@@ -305,7 +305,7 @@ final int TROPO_timeSteps = 24;
 
 // Modify Normal at Curve level is not complete...
 
-// Create3Ds.autoNormalCurve_Selection
+// Create3D.autoNormalCurve_Selection
 
 // writing export to rad completed for meshes and land - not allModel1Ds and 2Ds yet!
 
@@ -313,8 +313,8 @@ final int TROPO_timeSteps = 24;
 
 // exporting shaded land is not written. 
 
-// void Rotate3Ds.selection_Groups 
-// serach for Rotate3Ds.selection_Selection ( need to make them all correct for local pivots!
+// void Rotate3D.selection_Groups 
+// serach for Rotate3D.selection_Selection ( need to make them all correct for local pivots!
 // local pivot
 
 
@@ -464,7 +464,7 @@ String Folder_Trees;
 String Folder_Export;
 String Folder_Project;
 String Folder_Graphics;
-String Folder_Create3Ds;
+String Folder_Create3D;
 String Folder_ViewsFromSky;
 String Folder_ScreenShots;
 String Folder_Shadings;
@@ -518,7 +518,7 @@ void SOLARCHVISION_update_folders () {
   
   Folder_Export       = Folder_Project + "/Export";
   Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
-  Folder_Create3Ds      = Folder_Export + "/Create3Ds" + "/" + RunStamp;
+  Folder_Create3D      = Folder_Export + "/Create3D" + "/" + RunStamp;
   Folder_ViewsFromSky = Folder_Export + "/ViewsFromSky" + "/" + RunStamp;
   Folder_ScreenShots   = Folder_Export + "/ScreenShots" + "/" + RunStamp;
 
@@ -2814,7 +2814,7 @@ class solarchvision_WIN3D {
     this.graphics.stroke(127, 0, 255, 127);
     this.graphics.fill(127, 0, 255, 127);  
   
-    float[] P = Select3Ds.getPivot();
+    float[] P = Select3D.getPivot();
   
     float x = P[0];
     float y = P[1];
@@ -3308,7 +3308,7 @@ class solarchvision_WIN3D {
         switch(key) {
   
         case '*': 
-          Select3Ds.select_all();
+          Select3D.select_all();
           this.update = true;
           ROLLOUT.update = true;
           break;             
@@ -3528,7 +3528,7 @@ class solarchvision_WIN3D {
   
   
         case 155: // INSERT 
-          Select3Ds.deselect_all();
+          Select3D.deselect_all();
   
           this.update = true;
           ROLLOUT.update = true;
@@ -3538,7 +3538,7 @@ class solarchvision_WIN3D {
         switch(key) {
   
         case DELETE: 
-          Delete3Ds.selection();
+          Delete3D.selection();
   
           this.update = true;
           ROLLOUT.update = true; 
@@ -3799,7 +3799,7 @@ class solarchvision_WIN3D {
     float yA = ray_end[1] / OBJECTS_scale;
     float zA = ray_end[2] / OBJECTS_scale;
   
-    float[] P = Select3Ds.getPivot();
+    float[] P = Select3D.getPivot();
   
     float xB = P[0];
     float yB = P[1];
@@ -3823,7 +3823,7 @@ class solarchvision_WIN3D {
     float yA = ray_end[1] / OBJECTS_scale;
     float zA = ray_end[2] / OBJECTS_scale;
   
-    float[] P = Select3Ds.getPivot();
+    float[] P = Select3D.getPivot();
   
     float xB = P[0];
     float yB = P[1];
@@ -3872,7 +3872,7 @@ class solarchvision_WIN3D {
     float yA = this.CAM_y / OBJECTS_scale;
     float zA = this.CAM_z / OBJECTS_scale;
   
-    float[] P = Select3Ds.getPivot();
+    float[] P = Select3D.getPivot();
   
     float xO = P[0];
     float yO = P[1];
@@ -3904,7 +3904,7 @@ class solarchvision_WIN3D {
     float yA = this.CAM_y / OBJECTS_scale;
     float zA = this.CAM_z / OBJECTS_scale;
   
-    float[] P = Select3Ds.getPivot();
+    float[] P = Select3D.getPivot();
   
     float xO = P[0];
     float yO = P[1];
@@ -3952,7 +3952,7 @@ class solarchvision_WIN3D {
     float yA = this.CAM_y / OBJECTS_scale;
     float zA = this.CAM_z / OBJECTS_scale;
   
-    float[] P = Select3Ds.getPivot();
+    float[] P = Select3D.getPivot();
   
     float xO = P[0];
     float yO = P[1];
@@ -9226,7 +9226,7 @@ class solarchvision_ROLLOUT {
   
         User3D.create_MeshOrSolid = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
   
-        allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
+        allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3D.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
   
         Land3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
   
@@ -9237,7 +9237,7 @@ class solarchvision_ROLLOUT {
   
         OBJECTS_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "OBJECTS_scale", OBJECTS_scale, 0.0000001, 1000000, -2);      
   
-        Load_DefaultModels = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3Ds.maximum_default_models, 1), 1));
+        Load_DefaultModels = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3D.maximum_default_models, 1), 1));
       }
   
   
@@ -9277,20 +9277,20 @@ class solarchvision_ROLLOUT {
   
         User3D.modify_WeldTreshold = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.modify_WeldTreshold", User3D.modify_WeldTreshold, 0, 10, 0.001);      
   
-        Select3Ds.softPower = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.softPower", Select3Ds.softPower, 0.125, 8, -2);
-        Select3Ds.softRadius = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.softRadius", Select3Ds.softRadius, 0.01, 100, -2);
+        Select3D.softPower = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.softPower", Select3D.softPower, 0.125, 8, -2);
+        Select3D.softRadius = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.softRadius", Select3D.softRadius, 0.01, 100, -2);
   
-        Select3Ds.posVector = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.posVector", Select3Ds.posVector, 0, 3, 1), 1));
-        Select3Ds.rotVector =  int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.rotVector", Select3Ds.rotVector, 0, 2, 1), 1));
-        Select3Ds.scaleVector =  int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.scaleVector", Select3Ds.scaleVector, 0, 3, 1), 1));
+        Select3D.posVector = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.posVector", Select3D.posVector, 0, 3, 1), 1));
+        Select3D.rotVector =  int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.rotVector", Select3D.rotVector, 0, 2, 1), 1));
+        Select3D.scaleVector =  int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.scaleVector", Select3D.scaleVector, 0, 3, 1), 1));
   
-        Select3Ds.posValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.posValue", Select3Ds.posValue, -50, 50, 1), 1));
-        Select3Ds.rotValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.rotValue", Select3Ds.rotValue, -180, 180, 5), 5)); 
-        Select3Ds.scaleValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.scaleValue", Select3Ds.scaleValue, -8, 8, 0.5), 0.5)); 
+        Select3D.posValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.posValue", Select3D.posValue, -50, 50, 1), 1));
+        Select3D.rotValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.rotValue", Select3D.rotValue, -180, 180, 5), 5)); 
+        Select3D.scaleValue = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.scaleValue", Select3D.scaleValue, -8, 8, 0.5), 0.5)); 
   
-        Select3Ds.alignX = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.alignX", Select3Ds.alignX, -1, 1, 1), 1));
-        Select3Ds.alignY = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.alignY", Select3Ds.alignY, -1, 1, 1), 1));
-        Select3Ds.alignZ = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.alignZ", Select3Ds.alignZ, -1, 1, 1), 1));
+        Select3D.alignX = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.alignX", Select3D.alignX, -1, 1, 1), 1));
+        Select3D.alignY = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.alignY", Select3D.alignY, -1, 1, 1), 1));
+        Select3D.alignZ = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.alignZ", Select3D.alignZ, -1, 1, 1), 1));
       }
   
       if (this.child == 4) { // Solid
@@ -9376,9 +9376,9 @@ class solarchvision_ROLLOUT {
   
         //WIN3D.FacesShade = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,1,0, "WIN3D.FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
   
-        //allPoints.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayVertices", allPoints.displayAll, 0, 1, 1), 1));
-        //allFaces.displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayEdges", allFaces.displayEdges, 0, 1, 1), 1));
-        //allFaces.displayNormals = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3Ds.displayNormals", allFaces.displayNormals, 0, 1, 1), 1));
+        //allPoints.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3D.displayVertices", allPoints.displayAll, 0, 1, 1), 1));
+        //allFaces.displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3D.displayEdges", allFaces.displayEdges, 0, 1, 1), 1));
+        //allFaces.displayNormals = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Create3D.displayNormals", allFaces.displayNormals, 0, 1, 1), 1));
   
         //allCameras.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCameras.displayAll", allCameras.displayAll, 0, 1, 1), 1));
       }    
@@ -9555,27 +9555,27 @@ class solarchvision_ROLLOUT {
   
       if (this.child == 5) { // Selection
   
-        //Select3Ds.Group_displayPivot = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Group_displayPivot", Select3Ds.Group_displayPivot, 0, 1, 1), 1));
-        //Select3Ds.displayReferencePivot = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.displayReferencePivot", Select3Ds.displayReferencePivot, 0, 1, 1), 1));
-        //Select3Ds.Group_displayBox = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Group_displayBox", Select3Ds.Group_displayBox, 0, 1, 1), 1));
-        //Select3Ds.Group_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Group_displayEdges", Select3Ds.Group_displayEdges, 0, 1, 1), 1));
+        //Select3D.Group_displayPivot = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Group_displayPivot", Select3D.Group_displayPivot, 0, 1, 1), 1));
+        //Select3D.displayReferencePivot = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.displayReferencePivot", Select3D.displayReferencePivot, 0, 1, 1), 1));
+        //Select3D.Group_displayBox = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Group_displayBox", Select3D.Group_displayBox, 0, 1, 1), 1));
+        //Select3D.Group_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Group_displayEdges", Select3D.Group_displayEdges, 0, 1, 1), 1));
   
-        //Select3Ds.Face_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Face_displayEdges", Select3Ds.Face_displayEdges, 0, 1, 1), 1));
-        //Select3Ds.Face_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Face_displayVertexCount", Select3Ds.Face_displayVertexCount, 0, 1, 1), 1));
-        //Select3Ds.Curve_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Curve_displayVertexCount", Select3Ds.Curve_displayVertexCount, 0, 1, 1), 1));
-        //Select3Ds.Vertex_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Vertex_displayVertices", Select3Ds.Vertex_displayVertices, 0, 1, 1), 1));
-        //Select3Ds.Curve_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Curve_displayVertices", Select3Ds.Curve_displayVertices, 0, 1, 1), 1));
+        //Select3D.Face_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Face_displayEdges", Select3D.Face_displayEdges, 0, 1, 1), 1));
+        //Select3D.Face_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Face_displayVertexCount", Select3D.Face_displayVertexCount, 0, 1, 1), 1));
+        //Select3D.Curve_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Curve_displayVertexCount", Select3D.Curve_displayVertexCount, 0, 1, 1), 1));
+        //Select3D.Vertex_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Vertex_displayVertices", Select3D.Vertex_displayVertices, 0, 1, 1), 1));
+        //Select3D.Curve_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Curve_displayVertices", Select3D.Curve_displayVertices, 0, 1, 1), 1));
   
-        //Select3Ds.Model2D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Model2D_displayEdges", Select3Ds.Model2D_displayEdges, 0, 1, 1), 1));
-        //Select3Ds.Model0D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Model0D_displayEdges", Select3Ds.Model0D_displayEdges, 0, 1, 1), 1));
+        //Select3D.Model2D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Model2D_displayEdges", Select3D.Model2D_displayEdges, 0, 1, 1), 1));
+        //Select3D.Model0D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Model0D_displayEdges", Select3D.Model0D_displayEdges, 0, 1, 1), 1));
   
-        //Select3Ds.Solid_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Solid_displayEdges", Select3Ds.Solid_displayEdges, 0, 1, 1), 1));
+        //Select3D.Solid_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Solid_displayEdges", Select3D.Solid_displayEdges, 0, 1, 1), 1));
   
-        //Select3Ds.Section_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Section_displayEdges", Select3Ds.Section_displayEdges, 0, 1, 1), 1));
+        //Select3D.Section_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Section_displayEdges", Select3D.Section_displayEdges, 0, 1, 1), 1));
   
-        //Select3Ds.Camera_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.Camera_displayEdges", Select3Ds.Camera_displayEdges, 0, 1, 1), 1));
+        //Select3D.Camera_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.Camera_displayEdges", Select3D.Camera_displayEdges, 0, 1, 1), 1));
   
-        //Select3Ds.LandPoint_displayPoints = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3Ds.LandPoint_displayPoints", Select3Ds.LandPoint_displayPoints, 0, 1, 1), 1));
+        //Select3D.LandPoint_displayPoints = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Select3D.LandPoint_displayPoints", Select3D.LandPoint_displayPoints, 0, 1, 1), 1));
       }
     } else if (this.parent == 4) { // Post-Processing
   
@@ -10089,9 +10089,9 @@ class solarchvision_Faces {
       }
     }  
   
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
-      Select3Ds.deselect_Faces();
+    if (Select3D != null) {
+      Select3D.deselect_Groups();
+      Select3D.deselect_Faces();
     }
   }
 
@@ -10562,7 +10562,7 @@ class solarchvision_Faces {
     
             the_filename = "shadePallet.bmp";
     
-            TEXTURE_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+            TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
     
             println("Saving texture:", TEXTURE_path);
     
@@ -10862,7 +10862,7 @@ class solarchvision_Faces {
             
             the_filename = "shadePallet.bmp";
             
-            TEXTURE_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+            TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
             
             htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
             htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
@@ -11289,9 +11289,9 @@ class solarchvision_Curves {
       }
     }  
   
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
-      Select3Ds.deselect_Curves();
+    if (Select3D != null) {
+      Select3D.deselect_Groups();
+      Select3D.deselect_Curves();
     }
   }
 
@@ -11675,8 +11675,8 @@ class solarchvision_Groups {
     this.Solids = new int [n][2];
     this.Pivots = new float [n][9];
     
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
+    if (Select3D != null) {
+      Select3D.deselect_Groups();
     }
   }    
 
@@ -11771,10 +11771,10 @@ class solarchvision_Groups {
     
     this.setStop_Face(n, this.getStop_Face(n) + howMany); // because adding the faces also changes the end pointer of the same object
     
-    for (int k = 0; k < Select3Ds.Face_ids.length; k++) {
-      if (Select3Ds.Face_ids[k] != 0) {
-        if (Select3Ds.Face_ids[k] > fromFace) {  
-          Select3Ds.Face_ids[k] += howMany;
+    for (int k = 0; k < Select3D.Face_ids.length; k++) {
+      if (Select3D.Face_ids[k] != 0) {
+        if (Select3D.Face_ids[k] > fromFace) {  
+          Select3D.Face_ids[k] += howMany;
         }
       }
     }        
@@ -11851,9 +11851,9 @@ class solarchvision_Groups {
     if (run_process) {
   
       if (createNewGroup == 1) {
-        float x = Select3Ds.BoundingBox[1 + Select3Ds.alignX][0];
-        float y = Select3Ds.BoundingBox[1 + Select3Ds.alignX][1];
-        float z = Select3Ds.BoundingBox[1 + Select3Ds.alignX][2];
+        float x = Select3D.BoundingBox[1 + Select3D.alignX][0];
+        float y = Select3D.BoundingBox[1 + Select3D.alignX][1];
+        float z = Select3D.BoundingBox[1 + Select3D.alignX][2];
   
         float rot = User3D.create_Orientation;
         if (rot == 360) rot = WIN3D.rotation_Z;
@@ -11867,9 +11867,9 @@ class solarchvision_Groups {
   
       if (current_ObjectCategory == ObjectCategory.MODEL0D) {
   
-        for (int o = 0; o < Select3Ds.Model0D_ids.length; o++) {
+        for (int o = 0; o < Select3D.Model0D_ids.length; o++) {
   
-          int OBJ_ID = Select3Ds.Model0D_ids[o];
+          int OBJ_ID = Select3D.Model0D_ids[o];
   
           float x = allModel0Ds.getX(OBJ_ID);
           float y = allModel0Ds.getY(OBJ_ID);
@@ -11895,9 +11895,9 @@ class solarchvision_Groups {
   
         int n1 = allModel2Ds.num_files_PEOPLE;
   
-        for (int o = 0; o < Select3Ds.Model2D_ids.length; o++) {
+        for (int o = 0; o < Select3D.Model2D_ids.length; o++) {
   
-          int OBJ_ID = Select3Ds.Model2D_ids[o];
+          int OBJ_ID = Select3D.Model2D_ids[o];
   
           float x = allModel2Ds.getX(OBJ_ID);
           float y = allModel2Ds.getY(OBJ_ID);
@@ -11916,9 +11916,9 @@ class solarchvision_Groups {
   
       if (current_ObjectCategory == ObjectCategory.SOLID) {
   
-        for (int o = 0; o < Select3Ds.Solid_ids.length; o++) {
+        for (int o = 0; o < Select3D.Solid_ids.length; o++) {
   
-          int OBJ_ID = Select3Ds.Solid_ids[o];
+          int OBJ_ID = Select3D.Solid_ids[o];
   
           float Solid_posX = allSolids.get_posX(OBJ_ID);
           float Solid_posY = allSolids.get_posY(OBJ_ID);
@@ -11943,9 +11943,9 @@ class solarchvision_Groups {
   
       if (current_ObjectCategory == ObjectCategory.FACE) {
   
-        for (int o = 0; o < Select3Ds.Face_ids.length; o++) {
+        for (int o = 0; o < Select3D.Face_ids.length; o++) {
   
-          int f = Select3Ds.Face_ids[o];        
+          int f = Select3D.Face_ids[o];        
   
           int number_of_Vertices_before = allPoints.getLength();
   
@@ -12007,9 +12007,9 @@ class solarchvision_Groups {
   
       if (current_ObjectCategory == ObjectCategory.CURVE) {
   
-        for (int o = 0; o < Select3Ds.Curve_ids.length; o++) {
+        for (int o = 0; o < Select3D.Curve_ids.length; o++) {
   
-          int f = Select3Ds.Curve_ids[o];        
+          int f = Select3D.Curve_ids[o];        
   
           int number_of_Vertices_before = allPoints.getLength();
   
@@ -12075,17 +12075,17 @@ class solarchvision_Groups {
       addToLastGroup = pre_addToLastGroup;
   
   
-      Delete3Ds.selection();
+      Delete3D.selection();
   
   
-      Select3Ds.Group_ids = new int [1];
-      Select3Ds.Group_ids[0] = this.num - 1;
+      Select3D.Group_ids = new int [1];
+      Select3D.Group_ids[0] = this.num - 1;
   
   
       current_ObjectCategory = ObjectCategory.GROUP;
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
   
@@ -12095,12 +12095,12 @@ class solarchvision_Groups {
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {
   
-      Select3Ds.Group_ids = sort(Select3Ds.Group_ids);
+      Select3D.Group_ids = sort(Select3D.Group_ids);
   
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         this.Faces[OBJ_ID][0] = 0;
         this.Faces[OBJ_ID][1] = -1;
@@ -12118,7 +12118,7 @@ class solarchvision_Groups {
         this.Solids[OBJ_ID][1] = -1;
       }
   
-      Delete3Ds.selection();
+      Delete3D.selection();
     }
   }
   
@@ -12138,7 +12138,7 @@ class solarchvision_Groups {
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {  
   
-      Select3Ds.deselect_Groups();
+      Select3D.deselect_Groups();
   
       for (int OBJ_ID = 0; OBJ_ID < this.num; OBJ_ID++) {
   
@@ -12156,11 +12156,11 @@ class solarchvision_Groups {
             OBJ_ID
           };
   
-          Select3Ds.Group_ids = concat(Select3Ds.Group_ids, emptyGroup);
+          Select3D.Group_ids = concat(Select3D.Group_ids, emptyGroup);
         }
       }
   
-      Delete3Ds.selection();
+      Delete3D.selection();
     }
   
     current_ObjectCategory = pre_current_ObjectCategory;
@@ -12418,9 +12418,9 @@ class solarchvision_SolidImpacts {
   
     println(CLASS_STAMP + ".calculate_Impact_selectedSections");
   
-    for (int o = Select3Ds.Section_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Section_ids[o];
+      int f = Select3D.Section_ids[o];
   
       this.sectionType = allSections.get_type(f);
       this.RES1        = allSections.get_res1(f);
@@ -14176,9 +14176,9 @@ class solarchvision_SolarImpacts {
   
   void render_Shadows_selectedSections () {
   
-    for (int o = Select3Ds.Section_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Section_ids[o];
+      int f = Select3D.Section_ids[o];
   
       this.sectionType = allSections.get_type(f);
       this.RES1 = allSections.get_res1(f);
@@ -14206,9 +14206,9 @@ class solarchvision_SolarImpacts {
   
   void calculate_Impact_selectedSections () {
   
-    for (int o = Select3Ds.Section_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Section_ids[o];
+      int f = Select3D.Section_ids[o];
   
       this.sectionType = allSections.get_type(f);
       this.RES1        = allSections.get_res1(f);
@@ -14289,9 +14289,9 @@ solarchvision_SolarImpacts allSolarImpacts = new solarchvision_SolarImpacts();
 
 
 
-class solarchvision_Edit3Ds {
+class solarchvision_Edit3D {
   
-  private final static String CLASS_STAMP = "Edit3Ds";
+  private final static String CLASS_STAMP = "Edit3D";
   
   void selection (int p) {
 
@@ -14334,9 +14334,9 @@ class solarchvision_Edit3Ds {
   
   void Faces (int p) {
 
-    for (int o = Select3Ds.Face_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Face_ids[o];
+      int OBJ_ID = Select3D.Face_ids[o];
 
       int f = OBJ_ID;
 
@@ -14384,9 +14384,9 @@ class solarchvision_Edit3Ds {
   
   void Curves (int p) {
 
-    for (int o = Select3Ds.Curve_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Curve_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Curve_ids[o];
+      int OBJ_ID = Select3D.Curve_ids[o];
 
       int f = OBJ_ID;
 
@@ -14437,9 +14437,9 @@ class solarchvision_Edit3Ds {
   
   void Groups (int p) {
 
-    for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Group_ids[o];
+      int OBJ_ID = Select3D.Group_ids[o];
 
       for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
         if ((0 <= f) && (f < allFaces.nodes.length)) {
@@ -14538,9 +14538,9 @@ class solarchvision_Edit3Ds {
 
   void Model0Ds (int p) {
 
-    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model0D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model0D_ids[o];
+      int OBJ_ID = Select3D.Model0D_ids[o];
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
 
@@ -14663,9 +14663,9 @@ class solarchvision_Edit3Ds {
 
 
   void Model2Ds (int p) {
-    for (int o = Select3Ds.Model2D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model2D_ids[o];
+      int OBJ_ID = Select3D.Model2D_ids[o];
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
 
@@ -14715,9 +14715,9 @@ class solarchvision_Edit3Ds {
 
   void Cameras (int p) {
   
-    for (int o = Select3Ds.Camera_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Camera_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Camera_ids[o];
+      int OBJ_ID = Select3D.Camera_ids[o];
 
       int f = OBJ_ID;
 
@@ -14737,9 +14737,9 @@ class solarchvision_Edit3Ds {
 
     boolean allSolids_updated = false;  
 
-    for (int o = Select3Ds.Section_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Section_ids[o];
+      int OBJ_ID = Select3D.Section_ids[o];
 
       int f = OBJ_ID;
 
@@ -14779,9 +14779,9 @@ class solarchvision_Edit3Ds {
 
     boolean allSolids_updated = false;  
 
-    for (int o = Select3Ds.Solid_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Solid_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Solid_ids[o];
+      int OBJ_ID = Select3D.Solid_ids[o];
 
       int f = OBJ_ID;
 
@@ -14831,17 +14831,17 @@ class solarchvision_Edit3Ds {
 
 }
 
-solarchvision_Edit3Ds Edit3Ds = new solarchvision_Edit3Ds();     
+solarchvision_Edit3D Edit3D = new solarchvision_Edit3D();     
 
 
 
-class solarchvision_Scale3Ds {
+class solarchvision_Scale3D {
   
-  private final static String CLASS_STAMP = "Scale3Ds";
+  private final static String CLASS_STAMP = "Scale3D";
   
   void selection (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    float[] O = Select3Ds.translateOutside_ReferencePivot(x0, y0, z0);
+    float[] O = Select3D.translateOutside_ReferencePivot(x0, y0, z0);
   
     x0 = O[0];
     y0 = O[1];
@@ -14896,9 +14896,9 @@ class solarchvision_Scale3Ds {
 
   void LandPoints (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    for (int q = 0; q < Select3Ds.LandPoint_ids.length; q++) {
+    for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
   
-      int f = Select3Ds.LandPoint_ids[q];
+      int f = Select3D.LandPoint_ids[q];
   
       int i = f / Land3D.num_columns;
       int j = f % Land3D.num_columns;
@@ -14907,13 +14907,13 @@ class solarchvision_Scale3Ds {
       float y = Land3D.Mesh[i][j][1]; 
       float z = Land3D.Mesh[i][j][2];
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -14929,11 +14929,11 @@ class solarchvision_Scale3Ds {
   
   void softSelection (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    for (int q = 0; q < Select3Ds.softSelection_ids.length; q++) {
+    for (int q = 0; q < Select3D.softSelection_ids.length; q++) {
   
-      int f = Select3Ds.softSelection_ids[q];
+      int f = Select3D.softSelection_ids[q];
   
-      float v = Select3Ds.softSelection_values[q];    
+      float v = Select3D.softSelection_values[q];    
   
       float x = allPoints.getX(f) - x0; 
       float y = allPoints.getY(f) - y0; 
@@ -14948,21 +14948,21 @@ class solarchvision_Scale3Ds {
   
   void Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    for (int q = 0; q < Select3Ds.Vertex_ids.length; q++) {
+    for (int q = 0; q < Select3D.Vertex_ids.length; q++) {
   
-      int f = Select3Ds.Vertex_ids[q];
+      int f = Select3D.Vertex_ids[q];
   
       float x = allPoints.getX(f); 
       float y = allPoints.getY(f); 
       float z = allPoints.getZ(f);
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -14978,7 +14978,7 @@ class solarchvision_Scale3Ds {
   
   void Curves (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    int[] CurveVertices = Select3Ds.get_Curve_Vertices();
+    int[] CurveVertices = Select3D.get_Curve_Vertices();
   
     for (int q = 0; q < CurveVertices.length; q++) {
   
@@ -14988,13 +14988,13 @@ class solarchvision_Scale3Ds {
       float y = allPoints.getY(f);
       float z = allPoints.getZ(f);
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -15009,7 +15009,7 @@ class solarchvision_Scale3Ds {
 
   void Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    int[] FaceVertices = Select3Ds.get_Face_Vertices();
+    int[] FaceVertices = Select3D.get_Face_Vertices();
   
     for (int q = 0; q < FaceVertices.length; q++) {
   
@@ -15019,13 +15019,13 @@ class solarchvision_Scale3Ds {
       float y = allPoints.getY(f);
       float z = allPoints.getZ(f);
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -15042,21 +15042,21 @@ class solarchvision_Scale3Ds {
   
     boolean allSolids_updated = false; 
   
-    for (int q = 0; q < Select3Ds.Solid_ids.length; q++) {
+    for (int q = 0; q < Select3D.Solid_ids.length; q++) {
   
-      int f = Select3Ds.Solid_ids[q];
+      int f = Select3D.Solid_ids[q];
   
       float x = allSolids.get_posX(f);
       float y = allSolids.get_posY(f);
       float z = allSolids.get_posZ(f);
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0]; 
       y = B[1];
@@ -15075,9 +15075,9 @@ class solarchvision_Scale3Ds {
   
   void Sections (float sx, float sy) {
   
-    for (int q = 0; q < Select3Ds.Section_ids.length; q++) {
+    for (int q = 0; q < Select3D.Section_ids.length; q++) {
   
-      int f = Select3Ds.Section_ids[q];
+      int f = Select3D.Section_ids[q];
   
       allSections.setU(f, allSections.getU(f) * sx);
       allSections.setV(f, allSections.getV(f) * sy);
@@ -15097,9 +15097,9 @@ class solarchvision_Scale3Ds {
     sz = sy;
     sy = tmp;
   
-    for (int q = 0; q < Select3Ds.Camera_ids.length; q++) {
+    for (int q = 0; q < Select3D.Camera_ids.length; q++) {
   
-      int f = Select3Ds.Camera_ids[q];
+      int f = Select3D.Camera_ids[q];
   
       float x = allCameras.get_posX(f) - x0; 
       float y = allCameras.get_posY(f) - y0; 
@@ -15116,21 +15116,21 @@ class solarchvision_Scale3Ds {
 
   void Model0Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
-    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model0D_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Model0D_ids[o];
+      int f = Select3D.Model0D_ids[o];
   
       float x = allModel0Ds.getX(f);
       float y = allModel0Ds.getY(f); 
       float z = allModel0Ds.getZ(f);
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -15149,21 +15149,21 @@ class solarchvision_Scale3Ds {
   
     int n1 = allModel2Ds.num_files_PEOPLE;    
   
-    for (int o = Select3Ds.Model2D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Model2D_ids[o];
+      int f = Select3D.Model2D_ids[o];
   
       float x = allModel2Ds.getX(f);
       float y = allModel2Ds.getY(f); 
       float z = allModel2Ds.getZ(f);
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -15185,7 +15185,7 @@ class solarchvision_Scale3Ds {
 
   void Groups (float x0, float y0, float z0, float sx, float sy, float sz) {
   
-    int[] PolymeshVertices = Select3Ds.get_Group_Vertices();
+    int[] PolymeshVertices = Select3D.get_Group_Vertices();
   
     for (int q = 0; q < PolymeshVertices.length; q++) {
   
@@ -15195,13 +15195,13 @@ class solarchvision_Scale3Ds {
       float y = allPoints.getY(n); 
       float z = allPoints.getZ(n);
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = sx * (A[0] - x0) + x0;
       y = sy * (A[1] - y0) + y0;
       z = sz * (A[2] - z0) + z0;
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -15216,22 +15216,22 @@ class solarchvision_Scale3Ds {
   
     boolean allSolids_updated = false;
   
-    for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
   
-      int OBJ_ID = Select3Ds.Group_ids[o];
+      int OBJ_ID = Select3D.Group_ids[o];
   
       {
         float x = allGroups.Pivots[OBJ_ID][0]; 
         float y = allGroups.Pivots[OBJ_ID][1]; 
         float z = allGroups.Pivots[OBJ_ID][2];
   
-        float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+        float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
         x = sx * (A[0] - x0) + x0;
         y = sy * (A[1] - y0) + y0;
         z = sz * (A[2] - z0) + z0;
   
-        float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+        float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
         x = B[0];
         y = B[1];
@@ -15256,13 +15256,13 @@ class solarchvision_Scale3Ds {
           float y = allModel0Ds.getY(f); 
           float z = allModel0Ds.getZ(f);
   
-          float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+          float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
           x = sx * (A[0] - x0) + x0;
           y = sy * (A[1] - y0) + y0;
           z = sz * (A[2] - z0) + z0;
   
-          float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+          float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -15284,13 +15284,13 @@ class solarchvision_Scale3Ds {
           float y = allModel2Ds.getY(f); 
           float z = allModel2Ds.getZ(f);
   
-          float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+          float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
           x = sx * (A[0] - x0) + x0;
           y = sy * (A[1] - y0) + y0;
           z = sz * (A[2] - z0) + z0;
   
-          float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+          float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -15315,13 +15315,13 @@ class solarchvision_Scale3Ds {
           float y = allSolids.get_posY(f);
           float z = allSolids.get_posZ(f);
   
-          float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+          float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
           x = sx * (A[0] - x0) + x0;
           y = sy * (A[1] - y0) + y0;
           z = sz * (A[2] - z0) + z0;
   
-          float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+          float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
           x = B[0]; 
           y = B[1];
@@ -15341,22 +15341,22 @@ class solarchvision_Scale3Ds {
 
 }
 
-solarchvision_Scale3Ds Scale3Ds = new solarchvision_Scale3Ds();     
+solarchvision_Scale3D Scale3D = new solarchvision_Scale3D();     
 
 
 
 
 
-class solarchvision_Rotate3Ds {
+class solarchvision_Rotate3D {
   
-  private final static String CLASS_STAMP = "Rotate3Ds";
+  private final static String CLASS_STAMP = "Rotate3D";
 
   void selection (float x0, float y0, float z0, float r, int the_Vector) {
     
     r *= PI / 180; // <<<<<<<<
   
-    float[] A = Select3Ds.translateInside_ReferencePivot(0, 0, 0);
-    float[] B = Select3Ds.translateInside_ReferencePivot(x0, y0, z0);
+    float[] A = Select3D.translateInside_ReferencePivot(0, 0, 0);
+    float[] B = Select3D.translateInside_ReferencePivot(x0, y0, z0);
   
     x0 = B[0] - A[0];
     y0 = B[1] - A[1];
@@ -15410,11 +15410,11 @@ class solarchvision_Rotate3Ds {
 
   void softSelection (float x0, float y0, float z0, float r, int the_Vector) {
   
-    for (int q = 0; q < Select3Ds.softSelection_ids.length; q++) {
+    for (int q = 0; q < Select3D.softSelection_ids.length; q++) {
   
-      int f = Select3Ds.softSelection_ids[q];
+      int f = Select3D.softSelection_ids[q];
   
-      float v = Select3Ds.softSelection_values[q];
+      float v = Select3D.softSelection_values[q];
   
       float x = allPoints.getX(f) - x0; 
       float y = allPoints.getY(f) - y0; 
@@ -15440,9 +15440,9 @@ class solarchvision_Rotate3Ds {
 
   void LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
   
-    for (int q = 0; q < Select3Ds.LandPoint_ids.length; q++) {
+    for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
   
-      int f = Select3Ds.LandPoint_ids[q];
+      int f = Select3D.LandPoint_ids[q];
   
       int i = f / Land3D.num_columns;
       int j = f % Land3D.num_columns;
@@ -15472,9 +15472,9 @@ class solarchvision_Rotate3Ds {
 
   void Vertices (float x0, float y0, float z0, float r, int the_Vector) {
   
-    for (int q = 0; q < Select3Ds.Vertex_ids.length; q++) {
+    for (int q = 0; q < Select3D.Vertex_ids.length; q++) {
   
-      int f = Select3Ds.Vertex_ids[q];
+      int f = Select3D.Vertex_ids[q];
   
       float x = allPoints.getX(f) - x0; 
       float y = allPoints.getY(f) - y0; 
@@ -15499,7 +15499,7 @@ class solarchvision_Rotate3Ds {
 
   void Curves (float x0, float y0, float z0, float r, int the_Vector) {
   
-    int[] CurveVertices = Select3Ds.get_Curve_Vertices();
+    int[] CurveVertices = Select3D.get_Curve_Vertices();
   
     for (int q = 0; q < CurveVertices.length; q++) {
   
@@ -15528,7 +15528,7 @@ class solarchvision_Rotate3Ds {
 
   void Faces (float x0, float y0, float z0, float r, int the_Vector) {
   
-    int[] FaceVertices = Select3Ds.get_Face_Vertices();
+    int[] FaceVertices = Select3D.get_Face_Vertices();
   
     for (int q = 0; q < FaceVertices.length; q++) {
   
@@ -15559,9 +15559,9 @@ class solarchvision_Rotate3Ds {
   
     boolean allSolids_updated = false; 
   
-    for (int q = 0; q < Select3Ds.Solid_ids.length; q++) {
+    for (int q = 0; q < Select3D.Solid_ids.length; q++) {
   
-      int f = Select3Ds.Solid_ids[q];
+      int f = Select3D.Solid_ids[q];
   
       float Solid_posX = allSolids.get_posX(f);
       float Solid_posY = allSolids.get_posY(f);
@@ -15595,9 +15595,9 @@ class solarchvision_Rotate3Ds {
   
   void Sections (float r) {
   
-    for (int q = 0; q < Select3Ds.Section_ids.length; q++) {
+    for (int q = 0; q < Select3D.Section_ids.length; q++) {
   
-      int f = Select3Ds.Section_ids[q];
+      int f = Select3D.Section_ids[q];
   
       allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
     }
@@ -15615,9 +15615,9 @@ class solarchvision_Rotate3Ds {
     if (the_Vector == 2) the_Vector = 1;
     else if (the_Vector == 1) the_Vector = 2;
   
-    for (int q = 0; q < Select3Ds.Camera_ids.length; q++) {
+    for (int q = 0; q < Select3D.Camera_ids.length; q++) {
   
-      int f = Select3Ds.Camera_ids[q];
+      int f = Select3D.Camera_ids[q];
   
       float x = allCameras.get_posX(f) - x0; 
       float y = allCameras.get_posY(f) - y0; 
@@ -15645,9 +15645,9 @@ class solarchvision_Rotate3Ds {
   
   void Model0Ds (float x0, float y0, float z0, float r, int the_Vector) {
   
-    for (int q = 0; q < Select3Ds.Model0D_ids.length; q++) {
+    for (int q = 0; q < Select3D.Model0D_ids.length; q++) {
   
-      int f = Select3Ds.Model0D_ids[q];
+      int f = Select3D.Model0D_ids[q];
   
       float x = allModel0Ds.getX(f) - x0; 
       float y = allModel0Ds.getY(f) - y0; 
@@ -15674,9 +15674,9 @@ class solarchvision_Rotate3Ds {
   
   void Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
   
-    for (int q = 0; q < Select3Ds.Model2D_ids.length; q++) {
+    for (int q = 0; q < Select3D.Model2D_ids.length; q++) {
   
-      int f = Select3Ds.Model2D_ids[q];
+      int f = Select3D.Model2D_ids[q];
   
       float x = allModel2Ds.getX(f) - x0; 
       float y = allModel2Ds.getY(f) - y0; 
@@ -15702,7 +15702,7 @@ class solarchvision_Rotate3Ds {
 
   void Groups (float r, int the_Vector) {
   
-    int[] PolymeshVertices = Select3Ds.get_Group_Vertices();
+    int[] PolymeshVertices = Select3D.get_Group_Vertices();
   
     for (int q = 0; q < PolymeshVertices.length; q++) {
   
@@ -15712,7 +15712,7 @@ class solarchvision_Rotate3Ds {
       float y = allPoints.getY(n); 
       float z = allPoints.getZ(n);
   
-      float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+      float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
       x = A[0];
       y = A[1];
@@ -15742,7 +15742,7 @@ class solarchvision_Rotate3Ds {
         z = c;
       }
   
-      float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
       x = B[0];
       y = B[1];
@@ -15760,16 +15760,16 @@ class solarchvision_Rotate3Ds {
   
     boolean allSolids_updated = false;
   
-    for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
   
-      int OBJ_ID = Select3Ds.Group_ids[o];
+      int OBJ_ID = Select3D.Group_ids[o];
   
       { 
         float x = allGroups.Pivots[OBJ_ID][0]; 
         float y = allGroups.Pivots[OBJ_ID][1]; 
         float z = allGroups.Pivots[OBJ_ID][2];
   
-        float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+        float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
         x = A[0];
         y = A[1];
@@ -15799,7 +15799,7 @@ class solarchvision_Rotate3Ds {
           z = c;
         }
   
-        float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+        float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
         x = B[0];
         y = B[1];
@@ -15826,7 +15826,7 @@ class solarchvision_Rotate3Ds {
           float y = allModel0Ds.getY(f); 
           float z = allModel0Ds.getZ(f);
   
-          float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+          float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
           x = A[0];
           y = A[1];
@@ -15856,7 +15856,7 @@ class solarchvision_Rotate3Ds {
             z = c;
           }
   
-          float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+          float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -15882,7 +15882,7 @@ class solarchvision_Rotate3Ds {
           float y = allModel2Ds.getY(f); 
           float z = allModel2Ds.getZ(f);
   
-          float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+          float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
           x = A[0];
           y = A[1];
@@ -15912,7 +15912,7 @@ class solarchvision_Rotate3Ds {
             z = c;
           }
   
-          float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+          float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -15931,7 +15931,7 @@ class solarchvision_Rotate3Ds {
           float y = allSolids.get_posY(f);
           float z = allSolids.get_posZ(f);
   
-          float[] A = Select3Ds.translateOutside_ReferencePivot(x, y, z);
+          float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
           x = A[0];
           y = A[1];
@@ -15961,7 +15961,7 @@ class solarchvision_Rotate3Ds {
             z = c;
           }
   
-          float[] B = Select3Ds.translateInside_ReferencePivot(x, y, z);
+          float[] B = Select3D.translateInside_ReferencePivot(x, y, z);
   
           x = B[0];
           y = B[1];
@@ -15989,21 +15989,21 @@ class solarchvision_Rotate3Ds {
 
 }
 
-solarchvision_Rotate3Ds Rotate3Ds = new solarchvision_Rotate3Ds();     
+solarchvision_Rotate3D Rotate3D = new solarchvision_Rotate3D();     
 
 
 
 
 
 
-class solarchvision_Move3Ds {
+class solarchvision_Move3D {
   
-  private final static String CLASS_STAMP = "Move3Ds";
+  private final static String CLASS_STAMP = "Move3D";
 
   void selection (float dx, float dy, float dz) {
     /*
-    float[] A = Select3Ds.translateInside_ReferencePivot(0, 0, 0);
-    float[] B = Select3Ds.translateInside_ReferencePivot(dx, dy, dz);
+    float[] A = Select3D.translateInside_ReferencePivot(0, 0, 0);
+    float[] B = Select3D.translateInside_ReferencePivot(dx, dy, dz);
     
     dx = B[0] - A[0];
     dy = B[1] - A[1];
@@ -16060,9 +16060,9 @@ class solarchvision_Move3Ds {
 
   void LandPoints (float dx, float dy, float dz) {
   
-    for (int q = 0; q < Select3Ds.LandPoint_ids.length; q++) {
+    for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
   
-      int f = Select3Ds.LandPoint_ids[q];
+      int f = Select3D.LandPoint_ids[q];
   
       int i = f / Land3D.num_columns;
       int j = f % Land3D.num_columns;
@@ -16076,11 +16076,11 @@ class solarchvision_Move3Ds {
   
   void softSelection (float dx, float dy, float dz) {
   
-    for (int q = 0; q < Select3Ds.softSelection_ids.length; q++) {
+    for (int q = 0; q < Select3D.softSelection_ids.length; q++) {
   
-      int f = Select3Ds.softSelection_ids[q];
+      int f = Select3D.softSelection_ids[q];
   
-      float v = Select3Ds.softSelection_values[q];
+      float v = Select3D.softSelection_values[q];
   
       allPoints.move(f, dx * v, dy * v, dz * v); 
     }
@@ -16089,9 +16089,9 @@ class solarchvision_Move3Ds {
 
   void Vertices (float dx, float dy, float dz) {
   
-    for (int q = 0; q < Select3Ds.Vertex_ids.length; q++) {
+    for (int q = 0; q < Select3D.Vertex_ids.length; q++) {
   
-      int f = Select3Ds.Vertex_ids[q];
+      int f = Select3D.Vertex_ids[q];
   
       allPoints.move(f, dx, dy, dz); 
     }
@@ -16100,7 +16100,7 @@ class solarchvision_Move3Ds {
   
   void Curves (float dx, float dy, float dz) {
   
-    int[] CurveVertices = Select3Ds.get_Curve_Vertices();
+    int[] CurveVertices = Select3D.get_Curve_Vertices();
   
     for (int q = 0; q < CurveVertices.length; q++) {
   
@@ -16113,7 +16113,7 @@ class solarchvision_Move3Ds {
 
   void Faces (float dx, float dy, float dz) {
   
-    int[] FaceVertices = Select3Ds.get_Face_Vertices();
+    int[] FaceVertices = Select3D.get_Face_Vertices();
   
     for (int q = 0; q < FaceVertices.length; q++) {
   
@@ -16126,9 +16126,9 @@ class solarchvision_Move3Ds {
   
   void Model0Ds (float dx, float dy, float dz) {
   
-    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model0D_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Model0D_ids[o];
+      int f = Select3D.Model0D_ids[o];
   
       allModel0Ds.move(f, dx, dy, dz); 
     }
@@ -16138,9 +16138,9 @@ class solarchvision_Move3Ds {
   
   void Model2Ds (float dx, float dy, float dz) {
   
-    for (int o = Select3Ds.Model2D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
   
-      int f = Select3Ds.Model2D_ids[o];
+      int f = Select3D.Model2D_ids[o];
       
       allModel2Ds.move(f, dx, dy, dz); 
     }
@@ -16151,9 +16151,9 @@ class solarchvision_Move3Ds {
   
     boolean allSolids_updated = false; 
   
-    for (int q = 0; q < Select3Ds.Solid_ids.length; q++) {
+    for (int q = 0; q < Select3D.Solid_ids.length; q++) {
   
-      int f = Select3Ds.Solid_ids[q];
+      int f = Select3D.Solid_ids[q];
   
       float Solid_posX = allSolids.get_posX(f);
       float Solid_posY = allSolids.get_posY(f);
@@ -16170,9 +16170,9 @@ class solarchvision_Move3Ds {
   
   void Sections (float dx, float dy, float dz) {
   
-    for (int q = 0; q < Select3Ds.Section_ids.length; q++) {
+    for (int q = 0; q < Select3D.Section_ids.length; q++) {
   
-      int f = Select3Ds.Section_ids[q];
+      int f = Select3D.Section_ids[q];
       
       allSections.move(f, dx, dy, dz);
     }
@@ -16191,9 +16191,9 @@ class solarchvision_Move3Ds {
     dz = dy;
     dy = tmp;
   
-    for (int q = 0; q < Select3Ds.Camera_ids.length; q++) {
+    for (int q = 0; q < Select3D.Camera_ids.length; q++) {
   
-      int f = Select3Ds.Camera_ids[q];
+      int f = Select3D.Camera_ids[q];
   
       allCameras.move(f, dx, dy, dz); 
   
@@ -16203,7 +16203,7 @@ class solarchvision_Move3Ds {
 
   void Groups (float dx, float dy, float dz) {
   
-    int[] PolymeshVertices = Select3Ds.get_Group_Vertices();
+    int[] PolymeshVertices = Select3D.get_Group_Vertices();
   
     for (int q = 0; q < PolymeshVertices.length; q++) {
   
@@ -16214,9 +16214,9 @@ class solarchvision_Move3Ds {
   
     boolean allSolids_updated = false;
   
-    for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
   
-      int OBJ_ID = Select3Ds.Group_ids[o];
+      int OBJ_ID = Select3D.Group_ids[o];
   
       {
         allGroups.Pivots[OBJ_ID][0] += dx;
@@ -16257,14 +16257,14 @@ class solarchvision_Move3Ds {
 
 }
 
-solarchvision_Move3Ds Move3Ds = new solarchvision_Move3Ds();     
+solarchvision_Move3D Move3D = new solarchvision_Move3D();     
 
 
 
 
-class solarchvision_Drop3Ds {
+class solarchvision_Drop3D {
   
-  private final static String CLASS_STAMP = "Drop3Ds";
+  private final static String CLASS_STAMP = "Drop3D";
 
   void selection () {
 
@@ -16284,9 +16284,9 @@ class solarchvision_Drop3Ds {
   
   void Model0Ds () {
 
-    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model0D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model0D_ids[o];
+      int OBJ_ID = Select3D.Model0D_ids[o];
 
       float x = allModel0Ds.getX(OBJ_ID);
       float y = allModel0Ds.getY(OBJ_ID);
@@ -16338,9 +16338,9 @@ class solarchvision_Drop3Ds {
 
   void Model2Ds () {
 
-    for (int o = Select3Ds.Model2D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model2D_ids[o];
+      int OBJ_ID = Select3D.Model2D_ids[o];
 
       float x = allModel2Ds.getX(OBJ_ID);
       float y = allModel2Ds.getY(OBJ_ID);
@@ -16391,7 +16391,7 @@ class solarchvision_Drop3Ds {
 
 }
 
-solarchvision_Drop3Ds Drop3Ds = new solarchvision_Drop3Ds();     
+solarchvision_Drop3D Drop3D = new solarchvision_Drop3D();     
 
 
 
@@ -16404,9 +16404,9 @@ solarchvision_Drop3Ds Drop3Ds = new solarchvision_Drop3Ds();
   
 
 
-class solarchvision_Clone3Ds {
+class solarchvision_Clone3D {
   
-  private final static String CLASS_STAMP = "Clone3Ds";
+  private final static String CLASS_STAMP = "Clone3D";
 
   void selection (boolean produce_same_variation) {
   
@@ -16452,9 +16452,9 @@ class solarchvision_Clone3Ds {
 
     int number_of_allModel0Ds_before = allModel0Ds.num; 
 
-    for (int o = 0; o < Select3Ds.Model0D_ids.length; o++) {
+    for (int o = 0; o < Select3D.Model0D_ids.length; o++) {
 
-      int OBJ_ID = Select3Ds.Model0D_ids[o];
+      int OBJ_ID = Select3D.Model0D_ids[o];
 
       float x = allModel0Ds.getX(OBJ_ID);
       float y = allModel0Ds.getY(OBJ_ID);
@@ -16478,13 +16478,13 @@ class solarchvision_Clone3Ds {
 
     // selecting new objetcs
 
-    Select3Ds.deselect_Model0Ds();
+    Select3D.deselect_Model0Ds();
 
     for (int o = number_of_allModel0Ds_before; o < allModel0Ds.num; o++) {
 
       int[] newlyAddedallModel0Ds = {o};
 
-      Select3Ds.Model0D_ids = concat(Select3Ds.Model0D_ids, newlyAddedallModel0Ds);
+      Select3D.Model0D_ids = concat(Select3D.Model0D_ids, newlyAddedallModel0Ds);
     }
   }
 
@@ -16495,9 +16495,9 @@ class solarchvision_Clone3Ds {
 
     int number_of_allModel2Ds_before = allModel2Ds.num; 
 
-    for (int o = 0; o < Select3Ds.Model2D_ids.length; o++) {
+    for (int o = 0; o < Select3D.Model2D_ids.length; o++) {
 
-      int OBJ_ID = Select3Ds.Model2D_ids[o];
+      int OBJ_ID = Select3D.Model2D_ids[o];
 
       float x = allModel2Ds.getX(OBJ_ID);
       float y = allModel2Ds.getY(OBJ_ID);
@@ -16516,13 +16516,13 @@ class solarchvision_Clone3Ds {
 
     // selecting new objetcs
 
-    Select3Ds.deselect_Model2Ds();
+    Select3D.deselect_Model2Ds();
 
     for (int o = number_of_allModel2Ds_before; o < allModel2Ds.num; o++) {
 
       int[] newlyAddedallModel2Ds = {o};
 
-      Select3Ds.Model2D_ids = concat(Select3Ds.Model2D_ids, newlyAddedallModel2Ds);
+      Select3D.Model2D_ids = concat(Select3D.Model2D_ids, newlyAddedallModel2Ds);
     }
   }
   
@@ -16531,9 +16531,9 @@ class solarchvision_Clone3Ds {
 
     int number_of_Faces_before = allFaces.nodes.length;
 
-    for (int o = 0; o < Select3Ds.Face_ids.length; o++) {
+    for (int o = 0; o < Select3D.Face_ids.length; o++) {
 
-      int f = Select3Ds.Face_ids[o];        
+      int f = Select3D.Face_ids[o];        
 
       int number_of_Vertices_before = allPoints.getLength();
 
@@ -16596,13 +16596,13 @@ class solarchvision_Clone3Ds {
 
     // selecting new objetcs
 
-    Select3Ds.Face_ids = new int [0];
+    Select3D.Face_ids = new int [0];
 
     for (int o = number_of_Faces_before; o < allFaces.nodes.length; o++) {
 
       int[] newlyAddedFace = {o};
 
-      Select3Ds.Face_ids = concat(Select3Ds.Face_ids, newlyAddedFace);
+      Select3D.Face_ids = concat(Select3D.Face_ids, newlyAddedFace);
     }
   }
 
@@ -16611,9 +16611,9 @@ class solarchvision_Clone3Ds {
 
     int number_of_Curves_before = allCurves.nodes.length;
 
-    for (int o = 0; o < Select3Ds.Curve_ids.length; o++) {
+    for (int o = 0; o < Select3D.Curve_ids.length; o++) {
 
-      int f = Select3Ds.Curve_ids[o];        
+      int f = Select3D.Curve_ids[o];        
 
       int number_of_Vertices_before = allPoints.getLength();
 
@@ -16678,13 +16678,13 @@ class solarchvision_Clone3Ds {
 
     // selecting new objetcs
 
-    Select3Ds.Curve_ids = new int [0];
+    Select3D.Curve_ids = new int [0];
 
     for (int o = number_of_Curves_before; o < allCurves.nodes.length; o++) {
 
       int[] newlyAddedCurve = {o};
 
-      Select3Ds.Curve_ids = concat(Select3Ds.Curve_ids, newlyAddedCurve);
+      Select3D.Curve_ids = concat(Select3D.Curve_ids, newlyAddedCurve);
     }
   }
   
@@ -16693,9 +16693,9 @@ class solarchvision_Clone3Ds {
 
     int number_of_Solid_before = allSolids.DEF.length; 
 
-    for (int o = 0; o < Select3Ds.Solid_ids.length; o++) {
+    for (int o = 0; o < Select3D.Solid_ids.length; o++) {
 
-      int OBJ_ID = Select3Ds.Solid_ids[o];
+      int OBJ_ID = Select3D.Solid_ids[o];
 
       float Solid_posX = allSolids.get_posX(OBJ_ID);
       float Solid_posY = allSolids.get_posY(OBJ_ID);
@@ -16716,13 +16716,13 @@ class solarchvision_Clone3Ds {
 
     // selecting new objetcs
 
-    Select3Ds.deselect_Solids();
+    Select3D.deselect_Solids();
 
     for (int o = number_of_Solid_before; o < allSolids.DEF.length; o++) {
 
       int[] newlyAddedSolid = {o};
 
-      Select3Ds.Solid_ids = concat(Select3Ds.Solid_ids, newlyAddedSolid);
+      Select3D.Solid_ids = concat(Select3D.Solid_ids, newlyAddedSolid);
     }
   }
   
@@ -16730,9 +16730,9 @@ class solarchvision_Clone3Ds {
 
     int number_of_Section_before = allSections.num; 
 
-    for (int o = 0; o < Select3Ds.Section_ids.length; o++) {
+    for (int o = 0; o < Select3D.Section_ids.length; o++) {
 
-      int OBJ_ID = Select3Ds.Section_ids[o];
+      int OBJ_ID = Select3D.Section_ids[o];
 
       float Section_X = allSections.getX(OBJ_ID);
       float Section_Y = allSections.getY(OBJ_ID);
@@ -16750,13 +16750,13 @@ class solarchvision_Clone3Ds {
 
     // selecting new objetcs
 
-    Select3Ds.deselect_Sections();
+    Select3D.deselect_Sections();
 
     for (int o = number_of_Section_before; o < allSections.num; o++) {
 
       int[] newlyAddedSection = {o};
 
-      Select3Ds.Section_ids = concat(Select3Ds.Section_ids, newlyAddedSection);
+      Select3D.Section_ids = concat(Select3D.Section_ids, newlyAddedSection);
     }
   }  
   
@@ -16765,9 +16765,9 @@ class solarchvision_Clone3Ds {
 
     int number_of_Camera_before = allCameras.num; 
 
-    for (int o = 0; o < Select3Ds.Camera_ids.length; o++) {
+    for (int o = 0; o < Select3D.Camera_ids.length; o++) {
 
-      int OBJ_ID = Select3Ds.Camera_ids[o];
+      int OBJ_ID = Select3D.Camera_ids[o];
 
       float Camera_pX = allCameras.get_posX(OBJ_ID);
       float Camera_pY = allCameras.get_posY(OBJ_ID);
@@ -16785,13 +16785,13 @@ class solarchvision_Clone3Ds {
 
     // selecting new objetcs
 
-    Select3Ds.deselect_Cameras();
+    Select3D.deselect_Cameras();
 
     for (int o = number_of_Camera_before; o < allCameras.num; o++) {
 
       int[] newlyAddedCamera = {o};
 
-      Select3Ds.Camera_ids = concat(Select3Ds.Camera_ids, newlyAddedCamera);
+      Select3D.Camera_ids = concat(Select3D.Camera_ids, newlyAddedCamera);
     }
   }  
   
@@ -16804,9 +16804,9 @@ class solarchvision_Clone3Ds {
 
     int number_of_allGroups_before = allGroups.num;
 
-    for (int o = 0; o < Select3Ds.Group_ids.length; o++) {
+    for (int o = 0; o < Select3D.Group_ids.length; o++) {
 
-      int OBJ_ID = Select3Ds.Group_ids[o];
+      int OBJ_ID = Select3D.Group_ids[o];
 
       if ((0 <= allGroups.getStart_Face(OBJ_ID)) && (allGroups.getStart_Face(OBJ_ID) <= allGroups.getStop_Face(OBJ_ID))) { 
 
@@ -17120,13 +17120,13 @@ class solarchvision_Clone3Ds {
 
     // selecting new objetcs
 
-    Select3Ds.deselect_Groups();
+    Select3D.deselect_Groups();
 
     for (int o = number_of_allGroups_before; o < allGroups.num; o++) {
 
       int[] newlyAddedGroup = {o};
 
-      Select3Ds.Group_ids = concat(Select3Ds.Group_ids, newlyAddedGroup);
+      Select3D.Group_ids = concat(Select3D.Group_ids, newlyAddedGroup);
     }       
 
 
@@ -17135,7 +17135,7 @@ class solarchvision_Clone3Ds {
 
 }
 
-solarchvision_Clone3Ds Clone3Ds = new solarchvision_Clone3Ds();     
+solarchvision_Clone3D Clone3D = new solarchvision_Clone3D();     
   
 
 
@@ -17145,9 +17145,9 @@ solarchvision_Clone3Ds Clone3Ds = new solarchvision_Clone3Ds();
 
 
 
-class solarchvision_Delete3Ds {
+class solarchvision_Delete3D {
   
-  private final static String CLASS_STAMP = "Delete3Ds";
+  private final static String CLASS_STAMP = "Delete3D";
 
   void selection () {
   
@@ -17155,52 +17155,52 @@ class solarchvision_Delete3Ds {
     }
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      Delete3Ds.selected_Cameras();
+      Delete3D.selected_Cameras();
     }
   
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-      Delete3Ds.selected_Sections();
+      Delete3D.selected_Sections();
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL0D) {
-      Delete3Ds.selected_Model0Ds();
+      Delete3D.selected_Model0Ds();
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Delete3Ds.selected_Model2Ds();
+      Delete3D.selected_Model2Ds();
     }
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      Delete3Ds.selected_Solids();
+      Delete3D.selected_Solids();
     }
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
-      Delete3Ds.selected_Faces();
+      Delete3D.selected_Faces();
     }
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Delete3Ds.selected_Curves();
+      Delete3D.selected_Curves();
     }
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-      Delete3Ds.selected_Groups();
+      Delete3D.selected_Groups();
     }
   
     if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
   
-      Delete3Ds.selected_isolatedVertices();
+      Delete3D.selected_isolatedVertices();
     }  
 
-    Select3Ds.deselect_all(); // important to deselect
+    Select3D.deselect_all(); // important to deselect
   }  
 
   void selected_Cameras () {
 
-    Select3Ds.Camera_ids = sort(Select3Ds.Camera_ids);
+    Select3D.Camera_ids = sort(Select3D.Camera_ids);
 
-    for (int o = Select3Ds.Camera_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Camera_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Camera_ids[o];
+      int OBJ_ID = Select3D.Camera_ids[o];
 
       {
         float[][] startList = (float[][]) subset(allCameras.options, 0, OBJ_ID);
@@ -17234,11 +17234,11 @@ class solarchvision_Delete3Ds {
 
   void selected_Sections () {
 
-    Select3Ds.Section_ids = sort(Select3Ds.Section_ids);
+    Select3D.Section_ids = sort(Select3D.Section_ids);
 
-    for (int o = Select3Ds.Section_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Section_ids[o];
+      int OBJ_ID = Select3D.Section_ids[o];
 
       {
         float[][] startList = (float[][]) subset(allSections.f_data, 0, OBJ_ID);
@@ -17278,11 +17278,11 @@ class solarchvision_Delete3Ds {
 
   void selected_Model0Ds () {
 
-    Select3Ds.Model0D_ids = sort(Select3Ds.Model0D_ids);
+    Select3D.Model0D_ids = sort(Select3D.Model0D_ids);
 
-    for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model0D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model0D_ids[o];
+      int OBJ_ID = Select3D.Model0D_ids[o];
 
       for (int q = 0; q < allGroups.num; q++) {
 
@@ -17316,11 +17316,11 @@ class solarchvision_Delete3Ds {
 
   void selected_Model2Ds () {
 
-    Select3Ds.Model2D_ids = sort(Select3Ds.Model2D_ids);
+    Select3D.Model2D_ids = sort(Select3D.Model2D_ids);
 
-    for (int o = Select3Ds.Model2D_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Model2D_ids[o];
+      int OBJ_ID = Select3D.Model2D_ids[o];
 
       for (int q = 0; q < allGroups.num; q++) {
 
@@ -17355,11 +17355,11 @@ class solarchvision_Delete3Ds {
 
   void selected_Solids () {
 
-    Select3Ds.Solid_ids = sort(Select3Ds.Solid_ids);
+    Select3D.Solid_ids = sort(Select3D.Solid_ids);
 
-    for (int o = Select3Ds.Solid_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Solid_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Solid_ids[o];
+      int OBJ_ID = Select3D.Solid_ids[o];
 
       for (int q = 0; q < allGroups.num; q++) {
 
@@ -17384,11 +17384,11 @@ class solarchvision_Delete3Ds {
 
   void selected_Faces () {
 
-    Select3Ds.Face_ids = sort(Select3Ds.Face_ids);
+    Select3D.Face_ids = sort(Select3D.Face_ids);
 
-    for (int o = Select3Ds.Face_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Face_ids[o];
+      int OBJ_ID = Select3D.Face_ids[o];
 
       for (int q = 0; q < allGroups.num; q++) {
 
@@ -17420,11 +17420,11 @@ class solarchvision_Delete3Ds {
 
   void selected_Curves () {
 
-    Select3Ds.Curve_ids = sort(Select3Ds.Curve_ids);
+    Select3D.Curve_ids = sort(Select3D.Curve_ids);
 
-    for (int o = Select3Ds.Curve_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Curve_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Curve_ids[o];
+      int OBJ_ID = Select3D.Curve_ids[o];
 
       for (int q = 0; q < allGroups.num; q++) {
 
@@ -17460,15 +17460,15 @@ class solarchvision_Delete3Ds {
     //SOLARCHVISION_hold_project();
     /////////////////////////////    
     
-    Select3Ds.convert_Groups_to_Vertices(); // finding vertices so that we could delete the isolated ones later  
+    Select3D.convert_Groups_to_Vertices(); // finding vertices so that we could delete the isolated ones later  
 
-    Select3Ds.Group_ids = sort(Select3Ds.Group_ids);
+    Select3D.Group_ids = sort(Select3D.Group_ids);
 
     boolean allSolids_updated = false;  
 
-    for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3Ds.Group_ids[o];
+      int OBJ_ID = Select3D.Group_ids[o];
 
       int startFace = allGroups.getStart_Face(OBJ_ID);
       int endFace = allGroups.getStop_Face(OBJ_ID);
@@ -17686,11 +17686,11 @@ class solarchvision_Delete3Ds {
   
   void selected_isolatedVertices () { 
   
-    Select3Ds.Vertex_ids = sort(Select3Ds.Vertex_ids);
+    Select3D.Vertex_ids = sort(Select3D.Vertex_ids);
   
-    for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) { 
+    for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) { 
   
-      int vNo = Select3Ds.Vertex_ids[o];
+      int vNo = Select3D.Vertex_ids[o];
   
       int found = -1;
       
@@ -17752,7 +17752,7 @@ class solarchvision_Delete3Ds {
       }
     }
   
-    Select3Ds.deselect_Vertices();
+    Select3D.deselect_Vertices();
   }
   
   
@@ -17812,12 +17812,12 @@ class solarchvision_Delete3Ds {
   
     } 
   
-    Select3Ds.deselect_Vertices();
+    Select3D.deselect_Vertices();
   }
 
 }
 
-solarchvision_Delete3Ds Delete3Ds = new solarchvision_Delete3Ds();     
+solarchvision_Delete3D Delete3D = new solarchvision_Delete3D();     
 
 
 
@@ -17833,9 +17833,9 @@ solarchvision_Delete3Ds Delete3Ds = new solarchvision_Delete3Ds();
 
 
 
-class solarchvision_Select3Ds {
+class solarchvision_Select3D {
   
-  private final static String CLASS_STAMP = "Select3Ds";
+  private final static String CLASS_STAMP = "Select3D";
 
   int posVector = 2; // 0:X, 1:Y, 2:Z, 3: All
   int rotVector = 2; // 0:X, 1:Y, 2:Z
@@ -21999,14 +21999,14 @@ class solarchvision_Select3Ds {
 
 }
 
-solarchvision_Select3Ds Select3Ds = new solarchvision_Select3Ds();     
+solarchvision_Select3D Select3D = new solarchvision_Select3D();     
 
 
-float[][] saved_BoundingBox = Select3Ds.BoundingBox;
+float[][] saved_BoundingBox = Select3D.BoundingBox;
 
-int saved_alignX = Select3Ds.alignX;
-int saved_alignY = Select3Ds.alignY;
-int saved_alignZ = Select3Ds.alignZ;  
+int saved_alignX = Select3D.alignX;
+int saved_alignY = Select3D.alignY;
+int saved_alignZ = Select3D.alignZ;  
 
 
 int addNewSelectionToPreviousSelection = 0; // internal
@@ -22101,7 +22101,7 @@ int pre_WIN3D_currentCamera;
 
 int pre_WIN3D_FacesShade;
 
-int pre_Create3Ds_Tessellation;
+int pre_Create3D_Tessellation;
 
 boolean pre_allPoints_displayAll;
 boolean pre_allFaces_displayEdges;
@@ -22259,7 +22259,7 @@ void SOLARCHVISION_update_station (int Step) {
 void SOLARCHVISION_update_models (int Step) {
 
   if ((Step == 0) || (Step == 1)) allGroups.makeEmpty(0); //not deleting all
-  if ((Step == 0) || (Step == 2)) Create3Ds.add_Model_Main();
+  if ((Step == 0) || (Step == 2)) Create3D.add_Model_Main();
 }
 
 
@@ -22547,49 +22547,49 @@ void draw () {
 
 
 
-        pre_Selection_Solid_displayEdges = Select3Ds.Solid_displayEdges;
+        pre_Selection_Solid_displayEdges = Select3D.Solid_displayEdges;
 
-        pre_Selection_Section_displayEdges = Select3Ds.Section_displayEdges;
+        pre_Selection_Section_displayEdges = Select3D.Section_displayEdges;
 
-        pre_Selection_Camera_displayEdges = Select3Ds.Camera_displayEdges;
+        pre_Selection_Camera_displayEdges = Select3D.Camera_displayEdges;
 
-        pre_Selection_LandPoint_displayPoints = Select3Ds.LandPoint_displayPoints;
+        pre_Selection_LandPoint_displayPoints = Select3D.LandPoint_displayPoints;
 
-        pre_Selection_Model0D_displayEdges = Select3Ds.Model0D_displayEdges;
-        pre_Selection_Model2D_displayEdges = Select3Ds.Model2D_displayEdges;
+        pre_Selection_Model0D_displayEdges = Select3D.Model0D_displayEdges;
+        pre_Selection_Model2D_displayEdges = Select3D.Model2D_displayEdges;
         pre_allPoints_displayAll = allPoints.displayAll;
         pre_allFaces_displayEdges = allFaces.displayEdges;
         pre_allFaces_displayNormals = allFaces.displayNormals;
 
-        pre_Selection_softPower = Select3Ds.softPower;
-        pre_Selection_softRadius = Select3Ds.softRadius;
+        pre_Selection_softPower = Select3D.softPower;
+        pre_Selection_softRadius = Select3D.softRadius;
 
 
-        pre_Selection_posValue = Select3Ds.posValue;
-        pre_Selection_rotValue = Select3Ds.rotValue;
-        pre_Selection_scaleValue = Select3Ds.scaleValue;        
+        pre_Selection_posValue = Select3D.posValue;
+        pre_Selection_rotValue = Select3D.rotValue;
+        pre_Selection_scaleValue = Select3D.scaleValue;        
 
-        pre_Selection_alignX = Select3Ds.alignX;
-        pre_Selection_alignY = Select3Ds.alignY;
-        pre_Selection_alignZ = Select3Ds.alignZ;
+        pre_Selection_alignX = Select3D.alignX;
+        pre_Selection_alignY = Select3D.alignY;
+        pre_Selection_alignZ = Select3D.alignZ;
 
-        pre_Selection_displayReferencePivot = Select3Ds.displayReferencePivot;
+        pre_Selection_displayReferencePivot = Select3D.displayReferencePivot;
 
-        pre_Selection_Group_displayPivot = Select3Ds.Group_displayPivot;
-        pre_Selection_Group_displayEdges = Select3Ds.Group_displayEdges;
-        pre_Selection_Group_displayBox = Select3Ds.Group_displayBox;        
+        pre_Selection_Group_displayPivot = Select3D.Group_displayPivot;
+        pre_Selection_Group_displayEdges = Select3D.Group_displayEdges;
+        pre_Selection_Group_displayBox = Select3D.Group_displayBox;        
 
-        pre_Selection_Face_displayEdges = Select3Ds.Face_displayEdges;
-        pre_Selection_Face_displayVertexCount = Select3Ds.Face_displayVertexCount;
-        pre_Selection_Curve_displayVertexCount = Select3Ds.Curve_displayVertexCount;
-        pre_Selection_Vertex_displayVertices = Select3Ds.Vertex_displayVertices;
-        pre_Selection_Curve_displayVertices = Select3Ds.Curve_displayVertices;
+        pre_Selection_Face_displayEdges = Select3D.Face_displayEdges;
+        pre_Selection_Face_displayVertexCount = Select3D.Face_displayVertexCount;
+        pre_Selection_Curve_displayVertexCount = Select3D.Curve_displayVertexCount;
+        pre_Selection_Vertex_displayVertices = Select3D.Vertex_displayVertices;
+        pre_Selection_Curve_displayVertices = Select3D.Curve_displayVertices;
 
         pre_WIN3D_currentCamera = WIN3D.currentCamera; 
 
         pre_WIN3D_FacesShade = WIN3D.FacesShade;
 
-        pre_Create3Ds_Tessellation = allFaces.displayTessellation;
+        pre_Create3D_Tessellation = allFaces.displayTessellation;
 
 
         pre_Load_DefaultModels = Load_DefaultModels;
@@ -22716,66 +22716,66 @@ void draw () {
 
 
 
-        if (pre_Selection_Camera_displayEdges != Select3Ds.Camera_displayEdges) {
+        if (pre_Selection_Camera_displayEdges != Select3D.Camera_displayEdges) {
           WIN3D.update = true;
         }
 
-        if (pre_Selection_Section_displayEdges != Select3Ds.Section_displayEdges) {
+        if (pre_Selection_Section_displayEdges != Select3D.Section_displayEdges) {
           WIN3D.update = true;
         }         
 
-        if (pre_Selection_Solid_displayEdges != Select3Ds.Solid_displayEdges) {
+        if (pre_Selection_Solid_displayEdges != Select3D.Solid_displayEdges) {
           WIN3D.update = true;
         }  
 
-        if (pre_Selection_LandPoint_displayPoints != Select3Ds.LandPoint_displayPoints) {
+        if (pre_Selection_LandPoint_displayPoints != Select3D.LandPoint_displayPoints) {
           WIN3D.update = true;
         }          
 
-        if (pre_Selection_Model0D_displayEdges != Select3Ds.Model0D_displayEdges) {
+        if (pre_Selection_Model0D_displayEdges != Select3D.Model0D_displayEdges) {
           WIN3D.update = true;
         }     
 
-        if (pre_Selection_Model2D_displayEdges != Select3Ds.Model2D_displayEdges) {
+        if (pre_Selection_Model2D_displayEdges != Select3D.Model2D_displayEdges) {
           WIN3D.update = true;
         }     
 
 
-        if (pre_Selection_softPower != Select3Ds.softPower) {    
-          Select3Ds.convert_Vertex_to_softSelection();
+        if (pre_Selection_softPower != Select3D.softPower) {    
+          Select3D.convert_Vertex_to_softSelection();
           WIN3D.update = true;
         }  
 
-        if (pre_Selection_softRadius != Select3Ds.softRadius) {
-          Select3Ds.convert_Vertex_to_softSelection();
+        if (pre_Selection_softRadius != Select3D.softRadius) {
+          Select3D.convert_Vertex_to_softSelection();
           WIN3D.update = true;
         }  
 
 
-        if (pre_Selection_alignX != Select3Ds.alignX) {    
-          Select3Ds.calculate_BoundingBox();
+        if (pre_Selection_alignX != Select3D.alignX) {    
+          Select3D.calculate_BoundingBox();
           WIN3D.update = true;
         }        
 
-        if (pre_Selection_alignY != Select3Ds.alignY) {   
-          Select3Ds.calculate_BoundingBox();
+        if (pre_Selection_alignY != Select3D.alignY) {   
+          Select3D.calculate_BoundingBox();
           WIN3D.update = true;
         }      
 
-        if (pre_Selection_alignZ != Select3Ds.alignZ) {        
-          Select3Ds.calculate_BoundingBox();
+        if (pre_Selection_alignZ != Select3D.alignZ) {        
+          Select3D.calculate_BoundingBox();
           WIN3D.update = true;
         }      
 
-        if (pre_Selection_posValue != Select3Ds.posValue) {
+        if (pre_Selection_posValue != Select3D.posValue) {
 
-          float d = Select3Ds.posValue - pre_Selection_posValue;
+          float d = Select3D.posValue - pre_Selection_posValue;
 
           float dx = d;
           float dy = d;
           float dz = d;
 
-          int the_Vector = Select3Ds.posVector;
+          int the_Vector = Select3D.posVector;
 
           if (the_Vector == 0) {
             dy = 0; 
@@ -22790,39 +22790,39 @@ void draw () {
             dy = 0;
           }            
 
-          Move3Ds.selection(dx, dy, dz);
+          Move3D.selection(dx, dy, dz);
           WIN3D.update = true;
         }
-        if (pre_Selection_rotValue != Select3Ds.rotValue) {
+        if (pre_Selection_rotValue != Select3D.rotValue) {
 
-          float[] P = Select3Ds.getPivot();
+          float[] P = Select3D.getPivot();
 
           float x0 = P[0];
           float y0 = P[1];
           float z0 = P[2];
 
-          float r = Select3Ds.rotValue - pre_Selection_rotValue;
+          float r = Select3D.rotValue - pre_Selection_rotValue;
 
-          int the_Vector = Select3Ds.rotVector;
+          int the_Vector = Select3D.rotVector;
 
-          Rotate3Ds.selection(x0, y0, z0, r, the_Vector);
+          Rotate3D.selection(x0, y0, z0, r, the_Vector);
           WIN3D.update = true;
         }
-        if (pre_Selection_scaleValue != Select3Ds.scaleValue) {
+        if (pre_Selection_scaleValue != Select3D.scaleValue) {
 
-          float[] P = Select3Ds.getPivot();
+          float[] P = Select3D.getPivot();
 
           float x0 = P[0];
           float y0 = P[1];
           float z0 = P[2];
 
-          float s = pow(2.0, Select3Ds.scaleValue - pre_Selection_scaleValue);
+          float s = pow(2.0, Select3D.scaleValue - pre_Selection_scaleValue);
 
           float sx = s;
           float sy = s;
           float sz = s;
 
-          int the_Vector = Select3Ds.scaleVector;
+          int the_Vector = Select3D.scaleVector;
 
           if (the_Vector == 0) {
             sy = 1; 
@@ -22837,44 +22837,44 @@ void draw () {
             sy = 1;
           }           
 
-          Scale3Ds.selection(x0, y0, z0, sx, sy, sz);
+          Scale3D.selection(x0, y0, z0, sx, sy, sz);
           WIN3D.update = true;
         }        
 
 
-        if (pre_Selection_displayReferencePivot != Select3Ds.displayReferencePivot) {
+        if (pre_Selection_displayReferencePivot != Select3D.displayReferencePivot) {
           WIN3D.update = true;
         }
 
-        if (pre_Selection_Group_displayPivot != Select3Ds.Group_displayPivot) {
+        if (pre_Selection_Group_displayPivot != Select3D.Group_displayPivot) {
           WIN3D.update = true;
         }             
 
-        if (pre_Selection_Group_displayEdges != Select3Ds.Group_displayEdges) {
+        if (pre_Selection_Group_displayEdges != Select3D.Group_displayEdges) {
           WIN3D.update = true;
         }
 
-        if (pre_Selection_Group_displayBox != Select3Ds.Group_displayBox) {
+        if (pre_Selection_Group_displayBox != Select3D.Group_displayBox) {
           WIN3D.update = true;
         }     
 
-        if (pre_Selection_Face_displayEdges != Select3Ds.Face_displayEdges) {
+        if (pre_Selection_Face_displayEdges != Select3D.Face_displayEdges) {
           WIN3D.update = true;
         }     
 
-        if (pre_Selection_Face_displayVertexCount != Select3Ds.Face_displayVertexCount) {
+        if (pre_Selection_Face_displayVertexCount != Select3D.Face_displayVertexCount) {
           WIN3D.update = true;
         }     
         
-        if (pre_Selection_Curve_displayVertexCount != Select3Ds.Curve_displayVertexCount) {
+        if (pre_Selection_Curve_displayVertexCount != Select3D.Curve_displayVertexCount) {
           WIN3D.update = true;
         }           
 
-        if (pre_Selection_Vertex_displayVertices != Select3Ds.Vertex_displayVertices) {
+        if (pre_Selection_Vertex_displayVertices != Select3D.Vertex_displayVertices) {
           WIN3D.update = true;
         }     
 
-        if (pre_Selection_Curve_displayVertices != Select3Ds.Curve_displayVertices) {
+        if (pre_Selection_Curve_displayVertices != Select3D.Curve_displayVertices) {
           WIN3D.update = true;
         }     
 
@@ -22891,7 +22891,7 @@ void draw () {
           WIN3D.update = true;
         }             
 
-        if (pre_Create3Ds_Tessellation != allFaces.displayTessellation) {
+        if (pre_Create3D_Tessellation != allFaces.displayTessellation) {
           //VertexSolar_rebuild_array = true;
         }
 
@@ -22902,7 +22902,7 @@ void draw () {
 
           SOLARCHVISION_delete_ALL();
 
-          Create3Ds.add_DefaultModel(Load_DefaultModels);
+          Create3D.add_DefaultModel(Load_DefaultModels);
 
           allSolidImpacts.calculate_Impact_selectedSections();
 
@@ -24488,7 +24488,7 @@ void SOLARCHVISION_export_objects_SCR () {
   
   String fileBasename = ProjectName;
 
-  String scrFilename = Folder_Create3Ds + "/" + fileBasename + ".scr";  
+  String scrFilename = Folder_Create3D + "/" + fileBasename + ".scr";  
 
   PrintWriter scrOutput = createWriter(scrFilename);
 
@@ -24552,7 +24552,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
   String fileBasename = ProjectName;
 
-  String radFilename = Folder_Create3Ds + "/" + fileBasename + ".rad";  
+  String radFilename = Folder_Create3D + "/" + fileBasename + ".rad";  
 
   radOutput = createWriter(radFilename);
 
@@ -24646,7 +24646,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
   String fileBasename = ProjectName;
 
-  String htmlFilename = Folder_Create3Ds + "/" + fileBasename + ".html";  
+  String htmlFilename = Folder_Create3D + "/" + fileBasename + ".html";  
 
   htmlOutput = createWriter(htmlFilename);
 
@@ -24888,8 +24888,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   String fileBasename = ProjectName + suffix;
 
-  String objFilename = Folder_Create3Ds + "/" + fileBasename + ".obj";
-  String mtlFilename = Folder_Create3Ds + "/" + fileBasename + ".mtl";
+  String objFilename = Folder_Create3D + "/" + fileBasename + ".obj";
+  String mtlFilename = Folder_Create3D + "/" + fileBasename + ".mtl";
 
 
   if (User3D.export_MaterialLibrary) {
@@ -25191,7 +25191,7 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
     if (Z_out < abs(z)) Z_out = abs(z);
   }  
 
-  //Create3Ds.add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
+  //Create3D.add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
   allSolids.create(cen_X, cen_Y, cen_Z, CubePower, CubePower, CubePower, X_out, Y_out, Z_out, 0, 0, T_out, 1);
 
   return min_Z;
@@ -25844,7 +25844,7 @@ class solarchvision_Tropo3D {
       
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
       
-                String new_Texture_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+                String new_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
       
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -26243,7 +26243,7 @@ class solarchvision_Sky3D {
     
             the_filename = "skyPatternPallet.bmp";
     
-            TEXTURE_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+            TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
     
             println("Saving texture:", TEXTURE_path);
     
@@ -26995,7 +26995,7 @@ class solarchvision_Sun3D {
   
         the_filename = "sunPatternPallet.bmp";
   
-        TEXTURE_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+        TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
   
         println("Saving texture:", TEXTURE_path);
   
@@ -27935,7 +27935,7 @@ class solarchvision_Earth3D {
     
             String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-            String new_Texture_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+            String new_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
     
             println("Copying texture:", old_Texture_path, ">", new_Texture_path);
             saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -28637,7 +28637,7 @@ class solarchvision_Land3D {
     
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-                String new_Texture_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+                String new_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
     
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -29168,10 +29168,10 @@ class solarchvision_Land3D {
       }
       
       if (target_window == TypeWindow.LandMesh) {
-        Select3Ds.Group_ids = new int [1];
-        Select3Ds.Group_ids[0] = allGroups.num - 1;
+        Select3D.Group_ids = new int [1];
+        Select3D.Group_ids[0] = allGroups.num - 1;
         
-        Modify3Ds.weldObjectsVertices_Selection(0);
+        Modify3D.weldObjectsVertices_Selection(0);
         
       }    
       
@@ -29391,9 +29391,9 @@ class solarchvision_Model0Ds {
       }  
     }  
 
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();  
-      Select3Ds.deselect_Model0Ds();
+    if (Select3D != null) {
+      Select3D.deselect_Groups();  
+      Select3D.deselect_Model0Ds();
     }
   }
 
@@ -29974,8 +29974,8 @@ class solarchvision_Model1Ds {
     this.TrunkSize = new float [n];
     this.LeafSize = new float [n];
 
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
+    if (Select3D != null) {
+      Select3D.deselect_Groups();
     }  
   }    
   
@@ -31015,9 +31015,9 @@ class solarchvision_Model2Ds {
       }  
     }
 
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
-      Select3Ds.deselect_Model2Ds();
+    if (Select3D != null) {
+      Select3D.deselect_Groups();
+      Select3D.deselect_Model2Ds();
     }
   }    
   
@@ -31180,8 +31180,8 @@ class solarchvision_Model2Ds {
     
                 the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
     
-                new_Texture_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
-                opacity_Texture_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + "opacity_" + the_filename;
+                new_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+                opacity_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + "opacity_" + the_filename;
     
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -31983,9 +31983,9 @@ class solarchvision_Solids {
       }
     }
     
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
-      Select3Ds.deselect_Solids();
+    if (Select3D != null) {
+      Select3D.deselect_Groups();
+      Select3D.deselect_Solids();
     }
   }      
   
@@ -32618,11 +32618,11 @@ class solarchvision_Points {
   
     allVertices = new float [n][3];
   
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Groups();
-      Select3Ds.deselect_Faces();
-      Select3Ds.deselect_Curves();
-      Select3Ds.deselect_Vertices();
+    if (Select3D != null) {
+      Select3D.deselect_Groups();
+      Select3D.deselect_Faces();
+      Select3D.deselect_Curves();
+      Select3D.deselect_Vertices();
     }
   }    
   
@@ -33003,9 +33003,9 @@ solarchvision_User3D User3D = new solarchvision_User3D();
 
 
  
-class solarchvision_Modify3Ds {
+class solarchvision_Modify3D {
   
-  private final static String CLASS_STAMP = "Modify3Ds";
+  private final static String CLASS_STAMP = "Modify3D";
 
   
 
@@ -33013,20 +33013,20 @@ class solarchvision_Modify3Ds {
    
     if (current_ObjectCategory == ObjectCategory.GROUP) { 
 
-      Select3Ds.convert_Groups_to_Vertices();
+      Select3D.convert_Groups_to_Vertices();
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) { 
 
-      Select3Ds.convert_Faces_to_Vertices();
+      Select3D.convert_Faces_to_Vertices();
     }
 
     if (current_ObjectCategory == ObjectCategory.CURVE) { 
 
-      Select3Ds.convert_Curves_to_Vertices();
+      Select3D.convert_Curves_to_Vertices();
     }
 
-    Select3Ds.Vertex_ids = sort(Select3Ds.Vertex_ids);
+    Select3D.Vertex_ids = sort(Select3D.Vertex_ids);
   }
 
 
@@ -33038,20 +33038,20 @@ class solarchvision_Modify3Ds {
 
     if (current_ObjectCategory == ObjectCategory.GROUP) { 
 
-      Select3Ds.Group_ids = sort(Select3Ds.Group_ids);
+      Select3D.Group_ids = sort(Select3D.Group_ids);
 
-      Select3Ds.convert_Groups_to_Faces();    
+      Select3D.convert_Groups_to_Faces();    
 
-      Select3Ds.Face_ids = sort(Select3Ds.Face_ids);
+      Select3D.Face_ids = sort(Select3D.Face_ids);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) { 
 
-      Select3Ds.Face_ids = sort(Select3Ds.Face_ids);
+      Select3D.Face_ids = sort(Select3D.Face_ids);
 
-      Select3Ds.convert_Faces_to_Groups();    
+      Select3D.convert_Faces_to_Groups();    
 
-      Select3Ds.Group_ids = sort(Select3Ds.Group_ids);
+      Select3D.Group_ids = sort(Select3D.Group_ids);
 
     }  
   }  
@@ -33062,18 +33062,18 @@ class solarchvision_Modify3Ds {
   
     if (current_ObjectCategory == ObjectCategory.VERTEX) { 
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
-      for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) { 
   
-        int vNo = Select3Ds.Vertex_ids[o];
+        int vNo = Select3D.Vertex_ids[o];
   
-        allPoints.setX(vNo, Select3Ds.BoundingBox[1][0]); // center
-        allPoints.setY(vNo, Select3Ds.BoundingBox[1][1]); // center
-        allPoints.setZ(vNo, Select3Ds.BoundingBox[1][2]); // center
+        allPoints.setX(vNo, Select3D.BoundingBox[1][0]); // center
+        allPoints.setY(vNo, Select3D.BoundingBox[1][1]); // center
+        allPoints.setZ(vNo, Select3D.BoundingBox[1][2]); // center
       } 
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
   
@@ -33083,9 +33083,9 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {    
       this.selectVertices_fromCurrentSelection();
     
-      for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
   
-        int vNo = Select3Ds.Vertex_ids[o];
+        int vNo = Select3D.Vertex_ids[o];
   
         int found = -1;
         
@@ -33162,9 +33162,9 @@ class solarchvision_Modify3Ds {
         }
       }
     
-      Select3Ds.deselect_Vertices();
+      Select3D.deselect_Vertices();
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
 
@@ -33176,25 +33176,25 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {
       this.selectVertices_fromCurrentSelection();
       
-      Select3Ds.convert_Vertices_to_Faces();
-      Select3Ds.convert_Vertices_to_Curves();
+      Select3D.convert_Vertices_to_Faces();
+      Select3D.convert_Vertices_to_Curves();
   
-      for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) {  
+      for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {  
   
-        int vNo = Select3Ds.Vertex_ids[o];
+        int vNo = Select3D.Vertex_ids[o];
   
         int found = -1;
   
         for (int m = o - 1; m >= 0; m--) {
   
-          int q = Select3Ds.Vertex_ids[m];
+          int q = Select3D.Vertex_ids[m];
   
           float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
   
           if (d <= max_distance) { 
   
-            for (int i = 0; i < Select3Ds.Face_ids.length; i++) {
-              int f = Select3Ds.Face_ids[i];
+            for (int i = 0; i < Select3D.Face_ids.length; i++) {
+              int f = Select3D.Face_ids[i];
   
               for (int j = 0; j < allFaces.nodes[f].length; j++) {
                 if (allFaces.nodes[f][j] == q) {
@@ -33206,8 +33206,8 @@ class solarchvision_Modify3Ds {
               }
             }
             
-            for (int i = 0; i < Select3Ds.Curve_ids.length; i++) {
-              int f = Select3Ds.Curve_ids[i];
+            for (int i = 0; i < Select3D.Curve_ids.length; i++) {
+              int f = Select3D.Curve_ids[i];
   
               for (int j = 0; j < allCurves.nodes[f].length; j++) {
                 if (allCurves.nodes[f][j] == q) {
@@ -33252,9 +33252,9 @@ class solarchvision_Modify3Ds {
         }
       }
   
-      Select3Ds.deselect_Vertices();
+      Select3D.deselect_Vertices();
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
 
@@ -33265,10 +33265,10 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {
       this.selectVertices_fromCurrentSelection();
   
-      float[][] Vertex_offsetValues = new float [Select3Ds.Vertex_ids.length][3];
-      int[] Vertex_offsetNum = new int [Select3Ds.Vertex_ids.length];
+      float[][] Vertex_offsetValues = new float [Select3D.Vertex_ids.length][3];
+      int[] Vertex_offsetNum = new int [Select3D.Vertex_ids.length];
   
-      for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) { 
         Vertex_offsetValues[o][0] = 0;
         Vertex_offsetValues[o][1] = 0;
         Vertex_offsetValues[o][2] = 0;
@@ -33276,9 +33276,9 @@ class solarchvision_Modify3Ds {
         Vertex_offsetNum[o] = 0;
       }
   
-      for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
   
-        int vNo = Select3Ds.Vertex_ids[o];
+        int vNo = Select3D.Vertex_ids[o];
   
         for (int f = 0; f < allFaces.nodes.length; f++) {
           for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -33371,16 +33371,16 @@ class solarchvision_Modify3Ds {
       } 
   
   
-      for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
   
-        int vNo = Select3Ds.Vertex_ids[o];
+        int vNo = Select3D.Vertex_ids[o];
   
         allPoints.move(vNo, Vertex_offsetValues[o][0],
                             Vertex_offsetValues[o][1],
                             Vertex_offsetValues[o][2]);
       } 
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
   
@@ -33395,9 +33395,9 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {    
       this.selectVertices_fromCurrentSelection();
   
-      for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) { 
   
-        int vNo = Select3Ds.Vertex_ids[o];
+        int vNo = Select3D.Vertex_ids[o];
   
         for (int i = 0; i < allFaces.nodes.length; i++) { 
           for (int j = 0; j < allFaces.nodes[i].length; j++) {
@@ -33421,9 +33421,9 @@ class solarchvision_Modify3Ds {
       }
   
   
-      Select3Ds.deselect_Vertices();
+      Select3D.deselect_Vertices();
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
               
@@ -33451,11 +33451,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) { 
   
@@ -33560,7 +33560,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -33571,11 +33571,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) {
   
@@ -33715,7 +33715,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -33727,11 +33727,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) {
   
@@ -33850,7 +33850,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -33861,11 +33861,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) { 
   
@@ -33979,7 +33979,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -33991,11 +33991,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) { 
   
@@ -34107,7 +34107,7 @@ class solarchvision_Modify3Ds {
                       int[] newFace_nodes_number = {
                         f + s
                       }; 
-                      Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, newFace_nodes_number);
+                      Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFace_nodes_number);
                     }
                   }
                 }
@@ -34131,7 +34131,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -34143,11 +34143,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) { 
   
@@ -34238,7 +34238,7 @@ class solarchvision_Modify3Ds {
                   int[] newFace_nodes_number = {
                     f + s
                   }; 
-                  Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, newFace_nodes_number);
+                  Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFace_nodes_number);
                 }
               }
             }
@@ -34260,7 +34260,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -34272,11 +34272,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) {
   
@@ -34350,7 +34350,7 @@ class solarchvision_Modify3Ds {
                   int[] newFace_nodes_number = {
                     f + s
                   }; 
-                  Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, newFace_nodes_number);
+                  Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFace_nodes_number);
                 }
               }
             }
@@ -34372,7 +34372,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -34386,11 +34386,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) {
   
@@ -34466,7 +34466,7 @@ class solarchvision_Modify3Ds {
                     int[] newFace_nodes_number = {
                       f + s
                     }; 
-                    Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, newFace_nodes_number);
+                    Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFace_nodes_number);
                   }
                 }
               }
@@ -34489,7 +34489,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -34501,11 +34501,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
       
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) {
   
@@ -34547,7 +34547,7 @@ class solarchvision_Modify3Ds {
   
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -34559,11 +34559,11 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         for (int q = primary_list.length - 1; q >= 0; q--) { 
   
@@ -34635,7 +34635,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
   
     }
   }
@@ -34647,13 +34647,13 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      Select3Ds.deselect_Faces();
+      Select3D.deselect_Faces();
       
-      int[] primary_list = Select3Ds.Face_ids;
+      int[] primary_list = Select3D.Face_ids;
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
@@ -34753,7 +34753,7 @@ class solarchvision_Modify3Ds {
                 allFaces.nodes.length - 1
               };
   
-              Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, lastFace);
+              Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, lastFace);
             }
   
             allGroups.Faces[allGroups.num - 1][1] = allFaces.nodes.length - 1;
@@ -34763,7 +34763,7 @@ class solarchvision_Modify3Ds {
   
       
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
   
@@ -34773,17 +34773,17 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.CURVE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
-      Select3Ds.deselect_Faces();
+      Select3D.deselect_Faces();
   
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) { 
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) { 
   
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
   
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   
-        for (int q = Select3Ds.Curve_ids.length - 1; q >= 0; q--) { 
+        for (int q = Select3D.Curve_ids.length - 1; q >= 0; q--) { 
   
-          int f = Select3Ds.Curve_ids[q];
+          int f = Select3D.Curve_ids[q];
   
           int startCurve = allGroups.getStart_Curve(OBJ_ID);
           int endCurve = allGroups.getStop_Curve(OBJ_ID);          
@@ -34877,7 +34877,7 @@ class solarchvision_Modify3Ds {
                 allFaces.nodes.length - 1
               };
   
-              Select3Ds.Face_ids = (int[]) concat(Select3Ds.Face_ids, lastFace);
+              Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, lastFace);
             }
   
             allGroups.Faces[allGroups.num - 1][1] = allFaces.nodes.length - 1;
@@ -34891,7 +34891,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE;
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
   
@@ -34902,9 +34902,9 @@ class solarchvision_Modify3Ds {
     if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
 
-      for (int o = 0; o < Select3Ds.Face_ids.length; o++) {
+      for (int o = 0; o < Select3D.Face_ids.length; o++) {
   
-        int f = Select3Ds.Face_ids[o];     
+        int f = Select3D.Face_ids[o];     
       
         int n = allFaces.nodes[f].length;
   
@@ -34928,7 +34928,7 @@ class solarchvision_Modify3Ds {
           float[] ray_start = {G[0], G[1], G[2]};
           float[] ray_direction = {GAxGB.x, GAxGB.y, GAxGB.z};
 
-          float[] RxP = Select3Ds.intersect(ray_start, ray_direction);
+          float[] RxP = Select3D.intersect(ray_start, ray_direction);
 
           if (RxP[0] >= 0) {
 
@@ -34942,7 +34942,7 @@ class solarchvision_Modify3Ds {
       current_ObjectCategory = ObjectCategory.FACE; 
       UI_BAR_b.update = true;
   
-      Select3Ds.calculate_BoundingBox();
+      Select3D.calculate_BoundingBox();
     }
   }
  
@@ -34954,9 +34954,9 @@ class solarchvision_Modify3Ds {
 
   void flatten_LandPoints () {
   
-    for (int q = 0; q < Select3Ds.LandPoint_ids.length; q++) {
+    for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
   
-      int f = Select3Ds.LandPoint_ids[q];
+      int f = Select3D.LandPoint_ids[q];
   
       int i = f / Land3D.num_columns;
       int j = f % Land3D.num_columns;
@@ -34968,15 +34968,15 @@ class solarchvision_Modify3Ds {
   
 }
 
-solarchvision_Modify3Ds Modify3Ds = new solarchvision_Modify3Ds();  
+solarchvision_Modify3D Modify3D = new solarchvision_Modify3D();  
 
 
 
 
   
-class solarchvision_Create3Ds {
+class solarchvision_Create3D {
   
-  private final static String CLASS_STAMP = "Create3Ds";
+  private final static String CLASS_STAMP = "Create3D";
   
   void add_Octahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
     
@@ -37133,9 +37133,9 @@ class solarchvision_Create3Ds {
   
     if (Land3D.loadMesh) {
   
-      Create3Ds.add_onLand(1); // 1 = people
+      Create3D.add_onLand(1); // 1 = people
   
-      Create3Ds.add_onLand(2); // 2 = 2D trees
+      Create3D.add_onLand(2); // 2 = 2D trees
     } else {
       //allModel2Ds.add_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
       //allModel2Ds.add_polar(2, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
@@ -37320,7 +37320,7 @@ class solarchvision_Create3Ds {
   
 }  
 
-solarchvision_Create3Ds Create3Ds = new solarchvision_Create3Ds();
+solarchvision_Create3D Create3D = new solarchvision_Create3D();
 
 
 
@@ -37347,8 +37347,8 @@ class solarchvision_Cameras {
   
     this.add_first();
   
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Cameras();
+    if (Select3D != null) {
+      Select3D.deselect_Cameras();
     }
   }  
 
@@ -37866,8 +37866,8 @@ class solarchvision_Sections {
   
     this.num = n;
   
-    if (Select3Ds != null) {
-      Select3Ds.deselect_Sections();
+    if (Select3D != null) {
+      Select3D.deselect_Sections();
     }
   }      
   
@@ -38058,7 +38058,7 @@ class solarchvision_Sections {
           
           if (User3D.export_MaterialLibrary) {
   
-            String TEXTURE_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+            String TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
   
             if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
   
@@ -38779,7 +38779,7 @@ class solarchvision_WindFlow {
     
           the_filename = "WindFlowPallet.bmp";
     
-          String TEXTURE_path = Folder_Create3Ds + "/" + Subfolder_exportMaps + the_filename;
+          String TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
     
           println("Saving texture:", TEXTURE_path);
     
@@ -40940,7 +40940,7 @@ void mouseWheel (MouseEvent event) {
           if (WIN3D.include) {
             if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
-              float[] P = Select3Ds.getPivot();
+              float[] P = Select3D.getPivot();
 
               float x0 = P[0];
               float y0 = P[1];
@@ -40951,9 +40951,9 @@ void mouseWheel (MouseEvent event) {
 
                 float r = 5 * Wheel_Value;
 
-                int the_Vector = Select3Ds.rotVector;
+                int the_Vector = Select3D.rotVector;
 
-                Rotate3Ds.selection(x0, y0, z0, r, the_Vector);
+                Rotate3D.selection(x0, y0, z0, r, the_Vector);
 
                 WIN3D.update = true;
               }   
@@ -40966,7 +40966,7 @@ void mouseWheel (MouseEvent event) {
                 float sy = s;
                 float sz = s;
 
-                int the_Vector = Select3Ds.scaleVector;
+                int the_Vector = Select3D.scaleVector;
 
                 if (the_Vector == 0) {
                   sy = 1; 
@@ -40981,7 +40981,7 @@ void mouseWheel (MouseEvent event) {
                   sy = 1;
                 }                    
 
-                Scale3Ds.selection(x0, y0, z0, sx, sy, sz);
+                Scale3D.selection(x0, y0, z0, sx, sy, sz);
 
                 WIN3D.update = true;
               }       
@@ -40995,7 +40995,7 @@ void mouseWheel (MouseEvent event) {
                 float dy = d;
                 float dz = d;
 
-                int the_Vector = Select3Ds.posVector;
+                int the_Vector = Select3D.posVector;
 
                 if (the_Vector == 0) {
                   dy = 0; 
@@ -41010,7 +41010,7 @@ void mouseWheel (MouseEvent event) {
                   dy = 0;
                 }  
 
-                Move3Ds.selection(dx, dy, dz);
+                Move3D.selection(dx, dy, dz);
 
                 WIN3D.update = true;
               }   
@@ -41022,7 +41022,7 @@ void mouseWheel (MouseEvent event) {
 
                   int p = int(Wheel_Value);
 
-                  Edit3Ds.selection(p);
+                  Edit3D.selection(p);
 
                   WIN3D.update = true;
                 }
@@ -41290,11 +41290,11 @@ void mouseReleased () {
 
                 popMatrix();            
 
-                Select3Ds.selectRect(corner1x, corner1y, corner2x, corner2y);
+                Select3D.selectRect(corner1x, corner1y, corner2x, corner2y);
 
-                Select3Ds.calculate_BoundingBox();
+                Select3D.calculate_BoundingBox();
 
-                Select3Ds.reset_selectedRefValues();  
+                Select3D.reset_selectedRefValues();  
 
                 WIN3D.update = true;
               }
@@ -41765,15 +41765,15 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
     int number_of_allGroups_after = allGroups.num;
 
-    Select3Ds.Group_ids = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
-    for (int i = 0; i < Select3Ds.Group_ids.length - 1; i++) { 
-      Select3Ds.Group_ids[i] = i + number_of_allGroups_before;
-      //println(Select3Ds.Group_ids[i]);
+    Select3D.Group_ids = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.Group_ids.length - 1; i++) { 
+      Select3D.Group_ids[i] = i + number_of_allGroups_before;
+      //println(Select3D.Group_ids[i]);
     }
 
     current_ObjectCategory = ObjectCategory.GROUP;
 
-    Select3Ds.calculate_BoundingBox();
+    Select3D.calculate_BoundingBox();
 
     WIN3D.update = true;
     
@@ -42561,25 +42561,25 @@ void mouseClicked () {
               ROLLOUT.update = true;
             } 
             if (menu_option.equals("Display/Hide Selected Solids")) {
-              Select3Ds.Solid_displayEdges = !Select3Ds.Solid_displayEdges;
+              Select3D.Solid_displayEdges = !Select3D.Solid_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }            
             if (menu_option.equals("Display/Hide Selected Sections")) {
-              Select3Ds.Section_displayEdges = !Select3Ds.Section_displayEdges;
+              Select3D.Section_displayEdges = !Select3D.Section_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }
             if (menu_option.equals("Display/Hide Selected Cameras")) {
-              Select3Ds.Camera_displayEdges = !Select3Ds.Camera_displayEdges;
+              Select3D.Camera_displayEdges = !Select3D.Camera_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }     
             if (menu_option.equals("Display/Hide Selected LandPoints")) {
-              Select3Ds.LandPoint_displayPoints = !Select3Ds.LandPoint_displayPoints;
+              Select3D.LandPoint_displayPoints = !Select3D.LandPoint_displayPoints;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -42591,67 +42591,67 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }
             if (menu_option.equals("Display/Hide Selected Faces")) {
-              Select3Ds.Face_displayEdges = !Select3Ds.Face_displayEdges;
+              Select3D.Face_displayEdges = !Select3D.Face_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }   
             if (menu_option.equals("Display/Hide Selected Faces Vertex Count")) {
-              Select3Ds.Face_displayVertexCount = !Select3Ds.Face_displayVertexCount;
+              Select3D.Face_displayVertexCount = !Select3D.Face_displayVertexCount;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }            
             if (menu_option.equals("Display/Hide Selected Curves Vertex Count")) {
-              Select3Ds.Curve_displayVertexCount = !Select3Ds.Curve_displayVertexCount;
+              Select3D.Curve_displayVertexCount = !Select3D.Curve_displayVertexCount;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }                   
             if (menu_option.equals("Display/Hide Selected Vertices")) {
-              Select3Ds.Vertex_displayVertices = !Select3Ds.Vertex_displayVertices;
+              Select3D.Vertex_displayVertices = !Select3D.Vertex_displayVertices;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }   
             if (menu_option.equals("Display/Hide Selected Curves")) {
-              Select3Ds.Curve_displayVertices = !Select3Ds.Curve_displayVertices;
+              Select3D.Curve_displayVertices = !Select3D.Curve_displayVertices;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }               
             if (menu_option.equals("Display/Hide Selected REF Pivot")) {
-              Select3Ds.displayReferencePivot = !Select3Ds.displayReferencePivot;
+              Select3D.displayReferencePivot = !Select3D.displayReferencePivot;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }        
             if (menu_option.equals("Display/Hide Selected Group Pivot")) {
-              Select3Ds.Group_displayPivot = !Select3Ds.Group_displayPivot;
+              Select3D.Group_displayPivot = !Select3D.Group_displayPivot;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }  
             if (menu_option.equals("Display/Hide Selected Group Edges")) {
-              Select3Ds.Group_displayEdges = !Select3Ds.Group_displayEdges;
+              Select3D.Group_displayEdges = !Select3D.Group_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
             if (menu_option.equals("Display/Hide Selected Group Box")) {
-              Select3Ds.Group_displayBox = !Select3Ds.Group_displayBox;
+              Select3D.Group_displayBox = !Select3D.Group_displayBox;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
             if (menu_option.equals("Display/Hide Selected 2D Edges")) {
-              Select3Ds.Model2D_displayEdges = !Select3Ds.Model2D_displayEdges;
+              Select3D.Model2D_displayEdges = !Select3D.Model2D_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             }    
             if (menu_option.equals("Display/Hide Selected 0D Edges")) {
-              Select3Ds.Model0D_displayEdges = !Select3Ds.Model0D_displayEdges;
+              Select3D.Model0D_displayEdges = !Select3D.Model0D_displayEdges;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -42859,7 +42859,7 @@ void mouseClicked () {
               UI_BAR_b.highlight("DrL±");
               UI_BAR_b.update = true;  
 
-              Drop3Ds.selection();
+              Drop3D.selection();
               WIN3D.update = true;
             }
             if (menu_option.equals("Drop on ModelSurface (Down)")) {
@@ -42867,7 +42867,7 @@ void mouseClicked () {
               UI_BAR_b.highlight("DrM-");
               UI_BAR_b.update = true;  
 
-              Drop3Ds.selection(); 
+              Drop3D.selection(); 
               WIN3D.update = true;
             }                      
             if (menu_option.equals("Drop on ModelSurface (Up)")) {
@@ -42875,7 +42875,7 @@ void mouseClicked () {
               UI_BAR_b.highlight("DrM+");
               UI_BAR_b.update = true;  
 
-              Drop3Ds.selection();
+              Drop3D.selection();
               WIN3D.update = true;
             }
 
@@ -43016,23 +43016,23 @@ void mouseClicked () {
             }
 
             if (menu_option.equals("Save Current ReferenceBox")) {
-              Select3Ds.save_current_BoundingBox();
+              Select3D.save_current_BoundingBox();
               UI_BAR_b.highlight("<pvt>");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Reset Saved ReferenceBox")) {
-              Select3Ds.apply_saved_BoundingBox();
+              Select3D.apply_saved_BoundingBox();
               UI_BAR_b.highlight(">pvt<");
               UI_BAR_b.update = true;  
               WIN3D.update = true;
             }
             if (menu_option.equals("Use Selection ReferenceBox")) {
-              Select3Ds.calculate_BoundingBox();
+              Select3D.calculate_BoundingBox();
               UI_BAR_b.highlight("|pvt|");
               UI_BAR_b.update = true;
             }
             if (menu_option.equals("Use Origin ReferenceBox")) {
-              Select3Ds.apply_origin_ReferenceBox();
+              Select3D.apply_origin_ReferenceBox();
               UI_BAR_b.highlight(".pvt.");
               UI_BAR_b.update = true;  
               WIN3D.update = true;
@@ -43044,18 +43044,18 @@ void mouseClicked () {
               
               allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
-              Select3Ds.Group_ids = new int [1];
-              Select3Ds.Group_ids[0] = allGroups.num - 1;
+              Select3D.Group_ids = new int [1];
+              Select3D.Group_ids[0] = allGroups.num - 1;
 
               WIN3D.update = true;
             }    
 
             if (menu_option.equals("Begin New Group at Pivot")) {
 
-              allGroups.beginNewGroup(Select3Ds.BoundingBox[1 + Select3Ds.alignX][0], Select3Ds.BoundingBox[1 + Select3Ds.alignX][1], Select3Ds.BoundingBox[1 + Select3Ds.alignX][2], Select3Ds.BoundingBox[1 + Select3Ds.alignX][3], Select3Ds.BoundingBox[1 + Select3Ds.alignX][4], Select3Ds.BoundingBox[1 + Select3Ds.alignX][5], Select3Ds.BoundingBox[1 + Select3Ds.alignX][6], Select3Ds.BoundingBox[1 + Select3Ds.alignX][7], Select3Ds.BoundingBox[1 + Select3Ds.alignX][8]);
+              allGroups.beginNewGroup(Select3D.BoundingBox[1 + Select3D.alignX][0], Select3D.BoundingBox[1 + Select3D.alignX][1], Select3D.BoundingBox[1 + Select3D.alignX][2], Select3D.BoundingBox[1 + Select3D.alignX][3], Select3D.BoundingBox[1 + Select3D.alignX][4], Select3D.BoundingBox[1 + Select3D.alignX][5], Select3D.BoundingBox[1 + Select3D.alignX][6], Select3D.BoundingBox[1 + Select3D.alignX][7], Select3D.BoundingBox[1 + Select3D.alignX][8]);
 
-              Select3Ds.Group_ids = new int [1];
-              Select3Ds.Group_ids[0] = allGroups.num - 1;       
+              Select3D.Group_ids = new int [1];
+              Select3D.Group_ids[0] = allGroups.num - 1;       
 
               WIN3D.update = true;
             }              
@@ -43123,8 +43123,8 @@ void mouseClicked () {
             }  
 
             if (menu_option.equals("GoTo Selected Camera")) {
-              if (Select3Ds.Camera_ids.length > 0) {
-                WIN3D.currentCamera = Select3Ds.Camera_ids[Select3Ds.Camera_ids.length - 1];
+              if (Select3D.Camera_ids.length > 0) {
+                WIN3D.currentCamera = Select3D.Camera_ids[Select3D.Camera_ids.length - 1];
                 WIN3D.apply_currentCamera();
                 SOLARCHVISION_modify_Viewport_Title();
   
@@ -43435,15 +43435,15 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("Reverse Selection")) {
-              Select3Ds.reverse_Selection();
+              Select3D.reverse_Selection();
               WIN3D.update = true;
             }             
             if (menu_option.equals("Deselect All")) {
-              Select3Ds.deselect_all();
+              Select3D.deselect_all();
               WIN3D.update = true;
             } 
             if (menu_option.equals("Select All")) {
-              Select3Ds.select_all();
+              Select3D.select_all();
               WIN3D.update = true;
             }           
             if (menu_option.equals("Select Solid")) {
@@ -43497,104 +43497,104 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Soft Selection")) {
-              Select3Ds.convert_Vertex_to_softSelection();
+              Select3D.convert_Vertex_to_softSelection();
 
               current_ObjectCategory = ObjectCategory.SOFTVERTEX;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }                 
             if (menu_option.equals("Vertex >> Group")) {
-              Select3Ds.convert_Vertices_to_Groups();
+              Select3D.convert_Vertices_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Face >> Group")) {
-              Select3Ds.convert_Faces_to_Groups();
+              Select3D.convert_Faces_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Face")) {
-              Select3Ds.convert_Groups_to_Faces();
+              Select3D.convert_Groups_to_Faces();
               current_ObjectCategory = ObjectCategory.FACE;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Curve >> Group")) {
-              Select3Ds.convert_Curves_to_Groups();
+              Select3D.convert_Curves_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Curve")) {
-              Select3Ds.convert_Groups_to_Curves();
+              Select3D.convert_Groups_to_Curves();
               current_ObjectCategory = ObjectCategory.CURVE;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }            
             if (menu_option.equals("Curve >> Vertex")) {
-              Select3Ds.convert_Curves_to_Vertices();
+              Select3D.convert_Curves_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Vertex >> Curve")) {
-              Select3Ds.convert_Vertices_to_Curves();
+              Select3D.convert_Vertices_to_Curves();
               current_ObjectCategory = ObjectCategory.CURVE;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }               
             if (menu_option.equals("Group >> Vertex")) {
-              Select3Ds.convert_Groups_to_Vertices();
+              Select3D.convert_Groups_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }  
             if (menu_option.equals("Face >> Vertex")) {
-              Select3Ds.convert_Faces_to_Vertices();
+              Select3D.convert_Faces_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             } 
             if (menu_option.equals("Vertex >> Face")) {
-              Select3Ds.convert_Vertices_to_Faces();
+              Select3D.convert_Vertices_to_Faces();
               current_ObjectCategory = ObjectCategory.FACE;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }    
             if (menu_option.equals("Solid >> Group")) {
-              Select3Ds.convert_Solids_to_Groups();
+              Select3D.convert_Solids_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Solid")) {
-              Select3Ds.convert_Groups_to_Solids();
+              Select3D.convert_Groups_to_Solids();
               current_ObjectCategory = ObjectCategory.SOLID;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }                
             if (menu_option.equals("Model2Ds >> Group")) {
-              Select3Ds.convert_Model2Ds_to_Groups();
+              Select3D.convert_Model2Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Model2Ds")) {
-              Select3Ds.convert_Groups_to_Model2Ds();
+              Select3D.convert_Groups_to_Model2Ds();
               current_ObjectCategory = ObjectCategory.MODEL2D;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Model0Ds >> Group")) {
-              Select3Ds.convert_Model0Ds_to_Groups();
+              Select3D.convert_Model0Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.update = true;
               UI_BAR_b.update = true;
             }             
             if (menu_option.equals("Group >> Model0Ds")) {
-              Select3Ds.convert_Groups_to_Model0Ds();
+              Select3D.convert_Groups_to_Model0Ds();
               current_ObjectCategory = ObjectCategory.MODEL0D;
               WIN3D.update = true;
               UI_BAR_b.update = true;
@@ -43633,36 +43633,36 @@ void mouseClicked () {
             }
 
             if (menu_option.equals("Select Near Selected Vertices")) {
-              Select3Ds.selectNearVertices();
+              Select3D.selectNearVertices();
               WIN3D.update = true;
             }
 
             if (menu_option.equals("Weld Objects Selected Vertices")) {
-              Modify3Ds.weldObjectsVertices_Selection(User3D.modify_WeldTreshold);
+              Modify3D.weldObjectsVertices_Selection(User3D.modify_WeldTreshold);
               WIN3D.update = true;
             }            
             if (menu_option.equals("Weld Scene Selected Vertices")) {
-              Modify3Ds.weldSceneVertices_Selection(User3D.modify_WeldTreshold);
+              Modify3D.weldSceneVertices_Selection(User3D.modify_WeldTreshold);
               WIN3D.update = true;
             }
             if (menu_option.equals("Reposition Selected Vertices")) {
-              Modify3Ds.repositionVertices_Selection();
+              Modify3D.repositionVertices_Selection();
               WIN3D.update = true;
             }          
             if (menu_option.equals("Separate Selected Vertices")) {
-              Modify3Ds.separateVertices_Selection();
+              Modify3D.separateVertices_Selection();
               WIN3D.update = true;
             }          
             if (menu_option.equals("Select All Isolated Vertices")) {
-              Select3Ds.selectscene_isolatedVertices();
+              Select3D.selectscene_isolatedVertices();
               WIN3D.update = true;
             }             
             if (menu_option.equals("Delete All Isolated Vertices")) {
-              Delete3Ds.scene_isolatedVertices();
+              Delete3D.scene_isolatedVertices();
               WIN3D.update = true;
             }   
             if (menu_option.equals("Delete Isolated Selected Vertices")) {
-              Delete3Ds.selected_isolatedVertices();
+              Delete3D.selected_isolatedVertices();
               WIN3D.update = true;
             }              
             if (menu_option.equals("Delete All Empty Groups")) {
@@ -43670,7 +43670,7 @@ void mouseClicked () {
               WIN3D.update = true;
             }               
             if (menu_option.equals("Delete Selection")) {
-              Delete3Ds.selection();
+              Delete3D.selection();
               WIN3D.update = true;
             }      
             if (menu_option.equals("Dettach from All Groups")) {
@@ -43690,128 +43690,128 @@ void mouseClicked () {
               WIN3D.update = true;
             }                 
             if (menu_option.equals("Clone Selection (Identical)")) {
-              Clone3Ds.selection(true);
+              Clone3D.selection(true);
               WIN3D.update = true;
             }      
             if (menu_option.equals("Clone Selection (Variation)")) {
-              Clone3Ds.selection(false);
+              Clone3D.selection(false);
               WIN3D.update = true;
             } 
             if (menu_option.equals("Auto-Normal Selected Faces")) {
-              Modify3Ds.autoNormalFaces_Selection();
+              Modify3D.autoNormalFaces_Selection();
               WIN3D.update = true;
             }
             if (menu_option.equals("Force Triangulate Selected Faces")) {
-              Modify3Ds.forceTriangulateFaces_Selection();
+              Modify3D.forceTriangulateFaces_Selection();
               WIN3D.update = true;
             }            
             
             if (menu_option.equals("Insert Corner Opennings")) {
-              Modify3Ds.insertCornerOpennings_Selection();
+              Modify3D.insertCornerOpennings_Selection();
               WIN3D.update = true;
             }
             if (menu_option.equals("Insert Parallel Opennings")) {
-              Modify3Ds.insertParallelOpennings_Selection();              
+              Modify3D.insertParallelOpennings_Selection();              
               WIN3D.update = true;
             }     
             if (menu_option.equals("Insert Rotated Opennings")) {
-              Modify3Ds.insertRotatedOpennings_Selection();
+              Modify3D.insertRotatedOpennings_Selection();
               WIN3D.update = true;
             }       
             if (menu_option.equals("Insert Edge Opennings")) {
-              Modify3Ds.insertEdgeOpennings_Selection();
+              Modify3D.insertEdgeOpennings_Selection();
               WIN3D.update = true;
             } 
             
             if (menu_option.equals("Optimize Faces")) {
-              Modify3Ds.optimizeFace_Selection();
+              Modify3D.optimizeFace_Selection();
               WIN3D.update = true;
             }            
             
             if (menu_option.equals("Triangulate Faces")) {
-              Modify3Ds.triangulateFace_Selection();
+              Modify3D.triangulateFace_Selection();
               WIN3D.update = true;
             }                      
 
             if (menu_option.equals("Tessellate Rows & Columns")) {
-              Modify3Ds.tessellateRowsColumns_Selection();
+              Modify3D.tessellateRowsColumns_Selection();
               WIN3D.update = true;
             }
             if (menu_option.equals("Tessellate Rectangular")) {
-              Modify3Ds.tessellateRectangular_Selection();
+              Modify3D.tessellateRectangular_Selection();
               WIN3D.update = true;
             }
             if (menu_option.equals("Tessellation Triangular")) {
-              Modify3Ds.tessellateTriangular_Selection();
+              Modify3D.tessellateTriangular_Selection();
               WIN3D.update = true;
             }            
             if (menu_option.equals("Extrude Face Edges")) {
-              Modify3Ds.extrudeFaceEdges_Selection();
+              Modify3D.extrudeFaceEdges_Selection();
               WIN3D.update = true;
             }    
             if (menu_option.equals("Extrude Curve Edges")) {
-              Modify3Ds.extrudeCurveEdges_Selection();
+              Modify3D.extrudeCurveEdges_Selection();
               WIN3D.update = true;
             }                
             if (menu_option.equals("Offset(above) Vertices")) {
-              Modify3Ds.offsetVertices_Selection(0, abs(User3D.modify_OffsetAmount));
+              Modify3D.offsetVertices_Selection(0, abs(User3D.modify_OffsetAmount));
               WIN3D.update = true;
             }  
             if (menu_option.equals("Offset(below) Vertices")) {
-              Modify3Ds.offsetVertices_Selection(0, -abs(User3D.modify_OffsetAmount));
+              Modify3D.offsetVertices_Selection(0, -abs(User3D.modify_OffsetAmount));
               WIN3D.update = true;
             }             
             if (menu_option.equals("Offset(expand) Vertices")) {
-              Modify3Ds.offsetVertices_Selection(1, -abs(User3D.modify_OffsetAmount));
+              Modify3D.offsetVertices_Selection(1, -abs(User3D.modify_OffsetAmount));
               WIN3D.update = true;
             }   
             if (menu_option.equals("Offset(shrink) Vertices")) {
-              Modify3Ds.offsetVertices_Selection(1, abs(User3D.modify_OffsetAmount));
+              Modify3D.offsetVertices_Selection(1, abs(User3D.modify_OffsetAmount));
               WIN3D.update = true;
             }               
 
             if (menu_option.equals("Reverse Visibility of All Faces")) {
-              Select3Ds.reverseVisibilityFaces_Scene();
+              Select3D.reverseVisibilityFaces_Scene();
               WIN3D.update = true;
             } 
             if (menu_option.equals("Hide All Faces")) {
-              Select3Ds.changeVisibilityFaces_Scene(0);
+              Select3D.changeVisibilityFaces_Scene(0);
               WIN3D.update = true;
             }  
             if (menu_option.equals("Unhide All Faces")) {
-              Select3Ds.changeVisibilityFaces_Scene(1);
+              Select3D.changeVisibilityFaces_Scene(1);
               WIN3D.update = true;
             }  
             if (menu_option.equals("Hide Selected Faces")) {
-              Select3Ds.changeVisibilityFaces_Selection(0);
+              Select3D.changeVisibilityFaces_Selection(0);
               WIN3D.update = true;
             }  
             if (menu_option.equals("Unhide Selected Faces")) {
-              Select3Ds.changeVisibilityFaces_Selection(1);
+              Select3D.changeVisibilityFaces_Selection(1);
               WIN3D.update = true;
             }     
             if (menu_option.equals("Isolate Selection")) {
-              Select3Ds.isolate_Selection();
+              Select3D.isolate_Selection();
               WIN3D.update = true;
             }         
 
             if (menu_option.equals("Flatten Selected LandPoints")) {
-              Modify3Ds.flatten_LandPoints();
+              Modify3D.flatten_LandPoints();
               WIN3D.update = true;
             }
             
             if (menu_option.equals("Add People on Land")) {
-              Create3Ds.add_onLand(1); // 1 = people
+              Create3D.add_onLand(1); // 1 = people
               WIN3D.update = true;
             }                  
 
             if (menu_option.equals("Add 2D-Trees on Land")) {
-              Create3Ds.add_onLand(2); // 2 = 2D trees
+              Create3D.add_onLand(2); // 2 = 2D trees
               WIN3D.update = true;
             }   
 
             if (menu_option.equals("Add 3D-Trees on Land")) {
-              Create3Ds.add_onLand(3); // 3 = 3D trees
+              Create3D.add_onLand(3); // 3 = 3D trees
               WIN3D.update = true;
             }   
 
@@ -44502,7 +44502,7 @@ void mouseClicked () {
   
                   if (current_ObjectCategory == ObjectCategory.GROUP) {
   
-                    float[] P = Select3Ds.getPivot();
+                    float[] P = Select3D.getPivot();
   
                     x1 = P[0];
                     y1 = P[1];
@@ -44511,30 +44511,30 @@ void mouseClicked () {
   
                   if (current_ObjectCategory == ObjectCategory.MODEL2D) {
   
-                    x1 = allModel2Ds.getX(Select3Ds.Model2D_ids[Select3Ds.Model2D_ids.length - 1]); 
-                    y1 = allModel2Ds.getY(Select3Ds.Model2D_ids[Select3Ds.Model2D_ids.length - 1]); 
-                    z1 = allModel2Ds.getZ(Select3Ds.Model2D_ids[Select3Ds.Model2D_ids.length - 1]);
+                    x1 = allModel2Ds.getX(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]); 
+                    y1 = allModel2Ds.getY(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]); 
+                    z1 = allModel2Ds.getZ(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
                   }
   
                   if (current_ObjectCategory == ObjectCategory.MODEL0D) {
   
-                    x1 = allModel0Ds.getX(Select3Ds.Model0D_ids[Select3Ds.Model0D_ids.length - 1]); 
-                    y1 = allModel0Ds.getY(Select3Ds.Model0D_ids[Select3Ds.Model0D_ids.length - 1]); 
-                    z1 = allModel0Ds.getZ(Select3Ds.Model0D_ids[Select3Ds.Model0D_ids.length - 1]);
+                    x1 = allModel0Ds.getX(Select3D.Model0D_ids[Select3D.Model0D_ids.length - 1]); 
+                    y1 = allModel0Ds.getY(Select3D.Model0D_ids[Select3D.Model0D_ids.length - 1]); 
+                    z1 = allModel0Ds.getZ(Select3D.Model0D_ids[Select3D.Model0D_ids.length - 1]);
                   }            
   
                   if (current_ObjectCategory == ObjectCategory.SOLID) {
   
-                    x1 = allSolids.get_posX(Select3Ds.Solid_ids[Select3Ds.Solid_ids.length - 1]); 
-                    y1 = allSolids.get_posY(Select3Ds.Solid_ids[Select3Ds.Solid_ids.length - 1]); 
-                    z1 = allSolids.get_posZ(Select3Ds.Solid_ids[Select3Ds.Solid_ids.length - 1]);
+                    x1 = allSolids.get_posX(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]); 
+                    y1 = allSolids.get_posY(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]); 
+                    z1 = allSolids.get_posZ(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
                   }                 
   
                   if (current_ObjectCategory == ObjectCategory.VERTEX) {
   
-                    x1 = allPoints.getX(Select3Ds.Vertex_ids[Select3Ds.Vertex_ids.length - 1]); 
-                    y1 = allPoints.getY(Select3Ds.Vertex_ids[Select3Ds.Vertex_ids.length - 1]); 
-                    z1 = allPoints.getZ(Select3Ds.Vertex_ids[Select3Ds.Vertex_ids.length - 1]);
+                    x1 = allPoints.getX(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]); 
+                    y1 = allPoints.getY(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]); 
+                    z1 = allPoints.getZ(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
                   }             
   
                   if ((is_undefined_FLOAT(x1) == false) &&  
@@ -44548,7 +44548,7 @@ void mouseClicked () {
                     float dx, dy, dz;
                     
                     /*    
-                    float[] p = Select3Ds.translateOutside_ReferencePivot(x2, y2, z2);
+                    float[] p = Select3D.translateOutside_ReferencePivot(x2, y2, z2);
                     dx = p[0] - x1; 
                     dy = p[1] - y1;
                     dz = p[2] - z1;
@@ -44559,7 +44559,7 @@ void mouseClicked () {
                     
                     
 
-                    int the_Vector = Select3Ds.posVector;
+                    int the_Vector = Select3D.posVector;
   
                     if (the_Vector == 0) {
                       dy = 0; 
@@ -44574,9 +44574,9 @@ void mouseClicked () {
                       dy = 0;
                     } 
 
-                    Move3Ds.selection(dx, dy, dz);
+                    Move3D.selection(dx, dy, dz);
   
-                    Select3Ds.calculate_BoundingBox();
+                    Select3D.calculate_BoundingBox();
                     WIN3D.update = true;
                   }
                 }   
@@ -44641,7 +44641,7 @@ void mouseClicked () {
                           }
 
 
-                          float[] P = Select3Ds.getPivot();
+                          float[] P = Select3D.getPivot();
 
                           allGroups.Pivots[OBJ_ID][0] = P[0];
                           allGroups.Pivots[OBJ_ID][1] = P[1];
@@ -44656,10 +44656,10 @@ void mouseClicked () {
   
                         if (current_ObjectCategory == ObjectCategory.FACE) {
   
-                          Select3Ds.Face_ids = new int [1];
-                          Select3Ds.Face_ids[0] = f;       
+                          Select3D.Face_ids = new int [1];
+                          Select3D.Face_ids[0] = f;       
   
-                          Select3Ds.Face_displayVertexCount = true;                 
+                          Select3D.Face_displayVertexCount = true;                 
   
                           int n = allFaces.nodes[f].length;
   
@@ -44683,7 +44683,7 @@ void mouseClicked () {
   
                               PVector GAxGB = AG.cross(BG);
   
-                              float[] P = Select3Ds.getPivot();
+                              float[] P = Select3D.getPivot();
   
                               float x0 = P[0];
                               float y0 = P[1];
@@ -44741,7 +44741,7 @@ void mouseClicked () {
 
                                 PVector GAxGB = AG.cross(BG);
 
-                                float[] P = Select3Ds.getPivot();
+                                float[] P = Select3D.getPivot();
 
                                 float x0 = P[0];
                                 float y0 = P[1];
@@ -44775,10 +44775,10 @@ void mouseClicked () {
   
                         if (current_ObjectCategory == ObjectCategory.FACE) {
   
-                          Select3Ds.Face_ids = new int [1];
-                          Select3Ds.Face_ids[0] = f;
+                          Select3D.Face_ids = new int [1];
+                          Select3D.Face_ids[0] = f;
   
-                          Select3Ds.Face_displayVertexCount = true;
+                          Select3D.Face_displayVertexCount = true;
   
                           int n = allFaces.nodes[f].length;
   
@@ -44812,10 +44812,10 @@ void mouseClicked () {
                         
                         if (current_ObjectCategory == ObjectCategory.CURVE) {
   
-                          Select3Ds.Curve_ids = new int [1];
-                          Select3Ds.Curve_ids[0] = f;
+                          Select3D.Curve_ids = new int [1];
+                          Select3D.Curve_ids[0] = f;
   
-                          Select3Ds.Curve_displayVertexCount = true;
+                          Select3D.Curve_displayVertexCount = true;
   
                           int n = allCurves.nodes[f].length;
   
@@ -44940,7 +44940,7 @@ void mouseClicked () {
                     ROLLOUT.update = true;
                   } else if ((WIN3D.UI_CurrentTask != UITASK.Create) && (WIN3D.UI_CurrentTask != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
   
-                    Select3Ds.selectPick(RxP);
+                    Select3D.selectPick(RxP);
                   }
                 }
   
@@ -45012,9 +45012,9 @@ void mouseClicked () {
                       (current_ObjectCategory != ObjectCategory.CAMERA) && 
                       (current_ObjectCategory != ObjectCategory.SECTION)) {
   
-                    x -= rx * Select3Ds.alignX;
-                    y -= ry * Select3Ds.alignY;
-                    z -= rz * Select3Ds.alignZ;
+                    x -= rx * Select3D.alignX;
+                    y -= ry * Select3D.alignY;
+                    z -= rz * Select3D.alignZ;
                   }
   
   
@@ -45035,19 +45035,19 @@ void mouseClicked () {
     
                       if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
     
-                        Create3Ds.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, 2, rot);
+                        Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, 2, rot);
                       } else if ((px == 2) && (py == 2) && (pz == CubePower)) {
     
-                        Create3Ds.add_SuperCylinder(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_CylinderDegree, rot);
+                        Create3D.add_SuperCylinder(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_CylinderDegree, rot);
                       } else if ((px == CubePower) && (py == CubePower) && (pz == CubePower)) {
     
-                        Create3Ds.add_Box_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, rot);
+                        Create3D.add_Box_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, rot);
                       } else if ((px == 1) && (py == 1) && (pz == 1)) {
     
-                        Create3Ds.add_Octahedron(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, rot);
+                        Create3D.add_Octahedron(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, rot);
                       } else {
     
-                        Create3Ds.add_SuperSphere(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, pz, py, pz, rx, ry, rz, User3D.create_SphereDegree, rot);
+                        Create3D.add_SuperSphere(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, pz, py, pz, rx, ry, rz, User3D.create_SphereDegree, rot);
                       }
     
     
@@ -45063,39 +45063,39 @@ void mouseClicked () {
     
                     if (CreateObject == CREATE.Tri) {
     
-                      Create3Ds.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                      Create3Ds.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                      Create3Ds.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                      Create3Ds.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
                     }
     
 
                     if (CreateObject == CREATE.Plane) {
     
-                      Create3Ds.add_Mesh4(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
+                      Create3D.add_Mesh4(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
                     }
                     
                     if (CreateObject == CREATE.Poly) {
     
-                      Create3Ds.add_PolygonMesh(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, User3D.create_PolyDegree, rot);
+                      Create3D.add_PolygonMesh(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, User3D.create_PolyDegree, rot);
                     }                    
                     
                     if (CreateObject == CREATE.Hyper) {
     
-                      Create3Ds.add_PolygonHyper(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
+                      Create3D.add_PolygonHyper(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
                     }
                       
     
                     if (CreateObject == CREATE.Extrude) {       
     
-                      Create3Ds.add_PolygonExtrude(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
+                      Create3D.add_PolygonExtrude(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
                     }
     
                     if (CreateObject == CREATE.House1) {   
                       
                       float h = ry;  
 
-                      Create3Ds.add_House1_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
+                      Create3D.add_House1_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
                     }
 
                     if (CreateObject == CREATE.House2) {   
@@ -45104,12 +45104,12 @@ void mouseClicked () {
           
                       if (ry > rx) h = rx;            
     
-                      Create3Ds.add_House2_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
+                      Create3D.add_House2_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
                     }
     
                     if (CreateObject == CREATE.Parametric) {
     
-                      Create3Ds.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_Parametric_Type, rot);
+                      Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_Parametric_Type, rot);
                     }
                     
                   }
@@ -45154,10 +45154,10 @@ void mouseClicked () {
                     if (CreateObject == CREATE.Face) {
                       allFaces.add_VertexToLastFace(x, y, z); 
 
-                      Select3Ds.Face_ids = new int [1];
-                      Select3Ds.Face_ids[0] = allFaces.nodes.length - 1;
+                      Select3D.Face_ids = new int [1];
+                      Select3D.Face_ids[0] = allFaces.nodes.length - 1;
     
-                      Select3Ds.calculate_BoundingBox();
+                      Select3D.calculate_BoundingBox();
                     }
                   }      
           
@@ -45165,10 +45165,10 @@ void mouseClicked () {
                     if (CreateObject == CREATE.Curve) {
                       allCurves.add_VertexToLastCurve(x, y, z);                   
 
-                      Select3Ds.Curve_ids = new int [1];
-                      Select3Ds.Curve_ids[0] = allCurves.nodes.length - 1;
+                      Select3D.Curve_ids = new int [1];
+                      Select3D.Curve_ids[0] = allCurves.nodes.length - 1;
     
-                      Select3Ds.calculate_BoundingBox();
+                      Select3D.calculate_BoundingBox();
                     }
                   }        
                       
@@ -45441,16 +45441,16 @@ void mouseClicked () {
     
                         if (keep_number_of_allSections != allSections.num) { // if any Section created during the process
     
-                          Select3Ds.deselect_Sections();
+                          Select3D.deselect_Sections();
     
                           for (int o = keep_number_of_allSections; o < allSections.num; o++) {
     
                             int[] newlyAddedSection = {o};
     
-                            Select3Ds.Section_ids = concat(Select3Ds.Section_ids, newlyAddedSection);
+                            Select3D.Section_ids = concat(Select3D.Section_ids, newlyAddedSection);
                           }  
     
-                          Select3Ds.calculate_BoundingBox();
+                          Select3D.calculate_BoundingBox();
                         }      
     
                         allSolidImpacts.X[allSolidImpacts.sectionType] = Section_X;
@@ -45480,76 +45480,76 @@ void mouseClicked () {
   
                   if (keep_number_of_allSolids != allSolids.DEF.length) { // if any Solid created during the process
   
-                    Select3Ds.deselect_Solids();
+                    Select3D.deselect_Solids();
   
                     for (int o = keep_number_of_allSolids; o < allSolids.DEF.length; o++) {
   
                       int[] newlyAddedSolid = {o};
   
-                      Select3Ds.Solid_ids = concat(Select3Ds.Solid_ids, newlyAddedSolid);
+                      Select3D.Solid_ids = concat(Select3D.Solid_ids, newlyAddedSolid);
                     }  
   
-                    Select3Ds.calculate_BoundingBox();
+                    Select3D.calculate_BoundingBox();
                   }   
   
   
   
                   if (keep_number_of_allCameras != allCameras.num) { // if any Camera created during the process
   
-                    Select3Ds.deselect_Cameras();
+                    Select3D.deselect_Cameras();
   
                     for (int o = keep_number_of_allCameras; o < allCameras.num; o++) {
   
                       int[] newlyAddedCamera = {o};
   
-                      Select3Ds.Camera_ids = concat(Select3Ds.Camera_ids, newlyAddedCamera);
+                      Select3D.Camera_ids = concat(Select3D.Camera_ids, newlyAddedCamera);
                     }  
   
-                    Select3Ds.calculate_BoundingBox();
+                    Select3D.calculate_BoundingBox();
                   }                   
   
   
                   if (keep_number_of_allGroups != allGroups.num) { // if any Group created during the process
   
-                    Select3Ds.deselect_Groups();
+                    Select3D.deselect_Groups();
   
                     for (int o = keep_number_of_allGroups; o < allGroups.num; o++) {
   
                       int[] newlyAddedGroup = {o};
   
-                      Select3Ds.Group_ids = concat(Select3Ds.Group_ids, newlyAddedGroup);
+                      Select3D.Group_ids = concat(Select3D.Group_ids, newlyAddedGroup);
                     }  
   
-                    Select3Ds.calculate_BoundingBox();
+                    Select3D.calculate_BoundingBox();
                   }   
   
                   if (keep_number_of_allModel2Ds != allModel2Ds.num) { // if any allModel2Ds created during the process
   
-                    Select3Ds.deselect_Model2Ds();
+                    Select3D.deselect_Model2Ds();
   
                     for (int o = keep_number_of_allModel2Ds; o < allModel2Ds.num; o++) {
   
                       int[] newlyAddedallModel2Ds = {o};
   
-                      Select3Ds.Model2D_ids = concat(Select3Ds.Model2D_ids, newlyAddedallModel2Ds);
+                      Select3D.Model2D_ids = concat(Select3D.Model2D_ids, newlyAddedallModel2Ds);
                     }  
   
-                    Select3Ds.calculate_BoundingBox();
+                    Select3D.calculate_BoundingBox();
                   }   
   
   
                   if (keep_number_of_allModel0Ds != allModel0Ds.num) { // if any allModel0Ds created during the process
   
-                    Select3Ds.deselect_Model0Ds();
+                    Select3D.deselect_Model0Ds();
   
                     for (int o = keep_number_of_allModel0Ds; o < allModel0Ds.num; o++) {
   
                       int[] newlyAddedallModel0Ds = {o};
   
-                      Select3Ds.Model0D_ids = concat(Select3Ds.Model0D_ids, newlyAddedallModel0Ds);
+                      Select3D.Model0D_ids = concat(Select3D.Model0D_ids, newlyAddedallModel0Ds);
                     }  
   
-                    Select3Ds.calculate_BoundingBox();
+                    Select3D.calculate_BoundingBox();
                   }
                   
           
@@ -45936,7 +45936,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.LANDPOINT) {    
 
-    if (Select3Ds.LandPoint_displayPoints) {
+    if (Select3D.LandPoint_displayPoints) {
 
       pushMatrix();
 
@@ -45952,9 +45952,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       float R = 10;
 
-      for (int o = Select3Ds.LandPoint_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.LandPoint_ids.length - 1; o >= 0; o--) {
 
-        int OBJ_ID = Select3Ds.LandPoint_ids[o];
+        int OBJ_ID = Select3D.LandPoint_ids[o];
 
 
         int i = OBJ_ID / Land3D.num_columns;
@@ -45980,7 +45980,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.CAMERA) {
 
-    if (Select3Ds.Camera_displayEdges) {
+    if (Select3D.Camera_displayEdges) {
 
       pushMatrix();
 
@@ -45992,9 +45992,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(2);
 
       {
-        for (int o = Select3Ds.Camera_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.Camera_ids.length - 1; o >= 0; o--) {
 
-          int f = Select3Ds.Camera_ids[o];
+          int f = Select3D.Camera_ids[o];
 
           beginShape();
 
@@ -46025,7 +46025,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.SECTION) {
 
-    if (Select3Ds.Section_displayEdges) {
+    if (Select3D.Section_displayEdges) {
 
       pushMatrix();
 
@@ -46037,9 +46037,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(2);
 
       {
-        for (int o = Select3Ds.Section_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
 
-          int f = Select3Ds.Section_ids[o];
+          int f = Select3D.Section_ids[o];
 
           beginShape();
 
@@ -46070,7 +46070,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.SOLID) {
 
-    if (Select3Ds.Solid_displayEdges) {
+    if (Select3D.Solid_displayEdges) {
 
       pushMatrix();
 
@@ -46082,9 +46082,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(2);
 
       {
-        for (int o = Select3Ds.Solid_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.Solid_ids.length - 1; o >= 0; o--) {
 
-          int OBJ_ID = Select3Ds.Solid_ids[o];
+          int OBJ_ID = Select3D.Solid_ids[o];
 
           for (int plane_type = 0; plane_type < allSolids.num_visualFaces; plane_type++) {          
 
@@ -46122,7 +46122,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   
   if (current_ObjectCategory == ObjectCategory.MODEL2D) {
 
-    if (Select3Ds.Model2D_displayEdges) {
+    if (Select3D.Model2D_displayEdges) {
 
       pushMatrix();
 
@@ -46134,9 +46134,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(2);
 
       {
-        for (int o = Select3Ds.Model2D_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
 
-          int OBJ_ID = Select3Ds.Model2D_ids[o];
+          int OBJ_ID = Select3D.Model2D_ids[o];
 
           for (int plane_type = 0; plane_type < allModel2Ds.num_visualFaces; plane_type++) {          
 
@@ -46172,7 +46172,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.MODEL0D) {
 
-    if (Select3Ds.Model0D_displayEdges) {
+    if (Select3D.Model0D_displayEdges) {
 
       pushMatrix();
 
@@ -46184,9 +46184,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(2);
 
       {
-        for (int o = Select3Ds.Model0D_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.Model0D_ids.length - 1; o >= 0; o--) {
 
-          int f = Select3Ds.Model0D_ids[o];
+          int f = Select3D.Model0D_ids[o];
 
           beginShape();
 
@@ -46218,7 +46218,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.FACE) {    
 
-    if (Select3Ds.Face_displayEdges) {
+    if (Select3D.Face_displayEdges) {
 
       pushMatrix();
 
@@ -46229,9 +46229,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       stroke(127, 0, 255); 
       strokeWeight(2);
 
-      for (int o = Select3Ds.Face_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
 
-        int f = Select3Ds.Face_ids[o];
+        int f = Select3D.Face_ids[o];
 
         int Tessellation = allFaces.getTessellation(f);
 
@@ -46279,7 +46279,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
 
 
-    if (Select3Ds.Face_displayVertexCount) {
+    if (Select3D.Face_displayVertexCount) {
 
       pushMatrix();
 
@@ -46293,9 +46293,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       textSize(1.5 * MessageSize);
       textAlign(CENTER, BOTTOM);
 
-      for (int o = Select3Ds.Face_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
 
-        int f = Select3Ds.Face_ids[o];
+        int f = Select3D.Face_ids[o];
 
         for (int j = 0; j < allFaces.nodes[f].length; j++) {
           int vNo = allFaces.nodes[f][j];
@@ -46323,7 +46323,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   
   if (current_ObjectCategory == ObjectCategory.CURVE) {    
 
-    if (Select3Ds.Curve_displayVertexCount) {
+    if (Select3D.Curve_displayVertexCount) {
 
       pushMatrix();
 
@@ -46337,9 +46337,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       textSize(1.5 * MessageSize);
       textAlign(CENTER, BOTTOM);
 
-      for (int o = Select3Ds.Curve_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Curve_ids.length - 1; o >= 0; o--) {
 
-        int f = Select3Ds.Curve_ids[o];
+        int f = Select3D.Curve_ids[o];
 
         for (int j = 0; j < allCurves.nodes[f].length; j++) {
           int vNo = allCurves.nodes[f][j];
@@ -46367,7 +46367,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.VERTEX) {    
 
-    if (Select3Ds.Vertex_displayVertices) {
+    if (Select3D.Vertex_displayVertices) {
 
       pushMatrix();
 
@@ -46383,9 +46383,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       float R = 10;
 
-      for (int o = Select3Ds.Vertex_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
 
-        int vNo = Select3Ds.Vertex_ids[o];
+        int vNo = Select3D.Vertex_ids[o];
 
         float x = allPoints.getX(vNo) * OBJECTS_scale;
         float y = allPoints.getY(vNo) * OBJECTS_scale;
@@ -46408,7 +46408,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {    
 
-    if (Select3Ds.Vertex_displayVertices) {
+    if (Select3D.Vertex_displayVertices) {
 
       pushMatrix();
 
@@ -46420,11 +46420,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       float R = 5;
 
-      for (int q = 0; q < Select3Ds.softSelection_ids.length; q++) {
+      for (int q = 0; q < Select3D.softSelection_ids.length; q++) {
 
-        int vNo = Select3Ds.softSelection_ids[q];
+        int vNo = Select3D.softSelection_ids[q];
 
-        float _u = Select3Ds.softSelection_values[q];    
+        float _u = Select3D.softSelection_values[q];    
 
         float x = allPoints.getX(vNo) * OBJECTS_scale;
         float y = allPoints.getY(vNo) * OBJECTS_scale;
@@ -46455,7 +46455,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (current_ObjectCategory == ObjectCategory.GROUP) {    
 
-    if (Select3Ds.Group_displayEdges) {
+    if (Select3D.Group_displayEdges) {
 
       pushMatrix();
 
@@ -46466,9 +46466,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       stroke(127); 
       strokeWeight(2);
 
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
 
 
         for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
@@ -46630,7 +46630,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
 
 
-    if (Select3Ds.Group_displayBox) {
+    if (Select3D.Group_displayBox) {
 
       pushMatrix();
 
@@ -46641,27 +46641,27 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       stroke(0, 127, 0, 127);
       strokeWeight(2);
 
-      int keep_selection_alignX = Select3Ds.alignX;
-      int keep_selection_alignY = Select3Ds.alignY;
-      int keep_selection_alignZ = Select3Ds.alignZ;
+      int keep_selection_alignX = Select3D.alignX;
+      int keep_selection_alignY = Select3D.alignY;
+      int keep_selection_alignZ = Select3D.alignZ;
 
-      Select3Ds.alignX = 0; // apply the centre
-      Select3Ds.alignY = 0; // apply the centre
-      Select3Ds.alignZ = 0; // apply the centre
+      Select3D.alignX = 0; // apply the centre
+      Select3D.alignY = 0; // apply the centre
+      Select3D.alignZ = 0; // apply the centre
 
-      float[] P = Select3Ds.getPivot();
+      float[] P = Select3D.getPivot();
 
       float posX = P[0];
       float posY = P[1];
       float posZ = P[2];
 
-      float posX_min = Select3Ds.BoundingBox[0][0];
-      float posY_min = Select3Ds.BoundingBox[0][1];
-      float posZ_min = Select3Ds.BoundingBox[0][2];
+      float posX_min = Select3D.BoundingBox[0][0];
+      float posY_min = Select3D.BoundingBox[0][1];
+      float posZ_min = Select3D.BoundingBox[0][2];
 
-      float posX_max = Select3Ds.BoundingBox[2][0];
-      float posY_max = Select3Ds.BoundingBox[2][1];
-      float posZ_max = Select3Ds.BoundingBox[2][2];
+      float posX_max = Select3D.BoundingBox[2][0];
+      float posY_max = Select3D.BoundingBox[2][1];
+      float posZ_max = Select3D.BoundingBox[2][2];
 
       float[][] BoundingBox_Vertices = {
         {
@@ -46704,7 +46704,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float y = BoundingBox_Vertices[i][1] - posY;
         float z = BoundingBox_Vertices[i][2] - posZ;
 
-        float[] A = Select3Ds.translateInside_ReferencePivot(x, y, z);
+        float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
 
         x = A[0];
         y = A[1];
@@ -46762,15 +46762,15 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
 
 
-      Select3Ds.alignX = keep_selection_alignX;
-      Select3Ds.alignY = keep_selection_alignY;
-      Select3Ds.alignZ = keep_selection_alignZ;
+      Select3D.alignX = keep_selection_alignX;
+      Select3D.alignY = keep_selection_alignY;
+      Select3D.alignZ = keep_selection_alignZ;
     }  
 
 
 
 
-    if (Select3Ds.Group_displayPivot) {
+    if (Select3D.Group_displayPivot) {
 
       pushMatrix();
 
@@ -46782,9 +46782,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       strokeWeight(5);
 
-      for (int o = Select3Ds.Group_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
-        int OBJ_ID = Select3Ds.Group_ids[o];
+        int OBJ_ID = Select3D.Group_ids[o];
 
         float[][] Pivot_Vertices = {
           {
@@ -46821,8 +46821,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           y *= r;
           z *= r;
 
-          float[] O = Select3Ds.translateInside_ReferencePivot(0, 0, 0);
-          float[] A = Select3Ds.translateInside_ReferencePivot(x, y, z);
+          float[] O = Select3D.translateInside_ReferencePivot(0, 0, 0);
+          float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
 
           float dx = A[0] - O[0];
           float dy = A[1] - O[1];
@@ -46884,7 +46884,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
 
-  if (Select3Ds.displayReferencePivot) {
+  if (Select3D.displayReferencePivot) {
 
     pushMatrix();
 
@@ -46912,7 +46912,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       }
     }; 
 
-    float[] P = Select3Ds.getPivot();
+    float[] P = Select3D.getPivot();
 
     float x0 = P[0];
     float y0 = P[1];
@@ -46930,8 +46930,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       y *= r;
       z *= r;
 
-      float[] O = Select3Ds.translateInside_ReferencePivot(0, 0, 0);
-      float[] A = Select3Ds.translateInside_ReferencePivot(x, y, z);
+      float[] O = Select3D.translateInside_ReferencePivot(0, 0, 0);
+      float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
 
       float dx = A[0] - O[0];
       float dy = A[1] - O[1];
@@ -48706,7 +48706,7 @@ void UI_set_to_Create_Cushion () {
 void UI_set_to_Modify_Move (int n) {
   WIN3D.UI_CurrentTask = UITASK.Move;
 
-  Select3Ds.posVector = n;
+  Select3D.posVector = n;
 
   ROLLOUT.update = true;
 }
@@ -48714,7 +48714,7 @@ void UI_set_to_Modify_Move (int n) {
 void UI_set_to_Modify_Scale (int n) {
   WIN3D.UI_CurrentTask = UITASK.Scale;
 
-  Select3Ds.scaleVector = n;
+  Select3D.scaleVector = n;
 
   ROLLOUT.update = true;
 }
@@ -48723,7 +48723,7 @@ void UI_set_to_Modify_Scale (int n) {
 void UI_set_to_Modify_Rotate (int n) {
   WIN3D.UI_CurrentTask = UITASK.Rotate;
 
-  Select3Ds.rotVector = n;
+  Select3D.rotVector = n;
 
   ROLLOUT.update = true;
 }
@@ -48937,7 +48937,7 @@ void UI_set_to_View_WindowSelect (int n) {
 
 void UI_set_to_View_PivotX (int n) {
 
-  Select3Ds.alignX = n;
+  Select3D.alignX = n;
 
   WIN3D.update = true; 
   ROLLOUT.update = true;
@@ -48945,7 +48945,7 @@ void UI_set_to_View_PivotX (int n) {
 
 void UI_set_to_View_PivotY (int n) {
 
-  Select3Ds.alignY = n;
+  Select3D.alignY = n;
 
   WIN3D.update = true; 
   ROLLOUT.update = true;
@@ -48953,7 +48953,7 @@ void UI_set_to_View_PivotY (int n) {
 
 void UI_set_to_View_PivotZ (int n) {
 
-  Select3Ds.alignZ = n;
+  Select3D.alignZ = n;
 
   WIN3D.update = true; 
   ROLLOUT.update = true;
@@ -49493,7 +49493,7 @@ void SOLARCHVISION_save_project (String myFile) {
   
   User3D.to_XML(xml);
   
-  Select3Ds.to_XML(xml);      
+  Select3D.to_XML(xml);      
   
   WORLD.to_XML(xml);
   
@@ -49740,7 +49740,7 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   User3D.from_XML(xml);
   
-  Select3Ds.from_XML(xml);
+  Select3D.from_XML(xml);
   
   WORLD.from_XML(xml);
   
@@ -50396,9 +50396,9 @@ float[][] DiffuseVectors;
 
 void SOLARCHVISION_build_SkySphere (int Tessellation) {
 
-  //Create3Ds.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0,0,0, 1, Tessellation, 1, 90); // SKY
-  //Create3Ds.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 90); // SKY
-  Create3Ds.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3, 1, 90); // SKY
+  //Create3D.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0,0,0, 1, Tessellation, 1, 90); // SKY
+  //Create3D.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 90); // SKY
+  Create3D.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3, 1, 90); // SKY
 
   DiffuseVectors = new float[0][3];
 
@@ -52213,91 +52213,91 @@ class solarchvision_UI_BAR_a {
                   }
                 }
                 if (this.Items[i][j].equals("Display/Hide Selected Solids")) {
-                  if (Select3Ds.Solid_displayEdges == false) {
+                  if (Select3D.Solid_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }                        
                 if (this.Items[i][j].equals("Display/Hide Selected Sections")) {
-                  if (Select3Ds.Section_displayEdges == false) {
+                  if (Select3D.Section_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }          
                 if (this.Items[i][j].equals("Display/Hide Selected Cameras")) {
-                  if (Select3Ds.Camera_displayEdges == false) {
+                  if (Select3D.Camera_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }        
                 if (this.Items[i][j].equals("Display/Hide Selected LandPoints")) {
-                  if (Select3Ds.LandPoint_displayPoints == false) {
+                  if (Select3D.LandPoint_displayPoints == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }              
                 if (this.Items[i][j].equals("Display/Hide Selected Faces")) {
-                  if (Select3Ds.Face_displayEdges == false) {
+                  if (Select3D.Face_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }      
                 if (this.Items[i][j].equals("Display/Hide Selected Curves")) {
-                  if (Select3Ds.Curve_displayVertices == false) {
+                  if (Select3D.Curve_displayVertices == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }         
                 if (this.Items[i][j].equals("Display/Hide Selected Faces Vertex Count")) {
-                  if (Select3Ds.Face_displayVertexCount == false) {
+                  if (Select3D.Face_displayVertexCount == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }   
                 if (this.Items[i][j].equals("Display/Hide Selected Curves Vertex Count")) {
-                  if (Select3Ds.Curve_displayVertexCount == false) {
+                  if (Select3D.Curve_displayVertexCount == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }                
                 if (this.Items[i][j].equals("Display/Hide Selected Vertices")) {
-                  if (Select3Ds.Vertex_displayVertices == false) {
+                  if (Select3D.Vertex_displayVertices == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }               
                 if (this.Items[i][j].equals("Display/Hide Selected REF Pivot")) {
-                  if (Select3Ds.displayReferencePivot == false) {
+                  if (Select3D.displayReferencePivot == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }                 
                 if (this.Items[i][j].equals("Display/Hide Selected Group Pivot")) {
-                  if (Select3Ds.displayReferencePivot == false) {
+                  if (Select3D.displayReferencePivot == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }                    
                 if (this.Items[i][j].equals("Display/Hide Selected Group Edges")) {
-                  if (Select3Ds.Group_displayEdges == false) {
+                  if (Select3D.Group_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }    
                 if (this.Items[i][j].equals("Display/Hide Selected Group Box")) {
-                  if (Select3Ds.Group_displayBox == false) {
+                  if (Select3D.Group_displayBox == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }    
                 if (this.Items[i][j].equals("Display/Hide Selected 2D Edges")) {
-                  if (Select3Ds.Model2D_displayEdges == false) {
+                  if (Select3D.Model2D_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }    
                 if (this.Items[i][j].equals("Display/Hide Selected 0D Edges")) {
-                  if (Select3Ds.Model0D_displayEdges == false) {
+                  if (Select3D.Model0D_displayEdges == false) {
                     stroke(127); 
                     fill(127);
                   }
@@ -52636,7 +52636,7 @@ class solarchvision_UI_BAR_b {
             current_ObjectCategory = j - 1;
   
             if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-              Select3Ds.convert_Vertex_to_softSelection();
+              Select3D.convert_Vertex_to_softSelection();
             }
   
             ROLLOUT.update = true;   
@@ -55230,7 +55230,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (q == 3) dz = float(parameters[0]);
         }
       }
-      Move3Ds.selection(dx, dy, dz);
+      Move3D.selection(dx, dy, dz);
       WIN3D.update = true;
     }
     else {
@@ -55265,7 +55265,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           if (q == 1) r = float(parameters[0]);
         }      
       }
-      Rotate3Ds.selection(x, y, z, r, v);
+      Rotate3D.selection(x, y, z, r, v);
       WIN3D.update = true;
     }
     else {
@@ -55305,7 +55305,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           if (q == 1) {sx = float(parameters[0]); sy = sx; sz = sx;}
         }           
       }
-      Scale3Ds.selection(x, y, z, sx, sy, sz);
+      Scale3D.selection(x, y, z, sx, sy, sz);
       WIN3D.update = true;
     }
     else {
@@ -55321,11 +55321,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.update = true;}
-        else if (low_case.equals("selection")) {Delete3Ds.selection(); WIN3D.update = true;}
+        else if (low_case.equals("selection")) {Delete3D.selection(); WIN3D.update = true;}
         else if (low_case.equals("groups")) {allGroups.makeEmpty(0); WIN3D.update = true;}
         else if (low_case.equals("model2ds")) {allModel2Ds.makeEmpty(0); WIN3D.update = true;}
         else if (low_case.equals("model1ds")) {allModel1Ds.makeEmpty(0); WIN3D.update = true;}
-        else if (low_case.equals("vertices")) {Delete3Ds.selected_isolatedVertices(); WIN3D.update = true;}
+        else if (low_case.equals("vertices")) {Delete3D.selected_isolatedVertices(); WIN3D.update = true;}
         else if (low_case.equals("faces")) {allFaces.makeEmpty(0); WIN3D.update = true;}
         else if (low_case.equals("lines")) {allCurves.makeEmpty(0); WIN3D.update = true;}
         else if (low_case.equals("solids")) {allSolids.makeEmpty(0); WIN3D.update = true;}
@@ -55362,11 +55362,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       
       for (int q = 0; q < n; q++) {
-        Clone3Ds.selection(true); 
-        if ((dx != 0) || (dy != 0) || (dz != 0)) Move3Ds.selection(dx, dy, dz);
-        if (rx != 0) Rotate3Ds.selection(0, 0, 0, rx, 0);
-        if (ry != 0) Rotate3Ds.selection(0, 0, 0, ry, 1);
-        if (rz != 0) Rotate3Ds.selection(0, 0, 0, rz, 2);
+        Clone3D.selection(true); 
+        if ((dx != 0) || (dy != 0) || (dz != 0)) Move3D.selection(dx, dy, dz);
+        if (rx != 0) Rotate3D.selection(0, 0, 0, rx, 0);
+        if (ry != 0) Rotate3D.selection(0, 0, 0, ry, 1);
+        if (rz != 0) Rotate3D.selection(0, 0, 0, rz, 2);
       }
       WIN3D.update = true;
     }
@@ -55393,10 +55393,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
-             if (low_case.equals("all")) {Select3Ds.select_all(); WIN3D.update = true;}
-        else if (low_case.equals("reverse")) {Select3Ds.reverse_Selection(); WIN3D.update = true;}
-        else if (low_case.equals("nothing")) {Select3Ds.deselect_all(); WIN3D.update = true;}
-        else if (low_case.equals("last")) {Select3Ds.select_Last(); WIN3D.update = true;}
+             if (low_case.equals("all")) {Select3D.select_all(); WIN3D.update = true;}
+        else if (low_case.equals("reverse")) {Select3D.reverse_Selection(); WIN3D.update = true;}
+        else if (low_case.equals("nothing")) {Select3D.deselect_all(); WIN3D.update = true;}
+        else if (low_case.equals("last")) {Select3D.select_Last(); WIN3D.update = true;}
       }
     }
     else {
@@ -55430,7 +55430,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       WIN3D.update = true;  
       current_ObjectCategory = ObjectCategory.MODEL2D; 
       UI_BAR_b.update = true;
-      //Select3Ds.select_Last();
+      //Select3D.select_Last();
     }
     else {
       return_message = "2Dman m=? x=? y=? z=?";
@@ -55465,7 +55465,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.MODEL2D; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55519,7 +55519,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.MODEL0D; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55562,11 +55562,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {   
-        Create3Ds.add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
+        Create3D.add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55611,11 +55611,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
-        Create3Ds.add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
+        Create3D.add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55662,11 +55662,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
-        Create3Ds.add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
+        Create3D.add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55713,11 +55713,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
-        Create3Ds.add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
+        Create3D.add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55762,11 +55762,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((d != 0) && (h != 0)) {   
-        Create3Ds.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
+        Create3D.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55809,11 +55809,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (d != 0) {   
-        Create3Ds.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
+        Create3D.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55867,11 +55867,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0) && (px > 0) && (py > 0) && (pz > 0)) {   
-        Create3Ds.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
+        Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55918,11 +55918,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
-        Create3Ds.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
+        Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -55968,11 +55968,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
-        Create3Ds.add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
+        Create3D.add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56013,11 +56013,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (d != 0) {   
-        Create3Ds.add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
+        Create3D.add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56062,11 +56062,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((d != 0) && (h != 0)) {   
-        Create3Ds.add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
+        Create3D.add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.GROUP; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56111,11 +56111,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((d != 0) && (h != 0)) {   
-        Create3Ds.add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
+        Create3D.add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56158,11 +56158,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (d != 0) {   
-        Create3Ds.add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
+        Create3D.add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56206,11 +56206,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {   
-        Create3Ds.add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
+        Create3D.add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56256,11 +56256,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       {   
-        Create3Ds.add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+        Create3D.add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56312,11 +56312,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       {   
-        Create3Ds.add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+        Create3D.add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56374,11 +56374,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       {   
-        Create3Ds.add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
+        Create3D.add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56442,11 +56442,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       {   
-        Create3Ds.add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
+        Create3D.add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56488,11 +56488,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((d != 0) && (w != 0)) {
-        Create3Ds.add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
+        Create3D.add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56534,11 +56534,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((d != 0) && (h != 0)) {   
-        Create3Ds.add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
+        Create3D.add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.FACE; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56585,7 +56585,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.SOLID; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56632,7 +56632,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.SECTION; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56679,7 +56679,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CAMERA; 
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56724,7 +56724,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CURVE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56774,7 +56774,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         WIN3D.update = true;  
         current_ObjectCategory = ObjectCategory.CURVE;
         UI_BAR_b.update = true;
-        //Select3Ds.select_Last();
+        //Select3D.select_Last();
       }
     }
     else {
@@ -56807,97 +56807,97 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   }
   
   else if (Command_CAPITAL.equals("VERTEX>GROUP")) {
-    Select3Ds.convert_Vertices_to_Groups();
+    Select3D.convert_Vertices_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("FACE>GROUP")) {
-    Select3Ds.convert_Faces_to_Groups();
+    Select3D.convert_Faces_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>FACE")) {
-    Select3Ds.convert_Groups_to_Faces();
+    Select3D.convert_Groups_to_Faces();
     current_ObjectCategory = ObjectCategory.FACE;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }    
   else if (Command_CAPITAL.equals("CURVE>GROUP")) {
-    Select3Ds.convert_Curves_to_Groups();
+    Select3D.convert_Curves_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>CURVE")) {
-    Select3Ds.convert_Groups_to_Curves();
+    Select3D.convert_Groups_to_Curves();
     current_ObjectCategory = ObjectCategory.CURVE;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }            
   else if (Command_CAPITAL.equals("CURVE>VERTEX")) {
-    Select3Ds.convert_Curves_to_Vertices();
+    Select3D.convert_Curves_to_Vertices();
     current_ObjectCategory = ObjectCategory.VERTEX;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   } 
   else if (Command_CAPITAL.equals("VERTEX>CURVE")) {
-    Select3Ds.convert_Vertices_to_Curves();
+    Select3D.convert_Vertices_to_Curves();
     current_ObjectCategory = ObjectCategory.CURVE;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }               
   else if (Command_CAPITAL.equals("GROUP>VERTEX")) {
-    Select3Ds.convert_Groups_to_Vertices();
+    Select3D.convert_Groups_to_Vertices();
     current_ObjectCategory = ObjectCategory.VERTEX;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }  
   else if (Command_CAPITAL.equals("FACE>VERTEX")) {
-    Select3Ds.convert_Faces_to_Vertices();
+    Select3D.convert_Faces_to_Vertices();
     current_ObjectCategory = ObjectCategory.VERTEX;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   } 
   else if (Command_CAPITAL.equals("VERTEX>FACE")) {
-    Select3Ds.convert_Vertices_to_Faces();
+    Select3D.convert_Vertices_to_Faces();
     current_ObjectCategory = ObjectCategory.FACE;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }    
   else if (Command_CAPITAL.equals("SOLID>GROUP")) {
-    Select3Ds.convert_Solids_to_Groups();
+    Select3D.convert_Solids_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>SOLID")) {
-    Select3Ds.convert_Groups_to_Solids();
+    Select3D.convert_Groups_to_Solids();
     current_ObjectCategory = ObjectCategory.SOLID;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }                
   else if (Command_CAPITAL.equals("2D>GROUP")) {
-    Select3Ds.convert_Model2Ds_to_Groups();
+    Select3D.convert_Model2Ds_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>2D")) {
-    Select3Ds.convert_Groups_to_Model2Ds();
+    Select3D.convert_Groups_to_Model2Ds();
     current_ObjectCategory = ObjectCategory.MODEL2D;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("0D>GROUP")) {
-    Select3Ds.convert_Model0Ds_to_Groups();
+    Select3D.convert_Model0Ds_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.update = true;
     UI_BAR_b.update = true;
   }             
   else if (Command_CAPITAL.equals("GROUP>0D")) {
-    Select3Ds.convert_Groups_to_Model0Ds();
+    Select3D.convert_Groups_to_Model0Ds();
     current_ObjectCategory = ObjectCategory.MODEL0D;
     WIN3D.update = true;
     UI_BAR_b.update = true;
