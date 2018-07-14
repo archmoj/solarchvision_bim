@@ -1,5 +1,5 @@
 
-// Model0Ds --> export, solid, shadow 
+// Model0Ds --> solid, shadow 
 
 
 // move should keep the same distance of bounding box - now only moves the center
@@ -24925,7 +24925,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   
   allSections.draw(TypeWindow.OBJ);
   
-  allModel1Ds.draw(TypeWindow.OBJ);
+  allModel0Ds.draw(TypeWindow.OBJ);
   
   allModel2Ds.draw(TypeWindow.OBJ);
   
@@ -28587,11 +28587,11 @@ class solarchvision_Land3D {
     if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
       proceed = false;
     }
-    
+    /*
     if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {  
       proceed = true;
     }
-    
+    */
     if (proceed) {
   
       int PAL_type = SHADE.get_PAL_type(); 
@@ -29547,8 +29547,14 @@ class solarchvision_Model0Ds {
   
   float[][] Vertices;
   int[][] Faces;
+  
+  int tree_id = -1; // internal
+  int _turn = -1; // internal
+  int target_window; // internal
 
-  void draw (int target_window) {
+  void draw (int tar_win) {
+    
+    target_window = tar_win; 
     
     this.Faces = new int [this.num][4];
     this.Vertices = new float [4 * this.num][3];
@@ -29571,7 +29577,7 @@ class solarchvision_Model0Ds {
     
           if (this.num != 0) {
     
-            mtlOutput.println("newmtl " + "Model0Ds_Trunk");
+            mtlOutput.println("newmtl " + "Tree3D_Trunk");
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
             mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
             mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
@@ -29584,7 +29590,7 @@ class solarchvision_Model0Ds {
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
     
-            mtlOutput.println("newmtl " + "Model0Ds_Leaf");
+            mtlOutput.println("newmtl " + "Tee3D_Leaf");
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
             mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
             mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
@@ -29602,6 +29608,8 @@ class solarchvision_Model0Ds {
       
   
       for (int f = 0; f < this.num; f++) {
+        
+        tree_id = f;
   
         float x = this.getX(f);
         float y = this.getY(f);
@@ -29628,7 +29636,7 @@ class solarchvision_Model0Ds {
 
 
         if (n == 0) {
-          
+            
           if (target_window == TypeWindow.OBJ) {
           
             num_vertices_added = 0;
@@ -29639,34 +29647,25 @@ class solarchvision_Model0Ds {
             }    
           }
   
-          float Alpha = 0;
-          float Beta = rot; 
-  
-  
+
+          int start_turn = 1;
+          int end_turn = 1;
           if (target_window == TypeWindow.OBJ) {
-            for (int _turn = 1; _turn < 4; _turn++) {
-//this.branch_export(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
-            }
-    
-            obj_lastVertexNumber += num_vertices_added;
-            obj_lastVtextureNumber += num_vertices_added;  
+            end_turn = 3;
           }
           
-          if (target_window == TypeWindow.WIN3D) {
+          for (_turn = start_turn; _turn <= end_turn; _turn++) { 
   
-//this.branch_main(x, y, z, Alpha, Beta, scale, dMin, dMin, dMax, TrunkSize, LeafSize);
-            
             WIN3D.graphics.fill(random(128) + 128, random(64) + 64, 0);
             WIN3D.graphics.noStroke();
             //WIN3D.graphics.stroke(0, 0, 0);
             //WIN3D.graphics.strokeWeight(1);
-
+  
             WIN3D.graphics.pushMatrix();
             WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
             WIN3D.graphics.translate(x, -y, z);
             WIN3D.graphics.rotateZ(rot);
-            
-            
+              
             float treeHeight0 = rad;
             float treeWidth0 = rad * trunkSize * 0.15;
             
@@ -29677,6 +29676,8 @@ class solarchvision_Model0Ds {
             
             WIN3D.graphics.popMatrix();
             
+            
+
             
             
             // ----------------
@@ -29710,10 +29711,16 @@ class solarchvision_Model0Ds {
             this.Faces[f][1] = f * 4 + 1;
             this.Faces[f][2] = f * 4 + 2;
             this.Faces[f][3] = f * 4 + 3;           
-            
-            
-          }
   
+          }
+          
+
+          if (target_window == TypeWindow.OBJ) {
+            obj_lastVertexNumber += num_vertices_added;
+            obj_lastVtextureNumber += num_vertices_added;     
+          }          
+          
+          
         }
       }
     }
@@ -29785,24 +29792,72 @@ class solarchvision_Model0Ds {
       WIN3D.graphics.beginShape();
       for (int j = 0; j < 4; j++) {
   
-        float U = 0;
-        if ((j == 1) || (j == 2)) U = 1;
+        float u = 0;
+        if ((j == 1) || (j == 2)) u = 1;
   
-        float V = 0;
-        if ((j == 2) || (j == 3)) V = 1;
+        float v = 0;
+        if ((j == 2) || (j == 3)) v = 1;
   
         float T = w;
         if ((j == 2) || (j == 3)) T *= this.BranchRatio; // for conic trunks
   
-        float x = T * cos((i + U) * TWO_PI / float(this.elementSegments));
-        float y = T * sin((i + U) * TWO_PI / float(this.elementSegments));
-        float z = h * (V - 0.5);
+        float x = T * cos((i + u) * TWO_PI / float(this.elementSegments));
+        float y = T * sin((i + u) * TWO_PI / float(this.elementSegments));
+        float z = h * (v - 0.5);
         
         WIN3D.graphics.vertex(x, -y, z);
-
+        
+        if (target_window == TypeWindow.OBJ) {
+        
+          if (_turn == 1) {
+  
+            SOLARCHVISION_OBJprintVertex(WIN3D.graphics.modelX(x,y,z),
+                                         WIN3D.graphics.modelY(x,y,z), 
+                                         WIN3D.graphics.modelZ(x,y,z));  
+                                       
+          }
+  
+          if (_turn == 2) {
+  
+            SOLARCHVISION_OBJprintVtexture(u, v, 0);
+          }      
+        
+        }
       }
 
       WIN3D.graphics.endShape(CLOSE);
+      
+      if (target_window == TypeWindow.OBJ) {
+        if (_turn == 3) {
+  
+          num_vertices_added += 4;
+  
+          String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
+          String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+          String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+          String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+  
+          String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
+          String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
+          String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
+          String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
+  
+          if (User3D.export_PolyToPoly == 0) {
+            obj_lastGroupNumber += 1;
+            objOutput.println("g Tree3D_Trunk_n" + nf(tree_id, 0));
+          }
+  
+          if (User3D.export_MaterialLibrary) {
+            objOutput.println("usemtl Tree3D_Trunk");
+          }
+  
+          obj_lastFaceNumber += 1;
+          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+          
+        }   
+       
+      }
+      
     }
     
   }  
