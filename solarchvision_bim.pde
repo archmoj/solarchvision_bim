@@ -854,10 +854,10 @@ class solarchvision_Functions {
     float dLat = (float) (lat2 - lat1);
   
     float a = this.sin_ang(dLon / 2.0);
-    float b = this.sin_ang(dLat / 2.0) * this.sin_ang(dLat / 2.0) + this.cos_ang((float) lat1) * this.cos_ang((float) lat2) * a * a;
-    float d = 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) DOUBLE_r_Earth; 
-  
-    return(d);
+    float b = this.sin_ang(dLat / 2.0) * this.sin_ang(dLat / 2.0) + 
+              this.cos_ang((float) lat1) * this.cos_ang((float) lat2) * a * a;
+              
+    return 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) DOUBLE_r_Earth; 
   }
   
   float[] vec_scale (float[] a, float b) {
@@ -1048,7 +1048,9 @@ class solarchvision_Functions {
   
   boolean isInside_Quadrangle (float[] P, float[] A, float[] B, float[] C, float[] D) {  
   
-    float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])};
+    float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 
+                 0.25 * (A[1] + B[1] + C[1] + D[1]), 
+                 0.25 * (A[2] + B[2] + C[2] + D[2])};
   
     float pX = P[0] - G[0];
     float pY = P[1] - G[1];
@@ -1187,10 +1189,10 @@ class solarchvision_Functions {
     float[][] return_vertices = {
     };
   
-    int TotalSubNo = 1;
-    if (tessellation > 0) TotalSubNo = base_Vertices.length * int(this.roundTo(pow(4, tessellation - 1), 1));   
+    int totalNumberOfSubs = 1;
+    if (tessellation > 0) totalNumberOfSubs = base_Vertices.length * int(this.roundTo(pow(4, tessellation - 1), 1));   
   
-    if ((tessellation <= 0) || (n < 0) || (n >= TotalSubNo)) {
+    if ((tessellation <= 0) || (n < 0) || (n >= totalNumberOfSubs)) {
       return_vertices = new float [base_Vertices.length][3];
   
       for (int j = 0; j < base_Vertices.length; j++) {
@@ -5777,9 +5779,13 @@ class solarchvision_STUDY {
     if (fill_back != 0) {
       for (int i = this.j_Start; i < this.j_End; i++) {
   
+        float x1 = (i + this.rect_offset_x) * sx_Plot;
+        float y1 = 0;
+        float h = 2 * 90 * this.rect_scale * sx_Plot;
+        
         this.graphics.stroke(223);
         this.graphics.fill(223);
-        this.graphics.ellipse((i + this.rect_offset_x) * sx_Plot, 0, 2 * 90 * this.rect_scale * sx_Plot, 2 * 90 * this.rect_scale * sx_Plot);
+        this.graphics.ellipse(x1, y1, h, h);
       }
     }
   
@@ -5796,8 +5802,14 @@ class solarchvision_STUDY {
         }
         int r = 0;
         if ((t % 45) != 0) r = 15;
+
+        float x1 = (i + this.rect_offset_x + r * this.rect_scale * funcs.cos_ang(t)) * sx_Plot;
+        float x2 = (i + this.rect_offset_x + 90 * this.rect_scale * funcs.cos_ang(t)) * sx_Plot;
+        float y1 = -(r * this.rect_scale * funcs.sin_ang(t)) * sx_Plot;
+        float y2 = -(90 * this.rect_scale * funcs.sin_ang(t)) * sx_Plot;
   
-        this.graphics.line((i + this.rect_offset_x + r * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(r * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot, (i + this.rect_offset_x + 90 * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(90 * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot); 
+        this.graphics.line(x1, y1, x2, y2); 
+
   
         if (((t + 45) % 90) == 0) {
           this.graphics.stroke(0, 127);
@@ -5805,36 +5817,38 @@ class solarchvision_STUDY {
           this.graphics.textSize(sx_Plot * 0.150 / this.U_scale);
           this.graphics.textAlign(CENTER, CENTER);
   
-          String ORI = "";
+          String txt = "";
           switch((360 + 90 - t) % 360) {
           case 0 : 
-            ORI = "N"; 
+            txt = "N"; 
             break;
           case 45 : 
-            ORI = "NE"; 
+            txt = "NE"; 
             break;
           case 90 : 
-            ORI = "E"; 
+            txt = "E"; 
             break;
           case 135 : 
-            ORI = "SE"; 
+            txt = "SE"; 
             break;
           case 180 : 
-            ORI = "S"; 
+            txt = "S"; 
             break;
           case 225 : 
-            ORI = "SW"; 
+            txt = "SW"; 
             break;
           case 270 : 
-            ORI = "W"; 
+            txt = "W"; 
             break;
           case 315 : 
-            ORI = "NW"; 
+            txt = "NW"; 
             break;
           }
+          
+          float x = (i + this.rect_offset_x + 110 * this.rect_scale * funcs.cos_ang(t)) * sx_Plot;
+          float y = -(110 * this.rect_scale * funcs.sin_ang(t)) * sx_Plot;
   
-          this.graphics.text(ORI, (i + this.rect_offset_x + 110 * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(110 * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot);
-          //this.graphics.text(String.valueOf((360 + 90 - t) % 360), (i + this.rect_offset_x + 110 * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(110 * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot);
+          this.graphics.text(txt, x, y);
         }
       }
   
@@ -5850,7 +5864,11 @@ class solarchvision_STUDY {
           this.graphics.noFill();
         }
   
-        this.graphics.ellipse((i + this.rect_offset_x) * sx_Plot, 0, 2 * r * this.rect_scale * sx_Plot, 2 * r * this.rect_scale * sx_Plot);
+        float x1 = (i + this.rect_offset_x) * sx_Plot;
+        float y1 = 0;
+        float h = 2 * r * this.rect_scale * sx_Plot;
+        
+        this.graphics.ellipse(x1, y1, h, h);
   
         int t = 90;
         if (t == 90) {
@@ -5858,7 +5876,7 @@ class solarchvision_STUDY {
           this.graphics.fill(0, 127);
           this.graphics.textSize(sx_Plot * 0.200 / this.U_scale);
           this.graphics.textAlign(CENTER, CENTER);
-          this.graphics.text(nf(int(r / impact_scale), 1), (i + this.rect_offset_x + r * this.rect_scale * (funcs.cos_ang(t))) * sx_Plot, -(r * this.rect_scale * (funcs.sin_ang(t))) * sx_Plot);
+          this.graphics.text(nf(int(r / impact_scale), 1), (i + this.rect_offset_x + r * this.rect_scale * funcs.cos_ang(t)) * sx_Plot, -(r * this.rect_scale * funcs.sin_ang(t)) * sx_Plot);
         }
       }
     }
@@ -10326,11 +10344,11 @@ class solarchvision_Faces {
     
               int tessellation = this.getTessellation(f);
     
-              int TotalSubNo = 1;  
+              int totalNumberOfSubs = 1;  
               if (this.getMaterial(f) == 0) {
                 tessellation += this.displayTessellation;
               }
-              if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+              if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
               float[][] base_Vertices = new float [this.nodes[f].length][3];
               for (int j = 0; j < this.nodes[f].length; j++) {
@@ -10340,7 +10358,7 @@ class solarchvision_Faces {
                 base_Vertices[j][2] = allPoints.getZ(vNo);
               }
     
-              for (int n = 0; n < TotalSubNo; n++) {
+              for (int n = 0; n < totalNumberOfSubs; n++) {
     
                 float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
     
@@ -10483,12 +10501,12 @@ class solarchvision_Faces {
     
                     int tessellation = this.getTessellation(f);
     
-                    int TotalSubNo = 1;  
+                    int totalNumberOfSubs = 1;  
                     if (this.getMaterial(f) == 0) {
                       tessellation += this.displayTessellation;
                     }
     
-                    if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+                    if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
                     float[][] base_Vertices = new float [this.nodes[f].length][3];
                     for (int j = 0; j < this.nodes[f].length; j++) {
@@ -10498,7 +10516,7 @@ class solarchvision_Faces {
                       base_Vertices[j][2] = allPoints.getZ(vNo);
                     }
     
-                    for (int n = 0; n < TotalSubNo; n++) {
+                    for (int n = 0; n < totalNumberOfSubs; n++) {
     
                       float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
     
@@ -10658,12 +10676,12 @@ class solarchvision_Faces {
     
                     int tessellation = this.getTessellation(f);
     
-                    int TotalSubNo = 1;  
+                    int totalNumberOfSubs = 1;  
                     if (this.getMaterial(f) == 0) {
                       tessellation += this.displayTessellation;
                     }
     
-                    if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+                    if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
                     float x1 = 0;
                     float y1 = 0;
@@ -10689,7 +10707,7 @@ class solarchvision_Faces {
                       base_Vertices[j][2] = allPoints.getZ(vNo);
                     }
     
-                    for (int n = 0; n < TotalSubNo; n++) {
+                    for (int n = 0; n < totalNumberOfSubs; n++) {
     
                       float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
     
@@ -10929,12 +10947,12 @@ class solarchvision_Faces {
         
                 int tessellation = this.getTessellation(f);
         
-                int TotalSubNo = 1;  
+                int totalNumberOfSubs = 1;  
                 if (this.getMaterial(f) == 0) {
                   tessellation += this.displayTessellation;
                 }
         
-                if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+                if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
         
                 float[][] base_Vertices = new float [this.nodes[f].length][3];
                 for (int j = 0; j < this.nodes[f].length; j++) {
@@ -10944,7 +10962,7 @@ class solarchvision_Faces {
                   base_Vertices[j][2] = allPoints.getZ(vNo);
                 }
         
-                for (int n = 0; n < TotalSubNo; n++) {
+                for (int n = 0; n < totalNumberOfSubs; n++) {
         
                   float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
                   
@@ -11106,7 +11124,7 @@ class solarchvision_Faces {
     
             int tessellation = this.getTessellation(f);
     
-            int TotalSubNo = 1;  
+            int totalNumberOfSubs = 1;  
             if (this.getMaterial(f) == 0) {
               tessellation += this.displayTessellation;
             }
@@ -11115,7 +11133,7 @@ class solarchvision_Faces {
               tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
             }
     
-            if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+            if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int j = 0; j < this.nodes[f].length; j++) {
@@ -11125,7 +11143,7 @@ class solarchvision_Faces {
               base_Vertices[j][2] = allPoints.getZ(vNo);
             }
     
-            for (int n = 0; n < TotalSubNo; n++) {
+            for (int n = 0; n < totalNumberOfSubs; n++) {
     
               float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
               
@@ -11207,11 +11225,11 @@ class solarchvision_Faces {
   
             int tessellation = this.getTessellation(f);
   
-            int TotalSubNo = 1;  
+            int totalNumberOfSubs = 1;  
             if (this.getMaterial(f) == 0) {
               tessellation += this.displayTessellation;
             }
-            if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+            if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
   
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int g = 0; g < this.nodes[f].length; g++) {
@@ -11221,7 +11239,7 @@ class solarchvision_Faces {
               base_Vertices[g][2] = allPoints.getZ(vNo);
             }
   
-            for (int n = 0; n < TotalSubNo; n++) {
+            for (int n = 0; n < totalNumberOfSubs; n++) {
   
               float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
               float[][] subFace_Rotated = subFace;
@@ -25442,11 +25460,11 @@ void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D
 
       int tessellation = allFaces.getTessellation(f);
 
-      int TotalSubNo = 1;  
+      int totalNumberOfSubs = 1;  
       if (allFaces.getMaterial(f) == 0) {
         tessellation += allFaces.displayTessellation;
       }
-      if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+      if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -25456,7 +25474,7 @@ void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D
         base_Vertices[j][2] = allPoints.getZ(vNo);
       }
 
-      for (int n = 0; n < TotalSubNo; n++) {
+      for (int n = 0; n < totalNumberOfSubs; n++) {
 
         float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
@@ -26444,9 +26462,9 @@ class solarchvision_Sky3D {
     
               int tessellation = 0;
     
-              int TotalSubNo = 1;  
+              int totalNumberOfSubs = 1;  
               tessellation = Sky3D.displayTessellation;
-              if (tessellation > 0) TotalSubNo = skyFaces[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+              if (tessellation > 0) totalNumberOfSubs = skyFaces[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
               float[][] base_Vertices = new float [skyFaces[f].length][3];
               for (int j = 0; j < skyFaces[f].length; j++) {
@@ -26456,7 +26474,7 @@ class solarchvision_Sky3D {
                 base_Vertices[j][2] = skyVertices[vNo][2];
               }
     
-              for (int n = 0; n < TotalSubNo; n++) {
+              for (int n = 0; n < totalNumberOfSubs; n++) {
     
                 float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
     
@@ -26535,9 +26553,9 @@ class solarchvision_Sky3D {
       
             int tessellation = 0;
       
-            int TotalSubNo = 1;  
+            int totalNumberOfSubs = 1;  
             tessellation = this.displayTessellation;
-            if (tessellation > 0) TotalSubNo = skyFaces[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+            if (tessellation > 0) totalNumberOfSubs = skyFaces[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
       
             float[][] base_Vertices = new float [skyFaces[f].length][3];
             for (int j = 0; j < skyFaces[f].length; j++) {
@@ -26547,7 +26565,7 @@ class solarchvision_Sky3D {
               base_Vertices[j][2] = skyVertices[vNo][2];
             }
       
-            for (int n = 0; n < TotalSubNo; n++) {
+            for (int n = 0; n < totalNumberOfSubs; n++) {
       
               float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
       
@@ -28850,8 +28868,8 @@ class solarchvision_Land3D {
           tessellation = 0;
         }
   
-        int TotalSubNo = 1;  
-        if (tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+        int totalNumberOfSubs = 1;  
+        if (tessellation > 0) totalNumberOfSubs = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
   
         int i_start = this.skipStart;
         int i_end = this.num_rows - 1 - this.skipEnd;
@@ -28886,7 +28904,7 @@ class solarchvision_Land3D {
             base_Vertices[3][1] = this.Mesh[i][j+1][1];
             base_Vertices[3][2] = this.Mesh[i][j+1][2];        
   
-            for (int n = 0; n < TotalSubNo; n++) {
+            for (int n = 0; n < totalNumberOfSubs; n++) {
   
               float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
   
@@ -29327,8 +29345,8 @@ class solarchvision_Land3D {
         tessellation = 0;
       }
 
-      int TotalSubNo = 1;  
-      if (tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+      int totalNumberOfSubs = 1;  
+      if (tessellation > 0) totalNumberOfSubs = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
 
 
       for (int Li = this.skipStart; Li < this.num_rows - 1 - this.skipEnd; Li++) {
@@ -29352,7 +29370,7 @@ class solarchvision_Land3D {
           base_Vertices[3][1] = this.Mesh[Li][Lj+1][1];
           base_Vertices[3][2] = this.Mesh[Li][Lj+1][2];        
 
-          for (int n = 0; n < TotalSubNo; n++) {
+          for (int n = 0; n < totalNumberOfSubs; n++) {
 
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
             float[][] subFace_Rotated = subFace;
@@ -36483,8 +36501,8 @@ class solarchvision_Create3D {
       tessellation = 0;
     }
   
-    int TotalSubNo = 1;  
-    if (tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+    int totalNumberOfSubs = 1;  
+    if (tessellation > 0) totalNumberOfSubs = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
   
   
   
@@ -36511,7 +36529,7 @@ class solarchvision_Create3D {
           base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
           base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];
   
-          for (int n = 0; n < TotalSubNo; n++) {
+          for (int n = 0; n < totalNumberOfSubs; n++) {
   
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
   
@@ -36658,7 +36676,7 @@ class solarchvision_Create3D {
           base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
           base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];      
   
-          for (int n = 0; n < TotalSubNo; n++) {
+          for (int n = 0; n < totalNumberOfSubs; n++) {
   
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
   
@@ -38827,11 +38845,11 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
       int tessellation = allFaces.getTessellation(f);
 
-      int TotalSubNo = 1;  
+      int totalNumberOfSubs = 1;  
       if (allFaces.getMaterial(f) == 0) {
         tessellation += allFaces.displayTessellation;
       }
-      if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+      if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -38841,7 +38859,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
         base_Vertices[j][2] = allPoints.getZ(vNo);
       }     
 
-      for (int n = 0; n < TotalSubNo; n++) {
+      for (int n = 0; n < totalNumberOfSubs; n++) {
 
         float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
@@ -39176,11 +39194,11 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
 
       int tessellation = allFaces.getTessellation(f);
 
-      int TotalSubNo = 1;  
+      int totalNumberOfSubs = 1;  
       if (allFaces.getMaterial(f) == 0) {
         tessellation += allFaces.displayTessellation;
       }
-      if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+      if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -39190,7 +39208,7 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
         base_Vertices[j][2] = allPoints.getZ(vNo);
       }
 
-      for (int n = 0; n < TotalSubNo; n++) {
+      for (int n = 0; n < totalNumberOfSubs; n++) {
 
         float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
@@ -45909,11 +45927,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int tessellation = allFaces.getTessellation(f);
 
-        int TotalSubNo = 1;  
+        int totalNumberOfSubs = 1;  
         if (allFaces.getMaterial(f) == 0) {
           tessellation += allFaces.displayTessellation;
         }
-        if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+        if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
         float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
         for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -45923,7 +45941,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           base_Vertices[j][2] = allPoints.getZ(vNo);
         }
 
-        for (int n = 0; n < TotalSubNo; n++) {
+        for (int n = 0; n < totalNumberOfSubs; n++) {
 
           float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
@@ -46150,11 +46168,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             int tessellation = allFaces.getTessellation(f);
 
-            int TotalSubNo = 1;  
+            int totalNumberOfSubs = 1;  
             if (allFaces.getMaterial(f) == 0) {
               tessellation += allFaces.displayTessellation;
             }
-            if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+            if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
             float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
             for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -46164,7 +46182,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               base_Vertices[j][2] = allPoints.getZ(vNo);
             }
 
-            for (int n = 0; n < TotalSubNo; n++) {
+            for (int n = 0; n < totalNumberOfSubs; n++) {
 
               float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
