@@ -199,6 +199,7 @@ class solarchvision_WINDOWTYPE {
   private final static int OBJ      = 4;
   private final static int RAD      = 5;
   private final static int HTML     = 6;
+  private final static int SHADOW   = 7;
   
 }
 
@@ -11183,7 +11184,7 @@ class solarchvision_Faces {
 
 
 
-  void castShadows (float[] SunR_Rotated) {  
+  void castShadows () {  
   
     if (this.displayAll) {
   
@@ -29310,7 +29311,7 @@ class solarchvision_Land3D {
 
 
 
-  void castShadows (float[] SunR_Rotated) {
+  void castShadows () {
 
     if (this.displaySurface) {
       
@@ -30045,6 +30046,10 @@ class solarchvision_Model0Ds {
   void drawSegments(float w, float h) {
 
     for (int i = 0; i < this.elementSegments; i++) {
+      
+      float[][] subFace = new float[4][3];
+      
+      
       WIN3D.graphics.beginShape();
       for (int j = 0; j < 4; j++) {
   
@@ -30060,6 +30065,10 @@ class solarchvision_Model0Ds {
         float x = T * cos((i + u) * TWO_PI / float(this.elementSegments));
         float y = T * sin((i + u) * TWO_PI / float(this.elementSegments));
         float z = h * (v - 0.5);
+        
+        subFace[j][0] = x;
+        subFace[j][1] = y;
+        subFace[j][2] = z;
         
         WIN3D.graphics.vertex(x, -y, z);
         
@@ -30114,10 +30123,100 @@ class solarchvision_Model0Ds {
        
       }
       
-    }
-    
+      
+      
+
+      if (target_window == TypeWindow.SHADOW) {
+ 
+        float[][] subFace_Rotated = subFace;
+
+        for (int s = 0; s < subFace_Rotated.length; s++) {
+          if (allSolarImpacts.sectionType == 2) {
+            float a = subFace_Rotated[s][0];
+            float b = -subFace_Rotated[s][1];
+            float c = subFace_Rotated[s][2];
+
+            subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
+            subFace_Rotated[s][1] = c;    
+            subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+          } else if (allSolarImpacts.sectionType == 3) {
+          }
+        }  
+
+        SHADOW_graphics.beginShape();
+
+        for (int s = 0; s < subFace_Rotated.length; s++) {
+
+          float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
+          float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
+          float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
+
+          if (z >= 0) {
+
+            if (allSolarImpacts.sectionType == 1) {                    
+              float px = x;
+              float py = y;
+
+              x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+              y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+            } 
+
+            SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY);
+          } else {
+            int s_next = (s + 1) % subFace_Rotated.length;
+            int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
+
+            float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
+            float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
+            float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
+
+            if (z_prev > 0) { 
+              float ratio = z_prev / (z_prev - z);
+
+              float x_trim = x_prev * (1 - ratio) + x * ratio;
+              float y_trim = y_prev * (1 - ratio) + y * ratio;
+
+              if (allSolarImpacts.sectionType == 1) {
+                float px = x_trim;
+                float py = y_trim;
+
+                x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+                y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+              } 
+
+              SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
+            }
+
+            float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
+            float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
+            float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
+
+            if (z_next > 0) { 
+              float ratio = z_next / (z_next - z);
+
+              float x_trim = x_next * (1 - ratio) + x * ratio;
+              float y_trim = y_next * (1 - ratio) + y * ratio;
+
+              if (allSolarImpacts.sectionType == 1) {
+                float px = x_trim;
+                float py = y_trim;
+
+                x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+                y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+              } 
+
+              SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
+            }
+          }
+        }
+
+        SHADOW_graphics.endShape(CLOSE);      
+      }
+      
+      
+      
+    }  
   }  
-  
   
   
 
@@ -30206,13 +30305,6 @@ class solarchvision_Model0Ds {
     XML_setBoolean(parent, "displayLeaves", this.displayLeaves);
   }
 
-
-
-    
-
-
-  
-  
   public void from_XML (XML xml) {
     
     println("Loading:" + this.CLASS_STAMP);
@@ -30249,7 +30341,7 @@ class solarchvision_Model0Ds {
     
     this.displayAll = XML_getBoolean(parent, "displayAll");
     this.displayLeaves = XML_getBoolean(parent, "displayLeaves");
-  }      
+  }
 
 }
 
@@ -30951,7 +31043,7 @@ class solarchvision_Model1Ds {
     }
   }
   
-  void branch_shadow (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY, float Shades_offsetX, float Shades_offsetY) {
+  void branch_shadow (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float Shades_scaleX, float Shades_scaleY, float Shades_offsetX, float Shades_offsetY) {
   
     SHADOW_graphics.strokeWeight(0);
   
@@ -31101,7 +31193,7 @@ class solarchvision_Model1Ds {
           SHADOW_graphics.endShape(CLOSE);
         }
   
-        this.branch_shadow(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY, Shades_offsetY, Shades_offsetY);
+        this.branch_shadow(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, Shades_scaleX, Shades_scaleY, Shades_offsetY, Shades_offsetY);
       }
     } else {
   
@@ -31297,7 +31389,7 @@ class solarchvision_Model1Ds {
   }  
   
   
-  void castShadows (float[] SunR_Rotated) {
+  void castShadows () {
 
     if (this.displayAll) {
 
@@ -31329,7 +31421,7 @@ class solarchvision_Model1Ds {
           float Alpha = 0;
           float Beta = rot; 
 
-          this.branch_shadow(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY, Shades_offsetX, Shades_offsetY);
+          this.branch_shadow(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, Shades_scaleX, Shades_scaleY, Shades_offsetX, Shades_offsetY);
         }
       }
     }
@@ -32161,7 +32253,7 @@ class solarchvision_Model2Ds {
   
     
     
-  void castShadows (float[] SunR_Rotated, float[] SunR) {
+  void castShadows (float[] SunR) {
 
     for (int f = 0; f < this.num; f++) {
 
@@ -57609,7 +57701,9 @@ float Shades_scaleX;
 float Shades_scaleY;
 
 float Shades_offsetX;
-float Shades_offsetY; 
+float Shades_offsetY;
+
+float[] SunR_Rotated;
 
 
 void SOLARCHVISION_castShadows_CurrentSection () {
@@ -57651,7 +57745,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
         float HOUR_ANGLE = i; 
         float[] SunR = SOLARCHVISION_SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
-        float[] SunR_Rotated = SunR; 
+        SunR_Rotated = SunR; 
         int SunR_Rotated_check = 3;
 
         if (allSolarImpacts.sectionType == 2) {
@@ -57698,7 +57792,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
             TREES_graphics.blendMode(BLEND);        
 
-            allModel2Ds.castShadows(SunR_Rotated, SunR);
+            allModel2Ds.castShadows(SunR);
 
             TREES_graphics.popMatrix();
           }
@@ -57730,11 +57824,13 @@ void SOLARCHVISION_castShadows_CurrentSection () {
             SHADOW_graphics.stroke(0); 
             SHADOW_graphics.fill(0);      
     
-            allFaces.castShadows(SunR_Rotated);  
+            allFaces.castShadows();  
 
-            Land3D.castShadows(SunR_Rotated);
+            Land3D.castShadows();
             
-            allModel1Ds.castShadows(SunR_Rotated);
+            allModel1Ds.castShadows();
+            
+            allModel0Ds.draw(TypeWindow.SHADOW);
       
             SHADOW_graphics.popMatrix();
           }
@@ -57785,7 +57881,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
           0, DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
         };
 
-        float[] SunR_Rotated = SunR; 
+        SunR_Rotated = SunR; 
         int SunR_Rotated_check = 3;
 
         if (allSolarImpacts.sectionType == 2) {
@@ -57823,7 +57919,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
           TREES_graphics.blendMode(BLEND);        
 
-          allModel2Ds.castShadows(SunR_Rotated, SunR);
+          allModel2Ds.castShadows(SunR);
 
           TREES_graphics.popMatrix();
         }
@@ -57855,11 +57951,13 @@ void SOLARCHVISION_castShadows_CurrentSection () {
           SHADOW_graphics.stroke(0); 
           SHADOW_graphics.fill(0);
           
-          allFaces.castShadows(SunR_Rotated);
+          allFaces.castShadows();
 
-          Land3D.castShadows(SunR_Rotated);
+          Land3D.castShadows();
     
-          allModel1Ds.castShadows(SunR_Rotated);       
+          allModel1Ds.castShadows();      
+         
+          allModel0Ds.draw(TypeWindow.SHADOW); 
 
           SHADOW_graphics.popMatrix();
         }
