@@ -10312,13 +10312,13 @@ class solarchvision_Faces {
     
               int mt = this.getMaterial(f);
     
-              int Tessellation = this.getTessellation(f);
+              int tessellation = this.getTessellation(f);
     
               int TotalSubNo = 1;  
               if (this.getMaterial(f) == 0) {
-                Tessellation += this.displayTessellation;
+                tessellation += this.displayTessellation;
               }
-              if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+              if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
               float[][] base_Vertices = new float [this.nodes[f].length][3];
               for (int j = 0; j < this.nodes[f].length; j++) {
@@ -10330,7 +10330,7 @@ class solarchvision_Faces {
     
               for (int n = 0; n < TotalSubNo; n++) {
     
-                float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+                float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
     
                 WIN3D.graphics.beginShape();
     
@@ -10469,14 +10469,14 @@ class solarchvision_Faces {
                       }
                     }                  
     
-                    int Tessellation = this.getTessellation(f);
+                    int tessellation = this.getTessellation(f);
     
                     int TotalSubNo = 1;  
                     if (this.getMaterial(f) == 0) {
-                      Tessellation += this.displayTessellation;
+                      tessellation += this.displayTessellation;
                     }
     
-                    if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+                    if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
                     float[][] base_Vertices = new float [this.nodes[f].length][3];
                     for (int j = 0; j < this.nodes[f].length; j++) {
@@ -10488,7 +10488,7 @@ class solarchvision_Faces {
     
                     for (int n = 0; n < TotalSubNo; n++) {
     
-                      float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+                      float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
     
                       for (int s = 0; s < subFace.length; s++) {
     
@@ -10644,14 +10644,14 @@ class solarchvision_Faces {
     
                   for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
     
-                    int Tessellation = this.getTessellation(f);
+                    int tessellation = this.getTessellation(f);
     
                     int TotalSubNo = 1;  
                     if (this.getMaterial(f) == 0) {
-                      Tessellation += this.displayTessellation;
+                      tessellation += this.displayTessellation;
                     }
     
-                    if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+                    if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
                     float x1 = 0;
                     float y1 = 0;
@@ -10679,7 +10679,7 @@ class solarchvision_Faces {
     
                     for (int n = 0; n < TotalSubNo; n++) {
     
-                      float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+                      float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
     
                       CurrentFaceTextureNumber += 1;
     
@@ -10915,14 +10915,14 @@ class solarchvision_Faces {
                 
                 int mt = this.getMaterial(f);
         
-                int Tessellation = this.getTessellation(f);
+                int tessellation = this.getTessellation(f);
         
                 int TotalSubNo = 1;  
                 if (this.getMaterial(f) == 0) {
-                  Tessellation += this.displayTessellation;
+                  tessellation += this.displayTessellation;
                 }
         
-                if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+                if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
         
                 float[][] base_Vertices = new float [this.nodes[f].length][3];
                 for (int j = 0; j < this.nodes[f].length; j++) {
@@ -10934,7 +10934,7 @@ class solarchvision_Faces {
         
                 for (int n = 0; n < TotalSubNo; n++) {
         
-                  float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+                  float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
                   
                   for (int back_or_front = 1 - int(User3D.export_BackSides); back_or_front <= 1; back_or_front++) {
         
@@ -11092,18 +11092,18 @@ class solarchvision_Faces {
     
             int mt = this.getMaterial(f);
     
-            int Tessellation = this.getTessellation(f);
+            int tessellation = this.getTessellation(f);
     
             int TotalSubNo = 1;  
             if (this.getMaterial(f) == 0) {
-              Tessellation += this.displayTessellation;
+              tessellation += this.displayTessellation;
             }
     
-            if ((this.nodes[f].length > 4) && (Tessellation == 0)) { // don't need it for triangles
-              Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+            if ((this.nodes[f].length > 4) && (tessellation == 0)) { // don't need it for triangles
+              tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
             }
     
-            if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+            if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int j = 0; j < this.nodes[f].length; j++) {
@@ -11115,7 +11115,7 @@ class solarchvision_Faces {
     
             for (int n = 0; n < TotalSubNo; n++) {
     
-              float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+              float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
               
               for (int back_or_front = 1 - int(User3D.export_BackSides); back_or_front <= 1; back_or_front++) {
     
@@ -11193,13 +11193,13 @@ class solarchvision_Faces {
           int  mt = this.getMaterial(f);
           if (Materials_Color[mt][0] > 127) {
   
-            int Tessellation = this.getTessellation(f);
+            int tessellation = this.getTessellation(f);
   
             int TotalSubNo = 1;  
             if (this.getMaterial(f) == 0) {
-              Tessellation += this.displayTessellation;
+              tessellation += this.displayTessellation;
             }
-            if (Tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+            if (tessellation > 0) TotalSubNo = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
   
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int g = 0; g < this.nodes[f].length; g++) {
@@ -11211,7 +11211,7 @@ class solarchvision_Faces {
   
             for (int n = 0; n < TotalSubNo; n++) {
   
-              float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+              float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
               float[][] subFace_Rotated = subFace;
   
               for (int s = 0; s < subFace_Rotated.length; s++) {
@@ -11608,7 +11608,7 @@ class solarchvision_Curves {
           
             WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);    
         
-            int Tessellation = int(pow(2, this.getTessellation(f)));
+            int tessellation = int(pow(2, this.getTessellation(f)));
     
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int j = 0; j < this.nodes[f].length; j++) {
@@ -11642,12 +11642,12 @@ class solarchvision_Curves {
               
               if (drawSegment == 1) {
     
-                for (int q = 0; q <= Tessellation; q++) {
+                for (int q = 0; q <= tessellation; q++) {
       
                   float[] P = {0, 0, 0};
                   
                   for (int i = 0; i < 3; i++) {
-                    P[i] = ((Tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(Tessellation);
+                    P[i] = ((tessellation - q) * base_Vertices[nA][i] + q * base_Vertices[nB][i]) / float(tessellation);
                   }
                   
                   
@@ -11677,7 +11677,7 @@ class solarchvision_Curves {
                   }
                   
                   for (int i = 0; i < 3; i++) {
-                    P[i] += weight * ((Tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(Tessellation);
+                    P[i] += weight * ((tessellation - q) * ANG_start[i] + q * ANG_end[i]) / float(tessellation);
                   }        
        
                   
@@ -25428,13 +25428,13 @@ void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D
       SKY2D_graphics.stroke(c);
       SKY2D_graphics.fill(c);
 
-      int Tessellation = allFaces.getTessellation(f);
+      int tessellation = allFaces.getTessellation(f);
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allFaces.displayTessellation;
+        tessellation += allFaces.displayTessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+      if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -25446,7 +25446,7 @@ void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D
 
       for (int n = 0; n < TotalSubNo; n++) {
 
-        float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+        float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
         SKY2D_graphics.beginShape();
 
@@ -26430,11 +26430,11 @@ class solarchvision_Sky3D {
     
             for (int f = 0; f < skyFaces.length; f++) {
     
-              int Tessellation = 0;
+              int tessellation = 0;
     
               int TotalSubNo = 1;  
-              Tessellation = Sky3D.displayTessellation;
-              if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+              tessellation = Sky3D.displayTessellation;
+              if (tessellation > 0) TotalSubNo = skyFaces[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
     
               float[][] base_Vertices = new float [skyFaces[f].length][3];
               for (int j = 0; j < skyFaces[f].length; j++) {
@@ -26446,7 +26446,7 @@ class solarchvision_Sky3D {
     
               for (int n = 0; n < TotalSubNo; n++) {
     
-                float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+                float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
     
                 for (int j = 0; j < subFace.length; j++) {
                   subFace[j] = funcs.vec3_unit(subFace[j]);
@@ -26521,11 +26521,11 @@ class solarchvision_Sky3D {
   
           for (int f = 0; f < skyFaces.length; f++) {      
       
-            int Tessellation = 0;
+            int tessellation = 0;
       
             int TotalSubNo = 1;  
-            Tessellation = this.displayTessellation;
-            if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+            tessellation = this.displayTessellation;
+            if (tessellation > 0) TotalSubNo = skyFaces[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
       
             float[][] base_Vertices = new float [skyFaces[f].length][3];
             for (int j = 0; j < skyFaces[f].length; j++) {
@@ -26537,7 +26537,7 @@ class solarchvision_Sky3D {
       
             for (int n = 0; n < TotalSubNo; n++) {
       
-              float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+              float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
       
               for (int j = 0; j < subFace.length; j++) {
                 subFace[j] = funcs.vec3_unit(subFace[j]);
@@ -28829,17 +28829,17 @@ class solarchvision_Land3D {
   
   
   
-        int Tessellation = this.displayTessellation;
+        int tessellation = this.displayTessellation;
         if (WIN3D.FacesShade == SHADE.Surface_Base) {
-          Tessellation = 0;
+          tessellation = 0;
         }
   
         if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {
-          Tessellation = 0;
+          tessellation = 0;
         }
   
         int TotalSubNo = 1;  
-        if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+        if (tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
   
         int i_start = this.skipStart;
         int i_end = this.num_rows - 1 - this.skipEnd;
@@ -28876,7 +28876,7 @@ class solarchvision_Land3D {
   
             for (int n = 0; n < TotalSubNo; n++) {
   
-              float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+              float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
   
               int n_Map = -1; 
               if (this.displayTexture) { 
@@ -29310,13 +29310,13 @@ class solarchvision_Land3D {
 
     if (this.displaySurface) {
       
-      int Tessellation = this.displayTessellation;
+      int tessellation = this.displayTessellation;
       if (WIN3D.FacesShade == SHADE.Surface_Base) {
-        Tessellation = 0;
+        tessellation = 0;
       }
 
       int TotalSubNo = 1;  
-      if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+      if (tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
 
 
       for (int Li = this.skipStart; Li < this.num_rows - 1 - this.skipEnd; Li++) {
@@ -29342,7 +29342,7 @@ class solarchvision_Land3D {
 
           for (int n = 0; n < TotalSubNo; n++) {
 
-            float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+            float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
             float[][] subFace_Rotated = subFace;
 
             for (int s = 0; s < subFace_Rotated.length; s++) {
@@ -35697,7 +35697,7 @@ class solarchvision_Create3D {
   }  
   
   
-  void create_Face_afterSphericalTessellation (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int[] f) {
+  void create_Face_afterSphericaltessellation (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int[] f) {
   
     if (r > 0) {
     
@@ -35940,7 +35940,7 @@ class solarchvision_Create3D {
   }  
   
   
-  void add_CrystalSphere (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int Tessellation, int isSky, float t) {
+  void add_CrystalSphere (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int tessellation, int isSky, float t) {
   
     current_Material = m;
     current_Tessellation = tes;
@@ -35968,9 +35968,9 @@ class solarchvision_Create3D {
   
     int BuildFaces = 0;
   
-    for (int Loop_Tessellation = 1; Loop_Tessellation <= Tessellation; Loop_Tessellation++) { // added so that the tree generated from the bottom to the top!
+    for (int Loop_Tessellation = 1; Loop_Tessellation <= tessellation; Loop_Tessellation++) { // added so that the tree generated from the bottom to the top!
   
-      if (Loop_Tessellation == Tessellation) BuildFaces = 1;
+      if (Loop_Tessellation == tessellation) BuildFaces = 1;
       else BuildFaces = 0;
   
       for (int i = 1; i <= 5; i++) {
@@ -36076,7 +36076,7 @@ class solarchvision_Create3D {
   
   
   
-  void add_SuperSphere (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Tessellation, float t) {
+  void add_SuperSphere (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int tessellation, float t) {
   
     current_Material = m;
     current_Tessellation = tes;
@@ -36085,7 +36085,7 @@ class solarchvision_Create3D {
     current_Weight = wgt; 
     current_Closed = clz;
   
-    this.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, 1, Tessellation, -1, 90); // passing with isSky:-1
+    this.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, 1, tessellation, -1, 90); // passing with isSky:-1
   
     float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
     value = 1;
@@ -36349,11 +36349,11 @@ class solarchvision_Create3D {
     POINTER_TempObjectFaces = 0;
   }
   
-  void createLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Tessellation, int BuildFaces) {
+  void createLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int tessellation, int BuildFaces) {
 
-    if (Tessellation > 0) {
+    if (tessellation > 0) {
   
-      if (Tessellation == 1) {
+      if (tessellation == 1) {
   
         int[] newPoly = new int [4];
   
@@ -36389,7 +36389,7 @@ class solarchvision_Create3D {
   
   
   
-      Tessellation -= 1;
+      tessellation -= 1;
   
       float[] M = {
         (x1 + x2 + x4) / 3.0, (y1 + y2 + y4) / 3.0, (z1 + z2 + z4) / 3.0
@@ -36401,7 +36401,7 @@ class solarchvision_Create3D {
       M = funcs.vec3_unit(M);
       N = funcs.vec3_unit(N);
   
-      createLozenge(x2, y2, z2, N[0], N[1], N[2], x4, y4, z4, M[0], M[1], M[2], Tessellation, BuildFaces);     
+      createLozenge(x2, y2, z2, N[0], N[1], N[2], x4, y4, z4, M[0], M[1], M[2], tessellation, BuildFaces);     
   
   
       if (BuildFaces != 0) 
@@ -36423,7 +36423,7 @@ class solarchvision_Create3D {
   
         Q = funcs.vec3_unit(Q);
   
-        createLozenge(x2, y2, z2, P[0], P[1], P[2], x1, y1, z1, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
+        createLozenge(x2, y2, z2, P[0], P[1], P[2], x1, y1, z1, Q[0], Q[1], Q[2], tessellation, BuildFaces);
       }
   
   
@@ -36446,7 +36446,7 @@ class solarchvision_Create3D {
   
         Q = funcs.vec3_unit(Q);
   
-        createLozenge(x4, y4, z4, P[0], P[1], P[2], x3, y3, z3, Q[0], Q[1], Q[2], Tessellation, BuildFaces);
+        createLozenge(x4, y4, z4, P[0], P[1], P[2], x3, y3, z3, Q[0], Q[1], Q[2], tessellation, BuildFaces);
       }
     }
   }  
@@ -36465,13 +36465,13 @@ class solarchvision_Create3D {
       }
     };
   
-    int Tessellation = Land3D.displayTessellation;
+    int tessellation = Land3D.displayTessellation;
     if (WIN3D.FacesShade == SHADE.Surface_Base) {
-      Tessellation = 0;
+      tessellation = 0;
     }
   
     int TotalSubNo = 1;  
-    if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+    if (tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
   
   
   
@@ -36500,7 +36500,7 @@ class solarchvision_Create3D {
   
           for (int n = 0; n < TotalSubNo; n++) {
   
-            float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+            float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
   
             int n_Map = -1; 
             for (int q = 0; q < Land3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
@@ -36647,7 +36647,7 @@ class solarchvision_Create3D {
   
           for (int n = 0; n < TotalSubNo; n++) {
   
-            float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+            float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
   
             int max_o = int((16.0 / pow(2, Land3D.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
   
@@ -36979,7 +36979,7 @@ class solarchvision_Create3D {
     addToLastGroup = false;
   }
   
-}  
+}
 
 solarchvision_Create3D Create3D = new solarchvision_Create3D();
 
@@ -38812,13 +38812,13 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
     if (vsb > 0) {
 
-      int Tessellation = allFaces.getTessellation(f);
+      int tessellation = allFaces.getTessellation(f);
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allFaces.displayTessellation;
+        tessellation += allFaces.displayTessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+      if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -38830,7 +38830,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
       for (int n = 0; n < TotalSubNo; n++) {
 
-        float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+        float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
         for (int s = 0; s < subFace.length; s++) {
           
@@ -39161,13 +39161,13 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
 
       int mt = allFaces.getMaterial(f);
 
-      int Tessellation = allFaces.getTessellation(f);
+      int tessellation = allFaces.getTessellation(f);
 
       int TotalSubNo = 1;  
       if (allFaces.getMaterial(f) == 0) {
-        Tessellation += allFaces.displayTessellation;
+        tessellation += allFaces.displayTessellation;
       }
-      if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+      if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
       float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -39179,7 +39179,7 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
 
       for (int n = 0; n < TotalSubNo; n++) {
 
-        float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+        float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
         WIN3D.graphics.beginShape();
 
@@ -45894,13 +45894,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         int f = Select3D.Face_ids[o];
 
-        int Tessellation = allFaces.getTessellation(f);
+        int tessellation = allFaces.getTessellation(f);
 
         int TotalSubNo = 1;  
         if (allFaces.getMaterial(f) == 0) {
-          Tessellation += allFaces.displayTessellation;
+          tessellation += allFaces.displayTessellation;
         }
-        if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+        if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
         float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
         for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -45912,7 +45912,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         for (int n = 0; n < TotalSubNo; n++) {
 
-          float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+          float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
           beginShape();
 
@@ -46135,13 +46135,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
           if ((0 <= f) && (f < allFaces.nodes.length)) { 
 
-            int Tessellation = allFaces.getTessellation(f);
+            int tessellation = allFaces.getTessellation(f);
 
             int TotalSubNo = 1;  
             if (allFaces.getMaterial(f) == 0) {
-              Tessellation += allFaces.displayTessellation;
+              tessellation += allFaces.displayTessellation;
             }
-            if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
+            if (tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
             float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
             for (int j = 0; j < allFaces.nodes[f].length; j++) {
@@ -46153,7 +46153,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             for (int n = 0; n < TotalSubNo; n++) {
 
-              float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+              float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
               beginShape();
 
