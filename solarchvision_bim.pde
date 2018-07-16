@@ -1,7 +1,4 @@
 
-// Model0Ds --> solid, shadow 
-
-
 // move should keep the same distance of bounding box - now only moves the center
 
 // please define station elevation data for CWEEDS points!
@@ -312,7 +309,7 @@ final int TROPO_timeSteps = 24;
 
 // Create3D.autoNormalCurve_Selection
 
-// writing export to rad completed for meshes and land - not allModel1Ds and 2Ds yet!
+// writing export to rad completed for meshes and land - not Model0Ds and 2Ds yet!
 
 // colud record Climate data flags later.
 
@@ -325,7 +322,7 @@ final int TROPO_timeSteps = 24;
 
 // solid rotations inside groups should be translated to locals to avoid problems!
 
-// some rotations are not in degrees e.g. solids, allModel1Ds??, what else?
+// some rotations are not in degrees e.g. solids, what else?
 
 
 float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
@@ -2610,7 +2607,7 @@ class solarchvision_WIN3D {
   
   int UI_CurrentTask = UITASK.Zoom_Orbit_Pan; 
   int UI_OptionXorY = 0; // 0-1
-  int UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. allModel1Ds  
+  int UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. allModel0Ds  
 
 
   int FacesShade = SHADE.Surface_Materials; //Shade_Surface_White; // <<<<<
@@ -2729,8 +2726,6 @@ class solarchvision_WIN3D {
           allPoints.draw();
       
           allModel0Ds.draw(TypeWindow.WIN3D);
-      
-          allModel1Ds.draw(TypeWindow.WIN3D);
       
           allWindRoses.draw();
       
@@ -25342,7 +25337,6 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 void SOLARCHVISION_delete_ALL () {
   
   allModel0Ds.makeEmpty(0);
-  allModel1Ds.makeEmpty(0);
   allModel2Ds.makeEmpty(0);
 
   allCurves.makeEmpty(0);
@@ -30219,6 +30213,96 @@ class solarchvision_Model0Ds {
     }  
   }  
   
+
+
+
+  float[] intersect (float[] ray_pnt, float[] ray_dir) {
+  
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
+  
+    float[][] hitPoint = new float [this.Faces.length][4];
+  
+    for (int f = 0; f < this.Faces.length; f++) {
+      hitPoint[f][0] = FLOAT_undefined;
+      hitPoint[f][1] = FLOAT_undefined;
+      hitPoint[f][2] = FLOAT_undefined;
+      hitPoint[f][3] = FLOAT_undefined;
+    }
+    
+    for (int f = 0; f < this.Faces.length; f++) {
+  
+      int n = this.Faces[f].length;
+      
+      float X_intersect = FLOAT_undefined;         
+      float Y_intersect = FLOAT_undefined;
+      float Z_intersect = FLOAT_undefined;
+      float dist2intersect = FLOAT_undefined;
+  
+      boolean InPoly = false;
+  
+      float[] A = this.Vertices[this.Faces[f][0]];
+      float[] B = this.Vertices[this.Faces[f][1]];
+      float[] C = this.Vertices[this.Faces[f][n - 2]];
+      float[] D = this.Vertices[this.Faces[f][n - 1]];
+      
+      float[] AC = funcs.vec3_diff(A, C);
+      float[] BD = funcs.vec3_diff(B, D);
+      
+      float[] face_norm = funcs.vec3_cross(AC, BD);
+      
+      float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+    
+      float R = -funcs.vec3_dot(ray_dir, face_norm);
+  
+      if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+        dist2intersect = FLOAT_huge;
+      }
+      else {
+        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
+  
+        //if (dist2intersect > 0) {
+        if (dist2intersect > FLOAT_tiny) {
+  
+          X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+          Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+          Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+          
+          float[] P = {X_intersect, Y_intersect, Z_intersect};
+          
+          InPoly = funcs.isInside_Rectangle(P, A, B, C);
+        }
+      }
+            
+      if (InPoly) {
+        hitPoint[f][0] = X_intersect;
+        hitPoint[f][1] = Y_intersect;
+        hitPoint[f][2] = Z_intersect;
+        hitPoint[f][3] = dist2intersect;
+      }  
+  
+    }  
+  
+    float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+  
+    float pre_dist = FLOAT_undefined;
+  
+    for (int f = 0; f < this.Faces.length; f++) {
+  
+      if (pre_dist > hitPoint[f][3]) {
+  
+        pre_dist = hitPoint[f][3];
+  
+        return_point[0] = f;
+        return_point[1] = hitPoint[f][0];
+        return_point[2] = hitPoint[f][1];
+        return_point[3] = hitPoint[f][2];
+        return_point[4] = hitPoint[f][3];
+      }
+  
+    }
+  
+    return return_point;
+  }  
   
 
   
@@ -30350,1087 +30434,8 @@ solarchvision_Model0Ds allModel0Ds = new solarchvision_Model0Ds();
 
 
 
-class solarchvision_Model1Ds {
-  
-  private final static String CLASS_STAMP = "Model1Ds";
-
-  solarchvision_Model1Ds () { // constructor
-    makeEmpty(0);
-  }
-
-  boolean displayAll = true;
-  boolean displayLeaves = true;
-
-  float[][] XYZSR;
-
-  int num; 
-  int[] Type;
-  int[] Seed;  
-  int[] DegreeMin;
-  int[] DegreeMax;
-  float[] TrunkSize;
-  float[] LeafSize;
-  
-  void makeEmpty (int n) {
-    
-    this.num = n;
-    this.XYZSR = new float [n][5]; 
-    this.Type = new int [n];
-    this.DegreeMin = new int [n];
-    this.DegreeMax = new int [n];
-    this.Seed = new int [n];
-    this.TrunkSize = new float [n];
-    this.LeafSize = new float [n];
-
-    if (Select3D != null) {
-      Select3D.deselect_Groups();
-    }  
-  }    
-  
-
-  
-  
-  float getX (int n) {
-    return this.XYZSR[n][0]; 
-  }
-
-  float getY (int n) {
-    return this.XYZSR[n][1]; 
-  }
-
-  float getZ (int n) {
-    return this.XYZSR[n][2]; 
-  }
-
-  float getS (int n) {
-    return this.XYZSR[n][3]; 
-  }
-  
-  float getR (int n) {
-    return this.XYZSR[n][4]; 
-  }  
-
-  void setX (int n, float f) {
-    this.XYZSR[n][0] = f;  
-  }
-
-  void setY (int n, float f) {
-    this.XYZSR[n][1] = f;  
-  }
-
-  void setZ (int n, float f) {
-    this.XYZSR[n][2] = f;  
-  }
-
-  void setS (int n, float f) {
-    this.XYZSR[n][3] = f;  
-  }  
-  
-  void setR (int n, float f) {
-    this.XYZSR[n][4] = f;  
-  }     
-  
-  void move (int n, float dx, float dy, float dz) {
-    this.XYZSR[n][0] += dx;  
-    this.XYZSR[n][1] += dy;
-    this.XYZSR[n][2] += dz;
-  }  
-
-  void magS (int n, float f) {
-    this.XYZSR[n][3] *= f;  
-  }    
-
-  
-
-  
-  int getType (int n) {
-    return this.Type[n]; 
-  }  
-
-  void setType (int n, int t) {
-    this.Type[n] = t;  
-  }  
-  
-  int getSeed (int n) {
-    return this.Seed[n]; 
-  }  
-
-  void setSeed (int n, int t) {
-    this.Seed[n] = t;  
-  }    
-  
-  int getDegreeMin (int n) {
-    return this.DegreeMin[n]; 
-  }  
-
-  void setDegreeMin (int n, int t) {
-    this.DegreeMin[n] = t;  
-  }    
-  
-  int getDegreeMax (int n) {
-    return this.DegreeMax[n]; 
-  }  
-
-  void setDegreeMax (int n, int t) {
-    this.DegreeMax[n] = t;  
-  }  
 
 
-  float getTrunkSize (int n) {
-    return this.TrunkSize[n]; 
-  }  
-
-  void setTrunkSize (int n, float t) {
-    this.TrunkSize[n] = t;  
-  }  
-  
-  float getLeafSize (int n) {
-    return this.LeafSize[n]; 
-  }  
-
-  void setLeafSize (int n, float t) {
-    this.LeafSize[n] = t;  
-  }   
-
-  
-  float[][] Vertices;
-  int[][] Faces;
-
-  void draw (int target_window) {
-  
-    this.Faces = new int [this.num][4];
-    this.Vertices = new float [4 * this.num][3];
-  
-    boolean proceed = true;
-  
-    if (this.displayAll == false) {
-      proceed = false;
-    }
-  
-    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
-      proceed = false;
-    }
-
-    
-    if (proceed) {  
-      
-      if (target_window == TypeWindow.OBJ) {
-        if (User3D.export_MaterialLibrary) {
-    
-          if (this.num != 0) {
-    
-            mtlOutput.println("newmtl " + "Model1Ds_Trunk");
-            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-            mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
-            mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
-            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-    
-    
-            mtlOutput.println("newmtl " + "Model1Ds_Leaf");
-            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-            mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
-            mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
-            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-          }
-        }
-      }      
-      
-      
-  
-      for (int f = 0; f < this.num; f++) {
-  
-        float x = this.getX(f);
-        float y = this.getY(f);
-        float z = this.getZ(f);
-  
-        float r = this.getS(f) * 0.5;
-        float rot = this.getR(f);
-  
-        int n = this.getType(f);
-  
-        int dMin = this.getDegreeMin(f);
-  
-        int dMax = this.getDegreeMax(f);
-  
-        int s = this.getSeed(f);
-  
-        float TrunkSize = this.getTrunkSize(f);
-  
-        float LeafSize = this.getLeafSize(f);
-  
-        randomSeed(s);
-  
-  
-
-        if (n == 0) {
-          
-          if (target_window == TypeWindow.OBJ) {
-          
-            num_vertices_added = 0;
-    
-            if (User3D.export_PolyToPoly == 1) {
-              obj_lastGroupNumber += 1;
-              objOutput.println("g Model1Ds_" + nf(f, 0));
-            }    
-          }
-  
-          float Alpha = 0;
-          float Beta = rot; 
-  
-  
-          if (target_window == TypeWindow.OBJ) {
-            for (int _turn = 1; _turn < 4; _turn++) {
-              this.branch_export(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
-            }
-    
-            obj_lastVertexNumber += num_vertices_added;
-            obj_lastVtextureNumber += num_vertices_added;  
-          }
-          
-          if (target_window == TypeWindow.WIN3D) {
-  
-            this.branch_main(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
-    
-            // ----------------
-            x *= OBJECTS_scale;
-            y *= OBJECTS_scale;
-            z *= OBJECTS_scale;
-            r *= OBJECTS_scale;
-            // ----------------        
-    
-            float t = PI + WIN3D.rotation_Z * PI / 180.0;
-            if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI; 
-    
-    
-            this.Vertices[f * 4 + 0][0] = (x - r * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 0][1] = (y - r * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 0][2] = (z) / OBJECTS_scale;
-    
-            this.Vertices[f * 4 + 1][0] = (x + r * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 1][1] = (y + r * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 1][2] = (z) / OBJECTS_scale;
-    
-            this.Vertices[f * 4 + 2][0] = (x + r * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 2][1] = (y + r * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 2][2] = (z + 2 * r) / OBJECTS_scale;
-    
-            this.Vertices[f * 4 + 3][0] = (x - r * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 3][1] = (y - r * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 3][2] = (z + 2 * r) / OBJECTS_scale;
-    
-            this.Faces[f][0] = f * 4 + 0;
-            this.Faces[f][1] = f * 4 + 1;
-            this.Faces[f][2] = f * 4 + 2;
-            this.Faces[f][3] = f * 4 + 3;
-          }
-  
-        }
-      }
-    }
-  }
-  
-  
-  
-  
-  void branch_export (int _turn, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
-  
-    h *= getRatio_Plant_branch(d);
-  
-    int birth = 1;
-  
-    if ((birth != 0) && (d < Plant_max_degree)) {
-  
-      for (int i = 1; i <= d; i++) {  
-  
-        float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-        float rotXY = Beta + random(-PI, PI);
-  
-        float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
-  
-        //float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
-  
-        float x_dif = 0;
-        float y_dif = 0;
-        float z_dif = h;
-  
-        float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
-        float y_rot = y_dif;
-        float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
-  
-        float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
-        float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
-        float z_new = z0 + z_rot; 
-  
-        if (this.displayAll) {
-          int nSeg = 6; 
-          for (int q = 0; q < nSeg; q++) {
-  
-            for (int j = 0; j < 4; j++) {
-  
-              float the_U = 0;
-              if ((j == 1) || (j == 2)) the_U = 1;
-  
-              float the_V = 0;
-              if ((j == 2) || (j == 3)) the_V = 1;
-  
-              float the_thickness = 0.025 * w * h;
-              if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic trunks
-  
-              float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
-              float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
-              float Trunk_z_dif = h * the_V;
-  
-              float Trunk_x_rot = Trunk_z_dif * sin(rotZX) +  Trunk_x_dif * cos(rotZX);
-              float Trunk_y_rot = Trunk_y_dif;
-              float Trunk_z_rot = Trunk_z_dif * cos(rotZX) - Trunk_x_dif * sin(rotZX);
-  
-              float Trunk_x_new = x0 + Trunk_x_rot * cos(rotXY) - Trunk_y_rot * sin(rotXY);
-              float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
-              float Trunk_z_new = z0 + Trunk_z_rot; 
-  
-  
-              float x = Trunk_x_new;
-              float y = Trunk_y_new;
-              float z = Trunk_z_new;
-              float u = the_U;
-              float v = the_V;
-  
-              v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-  
-              if (_turn == 1) {
-  
-                SOLARCHVISION_OBJprintVertex(x, y, z);
-              }
-  
-              if (_turn == 2) {
-  
-                SOLARCHVISION_OBJprintVtexture(u, v, 0);
-              }
-            }
-  
-            if (_turn == 3) {
-  
-              num_vertices_added += 4;
-  
-              String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
-              String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-              String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-              String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-  
-              String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
-              String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
-              String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
-              String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
-  
-              if (User3D.export_PolyToPoly == 0) {
-                obj_lastGroupNumber += 1;
-                objOutput.println(("g Model1Ds_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
-              }
-  
-              if (User3D.export_MaterialLibrary) {
-                objOutput.println("usemtl Model1Ds_Trunk");
-              }
-  
-              obj_lastFaceNumber += 1;
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            }
-          }
-        }
-  
-        this.branch_export(_turn, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
-      }
-    } else {
-  
-      // must pass all the random values here.
-      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-      float rotXY = Beta + random(-PI, PI);
-      int c = int(random(127));  
-  
-      if (this.displayLeaves) {
-  
-        float LeafVertices[][] = {
-          {
-            0, 0, 0
-          }
-          , {
-            1, 0, 1
-          }
-          , {
-            0, 1, 1
-          }
-          , {
-            -1, 0, 1
-          }
-          , {
-            0, -1, 1
-          }
-          , {
-            0, 0, 2
-          }
-        };
-        int LeafFaces[][] = {
-          {
-            0, 1, 2, 5
-          }
-          , {
-            0, 2, 3, 5
-          }
-          , {
-            0, 3, 4, 5
-          }
-          , {
-            0, 4, 1, 5
-          }
-        };
-  
-        for (int i = 0; i < 4; i++) { // 4: LeafFaces.length
-          for (int j = 0; j < 4; j++) { // 4: LeafFaces[i].length
-  
-            float the_U = 0;
-            if ((j == 1) || (j == 2)) the_U = 1;
-  
-            float the_V = 0;
-            if ((j == 2) || (j == 3)) the_V = 1;
-  
-  
-            float Leaf_x_dif = 0.5 * LeafSize * LeafVertices[LeafFaces[i][j]][0];
-            float Leaf_y_dif = 0.5 * LeafSize * LeafVertices[LeafFaces[i][j]][1];
-            float Leaf_z_dif = 0.5 * LeafSize * LeafVertices[LeafFaces[i][j]][2];
-  
-            float Leaf_x_rot = Leaf_z_dif * sin(rotZX) +  Leaf_x_dif * cos(rotZX);
-            float Leaf_y_rot = Leaf_y_dif;
-            float Leaf_z_rot = Leaf_z_dif * cos(rotZX) - Leaf_x_dif * sin(rotZX);
-  
-            float Leaf_x_new = x0 + Leaf_x_rot * cos(rotXY) - Leaf_y_rot * sin(rotXY);
-            float Leaf_y_new = y0 + Leaf_x_rot * sin(rotXY) + Leaf_y_rot * cos(rotXY);
-            float Leaf_z_new = z0 + Leaf_z_rot; 
-  
-            float x = Leaf_x_new;
-            float y = Leaf_y_new;
-            float z = Leaf_z_new;
-            float u = the_U;
-            float v = the_V;
-  
-            v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-  
-            if (_turn == 1) {
-  
-              SOLARCHVISION_OBJprintVertex(x, y, z);
-            }
-  
-            if (_turn == 2) {
-  
-              SOLARCHVISION_OBJprintVtexture(u, v, 0);
-            }
-          }
-  
-  
-          if (_turn == 3) {  
-  
-            num_vertices_added += 4;
-  
-            String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
-            String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-            String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-            String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-  
-            String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
-            String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
-            String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
-            String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);        
-  
-            if (User3D.export_PolyToPoly == 0) {
-              obj_lastGroupNumber += 1;
-              objOutput.println(("g Model1Ds_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
-            }
-  
-            if (User3D.export_MaterialLibrary) {
-              objOutput.println("usemtl Model1Ds_Leaf");
-            }
-  
-            obj_lastFaceNumber += 1;
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-            if (User3D.export_BackSides) {
-              obj_lastFaceNumber += 1;
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  
-  
-  
-  float getRatio_Plant_branch (float d) {
-    return (0.75 / pow(d, 0.06125));
-  }
-  
-  void branch_main (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
-  
-    h *= getRatio_Plant_branch(d);
-  
-    int birth = 1;
-  
-    if ((birth != 0) && (d < Plant_max_degree)) {
-  
-      for (int i = 1; i <= d; i++) {  
-  
-        float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-        float rotXY = Beta + random(-PI, PI);
-  
-        float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
-  
-        float[] COL = {
-          255, 100 - 6 * w, 50 - 3 * w, 0
-        };
-  
-        WIN3D.graphics.strokeWeight(1);
-  
-        if (allFaces.displayEdges == false) {
-          WIN3D.graphics.noStroke();
-        } else {
-          WIN3D.graphics.stroke(0);
-        }
-  
-        WIN3D.graphics.fill(COL[1], COL[2], COL[3]);
-  
-        float x_dif = 0;
-        float y_dif = 0;
-        float z_dif = h;
-  
-        float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
-        float y_rot = y_dif;
-        float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
-  
-        float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
-        float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
-        float z_new = z0 + z_rot; 
-  
-        if (this.displayAll) {
-          int nSeg = 6; 
-          for (int q = 0; q < nSeg; q++) {
-            WIN3D.graphics.beginShape();
-            for (int j = 0; j < 4; j++) {
-  
-              float the_U = 0;
-              if ((j == 1) || (j == 2)) the_U = 1;
-  
-              float the_V = 0;
-              if ((j == 2) || (j == 3)) the_V = 1;
-  
-              float the_thickness = 0.025 * w * h;
-              if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic trunks
-  
-              float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
-              float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
-              float Trunk_z_dif = h * the_V;
-  
-              float Trunk_x_rot = Trunk_z_dif * sin(rotZX) +  Trunk_x_dif * cos(rotZX);
-              float Trunk_y_rot = Trunk_y_dif;
-              float Trunk_z_rot = Trunk_z_dif * cos(rotZX) - Trunk_x_dif * sin(rotZX);
-  
-              float Trunk_x_new = x0 + Trunk_x_rot * cos(rotXY) - Trunk_y_rot * sin(rotXY);
-              float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
-              float Trunk_z_new = z0 + Trunk_z_rot; 
-  
-              WIN3D.graphics.vertex(Trunk_x_new * OBJECTS_scale * WIN3D.scale, -Trunk_y_new * OBJECTS_scale * WIN3D.scale, Trunk_z_new * OBJECTS_scale * WIN3D.scale);
-            }
-            WIN3D.graphics.endShape(CLOSE);
-          }
-        }
-  
-        this.branch_main(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
-      }
-    } else {
-  
-      // must pass all the random values here.
-      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-      float rotXY = Beta + random(-PI, PI);
-      int c = int(random(127));  
-  
-      if (this.displayLeaves) {
-  
-        WIN3D.graphics.strokeWeight(0);
-  
-        float[] COL = {
-          127, 2 * c, 191 - c, 0
-        };  // opaque!
-  
-        WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
-        WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-  
-        WIN3D.graphics.pushMatrix(); 
-        WIN3D.graphics.translate(x0 * OBJECTS_scale * WIN3D.scale, -y0 * OBJECTS_scale * WIN3D.scale, z0 * OBJECTS_scale * WIN3D.scale);
-        WIN3D.graphics.sphere(0.5 * LeafSize * OBJECTS_scale * WIN3D.scale);
-        WIN3D.graphics.popMatrix();
-      }
-    }
-  }
-  
-  
-  void branch_add_allSolids (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
-  
-  
-    h *= getRatio_Plant_branch(d);
-  
-    int birth = 1;
-  
-    if ((birth != 0) && (d < Plant_max_degree)) {
-  
-      for (int i = 1; i <= d; i++) {  
-  
-        float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-        float rotXY = Beta + random(-PI, PI);
-  
-        float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
-  
-  
-        float x_dif = 0;
-        float y_dif = 0;
-        float z_dif = h;
-  
-        float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
-        float y_rot = y_dif;
-        float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
-  
-        float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
-        float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
-        float z_new = z0 + z_rot; 
-  
-  
-  
-  
-        float cx = 0.5 * (x0 + x_new); 
-        float cy = 0.5 * (y0 + y_new); 
-        float cz = 0.5 * (z0 + z_new);
-  
-        float the_thickness = 0.025 * w * h;
-        float rx = 0.5 * the_thickness;
-        float ry = 0.5 * the_thickness;
-        //float rz = 0.5 * abs(z_new - z0);
-        float rz = 0.5 * abs(z_new - z0) * 1.25; // <<<<<<< to somehow compensate the shrinkage!
-  
-        allSolids.create(cx, cy, cz, 2, 2, 2, rx, ry, rz, 0, (rotZX * 180 / PI), (rotXY * 180 / PI), User3D.create_MeshOrSolid);
-  
-  
-        this.branch_add_allSolids(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
-      }
-    } else {
-  
-      // must pass all the random values here.
-      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-      float rotXY = Beta + random(-PI, PI);
-      int c = int(random(127));  
-  
-      if (this.displayLeaves) {
-  
-        float r0 = 0.5 * LeafSize;
-        allSolids.create(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, User3D.create_MeshOrSolid);
-      }
-    }
-  }
-  
-  void branch_shadow (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float Shades_scaleX, float Shades_scaleY, float Shades_offsetX, float Shades_offsetY) {
-  
-    SHADOW_graphics.strokeWeight(0);
-  
-    SHADOW_graphics.stroke(0);
-    SHADOW_graphics.fill(0);
-  
-    h *= getRatio_Plant_branch(d);
-  
-    int birth = 1;
-  
-    if ((birth != 0) && (d < Plant_max_degree)) {
-  
-      for (int i = 1; i <= d; i++) {  
-  
-        float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-        float rotXY = Beta + random(-PI, PI);
-  
-        float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
-  
-        float x_dif = 0;
-        float y_dif = 0;
-        float z_dif = h;
-  
-        float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
-        float y_rot = y_dif;
-        float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
-  
-        float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
-        float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
-        float z_new = z0 + z_rot; 
-  
-        if (this.displayAll) {
-          int nSeg = 6; 
-          float[][] subFace = new float [nSeg * 4][3];
-          for (int q = 0; q < nSeg; q++) {
-            for (int j = 0; j < 4; j++) {
-  
-              float the_U = 0;
-              if ((j == 1) || (j == 2)) the_U = 1;
-  
-              float the_V = 0;
-              if ((j == 2) || (j == 3)) the_V = 1;
-  
-              float the_thickness = 0.025 * w * h;
-              if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic trunks
-  
-              float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
-              float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
-              float Trunk_z_dif = h * the_V;
-  
-              float Trunk_x_rot = Trunk_z_dif * sin(rotZX) +  Trunk_x_dif * cos(rotZX);
-              float Trunk_y_rot = Trunk_y_dif;
-              float Trunk_z_rot = Trunk_z_dif * cos(rotZX) - Trunk_x_dif * sin(rotZX);
-  
-              float Trunk_x_new = x0 + Trunk_x_rot * cos(rotXY) - Trunk_y_rot * sin(rotXY);
-              float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
-              float Trunk_z_new = z0 + Trunk_z_rot; 
-  
-              subFace[q * 4 + j][0] = Trunk_x_new;
-              subFace[q * 4 + j][1] = Trunk_y_new; 
-              subFace[q * 4 + j][2] = Trunk_z_new;
-            }
-          }
-  
-          float[][] subFace_Rotated = subFace;
-  
-          for (int s = 0; s < subFace_Rotated.length; s++) {
-            if (allSolarImpacts.sectionType == 2) {
-              float a = subFace_Rotated[s][0];
-              float b = -subFace_Rotated[s][1];
-              float c = subFace_Rotated[s][2];
-  
-              subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
-              subFace_Rotated[s][1] = c;    
-              subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-            } else if (allSolarImpacts.sectionType == 3) {
-            }
-          }  
-  
-          SHADOW_graphics.beginShape();
-  
-          for (int s = 0; s < subFace_Rotated.length; s++) {
-  
-            float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
-            float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
-            float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
-  
-            if (z >= 0) {
-  
-              if (allSolarImpacts.sectionType == 1) {                    
-                float px = x;
-                float py = y;
-  
-                x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-              } 
-  
-              SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY);
-            } else {
-              int s_next = (s + 1) % subFace_Rotated.length;
-              int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
-  
-              float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
-              float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
-              float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
-  
-              if (z_prev > 0) { 
-                float ratio = z_prev / (z_prev - z);
-  
-                float x_trim = x_prev * (1 - ratio) + x * ratio;
-                float y_trim = y_prev * (1 - ratio) + y * ratio;
-  
-                if (allSolarImpacts.sectionType == 1) {
-                  float px = x_trim;
-                  float py = y_trim;
-  
-                  x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                  y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                } 
-  
-                SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
-              }
-  
-              float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
-              float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
-              float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
-  
-              if (z_next > 0) { 
-                float ratio = z_next / (z_next - z);
-  
-                float x_trim = x_next * (1 - ratio) + x * ratio;
-                float y_trim = y_next * (1 - ratio) + y * ratio;
-  
-                if (allSolarImpacts.sectionType == 1) {
-                  float px = x_trim;
-                  float py = y_trim;
-  
-                  x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                  y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                } 
-  
-                SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
-              }
-            }
-          }
-  
-          SHADOW_graphics.endShape(CLOSE);
-        }
-  
-        this.branch_shadow(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, Shades_scaleX, Shades_scaleY, Shades_offsetY, Shades_offsetY);
-      }
-    } else {
-  
-      // must pass all the random values here.
-      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-      float rotXY = Beta + random(-PI, PI);
-      int COL = int(random(127));      
-  
-      if (this.displayLeaves) {
-  
-        float x0_Rotated = x0;
-        float y0_Rotated = y0;
-        float z0_Rotated = z0;
-  
-        if (allSolarImpacts.sectionType == 2) {
-          float a = x0;
-          float b = -y0;
-          float c = z0;
-  
-          x0_Rotated = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
-          y0_Rotated = c;    
-          z0_Rotated= a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-        } else if (allSolarImpacts.sectionType == 3) {
-        }
-  
-  
-        float z = z0_Rotated - allSolarImpacts.Z;
-        float x = x0_Rotated - z * SunR_Rotated[1] / SunR_Rotated[3];
-        float y = y0_Rotated - z * SunR_Rotated[2] / SunR_Rotated[3];
-  
-        if (z >= 0) {
-  
-          if (allSolarImpacts.sectionType == 1) {                    
-            float px = x;
-            float py = y;
-  
-            x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-            y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-          } 
-  
-  
-  
-          SHADOW_graphics.ellipse((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY, LeafSize * Shades_scaleX, LeafSize * Shades_scaleY);
-        }
-      }
-    }
-  }
-  
-  float[] intersect (float[] ray_pnt, float[] ray_dir) {
-  
-    float[] ray_normal = funcs.vec3_unit(ray_dir);   
-  
-    float[][] hitPoint = new float [this.Faces.length][4];
-  
-    for (int f = 0; f < this.Faces.length; f++) {
-      hitPoint[f][0] = FLOAT_undefined;
-      hitPoint[f][1] = FLOAT_undefined;
-      hitPoint[f][2] = FLOAT_undefined;
-      hitPoint[f][3] = FLOAT_undefined;
-    }
-    
-    for (int f = 0; f < this.Faces.length; f++) {
-  
-      int n = this.Faces[f].length;
-      
-      float X_intersect = FLOAT_undefined;         
-      float Y_intersect = FLOAT_undefined;
-      float Z_intersect = FLOAT_undefined;
-      float dist2intersect = FLOAT_undefined;
-  
-      boolean InPoly = false;
-  
-      float[] A = this.Vertices[this.Faces[f][0]];
-      float[] B = this.Vertices[this.Faces[f][1]];
-      float[] C = this.Vertices[this.Faces[f][n - 2]];
-      float[] D = this.Vertices[this.Faces[f][n - 1]];
-      
-      float[] AC = funcs.vec3_diff(A, C);
-      float[] BD = funcs.vec3_diff(B, D);
-      
-      float[] face_norm = funcs.vec3_cross(AC, BD);
-      
-      float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-    
-      float R = -funcs.vec3_dot(ray_dir, face_norm);
-  
-      if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-        dist2intersect = FLOAT_huge;
-      }
-      else {
-        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
-  
-        //if (dist2intersect > 0) {
-        if (dist2intersect > FLOAT_tiny) {
-  
-          X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-          Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-          Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-          
-          float[] P = {X_intersect, Y_intersect, Z_intersect};
-          
-          InPoly = funcs.isInside_Rectangle(P, A, B, C);
-        }
-      }
-            
-      if (InPoly) {
-        hitPoint[f][0] = X_intersect;
-        hitPoint[f][1] = Y_intersect;
-        hitPoint[f][2] = Z_intersect;
-        hitPoint[f][3] = dist2intersect;
-      }  
-  
-    }  
-  
-    float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
-  
-    float pre_dist = FLOAT_undefined;
-  
-    for (int f = 0; f < this.Faces.length; f++) {
-  
-      if (pre_dist > hitPoint[f][3]) {
-  
-        pre_dist = hitPoint[f][3];
-  
-        return_point[0] = f;
-        return_point[1] = hitPoint[f][0];
-        return_point[2] = hitPoint[f][1];
-        return_point[3] = hitPoint[f][2];
-        return_point[4] = hitPoint[f][3];
-      }
-  
-    }
-  
-    return return_point;
-  }  
-  
-  
-  
-  
-  void create (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
-  
-    float[] TempModel1Ds_TrunkSize = {
-      TrunkSize
-    }; 
-    this.TrunkSize = concat(this.TrunkSize, TempModel1Ds_TrunkSize);  
-  
-    float[] TempModel1Ds_LeafSize = {
-      LeafSize
-    }; 
-    this.LeafSize = concat(this.LeafSize, TempModel1Ds_LeafSize);
-  
-    int[] TempModel1Ds_Type = {
-      PlantType
-    }; 
-    this.Type = concat(this.Type, TempModel1Ds_Type);
-  
-    int[] TempModel1Ds_DegreeMin = {
-      PlantDegreeMin
-    }; 
-    this.DegreeMin = concat(this.DegreeMin, TempModel1Ds_DegreeMin);
-  
-    int[] TempModel1Ds_DegreeMax = {
-      PlantDegreeMax
-    }; 
-    this.DegreeMax = concat(this.DegreeMax, TempModel1Ds_DegreeMax);
-  
-    int q = PlantSeed;
-    if (q == -1) q = int(random(32767));
-  
-    int[] TempModel1Ds_Seed = {
-      q
-    }; 
-    this.Seed = concat(this.Seed, TempModel1Ds_Seed);
-  
-    float[][] TempModel1Ds_XYZSR = {
-      {
-        x, y, z, s, rot
-      }
-    };
-    this.XYZSR = (float[][]) concat(this.XYZSR, TempModel1Ds_XYZSR);
-  
-    this.num += 1;
-  
-  
-  
-    if (User3D.create_MeshOrSolid != 0) {
-  
-      randomSeed(q);
-  
-      this.branch_add_allSolids(x, y, z, 0, rot, 0.5 * s, PlantDegreeMin, PlantDegreeMin, PlantDegreeMax, TrunkSize, LeafSize);
-    }
-
-  }  
-  
-  
-  void castShadows () {
-
-    if (this.displayAll) {
-
-      for (int f = 0; f < this.num; f++) {
-
-        float x = this.getX(f);
-        float y = this.getY(f);
-        float z = this.getZ(f);
-
-        float r = this.getS(f) * 0.5;
-        float rot = this.getR(f);      
-
-        int n = this.getType(f);
-
-        int dMin = this.getDegreeMin(f);
-
-        int dMax = this.getDegreeMax(f);
-
-        int s = this.getSeed(f);
-
-        float TrunkSize = this.getTrunkSize(f);
-
-        float LeafSize = this.getLeafSize(f);
-
-        randomSeed(s);
-
-        if (n == 0) {
-
-          float Alpha = 0;
-          float Beta = rot; 
-
-          this.branch_shadow(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, Shades_scaleX, Shades_scaleY, Shades_offsetX, Shades_offsetY);
-        }
-      }
-    }
-  }  
-
-}
-
-solarchvision_Model1Ds allModel1Ds = new solarchvision_Model1Ds();
 
 
 class solarchvision_Model2Ds {
@@ -37218,7 +36223,7 @@ class solarchvision_Create3D {
   
       float the_dist = funcs.vec_dist(newVertex[0], TempObjectVertices[i]);
   
-      if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for allModel1Ds spheres!
+      if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for allModel0Ds spheres!
   
         if (min_dist > the_dist) {
           min_dist = the_dist;
@@ -43114,14 +42119,14 @@ void mouseClicked () {
               ROLLOUT.update = true;
             }             
             if (menu_option.equals("Display/Hide Leaves")) {
-              allModel1Ds.displayLeaves = !allModel1Ds.displayLeaves;
+              allModel0Ds.displayLeaves = !allModel0Ds.displayLeaves;
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
             } 
-            if (menu_option.equals("Display/Hide Model1Ds")) {
-              allModel1Ds.displayAll = !allModel1Ds.displayAll;
-              allModel1Ds.displayLeaves = allModel1Ds.displayAll; // <<<<<<
+            if (menu_option.equals("Display/Hide Model0Ds")) {
+              allModel0Ds.displayAll = !allModel0Ds.displayAll;
+              allModel0Ds.displayLeaves = allModel0Ds.displayAll; // <<<<<<
 
               WIN3D.update = true;  
               ROLLOUT.update = true;
@@ -44043,17 +43048,17 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }     
 
-            if (menu_option.equals("Model1DsProps")) {
+            if (menu_option.equals("Model0DsProps")) {
               UI_set_to_Modify_Model0DsProps(0);
               UI_BAR_b.highlight("allFP0");
               UI_BAR_b.update = true;
             }
-            if (menu_option.equals("Pick Model1DsProps")) {
+            if (menu_option.equals("Pick Model0DsProps")) {
               UI_set_to_Modify_Model0DsProps(1);
               UI_BAR_b.highlight("allFP1");
               UI_BAR_b.update = true;
             }
-            if (menu_option.equals("Assign Model1DsProps")) {
+            if (menu_option.equals("Assign Model0DsProps")) {
               UI_set_to_Modify_Model0DsProps(2);
               UI_BAR_b.highlight("allFP2");
               UI_BAR_b.update = true;
@@ -44477,8 +43482,8 @@ void mouseClicked () {
               WIN3D.update = true;
             }   
 
-            if (menu_option.equals("Erase All Model1Ds")) {
-              allModel1Ds.makeEmpty(0);
+            if (menu_option.equals("Erase All Model0Ds")) {
+              allModel0Ds.makeEmpty(0);
               WIN3D.update = true;
             }      
     
@@ -45139,7 +44144,7 @@ void mouseClicked () {
                   } else if (current_ObjectCategory == ObjectCategory.SOLID) {
                     RxP = allSolids.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.MODEL0D) {
-                    RxP = allModel1Ds.intersect(ray_start, ray_direction);
+                    RxP = allModel0Ds.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
                     RxP = allModel2Ds.intersect(ray_start, ray_direction);
                   } else {
@@ -50825,7 +49830,7 @@ class solarchvision_UI_BAR_a {
       "Display/Hide Edges", 
       "Display/Hide Normals", 
       "Display/Hide Leaves", 
-      "Display/Hide Model1Ds",
+      "Display/Hide Model0Ds",
       "Display/Hide Model2Ds",
       "Display/Hide Curves", 
       "Display/Hide Faces", 
@@ -50987,8 +49992,8 @@ class solarchvision_UI_BAR_a {
       "Group >> Face", 
       "Group >> Solid", 
       "Group >> Model2Ds", 
-      "Group >> Model1Ds", 
-      "Model1Ds >> Group", 
+      "Group >> Model0Ds", 
+      "Model0Ds >> Group", 
       "Model2Ds >> Group", 
       "Solid >> Group", 
       "Face >> Group", 
@@ -51114,7 +50119,7 @@ class solarchvision_UI_BAR_a {
       "Pick DegreeMin", 
       "Pick TrunkSize", 
       "Pick LeafSize", 
-      "Pick Model1DsProps", 
+      "Pick Model0DsProps", 
       "Assign Seed/Material", 
       "Assign Tessellation", 
       "Assign Layer", 
@@ -51124,7 +50129,7 @@ class solarchvision_UI_BAR_a {
       "Assign DegreeMin", 
       "Assign TrunkSize", 
       "Assign LeafSize", 
-      "Assign Model1DsProps", 
+      "Assign Model0DsProps", 
       "Assign Pivot", 
       "Drop on LandSurface", 
       "Drop on ModelSurface (Up)", 
@@ -51149,7 +50154,7 @@ class solarchvision_UI_BAR_a {
       "REC. Solid Graph", 
       "REC. Screenshot", 
       "Stop REC.", 
-      "Erase All Model1Ds", 
+      "Erase All Model0Ds", 
       "Erase All Model2Ds", 
       "Erase All Groups", 
       "Erase All Solids", 
@@ -51398,13 +50403,13 @@ class solarchvision_UI_BAR_a {
                   }
                 }               
                 if (this.Items[i][j].equals("Display/Hide Leaves")) {
-                  if (allModel1Ds.displayLeaves == false) {
+                  if (allModel0Ds.displayLeaves == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }  
-                if (this.Items[i][j].equals("Display/Hide Model1Ds")) {
-                  if (allModel1Ds.displayAll == false) {
+                if (this.Items[i][j].equals("Display/Hide Model0Ds")) {
+                  if (allModel0Ds.displayAll == false) {
                     stroke(127); 
                     fill(127);
                   }
@@ -51808,7 +50813,7 @@ class solarchvision_UI_BAR_b {
     
     //{"1", "trSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
     //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
-    //{"1", "allFP0", "allFP1", "allFP2", "Model1DsProps", "1.0"},
+    //{"1", "allFP0", "allFP1", "allFP2", "Model0DsProps", "1.0"},
   
     //{"1", "SEC", "Section", "1.0"},
     //{"1", "SLD", "Solid", "1.0"},
@@ -54623,7 +53628,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("selection")) {Delete3D.selection(); WIN3D.update = true;}
         else if (low_case.equals("groups")) {allGroups.makeEmpty(0); WIN3D.update = true;}
         else if (low_case.equals("model2ds")) {allModel2Ds.makeEmpty(0); WIN3D.update = true;}
-        else if (low_case.equals("model1ds")) {allModel1Ds.makeEmpty(0); WIN3D.update = true;}
+        else if (low_case.equals("model1ds")) {allModel0Ds.makeEmpty(0); WIN3D.update = true;}
         else if (low_case.equals("vertices")) {Delete3D.selected_isolatedVertices(); WIN3D.update = true;}
         else if (low_case.equals("faces")) {allFaces.makeEmpty(0); WIN3D.update = true;}
         else if (low_case.equals("lines")) {allCurves.makeEmpty(0); WIN3D.update = true;}
@@ -57699,7 +56704,7 @@ void XML_setBoolean(XML xml, String tag, boolean value) {
 
 PGraphics TREES_graphics;
 
-PGraphics SHADOW_graphics; // to be accessible to allModel1Ds plants
+PGraphics SHADOW_graphics; 
 
 float Shades_scaleX;
 float Shades_scaleY;
@@ -57832,8 +56837,6 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
             Land3D.castShadows();
             
-            allModel1Ds.castShadows();
-            
             allModel0Ds.draw(TypeWindow.SHADOW);
       
             SHADOW_graphics.popMatrix();
@@ -57959,8 +56962,6 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
           Land3D.castShadows();
     
-          allModel1Ds.castShadows();      
-         
           allModel0Ds.draw(TypeWindow.SHADOW); 
 
           SHADOW_graphics.popMatrix();
