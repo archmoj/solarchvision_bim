@@ -14323,7 +14323,7 @@ class solarchvision_SolarImpacts {
   
       SceneName = "Section_" + Section_Stamp();
   
-      SOLARCHVISION_render_Shadows_CurrentSection();
+      SOLARCHVISION_castShadows_CurrentSection();
     }
   
     this.displayImage = true;
@@ -57612,7 +57612,7 @@ float Shades_offsetX;
 float Shades_offsetY; 
 
 
-void SOLARCHVISION_render_Shadows_CurrentSection () {
+void SOLARCHVISION_castShadows_CurrentSection () {
 
   cursor(WAIT);  
 
