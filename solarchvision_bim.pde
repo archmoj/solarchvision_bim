@@ -1185,15 +1185,15 @@ class solarchvision_Functions {
   }
   
   
-  float[][] getSubFace (float[][] base_Vertices, int Tessellation, int n) {
+  float[][] getSubFace (float[][] base_Vertices, int tessellation, int n) {
   
     float[][] return_vertices = {
     };
   
     int TotalSubNo = 1;
-    if (Tessellation > 0) TotalSubNo = base_Vertices.length * int(this.roundTo(pow(4, Tessellation - 1), 1));   
+    if (tessellation > 0) TotalSubNo = base_Vertices.length * int(this.roundTo(pow(4, tessellation - 1), 1));   
   
-    if ((Tessellation <= 0) || (n < 0) || (n >= TotalSubNo)) {
+    if ((tessellation <= 0) || (n < 0) || (n >= TotalSubNo)) {
       return_vertices = new float [base_Vertices.length][3];
   
       for (int j = 0; j < base_Vertices.length; j++) {
@@ -1232,7 +1232,7 @@ class solarchvision_Functions {
         }
       }
   
-      if (Tessellation == 1) {
+      if (tessellation == 1) {
         return_vertices[0] = A; 
         return_vertices[1] = B; 
         return_vertices[2] = C; 
@@ -1240,7 +1240,7 @@ class solarchvision_Functions {
       } else {
   
         int section = n / div;
-        int res = int(this.roundTo(pow(2, Tessellation - 1), 1));
+        int res = int(this.roundTo(pow(2, tessellation - 1), 1));
         int u = section / res;
         int v = section % res;
   
@@ -42824,17 +42824,17 @@ void mouseClicked () {
               UI_BAR_b.update = true;
             }
 
-            if (menu_option.equals("Change Tessellation")) {
+            if (menu_option.equals("Change tessellation")) {
               UI_set_to_Modify_Tessellation(0);
               UI_BAR_b.highlight("Tes0");
               UI_BAR_b.update = true;
             }            
-            if (menu_option.equals("Pick Tessellation")) {
+            if (menu_option.equals("Pick tessellation")) {
               UI_set_to_Modify_Tessellation(1);
               UI_BAR_b.highlight("Tes1");
               UI_BAR_b.update = true;
             }            
-            if (menu_option.equals("Assign Tessellation")) {
+            if (menu_option.equals("Assign tessellation")) {
               UI_set_to_Modify_Tessellation(2);
               UI_BAR_b.highlight("Tes2");
               UI_BAR_b.update = true;
@@ -43402,7 +43402,7 @@ void mouseClicked () {
               Modify3D.tessellateRectangular_Selection();
               WIN3D.update = true;
             }
-            if (menu_option.equals("Tessellation Triangular")) {
+            if (menu_option.equals("tessellation Triangular")) {
               Modify3D.tessellateTriangular_Selection();
               WIN3D.update = true;
             }            
@@ -48692,9 +48692,9 @@ float valuesSUM = valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 float[][] DiffuseVectors;  
 
-void SOLARCHVISION_build_SkySphere (int Tessellation) {
+void SOLARCHVISION_build_SkySphere (int tessellation) {
 
-  //Create3D.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0,0,0, 1, Tessellation, 1, 90); // SKY
+  //Create3D.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0,0,0, 1, tessellation, 1, 90); // SKY
   //Create3D.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 90); // SKY
   Create3D.add_CrystalSphere(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3, 1, 90); // SKY
 
@@ -50028,7 +50028,7 @@ class solarchvision_UI_BAR_a {
       "Set-In Normal", 
       "Get FirstVertex", 
       "Change Seed/Material", 
-      "Change Tessellation", 
+      "Change tessellation", 
       "Change Layer", 
       "Change Visibility", 
       "Change Weight", 
@@ -50066,7 +50066,7 @@ class solarchvision_UI_BAR_a {
       "Extrude Curve Edges", 
       "Optimize Faces",
       //"Triangulate Faces",
-      "Tessellation Triangular", 
+      "tessellation Triangular", 
       "Tessellate Rectangular", 
       "Tessellate Rows & Columns", 
       "Auto-Normal Selected Faces", 
@@ -50105,7 +50105,7 @@ class solarchvision_UI_BAR_a {
       "PivotZ:Center", 
       "PivotZ:Maximum", 
       "Pick Seed/Material", 
-      "Pick Tessellation", 
+      "Pick tessellation", 
       "Pick Layer", 
       "Pick Visibility", 
       "Pick DegreeMax", 
@@ -50115,7 +50115,7 @@ class solarchvision_UI_BAR_a {
       "Pick LeafSize", 
       "Pick Model1DsProps", 
       "Assign Seed/Material", 
-      "Assign Tessellation", 
+      "Assign tessellation", 
       "Assign Layer", 
       "Assign Visibility", 
       "Assign DegreeMax", 
@@ -50768,7 +50768,7 @@ class solarchvision_UI_BAR_b {
     }
     , 
     {
-      "1", "Tes0", "Tes1", "Tes2", "Tes3", "Change Tessellation", "1.0"
+      "1", "Tes0", "Tes1", "Tes2", "Tes3", "Change tessellation", "1.0"
     }
     , 
     {
@@ -50977,7 +50977,7 @@ class solarchvision_UI_BAR_b {
             if ((this.Items[i][j]).equals("Mat3")) UI_set_to_Modify_Seed(3);
           }
   
-          if (Bar_Switch.equals("Change Tessellation")) {
+          if (Bar_Switch.equals("Change tessellation")) {
             if ((this.Items[i][j]).equals("Tes0")) UI_set_to_Modify_Tessellation(0);
             if ((this.Items[i][j]).equals("Tes1")) UI_set_to_Modify_Tessellation(1);
             if ((this.Items[i][j]).equals("Tes2")) UI_set_to_Modify_Tessellation(2);
@@ -51100,8 +51100,8 @@ class solarchvision_UI_BAR_b {
           if (Bar_Switch.equals("Change Seed/Material")) {
             UI_BAR_b.drawSeed(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("Change Tessellation")) {
-            UI_BAR_b.drawTessellation(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
+          if (Bar_Switch.equals("Change tessellation")) {
+            UI_BAR_b.drawtessellation(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Change Layer")) {
             UI_BAR_b.drawLayer(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
@@ -51702,7 +51702,7 @@ class solarchvision_UI_BAR_b {
   
   
   
-  void drawTessellation (int _type, float x, float y, float r) {
+  void drawtessellation (int _type, float x, float y, float r) {
   
     pushMatrix();
     translate(x, y);
