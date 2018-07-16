@@ -11183,7 +11183,7 @@ class solarchvision_Faces {
 
 
 
-  void castDirectShadows (float[] SunR_Rotated) {  
+  void castShadows (float[] SunR_Rotated) {  
   
     if (this.displayAll) {
   
@@ -11307,7 +11307,7 @@ class solarchvision_Faces {
     }
   }
 
- 
+
   
   public void to_XML (XML xml) {
     
@@ -29307,8 +29307,138 @@ class solarchvision_Land3D {
       
     }
   }
-  
-  
+
+
+
+  void castShadows (float[] SunR_Rotated) {
+
+    if (this.displaySurface) {
+      
+      int Tessellation = this.displayTessellation;
+      if (WIN3D.FacesShade == SHADE.Surface_Base) {
+        Tessellation = 0;
+      }
+
+      int TotalSubNo = 1;  
+      if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+
+
+      for (int Li = this.skipStart; Li < this.num_rows - 1 - this.skipEnd; Li++) {
+        for (int Lj = 0; Lj < this.num_columns - 1; Lj++) {
+
+          float[][] base_Vertices = new float [4][3];
+
+          base_Vertices[0][0] = this.Mesh[Li][Lj][0];
+          base_Vertices[0][1] = this.Mesh[Li][Lj][1];
+          base_Vertices[0][2] = this.Mesh[Li][Lj][2];
+
+          base_Vertices[1][0] = this.Mesh[Li+1][Lj][0];
+          base_Vertices[1][1] = this.Mesh[Li+1][Lj][1];
+          base_Vertices[1][2] = this.Mesh[Li+1][Lj][2];
+
+          base_Vertices[2][0] = this.Mesh[Li+1][Lj+1][0];
+          base_Vertices[2][1] = this.Mesh[Li+1][Lj+1][1];
+          base_Vertices[2][2] = this.Mesh[Li+1][Lj+1][2];
+
+          base_Vertices[3][0] = this.Mesh[Li][Lj+1][0];
+          base_Vertices[3][1] = this.Mesh[Li][Lj+1][1];
+          base_Vertices[3][2] = this.Mesh[Li][Lj+1][2];        
+
+          for (int n = 0; n < TotalSubNo; n++) {
+
+            float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
+            float[][] subFace_Rotated = subFace;
+
+            for (int s = 0; s < subFace_Rotated.length; s++) {
+              if (allSolarImpacts.sectionType == 2) {
+                float a = subFace_Rotated[s][0];
+                float b = -subFace_Rotated[s][1];
+                float c = subFace_Rotated[s][2];
+
+                subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
+                subFace_Rotated[s][1] = c;    
+                subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+              } else if (allSolarImpacts.sectionType == 3) {
+              }
+            }  
+
+            SHADOW_graphics.beginShape();
+
+            for (int s = 0; s < subFace_Rotated.length; s++) {
+
+              float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
+              float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
+              float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
+
+
+
+              if (z >= 0) {
+
+                if (allSolarImpacts.sectionType == 1) {                    
+                  float px = x;
+                  float py = y;
+
+                  x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+                  y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+                } 
+
+                SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
+              } else {
+                int s_next = (s + 1) % subFace_Rotated.length;
+                int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
+
+                float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
+                float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
+                float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
+
+                if (z_prev > 0) { 
+                  float ratio = z_prev / (z_prev - z);
+
+                  float x_trim = x_prev * (1 - ratio) + x * ratio;
+                  float y_trim = y_prev * (1 - ratio) + y * ratio;
+
+                  if (allSolarImpacts.sectionType == 1) {
+                    float px = x_trim;
+                    float py = y_trim;
+
+                    x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+                    y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+                  } 
+
+                  SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
+                }
+
+                float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
+                float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
+                float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
+
+                if (z_next > 0) { 
+                  float ratio = z_next / (z_next - z);
+
+                  float x_trim = x_next * (1 - ratio) + x * ratio;
+                  float y_trim = y_next * (1 - ratio) + y * ratio;
+
+                  if (allSolarImpacts.sectionType == 1) {
+                    float px = x_trim;
+                    float py = y_trim;
+
+                    x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+                    y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+                  } 
+
+                  SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
+                }
+              }
+            }
+
+            SHADOW_graphics.endShape(CLOSE);
+          }
+        }
+      }
+    }
+  }
+
+
   
   public void to_XML (XML xml) {
     
@@ -31167,7 +31297,43 @@ class solarchvision_Model1Ds {
   }  
   
   
+  void castShadows (float[] SunR_Rotated) {
 
+    if (this.displayAll) {
+
+      for (int f = 0; f < this.num; f++) {
+
+        float x = this.getX(f);
+        float y = this.getY(f);
+        float z = this.getZ(f);
+
+        float r = this.getS(f) * 0.5;
+        float rot = this.getR(f);      
+
+        int n = this.getType(f);
+
+        int dMin = this.getDegreeMin(f);
+
+        int dMax = this.getDegreeMax(f);
+
+        int s = this.getSeed(f);
+
+        float TrunkSize = this.getTrunkSize(f);
+
+        float LeafSize = this.getLeafSize(f);
+
+        randomSeed(s);
+
+        if (n == 0) {
+
+          float Alpha = 0;
+          float Beta = rot; 
+
+          this.branch_shadow(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY, Shades_offsetX, Shades_offsetY);
+        }
+      }
+    }
+  }  
 
 }
 
@@ -31993,6 +32159,221 @@ class solarchvision_Model2Ds {
 
   
   
+    
+    
+  void castShadows (float[] SunR_Rotated, float[] SunR) {
+
+    for (int f = 0; f < this.num; f++) {
+
+      int n = abs(this.MAP[f]);
+
+      int w = this.Images[n].width; 
+      int h = this.Images[n].height;
+
+      float r = this.getS(f) * 0.5;
+
+      float t = atan2(SunR[2], SunR[1]) + 0.5 * PI;
+
+      if (this.MAP[f] < 0) t += PI;         
+
+      if (r > 2.5) { // to select only trees!               
+
+        float x = this.getX(f);
+        float y = this.getY(f);
+        float z = this.getZ(f);
+
+        { // Vertical mask
+          TREES_graphics.beginShape();
+
+          TREES_graphics.texture(this.Images[n]); 
+
+          x = this.getX(f);
+          y = this.getY(f);
+          z = this.getZ(f);
+
+          float[] TX = {
+            0, 0, 0, 0
+          };
+          float[] TY = {
+            0, 0, 0, 0
+          };
+          float[] TZ = {
+            0, 0, 0, 0
+          };
+          float[] TU = {
+            0, 0, 0, 0
+          };
+          float[] TV = {
+            0, 0, 0, 0
+          };
+
+          TX[0] = x - r * cos(t); 
+          TY[0] = y - r * sin(t); 
+          TZ[0] = z; 
+          TX[1] = x + r * cos(t); 
+          TY[1] = y + r * sin(t); 
+          TZ[1] = z; 
+          TX[2] = x + r * cos(t); 
+          TY[2] = y + r * sin(t); 
+          TZ[2] = z + 2 * r; 
+          TX[3] = x - r * cos(t); 
+          TY[3] = y - r * sin(t); 
+          TZ[3] = z + 2 * r;            
+
+          TU[0] = 0; 
+          TV[0] = h;
+          TU[1] = w; 
+          TV[1] = h;
+          TU[2] = w; 
+          TV[2] = 0;
+          TU[3] = 0; 
+          TV[3] = 0;   
+
+          if (allSolarImpacts.sectionType == 2) {
+            {
+              for (int q = 0; q < 4; q++) {
+                float a = TX[q];
+                float b = -TY[q];
+                float c = TZ[q];
+
+                TX[q] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
+                TY[q] = c;
+                TZ[q] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+              }
+            } 
+            { // now that we rotated 2D we could rotate x,y,z
+              float a = x;
+              float b = -y;
+              float c = z;
+
+              x = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
+              y = c;
+              z = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+            }
+          } else if (allSolarImpacts.sectionType == 3) {
+          }
+
+          if ((TZ[0] < allSolarImpacts.Z) && (allSolarImpacts.Z < TZ[2])) {
+
+            float ratio = (allSolarImpacts.Z - TZ[0]) / (TZ[2] - TZ[0]);                      
+
+            TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
+            TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);    
+
+            if (allSolarImpacts.sectionType == 1) {
+
+              TV[0] = (TV[0] * (1 - ratio) + TV[2] * ratio);
+              TV[1] = (TV[1] * (1 - ratio) + TV[3] * ratio);
+            } else if (allSolarImpacts.sectionType == 2) {
+
+              TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
+              TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
+            } else if (allSolarImpacts.sectionType == 3) {
+            }
+          }
+
+          if (TZ[2] > allSolarImpacts.Z) {
+
+            for (int q = 0; q < 4; q++) {
+
+              TZ[q] = TZ[q] - allSolarImpacts.Z;
+              TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
+              TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);   
+
+              if (allSolarImpacts.sectionType == 1) {
+                float px = TX[q];
+                float py = TY[q];
+
+                TX[q] = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+                TY[q] = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+              }                          
+
+              TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
+            }
+          }
+
+          TREES_graphics.endShape(CLOSE);
+        }
+
+        { // Horizontal mask
+          float ratio = 0.5; // put the mask at half of the height of the tree 
+
+          for (int back_front = -1; back_front <= 1; back_front += 2) {
+
+            float rot = back_front * PI / 2 + t;
+
+            TREES_graphics.beginShape();
+
+            TREES_graphics.texture(this.Images[n]); 
+
+            float[] TX = {
+              0, 0, 0, 0
+            };
+            float[] TY = {
+              0, 0, 0, 0
+            };
+            float[] TZ = {
+              0, 0, 0, 0
+            };
+            float[] TU = {
+              0, 0, 0, 0
+            };
+            float[] TV = {
+              0, 0, 0, 0
+            };
+
+            TX[0] = x - r * cos(t); 
+            TY[0] = y - r * sin(t); 
+            TZ[0] = z + 2 * r * ratio; 
+            TX[1] = x + r * cos(t); 
+            TY[1] = y + r * sin(t); 
+            TZ[1] = z + 2 * r * ratio; 
+            TX[2] = x + r * cos(t) + r * cos(rot); 
+            TY[2] = y + r * sin(t) + r * sin(rot); 
+            TZ[2] = z + 2 * r * ratio; 
+            TX[3] = x - r * cos(t) + r * cos(rot); 
+            TY[3] = y - r * sin(t) + r * sin(rot); 
+            TZ[3] = z + 2 * r * ratio;    
+
+            TU[0] = 0; 
+            TV[0] = h * ratio;
+            TU[1] = w; 
+            TV[1] = h * ratio;
+            TU[2] = w; 
+            TV[2] = 0;
+            TU[3] = 0; 
+            TV[3] = 0;   
+
+            if (allSolarImpacts.sectionType == 1) {
+              if (z + 2 * r * ratio > allSolarImpacts.Z) {
+
+                for (int q = 0; q < 4; q++) {
+
+                  TZ[q] = TZ[q] - allSolarImpacts.Z;
+                  TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
+                  TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);                  
+
+                  if (allSolarImpacts.sectionType == 1) {
+                    float px = TX[q];
+                    float py = TY[q];
+
+                    TX[q] = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+                    TY[q] = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+                  }      
+
+                  TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
+                }
+              }
+            }
+
+            TREES_graphics.endShape(CLOSE);
+          }
+        }
+      }
+    }
+  }
+
+
   
   
   public void to_XML (XML xml) {
@@ -57220,6 +57601,7 @@ void XML_setBoolean(XML xml, String tag, boolean value) {
 
 
 
+PGraphics TREES_graphics;
 
 PGraphics SHADOW_graphics; // to be accessible to allModel1Ds plants
 
@@ -57249,7 +57631,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
   SHADOW_graphics = createGraphics(RES1, RES2, P2D); 
 
-  PGraphics TREES_graphics = createGraphics(RES1, RES2, P2D);
+  TREES_graphics = createGraphics(RES1, RES2, P2D);
 
   int keep_allSolarImpacts_sectionType = allSolarImpacts.sectionType;
   float keep_allSolarImpacts_rotation = allSolarImpacts.R;
@@ -57316,220 +57698,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
             TREES_graphics.blendMode(BLEND);        
 
-            if (allModel2Ds.displayAll) {
-
-              for (int f = 0; f < allModel2Ds.num; f++) {
-
-                int n = abs(allModel2Ds.MAP[f]);
-
-                int w = allModel2Ds.Images[n].width; 
-                int h = allModel2Ds.Images[n].height;
-
-                float r = allModel2Ds.getS(f) * 0.5;
-
-                float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
-
-                if (allModel2Ds.MAP[f] < 0) t += PI;         
-
-                if (r > 2.5) { // to select only trees!               
-
-                  float x = 0, y = 0, z = 0;
-
-                  { // Vertical mask
-                    TREES_graphics.beginShape();
-
-                    TREES_graphics.texture(allModel2Ds.Images[n]); 
-
-                    x = allModel2Ds.getX(f);
-                    y = allModel2Ds.getY(f);
-                    z = allModel2Ds.getZ(f);
-
-                    float[] TX = {
-                      0, 0, 0, 0
-                    };
-                    float[] TY = {
-                      0, 0, 0, 0
-                    };
-                    float[] TZ = {
-                      0, 0, 0, 0
-                    };
-                    float[] TU = {
-                      0, 0, 0, 0
-                    };
-                    float[] TV = {
-                      0, 0, 0, 0
-                    };
-
-                    TX[0] = x - r * cos(t); 
-                    TY[0] = y - r * sin(t); 
-                    TZ[0] = z; 
-                    TX[1] = x + r * cos(t); 
-                    TY[1] = y + r * sin(t); 
-                    TZ[1] = z; 
-                    TX[2] = x + r * cos(t); 
-                    TY[2] = y + r * sin(t); 
-                    TZ[2] = z + 2 * r; 
-                    TX[3] = x - r * cos(t); 
-                    TY[3] = y - r * sin(t); 
-                    TZ[3] = z + 2 * r;            
-
-                    TU[0] = 0; 
-                    TV[0] = h;
-                    TU[1] = w; 
-                    TV[1] = h;
-                    TU[2] = w; 
-                    TV[2] = 0;
-                    TU[3] = 0; 
-                    TV[3] = 0;   
-
-                    if (allSolarImpacts.sectionType == 2) {
-                      {
-                        for (int q = 0; q < 4; q++) {
-                          float a = TX[q];
-                          float b = -TY[q];
-                          float c = TZ[q];
-
-                          TX[q] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
-                          TY[q] = c;
-                          TZ[q] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-                        }
-                      } 
-                      { // now that we rotated 2D we could rotate x,y,z
-                        float a = x;
-                        float b = -y;
-                        float c = z;
-
-                        x = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
-                        y = c;
-                        z = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-                      }
-                    } else if (allSolarImpacts.sectionType == 3) {
-                    }
-
-                    if ((TZ[0] < allSolarImpacts.Z) && (allSolarImpacts.Z < TZ[2])) {
-
-                      float ratio = (allSolarImpacts.Z - TZ[0]) / (TZ[2] - TZ[0]);                      
-
-                      TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
-                      TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);    
-
-                      if (allSolarImpacts.sectionType == 1) {
-
-                        TV[0] = (TV[0] * (1 - ratio) + TV[2] * ratio);
-                        TV[1] = (TV[1] * (1 - ratio) + TV[3] * ratio);
-                      } else if (allSolarImpacts.sectionType == 2) {
-
-                        TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
-                        TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
-                      } else if (allSolarImpacts.sectionType == 3) {
-                      }
-                    }
-
-                    if (TZ[2] > allSolarImpacts.Z) {
-
-                      for (int q = 0; q < 4; q++) {
-
-                        TZ[q] = TZ[q] - allSolarImpacts.Z;
-                        TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
-                        TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);   
-
-                        if (allSolarImpacts.sectionType == 1) {
-                          float px = TX[q];
-                          float py = TY[q];
-
-                          TX[q] = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                          TY[q] = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                        }                          
-
-                        TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
-                      }
-                    }
-
-                    TREES_graphics.endShape(CLOSE);
-                  }
-
-                  { // Horizontal mask
-                    float ratio = 0.5; // put the mask at half of the height of the tree 
-
-                    for (int back_front = -1; back_front <= 1; back_front += 2) {
-
-                      float rot = back_front * PI / 2 + t;
-
-                      TREES_graphics.beginShape();
-
-                      TREES_graphics.texture(allModel2Ds.Images[n]); 
-
-                      x = allModel2Ds.getX(f);
-                      y = allModel2Ds.getY(f);
-                      z = allModel2Ds.getZ(f);                      
-
-                      float[] TX = {
-                        0, 0, 0, 0
-                      };
-                      float[] TY = {
-                        0, 0, 0, 0
-                      };
-                      float[] TZ = {
-                        0, 0, 0, 0
-                      };
-                      float[] TU = {
-                        0, 0, 0, 0
-                      };
-                      float[] TV = {
-                        0, 0, 0, 0
-                      };
-
-                      TX[0] = x - r * cos(t); 
-                      TY[0] = y - r * sin(t); 
-                      TZ[0] = z + 2 * r * ratio; 
-                      TX[1] = x + r * cos(t); 
-                      TY[1] = y + r * sin(t); 
-                      TZ[1] = z + 2 * r * ratio; 
-                      TX[2] = x + r * cos(t) + r * cos(rot); 
-                      TY[2] = y + r * sin(t) + r * sin(rot); 
-                      TZ[2] = z + 2 * r * ratio; 
-                      TX[3] = x - r * cos(t) + r * cos(rot); 
-                      TY[3] = y - r * sin(t) + r * sin(rot); 
-                      TZ[3] = z + 2 * r * ratio;    
-
-                      TU[0] = 0; 
-                      TV[0] = h * ratio;
-                      TU[1] = w; 
-                      TV[1] = h * ratio;
-                      TU[2] = w; 
-                      TV[2] = 0;
-                      TU[3] = 0; 
-                      TV[3] = 0;   
-
-                      if (allSolarImpacts.sectionType == 1) {
-
-                        if (z + 2 * r * ratio > allSolarImpacts.Z) {
-
-                          for (int q = 0; q < 4; q++) {
-
-                            TZ[q] = TZ[q] - allSolarImpacts.Z;
-                            TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
-                            TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);  
-
-                            if (allSolarImpacts.sectionType == 1) {
-                              float px = TX[q];
-                              float py = TY[q];
-
-                              TX[q] = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                              TY[q] = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                            }                            
-
-                            TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
-                          }
-                        }
-                      }
-
-                      TREES_graphics.endShape(CLOSE);
-                    }
-                  }
-                }
-              }
-            }
+            allModel2Ds.castShadows(SunR_Rotated, SunR);
 
             TREES_graphics.popMatrix();
           }
@@ -57561,172 +57730,12 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             SHADOW_graphics.stroke(0); 
             SHADOW_graphics.fill(0);      
     
-            allFaces.castDirectShadows(SunR_Rotated);  
+            allFaces.castShadows(SunR_Rotated);  
 
-
-            if (Land3D.displaySurface) {
-              
-              int Tessellation = Land3D.displayTessellation;
-              if (WIN3D.FacesShade == SHADE.Surface_Base) {
-                Tessellation = 0;
-              }
-        
-              int TotalSubNo = 1;  
-              if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
-        
-        
-              for (int Li = Land3D.skipStart; Li < Land3D.num_rows - 1 - Land3D.skipEnd; Li++) {
-                for (int Lj = 0; Lj < Land3D.num_columns - 1; Lj++) {
-        
-                  float[][] base_Vertices = new float [4][3];
-        
-                  base_Vertices[0][0] = Land3D.Mesh[Li][Lj][0];
-                  base_Vertices[0][1] = Land3D.Mesh[Li][Lj][1];
-                  base_Vertices[0][2] = Land3D.Mesh[Li][Lj][2];
-        
-                  base_Vertices[1][0] = Land3D.Mesh[Li+1][Lj][0];
-                  base_Vertices[1][1] = Land3D.Mesh[Li+1][Lj][1];
-                  base_Vertices[1][2] = Land3D.Mesh[Li+1][Lj][2];
-        
-                  base_Vertices[2][0] = Land3D.Mesh[Li+1][Lj+1][0];
-                  base_Vertices[2][1] = Land3D.Mesh[Li+1][Lj+1][1];
-                  base_Vertices[2][2] = Land3D.Mesh[Li+1][Lj+1][2];
-        
-                  base_Vertices[3][0] = Land3D.Mesh[Li][Lj+1][0];
-                  base_Vertices[3][1] = Land3D.Mesh[Li][Lj+1][1];
-                  base_Vertices[3][2] = Land3D.Mesh[Li][Lj+1][2];        
-        
-                  for (int n = 0; n < TotalSubNo; n++) {
-
-                    float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
-                    float[][] subFace_Rotated = subFace;
-
-                    for (int s = 0; s < subFace_Rotated.length; s++) {
-                      if (allSolarImpacts.sectionType == 2) {
-                        float a = subFace_Rotated[s][0];
-                        float b = -subFace_Rotated[s][1];
-                        float c = subFace_Rotated[s][2];
-
-                        subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
-                        subFace_Rotated[s][1] = c;    
-                        subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-                      } else if (allSolarImpacts.sectionType == 3) {
-                      }
-                    }  
-
-                    SHADOW_graphics.beginShape();
-
-                    for (int s = 0; s < subFace_Rotated.length; s++) {
-
-                      float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
-                      float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
-                      float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
-
-
-
-                      if (z >= 0) {
-
-                        if (allSolarImpacts.sectionType == 1) {                    
-                          float px = x;
-                          float py = y;
-
-                          x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                          y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                        } 
-
-                        SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
-                      } else {
-                        int s_next = (s + 1) % subFace_Rotated.length;
-                        int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
-
-                        float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
-                        float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
-                        float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
-
-                        if (z_prev > 0) { 
-                          float ratio = z_prev / (z_prev - z);
-
-                          float x_trim = x_prev * (1 - ratio) + x * ratio;
-                          float y_trim = y_prev * (1 - ratio) + y * ratio;
-
-                          if (allSolarImpacts.sectionType == 1) {
-                            float px = x_trim;
-                            float py = y_trim;
-
-                            x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                            y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                          } 
-
-                          SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
-                        }
-
-                        float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
-                        float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
-                        float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
-
-                        if (z_next > 0) { 
-                          float ratio = z_next / (z_next - z);
-
-                          float x_trim = x_next * (1 - ratio) + x * ratio;
-                          float y_trim = y_next * (1 - ratio) + y * ratio;
-
-                          if (allSolarImpacts.sectionType == 1) {
-                            float px = x_trim;
-                            float py = y_trim;
-
-                            x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                            y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                          } 
-
-                          SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
-                        }
-                      }
-                    }
-
-                    SHADOW_graphics.endShape(CLOSE);
-                  }
-                }
-              }
-            }
+            Land3D.castShadows(SunR_Rotated);
             
-            
-
-            //now calculating allModel1Ds plants
-            if (allModel1Ds.displayAll) {
-
-              for (int f = 0; f < allModel1Ds.num; f++) {
-
-                float x = allModel1Ds.getX(f);
-                float y = allModel1Ds.getY(f);
-                float z = allModel1Ds.getZ(f);
-
-                float r = allModel1Ds.getS(f) * 0.5;
-                float rot = allModel1Ds.getR(f);      
-
-                int n = allModel1Ds.getType(f);
-
-                int dMin = allModel1Ds.getDegreeMin(f);
-
-                int dMax = allModel1Ds.getDegreeMax(f);
-
-                int s = allModel1Ds.getSeed(f);
-
-                float TrunkSize = allModel1Ds.getTrunkSize(f);
-
-                float LeafSize = allModel1Ds.getLeafSize(f);
-
-                randomSeed(s);
-
-                if (n == 0) {
-
-                  float Alpha = 0;
-                  float Beta = rot; 
-
-                  allModel1Ds.branch_shadow(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY, Shades_offsetX, Shades_offsetY);
-                }
-              }
-            }            
-
+            allModel1Ds.castShadows(SunR_Rotated);
+      
             SHADOW_graphics.popMatrix();
           }
 
@@ -57793,7 +57802,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
         }
 
 
-        //------------------------------------ start of copy & paste from the direct version!
+
         TREES_graphics.beginDraw();
 
         TREES_graphics.blendMode(REPLACE);
@@ -57814,224 +57823,13 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
 
           TREES_graphics.blendMode(BLEND);        
 
-          if (allModel2Ds.displayAll) {
-
-            for (int f = 0; f < allModel2Ds.num; f++) {
-
-              int n = abs(allModel2Ds.MAP[f]);
-
-              int w = allModel2Ds.Images[n].width; 
-              int h = allModel2Ds.Images[n].height;
-
-              float r = allModel2Ds.getS(f) * 0.5;
-
-              float t = atan2(SunR[2], SunR[1]) + 0.5 * PI;
-
-              if (allModel2Ds.MAP[f] < 0) t += PI;         
-
-              if (r > 2.5) { // to select only trees!               
-
-                float x = allModel2Ds.getX(f);
-                float y = allModel2Ds.getY(f);
-                float z = allModel2Ds.getZ(f);
-
-                { // Vertical mask
-                  TREES_graphics.beginShape();
-
-                  TREES_graphics.texture(allModel2Ds.Images[n]); 
-
-                  x = allModel2Ds.getX(f);
-                  y = allModel2Ds.getY(f);
-                  z = allModel2Ds.getZ(f);
-
-                  float[] TX = {
-                    0, 0, 0, 0
-                  };
-                  float[] TY = {
-                    0, 0, 0, 0
-                  };
-                  float[] TZ = {
-                    0, 0, 0, 0
-                  };
-                  float[] TU = {
-                    0, 0, 0, 0
-                  };
-                  float[] TV = {
-                    0, 0, 0, 0
-                  };
-
-                  TX[0] = x - r * cos(t); 
-                  TY[0] = y - r * sin(t); 
-                  TZ[0] = z; 
-                  TX[1] = x + r * cos(t); 
-                  TY[1] = y + r * sin(t); 
-                  TZ[1] = z; 
-                  TX[2] = x + r * cos(t); 
-                  TY[2] = y + r * sin(t); 
-                  TZ[2] = z + 2 * r; 
-                  TX[3] = x - r * cos(t); 
-                  TY[3] = y - r * sin(t); 
-                  TZ[3] = z + 2 * r;            
-
-                  TU[0] = 0; 
-                  TV[0] = h;
-                  TU[1] = w; 
-                  TV[1] = h;
-                  TU[2] = w; 
-                  TV[2] = 0;
-                  TU[3] = 0; 
-                  TV[3] = 0;   
-
-                  if (allSolarImpacts.sectionType == 2) {
-                    {
-                      for (int q = 0; q < 4; q++) {
-                        float a = TX[q];
-                        float b = -TY[q];
-                        float c = TZ[q];
-
-                        TX[q] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
-                        TY[q] = c;
-                        TZ[q] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-                      }
-                    } 
-                    { // now that we rotated 2D we could rotate x,y,z
-                      float a = x;
-                      float b = -y;
-                      float c = z;
-
-                      x = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
-                      y = c;
-                      z = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-                    }
-                  } else if (allSolarImpacts.sectionType == 3) {
-                  }
-
-                  if ((TZ[0] < allSolarImpacts.Z) && (allSolarImpacts.Z < TZ[2])) {
-
-                    float ratio = (allSolarImpacts.Z - TZ[0]) / (TZ[2] - TZ[0]);                      
-
-                    TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
-                    TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);    
-
-                    if (allSolarImpacts.sectionType == 1) {
-
-                      TV[0] = (TV[0] * (1 - ratio) + TV[2] * ratio);
-                      TV[1] = (TV[1] * (1 - ratio) + TV[3] * ratio);
-                    } else if (allSolarImpacts.sectionType == 2) {
-
-                      TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
-                      TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
-                    } else if (allSolarImpacts.sectionType == 3) {
-                    }
-                  }
-
-                  if (TZ[2] > allSolarImpacts.Z) {
-
-                    for (int q = 0; q < 4; q++) {
-
-                      TZ[q] = TZ[q] - allSolarImpacts.Z;
-                      TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
-                      TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);   
-
-                      if (allSolarImpacts.sectionType == 1) {
-                        float px = TX[q];
-                        float py = TY[q];
-
-                        TX[q] = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                        TY[q] = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                      }                          
-
-                      TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
-                    }
-                  }
-
-                  TREES_graphics.endShape(CLOSE);
-                }
-
-                { // Horizontal mask
-                  float ratio = 0.5; // put the mask at half of the height of the tree 
-
-                  for (int back_front = -1; back_front <= 1; back_front += 2) {
-
-                    float rot = back_front * PI / 2 + t;
-
-                    TREES_graphics.beginShape();
-
-                    TREES_graphics.texture(allModel2Ds.Images[n]); 
-
-                    float[] TX = {
-                      0, 0, 0, 0
-                    };
-                    float[] TY = {
-                      0, 0, 0, 0
-                    };
-                    float[] TZ = {
-                      0, 0, 0, 0
-                    };
-                    float[] TU = {
-                      0, 0, 0, 0
-                    };
-                    float[] TV = {
-                      0, 0, 0, 0
-                    };
-
-                    TX[0] = x - r * cos(t); 
-                    TY[0] = y - r * sin(t); 
-                    TZ[0] = z + 2 * r * ratio; 
-                    TX[1] = x + r * cos(t); 
-                    TY[1] = y + r * sin(t); 
-                    TZ[1] = z + 2 * r * ratio; 
-                    TX[2] = x + r * cos(t) + r * cos(rot); 
-                    TY[2] = y + r * sin(t) + r * sin(rot); 
-                    TZ[2] = z + 2 * r * ratio; 
-                    TX[3] = x - r * cos(t) + r * cos(rot); 
-                    TY[3] = y - r * sin(t) + r * sin(rot); 
-                    TZ[3] = z + 2 * r * ratio;    
-
-                    TU[0] = 0; 
-                    TV[0] = h * ratio;
-                    TU[1] = w; 
-                    TV[1] = h * ratio;
-                    TU[2] = w; 
-                    TV[2] = 0;
-                    TU[3] = 0; 
-                    TV[3] = 0;   
-
-                    if (allSolarImpacts.sectionType == 1) {
-                      if (z + 2 * r * ratio > allSolarImpacts.Z) {
-
-                        for (int q = 0; q < 4; q++) {
-
-                          TZ[q] = TZ[q] - allSolarImpacts.Z;
-                          TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
-                          TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);                  
-
-                          if (allSolarImpacts.sectionType == 1) {
-                            float px = TX[q];
-                            float py = TY[q];
-
-                            TX[q] = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                            TY[q] = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                          }      
-
-                          TREES_graphics.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
-                        }
-                      }
-                    }
-
-                    TREES_graphics.endShape(CLOSE);
-                  }
-                }
-              }
-            }
-          }
+          allModel2Ds.castShadows(SunR_Rotated, SunR);
 
           TREES_graphics.popMatrix();
         }
 
 
         TREES_graphics.endDraw();
-        //------------------------------------ end of copy & paste from the direct version!
 
         TREES_graphics.save(File_Name + nf(i, 3) + "_2D.jpg");
 
@@ -58057,286 +57855,11 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           SHADOW_graphics.stroke(0); 
           SHADOW_graphics.fill(0);
           
-          if (allFaces.displayAll) {
+          allFaces.castShadows(SunR_Rotated);
 
-            for (int f = 0; f < allFaces.nodes.length; f++) {
-  
-              int vsb = allFaces.getVisibility(f);
-  
-              if (vsb > 0) {
-  
-                int  mt = allFaces.getMaterial(f);            
-                if (Materials_Color[mt][0] > 127) {
-  
-                  int Tessellation = allFaces.getTessellation(f);
-  
-                  int TotalSubNo = 1;  
-                  if (allFaces.getMaterial(f) == 0) {
-                    Tessellation += allFaces.displayTessellation;
-                  }
-                  if (Tessellation > 0) TotalSubNo = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, Tessellation - 1), 1));
-  
-                  float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-                  for (int g = 0; g < allFaces.nodes[f].length; g++) {
-                    int vNo = allFaces.nodes[f][g];
-                    base_Vertices[g][0] = allPoints.getX(vNo);
-                    base_Vertices[g][1] = allPoints.getY(vNo);
-                    base_Vertices[g][2] = allPoints.getZ(vNo);
-                  }
-  
-                  for (int n = 0; n < TotalSubNo; n++) {
-  
-                    float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
-                    float[][] subFace_Rotated = subFace;
-  
-                    for (int s = 0; s < subFace_Rotated.length; s++) {
-                      if (allSolarImpacts.sectionType == 2) {
-                        float a = subFace_Rotated[s][0];
-                        float b = -subFace_Rotated[s][1];
-                        float c = subFace_Rotated[s][2];
-  
-                        subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
-                        subFace_Rotated[s][1] = c;      
-                        subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-                      } else if (allSolarImpacts.sectionType == 3) {
-                      }
-                    }                
-  
-                    SHADOW_graphics.beginShape();
-  
-                    for (int s = 0; s < subFace_Rotated.length; s++) {
-  
-                      float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
-                      float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
-                      float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
-  
-                      if (z >= 0) {
-  
-                        if (allSolarImpacts.sectionType == 1) {
-                          float px = x;
-                          float py = y;
-  
-                          x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                          y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                        }                   
-  
-                        SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
-                      } else {
-                        int s_next = (s + 1) % subFace_Rotated.length;
-                        int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
-  
-                        float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
-                        float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
-                        float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];       
-  
-                        if (z_prev > 0) { 
-                          float ratio = z_prev / (z_prev - z);
-  
-                          float x_trim = x_prev * (1 - ratio) + x * ratio;
-                          float y_trim = y_prev * (1 - ratio) + y * ratio;
-  
-                          if (allSolarImpacts.sectionType == 1) {
-                            float px = x_trim;
-                            float py = y_trim;
-  
-                            x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                            y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                          }                     
-  
-                          SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
-                        }
-  
-                        float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
-                        float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
-                        float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
-  
-                        if (z_next > 0) { 
-                          float ratio = z_next / (z_next - z);
-  
-                          float x_trim = x_next * (1 - ratio) + x * ratio;
-                          float y_trim = y_next * (1 - ratio) + y * ratio;
-  
-                          if (allSolarImpacts.sectionType == 1) {
-                            float px = x_trim;
-                            float py = y_trim;
-  
-                            x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                            y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                          }                     
-  
-                          SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
-                        }
-                      }
-                    }
-  
-                    SHADOW_graphics.endShape(CLOSE);
-                  }
-                }
-              }
-            }
-          }
-          
-          
-          if (Land3D.displaySurface) {
-            
-            int Tessellation = Land3D.displayTessellation;
-            if (WIN3D.FacesShade == SHADE.Surface_Base) {
-              Tessellation = 0;
-            }
-      
-            int TotalSubNo = 1;  
-            if (Tessellation > 0) TotalSubNo = 4 * int(funcs.roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
-      
-      
-            for (int Li = Land3D.skipStart; Li < Land3D.num_rows - 1 - Land3D.skipEnd; Li++) {
-              for (int Lj = 0; Lj < Land3D.num_columns - 1; Lj++) {
-      
-                float[][] base_Vertices = new float [4][3];
-      
-                base_Vertices[0][0] = Land3D.Mesh[Li][Lj][0];
-                base_Vertices[0][1] = Land3D.Mesh[Li][Lj][1];
-                base_Vertices[0][2] = Land3D.Mesh[Li][Lj][2];
-      
-                base_Vertices[1][0] = Land3D.Mesh[Li+1][Lj][0];
-                base_Vertices[1][1] = Land3D.Mesh[Li+1][Lj][1];
-                base_Vertices[1][2] = Land3D.Mesh[Li+1][Lj][2];
-      
-                base_Vertices[2][0] = Land3D.Mesh[Li+1][Lj+1][0];
-                base_Vertices[2][1] = Land3D.Mesh[Li+1][Lj+1][1];
-                base_Vertices[2][2] = Land3D.Mesh[Li+1][Lj+1][2];
-      
-                base_Vertices[3][0] = Land3D.Mesh[Li][Lj+1][0];
-                base_Vertices[3][1] = Land3D.Mesh[Li][Lj+1][1];
-                base_Vertices[3][2] = Land3D.Mesh[Li][Lj+1][2];        
-      
-                for (int n = 0; n < TotalSubNo; n++) {
-
-                  float[][] subFace = funcs.getSubFace(base_Vertices, Tessellation, n);
-                  float[][] subFace_Rotated = subFace;
-
-                  for (int s = 0; s < subFace_Rotated.length; s++) {
-                    if (allSolarImpacts.sectionType == 2) {
-                      float a = subFace_Rotated[s][0];
-                      float b = -subFace_Rotated[s][1];
-                      float c = subFace_Rotated[s][2];
-
-                      subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
-                      subFace_Rotated[s][1] = c;    
-                      subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-                    } else if (allSolarImpacts.sectionType == 3) {
-                    }
-                  }  
-
-                  SHADOW_graphics.beginShape();
-
-                  for (int s = 0; s < subFace_Rotated.length; s++) {
-
-                    float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
-                    float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
-                    float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
-
-
-
-                    if (z >= 0) {
-
-                      if (allSolarImpacts.sectionType == 1) {                    
-                        float px = x;
-                        float py = y;
-
-                        x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                        y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                      } 
-
-                      SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
-                    } else {
-                      int s_next = (s + 1) % subFace_Rotated.length;
-                      int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
-
-                      float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
-                      float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
-                      float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
-
-                      if (z_prev > 0) { 
-                        float ratio = z_prev / (z_prev - z);
-
-                        float x_trim = x_prev * (1 - ratio) + x * ratio;
-                        float y_trim = y_prev * (1 - ratio) + y * ratio;
-
-                        if (allSolarImpacts.sectionType == 1) {
-                          float px = x_trim;
-                          float py = y_trim;
-
-                          x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                          y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                        } 
-
-                        SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
-                      }
-
-                      float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
-                      float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
-                      float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
-
-                      if (z_next > 0) { 
-                        float ratio = z_next / (z_next - z);
-
-                        float x_trim = x_next * (1 - ratio) + x * ratio;
-                        float y_trim = y_next * (1 - ratio) + y * ratio;
-
-                        if (allSolarImpacts.sectionType == 1) {
-                          float px = x_trim;
-                          float py = y_trim;
-
-                          x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                          y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                        } 
-
-                        SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
-                      }
-                    }
-                  }
-
-                  SHADOW_graphics.endShape(CLOSE);
-                }
-              }
-            }
-          }          
-
-          //now calculating allModel1Ds plants
-          if (allModel1Ds.displayAll) {
-
-            for (int f = 0; f < allModel1Ds.num; f++) {
-
-              float x = allModel1Ds.getX(f);
-              float y = allModel1Ds.getY(f);
-              float z = allModel1Ds.getZ(f);
-
-              float r = allModel1Ds.getS(f) * 0.5;
-              float rot = allModel1Ds.getR(f);      
-
-              int n = allModel1Ds.getType(f);
-
-              int dMin = allModel1Ds.getDegreeMin(f);
-
-              int dMax = allModel1Ds.getDegreeMax(f);
-
-              int s = allModel1Ds.getSeed(f);
-
-              float TrunkSize = allModel1Ds.getTrunkSize(f);
-
-              float LeafSize = allModel1Ds.getLeafSize(f);
-
-              randomSeed(s);
-
-              if (n == 0) {
-
-                float Alpha = 0;
-                float Beta = rot; 
-
-                allModel1Ds.branch_shadow(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY, Shades_offsetX, Shades_offsetY);
-              }
-            }
-          }          
+          Land3D.castShadows(SunR_Rotated);
+    
+          allModel1Ds.castShadows(SunR_Rotated);       
 
           SHADOW_graphics.popMatrix();
         }
