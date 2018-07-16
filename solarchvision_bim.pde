@@ -1,7 +1,4 @@
 
-// .castShadows() --> .draw(TypeWindow.SHADOW)
-
-
 // move should keep the same distance of bounding box - now only moves the center
 
 // please define station elevation data for CWEEDS points!
@@ -11180,7 +11177,7 @@ class solarchvision_Faces {
 
 
 
-  void castShadows () {  
+  void castShadows () {
   
     if (this.displayAll) {
   
@@ -29900,23 +29897,24 @@ class solarchvision_Model1Ds {
           }
   
 
-          int start_turn = 1;
           int end_turn = 1;
-          if (target_window == TypeWindow.OBJ) {
-            end_turn = 3;
-          }
+          if (target_window == TypeWindow.OBJ) end_turn = 3;
           
-          for (_turn = start_turn; _turn <= end_turn; _turn++) { 
+          for (_turn = 1; _turn <= end_turn; _turn++) { 
   
-            WIN3D.graphics.fill(random(128) + 128, random(64) + 64, 0);
-            WIN3D.graphics.noStroke();
-            //WIN3D.graphics.stroke(0, 0, 0);
-            //WIN3D.graphics.strokeWeight(1);
-  
-            WIN3D.graphics.pushMatrix();
-            WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
-            WIN3D.graphics.translate(x, -y, z);
-            WIN3D.graphics.rotateZ(rot);
+            WIN3D.graphics.pushMatrix(); // we put this outside the if statement so that graphics would be accessible to cast SHADOWs
+            
+            if (target_window == TypeWindow.WIN3D) {
+            
+              WIN3D.graphics.fill(random(128) + 128, random(64) + 64, 0);
+              WIN3D.graphics.noStroke();
+              //WIN3D.graphics.stroke(0, 0, 0);
+              //WIN3D.graphics.strokeWeight(1);
+              
+              WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
+              WIN3D.graphics.translate(x, -y, z);
+              WIN3D.graphics.rotateZ(rot);
+            }
 
             float treeHeight0 = rad;
             float treeWidth0 = rad * trunkSize * 0.15;
@@ -29926,7 +29924,7 @@ class solarchvision_Model1Ds {
             // Call to draw the tree
             this.makeBranch(treeWidth0, treeHeight0, dMax, dMax); 
             
-            WIN3D.graphics.popMatrix();
+            WIN3D.graphics.popMatrix(); // we put this outside the if statement so that graphics would be accessible to cast SHADOWs
             
             
 
