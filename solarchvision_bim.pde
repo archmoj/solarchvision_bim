@@ -30049,7 +30049,6 @@ class solarchvision_Model0Ds {
       
       float[][] subFace = new float[4][3];
       
-      
       WIN3D.graphics.beginShape();
       for (int j = 0; j < 4; j++) {
   
@@ -30066,11 +30065,13 @@ class solarchvision_Model0Ds {
         float y = T * sin((i + u) * TWO_PI / float(this.elementSegments));
         float z = h * (v - 0.5);
         
-        subFace[j][0] = x;
-        subFace[j][1] = y;
-        subFace[j][2] = z;
-        
         WIN3D.graphics.vertex(x, -y, z);
+        
+        if (target_window == TypeWindow.SHADOW) {
+          subFace[j][0] = WIN3D.graphics.modelX(x,y,z);
+          subFace[j][1] = WIN3D.graphics.modelY(x,y,z);
+          subFace[j][2] = WIN3D.graphics.modelZ(x,y,z);
+        }
         
         if (target_window == TypeWindow.OBJ) {
         
@@ -31764,11 +31765,9 @@ class solarchvision_Model2Ds {
           int end_turn = 1;
           if (target_window == TypeWindow.OBJ) end_turn = 3;
           for (int _turn = 1; _turn <= end_turn; _turn++) {
-            
             for (int back_front = -1; back_front <= 1; back_front++) {
-              
               if (back_front == 0) {
-                
+
                 if (target_window == TypeWindow.WIN3D) { 
     
                   WIN3D.graphics.beginShape();
@@ -31786,6 +31785,7 @@ class solarchvision_Model2Ds {
                 }
                 
                 if (target_window == TypeWindow.OBJ) { 
+
                   if (_turn == 1) {
     
                     SOLARCHVISION_OBJprintVertex(x1, y1, z);
@@ -31794,10 +31794,14 @@ class solarchvision_Model2Ds {
                     SOLARCHVISION_OBJprintVertex(x1, y1, (z + 2 * rh));
         
                     num_vertices_added += 4;
+                    
                   }              
                   
                   if (_turn == 2) {
-                    htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
+                      SOLARCHVISION_OBJprintVtexture(1, 0, 0);
+                      SOLARCHVISION_OBJprintVtexture(0, 0, 0);
+                      SOLARCHVISION_OBJprintVtexture(0, 1, 0);
+                      SOLARCHVISION_OBJprintVtexture(1, 1, 0);
                   }     
                   
                   if (_turn == 3) {
