@@ -1,4 +1,7 @@
 
+// SOLARCHVISION_snap_Faces --> allFaces.snap...
+
+
 // move should keep the same distance of bounding box - now only moves the center
 
 // please define station elevation data for CWEEDS points!
@@ -21,6 +24,24 @@ void launch (String s) {
 void launch (String[] s) {
   open(s);
 }
+
+
+String SceneName = "Complex";
+
+String SOLARCHVISION_version = "2018"; 
+//String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
+String BaseFolder = "C:/SOLARCHVISION_2017";
+
+String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+String ProjectName = "Revision_" + RunStamp;
+String HoldStamp = ""; 
+
+String Subfolder_exportMaps = "maps/";
+
+
+
+
+
 
 
 class solarchvision_STATION {
@@ -375,20 +396,6 @@ int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for so
 int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int SOLARCHVISION_pixel_H = 275; //300; 
 int SOLARCHVISION_pixel_W = int(SOLARCHVISION_pixel_H * 1.75); 
 
@@ -435,8 +442,6 @@ boolean is_undefined_FLOAT (float a) {
 
 boolean displayOutput_inExplorer = false;
 
-
-
 PrintWriter[] FILE_outputRaw;
 PrintWriter[] FILE_outputNorms;
 PrintWriter[] FILE_outputProbs;
@@ -472,62 +477,6 @@ String Folder_ScreenShots;
 String Folder_Shadings;
 
 
-String SceneName = "Complex";
-
-String SOLARCHVISION_version = "2018"; 
-//String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
-String BaseFolder = "C:/SOLARCHVISION_2017";
-
-String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
-String ProjectName = "Revision_" + RunStamp;
-String HoldStamp = ""; 
-
-String Subfolder_exportMaps = "maps/";
-
-void SOLARCHVISION_update_folders () {
-  
-  Folder_Project = BaseFolder + "/Projects/Esfahan";    
-  
-  Folder_Wgrib2Temp = Folder_Project + "/Temp";
-
-  Folder_GEOMET = Folder_Project + "/Data/GEOMET" + "/" + RunStamp;
-  Folder_GRIB2 = Folder_Project + "/Data/GRIB2";
-  
-  Folder_ENSEMBLE_FORECAST = Folder_Project + "/Data/FORECAST_NAEFS";
-  Folder_ENSEMBLE_OBSERVED = Folder_Project + "/Data/OBSERVATION_SWOB";
-
-  Folder_CLIMATE_CLMREC = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
-  Folder_CLIMATE_TMYEPW = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
-  Folder_CLIMATE_CWEEDS = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
-  
-  Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
-  Files_CLIMATE_TMYEPW = OPESYS.getFiles(Folder_CLIMATE_TMYEPW);
-  Files_CLIMATE_CWEEDS = OPESYS.getFiles(Folder_CLIMATE_CWEEDS);
-  
-  Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
-  Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);  
-
-  Folder_Backgrounds      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
-  Folder_Coordinates      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  WORLD.ViewFolder      = BaseFolder + "/Input/BackgroundImages/Standard/World";
-  
-  Folder_People = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
-  Folder_Trees  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
-  
-  Folder_Shadings = Folder_Project + "/ShadingAnalysis";
-  
-  Folder_Land         = Folder_Project + "/Land/USE";
-  
-  Folder_Export       = Folder_Project + "/Export";
-  Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
-  Folder_Create3D      = Folder_Export + "/Create3D" + "/" + RunStamp;
-  Folder_ViewsFromSky = Folder_Export + "/ViewsFromSky" + "/" + RunStamp;
-  Folder_ScreenShots   = Folder_Export + "/ScreenShots" + "/" + RunStamp;
-
-  String[] filenames = OPESYS.getFiles(Folder_ScreenShots);
-  if (filenames != null) SavedScreenShots = filenames.length;
-  
-}
 
 
 
@@ -4120,7 +4069,7 @@ class solarchvision_WIN3D {
     ray_direction[2] = ray_end[2] - ray_start[2];  
     
     
-    float[] RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+    float[] RxP = Land3D.intersect(ray_start, ray_direction);
   
     if (RxP[0] >= 0) {  
   
@@ -11484,6 +11433,181 @@ class solarchvision_Faces {
   }
 
 
+
+  float[] intersect (float[] ray_pnt, float[] ray_dir) {
+  
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
+  
+    float[][] hitPoint = new float [this.nodes.length][7];
+  
+    for (int f = 0; f < this.nodes.length; f++) {
+      hitPoint[f][0] = FLOAT_undefined;
+      hitPoint[f][1] = FLOAT_undefined;
+      hitPoint[f][2] = FLOAT_undefined;
+      hitPoint[f][3] = FLOAT_undefined;
+      hitPoint[f][4] = FLOAT_undefined;
+      hitPoint[f][5] = FLOAT_undefined;
+      hitPoint[f][6] = FLOAT_undefined;
+    }
+    
+    for (int f = 0; f < this.nodes.length; f++) {
+      
+      int n = this.nodes[f].length;
+      
+      if (n > 2) {
+    
+        int vsb = this.getVisibility(f);
+    
+        if (vsb > 0) {    
+  
+          float X_intersect = FLOAT_undefined;         
+          float Y_intersect = FLOAT_undefined;
+          float Z_intersect = FLOAT_undefined;
+          float dist2intersect = FLOAT_undefined;
+          float[] face_norm = {0,0,0};
+          
+          boolean InPoly = false;
+          
+          if (n < 5) { // works if n==3 or n==4
+      
+            float[] A = allPoints.getPosition(this.nodes[f][0]);
+            float[] B = allPoints.getPosition(this.nodes[f][1]);
+            float[] C = allPoints.getPosition(this.nodes[f][n - 2]);
+            float[] D = allPoints.getPosition(this.nodes[f][n - 1]);
+            
+            float[] AC = funcs.vec3_diff(A, C);
+            float[] BD = funcs.vec3_diff(B, D);
+            
+            face_norm = funcs.vec3_cross(AC, BD);
+            
+            float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+          
+            float R = -funcs.vec3_dot(ray_dir, face_norm);
+      
+            if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+              dist2intersect = FLOAT_huge;
+            }
+            else {
+              dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
+      
+              //if (dist2intersect > 0) {
+              if (dist2intersect > FLOAT_tiny) {
+    
+                X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+                Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+                Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+                
+                float[] P = {X_intersect, Y_intersect, Z_intersect};
+                
+                if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
+                else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
+  
+              }
+            }
+          }
+          else {        
+  
+            int[] tmpFace = new int[n];
+            float[] G = {
+              0, 0, 0
+            }; 
+            for (int j = 0; j < n; j++) {
+              tmpFace[j] = this.nodes[f][j];
+              G[0] += allPoints.getX(tmpFace[j]) / float(n); 
+              G[1] += allPoints.getY(tmpFace[j]) / float(n);
+              G[2] += allPoints.getZ(tmpFace[j]) / float(n);
+            }  
+            
+            for (int j = 0; j < n; j++) {
+      
+              int j_next = (j + 1) % n;
+      
+              float[] A = {
+                allPoints.getX(this.nodes[f][j]),
+                allPoints.getY(this.nodes[f][j]),
+                allPoints.getZ(this.nodes[f][j])
+              };            
+              
+              float[] B = {
+                allPoints.getX(this.nodes[f][j_next]),
+                allPoints.getY(this.nodes[f][j_next]),
+                allPoints.getZ(this.nodes[f][j_next])
+              };                
+    
+              float[] AG = funcs.vec3_diff(A, G);
+              float[] BG = funcs.vec3_diff(B, G);
+              
+              face_norm = funcs.vec3_cross(AG, BG);
+                
+              float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
+              
+              float R = -funcs.vec3_dot(ray_dir, face_norm);
+        
+              if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+                dist2intersect = FLOAT_huge;
+              }
+              else {
+                dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
+        
+                //if (dist2intersect > 0) {
+                if (dist2intersect > FLOAT_tiny) {
+      
+                  X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+                  Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+                  Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+                  
+                  float[] P = {X_intersect, Y_intersect, Z_intersect};
+    
+                  InPoly = funcs.isInside_Triangle(P, A, B, G); 
+                  
+                }
+              }
+              
+              if (InPoly) break;
+            }
+          }
+                
+          if (InPoly) {
+            hitPoint[f][0] = X_intersect;
+            hitPoint[f][1] = Y_intersect;
+            hitPoint[f][2] = Z_intersect;
+            hitPoint[f][3] = dist2intersect;
+            hitPoint[f][4] = face_norm[0];
+            hitPoint[f][5] = face_norm[1];
+            hitPoint[f][6] = face_norm[2];             
+          }               
+  
+        }
+      }  
+    }
+  
+    float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+  
+    float pre_dist = FLOAT_undefined;
+  
+    for (int f = 0; f < this.nodes.length; f++) {
+  
+      if (pre_dist > hitPoint[f][3]) {
+  
+        pre_dist = hitPoint[f][3];
+  
+        return_point[0] = f;
+        return_point[1] = hitPoint[f][0];
+        return_point[2] = hitPoint[f][1];
+        return_point[3] = hitPoint[f][2];
+        return_point[4] = hitPoint[f][3];
+        return_point[5] = hitPoint[f][4];
+        return_point[6] = hitPoint[f][5];
+        return_point[7] = hitPoint[f][6];
+  
+      }
+  
+    }
+  
+    return return_point;
+  }
+
+
   
   public void to_XML (XML xml) {
     
@@ -11884,6 +12008,184 @@ class solarchvision_Curves {
     }
   }  
   
+
+
+
+  float[] intersect (float[] ray_pnt, float[] ray_dir) {
+  
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
+  
+    float[][] hitPoint = new float [this.nodes.length][7];
+  
+    for (int f = 0; f < this.nodes.length; f++) {
+      hitPoint[f][0] = FLOAT_undefined;
+      hitPoint[f][1] = FLOAT_undefined;
+      hitPoint[f][2] = FLOAT_undefined;
+      hitPoint[f][3] = FLOAT_undefined;
+      hitPoint[f][4] = FLOAT_undefined;
+      hitPoint[f][5] = FLOAT_undefined;
+      hitPoint[f][6] = FLOAT_undefined;
+    }
+    
+    for (int f = 0; f < this.nodes.length; f++) {
+      
+      int n = this.nodes[f].length;
+      
+      if (n > 2) {
+    
+        int vsb = this.getVisibility(f);
+    
+        if (vsb > 0) {    
+  
+          float X_intersect = FLOAT_undefined;         
+          float Y_intersect = FLOAT_undefined;
+          float Z_intersect = FLOAT_undefined;
+          float dist2intersect = FLOAT_undefined;
+          float[] face_norm = {0,0,0};
+          
+          boolean InPoly = false;
+          
+          if (n < 5) { // works if n==3 or n==4
+      
+            float[] A = allPoints.getPosition(this.nodes[f][0]);
+            float[] B = allPoints.getPosition(this.nodes[f][1]);
+            float[] C = allPoints.getPosition(this.nodes[f][n - 2]);
+            float[] D = allPoints.getPosition(this.nodes[f][n - 1]);
+            
+            float[] AC = funcs.vec3_diff(A, C);
+            float[] BD = funcs.vec3_diff(B, D);
+            
+            face_norm = funcs.vec3_cross(AC, BD);
+            
+            float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+          
+            float R = -funcs.vec3_dot(ray_dir, face_norm);
+      
+            if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+              dist2intersect = FLOAT_huge;
+            }
+            else {
+              dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
+      
+              //if (dist2intersect > 0) {
+              if (dist2intersect > FLOAT_tiny) {
+    
+                X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+                Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+                Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+                
+                float[] P = {X_intersect, Y_intersect, Z_intersect};
+                
+                if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
+                else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
+  
+              }
+            }
+          }
+          else {        
+  
+            int[] tmpCurve = new int[n];
+            float[] G = {
+              0, 0, 0
+            }; 
+            for (int j = 0; j < n; j++) {
+              tmpCurve[j] = this.nodes[f][j];
+              G[0] += allPoints.getX(tmpCurve[j]) / float(n); 
+              G[1] += allPoints.getY(tmpCurve[j]) / float(n);
+              G[2] += allPoints.getZ(tmpCurve[j]) / float(n);
+            }  
+            
+            for (int j = 0; j < n; j++) {
+      
+              int j_next = (j + 1) % n;
+      
+              float[] A = {
+                allPoints.getX(this.nodes[f][j]),
+                allPoints.getY(this.nodes[f][j]),
+                allPoints.getZ(this.nodes[f][j])
+              };            
+              
+              float[] B = {
+                allPoints.getX(this.nodes[f][j_next]),
+                allPoints.getY(this.nodes[f][j_next]),
+                allPoints.getZ(this.nodes[f][j_next])
+              };                
+    
+              float[] AG = funcs.vec3_diff(A, G);
+              float[] BG = funcs.vec3_diff(B, G);
+              
+              face_norm = funcs.vec3_cross(AG, BG);
+                
+              float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
+              
+              float R = -funcs.vec3_dot(ray_dir, face_norm);
+        
+              if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+                dist2intersect = FLOAT_huge;
+              }
+              else {
+                dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
+        
+                //if (dist2intersect > 0) {
+                if (dist2intersect > FLOAT_tiny) {
+      
+                  X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+                  Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+                  Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+                  
+                  float[] P = {X_intersect, Y_intersect, Z_intersect};
+    
+                  InPoly = funcs.isInside_Triangle(P, A, B, G); 
+                  
+                }
+              }
+              
+              if (InPoly) break;
+            }
+          }
+                
+          if (InPoly) {
+            hitPoint[f][0] = X_intersect;
+            hitPoint[f][1] = Y_intersect;
+            hitPoint[f][2] = Z_intersect;
+            hitPoint[f][3] = dist2intersect;
+            hitPoint[f][4] = face_norm[0];
+            hitPoint[f][5] = face_norm[1];
+            hitPoint[f][6] = face_norm[2];             
+          }               
+  
+        }
+      }  
+    }
+  
+    float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+  
+    float pre_dist = FLOAT_undefined;
+  
+    for (int f = 0; f < this.nodes.length; f++) {
+  
+      if (pre_dist > hitPoint[f][3]) {
+  
+        pre_dist = hitPoint[f][3];
+  
+        return_point[0] = f;
+        return_point[1] = hitPoint[f][0];
+        return_point[2] = hitPoint[f][1];
+        return_point[3] = hitPoint[f][2];
+        return_point[4] = hitPoint[f][3];
+        return_point[5] = hitPoint[f][4];
+        return_point[6] = hitPoint[f][5];
+        return_point[7] = hitPoint[f][6];
+  
+      }
+  
+    }
+  
+    return return_point;
+  }
+
+
+
   
   
   public void to_XML (XML xml) {
@@ -16609,9 +16911,9 @@ class solarchvision_Drop3D {
       float[] RxP = new float [8];
 
       if (WIN3D.UI_TaskModifyParameter == 0) { 
-        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+        RxP = Land3D.intersect(ray_start, ray_direction);
       } else if (WIN3D.UI_TaskModifyParameter == 1) {
-        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+        RxP = allFaces.intersect(ray_start, ray_direction);
       } else {
         RxP[0] = -1; // undefined
       }
@@ -16624,9 +16926,9 @@ class solarchvision_Drop3D {
         ray_direction[2] = 1; // <<<< going upwards
 
         if (WIN3D.UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+          RxP = Land3D.intersect(ray_start, ray_direction);
         } else if (WIN3D.UI_TaskModifyParameter == 2) {
-          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+          RxP = allFaces.intersect(ray_start, ray_direction);
         } else {
           RxP[0] = -1; // undefined
         }
@@ -16663,9 +16965,9 @@ class solarchvision_Drop3D {
       float[] RxP = new float [8];
 
       if (WIN3D.UI_TaskModifyParameter == 0) { 
-        RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+        RxP = Land3D.intersect(ray_start, ray_direction);
       } else if (WIN3D.UI_TaskModifyParameter == 1) {
-        RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+        RxP = allFaces.intersect(ray_start, ray_direction);
       } else {
         RxP[0] = -1; // undefined
       }
@@ -16678,9 +16980,9 @@ class solarchvision_Drop3D {
         ray_direction[2] = 1; // <<<< going upwards
 
         if (WIN3D.UI_TaskModifyParameter == 0) { 
-          RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+          RxP = Land3D.intersect(ray_start, ray_direction);
         } else if (WIN3D.UI_TaskModifyParameter == 2) {
-          RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+          RxP = allFaces.intersect(ray_start, ray_direction);
         } else {
           RxP[0] = -1; // undefined
         }
@@ -22499,84 +22801,10 @@ void setup () {
   loop();
 }
 
-void SOLARCHVISION_draw_frameIcon () {
-  int frame_icon_size = 64;
-
-  PGraphics frame_icon = createGraphics(frame_icon_size, frame_icon_size);  
-
-  frame_icon.beginDraw();
-
-  //frame_icon.image(loadImage(BaseFolder + "/Input/BackgroundImages/Standard/Maps/Icon/s-icon.png"), 0, 0 );
-
-  frame_icon.background(0);
-  //frame_icon.background(63,63,255,255);
-
-  //frame_icon.fill(255,127);
-  frame_icon.fill(255, 255, 0, 127);
-
-  frame_icon.textAlign(CENTER, CENTER);
-  frame_icon.textSize(1.0 * frame_icon_size);
-  frame_icon.text("S", 0.20 * frame_icon_size, 0.4 * frame_icon_size);
-  frame_icon.text("A", 0.50 * frame_icon_size, 0.4 * frame_icon_size);
-  frame_icon.text("V", 0.80 * frame_icon_size, 0.4 * frame_icon_size);
-
-  frame_icon.endDraw();
-  frame.setIconImage(frame_icon.image);  
-
-  frame.setTitle("SOLARCHVISION-" + SOLARCHVISION_version);
-}
-
-
-
-void SOLARCHVISION_update_station (int Step) {
-
-  if ((Step == 0) || (Step == 1)) {
-
-    VertexSolar_rebuild_array = true;
-    GlobalSolar_rebuild_array = true;
-    allSolarImpacts.rebuild_Image_array = true;
-    allWindRoses.rebuild_Image_array = true;    
-
-    WORLD.update = true;
-    WIN3D.update = true; 
-    STUDY.update = true;
-
-    LocationLAT = STATION.getLatitude();
-    LocationLON = STATION.getLongitude();
-
-    WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
-    
-    TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
-  }
-
-  if ((Step == 0) || (Step == 2)) update_CLIMATE_TMYEPW();
-
-  if ((Step == 0) || (Step == 3)) update_CLIMATE_CWEEDS();  
-  
-  if ((Step == 0) || (Step == 4)) update_CLIMATE_CLMREC();
-
-  if ((Step == 0) || (Step == 5)) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
-
-  if ((Step == 0) || (Step == 6)) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-
-  if ((Step == 0) || (Step == 7)) Land3D.update_mesh();
-}
-
-void SOLARCHVISION_update_models (int Step) {
-
-  if ((Step == 0) || (Step == 1)) allGroups.makeEmpty(0); //not deleting all
-  if ((Step == 0) || (Step == 2)) Create3D.add_Model_Main();
-}
 
 
 int Last_initializationStep = 1000;
 int InitializationStep = 0;
-
-
-
-
-
- 
 
 void draw () {
 
@@ -24629,40 +24857,6 @@ void keyReleased () {
 
 
 
-String Default_Font = "MS Sans Serif";
-
-/*
-"MS Sans Serif"
- "Microsoft Sans Serif"
- "Arial Narrow"
- "Arial"
- "Times New Roman"
- "Calibri"
- "Cambria"
- "Georgia"
- "Courier New"
- "Franklin Gothic Medium"
- "BankGothic Md BT"
- */
-
-PFont SOLARCHVISION_font;
-
-void SOLARCHVISION_loadDefaultFontStyle () {
-
-  println("Loading font:", Default_Font);
-
-  SOLARCHVISION_font = createFont(Default_Font, 36, true);
-
-  SOLARCHVISION_ResetFontStyle();
-}
-
-void SOLARCHVISION_ResetFontStyle () {
-
-  textFont(SOLARCHVISION_font);
-  WORLD.graphics.textFont(SOLARCHVISION_font);
-  WIN3D.graphics.textFont(SOLARCHVISION_font);
-  STUDY.graphics.textFont(SOLARCHVISION_font);
-}
 
 
 
@@ -28679,6 +28873,33 @@ class solarchvision_Land3D {
   
     this.loadMesh = true;
   }
+
+
+
+  double[] getLandGrid (int i, int j) {
+  
+    double stp_lat = 1.0 / 2224.5968; // equals to 50m 
+  
+    double stp_lon = stp_lat / funcs.cos_ang(STATION.getLatitude());   
+    
+    //float q = 2;
+    float q = pow(2, 0.5);
+    //float q = 1.25;
+    //float q = 1.125;  
+    
+    float t = j * 360.0 / (this.num_columns - 1);
+    
+    float r = 0;
+    if (i > 0) r = pow(q, i - 1);
+  
+    double _lon = STATION.getLongitude() + stp_lon * r * funcs.cos_ang(t);
+    double _lat = STATION.getLatitude() + stp_lat * r * funcs.sin_ang(t);
+    
+    double[] LON_LAT = {_lon, _lat};
+    
+    return LON_LAT;
+    
+  }
   
   
   
@@ -29516,6 +29737,120 @@ class solarchvision_Land3D {
   }
 
 
+
+  float[] intersect (float[] ray_pnt, float[] ray_dir) {
+  
+    float[] ray_normal = funcs.vec3_unit(ray_dir);   
+  
+    float[][] hitPoint = new float [(this.num_rows - 1) * (this.num_columns - 1)][4];
+  
+    for (int f = 0; f < (this.num_rows - 1) * (this.num_columns - 1); f++) {
+      hitPoint[f][0] = FLOAT_undefined;
+      hitPoint[f][1] = FLOAT_undefined;
+      hitPoint[f][2] = FLOAT_undefined;
+      hitPoint[f][3] = FLOAT_undefined;
+    }
+  
+    for (int f = 0; f < (this.num_rows - 1) * (this.num_columns - 1); f++) {
+  
+      float X_intersect = FLOAT_undefined;         
+      float Y_intersect = FLOAT_undefined;
+      float Z_intersect = FLOAT_undefined;
+      float dist2intersect = FLOAT_undefined;
+      
+      boolean InPoly = false;
+  
+      int LAND_i = f / (this.num_columns - 1);
+      int LAND_j = f % (this.num_columns - 1);
+      
+      float[] A = this.Mesh[LAND_i][LAND_j];
+      float[] B = this.Mesh[LAND_i][LAND_j + 1];
+      float[] C = this.Mesh[LAND_i + 1][LAND_j + 1];
+      float[] D = this.Mesh[LAND_i + 1][LAND_j];
+      float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])}; 
+      
+      for (int i = 0; i < 4; i++) {
+        
+        float[] M = {0,0,0};
+        float[] N = {0,0,0};
+  
+        if (i == 0) {
+          M = A;
+          N = B;
+        } else if (i == 1) {
+          M = B;
+          N = C;
+        } else if (i == 2) {
+          M = C;
+          N = D;
+        } else if (i == 3) {
+          M = D;
+          N = A;
+        }       
+      
+        float[] NG = funcs.vec3_diff(N, G);
+        float[] GM = funcs.vec3_diff(G, M);
+        
+        float[] face_norm = funcs.vec3_cross(NG, GM);
+        
+        float face_offset = ((G[0] + M[0] + N[0]) * face_norm[0] + (G[1] + M[1] + N[1]) * face_norm[1] + (G[2] + M[2] + N[2]) * face_norm[2]) / 3.0;  
+      
+        float R = -funcs.vec3_dot(ray_dir, face_norm);
+    
+        if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
+          dist2intersect = FLOAT_huge;
+        }
+        else {
+          dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
+    
+          //if (dist2intersect > 0) {
+          if (dist2intersect > FLOAT_tiny) {
+          
+            X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
+            Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
+            Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
+  
+            float[] P = {X_intersect, Y_intersect, Z_intersect};
+  
+            InPoly = funcs.isInside_Triangle(P, M, N, G); 
+            
+          }
+        }
+        
+        if (InPoly) break;
+      }
+      
+      if (InPoly) {
+        hitPoint[f][0] = X_intersect;
+        hitPoint[f][1] = Y_intersect;
+        hitPoint[f][2] = Z_intersect;
+        hitPoint[f][3] = dist2intersect;
+      }   
+  
+    }
+  
+    float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+  
+    float pre_dist = FLOAT_undefined;
+  
+    for (int f = 0; f < (this.num_rows - 1) * (this.num_columns - 1); f++) {
+  
+      if (pre_dist > hitPoint[f][3]) {
+  
+        pre_dist = hitPoint[f][3];
+  
+        return_point[0] = f;
+        return_point[1] = hitPoint[f][0];
+        return_point[2] = hitPoint[f][1];
+        return_point[3] = hitPoint[f][2];
+        return_point[4] = hitPoint[f][3];
+      }
+  
+    }
+  
+    return return_point;
+  }
+
   
   public void to_XML (XML xml) {
     
@@ -29681,7 +30016,7 @@ class solarchvision_Land3D {
     }
     
         
-  }    
+  }
   
   
 }
@@ -40569,9 +40904,9 @@ void mouseReleased () {
                   float[] RxP = new float [8]; 
 
                   if (mouseButton == RIGHT) {
-                    RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+                    RxP = Land3D.intersect(ray_start, ray_direction);
                   } else if (mouseButton == LEFT) {
-                    RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
+                    RxP = SOLARCHVISION_snap_Faces(allFaces.intersect(ray_start, ray_direction));
                   }
 
                   if (RxP[0] >= 0) {
@@ -43670,16 +44005,16 @@ void mouseClicked () {
               float[] RxP = new float [8];
   
               if (mouseButton == RIGHT) {
-                RxP = SOLARCHVISION_intersect_LandPoints(ray_start, ray_direction);
+                RxP = Land3D.intersect(ray_start, ray_direction);
               } else if (mouseButton == LEFT) {
 
                 if ((WIN3D.UI_CurrentTask == UITASK.Create) || (WIN3D.UI_CurrentTask == UITASK.Move)) {
-                   RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
+                   RxP = SOLARCHVISION_snap_Faces(allFaces.intersect(ray_start, ray_direction));
 
                 } else {
  
                   if (current_ObjectCategory == ObjectCategory.CURVE) {
-                    RxP = SOLARCHVISION_intersect_Curves(ray_start, ray_direction);
+                    RxP = allCurves.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.CAMERA) {
                     RxP = allCameras.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.SECTION) {
@@ -43691,7 +44026,7 @@ void mouseClicked () {
                   } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
                     RxP = allModel2Ds.intersect(ray_start, ray_direction);
                   } else {
-                    RxP = SOLARCHVISION_snap_Faces(SOLARCHVISION_intersect_Faces(ray_start, ray_direction));
+                    RxP = SOLARCHVISION_snap_Faces(allFaces.intersect(ray_start, ray_direction));
                   }
                 }
                 
@@ -47348,7 +47683,7 @@ void SOLARCHVISION_preBakeViewport () {
 
     float[] RxP = new float [8]; 
 
-    RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+    RxP = allFaces.intersect(ray_start, ray_direction);
 
     if (RxP[0] >= 0) {        
         
@@ -47649,7 +47984,7 @@ void SOLARCHVISION_RenderViewport () {
   
     float[] RxP = new float [8]; 
 
-    RxP = SOLARCHVISION_intersect_Faces(ray_start, ray_direction);
+    RxP = allFaces.intersect(ray_start, ray_direction);
 
     if (RxP[0] >= 0) {        
         
@@ -56585,539 +56920,156 @@ void SOLARCHVISION_explore_output (String outputFile) {
 
 
 
+String Default_Font = "MS Sans Serif";
 
+/*
+"MS Sans Serif"
+ "Microsoft Sans Serif"
+ "Arial Narrow"
+ "Arial"
+ "Times New Roman"
+ "Calibri"
+ "Cambria"
+ "Georgia"
+ "Courier New"
+ "Franklin Gothic Medium"
+ "BankGothic Md BT"
+ */
 
+PFont SOLARCHVISION_font;
 
-float[] SOLARCHVISION_intersect_Faces (float[] ray_pnt, float[] ray_dir) {
+void SOLARCHVISION_loadDefaultFontStyle () {
 
-  float[] ray_normal = funcs.vec3_unit(ray_dir);   
+  println("Loading font:", Default_Font);
 
-  float[][] hitPoint = new float [allFaces.nodes.length][7];
+  SOLARCHVISION_font = createFont(Default_Font, 36, true);
 
-  for (int f = 0; f < allFaces.nodes.length; f++) {
-    hitPoint[f][0] = FLOAT_undefined;
-    hitPoint[f][1] = FLOAT_undefined;
-    hitPoint[f][2] = FLOAT_undefined;
-    hitPoint[f][3] = FLOAT_undefined;
-    hitPoint[f][4] = FLOAT_undefined;
-    hitPoint[f][5] = FLOAT_undefined;
-    hitPoint[f][6] = FLOAT_undefined;
-  }
-  
-  for (int f = 0; f < allFaces.nodes.length; f++) {
-    
-    int n = allFaces.nodes[f].length;
-    
-    if (n > 2) {
-  
-      int vsb = allFaces.getVisibility(f);
-  
-      if (vsb > 0) {    
+  SOLARCHVISION_ResetFontStyle();
+}
 
-        float X_intersect = FLOAT_undefined;         
-        float Y_intersect = FLOAT_undefined;
-        float Z_intersect = FLOAT_undefined;
-        float dist2intersect = FLOAT_undefined;
-        float[] face_norm = {0,0,0};
-        
-        boolean InPoly = false;
-        
-        if (n < 5) { // works if n==3 or n==4
-    
-          float[] A = allPoints.getPosition(allFaces.nodes[f][0]);
-          float[] B = allPoints.getPosition(allFaces.nodes[f][1]);
-          float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
-          float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
-          
-          float[] AC = funcs.vec3_diff(A, C);
-          float[] BD = funcs.vec3_diff(B, D);
-          
-          face_norm = funcs.vec3_cross(AC, BD);
-          
-          float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-        
-          float R = -funcs.vec3_dot(ray_dir, face_norm);
-    
-          if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-            dist2intersect = FLOAT_huge;
-          }
-          else {
-            dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
-    
-            //if (dist2intersect > 0) {
-            if (dist2intersect > FLOAT_tiny) {
-  
-              X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-              Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-              Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-              
-              float[] P = {X_intersect, Y_intersect, Z_intersect};
-              
-              if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
-              else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
+void SOLARCHVISION_ResetFontStyle () {
 
-            }
-          }
-        }
-        else {        
+  textFont(SOLARCHVISION_font);
+  WORLD.graphics.textFont(SOLARCHVISION_font);
+  WIN3D.graphics.textFont(SOLARCHVISION_font);
+  STUDY.graphics.textFont(SOLARCHVISION_font);
+}
 
-          int[] tmpFace = new int[n];
-          float[] G = {
-            0, 0, 0
-          }; 
-          for (int j = 0; j < n; j++) {
-            tmpFace[j] = allFaces.nodes[f][j];
-            G[0] += allPoints.getX(tmpFace[j]) / float(n); 
-            G[1] += allPoints.getY(tmpFace[j]) / float(n);
-            G[2] += allPoints.getZ(tmpFace[j]) / float(n);
-          }  
-          
-          for (int j = 0; j < n; j++) {
-    
-            int j_next = (j + 1) % n;
-    
-            float[] A = {
-              allPoints.getX(allFaces.nodes[f][j]),
-              allPoints.getY(allFaces.nodes[f][j]),
-              allPoints.getZ(allFaces.nodes[f][j])
-            };            
-            
-            float[] B = {
-              allPoints.getX(allFaces.nodes[f][j_next]),
-              allPoints.getY(allFaces.nodes[f][j_next]),
-              allPoints.getZ(allFaces.nodes[f][j_next])
-            };                
-  
-            float[] AG = funcs.vec3_diff(A, G);
-            float[] BG = funcs.vec3_diff(B, G);
-            
-            face_norm = funcs.vec3_cross(AG, BG);
-              
-            float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
-            
-            float R = -funcs.vec3_dot(ray_dir, face_norm);
-      
-            if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-              dist2intersect = FLOAT_huge;
-            }
-            else {
-              dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
-      
-              //if (dist2intersect > 0) {
-              if (dist2intersect > FLOAT_tiny) {
-    
-                X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-                Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-                Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-                
-                float[] P = {X_intersect, Y_intersect, Z_intersect};
-  
-                InPoly = funcs.isInside_Triangle(P, A, B, G); 
-                
-              }
-            }
-            
-            if (InPoly) break;
-          }
-        }
-              
-        if (InPoly) {
-          hitPoint[f][0] = X_intersect;
-          hitPoint[f][1] = Y_intersect;
-          hitPoint[f][2] = Z_intersect;
-          hitPoint[f][3] = dist2intersect;
-          hitPoint[f][4] = face_norm[0];
-          hitPoint[f][5] = face_norm[1];
-          hitPoint[f][6] = face_norm[2];             
-        }               
+void SOLARCHVISION_draw_frameIcon () {
+  int frame_icon_size = 64;
 
-      }
-    }  
-  }
+  PGraphics frame_icon = createGraphics(frame_icon_size, frame_icon_size);  
 
-  float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+  frame_icon.beginDraw();
 
-  float pre_dist = FLOAT_undefined;
+  //frame_icon.image(loadImage(BaseFolder + "/Input/BackgroundImages/Standard/Maps/Icon/s-icon.png"), 0, 0 );
 
-  for (int f = 0; f < allFaces.nodes.length; f++) {
+  frame_icon.background(0);
+  //frame_icon.background(63,63,255,255);
 
-    if (pre_dist > hitPoint[f][3]) {
+  //frame_icon.fill(255,127);
+  frame_icon.fill(255, 255, 0, 127);
 
-      pre_dist = hitPoint[f][3];
+  frame_icon.textAlign(CENTER, CENTER);
+  frame_icon.textSize(1.0 * frame_icon_size);
+  frame_icon.text("S", 0.20 * frame_icon_size, 0.4 * frame_icon_size);
+  frame_icon.text("A", 0.50 * frame_icon_size, 0.4 * frame_icon_size);
+  frame_icon.text("V", 0.80 * frame_icon_size, 0.4 * frame_icon_size);
 
-      return_point[0] = f;
-      return_point[1] = hitPoint[f][0];
-      return_point[2] = hitPoint[f][1];
-      return_point[3] = hitPoint[f][2];
-      return_point[4] = hitPoint[f][3];
-      return_point[5] = hitPoint[f][4];
-      return_point[6] = hitPoint[f][5];
-      return_point[7] = hitPoint[f][6];
+  frame_icon.endDraw();
+  frame.setIconImage(frame_icon.image);  
 
-    }
-
-  }
-
-  return return_point;
+  frame.setTitle("SOLARCHVISION-" + SOLARCHVISION_version);
 }
 
 
 
+void SOLARCHVISION_update_station (int Step) {
 
+  if ((Step == 0) || (Step == 1)) {
 
+    VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true;
+    allSolarImpacts.rebuild_Image_array = true;
+    allWindRoses.rebuild_Image_array = true;    
 
+    WORLD.update = true;
+    WIN3D.update = true; 
+    STUDY.update = true;
 
-float[] SOLARCHVISION_intersect_Curves (float[] ray_pnt, float[] ray_dir) {
+    LocationLAT = STATION.getLatitude();
+    LocationLON = STATION.getLongitude();
 
-  float[] ray_normal = funcs.vec3_unit(ray_dir);   
-
-  float[][] hitPoint = new float [allCurves.nodes.length][7];
-
-  for (int f = 0; f < allCurves.nodes.length; f++) {
-    hitPoint[f][0] = FLOAT_undefined;
-    hitPoint[f][1] = FLOAT_undefined;
-    hitPoint[f][2] = FLOAT_undefined;
-    hitPoint[f][3] = FLOAT_undefined;
-    hitPoint[f][4] = FLOAT_undefined;
-    hitPoint[f][5] = FLOAT_undefined;
-    hitPoint[f][6] = FLOAT_undefined;
-  }
-  
-  for (int f = 0; f < allCurves.nodes.length; f++) {
+    WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
     
-    int n = allCurves.nodes[f].length;
-    
-    if (n > 2) {
-  
-      int vsb = allCurves.getVisibility(f);
-  
-      if (vsb > 0) {    
-
-        float X_intersect = FLOAT_undefined;         
-        float Y_intersect = FLOAT_undefined;
-        float Z_intersect = FLOAT_undefined;
-        float dist2intersect = FLOAT_undefined;
-        float[] face_norm = {0,0,0};
-        
-        boolean InPoly = false;
-        
-        if (n < 5) { // works if n==3 or n==4
-    
-          float[] A = allPoints.getPosition(allCurves.nodes[f][0]);
-          float[] B = allPoints.getPosition(allCurves.nodes[f][1]);
-          float[] C = allPoints.getPosition(allCurves.nodes[f][n - 2]);
-          float[] D = allPoints.getPosition(allCurves.nodes[f][n - 1]);
-          
-          float[] AC = funcs.vec3_diff(A, C);
-          float[] BD = funcs.vec3_diff(B, D);
-          
-          face_norm = funcs.vec3_cross(AC, BD);
-          
-          float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
-        
-          float R = -funcs.vec3_dot(ray_dir, face_norm);
-    
-          if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-            dist2intersect = FLOAT_huge;
-          }
-          else {
-            dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
-    
-            //if (dist2intersect > 0) {
-            if (dist2intersect > FLOAT_tiny) {
-  
-              X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-              Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-              Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-              
-              float[] P = {X_intersect, Y_intersect, Z_intersect};
-              
-              if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
-              else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
-
-            }
-          }
-        }
-        else {        
-
-          int[] tmpCurve = new int[n];
-          float[] G = {
-            0, 0, 0
-          }; 
-          for (int j = 0; j < n; j++) {
-            tmpCurve[j] = allCurves.nodes[f][j];
-            G[0] += allPoints.getX(tmpCurve[j]) / float(n); 
-            G[1] += allPoints.getY(tmpCurve[j]) / float(n);
-            G[2] += allPoints.getZ(tmpCurve[j]) / float(n);
-          }  
-          
-          for (int j = 0; j < n; j++) {
-    
-            int j_next = (j + 1) % n;
-    
-            float[] A = {
-              allPoints.getX(allCurves.nodes[f][j]),
-              allPoints.getY(allCurves.nodes[f][j]),
-              allPoints.getZ(allCurves.nodes[f][j])
-            };            
-            
-            float[] B = {
-              allPoints.getX(allCurves.nodes[f][j_next]),
-              allPoints.getY(allCurves.nodes[f][j_next]),
-              allPoints.getZ(allCurves.nodes[f][j_next])
-            };                
-  
-            float[] AG = funcs.vec3_diff(A, G);
-            float[] BG = funcs.vec3_diff(B, G);
-            
-            face_norm = funcs.vec3_cross(AG, BG);
-              
-            float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
-            
-            float R = -funcs.vec3_dot(ray_dir, face_norm);
-      
-            if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-              dist2intersect = FLOAT_huge;
-            }
-            else {
-              dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
-      
-              //if (dist2intersect > 0) {
-              if (dist2intersect > FLOAT_tiny) {
-    
-                X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-                Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-                Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-                
-                float[] P = {X_intersect, Y_intersect, Z_intersect};
-  
-                InPoly = funcs.isInside_Triangle(P, A, B, G); 
-                
-              }
-            }
-            
-            if (InPoly) break;
-          }
-        }
-              
-        if (InPoly) {
-          hitPoint[f][0] = X_intersect;
-          hitPoint[f][1] = Y_intersect;
-          hitPoint[f][2] = Z_intersect;
-          hitPoint[f][3] = dist2intersect;
-          hitPoint[f][4] = face_norm[0];
-          hitPoint[f][5] = face_norm[1];
-          hitPoint[f][6] = face_norm[2];             
-        }               
-
-      }
-    }  
+    TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
   }
 
-  float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+  if ((Step == 0) || (Step == 2)) update_CLIMATE_TMYEPW();
 
-  float pre_dist = FLOAT_undefined;
+  if ((Step == 0) || (Step == 3)) update_CLIMATE_CWEEDS();  
+  
+  if ((Step == 0) || (Step == 4)) update_CLIMATE_CLMREC();
 
-  for (int f = 0; f < allCurves.nodes.length; f++) {
+  if ((Step == 0) || (Step == 5)) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
 
-    if (pre_dist > hitPoint[f][3]) {
+  if ((Step == 0) || (Step == 6)) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-      pre_dist = hitPoint[f][3];
+  if ((Step == 0) || (Step == 7)) Land3D.update_mesh();
+}
 
-      return_point[0] = f;
-      return_point[1] = hitPoint[f][0];
-      return_point[2] = hitPoint[f][1];
-      return_point[3] = hitPoint[f][2];
-      return_point[4] = hitPoint[f][3];
-      return_point[5] = hitPoint[f][4];
-      return_point[6] = hitPoint[f][5];
-      return_point[7] = hitPoint[f][6];
+void SOLARCHVISION_update_models (int Step) {
 
-    }
+  if ((Step == 0) || (Step == 1)) allGroups.makeEmpty(0); //not deleting all
+  if ((Step == 0) || (Step == 2)) Create3D.add_Model_Main();
+}
 
-  }
 
-  return return_point;
+void SOLARCHVISION_update_folders () {
+  
+  Folder_Project = BaseFolder + "/Projects/Esfahan";    
+  
+  Folder_Wgrib2Temp = Folder_Project + "/Temp";
+
+  Folder_GEOMET = Folder_Project + "/Data/GEOMET" + "/" + RunStamp;
+  Folder_GRIB2 = Folder_Project + "/Data/GRIB2";
+  
+  Folder_ENSEMBLE_FORECAST = Folder_Project + "/Data/FORECAST_NAEFS";
+  Folder_ENSEMBLE_OBSERVED = Folder_Project + "/Data/OBSERVATION_SWOB";
+
+  Folder_CLIMATE_CLMREC = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
+  Folder_CLIMATE_TMYEPW = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
+  Folder_CLIMATE_CWEEDS = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
+  
+  Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
+  Files_CLIMATE_TMYEPW = OPESYS.getFiles(Folder_CLIMATE_TMYEPW);
+  Files_CLIMATE_CWEEDS = OPESYS.getFiles(Folder_CLIMATE_CWEEDS);
+  
+  Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
+  Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);  
+
+  Folder_Backgrounds      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
+  Folder_Coordinates      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  WORLD.ViewFolder      = BaseFolder + "/Input/BackgroundImages/Standard/World";
+  
+  Folder_People = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+  Folder_Trees  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
+  
+  Folder_Shadings = Folder_Project + "/ShadingAnalysis";
+  
+  Folder_Land         = Folder_Project + "/Land/USE";
+  
+  Folder_Export       = Folder_Project + "/Export";
+  Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
+  Folder_Create3D      = Folder_Export + "/Create3D" + "/" + RunStamp;
+  Folder_ViewsFromSky = Folder_Export + "/ViewsFromSky" + "/" + RunStamp;
+  Folder_ScreenShots   = Folder_Export + "/ScreenShots" + "/" + RunStamp;
+
+  String[] filenames = OPESYS.getFiles(Folder_ScreenShots);
+  if (filenames != null) SavedScreenShots = filenames.length;
+  
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-float[] SOLARCHVISION_intersect_LandPoints (float[] ray_pnt, float[] ray_dir) {
-
-  float[] ray_normal = funcs.vec3_unit(ray_dir);   
-
-  float[][] hitPoint = new float [(Land3D.num_rows - 1) * (Land3D.num_columns - 1)][4];
-
-  for (int f = 0; f < (Land3D.num_rows - 1) * (Land3D.num_columns - 1); f++) {
-    hitPoint[f][0] = FLOAT_undefined;
-    hitPoint[f][1] = FLOAT_undefined;
-    hitPoint[f][2] = FLOAT_undefined;
-    hitPoint[f][3] = FLOAT_undefined;
-  }
-
-  for (int f = 0; f < (Land3D.num_rows - 1) * (Land3D.num_columns - 1); f++) {
-
-    float X_intersect = FLOAT_undefined;         
-    float Y_intersect = FLOAT_undefined;
-    float Z_intersect = FLOAT_undefined;
-    float dist2intersect = FLOAT_undefined;
-    
-    boolean InPoly = false;
-
-    int LAND_i = f / (Land3D.num_columns - 1);
-    int LAND_j = f % (Land3D.num_columns - 1);
-    
-    float[] A = Land3D.Mesh[LAND_i][LAND_j];
-    float[] B = Land3D.Mesh[LAND_i][LAND_j + 1];
-    float[] C = Land3D.Mesh[LAND_i + 1][LAND_j + 1];
-    float[] D = Land3D.Mesh[LAND_i + 1][LAND_j];
-    float[] G = {0.25 * (A[0] + B[0] + C[0] + D[0]), 0.25 * (A[1] + B[1] + C[1] + D[1]), 0.25 * (A[2] + B[2] + C[2] + D[2])}; 
-    
-    for (int i = 0; i < 4; i++) {
-      
-      float[] M = {0,0,0};
-      float[] N = {0,0,0};
-
-      if (i == 0) {
-        M = A;
-        N = B;
-      } else if (i == 1) {
-        M = B;
-        N = C;
-      } else if (i == 2) {
-        M = C;
-        N = D;
-      } else if (i == 3) {
-        M = D;
-        N = A;
-      }       
-    
-      float[] NG = funcs.vec3_diff(N, G);
-      float[] GM = funcs.vec3_diff(G, M);
-      
-      float[] face_norm = funcs.vec3_cross(NG, GM);
-      
-      float face_offset = ((G[0] + M[0] + N[0]) * face_norm[0] + (G[1] + M[1] + N[1]) * face_norm[1] + (G[2] + M[2] + N[2]) * face_norm[2]) / 3.0;  
-    
-      float R = -funcs.vec3_dot(ray_dir, face_norm);
-  
-      if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-        dist2intersect = FLOAT_huge;
-      }
-      else {
-        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
-  
-        //if (dist2intersect > 0) {
-        if (dist2intersect > FLOAT_tiny) {
-        
-          X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-          Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-          Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-
-          float[] P = {X_intersect, Y_intersect, Z_intersect};
-
-          InPoly = funcs.isInside_Triangle(P, M, N, G); 
-          
-        }
-      }
-      
-      if (InPoly) break;
-    }
-    
-    if (InPoly) {
-      hitPoint[f][0] = X_intersect;
-      hitPoint[f][1] = Y_intersect;
-      hitPoint[f][2] = Z_intersect;
-      hitPoint[f][3] = dist2intersect;
-    }   
-
-  }
-
-  float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
-
-  float pre_dist = FLOAT_undefined;
-
-  for (int f = 0; f < (Land3D.num_rows - 1) * (Land3D.num_columns - 1); f++) {
-
-    if (pre_dist > hitPoint[f][3]) {
-
-      pre_dist = hitPoint[f][3];
-
-      return_point[0] = f;
-      return_point[1] = hitPoint[f][0];
-      return_point[2] = hitPoint[f][1];
-      return_point[3] = hitPoint[f][2];
-      return_point[4] = hitPoint[f][3];
-    }
-
-  }
-
-  return return_point;
-}
-
-
-
-
-
-
-
-
-
-// ---------------------------------------------------------
-
-
-
-
-
-double[] getLandGrid (int i, int j) {
-
-  double stp_lat = 1.0 / 2224.5968; // equals to 50m 
-
-  double stp_lon = stp_lat / funcs.cos_ang(STATION.getLatitude());   
-  
-  //float q = 2;
-  float q = pow(2, 0.5);
-  //float q = 1.25;
-  //float q = 1.125;  
-  
-  float t = j * 360.0 / (Land3D.num_columns - 1);
-  
-  float r = 0;
-  if (i > 0) r = pow(q, i - 1);
-
-  double _lon = STATION.getLongitude() + stp_lon * r * funcs.cos_ang(t);
-  double _lat = STATION.getLatitude() + stp_lat * r * funcs.sin_ang(t);
-  
-  double[] LON_LAT = {_lon, _lat};
-  
-  return LON_LAT;
-  
-}
 
