@@ -29922,7 +29922,7 @@ class solarchvision_Model0Ds {
             WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
             WIN3D.graphics.translate(x, -y, z);
             WIN3D.graphics.rotateZ(rot);
-              
+
             float treeHeight0 = rad;
             float treeWidth0 = rad * trunkSize * 0.15;
             
@@ -30068,18 +30068,18 @@ class solarchvision_Model0Ds {
         WIN3D.graphics.vertex(x, -y, z);
         
         if (target_window == TypeWindow.SHADOW) {
-          subFace[j][0] = WIN3D.graphics.modelX(x,y,z);
-          subFace[j][1] = WIN3D.graphics.modelY(x,y,z);
-          subFace[j][2] = WIN3D.graphics.modelZ(x,y,z);
+          subFace[j][0] =  WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale);
+          subFace[j][1] = -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale);
+          subFace[j][2] =  WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale);
         }
         
         if (target_window == TypeWindow.OBJ) {
         
           if (_turn == 1) {
   
-            SOLARCHVISION_OBJprintVertex(WIN3D.graphics.modelX(x,y,z),
-                                         WIN3D.graphics.modelY(x,y,z), 
-                                         WIN3D.graphics.modelZ(x,y,z));  
+            SOLARCHVISION_OBJprintVertex(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale),
+                                        -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale),
+                                         WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale));  
                                        
           }
   
