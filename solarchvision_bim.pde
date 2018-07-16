@@ -2306,7 +2306,7 @@ class solarchvision_SHADE {
   float[] vertexRender_Surface_Materials (int mt) {  
   
     float[] COL = {
-      Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
+      allMaterials.Color[mt][0], allMaterials.Color[mt][1], allMaterials.Color[mt][2], allMaterials.Color[mt][3]
     };
   
     return COL;
@@ -5594,15 +5594,15 @@ class solarchvision_STUDY {
           break;
   
         case 'l' :
-          Materials_Selection += 1;
-          Materials_Selection %= Materials_Number; 
+          allMaterials.Selection += 1;
+          allMaterials.Selection %= allMaterials.Number; 
           DevelopData_update = true;
           this.update = true; 
           ROLLOUT.update = true; 
           break;
         case 'L' :
-          Materials_Selection += Materials_Number - 1;
-          Materials_Selection %= Materials_Number;
+          allMaterials.Selection += allMaterials.Number - 1;
+          allMaterials.Selection %= allMaterials.Number;
           DevelopData_update = true; 
           this.update = true; 
           ROLLOUT.update = true; 
@@ -8651,12 +8651,12 @@ class solarchvision_STUDY {
             this.graphics.image(Image_RGBA, (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
             this.graphics.imageMode(CORNER);
             /*
-            if (Materials_DirectArea_Flags[now_i][now_j] == -1) {
+            if (allMaterials.DirectArea_Flags[now_i][now_j] == -1) {
   
-              Materials_DirectArea_Flags[now_i][now_j] = 1; 
+              allMaterials.DirectArea_Flags[now_i][now_j] = 1; 
   
-              for (int mt = 0; mt < Materials_Number; mt++) {                 
-                Materials_DirectArea_Data[mt][now_i][now_j] = 0;
+              for (int mt = 0; mt < allMaterials.Number; mt++) {                 
+                allMaterials.DirectArea_Data[mt][now_i][now_j] = 0;
               }   
   
               if ((i+0.5 >= sunrise) && (i+0.5 <= sunset)) {
@@ -8674,19 +8674,19 @@ class solarchvision_STUDY {
                     int COL_G = COL >> 8 & 0xFF; 
                     int COL_B = COL & 0xFF;
   
-                    for (int mt = 0; mt < Materials_Number; mt++) {  
+                    for (int mt = 0; mt < allMaterials.Number; mt++) {  
   
-                      if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
-                        Materials_DirectArea_Data[mt][now_i][now_j] += 1;
+                      if ((COL_R == allMaterials.Color[mt][1]) && (COL_G == allMaterials.Color[mt][2]) && (COL_B == allMaterials.Color[mt][3])) {
+                        allMaterials.DirectArea_Data[mt][now_i][now_j] += 1;
                       }
                     }
                   }
                 }  
   
-                for (int mt = 0; mt < Materials_Number; mt++) {                 
-                  Materials_DirectArea_Data[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2) ; //???
+                for (int mt = 0; mt < allMaterials.Number; mt++) {                 
+                  allMaterials.DirectArea_Data[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2) ; //???
   
-                  if (Materials_Selection == mt) println("Direct:", mt, now_i, now_j, Materials_DirectArea_Data[mt][now_i][now_j]);
+                  if (allMaterials.Selection == mt) println("Direct:", mt, now_i, now_j, allMaterials.DirectArea_Data[mt][now_i][now_j]);
                 }
   
                 
@@ -8702,12 +8702,12 @@ class solarchvision_STUDY {
               PImage Image_RGBA = SKY2D_graphics.get();
               this.graphics.beginDraw();
              
-             if (Materials_DiffuseArea_Flags[now_i][now_j] == -1) {
+             if (allMaterials.DiffuseArea_Flags[now_i][now_j] == -1) {
                
-               Materials_DiffuseArea_Flags[now_i][now_j] = 1; 
+               allMaterials.DiffuseArea_Flags[now_i][now_j] = 1; 
                
-               for (int mt = 0; mt < Materials_Number; mt++) {                 
-                 Materials_DiffuseArea_Data[mt][now_i][now_j] = 0;
+               for (int mt = 0; mt < allMaterials.Number; mt++) {                 
+                 allMaterials.DiffuseArea_Data[mt][now_i][now_j] = 0;
                }                 
                
                int num_diffuse_views = 0;
@@ -8740,10 +8740,10 @@ class solarchvision_STUDY {
                        int COL_G = COL >> 8 & 0xFF; 
                        int COL_B = COL & 0xFF;
                        
-                       for (int mt = 0; mt < Materials_Number; mt++) {  
+                       for (int mt = 0; mt < allMaterials.Number; mt++) {  
                          
-                         if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
-                           Materials_DiffuseArea_Data[mt][now_i][now_j] += 1;
+                         if ((COL_R == allMaterials.Color[mt][1]) && (COL_G == allMaterials.Color[mt][2]) && (COL_B == allMaterials.Color[mt][3])) {
+                           allMaterials.DiffuseArea_Data[mt][now_i][now_j] += 1;
                          }
                        }
                      }
@@ -8751,20 +8751,20 @@ class solarchvision_STUDY {
                    
                  }
                }
-               for (int mt = 0; mt < Materials_Number; mt++) {                 
-                 Materials_DiffuseArea_Data[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2); //???
-                 Materials_DiffuseArea_Data[mt][now_i][now_j] *= 2.0 / float(num_diffuse_views); // note: multiply by 2 to have a area equal to roof!
+               for (int mt = 0; mt < allMaterials.Number; mt++) {                 
+                 allMaterials.DiffuseArea_Data[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2); //???
+                 allMaterials.DiffuseArea_Data[mt][now_i][now_j] *= 2.0 / float(num_diffuse_views); // note: multiply by 2 to have a area equal to roof!
                  
-                 if (Materials_Selection == mt) println("Diffuse:", mt, now_i, now_j, Materials_DiffuseArea_Data[mt][now_i][now_j]); 
+                 if (allMaterials.Selection == mt) println("Diffuse:", mt, now_i, now_j, allMaterials.DiffuseArea_Data[mt][now_i][now_j]); 
                }
                
                //---------------------------------------------
                // applying calculated diffuse model at this time for the rest of year.
-               for (int mt = 0; mt < Materials_Number; mt++) {
+               for (int mt = 0; mt < allMaterials.Number; mt++) {
                  for (int loop_i = 0; loop_i < 24; loop_i++) {
                    for (int loop_j = 0; loop_j < 365; loop_j++) {
-                     Materials_DiffuseArea_Data[mt][loop_i][loop_j] = Materials_DiffuseArea_Data[mt][now_i][now_j];
-                     Materials_DiffuseArea_Flags[loop_i][loop_j] = 1;
+                     allMaterials.DiffuseArea_Data[mt][loop_i][loop_j] = allMaterials.DiffuseArea_Data[mt][now_i][now_j];
+                     allMaterials.DiffuseArea_Flags[loop_i][loop_j] = 1;
                    }
                  }  
                }
@@ -9996,121 +9996,133 @@ int SOLARCHVISION_Y_click2 = -1;
 int Camera_Variation = 0; // 1;
 
 
-int Materials_Number = 11; //256; // 0, 1, 2, ... , 10
 
-int Materials_Selection = 1; //2; // yellow
 
-float[][][] Materials_DirectArea_Data = new float [Materials_Number][24][365]; 
-int[][] Materials_DirectArea_Flags = new int [24][365];
 
-float[][][] Materials_DiffuseArea_Data = new float [Materials_Number][24][365]; 
-int[][] Materials_DiffuseArea_Flags = new int [24][365];
 
-int[][] Materials_Color = new int [Materials_Number][4]; // ARGB                            
-{
-  {
-    int[] COL = {
-      255, 255, 127, 0
-    };    
-    Materials_Color[0] = COL;
-  }
-  {
-    int[] COL = {
-      255, 255, 0, 0
-    };    
-    Materials_Color[1] = COL;
-  }  
-  {
-    int[] COL = {
-      255, 255, 255, 0
-    };    
-    Materials_Color[2] = COL;
-  }
-  {
-    int[] COL = {
-      255, 0, 255, 0
-    };    
-    Materials_Color[3] = COL;
-  }
-  {
-    int[] COL = {
-      255, 0, 255, 255
-    };    
-    Materials_Color[4] = COL;
-  }
-  {
-    int[] COL = {
-      255, 0, 0, 255
-    };    
-    Materials_Color[5] = COL;
-  }
-  {
-    int[] COL = {
-      255, 255, 0, 255
-    };    
-    Materials_Color[6] = COL;
-  }
-  {
-    int[] COL = {
-      255, 255, 255, 255
-    };    
-    Materials_Color[7] = COL;
-  }
-  {
-    //int[] COL = {255, 63, 63, 63};    
-    int[] COL = {
-      63, 63, 63, 63
-    };
-    Materials_Color[8] = COL;
-  }
-  {
-    //int[] COL = {255, 127, 127, 127};    
-    int[] COL = {
-      127, 127, 127, 127
-    };
-    Materials_Color[9] = COL;
-  }
-  {
-    //int[] COL = {255, 191, 191, 191};    
-    int[] COL = {
-      191, 191, 191, 191
-    };
-    Materials_Color[10] = COL;
-  }
 
+class solarchvision_Materials {
+
+  int Number = 11; //256; // 0, 1, 2, ... , 10
+  
+  int Selection = 1; //2; // yellow
+  
+  float[][][] DirectArea_Data = new float [this.Number][24][365]; 
+  int[][] DirectArea_Flags = new int [24][365];
+  
+  float[][][] DiffuseArea_Data = new float [this.Number][24][365]; 
+  int[][] DiffuseArea_Flags = new int [24][365];
+  
+  int[][] Color = new int [this.Number][4]; // ARGB                            
   {
-    for (int mt = 11; mt < Materials_Number; mt++) {
+    {
       int[] COL = {
-        255, int(random(256)), int(random(256)), int(random(256))
+        255, 255, 127, 0
+      };    
+      this.Color[0] = COL;
+    }
+    {
+      int[] COL = {
+        255, 255, 0, 0
+      };    
+      this.Color[1] = COL;
+    }  
+    {
+      int[] COL = {
+        255, 255, 255, 0
+      };    
+      this.Color[2] = COL;
+    }
+    {
+      int[] COL = {
+        255, 0, 255, 0
+      };    
+      this.Color[3] = COL;
+    }
+    {
+      int[] COL = {
+        255, 0, 255, 255
+      };    
+      this.Color[4] = COL;
+    }
+    {
+      int[] COL = {
+        255, 0, 0, 255
+      };    
+      this.Color[5] = COL;
+    }
+    {
+      int[] COL = {
+        255, 255, 0, 255
+      };    
+      this.Color[6] = COL;
+    }
+    {
+      int[] COL = {
+        255, 255, 255, 255
+      };    
+      this.Color[7] = COL;
+    }
+    {
+      //int[] COL = {255, 63, 63, 63};    
+      int[] COL = {
+        63, 63, 63, 63
       };
-      Materials_Color[mt] = COL;
+      this.Color[8] = COL;
     }
-  }
-}
-
-void SOLARCHVISION_empty_Materials_DirectArea () {
-
-  for (int mt = 0; mt < Materials_Number; mt++) {
-    for (int i = 0; i < 24; i++) {
-      for (int j = 0; j < 365; j++) {
-        Materials_DirectArea_Data[mt][i][j] = FLOAT_undefined;
-        Materials_DirectArea_Flags[i][j] = -1;
+    {
+      //int[] COL = {255, 127, 127, 127};    
+      int[] COL = {
+        127, 127, 127, 127
+      };
+      this.Color[9] = COL;
+    }
+    {
+      //int[] COL = {255, 191, 191, 191};    
+      int[] COL = {
+        191, 191, 191, 191
+      };
+      this.Color[10] = COL;
+    }
+  
+    {
+      for (int mt = 11; mt < this.Number; mt++) {
+        int[] COL = {
+          255, int(random(256)), int(random(256)), int(random(256))
+        };
+        this.Color[mt] = COL;
       }
     }
   }
-}
-
-void SOLARCHVISION_empty_Materials_DiffuseArea () {
-
-  for (int mt = 0; mt < Materials_Number; mt++) {
-    for (int i = 0; i < 24; i++) {
-      for (int j = 0; j < 365; j++) {
-        Materials_DiffuseArea_Data[mt][i][j] = FLOAT_undefined;
-        Materials_DiffuseArea_Flags[i][j] = -1;
+  
+  void empty_DirectArea () {
+  
+    for (int mt = 0; mt < this.Number; mt++) {
+      for (int i = 0; i < 24; i++) {
+        for (int j = 0; j < 365; j++) {
+          this.DirectArea_Data[mt][i][j] = FLOAT_undefined;
+          this.DirectArea_Flags[i][j] = -1;
+        }
       }
     }
   }
+  
+  void empty_DiffuseArea () {
+  
+    for (int mt = 0; mt < this.Number; mt++) {
+      for (int i = 0; i < 24; i++) {
+        for (int j = 0; j < 365; j++) {
+          this.DiffuseArea_Data[mt][i][j] = FLOAT_undefined;
+          this.DiffuseArea_Flags[i][j] = -1;
+        }
+      }
+    }
+  }
+  
 }
+
+solarchvision_Materials allMaterials = new solarchvision_Materials(); 
+
 
 
 
@@ -10462,27 +10474,27 @@ class solarchvision_Faces {
     
           if (User3D.export_MaterialLibrary) {
     
-            int[] Materials_Used = new int [Materials_Number];
+            int[] used_Materials = new int [allMaterials.Number];
     
-            for (int i = 0; i < Materials_Used.length; i++) {
-              Materials_Used[i] = 0;
+            for (int i = 0; i < used_Materials.length; i++) {
+              used_Materials[i] = 0;
             }
     
             for (int f = 0; f < this.nodes.length; f++) {
     
               int mt = this.getMaterial(f);
     
-              Materials_Used[mt] += 1;
+              used_Materials[mt] += 1;
             }    
     
-            for (int mt = 0; mt < Materials_Number; mt++) {
+            for (int mt = 0; mt < allMaterials.Number; mt++) {
     
-              if (Materials_Used[mt] != 0) {
+              if (used_Materials[mt] != 0) {
     
-                float a = Materials_Color[mt][0] / 255.0; 
-                float r = Materials_Color[mt][1] / 255.0; 
-                float g = Materials_Color[mt][2] / 255.0; 
-                float b = Materials_Color[mt][3] / 255.0; 
+                float a = allMaterials.Color[mt][0] / 255.0; 
+                float r = allMaterials.Color[mt][1] / 255.0; 
+                float g = allMaterials.Color[mt][2] / 255.0; 
+                float b = allMaterials.Color[mt][3] / 255.0; 
     
                 mtlOutput.println("newmtl SurfaceMaterial" + nf(mt, 0));
                 mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -10894,27 +10906,27 @@ class solarchvision_Faces {
           
           if (Create_Face_Texture == 0) {
             
-            int[] Materials_Used = new int [Materials_Number];
+            int[] used_Materials = new int [allMaterials.Number];
     
-            for (int i = 0; i < Materials_Used.length; i++) {
-              Materials_Used[i] = 0;
+            for (int i = 0; i < used_Materials.length; i++) {
+              used_Materials[i] = 0;
             }
     
             for (int f = 0; f < this.nodes.length; f++) {
     
               int mt = this.getMaterial(f);
     
-              Materials_Used[mt] += 1;
+              used_Materials[mt] += 1;
             }    
     
-            for (int mt = 0; mt < Materials_Number; mt++) {
+            for (int mt = 0; mt < allMaterials.Number; mt++) {
     
-              if (Materials_Used[mt] != 0) {        
+              if (used_Materials[mt] != 0) {        
     
                 htmlOutput.println("\t\t\t\t<Appearance DEF='SurfaceMaterial" + nf(mt, 0) + "'>");
                 htmlOutput.print  ("\t\t\t\t\t<Material");
-                htmlOutput.print  (" transparency='" + nf(1 - Materials_Color[mt][0] / 255.0, 0, 3) + "'");
-                htmlOutput.print  (" diffuseColor='" + nf(Materials_Color[mt][1] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][2] / 255.0, 0, 3) + " " + nf(Materials_Color[mt][3] / 255.0, 0, 3) + "'");
+                htmlOutput.print  (" transparency='" + nf(1 - allMaterials.Color[mt][0] / 255.0, 0, 3) + "'");
+                htmlOutput.print  (" diffuseColor='" + nf(allMaterials.Color[mt][1] / 255.0, 0, 3) + " " + nf(allMaterials.Color[mt][2] / 255.0, 0, 3) + " " + nf(allMaterials.Color[mt][3] / 255.0, 0, 3) + "'");
                 htmlOutput.println("></Material>");
                 htmlOutput.println("\t\t\t\t</Appearance>");
                 
@@ -11118,27 +11130,27 @@ class solarchvision_Faces {
       
       if (target_window == TypeWindow.RAD) {
     
-        int[] Materials_Used = new int [Materials_Number];
+        int[] used_Materials = new int [allMaterials.Number];
     
-        for (int i = 0; i < Materials_Used.length; i++) {
-          Materials_Used[i] = 0;
+        for (int i = 0; i < used_Materials.length; i++) {
+          used_Materials[i] = 0;
         }
     
         for (int f = 0; f < this.nodes.length; f++) {
     
           int mt = this.getMaterial(f);
     
-          Materials_Used[mt] += 1;
+          used_Materials[mt] += 1;
         }    
     
-        for (int mt = 0; mt < Materials_Number; mt++) {
+        for (int mt = 0; mt < allMaterials.Number; mt++) {
     
-          if (Materials_Used[mt] != 0) {
+          if (used_Materials[mt] != 0) {
     
-            float a = Materials_Color[mt][0] / 255.0; 
-            float r = Materials_Color[mt][1] / 255.0; 
-            float g = Materials_Color[mt][2] / 255.0; 
-            float b = Materials_Color[mt][3] / 255.0; 
+            float a = allMaterials.Color[mt][0] / 255.0; 
+            float r = allMaterials.Color[mt][1] / 255.0; 
+            float g = allMaterials.Color[mt][2] / 255.0; 
+            float b = allMaterials.Color[mt][3] / 255.0; 
     
             radOutput.println("void plastic " + "SurfaceMaterial" + nf(mt, 0));
             radOutput.println("0");
@@ -11253,7 +11265,7 @@ class solarchvision_Faces {
         if (vsb > 0) {
   
           int  mt = this.getMaterial(f);
-          if (Materials_Color[mt][0] > 127) {
+          if (allMaterials.Color[mt][0] > 127) {
   
             int tessellation = this.getTessellation(f);
   
@@ -11663,7 +11675,7 @@ class solarchvision_Curves {
             int mt = this.getMaterial(f);  
         
             float[] COL = {
-              Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]
+              allMaterials.Color[mt][0], allMaterials.Color[mt][1], allMaterials.Color[mt][2], allMaterials.Color[mt][3]
             };      
             
             float weight = 0.1 * this.getWeight(f);
@@ -22352,8 +22364,8 @@ void setup () {
   TIME.date = (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (TIME.hour >= 12) TIME.date += 0.5;   
 
-  SOLARCHVISION_empty_Materials_DirectArea();
-  SOLARCHVISION_empty_Materials_DiffuseArea();
+  allMaterials.empty_DirectArea();
+  allMaterials.empty_DiffuseArea();
 
   VertexSolar_resize_array(); 
   GlobalSolar_resize_array();
@@ -25485,7 +25497,7 @@ void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D
       color c = color(0, 0, 0);
 
       int mt = allFaces.getMaterial(f);
-      c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
+      c = color(allMaterials.Color[mt][1], allMaterials.Color[mt][2], allMaterials.Color[mt][3], allMaterials.Color[mt][0]);
 
       SKY2D_graphics.stroke(c);
       SKY2D_graphics.fill(c);
@@ -34767,7 +34779,7 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           v[1], v[2], v[0]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }      
     
@@ -34775,7 +34787,7 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           v[2], v[3], v[0]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }      
     
@@ -34783,7 +34795,7 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           v[3], v[4], v[0]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }      
     
@@ -34791,7 +34803,7 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           v[4], v[1], v[0]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }      
     
@@ -34799,7 +34811,7 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           v[1], v[5], v[2]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }      
     
@@ -34807,14 +34819,14 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           v[2], v[5], v[3]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }      
       {
         int[] newFace_nodes = {
           v[3], v[5], v[4]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }  
     
@@ -34822,7 +34834,7 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           v[4], v[5], v[1]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       
@@ -34903,49 +34915,49 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           t3, m2, t2, b2, b3
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }  
       {//Roof-South
         int[] newFace_nodes = {
           m1, m2, t3, t4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }  
       {//East
         int[] newFace_nodes = {
           t1, m1, t4, b4, b1
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }    
       {//North
         int[] newFace_nodes = {
           t2, t1, b1, b2
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }  
       {//South
         int[] newFace_nodes = {
           t4, t3, b3, b4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }    
       {//Roof-North
         int[] newFace_nodes = {
           m2, m1, t1, t2
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }    
       {//Bottom
         int[] newFace_nodes = {
           b4, b3, b2, b1
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       
@@ -35035,63 +35047,63 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           t3, t2, b2, b3
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }  
       {//Roof-West
         int[] newFace_nodes = {
           t3, m2, t2
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }    
       {//Roof-South
         int[] newFace_nodes = {
           m1, m2, t3, t4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }  
       {//East
         int[] newFace_nodes = {
           t1, t4, b4, b1
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//Roof-East
         int[] newFace_nodes = {
           t1, m1, t4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }    
       {//North
         int[] newFace_nodes = {
           t2, t1, b1, b2
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }  
       {//South
         int[] newFace_nodes = {
           t4, t3, b3, b4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }    
       {//Roof-North
         int[] newFace_nodes = {
           m2, m1, t1, t2
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }    
       {//Bottom
         int[] newFace_nodes = {
           b4, b3, b2, b1
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       
@@ -35131,42 +35143,42 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           t3, t2, b2, b3
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//Roof
         int[] newFace_nodes = {
           t1, t2, t3, t4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//East
         int[] newFace_nodes = {
           t1, t4, b4, b1
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//North
         int[] newFace_nodes = {
           t2, t1, b1, b2
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//South
         int[] newFace_nodes = {
           t4, t3, b3, b4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//Bottom
         int[] newFace_nodes = {
           b4, b3, b2, b1
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       
@@ -35203,42 +35215,42 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           t3, t2, b2, b3
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//Roof
         int[] newFace_nodes = {
           t1, t2, t3, t4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//East
         int[] newFace_nodes = {
           t1, t4, b4, b1
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//North
         int[] newFace_nodes = {
           t2, t1, b1, b2
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//South
         int[] newFace_nodes = {
           t4, t3, b3, b4
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       {//Bottom
         int[] newFace_nodes = {
           b4, b3, b2, b1
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
       
@@ -35667,7 +35679,7 @@ class solarchvision_Create3D {
     
       allFaces.create(newFace_nodesT);
     
-      if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1)); 
+      if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1)); 
       allFaces.create(newFace_nodesB);
     
       for (int i = 0; i < n; i++) {
@@ -35676,7 +35688,7 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           vT[i], vB[i], vB[next_i], vT[next_i]
         };
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1)); 
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1)); 
         allFaces.create(newFace_nodes);
       }
     }
@@ -35734,7 +35746,7 @@ class solarchvision_Create3D {
           newFace_nodesB[1] = vB[next_i];
           newFace_nodesB[2] = vT[next_i]; 
     
-          if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));   
+          if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));   
           allFaces.create(newFace_nodesT);
           allFaces.create(newFace_nodesB);
         }
@@ -35751,7 +35763,7 @@ class solarchvision_Create3D {
           newFace_nodesB[1] = vB[i];
           newFace_nodesB[2] = vB[0];    
     
-          if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));
+          if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
           allFaces.create(newFace_nodesT);
           allFaces.create(newFace_nodesB);
         }
@@ -35995,7 +36007,7 @@ class solarchvision_Create3D {
           newFace_nodes = concat(newFace_nodes, f);
         }
   
-        if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));      
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));      
   
         allFaces.create(newFace_nodes);
       }
@@ -36400,7 +36412,7 @@ class solarchvision_Create3D {
         new_Vertex_ids[j] = allPoints.create(x + cx, y + cy, z + cz);
       }
   
-      if (m == -1) current_Material = 1 + (current_Material % (Materials_Number - 1));  
+      if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));  
       allFaces.create(new_Vertex_ids);
     }
   
@@ -47804,7 +47816,7 @@ void SOLARCHVISION_save_project (String myFile) {
     
     //XML_setInt(parent, "Camera_Variation", Camera_Variation);
 
-    XML_setInt(parent, "Materials_Selection", Materials_Selection);
+    XML_setInt(parent, "allMaterials.Selection", allMaterials.Selection);
     XML_setFloat(parent, "OBJECTS_scale", OBJECTS_scale);
 
     XML_setInt(parent, "FrameVariation", FrameVariation);
@@ -48047,7 +48059,7 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   Camera_Variation = XML_getInt(parent, "Camera_Variation");
 
-  Materials_Selection = XML_getInt(parent, "Materials_Selection");
+  allMaterials.Selection = XML_getInt(parent, "allMaterials.Selection");
   OBJECTS_scale = XML_getFloat(parent, "OBJECTS_scale");
   
   FrameVariation = XML_getInt(parent, "FrameVariation");
@@ -49332,10 +49344,10 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
               if ((is_undefined_FLOAT(R_dir) == false) && (is_undefined_FLOAT(R_dif) == false)) { 
   
-                if (Materials_DirectArea_Flags[now_i][now_j] == -1) {
+                if (allMaterials.DirectArea_Flags[now_i][now_j] == -1) {
                   valuesSUM[now_k] = FLOAT_undefined;
                 } else {
-                  valuesSUM[now_k] = 0.001 * (R_dir * Materials_DirectArea_Data[Materials_Selection][now_i][now_j] + R_dif * Materials_DiffuseArea_Data[Materials_Selection][now_i][now_j]);
+                  valuesSUM[now_k] = 0.001 * (R_dir * allMaterials.DirectArea_Data[allMaterials.Selection][now_i][now_j] + R_dif * allMaterials.DiffuseArea_Data[allMaterials.Selection][now_i][now_j]);
                 }
   
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
@@ -49345,7 +49357,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.V_offset = 0;
               LAYER_developed.V_belowLine = 1;
               LAYER_developed.unit = "KW";
-              LAYER_developed.descriptions[Language_EN] = "Direct radiation on surfaces with material #" + String.valueOf(Materials_Selection);
+              LAYER_developed.descriptions[Language_EN] = "Direct radiation on surfaces with material #" + String.valueOf(allMaterials.Selection);
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }         
   
