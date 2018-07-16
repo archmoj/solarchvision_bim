@@ -1,17 +1,18 @@
 
-// SOLARCHVISION_snap_Faces --> allFaces.snap...
 
+// bug drawProbs
 
 // move should keep the same distance of bounding box - now only moves the center
+
+
+
+// SOLARCHVISION_snap_Faces --> allFaces.snap...
 
 // please define station elevation data for CWEEDS points!
 
 // after calling .reduceDegreePolygon is not complete
 
-
-// bug drawProbs
-
-// remember: should optimize vertics after optimizing faces!
+// remember: should optimize vertices after optimizing faces!
 
 //for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period. 
 
@@ -341,7 +342,6 @@ final int TROPO_timeSteps = 24;
 
 // solid rotations inside groups should be translated to locals to avoid problems!
 
-// some rotations are not in degrees e.g. solids, what else?
 
 
 float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
@@ -56690,7 +56690,7 @@ void SOLARCHVISION_save_project (String myFile) {
 
   saveXML(xml, myFile);    
 
-  println("End of saving XML.");
+  println("End of saving XML:", myFile);
 
 }
 
@@ -56935,24 +56935,29 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
   LAYER_precipitation.from_XML(xml);
   LAYER_developed.from_XML(xml);
 
-  println("End of loading XML.");
-}  
+  println("End of loading XML");
+}
 
 
 
 void SOLARCHVISION_hold_project () {
 
   HoldStamp = nf(millis(), 0);
+  
+  String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
 
-  SOLARCHVISION_save_project(Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");  
+  SOLARCHVISION_save_project(myFile);  
 }
 
 void SOLARCHVISION_fetch_project () {
+  
+  String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
+  
   try {
-    SOLARCHVISION_load_project(Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");
+    SOLARCHVISION_load_project(myFile);
   }
   catch (Exception e) {
-    println("Cannot find hold file!");
+    println("Cannot find the hold file:", myFile);
   }
 }
 
