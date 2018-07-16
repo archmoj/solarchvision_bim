@@ -29942,20 +29942,20 @@ class solarchvision_Model0Ds {
             if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI; 
     
     
-            this.Vertices[f * 4 + 0][0] = (x - rad * cos(rot)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 0][1] = (y - rad * sin(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][0] = (x - rad * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][1] = (y - rad * sin(t)) / OBJECTS_scale;
             this.Vertices[f * 4 + 0][2] = (z) / OBJECTS_scale;
     
-            this.Vertices[f * 4 + 1][0] = (x + rad * cos(rot)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 1][1] = (y + rad * sin(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][0] = (x + rad * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][1] = (y + rad * sin(t)) / OBJECTS_scale;
             this.Vertices[f * 4 + 1][2] = (z) / OBJECTS_scale;
     
-            this.Vertices[f * 4 + 2][0] = (x + rad * cos(rot)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 2][1] = (y + rad * sin(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][0] = (x + rad * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][1] = (y + rad * sin(t)) / OBJECTS_scale;
             this.Vertices[f * 4 + 2][2] = (z + 2 * rad) / OBJECTS_scale;
     
-            this.Vertices[f * 4 + 3][0] = (x - rad * cos(rot)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 3][1] = (y - rad * sin(rot)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][0] = (x - rad * cos(t)) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][1] = (y - rad * sin(t)) / OBJECTS_scale;
             this.Vertices[f * 4 + 3][2] = (z + 2 * rad) / OBJECTS_scale;
     
             this.Faces[f][0] = f * 4 + 0;
