@@ -6672,7 +6672,7 @@ class solarchvision_STUDY {
   
         if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].println();
   
-        if (this.displaySorted) {  
+        if (this.displayProbs) {  
           _interval += 1; 
           if ((_interval % this.sumInterval) == 0) {
             for (int k = 0; k < count_k; k++) {
@@ -6688,12 +6688,12 @@ class solarchvision_STUDY {
                 }
               }
             }        
-            if (this.displayProbs) {
-              this.drawProbs(i, j, valuesSUM, valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
-            }
-          }      
+
+            this.drawProbs(i, j, valuesSUM, valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          } 
+        }     
     
-        
+        if (this.displaySorted) {
           this.drawSorted(i, j, valuesA, valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
   
