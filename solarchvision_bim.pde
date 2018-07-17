@@ -1,6 +1,8 @@
 
 
 // bug drawProbs
+// bug using small STUDY.LevelPix 
+
 
 // move should keep the same distance of bounding box - now only moves the center
 
@@ -297,7 +299,7 @@ final int TROPO_timeSteps = 24;
 // should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == 6) || (STUDY.PlotImpacts == 7)) {
 
 
-// bug using small STUDY.LevelPix 
+
 
 
 // pick select LandPoint is not written. 
@@ -5317,8 +5319,6 @@ class solarchvision_STUDY {
   int sumInterval = 2;
   float LevelPix = 8;
   
-  float Pix = 0; 
-  
   color color_data_raws = color(0, 0, 0);
   
   int plotSetup = 14; //4; //12; //13;
@@ -6044,14 +6044,21 @@ class solarchvision_STUDY {
   
   void drawProbs (int i, int j, float[] valuesSUM, float[] valuesNUM, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
 
-    this.Pix = (100.0 * this.view_S / this.LevelPix);
+    println("view_S=", this.view_S);
+    println("V_scale=", this.V_scale);
+    println("LevelPix=", this.LevelPix);
+    
+    float _pix = 400.0 * this.view_S / (this.V_scale * this.LevelPix); 
+    
+    
+    
 
     int PAL_type = this.PROB_pallet_CLR; 
     int PAL_direction = this.PROB_pallet_DIR;  
     float PAL_multiplier = this.PROB_pallet_MLT;
   
     float txt_max_width = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
-    float txt_max_height = this.Pix;
+    float txt_max_height = _pix;
     if (txt_max_height > txt_max_width) {
       this.graphics.textSize(0.9 * txt_max_width);
     }
@@ -6080,36 +6087,36 @@ class solarchvision_STUDY {
     
     
     if ((is_defined(min_v)) && (is_defined(-max_v))) {    
-      min_v = funcs.roundTo((min_v * abs(sy_Plot)), this.Pix) / this.Pix;
-      max_v = funcs.roundTo((max_v * abs(sy_Plot)), this.Pix) / this.Pix;
+      min_v = funcs.roundTo((min_v * abs(sy_Plot)), _pix) / _pix;
+      max_v = funcs.roundTo((max_v * abs(sy_Plot)), _pix) / _pix;
   
       if (CurrentLayer_id == LAYER_winddir.id) min_v = 0;
     
-      int[] _probs;
-      int total_probs = 0;
+      int[] probs;
+      int totalProbs = 0;
   
-      _probs = new int [floor(max_v - min_v) + 1];
+      probs = new int [floor(max_v - min_v) + 1];
   
       for (int k = 0; k < valuesSUM.length; k++) {
         if (is_defined(valuesSUM[k])) {
           float the_value = valuesSUM[k];
   
           if (CurrentLayer_id == LAYER_winddir.id) {
-            if (funcs.roundTo((the_value * abs(sy_Plot)), this.Pix) >= (360 * abs(sy_Plot))) the_value -= 360;
+            if (funcs.roundTo((the_value * abs(sy_Plot)), _pix) >= (360 * abs(sy_Plot))) the_value -= 360;
           }
 
-          int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), this.Pix) / this.Pix) - min_v, 1));
+          int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), _pix) / _pix) - min_v, 1));
           
           if (h < 0) h = 0;
-          else if (h > _probs.length - 1) h = _probs.length - 1; 
-          _probs[h] += 1;
-          total_probs += 1;
+          else if (h > probs.length - 1) h = probs.length - 1; 
+          probs[h] += 1;
+          totalProbs += 1;
         }
       }
 
-      if (total_probs != 0) {
-        for (int n = 0; n < _probs.length; n++) {
-          float prob_V = 1.0 * _probs[n] / total_probs;
+      if (totalProbs != 0) {
+        for (int n = 0; n < probs.length; n++) {
+          float prob_V = 1.0 * probs[n] / totalProbs;
   
           //if (int(funcs.roundTo(100 * prob_V, 1)) > 0) {
           if ((100 * prob_V) > 0) {
@@ -6127,9 +6134,9 @@ class solarchvision_STUDY {
             this.graphics.strokeWeight(this.T_scale * 0); 
             
             float x1 = (j + ((i + 1) / 24.0)) * sx_Plot;
-            float y1 = ((min_v + n) * this.Pix * sy_Plot);            
+            float y1 = ((min_v + n) * _pix * sy_Plot);            
             float w = -(this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
-            float h = this.Pix * sy_Plot;
+            float h = _pix * sy_Plot;
             
             this.graphics.rect(x1, y1, w, h); 
   
@@ -6145,7 +6152,7 @@ class solarchvision_STUDY {
             this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 + 0.5 * w, y1 + 0.5 * h + 0.05 * txt_max_height);
   
             if ((this.export_info_prob) && (this.displayProbs)) {
-              FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * this.Pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
+              FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * _pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
             }
 
           }
@@ -9054,7 +9061,6 @@ class solarchvision_STUDY {
     XML_setBoolean(parent, "displayProbs", this.displayProbs);
     XML_setInt(parent, "sumInterval", this.sumInterval);
     XML_setFloat(parent, "LevelPix", this.LevelPix);
-    XML_setFloat(parent, "Pix", this.Pix);
     XML_setInt(parent, "plotSetup", this.plotSetup);
   }
   
@@ -9111,7 +9117,6 @@ class solarchvision_STUDY {
     this.displayProbs = XML_getBoolean(parent, "displayProbs");
     this.sumInterval = XML_getInt(parent, "sumInterval");
     this.LevelPix = XML_getFloat(parent, "LevelPix");
-    this.Pix = XML_getFloat(parent, "Pix");
     this.plotSetup = XML_getInt(parent, "plotSetup");
  
   }       
