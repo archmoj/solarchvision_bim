@@ -1,6 +1,4 @@
 
-//CLIMATE_TMYEPW_values[i][j][LAYER_drybulb.id][k] = 20; !!!!!!!!!!!!!!!
-
 
 // bug drawProbs
 
@@ -433,15 +431,15 @@ final String STRING_undefined = "N/A";
 final float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
 final float FLOAT_max_defined = 0.95 * FLOAT_undefined;
 
-boolean is_defined_FLOAT (float a) {
+boolean is_defined (float a) {
   if (a < FLOAT_max_defined) {
     return true; 
   }
   return false;
 }
 
-boolean is_undefined_FLOAT (float a) {
-  return !is_defined_FLOAT(a);
+boolean is_undefined (float a) {
+  return !is_defined(a);
 }
 
 
@@ -1537,7 +1535,7 @@ class solarchvision_Functions {
             
                 intersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
                 
-                if (is_defined_FLOAT(intersectionPoint[0])) {
+                if (is_defined(intersectionPoint[0])) {
                   diagonalRejected = true;
                   break;
                 }
@@ -1600,7 +1598,7 @@ class solarchvision_Functions {
           
           intersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
           
-          if (is_defined_FLOAT(intersectionPoint[0])) {
+          if (is_defined(intersectionPoint[0])) {
             int[][] startList = (int[][]) subset(allDiagonals, 0, q);
             int[][] endList = (int[][]) subset(allDiagonals, q + 1);
             allDiagonals = (int[][]) concat(startList, endList); // remove this diagonal
@@ -2378,7 +2376,7 @@ class solarchvision_SHADE {
   
     float[] COL = {0,0,0,0}; // default color for undefined values 
   
-    if (is_defined_FLOAT(_u)) {   
+    if (is_defined(_u)) {   
       COL = PAINT.getColorStyle(PAL_type, _u);
     }
   
@@ -2392,7 +2390,7 @@ class solarchvision_SHADE {
   
     float _u = FLOAT_undefined;
   
-    if (is_defined_FLOAT(val)) { 
+    if (is_defined(val)) { 
   
       if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * val);
       if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * val);  
@@ -2495,7 +2493,7 @@ class solarchvision_SHADE {
   
     float[] COL = {63,63,63,127}; // default color for undefined values 
   
-    if (is_defined_FLOAT(_u)) { 
+    if (is_defined(_u)) { 
       COL = PAINT.getColorStyle(PAL_type, _u);
     }
   
@@ -2527,7 +2525,7 @@ class solarchvision_SHADE {
   
     float _u = FLOAT_undefined;
   
-    if (is_defined_FLOAT(valuesSUM)) {
+    if (is_defined(valuesSUM)) {
   
       if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
       if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
@@ -3100,7 +3098,7 @@ class solarchvision_WIN3D {
 
             float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
 
-            if (is_defined_FLOAT(_val)) {
+            if (is_defined(_val)) {
 
               float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
               if (PAL_direction == -1) _u = 1 - _u;
@@ -3144,7 +3142,7 @@ class solarchvision_WIN3D {
             //float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
             float _val = AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
 
-            if (is_defined_FLOAT(_val)) {
+            if (is_defined(_val)) {
 
               float teta = AERIAL_Data[GRIB2_Hour][LAYER_winddir.id][n][o];
               float D_teta = 15; 
@@ -4650,7 +4648,7 @@ class solarchvision_WORLD {
   
                 float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
   
-                if (is_defined_FLOAT(_val)) {
+                if (is_defined(_val)) {
   
                   float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
                   if (PAL_direction == -1) _u = 1 - _u;
@@ -4682,7 +4680,7 @@ class solarchvision_WORLD {
                       this.graphics.fill(255);
                       this.graphics.strokeWeight(2 * this.ImageScale);
                     }              
-                    if (is_defined_FLOAT(_val)) this.graphics.text(nf(int(funcs.roundTo(_val, 1)), 0), 0, 0);
+                    if (is_defined(_val)) this.graphics.text(nf(int(funcs.roundTo(_val, 1)), 0), 0, 0);
                   }
                 }
               }
@@ -4703,7 +4701,7 @@ class solarchvision_WORLD {
                 //float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
                 float _val = AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
   
-                if (is_defined_FLOAT(_val)) {              
+                if (is_defined(_val)) {              
   
                   float teta = AERIAL_Data[GRIB2_Hour][LAYER_winddir.id][n][o];
                   float D_teta = 15; 
@@ -4758,7 +4756,7 @@ class solarchvision_WORLD {
                       this.graphics.fill(255);
                       this.graphics.strokeWeight(2 * this.ImageScale);
                     }              
-                    if (is_defined_FLOAT(_val)) this.graphics.text(nf(int(funcs.roundTo(_val, 1)), 0), 0, 0);
+                    if (is_defined(_val)) this.graphics.text(nf(int(funcs.roundTo(_val, 1)), 0), 0, 0);
                   }
                 }
               }
@@ -6074,14 +6072,14 @@ class solarchvision_STUDY {
     float max_v = -FLOAT_undefined;
   
     for (int k = 0; k < valuesSUM.length; k++) {
-      if (is_defined_FLOAT(valuesSUM[k])) {
+      if (is_defined(valuesSUM[k])) {
         if (min_v > valuesSUM[k]) min_v = valuesSUM[k];
         if (max_v < valuesSUM[k]) max_v = valuesSUM[k];
       }
     }     
     
     
-    if ((is_defined_FLOAT(min_v)) && (is_defined_FLOAT(-max_v))) {    
+    if ((is_defined(min_v)) && (is_defined(-max_v))) {    
       min_v = funcs.roundTo((min_v * abs(sy_Plot)), this.Pix) / this.Pix;
       max_v = funcs.roundTo((max_v * abs(sy_Plot)), this.Pix) / this.Pix;
   
@@ -6093,7 +6091,7 @@ class solarchvision_STUDY {
       _probs = new int [floor(max_v - min_v) + 1];
   
       for (int k = 0; k < valuesSUM.length; k++) {
-        if (is_defined_FLOAT(valuesSUM[k])) {
+        if (is_defined(valuesSUM[k])) {
           float the_value = valuesSUM[k];
   
           if (CurrentLayer_id == LAYER_winddir.id) {
@@ -6210,7 +6208,7 @@ class solarchvision_STUDY {
     float[] sortedvaluesA = sort(valuesA);
     int num_sortedvaluesA = 0;
     for (int l = 0; l < sortedvaluesA.length; l++) {
-      if (is_defined_FLOAT(sortedvaluesA[l])) {
+      if (is_defined(sortedvaluesA[l])) {
         num_sortedvaluesA += 1;
       } else break;
     }
@@ -6218,7 +6216,7 @@ class solarchvision_STUDY {
     float[] sortedvaluesB = sort(valuesB);
     int num_sortedvaluesB = 0;
     for (int l = 0; l < sortedvaluesB.length; l++) {
-      if (is_defined_FLOAT(sortedvaluesB[l])) {
+      if (is_defined(sortedvaluesB[l])) {
         num_sortedvaluesB += 1;
       } else break;
     }
@@ -6313,7 +6311,7 @@ class solarchvision_STUDY {
       YvaluesA = new float [valuesA.length];
   
       for (int l = 0; l < valuesA.length; l++) {
-        if (is_defined_FLOAT(valuesA[l])) {
+        if (is_defined(valuesA[l])) {
           XvaluesA[l] = funcs.cos_ang(90 - valuesA[l]); 
           YvaluesA[l] = funcs.sin_ang(90 - valuesA[l]);
         } else {
@@ -6326,7 +6324,7 @@ class solarchvision_STUDY {
       float[] Y_NormalsA = SOLARCHVISION_NORMAL(YvaluesA);
   
       for (int l = 0; l < NormalsA.length; l++) {
-        if (is_defined_FLOAT(NormalsA[l])) {
+        if (is_defined(NormalsA[l])) {
           NormalsA[l] = 90 - funcs.atan2_ang(Y_NormalsA[l], X_NormalsA[l]);
           if (NormalsA[l] < 0) NormalsA[l] += 360;
         }
@@ -6342,7 +6340,7 @@ class solarchvision_STUDY {
       YvaluesB = new float [valuesB.length];
   
       for (int l = 0; l < valuesB.length; l++) {
-        if (is_defined_FLOAT(valuesB[l])) {
+        if (is_defined(valuesB[l])) {
           XvaluesB[l] = funcs.cos_ang(90 - valuesB[l]); 
           YvaluesB[l] = funcs.sin_ang(90 - valuesB[l]);
         } else {
@@ -6355,7 +6353,7 @@ class solarchvision_STUDY {
       float[] Y_NormalsB = SOLARCHVISION_NORMAL(YvaluesB);
   
       for (int l = 0; l < NormalsB.length; l++) {
-        if (is_defined_FLOAT(NormalsB[l])) {
+        if (is_defined(NormalsB[l])) {
           NormalsB[l] = 90 - funcs.atan2_ang(Y_NormalsB[l], X_NormalsB[l]);
           if (NormalsB[l] < 0) NormalsB[l] += 360;
         }
@@ -6433,7 +6431,7 @@ class solarchvision_STUDY {
       if (l == STAT_N_M25) z_l = 61;
       if (l == STAT_N_Ave) z_l = 62;
   
-      if ((is_defined_FLOAT(NormalsA[l])) && (is_defined_FLOAT(NormalsB[l]))) {
+      if ((is_defined(NormalsA[l])) && (is_defined(NormalsB[l]))) {
         
         float x1 = (j + ((i + 0.5) / 24.0)) * sx_Plot;
         float y1 = NormalsA[l] * sy_Plot;
@@ -6444,7 +6442,7 @@ class solarchvision_STUDY {
       } 
   
       if ((this.export_info_norm) && (this.displayNormals)) {
-        if (is_defined_FLOAT(NormalsA[l])) FILE_outputNorms[(j - this.j_Start)].print(nfs(NormalsA[l] - this.V_offset, 5, 5) + "\t"); 
+        if (is_defined(NormalsA[l])) FILE_outputNorms[(j - this.j_Start)].print(nfs(NormalsA[l] - this.V_offset, 5, 5) + "\t"); 
         else FILE_outputNorms[(j - this.j_Start)].print("[undefined]\t");
       }
     }
@@ -6621,7 +6619,7 @@ class solarchvision_STUDY {
   
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, CurrentLayer_id); 
           
-            if (is_undefined_FLOAT(Pa)) {
+            if (is_undefined(Pa)) {
               valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
   
               if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
@@ -6636,7 +6634,7 @@ class solarchvision_STUDY {
                 valuesNUM[(k * this.joinDays + j_ADD)] += 1;
   
                 if ((this.export_info_node) && (this.displayRaws)) {
-                  if (is_defined_FLOAT(valuesA[(k * this.joinDays + j_ADD)])) {
+                  if (is_defined(valuesA[(k * this.joinDays + j_ADD)])) {
                     FILE_outputRaw[(j - this.j_Start)].print(nfs(valuesA[(k * this.joinDays + j_ADD)] - this.V_offset, 5, 5) + "\t");
                   } 
                   else {
@@ -6648,7 +6646,7 @@ class solarchvision_STUDY {
   
                   Pb = getValue_CurrentDataSource(next_i, next_j, next_k, CurrentLayer_id);                 
                   
-                  if (is_undefined_FLOAT(Pb)) {
+                  if (is_undefined(Pb)) {
                     valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
                   } else {
                     valuesB[(k * this.joinDays + j_ADD)] = Pb;
@@ -7410,7 +7408,7 @@ class solarchvision_STUDY {
                   Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
                   Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
   
-                  if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc)) {
+                  if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc)) {
                     values_W_dir[k] = FLOAT_undefined;
                     values_W_spd[k] = FLOAT_undefined;
                     values_W_tmp[k] = FLOAT_undefined;
@@ -7523,7 +7521,7 @@ class solarchvision_STUDY {
                   Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
                   Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
   
-                  if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc)) {
+                  if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc)) {
                     values_W_dir[k] = FLOAT_undefined;
                     values_W_spd[k] = FLOAT_undefined;
                     values_W_tmp[k] = FLOAT_undefined;
@@ -8034,7 +8032,7 @@ class solarchvision_STUDY {
                         Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
                         Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
   
-                        if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc) || is_undefined_FLOAT(Pd)) {
+                        if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
                           values_R_dir = FLOAT_undefined;
                           values_R_dif = FLOAT_undefined;
                           values_E_dir = FLOAT_undefined;
@@ -8049,7 +8047,7 @@ class solarchvision_STUDY {
                             values_E_dir = 0.001 * Pc;
                             values_E_dif = 0.001 * Pd;
   
-                            if (is_undefined_FLOAT(valuesSUM_RAD)) {
+                            if (is_undefined(valuesSUM_RAD)) {
                               valuesSUM_RAD = 0;
                               valuesSUM_EFF_P = 0;
                               valuesSUM_EFF_N = 0;
@@ -8113,7 +8111,7 @@ class solarchvision_STUDY {
   
                   //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> valuesSUM_RAD:", valuesSUM_RAD, "COMPARISON:", COMPARISON);  
   
-                  if (is_defined_FLOAT(valuesSUM)) {
+                  if (is_defined(valuesSUM)) {
   
                     float _u = 0;
   
@@ -8197,7 +8195,7 @@ class solarchvision_STUDY {
   
               //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> (TOTAL) valuesSUM_RAD:", TOTALvaluesSUM_RAD[a][b], "COMPARISON:", COMPARISON);  
   
-              if (is_defined_FLOAT(valuesSUM)) {
+              if (is_defined(valuesSUM)) {
   
                 float _u = 0;
   
@@ -8448,7 +8446,7 @@ class solarchvision_STUDY {
                     Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
                     Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
   
-                    if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc) || is_undefined_FLOAT(Pd)) {
+                    if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
                       values_R_dir = FLOAT_undefined;
                       values_R_dif = FLOAT_undefined;
                       values_E_dir = FLOAT_undefined;
@@ -8463,7 +8461,7 @@ class solarchvision_STUDY {
                         values_E_dir = 0.001 * Pc;
                         values_E_dif = 0.001 * Pd;
   
-                        if (is_undefined_FLOAT(valuesSUM_RAD)) {
+                        if (is_undefined(valuesSUM_RAD)) {
                           valuesSUM_RAD = 0;
                           valuesSUM_EFF = 0;
                           valuesNUM = 0;
@@ -8479,7 +8477,7 @@ class solarchvision_STUDY {
                     if (Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
                     if (Impact_TYPE == Impact_PASSIVE) valuesSUM = valuesSUM_EFF; 
   
-                    if (is_defined_FLOAT(valuesSUM)) {
+                    if (is_defined(valuesSUM)) {
   
                       float _u = 0;
   
@@ -13151,14 +13149,14 @@ class solarchvision_SolidImpacts {
   
       float test_v = this.get_Impact_atXYZ(test_x, test_y, test_z);        
   
-      if ((test_v < v_min) || (is_undefined_FLOAT(v_min))) {
+      if ((test_v < v_min) || (is_undefined(v_min))) {
         v_min = test_v;
         t_min = test_t;
         x_min = test_x;
         y_min = test_y;
         z_min = test_z;
       }
-      if ((test_v > v_max) || (is_undefined_FLOAT(v_max))) {
+      if ((test_v > v_max) || (is_undefined(v_max))) {
         v_max = test_v;
         t_max = test_t;
         x_max = test_x;
@@ -13166,8 +13164,8 @@ class solarchvision_SolidImpacts {
         z_max = test_z;
       }
   
-      //if (((abs(test_v - v) < min_dist) && (funcs.vec2_dot(test_x - x, test_y - y, dx, dy) >= 0)) || (is_undefined_FLOAT(v_equ)))  {
-      if ((abs(test_v - v) < min_dist) || (is_undefined_FLOAT(v_equ))) {
+      //if (((abs(test_v - v) < min_dist) && (funcs.vec2_dot(test_x - x, test_y - y, dx, dy) >= 0)) || (is_undefined(v_equ)))  {
+      if ((abs(test_v - v) < min_dist) || (is_undefined(v_equ))) {
         //if (funcs.vec2_dot(test_x - x, test_y - y, dx, dy) >= 0) {
   
         min_dist = abs(test_v - v);
@@ -13258,7 +13256,7 @@ class solarchvision_SolidImpacts {
   
         float test_v = this.get_Impact_atXYZ(test_x, test_y, test_z);        
   
-        if ((test_v < v_min) || (is_undefined_FLOAT(v_min))) {
+        if ((test_v < v_min) || (is_undefined(v_min))) {
           v_min = test_v;
           tz_min = test_tz;
           txy_min = test_txy;
@@ -13266,7 +13264,7 @@ class solarchvision_SolidImpacts {
           y_min = test_y;
           z_min = test_z;
         }
-        if ((test_v > v_max) || (is_undefined_FLOAT(v_max))) {
+        if ((test_v > v_max) || (is_undefined(v_max))) {
           v_max = test_v;
           tz_max = test_tz;
           txy_max = test_txy;
@@ -13275,7 +13273,7 @@ class solarchvision_SolidImpacts {
           z_max = test_z;
         }
   
-        if ((abs(test_v - v) < min_dist) || (is_undefined_FLOAT(v_equ))) {
+        if ((abs(test_v - v) < min_dist) || (is_undefined(v_equ))) {
   
           min_dist = abs(test_v - v);
   
@@ -14518,7 +14516,7 @@ class solarchvision_SolarImpacts {
                     Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
                     Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
           
-                    if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc) || is_undefined_FLOAT(Pd)) {
+                    if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
                       values_R_dir = FLOAT_undefined;
                       values_R_dif = FLOAT_undefined;
                       values_E_dir = FLOAT_undefined;
@@ -14572,7 +14570,7 @@ class solarchvision_SolarImpacts {
                             int Image_Y = np / RES1;
   
                             for (int q = 0; q < numberOfImpactVariations; q++) {
-                              if (is_undefined_FLOAT(Matrix_ARGB[q][0][Image_X][Image_Y])) {
+                              if (is_undefined(Matrix_ARGB[q][0][Image_X][Image_Y])) {
                               
                                 Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
                                 Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
@@ -18962,12 +18960,12 @@ class solarchvision_Select3D {
       if (posZ_max < z) posZ_max = z;
     }   
   
-    if (is_defined_FLOAT(posX_min) &&  
-        is_defined_FLOAT(posY_min) &&
-        is_defined_FLOAT(posZ_min) &&
-        is_defined_FLOAT(-posX_max) &&
-        is_defined_FLOAT(-posY_max) &&
-        is_defined_FLOAT(-posZ_max)) {
+    if (is_defined(posX_min) &&  
+        is_defined(posY_min) &&
+        is_defined(posZ_min) &&
+        is_defined(-posX_max) &&
+        is_defined(-posY_max) &&
+        is_defined(-posZ_max)) {
       
       float dx = posX;
       float dy = posY;
@@ -24374,12 +24372,12 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
 
   _values = sort(_values);
   for (int i = 0; i < _values.length; i++) {
-    if (is_defined_FLOAT(_values[i])) NV += 1;
+    if (is_defined(_values[i])) NV += 1;
   }
 
   if (NV > 0) {
     for (int i = 0; i < NV; i++) {
-      if (is_defined_FLOAT(_values[i])) {
+      if (is_defined(_values[i])) {
         _weight = 1;
         weight_array[STAT_N_Ave] += _weight;
         return_array[STAT_N_Ave] += _values[i];
@@ -24458,7 +24456,7 @@ int SOLARCHVISION_filter (int dataID, int cloudCover_id, int type_of_filter, int
       println("ERROR: This dataID is not declared:", dataID);
     }
 
-    if (is_undefined_FLOAT(_sky)) {
+    if (is_undefined(_sky)) {
     } else {
       total_sky += _sky;
       num_sky += 1;
@@ -24489,7 +24487,7 @@ int[] SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS (float[] _values) {
 
   for (int l = 0; l < 9; l++) {
     return_array[l] = -1;
-    if (is_defined_FLOAT(_normals[l])) {
+    if (is_defined(_normals[l])) {
 
       float _dist = FLOAT_undefined;
 
@@ -24561,7 +24559,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
         Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
         Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
 
-        if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc) || is_undefined_FLOAT(Pd)) {
+        if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
         } else {
 
           int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k); 
@@ -24572,7 +24570,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
             values_E_dir = 0.0001 * Pc;
             values_E_dif = 0; //0.0001 * Pd;
 
-            if (is_undefined_FLOAT(valuesSUM_RAD[(k * STUDY.joinDays + j_ADD)])) {
+            if (is_undefined(valuesSUM_RAD[(k * STUDY.joinDays + j_ADD)])) {
               valuesSUM_RAD[(k * STUDY.joinDays + j_ADD)] = 0;
               valuesSUM_EFF[(k * STUDY.joinDays + j_ADD)] = 0;
               valuesNUM[(k * STUDY.joinDays + j_ADD)] = 0;
@@ -27258,7 +27256,7 @@ class solarchvision_Sun3D {
                     
                   }                  
   
-                  if ((is_undefined_FLOAT(Pa1)) && (is_undefined_FLOAT(Pa2))) {
+                  if ((is_undefined(Pa1)) && (is_undefined(Pa2))) {
                   } else {
   
                     float sun_V = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
@@ -27586,8 +27584,8 @@ class solarchvision_Sun3D {
                 Pc2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_direffect.id);
                 Pd2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_difeffect.id);
                 
-                if ((is_undefined_FLOAT(Pa1)) || (is_undefined_FLOAT(Pb1)) || (is_undefined_FLOAT(Pc1)) || (is_undefined_FLOAT(Pd1))
-                  || (is_undefined_FLOAT(Pa2)) || (is_undefined_FLOAT(Pb2)) || (is_undefined_FLOAT(Pc2)) || (is_undefined_FLOAT(Pd2))) {
+                if ((is_undefined(Pa1)) || (is_undefined(Pb1)) || (is_undefined(Pc1)) || (is_undefined(Pd1))
+                  || (is_undefined(Pa2)) || (is_undefined(Pb2)) || (is_undefined(Pc2)) || (is_undefined(Pd2))) {
                   values_R_dir = FLOAT_undefined;
                   values_R_dif = FLOAT_undefined;
                   values_E_dir = FLOAT_undefined;
@@ -27602,7 +27600,7 @@ class solarchvision_Sun3D {
                     values_E_dir = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
                     values_E_dif = 0.001 * (Pd1 * (1 - i_ratio) + Pd2 * i_ratio);
   
-                    if (is_undefined_FLOAT(valuesSUM_RAD)) {
+                    if (is_undefined(valuesSUM_RAD)) {
                       valuesSUM_RAD = 0;
                       valuesSUM_EFF = 0;
                       valuesNUM = 0;
@@ -27700,7 +27698,7 @@ class solarchvision_Sun3D {
   
                   if (Alpha >= 0) {
   
-                    if (is_defined_FLOAT(valuesSUM)) {
+                    if (is_defined(valuesSUM)) {
   
                       float _u = 0;
   
@@ -39412,7 +39410,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                       Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
                       Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
   
-                      if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc) || is_undefined_FLOAT(Pd)) {
+                      if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
                         values_R_dir = FLOAT_undefined;
                         values_R_dif = FLOAT_undefined;
                         values_E_dir = FLOAT_undefined;
@@ -39427,7 +39425,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                           values_E_dir = 0.001 * Pc;
                           values_E_dif = 0.001 * Pd;
   
-                          if (is_undefined_FLOAT(valuesSUM_RAD)) {
+                          if (is_undefined(valuesSUM_RAD)) {
                             valuesSUM_RAD = 0;
                             valuesSUM_EFF_P = 0;
                             valuesSUM_EFF_N = 0;
@@ -39640,7 +39638,7 @@ float[] SOLARCHVISION_snap_Faces (float[] RxP) {
         }
       }
       
-      if (is_defined_FLOAT(nearest_D)) {
+      if (is_defined(nearest_D)) {
         RxP[1] = nearest_X;
         RxP[2] = nearest_Y;
         RxP[3] = nearest_Z;
@@ -39823,11 +39821,11 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
 
   float return_value = FLOAT_undefined;
 
-  if (is_defined_FLOAT(SunR1) && 
-      is_defined_FLOAT(SunR2) && 
-      is_defined_FLOAT(SunR3) && 
-      is_defined_FLOAT(SunR4) && 
-      is_defined_FLOAT(SunR5)) { 
+  if (is_defined(SunR1) && 
+      is_defined(SunR2) && 
+      is_defined(SunR3) && 
+      is_defined(SunR4) && 
+      is_defined(SunR5)) { 
 
     float[] VECT = {
       0, 0, 0
@@ -40029,7 +40027,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
                   Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
                   Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
         
-                  if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb) || is_undefined_FLOAT(Pc) || is_undefined_FLOAT(Pd)) {
+                  if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
                     values_R_dir = FLOAT_undefined;
                     values_R_dif = FLOAT_undefined;
                     values_E_dir = FLOAT_undefined;
@@ -40044,7 +40042,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
                       values_E_dir = 0.001 * Pc;
                       values_E_dif = 0.001 * Pd;
 
-                      if (is_undefined_FLOAT(valuesSUM_RAD)) {
+                      if (is_undefined(valuesSUM_RAD)) {
                         valuesSUM_RAD = 0;
                         valuesSUM_EFF_P = 0;
                         valuesSUM_EFF_N = 0;
@@ -40101,10 +40099,10 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
             else PERCENTAGE = 0.0;
             COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
 
-            if (is_defined_FLOAT(valuesSUM_RAD)) {
+            if (is_defined(valuesSUM_RAD)) {
               GlobalSolar[Impact_ACTIVE][j + 1][a][b] = valuesSUM_RAD;
             }
-            if (is_defined_FLOAT(COMPARISON)) {
+            if (is_defined(COMPARISON)) {
               GlobalSolar[Impact_PASSIVE][j + 1][a][b] = COMPARISON;
             }
           }
@@ -40137,10 +40135,10 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
       else PERCENTAGE = 0.0;
       COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
 
-      if (is_defined_FLOAT(TOTALvaluesSUM_RAD[a][b])) {
+      if (is_defined(TOTALvaluesSUM_RAD[a][b])) {
         GlobalSolar[Impact_ACTIVE][0][a][b] = TOTALvaluesSUM_RAD[a][b];
       }
-      if (is_defined_FLOAT(COMPARISON)) {
+      if (is_defined(COMPARISON)) {
         GlobalSolar[Impact_PASSIVE][0][a][b] = COMPARISON;
       }
 
@@ -44113,9 +44111,9 @@ void mouseClicked () {
                     z1 = allPoints.getZ(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
                   }             
   
-                  if ((is_defined_FLOAT(x1)) &&  
-                      (is_defined_FLOAT(y1)) &&
-                      (is_defined_FLOAT(z1))) {     
+                  if ((is_defined(x1)) &&  
+                      (is_defined(y1)) &&
+                      (is_defined(z1))) {     
   
                     float x2 = RxP[1];
                     float y2 = RxP[2];
@@ -45410,7 +45408,7 @@ void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, 
   
         for (int n = 0; n < AERIAL_num; n++) {
           for (int o = 0; o < GRIB2_maxScenarios; o++) {
-            if (is_defined_FLOAT(AERIAL_Data[GRIB2_Hour][GRIB2_Layer][n][o])) {
+            if (is_defined(AERIAL_Data[GRIB2_Hour][GRIB2_Layer][n][o])) {
               AERIAL_Flags[GRIB2_Hour][GRIB2_Layer][n][o] = 1;
             } else AERIAL_Flags[GRIB2_Hour][GRIB2_Layer][n][o] = -1;
           }
@@ -47901,7 +47899,7 @@ void SOLARCHVISION_preBakeViewport () {
 
     for (int np = 0; np < (RES1 * RES2); np++) {
       
-      if (is_defined_FLOAT(Diffuse_Matrix[SHD][np])) {
+      if (is_defined(Diffuse_Matrix[SHD][np])) {
       
         Diffuse_RGBA[SHD].pixels[np] = color(255 * Diffuse_Matrix[SHD][np], 255);
       }
@@ -48123,7 +48121,7 @@ float valuesSUM = valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       
       float _u = 0;
     
-      if (is_defined_FLOAT(valuesSUM)) {
+      if (is_defined(valuesSUM)) {
     
         if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
         if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
@@ -48340,7 +48338,7 @@ void SOLARCHVISION_setDataFlags (int desired_DataSource) {
     for (int j = 0; j < 365; j++) {
       for (int l = 0; l < numberOfLayers; l++) {
         for (int k = 0; k < (1 + DATA_end - DATA_start); k++) {
-          if (is_defined_FLOAT(getValue_CurrentDataSource(i, j, k, l))) {
+          if (is_defined(getValue_CurrentDataSource(i, j, k, l))) {
             setFlag_CurrentDataSource(i, j, k, l, true);
           }
         }
@@ -48372,15 +48370,15 @@ void SOLARCHVISION_postProcess_fillGaps (int desired_DataSource) {
 
         for (int i = 0; i < 24; i++) {
           
-          if (is_undefined_FLOAT(getValue_CurrentDataSource(i, j, k, l))) {
-            if (is_defined_FLOAT(pre_v)) {
+          if (is_undefined(getValue_CurrentDataSource(i, j, k, l))) {
+            if (is_defined(pre_v)) {
               pre_num += 1;
 
               float next_v = FLOAT_undefined;
               int next_i = i;
               int next_j = j;
               int next_num = 0;
-              while ((next_num < MAX_SEARCH) && (is_undefined_FLOAT(next_v))) {
+              while ((next_num < MAX_SEARCH) && (is_undefined(next_v))) {
                 next_num += 1;
                 next_i += 1;
                 if (next_i == 24) {
@@ -48390,7 +48388,7 @@ void SOLARCHVISION_postProcess_fillGaps (int desired_DataSource) {
                 if (next_j == 365) {
                   next_j = 0;
                 }
-                if (is_defined_FLOAT(getValue_CurrentDataSource(next_i, next_j, k, l))) {
+                if (is_defined(getValue_CurrentDataSource(next_i, next_j, k, l))) {
                   next_v = getValue_CurrentDataSource(next_i, next_j, k, l);
 
                   if (l == LAYER_winddir.id) {
@@ -48443,7 +48441,7 @@ void SOLARCHVISION_postProcess_solarsUsingCloud (int desired_DataSource) {
         
         float CL = getValue_CurrentDataSource(i, j, k, LAYER_cloudcover.id);
         
-        if (is_defined_FLOAT(CL)) {
+        if (is_defined(CL)) {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
           float HOUR_ANGLE = i; 
 
@@ -48482,7 +48480,7 @@ void SOLARCHVISION_postProcess_solarEffects (int desired_DataSource) {
         float R_dir = getValue_CurrentDataSource(i, j, k, LAYER_dirnorrad.id);
         float R_dif = getValue_CurrentDataSource(i, j, k, LAYER_difhorrad.id);
 
-        if (is_defined_FLOAT(T) && is_defined_FLOAT(R_dir) && is_defined_FLOAT(R_dif)) {
+        if (is_defined(T) && is_defined(R_dir) && is_defined(R_dif)) {
 
           setValue_CurrentDataSource(i, j, k, LAYER_direffect.id, (18 - T) * R_dir);
           setValue_CurrentDataSource(i, j, k, LAYER_difeffect.id, (18 - T) * R_dif);
@@ -48504,7 +48502,7 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
     for (int j_for = 0; j_for < ENSEMBLE_FORECAST_maxDays; j_for++) { 
       int j = ((j_for + TIME.beginDay) % 365);
       for (int i = 0; i < 24; i++) {
-        if (is_undefined_FLOAT(ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k])) {
+        if (is_undefined(ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k])) {
         } else {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
           float HOUR_ANGLE = i; 
@@ -48547,7 +48545,7 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
               }
 
 
-              if ((is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover.id][q])) || (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure.id][q]))) {
+              if ((is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover.id][q])) || (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure.id][q]))) {
               } else {
                 float CC_dist = abs(Forecast_CC - CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover.id][q]);
                 float AP_dist = abs(Forecast_AP - CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure.id][q]);
@@ -48561,11 +48559,11 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
 
                   sum_count += _weight;
 
-                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_dirnorrad.id][q])) {
+                  if (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_dirnorrad.id][q])) {
                   } else valuesSUM_DIR += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_dirnorrad.id][q]; 
-                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_difhorrad.id][q])) {
+                  if (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_difhorrad.id][q])) {
                   } else valuesSUM_DIF += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_difhorrad.id][q]; 
-                  if (is_undefined_FLOAT(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_glohorrad.id][q])) {
+                  if (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_glohorrad.id][q])) {
                   } else valuesSUM_GLO += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_glohorrad.id][q];
                 }
               }
@@ -48676,7 +48674,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
             
-            if (is_undefined_FLOAT(Pa)) {
+            if (is_undefined(Pa)) {
               R_dir = FLOAT_undefined;
             } else {
               R_dir = Pa;
@@ -48684,7 +48682,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
             
-            if (is_undefined_FLOAT(Pa)) {
+            if (is_undefined(Pa)) {
               R_dif = FLOAT_undefined;
             } else {
               R_dif = Pa;
@@ -48692,7 +48690,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
             
-            if (is_undefined_FLOAT(Pa)) {
+            if (is_undefined(Pa)) {
               T = FLOAT_undefined;
             } else {
               T = Pa;
@@ -48700,7 +48698,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
             
-            if (is_undefined_FLOAT(Pa)) {
+            if (is_undefined(Pa)) {
               WS = FLOAT_undefined;
             } else {
               WS = Pa;
@@ -48709,7 +48707,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_precipitation.id);
             Pb = getValue_CurrentDataSource(next_i, next_j, now_k, LAYER_precipitation.id);
             
-            if (is_undefined_FLOAT(Pa) || is_undefined_FLOAT(Pb)) {
+            if (is_undefined(Pa) || is_undefined(Pb)) {
               RAIN = FLOAT_undefined;
             } else {
               RAIN = Pb - Pa;
@@ -48732,7 +48730,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             if (Develop_Option == DEV_OP_00) {  
   
-              if (is_defined_FLOAT(R_dir) && is_defined_FLOAT(R_dif)) { 
+              if (is_defined(R_dir) && is_defined(R_dif)) { 
   
                 if (allMaterials.DirectArea_Flags[now_i][now_j] == -1) {
                   valuesSUM[now_k] = FLOAT_undefined;
@@ -48758,7 +48756,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
   
   
-              if (is_defined_FLOAT(R_dir) && is_defined_FLOAT(R_dif)) { 
+              if (is_defined(R_dir) && is_defined(R_dif)) { 
   
                 valuesSUM[now_k] = SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
   
@@ -48777,7 +48775,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               float Alpha = Develop_AngleInclination;
               float Beta = Develop_AngleOrientation;
   
-              if (is_defined_FLOAT(R_dir) && is_defined_FLOAT(R_dif)) { 
+              if (is_defined(R_dir) && is_defined(R_dif)) { 
   
                 valuesSUM[now_k] += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
   
@@ -48797,7 +48795,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               float Alpha = funcs.asin_ang(SunR[3]);
               float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
   
-              if (is_defined_FLOAT(R_dir) && is_defined_FLOAT(R_dif)) { 
+              if (is_defined(R_dir) && is_defined(R_dif)) { 
   
                 valuesSUM[now_k] = SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
   
@@ -48816,7 +48814,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               float Alpha = funcs.asin_ang(SunR[3]);
               float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
   
-              if (is_defined_FLOAT(R_dir) && is_defined_FLOAT(R_dif)) { 
+              if (is_defined(R_dir) && is_defined(R_dif)) { 
   
                 valuesSUM[now_k] += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
   
@@ -48834,7 +48832,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             if (Develop_Option == DEV_OP_05) {
   
-              if (is_defined_FLOAT(T)) { 
+              if (is_defined(T)) { 
                 valuesSUM[now_k] += (T - 18) / 24;
   
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
@@ -48875,13 +48873,13 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
                 Pa = getValue_CurrentDataSource(new_i, new_j, new_k, DevelopLayer_id);
   
-                if (is_undefined_FLOAT(Pa)) {
+                if (is_undefined(Pa)) {
                   T_new = FLOAT_undefined;
                 } else {
                   T_new = Pa;
                 }            
   
-                if (is_defined_FLOAT(T_new)) {
+                if (is_defined(T_new)) {
                   float _weight = (num_count - _count + 1);
                   if (STUDY.TrendJoinType == 1) _weight = 1;
                   sum_count += _weight;
@@ -48931,13 +48929,13 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
                   
                   Pa = getValue_CurrentDataSource(new_i, new_j, new_k, DevelopLayer_id);
   
-                  if (is_undefined_FLOAT(Pa)) {
+                  if (is_undefined(Pa)) {
                     T_new = FLOAT_undefined;
                   } else {
                     T_new = Pa;
                   }            
   
-                  if (is_defined_FLOAT(T_new)) {
+                  if (is_defined(T_new)) {
                     float _weight = (num_count - _count + 1);
                     if (STUDY.TrendJoinType == 1) _weight = 1;
                     sum_count += _weight;
@@ -48987,13 +48985,13 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
                 Pa = getValue_CurrentDataSource(new_i, new_j, new_k, DevelopLayer_id);
   
-                if (is_undefined_FLOAT(Pa)) {
+                if (is_undefined(Pa)) {
                   T_new = FLOAT_undefined;
                 } else {
                   T_new = Pa;
                 }            
   
-                if (is_defined_FLOAT(T_new)) {
+                if (is_defined(T_new)) {
                   float _weight = (num_count - _count + 1);
                   if (STUDY.TrendJoinType == 1) _weight = 1;
                   sum_count += _weight;
@@ -49018,7 +49016,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             if (Develop_Option == DEV_OP_09) {
   
-              if (is_defined_FLOAT(RAIN)) { 
+              if (is_defined(RAIN)) { 
                 valuesSUM[now_k] = RAIN;
   
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
@@ -49034,7 +49032,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             if (Develop_Option == DEV_OP_10) {
   
-              if (is_defined_FLOAT(RAIN)) { 
+              if (is_defined(RAIN)) { 
                 valuesSUM[now_k] = RAIN;
   
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
@@ -49051,7 +49049,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   
             if (Develop_Option == DEV_OP_11) {
   
-              if (is_defined_FLOAT(WS)) { 
+              if (is_defined(WS)) { 
   
                 valuesSUM[now_k] = 0.5 * 1.23 * 1 * pow(WS / 3.6, 3); 
   
@@ -55766,13 +55764,13 @@ void load_CLIMATE_TMYEPW (String FileName) {
     //println(i);
 
     CLIMATE_TMYEPW_values[i][j][LAYER_pressure.id][k] = float(parts[9]) * 0.01; // 10 times in Pa
-    CLIMATE_TMYEPW_values[i][j][LAYER_drybulb.id][k] = 20; // float(parts[6]); // in °C
-    CLIMATE_TMYEPW_values[i][j][LAYER_relhum.id][k] = 20; //float(parts[8]); // 0 - 110%
+    CLIMATE_TMYEPW_values[i][j][LAYER_drybulb.id][k] = float(parts[6]); // in °C
+    CLIMATE_TMYEPW_values[i][j][LAYER_relhum.id][k] = float(parts[8]); // 0 - 110%
     CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad.id][k] = float(parts[13]); // Wh/m²
     CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad.id][k] = float(parts[14]); // Wh/m²
     CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad.id][k] = float(parts[15]); // Wh/m²
-    CLIMATE_TMYEPW_values[i][j][LAYER_windspd.id][k] = 20; //float(parts[21]); // in m/s
-    CLIMATE_TMYEPW_values[i][j][LAYER_winddir.id][k] = 20; //float(parts[20]); // ° 
+    CLIMATE_TMYEPW_values[i][j][LAYER_windspd.id][k] = float(parts[21]); // in m/s
+    CLIMATE_TMYEPW_values[i][j][LAYER_winddir.id][k] = float(parts[20]); // ° 
     CLIMATE_TMYEPW_values[i][j][LAYER_cloudcover.id][k] = float(parts[23]); // 0.1 times in % ... there is also total_sky_cover on[22]
     CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky.id][k] = float(parts[25]); // in m
 
