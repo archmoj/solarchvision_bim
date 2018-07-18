@@ -1676,16 +1676,11 @@ class solarchvision_Functions {
 
 
   float EquationOfTime (float DateAngle) {
-    float b = DateAngle;
-  
-    return 0.01  * (9.87 * this.sin_ang(2 * b) - 7.53 * this.cos_ang(b) - 1.5 * this.sin_ang(b));
+    return 0.01 * (9.87 * this.sin_ang(2 * DateAngle) - 7.53 * this.cos_ang(DateAngle) - 1.5 * this.sin_ang(DateAngle));
   }
   
-
-  
-  
   float correctHourAngle (float DateAngle, float HourAngleOrigin) {
-    return EquationOfTime(DateAngle) + HourAngleOrigin + 0.5; // here we also add 0.5 hour becaue hour 1 is passed by index 0.
+    return EquationOfTime(DateAngle) + HourAngleOrigin;
   }
   
   float[] SunPositionRadiation (float DateAngle, float HourAngleOrigin, float CloudCover) {
@@ -1768,7 +1763,7 @@ class solarchvision_Functions {
   
   float Sunset (float Latitude, float DateAngle) {
   
-    return 24.0 - this.Sunrise(Latitude, DateAngle) - EquationOfTime(DateAngle);
+    return 24.0 - this.Sunrise(Latitude, DateAngle) - 2 * EquationOfTime(DateAngle);
   }
   
   float DayTime (float Latitude, float DateAngle) {
@@ -5270,7 +5265,7 @@ class solarchvision_STUDY {
   int j_End = 12; //8; //6; //2; //16; // Variable  
 
   float perDays = 30.5; //1; //45; //61; //30.5;
-  int joinDays = 31; //1; //30;//perDays; // it should be set up to 1 in order to plot only one day  
+  int joinDays = 30; //1; //30;//perDays; // it should be set up to 1 in order to plot only one day  
   
   boolean PrintTtitle = true;
   
@@ -7990,9 +7985,6 @@ class solarchvision_STUDY {
   
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
   
-          float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-          float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
-  
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
           Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE);
@@ -8672,9 +8664,6 @@ class solarchvision_STUDY {
         }
   
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-  
-        float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-        float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
   
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
@@ -14453,9 +14442,6 @@ class solarchvision_SolarImpacts {
   
           int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
           if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
-  
-          float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-          float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
   
           //println(DATE_ANGLE, DATE_ANGLE_approximate);
   
@@ -26960,7 +26946,7 @@ class solarchvision_Sun3D {
   
   boolean displayGrid = true;
   boolean displayPath = true;
-  boolean displayPattern = false;
+  boolean displayPattern = true; //false;
   
   boolean displaySurface = false;
   boolean displayTexture = true;
@@ -27342,18 +27328,16 @@ class solarchvision_Sun3D {
   
   void drawCycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
   
-    // target_window: 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export
-  
+    int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
+    
+    
     int[] startK_endK = get_startK_endK();
     int start_k = startK_endK[0]; 
     int end_k = startK_endK[1];
     int count_k = 1 + end_k - start_k; 
     if (count_k < 0) count_k = 0;
   
-  
-  
-    int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
-  
+
     if (STUDY.PlotImpacts % 2 == 0) Impact_TYPE = Impact_ACTIVE;
     else Impact_TYPE = Impact_PASSIVE;
   
@@ -27396,7 +27380,9 @@ class solarchvision_Sun3D {
         PAL_direction = this.PASSIVE_pallet_DIR;
         PAL_multiplier = this.PASSIVE_pallet_MLT;
       }
-    } else {
+    } 
+    
+    if (target_window == TypeWindow.STUDY) {
   
       if (Impact_TYPE == Impact_ACTIVE) {  
         PAL_type = STUDY.ACTIVE_pallet_CLR; 
@@ -27495,7 +27481,7 @@ class solarchvision_Sun3D {
         }
       }    
   
-  
+
   
       for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
   
@@ -27514,8 +27500,12 @@ class solarchvision_Sun3D {
   
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
   
-          float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-          float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
+          float sunrise_origin = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE); 
+          float sunset_origin = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
+          
+          //println("rise=", sunrise_origin);
+          //println("set=", sunset_origin);
+          //println("mid=", (sunrise_origin + sunset_origin) * 0.5);
   
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
@@ -27527,7 +27517,7 @@ class solarchvision_Sun3D {
   
             STUDY.filter = keep_filter_type;
           }
-  
+
           for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
             if (nk != -1) {
               int k = int(nk / STUDY.joinDays);
@@ -27548,20 +27538,23 @@ class solarchvision_Sun3D {
                 //-------------- to extend graph to the horizon ---------------
                 if (Alpha < 0) {              
   
-                  if (SunR[1] > 0) { 
-                    float[] SunR_rise = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, sunrise);
-  
-                    Alpha = 0;
-                    Beta = 180 - funcs.atan2_ang(SunR_rise[1], SunR_rise[2]);
-                  } else {
-                    float[] SunR_set = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, sunset);
-  
-                    Alpha = 0;
-                    Beta = 180 - funcs.atan2_ang(SunR_set[1], SunR_set[2]);
+                  float[] SunR_temp;
+                  if (i < 12) { 
+                    SunR_temp = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, sunrise_origin);
                   }
+                  else {
+                    SunR_temp = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, sunset_origin);
+                  }
+                  
+                  println("x=", SunR_temp[1]);
+                  println("y=", SunR_temp[2]);
+                  println("z=", SunR_temp[3]);
+                  
+                  Alpha = 0;
+                  Beta = 180 - funcs.atan2_ang(SunR_temp[1], SunR_temp[2]);
                 }
                 //-----------------------------------------------------------
-  
+
                 now_k = k + start_k;
   
                 now_i1 = floor(i);
@@ -27646,10 +27639,11 @@ class solarchvision_Sun3D {
           }
         }
   
-  
-  
+
+
+
         for (int more_J = 0; more_J < STUDY.perDays - STUDY.joinDays; more_J += STUDY.joinDays) { //count one less!
-  
+   
           now_j = (more_J + j * int(STUDY.perDays) + TIME.beginDay + 365) % 365;
   
           if (now_j >= 365) {
@@ -27803,267 +27797,7 @@ class solarchvision_Sun3D {
         obj_lastVtextureNumber += num_vertices_added;
       }
     }  
-  
-  
-  
-  
-  
-    if (target_window == TypeWindow.WIN3D) {
-      WIN3D.graphics.strokeWeight(1);
-      WIN3D.graphics.stroke(127);
-    } else if (target_window == TypeWindow.WORLD) {
-      WORLD.graphics.strokeWeight(1);
-      WORLD.graphics.stroke(127);
-    } else if (target_window == TypeWindow.STUDY) {
-      STUDY.graphics.strokeWeight(1);
-      STUDY.graphics.stroke(127);
-    }
-  
-    for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {    
-  
-      int max_j_to_draw_grid = STUDY.j_End;
-      if ((target_window == TypeWindow.WIN3D) || (target_window == TypeWindow.OBJ)) {
-        max_j_to_draw_grid = 1; // draw it just once!
-      }
-      if (j < max_j_to_draw_grid) {
-  
-  
-        float s_SunPath = sx_Plot;
-        
-        
-        /*
-  
-        for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
-  
-          float sunrise = funcs.Sunrise(STATION.getLatitude(), myDATE); 
-          float sunset = funcs.Sunset(STATION.getLatitude(), myDATE);        
-  
-          float myHOUR_step = 1.0 / float(TES_hour);
-  
-          for (float myHOUR = 0; myHOUR < 24; myHOUR += myHOUR_step) {
-  
-  
-  
-            float HourA = myHOUR;
-            float HourB = myHOUR + myHOUR_step;
-  
-            float[] SunA = funcs.SunPosition(STATION.getLatitude(), myDATE, HourA);
-            float[] SunB = funcs.SunPosition(STATION.getLatitude(), myDATE, HourB);
-  
-            if ((SunA[3] < 0) && (SunB[3] > 0)) {
-              SunA = funcs.SunPosition(STATION.getLatitude(), myDATE, sunrise);
-              SunA[3] = 0;
-            }
-            if ((SunA[3] > 0) && (SunB[3] < 0)) {
-              SunB = funcs.SunPosition(STATION.getLatitude(), myDATE, sunset);
-              SunB[3] = 0;
-            }
-  
-  
-  
-            if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
-  
-              if (target_window == TypeWindow.WIN3D) {
-  
-                float x1 = SunA[1] * WIN3D.scale * s_SunPath + x_Plot;
-                float y1 = SunA[2] * WIN3D.scale * s_SunPath + y_Plot;
-                float z1 = SunA[3] * WIN3D.scale * s_SunPath + z_Plot;
-  
-                float x2 = SunB[1] * WIN3D.scale * s_SunPath + x_Plot;
-                float y2 = SunB[2] * WIN3D.scale * s_SunPath + y_Plot;
-                float z2 = SunB[3] * WIN3D.scale * s_SunPath + z_Plot;
-  
-                WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-              } else if (target_window == TypeWindow.WORLD) {
-                // ??????????????????????????
-              } else if (target_window == TypeWindow.STUDY) {
-  
-                float Alpha1 = funcs.asin_ang(SunA[3]);
-                float Beta1 = funcs.atan2_ang(SunA[2], SunA[1]) + 90;          
-  
-                float Alpha2 = funcs.asin_ang(SunB[3]);
-                float Beta2 = funcs.atan2_ang(SunB[2], SunB[1]) + 90;          
-  
-                float x1 = (90 - Alpha1) * (funcs.cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-                float y1 = (90 - Alpha1) * (funcs.sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
-  
-                float x2 = (90 - Alpha2) * (funcs.cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-                float y2 = (90 - Alpha2) * (funcs.sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
-  
-                float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-  
-                STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
-              }
-            }
-          }
-        }
-        
 
-  
-        for (float myHOUR = 0; myHOUR < 24; myHOUR++) {
-  
-          int myDATE_step = STUDY.joinDays;
-  
-          int myDATE_start = 0;
-          int myDATE_end = 360; 
-  
-          if (target_window != 3) {
-            if (STUDY.j_End == 2) {
-              if (j == 0) {
-                myDATE_start = 90;
-                myDATE_end = 270;
-              }
-              if (j == 1) {
-                myDATE_start = 270;
-                myDATE_end = 450;
-              }
-            }
-          }
-  
-          for (int myDATE = myDATE_start; myDATE <= myDATE_end; myDATE += myDATE_step) {
-            float[] SunA = funcs.SunPosition(STATION.getLatitude(), myDATE, myHOUR);
-            float[] SunB = funcs.SunPosition(STATION.getLatitude(), (myDATE + myDATE_step), myHOUR);
-            if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
-  
-              if (target_window == TypeWindow.WIN3D) {        
-  
-                float x1 = SunA[1] * WIN3D.scale * s_SunPath + x_Plot;
-                float y1 = SunA[2] * WIN3D.scale * s_SunPath + y_Plot;
-                float z1 = SunA[3] * WIN3D.scale * s_SunPath + z_Plot;
-  
-                float x2 = SunB[1] * WIN3D.scale * s_SunPath + x_Plot;
-                float y2 = SunB[2] * WIN3D.scale * s_SunPath + y_Plot;
-                float z2 = SunB[3] * WIN3D.scale * s_SunPath + z_Plot;
-  
-                float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-  
-                WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-              } else if (target_window == TypeWindow.WORLD) {
-                // ??????????????????????????
-              } else if (target_window == TypeWindow.STUDY) {
-  
-                float Alpha1 = funcs.asin_ang(SunA[3]);
-                float Beta1 = funcs.atan2_ang(SunA[2], SunA[1]) + 90;          
-  
-                float Alpha2 = funcs.asin_ang(SunB[3]);
-                float Beta2 = funcs.atan2_ang(SunB[2], SunB[1]) + 90;          
-  
-                float x1 = (90 - Alpha1) * (funcs.cos_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-                float y1 = (90 - Alpha1) * (funcs.sin_ang(Beta1 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
-  
-                float x2 = (90 - Alpha2) * (funcs.cos_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + x_Plot * STUDY.rect_scale;
-                float y2 = (90 - Alpha2) * (funcs.sin_ang(Beta2 - 90)) * STUDY.rect_scale * s_SunPath + y_Plot * STUDY.rect_scale;
-  
-                float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-  
-                STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
-              }
-            }
-          }
-        }
-  
-  
-  
-        if (target_window == TypeWindow.WIN3D) {  
-          WIN3D.graphics.stroke(0);
-          WIN3D.graphics.fill(0);
-          WIN3D.graphics.textAlign(CENTER, CENTER);
-        } else if (target_window == TypeWindow.WORLD) {  
-          WORLD.graphics.stroke(0);
-          WORLD.graphics.fill(0);
-          WORLD.graphics.textAlign(CENTER, CENTER);
-        } else if (target_window == TypeWindow.STUDY) {  
-          STUDY.graphics.stroke(0);
-          STUDY.graphics.fill(0);
-          STUDY.graphics.textAlign(CENTER, CENTER);
-        }      
-  
-        for (int i = 0; i < 360; i++) {
-          if (target_window == TypeWindow.WIN3D) {  
-  
-            float x1 = s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
-            float y1 = s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
-            float z1 = 0 + z_Plot;
-  
-            float x2 = s_SunPath * cos((i + 5) * PI / 180) * WIN3D.scale + x_Plot;
-            float y2 = s_SunPath * sin((i + 5) * PI / 180) * WIN3D.scale + y_Plot;
-            float z2 = 0 + z_Plot;
-  
-            WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-          } else if (target_window == TypeWindow.WORLD) {
-            // ??????????????????????????
-          } else if (target_window == TypeWindow.STUDY) {
-            // no nead for a circle here in this case!
-          }
-        }
-  
-        for (int i = 0; i < 360; i += 5) {
-          if (target_window == TypeWindow.WIN3D) {  
-  
-            float x1 = s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
-            float y1 = s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
-            float z1 = 0 + z_Plot;
-  
-            float x2 = 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D.scale + x_Plot;
-            float y2 = 1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D.scale + y_Plot;
-            float z2 = 0 + z_Plot;
-  
-            WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
-          } else if (target_window == TypeWindow.WORLD) {
-            // ??????????????????????????
-          } else if (target_window == TypeWindow.STUDY) {
-  
-            float x1 = 90 * s_SunPath * cos(i * PI / 180) * STUDY.rect_scale + x_Plot * STUDY.rect_scale;
-            float y1 = 90 * s_SunPath * sin(i * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
-  
-            float x2 = 90 * 1.05 * s_SunPath * cos((i) * PI / 180) * STUDY.rect_scale + x_Plot * STUDY.rect_scale;
-            float y2 = 90 * 1.05 * s_SunPath * sin((i) * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
-  
-            float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-  
-            STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
-          }
-        }
-
-        for (int i = 0; i < 360; i += 15) {
-  
-          String txt = nf((90 - i + 360) % 360, 0);
-          if (i == 0) {
-            txt = "E";
-          } else if (i == 90) {
-            txt = "N";
-          } else if (i == 180) {
-            txt = "W";
-          } else if (i == 270) {
-            txt = "S";
-          }
-  
-          float txtSize = 0.1;
-          if (txt.length() > 1) txtSize *= 0.75;
-  
-          if (target_window == TypeWindow.WIN3D) {
-  
-            float x = 1.10 * s_SunPath * cos(i * PI / 180) * WIN3D.scale + x_Plot;
-            float y = 1.10 * s_SunPath * sin(i * PI / 180) * WIN3D.scale + y_Plot;
-            float z = 0 + z_Plot;
-  
-            WIN3D.graphics.textSize(txtSize * WIN3D.scale * s_SunPath);
-            WIN3D.graphics.text(txt, x, -y, z);
-          } else if (target_window == TypeWindow.WORLD) {
-            // ??????????????????????????
-          } else if (target_window == TypeWindow.STUDY) {
-            float x = 90 * 1.10 * s_SunPath * cos(i * PI / 180) * STUDY.rect_scale+ x_Plot * STUDY.rect_scale;
-            float y = 90 * 1.10 * s_SunPath * sin(i * PI / 180) * STUDY.rect_scale + y_Plot * STUDY.rect_scale;
-  
-            float ox = (j + STUDY.rect_offset_x) * sx_Plot;
-  
-            STUDY.graphics.textSize(txtSize * 0.4 * s_SunPath);
-            STUDY.graphics.text(txt, ox + x, -y);
-          }
-        }
-  */
-      }
-    }
   }  
   
   
@@ -39366,10 +39100,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               }
   
               float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-  
-              float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-              float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
-  
+
               int[] Normals_COL_N;
   
   
@@ -39987,9 +39718,6 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
     }
 
     float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-
-    float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE); 
-    float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
 
     int[] Normals_COL_N;
     Normals_COL_N = new int [9];
