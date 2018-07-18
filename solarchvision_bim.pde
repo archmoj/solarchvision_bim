@@ -8852,20 +8852,14 @@ class solarchvision_STUDY {
   
     if ((this.PlotImpacts == 8) || (this.PlotImpacts == 9)) {
   
-      //for (int p = 0; p < 3; p++) { 
-      //int l = 3 * int(this.ImpactLayer / 3) + p;
-  
-      //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(this.ImpactLayer / 3) + p;
-  
       for (int p = 0; p < 1; p++) { 
-        int l = this.ImpactLayer;
-  
-        //for (int p = 0; p < 1; p++) { 
-        //int l = 3 * int(this.ImpactLayer / 3) + 1; //this.ImpactLayer;    
+        int l = this.ImpactLayer;    
   
         int target_window = TypeWindow.STUDY;
-        Sun3D.drawCycles(target_window, x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot);
+
+        Sun3D.drawPattern(TypeWindow.STUDY, x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot);
+
+        Sun3D.drawGrid(TypeWindow.STUDY,  x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot);
   
         this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
   
@@ -8972,6 +8966,7 @@ class solarchvision_STUDY {
           //?? French
         }
       }
+
     } 
   
   
@@ -26962,7 +26957,7 @@ class solarchvision_Sun3D {
   void draw () {
     if (this.displaySurface) {
   
-      WIN3D.graphics.strokeWeight(1);
+      WIN3D.graphics.noStroke();
 
       float OffsetX = 0; 
       float OffsetY = 0; 
@@ -27037,16 +27032,13 @@ class solarchvision_Sun3D {
           }
   
           WIN3D.graphics.beginShape();
-  
-          WIN3D.graphics.noStroke();
-  
+
           if (this.displayTexture) {
-  
             WIN3D.graphics.texture(this.Map);
           }
   
           for (int s = 0; s < subFace.length; s++) {
-  
+            
             WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * this.Map.width, subFace[s][4] * this.Map.height);
           }
   
@@ -27067,11 +27059,23 @@ class solarchvision_Sun3D {
   
     if (this.displayGrid) {
   
-      WIN3D.graphics.pushMatrix();
-      WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
-  
-      WIN3D.graphics.strokeWeight(1);
-      WIN3D.graphics.stroke(0);
+      if (target_window == TypeWindow.WIN3D) {
+      
+        WIN3D.graphics.pushMatrix();
+        WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
+    
+        WIN3D.graphics.strokeWeight(1);
+        WIN3D.graphics.stroke(0);
+      }
+      
+      if (target_window == TypeWindow.STUDY) {
+      
+        STUDY.graphics.pushMatrix();
+        STUDY.graphics.translate(x_SunPath, y_SunPath);
+    
+        STUDY.graphics.strokeWeight(1);
+        STUDY.graphics.stroke(0);
+      }      
   
       for (float j = 90; j <= 270; j += 30) {
         
@@ -27082,7 +27086,14 @@ class solarchvision_Sun3D {
           float[] SunB = funcs.SunPosition(STATION.getLatitude(), j, i + HOUR_step);
           
           if ((SunA[3] > 0) || (SunB[3] > 0)) {
-            WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+            
+            if (target_window == TypeWindow.WIN3D) {
+              WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+            }
+            
+            if (target_window == TypeWindow.STUDY) {
+              STUDY.graphics.line(s_SunPath * SunA[1] * STUDY.view_S, -s_SunPath * SunA[2] * STUDY.view_S, s_SunPath * SunB[1] * STUDY.view_S, -s_SunPath * SunB[2] * STUDY.view_S);
+            }            
           }
         }
       }
@@ -27094,13 +27105,26 @@ class solarchvision_Sun3D {
           float[] SunA = funcs.SunPosition(STATION.getLatitude(), j, i);
           float[] SunB = funcs.SunPosition(STATION.getLatitude(),  j + DATE_step, i);
           
-          if ((SunA[3] > 0) || (SunB[3] > 0)) {            
-            WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+          if ((SunA[3] > 0) || (SunB[3] > 0)) {
+
+            if (target_window == TypeWindow.WIN3D) {            
+              WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+            }
+            
+            if (target_window == TypeWindow.STUDY) {            
+              STUDY.graphics.line(s_SunPath * SunA[1] * STUDY.view_S, -s_SunPath * SunA[2] * STUDY.view_S, s_SunPath * SunB[1] * STUDY.view_S, -s_SunPath * SunB[2] * STUDY.view_S);
+            }            
           }
         }
       }
-  
-      WIN3D.graphics.popMatrix();
+      
+      if (target_window == TypeWindow.WIN3D) {
+        WIN3D.graphics.popMatrix();
+      }
+      
+      if (target_window == TypeWindow.STUDY) {
+        STUDY.graphics.popMatrix();
+      }      
     }
   
   }
@@ -27548,9 +27572,9 @@ class solarchvision_Sun3D {
                     SunR_temp = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, sunset_origin);
                   }
                   
-                  println("x=", SunR_temp[1]);
-                  println("y=", SunR_temp[2]);
-                  println("z=", SunR_temp[3]);
+                  //println("x=", SunR_temp[1]);
+                  //println("y=", SunR_temp[2]);
+                  //println("z=", SunR_temp[3]);
                   
                   Alpha = 0;
                   Beta = 180 - funcs.atan2_ang(SunR_temp[1], SunR_temp[2]);
