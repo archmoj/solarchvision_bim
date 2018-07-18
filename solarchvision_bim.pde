@@ -2757,11 +2757,11 @@ class solarchvision_WIN3D {
       
           Sky3D.draw(TypeWindow.WIN3D);
       
-          Sun3D.drawPattern(0, 0, 0, 0.975 * Sky3D.scale);
+          Sun3D.drawPattern(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
       
-          Sun3D.drawPath(0, 0, 0, 0.975 * Sky3D.scale);
+          Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
 
-          Sun3D.drawGrid(0, 0, 0, 0.975 * Sky3D.scale);
+          Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
       
           Sun3D.draw();
       
@@ -8865,7 +8865,7 @@ class solarchvision_STUDY {
         //int l = 3 * int(this.ImpactLayer / 3) + 1; //this.ImpactLayer;    
   
         int target_window = TypeWindow.STUDY;
-        Sun3D.drawCycles(x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot, target_window);
+        Sun3D.drawCycles(target_window, x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot);
   
         this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
   
@@ -25357,7 +25357,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     float previous_DATE = TIME.date;
 
-    Sun3D.drawCycles(0, 0, 0, 0.975 * Sky3D.scale, TypeWindow.STUDY);
+    Sun3D.drawCycles(TypeWindow.STUDY, 0, 0, 0, 0.975 * Sky3D.scale);
 
     STUDY.perDays = keep_STUDY_perDays;
     STUDY.joinDays = keep_STUDY_joinDays; 
@@ -27063,7 +27063,7 @@ class solarchvision_Sun3D {
   
   
   
-  void drawGrid (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+  void drawGrid (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
   
     if (this.displayGrid) {
   
@@ -27103,12 +27103,12 @@ class solarchvision_Sun3D {
       WIN3D.graphics.popMatrix();
     }
   
-  } 
+  }
   
   
   
   
-  void drawPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+  void drawPath (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
   
     if (this.displayPath) {
       
@@ -27302,7 +27302,7 @@ class solarchvision_Sun3D {
   
 
 
-  void drawPattern (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
+  void drawPattern (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
   
     if (this.displayPattern) {
   
@@ -27315,18 +27315,18 @@ class solarchvision_Sun3D {
   
       float previous_DATE = TIME.date;
   
-      this.drawCycles(x_SunPath, y_SunPath, z_SunPath, s_SunPath, TypeWindow.WIN3D);
+      this.drawCycles(target_window, x_SunPath, y_SunPath, z_SunPath, s_SunPath);
   
       STUDY.perDays = keep_STUDY_perDays;
       STUDY.joinDays = keep_STUDY_joinDays; 
       TIME.date = previous_DATE;
       TIME.updateDate();
     }
-  }  
+  }
   
   
   
-  void drawCycles (float x_Plot, float y_Plot, float z_Plot, float s_Plot, int target_window) {
+  void drawCycles (int target_window, float x_Plot, float y_Plot, float z_Plot, float s_Plot) {
   
     int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
     
@@ -27800,7 +27800,7 @@ class solarchvision_Sun3D {
       }
     }  
 
-  }  
+  }
   
   
   
