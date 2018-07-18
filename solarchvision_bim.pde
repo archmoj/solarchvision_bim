@@ -27829,6 +27829,9 @@ class solarchvision_Sun3D {
   
   
         float s_SunPath = sx_Plot;
+        
+        
+        /*
   
         for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
   
@@ -27894,6 +27897,8 @@ class solarchvision_Sun3D {
             }
           }
         }
+        
+
   
         for (float myHOUR = 0; myHOUR < 24; myHOUR++) {
   
@@ -28019,8 +28024,7 @@ class solarchvision_Sun3D {
             STUDY.graphics.line(ox + x1, -y1, ox + x2, -y2);
           }
         }
-  
-  /*
+
         for (int i = 0; i < 360; i += 15) {
   
           String txt = nf((90 - i + 360) % 360, 0);
