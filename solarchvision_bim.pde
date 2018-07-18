@@ -8865,7 +8865,7 @@ class solarchvision_STUDY {
         //int l = 3 * int(this.ImpactLayer / 3) + 1; //this.ImpactLayer;    
   
         int target_window = TypeWindow.STUDY;
-        Sun3D.drawCycles(x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot, sy_Plot, 1, l, target_window);
+        Sun3D.drawCycles(x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot, target_window);
   
         this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
   
@@ -25357,7 +25357,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     float previous_DATE = TIME.date;
 
-    Sun3D.drawCycles(0, 0, 0, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, 0.975 * Sky3D.scale, STUDY.ImpactLayer, TypeWindow.STUDY);
+    Sun3D.drawCycles(0, 0, 0, 0.975 * Sky3D.scale, TypeWindow.STUDY);
 
     STUDY.perDays = keep_STUDY_perDays;
     STUDY.joinDays = keep_STUDY_joinDays; 
@@ -27315,7 +27315,7 @@ class solarchvision_Sun3D {
   
       float previous_DATE = TIME.date;
   
-      this.drawCycles(x_SunPath, x_SunPath, x_SunPath, s_SunPath, s_SunPath, s_SunPath, STUDY.ImpactLayer, TypeWindow.WIN3D);
+      this.drawCycles(x_SunPath, y_SunPath, z_SunPath, s_SunPath, TypeWindow.WIN3D);
   
       STUDY.perDays = keep_STUDY_perDays;
       STUDY.joinDays = keep_STUDY_joinDays; 
@@ -27326,7 +27326,7 @@ class solarchvision_Sun3D {
   
   
   
-  void drawCycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
+  void drawCycles (float x_Plot, float y_Plot, float z_Plot, float s_Plot, int target_window) {
   
     int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
     
@@ -27518,6 +27518,8 @@ class solarchvision_Sun3D {
             STUDY.filter = keep_filter_type;
           }
 
+          int l = STUDY.ImpactLayer;
+
           for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
             if (nk != -1) {
               int k = int(nk / STUDY.joinDays);
@@ -27708,13 +27710,13 @@ class solarchvision_Sun3D {
   
                       float[] COL = PAINT.getColorStyle(PAL_type, _u);
   
-                      float r = sx_Plot;
+                      float r = s_Plot;
   
                       if (target_window == TypeWindow.OBJ) {
   
                         float x = funcs.cos_ang(Alpha) * (funcs.cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
                         float y = funcs.cos_ang(Alpha) * (funcs.sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
-                        float z = funcs.sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
+                        float z = funcs.sin_ang(Alpha) * WIN3D.scale * s_Plot + z_Plot;
   
                         if (_turn == 1) {
                           SOLARCHVISION_OBJprintVertex(x, y, z);
@@ -27741,7 +27743,7 @@ class solarchvision_Sun3D {
   
                         float x = funcs.cos_ang(Alpha) * (funcs.cos_ang(Beta - 90)) * WIN3D.scale * r + x_Plot;
                         float y = funcs.cos_ang(Alpha) * (funcs.sin_ang(Beta - 90)) * WIN3D.scale * r + y_Plot;
-                        float z = funcs.sin_ang(Alpha) * WIN3D.scale * sz_Plot + z_Plot;
+                        float z = funcs.sin_ang(Alpha) * WIN3D.scale * s_Plot + z_Plot;
   
                         WIN3D.graphics.vertex(x, -y, z);
                       } else if (target_window == TypeWindow.WORLD) {
@@ -27753,7 +27755,7 @@ class solarchvision_Sun3D {
                         float x = (90 - Alpha) * (funcs.cos_ang(Beta - 90)) * STUDY.rect_scale * r + x_Plot * STUDY.rect_scale;
                         float y = (90 - Alpha) * (funcs.sin_ang(Beta - 90)) * STUDY.rect_scale * r + y_Plot * STUDY.rect_scale;
   
-                        float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+                        float ox = (j + STUDY.rect_offset_x) * s_Plot;
   
                         STUDY.graphics.vertex(ox + x, -y);
                       }
