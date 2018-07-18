@@ -2541,7 +2541,9 @@ class solarchvision_SHADE {
   
     int PAL_type = 0; 
   
-    if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+    if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+        (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+          
       if (Impact_TYPE == Impact_ACTIVE) PAL_type = allFaces.ACTIVE_pallet_CLR;
       if (Impact_TYPE == Impact_PASSIVE) PAL_type = allFaces.PASSIVE_pallet_CLR;
     }          
@@ -2562,7 +2564,9 @@ class solarchvision_SHADE {
   
     int PAL_direction = 1;
   
-    if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+    if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+        (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+          
       if (Impact_TYPE == Impact_ACTIVE) PAL_direction = allFaces.ACTIVE_pallet_DIR;
       if (Impact_TYPE == Impact_PASSIVE) PAL_direction = allFaces.PASSIVE_pallet_DIR;
     }              
@@ -2583,7 +2587,9 @@ class solarchvision_SHADE {
   
     float PAL_multiplier = 1; 
   
-    if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+    if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+        (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+          
       if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * allFaces.ACTIVE_pallet_MLT; 
       if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * allFaces.PASSIVE_pallet_MLT;
     }              
@@ -2895,7 +2901,8 @@ class solarchvision_WIN3D {
     int PAL_direction = 1;
     float PAL_multiplier = 1; 
   
-    if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
+    if ((this.FacesShade == SHADE.Global_Solar) || 
+        (this.FacesShade == SHADE.Vertex_Solar)) {
   
       if (Impact_TYPE == Impact_ACTIVE) {
         PAL_type = allFaces.ACTIVE_pallet_CLR; 
@@ -2979,7 +2986,9 @@ class solarchvision_WIN3D {
   
         float _u = 0.2 * q - 0.5;
   
-        if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
+        if ((this.FacesShade == SHADE.Global_Solar) || 
+            (this.FacesShade == SHADE.Vertex_Solar)) {
+              
           if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
           if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
         }
@@ -3017,7 +3026,9 @@ class solarchvision_WIN3D {
 
 
   
-        if ((this.FacesShade == SHADE.Global_Solar) || (this.FacesShade == SHADE.Vertex_Solar)) {
+        if ((this.FacesShade == SHADE.Global_Solar) || 
+            (this.FacesShade == SHADE.Vertex_Solar)) {
+              
           if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
           if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y, 0);
         }
@@ -7285,7 +7296,10 @@ class solarchvision_STUDY {
   
   
   void refreshDateTabs () {
-    if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || (CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) { 
+    if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || 
+        (CurrentDataSource == dataID_CLIMATE_CLMREC) || 
+        (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
+          
       if (this.perDays == 1) { 
         this.perDays = int(365 / float(this.j_End - this.j_Start));
       } else {
@@ -7314,7 +7328,9 @@ class solarchvision_STUDY {
     float keep_STUDY_perDays = this.perDays;
     int keep_STUDY_joinDays = this.joinDays;
   
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || 
+        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+          
       this.perDays = 1;
       this.joinDays = 1;
     }
@@ -10443,7 +10459,9 @@ class solarchvision_Faces {
               for (int j = 0; j < this.nodes[f].length; j++) {
                 int vNo = this.nodes[f][j];
     
-                WIN3D.graphics.vertex(allPoints.getX(vNo) * OBJECTS_scale * WIN3D.scale, -(allPoints.getY(vNo) * OBJECTS_scale * WIN3D.scale), allPoints.getZ(vNo) * OBJECTS_scale * WIN3D.scale);
+                WIN3D.graphics.vertex(allPoints.getX(vNo) * OBJECTS_scale * WIN3D.scale, 
+                                     -allPoints.getY(vNo) * OBJECTS_scale * WIN3D.scale, 
+                                      allPoints.getZ(vNo) * OBJECTS_scale * WIN3D.scale);
               }    
     
               WIN3D.graphics.endShape(CLOSE);
@@ -10516,7 +10534,9 @@ class solarchvision_Faces {
                     WIN3D.graphics.noFill();
                   }
     
-                  WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -(subFace[s][1] * OBJECTS_scale * WIN3D.scale), subFace[s][2] * OBJECTS_scale * WIN3D.scale);
+                  WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, 
+                                       -subFace[s][1] * OBJECTS_scale * WIN3D.scale, 
+                                        subFace[s][2] * OBJECTS_scale * WIN3D.scale);
                 }
     
                 WIN3D.graphics.endShape(CLOSE);
@@ -10531,7 +10551,10 @@ class solarchvision_Faces {
     
         int Create_Face_Texture = 0;
     
-        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solid) || (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
+        if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+            (WIN3D.FacesShade == SHADE.Vertex_Solar) ||
+            (WIN3D.FacesShade == SHADE.Vertex_Solid) || 
+            (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
           Create_Face_Texture = 1;
         }
     
@@ -10722,7 +10745,8 @@ class solarchvision_Faces {
     
               float _u = 0.5 + _val;
     
-              if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+              if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+                  (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
                 if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }            
     
@@ -10899,7 +10923,9 @@ class solarchvision_Faces {
     
                           float u0 = 0.5 * (_u + 0.5);
     
-                          if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                          if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+                              (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                                
                             if (Impact_TYPE == Impact_ACTIVE) {
                               u0 = _u;
                             }
@@ -10956,7 +10982,11 @@ class solarchvision_Faces {
     
         int Create_Face_Texture = 0;
     
-        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solid) || (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
+        if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+            (WIN3D.FacesShade == SHADE.Vertex_Solar) || 
+            (WIN3D.FacesShade == SHADE.Vertex_Solid) || 
+            (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
+              
           Create_Face_Texture = 1;
         }    
         
@@ -10991,7 +11021,9 @@ class solarchvision_Faces {
                 htmlOutput.println("\t\t\t\t<Appearance DEF='SurfaceMaterial" + nf(mt, 0) + "'>");
                 htmlOutput.print  ("\t\t\t\t\t<Material");
                 htmlOutput.print  (" transparency='" + nf(1 - allMaterials.Color[mt][0] / 255.0, 0, 3) + "'");
-                htmlOutput.print  (" diffuseColor='" + nf(allMaterials.Color[mt][1] / 255.0, 0, 3) + " " + nf(allMaterials.Color[mt][2] / 255.0, 0, 3) + " " + nf(allMaterials.Color[mt][3] / 255.0, 0, 3) + "'");
+                htmlOutput.print  (" diffuseColor='" + nf(allMaterials.Color[mt][1] / 255.0, 0, 3) + " " + 
+                                                       nf(allMaterials.Color[mt][2] / 255.0, 0, 3) + " " + 
+                                                       nf(allMaterials.Color[mt][3] / 255.0, 0, 3) + "'");
                 htmlOutput.println("></Material>");
                 htmlOutput.println("\t\t\t\t</Appearance>");
                 
@@ -11025,7 +11057,9 @@ class solarchvision_Faces {
     
               float _u = 0.5 + _val;
     
-              if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+              if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+                  (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                    
                 if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }            
     
@@ -11108,7 +11142,9 @@ class solarchvision_Faces {
                         s = subFace.length - 1 - q;
                       }
                       
-                      htmlOutput.print(nf(subFace[s][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[s][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[s][2], 0, User3D.export_PrecisionVertex));
+                      htmlOutput.print(nf(subFace[s][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                       nf(subFace[s][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                       nf(subFace[s][2], 0, User3D.export_PrecisionVertex));
                     }                
                     htmlOutput.println("'></Coordinate>");
         
@@ -11163,7 +11199,9 @@ class solarchvision_Faces {
             
                         float u0 = 0.5 * (_u + 0.5);
             
-                        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                        if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+                            (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                              
                           if (Impact_TYPE == Impact_ACTIVE) {
                             u0 = _u;
                           }
@@ -11220,7 +11258,9 @@ class solarchvision_Faces {
             radOutput.println("void plastic " + "SurfaceMaterial" + nf(mt, 0));
             radOutput.println("0");
             radOutput.println("0");
-            radOutput.println("5 " + nf(r, 0, User3D.export_PrecisionVtexture) + " " + nf(g, 0, User3D.export_PrecisionVtexture) + " " + nf(b, 0, User3D.export_PrecisionVtexture) + " 0 0");
+            radOutput.println("5 " + nf(r, 0, User3D.export_PrecisionVtexture) + " " + 
+                                     nf(g, 0, User3D.export_PrecisionVtexture) + " " + 
+                                     nf(b, 0, User3D.export_PrecisionVtexture) + " 0 0");
     
           }
         }
@@ -11265,9 +11305,15 @@ class solarchvision_Faces {
                   radOutput.println("0");
                   radOutput.println("9");      
                   
-                  radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, User3D.export_PrecisionVertex));                
-                  radOutput.println(" " + nf(subFace[1][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[1][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[1][2], 0, User3D.export_PrecisionVertex));
-                  radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, User3D.export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[0][2], 0, User3D.export_PrecisionVertex));                
+                  radOutput.println(" " + nf(subFace[1][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[1][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[1][2], 0, User3D.export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[2][2], 0, User3D.export_PrecisionVertex));
                   
                   if (subFace.length == 4) {
     
@@ -11276,9 +11322,15 @@ class solarchvision_Faces {
                     radOutput.println("0");
                     radOutput.println("9");      
                     
-                    radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, User3D.export_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[3][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[3][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[3][2], 0, User3D.export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, User3D.export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[2][2], 0, User3D.export_PrecisionVertex));                
+                    radOutput.println(" " + nf(subFace[3][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[3][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[3][2], 0, User3D.export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[0][2], 0, User3D.export_PrecisionVertex));
                   }
                   
                   
@@ -11289,9 +11341,15 @@ class solarchvision_Faces {
                   radOutput.println("0");
                   radOutput.println("9");    
                   
-                  radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, User3D.export_PrecisionVertex));                
-                  radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, User3D.export_PrecisionVertex));
-                  radOutput.println(" " + nf(subFace[1][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[1][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[1][2], 0, User3D.export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[0][2], 0, User3D.export_PrecisionVertex));                
+                  radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[2][2], 0, User3D.export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[1][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[1][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                          nf(subFace[1][2], 0, User3D.export_PrecisionVertex));
                   
                   if (subFace.length == 4) { 
                     
@@ -11300,9 +11358,15 @@ class solarchvision_Faces {
                     radOutput.println("0");
                     radOutput.println("9");                   
                     
-                    radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[2][2], 0, User3D.export_PrecisionVertex));                
-                    radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[0][2], 0, User3D.export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[3][0], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[3][1], 0, User3D.export_PrecisionVertex) + " " + nf(subFace[3][2], 0, User3D.export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[2][2], 0, User3D.export_PrecisionVertex));                
+                    radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[0][2], 0, User3D.export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[3][0], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[3][1], 0, User3D.export_PrecisionVertex) + " " + 
+                                            nf(subFace[3][2], 0, User3D.export_PrecisionVertex));
                   }
                 }
               }
@@ -11491,7 +11555,9 @@ class solarchvision_Faces {
             
             face_norm = funcs.vec3_cross(AC, BD);
             
-            float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+            float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + 
+                                        (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + 
+                                        (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
           
             float R = -funcs.vec3_dot(ray_dir, face_norm);
       
@@ -11550,7 +11616,9 @@ class solarchvision_Faces {
               
               face_norm = funcs.vec3_cross(AG, BG);
                 
-              float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
+              float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + 
+                                                 (A[1] + B[1] + G[1]) * face_norm[1] + 
+                                                 (A[2] + B[2] + G[2]) * face_norm[2]);  
               
               float R = -funcs.vec3_dot(ray_dir, face_norm);
         
@@ -11786,18 +11854,12 @@ class solarchvision_Curves {
   
 
 
-
-
-
-
   void beginNewCurve () {
   
     int[] newCurve_nodes = {};    
     
     this.create(newCurve_nodes);
-    
   }
-  
 
   
   void add_VertexToLastCurve (float x, float y, float z) {
@@ -11811,8 +11873,6 @@ class solarchvision_Curves {
     this.nodes[n] = (int[]) concat(this.nodes[n], newVertex);
   
   }
-
-  
 
   
   int create (int[] f) {
@@ -11891,10 +11951,6 @@ class solarchvision_Curves {
   }
 
 
-
-
-
-  
   
   void draw (int target_window) {
    
@@ -12068,7 +12124,9 @@ class solarchvision_Curves {
             
             face_norm = funcs.vec3_cross(AC, BD);
             
-            float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+            float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + 
+                                        (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + 
+                                        (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
           
             float R = -funcs.vec3_dot(ray_dir, face_norm);
       
@@ -12127,7 +12185,9 @@ class solarchvision_Curves {
               
               face_norm = funcs.vec3_cross(AG, BG);
                 
-              float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
+              float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + 
+                                                 (A[1] + B[1] + G[1]) * face_norm[1] + 
+                                                 (A[2] + B[2] + G[2]) * face_norm[2]);  
               
               float R = -funcs.vec3_dot(ray_dir, face_norm);
         
@@ -17802,7 +17862,10 @@ class solarchvision_Delete3D {
       Delete3D.selected_Groups();
     }
   
-    if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.GROUP)) { 
+    if ((current_ObjectCategory == ObjectCategory.VERTEX) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.CURVE) || 
+        (current_ObjectCategory == ObjectCategory.GROUP)) { 
   
       Delete3D.selected_isolatedVertices();
     }  
@@ -18572,7 +18635,9 @@ class solarchvision_Select3D {
               
               face_norm = funcs.vec3_cross(AC, BD);
               
-              float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+              float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + 
+                                          (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + 
+                                          (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
             
               float R = -funcs.vec3_dot(ray_dir, face_norm);
         
@@ -18631,7 +18696,9 @@ class solarchvision_Select3D {
                 
                 face_norm = funcs.vec3_cross(AG, BG);
                   
-                float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
+                float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + 
+                                                   (A[1] + B[1] + G[1]) * face_norm[1] + 
+                                                   (A[2] + B[2] + G[2]) * face_norm[2]);  
                 
                 float R = -funcs.vec3_dot(ray_dir, face_norm);
           
@@ -18727,7 +18794,9 @@ class solarchvision_Select3D {
       theVertices = this.Solid_ids;
     } 
   
-    if ((current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.SOFTVERTEX)) {
+    if ((current_ObjectCategory == ObjectCategory.VERTEX) || 
+        (current_ObjectCategory == ObjectCategory.SOFTVERTEX)) {
+          
       theVertices = this.Vertex_ids;
     }
     if (current_ObjectCategory == ObjectCategory.FACE) {
@@ -18889,7 +18958,12 @@ class solarchvision_Select3D {
       }  
   
   
-      if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX) || (current_ObjectCategory == ObjectCategory.SOFTVERTEX)) {
+      if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+          (current_ObjectCategory == ObjectCategory.FACE) || 
+          (current_ObjectCategory == ObjectCategory.CURVE) || 
+          (current_ObjectCategory == ObjectCategory.VERTEX) || 
+          (current_ObjectCategory == ObjectCategory.SOFTVERTEX)) {
+            
         int n = theVertices[q];
   
         x = allPoints.getX(n);
@@ -21161,7 +21235,9 @@ class solarchvision_Select3D {
 
   void changeVisibilityFaces_Selection (int new_vsb) {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.VERTEX)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX)) { 
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
@@ -21209,7 +21285,9 @@ class solarchvision_Select3D {
   
   void changeVisibilityCurves_Selection (int new_vsb) {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.CURVE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX)) { 
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
@@ -21258,7 +21336,10 @@ class solarchvision_Select3D {
   
   void isolate_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.CURVE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX)) { 
   
       this.changeVisibilityFaces_Scene(0);
       this.changeVisibilityFaces_Selection(1);
@@ -21967,7 +22048,9 @@ class solarchvision_Select3D {
 
   void selectNearVertices () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.VERTEX)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX)) { 
   
       if (current_ObjectCategory == ObjectCategory.GROUP) { 
   
@@ -23211,7 +23294,13 @@ void draw () {
           ROLLOUT.drawView();
         }
 
-        if ((pre_TIME_Year != TIME.year) || (pre_TIME_Month != TIME.month) || (pre_TIME_Day != TIME.day) || (pre_TIME_Hour != TIME.hour) || (pre_CLIMATIC_SolarForecast != CLIMATIC_SolarForecast) || (pre_CLIMATIC_WeatherForecast != CLIMATIC_WeatherForecast)) {
+        if ((pre_TIME_Year != TIME.year) || 
+            (pre_TIME_Month != TIME.month) || 
+            (pre_TIME_Day != TIME.day) || 
+            (pre_TIME_Hour != TIME.hour) || 
+            (pre_CLIMATIC_SolarForecast != CLIMATIC_SolarForecast) || 
+            (pre_CLIMATIC_WeatherForecast != CLIMATIC_WeatherForecast)) {
+              
           UI_timeBar.revise();
 
           TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
@@ -23237,7 +23326,8 @@ void draw () {
 
 
 
-        if ((pre_LocationLAT != LocationLAT) || (pre_LocationLON != LocationLON)) {
+        if ((pre_LocationLAT != LocationLAT) || 
+            (pre_LocationLON != LocationLON)) {
 
           WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
           WORLD.revise();
@@ -25345,7 +25435,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     float keep_STUDY_perDays = STUDY.perDays;
     int keep_STUDY_joinDays = STUDY.joinDays;
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || 
+        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
       STUDY.perDays = 1;
       STUDY.joinDays = 1;
     }    
@@ -26394,7 +26485,9 @@ class solarchvision_Tropo3D {
                       float x_point = WORLD.dX * (( 1 * (_lon - WORLD.oX) / 360.0) + 0.5) / WORLD.sX;
                       float y_point = WORLD.dY * ((-1 * (_lat - WORLD.oY) / 180.0) + 0.5) / WORLD.sY; 
     
-                      WORLD.graphics.vertex(x_point, y_point, subFace[s][3] * this.Map[n_Map].width, subFace[s][4] * this.Map[n_Map].height);
+                      WORLD.graphics.vertex(x_point, y_point, 
+                                            subFace[s][3] * this.Map[n_Map].width, 
+                                            subFace[s][4] * this.Map[n_Map].height);
                     }
           
                     WORLD.graphics.endShape(CLOSE);
@@ -26462,7 +26555,11 @@ class solarchvision_Tropo3D {
                   
                     if (target_window == TypeWindow.WIN3D) {
   
-                      WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * this.Map[n_Map].width, v * this.Map[n_Map].height);
+                      WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, 
+                                           -y * OBJECTS_scale * WIN3D.scale, 
+                                            z * OBJECTS_scale * WIN3D.scale, 
+                                            u * this.Map[n_Map].width, 
+                                            v * this.Map[n_Map].height);
                     }                    
                   
                     if (target_window == TypeWindow.OBJ) {
@@ -26619,7 +26716,8 @@ class solarchvision_Sky3D {
       proceed = false;
     }
   
-    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+    if ((target_window == TypeWindow.STUDY) || 
+        (target_window == TypeWindow.WORLD)) {  
       proceed = false;
     }
 
@@ -26643,7 +26741,8 @@ class solarchvision_Sky3D {
     
       if (target_window == TypeWindow.OBJ) {
     
-        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+        if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+            (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
     
           String the_filename = "";
           String TEXTURE_path = "";  
@@ -26757,7 +26856,9 @@ class solarchvision_Sky3D {
                   if (_turn == 2) { 
                     float u1 = 0.5 * (_u + 0.5);
     
-                    if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) { 
+                    if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+                        (WIN3D.FacesShade == SHADE.Vertex_Solar)) { 
+                          
                       if  (Impact_TYPE == Impact_ACTIVE) u1 = _u;
                     }
     
@@ -26800,7 +26901,8 @@ class solarchvision_Sky3D {
     
       if (target_window == TypeWindow.WIN3D) {
     
-        if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+        if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+            (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
   
           for (int f = 0; f < skyFaces.length; f++) {      
       
@@ -26837,7 +26939,9 @@ class solarchvision_Sky3D {
       
                 WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
       
-                WIN3D.graphics.vertex(subFace[s][0] * this.scale * WIN3D.scale, -(subFace[s][1] * this.scale * WIN3D.scale), subFace[s][2] * this.scale * WIN3D.scale);
+                WIN3D.graphics.vertex(subFace[s][0] * this.scale * WIN3D.scale, 
+                                     -subFace[s][1] * this.scale * WIN3D.scale, 
+                                      subFace[s][2] * this.scale * WIN3D.scale);
               }
       
               WIN3D.graphics.endShape(CLOSE);
@@ -26862,7 +26966,9 @@ class solarchvision_Sky3D {
       
             for (int j = 0; j < skyFaces[f].length; j++) {
               int vNo = skyFaces[f][j];
-              WIN3D.graphics.vertex(skyVertices[vNo][0] * this.scale * WIN3D.scale, -(skyVertices[vNo][1] * this.scale * WIN3D.scale), skyVertices[vNo][2] * this.scale * WIN3D.scale);
+              WIN3D.graphics.vertex(skyVertices[vNo][0] * this.scale * WIN3D.scale, 
+                                   -skyVertices[vNo][1] * this.scale * WIN3D.scale, 
+                                    skyVertices[vNo][2] * this.scale * WIN3D.scale);
             }    
       
             WIN3D.graphics.endShape(CLOSE);
@@ -27039,7 +27145,11 @@ class solarchvision_Sun3D {
   
           for (int s = 0; s < subFace.length; s++) {
             
-            WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, subFace[s][3] * this.Map.width, subFace[s][4] * this.Map.height);
+            WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, 
+                                 -subFace[s][1] * OBJECTS_scale * WIN3D.scale, 
+                                  subFace[s][2] * OBJECTS_scale * WIN3D.scale, 
+                                  subFace[s][3] * this.Map.width, 
+                                  subFace[s][4] * this.Map.height);
           }
   
           WIN3D.graphics.endShape(CLOSE);
@@ -27088,11 +27198,19 @@ class solarchvision_Sun3D {
           if ((SunA[3] > 0) || (SunB[3] > 0)) {
             
             if (target_window == TypeWindow.WIN3D) {
-              WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+              WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, 
+                                 -s_SunPath * SunA[2] * WIN3D.scale, 
+                                  s_SunPath * SunA[3] * WIN3D.scale, 
+                                  s_SunPath * SunB[1] * WIN3D.scale, 
+                                 -s_SunPath * SunB[2] * WIN3D.scale, 
+                                  s_SunPath * SunB[3] * WIN3D.scale);
             }
             
             if (target_window == TypeWindow.STUDY) {
-              STUDY.graphics.line(s_SunPath * SunA[1] * STUDY.view_S, -s_SunPath * SunA[2] * STUDY.view_S, s_SunPath * SunB[1] * STUDY.view_S, -s_SunPath * SunB[2] * STUDY.view_S);
+              STUDY.graphics.line(s_SunPath * SunA[1] * STUDY.view_S, 
+                                 -s_SunPath * SunA[2] * STUDY.view_S, 
+                                  s_SunPath * SunB[1] * STUDY.view_S, 
+                                 -s_SunPath * SunB[2] * STUDY.view_S);
             }            
           }
         }
@@ -27108,11 +27226,19 @@ class solarchvision_Sun3D {
           if ((SunA[3] > 0) || (SunB[3] > 0)) {
 
             if (target_window == TypeWindow.WIN3D) {            
-              WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, -s_SunPath * SunA[2] * WIN3D.scale, s_SunPath * SunA[3] * WIN3D.scale, s_SunPath * SunB[1] * WIN3D.scale, -s_SunPath * SunB[2] * WIN3D.scale, s_SunPath * SunB[3] * WIN3D.scale);
+              WIN3D.graphics.line(s_SunPath * SunA[1] * WIN3D.scale, 
+                                 -s_SunPath * SunA[2] * WIN3D.scale, 
+                                  s_SunPath * SunA[3] * WIN3D.scale, 
+                                  s_SunPath * SunB[1] * WIN3D.scale, 
+                                 -s_SunPath * SunB[2] * WIN3D.scale, 
+                                  s_SunPath * SunB[3] * WIN3D.scale);
             }
             
             if (target_window == TypeWindow.STUDY) {            
-              STUDY.graphics.line(s_SunPath * SunA[1] * STUDY.view_S, -s_SunPath * SunA[2] * STUDY.view_S, s_SunPath * SunB[1] * STUDY.view_S, -s_SunPath * SunB[2] * STUDY.view_S);
+              STUDY.graphics.line(s_SunPath * SunA[1] * STUDY.view_S, 
+                                 -s_SunPath * SunA[2] * STUDY.view_S, 
+                                  s_SunPath * SunB[1] * STUDY.view_S, 
+                                 -s_SunPath * SunB[2] * STUDY.view_S);
             }            
           }
         }
@@ -27138,7 +27264,9 @@ class solarchvision_Sun3D {
       
       float keep_STUDY_perDays = STUDY.perDays;
       int keep_STUDY_joinDays = STUDY.joinDays;
-      if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+      if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || 
+          (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+            
         STUDY.perDays = 1;
         STUDY.joinDays = 1;
       }    
@@ -27332,7 +27460,9 @@ class solarchvision_Sun3D {
   
       float keep_STUDY_perDays = STUDY.perDays;
       int keep_STUDY_joinDays = STUDY.joinDays;
-      if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+      if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || 
+          (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+            
         STUDY.perDays = 1;
         STUDY.joinDays = 1;
       }    
@@ -27392,7 +27522,8 @@ class solarchvision_Sun3D {
     if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0 * STUDY.ACTIVE_pallet_MLT;
     if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * STUDY.PASSIVE_pallet_MLT;
   
-    if ((target_window == TypeWindow.WIN3D) || (target_window == TypeWindow.OBJ)) {
+    if ((target_window == TypeWindow.WIN3D) || 
+        (target_window == TypeWindow.OBJ)) {
   
       if (Impact_TYPE == Impact_ACTIVE) {  
         PAL_type = this.ACTIVE_pallet_CLR; 
@@ -27749,7 +27880,9 @@ class solarchvision_Sun3D {
                         if (_turn == 2) { 
                           float u1 = 0.5 * (_u + 0.5);
   
-                          if ((WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                          if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
+                              (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                                
                             if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
                           }
   
@@ -28075,7 +28208,9 @@ class solarchvision_Earth3D {
       proceed = false;
     }
   
-    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+    if ((target_window == TypeWindow.STUDY) || 
+        (target_window == TypeWindow.WORLD)) {
+          
       proceed = false;
     }
   
@@ -28099,7 +28234,8 @@ class solarchvision_Earth3D {
       float r = FLOAT_r_Earth;
       
   
-      if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+      if ((target_window == TypeWindow.HTML) || 
+          (target_window == TypeWindow.OBJ)) {
       
         if (User3D.export_MaterialLibrary) {
   
@@ -28800,7 +28936,8 @@ class solarchvision_Land3D {
       proceed = false;
     }
   
-    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+    if ((target_window == TypeWindow.STUDY) || 
+        (target_window == TypeWindow.WORLD)) {  
       proceed = false;
     }
     /*
@@ -28848,7 +28985,8 @@ class solarchvision_Land3D {
           }
   
   
-          if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+          if ((target_window == TypeWindow.HTML) || 
+              (target_window == TypeWindow.OBJ)) {
   
             if (this.displayTexture) {
               if (n_Map != -1) {
@@ -28887,7 +29025,8 @@ class solarchvision_Land3D {
   
       }
       
-      if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {
+      if ((target_window == TypeWindow.LandGap) || 
+          (target_window == TypeWindow.LandMesh)) {
         
         current_Material = User3D.default_Material;
         current_Tessellation = User3D.default_Tessellation;
@@ -28928,7 +29067,8 @@ class solarchvision_Land3D {
           tessellation = 0;
         }
   
-        if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {
+        if ((target_window == TypeWindow.LandGap) || 
+            (target_window == TypeWindow.LandMesh)) {
           tessellation = 0;
         }
   
@@ -30025,7 +30165,9 @@ class solarchvision_Model1Ds {
       proceed = false;
     }
   
-    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+    if ((target_window == TypeWindow.STUDY) || 
+        (target_window == TypeWindow.WORLD)) {
+          
       proceed = false;
     }
 
@@ -30799,7 +30941,9 @@ class solarchvision_Model2Ds {
       proceed = false;
     }
   
-    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+    if ((target_window == TypeWindow.STUDY) || 
+        (target_window == TypeWindow.WORLD)) {
+          
       proceed = false;
     }
     
@@ -30807,7 +30951,8 @@ class solarchvision_Model2Ds {
   
       if (User3D.export_MaterialLibrary) {
       
-        if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {  
+        if ((target_window == TypeWindow.HTML) || 
+            (target_window == TypeWindow.OBJ)) {  
     
           int[] ImageUsed = new int [this.ImagePath.length];
     
@@ -30947,7 +31092,9 @@ class solarchvision_Model2Ds {
           float t = PI + WIN3D.rotation_Z * PI / 180.0;
           if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI;
          
-          if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+          if ((target_window == TypeWindow.HTML) || 
+              (target_window == TypeWindow.OBJ)) {
+                
             t = 0;
           }     
   
@@ -32950,7 +33097,11 @@ class solarchvision_Modify3D {
   
   void weldSceneVertices_Selection (float max_distance) {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {    
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.CURVE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX)) {
+          
       this.selectVertices_fromCurrentSelection();
     
       for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
@@ -33043,7 +33194,11 @@ class solarchvision_Modify3D {
   
   void weldObjectsVertices_Selection (float max_distance) {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.CURVE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX)) {
+          
       this.selectVertices_fromCurrentSelection();
       
       Select3D.convert_Vertices_to_Faces();
@@ -33132,7 +33287,11 @@ class solarchvision_Modify3D {
 
   void offsetVertices_Selection (int _type, float _amount) {
 
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.CURVE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX)) {
+          
       this.selectVertices_fromCurrentSelection();
   
       float[][] Vertex_offsetValues = new float [Select3D.Vertex_ids.length][3];
@@ -33262,7 +33421,11 @@ class solarchvision_Modify3D {
   
   void separateVertices_Selection () {
     
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE) || (current_ObjectCategory == ObjectCategory.VERTEX)) {    
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE) || 
+        (current_ObjectCategory == ObjectCategory.CURVE) || 
+        (current_ObjectCategory == ObjectCategory.VERTEX)) {
+          
       this.selectVertices_fromCurrentSelection();
   
       for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) { 
@@ -33318,7 +33481,9 @@ class solarchvision_Modify3D {
   
   void insertCornerOpennings_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -33438,7 +33603,9 @@ class solarchvision_Modify3D {
   
   void insertParallelOpennings_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -33594,7 +33761,9 @@ class solarchvision_Modify3D {
   
   void insertRotatedOpennings_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -33728,7 +33897,8 @@ class solarchvision_Modify3D {
   
   void insertEdgeOpennings_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -33858,7 +34028,8 @@ class solarchvision_Modify3D {
   
   void tessellateRowsColumns_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) { 
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -34010,7 +34181,9 @@ class solarchvision_Modify3D {
   
   void tessellateRectangular_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -34139,7 +34312,9 @@ class solarchvision_Modify3D {
   
   void tessellateTriangular_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -34253,7 +34428,9 @@ class solarchvision_Modify3D {
     // this function is the copy of above function (this.tessellateTriangular_Selection) 
     // but only processed the faces with degrees above 3.
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -34368,7 +34545,9 @@ class solarchvision_Modify3D {
 
   void optimizeFace_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
       
       int[] primary_list = Select3D.Face_ids;
@@ -34426,7 +34605,9 @@ class solarchvision_Modify3D {
 
   void triangulateFace_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -34514,7 +34695,9 @@ class solarchvision_Modify3D {
   
   void extrudeFaceEdges_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       Select3D.deselect_Faces();
@@ -34640,7 +34823,9 @@ class solarchvision_Modify3D {
   
   void extrudeCurveEdges_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.CURVE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.CURVE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       Select3D.deselect_Faces();
@@ -34769,7 +34954,9 @@ class solarchvision_Modify3D {
 
   void autoNormalFaces_Selection () {
   
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE)) { 
+    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
 
       for (int o = 0; o < Select3D.Face_ids.length; o++) {
@@ -37903,7 +38090,9 @@ class solarchvision_Sections {
       proceed = false;
     }
   
-    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+    if ((target_window == TypeWindow.STUDY) || 
+        (target_window == TypeWindow.WORLD)) {
+          
       proceed = false;
     }
     
@@ -37930,7 +38119,8 @@ class solarchvision_Sections {
   
             String TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
   
-            if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+            if ((target_window == TypeWindow.HTML) || 
+                (target_window == TypeWindow.OBJ)) {
   
               if (allSolarImpacts.displayImage) {
                 println("Saving texture:", TEXTURE_path);
@@ -38629,7 +38819,8 @@ class solarchvision_WindFlow {
       proceed = false;
     }
   
-    if ((target_window == TypeWindow.STUDY) || (target_window == TypeWindow.WORLD)) {  
+    if ((target_window == TypeWindow.STUDY) || 
+        (target_window == TypeWindow.WORLD)) {  
       proceed = false;
     }
   
@@ -38975,7 +39166,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
   float keep_STUDY_perDays = STUDY.perDays;
   int keep_STUDY_joinDays = STUDY.joinDays;
-  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || 
+      (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
     STUDY.perDays = 1;
     STUDY.joinDays = 1;
   }
@@ -39454,7 +39646,9 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
             
             face_norm = funcs.vec3_cross(AC, BD);
             
-            float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
+            float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] + 
+                                        (A[1] + B[1] + C[1] + D[1]) * face_norm[1] + 
+                                        (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);  
           
             float R = -funcs.vec3_dot(ray_dir, face_norm);
       
@@ -39513,7 +39707,9 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
               
               face_norm = funcs.vec3_cross(AG, BG);
                 
-              float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + (A[1] + B[1] + G[1]) * face_norm[1] + (A[2] + B[2] + G[2]) * face_norm[2]);  
+              float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] + 
+                                                 (A[1] + B[1] + G[1]) * face_norm[1] + 
+                                                 (A[2] + B[2] + G[2]) * face_norm[2]);  
               
               float R = -funcs.vec3_dot(ray_dir, face_norm);
         
@@ -39684,7 +39880,8 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
   float keep_STUDY_perDays = STUDY.perDays;
   int keep_STUDY_joinDays = STUDY.joinDays;
-  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || 
+      (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
     STUDY.perDays = 1;
     STUDY.joinDays = 1;
   }
@@ -40076,7 +40273,8 @@ void mouseWheel (MouseEvent event) {
                   if (STUDY.i_End < 0) STUDY.i_End = 23;
                   if (STUDY.i_End > 23) STUDY.i_End = 0;
 
-                  if ((keep_STUDY_i_Start != STUDY.i_Start) || (keep_STUDY_i_End != STUDY.i_End)) {
+                  if ((keep_STUDY_i_Start != STUDY.i_Start) || 
+                      (keep_STUDY_i_End != STUDY.i_End)) {
 
                     ROLLOUT.revise();
                     STUDY.revise();
@@ -40138,7 +40336,8 @@ void mouseWheel (MouseEvent event) {
                     if (SampleYear_End < CLIMATE_CWEEDS_start) SampleYear_End = CLIMATE_CWEEDS_start;
                     if (SampleYear_End > CLIMATE_CWEEDS_end) SampleYear_End = CLIMATE_CWEEDS_end;
 
-                    if ((keep_SampleYear_Start != SampleYear_Start) || (keep_SampleYear_End != SampleYear_End)) {
+                    if ((keep_SampleYear_Start != SampleYear_Start) || 
+                        (keep_SampleYear_End != SampleYear_End)) {
 
                       ROLLOUT.revise();
                       STUDY.revise();
@@ -40170,7 +40369,8 @@ void mouseWheel (MouseEvent event) {
                     if (SampleYear_End < CLIMATE_CLMREC_start) SampleYear_End = CLIMATE_CLMREC_start;
                     if (SampleYear_End > CLIMATE_CLMREC_end) SampleYear_End = CLIMATE_CLMREC_end;
 
-                    if ((keep_SampleYear_Start != SampleYear_Start) || (keep_SampleYear_End != SampleYear_End)) {
+                    if ((keep_SampleYear_Start != SampleYear_Start) || 
+                        (keep_SampleYear_End != SampleYear_End)) {
 
                       ROLLOUT.revise();
                       STUDY.revise();
@@ -40202,7 +40402,8 @@ void mouseWheel (MouseEvent event) {
                     if (SampleMember_End < ENSEMBLE_FORECAST_start) SampleMember_End = ENSEMBLE_FORECAST_start;
                     if (SampleMember_End > ENSEMBLE_FORECAST_end) SampleMember_End = ENSEMBLE_FORECAST_end;
 
-                    if ((keep_SampleMember_Start != SampleMember_Start) || (keep_SampleMember_End != SampleMember_End)) {
+                    if ((keep_SampleMember_Start != SampleMember_Start) || 
+                        (keep_SampleMember_End != SampleMember_End)) {
 
                       ROLLOUT.revise();
                       STUDY.revise();
@@ -40234,7 +40435,8 @@ void mouseWheel (MouseEvent event) {
                     if (SampleStation_End < ENSEMBLE_OBSERVED_start) SampleStation_End = ENSEMBLE_OBSERVED_start;
                     if (SampleStation_End > ENSEMBLE_OBSERVED_end) SampleStation_End = ENSEMBLE_OBSERVED_end;
 
-                    if ((keep_SampleStation_Start != SampleStation_Start) || (keep_SampleStation_End != SampleStation_End)) {
+                    if ((keep_SampleStation_Start != SampleStation_Start) || 
+                        (keep_SampleStation_End != SampleStation_End)) {
 
                       ROLLOUT.revise();
                       STUDY.revise();
@@ -40367,7 +40569,10 @@ void mouseWheel (MouseEvent event) {
 
 
 
-              if ((WIN3D.UI_CurrentTask == UITASK.Zoom_Orbit_Pan) || (WIN3D.UI_CurrentTask == UITASK.CameraRoll_Pan) || (WIN3D.UI_CurrentTask == UITASK.TargetRoll_Pan) || (WIN3D.UI_CurrentTask == UITASK.Pan_TargetRoll)) { // viewport:zoom
+              if ((WIN3D.UI_CurrentTask == UITASK.Zoom_Orbit_Pan) || 
+                  (WIN3D.UI_CurrentTask == UITASK.CameraRoll_Pan) || 
+                  (WIN3D.UI_CurrentTask == UITASK.TargetRoll_Pan) || 
+                  (WIN3D.UI_CurrentTask == UITASK.Pan_TargetRoll)) { // viewport:zoom
 
                 if (WIN3D.ViewType == 1) {
                   WIN3D.position_Z += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
@@ -40518,7 +40723,8 @@ void mouseWheel (MouseEvent event) {
                 WIN3D.revise();
               }      
 
-              if ((WIN3D.UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) || (WIN3D.UI_CurrentTask == UITASK.PickSelect)) { // viewport:DistMouseXY
+              if ((WIN3D.UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) || 
+                  (WIN3D.UI_CurrentTask == UITASK.PickSelect)) { // viewport:DistMouseXY
 
                 WIN3D.move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
 
@@ -40604,7 +40810,8 @@ void mouseReleased () {
           if (WIN3D.include) {
             if (isInside(mouseX, mouseY, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
-              if ((WIN3D.UI_CurrentTask == UITASK.RectSelect) || (WIN3D.UI_CurrentTask > UITASK.Move)) { // RectSelect also if scale, rotate, modify, etc. where selected          
+              if ((WIN3D.UI_CurrentTask == UITASK.RectSelect) || 
+                  (WIN3D.UI_CurrentTask > UITASK.Move)) { // RectSelect also if scale, rotate, modify, etc. where selected          
 
                 float corner1x = SOLARCHVISION_X_click1 - 0.5 * WIN3D.dX - WIN3D.cX;
                 float corner1y = SOLARCHVISION_Y_click1 - 0.5 * WIN3D.dY - WIN3D.cY;
@@ -40801,7 +41008,8 @@ void mouseDragged () {
               }
             } 
 
-            if ((WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) || (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ)) { // viewport
+            if ((WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) || 
+                (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRollXY
 
@@ -40818,7 +41026,9 @@ void mouseDragged () {
               }
             } 
 
-            if ((WIN3D.UI_CurrentTask == UITASK.Pan_TargetRoll) || (WIN3D.UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) || (WIN3D.UI_CurrentTask == UITASK.PickSelect)) { // viewport
+            if ((WIN3D.UI_CurrentTask == UITASK.Pan_TargetRoll) || 
+                (WIN3D.UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) || 
+                (WIN3D.UI_CurrentTask == UITASK.PickSelect)) { // viewport
 
               if (mouseButton == LEFT) { // Pan
 
@@ -40839,7 +41049,8 @@ void mouseDragged () {
               }
             }            
 
-            if ((WIN3D.UI_CurrentTask == UITASK.CameraRoll_Pan) || (WIN3D.UI_CurrentTask == UITASK.CameraDistance_TargetRollXY_TargetRollZ)) { // viewport
+            if ((WIN3D.UI_CurrentTask == UITASK.CameraRoll_Pan) || 
+                (WIN3D.UI_CurrentTask == UITASK.CameraDistance_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRoll
 
@@ -40918,7 +41129,9 @@ void mouseDragged () {
               }
             }            
 
-            if ((WIN3D.UI_CurrentTask == UITASK.Zoom_Orbit_Pan) || (WIN3D.UI_CurrentTask == UITASK.SkydomeSize) || (WIN3D.UI_CurrentTask == UITASK.AllModelSize)) { // viewport
+            if ((WIN3D.UI_CurrentTask == UITASK.Zoom_Orbit_Pan) || 
+                (WIN3D.UI_CurrentTask == UITASK.SkydomeSize) || 
+                (WIN3D.UI_CurrentTask == UITASK.AllModelSize)) { // viewport
 
               if (mouseButton == LEFT) { // orbit
 
@@ -43513,7 +43726,9 @@ void mouseClicked () {
               WORLD.Zoom = 6;
             }
 
-            if ((pre_LocationLAT != LocationLAT) || (pre_LocationLON != LocationLON)) {
+            if ((pre_LocationLAT != LocationLAT) || 
+                (pre_LocationLON != LocationLON)) {
+                  
               WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
             } 
 
@@ -43798,7 +44013,9 @@ void mouseClicked () {
                 RxP = Land3D.intersect(ray_start, ray_direction);
               } else if (mouseButton == LEFT) {
 
-                if ((WIN3D.UI_CurrentTask == UITASK.Create) || (WIN3D.UI_CurrentTask == UITASK.Move)) {
+                if ((WIN3D.UI_CurrentTask == UITASK.Create) || 
+                    (WIN3D.UI_CurrentTask == UITASK.Move)) {
+                      
                    RxP = SOLARCHVISION_snap_Faces(allFaces.intersect(ray_start, ray_direction));
 
                 } else {
@@ -43923,11 +44140,16 @@ void mouseClicked () {
   
                   if ((WIN3D.UI_TaskModifyParameter != 0) && (WIN3D.UI_CurrentTask >= UITASK.Seed_Material)) { // Pick/Assign properties 
   
-                    if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE)) {
+                    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
+                        (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE)) {
   
                       int f = int(RxP[0]);
   
-                      if ((WIN3D.UI_CurrentTask == UITASK.Seed_Material) || (WIN3D.UI_CurrentTask == UITASK.Tessellation) || (WIN3D.UI_CurrentTask == UITASK.Layer) || (WIN3D.UI_CurrentTask == UITASK.Visibility) || (WIN3D.UI_CurrentTask == UITASK.Weight)) {
+                      if ((WIN3D.UI_CurrentTask == UITASK.Seed_Material) || 
+                          (WIN3D.UI_CurrentTask == UITASK.Tessellation) || 
+                          (WIN3D.UI_CurrentTask == UITASK.Layer) || 
+                          (WIN3D.UI_CurrentTask == UITASK.Visibility) || 
+                          (WIN3D.UI_CurrentTask == UITASK.Weight)) {
   
                         if (WIN3D.UI_TaskModifyParameter == 1) { // Pick 
                           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) User3D.default_Material     = allFaces.getMaterial(f);
@@ -48306,7 +48528,8 @@ void SOLARCHVISION_postProcess_climaticSolarForecast () {
               }
 
 
-              if ((is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover.id][q])) || (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure.id][q]))) {
+              if ((is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover.id][q])) || 
+                 (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure.id][q]))) {
               } else {
                 float CC_dist = abs(Forecast_CC - CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover.id][q]);
                 float AP_dist = abs(Forecast_AP - CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure.id][q]);
@@ -48361,7 +48584,9 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
   float keep_STUDY_perDays = STUDY.perDays;
   int keep_STUDY_joinDays = STUDY.joinDays;
   
-  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || 
+      (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+        
     STUDY.perDays = 1;
     STUDY.joinDays = 1;
   }
@@ -52234,7 +52459,9 @@ class solarchvision_UI_timeBar {
   
           float keep_STUDY_perDays = STUDY.perDays;
           int keep_STUDY_joinDays = STUDY.joinDays;
-          if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+          if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || 
+              (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+                
             STUDY.perDays = 1;
             STUDY.joinDays = 1;
           }
@@ -52786,7 +53013,10 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
   }  
   
-  else if ((Command_CAPITAL.equals("ROTATE")) || (Command_CAPITAL.equals("ROTATEX")) || (Command_CAPITAL.equals("ROTATEY")) || (Command_CAPITAL.equals("ROTATEZ"))) {
+  else if ((Command_CAPITAL.equals("ROTATE")) || 
+          (Command_CAPITAL.equals("ROTATEX")) || 
+          (Command_CAPITAL.equals("ROTATEY")) || 
+          (Command_CAPITAL.equals("ROTATEZ"))) {
     if (parts.length > 1) {
       int v = 2;
       if (Command_CAPITAL.equals("ROTATEX")) v = 0;
