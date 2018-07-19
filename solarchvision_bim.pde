@@ -6064,7 +6064,6 @@ class solarchvision_STUDY {
     int PAL_direction = this.PROB_pallet_DIR;  
     float PAL_multiplier = this.PROB_pallet_MLT;
     
-/*    
     float txt_max_width = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
     float txt_max_height = _pix;
     if (txt_max_height > txt_max_width) {
@@ -6073,8 +6072,6 @@ class solarchvision_STUDY {
     else {
       this.graphics.textSize(0.9 * txt_max_height);
     }
-*/
-this.graphics.textSize(0.9 * _pix); 
 
     this.graphics.rectMode(CORNER);
     this.graphics.textAlign(CENTER, CENTER);
@@ -6133,30 +6130,25 @@ this.graphics.textSize(0.9 * _pix);
             float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
             float w = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
-            float h = _pix;
+            float h = _pix * 1.5;
             
             float x1 = (j + ((i + 1) / 24.0)) * sx_Plot;
             float y1 = -(min_b + n + 0.5) * h;            
 
             this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
             this.graphics.noStroke();            
-            this.graphics.rect(x1, y1, w, h); 
-/*  
+            this.graphics.rect(x1 - w, y1, w, h); 
+
             if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-              this.graphics.stroke(127);
               this.graphics.fill(127);
-              this.graphics.strokeWeight(0);
+              this.graphics.noStroke();
             } else {
-              this.graphics.stroke(255);
               this.graphics.fill(255);
+              this.graphics.stroke(255);
               this.graphics.strokeWeight(2);
             }  
-*/           
-      this.graphics.noStroke();
-      this.graphics.fill(0,127,0);
             
-            //this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 + 0.5 * w, y1 + 0.5 * h + 0.05 * txt_max_height);
-            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 + 0.5 * w, y1 + 0.5 * h);
+            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 - 0.5 * w, y1 + 0.5 * h - 0.2 * txt_max_height);
   
             if ((this.export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_b + n) * _pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
@@ -55777,8 +55769,8 @@ void load_CLIMATE_TMYEPW (String FileName) {
     //println(i);
 
     CLIMATE_TMYEPW_values[i][j][LAYER_pressure.id][k] = float(parts[9]) * 0.01; // 10 times in Pa
-    CLIMATE_TMYEPW_values[i][j][LAYER_drybulb.id][k] = 20; //float(parts[6]); // in °C
-    CLIMATE_TMYEPW_values[i][j][LAYER_relhum.id][k] = 0; //float(parts[8]); // 0 - 110%
+    CLIMATE_TMYEPW_values[i][j][LAYER_drybulb.id][k] = float(parts[6]); // in °C
+    CLIMATE_TMYEPW_values[i][j][LAYER_relhum.id][k] = float(parts[8]); // 0 - 110%
     CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad.id][k] = float(parts[13]); // Wh/m²
     CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad.id][k] = float(parts[14]); // Wh/m²
     CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad.id][k] = float(parts[15]); // Wh/m²
