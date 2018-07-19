@@ -6052,10 +6052,10 @@ class solarchvision_STUDY {
   void drawProbs (int i, int j, float[] valuesSUM, float[] valuesNUM, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
     println("view_S=", this.view_S);
-    println("V_scale=", this.V_scale);
     println("LevelPix=", this.LevelPix);
     
-    float _pix = 100.0 * this.view_S / this.LevelPix; 
+    //float _pix = 100.0 * this.view_S / this.LevelPix; 
+    float _pix = 90.0 * this.view_S / this.LevelPix;
     
     println("_pix=", _pix);
     
@@ -6066,12 +6066,15 @@ class solarchvision_STUDY {
     
     float txt_max_width = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
     float txt_max_height = _pix;
+    float txt_size = 1;
     if (txt_max_height > txt_max_width) {
-      this.graphics.textSize(0.9 * txt_max_width);
+      txt_size = 0.9 * txt_max_width;
     }
     else {
-      this.graphics.textSize(0.9 * txt_max_height);
+      txt_size = 0.9 * txt_max_height;
     }
+    this.graphics.textSize(txt_size);
+
 
     this.graphics.rectMode(CORNER);
     this.graphics.textAlign(CENTER, CENTER);
@@ -6148,7 +6151,7 @@ class solarchvision_STUDY {
               this.graphics.strokeWeight(2);
             }  
             
-            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 - 0.5 * w, y1 + 0.5 * h - 0.2 * txt_max_height);
+            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 - 0.5 * w, y1 + 0.5 * h - 0.25 * txt_size);
   
             if ((this.export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_b + n) * _pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
