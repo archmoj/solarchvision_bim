@@ -6053,7 +6053,7 @@ class solarchvision_STUDY {
     println("V_scale=", this.V_scale);
     println("LevelPix=", this.LevelPix);
     
-    float _pix = 400.0 * this.view_S / (this.V_scale * this.LevelPix); 
+    float _pix = 100.0 * this.view_S / this.LevelPix; 
     
     println("_pix=", _pix);
     
@@ -6061,7 +6061,8 @@ class solarchvision_STUDY {
     int PAL_type = this.PROB_pallet_CLR; 
     int PAL_direction = this.PROB_pallet_DIR;  
     float PAL_multiplier = this.PROB_pallet_MLT;
-  
+    
+/*    
     float txt_max_width = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
     float txt_max_height = _pix;
     if (txt_max_height > txt_max_width) {
@@ -6070,14 +6071,11 @@ class solarchvision_STUDY {
     else {
       this.graphics.textSize(0.9 * txt_max_height);
     }
+*/
+this.graphics.textSize(0.9 * _pix); 
+
+    this.graphics.rectMode(CORNER);
     this.graphics.textAlign(CENTER, CENTER);
-    this.graphics.strokeWeight(this.T_scale * 0);    
-    
-    
-    
-    
-    
-    
     
     
     float min_v = FLOAT_undefined;
@@ -6133,18 +6131,17 @@ class solarchvision_STUDY {
             if (PAL_direction == 2) _u =  0.5 * _u;
 
             float[] COL = PAINT.getColorStyle(PAL_type, _u);
-  
-            this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-            this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]); 
-            this.graphics.strokeWeight(this.T_scale * 0); 
+
+            float w = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
+            float h = _pix;
             
             float x1 = (j + ((i + 1) / 24.0)) * sx_Plot;
-            float y1 = ((min_v + n) * _pix * sy_Plot);            
-            float w = -(this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
-            float h = _pix * sy_Plot;
-            
+            float y1 = -(min_v + n + 0.5) * h;            
+
+            this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+            this.graphics.noStroke();            
             this.graphics.rect(x1, y1, w, h); 
-  
+/*  
             if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
               this.graphics.stroke(127);
               this.graphics.fill(127);
@@ -6153,8 +6150,13 @@ class solarchvision_STUDY {
               this.graphics.stroke(255);
               this.graphics.fill(255);
               this.graphics.strokeWeight(2);
-            }   
-            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 + 0.5 * w, y1 + 0.5 * h + 0.05 * txt_max_height);
+            }  
+*/           
+      this.graphics.noStroke();
+      this.graphics.fill(0,127,0);
+            
+            //this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 + 0.5 * w, y1 + 0.5 * h + 0.05 * txt_max_height);
+            this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 + 0.5 * w, y1 + 0.5 * h);
   
             if ((this.export_info_prob) && (this.displayProbs)) {
               FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * _pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
