@@ -1,3 +1,5 @@
+// CLIMATE_TMYEPW_values[i][j][LAYER_drybulb.id][k] = 20; etc 
+
 
 // pleas improve drawGrid : )
 
@@ -6077,28 +6079,26 @@ this.graphics.textSize(0.9 * _pix);
     this.graphics.rectMode(CORNER);
     this.graphics.textAlign(CENTER, CENTER);
     
-    
-    float min_v = FLOAT_undefined;
-    float max_v = -FLOAT_undefined;
+    float min_V = FLOAT_undefined;
+    float max_V = -FLOAT_undefined;
   
     for (int k = 0; k < valuesSUM.length; k++) {
       if (is_defined(valuesSUM[k])) {
-        if (min_v > valuesSUM[k]) min_v = valuesSUM[k];
-        if (max_v < valuesSUM[k]) max_v = valuesSUM[k];
+        if (min_V > valuesSUM[k]) min_V = valuesSUM[k];
+        if (max_V < valuesSUM[k]) max_V = valuesSUM[k];
       }
-    }     
+    }         
     
-    
-    if ((is_defined(min_v)) && (is_defined(-max_v))) {    
-      min_v = funcs.roundTo((min_v * abs(sy_Plot)), _pix) / _pix;
-      max_v = funcs.roundTo((max_v * abs(sy_Plot)), _pix) / _pix;
+    if ((is_defined(min_V)) && (is_defined(-max_V))) {    
+      int min_b = int(funcs.roundTo((min_V * abs(sy_Plot)), _pix) / _pix);
+      int max_b = int(funcs.roundTo((max_V * abs(sy_Plot)), _pix) / _pix);
   
-      if (CurrentLayer_id == LAYER_winddir.id) min_v = 0;
+      if (CurrentLayer_id == LAYER_winddir.id) min_b = 0;
     
       int[] probs;
       int totalProbs = 0;
   
-      probs = new int [floor(max_v - min_v) + 1];
+      probs = new int [floor(max_b - min_b) + 1];
   
       for (int k = 0; k < valuesSUM.length; k++) {
         if (is_defined(valuesSUM[k])) {
@@ -6108,7 +6108,7 @@ this.graphics.textSize(0.9 * _pix);
             if (funcs.roundTo((the_value * abs(sy_Plot)), _pix) >= (360 * abs(sy_Plot))) the_value -= 360;
           }
 
-          int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), _pix) / _pix) - min_v, 1));
+          int h = int(funcs.roundTo((funcs.roundTo((the_value * abs(sy_Plot)), _pix) / _pix) - min_b, 1));
           
           if (h < 0) h = 0;
           else if (h > probs.length - 1) h = probs.length - 1; 
@@ -6136,7 +6136,7 @@ this.graphics.textSize(0.9 * _pix);
             float h = _pix;
             
             float x1 = (j + ((i + 1) / 24.0)) * sx_Plot;
-            float y1 = -(min_v + n + 0.5) * h;            
+            float y1 = -(min_b + n + 0.5) * h;            
 
             this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
             this.graphics.noStroke();            
@@ -6159,7 +6159,7 @@ this.graphics.textSize(0.9 * _pix);
             this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 + 0.5 * w, y1 + 0.5 * h);
   
             if ((this.export_info_prob) && (this.displayProbs)) {
-              FILE_outputProbs[(j - this.j_Start)].print(nfs((min_v + n) * _pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
+              FILE_outputProbs[(j - this.j_Start)].print(nfs((min_b + n) * _pix / abs(sy_Plot) - this.V_offset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
             }
 
           }
@@ -55777,8 +55777,8 @@ void load_CLIMATE_TMYEPW (String FileName) {
     //println(i);
 
     CLIMATE_TMYEPW_values[i][j][LAYER_pressure.id][k] = float(parts[9]) * 0.01; // 10 times in Pa
-    CLIMATE_TMYEPW_values[i][j][LAYER_drybulb.id][k] = float(parts[6]); // in °C
-    CLIMATE_TMYEPW_values[i][j][LAYER_relhum.id][k] = float(parts[8]); // 0 - 110%
+    CLIMATE_TMYEPW_values[i][j][LAYER_drybulb.id][k] = 20; //float(parts[6]); // in °C
+    CLIMATE_TMYEPW_values[i][j][LAYER_relhum.id][k] = 0; //float(parts[8]); // 0 - 110%
     CLIMATE_TMYEPW_values[i][j][LAYER_glohorrad.id][k] = float(parts[13]); // Wh/m²
     CLIMATE_TMYEPW_values[i][j][LAYER_dirnorrad.id][k] = float(parts[14]); // Wh/m²
     CLIMATE_TMYEPW_values[i][j][LAYER_difhorrad.id][k] = float(parts[15]); // Wh/m²
