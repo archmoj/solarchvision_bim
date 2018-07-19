@@ -2589,7 +2589,7 @@ class solarchvision_SHADE {
         (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
           
       if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = allFaces.ACTIVE_pallet_MLT; 
-      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * allFaces.PASSIVE_pallet_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
     }              
   
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
@@ -2910,7 +2910,7 @@ class solarchvision_WIN3D {
       if (Impact_TYPE == Impact_PASSIVE) {  
         PAL_type = allFaces.PASSIVE_pallet_CLR; 
         PAL_direction = allFaces.PASSIVE_pallet_DIR;
-        PAL_multiplier = 0.05 * allFaces.PASSIVE_pallet_MLT;
+        PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
       }   
   
       draw_pal = true;
@@ -5249,7 +5249,7 @@ class solarchvision_STUDY {
   
   int PASSIVE_pallet_CLR = 1; 
   int PASSIVE_pallet_DIR = 1;
-  float PASSIVE_pallet_MLT = 1; 
+  float PASSIVE_pallet_MLT = 0.2; 
 
 
   int cX = 0;
@@ -7740,7 +7740,7 @@ class solarchvision_STUDY {
         if (Impact_TYPE == Impact_PASSIVE) {  
           PAL_type = allFaces.PASSIVE_pallet_CLR; 
           PAL_direction = allFaces.PASSIVE_pallet_DIR;
-          PAL_multiplier = 0.05 * allFaces.PASSIVE_pallet_MLT;
+          PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
         }        
 
         int l = this.ImpactLayer;
@@ -7944,7 +7944,7 @@ class solarchvision_STUDY {
   
       float PAL_multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.PASSIVE_pallet_MLT; 
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT; 
   
 
       int l = this.ImpactLayer;
@@ -8361,7 +8361,7 @@ class solarchvision_STUDY {
   
       float PAL_multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.PASSIVE_pallet_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
   
       this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
@@ -8627,7 +8627,7 @@ class solarchvision_STUDY {
   
       float PAL_multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.PASSIVE_pallet_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
   
       this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
   
@@ -8881,7 +8881,7 @@ class solarchvision_STUDY {
   
       float PAL_multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.PASSIVE_pallet_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
   
       float pal_length = 400;
       float pal_ox = 700;
@@ -10190,11 +10190,11 @@ class solarchvision_Faces {
   
   int ACTIVE_pallet_CLR = 19; //15; //14;
   int ACTIVE_pallet_DIR = 1;
-  float ACTIVE_pallet_MLT = 1; //2; 
+  float ACTIVE_pallet_MLT = 1;
   
   int PASSIVE_pallet_CLR = 1; 
   int PASSIVE_pallet_DIR = 1;  
-  float PASSIVE_pallet_MLT = 8; //1;   
+  float PASSIVE_pallet_MLT = 0.2;   
   
   
   int[][] nodes;
@@ -14684,7 +14684,7 @@ class solarchvision_SolarImpacts {
     
                     PAL_type = allFaces.PASSIVE_pallet_CLR; 
                     PAL_direction = allFaces.PASSIVE_pallet_DIR;
-                    PAL_multiplier = 0.05 * allFaces.PASSIVE_pallet_MLT;
+                    PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
     
                     //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                     _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
@@ -14777,7 +14777,7 @@ class solarchvision_SolarImpacts {
     
                 PAL_type = allFaces.PASSIVE_pallet_CLR; 
                 PAL_direction = allFaces.PASSIVE_pallet_DIR;
-                PAL_multiplier = 0.05 * allFaces.PASSIVE_pallet_MLT;
+                PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
     
                 //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
@@ -26665,7 +26665,7 @@ class solarchvision_Sky3D {
   
   int PASSIVE_pallet_CLR = 18; 
   int PASSIVE_pallet_DIR = -1;  
-  float PASSIVE_pallet_MLT = 1; //2;
+  float PASSIVE_pallet_MLT = 0.2;
 
   float stp_slp;
   float stp_dir;
@@ -26703,7 +26703,7 @@ class solarchvision_Sky3D {
       if (Impact_TYPE == Impact_PASSIVE) {
         PAL_type = this.PASSIVE_pallet_CLR; 
         PAL_direction = this.PASSIVE_pallet_DIR;  
-        PAL_multiplier = 0.05 * this.PASSIVE_pallet_MLT;
+        PAL_multiplier = this.PASSIVE_pallet_MLT;
       }        
     
       if (target_window == TypeWindow.OBJ) {
@@ -27010,7 +27010,7 @@ class solarchvision_Sun3D {
   
   int PASSIVE_pallet_CLR = 18; 
   int PASSIVE_pallet_DIR = -1;  
-  float PASSIVE_pallet_MLT = 8; //1;
+  float PASSIVE_pallet_MLT = 0.2;
   
   boolean displayGrid = true;
   boolean displayPath = true;
@@ -27275,7 +27275,7 @@ class solarchvision_Sun3D {
   
       float PAL_multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 0.05 * this.PASSIVE_pallet_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
   
   
   
@@ -27513,7 +27513,7 @@ class solarchvision_Sun3D {
       if (Impact_TYPE == Impact_PASSIVE) {  
         PAL_type = STUDY.PASSIVE_pallet_CLR; 
         PAL_direction = STUDY.PASSIVE_pallet_DIR;
-        PAL_multiplier = 0.05 * STUDY.PASSIVE_pallet_MLT;
+        PAL_multiplier = STUDY.PASSIVE_pallet_MLT;
       }
     }  
     else {
@@ -27526,7 +27526,7 @@ class solarchvision_Sun3D {
       if (Impact_TYPE == Impact_PASSIVE) {  
         PAL_type = this.PASSIVE_pallet_CLR; 
         PAL_direction = this.PASSIVE_pallet_DIR;
-        PAL_multiplier = 0.05 * this.PASSIVE_pallet_MLT;
+        PAL_multiplier = this.PASSIVE_pallet_MLT;
       }
     }    
   
@@ -47905,7 +47905,7 @@ void SOLARCHVISION_RenderViewport () {
   if (Impact_TYPE == Impact_PASSIVE) {  
     PAL_type = allFaces.PASSIVE_pallet_CLR; 
     PAL_direction = allFaces.PASSIVE_pallet_DIR;
-    PAL_multiplier = 0.05 * allFaces.PASSIVE_pallet_MLT;
+    PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
   }     
 
   
