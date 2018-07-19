@@ -4,9 +4,6 @@
 // pleas improve drawGrid : )
 
 
-// bug drawProbs
-// bug using small STUDY.LevelPix 
-
 // move should keep the same distance of bounding box - now only moves the center
 
 // SOLARCHVISION_snap_Faces --> allFaces.snap...
@@ -2768,7 +2765,7 @@ class solarchvision_WIN3D {
       
           Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
 
-          Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
+          Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale, 0, 360);
       
           Sun3D.draw();
       
@@ -7772,15 +7769,15 @@ class solarchvision_STUDY {
             this.graphics.strokeWeight(this.T_scale * 0);
             this.graphics.stroke(223);
             this.graphics.fill(223); 
-            this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (1 * p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+            this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
   
             this.graphics.strokeWeight(this.T_scale * 2);
             this.graphics.stroke(255);
             this.graphics.noFill(); 
-            this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (1 * p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+            this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
   
             this.graphics.imageMode(CENTER); 
-            this.graphics.image(allSolarImpacts.Image[Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, - (1 * p * sx_Plot / this.U_scale), int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
+            this.graphics.image(allSolarImpacts.Image[Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, - (p * sx_Plot / this.U_scale), int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
   
             this.graphics.stroke(0);
             this.graphics.fill(0);
@@ -7804,15 +7801,15 @@ class solarchvision_STUDY {
             this.graphics.strokeWeight(this.T_scale * 0);
             this.graphics.stroke(223);
             this.graphics.fill(223); 
-            //this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (1 * p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+            //this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
   
             this.graphics.strokeWeight(this.T_scale * 2);
             this.graphics.stroke(0);
             this.graphics.noFill(); 
-            //this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (1 * p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+            //this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
   
             this.graphics.imageMode(CENTER); 
-            //this.graphics.image(allSolarImpacts.Image[Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, - (1 * p * sx_Plot / this.U_scale), int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
+            //this.graphics.image(allSolarImpacts.Image[Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, - (p * sx_Plot / this.U_scale), int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
   
             this.graphics.stroke(0);
             this.graphics.fill(0);
@@ -7839,10 +7836,10 @@ class solarchvision_STUDY {
           this.graphics.strokeWeight(0); 
   
           if (Impact_TYPE == Impact_ACTIVE) {  
-            this.graphics.text(STAT_N_Title[l], 0, - (1 * p * sx_Plot / this.U_scale));
+            this.graphics.text(STAT_N_Title[l], 0, - (p * sx_Plot / this.U_scale));
           }
           if (Impact_TYPE == Impact_PASSIVE) {  
-            this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (1 * p * sx_Plot / this.U_scale));
+            this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (p * sx_Plot / this.U_scale));
           }            
           //?? French
         }
@@ -8239,7 +8236,7 @@ class solarchvision_STUDY {
           this.graphics.strokeWeight(this.T_scale * 2);
           this.graphics.stroke(0);
           this.graphics.noFill(); 
-          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (1 * p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
   
   
           this.graphics.stroke(0);
@@ -8275,10 +8272,10 @@ class solarchvision_STUDY {
         this.graphics.fill(0);
         this.graphics.strokeWeight(0); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          this.graphics.text(STAT_N_Title[l], 0, - (1 * p * sx_Plot / this.U_scale));
+          this.graphics.text(STAT_N_Title[l], 0, - (p * sx_Plot / this.U_scale));
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (1 * p * sx_Plot / this.U_scale));
+          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (p * sx_Plot / this.U_scale));
         }            
         //?? French
       }
@@ -8550,10 +8547,10 @@ class solarchvision_STUDY {
         this.graphics.fill(0);
         this.graphics.strokeWeight(0); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          this.graphics.text(STAT_N_Title[l], 0, - (1 * p * sx_Plot / this.U_scale));
+          this.graphics.text(STAT_N_Title[l], 0, - (p * sx_Plot / this.U_scale));
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (1 * p * sx_Plot / this.U_scale));
+          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (p * sx_Plot / this.U_scale));
         }            
         //?? French
       }
@@ -8869,14 +8866,13 @@ class solarchvision_STUDY {
   
         int target_window = TypeWindow.STUDY;
 
-        Sun3D.drawPattern(TypeWindow.STUDY, x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot);
-
+        Sun3D.drawPattern(TypeWindow.STUDY, x_Plot, y_Plot - (p * sx_Plot / this.U_scale), 0, sx_Plot);
 
         for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
         
           float ox = (j + STUDY.rect_offset_x) * sx_Plot;
 
-          Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot - (1 * p * sx_Plot / this.U_scale), 0, sx_Plot);
+          Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot - (p * sx_Plot / this.U_scale), 0, sx_Plot, j * 180 - 90, j * 180 + 90);
           
         }
   
@@ -8894,10 +8890,10 @@ class solarchvision_STUDY {
         this.graphics.fill(0);
         this.graphics.strokeWeight(0); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          this.graphics.text(STAT_N_Title[l], 0, - (1 * p * sx_Plot / this.U_scale));
+          this.graphics.text(STAT_N_Title[l], 0, - (p * sx_Plot / this.U_scale));
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (1 * p * sx_Plot / this.U_scale));
+          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, - (p * sx_Plot / this.U_scale));
         }            
         //?? French
       }    
@@ -27168,8 +27164,8 @@ class solarchvision_Sun3D {
   
   
   
-  void drawGrid (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
-  
+  void drawGrid (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, int start_j, int end_j) { 
+    
     if (this.displayGrid) {
   
       if (target_window == TypeWindow.WIN3D) {
@@ -27190,7 +27186,7 @@ class solarchvision_Sun3D {
         STUDY.graphics.stroke(0);
       }      
   
-      for (float j = 90; j <= 270; j += 30) {
+      for (float j = start_j; j <= end_j; j += 30) {
         
         float HOUR_step = 0.25;
         for (float i = 0; i <= 24; i += HOUR_step) {
@@ -27229,7 +27225,7 @@ class solarchvision_Sun3D {
   
       for (float i = 0; i <= 24; i += 1) {
         float DATE_step = 1;
-        for (float j = 0; j <= 360; j += DATE_step) {
+        for (float j = start_j; j <= end_j; j += DATE_step) {
           
           float[] SunA = funcs.SunPosition(STATION.getLatitude(), j, i);
           float[] SunB = funcs.SunPosition(STATION.getLatitude(),  j + DATE_step, i);
