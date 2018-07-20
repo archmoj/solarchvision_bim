@@ -1775,55 +1775,55 @@ class solarchvision_UITASK {
   
   private final static String CLASS_STAMP = "UITASK";
  
-  int length = 0;
+  int num = 0;
  
-  int LandOrbit_Pan_TargetRollZ = length++;
-  int LookAtDirection = length++;
-  int DistMouseXY_TargetRollXY_TargetRollZ = length++; 
-  int PanY_TargetRollXY_TargetRollZ = length++;
-  int PanX_TargetRollXY_TargetRollZ = length++; 
-  int Pan_TargetRoll = length++;
-  int CameraDistance_TargetRollXY_TargetRollZ = length++; 
-  int CameraRoll_Pan = length++;
-  int CameraRollXY_CameraRollZ = length++; 
-  int TargetRoll_Pan = length++;
-  int TargetRollXY_TargetRollZ = length++; 
-  int AllModelSize = length++;
-  int SkydomeSize = length++;
-  int Truck_Orbit = length++;
-  int ModelSize_Pan_TargetRoll = length++; 
-  int Pan_Height = length++;
-  int Zoom_Orbit_Pan = length++; 
-  int RectSelect = length++;
-  int PickSelect = length++;
-  int Create = length++;
-  int Move = length++;
-  int Scale = length++;
-  int Rotate = length++;
-  int Seed_Material = length++;
-  int Tessellation = length++;
-  int Layer = length++;
-  int Visibility = length++; 
-  int Weight = length++;
-  int DegreeMax = length++; 
-  int DegreeDif = length++;
-  int DegreeMin = length++;
-  int BranchTilt = length++; 
-  int BranchTwist = length++; 
-  int BranchRatio = length++;
-  int BranchBase = length++;
-  int TrunkSize = length++;
-  int LeafSize = length++;
-  int Model1DsProps = length++;
-  int Pivot = length++;
-  int Normal = length++; 
-  int FirstVertex = length++; 
-  int Drop = length++;
-  int GetLength = length++; 
-  int PowerX = length++;
-  int PowerY = length++;
-  int PowerZ = length++;
-  int PowerAll = length++;  
+  int LandOrbit_Pan_TargetRollZ = num++;
+  int LookAtDirection = num++;
+  int DistMouseXY_TargetRollXY_TargetRollZ = num++; 
+  int PanY_TargetRollXY_TargetRollZ = num++;
+  int PanX_TargetRollXY_TargetRollZ = num++; 
+  int Pan_TargetRoll = num++;
+  int CameraDistance_TargetRollXY_TargetRollZ = num++; 
+  int CameraRoll_Pan = num++;
+  int CameraRollXY_CameraRollZ = num++; 
+  int TargetRoll_Pan = num++;
+  int TargetRollXY_TargetRollZ = num++; 
+  int AllModelSize = num++;
+  int SkydomeSize = num++;
+  int Truck_Orbit = num++;
+  int ModelSize_Pan_TargetRoll = num++; 
+  int Pan_Height = num++;
+  int Zoom_Orbit_Pan = num++; 
+  int RectSelect = num++;
+  int PickSelect = num++;
+  int Create = num++;
+  int Move = num++;
+  int Scale = num++;
+  int Rotate = num++;
+  int Seed_Material = num++;
+  int Tessellation = num++;
+  int Layer = num++;
+  int Visibility = num++; 
+  int Weight = num++;
+  int DegreeMax = num++; 
+  int DegreeDif = num++;
+  int DegreeMin = num++;
+  int BranchTilt = num++; 
+  int BranchTwist = num++; 
+  int BranchRatio = num++;
+  int BranchBase = num++;
+  int TrunkSize = num++;
+  int LeafSize = num++;
+  int Model1DsProps = num++;
+  int Pivot = num++;
+  int Normal = num++; 
+  int FirstVertex = num++; 
+  int Drop = num++;
+  int GetLength = num++; 
+  int PowerX = num++;
+  int PowerY = num++;
+  int PowerZ = num++;
+  int PowerAll = num++;  
   
 }
 
@@ -9427,8 +9427,8 @@ class solarchvision_ROLLOUT {
         
         User3D.create_Model1D_BranchTilt = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_BranchTilt", User3D.create_Model1D_BranchTilt, 0, 360, 5), 0.1);
         User3D.create_Model1D_BranchTwist = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_BranchTwist", User3D.create_Model1D_BranchTwist, 0, 360, 5), 0.1);
-        User3D.create_Model1D_BranchRatio = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_BranchRatio", User3D.create_Model1D_BranchRatio, 0, 1, 0.05), 0.01);
-        User3D.create_Model1D_BranchBase = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_BranchBase", User3D.create_Model1D_BranchBase, 0, 1, 0.05), 0.01);        
+        User3D.create_Model1D_BranchRatio = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_BranchRatio", User3D.create_Model1D_BranchRatio, 0.05, 1, 0.05), 0.01);
+        User3D.create_Model1D_BranchBase = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_BranchBase", User3D.create_Model1D_BranchBase, 0, 4, 0.1), 0.01);        
       }    
   
       if (this.child == 7) { // Environment
@@ -15269,7 +15269,7 @@ class solarchvision_Edit3D {
 
         q += 0.125 * p;
 
-        if (q < 0.2) q = 0.2;
+        if (q < 0.1) q = 0.1;
         if (q > 1.0) q = 1.0;
 
         allModel1Ds.setBranchRatio(OBJ_ID, q);
@@ -15277,6 +15277,19 @@ class solarchvision_Edit3D {
         User3D.create_Model1D_BranchRatio = q;
         ROLLOUT.revise();
       }      
+      if (WIN3D.UI_CurrentTask == UITASK.BranchBase) {
+        float q = allModel1Ds.getBranchBase(OBJ_ID);
+
+        q += 0.125 * p;
+
+        if (q < 0.0) q = 0.0;
+        if (q > 4.0) q = 4.0;
+
+        allModel1Ds.setBranchBase(OBJ_ID, q);
+
+        User3D.create_Model1D_BranchBase = q;
+        ROLLOUT.revise();
+      }            
       if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
         float q = allModel1Ds.getTrunkSize(OBJ_ID);
 
@@ -30158,9 +30171,10 @@ class solarchvision_Model1Ds {
   
 
 
-  float BranchTilt;
-  float BranchTwist;
-  float BranchRatio;  
+  float branchTilt;
+  float branchTwist;
+  float branchRatio;  
+  float branchBase;
   
   float[][] Vertices;
   int[][] Faces;
@@ -30249,9 +30263,10 @@ class solarchvision_Model1Ds {
   
         float leafSize = this.getLeafSize(f);
         
-        BranchTilt = this.getBranchTilt(f);
-        BranchTwist = this.getBranchTwist(f);
-        BranchRatio = this.getBranchRatio(f);
+        branchTilt = this.getBranchTilt(f);
+        branchTwist = this.getBranchTwist(f);
+        branchRatio = this.getBranchRatio(f);
+        branchBase = this.getBranchBase(f);
 
 
         if (n == 0) {
@@ -30358,9 +30373,13 @@ class solarchvision_Model1Ds {
       
       WIN3D.graphics.pushMatrix();
       
-      this.twistBranch(this.BranchTwist);
+      this.twistBranch(this.branchTwist);
       
-      this.makeBranch(w * this.BranchRatio, h * this.BranchRatio, n - 1, n);
+      if ((n == nStart) && (this.branchBase > 0.0)) {
+        this.drawElement(w, h * this.branchBase);
+      }
+      
+      this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
       
       WIN3D.graphics.popMatrix();
     
@@ -30368,11 +30387,11 @@ class solarchvision_Model1Ds {
     
         WIN3D.graphics.pushMatrix();
   
-        this.twistBranch(this.BranchTwist);
-        this.tiltBranch(this.BranchTilt);
+        this.twistBranch(this.branchTwist);
+        this.tiltBranch(this.branchTilt);
         
         this.drawElement(w, h);
-        this.makeBranch(w * this.BranchRatio, h * this.BranchRatio, n - 1, n);
+        this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
         
         WIN3D.graphics.popMatrix();
       }
@@ -30422,7 +30441,7 @@ class solarchvision_Model1Ds {
         if ((j == 2) || (j == 3)) v = 1;
   
         float T = w;
-        if ((j == 2) || (j == 3)) T *= this.BranchRatio; // for conic trunks
+        if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
   
         float x = T * cos((i + u) * TWO_PI / float(this.elementSegments));
         float y = T * sin((i + u) * TWO_PI / float(this.elementSegments));
@@ -32826,7 +32845,7 @@ class solarchvision_User3D {
   float create_Model1D_BranchTilt = 60.0; 
   float create_Model1D_BranchTwist = 137.5; //golden angle ratio
   float create_Model1D_BranchRatio = 0.75;
-  float create_Model1D_BranchBase = 0.75;
+  float create_Model1D_BranchBase = 2.0;
   
   
 
@@ -42898,6 +42917,22 @@ void mouseClicked () {
               UI_toolBar.highlight("bRatio2");
               UI_toolBar.revise();
             }     
+            
+            if (menu_option.equals("Change BranchBase")) {
+              UI_set_to_Modify_BranchBase(0);
+              UI_toolBar.highlight("bBase0");
+              UI_toolBar.revise();
+            }
+            if (menu_option.equals("Pick BranchBase")) {
+              UI_set_to_Modify_BranchBase(1);
+              UI_toolBar.highlight("bBase1");
+              UI_toolBar.revise();
+            }
+            if (menu_option.equals("Assign BranchBase")) {
+              UI_set_to_Modify_BranchBase(2);
+              UI_toolBar.highlight("bBase2");
+              UI_toolBar.revise();
+            }                 
 
             if (menu_option.equals("Change TrunkSize")) {
               UI_set_to_Modify_TrunkSize(0);
@@ -42964,6 +42999,9 @@ void mouseClicked () {
             }            
             if (menu_option.equals("Change BranchRatio")) {
               UI_set_to_Modify_BranchRatio(0);
+            }            
+            if (menu_option.equals("Change BranchBase")) {
+              UI_set_to_Modify_BranchBase(0);
             }            
             if (menu_option.equals("Change TrunkSize")) {
               UI_set_to_Modify_TrunkSize(0);
@@ -44464,6 +44502,7 @@ void mouseClicked () {
                         if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);                        
                         if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) User3D.create_Model1D_BranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) User3D.create_Model1D_BranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchBase) User3D.create_Model1D_BranchBase = allModel1Ds.getBranchBase(OBJ_ID);
                         
                         if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
@@ -44484,6 +44523,8 @@ void mouseClicked () {
                         if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.create_Model1D_BranchTilt);
                         if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.create_Model1D_BranchTwist);
                         if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.create_Model1D_BranchRatio);               
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchBase) allModel1Ds.setBranchBase(OBJ_ID, User3D.create_Model1D_BranchBase);
+                        
                         if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
                         if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
@@ -47008,6 +47049,13 @@ void UI_set_to_Modify_BranchRatio (int n) {
   ROLLOUT.revise();
 }
 
+void UI_set_to_Modify_BranchBase (int n) {
+  WIN3D.UI_CurrentTask = UITASK.BranchBase;
+  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT.revise();
+}
+
 
 void UI_set_to_Modify_TrunkSize (int n) {
   WIN3D.UI_CurrentTask = UITASK.TrunkSize;
@@ -49490,6 +49538,7 @@ class solarchvision_UI_menuBar {
       "Change BranchTilt",
       "Change BranchTwist",
       "Change BranchRatio",
+      "Change BranchBase",
       "Change TrunkSize", 
       "Change LeafSize"
     }
@@ -50262,6 +50311,7 @@ class solarchvision_UI_toolBar {
     //{"1", "bTwist0", "bTwist1", "bTwist2", "Change BranchTwist", "1.0"},
     //{"1", "bTwist0", "bTwist1", "bTwist2", "Change BranchTwist", "1.0"},
     //{"1", "bRatio0", "bRatio1", "bRatio2", "Change BranchRatio", "1.0"},    
+    //{"1", "bBase0", "bBase1", "bBase2", "Change BranchBase", "1.0"},    
     
     //{"1", "trSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
     //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
