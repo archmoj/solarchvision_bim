@@ -1,4 +1,6 @@
 
+// 3D-tree: leaves could be improved, shaded and exported. 
+
 
 // move should keep the same distance of bounding box - now only moves the center
 
@@ -30174,8 +30176,6 @@ class solarchvision_Model1Ds {
   float branchRatio;  
   float treeBase;
   float leafSize;
-  int dMin;
-  int dMax;
   
   float[][] Vertices;
   int[][] Faces;
@@ -30254,9 +30254,9 @@ class solarchvision_Model1Ds {
   
         int n = this.getType(f);
   
-        dMin = this.getDegreeMin(f);
+        int dMin = this.getDegreeMin(f);
   
-        dMax = this.getDegreeMax(f);
+        int dMax = this.getDegreeMax(f);
   
         int seed = this.getSeed(f);
   
@@ -30364,15 +30364,13 @@ class solarchvision_Model1Ds {
   void makeBranch(float w, float h, int n, int nStart) {
     
     // Note: this is a recursive function.
-    
+
     if (n > 0) {
       WIN3D.graphics.pushMatrix();
       this.twistBranch(this.branchTwist);
-      
       if ((n == nStart) && (this.treeBase > 0.0)) {
         this.drawElement(w, h * this.treeBase);
       }
-      
       this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
       WIN3D.graphics.popMatrix();
     
@@ -30386,7 +30384,9 @@ class solarchvision_Model1Ds {
       }
   
     }
-
+    else {
+      this.drawLeaf();
+    }       
 
 
   }
