@@ -30301,8 +30301,10 @@ class solarchvision_Model1Ds {
               WIN3D.graphics.rotateZ(rot);
             }
 
-            float treeHeight0 = rad;
-            float treeWidth0 = rad * trunkSize * 0.15;
+            float treeScale = 0.25;
+
+            float treeHeight0 = rad * treeScale;
+            float treeWidth0 = rad * treeScale * trunkSize * 0.15;
             
             randomSeed(seed);
             
@@ -30319,7 +30321,7 @@ class solarchvision_Model1Ds {
             x *= OBJECTS_scale;
             y *= OBJECTS_scale;
             z *= OBJECTS_scale;
-            rad *= OBJECTS_scale;
+            rad *= OBJECTS_scale * treeScale;
             // ----------------        
     
             float t = PI + WIN3D.rotation_Z * PI / 180.0;
@@ -36972,7 +36974,8 @@ class solarchvision_Create3D {
                 float b = COL & 0xFF;
   
                 //if ((g > r + 8) && (g > b + 16)) { // looks more green
-                if ((g > r - 4) && (g > b + 16)) { // looks more green, slightly red is acceptible
+                //if ((g > r - 4) && (g > b + 16)) { // looks more green, slightly red is acceptible
+                if ((g > r + 4) && (g > b + 4)) { // looks more green
   
                   if (g < 56) { // not on grass (light green) 
   
