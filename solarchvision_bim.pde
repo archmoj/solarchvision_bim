@@ -9423,7 +9423,7 @@ class solarchvision_ROLLOUT {
         User3D.create_Model1D_DegreeMax = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMax", User3D.create_Model1D_DegreeMax, 0, 12, 1), 1));
         User3D.create_Model1D_Seed = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Seed", User3D.create_Model1D_Seed, -1, 32767, 1), 1));
         User3D.create_Model1D_TrunkSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1), 0.1);
-        User3D.create_Model1D_LeafSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_LeafSize", User3D.create_Model1D_LeafSize, 0, 10, 0.1), 0.1);
+        User3D.create_Model1D_LeafSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_LeafSize", User3D.create_Model1D_LeafSize, 0, 1, 0.01), 0.1);
         
         User3D.create_Model1D_BranchTilt = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_BranchTilt", User3D.create_Model1D_BranchTilt, 0, 360, 5), 0.1);
         User3D.create_Model1D_BranchTwist = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_BranchTwist", User3D.create_Model1D_BranchTwist, 0, 360, 5), 0.1);
@@ -17504,8 +17504,6 @@ class solarchvision_Clone3D {
             float trunkSize = allModel1Ds.getTrunkSize(q);
 
             float leafSize = allModel1Ds.getLeafSize(q);
-            
-
 
             if (produce_same_variation == false) {
               randomSeed(millis());
@@ -29995,7 +29993,7 @@ class solarchvision_Model1Ds {
 
 
   void create (int type, int seed, int degreeMin, int degreeMax, float x, float y, float z, float s, float rot, float tilt, float twist, float ratio, float base, float trunkSize, float leafSize) {
-  
+
     int[][] new_i_data = {
       {
         type, seed, degreeMin, degreeMax
@@ -30005,7 +30003,7 @@ class solarchvision_Model1Ds {
   
     float[][] new_f_data = {
       {
-        x, y, z, s, rot, tilt, twist, ratio, trunkSize, leafSize, base
+        x, y, z, s, rot, tilt, twist, ratio, base, trunkSize, leafSize
       }
     };
     this.f_data = (float[][]) concat(this.f_data, new_f_data);
@@ -30175,6 +30173,9 @@ class solarchvision_Model1Ds {
   float branchTwist;
   float branchRatio;  
   float treeBase;
+  float leafSize;
+  int dMin;
+  int dMax;
   
   float[][] Vertices;
   int[][] Faces;
@@ -30248,21 +30249,21 @@ class solarchvision_Model1Ds {
         float y = this.getY(f);
         float z = this.getZ(f);
   
-        float rad = this.getScale(f);
+        float rad = this.getScale(f) * 0.25;
         float rot = this.getRotation(f);
   
         int n = this.getType(f);
   
-        int dMin = this.getDegreeMin(f);
+        dMin = this.getDegreeMin(f);
   
-        int dMax = this.getDegreeMax(f);
+        dMax = this.getDegreeMax(f);
   
         int seed = this.getSeed(f);
   
         float trunkSize = this.getTrunkSize(f);
   
-        float leafSize = this.getLeafSize(f);
-        
+        leafSize = this.getLeafSize(f);
+
         branchTilt = this.getBranchTilt(f);
         branchTwist = this.getBranchTwist(f);
         branchRatio = this.getBranchRatio(f);
@@ -30286,28 +30287,21 @@ class solarchvision_Model1Ds {
           if (target_window == TypeWindow.OBJ) end_turn = 3;
           
           for (_turn = 1; _turn <= end_turn; _turn++) { 
-  
+
             WIN3D.graphics.pushMatrix(); // we put this outside the if statement so that graphics would be accessible to cast SHADOWs
             
             if (target_window == TypeWindow.WIN3D) {
             
-              WIN3D.graphics.fill(random(128) + 128, random(64) + 64, 0);
-              WIN3D.graphics.noStroke();
-              //WIN3D.graphics.stroke(0, 0, 0);
-              //WIN3D.graphics.strokeWeight(1);
-              
               WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
               WIN3D.graphics.translate(x, -y, z);
               WIN3D.graphics.rotateZ(rot);
             }
 
-            float treeScale = 0.25;
+            float treeHeight0 = rad;
+            float treeWidth0 = rad * trunkSize * 0.15;
 
-            float treeHeight0 = rad * treeScale;
-            float treeWidth0 = rad * treeScale * trunkSize * 0.15;
-            
             randomSeed(seed);
-            
+
             // Call to draw the tree
             this.makeBranch(treeWidth0, treeHeight0, dMax, dMax); 
             
@@ -30321,7 +30315,7 @@ class solarchvision_Model1Ds {
             x *= OBJECTS_scale;
             y *= OBJECTS_scale;
             z *= OBJECTS_scale;
-            rad *= OBJECTS_scale * treeScale;
+            rad *= OBJECTS_scale;
             // ----------------        
     
             float t = PI + WIN3D.rotation_Z * PI / 180.0;
@@ -30372,9 +30366,7 @@ class solarchvision_Model1Ds {
     // Note: this is a recursive function.
     
     if (n > 0) {
-      
       WIN3D.graphics.pushMatrix();
-      
       this.twistBranch(this.branchTwist);
       
       if ((n == nStart) && (this.treeBase > 0.0)) {
@@ -30382,22 +30374,32 @@ class solarchvision_Model1Ds {
       }
       
       this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
-      
       WIN3D.graphics.popMatrix();
     
       if (n != nStart) {
-    
         WIN3D.graphics.pushMatrix();
-  
         this.twistBranch(this.branchTwist);
         this.tiltBranch(this.branchTilt);
-        
         this.drawElement(w, h);
         this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
-        
         WIN3D.graphics.popMatrix();
       }
   
+    }
+
+
+
+  }
+  
+
+  void drawLeaf() {
+
+    WIN3D.graphics.fill(127, 255, 0);
+    WIN3D.graphics.noStroke();    
+    WIN3D.graphics.sphereDetail(6, 4);
+    
+    if (leafSize > 0) {
+      WIN3D.graphics.sphere(leafSize * 2);
     }
   }
   
@@ -30415,6 +30417,10 @@ class solarchvision_Model1Ds {
   
   
   void drawElement(float w, float h) {
+    
+    WIN3D.graphics.fill(255, 127, 0);
+    WIN3D.graphics.noStroke();
+    
 
     WIN3D.graphics.pushMatrix();
     WIN3D.graphics.translate(0, 0, 0.5 * h);
@@ -30603,6 +30609,8 @@ class solarchvision_Model1Ds {
     }  
   }  
   
+
+
 
 
 
@@ -32841,8 +32849,8 @@ class solarchvision_User3D {
   int create_Model1D_DegreeMin = 1; //2; 
   int create_Model1D_DegreeMax = 6; //5; //8;
   int create_Model1D_Seed = -1; // -1:random, 0-99 choice
-  float create_Model1D_TrunkSize = 1; //0.5;
-  float create_Model1D_LeafSize = 1; //1; 
+  float create_Model1D_TrunkSize = 1; 
+  float create_Model1D_LeafSize = 0.1; 
   
   float create_Model1D_BranchTilt = 60.0; 
   float create_Model1D_BranchTwist = 137.5; //golden angle ratio
@@ -53324,7 +53332,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       float ratio = 0.5 + random(0.5);
       float base = 0.0 + random(2.0);
       float Tk = 1.0; //TrunkSize
-      float Lf = 1.0; //LeafSize
+      float Lf = 0.1; //LeafSize
        
       for (int q = 1; q < parts.length; q++) {
         String[] parameters = split(parts[q], '=');
