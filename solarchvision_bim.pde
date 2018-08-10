@@ -1808,8 +1808,6 @@ class solarchvision_UITASK {
   int Visibility = num++; 
   int Weight = num++;
   int DegreeMax = num++; 
-  int DegreeDif = num++;
-  int DegreeMin = num++;
   int BranchTilt = num++; 
   int BranchTwist = num++; 
   int BranchRatio = num++;
@@ -9421,7 +9419,6 @@ class solarchvision_ROLLOUT {
       if (this.child == 6) { // Fractals
   
         User3D.create_Model1D_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Type", User3D.create_Model1D_Type, 0, 0, 1), 1));
-        User3D.create_Model1D_DegreeMin = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMin", User3D.create_Model1D_DegreeMin, 0, 12, 1), 1));
         User3D.create_Model1D_DegreeMax = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_DegreeMax", User3D.create_Model1D_DegreeMax, 0, 12, 1), 1));
         User3D.create_Model1D_Seed = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_Seed", User3D.create_Model1D_Seed, -1, 32767, 1), 1));
         User3D.create_Model1D_TrunkSize = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Model1D_TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1), 0.1);
@@ -12530,13 +12527,12 @@ class solarchvision_Groups {
           float base = allModel1Ds.getTreeBase(OBJ_ID);
   
           int n = allModel1Ds.getType(OBJ_ID);
-          int dMin = allModel1Ds.getDegreeMin(OBJ_ID);
           int dMax = allModel1Ds.getDegreeMax(OBJ_ID);
           int seed = allModel1Ds.getSeed(OBJ_ID);
           float trunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
           float leafSize = allModel1Ds.getLeafSize(OBJ_ID);
   
-          allModel1Ds.create(n, seed, dMin, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+          allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
         }
       }  
   
@@ -15205,47 +15201,6 @@ class solarchvision_Edit3D {
         User3D.create_Model1D_DegreeMax = q;
         ROLLOUT.revise();
       }
-      if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-        int q1 = allModel1Ds.getDegreeMin(OBJ_ID);
-        int q2 = allModel1Ds.getDegreeMax(OBJ_ID);
-        q1 += p;
-        q2 += p;
-
-        int change_them = 1; 
-
-        if (q1 < 0) {
-          q1 = 0; 
-          change_them = 0;
-        } 
-        if (q2 < 0) {
-          q2 = 0; 
-          change_them = 0;
-        }
-
-        if (change_them == 1) {
-
-          allModel1Ds.setDegreeMin(OBJ_ID, q1);
-          allModel1Ds.setDegreeMax(OBJ_ID, q2);
-
-          User3D.create_Model1D_DegreeMin = q1;
-          User3D.create_Model1D_DegreeMax = q2;
-
-          ROLLOUT.revise();
-        }
-      }
-      if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) {
-        int q = allModel1Ds.getDegreeMin(OBJ_ID);
-
-        q += p;
-
-        if (q < 0) q = 0;
-        if (q > 12) q = 12;
-
-        allModel1Ds.setDegreeMin(OBJ_ID, q);
-
-        User3D.create_Model1D_DegreeMin = q;
-        ROLLOUT.revise();
-      }        
       if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) {
         float q = allModel1Ds.getBranchTilt(OBJ_ID);
 
@@ -17126,14 +17081,13 @@ class solarchvision_Clone3D {
       float base = allModel1Ds.getTreeBase(OBJ_ID);
 
       int n = allModel1Ds.getType(OBJ_ID);
-      int dMin = allModel1Ds.getDegreeMin(OBJ_ID);
       int dMax = allModel1Ds.getDegreeMax(OBJ_ID);
       int seed = allModel1Ds.getSeed(OBJ_ID);
       float trunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
       float leafSize = allModel1Ds.getLeafSize(OBJ_ID);
 
       if (produce_same_variation == false) randomSeed(millis());
-      allModel1Ds.create(n, seed, dMin, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+      allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
     }
 
     // selecting new objetcs
@@ -17497,8 +17451,6 @@ class solarchvision_Clone3D {
 
             int n = allModel1Ds.getType(q);
 
-            int dMin = allModel1Ds.getDegreeMin(q);
-
             int dMax = allModel1Ds.getDegreeMax(q);
 
             int seed = allModel1Ds.getSeed(q);
@@ -17513,7 +17465,7 @@ class solarchvision_Clone3D {
               rot = floor(random(360));
               seed = int(random(32767));
             }
-            allModel1Ds.create(n, seed, dMin, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+            allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
           }
         }
 
@@ -17652,8 +17604,6 @@ class solarchvision_Clone3D {
 
             int n = allModel1Ds.getType(q);
 
-            int dMin = allModel1Ds.getDegreeMin(q);
-
             int dMax = allModel1Ds.getDegreeMax(q);
 
             int seed = allModel1Ds.getSeed(q);
@@ -17668,7 +17618,7 @@ class solarchvision_Clone3D {
               rot = floor(random(360));
               seed = int(random(32767));
             }
-            allModel1Ds.create(n, seed, dMin, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+            allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
           }
         }
 
@@ -29994,11 +29944,11 @@ class solarchvision_Model1Ds {
   }
 
 
-  void create (int type, int seed, int degreeMin, int degreeMax, float x, float y, float z, float s, float rot, float tilt, float twist, float ratio, float base, float trunkSize, float leafSize) {
+  void create (int type, int seed, int degreeMax, float x, float y, float z, float s, float rot, float tilt, float twist, float ratio, float base, float trunkSize, float leafSize) {
 
     int[][] new_i_data = {
       {
-        type, seed, degreeMin, degreeMax
+        type, seed, degreeMax
       }
     };
     this.i_data = (int[][]) concat(this.i_data, new_i_data);
@@ -30133,12 +30083,8 @@ class solarchvision_Model1Ds {
     return this.i_data[n][1]; 
   }  
   
-  int getDegreeMin (int n) {
-    return this.i_data[n][2]; 
-  }  
-  
   int getDegreeMax (int n) {
-    return this.i_data[n][3]; 
+    return this.i_data[n][2]; 
   }  
   
   
@@ -30151,12 +30097,8 @@ class solarchvision_Model1Ds {
     this.i_data[n][1] = t;   
   }      
 
-  void setDegreeMin (int n, int t) {
-    this.i_data[n][2] = t;   
-  }    
-
   void setDegreeMax (int n, int t) {
-    this.i_data[n][3] = t;   
+    this.i_data[n][2] = t;   
   }  
 
 
@@ -30253,8 +30195,6 @@ class solarchvision_Model1Ds {
         float rot = this.getRotation(f);
   
         int n = this.getType(f);
-  
-        int dMin = this.getDegreeMin(f);
   
         int dMax = this.getDegreeMax(f);
   
@@ -30371,7 +30311,7 @@ class solarchvision_Model1Ds {
       if ((n == nStart) && (this.treeBase > 0.0)) {
         this.drawElement(w, h * this.treeBase);
       }
-      this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
+      this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, nStart);
       WIN3D.graphics.popMatrix();
     
       if (n != nStart) {
@@ -30379,7 +30319,7 @@ class solarchvision_Model1Ds {
         this.twistBranch(this.branchTwist);
         this.tiltBranch(this.branchTilt);
         this.drawElement(w, h);
-        this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, n);
+        this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, nStart);
         WIN3D.graphics.popMatrix();
       }
   
@@ -30726,7 +30666,6 @@ class solarchvision_Model1Ds {
       
       XML_setInt(child, "type", getType(i));
       XML_setInt(child, "seed", getSeed(i));
-      XML_setInt(child, "degreeMin", getDegreeMin(i));
       XML_setInt(child, "degreeMax", getDegreeMax(i));
       
       
@@ -30773,7 +30712,6 @@ class solarchvision_Model1Ds {
 
       this.setType(i, children[i].getInt("type"));
       this.setSeed(i, children[i].getInt("seed"));
-      this.setDegreeMin(i, children[i].getInt("degreeMin"));
       this.setDegreeMax(i, children[i].getInt("degreeMax"));      
       
       String txt = XML_getContent(children[i]);
@@ -32846,7 +32784,6 @@ class solarchvision_User3D {
   int create_Plant_Type = 0;
   
   int create_Model1D_Type = 0;
-  int create_Model1D_DegreeMin = 1; //2; 
   int create_Model1D_DegreeMax = 6; //5; //8;
   int create_Model1D_Seed = -1; // -1:random, 0-99 choice
   float create_Model1D_TrunkSize = 1; 
@@ -32914,14 +32851,12 @@ class solarchvision_User3D {
     XML_setInt(parent, "create_Plant_Type", this.create_Plant_Type);
     
     XML_setInt(parent, "create_Model1D_Type", this.create_Model1D_Type);
-    XML_setInt(parent, "create_Model1D_DegreeMin", this.create_Model1D_DegreeMin);
     XML_setInt(parent, "create_Model1D_DegreeMax", this.create_Model1D_DegreeMax);
     XML_setInt(parent, "create_Model1D_Seed", this.create_Model1D_Seed);
     XML_setFloat(parent, "create_Model1D_TrunkSize", this.create_Model1D_TrunkSize);
     XML_setFloat(parent, "create_Model1D_LeafSize", this.create_Model1D_LeafSize);
     
     XML_setInt(parent, "create_Model1D_Type", this.create_Model1D_Type);
-    XML_setInt(parent, "create_Model1D_DegreeMin", this.create_Model1D_DegreeMin);
     XML_setInt(parent, "create_Model1D_DegreeMax", this.create_Model1D_DegreeMax);
     XML_setInt(parent, "create_Model1D_Seed", this.create_Model1D_Seed);
     XML_setFloat(parent, "create_Model1D_TrunkSize", this.create_Model1D_TrunkSize);
@@ -32981,14 +32916,12 @@ class solarchvision_User3D {
     this.create_Plant_Type = XML_getInt(parent, "create_Plant_Type");
 
     this.create_Model1D_Type = XML_getInt(parent, "create_Model1D_Type");
-    this.create_Model1D_DegreeMin = XML_getInt(parent, "create_Model1D_DegreeMin");
     this.create_Model1D_DegreeMax = XML_getInt(parent, "create_Model1D_DegreeMax");
     this.create_Model1D_Seed = XML_getInt(parent, "create_Model1D_Seed");
     this.create_Model1D_TrunkSize = XML_getFloat(parent, "create_Model1D_TrunkSize");
     this.create_Model1D_LeafSize = XML_getFloat(parent, "create_Model1D_LeafSize");
     
     this.create_Model1D_Type = XML_getInt(parent, "create_Model1D_Type");
-    this.create_Model1D_DegreeMin = XML_getInt(parent, "create_Model1D_DegreeMin");
     this.create_Model1D_DegreeMax = XML_getInt(parent, "create_Model1D_DegreeMax");
     this.create_Model1D_Seed = XML_getInt(parent, "create_Model1D_Seed");
     this.create_Model1D_TrunkSize = XML_getFloat(parent, "create_Model1D_TrunkSize");
@@ -37016,7 +36949,7 @@ class solarchvision_Create3D {
                         allModel2Ds.create("TREES", 0, x, y, z, s);
                       } else {
                         allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
-                                           User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax,
+                                           User3D.create_Model1D_DegreeMax,
                                            x, y, z, s, floor(random(360)),
                                            User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
                                            User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
@@ -37091,7 +37024,7 @@ class solarchvision_Create3D {
                     allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
                   } else {
                     allModel1Ds.create(User3D.create_Model1D_Type,  User3D.create_Model1D_Seed, 
-                                       User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, 
+                                       User3D.create_Model1D_DegreeMax, 
                                        x, y, z, 5 + random(10), floor(random(360)), 
                                        User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
                                        User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
@@ -37123,7 +37056,7 @@ class solarchvision_Create3D {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
         allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
-                           User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, 
+                           User3D.create_Model1D_DegreeMax, 
                            x, y, z, 5 + random(10), floor(random(360)), 
                            User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
                            User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase, 
@@ -37157,7 +37090,7 @@ class solarchvision_Create3D {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
         allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
-                           User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, 
+                           User3D.create_Model1D_DegreeMax, 
                            x, y, z, 5 + random(10), floor(random(360)), 
                            User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
                            User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase, 
@@ -37194,7 +37127,7 @@ class solarchvision_Create3D {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
         allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed,
-                           User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax,  
+                           User3D.create_Model1D_DegreeMax,  
                            x, y, z, 5 + random(10), floor(random(360)), 
                            User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
                            User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase, 
@@ -42849,38 +42782,9 @@ void mouseClicked () {
               UI_toolBar.revise();
             }
 
-            if (menu_option.equals("Change DegreeDif")) {
-              UI_set_to_Modify_DegreeDif(0);
-              UI_toolBar.highlight("dgDif0");
-              UI_toolBar.revise();
-            }
-            if (menu_option.equals("Pick DegreeDif")) {
-              UI_set_to_Modify_DegreeDif(1);
-              UI_toolBar.highlight("dgDif1");
-              UI_toolBar.revise();
-            }
-            if (menu_option.equals("Assign DegreeDif")) {
-              UI_set_to_Modify_DegreeDif(2);
-              UI_toolBar.highlight("dgDif2");
-              UI_toolBar.revise();
-            }                 
+     
 
-            if (menu_option.equals("Change DegreeMin")) {
-              UI_set_to_Modify_DegreeMin(0);
-              UI_toolBar.highlight("dgMin0");
-              UI_toolBar.revise();
-            }
-            if (menu_option.equals("Pick DegreeMin")) {
-              UI_set_to_Modify_DegreeMin(1);
-              UI_toolBar.highlight("dgMin1");
-              UI_toolBar.revise();
-            }
-            if (menu_option.equals("Assign DegreeMin")) {
-              UI_set_to_Modify_DegreeMin(2);
-              UI_toolBar.highlight("dgMin2");
-              UI_toolBar.revise();
-            }     
-            
+
             if (menu_option.equals("Change BranchTilt")) {
               UI_set_to_Modify_BranchTilt(0);
               UI_toolBar.highlight("bTilt0");
@@ -42996,12 +42900,6 @@ void mouseClicked () {
             if (menu_option.equals("Change DegreeMax")) {
               UI_set_to_Modify_DegreeMax(0);
             }    
-            if (menu_option.equals("Change DegreeDif")) {
-              UI_set_to_Modify_DegreeDif(0);
-            }    
-            if (menu_option.equals("Change DegreeMin")) {
-              UI_set_to_Modify_DegreeMin(0);
-            }
             if (menu_option.equals("Change BranchTilt")) {
               UI_set_to_Modify_BranchTilt(0);
             }
@@ -44505,11 +44403,6 @@ void mouseClicked () {
   
                       if (WIN3D.UI_TaskModifyParameter == 1) { // Pick 
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-                          User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID); 
-                          User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_ID);
-                        }
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);                        
                         if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) User3D.create_Model1D_BranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) User3D.create_Model1D_BranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
@@ -44519,18 +44412,12 @@ void mouseClicked () {
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
                         if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
                           User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-                          User3D.create_Model1D_DegreeMin = allModel1Ds.getDegreeMin(OBJ_ID);
                           User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
                           User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
                         }
                       } 
                       if (WIN3D.UI_TaskModifyParameter == 2) { //Assign
                         if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);                    
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeDif) {
-                          allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax); 
-                          allModel1Ds.setDegreeMin(OBJ_ID, User3D.create_Model1D_DegreeMin);
-                        }                 
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMin) allModel1Ds.setDegreeMin(OBJ_ID, User3D.create_Model1D_DegreeMin);     
                         if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.create_Model1D_BranchTilt);
                         if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.create_Model1D_BranchTwist);
                         if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.create_Model1D_BranchRatio);               
@@ -44540,7 +44427,6 @@ void mouseClicked () {
                         if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
                         if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
                           allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
-                          allModel1Ds.setDegreeMin(OBJ_ID, User3D.create_Model1D_DegreeMin);                    
                           allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
                           allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
                         }
@@ -44746,7 +44632,7 @@ void mouseClicked () {
   
                       randomSeed(millis());
                       allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
-                                         User3D.create_Model1D_DegreeMin, User3D.create_Model1D_DegreeMax, 
+                                         User3D.create_Model1D_DegreeMax, 
                                          x, y, z, 2 * rz, floor(random(360)), 
                                          User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
                                          User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase, 
@@ -47020,24 +46906,6 @@ void UI_set_to_Modify_DegreeMax (int n) {
 
   ROLLOUT.revise();
 }
-
-void UI_set_to_Modify_DegreeDif (int n) {
-  WIN3D.UI_CurrentTask = UITASK.DegreeDif;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
-
-  ROLLOUT.revise();
-}
-
-void UI_set_to_Modify_DegreeMin (int n) {
-  WIN3D.UI_CurrentTask = UITASK.DegreeMin;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
-
-  ROLLOUT.revise();
-}
-
-
-
-
 
 void UI_set_to_Modify_BranchTilt (int n) {
   WIN3D.UI_CurrentTask = UITASK.BranchTilt;
@@ -49544,8 +49412,6 @@ class solarchvision_UI_menuBar {
       "Change Visibility", 
       "Change Weight", 
       "Change DegreeMax", 
-      "Change DegreeDif", 
-      "Change DegreeMin",
       "Change BranchTilt",
       "Change BranchTwist",
       "Change BranchRatio",
@@ -49621,8 +49487,6 @@ class solarchvision_UI_menuBar {
       "Pick Layer", 
       "Pick Visibility", 
       "Pick DegreeMax", 
-      "Pick DegreeDif", 
-      "Pick DegreeMin", 
       "Pick TrunkSize", 
       "Pick LeafSize", 
       "Pick Model1DsProps", 
@@ -49631,8 +49495,6 @@ class solarchvision_UI_menuBar {
       "Assign Layer", 
       "Assign Visibility", 
       "Assign DegreeMax", 
-      "Assign DegreeDif", 
-      "Assign DegreeMin", 
       "Assign TrunkSize", 
       "Assign LeafSize", 
       "Assign Model1DsProps", 
@@ -50316,8 +50178,6 @@ class solarchvision_UI_toolBar {
     //{"1", "SPvt0", "SPvt1", "SPvt2", "Pivot", "1.0"},
   
     //{"1", "dgMax0", "dgMax1", "dgMax2", "Change DegreeMax", "1.0"},
-    //{"1", "dgDif0", "dgDif1", "dgDif2", "Change DegreeDif", "1.0"},
-    //{"1", "dgMin0", "dgMin1", "dgMin2", "Change DegreeMin", "1.0"},
     //{"1", "bTilt0", "bTilt1", "bTilt2", "Change BranchTilt", "1.0"},
     //{"1", "bTwist0", "bTwist1", "bTwist2", "Change BranchTwist", "1.0"},
     //{"1", "bTwist0", "bTwist1", "bTwist2", "Change BranchTwist", "1.0"},
@@ -53320,8 +53180,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     if (parts.length > 1) {
       int m = 0;
       int seed = 0; //PlantSeed
-      int Min = 2; //PlantDegreeMin
-      int Max = 5; //PlantDegreeMax
+      int degree = 5; //PlantDegree
       float x = 0;
       float y = 0;
       float z = 0;
@@ -53340,8 +53199,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           String low_case = parameters[0].toLowerCase();
                if (low_case.equals("m")) m = int(parameters[1]);
           else if (low_case.equals("seed")) seed = int(parameters[1]);
-          else if (low_case.equals("min")) Min = int(parameters[1]);
-          else if (low_case.equals("max")) Max = int(parameters[1]);
+          else if (low_case.equals("degree")) degree = int(parameters[1]);
           else if (low_case.equals("x")) x = float(parameters[1]);
           else if (low_case.equals("y")) y = float(parameters[1]);
           else if (low_case.equals("z")) z = float(parameters[1]);
@@ -53356,7 +53214,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (h != 0) {
-        allModel1Ds.create(m, seed, Min, Max, x, y, z, h, r, tilt, twist, ratio, base, Tk, Lf);
+        allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, Tk, Lf);
         WIN3D.revise();  
         current_ObjectCategory = ObjectCategory.MODEL1D; 
         UI_toolBar.revise();
@@ -53364,7 +53222,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "3Dtree m=? min=? max=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
+      return_message = "3Dtree m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
       
       UI_set_to_Create_allModel1Ds();
       UI_toolBar.highlight("3D-Tree");
