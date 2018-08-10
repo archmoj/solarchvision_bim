@@ -15224,7 +15224,7 @@ class solarchvision_Edit3D {
       if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) {
         float q = allModel1Ds.getBranchRatio(OBJ_ID);
 
-        q += 0.125 * p;
+        q += 0.02 * p;
 
         if (q < 0.1) q = 0.1;
         if (q > 1.0) q = 1.0;
@@ -15237,7 +15237,7 @@ class solarchvision_Edit3D {
       if (WIN3D.UI_CurrentTask == UITASK.TreeBase) {
         float q = allModel1Ds.getTreeBase(OBJ_ID);
 
-        q += 0.125 * p;
+        q += 0.02 * p;
 
         if (q < 0.0) q = 0.0;
         if (q > 4.0) q = 4.0;
@@ -15250,7 +15250,7 @@ class solarchvision_Edit3D {
       if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
         float q = allModel1Ds.getTrunkSize(OBJ_ID);
 
-        q += 0.125 * p;
+        q += 0.02 * p;
 
         if (q < 0) q = 0;
 
@@ -15262,7 +15262,7 @@ class solarchvision_Edit3D {
       if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
         float q = allModel1Ds.getLeafSize(OBJ_ID);
 
-        q += 0.125 * p;
+        q += 0.02 * p;
 
         if (q < 0) q = 0;
 
@@ -30297,19 +30297,17 @@ class solarchvision_Model1Ds {
     }
   }
 
-  
-  
-  
 
   void makeBranch(float w, float h, int n) {
     
     // Note: this is a recursive function.
-
+    
     if (n > 0) {
+      
       WIN3D.graphics.pushMatrix();
       this.twistBranch(this.branchTwist);
       if ((n == this.nStart) && (this.treeBase > 0.0)) {
-        this.drawElement(w, h * this.treeBase);
+        this.drawElement(w, h * this.treeBase, n);
       }
       this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1);
       WIN3D.graphics.popMatrix();
@@ -30318,17 +30316,12 @@ class solarchvision_Model1Ds {
         WIN3D.graphics.pushMatrix();
         this.twistBranch(this.branchTwist);
         this.tiltBranch(this.branchTilt);
-        this.drawElement(w, h);
+        this.drawElement(w, h, n);
         this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1);
         WIN3D.graphics.popMatrix();
       }
-  
+      
     }
-    else {
-      this.drawLeaf();
-    }       
-
-
   }
   
 
@@ -30356,8 +30349,8 @@ class solarchvision_Model1Ds {
   }
   
   
-  void drawElement(float w, float h) {
-    
+  void drawElement(float w, float h, int n) {
+
     WIN3D.graphics.fill(255, 127, 0);
     WIN3D.graphics.noStroke();
     
@@ -30370,6 +30363,10 @@ class solarchvision_Model1Ds {
     WIN3D.graphics.popMatrix();
     
     WIN3D.graphics.translate(0, 0, h);
+
+    if (n == 1) {
+      this.drawLeaf();
+    }      
   }
   
   
