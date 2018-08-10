@@ -30351,18 +30351,7 @@ class solarchvision_Model1Ds {
       this.drawLeaf();
     }      
   }
-
-
-  float[][][] leaf_faces = {{{-1,-1,-1}, { 1,-1,-1}, { 1, 1,-1}, {-1, 1,-1}},
-                            {{-1,-1, 1}, { 1,-1, 1}, { 1, 1, 1}, {-1, 1, 1}},
-                            {{-1,-1,-1}, { 1,-1,-1}, { 1,-1, 1}, {-1,-1, 1}},
-                            {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, {-1, 1, 1}},
-                            {{-1,-1,-1}, {-1, 1,-1}, {-1, 1, 1}, {-1,-1, 1}},
-                            {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1,-1, 1}}};  
-
-  int num_leaf_faces = leaf_faces.length;
   
-  float[][] local_vertices = new float[4][3];
   
   void drawLeaf() {
     
@@ -30370,17 +30359,26 @@ class solarchvision_Model1Ds {
     
       WIN3D.graphics.fill(127, 255, 0);
       WIN3D.graphics.noStroke();    
+      
+      float[][][] leaf_faces = {{{-1,-1,-1}, { 1,-1,-1}, { 1, 1,-1}, {-1, 1,-1}},
+                                {{-1,-1, 1}, { 1,-1, 1}, { 1, 1, 1}, {-1, 1, 1}},
+                                {{-1,-1,-1}, { 1,-1,-1}, { 1,-1, 1}, {-1,-1, 1}},
+                                {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, {-1, 1, 1}},
+                                {{-1,-1,-1}, {-1, 1,-1}, {-1, 1, 1}, {-1,-1, 1}},
+                                {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1,-1, 1}}};
 
-      for (int i = 0; i < num_leaf_faces; i++) {
-
+      for (int i = 0; i < leaf_faces.length; i++) {
+        
+        float[][] local_vertices = new float[4][3];
+  
         for (int j = 0; j < 4; j++) {
           
-          this.local_vertices[j][0] = this.leaf_faces[i][j][0] * leafSize;
-          this.local_vertices[j][1] = this.leaf_faces[i][j][1] * leafSize;
-          this.local_vertices[j][2] = this.leaf_faces[i][j][2] * leafSize;
+          local_vertices[j][0] = leaf_faces[i][j][0] * leafSize;
+          local_vertices[j][1] = leaf_faces[i][j][1] * leafSize;
+          local_vertices[j][2] = leaf_faces[i][j][2] * leafSize;
         }
           
-        this.drawLocalFace();
+        this.drawLocalFace(local_vertices);
       }
     }
   }      
@@ -30392,6 +30390,8 @@ class solarchvision_Model1Ds {
     WIN3D.graphics.noStroke();    
     
     for (int i = 0; i < this.elementSegments; i++) {
+      
+      float[][] local_vertices = new float[4][3];
 
       for (int j = 0; j < 4; j++) {
   
@@ -30404,25 +30404,26 @@ class solarchvision_Model1Ds {
         float T = w;
         if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
 
-        this.local_vertices[j][0] = T * cos((i + u) * TWO_PI / float(this.elementSegments));
-        this.local_vertices[j][1] = T * sin((i + u) * TWO_PI / float(this.elementSegments));
-        this.local_vertices[j][2] = h * (v - 0.5);
+        local_vertices[j][0] = T * cos((i + u) * TWO_PI / float(this.elementSegments));
+        local_vertices[j][1] = T * sin((i + u) * TWO_PI / float(this.elementSegments));
+        local_vertices[j][2] = h * (v - 0.5);
       }
         
-      this.drawLocalFace();
+      this.drawLocalFace(local_vertices);
     }
   }    
 
   
-  void drawLocalFace() {     
+  void drawLocalFace(float[][] local_vertices) {     
    
-    float[][] subFace = new float[this.local_vertices.length][3];
+    float[][] subFace = new float[local_vertices.length][3];
+    
     
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.beginShape();
     }
     
-    for (int j = 0; j < this.local_vertices.length; j++) {
+    for (int j = 0; j < local_vertices.length; j++) {
       
       float u = 0;
       if ((j == 1) || (j == 2)) u = 1;
@@ -30430,9 +30431,9 @@ class solarchvision_Model1Ds {
       float v = 0;
       if ((j == 2) || (j == 3)) v = 1;    
       
-      float x = this.local_vertices[j][0];
-      float y = this.local_vertices[j][1];
-      float z = this.local_vertices[j][2];
+      float x = local_vertices[j][0];
+      float y = local_vertices[j][1];
+      float z = local_vertices[j][2];
       
       if (target_window == TypeWindow.WIN3D) {
         WIN3D.graphics.vertex(x, -y, z);
