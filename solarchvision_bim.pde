@@ -184,9 +184,9 @@ class solarchvision_OBJECTTYPE {
   
   private final static String CLASS_STAMP = "OBJECTTYPE";
   
-  private final static int LANDPOINT = 0;
-  private final static int MODEL1D = 1; 
-  private final static int MODEL2D = 2; 
+  private final static int TREE3D = 0; 
+  private final static int TREE2D = 1; 
+  private final static int PERSON = 2;
   private final static int GROUP = 3;
   private final static int FACE = 4; 
   private final static int VERTEX = 5;
@@ -195,6 +195,7 @@ class solarchvision_OBJECTTYPE {
   private final static int SECTION = 8;
   private final static int CAMERA = 9;
   private final static int CURVE = 10;
+  private final static int LANDPOINT = 11;
   
 }
 
@@ -238,7 +239,7 @@ class solarchvision_CREATE {
   private final static int Parametric = 9;
   private final static int Person     = 10;
   private final static int Plant      = 11;
-  private final static int Model1Ds   = 12;
+  private final static int Tree3Ds   = 12;
   private final static int Face       = 13;
   private final static int Vertex     = 14;
   private final static int Curve      = 15;
@@ -306,7 +307,7 @@ final int TROPO_timeSteps = 24;
 
 // snap for Curve objects is not developed yet.
 
-// don't know if multiple allModel2Ds.Images[n].get(Image_X, Image_Y) in allModel2Ds selection can produce performance problems? 
+// don't know if multiple allTree2Ds.Images[n].get(Image_X, Image_Y) in allTree2Ds selection can produce performance problems? 
 
 
 // note: code for SOLARCHVISION_intersect_allSolids might run a bit slow. But it is OK for now.
@@ -315,7 +316,7 @@ final int TROPO_timeSteps = 24;
 // should see where else could add snap3D :)
 
 
-// drop functions only works for allModel2Ds objects and not at Group level
+// drop functions only works for allTree2Ds objects and not at Group level
 
 // could add join/explode groups ?
 
@@ -327,7 +328,7 @@ final int TROPO_timeSteps = 24;
 
 // Create3D.autoNormalCurve_Selection
 
-// writing export to rad completed for meshes and land - not Model1Ds and 2Ds yet!
+// writing export to rad completed for meshes and land - not Tree3Ds and 2Ds yet!
 
 // colud record Climate data flags later.
 
@@ -1076,7 +1077,7 @@ class solarchvision_Functions {
     return result;
   }
   
-  boolean isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting allModel2Ds, etc.  
+  boolean isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting allTree2Ds, etc.  
   
     float pX = P[0] - O[0];
     float pY = P[1] - O[1];
@@ -1814,7 +1815,7 @@ class solarchvision_UITASK {
   int TreeBase = num++;
   int TrunkSize = num++;
   int LeafSize = num++;
-  int Model1DsProps = num++;
+  int Tree3DsProps = num++;
   int Pivot = num++;
   int Normal = num++; 
   int FirstVertex = num++; 
@@ -2664,7 +2665,7 @@ class solarchvision_WIN3D {
   
   int UI_CurrentTask = UITASK.Zoom_Orbit_Pan; 
   int UI_OptionXorY = 0; // 0-1
-  int UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. allModel1Ds  
+  int UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. allTree3Ds  
 
 
   int FacesShade = SHADE.Surface_Materials; //Shade_Surface_White; // <<<<<
@@ -2782,7 +2783,7 @@ class solarchvision_WIN3D {
       
           allPoints.draw();
       
-          allModel1Ds.draw(TypeWindow.WIN3D);
+          allTree3Ds.draw(TypeWindow.WIN3D);
       
           allWindRoses.draw();
       
@@ -2796,7 +2797,7 @@ class solarchvision_WIN3D {
       
           allSolidImpacts.draw_points();
       
-          allModel2Ds.draw(TypeWindow.WIN3D);  
+          allTree2Ds.draw(TypeWindow.WIN3D);  
       
           allWindFlows.draw(TypeWindow.WIN3D);
           
@@ -3426,9 +3427,9 @@ class solarchvision_WIN3D {
           break;
   
         case '1' :
-          allModel1Ds.displayAll = !allModel1Ds.displayAll;
-          if (allModel1Ds.displayAll) {
-            current_ObjectCategory = ObjectCategory.MODEL1D;
+          allTree3Ds.displayAll = !allTree3Ds.displayAll;
+          if (allTree3Ds.displayAll) {
+            current_ObjectCategory = ObjectCategory.TREE3D;
             UI_toolBar.revise();
           }
           this.revise(); 
@@ -3436,9 +3437,9 @@ class solarchvision_WIN3D {
           break;
   
         case '2' :
-          allModel2Ds.displayAll = !allModel2Ds.displayAll;
-          if (allModel2Ds.displayAll) {
-            current_ObjectCategory = ObjectCategory.MODEL2D;
+          allTree2Ds.displayAll = !allTree2Ds.displayAll;
+          if (allTree2Ds.displayAll) {
+            current_ObjectCategory = ObjectCategory.TREE2D;
             UI_toolBar.revise();
           }
           this.revise(); 
@@ -9412,8 +9413,8 @@ class solarchvision_ROLLOUT {
         User3D.create_PolyDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
   
         User3D.create_Parametric_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Parametric_Type", User3D.create_Parametric_Type, 0, 7, 1), 1));
-        User3D.create_Person_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
-        User3D.create_Plant_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
+        User3D.create_Person_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Person_Type", User3D.create_Person_Type, 0, allTree2Ds.num_files_PEOPLE, 1), 1));
+        User3D.create_Plant_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.create_Plant_Type", User3D.create_Plant_Type, 0, allTree2Ds.num_files_TREES, 1), 1));
       }
   
       if (this.child == 6) { // Fractals
@@ -9441,9 +9442,9 @@ class solarchvision_ROLLOUT {
         //Land3D.displayPoints = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));     
         //Land3D.displayDepth = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
   
-        //allModel2Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayLeaves = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
+        //allTree2Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allTree2Ds.displayAll", allTree2Ds.displayAll, 0, 1, 1), 1));
+        //allTree3Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allTree3Ds.displayAll", allTree3Ds.displayAll, 0, 1, 1), 1));
+        //allTree3Ds.displayLeaves = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allTree3Ds.displayLeaves", allTree3Ds.displayLeaves, 0, 1, 1), 1));
         //allCurves.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
         //allFaces.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
   
@@ -12306,15 +12307,15 @@ class solarchvision_Groups {
   int[][] Curves;
   int[][] Faces;
   int[][] Solids;
-  int[][] Model1Ds;
-  int[][] Model2Ds;
+  int[][] Tree3Ds;
+  int[][] Tree2Ds;
   float[][] Pivots;
 
   void makeEmpty (int n) {
 
     this.num = n;
-    this.Model1Ds = new int [n][2];
-    this.Model2Ds = new int [n][2];
+    this.Tree3Ds = new int [n][2];
+    this.Tree2Ds = new int [n][2];
     this.Faces = new int [n][2];
     this.Curves = new int [n][2];
     this.Solids = new int [n][2];
@@ -12352,19 +12353,19 @@ class solarchvision_Groups {
   }  
 
   int getStart_Model1D (int n) {
-    return this.Model1Ds[n][0];
+    return this.Tree3Ds[n][0];
   }
 
   int getStop_Model1D (int n) {
-    return this.Model1Ds[n][1];
+    return this.Tree3Ds[n][1];
   }
 
   int getStart_Model2D (int n) {
-    return this.Model2Ds[n][0];
+    return this.Tree2Ds[n][0];
   }
 
   int getStop_Model2D (int n) {
-    return this.Model2Ds[n][1];
+    return this.Tree2Ds[n][1];
   }  
   
   void setStart_Curve (int n, int t) {
@@ -12392,19 +12393,19 @@ class solarchvision_Groups {
   }
   
   void setStart_Model1D (int n, int t) {
-    this.Model1Ds[n][0] = t;
+    this.Tree3Ds[n][0] = t;
   }
 
   void setStop_Model1D (int n, int t) {
-    this.Model1Ds[n][1] = t;
+    this.Tree3Ds[n][1] = t;
   }
   
   void setStart_Model2D (int n, int t) {
-    this.Model2Ds[n][0] = t;
+    this.Tree2Ds[n][0] = t;
   }
 
   void setStop_Model2D (int n, int t) {
-    this.Model2Ds[n][1] = t;
+    this.Tree2Ds[n][1] = t;
   }  
 
 
@@ -12435,19 +12436,19 @@ class solarchvision_Groups {
     }; 
     this.Pivots = (float[][]) concat(this.Pivots, newObject_Pivots);
   
-    int[][] newObject_allModel1Ds = {
+    int[][] newObject_allTree3Ds = {
       {
-        allModel1Ds.num, -1
+        allTree3Ds.num, -1
       }
     }; // i.e. null because start > end 
-    this.Model1Ds = (int[][]) concat(this.Model1Ds, newObject_allModel1Ds);     
+    this.Tree3Ds = (int[][]) concat(this.Tree3Ds, newObject_allTree3Ds);     
     
-    int[][] newObject_allModel2Ds = {
+    int[][] newObject_allTree2Ds = {
       {
-        allModel2Ds.num, -1
+        allTree2Ds.num, -1
       }
     }; // i.e. null because start > end 
-    this.Model2Ds = (int[][]) concat(this.Model2Ds, newObject_allModel2Ds);   
+    this.Tree2Ds = (int[][]) concat(this.Tree2Ds, newObject_allTree2Ds);   
   
     int[][] newObject_allSolids = {
       {
@@ -12490,8 +12491,8 @@ class solarchvision_Groups {
     if (current_ObjectCategory == ObjectCategory.SOLID) run_process = true;
     if (current_ObjectCategory == ObjectCategory.FACE) run_process = true;
     if (current_ObjectCategory == ObjectCategory.CURVE) run_process = true;
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) run_process = true;
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) run_process = true;
+    if (current_ObjectCategory == ObjectCategory.TREE2D) run_process = true;
+    if (current_ObjectCategory == ObjectCategory.TREE3D) run_process = true;
   
     if (run_process) {
   
@@ -12510,50 +12511,50 @@ class solarchvision_Groups {
       boolean pre_addToLastGroup = addToLastGroup;
       addToLastGroup = true;
   
-      if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      if (current_ObjectCategory == ObjectCategory.TREE3D) {
   
         for (int o = 0; o < Select3D.Model1D_ids.length; o++) {
   
           int OBJ_ID = Select3D.Model1D_ids[o];
   
-          float x = allModel1Ds.getX(OBJ_ID);
-          float y = allModel1Ds.getY(OBJ_ID);
-          float z = allModel1Ds.getZ(OBJ_ID);
-          float d = allModel1Ds.getScale(OBJ_ID);
-          float rot = allModel1Ds.getRotation(OBJ_ID);
-          float tilt = allModel1Ds.getBranchTilt(OBJ_ID);
-          float twist = allModel1Ds.getBranchTwist(OBJ_ID);
-          float ratio = allModel1Ds.getBranchRatio(OBJ_ID);
-          float base = allModel1Ds.getTreeBase(OBJ_ID);
+          float x = allTree3Ds.getX(OBJ_ID);
+          float y = allTree3Ds.getY(OBJ_ID);
+          float z = allTree3Ds.getZ(OBJ_ID);
+          float d = allTree3Ds.getScale(OBJ_ID);
+          float rot = allTree3Ds.getRotation(OBJ_ID);
+          float tilt = allTree3Ds.getBranchTilt(OBJ_ID);
+          float twist = allTree3Ds.getBranchTwist(OBJ_ID);
+          float ratio = allTree3Ds.getBranchRatio(OBJ_ID);
+          float base = allTree3Ds.getTreeBase(OBJ_ID);
   
-          int n = allModel1Ds.getType(OBJ_ID);
-          int dMax = allModel1Ds.getDegreeMax(OBJ_ID);
-          int seed = allModel1Ds.getSeed(OBJ_ID);
-          float trunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-          float leafSize = allModel1Ds.getLeafSize(OBJ_ID);
+          int n = allTree3Ds.getType(OBJ_ID);
+          int dMax = allTree3Ds.getDegreeMax(OBJ_ID);
+          int seed = allTree3Ds.getSeed(OBJ_ID);
+          float trunkSize = allTree3Ds.getTrunkSize(OBJ_ID);
+          float leafSize = allTree3Ds.getLeafSize(OBJ_ID);
   
-          allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+          allTree3Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
         }
       }  
   
-      if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      if (current_ObjectCategory == ObjectCategory.TREE2D) {
   
-        int n1 = allModel2Ds.num_files_PEOPLE;
+        int n1 = allTree2Ds.num_files_PEOPLE;
   
         for (int o = 0; o < Select3D.Model2D_ids.length; o++) {
   
           int OBJ_ID = Select3D.Model2D_ids[o];
   
-          float x = allModel2Ds.getX(OBJ_ID);
-          float y = allModel2Ds.getY(OBJ_ID);
-          float z = allModel2Ds.getZ(OBJ_ID);
-          float s = allModel2Ds.getS(OBJ_ID);
+          float x = allTree2Ds.getX(OBJ_ID);
+          float y = allTree2Ds.getY(OBJ_ID);
+          float z = allTree2Ds.getZ(OBJ_ID);
+          float s = allTree2Ds.getS(OBJ_ID);
   
-          int n = allModel2Ds.MAP[OBJ_ID];
-          if (allModel2Ds.isTree(n)) {
-            allModel2Ds.create("TREES", n, x, y, z, s);
+          int n = allTree2Ds.MAP[OBJ_ID];
+          if (allTree2Ds.isTree(n)) {
+            allTree2Ds.create("TREES", n, x, y, z, s);
           } else {
-            allModel2Ds.create("PEOPLE", n, x, y, z, s);
+            allTree2Ds.create("PEOPLE", n, x, y, z, s);
           }
         }
       }
@@ -12753,11 +12754,11 @@ class solarchvision_Groups {
         this.Curves[OBJ_ID][0] = 0;
         this.Curves[OBJ_ID][1] = -1;
 
-        this.Model1Ds[OBJ_ID][0] = 0;
-        this.Model1Ds[OBJ_ID][1] = -1;
+        this.Tree3Ds[OBJ_ID][0] = 0;
+        this.Tree3Ds[OBJ_ID][1] = -1;
 
-        this.Model2Ds[OBJ_ID][0] = 0;
-        this.Model2Ds[OBJ_ID][1] = -1;
+        this.Tree2Ds[OBJ_ID][0] = 0;
+        this.Tree2Ds[OBJ_ID][1] = -1;
   
         this.Solids[OBJ_ID][0] = 0;
         this.Solids[OBJ_ID][1] = -1;
@@ -12791,8 +12792,8 @@ class solarchvision_Groups {
   
         if ((0 <= this.Faces[OBJ_ID][0]) && (this.Faces[OBJ_ID][0] <= this.Faces[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Curves[OBJ_ID][0]) && (this.Curves[OBJ_ID][0] <= this.Curves[OBJ_ID][1])) notEmpty = true;
-        if ((0 <= this.Model1Ds[OBJ_ID][0]) && (this.Model1Ds[OBJ_ID][0] <= this.Model1Ds[OBJ_ID][1])) notEmpty = true;
-        if ((0 <= this.Model2Ds[OBJ_ID][0]) && (this.Model2Ds[OBJ_ID][0] <= this.Model2Ds[OBJ_ID][1])) notEmpty = true;
+        if ((0 <= this.Tree3Ds[OBJ_ID][0]) && (this.Tree3Ds[OBJ_ID][0] <= this.Tree3Ds[OBJ_ID][1])) notEmpty = true;
+        if ((0 <= this.Tree2Ds[OBJ_ID][0]) && (this.Tree2Ds[OBJ_ID][0] <= this.Tree2Ds[OBJ_ID][1])) notEmpty = true;
         if ((0 <= this.Solids[OBJ_ID][0]) && (this.Solids[OBJ_ID][0] <= this.Solids[OBJ_ID][1])) notEmpty = true;
   
         if (notEmpty) {
@@ -12826,11 +12827,11 @@ class solarchvision_Groups {
       XML child = parent.addChild("item");
       XML_setInt(child, "id", i);
 
-      XML_setString(child, "Model1Ds", 
+      XML_setString(child, "Tree3Ds", 
                     nf(this.getStart_Model1D(i), 0) + "|" + 
                     nf(this.getStop_Model1D(i), 0));
                
-      XML_setString(child, "Model2Ds", 
+      XML_setString(child, "Tree2Ds", 
                     nf(this.getStart_Model2D(i), 0) + "|" + 
                     nf(this.getStop_Model2D(i), 0));
                
@@ -12889,13 +12890,13 @@ class solarchvision_Groups {
       }
 
       {
-        String[] parts = split(XML_getString(children[i], "Model1Ds"), "|");
+        String[] parts = split(XML_getString(children[i], "Tree3Ds"), "|");
         this.setStart_Model1D(i, int(parts[0]));
         this.setStop_Model1D(i, int(parts[1]));
       }      
       
       {
-        String[] parts = split(XML_getString(children[i], "Model2Ds"), "|");
+        String[] parts = split(XML_getString(children[i], "Tree2Ds"), "|");
         this.setStart_Model2D(i, int(parts[0]));
         this.setStop_Model2D(i, int(parts[1]));
       }         
@@ -14945,12 +14946,12 @@ class solarchvision_Edit3D {
       this.Faces(p);
     }         
     
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(p);
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
+      this.Tree3Ds(p);
     }    
     
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(p);
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
+      this.Tree2Ds(p);
     }      
 
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
@@ -15178,7 +15179,7 @@ class solarchvision_Edit3D {
 
 
 
-  void Model1Ds (int p) {
+  void Tree3Ds (int p) {
 
     for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
 
@@ -15186,87 +15187,87 @@ class solarchvision_Edit3D {
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
 
-        allModel1Ds.setSeed(OBJ_ID, allModel1Ds.getSeed(OBJ_ID) + p);
+        allTree3Ds.setSeed(OBJ_ID, allTree3Ds.getSeed(OBJ_ID) + p);
       } 
       if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) {
-        int q = allModel1Ds.getDegreeMax(OBJ_ID);
+        int q = allTree3Ds.getDegreeMax(OBJ_ID);
 
         q += p;
 
         if (q < 0) q = 0;
         if (q > 12) q = 12;
 
-        allModel1Ds.setDegreeMax(OBJ_ID, q);
+        allTree3Ds.setDegreeMax(OBJ_ID, q);
 
         User3D.create_Model1D_DegreeMax = q;
         ROLLOUT.revise();
       }
       if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) {
-        float q = allModel1Ds.getBranchTilt(OBJ_ID);
+        float q = allTree3Ds.getBranchTilt(OBJ_ID);
 
         q += p * 5;
 
-        allModel1Ds.setBranchTilt(OBJ_ID, q);
+        allTree3Ds.setBranchTilt(OBJ_ID, q);
 
         User3D.create_Model1D_BranchTilt = q;
         ROLLOUT.revise();
       }
       if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) {
-        float q = allModel1Ds.getBranchTwist(OBJ_ID);
+        float q = allTree3Ds.getBranchTwist(OBJ_ID);
 
         q += p * 5;
 
-        allModel1Ds.setBranchTwist(OBJ_ID, q);
+        allTree3Ds.setBranchTwist(OBJ_ID, q);
 
         User3D.create_Model1D_BranchTwist = q;
         ROLLOUT.revise();
       }
       if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) {
-        float q = allModel1Ds.getBranchRatio(OBJ_ID);
+        float q = allTree3Ds.getBranchRatio(OBJ_ID);
 
         q += 0.02 * p;
 
         if (q < 0.1) q = 0.1;
         if (q > 1.0) q = 1.0;
 
-        allModel1Ds.setBranchRatio(OBJ_ID, q);
+        allTree3Ds.setBranchRatio(OBJ_ID, q);
 
         User3D.create_Model1D_BranchRatio = q;
         ROLLOUT.revise();
       }      
       if (WIN3D.UI_CurrentTask == UITASK.TreeBase) {
-        float q = allModel1Ds.getTreeBase(OBJ_ID);
+        float q = allTree3Ds.getTreeBase(OBJ_ID);
 
         q += 0.02 * p;
 
         if (q < 0.0) q = 0.0;
         if (q > 4.0) q = 4.0;
 
-        allModel1Ds.setTreeBase(OBJ_ID, q);
+        allTree3Ds.setTreeBase(OBJ_ID, q);
 
         User3D.create_Model1D_TreeBase = q;
         ROLLOUT.revise();
       }            
       if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
-        float q = allModel1Ds.getTrunkSize(OBJ_ID);
+        float q = allTree3Ds.getTrunkSize(OBJ_ID);
 
         q += 0.02 * p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.setTrunkSize(OBJ_ID, q);
+        allTree3Ds.setTrunkSize(OBJ_ID, q);
 
         User3D.create_Model1D_TrunkSize = q;
         ROLLOUT.revise();
       }
       if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
-        float q = allModel1Ds.getLeafSize(OBJ_ID);
+        float q = allTree3Ds.getLeafSize(OBJ_ID);
 
         q += 0.02 * p;
 
         if (q < 0) q = 0;
 
-        allModel1Ds.setLeafSize(OBJ_ID, q);
+        allTree3Ds.setLeafSize(OBJ_ID, q);
 
         User3D.create_Model1D_LeafSize = q;
         ROLLOUT.revise();
@@ -15276,23 +15277,23 @@ class solarchvision_Edit3D {
 
 
 
-  void Model2Ds (int p) {
+  void Tree2Ds (int p) {
     for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
 
       int OBJ_ID = Select3D.Model2D_ids[o];
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
 
-        int n = allModel2Ds.MAP[OBJ_ID];
+        int n = allTree2Ds.MAP[OBJ_ID];
         int sign_n = 1;
         if (n < 0) sign_n = -1;
 
         n = abs(n);
 
-        int n1 = allModel2Ds.num_files_PEOPLE;
-        int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
+        int n1 = allTree2Ds.num_files_PEOPLE;
+        int n2 = allTree2Ds.num_files_PEOPLE + allTree2Ds.num_files_TREES;
 
-        if (allModel2Ds.isTree(n)) { // case: trees
+        if (allTree2Ds.isTree(n)) { // case: trees
 
           n += p;
 
@@ -15321,7 +15322,7 @@ class solarchvision_Edit3D {
 
         n *= sign_n;
 
-        allModel2Ds.MAP[OBJ_ID] = n;
+        allTree2Ds.MAP[OBJ_ID] = n;
       }
     }
   }
@@ -15485,12 +15486,12 @@ class solarchvision_Scale3D {
       this.Groups(x0, y0, z0, sx, sy, sz);
     }        
   
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(x0, y0, z0, sx, sy, sz);
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
+      this.Tree2Ds(x0, y0, z0, sx, sy, sz);
     }
   
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(x0, y0, z0, sx, sy, sz);
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
+      this.Tree3Ds(x0, y0, z0, sx, sy, sz);
     }  
 
     if (current_ObjectCategory == ObjectCategory.SOLID) {
@@ -15728,15 +15729,15 @@ class solarchvision_Scale3D {
   }  
 
 
-  void Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void Tree3Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
     for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
   
       int f = Select3D.Model1D_ids[o];
   
-      float x = allModel1Ds.getX(f);
-      float y = allModel1Ds.getY(f); 
-      float z = allModel1Ds.getZ(f);
+      float x = allTree3Ds.getX(f);
+      float y = allTree3Ds.getY(f); 
+      float z = allTree3Ds.getZ(f);
   
       float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
@@ -15750,26 +15751,26 @@ class solarchvision_Scale3D {
       y = B[1];
       z = B[2];
   
-      allModel1Ds.setX(f, x);
-      allModel1Ds.setY(f, y);
-      allModel1Ds.setZ(f, z);
+      allTree3Ds.setX(f, x);
+      allTree3Ds.setY(f, y);
+      allTree3Ds.setZ(f, z);
   
-      allModel1Ds.magS(f, sz);
+      allTree3Ds.magS(f, sz);
     }
   }  
 
   
-  void Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void Tree2Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
   
-    int n1 = allModel2Ds.num_files_PEOPLE;    
+    int n1 = allTree2Ds.num_files_PEOPLE;    
   
     for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
   
       int f = Select3D.Model2D_ids[o];
   
-      float x = allModel2Ds.getX(f);
-      float y = allModel2Ds.getY(f); 
-      float z = allModel2Ds.getZ(f);
+      float x = allTree2Ds.getX(f);
+      float y = allTree2Ds.getY(f); 
+      float z = allTree2Ds.getZ(f);
   
       float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
@@ -15783,15 +15784,15 @@ class solarchvision_Scale3D {
       y = B[1];
       z = B[2];         
   
-      allModel2Ds.setX(f, x); 
-      allModel2Ds.setY(f, y);
-      allModel2Ds.setZ(f, z);    
+      allTree2Ds.setX(f, x); 
+      allTree2Ds.setY(f, y);
+      allTree2Ds.setZ(f, z);    
   
   
-      int n = allModel2Ds.MAP[f];
+      int n = allTree2Ds.MAP[f];
   
-      if (allModel2Ds.isTree(n)) { // does not scale poeple!    
-        allModel2Ds.magS(f, sz);
+      if (allTree2Ds.isTree(n)) { // does not scale poeple!    
+        allTree2Ds.magS(f, sz);
       }
     }
   }
@@ -15826,7 +15827,7 @@ class solarchvision_Scale3D {
       allPoints.setZ(n, z);
     }
   
-    int n1 = allModel2Ds.num_files_PEOPLE;
+    int n1 = allTree2Ds.num_files_PEOPLE;
   
     boolean allSolids_updated = false;
   
@@ -15864,11 +15865,11 @@ class solarchvision_Scale3D {
   
   
       for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
+        if ((0 <= f) && (f < allTree3Ds.num)) {
   
-          float x = allModel1Ds.getX(f);
-          float y = allModel1Ds.getY(f); 
-          float z = allModel1Ds.getZ(f);
+          float x = allTree3Ds.getX(f);
+          float y = allTree3Ds.getY(f); 
+          float z = allTree3Ds.getZ(f);
   
           float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
@@ -15882,21 +15883,21 @@ class solarchvision_Scale3D {
           y = B[1];
           z = B[2];
   
-          allModel1Ds.setX(f, x);
-          allModel1Ds.setY(f, y);
-          allModel1Ds.setZ(f, z);
+          allTree3Ds.setX(f, x);
+          allTree3Ds.setY(f, y);
+          allTree3Ds.setZ(f, z);
   
-          allModel1Ds.magS(f, sz);
+          allTree3Ds.magS(f, sz);
         }
       }  
   
   
       for (int f = allGroups.getStart_Model2D(OBJ_ID); f <= allGroups.getStop_Model2D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel2Ds.num)) {
+        if ((0 <= f) && (f < allTree2Ds.num)) {
   
-          float x = allModel2Ds.getX(f);
-          float y = allModel2Ds.getY(f); 
-          float z = allModel2Ds.getZ(f);
+          float x = allTree2Ds.getX(f);
+          float y = allTree2Ds.getY(f); 
+          float z = allTree2Ds.getZ(f);
   
           float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
@@ -15910,14 +15911,14 @@ class solarchvision_Scale3D {
           y = B[1];
           z = B[2];         
   
-          allModel2Ds.setX(f, x); 
-          allModel2Ds.setY(f, y);
-          allModel2Ds.setZ(f, z);
+          allTree2Ds.setX(f, x); 
+          allTree2Ds.setY(f, y);
+          allTree2Ds.setZ(f, z);
   
-          int n = allModel2Ds.MAP[f];
+          int n = allTree2Ds.MAP[f];
   
-          if (allModel2Ds.isTree(n)) { // does not scale poeple!    
-            allModel2Ds.magS(f, sz);
+          if (allTree2Ds.isTree(n)) { // does not scale poeple!    
+            allTree2Ds.magS(f, sz);
           }
         }
       }     
@@ -15996,12 +15997,12 @@ class solarchvision_Rotate3D {
       this.Faces(x0, y0, z0, r, the_Vector);
     }  
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(x0, y0, z0, r, the_Vector);
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
+      this.Tree3Ds(x0, y0, z0, r, the_Vector);
     }   
   
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(x0, y0, z0, r, the_Vector);
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
+      this.Tree2Ds(x0, y0, z0, r, the_Vector);
     }
     
     if (current_ObjectCategory == ObjectCategory.SOLID) {
@@ -16257,57 +16258,57 @@ class solarchvision_Rotate3D {
   
   
   
-  void Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
+  void Tree3Ds (float x0, float y0, float z0, float r, int the_Vector) {
   
     for (int q = 0; q < Select3D.Model1D_ids.length; q++) {
   
       int f = Select3D.Model1D_ids[q];
   
-      float x = allModel1Ds.getX(f) - x0; 
-      float y = allModel1Ds.getY(f) - y0; 
-      float z = allModel1Ds.getZ(f) - z0;
+      float x = allTree3Ds.getX(f) - x0; 
+      float y = allTree3Ds.getY(f) - y0; 
+      float z = allTree3Ds.getZ(f) - z0;
   
       if (the_Vector == 2) {
-        allModel1Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allModel1Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allModel1Ds.setZ(f, z0 + (z));
+        allTree3Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allTree3Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allTree3Ds.setZ(f, z0 + (z));
 
-        allModel1Ds.setRotation(f, allModel1Ds.getRotation(f) - r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        allTree3Ds.setRotation(f, allTree3Ds.getRotation(f) - r); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       } else if (the_Vector == 1) {
-        allModel1Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allModel1Ds.setY(f, y0 + (y));
-        allModel1Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+        allTree3Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allTree3Ds.setY(f, y0 + (y));
+        allTree3Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
       } else if (the_Vector == 0) {
-        allModel1Ds.setX(f, x0 + (x)); 
-        allModel1Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allModel1Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+        allTree3Ds.setX(f, x0 + (x)); 
+        allTree3Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allTree3Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
   }  
   
   
-  void Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
+  void Tree2Ds (float x0, float y0, float z0, float r, int the_Vector) {
   
     for (int q = 0; q < Select3D.Model2D_ids.length; q++) {
   
       int f = Select3D.Model2D_ids[q];
   
-      float x = allModel2Ds.getX(f) - x0; 
-      float y = allModel2Ds.getY(f) - y0; 
-      float z = allModel2Ds.getZ(f) - z0;
+      float x = allTree2Ds.getX(f) - x0; 
+      float y = allTree2Ds.getY(f) - y0; 
+      float z = allTree2Ds.getZ(f) - z0;
   
       if (the_Vector == 2) {
-        allModel2Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
-        allModel2Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
-        allModel2Ds.setZ(f, z0 + (z));
+        allTree2Ds.setX(f, x0 + (x * cos(r) - y * sin(r))); 
+        allTree2Ds.setY(f, y0 + (x * sin(r) + y * cos(r)));
+        allTree2Ds.setZ(f, z0 + (z));
       } else if (the_Vector == 1) {
-        allModel2Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
-        allModel2Ds.setY(f, y0 + (y));
-        allModel2Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
+        allTree2Ds.setX(f, x0 + (z * sin(r) + x * cos(r))); 
+        allTree2Ds.setY(f, y0 + (y));
+        allTree2Ds.setZ(f, z0 + (z * cos(r) - x * sin(r)));
       } else if (the_Vector == 0) {
-        allModel2Ds.setX(f, x0 + (x)); 
-        allModel2Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
-        allModel2Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
+        allTree2Ds.setX(f, x0 + (x)); 
+        allTree2Ds.setY(f, y0 + (y * cos(r) - z * sin(r)));
+        allTree2Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
   }    
@@ -16434,11 +16435,11 @@ class solarchvision_Rotate3D {
   
   
       for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
+        if ((0 <= f) && (f < allTree3Ds.num)) {
   
-          float x = allModel1Ds.getX(f); 
-          float y = allModel1Ds.getY(f); 
-          float z = allModel1Ds.getZ(f);
+          float x = allTree3Ds.getX(f); 
+          float y = allTree3Ds.getY(f); 
+          float z = allTree3Ds.getZ(f);
   
           float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
@@ -16476,13 +16477,13 @@ class solarchvision_Rotate3D {
           y = B[1];
           z = B[2];
   
-          allModel1Ds.setX(f, x);
-          allModel1Ds.setY(f, y);
-          allModel1Ds.setZ(f, z);
+          allTree3Ds.setX(f, x);
+          allTree3Ds.setY(f, y);
+          allTree3Ds.setZ(f, z);
   
   
           if (the_Vector == 2) {
-            //allModel1Ds.setRotation(f, allModel1Ds.getRotation(f) + r); // <<<<<<<<<
+            //allTree3Ds.setRotation(f, allTree3Ds.getRotation(f) + r); // <<<<<<<<<
           } else if (the_Vector == 1) {
           } else if (the_Vector == 0) {
           }
@@ -16490,11 +16491,11 @@ class solarchvision_Rotate3D {
       }         
   
       for (int f = allGroups.getStart_Model2D(OBJ_ID); f <= allGroups.getStop_Model2D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel2Ds.num)) {
+        if ((0 <= f) && (f < allTree2Ds.num)) {
   
-          float x = allModel2Ds.getX(f); 
-          float y = allModel2Ds.getY(f); 
-          float z = allModel2Ds.getZ(f);
+          float x = allTree2Ds.getX(f); 
+          float y = allTree2Ds.getY(f); 
+          float z = allTree2Ds.getZ(f);
   
           float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
   
@@ -16532,9 +16533,9 @@ class solarchvision_Rotate3D {
           y = B[1];
           z = B[2];
   
-          allModel2Ds.setX(f, x);
-          allModel2Ds.setY(f, y);
-          allModel2Ds.setZ(f, z);
+          allTree2Ds.setX(f, x);
+          allTree2Ds.setY(f, y);
+          allTree2Ds.setZ(f, z);
         }
       }         
   
@@ -16645,12 +16646,12 @@ class solarchvision_Move3D {
       this.Faces(dx, dy, dz);
     }  
     
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(dx, dy, dz);
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
+      this.Tree3Ds(dx, dy, dz);
     }    
   
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(dx, dy, dz);
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
+      this.Tree2Ds(dx, dy, dz);
     }  
     
     if (current_ObjectCategory == ObjectCategory.SOLID) {
@@ -16738,25 +16739,25 @@ class solarchvision_Move3D {
   }
   
   
-  void Model1Ds (float dx, float dy, float dz) {
+  void Tree3Ds (float dx, float dy, float dz) {
   
     for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
   
       int f = Select3D.Model1D_ids[o];
   
-      allModel1Ds.move(f, dx, dy, dz); 
+      allTree3Ds.move(f, dx, dy, dz); 
     }
   } 
     
   
   
-  void Model2Ds (float dx, float dy, float dz) {
+  void Tree2Ds (float dx, float dy, float dz) {
   
     for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
   
       int f = Select3D.Model2D_ids[o];
       
-      allModel2Ds.move(f, dx, dy, dz); 
+      allTree2Ds.move(f, dx, dy, dz); 
     }
   } 
   
@@ -16839,16 +16840,16 @@ class solarchvision_Move3D {
       }
   
       for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel1Ds.num)) {
+        if ((0 <= f) && (f < allTree3Ds.num)) {
   
-          allModel1Ds.move(f, dx, dy, dz);
+          allTree3Ds.move(f, dx, dy, dz);
         }
       }
   
       for (int f = allGroups.getStart_Model2D(OBJ_ID); f <= allGroups.getStop_Model2D(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allModel2Ds.num)) {
+        if ((0 <= f) && (f < allTree2Ds.num)) {
   
-          allModel2Ds.move(f, dx, dy, dz);
+          allTree2Ds.move(f, dx, dy, dz);
         }
       }
   
@@ -16882,12 +16883,12 @@ class solarchvision_Drop3D {
 
   void selection () {
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(); 
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
+      this.Tree3Ds(); 
     }       
     
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(); 
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
+      this.Tree2Ds(); 
     }
 
   }
@@ -16896,15 +16897,15 @@ class solarchvision_Drop3D {
   
   
   
-  void Model1Ds () {
+  void Tree3Ds () {
 
     for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
 
       int OBJ_ID = Select3D.Model1D_ids[o];
 
-      float x = allModel1Ds.getX(OBJ_ID);
-      float y = allModel1Ds.getY(OBJ_ID);
-      float z = allModel1Ds.getZ(OBJ_ID);
+      float x = allTree3Ds.getX(OBJ_ID);
+      float y = allTree3Ds.getY(OBJ_ID);
+      float z = allTree3Ds.getZ(OBJ_ID);
 
       float[] ray_start = {
         x, y, z
@@ -16925,9 +16926,9 @@ class solarchvision_Drop3D {
       }
 
       if (RxP[0] >= 0) {
-        allModel1Ds.setX(OBJ_ID, RxP[1]); 
-        allModel1Ds.setY(OBJ_ID, RxP[2]); 
-        allModel1Ds.setZ(OBJ_ID, RxP[3]);
+        allTree3Ds.setX(OBJ_ID, RxP[1]); 
+        allTree3Ds.setY(OBJ_ID, RxP[2]); 
+        allTree3Ds.setZ(OBJ_ID, RxP[3]);
       } else {
         ray_direction[2] = 1; // <<<< going upwards
 
@@ -16940,9 +16941,9 @@ class solarchvision_Drop3D {
         }
 
         if (RxP[0] >= 0) {
-          allModel1Ds.setX(OBJ_ID, RxP[1]); 
-          allModel1Ds.setY(OBJ_ID, RxP[2]); 
-          allModel1Ds.setZ(OBJ_ID, RxP[3]);
+          allTree3Ds.setX(OBJ_ID, RxP[1]); 
+          allTree3Ds.setY(OBJ_ID, RxP[2]); 
+          allTree3Ds.setZ(OBJ_ID, RxP[3]);
         }
       }
     }
@@ -16950,15 +16951,15 @@ class solarchvision_Drop3D {
   
   
 
-  void Model2Ds () {
+  void Tree2Ds () {
 
     for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
 
       int OBJ_ID = Select3D.Model2D_ids[o];
 
-      float x = allModel2Ds.getX(OBJ_ID);
-      float y = allModel2Ds.getY(OBJ_ID);
-      float z = allModel2Ds.getZ(OBJ_ID);
+      float x = allTree2Ds.getX(OBJ_ID);
+      float y = allTree2Ds.getY(OBJ_ID);
+      float z = allTree2Ds.getZ(OBJ_ID);
 
       float[] ray_start = {
         x, y, z
@@ -16979,9 +16980,9 @@ class solarchvision_Drop3D {
       }
 
       if (RxP[0] >= 0) {
-        allModel2Ds.setX(OBJ_ID, RxP[1]); 
-        allModel2Ds.setY(OBJ_ID, RxP[2]); 
-        allModel2Ds.setZ(OBJ_ID, RxP[3]);
+        allTree2Ds.setX(OBJ_ID, RxP[1]); 
+        allTree2Ds.setY(OBJ_ID, RxP[2]); 
+        allTree2Ds.setZ(OBJ_ID, RxP[3]);
       } else {
         ray_direction[2] = 1; // <<<< going upwards
 
@@ -16994,9 +16995,9 @@ class solarchvision_Drop3D {
         }
 
         if (RxP[0] >= 0) {
-          allModel2Ds.setX(OBJ_ID, RxP[1]); 
-          allModel2Ds.setY(OBJ_ID, RxP[2]); 
-          allModel2Ds.setZ(OBJ_ID, RxP[3]);
+          allTree2Ds.setX(OBJ_ID, RxP[1]); 
+          allTree2Ds.setY(OBJ_ID, RxP[2]); 
+          allTree2Ds.setZ(OBJ_ID, RxP[3]);
         }
       }
     }
@@ -17027,12 +17028,12 @@ class solarchvision_Clone3D {
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
     }
   
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1Ds(produce_same_variation);
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
+      this.Tree3Ds(produce_same_variation);
     }  
   
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2Ds(produce_same_variation);
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
+      this.Tree2Ds(produce_same_variation);
     }  
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
@@ -17062,81 +17063,81 @@ class solarchvision_Clone3D {
 
 
 
-  void Model1Ds (boolean produce_same_variation) {
+  void Tree3Ds (boolean produce_same_variation) {
 
-    int number_of_allModel1Ds_before = allModel1Ds.num; 
+    int number_of_allTree3Ds_before = allTree3Ds.num; 
 
     for (int o = 0; o < Select3D.Model1D_ids.length; o++) {
 
       int OBJ_ID = Select3D.Model1D_ids[o];
 
-      float x = allModel1Ds.getX(OBJ_ID);
-      float y = allModel1Ds.getY(OBJ_ID);
-      float z = allModel1Ds.getZ(OBJ_ID);
-      float d = allModel1Ds.getScale(OBJ_ID);
-      float rot = allModel1Ds.getRotation(OBJ_ID);
-      float tilt = allModel1Ds.getBranchTilt(OBJ_ID);
-      float twist = allModel1Ds.getBranchTwist(OBJ_ID);
-      float ratio = allModel1Ds.getBranchRatio(OBJ_ID);      
-      float base = allModel1Ds.getTreeBase(OBJ_ID);
+      float x = allTree3Ds.getX(OBJ_ID);
+      float y = allTree3Ds.getY(OBJ_ID);
+      float z = allTree3Ds.getZ(OBJ_ID);
+      float d = allTree3Ds.getScale(OBJ_ID);
+      float rot = allTree3Ds.getRotation(OBJ_ID);
+      float tilt = allTree3Ds.getBranchTilt(OBJ_ID);
+      float twist = allTree3Ds.getBranchTwist(OBJ_ID);
+      float ratio = allTree3Ds.getBranchRatio(OBJ_ID);      
+      float base = allTree3Ds.getTreeBase(OBJ_ID);
 
-      int n = allModel1Ds.getType(OBJ_ID);
-      int dMax = allModel1Ds.getDegreeMax(OBJ_ID);
-      int seed = allModel1Ds.getSeed(OBJ_ID);
-      float trunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-      float leafSize = allModel1Ds.getLeafSize(OBJ_ID);
+      int n = allTree3Ds.getType(OBJ_ID);
+      int dMax = allTree3Ds.getDegreeMax(OBJ_ID);
+      int seed = allTree3Ds.getSeed(OBJ_ID);
+      float trunkSize = allTree3Ds.getTrunkSize(OBJ_ID);
+      float leafSize = allTree3Ds.getLeafSize(OBJ_ID);
 
       if (produce_same_variation == false) randomSeed(millis());
-      allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+      allTree3Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
     }
 
     // selecting new objetcs
 
-    Select3D.deselect_Model1Ds();
+    Select3D.deselect_Tree3Ds();
 
-    for (int o = number_of_allModel1Ds_before; o < allModel1Ds.num; o++) {
+    for (int o = number_of_allTree3Ds_before; o < allTree3Ds.num; o++) {
 
-      int[] newlyAddedallModel1Ds = {o};
+      int[] newlyAddedallTree3Ds = {o};
 
-      Select3D.Model1D_ids = concat(Select3D.Model1D_ids, newlyAddedallModel1Ds);
+      Select3D.Model1D_ids = concat(Select3D.Model1D_ids, newlyAddedallTree3Ds);
     }
   }
 
 
-  void Model2Ds (boolean produce_same_variation) {
+  void Tree2Ds (boolean produce_same_variation) {
 
-    int n1 = allModel2Ds.num_files_PEOPLE;
+    int n1 = allTree2Ds.num_files_PEOPLE;
 
-    int number_of_allModel2Ds_before = allModel2Ds.num; 
+    int number_of_allTree2Ds_before = allTree2Ds.num; 
 
     for (int o = 0; o < Select3D.Model2D_ids.length; o++) {
 
       int OBJ_ID = Select3D.Model2D_ids[o];
 
-      float x = allModel2Ds.getX(OBJ_ID);
-      float y = allModel2Ds.getY(OBJ_ID);
-      float z = allModel2Ds.getZ(OBJ_ID);
-      float s = allModel2Ds.getS(OBJ_ID);
+      float x = allTree2Ds.getX(OBJ_ID);
+      float y = allTree2Ds.getY(OBJ_ID);
+      float z = allTree2Ds.getZ(OBJ_ID);
+      float s = allTree2Ds.getS(OBJ_ID);
 
-      int n = allModel2Ds.MAP[OBJ_ID];
-      if (allModel2Ds.isTree(n)) {
+      int n = allTree2Ds.MAP[OBJ_ID];
+      if (allTree2Ds.isTree(n)) {
         if (produce_same_variation == false) n = 0; // this makes it random
-        allModel2Ds.create("TREES", n, x, y, z, s);
+        allTree2Ds.create("TREES", n, x, y, z, s);
       } else {
         if (produce_same_variation == false) n = 0; // this makes it random
-        allModel2Ds.create("PEOPLE", n, x, y, z, s);
+        allTree2Ds.create("PEOPLE", n, x, y, z, s);
       }
     }
 
     // selecting new objetcs
 
-    Select3D.deselect_Model2Ds();
+    Select3D.deselect_Tree2Ds();
 
-    for (int o = number_of_allModel2Ds_before; o < allModel2Ds.num; o++) {
+    for (int o = number_of_allTree2Ds_before; o < allTree2Ds.num; o++) {
 
-      int[] newlyAddedallModel2Ds = {o};
+      int[] newlyAddedallTree2Ds = {o};
 
-      Select3D.Model2D_ids = concat(Select3D.Model2D_ids, newlyAddedallModel2Ds);
+      Select3D.Model2D_ids = concat(Select3D.Model2D_ids, newlyAddedallTree2Ds);
     }
   }
   
@@ -17412,7 +17413,7 @@ class solarchvision_Clone3D {
 
   void Groups (boolean produce_same_variation) {
 
-    int n1 = allModel2Ds.num_files_PEOPLE;
+    int n1 = allTree2Ds.num_files_PEOPLE;
 
     int SOLID_added = 0;
 
@@ -17437,27 +17438,27 @@ class solarchvision_Clone3D {
         if ((0 <= allGroups.getStop_Model1D(OBJ_ID)) && (allGroups.getStart_Model1D(OBJ_ID) <= allGroups.getStop_Model1D(OBJ_ID))) { 
           for (int q = allGroups.getStart_Model1D(OBJ_ID); q <= allGroups.getStop_Model1D(OBJ_ID); q++) {
 
-            float x = allModel1Ds.getX(q);
-            float y = allModel1Ds.getY(q);
-            float z = allModel1Ds.getZ(q);
+            float x = allTree3Ds.getX(q);
+            float y = allTree3Ds.getY(q);
+            float z = allTree3Ds.getZ(q);
 
-            float d = allModel1Ds.getScale(q);
-            float rot = allModel1Ds.getRotation(q);
+            float d = allTree3Ds.getScale(q);
+            float rot = allTree3Ds.getRotation(q);
             
-            float tilt = allModel1Ds.getBranchTilt(q);
-            float twist = allModel1Ds.getBranchTwist(q);
-            float ratio = allModel1Ds.getBranchRatio(q);                        
-            float base = allModel1Ds.getBranchRatio(q);
+            float tilt = allTree3Ds.getBranchTilt(q);
+            float twist = allTree3Ds.getBranchTwist(q);
+            float ratio = allTree3Ds.getBranchRatio(q);                        
+            float base = allTree3Ds.getBranchRatio(q);
 
-            int n = allModel1Ds.getType(q);
+            int n = allTree3Ds.getType(q);
 
-            int dMax = allModel1Ds.getDegreeMax(q);
+            int dMax = allTree3Ds.getDegreeMax(q);
 
-            int seed = allModel1Ds.getSeed(q);
+            int seed = allTree3Ds.getSeed(q);
 
-            float trunkSize = allModel1Ds.getTrunkSize(q);
+            float trunkSize = allTree3Ds.getTrunkSize(q);
 
-            float leafSize = allModel1Ds.getLeafSize(q);
+            float leafSize = allTree3Ds.getLeafSize(q);
 
             if (produce_same_variation == false) {
               randomSeed(millis());
@@ -17465,26 +17466,26 @@ class solarchvision_Clone3D {
               rot = floor(random(360));
               seed = int(random(32767));
             }
-            allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+            allTree3Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
           }
         }
 
         if ((0 <= allGroups.getStop_Model2D(OBJ_ID)) && (allGroups.getStart_Model2D(OBJ_ID) <= allGroups.getStop_Model2D(OBJ_ID))) { 
           for (int q = allGroups.getStart_Model2D(OBJ_ID); q <= allGroups.getStop_Model2D(OBJ_ID); q++) {
   
-            float x = allModel2Ds.getX(q);
-            float y = allModel2Ds.getY(q);
-            float z = allModel2Ds.getZ(q);
-            float s = allModel2Ds.getS(q);
+            float x = allTree2Ds.getX(q);
+            float y = allTree2Ds.getY(q);
+            float z = allTree2Ds.getZ(q);
+            float s = allTree2Ds.getS(q);
   
-            int n = allModel2Ds.MAP[q];
+            int n = allTree2Ds.MAP[q];
   
-            if (allModel2Ds.isTree(n)) {
+            if (allTree2Ds.isTree(n)) {
               if (produce_same_variation == false) n = 0; // this makes it random
-              allModel2Ds.create("TREES", n, x, y, z, s);
+              allTree2Ds.create("TREES", n, x, y, z, s);
             } else {
               if (produce_same_variation == false) n = 0; // this makes it random
-              allModel2Ds.create("PEOPLE", n, x, y, z, s);
+              allTree2Ds.create("PEOPLE", n, x, y, z, s);
             }
           }
         }
@@ -17590,27 +17591,27 @@ class solarchvision_Clone3D {
         if ((0 <= allGroups.getStop_Model1D(OBJ_ID)) && (allGroups.getStart_Model1D(OBJ_ID) <= allGroups.getStop_Model1D(OBJ_ID))) { 
           for (int q = allGroups.getStart_Model1D(OBJ_ID); q <= allGroups.getStop_Model1D(OBJ_ID); q++) {
 
-            float x = allModel1Ds.getX(q);
-            float y = allModel1Ds.getY(q);
-            float z = allModel1Ds.getZ(q);
+            float x = allTree3Ds.getX(q);
+            float y = allTree3Ds.getY(q);
+            float z = allTree3Ds.getZ(q);
 
-            float d = allModel1Ds.getScale(q);
-            float rot = allModel1Ds.getRotation(q);
+            float d = allTree3Ds.getScale(q);
+            float rot = allTree3Ds.getRotation(q);
             
-            float tilt = allModel1Ds.getBranchTilt(q);
-            float twist = allModel1Ds.getBranchTwist(q);
-            float ratio = allModel1Ds.getBranchRatio(q);                        
-            float base = allModel1Ds.getBranchRatio(q);
+            float tilt = allTree3Ds.getBranchTilt(q);
+            float twist = allTree3Ds.getBranchTwist(q);
+            float ratio = allTree3Ds.getBranchRatio(q);                        
+            float base = allTree3Ds.getBranchRatio(q);
 
-            int n = allModel1Ds.getType(q);
+            int n = allTree3Ds.getType(q);
 
-            int dMax = allModel1Ds.getDegreeMax(q);
+            int dMax = allTree3Ds.getDegreeMax(q);
 
-            int seed = allModel1Ds.getSeed(q);
+            int seed = allTree3Ds.getSeed(q);
 
-            float trunkSize = allModel1Ds.getTrunkSize(q);
+            float trunkSize = allTree3Ds.getTrunkSize(q);
 
-            float leafSize = allModel1Ds.getLeafSize(q);
+            float leafSize = allTree3Ds.getLeafSize(q);
 
             if (produce_same_variation == false) {
               randomSeed(millis());
@@ -17618,26 +17619,26 @@ class solarchvision_Clone3D {
               rot = floor(random(360));
               seed = int(random(32767));
             }
-            allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
+            allTree3Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
           }
         }
 
         if ((0 <= allGroups.getStop_Model2D(OBJ_ID)) && (allGroups.getStart_Model2D(OBJ_ID) <= allGroups.getStop_Model2D(OBJ_ID))) { 
           for (int q = allGroups.getStart_Model2D(OBJ_ID); q <= allGroups.getStop_Model2D(OBJ_ID); q++) {
 
-            float x = allModel2Ds.getX(q);
-            float y = allModel2Ds.getY(q);
-            float z = allModel2Ds.getZ(q);
-            float s = allModel2Ds.getS(q);
+            float x = allTree2Ds.getX(q);
+            float y = allTree2Ds.getY(q);
+            float z = allTree2Ds.getZ(q);
+            float s = allTree2Ds.getS(q);
 
-            int n = allModel2Ds.MAP[q];
+            int n = allTree2Ds.MAP[q];
 
-            if (allModel2Ds.isTree(n)) {
+            if (allTree2Ds.isTree(n)) {
               if (produce_same_variation == false) n = 0; // this makes it random
-              allModel2Ds.create("TREES", n, x, y, z, s);
+              allTree2Ds.create("TREES", n, x, y, z, s);
             } else {
               if (produce_same_variation == false) n = 0; // this makes it random
-              allModel2Ds.create("PEOPLE", n, x, y, z, s);
+              allTree2Ds.create("PEOPLE", n, x, y, z, s);
             }
           }
         }
@@ -17772,12 +17773,12 @@ class solarchvision_Delete3D {
       Delete3D.selected_Sections();
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      Delete3D.selected_Model1Ds();
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
+      Delete3D.selected_Tree3Ds();
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      Delete3D.selected_Model2Ds();
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
+      Delete3D.selected_Tree2Ds();
     }
   
     if (current_ObjectCategory == ObjectCategory.SOLID) {
@@ -17889,7 +17890,7 @@ class solarchvision_Delete3D {
 
 
 
-  void selected_Model1Ds () {
+  void selected_Tree3Ds () {
 
     Select3D.Model1D_ids = sort(Select3D.Model1D_ids);
 
@@ -17899,35 +17900,35 @@ class solarchvision_Delete3D {
 
       for (int q = 0; q < allGroups.num; q++) {
 
-        if ((allGroups.Model1Ds[q][0] <= OBJ_ID) && (OBJ_ID <= allGroups.Model1Ds[q][1])) {
-          if (allGroups.Model1Ds[q][1] >= 0) allGroups.Model1Ds[q][1] -= 1;
-        } else if (allGroups.Model1Ds[q][0] > OBJ_ID) {
-          if (allGroups.Model1Ds[q][0] >= 0) allGroups.Model1Ds[q][0] -= 1;
-          if (allGroups.Model1Ds[q][1] >= 0) allGroups.Model1Ds[q][1] -= 1;
+        if ((allGroups.Tree3Ds[q][0] <= OBJ_ID) && (OBJ_ID <= allGroups.Tree3Ds[q][1])) {
+          if (allGroups.Tree3Ds[q][1] >= 0) allGroups.Tree3Ds[q][1] -= 1;
+        } else if (allGroups.Tree3Ds[q][0] > OBJ_ID) {
+          if (allGroups.Tree3Ds[q][0] >= 0) allGroups.Tree3Ds[q][0] -= 1;
+          if (allGroups.Tree3Ds[q][1] >= 0) allGroups.Tree3Ds[q][1] -= 1;
         }
       }
 
 
       {
-        float[][] startList = (float[][]) subset(allModel1Ds.f_data, 0, OBJ_ID);
-        float[][] endList = (float[][]) subset(allModel1Ds.f_data, OBJ_ID + 1);
+        float[][] startList = (float[][]) subset(allTree3Ds.f_data, 0, OBJ_ID);
+        float[][] endList = (float[][]) subset(allTree3Ds.f_data, OBJ_ID + 1);
 
-        allModel1Ds.f_data = (float[][]) concat(startList, endList);
+        allTree3Ds.f_data = (float[][]) concat(startList, endList);
       }
 
       {
-        int[][] startList = (int[][]) subset(allModel1Ds.i_data, 0, OBJ_ID);
-        int[][] endList = (int[][]) subset(allModel1Ds.i_data, OBJ_ID + 1);
+        int[][] startList = (int[][]) subset(allTree3Ds.i_data, 0, OBJ_ID);
+        int[][] endList = (int[][]) subset(allTree3Ds.i_data, OBJ_ID + 1);
 
-        allModel1Ds.i_data = (int[][]) concat(startList, endList);
+        allTree3Ds.i_data = (int[][]) concat(startList, endList);
       }
 
-      allModel1Ds.num -= 1;
+      allTree3Ds.num -= 1;
     }
   }
 
 
-  void selected_Model2Ds () {
+  void selected_Tree2Ds () {
 
     Select3D.Model2D_ids = sort(Select3D.Model2D_ids);
 
@@ -17937,30 +17938,30 @@ class solarchvision_Delete3D {
 
       for (int q = 0; q < allGroups.num; q++) {
 
-        if ((allGroups.Model2Ds[q][0] <= OBJ_ID) && (OBJ_ID <= allGroups.Model2Ds[q][1])) {
-          if (allGroups.Model2Ds[q][1] >= 0) allGroups.Model2Ds[q][1] -= 1;
-        } else if (allGroups.Model2Ds[q][0] > OBJ_ID) {
-          if (allGroups.Model2Ds[q][0] >= 0) allGroups.Model2Ds[q][0] -= 1;
-          if (allGroups.Model2Ds[q][1] >= 0) allGroups.Model2Ds[q][1] -= 1;
+        if ((allGroups.Tree2Ds[q][0] <= OBJ_ID) && (OBJ_ID <= allGroups.Tree2Ds[q][1])) {
+          if (allGroups.Tree2Ds[q][1] >= 0) allGroups.Tree2Ds[q][1] -= 1;
+        } else if (allGroups.Tree2Ds[q][0] > OBJ_ID) {
+          if (allGroups.Tree2Ds[q][0] >= 0) allGroups.Tree2Ds[q][0] -= 1;
+          if (allGroups.Tree2Ds[q][1] >= 0) allGroups.Tree2Ds[q][1] -= 1;
         }
       }
 
 
       {
-        float[][] startList = (float[][]) subset(allModel2Ds.XYZS, 0, OBJ_ID);
-        float[][] endList = (float[][]) subset(allModel2Ds.XYZS, OBJ_ID + 1);
+        float[][] startList = (float[][]) subset(allTree2Ds.XYZS, 0, OBJ_ID);
+        float[][] endList = (float[][]) subset(allTree2Ds.XYZS, OBJ_ID + 1);
 
-        allModel2Ds.XYZS = (float[][]) concat(startList, endList);
+        allTree2Ds.XYZS = (float[][]) concat(startList, endList);
       }
 
       {
-        int[] startList = (int[]) subset(allModel2Ds.MAP, 0, OBJ_ID);
-        int[] endList = (int[]) subset(allModel2Ds.MAP, OBJ_ID + 1);
+        int[] startList = (int[]) subset(allTree2Ds.MAP, 0, OBJ_ID);
+        int[] endList = (int[]) subset(allTree2Ds.MAP, OBJ_ID + 1);
 
-        allModel2Ds.MAP = (int[]) concat(startList, endList);
+        allTree2Ds.MAP = (int[]) concat(startList, endList);
       }   
 
-      allModel2Ds.num -= 1;
+      allTree2Ds.num -= 1;
     }
 
   }
@@ -18161,90 +18162,90 @@ class solarchvision_Delete3D {
       }
 
 
-      int startModel1Ds = allGroups.getStart_Model1D(OBJ_ID);
-      int endModel1Ds = allGroups.getStop_Model1D(OBJ_ID);
+      int startTree3Ds = allGroups.getStart_Model1D(OBJ_ID);
+      int endTree3Ds = allGroups.getStop_Model1D(OBJ_ID);
 
       {
 
-        if ((0 <= startModel1Ds) && (startModel1Ds <= endModel1Ds)) {
+        if ((0 <= startTree3Ds) && (startTree3Ds <= endTree3Ds)) {
 
           for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
 
             for (int j = 0; j < 2; j++) {
 
-              allGroups.Model1Ds[i][j] -= 1 + endModel1Ds - startModel1Ds;
+              allGroups.Tree3Ds[i][j] -= 1 + endTree3Ds - startTree3Ds;
 
-              if (allGroups.Model1Ds[i][j] < 0) allGroups.Model1Ds[i][j] = 0;
+              if (allGroups.Tree3Ds[i][j] < 0) allGroups.Tree3Ds[i][j] = 0;
             }
           }
         }   
 
-        int[][] startList = (int[][]) subset(allGroups.Model1Ds, 0, OBJ_ID);
-        int[][] endList = (int[][]) subset(allGroups.Model1Ds, OBJ_ID + 1);
+        int[][] startList = (int[][]) subset(allGroups.Tree3Ds, 0, OBJ_ID);
+        int[][] endList = (int[][]) subset(allGroups.Tree3Ds, OBJ_ID + 1);
 
-        allGroups.Model1Ds = (int[][]) concat(startList, endList);
+        allGroups.Tree3Ds = (int[][]) concat(startList, endList);
       }  
 
-      if ((0 <= startModel1Ds) && (startModel1Ds <= endModel1Ds)) {
+      if ((0 <= startTree3Ds) && (startTree3Ds <= endTree3Ds)) {
 
         {
-          float[][] startList = (float[][]) subset(allModel1Ds.f_data, 0, startModel1Ds);
-          float[][] endList = (float[][]) subset(allModel1Ds.f_data, endModel1Ds + 1);
+          float[][] startList = (float[][]) subset(allTree3Ds.f_data, 0, startTree3Ds);
+          float[][] endList = (float[][]) subset(allTree3Ds.f_data, endTree3Ds + 1);
 
-          allModel1Ds.f_data = (float[][]) concat(startList, endList);
+          allTree3Ds.f_data = (float[][]) concat(startList, endList);
         }
 
         {
-          int[][] startList = (int[][]) subset(allModel1Ds.i_data, 0, startModel1Ds);
-          int[][] endList = (int[][]) subset(allModel1Ds.i_data, endModel1Ds + 1);
+          int[][] startList = (int[][]) subset(allTree3Ds.i_data, 0, startTree3Ds);
+          int[][] endList = (int[][]) subset(allTree3Ds.i_data, endTree3Ds + 1);
 
-          allModel1Ds.i_data = (int[][]) concat(startList, endList);
+          allTree3Ds.i_data = (int[][]) concat(startList, endList);
         }
 
-        allModel1Ds.num = allModel1Ds.f_data.length;
+        allTree3Ds.num = allTree3Ds.f_data.length;
       }
 
-      int startModel2Ds = allGroups.getStart_Model2D(OBJ_ID);
-      int endModel2Ds = allGroups.getStop_Model2D(OBJ_ID);
+      int startTree2Ds = allGroups.getStart_Model2D(OBJ_ID);
+      int endTree2Ds = allGroups.getStop_Model2D(OBJ_ID);
 
       {
 
-        if ((0 <= startModel2Ds) && (startModel2Ds <= endModel2Ds)) {
+        if ((0 <= startTree2Ds) && (startTree2Ds <= endTree2Ds)) {
 
           for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
 
             for (int j = 0; j < 2; j++) {
 
-              allGroups.Model2Ds[i][j] -= 1 + endModel2Ds - startModel2Ds;
+              allGroups.Tree2Ds[i][j] -= 1 + endTree2Ds - startTree2Ds;
 
-              if (allGroups.Model2Ds[i][j] < 0) allGroups.Model2Ds[i][j] = 0;
+              if (allGroups.Tree2Ds[i][j] < 0) allGroups.Tree2Ds[i][j] = 0;
             }
           }
         }   
 
-        int[][] startList = (int[][]) subset(allGroups.Model2Ds, 0, OBJ_ID);
-        int[][] endList = (int[][]) subset(allGroups.Model2Ds, OBJ_ID + 1);
+        int[][] startList = (int[][]) subset(allGroups.Tree2Ds, 0, OBJ_ID);
+        int[][] endList = (int[][]) subset(allGroups.Tree2Ds, OBJ_ID + 1);
 
-        allGroups.Model2Ds = (int[][]) concat(startList, endList);
+        allGroups.Tree2Ds = (int[][]) concat(startList, endList);
       }  
 
-      if ((0 <= startModel2Ds) && (startModel2Ds <= endModel2Ds)) {
+      if ((0 <= startTree2Ds) && (startTree2Ds <= endTree2Ds)) {
 
         {
-          float[][] startList = (float[][]) subset(allModel2Ds.XYZS, 0, startModel2Ds);
-          float[][] endList = (float[][]) subset(allModel2Ds.XYZS, endModel2Ds + 1);
+          float[][] startList = (float[][]) subset(allTree2Ds.XYZS, 0, startTree2Ds);
+          float[][] endList = (float[][]) subset(allTree2Ds.XYZS, endTree2Ds + 1);
 
-          allModel2Ds.XYZS = (float[][]) concat(startList, endList);
+          allTree2Ds.XYZS = (float[][]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allModel2Ds.MAP, 0, startModel2Ds);
-          int[] endList = (int[]) subset(allModel2Ds.MAP, endModel2Ds + 1);
+          int[] startList = (int[]) subset(allTree2Ds.MAP, 0, startTree2Ds);
+          int[] endList = (int[]) subset(allTree2Ds.MAP, endTree2Ds + 1);
 
-          allModel2Ds.MAP = (int[]) concat(startList, endList);
+          allTree2Ds.MAP = (int[]) concat(startList, endList);
         }
 
-        allModel2Ds.num = allModel2Ds.XYZS.length;
+        allTree2Ds.num = allTree2Ds.XYZS.length;
       }
 
       int startSolid = allGroups.getStart_Solid(OBJ_ID);
@@ -18742,10 +18743,10 @@ class solarchvision_Select3D {
     if (current_ObjectCategory == ObjectCategory.GROUP) {
       theVertices = this.get_Group_Vertices();
     }
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
       theVertices = this.Model2D_ids;
     }
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
       theVertices = this.Model1D_ids;
     }  
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
@@ -18904,19 +18905,19 @@ class solarchvision_Select3D {
         y = allPoints.getY(n);
         z = allPoints.getZ(n);
       }
-      if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      if (current_ObjectCategory == ObjectCategory.TREE2D) {
         int n = theVertices[q];
   
-        x = allModel2Ds.getX(n);
-        y = allModel2Ds.getY(n);
-        z = allModel2Ds.getZ(n);
+        x = allTree2Ds.getX(n);
+        y = allTree2Ds.getY(n);
+        z = allTree2Ds.getZ(n);
       }     
-      if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      if (current_ObjectCategory == ObjectCategory.TREE3D) {
         int n = theVertices[q];
   
-        x = allModel1Ds.getX(n);
-        y = allModel1Ds.getY(n);
-        z = allModel1Ds.getZ(n);
+        x = allTree3Ds.getX(n);
+        y = allTree3Ds.getY(n);
+        z = allTree3Ds.getZ(n);
       }  
       if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
         int n = theVertices[q];
@@ -19265,7 +19266,7 @@ class solarchvision_Select3D {
     }
   
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
   
       int OBJ_ID = int(RxP[0]);
   
@@ -19315,7 +19316,7 @@ class solarchvision_Select3D {
     
   
   
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
   
       int OBJ_ID = int(RxP[0]);
   
@@ -19835,9 +19836,9 @@ class solarchvision_Select3D {
   
   
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
   
-      for (int OBJ_ID = 0; OBJ_ID < allModel1Ds.Faces.length; OBJ_ID++) {
+      for (int OBJ_ID = 0; OBJ_ID < allTree3Ds.Faces.length; OBJ_ID++) {
   
         int break_loops = 0;
   
@@ -19848,13 +19849,13 @@ class solarchvision_Select3D {
   
         int f = OBJ_ID;
   
-        for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
+        for (int j = 0; j < allTree3Ds.Faces[f].length; j++) {
   
-          int vNo = allModel1Ds.Faces[f][j];
+          int vNo = allTree3Ds.Faces[f][j];
   
-          float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-          float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-          float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+          float x = allTree3Ds.Vertices[vNo][0] * OBJECTS_scale;
+          float y = allTree3Ds.Vertices[vNo][1] * OBJECTS_scale;
+          float z = -allTree3Ds.Vertices[vNo][2] * OBJECTS_scale;
   
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
@@ -20323,9 +20324,9 @@ class solarchvision_Select3D {
       }
     }             
   
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
   
-      for (int f = 0; f < allModel2Ds.Faces.length; f++) {
+      for (int f = 0; f < allTree2Ds.Faces.length; f++) {
   
         int break_loops = 0;
   
@@ -20334,17 +20335,17 @@ class solarchvision_Select3D {
         if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
         if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
   
-        int OBJ_ID = f / allModel2Ds.num_visualFaces;
+        int OBJ_ID = f / allTree2Ds.num_visualFaces;
   
         //println(f, OBJ_ID);
   
-        for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
+        for (int j = 0; j < allTree2Ds.Faces[f].length; j++) {
   
-          int vNo = allModel2Ds.Faces[f][j];
+          int vNo = allTree2Ds.Faces[f][j];
   
-          float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
-          float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-          float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+          float x = allTree2Ds.Vertices[vNo][0] * OBJECTS_scale;
+          float y = allTree2Ds.Vertices[vNo][1] * OBJECTS_scale;
+          float z = -allTree2Ds.Vertices[vNo][2] * OBJECTS_scale;
   
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
   
@@ -20418,7 +20419,7 @@ class solarchvision_Select3D {
             this.Model2D_ids = (int[]) concat(this.Model2D_ids, newObject_id);
             
             // skip the same object's drawn faces
-            f += allModel2Ds.num_visualFaces - (f % allModel2Ds.num_visualFaces) - 1;
+            f += allTree2Ds.num_visualFaces - (f % allTree2Ds.num_visualFaces) - 1;
           }
         }
       }
@@ -20749,12 +20750,12 @@ class solarchvision_Select3D {
     this.Section_ids = new int [0];
   }  
 
-  void deselect_Model1Ds () {
+  void deselect_Tree3Ds () {
     this.Model1D_ids = new int [0];
   }
   
 
-  void deselect_Model2Ds () {
+  void deselect_Tree2Ds () {
     this.Model2D_ids = new int [0];
   }  
   
@@ -20769,8 +20770,8 @@ class solarchvision_Select3D {
     this.deselect_Cameras();
     this.deselect_Sections();
     this.deselect_Solids();
-    this.deselect_Model1Ds();
-    this.deselect_Model2Ds();
+    this.deselect_Tree3Ds();
+    this.deselect_Tree2Ds();
     this.deselect_Faces();
     this.deselect_Curves();
     this.deselect_Vertices();
@@ -20788,15 +20789,15 @@ class solarchvision_Select3D {
       }
     }  
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1D_ids = new int [allModel1Ds.num];
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
+      this.Model1D_ids = new int [allTree3Ds.num];
       for (int i = 0; i < this.Model1D_ids.length; i++) { 
         this.Model1D_ids[i] = i;
       }
     }
   
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2D_ids = new int [allModel2Ds.num];
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
+      this.Model2D_ids = new int [allTree2Ds.num];
       for (int i = 0; i < this.Model2D_ids.length; i++) { 
         this.Model2D_ids[i] = i;
       }
@@ -20885,12 +20886,12 @@ class solarchvision_Select3D {
       }
     }     
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
       int[] pre_Selection_Model1D_ids = sort(this.Model1D_ids);
   
       this.Model1D_ids = new int [0];
   
-      for (int i = 0; i < allModel1Ds.num; i++) {
+      for (int i = 0; i < allTree3Ds.num; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_Selection_Model1D_ids.length; j++) {
@@ -20913,12 +20914,12 @@ class solarchvision_Select3D {
       }
     }    
     
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
       int[] pre_Selection_Model2D_ids = sort(this.Model2D_ids);
   
       this.Model2D_ids = new int [0];
   
-      for (int i = 0; i < allModel2Ds.num; i++) {
+      for (int i = 0; i < allTree2Ds.num; i++) {
         int found = -1; 
   
         for (int j = 0; j < pre_Selection_Model2D_ids.length; j++) {
@@ -21288,20 +21289,20 @@ class solarchvision_Select3D {
       }
     } 
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (current_ObjectCategory == ObjectCategory.TREE3D) {
       this.Model1D_ids = new int [0];
       
-      if (allModel1Ds.num > 0) {
-        int[] new_Item = {allModel1Ds.num - 1};
+      if (allTree3Ds.num > 0) {
+        int[] new_Item = {allTree3Ds.num - 1};
         this.Model1D_ids = concat(this.Model1D_ids, new_Item);
       }
     } 
   
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (current_ObjectCategory == ObjectCategory.TREE2D) {
       this.Model2D_ids = new int [0];
       
-      if (allModel2Ds.num > 0) {
-        int[] new_Item = {allModel2Ds.num - 1};
+      if (allTree2Ds.num > 0) {
+        int[] new_Item = {allTree2Ds.num - 1};
         this.Model2D_ids = concat(this.Model2D_ids, new_Item);
       }
     } 
@@ -21360,7 +21361,7 @@ class solarchvision_Select3D {
   }
 
 
-  void convert_Model1Ds_to_Groups () {
+  void convert_Tree3Ds_to_Groups () {
   
     this.Group_ids = new int [0];
   
@@ -21390,7 +21391,7 @@ class solarchvision_Select3D {
     }
   }
   
-  void convert_Model2Ds_to_Groups () {
+  void convert_Tree2Ds_to_Groups () {
   
     this.Group_ids = new int [0];
   
@@ -21657,7 +21658,7 @@ class solarchvision_Select3D {
     }
   }
   
-  void convert_Groups_to_Model1Ds () {
+  void convert_Groups_to_Tree3Ds () {
   
     this.Model1D_ids = new int [0];
     
@@ -21685,7 +21686,7 @@ class solarchvision_Select3D {
   }
   
  
-  void convert_Groups_to_Model2Ds () {
+  void convert_Groups_to_Tree2Ds () {
   
     this.Model2D_ids = new int [0];
   
@@ -22275,7 +22276,7 @@ class solarchvision_Select3D {
         txt += nf(this.Model1D_ids[i], 0);
         if (i < ni - 1) txt += "|";
       }
-      XML_setString(parent, "selected_Model1Ds", txt);
+      XML_setString(parent, "selected_Tree3Ds", txt);
     }      
 
  
@@ -22286,7 +22287,7 @@ class solarchvision_Select3D {
         txt += nf(this.Model2D_ids[i], 0);
         if (i < ni - 1) txt += "|";
       }
-      XML_setString(parent, "selected_Model2Ds", txt);
+      XML_setString(parent, "selected_Tree2Ds", txt);
     }      
   
     { 
@@ -22441,7 +22442,7 @@ class solarchvision_Select3D {
     }
     
     {
-      String txt = XML_getString(parent, "selected_Model1Ds");      
+      String txt = XML_getString(parent, "selected_Tree3Ds");      
       if (txt.equals("")) {
         this.Model1D_ids = new int[0]; 
       }
@@ -22455,7 +22456,7 @@ class solarchvision_Select3D {
     }
     
     {
-      String txt = XML_getString(parent, "selected_Model2Ds");    
+      String txt = XML_getString(parent, "selected_Tree2Ds");    
       if (txt.equals("")) {
         this.Model2D_ids = new int[0]; 
       }
@@ -22896,9 +22897,9 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
-    stroke(255); fill(255); text("Model2Ds.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("Tree2Ds.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 4) {
-    allModel2Ds.load_images();
+    allTree2Ds.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY); 
 
@@ -25204,7 +25205,7 @@ void SOLARCHVISION_export_objects_HTML () {
   
   allSections.draw(TypeWindow.HTML);
   
-  allModel2Ds.draw(TypeWindow.HTML);
+  allTree2Ds.draw(TypeWindow.HTML);
   
   allFaces.draw(TypeWindow.HTML);
 
@@ -25330,9 +25331,9 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
   
   allSections.draw(TypeWindow.OBJ);
   
-  allModel1Ds.draw(TypeWindow.OBJ);
+  allTree3Ds.draw(TypeWindow.OBJ);
   
-  allModel2Ds.draw(TypeWindow.OBJ);
+  allTree2Ds.draw(TypeWindow.OBJ);
   
   allFaces.draw(TypeWindow.OBJ);
 
@@ -25620,8 +25621,8 @@ float SOLARCHVISION_import_objects_asParametricBox_OBJ (String FileName, int m, 
 
 void SOLARCHVISION_delete_ALL () {
   
-  allModel1Ds.makeEmpty(0);
-  allModel2Ds.makeEmpty(0);
+  allTree3Ds.makeEmpty(0);
+  allTree2Ds.makeEmpty(0);
 
   allCurves.makeEmpty(0);
   allFaces.makeEmpty(0);
@@ -29881,11 +29882,11 @@ solarchvision_Land3D Land3D = new solarchvision_Land3D();
 
 
 
-class solarchvision_Model1Ds {
+class solarchvision_Tree3Ds {
   
-  private final static String CLASS_STAMP = "Model1Ds";
+  private final static String CLASS_STAMP = "Tree3Ds";
   
-  solarchvision_Model1Ds () { // constructor
+  solarchvision_Tree3Ds () { // constructor
     makeEmpty(0);
   }  
 
@@ -29907,14 +29908,14 @@ class solarchvision_Model1Ds {
   
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
-        allGroups.Model1Ds[q][0] = 0;
-        allGroups.Model1Ds[q][1] = -1;
+        allGroups.Tree3Ds[q][0] = 0;
+        allGroups.Tree3Ds[q][1] = -1;
       }  
     }  
 
     if (Select3D != null) {
       Select3D.deselect_Groups();  
-      Select3D.deselect_Model1Ds();
+      Select3D.deselect_Tree3Ds();
     }
   }
 
@@ -29945,7 +29946,7 @@ class solarchvision_Model1Ds {
     }
   
   
-    if (allGroups.num > 0) allGroups.Model1Ds[allGroups.num - 1][1] = this.num - 1;
+    if (allGroups.num > 0) allGroups.Tree3Ds[allGroups.num - 1][1] = this.num - 1;
   
   }  
   
@@ -30193,7 +30194,7 @@ class solarchvision_Model1Ds {
     
             if (User3D.export_PolyToPoly == 1) {
               obj_lastGroupNumber += 1;
-              objOutput.println("g Model1Ds_" + nf(f, 0));
+              objOutput.println("g Tree3Ds_" + nf(f, 0));
             }    
           }
   
@@ -30757,7 +30758,7 @@ class solarchvision_Model1Ds {
 
 }
 
-solarchvision_Model1Ds allModel1Ds = new solarchvision_Model1Ds();
+solarchvision_Tree3Ds allTree3Ds = new solarchvision_Tree3Ds();
 
 
 
@@ -30765,11 +30766,11 @@ solarchvision_Model1Ds allModel1Ds = new solarchvision_Model1Ds();
 
 
 
-class solarchvision_Model2Ds {
+class solarchvision_Tree2Ds {
   
-  private final static String CLASS_STAMP = "Model2Ds";
+  private final static String CLASS_STAMP = "Tree2Ds";
 
-  solarchvision_Model2Ds () { // constructor
+  solarchvision_Tree2Ds () { // constructor
     makeEmpty(0);
   }  
 
@@ -30786,14 +30787,14 @@ class solarchvision_Model2Ds {
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
-        allGroups.Model2Ds[q][0] = 0;
-        allGroups.Model2Ds[q][1] = -1;
+        allGroups.Tree2Ds[q][0] = 0;
+        allGroups.Tree2Ds[q][1] = -1;
       }  
     }
 
     if (Select3D != null) {
       Select3D.deselect_Groups();
-      Select3D.deselect_Model2Ds();
+      Select3D.deselect_Tree2Ds();
     }
   }    
   
@@ -30840,7 +30841,7 @@ class solarchvision_Model2Ds {
       }
     }
   
-    if (allGroups.num > 0) allGroups.Model2Ds[allGroups.num - 1][1] = this.num - 1;
+    if (allGroups.num > 0) allGroups.Tree2Ds[allGroups.num - 1][1] = this.num - 1;
   }  
     
   
@@ -31954,7 +31955,7 @@ class solarchvision_Model2Ds {
   }    
 }
 
-solarchvision_Model2Ds allModel2Ds = new solarchvision_Model2Ds();
+solarchvision_Tree2Ds allTree2Ds = new solarchvision_Tree2Ds();
 
 
 
@@ -36586,7 +36587,7 @@ class solarchvision_Create3D {
   
       float the_dist = funcs.vec_dist(newVertex[0], TempObjectVertices[i]);
   
-      if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for allModel1Ds spheres!
+      if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for allTree3Ds spheres!
   
         if (min_dist > the_dist) {
           min_dist = the_dist;
@@ -36967,9 +36968,9 @@ class solarchvision_Create3D {
                     if (foundNearTree == 0) {
   
                       if (people_or_trees == 2) {
-                        allModel2Ds.create("TREES", 0, x, y, z, s);
+                        allTree2Ds.create("TREES", 0, x, y, z, s);
                       } else {
-                        allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
+                        allTree3Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
                                            User3D.create_Model1D_DegreeMax,
                                            x, y, z, s, floor(random(360)),
                                            User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
@@ -37040,11 +37041,11 @@ class solarchvision_Create3D {
                 if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
   
                   if (people_or_trees == 1) {
-                    allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+                    allTree2Ds.create("PEOPLE", 0, x, y, z, 2.5);
                   } else if (people_or_trees == 2) {
-                    allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
+                    allTree2Ds.create("TREES", 0, x, y, z, 5 + random(10));
                   } else {
-                    allModel1Ds.create(User3D.create_Model1D_Type,  User3D.create_Model1D_Seed, 
+                    allTree3Ds.create(User3D.create_Model1D_Type,  User3D.create_Model1D_Seed, 
                                        User3D.create_Model1D_DegreeMax, 
                                        x, y, z, 5 + random(10), floor(random(360)), 
                                        User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
@@ -37072,11 +37073,11 @@ class solarchvision_Create3D {
       float z = z0;
   
       if (people_or_trees == 1) {
-        allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+        allTree2Ds.create("PEOPLE", 0, x, y, z, 2.5);
       } else if (people_or_trees == 2) {
-        allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
+        allTree2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
+        allTree3Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
                            User3D.create_Model1D_DegreeMax, 
                            x, y, z, 5 + random(10), floor(random(360)), 
                            User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
@@ -37106,11 +37107,11 @@ class solarchvision_Create3D {
       z += z0;
   
       if (people_or_trees == 1) {
-        allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+        allTree2Ds.create("PEOPLE", 0, x, y, z, 2.5);
       } else if (people_or_trees == 2) {
-        allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
+        allTree2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
+        allTree3Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
                            User3D.create_Model1D_DegreeMax, 
                            x, y, z, 5 + random(10), floor(random(360)), 
                            User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
@@ -37143,11 +37144,11 @@ class solarchvision_Create3D {
       float z = z0;
   
       if (people_or_trees == 1) {
-        allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+        allTree2Ds.create("PEOPLE", 0, x, y, z, 2.5);
       } else if (people_or_trees == 2) {
-        allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
+        allTree2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed,
+        allTree3Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed,
                            User3D.create_Model1D_DegreeMax,  
                            x, y, z, 5 + random(10), floor(random(360)), 
                            User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
@@ -37172,8 +37173,8 @@ class solarchvision_Create3D {
   
       Create3D.add_onLand(2); // 2 = 2D trees
     } else {
-      //allModel2Ds.add_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
-      //allModel2Ds.add_polar(2, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
+      //allTree2Ds.add_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
+      //allTree2Ds.add_polar(2, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
     }  
   
   
@@ -37340,7 +37341,7 @@ class solarchvision_Create3D {
       float y = float(parts[1]);
       float z = float(parts[2]);
   
-      allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
+      allTree2Ds.create("PEOPLE", 0, x, y, z, 2.5);
     }
   }
   
@@ -41986,20 +41987,20 @@ void mouseClicked () {
               ROLLOUT.revise();
             }             
             if (menu_option.equals("Display/Hide Leaves")) {
-              allModel1Ds.displayLeaves = !allModel1Ds.displayLeaves;
+              allTree3Ds.displayLeaves = !allTree3Ds.displayLeaves;
 
               WIN3D.revise();  
               ROLLOUT.revise();
             } 
-            if (menu_option.equals("Display/Hide Model1Ds")) {
-              allModel1Ds.displayAll = !allModel1Ds.displayAll;
-              allModel1Ds.displayLeaves = allModel1Ds.displayAll; // <<<<<<
+            if (menu_option.equals("Display/Hide Tree3Ds")) {
+              allTree3Ds.displayAll = !allTree3Ds.displayAll;
+              allTree3Ds.displayLeaves = allTree3Ds.displayAll; // <<<<<<
 
               WIN3D.revise();  
               ROLLOUT.revise();
             } 
-            if (menu_option.equals("Display/Hide Model2Ds")) {
-              allModel2Ds.displayAll = !allModel2Ds.displayAll;
+            if (menu_option.equals("Display/Hide Tree2Ds")) {
+              allTree2Ds.displayAll = !allTree2Ds.displayAll;
 
               WIN3D.revise();  
               ROLLOUT.revise();
@@ -42253,7 +42254,7 @@ void mouseClicked () {
             }
 
             if (menu_option.equals("3D-Tree")) {
-              UI_set_to_Create_allModel1Ds();
+              UI_set_to_Create_allTree3Ds();
               UI_toolBar.highlight("3D-Tree");
               UI_toolBar.revise();
             }
@@ -42902,18 +42903,18 @@ void mouseClicked () {
               UI_toolBar.revise();
             }     
 
-            if (menu_option.equals("Model1DsProps")) {
-              UI_set_to_Modify_Model1DsProps(0);
+            if (menu_option.equals("Tree3DsProps")) {
+              UI_set_to_Modify_Tree3DsProps(0);
               UI_toolBar.highlight("allFP0");
               UI_toolBar.revise();
             }
-            if (menu_option.equals("Pick Model1DsProps")) {
-              UI_set_to_Modify_Model1DsProps(1);
+            if (menu_option.equals("Pick Tree3DsProps")) {
+              UI_set_to_Modify_Tree3DsProps(1);
               UI_toolBar.highlight("allFP1");
               UI_toolBar.revise();
             }
-            if (menu_option.equals("Assign Model1DsProps")) {
-              UI_set_to_Modify_Model1DsProps(2);
+            if (menu_option.equals("Assign Tree3DsProps")) {
+              UI_set_to_Modify_Tree3DsProps(2);
               UI_toolBar.highlight("allFP2");
               UI_toolBar.revise();
             }                 
@@ -43007,19 +43008,19 @@ void mouseClicked () {
               WIN3D.revise();
             }         
             if (menu_option.equals("Select All 3D-Trees")) {
-              current_ObjectCategory = ObjectCategory.MODEL1D;
+              current_ObjectCategory = ObjectCategory.TREE3D;
               UI_toolBar.revise();
               Select3D.select_all();
               WIN3D.revise();
             }         
             if (menu_option.equals("Select All 2D-Trees")) {
-              current_ObjectCategory = ObjectCategory.MODEL2D;
+              current_ObjectCategory = ObjectCategory.TREE2D;
               UI_toolBar.revise();
               Select3D.select_all();
               WIN3D.revise();
             }         
             if (menu_option.equals("Select All People")) {
-              current_ObjectCategory = ObjectCategory.MODEL2D;
+              current_ObjectCategory = ObjectCategory.TREE2D;
               UI_toolBar.revise();
               Select3D.select_all();
               WIN3D.revise();
@@ -43050,13 +43051,13 @@ void mouseClicked () {
               WIN3D.revise();
               UI_toolBar.revise();
             }              
-            if (menu_option.equals("Select Model1Ds")) {
-              current_ObjectCategory = ObjectCategory.MODEL1D;
+            if (menu_option.equals("Select Tree3Ds")) {
+              current_ObjectCategory = ObjectCategory.TREE3D;
               WIN3D.revise();
               UI_toolBar.revise();
             }  
-            if (menu_option.equals("Select Model2Ds")) {
-              current_ObjectCategory = ObjectCategory.MODEL2D;
+            if (menu_option.equals("Select Tree2Ds")) {
+              current_ObjectCategory = ObjectCategory.TREE2D;
               WIN3D.revise();
               UI_toolBar.revise();
             } 
@@ -43159,27 +43160,27 @@ void mouseClicked () {
               WIN3D.revise();
               UI_toolBar.revise();
             }                
-            if (menu_option.equals("Model2Ds >> Group")) {
-              Select3D.convert_Model2Ds_to_Groups();
+            if (menu_option.equals("Tree2Ds >> Group")) {
+              Select3D.convert_Tree2Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Group >> Model2Ds")) {
-              Select3D.convert_Groups_to_Model2Ds();
-              current_ObjectCategory = ObjectCategory.MODEL2D;
+            if (menu_option.equals("Group >> Tree2Ds")) {
+              Select3D.convert_Groups_to_Tree2Ds();
+              current_ObjectCategory = ObjectCategory.TREE2D;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Model1Ds >> Group")) {
-              Select3D.convert_Model1Ds_to_Groups();
+            if (menu_option.equals("Tree3Ds >> Group")) {
+              Select3D.convert_Tree3Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Group >> Model1Ds")) {
-              Select3D.convert_Groups_to_Model1Ds();
-              current_ObjectCategory = ObjectCategory.MODEL1D;
+            if (menu_option.equals("Group >> Tree3Ds")) {
+              Select3D.convert_Groups_to_Tree3Ds();
+              current_ObjectCategory = ObjectCategory.TREE3D;
               WIN3D.revise();
               UI_toolBar.revise();
             }            
@@ -43399,13 +43400,13 @@ void mouseClicked () {
               WIN3D.revise();
             }   
 
-            if (menu_option.equals("Erase All Model1Ds")) {
-              allModel1Ds.makeEmpty(0);
+            if (menu_option.equals("Erase All Tree3Ds")) {
+              allTree3Ds.makeEmpty(0);
               WIN3D.revise();
             }      
     
-            if (menu_option.equals("Erase All Model2Ds")) {
-              allModel2Ds.makeEmpty(0);
+            if (menu_option.equals("Erase All Tree2Ds")) {
+              allTree2Ds.makeEmpty(0);
               WIN3D.revise();
             }        
     
@@ -44064,10 +44065,10 @@ void mouseClicked () {
                     RxP = allSections.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.SOLID) {
                     RxP = allSolids.intersect(ray_start, ray_direction);
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-                    RxP = allModel1Ds.intersect(ray_start, ray_direction);
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-                    RxP = allModel2Ds.intersect(ray_start, ray_direction);
+                  } else if (current_ObjectCategory == ObjectCategory.TREE3D) {
+                    RxP = allTree3Ds.intersect(ray_start, ray_direction);
+                  } else if (current_ObjectCategory == ObjectCategory.TREE2D) {
+                    RxP = allTree2Ds.intersect(ray_start, ray_direction);
                   } else {
                     RxP = SOLARCHVISION_snap_Faces(allFaces.intersect(ray_start, ray_direction));
                   }
@@ -44097,18 +44098,18 @@ void mouseClicked () {
                     z1 = P[2];
                   }
   
-                  if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+                  if (current_ObjectCategory == ObjectCategory.TREE2D) {
   
-                    x1 = allModel2Ds.getX(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]); 
-                    y1 = allModel2Ds.getY(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]); 
-                    z1 = allModel2Ds.getZ(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
+                    x1 = allTree2Ds.getX(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]); 
+                    y1 = allTree2Ds.getY(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]); 
+                    z1 = allTree2Ds.getZ(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
                   }
   
-                  if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                  if (current_ObjectCategory == ObjectCategory.TREE3D) {
   
-                    x1 = allModel1Ds.getX(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]); 
-                    y1 = allModel1Ds.getY(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]); 
-                    z1 = allModel1Ds.getZ(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
+                    x1 = allTree3Ds.getX(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]); 
+                    y1 = allTree3Ds.getY(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]); 
+                    z1 = allTree3Ds.getZ(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
                   }            
   
                   if (current_ObjectCategory == ObjectCategory.SOLID) {
@@ -44451,21 +44452,21 @@ void mouseClicked () {
   
   
   
-                    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+                    if (current_ObjectCategory == ObjectCategory.TREE2D) {
   
                       int OBJ_ID = int(RxP[0]);
   
-                      int n = allModel2Ds.MAP[OBJ_ID];
+                      int n = allTree2Ds.MAP[OBJ_ID];
                       int sign_n = 1;
                       if (n < 0) sign_n = -1;
                       n = abs(n);
-                      int n1 = allModel2Ds.num_files_PEOPLE;
-                      int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
+                      int n1 = allTree2Ds.num_files_PEOPLE;
+                      int n2 = allTree2Ds.num_files_PEOPLE + allTree2Ds.num_files_TREES;
   
                       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
   
                         if (WIN3D.UI_TaskModifyParameter == 1) { // Pick 
-                          if (allModel2Ds.isTree(n)) { // case: trees
+                          if (allTree2Ds.isTree(n)) { // case: trees
                             User3D.create_Plant_Type = n - n1;
                           }
                           else { // case: people 
@@ -44473,49 +44474,49 @@ void mouseClicked () {
                           } 
                         } 
                         if ((WIN3D.UI_TaskModifyParameter == 2) || (WIN3D.UI_TaskModifyParameter == 3)) { // Assign
-                          if (allModel2Ds.isTree(n)) { // case: trees
-                            allModel2Ds.MAP[OBJ_ID] = sign_n * (User3D.create_Plant_Type + n1);
+                          if (allTree2Ds.isTree(n)) { // case: trees
+                            allTree2Ds.MAP[OBJ_ID] = sign_n * (User3D.create_Plant_Type + n1);
                           }
                           else { // case: people 
-                            allModel2Ds.MAP[OBJ_ID] = sign_n * User3D.create_Person_Type;
+                            allTree2Ds.MAP[OBJ_ID] = sign_n * User3D.create_Person_Type;
                           }
                         }
                       }
                     }      
   
   
-                    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                    if (current_ObjectCategory == ObjectCategory.TREE3D) {
   
                       int OBJ_ID = int(RxP[0]);
   
                       if (WIN3D.UI_TaskModifyParameter == 1) { // Pick 
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);                        
-                        if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) User3D.create_Model1D_BranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) User3D.create_Model1D_BranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.TreeBase) User3D.create_Model1D_TreeBase = allModel1Ds.getTreeBase(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model1D_DegreeMax = allTree3Ds.getDegreeMax(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model1D_BranchTilt = allTree3Ds.getBranchTilt(OBJ_ID);                        
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) User3D.create_Model1D_BranchTwist = allTree3Ds.getBranchTwist(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) User3D.create_Model1D_BranchRatio = allTree3Ds.getBranchRatio(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.TreeBase) User3D.create_Model1D_TreeBase = allTree3Ds.getTreeBase(OBJ_ID);
                         
-                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
-                        if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
-                          User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-                          User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-                          User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allTree3Ds.getTrunkSize(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allTree3Ds.getLeafSize(OBJ_ID);
+                        if (WIN3D.UI_CurrentTask == UITASK.Tree3DsProps) { // all properties
+                          User3D.create_Model1D_DegreeMax = allTree3Ds.getDegreeMax(OBJ_ID);
+                          User3D.create_Model1D_TrunkSize = allTree3Ds.getTrunkSize(OBJ_ID);
+                          User3D.create_Model1D_LeafSize = allTree3Ds.getLeafSize(OBJ_ID);
                         }
                       } 
                       if (WIN3D.UI_TaskModifyParameter == 2) { //Assign
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);                    
-                        if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.create_Model1D_BranchTilt);
-                        if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.create_Model1D_BranchTwist);
-                        if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.create_Model1D_BranchRatio);               
-                        if (WIN3D.UI_CurrentTask == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.create_Model1D_TreeBase);
+                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allTree3Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);                    
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) allTree3Ds.setBranchTilt(OBJ_ID, User3D.create_Model1D_BranchTilt);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) allTree3Ds.setBranchTwist(OBJ_ID, User3D.create_Model1D_BranchTwist);
+                        if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) allTree3Ds.setBranchRatio(OBJ_ID, User3D.create_Model1D_BranchRatio);               
+                        if (WIN3D.UI_CurrentTask == UITASK.TreeBase) allTree3Ds.setTreeBase(OBJ_ID, User3D.create_Model1D_TreeBase);
                         
-                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
-                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
-                        if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
-                          allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
-                          allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
-                          allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
+                        if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allTree3Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
+                        if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allTree3Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
+                        if (WIN3D.UI_CurrentTask == UITASK.Tree3DsProps) { // all properties
+                          allTree3Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
+                          allTree3Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);                    
+                          allTree3Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
                         }
                       }
                     }                        
@@ -44531,8 +44532,8 @@ void mouseClicked () {
                 if (WIN3D.UI_CurrentTask == UITASK.Create) { // create
                   
                   int keep_number_of_allGroups = allGroups.num;
-                  int keep_number_of_allModel2Ds = allModel2Ds.num;
-                  int keep_number_of_allModel1Ds = allModel1Ds.num;
+                  int keep_number_of_allTree2Ds = allTree2Ds.num;
+                  int keep_number_of_allTree3Ds = allTree3Ds.num;
                   int keep_number_of_allSolids = allSolids.DEF.length;
                   int keep_number_of_allSections = allSections.num;
                   int keep_number_of_allCameras = allCameras.num;
@@ -44590,8 +44591,8 @@ void mouseClicked () {
                   }
   
   
-                  if ((current_ObjectCategory != ObjectCategory.MODEL1D) && 
-                      (current_ObjectCategory != ObjectCategory.MODEL2D) && 
+                  if ((current_ObjectCategory != ObjectCategory.TREE3D) && 
+                      (current_ObjectCategory != ObjectCategory.TREE2D) && 
                       (current_ObjectCategory != ObjectCategory.LANDPOINT) && 
                       (current_ObjectCategory != ObjectCategory.CAMERA) && 
                       (current_ObjectCategory != ObjectCategory.SECTION)) {
@@ -44603,7 +44604,7 @@ void mouseClicked () {
   
   
   
-                  //if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.SOLID) || (current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.MODEL2D)) {
+                  //if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.SOLID) || (current_ObjectCategory == ObjectCategory.TREE3D) || (current_ObjectCategory == ObjectCategory.TREE2D)) {
                   if (current_ObjectCategory == ObjectCategory.GROUP) {
   
                     if (addToLastGroup == false) {
@@ -44698,27 +44699,27 @@ void mouseClicked () {
                     
                   }
   
-                  if (current_ObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
+                  if (current_ObjectCategory == ObjectCategory.TREE2D) { // working with model2Ds
                     if (CreateObject == CREATE.Person) {
     
                       randomSeed(millis());
-                      allModel2Ds.create("PEOPLE", User3D.create_Person_Type, x, y, z, 2.5);
+                      allTree2Ds.create("PEOPLE", User3D.create_Person_Type, x, y, z, 2.5);
                     }
     
                     if (CreateObject == CREATE.Plant) {
                       int n = 0;
-                      if (User3D.create_Plant_Type > 0) n = User3D.create_Plant_Type + allModel2Ds.num_files_PEOPLE;
+                      if (User3D.create_Plant_Type > 0) n = User3D.create_Plant_Type + allTree2Ds.num_files_PEOPLE;
     
                       randomSeed(millis());
-                      allModel2Ds.create("TREES", n, x, y, z, 2 * rz);
+                      allTree2Ds.create("TREES", n, x, y, z, 2 * rz);
                     }
                   }    
                   
-                  if (current_ObjectCategory == ObjectCategory.MODEL1D) { // working with model1Ds
-                    if (CreateObject == CREATE.Model1Ds) {
+                  if (current_ObjectCategory == ObjectCategory.TREE3D) { // working with model1Ds
+                    if (CreateObject == CREATE.Tree3Ds) {
   
                       randomSeed(millis());
-                      allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
+                      allTree3Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed, 
                                          User3D.create_Model1D_DegreeMax, 
                                          x, y, z, 2 * rz, floor(random(360)), 
                                          User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist, 
@@ -45108,30 +45109,30 @@ void mouseClicked () {
                     Select3D.calculate_BoundingBox();
                   }   
   
-                  if (keep_number_of_allModel2Ds != allModel2Ds.num) { // if any allModel2Ds created during the process
+                  if (keep_number_of_allTree2Ds != allTree2Ds.num) { // if any allTree2Ds created during the process
   
-                    Select3D.deselect_Model2Ds();
+                    Select3D.deselect_Tree2Ds();
   
-                    for (int o = keep_number_of_allModel2Ds; o < allModel2Ds.num; o++) {
+                    for (int o = keep_number_of_allTree2Ds; o < allTree2Ds.num; o++) {
   
-                      int[] newlyAddedallModel2Ds = {o};
+                      int[] newlyAddedallTree2Ds = {o};
   
-                      Select3D.Model2D_ids = concat(Select3D.Model2D_ids, newlyAddedallModel2Ds);
+                      Select3D.Model2D_ids = concat(Select3D.Model2D_ids, newlyAddedallTree2Ds);
                     }  
   
                     Select3D.calculate_BoundingBox();
                   }   
   
   
-                  if (keep_number_of_allModel1Ds != allModel1Ds.num) { // if any allModel1Ds created during the process
+                  if (keep_number_of_allTree3Ds != allTree3Ds.num) { // if any allTree3Ds created during the process
   
-                    Select3D.deselect_Model1Ds();
+                    Select3D.deselect_Tree3Ds();
   
-                    for (int o = keep_number_of_allModel1Ds; o < allModel1Ds.num; o++) {
+                    for (int o = keep_number_of_allTree3Ds; o < allTree3Ds.num; o++) {
   
-                      int[] newlyAddedallModel1Ds = {o};
+                      int[] newlyAddedallTree3Ds = {o};
   
-                      Select3D.Model1D_ids = concat(Select3D.Model1D_ids, newlyAddedallModel1Ds);
+                      Select3D.Model1D_ids = concat(Select3D.Model1D_ids, newlyAddedallTree3Ds);
                     }  
   
                     Select3D.calculate_BoundingBox();
@@ -45705,7 +45706,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }  
   
-  if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+  if (current_ObjectCategory == ObjectCategory.TREE2D) {
 
     if (Select3D.Model2D_displayEdges) {
 
@@ -45723,19 +45724,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           int OBJ_ID = Select3D.Model2D_ids[o];
 
-          for (int plane_type = 0; plane_type < allModel2Ds.num_visualFaces; plane_type++) {          
+          for (int plane_type = 0; plane_type < allTree2Ds.num_visualFaces; plane_type++) {          
 
-            int f = OBJ_ID * allModel2Ds.num_visualFaces + plane_type; 
+            int f = OBJ_ID * allTree2Ds.num_visualFaces + plane_type; 
 
             beginShape();
 
-            for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
+            for (int j = 0; j < allTree2Ds.Faces[f].length; j++) {
 
-              int vNo = allModel2Ds.Faces[f][j];
+              int vNo = allTree2Ds.Faces[f][j];
 
-              float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
-              float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+              float x = allTree2Ds.Vertices[vNo][0] * OBJECTS_scale;
+              float y = allTree2Ds.Vertices[vNo][1] * OBJECTS_scale;
+              float z = -allTree2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
@@ -45755,7 +45756,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
   }    
 
-  if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+  if (current_ObjectCategory == ObjectCategory.TREE3D) {
 
     if (Select3D.Model1D_displayEdges) {
 
@@ -45775,13 +45776,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           beginShape();
 
-          for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
+          for (int j = 0; j < allTree3Ds.Faces[f].length; j++) {
 
-            int vNo = allModel1Ds.Faces[f][j];
+            int vNo = allTree3Ds.Faces[f][j];
 
-            float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-            float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-            float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+            float x = allTree3Ds.Vertices[vNo][0] * OBJECTS_scale;
+            float y = allTree3Ds.Vertices[vNo][1] * OBJECTS_scale;
+            float z = -allTree3Ds.Vertices[vNo][2] * OBJECTS_scale;
 
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
@@ -46125,17 +46126,17 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
 
-          if ((0 <= f) && (f < allModel1Ds.Faces.length)) { 
+          if ((0 <= f) && (f < allTree3Ds.Faces.length)) { 
 
             beginShape();
 
-            for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
+            for (int j = 0; j < allTree3Ds.Faces[f].length; j++) {
 
-              int vNo = allModel1Ds.Faces[f][j];
+              int vNo = allTree3Ds.Faces[f][j];
 
-              float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-              float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+              float x = allTree3Ds.Vertices[vNo][0] * OBJECTS_scale;
+              float y = allTree3Ds.Vertices[vNo][1] * OBJECTS_scale;
+              float z = -allTree3Ds.Vertices[vNo][2] * OBJECTS_scale;
 
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
@@ -46151,17 +46152,17 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         for (int f = allGroups.getStart_Model2D(OBJ_ID); f <= allGroups.getStop_Model2D(OBJ_ID); f++) {
 
-          if ((0 <= f) && (f < allModel2Ds.Faces.length)) { 
+          if ((0 <= f) && (f < allTree2Ds.Faces.length)) { 
 
             beginShape();
 
-            for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
+            for (int j = 0; j < allTree2Ds.Faces[f].length; j++) {
 
-              int vNo = allModel2Ds.Faces[f][j];
+              int vNo = allTree2Ds.Faces[f][j];
 
-              float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
-              float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+              float x = allTree2Ds.Vertices[vNo][0] * OBJECTS_scale;
+              float y = allTree2Ds.Vertices[vNo][1] * OBJECTS_scale;
+              float z = -allTree2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);            
 
@@ -46703,11 +46704,11 @@ void UI_set_to_Create_Nothing () {
 }
 
 
-void UI_set_to_Create_allModel1Ds () {
+void UI_set_to_Create_allTree3Ds () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE.Model1Ds;
-  current_ObjectCategory = ObjectCategory.MODEL1D;
+  CreateObject = CREATE.Tree3Ds;
+  current_ObjectCategory = ObjectCategory.TREE3D;
 }  
 
 
@@ -46715,14 +46716,14 @@ void UI_set_to_Create_Tree () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Plant;
-  current_ObjectCategory = ObjectCategory.MODEL2D;
+  current_ObjectCategory = ObjectCategory.TREE2D;
 }
 
 void UI_set_to_Create_Person () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Person;
-  current_ObjectCategory = ObjectCategory.MODEL2D;
+  current_ObjectCategory = ObjectCategory.TREE2D;
 }
 
 void UI_set_to_Create_Vertex () {
@@ -47035,8 +47036,8 @@ void UI_set_to_Modify_LeafSize (int n) {
   ROLLOUT.revise();
 }
 
-void UI_set_to_Modify_Model1DsProps (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Model1DsProps;
+void UI_set_to_Modify_Tree3DsProps (int n) {
+  WIN3D.UI_CurrentTask = UITASK.Tree3DsProps;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT.revise();
@@ -49288,8 +49289,8 @@ class solarchvision_UI_menuBar {
       "Display/Hide Edges", 
       "Display/Hide Normals", 
       "Display/Hide Leaves", 
-      "Display/Hide Model1Ds",
-      "Display/Hide Model2Ds",
+      "Display/Hide Tree3Ds",
+      "Display/Hide Tree2Ds",
       "Display/Hide Curves", 
       "Display/Hide Faces", 
       "Display/Hide Solids", 
@@ -49449,8 +49450,8 @@ class solarchvision_UI_menuBar {
       "Select Section", 
       "Select Camera", 
       "Select LandPoint", 
-      "Select Model1Ds", 
-      "Select Model2Ds", 
+      "Select Tree3Ds", 
+      "Select Tree2Ds", 
       "Select Group", 
       "Select Face", 
       "Select Curve", 
@@ -49460,10 +49461,10 @@ class solarchvision_UI_menuBar {
       "Group >> Curve", 
       "Group >> Face", 
       "Group >> Solid", 
-      "Group >> Model2Ds", 
-      "Group >> Model1Ds", 
-      "Model1Ds >> Group", 
-      "Model2Ds >> Group", 
+      "Group >> Tree2Ds", 
+      "Group >> Tree3Ds", 
+      "Tree3Ds >> Group", 
+      "Tree2Ds >> Group", 
       "Solid >> Group", 
       "Face >> Group", 
       "Curve >> Group", 
@@ -49585,7 +49586,7 @@ class solarchvision_UI_menuBar {
       "Pick DegreeMax", 
       "Pick TrunkSize", 
       "Pick LeafSize", 
-      "Pick Model1DsProps", 
+      "Pick Tree3DsProps", 
       "Assign Seed/Material", 
       "Assign tessellation", 
       "Assign Layer", 
@@ -49593,7 +49594,7 @@ class solarchvision_UI_menuBar {
       "Assign DegreeMax", 
       "Assign TrunkSize", 
       "Assign LeafSize", 
-      "Assign Model1DsProps", 
+      "Assign Tree3DsProps", 
       "Assign Pivot", 
       "Drop on LandSurface", 
       "Drop on ModelSurface (Up)", 
@@ -49618,8 +49619,8 @@ class solarchvision_UI_menuBar {
       "REC. Solid Graph", 
       "REC. Screenshot", 
       "Stop REC.", 
-      "Erase All Model1Ds", 
-      "Erase All Model2Ds", 
+      "Erase All Tree3Ds", 
+      "Erase All Tree2Ds", 
       "Erase All Groups", 
       "Erase All Solids", 
       "Erase All Sections", 
@@ -49867,19 +49868,19 @@ class solarchvision_UI_menuBar {
                   }
                 }               
                 if (this.Items[i][j].equals("Display/Hide Leaves")) {
-                  if (allModel1Ds.displayLeaves == false) {
+                  if (allTree3Ds.displayLeaves == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }  
-                if (this.Items[i][j].equals("Display/Hide Model1Ds")) {
-                  if (allModel1Ds.displayAll == false) {
+                if (this.Items[i][j].equals("Display/Hide Tree3Ds")) {
+                  if (allTree3Ds.displayAll == false) {
                     stroke(127); 
                     fill(127);
                   }
                 }               
-                if (this.Items[i][j].equals("Display/Hide Model2Ds")) {
-                  if (allModel2Ds.displayAll == false) {
+                if (this.Items[i][j].equals("Display/Hide Tree2Ds")) {
+                  if (allTree2Ds.displayAll == false) {
                     stroke(127); 
                     fill(127);
                   }
@@ -50185,7 +50186,7 @@ class solarchvision_UI_toolBar {
     , 
   
     {
-      "3", "3D-Tree", "2D-Tree", "Person", "Model2DsType", "1.5"
+      "3", "3D-Tree", "2D-Tree", "Person", "Tree2DsType", "1.5"
     }
     , 
     {
@@ -50282,7 +50283,7 @@ class solarchvision_UI_toolBar {
     
     //{"1", "trSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
     //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
-    //{"1", "allFP0", "allFP1", "allFP2", "Model1DsProps", "1.0"},
+    //{"1", "allFP0", "allFP1", "allFP2", "Tree3DsProps", "1.0"},
   
     //{"1", "SEC", "Section", "1.0"},
     //{"1", "SLD", "Solid", "1.0"},
@@ -50422,8 +50423,8 @@ class solarchvision_UI_toolBar {
             ROLLOUT.revise();
           }        
   
-          if ((Bar_Switch.equals("Model2DsType")) || (Bar_Switch.equals("BuildingType"))) {
-            if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allModel1Ds();
+          if ((Bar_Switch.equals("Tree2DsType")) || (Bar_Switch.equals("BuildingType"))) {
+            if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allTree3Ds();
             else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
             else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
             else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
@@ -53118,8 +53119,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
              if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.revise();}
         else if (low_case.equals("selection")) {Delete3D.selection(); WIN3D.revise();}
         else if (low_case.equals("groups")) {allGroups.makeEmpty(0); WIN3D.revise();}
-        else if (low_case.equals("model2ds")) {allModel2Ds.makeEmpty(0); WIN3D.revise();}
-        else if (low_case.equals("model1ds")) {allModel1Ds.makeEmpty(0); WIN3D.revise();}
+        else if (low_case.equals("model2ds")) {allTree2Ds.makeEmpty(0); WIN3D.revise();}
+        else if (low_case.equals("model1ds")) {allTree3Ds.makeEmpty(0); WIN3D.revise();}
         else if (low_case.equals("vertices")) {Delete3D.selected_isolatedVertices(); WIN3D.revise();}
         else if (low_case.equals("faces")) {allFaces.makeEmpty(0); WIN3D.revise();}
         else if (low_case.equals("lines")) {allCurves.makeEmpty(0); WIN3D.revise();}
@@ -53175,8 +53176,8 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("groups")) {current_ObjectCategory = ObjectCategory.GROUP; UI_toolBar.revise();}
-        else if (low_case.equals("model2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_toolBar.revise();}
-        else if (low_case.equals("model1ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_toolBar.revise();}
+        else if (low_case.equals("model2ds")) {current_ObjectCategory = ObjectCategory.TREE2D; UI_toolBar.revise();}
+        else if (low_case.equals("model1ds")) {current_ObjectCategory = ObjectCategory.TREE3D; UI_toolBar.revise();}
         else if (low_case.equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_toolBar.revise();}
         else if (low_case.equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_toolBar.revise();}
         else if (low_case.equals("lines")) {current_ObjectCategory = ObjectCategory.CURVE; UI_toolBar.revise();}
@@ -53221,9 +53222,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
           else if (low_case.equals("z")) z = float(parameters[1]);
         }
       }
-      allModel2Ds.create(t, m, x, y, z, 2.5);
+      allTree2Ds.create(t, m, x, y, z, 2.5);
       WIN3D.revise();  
-      current_ObjectCategory = ObjectCategory.MODEL2D; 
+      current_ObjectCategory = ObjectCategory.TREE2D; 
       UI_toolBar.revise();
       //Select3D.select_Last();
     }
@@ -53256,9 +53257,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (h != 0) {
-        allModel2Ds.create(t, m, x, y, z, h);
+        allTree2Ds.create(t, m, x, y, z, h);
         WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.MODEL2D; 
+        current_ObjectCategory = ObjectCategory.TREE2D; 
         UI_toolBar.revise();
         //Select3D.select_Last();
       }
@@ -53310,9 +53311,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (h != 0) {
-        allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, Tk, Lf);
+        allTree3Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, Tk, Lf);
         WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.MODEL1D; 
+        current_ObjectCategory = ObjectCategory.TREE3D; 
         UI_toolBar.revise();
         //Select3D.select_Last();
       }
@@ -53320,7 +53321,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "3Dtree m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
       
-      UI_set_to_Create_allModel1Ds();
+      UI_set_to_Create_allTree3Ds();
       UI_toolBar.highlight("3D-Tree");
       UI_toolBar.revise();      
     }  
@@ -54673,27 +54674,27 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     WIN3D.revise();
     UI_toolBar.revise();
   }                
-  else if (Command_CAPITAL.equals("2D>GROUP")) {
-    Select3D.convert_Model2Ds_to_Groups();
+  else if (Command_CAPITAL.equals("TREE2D>GROUP")) {
+    Select3D.convert_Tree2Ds_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.revise();
     UI_toolBar.revise();
   }             
-  else if (Command_CAPITAL.equals("GROUP>2D")) {
-    Select3D.convert_Groups_to_Model2Ds();
-    current_ObjectCategory = ObjectCategory.MODEL2D;
+  else if (Command_CAPITAL.equals("GROUP>TREE2D")) {
+    Select3D.convert_Groups_to_Tree2Ds();
+    current_ObjectCategory = ObjectCategory.TREE2D;
     WIN3D.revise();
     UI_toolBar.revise();
   }             
-  else if (Command_CAPITAL.equals("1D>GROUP")) {
-    Select3D.convert_Model1Ds_to_Groups();
+  else if (Command_CAPITAL.equals("TREE3D>GROUP")) {
+    Select3D.convert_Tree3Ds_to_Groups();
     current_ObjectCategory = ObjectCategory.GROUP;
     WIN3D.revise();
     UI_toolBar.revise();
   }             
-  else if (Command_CAPITAL.equals("GROUP>1D")) {
-    Select3D.convert_Groups_to_Model1Ds();
-    current_ObjectCategory = ObjectCategory.MODEL1D;
+  else if (Command_CAPITAL.equals("GROUP>TREE3D")) {
+    Select3D.convert_Groups_to_Tree3Ds();
+    current_ObjectCategory = ObjectCategory.TREE3D;
     WIN3D.revise();
     UI_toolBar.revise();
   }              
@@ -56292,7 +56293,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
             TREES_graphics.blendMode(BLEND);        
 
-            allModel2Ds.castShadows(SunR);
+            allTree2Ds.castShadows(SunR);
 
             TREES_graphics.popMatrix();
           }
@@ -56328,7 +56329,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
             Land3D.castShadows();
             
-            allModel1Ds.draw(TypeWindow.SHADOW);
+            allTree3Ds.draw(TypeWindow.SHADOW);
       
             SHADOW_graphics.popMatrix();
           }
@@ -56336,7 +56337,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
           SHADOW_graphics.save(File_Name + "3D_.jpg"); //just to test   
 
-          if (allModel2Ds.displayAll) {
+          if (allTree2Ds.displayAll) {
 
             PImage img = loadImage(File_Name + "_2D.jpg");
 
@@ -56417,7 +56418,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
           TREES_graphics.blendMode(BLEND);        
 
-          allModel2Ds.castShadows(SunR);
+          allTree2Ds.castShadows(SunR);
 
           TREES_graphics.popMatrix();
         }
@@ -56453,14 +56454,14 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
           Land3D.castShadows();
     
-          allModel1Ds.draw(TypeWindow.SHADOW); 
+          allTree3Ds.draw(TypeWindow.SHADOW); 
 
           SHADOW_graphics.popMatrix();
         }
 
         SHADOW_graphics.save(File_Name + "3D_.jpg"); //just to test   
 
-        if (allModel2Ds.displayAll) {
+        if (allTree2Ds.displayAll) {
 
           PImage img = loadImage(File_Name + nf(i, 3) + "_2D.jpg");
 
@@ -56654,9 +56655,9 @@ void SOLARCHVISION_save_project (String myFile) {
 
   allSections.to_XML(xml);
   
-  allModel1Ds.to_XML(xml);
+  allTree3Ds.to_XML(xml);
   
-  allModel2Ds.to_XML(xml);
+  allTree2Ds.to_XML(xml);
   
   Land3D.to_XML(xml);  
   
@@ -56901,9 +56902,9 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
   
   allSections.from_XML(xml);
   
-  allModel1Ds.from_XML(xml);
+  allTree3Ds.from_XML(xml);
   
-  allModel2Ds.from_XML(xml);    
+  allTree2Ds.from_XML(xml);    
   
   Land3D.from_XML(xml);  
   
