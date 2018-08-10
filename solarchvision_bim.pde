@@ -30351,7 +30351,18 @@ class solarchvision_Model1Ds {
       this.drawLeaf();
     }      
   }
+
+
+  float[][][] leaf_faces = {{{-1,-1,-1}, { 1,-1,-1}, { 1, 1,-1}, {-1, 1,-1}},
+                            {{-1,-1, 1}, { 1,-1, 1}, { 1, 1, 1}, {-1, 1, 1}},
+                            {{-1,-1,-1}, { 1,-1,-1}, { 1,-1, 1}, {-1,-1, 1}},
+                            {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, {-1, 1, 1}},
+                            {{-1,-1,-1}, {-1, 1,-1}, {-1, 1, 1}, {-1,-1, 1}},
+                            {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1,-1, 1}}};  
+
+  int num_leaf_faces = leaf_faces.length;
   
+  float[][] local_vertices = new float[4][3];
   
   void drawLeaf() {
     
@@ -30359,26 +30370,17 @@ class solarchvision_Model1Ds {
     
       WIN3D.graphics.fill(127, 255, 0);
       WIN3D.graphics.noStroke();    
-      
-      float[][][] faces = {{{-1,-1,-1}, { 1,-1,-1}, { 1, 1,-1}, {-1, 1,-1}},
-                           {{-1,-1, 1}, { 1,-1, 1}, { 1, 1, 1}, {-1, 1, 1}},
-                           {{-1,-1,-1}, { 1,-1,-1}, { 1,-1, 1}, {-1,-1, 1}},
-                           {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, {-1, 1, 1}},
-                           {{-1,-1,-1}, {-1, 1,-1}, {-1, 1, 1}, {-1,-1, 1}},
-                           {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1,-1, 1}}};
 
-      for (int i = 0; i < faces.length; i++) {
-        
-        float[][] local_face = new float[4][3];
-  
+      for (int i = 0; i < num_leaf_faces; i++) {
+
         for (int j = 0; j < 4; j++) {
           
-          local_face[j][0] = faces[i][j][0] * leafSize;
-          local_face[j][1] = faces[i][j][1] * leafSize;
-          local_face[j][2] = faces[i][j][2] * leafSize;
+          this.local_vertices[j][0] = this.leaf_faces[i][j][0] * leafSize;
+          this.local_vertices[j][1] = this.leaf_faces[i][j][1] * leafSize;
+          this.local_vertices[j][2] = this.leaf_faces[i][j][2] * leafSize;
         }
           
-        this.drawLocalFace(local_face);
+        this.drawLocalFace();
       }
     }
   }      
@@ -30390,8 +30392,6 @@ class solarchvision_Model1Ds {
     WIN3D.graphics.noStroke();    
     
     for (int i = 0; i < this.elementSegments; i++) {
-      
-      float[][] local_face = new float[4][3];
 
       for (int j = 0; j < 4; j++) {
   
@@ -30404,37 +30404,35 @@ class solarchvision_Model1Ds {
         float T = w;
         if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
 
-        local_face[j][0] = T * cos((i + u) * TWO_PI / float(this.elementSegments));
-        local_face[j][1] = T * sin((i + u) * TWO_PI / float(this.elementSegments));
-        local_face[j][2] = h * (v - 0.5);
+        this.local_vertices[j][0] = T * cos((i + u) * TWO_PI / float(this.elementSegments));
+        this.local_vertices[j][1] = T * sin((i + u) * TWO_PI / float(this.elementSegments));
+        this.local_vertices[j][2] = h * (v - 0.5);
       }
         
-      this.drawLocalFace(local_face);
+      this.drawLocalFace();
     }
   }    
 
   
-  void drawLocalFace(float[][] local_face) {     
+  void drawLocalFace() {     
    
-    float[][] subFace = new float[local_face.length][3];
-    
+    float[][] subFace = new float[this.local_vertices.length][3];
     
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.beginShape();
     }
     
-    for (int j = 0; j < local_face.length; j++) {
+    for (int j = 0; j < this.local_vertices.length; j++) {
       
       float u = 0;
       if ((j == 1) || (j == 2)) u = 1;
 
       float v = 0;
       if ((j == 2) || (j == 3)) v = 1;    
-  
       
-      float x = local_face[j][0];
-      float y = local_face[j][1];
-      float z = local_face[j][2];
+      float x = this.local_vertices[j][0];
+      float y = this.local_vertices[j][1];
+      float z = this.local_vertices[j][2];
       
       if (target_window == TypeWindow.WIN3D) {
         WIN3D.graphics.vertex(x, -y, z);
