@@ -29928,7 +29928,7 @@ class solarchvision_Model1Ds {
     
     this.num = n;
     this.f_data = new float [n][11]; 
-    this.i_data = new int   [n][4];
+    this.i_data = new int   [n][3];
   
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
@@ -30686,6 +30686,8 @@ class solarchvision_Model1Ds {
       txt += ",";
       txt += nf(this.getBranchRatio(i), 0, 4).replace(",", "."); // <<<<     
       txt += ",";
+      txt += nf(this.getTreeBase(i), 0, 4).replace(",", "."); // <<<<     
+      txt += ",";      
       txt += nf(this.getTrunkSize(i), 0, 4).replace(",", "."); // <<<<
       txt += ",";
       txt += nf(this.getLeafSize(i), 0, 4).replace(",", "."); // <<<<      
@@ -30725,8 +30727,9 @@ class solarchvision_Model1Ds {
       this.setBranchTilt(i, float(parts[5]));
       this.setBranchTwist(i, float(parts[6]));
       this.setBranchRatio(i, float(parts[7]));
-      this.setTrunkSize(i, float(parts[8]));
-      this.setLeafSize(i, float(parts[9]));
+      this.setTreeBase(i, float(parts[8]));
+      this.setTrunkSize(i, float(parts[9]));
+      this.setLeafSize(i, float(parts[10]));
       
     }
     
