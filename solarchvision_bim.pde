@@ -30360,12 +30360,12 @@ class solarchvision_Model1Ds {
       WIN3D.graphics.fill(127, 255, 0);
       WIN3D.graphics.noStroke();    
       
-      float[][][] faces = {{{-1,-1,-1}, { 1,-1,-1}, { 1, 1,-1}, { 1,-1,-1}},
-                           {{-1,-1, 1}, { 1,-1, 1}, { 1, 1, 1}, { 1,-1, 1}},
-                           {{-1,-1,-1}, { 1,-1,-1}, { 1,-1, 1}, { 1,-1,-1}},
-                           {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1, 1,-1}},
-                           {{-1,-1,-1}, {-1, 1,-1}, {-1, 1, 1}, {-1, 1,-1}},
-                           {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1, 1,-1}}};
+      float[][][] faces = {{{-1,-1,-1}, { 1,-1,-1}, { 1, 1,-1}, {-1, 1,-1}},
+                           {{-1,-1, 1}, { 1,-1, 1}, { 1, 1, 1}, {-1, 1, 1}},
+                           {{-1,-1,-1}, { 1,-1,-1}, { 1,-1, 1}, {-1,-1, 1}},
+                           {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, {-1, 1, 1}},
+                           {{-1,-1,-1}, {-1, 1,-1}, {-1, 1, 1}, {-1,-1, 1}},
+                           {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1,-1, 1}}};
 
       for (int i = 0; i < faces.length; i++) {
         
@@ -30373,9 +30373,9 @@ class solarchvision_Model1Ds {
   
         for (int j = 0; j < 4; j++) {
           
-          local_face[j][0] = faces[i][j][0] * leafSize * 100;
-          local_face[j][1] = faces[i][j][1] * leafSize * 100;
-          local_face[j][2] = faces[i][j][2] * leafSize * 100;
+          local_face[j][0] = faces[i][j][0] * leafSize;
+          local_face[j][1] = faces[i][j][1] * leafSize;
+          local_face[j][2] = faces[i][j][2] * leafSize;
         }
           
         this.drawLocalFace(local_face);
