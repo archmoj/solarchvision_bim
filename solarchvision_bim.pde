@@ -30356,6 +30356,22 @@ class solarchvision_Model1Ds {
     }      
   }
   
+
+  void drawLeaf() {
+    
+    if (leafSize > 0) {    
+
+      if (target_window == TypeWindow.WIN3D) {
+        WIN3D.graphics.fill(127, 255, 0);
+        WIN3D.graphics.noStroke();    
+        WIN3D.graphics.sphereDetail(6, 4);
+  
+        WIN3D.graphics.sphere(leafSize * 2);
+      }
+
+    }
+  }
+
   
   void drawTrunk(float w, float h) {
 
@@ -30363,7 +30379,8 @@ class solarchvision_Model1Ds {
       
       float[][] subFace = new float[4][3];
       
-      WIN3D.graphics.beginShape();
+
+      
       for (int j = 0; j < 4; j++) {
   
         float u = 0;
@@ -30378,402 +30395,187 @@ class solarchvision_Model1Ds {
         float x = T * cos((i + u) * TWO_PI / float(this.elementSegments));
         float y = T * sin((i + u) * TWO_PI / float(this.elementSegments));
         float z = h * (v - 0.5);
-        
-        WIN3D.graphics.vertex(x, -y, z);
-        
-        if (target_window == TypeWindow.SHADOW) {
-          subFace[j][0] =  WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale);
-          subFace[j][1] = -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale);
-          subFace[j][2] =  WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale);
-        }
-        
-        if (target_window == TypeWindow.OBJ) {
-        
-          if (_turn == 1) {
-  
-            SOLARCHVISION_OBJprintVertex(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale),
-                                        -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale),
-                                         WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale));  
-                                       
-          }
-  
-          if (_turn == 2) {
-  
-            SOLARCHVISION_OBJprintVtexture(u, v, 0);
-          }      
-        
-        }
-      }
 
-      WIN3D.graphics.endShape(CLOSE);
+      }
       
-      if (target_window == TypeWindow.OBJ) {
-        if (_turn == 3) {
-  
-          num_vertices_added += 4;
-  
-          String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
-          String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-          String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-          String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-  
-          String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
-          String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
-          String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
-          String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
-  
-          if (User3D.export_PolyToPoly == 0) {
-            obj_lastGroupNumber += 1;
-            objOutput.println("g Tree3D_Trunk_n" + nf(tree_id, 0));
-          }
-  
-          if (User3D.export_MaterialLibrary) {
-            objOutput.println("usemtl Tree3D_Trunk");
-          }
-  
-          obj_lastFaceNumber += 1;
-          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+
           
-        }   
-       
-      }
-      
-      
-      
-
-      if (target_window == TypeWindow.SHADOW) {
- 
-        float[][] subFace_Rotated = subFace;
-
-        for (int s = 0; s < subFace_Rotated.length; s++) {
-          if (allSolarImpacts.sectionType == 2) {
-            float a = subFace_Rotated[s][0];
-            float b = -subFace_Rotated[s][1];
-            float c = subFace_Rotated[s][2];
-
-            subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
-            subFace_Rotated[s][1] = c;    
-            subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-          } else if (allSolarImpacts.sectionType == 3) {
-          }
-        }  
-
-        SHADOW_graphics.beginShape();
-
-        for (int s = 0; s < subFace_Rotated.length; s++) {
-
-          float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
-          float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
-          float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
-
-          if (z >= 0) {
-
-            if (allSolarImpacts.sectionType == 1) {                    
-              float px = x;
-              float py = y;
-
-              x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-              y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-            } 
-
-            SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY);
-          } else {
-            int s_next = (s + 1) % subFace_Rotated.length;
-            int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
-
-            float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
-            float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
-            float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
-
-            if (z_prev > 0) { 
-              float ratio = z_prev / (z_prev - z);
-
-              float x_trim = x_prev * (1 - ratio) + x * ratio;
-              float y_trim = y_prev * (1 - ratio) + y * ratio;
-
-              if (allSolarImpacts.sectionType == 1) {
-                float px = x_trim;
-                float py = y_trim;
-
-                x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-              } 
-
-              SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
-            }
-
-            float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
-            float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
-            float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
-
-            if (z_next > 0) { 
-              float ratio = z_next / (z_next - z);
-
-              float x_trim = x_next * (1 - ratio) + x * ratio;
-              float y_trim = y_next * (1 - ratio) + y * ratio;
-
-              if (allSolarImpacts.sectionType == 1) {
-                float px = x_trim;
-                float py = y_trim;
-
-                x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-              } 
-
-              SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
-            }
-          }
-        }
-
-        SHADOW_graphics.endShape(CLOSE);      
-      }
-      
-      
-      
+      this.drawMesh(subFace);
     }  
-  }  
+  }
   
-
-
-  void drawLeaf() {
+void drawMesh(float[][] face) {
+  
+  if (target_window == TypeWindow.WIN3D) {
+    WIN3D.graphics.beginShape();
+  }        
+  
+  for (int i = 0; i < face.length; i++) {
+      
+    float x = face[i][j
     
-    if (leafSize > 0) {    
+    if (target_window == TypeWindow.WIN3D) {
+      WIN3D.graphics.vertex(x, -y, z);
+    }
+    
+    if (target_window == TypeWindow.SHADOW) {
+      subFace[j][0] =  WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale);
+      subFace[j][1] = -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale);
+      subFace[j][2] =  WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale);
+    }
+    
+    if (target_window == TypeWindow.OBJ) {
+    
+      if (_turn == 1) {
 
-      if (target_window == TypeWindow.WIN3D) {
-        WIN3D.graphics.fill(127, 255, 0);
-        WIN3D.graphics.noStroke();    
-        WIN3D.graphics.sphereDetail(6, 4);
-  
-        WIN3D.graphics.sphere(leafSize * 2);
+        SOLARCHVISION_OBJprintVertex(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale),
+                                    -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale),
+                                     WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale));  
+                                   
       }
 
+      if (_turn == 2) {
+
+        SOLARCHVISION_OBJprintVtexture(u, v, 0);
+      }      
+    
+    }
+    
+
+
+
+    if (target_window == TypeWindow.OBJ) {
+      if (_turn == 3) {
   
+        num_vertices_added += 4;
   
+        String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
+        String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+        String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+        String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
   
-      for (int i = 0; i < this.elementSegments; i++) {
-        
-        float[][] subFace = new float[4][3];
-        
-        WIN3D.graphics.beginShape();
-        for (int j = 0; j < 4; j++) {
-    
-          float u = 0;
-          if ((j == 1) || (j == 2)) u = 1;
-    
-          float v = 0;
-          if ((j == 2) || (j == 3)) v = 1;
-    
-          float T = w;
-          if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
-    
-          float x = T * cos((i + u) * TWO_PI / float(this.elementSegments));
-          float y = T * sin((i + u) * TWO_PI / float(this.elementSegments));
-          float z = h * (v - 0.5);
-          
-          WIN3D.graphics.vertex(x, -y, z);
-          
-          if (target_window == TypeWindow.SHADOW) {
-            subFace[j][0] =  WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale);
-            subFace[j][1] = -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale);
-            subFace[j][2] =  WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale);
-          }
-          
-          if (target_window == TypeWindow.OBJ) {
-          
-            if (_turn == 1) {
-    
-              SOLARCHVISION_OBJprintVertex(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale),
-                                          -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale),
-                                           WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale));  
-                                         
-            }
-    
-            if (_turn == 2) {
-    
-              SOLARCHVISION_OBJprintVtexture(u, v, 0);
-            }      
-          
-          }
+        String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
+        String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
+        String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
+        String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
+  
+        if (User3D.export_PolyToPoly == 0) {
+          obj_lastGroupNumber += 1;
+          objOutput.println("g Tree3D_Trunk_n" + nf(tree_id, 0));
         }
   
-        WIN3D.graphics.endShape(CLOSE);
-        
-        if (target_window == TypeWindow.OBJ) {
-          if (_turn == 3) {
-    
-            num_vertices_added += 4;
-    
-            String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
-            String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-            String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-            String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-    
-            String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
-            String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
-            String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
-            String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
-    
-            if (User3D.export_PolyToPoly == 0) {
-              obj_lastGroupNumber += 1;
-              objOutput.println("g Tree3D_Trunk_n" + nf(tree_id, 0));
-            }
-    
-            if (User3D.export_MaterialLibrary) {
-              objOutput.println("usemtl Tree3D_Trunk");
-            }
-    
-            obj_lastFaceNumber += 1;
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            
-          }   
-         
+        if (User3D.export_MaterialLibrary) {
+          objOutput.println("usemtl Tree3D_Trunk");
         }
+  
+        obj_lastFaceNumber += 1;
+        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+        
+      }   
+     
+    }
         
         
         
   
-        if (target_window == TypeWindow.SHADOW) {
+    if (target_window == TypeWindow.SHADOW) {
    
-          float[][] subFace_Rotated = subFace;
+      float[][] subFace_Rotated = subFace;
   
-          for (int s = 0; s < subFace_Rotated.length; s++) {
-            if (allSolarImpacts.sectionType == 2) {
-              float a = subFace_Rotated[s][0];
-              float b = -subFace_Rotated[s][1];
-              float c = subFace_Rotated[s][2];
+      for (int s = 0; s < subFace_Rotated.length; s++) {
+        if (allSolarImpacts.sectionType == 2) {
+          float a = subFace_Rotated[s][0];
+          float b = -subFace_Rotated[s][1];
+          float c = subFace_Rotated[s][2];
   
-              subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
-              subFace_Rotated[s][1] = c;    
-              subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
-            } else if (allSolarImpacts.sectionType == 3) {
-            }
-          }  
-  
-          SHADOW_graphics.beginShape();
-  
-          for (int s = 0; s < subFace_Rotated.length; s++) {
-  
-            float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
-            float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
-            float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
-  
-            if (z >= 0) {
-  
-              if (allSolarImpacts.sectionType == 1) {                    
-                float px = x;
-                float py = y;
-  
-                x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-              } 
-  
-              SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY);
-            } else {
-              int s_next = (s + 1) % subFace_Rotated.length;
-              int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
-  
-              float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
-              float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
-              float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
-  
-              if (z_prev > 0) { 
-                float ratio = z_prev / (z_prev - z);
-  
-                float x_trim = x_prev * (1 - ratio) + x * ratio;
-                float y_trim = y_prev * (1 - ratio) + y * ratio;
-  
-                if (allSolarImpacts.sectionType == 1) {
-                  float px = x_trim;
-                  float py = y_trim;
-  
-                  x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                  y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                } 
-  
-                SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
-              }
-  
-              float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
-              float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
-              float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
-  
-              if (z_next > 0) { 
-                float ratio = z_next / (z_next - z);
-  
-                float x_trim = x_next * (1 - ratio) + x * ratio;
-                float y_trim = y_next * (1 - ratio) + y * ratio;
-  
-                if (allSolarImpacts.sectionType == 1) {
-                  float px = x_trim;
-                  float py = y_trim;
-  
-                  x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
-                  y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
-                } 
-  
-                SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
-              }
-            }
-          }
-  
-          SHADOW_graphics.endShape(CLOSE);      
+          subFace_Rotated[s][0] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);     
+          subFace_Rotated[s][1] = c;    
+          subFace_Rotated[s][2] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+        } else if (allSolarImpacts.sectionType == 3) {
         }
-        
-        
-        
       }  
   
-      
+      SHADOW_graphics.beginShape();
   
-      /*    
+      for (int s = 0; s < subFace_Rotated.length; s++) {
   
-      // must pass all the random values here.
-      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-      float rotXY = Beta + random(-PI, PI);
-      int COL = int(random(127));      
-  
-      if (Display_Leaves != 0) {
-  
-        float x0_Rotated = x0;
-        float y0_Rotated = y0;
-        float z0_Rotated = z0;
-  
-        if (SolarImpact_sectionType == 2) {
-          float a = x0;
-          float b = -y0;
-          float c = z0;
-  
-          x0_Rotated = a * cos_ang(-SolarImpact_Rotation) - b * sin_ang(-SolarImpact_Rotation);     
-          y0_Rotated = c;    
-          z0_Rotated= a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);
-        } else if (SolarImpact_sectionType == 3) {
-        }
-  
-  
-        float z = z0_Rotated - SolarImpact_Elevation;
-        float x = x0_Rotated - z * SunR_Rotated[1] / SunR_Rotated[3];
-        float y = y0_Rotated - z * SunR_Rotated[2] / SunR_Rotated[3];
+        float z = subFace_Rotated[s][2] - allSolarImpacts.Z;
+        float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
+        float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
   
         if (z >= 0) {
   
-          if (SolarImpact_sectionType == 1) {                    
+          if (allSolarImpacts.sectionType == 1) {                    
             float px = x;
             float py = y;
   
-            x = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
-            y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
+            x = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+            y = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
           } 
   
+          SHADOW_graphics.vertex((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY);
+        } else {
+          int s_next = (s + 1) % subFace_Rotated.length;
+          int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
   
+          float z_prev = subFace_Rotated[s_prev][2] - allSolarImpacts.Z;
+          float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
+          float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
   
-          SHADOW_Diagrams.ellipse((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY, LeafSize * Shades_scaleX, LeafSize * Shades_scaleY);
+          if (z_prev > 0) { 
+            float ratio = z_prev / (z_prev - z);
+  
+            float x_trim = x_prev * (1 - ratio) + x * ratio;
+            float y_trim = y_prev * (1 - ratio) + y * ratio;
+  
+            if (allSolarImpacts.sectionType == 1) {
+              float px = x_trim;
+              float py = y_trim;
+  
+              x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+              y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+            } 
+  
+            SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
+          }
+  
+          float z_next = subFace_Rotated[s_next][2] - allSolarImpacts.Z;
+          float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
+          float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
+  
+          if (z_next > 0) { 
+            float ratio = z_next / (z_next - z);
+  
+            float x_trim = x_next * (1 - ratio) + x * ratio;
+            float y_trim = y_next * (1 - ratio) + y * ratio;
+  
+            if (allSolarImpacts.sectionType == 1) {
+              float px = x_trim;
+              float py = y_trim;
+  
+              x_trim = px * funcs.cos_ang(-allSolarImpacts.R) - py * funcs.sin_ang(-allSolarImpacts.R); 
+              y_trim = px * funcs.sin_ang(-allSolarImpacts.R) + py * funcs.cos_ang(-allSolarImpacts.R);
+            } 
+  
+            SHADOW_graphics.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
+          }
         }
       }
   
-      */  
-  
-    }
+      SHADOW_graphics.endShape(CLOSE);
+      
+    }   
   }
+  
+  if (target_window == TypeWindow.WIN3D) {
+    WIN3D.graphics.endShape(CLOSE);
+  }    
+
+}
+  
+
+
+
   
 
 
