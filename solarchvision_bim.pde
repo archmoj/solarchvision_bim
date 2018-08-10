@@ -30228,14 +30228,11 @@ class solarchvision_Model1Ds {
           
           for (_turn = 1; _turn <= end_turn; _turn++) { 
 
-            WIN3D.graphics.pushMatrix(); // we put this outside the if statement so that graphics would be accessible to cast SHADOWs
+            WIN3D.graphics.pushMatrix(); 
             
-            if (target_window == TypeWindow.WIN3D) {
-            
-              WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
-              WIN3D.graphics.translate(x, -y, z);
-              WIN3D.graphics.rotateZ(rot);
-            }
+            WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
+            WIN3D.graphics.translate(x, -y, z);
+            WIN3D.graphics.rotateZ(rot);
 
             float treeHeight0 = rad;
             float treeWidth0 = rad * trunkSize * 0.15;
@@ -30245,7 +30242,7 @@ class solarchvision_Model1Ds {
             // Call to draw the tree
             this.makeBranch(treeWidth0, treeHeight0, nStart); 
             
-            WIN3D.graphics.popMatrix(); // we put this outside the if statement so that graphics would be accessible to cast SHADOWs
+            WIN3D.graphics.popMatrix(); 
             
             
 
