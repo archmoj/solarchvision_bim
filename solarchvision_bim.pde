@@ -30112,7 +30112,7 @@ class solarchvision_Model1Ds {
 
   
 
-
+  int nStart;
   float branchTilt;
   float branchTwist;
   float branchRatio;  
@@ -30196,8 +30196,6 @@ class solarchvision_Model1Ds {
   
         int n = this.getType(f);
   
-        int dMax = this.getDegreeMax(f);
-  
         int seed = this.getSeed(f);
   
         float trunkSize = this.getTrunkSize(f);
@@ -30208,6 +30206,8 @@ class solarchvision_Model1Ds {
         branchTwist = this.getBranchTwist(f);
         branchRatio = this.getBranchRatio(f);
         treeBase = this.getTreeBase(f);
+        
+        nStart = this.getDegreeMax(f);
 
 
         if (n == 0) {
@@ -30243,7 +30243,7 @@ class solarchvision_Model1Ds {
             randomSeed(seed);
 
             // Call to draw the tree
-            this.makeBranch(treeWidth0, treeHeight0, dMax, dMax); 
+            this.makeBranch(treeWidth0, treeHeight0, nStart); 
             
             WIN3D.graphics.popMatrix(); // we put this outside the if statement so that graphics would be accessible to cast SHADOWs
             
@@ -30301,25 +30301,25 @@ class solarchvision_Model1Ds {
   
   
 
-  void makeBranch(float w, float h, int n, int nStart) {
+  void makeBranch(float w, float h, int n) {
     
     // Note: this is a recursive function.
 
     if (n > 0) {
       WIN3D.graphics.pushMatrix();
       this.twistBranch(this.branchTwist);
-      if ((n == nStart) && (this.treeBase > 0.0)) {
+      if ((n == this.nStart) && (this.treeBase > 0.0)) {
         this.drawElement(w, h * this.treeBase);
       }
-      this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, nStart);
+      this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1);
       WIN3D.graphics.popMatrix();
     
-      if (n != nStart) {
+      if (n != this.nStart) {
         WIN3D.graphics.pushMatrix();
         this.twistBranch(this.branchTwist);
         this.tiltBranch(this.branchTilt);
         this.drawElement(w, h);
-        this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1, nStart);
+        this.makeBranch(w * this.branchRatio, h * this.branchRatio, n - 1);
         WIN3D.graphics.popMatrix();
       }
   
@@ -46900,8 +46900,6 @@ void UI_set_to_Modify_Weight (int n) {
 
   ROLLOUT.revise();
 }
-
-// the same messages of WIN3D.UI_CurrentTask=6/7 for both Layer/Visibility of group3Ds and DegreeMax/DegreeDif is not good!
 
 void UI_set_to_Modify_DegreeMax (int n) {
   WIN3D.UI_CurrentTask = UITASK.DegreeMax;
