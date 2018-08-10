@@ -30338,10 +30338,6 @@ class solarchvision_Model1Ds {
   
   void drawElement(float w, float h, int n) {
 
-    WIN3D.graphics.fill(255, 127, 0);
-    WIN3D.graphics.noStroke();
-    
-
     WIN3D.graphics.pushMatrix();
     WIN3D.graphics.translate(0, 0, 0.5 * h);
     
@@ -30359,20 +30355,39 @@ class solarchvision_Model1Ds {
   
   void drawLeaf() {
     
-    if (leafSize > 0) {    
+    if (leafSize > 0) {
+    
+      WIN3D.graphics.fill(127, 255, 0);
+      WIN3D.graphics.noStroke();    
+      
+      float[][][] faces = {{{-1,-1,-1}, { 1,-1,-1}, { 1, 1,-1}, { 1,-1,-1}},
+                           {{-1,-1, 1}, { 1,-1, 1}, { 1, 1, 1}, { 1,-1, 1}},
+                           {{-1,-1,-1}, { 1,-1,-1}, { 1,-1, 1}, { 1,-1,-1}},
+                           {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1, 1,-1}},
+                           {{-1,-1,-1}, {-1, 1,-1}, {-1, 1, 1}, {-1, 1,-1}},
+                           {{ 1,-1,-1}, { 1, 1,-1}, { 1, 1, 1}, { 1, 1,-1}}};
 
-      if (target_window == TypeWindow.WIN3D) {
-        WIN3D.graphics.fill(127, 255, 0);
-        WIN3D.graphics.noStroke();    
-        WIN3D.graphics.sphereDetail(6, 4);
+      for (int i = 0; i < faces.length; i++) {
+        
+        float[][] local_face = new float[4][3];
   
-        WIN3D.graphics.sphere(leafSize * 2);
+        for (int j = 0; j < 4; j++) {
+          
+          local_face[j][0] = faces[i][j][0] * leafSize * 100;
+          local_face[j][1] = faces[i][j][1] * leafSize * 100;
+          local_face[j][2] = faces[i][j][2] * leafSize * 100;
+        }
+          
+        this.drawLocalFace(local_face);
       }
-
     }
-  }
+  }      
+  
     
   void drawTrunk(float w, float h) {
+    
+    WIN3D.graphics.fill(255, 127, 0);
+    WIN3D.graphics.noStroke();    
     
     for (int i = 0; i < this.elementSegments; i++) {
       
@@ -30388,14 +30403,10 @@ class solarchvision_Model1Ds {
   
         float T = w;
         if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
-  
-        float x = T * cos((i + u) * TWO_PI / float(this.elementSegments));
-        float y = T * sin((i + u) * TWO_PI / float(this.elementSegments));
-        float z = h * (v - 0.5);
-        
-        local_face[j][0] = x;
-        local_face[j][1] = y;
-        local_face[j][2] = z;
+
+        local_face[j][0] = T * cos((i + u) * TWO_PI / float(this.elementSegments));
+        local_face[j][1] = T * sin((i + u) * TWO_PI / float(this.elementSegments));
+        local_face[j][2] = h * (v - 0.5);
       }
         
       this.drawLocalFace(local_face);
