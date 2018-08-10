@@ -20765,42 +20765,17 @@ class solarchvision_Select3D {
 
   void deselect_all () {
   
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      this.deselect_LandPoints();
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.SECTION) {  
-      this.deselect_Sections();
-    }  
-  
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {  
-      this.deselect_Cameras();
-    }  
-  
-    if ((current_ObjectCategory == ObjectCategory.GROUP) || 
-        (current_ObjectCategory == ObjectCategory.MODEL1D) || 
-        (current_ObjectCategory == ObjectCategory.MODEL2D) || 
-        (current_ObjectCategory == ObjectCategory.FACE) || 
-        (current_ObjectCategory == ObjectCategory.CURVE) || 
-        (current_ObjectCategory == ObjectCategory.VERTEX) || 
-        (current_ObjectCategory == ObjectCategory.SOFTVERTEX) || 
-        (current_ObjectCategory == ObjectCategory.SOLID)) {  
-  
-      this.deselect_Groups();
-      
-      this.deselect_Model1Ds();
-
-      this.deselect_Model2Ds();
-  
-      this.deselect_Curves();
-  
-      this.deselect_Faces();
-  
-      this.deselect_Vertices();
-  
-      this.deselect_Solids();
-    }  
-  
+    this.deselect_LandPoints();
+    this.deselect_Cameras();
+    this.deselect_Sections();
+    this.deselect_Solids();
+    this.deselect_Model1Ds();
+    this.deselect_Model2Ds();
+    this.deselect_Faces();
+    this.deselect_Curves();
+    this.deselect_Vertices();
+    this.deselect_Groups();
+    
     this.calculate_BoundingBox();
   }
   
@@ -42977,7 +42952,7 @@ void mouseClicked () {
               UI_toolBar.revise();
             }   
 
-            if (menu_option.equals("Reverse Selection")) {
+            if (menu_option.equals("Invert Selection")) {
               Select3D.reverse_Selection();
               WIN3D.revise();
             }             
@@ -42988,7 +42963,73 @@ void mouseClicked () {
             if (menu_option.equals("Select All")) {
               Select3D.select_all();
               WIN3D.revise();
-            }           
+            }
+            if (menu_option.equals("Select All Cameras")) {
+              current_ObjectCategory = ObjectCategory.CAMERA;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }
+            if (menu_option.equals("Select All Sections")) {
+              current_ObjectCategory = ObjectCategory.SECTION;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }
+            if (menu_option.equals("Select All Solids")) {
+              current_ObjectCategory = ObjectCategory.SOLID;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }
+            if (menu_option.equals("Select All Faces")) {
+              current_ObjectCategory = ObjectCategory.FACE;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }         
+            if (menu_option.equals("Select All Curves")) {
+              current_ObjectCategory = ObjectCategory.CURVE;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }         
+            if (menu_option.equals("Select All Verices")) {
+              current_ObjectCategory = ObjectCategory.VERTEX;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }         
+            if (menu_option.equals("Select All Groups")) {
+              current_ObjectCategory = ObjectCategory.GROUP;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }         
+            if (menu_option.equals("Select All 3D-Trees")) {
+              current_ObjectCategory = ObjectCategory.MODEL1D;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }         
+            if (menu_option.equals("Select All 2D-Trees")) {
+              current_ObjectCategory = ObjectCategory.MODEL2D;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }         
+            if (menu_option.equals("Select All People")) {
+              current_ObjectCategory = ObjectCategory.MODEL2D;
+              UI_toolBar.revise();
+              Select3D.select_all();
+              WIN3D.revise();
+            }                     
+            
+
+
+            
+            
+           
             if (menu_option.equals("Select Solid")) {
               current_ObjectCategory = ObjectCategory.SOLID;
               WIN3D.revise();
@@ -49390,9 +49431,20 @@ class solarchvision_UI_menuBar {
     , 
     {
       "Select", 
-      "Reverse Selection", 
+      "Invert Selection", 
       "Deselect All", 
       "Select All", 
+      "Select All People",
+      "Select All 2D-Trees",
+      "Select All 3D-Trees",
+      "Select All Groups",
+      "Select All Curves",
+      "Select All Faces",
+      "Select All Vertices",
+      "Select All LandPoints",
+      "Select All Sections",
+      "Select All Cameras",
+      "Select All Solids",
       "Select Solid", 
       "Select Section", 
       "Select Camera", 
