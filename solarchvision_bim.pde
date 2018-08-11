@@ -1,8 +1,4 @@
 
-// delete all empty groups, removes everything!
-
-
-
 
 // continue to remove win3d and ui updates from create3D, etc.
 
@@ -12742,33 +12738,26 @@ class solarchvision_Groups {
   
     SOLARCHVISION_switch_category(ObjectCategory.GROUP);
   
-    if (current_ObjectCategory == ObjectCategory.GROUP) {  
   
-      Select3D.deselect_Groups();
-  
-      for (int OBJ_ID = 0; OBJ_ID < this.num; OBJ_ID++) {
-  
-        boolean notEmpty = false;
-  
-        if ((0 <= this.Faces[OBJ_ID][0]) && (this.Faces[OBJ_ID][0] <= this.Faces[OBJ_ID][1])) notEmpty = true;
-        if ((0 <= this.Curves[OBJ_ID][0]) && (this.Curves[OBJ_ID][0] <= this.Curves[OBJ_ID][1])) notEmpty = true;
-        if ((0 <= this.Model1Ds[OBJ_ID][0]) && (this.Model1Ds[OBJ_ID][0] <= this.Model1Ds[OBJ_ID][1])) notEmpty = true;
-        if ((0 <= this.Model2Ds[OBJ_ID][0]) && (this.Model2Ds[OBJ_ID][0] <= this.Model2Ds[OBJ_ID][1])) notEmpty = true;
-        if ((0 <= this.Solids[OBJ_ID][0]) && (this.Solids[OBJ_ID][0] <= this.Solids[OBJ_ID][1])) notEmpty = true;
-  
-        if (notEmpty) {
-  
-          int[] emptyGroup = {
-            OBJ_ID
-          };
-  
-          Select3D.Group_ids = concat(Select3D.Group_ids, emptyGroup);
-        }
-      }
-  
-      Delete3D.selection();
+    Select3D.deselect_Groups();
+
+    for (int OBJ_ID = 0; OBJ_ID < this.num; OBJ_ID++) {
+
+      if ((0 <= this.Faces   [OBJ_ID][0]) && (this.Faces   [OBJ_ID][0] <= this.Faces   [OBJ_ID][1])) continue;
+      if ((0 <= this.Curves  [OBJ_ID][0]) && (this.Curves  [OBJ_ID][0] <= this.Curves  [OBJ_ID][1])) continue;
+      if ((0 <= this.Model1Ds[OBJ_ID][0]) && (this.Model1Ds[OBJ_ID][0] <= this.Model1Ds[OBJ_ID][1])) continue;
+      if ((0 <= this.Model2Ds[OBJ_ID][0]) && (this.Model2Ds[OBJ_ID][0] <= this.Model2Ds[OBJ_ID][1])) continue;
+      if ((0 <= this.Solids  [OBJ_ID][0]) && (this.Solids  [OBJ_ID][0] <= this.Solids  [OBJ_ID][1])) continue;
+
+      int[] emptyGroup = {
+        OBJ_ID
+      };
+
+      Select3D.Group_ids = concat(Select3D.Group_ids, emptyGroup);
     }
-  
+
+    Delete3D.selection();
+
     current_ObjectCategory = pre_current_ObjectCategory;
   }
 
