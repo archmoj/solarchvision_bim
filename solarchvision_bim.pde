@@ -2701,6 +2701,12 @@ class solarchvision_WIN3D {
   void drawView () {
     
     if (this.update) {
+      
+      println("______________");
+      
+      if (Select3D.update_BoundingBox) {
+        Select3D.calculate_BoundingBox();
+      }
   
       if (this.record_IMG) this.ImageScale = 2; //3; 
       else this.ImageScale = 1;
@@ -3414,102 +3420,52 @@ class solarchvision_WIN3D {
   
         case '0' :
           Land3D.displaySurface = !Land3D.displaySurface;
-          if (Land3D.displaySurface) {
-            current_ObjectCategory = ObjectCategory.LANDPOINT;
-            UI_toolBar.revise();
-          }
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.LANDPOINT);
           break;
   
         case '1' :
           allModel1Ds.displayAll = !allModel1Ds.displayAll;
-          if (allModel1Ds.displayAll) {
-            current_ObjectCategory = ObjectCategory.MODEL1D;
-            UI_toolBar.revise();
-          }
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
           break;
   
         case '2' :
           allModel2Ds.displayAll = !allModel2Ds.displayAll;
-          if (allModel2Ds.displayAll) {
-            current_ObjectCategory = ObjectCategory.MODEL2D;
-            UI_toolBar.revise();
-          }
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
           break;
   
         case '3' :
           allFaces.displayAll = !allFaces.displayAll;
-          if (allFaces.displayAll) {
-            current_ObjectCategory = ObjectCategory.GROUP;
-            UI_toolBar.revise();
-          } 
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.GROUP);
           break;
   
         case '4' :
           allFaces.displayAll = !allFaces.displayAll;
-          if (allFaces.displayAll) {
-            current_ObjectCategory = ObjectCategory.FACE;
-            UI_toolBar.revise();
-          } 
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.FACE);
           break;                  
   
         case '5' :
           allFaces.displayAll = !allFaces.displayAll;
-          if (allFaces.displayAll) {
-            current_ObjectCategory = ObjectCategory.VERTEX;
-            UI_toolBar.revise();
-          } 
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
           break;  
   
         case '6' :
           allCurves.displayAll = !allCurves.displayAll;
-          if (allFaces.displayAll) {
-            current_ObjectCategory = ObjectCategory.CURVE;
-            UI_toolBar.revise();
-          } 
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.CURVE);
           break;                       
   
         case '7' :
           allSolids.displayAll = !allSolids.displayAll;
-          if (allSolids.displayAll) {
-            current_ObjectCategory = ObjectCategory.SOLID;
-            UI_toolBar.revise();
-          } 
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.SOLID);
           break; 
   
         case '8' :
           allSections.displayAll = !allSections.displayAll;
-          if (allSections.displayAll) {
-            current_ObjectCategory = ObjectCategory.SECTION;
-            UI_toolBar.revise();
-          } 
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.SECTION);
           break; 
   
         case '9' :
           allCameras.displayAll = !allCameras.displayAll;
-          if (allCameras.displayAll) {
-            current_ObjectCategory = ObjectCategory.CAMERA;
-            UI_toolBar.revise();
-          } 
-          this.revise(); 
-          ROLLOUT.revise(); 
+          SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
           break; 
   
   
@@ -12727,11 +12683,7 @@ class solarchvision_Groups {
       Select3D.Group_ids = new int [1];
       Select3D.Group_ids[0] = this.num - 1;
   
-  
-      current_ObjectCategory = ObjectCategory.GROUP;
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
+      SOLARCHVISION_switch_category(ObjectCategory.GROUP);
     }
   }
   
@@ -12780,7 +12732,7 @@ class solarchvision_Groups {
   
     int pre_current_ObjectCategory = current_ObjectCategory;
   
-    current_ObjectCategory = ObjectCategory.GROUP;
+    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
   
     if (current_ObjectCategory == ObjectCategory.GROUP) {  
   
@@ -18715,9 +18667,17 @@ class solarchvision_Select3D {
   }
     
     
+  private boolean update_BoundingBox = true; // internal
     
+  void revise_BoundingBox () {
+    this.update_BoundingBox = true;
+  }    
   
   void calculate_BoundingBox () {
+    
+    this.update_BoundingBox = false;
+    
+    println("calculate_BoundingBox");
   
     int keep_selection_alignX = this.alignX;
     int keep_selection_alignY = this.alignY;
@@ -19681,7 +19641,7 @@ class solarchvision_Select3D {
     }
     
     
-    SOLARCHVISION_selection_changed();    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21204,7 +21164,7 @@ class solarchvision_Select3D {
       }
     } 
   
-    this.calculate_BoundingBox();  
+    SOLARCHVISION_selection_changed();  
   }
   
 
@@ -21249,6 +21209,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   void convert_Model2Ds_to_Groups () {
@@ -21279,6 +21241,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21312,6 +21276,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   void convert_Faces_to_Groups () {
@@ -21345,6 +21311,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   void convert_Curves_to_Groups () {
@@ -21378,6 +21346,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21448,6 +21418,8 @@ class solarchvision_Select3D {
         }
       }    
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21482,6 +21454,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21516,6 +21490,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   void convert_Groups_to_Model1Ds () {
@@ -21543,6 +21519,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
  
@@ -21571,6 +21549,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21600,6 +21580,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21629,6 +21611,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21657,6 +21641,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21713,6 +21699,8 @@ class solarchvision_Select3D {
         }
       }    
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21743,6 +21731,8 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
@@ -21773,12 +21763,14 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   
 
   
-  void convert_Vertex_to_softSelection () { 
+  void convert_Vertex_to_softSelection () {
   
     int[] keep_selection_Vertex_ids = this.Vertex_ids;
   
@@ -21812,6 +21804,8 @@ class solarchvision_Select3D {
     this.softSelection_ids = this.Vertex_ids;
   
     this.Vertex_ids = keep_selection_Vertex_ids;
+    
+    SOLARCHVISION_selection_changed();
   }
 
 
@@ -21885,7 +21879,7 @@ class solarchvision_Select3D {
         }
       } 
   
-      this.calculate_BoundingBox();
+      SOLARCHVISION_selection_changed();
     }
   }
 
@@ -21930,10 +21924,7 @@ class solarchvision_Select3D {
       }
     } 
   
-    current_ObjectCategory = ObjectCategory.VERTEX; 
-    UI_toolBar.revise();
-  
-    this.calculate_BoundingBox();
+    SOLARCHVISION_switch_category(ObjectCategory.VERTEX); 
   }
 
 
@@ -25496,21 +25487,44 @@ void SOLARCHVISION_deleteAll () {
 }
 
 
-
-
-
-void SOLARCHVISION_model_changed () {
+void SOLARCHVISION_view_changed () {
   WIN3D.revise();
 }
 
-void SOLARCHVISION_selection_changed () {
- 
-  Select3D.calculate_BoundingBox();
-  Select3D.reset_selectedRefValues();
+
+void SOLARCHVISION_model_changed () {
   
-  WIN3D.revise();    
+  SOLARCHVISION_view_changed();
 }
 
+
+
+  
+  
+
+
+
+
+
+
+void SOLARCHVISION_selection_changed () {
+ 
+  Select3D.reset_selectedRefValues();
+  
+  Select3D.revise_BoundingBox();
+  
+  SOLARCHVISION_view_changed();
+}
+
+
+void SOLARCHVISION_switch_category (int a) {
+  
+  current_ObjectCategory = a; 
+  
+  UI_toolBar.revise();
+  
+  SOLARCHVISION_selection_changed();
+}
 
 
 
@@ -33035,8 +33049,6 @@ class solarchvision_Modify3D {
       }
     
       Select3D.deselect_Vertices();
-  
-      Select3D.calculate_BoundingBox();
     }
   }
 
@@ -33129,8 +33141,6 @@ class solarchvision_Modify3D {
       }
   
       Select3D.deselect_Vertices();
-  
-      Select3D.calculate_BoundingBox();
     }
   }
 
@@ -33260,7 +33270,7 @@ class solarchvision_Modify3D {
                             Vertex_offsetValues[o][2]);
       } 
   
-      Select3D.calculate_BoundingBox();
+      SOLARCHVISION_selection_changed();
     }
   }
   
@@ -33306,8 +33316,6 @@ class solarchvision_Modify3D {
   
   
       Select3D.deselect_Vertices();
-  
-      Select3D.calculate_BoundingBox();
     }
   }
               
@@ -33443,11 +33451,7 @@ class solarchvision_Modify3D {
         }
       }
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
   
@@ -33600,11 +33604,7 @@ class solarchvision_Modify3D {
   
       
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
   
@@ -33737,11 +33737,7 @@ class solarchvision_Modify3D {
   
       
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
   
@@ -33867,11 +33863,7 @@ class solarchvision_Modify3D {
   
       
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
   
@@ -33880,7 +33872,7 @@ class solarchvision_Modify3D {
   void tessellateRowsColumns_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || 
-        (current_ObjectCategory == ObjectCategory.FACE)) { 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -34020,11 +34012,7 @@ class solarchvision_Modify3D {
   
       
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
   
@@ -34151,11 +34139,7 @@ class solarchvision_Modify3D {
   
       
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
   
@@ -34265,11 +34249,7 @@ class solarchvision_Modify3D {
   
       
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
   
@@ -34384,11 +34364,7 @@ class solarchvision_Modify3D {
   
       
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
   
@@ -34534,11 +34510,7 @@ class solarchvision_Modify3D {
   
       
   
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
 
@@ -34794,10 +34766,7 @@ class solarchvision_Modify3D {
   
       
       
-      current_ObjectCategory = ObjectCategory.FACE;
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
+      SOLARCHVISION_switch_category(ObjectCategory.FACE);
     }
   }
   
@@ -34847,10 +34816,7 @@ class solarchvision_Modify3D {
         }
       }
 
-      current_ObjectCategory = ObjectCategory.FACE; 
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
+      SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
  
@@ -41309,12 +41275,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
       //println(Select3D.Group_ids[i]);
     }
 
-    current_ObjectCategory = ObjectCategory.GROUP;
-
-    Select3D.calculate_BoundingBox();
-
-    WIN3D.revise();
-    
+    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
   }
 }     
 
@@ -42969,58 +42930,40 @@ void mouseClicked () {
               WIN3D.revise();
             }
             if (menu_option.equals("Select All Cameras")) {
-              current_ObjectCategory = ObjectCategory.CAMERA;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
               Select3D.selectAll();
-              WIN3D.revise();
             }
             if (menu_option.equals("Select All Sections")) {
-              current_ObjectCategory = ObjectCategory.SECTION;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.SECTION);
               Select3D.selectAll();
-              WIN3D.revise();
             }
             if (menu_option.equals("Select All Solids")) {
-              current_ObjectCategory = ObjectCategory.SOLID;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.SOLID);
               Select3D.selectAll();
-              WIN3D.revise();
             }
             if (menu_option.equals("Select All Faces")) {
-              current_ObjectCategory = ObjectCategory.FACE;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.FACE);
               Select3D.selectAll();
-              WIN3D.revise();
             }         
             if (menu_option.equals("Select All Curves")) {
-              current_ObjectCategory = ObjectCategory.CURVE;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.CURVE);
               Select3D.selectAll();
-              WIN3D.revise();
             }         
             if (menu_option.equals("Select All Verices")) {
-              current_ObjectCategory = ObjectCategory.VERTEX;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
               Select3D.selectAll();
-              WIN3D.revise();
             }         
             if (menu_option.equals("Select All Groups")) {
-              current_ObjectCategory = ObjectCategory.GROUP;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.GROUP);
               Select3D.selectAll();
-              WIN3D.revise();
             }         
             if (menu_option.equals("Select All Model1Ds")) {
-              current_ObjectCategory = ObjectCategory.MODEL1D;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
               Select3D.selectAll();
-              WIN3D.revise();
             }         
             if (menu_option.equals("Select All Model2Ds")) {
-              current_ObjectCategory = ObjectCategory.MODEL2D;
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
               Select3D.selectAll();
-              WIN3D.revise();
             }         
 
 
@@ -43028,157 +42971,103 @@ void mouseClicked () {
             
            
             if (menu_option.equals("Select Solid")) {
-              current_ObjectCategory = ObjectCategory.SOLID;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.SOLID);
             }                 
             if (menu_option.equals("Select Section")) {
-              current_ObjectCategory = ObjectCategory.SECTION;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.SECTION);
             }       
             if (menu_option.equals("Select Camera")) {
-              current_ObjectCategory = ObjectCategory.CAMERA;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
             }  
             if (menu_option.equals("Select LandPoint")) {
-              current_ObjectCategory = ObjectCategory.LANDPOINT;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.LANDPOINT);
             }              
             if (menu_option.equals("Select Model1Ds")) {
-              current_ObjectCategory = ObjectCategory.MODEL1D;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
             }  
             if (menu_option.equals("Select Model2Ds")) {
-              current_ObjectCategory = ObjectCategory.MODEL2D;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
             } 
             if (menu_option.equals("Select Group")) {
-              current_ObjectCategory = ObjectCategory.GROUP;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.GROUP);
             } 
             if (menu_option.equals("Select Face")) {
-              current_ObjectCategory = ObjectCategory.FACE;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.FACE);
             } 
             if (menu_option.equals("Select Curve")) {
-              current_ObjectCategory = ObjectCategory.CURVE;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.CURVE);
             }             
             if (menu_option.equals("Select Vertex")) {
-              current_ObjectCategory = ObjectCategory.VERTEX;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
             } 
             if (menu_option.equals("Soft Selection")) {
               Select3D.convert_Vertex_to_softSelection();
 
-              current_ObjectCategory = ObjectCategory.SOFTVERTEX;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.SOFTVERTEX);
             }                 
             if (menu_option.equals("Vertices >> Groups")) {
               Select3D.convert_Vertices_to_Groups();
-              current_ObjectCategory = ObjectCategory.GROUP;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.GROUP);
             }             
             if (menu_option.equals("Faces >> Groups")) {
               Select3D.convert_Faces_to_Groups();
-              current_ObjectCategory = ObjectCategory.GROUP;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.GROUP);
             }             
             if (menu_option.equals("Groups >> Faces")) {
               Select3D.convert_Groups_to_Faces();
-              current_ObjectCategory = ObjectCategory.FACE;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.FACE);
             }    
             if (menu_option.equals("Curves >> Groups")) {
               Select3D.convert_Curves_to_Groups();
-              current_ObjectCategory = ObjectCategory.GROUP;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.GROUP);
             }             
             if (menu_option.equals("Groups >> Curves")) {
               Select3D.convert_Groups_to_Curves();
-              current_ObjectCategory = ObjectCategory.CURVE;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.CURVE);
             }            
             if (menu_option.equals("Curves >> Vertices")) {
               Select3D.convert_Curves_to_Vertices();
-              current_ObjectCategory = ObjectCategory.VERTEX;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
             } 
             if (menu_option.equals("Vertices >> Curves")) {
               Select3D.convert_Vertices_to_Curves();
-              current_ObjectCategory = ObjectCategory.CURVE;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.CURVE);
             }               
             if (menu_option.equals("Groups >> Vertices")) {
               Select3D.convert_Groups_to_Vertices();
-              current_ObjectCategory = ObjectCategory.VERTEX;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
             }  
             if (menu_option.equals("Faces >> Vertices")) {
               Select3D.convert_Faces_to_Vertices();
-              current_ObjectCategory = ObjectCategory.VERTEX;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
             } 
             if (menu_option.equals("Vertices >> Faces")) {
               Select3D.convert_Vertices_to_Faces();
-              current_ObjectCategory = ObjectCategory.FACE;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.FACE);
             }    
             if (menu_option.equals("Solids >> Groups")) {
               Select3D.convert_Solids_to_Groups();
-              current_ObjectCategory = ObjectCategory.GROUP;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.GROUP);
             }             
             if (menu_option.equals("Groups >> Solids")) {
               Select3D.convert_Groups_to_Solids();
-              current_ObjectCategory = ObjectCategory.SOLID;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.SOLID);
             }                
             if (menu_option.equals("Model2Ds >> Groups")) {
               Select3D.convert_Model2Ds_to_Groups();
-              current_ObjectCategory = ObjectCategory.GROUP;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.GROUP);
             }             
             if (menu_option.equals("Groups >> Model2Ds")) {
               Select3D.convert_Groups_to_Model2Ds();
-              current_ObjectCategory = ObjectCategory.MODEL2D;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
             }             
             if (menu_option.equals("Model1Ds >> Groups")) {
               Select3D.convert_Model1Ds_to_Groups();
-              current_ObjectCategory = ObjectCategory.GROUP;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.GROUP);
             }             
             if (menu_option.equals("Groups >> Model1Ds")) {
               Select3D.convert_Groups_to_Model1Ds();
-              current_ObjectCategory = ObjectCategory.MODEL1D;
-              WIN3D.revise();
-              UI_toolBar.revise();
+              SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
             }            
 
             if (menu_option.equals("Pick Select")) {
@@ -46695,7 +46584,7 @@ void UI_set_to_Create_allModel1Ds () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Model1Ds;
-  current_ObjectCategory = ObjectCategory.MODEL1D;
+  SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
 }  
 
 
@@ -46703,21 +46592,21 @@ void UI_set_to_Create_Tree () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Plant;
-  current_ObjectCategory = ObjectCategory.MODEL2D;
+  SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
 }
 
 void UI_set_to_Create_Person () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Person;
-  current_ObjectCategory = ObjectCategory.MODEL2D;
+  SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
 }
 
 void UI_set_to_Create_Vertex () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Vertex;
-  current_ObjectCategory = ObjectCategory.VERTEX;
+  SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
 }
 
 void UI_set_to_Create_Face () {
@@ -46733,7 +46622,7 @@ void UI_set_to_Create_Face () {
   allFaces.beginNewFace();
 
   CreateObject = CREATE.Face;
-  current_ObjectCategory = ObjectCategory.FACE;
+  SOLARCHVISION_switch_category(ObjectCategory.FACE);
 }
 
 void UI_set_to_Create_Curve () {
@@ -46749,21 +46638,21 @@ void UI_set_to_Create_Curve () {
   allCurves.beginNewCurve();
 
   CreateObject = CREATE.Curve;
-  current_ObjectCategory = ObjectCategory.CURVE;
+  SOLARCHVISION_switch_category(ObjectCategory.CURVE);
 }
 
 void UI_set_to_Create_Solid () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Solid;
-  current_ObjectCategory = ObjectCategory.SOLID;
+  SOLARCHVISION_switch_category(ObjectCategory.SOLID);
 }
 
 void UI_set_to_Create_Section () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Section;
-  current_ObjectCategory = ObjectCategory.SECTION;
+  SOLARCHVISION_switch_category(ObjectCategory.SECTION);
 }
 
 
@@ -46771,7 +46660,7 @@ void UI_set_to_Create_Camera () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Camera;
-  current_ObjectCategory = ObjectCategory.CAMERA;
+  SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
 }
 
 
@@ -46785,56 +46674,56 @@ void UI_set_to_Create_Parametric (int n) {
   CreateObject = CREATE.Parametric;
   User3D.create_Parametric_Type = n;
 
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Tri () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Tri;
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Plane () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Plane;
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Poly () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Poly;
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Extrude () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Extrude;
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Hyper () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Hyper;
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_House1 () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.House1;
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_House2 () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.House2;
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Box () {
@@ -46846,7 +46735,7 @@ void UI_set_to_Create_Box () {
   User3D.create_powY = CubePower; 
   User3D.create_powZ = CubePower;             
 
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 
@@ -46859,7 +46748,7 @@ void UI_set_to_Create_Icosahedron () {
   User3D.create_powY = 1; 
   User3D.create_powZ = 1;            
 
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Octahedron () {
@@ -46871,7 +46760,7 @@ void UI_set_to_Create_Octahedron () {
   User3D.create_powY = 1; 
   User3D.create_powZ = 1;            
 
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Sphere () {
@@ -46883,7 +46772,7 @@ void UI_set_to_Create_Sphere () {
   User3D.create_powY = 2; 
   User3D.create_powZ = 2;            
 
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Cylinder () {
@@ -46895,7 +46784,7 @@ void UI_set_to_Create_Cylinder () {
   User3D.create_powY = 2; 
   User3D.create_powZ = CubePower;             
 
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 void UI_set_to_Create_Cushion () {
@@ -46907,7 +46796,7 @@ void UI_set_to_Create_Cushion () {
   User3D.create_powY = CubePower;  
   User3D.create_powZ = 2;            
 
-  current_ObjectCategory = ObjectCategory.GROUP;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
 
@@ -53163,24 +53052,24 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
-             if (low_case.equals("groups")) {current_ObjectCategory = ObjectCategory.GROUP; UI_toolBar.revise();}
-        else if (low_case.equals("model2ds")) {current_ObjectCategory = ObjectCategory.MODEL2D; UI_toolBar.revise();}
-        else if (low_case.equals("model1ds")) {current_ObjectCategory = ObjectCategory.MODEL1D; UI_toolBar.revise();}
-        else if (low_case.equals("vertices")) {current_ObjectCategory = ObjectCategory.VERTEX; UI_toolBar.revise();}
-        else if (low_case.equals("faces")) {current_ObjectCategory = ObjectCategory.FACE; UI_toolBar.revise();}
-        else if (low_case.equals("lines")) {current_ObjectCategory = ObjectCategory.CURVE; UI_toolBar.revise();}
-        else if (low_case.equals("solids")) {current_ObjectCategory = ObjectCategory.SOLID; UI_toolBar.revise();}
-        else if (low_case.equals("sections")) {current_ObjectCategory = ObjectCategory.SECTION; UI_toolBar.revise();}
-        else if (low_case.equals("cameras")) {current_ObjectCategory = ObjectCategory.CAMERA; UI_toolBar.revise();}
-        else if (low_case.equals("landpoints")) {current_ObjectCategory = ObjectCategory.LANDPOINT; UI_toolBar.revise();}
+             if (low_case.equals("groups")) SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+        else if (low_case.equals("model2ds")) SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
+        else if (low_case.equals("model1ds")) SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
+        else if (low_case.equals("vertices")) SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
+        else if (low_case.equals("faces")) SOLARCHVISION_switch_category(ObjectCategory.FACE);
+        else if (low_case.equals("lines")) SOLARCHVISION_switch_category(ObjectCategory.CURVE);
+        else if (low_case.equals("solids")) SOLARCHVISION_switch_category(ObjectCategory.SOLID);
+        else if (low_case.equals("sections")) SOLARCHVISION_switch_category(ObjectCategory.SECTION);
+        else if (low_case.equals("cameras")) SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
+        else if (low_case.equals("landpoints")) SOLARCHVISION_switch_category(ObjectCategory.LANDPOINT);
       }
       
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
-             if (low_case.equals("all")) {Select3D.selectAll(); WIN3D.revise();}
-        else if (low_case.equals("invert")) {Select3D.invertSelection(); WIN3D.revise();}
-        else if (low_case.equals("nothing")) {Select3D.deselectAll(); WIN3D.revise();}
-        else if (low_case.equals("last")) {Select3D.selectLast(); WIN3D.revise();}
+             if (low_case.equals("all")) Select3D.selectAll();
+        else if (low_case.equals("invert")) Select3D.invertSelection();
+        else if (low_case.equals("nothing")) Select3D.deselectAll();
+        else if (low_case.equals("last")) Select3D.selectLast();
       }
     }
     else {
@@ -53211,10 +53100,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       allModel2Ds.create(t, m, x, y, z, 2.5);
-      WIN3D.revise();  
-      current_ObjectCategory = ObjectCategory.MODEL2D; 
-      UI_toolBar.revise();
-      //Select3D.selectLast();
     }
     else {
       return_message = "2Dman m=? x=? y=? z=?";
@@ -53246,10 +53131,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (h != 0) {
         allModel2Ds.create(t, m, x, y, z, h);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.MODEL2D; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53300,10 +53181,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (h != 0) {
         allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, Tk, Lf);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.MODEL1D; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53347,10 +53224,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {   
         Create3D.add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53396,10 +53269,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         Create3D.add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53447,10 +53316,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         Create3D.add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53498,10 +53363,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         Create3D.add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53547,10 +53408,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (h != 0)) {   
         Create3D.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53594,10 +53451,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (d != 0) {   
         Create3D.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53652,10 +53505,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0) && (px > 0) && (py > 0) && (pz > 0)) {   
         Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53703,10 +53552,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53753,10 +53598,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((dx != 0) && (dy != 0) && (dz != 0)) {   
         Create3D.add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53798,10 +53639,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (d != 0) {   
         Create3D.add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53847,10 +53684,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (h != 0)) {   
         Create3D.add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.GROUP; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53896,10 +53729,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (h != 0)) {   
         Create3D.add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53943,10 +53772,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (d != 0) {   
         Create3D.add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -53991,10 +53816,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {   
         Create3D.add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54041,10 +53862,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       {   
         Create3D.add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54097,10 +53914,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       {   
         Create3D.add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54159,10 +53972,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       {   
         Create3D.add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54227,10 +54036,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       {   
         Create3D.add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54273,10 +54078,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (w != 0)) {
         Create3D.add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54319,10 +54120,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((d != 0) && (h != 0)) {   
         Create3D.add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.FACE; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54366,10 +54163,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {   
         allSolids.create(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.SOLID; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54413,10 +54206,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((t > 0) && (i > 0) && (j > 0) && (u > 0) && (v > 0)) {   
         allSections.create(x, y, z, r, u, v, t, i, j);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.SECTION; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54460,10 +54249,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (a != 0) {   
         allCameras.create(px, py, pz, pt, rx, ry, rz, rt, a, t);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.CAMERA; 
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54505,10 +54290,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if (points.length > 1) {   
         allCurves.add_Spline(m, tes, lyr, vsb, wgt, clz, points);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.CURVE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54555,10 +54336,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
       if ((r != 0) && (deg > 2)) {   
         allCurves.add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
-        WIN3D.revise();  
-        current_ObjectCategory = ObjectCategory.CURVE;
-        UI_toolBar.revise();
-        //Select3D.selectLast();
       }
     }
     else {
@@ -54592,99 +54369,51 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   
   else if (Command_CAPITAL.equals("VERTEX>GROUP")) {
     Select3D.convert_Vertices_to_Groups();
-    current_ObjectCategory = ObjectCategory.GROUP;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }             
   else if (Command_CAPITAL.equals("FACE>GROUP")) {
     Select3D.convert_Faces_to_Groups();
-    current_ObjectCategory = ObjectCategory.GROUP;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }             
   else if (Command_CAPITAL.equals("GROUP>FACE")) {
     Select3D.convert_Groups_to_Faces();
-    current_ObjectCategory = ObjectCategory.FACE;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }    
   else if (Command_CAPITAL.equals("CURVE>GROUP")) {
     Select3D.convert_Curves_to_Groups();
-    current_ObjectCategory = ObjectCategory.GROUP;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }             
   else if (Command_CAPITAL.equals("GROUP>CURVE")) {
     Select3D.convert_Groups_to_Curves();
-    current_ObjectCategory = ObjectCategory.CURVE;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }            
   else if (Command_CAPITAL.equals("CURVE>VERTEX")) {
     Select3D.convert_Curves_to_Vertices();
-    current_ObjectCategory = ObjectCategory.VERTEX;
-    WIN3D.revise();
-    UI_toolBar.revise();
   } 
   else if (Command_CAPITAL.equals("VERTEX>CURVE")) {
     Select3D.convert_Vertices_to_Curves();
-    current_ObjectCategory = ObjectCategory.CURVE;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }               
   else if (Command_CAPITAL.equals("GROUP>VERTEX")) {
     Select3D.convert_Groups_to_Vertices();
-    current_ObjectCategory = ObjectCategory.VERTEX;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }  
   else if (Command_CAPITAL.equals("FACE>VERTEX")) {
     Select3D.convert_Faces_to_Vertices();
-    current_ObjectCategory = ObjectCategory.VERTEX;
-    WIN3D.revise();
-    UI_toolBar.revise();
   } 
   else if (Command_CAPITAL.equals("VERTEX>FACE")) {
     Select3D.convert_Vertices_to_Faces();
-    current_ObjectCategory = ObjectCategory.FACE;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }    
   else if (Command_CAPITAL.equals("SOLID>GROUP")) {
     Select3D.convert_Solids_to_Groups();
-    current_ObjectCategory = ObjectCategory.GROUP;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }             
   else if (Command_CAPITAL.equals("GROUP>SOLID")) {
     Select3D.convert_Groups_to_Solids();
-    current_ObjectCategory = ObjectCategory.SOLID;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }                
   else if (Command_CAPITAL.equals("2D>GROUP")) {
     Select3D.convert_Model2Ds_to_Groups();
-    current_ObjectCategory = ObjectCategory.GROUP;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }             
   else if (Command_CAPITAL.equals("GROUP>2D")) {
     Select3D.convert_Groups_to_Model2Ds();
-    current_ObjectCategory = ObjectCategory.MODEL2D;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }             
   else if (Command_CAPITAL.equals("1D>GROUP")) {
     Select3D.convert_Model1Ds_to_Groups();
-    current_ObjectCategory = ObjectCategory.GROUP;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }             
   else if (Command_CAPITAL.equals("GROUP>1D")) {
     Select3D.convert_Groups_to_Model1Ds();
-    current_ObjectCategory = ObjectCategory.MODEL1D;
-    WIN3D.revise();
-    UI_toolBar.revise();
   }              
 
   else if (Command_CAPITAL.equals("DISTZ")) {
