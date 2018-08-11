@@ -1,7 +1,4 @@
 
-// 3D-tree: leaves could be improved, shaded and exported. 
-
-
 // move should keep the same distance of bounding box - now only moves the center
 
 // SOLARCHVISION_snap_Faces --> allFaces.snap...
@@ -211,8 +208,8 @@ class solarchvision_WINDOWTYPE {
   private final static int STUDY    = 1;
   private final static int WORLD    = 2;
   private final static int WIN3D    = 3;
-  private final static int OBJ      = 4;
-  private final static int RAD      = 5;
+  private final static int OBJ3D    = 4;
+  private final static int RAD3D    = 5;
   private final static int HTML     = 6;
   private final static int SHADOW   = 7;
   
@@ -10513,7 +10510,7 @@ class solarchvision_Faces {
       }      
       
       
-      if (target_window == TypeWindow.OBJ) {
+      if (target_window == TypeWindow.OBJ3D) {
     
         int Create_Face_Texture = 0;
     
@@ -11197,7 +11194,7 @@ class solarchvision_Faces {
       }      
       
       
-      if (target_window == TypeWindow.RAD) {
+      if (target_window == TypeWindow.RAD3D) {
     
         int[] used_Materials = new int [allMaterials.Number];
     
@@ -20847,7 +20844,7 @@ class solarchvision_Select3D {
   }
   
   
-  void reverse_Selection () {
+  void invert_Selection () {
   
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
       int[] pre_Selection_LandPoint_ids = sort(this.LandPoint_ids);
@@ -24962,9 +24959,9 @@ void SOLARCHVISION_export_objects_RAD () {
 
 
 
-  Land3D.draw(TypeWindow.RAD);
+  Land3D.draw(TypeWindow.RAD3D);
 
-  allFaces.draw(TypeWindow.RAD);
+  allFaces.draw(TypeWindow.RAD3D);
 
 
   
@@ -25314,23 +25311,23 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
 
 
-  Earth3D.draw(TypeWindow.OBJ);
+  Earth3D.draw(TypeWindow.OBJ3D);
 
-  Land3D.draw(TypeWindow.OBJ);
+  Land3D.draw(TypeWindow.OBJ3D);
 
-  Tropo3D.draw(TypeWindow.OBJ, STUDY.i_Start, STUDY.i_End);  
+  Tropo3D.draw(TypeWindow.OBJ3D, STUDY.i_Start, STUDY.i_End);  
   
-  allSections.draw(TypeWindow.OBJ);
+  allSections.draw(TypeWindow.OBJ3D);
   
-  allModel1Ds.draw(TypeWindow.OBJ);
+  allModel1Ds.draw(TypeWindow.OBJ3D);
   
-  allModel2Ds.draw(TypeWindow.OBJ);
+  allModel2Ds.draw(TypeWindow.OBJ3D);
   
-  allFaces.draw(TypeWindow.OBJ);
+  allFaces.draw(TypeWindow.OBJ3D);
 
-  allWindFlows.draw(TypeWindow.OBJ);
+  allWindFlows.draw(TypeWindow.OBJ3D);
 
-  Sky3D.draw(TypeWindow.OBJ);
+  Sky3D.draw(TypeWindow.OBJ3D);
 
   if (Sun3D.displayPattern) {
 
@@ -26216,7 +26213,7 @@ class solarchvision_Tropo3D {
         if (this.Filenames[n_Map].equals("")) { // not to display empty images 
           } else {
           
-          if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ)) {
+          if ((target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ3D)) {
             
             if (User3D.export_MaterialLibrary) {
       
@@ -26224,7 +26221,7 @@ class solarchvision_Tropo3D {
                 htmlOutput.println("\t\t\t\t<Appearance DEF='TropoSphere" + nf(n_Map, 0) + "'>");
               }            
               
-              if (target_window == TypeWindow.OBJ) {
+              if (target_window == TypeWindow.OBJ3D) {
               
                 mtlOutput.println("newmtl TropoSphere" + nf(n_Map, 0));
                 mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -26250,7 +26247,7 @@ class solarchvision_Tropo3D {
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
       
-                if (target_window == TypeWindow.OBJ) {
+                if (target_window == TypeWindow.OBJ3D) {
       
                   //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
                   mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map        
@@ -26268,7 +26265,7 @@ class solarchvision_Tropo3D {
               htmlOutput.println("\t\t\t\t</Appearance>");
             } 
           
-            if (target_window == TypeWindow.OBJ) {
+            if (target_window == TypeWindow.OBJ3D) {
           
               if (User3D.export_PolyToPoly == 1) {
                 obj_lastGroupNumber += 1;  
@@ -26301,7 +26298,7 @@ class solarchvision_Tropo3D {
           num_vertices_added = 0;
           
           int end_turn = 1;
-          if (target_window == TypeWindow.OBJ) end_turn = 3;
+          if (target_window == TypeWindow.OBJ3D) end_turn = 3;
           for (int _turn = 1; _turn <= end_turn; _turn++) {
   
             int f = 0;
@@ -26463,7 +26460,7 @@ class solarchvision_Tropo3D {
                                             v * this.Map[n_Map].height);
                     }                    
                   
-                    if (target_window == TypeWindow.OBJ) {
+                    if (target_window == TypeWindow.OBJ3D) {
         
                       if (_turn == 1) {
                         SOLARCHVISION_OBJprintVertex(x, y, z);
@@ -26519,7 +26516,7 @@ class solarchvision_Tropo3D {
                     WIN3D.graphics.endShape(CLOSE);
                   }    
    
-                  if (target_window == TypeWindow.OBJ) {
+                  if (target_window == TypeWindow.OBJ3D) {
       
                     String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
                     String n2_txt = nf(obj_lastVertexNumber - 2, 0);
@@ -26640,7 +26637,7 @@ class solarchvision_Sky3D {
         PAL_multiplier = this.PASSIVE_pallet_MLT;
       }        
     
-      if (target_window == TypeWindow.OBJ) {
+      if (target_window == TypeWindow.OBJ3D) {
     
         if ((WIN3D.FacesShade == SHADE.Global_Solar) || 
             (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
@@ -27468,7 +27465,7 @@ class solarchvision_Sun3D {
     String the_filename = "";
     String TEXTURE_path = "";
   
-    if (target_window == TypeWindow.OBJ) {
+    if (target_window == TypeWindow.OBJ3D) {
   
       num_vertices_added = 0;
   
@@ -27530,11 +27527,11 @@ class solarchvision_Sun3D {
     num_vertices_added = 0;
   
     int end_turn = 1;
-    if (target_window == TypeWindow.OBJ) end_turn = 3;
+    if (target_window == TypeWindow.OBJ3D) end_turn = 3;
     for (int _turn = 1; _turn <= end_turn; _turn++) {
   
   
-      if (target_window == TypeWindow.OBJ) {
+      if (target_window == TypeWindow.OBJ3D) {
   
         if (_turn == 3) {
   
@@ -27730,7 +27727,7 @@ class solarchvision_Sun3D {
             if (STUDY.isInHourlyRange(i)) {
               if ((i > sunrise - 1.0 / float(TES_hour)) && (i < sunset + 1.0 / float(TES_hour))) {              
   
-                if (target_window == TypeWindow.OBJ) {
+                if (target_window == TypeWindow.OBJ3D) {
                 } else if (target_window == TypeWindow.WIN3D) {
                   WIN3D.graphics.beginShape();
                   WIN3D.graphics.noStroke();
@@ -27776,7 +27773,7 @@ class solarchvision_Sun3D {
   
                       float[] COL = PAINT.getColorStyle(PAL_type, _u);
   
-                      if (target_window == TypeWindow.OBJ) {
+                      if (target_window == TypeWindow.OBJ3D) {
   
                         float x = funcs.cos_ang(Alpha) * (funcs.cos_ang(Beta - 90)) * WIN3D.scale * s_Plot + x_Plot;
                         float y = funcs.cos_ang(Alpha) * (funcs.sin_ang(Beta - 90)) * WIN3D.scale * s_Plot + y_Plot;
@@ -27829,7 +27826,7 @@ class solarchvision_Sun3D {
                   }
                 }
   
-                if (target_window == TypeWindow.OBJ) {
+                if (target_window == TypeWindow.OBJ3D) {
   
                   if (_turn == 3) {
   
@@ -27860,7 +27857,7 @@ class solarchvision_Sun3D {
       }
   
   
-      if (target_window == TypeWindow.OBJ) {
+      if (target_window == TypeWindow.OBJ3D) {
         obj_lastVertexNumber += num_vertices_added;
         obj_lastVtextureNumber += num_vertices_added;
       }
@@ -28144,7 +28141,7 @@ class solarchvision_Earth3D {
       
   
       if ((target_window == TypeWindow.HTML) || 
-          (target_window == TypeWindow.OBJ)) {
+          (target_window == TypeWindow.OBJ3D)) {
       
         if (User3D.export_MaterialLibrary) {
   
@@ -28152,7 +28149,7 @@ class solarchvision_Earth3D {
             htmlOutput.println("\t\t\t\t<Appearance DEF='EarthSphere" + nf(n_Map, 0) + "'>");
           }
           
-          if (target_window == TypeWindow.OBJ) {
+          if (target_window == TypeWindow.OBJ3D) {
     
             mtlOutput.println("newmtl EarthSphere");
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -28178,7 +28175,7 @@ class solarchvision_Earth3D {
             println("Copying texture:", old_Texture_path, ">", new_Texture_path);
             saveBytes(new_Texture_path, loadBytes(old_Texture_path));
     
-            if (target_window == TypeWindow.OBJ) {
+            if (target_window == TypeWindow.OBJ3D) {
     
               //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
               mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map        
@@ -28196,7 +28193,7 @@ class solarchvision_Earth3D {
           htmlOutput.println("\t\t\t\t</Appearance>");
         }              
     
-        if (target_window == TypeWindow.OBJ) {
+        if (target_window == TypeWindow.OBJ3D) {
           if (User3D.export_PolyToPoly == 1) {
             obj_lastGroupNumber += 1;  
             objOutput.println("g EarthSphere");
@@ -28213,7 +28210,7 @@ class solarchvision_Earth3D {
       num_vertices_added = 0;
   
       int end_turn = 1;
-      if (target_window == TypeWindow.OBJ) end_turn = 3;
+      if (target_window == TypeWindow.OBJ3D) end_turn = 3;
       for (int _turn = 1; _turn <= end_turn; _turn++) {
   
         int f = 0;
@@ -28335,7 +28332,7 @@ class solarchvision_Earth3D {
               }
   
               
-              if (target_window == TypeWindow.OBJ) {
+              if (target_window == TypeWindow.OBJ3D) {
                 if (_turn == 1) {
                   SOLARCHVISION_OBJprintVertex(x, y, z);
                 }
@@ -28388,7 +28385,7 @@ class solarchvision_Earth3D {
               WIN3D.graphics.endShape(CLOSE);
             }
             
-            if (target_window == TypeWindow.OBJ) {
+            if (target_window == TypeWindow.OBJ3D) {
               String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
               String n2_txt = nf(obj_lastVertexNumber - 2, 0);
               String n3_txt = nf(obj_lastVertexNumber - 1, 0);
@@ -28864,7 +28861,7 @@ class solarchvision_Land3D {
   
         for (int n_Map = 0; n_Map < this.Textures_num; n_Map++) {
   
-          if (target_window == TypeWindow.RAD) {
+          if (target_window == TypeWindow.RAD3D) {
   
             radOutput.println("void plastic " + "LandMap" + nf(n_Map, 0));
             radOutput.println("0");
@@ -28877,7 +28874,7 @@ class solarchvision_Land3D {
             htmlOutput.println("\t\t\t\t<Appearance DEF='LandMap" + nf(n_Map, 0) + "'>");
           }
           
-          if (target_window == TypeWindow.OBJ) {
+          if (target_window == TypeWindow.OBJ3D) {
           
             mtlOutput.println("newmtl LandMap" + nf(n_Map, 0));
             mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -28895,7 +28892,7 @@ class solarchvision_Land3D {
   
   
           if ((target_window == TypeWindow.HTML) || 
-              (target_window == TypeWindow.OBJ)) {
+              (target_window == TypeWindow.OBJ3D)) {
   
             if (this.displayTexture) {
               if (n_Map != -1) {
@@ -28910,7 +28907,7 @@ class solarchvision_Land3D {
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
     
     
-                if (target_window == TypeWindow.OBJ) {
+                if (target_window == TypeWindow.OBJ3D) {
                     
                   //mtlOutput.println("\tmap_Ka " + Subfolder_exportMaps + the_filename); // ambient map
                   mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map        
@@ -28952,11 +28949,11 @@ class solarchvision_Land3D {
       num_vertices_added = 0;
   
       int end_turn = 1;
-      if (target_window == TypeWindow.OBJ) end_turn = 3;
+      if (target_window == TypeWindow.OBJ3D) end_turn = 3;
       for (int _turn = 1; _turn <= end_turn; _turn++) {
   
   
-        if (target_window == TypeWindow.OBJ) {
+        if (target_window == TypeWindow.OBJ3D) {
   
           if (_turn == 3) {
             
@@ -29074,7 +29071,7 @@ class solarchvision_Land3D {
                 }
               }
   
-              if (target_window == TypeWindow.OBJ) {
+              if (target_window == TypeWindow.OBJ3D) {
   
                 if (_turn == 3) {
   
@@ -29186,7 +29183,7 @@ class solarchvision_Land3D {
                     WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
                   }
                   
-                  if (target_window == TypeWindow.RAD) {
+                  if (target_window == TypeWindow.RAD3D) {
   
                     if (this.displayTexture) {   
                     
@@ -29231,7 +29228,7 @@ class solarchvision_Land3D {
                     }
                   }
   
-                  if (target_window == TypeWindow.OBJ) {
+                  if (target_window == TypeWindow.OBJ3D) {
                     
                     if (this.displayTexture) {   
                     
@@ -29299,7 +29296,7 @@ class solarchvision_Land3D {
                 WIN3D.graphics.endShape(CLOSE);
               }
   
-              if (target_window == TypeWindow.OBJ) {
+              if (target_window == TypeWindow.OBJ3D) {
   
                 if (_turn == 3) {
                   
@@ -29405,7 +29402,7 @@ class solarchvision_Land3D {
         }
       }
   
-      if (target_window == TypeWindow.OBJ) {
+      if (target_window == TypeWindow.OBJ3D) {
         obj_lastVertexNumber += num_vertices_added;
         obj_lastVtextureNumber += num_vertices_added;
       }    
@@ -30115,7 +30112,7 @@ class solarchvision_Model1Ds {
     
     if (proceed) {  
       
-      if (target_window == TypeWindow.OBJ) {
+      if (target_window == TypeWindow.OBJ3D) {
         if (User3D.export_MaterialLibrary) {
     
           if (this.num != 0) {
@@ -30179,7 +30176,7 @@ class solarchvision_Model1Ds {
 
         if (n == 0) {
             
-          if (target_window == TypeWindow.OBJ) {
+          if (target_window == TypeWindow.OBJ3D) {
           
             num_vertices_added = 0;
     
@@ -30191,7 +30188,7 @@ class solarchvision_Model1Ds {
   
 
           int end_turn = 1;
-          if (target_window == TypeWindow.OBJ) end_turn = 3;
+          if (target_window == TypeWindow.OBJ3D) end_turn = 3;
           
           for (_turn = 1; _turn <= end_turn; _turn++) { 
 
@@ -30250,7 +30247,7 @@ class solarchvision_Model1Ds {
           }
           
 
-          if (target_window == TypeWindow.OBJ) {
+          if (target_window == TypeWindow.OBJ3D) {
             obj_lastVertexNumber += num_vertices_added;
             obj_lastVtextureNumber += num_vertices_added;     
           }          
@@ -30412,7 +30409,7 @@ class solarchvision_Model1Ds {
         subFace[j][2] =  WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale);
       }
       
-      if (target_window == TypeWindow.OBJ) {
+      if (target_window == TypeWindow.OBJ3D) {
       
         if (_turn == 1) {
 
@@ -30430,7 +30427,7 @@ class solarchvision_Model1Ds {
       }
     }      
       
-    if (target_window == TypeWindow.OBJ) {
+    if (target_window == TypeWindow.OBJ3D) {
       if (_turn == 3) {
 
         num_vertices_added += 4;
@@ -30966,7 +30963,7 @@ class solarchvision_Model2Ds {
       if (User3D.export_MaterialLibrary) {
       
         if ((target_window == TypeWindow.HTML) || 
-            (target_window == TypeWindow.OBJ)) {  
+            (target_window == TypeWindow.OBJ3D)) {  
     
           int[] ImageUsed = new int [this.ImagePath.length];
     
@@ -31035,7 +31032,7 @@ class solarchvision_Model2Ds {
                   htmlOutput.println("\t\t\t\t</Appearance>");
                 }
     
-                if (target_window == TypeWindow.OBJ) { 
+                if (target_window == TypeWindow.OBJ3D) { 
       
                   mtlOutput.println("newmtl " + CLASS_STAMP + the_filename);
                   mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -31107,7 +31104,7 @@ class solarchvision_Model2Ds {
           if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI;
          
           if ((target_window == TypeWindow.HTML) || 
-              (target_window == TypeWindow.OBJ)) {
+              (target_window == TypeWindow.OBJ3D)) {
                 
             t = 0;
           }     
@@ -31124,7 +31121,7 @@ class solarchvision_Model2Ds {
           float x2 = x + dx;
           float y2 = y + dy;
   
-          if (target_window == TypeWindow.OBJ) { 
+          if (target_window == TypeWindow.OBJ3D) { 
   
             if (User3D.export_PolyToPoly == 1) {
               obj_lastGroupNumber += 1;  
@@ -31139,7 +31136,7 @@ class solarchvision_Model2Ds {
           num_vertices_added = 0;
     
           int end_turn = 1;
-          if (target_window == TypeWindow.OBJ) end_turn = 3;
+          if (target_window == TypeWindow.OBJ3D) end_turn = 3;
           for (int _turn = 1; _turn <= end_turn; _turn++) {
             for (int back_front = -1; back_front <= 1; back_front++) {
               if (back_front == 0) {
@@ -31160,7 +31157,7 @@ class solarchvision_Model2Ds {
                   WIN3D.graphics.endShape(CLOSE);        
                 }
                 
-                if (target_window == TypeWindow.OBJ) { 
+                if (target_window == TypeWindow.OBJ3D) { 
 
                   if (_turn == 1) {
     
@@ -31308,7 +31305,7 @@ class solarchvision_Model2Ds {
                     WIN3D.graphics.endShape(CLOSE);
                   }
                   
-                  if (target_window == TypeWindow.OBJ) {
+                  if (target_window == TypeWindow.OBJ3D) {
                     if (_turn == 1) {
         
                       SOLARCHVISION_OBJprintVertex(x1, y1, (z + 2 * rh * ratio));
@@ -38098,7 +38095,7 @@ class solarchvision_Sections {
             String TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
   
             if ((target_window == TypeWindow.HTML) || 
-                (target_window == TypeWindow.OBJ)) {
+                (target_window == TypeWindow.OBJ3D)) {
   
               if (allSolarImpacts.displayImage) {
                 println("Saving texture:", TEXTURE_path);
@@ -38114,7 +38111,7 @@ class solarchvision_Sections {
                 htmlOutput.println("\t\t\t\t</Appearance>");
               }
     
-              if (target_window == TypeWindow.OBJ) {
+              if (target_window == TypeWindow.OBJ3D) {
     
                 mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
                 mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -38135,7 +38132,7 @@ class solarchvision_Sections {
           }
   
   
-          if (target_window == TypeWindow.OBJ) {
+          if (target_window == TypeWindow.OBJ3D) {
   
             if (User3D.export_PolyToPoly == 1) {
               obj_lastGroupNumber += 1;  
@@ -38154,7 +38151,7 @@ class solarchvision_Sections {
           num_vertices_added = 0;
         
           int end_turn = 1;
-          if (target_window == TypeWindow.OBJ) end_turn = 3;
+          if (target_window == TypeWindow.OBJ3D) end_turn = 3;
           for (int _turn = 1; _turn <= end_turn; _turn++) {
   
             boolean display_image = false;
@@ -38192,7 +38189,7 @@ class solarchvision_Sections {
               }
               
               
-              if (target_window == TypeWindow.OBJ) {
+              if (target_window == TypeWindow.OBJ3D) {
                 
                 v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
   
@@ -38225,7 +38222,7 @@ class solarchvision_Sections {
             this.Faces[f][3] = f * 4 + 3;  
           }
           
-          if (target_window == TypeWindow.OBJ) {
+          if (target_window == TypeWindow.OBJ3D) {
   
             String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
             String n2_txt = nf(obj_lastVertexNumber - 2, 0);
@@ -38810,7 +38807,7 @@ class solarchvision_WindFlow {
         
         
         
-      if (target_window == TypeWindow.OBJ) {  
+      if (target_window == TypeWindow.OBJ3D) {  
     
         String the_filename = "";
     
@@ -42945,7 +42942,7 @@ void mouseClicked () {
             }   
 
             if (menu_option.equals("Invert Selection")) {
-              Select3D.reverse_Selection();
+              Select3D.invert_Selection();
               WIN3D.revise();
             }             
             if (menu_option.equals("Deselect All")) {
@@ -42998,13 +42995,13 @@ void mouseClicked () {
               Select3D.select_all();
               WIN3D.revise();
             }         
-            if (menu_option.equals("Select All 3D-Trees")) {
+            if (menu_option.equals("Select All Model1Ds")) {
               current_ObjectCategory = ObjectCategory.MODEL1D;
               UI_toolBar.revise();
               Select3D.select_all();
               WIN3D.revise();
             }         
-            if (menu_option.equals("Select All 2D-Models")) {
+            if (menu_option.equals("Select All Model2Ds")) {
               current_ObjectCategory = ObjectCategory.MODEL2D;
               UI_toolBar.revise();
               Select3D.select_all();
@@ -43072,116 +43069,116 @@ void mouseClicked () {
               WIN3D.revise();
               UI_toolBar.revise();
             }                 
-            if (menu_option.equals("Vertex >> Group")) {
+            if (menu_option.equals("Vertices >> Groups")) {
               Select3D.convert_Vertices_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Face >> Group")) {
+            if (menu_option.equals("Faces >> Groups")) {
               Select3D.convert_Faces_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Group >> Face")) {
+            if (menu_option.equals("Groups >> Faces")) {
               Select3D.convert_Groups_to_Faces();
               current_ObjectCategory = ObjectCategory.FACE;
               WIN3D.revise();
               UI_toolBar.revise();
             }    
-            if (menu_option.equals("Curve >> Group")) {
+            if (menu_option.equals("Curves >> Groups")) {
               Select3D.convert_Curves_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Group >> Curve")) {
+            if (menu_option.equals("Groups >> Curves")) {
               Select3D.convert_Groups_to_Curves();
               current_ObjectCategory = ObjectCategory.CURVE;
               WIN3D.revise();
               UI_toolBar.revise();
             }            
-            if (menu_option.equals("Curve >> Vertex")) {
+            if (menu_option.equals("Curves >> Vertices")) {
               Select3D.convert_Curves_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.revise();
               UI_toolBar.revise();
             } 
-            if (menu_option.equals("Vertex >> Curve")) {
+            if (menu_option.equals("Vertices >> Curves")) {
               Select3D.convert_Vertices_to_Curves();
               current_ObjectCategory = ObjectCategory.CURVE;
               WIN3D.revise();
               UI_toolBar.revise();
             }               
-            if (menu_option.equals("Group >> Vertex")) {
+            if (menu_option.equals("Groups >> Vertices")) {
               Select3D.convert_Groups_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.revise();
               UI_toolBar.revise();
             }  
-            if (menu_option.equals("Face >> Vertex")) {
+            if (menu_option.equals("Faces >> Vertices")) {
               Select3D.convert_Faces_to_Vertices();
               current_ObjectCategory = ObjectCategory.VERTEX;
               WIN3D.revise();
               UI_toolBar.revise();
             } 
-            if (menu_option.equals("Vertex >> Face")) {
+            if (menu_option.equals("Vertices >> Faces")) {
               Select3D.convert_Vertices_to_Faces();
               current_ObjectCategory = ObjectCategory.FACE;
               WIN3D.revise();
               UI_toolBar.revise();
             }    
-            if (menu_option.equals("Solid >> Group")) {
+            if (menu_option.equals("Solids >> Groups")) {
               Select3D.convert_Solids_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Group >> Solid")) {
+            if (menu_option.equals("Groups >> Solids")) {
               Select3D.convert_Groups_to_Solids();
               current_ObjectCategory = ObjectCategory.SOLID;
               WIN3D.revise();
               UI_toolBar.revise();
             }                
-            if (menu_option.equals("Model2Ds >> Group")) {
+            if (menu_option.equals("Model2Ds >> Groups")) {
               Select3D.convert_Model2Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Group >> Model2Ds")) {
+            if (menu_option.equals("Groups >> Model2Ds")) {
               Select3D.convert_Groups_to_Model2Ds();
               current_ObjectCategory = ObjectCategory.MODEL2D;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Model1Ds >> Group")) {
+            if (menu_option.equals("Model1Ds >> Groups")) {
               Select3D.convert_Model1Ds_to_Groups();
               current_ObjectCategory = ObjectCategory.GROUP;
               WIN3D.revise();
               UI_toolBar.revise();
             }             
-            if (menu_option.equals("Group >> Model1Ds")) {
+            if (menu_option.equals("Groups >> Model1Ds")) {
               Select3D.convert_Groups_to_Model1Ds();
               current_ObjectCategory = ObjectCategory.MODEL1D;
               WIN3D.revise();
               UI_toolBar.revise();
             }            
 
-            if (menu_option.equals("Click Select")) {
-              UI_set_to_View_ClickSelect(0);
-              UI_toolBar.highlight("±CS");
+            if (menu_option.equals("Pick Select")) {
+              UI_set_to_View_PickSelect(0);
+              UI_toolBar.highlight("±PS");
               UI_toolBar.revise();
             } 
-            if (menu_option.equals("Click Select+")) {
-              UI_set_to_View_ClickSelect(1);
-              UI_toolBar.highlight("+CS");
+            if (menu_option.equals("Pick Select+")) {
+              UI_set_to_View_PickSelect(1);
+              UI_toolBar.highlight("+PS");
               UI_toolBar.revise();
             } 
-            if (menu_option.equals("Click Select-")) {
-              UI_set_to_View_ClickSelect(2);
-              UI_toolBar.highlight("-CS");
+            if (menu_option.equals("Pick Select-")) {
+              UI_set_to_View_PickSelect(2);
+              UI_toolBar.highlight("-PS");
               UI_toolBar.revise();
             }            
 
@@ -47096,7 +47093,7 @@ void UI_set_to_View_ProjectionType (int n) {
   ROLLOUT.revise();
 }
 
-void UI_set_to_View_ClickSelect (int n) {
+void UI_set_to_View_PickSelect (int n) {
 
   WIN3D.UI_CurrentTask = UITASK.PickSelect;
 
@@ -49419,49 +49416,51 @@ class solarchvision_UI_menuBar {
       "Invert Selection", 
       "Deselect All", 
       "Select All", 
-      "Select All 2D-Models",
-      "Select All 3D-Trees",
-      "Select All Groups",
+      "Select All Cameras",
       "Select All Curves",
       "Select All Faces",
-      "Select All Vertices",
+      "Select All Groups",
       "Select All LandPoints",
+      "Select All Model1Ds",
+      "Select All Model2Ds",
       "Select All Sections",
-      "Select All Cameras",
       "Select All Solids",
-      "Select Solid", 
-      "Select Section", 
-      "Select Camera", 
+      "Select All Vertices", 
+      "Select All Isolated Vertices",
+      "Select Near Selected Vertices",
+      "Select Curve",
+      "Select Camera",
+      "Select Face", 
+      "Select Group", 
       "Select LandPoint", 
       "Select Model1Ds", 
-      "Select Model2Ds", 
-      "Select Group", 
-      "Select Face", 
-      "Select Curve", 
-      "Select Vertex", 
+      "Select Model2Ds",
+      "Select Section",      
+      "Select Solid", 
+      "Select Vertex",
       "Soft Selection", 
-      "Group >> Vertex", 
-      "Group >> Curve", 
-      "Group >> Face", 
-      "Group >> Solid", 
-      "Group >> Model2Ds", 
-      "Group >> Model1Ds", 
-      "Model1Ds >> Group", 
-      "Model2Ds >> Group", 
-      "Solid >> Group", 
-      "Face >> Group", 
-      "Curve >> Group", 
-      "Vertex >> Group", 
-      "Vertex >> Face", 
-      "Face >> Vertex", 
-      "Click Select", 
-      "Click Select+", 
-      "Click Select-", 
+      "Curves >> Vertices",
+      "Vertices >> Curves",
+      "Faces >> Vertices",
+      "Vertices >> Faces",      
+      "Groups >> Curves", 
+      "Groups >> Faces", 
+      "Groups >> Solids", 
+      "Groups >> Model2Ds", 
+      "Groups >> Model1Ds",
+      "Groups >> Vertices",
+      "Curves >> Groups",
+      "Faces >> Groups", 
+      "Model1Ds >> Groups", 
+      "Model2Ds >> Groups", 
+      "Solids >> Groups", 
+      "Vertices >> Groups",
+      "Pick Select", 
+      "Pick Select+", 
+      "Pick Select-", 
       "Window Select", 
       "Window Select+", 
-      "Window Select-", 
-      "Select Near Selected Vertices", 
-      "Select All Isolated Vertices"
+      "Window Select-" 
     }
     ,
     {
@@ -50186,7 +50185,7 @@ class solarchvision_UI_toolBar {
     }
     , 
     {
-      "1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"
+      "1", "±PS", "+PS", "-PS", "PickSelect", "1.0"
     }
     , 
     {
@@ -50485,7 +50484,7 @@ class solarchvision_UI_toolBar {
   
           if (Bar_Switch.equals("ProjectionType")) UI_set_to_View_ProjectionType(j - 1);
   
-          if (Bar_Switch.equals("ClickSelect")) UI_set_to_View_ClickSelect(j - 1);
+          if (Bar_Switch.equals("PickSelect")) UI_set_to_View_PickSelect(j - 1);
           if (Bar_Switch.equals("WindowSelect")) UI_set_to_View_WindowSelect(j - 1);
   
           if (Bar_Switch.equals("PivotX")) UI_set_to_View_PivotX(j - 2);
@@ -50578,8 +50577,8 @@ class solarchvision_UI_toolBar {
             UI_toolBar.drawFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }            
   
-          if (Bar_Switch.equals("ClickSelect")) {
-            UI_toolBar.drawClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
+          if (Bar_Switch.equals("PickSelect")) {
+            UI_toolBar.drawPickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }       
           if (Bar_Switch.equals("WindowSelect")) {
             UI_toolBar.drawWindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
@@ -50706,7 +50705,7 @@ class solarchvision_UI_toolBar {
     strokeWeight(0);
   }
   
-  void drawClickSelect (int _type, float x, float y, float r) {
+  void drawPickSelect (int _type, float x, float y, float r) {
   
     pushMatrix();
     translate(x, y);
@@ -53173,13 +53172,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) {Select3D.select_all(); WIN3D.revise();}
-        else if (low_case.equals("reverse")) {Select3D.reverse_Selection(); WIN3D.revise();}
+        else if (low_case.equals("invert")) {Select3D.invert_Selection(); WIN3D.revise();}
         else if (low_case.equals("nothing")) {Select3D.deselect_all(); WIN3D.revise();}
         else if (low_case.equals("last")) {Select3D.select_Last(); WIN3D.revise();}
       }
     }
     else {
-      return_message = "Select all/last/nothing/reverse group3Ds/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint";
+      return_message = "Select all/last/nothing/invert/group3Ds/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint";
     }
   }
 
