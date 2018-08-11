@@ -1,6 +1,12 @@
 
 
+// add to ast group remains active when drawing houses then trees are added to the last group!
+
+
+// Now when adding mulitole objects at once (e.g. trees on land), only the last one selected.
+
 // continue to remove win3d and ui updates from create3D, etc.
+// WIN3D.revise();
 
 
 // move should keep the same distance of bounding box - now only moves the center
@@ -5378,50 +5384,34 @@ class solarchvision_STUDY {
         case 112 : //F1
           this.PlotImpacts = -2; 
           this.revise(); 
-          WIN3D.revise();
-          ROLLOUT.revise(); 
           break;
         case 113 : //F2
           this.PlotImpacts = -1; 
           this.revise(); 
-          WIN3D.revise();
-          ROLLOUT.revise(); 
           break;
         case 114 : //F3
           this.PlotImpacts = 4; 
           this.revise(); 
-          WIN3D.revise();
-          ROLLOUT.revise(); 
           break;
         case 115 : //F4
           this.PlotImpacts = 5; 
           this.revise(); 
-          WIN3D.revise();
-          ROLLOUT.revise(); 
           break;          
         case 116 : //F5
           this.PlotImpacts = 2; 
           this.revise(); 
-          WIN3D.revise();
-          ROLLOUT.revise(); 
           break;
         case 117 : //F6
           this.PlotImpacts = 3; 
           this.revise(); 
-          WIN3D.revise();
-          ROLLOUT.revise(); 
           break;                   
         case 118 : //F7
           this.PlotImpacts = 0; 
           this.revise(); 
-          WIN3D.revise();
-          ROLLOUT.revise(); 
           break;           
         case 119 : //F8
           this.PlotImpacts = 1; 
           this.revise(); 
-          WIN3D.revise();
-          ROLLOUT.revise(); 
           break;
         }
       }
@@ -5682,7 +5672,6 @@ class solarchvision_STUDY {
           if (this.sumInterval > 6) this.sumInterval -= 6; 
           else if (this.sumInterval > 1) this.sumInterval -= 1;
           if (this.sumInterval == 5) this.sumInterval = 4;
-          println(CLASS_STAMP + ".sumInterval =", this.sumInterval);
           this.revise(); 
           ROLLOUT.revise(); 
           break;
@@ -5691,7 +5680,6 @@ class solarchvision_STUDY {
           else if (this.sumInterval < 24) this.sumInterval += 6;
           else this.sumInterval += 24;
           if (this.sumInterval == 5) this.sumInterval = 6;
-          println(CLASS_STAMP + ".sumInterval =", this.sumInterval);
           this.revise(); 
           ROLLOUT.revise(); 
           break;
@@ -13011,8 +12999,6 @@ class solarchvision_SolidImpacts {
 
   void calculate_Impact_selectedSections () {
   
-    println(CLASS_STAMP + ".calculate_Impact_selectedSections");
-  
     for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
   
       int f = Select3D.Section_ids[o];
@@ -15488,6 +15474,8 @@ class solarchvision_Scale3D {
       Land3D.Mesh[i][j][2] = z;
   
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
   
@@ -15507,6 +15495,8 @@ class solarchvision_Scale3D {
       allPoints.setY(f, (y0 + sy * y) * v + (y0 + y) * (1 - v)); 
       allPoints.setZ(f, (z0 + sz * z) * v + (z0 + z) * (1 - v));
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
   
@@ -15536,6 +15526,8 @@ class solarchvision_Scale3D {
       allPoints.setY(f, y);
       allPoints.setZ(f, z);
     }
+    
+    SOLARCHVISION_model_changed();
   }  
   
   
@@ -15568,6 +15560,8 @@ class solarchvision_Scale3D {
       allPoints.setY(f, y);
       allPoints.setZ(f, z);
     }
+    
+    SOLARCHVISION_model_changed();
   }  
   
 
@@ -15599,6 +15593,8 @@ class solarchvision_Scale3D {
       allPoints.setY(f, y);
       allPoints.setZ(f, z);
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
   
@@ -15634,6 +15630,8 @@ class solarchvision_Scale3D {
     }
   
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    
+    SOLARCHVISION_model_changed();
   }
   
   
@@ -15649,8 +15647,7 @@ class solarchvision_Scale3D {
   
     allSolidImpacts.calculate_Impact_selectedSections(); 
   
-    WIN3D.revise();
-    ROLLOUT.revise();
+    SOLARCHVISION_model_changed();
   }
 
   
@@ -15675,10 +15672,12 @@ class solarchvision_Scale3D {
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
+    
+    SOLARCHVISION_model_changed();
   }  
 
 
-  void Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
   
@@ -15706,10 +15705,12 @@ class solarchvision_Scale3D {
   
       allModel1Ds.magS(f, sz);
     }
+    
+    SOLARCHVISION_model_changed();
   }  
 
   
-  void Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  void Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
   
     int n1 = allModel2Ds.num_files_PEOPLE;    
   
@@ -15744,6 +15745,8 @@ class solarchvision_Scale3D {
         allModel2Ds.magS(f, sz);
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
 
@@ -15899,7 +15902,9 @@ class solarchvision_Scale3D {
     }
   
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-  }    
+    
+    SOLARCHVISION_model_changed();
+  }
 
 }
 
@@ -15996,6 +16001,8 @@ class solarchvision_Rotate3D {
         allPoints.setZ(f, z0 + (y * sin(r * v) + z * cos(r * v)));
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }
 
 
@@ -16027,6 +16034,8 @@ class solarchvision_Rotate3D {
         Land3D.Mesh[i][j][2] = z0 + (y * sin(r) + z * cos(r));
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
   
@@ -16056,6 +16065,8 @@ class solarchvision_Rotate3D {
         allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }
 
 
@@ -16085,6 +16096,8 @@ class solarchvision_Rotate3D {
         allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }
 
 
@@ -16114,6 +16127,8 @@ class solarchvision_Rotate3D {
         allPoints.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
 
@@ -16152,6 +16167,8 @@ class solarchvision_Rotate3D {
     }
   
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    
+    SOLARCHVISION_model_changed();
   }  
   
   
@@ -16166,8 +16183,7 @@ class solarchvision_Rotate3D {
   
     allSolidImpacts.calculate_Impact_selectedSections(); 
   
-    WIN3D.revise();
-    ROLLOUT.revise();
+    SOLARCHVISION_model_changed();
   }  
   
   
@@ -16201,6 +16217,8 @@ class solarchvision_Rotate3D {
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
+    
+    SOLARCHVISION_model_changed();
   }  
   
   
@@ -16231,6 +16249,8 @@ class solarchvision_Rotate3D {
         allModel1Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }  
   
   
@@ -16258,6 +16278,8 @@ class solarchvision_Rotate3D {
         allModel2Ds.setZ(f, z0 + (y * sin(r) + z * cos(r)));
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }    
 
 
@@ -16547,6 +16569,8 @@ class solarchvision_Rotate3D {
     }
   
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    
+    SOLARCHVISION_model_changed();
   }
 
 }
@@ -16633,6 +16657,8 @@ class solarchvision_Move3D {
       Land3D.Mesh[i][j][1] += dy;
       Land3D.Mesh[i][j][2] += dz;
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
   
@@ -16646,6 +16672,8 @@ class solarchvision_Move3D {
   
       allPoints.move(f, dx * v, dy * v, dz * v); 
     }
+    
+    SOLARCHVISION_model_changed();
   }  
 
 
@@ -16657,6 +16685,8 @@ class solarchvision_Move3D {
   
       allPoints.move(f, dx, dy, dz); 
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
   
@@ -16670,6 +16700,8 @@ class solarchvision_Move3D {
   
       allPoints.move(f, dx, dy, dz); 
     }
+    
+    SOLARCHVISION_model_changed();
   }  
   
 
@@ -16694,6 +16726,8 @@ class solarchvision_Move3D {
   
       allModel1Ds.move(f, dx, dy, dz); 
     }
+    
+    SOLARCHVISION_model_changed();
   } 
     
   
@@ -16706,6 +16740,8 @@ class solarchvision_Move3D {
       
       allModel2Ds.move(f, dx, dy, dz); 
     }
+    
+    SOLARCHVISION_model_changed();
   } 
   
   
@@ -16727,6 +16763,8 @@ class solarchvision_Move3D {
     }
   
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    
+    SOLARCHVISION_model_changed();
   }  
   
   
@@ -16741,8 +16779,7 @@ class solarchvision_Move3D {
   
     allSolidImpacts.calculate_Impact_selectedSections();
   
-    WIN3D.revise();
-    ROLLOUT.revise();
+    SOLARCHVISION_model_changed();
   }
 
 
@@ -16761,6 +16798,8 @@ class solarchvision_Move3D {
   
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
+    
+    SOLARCHVISION_model_changed();
   }
 
   void Groups (float dx, float dy, float dz) {
@@ -16815,6 +16854,8 @@ class solarchvision_Move3D {
     }
   
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
+    
+    SOLARCHVISION_model_changed();
   }
 
 }
@@ -16894,6 +16935,8 @@ class solarchvision_Drop3D {
         }
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }
   
   
@@ -16948,6 +16991,8 @@ class solarchvision_Drop3D {
         }
       }
     }
+    
+    SOLARCHVISION_model_changed();
   }
 
 
@@ -17048,6 +17093,8 @@ class solarchvision_Clone3D {
 
       Select3D.Model1D_ids = concat(Select3D.Model1D_ids, newlyAddedallModel1Ds);
     }
+    
+    SOLARCHVISION_selection_changed();
   }
 
 
@@ -17084,6 +17131,8 @@ class solarchvision_Clone3D {
 
       Select3D.Model2D_ids = concat(Select3D.Model2D_ids, newlyAddedallModel2Ds);
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
 
@@ -17164,6 +17213,8 @@ class solarchvision_Clone3D {
 
       Select3D.Face_ids = concat(Select3D.Face_ids, newlyAddedFace);
     }
+    
+    SOLARCHVISION_selection_changed();
   }
 
 
@@ -17246,6 +17297,8 @@ class solarchvision_Clone3D {
 
       Select3D.Curve_ids = concat(Select3D.Curve_ids, newlyAddedCurve);
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
 
@@ -17284,6 +17337,8 @@ class solarchvision_Clone3D {
 
       Select3D.Solid_ids = concat(Select3D.Solid_ids, newlyAddedSolid);
     }
+    
+    SOLARCHVISION_selection_changed();
   }
   
   void Sections (boolean produce_same_variation) {
@@ -17318,6 +17373,8 @@ class solarchvision_Clone3D {
 
       Select3D.Section_ids = concat(Select3D.Section_ids, newlyAddedSection);
     }
+    
+    SOLARCHVISION_selection_changed();
   }  
   
   
@@ -17353,6 +17410,8 @@ class solarchvision_Clone3D {
 
       Select3D.Camera_ids = concat(Select3D.Camera_ids, newlyAddedCamera);
     }
+    
+    SOLARCHVISION_selection_changed();
   }  
   
 
@@ -17685,6 +17744,8 @@ class solarchvision_Clone3D {
 
 
     if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
+    
+    SOLARCHVISION_selection_changed();
   }
 
 }
@@ -18255,7 +18316,7 @@ class solarchvision_Delete3D {
   
   
   
-  void isolatedVertices_Selection () { 
+  void isolatedVertices_Selection () {
   
     Select3D.Vertex_ids = sort(Select3D.Vertex_ids);
   
@@ -23096,65 +23157,60 @@ void draw () {
 
         if (pre_Land3D_loadMesh != Land3D.loadMesh) {
           Land3D.update_mesh();
-          WIN3D.revise();
+          SOLARCHVISION_model_changed();
         }
 
         if (pre_Land3D_loadTextures != Land3D.loadTextures) {
           Land3D.update_textures();
-          WIN3D.revise();
+          SOLARCHVISION_model_changed();
         }
 
 
 
         if (pre_Selection_Camera_displayEdges != Select3D.Camera_displayEdges) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }
 
         if (pre_Selection_Section_displayEdges != Select3D.Section_displayEdges) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }         
 
         if (pre_Selection_Solid_displayEdges != Select3D.Solid_displayEdges) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }  
 
         if (pre_Selection_LandPoint_displayPoints != Select3D.LandPoint_displayPoints) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }          
 
         if (pre_Selection_Model1D_displayEdges != Select3D.Model1D_displayEdges) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }     
 
         if (pre_Selection_Model2D_displayEdges != Select3D.Model2D_displayEdges) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }     
 
 
         if (pre_Selection_softPower != Select3D.softPower) {    
           Select3D.convert_Vertex_to_softSelection();
-          WIN3D.revise();
         }  
 
         if (pre_Selection_softRadius != Select3D.softRadius) {
           Select3D.convert_Vertex_to_softSelection();
-          WIN3D.revise();
         }  
 
 
         if (pre_Selection_alignX != Select3D.alignX) {    
-          Select3D.calculate_BoundingBox();
-          WIN3D.revise();
+          SOLARCHVISION_selection_changed();
         }        
 
         if (pre_Selection_alignY != Select3D.alignY) {   
-          Select3D.calculate_BoundingBox();
-          WIN3D.revise();
+          SOLARCHVISION_selection_changed();
         }      
 
-        if (pre_Selection_alignZ != Select3D.alignZ) {        
-          Select3D.calculate_BoundingBox();
-          WIN3D.revise();
+        if (pre_Selection_alignZ != Select3D.alignZ) {
+          SOLARCHVISION_selection_changed();        
         }      
 
         if (pre_Selection_posValue != Select3D.posValue) {
@@ -23181,7 +23237,8 @@ void draw () {
           }            
 
           Move3D.selection(dx, dy, dz);
-          WIN3D.revise();
+          
+          SOLARCHVISION_model_changed();
         }
         if (pre_Selection_rotValue != Select3D.rotValue) {
 
@@ -23196,7 +23253,8 @@ void draw () {
           int the_Vector = Select3D.rotVector;
 
           Rotate3D.selection(x0, y0, z0, r, the_Vector);
-          WIN3D.revise();
+          
+          SOLARCHVISION_model_changed();
         }
         if (pre_Selection_scaleValue != Select3D.scaleValue) {
 
@@ -23228,44 +23286,45 @@ void draw () {
           }           
 
           Scale3D.selection(x0, y0, z0, sx, sy, sz);
-          WIN3D.revise();
+          
+          SOLARCHVISION_model_changed();
         }        
 
 
         if (pre_Selection_displayReferencePivot != Select3D.displayReferencePivot) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }
 
         if (pre_Selection_Group_displayPivot != Select3D.Group_displayPivot) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }             
 
         if (pre_Selection_Group_displayEdges != Select3D.Group_displayEdges) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }
 
         if (pre_Selection_Group_displayBox != Select3D.Group_displayBox) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }     
 
         if (pre_Selection_Face_displayEdges != Select3D.Face_displayEdges) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }     
 
         if (pre_Selection_Face_displayVertexCount != Select3D.Face_displayVertexCount) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }     
         
         if (pre_Selection_Curve_displayVertexCount != Select3D.Curve_displayVertexCount) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }           
 
         if (pre_Selection_Vertex_displayVertices != Select3D.Vertex_displayVertices) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }     
 
         if (pre_Selection_Curve_displayVertices != Select3D.Curve_displayVertices) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }     
 
 
@@ -23273,16 +23332,17 @@ void draw () {
           WIN3D.apply_currentCamera();
 
           SOLARCHVISION_modify_Viewport_Title();
-          WIN3D.revise();
+          
+          SOLARCHVISION_view_changed();
         }
 
 
         if (pre_WIN3D_FacesShade != WIN3D.FacesShade) {
-          WIN3D.revise();
+          SOLARCHVISION_view_changed();
         }             
 
         if (pre_Create3D_Tessellation != allFaces.displayTessellation) {
-          //VertexSolar_rebuild_array = true;
+          SOLARCHVISION_view_changed();
         }
 
 
@@ -23310,78 +23370,106 @@ void draw () {
 
 
         if (pre_allSolids_pallet_CLR != allSolids.pallet_CLR) {
-          allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          allSolidImpacts.calculate_Impact_selectedSections();
+          
+          SOLARCHVISION_view_changed();
         }
         if (pre_allSolids_pallet_DIR != allSolids.pallet_DIR) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          
+          SOLARCHVISION_view_changed();
         }
         if (pre_allSolids_pallet_MLT != allSolids.pallet_MLT) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          
+          SOLARCHVISION_view_changed();
         }
 
         if (pre_allSolidImpacts_Grade != allSolidImpacts.Grade) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          
+          SOLARCHVISION_view_changed();
         }
         if (pre_allSolidImpacts_Power != allSolidImpacts.Power) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          
+          SOLARCHVISION_view_changed();
         }
         if (pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType] != allSolidImpacts.R[allSolidImpacts.sectionType]) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          
+          SOLARCHVISION_view_changed();
         }
         if (pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType] != allSolidImpacts.Z[allSolidImpacts.sectionType]) {
           allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          
+          SOLARCHVISION_view_changed();
         }
 
         if (pre_allSolidImpacts_U_scale[allSolidImpacts.sectionType] != allSolidImpacts.U[allSolidImpacts.sectionType]) {
-          allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          allSolidImpacts.calculate_Impact_selectedSections();
+          
+          SOLARCHVISION_view_changed();
         }
+        
         if (pre_allSolidImpacts_V_scale[allSolidImpacts.sectionType] != allSolidImpacts.V[allSolidImpacts.sectionType]) {
-          allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          allSolidImpacts.calculate_Impact_selectedSections();
+          
+          SOLARCHVISION_view_changed();
         }
 
         if (pre_allSolidImpacts_sU_offset[allSolidImpacts.sectionType] != allSolidImpacts.X[allSolidImpacts.sectionType]) {
-          allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          allSolidImpacts.calculate_Impact_selectedSections();
+          
+          SOLARCHVISION_view_changed();
         }
         if (pre_allSolidImpacts_sV_offset[allSolidImpacts.sectionType] != allSolidImpacts.Y[allSolidImpacts.sectionType]) {
-          allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          allSolidImpacts.calculate_Impact_selectedSections();
+         
+          SOLARCHVISION_view_changed();
         }
-
 
         if (pre_allSolidImpacts_Wspd != allSolidImpacts.WindSpeed) {
-          allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          allSolidImpacts.calculate_Impact_selectedSections();
+          
+          SOLARCHVISION_view_changed();
         }
         if (pre_allSolidImpacts_Wdir != allSolidImpacts.WindDirection) {
-          allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          allSolidImpacts.calculate_Impact_selectedSections();
+          
+          SOLARCHVISION_view_changed();
         }
 
 
         if (pre_allSolidImpacts_Process_subDivisions != allSolidImpacts.Process_subDivisions) {
-          allSolidImpacts.calculate_Impact_selectedSections(); 
-          WIN3D.revise();
+          allSolidImpacts.calculate_Impact_selectedSections();
+          
+          SOLARCHVISION_view_changed();
         }
 
-        if (pre_allSolidImpacts_displayPoints != allSolidImpacts.displayPoints) WIN3D.revise();
-        if (pre_allSolidImpacts_displayLines != allSolidImpacts.displayLines) WIN3D.revise();
+        if (pre_allSolidImpacts_displayPoints != allSolidImpacts.displayPoints) {
+          SOLARCHVISION_view_changed();
+        }
+        
+        if (pre_allSolidImpacts_displayLines != allSolidImpacts.displayLines) {
+          SOLARCHVISION_view_changed();
+        }
 
-        if (pre_allPoints_displayAll != allPoints.displayAll) WIN3D.revise();
-        if (pre_allFaces_displayEdges != allFaces.displayEdges) WIN3D.revise();
-        if (pre_allFaces_displayNormals != allFaces.displayNormals) WIN3D.revise();
+        if (pre_allPoints_displayAll != allPoints.displayAll) {
+          SOLARCHVISION_view_changed();
+        }
+        
+        if (pre_allFaces_displayEdges != allFaces.displayEdges) {
+          SOLARCHVISION_view_changed();
+        }
+        
+        if (pre_allFaces_displayNormals != allFaces.displayNormals) {
+          SOLARCHVISION_view_changed();
+        }
 
-        if (pre_WindFlow_display != allWindFlows.displayAll) WIN3D.revise();
-
+        if (pre_WindFlow_display != allWindFlows.displayAll) {
+          SOLARCHVISION_view_changed();
+        }
 
         if (STUDY.plotSetup != pre_STUDY_Setup) {
           STUDY.Impacts_update = true;
@@ -36815,8 +36903,6 @@ class solarchvision_Create3D {
 
   void add_onLand (int people_or_trees) {
 
-    println(CLASS_STAMP + ".add_onLand");
-  
     //randomSeed(0);
   
     float[][] treesXYZS = {
@@ -37050,7 +37136,7 @@ class solarchvision_Create3D {
       }
     }
     
-    SOLARCHVISION_model_added();
+    SOLARCHVISION_model_changed();
   }
   
   void add_onPolar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
@@ -37078,7 +37164,7 @@ class solarchvision_Create3D {
       }
     }
     
-    SOLARCHVISION_model_added();
+    SOLARCHVISION_model_changed();
   }
   
   void add_onPlane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry, float rot) {
@@ -37114,7 +37200,7 @@ class solarchvision_Create3D {
       }
     }
     
-    SOLARCHVISION_model_added();
+    SOLARCHVISION_model_changed();
   }
   
   void add_onMesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
@@ -37153,8 +37239,8 @@ class solarchvision_Create3D {
       }
     }
     
-    SOLARCHVISION_model_added();
-  }  
+    SOLARCHVISION_model_changed();
+  }
 
 
 
