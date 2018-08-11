@@ -1,5 +1,10 @@
 
-// continue to remove win3d and ui updates from select3D, modify3d, etc.
+// delete all empty groups, removes everything!
+
+
+
+
+// continue to remove win3d and ui updates from create3D, etc.
 
 
 // move should keep the same distance of bounding box - now only moves the center
@@ -17751,7 +17756,7 @@ class solarchvision_Delete3D {
         (current_ObjectCategory == ObjectCategory.CURVE) || 
         (current_ObjectCategory == ObjectCategory.GROUP)) { 
   
-      Delete3D.selected_isolatedVertices();
+      Delete3D.isolatedVertices_Selection();
     }  
 
     Select3D.deselectAll(); // important to deselect
@@ -18261,7 +18266,7 @@ class solarchvision_Delete3D {
   
   
   
-  void selected_isolatedVertices () { 
+  void isolatedVertices_Selection () { 
   
     Select3D.Vertex_ids = sort(Select3D.Vertex_ids);
   
@@ -18335,7 +18340,7 @@ class solarchvision_Delete3D {
   }
   
   
-  void scene_isolatedVertices () {
+  void isolatedVertices_Scene () {
   
     for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) {
   
@@ -21887,7 +21892,7 @@ class solarchvision_Select3D {
   }
 
 
-  void selectscene_isolatedVertices () {
+  void isolatedVertices_Scene () {
   
     this.Vertex_ids = new int [0];
   
@@ -25490,24 +25495,24 @@ void SOLARCHVISION_deleteAll () {
 }
 
 
-void SOLARCHVISION_view_changed () {
-  WIN3D.revise();
+
+
+
+void SOLARCHVISION_model_added () {
+  
+  Select3D.selectLast();
+  
+  SOLARCHVISION_selection_changed();
 }
 
-
 void SOLARCHVISION_model_changed () {
-  
   SOLARCHVISION_view_changed();
 }
 
 
-
-  
-  
-
-
-
-
+void SOLARCHVISION_view_changed () {
+  WIN3D.revise();
+}
 
 
 void SOLARCHVISION_selection_changed () {
@@ -32912,6 +32917,7 @@ class solarchvision_Modify3D {
     }
 
     Select3D.Vertex_ids = sort(Select3D.Vertex_ids);
+    
   }
 
 
@@ -33606,7 +33612,6 @@ class solarchvision_Modify3D {
       }
   
       
-  
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
@@ -33734,12 +33739,8 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
-  
-  
-  
-      
-  
+
+
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
@@ -33748,7 +33749,8 @@ class solarchvision_Modify3D {
   void insertEdgeOpennings_Selection () {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || 
-        (current_ObjectCategory == ObjectCategory.FACE)) { 
+        (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -33860,11 +33862,7 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
-  
-  
-  
-      
+
   
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
@@ -33876,6 +33874,7 @@ class solarchvision_Modify3D {
   
     if ((current_ObjectCategory == ObjectCategory.GROUP) || 
         (current_ObjectCategory == ObjectCategory.FACE)) {
+          
       this.selectFacesAndGroups_fromCurrentSelection();
   
       int[] primary_list = Select3D.Face_ids;
@@ -34011,9 +34010,7 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
-  
-      
+
   
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
@@ -34138,9 +34135,7 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
-  
-      
+
   
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
@@ -34248,10 +34243,8 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
-  
-      
-  
+
+
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
   }
@@ -34363,9 +34356,7 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
-  
-      
+
   
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
@@ -34424,10 +34415,8 @@ class solarchvision_Modify3D {
         }
       }
   
-      UI_toolBar.revise();
-  
-      Select3D.calculate_BoundingBox();
-  
+      
+      SOLARCHVISION_selection_changed();
     }
   }
 
@@ -34508,10 +34497,7 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
-  
-  
-      
+
   
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
@@ -34639,10 +34625,9 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
       
   
-      Select3D.calculate_BoundingBox();
+      SOLARCHVISION_selection_changed();
     }
   }
   
@@ -34765,10 +34750,8 @@ class solarchvision_Modify3D {
           }
         }
       }
-  
-  
-      
-      
+
+ 
       SOLARCHVISION_switch_category(ObjectCategory.FACE);
     }
   }
@@ -34818,6 +34801,7 @@ class solarchvision_Modify3D {
           }
         }
       }
+      
 
       SOLARCHVISION_switch_category(ObjectCategory.FACE); 
     }
@@ -34841,6 +34825,8 @@ class solarchvision_Modify3D {
       Land3D.Mesh[i][j][2] = 0;
   
     }
+    
+    SOLARCHVISION_selection_changed();
   }  
   
   
@@ -35106,8 +35092,10 @@ class solarchvision_Create3D {
         if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
-      
-    }            
+    
+    
+    SOLARCHVISION_model_added();  
+    }   
   }
   
   
@@ -35229,7 +35217,9 @@ class solarchvision_Create3D {
         if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
-      
+
+
+      SOLARCHVISION_model_added();      
     }
   }
   
@@ -35375,7 +35365,9 @@ class solarchvision_Create3D {
         if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
-      
+    
+    
+      SOLARCHVISION_model_added();  
     }
   }
   
@@ -35383,7 +35375,7 @@ class solarchvision_Create3D {
   
   void add_Box_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
   
-    if ((rx > 0) && (ry > 0) && (rz > 0)) {  
+    if ((rx > 0) && (ry > 0) && (rz > 0)) {
     
       current_Material = m;
       current_Tessellation = tes;
@@ -35450,7 +35442,9 @@ class solarchvision_Create3D {
         if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
-      
+    
+    
+      SOLARCHVISION_model_added();  
     }
   }
   
@@ -35522,7 +35516,9 @@ class solarchvision_Create3D {
         if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
         allFaces.create(newFace_nodes);
       }
-      
+    
+    
+      SOLARCHVISION_model_added();  
     }
   }
   
@@ -35572,7 +35568,8 @@ class solarchvision_Create3D {
         };
         allFaces.create(newFace_nodes);
       }
-      
+    
+      SOLARCHVISION_model_added();  
     }
   }
   
@@ -35619,6 +35616,7 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
       
+      SOLARCHVISION_model_added();
     }
   }
   
@@ -35667,8 +35665,10 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
       
+      SOLARCHVISION_model_added();
     }
   }
+  
   
   void add_Mesh3 (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
   
@@ -35694,6 +35694,8 @@ class solarchvision_Create3D {
             allFaces.create(newFace_nodes);
           }
     
+    
+          SOLARCHVISION_model_added();
         }
       }
     }
@@ -35739,9 +35741,9 @@ class solarchvision_Create3D {
         };
         allFaces.create(newFace_nodes);
       }
-          
+    
+      SOLARCHVISION_model_added();      
     }
-  
   }
   
   
@@ -35789,7 +35791,8 @@ class solarchvision_Create3D {
         };
         allFaces.create(newFace_nodes);
       }
-      
+    
+      SOLARCHVISION_model_added();  
     }
   }
   
@@ -35842,6 +35845,8 @@ class solarchvision_Create3D {
         };
         allFaces.create(newFace_nodes);
       }
+      
+      SOLARCHVISION_model_added();
     }
   }
   
@@ -35871,6 +35876,8 @@ class solarchvision_Create3D {
       } 
     
       allFaces.create(newFace_nodes);
+      
+      SOLARCHVISION_model_added();
     }
   }
   
@@ -35899,6 +35906,8 @@ class solarchvision_Create3D {
       } 
     
       allFaces.create(newFace_nodes);
+      
+      SOLARCHVISION_model_added();
     }
   }
   
@@ -35906,7 +35915,7 @@ class solarchvision_Create3D {
   
   void add_PolygonExtrude (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
   
-    if ((r > 0) && (h > 0) && (n > 2)) {  
+    if ((r > 0) && (h > 0) && (n > 2)) {
     
       current_Material = m;
       current_Tessellation = tes;
@@ -35960,6 +35969,8 @@ class solarchvision_Create3D {
         if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1)); 
         allFaces.create(newFace_nodes);
       }
+      
+      SOLARCHVISION_model_added();
     }
   }
   
@@ -35970,7 +35981,7 @@ class solarchvision_Create3D {
   
   void add_Icosahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float rot) {
   
-    if (r > 0) {  
+    if (r > 0) {
     
       current_Material = m;
       current_Tessellation = tes;
@@ -36037,6 +36048,8 @@ class solarchvision_Create3D {
           allFaces.create(newFace_nodesB);
         }
       }
+      
+      SOLARCHVISION_model_added();
     }
   }  
   
@@ -36151,6 +36164,8 @@ class solarchvision_Create3D {
     
         //allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes);
       }
+      
+      SOLARCHVISION_model_added();
     }
   }
   
@@ -36281,7 +36296,9 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
     }
-  }  
+    
+    SOLARCHVISION_model_added();
+  }
   
   
   void add_CrystalSphere (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, int tessellation, int isSky, float t) {
@@ -36416,7 +36433,9 @@ class solarchvision_Create3D {
     } else {
       // Nothing. In this case we should add temp object outside this function. See SuperSphere
     }
-  }  
+  
+    SOLARCHVISION_model_added();  
+  }
   
   
   
@@ -36462,7 +36481,9 @@ class solarchvision_Create3D {
     }
   
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
-  }  
+    
+    SOLARCHVISION_model_added();
+  }
   
   
   void add_SuperCylinder (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
@@ -36542,6 +36563,8 @@ class solarchvision_Create3D {
     }
   
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
+    
+    SOLARCHVISION_model_added();
   }
   
   
@@ -36691,6 +36714,8 @@ class solarchvision_Create3D {
   
     POINTER_TempObjectVertices = 0;
     POINTER_TempObjectFaces = 0;
+    
+    SOLARCHVISION_model_added();    
   }
   
   void createLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int tessellation, int BuildFaces) {
@@ -36793,7 +36818,9 @@ class solarchvision_Create3D {
         createLozenge(x4, y4, z4, P[0], P[1], P[2], x3, y3, z3, Q[0], Q[1], Q[2], tessellation, BuildFaces);
       }
     }
-  }  
+    
+    SOLARCHVISION_model_added();
+  }
 
 
 
@@ -37033,6 +37060,8 @@ class solarchvision_Create3D {
         }
       }
     }
+    
+    SOLARCHVISION_model_added();
   }
   
   void add_onPolar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
@@ -37059,6 +37088,8 @@ class solarchvision_Create3D {
                            User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
       }
     }
+    
+    SOLARCHVISION_model_added();
   }
   
   void add_onPlane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry, float rot) {
@@ -37093,6 +37124,8 @@ class solarchvision_Create3D {
                            User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
       }
     }
+    
+    SOLARCHVISION_model_added();
   }
   
   void add_onMesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
@@ -37130,6 +37163,8 @@ class solarchvision_Create3D {
                            User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);        
       }
     }
+    
+    SOLARCHVISION_model_added();
   }  
 
 
@@ -43126,19 +43161,19 @@ void mouseClicked () {
               Modify3D.separateVertices_Selection();
               WIN3D.revise();
             }          
-            if (menu_option.equals("Select All Isolated Vertices")) {
-              Select3D.selectscene_isolatedVertices();
+            if (menu_option.equals("Select Scene Isolated Vertices")) {
+              Select3D.isolatedVertices_Scene();
               WIN3D.revise();
             }             
-            if (menu_option.equals("Delete All Isolated Vertices")) {
-              Delete3D.scene_isolatedVertices();
+            if (menu_option.equals("Delete Scene Isolated Vertices")) {
+              Delete3D.isolatedVertices_Scene();
               WIN3D.revise();
             }   
-            if (menu_option.equals("Delete Isolated Selected Vertices")) {
-              Delete3D.selected_isolatedVertices();
+            if (menu_option.equals("Delete Selection Isolated Vertices")) {
+              Delete3D.isolatedVertices_Selection();
               WIN3D.revise();
             }              
-            if (menu_option.equals("Delete All Empty Groups")) {
+            if (menu_option.equals("Delete Scene Empty Groups")) {
               allGroups.deleteEmptyGroups_Scene();
               WIN3D.revise();
             }               
@@ -43146,7 +43181,7 @@ void mouseClicked () {
               Delete3D.selection();
               WIN3D.revise();
             }      
-            if (menu_option.equals("Dettach from All Groups")) {
+            if (menu_option.equals("Dettach from Groups Selection")) {
               allGroups.dettachFromGroups_Selection();
               WIN3D.revise();
             }                
@@ -49324,7 +49359,7 @@ class solarchvision_UI_menuBar {
       "Select All Sections",
       "Select All Solids",
       "Select All Vertices", 
-      "Select All Isolated Vertices",
+      "Select Scene Isolated Vertices",
       "Select Near Selected Vertices",
       "Select Curve",
       "Select Camera",
@@ -49402,13 +49437,13 @@ class solarchvision_UI_menuBar {
       "Clone Selection (Identical)", 
       "Clone Selection (Variation)", 
       "Attach to Last Group", 
-      "Dettach from All Groups", 
+      "Dettach from Groups Selection", 
       "Group Selection", 
       "Ungroup Selection", 
-      "Delete All Empty Groups", 
+      "Delete Scene Empty Groups", 
       "Delete Selection", 
-      "Delete All Isolated Vertices", 
-      "Delete Isolated Selected Vertices", 
+      "Delete Scene Isolated Vertices", 
+      "Delete Selection Isolated Vertices", 
       "Separate Selected Vertices", 
       "Reposition Selected Vertices", 
       "Weld Objects Selected Vertices", 
@@ -53005,7 +53040,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("solids")) allSolids.makeEmpty(0); 
         else if (low_case.equals("sections")) allSections.makeEmpty(0); 
         else if (low_case.equals("cameras")) allCameras.makeEmpty(0);
-        else if (low_case.equals("vertices")) Delete3D.selected_isolatedVertices();
+        else if (low_case.equals("vertices")) Delete3D.isolatedVertices_Selection();
         else if (low_case.equals("selection")) Delete3D.selection(); 
       }
     }
