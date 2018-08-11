@@ -10212,6 +10212,8 @@ class solarchvision_Faces {
       Select3D.deselect_Groups();
       Select3D.deselect_Faces();
     }
+    
+    SOLARCHVISION_model_changed();    
   }
 
   
@@ -11765,6 +11767,8 @@ class solarchvision_Curves {
       Select3D.deselect_Groups();
       Select3D.deselect_Curves();
     }
+    
+    SOLARCHVISION_model_changed();
   }
 
   int getMaterial (int n) {
@@ -12320,6 +12324,8 @@ class solarchvision_Groups {
     if (Select3D != null) {
       Select3D.deselect_Groups();
     }
+    
+    SOLARCHVISION_model_changed();
   }    
 
 
@@ -19042,33 +19048,7 @@ class solarchvision_Select3D {
   }
     
 
-  
-
-  
-  
-  
  
-  
-  
-  
-  
-  
-  
-
-    
-
-
-
-  
-  
-
-
- 
-  
-
-
-
-  
   
   float[] translateInside_ReferencePivot (float a, float b, float c) {
   
@@ -19247,10 +19227,6 @@ class solarchvision_Select3D {
   
         this.LandPoint_ids = (int[]) concat(this.LandPoint_ids, newObject_id);
       }
-  
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
   
 
@@ -19296,12 +19272,7 @@ class solarchvision_Select3D {
   
         this.Model1D_ids = (int[]) concat(this.Model1D_ids, newObject_id);
       }
-  
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
-    
   
   
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
@@ -19346,10 +19317,6 @@ class solarchvision_Select3D {
   
         this.Model2D_ids = (int[]) concat(this.Model2D_ids, newObject_id);
       }
-  
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
   
   
@@ -19361,10 +19328,7 @@ class solarchvision_Select3D {
   
       for (int i = 0; i < allGroups.num; i++) {
         if ((allGroups.Faces[i][0] <= f) && (f <= allGroups.Faces[i][1])) {
-  
           OBJ_ID = i;
-  
-          WIN3D.revise();
           break;
         }
       }
@@ -19407,10 +19371,6 @@ class solarchvision_Select3D {
   
         this.Group_ids = (int[]) concat(this.Group_ids, newObject_id);
       }
-  
-  
-  
-      this.calculate_BoundingBox();
     }
   
     if (current_ObjectCategory == ObjectCategory.FACE) {
@@ -19455,10 +19415,6 @@ class solarchvision_Select3D {
   
         this.Face_ids = (int[]) concat(this.Face_ids, newObject_id);
       }
-  
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
   
     if (current_ObjectCategory == ObjectCategory.CURVE) {
@@ -19503,10 +19459,6 @@ class solarchvision_Select3D {
   
         this.Curve_ids = (int[]) concat(this.Curve_ids, newObject_id);
       }
-  
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
     
   
@@ -19571,10 +19523,6 @@ class solarchvision_Select3D {
   
         this.Vertex_ids = (int[]) concat(this.Vertex_ids, newObject_id);
       }
-  
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
   
   
@@ -19621,10 +19569,6 @@ class solarchvision_Select3D {
   
         this.Solid_ids = (int[]) concat(this.Solid_ids, newObject_id);
       }
-  
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
   
   
@@ -19671,10 +19615,6 @@ class solarchvision_Select3D {
   
         this.Section_ids = (int[]) concat(this.Section_ids, newObject_id);
       }
-  
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
   
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
@@ -19720,10 +19660,12 @@ class solarchvision_Select3D {
         this.Camera_ids = (int[]) concat(this.Camera_ids, newObject_id);
       }
   
-      WIN3D.revise();
-  
-      this.calculate_BoundingBox();
     }
+    
+    
+    this.calculate_BoundingBox();
+    Select3D.reset_selectedRefValues();
+    SOLARCHVISION_model_changed();    
   }
   
   
@@ -20697,6 +20639,10 @@ class solarchvision_Select3D {
         }
       }
     }
+    
+    this.calculate_BoundingBox();
+    Select3D.reset_selectedRefValues();
+    SOLARCHVISION_model_changed();        
   }
   
 
@@ -23436,8 +23382,6 @@ void draw () {
 
           allSolidImpacts.calculate_Impact_selectedSections();
 
-          WIN3D.revise();
-
           ROLLOUT.revise();
         }
 
@@ -25623,10 +25567,12 @@ void SOLARCHVISION_delete_ALL () {
 
   allGroups.makeEmpty(0); 
 
-  WIN3D.revise();
 }
 
 
+void SOLARCHVISION_model_changed () {
+  WIN3D.revise();
+}
 
 
 
@@ -29905,6 +29851,8 @@ class solarchvision_Model1Ds {
       Select3D.deselect_Groups();  
       Select3D.deselect_Model1Ds();
     }
+    
+    SOLARCHVISION_model_changed();
   }
 
 
@@ -30784,6 +30732,8 @@ class solarchvision_Model2Ds {
       Select3D.deselect_Groups();
       Select3D.deselect_Model2Ds();
     }
+    
+    SOLARCHVISION_model_changed();
   }    
   
   void create (String t, int m, float x, float y, float z, float s) {
@@ -31977,6 +31927,8 @@ class solarchvision_Solids {
       Select3D.deselect_Groups();
       Select3D.deselect_Solids();
     }
+    
+    SOLARCHVISION_model_changed();
   }      
   
   void updatePosition (int n, float a, float b, float c) {
@@ -32614,6 +32566,8 @@ class solarchvision_Points {
       Select3D.deselect_Curves();
       Select3D.deselect_Vertices();
     }
+    
+    SOLARCHVISION_model_changed();
   }    
   
   void setX (int n, float f) { 
@@ -37374,6 +37328,8 @@ class solarchvision_Cameras {
     if (Select3D != null) {
       Select3D.deselect_Cameras();
     }
+    
+    SOLARCHVISION_model_changed();
   }  
 
 
@@ -37896,6 +37852,8 @@ class solarchvision_Sections {
     if (Select3D != null) {
       Select3D.deselect_Sections();
     }
+    
+    SOLARCHVISION_model_changed();
   }  
 
 
@@ -40808,12 +40766,6 @@ void mouseReleased () {
                 popMatrix();            
 
                 Select3D.selectRect(corner1x, corner1y, corner2x, corner2y);
-
-                Select3D.calculate_BoundingBox();
-
-                Select3D.reset_selectedRefValues();  
-
-                WIN3D.revise();
               }
 
 
@@ -43423,7 +43375,6 @@ void mouseClicked () {
     
             if (menu_option.equals("Erase All ")) {
               SOLARCHVISION_delete_ALL();
-              WIN3D.revise();
             }  
             
         
@@ -53098,7 +53049,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     if (parts.length > 1) {
       for (int q = 1; q < parts.length; q++) {
         String low_case = parts[q].toLowerCase();
-             if (low_case.equals("all")) {SOLARCHVISION_delete_ALL(); WIN3D.revise();}
+             if (low_case.equals("all")) SOLARCHVISION_delete_ALL(); 
         else if (low_case.equals("selection")) {Delete3D.selection(); WIN3D.revise();}
         else if (low_case.equals("groups")) {allGroups.makeEmpty(0); WIN3D.revise();}
         else if (low_case.equals("model2ds")) {allModel2Ds.makeEmpty(0); WIN3D.revise();}
