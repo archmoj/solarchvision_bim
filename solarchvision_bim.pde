@@ -1,4 +1,7 @@
 
+// continue to remove win3d and ui updates from select3D, modify3d, etc.
+
+
 // move should keep the same distance of bounding box - now only moves the center
 
 // SOLARCHVISION_snap_Faces --> allFaces.snap...
