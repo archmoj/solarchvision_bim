@@ -43335,42 +43335,34 @@ void mouseClicked () {
 
             if (menu_option.equals("Erase All Model1Ds")) {
               allModel1Ds.makeEmpty(0);
-              WIN3D.revise();
             }      
     
             if (menu_option.equals("Erase All Model2Ds")) {
               allModel2Ds.makeEmpty(0);
-              WIN3D.revise();
             }        
     
             if (menu_option.equals("Erase All Groups")) {
               allGroups.makeEmpty(0);
-              WIN3D.revise();
             }
     
             if (menu_option.equals("Erase All Solids")) {
               allSolids.makeEmpty(0);
-              WIN3D.revise();
             }          
     
             if (menu_option.equals("Erase All Sections")) {
               allSections.makeEmpty(0);
-              WIN3D.revise();
             }       
     
             if (menu_option.equals("Erase All Cameras")) {
               allCameras.makeEmpty(0);
-              WIN3D.revise();
             }    
     
             if (menu_option.equals("Erase Faces")) {
               allFaces.makeEmpty(0);
-              WIN3D.revise();
             }             
     
             if (menu_option.equals("Erase Curves")) {
               allCurves.makeEmpty(0);
-              WIN3D.revise();
             }  
     
             if (menu_option.equals("Erase All ")) {
@@ -53051,15 +53043,15 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         String low_case = parts[q].toLowerCase();
              if (low_case.equals("all")) SOLARCHVISION_delete_ALL(); 
         else if (low_case.equals("selection")) {Delete3D.selection(); WIN3D.revise();}
-        else if (low_case.equals("groups")) {allGroups.makeEmpty(0); WIN3D.revise();}
-        else if (low_case.equals("model2ds")) {allModel2Ds.makeEmpty(0); WIN3D.revise();}
-        else if (low_case.equals("model1ds")) {allModel1Ds.makeEmpty(0); WIN3D.revise();}
+        else if (low_case.equals("groups")) allGroups.makeEmpty(0);
+        else if (low_case.equals("model2ds")) allModel2Ds.makeEmpty(0);
+        else if (low_case.equals("model1ds")) allModel1Ds.makeEmpty(0);
         else if (low_case.equals("vertices")) {Delete3D.selected_isolatedVertices(); WIN3D.revise();}
-        else if (low_case.equals("faces")) {allFaces.makeEmpty(0); WIN3D.revise();}
-        else if (low_case.equals("lines")) {allCurves.makeEmpty(0); WIN3D.revise();}
-        else if (low_case.equals("solids")) {allSolids.makeEmpty(0); WIN3D.revise();}
-        else if (low_case.equals("sections")) {allSections.makeEmpty(0); WIN3D.revise();}
-        else if (low_case.equals("cameras")) {allCameras.makeEmpty(0); WIN3D.revise();}
+        else if (low_case.equals("faces")) allFaces.makeEmpty(0); 
+        else if (low_case.equals("lines")) allCurves.makeEmpty(0); 
+        else if (low_case.equals("solids")) allSolids.makeEmpty(0); 
+        else if (low_case.equals("sections")) allSections.makeEmpty(0); 
+        else if (low_case.equals("cameras")) allCameras.makeEmpty(0); 
       }
     }
     else {
