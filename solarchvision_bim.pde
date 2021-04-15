@@ -8,7 +8,7 @@ test these functions:
 */
 
 
-// add to ast group remains active when drawing houses then trees are added to the last group!
+// add to last group remains active when drawing houses then trees are added to the last group!
 
 
 // Now when adding mulitole objects at once (e.g. trees on land), only the last one selected.
@@ -32,19 +32,10 @@ test these functions:
 
 import processing.pdf.*;
 
-void launch (String s) {
-  open(s);
-}
-void launch (String[] s) {
-  open(s);
-}
-
-
 String SceneName = "Complex";
 
-String SOLARCHVISION_version = "2018"; 
-//String BaseFolder = "C:/SOLARCHVISION_" + SOLARCHVISION_version; 
-String BaseFolder = "C:/SOLARCHVISION_2017";
+String SOLARCHVISION_version = "2021"; 
+String BaseFolder = "/home/solarch/org/solarchvision_bim";
 
 String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
 String ProjectName = "Revision_" + RunStamp;
@@ -2719,9 +2710,6 @@ class solarchvision_WIN3D {
   void drawView () {
     
     if (this.update) {
-      
-      println("______________");
-      
       if (Select3D.update_BoundingBox) {
         Select3D.calculate_BoundingBox();
       }
@@ -22689,8 +22677,8 @@ float pre_USER_create_powAll;
 
 void setup () {
 
-  //size(1200, 696, P2D);
-  size(2 * SOLARCHVISION_pixel_W + ROLLOUT.dX, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D, P2D);
+  size(1237, 669, P2D);
+  //size(2 * SOLARCHVISION_pixel_W + ROLLOUT.dX, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D, P2D);
 
 
   SOLARCHVISION_draw_frameIcon();
@@ -54806,7 +54794,7 @@ solarchvision_STATION[] CLMREC_Coordinates;
 
 void inputCoordinates_CLMREC () {
 
-  String[] FileALL = loadStrings(Folder_Coordinates + "/CLMREC_UTF8_EN.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/CLMREC_UTF8.txt");
 
   String lineSTR;
 
@@ -56798,9 +56786,9 @@ void SOLARCHVISION_draw_frameIcon () {
   frame_icon.text("V", 0.80 * frame_icon_size, 0.4 * frame_icon_size);
 
   frame_icon.endDraw();
-  frame.setIconImage(frame_icon.image);  
+  //frame.setIconImage(frame_icon.image);  
 
-  frame.setTitle("SOLARCHVISION-" + SOLARCHVISION_version);
+  //frame.setTitle("SOLARCHVISION-" + SOLARCHVISION_version);
 }
 
 
@@ -56890,5 +56878,3 @@ void SOLARCHVISION_update_folders () {
   if (filenames != null) SavedScreenShots = filenames.length;
   
 }
-
-
