@@ -469,7 +469,6 @@ String Folder_GEOMET;
 
 String Folder_Wgrib2Temp;
 
-String Folder_Backgrounds;
 String Folder_Coordinates;
 
 String Folder_Land;
@@ -22738,7 +22737,7 @@ void draw () {
     float cr;
 
     cr = SOLARCHVISION_pixel_W / 4.0;
-    PImage SOLARCHVISION_logo = loadImage(Folder_Backgrounds + "/" + "SOLARCHVISION.jpg");
+    PImage SOLARCHVISION_logo = loadImage(BaseFolder + "/input/images/logo/SOLARCHVISION.jpg");
     imageMode(CENTER);
     image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * MessageSize - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
     imageMode(CORNER);
@@ -26936,7 +26935,7 @@ class solarchvision_Sun3D {
   boolean displaySurface = false;
   boolean displayTexture = true;
  
-  String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
+  String Filename = BaseFolder + "/input/images/sun/Sun.jpg";
   
   PImage Map;
   
@@ -27912,7 +27911,7 @@ class solarchvision_Moon3D {
   boolean displaySurface = false;
   boolean displayTexture = true;
   
-  String Filename = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
+  String Filename = BaseFolder + "/input/images/moon/Moon.jpg";
 
   PImage Map; 
   
@@ -28054,7 +28053,7 @@ class solarchvision_Earth3D {
   float[][] BoundariesX;
   float[][] BoundariesY;
   
-  String Path = BaseFolder + "/Input/BackgroundImages/Standard/Maps/EarthSurface";
+  String Path = BaseFolder + "/input/images/earth";
   
   String[] Filenames = sort(OPESYS.getFiles(this.Path));
   
@@ -54723,7 +54722,7 @@ solarchvision_STATION[] TMYEPW_Coordinates;
 
 void inputCoordinates_TMYEPW () {
 
-  String[] FileALL = loadStrings(Folder_Coordinates + "/EPW_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/EPW.txt");
 
   String lineSTR;
 
@@ -54756,7 +54755,7 @@ solarchvision_STATION[] CWEEDS_coordinates;
 
 void inputCoordinates_CWEEDS () {
 
-  String[] FileALL = loadStrings(Folder_Coordinates + "/CWEEDS_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/CWEEDS.txt");
 
   String lineSTR;
 
@@ -54794,7 +54793,7 @@ solarchvision_STATION[] CLMREC_Coordinates;
 
 void inputCoordinates_CLMREC () {
 
-  String[] FileALL = loadStrings(Folder_Coordinates + "/CLMREC_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/CLMREC.txt");
 
   String lineSTR;
 
@@ -54830,7 +54829,7 @@ solarchvision_STATION[] SWOB_Coordinates;
 
 void inputCoordinates_SWOB () {
 
-  String[] FileALL = loadStrings(Folder_Coordinates + "/SWOB_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/SWOB.txt");
 
   String lineSTR;
 
@@ -54876,7 +54875,7 @@ solarchvision_STATION[] NAEFposition_Ts;
 
 void inputCoordinates_NAEFS () {
 
-  String[] FileALL = loadStrings(Folder_Coordinates + "/NAEFS_UTF8.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/NAEFS.txt");
 
   String lineSTR;
 
@@ -56771,7 +56770,7 @@ void SOLARCHVISION_draw_frameIcon () {
 
   frame_icon.beginDraw();
 
-  //frame_icon.image(loadImage(BaseFolder + "/Input/BackgroundImages/Standard/Maps/Icon/s-icon.png"), 0, 0 );
+  //frame_icon.image(loadImage(BaseFolder + "/input/images/icon/s-icon.png"), 0, 0 );
 
   frame_icon.background(0);
   //frame_icon.background(63,63,255,255);
@@ -56836,19 +56835,19 @@ void SOLARCHVISION_update_models (int Step) {
 
 void SOLARCHVISION_update_folders () {
   
-  Folder_Project = BaseFolder + "/Projects/Roodbar";    
+  Folder_Project = BaseFolder + "/projects/Roodbar";    
   
-  Folder_Wgrib2Temp = Folder_Project + "/Temp";
+  Folder_Wgrib2Temp = Folder_Project + "/temp";
 
-  Folder_GEOMET = Folder_Project + "/Data/GEOMET" + "/" + RunStamp;
-  Folder_GRIB2 = Folder_Project + "/Data/GRIB2";
+  Folder_GEOMET = Folder_Project + "/data/GEOMET" + "/" + RunStamp;
+  Folder_GRIB2 = Folder_Project + "/data/GRIB2";
   
-  Folder_ENSEMBLE_FORECAST = Folder_Project + "/Data/FORECAST_NAEFS";
-  Folder_ENSEMBLE_OBSERVED = Folder_Project + "/Data/OBSERVATION_SWOB";
+  Folder_ENSEMBLE_FORECAST = Folder_Project + "/data/NAEFS";
+  Folder_ENSEMBLE_OBSERVED = Folder_Project + "/data/SWOB";
 
-  Folder_CLIMATE_CLMREC = BaseFolder + "/Input/Climate/CLIMATE_CLMREC";
-  Folder_CLIMATE_TMYEPW = BaseFolder + "/Input/Climate/CLIMATE_EPW_WORLD";
-  Folder_CLIMATE_CWEEDS = BaseFolder + "/Input/Climate/CLIMATE_CWEED";
+  Folder_CLIMATE_CLMREC = BaseFolder + "/input/climate/CLMREC";
+  Folder_CLIMATE_TMYEPW = BaseFolder + "/input/climate/TMYEPW";
+  Folder_CLIMATE_CWEEDS = BaseFolder + "/input/climate/CWEED";
   
   Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
   Files_CLIMATE_TMYEPW = OPESYS.getFiles(Folder_CLIMATE_TMYEPW);
@@ -56857,22 +56856,21 @@ void SOLARCHVISION_update_folders () {
   Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
   Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);  
 
-  Folder_Backgrounds      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
-  Folder_Coordinates      = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  WORLD.ViewFolder      = BaseFolder + "/Input/BackgroundImages/Standard/World";
+  Folder_Coordinates      = BaseFolder + "/input/coordinates";
+  WORLD.ViewFolder      = BaseFolder + "/input/images/worldmap";
   
-  Folder_People = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
-  Folder_Trees  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
+  Folder_People = BaseFolder + "/input/images/people";
+  Folder_Trees  = BaseFolder + "/input/images/trees";
   
-  Folder_Shadings = Folder_Project + "/ShadingAnalysis";
+  Folder_Shadings = Folder_Project + "/shadings";
   
-  Folder_Land         = Folder_Project + "/Land/USE";
+  Folder_Land         = Folder_Project + "/land";
   
-  Folder_Export       = Folder_Project + "/Export";
+  Folder_Export       = Folder_Project + "/export";
   Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
-  Folder_Create3D      = Folder_Export + "/Create3D" + "/" + RunStamp;
-  Folder_ViewsFromSky = Folder_Export + "/ViewsFromSky" + "/" + RunStamp;
-  Folder_ScreenShots   = Folder_Export + "/ScreenShots" + "/" + RunStamp;
+  Folder_Create3D      = Folder_Export + "/create3D" + "/" + RunStamp;
+  Folder_ViewsFromSky = Folder_Export + "/viewsFromSky" + "/" + RunStamp;
+  Folder_ScreenShots   = Folder_Export + "/screenshots" + "/" + RunStamp;
 
   String[] filenames = OPESYS.getFiles(Folder_ScreenShots);
   if (filenames != null) SavedScreenShots = filenames.length;
