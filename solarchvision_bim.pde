@@ -32,7 +32,7 @@ test these functions:
 
 import processing.pdf.*;
 
-String SceneName = "Complex";
+String SceneName = "";
 
 String SOLARCHVISION_version = "2021"; 
 String BaseFolder = "/home/solarch/org/solarchvision_bim";
@@ -178,11 +178,7 @@ class solarchvision_STATION {
 }
 
 solarchvision_STATION STATION = new solarchvision_STATION(
-
-  "", "Roodbar", "XX", "IR", 36.826, 49.426, 52.5, 194, "", "", "IRN_Rasht_YY_IR"
-
-  //"", "Esfahan", "ZZ", "IR", 32.617, 51.667, 52.5, 1590, "", "", "IRN_Esfahan_ZZ_IR"
-  
+  "", "Montreal", "XX", "IR", 45.47, -73.75, -45, 36, "", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
 );
 
 
@@ -56835,7 +56831,7 @@ void SOLARCHVISION_update_models (int Step) {
 
 void SOLARCHVISION_update_folders () {
   
-  Folder_Project = BaseFolder + "/projects/Roodbar";    
+  Folder_Project = BaseFolder + "/projects/Montreal";    
   
   Folder_Wgrib2Temp = Folder_Project + "/temp";
 
