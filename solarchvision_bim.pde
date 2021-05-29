@@ -396,7 +396,7 @@ int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for so
 int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
 
-int SOLARCHVISION_pixel_H = 300; 
+int SOLARCHVISION_pixel_H = 400;
 int SOLARCHVISION_pixel_W = int(SOLARCHVISION_pixel_H * 1.75); 
 
 float MessageSize = (2 * SOLARCHVISION_pixel_W + SOLARCHVISION_pixel_H) / 120.0; // screen width 
@@ -22671,7 +22671,8 @@ boolean pre_WindFlow_display;
 float pre_USER_create_powAll;
 
 void setup () {
-  size(1350, 729, P2D);
+  size(1800, 975, P2D);
+  //size(1350, 729, P2D);
   //size(2 * SOLARCHVISION_pixel_W + ROLLOUT.dX, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D, P2D);
 
 
