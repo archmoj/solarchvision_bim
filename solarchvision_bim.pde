@@ -12,11 +12,6 @@ String HoldStamp = "";
 String Subfolder_exportMaps = "maps/";
 
 
-
-
-
-
-
 class solarchvision_STATION {
 
   private final static String CLASS_STAMP = "STATION";
@@ -233,10 +228,6 @@ int current_Weight = 0;
 int current_Closed = 0;
 
 
-
-
-
-
 class solarchvision_DATATYPE {
   
   private final static String CLASS_STAMP = "DATATYPE";
@@ -256,59 +247,6 @@ int WMS_type = DataType.FORECAST_GDPS; // <<<<<<<<<<<<<
 final int TROPO_deltaTime = 1; 
 final int TROPO_timeSteps = 24;
 
-// Tropo3D.draw --- we only use the first image!
-// note we used .... float r = FLOAT_r_Earth + 10000; for clouds
-
-
-
-
-// should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == 6) || (STUDY.PlotImpacts == 7)) {
-
-
-
-
-
-// pick select LandPoint is not written. 
-
-
-// diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!" 
-
-
-// snap for Curve objects is not developed yet.
-
-// don't know if multiple allModel2Ds.Images[n].get(Image_X, Image_Y) in allModel2Ds selection can produce performance problems? 
-
-
-// note: code for SOLARCHVISION_intersect_allSolids might run a bit slow. But it is OK for now.
-
-
-// should see where else could add snap3D :)
-
-
-// drop functions only works for allModel2Ds objects and not at Group level
-
-// could add join/explode groups ?
-
-
-// export and import of curves
-// converting curves to faces e.g. Surface, Extrude, Connect
-
-// Modify Normal at Curve level is not complete...
-
-// Create3D.autoNormalCurve_Selection
-
-// writing export to rad completed for meshes and land - not Model1Ds and 2Ds yet!
-
-// colud record Climate data flags later.
-
-// exporting shaded land is not written. 
-
-// void Rotate3D.selection_Groups 
-// serach for Rotate3D.selection_Selection ( need to make them all correct for local pivots!
-// local pivot
-
-
-// solid rotations inside groups should be translated to locals to avoid problems!
 
 
 
@@ -334,19 +272,9 @@ float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intre
 
 float GlobalAlbedo = 0; // 0-100
 
-
 float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
 
-
 float Planetary_Magnification = 4.0; // <<<<<<<<<<
-
-
-
-
-
-
-
-
 
 
 boolean FRAME_record_AUTO = false;
@@ -56876,3 +56804,57 @@ test these functions:
 // remember: should optimize vertices after optimizing faces!
 
 //for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period.
+
+// Tropo3D.draw --- we only use the first image!
+// note we used .... float r = FLOAT_r_Earth + 10000; for clouds
+
+
+
+
+// should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == 6) || (STUDY.PlotImpacts == 7)) {
+
+
+
+
+
+// pick select LandPoint is not written.
+
+
+// diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!"
+
+
+// snap for Curve objects is not developed yet.
+
+// don't know if multiple allModel2Ds.Images[n].get(Image_X, Image_Y) in allModel2Ds selection can produce performance problems?
+
+
+// note: code for SOLARCHVISION_intersect_allSolids might run a bit slow. But it is OK for now.
+
+
+// should see where else could add snap3D :)
+
+
+// drop functions only works for allModel2Ds objects and not at Group level
+
+// could add join/explode groups ?
+
+
+// export and import of curves
+// converting curves to faces e.g. Surface, Extrude, Connect
+
+// Modify Normal at Curve level is not complete...
+
+// Create3D.autoNormalCurve_Selection
+
+// writing export to rad completed for meshes and land - not Model1Ds and 2Ds yet!
+
+// colud record Climate data flags later.
+
+// exporting shaded land is not written.
+
+// void Rotate3D.selection_Groups
+// serach for Rotate3D.selection_Selection ( need to make them all correct for local pivots!
+// local pivot
+
+
+// solid rotations inside groups should be translated to locals to avoid problems!
