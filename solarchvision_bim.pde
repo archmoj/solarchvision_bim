@@ -43647,6 +43647,10 @@ void mouseClicked () {
           UI_timeBar.revise();
         }  
 
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, ROLLOUT.cX, ROLLOUT.cY, ROLLOUT.cX + ROLLOUT.dX, ROLLOUT.cY + ROLLOUT.dY)) {
+          ROLLOUT.revise();
+        }
+
         if (WORLD.include) {
           if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
