@@ -339,8 +339,6 @@ boolean is_undefined (float a) {
 }
 
 
-boolean displayOutput_inExplorer = false;
-
 PrintWriter[] FILE_outputRaw;
 PrintWriter[] FILE_outputNorms;
 PrintWriter[] FILE_outputProbs;
@@ -2730,7 +2728,6 @@ class solarchvision_WIN3D {
             myFile += ".jpg";
           
             this.graphics.save(myFile);
-            SOLARCHVISION_explore_output(myFile);
             println("File created:" + myFile);
           }
         }
@@ -4992,7 +4989,6 @@ class solarchvision_WORLD {
         endRecord();
   
         String myFile = MAKE_Filename(createStamp(0, CLASS_STAMP)) + ".pdf";
-        SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       } else {
         this.graphics.endDraw();
@@ -5000,7 +4996,6 @@ class solarchvision_WORLD {
         if ((this.record_IMG) || (this.record_AUTO)) {
           String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP)) + ".jpg";
           this.graphics.save(myFile);
-          SOLARCHVISION_explore_output(myFile);
           println("File created:" + myFile);
         }
   
@@ -7072,7 +7067,6 @@ class solarchvision_STUDY {
         endRecord();
   
         String myFile = MAKE_Filename(createStamp(0, CLASS_STAMP)) + ".pdf";
-        SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       } else {
         this.graphics.endDraw();
@@ -7080,7 +7074,6 @@ class solarchvision_STUDY {
         if ((this.record_IMG) || (this.record_AUTO)) {
           String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP)) + ".jpg";
           this.graphics.save(myFile);
-          SOLARCHVISION_explore_output(myFile);
           println("File created:" + myFile);
         }
   
@@ -9559,9 +9552,6 @@ class solarchvision_ROLLOUT {
         //User3D.export_MaterialLibrary = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_MaterialLibrary", User3D.export_MaterialLibrary, 0, 1, 1), 1));
         //User3D.export_BackSides = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_BackSides", User3D.export_BackSides, 0, 1, 1), 1));
         //User3D.export_PalletResolution = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "User3D.export_PalletResolution", User3D.export_PalletResolution, 32, 2048, -2), 1));
-  
-  
-        //displayOutput_inExplorer = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "displayOutput_inExplorer", displayOutput_inExplorer, 0, 1, 1), 1));
       }  
   
       if (this.child == 2) { // Media
@@ -13305,7 +13295,6 @@ class solarchvision_SolidImpacts {
       if (this.record_IMG == 1) {
         String myFile = getFilename_SolidImpact() + ".jpg";
         this.Image.save(myFile);
-        SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       }    
   
@@ -13515,7 +13504,6 @@ class solarchvision_SolidImpacts {
   
         pdf.endDraw();
   
-        SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
       }
   
@@ -14545,7 +14533,6 @@ class solarchvision_SolarImpacts {
                 if (this.record_IMG == 1) {
                   String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(j + 1, 0) + ".jpg";
                   this.Image[q][j + 1].save(myFile);
-                  if (j == 0) SOLARCHVISION_explore_output(myFile);
                   println("File created:" + myFile);
                 }
                 //}
@@ -14634,7 +14621,6 @@ class solarchvision_SolarImpacts {
             if (this.record_IMG == 1) {
               String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(0, 0) + ".jpg";
               this.Image[q][0].save(myFile);
-              //SOLARCHVISION_explore_output(myFile);
               println("File created:" + myFile);
             }
             //}
@@ -24782,7 +24768,6 @@ void SOLARCHVISION_export_objects_SCR () {
 
   println("End of scripting lines and meshes."); 
 
-  SOLARCHVISION_explore_output(scrFilename);
   println("File created:" + scrFilename);
 }
 
@@ -24817,7 +24802,6 @@ void SOLARCHVISION_export_objects_RAD () {
 
   println("End of creating rad file."); 
 
-  SOLARCHVISION_explore_output(radFilename);
   println("File created:" + radFilename);
   
   
@@ -25066,7 +25050,6 @@ void SOLARCHVISION_export_objects_HTML () {
 
   println("End of creating html file."); 
 
-  SOLARCHVISION_explore_output(htmlFilename);
   println("File created:" + htmlFilename);
 
 }
@@ -25203,7 +25186,6 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   println("End of exporting the mesh."); 
 
-  SOLARCHVISION_explore_output(objFilename);
   println("File created:" + objFilename);
 }
 
@@ -47942,7 +47924,6 @@ float valuesSUM = valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
  
   String myFile = Folder_ScreenShots + "/" + createStamp(1, "Render") + ".png";
   Image_RGBA.save(myFile);
-  SOLARCHVISION_explore_output(myFile);
   println("File created:" + myFile);
   
 }
@@ -56183,8 +56164,6 @@ void SOLARCHVISION_save_project (String myFile) {
   {
     XML parent = xml.addChild("SOLARCHVISION_variables");
   
-    XML_setBoolean(parent, "displayOutput_inExplorer", displayOutput_inExplorer);
-
     XML_setInt(parent, "current_ObjectCategory", current_ObjectCategory);
   
     XML_setFloat(parent, "GlobalAlbedo", GlobalAlbedo);
@@ -56429,8 +56408,6 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   XML parent = xml.getChild("SOLARCHVISION_variables");
     
-  displayOutput_inExplorer = XML_getBoolean(parent, "displayOutput_inExplorer");
-
   current_ObjectCategory = XML_getInt(parent, "current_ObjectCategory");
 
   GlobalAlbedo = XML_getFloat(parent, "GlobalAlbedo");
@@ -56614,14 +56591,6 @@ void SOLARCHVISION_fetch_project () {
     println("Cannot find the hold file:", myFile);
   }
 }
-
-void SOLARCHVISION_explore_output (String outputFile) {
-
-  if ((displayOutput_inExplorer)  && (STUDY.record_AUTO == false) && (WORLD.record_AUTO == false) && (WIN3D.record_AUTO == false) && (FRAME_record_AUTO == false)) {
-    launch("explorer /select," + outputFile.replace('/', char(92)));
-  }
-}
-
 
 
 String Default_Font = "MS Sans Serif";
