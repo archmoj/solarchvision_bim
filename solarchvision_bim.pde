@@ -1,35 +1,3 @@
-
-/*
-test these functions:
-
-"LandMesh >> Group"
-"LandGap >> Group"
-
-*/
-
-
-// add to last group remains active when drawing houses then trees are added to the last group!
-
-
-// Now when adding mulitole objects at once (e.g. trees on land), only the last one selected.
-
-// continue to remove win3d and ui updates from create3D, etc.
-// WIN3D.revise();
-
-
-// move should keep the same distance of bounding box - now only moves the center
-
-// SOLARCHVISION_snap_Faces --> allFaces.snap...
-
-// please define station elevation data for CWEEDS points!
-
-// after calling .reduceDegreePolygon is not complete
-
-// remember: should optimize vertices after optimizing faces!
-
-//for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period. 
-
-
 import processing.pdf.*;
 
 String SceneName = "";
@@ -56876,3 +56844,35 @@ void SOLARCHVISION_update_folders () {
   if (filenames != null) SavedScreenShots = filenames.length;
   
 }
+
+// TODOs:
+
+/*
+test these functions:
+
+"LandMesh >> Group"
+"LandGap >> Group"
+
+*/
+
+
+// add to last group remains active when drawing houses then trees are added to the last group!
+
+
+// Now when adding mulitole objects at once (e.g. trees on land), only the last one selected.
+
+// continue to remove win3d and ui updates from create3D, etc.
+// WIN3D.revise();
+
+
+// move should keep the same distance of bounding box - now only moves the center
+
+// SOLARCHVISION_snap_Faces --> allFaces.snap...
+
+// please define station elevation data for CWEEDS points!
+
+// after calling .reduceDegreePolygon is not complete
+
+// remember: should optimize vertices after optimizing faces!
+
+//for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period.
