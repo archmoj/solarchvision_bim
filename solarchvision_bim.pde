@@ -2603,7 +2603,7 @@ class solarchvision_WIN3D {
         Select3D.calculate_BoundingBox();
       }
   
-      if (this.record_IMG) this.ImageScale = 2; //3; 
+      if (this.record_IMG) this.ImageScale = 1; //2; //3;
       else this.ImageScale = 1;
   
       //////////////////////////////////
@@ -4424,7 +4424,7 @@ class solarchvision_WORLD {
     if (this.update) {
   
       if (this.record_PDF) this.ImageScale = 1;
-      else if (this.record_IMG) this.ImageScale = 2;
+      else if (this.record_IMG) this.ImageScale = 1; //2;
       else this.ImageScale = 1;
   
       //////////////////////////////////
@@ -6985,7 +6985,7 @@ class solarchvision_STUDY {
     if (this.update) {
   
       if (this.record_PDF) this.ImageScale = 1;
-      else if (this.record_IMG) this.ImageScale = 2;
+      else if (this.record_IMG) this.ImageScale = 1; //2;
       else this.ImageScale = 1;
   
       //////////////////////////////////
