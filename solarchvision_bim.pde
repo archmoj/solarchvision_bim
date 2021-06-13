@@ -56712,7 +56712,7 @@ void SOLARCHVISION_update_folders () {
 
   Folder_CLIMATE_CLMREC = BaseFolder + "/input/climate/CLMREC";
   Folder_CLIMATE_TMYEPW = BaseFolder + "/input/climate/TMYEPW";
-  Folder_CLIMATE_CWEEDS = BaseFolder + "/input/climate/CWEED";
+  Folder_CLIMATE_CWEEDS = BaseFolder + "/input/climate/CWEEDS";
   
   Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
   Files_CLIMATE_TMYEPW = OPESYS.getFiles(Folder_CLIMATE_TMYEPW);
