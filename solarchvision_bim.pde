@@ -412,8 +412,8 @@ class solarchvision_TIME {
   
   private int hour = this.modelRun; //hour(); 
   private int year = year(); 
-  private int month = 1; //month();
-  private int day = 21; //day(); 
+  private int month = month(); //1;
+  private int day = day(); //21;
   
   private int beginDay;
   private float date;    
