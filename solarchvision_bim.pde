@@ -54599,7 +54599,7 @@ solarchvision_STATION[] TMYEPW_Coordinates;
 
 void inputCoordinates_TMYEPW () {
 
-  String[] FileALL = loadStrings(Folder_Coordinates + "/EPW.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/TMYEPW.txt");
 
   String lineSTR;
 
