@@ -141,7 +141,7 @@ class solarchvision_STATION {
 }
 
 solarchvision_STATION STATION = new solarchvision_STATION(
-  "", "Montreal", "XX", "IR", 45.47, -73.75, -45, 36, "", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_T_N", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  "", "Montreal", "XX", "IR", 45.47, -73.75, -45, 36, "MONTREAL_DORVAL_QC_CA", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_T_N", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
 );
 
 
@@ -1826,7 +1826,7 @@ solarchvision_LAYER LAYER_thicknesses_1000_500 = new solarchvision_LAYER(
   "dam",
   "Geopotentiel Difference",
   "Différence de géopotentiel",
-  "PARAMETERS-1000-500HPA"
+  "LAYER-1000-500HPA"
 );
 
 
@@ -24878,8 +24878,8 @@ void SOLARCHVISION_export_objects_HTML () {
   htmlOutput.println("<html>");
   htmlOutput.println("\t<head>");
   htmlOutput.println("\t\t<title>" + ProjectName + "</title>");   
-  htmlOutput.println("\t\t<script type='text/javascript' src='http://www.x3dom.org/download/x3dom.js'></script>");
-  htmlOutput.println("\t\t<link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>");
+  htmlOutput.println("\t\t<script type='text/javascript' src='https://www.x3dom.org/download/x3dom.js'></script>");
+  htmlOutput.println("\t\t<link rel='stylesheet' type='text/css' href='https://www.x3dom.org/download/x3dom.css'></link>");
   htmlOutput.println("\t</head>"); 
   htmlOutput.println("\t<body>"); 
   htmlOutput.println("\t\t<x3d width='900px' height='600px'>");  
@@ -25840,10 +25840,10 @@ class solarchvision_Tropo3D {
       String the_service = "";
       
       if (WMS_type == DataType.SATELLITE_GOES) {
-        the_service = "http://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
+        the_service = "https://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
       }
       else {
-        the_service = "http://geo.weather.gc.ca/geomet/";
+        the_service = "https://geo.weather.gc.ca/geomet/";
       } 
   
   
@@ -41314,11 +41314,11 @@ void mouseClicked () {
             // should call the functions here!
 
             if (menu_option.equals("Mojtaba Samimi")) { 
-              link("http://solarchvision.com/?page_id=102");
+              link("https://solarchvision.com/?page_id=102");
             }     
 
             if (menu_option.equals("www.solarchvision.com")) { 
-              link("http://solarchvision.com/");
+              link("https://solarchvision.com/");
             }     
 
             if (menu_option.equals("New")) { 
@@ -44996,22 +44996,22 @@ void SOLARCHVISION_download_AERIAL (int begin_YEAR, int begin_MONTH, int begin_D
           if (!dir.isFile()) {
 
             if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDWPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + the_filename;
+              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + the_filename;
             }
             if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("HRDPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
             }
             if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
             }          
             if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("GDPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
             }
             if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("REPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
             }
             if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("GEPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
             }
 
 
@@ -48087,16 +48087,16 @@ String getReference_CurrentDataSource () {
     return_value = STATION.getFilename_CWEEDS() + ".WY3" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/";
   }
   else if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
-    return_value  = "Environment and Climate Change Canada website at http://climate.weather.gc.ca/climate_data";
+    return_value  = "Environment and Climate Change Canada website at https://climate.weather.gc.ca/climate_data";
   }  
   else if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
     return_value = STATION.getFilename_TMYEPW() + ".epw";
   }    
   else if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-    return_value = nf(TIME.year, 4) + nf(TIME.month, 2) + nf(TIME.day, 2) + nf(TIME.hour, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + CurrentLayer_name + "_000-384.xml" + ", Environment and Climate Change Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/";
+    return_value = nf(TIME.year, 4) + nf(TIME.month, 2) + nf(TIME.day, 2) + nf(TIME.hour, 2) + "_GEPS-NAEFS-RAW_" + STATION.getFilename_NAEFS() + "_" + CurrentLayer_name + "_000-384.xml" + ", Environment and Climate Change Canada: https://dd.weather.gc.ca/ensemble/naefs/";
   }
   else if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
-    return_value = "Environment and Climate Change Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/";
+    return_value = "Environment and Climate Change Canada website at https://dd.weather.gc.ca/observations/swob-ml/";
   }
   
   return return_value;
@@ -54829,7 +54829,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       if (!dir.isFile()) {
         
         String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + allLayers[f].name + "/raw";
-        String the_link = "http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
+        String the_link = "https://dd.weather.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
         the_target = the_target + ".bz2";
     
         println("Try downloading: " + the_link);
@@ -55145,7 +55145,7 @@ void download_CLIMATE_CLMREC () {
         File dir = new File(the_target);
         if (!dir.isFile()) {          
           
-          String the_link = "http://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          String the_link = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
           
           println("Try downloading: " + the_link);
     
@@ -55491,7 +55491,7 @@ void download_ENSEMBLE_OBSERVED () {
         File dir = new File(the_target);
         if (!dir.isFile()) {       
 
-          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + split(SWOB_Coordinates[f].getCode(),'-')[0] + "/" + FN;
+          String the_link = "https://dd.weather.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + split(SWOB_Coordinates[f].getCode(),'-')[0] + "/" + FN;
   
           println("Try downloading: " + the_link);
   
