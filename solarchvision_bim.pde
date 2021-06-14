@@ -141,7 +141,7 @@ class solarchvision_STATION {
 }
 
 solarchvision_STATION STATION = new solarchvision_STATION(
-  "", "Montreal", "XX", "IR", 45.47, -73.75, -45, 36, "", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  "", "Montreal", "XX", "IR", 45.47, -73.75, -45, 36, "", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_T_N", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
 );
 
 
@@ -2045,8 +2045,8 @@ int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
 int CLIMATE_TMYEPW_start = 1; 
 int CLIMATE_TMYEPW_end = 1;
 
-int CLIMATE_CWEEDS_start = 1953;
-int CLIMATE_CWEEDS_end = 2005;
+int CLIMATE_CWEEDS_start = 1970;
+int CLIMATE_CWEEDS_end = 2017;
 
 int CLIMATE_CLMREC_start = 2000;
 int CLIMATE_CLMREC_end = year();
@@ -48084,7 +48084,7 @@ String getReference_CurrentDataSource () {
   String return_value = "";
 
   if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
-    return_value = STATION.getFilename_CWEEDS() + ".wy2" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/";
+    return_value = STATION.getFilename_CWEEDS() + ".WY3" + ", Environment and Climate Change Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/";
   }
   else if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
     return_value  = "Environment and Climate Change Canada website at http://climate.weather.gc.ca/climate_data";
@@ -54643,21 +54643,21 @@ void inputCoordinates_CWEEDS () {
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line  
 
-    String[] parts = split(lineSTR, '_');
+    String[] parts = split(lineSTR, ',');
 
-    float latitude = float(parts[2]) * 0.01;
-    float longitude = float(parts[3]) * -0.01;
+    float latitude = float(parts[5]);
+    float longitude = float(parts[6]);
     
     CWEEDS_coordinates[f] = new solarchvision_STATION(); 
 
     CWEEDS_coordinates[f].setCity(parts[1]);
-    CWEEDS_coordinates[f].setProvince(parts[0]);
-    CWEEDS_coordinates[f].setCountry("CA");
+    CWEEDS_coordinates[f].setProvince(parts[2]);
+    CWEEDS_coordinates[f].setCountry(parts[3]);
     CWEEDS_coordinates[f].setLatitude(latitude);
     CWEEDS_coordinates[f].setLongitude(longitude);
-    CWEEDS_coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
-    CWEEDS_coordinates[f].setElevation(0); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ??
-    CWEEDS_coordinates[f].setFilename_CWEEDS(lineSTR);
+    CWEEDS_coordinates[f].setTimelong(float(parts[7]));
+    CWEEDS_coordinates[f].setElevation(float(parts[8]));
+    CWEEDS_coordinates[f].setFilename_CWEEDS(parts[9]);
   }
 }
 
@@ -55025,7 +55025,7 @@ void update_CLIMATE_CWEEDS () {
 
   if (CLIMATE_CWEEDS_load) {
 
-    String FN = STATION.getFilename_CWEEDS() + ".wy2";
+    String FN = STATION.getFilename_CWEEDS() + ".WY3";
     
     String the_source = Folder_CLIMATE_CWEEDS + "/" + FN;
 
@@ -55055,15 +55055,15 @@ void load_CLIMATE_CWEEDS (String FileName) {
 
   println("lines = ", FileALL.length);
 
-  for (int f = 0; f < FileALL.length; f++) {
+  for (int f = 1; f < FileALL.length; f++) {
 
     lineSTR = FileALL[f];
     //println(lineSTR);
 
-    int CLIMATE_YEAR = int(lineSTR.substring(6, 10));
-    int CLIMATE_MONTH = int(lineSTR.substring(10, 12));
-    int CLIMATE_DAY = int(lineSTR.substring(12, 14));
-    int CLIMATE_HOUR = int(lineSTR.substring(14, 16));
+    int CLIMATE_YEAR = int(lineSTR.substring(8, 12));
+    int CLIMATE_MONTH = int(lineSTR.substring(12, 14));
+    int CLIMATE_DAY = int(lineSTR.substring(14, 16));
+    int CLIMATE_HOUR = int(lineSTR.substring(16, 18));
 
     //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
 
@@ -55073,16 +55073,16 @@ void load_CLIMATE_CWEEDS (String FileName) {
 
     //println(i);
 
-    CLIMATE_CWEEDS_values[i][j][LAYER_pressure.id][k] = float(lineSTR.substring(85, 90)); // 10 times in Pa
-    CLIMATE_CWEEDS_values[i][j][LAYER_drybulb.id][k] = float(lineSTR.substring(91, 95)); // 10 times in °C
+    CLIMATE_CWEEDS_values[i][j][LAYER_pressure.id][k] = float(lineSTR.substring(87, 92)); // 10 times in Pa
+    CLIMATE_CWEEDS_values[i][j][LAYER_drybulb.id][k] = float(lineSTR.substring(93, 97)); // 10 times in °C
     //CLIMATE_CWEEDS_values[i][j][LAYER_relhum.id][k] = 50; // Relative Humidity is not presented in DCLIMATE files!
-    CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad.id][k] = float(lineSTR.substring(20, 24)); // Wh/m²
-    CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad.id][k] = float(lineSTR.substring(26, 30)); // Wh/m²
-    CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad.id][k] = float(lineSTR.substring(32, 36)); // Wh/m²
-    CLIMATE_CWEEDS_values[i][j][LAYER_windspd.id][k] = float(lineSTR.substring(105, 109)); // 10 times in m/s
-    CLIMATE_CWEEDS_values[i][j][LAYER_winddir.id][k] = float(lineSTR.substring(101, 104)); // °
-    CLIMATE_CWEEDS_values[i][j][LAYER_cloudcover.id][k] = float(lineSTR.substring(113, 115)); // 0.1 times in %
-    CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky.id][k] = float(lineSTR.substring(61, 65)); // 0.1 times in m
+    CLIMATE_CWEEDS_values[i][j][LAYER_glohorrad.id][k] = float(lineSTR.substring(22, 26)); // Wh/m²
+    CLIMATE_CWEEDS_values[i][j][LAYER_dirnorrad.id][k] = float(lineSTR.substring(28, 32)); // Wh/m²
+    CLIMATE_CWEEDS_values[i][j][LAYER_difhorrad.id][k] = float(lineSTR.substring(34, 38)); // Wh/m²
+    CLIMATE_CWEEDS_values[i][j][LAYER_windspd.id][k] = float(lineSTR.substring(107, 111)); // 10 times in m/s
+    CLIMATE_CWEEDS_values[i][j][LAYER_winddir.id][k] = float(lineSTR.substring(103, 106)); // °
+    CLIMATE_CWEEDS_values[i][j][LAYER_cloudcover.id][k] = float(lineSTR.substring(115, 117)); // 0.1 times in %
+    CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky.id][k] = float(lineSTR.substring(63, 67)); // 0.1 times in m
 
     if (CLIMATE_CWEEDS_values[i][j][LAYER_pressure.id][k] == 99999) CLIMATE_CWEEDS_values[i][j][LAYER_pressure.id][k] = FLOAT_undefined;
     else CLIMATE_CWEEDS_values[i][j][LAYER_pressure.id][k] = 0.1 * CLIMATE_CWEEDS_values[i][j][LAYER_pressure.id][k];
