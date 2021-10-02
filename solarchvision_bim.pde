@@ -54850,14 +54850,29 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
 
   if (new_files_downloaded) {
     
-    String folder_inout = Folder_ENSEMBLE_FORECAST.replace('/', char(92));
+    String folder_inout = Folder_ENSEMBLE_FORECAST;
+    // on Windows:
+    //folder_inout = folder_inout.replace('/', char(92));
     
     {
-      String Command1 = "cmd /c \"\"C:\\Program Files (x86)\\7-Zip\\7z.exe\"\" e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
+      // on Windows:
+      //String Command1 = "cmd /c \"\"C:\\Program Files (x86)\\7-Zip\\7z.exe\"\" e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
+      String Command1 = "for bz2 in " + folder_inout + "/*.bz2; do 7z e $bz2 -o" + folder_inout + " -y; done";
       println(Command1);
-      String Command2 = "del " + folder_inout + "\\*.bz2 /q";
+
+      // on Windows:
+      //String Command2 = "del " + folder_inout + "\\*.bz2 /q";
+      String Command2 = "rm " + folder_inout + "/*.bz2";
       println(Command2);
-      launch(Command1 + " & " + Command2);
+
+      try {
+        // on Windows:
+        //launch(Command1 + " & " + Command2);
+        exec(Command1 + " && " + Command2);
+      }
+      catch (Exception e) {
+        println(e);
+      }
     }
     
     Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);  
