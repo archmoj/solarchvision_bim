@@ -1,5 +1,5 @@
-# SOLARCHVISION-BIM 
-# Copyright (C) 2002-2021 Mojtaba Samimi (M.Arch)
+# SOLARCHVISION-BIM
+# Copyright (C) 2014-2026 Mojtaba Samimi (M.Arch)
 
 ## Acknowledgement
 The author would like to acknowledge the assistance from Mr. Lewis Poulin at
@@ -9,11 +9,11 @@ summarized in part in his [presentations](http://collaboration.cmc.ec.gc.ca/cmc/
 Enhanced Building Operations, Montreal, 2013.
 
 ## Programming language
-This SOLARCHVISION project is mainly developed in [Processing v.2](https://processing.org/) on top of Java.
+This SOLARCHVISION project is mainly developed in [Processing](https://processing.org/) on top of Java.
 
 ## Licence
 The SOLARCHVISON-BIM software application is freed by
-its author on April 1, 2021 under GNU GPL v.2.0.
+[Mojtaba Samimi](https://github.com/archmoj) on November 30, 2025 under GNU GPL v.2.0.
 
 ### [Français](https://www.gnu.org/licenses/old-licenses/gpl-2.0.fr.html) | [English](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
