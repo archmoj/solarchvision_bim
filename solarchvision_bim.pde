@@ -2,7 +2,7 @@ import processing.pdf.*;
 
 String SceneName = "";
 
-String SOLARCHVISION_version = "2021";
+String SOLARCHVISION_version = "2026";
 String BaseFolder = "/home/solarch/org/solarchvision_bim";
 
 String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
