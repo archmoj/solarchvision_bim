@@ -9733,8 +9733,8 @@ class solarchvision_MESSAGE {
   private final static String CLASS_STAMP = "MESSAGE";
 
   int cX = 0;
-  int cY = int(1 * SOLARCHVISION_pixel_H - 0.75 * MessageSize + 0.5 * (SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D));
-  int dX = 2 * SOLARCHVISION_pixel_W + ROLLOUT.dX;
+  int cY = 498;
+  int dX = 1848;
   int dY = int(1.5 * MessageSize);
 }
 
