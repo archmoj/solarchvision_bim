@@ -266,9 +266,9 @@ final float FLOAT_e = 2.7182818284;
 final double DOUBLE_r_Earth = 6367470.0; //6373000.0;
 final float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
 
-float CrustDepth = 100; // 100 = 100m .The actual crust ranges from 5–70 km
+float CrustDepth = 1000; // 1000m .The actual crust ranges from 5–70 km
 
-float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
+float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intrenal!
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -291,12 +291,10 @@ int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for so
 
 int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
+int SOLARCHVISION_pixel_H = 400;
+int SOLARCHVISION_pixel_W = 700;
 
-int SOLARCHVISION_pixel_H = 410;
-int SOLARCHVISION_pixel_W = int(SOLARCHVISION_pixel_H * 1.75);
-
-float MessageSize = (2 * SOLARCHVISION_pixel_W + SOLARCHVISION_pixel_H) / 120.0; // screen width
-
+float MessageSize = 15.0;
 int SOLARCHVISION_pixel_A = int(1.5 * MessageSize); // menu bar
 int SOLARCHVISION_pixel_B = int(2.75 * MessageSize); // 3D tool bar
 int SOLARCHVISION_pixel_C = int(3.0 * MessageSize); // command bar
@@ -2517,7 +2515,7 @@ class solarchvision_WIN3D {
   int cX = 0;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
   // width and height
-  int dX = int(1.5 * SOLARCHVISION_pixel_H);
+  int dX = SOLARCHVISION_pixel_W;
   int dY = SOLARCHVISION_pixel_H;
   float view_R = float(dY) / float(dX);
 
@@ -4269,10 +4267,10 @@ class solarchvision_WORLD {
   float oX = 0;
   float oY = 0;
   // (top-left) corner
-  int cX = int(1.5 * SOLARCHVISION_pixel_H);
+  int cX = SOLARCHVISION_pixel_W;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
   // width and height
-  int dX = int(2.0 * SOLARCHVISION_pixel_H);
+  int dX = SOLARCHVISION_pixel_W;
   int dY = SOLARCHVISION_pixel_H;
 
   boolean update = true;
