@@ -43515,13 +43515,13 @@ void mouseClicked () {
           UI_toolBar.revise();
         }
 
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C)) {
+          UI_timeBar.revise();
+        }
+
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) {
           UI_commandBar.revise();
           typeUserCommand = 1;
-        }
-
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C)) {
-          UI_timeBar.revise();
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, ROLLOUT.cX, ROLLOUT.cY, ROLLOUT.cX + ROLLOUT.dX, ROLLOUT.cY + ROLLOUT.dY)) {
