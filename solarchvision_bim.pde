@@ -292,7 +292,7 @@ int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for so
 int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
 int SOLARCHVISION_pixel_H = 400;
-int SOLARCHVISION_pixel_W = 700;
+int SOLARCHVISION_pixel_W = 724;
 
 float MessageSize = 15.0;
 int SOLARCHVISION_pixel_A = int(1.5 * MessageSize); // menu bar
@@ -22547,7 +22547,7 @@ class solarchvision_MESSAGE {
   int cX = 0;
   int cY = 498;
   int dX = 1848;
-  int dY = int(1.5 * MessageSize);
+  int dY = int(2 * MessageSize);
 }
 
 solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
@@ -22676,7 +22676,7 @@ void draw () {
     text("Raz, Mehr, Mehraz solarch studio\n1998-" + SOLARCHVISION_version + "\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
 
     textAlign(CENTER, CENTER);
-    textSize(MessageSize);
+    textSize(1.25 * MessageSize);
   } else if (frameCount == 2) {
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
