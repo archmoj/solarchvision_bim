@@ -297,8 +297,8 @@ int SOLARCHVISION_pixel_W = 724;
 float MessageSize = 16.0;
 int SOLARCHVISION_pixel_A = 24; // menu bar
 int SOLARCHVISION_pixel_B = 44; // 3D tool bar
-int SOLARCHVISION_pixel_C = 72; // command bar
-int SOLARCHVISION_pixel_D = 72; // time bar
+int SOLARCHVISION_pixel_C = 72; // time bar
+int SOLARCHVISION_pixel_D = 72; // command bar
 
 String[] skyScenario_Title = {
   "", "All data", "Cloudy\nPattern", "Partly Cloudy\nPattern", "Sunny\nPattern"
@@ -40196,7 +40196,7 @@ void mouseWheel (MouseEvent event) {
             float displayBarWidth = 2 * SOLARCHVISION_pixel_W;
 
             STUDY.X_control = 0.5 * displayBarWidth;
-            STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + 0.5 * UI_timeBar.tab;
+            STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * UI_timeBar.tab;
 
             for (int i = 0; i < UI_timeBar.Items.length; i++) {
 
@@ -43515,12 +43515,12 @@ void mouseClicked () {
           UI_toolBar.revise();
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C)) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) {
           UI_commandBar.revise();
           typeUserCommand = 1;
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) {
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C)) {
           UI_timeBar.revise();
         }
 
@@ -52061,7 +52061,7 @@ class solarchvision_UI_commandBar {
         fill(63);
       }
       noStroke();
-      rect(0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_C);
+      rect(0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_D);
 
       noStroke();
 
@@ -52069,7 +52069,7 @@ class solarchvision_UI_commandBar {
 
 
       pushMatrix();
-      translate(0, 0.625 * MessageSize + SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H);
+      translate(0, 0.625 * MessageSize + SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C);
 
       for (int q = 0; q < maxDisplayLines; q++) {
 
@@ -52140,11 +52140,11 @@ class solarchvision_UI_timeBar {
 
       this.updated();
 
-      this.tab = SOLARCHVISION_pixel_D / float(this.Items.length);
+      this.tab = SOLARCHVISION_pixel_C / float(this.Items.length);
 
       fill(191);
       noStroke();
-      rect(0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_D);
+      rect(0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_C);
 
 
 
@@ -52152,7 +52152,7 @@ class solarchvision_UI_timeBar {
       float displayBarWidth = 2 * SOLARCHVISION_pixel_W;
 
       STUDY.X_control = 0.5 * displayBarWidth;
-      STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + 0.5 * this.tab;
+      STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * this.tab;
 
       for (int i = 0; i < this.Items.length; i++) {
 
@@ -52529,7 +52529,7 @@ class solarchvision_UI_timeBar {
       displayBarHeight = 4.5 * MessageSize;
 
       float temp_offsetX = ROLLOUT.cX + 0.5 * displayBarWidth;
-      float temp_offsetY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + 0.5 * displayBarHeight;
+      float temp_offsetY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * displayBarHeight;
 
       for (int n = 0; n < 9; n++) {
 
