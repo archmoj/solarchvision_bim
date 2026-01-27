@@ -295,10 +295,10 @@ int SOLARCHVISION_pixel_H = 400;
 int SOLARCHVISION_pixel_W = 724;
 
 float MessageSize = 16.0;
-int SOLARCHVISION_pixel_A = int(1.5 * 16); // menu bar
-int SOLARCHVISION_pixel_B = int(2.75 * 16); // 3D tool bar
-int SOLARCHVISION_pixel_C = int(4.5 * 16); // command bar
-int SOLARCHVISION_pixel_D = int(4.5 * 16); // time bar
+int SOLARCHVISION_pixel_A = 24; // menu bar
+int SOLARCHVISION_pixel_B = 44; // 3D tool bar
+int SOLARCHVISION_pixel_C = 72; // command bar
+int SOLARCHVISION_pixel_D = 72; // time bar
 
 String[] skyScenario_Title = {
   "", "All data", "Cloudy\nPattern", "Partly Cloudy\nPattern", "Sunny\nPattern"
