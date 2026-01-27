@@ -294,11 +294,11 @@ int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 int SOLARCHVISION_pixel_H = 400;
 int SOLARCHVISION_pixel_W = 724;
 
-float MessageSize = 15.0;
-int SOLARCHVISION_pixel_A = int(1.5 * MessageSize); // menu bar
-int SOLARCHVISION_pixel_B = int(2.75 * MessageSize); // 3D tool bar
-int SOLARCHVISION_pixel_C = int(3.0 * MessageSize); // command bar
-int SOLARCHVISION_pixel_D = int(4.5 * MessageSize); // time bar
+float MessageSize = 16.0;
+int SOLARCHVISION_pixel_A = int(1.5 * 16); // menu bar
+int SOLARCHVISION_pixel_B = int(2.75 * 16); // 3D tool bar
+int SOLARCHVISION_pixel_C = int(4.5 * 16); // command bar
+int SOLARCHVISION_pixel_D = int(4.5 * 16); // time bar
 
 String[] skyScenario_Title = {
   "", "All data", "Cloudy\nPattern", "Partly Cloudy\nPattern", "Sunny\nPattern"
@@ -22545,7 +22545,7 @@ class solarchvision_MESSAGE {
   private final static String CLASS_STAMP = "MESSAGE";
 
   int cX = 0;
-  int cY = 498;
+  int cY = 495;
   int dX = 1848;
   int dY = int(2 * MessageSize);
 }
@@ -52065,11 +52065,11 @@ class solarchvision_UI_commandBar {
 
       noStroke();
 
-      textSize(1.5 * MessageSize);
+      textSize(1.25 * MessageSize);
 
 
       pushMatrix();
-      translate(0, 0.333 * MessageSize + SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H);
+      translate(0, 0.625 * MessageSize + SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H);
 
       for (int q = 0; q < maxDisplayLines; q++) {
 
