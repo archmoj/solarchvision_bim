@@ -9728,17 +9728,6 @@ solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
 
 
 
-class solarchvision_MESSAGE {
-
-  private final static String CLASS_STAMP = "MESSAGE";
-
-  int cX = 0;
-  int cY = 498;
-  int dX = 1848;
-  int dY = int(1.5 * MessageSize);
-}
-
-solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
 
 
 
@@ -22549,6 +22538,20 @@ int pre_allSolidImpacts_Process_subDivisions;
 boolean pre_WindFlow_display;
 
 float pre_USER_create_powAll;
+
+
+class solarchvision_MESSAGE {
+
+  private final static String CLASS_STAMP = "MESSAGE";
+
+  int cX = 0;
+  int cY = 498;
+  int dX = 1848;
+  int dY = int(1.5 * MessageSize);
+}
+
+solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
+
 
 void setup () {
   size(1848, 1016, P2D);
