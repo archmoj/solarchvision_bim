@@ -2512,7 +2512,7 @@ class solarchvision_WIN3D {
   // scales
   float scale;
   // (top-left) corner
-  int cX = 0;
+  int cX = SOLARCHVISION_pixel_W;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
   // width and height
   int dX = SOLARCHVISION_pixel_W;
@@ -4267,7 +4267,7 @@ class solarchvision_WORLD {
   float oX = 0;
   float oY = 0;
   // (top-left) corner
-  int cX = SOLARCHVISION_pixel_W;
+  int cX = 0;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
   // width and height
   int dX = SOLARCHVISION_pixel_W;
