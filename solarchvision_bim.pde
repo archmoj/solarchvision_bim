@@ -24425,16 +24425,16 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D.include = true;
     WORLD.include = true;
 
-    WIN3D.cX = 0;
+    WIN3D.cX = SOLARCHVISION_pixel_W;;
     WIN3D.cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
-    WIN3D.dX = int(1.5 * SOLARCHVISION_pixel_H);
+    WIN3D.dX = SOLARCHVISION_pixel_W;
     WIN3D.dY = SOLARCHVISION_pixel_H;
     WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
     WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
 
-    WORLD.cX = int(1.5 * SOLARCHVISION_pixel_H);
+    WORLD.cX = 0;
     WORLD.cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
-    WORLD.dX = int(2.0 * SOLARCHVISION_pixel_H);
+    WORLD.dX = SOLARCHVISION_pixel_W;
     WORLD.dY = SOLARCHVISION_pixel_H;
     WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
 
