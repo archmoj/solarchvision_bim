@@ -141,9 +141,10 @@ class solarchvision_STATION {
 }
 
 solarchvision_STATION STATION = new solarchvision_STATION(
-  "", "Montreal", "QC", "CA", 45.47, -73.75, -45, 36, "MONTREAL_DORVAL_QC_CA", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "MONTREAL_DORVAL_QC_CA", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "TORONTO_PEARSON_INTL_ON_CA", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "CAN_ON_Toronto.716240_CWEC"
+  //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "VANCOUVER_INTL_BC_CA", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "CAN_BC_Vancouver.718920_CWEC"
 );
-
 
 class solarchvision_OBJECTTYPE {
 
@@ -4278,7 +4279,7 @@ class solarchvision_WORLD {
 
 
   int numMaps;
-  int Zoom = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
+  int Zoom = 6; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
 
   boolean autoView = true;
 
@@ -56714,7 +56715,7 @@ void SOLARCHVISION_update_models (int Step) {
 
 void SOLARCHVISION_update_folders () {
 
-  Folder_Project = BaseFolder + "/projects/Montreal";
+  Folder_Project = BaseFolder + "/projects/model-01";
 
   Folder_Wgrib2Temp = Folder_Project + "/temp";
 
