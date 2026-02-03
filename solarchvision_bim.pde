@@ -5165,7 +5165,7 @@ class solarchvision_STUDY {
   boolean displayNormals = true;
   boolean displayProbs = false;
 
-  int sumInterval = 2;
+  int sumInterval = 4;
   float LevelPix = 8;
 
   color color_data_raws = color(0, 0, 0);
@@ -5875,13 +5875,13 @@ class solarchvision_STUDY {
 
   void drawProbs (int i, int j, float[] valuesSUM, float[] valuesNUM, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-    println("view_S=", this.view_S);
-    println("LevelPix=", this.LevelPix);
+    //println("view_S=", this.view_S);
+    //println("LevelPix=", this.LevelPix);
 
     //float _pix = 100.0 * this.view_S / this.LevelPix;
     float _pix = 90.0 * this.view_S / this.LevelPix;
 
-    println("_pix=", _pix);
+    //println("_pix=", _pix);
 
 
     int PAL_type = this.PROB_pallet_CLR;
