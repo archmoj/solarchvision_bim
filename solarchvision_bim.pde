@@ -48958,6 +48958,14 @@ class solarchvision_UI_menuBar {
 
   String[][] Items = {
     {
+      "About",
+      "SOLARCHVISION-BIM6D",
+      "Designed & developed by",
+      "Mojtaba Samimi",
+      "www.solarchvision.com"
+    }
+    ,
+    {
       "Project",
       "New",
       "Save",
@@ -49420,14 +49428,6 @@ class solarchvision_UI_menuBar {
       "Layout 12",
       "Layout 13",
       "Layout 14"
-    }
-    ,
-    {
-      "About",
-      "SOLARCHVISION-BIM 2026",
-      "Designed & developed by",
-      "Mojtaba Samimi",
-      "www.solarchvision.com"
     }
   };
 
