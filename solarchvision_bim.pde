@@ -43235,7 +43235,7 @@ void mouseClicked () {
               allCurves.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All ")) {
+            if (menu_option.equals("Erase All")) {
               SOLARCHVISION_deleteAll();
             }
 
@@ -49003,7 +49003,12 @@ class solarchvision_UI_menuBar {
       "Erase All Cameras",
       "Erase Faces",
       "Erase Curves",
-      "Erase All "
+      "Erase All",
+      "Display All Viewports",
+      "Enlarge 3D Viewport",
+      "Enlarge Map Viewport",
+      "Enlarge Time Viewport",
+
     }
     ,
     {
@@ -49063,10 +49068,6 @@ class solarchvision_UI_menuBar {
       "S.E.",
       "N.E.",
       "N.W.",
-      "Display All Viewports",
-      "Enlarge 3D Viewport",
-      "Enlarge Map Viewport",
-      "Enlarge Time Viewport",
       "Perspective",
       "Orthographic",
       "Zoom",
