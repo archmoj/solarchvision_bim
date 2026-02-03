@@ -5156,8 +5156,8 @@ class solarchvision_STUDY {
 
   boolean impact_summary = false;
 
-  int ImpactLayer = 1; // 4 = Median
-  int PlotImpacts = 4; //-2/-1:wind 0/1:urban 2/3:globe 4/5:sun-path 6/7:view-from-sun 8/9:two-cycles
+  int ImpactLayer = 7; // 4 = Median
+  int PlotImpacts = 3; //-2/-1:wind 0/1:urban 2/3:globe 4/5:sun-path 6/7:view-from-sun 8/9:two-cycles
   boolean Impacts_update = true;
 
   boolean displayRaws = false;
