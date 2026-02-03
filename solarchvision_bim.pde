@@ -41749,6 +41749,9 @@ void mouseClicked () {
             if (menu_option.equals("Typical Year (TMY)")) {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
+              CLIMATE_TMYEPW_load = true;
+              update_CLIMATE_TMYEPW();
+
               SOLARCHVISION_view_changed();
               WORLD.revise();
               STUDY.revise();
@@ -41760,6 +41763,9 @@ void mouseClicked () {
             }
             if (menu_option.equals("Long-term (CWEEDS)")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
+
+              CLIMATE_CWEEDS_load = true;
+              update_CLIMATE_CWEEDS();
 
               SOLARCHVISION_view_changed();
               WORLD.revise();
@@ -41773,6 +41779,9 @@ void mouseClicked () {
             if (menu_option.equals("Long-term (CLMREC)")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
 
+              CLIMATE_CLMREC_load = true;
+              update_CLIMATE_CLMREC();
+
               SOLARCHVISION_view_changed();
               WORLD.revise();
               STUDY.revise();
@@ -41785,6 +41794,9 @@ void mouseClicked () {
             if (menu_option.equals("Real-time Observed (SWOB)")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
 
+              ENSEMBLE_OBSERVED_load = true;
+              SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+
               SOLARCHVISION_view_changed();
               WORLD.revise();
               STUDY.revise();
@@ -41796,6 +41808,9 @@ void mouseClicked () {
             }
             if (menu_option.equals("Weather Forecast (NAEFS)")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
+
+              ENSEMBLE_FORECAST_load = true;
+              update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
               SOLARCHVISION_view_changed();
               WIN3D.revise();
