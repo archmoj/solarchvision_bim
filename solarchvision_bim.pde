@@ -23433,6 +23433,14 @@ void draw () {
           }
         }
 
+        if(updateBars) {
+          updateBars = false;
+          UI_menuBar.revise();
+          UI_toolBar.revise();
+          UI_timeBar.revise();
+          UI_commandBar.revise();
+        }
+
         if (UI_menuBar.update) {
           UI_menuBar.draw();
         }
@@ -47172,8 +47180,11 @@ void UI_set_to_View_AllModelSize () {
   SOLARCHVISION_view_changed();
 }
 
+boolean updateBars = false;
 
 void UI_set_to_Viewport (int n) {
+
+  updateBars = true;
 
   FrameVariation = n;
   SOLARCHVISION_update_frame_layout();
