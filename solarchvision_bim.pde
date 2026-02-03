@@ -24139,17 +24139,17 @@ int STAT_N_Ave = 7;
 int STAT_N_Max = 8;
 
 String[] STAT_N_Title = {
-  "Mid-Low*       ",
-  "Middle*        ",
-  "Mid-High*      ",
+  "Mid-Low",
+  "Middle",
+  "Mid-High",
 
   "25th Percentile",
   "50th P.(Median)",
   "75th Percentile",
 
-  "Minimum        ",
-  "Average        ",
-  "Maximum        "
+  "Minimum",
+  "Average",
+  "Maximum"
 };
 
 int[] STAT_reverse_N;
