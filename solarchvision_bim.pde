@@ -5592,18 +5592,6 @@ class solarchvision_STUDY {
           ROLLOUT.revise();
           break;
 
-        case 's' :
-          this.record_IMG = true;
-          this.record_PDF = false;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'S' :
-          this.record_PDF = true;
-          this.record_IMG = false;
-          this.revise();
-          ROLLOUT.revise();
-          break;
         }
       }
     }
