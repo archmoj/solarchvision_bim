@@ -48946,7 +48946,7 @@ class solarchvision_UI_menuBar {
   boolean update = true;
 
   float width_parent = 4 * SOLARCHVISION_pixel_A;
-  float width_child = 5 * width_parent;
+  float width_child = width_parent; // i.e. minimum size
 
   int selected_parent = -1;
   int selected_child = 0;
@@ -49525,20 +49525,28 @@ class solarchvision_UI_menuBar {
 
           this.selected_child = 0;
 
+
+          float widthChildren = this.width_child;
+
+          for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
+            float estimatedWidth = this.Items[this.selected_parent][j].length() * 1.25 * MessageSize * 0.55;
+            if (widthChildren < estimatedWidth) widthChildren = estimatedWidth;
+          }
+
           for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
 
-            if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_pixel_A, cx + this.width_child, cy + cr + j * SOLARCHVISION_pixel_A)) {
+            if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_pixel_A, cx + widthChildren, cy + cr + j * SOLARCHVISION_pixel_A)) {
 
               this.selected_child = j;
 
               fill(255, 127, 0);
               noStroke();
-              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A, this.width_child, SOLARCHVISION_pixel_A);
+              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A, widthChildren, SOLARCHVISION_pixel_A);
             } else {
 
               fill(0, 223);
               noStroke();
-              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A, this.width_child, SOLARCHVISION_pixel_A);
+              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A, widthChildren, SOLARCHVISION_pixel_A);
             }
 
             textAlign(LEFT, CENTER);
