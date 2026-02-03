@@ -9040,19 +9040,17 @@ class solarchvision_ROLLOUT {
         if (i % 2 == 1) STUDY.Y_control += 15 * this.view_S;
       }
 
-      strokeWeight(2);
-      stroke(63);
-      fill(63);
+      noStroke();
+      fill(127);
       rect(this.cX, STUDY.Y_control, this.dX, 17.5 * ceil((allRollouts[this.parent].length - 1) / 3.0) * this.view_S);
-      strokeWeight(0);
 
       STUDY.Y_control += 5 * this.view_S;
 
       for (int i = 1; i < allRollouts[this.parent].length; i++) {
 
-        float cx = this.cX + (100 * ((i - 1) % 3) + 10) * this.view_S;
-        float cy = STUDY.Y_control;
         float cr = 6.75 * this.view_S;
+        float cx = this.cX + (100 * ((i - 1) % 3) + 10) * this.view_S;
+        float cy = STUDY.Y_control + 0.5 * cr;
 
         textAlign(LEFT, CENTER);
 
@@ -9063,7 +9061,11 @@ class solarchvision_ROLLOUT {
         }
 
         if (i == this.child) {
-          stroke(255, 127, 0);
+          noStroke();
+          fill(63);
+          rect(cx, cy - cr, 100 * this.view_S, cr * 2);
+
+          stroke(255, 0, 0);
           fill(255, 127, 0);
           textSize(15 * this.view_S);
         } else {
