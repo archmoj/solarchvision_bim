@@ -5795,9 +5795,9 @@ class solarchvision_STUDY {
         float h = sx_Plot * 0.2 / this.U_scale;
 
         this.graphics.textSize(h);
-        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y);
+        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h * 1.75);
         if (this.joinDays > 1) {
-          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y + h);
+          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y + h * 0.75);
         }
       }
     }
@@ -6349,9 +6349,9 @@ class solarchvision_STUDY {
         float h = sx_Plot * 0.2 / this.U_scale;
 
         this.graphics.textSize(h);
-        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y);
+        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h * 1.75);
         if (this.joinDays > 1) {
-          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y + h);
+          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y + h * 0.75);
         }
       }
 
@@ -6994,7 +6994,7 @@ class solarchvision_STUDY {
       }
 
       DrawnFrame += 1;
-      println("frame:", DrawnFrame);
+      //println("frame:", DrawnFrame);
 
       if (DevelopData_update) {
         if (CurrentLayer_id == LAYER_developed.id) {
