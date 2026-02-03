@@ -42114,52 +42114,52 @@ void mouseClicked () {
             if (menu_option.equals("Display/Hide SWOB points")) {
               WORLD.displayAll_SWOB = (WORLD.displayAll_SWOB + 1) % 2;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide SWOB nearest")) {
               WORLD.displayNear_SWOB = !WORLD.displayNear_SWOB;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide NAEFS points")) {
               WORLD.displayAll_NAEFS = (WORLD.displayAll_NAEFS + 1) % 2;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide NAEFS nearest")) {
               WORLD.displayNear_NAEFS = !WORLD.displayNear_NAEFS;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide CWEEDS points")) {
               WORLD.displayAll_CWEEDS = (WORLD.displayAll_CWEEDS + 1) % 2;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide CWEEDS nearest")) {
               WORLD.displayNear_CWEEDS = !WORLD.displayNear_CWEEDS;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide CLMREC points")) {
               WORLD.displayAll_CLMREC = (WORLD.displayAll_CLMREC + 1) % 2;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide CLMREC nearest")) {
               WORLD.displayNear_CLMREC = !WORLD.displayNear_CLMREC;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide TMYEPW points")) {
               WORLD.displayAll_TMYEPW = (WORLD.displayAll_TMYEPW + 1) % 2;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide TMYEPW nearest")) {
               WORLD.displayNear_TMYEPW = !WORLD.displayNear_TMYEPW;
 
-              SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
 
             if (menu_option.equals("3D-Tree")) {
@@ -48963,17 +48963,46 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Site",
-      "update Station",
-      "Load Land Mesh",
-      "Load Land Texture",
-      "Download Land Mesh",
-      "Download Land Texture",
-      "Download Toroposphere",
-      "Download NAEFS",
-      "Download SWOB",
-      "Download CLMREC",
-      "Download Aerial"
+      "Action",
+      "Undo",
+      "Redo",
+      "JPG Time Graph",
+      "PDF Time Graph",
+      "JPG Location Graph",
+      "PDF Location Graph",
+      "JPG 3D Graph",
+      "JPG 3D Full-Period",
+      "Screenshot",
+      "Screenshot+Click",
+      "Screenshot+Drag",
+      "REC. Time Graph",
+      "REC. Location Graph",
+      "REC. Solid Graph",
+      "REC. Screenshot",
+      "Stop REC.",
+      "Erase All Model1Ds",
+      "Erase All Model2Ds",
+      "Erase All Groups",
+      "Erase All Solids",
+      "Erase All Sections",
+      "Erase All Cameras",
+      "Erase Faces",
+      "Erase Curves",
+      "Erase All "
+    }
+    ,
+    {
+      "Stations",
+      "Display/Hide TMYEPW points",
+      "Display/Hide TMYEPW nearest",
+      "Display/Hide CWEEDS points",
+      "Display/Hide CWEEDS nearest",
+      "Display/Hide CLMREC points",
+      "Display/Hide CLMREC nearest",
+      "Display/Hide SWOB points",
+      "Display/Hide SWOB nearest",
+      "Display/Hide NAEFS points",
+      "Display/Hide NAEFS nearest"
     }
     ,
     {
@@ -48989,6 +49018,20 @@ class solarchvision_UI_menuBar {
       "update CWEEDS",
       "update TMYEPW",
       "update Aerial"
+    }
+    ,
+    {
+      "Site",
+      "update Station",
+      "Load Land Mesh",
+      "Load Land Texture",
+      "Download Land Mesh",
+      "Download Land Texture",
+      "Download Toroposphere",
+      "Download NAEFS",
+      "Download SWOB",
+      "Download CLMREC",
+      "Download Aerial"
     }
     ,
     {
@@ -49037,20 +49080,6 @@ class solarchvision_UI_menuBar {
       "CameraDistance",
       "3DModelSize",
       "SkydomeSize"
-    }
-    ,
-    {
-      "Stations",
-      "Display/Hide SWOB points",
-      "Display/Hide SWOB nearest",
-      "Display/Hide NAEFS points",
-      "Display/Hide NAEFS nearest",
-      "Display/Hide CWEEDS points",
-      "Display/Hide CWEEDS nearest",
-      "Display/Hide CLMREC points",
-      "Display/Hide CLMREC nearest",
-      "Display/Hide TMYEPW points",
-      "Display/Hide TMYEPW nearest"
     }
     ,
     {
@@ -49374,35 +49403,6 @@ class solarchvision_UI_menuBar {
       "Drop on LandSurface",
       "Drop on ModelSurface (Up)",
       "Drop on ModelSurface (Down)"
-    }
-    ,
-    {
-      "Action",
-      "Undo",
-      "Redo",
-      "JPG Time Graph",
-      "PDF Time Graph",
-      "JPG Location Graph",
-      "PDF Location Graph",
-      "JPG 3D Graph",
-      "JPG 3D Full-Period",
-      "Screenshot",
-      "Screenshot+Click",
-      "Screenshot+Drag",
-      "REC. Time Graph",
-      "REC. Location Graph",
-      "REC. Solid Graph",
-      "REC. Screenshot",
-      "Stop REC.",
-      "Erase All Model1Ds",
-      "Erase All Model2Ds",
-      "Erase All Groups",
-      "Erase All Solids",
-      "Erase All Sections",
-      "Erase All Cameras",
-      "Erase Faces",
-      "Erase Curves",
-      "Erase All "
     }
     ,
     {
