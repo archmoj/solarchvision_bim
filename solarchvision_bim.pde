@@ -49535,24 +49535,24 @@ class solarchvision_UI_menuBar {
           float widthChildren = this.width_child;
 
           for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
-            float estimatedWidth = this.Items[this.selected_parent][j].length() * 1.25 * MessageSize * 0.55;
+            float estimatedWidth = this.Items[this.selected_parent][j].length() * MessageSize * 0.55;
             if (widthChildren < estimatedWidth) widthChildren = estimatedWidth;
           }
 
           for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
 
-            if (isInside(UI_X_moved, UI_Y_moved, cx, cy - cr + j * SOLARCHVISION_pixel_A, cx + widthChildren, cy + cr + j * SOLARCHVISION_pixel_A)) {
+            if (isInside(UI_X_moved, UI_Y_moved, cx, ceil(cy - cr + j * SOLARCHVISION_pixel_A * 0.85) + 1, cx + widthChildren, floor(cy + cr + j * SOLARCHVISION_pixel_A * 0.85) - 1)) {
 
               this.selected_child = j;
 
               fill(255, 127, 0);
               noStroke();
-              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A, widthChildren, SOLARCHVISION_pixel_A);
+              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A * 0.85, widthChildren, SOLARCHVISION_pixel_A * 0.85);
             } else {
 
               fill(0, 223);
               noStroke();
-              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A, widthChildren, SOLARCHVISION_pixel_A);
+              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A * 0.85, widthChildren, SOLARCHVISION_pixel_A * 0.85);
             }
 
             textAlign(LEFT, CENTER);
@@ -49878,8 +49878,8 @@ class solarchvision_UI_menuBar {
               }
             }
 
-            textSize(1.25 * MessageSize);
-            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize + j * SOLARCHVISION_pixel_A);
+            textSize(MessageSize);
+            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize + j * SOLARCHVISION_pixel_A * 0.85);
           }
         }
       }
