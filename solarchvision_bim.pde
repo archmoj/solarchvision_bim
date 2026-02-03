@@ -48950,7 +48950,7 @@ class solarchvision_UI_menuBar {
 
   boolean update = true;
 
-  float width_parent = 4 * SOLARCHVISION_pixel_A;
+  float width_parent = 4.5 * SOLARCHVISION_pixel_A;
   float width_child = width_parent; // i.e. minimum size
 
   int selected_parent = -1;
@@ -49055,7 +49055,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "View",
+      "3D-view",
       "Camera >> Viewport",
       "GoTo Selected Camera",
       "Top",
@@ -49099,7 +49099,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Display",
+      "3D-display",
       "Display/Hide Land Mesh",
       "Display/Hide Land Texture",
       "Display/Hide Land Points",
@@ -49143,7 +49143,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Shade",
+      "3D-shade",
       "Shade Surface Wire",
       "Shade Surface Base",
       "Shade Surface White",
@@ -49155,55 +49155,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Study",
-      "Wind pattern (active)",
-      "Wind pattern (passive)",
-      "Urban solar potential (active)",
-      "Urban solar potential (passive)",
-      "Orientation potential (active)",
-      "Orientation potential (passive)",
-      "Hourly sun position (active)",
-      "Hourly sun position (passive)",
-      "View from sun & sky (active)",
-      "View from sun & sky (passive)",
-      "Annual cycle sun path (active)",
-      "Annual cycle sun path (passive)",
-      "Render Viewport",
-      "PreBake Viewport",
-      "Pre-bake Selected Sections",
-      "Process Active Impact",
-      "Process Passive Impact",
-      "Process Solid Impact",
-      "Run wind 3D-model"
-    }
-    ,
-    {
-      "Layers"
-    }
-    , // Parameters
-    {
-      "Layout",
-      "Layout -2",
-      "Layout -1",
-      "Layout 0",
-      "Layout 1",
-      "Layout 2",
-      "Layout 3",
-      "Layout 4",
-      "Layout 5",
-      "Layout 6",
-      "Layout 7",
-      "Layout 8",
-      "Layout 9",
-      "Layout 10",
-      "Layout 11",
-      "Layout 12",
-      "Layout 13",
-      "Layout 14"
-    }
-    ,
-    {
-      "Create",
+      "3D-create",
       "Begin New Group at Origin",
       "Begin New Group at Pivot",
       "LandMesh >> Group",
@@ -49250,7 +49202,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Select",
+      "3D-select",
       "Invert Selection",
       "Deselect All",
       "Select All",
@@ -49302,7 +49254,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Alter",
+      "3D-alter",
       "Move",
       "MoveX",
       "MoveY",
@@ -49338,7 +49290,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Modify",
+      "3D-modify",
       "Clone Selection (Identical)",
       "Clone Selection (Variation)",
       "Attach to Last Group",
@@ -49385,7 +49337,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Match",
+      "3D-match",
       "Save Current ReferenceBox",
       "Reset Saved ReferenceBox",
       "Use Selection ReferenceBox",
@@ -49422,7 +49374,57 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "About SOLARCHVISION",
+      "Study",
+      "Wind pattern (active)",
+      "Wind pattern (passive)",
+      "Urban solar potential (active)",
+      "Urban solar potential (passive)",
+      "Orientation potential (active)",
+      "Orientation potential (passive)",
+      "Hourly sun position (active)",
+      "Hourly sun position (passive)",
+      "View from sun & sky (active)",
+      "View from sun & sky (passive)",
+      "Annual cycle sun path (active)",
+      "Annual cycle sun path (passive)",
+      "Render Viewport",
+      "PreBake Viewport",
+      "Pre-bake Selected Sections",
+      "Process Active Impact",
+      "Process Passive Impact",
+      "Process Solid Impact",
+      "Run wind 3D-model"
+    }
+    ,
+    {
+      "Layers"
+      // Parameters are added here later in the process.
+    }
+    ,
+    {
+      "Layout",
+      "Layout -2",
+      "Layout -1",
+      "Layout 0",
+      "Layout 1",
+      "Layout 2",
+      "Layout 3",
+      "Layout 4",
+      "Layout 5",
+      "Layout 6",
+      "Layout 7",
+      "Layout 8",
+      "Layout 9",
+      "Layout 10",
+      "Layout 11",
+      "Layout 12",
+      "Layout 13",
+      "Layout 14"
+    }
+    ,
+    {
+      "About",
+      "SOLARCHVISION-BIM 2026",
       "Designed & developed by",
       "Mojtaba Samimi",
       "www.solarchvision.com"
