@@ -56619,21 +56619,7 @@ void SOLARCHVISION_fetch_project () {
 }
 
 
-String Default_Font = "MS Sans Serif";
-
-/*
-"MS Sans Serif"
- "Microsoft Sans Serif"
- "Arial Narrow"
- "Arial"
- "Times New Roman"
- "Calibri"
- "Cambria"
- "Georgia"
- "Courier New"
- "Franklin Gothic Medium"
- "BankGothic Md BT"
- */
+String Default_Font = "Liberation Sans";
 
 PFont SOLARCHVISION_font;
 
