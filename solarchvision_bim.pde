@@ -48946,19 +48946,12 @@ class solarchvision_UI_menuBar {
   boolean update = true;
 
   float width_parent = 4 * SOLARCHVISION_pixel_A;
-  float width_child = 3.5 * 4 * SOLARCHVISION_pixel_A;
+  float width_child = 5 * width_parent;
 
   int selected_parent = -1;
   int selected_child = 0;
 
   String[][] Items = {
-    {
-      "SOLARCHVISION-" + SOLARCHVISION_version,
-      "Designed & developed by",
-      "Mojtaba Samimi",
-      "www.solarchvision.com"
-    }
-    ,
     {
       "Project",
       "New",
@@ -49421,6 +49414,13 @@ class solarchvision_UI_menuBar {
       "Erase Curves",
       "Erase All "
     }
+    ,
+    {
+      "About SOLARCHVISION",
+      "Designed & developed by",
+      "Mojtaba Samimi",
+      "www.solarchvision.com"
+    }
   };
 
 
@@ -49486,8 +49486,6 @@ class solarchvision_UI_menuBar {
         float cx = STUDY.X_control + i * this.width_parent;
         float cy = STUDY.Y_control;
         float cr = 0.5 * SOLARCHVISION_pixel_A;
-
-        if (i > 0) cx += 1.5 * this.width_parent; // to include SOLARCHVISION title
 
         if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr)) {
 
