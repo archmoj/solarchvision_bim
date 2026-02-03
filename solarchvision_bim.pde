@@ -7642,10 +7642,10 @@ class solarchvision_STUDY {
         this.graphics.strokeWeight(0);
 
         if (Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(STAT_N_Title[l], 0, 1.3 * sx_Plot / this.U_scale);
+          this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
         }
         if (Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, 1.3 * sx_Plot / this.U_scale);
+          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
         }
         //?? French
 
@@ -8072,10 +8072,10 @@ class solarchvision_STUDY {
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
       if (Impact_TYPE == Impact_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], 0, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
       }
       //?? French
 
@@ -8336,10 +8336,10 @@ class solarchvision_STUDY {
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
       if (Impact_TYPE == Impact_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], 0, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
       }
       //?? French
 
@@ -8678,10 +8678,10 @@ class solarchvision_STUDY {
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
       if (Impact_TYPE == Impact_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], 0, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], 0, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
       }
       //?? French
 
