@@ -41357,36 +41357,36 @@ void mouseClicked () {
               selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
             }
 
-            if (menu_option.equals("Import 3D-Model...")) {
+            if (menu_option.equals("Import 3D-model...")) {
               selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
             }
 
-            if (menu_option.equals("Execute CommandFile...")) {
+            if (menu_option.equals("Import Command File...")) {
               selectInput("Select TXT file to execute:", "SOLARCHVISION_SelectFile_Execute_CommandFile");
             }
 
-            if (menu_option.equals("Export 3D-Model > OBJ (time-series)")) {
+            if (menu_option.equals("Export 3D-model > OBJ (time-series)")) {
               SOLARCHVISION_export_objects_OBJ_timeSeries();
             }
 
 
-            if (menu_option.equals("Export 3D-Model > OBJ (date-series)")) {
+            if (menu_option.equals("Export 3D-model > OBJ (date-series)")) {
               SOLARCHVISION_export_objects_OBJ_dateSeries();
             }
 
-            if (menu_option.equals("Export 3D-Model > OBJ")) {
+            if (menu_option.equals("Export 3D-model > OBJ")) {
               SOLARCHVISION_export_objects_OBJ("");
             }
 
-            if (menu_option.equals("Export 3D-Model > HTML")) {
+            if (menu_option.equals("Export 3D-model > HTML")) {
               SOLARCHVISION_export_objects_HTML();
             }
 
-            if (menu_option.equals("Export 3D-Model > RAD")) {
+            if (menu_option.equals("Export 3D-model > RAD")) {
               SOLARCHVISION_export_objects_RAD();
             }
 
-            if (menu_option.equals("Export 3D-Model > SCR")) {
+            if (menu_option.equals("Export 3D-model > SCR")) {
               SOLARCHVISION_export_objects_SCR();
             }
 
@@ -48968,19 +48968,19 @@ class solarchvision_UI_menuBar {
     {
       "Project",
       "New",
-      "Save",
+      "Open...",
+      "Import 3D-model...",
+      "Import Command File...",
       "Hold",
       "Fetch",
-      "Open...",
+      "Save",
       "Save As...",
-      "Export 3D-Model > SCR",
-      "Export 3D-Model > RAD",
-      "Export 3D-Model > HTML",
-      "Export 3D-Model > OBJ",
-      "Export 3D-Model > OBJ (date-series)",
-      "Export 3D-Model > OBJ (time-series)",
-      "Import 3D-Model...",
-      "Execute CommandFile...",
+      "Export 3D-model > SCR",
+      "Export 3D-model > RAD",
+      "Export 3D-model > HTML",
+      "Export 3D-model > OBJ",
+      "Export 3D-model > OBJ (date-series)",
+      "Export 3D-model > OBJ (time-series)",
       "Preferences",
       "Quit"
     }
