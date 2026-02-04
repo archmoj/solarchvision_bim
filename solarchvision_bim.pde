@@ -9153,16 +9153,16 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 2) { // Modify
 
-        User3D.modify_OpenningDepth = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_OpenningDepth", User3D.modify_OpenningDepth, -10, 10, 0.1);
-        User3D.modify_OpenningArea = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_OpenningArea", User3D.modify_OpenningArea, 0, 1, 0.05);
-        User3D.modify_OpenningDeviation = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_OpenningDeviation", User3D.modify_OpenningDeviation, 0, 1, 0.05);
+        User3D.modify_OpenningDepth = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify.OpenningDepth", User3D.modify_OpenningDepth, -10, 10, 0.1);
+        User3D.modify_OpenningArea = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify.OpenningArea", User3D.modify_OpenningArea, 0, 1, 0.05);
+        User3D.modify_OpenningDeviation = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify.OpenningDeviation", User3D.modify_OpenningDeviation, 0, 1, 0.05);
 
-        User3D.modify_TessellateRows = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_TessellateRows", User3D.modify_TessellateRows, 1, 100, 1), 1));
-        User3D.modify_TessellateColumns = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_TessellateColumns", User3D.modify_TessellateColumns, 1, 100, 1), 1));
+        User3D.modify_TessellateRows = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify.TessellateRows", User3D.modify_TessellateRows, 1, 100, 1), 1));
+        User3D.modify_TessellateColumns = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify.TessellateColumns", User3D.modify_TessellateColumns, 1, 100, 1), 1));
 
-        User3D.modify_OffsetAmount = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_OffsetAmount", User3D.modify_OffsetAmount, 0, 25, 0.001);
+        User3D.modify_OffsetAmount = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify.OffsetAmount", User3D.modify_OffsetAmount, 0, 25, 0.001);
 
-        User3D.modify_WeldTreshold = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_WeldTreshold", User3D.modify_WeldTreshold, 0, 10, 0.001);
+        User3D.modify_WeldTreshold = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify.WeldTreshold", User3D.modify_WeldTreshold, 0, 10, 0.001);
 
         Select3D.softPower = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.softPower", Select3D.softPower, 0.125, 8, -2);
         Select3D.softRadius = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.softRadius", Select3D.softRadius, 0.01, 100, -2);
