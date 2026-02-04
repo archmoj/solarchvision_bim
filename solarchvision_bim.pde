@@ -198,19 +198,20 @@ class solarchvision_CREATE {
   private final static int Extrude    = 3;
   private final static int Tri        = 4;
   private final static int Hyper      = 5;
-  private final static int House2     = 6;
-  private final static int House1     = 7;
-  private final static int SuperOBJ   = 8;
-  private final static int Parametric = 9;
-  private final static int Person     = 10;
-  private final static int Plant      = 11;
-  private final static int Model1Ds   = 12;
-  private final static int Face       = 13;
-  private final static int Vertex     = 14;
-  private final static int Curve      = 15;
-  private final static int Solid      = 16;
-  private final static int Section    = 17;
-  private final static int Camera     = 18;
+  private final static int House1     = 6;
+  private final static int House2     = 7;
+  private final static int House3     = 8;
+  private final static int SuperOBJ   = 9;
+  private final static int Parametric = 10;
+  private final static int Person     = 11;
+  private final static int Plant      = 12;
+  private final static int Model1Ds   = 13;
+  private final static int Face       = 14;
+  private final static int Vertex     = 15;
+  private final static int Curve      = 16;
+  private final static int Solid      = 17;
+  private final static int Section    = 18;
+  private final static int Camera     = 19;
 
 }
 
@@ -35052,6 +35053,131 @@ class solarchvision_Create3D {
   }
 
 
+  void add_House3_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
+
+    if ((rx > 0) && (ry > 0) && (rz > 0)) {
+
+      current_Material = m;
+      current_Tessellation = tes;
+      current_Layer = lyr;
+      current_Visibility = vsb;
+      current_Weight = wgt;
+      current_Closed = clz;
+
+      float teta = (90 + rot) * PI / 180.0;
+
+      float x1 = rx;
+      float x2 = -rx;
+      float x3 = -rx;
+      float x4 = rx;
+
+      float y1 = ry;
+      float y2 = ry;
+      float y3 = -ry;
+      float y4 = -ry;
+
+      float z0 = -rz;
+      float z1 = rz;
+      float z2 = h2;
+
+      float[] vx = {
+        1, -1, -1, 1, 1, -1, -1, 1, 1, -1
+      };
+      float[] vy = {
+        1, 1, -1, -1, 1, 1, -1, -1, 0, 0
+      };
+      float[] vz = {
+        0, 0, 0, 0, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz
+      };
+
+      for (int i = 0; i < 10; i++) {
+        vx[i] *= rx;
+        vy[i] *= ry;
+        vz[i] *= rz;
+
+        float vx_rot = x + vx[i] * cos(teta) - vy[i] * sin(teta);
+        float vy_rot = y + vx[i] * sin(teta) + vy[i] * cos(teta);
+        float vz_rot = z + vz[i];
+
+        vx[i] = vx_rot;
+        vy[i] = vy_rot;
+        vz[i] = vz_rot;
+      }
+
+      int b1 = allPoints.create(vx[0], vy[0], vz[0]);
+      int b2 = allPoints.create(vx[1], vy[1], vz[1]);
+      int b3 = allPoints.create(vx[2], vy[2], vz[2]);
+      int b4 = allPoints.create(vx[3], vy[3], vz[3]);
+
+      int t1 = allPoints.create(vx[4], vy[4], vz[4]);
+      int t2 = allPoints.create(vx[5], vy[5], vz[5]);
+      int t3 = allPoints.create(vx[6], vy[6], vz[6]);
+      int t4 = allPoints.create(vx[7], vy[7], vz[7]);
+
+      int m1 = allPoints.create(vx[8], vy[8], vz[8]);
+      int m2 = allPoints.create(vx[9], vy[9], vz[9]);
+
+
+      if (m == -1) current_Material = 0;
+      else current_Material = m;
+
+
+      {//West
+        int[] newFace_nodes = {
+          t3, m2, t2, b2, b3
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//Roof-South
+        int[] newFace_nodes = {
+          m1, m2, t3, t4
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//East
+        int[] newFace_nodes = {
+          t1, m1, t4, b4, b1
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//North
+        int[] newFace_nodes = {
+          t2, t1, b1, b2
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//South
+        int[] newFace_nodes = {
+          t4, t3, b3, b4
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//Roof-North
+        int[] newFace_nodes = {
+          m2, m1, t1, t2
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//Bottom
+        int[] newFace_nodes = {
+          b4, b3, b2, b1
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+
+
+      SOLARCHVISION_model_added();
+    }
+  }
+
+
   void add_House2_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
 
     if ((rx > 0) && (ry > 0) && (rz > 0)) {
@@ -42269,6 +42395,11 @@ void mouseClicked () {
               UI_toolBar.highlight("Hyper");
               UI_toolBar.revise();
             }
+            if (menu_option.equals("House3")) {
+              UI_set_to_Create_House3();
+              UI_toolBar.highlight("House3");
+              UI_toolBar.revise();
+            }
             if (menu_option.equals("House2")) {
               UI_set_to_Create_House2();
               UI_toolBar.highlight("House2");
@@ -44472,6 +44603,13 @@ void mouseClicked () {
                       Create3D.add_PolygonExtrude(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
                     }
 
+                    if (CreateObject == CREATE.House3) {
+
+                      float h = ry;
+
+                      Create3D.add_House3_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
+                    }
+
                     if (CreateObject == CREATE.House2) {
 
                       float h = ry;
@@ -46621,6 +46759,13 @@ void UI_set_to_Create_Hyper () {
   UI_set_to_Create_Nothing();
 
   CreateObject = CREATE.Hyper;
+  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+}
+
+void UI_set_to_Create_House3 () {
+  UI_set_to_Create_Nothing();
+
+  CreateObject = CREATE.House3;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
@@ -49180,8 +49325,9 @@ class solarchvision_UI_menuBar {
       "Add People on Land",
       "Add 2D-Trees on Land",
       "Add 3D-Trees on Land",
-      "House2",
       "House1",
+      "House2",
+      "House3",
       "Box",
       "Cushion",
       "Cylinder",
@@ -49995,7 +50141,7 @@ class solarchvision_UI_toolBar {
     }
     ,
     {
-      "1", "House2", "House1", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
     }
     ,
     {
@@ -50240,6 +50386,7 @@ class solarchvision_UI_toolBar {
             else if ((this.Items[i][j]).equals("Poly")) UI_set_to_Create_Poly();
             else if ((this.Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
             else if ((this.Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
+            else if ((this.Items[i][j]).equals("House3")) UI_set_to_Create_House3();
             else if ((this.Items[i][j]).equals("House2")) UI_set_to_Create_House2();
             else if ((this.Items[i][j]).equals("House1")) UI_set_to_Create_House1();
             else if ((this.Items[i][j]).equals("Box")) UI_set_to_Create_Box();
@@ -53200,6 +53347,53 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
       UI_set_to_Create_Box();
       UI_toolBar.highlight("Box");
+      UI_toolBar.revise();
+    }
+  }
+
+  else if (Command_CAPITAL.equals("HOUSE3")) {
+    if (parts.length > 1) {
+      int m = -1;
+      int tes = 0;
+      int lyr = 0;
+      int vsb = 1;
+      int wgt = 0;
+      int clz = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float dx = 6;
+      float dy = 6;
+      float dz = 6;
+      float h = 3;
+      float r = 0;
+      for (int q = 1; q < parts.length; q++) {
+        String[] parameters = split(parts[q], '=');
+        if (parameters.length > 1) {
+          String low_case = parameters[0].toLowerCase();
+               if (low_case.equals("m")) m = int(parameters[1]);
+          else if (low_case.equals("tes")) tes = int(parameters[1]);
+          else if (low_case.equals("lyr")) lyr = int(parameters[1]);
+
+          else if (low_case.equals("x")) x = float(parameters[1]);
+          else if (low_case.equals("y")) y = float(parameters[1]);
+          else if (low_case.equals("z")) z = float(parameters[1]);
+          else if (low_case.equals("dx")) dx = float(parameters[1]);
+          else if (low_case.equals("dy")) dy = float(parameters[1]);
+          else if (low_case.equals("dz")) dz = float(parameters[1]);
+          else if (low_case.equals("h")) h = float(parameters[1]);
+          else if (low_case.equals("r")) r = float(parameters[1]);
+        }
+      }
+      if ((dx != 0) && (dy != 0) && (dz != 0)) {
+        Create3D.add_House3_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
+      }
+    }
+    else {
+      return_message = "House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
+
+      UI_set_to_Create_House3();
+      UI_toolBar.highlight("House3");
       UI_toolBar.revise();
     }
   }
