@@ -8923,7 +8923,7 @@ solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 String[][] allRollouts = {
   {
-    "Location & Data", "Point", "Weather"
+    "Location & Data", "Point", "Stations", "Weather"
   }
   ,
   {
@@ -9093,7 +9093,7 @@ class solarchvision_ROLLOUT {
 
       }
 
-      if (this.child == 2) { // Weather
+      if (this.child == 2) { // Stations
 
         WORLD.displayAll_TMYEPW = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1), 1));
         //WORLD.displayNear_TMYEPW = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
@@ -9109,7 +9109,9 @@ class solarchvision_ROLLOUT {
 
         WORLD.displayAll_NAEFS = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
         //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
+      }
 
+      if (this.child == 3) { // Weather
 
         //ENSEMBLE_FORECAST_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load, 0, 1, 1), 1));
         //ENSEMBLE_OBSERVED_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load, 0, 1, 1), 1));
