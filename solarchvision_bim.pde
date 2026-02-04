@@ -54854,7 +54854,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       if (!dir.isFile()) {
 
         String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + allLayers[f].name + "/raw";
-        String the_link = "https://dd.weather.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
+        String the_link = "https://dd.weather.gc.ca/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/WXO-DD/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
         the_target = the_target + ".bz2";
 
         println("Try downloading: " + the_link);
