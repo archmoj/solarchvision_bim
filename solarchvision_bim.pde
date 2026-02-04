@@ -8927,7 +8927,7 @@ String[][] allRollouts = {
   }
   ,
   {
-    "Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Fractal Tree", "Environment", "Viewport", "Simulation"
+    "Geometries & Space", "Create", "Modify", "Solid", "Surface", "Fractal Tree", "Environment", "Viewport", "Simulation", "Other"
   }
   ,
   {
@@ -9144,7 +9144,7 @@ class solarchvision_ROLLOUT {
       }
     } else if (this.parent == 1) { // Geometries & Space
 
-      if (this.child == 1) { // General
+      if (this.child == 9) { // Other
 
         User3D.create_MeshOrSolid = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3d-create.MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
 
@@ -9164,7 +9164,7 @@ class solarchvision_ROLLOUT {
 
 
 
-      if (this.child == 2) { // Create
+      if (this.child == 1) { // Create
 
         //addToLastGroup = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
 
@@ -9186,7 +9186,7 @@ class solarchvision_ROLLOUT {
         User3D.create_Snap = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Snap", User3D.create_Snap, 0, 1, 1), 1));
       }
 
-      if (this.child == 3) { // Modify
+      if (this.child == 2) { // Modify
 
         User3D.modify_OpenningDepth = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_OpenningDepth", User3D.modify_OpenningDepth, -10, 10, 0.1);
         User3D.modify_OpenningArea = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-modify_OpenningArea", User3D.modify_OpenningArea, 0, 1, 0.05);
@@ -9215,7 +9215,7 @@ class solarchvision_ROLLOUT {
         Select3D.alignZ = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.alignZ", Select3D.alignZ, -1, 1, 1), 1));
       }
 
-      if (this.child == 4) { // Solid
+      if (this.child == 3) { // Solid
 
         //User3D.create_powRnd = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0,0,0, "powRnd" , User3D.create_powRnd, 0, 1, 1), 1));
         User3D.create_powAll = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.powAll", User3D.create_powAll, 0.5, CubePower, -2);
@@ -9224,7 +9224,7 @@ class solarchvision_ROLLOUT {
         User3D.create_powZ = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.powZ", User3D.create_powZ, 0.5, CubePower, -2);
       }
 
-      if (this.child == 5) { // Surface
+      if (this.child == 4) { // Surface
 
         User3D.create_SphereDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.SphereDegree", User3D.create_SphereDegree, 0, 5, 1), 1));
 
@@ -9237,7 +9237,7 @@ class solarchvision_ROLLOUT {
         User3D.create_Plant_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
       }
 
-      if (this.child == 6) { // Fractal Tree
+      if (this.child == 5) { // Fractal Tree
 
         User3D.create_Model1D_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Type", User3D.create_Model1D_Type, 0, 0, 1), 1));
         User3D.create_Model1D_DegreeMax = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.DegreeMax", User3D.create_Model1D_DegreeMax, 0, 12, 1), 1));
@@ -9251,7 +9251,7 @@ class solarchvision_ROLLOUT {
         User3D.create_Model1D_TreeBase = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.TreeBase", User3D.create_Model1D_TreeBase, 0, 4, 0.1), 0.01);
       }
 
-      if (this.child == 7) { // Environment
+      if (this.child == 6) { // Environment
 
         //Land3D.loadTextures = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
         //Land3D.loadMesh = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
@@ -9289,7 +9289,7 @@ class solarchvision_ROLLOUT {
       }
 
 
-      if (this.child == 8) { // Viewport
+      if (this.child == 7) { // Viewport
 
         WIN3D.currentCamera = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1), 1));
 
@@ -9306,7 +9306,7 @@ class solarchvision_ROLLOUT {
       }
 
 
-      if (this.child == 9) { // Simulation
+      if (this.child == 8) { // Simulation
 
         IMPACTS_displayDay = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
 
