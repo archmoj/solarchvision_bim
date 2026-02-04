@@ -40411,8 +40411,8 @@ void mouseWheel (MouseEvent event) {
 
               int keep_WORLD_Zoom = WORLD.Zoom;
 
-              if (Wheel_Value < 0) WORLD.Zoom -= 1;
-              if (Wheel_Value > 0) WORLD.Zoom += 1;
+              if (Wheel_Value < 0) WORLD.Zoom += 1;
+              if (Wheel_Value > 0) WORLD.Zoom -= 1;
 
               if (WORLD.Zoom < 1) WORLD.Zoom = 1;
               if (WORLD.Zoom > 6) WORLD.Zoom = 6;
@@ -40526,9 +40526,9 @@ void mouseWheel (MouseEvent event) {
                   (WIN3D.UI_CurrentTask == UITASK.Pan_TargetRoll)) { // viewport:zoom
 
                 if (WIN3D.ViewType == 1) {
-                  WIN3D.position_Z += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
+                  WIN3D.position_Z -= Wheel_Value * WIN3D.position_T * OBJECTS_scale;
                 } else {
-                  WIN3D.Zoom /= pow(2.0, Wheel_Value);
+                  WIN3D.Zoom *= pow(2.0, Wheel_Value);
                 }
 
                 SOLARCHVISION_view_changed();
@@ -40536,16 +40536,16 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D.UI_CurrentTask == UITASK.Pan_Height) { // viewport:elevation
 
-                if (Wheel_Value > 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.Zoom));
-                if (Wheel_Value < 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.Zoom));
+                if (Wheel_Value > 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.Zoom));
+                if (Wheel_Value < 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.Zoom));
 
                 SOLARCHVISION_view_changed();
               }
 
               if (WIN3D.UI_CurrentTask == UITASK.ModelSize_Pan_TargetRoll) { // viewport:3DModelSize
 
-                if (Wheel_Value > 0) OBJECTS_scale *= pow(2.0, 0.25);
-                if (Wheel_Value < 0) OBJECTS_scale /= pow(2.0, 0.25);
+                if (Wheel_Value > 0) OBJECTS_scale /= pow(2.0, 0.25);
+                if (Wheel_Value < 0) OBJECTS_scale *= pow(2.0, 0.25);
 
                 SOLARCHVISION_view_changed();
               }
@@ -40606,13 +40606,13 @@ void mouseWheel (MouseEvent event) {
                 if (WIN3D.UI_TaskModifyParameter == 0) { // AllModelSize
 
                   if (Wheel_Value > 0) {
-                    OBJECTS_scale *= pow(2.0, 0.25);
-                    Sky3D.scale *= pow(2.0, 0.25);
+                    OBJECTS_scale /= pow(2.0, 0.25);
+                    Sky3D.scale /= pow(2.0, 0.25);
                   }
 
                   if (Wheel_Value < 0) {
-                    OBJECTS_scale /= pow(2.0, 0.25);
-                    Sky3D.scale /= pow(2.0, 0.25);
+                    OBJECTS_scale *= pow(2.0, 0.25);
+                    Sky3D.scale *= pow(2.0, 0.25);
                   }
 
                   SOLARCHVISION_view_changed();
@@ -40653,7 +40653,7 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D.UI_CurrentTask == UITASK.CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
 
-                WIN3D.move_3DViewport_towards_Selection(pow(2, -0.5 * Wheel_Value));
+                WIN3D.move_3DViewport_towards_Selection(pow(2, 0.5 * Wheel_Value));
 
                 SOLARCHVISION_view_changed();
               }
@@ -40675,14 +40675,14 @@ void mouseWheel (MouseEvent event) {
               if ((WIN3D.UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) ||
                   (WIN3D.UI_CurrentTask == UITASK.PickSelect)) { // viewport:DistMouseXY
 
-                WIN3D.move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
+                WIN3D.move_3DViewport_towards_Mouse(pow(2, 0.5 * Wheel_Value));
 
                 SOLARCHVISION_view_changed();
               }
 
               if (WIN3D.UI_CurrentTask == UITASK.LandOrbit_Pan_TargetRollZ) { // viewport:LandOrbit
 
-                WIN3D.move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
+                WIN3D.move_3DViewport_towards_Mouse(pow(2, 0.5 * Wheel_Value));
 
                 SOLARCHVISION_view_changed();
               }
