@@ -9394,7 +9394,8 @@ class solarchvision_ROLLOUT {
 
         changeCurrentLayerTo(int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
 
-        STUDY.V_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
+        //STUDY.V_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
+        STUDY.V_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Scale (" + allLayers[CurrentLayer_id].descriptions[Language_EN] + ")", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
 
         //STUDY.displayRaws = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw data", STUDY.displayRaws, 0, 1, 1), 1));
         //STUDY.displaySorted = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted, 0, 1, 1), 1));
