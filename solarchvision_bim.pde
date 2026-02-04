@@ -8923,7 +8923,7 @@ solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 String[][] allRollouts = {
   {
-    "Location & Data", "Point", "Weather", "Space"
+    "Location & Data", "Point", "Weather"
   }
   ,
   {
@@ -9126,22 +9126,6 @@ class solarchvision_ROLLOUT {
         GRIB2_Layer_Step = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, numberOfLayers, 1), 1));
       }
 
-      if (this.child == 3) { // Space
-
-        //Tropo3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
-        //Tropo3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));
-
-        //Earth3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface, 0, 1, 1), 1));
-        //Earth3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture, 0, 1, 1), 1));
-
-        //Moon3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
-        //Moon3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
-
-        //Sun3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface, 0, 1, 1), 1));
-        //Sun3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture, 0, 1, 1), 1));
-
-        Planetary_Magnification = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
-      }
     } else if (this.parent == 1) { // Geometries & Space
       if (this.child == 1) { // Create
 
@@ -9332,6 +9316,20 @@ class solarchvision_ROLLOUT {
         Sky3D.scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 0.0000001, 1000000, -2);
 
         BIOSPHERE_drawResolution = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Biosphere_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
+
+        //Tropo3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
+        //Tropo3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));
+
+        //Earth3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface, 0, 1, 1), 1));
+        //Earth3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture, 0, 1, 1), 1));
+
+        //Moon3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
+        //Moon3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
+
+        //Sun3D.displaySurface = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface, 0, 1, 1), 1));
+        //Sun3D.displayTexture = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture, 0, 1, 1), 1));
+
+        Planetary_Magnification = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
 
         OBJECTS_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2);
 
