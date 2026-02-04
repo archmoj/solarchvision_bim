@@ -49382,6 +49382,11 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
+      "Layers"
+      // Parameters are added here later in the process.
+    }
+    ,
+    {
       "Study",
       "Wind pattern (active)",
       "Wind pattern (passive)",
@@ -49402,11 +49407,6 @@ class solarchvision_UI_menuBar {
       "Process Passive Impact",
       "Process Solid Impact",
       "Run wind 3D-model"
-    }
-    ,
-    {
-      "Layers"
-      // Parameters are added here later in the process.
     }
     ,
     {
