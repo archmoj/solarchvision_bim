@@ -2521,16 +2521,16 @@ class solarchvision_WIN3D {
   float view_R = float(dY) / float(dX);
 
   float position_X = 0;
-  float position_Y = 50; //10;
-  float position_Z = -50; //50;
+  float position_Y = 10; //50; //10;
+  float position_Z = 10; //50;
   float position_T = 1.0;
 
-  float rotation_X = 90; //75; //0;
+  float rotation_X = 90; //90; //75; //0;
   float rotation_Y = 0;
   float rotation_Z = 90; //0; //180; //135;
   float rotation_T = 5.0;
 
-  float Zoom = 60.0; // / (SOLARCHVISION_pixel_H / 300.0);
+  float Zoom = 90.0; //60.0; // / (SOLARCHVISION_pixel_H / 300.0);
 
   int ViewType = 1; // 0: Ortho 1: Perspective
 
