@@ -9143,27 +9143,6 @@ class solarchvision_ROLLOUT {
         Planetary_Magnification = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
       }
     } else if (this.parent == 1) { // Geometries & Space
-
-      if (this.child == 9) { // Other
-
-        User3D.create_MeshOrSolid = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3d-create.MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
-
-        allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "3d-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
-
-        Land3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
-
-        Sky3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));
-        Sky3D.scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 0.0000001, 1000000, -2);
-
-        BIOSPHERE_drawResolution = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Biosphere_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
-
-        OBJECTS_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2);
-
-        Load_DefaultModels = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3D.maximum_default_models, 1), 1));
-      }
-
-
-
       if (this.child == 1) { // Create
 
         //addToLastGroup = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
@@ -9340,6 +9319,25 @@ class solarchvision_ROLLOUT {
 
         //allWindFlows.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allWindFlows.displayAll", allWindFlows.displayAll, 0, 1, 1), 1));
       }
+
+      if (this.child == 9) { // Other
+
+        User3D.create_MeshOrSolid = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3d-create.MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
+
+        allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "3d-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
+
+        Land3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
+
+        Sky3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));
+        Sky3D.scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 0.0000001, 1000000, -2);
+
+        BIOSPHERE_drawResolution = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Biosphere_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
+
+        OBJECTS_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2);
+
+        Load_DefaultModels = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3D.maximum_default_models, 1), 1));
+      }
+
     } else if (this.parent == 2) { // Period & Scenarios
 
       if (this.child == 1) { // Time
