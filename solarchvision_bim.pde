@@ -32659,14 +32659,14 @@ class solarchvision_User3D {
   int create_Plant_Type = 0;
 
   int create_Model1D_Type = 0;
-  int create_Model1D_DegreeMax = 6; //5; //8;
+  int create_Model1D_DegreeMax = 8;
   int create_Model1D_Seed = -1; // -1:random, 0-99 choice
   float create_Model1D_TrunkSize = 1;
-  float create_Model1D_LeafSize = 0.1;
+  float create_Model1D_LeafSize = 0.2;
 
   float create_Model1D_BranchTilt = 60.0;
   float create_Model1D_BranchTwist = 137.5; //golden angle ratio
-  float create_Model1D_BranchRatio = 0.75;
+  float create_Model1D_BranchRatio = 0.8;
   float create_Model1D_TreeBase = 2.0;
 
 
