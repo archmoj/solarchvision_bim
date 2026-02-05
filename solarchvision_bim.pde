@@ -6599,7 +6599,7 @@ class solarchvision_STUDY {
       this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       this.PlotImpacts = keep_PlotImpacts;
-      CurrentLayer_id = keep_CurrentLayer_id;
+      changeCurrentLayerTo(keep_CurrentLayer_id);
     }
 
 
@@ -6622,7 +6622,7 @@ class solarchvision_STUDY {
       this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       this.PlotImpacts = keep_PlotImpacts;
-      CurrentLayer_id = keep_CurrentLayer_id;
+      changeCurrentLayerTo(keep_CurrentLayer_id);
     }
 
 
@@ -6661,7 +6661,7 @@ class solarchvision_STUDY {
 
       this.ImpactLayer = keep_ImpactLayer;
       this.PlotImpacts = keep_PlotImpacts;
-      CurrentLayer_id = keep_CurrentLayer_id;
+      changeCurrentLayerTo(keep_CurrentLayer_id);
       this.displaySorted = keep_displaySorted;
       this.displayNormals = keep_displayNormals;
       this.displayRaws = keep_displayRaws;
@@ -6693,7 +6693,7 @@ class solarchvision_STUDY {
       this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       this.skyScenario = keep_skyScenario;
-      CurrentLayer_id = keep_CurrentLayer_id;
+      changeCurrentLayerTo(keep_CurrentLayer_id);
     }
 
 
@@ -6720,7 +6720,7 @@ class solarchvision_STUDY {
       this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       this.skyScenario = keep_skyScenario;
-      CurrentLayer_id = keep_CurrentLayer_id;
+      changeCurrentLayerTo(keep_CurrentLayer_id);
     }
 
 
@@ -6742,8 +6742,30 @@ class solarchvision_STUDY {
       changeCurrentLayerTo(LAYER_drybulb.id);
       this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-      CurrentLayer_id = keep_CurrentLayer_id;
+      changeCurrentLayerTo(keep_CurrentLayer_id);
     }
+
+
+    if (this.plotSetup == 7) {
+      int keep_CurrentLayer_id = CurrentLayer_id;
+
+      this.PlotImpacts = 3;
+      this.plotImpact(0, ((FrameVariation == 2) ? -450 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.PlotImpacts = 5;
+      this.plotImpact(0, ((FrameVariation == 2) ? -150 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      if (FrameVariation == 2) {
+        changeCurrentLayerTo(LAYER_dirnorrad.id);
+        this.plotHourly(0, 150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+        changeCurrentLayerTo(LAYER_difhorrad.id);
+        this.plotHourly(0, 450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      }
+
+      changeCurrentLayerTo(keep_CurrentLayer_id);
+    }
+
 
 
     // -----------------------------------------------
@@ -6895,29 +6917,6 @@ class solarchvision_STUDY {
       this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
-    }
-
-
-    if (this.plotSetup == 9) {
-
-      changeCurrentLayerTo(LAYER_dirnorrad.id);
-      this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_difhorrad.id);
-      this.plotHourly(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_developed.id);
-      Develop_Option = DEV_OP_01;
-      SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_developed.id);
-      Develop_Option = DEV_OP_03;
-      SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
-      Develop_Option = pre_Develop_Option;
     }
 
   }
