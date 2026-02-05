@@ -6608,17 +6608,17 @@ class solarchvision_STUDY {
       int keep_CurrentLayer_id = CurrentLayer_id;
 
       if (FrameVariation == 2) {
-        this.PlotImpacts = 1;
+        this.PlotImpacts = -1;
         this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-        this.PlotImpacts = -2;
-        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+        changeCurrentLayerTo(LAYER_drybulb.id);
+        this.plotHourly(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
       }
 
-      changeCurrentLayerTo(LAYER_windspd.id);
-      this.plotHourly(0, ((FrameVariation == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      this.PlotImpacts = -2;
+      this.plotImpact(0, ((FrameVariation == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-      changeCurrentLayerTo(LAYER_drybulb.id);
+      changeCurrentLayerTo(LAYER_windspd.id);
       this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       this.PlotImpacts = keep_PlotImpacts;
