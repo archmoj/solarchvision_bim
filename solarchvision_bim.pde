@@ -5171,7 +5171,7 @@ class solarchvision_STUDY {
 
   color color_data_raws = color(0, 0, 0);
 
-  int plotSetup = 14; //4; //12; //13;
+  int plotSetup = 0;
 
   float ImageScale = 1.0;
 
@@ -6544,7 +6544,7 @@ class solarchvision_STUDY {
 
   void plotSetup () {
 
-    if (this.plotSetup == 14) {
+    if (this.plotSetup == 0) {
 
       if (FrameVariation == 2) {
 
@@ -6586,7 +6586,7 @@ class solarchvision_STUDY {
 
     // -----------------------------------------------
 
-    if (this.plotSetup == -2) {
+    if (this.plotSetup == 16) {
       if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
         pre_TIME_Date = TIME.date;
         int keep_TIME_BeginDay = TIME.beginDay;
@@ -6624,7 +6624,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == -1) {
+    if (this.plotSetup == 15) {
       pre_CurrentDataSource = CurrentDataSource;
 
       CurrentDataSource = dataID_ENSEMBLE_FORECAST;
@@ -6660,14 +6660,14 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 0) {
+    if (this.plotSetup == 14) {
 
       this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
     }
 
 
-    if (this.plotSetup == 1) {
+    if (this.plotSetup == 13) {
 
       DevelopLayer_id = CurrentLayer_id;
       changeCurrentLayerTo(LAYER_developed.id);
@@ -6693,7 +6693,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 2) {
+    if (this.plotSetup == 12) {
       if (CurrentLayer_id != LAYER_developed.id) {
 
 
@@ -6719,7 +6719,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 3) {
+    if (this.plotSetup == 11) {
 
       changeCurrentLayerTo(LAYER_windspd200hPa.id);
       this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
@@ -6737,7 +6737,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 4) {
+    if (this.plotSetup == 10) {
 
       changeCurrentLayerTo(LAYER_windspd.id);
       this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
@@ -6755,7 +6755,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 5) {
+    if (this.plotSetup == 9) {
 
       changeCurrentLayerTo(LAYER_dirnorrad.id);
       this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
@@ -6778,7 +6778,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 6) {
+    if (this.plotSetup == 8) {
 
       this.skyScenario = 4;
       this.plotHourly(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
@@ -6820,7 +6820,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 8) {
+    if (this.plotSetup == 6) {
 
       this.displaySorted = false;
       this.displayNormals = false;
@@ -6842,7 +6842,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 9) {
+    if (this.plotSetup == 5) {
 
       this.displaySorted = false;
       this.displayNormals = false;
@@ -6863,7 +6863,7 @@ class solarchvision_STUDY {
       this.ImpactLayer = pre_STUDY_ImpactLayer;
     }
 
-    if (this.plotSetup == 10) {
+    if (this.plotSetup == 4) {
 
       this.displaySorted = false;
       this.displayNormals = false;
@@ -6884,7 +6884,7 @@ class solarchvision_STUDY {
       this.ImpactLayer = pre_STUDY_ImpactLayer;
     }
 
-    if (this.plotSetup == 11) {
+    if (this.plotSetup == 3) {
 
       this.displaySorted = false;
       this.displayNormals = false;
@@ -6905,7 +6905,7 @@ class solarchvision_STUDY {
       this.ImpactLayer = pre_STUDY_ImpactLayer;
     }
 
-    if (this.plotSetup == 12) {
+    if (this.plotSetup == 2) {
 
       if (SOLARCHVISION_automated != 0) {
         this.displaySorted = false;
@@ -6934,7 +6934,7 @@ class solarchvision_STUDY {
       this.plotImpact(0, -200 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
     }
 
-    if (this.plotSetup == 13) {
+    if (this.plotSetup == 1) {
 
       if (SOLARCHVISION_automated != 0) {
         this.displaySorted = true;
@@ -9389,7 +9389,7 @@ class solarchvision_ROLLOUT {
 
         FrameVariation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
 
-        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 14, 1), 1));
+        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, 0, 16, 1), 1));
 
         //STUDY.update = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
 
@@ -41523,84 +41523,84 @@ void mouseClicked () {
 
             if (menu_option.equals("Wind pattern (active)")) {
               STUDY.PlotImpacts = -2;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = true;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Wind pattern (passive)")) {
               STUDY.PlotImpacts = -1;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = true;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Urban solar potential (active)")) {
               STUDY.PlotImpacts = 0;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Urban solar potential (passive)")) {
               STUDY.PlotImpacts = 1;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Orientation potential (active)")) {
               STUDY.PlotImpacts = 2;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Orientation potential (passive)")) {
               STUDY.PlotImpacts = 3;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Hourly sun position (active)")) {
               STUDY.PlotImpacts = 4;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Hourly sun position (passive)")) {
               STUDY.PlotImpacts = 5;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("View from sun & sky (active)")) {
               STUDY.PlotImpacts = 6;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("View from sun & sky (passive)")) {
               STUDY.PlotImpacts = 7;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Annual cycle sun path (active)")) {
               STUDY.PlotImpacts = 8;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Annual cycle sun path (passive)")) {
               STUDY.PlotImpacts = 9;
-              STUDY.plotSetup = 14; // <<<<<<<<
+              STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
@@ -41638,7 +41638,7 @@ void mouseClicked () {
               SOLARCHVISION_view_changed();
             }
 
-            for (int n = -2; n <= 14; n++) {
+            for (int n = 0; n <= 16; n++) {
               if (menu_option.equals("Layout " + nf(n, 0))) {
 
                 STUDY.plotSetup = n;
