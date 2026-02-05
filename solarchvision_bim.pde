@@ -6585,6 +6585,38 @@ class solarchvision_STUDY {
       this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
     }
 
+
+    if (this.plotSetup == 1) {
+
+      if (SOLARCHVISION_automated != 0) {
+        this.displaySorted = true;
+        this.displayNormals = true;
+        this.displayRaws = false;
+        this.displayProbs = false;
+      }
+
+      changeCurrentLayerTo(LAYER_dirnorrad.id);
+      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      //changeCurrentLayerTo(LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<<
+      //this.plotHourly(0, 325 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      changeCurrentLayerTo(LAYER_cloudcover.id);
+      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.PlotImpacts = 0;
+      this.plotImpact(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.PlotImpacts = 2; //4;
+      this.plotImpact(0, -200 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+
+      this.PlotImpacts = pre_STUDY_PlotImpacts;
+      this.ImpactLayer = pre_STUDY_ImpactLayer;
+    }
+
+
+
     // -----------------------------------------------
 
     if (this.plotSetup == 16) {
@@ -6933,35 +6965,6 @@ class solarchvision_STUDY {
 
       this.PlotImpacts = -2;
       this.plotImpact(0, -200 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-    }
-
-    if (this.plotSetup == 1) {
-
-      if (SOLARCHVISION_automated != 0) {
-        this.displaySorted = true;
-        this.displayNormals = true;
-        this.displayRaws = false;
-        this.displayProbs = false;
-      }
-
-      changeCurrentLayerTo(LAYER_dirnorrad.id);
-      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      //changeCurrentLayerTo(LAYER_glohorrad.id; //LAYER_difhorrad.id; // <<<<<<<<<<<<<<
-      //this.plotHourly(0, 325 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_cloudcover.id);
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = 0;
-      this.plotImpact(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = 2; //4;
-      this.plotImpact(0, -200 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-
-      this.PlotImpacts = pre_STUDY_PlotImpacts;
-      this.ImpactLayer = pre_STUDY_ImpactLayer;
     }
   }
 
