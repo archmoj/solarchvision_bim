@@ -7406,7 +7406,7 @@ class solarchvision_STUDY {
 
         float pal_length = 400;
         float pal_ox = 700;
-        float pal_oy = 115;
+        float pal_oy = 110;
         for (int q = 0; q < 11; q++) {
           float _u = 0;
 
@@ -7456,11 +7456,11 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP);
         if (Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(("Wind direction and speed"), 0, 1.2 * sx_Plot / this.U_scale);
+          this.graphics.text(("Wind direction and speed"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(("Wind direction and speed with air temperature"), 0, 1.2 * sx_Plot / this.U_scale);
+          this.graphics.text(("Wind direction and speed with air temperature"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
       }
@@ -7600,17 +7600,17 @@ class solarchvision_STUDY {
         this.graphics.strokeWeight(0);
 
         if (Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
+          this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
         }
         if (Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
+          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
         }
         //?? French
 
 
         float pal_length = 400;
         float pal_ox = 700;
-        float pal_oy = 115;
+        float pal_oy = 110;
         for (int q = 0; q < 11; q++) {
           float _u = 0;
 
@@ -7663,11 +7663,11 @@ class solarchvision_STUDY {
           this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
           this.graphics.textAlign(LEFT, TOP);
           if (Impact_TYPE == Impact_ACTIVE) {
-            this.graphics.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
+            this.graphics.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
             //?? French
           }
           if (Impact_TYPE == Impact_PASSIVE) {
-            this.graphics.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
+            this.graphics.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
             //?? French
           }
         }
@@ -8030,16 +8030,16 @@ class solarchvision_STUDY {
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
       if (Impact_TYPE == Impact_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       }
       //?? French
 
       float pal_length = 400;
       float pal_ox = 700;
-      float pal_oy = 115;
+      float pal_oy = 110;
       for (int q = 0; q < 11; q++) {
         float _u = 0;
 
@@ -8091,11 +8091,11 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP);
         if (Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(("Solar radiation on hemisphere (kW/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
+          this.graphics.text(("Solar radiation on hemisphere (kW/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
+          this.graphics.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
       }
@@ -8294,17 +8294,17 @@ class solarchvision_STUDY {
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
       if (Impact_TYPE == Impact_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       }
       //?? French
 
 
       float pal_length = 400;
       float pal_ox = 700;
-      float pal_oy = 115;
+      float pal_oy = 110;
       for (int q = 0; q < 11; q++) {
         float _u = 0;
 
@@ -8357,11 +8357,11 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP);
         if (Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(("Direct solar radiation (kWh/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
+          this.graphics.text(("Direct solar radiation (kWh/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(("Direct solar effects (kWh°C/m²)"), 0, 1.2 * sx_Plot / this.U_scale);
+          this.graphics.text(("Direct solar effects (kWh°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
       }
@@ -8601,7 +8601,7 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP);
 
-        this.graphics.text(("Solar perspectives"), 0, 1.2 * sx_Plot / this.U_scale);
+        this.graphics.text(("Solar perspectives"), 0, 1.1 * sx_Plot / this.U_scale);
       }
     }
 
@@ -8636,10 +8636,10 @@ class solarchvision_STUDY {
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
       if (Impact_TYPE == Impact_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       }
       if (Impact_TYPE == Impact_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.3 * sx_Plot / this.U_scale);
+        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       }
       //?? French
 
@@ -8661,7 +8661,7 @@ class solarchvision_STUDY {
 
       float pal_length = 400;
       float pal_ox = 700;
-      float pal_oy = 115;
+      float pal_oy = 110;
 
       if (this.j_End == 2) {
         pal_oy = 325;
