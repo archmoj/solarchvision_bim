@@ -6697,6 +6697,31 @@ class solarchvision_STUDY {
     }
 
 
+    if (this.plotSetup == 5) {
+      int keep_skyScenario = this.skyScenario;
+      int keep_CurrentLayer_id = CurrentLayer_id;
+
+      changeCurrentLayerTo(LAYER_windspd.id);
+
+      if (FrameVariation == 2) {
+        this.skyScenario = 1;
+        this.plotHourly(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      }
+
+      this.skyScenario = 4;
+      this.plotHourly(0, ((FrameVariation == 2) ? -150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      if (FrameVariation == 2) {
+        this.skyScenario = 3;
+        this.plotHourly(0, 150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      }
+
+      this.skyScenario = 2;
+      this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.skyScenario = keep_skyScenario;
+      CurrentLayer_id = keep_CurrentLayer_id;
+    }
 
 
 
