@@ -6608,6 +6608,29 @@ class solarchvision_STUDY {
       int keep_CurrentLayer_id = CurrentLayer_id;
 
       if (FrameVariation == 2) {
+        this.PlotImpacts = 1;
+        this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+        this.PlotImpacts = 3;
+        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      }
+
+      changeCurrentLayerTo(LAYER_direffect.id);
+      this.plotHourly(0, ((FrameVariation == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      changeCurrentLayerTo(LAYER_drybulb.id);
+      this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.PlotImpacts = keep_PlotImpacts;
+      changeCurrentLayerTo(keep_CurrentLayer_id);
+    }
+
+
+    if (this.plotSetup == 3) {
+      int keep_PlotImpacts = this.PlotImpacts;
+      int keep_CurrentLayer_id = CurrentLayer_id;
+
+      if (FrameVariation == 2) {
         this.PlotImpacts = -1;
         this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
@@ -6626,7 +6649,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 3) {
+    if (this.plotSetup == 4) {
       int keep_ImpactLayer = this.ImpactLayer;
       int keep_PlotImpacts = this.PlotImpacts;
       int keep_CurrentLayer_id = CurrentLayer_id;
@@ -6669,8 +6692,7 @@ class solarchvision_STUDY {
     }
 
 
-
-    if (this.plotSetup == 4) {
+    if (this.plotSetup == 5) {
       int keep_skyScenario = this.skyScenario;
       int keep_CurrentLayer_id = CurrentLayer_id;
 
@@ -6697,7 +6719,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 5) {
+    if (this.plotSetup == 6) {
       int keep_skyScenario = this.skyScenario;
       int keep_CurrentLayer_id = CurrentLayer_id;
 
@@ -6724,8 +6746,7 @@ class solarchvision_STUDY {
     }
 
 
-
-    if (this.plotSetup == 6) {
+    if (this.plotSetup == 7) {
       int keep_CurrentLayer_id = CurrentLayer_id;
 
       if (FrameVariation == 2) {
@@ -6746,7 +6767,7 @@ class solarchvision_STUDY {
     }
 
 
-    if (this.plotSetup == 7) {
+    if (this.plotSetup == 8) {
       int keep_CurrentLayer_id = CurrentLayer_id;
 
       this.PlotImpacts = 3;
@@ -6765,160 +6786,6 @@ class solarchvision_STUDY {
 
       changeCurrentLayerTo(keep_CurrentLayer_id);
     }
-
-
-
-    // -----------------------------------------------
-
-    if (this.plotSetup == 16) {
-      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-        pre_TIME_Date = TIME.date;
-        int keep_TIME_BeginDay = TIME.beginDay;
-        int delta = 4;
-
-        this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        TIME.date -= delta;
-        TIME.updateDate();
-        TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
-        update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-        TIME.beginDay = (TIME.beginDay + delta) % 365;
-        this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        TIME.date -= delta;
-        TIME.updateDate();
-        TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
-        update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-        TIME.beginDay = (TIME.beginDay + 2 * delta) % 365;
-        this.plotHourly(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        TIME.date -= delta;
-        TIME.updateDate();
-        TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
-        update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-        TIME.beginDay = (TIME.beginDay + 3 * delta) % 365;
-        this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        TIME.date = pre_TIME_Date;
-        TIME.updateDate();
-        TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
-        update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-        TIME.beginDay = keep_TIME_BeginDay;
-      }
-    }
-
-
-    if (this.plotSetup == 15) {
-      pre_CurrentDataSource = CurrentDataSource;
-
-      CurrentDataSource = dataID_ENSEMBLE_FORECAST;
-
-      this.displaySorted = false;
-      this.displayNormals = false;
-      this.displayRaws = true;
-      this.displayProbs = true;
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.displaySorted = true;
-      this.displayNormals = true;
-      this.displayRaws = false;
-      this.displayProbs = false;
-      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      CurrentDataSource = dataID_CLIMATE_CWEEDS;
-
-      this.displaySorted = false;
-      this.displayNormals = false;
-      this.displayRaws = true;
-      this.displayProbs = true;
-
-      this.plotHourly(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.displaySorted = true;
-      this.displayNormals = true;
-      this.displayRaws = false;
-      this.displayProbs = false;
-      this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      CurrentDataSource = pre_CurrentDataSource;
-    }
-
-
-    if (this.plotSetup == 14) {
-
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-    }
-
-
-    if (this.plotSetup == 13) {
-
-      DevelopLayer_id = CurrentLayer_id;
-      changeCurrentLayerTo(LAYER_developed.id);
-
-      Develop_Option = DEV_OP_01;
-      SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      Develop_Option = DEV_OP_02;
-      SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      Develop_Option = DEV_OP_03;
-      SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      Develop_Option = DEV_OP_04;
-      SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      Develop_Option = pre_Develop_Option;
-      changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
-    }
-
-    if (this.plotSetup == 12) {
-      if (CurrentLayer_id != LAYER_developed.id) {
-
-
-        this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        DevelopLayer_id = CurrentLayer_id;
-        changeCurrentLayerTo(LAYER_developed.id);
-
-        Develop_Option = DEV_OP_06;
-        SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        this.plotHourly(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        Develop_Option = DEV_OP_07;
-        SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        Develop_Option = DEV_OP_08;
-        SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-        this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
-      }
-    }
-
-
-    if (this.plotSetup == 11) {
-
-      changeCurrentLayerTo(LAYER_windspd200hPa.id);
-      this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_pressure.id);
-      this.plotHourly(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_heightp500hPa.id);
-      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_thicknesses_1000_500.id);
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
-    }
-
   }
 
 
@@ -9343,7 +9210,7 @@ class solarchvision_ROLLOUT {
     } else if (this.parent == 3) { // Display Options
 
       if (this.child == 1) { // 2D-Layers
-        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -1, 16, 1), 1));
+        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -1, 8, 1), 1));
 
         //STUDY.update = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
 
@@ -41589,7 +41456,7 @@ void mouseClicked () {
               SOLARCHVISION_view_changed();
             }
 
-            for (int n = -1; n <= 16; n++) {
+            for (int n = -1; n <= 8; n++) {
               if (menu_option.equals("Layout " + nf(n, 0))) {
 
                 STUDY.plotSetup = n;
