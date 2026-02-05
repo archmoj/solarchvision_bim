@@ -26922,6 +26922,9 @@ class solarchvision_Sun3D {
 
 
   void drawGrid (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, int start_j, int end_j) {
+    if (target_window == TypeWindow.STUDY) {
+      s_SunPath *= 0.65; // TODO: why do we need this?
+    }
 
     if (this.displayGrid) {
 
