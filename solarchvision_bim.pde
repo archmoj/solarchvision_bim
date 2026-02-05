@@ -14191,11 +14191,7 @@ class solarchvision_SolarImpacts {
       this.resize_Image_array();
     }
 
-    println("AAA");
-
     if (this.sectionType != 0) {
-
-      println("BBB");
 
       cursor(WAIT);
 
@@ -18595,8 +18591,6 @@ class solarchvision_Select3D {
   void calculate_BoundingBox () {
 
     this.update_BoundingBox = false;
-
-    println("calculate_BoundingBox");
 
     int keep_selection_alignX = this.alignX;
     int keep_selection_alignY = this.alignY;
