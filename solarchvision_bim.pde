@@ -41643,15 +41643,6 @@ void mouseClicked () {
 
                 STUDY.plotSetup = n;
                 STUDY.revise();
-
-                if (STUDY.plotSetup == 14) {
-                } else {
-
-                  if (FrameVariation != 2) {
-                    FrameVariation = 2;
-                    SOLARCHVISION_update_frame_layout();
-                  }
-                }
               }
             }
 
