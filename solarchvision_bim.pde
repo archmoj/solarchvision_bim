@@ -2014,12 +2014,6 @@ String[] CurrentLayer_descriptions = {allLayers[0].descriptions[Language_EN],
 
 void changeCurrentLayerTo (int new_id) {
 
-  int pre_id = CurrentLayer_id;
-
-  allLayers[pre_id].V_scale = STUDY.V_scale;
-  allLayers[pre_id].V_offset = STUDY.V_offset;
-  allLayers[pre_id].V_belowLine = STUDY.V_belowLine;
-
   STUDY.V_scale = allLayers[new_id].V_scale;
   STUDY.V_offset = allLayers[new_id].V_offset;
   STUDY.V_belowLine = allLayers[new_id].V_belowLine;
