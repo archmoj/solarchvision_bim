@@ -6544,6 +6544,29 @@ class solarchvision_STUDY {
 
   void plotSetup () {
 
+    if (this.plotSetup == -1) {
+      int keep_TIME_BeginDay = TIME.beginDay;
+      float keep_STUDY_perDays = this.perDays;
+      int keep_STUDY_j_End = this.j_End;
+      float keep_STUDY_U_scale = this.U_scale;
+      int keep_STUDY_PlotImpacts = this.PlotImpacts;
+
+      TIME.beginDay = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
+      this.perDays = 183;
+      this.j_End = 2;
+      this.U_scale = 18.0 / float(this.j_End - this.j_Start);
+      this.PlotImpacts = (this.PlotImpacts % 2 == 1) ? 9 : 8;
+
+      this.plotImpact(0, 0 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      TIME.beginDay = keep_TIME_BeginDay;
+      this.perDays = keep_STUDY_perDays;
+      this.j_End = keep_STUDY_j_End;
+      this.U_scale = keep_STUDY_U_scale;
+      this.PlotImpacts = keep_STUDY_PlotImpacts;
+    }
+
+
     if (this.plotSetup == 0) {
 
       if (FrameVariation == 2) {
@@ -6555,33 +6578,11 @@ class solarchvision_STUDY {
         }
         this.ImpactLayer = pre_STUDY_ImpactLayer;
 
-        this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
       } else {
-
-        if ((this.PlotImpacts == 8) || (this.PlotImpacts == 9)) {
-
-          int keep_TIME_BeginDay = TIME.beginDay;
-          float keep_STUDY_perDays = this.perDays;
-          int keep_STUDY_j_End = this.j_End;
-          float keep_STUDY_U_scale = this.U_scale;
-
-          TIME.beginDay = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
-          this.perDays = 183;
-          this.j_End = 2;
-          this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-
-          this.plotImpact(0, 0 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-          TIME.beginDay = keep_TIME_BeginDay;
-          this.perDays = keep_STUDY_perDays;
-          this.j_End = keep_STUDY_j_End;
-          this.U_scale = keep_STUDY_U_scale;
-        } else {
-          this.plotImpact(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-          this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-        }
+        this.plotImpact(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
       }
+
+      this.plotHourly(0, ((FrameVariation == 2) ? 525 : 175) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
     }
 
     // -----------------------------------------------
@@ -9389,7 +9390,7 @@ class solarchvision_ROLLOUT {
 
         FrameVariation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
 
-        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, 0, 16, 1), 1));
+        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -1, 16, 1), 1));
 
         //STUDY.update = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
 
@@ -41638,7 +41639,7 @@ void mouseClicked () {
               SOLARCHVISION_view_changed();
             }
 
-            for (int n = 0; n <= 16; n++) {
+            for (int n = -1; n <= 16; n++) {
               if (menu_option.equals("Layout " + nf(n, 0))) {
 
                 STUDY.plotSetup = n;
