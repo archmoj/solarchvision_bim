@@ -6668,6 +6668,38 @@ class solarchvision_STUDY {
       this.displayProbs = keep_displayProbs;
     }
 
+
+
+    if (this.plotSetup == 4) {
+      int keep_skyScenario = this.skyScenario;
+      int keep_CurrentLayer_id = CurrentLayer_id;
+
+      changeCurrentLayerTo(LAYER_drybulb.id);
+
+      if (FrameVariation == 2) {
+        this.skyScenario = 1;
+        this.plotHourly(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      }
+
+      this.skyScenario = 4;
+      this.plotHourly(0, ((FrameVariation == 2) ? -150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      if (FrameVariation == 2) {
+        this.skyScenario = 3;
+        this.plotHourly(0, 150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      }
+
+      this.skyScenario = 2;
+      this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.skyScenario = keep_skyScenario;
+      CurrentLayer_id = keep_CurrentLayer_id;
+    }
+
+
+
+
+
     // -----------------------------------------------
 
     if (this.plotSetup == 16) {
@@ -6776,7 +6808,6 @@ class solarchvision_STUDY {
       changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
     }
 
-
     if (this.plotSetup == 12) {
       if (CurrentLayer_id != LAYER_developed.id) {
 
@@ -6859,24 +6890,6 @@ class solarchvision_STUDY {
 
       changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
       Develop_Option = pre_Develop_Option;
-    }
-
-
-    if (this.plotSetup == 8) {
-
-      this.skyScenario = 4;
-      this.plotHourly(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.skyScenario = 3;
-      this.plotHourly(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.skyScenario = 2;
-      this.plotHourly(0, 150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.skyScenario = 1;
-      this.plotHourly(0, 450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.skyScenario = pre_STUDY_SkyScenario;
     }
 
   }
