@@ -6588,24 +6588,23 @@ class solarchvision_STUDY {
 
     if (this.plotSetup == 1) {
 
-      if (SOLARCHVISION_automated != 0) {
-        this.displaySorted = true;
-        this.displayNormals = true;
-        this.displayRaws = false;
-        this.displayProbs = false;
+      if (FrameVariation == 2) {
+        this.PlotImpacts = 0;
+        this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+        this.PlotImpacts = 2;
+        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
       }
 
+      int keep_CurrentLayer_id = CurrentLayer_id;
+
       changeCurrentLayerTo(LAYER_dirnorrad.id);
-      this.plotHourly(0, 150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      this.plotHourly(0, ((FrameVariation == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       changeCurrentLayerTo(LAYER_cloudcover.id);
-      this.plotHourly(0, 450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-      this.PlotImpacts = 0;
-      this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = 2; //4;
-      this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      CurrentLayer_id = keep_CurrentLayer_id;
 
 
       this.PlotImpacts = pre_STUDY_PlotImpacts;
@@ -6936,13 +6935,6 @@ class solarchvision_STUDY {
     }
 
     if (this.plotSetup == 2) {
-
-      if (SOLARCHVISION_automated != 0) {
-        this.displaySorted = false;
-        this.displayNormals = true;
-        this.displayRaws = false;
-        this.displayProbs = true;
-      }
 
       changeCurrentLayerTo(LAYER_windspd.id);
       this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
