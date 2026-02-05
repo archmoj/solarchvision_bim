@@ -9343,9 +9343,6 @@ class solarchvision_ROLLOUT {
     } else if (this.parent == 3) { // Display Options
 
       if (this.child == 1) { // 2D-Layers
-
-        FrameVariation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 1, 1, "Frame layout variation", FrameVariation, 0, 3, 1), 1));
-
         STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -1, 16, 1), 1));
 
         //STUDY.update = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
