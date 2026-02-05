@@ -6625,7 +6625,26 @@ class solarchvision_STUDY {
       CurrentLayer_id = keep_CurrentLayer_id;
     }
 
+    if (this.plotSetup == 3) {
 
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true;
+      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.displaySorted = true;
+      this.displayNormals = true;
+      this.displayRaws = false;
+      this.displayProbs = false;
+      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.PlotImpacts = 5;
+      this.plotImpact(0, -200 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      this.PlotImpacts = pre_STUDY_PlotImpacts;
+      this.ImpactLayer = pre_STUDY_ImpactLayer;
+    }
 
     // -----------------------------------------------
 
@@ -6921,27 +6940,6 @@ class solarchvision_STUDY {
       this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       this.PlotImpacts = 4;
-      this.plotImpact(0, -200 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = pre_STUDY_PlotImpacts;
-      this.ImpactLayer = pre_STUDY_ImpactLayer;
-    }
-
-    if (this.plotSetup == 3) {
-
-      this.displaySorted = false;
-      this.displayNormals = false;
-      this.displayRaws = true;
-      this.displayProbs = true;
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.displaySorted = true;
-      this.displayNormals = true;
-      this.displayRaws = false;
-      this.displayProbs = false;
-      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = 5;
       this.plotImpact(0, -200 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       this.PlotImpacts = pre_STUDY_PlotImpacts;
