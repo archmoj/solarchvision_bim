@@ -5796,9 +5796,9 @@ class solarchvision_STUDY {
         float h = sx_Plot * 0.2 / this.U_scale;
 
         this.graphics.textSize(h);
-        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h * 1.75);
+        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h);
         if (this.joinDays > 1) {
-          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y + h * 0.75);
+          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y);
         }
       }
     }
@@ -6350,9 +6350,9 @@ class solarchvision_STUDY {
         float h = sx_Plot * 0.2 / this.U_scale;
 
         this.graphics.textSize(h);
-        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h * 1.75);
+        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h);
         if (this.joinDays > 1) {
-          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y + h * 0.75);
+          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y);
         }
       }
 
