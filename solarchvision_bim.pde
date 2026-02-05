@@ -6574,15 +6574,15 @@ class solarchvision_STUDY {
         for (int p = 0; p < 3; p++) {
           this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + p;
 
-          this.plotImpact(0, (175 - p * 350) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+          this.plotImpact(0, (150 - p * 300) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
         }
         this.ImpactLayer = pre_STUDY_ImpactLayer;
 
       } else {
-        this.plotImpact(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
       }
 
-      this.plotHourly(0, ((FrameVariation == 2) ? 525 : 175) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
     }
 
     // -----------------------------------------------
