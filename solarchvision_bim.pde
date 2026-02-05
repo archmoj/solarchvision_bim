@@ -6725,6 +6725,27 @@ class solarchvision_STUDY {
 
 
 
+    if (this.plotSetup == 6) {
+      int keep_CurrentLayer_id = CurrentLayer_id;
+
+      if (FrameVariation == 2) {
+        changeCurrentLayerTo(LAYER_pressure.id);
+        this.plotHourly(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+        changeCurrentLayerTo(LAYER_windspd.id);
+        this.plotHourly(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      }
+
+      changeCurrentLayerTo(LAYER_relhum.id);
+      this.plotHourly(0, ((FrameVariation == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      changeCurrentLayerTo(LAYER_drybulb.id);
+      this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+      CurrentLayer_id = keep_CurrentLayer_id;
+    }
+
+
     // -----------------------------------------------
 
     if (this.plotSetup == 16) {
@@ -6871,24 +6892,6 @@ class solarchvision_STUDY {
       this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       changeCurrentLayerTo(LAYER_thicknesses_1000_500.id);
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
-    }
-
-
-    if (this.plotSetup == 10) {
-
-      changeCurrentLayerTo(LAYER_windspd.id);
-      this.plotHourly(0, -525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_precipitation.id);
-      this.plotHourly(0, -175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_relhum.id);
-      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_drybulb.id);
       this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       changeCurrentLayerTo(pre_STUDY_CurrentLayer_id);
