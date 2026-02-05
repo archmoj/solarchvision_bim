@@ -5981,7 +5981,7 @@ class solarchvision_STUDY {
 
     float pal_length = 400;
     float pal_ox = 700;
-    float pal_oy = (50 * this.V_belowLine) + 50;
+    float pal_oy = (50 * this.V_belowLine) + 40;
 
     for (int q = 0; q < 11; q++) {
       float prob_V = 10 * q / 100.0;
@@ -6085,7 +6085,7 @@ class solarchvision_STUDY {
     };
     float pal_length = 400;
     float pal_ox = 700;
-    float pal_oy = (50 * this.V_belowLine) + 50;
+    float pal_oy = (50 * this.V_belowLine) + 40;
 
     for (int q = 0; q < 9; q++) {
       float sort_V = 1.1 * (q - 4) / 8.0;
@@ -7450,7 +7450,7 @@ class solarchvision_STUDY {
 
         float pal_length = 400;
         float pal_ox = 700;
-        float pal_oy = 125;
+        float pal_oy = 115;
         for (int q = 0; q < 11; q++) {
           float _u = 0;
 
@@ -7654,7 +7654,7 @@ class solarchvision_STUDY {
 
         float pal_length = 400;
         float pal_ox = 700;
-        float pal_oy = 125;
+        float pal_oy = 115;
         for (int q = 0; q < 11; q++) {
           float _u = 0;
 
@@ -8083,7 +8083,7 @@ class solarchvision_STUDY {
 
       float pal_length = 400;
       float pal_ox = 700;
-      float pal_oy = 125;
+      float pal_oy = 115;
       for (int q = 0; q < 11; q++) {
         float _u = 0;
 
@@ -8348,7 +8348,7 @@ class solarchvision_STUDY {
 
       float pal_length = 400;
       float pal_ox = 700;
-      float pal_oy = 125;
+      float pal_oy = 115;
       for (int q = 0; q < 11; q++) {
         float _u = 0;
 
@@ -8705,7 +8705,7 @@ class solarchvision_STUDY {
 
       float pal_length = 400;
       float pal_ox = 700;
-      float pal_oy = 125;
+      float pal_oy = 115;
 
       if (this.j_End == 2) {
         pal_oy = 325;
