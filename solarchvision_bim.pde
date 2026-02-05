@@ -6625,25 +6625,47 @@ class solarchvision_STUDY {
       CurrentLayer_id = keep_CurrentLayer_id;
     }
 
-    if (this.plotSetup == 3) {
 
-      this.displaySorted = false;
-      this.displayNormals = false;
-      this.displayRaws = true;
-      this.displayProbs = true;
-      this.plotHourly(0, 525 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+    if (this.plotSetup == 3) {
+      int keep_ImpactLayer = this.ImpactLayer;
+      int keep_PlotImpacts = this.PlotImpacts;
+      int keep_CurrentLayer_id = CurrentLayer_id;
+      boolean keep_displaySorted = this.displaySorted;
+      boolean keep_displayNormals = this.displayNormals;
+      boolean keep_displayRaws = this.displayRaws;
+      boolean keep_displayProbs = this.displayProbs;
+
+      if (FrameVariation == 2) {
+        this.PlotImpacts = 3;
+
+        this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3);
+        this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+
+        this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + 2;
+        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      }
+
+      changeCurrentLayerTo(LAYER_drybulb.id);
 
       this.displaySorted = true;
       this.displayNormals = true;
       this.displayRaws = false;
       this.displayProbs = false;
-      this.plotHourly(0, 175 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      this.plotHourly(0, ((FrameVariation == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-      this.PlotImpacts = 5;
-      this.plotImpact(0, -200 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      this.displaySorted = false;
+      this.displayNormals = false;
+      this.displayRaws = true;
+      this.displayProbs = true;
+      this.plotHourly(0, ((FrameVariation == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-      this.PlotImpacts = pre_STUDY_PlotImpacts;
-      this.ImpactLayer = pre_STUDY_ImpactLayer;
+      this.ImpactLayer = keep_ImpactLayer;
+      this.PlotImpacts = keep_PlotImpacts;
+      CurrentLayer_id = keep_CurrentLayer_id;
+      this.displaySorted = keep_displaySorted;
+      this.displayNormals = keep_displayNormals;
+      this.displayRaws = keep_displayRaws;
+      this.displayProbs = keep_displayProbs;
     }
 
     // -----------------------------------------------
