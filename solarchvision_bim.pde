@@ -39106,8 +39106,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
 
-  Impact_TYPE = Impact_ACTIVE;
-  if (STUDY.PlotImpacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
+  if (STUDY.PlotImpacts % 2 == 0) Impact_TYPE = Impact_ACTIVE;
+  else Impact_TYPE = Impact_PASSIVE;
 
   float Pa = FLOAT_undefined;
   float Pb = FLOAT_undefined;
