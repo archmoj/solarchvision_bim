@@ -5228,18 +5228,6 @@ class solarchvision_STUDY {
     } else if (e.isControlDown()) {
       if (key == CODED) {
         switch(keyCode) {
-          case 16: // PAGE_UP
-          this.PlotImpacts = -2 + (2 + this.PlotImpacts + 1) % 11;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-          case 11: // PAGE_DOWN
-          this.PlotImpacts = -2 + (2 + this.PlotImpacts - 1 + 11) % 11;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
           case UP :
           changeCurrentLayerTo((CurrentLayer_id + 1) % numberOfLayers);
           this.revise();
@@ -5253,12 +5241,24 @@ class solarchvision_STUDY {
           break;
 
           case RIGHT :
-          STUDY.plotSetup = -2 + (2 + STUDY.plotSetup + 1) % 10;
+          this.PlotImpacts = -2 + (2 + this.PlotImpacts + 1) % 11;
           this.revise();
           ROLLOUT.revise();
           break;
 
           case LEFT :
+          this.PlotImpacts = -2 + (2 + this.PlotImpacts - 1 + 11) % 11;
+          this.revise();
+          ROLLOUT.revise();
+          break;
+
+          case 16: // PAGE_UP
+          STUDY.plotSetup = -2 + (2 + STUDY.plotSetup + 1) % 10;
+          this.revise();
+          ROLLOUT.revise();
+          break;
+
+          case 11: // PAGE_DOWN
           STUDY.plotSetup = -2 + (2 + STUDY.plotSetup - 1 + 10) % 10;
           this.revise();
           ROLLOUT.revise();
