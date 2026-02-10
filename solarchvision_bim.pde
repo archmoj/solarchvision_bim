@@ -26762,7 +26762,7 @@ class solarchvision_Sun3D {
 
       for (float j = start_j; j <= end_j; j += 30) {
 
-        float HOUR_step = 0.25;
+        float HOUR_step = 0.1;
         for (float i = 0; i <= 24; i += HOUR_step) {
 
           float[] SunA = funcs.SunPosition(STATION.getLatitude(), j, i);
