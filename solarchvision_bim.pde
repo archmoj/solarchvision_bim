@@ -5239,6 +5239,18 @@ class solarchvision_STUDY {
           this.revise();
           ROLLOUT.revise();
           break;
+
+          case RIGHT :
+          STUDY.plotSetup = -1 + (1 + STUDY.plotSetup + 1) % 9;
+          this.revise();
+          ROLLOUT.revise();
+          break;
+
+          case LEFT :
+          STUDY.plotSetup = -1 + (1 + STUDY.plotSetup - 1 + 9) % 9;
+          this.revise();
+          ROLLOUT.revise();
+          break;
         }
       } else {
         switch(key) {
