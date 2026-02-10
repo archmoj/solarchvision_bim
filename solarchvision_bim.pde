@@ -6558,7 +6558,7 @@ class solarchvision_STUDY {
   }
 
 
-  void plotSetup () {
+  void setupPlot () {
 
     if (this.plotSetup == -1) {
       int keep_TIME_BeginDay = TIME.beginDay;
@@ -6873,7 +6873,7 @@ class solarchvision_STUDY {
       //this.graphics.translate(this.position_X * -0.25, this.position_Y * 0.5);
       this.graphics.translate(this.position_X * -0.425, this.position_Y * 0.5);
 
-      this.plotSetup();
+      this.setupPlot();
 
       //this.graphics.translate(this.position_X * 0.25, this.position_Y * 0.5);
       this.graphics.translate(this.position_X * 0.425, this.position_Y * 0.5);
