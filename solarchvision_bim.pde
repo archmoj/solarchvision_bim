@@ -32259,11 +32259,11 @@ class solarchvision_Solids {
 
     println("Loading:" + this.CLASS_STAMP);
 
-    this.makeEmpty(0);
-
     XML parent = xml.getChild(this.CLASS_STAMP);
 
     int ni = XML_getInt(parent, "ni");
+
+    this.makeEmpty(ni);
 
     XML[] children = parent.getChildren("item");
     for (int i = 0; i < ni; i++) {
