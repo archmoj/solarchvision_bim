@@ -5241,13 +5241,13 @@ class solarchvision_STUDY {
           break;
 
           case RIGHT :
-          STUDY.plotSetup = -1 + (1 + STUDY.plotSetup + 1) % 9;
+          STUDY.plotSetup = -2 + (2 + STUDY.plotSetup + 1) % 10;
           this.revise();
           ROLLOUT.revise();
           break;
 
           case LEFT :
-          STUDY.plotSetup = -1 + (1 + STUDY.plotSetup - 1 + 9) % 9;
+          STUDY.plotSetup = -2 + (2 + STUDY.plotSetup - 1 + 10) % 10;
           this.revise();
           ROLLOUT.revise();
           break;
@@ -6559,8 +6559,7 @@ class solarchvision_STUDY {
 
 
   void setupPlot () {
-
-    if (this.plotSetup == -1) {
+    if ((this.plotSetup == -2) || (this.plotSetup == -1)) {
       int keep_TIME_BeginDay = TIME.beginDay;
       float keep_STUDY_perDays = this.perDays;
       int keep_STUDY_j_End = this.j_End;
@@ -6571,7 +6570,7 @@ class solarchvision_STUDY {
       this.perDays = 183;
       this.j_End = 2;
       this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-      this.PlotImpacts = (this.PlotImpacts % 2 == 1) ? 9 : 8;
+      this.PlotImpacts = (this.plotSetup == -1) ? 9 : 8;
 
       this.plotImpact(0, 0 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
@@ -9232,7 +9231,7 @@ class solarchvision_ROLLOUT {
     } else if (this.parent == 3) { // Display Options
 
       if (this.child == 1) { // 2D-Layers
-        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -1, 8, 1), 1));
+        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 8, 1), 1));
 
         //STUDY.update = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
 
@@ -41478,7 +41477,7 @@ void mouseClicked () {
               SOLARCHVISION_view_changed();
             }
 
-            for (int n = -1; n <= 8; n++) {
+            for (int n = -2; n <= 8; n++) {
               if (menu_option.equals("Layout " + nf(n, 0))) {
 
                 STUDY.plotSetup = n;
