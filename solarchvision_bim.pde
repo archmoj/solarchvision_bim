@@ -8704,6 +8704,7 @@ class solarchvision_STUDY {
     XML_setInt(parent, "sumInterval", this.sumInterval);
     XML_setFloat(parent, "LevelPix", this.LevelPix);
     XML_setInt(parent, "plotSetup", this.plotSetup);
+    XML_setInt(parent, "Impact_TYPE", this.Impact_TYPE);
   }
 
 
@@ -8760,7 +8761,7 @@ class solarchvision_STUDY {
     this.sumInterval = XML_getInt(parent, "sumInterval");
     this.LevelPix = XML_getFloat(parent, "LevelPix");
     this.plotSetup = XML_getInt(parent, "plotSetup");
-
+    this.Impact_TYPE = XML_getInt(parent, "Impact_TYPE");
   }
 
 
