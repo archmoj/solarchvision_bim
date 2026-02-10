@@ -5228,7 +5228,17 @@ class solarchvision_STUDY {
     } else if (e.isControlDown()) {
       if (key == CODED) {
         switch(keyCode) {
+          case UP :
+          changeCurrentLayerTo((CurrentLayer_id + 1) % numberOfLayers);
+          this.revise();
+          ROLLOUT.revise();
+          break;
 
+          case DOWN :
+          changeCurrentLayerTo((CurrentLayer_id + numberOfLayers - 1) % numberOfLayers);
+          this.revise();
+          ROLLOUT.revise();
+          break;
         }
       } else {
         switch(key) {
