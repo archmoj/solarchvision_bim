@@ -36949,8 +36949,8 @@ class solarchvision_Create3D {
 
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-            int max_o = int((16.0 / pow(2, Land3D.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
-
+            //int max_o = int((16.0 / pow(2, Land3D.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
+            int max_o = int(random(10)) == 0 ? 1 : 0;
 
             if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
             //if (i > 10) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
