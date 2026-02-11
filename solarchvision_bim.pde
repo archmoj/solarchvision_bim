@@ -367,7 +367,7 @@ String Folder_Trees;
 String Folder_Export;
 String Folder_Project;
 String Folder_Graphics;
-String Folder_Create3D;
+String Folder_Export3D;
 String Folder_ViewsFromSky;
 String Folder_ScreenShots;
 String Folder_Shadings;
@@ -10358,7 +10358,7 @@ class solarchvision_Faces {
 
             the_filename = "shadePallet.bmp";
 
-            TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+            TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
             println("Saving texture:", TEXTURE_path);
 
@@ -10667,7 +10667,7 @@ class solarchvision_Faces {
 
             the_filename = "shadePallet.bmp";
 
-            TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+            TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
             htmlOutput.println("\t\t\t\t<Appearance DEF='" + the_filename + "'>");
             htmlOutput.println("\t\t\t\t\t<ImageTexture url='"+ Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
@@ -24559,7 +24559,7 @@ void SOLARCHVISION_export_objects_SCR () {
 
   String fileBasename = ProjectName;
 
-  String scrFilename = Folder_Create3D + "/" + fileBasename + ".scr";
+  String scrFilename = Folder_Export3D + "/" + fileBasename + ".scr";
 
   PrintWriter scrOutput = createWriter(scrFilename);
 
@@ -24622,7 +24622,7 @@ void SOLARCHVISION_export_objects_RAD () {
 
   String fileBasename = ProjectName;
 
-  String radFilename = Folder_Create3D + "/" + fileBasename + ".rad";
+  String radFilename = Folder_Export3D + "/" + fileBasename + ".rad";
 
   radOutput = createWriter(radFilename);
 
@@ -24715,7 +24715,7 @@ void SOLARCHVISION_export_objects_HTML () {
 
   String fileBasename = ProjectName;
 
-  String htmlFilename = Folder_Create3D + "/" + fileBasename + ".html";
+  String htmlFilename = Folder_Export3D + "/" + fileBasename + ".html";
 
   htmlOutput = createWriter(htmlFilename);
 
@@ -24956,8 +24956,8 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
   String fileBasename = ProjectName + suffix;
 
-  String objFilename = Folder_Create3D + "/" + fileBasename + ".obj";
-  String mtlFilename = Folder_Create3D + "/" + fileBasename + ".mtl";
+  String objFilename = Folder_Export3D + "/" + fileBasename + ".obj";
+  String mtlFilename = Folder_Export3D + "/" + fileBasename + ".mtl";
 
 
   if (User3D.export_MaterialLibrary) {
@@ -25945,7 +25945,7 @@ class solarchvision_Tropo3D {
 
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
-                String new_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+                String new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -26352,7 +26352,7 @@ class solarchvision_Sky3D {
 
             the_filename = "skyPatternPallet.bmp";
 
-            TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+            TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
             println("Saving texture:", TEXTURE_path);
 
@@ -27181,7 +27181,7 @@ class solarchvision_Sun3D {
 
         the_filename = "sunPatternPallet.bmp";
 
-        TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+        TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
         println("Saving texture:", TEXTURE_path);
 
@@ -27878,7 +27878,7 @@ class solarchvision_Earth3D {
 
             String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
-            String new_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+            String new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
             println("Copying texture:", old_Texture_path, ">", new_Texture_path);
             saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -28609,7 +28609,7 @@ class solarchvision_Land3D {
 
                 String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
-                String new_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+                String new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -30707,8 +30707,8 @@ class solarchvision_Model2Ds {
 
                 the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1); // image name
 
-                new_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
-                opacity_Texture_path = Folder_Create3D + "/" + Subfolder_exportMaps + "opacity_" + the_filename;
+                new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
+                opacity_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + "opacity_" + the_filename;
 
                 println("Copying texture:", old_Texture_path, ">", new_Texture_path);
                 saveBytes(new_Texture_path, loadBytes(old_Texture_path));
@@ -38045,7 +38045,7 @@ class solarchvision_Sections {
 
           if (User3D.export_MaterialLibrary) {
 
-            String TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+            String TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
             if ((target_window == TypeWindow.HTML) ||
                 (target_window == TypeWindow.OBJ3D)) {
@@ -38768,7 +38768,7 @@ class solarchvision_WindFlow {
 
           the_filename = "WindFlowPallet.bmp";
 
-          String TEXTURE_path = Folder_Create3D + "/" + Subfolder_exportMaps + the_filename;
+          String TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
           println("Saving texture:", TEXTURE_path);
 
@@ -56837,7 +56837,7 @@ void SOLARCHVISION_update_folders () {
 
   Folder_Export       = Folder_Project + "/export";
   Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
-  Folder_Create3D      = Folder_Export + "/create3D" + "/" + RunStamp;
+  Folder_Export3D      = Folder_Export + "/create3D" + "/" + RunStamp;
   Folder_ViewsFromSky = Folder_Export + "/viewsFromSky" + "/" + RunStamp;
   Folder_ScreenShots   = Folder_Export + "/screenshots" + "/" + RunStamp;
 
