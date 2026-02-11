@@ -6066,7 +6066,8 @@ class solarchvision_STUDY {
       this.U_scale = 18.0 / float(this.j_End - this.j_Start);
       this.PlotImpacts = (this.plotSetup == -1) ? 9 : 8;
 
-      this.plotImpact(0, 0 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      float scale = (FrameVariation == 2) ? 1 : 0.65;
+      this.plotImpact(0, 0 * this.view_S, scale * (100.0 * this.U_scale * this.view_S), scale * (-1.0 * this.V_scale * this.view_S));
 
       TIME.beginDay = keep_TIME_BeginDay;
       this.perDays = keep_STUDY_perDays;
@@ -8048,7 +8049,8 @@ class solarchvision_STUDY {
       float pal_oy = 110;
 
       if (this.j_End == 2) {
-        pal_oy = -375;
+        pal_ox = (FrameVariation == 2) ? 700 : 380;
+        pal_oy = (FrameVariation == 2) ? -375 : 275;
       }
 
       for (int q = 0; q < 11; q++) {
@@ -8066,7 +8068,7 @@ class solarchvision_STUDY {
         this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
 
         this.graphics.strokeWeight(0);
-        this.graphics.rect((700 + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
+        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
         if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
           this.graphics.stroke(127);
@@ -8101,11 +8103,11 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(CENTER, TOP);
         if (this.Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
+          this.graphics.text(("Direct solar radiation (kWh/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
           //?? French
         }
         if (this.Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
+          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
           //?? French
         }
       }
