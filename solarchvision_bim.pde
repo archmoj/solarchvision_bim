@@ -5255,15 +5255,19 @@ class solarchvision_STUDY {
           break;
 
           case 16: // PAGE_UP
-          STUDY.plotSetup = -2 + (2 + STUDY.plotSetup + 1) % 10;
-          this.revise();
-          ROLLOUT.revise();
+          if(!e.isShiftDown()) {
+            STUDY.plotSetup = -2 + (2 + STUDY.plotSetup + 1) % 10;
+            this.revise();
+            ROLLOUT.revise();
+          }
           break;
 
           case 11: // PAGE_DOWN
-          STUDY.plotSetup = -2 + (2 + STUDY.plotSetup - 1 + 10) % 10;
-          this.revise();
-          ROLLOUT.revise();
+          if(!e.isShiftDown()) {
+            STUDY.plotSetup = -2 + (2 + STUDY.plotSetup - 1 + 10) % 10;
+            this.revise();
+            ROLLOUT.revise();
+          }
           break;
         }
       } else {
