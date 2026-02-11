@@ -30626,7 +30626,7 @@ class solarchvision_Model2Ds {
 
         if (n < 0) u = 1 - u;
 
-        println("uv,n", u, v, n);
+        //println("uv,n", u, v, n);
 
         int Image_X = int(u * RES1);
         int Image_Y = int(v * RES2);
