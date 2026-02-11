@@ -8823,7 +8823,7 @@ class solarchvision_ROLLOUT {
   boolean update = true;
   boolean include = true;
 
-  int parent = 3; //0; // 0: Location, 1: Geometry, 2: Time, etc.
+  int parent = 1; //0; // 0: Location, 1: Geometry, 2: Time, etc.
   int child = 1; // number of the category inside e.g. 1, 2, ...
 
 
@@ -8991,6 +8991,11 @@ class solarchvision_ROLLOUT {
 
     } else if (this.parent == 1) { // Geometries & Space
       if (this.child == 1) { // Create
+
+        Load_DefaultModels = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3D.maximum_default_models, 1), 1));
+
+        User3D.create_MeshOrSolid = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
+
 
         //addToLastGroup = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
 
@@ -9169,9 +9174,7 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 9) { // Other
 
-        User3D.create_MeshOrSolid = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3d-create.MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
-
-        allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "3d-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
+        allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "3D-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
 
         Land3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
 
@@ -9195,8 +9198,6 @@ class solarchvision_ROLLOUT {
         Planetary_Magnification = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
 
         OBJECTS_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2);
-
-        Load_DefaultModels = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3D.maximum_default_models, 1), 1));
       }
 
     } else if (this.parent == 2) { // Period & Scenarios
