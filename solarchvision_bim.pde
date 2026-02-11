@@ -4976,6 +4976,7 @@ class solarchvision_STUDY {
           }
           this.revise();
           ROLLOUT.revise();
+          UI_timeBar.revise();
           break;
         case '<' :
           if ((this.PlotImpacts == -2) || (this.PlotImpacts == -1)) {
@@ -4985,6 +4986,7 @@ class solarchvision_STUDY {
           }
           this.revise();
           ROLLOUT.revise();
+          UI_timeBar.revise();
           break;
 
 
