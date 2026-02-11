@@ -3094,182 +3094,12 @@ class solarchvision_WIN3D {
   void keyPressed (KeyEvent e) {
 
     if (e.isAltDown()) {
-      if (key == CODED) {
-        switch(keyCode) {
-
-        case RIGHT :
-          allSolidImpacts.R[allSolidImpacts.sectionType] = (allSolidImpacts.R[allSolidImpacts.sectionType] + 15) % 360;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case LEFT :
-          allSolidImpacts.R[allSolidImpacts.sectionType] = (allSolidImpacts.R[allSolidImpacts.sectionType] + 360 - 15) % 360;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case UP   :
-          allSolidImpacts.Z[allSolidImpacts.sectionType] += allSolidImpacts.positionStep;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case DOWN :
-          allSolidImpacts.Z[allSolidImpacts.sectionType] -= allSolidImpacts.positionStep;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 33 :
-          allSolidImpacts.Z[allSolidImpacts.sectionType] += 4 * allSolidImpacts.positionStep;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 34 :
-          allSolidImpacts.Z[allSolidImpacts.sectionType] -= 4 * allSolidImpacts.positionStep;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 35 :
-          allSolidImpacts.U[allSolidImpacts.sectionType] *= pow(2.0, 0.5);
-          allSolidImpacts.V[allSolidImpacts.sectionType] *= pow(2.0, 0.5);
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 36 :
-          allSolidImpacts.U[allSolidImpacts.sectionType] /= pow(2.0, 0.5);
-          allSolidImpacts.V[allSolidImpacts.sectionType] /= pow(2.0, 0.5);
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        }
-      } else {
-        switch(key) {
-
-        case 'U' :
-          allSolidImpacts.X[allSolidImpacts.sectionType] += allSolidImpacts.positionStep;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'u' :
-          allSolidImpacts.X[allSolidImpacts.sectionType] -= allSolidImpacts.positionStep;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'V' :
-          allSolidImpacts.Y[allSolidImpacts.sectionType] += allSolidImpacts.positionStep;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'v' :
-          allSolidImpacts.Y[allSolidImpacts.sectionType] -= allSolidImpacts.positionStep;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case ']' :
-          allSolidImpacts.sectionType = (allSolidImpacts.sectionType + 1) % 4;
-          allSolarImpacts.sectionType = allSolidImpacts.sectionType;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '[' :
-          allSolidImpacts.sectionType = (allSolidImpacts.sectionType + 4 - 1) % 4;
-          allSolarImpacts.sectionType = allSolidImpacts.sectionType;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '0' :
-          allSolidImpacts.Z[allSolidImpacts.sectionType] = 0;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '.' :
-          allSolidImpacts.R[allSolidImpacts.sectionType] = 0;
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '/' :
-          allSolidImpacts.Power *= pow(2.0, 0.5);
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '*' :
-          allSolidImpacts.Power /= pow(2.0, 0.5);
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '+' :
-          allSolidImpacts.Grade *= pow(2.0, 0.5);
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '-' :
-          allSolidImpacts.Grade /= pow(2.0, 0.5);
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '>' :
-          allSolidImpacts.Grade /= pow(2.0, 0.25);
-          allSolidImpacts.Power /= pow(2.0, 0.5);
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '<' :
-          allSolidImpacts.Grade *= pow(2.0, 0.25);
-          allSolidImpacts.Power *= pow(2.0, 0.5);
-          allSolidImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-
-
-        case ENTER :
-          allSolidImpacts.calculate_WindFlow();
-          this.revise();
-          break;
-        }
-      }
     } else if (e.isControlDown()) {
       if (key == CODED) {
         switch(keyCode) {
         }
       } else {
         switch(key) {
-
-        case '*':
-          Select3D.selectAll();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
         case '.' :
           this.position_X = 0;
           this.position_Y = 0;
@@ -3277,87 +3107,6 @@ class solarchvision_WIN3D {
           this.revise();
           ROLLOUT.revise();
           break;
-
-        case '-' :
-          this.rotation_X = 90;
-          WIN3D.reverseTransform_3DViewport();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-
-        case '+' :
-          this.rotation_X = 0;
-          this.rotation_Y = 0;
-          this.rotation_Z = 0;
-
-          this.position_X = 0;
-          this.position_Y = 0;
-          this.position_Z = -100;
-
-          this.position_T = 1;
-
-          this.Zoom = 60;
-
-          this.currentCamera = 0;
-          SOLARCHVISION_modify_Viewport_Title();
-
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '0' :
-          Land3D.displaySurface = !Land3D.displaySurface;
-          SOLARCHVISION_switch_category(ObjectCategory.LANDPOINT);
-          break;
-
-        case '1' :
-          allModel1Ds.displayAll = !allModel1Ds.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
-          break;
-
-        case '2' :
-          allModel2Ds.displayAll = !allModel2Ds.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
-          break;
-
-        case '3' :
-          allFaces.displayAll = !allFaces.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-          break;
-
-        case '4' :
-          allFaces.displayAll = !allFaces.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.FACE);
-          break;
-
-        case '5' :
-          allFaces.displayAll = !allFaces.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
-          break;
-
-        case '6' :
-          allCurves.displayAll = !allCurves.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.CURVE);
-          break;
-
-        case '7' :
-          allSolids.displayAll = !allSolids.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.SOLID);
-          break;
-
-        case '8' :
-          allSections.displayAll = !allSections.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.SECTION);
-          break;
-
-        case '9' :
-          allCameras.displayAll = !allCameras.displayAll;
-          SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
-          break;
-
-
-
 
 
         case ' ' :
@@ -3423,15 +3172,6 @@ class solarchvision_WIN3D {
           this.revise();
           ROLLOUT.revise();
           break;
-
-        case 35:
-
-          break;
-
-        case 36:
-
-          break;
-
 
 
         case 155: // INSERT
@@ -3563,32 +3303,6 @@ class solarchvision_WIN3D {
           this.revise();
           ROLLOUT.revise();
           break;
-
-        case 'O' :
-          this.ViewType = 0;
-          this.revise();
-          ROLLOUT.revise();
-          ROLLOUT.revise();
-          break;
-        case 'o' :
-          this.ViewType = 0;
-          this.revise();
-          ROLLOUT.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'P' ://this.Zoom = 60;
-          this.ViewType = 1;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'p' ://this.Zoom = 60;
-          this.ViewType = 1;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-
 
         case ']' :
           IMPACTS_displayDay += 1;
