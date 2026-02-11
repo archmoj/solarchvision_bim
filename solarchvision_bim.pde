@@ -56837,7 +56837,7 @@ void SOLARCHVISION_update_folders () {
 
   Folder_Export       = Folder_Project + "/export";
   Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
-  Folder_Export3D      = Folder_Export + "/create3D" + "/" + RunStamp;
+  Folder_Export3D      = Folder_Export + "/3D" + "/" + RunStamp;
   Folder_ViewsFromSky = Folder_Export + "/viewsFromSky" + "/" + RunStamp;
   Folder_ScreenShots   = Folder_Export + "/screenshots" + "/" + RunStamp;
 
