@@ -5246,8 +5246,8 @@ class solarchvision_STUDY {
             break;
           }
 
-          float x = (i + this.rect_offset_x + 110 * this.rect_scale * funcs.cos_ang(t)) * sx_Plot;
-          float y = -(110 * this.rect_scale * funcs.sin_ang(t)) * sx_Plot;
+          float x = (i + this.rect_offset_x + 100 * this.rect_scale * funcs.cos_ang(t)) * sx_Plot;
+          float y = -(100 * this.rect_scale * funcs.sin_ang(t)) * sx_Plot;
 
           this.graphics.text(txt, x, y);
         }
