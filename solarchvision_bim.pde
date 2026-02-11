@@ -21990,7 +21990,13 @@ void draw () {
     fill(255);
     textAlign(CENTER, CENTER);
     textSize(3 * MessageSize);
-    text("SOLARCHVISION model integrations " + SOLARCHVISION_version, 0.5 * width, 0.05 * height);
+    text(SOLARCHVISION_version + " model integrations (BIM-6D)", 0.5 * width, 0.05 * height);
+
+    stroke(0);
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(3 * MessageSize);
+    text("SOLARCHVISION", 0.5 * width, 0.6 * height);
 
     stroke(0);
     fill(0);
