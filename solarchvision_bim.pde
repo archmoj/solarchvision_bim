@@ -5193,39 +5193,6 @@ class solarchvision_STUDY {
         switch(keyCode) {
         }
       } else {
-        switch(key) {
-        case '0' :
-          Camera_Variation = 0;
-          this.revise();
-          break;
-        case '1' :
-          Camera_Variation = 1;
-          this.revise();
-          break;
-        case '2' :
-          Camera_Variation = 2;
-          this.revise();
-          break;
-        case '3' :
-          Camera_Variation = 3;
-          this.revise();
-          break;
-        case '4' :
-          Camera_Variation = 4;
-          this.revise();
-          break;
-        case '5' :
-          Camera_Variation = 5;
-          this.revise();
-          break;
-        case '6' :
-          Camera_Variation = 6;
-          this.revise();
-          break;
-          //case '7' : Camera_Variation = 7; this.revise(); break;
-          //case '8' : Camera_Variation = 8; this.revise(); break;
-          //case '9' : Camera_Variation = 9; this.revise(); break;
-        }
       }
     } else if (e.isControlDown()) {
       if (key == CODED) {
@@ -5272,40 +5239,6 @@ class solarchvision_STUDY {
         }
       } else {
         switch(key) {
-
-        case 'r' :
-          this.record_AUTO = !this.record_AUTO;
-          this.updated();
-          ROLLOUT.revise();
-          break;
-        case 'R' :
-          this.record_AUTO = !this.record_AUTO;
-          this.updated();
-          ROLLOUT.revise();
-          break;
-
-        }
-      }
-    } else if (e.isShiftDown()) {
-      if (key == CODED) {
-        switch(keyCode) {
-        }
-      }
-    }
-
-
-    if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
-
-      if (key != CODED) {
-        switch(key) {
-
-        case '|' :
-          if (TIME.date == 1.0 * int(TIME.date)) TIME.date += 0.5;
-          else TIME.date -= 0.5;
-          TIME.updateDate();
-          update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-          break;
-
         case ';':
           this.impact_summary = !(this.impact_summary);
           this.revise();
@@ -5320,95 +5253,6 @@ class solarchvision_STUDY {
           ROLLOUT.revise();
           break;
 
-        case '}' :
-          this.j_End += 1;
-          if (this.j_End > this.j_Start + 61) this.j_End -= 1;
-          this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-          /*
-           if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
-           this.perDays = int(365 / float(this.j_End - this.j_Start));
-           }
-           if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-           this.perDays = 1;
-           }
-           */
-          DevelopData_update = true;
-
-          VertexSolar_rebuild_array = true;
-          GlobalSolar_rebuild_array = true;
-          allSolarImpacts.rebuild_Image_array = true;
-          allWindRoses.rebuild_Image_array = true;
-          allSections.resize_solarImpact_array();
-
-          UI_timeBar.revise();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '{' :
-          this.j_End -= 1;
-          if (this.j_End <= this.j_Start) this.j_End += 1;
-          this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-          /*
-           if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
-           this.perDays = int(365 / float(this.j_End - this.j_Start));
-           }
-           if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-           this.perDays = 1;
-           }
-           */
-          DevelopData_update = true;
-
-          VertexSolar_rebuild_array = true;
-          GlobalSolar_rebuild_array = true;
-          allSolarImpacts.rebuild_Image_array = true;
-          allWindRoses.rebuild_Image_array = true;
-          allSections.resize_solarImpact_array();
-
-          UI_timeBar.revise();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'a'  :
-          Develop_AngleInclination -= 5;
-          if (Develop_AngleInclination < -90) Develop_AngleInclination = -90;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'A'  :
-          Develop_AngleInclination += 5;
-          if (Develop_AngleInclination > 90) Develop_AngleInclination = 90;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'z' :
-          Develop_AngleOrientation = (Develop_AngleOrientation - 5 + 360) % 360;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'Z' :
-          Develop_AngleOrientation = (Develop_AngleOrientation + 5) % 360;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'd' :
-          Develop_DayHour = (Develop_DayHour + 1) % 4;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'D' :
-          Develop_DayHour = (Develop_DayHour - 1 + 4) % 4;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
 
         case '>' :
           if ((this.PlotImpacts == -2) || (this.PlotImpacts == -1)) {
@@ -5432,30 +5276,42 @@ class solarchvision_STUDY {
 
 
 
-          //case 'g' :this.filter = (this.filter + 1) % 2; DevelopData_update = true; this.revise(); ROLLOUT.revise(); break;
-          //case 'G' :this.filter = (this.filter + 2 - 1) % 2; DevelopData_update = true; this.revise(); ROLLOUT.revise(); break;
-
-        case '=' :
+        case '"' :
           this.V_scale *= pow(2.0, (1.0 / 2.0));
           this.revise();
           ROLLOUT.revise();
           break;
-        case '_' :
+        case '\'' :
           this.V_scale *= pow(0.5, (1.0 / 2.0));
           this.revise();
           ROLLOUT.revise();
           break;
 
-        case 'c' :
-          COLOR_STYLE_Current = (COLOR_STYLE_Current + 1) % COLOR_STYLE_Number;
+        case '+' :
+          this.joinDays += 2;
+          if (this.joinDays > 365) this.joinDays = 365;
+          DevelopData_update = true;
+          UI_timeBar.revise();
           this.revise();
           ROLLOUT.revise();
           break;
-        case 'C' :
-          COLOR_STYLE_Current = (COLOR_STYLE_Current - 1 + COLOR_STYLE_Number) % COLOR_STYLE_Number;
+        case '=' :
+          this.joinDays -= 2;
+          if (this.joinDays < 1) this.joinDays = 1;
+          DevelopData_update = true;
+          UI_timeBar.revise();
           this.revise();
           ROLLOUT.revise();
           break;
+        }
+      }
+    }
+
+    if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+
+      if (key != CODED) {
+        switch(key) {
+
 
         case 'V' :
           this.displayRaws = !this.displayRaws;
@@ -5464,38 +5320,6 @@ class solarchvision_STUDY {
           break;
         case 'v' :
           this.displayRaws = !this.displayRaws;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '`' :
-          this.joinDays += 2;
-          if (this.joinDays > 365) this.joinDays = 365;
-          DevelopData_update = true;
-          UI_timeBar.revise();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '~' :
-          this.joinDays -= 2;
-          if (this.joinDays < 1) this.joinDays = 1;
-          DevelopData_update = true;
-          UI_timeBar.revise();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'l' :
-          allMaterials.Selection += 1;
-          allMaterials.Selection %= allMaterials.Number;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'L' :
-          allMaterials.Selection += allMaterials.Number - 1;
-          allMaterials.Selection %= allMaterials.Number;
-          DevelopData_update = true;
           this.revise();
           ROLLOUT.revise();
           break;
@@ -5557,31 +5381,6 @@ class solarchvision_STUDY {
           else if (this.sumInterval < 24) this.sumInterval += 6;
           else this.sumInterval += 24;
           if (this.sumInterval == 5) this.sumInterval = 6;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '!' :
-          this.skyScenario = 1;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '@' :
-          this.skyScenario = 2;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '#' :
-          this.skyScenario = 3;
-          DevelopData_update = true;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '$' :
-          this.skyScenario = 4;
-          DevelopData_update = true;
           this.revise();
           ROLLOUT.revise();
           break;
