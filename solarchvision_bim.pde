@@ -5290,47 +5290,6 @@ class solarchvision_STUDY {
     }
 
 
-    if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
-
-      if (key == CODED) {
-        switch(keyCode) {
-
-        case 112 : //F1
-          this.PlotImpacts = -2;
-          this.revise();
-          break;
-        case 113 : //F2
-          this.PlotImpacts = -1;
-          this.revise();
-          break;
-        case 114 : //F3
-          this.PlotImpacts = 4;
-          this.revise();
-          break;
-        case 115 : //F4
-          this.PlotImpacts = 5;
-          this.revise();
-          break;
-        case 116 : //F5
-          this.PlotImpacts = 2;
-          this.revise();
-          break;
-        case 117 : //F6
-          this.PlotImpacts = 3;
-          this.revise();
-          break;
-        case 118 : //F7
-          this.PlotImpacts = 0;
-          this.revise();
-          break;
-        case 119 : //F8
-          this.PlotImpacts = 1;
-          this.revise();
-          break;
-        }
-      }
-    }
-
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
 
       if (key != CODED) {
