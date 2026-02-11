@@ -258,7 +258,7 @@ final int Impact_ACTIVE = 0; // internal
 final int Impact_PASSIVE = 1; // internal
 final int numberOfImpactVariations = 2; // internal
 
-int Impact_TYPE;
+int Impact_TYPE = Impact_PASSIVE;
 
 float CubePower = 16; //8;
 float StarPower = 0.25;
@@ -3183,6 +3183,15 @@ class solarchvision_WIN3D {
         }
       } else {
         switch(key) {
+
+        case TAB:
+          if (e.isShiftDown() == true) {
+            Impact_TYPE = (Impact_TYPE + 1) % numberOfImpactVariations;
+
+            this.revise();
+            ROLLOUT.revise();
+          }
+          break;
 
         case DELETE:
           Delete3D.selection();
@@ -21930,9 +21939,6 @@ void draw () {
 
   //println("frameCount:", frameCount);
 
-  Impact_TYPE = 1;
-
-
 
   if (frameCount == 1) {
 
@@ -23869,8 +23875,10 @@ void keyPressed (KeyEvent e) {
           switch(key) {
 
             case TAB:
-              typeUserCommand = (typeUserCommand + 1) % 2;
-              UI_commandBar.revise();
+              if (e.isShiftDown() != true) {
+                typeUserCommand = (typeUserCommand + 1) % 2;
+                UI_commandBar.revise();
+              }
               break;
           }
 
@@ -26477,8 +26485,6 @@ class solarchvision_Sun3D {
 
     if (target_window == TypeWindow.STUDY) {
       Impact_TYPE = (STUDY.PlotImpacts % 2 == 0) ? Impact_ACTIVE : Impact_PASSIVE;
-    } else {
-      Impact_TYPE = (Impact_TYPE == 0) ? Impact_ACTIVE : Impact_PASSIVE;
     }
 
     float Pa1 = FLOAT_undefined;
@@ -38470,8 +38476,6 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
 
-  Impact_TYPE = (Impact_TYPE == 0) ? Impact_ACTIVE : Impact_PASSIVE;
-
   float Pa = FLOAT_undefined;
   float Pb = FLOAT_undefined;
   float Pc = FLOAT_undefined;
@@ -39182,8 +39186,6 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
   int end_k = startK_endK[1];
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
-
-  Impact_TYPE = (Impact_TYPE == 0) ? Impact_ACTIVE : Impact_PASSIVE;
 
   float Pa = FLOAT_undefined;
   float Pb = FLOAT_undefined;
