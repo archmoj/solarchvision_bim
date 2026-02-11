@@ -22456,9 +22456,9 @@ void draw () {
     float cr;
 
     cr = SOLARCHVISION_pixel_W / 4.0;
-    PImage SOLARCHVISION_logo = loadImage(BaseFolder + "/input/images/logo/SOLARCHVISION.jpg");
-    imageMode(CENTER);
-    image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * MessageSize - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
+    //PImage SOLARCHVISION_logo = loadImage(BaseFolder + "/input/images/logo/SOLARCHVISION.jpg");
+    //imageMode(CENTER);
+    //image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * MessageSize - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
     imageMode(CORNER);
 
     strokeWeight(1);
@@ -22472,19 +22472,15 @@ void draw () {
     stroke(191);
     fill(191);
     ellipse(0.2 * width, 0.5 * height - 0.75 * MessageSize - cr, 2 * cr, 2 * cr);
-    strokeWeight(1);
-    stroke(255);
-    noFill();
-    SOLARCHVISION_draw_logo(0.2 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, 1);
+
+    SOLARCHVISION_draw_logo(0.2 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, 1, 1);
     strokeWeight(2);
     stroke(0);
     noFill();
     ellipse(0.2 * width, 0.5 * height - 0.75 * MessageSize - cr, 2 * cr, 2 * cr);
 
-    strokeWeight(1);
-    stroke(127);
-    noFill();
-    //SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, 0);
+    SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, 0, 1);
+    SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, 0, 2);
     strokeWeight(2);
     stroke(0);
     noFill();
@@ -22494,10 +22490,8 @@ void draw () {
     stroke(191);
     fill(191);
     ellipse(0.8 * width, 0.5 * height - 0.75 * MessageSize - cr, 2 * cr, 2 * cr);
-    strokeWeight(1);
-    stroke(255);
-    noFill();
-    SOLARCHVISION_draw_logo(0.8 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, -1);
+
+    SOLARCHVISION_draw_logo(0.8 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, -1, 1);
     strokeWeight(2);
     stroke(0);
     noFill();
@@ -40038,20 +40032,24 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 }
 
 
-void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_view) {
+void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_view, int pass) {
 
-  float stp_u = 1.0 / 12.0;
-  float stp_v = 1.0 / 12.0;
+  float stp_u = 1.0 / 24.0;
+  float stp_v = 1.0 / 24.0;
 
   int n_a = 1;
 
+  int aI = 0;
   for (float a = -1; a < 1; a += stp_u) {
+    aI++;
 
     n_a *= -1;
 
     int n_b = n_a;
 
+    int bI = 0;
     for (float b = -1; b < 1; b += stp_v) {
+      bI++;
 
       n_b *= -1;
 
@@ -40080,7 +40078,7 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
 
         //---------------------------------------
         float x0 = cos(u * PI);
-        float y0 = sin(u * PI) * cos(v * PI);
+        float y0 = -sin(u * PI) * cos(v * PI);
         float z0 = sin(v * PI);
 
         float d = pow(x0*x0 + y0*y0 + z0*z0, 0.5);
@@ -40093,7 +40091,7 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
         float z = z0;
 
         if (the_view == 0) { // corner view: logo
-          float t = 0.25 * PI;
+          float t = -0.25 * PI;
           newQuad[i][0] = x0 * cos(t) - z0 * sin(t);
           newQuad[i][1] = y0;
           newQuad[i][2] = x0 * sin(t) + z0 * cos(t);
@@ -40124,12 +40122,45 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
       float y4 = cr * newQuad[3][1] + cy;
       float z4 = cr * newQuad[3][2] + cz;
 
-      if (n_a * n_b == 1) {
-        triangle(x1, y1, x2, y2, x3, y3);
-        triangle(x3, y3, x4, y4, x1, y1);
+      strokeWeight(1);
+      stroke(127);
+      noFill();
+
+      int q = 0;
+
+      if(pass == 2) {
+        if((aI == bI + 2) || (aI == bI + 3) || (aI == bI + 4)) {
+          if(aI == bI + 2) q = 1;
+          if(aI == bI + 4) q = 2;
+
+          strokeWeight(2);
+          stroke(255);
+          fill(255,191,127);
+        } else if((aI + bI == 43) || (aI + bI == 44) || (aI + bI == 45)) {
+          if(aI + bI == 43) q = 4;
+          if(aI + bI == 45) q = 3;
+
+          strokeWeight(2);
+          stroke(255);
+          fill(0);
+        } else {
+          continue;
+        }
+      }
+
+      if(q == 0) {
+        if (n_a * n_b == 1) {
+          triangle(x1, y1, x2, y2, x3, y3);
+          triangle(x3, y3, x4, y4, x1, y1);
+        } else {
+          triangle(x4, y4, x1, y1, x2, y2);
+          triangle(x2, y2, x3, y3, x4, y4);
+        }
       } else {
-        triangle(x4, y4, x1, y1, x2, y2);
-        triangle(x2, y2, x3, y3, x4, y4);
+        if(q == 1) triangle(x1, y1, x2, y2, x3, y3);
+        if(q == 2) triangle(x3, y3, x4, y4, x1, y1);
+        if(q == 3) triangle(x4, y4, x1, y1, x2, y2);
+        if(q == 4) triangle(x2, y2, x3, y3, x4, y4);
       }
     }
   }
