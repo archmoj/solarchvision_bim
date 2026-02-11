@@ -40137,6 +40137,15 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
           strokeWeight(2);
           stroke(255);
           fill(255,191,127);
+
+          if(
+            (aI == 47 && bI == 45) ||
+            (aI == 48 && bI == 44) ||
+            (aI == 40 && bI == 38) ||
+            (aI == 41 && bI == 37)
+          ) {
+            fill(0);
+          }
         } else if((aI + bI == 43) || (aI + bI == 44) || (aI + bI == 45)) {
           if(aI + bI == 43) q = 4;
           if(aI + bI == 45) q = 3;
