@@ -8042,7 +8042,7 @@ class solarchvision_STUDY {
       float pal_oy = 110;
 
       if (this.j_End == 2) {
-        pal_oy = 325;
+        pal_oy = -375;
       }
 
       for (int q = 0; q < 11; q++) {
@@ -8095,11 +8095,11 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(CENTER, TOP);
         if (this.Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 20 * this.view_S);
+          this.graphics.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
           //?? French
         }
         if (this.Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 20 * this.view_S);
+          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
           //?? French
         }
       }
