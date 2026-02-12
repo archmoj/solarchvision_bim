@@ -48836,13 +48836,7 @@ class solarchvision_UI_menuBar {
       "Layout 5",
       "Layout 6",
       "Layout 7",
-      "Layout 8",
-      "Layout 9",
-      "Layout 10",
-      "Layout 11",
-      "Layout 12",
-      "Layout 13",
-      "Layout 14"
+      "Layout 8"
     }
   };
 
