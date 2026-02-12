@@ -4739,6 +4739,26 @@ class solarchvision_WORLD {
   }
 
 
+  void keyPressed (KeyEvent e) {
+
+    if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+      switch(key) {
+      case '`' :
+        this.Zoom = (this.Zoom - 1 + 6) % 6;
+        this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
+        this.revise();
+        break;
+
+      case '~' :
+        this.Zoom = (this.Zoom + 1) % 6;
+        this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
+        this.revise();
+        break;
+
+      }
+    }
+  }
+
   public void to_XML (XML xml) {
 
     println("Saving:" + this.CLASS_STAMP);
