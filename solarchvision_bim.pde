@@ -6084,6 +6084,7 @@ class solarchvision_STUDY {
       int keep_STUDY_j_End = this.j_End;
       float keep_STUDY_U_scale = this.U_scale;
       int keep_STUDY_PlotImpacts = this.PlotImpacts;
+      int keep_STUDY_Impact_TYPE = this.Impact_TYPE;
 
       TIME.beginDay = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
       this.perDays = 183;
@@ -6092,6 +6093,7 @@ class solarchvision_STUDY {
       this.j_End = 2;
       this.U_scale = 18.0 / float(this.j_End - this.j_Start);
       this.PlotImpacts = (this.plotSetup == -1) ? 9 : 8;
+      this.Impact_TYPE = (this.plotSetup == -1) ? Impact_PASSIVE : Impact_ACTIVE;
 
       float scale = (FrameVariation == 2) ? 1 : 0.65;
       this.plotImpact(0, 0 * this.view_S, scale * (100.0 * this.U_scale * this.view_S), scale * (-1.0 * this.V_scale * this.view_S));
@@ -6103,6 +6105,7 @@ class solarchvision_STUDY {
       this.j_End = keep_STUDY_j_End;
       this.U_scale = keep_STUDY_U_scale;
       this.PlotImpacts = keep_STUDY_PlotImpacts;
+      this.Impact_TYPE = keep_STUDY_Impact_TYPE;
     }
 
 
