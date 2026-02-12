@@ -22148,8 +22148,8 @@ void draw () {
 
     UI_menuBar.revise();
     UI_toolBar.revise();
-    UI_commandBar.revise();
     UI_timeBar.revise();
+    UI_commandBar.revise();
 
     InitializationStep = frameCount;
     Last_initializationStep = frameCount;
@@ -22799,12 +22799,12 @@ void draw () {
           UI_toolBar.draw();
         }
 
-        if (UI_commandBar.update) {
-          UI_commandBar.draw();
-        }
-
         if (UI_timeBar.update) {
           UI_timeBar.draw();
+        }
+
+        if (UI_commandBar.update) {
+          UI_commandBar.draw();
         }
 
 
