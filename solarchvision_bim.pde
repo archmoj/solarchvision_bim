@@ -4808,6 +4808,7 @@ class solarchvision_WORLD {
   void updated () {
     this.update = false;
   }
+
 }
 
 solarchvision_WORLD WORLD = new solarchvision_WORLD();
@@ -4932,11 +4933,6 @@ class solarchvision_STUDY {
   void keyPressed (KeyEvent e) {
 
     if (e.isAltDown()) {
-      if (key == CODED) {
-        switch(keyCode) {
-        }
-      } else {
-      }
     } else if (e.isControlDown()) {
       if (key == CODED) {
         switch(keyCode) {
@@ -23878,7 +23874,7 @@ void keyPressed (KeyEvent e) {
         UI_commandBar.updated();
 
         STUDY.keyPressed(e);
-
+        WORLD.keyPressed(e);
         WIN3D.keyPressed(e);
       }
       else {
@@ -52072,32 +52068,6 @@ String[] allMessages = {"SOLARCHVISION Command Output:", ""};
 int typeUserCommand = 0;
 
 void COMIN_keyPressed (KeyEvent e) {
-
-
-
-  if (e.isAltDown()) {
-    if (key == CODED) {
-      switch(keyCode) {
-      }
-    } else {
-      switch(key) {
-      }
-    }
-  } else if (e.isControlDown()) {
-    if (key == CODED) {
-      switch(keyCode) {
-      }
-    } else {
-      switch(key) {
-      }
-    }
-  } else if (e.isShiftDown()) {
-    if (key == CODED) {
-      switch(keyCode) {
-      }
-    }
-  }
-
 
   if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
 
