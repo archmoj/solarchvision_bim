@@ -3255,13 +3255,13 @@ class solarchvision_WIN3D {
           this.revise();
           ROLLOUT.revise();
           break;
-        case '2' :
+        case '8' :
           this.rotation_X -= this.rotation_T;
           WIN3D.reverseTransform_3DViewport();
           this.revise();
           ROLLOUT.revise();
           break;
-        case '8' :
+        case '2' :
           this.rotation_X += this.rotation_T;
           WIN3D.reverseTransform_3DViewport();
           this.revise();
