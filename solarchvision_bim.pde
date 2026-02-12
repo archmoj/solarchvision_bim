@@ -25681,7 +25681,7 @@ class solarchvision_Sky3D {
 
   boolean displaySurface = false;
   int displayTessellation = 3; //3;
-  float scale = 1000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
+  float scale = 4000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 
   int ACTIVE_pallet_CLR = 18; //-1; //7; //8;
