@@ -27563,7 +27563,7 @@ class solarchvision_Land3D {
   boolean displayTexture = true;
   boolean displayDepth = false;
 
-  int displayTessellation = 1; //0; //2;
+  int displayTessellation = 0; //0; //2;
 
   int pallet_CLR = 1;
   int pallet_DIR = -1;
