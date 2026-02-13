@@ -5078,6 +5078,21 @@ class solarchvision_STUDY {
           ROLLOUT.revise();
           break;          
 
+        case 'S' :
+          this.skyScenario = 1 + (-1 + this.skyScenario + 1) % 4;
+          DevelopData_update = true;
+          this.revise();
+          WIN3D.revise();
+          ROLLOUT.revise();
+          break;
+        case 's' :
+          this.skyScenario = 1 + (-1 + this.skyScenario - 1 + 4) % 4;
+          DevelopData_update = true;
+          this.revise();
+          WIN3D.revise();
+          ROLLOUT.revise();
+          break;
+
         case 'V' :
           this.displayRaws = !this.displayRaws;
           this.revise();
