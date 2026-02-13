@@ -4992,31 +4992,6 @@ class solarchvision_STUDY {
           ROLLOUT.revise();
           break;
 
-
-        case '>' :
-          if ((this.PlotImpacts == -2) || (this.PlotImpacts == -1)) {
-            this.O_scale *= pow(2.0, (1.0 / 4.0));
-          } else {
-            this.ImpactLayer = (this.ImpactLayer + 1) % 9;
-          }
-          this.revise();
-          ROLLOUT.revise();
-          UI_timeBar.revise();
-          break;
-        case '<' :
-          if ((this.PlotImpacts == -2) || (this.PlotImpacts == -1)) {
-            this.O_scale *= pow(0.5, (1.0 / 4.0));
-          } else {
-            this.ImpactLayer = (this.ImpactLayer + 9 - 1) % 9;
-          }
-          this.revise();
-          ROLLOUT.revise();
-          UI_timeBar.revise();
-          break;
-
-
-
-
         case '"' :
           this.V_scale *= pow(2.0, (1.0 / 2.0));
           this.revise();
@@ -5052,7 +5027,6 @@ class solarchvision_STUDY {
 
       if (key != CODED) {
         switch(key) {
-
 
         case 'V' :
           this.displayRaws = !this.displayRaws;
