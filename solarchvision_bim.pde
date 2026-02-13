@@ -5028,6 +5028,56 @@ class solarchvision_STUDY {
       if (key != CODED) {
         switch(key) {
 
+        case '>' :
+          this.j_End += 1;
+          if (this.j_End > this.j_Start + 61) this.j_End -= 1;
+          this.U_scale = 18.0 / float(this.j_End - this.j_Start);
+          /*
+           if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
+           this.perDays = int(365 / float(this.j_End - this.j_Start));
+           }
+           if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+           this.perDays = 1;
+           }
+           */
+          DevelopData_update = true;
+
+          VertexSolar_rebuild_array = true;
+          GlobalSolar_rebuild_array = true;
+          allSolarImpacts.rebuild_Image_array = true;
+          allWindRoses.rebuild_Image_array = true;
+          allSections.resize_solarImpact_array();
+
+          UI_timeBar.revise();
+          this.revise();
+          ROLLOUT.revise();
+          break;
+
+        case '<' :
+          this.j_End -= 1;
+          if (this.j_End <= this.j_Start) this.j_End += 1;
+          this.U_scale = 18.0 / float(this.j_End - this.j_Start);
+          /*
+           if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
+           this.perDays = int(365 / float(this.j_End - this.j_Start));
+           }
+           if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+           this.perDays = 1;
+           }
+           */
+          DevelopData_update = true;
+
+          VertexSolar_rebuild_array = true;
+          GlobalSolar_rebuild_array = true;
+          allSolarImpacts.rebuild_Image_array = true;
+          allWindRoses.rebuild_Image_array = true;
+          allSections.resize_solarImpact_array();
+
+          UI_timeBar.revise();
+          this.revise();
+          ROLLOUT.revise();
+          break;          
+
         case 'V' :
           this.displayRaws = !this.displayRaws;
           this.revise();
