@@ -36680,12 +36680,9 @@ class solarchvision_Create3D {
       }
     }
 
-    if (n == 7) {
-      this.add_Model_Main();
-    }
   }
 
-  int maximum_default_models = 7;
+  int maximum_default_models = 6;
 
 
   void add_Model_2DsFromFile () {
@@ -48895,15 +48892,12 @@ class solarchvision_UI_menuBar {
       "Layout 6",
       "Layout 7",
       "Layout 8",
-      "3D-model 0",
       "3D-model 1",
       "3D-model 2",
       "3D-model 3",
       "3D-model 4",
       "3D-model 5",
-      "3D-model 6",
-      "3D-model 7",
-      "3D-model 8",
+      "3D-model 6"
     }
   };
 
