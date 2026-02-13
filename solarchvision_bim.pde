@@ -9219,8 +9219,8 @@ float LocationLAT = 0.0;
 float LocationLON = 0.0;
 float LocationELE = 0.0;
 
-float LocationLAT_step = 0.1;
-float LocationLON_step = 0.1;
+float LocationLAT_step = 0.01;
+float LocationLON_step = 0.01;
 float LocationELE_step = 1.0;
 
 int save_frame_number = 0;
