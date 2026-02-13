@@ -36546,6 +36546,14 @@ class solarchvision_Create3D {
 
 
 
+    if (n == 1) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
+
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_PolygonHyper(0, 0, 0, 1, 0, 0, 0, 0, 5, 10, 10, 4, 0);
+    }
+
     if (n == 2) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
@@ -36562,14 +36570,6 @@ class solarchvision_Create3D {
       this.add_House3_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
     }
 
-    if (n == 1) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
-
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_PolygonHyper(0, 0, 0, 1, 0, 0, 0, 0, 5, 10, 10, 4, 0);
-    }
-
     if (n == 4) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
@@ -36580,9 +36580,45 @@ class solarchvision_Create3D {
       }
     }
 
+    if (n == 5) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(8, 0, 0, 1, 0, 0, -50, -50, 0, 50, 50, 0);
+
+      {
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        float x = 0;
+        float y = 0;
+        float z = 0;
+        float r = 10;
+        this.add_CrystalSphere(1, 0, 0, 1, 0, 0, x, y, z, r, 5, 0, 90);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+      }
+
+      {
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        float x = -20;
+        float y = -20;
+        float z = 0;
+        float r = 8;
+        this.add_CrystalSphere(2, 0, 0, 1, 0, 0, x, y, z, r, 4, 0, 90);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+      }
+
+      {
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        float x = 0;
+        float y = 20;
+        float z = 0;
+        float r = 6;
+        this.add_CrystalSphere(3, 0, 0, 1, 0, 0, x, y, z, r, 3, 0, 90);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+      }
+    }
+
+
 
     if (n == 6) {
-      //SOLARCHVISION Complex:
+      //Complex used in the YC book:
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_Mesh2(8, 0, 0, 1, 0, 0, -100, -100, 0, 100, 100, 0);
@@ -36623,42 +36659,6 @@ class solarchvision_Create3D {
       this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 42, 72, 0, 66, 78, 12);
       this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 66, 42, 0, 78, 78, 12);
     }
-
-    if (n == 5) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(8, 0, 0, 1, 0, 0, -50, -50, 0, 50, 50, 0);
-
-      {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        float x = 0;
-        float y = 0;
-        float z = 0;
-        float r = 10;
-        this.add_CrystalSphere(1, 0, 0, 1, 0, 0, x, y, z, r, 5, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
-      }
-
-      {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        float x = -20;
-        float y = -20;
-        float z = 0;
-        float r = 8;
-        this.add_CrystalSphere(2, 0, 0, 1, 0, 0, x, y, z, r, 4, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
-      }
-
-      {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        float x = 0;
-        float y = 20;
-        float z = 0;
-        float r = 6;
-        this.add_CrystalSphere(3, 0, 0, 1, 0, 0, x, y, z, r, 3, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
-      }
-    }
-
   }
 
   int maximum_default_models = 6;
