@@ -36546,22 +36546,26 @@ class solarchvision_Create3D {
 
 
 
-    //if (n != 0) {
-    allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-    this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
-    //}
-
     if (n == 1) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
+
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_House2_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 90);
     }
 
     if (n == 2) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
+
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_House2_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
     }
 
     if (n == 3) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
+
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_PolygonHyper(0, 0, 0, 1, 0, 0, 0, 0, 5, 10, 10, 4, 0);
 
@@ -36570,6 +36574,9 @@ class solarchvision_Create3D {
     }
 
     if (n == 4) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
+
       for (int i = 0; i < int (10 + random (10)); i++) {
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
         this.add_House2_Core(7, 0, 0, 1, 0, 0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), floor(random(360)));
@@ -36580,75 +36587,50 @@ class solarchvision_Create3D {
     if (n == 5) {
       //SOLARCHVISION Complex:
 
-      //this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3, 3);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 2, 1, 1, 3, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 0, 2, 1, 3, 3);
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(8, 0, 0, 1, 0, 0, -100, -100, 0, 100, 100, 0);
 
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 2, 0, 0, 6, 4, 0.5);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 7, 0, 0, 9, 2, 2);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 7, 3, 0, 9, 4, 4);
-
-      //this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 10, 0, 0, 13, 4, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 10, 0, 0, 13, 1, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 10, 1, 0, 10.5, 3, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 12.5, 1, 0, 13, 3, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 10, 3, 0, 13, 4, 1);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 4, 0, 1, 8, 2);
-
-      //this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 2, 5, 0, 4, 8, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 2, 5, 0, 4, 5.5, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 2, 5.5, 0, 2.5, 7.5, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 3.5, 5.5, 0, 4, 7.5, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 2, 7.5, 0, 4, 8, 2);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 5, 5, 0, 8, 8, 1);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 9, 5, 0, 11, 9, 1);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 12, 5, 0, 13, 7, 4);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 12, 8, 0, 13, 9, 8);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 9, 0, 4, 11, 1);
-
-      //this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 5, 9, 0, 8, 11, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 5, 9, 0, 5.5, 11, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 5.5, 9, 0, 7.5, 9.5, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 5.5, 10.5, 0, 7.5, 11, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 7.5, 9, 0, 8, 11, 2);
-
-      //this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 12, 0, 3, 13, 3);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 12, 0, 3, 13, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 12, 1, 1, 13, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 2, 12, 1, 3, 13, 2);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 0, 12, 2, 3, 13, 3);
-
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 4, 12, 0, 8, 13, 2);
-
-      //this.add_Box_Corners(-1, 0 , 0 , 1 ,0, 0, 9, 10, 0, 13, 13, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 9, 10, 0, 10, 13, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 10, 10, 0, 12, 10.5, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 10, 12.5, 0, 12, 13, 1);
-      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 12, 10, 0, 13, 13, 1);
-
-      float model_scale = 12; // to make grid scale equal to 12m. <<<<
-
-      for (int i = 1; i < allPoints.getLength(); i++) {
-        allPoints.setX(i, allPoints.getX(i) - 6.5);
-        allPoints.setY(i, allPoints.getY(i) - 6.5);
-
-        allPoints.setX(i, allPoints.getX(i) * model_scale);
-        allPoints.setY(i, allPoints.getY(i) * model_scale);
-        allPoints.setZ(i, allPoints.getZ(i) * model_scale);
-      }
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, -78, 0, -66, -42, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, -78, 12, -66, -66, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, -54, 12, -66, -42, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, -78, 24, -66, -42, 36);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -54, -78, 0, -6, -30, 6);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 6, -78, 0, 30, -54, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 6, -42, 0, 30, -30, 48);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 42, -78, 0, 78, -66, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 42, -66, 0, 48, -42, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 72, -66, 0, 78, -42, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 42, -42, 0, 78, -30, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, -30, 0, -66, 18, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -54, -18, 0, -30, -12, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -54, -12, 0, -48, 12, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -36, -12, 0, -30, 12, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -54, 12, 0, -30, 18, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -18, -18, 0, 18, 18, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 30, -18, 0, 54, 30, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 66, -18, 0, 78, 6, 48);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 66, 18, 0, 78, 30, 96);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, 30, 0, -30, 54, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -18, 30, 0, -12, 54, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -12, 30, 0, 12, 36, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -12, 48, 0, 12, 54, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 12, 30, 0, 18, 54, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, 66, 0, -42, 78, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, 66, 12, -66, 78, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -54, 66, 12, -42, 78, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -78, 66, 24, -42, 78, 36);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, -30, 66, 0, 18, 78, 24);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 30, 42, 0, 42, 78, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 42, 42, 0, 66, 48, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 42, 72, 0, 66, 78, 12);
+      this.add_Box_Corners(-1, 0, 0, 1, 0, 0, 66, 42, 0, 78, 78, 12);
     }
 
     if (n == 6) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(8, 0, 0, 1, 0, 0, -25, -25, 0, 25, 25, 0);
+
       {
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
         float x = 0;
