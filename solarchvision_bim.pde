@@ -40963,6 +40963,23 @@ void mouseClicked () {
               }
             }
 
+            for (int n = 0; n <= 8; n++) {
+              if (menu_option.equals("3D-model " + nf(n, 0))) {
+
+                Load_DefaultModels = n;
+
+                SOLARCHVISION_deleteAll();
+
+                Create3D.add_DefaultModel(Load_DefaultModels);
+
+                allSolidImpacts.calculate_Impact_selectedSections();
+
+                ROLLOUT.revise();
+
+                WIN3D.revise();
+              }
+            }
+
 
 
 
@@ -48866,7 +48883,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Layout",
+      "Setup",
       "Layout -2",
       "Layout -1",
       "Layout 0",
@@ -48877,7 +48894,16 @@ class solarchvision_UI_menuBar {
       "Layout 5",
       "Layout 6",
       "Layout 7",
-      "Layout 8"
+      "Layout 8",
+      "3D-model 0",
+      "3D-model 1",
+      "3D-model 2",
+      "3D-model 3",
+      "3D-model 4",
+      "3D-model 5",
+      "3D-model 6",
+      "3D-model 7",
+      "3D-model 8",
     }
   };
 
