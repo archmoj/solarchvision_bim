@@ -2516,8 +2516,8 @@ class solarchvision_WIN3D {
   float view_R = float(dY) / float(dX);
 
   float position_X = 0;
-  float position_Y = 10; //50; //10;
-  float position_Z = 10; //50;
+  float position_Y = 5;
+  float position_Z = 60;
   float position_T = 1.0;
 
   float rotation_X = 90; //90; //75; //0;
