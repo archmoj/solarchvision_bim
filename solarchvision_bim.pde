@@ -5002,23 +5002,6 @@ class solarchvision_STUDY {
           this.revise();
           ROLLOUT.revise();
           break;
-
-        case '+' :
-          this.joinDays += 2;
-          if (this.joinDays > 365) this.joinDays = 365;
-          DevelopData_update = true;
-          UI_timeBar.revise();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '=' :
-          this.joinDays -= 2;
-          if (this.joinDays < 1) this.joinDays = 1;
-          DevelopData_update = true;
-          UI_timeBar.revise();
-          this.revise();
-          ROLLOUT.revise();
-          break;
         }
       }
     }
@@ -5029,6 +5012,25 @@ class solarchvision_STUDY {
         switch(key) {
 
         case '>' :
+          this.joinDays += 2;
+          if (this.joinDays > 365) this.joinDays = 365;
+          DevelopData_update = true;
+          UI_timeBar.revise();
+          this.revise();
+          WIN3D.revise();
+          ROLLOUT.revise();
+          break;
+        case '<' :
+          this.joinDays -= 2;
+          if (this.joinDays < 1) this.joinDays = 1;
+          DevelopData_update = true;
+          UI_timeBar.revise();
+          this.revise();
+          WIN3D.revise();
+          ROLLOUT.revise();
+          break;
+
+        case ')' :
           this.j_End += 1;
           if (this.j_End > this.j_Start + 61) this.j_End -= 1;
           this.U_scale = 18.0 / float(this.j_End - this.j_Start);
@@ -5053,7 +5055,7 @@ class solarchvision_STUDY {
           ROLLOUT.revise();
           break;
 
-        case '<' :
+        case '(' :
           this.j_End -= 1;
           if (this.j_End <= this.j_Start) this.j_End += 1;
           this.U_scale = 18.0 / float(this.j_End - this.j_Start);
