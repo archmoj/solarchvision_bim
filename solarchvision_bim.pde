@@ -8547,11 +8547,6 @@ class solarchvision_ROLLOUT {
     } else if (this.parent == 1) { // Geometries & Space
       if (this.child == 1) { // Create
 
-        Load_DefaultModels = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Load_DefaultModels", Load_DefaultModels, 0, Create3D.maximum_default_models, 1), 1));
-
-        User3D.create_MeshOrSolid = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.MeshOrSolid", User3D.create_MeshOrSolid, 0, 1, 1), 1));
-
-
         //addToLastGroup = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
 
         User3D.default_Material = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Material", User3D.default_Material, -1, 8, 1), 1));
@@ -21798,15 +21793,6 @@ int addNewSelectionToPreviousSelection = 0; // internal
 
 boolean addToLastGroup = false; // internal
 
-int Load_DefaultModels = 0; // internal
-
-
-
-
-
-
-
-
 
 
 float pre_TIME_Date;
@@ -21879,8 +21865,6 @@ boolean pre_Selection_Face_displayVertexCount;
 boolean pre_Selection_Curve_displayVertexCount;
 boolean pre_Selection_Vertex_displayVertices;
 boolean pre_Selection_Curve_displayVertices;
-
-int pre_Load_DefaultModels;
 
 int pre_WIN3D_currentCamera;
 
@@ -22311,9 +22295,6 @@ void draw () {
 
         pre_Create3D_Tessellation = allFaces.displayTessellation;
 
-
-        pre_Load_DefaultModels = Load_DefaultModels;
-
         pre_STUDY_ImpactLayer = STUDY.ImpactLayer;
 
         pre_Develop_Option = Develop_Option;
@@ -22620,20 +22601,6 @@ void draw () {
 
         if (pre_Create3D_Tessellation != allFaces.displayTessellation) {
           SOLARCHVISION_view_changed();
-        }
-
-
-
-
-        if (pre_Load_DefaultModels != Load_DefaultModels) {
-
-          SOLARCHVISION_deleteAll();
-
-          Create3D.add_DefaultModel(Load_DefaultModels);
-
-          allSolidImpacts.calculate_Impact_selectedSections();
-
-          ROLLOUT.revise();
         }
 
 
@@ -40939,14 +40906,12 @@ void mouseClicked () {
               }
             }
 
-            for (int n = 0; n <= 8; n++) {
+            for (int n = 1; n <= 6; n++) {
               if (menu_option.equals("3D-model " + nf(n, 0))) {
-
-                Load_DefaultModels = n;
 
                 SOLARCHVISION_deleteAll();
 
-                Create3D.add_DefaultModel(Load_DefaultModels);
+                Create3D.add_DefaultModel(n);
 
                 allSolidImpacts.calculate_Impact_selectedSections();
 
