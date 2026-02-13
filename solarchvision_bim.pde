@@ -36350,8 +36350,7 @@ class solarchvision_Create3D {
             //int max_o = int((16.0 / pow(2, Land3D.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
             int max_o = int(random(10)) == 0 ? 1 : 0;
 
-            if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-            //if (i > 10) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            if (i > 2) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
 
             for (int o = 0; o < max_o; o++) {
 
@@ -36364,7 +36363,7 @@ class solarchvision_Create3D {
 
               if (z + STATION.getElevation() > 0) { // i.e. above sea level
 
-                if (dist(x, y, 0, 0) > 10.0) { // i.e. No 2D at the center!
+                if (dist(x, y, 0, 0) > 20.0) { // i.e. No 2D at the center!
 
                   if (people_or_trees == 1) {
                     allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
