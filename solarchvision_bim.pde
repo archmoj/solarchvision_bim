@@ -5137,18 +5137,18 @@ class solarchvision_STUDY {
           ROLLOUT.revise();
           break;
 
-        case 'j' :
+        case '{' :
           if (this.LevelPix < 32) this.LevelPix *= pow(2.0, (1.0 / 1.0));
           this.revise();
           ROLLOUT.revise();
           break;
-        case 'J' :
+        case '}' :
           if (this.LevelPix > 2) this.LevelPix *= pow(0.5, (1.0 / 1.0));
           this.revise();
           ROLLOUT.revise();
           break;
 
-        case 'i' :
+        case '[' :
           if (this.sumInterval > 24) this.sumInterval -= 24;
           if (this.sumInterval > 6) this.sumInterval -= 6;
           else if (this.sumInterval > 1) this.sumInterval -= 1;
@@ -5156,7 +5156,7 @@ class solarchvision_STUDY {
           this.revise();
           ROLLOUT.revise();
           break;
-        case 'I' :
+        case ']' :
           if (this.sumInterval < 6) this.sumInterval += 1;
           else if (this.sumInterval < 24) this.sumInterval += 6;
           else this.sumInterval += 24;
