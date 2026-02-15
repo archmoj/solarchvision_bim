@@ -260,6 +260,20 @@ final int numberOfImpactVariations = 2; // internal
 
 int Impact_TYPE = Impact_PASSIVE;
 
+final int PlotImpacts_WIND_ACTIVE = -2;
+final int PlotImpacts_WIND_PASSIVE = -1;
+final int PlotImpacts_URBAN_ACTIVE = 0;
+final int PlotImpacts_URBAN_PASSIVE = 1;
+final int PlotImpacts_GLOBAL_ACTIVE = 2;
+final int PlotImpacts_GLOBAL_PASSIVE = 3;
+final int PlotImpacts_SUNPATH_ACTIVE = 4;
+final int PlotImpacts_SUNPATH_PASSIVE = 5;
+final int PlotImpacts_FROMSUN_ACTIVE = 6;
+final int PlotImpacts_FROMSUN_PASSIVE = 7;
+final int PlotImpacts_CYCLES_ACTIVE = 8;
+final int PlotImpacts_CYCLES_PASSIVE = 9;
+
+
 float CubePower = 16; //8;
 float StarPower = 0.25;
 
@@ -4897,18 +4911,6 @@ class solarchvision_STUDY {
 
   int ImpactLayer = 7; // 4 = Median
 
-  int PlotImpacts_WIND_ACTIVE = -2;
-  int PlotImpacts_WIND_PASSIVE = -1;
-  int PlotImpacts_URBAN_ACTIVE = 0;
-  int PlotImpacts_URBAN_PASSIVE = 1;
-  int PlotImpacts_GLOBAL_ACTIVE = 2;
-  int PlotImpacts_GLOBAL_PASSIVE = 3;
-  int PlotImpacts_SUNPATH_ACTIVE = 4;
-  int PlotImpacts_SUNPATH_PASSIVE = 5;
-  int PlotImpacts_FROMSUN_ACTIVE = 6;
-  int PlotImpacts_FROMSUN_PASSIVE = 7;
-  int PlotImpacts_CYCLES_ACTIVE = 8;
-  int PlotImpacts_CYCLES_PASSIVE = 9;
   int PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
 
   boolean Impacts_update = true;
