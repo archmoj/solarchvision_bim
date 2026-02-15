@@ -260,18 +260,18 @@ final int numberOfImpactVariations = 2; // internal
 
 int Impact_TYPE = Impact_PASSIVE;
 
-final int PlotImpacts_WIND_ACTIVE = -2;
-final int PlotImpacts_WIND_PASSIVE = -1;
-final int PlotImpacts_URBAN_ACTIVE = 0;
-final int PlotImpacts_URBAN_PASSIVE = 1;
-final int PlotImpacts_GLOBAL_ACTIVE = 2;
-final int PlotImpacts_GLOBAL_PASSIVE = 3;
-final int PlotImpacts_SUNPATH_ACTIVE = 4;
-final int PlotImpacts_SUNPATH_PASSIVE = 5;
-final int PlotImpacts_FROMSUN_ACTIVE = 6;
-final int PlotImpacts_FROMSUN_PASSIVE = 7;
-final int PlotImpacts_CYCLES_ACTIVE = 8;
-final int PlotImpacts_CYCLES_PASSIVE = 9;
+final int PlotImpacts_CYCLES_ACTIVE = 0;
+final int PlotImpacts_CYCLES_PASSIVE = 1;
+final int PlotImpacts_SUNPATH_ACTIVE = 2;
+final int PlotImpacts_SUNPATH_PASSIVE = 3;
+final int PlotImpacts_GLOBAL_ACTIVE = 4;
+final int PlotImpacts_GLOBAL_PASSIVE = 5;
+final int PlotImpacts_WIND_ACTIVE = 6;
+final int PlotImpacts_WIND_PASSIVE = 7;
+final int PlotImpacts_URBAN_ACTIVE = 8;
+final int PlotImpacts_URBAN_PASSIVE = 9;
+final int PlotImpacts_FROMSUN_ACTIVE = 10;
+final int PlotImpacts_FROMSUN_PASSIVE = 11;
 
 
 float CubePower = 16; //8;
@@ -4965,13 +4965,13 @@ class solarchvision_STUDY {
           break;
 
           case RIGHT :
-          this.PlotImpacts = -2 + (2 + this.PlotImpacts + 1) % 11;
+          this.PlotImpacts = (this.PlotImpacts + 1) % 11;
           this.revise();
           ROLLOUT.revise();
           break;
 
           case LEFT :
-          this.PlotImpacts = -2 + (2 + this.PlotImpacts - 1 + 11) % 11;
+          this.PlotImpacts = (this.PlotImpacts - 1 + 11) % 11;
           this.revise();
           ROLLOUT.revise();
           break;
@@ -5338,7 +5338,7 @@ class solarchvision_STUDY {
       }
 
       float impact_scale = 1;
-      if ((this.PlotImpacts == -2) || (this.PlotImpacts == -1)) impact_scale = LAYER_windspd.V_scale * 45 / 50.0;
+      if ((this.PlotImpacts == PlotImpacts_WIND_ACTIVE) || (this.PlotImpacts == PlotImpacts_WIND_PASSIVE)) impact_scale = LAYER_windspd.V_scale * 45 / 50.0;
 
       for (int r = 90; r > 0; r -= 15) {
         if ((r % 90) != 0) {
@@ -6570,7 +6570,7 @@ class solarchvision_STUDY {
     if (count_k < 0) count_k = 0;
 
 
-    if ((this.PlotImpacts == -2) || (this.PlotImpacts == -1)) {
+    if ((this.PlotImpacts == PlotImpacts_WIND_ACTIVE) || (this.PlotImpacts == PlotImpacts_WIND_PASSIVE)) {
 
       allWindRoses.resize_Image_array();
 
@@ -6578,8 +6578,8 @@ class solarchvision_STUDY {
 
       allWindRoses.renderedRES = RES;
 
-      if (this.PlotImpacts == -2) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == -1) this.Impact_TYPE = Impact_PASSIVE;
+      if (this.PlotImpacts == PlotImpacts_WIND_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+      if (this.PlotImpacts == PlotImpacts_WIND_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
