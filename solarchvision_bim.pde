@@ -8105,10 +8105,10 @@ class solarchvision_STUDY {
       this.graphics.stroke(0);
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
-      if (this.Impact_TYPE == Impact_ACTIVE) {
+      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
         this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
+      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
         this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       }
       //?? French
@@ -8116,18 +8116,18 @@ class solarchvision_STUDY {
       int PAL_type = 0;
       int PAL_direction = 1;
 
-      if (this.Impact_TYPE == Impact_ACTIVE) {
+      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
         PAL_type = this.ACTIVE_pallet_CLR;
         PAL_direction = this.ACTIVE_pallet_DIR;
       }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
+      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
         PAL_type = this.PASSIVE_pallet_CLR;
         PAL_direction = this.PASSIVE_pallet_DIR;
       }
 
       float PAL_multiplier = 1;
-      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
+      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
+      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
 
       float pal_length = 400;
       float pal_ox = 700;
@@ -8141,8 +8141,8 @@ class solarchvision_STUDY {
       for (int q = 0; q < 11; q++) {
         float _u = 0;
 
-        if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-        if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+        if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) _u = 0.1 * q;
+        if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) _u = 0.2 * q - 0.5;
 
         if (PAL_direction == -1) _u = 1 - _u;
         if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
@@ -8167,8 +8167,8 @@ class solarchvision_STUDY {
 
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
-        if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
-        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+        if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+        if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
       }
 
 
@@ -8187,11 +8187,11 @@ class solarchvision_STUDY {
 
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(CENTER, TOP);
-        if (this.Impact_TYPE == Impact_ACTIVE) {
+        if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
           this.graphics.text(("Direct solar radiation (kWh/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
           //?? French
         }
-        if (this.Impact_TYPE == Impact_PASSIVE) {
+        if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
           this.graphics.text(("Direct solar effects (kWh°C/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
           //?? French
         }
