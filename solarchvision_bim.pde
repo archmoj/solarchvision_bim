@@ -8504,8 +8504,47 @@ class solarchvision_ROLLOUT {
 
 
 
+    if (this.parent == 0) { // Period & Scenarios
 
-    if (this.parent == 1) { // Location & data
+      if (this.child == 1) { // Time
+
+        STUDY.joinDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Join days", STUDY.joinDays, 1, 64, -2), 1));
+        STUDY.j_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
+
+        TIME.beginDay = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME.beginDay, 0, 364, 1), 1));
+
+        //TIME.date = this.Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Solar date", TIME.date, 0, 364.5, 0.5);
+        TIME.date = int(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Solar date", TIME.date, 0, 364, 1));
+
+        TIME.day = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast day", TIME.day, 1, 31, 1), 1));
+        TIME.month = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME.month, 1, 12, 1), 1));
+        TIME.year = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME.year, 1953, 2100, 1), 1));
+
+        ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
+      }
+
+      if (this.child == 2) { // Ranges
+        STUDY.i_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
+        STUDY.i_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
+
+        SampleYear_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+        SampleYear_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+
+        SampleMember_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
+        SampleMember_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
+
+        SampleStation_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
+        SampleStation_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
+
+
+      }
+
+      if (this.child == 3) { // Filters
+
+        STUDY.skyScenario = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
+        STUDY.filter = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
+      }
+    } else if (this.parent == 1) { // Location & data
 
 
       if (this.child == 1) { // Point
@@ -8764,48 +8803,6 @@ class solarchvision_ROLLOUT {
         OBJECTS_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2);
       }
 
-    } else if (this.parent == 0) { // Period & Scenarios
-
-      if (this.child == 1) { // Time
-
-        STUDY.joinDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Join days", STUDY.joinDays, 1, 64, -2), 1));
-        STUDY.j_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
-
-        TIME.beginDay = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME.beginDay, 0, 364, 1), 1));
-
-        //TIME.date = this.Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Solar date", TIME.date, 0, 364.5, 0.5);
-        TIME.date = int(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Solar date", TIME.date, 0, 364, 1));
-
-        TIME.day = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast day", TIME.day, 1, 31, 1), 1));
-        TIME.month = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME.month, 1, 12, 1), 1));
-        TIME.year = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME.year, 1953, 2100, 1), 1));
-
-        ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
-      }
-
-      if (this.child == 2) { // Ranges
-        STUDY.i_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
-        STUDY.i_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
-
-  //??????
-        SampleYear_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
-        SampleYear_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
-  //??????
-
-        SampleMember_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
-        SampleMember_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
-
-        SampleStation_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
-        SampleStation_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
-
-
-      }
-
-      if (this.child == 3) { // Filters
-
-        STUDY.skyScenario = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
-        STUDY.filter = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
-      }
     } else if (this.parent == 3) { // Display Options
 
       if (this.child == 1) { // 2D-Layers
