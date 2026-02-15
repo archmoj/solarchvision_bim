@@ -48394,7 +48394,6 @@ class solarchvision_UI_menuBar {
       "Export 3D-model > OBJ",
       "Export 3D-model > OBJ (date-series)",
       "Export 3D-model > OBJ (time-series)",
-      "Preferences",
       "Quit"
     }
     ,
