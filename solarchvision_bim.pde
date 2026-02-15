@@ -40734,9 +40734,6 @@ void mouseClicked () {
               SOLARCHVISION_fetch_project();
             }
 
-            if (menu_option.equals("Undo")) {
-            }
-
             if (menu_option.equals("Open...")) {
               selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
             }
@@ -41057,7 +41054,7 @@ void mouseClicked () {
               FRAME_drag_IMG = true;
             }
 
-            if (menu_option.equals("update Station")) {
+            if (menu_option.equals("Update Station")) {
               SOLARCHVISION_update_station(0);
             }
 
@@ -41098,37 +41095,37 @@ void mouseClicked () {
 
 
 
-            if (menu_option.equals("update TMYEPW")) {
+            if (menu_option.equals("Update TMYEPW")) {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
               CLIMATE_TMYEPW_load = true;
               update_CLIMATE_TMYEPW();
             }
-            if (menu_option.equals("update CWEEDS")) {
+            if (menu_option.equals("Update CWEEDS")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
 
               CLIMATE_CWEEDS_load = true;
               update_CLIMATE_CWEEDS();
             }
-            if (menu_option.equals("update CLMREC")) {
+            if (menu_option.equals("Update CLMREC")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
 
               CLIMATE_CLMREC_load = true;
               update_CLIMATE_CLMREC();
             }
-            if (menu_option.equals("update SWOB")) {
+            if (menu_option.equals("Update SWOB")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
 
               ENSEMBLE_OBSERVED_load = true;
               SOLARCHVISION_update_ENSEMBLE_OBSERVED();
             }
-            if (menu_option.equals("update NAEFS")) {
+            if (menu_option.equals("Update NAEFS")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
 
               ENSEMBLE_FORECAST_load = true;
               update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
             }
-            if (menu_option.equals("update Aerial")) {
+            if (menu_option.equals("Update Aerial")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
 
               ENSEMBLE_FORECAST_load = true;
@@ -41140,7 +41137,7 @@ void mouseClicked () {
 
 
 
-            if (menu_option.equals("Typical Year (TMY)")) {
+            if (menu_option.equals("Use typical year (TMY)")) {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
               CLIMATE_TMYEPW_load = true;
@@ -41155,7 +41152,7 @@ void mouseClicked () {
               WORLD.displayAll_TMYEPW = 1;
               WORLD.displayNear_TMYEPW = true;
             }
-            if (menu_option.equals("Long-term (CWEEDS)")) {
+            if (menu_option.equals("Use long-term (CWEEDS)")) {
               CurrentDataSource = dataID_CLIMATE_CWEEDS;
 
               CLIMATE_CWEEDS_load = true;
@@ -41170,7 +41167,7 @@ void mouseClicked () {
               WORLD.displayAll_CWEEDS = 1;
               WORLD.displayNear_CWEEDS = true;
             }
-            if (menu_option.equals("Long-term (CLMREC)")) {
+            if (menu_option.equals("Use long-term (CLMREC)")) {
               CurrentDataSource = dataID_CLIMATE_CLMREC;
 
               CLIMATE_CLMREC_load = true;
@@ -41185,7 +41182,7 @@ void mouseClicked () {
               WORLD.displayAll_CLMREC = 1;
               WORLD.displayNear_CLMREC = true;
             }
-            if (menu_option.equals("Real-time Observed (SWOB)")) {
+            if (menu_option.equals("Use real-time observed (SWOB)")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
 
               ENSEMBLE_OBSERVED_load = true;
@@ -41200,7 +41197,7 @@ void mouseClicked () {
               WORLD.displayAll_SWOB = 1;
               WORLD.displayNear_SWOB = true;
             }
-            if (menu_option.equals("Weather Forecast (NAEFS)")) {
+            if (menu_option.equals("Use weather forecast (NAEFS)")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
 
               ENSEMBLE_FORECAST_load = true;
@@ -41219,7 +41216,7 @@ void mouseClicked () {
 
 
 
-            if (UI_menuBar.Items[UI_menuBar.selected_parent][0].equals("Layers")) {
+            if (UI_menuBar.Items[UI_menuBar.selected_parent][0].equals("Layer")) {
               if (UI_menuBar.selected_child > 0) {
                 if (CurrentLayer_id != UI_menuBar.selected_child - 1) {
 
@@ -41520,7 +41517,7 @@ void mouseClicked () {
               SOLARCHVISION_view_changed();
             }
 
-            if (menu_option.equals("Display/Hide SWOB points")) {
+            if (menu_option.equals("Display/Hide SWOB stations")) {
               WORLD.displayAll_SWOB = (WORLD.displayAll_SWOB + 1) % 2;
 
               WORLD.revise();
@@ -41530,7 +41527,7 @@ void mouseClicked () {
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide NAEFS points")) {
+            if (menu_option.equals("Display/Hide NAEFS stations")) {
               WORLD.displayAll_NAEFS = (WORLD.displayAll_NAEFS + 1) % 2;
 
               WORLD.revise();
@@ -41540,7 +41537,7 @@ void mouseClicked () {
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide CWEEDS points")) {
+            if (menu_option.equals("Display/Hide CWEEDS stations")) {
               WORLD.displayAll_CWEEDS = (WORLD.displayAll_CWEEDS + 1) % 2;
 
               WORLD.revise();
@@ -41550,7 +41547,7 @@ void mouseClicked () {
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide CLMREC points")) {
+            if (menu_option.equals("Display/Hide CLMREC stations")) {
               WORLD.displayAll_CLMREC = (WORLD.displayAll_CLMREC + 1) % 2;
 
               WORLD.revise();
@@ -41560,7 +41557,7 @@ void mouseClicked () {
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide TMYEPW points")) {
+            if (menu_option.equals("Display/Hide TMYEPW stations")) {
               WORLD.displayAll_TMYEPW = (WORLD.displayAll_TMYEPW + 1) % 2;
 
               WORLD.revise();
@@ -48382,7 +48379,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Project",
+      "File",
       "New",
       "Open...",
       "Import 3D-model...",
@@ -48402,9 +48399,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Action",
-      "Undo",
-      "Redo",
+      "Tools",
       "JPG Time Graph",
       "PDF Time Graph",
       "JPG Location Graph",
@@ -48432,41 +48427,24 @@ class solarchvision_UI_menuBar {
       "Enlarge 3D Viewport",
       "Enlarge Map Viewport",
       "Enlarge Time Viewport",
+    }
+    ,
+    {
+      "Region",
+      "Use typical year (TMY)",
+      "Use long-term (CWEEDS)",
+      "Use long-term (CLMREC)",
+      "Use real-time observed (SWOB)",
+      "Use weather forecast (NAEFS)",
 
-    }
-    ,
-    {
-      "Stations",
-      "Display/Hide TMYEPW points",
-      "Display/Hide TMYEPW nearest",
-      "Display/Hide CWEEDS points",
-      "Display/Hide CWEEDS nearest",
-      "Display/Hide CLMREC points",
-      "Display/Hide CLMREC nearest",
-      "Display/Hide SWOB points",
-      "Display/Hide SWOB nearest",
-      "Display/Hide NAEFS points",
-      "Display/Hide NAEFS nearest"
-    }
-    ,
-    {
-      "Data",
-      "Typical Year (TMY)",
-      "Long-term (CWEEDS)",
-      "Long-term (CLMREC)",
-      "Real-time Observed (SWOB)",
-      "Weather Forecast (NAEFS)",
-      "update NAEFS",
-      "update SWOB",
-      "update CLMREC",
-      "update CWEEDS",
-      "update TMYEPW",
-      "update Aerial"
-    }
-    ,
-    {
-      "Site",
-      "update Station",
+      "Update TMYEPW",
+      "Update CWEEDS",
+      "Update CLMREC",
+      "Update SWOB",
+      "Update NAEFS",
+      "Update Aerial",
+      "Update Station",
+
       "Load Land Mesh",
       "Load Land Texture",
       "Download Land Mesh",
@@ -48475,7 +48453,67 @@ class solarchvision_UI_menuBar {
       "Download NAEFS",
       "Download SWOB",
       "Download CLMREC",
-      "Download Aerial"
+      "Download Aerial",
+
+      "Display/Hide TMYEPW stations",
+      "Display/Hide TMYEPW nearest",
+      "Display/Hide CWEEDS stations",
+      "Display/Hide CWEEDS nearest",
+      "Display/Hide CLMREC stations",
+      "Display/Hide CLMREC nearest",
+      "Display/Hide SWOB stations",
+      "Display/Hide SWOB nearest",
+      "Display/Hide NAEFS stations",
+      "Display/Hide NAEFS nearest"
+    }
+    ,
+    {
+      "Layer"
+      // Parameters are added here later in the process.
+    }
+    ,
+    {
+      "Study",
+      "Wind pattern (active)",
+      "Wind pattern (passive)",
+      "Urban solar potential (active)",
+      "Urban solar potential (passive)",
+      "Orientation potential (active)",
+      "Orientation potential (passive)",
+      "Hourly sun position (active)",
+      "Hourly sun position (passive)",
+      "View from sun & sky (active)",
+      "View from sun & sky (passive)",
+      "Annual cycle sun path (active)",
+      "Annual cycle sun path (passive)",
+      "Render Viewport",
+      "PreBake Viewport",
+      "Pre-bake Selected Sections",
+      "Process Active Impact",
+      "Process Passive Impact",
+      "Process Solid Impact",
+      "Run wind 3D-model"
+    }
+    ,
+    {
+      "Setup",
+      "Layout -2",
+      "Layout -1",
+      "Layout 0",
+      "Layout 1",
+      "Layout 2",
+      "Layout 3",
+      "Layout 4",
+      "Layout 5",
+      "Layout 6",
+      "Layout 7",
+      "Layout 8",
+      "3D-model 1",
+      "3D-model 2",
+      "3D-model 3",
+      "3D-model 4",
+      "3D-model 5",
+      "3D-model 6"
     }
     ,
     {
@@ -48797,55 +48835,6 @@ class solarchvision_UI_menuBar {
       "Drop on ModelSurface (Up)",
       "Drop on ModelSurface (Down)"
     }
-    ,
-    {
-      "Layers"
-      // Parameters are added here later in the process.
-    }
-    ,
-    {
-      "Study",
-      "Wind pattern (active)",
-      "Wind pattern (passive)",
-      "Urban solar potential (active)",
-      "Urban solar potential (passive)",
-      "Orientation potential (active)",
-      "Orientation potential (passive)",
-      "Hourly sun position (active)",
-      "Hourly sun position (passive)",
-      "View from sun & sky (active)",
-      "View from sun & sky (passive)",
-      "Annual cycle sun path (active)",
-      "Annual cycle sun path (passive)",
-      "Render Viewport",
-      "PreBake Viewport",
-      "Pre-bake Selected Sections",
-      "Process Active Impact",
-      "Process Passive Impact",
-      "Process Solid Impact",
-      "Run wind 3D-model"
-    }
-    ,
-    {
-      "Setup",
-      "Layout -2",
-      "Layout -1",
-      "Layout 0",
-      "Layout 1",
-      "Layout 2",
-      "Layout 3",
-      "Layout 4",
-      "Layout 5",
-      "Layout 6",
-      "Layout 7",
-      "Layout 8",
-      "3D-model 1",
-      "3D-model 2",
-      "3D-model 3",
-      "3D-model 4",
-      "3D-model 5",
-      "3D-model 6"
-    }
   };
 
 
@@ -48856,11 +48845,11 @@ class solarchvision_UI_menuBar {
 
   solarchvision_UI_menuBar () { // constructor
 
-    // finding id of "Layers" in the list
+    // finding id of "Layer" in the list
 
     LayersID_in_Bar = -1;
     for (int i = 0; i < this.Items.length; i++) {
-       if (this.Items[i][0].equals("Layers")) {
+       if (this.Items[i][0].equals("Layer")) {
          LayersID_in_Bar = i;
          break;
        }
@@ -48868,7 +48857,7 @@ class solarchvision_UI_menuBar {
 
     this.Items[LayersID_in_Bar] = new String [numberOfLayers + 12];
 
-    this.Items[LayersID_in_Bar][0] = "Layers";
+    this.Items[LayersID_in_Bar][0] = "Layer";
 
     for (int i = 0; i < numberOfLayers; i++) {
 
@@ -48984,8 +48973,8 @@ class solarchvision_UI_menuBar {
               stroke(255);
               fill(255);
 
-              if (this.Items[i][0].equals("Stations")) {
-                if (this.Items[i][j].equals("Display/Hide SWOB points")) {
+              if (this.Items[i][0].equals("Region")) {
+                if (this.Items[i][j].equals("Display/Hide SWOB stations")) {
                   if (WORLD.displayAll_SWOB == 0) {
                     stroke(127);
                     fill(127);
@@ -48997,7 +48986,7 @@ class solarchvision_UI_menuBar {
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide NAEFS points")) {
+                if (this.Items[i][j].equals("Display/Hide NAEFS stations")) {
                   if (WORLD.displayAll_NAEFS == 0) {
                     stroke(127);
                     fill(127);
@@ -49009,7 +48998,7 @@ class solarchvision_UI_menuBar {
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide CWEEDS points")) {
+                if (this.Items[i][j].equals("Display/Hide CWEEDS stations")) {
                   if (WORLD.displayAll_CWEEDS == 0) {
                     stroke(127);
                     fill(127);
@@ -49021,7 +49010,7 @@ class solarchvision_UI_menuBar {
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide CLMREC points")) {
+                if (this.Items[i][j].equals("Display/Hide CLMREC stations")) {
                   if (WORLD.displayAll_CLMREC == 0) {
                     stroke(127);
                     fill(127);
@@ -49033,7 +49022,7 @@ class solarchvision_UI_menuBar {
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide TMYEPW points")) {
+                if (this.Items[i][j].equals("Display/Hide TMYEPW stations")) {
                   if (WORLD.displayAll_TMYEPW == 0) {
                     stroke(127);
                     fill(127);
