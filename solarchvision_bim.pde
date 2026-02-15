@@ -8082,12 +8082,14 @@ class solarchvision_STUDY {
 
       Sun3D.drawPattern(TypeWindow.STUDY, x_Plot, y_Plot, 0, sx_Plot);
 
-      for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
+      if (this.j_End == 2) {
+        for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-        float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+          float ox = (j + STUDY.rect_offset_x) * sx_Plot;
 
-        Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot, 0, sx_Plot, j * 180 - 90, j * 180 + 90);
+          Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot, 0, sx_Plot, j * 180 - 90, j * 180 + 90);
 
+        }
       }
 
       this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
