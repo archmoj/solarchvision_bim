@@ -8392,7 +8392,7 @@ class solarchvision_ROLLOUT {
   boolean update = true;
   boolean include = true;
 
-  int parent = 0; //0; // 0: Location, 1: Geometry, 2: Time, etc.
+  int parent = 2; //0; // 0: Location, 1: Geometry, 2: Time, etc.
   int child = 1; // number of the category inside e.g. 1, 2, ...
 
 
@@ -8768,6 +8768,11 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 1) { // Time
 
+        STUDY.joinDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Join days", STUDY.joinDays, 1, 64, -2), 1));
+        STUDY.j_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
+
+        TIME.beginDay = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME.beginDay, 0, 364, 1), 1));
+
         //TIME.date = this.Spinner(STUDY.X_control, STUDY.Y_control, 1,0,0, "Solar date", TIME.date, 0, 364.5, 0.5);
         TIME.date = int(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Solar date", TIME.date, 0, 364, 1));
 
@@ -8775,19 +8780,12 @@ class solarchvision_ROLLOUT {
         TIME.month = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast month", TIME.month, 1, 12, 1), 1));
         TIME.year = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Forecast year", TIME.year, 1953, 2100, 1), 1));
 
-        TIME.beginDay = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Plot start date", TIME.beginDay, 0, 364, 1), 1));
-
-        STUDY.j_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
-
         ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
-
       }
 
       if (this.child == 2) { // Ranges
         STUDY.i_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
         STUDY.i_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
-
-        STUDY.joinDays = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Join days", STUDY.joinDays, 1, 64, -2), 1));
 
   //??????
         SampleYear_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
