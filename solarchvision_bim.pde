@@ -4896,7 +4896,21 @@ class solarchvision_STUDY {
   boolean impact_summary = false;
 
   int ImpactLayer = 7; // 4 = Median
-  int PlotImpacts = 3; //-2/-1:wind 0/1:urban 2/3:globe 4/5:sun-path 6/7:view-from-sun 8/9:two-cycles
+
+  int PlotImpacts_WIND_ACTIVE = -2;
+  int PlotImpacts_WIND_PASSIVE = -1;
+  int PlotImpacts_URBAN_ACTIVE = 0;
+  int PlotImpacts_URBAN_PASSIVE = 1;
+  int PlotImpacts_GLOBAL_ACTIVE = 2;
+  int PlotImpacts_GLOBAL_PASSIVE = 3;
+  int PlotImpacts_SUNPATH_ACTIVE = 4;
+  int PlotImpacts_SUNPATH_PASSIVE = 5;
+  int PlotImpacts_FROMSUN_ACTIVE = 6;
+  int PlotImpacts_FROMSUN_PASSIVE = 7;
+  int PlotImpacts_CYCLES_ACTIVE = 8;
+  int PlotImpacts_CYCLES_PASSIVE = 9;
+  int PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
+
   boolean Impacts_update = true;
 
   boolean displayRaws = false;
@@ -6133,7 +6147,7 @@ class solarchvision_STUDY {
       this.j_Start = 0;
       this.j_End = 2;
       this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-      this.PlotImpacts = (this.plotSetup == -1) ? 9 : 8;
+      this.PlotImpacts = (this.plotSetup == -1) ? PlotImpacts_CYCLES_PASSIVE : PlotImpacts_CYCLES_ACTIVE;
       this.Impact_TYPE = (this.plotSetup == -1) ? Impact_PASSIVE : Impact_ACTIVE;
 
       float scale = (FrameVariation == 2) ? 1 : 0.65;
@@ -6174,10 +6188,10 @@ class solarchvision_STUDY {
       int keep_CurrentLayer_id = CurrentLayer_id;
 
       if (FrameVariation == 2) {
-        this.PlotImpacts = 0;
+        this.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
         this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-        this.PlotImpacts = 2;
+        this.PlotImpacts = PlotImpacts_GLOBAL_ACTIVE;
         this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
       }
 
@@ -6197,10 +6211,10 @@ class solarchvision_STUDY {
       int keep_CurrentLayer_id = CurrentLayer_id;
 
       if (FrameVariation == 2) {
-        this.PlotImpacts = 1;
+        this.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
         this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-        this.PlotImpacts = 3;
+        this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
         this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
       }
 
@@ -6220,14 +6234,14 @@ class solarchvision_STUDY {
       int keep_CurrentLayer_id = CurrentLayer_id;
 
       if (FrameVariation == 2) {
-        this.PlotImpacts = -1;
+        this.PlotImpacts = PlotImpacts_WIND_PASSIVE;
         this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
         changeCurrentLayerTo(LAYER_drybulb.id);
         this.plotHourly(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
       }
 
-      this.PlotImpacts = -2;
+      this.PlotImpacts = PlotImpacts_WIND_ACTIVE;
       this.plotImpact(0, ((FrameVariation == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       changeCurrentLayerTo(LAYER_windspd.id);
@@ -6248,7 +6262,7 @@ class solarchvision_STUDY {
       boolean keep_displayProbs = this.displayProbs;
 
       if (FrameVariation == 2) {
-        this.PlotImpacts = 3;
+        this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
 
         this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3);
         this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
@@ -6359,10 +6373,10 @@ class solarchvision_STUDY {
     if (this.plotSetup == 8) {
       int keep_CurrentLayer_id = CurrentLayer_id;
 
-      this.PlotImpacts = 3;
+      this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
       this.plotImpact(0, ((FrameVariation == 2) ? -450 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
-      this.PlotImpacts = 5;
+      this.PlotImpacts = PlotImpacts_SUNPATH_PASSIVE;
       this.plotImpact(0, ((FrameVariation == 2) ? -150 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
 
       if (FrameVariation == 2) {
@@ -6929,8 +6943,7 @@ class solarchvision_STUDY {
 
 
 
-
-    if ((this.PlotImpacts == 0) || (this.PlotImpacts == 1)) {
+    if ((this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) || (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE)) {
 
       if (this.Impacts_update) {
 
@@ -6939,8 +6952,8 @@ class solarchvision_STUDY {
         int RES1 = allSolarImpacts.RES1;
         int RES2 = allSolarImpacts.RES2;
 
-        if (this.PlotImpacts == 0) this.Impact_TYPE = Impact_ACTIVE;
-        if (this.PlotImpacts == 1) this.Impact_TYPE = Impact_PASSIVE;
+        if (this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+        if (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
         float Pa = FLOAT_undefined;
         float Pb = FLOAT_undefined;
@@ -7137,16 +7150,14 @@ class solarchvision_STUDY {
 
 
 
-
-
-    if ((this.PlotImpacts == 2) || (this.PlotImpacts == 3)) {
+    if ((this.PlotImpacts == PlotImpacts_GLOBAL_ACTIVE) || (this.PlotImpacts == PlotImpacts_GLOBAL_PASSIVE)) {
 
       if (GlobalSolar_rebuild_array) {
         GlobalSolar_resize_array();
       }
 
-      if (this.PlotImpacts == 2) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == 3) this.Impact_TYPE = Impact_PASSIVE;
+      if (this.PlotImpacts == PlotImpacts_GLOBAL_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+      if (this.PlotImpacts == PlotImpacts_GLOBAL_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
@@ -7560,10 +7571,9 @@ class solarchvision_STUDY {
     }
 
 
-
-    if ((this.PlotImpacts == 4) || (this.PlotImpacts == 5)) {
-      if (this.PlotImpacts == 4) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == 5) this.Impact_TYPE = Impact_PASSIVE;
+    if ((this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) || (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE)) {
+      if (this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+      if (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
@@ -7826,10 +7836,10 @@ class solarchvision_STUDY {
 
 
 
-    if ((this.PlotImpacts == 6) || (this.PlotImpacts == 7)) {
+    if ((this.PlotImpacts == PlotImpacts_FROMSUN_ACTIVE) || (this.PlotImpacts == PlotImpacts_FROMSUN_PASSIVE)) {
 
-      if (this.PlotImpacts == 6) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == 7) this.Impact_TYPE = Impact_PASSIVE;
+      if (this.PlotImpacts == PlotImpacts_FROMSUN_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+      if (this.PlotImpacts == PlotImpacts_FROMSUN_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
@@ -8062,7 +8072,7 @@ class solarchvision_STUDY {
     }
 
 
-    if ((this.PlotImpacts == 8) || (this.PlotImpacts == 9)) {
+    if ((this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) || (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE)) {
 
       int l = this.ImpactLayer;
 
@@ -8189,7 +8199,7 @@ class solarchvision_STUDY {
 
 
 
-    if ((this.PlotImpacts == 8) || (this.PlotImpacts == 9)) {
+    if ((this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) || (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE)) {
     } else {
       this.drawDailyGrid(x_Plot, y_Plot, sx_Plot, sy_Plot);
     }
@@ -40782,84 +40792,84 @@ void mouseClicked () {
 
 
             if (menu_option.equals("Wind pattern (active)")) {
-              STUDY.PlotImpacts = -2;
+              STUDY.PlotImpacts = PlotImpacts_WIND_ACTIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = true;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Wind pattern (passive)")) {
-              STUDY.PlotImpacts = -1;
+              STUDY.PlotImpacts = PlotImpacts_WIND_PASSIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = true;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Urban solar potential (active)")) {
-              STUDY.PlotImpacts = 0;
+              STUDY.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Urban solar potential (passive)")) {
-              STUDY.PlotImpacts = 1;
+              STUDY.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Orientation potential (active)")) {
-              STUDY.PlotImpacts = 2;
+              STUDY.PlotImpacts = PlotImpacts_GLOBAL_ACTIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Orientation potential (passive)")) {
-              STUDY.PlotImpacts = 3;
+              STUDY.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Hourly sun position (active)")) {
-              STUDY.PlotImpacts = 4;
+              STUDY.PlotImpacts = PlotImpacts_SUNPATH_ACTIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Hourly sun position (passive)")) {
-              STUDY.PlotImpacts = 5;
+              STUDY.PlotImpacts = PlotImpacts_SUNPATH_PASSIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("View from sun & sky (active)")) {
-              STUDY.PlotImpacts = 6;
+              STUDY.PlotImpacts = PlotImpacts_FROMSUN_ACTIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("View from sun & sky (passive)")) {
-              STUDY.PlotImpacts = 7;
+              STUDY.PlotImpacts = PlotImpacts_FROMSUN_PASSIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Annual cycle sun path (active)")) {
-              STUDY.PlotImpacts = 8;
+              STUDY.PlotImpacts = PlotImpacts_CYCLES_ACTIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
             if (menu_option.equals("Annual cycle sun path (passive)")) {
-              STUDY.PlotImpacts = 9;
+              STUDY.PlotImpacts = PlotImpacts_CYCLES_PASSIVE;
               STUDY.plotSetup = 0;
               STUDY.revise();
               allWindRoses.displayImage = false;
@@ -40873,14 +40883,14 @@ void mouseClicked () {
             }
 
             if (menu_option.equals("Process Active Impact")) {
-              STUDY.PlotImpacts = 0;
+              STUDY.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
               allSolarImpacts.calculate_Impact_selectedSections();
 
               SOLARCHVISION_view_changed();
             }
 
             if (menu_option.equals("Process Passive Impact")) {
-              STUDY.PlotImpacts = 1;
+              STUDY.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
               allSolarImpacts.calculate_Impact_selectedSections();
 
               SOLARCHVISION_view_changed();
@@ -56233,7 +56243,7 @@ test these functions:
 
 
 
-// should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == 6) || (STUDY.PlotImpacts == 7)) {
+// should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == PlotImpacts_FROMSUN_ACTIVE) || (STUDY.PlotImpacts == PlotImpacts_FROMSUN_PASSIVE)) {
 
 
 
