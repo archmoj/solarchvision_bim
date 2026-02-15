@@ -8353,15 +8353,15 @@ solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 String[][] allRollouts = {
   {
+    "Period & Scenarios", "Time", "Ranges", "Filters"
+  }
+  ,
+  {
     "Location & Data", "Point", "Stations", "Weather"
   }
   ,
   {
     "Geometries & Space", "Create", "Modify", "Solid", "Surface", "Fractal Tree", "Environment", "Viewport", "Simulation", "Other"
-  }
-  ,
-  {
-    "Period & Scenarios", "Time", "Ranges", "Filters"
   }
   ,
   {
@@ -8392,7 +8392,7 @@ class solarchvision_ROLLOUT {
   boolean update = true;
   boolean include = true;
 
-  int parent = 2; //0; // 0: Location, 1: Geometry, 2: Time, etc.
+  int parent = 0; // 0: Time, 1: Location, 2: Geometry, etc.
   int child = 1; // number of the category inside e.g. 1, 2, ...
 
 
@@ -8505,7 +8505,7 @@ class solarchvision_ROLLOUT {
 
 
 
-    if (this.parent == 0) { // Location & data
+    if (this.parent == 1) { // Location & data
 
 
       if (this.child == 1) { // Point
@@ -8558,7 +8558,7 @@ class solarchvision_ROLLOUT {
         GRIB2_Layer_Step = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, numberOfLayers, 1), 1));
       }
 
-    } else if (this.parent == 1) { // Geometries & Space
+    } else if (this.parent == 2) { // Geometries & Space
       if (this.child == 1) { // Create
 
         //addToLastGroup = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
@@ -8764,7 +8764,7 @@ class solarchvision_ROLLOUT {
         OBJECTS_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2);
       }
 
-    } else if (this.parent == 2) { // Period & Scenarios
+    } else if (this.parent == 0) { // Period & Scenarios
 
       if (this.child == 1) { // Time
 
