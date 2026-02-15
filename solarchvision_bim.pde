@@ -39606,7 +39606,7 @@ void mouseWheel (MouseEvent event) {
               float y1 = STUDY.Y_control - 0.45 * displayBarHeight;
               float y2 = STUDY.Y_control + 0.45 * displayBarHeight;
 
-              if (UI_timeBar.Items[i][0].equals("Day")) {
+              if (UI_timeBar.Items[i][0].equals("Hours")) {
 
                 if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
@@ -39641,7 +39641,7 @@ void mouseWheel (MouseEvent event) {
                 }
               }
 
-              if (UI_timeBar.Items[i][0].equals("Year")) {
+              if (UI_timeBar.Items[i][0].equals("Days")) {
 
                 if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
@@ -51566,11 +51566,11 @@ class solarchvision_UI_timeBar {
   String[][] Items = {
 
     {
-      "Day"
+      "Hours"
     }
     ,
     {
-      "Year"
+      "Days"
     }
     ,
     {
@@ -51618,7 +51618,7 @@ class solarchvision_UI_timeBar {
 
         text(this.Items[i][0] + ": ", x1, STUDY.Y_control - 0.2 * MessageSize);
 
-        if (this.Items[i][0].equals("Day")) {
+        if (this.Items[i][0].equals("Hours")) {
 
           if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
@@ -51668,7 +51668,7 @@ class solarchvision_UI_timeBar {
           }
         }
 
-        if (this.Items[i][0].equals("Year")) {
+        if (this.Items[i][0].equals("Days")) {
 
           if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
