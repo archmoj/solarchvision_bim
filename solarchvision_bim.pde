@@ -41193,6 +41193,7 @@ void mouseClicked () {
             }
             if (menu_option.equals("Use real-time observed (SWOB)")) {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
+              STUDY.joinDays = 1;
 
               ENSEMBLE_OBSERVED_load = true;
               SOLARCHVISION_update_ENSEMBLE_OBSERVED();
@@ -41208,6 +41209,7 @@ void mouseClicked () {
             }
             if (menu_option.equals("Use weather forecast (NAEFS)")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
+              STUDY.joinDays = 1;
 
               ENSEMBLE_FORECAST_load = true;
               update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
