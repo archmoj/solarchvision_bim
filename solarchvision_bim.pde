@@ -8985,8 +8985,8 @@ class solarchvision_ROLLOUT {
 
     float new_value = v;
 
-    if (new_value < min_v) new_value = max_v;
-    if (new_value > max_v) new_value = min_v;
+    if (new_value < min_v) new_value = min_v;
+    if (new_value > max_v) new_value = max_v;
 
     float cx, cy, cr;
     float w1, w2, h, o, t_o;
@@ -9047,8 +9047,8 @@ class solarchvision_ROLLOUT {
       }
     }
 
-    if (new_value < min_v) new_value = max_v;
-    if (new_value > max_v) new_value = min_v;
+    if (new_value < min_v) new_value = min_v;
+    if (new_value > max_v) new_value = max_v;
 
 
 
