@@ -31910,7 +31910,7 @@ class solarchvision_User3D {
   float create_powZ = CubePower;
   float create_powAll = 8;
   int create_powRnd = 0;
-  int create_SphereDegree = 2; //4;
+  int create_SphereDegree = 4;
   int create_CylinderDegree = 24;
   int create_PolyDegree = 6;
   int create_Parametric_Type = 0;
