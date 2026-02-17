@@ -48480,12 +48480,33 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
+      "Setup",
+      "Layout -2",
+      "Layout -1",
+      "Layout 0",
+      "Layout 1",
+      "Layout 2",
+      "Layout 3",
+      "Layout 4",
+      "Layout 5",
+      "Layout 6",
+      "Layout 7",
+      "Layout 8",
+      "3D-model 1",
+      "3D-model 2",
+      "3D-model 3",
+      "3D-model 4",
+      "3D-model 5",
+      "3D-model 6"
+    }
+    ,
+    {
       "Layer"
       // Parameters are added here later in the process.
     }
     ,
     {
-      "Study",
+      "Analysis",
       "Wind pattern (active)",
       "Wind pattern (passive)",
       "Urban solar potential (active)",
@@ -48505,27 +48526,6 @@ class solarchvision_UI_menuBar {
       "Process Passive Impact",
       "Process Solid Impact",
       "Run wind 3D-model"
-    }
-    ,
-    {
-      "Setup",
-      "Layout -2",
-      "Layout -1",
-      "Layout 0",
-      "Layout 1",
-      "Layout 2",
-      "Layout 3",
-      "Layout 4",
-      "Layout 5",
-      "Layout 6",
-      "Layout 7",
-      "Layout 8",
-      "3D-model 1",
-      "3D-model 2",
-      "3D-model 3",
-      "3D-model 4",
-      "3D-model 5",
-      "3D-model 6"
     }
     ,
     {
