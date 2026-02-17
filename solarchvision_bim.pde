@@ -8363,7 +8363,7 @@ String[][] allRollouts = {
   }
   ,
   {
-    "Geometries & Space", "Create", "Modify", "Solid", "Surface", "Fractal Tree", "Environment", "Viewport", "Simulation", "Other"
+    "Geometries & Space", "Create", "Modify", "Solid", "Fractal Tree", "Environment", "Viewport", "Simulation", "Other"
   }
   ,
   {
@@ -8620,6 +8620,17 @@ class solarchvision_ROLLOUT {
         User3D.create_Volume = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Volume", User3D.create_Volume, 0, 25000, 1000);
 
         User3D.create_Snap = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Snap", User3D.create_Snap, 0, 1, 1), 1));
+
+        User3D.create_SphereDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.SphereDegree", User3D.create_SphereDegree, 0, 5, 1), 1));
+
+        User3D.create_CylinderDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.CylinderDegree", User3D.create_CylinderDegree, 3, 36, 1), 1));
+
+        User3D.create_PolyDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
+
+        User3D.create_Parametric_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Parametric_Type", User3D.create_Parametric_Type, 0, 7, 1), 1));
+        User3D.create_Person_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
+        User3D.create_Plant_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
+
       }
 
       if (this.child == 2) { // Modify
@@ -8660,20 +8671,8 @@ class solarchvision_ROLLOUT {
         User3D.create_powZ = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.powZ", User3D.create_powZ, 0.5, CubePower, -2);
       }
 
-      if (this.child == 4) { // Surface
 
-        User3D.create_SphereDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.SphereDegree", User3D.create_SphereDegree, 0, 5, 1), 1));
-
-        User3D.create_CylinderDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.CylinderDegree", User3D.create_CylinderDegree, 3, 36, 1), 1));
-
-        User3D.create_PolyDegree = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
-
-        User3D.create_Parametric_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Parametric_Type", User3D.create_Parametric_Type, 0, 7, 1), 1));
-        User3D.create_Person_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
-        User3D.create_Plant_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
-      }
-
-      if (this.child == 5) { // Fractal Tree
+      if (this.child == 4) { // Fractal Tree
 
         User3D.create_Model1D_Type = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.Type", User3D.create_Model1D_Type, 0, 0, 1), 1));
         User3D.create_Model1D_DegreeMax = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.DegreeMax", User3D.create_Model1D_DegreeMax, 0, 12, 1), 1));
@@ -8687,7 +8686,7 @@ class solarchvision_ROLLOUT {
         User3D.create_Model1D_TreeBase = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-create.TreeBase", User3D.create_Model1D_TreeBase, 0, 4, 0.1), 0.01);
       }
 
-      if (this.child == 6) { // Environment
+      if (this.child == 5) { // Environment
 
         //Land3D.loadTextures = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
         //Land3D.loadMesh = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
@@ -8725,7 +8724,7 @@ class solarchvision_ROLLOUT {
       }
 
 
-      if (this.child == 7) { // Viewport
+      if (this.child == 6) { // Viewport
 
         WIN3D.currentCamera = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1), 1));
 
@@ -8742,7 +8741,7 @@ class solarchvision_ROLLOUT {
       }
 
 
-      if (this.child == 8) { // Simulation
+      if (this.child == 7) { // Simulation
 
         IMPACTS_displayDay = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
 
@@ -8777,7 +8776,7 @@ class solarchvision_ROLLOUT {
         //allWindFlows.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "allWindFlows.displayAll", allWindFlows.displayAll, 0, 1, 1), 1));
       }
 
-      if (this.child == 9) { // Other
+      if (this.child == 8) { // Other
 
         allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "3D-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
 
