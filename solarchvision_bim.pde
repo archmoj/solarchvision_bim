@@ -48443,7 +48443,7 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
-      "Region",
+      "Location",
       "Use typical year (TMY)",
       "Use long-term (CWEEDS)",
       "Use long-term (CLMREC)",
@@ -48986,7 +48986,7 @@ class solarchvision_UI_menuBar {
               stroke(255);
               fill(255);
 
-              if (this.Items[i][0].equals("Region")) {
+              if (this.Items[i][0].equals("Location")) {
                 if (this.Items[i][j].equals("Display/Hide SWOB stations")) {
                   if (WORLD.displayAll_SWOB == 0) {
                     stroke(127);
