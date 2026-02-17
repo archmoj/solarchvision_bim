@@ -21979,7 +21979,7 @@ void setup () {
 
   changeCurrentLayerTo(8); // pointing to air temperature variable i.e. on the list of allLayers
 
-  frameRate(8);
+  frameRate(24);
 
   loop();
 }
