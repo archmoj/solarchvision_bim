@@ -27592,7 +27592,7 @@ class solarchvision_Land3D {
   int num_rows = 12; // 24;
   int num_columns = 24 + 1; // 48 + 1;
 
-  int skipStart = 0;
+  int skipStart = 1;
   int skipEnd = 0;
 
 
