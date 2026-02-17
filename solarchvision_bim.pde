@@ -27176,7 +27176,7 @@ class solarchvision_Earth3D {
 
   private final static String CLASS_STAMP = "Earth3D";
 
-  boolean displaySurface = false; //true;
+  boolean displaySurface = true;
   boolean displayTexture = true;
 
   PImage[] Map;
