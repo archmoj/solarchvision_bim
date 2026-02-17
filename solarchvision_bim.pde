@@ -41244,31 +41244,13 @@ void mouseClicked () {
 
                     STUDY.revise();
                   } else {
+                    Develop_Option = UI_menuBar.selected_child - numberOfLayers;
 
-                    if ((Develop_Option == DEV_OP_06) || (Develop_Option == DEV_OP_07) || (Develop_Option == DEV_OP_08)) {
+                    SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
 
-                      if (CurrentLayer_id == DevelopLayer_id) {
+                    changeCurrentLayerTo(LAYER_developed.id);
 
-                        changeCurrentLayerTo(LAYER_developed.id);
-                      }
-
-                      Develop_Option = UI_menuBar.selected_child - numberOfLayers;
-
-                      SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-
-                      STUDY.revise();
-                    } else {
-
-                      DevelopLayer_id = CurrentLayer_id;
-
-                      changeCurrentLayerTo(LAYER_developed.id);
-
-                      Develop_Option = UI_menuBar.selected_child - numberOfLayers;
-
-                      SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-
-                      STUDY.revise();
-                    }
+                    STUDY.revise();
                   }
                 }
               }
