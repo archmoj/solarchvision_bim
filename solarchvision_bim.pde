@@ -43202,6 +43202,7 @@ void mouseClicked () {
 
 
             WORLD.revise();
+            WIN3D.revise();
           }
         }
 
