@@ -2179,20 +2179,15 @@ int GRIB2_DomainSelection = 4; int GRIB2_maxScenarios = 1;
 int AERIAL_graphOption = 0;
 
 
-final int DEV_OP_00 = 8;
-final int DEV_OP_01 = 6;
-final int DEV_OP_02 = 5;
-final int DEV_OP_03 = 7;
-final int DEV_OP_04 = 4;
-final int DEV_OP_05 = 3;
-final int DEV_OP_06 = 10;
-final int DEV_OP_07 = 9;
-final int DEV_OP_08 = 11;
-final int DEV_OP_09 = 0;
-final int DEV_OP_10 = 1;
-final int DEV_OP_11 = 2;
+final int DEV_WindPower = 0;
+final int DEV_AccumDegreeDay = 1;
+final int DEV_RadiationOnTracker = 2;
+final int DEV_AccumRadiationOnTracker = 3;
+final int DEV_RadiationOnSurface = 4;
+final int DEV_AccumRadiationOnSurface = 5;
+final int DEV_DirectOnMaterial = 6;
 
-int Develop_Option = DEV_OP_06; //between 0 - 11...
+int Develop_Option = DEV_WindPower;
 int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
 
 boolean DevelopData_update = true;
@@ -47938,7 +47933,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
 
 
 
-            if (Develop_Option == DEV_OP_00) {
+            if (Develop_Option == DEV_DirectOnMaterial) {
 
               if (is_defined(R_dir) && is_defined(R_dif)) {
 
@@ -47960,7 +47955,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             }
 
 
-            if (Develop_Option == DEV_OP_01) {
+            if (Develop_Option == DEV_RadiationOnSurface) {
               float Alpha = Develop_AngleInclination;
               float Beta = Develop_AngleOrientation;
 
@@ -47981,7 +47976,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
-            if (Develop_Option == DEV_OP_02) {
+            if (Develop_Option == DEV_AccumRadiationOnSurface) {
               float Alpha = Develop_AngleInclination;
               float Beta = Develop_AngleOrientation;
 
@@ -48001,7 +47996,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
-            if (Develop_Option == DEV_OP_03) {
+            if (Develop_Option == DEV_RadiationOnTracker) {
               float Alpha = funcs.asin_ang(SunR[3]);
               float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
 
@@ -48020,7 +48015,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
-            if (Develop_Option == DEV_OP_04) {
+            if (Develop_Option == DEV_AccumRadiationOnTracker) {
               float Alpha = funcs.asin_ang(SunR[3]);
               float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
 
@@ -48040,7 +48035,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             }
 
 
-            if (Develop_Option == DEV_OP_05) {
+            if (Develop_Option == DEV_AccumDegreeDay) {
 
               if (is_defined(T)) {
                 valuesSUM[now_k] += (T - 18) / 24;
@@ -48056,208 +48051,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
-            if (Develop_Option == DEV_OP_06) {
-
-              valuesSUM[now_k] = 0;
-              float sum_count = 0;
-
-              int num_count = STUDY.TrendJoinHours;
-
-
-              for (int _count = 1; _count <= num_count; _count++) {
-
-                int plus_i = - (_count - 1);
-
-                int new_k = k;
-                int new_i = ((i + plus_i) + 24 * 365 + 24 * (floor((i + plus_i) / 24.0))) % 24;
-                int new_j = (j + TIME.beginDay + 365 + floor((i + plus_i) / 24.0)) % 365;
-
-                if (new_j >= 365) {
-                  new_j = new_j % 365;
-                }
-                if (now_j < 0) {
-                  new_j = (new_j + 365) % 365;
-                }
-
-                float T_new = FLOAT_undefined;
-
-                Pa = getValue_CurrentDataSource(new_i, new_j, new_k, DevelopLayer_id);
-
-                if (is_undefined(Pa)) {
-                  T_new = FLOAT_undefined;
-                } else {
-                  T_new = Pa;
-                }
-
-                if (is_defined(T_new)) {
-                  float _weight = (num_count - _count + 1);
-                  if (STUDY.TrendJoinType == 1) _weight = 1;
-                  sum_count += _weight;
-                  valuesSUM[now_k] += _weight * T_new;
-                }
-              }
-
-              if (sum_count != 0) {
-                valuesSUM[now_k] /= sum_count;
-              } else {
-                valuesSUM[now_k] = FLOAT_undefined;
-              }
-              setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-
-              valuesSUM[now_k] = 0;
-
-              LAYER_developed.descriptions[Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour PASSIVE trend of " + CurrentLayer_descriptions[Language_EN];
-              LAYER_developed.descriptions[Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour PASSIVE trend of " + CurrentLayer_descriptions[Language_FR]; // ??
-            }
-
-
-            if (Develop_Option == DEV_OP_07) {
-
-              valuesSUM[now_k] = 0;
-              float sum_count = 0;
-
-              int num_count = STUDY.TrendJoinHours;
-
-
-              for (int _count = 1; _count <= ceil ( (num_count + 1) / 2); _count++) {
-                for (int dir_count = -1; dir_count <= 1; dir_count += 2) {
-
-                  int plus_i = dir_count * (_count - 1);
-
-                  int new_k = k;
-                  int new_i = ((i + plus_i) + 24 * 365 + 24 * (floor((i + plus_i) / 24.0))) % 24;
-                  int new_j = (j + TIME.beginDay + 365 + floor((i + plus_i) / 24.0)) % 365;
-
-                  if (new_j >= 365) {
-                    new_j = new_j % 365;
-                  }
-                  if (now_j < 0) {
-                    new_j = (new_j + 365) % 365;
-                  }
-
-                  float T_new = FLOAT_undefined;
-
-                  Pa = getValue_CurrentDataSource(new_i, new_j, new_k, DevelopLayer_id);
-
-                  if (is_undefined(Pa)) {
-                    T_new = FLOAT_undefined;
-                  } else {
-                    T_new = Pa;
-                  }
-
-                  if (is_defined(T_new)) {
-                    float _weight = (num_count - _count + 1);
-                    if (STUDY.TrendJoinType == 1) _weight = 1;
-                    sum_count += _weight;
-                    valuesSUM[now_k] += _weight * T_new;
-                  }
-                }
-              }
-
-              if (sum_count != 0) {
-                valuesSUM[now_k] /= sum_count;
-              } else {
-                valuesSUM[now_k] = FLOAT_undefined;
-              }
-              setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-
-              valuesSUM[now_k] = 0;
-
-
-              LAYER_developed.descriptions[Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour NORMAL trend of " + CurrentLayer_descriptions[Language_EN];
-              LAYER_developed.descriptions[Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour NORMAL trend of " + CurrentLayer_descriptions[Language_FR]; // ??
-            }
-
-            if (Develop_Option == DEV_OP_08) {
-
-              valuesSUM[now_k] = 0;
-              float sum_count = 0;
-
-              int num_count = STUDY.TrendJoinHours;
-
-
-              for (int _count = num_count; _count > 0; _count--) {
-
-                int plus_i = _count - 1;
-
-                int new_k = k;
-                int new_i = ((i + plus_i) + 24 * floor((i + plus_i) / 24.0)) % 24;
-                int new_j = (j + TIME.beginDay + 365 + floor((i + plus_i) / 24.0)) % 365;
-
-                if (new_j >= 365) {
-                  new_j = new_j % 365;
-                }
-                if (now_j < 0) {
-                  new_j = (new_j + 365) % 365;
-                }
-
-                float T_new = FLOAT_undefined;
-
-                Pa = getValue_CurrentDataSource(new_i, new_j, new_k, DevelopLayer_id);
-
-                if (is_undefined(Pa)) {
-                  T_new = FLOAT_undefined;
-                } else {
-                  T_new = Pa;
-                }
-
-                if (is_defined(T_new)) {
-                  float _weight = (num_count - _count + 1);
-                  if (STUDY.TrendJoinType == 1) _weight = 1;
-                  sum_count += _weight;
-                  valuesSUM[now_k] += _weight * T_new;
-                }
-              }
-
-              if (sum_count != 0) {
-                valuesSUM[now_k] /= sum_count;
-              } else {
-                valuesSUM[now_k] = FLOAT_undefined;
-              }
-              setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-
-              valuesSUM[now_k] = 0;
-
-
-              LAYER_developed.descriptions[Language_EN] = String.valueOf(STUDY.TrendJoinHours) + "-hour ACTIVE trend of " + CurrentLayer_descriptions[Language_EN];
-              LAYER_developed.descriptions[Language_FR] = String.valueOf(STUDY.TrendJoinHours) + "-hour ACTIVE trend of " + CurrentLayer_descriptions[Language_FR]; // ??
-            }
-
-
-            if (Develop_Option == DEV_OP_09) {
-
-              if (is_defined(RAIN)) {
-                valuesSUM[now_k] = RAIN;
-
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-              }
-
-              LAYER_developed.V_scale = 2.5;
-              LAYER_developed.V_offset = 0; //-20.0 / (1.0 * STUDY.LevelPix); // so that we can have two views on probabilites above and below zero.
-              LAYER_developed.V_belowLine = 0; //1;
-              LAYER_developed.unit = "mm/12hours";
-              LAYER_developed.descriptions[Language_EN] = "12-hour Surface Accumulated Precipitation";
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
-            }
-
-            if (Develop_Option == DEV_OP_10) {
-
-              if (is_defined(RAIN)) {
-                valuesSUM[now_k] = RAIN;
-
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-              }
-
-              LAYER_developed.V_scale = 2.0; //4.0;
-              LAYER_developed.V_offset = 0;
-              LAYER_developed.V_belowLine = 0; //1;
-              LAYER_developed.unit = "mm/h";
-              LAYER_developed.descriptions[Language_EN] = "Hourly Surface Precipitation (interpolated)";
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
-            }
-
-
-            if (Develop_Option == DEV_OP_11) {
+            if (Develop_Option == DEV_WindPower) {
 
               if (is_defined(WS)) {
 
@@ -48279,7 +48073,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
 
 
 
-            if ((Develop_Option == DEV_OP_02) || (Develop_Option == DEV_OP_04)) {
+            if ((Develop_Option == DEV_AccumRadiationOnSurface) || (Develop_Option == DEV_AccumRadiationOnTracker)) {
 
               if ((i == 23) && (Develop_DayHour == 1)) {
                 for (int l = i + 1 - 24; l <= i; l++) {
@@ -48853,7 +48647,7 @@ class solarchvision_UI_menuBar {
        }
     }
 
-    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 12];
+    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 7];
 
     this.Items[LayersID_in_Bar][0] = "Layer";
 
@@ -48862,18 +48656,13 @@ class solarchvision_UI_menuBar {
       this.Items[LayersID_in_Bar][i + 1] = allLayers[i].descriptions[Language_EN];
     }
 
-    this.Items[LayersID_in_Bar][numberOfLayers + 0] = "12h accumulated Precipitation";
-    this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Hourly precipitation";
-    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Wind power";
-    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Accumulated degree day <18°C<";
-    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Accumulated radiation on tracker";
+    this.Items[LayersID_in_Bar][numberOfLayers + 0] = "Wind power";
+    this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Accumulated degree day <18°C<";
+    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on solar tracker";
+    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Accumulated radiation on tracker";
+    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Radiation on surface inclination";
     this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Accumulated radiation on surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on surface inclination";
-    this.Items[LayersID_in_Bar][numberOfLayers + 7] = "Radiation on solar tracker";
-    this.Items[LayersID_in_Bar][numberOfLayers + 8] = "Radiation on surface material";
-    this.Items[LayersID_in_Bar][numberOfLayers + 9] = "Normal trend of parameter";
-    this.Items[LayersID_in_Bar][numberOfLayers + 10] = "Passive trend of parameter";
-    this.Items[LayersID_in_Bar][numberOfLayers + 11] = "Active trend of parameter";
+    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on surface material";
   }
 
 
