@@ -8784,7 +8784,7 @@ class solarchvision_ROLLOUT {
         Land3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
 
         Sky3D.displayTessellation = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));
-        Sky3D.scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 0.0000001, 1000000, -2);
+        Sky3D.scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 1, 4000000, -2);
 
         BIOSPHERE_drawResolution = funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "Biosphere_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
 
