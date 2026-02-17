@@ -40610,9 +40610,13 @@ void SOLARCHVISION_fileSelected_Open (File selectedFile) {
 
     println("Loading:", Filename);
 
+    noLoop();
+
     SOLARCHVISION_load_project(Filename);
 
     SOLARCHVISION_update_project_info(selectedFile);
+
+    loop();
   }
 }
 
