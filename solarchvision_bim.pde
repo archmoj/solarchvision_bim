@@ -3201,6 +3201,8 @@ class solarchvision_WIN3D {
         case TAB:
           if (e.isShiftDown() == true) {
             Impact_TYPE = (Impact_TYPE + 1) % numberOfImpactVariations;
+            if (this.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+            if (this.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
             this.revise();
             ROLLOUT.revise();
