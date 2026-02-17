@@ -288,7 +288,7 @@ float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intre
 
 float GlobalAlbedo = 0; // 0-100
 
-float BIOSPHERE_drawResolution = 5.0; //2.5; // 5: 5 degrees
+float BIOSPHERE_drawResolution = 1; //2.5; // 5: 5 degrees
 
 float Planetary_Magnification = 4.0; // <<<<<<<<<<
 
