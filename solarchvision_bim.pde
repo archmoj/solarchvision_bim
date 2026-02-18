@@ -11141,6 +11141,7 @@ class solarchvision_Polylines {
 
   void draw (int target_window) {
 
+
     if (allFaces.displayAll) {
 
       if (target_window == TypeWindow.WIN3D) {
@@ -42611,11 +42612,11 @@ void mouseClicked () {
               allCameras.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase Faces")) {
+            if (menu_option.equals("Erase All Faces")) {
               allFaces.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase Polylines")) {
+            if (menu_option.equals("Erase All Polylines")) {
               allPolylines.makeEmpty(0);
             }
 
@@ -48106,8 +48107,8 @@ class solarchvision_UI_menuBar {
       "Erase All Solids",
       "Erase All Sections",
       "Erase All Cameras",
-      "Erase Faces",
-      "Erase Polylines",
+      "Erase All Faces",
+      "Erase All Polylines",
       "Erase All",
       "Display All Viewports",
       "Enlarge 3D Viewport",
