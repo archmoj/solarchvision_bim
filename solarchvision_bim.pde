@@ -2180,12 +2180,9 @@ int AERIAL_graphOption = 0;
 
 
 final int DEV_WindPower = 0;
-final int DEV_AccumDegreeDay = 1;
-final int DEV_RadiationOnTracker = 2;
-final int DEV_AccumRadiationOnTracker = 3;
-final int DEV_RadiationOnSurface = 4;
-final int DEV_AccumRadiationOnSurface = 5;
-final int DEV_DirectOnMaterial = 6;
+final int DEV_RadiationOnTracker = 1;
+final int DEV_RadiationOnSurface = 2;
+final int DEV_DirectOnMaterial = 3;
 
 int Develop_Option = DEV_WindPower;
 int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
@@ -47976,26 +47973,6 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
-            if (Develop_Option == DEV_AccumRadiationOnSurface) {
-              float Alpha = Develop_AngleInclination;
-              float Beta = Develop_AngleOrientation;
-
-              if (is_defined(R_dir) && is_defined(R_dif)) {
-
-                valuesSUM[now_k] += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
-
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, 0.001 * valuesSUM[now_k]);
-              }
-
-
-              LAYER_developed.V_scale = 2.5;
-              LAYER_developed.V_offset = -40;
-              LAYER_developed.V_belowLine = 1;
-              LAYER_developed.unit = "kWh/m²";
-              LAYER_developed.descriptions[Language_EN] = "Accumulated radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
-            }
-
             if (Develop_Option == DEV_RadiationOnTracker) {
               float Alpha = funcs.asin_ang(SunR[3]);
               float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
@@ -48012,42 +47989,6 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.V_belowLine = 0;
               LAYER_developed.unit = "W/m²";
               LAYER_developed.descriptions[Language_EN] = "Radiation on solar tracker";
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
-            }
-
-            if (Develop_Option == DEV_AccumRadiationOnTracker) {
-              float Alpha = funcs.asin_ang(SunR[3]);
-              float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
-
-              if (is_defined(R_dir) && is_defined(R_dif)) {
-
-                valuesSUM[now_k] += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
-
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, 0.001 * valuesSUM[now_k]);
-              }
-
-              LAYER_developed.V_scale = 2.5;
-              LAYER_developed.V_offset = -40;
-              LAYER_developed.V_belowLine = 1;
-              LAYER_developed.unit = "kWh/m²";
-              LAYER_developed.descriptions[Language_EN] = "Accumulated radiation on solar tracker";
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
-            }
-
-
-            if (Develop_Option == DEV_AccumDegreeDay) {
-
-              if (is_defined(T)) {
-                valuesSUM[now_k] += (T - 18) / 24;
-
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-              }
-
-              LAYER_developed.V_scale = 1.0;
-              LAYER_developed.V_offset = 0;
-              LAYER_developed.V_belowLine = -1;
-              LAYER_developed.unit = "°C";
-              LAYER_developed.descriptions[Language_EN] = "Accumulated degree day (based on 18°C)";
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
@@ -48069,51 +48010,6 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             }
 
 
-
-
-
-
-            if ((Develop_Option == DEV_AccumRadiationOnSurface) || (Develop_Option == DEV_AccumRadiationOnTracker)) {
-
-              if ((i == 23) && (Develop_DayHour == 1)) {
-                for (int l = i + 1 - 24; l <= i; l++) {
-                  setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-                }
-                //STUDY.sumInterval = 24;
-                LAYER_developed.V_scale = 10;
-                LAYER_developed.V_offset = 0;
-                LAYER_developed.V_belowLine = 0;
-                LAYER_developed.unit += "/day";
-
-                valuesSUM[now_k] = 0;
-              }
-
-              if (((i == 11) || (i == 23)) && (Develop_DayHour == 2)) {
-                for (int l = i + 1 - 12; l <= i; l++) {
-                  setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-                }
-                //STUDY.sumInterval = 12;
-                LAYER_developed.V_scale = 10;
-                LAYER_developed.V_offset = 0;
-                LAYER_developed.V_belowLine = 0;
-                LAYER_developed.unit += "/12hours";
-
-                valuesSUM[now_k] = 0;
-              }
-
-              if (((i == 5) || (i == 11) || (i == 17) || (i == 23)) && (Develop_DayHour == 3)) {
-                for (int l = i + 1 - 6; l <= i; l++) {
-                  setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-                }
-                //STUDY.sumInterval = 6;
-                LAYER_developed.V_scale = 10;
-                LAYER_developed.V_offset = 0;
-                LAYER_developed.V_belowLine = 0;
-                LAYER_developed.unit += "/6hours";
-
-                valuesSUM[now_k] = 0;
-              }
-            }
           }
         }
       }
@@ -48647,7 +48543,7 @@ class solarchvision_UI_menuBar {
        }
     }
 
-    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 7];
+    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 4];
 
     this.Items[LayersID_in_Bar][0] = "Layer";
 
@@ -48657,12 +48553,9 @@ class solarchvision_UI_menuBar {
     }
 
     this.Items[LayersID_in_Bar][numberOfLayers + 0] = "Wind power";
-    this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Accumulated degree day <18°C<";
-    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on solar tracker";
-    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Accumulated radiation on tracker";
-    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Radiation on surface inclination";
-    this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Accumulated radiation on surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on surface material";
+    this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Radiation on solar tracker";
+    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on surface inclination";
+    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Radiation on surface material";
   }
 
 
