@@ -160,7 +160,7 @@ class solarchvision_OBJECTTYPE {
   private final static int SOLID = 7;
   private final static int SECTION = 8;
   private final static int CAMERA = 9;
-  private final static int CURVE = 10;
+  private final static int POLYLINE = 10;
 
 }
 
@@ -208,7 +208,7 @@ class solarchvision_CREATE {
   private final static int Model1Ds   = 13;
   private final static int Face       = 14;
   private final static int Vertex     = 15;
-  private final static int Curve      = 16;
+  private final static int Polyline   = 16;
   private final static int Solid      = 17;
   private final static int Section    = 18;
   private final static int Camera     = 19;
@@ -2676,7 +2676,7 @@ class solarchvision_WIN3D {
 
           allFaces.draw(TypeWindow.WIN3D);
 
-          allCurves.draw(TypeWindow.WIN3D);
+          allPolylines.draw(TypeWindow.WIN3D);
 
           allPoints.draw();
 
@@ -8692,7 +8692,7 @@ class solarchvision_ROLLOUT {
         //allModel2Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
         //allModel1Ds.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
         //allModel1Ds.displayLeaves = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
-        //allCurves.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allCurves.displayAll", allCurves.displayAll, 0, 1, 1), 1));
+        //allPolylines.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allPolylines.displayAll", allPolylines.displayAll, 0, 1, 1), 1));
         //allFaces.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
 
         //allSolids.displayAll = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 1, 0, "allSolids.displayAll", allSolids.displayAll, 0, 1, 1), 1));
@@ -8894,9 +8894,9 @@ class solarchvision_ROLLOUT {
 
         //Select3D.Face_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Face_displayEdges", Select3D.Face_displayEdges, 0, 1, 1), 1));
         //Select3D.Face_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Face_displayVertexCount", Select3D.Face_displayVertexCount, 0, 1, 1), 1));
-        //Select3D.Curve_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Curve_displayVertexCount", Select3D.Curve_displayVertexCount, 0, 1, 1), 1));
+        //Select3D.Polyline_displayVertexCount = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Polyline_displayVertexCount", Select3D.Polyline_displayVertexCount, 0, 1, 1), 1));
         //Select3D.Vertex_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Vertex_displayVertices", Select3D.Vertex_displayVertices, 0, 1, 1), 1));
-        //Select3D.Curve_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Curve_displayVertices", Select3D.Curve_displayVertices, 0, 1, 1), 1));
+        //Select3D.Polyline_displayVertices = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Polyline_displayVertices", Select3D.Polyline_displayVertices, 0, 1, 1), 1));
 
         //Select3D.Model2D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Model2D_displayEdges", Select3D.Model2D_displayEdges, 0, 1, 1), 1));
         //Select3D.Model1D_displayEdges = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 0, "3D-select.Model1D_displayEdges", Select3D.Model1D_displayEdges, 0, 1, 1), 1));
@@ -10958,11 +10958,11 @@ class solarchvision_Faces {
 
 solarchvision_Faces allFaces = new solarchvision_Faces();
 
-class solarchvision_Curves {
+class solarchvision_Polylines {
 
-  private final static String CLASS_STAMP = "Curves";
+  private final static String CLASS_STAMP = "Polylines";
 
-  solarchvision_Curves () { // constructor
+  solarchvision_Polylines () { // constructor
     makeEmpty(0);
   }
 
@@ -10978,14 +10978,14 @@ class solarchvision_Curves {
 
     if (allGroups != null) {
       for (int q = 0; q < allGroups.num; q++) {
-        allGroups.Curves[q][0] = 0;
-        allGroups.Curves[q][1] = -1;
+        allGroups.Polylines[q][0] = 0;
+        allGroups.Polylines[q][1] = -1;
       }
     }
 
     if (Select3D != null) {
       Select3D.deselect_Groups();
-      Select3D.deselect_Curves();
+      Select3D.deselect_Polylines();
     }
 
     SOLARCHVISION_model_changed();
@@ -11041,15 +11041,15 @@ class solarchvision_Curves {
 
 
 
-  void beginNewCurve () {
+  void beginNewPolyline () {
 
-    int[] newCurve_nodes = {};
+    int[] newPolyline_nodes = {};
 
-    this.create(newCurve_nodes);
+    this.create(newPolyline_nodes);
   }
 
 
-  void add_VertexToLastCurve (float x, float y, float z) {
+  void add_VertexToLastPolyline (float x, float y, float z) {
 
     int n = this.nodes.length - 1;
 
@@ -11066,22 +11066,22 @@ class solarchvision_Curves {
 
     {
 
-      int[][] newCurve_options = {
+      int[][] newPolyline_options = {
         {
           current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
         }
       };
 
-      this.options =  (int[][]) concat(this.options, newCurve_options);
+      this.options =  (int[][]) concat(this.options, newPolyline_options);
 
-      int[][] newCurve_nodes = {
+      int[][] newPolyline_nodes = {
         f
       };
 
-      this.nodes = (int[][]) concat(this.nodes, newCurve_nodes);
+      this.nodes = (int[][]) concat(this.nodes, newPolyline_nodes);
     }
 
-    if (allGroups.num > 0) allGroups.Curves[allGroups.num - 1][1] = this.nodes.length - 1;
+    if (allGroups.num > 0) allGroups.Polylines[allGroups.num - 1][1] = this.nodes.length - 1;
 
     return(this.nodes.length - 1);
   }
@@ -11096,13 +11096,13 @@ class solarchvision_Curves {
     current_Weight = wgt;
     current_Closed = clz;
 
-    int[] newCurve_nodes = new int[points.length];
+    int[] newPolyline_nodes = new int[points.length];
 
     for (int i = 0; i < points.length; i++) {
-      newCurve_nodes[i] = allPoints.create(points[i][0], points[i][1], points[i][2]);
+      newPolyline_nodes[i] = allPoints.create(points[i][0], points[i][1], points[i][2]);
     }
 
-    this.create(newCurve_nodes);
+    this.create(newPolyline_nodes);
   }
 
 
@@ -11123,7 +11123,7 @@ class solarchvision_Curves {
     current_Closed = clz;
 
 
-    int[] newCurve_nodes = {
+    int[] newPolyline_nodes = {
       allPoints.create(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
     };
     for (int i = 1; i <= EndOfLoop; i++) {
@@ -11131,10 +11131,10 @@ class solarchvision_Curves {
       int[] f = {
         allPoints.create(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
       };
-      newCurve_nodes = concat(newCurve_nodes, f);
+      newPolyline_nodes = concat(newPolyline_nodes, f);
     }
 
-    this.create(newCurve_nodes);
+    this.create(newPolyline_nodes);
   }
 
 
@@ -11340,15 +11340,15 @@ class solarchvision_Curves {
           }
           else {
 
-            int[] tmpCurve = new int[n];
+            int[] tmpPolyline = new int[n];
             float[] G = {
               0, 0, 0
             };
             for (int j = 0; j < n; j++) {
-              tmpCurve[j] = this.nodes[f][j];
-              G[0] += allPoints.getX(tmpCurve[j]) / float(n);
-              G[1] += allPoints.getY(tmpCurve[j]) / float(n);
-              G[2] += allPoints.getZ(tmpCurve[j]) / float(n);
+              tmpPolyline[j] = this.nodes[f][j];
+              G[0] += allPoints.getX(tmpPolyline[j]) / float(n);
+              G[1] += allPoints.getY(tmpPolyline[j]) / float(n);
+              G[2] += allPoints.getZ(tmpPolyline[j]) / float(n);
             }
 
             for (int j = 0; j < n; j++) {
@@ -11512,7 +11512,7 @@ class solarchvision_Curves {
 
 }
 
-solarchvision_Curves allCurves = new solarchvision_Curves();
+solarchvision_Polylines allPolylines = new solarchvision_Polylines();
 
 
 class solarchvision_Groups {
@@ -11524,7 +11524,7 @@ class solarchvision_Groups {
   }
 
   int num;
-  int[][] Curves;
+  int[][] Polylines;
   int[][] Faces;
   int[][] Solids;
   int[][] Model1Ds;
@@ -11537,7 +11537,7 @@ class solarchvision_Groups {
     this.Model1Ds = new int [n][2];
     this.Model2Ds = new int [n][2];
     this.Faces = new int [n][2];
-    this.Curves = new int [n][2];
+    this.Polylines = new int [n][2];
     this.Solids = new int [n][2];
     this.Pivots = new float [n][9];
 
@@ -11550,12 +11550,12 @@ class solarchvision_Groups {
 
 
 
-  int getStart_Curve (int n) {
-    return this.Curves[n][0];
+  int getStart_Polyline (int n) {
+    return this.Polylines[n][0];
   }
 
-  int getStop_Curve (int n) {
-    return this.Curves[n][1];
+  int getStop_Polyline (int n) {
+    return this.Polylines[n][1];
   }
 
   int getStart_Face (int n) {
@@ -11590,12 +11590,12 @@ class solarchvision_Groups {
     return this.Model2Ds[n][1];
   }
 
-  void setStart_Curve (int n, int t) {
-    this.Curves[n][0] = t;
+  void setStart_Polyline (int n, int t) {
+    this.Polylines[n][0] = t;
   }
 
-  void setStop_Curve (int n, int t) {
-    this.Curves[n][1] = t;
+  void setStop_Polyline (int n, int t) {
+    this.Polylines[n][1] = t;
   }
 
   void setStart_Face (int n, int t) {
@@ -11686,12 +11686,12 @@ class solarchvision_Groups {
     }; // i.e. null because start > end
     this.Faces = (int[][]) concat(this.Faces, newObject_Faces);
 
-    int[][] newObject_Curves = {
+    int[][] newObject_Polylines = {
       {
-        allCurves.nodes.length, -1
+        allPolylines.nodes.length, -1
       }
     }; // i.e. null because start > end
-    this.Curves = (int[][]) concat(this.Curves, newObject_Curves);
+    this.Polylines = (int[][]) concat(this.Polylines, newObject_Polylines);
 
 
 
@@ -11712,7 +11712,7 @@ class solarchvision_Groups {
 
     if (current_ObjectCategory == ObjectCategory.SOLID) run_process = true;
     if (current_ObjectCategory == ObjectCategory.FACE) run_process = true;
-    if (current_ObjectCategory == ObjectCategory.CURVE) run_process = true;
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) run_process = true;
     if (current_ObjectCategory == ObjectCategory.MODEL2D) run_process = true;
     if (current_ObjectCategory == ObjectCategory.MODEL1D) run_process = true;
 
@@ -11871,24 +11871,24 @@ class solarchvision_Groups {
       }
 
 
-      if (current_ObjectCategory == ObjectCategory.CURVE) {
+      if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
-        for (int o = 0; o < Select3D.Curve_ids.length; o++) {
+        for (int o = 0; o < Select3D.Polyline_ids.length; o++) {
 
-          int f = Select3D.Curve_ids[o];
+          int f = Select3D.Polyline_ids[o];
 
           int number_of_Vertices_before = allPoints.getLength();
 
           int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
           int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
 
-          if ((0 <= f) && (f < allCurves.nodes.length)) {
+          if ((0 <= f) && (f < allPolylines.nodes.length)) {
 
-            int[] newCurve_nodes = {
+            int[] newPolyline_nodes = {
             };
 
-            for (int j = 0; j < allCurves.nodes[f].length; j++) {
-              int vNo = allCurves.nodes[f][j];
+            for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+              int vNo = allPolylines.nodes[f][j];
 
               int vertex_listed = -1;
 
@@ -11921,17 +11921,17 @@ class solarchvision_Groups {
                 number_of_Vertices_before + vertex_listed
               };
 
-              newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
+              newPolyline_nodes = concat(newPolyline_nodes, new_vertexItem);
             }
 
-            current_Material = allCurves.getMaterial(f);
-            current_Tessellation = allCurves.getTessellation(f);
-            current_Layer = allCurves.getLayer(f);
-            current_Visibility = allCurves.getVisibility(f);
-            current_Weight = allCurves.getWeight(f);
-            current_Closed = allCurves.getClose(f);
+            current_Material = allPolylines.getMaterial(f);
+            current_Tessellation = allPolylines.getTessellation(f);
+            current_Layer = allPolylines.getLayer(f);
+            current_Visibility = allPolylines.getVisibility(f);
+            current_Weight = allPolylines.getWeight(f);
+            current_Closed = allPolylines.getClose(f);
 
-            allCurves.create(newCurve_nodes);
+            allPolylines.create(newPolyline_nodes);
           }
         }
       }
@@ -11967,8 +11967,8 @@ class solarchvision_Groups {
         this.Faces[OBJ_ID][0] = 0;
         this.Faces[OBJ_ID][1] = -1;
 
-        this.Curves[OBJ_ID][0] = 0;
-        this.Curves[OBJ_ID][1] = -1;
+        this.Polylines[OBJ_ID][0] = 0;
+        this.Polylines[OBJ_ID][1] = -1;
 
         this.Model1Ds[OBJ_ID][0] = 0;
         this.Model1Ds[OBJ_ID][1] = -1;
@@ -12004,7 +12004,7 @@ class solarchvision_Groups {
     for (int OBJ_ID = 0; OBJ_ID < this.num; OBJ_ID++) {
 
       if ((0 <= this.Faces   [OBJ_ID][0]) && (this.Faces   [OBJ_ID][0] <= this.Faces   [OBJ_ID][1])) continue;
-      if ((0 <= this.Curves  [OBJ_ID][0]) && (this.Curves  [OBJ_ID][0] <= this.Curves  [OBJ_ID][1])) continue;
+      if ((0 <= this.Polylines  [OBJ_ID][0]) && (this.Polylines  [OBJ_ID][0] <= this.Polylines  [OBJ_ID][1])) continue;
       if ((0 <= this.Model1Ds[OBJ_ID][0]) && (this.Model1Ds[OBJ_ID][0] <= this.Model1Ds[OBJ_ID][1])) continue;
       if ((0 <= this.Model2Ds[OBJ_ID][0]) && (this.Model2Ds[OBJ_ID][0] <= this.Model2Ds[OBJ_ID][1])) continue;
       if ((0 <= this.Solids  [OBJ_ID][0]) && (this.Solids  [OBJ_ID][0] <= this.Solids  [OBJ_ID][1])) continue;
@@ -12048,9 +12048,9 @@ class solarchvision_Groups {
                     nf(this.getStart_Face(i), 0) + "|" +
                     nf(this.getStop_Face(i), 0));
 
-      XML_setString(child, "Curves",
-                    nf(this.getStart_Curve(i), 0) + "|" +
-                    nf(this.getStop_Curve(i), 0));
+      XML_setString(child, "Polylines",
+                    nf(this.getStart_Polyline(i), 0) + "|" +
+                    nf(this.getStop_Polyline(i), 0));
 
       XML_setString(child, "Solids",
                     nf(this.getStart_Solid(i), 0) + "|" +
@@ -12099,9 +12099,9 @@ class solarchvision_Groups {
       }
 
       {
-        String[] parts = split(XML_getString(children[i], "Curves"), "|");
-        this.setStart_Curve(i, int(parts[0]));
-        this.setStop_Curve(i, int(parts[1]));
+        String[] parts = split(XML_getString(children[i], "Polylines"), "|");
+        this.setStart_Polyline(i, int(parts[0]));
+        this.setStop_Polyline(i, int(parts[1]));
       }
 
       {
@@ -14139,8 +14139,8 @@ class solarchvision_Edit3D {
 
   void selection (int p) {
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curves(p);
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      this.Polylines(p);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
@@ -14226,52 +14226,52 @@ class solarchvision_Edit3D {
     }
   }
 
-  void Curves (int p) {
+  void Polylines (int p) {
 
-    for (int o = Select3D.Curve_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Polyline_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3D.Curve_ids[o];
+      int OBJ_ID = Select3D.Polyline_ids[o];
 
       int f = OBJ_ID;
 
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-        int n = allCurves.getMaterial(f);
+        int n = allPolylines.getMaterial(f);
         n += p;
         if (n > 8) n = 0;
         if (n < 0) n = 8;
-        allCurves.setMaterial(f, n);
+        allPolylines.setMaterial(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-        int n = allCurves.getTessellation(f);
+        int n = allPolylines.getTessellation(f);
         n += p;
         if (n > 4) n = 0;
         if (n < 0) n = 4;
-        allCurves.setTessellation(f, n);
+        allPolylines.setTessellation(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-        int n = allCurves.getLayer(f);
+        int n = allPolylines.getLayer(f);
         n += p;
         if (n > 16) n = 0;
         if (n < 0) n = 16;
-        allCurves.setLayer(f, n);
+        allPolylines.setLayer(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-        int n = allCurves.getVisibility(f);
+        int n = allPolylines.getVisibility(f);
         n += p;
         if (n > 2) n = 0;
         if (n < 0) n = 2;
-        allCurves.setVisibility(f, n);
+        allPolylines.setVisibility(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-        int n = allCurves.getWeight(f);
+        int n = allPolylines.getWeight(f);
         n += p;
         if (n > 20) n = -20;
         if (n < -20) n = 20;
-        allCurves.setWeight(f, n);
+        allPolylines.setWeight(f, n);
       }
     }
   }
@@ -14330,47 +14330,47 @@ class solarchvision_Edit3D {
         }
       }
 
-      for (int f = allGroups.getStart_Curve(OBJ_ID); f <= allGroups.getStop_Curve(OBJ_ID); f++) {
-        if ((0 <= f) && (f < allCurves.nodes.length)) {
+      for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
+        if ((0 <= f) && (f < allPolylines.nodes.length)) {
 
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-            int n = allCurves.getMaterial(f);
+            int n = allPolylines.getMaterial(f);
             n += p;
             if (n > 8) n = 0;
             if (n < 0) n = 8;
-            allCurves.setMaterial(f, n);
+            allPolylines.setMaterial(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
-            int n = allCurves.getTessellation(f);
+            int n = allPolylines.getTessellation(f);
             n += p;
             if (n > 4) n = 0;
             if (n < 0) n = 4;
-            allCurves.setTessellation(f, n);
+            allPolylines.setTessellation(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Layer) {
-            int n = allCurves.getLayer(f);
+            int n = allPolylines.getLayer(f);
             n += p;
             if (n > 16) n = 0;
             if (n < 0) n = 16;
-            allCurves.setLayer(f, n);
+            allPolylines.setLayer(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
-            int n = allCurves.getVisibility(f);
+            int n = allPolylines.getVisibility(f);
             n += p;
             if (n > 2) n = 0;
             if (n < 0) n = 2;
-            allCurves.setVisibility(f, n);
+            allPolylines.setVisibility(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Weight) {
-            int n = allCurves.getWeight(f);
+            int n = allPolylines.getWeight(f);
             n += p;
             if (n > 20) n = -20;
             if (n < -20) n = 20;
-            allCurves.setWeight(f, n);
+            allPolylines.setWeight(f, n);
           }
         }
       }
@@ -14675,8 +14675,8 @@ class solarchvision_Scale3D {
       this.Vertices(x0, y0, z0, sx, sy, sz);
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curves(x0, y0, z0, sx, sy, sz);
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      this.Polylines(x0, y0, z0, sx, sy, sz);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
@@ -14798,13 +14798,13 @@ class solarchvision_Scale3D {
 
 
 
-  void Curves (float x0, float y0, float z0, float sx, float sy, float sz) {
+  void Polylines (float x0, float y0, float z0, float sx, float sy, float sz) {
 
-    int[] CurveVertices = Select3D.get_Curve_Vertices();
+    int[] PolylineVertices = Select3D.get_Polyline_Vertices();
 
-    for (int q = 0; q < CurveVertices.length; q++) {
+    for (int q = 0; q < PolylineVertices.length; q++) {
 
-      int f = CurveVertices[q];
+      int f = PolylineVertices[q];
 
       float x = allPoints.getX(f);
       float y = allPoints.getY(f);
@@ -15207,8 +15207,8 @@ class solarchvision_Rotate3D {
       this.Vertices(x0, y0, z0, r, the_Vector);
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curves(x0, y0, z0, r, the_Vector);
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      this.Polylines(x0, y0, z0, r, the_Vector);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
@@ -15336,13 +15336,13 @@ class solarchvision_Rotate3D {
   }
 
 
-  void Curves (float x0, float y0, float z0, float r, int the_Vector) {
+  void Polylines (float x0, float y0, float z0, float r, int the_Vector) {
 
-    int[] CurveVertices = Select3D.get_Curve_Vertices();
+    int[] PolylineVertices = Select3D.get_Polyline_Vertices();
 
-    for (int q = 0; q < CurveVertices.length; q++) {
+    for (int q = 0; q < PolylineVertices.length; q++) {
 
-      int f = CurveVertices[q];
+      int f = PolylineVertices[q];
 
       float x = allPoints.getX(f) - x0;
       float y = allPoints.getY(f) - y0;
@@ -15875,8 +15875,8 @@ class solarchvision_Move3D {
       this.Vertices(dx, dy, dz);
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curves(dx, dy, dz);
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      this.Polylines(dx, dy, dz);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
@@ -15956,13 +15956,13 @@ class solarchvision_Move3D {
   }
 
 
-  void Curves (float dx, float dy, float dz) {
+  void Polylines (float dx, float dy, float dz) {
 
-    int[] CurveVertices = Select3D.get_Curve_Vertices();
+    int[] PolylineVertices = Select3D.get_Polyline_Vertices();
 
-    for (int q = 0; q < CurveVertices.length; q++) {
+    for (int q = 0; q < PolylineVertices.length; q++) {
 
-      int f = CurveVertices[q];
+      int f = PolylineVertices[q];
 
       allPoints.move(f, dx, dy, dz);
     }
@@ -16298,8 +16298,8 @@ class solarchvision_Clone3D {
       this.Faces(produce_same_variation);
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curves(produce_same_variation);
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      this.Polylines(produce_same_variation);
     }
 
     if (current_ObjectCategory == ObjectCategory.SOLID) {
@@ -16484,26 +16484,26 @@ class solarchvision_Clone3D {
   }
 
 
-  void Curves (boolean produce_same_variation) {
+  void Polylines (boolean produce_same_variation) {
 
-    int number_of_Curves_before = allCurves.nodes.length;
+    int number_of_Polylines_before = allPolylines.nodes.length;
 
-    for (int o = 0; o < Select3D.Curve_ids.length; o++) {
+    for (int o = 0; o < Select3D.Polyline_ids.length; o++) {
 
-      int f = Select3D.Curve_ids[o];
+      int f = Select3D.Polyline_ids[o];
 
       int number_of_Vertices_before = allPoints.getLength();
 
       int[] PolymeshVertices_OLD = new int [0];  // keeps the list of exiting vertex numbers
       int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
 
-      if ((0 <= f) && (f < allCurves.nodes.length)) {
+      if ((0 <= f) && (f < allPolylines.nodes.length)) {
 
-        int[] newCurve_nodes = {
+        int[] newPolyline_nodes = {
         };
 
-        for (int j = 0; j < allCurves.nodes[f].length; j++) {
-          int vNo = allCurves.nodes[f][j];
+        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+          int vNo = allPolylines.nodes[f][j];
 
           int vertex_listed = -1;
 
@@ -16538,30 +16538,30 @@ class solarchvision_Clone3D {
             number_of_Vertices_before + vertex_listed - 1
           };
 
-          newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
+          newPolyline_nodes = concat(newPolyline_nodes, new_vertexItem);
         }
 
-        current_Material = allCurves.getMaterial(f);
-        current_Tessellation = allCurves.getTessellation(f);
-        current_Layer = allCurves.getLayer(f);
-        current_Visibility = allCurves.getVisibility(f);
-        current_Weight = allCurves.getWeight(f);
-        current_Closed = allCurves.getClose(f);
+        current_Material = allPolylines.getMaterial(f);
+        current_Tessellation = allPolylines.getTessellation(f);
+        current_Layer = allPolylines.getLayer(f);
+        current_Visibility = allPolylines.getVisibility(f);
+        current_Weight = allPolylines.getWeight(f);
+        current_Closed = allPolylines.getClose(f);
 
-        allCurves.create(newCurve_nodes);
+        allPolylines.create(newPolyline_nodes);
       }
     }
 
 
     // selecting new objetcs
 
-    Select3D.Curve_ids = new int [0];
+    Select3D.Polyline_ids = new int [0];
 
-    for (int o = number_of_Curves_before; o < allCurves.nodes.length; o++) {
+    for (int o = number_of_Polylines_before; o < allPolylines.nodes.length; o++) {
 
-      int[] newlyAddedCurve = {o};
+      int[] newlyAddedPolyline = {o};
 
-      Select3D.Curve_ids = concat(Select3D.Curve_ids, newlyAddedCurve);
+      Select3D.Polyline_ids = concat(Select3D.Polyline_ids, newlyAddedPolyline);
     }
 
     SOLARCHVISION_selection_changed();
@@ -16844,7 +16844,7 @@ class solarchvision_Clone3D {
         }
       }
 
-      if ((0 <= allGroups.getStart_Curve(OBJ_ID)) && (allGroups.getStart_Curve(OBJ_ID) <= allGroups.getStop_Curve(OBJ_ID))) {
+      if ((0 <= allGroups.getStart_Polyline(OBJ_ID)) && (allGroups.getStart_Polyline(OBJ_ID) <= allGroups.getStop_Polyline(OBJ_ID))) {
 
         int number_of_Vertices_before = allPoints.getLength();
 
@@ -16938,15 +16938,15 @@ class solarchvision_Clone3D {
         int[] PolymeshVertices_OLD = new int [0]; // keeps the list of exiting vertex numbers
         int[] PolymeshVertices_NEW = new int [0]; // keeps the list of new vertex numbers
 
-        for (int f = allGroups.getStart_Curve(OBJ_ID); f <= allGroups.getStop_Curve(OBJ_ID); f++) {
+        for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
 
-          if ((0 <= f) && (f < allCurves.nodes.length)) {
+          if ((0 <= f) && (f < allPolylines.nodes.length)) {
 
-            int[] newCurve_nodes = {
+            int[] newPolyline_nodes = {
             };
 
-            for (int j = 0; j < allCurves.nodes[f].length; j++) {
-              int vNo = allCurves.nodes[f][j];
+            for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+              int vNo = allPolylines.nodes[f][j];
 
               int vertex_listed = -1;
 
@@ -16979,17 +16979,17 @@ class solarchvision_Clone3D {
                 number_of_Vertices_before + vertex_listed
               };
 
-              newCurve_nodes = concat(newCurve_nodes, new_vertexItem);
+              newPolyline_nodes = concat(newPolyline_nodes, new_vertexItem);
             }
 
-            current_Material = allCurves.getMaterial(f);
-            current_Tessellation = allCurves.getTessellation(f);
-            current_Layer = allCurves.getLayer(f);
-            current_Visibility = allCurves.getVisibility(f);
-            current_Weight = allCurves.getWeight(f);
-            current_Closed = allCurves.getClose(f);
+            current_Material = allPolylines.getMaterial(f);
+            current_Tessellation = allPolylines.getTessellation(f);
+            current_Layer = allPolylines.getLayer(f);
+            current_Visibility = allPolylines.getVisibility(f);
+            current_Weight = allPolylines.getWeight(f);
+            current_Closed = allPolylines.getClose(f);
 
-            allCurves.create(newCurve_nodes);
+            allPolylines.create(newPolyline_nodes);
           }
         }
       }
@@ -17059,8 +17059,8 @@ class solarchvision_Delete3D {
       Delete3D.selected_Faces();
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      Delete3D.selected_Curves();
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      Delete3D.selected_Polylines();
     }
 
     if (current_ObjectCategory == ObjectCategory.GROUP) {
@@ -17069,7 +17069,7 @@ class solarchvision_Delete3D {
 
     if ((current_ObjectCategory == ObjectCategory.VERTEX) ||
         (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.CURVE) ||
+        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
         (current_ObjectCategory == ObjectCategory.GROUP)) {
 
       Delete3D.isolatedVertices_Selection();
@@ -17313,37 +17313,37 @@ class solarchvision_Delete3D {
   }
 
 
-  void selected_Curves () {
+  void selected_Polylines () {
 
-    Select3D.Curve_ids = sort(Select3D.Curve_ids);
+    Select3D.Polyline_ids = sort(Select3D.Polyline_ids);
 
-    for (int o = Select3D.Curve_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.Polyline_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = Select3D.Curve_ids[o];
+      int OBJ_ID = Select3D.Polyline_ids[o];
 
       for (int q = 0; q < allGroups.num; q++) {
 
-        if ((allGroups.Curves[q][0] <= OBJ_ID) && (OBJ_ID <= allGroups.Curves[q][1])) {
-          if (allGroups.Curves[q][1] >= 0) allGroups.Curves[q][1] -= 1;
-        } else if (allGroups.Curves[q][0] > OBJ_ID) {
-          if (allGroups.Curves[q][0] >= 0) allGroups.Curves[q][0] -= 1;
-          if (allGroups.Curves[q][1] >= 0) allGroups.Curves[q][1] -= 1;
+        if ((allGroups.Polylines[q][0] <= OBJ_ID) && (OBJ_ID <= allGroups.Polylines[q][1])) {
+          if (allGroups.Polylines[q][1] >= 0) allGroups.Polylines[q][1] -= 1;
+        } else if (allGroups.Polylines[q][0] > OBJ_ID) {
+          if (allGroups.Polylines[q][0] >= 0) allGroups.Polylines[q][0] -= 1;
+          if (allGroups.Polylines[q][1] >= 0) allGroups.Polylines[q][1] -= 1;
         }
       }
 
 
       {
-        int[][] startList = (int[][]) subset(allCurves.nodes, 0, OBJ_ID);
-        int[][] endList = (int[][]) subset(allCurves.nodes, OBJ_ID + 1);
+        int[][] startList = (int[][]) subset(allPolylines.nodes, 0, OBJ_ID);
+        int[][] endList = (int[][]) subset(allPolylines.nodes, OBJ_ID + 1);
 
-        allCurves.nodes = (int[][]) concat(startList, endList);
+        allPolylines.nodes = (int[][]) concat(startList, endList);
       }
 
       {
-        int[][] startList = (int[][]) subset(allCurves.options, 0, OBJ_ID);
-        int[][] endList = (int[][]) subset(allCurves.options, OBJ_ID + 1);
+        int[][] startList = (int[][]) subset(allPolylines.options, 0, OBJ_ID);
+        int[][] endList = (int[][]) subset(allPolylines.options, OBJ_ID + 1);
 
-        allCurves.options = (int[][]) concat(startList, endList);
+        allPolylines.options = (int[][]) concat(startList, endList);
       }
     }
 
@@ -17406,41 +17406,41 @@ class solarchvision_Delete3D {
       }
 
 
-      int startCurve = allGroups.getStart_Curve(OBJ_ID);
-      int endCurve = allGroups.getStop_Curve(OBJ_ID);
+      int startPolyline = allGroups.getStart_Polyline(OBJ_ID);
+      int endPolyline = allGroups.getStop_Polyline(OBJ_ID);
 
       {
 
-        if ((0 <= startCurve) && (startCurve <= endCurve)) {
+        if ((0 <= startPolyline) && (startPolyline <= endPolyline)) {
 
           for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
             for (int j = 0; j < 2; j++) {
-              allGroups.Curves[i][j] -= 1 + endCurve - startCurve;
+              allGroups.Polylines[i][j] -= 1 + endPolyline - startPolyline;
 
-              if (allGroups.Curves[i][j] < 0) allGroups.Curves[i][j] = 0;
+              if (allGroups.Polylines[i][j] < 0) allGroups.Polylines[i][j] = 0;
             }
           }
         }
 
-        int[][] startList = (int[][]) subset(allGroups.Curves, 0, OBJ_ID);
-        int[][] endList = (int[][]) subset(allGroups.Curves, OBJ_ID + 1);
+        int[][] startList = (int[][]) subset(allGroups.Polylines, 0, OBJ_ID);
+        int[][] endList = (int[][]) subset(allGroups.Polylines, OBJ_ID + 1);
 
-        allGroups.Curves = (int[][]) concat(startList, endList);
+        allGroups.Polylines = (int[][]) concat(startList, endList);
       }
 
-      if ((0 <= startCurve) && (startCurve <= endCurve)) {
+      if ((0 <= startPolyline) && (startPolyline <= endPolyline)) {
         {
-          int[][] startList = (int[][]) subset(allCurves.nodes, 0, startCurve);
-          int[][] endList = (int[][]) subset(allCurves.nodes, endCurve + 1);
+          int[][] startList = (int[][]) subset(allPolylines.nodes, 0, startPolyline);
+          int[][] endList = (int[][]) subset(allPolylines.nodes, endPolyline + 1);
 
-          allCurves.nodes = (int[][]) concat(startList, endList);
+          allPolylines.nodes = (int[][]) concat(startList, endList);
         }
 
         {
-          int[][] startList = (int[][]) subset(allCurves.options, 0, startCurve);
-          int[][] endList = (int[][]) subset(allCurves.options, endCurve + 1);
+          int[][] startList = (int[][]) subset(allPolylines.options, 0, startPolyline);
+          int[][] endList = (int[][]) subset(allPolylines.options, endPolyline + 1);
 
-          allCurves.options = (int[][]) concat(startList, endList);
+          allPolylines.options = (int[][]) concat(startList, endList);
         }
       }
 
@@ -17608,9 +17608,9 @@ class solarchvision_Delete3D {
       }
 
       if (found == -1) {
-        for (int i = 0; i < allCurves.nodes.length; i++) {
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] == vNo) {
+        for (int i = 0; i < allPolylines.nodes.length; i++) {
+          for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+            if (allPolylines.nodes[i][j] == vNo) {
 
               found = 1;
             }
@@ -17634,11 +17634,11 @@ class solarchvision_Delete3D {
           }
         }
 
-        for (int i = 0; i < allCurves.nodes.length; i++) {
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] > vNo) {
+        for (int i = 0; i < allPolylines.nodes.length; i++) {
+          for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+            if (allPolylines.nodes[i][j] > vNo) {
 
-              allCurves.nodes[i][j] -= 1;
+              allPolylines.nodes[i][j] -= 1;
             }
           }
         }
@@ -17673,9 +17673,9 @@ class solarchvision_Delete3D {
       }
 
       if (found == -1) {
-        for (int i = 0; i < allCurves.nodes.length; i++) {
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] == vNo) {
+        for (int i = 0; i < allPolylines.nodes.length; i++) {
+          for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+            if (allPolylines.nodes[i][j] == vNo) {
               found = 1;
             }
           }
@@ -17699,11 +17699,11 @@ class solarchvision_Delete3D {
           }
         }
 
-        for (int i = 0; i < allCurves.nodes.length; i++) {
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] > vNo) {
+        for (int i = 0; i < allPolylines.nodes.length; i++) {
+          for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+            if (allPolylines.nodes[i][j] > vNo) {
 
-              allCurves.nodes[i][j] -= 1;
+              allPolylines.nodes[i][j] -= 1;
             }
           }
         }
@@ -17760,9 +17760,9 @@ class solarchvision_Select3D {
 
   boolean Face_displayEdges = true;
   boolean Face_displayVertexCount = false;
-  boolean Curve_displayVertexCount = false;
+  boolean Polyline_displayVertexCount = false;
   boolean Vertex_displayVertices = true;
-  boolean Curve_displayVertices = true;
+  boolean Polyline_displayVertices = true;
 
 
   boolean Model2D_displayEdges = true;
@@ -17781,7 +17781,7 @@ class solarchvision_Select3D {
   int[] Group_ids = new int[0];
   int[] Face_ids = new int[0];
   int[] Vertex_ids = new int[0];
-  int[] Curve_ids = new int[0];
+  int[] Polyline_ids = new int[0];
 
   int[] softSelection_ids = new int[0];
   float[] softSelection_values = new float[0];
@@ -18031,8 +18031,8 @@ class solarchvision_Select3D {
     if (current_ObjectCategory == ObjectCategory.FACE) {
       theVertices = this.get_Face_Vertices();
     }
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      theVertices = this.get_Curve_Vertices();
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      theVertices = this.get_Polyline_Vertices();
     }
     if (current_ObjectCategory == ObjectCategory.GROUP) {
       theVertices = this.get_Group_Vertices();
@@ -18189,7 +18189,7 @@ class solarchvision_Select3D {
 
       if ((current_ObjectCategory == ObjectCategory.GROUP) ||
           (current_ObjectCategory == ObjectCategory.FACE) ||
-          (current_ObjectCategory == ObjectCategory.CURVE) ||
+          (current_ObjectCategory == ObjectCategory.POLYLINE) ||
           (current_ObjectCategory == ObjectCategory.VERTEX) ||
           (current_ObjectCategory == ObjectCategory.SOFTVERTEX)) {
 
@@ -18717,7 +18717,7 @@ class solarchvision_Select3D {
       }
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
       int OBJ_ID = int(RxP[0]);
 
@@ -18731,8 +18731,8 @@ class solarchvision_Select3D {
 
       if (addNewSelectionToPreviousSelection != 0) {
 
-        for (int o = this.Curve_ids.length - 1; o >= 0; o--) {
-          if (this.Curve_ids[o] == OBJ_ID) {
+        for (int o = this.Polyline_ids.length - 1; o >= 0; o--) {
+          if (this.Polyline_ids[o] == OBJ_ID) {
             found_at = o;
             if (addNewSelectionToPreviousSelection == 1) {
               use_it = 0;
@@ -18746,10 +18746,10 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Curve_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Curve_ids, found_at + 1);
+        int[] startList = (int[]) subset(this.Polyline_ids, 0, found_at);
+        int[] endList = (int[]) subset(this.Polyline_ids, found_at + 1);
 
-        this.Curve_ids = (int[]) concat(startList, endList);
+        this.Polyline_ids = (int[]) concat(startList, endList);
       }
 
       if (use_it == 1) {
@@ -18757,7 +18757,7 @@ class solarchvision_Select3D {
           OBJ_ID
         };
 
-        this.Curve_ids = (int[]) concat(this.Curve_ids, newObject_id);
+        this.Polyline_ids = (int[]) concat(this.Polyline_ids, newObject_id);
       }
     }
 
@@ -19210,16 +19210,16 @@ class solarchvision_Select3D {
           }
         }
 
-        if (allGroups.getStart_Curve(OBJ_ID) <= allGroups.getStop_Curve(OBJ_ID)) {
+        if (allGroups.getStart_Polyline(OBJ_ID) <= allGroups.getStop_Polyline(OBJ_ID)) {
 
           if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
           if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-          for (int f = allGroups.getStart_Curve(OBJ_ID); f <= allGroups.getStop_Curve(OBJ_ID); f++) {
-            if ((0 <= f) && (f < allCurves.nodes.length)) {
+          for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
+            if ((0 <= f) && (f < allPolylines.nodes.length)) {
 
-              for (int j = 0; j < allCurves.nodes[f].length; j++) {
-                int vNo = allCurves.nodes[f][j];
+              for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+                int vNo = allPolylines.nodes[f][j];
 
                 float x = allPoints.getX(vNo) * OBJECTS_scale;
                 float y = allPoints.getY(vNo) * OBJECTS_scale;
@@ -19387,9 +19387,9 @@ class solarchvision_Select3D {
       }
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
-      for (int OBJ_ID = 0; OBJ_ID < allCurves.nodes.length; OBJ_ID++) {
+      for (int OBJ_ID = 0; OBJ_ID < allPolylines.nodes.length; OBJ_ID++) {
 
         int break_loops = 0;
 
@@ -19398,8 +19398,8 @@ class solarchvision_Select3D {
         if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
         if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-        for (int j = 0; j < allCurves.nodes[OBJ_ID].length; j++) {
-          int vNo = allCurves.nodes[OBJ_ID][j];
+        for (int j = 0; j < allPolylines.nodes[OBJ_ID].length; j++) {
+          int vNo = allPolylines.nodes[OBJ_ID][j];
 
           float x = allPoints.getX(vNo) * OBJECTS_scale;
           float y = allPoints.getY(vNo) * OBJECTS_scale;
@@ -19443,8 +19443,8 @@ class solarchvision_Select3D {
 
           if (addNewSelectionToPreviousSelection != 0) {
 
-            for (int o = this.Curve_ids.length - 1; o >= 0; o--) {
-              if (this.Curve_ids[o] == OBJ_ID) {
+            for (int o = this.Polyline_ids.length - 1; o >= 0; o--) {
+              if (this.Polyline_ids[o] == OBJ_ID) {
                 found_at = o;
                 if (addNewSelectionToPreviousSelection == 1) {
                   use_it = 0;
@@ -19458,10 +19458,10 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Curve_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Curve_ids, found_at + 1);
+            int[] startList = (int[]) subset(this.Polyline_ids, 0, found_at);
+            int[] endList = (int[]) subset(this.Polyline_ids, found_at + 1);
 
-            this.Curve_ids = (int[]) concat(startList, endList);
+            this.Polyline_ids = (int[]) concat(startList, endList);
           }
 
           if (use_it == 1) {
@@ -19469,7 +19469,7 @@ class solarchvision_Select3D {
               OBJ_ID
             };
 
-            this.Curve_ids = (int[]) concat(this.Curve_ids, newObject_id);
+            this.Polyline_ids = (int[]) concat(this.Polyline_ids, newObject_id);
           }
         }
       }
@@ -19972,8 +19972,8 @@ class solarchvision_Select3D {
     SOLARCHVISION_selection_changed();
   }
 
-  void deselect_Curves () {
-    this.Curve_ids = new int [0];
+  void deselect_Polylines () {
+    this.Polyline_ids = new int [0];
 
     SOLARCHVISION_selection_changed();
   }
@@ -20025,7 +20025,7 @@ class solarchvision_Select3D {
     this.deselect_Model1Ds();
     this.deselect_Model2Ds();
     this.deselect_Faces();
-    this.deselect_Curves();
+    this.deselect_Polylines();
     this.deselect_Vertices();
     this.deselect_Groups();
 
@@ -20076,10 +20076,10 @@ class solarchvision_Select3D {
       }
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curve_ids = new int [allCurves.nodes.length];
-      for (int i = 0; i < this.Curve_ids.length; i++) {
-        this.Curve_ids[i] = i;
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      this.Polyline_ids = new int [allPolylines.nodes.length];
+      for (int i = 0; i < this.Polyline_ids.length; i++) {
+        this.Polyline_ids[i] = i;
       }
     }
 
@@ -20250,20 +20250,20 @@ class solarchvision_Select3D {
       }
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      int[] pre_Selection_Curve_ids = sort(this.Curve_ids);
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      int[] pre_Selection_Polyline_ids = sort(this.Polyline_ids);
 
-      this.Curve_ids = new int [0];
+      this.Polyline_ids = new int [0];
 
-      for (int i = 0; i < allCurves.nodes.length; i++) {
+      for (int i = 0; i < allPolylines.nodes.length; i++) {
         int found = -1;
 
-        for (int j = 0; j < pre_Selection_Curve_ids.length; j++) {
+        for (int j = 0; j < pre_Selection_Polyline_ids.length; j++) {
 
-          if (pre_Selection_Curve_ids[j] == i) {
+          if (pre_Selection_Polyline_ids[j] == i) {
             found = 1;
             break;
-          } else if (pre_Selection_Curve_ids[j] > i) {
+          } else if (pre_Selection_Polyline_ids[j] > i) {
             break;
           }
         }
@@ -20273,7 +20273,7 @@ class solarchvision_Select3D {
             i
           };
 
-          this.Curve_ids = concat(this.Curve_ids, new_Item);
+          this.Polyline_ids = concat(this.Polyline_ids, new_Item);
         }
       }
     }
@@ -20477,12 +20477,12 @@ class solarchvision_Select3D {
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
-      this.Curve_ids = new int [0];
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      this.Polyline_ids = new int [0];
 
-      if (allCurves.nodes.length > 0) {
-        int[] new_Item = {allCurves.nodes.length - 1};
-        this.Curve_ids = concat(this.Curve_ids, new_Item);
+      if (allPolylines.nodes.length > 0) {
+        int[] new_Item = {allPolylines.nodes.length - 1};
+        this.Polyline_ids = concat(this.Polyline_ids, new_Item);
       }
     }
 
@@ -20637,19 +20637,19 @@ class solarchvision_Select3D {
     SOLARCHVISION_selection_changed();
   }
 
-  void convert_Curves_to_Groups () {
+  void convert_Polylines_to_Groups () {
 
     this.Group_ids = new int [0];
 
-    for (int i = 0; i < this.Curve_ids.length; i++) {
+    for (int i = 0; i < this.Polyline_ids.length; i++) {
 
-      int f = this.Curve_ids[i];
+      int f = this.Polyline_ids[i];
 
-      for (int j = 0; j < allCurves.nodes[f].length; j++) {
+      for (int j = 0; j < allPolylines.nodes[f].length; j++) {
 
         for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
 
-          if ((allGroups.getStart_Curve(OBJ_ID) <= f) && (f <= allGroups.getStop_Curve(OBJ_ID))) {
+          if ((allGroups.getStart_Polyline(OBJ_ID) <= f) && (f <= allGroups.getStop_Polyline(OBJ_ID))) {
 
             int previously_added = 0;
             for (int q = 0; q < this.Group_ids.length; q++) {
@@ -20711,15 +20711,15 @@ class solarchvision_Select3D {
         }
       }
 
-      for (int f = 0; f < allCurves.nodes.length; f++) {
+      for (int f = 0; f < allPolylines.nodes.length; f++) {
 
-        for (int j = 0; j < allCurves.nodes[f].length; j++) {
+        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
 
-          if (allCurves.nodes[f][j] == vNo) {
+          if (allPolylines.nodes[f][j] == vNo) {
 
             for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
 
-              if ((allGroups.getStart_Curve(OBJ_ID) <= f) && (f <= allGroups.getStop_Curve(OBJ_ID))) {
+              if ((allGroups.getStart_Polyline(OBJ_ID) <= f) && (f <= allGroups.getStop_Polyline(OBJ_ID))) {
 
                 int previously_added = 0;
                 for (int q = 0; q < this.Group_ids.length; q++) {
@@ -20781,23 +20781,23 @@ class solarchvision_Select3D {
   }
 
 
-  void convert_Vertices_to_Curves () {
+  void convert_Vertices_to_Polylines () {
 
-    this.Curve_ids = new int [0];
+    this.Polyline_ids = new int [0];
 
     for (int i = 0; i < this.Vertex_ids.length; i++) {
 
       int vNo = this.Vertex_ids[i];
 
-      for (int f = 0; f < allCurves.nodes.length; f++) {
+      for (int f = 0; f < allPolylines.nodes.length; f++) {
 
-        for (int j = 0; j < allCurves.nodes[f].length; j++) {
+        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
 
-          if (allCurves.nodes[f][j] == vNo) {
+          if (allPolylines.nodes[f][j] == vNo) {
 
             int previously_added = 0;
-            for (int q = 0; q < this.Curve_ids.length; q++) {
-              if (this.Curve_ids[q] == f) {
+            for (int q = 0; q < this.Polyline_ids.length; q++) {
+              if (this.Polyline_ids[q] == f) {
                 previously_added = 1;
                 break;
               }
@@ -20806,7 +20806,7 @@ class solarchvision_Select3D {
               int[] new_Item = {
                 f
               };
-              this.Curve_ids = concat(this.Curve_ids, new_Item);
+              this.Polyline_ids = concat(this.Polyline_ids, new_Item);
             }
           }
         }
@@ -20938,19 +20938,19 @@ class solarchvision_Select3D {
   }
 
 
-  void convert_Groups_to_Curves () {
+  void convert_Groups_to_Polylines () {
 
-    this.Curve_ids = new int [0];
+    this.Polyline_ids = new int [0];
 
     for (int i = 0; i < this.Group_ids.length; i++) {
 
       int OBJ_ID = this.Group_ids[i];
 
-      for (int f = allGroups.getStart_Curve(OBJ_ID); f <= allGroups.getStop_Curve(OBJ_ID); f++) {
+      for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
 
         int previously_added = 0;
-        for (int q = 0; q < this.Curve_ids.length; q++) {
-          if (this.Curve_ids[q] == f) {
+        for (int q = 0; q < this.Polyline_ids.length; q++) {
+          if (this.Polyline_ids[q] == f) {
             previously_added = 1;
             break;
           }
@@ -20959,7 +20959,7 @@ class solarchvision_Select3D {
           int[] new_Item = {
             f
           };
-          this.Curve_ids = concat(this.Curve_ids, new_Item);
+          this.Polyline_ids = concat(this.Polyline_ids, new_Item);
         }
       }
     }
@@ -20999,11 +20999,11 @@ class solarchvision_Select3D {
         }
       }
 
-      for (int f = allGroups.getStart_Curve(OBJ_ID); f <= allGroups.getStop_Curve(OBJ_ID); f++) {
+      for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
 
-        for (int j = 0; j < allCurves.nodes[f].length; j++) {
+        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
 
-          int vNo = allCurves.nodes[f][j];
+          int vNo = allPolylines.nodes[f][j];
 
           int previously_added = 0;
           for (int q = 0; q < this.Vertex_ids.length; q++) {
@@ -21058,17 +21058,17 @@ class solarchvision_Select3D {
   }
 
 
-  void convert_Curves_to_Vertices () {
+  void convert_Polylines_to_Vertices () {
 
     this.Vertex_ids = new int [0];
 
-    for (int i = 0; i < this.Curve_ids.length; i++) {
+    for (int i = 0; i < this.Polyline_ids.length; i++) {
 
-      int f = this.Curve_ids[i];
+      int f = this.Polyline_ids[i];
 
-      for (int j = 0; j < allCurves.nodes[f].length; j++) {
+      for (int j = 0; j < allPolylines.nodes[f].length; j++) {
 
-        int vNo = allCurves.nodes[f][j];
+        int vNo = allPolylines.nodes[f][j];
 
         int previously_added = 0;
         for (int q = 0; q < this.Vertex_ids.length; q++) {
@@ -21148,9 +21148,9 @@ class solarchvision_Select3D {
         this.convert_Faces_to_Vertices();
       }
 
-      if (current_ObjectCategory == ObjectCategory.CURVE) {
+      if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
-        this.convert_Curves_to_Vertices();
+        this.convert_Polylines_to_Vertices();
       }
 
       this.Vertex_ids = sort(this.Vertex_ids);
@@ -21225,9 +21225,9 @@ class solarchvision_Select3D {
       }
 
       if (found == -1) {
-        for (int i = 0; i < allCurves.nodes.length; i++) {
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
-            if (allCurves.nodes[i][j] == vNo) {
+        for (int i = 0; i < allPolylines.nodes.length; i++) {
+          for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+            if (allPolylines.nodes[i][j] == vNo) {
               found = 1;
             }
           }
@@ -21293,23 +21293,23 @@ class solarchvision_Select3D {
   }
 
 
-  int[] get_Curve_Vertices () {
+  int[] get_Polyline_Vertices () {
 
-    int[] CurveVertices = new int [0];
+    int[] PolylineVertices = new int [0];
 
-    for (int o = this.Curve_ids.length - 1; o >= 0; o--) {
+    for (int o = this.Polyline_ids.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = this.Curve_ids[o];
+      int OBJ_ID = this.Polyline_ids[o];
 
       int f = OBJ_ID;
 
-      for (int j = 0; j < allCurves.nodes[f].length; j++) {
-        int vNo = allCurves.nodes[f][j];
+      for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+        int vNo = allPolylines.nodes[f][j];
 
         int vertex_listed = -1;
 
-        for (int q = 0; q < CurveVertices.length; q++) {
-          if (vNo == CurveVertices[q]) {
+        for (int q = 0; q < PolylineVertices.length; q++) {
+          if (vNo == PolylineVertices[q]) {
             vertex_listed = 1;
             break;
           }
@@ -21319,12 +21319,12 @@ class solarchvision_Select3D {
           int[] newVertexListed = {
             vNo
           };
-          CurveVertices = concat(CurveVertices, newVertexListed);
+          PolylineVertices = concat(PolylineVertices, newVertexListed);
         }
       }
     }
 
-    return CurveVertices;
+    return PolylineVertices;
   }
 
 
@@ -21365,12 +21365,12 @@ class solarchvision_Select3D {
 
 
 
-      for (int f = allGroups.getStart_Curve(OBJ_ID); f <= allGroups.getStop_Curve(OBJ_ID); f++) {
+      for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
 
-        if ((0 <= f) && (f < allCurves.nodes.length)) {
-          for (int j = 0; j < allCurves.nodes[f].length; j++) {
+        if ((0 <= f) && (f < allPolylines.nodes.length)) {
+          for (int j = 0; j < allPolylines.nodes[f].length; j++) {
 
-            int vNo = allCurves.nodes[f][j];
+            int vNo = allPolylines.nodes[f][j];
 
             int vertex_listed = -1;
 
@@ -21415,9 +21415,9 @@ class solarchvision_Select3D {
 
     XML_setBoolean(parent, "Face_displayEdges", this.Face_displayEdges);
     XML_setBoolean(parent, "Face_displayVertexCount", this.Face_displayVertexCount);
-    XML_setBoolean(parent, "Curve_displayVertexCount", this.Curve_displayVertexCount);
+    XML_setBoolean(parent, "Polyline_displayVertexCount", this.Polyline_displayVertexCount);
     XML_setBoolean(parent, "Vertex_displayVertices", this.Vertex_displayVertices);
-    XML_setBoolean(parent, "Curve_displayVertices", this.Curve_displayVertices);
+    XML_setBoolean(parent, "Polyline_displayVertices", this.Polyline_displayVertices);
     XML_setBoolean(parent, "Group_displayPivot", this.Group_displayPivot);
     XML_setBoolean(parent, "displayReferencePivot", this.displayReferencePivot);
     XML_setBoolean(parent, "Group_displayEdges", this.Group_displayEdges);
@@ -21486,12 +21486,12 @@ class solarchvision_Select3D {
 
     {
       String txt = "";
-      int ni = Curve_ids.length;
+      int ni = Polyline_ids.length;
       for (int i = 0; i < ni; i++) {
-        txt += nf(this.Curve_ids[i], 0);
+        txt += nf(this.Polyline_ids[i], 0);
         if (i < ni - 1) txt += "|";
       }
-      XML_setString(parent, "selected_Curves", txt);
+      XML_setString(parent, "selected_Polylines", txt);
     }
 
 
@@ -21586,9 +21586,9 @@ class solarchvision_Select3D {
     this.Group_displayBox = XML_getBoolean(parent, "Group_displayBox");
     this.Face_displayEdges = XML_getBoolean(parent, "Face_displayEdges");
     this.Face_displayVertexCount = XML_getBoolean(parent, "Face_displayVertexCount");
-    this.Curve_displayVertexCount = XML_getBoolean(parent, "Curve_displayVertexCount");
+    this.Polyline_displayVertexCount = XML_getBoolean(parent, "Polyline_displayVertexCount");
     this.Vertex_displayVertices = XML_getBoolean(parent, "Vertex_displayVertices");
-    this.Curve_displayVertices = XML_getBoolean(parent, "Curve_displayVertices");
+    this.Polyline_displayVertices = XML_getBoolean(parent, "Polyline_displayVertices");
     this.Model2D_displayEdges = XML_getBoolean(parent, "Model2D_displayEdges");
     this.Model1D_displayEdges = XML_getBoolean(parent, "Model1D_displayEdges");
     this.Solid_displayEdges = XML_getBoolean(parent, "Solid_displayEdges");
@@ -21672,15 +21672,15 @@ class solarchvision_Select3D {
 
 
     {
-      String txt = XML_getString(parent, "selected_Curves");
+      String txt = XML_getString(parent, "selected_Polylines");
       if (txt.equals("")) {
-        this.Curve_ids = new int[0];
+        this.Polyline_ids = new int[0];
       }
       else {
         String[] parts = split(txt, "|");
-        this.Curve_ids = new int[parts.length];
+        this.Polyline_ids = new int[parts.length];
         for (int i = 0; i < parts.length; i++) {
-          this.Curve_ids[i] = int(parts[i]);
+          this.Polyline_ids[i] = int(parts[i]);
         }
       }
     }
@@ -21864,9 +21864,9 @@ boolean pre_Selection_Group_displayBox;
 
 boolean pre_Selection_Face_displayEdges;
 boolean pre_Selection_Face_displayVertexCount;
-boolean pre_Selection_Curve_displayVertexCount;
+boolean pre_Selection_Polyline_displayVertexCount;
 boolean pre_Selection_Vertex_displayVertices;
-boolean pre_Selection_Curve_displayVertices;
+boolean pre_Selection_Polyline_displayVertices;
 
 int pre_WIN3D_currentCamera;
 
@@ -22287,9 +22287,9 @@ void draw () {
 
         pre_Selection_Face_displayEdges = Select3D.Face_displayEdges;
         pre_Selection_Face_displayVertexCount = Select3D.Face_displayVertexCount;
-        pre_Selection_Curve_displayVertexCount = Select3D.Curve_displayVertexCount;
+        pre_Selection_Polyline_displayVertexCount = Select3D.Polyline_displayVertexCount;
         pre_Selection_Vertex_displayVertices = Select3D.Vertex_displayVertices;
-        pre_Selection_Curve_displayVertices = Select3D.Curve_displayVertices;
+        pre_Selection_Polyline_displayVertices = Select3D.Polyline_displayVertices;
 
         pre_WIN3D_currentCamera = WIN3D.currentCamera;
 
@@ -22575,7 +22575,7 @@ void draw () {
           SOLARCHVISION_view_changed();
         }
 
-        if (pre_Selection_Curve_displayVertexCount != Select3D.Curve_displayVertexCount) {
+        if (pre_Selection_Polyline_displayVertexCount != Select3D.Polyline_displayVertexCount) {
           SOLARCHVISION_view_changed();
         }
 
@@ -22583,7 +22583,7 @@ void draw () {
           SOLARCHVISION_view_changed();
         }
 
-        if (pre_Selection_Curve_displayVertices != Select3D.Curve_displayVertices) {
+        if (pre_Selection_Polyline_displayVertices != Select3D.Polyline_displayVertices) {
           SOLARCHVISION_view_changed();
         }
 
@@ -23985,20 +23985,20 @@ void SOLARCHVISION_export_objects_SCR () {
     }
   }
 
-  for (int f = 0; f < allCurves.nodes.length; f++) {
+  for (int f = 0; f < allPolylines.nodes.length; f++) {
 
     scrOutput.println("line");
 
-    for (int j = 0; j < allCurves.nodes[f].length; j++) {
+    for (int j = 0; j < allPolylines.nodes[f].length; j++) {
 
-      float x = allPoints.getX(allCurves.nodes[f][j]);
-      float y = allPoints.getY(allCurves.nodes[f][j]);
-      float z = allPoints.getZ(allCurves.nodes[f][j]);
+      float x = allPoints.getX(allPolylines.nodes[f][j]);
+      float y = allPoints.getY(allPolylines.nodes[f][j]);
+      float z = allPoints.getZ(allPolylines.nodes[f][j]);
 
       scrOutput.println(nf(x, 0, User3D.export_PrecisionVertex) + "," + nf(y, 0, User3D.export_PrecisionVertex) + "," + nf(z, 0, User3D.export_PrecisionVertex));
     }
 
-    if (allCurves.getMaterial(f) == 1) {
+    if (allPolylines.getMaterial(f) == 1) {
       scrOutput.println("c");
     }
     else {
@@ -24682,7 +24682,7 @@ void SOLARCHVISION_deleteAll () {
   allModel1Ds.makeEmpty(0);
   allModel2Ds.makeEmpty(0);
 
-  allCurves.makeEmpty(0);
+  allPolylines.makeEmpty(0);
   allFaces.makeEmpty(0);
 
   allPoints.makeEmpty(0);
@@ -31724,7 +31724,7 @@ class solarchvision_Points {
     if (Select3D != null) {
       Select3D.deselect_Groups();
       Select3D.deselect_Faces();
-      Select3D.deselect_Curves();
+      Select3D.deselect_Polylines();
       Select3D.deselect_Vertices();
     }
 
@@ -32115,9 +32115,9 @@ class solarchvision_Modify3D {
       Select3D.convert_Faces_to_Vertices();
     }
 
-    if (current_ObjectCategory == ObjectCategory.CURVE) {
+    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
-      Select3D.convert_Curves_to_Vertices();
+      Select3D.convert_Polylines_to_Vertices();
     }
 
     Select3D.Vertex_ids = sort(Select3D.Vertex_ids);
@@ -32177,7 +32177,7 @@ class solarchvision_Modify3D {
 
     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
         (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.CURVE) ||
+        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
         (current_ObjectCategory == ObjectCategory.VERTEX)) {
 
       this.selectVertices_fromCurrentSelection();
@@ -32210,10 +32210,10 @@ class solarchvision_Modify3D {
         }
 
         if (found != -1) {
-          for (int i = 0; i < allCurves.nodes.length; i++) {
-            for (int j = 0; j < allCurves.nodes[i].length; j++) {
+          for (int i = 0; i < allPolylines.nodes.length; i++) {
+            for (int j = 0; j < allPolylines.nodes[i].length; j++) {
 
-              int q = allCurves.nodes[i][j];
+              int q = allPolylines.nodes[i][j];
 
               if (q > vNo) { // it is faster than (q != vNo)
 
@@ -32221,7 +32221,7 @@ class solarchvision_Modify3D {
 
                 if (d <= max_distance) {
 
-                  allCurves.nodes[i][j] = vNo;
+                  allPolylines.nodes[i][j] = vNo;
 
                   found = q;
                 }
@@ -32250,11 +32250,11 @@ class solarchvision_Modify3D {
             }
           }
 
-          for (int i = 0; i < allCurves.nodes.length; i++) {
-            for (int j = 0; j < allCurves.nodes[i].length; j++) {
-              if (allCurves.nodes[i][j] > q) {
+          for (int i = 0; i < allPolylines.nodes.length; i++) {
+            for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+              if (allPolylines.nodes[i][j] > q) {
 
-                allCurves.nodes[i][j] -= 1;
+                allPolylines.nodes[i][j] -= 1;
               }
             }
           }
@@ -32272,13 +32272,13 @@ class solarchvision_Modify3D {
 
     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
         (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.CURVE) ||
+        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
         (current_ObjectCategory == ObjectCategory.VERTEX)) {
 
       this.selectVertices_fromCurrentSelection();
 
       Select3D.convert_Vertices_to_Faces();
-      Select3D.convert_Vertices_to_Curves();
+      Select3D.convert_Vertices_to_Polylines();
 
       for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
 
@@ -32307,13 +32307,13 @@ class solarchvision_Modify3D {
               }
             }
 
-            for (int i = 0; i < Select3D.Curve_ids.length; i++) {
-              int f = Select3D.Curve_ids[i];
+            for (int i = 0; i < Select3D.Polyline_ids.length; i++) {
+              int f = Select3D.Polyline_ids[i];
 
-              for (int j = 0; j < allCurves.nodes[f].length; j++) {
-                if (allCurves.nodes[f][j] == q) {
+              for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+                if (allPolylines.nodes[f][j] == q) {
 
-                  allCurves.nodes[f][j] = vNo;
+                  allPolylines.nodes[f][j] = vNo;
 
                   found = q;
                 }
@@ -32342,11 +32342,11 @@ class solarchvision_Modify3D {
             }
           }
 
-          for (int i = 0; i < allCurves.nodes.length; i++) {
-            for (int j = 0; j < allCurves.nodes[i].length; j++) {
-              if (allCurves.nodes[i][j] > q) {
+          for (int i = 0; i < allPolylines.nodes.length; i++) {
+            for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+              if (allPolylines.nodes[i][j] > q) {
 
-                allCurves.nodes[i][j] -= 1;
+                allPolylines.nodes[i][j] -= 1;
               }
             }
           }
@@ -32363,7 +32363,7 @@ class solarchvision_Modify3D {
 
     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
         (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.CURVE) ||
+        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
         (current_ObjectCategory == ObjectCategory.VERTEX)) {
 
       this.selectVertices_fromCurrentSelection();
@@ -32424,18 +32424,18 @@ class solarchvision_Modify3D {
           }
         }
 
-        for (int f = 0; f < allCurves.nodes.length; f++) {
-          for (int j = 0; j < allCurves.nodes[f].length; j++) {
+        for (int f = 0; f < allPolylines.nodes.length; f++) {
+          for (int j = 0; j < allPolylines.nodes[f].length; j++) {
 
-            if (allCurves.nodes[f][j] == vNo) {
+            if (allPolylines.nodes[f][j] == vNo) {
 
-              float[][] base_Vertices = new float [allCurves.nodes[f].length][3];
+              float[][] base_Vertices = new float [allPolylines.nodes[f].length][3];
 
-              for (int s = 0; s < allCurves.nodes[f].length; s++) {
+              for (int s = 0; s < allPolylines.nodes[f].length; s++) {
 
-                base_Vertices[s][0] = allPoints.getX(allCurves.nodes[f][s]);
-                base_Vertices[s][1] = allPoints.getY(allCurves.nodes[f][s]);
-                base_Vertices[s][2] = allPoints.getZ(allCurves.nodes[f][s]);
+                base_Vertices[s][0] = allPoints.getX(allPolylines.nodes[f][s]);
+                base_Vertices[s][1] = allPoints.getY(allPolylines.nodes[f][s]);
+                base_Vertices[s][2] = allPoints.getZ(allPolylines.nodes[f][s]);
               }
 
               for (int s = 0; s < base_Vertices.length; s++) {
@@ -32497,7 +32497,7 @@ class solarchvision_Modify3D {
 
     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
         (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.CURVE) ||
+        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
         (current_ObjectCategory == ObjectCategory.VERTEX)) {
 
       this.selectVertices_fromCurrentSelection();
@@ -32516,12 +32516,12 @@ class solarchvision_Modify3D {
           }
         }
 
-        for (int i = 0; i < allCurves.nodes.length; i++) {
-          for (int j = 0; j < allCurves.nodes[i].length; j++) {
+        for (int i = 0; i < allPolylines.nodes.length; i++) {
+          for (int j = 0; j < allPolylines.nodes[i].length; j++) {
 
-            if (allCurves.nodes[i][j] == vNo) {
+            if (allPolylines.nodes[i][j] == vNo) {
 
-              allCurves.nodes[i][j] = allPoints.create(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+              allPolylines.nodes[i][j] = allPoints.create(allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
             }
           }
         }
@@ -33836,10 +33836,10 @@ class solarchvision_Modify3D {
   }
 
 
-  void extrudeCurveEdges_Selection () {
+  void extrudePolylineEdges_Selection () {
 
     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-        (current_ObjectCategory == ObjectCategory.CURVE)) {
+        (current_ObjectCategory == ObjectCategory.POLYLINE)) {
 
       this.selectFacesAndGroups_fromCurrentSelection();
 
@@ -33851,20 +33851,20 @@ class solarchvision_Modify3D {
 
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
-        for (int q = Select3D.Curve_ids.length - 1; q >= 0; q--) {
+        for (int q = Select3D.Polyline_ids.length - 1; q >= 0; q--) {
 
-          int f = Select3D.Curve_ids[q];
+          int f = Select3D.Polyline_ids[q];
 
-          int startCurve = allGroups.getStart_Curve(OBJ_ID);
-          int endCurve = allGroups.getStop_Curve(OBJ_ID);
+          int startPolyline = allGroups.getStart_Polyline(OBJ_ID);
+          int endPolyline = allGroups.getStop_Polyline(OBJ_ID);
 
-          if ((startCurve <= f) && (f <= endCurve)) {
+          if ((startPolyline <= f) && (f <= endPolyline)) {
 
-            float[][] base_Vertices = new float [allCurves.nodes[f].length][3];
-            float[][] top_Vertices = new float [allCurves.nodes[f].length][3];
+            float[][] base_Vertices = new float [allPolylines.nodes[f].length][3];
+            float[][] top_Vertices = new float [allPolylines.nodes[f].length][3];
 
-            for (int s = 0; s < allCurves.nodes[f].length; s++) {
-              int vNo = allCurves.nodes[f][s];
+            for (int s = 0; s < allPolylines.nodes[f].length; s++) {
+              int vNo = allPolylines.nodes[f][s];
 
               base_Vertices[s][0] = allPoints.getX(vNo);
               base_Vertices[s][1] = allPoints.getY(vNo);
@@ -33875,10 +33875,10 @@ class solarchvision_Modify3D {
               top_Vertices[s][2] = allPoints.getZ(vNo);
             }
 
-            for (int s = 0; s < allCurves.nodes[f].length; s++) {
+            for (int s = 0; s < allPolylines.nodes[f].length; s++) {
 
-              int s_next = (s + 1) % allCurves.nodes[f].length;
-              int s_prev = (s + allCurves.nodes[f].length - 1) % allCurves.nodes[f].length;
+              int s_next = (s + 1) % allPolylines.nodes[f].length;
+              int s_prev = (s + allPolylines.nodes[f].length - 1) % allPolylines.nodes[f].length;
 
               PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
               PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
@@ -33893,18 +33893,18 @@ class solarchvision_Modify3D {
               top_Vertices[s][2] += W[2] * User3D.modify_OpenningDepth;
             }
 
-            int[] base_Vertex_ids = new int [allCurves.nodes[f].length];
-            int[] top_Vertex_ids = new int [allCurves.nodes[f].length];
+            int[] base_Vertex_ids = new int [allPolylines.nodes[f].length];
+            int[] top_Vertex_ids = new int [allPolylines.nodes[f].length];
 
-            for (int s = 0; s < allCurves.nodes[f].length; s++) {
+            for (int s = 0; s < allPolylines.nodes[f].length; s++) {
 
               base_Vertex_ids[s] = allPoints.create(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]);
               top_Vertex_ids[s] = allPoints.create(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
             }
 
-            for (int s = 0; s < allCurves.nodes[f].length; s++) {
+            for (int s = 0; s < allPolylines.nodes[f].length; s++) {
 
-              int s_next = (s + 1) % allCurves.nodes[f].length;
+              int s_next = (s + 1) % allPolylines.nodes[f].length;
 
               if (User3D.modify_OpenningDepth < 0) { // reverse direction for negative extrude heights
                 int[][] newFace_nodes = {
@@ -33922,9 +33922,9 @@ class solarchvision_Modify3D {
                 allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes);
               }
 
-              int[][] newFace_options = { // copying target face properties from curve source
+              int[][] newFace_options = { // copying target face properties from polyline source
                 {
-                  allCurves.getMaterial(f), allCurves.getTessellation(f), allCurves.getLayer(f), allCurves.getVisibility(f), allCurves.getWeight(f), allCurves.getClose(f)
+                  allPolylines.getMaterial(f), allPolylines.getTessellation(f), allPolylines.getLayer(f), allPolylines.getVisibility(f), allPolylines.getWeight(f), allPolylines.getClose(f)
                 }
               };
               allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);
@@ -33936,9 +33936,9 @@ class solarchvision_Modify3D {
               };
               allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes);
 
-              int[][] newFace_options = { // copying target face properties from curve source
+              int[][] newFace_options = { // copying target face properties from polyline source
                 {
-                  allCurves.getMaterial(f), allCurves.getTessellation(f), allCurves.getLayer(f), allCurves.getVisibility(f), allCurves.getWeight(f), allCurves.getClose(f)
+                  allPolylines.getMaterial(f), allPolylines.getTessellation(f), allPolylines.getLayer(f), allPolylines.getVisibility(f), allPolylines.getWeight(f), allPolylines.getClose(f)
                 }
               };
               allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);
@@ -34091,27 +34091,27 @@ class solarchvision_Modify3D {
   }
 
 
-  void changeVisibilityCurves_Selection (int new_vsb) {
+  void changeVisibilityPolylines_Selection (int new_vsb) {
 
     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-        (current_ObjectCategory == ObjectCategory.CURVE) ||
+        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
         (current_ObjectCategory == ObjectCategory.VERTEX)) {
 
       if (current_ObjectCategory == ObjectCategory.GROUP) {
 
-        Select3D.convert_Groups_to_Curves();
+        Select3D.convert_Groups_to_Polylines();
       }
 
       if (current_ObjectCategory == ObjectCategory.VERTEX) {
 
-        Select3D.convert_Vertices_to_Curves();
+        Select3D.convert_Vertices_to_Polylines();
       }
 
-      for (int o = Select3D.Curve_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Polyline_ids.length - 1; o >= 0; o--) {
 
-        int f = Select3D.Curve_ids[o];
+        int f = Select3D.Polyline_ids[o];
 
-        allCurves.setVisibility(f, new_vsb);
+        allPolylines.setVisibility(f, new_vsb);
 
       }
     }
@@ -34120,27 +34120,27 @@ class solarchvision_Modify3D {
   }
 
 
-  void changeVisibilityCurves_Scene (int new_vsb) {
+  void changeVisibilityPolylines_Scene (int new_vsb) {
 
-    for (int f = allCurves.nodes.length - 1; f >= 0; f--) {
-      allCurves.setVisibility(f, new_vsb);
+    for (int f = allPolylines.nodes.length - 1; f >= 0; f--) {
+      allPolylines.setVisibility(f, new_vsb);
     }
 
     SOLARCHVISION_model_changed();
   }
 
 
-  void reverseVisibilityCurves_Scene () {
+  void reverseVisibilityPolylines_Scene () {
 
-    for (int f = allCurves.nodes.length - 1; f >= 0; f--) {
+    for (int f = allPolylines.nodes.length - 1; f >= 0; f--) {
 
-      int vsb = allCurves.getVisibility(f);
+      int vsb = allPolylines.getVisibility(f);
       int new_vsb = vsb;
 
       if (vsb == 0) new_vsb = 1;
       else if (vsb == 1) new_vsb = 0;
 
-      allCurves.setVisibility(f, new_vsb);
+      allPolylines.setVisibility(f, new_vsb);
     }
 
     SOLARCHVISION_model_changed();
@@ -34150,14 +34150,14 @@ class solarchvision_Modify3D {
 
     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
         (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.CURVE) ||
+        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
         (current_ObjectCategory == ObjectCategory.VERTEX)) {
 
       this.changeVisibilityFaces_Scene(0);
       this.changeVisibilityFaces_Selection(1);
 
-      this.changeVisibilityCurves_Scene(0);
-      this.changeVisibilityCurves_Selection(1);
+      this.changeVisibilityPolylines_Scene(0);
+      this.changeVisibilityPolylines_Selection(1);
     }
   }
 
@@ -41349,8 +41349,8 @@ void mouseClicked () {
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Curves")) {
-              allCurves.displayAll = !allCurves.displayAll;
+            if (menu_option.equals("Display/Hide Polylines")) {
+              allPolylines.displayAll = !allPolylines.displayAll;
 
               SOLARCHVISION_view_changed();
             }
@@ -41459,8 +41459,8 @@ void mouseClicked () {
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Curves Vertex Count")) {
-              Select3D.Curve_displayVertexCount = !Select3D.Curve_displayVertexCount;
+            if (menu_option.equals("Display/Hide Selected Polylines Vertex Count")) {
+              Select3D.Polyline_displayVertexCount = !Select3D.Polyline_displayVertexCount;
 
               SOLARCHVISION_view_changed();
             }
@@ -41469,8 +41469,8 @@ void mouseClicked () {
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Curves")) {
-              Select3D.Curve_displayVertices = !Select3D.Curve_displayVertices;
+            if (menu_option.equals("Display/Hide Selected Polylines")) {
+              Select3D.Polyline_displayVertices = !Select3D.Polyline_displayVertices;
 
               SOLARCHVISION_view_changed();
             }
@@ -41577,7 +41577,7 @@ void mouseClicked () {
               UI_toolBar.revise();
             }
             if (menu_option.equals("Polyline")) {
-              UI_set_to_Create_Curve();
+              UI_set_to_Create_Polyline();
               UI_toolBar.highlight("Polyline");
               UI_toolBar.revise();
             }
@@ -42290,8 +42290,8 @@ void mouseClicked () {
               SOLARCHVISION_switch_category(ObjectCategory.FACE);
               Select3D.selectAll();
             }
-            if (menu_option.equals("Select All Curves")) {
-              SOLARCHVISION_switch_category(ObjectCategory.CURVE);
+            if (menu_option.equals("Select All Polylines")) {
+              SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
               Select3D.selectAll();
             }
             if (menu_option.equals("Select All Verices")) {
@@ -42339,8 +42339,8 @@ void mouseClicked () {
             if (menu_option.equals("Select Face")) {
               SOLARCHVISION_switch_category(ObjectCategory.FACE);
             }
-            if (menu_option.equals("Select Curve")) {
-              SOLARCHVISION_switch_category(ObjectCategory.CURVE);
+            if (menu_option.equals("Select Polyline")) {
+              SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
             }
             if (menu_option.equals("Select Vertex")) {
               SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
@@ -42362,21 +42362,21 @@ void mouseClicked () {
               Select3D.convert_Groups_to_Faces();
               SOLARCHVISION_switch_category(ObjectCategory.FACE);
             }
-            if (menu_option.equals("Curves >> Groups")) {
-              Select3D.convert_Curves_to_Groups();
+            if (menu_option.equals("Polylines >> Groups")) {
+              Select3D.convert_Polylines_to_Groups();
               SOLARCHVISION_switch_category(ObjectCategory.GROUP);
             }
-            if (menu_option.equals("Groups >> Curves")) {
-              Select3D.convert_Groups_to_Curves();
-              SOLARCHVISION_switch_category(ObjectCategory.CURVE);
+            if (menu_option.equals("Groups >> Polylines")) {
+              Select3D.convert_Groups_to_Polylines();
+              SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
             }
-            if (menu_option.equals("Curves >> Vertices")) {
-              Select3D.convert_Curves_to_Vertices();
+            if (menu_option.equals("Polylines >> Vertices")) {
+              Select3D.convert_Polylines_to_Vertices();
               SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
             }
-            if (menu_option.equals("Vertices >> Curves")) {
-              Select3D.convert_Vertices_to_Curves();
-              SOLARCHVISION_switch_category(ObjectCategory.CURVE);
+            if (menu_option.equals("Vertices >> Polylines")) {
+              Select3D.convert_Vertices_to_Polylines();
+              SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
             }
             if (menu_option.equals("Groups >> Vertices")) {
               Select3D.convert_Groups_to_Vertices();
@@ -42536,8 +42536,8 @@ void mouseClicked () {
             if (menu_option.equals("Extrude Face Edges")) {
               Modify3D.extrudeFaceEdges_Selection();
             }
-            if (menu_option.equals("Extrude Curve Edges")) {
-              Modify3D.extrudeCurveEdges_Selection();
+            if (menu_option.equals("Extrude Polyline Edges")) {
+              Modify3D.extrudePolylineEdges_Selection();
             }
             if (menu_option.equals("Offset(above) Vertices")) {
               Modify3D.offsetVertices_Selection(0, abs(User3D.modify_OffsetAmount));
@@ -42615,8 +42615,8 @@ void mouseClicked () {
               allFaces.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase Curves")) {
-              allCurves.makeEmpty(0);
+            if (menu_option.equals("Erase Polylines")) {
+              allPolylines.makeEmpty(0);
             }
 
             if (menu_option.equals("Erase All")) {
@@ -43243,8 +43243,8 @@ void mouseClicked () {
 
                 } else {
 
-                  if (current_ObjectCategory == ObjectCategory.CURVE) {
-                    RxP = allCurves.intersect(ray_start, ray_direction);
+                  if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+                    RxP = allPolylines.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.CAMERA) {
                     RxP = allCameras.intersect(ray_start, ray_direction);
                   } else if (current_ObjectCategory == ObjectCategory.SECTION) {
@@ -43363,7 +43363,7 @@ void mouseClicked () {
                   if ((WIN3D.UI_TaskModifyParameter != 0) && (WIN3D.UI_CurrentTask >= UITASK.Seed_Material)) { // Pick/Assign properties
 
                     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-                        (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.CURVE)) {
+                        (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.POLYLINE)) {
 
                       int f = int(RxP[0]);
 
@@ -43589,14 +43589,14 @@ void mouseClicked () {
                         }
 
 
-                        if (current_ObjectCategory == ObjectCategory.CURVE) {
+                        if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
-                          Select3D.Curve_ids = new int [1];
-                          Select3D.Curve_ids[0] = f;
+                          Select3D.Polyline_ids = new int [1];
+                          Select3D.Polyline_ids[0] = f;
 
-                          Select3D.Curve_displayVertexCount = true;
+                          Select3D.Polyline_displayVertexCount = true;
 
-                          int n = allCurves.nodes[f].length;
+                          int n = allPolylines.nodes[f].length;
 
                           if (n > 2) {
 
@@ -43604,7 +43604,7 @@ void mouseClicked () {
                             float min_dist = FLOAT_undefined;
 
                             for (int j = 0; j < n; j++) {
-                              int vNo = allCurves.nodes[f][j];
+                              int vNo = allPolylines.nodes[f][j];
 
                               float d = dist(RxP[1], RxP[2], RxP[3], allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
 
@@ -43614,13 +43614,13 @@ void mouseClicked () {
                               }
                             }
 
-                            int[] tmpCurve = new int[n];
+                            int[] tmpPolyline = new int[n];
                             for (int j = 0; j < n; j++) {
-                              tmpCurve[j] = allCurves.nodes[f][j];
+                              tmpPolyline[j] = allPolylines.nodes[f][j];
                             }
 
                             for (int j = 0; j < n; j++) {
-                              allCurves.nodes[f][j] = tmpCurve[(j + min_num + n) % n];
+                              allPolylines.nodes[f][j] = tmpPolyline[(j + min_num + n) % n];
                             }
                           }
                         }
@@ -43939,12 +43939,12 @@ void mouseClicked () {
                     }
                   }
 
-                  if (current_ObjectCategory == ObjectCategory.CURVE) { // working with curves
-                    if (CreateObject == CREATE.Curve) {
-                      allCurves.add_VertexToLastCurve(x, y, z);
+                  if (current_ObjectCategory == ObjectCategory.POLYLINE) { // working with polylines
+                    if (CreateObject == CREATE.Polyline) {
+                      allPolylines.add_VertexToLastPolyline(x, y, z);
 
-                      Select3D.Curve_ids = new int [1];
-                      Select3D.Curve_ids[0] = allCurves.nodes.length - 1;
+                      Select3D.Polyline_ids = new int [1];
+                      Select3D.Polyline_ids[0] = allPolylines.nodes.length - 1;
 
                       Select3D.calculate_BoundingBox();
                     }
@@ -45091,9 +45091,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   }
 
 
-  if (current_ObjectCategory == ObjectCategory.CURVE) {
+  if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
-    if (Select3D.Curve_displayVertexCount) {
+    if (Select3D.Polyline_displayVertexCount) {
 
       pushMatrix();
 
@@ -45107,12 +45107,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       textSize(1.5 * MessageSize);
       textAlign(CENTER, BOTTOM);
 
-      for (int o = Select3D.Curve_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.Polyline_ids.length - 1; o >= 0; o--) {
 
-        int f = Select3D.Curve_ids[o];
+        int f = Select3D.Polyline_ids[o];
 
-        for (int j = 0; j < allCurves.nodes[f].length; j++) {
-          int vNo = allCurves.nodes[f][j];
+        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
+          int vNo = allPolylines.nodes[f][j];
 
           float x = allPoints.getX(vNo) * OBJECTS_scale;
           float y = allPoints.getY(vNo) * OBJECTS_scale;
@@ -45285,12 +45285,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
 
 
-        for (int f = allGroups.getStart_Curve(OBJ_ID); f <= allGroups.getStop_Curve(OBJ_ID); f++) {
-          if ((0 <= f) && (f < allCurves.nodes.length)) {
+        for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
+          if ((0 <= f) && (f < allPolylines.nodes.length)) {
 
             beginShape();
 
-            for (int vNo = 0; vNo < allCurves.nodes[f].length; vNo++) {
+            for (int vNo = 0; vNo < allPolylines.nodes[f].length; vNo++) {
 
               float x = allPoints.getX(vNo) * OBJECTS_scale;
               float y = allPoints.getY(vNo) * OBJECTS_scale;
@@ -45933,7 +45933,7 @@ void UI_set_to_Create_Face () {
   SOLARCHVISION_switch_category(ObjectCategory.FACE);
 }
 
-void UI_set_to_Create_Curve () {
+void UI_set_to_Create_Polyline () {
   UI_set_to_Create_Nothing();
 
   current_Material = User3D.default_Material;
@@ -45943,10 +45943,10 @@ void UI_set_to_Create_Curve () {
   current_Weight = User3D.default_Weight;
   current_Closed = User3D.default_Closed;
 
-  allCurves.beginNewCurve();
+  allPolylines.beginNewPolyline();
 
-  CreateObject = CREATE.Curve;
-  SOLARCHVISION_switch_category(ObjectCategory.CURVE);
+  CreateObject = CREATE.Polyline;
+  SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
 }
 
 void UI_set_to_Create_Solid () {
@@ -48107,7 +48107,7 @@ class solarchvision_UI_menuBar {
       "Erase All Sections",
       "Erase All Cameras",
       "Erase Faces",
-      "Erase Curves",
+      "Erase Polylines",
       "Erase All",
       "Display All Viewports",
       "Enlarge 3D Viewport",
@@ -48258,7 +48258,7 @@ class solarchvision_UI_menuBar {
       "Display/Hide Leaves",
       "Display/Hide Model1Ds",
       "Display/Hide Model2Ds",
-      "Display/Hide Curves",
+      "Display/Hide Polylines",
       "Display/Hide Faces",
       "Display/Hide Solids",
       "Display/Hide Sections",
@@ -48280,7 +48280,7 @@ class solarchvision_UI_menuBar {
       "Display/Hide Selected LandPoints",
       "Display/Hide Selected Faces",
       "Display/Hide Selected Faces Vertex Count",
-      "Display/Hide Selected Curves Vertex Count",
+      "Display/Hide Selected Polylines Vertex Count",
       "Display/Hide Selected Vertices",
       "Display/Hide Selected REF Pivot",
       "Display/Hide Selected Group Pivot",
@@ -48356,7 +48356,7 @@ class solarchvision_UI_menuBar {
       "Deselect All",
       "Select All",
       "Select All Cameras",
-      "Select All Curves",
+      "Select All Polylines",
       "Select All Faces",
       "Select All Groups",
       "Select All LandPoints",
@@ -48367,7 +48367,7 @@ class solarchvision_UI_menuBar {
       "Select All Vertices",
       "Select Scene Isolated Vertices",
       "Select Near Selected Vertices",
-      "Select Curve",
+      "Select Polyline",
       "Select Camera",
       "Select Face",
       "Select Group",
@@ -48378,17 +48378,17 @@ class solarchvision_UI_menuBar {
       "Select Solid",
       "Select Vertex",
       "Soft Selection",
-      "Curves >> Vertices",
-      "Vertices >> Curves",
+      "Polylines >> Vertices",
+      "Vertices >> Polylines",
       "Faces >> Vertices",
       "Vertices >> Faces",
-      "Groups >> Curves",
+      "Groups >> Polylines",
       "Groups >> Faces",
       "Groups >> Solids",
       "Groups >> Model2Ds",
       "Groups >> Model1Ds",
       "Groups >> Vertices",
-      "Curves >> Groups",
+      "Polylines >> Groups",
       "Faces >> Groups",
       "Model1Ds >> Groups",
       "Model2Ds >> Groups",
@@ -48459,7 +48459,7 @@ class solarchvision_UI_menuBar {
       "Offset(expand) Vertices",
       "Offset(shrink) Vertices",
       "Extrude Face Edges",
-      "Extrude Curve Edges",
+      "Extrude Polyline Edges",
       "Optimize Faces",
       //"Triangulate Faces",
       "tessellation Triangular",
@@ -48477,11 +48477,11 @@ class solarchvision_UI_menuBar {
       "Unhide Selected Faces",
       "Unhide All Faces",
       "Isolate Selection",
-      "Reverse Visibility of All Curves",
-      "Hide All Curves",
-      "Hide Selected Curves",
-      "Unhide Selected Curves",
-      "Unhide All Curves",
+      "Reverse Visibility of All Polylines",
+      "Hide All Polylines",
+      "Hide Selected Polylines",
+      "Unhide Selected Polylines",
+      "Unhide All Polylines",
       "Flatten Selected LandPoints"
     }
     ,
@@ -48775,7 +48775,7 @@ class solarchvision_UI_menuBar {
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Curves")) {
+                if (this.Items[i][j].equals("Display/Hide Polylines")) {
                   if (allFaces.displayAll == false) {
                     stroke(127);
                     fill(127);
@@ -48901,8 +48901,8 @@ class solarchvision_UI_menuBar {
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Curves")) {
-                  if (Select3D.Curve_displayVertices == false) {
+                if (this.Items[i][j].equals("Display/Hide Selected Polylines")) {
+                  if (Select3D.Polyline_displayVertices == false) {
                     stroke(127);
                     fill(127);
                   }
@@ -48913,8 +48913,8 @@ class solarchvision_UI_menuBar {
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Curves Vertex Count")) {
-                  if (Select3D.Curve_displayVertexCount == false) {
+                if (this.Items[i][j].equals("Display/Hide Selected Polylines Vertex Count")) {
+                  if (Select3D.Polyline_displayVertexCount == false) {
                     stroke(127);
                     fill(127);
                   }
@@ -49089,7 +49089,7 @@ class solarchvision_UI_toolBar {
     ,
 
     {
-      "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Curve", "LayerType", "2.0"
+      "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Polyline", "LayerType", "2.0"
     }
     ,
     {
@@ -49318,7 +49318,7 @@ class solarchvision_UI_toolBar {
             else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
             else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
             else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
-            else if ((this.Items[i][j]).equals("Polyline")) UI_set_to_Create_Curve();
+            else if ((this.Items[i][j]).equals("Polyline")) UI_set_to_Create_Polyline();
             else if ((this.Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
             else if ((this.Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
             else if ((this.Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
@@ -51983,7 +51983,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("model2ds")) allModel2Ds.makeEmpty(0);
         else if (low_case.equals("model1ds")) allModel1Ds.makeEmpty(0);
         else if (low_case.equals("faces")) allFaces.makeEmpty(0);
-        else if (low_case.equals("lines")) allCurves.makeEmpty(0);
+        else if (low_case.equals("lines")) allPolylines.makeEmpty(0);
         else if (low_case.equals("solids")) allSolids.makeEmpty(0);
         else if (low_case.equals("sections")) allSections.makeEmpty(0);
         else if (low_case.equals("cameras")) allCameras.makeEmpty(0);
@@ -52041,7 +52041,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         else if (low_case.equals("model1ds")) SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
         else if (low_case.equals("vertices")) SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
         else if (low_case.equals("faces")) SOLARCHVISION_switch_category(ObjectCategory.FACE);
-        else if (low_case.equals("lines")) SOLARCHVISION_switch_category(ObjectCategory.CURVE);
+        else if (low_case.equals("lines")) SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
         else if (low_case.equals("solids")) SOLARCHVISION_switch_category(ObjectCategory.SOLID);
         else if (low_case.equals("sections")) SOLARCHVISION_switch_category(ObjectCategory.SECTION);
         else if (low_case.equals("cameras")) SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
@@ -53320,14 +53320,14 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (points.length > 1) {
-        allCurves.add_Polyline(m, tes, lyr, vsb, wgt, clz, points);
+        allPolylines.add_Polyline(m, tes, lyr, vsb, wgt, clz, points);
       }
     }
     else {
       return_message = "Polyline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
 
-      UI_set_to_Create_Curve();
-      UI_toolBar.highlight("Curve");
+      UI_set_to_Create_Polyline();
+      UI_toolBar.highlight("Polyline");
       UI_toolBar.revise();
     }
   }
@@ -53366,14 +53366,14 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if ((r != 0) && (deg > 2)) {
-        allCurves.add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
+        allPolylines.add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
       }
     }
     else {
       return_message = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
 
-      UI_set_to_Create_Curve();
-      UI_toolBar.highlight("Curve");
+      UI_set_to_Create_Polyline();
+      UI_toolBar.highlight("Polyline");
       UI_toolBar.revise();
     }
   }
@@ -53407,17 +53407,17 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
   else if (Command_CAPITAL.equals("GROUP>FACE")) {
     Select3D.convert_Groups_to_Faces();
   }
-  else if (Command_CAPITAL.equals("CURVE>GROUP")) {
-    Select3D.convert_Curves_to_Groups();
+  else if (Command_CAPITAL.equals("POLYLINE>GROUP")) {
+    Select3D.convert_Polylines_to_Groups();
   }
-  else if (Command_CAPITAL.equals("GROUP>CURVE")) {
-    Select3D.convert_Groups_to_Curves();
+  else if (Command_CAPITAL.equals("GROUP>POLYLINE")) {
+    Select3D.convert_Groups_to_Polylines();
   }
-  else if (Command_CAPITAL.equals("CURVE>VERTEX")) {
-    Select3D.convert_Curves_to_Vertices();
+  else if (Command_CAPITAL.equals("POLYLINE>VERTEX")) {
+    Select3D.convert_Polylines_to_Vertices();
   }
-  else if (Command_CAPITAL.equals("VERTEX>CURVE")) {
-    Select3D.convert_Vertices_to_Curves();
+  else if (Command_CAPITAL.equals("VERTEX>POLYLINE")) {
+    Select3D.convert_Vertices_to_Polylines();
   }
   else if (Command_CAPITAL.equals("GROUP>VERTEX")) {
     Select3D.convert_Groups_to_Vertices();
@@ -55404,7 +55404,7 @@ void SOLARCHVISION_save_project (String myFile) {
 
   allPoints.to_XML(xml);
 
-  allCurves.to_XML(xml);
+  allPolylines.to_XML(xml);
 
   allFaces.to_XML(xml);
 
@@ -55648,7 +55648,7 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   allPoints.from_XML(xml);
 
-  allCurves.from_XML(xml);
+  allPolylines.from_XML(xml);
 
   allFaces.from_XML(xml);
 
@@ -55662,7 +55662,7 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   allModel2Ds.from_XML(xml);
 
-  allGroups.from_XML(xml); // Note: Groups should be inputted after Faces, Curves, Model1Ds, Model2Ds, etc.
+  allGroups.from_XML(xml); // Note: Groups should be inputted after Faces, Polylines, Model1Ds, Model2Ds, etc.
 
   Land3D.from_XML(xml);
 
@@ -55924,7 +55924,7 @@ test these functions:
 // diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!"
 
 
-// snap for Curve objects is not developed yet.
+// snap for Polyline objects is not developed yet.
 
 // don't know if multiple allModel2Ds.Images[n].get(Image_X, Image_Y) in allModel2Ds selection can produce performance problems?
 
@@ -55940,12 +55940,12 @@ test these functions:
 // could add join/explode groups ?
 
 
-// export and import of curves
-// converting curves to faces e.g. Surface, Extrude, Connect
+// export and import of polylines
+// converting polylines to faces e.g. Surface, Extrude, Connect
 
-// Modify Normal at Curve level is not complete...
+// Modify Normal at Polyline level is not complete...
 
-// Create3D.autoNormalCurve_Selection
+// Create3D.autoNormalPolyline_Selection
 
 // writing export to rad completed for meshes and land - not Model1Ds and 2Ds yet!
 
