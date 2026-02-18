@@ -366,10 +366,7 @@ String Folder_CLIMATE_CWEEDS;
 String Folder_CLIMATE_CLMREC;
 String Folder_ENSEMBLE_OBSERVED;
 String Folder_ENSEMBLE_FORECAST;
-String Folder_GRIB2;
 String Folder_GEOMET;
-
-String Folder_Wgrib2Temp;
 
 String Folder_Coordinates;
 
@@ -2104,78 +2101,6 @@ boolean ENSEMBLE_FORECAST_load = false;
 boolean ENSEMBLE_OBSERVED_load = false;
 
 
-int[] GRIB2_TGL_Selected = {
-  1, 0, 0, 0
-}; // for levels above ground level
-int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
-
-
-int GRIB2_Year;
-int GRIB2_Month;
-int GRIB2_Day;
-int GRIB2_ModelRun;
-
-int AERIAL_num = 4 * (1 + 6 + 12); // the number of nearest points on the path we want to extract the data
-
-float AERIAL_Center_Longitude = FLOAT_undefined;
-float AERIAL_Center_Latitude = FLOAT_undefined;
-
-float[][] AERIAL_Locations;
-
-float[][][][] AERIAL_Data;
-int[][][][] AERIAL_Flags;
-
-int GRIB2_Hour_Start = 0;
-int GRIB2_Hour_End = 30; //48;
-int GRIB2_Hour_Step = 1; //1;
-
-int GRIB2_Layer_Start = 4; //_cloudcover;
-int GRIB2_Layer_End = 8; //_drybulb;
-int GRIB2_Layer_Step = 1;
-
-int GRIB2_Hour;
-int GRIB2_Layer;
-
-
-
-
-String[][] GRIB2_Domains = {
-  {
-    "GEPS", "ensemble/naefs/grib2/raw", "CMC_naefs-geps-raw", "latlon1p0x1p0", "_allmbrs.grib2", "100"
-  }
-  , {
-    "REPS", "ensemble/reps/15km/grib2/raw", "CMC-reps-srpe-raw", "ps15km", "_allmbrs.grib2", "15"
-  }
-  , {
-    "GDPS", "model_gem_global/25km/grib2/lat_lon", "CMC_glb", "latlon.24x.24", ".grib2", "20"
-  }
-  , {
-    "RDPS", "model_gem_regional/10km/grib2", "CMC_reg", "ps10km", ".grib2", "10"
-  }
-  , {
-    "HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km", "-00.grib2", "2.5"
-  }
-  , {
-    "RDWPS", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.08", ".grib2", "5"
-  }
-};
-
-
-//int GRIB2_DomainSelection = 0; int GRIB2_maxScenarios = 21; // should convert U&V to wind speed and direction!
-//int GRIB2_DomainSelection = 1; int GRIB2_maxScenarios = 21; // should convert U&V to wind speed and direction!
-//int GRIB2_DomainSelection = 2; int GRIB2_maxScenarios = 1;
-//int GRIB2_DomainSelection = 3; int GRIB2_maxScenarios = 1;
-int GRIB2_DomainSelection = 4; int GRIB2_maxScenarios = 1;
-//int GRIB2_DomainSelection = 5; int GRIB2_maxScenarios = 1; // not working now!
-
-{
-  ENSEMBLE_FORECAST_end += GRIB2_maxScenarios;
-}
-
-
-int AERIAL_graphOption = 0;
-
-
 final int DEV_WindPower = 0;
 final int DEV_RadiationOnTracker = 1;
 final int DEV_RadiationOnSurface = 2;
@@ -2694,8 +2619,6 @@ class solarchvision_WIN3D {
 
         allWindFlows.draw(TypeWindow.WIN3D);
 
-        WIN3D.draw_AERIAL();
-
         this.graphics.hint(DISABLE_DEPTH_TEST);
 
         if ((this.record_IMG) || (this.record_AUTO)) {
@@ -2960,133 +2883,6 @@ class solarchvision_WIN3D {
   }
 
 
-
-
-
-
-
-  void draw_AERIAL () {
-    this.graphics.sphereDetail(6, 4);
-
-    if ((AERIAL_Center_Longitude == STATION.getLongitude()) && (AERIAL_Center_Latitude == STATION.getLatitude())) {
-      for (int n = 0; n < AERIAL_num; n++) {
-
-        float _tgl = AERIAL_Locations[n][2];
-        float _lat = AERIAL_Locations[n][1];
-        float _lon = AERIAL_Locations[n][0];
-        if (_lon > 180) _lon -= 360; // << important!
-
-        double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * DOUBLE_r_Earth);
-        double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * DOUBLE_r_Earth);
-
-        float x = 0.1 * (float) du * funcs.cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<< 0.1
-        float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<< 0.1
-        float z = _tgl - HeightAboveGround;
-
-        if (AERIAL_graphOption == 0) {
-          //-----------------------------
-          int PAL_type = 6; //12;
-          int PAL_direction = -1;
-          float PAL_multiplier = 1.0 / 30.0;
-          //-----------------------------
-
-          for (int o = 0; o < GRIB2_maxScenarios; o++) {
-
-            float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
-
-            if (is_defined(_val)) {
-
-              float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
-              if (PAL_direction == -1) _u = 1 - _u;
-              if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_direction == 2) _u =  0.5 * _u;
-
-              float[] COL = PAINT.getColorStyle(PAL_type, _u);
-
-              this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-              this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-              //this.graphics.noFill();
-
-              this.graphics.strokeWeight(0); // 2; <<<<<<<<<
-
-              float R = 5;
-              /*
-               this.graphics.beginShape();
-               for (float teta = 0; teta < 360; teta += 360.0 / 6.0) {
-               this.graphics.vertex((x + R * funcs.cos_ang(teta)) * OBJECTS_scale * this.scale, (y + R * funcs.sin_ang(teta)) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-               }
-               this.graphics.endShape(CLOSE);
-               */
-              this.graphics.pushMatrix();
-              this.graphics.translate(x * OBJECTS_scale * this.scale, y * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-              this.graphics.sphere(R);
-              this.graphics.popMatrix();
-            }
-          }
-        }
-
-        if (AERIAL_graphOption == 1) {
-
-          //-----------------------------
-          int PAL_type = 1;//12;
-          int PAL_direction = 1;//-1;
-          float PAL_multiplier = 0.1;//1.0 / 30.0;
-          //-----------------------------
-
-          for (int o = 0; o < GRIB2_maxScenarios; o++) {
-
-            //float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
-            float _val = AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
-
-            if (is_defined(_val)) {
-
-              float teta = AERIAL_Data[GRIB2_Hour][LAYER_winddir.id][n][o];
-              float D_teta = 15;
-              float R = 5.0 * AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
-
-              float R_in = 0.0 * R;
-              float x1 = (R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta)));
-              float y1 = (R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta)));
-              float x2 = (R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta)));
-              float y2 = (R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta)));
-
-              float x4 = (R * funcs.cos_ang(90 - (teta - 0.5 * D_teta)));
-              float y4 = (R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta)));
-              float x3 = (R * funcs.cos_ang(90 - (teta + 0.5 * D_teta)));
-              float y3 = (R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta)));
-
-              //float ox = -0.5 * (R * funcs.cos_ang(90 - teta));
-              //float oy = -0.5 * (R * -funcs.sin_ang(90 - teta));
-              //float ox = -1 * (R * funcs.cos_ang(90 - teta));
-              //float oy = -1 * (R * -funcs.sin_ang(90 - teta));
-              float ox = -2 * (R * funcs.cos_ang(90 - teta)) / 3.0;
-              float oy = -2 * (R * -funcs.sin_ang(90 - teta)) / 3.0;
-
-              float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
-              if (PAL_direction == -1) _u = 1 - _u;
-              if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_direction == 2) _u =  0.5 * _u;
-
-              float[] COL = PAINT.getColorStyle(PAL_type, _u);
-
-              this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-              //this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-              this.graphics.noFill();
-
-              this.graphics.strokeWeight(2); // 0; <<<<<<<<<
-
-              this.graphics.beginShape();
-              this.graphics.vertex((x + x1 + ox) * OBJECTS_scale * this.scale, (y + y1 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-              this.graphics.vertex((x + x2 + ox) * OBJECTS_scale * this.scale, (y + y2 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-              this.graphics.vertex((x + x3 + ox) * OBJECTS_scale * this.scale, (y + y3 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-              this.graphics.vertex((x + x4 + ox) * OBJECTS_scale * this.scale, (y + y4 + oy) * OBJECTS_scale * this.scale, z * OBJECTS_scale * this.scale);
-              this.graphics.endShape(CLOSE);
-            }
-          }
-        }
-      }
-    }
-  }
 
 
 
@@ -4192,159 +3988,6 @@ class solarchvision_WORLD {
       if (this.VIEW_displayGrid[this.VIEW_id] == 1) R_station = 5;
 
       this.graphics.ellipseMode(CENTER);
-
-      for (int n = 0; n < AERIAL_num; n++) {
-
-        //try {
-
-        if ((AERIAL_Center_Longitude == STATION.getLongitude()) && (AERIAL_Center_Latitude == STATION.getLatitude())) {
-
-          float _lat = AERIAL_Locations[n][1];
-          float _lon = AERIAL_Locations[n][0];
-          if (_lon > 180) _lon -= 360; // << important!
-
-          float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-          float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-          this.graphics.pushMatrix();
-          this.graphics.translate(x_point, y_point);
-
-          if (AERIAL_graphOption == 0) {
-            //-----------------------------
-            int PAL_type = 6; //12;
-            int PAL_direction = -1;
-            float PAL_multiplier = 1.0 / 30.0;
-            //-----------------------------
-
-            for (int _turn = 1; _turn <= 2; _turn++) {
-              for (int o = 0; o < GRIB2_maxScenarios; o++) {
-
-                float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
-
-                if (is_defined(_val)) {
-
-                  float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
-                  if (PAL_direction == -1) _u = 1 - _u;
-                  if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_direction == 2) _u =  0.5 * _u;
-
-                  float[] COL = PAINT.getColorStyle(PAL_type, _u);
-
-                  if (_turn == 1) {
-                    this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-                    this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-
-                    this.graphics.strokeWeight(0);
-                    this.graphics.ellipse(0, 0, R_station, R_station);
-                  }
-
-                  if (_turn == 2) {
-                    this.graphics.textSize(MessageSize * this.ImageScale);
-                    this.graphics.textAlign(CENTER, CENTER);
-
-                    _u = 0.5 + 0.5 * (PAL_multiplier * _val);
-
-                    if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-                      this.graphics.stroke(127);
-                      this.graphics.fill(127);
-                      this.graphics.strokeWeight(0);
-                    } else {
-                      this.graphics.stroke(255);
-                      this.graphics.fill(255);
-                      this.graphics.strokeWeight(2 * this.ImageScale);
-                    }
-                    if (is_defined(_val)) this.graphics.text(nf(int(funcs.roundTo(_val, 1)), 0), 0, 0);
-                  }
-                }
-              }
-            }
-          }
-
-          if (AERIAL_graphOption == 1) {
-
-            //-----------------------------
-            int PAL_type = 1;//12;
-            int PAL_direction = 1;//-1;
-            float PAL_multiplier = 0.1;//1.0 / 30.0;
-            //-----------------------------
-
-            for (int _turn = 1; _turn <= 2; _turn++) {
-              for (int o = 0; o < GRIB2_maxScenarios; o++) {
-
-                //float _val = AERIAL_Data[GRIB2_Hour][LAYER_drybulb.id][n][o];
-                float _val = AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
-
-                if (is_defined(_val)) {
-
-                  float teta = AERIAL_Data[GRIB2_Hour][LAYER_winddir.id][n][o];
-                  float D_teta = 15;
-                  float R = 0.25 * R_station * AERIAL_Data[GRIB2_Hour][LAYER_windspd.id][n][o];
-
-                  float R_in = 0.0 * R;
-                  float x1 = (R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
-                  float y1 = (R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
-                  float x2 = (R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;
-                  float y2 = (R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;
-
-                  float x4 = (R * funcs.cos_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
-                  float y4 = (R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta))) * this.ImageScale;
-                  float x3 = (R * funcs.cos_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;
-                  float y3 = (R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta))) * this.ImageScale;
-
-                  //float ox = -0.5 * (R * funcs.cos_ang(90 - teta)) * this.ImageScale;
-                  //float oy = -0.5 * (R * -funcs.sin_ang(90 - teta)) * this.ImageScale;
-                  //float ox = -1 * (R * funcs.cos_ang(90 - teta)) * this.ImageScale;
-                  //float oy = -1 * (R * -funcs.sin_ang(90 - teta)) * this.ImageScale;
-                  float ox = -2 * (R * funcs.cos_ang(90 - teta)) / 3.0 * this.ImageScale;
-                  float oy = -2 * (R * -funcs.sin_ang(90 - teta)) / 3.0 * this.ImageScale;
-
-                  float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
-                  if (PAL_direction == -1) _u = 1 - _u;
-                  if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_direction == 2) _u =  0.5 * _u;
-
-                  float[] COL = PAINT.getColorStyle(PAL_type, _u);
-
-                  if (_turn == 1) {
-                    this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-                    this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-
-                    this.graphics.strokeWeight(0);
-                    //this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-                    this.graphics.quad(x1 + ox, y1 + oy, x2 + ox, y2 + oy, x3 + ox, y3 + oy, x4 + ox, y4 + oy);
-                  }
-
-                  if (_turn == 2) {
-                    this.graphics.textSize(MessageSize * this.ImageScale);
-                    this.graphics.textAlign(CENTER, CENTER);
-
-                    _u = 0.5 + 0.5 * (PAL_multiplier * _val);
-
-                    if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-                      this.graphics.stroke(127);
-                      this.graphics.fill(127);
-                      this.graphics.strokeWeight(0);
-                    } else {
-                      this.graphics.stroke(255);
-                      this.graphics.fill(255);
-                      this.graphics.strokeWeight(2 * this.ImageScale);
-                    }
-                    if (is_defined(_val)) this.graphics.text(nf(int(funcs.roundTo(_val, 1)), 0), 0, 0);
-                  }
-                }
-              }
-            }
-          }
-
-          this.graphics.popMatrix();
-        }
-        //}
-        //catch (Exception e) {
-        //}
-      }
-
-
-
 
       {
         float _lat = STATION.getLatitude();
@@ -8108,7 +7751,7 @@ String[][] allRollouts = {
   }
   ,
   {
-    "Location & Data", "Point", "Stations", "Weather"
+    "Location & Data", "Point", "Stations"
   }
   ,
   {
@@ -8330,24 +7973,6 @@ class solarchvision_ROLLOUT {
         WORLD.displayAll_NAEFS = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
         //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
       }
-
-      if (this.child == 3) { // Weather
-
-        //ENSEMBLE_FORECAST_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load, 0, 1, 1), 1));
-        //ENSEMBLE_OBSERVED_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load, 0, 1, 1), 1));
-        //CLIMATE_CLMREC_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load, 0, 1, 1), 1));
-        //CLIMATE_CWEEDS_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load, 0, 1, 1), 1));
-        //CLIMATE_TMYEPW_load = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load, 0, 1, 1), 1));
-
-        GRIB2_Hour_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Start", GRIB2_Hour_Start, 0, 48, 1), 1));
-        GRIB2_Hour_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_End", GRIB2_Hour_End, 0, 48, 1), 1));
-        GRIB2_Hour_Step = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Hour_Step", GRIB2_Hour_Step, 1, 24, 1), 1));
-
-        GRIB2_Layer_Start = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Start", GRIB2_Layer_Start, 0, numberOfLayers, 1), 1));
-        GRIB2_Layer_End = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_End", GRIB2_Layer_End, 0, numberOfLayers, 1), 1));
-        GRIB2_Layer_Step = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 0, 0, 1, "GRIB2_Layer_Step", GRIB2_Layer_Step, 1, numberOfLayers, 1), 1));
-      }
-
     } else if (this.parent == 2) { // Geometries & Space
       if (this.child == 1) { // Create
 
@@ -8988,7 +8613,7 @@ int COLOR_STYLE_Number = 20; //6;
 
 
 final int dataID_ENSEMBLE_OBSERVED = 0;
-final int dataID_ENSEMBLE_FORECAST = 1; // also used for Aerial
+final int dataID_ENSEMBLE_FORECAST = 1;
 final int dataID_CLIMATE_CWEEDS = 2;
 final int dataID_CLIMATE_CLMREC = 3;
 final int dataID_CLIMATE_TMYEPW = 4;
@@ -22520,26 +22145,6 @@ void draw () {
     STUDY.updated();
 
     if (STUDY.record_PDF == false) {
-      /*
-       if (Illustrations_Animate != 0) {
-       GRIB2_Layer = GRIB2_Layer_Start;
-
-       GRIB2_Hour = GRIB2_Hour_Start;
-
-       int d = (GRIB2_Hour_End - GRIB2_Hour_Start) / GRIB2_Hour_Step;
-
-       if (d > 1) {
-
-       GRIB2_Hour += GRIB2_Hour_Step * (frameCount % d);
-
-       if (GRIB2_Hour > GRIB2_Hour_End) GRIB2_Hour = GRIB2_Hour_Start;
-
-       WORLD.revise();
-       WIN3D.revise(); // <<<<<<<<<<<
-       }
-       }
-       */
-
       if (WORLD.include) {
         if (WORLD.update) {
 
@@ -40831,9 +40436,6 @@ void mouseClicked () {
               Tropo3D.download_images();
             }
 
-            if (menu_option.equals("Download Aerial")) {
-              SOLARCHVISION_download_AERIAL(TIME.year, TIME.month, TIME.day, TIME.hour);
-            }
             if (menu_option.equals("Download NAEFS")) {
               download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
             }
@@ -40878,18 +40480,6 @@ void mouseClicked () {
               ENSEMBLE_FORECAST_load = true;
               update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
             }
-            if (menu_option.equals("Update Aerial")) {
-              CurrentDataSource = dataID_ENSEMBLE_FORECAST;
-
-              ENSEMBLE_FORECAST_load = true;
-              SOLARCHVISION_load_AERIAL(TIME.year, TIME.month, TIME.day, TIME.hour);
-            }
-
-
-
-
-
-
             if (menu_option.equals("Use typical year (TMY)")) {
               CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
@@ -44094,359 +43684,6 @@ boolean isInside (float x, float y, float x1, float y1, float x2, float y2) {
   }
   return false;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------
-
-
-void SOLARCHVISION_download_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, int begin_HOUR) {
-
-  GRIB2_Year = begin_YEAR;
-  GRIB2_Month = begin_MONTH;
-  GRIB2_Day = begin_DAY;
-  GRIB2_ModelRun = begin_HOUR;
-
-/*
-  String the_directory = getGrib2Folder(GRIB2_DomainSelection);
-  {
-    String[] tmpMessage = {
-      nf(GRIB2_Year, 4), nf(GRIB2_Month, 2), nf(GRIB2_Day, 2), nf(GRIB2_ModelRun, 2)
-    };
-    saveStrings(the_directory + "/TempEmpty.txt", tmpMessage);
-  }
-
-
-  for (int h = 0; h < GRIB2_TGL_number; h++) {
-
-    if (GRIB2_TGL_Selected[h] != 0) {
-
-      for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
-        GRIB2_Layer = l;
-
-        for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
-          GRIB2_Hour = k;
-
-          boolean new_files_downloaded = false;
-
-          String the_link = "";
-
-          String the_filename = getGrib2Filename(GRIB2_Hour, GRIB2_Layer, h);
-
-          String the_target = the_directory + "/" + the_filename;
-
-          File dir = new File(the_target);
-          if (!dir.isFile()) {
-
-            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDWPS")) {
-              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + the_filename;
-            }
-            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("HRDPS")) {
-              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-            }
-            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("RDPS")) {
-              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-            }
-            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("GDPS")) {
-              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-            }
-            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("REPS")) {
-              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-            }
-            if (GRIB2_Domains[GRIB2_DomainSelection][0].equals("GEPS")) {
-              the_link = "https://dd.weather.gc.ca/" + GRIB2_Domains[GRIB2_DomainSelection][1] + "/" + nf(GRIB2_ModelRun, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-            }
-
-
-            println("Try downloading: " + the_link);
-
-            try {
-              saveBytes(the_target, loadBytes(the_link));
-            }
-            catch (Exception e) {
-              println("LINK NOT AVAILABLE:", the_link);
-            }
-
-          }
-
-        }
-      }
-    }
-  }
-*/
-}
-
-
-
-
-void SOLARCHVISION_load_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, int begin_HOUR) {
-
-
-  GRIB2_Year = begin_YEAR;
-  GRIB2_Month = begin_MONTH;
-  GRIB2_Day = begin_DAY;
-  GRIB2_ModelRun = begin_HOUR;
-
-/*
-
-
-  AERIAL_Data = new float [49][numberOfLayers][AERIAL_num][GRIB2_maxScenarios];
-  AERIAL_Flags = new int [49][numberOfLayers][AERIAL_num][GRIB2_maxScenarios];
-  AERIAL_Locations = new float [AERIAL_num][3]; // lon, lat, tgl
-  AERIAL_Center_Longitude = STATION.getLongitude();
-  AERIAL_Center_Latitude = STATION.getLatitude();
-
-  for (int h = 0; h < GRIB2_TGL_number; h++) {
-    GRIB2_TGL_Selected[h] = 0; // deselect all layers first.
-  }
-
-  for (int n = 0; n < AERIAL_num; n++) {
-    for (int k = 0; k <= 48; k++) {
-      for (int l = 0; l < numberOfLayers; l++) {
-        for (int o = 0; o < GRIB2_maxScenarios; o++) {
-          AERIAL_Data[k][l][n][o] = FLOAT_undefined;
-          AERIAL_Flags[k][l][n][o] = -1;
-        }
-      }
-    }
-
-
-    float stp_lat = 20.0 / 2224.5968; // equals to 1km <<<<<<<<
-    float stp_lon = stp_lat / funcs.cos_ang(AERIAL_Center_Latitude);
-
-
-    float r1 = float(GRIB2_Domains[GRIB2_DomainSelection][5]);
-    float r = 0;
-    float t = 0;
-
-    int p = n / (1 + 6 + 12);
-    int q = n % (1 + 6 + 12);
-
-    if ((q > 0) && (q <= 6)) {
-      r = 1 * r1;
-      t = 360 * q / 6.0;
-    }
-
-    if ((q > 6) && (q <= 18)) {
-      r = 2 * r1;
-      t = 360 * (q - 6) / 12.0;
-    }
-
-    if ((q > 18) && (q <= 36)) {
-      r = 3 * r1;
-      t = 360 * (q - 18) / 18.0;
-    }
-
-    float _tgl = 40 * p;
-
-    if (_tgl == 0) _tgl = 10; // <<<<<<
-
-    AERIAL_Locations[n][0] = AERIAL_Center_Longitude + stp_lon * r * funcs.cos_ang(t);
-    AERIAL_Locations[n][1] = AERIAL_Center_Latitude + stp_lat * r * funcs.sin_ang(t);
-    AERIAL_Locations[n][2] = _tgl;
-
-    GRIB2_TGL_Selected[p] = 1;
-  }
-
-
-
-
-  if (ENSEMBLE_FORECAST_load) {
-
-    String the_directory = getGrib2Folder(GRIB2_DomainSelection);
-    {
-      String[] tmpMessage = {
-        nf(GRIB2_Year, 4), nf(GRIB2_Month, 2), nf(GRIB2_Day, 2), nf(GRIB2_ModelRun, 2)
-      };
-      saveStrings(Folder_Wgrib2Temp + "/TempEmpty.txt", tmpMessage);
-    }
-
-
-    for (int h = 0; h < GRIB2_TGL_number; h++) {
-
-      if (GRIB2_TGL_Selected[h] != 0) {
-
-        for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
-          GRIB2_Layer = l;
-
-          for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
-            GRIB2_Hour = k;
-
-            boolean new_files_downloaded = false;
-
-            String the_link = "";
-
-            String the_target = the_directory + "/" + getGrib2Filename(GRIB2_Hour, GRIB2_Layer, h);
-
-            File dir = new File(the_target);
-            if (dir.isFile()) {
-
-              float[][] Points = {
-                {
-                  0, 0, 0
-                }
-              };
-
-              for (int n = 0; n < AERIAL_num; n++) {
-                int p = int(funcs.roundTo(AERIAL_Locations[n][2] / 40.0, 1));
-
-                if (p == h) {
-
-                  float[][] newPoint = {
-                    {
-                      AERIAL_Locations[n][0], AERIAL_Locations[n][1], AERIAL_Locations[n][2]
-                    }
-                  };
-                  Points = (float[][]) concat(Points, newPoint);
-
-                }
-              }
-
-
-              float[][] GRIB2_values = getGrib2Value_MultiplePoints(GRIB2_Hour, GRIB2_Layer, h, Points, the_link);
-
-              int nPoint = 0;
-
-              for (int n = 0; n < AERIAL_num; n++) {
-                int p = int(funcs.roundTo(AERIAL_Locations[n][2] / 40.0, 1));
-
-                if (p == h) {
-
-                  nPoint += 1;
-
-                  for (int o = 0; o < GRIB2_maxScenarios; o++) {
-                    AERIAL_Data[GRIB2_Hour][GRIB2_Layer][n][o] = GRIB2_values[nPoint][o];
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-
-
-
-
-
-
-    for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
-      GRIB2_Layer = l;
-
-      for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
-        GRIB2_Hour = k;
-
-        for (int n = 0; n < AERIAL_num; n++) {
-          for (int o = 0; o < GRIB2_maxScenarios; o++) {
-            if (is_defined(AERIAL_Data[GRIB2_Hour][GRIB2_Layer][n][o])) {
-              AERIAL_Flags[GRIB2_Hour][GRIB2_Layer][n][o] = 1;
-            } else AERIAL_Flags[GRIB2_Hour][GRIB2_Layer][n][o] = -1;
-          }
-        }
-      }
-    }
-
-    for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
-      GRIB2_Layer = l;
-
-      for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
-        GRIB2_Hour = k;
-
-        for (int n = 0; n < 1; n++) { // <<<<<<<<<<<<<<<< For now: only the first point (i.e. the center)
-          for (int o = 0; o < GRIB2_maxScenarios; o++) {
-
-            int THE_YEAR = GRIB2_Year;
-            int THE_MONTH = GRIB2_Month;
-            int THE_DAY = GRIB2_Day;
-            int THE_HOUR = GRIB2_ModelRun;
-
-            int now_i = int(THE_HOUR);
-            int now_j = TIME.convert2Date(THE_MONTH, THE_DAY);
-
-            now_i -= int(-STATION.getTimelong() / 15);
-            if (now_i < 0) {
-              now_i += 24;
-              now_j -= 1;
-              if (now_j < 0) {
-                now_j += 365;
-              }
-            }
-
-            int next_i = now_i + k;
-            int next_j = now_j;
-            if (next_i >= 24) {
-
-              next_j += int(next_i / 24);
-              if (next_j >= 365) {
-                next_j = next_j % 365;
-              }
-
-              next_i = next_i % 24;
-            }
-
-
-            ENSEMBLE_FORECAST_values[next_i][next_j][l][43 + o] = AERIAL_Data[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing after member 43
-
-            println(GRIB2_Domains[GRIB2_DomainSelection][0] + "[" + nf(o, 0) + "]:", ENSEMBLE_FORECAST_values[next_i][next_j][l][43 + o]);
-            println("GDPS:", ENSEMBLE_FORECAST_values[next_i][next_j][l][21]);
-          }
-        }
-      }
-    }
-
-
-    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_FORECAST);
-    SOLARCHVISION_postProcess_fillGaps(dataID_ENSEMBLE_FORECAST);
-    if (CLIMATIC_SolarForecast == 1) {
-      SOLARCHVISION_postProcess_climaticSolarForecast();
-    }
-    else {
-      SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_FORECAST);
-    }
-    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_FORECAST);
-    SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_FORECAST);
-
-    WORLD.displayAll_NAEFS = 1;
-    WORLD.displayNear_NAEFS = true;
-  }
-
-  SOLARCHVISION_model_changed();
-  WORLD.revise();
-  STUDY.revise();
-  ROLLOUT.revise();
-  UI_timeBar.revise();
-
-  SampleMember_Start = 44; //ENSEMBLE_FORECAST_start;
-  SampleMember_End = ENSEMBLE_FORECAST_end;
-
-  */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void SOLARCHVISION_draw_Perspective_Internally () {
@@ -47911,7 +47148,6 @@ class solarchvision_UI_menuBar {
       "Update CLMREC",
       "Update SWOB",
       "Update NAEFS",
-      "Update Aerial",
       "Update Station",
 
       "Load Land Mesh",
@@ -47922,7 +47158,6 @@ class solarchvision_UI_menuBar {
       "Download NAEFS",
       "Download SWOB",
       "Download CLMREC",
-      "Download Aerial",
 
       "Display/Hide TMYEPW stations",
       "Display/Hide TMYEPW nearest",
@@ -55132,23 +54367,6 @@ void SOLARCHVISION_save_project (String myFile) {
     XML_setBoolean(parent, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load);
     XML_setBoolean(parent, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load);
     XML_setBoolean(parent, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load);
-    XML_setInt(parent, "GRIB2_Month", GRIB2_Month);
-    XML_setInt(parent, "GRIB2_Day", GRIB2_Day);
-    XML_setInt(parent, "GRIB2_ModelRun", GRIB2_ModelRun);
-    XML_setInt(parent, "AERIAL_num", AERIAL_num);
-    XML_setFloat(parent, "AERIAL_Center_Longitude", AERIAL_Center_Longitude);
-    XML_setFloat(parent, "AERIAL_Center_Latitude", AERIAL_Center_Latitude);
-    XML_setInt(parent, "GRIB2_Hour_Start", GRIB2_Hour_Start);
-    XML_setInt(parent, "GRIB2_Hour_End", GRIB2_Hour_End);
-    XML_setInt(parent, "GRIB2_Hour_Step", GRIB2_Hour_Step);
-    XML_setInt(parent, "GRIB2_Layer_Start", GRIB2_Layer_Start);
-    XML_setInt(parent, "GRIB2_Layer_End", GRIB2_Layer_End);
-    XML_setInt(parent, "GRIB2_Layer_Step", GRIB2_Layer_Step);
-    XML_setInt(parent, "GRIB2_Hour", GRIB2_Hour);
-    XML_setInt(parent, "GRIB2_Layer", GRIB2_Layer);
-    XML_setInt(parent, "GRIB2_DomainSelection", GRIB2_DomainSelection);
-    XML_setInt(parent, "GRIB2_TGL_number", GRIB2_TGL_number);
-    XML_setInt(parent, "AERIAL_graphOption", AERIAL_graphOption);
     XML_setInt(parent, "Develop_Option", Develop_Option);
     XML_setInt(parent, "Develop_DayHour", Develop_DayHour);
     XML_setBoolean(parent, "DevelopData_update", DevelopData_update);
@@ -55376,23 +54594,6 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
   CLIMATE_CLMREC_load = XML_getBoolean(parent, "CLIMATE_CLMREC_load");
   ENSEMBLE_FORECAST_load = XML_getBoolean(parent, "ENSEMBLE_FORECAST_load");
   ENSEMBLE_OBSERVED_load = XML_getBoolean(parent, "ENSEMBLE_OBSERVED_load");
-  GRIB2_Month = XML_getInt(parent, "GRIB2_Month");
-  GRIB2_Day = XML_getInt(parent, "GRIB2_Day");
-  GRIB2_ModelRun = XML_getInt(parent, "GRIB2_ModelRun");
-  AERIAL_num = XML_getInt(parent, "AERIAL_num");
-  AERIAL_Center_Longitude = XML_getFloat(parent, "AERIAL_Center_Longitude");
-  AERIAL_Center_Latitude = XML_getFloat(parent, "AERIAL_Center_Latitude");
-  GRIB2_Hour_Start = XML_getInt(parent, "GRIB2_Hour_Start");
-  GRIB2_Hour_End = XML_getInt(parent, "GRIB2_Hour_End");
-  GRIB2_Hour_Step = XML_getInt(parent, "GRIB2_Hour_Step");
-  GRIB2_Layer_Start = XML_getInt(parent, "GRIB2_Layer_Start");
-  GRIB2_Layer_End = XML_getInt(parent, "GRIB2_Layer_End");
-  GRIB2_Layer_Step = XML_getInt(parent, "GRIB2_Layer_Step");
-  GRIB2_Hour = XML_getInt(parent, "GRIB2_Hour");
-  GRIB2_Layer = XML_getInt(parent, "GRIB2_Layer");
-  GRIB2_DomainSelection = XML_getInt(parent, "GRIB2_DomainSelection");
-  GRIB2_TGL_number = XML_getInt(parent, "GRIB2_TGL_number");
-  AERIAL_graphOption = XML_getInt(parent, "AERIAL_graphOption");
   Develop_Option = XML_getInt(parent, "Develop_Option");
   Develop_DayHour = XML_getInt(parent, "Develop_DayHour");
   //DevelopData_update = XML_getBoolean(parent, "DevelopData_update");
@@ -55623,10 +54824,7 @@ void SOLARCHVISION_update_folders () {
 
   Folder_Project = BaseFolder + "/projects/model-01";
 
-  Folder_Wgrib2Temp = Folder_Project + "/temp";
-
   Folder_GEOMET = Folder_Project + "/data/GEOMET" + "/" + RunStamp;
-  Folder_GRIB2 = Folder_Project + "/data/GRIB2";
 
   Folder_ENSEMBLE_FORECAST = Folder_Project + "/data/NAEFS";
   Folder_ENSEMBLE_OBSERVED = Folder_Project + "/data/SWOB";
