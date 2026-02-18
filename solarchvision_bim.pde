@@ -24454,11 +24454,11 @@ class solarchvision_Tropo3D {
         the_service = "https://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi";
       }
       else {
-        the_service = "https://geo.weather.gc.ca/geomet/";
+        the_service = "https://geo.weather.gc.ca/geomet";
       }
 
 
-      String the_link = the_service + "?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&TRANSPARENT=true";
+      String the_link = the_service + "?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&FORMAT=image%2Fpng&TRANSPARENT=true";
 
 
       String ParameterStamp = "";
@@ -24537,11 +24537,11 @@ class solarchvision_Tropo3D {
 
 
       the_link += "&LAYERS=" + DomainStamp + ParameterStamp + "&WIDTH=" + nf(RES1, 0) + "&HEIGHT=" + nf(RES2, 0);
-      the_link += "&SRS=EPSG%3A4326&BBOX=";
-      the_link += nf(this.BoundariesX[i][0], 0, 3) + ",";
+      the_link += "&CRS=EPSG%3A4326&BBOX=";
       the_link += nf(this.BoundariesY[i][0], 0, 3) + ",";
-      the_link += nf(this.BoundariesX[i][1], 0, 3) + ",";
-      the_link += nf(this.BoundariesY[i][1], 0, 3);
+      the_link += nf(this.BoundariesX[i][0], 0, 3) + ",";
+      the_link += nf(this.BoundariesY[i][1], 0, 3) + ",";
+      the_link += nf(this.BoundariesX[i][1], 0, 3);
 
       int the_hour = i * TROPO_deltaTime;
 
