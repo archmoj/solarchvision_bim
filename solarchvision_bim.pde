@@ -48197,6 +48197,18 @@ class solarchvision_UI_menuBar {
     }
     ,
     {
+      "3D-shade",
+      "Shade Surface Wire",
+      "Shade Surface Base",
+      "Shade Surface White",
+      "Shade Surface Materials",
+      "Shade Global Solar",
+      "Shade Vertex Solar",
+      "Shade Vertex Solid",
+      "Shade Vertex Elevation"
+    }
+    ,
+    {
       "3D-view",
       "Camera >> Viewport",
       "GoTo Selected Camera",
@@ -48282,18 +48294,6 @@ class solarchvision_UI_menuBar {
       "Display/Hide Selected Group Box",
       "Display/Hide Selected 2D Edges",
       "Display/Hide Selected 1D Edges",
-    }
-    ,
-    {
-      "3D-shade",
-      "Shade Surface Wire",
-      "Shade Surface Base",
-      "Shade Surface White",
-      "Shade Surface Materials",
-      "Shade Global Solar",
-      "Shade Vertex Solar",
-      "Shade Vertex Solid",
-      "Shade Vertex Elevation"
     }
     ,
     {
