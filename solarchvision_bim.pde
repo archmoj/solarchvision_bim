@@ -2179,6 +2179,10 @@ int AERIAL_graphOption = 0;
 final int DEV_WindPower = 0;
 final int DEV_RadiationOnTracker = 1;
 final int DEV_RadiationOnSurface = 2;
+final int DEV_RadiationOnSouth = 3;
+final int DEV_RadiationOnEast = 4;
+final int DEV_RadiationOnNorth = 5;
+final int DEV_RadiationOnWest = 6;
 
 int Develop_Option = DEV_WindPower;
 int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
@@ -47699,9 +47703,31 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             }
 
 
-            if (Develop_Option == DEV_RadiationOnSurface) {
-              float Alpha = Develop_AngleInclination;
-              float Beta = Develop_AngleOrientation;
+            if (
+              (Develop_Option == DEV_RadiationOnSouth) ||
+              (Develop_Option == DEV_RadiationOnEast) ||
+              (Develop_Option == DEV_RadiationOnWest) ||
+              (Develop_Option == DEV_RadiationOnNorth) ||
+              (Develop_Option == DEV_RadiationOnSurface)
+            ) {
+              float Alpha = 0;
+              float Beta = 0;
+              if (Develop_Option == DEV_RadiationOnSurface) {
+                Alpha = Develop_AngleInclination;
+                Beta = Develop_AngleOrientation;
+              } else if (Develop_Option == DEV_RadiationOnSouth) {
+                Alpha = 0;
+                Beta = 0;
+              } else if (Develop_Option == DEV_RadiationOnEast) {
+                Alpha = 0;
+                Beta = 90;
+              } else if (Develop_Option == DEV_RadiationOnNorth) {
+                Alpha = 0;
+                Beta = 180;
+              } else if (Develop_Option == DEV_RadiationOnWest) {
+                Alpha = 0;
+                Beta = -90;
+              }
 
               if (is_defined(R_dir) && is_defined(R_dif)) {
 
@@ -48251,7 +48277,7 @@ class solarchvision_UI_menuBar {
        }
     }
 
-    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 3];
+    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 7];
 
     this.Items[LayersID_in_Bar][0] = "Layer";
 
@@ -48263,6 +48289,10 @@ class solarchvision_UI_menuBar {
     this.Items[LayersID_in_Bar][numberOfLayers + 0] = "Wind power";
     this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Radiation on solar tracker";
     this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on surface inclination";
+    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Radiation on south";
+    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Radiation on east";
+    this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Radiation on north";
+    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on west";
   }
 
 
