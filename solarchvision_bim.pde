@@ -2183,6 +2183,10 @@ final int DEV_RadiationOnSouth = 3;
 final int DEV_RadiationOnEast = 4;
 final int DEV_RadiationOnNorth = 5;
 final int DEV_RadiationOnWest = 6;
+final int DEV_RadiationOnSE = 7;
+final int DEV_RadiationOnNE = 8;
+final int DEV_RadiationOnNW = 9;
+final int DEV_RadiationOnSW = 10;
 
 int Develop_Option = DEV_WindPower;
 int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
@@ -47708,6 +47712,10 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               (Develop_Option == DEV_RadiationOnEast) ||
               (Develop_Option == DEV_RadiationOnWest) ||
               (Develop_Option == DEV_RadiationOnNorth) ||
+              (Develop_Option == DEV_RadiationOnSE) ||
+              (Develop_Option == DEV_RadiationOnNE) ||
+              (Develop_Option == DEV_RadiationOnNW) ||
+              (Develop_Option == DEV_RadiationOnSW) ||
               (Develop_Option == DEV_RadiationOnSurface)
             ) {
               float Alpha = 0;
@@ -47727,6 +47735,18 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               } else if (Develop_Option == DEV_RadiationOnWest) {
                 Alpha = 0;
                 Beta = -90;
+              } else if (Develop_Option == DEV_RadiationOnSE) {
+                Alpha = 0;
+                Beta = 45;
+              } else if (Develop_Option == DEV_RadiationOnNE) {
+                Alpha = 0;
+                Beta = 135;
+              } else if (Develop_Option == DEV_RadiationOnNW) {
+                Alpha = 0;
+                Beta = -135;
+              } else if (Develop_Option == DEV_RadiationOnSW) {
+                Alpha = 0;
+                Beta = -45;
               }
 
               if (is_defined(R_dir) && is_defined(R_dif)) {
@@ -47740,8 +47760,35 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.V_offset = 0;
               LAYER_developed.V_belowLine = 0;
               LAYER_developed.unit = "W/m²";
-              LAYER_developed.descriptions[Language_EN] = "Radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
+
+              if (Develop_Option == DEV_RadiationOnSurface) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              } else if (Develop_Option == DEV_RadiationOnSouth) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on South surface";
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              } else if (Develop_Option == DEV_RadiationOnEast) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on East surface";
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              } else if (Develop_Option == DEV_RadiationOnNorth) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on North surface";
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              } else if (Develop_Option == DEV_RadiationOnWest) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on West surface";
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              } else if (Develop_Option == DEV_RadiationOnSE) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on S.E. surface";
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              } else if (Develop_Option == DEV_RadiationOnNE) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on N.E. surface";
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              } else if (Develop_Option == DEV_RadiationOnNW) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on N.W. surface";
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              } else if (Develop_Option == DEV_RadiationOnSW) {
+                LAYER_developed.descriptions[Language_EN] = "Radiation on S.W. surface";
+                LAYER_developed.descriptions[Language_FR] = "?"; // ??
+              }
             }
 
           }
@@ -48277,7 +48324,7 @@ class solarchvision_UI_menuBar {
        }
     }
 
-    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 7];
+    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 11];
 
     this.Items[LayersID_in_Bar][0] = "Layer";
 
@@ -48288,11 +48335,16 @@ class solarchvision_UI_menuBar {
 
     this.Items[LayersID_in_Bar][numberOfLayers + 0] = "Wind power";
     this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Radiation on solar tracker";
-    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on surface inclination";
-    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Radiation on south";
-    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Radiation on east";
-    this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Radiation on north";
-    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on west";
+    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on surface with inclination";
+    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Radiation on South surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Radiation on East surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Radiation on North surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on West surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 7] = "Radiation on S.E. surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 8] = "Radiation on N.E. surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 9] = "Radiation on N.W. surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 10] = "Radiation on S.W. surface";
+
   }
 
 
