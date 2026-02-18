@@ -24483,7 +24483,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
 
     if (1 + Progress < 100 * f / float(FileALL.length)) {
       Progress = 100 * f / float(FileALL.length);
-      println("Progress:", int(Progress), "%");
+      //println("Progress:", int(Progress), "%");
     }
 
     lineSTR = FileALL[f];
@@ -38503,7 +38503,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
     if (1 + Progress < 100 * f / float(allFaces.nodes.length)) {
       Progress = 100 * f / float(allFaces.nodes.length);
-      println("Progress:", int(Progress), "%");
+      //println("Progress:", int(Progress), "%");
     }
 
     int vsb = allFaces.getVisibility(f);
@@ -46862,7 +46862,7 @@ void SOLARCHVISION_preBakeViewport () {
 
     if (1 + Progress < 100 * np / float(RES1 * RES2)) {
       Progress = 100 * np / float(RES1 * RES2);
-      println("Progress:", int(Progress), "%");
+      //println("Progress:", int(Progress), "%");
     }
 
     Image_X -= 0.5 * WIN3D.dX;
@@ -47164,7 +47164,7 @@ void SOLARCHVISION_RenderViewport () {
 
     if (1 + Progress < 100 * np / float(RES1 * RES2)) {
       Progress = 100 * np / float(RES1 * RES2);
-      println("Progress:", int(Progress), "%");
+      //println("Progress:", int(Progress), "%");
     }
 
     float[] ray_direction = new float [3];
