@@ -41226,24 +41226,22 @@ void mouseClicked () {
 
             if (UI_menuBar.Items[UI_menuBar.selected_parent][0].equals("Layer")) {
               if (UI_menuBar.selected_child > 0) {
-                if (CurrentLayer_id != UI_menuBar.selected_child - 1) {
 
-                  if (UI_menuBar.selected_child < numberOfLayers) {
+                if (UI_menuBar.selected_child < numberOfLayers) {
 
-                    changeCurrentLayerTo(UI_menuBar.selected_child - 1);
+                  changeCurrentLayerTo(UI_menuBar.selected_child - 1);
 
-                    DevelopLayer_id = CurrentLayer_id;
+                  DevelopLayer_id = CurrentLayer_id;
 
-                    STUDY.revise();
-                  } else {
-                    Develop_Option = UI_menuBar.selected_child - numberOfLayers;
+                  STUDY.revise();
+                } else {
+                  Develop_Option = UI_menuBar.selected_child - numberOfLayers;
 
-                    SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
+                  SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
 
-                    changeCurrentLayerTo(LAYER_developed.id);
+                  changeCurrentLayerTo(LAYER_developed.id);
 
-                    STUDY.revise();
-                  }
+                  STUDY.revise();
                 }
               }
             }
