@@ -270,8 +270,6 @@ final int PlotImpacts_WIND_ACTIVE = 6;
 final int PlotImpacts_WIND_PASSIVE = 7;
 final int PlotImpacts_URBAN_ACTIVE = 8;
 final int PlotImpacts_URBAN_PASSIVE = 9;
-final int PlotImpacts_FROMSUN_ACTIVE = 10;
-final int PlotImpacts_FROMSUN_PASSIVE = 11;
 
 
 float CubePower = 16; //8;
@@ -382,7 +380,6 @@ String Folder_Export;
 String Folder_Project;
 String Folder_Graphics;
 String Folder_Export3D;
-String Folder_ViewsFromSky;
 String Folder_ScreenShots;
 String Folder_Shadings;
 
@@ -7818,243 +7815,6 @@ class solarchvision_STUDY {
         }
       }
 
-    }
-
-
-
-    if ((this.PlotImpacts == PlotImpacts_FROMSUN_ACTIVE) || (this.PlotImpacts == PlotImpacts_FROMSUN_PASSIVE)) {
-
-      if (this.PlotImpacts == PlotImpacts_FROMSUN_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == PlotImpacts_FROMSUN_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
-
-      float Pa = FLOAT_undefined;
-      float Pb = FLOAT_undefined;
-      float Pc = FLOAT_undefined;
-      float Pd = FLOAT_undefined;
-
-      float values_R_dir;
-      float values_R_dif;
-      float values_E_dir;
-      float values_E_dif;
-
-      int now_k = 0;
-      int now_i = 0;
-      int now_j = 0;
-
-      int PAL_type = 0;
-      int PAL_direction = 1;
-
-      if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_pallet_CLR;
-        PAL_direction = this.ACTIVE_pallet_DIR;
-      }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = this.PASSIVE_pallet_CLR;
-        PAL_direction = this.PASSIVE_pallet_DIR;
-      }
-
-      float PAL_multiplier = 1;
-      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
-
-      this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
-
-
-      for (int j = this.j_Start; j < this.j_End; j++) {
-
-        now_j = (j * int(this.perDays) + TIME.beginDay + 365) % 365;
-
-        if (now_j >= 365) {
-          now_j = now_j % 365;
-        }
-        if (now_j < 0) {
-          now_j = (now_j + 365) % 365;
-        }
-
-        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
-
-        int[] Normals_COL_N;
-        Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE);
-
-        for (int i = 0; i < 24; i++) {
-          //for (int i = 10; i <= 14; i += 2) {
-          //for (int i = 12; i <= 12; i += 2) {
-
-          float HOUR_ANGLE = i;
-          float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
-
-          float Alpha = 90 - funcs.acos_ang(SunR[3]);
-          float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
-
-          now_i = i;
-          now_j = int(j * this.perDays + TIME.beginDay + 365) % 365;
-
-          if (now_j >= 365) {
-            now_j = now_j % 365;
-          }
-          if (now_j < 0) {
-            now_j = (now_j + 365) % 365;
-          }
-
-
-          int RES1 = SKY2D_X_View;
-          int RES2 = SKY2D_Y_View;
-
-
-          { // Direct
-
-            this.graphics.endDraw();
-            ViewFromTheSky(0, 0, 0, 90-Alpha, 0, Beta);
-            PImage Image_RGBA = SKY2D_graphics.get();
-            this.graphics.beginDraw();
-
-
-            Image_RGBA.save(Folder_ViewsFromSky + "/" + "Direct" + nf(j,2) + nf(i,2) + ".png");
-
-
-            this.graphics.imageMode(CENTER);
-            this.graphics.image(Image_RGBA, (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
-            this.graphics.imageMode(CORNER);
-            /*
-            if (allMaterials.DirectArea_Flags[now_i][now_j] == -1) {
-
-              allMaterials.DirectArea_Flags[now_i][now_j] = 1;
-
-              for (int mt = 0; mt < allMaterials.Number; mt++) {
-                allMaterials.DirectArea_Data[mt][now_i][now_j] = 0;
-              }
-
-              if ((i+0.5 >= sunrise) && (i+0.5 <= sunset)) {
-
-                for (int np = 0; np < (RES1 * RES2); np++) {
-                  int Image_X = np % RES1;
-                  int Image_Y = np / RES1;
-
-                  color COL = Image_RGBA.get(Image_X, Image_Y);
-
-                  int COL_A = COL >> 24 & 0xFF;
-
-                  if (COL_A != 0) {
-                    int COL_R = COL >> 16 & 0xFF;
-                    int COL_G = COL >> 8 & 0xFF;
-                    int COL_B = COL & 0xFF;
-
-                    for (int mt = 0; mt < allMaterials.Number; mt++) {
-
-                      if ((COL_R == allMaterials.Color[mt][1]) && (COL_G == allMaterials.Color[mt][2]) && (COL_B == allMaterials.Color[mt][3])) {
-                        allMaterials.DirectArea_Data[mt][now_i][now_j] += 1;
-                      }
-                    }
-                  }
-                }
-
-                for (int mt = 0; mt < allMaterials.Number; mt++) {
-                  allMaterials.DirectArea_Data[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2) ; //???
-
-                  if (allMaterials.Selection == mt) println("Direct:", mt, now_i, now_j, allMaterials.DirectArea_Data[mt][now_i][now_j]);
-                }
-
-
-              }
-            }
-            */
-          }
-
-           /*
-           { // Diffuse
-              this.graphics.endDraw();
-              ViewFromTheSky(0, 0, 0, 90-Alpha, 0, Beta);
-              PImage Image_RGBA = SKY2D_graphics.get();
-              this.graphics.beginDraw();
-
-             if (allMaterials.DiffuseArea_Flags[now_i][now_j] == -1) {
-
-               allMaterials.DiffuseArea_Flags[now_i][now_j] = 1;
-
-               for (int mt = 0; mt < allMaterials.Number; mt++) {
-                 allMaterials.DiffuseArea_Data[mt][now_i][now_j] = 0;
-               }
-
-               int num_diffuse_views = 0;
-
-               for (int vNo = 0; vNo < skyVertices.length; vNo++) {
-
-                 float skyAngle_Alpha = funcs.asin_ang(skyVertices[vNo][2]);
-                 float skyAngle_Beta = funcs.atan2_ang(skyVertices[vNo][1], skyVertices[vNo][0]) + 90;
-
-                 if (skyAngle_Alpha >= 0) {
-
-                   num_diffuse_views += 1;
-
-                   PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-skyAngle_Alpha,0,skyAngle_Beta);
-
-                   //this.graphics.imageMode(CENTER);
-                   //this.graphics.image(Image_RGBA, (j + this.rect_offset_x + (90 - skyAngle_Alpha) * this.rect_scale * (funcs.cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * this.rect_scale * (funcs.sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
-                   //this.graphics.imageMode(CORNER);
-
-                   for (int np = 0; np < (RES1 * RES2); np++) {
-                     int Image_X = np % RES1;
-                     int Image_Y = np / RES1;
-
-                     color COL = Image_RGBA.get(Image_X, Image_Y);
-
-                     int COL_A = COL >> 24 & 0xFF;
-
-                     if (COL_A != 0) {
-                       int COL_R = COL >> 16 & 0xFF;
-                       int COL_G = COL >> 8 & 0xFF;
-                       int COL_B = COL & 0xFF;
-
-                       for (int mt = 0; mt < allMaterials.Number; mt++) {
-
-                         if ((COL_R == allMaterials.Color[mt][1]) && (COL_G == allMaterials.Color[mt][2]) && (COL_B == allMaterials.Color[mt][3])) {
-                           allMaterials.DiffuseArea_Data[mt][now_i][now_j] += 1;
-                         }
-                       }
-                     }
-                   }
-
-                 }
-               }
-               for (int mt = 0; mt < allMaterials.Number; mt++) {
-                 allMaterials.DiffuseArea_Data[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2); //???
-                 allMaterials.DiffuseArea_Data[mt][now_i][now_j] *= 2.0 / float(num_diffuse_views); // note: multiply by 2 to have a area equal to roof!
-
-                 if (allMaterials.Selection == mt) println("Diffuse:", mt, now_i, now_j, allMaterials.DiffuseArea_Data[mt][now_i][now_j]);
-               }
-
-               //---------------------------------------------
-               // applying calculated diffuse model at this time for the rest of year.
-               for (int mt = 0; mt < allMaterials.Number; mt++) {
-                 for (int loop_i = 0; loop_i < 24; loop_i++) {
-                   for (int loop_j = 0; loop_j < 365; loop_j++) {
-                     allMaterials.DiffuseArea_Data[mt][loop_i][loop_j] = allMaterials.DiffuseArea_Data[mt][now_i][now_j];
-                     allMaterials.DiffuseArea_Flags[loop_i][loop_j] = 1;
-                   }
-                 }
-               }
-               //---------------------------------------------
-             }
-           }
-           */
-
-
-        }
-
-      }
-
-      if (this.PrintTtitle) {
-
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.strokeWeight(this.T_scale * 0);
-
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(LEFT, TOP);
-
-        this.graphics.text(("Solar perspectives"), 0, 1.1 * sx_Plot / this.U_scale);
-      }
     }
 
 
@@ -40837,20 +40597,6 @@ void mouseClicked () {
               allWindRoses.displayImage = false;
               ROLLOUT.revise();
             }
-            if (menu_option.equals("View from sun & sky (active)")) {
-              STUDY.PlotImpacts = PlotImpacts_FROMSUN_ACTIVE;
-              STUDY.plotSetup = 0;
-              STUDY.revise();
-              allWindRoses.displayImage = false;
-              ROLLOUT.revise();
-            }
-            if (menu_option.equals("View from sun & sky (passive)")) {
-              STUDY.PlotImpacts = PlotImpacts_FROMSUN_PASSIVE;
-              STUDY.plotSetup = 0;
-              STUDY.revise();
-              allWindRoses.displayImage = false;
-              ROLLOUT.revise();
-            }
             if (menu_option.equals("Annual cycle sun path (active)")) {
               STUDY.PlotImpacts = PlotImpacts_CYCLES_ACTIVE;
               STUDY.plotSetup = 0;
@@ -55860,7 +55606,6 @@ void SOLARCHVISION_update_folders () {
   Folder_Export       = Folder_Project + "/export";
   Folder_Graphics     = Folder_Export + "/graphics" + "/" + RunStamp;
   Folder_Export3D      = Folder_Export + "/3D" + "/" + RunStamp;
-  Folder_ViewsFromSky = Folder_Export + "/viewsFromSky" + "/" + RunStamp;
   Folder_ScreenShots   = Folder_Export + "/screenshots" + "/" + RunStamp;
 
   String[] filenames = OPESYS.getFiles(Folder_ScreenShots);
@@ -55906,7 +55651,6 @@ test these functions:
 
 
 
-// should define subroutines to perfome this not inside draw! if ((STUDY.PlotImpacts == PlotImpacts_FROMSUN_ACTIVE) || (STUDY.PlotImpacts == PlotImpacts_FROMSUN_PASSIVE)) {
 
 
 
