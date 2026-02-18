@@ -47662,25 +47662,20 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
 
             float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
+            if (Develop_Option == DEV_WindPower) {
 
-            if (Develop_Option == DEV_RadiationOnSurface) {
-              float Alpha = Develop_AngleInclination;
-              float Beta = Develop_AngleOrientation;
+              if (is_defined(WS)) {
 
-
-
-              if (is_defined(R_dir) && is_defined(R_dif)) {
-
-                valuesSUM[now_k] = SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
+                valuesSUM[now_k] = 0.5 * 1.23 * 1 * pow(WS / 3.6, 3);
 
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
 
-              LAYER_developed.V_scale = 0.1;
+              LAYER_developed.V_scale = 0.05;
               LAYER_developed.V_offset = 0;
               LAYER_developed.V_belowLine = 0;
               LAYER_developed.unit = "W/m²";
-              LAYER_developed.descriptions[Language_EN] = "Radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
+              LAYER_developed.descriptions[Language_EN] = "Wind power";
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
@@ -47703,23 +47698,25 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
-            if (Develop_Option == DEV_WindPower) {
 
-              if (is_defined(WS)) {
+            if (Develop_Option == DEV_RadiationOnSurface) {
+              float Alpha = Develop_AngleInclination;
+              float Beta = Develop_AngleOrientation;
 
-                valuesSUM[now_k] = 0.5 * 1.23 * 1 * pow(WS / 3.6, 3);
+              if (is_defined(R_dir) && is_defined(R_dif)) {
+
+                valuesSUM[now_k] = SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
 
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
 
-              LAYER_developed.V_scale = 0.05;
+              LAYER_developed.V_scale = 0.1;
               LAYER_developed.V_offset = 0;
               LAYER_developed.V_belowLine = 0;
               LAYER_developed.unit = "W/m²";
-              LAYER_developed.descriptions[Language_EN] = "Wind power";
+              LAYER_developed.descriptions[Language_EN] = "Radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
-
 
           }
         }
