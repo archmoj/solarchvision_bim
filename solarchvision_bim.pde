@@ -11087,7 +11087,7 @@ class solarchvision_Curves {
   }
 
 
-  void add_Spline (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
+  void add_Polyline (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
 
     current_Material = m;
     current_Tessellation = tes;
@@ -41576,9 +41576,9 @@ void mouseClicked () {
               UI_toolBar.highlight("Point");
               UI_toolBar.revise();
             }
-            if (menu_option.equals("Spline")) {
+            if (menu_option.equals("Polyline")) {
               UI_set_to_Create_Curve();
-              UI_toolBar.highlight("Spline");
+              UI_toolBar.highlight("Polyline");
               UI_toolBar.revise();
             }
             if (menu_option.equals("Surface")) {
@@ -48313,7 +48313,7 @@ class solarchvision_UI_menuBar {
       "Section",
       "Solid",
       "Point",
-      "Spline",
+      "Polyline",
       "Surface",
       "3D-Tree",
       "2D-Tree",
@@ -49080,7 +49080,7 @@ class solarchvision_UI_toolBar {
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Spline", "Surface", "BuildingType", "2.5"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Polyline", "Surface", "BuildingType", "2.5"
     }
     ,
     {
@@ -49318,7 +49318,7 @@ class solarchvision_UI_toolBar {
             else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
             else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
             else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
-            else if ((this.Items[i][j]).equals("Spline")) UI_set_to_Create_Curve();
+            else if ((this.Items[i][j]).equals("Polyline")) UI_set_to_Create_Curve();
             else if ((this.Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
             else if ((this.Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
             else if ((this.Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
@@ -53291,7 +53291,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
   }
 
-  else if (Command_CAPITAL.equals("SPLINE")) {
+  else if (Command_CAPITAL.equals("PLOYLINE")) {
     if (parts.length > 1) {
       int m = 7;
       int deg = 6;
@@ -53320,11 +53320,11 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         }
       }
       if (points.length > 1) {
-        allCurves.add_Spline(m, tes, lyr, vsb, wgt, clz, points);
+        allCurves.add_Polyline(m, tes, lyr, vsb, wgt, clz, points);
       }
     }
     else {
-      return_message = "Spline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
+      return_message = "Polyline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
 
       UI_set_to_Create_Curve();
       UI_toolBar.highlight("Curve");
