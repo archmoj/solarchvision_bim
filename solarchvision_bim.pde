@@ -48307,16 +48307,14 @@ class solarchvision_UI_menuBar {
 
 
         textAlign(LEFT, CENTER);
+        textSize(1.25 * MessageSize);
 
         if (this.selected_parent == i) {
-
           stroke(0);
           fill(0);
-          textSize(1.25 * MessageSize);
         } else {
           stroke(255);
           fill(255);
-          textSize(1.25 * MessageSize);
         }
 
         text(this.Items[i][0], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize);
@@ -48426,7 +48424,7 @@ class solarchvision_UI_menuBar {
                 }
               }
 
-              if (this.Items[i][0].equals("Display")) {
+              if (this.Items[i][0].equals("3D-display")) {
                 if (this.Items[i][j].equals("Display/Hide Land Mesh")) {
                   if (Land3D.displaySurface == false) {
                     stroke(127);
