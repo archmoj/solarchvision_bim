@@ -11168,6 +11168,9 @@ class solarchvision_Polylines {
 
             int tessellation = int(pow(2, this.getTessellation(f)));
 
+            // so that single line to appear!
+            if((tessellation == 1) && (this.nodes[f].length == 2)) tessellation = 2;
+
             float[][] base_Vertices = new float [this.nodes[f].length][3];
             for (int j = 0; j < this.nodes[f].length; j++) {
               int vNo = this.nodes[f][j];
