@@ -2179,7 +2179,6 @@ int AERIAL_graphOption = 0;
 final int DEV_WindPower = 0;
 final int DEV_RadiationOnTracker = 1;
 final int DEV_RadiationOnSurface = 2;
-final int DEV_DirectOnMaterial = 3;
 
 int Develop_Option = DEV_WindPower;
 int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
@@ -47664,32 +47663,6 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
             float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
 
-
-
-
-
-            if (Develop_Option == DEV_DirectOnMaterial) {
-
-              if (is_defined(R_dir) && is_defined(R_dif)) {
-
-                if (allMaterials.DirectArea_Flags[now_i][now_j] == -1) {
-                  valuesSUM[now_k] = FLOAT_undefined;
-                } else {
-                  valuesSUM[now_k] = 0.001 * (R_dir * allMaterials.DirectArea_Data[allMaterials.Selection][now_i][now_j] + R_dif * allMaterials.DiffuseArea_Data[allMaterials.Selection][now_i][now_j]);
-                }
-
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
-              }
-
-              LAYER_developed.V_scale = 0.5;
-              LAYER_developed.V_offset = 0;
-              LAYER_developed.V_belowLine = 1;
-              LAYER_developed.unit = "KW";
-              LAYER_developed.descriptions[Language_EN] = "Direct radiation on surfaces with material #" + String.valueOf(allMaterials.Selection);
-              LAYER_developed.descriptions[Language_FR] = "?"; // ??
-            }
-
-
             if (Develop_Option == DEV_RadiationOnSurface) {
               float Alpha = Develop_AngleInclination;
               float Beta = Develop_AngleOrientation;
@@ -48281,7 +48254,7 @@ class solarchvision_UI_menuBar {
        }
     }
 
-    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 4];
+    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 3];
 
     this.Items[LayersID_in_Bar][0] = "Layer";
 
@@ -48293,7 +48266,6 @@ class solarchvision_UI_menuBar {
     this.Items[LayersID_in_Bar][numberOfLayers + 0] = "Wind power";
     this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Radiation on solar tracker";
     this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on surface inclination";
-    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Radiation on surface material";
   }
 
 
