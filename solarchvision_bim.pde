@@ -2619,121 +2619,111 @@ class solarchvision_WIN3D {
       int firstDay = IMPACTS_displayDay;
       int lastDay = IMPACTS_displayDay;
 
-      int firstImpact = Impact_TYPE;
-      int lastImpact = Impact_TYPE;
-
       if (this.fullPeriod_IMG) {
         this.fullPeriod_IMG = false;
 
         firstDay = 0;
         lastDay = STUDY.j_End;
-
-        firstImpact = 0;
-        lastImpact = numberOfImpactVariations - 1;
       }
 
-      int keep_Impact_TYPE = Impact_TYPE;
       int keep_IMPACTS_displayDay = IMPACTS_displayDay;
       for (IMPACTS_displayDay = lastDay; IMPACTS_displayDay >= firstDay; IMPACTS_displayDay--) {
-        for (Impact_TYPE = lastImpact; Impact_TYPE >= firstImpact; Impact_TYPE--) {
 
-          this.graphics.beginDraw();
+        this.graphics.beginDraw();
 
-          this.scale = this.dY / this.refScale; // fits field of view to window's height
+        this.scale = this.dY / this.refScale; // fits field of view to window's height
 
-          this.graphics.background(233);
+        this.graphics.background(233);
 
-          this.graphics.fill(127);
-          this.graphics.strokeWeight(0);
+        this.graphics.fill(127);
+        this.graphics.strokeWeight(0);
 
-          this.graphics.pushMatrix();
+        this.graphics.pushMatrix();
 
-          this.graphics.hint(ENABLE_DEPTH_TEST);
+        this.graphics.hint(ENABLE_DEPTH_TEST);
 
-          WIN3D.record_last3DViewport();
+        WIN3D.record_last3DViewport();
 
-          WIN3D.transform_3DViewport();
+        WIN3D.transform_3DViewport();
 
-          WIN3D.put_3DViewport();
+        WIN3D.put_3DViewport();
 
-          Sky3D.draw(TypeWindow.WIN3D);
+        Sky3D.draw(TypeWindow.WIN3D);
 
-          Sun3D.drawPattern(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
+        Sun3D.drawPattern(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
 
-          Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
+        Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
 
-          Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale, 0, 360);
+        Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale, 0, 360);
 
-          Sun3D.draw();
+        Sun3D.draw();
 
-          Moon3D.draw();
+        Moon3D.draw();
 
-          Earth3D.draw(TypeWindow.WIN3D);
+        Earth3D.draw(TypeWindow.WIN3D);
 
-          Land3D.draw(TypeWindow.WIN3D);
+        Land3D.draw(TypeWindow.WIN3D);
 
-          Tropo3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
+        Tropo3D.draw(TypeWindow.WIN3D, STUDY.i_Start, STUDY.i_End);
 
-          allFaces.draw(TypeWindow.WIN3D);
+        allFaces.draw(TypeWindow.WIN3D);
 
-          allPolylines.draw(TypeWindow.WIN3D);
+        allPolylines.draw(TypeWindow.WIN3D);
 
-          allPoints.draw();
+        allPoints.draw();
 
-          allModel1Ds.draw(TypeWindow.WIN3D);
+        allModel1Ds.draw(TypeWindow.WIN3D);
 
-          allWindRoses.draw();
+        allWindRoses.draw();
 
-          allSections.draw(TypeWindow.WIN3D);
+        allSections.draw(TypeWindow.WIN3D);
 
-          allCameras.draw();
+        allCameras.draw();
 
-          allSolids.draw();
+        allSolids.draw();
 
-          allSolidImpacts.draw_lines();
+        allSolidImpacts.draw_lines();
 
-          allSolidImpacts.draw_points();
+        allSolidImpacts.draw_points();
 
-          allModel2Ds.draw(TypeWindow.WIN3D);
+        allModel2Ds.draw(TypeWindow.WIN3D);
 
-          allWindFlows.draw(TypeWindow.WIN3D);
+        allWindFlows.draw(TypeWindow.WIN3D);
 
-          WIN3D.draw_AERIAL();
+        WIN3D.draw_AERIAL();
 
-          this.graphics.hint(DISABLE_DEPTH_TEST);
+        this.graphics.hint(DISABLE_DEPTH_TEST);
 
-          if ((this.record_IMG) || (this.record_AUTO)) {
+        if ((this.record_IMG) || (this.record_AUTO)) {
+        }
+        else {
+          WIN3D.draw_referencePivot();
+        }
+
+        this.graphics.popMatrix();
+
+
+        this.drawPallet();
+
+        this.graphics.endDraw();
+
+        if ((this.record_IMG) || (this.record_AUTO)) {
+          String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP));
+
+          if (Impact_TYPE == Impact_ACTIVE) {
+            myFile += "_RAD";
           }
-          else {
-            WIN3D.draw_referencePivot();
+          if (Impact_TYPE == Impact_PASSIVE) {
+            myFile += "_EFF";
           }
+          myFile += "_" + importedObjectName;
+          myFile += ".jpg";
 
-          this.graphics.popMatrix();
-
-
-          this.drawPallet();
-
-          this.graphics.endDraw();
-
-          if ((this.record_IMG) || (this.record_AUTO)) {
-            String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP));
-
-            if (Impact_TYPE == Impact_ACTIVE) {
-              myFile += "_RAD";
-            }
-            if (Impact_TYPE == Impact_PASSIVE) {
-              myFile += "_EFF";
-            }
-            myFile += "_" + importedObjectName;
-            myFile += ".jpg";
-
-            this.graphics.save(myFile);
-            println("File created:" + myFile);
-          }
+          this.graphics.save(myFile);
+          println("File created:" + myFile);
         }
       }
       IMPACTS_displayDay = keep_IMPACTS_displayDay;
-      Impact_TYPE = keep_Impact_TYPE;
 
       imageMode(CORNER);
       image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
