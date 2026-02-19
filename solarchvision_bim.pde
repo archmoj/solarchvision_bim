@@ -40758,6 +40758,7 @@ void mouseClicked () {
               Tropo3D.displaySurface = !Tropo3D.displaySurface;
 
               SOLARCHVISION_view_changed();
+              WORLD.revise();
             }
             if (menu_option.equals("Display/Hide Solar Section")) {
               allSolarImpacts.displayImage = !allSolarImpacts.displayImage;
