@@ -244,7 +244,7 @@ class solarchvision_DATATYPE {
 solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
 
 
-int WMS_type = DataType.FORECAST_GDPS; // <<<<<<<<<<<<<
+int WMS_type = DataType.FORECAST_HRDPS; // <<<<<<<<<<<<<
 
 final int TROPO_deltaTime = 1;
 final int TROPO_timeSteps = 24;
@@ -24547,14 +24547,13 @@ class solarchvision_Tropo3D {
 
       String timeStamp = "";
       if (WMS_type == DataType.SATELLITE_GOES) {
-        timeStamp = "&date=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(CurrentHour, 2) + ":00";
+        timeStamp = "&DATE=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(CurrentHour, 2) + ":00";
       }
       else {
         timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
       }
 
-      //the_link += "%26time%3D" + timeStamp +"%3A22%3A00Z";
-      the_link += "%26time%3D" + timeStamp +"%3A00Z";
+      the_link += "&TIME=" + timeStamp +":00:00Z";
 
       this.Map[i] = createImage(2, 2, RGB); // empty and small
 
