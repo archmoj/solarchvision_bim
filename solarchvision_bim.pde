@@ -40415,6 +40415,8 @@ void mouseClicked () {
             if (menu_option.equals("Load Toroposphere")) {
               Tropo3D.download_images();
               Tropo3D.displaySurface = true;
+              WORLD.revise();
+              WIN3D.revise();
             }
 
             if (menu_option.equals("Download NAEFS")) {
