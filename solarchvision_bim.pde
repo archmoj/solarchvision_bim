@@ -2824,24 +2824,28 @@ class solarchvision_WIN3D {
       this.graphics.noStroke();
       this.graphics.fill(0);
 
+      String txt = "";
+
       this.graphics.textAlign(LEFT, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
-      if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
+      if (this.FacesShade == SHADE.Vertex_Elevation) {
+      } else if (this.FacesShade == SHADE.Vertex_Solid) {
+      } else {
+        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
+        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
 
-      String txt = "SOLARCHVISION ";
+        txt += "SOLARCHVISION";
 
-      if (Impact_TYPE == Impact_ACTIVE) txt += "active model ";
-      if (Impact_TYPE == Impact_PASSIVE) txt += "passive model ";
+        if (Impact_TYPE == Impact_ACTIVE) txt += "active model ";
+        if (Impact_TYPE == Impact_PASSIVE) txt += "passive model ";
 
-      if (IMPACTS_displayDay != 0) {
-        txt += TIME.getDayText((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
+        if (IMPACTS_displayDay != 0) {
+          txt += TIME.getDayText((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
+        }
+        else {
+          txt += TIME.getDayText( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + " - ";
+          txt += TIME.getDayText((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
+        }
       }
-      else {
-        txt += TIME.getDayText( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + " - ";
-        txt += TIME.getDayText((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
-      }
-
-      txt += ", 3D-model: " + importedObjectName;
 
       this.graphics.textAlign(CENTER, CENTER);
       this.graphics.text(txt, 0, y1 - 1.0 * txtSize, 0);
