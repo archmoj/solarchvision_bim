@@ -5785,7 +5785,6 @@ class solarchvision_STUDY {
 
         for (int p = 0; p < 3; p++) {
           this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + p;
-
           this.plotImpact(0, (150 - p * 300) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
         }
         this.ImpactLayer = pre_STUDY_ImpactLayer;
@@ -25852,6 +25851,8 @@ class solarchvision_Sun3D {
     int count_k = 1 + end_k - start_k;
     if (count_k < 0) count_k = 0;
 
+    int keep_Impact_TYPE = Impact_TYPE;
+
     if (target_window == TypeWindow.STUDY) {
       Impact_TYPE = (STUDY.PlotImpacts % 2 == 0) ? Impact_ACTIVE : Impact_PASSIVE;
     }
@@ -26310,6 +26311,7 @@ class solarchvision_Sun3D {
       }
     }
 
+    Impact_TYPE = keep_Impact_TYPE;
   }
 
 
