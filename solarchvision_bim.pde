@@ -234,10 +234,10 @@ class solarchvision_DATATYPE {
 
   private final static String CLASS_STAMP = "DATATYPE";
 
-  private final static int SATELLITE_GOES = 0;
-  private final static int FORECAST_HRDPS = 1;
-  private final static int FORECAST_RDPS  = 2;
-  private final static int FORECAST_GDPS  = 3;
+  final static int SATELLITE_GOES = 0;
+  final static int FORECAST_HRDPS = 1;
+  final static int FORECAST_RDPS  = 2;
+  final static int FORECAST_GDPS  = 3;
 
 }
 
@@ -246,8 +246,8 @@ solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
 
 int WMS_type = DataType.FORECAST_HRDPS; // <<<<<<<<<<<<<
 
-final int TROPO_deltaTime = 1;
-final int TROPO_timeSteps = 24;
+int TROPO_deltaTime = (WMS_type == solarchvision_DATATYPE.FORECAST_GDPS) ? 3 : 1;
+int TROPO_timeSteps = 24;
 
 
 
@@ -2981,15 +2981,15 @@ class solarchvision_WIN3D {
         switch(key) {
 
         case 't':
-          Tropo3D.i_Map++;
-          if (Tropo3D.i_Map > STUDY.i_End) Tropo3D.i_Map = STUDY.i_End;
+          Tropo3D.i_Map += TROPO_deltaTime;
+          if (Tropo3D.i_Map > STUDY.i_End) Tropo3D.i_Map -= TROPO_deltaTime;
           WORLD.revise();
           WIN3D.revise();
           break;
 
         case 'T':
-          Tropo3D.i_Map--;
-          if (Tropo3D.i_Map < STUDY.i_Start) Tropo3D.i_Map = STUDY.i_Start;
+          Tropo3D.i_Map -= TROPO_deltaTime;
+          if (Tropo3D.i_Map < STUDY.i_Start) Tropo3D.i_Map += TROPO_deltaTime;
           WORLD.revise();
           WIN3D.revise();
           break;
@@ -24558,14 +24558,14 @@ class solarchvision_Tropo3D {
       the_link += nf(this.BoundariesY[i][1], 0, 3) + ",";
       the_link += nf(this.BoundariesX[i][1], 0, 3);
 
-      int the_hour = i * TROPO_deltaTime;
+      int the_hour = int(CurrentHour / TROPO_deltaTime) * TROPO_deltaTime;
 
       String timeStamp = "";
       if (WMS_type == DataType.SATELLITE_GOES) {
-        timeStamp = "&DATE=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(CurrentHour, 2) + ":00";
+        timeStamp = "&DATE=" + nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "&time=" + nf(the_hour, 2) + ":00";
       }
       else {
-        timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(CurrentHour, 2);
+        timeStamp = nf(CurrentYear, 4) + "-" + nf(CurrentMonth, 2) + "-" + nf(CurrentDay, 2) + "T" + nf(the_hour, 2);
       }
 
       the_link += "&TIME=" + timeStamp +":00:00Z";
