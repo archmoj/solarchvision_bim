@@ -40560,7 +40560,22 @@ void mouseClicked () {
               }
             }
 
+            if (menu_option.equals("Active Shade")) {
+              Impact_TYPE = Impact_ACTIVE;
 
+              if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+              if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+
+              SOLARCHVISION_view_changed();
+            }
+            if (menu_option.equals("Passive Shade")) {
+              Impact_TYPE = Impact_PASSIVE;
+
+              if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+              if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+
+              SOLARCHVISION_view_changed();
+            }
 
             if (menu_option.equals("Shade Surface Wire")) {
               WIN3D.FacesShade = SHADE.Surface_Wire;
@@ -47210,6 +47225,9 @@ class solarchvision_UI_menuBar {
     ,
     {
       "3D-shade",
+      "Active Shade",
+      "Passive Shade",
+      "———————————————",
       "Shade Surface Wire",
       "Shade Surface Base",
       "Shade Surface White",
