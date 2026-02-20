@@ -1817,36 +1817,6 @@ class solarchvision_LAYER {
 
 }
 
-solarchvision_LAYER LAYER_windspd200hPa = new solarchvision_LAYER(
-  0.5,
-  0,
-  0,
-  "knots",
-  "Wind Speed at 200 hPa",
-  "Vitesse du vent à 200 hPa",
-  "WIND-200HPA"
-);
-
-solarchvision_LAYER LAYER_thicknesses_1000_500 = new solarchvision_LAYER(
-  1,
-  -500,
-  1,
-  "dam",
-  "Geopotentiel Difference",
-  "Différence de géopotentiel",
-  "LAYER-1000-500HPA"
-);
-
-
-solarchvision_LAYER LAYER_heightp500hPa = new solarchvision_LAYER(
-  1,
-  -500,
-  1,
-  "dam",
-  "Geopotential at 500 hPa",
-  "Géopotentiel à 500 hPa",
-  "HGT-500HPA"
-);
 
 solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
   0.01,
@@ -1993,9 +1963,6 @@ solarchvision_LAYER LAYER_developed = new solarchvision_LAYER(
 
 
 solarchvision_LAYER[] allLayers = {
-  LAYER_windspd200hPa,
-  LAYER_thicknesses_1000_500,
-  LAYER_heightp500hPa,
   LAYER_ceilingsky,
   LAYER_cloudcover,
   LAYER_winddir,
@@ -21369,7 +21336,7 @@ void setup () {
 
   SOLARCHVISION_loadDefaultFontStyle();
 
-  changeCurrentLayerTo(8); // pointing to air temperature variable i.e. on the list of allLayers
+  changeCurrentLayerTo(5); // pointing to air temperature variable i.e. on the list of allLayers
 
   frameRate(24);
 
@@ -54479,9 +54446,6 @@ void SOLARCHVISION_save_project (String myFile) {
 
   allSolarImpacts.to_XML(xml);
 
-  LAYER_windspd200hPa.to_XML(xml);
-  LAYER_thicknesses_1000_500.to_XML(xml);
-  LAYER_heightp500hPa.to_XML(xml);
   LAYER_ceilingsky.to_XML(xml);
   LAYER_cloudcover.to_XML(xml);
   LAYER_winddir.to_XML(xml);
@@ -54706,9 +54670,6 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   allSolarImpacts.from_XML(xml);
 
-  LAYER_windspd200hPa.from_XML(xml);
-  LAYER_thicknesses_1000_500.from_XML(xml);
-  LAYER_heightp500hPa.from_XML(xml);
   LAYER_ceilingsky.from_XML(xml);
   LAYER_cloudcover.from_XML(xml);
   LAYER_winddir.from_XML(xml);
