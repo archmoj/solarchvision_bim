@@ -30416,7 +30416,7 @@ class solarchvision_Solids {
   boolean displayAll = true;
   int pallet_CLR = 17; //1;
   int pallet_DIR = -1;
-  float pallet_MLT = 0.01; //1;
+  float pallet_MLT = 0.4; //1;
 
   float[][] DEF;
 
@@ -35900,7 +35900,7 @@ class solarchvision_Create3D {
 
     if (n == 5) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(8, 0, 0, 1, 0, 0, -50, -50, 0, 50, 50, 0);
+      this.add_Mesh2(7, 6, 0, 1, 0, 0, -50, -50, 0, 50, 50, 0);
 
       {
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
