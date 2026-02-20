@@ -2079,6 +2079,7 @@ final int DEV_RadiationOnSE = 7;
 final int DEV_RadiationOnNE = 8;
 final int DEV_RadiationOnNW = 9;
 final int DEV_RadiationOnSW = 10;
+int numberOfDevelopedLayers = 11;
 
 int Develop_Option = DEV_WindPower;
 int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
@@ -8165,8 +8166,6 @@ class solarchvision_ROLLOUT {
         STUDY.plotSetup = int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 8, 1), 1));
 
         //STUDY.update = boolean(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
-
-        changeCurrentLayerTo(int(funcs.roundTo(this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Layer", CurrentLayer_id, 0, (numberOfLayers - 1), 1), 1)));
 
         //STUDY.V_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
         STUDY.V_scale = this.Spinner(STUDY.X_control, STUDY.Y_control, 1, 0, 0, "Scale (" + allLayers[CurrentLayer_id].descriptions[Language_EN] + ")", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
@@ -47546,7 +47545,7 @@ class solarchvision_UI_menuBar {
        }
     }
 
-    this.Items[LayersID_in_Bar] = new String [numberOfLayers + 11];
+    this.Items[LayersID_in_Bar] = new String [numberOfLayers + numberOfDevelopedLayers];
 
     this.Items[LayersID_in_Bar][0] = "Layer";
 
