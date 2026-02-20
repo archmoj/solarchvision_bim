@@ -40601,10 +40601,14 @@ void mouseClicked () {
             if (menu_option.equals("Shade Global Solar")) {
               WIN3D.FacesShade = SHADE.Global_Solar;
 
+              GlobalSolar_rebuild_array = true;
+
               SOLARCHVISION_view_changed();
             }
             if (menu_option.equals("Shade Vertex Solar")) {
               WIN3D.FacesShade = SHADE.Vertex_Solar;
+
+              VertexSolar_rebuild_array = true;
 
               SOLARCHVISION_view_changed();
             }
