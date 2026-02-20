@@ -40440,8 +40440,9 @@ void mouseClicked () {
               Land3D.download_textures();
             }
 
-            if (menu_option.equals("Download Toroposphere")) {
+            if (menu_option.equals("Load Toroposphere")) {
               Tropo3D.download_images();
+              Tropo3D.displaySurface = true;
             }
 
             if (menu_option.equals("Download NAEFS")) {
@@ -47098,12 +47099,16 @@ class solarchvision_UI_menuBar {
       "File",
       "New",
       "Open...",
+      "——————————————————",
       "Import 3D-model...",
       "Import Command File...",
+      "——————————————————",
       "Hold",
       "Fetch",
+      "——————————————————",
       "Save",
       "Save As...",
+      "——————————————————",
       "Export 3D-model > SCR",
       "Export 3D-model > RAD",
       "Export 3D-model > HTML",
@@ -47121,14 +47126,17 @@ class solarchvision_UI_menuBar {
       "PDF Location Graph",
       "JPG 3D Graph",
       "JPG 3D Full-Period",
+      "——————————",
       "Screenshot",
       "Screenshot+Click",
       "Screenshot+Drag",
+      "——————————",
       "REC. Time Graph",
       "REC. Location Graph",
       "REC. Solid Graph",
       "REC. Screenshot",
       "Stop REC.",
+      "——————————",
       "Erase All Model1Ds",
       "Erase All Model2Ds",
       "Erase All Groups",
@@ -47138,6 +47146,7 @@ class solarchvision_UI_menuBar {
       "Erase All Faces",
       "Erase All Polylines",
       "Erase All",
+      "——————————",
       "Display All Viewports",
       "Enlarge 3D Viewport",
       "Enlarge Map Viewport",
@@ -47151,23 +47160,24 @@ class solarchvision_UI_menuBar {
       "Use long-term (CLMREC)",
       "Use real-time observed (SWOB)",
       "Use weather forecast (NAEFS)",
-
+      "———————————————",
       "Update TMYEPW",
       "Update CWEEDS",
       "Update CLMREC",
       "Update SWOB",
       "Update NAEFS",
       "Update Station",
-
+      "———————————————",
+      "Load Toroposphere",
       "Load Land Mesh",
       "Load Land Texture",
       "Download Land Mesh",
       "Download Land Texture",
-      "Download Toroposphere",
+      "———————————————",
       "Download NAEFS",
       "Download SWOB",
       "Download CLMREC",
-
+      "———————————————",
       "Display/Hide TMYEPW stations",
       "Display/Hide TMYEPW nearest",
       "Display/Hide CWEEDS stations",
@@ -47193,6 +47203,7 @@ class solarchvision_UI_menuBar {
       "Layout 6",
       "Layout 7",
       "Layout 8",
+      "——————",
       "3D-model 1",
       "3D-model 2",
       "3D-model 3",
@@ -47218,11 +47229,11 @@ class solarchvision_UI_menuBar {
       "Annual cycle sun path (passive)",
       "Urban solar potential (active)",
       "Urban solar potential (passive)",
-      "View from sun & sky (active)",
-      "View from sun & sky (passive)",
+      "————————————————",
       "Render Viewport",
       "PreBake Viewport",
       "Pre-bake Selected Sections",
+      "————————————————",
       "Process Active Impact",
       "Process Passive Impact",
       "Process Solid Impact",
@@ -47659,8 +47670,10 @@ class solarchvision_UI_menuBar {
           }
 
           for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
-
-            if (isInside(UI_X_moved, UI_Y_moved, cx, ceil(cy - cr + j * SOLARCHVISION_pixel_A * 0.85) + 1, cx + widthChildren, floor(cy + cr + j * SOLARCHVISION_pixel_A * 0.85) - 1)) {
+            if (
+              (this.Items[this.selected_parent][j].charAt(0) != '—') && 
+              (isInside(UI_X_moved, UI_Y_moved, cx, ceil(cy - cr + j * SOLARCHVISION_pixel_A * 0.85) + 1, cx + widthChildren, floor(cy + cr + j * SOLARCHVISION_pixel_A * 0.85) - 1))
+            ) {
 
               this.selected_child = j;
 
