@@ -50234,7 +50234,7 @@ class solarchvision_UI_commandBar {
 
       this.updated();
 
-      int maxDisplayLines = 2;
+      int maxDisplayLines = 3;
 
       if (typeUserCommand == 1) {
         fill(0);
