@@ -40574,8 +40574,8 @@ void mouseClicked () {
                   DevelopLayer_id = CurrentLayer_id;
 
                   STUDY.revise();
-                } else {
-                  Develop_Option = UI_menuBar.selected_child - numberOfLayers;
+                } else if (menu_option.charAt(0) != '—') {
+                  Develop_Option = UI_menuBar.selected_child - numberOfLayers - 1; // -1 for the divider
 
                   SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
 
@@ -47603,7 +47603,7 @@ class solarchvision_UI_menuBar {
        }
     }
 
-    this.Items[LayersID_in_Bar] = new String [numberOfLayers + numberOfDevelopedLayers];
+    this.Items[LayersID_in_Bar] = new String [numberOfLayers + numberOfDevelopedLayers + 1]; // +1 for the divider
 
     this.Items[LayersID_in_Bar][0] = "Layer";
 
@@ -47612,17 +47612,18 @@ class solarchvision_UI_menuBar {
       this.Items[LayersID_in_Bar][i + 1] = allLayers[i].descriptions[Language_EN];
     }
 
-    this.Items[LayersID_in_Bar][numberOfLayers + 0] = "Wind power";
-    this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Radiation on solar tracker";
-    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on surface with inclination";
-    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Radiation on South surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Radiation on East surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Radiation on North surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on West surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 7] = "Radiation on S.E. surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 8] = "Radiation on N.E. surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 9] = "Radiation on N.W. surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 10] = "Radiation on S.W. surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 0] = "———————————————————";
+    this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Wind power";
+    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on solar tracker";
+    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Radiation on surface with inclination";
+    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Radiation on South surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Radiation on East surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on North surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 7] = "Radiation on West surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 8] = "Radiation on S.E. surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 9] = "Radiation on N.E. surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 10] = "Radiation on N.W. surface";
+    this.Items[LayersID_in_Bar][numberOfLayers + 11] = "Radiation on S.W. surface";
 
   }
 
