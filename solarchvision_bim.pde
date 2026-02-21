@@ -24509,10 +24509,10 @@ class solarchvision_Tropo3D {
         DomainStamp = "GDPS.ETA";
       }
 
-      this.BoundariesX[i][0] = STATION.getLongitude() - 15;
-      this.BoundariesX[i][1] = STATION.getLongitude() + 15;
-      this.BoundariesY[i][0] = STATION.getLatitude() - 15 * funcs.cos_ang(STATION.getLatitude());
-      this.BoundariesY[i][1] = STATION.getLatitude() + 15 * funcs.cos_ang(STATION.getLatitude());
+      this.BoundariesX[i][0] = STATION.getLongitude() - 5;
+      this.BoundariesX[i][1] = STATION.getLongitude() + 5;
+      this.BoundariesY[i][0] = STATION.getLatitude() - 5 * funcs.cos_ang(STATION.getLatitude());
+      this.BoundariesY[i][1] = STATION.getLatitude() + 5 * funcs.cos_ang(STATION.getLatitude());
 
 
 
