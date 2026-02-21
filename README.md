@@ -14,6 +14,7 @@ developed by [Mojtaba Samimi
 -   [Download EPW files](#download-epw-files)
 -   [Download CWEEDS files](#download-cweeds-files)
 -   [Copyright and license](#copyright-and-license)
+-   [User Interface](#user-interface)
 
 ------------------------------------------------------------------------
 
@@ -91,3 +92,14 @@ the `solarchvision_bim/input/climate/CWEEDS/` folder.
 
 The code and documentation are released under the [GPL
 v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
+
+## User Interface
+
+Once loaded the UI would look like this:
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/archmoj/solarchvision_bim/blob/main/doc/images/InitialView.jpg">
+</p>
+
+Please note that in above example the `Setup | 3D-model 1` option is selected. A person and a tree is also added close to the camera.
+
