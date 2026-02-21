@@ -98,7 +98,7 @@ v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
 Once loaded the UI would look like this:
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/archmoj/solarchvision_bim/blob/main/doc/images/InitialView.jpg">
+    <img src="https://raw.githubusercontent.com/archmoj/solarchvision_bim/refs/heads/main//doc/images/InitialView.jpg">
 </p>
 
 Please note that in above example the `Setup | 3D-model 1` option is selected. A person and a tree is also added close to the camera.
