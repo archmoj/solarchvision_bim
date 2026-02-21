@@ -47128,6 +47128,7 @@ class solarchvision_UI_menuBar {
       "Export 3D-model > OBJ",
       "Export 3D-model > OBJ (date-series)",
       "Export 3D-model > OBJ (time-series)",
+      "——————————————————",
       "Quit"
     }
     ,
@@ -47235,12 +47236,16 @@ class solarchvision_UI_menuBar {
       "Analysis",
       "Wind pattern (active)",
       "Wind pattern (passive)",
+      "————————————————",
       "Orientation potential (active)",
       "Orientation potential (passive)",
+      "————————————————",
       "Hourly sun position (active)",
       "Hourly sun position (passive)",
+      "————————————————",
       "Annual cycle sun path (active)",
       "Annual cycle sun path (passive)",
+      "————————————————",
       "Urban solar potential (active)",
       "Urban solar potential (passive)",
       "————————————————",
@@ -47263,8 +47268,10 @@ class solarchvision_UI_menuBar {
       "Shade Surface Base",
       "Shade Surface White",
       "Shade Surface Materials",
+      "———————————————",
       "Shade Global Solar",
       "Shade Vertex Solar",
+      "———————————————",
       "Shade Vertex Solid",
       "Shade Vertex Elevation"
     }
