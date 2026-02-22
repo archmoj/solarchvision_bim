@@ -9,6 +9,7 @@ developed by [Mojtaba Samimi
 -   [Clone using SSH](#clone-using-ssh)
 -   [Clone using HTTPS](#clone-using-https)
 -   [Requirements](#requirements)
+-   [Before running the program](#before-running-the-program)
 -   [Run using Processing IDE](#run-using-processing-ide)
 -   [Run using command line](#run-using-command-line)
 -   [Download EPW files](#download-epw-files)
@@ -47,6 +48,29 @@ git clone https://github.com/archmoj/solarchvision_bim.git --depth 1
 
 [Processing v4](https://processing.org/download) must be installed, as
 SOLARCHVISION-BIM is a Processing sketch.
+
+## Before running the program
+
+You should adjust the `BaseFolder` variable inside `solarchvision_bim.pde`.
+
+``` java
+String BaseFolder = "/home/solarch/org/solarchvision_bim";
+```
+
+Also to your screen resolution you may need to scale initial values of following
+variables and the size() function:
+``` java
+int SOLARCHVISION_pixel_H = 400;
+int SOLARCHVISION_pixel_W = 724;
+
+float MessageSize = 16.0;
+int SOLARCHVISION_pixel_A = 24; // menu bar
+int SOLARCHVISION_pixel_B = 44; // 3D tool bar
+int SOLARCHVISION_pixel_C = 72; // time bar
+int SOLARCHVISION_pixel_D = 72; // command bar
+
+size(1848, 1016, P2D);
+```
 
 ## Run using Processing IDE
 
