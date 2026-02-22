@@ -144,120 +144,189 @@ variants are accepted.
 
 ------------------------------------------------------------------------
 
--   `CLS`: Clears the command line screen\
--   `OPEN`: Opens a saved project\
--   `SAVE.AS`: Saves the project with a new name\
--   `SAVE`: Saves the project\
--   `HOLD`: Holds the scene\
--   `FETCH`: Fetches the scene\
--   `IMPORT`: Imports an OBJ file\
+-   `CLS`: Clears the command line screen
+-   `OPEN`: Opens a saved project
+-   `SAVE.AS`: Saves the project with a new name
+-   `SAVE`: Saves the project
+-   `HOLD`: Holds the scene
+-   `FETCH`: Fetches the scene
+-   `IMPORT`: Imports an OBJ file
 -   `EXECUTE`: Executes a script file containing multiple SOLARCHVISION
-    commands\
+    commands
 -   `EXPORT.OBJ.TIMESERIES`: Exports the scene in OBJ format at
-    different hours (multiple files)\
+    different hours (multiple files)
 -   `EXPORT.OBJ.DATESERIES`: Exports the scene in OBJ format at
-    different days (multiple files)\
--   `EXPORT.OBJ`: Exports the scene in OBJ format\
--   `EXPORT.RAD`: Exports the scene in Radiance RAD format\
--   `EXPORT.SCR`: Exports the scene in AutoCAD SCR format\
+    different days (multiple files)
+-   `EXPORT.OBJ`: Exports the scene in OBJ format
+-   `EXPORT.RAD`: Exports the scene in Radiance RAD format
+-   `EXPORT.SCR`: Exports the scene in AutoCAD SCR format
 -   `QUIT`: Exits the software
 
 ------------------------------------------------------------------------
 
--   `LONLAT`: Sets the longitude and latitude of the location\
-    Example: `"LonLat ? ?"`
+-   `LONLAT`: Sets the longitude and latitude of the location
+
+```
+LonLat ? ?
+```
 
 ------------------------------------------------------------------------
 
 ### Selection and editing
 
--   `SELECT`: Selects various categories\
-    Example:
-    `"Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint"`
+-   `SELECT`: Selects various categories
+```
+Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint
+```
 
--   `DELETE`: Deletes the selection or various categories\
-    Example:
-    `"Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras"`
+-   `DELETE`: Deletes the selection or various categories
+```
+Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras
+```
 
--   `COPY`: Copies the selection\
-    Example: `"Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?"`
+-   `COPY`: Copies the selection
 
--   `MOVE`: Moves the selection\
-    Example: `"Move dx=? dy=? dz=?"`
+```
+Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?
+```
 
--   `ROTATE`, `ROTATEX`, `ROTATEY`, `ROTATEZ`: Rotates the selection\
-    Example: `"Rotate[X|Y|Z] r=? x=? y=? z=?"`
+-   `MOVE`: Moves the selection
 
--   `SCALE`: Scales the selection\
-    Example: `"Scale s=? sx=? sy=? sz=? x=? y=? z=?"`
+```
+Move dx=? dy=? dz=?
+```
+
+-   `ROTATE`, `ROTATEX`, `ROTATEY`, `ROTATEZ`: Rotates the selection
+
+```
+Rotate[X|Y|Z] r=? x=? y=? z=?
+```
+
+-   `SCALE`: Scales the selection
+
+```
+Scale s=? sx=? sy=? sz=? x=? y=? z=?
+```
 
 ------------------------------------------------------------------------
 
 ### Object creation
 
--   `2DMAN`: Creates a person\
-    Example: `"2Dman m=? x=? y=? z=?"`
+-   `2DMAN`: Creates a person
 
--   `2DTREE`: Creates a 2D tree using vertical and horizontal sections\
-    Example: `"2Dtree m=? x=? y=? z=? h=?"`
+```
+2Dman m=? x=? y=? z=?
+```
 
--   `3DTREE`: Creates a parametric fractal tree in 3D\
-    Example:
-    `"3Dtree m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?"`
+-   `2DTREE`: Creates a 2D tree using vertical and horizontal sections
 
--   `BOX2P`: Creates a box using two corner points\
-    Example: `"Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?"`
+```
+2Dtree m=? x=? y=? z=? h=?
+```
 
--   `BOX`: Creates a box using center point, width, length, and height\
-    Example: `"Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?"`
+-   `3DTREE`: Creates a parametric fractal tree in 3D
+```
+3Dtree m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?
+```
+
+-   `BOX2P`: Creates a box using two corner points
+
+```
+Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?
+```
+
+-   `BOX`: Creates a box using center point, width, length, and height
+
+```
+Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?
+```
 
 -   `HOUSE1`: Creates a house-like structure with roof folded in all
-    directions\
-    Example: `"House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?"`
+    directions
+
+```
+House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
+```
 
 -   `HOUSE2`: Creates a house-like structure with roof folded in one
-    direction\
-    Example: `"House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?"`
+    direction
+
+```
+House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
+```
 
 -   `HOUSE3`: Creates a house-like structure with roof folded in the
     second direction
-    Example: `"House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?"`
 
--   `CYLINDER`: Creates a cylinder\
-    Example: `"Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?"`
+```
+House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
+```
 
--   `SPHERE`: Creates a sphere\
-    Example: `"Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?"`
+-   `CYLINDER`: Creates a cylinder
+
+```
+Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?
+```
+
+-   `SPHERE`: Creates a sphere
+
+```
+Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?
+```
 
 -   `SUPERSPHERE`: Creates a supersphere (deforms from cube to star-like
-    object)\
-    Example: `"SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?"`
+    object)
 
--   `CUSHION`: Creates a cushion-like object\
-    Example: `"Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?"`
+```
+SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
+```
 
--   `OCTAHEDRON`: Creates an octahedron\
-    Example: `"Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?"`
+-   `CUSHION`: Creates a cushion-like object
 
--   `ICOSAHEDRON`: Creates an icosahedron\
-    Example: `"Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?"`
+```
+Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?
+```
 
--   `POLYGONMESH`: Creates an equilateral polygon mesh\
-    Example: `"PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?"`
+-   `OCTAHEDRON`: Creates an octahedron
+
+```
+Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?
+```
+
+-   `ICOSAHEDRON`: Creates an icosahedron
+
+```
+Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?
+```
+
+-   `POLYGONMESH`: Creates an equilateral polygon mesh
+
+```
+PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?
+```
 
 -   `POLYGONHYPER`: Creates a hyperbolic surface based on an equilateral
-    polygon\
-    Example: `"PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?"`
+    polygon
 
--   `POLYGONEXTRUDE`: Creates an extrusion from an equilateral polygon\
-    Example: `"PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?"`
+```
+PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?
+```
+
+-   `POLYGONEXTRUDE`: Creates an extrusion from an equilateral polygon
+
+```
+PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?
+```
 
 ------------------------------------------------------------------------
 
 ### Mesh creation
 
--   `MESH2` to `MESH6`: Creates meshes using 2 to 6 points\
-    Example: `"Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?"`
+-   `MESH2` to `MESH6`: Creates meshes using 2 to 6 points
+
+```
+Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?
+```
 
 ------------------------------------------------------------------------
 
