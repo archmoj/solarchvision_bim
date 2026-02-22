@@ -16,9 +16,9 @@ developed by [Mojtaba Samimi
 -   [Download CWEEDS files](#download-cweeds-files)
 -   [Copyright and license](#copyright-and-license)
 -   [User Interface](#user-interface)
--   [Additional resources](#additional-resources)
 -   [User interface keyboard shortcuts](#user-interface-keyboard-shortcuts)
 -   [Command line](#command-line)
+-   [Additional resources](#additional-resources)
 
 ------------------------------------------------------------------------
 
@@ -129,11 +129,6 @@ Once loaded the UI would look like this:
 </p>
 
 Please note that in above example the `Setup | 3D-model 1` option is selected. A person and a tree is also added close to the camera.
-
-## Additional resources
-### [BIM6D Presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
-### [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
-### [TU-Berlin book: Intelligent Design using Solar-Climatic Vision (Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION)](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
 
 ## User interface keyboard shortcuts
 
@@ -425,3 +420,9 @@ Includes commands such as:
 -   `RENDER.VIEWPORT`: Renders the viewport
 -   `PREBAKE.VIEWPORT`: Pre-bakes the viewport
 
+------------------------------------------------------------------------
+
+## Additional resources
+### [BIM6D Presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
+### [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
+### [TU-Berlin book: Intelligent Design using Solar-Climatic Vision (Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION)](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
