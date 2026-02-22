@@ -2878,35 +2878,6 @@ class solarchvision_WIN3D {
 
   void keyPressed (KeyEvent e) {
 
-    if (e.isAltDown()) {
-    } else if (e.isControlDown()) {
-      if (key == CODED) {
-        switch(keyCode) {
-        }
-      } else {
-        switch(key) {
-        case '.' :
-          this.position_X = 0;
-          this.position_Y = 0;
-          //this.Zoom = 60;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-
-        case ' ' :
-          allSolarImpacts.render_Shadows_selectedSections();
-          this.revise();
-          break;
-
-        case ENTER :
-          allSolarImpacts.calculate_Impact_selectedSections();
-          this.revise();
-          break;
-        }
-      }
-    }
-
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
 
       if (key == CODED) {
@@ -2936,12 +2907,6 @@ class solarchvision_WIN3D {
           ROLLOUT.revise();
           break;
 
-        case 155: // INSERT
-          Select3D.deselectAll();
-
-          this.revise();
-          ROLLOUT.revise();
-          break;
         }
       } else {
         switch(key) {
@@ -4629,14 +4594,6 @@ class solarchvision_STUDY {
         switch(key) {
         case ';':
           this.impact_summary = !(this.impact_summary);
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '?' :
-          STUDY.refreshDateTabs();
-          DevelopData_update = true;
-          UI_timeBar.revise();
           this.revise();
           ROLLOUT.revise();
           break;
