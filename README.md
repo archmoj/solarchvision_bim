@@ -371,3 +371,47 @@ Includes commands such as:
 -   `RENDER.VIEWPORT`: Renders the viewport
 -   `PREBAKE.VIEWPORT`: Pre-bakes the viewport
 
+## User Interface keyboard shortcuts
+
+When command bar is disabled (the default) you could use keyboard shortcuts to perform some tasks.
+
+-   `TAB`: enable/disable command bar
+-   `Shift+TAB`: switch between active and passive views isnside the 3D viewport
+
+-   `` ` `` and `~`: Zoom in and out world viewport
+-   `+` and `-`: Zoom in and out 3D viewport
+-   `,` and `.`: Move camera closer and farther
+-   `2` and `8`: Rotate camera up and down
+-   `4` and `6`: Rotate camera left and right
+-   `1` and `3`: Move camera left and right
+-   `7` and `9`: Move camera up and down
+-   `5`: Rotate camera to look at origin
+-   `0`: Move camera closer
+-   `/` and `*`: Move camera towards and away the selection
+-   `UP`, `DOWN`, `LEFT` and `RIGHT`: Rotate camera around selection
+-   `DELETE`: delete selected item(s)
+-   `c` and `C`: Change viewport to the cameras within scene
+-   `d` and `D`: Change the impact display day inside 3D viewport
+-   `t` and `T`: Change the forecast hour used to display troposphere
+-   `ENTER`: Rebuild global & vertex solar energy/impact data
+-   `SPACE`: Record the frame
+
+-   `Ctrl+UP` and `Ctrl+DOWN`: Change current weather layer used to display hourly graph in layout 0 (default layout)
+-   `Ctrl+LEFT` and `Ctrl+RIGHT`: Change current impact layer used to display daily graph in layout 0 (default layout)
+-   `Ctrl+PAGE_UP` and `Ctrl+PAGE_DOWN`: Change layout from default to other layouts (enlarge time viewport to see entire layout)
+-   `Ctrl+;`: Display/hide imapct summary
+-   `Ctrl+'` and `Ctrl+"`: Change vertical scale factor of hourly time graph
+-   `<` and `>`: Increase/decrease the number of joined days (For a monthly graph 30 days are joined by default)
+-   `(` and `)`: Increase/decrease the number of days to plot
+-   `s` and `S`: Change sky scenario from "All data" to "Sunny", "Partly Cloudy" or "Cloudy"
+-   `v` and `V`: Display/hide raw values on hourly time graph
+-   `b` and `B`: Display/hide probabilities on hourly time graph
+-   `n` and `N`: Display/hide statistics on hourly time graph
+-   `m` and `M`: Display/hide sorted values on hourly time graph
+-   `[` and `]`: Increase/decrease horizontal interval used for the probabilities graph
+-   `{` and `}`: Increase/decrease vertical interval used for the probabilities graph
+
+
+
+
+
