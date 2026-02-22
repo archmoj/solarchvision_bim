@@ -2936,29 +2936,6 @@ class solarchvision_WIN3D {
           ROLLOUT.revise();
           break;
 
-        case 33:
-          this.currentCamera += 1;
-          if (this.currentCamera > allCameras.num - 1) this.currentCamera = 0;
-          WIN3D.apply_currentCamera();
-
-          SOLARCHVISION_modify_Viewport_Title();
-
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 34:
-          this.currentCamera -= 1;
-          if (this.currentCamera < 0) this.currentCamera = allCameras.num - 1;
-          WIN3D.apply_currentCamera();
-
-          SOLARCHVISION_modify_Viewport_Title();
-
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-
         case 155: // INSERT
           Select3D.deselectAll();
 
@@ -3099,6 +3076,29 @@ class solarchvision_WIN3D {
           this.revise();
           ROLLOUT.revise();
           break;
+
+        case 'c':
+          this.currentCamera += 1;
+          if (this.currentCamera > allCameras.num - 1) this.currentCamera = 0;
+          WIN3D.apply_currentCamera();
+
+          SOLARCHVISION_modify_Viewport_Title();
+
+          this.revise();
+          ROLLOUT.revise();
+          break;
+
+        case 'C':
+          this.currentCamera -= 1;
+          if (this.currentCamera < 0) this.currentCamera = allCameras.num - 1;
+          WIN3D.apply_currentCamera();
+
+          SOLARCHVISION_modify_Viewport_Title();
+
+          this.revise();
+          ROLLOUT.revise();
+          break;
+
 
         case 't':
           Tropo3D.i_Map += TROPO_deltaTime;
