@@ -162,7 +162,7 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 -   `ENTER`: Rebuild global & vertex solar energy/impact data
 -   `SPACE`: Record the frame
 
-# Time, weather, and impact visualization
+### Time, weather, and impact visualization
 -   `d` and `D`: Change the impact display day in the 3D viewport
 -   `t` and `T`: Change the forecast hour used to display the troposphere
 
