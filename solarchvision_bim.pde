@@ -3079,12 +3079,12 @@ class solarchvision_WIN3D {
           this.revise();
           ROLLOUT.revise();
           break;
-        case '9' :
+        case '7' :
           this.position_Y += this.position_T * OBJECTS_scale;
           this.revise();
           ROLLOUT.revise();
           break;
-        case '7' :
+        case '9' :
           this.position_Y -= this.position_T * OBJECTS_scale;
           this.revise();
           ROLLOUT.revise();
