@@ -2969,20 +2969,6 @@ class solarchvision_WIN3D {
       } else {
         switch(key) {
 
-        case 't':
-          Tropo3D.i_Map += TROPO_deltaTime;
-          if (Tropo3D.i_Map > STUDY.i_End) Tropo3D.i_Map -= TROPO_deltaTime;
-          WORLD.revise();
-          WIN3D.revise();
-          break;
-
-        case 'T':
-          Tropo3D.i_Map -= TROPO_deltaTime;
-          if (Tropo3D.i_Map < STUDY.i_Start) Tropo3D.i_Map += TROPO_deltaTime;
-          WORLD.revise();
-          WIN3D.revise();
-          break;
-
         case TAB:
           if (e.isShiftDown() == true) {
             Impact_TYPE = (Impact_TYPE + 1) % numberOfImpactVariations;
@@ -3112,6 +3098,19 @@ class solarchvision_WIN3D {
           this.Zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * this.Zoom));
           this.revise();
           ROLLOUT.revise();
+          break;
+
+        case 't':
+          Tropo3D.i_Map += TROPO_deltaTime;
+          if (Tropo3D.i_Map > STUDY.i_End) Tropo3D.i_Map -= TROPO_deltaTime;
+          WORLD.revise();
+          WIN3D.revise();
+          break;
+        case 'T':
+          Tropo3D.i_Map -= TROPO_deltaTime;
+          if (Tropo3D.i_Map < STUDY.i_Start) Tropo3D.i_Map += TROPO_deltaTime;
+          WORLD.revise();
+          WIN3D.revise();
           break;
 
         case 'd' :
