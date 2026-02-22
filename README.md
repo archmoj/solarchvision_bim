@@ -135,6 +135,59 @@ Please note that in above example the `Setup | 3D-model 1` option is selected. A
 ### [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
 ### [TU-Berlin book: Intelligent Design using Solar-Climatic Vision (Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION)](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
 
+## User interface keyboard shortcuts
+
+When the command bar is disabled (default mode), you can use keyboard shortcuts to perform various tasks.
+
+### General
+-   `TAB`: Enable or disable the command bar
+-   `Shift+TAB`: Switch between active and passive views inside the 3D viewport
+
+### Camera and viewport control
+-   `` ` `` and `~`: Zoom in and out in the world viewport
+-   `+` and `-`: Zoom in and out in the 3D viewport
+-   `,` and `.`: Move the camera closer and farther
+-   `2` and `8`: RRotate the camera up and down
+-   `4` and `6`: Rotate the camera left and right
+-   `1` and `3`: Move the camera left and right
+-   `7` and `9`: Move the camera up and down
+-   `5`: Rotate the camera to look at the origin
+-   `0`: Move the camera closer
+-   `/` and `*`: Move the camera toward and away from the selection
+-   `UP`, `DOWN`, `LEFT` and `RIGHT`: Rotate the camera around the selection
+
+### Selection and scene interaction
+-   `DELETE`: Delete selected item(s)
+-   `c` and `C`: Switch the viewport to available cameras in the scene
+-   `ENTER`: Rebuild global & vertex solar energy/impact data
+-   `SPACE`: Record the frame
+
+# Time, weather, and impact visualization
+-   `d` and `D`: Change the impact display day in the 3D viewport
+-   `t` and `T`: Change the forecast hour used to display the troposphere
+
+### Layout and graph controls
+-   `Ctrl+UP` and `Ctrl+DOWN`: Change the current weather layer displayed in the hourly graph (Layout 0 — default layout)
+-   `Ctrl+LEFT` and `Ctrl+RIGHT`: Change the current impact layer displayed in the daily graph (Layout 0 — default layout)
+-   `Ctrl+PAGE_UP` and `Ctrl+PAGE_DOWN`: Switch between layouts (enlarge the time viewport to view the full layout)
+-   `Ctrl+;`: Show or hide the impact summary
+
+### Graph scaling and display options
+-   `Ctrl+'` and `Ctrl+"`: Adjust the vertical scale factor of the hourly time graph
+-   `<` and `>`: Increase or decrease the number of joined days (30 days by default for monthly graphs)
+-   `(` and `)`: Increase or decrease the number of displayed days
+-   `[` and `]`: Increase or decrease the horizontal interval used for the probabilities graph
+-   `{` and `}`: Increase or decrease the vertical interval used for the probabilities graph
+
+### Graph visualization modes
+-   `s` and `S`: Change the sky scenario ("All data", "Sunny", "Partly Cloudy", or "Cloudy")
+-   `v` and `V`: Show or hide raw values on the hourly time graph
+-   `b` and `B`: Show or hide probabilities on the hourly time graph
+-   `n` and `N`: Show or hide statistics on the hourly time graph
+-   `m` and `M`: Show or hide sorted values on the hourly time graph
+
+
+
 ## Command line
 
 Use `TAB` to enable or disable the command line, or click inside/outside
@@ -371,55 +424,4 @@ Includes commands such as:
 -   `SHADE.ELEVATION`: Elevation shading
 -   `RENDER.VIEWPORT`: Renders the viewport
 -   `PREBAKE.VIEWPORT`: Pre-bakes the viewport
-
-## User interface keyboard shortcuts
-
-When the command bar is disabled (default mode), you can use keyboard shortcuts to perform various tasks.
-
-### General
--   `TAB`: Enable or disable the command bar
--   `Shift+TAB`: Switch between active and passive views inside the 3D viewport
-
-### Camera and viewport control
--   `` ` `` and `~`: Zoom in and out in the world viewport
--   `+` and `-`: Zoom in and out in the 3D viewport
--   `,` and `.`: Move the camera closer and farther
--   `2` and `8`: RRotate the camera up and down
--   `4` and `6`: Rotate the camera left and right
--   `1` and `3`: Move the camera left and right
--   `7` and `9`: Move the camera up and down
--   `5`: Rotate the camera to look at the origin
--   `0`: Move the camera closer
--   `/` and `*`: Move the camera toward and away from the selection
--   `UP`, `DOWN`, `LEFT` and `RIGHT`: Rotate the camera around the selection
-
-### Selection and scene interaction
--   `DELETE`: Delete selected item(s)
--   `c` and `C`: Switch the viewport to available cameras in the scene
--   `ENTER`: Rebuild global & vertex solar energy/impact data
--   `SPACE`: Record the frame
-
-# Time, weather, and impact visualization
--   `d` and `D`: Change the impact display day in the 3D viewport
--   `t` and `T`: Change the forecast hour used to display the troposphere
-
-### Layout and graph controls
--   `Ctrl+UP` and `Ctrl+DOWN`: Change the current weather layer displayed in the hourly graph (Layout 0 — default layout)
--   `Ctrl+LEFT` and `Ctrl+RIGHT`: Change the current impact layer displayed in the daily graph (Layout 0 — default layout)
--   `Ctrl+PAGE_UP` and `Ctrl+PAGE_DOWN`: Switch between layouts (enlarge the time viewport to view the full layout)
--   `Ctrl+;`: Show or hide the impact summary
-
-### Graph scaling and display options
--   `Ctrl+'` and `Ctrl+"`: Adjust the vertical scale factor of the hourly time graph
--   `<` and `>`: Increase or decrease the number of joined days (30 days by default for monthly graphs)
--   `(` and `)`: Increase or decrease the number of displayed days
--   `[` and `]`: Increase or decrease the horizontal interval used for the probabilities graph
--   `{` and `}`: Increase or decrease the vertical interval used for the probabilities graph
-
-### Graph visualization modes
--   `s` and `S`: Change the sky scenario ("All data", "Sunny", "Partly Cloudy", or "Cloudy")
--   `v` and `V`: Show or hide raw values on the hourly time graph
--   `b` and `B`: Show or hide probabilities on the hourly time graph
--   `n` and `N`: Show or hide statistics on the hourly time graph
--   `m` and `M`: Show or hide sorted values on the hourly time graph
 
