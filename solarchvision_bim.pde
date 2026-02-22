@@ -3114,13 +3114,13 @@ class solarchvision_WIN3D {
           ROLLOUT.revise();
           break;
 
-        case ']' :
+        case 'd' :
           IMPACTS_displayDay += 1;
           if (IMPACTS_displayDay > STUDY.j_End) IMPACTS_displayDay = 0;
           this.revise();
           ROLLOUT.revise();
           break;
-        case '[' :
+        case 'D' :
           IMPACTS_displayDay -= 1;
           if (IMPACTS_displayDay < 0) IMPACTS_displayDay = STUDY.j_End;
           this.revise();
