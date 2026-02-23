@@ -15,7 +15,7 @@ developed by [Mojtaba Samimi
 -   [Download EPW files](#download-epw-files)
 -   [Download CWEEDS files](#download-cweeds-files)
 -   [Copyright and license](#copyright-and-license)
--   [User Interface](#user-interface)
+-   [Graphical User Interface](#graphical-user-interface)
 -   [User interface keyboard shortcuts](#user-interface-keyboard-shortcuts)
 -   [Command line](#command-line)
 -   [Additional resources](#additional-resources)
@@ -120,7 +120,7 @@ the `solarchvision_bim/input/climate/CWEEDS/` folder.
 The code and documentation are released under the [GPL
 v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
 
-## User Interface
+## Graphical User Interface
 
 Once loaded the UI would look like this:
 
@@ -138,6 +138,8 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 -   `TAB`: Enable or disable the command bar
 -   `Shift+TAB`: Switch between active and passive views inside the 3D viewport
 
+------------------------------------------------------------------------
+
 ### Camera and viewport control
 -   `` ` `` and `~`: Zoom in and out in the world viewport
 -   `+` and `-`: Zoom in and out in the 3D viewport
@@ -151,15 +153,21 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 -   `/` and `*`: Move the camera toward and away from the selection
 -   `UP`, `DOWN`, `LEFT` and `RIGHT`: Rotate the camera around the selection
 
+------------------------------------------------------------------------
+
 ### Selection and scene interaction
 -   `DELETE`: Delete selected item(s)
 -   `c` and `C`: Switch the viewport to available cameras in the scene
 -   `ENTER`: Rebuild global & vertex solar energy/impact data
 -   `SPACE`: Record the frame
 
+------------------------------------------------------------------------
+
 ### Time, weather, and impact visualization
 -   `d` and `D`: Change the impact display day in the 3D viewport
 -   `t` and `T`: Change the forecast hour used to display the troposphere
+
+------------------------------------------------------------------------
 
 ### Layout and graph controls
 -   `Ctrl+UP` and `Ctrl+DOWN`: Change the current weather layer displayed in the hourly graph (Layout 0 — default layout)
@@ -167,12 +175,16 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 -   `Ctrl+PAGE_UP` and `Ctrl+PAGE_DOWN`: Switch between layouts (enlarge the time viewport to view the full layout)
 -   `Ctrl+;`: Show or hide the impact summary
 
+------------------------------------------------------------------------
+
 ### Graph scaling and display options
 -   `Ctrl+'` and `Ctrl+"`: Adjust the vertical scale factor of the hourly time graph
 -   `<` and `>`: Increase or decrease the number of joined days (30 days by default for monthly graphs)
 -   `(` and `)`: Increase or decrease the number of displayed days
 -   `[` and `]`: Increase or decrease the horizontal interval used for the probabilities graph
 -   `{` and `}`: Increase or decrease the vertical interval used for the probabilities graph
+
+------------------------------------------------------------------------
 
 ### Graph visualization modes
 -   `s` and `S`: Change the sky scenario ("All data", "Sunny", "Partly Cloudy", or "Cloudy")
@@ -212,6 +224,8 @@ variants are accepted.
 -   `QUIT`: Exits the software
 
 ------------------------------------------------------------------------
+
+### Location
 
 -   `LONLAT`: Sets the longitude and latitude of the location
 
@@ -420,7 +434,7 @@ Includes commands such as:
 -   `RENDER.VIEWPORT`: Renders the viewport
 -   `PREBAKE.VIEWPORT`: Pre-bakes the viewport
 
-------------------------------------------------------------------------
+
 
 ## Additional resources
 ### [BIM6D Presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
