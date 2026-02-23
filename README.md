@@ -130,6 +130,91 @@ Once loaded the UI would look like this:
 
 Please note that in above example the `Setup | 3D-model 1` option is selected. A person and a tree is also added close to the camera.
 
+### Adding an object to the scene
+
+You could chooze a desired object such as Houses, Parametric Surfaces, `Box`, `Cushion`, `Cylinder`, `Sphere`, `Octahedron`, `Icosahedron`, `Tri`, `Hyper`, `Plane`, `Poly`, `Extrude`, `Surface`, `Polyline`, `Point`, `3D-Tree`, `2D-Tree`, `Person` and `Camera` from `3D-create` menu.
+
+After choozing the desired object to add, you could use right-click as well as left click over the surface on the 3D viewport to add it to the scene.
+The right-click option adds the object on the surface of the land.
+The left-click option adds the object on the surface of other existing 3d models.
+
+The default parameters used for the creation of new objects could be found inside `Geometries & Space` under `Create`.
+
+Alternatively the user may consider using command line option to generate a new object.
+For example the following command adds a section with height and width of 100 with the distance 0.1 above the origin:
+```
+section u=100 v=100 z=0.1
+```
+Please see [Command line](#command-line) section to learn more about this option.
+
+------------------------------------------------------------------------
+
+### Selecting objects
+
+You could use `3D-select` menu to select objects in different types e.g. `Land`, `1D`, `2D`, `Group`, `Face`, `Vertex`, `Soft`, `Solid`, `Section`, `Camera`, `Polyline`.
+In addition you could use `Pick` and `Window` selection options to select or deselect objects.
+You could also `add object to` and `remove objects from` the selection.
+It is also easy to `select all` or `deselect all` objects.
+Also you could convert one type of selection to another type.
+For example `Groups >> Faces` option selects all faces of the selected group(s).
+On the other hand `Faces >> Groups` option selects all groups of the selected face(s).
+
+------------------------------------------------------------------------
+
+### Altering objects
+
+You could use `3D-alter` option to change the properties of the created objects.
+After choozing an option from the menu, use mouse wheel to tweak the properties.
+
+------------------------------------------------------------------------
+
+### Modifying objects
+
+There are several modifiers available in the `3D-modify` menu mainly to modify 3D surfaces.
+For example `Insert Corner Opennings` could be used to insert the base of an openning parallel to the edges of the selected surface(s).
+
+------------------------------------------------------------------------
+
+### Matching and aligning objects
+
+You could match and align objects by selecting `3D-match`.
+
+------------------------------------------------------------------------
+
+### Quick layout and 3D setup
+
+The `Setup` menu is to provide quick access to pre-designed `layouts` for the time viewport as well `3D-models` for the 3D viewport.
+You could enlarge time viewport to extend the graphs of different `layouts`.
+
+------------------------------------------------------------------------
+
+### Climatic studies
+
+General studies such as `Wind pattern (active)`, `Wind pattern (passive)`, `Orientation potential (active)`, `Orientation potential (passive)`, `Hourly sun position (active)`, `Hourly sun position (passive)`, `Annual cycle sun path (active)` and `Annual cycle sun path (passive)` could be selected from `Analysis` menu. These studies would be displayed in the time viewport. You could enlarge time viewport to extend the graphs.
+
+For studies that relate to the 3D-model namely `Urban solar potential (active)` and `Urban solar potential (passive)` it is required that the selected `section` or `camera` is pre-baked using `PreBake Viewport` or `Pre-bake Selected Sections`.
+
+------------------------------------------------------------------------
+
+### Weather layers
+
+There are two types of layers defined: 1. `general`, 2. `developed`.
+A `general` layer could be found within the weather data files. It is possible that missing values are filled using post-processing techniques.
+A `developed` layer is not available within the weather data fiels. It is post-processed by the software.
+
+------------------------------------------------------------------------
+
+### Location menu
+
+You could select the location and use the `Location` menu to download and load data for the project site.
+By default the software uses EPW/TMY (Typical Meteorological Year) data.
+But it is also possible to use climate files including records of multiple years e.g. the CWEEDS dataset.
+You could also download and extract ensemble forecast data e.g. NAEFS dataset and use it to display visulizations and run simulations.
+The observation data e.g. SWOB records could also be loaded in this menu.
+The `Land Mesh` and `Land Texture` options now require an API key so they are not working without the API key.
+The `troposphere` option could be used to load WMS forecast data and visulize hourly cloud formations using datasets e.g. HRDPS or GDPS.
+
+
 ## User interface keyboard shortcuts
 
 When the command bar is disabled (default mode), you can use keyboard shortcuts to perform various tasks.
