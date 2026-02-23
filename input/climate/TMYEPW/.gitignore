@@ -1,2 +1,6 @@
 *.epw
 *.EPW
+
+!CAN_PQ_Montreal.Intl.AP.716270_CWEC.epw
+!CAN_ON_Toronto.716240_CWEC.epw
+!CAN_BC_Vancouver.718920_CWEC.epw
