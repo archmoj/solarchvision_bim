@@ -51118,7 +51118,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
 
 
-  else if (Command_CAPITAL.equals("2DMAN")) {
+  else if (Command_CAPITAL.equals("PERSON")) {
     if (parts.length > 1) {
       String t = "PEOPLE";
       int m = 0;
@@ -51147,7 +51147,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
   }
 
-  else if (Command_CAPITAL.equals("2DTREE")) {
+  else if (Command_CAPITAL.equals("TREE")) {
     if (parts.length > 1) {
       String t = "TREES";
       int m = 0;
@@ -51180,7 +51180,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
   }
 
-  else if (Command_CAPITAL.equals("3DTREE")) {
+  else if (Command_CAPITAL.equals("FRACTALTREE")) {
     if (parts.length > 1) {
       int m = 0;
       int seed = 0; //PlantSeed
@@ -52621,33 +52621,33 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     UI_toolBar.revise();
   }
 
-  else if (Command_CAPITAL.equals("TROLL")) {
+  else if (Command_CAPITAL.equals("TARGETROLL")) {
     UI_set_to_View_TargetRoll(0);
     UI_toolBar.highlight("TRL");
     UI_toolBar.revise();
   }
-  else if (Command_CAPITAL.equals("TROLLZ")) {
+  else if (Command_CAPITAL.equals("TARGETROLLZ")) {
     UI_set_to_View_TargetRoll(1);
     UI_toolBar.highlight("TRLz");
     UI_toolBar.revise();
   }
-  else if (Command_CAPITAL.equals("TROLLXY")) {
+  else if (Command_CAPITAL.equals("TARGETROLLXY")) {
     UI_set_to_View_TargetRoll(2);
     UI_toolBar.highlight("TRLxy");
     UI_toolBar.revise();
   }
 
-  else if (Command_CAPITAL.equals("CROLL")) {
+  else if (Command_CAPITAL.equals("CAMERAROLL")) {
     UI_set_to_View_CameraRoll(0);
     UI_toolBar.highlight("CRL");
     UI_toolBar.revise();
   }
-  else if (Command_CAPITAL.equals("CROLLZ")) {
+  else if (Command_CAPITAL.equals("CAMERAROLLZ")) {
     UI_set_to_View_CameraRoll(1);
     UI_toolBar.highlight("CRLz");
     UI_toolBar.revise();
   }
-  else if (Command_CAPITAL.equals("CROLLXY")) {
+  else if (Command_CAPITAL.equals("CAMERAROLLXY")) {
     UI_set_to_View_CameraRoll(2);
     UI_toolBar.highlight("CRLxy");
     UI_toolBar.revise();

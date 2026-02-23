@@ -275,19 +275,19 @@ Scale s=? sx=? sy=? sz=? x=? y=? z=?
 
 ### Object creation
 
--   `2DMAN`: Creates a person
+-   `PERSON`: Creates a person
 
 ```
 2Dman m=? x=? y=? z=?
 ```
 
--   `2DTREE`: Creates a 2D tree using vertical and horizontal sections
+-   `TREE`: Creates a 2D tree using vertical and horizontal sections
 
 ```
 2Dtree m=? x=? y=? z=? h=?
 ```
 
--   `3DTREE`: Creates a parametric fractal tree in 3D
+-   `FRACTALTREE`: Creates a parametric fractal tree in 3D
 ```
 3Dtree m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?
 ```
