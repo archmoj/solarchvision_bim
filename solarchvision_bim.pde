@@ -40237,7 +40237,7 @@ void mouseClicked () {
               }
             }
 
-            for (int n = 1; n <= 6; n++) {
+            for (int n = 1; n <= 7; n++) {
               if (menu_option.equals("3D-model " + nf(n, 0))) {
 
                 SOLARCHVISION_deleteAll();
