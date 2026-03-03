@@ -1407,189 +1407,6 @@ class solarchvision_Functions {
 
 
 
-  int[][] reduceDegreePolygon (float[][] polygon_vertices) {
-
-    int maximumDegree = 3;
-
-    int[][] allDiagonals = new int[0][2]; // start, end
-    float[] allDiagonals_dist = new float[0];
-    float[] intersectionPoint;
-
-    int i, j, k, q;
-    int i2, j2;
-    float[] A, B, A2, B2;
-
-    int n = polygon_vertices.length;
-
-    for (i = 0; i < n; i++) {
-
-      int next_i = (i + 1) % n;
-      int prev_i = (i - 1 + n) % n;
-
-      for (j = i + 1; j < n; j++) {
-
-        if ((j != prev_i) && (j != next_i)) {
-
-          A = polygon_vertices[i];
-          B = polygon_vertices[j];
-
-          boolean diagonalRejected = false;
-
-          float[] lEdgeMiddle = this.vec3_scale(this.vec_sum(A, B), 0.5);
-          if (false == isPointInPolygon(lEdgeMiddle, polygon_vertices)) {
-            diagonalRejected = true;
-          }
-          else {
-
-            for (k = 0; k < n; k++) {
-
-              int next_k = (k + 1) % n;
-
-              if ((i != k) && (i != next_k) &&
-                  (j != k) && (j != next_k)) {
-
-                A2 = polygon_vertices[k];
-                B2 = polygon_vertices[next_k];
-
-                intersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
-
-                if (is_defined(intersectionPoint[0])) {
-                  diagonalRejected = true;
-                  break;
-                }
-              }
-            }
-          }
-
-          if (false == diagonalRejected) {
-
-            float dist = this.vec3_mag(this.vec3_diff(A, B));
-
-            int[][] newDiagonal = {{i, j}};
-            allDiagonals = (int[][]) concat(allDiagonals, newDiagonal);
-
-            float[] newDiagonal_dist = {dist};
-            allDiagonals_dist = (float[]) concat(allDiagonals_dist, newDiagonal_dist);
-
-          }
-
-        }
-      }
-    }
-
-
-    // ascending sort:
-    for (k = 0; k < allDiagonals.length; k++) {
-      for (q = k + 1; q < allDiagonals.length; q++) {
-        if (allDiagonals_dist[k] > allDiagonals_dist[q]) {
-          float tmp_float = allDiagonals_dist[k];
-          allDiagonals_dist[k] = allDiagonals_dist[q];
-          allDiagonals_dist[q] = tmp_float;
-
-          for (j = 0; k < 2; j++) {
-            int tmp_int = allDiagonals[k][j];
-            allDiagonals[k][j] = allDiagonals[q][j];
-            allDiagonals[q][j] = tmp_int;
-          }
-
-        }
-      }
-    }
-
-
-    for (k = 0; k < allDiagonals.length; k++) {
-
-      i = allDiagonals[k][0]; // start
-      j = allDiagonals[k][1]; // end
-      A = polygon_vertices[i];
-      B = polygon_vertices[j];
-
-      for (q = allDiagonals.length - 1 ; q > k; q--) { // reversed loop required.
-
-        i2 = allDiagonals[q][0]; // start
-        j2 = allDiagonals[q][1]; // end
-        A2 = polygon_vertices[i2];
-        B2 = polygon_vertices[j2];
-
-        if ((i != i2) && (i != j2) &&
-            (j != i2) && (j != j2)) {
-
-          intersectionPoint = intersect_segmentXsegment(A, B, A2, B2);
-
-          if (is_defined(intersectionPoint[0])) {
-            int[][] startList = (int[][]) subset(allDiagonals, 0, q);
-            int[][] endList = (int[][]) subset(allDiagonals, q + 1);
-            allDiagonals = (int[][]) concat(startList, endList); // remove this diagonal
-          }
-        }
-
-      }
-    }
-
-
-    int[][] faces = new int[1][n];
-    for (k = 0; k < n; k++) {
-      faces[0][n] = k;
-    }
-
-    int vertexID;
-
-    for (k = 0; k < allDiagonals.length; k++) {
-      int v1 = allDiagonals[k][0]; // start
-      int v2 = allDiagonals[k][1]; // end
-
-      int ID_1st = -1;
-      int ID_2nd = -1;
-      for (i = 0; i < faces.length; i++) {
-
-        if (faces[i].length > maximumDegree) {
-
-          for (j = 0; j < faces[i].length; j++) {
-            vertexID = faces[i][j];
-                 if (v1 == vertexID) ID_1st = j;
-            else if (v2 == vertexID) ID_2nd = j;
-          }
-
-          if ((-1 != ID_1st) && (-1 != ID_2nd)) {
-            // we found the face to devide by the diagonal
-
-            int[][] newFace1 = new int[0][0];
-            int[][] newFace2 = new int[0][0];
-
-            for (j = 0; j < faces[i].length; j++) {
-              vertexID = faces[i][j];
-
-              int[][] newItem = {{vertexID}};
-
-              if ((j <= ID_1st) || (j >= ID_2nd)) {
-                newFace1 = (int[][]) concat(newFace1, newItem); // pushing vertexID
-              }
-
-              if ((j >= ID_1st) && (j <= ID_2nd)) {
-                newFace2 = (int[][]) concat(newFace2, newItem); // pushing vertexID
-              }
-
-            }
-
-            int[][] startList = (int[][]) subset(faces, 0, i);
-            int[][] endList = (int[][]) subset(faces, i + 1);
-            faces = (int[][]) concat(startList, endList); // remove this face
-
-            faces = (int[][]) concat(faces, newFace1); // pushing 1st new face
-            faces = (int[][]) concat(faces, newFace2); // pushing 2st new face
-            i--; // since we added 2 faces and removed one
-            break;
-          }
-        }
-      }
-    }
-
-    return faces;
-  }
-
-
-
-
 
   float EquationOfTime (float DateAngle) {
     return 0.01 * (9.87 * this.sin_ang(2 * DateAngle) - 7.53 * this.cos_ang(DateAngle) - 1.5 * this.sin_ang(DateAngle));
@@ -32945,89 +32762,6 @@ class solarchvision_Modify3D {
 
 
 
-  void triangulateFace_Selection () {
-
-    if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-        (current_ObjectCategory == ObjectCategory.FACE)) {
-
-      this.selectFacesAndGroups_fromCurrentSelection();
-
-      int[] primary_list = Select3D.Face_ids;
-
-      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-
-        int OBJ_ID = Select3D.Group_ids[o];
-
-        for (int q = primary_list.length - 1; q >= 0; q--) {
-
-          int f = primary_list[q];
-
-          int startFace = allGroups.getStart_Face(OBJ_ID);
-          int endFace = allGroups.getStop_Face(OBJ_ID);
-
-          if ((startFace <= f) && (f <= endFace)) {
-
-            allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object
-
-            int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-            int[][] midList_Faces_nodes;
-            int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
-
-
-            int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_options;
-            int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
-
-            {
-              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-
-              for (int i = 0; i < allFaces.nodes[f].length; i++) {
-
-                base_Vertices[i][0] = allPoints.getX(allFaces.nodes[f][i]);
-                base_Vertices[i][1] = allPoints.getY(allFaces.nodes[f][i]);
-                base_Vertices[i][2] = allPoints.getZ(allFaces.nodes[f][i]);
-
-              }
-
-              midList_Faces_nodes = funcs.reduceDegreePolygon(base_Vertices);
-              midList_Faces_options = new int[0][0];
-
-              current_Material = allFaces.getMaterial(f);
-              current_Tessellation = allFaces.getTessellation(f);
-              current_Layer = allFaces.getLayer(f);
-              current_Visibility = allFaces.getVisibility(f);
-
-              for (int s = 0; s < midList_Faces_nodes.length; s++) {
-
-                int[][] newFace_options = {
-                  {
-                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                  }
-                };
-
-                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
-              }
-
-            }
-
-            startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
-            startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
-
-            allFaces.nodes = (int[][]) concat(startList_Faces_nodes, endList_Faces_nodes);
-            allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);
-
-            primary_list = this.remove_item_from_primary_list(q, primary_list);
-          }
-        }
-      }
-
-
-      SOLARCHVISION_switch_category(ObjectCategory.FACE);
-    }
-  }
-
-
-
   void extrudeFaceEdges_Selection () {
 
     if ((current_ObjectCategory == ObjectCategory.GROUP) ||
@@ -41853,10 +41587,6 @@ void mouseClicked () {
               Modify3D.optimizeFace_Selection();
             }
 
-            if (menu_option.equals("Triangulate Faces")) {
-              Modify3D.triangulateFace_Selection();
-            }
-
             if (menu_option.equals("Tessellate Rows & Columns")) {
               Modify3D.tessellateRowsColumns_Selection();
             }
@@ -47496,7 +47226,6 @@ class solarchvision_UI_menuBar {
       "Extrude Face Edges",
       "Extrude Polyline Edges",
       "Optimize Faces",
-      //"Triangulate Faces",
       "Tessellate Triangular",
       "Tessellate Rectangular",
       "Tessellate Rows & Columns",
@@ -54953,8 +54682,6 @@ test these functions:
 // SOLARCHVISION_snap_Faces --> allFaces.snap...
 
 // please define station elevation data for CWEEDS points!
-
-// after calling .reduceDegreePolygon is not complete
 
 // remember: should optimize vertices after optimizing faces!
 
