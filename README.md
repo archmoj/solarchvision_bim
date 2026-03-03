@@ -4,23 +4,53 @@ developed by [Mojtaba Samimi
 [Processing](https://processing.org/) language. It is available for
 `GNU/Linux`, `macOS`, and `Microsoft Windows`.
 
-## Table of contents
+# Table of contents
 
--   [Clone using SSH](#clone-using-ssh)
--   [Clone using HTTPS](#clone-using-https)
--   [Requirements](#requirements)
--   [Before running the program](#before-running-the-program)
--   [Run using Processing IDE](#run-using-processing-ide)
--   [Run using command line](#run-using-command-line)
--   [Download EPW files](#download-epw-files)
--   [Download CWEEDS files](#download-cweeds-files)
+-   [Installation](#installation)
+    -   [Clone using SSH](#clone-using-ssh)
+    -   [Clone using HTTPS](#clone-using-https)
+    -   [Requirements](#requirements)
+    -   [Before running the program](#before-running-the-program)
+    -   [Run using Processing IDE](#run-using-processing-ide)
+    -   [Run using command line](#run-using-command-line)
+    -   [Download EPW files](#download-epw-files)
+    -   [Download CWEEDS files](#download-cweeds-files)
 -   [Copyright and license](#copyright-and-license)
 -   [Graphical User Interface](#graphical-user-interface)
--   [User interface keyboard shortcuts](#user-interface-keyboard-shortcuts)
--   [Command line](#command-line)
+    -   [Adding an object to the scene](#adding-an-object-to-the-scene)
+    -   [Selecting objects](#selecting-objects)
+    -   [Altering objects](#altering-objects)
+    -   [Modifying objects](#modifying-objects)
+    -   [Matching and aligning objects](#matching-and-aligning-objects)
+    -   [Quick layout and 3D setup](#quick-layout-and-3d-setup)
+    -   [Climatic studies](#climatic-studies)
+    -   [Weather layers](#weather-layers)
+    -   [Location menu](#location-menu)
+    -   [Case bar](#case-bar)
+        -   [Range Sliders](#range-sliders)
+        -   [Statistical Options](#statistical-options)
+    -   [User interface keyboard shortcuts](#user-interface-keyboard-shortcuts)
+        -   [General](#general)
+        -   [Camera and viewport control](#camera-and-viewport-control)
+        -   [Selection and scene interaction](#selection-and-scene-interaction)
+        -   [Time, weather, and impact visualization](#time-weather-and-impact-visualization)
+        -   [Layout and graph controls](#layout-and-graph-controls)
+        -   [Graph scaling and display options](#graph-scaling-and-display-options)
+        -   [Graph visualization modes](#graph-visualization-modes)
+    -   [Command line](#command-line)
+        -   [Location](#location)
+        -   [Selection and editing](#selection-and-editing)
+        -   [Object creation](#object-creation)
+        -   [Mesh creation](#mesh-creation)
+        -   [Viewports](#viewports)
+        -   [Camera control](#camera-control)
+        -   [Views](#views)
+        -   [Shading and rendering](#shading-and-rendering)
 -   [Additional resources](#additional-resources)
 
 ------------------------------------------------------------------------
+
+# Installation
 
 ## Clone using SSH
 
@@ -115,12 +145,12 @@ Datasets (https://climate.weather.gc.ca/prods_servs/engineering_e.html).
 The files for the region of interest can be extracted and placed inside
 the `solarchvision_bim/input/climate/CWEEDS/` folder.
 
-## Copyright and license
+# Copyright and license
 
 The code and documentation are released under the [GPL
 v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
 
-## Graphical User Interface
+# Graphical User Interface
 
 Once loaded the UI would look like this:
 
@@ -624,7 +654,7 @@ Includes commands such as:
 
 
 
-## Additional resources
-### [BIM6D Presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
-### [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
-### [TU-Berlin book: Intelligent Design using Solar-Climatic Vision (Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION)](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
+# Additional resources
+## [BIM6D Presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
+## [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
+## [TU-Berlin book: Intelligent Design using Solar-Climatic Vision (Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION)](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
