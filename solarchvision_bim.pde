@@ -50175,7 +50175,8 @@ class solarchvision_UI_caseBar {
               float x_start = x1 + (x2 - x1) * ((now_j) % 365) / 365.0;
               float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / 365.0;
 
-              fill(191, 0, 0, 127);
+              float q = 1.0 * (j - STUDY.j_Start) / (STUDY.j_End - STUDY.j_Start);
+              fill(255 * q, 0, 255 * (1 - q), 127);
               noStroke();
 
               if (x_start <= x_end) {
@@ -50365,7 +50366,7 @@ class solarchvision_UI_caseBar {
           float x_start = x1 + (x2 - x1) * (V_start - n1) / float(n2 - n1 + 1);
           float x_end = x1 + (x2 - x1) * (V_end - n1 + 1) / float(n2 - n1 + 1);
 
-          fill(0, 0, 191, 191);
+          fill(191, 191, 0, 191);
           noStroke();
 
           if (x_start <= x_end) {
