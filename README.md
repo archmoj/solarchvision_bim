@@ -285,9 +285,36 @@ Additional features include:
 
 ## Case bar
 
-There is a control area above command bar which consists of 3 range sliders on the left and 9 statistical options on the right.
-The range sliders can be used to select desired `hours`, `days` and forecast `scenarios` (or `years` for the case of long-term input data). To select the start of the range use `left click`. To select the end of the range use `right click`.
-One of the statistical options (e.g. `Minimum`, `Average`, `Maximum`, `25th Percentile`, `50th P.(Median)`, `75th Percentile`) on the right side of case bar could be used to run the simulations inside viewports. In addition, the `Middle`, `Mid-High` and `Mid-Low` options are other built-in options provided by the software which use weight factors on sorted data records.
+The **Case Bar** is located above the Command Bar. It consists of three range sliders on the left and nine statistical options on the right.
+
+### Range Sliders
+
+The range sliders allow users to select the desired:
+- `Hours`
+- `Days`
+- Forecast `Scenarios` (or `Years` when using long-term input data)
+
+To define a range:
+- Use **left-click** to set the start of the range.
+- Use **right-click** to set the end of the range.
+
+### Statistical Options
+
+The statistical options determine which scenario close to the selected data aggregation is used to run simulations in the viewports. Available options include:
+
+- `Minimum`
+- `Average`
+- `Maximum`
+- `25th Percentile`
+- `50th Percentile (Median)`
+- `75th Percentile`
+- `Middle`
+- `Mid-High`
+- `Mid-Low`
+
+The first six options compute standard statistical measures based on the selected data range.
+
+The `Middle`, `Mid-High`, and `Mid-Low` options are built-in methods that apply weighted selection criteria to sorted data records.
 
 
 ## User interface keyboard shortcuts
