@@ -6,7 +6,7 @@ int SOLARCHVISION_pixel_W = 724;
 float MessageSize = 16.0;
 int SOLARCHVISION_pixel_A = 24; // menu bar
 int SOLARCHVISION_pixel_B = 44; // 3D tool bar
-int SOLARCHVISION_pixel_C = 72; // time bar
+int SOLARCHVISION_pixel_C = 72; // case bar
 int SOLARCHVISION_pixel_D = 72; // command bar
 
 /*
@@ -4436,7 +4436,7 @@ class solarchvision_STUDY {
           this.joinDays += 2;
           if (this.joinDays > 365) this.joinDays = 365;
           DevelopData_update = true;
-          UI_timeBar.revise();
+          UI_caseBar.revise();
           this.revise();
           WIN3D.revise();
           ROLLOUT.revise();
@@ -4445,7 +4445,7 @@ class solarchvision_STUDY {
           this.joinDays -= 2;
           if (this.joinDays < 1) this.joinDays = 1;
           DevelopData_update = true;
-          UI_timeBar.revise();
+          UI_caseBar.revise();
           this.revise();
           WIN3D.revise();
           ROLLOUT.revise();
@@ -4471,7 +4471,7 @@ class solarchvision_STUDY {
           allWindRoses.rebuild_Image_array = true;
           allSections.resize_solarImpact_array();
 
-          UI_timeBar.revise();
+          UI_caseBar.revise();
           this.revise();
           ROLLOUT.revise();
           break;
@@ -4496,7 +4496,7 @@ class solarchvision_STUDY {
           allWindRoses.rebuild_Image_array = true;
           allSections.resize_solarImpact_array();
 
-          UI_timeBar.revise();
+          UI_caseBar.revise();
           this.revise();
           ROLLOUT.revise();
           break;          
@@ -21337,7 +21337,7 @@ void draw () {
 
     UI_menuBar.revise();
     UI_toolBar.revise();
-    UI_timeBar.revise();
+    UI_caseBar.revise();
     UI_commandBar.revise();
 
     InitializationStep = frameCount;
@@ -21475,43 +21475,43 @@ void draw () {
         }
 
         if (pre_SampleYear_Start != SampleYear_Start) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
         if (pre_SampleYear_End != SampleYear_End) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (pre_SampleMember_Start != SampleMember_Start) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (pre_SampleMember_End != SampleMember_End) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (pre_SampleStation_Start != SampleStation_Start) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (pre_SampleStation_End != SampleStation_End) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (pre_STUDY_joinDays != STUDY.joinDays) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (pre_STUDY_i_Start != STUDY.i_Start) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (pre_STUDY_i_End != STUDY.i_End) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
 
         if (pre_STUDY_j_End != STUDY.j_End) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
 
           VertexSolar_rebuild_array = true;
           GlobalSolar_rebuild_array = true;
@@ -21522,11 +21522,11 @@ void draw () {
         }
 
         if (pre_IMPACTS_displayDay != IMPACTS_displayDay) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (pre_TIME_Date != TIME.date) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
 
           TIME.updateDate();
           ROLLOUT.drawView();
@@ -21539,7 +21539,7 @@ void draw () {
             (pre_CLIMATIC_SolarForecast != CLIMATIC_SolarForecast) ||
             (pre_CLIMATIC_WeatherForecast != CLIMATIC_WeatherForecast)) {
 
-          UI_timeBar.revise();
+          UI_caseBar.revise();
 
           TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
           TIME.hour = int(24 * (TIME.date - int(TIME.date)));
@@ -21878,12 +21878,12 @@ void draw () {
 
         if (STUDY.plotSetup != pre_STUDY_Setup) {
           STUDY.Impacts_update = true;
-          UI_timeBar.updated();
+          UI_caseBar.updated();
         }
 
         if (CurrentDataSource != pre_CurrentDataSource) {
           STUDY.Impacts_update = true;
-          UI_timeBar.updated();
+          UI_caseBar.updated();
         }
       }
     }
@@ -21896,7 +21896,7 @@ void draw () {
       if (WORLD.update) FRAME_record_IMG = true;
       //if (UI_menuBar.update) FRAME_record_IMG = true;
       //if (UI_toolBar.update) FRAME_record_IMG = true;
-      //if (UI_timeBar.update) FRAME_record_IMG = true;
+      //if (UI_caseBar.update) FRAME_record_IMG = true;
     }
 
 
@@ -21939,7 +21939,7 @@ void draw () {
           updateBars = false;
           UI_menuBar.revise();
           UI_toolBar.revise();
-          UI_timeBar.revise();
+          UI_caseBar.revise();
           UI_commandBar.revise();
         }
 
@@ -21951,8 +21951,8 @@ void draw () {
           UI_toolBar.draw();
         }
 
-        if (UI_timeBar.update) {
-          UI_timeBar.draw();
+        if (UI_caseBar.update) {
+          UI_caseBar.draw();
         }
 
         if (UI_commandBar.update) {
@@ -38658,16 +38658,16 @@ void mouseWheel (MouseEvent event) {
             float displayBarWidth = 2 * SOLARCHVISION_pixel_W;
 
             STUDY.X_control = 0.5 * displayBarWidth;
-            STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * UI_timeBar.tab;
+            STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * UI_caseBar.tab;
 
-            for (int i = 0; i < UI_timeBar.Items.length; i++) {
+            for (int i = 0; i < UI_caseBar.Items.length; i++) {
 
               float x1 = STUDY.X_control - 0.366 * displayBarWidth;
               float x2 = STUDY.X_control + 0.5 * displayBarWidth;
               float y1 = STUDY.Y_control - 0.45 * displayBarHeight;
               float y2 = STUDY.Y_control + 0.45 * displayBarHeight;
 
-              if (UI_timeBar.Items[i][0].equals("Hours")) {
+              if (UI_caseBar.Items[i][0].equals("Hours")) {
 
                 if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
@@ -38694,7 +38694,7 @@ void mouseWheel (MouseEvent event) {
                     ROLLOUT.revise();
                     STUDY.revise();
                     WORLD.revise();
-                    UI_timeBar.revise();
+                    UI_caseBar.revise();
                     SOLARCHVISION_view_changed();
 
                     SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -38702,7 +38702,7 @@ void mouseWheel (MouseEvent event) {
                 }
               }
 
-              if (UI_timeBar.Items[i][0].equals("Days")) {
+              if (UI_caseBar.Items[i][0].equals("Days")) {
 
                 if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
@@ -38718,7 +38718,7 @@ void mouseWheel (MouseEvent event) {
 
                     ROLLOUT.revise();
                     STUDY.revise();
-                    UI_timeBar.revise();
+                    UI_caseBar.revise();
                     SOLARCHVISION_view_changed();
 
                     SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -38726,7 +38726,7 @@ void mouseWheel (MouseEvent event) {
                 }
               }
 
-              if (UI_timeBar.Items[i][0].equals("Scenario")) {
+              if (UI_caseBar.Items[i][0].equals("Scenario")) {
 
                 if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
 
@@ -38756,7 +38756,7 @@ void mouseWheel (MouseEvent event) {
 
                       ROLLOUT.revise();
                       STUDY.revise();
-                      UI_timeBar.revise();
+                      UI_caseBar.revise();
                       SOLARCHVISION_view_changed();
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -38789,7 +38789,7 @@ void mouseWheel (MouseEvent event) {
 
                       ROLLOUT.revise();
                       STUDY.revise();
-                      UI_timeBar.revise();
+                      UI_caseBar.revise();
                       SOLARCHVISION_view_changed();
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -38822,7 +38822,7 @@ void mouseWheel (MouseEvent event) {
 
                       ROLLOUT.revise();
                       STUDY.revise();
-                      UI_timeBar.revise();
+                      UI_caseBar.revise();
                       SOLARCHVISION_view_changed();
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -38855,7 +38855,7 @@ void mouseWheel (MouseEvent event) {
 
                       ROLLOUT.revise();
                       STUDY.revise();
-                      UI_timeBar.revise();
+                      UI_caseBar.revise();
                       SOLARCHVISION_view_changed();
 
                       SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -38865,7 +38865,7 @@ void mouseWheel (MouseEvent event) {
               }
 
 
-              STUDY.Y_control += UI_timeBar.tab;
+              STUDY.Y_control += UI_caseBar.tab;
             }
           }
 
@@ -39213,7 +39213,7 @@ void mouseReleased () {
           ROLLOUT.revise();
           UI_menuBar.revise();
           UI_toolBar.revise();
-          UI_timeBar.revise();
+          UI_caseBar.revise();
 
           FRAME_drag_IMG = false;
 
@@ -40200,7 +40200,7 @@ void mouseClicked () {
               WORLD.revise();
               STUDY.revise();
               ROLLOUT.revise();
-              UI_timeBar.revise();
+              UI_caseBar.revise();
 
               WORLD.displayAll_TMYEPW = 1;
               WORLD.displayNear_TMYEPW = true;
@@ -40215,7 +40215,7 @@ void mouseClicked () {
               WORLD.revise();
               STUDY.revise();
               ROLLOUT.revise();
-              UI_timeBar.revise();
+              UI_caseBar.revise();
 
               WORLD.displayAll_CWEEDS = 1;
               WORLD.displayNear_CWEEDS = true;
@@ -40230,7 +40230,7 @@ void mouseClicked () {
               WORLD.revise();
               STUDY.revise();
               ROLLOUT.revise();
-              UI_timeBar.revise();
+              UI_caseBar.revise();
 
               WORLD.displayAll_CLMREC = 1;
               WORLD.displayNear_CLMREC = true;
@@ -40246,7 +40246,7 @@ void mouseClicked () {
               WORLD.revise();
               STUDY.revise();
               ROLLOUT.revise();
-              UI_timeBar.revise();
+              UI_caseBar.revise();
 
               WORLD.displayAll_SWOB = 1;
               WORLD.displayNear_SWOB = true;
@@ -40262,7 +40262,7 @@ void mouseClicked () {
               WIN3D.revise();
               STUDY.revise();
               ROLLOUT.revise();
-              UI_timeBar.revise();
+              UI_caseBar.revise();
 
               WORLD.displayAll_NAEFS = 1;
               WORLD.displayNear_NAEFS = true;
@@ -41985,7 +41985,7 @@ void mouseClicked () {
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C)) {
-          UI_timeBar.revise();
+          UI_caseBar.revise();
         }
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) {
@@ -50001,9 +50001,9 @@ solarchvision_UI_commandBar UI_commandBar = new solarchvision_UI_commandBar();
 
 
 
-class solarchvision_UI_timeBar {
+class solarchvision_UI_caseBar {
 
-  private final static String CLASS_STAMP = "UI_timeBar";
+  private final static String CLASS_STAMP = "UI_caseBar";
 
   boolean update = true;
 
@@ -50503,7 +50503,7 @@ class solarchvision_UI_timeBar {
   }
 }
 
-solarchvision_UI_timeBar UI_timeBar = new solarchvision_UI_timeBar();
+solarchvision_UI_caseBar UI_caseBar = new solarchvision_UI_caseBar();
 
 
 
@@ -52896,7 +52896,7 @@ void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
   WORLD.revise();
   STUDY.revise();
   ROLLOUT.revise();
-  UI_timeBar.revise();
+  UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 
   SampleMember_Start = ENSEMBLE_FORECAST_start;
@@ -53015,7 +53015,7 @@ void update_CLIMATE_CWEEDS () {
   WORLD.revise();
   STUDY.revise();
   ROLLOUT.revise();
-  UI_timeBar.revise();
+  UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 
   SampleYear_Start = CLIMATE_CWEEDS_start;
@@ -53215,7 +53215,7 @@ void update_CLIMATE_CLMREC () {
   WORLD.revise();
   STUDY.revise();
   ROLLOUT.revise();
-  UI_timeBar.revise();
+  UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 
   SampleYear_Start = CLIMATE_CLMREC_start;
@@ -53333,7 +53333,7 @@ void update_CLIMATE_TMYEPW () {
   WORLD.revise();
   STUDY.revise();
   ROLLOUT.revise();
-  UI_timeBar.revise();
+  UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 
 }
@@ -53416,7 +53416,7 @@ void load_CLIMATE_TMYEPW (String FileName) {
   WORLD.revise();
   STUDY.revise();
   ROLLOUT.revise();
-  UI_timeBar.revise();
+  UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 
 }
@@ -53594,7 +53594,7 @@ void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
   WORLD.revise();
   STUDY.revise();
   ROLLOUT.revise();
-  UI_timeBar.revise();
+  UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 
   SampleStation_Start = ENSEMBLE_OBSERVED_start;
@@ -54339,7 +54339,7 @@ void SOLARCHVISION_load_project (String myFile) {
     STUDY.revise();
     UI_menuBar.revise();
     UI_toolBar.revise();
-    UI_timeBar.revise();
+    UI_caseBar.revise();
     SOLARCHVISION_view_changed();
 
 

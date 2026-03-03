@@ -68,7 +68,7 @@ int SOLARCHVISION_pixel_W = 724;
 float MessageSize = 16.0;
 int SOLARCHVISION_pixel_A = 24; // menu bar
 int SOLARCHVISION_pixel_B = 44; // 3D tool bar
-int SOLARCHVISION_pixel_C = 72; // time bar
+int SOLARCHVISION_pixel_C = 72; // case bar
 int SOLARCHVISION_pixel_D = 72; // command bar
 
 size(1848, 1016, P2D);
