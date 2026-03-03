@@ -41863,7 +41863,7 @@ void mouseClicked () {
             if (menu_option.equals("Tessellate Rectangular")) {
               Modify3D.tessellateRectangular_Selection();
             }
-            if (menu_option.equals("tessellation Triangular")) {
+            if (menu_option.equals("Tessellate Triangular")) {
               Modify3D.tessellateTriangular_Selection();
             }
             if (menu_option.equals("Extrude Face Edges")) {
@@ -47497,7 +47497,7 @@ class solarchvision_UI_menuBar {
       "Extrude Polyline Edges",
       "Optimize Faces",
       //"Triangulate Faces",
-      "tessellation Triangular",
+      "Tessellate Triangular",
       "Tessellate Rectangular",
       "Tessellate Rows & Columns",
       "Auto-Normal Selected Faces",
