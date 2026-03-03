@@ -50477,11 +50477,7 @@ class solarchvision_UI_timeBar {
           fill(255);
         }
 
-        if (n == STUDY.ImpactLayer) {
-          textSize(1.25 * MessageSize);
-        } else {
-          textSize(1.125 * MessageSize);
-        }
+        textSize(1.125 * MessageSize);
 
         text(STAT_N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.2 * MessageSize);
       }
