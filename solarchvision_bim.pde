@@ -5,7 +5,7 @@ int SOLARCHVISION_pixel_W = 724;
 
 float MessageSize = 16.0;
 int SOLARCHVISION_pixel_A = 24; // menu bar
-int SOLARCHVISION_pixel_B = 44; // 3D tool bar
+int SOLARCHVISION_pixel_B = 42; // 3D tool bar
 int SOLARCHVISION_pixel_C = 72; // case bar
 int SOLARCHVISION_pixel_D = 72; // command bar
 
@@ -21,7 +21,7 @@ int SOLARCHVISION_pixel_D = 72; // command bar
   You should search for the size call like this and modify that.
 
 void setup () {
-  size(1848, 1016, P2D);
+  size(1846, 1016, P2D);
 
 }
 */
@@ -21105,7 +21105,7 @@ class solarchvision_MESSAGE {
 
   int cX = 0;
   int cY = 495;
-  int dX = 1848;
+  int dX = 1846;
   int dY = int(2 * MessageSize);
 }
 
@@ -21113,7 +21113,7 @@ solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
 
 
 void setup () {
-  size(1848, 1016, P2D);
+  size(1846, 1016, P2D);
   //size(2 * SOLARCHVISION_pixel_W + ROLLOUT.dX, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D, P2D);
 
   SOLARCHVISION_draw_frameIcon();
