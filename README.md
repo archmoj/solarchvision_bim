@@ -281,6 +281,14 @@ Additional features include:
     cloud formations using datasets such as HRDPS (High Resolution Deterministic Prediction System) or
     GDPS (Global Deterministic Prediction System)
 
+------------------------------------------------------------------------
+
+## Case bar
+
+There is a control area above command bar which consists of 3 range sliders on the left and 9 statistical options on the right.
+The range sliders can be used to select desired `hours`, `days` and forecast `scenarios` (or `years` for the case of long-term input data). To select the start of the range use `left click`. To select the end of the range use `right click`.
+One of the statistical options (e.g. `Minimum`, `Average`, `Maximum`, `25th Percentile`, `50th P.(Median)`, `75th Percentile`) on the right side of case bar could be used to run the simulations inside viewports. In addition, the `Middle`, `Mid-High` and `Mid-Low` options are other built-in options provided by the software which use weight factors on sorted data records.
+
 
 ## User interface keyboard shortcuts
 
