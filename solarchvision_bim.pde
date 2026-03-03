@@ -2308,16 +2308,14 @@ class solarchvision_WIN3D {
       float zNear = this.CAM_dist * this.CAM_clipNear;
 
       this.graphics.perspective(this.CAM_fov, aspect, zNear, zFar);
-
-      this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
     } else {
 
       float ZOOM = WIN3D.Orthographic_ZOOM();
 
       this.graphics.ortho(ZOOM * this.dX * -1, ZOOM * this.dX * 1, ZOOM  * this.dY * -1, ZOOM  * this.dY * 1, 0.00001, 100000);
-
-      this.graphics.translate(0, 1.0 * this.dY, 0); // << IMPORTANT!
     }
+
+    this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
 
     this.graphics.translate(this.position_X * this.scale, this.position_Y * this.scale, this.position_Z * this.scale);
 
