@@ -50138,9 +50138,9 @@ class solarchvision_UI_caseBar {
 
               if (TIME.date > _DATE2) _DATE2 += 365;
 
-              STUDY.perDays = int(funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.j_End - STUDY.j_Start), 1));
+              STUDY.perDays = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.j_End - STUDY.j_Start), 0.5);
 
-              if (STUDY.perDays < 0) STUDY.perDays = 1;
+              if (STUDY.perDays < 1) STUDY.perDays = 1;
 
               STUDY.revise();
               ROLLOUT.revise();
