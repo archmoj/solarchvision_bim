@@ -6,6 +6,7 @@ developed by [Mojtaba Samimi
 
 # Table of contents
 
+-   [Copyright and license](#copyright-and-license)
 -   [Installation](#installation)
     -   [Clone using SSH](#clone-using-ssh)
     -   [Clone using HTTPS](#clone-using-https)
@@ -15,7 +16,6 @@ developed by [Mojtaba Samimi
     -   [Run using command line](#run-using-command-line)
     -   [Download EPW files](#download-epw-files)
     -   [Download CWEEDS files](#download-cweeds-files)
--   [Copyright and license](#copyright-and-license)
 -   [Graphical User Interface](#graphical-user-interface)
     -   [Adding an object to the scene](#adding-an-object-to-the-scene)
     -   [Selecting objects](#selecting-objects)
@@ -49,6 +49,11 @@ developed by [Mojtaba Samimi
 -   [Additional resources](#additional-resources)
 
 ------------------------------------------------------------------------
+
+# Copyright and license
+
+The code and documentation are released under the [GPL
+v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
 
 # Installation
 
@@ -145,10 +150,6 @@ Datasets (https://climate.weather.gc.ca/prods_servs/engineering_e.html).
 The files for the region of interest can be extracted and placed inside
 the `solarchvision_bim/input/climate/CWEEDS/` folder.
 
-# Copyright and license
-
-The code and documentation are released under the [GPL
-v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
 
 # Graphical User Interface
 
