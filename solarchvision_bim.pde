@@ -2665,7 +2665,7 @@ class solarchvision_WIN3D {
         if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
         if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
 
-        txt += "SOLARCHVISION";
+        txt += "SOLARCHVISION ";
 
         if (Impact_TYPE == Impact_ACTIVE) txt += "active model ";
         if (Impact_TYPE == Impact_PASSIVE) txt += "passive model ";
@@ -4499,7 +4499,7 @@ class solarchvision_STUDY {
           UI_caseBar.revise();
           this.revise();
           ROLLOUT.revise();
-          break;          
+          break;
 
         case 'S' :
           this.skyScenario = 1 + (-1 + this.skyScenario + 1) % 4;
@@ -47422,7 +47422,7 @@ class solarchvision_UI_menuBar {
 
           for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
             if (
-              (this.Items[this.selected_parent][j].charAt(0) != '—') && 
+              (this.Items[this.selected_parent][j].charAt(0) != '—') &&
               (isInside(UI_X_moved, UI_Y_moved, cx, ceil(cy - cr + j * SOLARCHVISION_pixel_A * 0.85) + 1, cx + widthChildren, floor(cy + cr + j * SOLARCHVISION_pixel_A * 0.85) - 1))
             ) {
 
