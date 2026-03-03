@@ -2570,14 +2570,12 @@ class solarchvision_WIN3D {
 
         float zFar = this.CAM_dist * 1000;
         float zNear = this.CAM_dist * 0.001;
-
-        this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
       } else {
 
         float ZOOM = WIN3D.Orthographic_ZOOM();
-
-        this.graphics.translate(0, 1.0 * this.dY, 0); // << IMPORTANT!
       }
+
+      this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
 
       float pal_length = 1 * SOLARCHVISION_pixel_H * this.ImageScale / the_scale;
 
@@ -23934,7 +23932,7 @@ void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D
 
   SKY2D_graphics.ortho(SKY2D_X_View / -SKY2D_ZOOM, SKY2D_X_View / SKY2D_ZOOM, SKY2D_Y_View / -SKY2D_ZOOM, SKY2D_Y_View / SKY2D_ZOOM, 0.00001, 100000);
 
-  SKY2D_graphics.translate(0, 1.0 * SKY2D_Y_View, 0); // << IMPORTANT!
+  SKY2D_graphics.translate(0.5 * SKY2D_X_View, 0.5 * SKY2D_Y_View, 0); // << IMPORTANT!
 
   SKY2D_graphics.translate(SKY2D_position_X, SKY2D_position_Y, SKY2D_position_Z);
   SKY2D_graphics.rotateX(SKY2D_rotation_X * PI / 180);
