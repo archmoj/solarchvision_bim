@@ -5800,6 +5800,8 @@ class solarchvision_STUDY {
   }
 
 
+  float prev_ImageScale = 1;
+
   void drawView () {
 
     cursor(WAIT);
@@ -5808,8 +5810,22 @@ class solarchvision_STUDY {
     if (this.update) {
 
       if (this.record_PDF) this.ImageScale = 1;
-      else if (this.record_IMG) this.ImageScale = 1; //2;
+      else if (this.record_IMG) this.ImageScale = 2;
       else this.ImageScale = 1;
+
+      if(prev_ImageScale != this.ImageScale) {
+        prev_ImageScale = this.ImageScale;
+
+        // we need to redraw these due to gl context lost
+        WORLD.revise();
+        WIN3D.revise();
+        STUDY.revise();
+        ROLLOUT.revise();
+        UI_menuBar.revise();
+        UI_toolBar.revise();
+        UI_caseBar.revise();
+        UI_commandBar.revise();
+      }
 
       //////////////////////////////////
       this.dX *= this.ImageScale;
