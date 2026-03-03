@@ -41961,6 +41961,14 @@ void mouseClicked () {
 
         SOLARCHVISION_X_clicked = -1;
         SOLARCHVISION_Y_clicked = -1;
+      } else if ((UI_menuBar.selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_pixel_A) == true)) {
+        UI_menuBar.selected_parent = -1;
+        UI_menuBar.selected_child = 0;
+
+        image(pre_screen, 0, SOLARCHVISION_pixel_A);
+
+        SOLARCHVISION_X_clicked = -1;
+        SOLARCHVISION_Y_clicked = -1;
       } else {
 
         SOLARCHVISION_X_clicked = mouseX;
