@@ -5383,131 +5383,133 @@ class solarchvision_STUDY {
       }
 
       for (int i = 0; i < 24; i++) {
-        if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print(nf(i, 2) + "\t");
-        if ((this.export_info_norm) && (this.displayNormals)) FILE_outputNorms[(j - this.j_Start)].print(nf(i, 2) + "\t");
-        if ((this.export_info_prob) && (this.displayProbs)) FILE_outputProbs[(j - this.j_Start)].print(nf(i, 2) + "\t");
+        if (this.isInHourlyRange(i)) {
+          if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print(nf(i, 2) + "\t");
+          if ((this.export_info_norm) && (this.displayNormals)) FILE_outputNorms[(j - this.j_Start)].print(nf(i, 2) + "\t");
+          if ((this.export_info_prob) && (this.displayProbs)) FILE_outputProbs[(j - this.j_Start)].print(nf(i, 2) + "\t");
 
-        for (int k = 0; k < count_k; k++) {
-          for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
+          for (int k = 0; k < count_k; k++) {
+            for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
 
-            valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
-            valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
-            valuesSUM[(k * this.joinDays + j_ADD)] = 0;
-            valuesNUM[(k * this.joinDays + j_ADD)] = 1;
-
-            float[] COL = PAINT.getColorStyle(COLOR_STYLE_Current, (1.0 * k / (1 + DATA_end - DATA_start)));
-            this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-            this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-
-
-            int now_k = k + start_k;
-            int now_i = i;
-            int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
-
-
-            if (now_j >= 365) {
-              now_j = now_j % 365;
-            }
-            if (now_j < 0) {
-              now_j = (now_j + 365) % 365;
-            }
-
-            int next_i = now_i + 1;
-            int next_j = now_j;
-            int next_k = now_k;
-            if (next_i == 24) {
-              next_i = 0;
-              next_j += 1;
-              if (next_j == 365) {
-                next_j = 0;
-                next_k += 1;
-              }
-            }
-
-            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, CurrentLayer_id);
-
-            if (is_undefined(Pa)) {
               valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+              valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+              valuesSUM[(k * this.joinDays + j_ADD)] = 0;
+              valuesNUM[(k * this.joinDays + j_ADD)] = 1;
 
-              if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
-            } else {
-              int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+              float[] COL = PAINT.getColorStyle(COLOR_STYLE_Current, (1.0 * k / (1 + DATA_end - DATA_start)));
+              this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+              this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
 
-              if (memberCount == 1) {
-                valuesA[(k * this.joinDays + j_ADD)] = Pa;
-                valuesA[(k * this.joinDays + j_ADD)] += this.V_offset;
 
-                valuesSUM[(k * this.joinDays + j_ADD)] += valuesA[(k * this.joinDays + j_ADD)];
-                valuesNUM[(k * this.joinDays + j_ADD)] += 1;
+              int now_k = k + start_k;
+              int now_i = i;
+              int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
 
-                if ((this.export_info_node) && (this.displayRaws)) {
-                  if (is_defined(valuesA[(k * this.joinDays + j_ADD)])) {
-                    FILE_outputRaw[(j - this.j_Start)].print(nfs(valuesA[(k * this.joinDays + j_ADD)] - this.V_offset, 5, 5) + "\t");
-                  }
-                  else {
-                    FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
-                  }
+
+              if (now_j >= 365) {
+                now_j = now_j % 365;
+              }
+              if (now_j < 0) {
+                now_j = (now_j + 365) % 365;
+              }
+
+              int next_i = now_i + 1;
+              int next_j = now_j;
+              int next_k = now_k;
+              if (next_i == 24) {
+                next_i = 0;
+                next_j += 1;
+                if (next_j == 365) {
+                  next_j = 0;
+                  next_k += 1;
                 }
+              }
 
-                if (next_k < (1 + DATA_end - DATA_start)) {
+              Pa = getValue_CurrentDataSource(now_i, now_j, now_k, CurrentLayer_id);
 
-                  Pb = getValue_CurrentDataSource(next_i, next_j, next_k, CurrentLayer_id);
+              if (is_undefined(Pa)) {
+                valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
 
-                  if (is_undefined(Pb)) {
-                    valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
-                  } else {
-                    valuesB[(k * this.joinDays + j_ADD)] = Pb;
-                    valuesB[(k * this.joinDays + j_ADD)] += this.V_offset;
+                if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
+              } else {
+                int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
-                    if (this.displayRaws) {
-                      if ((CurrentLayer_id == LAYER_winddir.id) && (abs(valuesB[(k * this.joinDays + j_ADD)] - valuesA[(k * this.joinDays + j_ADD)]) > 180)) {
-                      } else {
-                        Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
-                        Ay_LINES = append(Ay_LINES, valuesA[(k * this.joinDays + j_ADD)] * sy_Plot);
+                if (memberCount == 1) {
+                  valuesA[(k * this.joinDays + j_ADD)] = Pa;
+                  valuesA[(k * this.joinDays + j_ADD)] += this.V_offset;
 
-                        Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
-                        By_LINES = append(By_LINES, valuesB[(k * this.joinDays + j_ADD)] * sy_Plot);
+                  valuesSUM[(k * this.joinDays + j_ADD)] += valuesA[(k * this.joinDays + j_ADD)];
+                  valuesNUM[(k * this.joinDays + j_ADD)] += 1;
+
+                  if ((this.export_info_node) && (this.displayRaws)) {
+                    if (is_defined(valuesA[(k * this.joinDays + j_ADD)])) {
+                      FILE_outputRaw[(j - this.j_Start)].print(nfs(valuesA[(k * this.joinDays + j_ADD)] - this.V_offset, 5, 5) + "\t");
+                    }
+                    else {
+                      FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
+                    }
+                  }
+
+                  if (next_k < (1 + DATA_end - DATA_start)) {
+
+                    Pb = getValue_CurrentDataSource(next_i, next_j, next_k, CurrentLayer_id);
+
+                    if (is_undefined(Pb)) {
+                      valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+                    } else {
+                      valuesB[(k * this.joinDays + j_ADD)] = Pb;
+                      valuesB[(k * this.joinDays + j_ADD)] += this.V_offset;
+
+                      if (this.displayRaws) {
+                        if ((CurrentLayer_id == LAYER_winddir.id) && (abs(valuesB[(k * this.joinDays + j_ADD)] - valuesA[(k * this.joinDays + j_ADD)]) > 180)) {
+                        } else {
+                          Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
+                          Ay_LINES = append(Ay_LINES, valuesA[(k * this.joinDays + j_ADD)] * sy_Plot);
+
+                          Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
+                          By_LINES = append(By_LINES, valuesB[(k * this.joinDays + j_ADD)] * sy_Plot);
+                        }
                       }
                     }
                   }
-                }
-              } else {
-                if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("not_the_case\t");
-              }
-            }
-          }
-        }
-
-
-        if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].println();
-
-        if (this.displayProbs) {
-          _interval += 1;
-          if ((_interval % this.sumInterval) == 0) {
-            for (int k = 0; k < count_k; k++) {
-              for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
-                valuesSUM[(k * this.joinDays + j_ADD)] += valuesA[(k * this.joinDays + j_ADD)];
-                valuesNUM[(k * this.joinDays + j_ADD)] += 1;
-
-                if (valuesNUM[(k * this.joinDays + j_ADD)] != 0) {
-                  valuesSUM[(k * this.joinDays + j_ADD)] /= valuesNUM[(k * this.joinDays + j_ADD)];
-                }
-                else {
-                  valuesSUM[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+                } else {
+                  if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("not_the_case\t");
                 }
               }
             }
-
-            this.drawProbs(i, j, valuesSUM, valuesNUM, x_Plot, y_Plot, sx_Plot, sy_Plot);
           }
-        }
 
-        if (this.displaySorted) {
-          this.drawSorted(i, j, valuesA, valuesB, x_Plot, y_Plot, sx_Plot, sy_Plot);
-        }
 
-        if (this.displayNormals) {
-          this.drawNormals(i, j, valuesA, valuesB, x_Plot, y_Plot, sx_Plot, sy_Plot);
+          if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].println();
+
+          if (this.displayProbs) {
+            _interval += 1;
+            if ((_interval % this.sumInterval) == 0) {
+              for (int k = 0; k < count_k; k++) {
+                for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
+                  valuesSUM[(k * this.joinDays + j_ADD)] += valuesA[(k * this.joinDays + j_ADD)];
+                  valuesNUM[(k * this.joinDays + j_ADD)] += 1;
+
+                  if (valuesNUM[(k * this.joinDays + j_ADD)] != 0) {
+                    valuesSUM[(k * this.joinDays + j_ADD)] /= valuesNUM[(k * this.joinDays + j_ADD)];
+                  }
+                  else {
+                    valuesSUM[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+                  }
+                }
+              }
+
+              this.drawProbs(i, j, valuesSUM, valuesNUM, x_Plot, y_Plot, sx_Plot, sy_Plot);
+            }
+          }
+
+          if (this.displaySorted) {
+            this.drawSorted(i, j, valuesA, valuesB, x_Plot, y_Plot, sx_Plot, sy_Plot);
+          }
+
+          if (this.displayNormals) {
+            this.drawNormals(i, j, valuesA, valuesB, x_Plot, y_Plot, sx_Plot, sy_Plot);
+          }
         }
       }
 
