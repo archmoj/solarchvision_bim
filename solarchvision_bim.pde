@@ -50174,7 +50174,8 @@ class solarchvision_UI_caseBar {
           }
 
           for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
-
+            float first_x_start = -1;
+            float last_x_end = -1;
             for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {
 
               int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
@@ -50188,6 +50189,12 @@ class solarchvision_UI_caseBar {
 
               float x_start = x1 + (x2 - x1) * ((now_j) % 365) / 365.0;
               float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / 365.0;
+              if(j_ADD == 0) {
+                first_x_start = x_start;
+              }
+              if(j_ADD == STUDY.joinDays - 1) {
+                last_x_end = x_end;
+              }
 
               float q = 1.0 * (j - STUDY.j_Start) / (STUDY.j_End - STUDY.j_Start);
               fill(255 * (1 - q), 63, 255 * q, 127);
@@ -50200,6 +50207,17 @@ class solarchvision_UI_caseBar {
                 rect(x_start, y1, x2 - x_start, y2 - y1);
               }
             }
+
+            strokeWeight(1);
+            stroke(255);
+            noFill();
+            if (first_x_start <= last_x_end) {
+              rect(first_x_start, y1, last_x_end - first_x_start, y2 - y1);
+            } else {
+              rect(x1, y1, last_x_end - x1, y2 - y1);
+              rect(first_x_start, y1, x2 - first_x_start, y2 - y1);
+            }
+            strokeWeight(0);
           }
 
           {
