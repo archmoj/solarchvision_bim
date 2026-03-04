@@ -50121,7 +50121,7 @@ class solarchvision_UI_caseBar {
           textAlign(CENTER, CENTER);
           stroke(0);
           fill(0);
-          textSize(1.25 * MessageSize);
+          textSize(MessageSize);
 
           for (int j = 0; j < 24; j++) {
             text(nf(j, 0), x1 + (x2 - x1) * (j + 0.5) / 24.0, STUDY.Y_control - 0.2 * MessageSize);
@@ -50224,7 +50224,7 @@ class solarchvision_UI_caseBar {
             textAlign(CENTER, CENTER);
             stroke(0);
             fill(0);
-            textSize(1.25 * MessageSize);
+            textSize(MessageSize);
 
             for (int j = 0; j < 12; j++) {
               text(TIME.namesOfMonths[j][Language_Active], x1 + (x2 - x1) * (j + 0.5) / 12.0, STUDY.Y_control - 0.2 * MessageSize);
@@ -50408,7 +50408,7 @@ class solarchvision_UI_caseBar {
           textAlign(CENTER, CENTER);
           stroke(0);
           fill(0);
-          textSize(1.25 * MessageSize);
+          textSize(MessageSize);
 
           for (int j = 0; j < n2 - n1 + 1; j++) {
 
