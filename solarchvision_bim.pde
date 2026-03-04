@@ -50124,7 +50124,7 @@ class solarchvision_UI_caseBar {
           textSize(MessageSize);
 
           for (int j = 0; j < 24; j++) {
-            text(nf(j, 0), x1 + (x2 - x1) * (j + 0.5) / 24.0, STUDY.Y_control - 0.2 * MessageSize);
+            text(nf(j, 0), x1 + (x2 - x1) * (j + 0.5) / 24.0, STUDY.Y_control);
           }
         }
 
@@ -50208,7 +50208,7 @@ class solarchvision_UI_caseBar {
               }
             }
 
-            strokeWeight(1);
+            strokeWeight(2);
             stroke(255);
             noFill();
             if (first_x_start <= last_x_end) {
@@ -50222,13 +50222,26 @@ class solarchvision_UI_caseBar {
 
           {
             textAlign(CENTER, CENTER);
+            strokeWeight(1);
             stroke(0);
             fill(0);
-            textSize(MessageSize);
+            textSize(0.95 * MessageSize);
 
             for (int j = 0; j < 12; j++) {
-              text(TIME.namesOfMonths[j][Language_Active], x1 + (x2 - x1) * (j + 0.5) / 12.0, STUDY.Y_control - 0.2 * MessageSize);
+              String txt = TIME.namesOfMonths[j][Language_Active];
+              // add spaces between characters
+              String txt2 = "";
+              int len = txt.length();
+              for (int k = 0; k < len; k++) {
+                txt2 += txt.charAt(k);
+                if(k < len - 1) {
+                  txt2 += " ";
+                }
+              }
+
+              text(txt2, x1 + (x2 - x1) * (j + 0.5) / 12.0, STUDY.Y_control);
             }
+            strokeWeight(0);
           }
 
           STUDY.perDays = keep_STUDY_perDays;
@@ -50439,7 +50452,7 @@ class solarchvision_UI_caseBar {
               //}
             }
 
-            text(txt, x1 + (x2 - x1) * (j + 0.5) / float(n2 - n1 + 1), STUDY.Y_control - 0.2 * MessageSize);
+            text(txt, x1 + (x2 - x1) * (j + 0.5) / float(n2 - n1 + 1), STUDY.Y_control - 0.1 * MessageSize);
           }
         }
 
