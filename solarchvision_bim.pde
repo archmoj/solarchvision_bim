@@ -2750,6 +2750,19 @@ class solarchvision_WIN3D {
               Move3D.selection(dx, dy, dz);
               SOLARCHVISION_model_changed();
             }
+
+            if (WIN3D.UI_TaskModifyParameter == 0) {
+              if (WIN3D.UI_CurrentTask >= UITASK.Seed_Material) { // other properties
+
+                int p = 1;
+                if(keyCode == DOWN) p = -p;
+
+                Edit3D.selection(p);
+
+                SOLARCHVISION_model_changed();
+              }
+            }
+
             break;
 
           }
