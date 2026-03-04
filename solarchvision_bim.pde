@@ -50190,7 +50190,7 @@ class solarchvision_UI_caseBar {
               float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / 365.0;
 
               float q = 1.0 * (j - STUDY.j_Start) / (STUDY.j_End - STUDY.j_Start);
-              fill(255 * q, 0, 255 * (1 - q), 127);
+              fill(255 * (1 - q), 63, 255 * q, 127);
               noStroke();
 
               if (x_start <= x_end) {
