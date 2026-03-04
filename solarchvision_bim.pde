@@ -2694,32 +2694,93 @@ class solarchvision_WIN3D {
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
 
       if (key == CODED) {
-        switch(keyCode) {
+        if (e.isShiftDown() == true) {
+          switch(keyCode) {
 
-        case DOWN :
-          WIN3D.rotateZ_3DViewport_around_Selection(this.rotation_T);
-          this.revise();
-          ROLLOUT.revise();
-          break;
+          case UP :
+          case DOWN :
+            float[] P = Select3D.getPivot();
 
-        case LEFT :
-          WIN3D.rotateXY_3DViewport_around_Selection(-this.rotation_T);
-          this.revise();
-          ROLLOUT.revise();
-          break;
+            float x0 = P[0];
+            float y0 = P[1];
+            float z0 = P[2];
 
-        case RIGHT :
-          WIN3D.rotateXY_3DViewport_around_Selection(this.rotation_T);
-          this.revise();
-          ROLLOUT.revise();
-          break;
+            if (WIN3D.UI_CurrentTask == UITASK.Rotate) { // rotate
+              float r = 5;
+              if(keyCode == DOWN) r = -r;
 
-        case UP :
-          WIN3D.rotateZ_3DViewport_around_Selection(-this.rotation_T);
-          this.revise();
-          ROLLOUT.revise();
-          break;
+              int the_Vector = Select3D.rotVector;
+              Rotate3D.selection(x0, y0, z0, r, the_Vector);
+              SOLARCHVISION_model_changed();
+            }
 
+            if (WIN3D.UI_CurrentTask == UITASK.Scale) { // scale
+              float s = pow(2.0, 0.25);
+              if(keyCode == DOWN) s = 1.0 / s;
+
+              float sx = s;
+              float sy = s;
+              float sz = s;
+
+              int the_Vector = Select3D.scaleVector;
+
+              if (the_Vector == 0) { sy = 1; sz = 1; }
+              if (the_Vector == 1) { sz = 1; sx = 1; }
+              if (the_Vector == 2) { sx = 1; sy = 1; }
+
+              Scale3D.selection(x0, y0, z0, sx, sy, sz);
+              SOLARCHVISION_model_changed();
+            }
+
+            if (WIN3D.UI_CurrentTask == UITASK.Move) { // move
+
+              float d = 0.5;
+              if(keyCode == DOWN) d = -d;
+
+              float dx = d;
+              float dy = d;
+              float dz = d;
+
+              int the_Vector = Select3D.posVector;
+
+              if (the_Vector == 0) { dy = 0; dz = 0; }
+              if (the_Vector == 1) { dz = 0; dx = 0; }
+              if (the_Vector == 2) { dx = 0; dy = 0; }
+
+              Move3D.selection(dx, dy, dz);
+              SOLARCHVISION_model_changed();
+            }
+            break;
+
+          }
+        } else {
+          switch(keyCode) {
+
+          case DOWN :
+            WIN3D.rotateZ_3DViewport_around_Selection(this.rotation_T);
+            this.revise();
+            ROLLOUT.revise();
+            break;
+
+          case LEFT :
+            WIN3D.rotateXY_3DViewport_around_Selection(-this.rotation_T);
+            this.revise();
+            ROLLOUT.revise();
+            break;
+
+          case RIGHT :
+            WIN3D.rotateXY_3DViewport_around_Selection(this.rotation_T);
+            this.revise();
+            ROLLOUT.revise();
+            break;
+
+          case UP :
+            WIN3D.rotateZ_3DViewport_around_Selection(-this.rotation_T);
+            this.revise();
+            ROLLOUT.revise();
+            break;
+
+          }
         }
       } else {
         switch(key) {
