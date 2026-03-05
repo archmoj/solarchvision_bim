@@ -48423,9 +48423,9 @@ class solarchvision_UI_toolBar {
           textAlign(CENTER, CENTER);
           stroke(255);
           fill(255);
-          textSize(0.45 * SOLARCHVISION_pixel_B);
+          textSize(MessageSize);
 
-          text(this.Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MessageSize);
+          text(this.Items[i][j], cx + 0.5 * Item_width, cy);
         }
 
 
