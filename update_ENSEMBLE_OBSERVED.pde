@@ -1,4 +1,4 @@
-void SOLARCHVISION_update_ENSEMBLE_OBSERVED () {
+void update_ENSEMBLE_OBSERVED () {
 
   ENSEMBLE_OBSERVED_values = new float [24][365][numberOfLayers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)];
   ENSEMBLE_OBSERVED_flags = new boolean [24][365][numberOfLayers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)]; // true: direct input , false: no-input, interpolated or post-processed

@@ -1294,7 +1294,7 @@ void draw () {
         if (pre_CLIMATE_TMYEPW_load != CLIMATE_TMYEPW_load) update_CLIMATE_TMYEPW();
         if (pre_CLIMATE_CWEEDS_load != CLIMATE_CWEEDS_load) update_CLIMATE_CWEEDS();
         if (pre_CLIMATE_CLMREC_load != CLIMATE_CLMREC_load) update_CLIMATE_CLMREC();
-        if (pre_ENSEMBLE_OBSERVED_load != ENSEMBLE_OBSERVED_load) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+        if (pre_ENSEMBLE_OBSERVED_load != ENSEMBLE_OBSERVED_load) update_ENSEMBLE_OBSERVED();
         if (pre_ENSEMBLE_FORECAST_load != ENSEMBLE_FORECAST_load) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
         if (pre_WORLD_autoView != WORLD.autoView) {
@@ -3135,7 +3135,7 @@ void download_ENSEMBLE_OBSERVED () {
   Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
 
   ENSEMBLE_OBSERVED_load = true;
-  SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+  update_ENSEMBLE_OBSERVED();
 }
 
 
@@ -3359,7 +3359,7 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 4)) update_CLIMATE_CLMREC();
 
-  if ((Step == 0) || (Step == 5)) SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+  if ((Step == 0) || (Step == 5)) update_ENSEMBLE_OBSERVED();
 
   if ((Step == 0) || (Step == 6)) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 

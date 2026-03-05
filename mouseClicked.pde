@@ -427,7 +427,7 @@ void mouseClicked () {
               CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
 
               ENSEMBLE_OBSERVED_load = true;
-              SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+              update_ENSEMBLE_OBSERVED();
             }
             if (menu_option.equals("Update NAEFS")) {
               CurrentDataSource = dataID_ENSEMBLE_FORECAST;
@@ -485,7 +485,7 @@ void mouseClicked () {
               STUDY.joinDays = 1;
 
               ENSEMBLE_OBSERVED_load = true;
-              SOLARCHVISION_update_ENSEMBLE_OBSERVED();
+              update_ENSEMBLE_OBSERVED();
 
               SOLARCHVISION_view_changed();
               WORLD.revise();
