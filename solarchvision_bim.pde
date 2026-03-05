@@ -34365,7 +34365,7 @@ class solarchvision_Create3D {
       current_Closed = clz;
 
       int[] newFace_nodes = {
-        allPoints.create(cx + r * funcs.cos_ang(0), cy + r * funcs.sin_ang(0), cz)
+        allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz)
       };
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n) + rot;
