@@ -525,34 +525,36 @@ solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 
 
-String[][] allRollouts = {
-  {
-    "Period & Scenarios", "Time", "Ranges", "Filters"
-  }
-  ,
-  {
-    "Location & Data", "Point", "Stations"
-  }
-  ,
-  {
-    "Geometries & Space", "Create", "Modify", "Solid", "Fractal Tree", "Environment", "Viewport", "Simulation", "Other"
-  }
-  ,
-  {
-    "Illustration Options", "2D-Layers", "2D-Colors", "3D-Solar", "3D-Spatial", "Selection"
-  }
-  ,
-  {
-    "Post-Processing", "Interpolation", "Developed", "Impacts"
-  }
-  ,
-  {
-    "Export Products", "Data", "Media"
-  }
-};
 
 
 class solarchvision_ROLLOUT {
+
+  private final String[][] allRollouts = {
+    {
+      "Period & Scenarios", "Time", "Ranges", "Filters"
+    }
+    ,
+    {
+      "Location & Data", "Point", "Stations"
+    }
+    ,
+    {
+      "Geometries & Space", "Create", "Modify", "Solid", "Fractal Tree", "Environment", "Viewport", "Simulation", "Other"
+    }
+    ,
+    {
+      "Illustration Options", "2D-Layers", "2D-Colors", "3D-Solar", "3D-Spatial", "Selection"
+    }
+    ,
+    {
+      "Post-Processing", "Interpolation", "Developed", "Impacts"
+    }
+    ,
+    {
+      "Export Products", "Data", "Media"
+    }
+  };
+
 
   private final static String CLASS_STAMP = "ROLLOUT";
 
