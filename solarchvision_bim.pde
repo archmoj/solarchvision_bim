@@ -37,9 +37,6 @@ String HoldStamp = "";
 
 String Subfolder_exportMaps = "maps/";
 
-
-
-
 solarchvision_STATION STATION = new solarchvision_STATION(
   //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "MONTREAL_DORVAL_QC_CA", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "TORONTO_PEARSON_INTL_ON_CA", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "CAN_ON_Toronto.716240_CWEC"
@@ -52,7 +49,6 @@ solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE();
 
 solarchvision_CREATE CREATE = new solarchvision_CREATE();
 
-
 int CreateObject = CREATE.Nothing;
 
 int current_ObjectCategory = ObjectCategory.GROUP;
@@ -63,7 +59,6 @@ int current_Layer = 0;
 int current_Visibility = 1;
 int current_Weight = 0;
 int current_Closed = 0;
-
 
 class solarchvision_DATATYPE {
 
@@ -78,14 +73,10 @@ class solarchvision_DATATYPE {
 
 solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
 
-
 int WMS_type = DataType.FORECAST_HRDPS; // <<<<<<<<<<<<<
 
 int TROPO_deltaTime = (WMS_type == solarchvision_DATATYPE.FORECAST_GDPS) ? 3 : 1;
 int TROPO_timeSteps = 24;
-
-
-
 
 float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
 
@@ -106,7 +97,6 @@ final int PlotImpacts_WIND_PASSIVE = 7;
 final int PlotImpacts_URBAN_ACTIVE = 8;
 final int PlotImpacts_URBAN_PASSIVE = 9;
 
-
 float CubePower = 16; //8;
 float StarPower = 0.25;
 
@@ -125,15 +115,12 @@ float BIOSPHERE_drawResolution = 1; //2.5; // 5: 5 degrees
 
 float Planetary_Magnification = 4.0; // <<<<<<<<<<
 
-
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;
 boolean FRAME_click_IMG = false;
 boolean FRAME_drag_IMG = false;
 
-
 //-------------------------------
-
 
 int CLIMATIC_SolarForecast = 0; //                                   Used for solar radiation only
 int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
@@ -157,7 +144,6 @@ final int Language_EN = 0;
 final int Language_FR = 1;
 int Language_Active = Language_EN;
 
-
 final float FLOAT_huge = 1000000000;
 final float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
 
@@ -175,7 +161,6 @@ boolean is_defined (float a) {
 boolean is_undefined (float a) {
   return !is_defined(a);
 }
-
 
 PrintWriter[] FILE_outputRaw;
 PrintWriter[] FILE_outputNorms;
@@ -206,10 +191,6 @@ String Folder_Export3D;
 String Folder_ScreenShots;
 String Folder_Shadings;
 
-
-
-
-
 solarchvision_OperatingSystem OPESYS = new solarchvision_OperatingSystem();
 
 solarchvision_TIME TIME = new solarchvision_TIME();
@@ -218,25 +199,7 @@ solarchvision_Functions funcs = new solarchvision_Functions();
 
 solarchvision_UITASK UITASK = new solarchvision_UITASK();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int numberOfLayers = 0;
-
-
-
 
 solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
   0.01,
@@ -247,7 +210,6 @@ solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
   "Hauteur sous plafond",
   ""
 );
-
 
 solarchvision_LAYER LAYER_cloudcover = new solarchvision_LAYER(
   10.0,
@@ -379,9 +341,6 @@ solarchvision_LAYER LAYER_developed = new solarchvision_LAYER(
   ""
 );
 
-
-
-
 solarchvision_LAYER[] allLayers = {
   LAYER_ceilingsky,
   LAYER_cloudcover,
@@ -398,7 +357,6 @@ solarchvision_LAYER[] allLayers = {
   LAYER_precipitation,
   LAYER_developed
 };
-
 
 int DevelopLayer_id = 0;
 int CurrentLayer_id = 0;
@@ -423,13 +381,8 @@ void changeCurrentLayerTo (int new_id) {
 
 }
 
-
-
-
-
 int ENSEMBLE_FORECAST_maxDays = 16; // Constant
 int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
-
 
 int CLIMATE_TMYEPW_start = 1;
 int CLIMATE_TMYEPW_end = 1;
@@ -453,8 +406,6 @@ float[] nearest_Station_ENSEMBLE_OBSERVED_dist = new float [ENSEMBLE_OBSERVED_nu
 
 int nearest_Station_CLMREC_id = -1;
 float nearest_Station_CLMREC_dist = FLOAT_undefined;
-
-
 
 int SampleYear_Start = 1980;
 int SampleYear_End = year();
@@ -480,13 +431,11 @@ boolean[][][][] ENSEMBLE_FORECAST_flags;
 float[][][][] ENSEMBLE_OBSERVED_values;
 boolean[][][][] ENSEMBLE_OBSERVED_flags;
 
-
 boolean CLIMATE_TMYEPW_load = true;
 boolean CLIMATE_CWEEDS_load = false;
 boolean CLIMATE_CLMREC_load = false;
 boolean ENSEMBLE_FORECAST_load = false;
 boolean ENSEMBLE_OBSERVED_load = false;
-
 
 final int DEV_WindPower = 0;
 final int DEV_RadiationOnTracker = 1;
@@ -509,7 +458,6 @@ boolean DevelopData_update = true;
 float Develop_AngleInclination = 45; // 90 = horizontal surface, 0 = Vertical surface
 float Develop_AngleOrientation = 0; // 0 = South, 90 = East
 
-
 solarchvision_SHADE SHADE = new solarchvision_SHADE();
 
 solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
@@ -520,13 +468,6 @@ solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
 
-
-
-
-
-
-
-
 float[][]   VertexSolar_XYZ;
 float[][][] VertexSolar_amounts;
 
@@ -535,16 +476,11 @@ boolean GlobalSolar_rebuild_array = true;
 
 float[][][][] GlobalSolar;
 
-
-
-
-
 int SavedScreenShots = 0;
 
 String createStamp (int increment, String CLASS_STAMP) {
 
   SavedScreenShots += increment;
-
 
   String txt = "";
 
@@ -568,14 +504,10 @@ String createStamp (int increment, String CLASS_STAMP) {
   return txt;
 }
 
-
-
 void SOLARCHVISION_RecordFrame () {
 
   saveFrame(Folder_ScreenShots + "/" + createStamp(1, "Screen") + ".jpg");
 }
-
-
 
 String MAKE_Filename (String beginName) {
 
@@ -583,8 +515,6 @@ String MAKE_Filename (String beginName) {
 
   return My_Filenames;
 }
-
-
 
 String MAKE_MainName () {
 
@@ -607,7 +537,6 @@ String getFilename_SolarImpact () {
 
 float HeightAboveGround = 0; //2.5; // <<<<<<<<<
 
-
 float LocationLAT = 0.0;
 float LocationLON = 0.0;
 float LocationELE = 0.0;
@@ -618,11 +547,8 @@ float LocationELE_step = 1.0;
 
 int save_frame_number = 0;
 
-
 int COLOR_STYLE_Current = 0;
 int COLOR_STYLE_Number = 20; //6;
-
-
 
 final int dataID_ENSEMBLE_OBSERVED = 0;
 final int dataID_ENSEMBLE_FORECAST = 1;
@@ -631,13 +557,11 @@ final int dataID_CLIMATE_CLMREC = 3;
 final int dataID_CLIMATE_TMYEPW = 4;
 final int MAXIMUM_dataID = dataID_CLIMATE_TMYEPW;
 
-
 int CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
 final String[] databaseString = {
   "SWOB", "NAEFS", "CWEEDS", "CLMREC", "TMY"
 };
-
 
 int DrawnFrame = 0;
 
@@ -648,8 +572,6 @@ int SOLARCHVISION_X_click1 = -1;
 int SOLARCHVISION_Y_click1 = -1;
 int SOLARCHVISION_X_click2 = -1;
 int SOLARCHVISION_Y_click2 = -1;
-
-
 
 int Camera_Variation = 0; // 1;
 
@@ -681,19 +603,15 @@ solarchvision_Delete3D Delete3D = new solarchvision_Delete3D();
 
 solarchvision_Select3D Select3D = new solarchvision_Select3D();
 
-
 float[][] saved_BoundingBox = Select3D.BoundingBox;
 
 int saved_alignX = Select3D.alignX;
 int saved_alignY = Select3D.alignY;
 int saved_alignZ = Select3D.alignZ;
 
-
 int addNewSelectionToPreviousSelection = 0; // internal
 
 boolean addToLastGroup = false; // internal
-
-
 
 float pre_TIME_Date;
 int pre_TIME_Hour;
@@ -821,7 +739,6 @@ boolean pre_WindFlow_display;
 
 float pre_USER_create_powAll;
 
-
 class solarchvision_MESSAGE {
 
   private final static String CLASS_STAMP = "MESSAGE";
@@ -833,7 +750,6 @@ class solarchvision_MESSAGE {
 }
 
 solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
-
 
 void setup () {
   size(1846, 1016, P2D);
@@ -874,15 +790,12 @@ void setup () {
   loop();
 }
 
-
-
 int Last_initializationStep = 1000;
 int InitializationStep = 0;
 
 void draw () {
 
   //println("frameCount:", frameCount);
-
 
   if (frameCount == 1) {
 
@@ -901,7 +814,6 @@ void draw () {
     strokeWeight(1);
     stroke(0);
     noFill();
-
 
     ellipseMode(CENTER);
 
@@ -1149,8 +1061,6 @@ void draw () {
 
         pre_WindFlow_display = allWindFlows.displayAll;
 
-
-
         pre_Selection_Solid_displayEdges = Select3D.Solid_displayEdges;
 
         pre_Selection_Section_displayEdges = Select3D.Section_displayEdges;
@@ -1167,7 +1077,6 @@ void draw () {
 
         pre_Selection_softPower = Select3D.softPower;
         pre_Selection_softRadius = Select3D.softRadius;
-
 
         pre_Selection_posValue = Select3D.posValue;
         pre_Selection_rotValue = Select3D.rotValue;
@@ -1248,7 +1157,6 @@ void draw () {
           UI_caseBar.revise();
         }
 
-
         if (pre_STUDY_j_End != STUDY.j_End) {
           UI_caseBar.revise();
 
@@ -1289,8 +1197,6 @@ void draw () {
           ROLLOUT.drawView();
         }
 
-
-
         if (pre_CLIMATE_TMYEPW_load != CLIMATE_TMYEPW_load) update_CLIMATE_TMYEPW();
         if (pre_CLIMATE_CWEEDS_load != CLIMATE_CWEEDS_load) update_CLIMATE_CWEEDS();
         if (pre_CLIMATE_CLMREC_load != CLIMATE_CLMREC_load) update_CLIMATE_CLMREC();
@@ -1301,17 +1207,12 @@ void draw () {
           WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
         }
 
-
-
         if ((pre_LocationLAT != LocationLAT) ||
             (pre_LocationLON != LocationLON)) {
 
           WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
           WORLD.revise();
         }
-
-
-
 
         if (pre_Land3D_loadMesh != Land3D.loadMesh) {
           Land3D.update_mesh();
@@ -1322,8 +1223,6 @@ void draw () {
           Land3D.update_textures();
           SOLARCHVISION_model_changed();
         }
-
-
 
         if (pre_Selection_Camera_displayEdges != Select3D.Camera_displayEdges) {
           SOLARCHVISION_view_changed();
@@ -1349,7 +1248,6 @@ void draw () {
           SOLARCHVISION_view_changed();
         }
 
-
         if (pre_Selection_softPower != Select3D.softPower) {
           Select3D.convert_Vertex_to_softSelection();
         }
@@ -1357,7 +1255,6 @@ void draw () {
         if (pre_Selection_softRadius != Select3D.softRadius) {
           Select3D.convert_Vertex_to_softSelection();
         }
-
 
         if (pre_Selection_alignX != Select3D.alignX) {
           SOLARCHVISION_selection_changed();
@@ -1448,7 +1345,6 @@ void draw () {
           SOLARCHVISION_model_changed();
         }
 
-
         if (pre_Selection_displayReferencePivot != Select3D.displayReferencePivot) {
           SOLARCHVISION_view_changed();
         }
@@ -1485,7 +1381,6 @@ void draw () {
           SOLARCHVISION_view_changed();
         }
 
-
         if (pre_WIN3D_currentCamera != WIN3D.currentCamera) {
           WIN3D.apply_currentCamera();
 
@@ -1493,7 +1388,6 @@ void draw () {
 
           SOLARCHVISION_view_changed();
         }
-
 
         if (pre_WIN3D_FacesShade != WIN3D.FacesShade) {
           SOLARCHVISION_view_changed();
@@ -1503,7 +1397,6 @@ void draw () {
           SOLARCHVISION_view_changed();
         }
 
-
         if (pre_USER_create_powAll != User3D.create_powAll) {
           User3D.create_powX = User3D.create_powAll;
           User3D.create_powY = User3D.create_powAll;
@@ -1511,7 +1404,6 @@ void draw () {
 
           ROLLOUT.revise();
         }
-
 
         if (pre_allSolids_pallet_CLR != allSolids.pallet_CLR) {
           allSolidImpacts.calculate_Impact_selectedSections();
@@ -1584,7 +1476,6 @@ void draw () {
           SOLARCHVISION_view_changed();
         }
 
-
         if (pre_allSolidImpacts_Process_subDivisions != allSolidImpacts.Process_subDivisions) {
           allSolidImpacts.calculate_Impact_selectedSections();
 
@@ -1627,8 +1518,6 @@ void draw () {
       }
     }
 
-
-
     if (FRAME_record_AUTO) {
       if (STUDY.update) FRAME_record_IMG = true;
       if (WIN3D.update) FRAME_record_IMG = true;
@@ -1637,9 +1526,6 @@ void draw () {
       //if (UI_toolBar.update) FRAME_record_IMG = true;
       //if (UI_caseBar.update) FRAME_record_IMG = true;
     }
-
-
-
 
     int Illustrations_Animate = 0;
 
@@ -1698,8 +1584,6 @@ void draw () {
           UI_commandBar.draw();
         }
 
-
-
         if (FRAME_record_IMG) {
           SOLARCHVISION_RecordFrame();
           FRAME_record_IMG = false;
@@ -1710,7 +1594,6 @@ void draw () {
     } else {
       STUDY.record_PDF = false;
     }
-
 
     //WIN3D.updated();
     //WORLD.updated();
@@ -1737,8 +1620,6 @@ void SOLARCHVISION_find_which_bakings_to_regenerate () {
   }
 }
 
-
-
 void SOLARCHVISION_regenerate_desired_bakings () {
 
   if (VertexSolar_rebuild_array) {
@@ -1751,9 +1632,7 @@ void SOLARCHVISION_regenerate_desired_bakings () {
 
 }
 
-
 solarchvision_PAINT PAINT = new solarchvision_PAINT();
-
 
 int STAT_N_MidLow = 0;
 int STAT_N_Middle = 1;
@@ -1794,9 +1673,6 @@ int[] STAT_reverse_N;
   STAT_reverse_N[STAT_N_Ave] = STAT_N_Ave;
   STAT_reverse_N[STAT_N_Max] = STAT_N_Min;
 }
-
-
-
 
 int FrameVariation = 0;
 
@@ -1869,9 +1745,6 @@ void SOLARCHVISION_update_frame_layout () {
   STUDY.revise();
 }
 
-
-
-
 void keyPressed (KeyEvent e) {
 
   //println("key: " + key);
@@ -1893,7 +1766,6 @@ void keyPressed (KeyEvent e) {
 
       addNewSelectionToPreviousSelection = 0;
 
-
       if (typeUserCommand == 0) {
 
         UI_commandBar.updated();
@@ -1908,7 +1780,6 @@ void keyPressed (KeyEvent e) {
 
         COMIN_keyPressed(e);
       }
-
 
       if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
 
@@ -1936,69 +1807,15 @@ void keyReleased () {
   addNewSelectionToPreviousSelection = 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 PrintWriter mtlOutput;
 PrintWriter objOutput;
-
 
 int obj_lastVertexNumber;
 int obj_lastVtextureNumber;
 int obj_lastFaceNumber;
 int obj_lastGroupNumber;
 
-
-
 int num_vertices_added = 0;
-
 
 void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
 
@@ -2015,23 +1832,17 @@ void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
   }
 }
 
-
-
 void SOLARCHVISION_OBJprintVtexture (float u, float v, float w) {
 
   objOutput.println("vt " + nf(u, 0, User3D.export_PrecisionVtexture) + " " + nf(v, 0, User3D.export_PrecisionVtexture) + " " + nf(w, 0, User3D.export_PrecisionVtexture));
 }
-
 
 void SOLARCHVISION_HTMLprintVtexture (float u, float v) {
 
   htmlOutput.print(nf(u, 0, User3D.export_PrecisionVtexture) + " " + nf(v, 0, User3D.export_PrecisionVtexture));
 }
 
-
 String importedObjectName = "";
-
-
 
 void SOLARCHVISION_deleteAll () {
 
@@ -2051,10 +1862,6 @@ void SOLARCHVISION_deleteAll () {
 
 }
 
-
-
-
-
 void SOLARCHVISION_model_added () {
 
   Select3D.selectLast();
@@ -2066,11 +1873,9 @@ void SOLARCHVISION_model_changed () {
   SOLARCHVISION_view_changed();
 }
 
-
 void SOLARCHVISION_view_changed () {
   WIN3D.revise();
 }
-
 
 void SOLARCHVISION_selection_changed () {
 
@@ -2081,7 +1886,6 @@ void SOLARCHVISION_selection_changed () {
   SOLARCHVISION_view_changed();
 }
 
-
 void SOLARCHVISION_switch_category (int a) {
 
   current_ObjectCategory = a;
@@ -2091,48 +1895,16 @@ void SOLARCHVISION_switch_category (int a) {
   SOLARCHVISION_selection_changed();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 float OBJECTS_scale = 1.0;
-
 
 int SKY2D_X_View = 50;
 int SKY2D_Y_View = 50;
 float SKY2D_ZOOM = 5;
 PGraphics SKY2D_graphics;
 
-
-
-
 int getLocationTimeZone () {
   return int(funcs.roundTo(STATION.getLongitude() / 15, 15));
 }
-
 
 int[] getNow_inUTC () {
 
@@ -2142,7 +1914,6 @@ int[] getNow_inUTC () {
   int CurrentMonth = month();
   int CurrentDay = day();
   int CurrentHour = hour();
-
 
   // converting from local time to global time
 
@@ -2190,7 +1961,6 @@ int[] getNow_inUTC () {
   return return_array;
 }
 
-
 solarchvision_Tropo3D Tropo3D = new solarchvision_Tropo3D();
 
 solarchvision_Sky3D Sky3D = new solarchvision_Sky3D();
@@ -2227,19 +1997,6 @@ solarchvision_WindRose allWindRoses = new solarchvision_WindRose();
 
 solarchvision_WindFlow allWindFlows = new solarchvision_WindFlow();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 void VertexSolar_resize_array () { // called when STUDY.j_End changes
 
   VertexSolar_XYZ     = new float [0][3];
@@ -2247,8 +2004,6 @@ void VertexSolar_resize_array () { // called when STUDY.j_End changes
 
   VertexSolar_rebuild_array = false;
 }
-
-
 
 float[][] skyVertices = new float [0][3];
 int[][] skyFaces = new int [0][1];
@@ -2259,13 +2014,8 @@ int POINTER_TempObjectFaces = 0;
 float[][] TempObjectVertices = new float [0][3];
 int[][] TempObjectFaces = new int [0][1];
 
-
-
 int mouseWheelConsume = 0;
 int dragging_started = 0;
-
-
-
 
 void SOLARCHVISION_update_project_info (File selectedFile) {
 
@@ -2310,7 +2060,6 @@ void SOLARCHVISION_fileSelected_Open (File selectedFile) {
   }
 }
 
-
 void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
 
   String Filename = "";
@@ -2327,8 +2076,6 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
   }
 }
 
-
-
 void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
   String Filename = "";
@@ -2337,11 +2084,9 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
   } else {
     Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
 
-
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
     }
-
 
     println("Importing:", Filename);
 
@@ -2362,7 +2107,6 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
   }
 }
 
-
 void SOLARCHVISION_SelectFile_Execute_CommandFile (File selectedFile) {
 
   String Filename = "";
@@ -2377,18 +2121,12 @@ void SOLARCHVISION_SelectFile_Execute_CommandFile (File selectedFile) {
   }
 }
 
-
-
-
 boolean isInside (float x, float y, float x1, float y1, float x2, float y2) {
   if ((x1 < x) && (x < x2) && (y1 < y) && (y < y2)) {
     return true;
   }
   return false;
 }
-
-
-
 
 String NearLatitude_Stamp () {
 
@@ -2403,8 +2141,6 @@ String NearLatitude_Stamp () {
 
   return a;
 }
-
-
 
 String Section_Stamp () {
 
@@ -2421,7 +2157,6 @@ String Section_Stamp () {
 
   return s;
 }
-
 
 String Viewport_Stamp () {
 
@@ -2445,17 +2180,10 @@ String Viewport_Stamp () {
   return s;
 }
 
-
-
-
 int UI_X_moved = -1;
 int UI_Y_moved = -1;
 
-
 PImage pre_screen;
-
-
-
 
 void SOLARCHVISION_modify_Viewport_Title () {
 
@@ -2466,10 +2194,6 @@ void SOLARCHVISION_modify_Viewport_Title () {
 
   UI_toolBar.revise();
 }
-
-
-
-
 
 int[] get_startK_endK () {
   int[] a = new int [2];
@@ -2521,7 +2245,6 @@ int[] get_startK_endK () {
     end_k -= ENSEMBLE_OBSERVED_start;
   }
 
-
   //println("start_k=", start_k);
   //println("end_k=", end_k);
 
@@ -2531,20 +2254,7 @@ int[] get_startK_endK () {
   return  a;
 }
 
-
-
-
-
-
-
-
 float[][] DiffuseVectors;
-
-
-
-
-
-
 
 void setFlag_CurrentDataSource (int i, int j, int k, int Parameter_ID, boolean flag) {
 
@@ -2586,7 +2296,6 @@ void setValue_CurrentDataSource (int i, int j, int k, int Parameter_ID, float va
 
 }
 
-
 float getValue_CurrentDataSource (int i, int j, int k, int Parameter_ID) {
 
   float return_value = FLOAT_undefined;
@@ -2609,7 +2318,6 @@ float getValue_CurrentDataSource (int i, int j, int k, int Parameter_ID) {
 
   return return_value;
 }
-
 
 int getStart_CurrentDataSource () {
 
@@ -2680,8 +2388,6 @@ String getReference_CurrentDataSource () {
   return return_value;
 }
 
-
-
 void SOLARCHVISION_setDataFlags (int desired_DataSource) {
 
   int keep_CurrentDataSource = CurrentDataSource;
@@ -2706,7 +2412,6 @@ void SOLARCHVISION_setDataFlags (int desired_DataSource) {
   CurrentDataSource = keep_CurrentDataSource;
 }
 
-
 solarchvision_UI_menuBar UI_menuBar = new solarchvision_UI_menuBar();
 
 solarchvision_UI_toolBar UI_toolBar = new solarchvision_UI_toolBar();
@@ -2715,19 +2420,10 @@ solarchvision_UI_commandBar UI_commandBar = new solarchvision_UI_commandBar();
 
 solarchvision_UI_caseBar UI_caseBar = new solarchvision_UI_caseBar();
 
-
-
-
-
-
 String[] allCommands = {"SOLARCHVISION Command Input:", ""};
 String[] allMessages = {"SOLARCHVISION Command Output:", ""};
 
-
 int typeUserCommand = 0;
-
-
-
 
 solarchvision_STATION[] TMYEPW_Coordinates;
 
@@ -2758,9 +2454,6 @@ void inputCoordinates_TMYEPW () {
     TMYEPW_Coordinates[f].setFilename_TMYEPW(parts[10]);
   }
 }
-
-
-
 
 solarchvision_STATION[] CWEEDS_coordinates;
 
@@ -2795,11 +2488,6 @@ void inputCoordinates_CWEEDS () {
   }
 }
 
-
-
-
-
-
 solarchvision_STATION[] CLMREC_Coordinates;
 
 void inputCoordinates_CLMREC () {
@@ -2832,9 +2520,6 @@ void inputCoordinates_CLMREC () {
     //CLMREC_Coordinates[f].setFilename_CLMREC(?);
   }
 }
-
-
-
 
 solarchvision_STATION[] SWOB_Coordinates;
 
@@ -2874,13 +2559,6 @@ void inputCoordinates_SWOB () {
 
   }
 }
-
-
-
-
-
-
-
 
 solarchvision_STATION[] NAEFposition_Ts;
 
@@ -2932,7 +2610,6 @@ void inputCoordinates_NAEFS () {
     l = parts[3].length();
     elevation = float(parts[3].substring(0, l - 1));
 
-
     NAEFposition_Ts[f] = new solarchvision_STATION();
 
     NAEFposition_Ts[f].setCity(city);
@@ -2945,8 +2622,6 @@ void inputCoordinates_NAEFS () {
     NAEFposition_Ts[f].setFilename_NAEFS(filename);
   }
 }
-
-
 
 void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
@@ -2979,8 +2654,6 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       }
     }
   }
-
-
 
   if (new_files_downloaded) {
 
@@ -3015,8 +2688,6 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
   }
 }
-
-
 
 void download_CLIMATE_CLMREC () {
 
@@ -3056,8 +2727,6 @@ void download_CLIMATE_CLMREC () {
   }
 }
 
-
-
 void download_ENSEMBLE_OBSERVED () {
 
   // this line tries to update the most recent files! <<
@@ -3065,7 +2734,6 @@ void download_ENSEMBLE_OBSERVED () {
   int THE_MONTH = month();
   int THE_DAY = day();
   int THE_HOUR = hour();
-
 
   float THE_DATE = TIME.date;
 
@@ -3131,23 +2799,14 @@ void download_ENSEMBLE_OBSERVED () {
     THE_HOUR = now_i;
   }
 
-
   Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
 
   ENSEMBLE_OBSERVED_load = true;
   update_ENSEMBLE_OBSERVED();
 }
 
-
-
-
-
-
-
-
 boolean diag_XML_input = false;
 boolean diag_XML_output = false;
-
 
 String XML_getContent(XML xml) {
  String result = xml.getContent();
@@ -3182,8 +2841,6 @@ Boolean XML_getBoolean(XML xml, String tag) {
  if (diag_XML_input) println(result);
  return result;
 }
-
-
 
 void XML_setContent(XML xml, String value) {
  //if (diag_XML_output) println("<" + value + ">");
@@ -3222,8 +2879,6 @@ void XML_setBoolean(XML xml, String tag, boolean value) {
  xml.setString(tag, Boolean.toString(value));
 }
 
-
-
 PGraphics TREES_graphics;
 
 PGraphics SHADOW_graphics;
@@ -3236,29 +2891,7 @@ float Shades_offsetY;
 
 float[] SunR_Rotated;
 
-
-
-
-
-
-
-
-
-
-
-
-
 String save_folder = "";
-
-
-
-
-
-
-
-
-
-
 
 void SOLARCHVISION_hold_project () {
 
@@ -3280,7 +2913,6 @@ void SOLARCHVISION_fetch_project () {
     println("Cannot find the hold file:", myFile);
   }
 }
-
 
 String Default_Font = "Liberation Sans";
 
@@ -3330,8 +2962,6 @@ void SOLARCHVISION_draw_frameIcon () {
   //frame.setTitle("SOLARCHVISION-" + SOLARCHVISION_version);
 }
 
-
-
 void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 1)) {
@@ -3371,7 +3001,6 @@ void SOLARCHVISION_update_models (int Step) {
   if ((Step == 0) || (Step == 1)) allGroups.makeEmpty(0); //not deleting all
   if ((Step == 0) || (Step == 2)) Create3D.add_Model_Main();
 }
-
 
 void SOLARCHVISION_update_folders () {
 
@@ -3423,15 +3052,12 @@ test these functions:
 
 */
 
-
 // add to last group remains active when drawing houses then trees are added to the last group!
-
 
 // Now when adding mulitole objects at once (e.g. trees on land), only the last one selected.
 
 // continue to remove win3d and ui updates from create3D, etc.
 // WIN3D.revise();
-
 
 // move should keep the same distance of bounding box - now only moves the center
 
@@ -3446,35 +3072,21 @@ test these functions:
 // Tropo3D.draw
 // note we used .... float r = FLOAT_r_Earth + 10000; for clouds
 
-
-
-
-
-
-
-
-
 // pick select LandPoint is not written.
 
-
 // diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!"
-
 
 // snap for Polyline objects is not developed yet.
 
 // don't know if multiple allModel2Ds.Images[n].get(Image_X, Image_Y) in allModel2Ds selection can produce performance problems?
 
-
 // note: code for SOLARCHVISION_intersect_allSolids might run a bit slow. But it is OK for now.
 
-
 // should see where else could add snap3D :)
-
 
 // drop functions only works for allModel2Ds objects and not at Group level
 
 // could add join/explode groups ?
-
 
 // export and import of polylines
 // converting polylines to faces e.g. Surface, Extrude, Connect
@@ -3492,6 +3104,5 @@ test these functions:
 // void Rotate3D.selection_Groups
 // serach for Rotate3D.selection_Selection ( need to make them all correct for local pivots!
 // local pivot
-
 
 // solid rotations inside groups should be translated to locals to avoid problems!
