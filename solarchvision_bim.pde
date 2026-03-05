@@ -26,719 +26,6 @@ void setup () {
 }
 */
 
-String SceneName = "";
-
-String SOLARCHVISION_version = "2026";
-String BaseFolder = "/home/solarch/org/solarchvision_bim";
-
-String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
-String ProjectName = "Revision_" + RunStamp;
-String HoldStamp = "";
-
-String Subfolder_exportMaps = "maps/";
-
-solarchvision_STATION STATION = new solarchvision_STATION(
-  //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "MONTREAL_DORVAL_QC_CA", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "TORONTO_PEARSON_INTL_ON_CA", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "CAN_ON_Toronto.716240_CWEC"
-  //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "VANCOUVER_INTL_BC_CA", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "CAN_BC_Vancouver.718920_CWEC"
-);
-
-solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE();
-
-solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE();
-
-solarchvision_CREATE CREATE = new solarchvision_CREATE();
-
-int CreateObject = CREATE.Nothing;
-
-int current_ObjectCategory = ObjectCategory.GROUP;
-
-int current_Material = 7;
-int current_Tessellation = 0;
-int current_Layer = 0;
-int current_Visibility = 1;
-int current_Weight = 0;
-int current_Closed = 0;
-
-class solarchvision_DATATYPE {
-
-  private final static String CLASS_STAMP = "DATATYPE";
-
-  final static int SATELLITE_GOES = 0;
-  final static int FORECAST_HRDPS = 1;
-  final static int FORECAST_RDPS  = 2;
-  final static int FORECAST_GDPS  = 3;
-
-}
-
-solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
-
-int WMS_type = DataType.FORECAST_HRDPS; // <<<<<<<<<<<<<
-
-int TROPO_deltaTime = (WMS_type == solarchvision_DATATYPE.FORECAST_GDPS) ? 3 : 1;
-int TROPO_timeSteps = 24;
-
-float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
-
-final int Impact_ACTIVE = 0; // internal
-final int Impact_PASSIVE = 1; // internal
-final int numberOfImpactVariations = 2; // internal
-
-int Impact_TYPE = Impact_PASSIVE;
-
-final int PlotImpacts_CYCLES_ACTIVE = 0;
-final int PlotImpacts_CYCLES_PASSIVE = 1;
-final int PlotImpacts_SUNPATH_ACTIVE = 2;
-final int PlotImpacts_SUNPATH_PASSIVE = 3;
-final int PlotImpacts_GLOBAL_ACTIVE = 4;
-final int PlotImpacts_GLOBAL_PASSIVE = 5;
-final int PlotImpacts_WIND_ACTIVE = 6;
-final int PlotImpacts_WIND_PASSIVE = 7;
-final int PlotImpacts_URBAN_ACTIVE = 8;
-final int PlotImpacts_URBAN_PASSIVE = 9;
-
-float CubePower = 16; //8;
-float StarPower = 0.25;
-
-final float FLOAT_e = 2.7182818284;
-
-final double DOUBLE_r_Earth = 6367470.0; //6373000.0;
-final float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
-
-float CrustDepth = 1000; // 1000m .The actual crust ranges from 5–70 km
-
-float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intrenal!
-
-float GlobalAlbedo = 0; // 0-100
-
-float BIOSPHERE_drawResolution = 1; //2.5; // 5: 5 degrees
-
-float Planetary_Magnification = 4.0; // <<<<<<<<<<
-
-boolean FRAME_record_AUTO = false;
-boolean FRAME_record_IMG = false;
-boolean FRAME_click_IMG = false;
-boolean FRAME_drag_IMG = false;
-
-//-------------------------------
-
-int CLIMATIC_SolarForecast = 0; //                                   Used for solar radiation only
-int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
-
-int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
-
-String[] skyScenario_Title = {
-  "", "All data", "Cloudy\nPattern", "Partly Cloudy\nPattern", "Sunny\nPattern"
-};
-String[] skyScenario_FileTXT = {
-  "", "", "Overcast sky", "Scattered sky", "Clear sky"
-};
-
-final int filter_HOURLY = 0;
-final int filter_DAILY = 1;
-
-int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
-
-final int numberOfLanguages = 2;
-final int Language_EN = 0;
-final int Language_FR = 1;
-int Language_Active = Language_EN;
-
-final float FLOAT_huge = 1000000000;
-final float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
-
-final String STRING_undefined = "N/A";
-final float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
-final float FLOAT_max_defined = 0.95 * FLOAT_undefined;
-
-boolean is_defined (float a) {
-  if (a < FLOAT_max_defined) {
-    return true;
-  }
-  return false;
-}
-
-boolean is_undefined (float a) {
-  return !is_defined(a);
-}
-
-PrintWriter[] FILE_outputRaw;
-PrintWriter[] FILE_outputNorms;
-PrintWriter[] FILE_outputProbs;
-
-String[] Files_CLIMATE_TMYEPW;
-String[] Files_CLIMATE_CWEEDS;
-String[] Files_CLIMATE_CLMREC;
-String[] Files_ENSEMBLE_OBSERVED;
-String[] Files_ENSEMBLE_FORECAST;
-
-String Folder_CLIMATE_TMYEPW;
-String Folder_CLIMATE_CWEEDS;
-String Folder_CLIMATE_CLMREC;
-String Folder_ENSEMBLE_OBSERVED;
-String Folder_ENSEMBLE_FORECAST;
-String Folder_GEOMET;
-
-String Folder_Coordinates;
-
-String Folder_Land;
-String Folder_People;
-String Folder_Trees;
-String Folder_Export;
-String Folder_Project;
-String Folder_Graphics;
-String Folder_Export3D;
-String Folder_ScreenShots;
-String Folder_Shadings;
-
-solarchvision_OperatingSystem OPESYS = new solarchvision_OperatingSystem();
-
-solarchvision_TIME TIME = new solarchvision_TIME();
-
-solarchvision_Functions funcs = new solarchvision_Functions();
-
-solarchvision_UITASK UITASK = new solarchvision_UITASK();
-
-int numberOfLayers = 0;
-
-solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
-  0.01,
-  0,
-  0,
-  "m",
-  "Ceiling height",
-  "Hauteur sous plafond",
-  ""
-);
-
-solarchvision_LAYER LAYER_cloudcover = new solarchvision_LAYER(
-  10.0,
-  0,
-  0,
-  "tenth",
-  "Total Cloud Cover",
-  "Couvert nuageux total",
-  "TCDC"
-);
-
-solarchvision_LAYER LAYER_winddir = new solarchvision_LAYER(
-  100.0 / 360.0,
-  0,
-  0,
-  "°",
-  "Surface Wind Direction",
-  "Direction du vent à la surface",
-  "WDIR-SFC"
-);
-
-solarchvision_LAYER LAYER_windspd = new solarchvision_LAYER(
-  2.5,
-  0,
-  0,
-  "km/h",
-  "Surface Wind Speed",
-  "Vitesse du vent à la surface",
-  "WIND-SFC"
-);
-
-solarchvision_LAYER LAYER_pressure = new solarchvision_LAYER(
-  2.0,
-  -1000,
-  1,
-  "hPa",
-  "Mean Sea level Pressure",
-  "Pression moyenne au niveau de la mer",
-  "MSLP"
-);
-
-solarchvision_LAYER LAYER_drybulb = new solarchvision_LAYER(
-  2.5,
-  0,
-  1,
-  "°C",
-  "Surface Air Temperature",
-  "Température de l'air à la surface",
-  "TMP-SFC"
-);
-
-solarchvision_LAYER LAYER_relhum = new solarchvision_LAYER(
-  1.0,
-  0,
-  0,
-  "%",
-  "Surface Relative Humidity",
-  "Humidité relative à la surface",
-  "RELH-SFC"
-);
-
-solarchvision_LAYER LAYER_dirnorrad = new solarchvision_LAYER(
-  0.1,
-  0,
-  0,
-  "W/m²",
-  "Direct normal radiation",
-  "Rayonnement direct normal",
-  ""
-);
-
-solarchvision_LAYER LAYER_difhorrad = new solarchvision_LAYER(
-  0.1,
-  0,
-  0,
-  "W/m²",
-  "Diffuse horizontal radiation",
-  "Diffus rayonnement horizontal",
-  ""
-);
-
-solarchvision_LAYER LAYER_glohorrad = new solarchvision_LAYER(
-  0.1,
-  0,
-  0,
-  "W/m²",
-  "Global horizontal radiation",
-  "Rayonnement global horizontal",
-  ""
-);
-
-solarchvision_LAYER LAYER_direffect = new solarchvision_LAYER(
-  0.0025,
-  0,
-  1,
-  "W°C/m²",
-  "Direct normal effect <18°C<",
-  "Effet direct normal <18°C<",
-  ""
-);
-
-solarchvision_LAYER LAYER_difeffect = new solarchvision_LAYER(
-  0.0025,
-  0,
-  1,
-  "W°C/m²",
-  "Diffuse normal effect <18°C<",
-  "Effet diffus normal <18°C<",
-  ""
-);
-
-solarchvision_LAYER LAYER_precipitation = new solarchvision_LAYER(
-  4.0,
-  0,
-  0,
-  "mm",
-  "Surface Accumulated Precipitation",
-  "Précipitations accumulées à la surface",
-  "APCP-SFC"
-);
-
-solarchvision_LAYER LAYER_developed = new solarchvision_LAYER(
-  1,
-  0,
-  0,
-  "",
-  "",
-  "",
-  ""
-);
-
-solarchvision_LAYER[] allLayers = {
-  LAYER_ceilingsky,
-  LAYER_cloudcover,
-  LAYER_winddir,
-  LAYER_windspd,
-  LAYER_pressure,
-  LAYER_drybulb,
-  LAYER_relhum,
-  LAYER_dirnorrad,
-  LAYER_difhorrad,
-  LAYER_glohorrad,
-  LAYER_direffect,
-  LAYER_difeffect,
-  LAYER_precipitation,
-  LAYER_developed
-};
-
-int DevelopLayer_id = 0;
-int CurrentLayer_id = 0;
-String CurrentLayer_unit = allLayers[0].unit;
-String CurrentLayer_name = allLayers[0].name;
-String[] CurrentLayer_descriptions = {allLayers[0].descriptions[Language_EN],
-                                      allLayers[0].descriptions[Language_FR]};
-
-void changeCurrentLayerTo (int new_id) {
-
-  STUDY.V_scale = allLayers[new_id].V_scale;
-  STUDY.V_offset = allLayers[new_id].V_offset;
-  STUDY.V_belowLine = allLayers[new_id].V_belowLine;
-
-  DevelopLayer_id = new_id;
-  CurrentLayer_id = new_id;
-
-  CurrentLayer_unit = allLayers[new_id].unit;
-  CurrentLayer_name = allLayers[new_id].name;
-  CurrentLayer_descriptions[Language_EN] = allLayers[new_id].descriptions[Language_EN];
-  CurrentLayer_descriptions[Language_FR] = allLayers[new_id].descriptions[Language_FR];
-
-}
-
-int ENSEMBLE_FORECAST_maxDays = 16; // Constant
-int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
-
-int CLIMATE_TMYEPW_start = 1;
-int CLIMATE_TMYEPW_end = 1;
-
-int CLIMATE_CWEEDS_start = 1970;
-int CLIMATE_CWEEDS_end = 2017;
-
-int CLIMATE_CLMREC_start = 2000;
-int CLIMATE_CLMREC_end = year();
-
-int ENSEMBLE_FORECAST_start = 1;
-int ENSEMBLE_FORECAST_end = 43; // NAEFS:1-43, Note we will append REPS/HRDPS or other scenarions at the end  of this list
-
-int ENSEMBLE_OBSERVED_numNearest = 3;  // <<<<<<<<
-
-int ENSEMBLE_OBSERVED_start = 1;
-int ENSEMBLE_OBSERVED_end = ENSEMBLE_OBSERVED_numNearest;
-
-int[] nearest_Station_ENSEMBLE_OBSERVED_id = new int [ENSEMBLE_OBSERVED_numNearest];
-float[] nearest_Station_ENSEMBLE_OBSERVED_dist = new float [ENSEMBLE_OBSERVED_numNearest];
-
-int nearest_Station_CLMREC_id = -1;
-float nearest_Station_CLMREC_dist = FLOAT_undefined;
-
-int SampleYear_Start = 1980;
-int SampleYear_End = year();
-
-int SampleMember_Start = 1;
-int SampleMember_End = 43;
-
-int SampleStation_Start = 1;
-int SampleStation_End = ENSEMBLE_OBSERVED_numNearest;
-
-float[][][][] CLIMATE_TMYEPW_values;
-boolean[][][][] CLIMATE_TMYEPW_flags;
-
-float[][][][] CLIMATE_CWEEDS_values;
-boolean[][][][] CLIMATE_CWEEDS_flags;
-
-float[][][][] CLIMATE_CLMREC_values;
-boolean[][][][] CLIMATE_CLMREC_flags;
-
-float[][][][] ENSEMBLE_FORECAST_values;
-boolean[][][][] ENSEMBLE_FORECAST_flags;
-
-float[][][][] ENSEMBLE_OBSERVED_values;
-boolean[][][][] ENSEMBLE_OBSERVED_flags;
-
-boolean CLIMATE_TMYEPW_load = true;
-boolean CLIMATE_CWEEDS_load = false;
-boolean CLIMATE_CLMREC_load = false;
-boolean ENSEMBLE_FORECAST_load = false;
-boolean ENSEMBLE_OBSERVED_load = false;
-
-final int DEV_WindPower = 0;
-final int DEV_RadiationOnTracker = 1;
-final int DEV_RadiationOnSurface = 2;
-final int DEV_RadiationOnSouth = 3;
-final int DEV_RadiationOnEast = 4;
-final int DEV_RadiationOnNorth = 5;
-final int DEV_RadiationOnWest = 6;
-final int DEV_RadiationOnSE = 7;
-final int DEV_RadiationOnNE = 8;
-final int DEV_RadiationOnNW = 9;
-final int DEV_RadiationOnSW = 10;
-int numberOfDevelopedLayers = 11;
-
-int Develop_Option = DEV_WindPower;
-int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
-
-boolean DevelopData_update = true;
-
-float Develop_AngleInclination = 45; // 90 = horizontal surface, 0 = Vertical surface
-float Develop_AngleOrientation = 0; // 0 = South, 90 = East
-
-solarchvision_SHADE SHADE = new solarchvision_SHADE();
-
-solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
-
-solarchvision_WORLD WORLD = new solarchvision_WORLD();
-
-solarchvision_STUDY STUDY = new solarchvision_STUDY();
-
-solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
-
-float[][]   VertexSolar_XYZ;
-float[][][] VertexSolar_amounts;
-
-boolean VertexSolar_rebuild_array = true;
-boolean GlobalSolar_rebuild_array = true;
-
-float[][][][] GlobalSolar;
-
-int SavedScreenShots = 0;
-
-String createStamp (int increment, String CLASS_STAMP) {
-
-  SavedScreenShots += increment;
-
-  String txt = "";
-
-  if (CLASS_STAMP == "WIN3D") {
-    txt += "CAM" + nf(WIN3D.currentCamera, 2) + "_";
-  }
-  else {
-    txt += "IMG" + nf(SavedScreenShots, 4) + "_";
-  }
-
-  txt += STATION.getCity() + "_";
-
-  if (IMPACTS_displayDay != 0) {
-    txt += TIME.getMM((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
-  }
-  else {
-    txt += TIME.getMM( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + "-" +
-           TIME.getMM((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
-  }
-
-  return txt;
-}
-
-void SOLARCHVISION_RecordFrame () {
-
-  saveFrame(Folder_ScreenShots + "/" + createStamp(1, "Screen") + ".jpg");
-}
-
-String MAKE_Filename (String beginName) {
-
-  String My_Filenames = Folder_ScreenShots + "/" + beginName;
-
-  return My_Filenames;
-}
-
-String MAKE_MainName () {
-
-  String s = "";
-
-  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) s = nf(TIME.year, 2) + nf(TIME.month, 2) + nf(TIME.day, 2) + "_" + nf(STUDY.j_End, 0) + "dayFORECAST_";
-
-  return s;
-}
-
-String getFilename_SolidImpact () {
-
-  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/Solid" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.Z[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.R[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
-}
-
-String getFilename_SolarImpact () {
-
-  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/Solar" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.Z, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.R, 1)), 3);
-}
-
-float HeightAboveGround = 0; //2.5; // <<<<<<<<<
-
-float LocationLAT = 0.0;
-float LocationLON = 0.0;
-float LocationELE = 0.0;
-
-float LocationLAT_step = 0.01;
-float LocationLON_step = 0.01;
-float LocationELE_step = 1.0;
-
-int save_frame_number = 0;
-
-int COLOR_STYLE_Current = 0;
-int COLOR_STYLE_Number = 20; //6;
-
-final int dataID_ENSEMBLE_OBSERVED = 0;
-final int dataID_ENSEMBLE_FORECAST = 1;
-final int dataID_CLIMATE_CWEEDS = 2;
-final int dataID_CLIMATE_CLMREC = 3;
-final int dataID_CLIMATE_TMYEPW = 4;
-final int MAXIMUM_dataID = dataID_CLIMATE_TMYEPW;
-
-int CurrentDataSource = dataID_CLIMATE_TMYEPW;
-
-final String[] databaseString = {
-  "SWOB", "NAEFS", "CWEEDS", "CLMREC", "TMY"
-};
-
-int DrawnFrame = 0;
-
-int SOLARCHVISION_X_clicked = -1;
-int SOLARCHVISION_Y_clicked = -1;
-
-int SOLARCHVISION_X_click1 = -1;
-int SOLARCHVISION_Y_click1 = -1;
-int SOLARCHVISION_X_click2 = -1;
-int SOLARCHVISION_Y_click2 = -1;
-
-int Camera_Variation = 0; // 1;
-
-solarchvision_Materials allMaterials = new solarchvision_Materials();
-
-solarchvision_Faces allFaces = new solarchvision_Faces();
-
-solarchvision_Polylines allPolylines = new solarchvision_Polylines();
-
-solarchvision_Groups allGroups = new solarchvision_Groups();
-
-solarchvision_SolidImpacts allSolidImpacts = new solarchvision_SolidImpacts();
-
-solarchvision_SolarImpacts allSolarImpacts = new solarchvision_SolarImpacts();
-
-solarchvision_Edit3D Edit3D = new solarchvision_Edit3D();
-
-solarchvision_Scale3D Scale3D = new solarchvision_Scale3D();
-
-solarchvision_Rotate3D Rotate3D = new solarchvision_Rotate3D();
-
-solarchvision_Move3D Move3D = new solarchvision_Move3D();
-
-solarchvision_Drop3D Drop3D = new solarchvision_Drop3D();
-
-solarchvision_Clone3D Clone3D = new solarchvision_Clone3D();
-
-solarchvision_Delete3D Delete3D = new solarchvision_Delete3D();
-
-solarchvision_Select3D Select3D = new solarchvision_Select3D();
-
-float[][] saved_BoundingBox = Select3D.BoundingBox;
-
-int saved_alignX = Select3D.alignX;
-int saved_alignY = Select3D.alignY;
-int saved_alignZ = Select3D.alignZ;
-
-int addNewSelectionToPreviousSelection = 0; // internal
-
-boolean addToLastGroup = false; // internal
-
-float pre_TIME_Date;
-int pre_TIME_Hour;
-int pre_TIME_Day;
-int pre_TIME_Month;
-int pre_TIME_Year;
-
-int pre_SampleYear_Start;
-int pre_SampleYear_End;
-int pre_SampleMember_Start;
-int pre_SampleMember_End;
-int pre_SampleStation_Start;
-int pre_SampleStation_End;
-
-int pre_STUDY_joinDays;
-int pre_STUDY_i_Start;
-int pre_STUDY_i_End;
-int pre_STUDY_j_End;
-int pre_STUDY_Setup;
-
-int pre_IMPACTS_displayDay;
-int pre_CurrentDataSource;
-
-int pre_CLIMATIC_SolarForecast;
-int pre_CLIMATIC_WeatherForecast;
-
-boolean pre_CLIMATE_TMYEPW_load;
-boolean pre_CLIMATE_CWEEDS_load;
-boolean pre_CLIMATE_CLMREC_load;
-boolean pre_ENSEMBLE_FORECAST_load;
-boolean pre_ENSEMBLE_OBSERVED_load;
-
-boolean pre_Land3D_loadMesh;
-boolean pre_Land3D_loadTextures;
-
-float pre_LocationLAT;
-float pre_LocationLON;
-
-boolean pre_WORLD_autoView;
-
-boolean pre_Selection_Model1D_displayEdges;
-boolean pre_Selection_Model2D_displayEdges;
-
-boolean pre_Selection_Solid_displayEdges;
-boolean pre_Selection_Section_displayEdges;
-boolean pre_Selection_Camera_displayEdges;
-
-boolean pre_Selection_LandPoint_displayPoints;
-
-float pre_Selection_softPower;
-float pre_Selection_softRadius;
-
-float pre_Selection_posValue;
-float pre_Selection_rotValue;
-float pre_Selection_scaleValue;
-
-int pre_Selection_alignX;
-int pre_Selection_alignY;
-int pre_Selection_alignZ;
-
-boolean pre_Selection_displayReferencePivot;
-
-boolean pre_Selection_Group_displayPivot;
-boolean pre_Selection_Group_displayEdges;
-boolean pre_Selection_Group_displayBox;
-
-boolean pre_Selection_Face_displayEdges;
-boolean pre_Selection_Face_displayVertexCount;
-boolean pre_Selection_Polyline_displayVertexCount;
-boolean pre_Selection_Vertex_displayVertices;
-boolean pre_Selection_Polyline_displayVertices;
-
-int pre_WIN3D_currentCamera;
-
-int pre_WIN3D_FacesShade;
-
-int pre_Create3D_Tessellation;
-
-boolean pre_allPoints_displayAll;
-boolean pre_allFaces_displayEdges;
-boolean pre_allFaces_displayNormals;
-
-int pre_Develop_Option;
-
-int pre_STUDY_ImpactLayer;
-int pre_STUDY_CurrentLayer_id;
-
-int pre_STUDY_SkyScenario;
-int pre_STUDY_PlotImpacts;
-
-int pre_allSolids_pallet_CLR;
-int pre_allSolids_pallet_DIR;
-float pre_allSolids_pallet_MLT;
-
-float pre_allSolidImpacts_Grade;
-float pre_allSolidImpacts_Power;
-float[] pre_allSolidImpacts_Rotation = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_Elevation = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_U_scale = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_V_scale = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_sU_offset = {
-  0, 0, 0, 0
-};
-float[] pre_allSolidImpacts_sV_offset = {
-  0, 0, 0, 0
-};
-
-float pre_allSolidImpacts_Wspd;
-float pre_allSolidImpacts_Wdir;
-
-boolean pre_allSolidImpacts_displayPoints;
-boolean pre_allSolidImpacts_displayLines;
-
-int pre_allSolidImpacts_Process_subDivisions;
-
-boolean pre_WindFlow_display;
-
-float pre_USER_create_powAll;
-
 class solarchvision_MESSAGE {
 
   private final static String CLASS_STAMP = "MESSAGE";
@@ -1603,6 +890,719 @@ void draw () {
 
   }
 }
+
+String SceneName = "";
+
+String SOLARCHVISION_version = "2026";
+String BaseFolder = "/home/solarch/org/solarchvision_bim";
+
+String RunStamp = nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+String ProjectName = "Revision_" + RunStamp;
+String HoldStamp = "";
+
+String Subfolder_exportMaps = "maps/";
+
+solarchvision_STATION STATION = new solarchvision_STATION(
+  //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "MONTREAL_DORVAL_QC_CA", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
+  "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "TORONTO_PEARSON_INTL_ON_CA", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "CAN_ON_Toronto.716240_CWEC"
+  //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "VANCOUVER_INTL_BC_CA", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "CAN_BC_Vancouver.718920_CWEC"
+);
+
+solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE();
+
+solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE();
+
+solarchvision_CREATE CREATE = new solarchvision_CREATE();
+
+int CreateObject = CREATE.Nothing;
+
+int current_ObjectCategory = ObjectCategory.GROUP;
+
+int current_Material = 7;
+int current_Tessellation = 0;
+int current_Layer = 0;
+int current_Visibility = 1;
+int current_Weight = 0;
+int current_Closed = 0;
+
+class solarchvision_DATATYPE {
+
+  private final static String CLASS_STAMP = "DATATYPE";
+
+  final static int SATELLITE_GOES = 0;
+  final static int FORECAST_HRDPS = 1;
+  final static int FORECAST_RDPS  = 2;
+  final static int FORECAST_GDPS  = 3;
+
+}
+
+solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
+
+int WMS_type = DataType.FORECAST_HRDPS; // <<<<<<<<<<<<<
+
+int TROPO_deltaTime = (WMS_type == solarchvision_DATATYPE.FORECAST_GDPS) ? 3 : 1;
+int TROPO_timeSteps = 24;
+
+float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
+
+final int Impact_ACTIVE = 0; // internal
+final int Impact_PASSIVE = 1; // internal
+final int numberOfImpactVariations = 2; // internal
+
+int Impact_TYPE = Impact_PASSIVE;
+
+final int PlotImpacts_CYCLES_ACTIVE = 0;
+final int PlotImpacts_CYCLES_PASSIVE = 1;
+final int PlotImpacts_SUNPATH_ACTIVE = 2;
+final int PlotImpacts_SUNPATH_PASSIVE = 3;
+final int PlotImpacts_GLOBAL_ACTIVE = 4;
+final int PlotImpacts_GLOBAL_PASSIVE = 5;
+final int PlotImpacts_WIND_ACTIVE = 6;
+final int PlotImpacts_WIND_PASSIVE = 7;
+final int PlotImpacts_URBAN_ACTIVE = 8;
+final int PlotImpacts_URBAN_PASSIVE = 9;
+
+float CubePower = 16; //8;
+float StarPower = 0.25;
+
+final float FLOAT_e = 2.7182818284;
+
+final double DOUBLE_r_Earth = 6367470.0; //6373000.0;
+final float FLOAT_r_Earth = (float) DOUBLE_r_Earth;
+
+float CrustDepth = 1000; // 1000m .The actual crust ranges from 5–70 km
+
+float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intrenal!
+
+float GlobalAlbedo = 0; // 0-100
+
+float BIOSPHERE_drawResolution = 1; //2.5; // 5: 5 degrees
+
+float Planetary_Magnification = 4.0; // <<<<<<<<<<
+
+boolean FRAME_record_AUTO = false;
+boolean FRAME_record_IMG = false;
+boolean FRAME_click_IMG = false;
+boolean FRAME_drag_IMG = false;
+
+//-------------------------------
+
+int CLIMATIC_SolarForecast = 0; //                                   Used for solar radiation only
+int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
+
+int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
+
+String[] skyScenario_Title = {
+  "", "All data", "Cloudy\nPattern", "Partly Cloudy\nPattern", "Sunny\nPattern"
+};
+String[] skyScenario_FileTXT = {
+  "", "", "Overcast sky", "Scattered sky", "Clear sky"
+};
+
+final int filter_HOURLY = 0;
+final int filter_DAILY = 1;
+
+int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
+
+final int numberOfLanguages = 2;
+final int Language_EN = 0;
+final int Language_FR = 1;
+int Language_Active = Language_EN;
+
+final float FLOAT_huge = 1000000000;
+final float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
+
+final String STRING_undefined = "N/A";
+final float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
+final float FLOAT_max_defined = 0.95 * FLOAT_undefined;
+
+boolean is_defined (float a) {
+  if (a < FLOAT_max_defined) {
+    return true;
+  }
+  return false;
+}
+
+boolean is_undefined (float a) {
+  return !is_defined(a);
+}
+
+PrintWriter[] FILE_outputRaw;
+PrintWriter[] FILE_outputNorms;
+PrintWriter[] FILE_outputProbs;
+
+String[] Files_CLIMATE_TMYEPW;
+String[] Files_CLIMATE_CWEEDS;
+String[] Files_CLIMATE_CLMREC;
+String[] Files_ENSEMBLE_OBSERVED;
+String[] Files_ENSEMBLE_FORECAST;
+
+String Folder_CLIMATE_TMYEPW;
+String Folder_CLIMATE_CWEEDS;
+String Folder_CLIMATE_CLMREC;
+String Folder_ENSEMBLE_OBSERVED;
+String Folder_ENSEMBLE_FORECAST;
+String Folder_GEOMET;
+
+String Folder_Coordinates;
+
+String Folder_Land;
+String Folder_People;
+String Folder_Trees;
+String Folder_Export;
+String Folder_Project;
+String Folder_Graphics;
+String Folder_Export3D;
+String Folder_ScreenShots;
+String Folder_Shadings;
+
+solarchvision_OperatingSystem OPESYS = new solarchvision_OperatingSystem();
+
+solarchvision_TIME TIME = new solarchvision_TIME();
+
+solarchvision_Functions funcs = new solarchvision_Functions();
+
+solarchvision_UITASK UITASK = new solarchvision_UITASK();
+
+int numberOfLayers = 0;
+
+solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
+  0.01,
+  0,
+  0,
+  "m",
+  "Ceiling height",
+  "Hauteur sous plafond",
+  ""
+);
+
+solarchvision_LAYER LAYER_cloudcover = new solarchvision_LAYER(
+  10.0,
+  0,
+  0,
+  "tenth",
+  "Total Cloud Cover",
+  "Couvert nuageux total",
+  "TCDC"
+);
+
+solarchvision_LAYER LAYER_winddir = new solarchvision_LAYER(
+  100.0 / 360.0,
+  0,
+  0,
+  "°",
+  "Surface Wind Direction",
+  "Direction du vent à la surface",
+  "WDIR-SFC"
+);
+
+solarchvision_LAYER LAYER_windspd = new solarchvision_LAYER(
+  2.5,
+  0,
+  0,
+  "km/h",
+  "Surface Wind Speed",
+  "Vitesse du vent à la surface",
+  "WIND-SFC"
+);
+
+solarchvision_LAYER LAYER_pressure = new solarchvision_LAYER(
+  2.0,
+  -1000,
+  1,
+  "hPa",
+  "Mean Sea level Pressure",
+  "Pression moyenne au niveau de la mer",
+  "MSLP"
+);
+
+solarchvision_LAYER LAYER_drybulb = new solarchvision_LAYER(
+  2.5,
+  0,
+  1,
+  "°C",
+  "Surface Air Temperature",
+  "Température de l'air à la surface",
+  "TMP-SFC"
+);
+
+solarchvision_LAYER LAYER_relhum = new solarchvision_LAYER(
+  1.0,
+  0,
+  0,
+  "%",
+  "Surface Relative Humidity",
+  "Humidité relative à la surface",
+  "RELH-SFC"
+);
+
+solarchvision_LAYER LAYER_dirnorrad = new solarchvision_LAYER(
+  0.1,
+  0,
+  0,
+  "W/m²",
+  "Direct normal radiation",
+  "Rayonnement direct normal",
+  ""
+);
+
+solarchvision_LAYER LAYER_difhorrad = new solarchvision_LAYER(
+  0.1,
+  0,
+  0,
+  "W/m²",
+  "Diffuse horizontal radiation",
+  "Diffus rayonnement horizontal",
+  ""
+);
+
+solarchvision_LAYER LAYER_glohorrad = new solarchvision_LAYER(
+  0.1,
+  0,
+  0,
+  "W/m²",
+  "Global horizontal radiation",
+  "Rayonnement global horizontal",
+  ""
+);
+
+solarchvision_LAYER LAYER_direffect = new solarchvision_LAYER(
+  0.0025,
+  0,
+  1,
+  "W°C/m²",
+  "Direct normal effect <18°C<",
+  "Effet direct normal <18°C<",
+  ""
+);
+
+solarchvision_LAYER LAYER_difeffect = new solarchvision_LAYER(
+  0.0025,
+  0,
+  1,
+  "W°C/m²",
+  "Diffuse normal effect <18°C<",
+  "Effet diffus normal <18°C<",
+  ""
+);
+
+solarchvision_LAYER LAYER_precipitation = new solarchvision_LAYER(
+  4.0,
+  0,
+  0,
+  "mm",
+  "Surface Accumulated Precipitation",
+  "Précipitations accumulées à la surface",
+  "APCP-SFC"
+);
+
+solarchvision_LAYER LAYER_developed = new solarchvision_LAYER(
+  1,
+  0,
+  0,
+  "",
+  "",
+  "",
+  ""
+);
+
+solarchvision_LAYER[] allLayers = {
+  LAYER_ceilingsky,
+  LAYER_cloudcover,
+  LAYER_winddir,
+  LAYER_windspd,
+  LAYER_pressure,
+  LAYER_drybulb,
+  LAYER_relhum,
+  LAYER_dirnorrad,
+  LAYER_difhorrad,
+  LAYER_glohorrad,
+  LAYER_direffect,
+  LAYER_difeffect,
+  LAYER_precipitation,
+  LAYER_developed
+};
+
+int DevelopLayer_id = 0;
+int CurrentLayer_id = 0;
+String CurrentLayer_unit = allLayers[0].unit;
+String CurrentLayer_name = allLayers[0].name;
+String[] CurrentLayer_descriptions = {allLayers[0].descriptions[Language_EN],
+                                      allLayers[0].descriptions[Language_FR]};
+
+void changeCurrentLayerTo (int new_id) {
+
+  STUDY.V_scale = allLayers[new_id].V_scale;
+  STUDY.V_offset = allLayers[new_id].V_offset;
+  STUDY.V_belowLine = allLayers[new_id].V_belowLine;
+
+  DevelopLayer_id = new_id;
+  CurrentLayer_id = new_id;
+
+  CurrentLayer_unit = allLayers[new_id].unit;
+  CurrentLayer_name = allLayers[new_id].name;
+  CurrentLayer_descriptions[Language_EN] = allLayers[new_id].descriptions[Language_EN];
+  CurrentLayer_descriptions[Language_FR] = allLayers[new_id].descriptions[Language_FR];
+
+}
+
+int ENSEMBLE_FORECAST_maxDays = 16; // Constant
+int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
+
+int CLIMATE_TMYEPW_start = 1;
+int CLIMATE_TMYEPW_end = 1;
+
+int CLIMATE_CWEEDS_start = 1970;
+int CLIMATE_CWEEDS_end = 2017;
+
+int CLIMATE_CLMREC_start = 2000;
+int CLIMATE_CLMREC_end = year();
+
+int ENSEMBLE_FORECAST_start = 1;
+int ENSEMBLE_FORECAST_end = 43; // NAEFS:1-43, Note we will append REPS/HRDPS or other scenarions at the end  of this list
+
+int ENSEMBLE_OBSERVED_numNearest = 3;  // <<<<<<<<
+
+int ENSEMBLE_OBSERVED_start = 1;
+int ENSEMBLE_OBSERVED_end = ENSEMBLE_OBSERVED_numNearest;
+
+int[] nearest_Station_ENSEMBLE_OBSERVED_id = new int [ENSEMBLE_OBSERVED_numNearest];
+float[] nearest_Station_ENSEMBLE_OBSERVED_dist = new float [ENSEMBLE_OBSERVED_numNearest];
+
+int nearest_Station_CLMREC_id = -1;
+float nearest_Station_CLMREC_dist = FLOAT_undefined;
+
+int SampleYear_Start = 1980;
+int SampleYear_End = year();
+
+int SampleMember_Start = 1;
+int SampleMember_End = 43;
+
+int SampleStation_Start = 1;
+int SampleStation_End = ENSEMBLE_OBSERVED_numNearest;
+
+float[][][][] CLIMATE_TMYEPW_values;
+boolean[][][][] CLIMATE_TMYEPW_flags;
+
+float[][][][] CLIMATE_CWEEDS_values;
+boolean[][][][] CLIMATE_CWEEDS_flags;
+
+float[][][][] CLIMATE_CLMREC_values;
+boolean[][][][] CLIMATE_CLMREC_flags;
+
+float[][][][] ENSEMBLE_FORECAST_values;
+boolean[][][][] ENSEMBLE_FORECAST_flags;
+
+float[][][][] ENSEMBLE_OBSERVED_values;
+boolean[][][][] ENSEMBLE_OBSERVED_flags;
+
+boolean CLIMATE_TMYEPW_load = true;
+boolean CLIMATE_CWEEDS_load = false;
+boolean CLIMATE_CLMREC_load = false;
+boolean ENSEMBLE_FORECAST_load = false;
+boolean ENSEMBLE_OBSERVED_load = false;
+
+final int DEV_WindPower = 0;
+final int DEV_RadiationOnTracker = 1;
+final int DEV_RadiationOnSurface = 2;
+final int DEV_RadiationOnSouth = 3;
+final int DEV_RadiationOnEast = 4;
+final int DEV_RadiationOnNorth = 5;
+final int DEV_RadiationOnWest = 6;
+final int DEV_RadiationOnSE = 7;
+final int DEV_RadiationOnNE = 8;
+final int DEV_RadiationOnNW = 9;
+final int DEV_RadiationOnSW = 10;
+int numberOfDevelopedLayers = 11;
+
+int Develop_Option = DEV_WindPower;
+int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
+
+boolean DevelopData_update = true;
+
+float Develop_AngleInclination = 45; // 90 = horizontal surface, 0 = Vertical surface
+float Develop_AngleOrientation = 0; // 0 = South, 90 = East
+
+solarchvision_SHADE SHADE = new solarchvision_SHADE();
+
+solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
+
+solarchvision_WORLD WORLD = new solarchvision_WORLD();
+
+solarchvision_STUDY STUDY = new solarchvision_STUDY();
+
+solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
+
+float[][]   VertexSolar_XYZ;
+float[][][] VertexSolar_amounts;
+
+boolean VertexSolar_rebuild_array = true;
+boolean GlobalSolar_rebuild_array = true;
+
+float[][][][] GlobalSolar;
+
+int SavedScreenShots = 0;
+
+String createStamp (int increment, String CLASS_STAMP) {
+
+  SavedScreenShots += increment;
+
+  String txt = "";
+
+  if (CLASS_STAMP == "WIN3D") {
+    txt += "CAM" + nf(WIN3D.currentCamera, 2) + "_";
+  }
+  else {
+    txt += "IMG" + nf(SavedScreenShots, 4) + "_";
+  }
+
+  txt += STATION.getCity() + "_";
+
+  if (IMPACTS_displayDay != 0) {
+    txt += TIME.getMM((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
+  }
+  else {
+    txt += TIME.getMM( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + "-" +
+           TIME.getMM((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
+  }
+
+  return txt;
+}
+
+void SOLARCHVISION_RecordFrame () {
+
+  saveFrame(Folder_ScreenShots + "/" + createStamp(1, "Screen") + ".jpg");
+}
+
+String MAKE_Filename (String beginName) {
+
+  String My_Filenames = Folder_ScreenShots + "/" + beginName;
+
+  return My_Filenames;
+}
+
+String MAKE_MainName () {
+
+  String s = "";
+
+  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) s = nf(TIME.year, 2) + nf(TIME.month, 2) + nf(TIME.day, 2) + "_" + nf(STUDY.j_End, 0) + "dayFORECAST_";
+
+  return s;
+}
+
+String getFilename_SolidImpact () {
+
+  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/Solid" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.Z[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.R[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
+}
+
+String getFilename_SolarImpact () {
+
+  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/Solar" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.Z, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.R, 1)), 3);
+}
+
+float HeightAboveGround = 0; //2.5; // <<<<<<<<<
+
+float LocationLAT = 0.0;
+float LocationLON = 0.0;
+float LocationELE = 0.0;
+
+float LocationLAT_step = 0.01;
+float LocationLON_step = 0.01;
+float LocationELE_step = 1.0;
+
+int save_frame_number = 0;
+
+int COLOR_STYLE_Current = 0;
+int COLOR_STYLE_Number = 20; //6;
+
+final int dataID_ENSEMBLE_OBSERVED = 0;
+final int dataID_ENSEMBLE_FORECAST = 1;
+final int dataID_CLIMATE_CWEEDS = 2;
+final int dataID_CLIMATE_CLMREC = 3;
+final int dataID_CLIMATE_TMYEPW = 4;
+final int MAXIMUM_dataID = dataID_CLIMATE_TMYEPW;
+
+int CurrentDataSource = dataID_CLIMATE_TMYEPW;
+
+final String[] databaseString = {
+  "SWOB", "NAEFS", "CWEEDS", "CLMREC", "TMY"
+};
+
+int DrawnFrame = 0;
+
+int SOLARCHVISION_X_clicked = -1;
+int SOLARCHVISION_Y_clicked = -1;
+
+int SOLARCHVISION_X_click1 = -1;
+int SOLARCHVISION_Y_click1 = -1;
+int SOLARCHVISION_X_click2 = -1;
+int SOLARCHVISION_Y_click2 = -1;
+
+int Camera_Variation = 0; // 1;
+
+solarchvision_Materials allMaterials = new solarchvision_Materials();
+
+solarchvision_Faces allFaces = new solarchvision_Faces();
+
+solarchvision_Polylines allPolylines = new solarchvision_Polylines();
+
+solarchvision_Groups allGroups = new solarchvision_Groups();
+
+solarchvision_SolidImpacts allSolidImpacts = new solarchvision_SolidImpacts();
+
+solarchvision_SolarImpacts allSolarImpacts = new solarchvision_SolarImpacts();
+
+solarchvision_Edit3D Edit3D = new solarchvision_Edit3D();
+
+solarchvision_Scale3D Scale3D = new solarchvision_Scale3D();
+
+solarchvision_Rotate3D Rotate3D = new solarchvision_Rotate3D();
+
+solarchvision_Move3D Move3D = new solarchvision_Move3D();
+
+solarchvision_Drop3D Drop3D = new solarchvision_Drop3D();
+
+solarchvision_Clone3D Clone3D = new solarchvision_Clone3D();
+
+solarchvision_Delete3D Delete3D = new solarchvision_Delete3D();
+
+solarchvision_Select3D Select3D = new solarchvision_Select3D();
+
+float[][] saved_BoundingBox = Select3D.BoundingBox;
+
+int saved_alignX = Select3D.alignX;
+int saved_alignY = Select3D.alignY;
+int saved_alignZ = Select3D.alignZ;
+
+int addNewSelectionToPreviousSelection = 0; // internal
+
+boolean addToLastGroup = false; // internal
+
+float pre_TIME_Date;
+int pre_TIME_Hour;
+int pre_TIME_Day;
+int pre_TIME_Month;
+int pre_TIME_Year;
+
+int pre_SampleYear_Start;
+int pre_SampleYear_End;
+int pre_SampleMember_Start;
+int pre_SampleMember_End;
+int pre_SampleStation_Start;
+int pre_SampleStation_End;
+
+int pre_STUDY_joinDays;
+int pre_STUDY_i_Start;
+int pre_STUDY_i_End;
+int pre_STUDY_j_End;
+int pre_STUDY_Setup;
+
+int pre_IMPACTS_displayDay;
+int pre_CurrentDataSource;
+
+int pre_CLIMATIC_SolarForecast;
+int pre_CLIMATIC_WeatherForecast;
+
+boolean pre_CLIMATE_TMYEPW_load;
+boolean pre_CLIMATE_CWEEDS_load;
+boolean pre_CLIMATE_CLMREC_load;
+boolean pre_ENSEMBLE_FORECAST_load;
+boolean pre_ENSEMBLE_OBSERVED_load;
+
+boolean pre_Land3D_loadMesh;
+boolean pre_Land3D_loadTextures;
+
+float pre_LocationLAT;
+float pre_LocationLON;
+
+boolean pre_WORLD_autoView;
+
+boolean pre_Selection_Model1D_displayEdges;
+boolean pre_Selection_Model2D_displayEdges;
+
+boolean pre_Selection_Solid_displayEdges;
+boolean pre_Selection_Section_displayEdges;
+boolean pre_Selection_Camera_displayEdges;
+
+boolean pre_Selection_LandPoint_displayPoints;
+
+float pre_Selection_softPower;
+float pre_Selection_softRadius;
+
+float pre_Selection_posValue;
+float pre_Selection_rotValue;
+float pre_Selection_scaleValue;
+
+int pre_Selection_alignX;
+int pre_Selection_alignY;
+int pre_Selection_alignZ;
+
+boolean pre_Selection_displayReferencePivot;
+
+boolean pre_Selection_Group_displayPivot;
+boolean pre_Selection_Group_displayEdges;
+boolean pre_Selection_Group_displayBox;
+
+boolean pre_Selection_Face_displayEdges;
+boolean pre_Selection_Face_displayVertexCount;
+boolean pre_Selection_Polyline_displayVertexCount;
+boolean pre_Selection_Vertex_displayVertices;
+boolean pre_Selection_Polyline_displayVertices;
+
+int pre_WIN3D_currentCamera;
+
+int pre_WIN3D_FacesShade;
+
+int pre_Create3D_Tessellation;
+
+boolean pre_allPoints_displayAll;
+boolean pre_allFaces_displayEdges;
+boolean pre_allFaces_displayNormals;
+
+int pre_Develop_Option;
+
+int pre_STUDY_ImpactLayer;
+int pre_STUDY_CurrentLayer_id;
+
+int pre_STUDY_SkyScenario;
+int pre_STUDY_PlotImpacts;
+
+int pre_allSolids_pallet_CLR;
+int pre_allSolids_pallet_DIR;
+float pre_allSolids_pallet_MLT;
+
+float pre_allSolidImpacts_Grade;
+float pre_allSolidImpacts_Power;
+float[] pre_allSolidImpacts_Rotation = {
+  0, 0, 0, 0
+};
+float[] pre_allSolidImpacts_Elevation = {
+  0, 0, 0, 0
+};
+float[] pre_allSolidImpacts_U_scale = {
+  0, 0, 0, 0
+};
+float[] pre_allSolidImpacts_V_scale = {
+  0, 0, 0, 0
+};
+float[] pre_allSolidImpacts_sU_offset = {
+  0, 0, 0, 0
+};
+float[] pre_allSolidImpacts_sV_offset = {
+  0, 0, 0, 0
+};
+
+float pre_allSolidImpacts_Wspd;
+float pre_allSolidImpacts_Wdir;
+
+boolean pre_allSolidImpacts_displayPoints;
+boolean pre_allSolidImpacts_displayLines;
+
+int pre_allSolidImpacts_Process_subDivisions;
+
+boolean pre_WindFlow_display;
+
+float pre_USER_create_powAll;
 
 void SOLARCHVISION_find_which_bakings_to_regenerate () {
 
