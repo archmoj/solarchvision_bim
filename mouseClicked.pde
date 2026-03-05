@@ -2276,10 +2276,10 @@ void mouseClicked () {
               int nearest_WORLD_NAEFS = -1;
               float nearest_WORLD_NAEFS_dist = FLOAT_undefined;
 
-              for (int f = 0; f < NAEFposition_Ts.length; f++) {
+              for (int f = 0; f < NAEFS_Coordinates.length; f++) {
 
-                float _lat = NAEFposition_Ts[f].getLatitude();
-                float _lon = NAEFposition_Ts[f].getLongitude();
+                float _lat = NAEFS_Coordinates[f].getLatitude();
+                float _lon = NAEFS_Coordinates[f].getLongitude();
                 if (_lon > 180) _lon -= 360; // << important!
 
                 float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
@@ -2293,25 +2293,25 @@ void mouseClicked () {
               {
                 int f = nearest_WORLD_NAEFS;
 
-                if (STATION.getFilename_NAEFS().equals(NAEFposition_Ts[f].getFilename_NAEFS())) {
+                if (STATION.getFilename_NAEFS().equals(NAEFS_Coordinates[f].getFilename_NAEFS())) {
                 } else {
 
                   STATION.setLatitude(mouse_lat);
                   STATION.setLongitude(mouse_lon);
 
-                  STATION.setFilename_NAEFS(NAEFposition_Ts[f].getFilename_NAEFS()); // naefs filename
+                  STATION.setFilename_NAEFS(NAEFS_Coordinates[f].getFilename_NAEFS()); // naefs filename
 
-                  println("nearest naefs filename:", NAEFposition_Ts[f].getFilename_NAEFS());
+                  println("nearest naefs filename:", NAEFS_Coordinates[f].getFilename_NAEFS());
 
                   if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-                    STATION.setCity(NAEFposition_Ts[f].getCity());
-                    STATION.setProvince(NAEFposition_Ts[f].getProvince());
-                    STATION.setCountry(NAEFposition_Ts[f].getCountry());
+                    STATION.setCity(NAEFS_Coordinates[f].getCity());
+                    STATION.setProvince(NAEFS_Coordinates[f].getProvince());
+                    STATION.setCountry(NAEFS_Coordinates[f].getCountry());
 
-                    //STATION.setLatitude(NAEFposition_Ts[f].getLatitude());
-                    //STATION.setLongitude(NAEFposition_Ts[f].getLongitude());
-                    STATION.setElevation(NAEFposition_Ts[f].getElevation());
-                    STATION.setTimelong(NAEFposition_Ts[f].getTimelong());
+                    //STATION.setLatitude(NAEFS_Coordinates[f].getLatitude());
+                    //STATION.setLongitude(NAEFS_Coordinates[f].getLongitude());
+                    STATION.setElevation(NAEFS_Coordinates[f].getElevation());
+                    STATION.setTimelong(NAEFS_Coordinates[f].getTimelong());
 
                     ROLLOUT.parent = 0;
                     ROLLOUT.child = 1;

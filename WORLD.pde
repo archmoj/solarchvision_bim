@@ -312,13 +312,13 @@ class solarchvision_WORLD {
       int nearest_WORLD_NAEFS = -1;
       float nearest_WORLD_NAEFS_dist = FLOAT_undefined;
 
-      for (int f = 0; f < NAEFposition_Ts.length; f++) {
+      for (int f = 0; f < NAEFS_Coordinates.length; f++) {
         boolean draw_info = false;
 
         if (this.displayAll_NAEFS != 0) draw_info = true;
 
-        float _lat = NAEFposition_Ts[f].getLatitude();
-        float _lon = NAEFposition_Ts[f].getLongitude();
+        float _lat = NAEFS_Coordinates[f].getLatitude();
+        float _lon = NAEFS_Coordinates[f].getLongitude();
         if (_lon > 180) _lon -= 360; // << important!
 
         if (_lon < this.VIEW_BoundariesX[this.VIEW_id][0]) draw_info = false;
@@ -343,7 +343,7 @@ class solarchvision_WORLD {
             this.graphics.fill(0);
             this.graphics.textAlign(RIGHT, CENTER);
             this.graphics.textSize(MessageSize * this.ImageScale);
-            this.graphics.text(NAEFposition_Ts[f].getCity(), x_point, y_point);
+            this.graphics.text(NAEFS_Coordinates[f].getCity(), x_point, y_point);
           }
         }
 
@@ -358,8 +358,8 @@ class solarchvision_WORLD {
       if (this.displayNear_NAEFS) {
         int f = nearest_WORLD_NAEFS;
 
-        float _lat = NAEFposition_Ts[f].getLatitude();
-        float _lon = NAEFposition_Ts[f].getLongitude();
+        float _lat = NAEFS_Coordinates[f].getLatitude();
+        float _lon = NAEFS_Coordinates[f].getLongitude();
         if (_lon > 180) _lon -= 360; // << important!
 
         float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
@@ -370,8 +370,8 @@ class solarchvision_WORLD {
         this.graphics.fill(0);
         this.graphics.textAlign(RIGHT, CENTER);
         this.graphics.textSize(MessageSize * this.ImageScale);
-        this.graphics.text(NAEFposition_Ts[f].getCity(), x_point, y_point);
-        //println(NAEFposition_Ts[f].getCity());
+        this.graphics.text(NAEFS_Coordinates[f].getCity(), x_point, y_point);
+        //println(NAEFS_Coordinates[f].getCity());
       }
 
 

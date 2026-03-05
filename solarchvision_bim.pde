@@ -2290,7 +2290,7 @@ void inputCoordinates_SWOB () {
   }
 }
 
-solarchvision_STATION[] NAEFposition_Ts;
+solarchvision_STATION[] NAEFS_Coordinates;
 
 void inputCoordinates_NAEFS () {
 
@@ -2300,7 +2300,7 @@ void inputCoordinates_NAEFS () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  NAEFposition_Ts = new solarchvision_STATION [num_stn];
+  NAEFS_Coordinates = new solarchvision_STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
@@ -2340,16 +2340,16 @@ void inputCoordinates_NAEFS () {
     l = parts[3].length();
     elevation = float(parts[3].substring(0, l - 1));
 
-    NAEFposition_Ts[f] = new solarchvision_STATION();
+    NAEFS_Coordinates[f] = new solarchvision_STATION();
 
-    NAEFposition_Ts[f].setCity(city);
-    NAEFposition_Ts[f].setProvince(province);
-    NAEFposition_Ts[f].setCountry(country);
-    NAEFposition_Ts[f].setLatitude(latitude);
-    NAEFposition_Ts[f].setLongitude(longitude);
-    NAEFposition_Ts[f].setTimelong(funcs.roundTo(longitude, 15));
-    NAEFposition_Ts[f].setElevation(elevation);
-    NAEFposition_Ts[f].setFilename_NAEFS(filename);
+    NAEFS_Coordinates[f].setCity(city);
+    NAEFS_Coordinates[f].setProvince(province);
+    NAEFS_Coordinates[f].setCountry(country);
+    NAEFS_Coordinates[f].setLatitude(latitude);
+    NAEFS_Coordinates[f].setLongitude(longitude);
+    NAEFS_Coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
+    NAEFS_Coordinates[f].setElevation(elevation);
+    NAEFS_Coordinates[f].setFilename_NAEFS(filename);
   }
 }
 
