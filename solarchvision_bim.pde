@@ -46,24 +46,6 @@ solarchvision_STATION STATION = new solarchvision_STATION(
   //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "VANCOUVER_INTL_BC_CA", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "CAN_BC_Vancouver.718920_CWEC"
 );
 
-class solarchvision_OBJECTTYPE {
-
-  private final static String CLASS_STAMP = "OBJECTTYPE";
-
-  private final static int LANDPOINT = 0;
-  private final static int MODEL1D = 1;
-  private final static int MODEL2D = 2;
-  private final static int GROUP = 3;
-  private final static int FACE = 4;
-  private final static int VERTEX = 5;
-  private final static int SOFTVERTEX = 6;
-  private final static int SOLID = 7;
-  private final static int SECTION = 8;
-  private final static int CAMERA = 9;
-  private final static int POLYLINE = 10;
-
-}
-
 solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE();
 
 solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE();
