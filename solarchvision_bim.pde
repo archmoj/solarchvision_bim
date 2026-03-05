@@ -220,7 +220,7 @@ class solarchvision_CREATE {
 
   private final static int Nothing    = 0;
   private final static int Plane      = 1;
-  private final static int Poly       = 2;
+  private final static int Polygon    = 2;
   private final static int Extrude    = 3;
   private final static int Tri        = 4;
   private final static int Hyper      = 5;
@@ -40789,9 +40789,9 @@ void mouseClicked () {
               UI_toolBar.highlight("Plane");
               UI_toolBar.revise();
             }
-            if (menu_option.equals("Poly")) {
-              UI_set_to_Create_Poly();
-              UI_toolBar.highlight("Poly");
+            if (menu_option.equals("Polygon")) {
+              UI_set_to_Create_Polygon();
+              UI_toolBar.highlight("Polygon");
               UI_toolBar.revise();
             }
             if (menu_option.equals("Extrude")) {
@@ -43004,7 +43004,7 @@ void mouseClicked () {
                       Create3D.add_Mesh4(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
                     }
 
-                    if (CreateObject == CREATE.Poly) {
+                    if (CreateObject == CREATE.Polygon) {
 
                       Create3D.add_PolygonMesh(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, User3D.create_PolyDegree, rot);
                     }
@@ -44805,10 +44805,10 @@ void UI_set_to_Create_Plane () {
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Poly () {
+void UI_set_to_Create_Polygon () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE.Poly;
+  CreateObject = CREATE.Polygon;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
@@ -47194,7 +47194,7 @@ class solarchvision_UI_menuBar {
       "Tri",
       "Hyper",
       "Plane",
-      "Poly",
+      "Polygon",
       "Extrude",
       "Parametric 1",
       "Parametric 2",
@@ -47949,7 +47949,7 @@ class solarchvision_UI_toolBar {
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Poly", "Extrude", "Parametric", "Point", "Polyline", "Surface", "BuildingType", "2.5"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "BuildingType", "2.5"
     }
     ,
     {
@@ -48191,7 +48191,7 @@ class solarchvision_UI_toolBar {
             else if ((this.Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
             else if ((this.Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
             else if ((this.Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
-            else if ((this.Items[i][j]).equals("Poly")) UI_set_to_Create_Poly();
+            else if ((this.Items[i][j]).equals("Polygon")) UI_set_to_Create_Polygon();
             else if ((this.Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
             else if ((this.Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
             else if ((this.Items[i][j]).equals("House3")) UI_set_to_Create_House3();
@@ -51731,7 +51731,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
 
       UI_set_to_Create_Plane();
-      UI_toolBar.highlight("Poly");
+      UI_toolBar.highlight("Polygon");
       UI_toolBar.revise();
     }
   }
