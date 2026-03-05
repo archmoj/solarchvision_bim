@@ -47474,7 +47474,7 @@ class solarchvision_UI_menuBar {
           fill(255);
         }
 
-        text(this.Items[i][0], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize);
+        text(this.Items[i][0], cx + 0.5 * MessageSize, cy - 0.125 * MessageSize);
 
 
 
@@ -47834,7 +47834,7 @@ class solarchvision_UI_menuBar {
             }
 
             textSize(MessageSize);
-            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.2 * MessageSize + j * SOLARCHVISION_pixel_A * 0.85);
+            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.1 * MessageSize + j * SOLARCHVISION_pixel_A * 0.85);
           }
         }
       }
@@ -50150,7 +50150,7 @@ class solarchvision_UI_caseBar {
         fill(0);
         textSize(1.25 * MessageSize);
 
-        text(this.Items[i][0] + ": ", x1, STUDY.Y_control - 0.2 * MessageSize);
+        text(this.Items[i][0] + ": ", x1, STUDY.Y_control - 0.125 * MessageSize);
 
         if (this.Items[i][0].equals("Hours")) {
 
@@ -50607,7 +50607,7 @@ class solarchvision_UI_caseBar {
 
         textSize(1.125 * MessageSize);
 
-        text(STAT_N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.2 * MessageSize);
+        text(STAT_N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1125 * MessageSize);
       }
 
       SOLARCHVISION_X_clicked = -1;
