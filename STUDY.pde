@@ -451,11 +451,22 @@ class solarchvision_STUDY {
 
         this.graphics.line(x1, y1, x2, y2);
 
+        boolean displayText = false;
+        if ((this.j_End == 2) && (t % 45 == 0)) displayText = true;
+        else if ((t + 45) % 90 == 0) displayText = true;
 
-        if (((t + 45) % 90) == 0) {
+        if (displayText) {
+          float textR = 105;
+          float textSize = sx_Plot * 0.150 / this.U_scale;
+
+          if (this.j_End == 2) {
+            textR = 95;
+            textSize *= 1.5;
+          }
+
           this.graphics.stroke(0, 127);
           this.graphics.fill(0, 127);
-          this.graphics.textSize(sx_Plot * 0.150 / this.U_scale);
+          this.graphics.textSize(textSize);
           this.graphics.textAlign(CENTER, CENTER);
 
           String txt = "";
@@ -486,8 +497,8 @@ class solarchvision_STUDY {
             break;
           }
 
-          float x = (i + this.rect_offset_x + 100 * this.rect_scale * funcs.cos_ang(t)) * sx_Plot;
-          float y = -(100 * this.rect_scale * funcs.sin_ang(t)) * sx_Plot;
+          float x = (i + this.rect_offset_x + textR * this.rect_scale * funcs.cos_ang(t)) * sx_Plot;
+          float y = -(textR * this.rect_scale * funcs.sin_ang(t)) * sx_Plot;
 
           this.graphics.text(txt, x, y);
         }
@@ -513,13 +524,17 @@ class solarchvision_STUDY {
 
         int t = 90;
         if (t == 90) {
+          float textSize = sx_Plot * 0.150 / this.U_scale;
+          if (this.j_End == 2) {
+            textSize *= 1.5;
+          }
 
           float x = (i + this.rect_offset_x + r * this.rect_scale * funcs.cos_ang(t)) * sx_Plot;
           float y = -(r * this.rect_scale * funcs.sin_ang(t)) * sx_Plot;
 
           this.graphics.stroke(0, 127);
           this.graphics.fill(0, 127);
-          this.graphics.textSize(sx_Plot * 0.150 / this.U_scale);
+          this.graphics.textSize(textSize);
           this.graphics.textAlign(CENTER, CENTER);
           this.graphics.text(nf(int(r / impact_scale), 1), x, y);
         }
