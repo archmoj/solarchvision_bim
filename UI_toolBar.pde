@@ -228,11 +228,11 @@ class solarchvision_UI_toolBar {
       noStroke();
       rect(0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_B);
 
-      STUDY.X_control = 0; //0.25 * MessageSize;
-      STUDY.Y_control = SOLARCHVISION_pixel_A + 0.5 * SOLARCHVISION_pixel_B;
+      X_control = 0; //0.25 * MessageSize;
+      Y_control = SOLARCHVISION_pixel_A + 0.5 * SOLARCHVISION_pixel_B;
 
-      float cx = STUDY.X_control;
-      float cy = STUDY.Y_control;
+      float cx = X_control;
+      float cy = Y_control;
       float cr = 0.5 * SOLARCHVISION_pixel_B;
 
       for (int i = 0; i < this.Items.length; i++) {

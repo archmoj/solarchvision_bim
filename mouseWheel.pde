@@ -18,15 +18,15 @@ void mouseWheel (MouseEvent event) {
             float displayBarHeight = MessageSize;
             float displayBarWidth = 2 * SOLARCHVISION_pixel_W;
 
-            STUDY.X_control = 0.5 * displayBarWidth;
-            STUDY.Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * UI_caseBar.tab;
+            X_control = 0.5 * displayBarWidth;
+            Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * UI_caseBar.tab;
 
             for (int i = 0; i < UI_caseBar.Items.length; i++) {
 
-              float x1 = STUDY.X_control - 0.366 * displayBarWidth;
-              float x2 = STUDY.X_control + 0.5 * displayBarWidth;
-              float y1 = STUDY.Y_control - 0.45 * displayBarHeight;
-              float y2 = STUDY.Y_control + 0.45 * displayBarHeight;
+              float x1 = X_control - 0.366 * displayBarWidth;
+              float x2 = X_control + 0.5 * displayBarWidth;
+              float y1 = Y_control - 0.45 * displayBarHeight;
+              float y2 = Y_control + 0.45 * displayBarHeight;
 
               if (UI_caseBar.Items[i][0].equals("Hours")) {
 
@@ -226,7 +226,7 @@ void mouseWheel (MouseEvent event) {
               }
 
 
-              STUDY.Y_control += UI_caseBar.tab;
+              Y_control += UI_caseBar.tab;
             }
           }
 

@@ -62,11 +62,6 @@ class solarchvision_STUDY {
   boolean export_info_norm = false;
   boolean export_info_prob = false;
 
-
-  float X_control;
-  float Y_control;
-
-
   float position_X = 0;
   float position_Y = 0;
 

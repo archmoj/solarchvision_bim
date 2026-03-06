@@ -551,13 +551,13 @@ class solarchvision_UI_menuBar {
 
       rect(0, 0, width, SOLARCHVISION_pixel_A);
 
-      STUDY.X_control = 0; //0.25 * MessageSize;
-      STUDY.Y_control = 0.5 * SOLARCHVISION_pixel_A;
+      X_control = 0; //0.25 * MessageSize;
+      Y_control = 0.5 * SOLARCHVISION_pixel_A;
 
       for (int i = 0; i < this.Items.length; i++) {
 
-        float cx = STUDY.X_control + i * this.width_parent;
-        float cy = STUDY.Y_control;
+        float cx = X_control + i * this.width_parent;
+        float cy = Y_control;
         float cr = 0.5 * SOLARCHVISION_pixel_A;
 
         if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr)) {

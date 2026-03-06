@@ -2146,6 +2146,9 @@ void SOLARCHVISION_modify_Viewport_Title () {
 
 float[][] DiffuseVectors;
 
+float X_control;
+float Y_control;
+
 solarchvision_UI_menuBar UI_menuBar = new solarchvision_UI_menuBar();
 
 solarchvision_UI_toolBar UI_toolBar = new solarchvision_UI_toolBar();
