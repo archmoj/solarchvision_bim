@@ -603,7 +603,7 @@ class solarchvision_STUDY {
 
     this.graphics.textAlign(RIGHT, TOP);
 
-    this.graphics.text(skyScenario_Title[this.skyScenario], -1 * sx_Plot / this.U_scale, -0.25 * sx_Plot / this.U_scale);
+    this.graphics.text(skyScenario_Title[this.skyScenario], -1.75 * sx_Plot / this.U_scale, -0.25 * sx_Plot / this.U_scale);
   }
 
 

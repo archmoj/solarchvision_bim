@@ -991,7 +991,7 @@ int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for so
 int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
 
 String[] skyScenario_Title = {
-  "", "All data", "Cloudy\nPattern", "Partly Cloudy\nPattern", "Sunny\nPattern"
+  "", "All", "Cloudy\nPattern", "Partly\nCloudy\nPattern", "Sunny\nPattern"
 };
 String[] skyScenario_FileTXT = {
   "", "", "Overcast sky", "Scattered sky", "Clear sky"
