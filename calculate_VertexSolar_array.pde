@@ -163,7 +163,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                 Normals_COL_N = PROCESSED_DAILY_SCENARIOS[STUDY.j_End - STUDY.j_Start];
               } else {
                 Normals_COL_N = new int [9];
-                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE);
+                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, Impact_TYPE);
 
                 int[][] newNormals = {
                   Normals_COL_N

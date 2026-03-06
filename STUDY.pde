@@ -2411,7 +2411,7 @@ class solarchvision_STUDY {
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE);
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
           if (nk != -1) {
@@ -2817,7 +2817,7 @@ class solarchvision_STUDY {
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE);
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
           if (nk != -1) {

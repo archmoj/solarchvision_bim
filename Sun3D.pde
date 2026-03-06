@@ -338,7 +338,7 @@ class solarchvision_Sun3D {
 
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE);
+          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : Impact_TYPE);
 
           for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
             if (nk != -1) {
@@ -650,7 +650,7 @@ class solarchvision_Sun3D {
             int keep_filter_type = STUDY.filter;
             STUDY.filter = filter_HOURLY;
 
-            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, more_J + j, DATE_ANGLE);
+            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, more_J + j, DATE_ANGLE, target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : Impact_TYPE);
 
             STUDY.filter = keep_filter_type;
           }
