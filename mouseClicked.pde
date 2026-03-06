@@ -22,8 +22,16 @@ void mouseClicked () {
 
             // should call the functions here!
 
+            if (menu_option.equals("SOLARCHVISION-BIM6D")) {
+              link("https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1");
+            }
+
+            if (menu_option.equals("Designed & developed by")) {
+              link("https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8");
+            }
+
             if (menu_option.equals("Mojtaba Samimi")) {
-              link("https://solarchvision.com/?page_id=102");
+              link("https://www.linkedin.com/in/mojtaba-samimi-06178840/");
             }
 
             if (menu_option.equals("www.solarchvision.com")) {
