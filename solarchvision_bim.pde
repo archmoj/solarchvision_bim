@@ -1794,6 +1794,10 @@ void keyPressed (KeyEvent e) {
               break;
           }
 
+          if(key == ESC) {
+            key = 0; // Overrides the default ESC key behavior that exits a Processing sketch
+          }
+
         }
       }
 
