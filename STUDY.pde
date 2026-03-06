@@ -73,7 +73,7 @@ class solarchvision_STUDY {
 
   boolean impact_summary = false;
 
-  int ImpactLayer = 7; // 4 = Median
+  int ImpactLayer = 4; // 4 = Median
 
   int PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
 
