@@ -1347,19 +1347,21 @@ class solarchvision_Create3D {
 
     float teta = rot * PI / 180.0;
 
-    float stp_u = 0.1; //0.05;
-    float stp_v = 0.1; //0.05;
+    float stp_u = 0.1;
+    float stp_v = 0.1;
 
     float start_u = -1;
     float start_v = -1;
     float end_u = 1;
     float end_v = 1;
 
-    if (n == 1) {
+    if ((n == 6) || (n == 7)) {
       start_u = 0;
     }
-    if (n == 2) {
-      start_u = 0;
+
+    if ((n == 4) || (n == 5) || (n == 6) || (n == 7)) {
+      stp_u = 0.05;
+      stp_v = 0.05;
     }
 
     for (float a = start_u; a < end_u; a += stp_u) {
@@ -1380,7 +1382,7 @@ class solarchvision_Create3D {
           float y = 0;
           float z = 0;
 
-          if (n == 1) { // LOGO:
+          if (n == 7) { // LOGO:
             float x0 = cos(u * PI);
             float y0 = sin(v * PI);
             float z0 = -sin(u * PI) * cos(v * PI);
@@ -1394,15 +1396,15 @@ class solarchvision_Create3D {
               y = y0 / d;
               z = z0 / d;
             }
-          } else if (n == 2) {
+          } else if (n == 6) {
             x = cos(u * PI);
             y = sin(v * PI);
             z = -sin(u * PI) * cos(v * PI);
-          } else if (n == 3) {
+          } else if (n == 4) {
             x = sin(u * PI);
             y = sin(v * PI);
             z = cos((u + v) * PI);
-          } else if (n == 4) {
+          } else if (n == 5) {
             float x0 = sin(u * PI);
             float y0 = sin(v * PI);
             float z0 = cos((u + v) * PI);
@@ -1416,18 +1418,18 @@ class solarchvision_Create3D {
               y = y0 / d;
               z = z0 / d;
             }
-          } else if (n == 5) {
+          } else if (n == 1) {
             x = u;
             y = v;
             z = cos(0.5 * u * PI) * cos(0.5 * v * PI);
-          } else if (n == 6) {
+          } else if (n == 2) {
             x = u;
             y = v;
-            z = sin(u * PI) * sin(v * PI);
-          } else if (n == 7) {
+            z = 0.5 * sin(u * PI) * sin(v * PI);
+          } else if (n == 3) {
             x = u;
             y = v;
-            z = 0.5 * cos(u * PI) + cos(v * PI);
+            z = u * v;
           }
 
 
