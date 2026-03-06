@@ -614,12 +614,12 @@ class solarchvision_UI_menuBar {
 
               fill(255, 127, 0);
               noStroke();
-              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A * 0.85, widthChildren, SOLARCHVISION_pixel_A * 0.85);
+              rect(cx, cy - cr + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * 0.85, widthChildren, SOLARCHVISION_pixel_A * 0.85);
             } else {
 
               fill(0, 223);
               noStroke();
-              rect(cx, cy - cr + j * SOLARCHVISION_pixel_A * 0.85, widthChildren, SOLARCHVISION_pixel_A * 0.85);
+              rect(cx, cy - cr + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * 0.85, widthChildren, SOLARCHVISION_pixel_A * 0.85);
             }
 
             textAlign(LEFT, CENTER);
@@ -946,7 +946,7 @@ class solarchvision_UI_menuBar {
             }
 
             textSize(MessageSize);
-            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.1 * MessageSize + j * SOLARCHVISION_pixel_A * 0.85);
+            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.1 * MessageSize + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * 0.85);
           }
         }
       }
