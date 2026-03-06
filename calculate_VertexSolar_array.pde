@@ -163,7 +163,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                 Normals_COL_N = PROCESSED_DAILY_SCENARIOS[STUDY.j_End - STUDY.j_Start];
               } else {
                 Normals_COL_N = new int [9];
-                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, Impact_TYPE);
+                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
 
                 int[][] newNormals = {
                   Normals_COL_N
@@ -340,8 +340,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
 
             float valuesSUM = FLOAT_undefined;
-            if (Impact_TYPE == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD;
-            if (Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
+            if (WIN3D.Impact_TYPE == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD;
+            if (WIN3D.Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
 
             //println("3D-Model >> valuesSUM_RAD:", valuesSUM_RAD, "|COMPARISON:", COMPARISON);
 

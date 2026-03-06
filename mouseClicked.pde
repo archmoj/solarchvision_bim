@@ -538,7 +538,7 @@ void mouseClicked () {
             }
 
             if (menu_option.equals("Active Shade")) {
-              Impact_TYPE = Impact_ACTIVE;
+              WIN3D.Impact_TYPE = Impact_ACTIVE;
 
               if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
               if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
@@ -546,7 +546,7 @@ void mouseClicked () {
               SOLARCHVISION_view_changed();
             }
             if (menu_option.equals("Passive Shade")) {
-              Impact_TYPE = Impact_PASSIVE;
+              WIN3D.Impact_TYPE = Impact_PASSIVE;
 
               if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
               if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;

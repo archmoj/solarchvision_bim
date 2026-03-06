@@ -54,9 +54,6 @@ void SOLARCHVISION_save_project (String myFile) {
     XML_setInt(parent, "DevelopLayer_id", DevelopLayer_id);
     XML_setInt(parent, "CurrentLayer_id", CurrentLayer_id);
 
-
-    XML_setInt(parent, "Impact_TYPE", Impact_TYPE);
-
     XML_setInt(parent, "COLOR_STYLE_Current", COLOR_STYLE_Current);
     XML_setInt(parent, "COLOR_STYLE_Number", COLOR_STYLE_Number);
 

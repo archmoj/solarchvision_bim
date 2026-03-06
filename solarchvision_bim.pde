@@ -949,8 +949,6 @@ final int Impact_ACTIVE = 0; // internal
 final int Impact_PASSIVE = 1; // internal
 final int numberOfImpactVariations = 2; // internal
 
-int Impact_TYPE = Impact_PASSIVE;
-
 final int PlotImpacts_CYCLES_ACTIVE = 0;
 final int PlotImpacts_CYCLES_PASSIVE = 1;
 final int PlotImpacts_SUNPATH_ACTIVE = 2;

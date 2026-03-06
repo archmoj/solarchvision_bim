@@ -47,8 +47,6 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   changeCurrentLayerTo(XML_getInt(parent, "CurrentLayer_id"));
 
-  Impact_TYPE = XML_getInt(parent, "Impact_TYPE");
-
   COLOR_STYLE_Current = XML_getInt(parent, "COLOR_STYLE_Current");
   COLOR_STYLE_Number = XML_getInt(parent, "COLOR_STYLE_Number");
 

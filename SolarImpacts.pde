@@ -117,7 +117,7 @@ class solarchvision_SolarImpacts {
 
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, Impact_TYPE);
+          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
 
           //println("j =", j);
           //println(Normals_COL_N);

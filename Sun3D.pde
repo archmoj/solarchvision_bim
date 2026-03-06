@@ -267,18 +267,18 @@ class solarchvision_Sun3D {
       int PAL_type = 0;
       int PAL_direction = 1;
 
-      if (Impact_TYPE == Impact_ACTIVE) {
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
         PAL_type = this.ACTIVE_pallet_CLR;
         PAL_direction = this.ACTIVE_pallet_DIR;
       }
-      if (Impact_TYPE == Impact_PASSIVE) {
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
         PAL_type = this.PASSIVE_pallet_CLR;
         PAL_direction = this.PASSIVE_pallet_DIR;
       }
 
       float PAL_multiplier = 1;
-      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
 
 
 
@@ -338,7 +338,7 @@ class solarchvision_Sun3D {
 
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : Impact_TYPE);
+          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
 
           for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
             if (nk != -1) {
@@ -369,14 +369,14 @@ class solarchvision_Sun3D {
                   float Pa1 = FLOAT_undefined;
                   float Pa2 = FLOAT_undefined;
 
-                  if (Impact_TYPE == Impact_ACTIVE) {
+                  if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
 
                     Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_dirnorrad.id);
                     Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_dirnorrad.id);
 
                   }
 
-                  if (Impact_TYPE == Impact_PASSIVE) {
+                  if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
 
                     Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, LAYER_direffect.id);
                     Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, LAYER_direffect.id);
@@ -390,8 +390,8 @@ class solarchvision_Sun3D {
 
                     float _u = 0;
 
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * sun_V);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * sun_V);
+                    if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * sun_V);
+                    if (WIN3D.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * sun_V);
 
                     if (PAL_direction == -1) _u = 1 - _u;
                     if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
@@ -477,10 +477,10 @@ class solarchvision_Sun3D {
     int count_k = 1 + end_k - start_k;
     if (count_k < 0) count_k = 0;
 
-    int keep_Impact_TYPE = Impact_TYPE;
+    int keep_Impact_TYPE = WIN3D.Impact_TYPE;
 
     if (target_window == TypeWindow.STUDY) {
-      Impact_TYPE = (STUDY.PlotImpacts % 2 == 0) ? Impact_ACTIVE : Impact_PASSIVE;
+      WIN3D.Impact_TYPE = (STUDY.PlotImpacts % 2 == 0) ? Impact_ACTIVE : Impact_PASSIVE;
     }
 
     float Pa1 = FLOAT_undefined;
@@ -510,12 +510,12 @@ class solarchvision_Sun3D {
 
     if (target_window == TypeWindow.STUDY) {
 
-      if (Impact_TYPE == Impact_ACTIVE) {
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
         PAL_type = STUDY.ACTIVE_pallet_CLR;
         PAL_direction = STUDY.ACTIVE_pallet_DIR;
         PAL_multiplier = STUDY.ACTIVE_pallet_MLT;
       }
-      if (Impact_TYPE == Impact_PASSIVE) {
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
         PAL_type = STUDY.PASSIVE_pallet_CLR;
         PAL_direction = STUDY.PASSIVE_pallet_DIR;
         PAL_multiplier = STUDY.PASSIVE_pallet_MLT;
@@ -523,12 +523,12 @@ class solarchvision_Sun3D {
     }
     else {
 
-      if (Impact_TYPE == Impact_ACTIVE) {
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
         PAL_type = this.ACTIVE_pallet_CLR;
         PAL_direction = this.ACTIVE_pallet_DIR;
         PAL_multiplier = this.ACTIVE_pallet_MLT;
       }
-      if (Impact_TYPE == Impact_PASSIVE) {
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
         PAL_type = this.PASSIVE_pallet_CLR;
         PAL_direction = this.PASSIVE_pallet_DIR;
         PAL_multiplier = this.PASSIVE_pallet_MLT;
@@ -567,7 +567,7 @@ class solarchvision_Sun3D {
 
           float _u = 0.5 + _val;
 
-          if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+          if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
 
           float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
@@ -650,7 +650,7 @@ class solarchvision_Sun3D {
             int keep_filter_type = STUDY.filter;
             STUDY.filter = filter_HOURLY;
 
-            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, more_J + j, DATE_ANGLE, target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : Impact_TYPE);
+            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, more_J + j, DATE_ANGLE, target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
 
             STUDY.filter = keep_filter_type;
           }
@@ -748,8 +748,8 @@ class solarchvision_Sun3D {
                 }
 
                 float valuesSUM = FLOAT_undefined;
-                if (Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
-                if (Impact_TYPE == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
+                if (WIN3D.Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
+                if (WIN3D.Impact_TYPE == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
 
                 int row_J = more_J / STUDY.joinDays;
 
@@ -838,8 +838,8 @@ class solarchvision_Sun3D {
 
                       float _u = 0;
 
-                      if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
-                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
+                      if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
+                      if (WIN3D.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
 
                       if (PAL_direction == -1) _u = 1 - _u;
                       if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
@@ -863,7 +863,7 @@ class solarchvision_Sun3D {
                           if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
                               (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-                            if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
+                            if (WIN3D.Impact_TYPE == Impact_ACTIVE) u1 = _u;
                           }
 
                           if (u1 > 0.999) u1 = 0.999;
@@ -937,7 +937,7 @@ class solarchvision_Sun3D {
       }
     }
 
-    Impact_TYPE = keep_Impact_TYPE;
+    WIN3D.Impact_TYPE = keep_Impact_TYPE;
   }
 
 

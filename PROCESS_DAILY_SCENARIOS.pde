@@ -1,4 +1,4 @@
-int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, float DATE_ANGLE, int __Impact_TYPE) {
+int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, float DATE_ANGLE, int Impact_TYPE) {
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
@@ -79,7 +79,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
     }
   }
 
-  if (__Impact_TYPE == Impact_PASSIVE)
+  if (Impact_TYPE == Impact_PASSIVE)
     return SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS(valuesSUM_EFF);
   else
     return SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS(valuesSUM_RAD);

@@ -230,7 +230,7 @@ class solarchvision_Sections {
 
               if (allSolarImpacts.displayImage) {
                 println("Saving texture:", TEXTURE_path);
-                this.SolarImpact[f][IMPACTS_displayDay][Impact_TYPE].save(TEXTURE_path);
+                this.SolarImpact[f][IMPACTS_displayDay][WIN3D.Impact_TYPE].save(TEXTURE_path);
               } else if (allSolidImpacts.displayImage) {
                 println("Saving texture:", TEXTURE_path);
                 this.SolidImpact[f].save(TEXTURE_path);
@@ -296,7 +296,7 @@ class solarchvision_Sections {
 
               if (allSolarImpacts.displayImage) {
 
-                WIN3D.graphics.texture(this.SolarImpact[f][IMPACTS_displayDay][Impact_TYPE]);
+                WIN3D.graphics.texture(this.SolarImpact[f][IMPACTS_displayDay][WIN3D.Impact_TYPE]);
 
               } else if (allSolidImpacts.displayImage) {
 

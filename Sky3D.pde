@@ -43,12 +43,12 @@ class solarchvision_Sky3D {
       int PAL_direction = 1;
       float PAL_multiplier = 1;
 
-      if (Impact_TYPE == Impact_ACTIVE) {
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
         PAL_type = this.ACTIVE_pallet_CLR;
         PAL_direction = this.ACTIVE_pallet_DIR;
         PAL_multiplier = this.ACTIVE_pallet_MLT;
       }
-      if (Impact_TYPE == Impact_PASSIVE) {
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
         PAL_type = this.PASSIVE_pallet_CLR;
         PAL_direction = this.PASSIVE_pallet_DIR;
         PAL_multiplier = this.PASSIVE_pallet_MLT;
@@ -86,7 +86,7 @@ class solarchvision_Sky3D {
 
               float _u = 0.5 + _val;
 
-              if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+              if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
@@ -174,7 +174,7 @@ class solarchvision_Sky3D {
                     if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
                         (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-                      if  (Impact_TYPE == Impact_ACTIVE) u1 = _u;
+                      if  (WIN3D.Impact_TYPE == Impact_ACTIVE) u1 = _u;
                     }
 
                     if (u1 > 0.999) u1 = 0.999;

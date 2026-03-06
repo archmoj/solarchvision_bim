@@ -52,8 +52,9 @@ class solarchvision_WIN3D {
   int UI_OptionXorY = 0; // 0-1
   int UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. allModel1Ds
 
-
   int FacesShade = SHADE.Surface_Materials; //Shade_Surface_White; // <<<<<
+
+  int Impact_TYPE = Impact_PASSIVE;
 
 
   PGraphics graphics;
@@ -197,10 +198,10 @@ class solarchvision_WIN3D {
         if ((this.record_IMG) || (this.record_AUTO)) {
           String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP));
 
-          if (Impact_TYPE == Impact_ACTIVE) {
+          if (this.Impact_TYPE == Impact_ACTIVE) {
             myFile += "_RAD";
           }
-          if (Impact_TYPE == Impact_PASSIVE) {
+          if (this.Impact_TYPE == Impact_PASSIVE) {
             myFile += "_EFF";
           }
           myFile += "_" + importedObjectName;
@@ -275,12 +276,12 @@ class solarchvision_WIN3D {
     if ((this.FacesShade == SHADE.Global_Solar) ||
         (this.FacesShade == SHADE.Vertex_Solar)) {
 
-      if (Impact_TYPE == Impact_ACTIVE) {
+      if (this.Impact_TYPE == Impact_ACTIVE) {
         PAL_type = allFaces.ACTIVE_pallet_CLR;
         PAL_direction = allFaces.ACTIVE_pallet_DIR;
         PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
       }
-      if (Impact_TYPE == Impact_PASSIVE) {
+      if (this.Impact_TYPE == Impact_PASSIVE) {
         PAL_type = allFaces.PASSIVE_pallet_CLR;
         PAL_direction = allFaces.PASSIVE_pallet_DIR;
         PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
@@ -358,8 +359,8 @@ class solarchvision_WIN3D {
         if ((this.FacesShade == SHADE.Global_Solar) ||
             (this.FacesShade == SHADE.Vertex_Solar)) {
 
-          if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-          if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+          if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
+          if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
         }
 
         if (PAL_direction == -1) _u = 1 - _u;
@@ -398,8 +399,8 @@ class solarchvision_WIN3D {
         if ((this.FacesShade == SHADE.Global_Solar) ||
             (this.FacesShade == SHADE.Vertex_Solar)) {
 
-          if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
-          if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y, 0);
+          if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
+          if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y, 0);
         }
 
         if (this.FacesShade == SHADE.Vertex_Elevation) {
@@ -420,13 +421,13 @@ class solarchvision_WIN3D {
       if (this.FacesShade == SHADE.Vertex_Elevation) {
       } else if (this.FacesShade == SHADE.Vertex_Solid) {
       } else {
-        if (Impact_TYPE == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
-        if (Impact_TYPE == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
+        if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
+        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
 
         txt += "SOLARCHVISION ";
 
-        if (Impact_TYPE == Impact_ACTIVE) txt += "active model ";
-        if (Impact_TYPE == Impact_PASSIVE) txt += "passive model ";
+        if (this.Impact_TYPE == Impact_ACTIVE) txt += "active model ";
+        if (this.Impact_TYPE == Impact_PASSIVE) txt += "passive model ";
 
         if (IMPACTS_displayDay != 0) {
           txt += TIME.getDayText((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
@@ -560,7 +561,7 @@ class solarchvision_WIN3D {
 
         case TAB:
           if (e.isShiftDown() == true) {
-            Impact_TYPE = (Impact_TYPE + 1) % numberOfImpactVariations;
+            this.Impact_TYPE = (this.Impact_TYPE + 1) % numberOfImpactVariations;
             if (this.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
             if (this.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
@@ -1339,6 +1340,8 @@ class solarchvision_WIN3D {
     XML_setInt(parent, "UI_CurrentTask", this.UI_CurrentTask);
     XML_setInt(parent, "UI_OptionXorY", this.UI_OptionXorY);
     XML_setInt(parent, "UI_TaskModifyParameter", this.UI_TaskModifyParameter);
+
+    XML_setInt(parent, "Impact_TYPE", this.Impact_TYPE);
   }
 
 
@@ -1373,6 +1376,8 @@ class solarchvision_WIN3D {
     this.UI_CurrentTask = XML_getInt(parent, "UI_CurrentTask");
     this.UI_OptionXorY = XML_getInt(parent, "UI_OptionXorY");
     this.UI_TaskModifyParameter = XML_getInt(parent, "UI_TaskModifyParameter");
+
+    this.Impact_TYPE = XML_getInt(parent, "Impact_TYPE");
   }
 
   void revise () {

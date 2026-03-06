@@ -56,8 +56,8 @@ class solarchvision_SHADE {
 
     if (is_defined(val)) {
 
-      if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * val);
-      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * val);
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * val);
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * val);
 
       if (PAL_direction == -1) _u = 1 - _u;
       if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
@@ -75,7 +75,7 @@ class solarchvision_SHADE {
     int q = this.findID_SolarImpact_atXYZ(x, y, z);
 
     if (q >= 0) {
-      v = VertexSolar_amounts[Impact_TYPE][IMPACTS_displayDay][q];
+      v = VertexSolar_amounts[WIN3D.Impact_TYPE][IMPACTS_displayDay][q];
     }
 
     return v;
@@ -185,14 +185,14 @@ class solarchvision_SHADE {
     if (a > int(180 / Sky3D.stp_slp)) a -= int(180 / Sky3D.stp_slp);
     if (b > int(360 / Sky3D.stp_dir)) b -= int(360 / Sky3D.stp_dir);
 
-    float valuesSUM = GlobalSolar[Impact_TYPE][IMPACTS_displayDay][a][b];
+    float valuesSUM = GlobalSolar[WIN3D.Impact_TYPE][IMPACTS_displayDay][a][b];
 
     float _u = FLOAT_undefined;
 
     if (is_defined(valuesSUM)) {
 
-      if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
-      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
 
       if (PAL_direction == -1) _u = 1 - _u;
       if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
@@ -211,8 +211,8 @@ class solarchvision_SHADE {
     if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
         (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_type = allFaces.ACTIVE_pallet_CLR;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_type = allFaces.PASSIVE_pallet_CLR;
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_type = allFaces.ACTIVE_pallet_CLR;
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_type = allFaces.PASSIVE_pallet_CLR;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
@@ -234,8 +234,8 @@ class solarchvision_SHADE {
     if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
         (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_direction = allFaces.ACTIVE_pallet_DIR;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_direction = allFaces.PASSIVE_pallet_DIR;
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_direction = allFaces.ACTIVE_pallet_DIR;
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_direction = allFaces.PASSIVE_pallet_DIR;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
@@ -257,8 +257,8 @@ class solarchvision_SHADE {
     if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
         (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {

@@ -540,7 +540,7 @@ class solarchvision_Faces {
 
               if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
                   (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-                if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+                if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
@@ -719,7 +719,7 @@ class solarchvision_Faces {
                           if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
                               (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-                            if (Impact_TYPE == Impact_ACTIVE) {
+                            if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
                               u0 = _u;
                             }
                           }
@@ -853,7 +853,7 @@ class solarchvision_Faces {
               if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
                   (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-                if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+                if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
@@ -995,7 +995,7 @@ class solarchvision_Faces {
                         if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
                             (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-                          if (Impact_TYPE == Impact_ACTIVE) {
+                          if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
                             u0 = _u;
                           }
                         }

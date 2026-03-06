@@ -6,12 +6,12 @@ void SOLARCHVISION_RenderViewport () {
   int PAL_direction = 1;
   float PAL_multiplier = 1;
 
-  if (Impact_TYPE == Impact_ACTIVE) {
+  if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
     PAL_type = allFaces.ACTIVE_pallet_CLR;
     PAL_direction = allFaces.ACTIVE_pallet_DIR;
     PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
   }
-  if (Impact_TYPE == Impact_PASSIVE) {
+  if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
     PAL_type = allFaces.PASSIVE_pallet_CLR;
     PAL_direction = allFaces.PASSIVE_pallet_DIR;
     PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
@@ -190,8 +190,8 @@ void SOLARCHVISION_RenderViewport () {
 
       if (is_defined(valuesSUM)) {
 
-        if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
-        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+        if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
+        if (WIN3D.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
 
         if (PAL_direction == -1) _u = 1 - _u;
         if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
