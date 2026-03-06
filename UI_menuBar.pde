@@ -303,7 +303,7 @@ class solarchvision_UI_menuBar {
       "Sphere",
       "Octahedron",
       "Icosahedron",
-      "Tri",
+      "Pyramid",
       "Hyper",
       "Plane",
       "Polygon",

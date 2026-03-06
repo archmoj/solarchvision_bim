@@ -6,7 +6,7 @@ class solarchvision_CREATE {
   private final static int Plane      = 1;
   private final static int Polygon    = 2;
   private final static int Extrude    = 3;
-  private final static int Tri        = 4;
+  private final static int Pyramid    = 4;
   private final static int Hyper      = 5;
   private final static int House1     = 6;
   private final static int House2     = 7;

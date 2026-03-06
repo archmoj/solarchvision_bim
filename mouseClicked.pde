@@ -936,9 +936,9 @@ void mouseClicked () {
               UI_toolBar.revise();
             }
 
-            if (menu_option.equals("Tri")) {
-              UI_set_to_Create_Tri();
-              UI_toolBar.highlight("Tri");
+            if (menu_option.equals("Pyramid")) {
+              UI_set_to_Create_Pyramid();
+              UI_toolBar.highlight("Pyramid");
               UI_toolBar.revise();
             }
             if (menu_option.equals("Plane")) {
@@ -3147,7 +3147,7 @@ void mouseClicked () {
 
 
 
-                    if (CreateObject == CREATE.Tri) {
+                    if (CreateObject == CREATE.Pyramid) {
 
                       Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                       Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);

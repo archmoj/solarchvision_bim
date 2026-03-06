@@ -90,7 +90,7 @@ class solarchvision_UI_toolBar {
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Tri", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "BuildingType", "2.5"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "BuildingType", "2.5"
     }
     ,
     {
@@ -330,7 +330,7 @@ class solarchvision_UI_toolBar {
             else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
             else if ((this.Items[i][j]).equals("Polyline")) UI_set_to_Create_Polyline();
             else if ((this.Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
-            else if ((this.Items[i][j]).equals("Tri")) UI_set_to_Create_Tri();
+            else if ((this.Items[i][j]).equals("Pyramid")) UI_set_to_Create_Pyramid();
             else if ((this.Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
             else if ((this.Items[i][j]).equals("Polygon")) UI_set_to_Create_Polygon();
             else if ((this.Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();

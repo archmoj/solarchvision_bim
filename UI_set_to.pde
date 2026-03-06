@@ -105,10 +105,10 @@ void UI_set_to_Create_Parametric (int n) {
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Tri () {
+void UI_set_to_Create_Pyramid () {
   UI_set_to_Create_Nothing();
 
-  CreateObject = CREATE.Tri;
+  CreateObject = CREATE.Pyramid;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 

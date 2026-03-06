@@ -165,7 +165,7 @@ Please note that in above example the `Setup | 3D-model 1` option is selected. A
 
 You can choose a desired object such as Houses, Parametric Surfaces,
 `Box`, `Cushion`, `Cylinder`, `Sphere`, `Octahedron`, `Icosahedron`,
-`Tri`, `Hyper`, `Plane`, `Polygon`, `Extrude`, `Surface`, `Polyline`,
+`Pyramid`, `Hyper`, `Plane`, `Polygon`, `Extrude`, `Surface`, `Polyline`,
 `Point`, `3D-Tree`, `2D-Tree`, `Person`, and `Camera` from the
 `3D-create` menu.
 
