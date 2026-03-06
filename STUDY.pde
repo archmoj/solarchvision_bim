@@ -2214,25 +2214,21 @@ class solarchvision_STUDY {
           this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
         }
 
-        ////////////////////////////
-        this.impact_summary = true;
-        ////////////////////////////
-
         if (this.impact_summary) {
           int j = -1; // << to put the summary graph before the daily graphs
 
           this.graphics.strokeWeight(this.T_scale * 0);
           this.graphics.stroke(223);
           this.graphics.fill(223);
-          //this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
           this.graphics.strokeWeight(this.T_scale * 2);
           this.graphics.stroke(0);
           this.graphics.noFill();
-          //this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot - (p * sx_Plot / this.U_scale), (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
           this.graphics.imageMode(CENTER);
-          //this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, - (p * sx_Plot / this.U_scale), int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
+          this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][0], (j + 100 * this.rect_scale) * sx_Plot, 0, int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
 
           this.graphics.stroke(0);
           this.graphics.fill(0);
