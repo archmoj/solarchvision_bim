@@ -146,7 +146,10 @@ void mouseDragged () {
 
             if (WIN3D.UI_CurrentTask == UITASK.TargetRollXY_TargetRollZ) { // viewport
 
-              if (mouseButton == LEFT) { // TargetRollXY
+              if (
+                (mouseButton == LEFT && WIN3D.UI_OptionXorY == 1) ||
+                (mouseButton == RIGHT && WIN3D.UI_OptionXorY == 0)
+              ) { // TargetRollXY
 
                 WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T;
 
@@ -155,7 +158,10 @@ void mouseDragged () {
                 SOLARCHVISION_view_changed();
               }
 
-              if (mouseButton == RIGHT) { // TargetRollZ
+              if (
+                (mouseButton == LEFT && WIN3D.UI_OptionXorY == 0) ||
+                (mouseButton == RIGHT && WIN3D.UI_OptionXorY == 1)
+              ) { // TargetRollZ
 
                 WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
