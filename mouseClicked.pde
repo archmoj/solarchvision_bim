@@ -13,8 +13,7 @@ void mouseClicked () {
         SOLARCHVISION_RecordFrame();
       }
 
-
-      if ((UI_menuBar.selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_pixel_A) == false)) {
+      if ((UI_menuBar.selected_parent != -1)) {
 
         String menu_option = UI_menuBar.Items[UI_menuBar.selected_parent][UI_menuBar.selected_child];
 
@@ -2201,14 +2200,6 @@ void mouseClicked () {
           }
         }
 
-        UI_menuBar.selected_parent = -1;
-        UI_menuBar.selected_child = 0;
-
-        image(pre_screen, 0, SOLARCHVISION_pixel_A);
-
-        SOLARCHVISION_X_clicked = -1;
-        SOLARCHVISION_Y_clicked = -1;
-      } else if ((UI_menuBar.selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, SOLARCHVISION_pixel_A) == true)) {
         UI_menuBar.selected_parent = -1;
         UI_menuBar.selected_child = 0;
 
