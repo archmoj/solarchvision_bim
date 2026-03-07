@@ -18,7 +18,7 @@ class solarchvision_Faces {
 
   int PASSIVE_pallet_CLR = 1;
   int PASSIVE_pallet_DIR = 1;
-  float PASSIVE_pallet_MLT = 0.2;
+  float PASSIVE_pallet_MLT = 0.4;
 
 
   int[][] nodes;
