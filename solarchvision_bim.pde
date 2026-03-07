@@ -2521,8 +2521,9 @@ void SOLARCHVISION_update_station (int Step) {
 
     VertexSolar_rebuild_array = true;
     GlobalSolar_rebuild_array = true;
-    allSolarImpacts.rebuild_Image_array = true;
     allWindRoses.rebuild_Image_array = true;
+    allSolarImpacts.rebuild_Image_array = true;
+    allSolarImpacts.sectionType = 0; // Turn off analysis. It should be prebaked first.
 
     WORLD.revise();
     STUDY.revise();
