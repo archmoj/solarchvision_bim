@@ -84,6 +84,9 @@ class solarchvision_UI_menuBar {
     ,
     {
       "Location",
+      "———————————————",
+      "Update Station",
+      "———————————————",
       "Use typical year (TMY)",
       "Use long-term (CWEEDS)",
       "Use long-term (CLMREC)",
@@ -95,7 +98,6 @@ class solarchvision_UI_menuBar {
       "Update CLMREC",
       "Update SWOB",
       "Update NAEFS",
-      "Update Station",
       "———————————————",
       "Load Toroposphere",
       "Load Land Mesh",
