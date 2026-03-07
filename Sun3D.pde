@@ -12,7 +12,7 @@ class solarchvision_Sun3D {
 
   boolean displayGrid = true;
   boolean displayPath = true;
-  boolean displayPattern = true; //false;
+  boolean displayPattern = false;
 
   boolean displaySurface = false;
   boolean displayTexture = true;
@@ -442,7 +442,7 @@ class solarchvision_Sun3D {
 
   void drawPattern (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) {
 
-    if (this.displayPattern) {
+    if (this.displayPattern || (target_window == TypeWindow.STUDY)) {
 
       float keep_STUDY_perDays = STUDY.perDays;
       int keep_STUDY_joinDays = STUDY.joinDays;
