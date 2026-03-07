@@ -616,260 +616,260 @@ void mouseClicked () {
             }
 
 
-            if (menu_option.equals("Display/Hide Land Mesh")) {
+            if (menu_option.equals("Show/Hide Land Mesh")) {
               Land3D.displaySurface = !Land3D.displaySurface;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Land Texture")) {
+            if (menu_option.equals("Show/Hide Land Texture")) {
               Land3D.displayTexture = !Land3D.displayTexture;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Land Points")) {
+            if (menu_option.equals("Show/Hide Land Points")) {
               Land3D.displayPoints = !Land3D.displayPoints;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Land Depth")) {
+            if (menu_option.equals("Show/Hide Land Depth")) {
               Land3D.displayDepth = !Land3D.displayDepth;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Vertices")) {
+            if (menu_option.equals("Show/Hide Vertices")) {
               allPoints.displayAll = !allPoints.displayAll;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Edges")) {
+            if (menu_option.equals("Show/Hide Edges")) {
               allFaces.displayEdges = !allFaces.displayEdges;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Normals")) {
+            if (menu_option.equals("Show/Hide Normals")) {
               allFaces.displayNormals = !allFaces.displayNormals;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Leaves")) {
+            if (menu_option.equals("Show/Hide Leaves")) {
               allModel1Ds.displayLeaves = !allModel1Ds.displayLeaves;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Model1Ds")) {
+            if (menu_option.equals("Show/Hide Model1Ds")) {
               allModel1Ds.displayAll = !allModel1Ds.displayAll;
               allModel1Ds.displayLeaves = allModel1Ds.displayAll; // <<<<<<
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Model2Ds")) {
+            if (menu_option.equals("Show/Hide Model2Ds")) {
               allModel2Ds.displayAll = !allModel2Ds.displayAll;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Polylines")) {
+            if (menu_option.equals("Show/Hide Polylines")) {
               allPolylines.displayAll = !allPolylines.displayAll;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Faces")) {
+            if (menu_option.equals("Show/Hide Faces")) {
               allFaces.displayAll = !allFaces.displayAll;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Solids")) {
+            if (menu_option.equals("Show/Hide Solids")) {
               allSolids.displayAll = !allSolids.displayAll;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Sections")) {
+            if (menu_option.equals("Show/Hide Sections")) {
               allSections.displayAll = !allSections.displayAll;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Cameras")) {
+            if (menu_option.equals("Show/Hide Cameras")) {
               allCameras.displayAll = !allCameras.displayAll;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Sky")) {
+            if (menu_option.equals("Show/Hide Sky")) {
               Sky3D.displaySurface = !Sky3D.displaySurface;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Sun Grid")) {
+            if (menu_option.equals("Show/Hide Sun Grid")) {
               Sun3D.displayGrid = !Sun3D.displayGrid;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Sun Path")) {
+            if (menu_option.equals("Show/Hide Sun Path")) {
               Sun3D.displayPath = !Sun3D.displayPath;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Sun Pattern")) {
+            if (menu_option.equals("Show/Hide Sun Pattern")) {
               Sun3D.displayPattern = !Sun3D.displayPattern;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Sun Surface")) {
+            if (menu_option.equals("Show/Hide Sun Surface")) {
               Sun3D.displaySurface = !Sun3D.displaySurface;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Moon Surface")) {
+            if (menu_option.equals("Show/Hide Moon Surface")) {
               Moon3D.displaySurface = !Moon3D.displaySurface;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Earth Surface")) {
+            if (menu_option.equals("Show/Hide Earth Surface")) {
               Earth3D.displaySurface = !Earth3D.displaySurface;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Troposphere")) {
+            if (menu_option.equals("Show/Hide Troposphere")) {
               Tropo3D.displaySurface = !Tropo3D.displaySurface;
 
               SOLARCHVISION_view_changed();
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide Solar Section")) {
+            if (menu_option.equals("Show/Hide Solar Section")) {
               allSolarImpacts.displayImage = !allSolarImpacts.displayImage;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Solid Section")) {
+            if (menu_option.equals("Show/Hide Solid Section")) {
               allSolidImpacts.displayImage = !allSolidImpacts.displayImage;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Solids")) {
+            if (menu_option.equals("Show/Hide Selected Solids")) {
               Select3D.Solid_displayEdges = !Select3D.Solid_displayEdges;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Sections")) {
+            if (menu_option.equals("Show/Hide Selected Sections")) {
               Select3D.Section_displayEdges = !Select3D.Section_displayEdges;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Cameras")) {
+            if (menu_option.equals("Show/Hide Selected Cameras")) {
               Select3D.Camera_displayEdges = !Select3D.Camera_displayEdges;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected LandPoints")) {
+            if (menu_option.equals("Show/Hide Selected LandPoints")) {
               Select3D.LandPoint_displayPoints = !Select3D.LandPoint_displayPoints;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Wind Flow")) {
+            if (menu_option.equals("Show/Hide Wind Flow")) {
               allWindFlows.displayAll = !allWindFlows.displayAll;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Faces")) {
+            if (menu_option.equals("Show/Hide Selected Faces")) {
               Select3D.Face_displayEdges = !Select3D.Face_displayEdges;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Faces Vertex Count")) {
+            if (menu_option.equals("Show/Hide Selected Faces Vertex Count")) {
               Select3D.Face_displayVertexCount = !Select3D.Face_displayVertexCount;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Polylines Vertex Count")) {
+            if (menu_option.equals("Show/Hide Selected Polylines Vertex Count")) {
               Select3D.Polyline_displayVertexCount = !Select3D.Polyline_displayVertexCount;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Vertices")) {
+            if (menu_option.equals("Show/Hide Selected Vertices")) {
               Select3D.Vertex_displayVertices = !Select3D.Vertex_displayVertices;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Polylines")) {
+            if (menu_option.equals("Show/Hide Selected Polylines")) {
               Select3D.Polyline_displayVertices = !Select3D.Polyline_displayVertices;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected REF Pivot")) {
+            if (menu_option.equals("Show/Hide Selected REF Pivot")) {
               Select3D.displayReferencePivot = !Select3D.displayReferencePivot;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Group Pivot")) {
+            if (menu_option.equals("Show/Hide Selected Group Pivot")) {
               Select3D.Group_displayPivot = !Select3D.Group_displayPivot;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Group Edges")) {
+            if (menu_option.equals("Show/Hide Selected Group Edges")) {
               Select3D.Group_displayEdges = !Select3D.Group_displayEdges;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected Group Box")) {
+            if (menu_option.equals("Show/Hide Selected Group Box")) {
               Select3D.Group_displayBox = !Select3D.Group_displayBox;
 
               SOLARCHVISION_view_changed();;
             }
-            if (menu_option.equals("Display/Hide Selected 2D Edges")) {
+            if (menu_option.equals("Show/Hide Selected 2D Edges")) {
               Select3D.Model2D_displayEdges = !Select3D.Model2D_displayEdges;
 
               SOLARCHVISION_view_changed();
             }
-            if (menu_option.equals("Display/Hide Selected 1D Edges")) {
+            if (menu_option.equals("Show/Hide Selected 1D Edges")) {
               Select3D.Model1D_displayEdges = !Select3D.Model1D_displayEdges;
 
               SOLARCHVISION_view_changed();
             }
 
-            if (menu_option.equals("Display/Hide SWOB stations")) {
+            if (menu_option.equals("Show/Hide SWOB stations")) {
               WORLD.displayAll_SWOB = (WORLD.displayAll_SWOB + 1) % 2;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide SWOB nearest")) {
+            if (menu_option.equals("Show/Hide SWOB nearest")) {
               WORLD.displayNear_SWOB = !WORLD.displayNear_SWOB;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide NAEFS stations")) {
+            if (menu_option.equals("Show/Hide NAEFS stations")) {
               WORLD.displayAll_NAEFS = (WORLD.displayAll_NAEFS + 1) % 2;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide NAEFS nearest")) {
+            if (menu_option.equals("Show/Hide NAEFS nearest")) {
               WORLD.displayNear_NAEFS = !WORLD.displayNear_NAEFS;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide CWEEDS stations")) {
+            if (menu_option.equals("Show/Hide CWEEDS stations")) {
               WORLD.displayAll_CWEEDS = (WORLD.displayAll_CWEEDS + 1) % 2;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide CWEEDS nearest")) {
+            if (menu_option.equals("Show/Hide CWEEDS nearest")) {
               WORLD.displayNear_CWEEDS = !WORLD.displayNear_CWEEDS;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide CLMREC stations")) {
+            if (menu_option.equals("Show/Hide CLMREC stations")) {
               WORLD.displayAll_CLMREC = (WORLD.displayAll_CLMREC + 1) % 2;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide CLMREC nearest")) {
+            if (menu_option.equals("Show/Hide CLMREC nearest")) {
               WORLD.displayNear_CLMREC = !WORLD.displayNear_CLMREC;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide TMYEPW stations")) {
+            if (menu_option.equals("Show/Hide TMYEPW stations")) {
               WORLD.displayAll_TMYEPW = (WORLD.displayAll_TMYEPW + 1) % 2;
 
               WORLD.revise();
             }
-            if (menu_option.equals("Display/Hide TMYEPW nearest")) {
+            if (menu_option.equals("Show/Hide TMYEPW nearest")) {
               WORLD.displayNear_TMYEPW = !WORLD.displayNear_TMYEPW;
 
               WORLD.revise();

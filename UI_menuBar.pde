@@ -109,16 +109,16 @@ class solarchvision_UI_menuBar {
       "Download SWOB",
       "Download CLMREC",
       "———————————————",
-      "Display/Hide TMYEPW stations",
-      "Display/Hide TMYEPW nearest",
-      "Display/Hide CWEEDS stations",
-      "Display/Hide CWEEDS nearest",
-      "Display/Hide CLMREC stations",
-      "Display/Hide CLMREC nearest",
-      "Display/Hide SWOB stations",
-      "Display/Hide SWOB nearest",
-      "Display/Hide NAEFS stations",
-      "Display/Hide NAEFS nearest"
+      "Show/Hide TMYEPW stations",
+      "Show/Hide TMYEPW nearest",
+      "Show/Hide CWEEDS stations",
+      "Show/Hide CWEEDS nearest",
+      "Show/Hide CLMREC stations",
+      "Show/Hide CLMREC nearest",
+      "Show/Hide SWOB stations",
+      "Show/Hide SWOB nearest",
+      "Show/Hide NAEFS stations",
+      "Show/Hide NAEFS nearest"
     }
     ,
     {
@@ -239,46 +239,46 @@ class solarchvision_UI_menuBar {
     ,
     {
       "3D-display",
-      "Display/Hide Land Mesh",
-      "Display/Hide Land Texture",
-      "Display/Hide Land Points",
-      "Display/Hide Land Depth",
-      "Display/Hide Vertices",
-      "Display/Hide Edges",
-      "Display/Hide Normals",
-      "Display/Hide Leaves",
-      "Display/Hide Model1Ds",
-      "Display/Hide Model2Ds",
-      "Display/Hide Polylines",
-      "Display/Hide Faces",
-      "Display/Hide Solids",
-      "Display/Hide Cameras",
-      "Display/Hide Sections",
-      "Display/Hide Sky",
-      "Display/Hide Sun Grid",
-      "Display/Hide Sun Path",
-      "Display/Hide Sun Pattern",
-      "Display/Hide Sun Surface",
-      "Display/Hide Moon Surface",
-      "Display/Hide Troposphere",
-      "Display/Hide Earth Surface",
-      "Display/Hide Solar Section",
-      "Display/Hide Solid Section",
-      "Display/Hide Wind Flow",
-      "Display/Hide Selected Solids",
-      "Display/Hide Selected Sections",
-      "Display/Hide Selected Cameras",
-      "Display/Hide Selected LandPoints",
-      "Display/Hide Selected Faces",
-      "Display/Hide Selected Faces Vertex Count",
-      "Display/Hide Selected Polylines Vertex Count",
-      "Display/Hide Selected Vertices",
-      "Display/Hide Selected REF Pivot",
-      "Display/Hide Selected Group Pivot",
-      "Display/Hide Selected Group Edges",
-      "Display/Hide Selected Group Box",
-      "Display/Hide Selected 2D Edges",
-      "Display/Hide Selected 1D Edges",
+      "Show/Hide Land Mesh",
+      "Show/Hide Land Texture",
+      "Show/Hide Land Points",
+      "Show/Hide Land Depth",
+      "Show/Hide Vertices",
+      "Show/Hide Edges",
+      "Show/Hide Normals",
+      "Show/Hide Leaves",
+      "Show/Hide Model1Ds",
+      "Show/Hide Model2Ds",
+      "Show/Hide Polylines",
+      "Show/Hide Faces",
+      "Show/Hide Solids",
+      "Show/Hide Cameras",
+      "Show/Hide Sections",
+      "Show/Hide Sky",
+      "Show/Hide Sun Grid",
+      "Show/Hide Sun Path",
+      "Show/Hide Sun Pattern",
+      "Show/Hide Sun Surface",
+      "Show/Hide Moon Surface",
+      "Show/Hide Troposphere",
+      "Show/Hide Earth Surface",
+      "Show/Hide Solar Section",
+      "Show/Hide Solid Section",
+      "Show/Hide Wind Flow",
+      "Show/Hide Selected Solids",
+      "Show/Hide Selected Sections",
+      "Show/Hide Selected Cameras",
+      "Show/Hide Selected LandPoints",
+      "Show/Hide Selected Faces",
+      "Show/Hide Selected Faces Vertex Count",
+      "Show/Hide Selected Polylines Vertex Count",
+      "Show/Hide Selected Vertices",
+      "Show/Hide Selected REF Pivot",
+      "Show/Hide Selected Group Pivot",
+      "Show/Hide Selected Group Edges",
+      "Show/Hide Selected Group Box",
+      "Show/Hide Selected 2D Edges",
+      "Show/Hide Selected 1D Edges",
     }
     ,
     {
@@ -636,61 +636,61 @@ class solarchvision_UI_menuBar {
               fill(255);
 
               if (this.Items[i][0].equals("Location")) {
-                if (this.Items[i][j].equals("Display/Hide SWOB stations")) {
+                if (this.Items[i][j].equals("Show/Hide SWOB stations")) {
                   if (WORLD.displayAll_SWOB == 0) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide SWOB nearest")) {
+                if (this.Items[i][j].equals("Show/Hide SWOB nearest")) {
                   if (WORLD.displayNear_SWOB == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide NAEFS stations")) {
+                if (this.Items[i][j].equals("Show/Hide NAEFS stations")) {
                   if (WORLD.displayAll_NAEFS == 0) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide NAEFS nearest")) {
+                if (this.Items[i][j].equals("Show/Hide NAEFS nearest")) {
                   if (WORLD.displayNear_NAEFS == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide CWEEDS stations")) {
+                if (this.Items[i][j].equals("Show/Hide CWEEDS stations")) {
                   if (WORLD.displayAll_CWEEDS == 0) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide CWEEDS nearest")) {
+                if (this.Items[i][j].equals("Show/Hide CWEEDS nearest")) {
                   if (WORLD.displayNear_CWEEDS == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide CLMREC stations")) {
+                if (this.Items[i][j].equals("Show/Hide CLMREC stations")) {
                   if (WORLD.displayAll_CLMREC == 0) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide CLMREC nearest")) {
+                if (this.Items[i][j].equals("Show/Hide CLMREC nearest")) {
                   if (WORLD.displayNear_CLMREC == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide TMYEPW stations")) {
+                if (this.Items[i][j].equals("Show/Hide TMYEPW stations")) {
                   if (WORLD.displayAll_TMYEPW == 0) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide TMYEPW nearest")) {
+                if (this.Items[i][j].equals("Show/Hide TMYEPW nearest")) {
                   if (WORLD.displayNear_TMYEPW == false) {
                     stroke(127);
                     fill(127);
@@ -699,247 +699,247 @@ class solarchvision_UI_menuBar {
               }
 
               if (this.Items[i][0].equals("3D-display")) {
-                if (this.Items[i][j].equals("Display/Hide Land Mesh")) {
+                if (this.Items[i][j].equals("Show/Hide Land Mesh")) {
                   if (Land3D.displaySurface == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Land Texture")) {
+                if (this.Items[i][j].equals("Show/Hide Land Texture")) {
                   if (Land3D.displayTexture == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Land Points")) {
+                if (this.Items[i][j].equals("Show/Hide Land Points")) {
                   if (Land3D.displayPoints == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Land Depth")) {
+                if (this.Items[i][j].equals("Show/Hide Land Depth")) {
                   if (Land3D.displayDepth == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Vertices")) {
+                if (this.Items[i][j].equals("Show/Hide Vertices")) {
                   if (allPoints.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Edges")) {
+                if (this.Items[i][j].equals("Show/Hide Edges")) {
                   if (allFaces.displayEdges == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Normals")) {
+                if (this.Items[i][j].equals("Show/Hide Normals")) {
                   if (allFaces.displayNormals == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Leaves")) {
+                if (this.Items[i][j].equals("Show/Hide Leaves")) {
                   if (allModel1Ds.displayLeaves == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Model1Ds")) {
+                if (this.Items[i][j].equals("Show/Hide Model1Ds")) {
                   if (allModel1Ds.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Model2Ds")) {
+                if (this.Items[i][j].equals("Show/Hide Model2Ds")) {
                   if (allModel2Ds.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Polylines")) {
+                if (this.Items[i][j].equals("Show/Hide Polylines")) {
                   if (allFaces.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Faces")) {
+                if (this.Items[i][j].equals("Show/Hide Faces")) {
                   if (allFaces.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Solids")) {
+                if (this.Items[i][j].equals("Show/Hide Solids")) {
                   if (allSolids.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Sections")) {
+                if (this.Items[i][j].equals("Show/Hide Sections")) {
                   if (allSections.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Cameras")) {
+                if (this.Items[i][j].equals("Show/Hide Cameras")) {
                   if (allCameras.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Sky")) {
+                if (this.Items[i][j].equals("Show/Hide Sky")) {
                   if (Sky3D.displaySurface == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Sun Grid")) {
+                if (this.Items[i][j].equals("Show/Hide Sun Grid")) {
                   if (Sun3D.displayGrid == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Sun Path")) {
+                if (this.Items[i][j].equals("Show/Hide Sun Path")) {
                   if (Sun3D.displayPath == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Sun Pattern")) {
+                if (this.Items[i][j].equals("Show/Hide Sun Pattern")) {
                   if (Sun3D.displayPattern == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Sun Surface")) {
+                if (this.Items[i][j].equals("Show/Hide Sun Surface")) {
                   if (Sun3D.displaySurface == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Moon Surface")) {
+                if (this.Items[i][j].equals("Show/Hide Moon Surface")) {
                   if (Moon3D.displaySurface == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Earth Surface")) {
+                if (this.Items[i][j].equals("Show/Hide Earth Surface")) {
                   if (Earth3D.displaySurface == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Troposphere")) {
+                if (this.Items[i][j].equals("Show/Hide Troposphere")) {
                   if (Tropo3D.displaySurface == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Solar Section")) {
+                if (this.Items[i][j].equals("Show/Hide Solar Section")) {
                   if (allSolarImpacts.displayImage == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Solid Section")) {
+                if (this.Items[i][j].equals("Show/Hide Solid Section")) {
                   if (allSolidImpacts.displayImage == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Wind Flow")) {
+                if (this.Items[i][j].equals("Show/Hide Wind Flow")) {
                   if (allWindFlows.displayAll == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Solids")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Solids")) {
                   if (Select3D.Solid_displayEdges == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Sections")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Sections")) {
                   if (Select3D.Section_displayEdges == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Cameras")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Cameras")) {
                   if (Select3D.Camera_displayEdges == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected LandPoints")) {
+                if (this.Items[i][j].equals("Show/Hide Selected LandPoints")) {
                   if (Select3D.LandPoint_displayPoints == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Faces")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Faces")) {
                   if (Select3D.Face_displayEdges == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Polylines")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Polylines")) {
                   if (Select3D.Polyline_displayVertices == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Faces Vertex Count")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Faces Vertex Count")) {
                   if (Select3D.Face_displayVertexCount == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Polylines Vertex Count")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Polylines Vertex Count")) {
                   if (Select3D.Polyline_displayVertexCount == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Vertices")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Vertices")) {
                   if (Select3D.Vertex_displayVertices == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected REF Pivot")) {
+                if (this.Items[i][j].equals("Show/Hide Selected REF Pivot")) {
                   if (Select3D.displayReferencePivot == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Group Pivot")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Group Pivot")) {
                   if (Select3D.displayReferencePivot == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Group Edges")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Group Edges")) {
                   if (Select3D.Group_displayEdges == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected Group Box")) {
+                if (this.Items[i][j].equals("Show/Hide Selected Group Box")) {
                   if (Select3D.Group_displayBox == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected 2D Edges")) {
+                if (this.Items[i][j].equals("Show/Hide Selected 2D Edges")) {
                   if (Select3D.Model2D_displayEdges == false) {
                     stroke(127);
                     fill(127);
                   }
                 }
-                if (this.Items[i][j].equals("Display/Hide Selected 1D Edges")) {
+                if (this.Items[i][j].equals("Show/Hide Selected 1D Edges")) {
                   if (Select3D.Model1D_displayEdges == false) {
                     stroke(127);
                     fill(127);
