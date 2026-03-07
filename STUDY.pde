@@ -71,7 +71,7 @@ class solarchvision_STUDY {
   float rect_scale = 0.005;
   float rect_offset_x = 0.5;
 
-  boolean impact_summary = false;
+  boolean impact_summary = true;
 
   int ImpactLayer = 4; // 4 = Median
 
