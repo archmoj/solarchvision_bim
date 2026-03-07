@@ -1658,20 +1658,6 @@ String[] STAT_N_Title = {
   "Maximum"
 };
 
-int[] STAT_reverse_N;
-{
-  STAT_reverse_N = new int [9];
-  STAT_reverse_N[STAT_N_MidLow] = STAT_N_MidHigh;
-  STAT_reverse_N[STAT_N_Middle] = STAT_N_Middle;
-  STAT_reverse_N[STAT_N_MidHigh] = STAT_N_MidLow;
-  STAT_reverse_N[STAT_N_M25] = STAT_N_M75;
-  STAT_reverse_N[STAT_N_M50] = STAT_N_M50;
-  STAT_reverse_N[STAT_N_M75] = STAT_N_M25;
-  STAT_reverse_N[STAT_N_Min] = STAT_N_Max;
-  STAT_reverse_N[STAT_N_Ave] = STAT_N_Ave;
-  STAT_reverse_N[STAT_N_Max] = STAT_N_Min;
-}
-
 int FrameVariation = 0;
 
 void SOLARCHVISION_update_frame_layout () {

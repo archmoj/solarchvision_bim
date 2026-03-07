@@ -2254,12 +2254,7 @@ class solarchvision_STUDY {
         this.graphics.fill(0);
         this.graphics.strokeWeight(0);
 
-        if (this.Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-        }
-        if (this.Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-        }
+        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
         //?? French
 
 
@@ -2682,12 +2677,7 @@ class solarchvision_STUDY {
       this.graphics.stroke(0);
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
-      if (this.Impact_TYPE == Impact_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-      }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-      }
+      this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       //?? French
 
       float pal_length = 400;
@@ -2945,12 +2935,7 @@ class solarchvision_STUDY {
       this.graphics.stroke(0);
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
-      if (this.Impact_TYPE == Impact_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-      }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-      }
+      this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       //?? French
 
 
@@ -3052,12 +3037,7 @@ class solarchvision_STUDY {
       this.graphics.stroke(0);
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
-      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
-        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-      }
-      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
-        this.graphics.text(STAT_N_Title[STAT_reverse_N[l]], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-      }
+      this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       //?? French
 
       int PAL_type = 0;
