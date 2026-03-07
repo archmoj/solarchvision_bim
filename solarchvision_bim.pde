@@ -2077,9 +2077,7 @@ boolean isInside (float x, float y, float x1, float y1, float x2, float y2) {
 
 String NearLatitude_Stamp () {
 
-  int Round_Latitude = int(funcs.roundTo(STATION.getLatitude(), 5));
-  if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
-  if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
+  int Round_Latitude = int(funcs.roundTo(STATION.getLatitude(), 1));
 
   String a = nf(abs(Round_Latitude), 2);
 
@@ -2523,6 +2521,7 @@ void SOLARCHVISION_update_station (int Step) {
     GlobalSolar_rebuild_array = true;
     allWindRoses.rebuild_Image_array = true;
     allSolarImpacts.rebuild_Image_array = true;
+
     allSolarImpacts.sectionType = 0; // Turn off analysis. It should be prebaked first.
 
     WORLD.revise();
