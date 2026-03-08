@@ -217,6 +217,7 @@ class solarchvision_UI_toolBar {
     }
   }
 
+  boolean HelperState = false;
 
   void draw () {
 
@@ -261,6 +262,7 @@ class solarchvision_UI_toolBar {
 
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr)) {
+          String Bar_Switch = this.Items[i][this.Items[i].length - 2];
 
           if (mouseButton == RIGHT) {
 
@@ -298,13 +300,33 @@ class solarchvision_UI_toolBar {
             }
           }
 
+          if (mouseButton == CENTER) {
+            HelperState = !HelperState;
+            if(HelperState) {
+              // draw over menu bar
+              float HelperY = cy - cr - SOLARCHVISION_pixel_A;
+              float HelperH = SOLARCHVISION_pixel_A;
+              float HelperX = cx;
+              float HelperW = SOLARCHVISION_pixel_B * 4;
+              if(HelperX + HelperW > width) HelperX -= HelperW - SOLARCHVISION_pixel_B;
+
+              fill(127, 255, 0);
+              noStroke();
+              rect(HelperX, HelperY, HelperW, HelperH);
+
+              String HelperText = Bar_Switch;
+              if(this.Items[i].length > 4) HelperText += ": " + this.Items[i][j];
+
+              fill(0);
+              text(HelperText, HelperX, HelperY, HelperW, HelperH);
+            } else {
+              UI_menuBar.revise();
+            }
+          }
 
           fill(255, 127, 0);
           noStroke();
           rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
-
-          String Bar_Switch = this.Items[i][this.Items[i].length - 2];
-
 
           if (Bar_Switch.equals("LayerType")) {
             current_ObjectCategory = j - 1;
