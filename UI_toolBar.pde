@@ -165,7 +165,7 @@ class solarchvision_UI_toolBar {
     }
     ,
     {
-      "1", "", "FirstVertex", "1.0"
+      "1", "", "First Vertex", "1.0"
     }
   };
 
@@ -401,7 +401,7 @@ class solarchvision_UI_toolBar {
             if ((this.Items[i][j]).equals("Norm3")) UI_set_to_Modify_Normal(3);
           }
 
-          if (Bar_Switch.equals("FirstVertex")) {
+          if (Bar_Switch.equals("First Vertex")) {
             if ((this.Items[i][j]).equals("1stV")) UI_set_to_Modify_FirstVertex(1);
           }
 
@@ -505,7 +505,7 @@ class solarchvision_UI_toolBar {
           if (Bar_Switch.equals("Normal")) {
             UI_toolBar.drawNormal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("FirstVertex")) {
+          if (Bar_Switch.equals("First Vertex")) {
             UI_toolBar.drawFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
 
