@@ -159,7 +159,7 @@ Once loaded the UI would look like this:
     <img src="https://raw.githubusercontent.com/archmoj/solarchvision_bim/refs/heads/main//doc/images/InitialView.jpg">
 </p>
 
-Please note that in above example the `Setup | 3D-model 1` option is selected. A person and a tree is also added close to the camera.
+Please note that in above example the `Setup | 3D-model 7` option is selected. Also the rendering is set to `Shade Global Solar` option via `3D-shade` menu.
 
 ## Adding an object to the scene
 
