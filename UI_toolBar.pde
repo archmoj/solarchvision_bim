@@ -8,106 +8,106 @@ class solarchvision_UI_toolBar {
 
   String[][] Items = {
     {
-      "11", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Cam00", "3DViewPoint", "2.0"
+      "11", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Cam00", "View Point", "2.0"
     }
     ,
     {
-      "2", "AllViewports", "Expand3DView", "ExpandTimeView", "ExpandMapView", "3DViewSpace", "1"
-    }
-    ,
-
-    {
-      "2", "P<>", "P><", "ProjectionType", "1.0"
-    }
-    ,
-    {
-      "1", "LAO", "LookAtOrigin", "1.0"
-    }
-    ,
-    {
-      "1", "LAD", "LookAtDirection", "1.0"
-    }
-    ,
-    {
-      "1", "LAS", "LookAtSelection", "1.0"
-    }
-    ,
-    {
-      "3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"
-    }
-    ,
-    {
-      "1", "±CDS", "CameraDistance", "1.0"
-    }
-    ,
-    {
-      "1", "±CDM", "DistMouseXY", "1.0"
-    }
-    ,
-    {
-      "1", "±CDZ", "DistZ", "1.0"
-    }
-    ,
-    {
-      "3", "DIz", "DIx", "DIy", "Truck", "1.0"
-    }
-    ,
-    {
-      "1", "LNOR", "LandOrbit", "1.0"
-    }
-    ,
-    {
-      "1", "OR", "ORxy", "ORz", "Orbit", "1.0"
-    }
-    ,
-    {
-      "1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"
-    }
-    ,
-    {
-      "1", "Pan", "PanX", "PanY", "Pan", "1.0"
-    }
-    ,
-    {
-      "1", "±ZM", "0ZM", "Zoom", "1.0"
-    }
-    ,
-    {
-      "1", "±SA", "AllModelSize", "1.0"
-    }
-    ,
-    {
-      "1", "±SZ", "3DModelSize", "1.0"
-    }
-    ,
-    {
-      "1", "±SK", "SkydomeSize", "1.0"
+      "2", "all", "3D", "graph", "map", "View Layout", "1"
     }
     ,
 
     {
-      "3", "3D-Tree", "2D-Tree", "Person", "Model2DsType", "1.5"
+      "2", "orthographic", "perspective", "Projection Type", "1.0"
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "BuildingType", "2.5"
+      "1", "", "Look At Origin", "1.0"
     }
     ,
     {
-      "1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"
+      "1", "", "Look At Direction", "1.0"
+    }
+    ,
+    {
+      "1", "", "Look At Selection", "1.0"
+    }
+    ,
+    {
+      "3", "", "z", "xy", "Camera Roll", "1.0"
+    }
+    ,
+    {
+      "1", "", "Camera Distance", "1.0"
+    }
+    ,
+    {
+      "1", "", "Dist XY", "1.0"
+    }
+    ,
+    {
+      "1", "", "Dist Z", "1.0"
+    }
+    ,
+    {
+      "3", "z", "x", "y", "Truck", "1.0"
+    }
+    ,
+    {
+      "1", "", "Land Orbit", "1.0"
+    }
+    ,
+    {
+      "1", "", "xy", "z", "Orbit", "1.0"
+    }
+    ,
+    {
+      "1", "", "z", "xy", "Target Roll", "1.0"
+    }
+    ,
+    {
+      "1", "", "x", "y", "Pan", "1.0"
+    }
+    ,
+    {
+      "1", "±", "normal", "Zoom", "1.0"
+    }
+    ,
+    {
+      "1", "", "All Model Size", "1.0"
+    }
+    ,
+    {
+      "1", "", "3D Model Size", "1.0"
+    }
+    ,
+    {
+      "1", "", "Skydome Size", "1.0"
     }
     ,
 
     {
-      "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Polyline", "LayerType", "2.0"
+      "3", "3D-Tree", "2D-Tree", "Person", "Living Type", "1.5"
     }
     ,
     {
-      "1", "±PS", "+PS", "-PS", "PickSelect", "1.0"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "Building Type", "2.5"
     }
     ,
     {
-      "1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"
+      "1", "Mesh", "Solid", "Model Type", "2.0"
+    }
+    ,
+
+    {
+      "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Polyline", "Layer Type", "2.0"
+    }
+    ,
+    {
+      "1", "±", "+", "-", "Pick Select", "1.0"
+    }
+    ,
+    {
+      "1", "±", "+", "-", "Window Select", "1.0"
     }
     ,
     {
@@ -122,72 +122,51 @@ class solarchvision_UI_toolBar {
       "2", "Z<", "Z|", "Z>", "PivotZ", "1.0"
     }
     ,
-    //{"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
+    //{"1", "±", "+", "-", "Drop", "1.0"},
     {
-      "4", "GLx", "GLy", "GLz", "GL³", "GL²", "GLa", "GetLength", "1.0"
+      "4", "x", "y", "z", "xyz", "xy", "angle", "Get Length", "1.0"
     }
     ,
     {
-      "3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"
+      "3", "x", "y", "z", "xyz", "Move", "1.0"
     }
     ,
     {
-      "3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"
+      "3", "x", "y", "z", "xyz", "Scale", "1.0"
     }
     ,
     {
-      "3", "RTx", "RTy", "RTz", "Rotate", "1.0"
+      "3", "x", "y", "z", "Rotate", "1.0"
     }
     ,
-    //{"3", "PWx", "PWy", "PWz", "PW³", "Power", "1.0"},
+    //{"3", "x", "y", "z", "xyz", "Power", "1.0"},
     {
-      "1", "Mat0", "Mat1", "Mat2", "Mat3", "Change Seed/Material", "1.0"
-    }
-    ,
-    {
-      "1", "Tes0", "Tes1", "Tes2", "Tes3", "Change tessellation", "1.0"
+      "1", "0", "1", "2", "3", "Change Seed/Material", "1.0"
     }
     ,
     {
-      "1", "Lyr0", "Lyr1", "Lyr2", "Lyr3", "Change Layer", "1.0"
+      "1", "0", "1", "2", "3", "Change Tessellation", "1.0"
     }
     ,
     {
-      "1", "Vsb0", "Vsb1", "Vsb2", "Vsb3", "Change Visibility", "1.0"
+      "1", "0", "1", "2", "3", "Change Layer", "1.0"
     }
     ,
     {
-      "1", "Wgt0", "Wgt1", "Wgt2", "Wgt3", "Change Weight", "1.0"
+      "1", "0", "1", "2", "3", "Change Visibility", "1.0"
     }
     ,
     {
-      "1", "Norm1", "Norm2", "Norm3", "Normal", "1.0"
+      "1", "0", "1", "2", "3", "Change Weight", "1.0"
     }
     ,
     {
-      "1", "1stV", "FirstVertex", "1.0"
+      "1", "1", "2", "3", "Normal", "1.0"
     }
     ,
-
-
-    //{"1", "<pvt>", ">pvt<", "|pvt|", ".pvt.", "Get/Set Pivot", "1.0"},
-
-    //{"1", "SPvt0", "SPvt1", "SPvt2", "Pivot", "1.0"},
-
-    //{"1", "dgMax0", "dgMax1", "dgMax2", "Change DegreeMax", "1.0"},
-    //{"1", "bTilt0", "bTilt1", "bTilt2", "Change BranchTilt", "1.0"},
-    //{"1", "bTwist0", "bTwist1", "bTwist2", "Change BranchTwist", "1.0"},
-    //{"1", "bTwist0", "bTwist1", "bTwist2", "Change BranchTwist", "1.0"},
-    //{"1", "bRatio0", "bRatio1", "bRatio2", "Change BranchRatio", "1.0"},
-    //{"1", "tBase0", "tBase1", "tBase2", "Change TreeBase", "1.0"},
-
-    //{"1", "trSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
-    //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
-    //{"1", "allFP0", "allFP1", "allFP2", "Model1DsProps", "1.0"},
-
-    //{"1", "SEC", "Section", "1.0"},
-    //{"1", "SLD", "Solid", "1.0"},
-    //{"1", "CAM", "Pick Study Camera", "1.0"},
+    {
+      "1", "", "FirstVertex", "1.0"
+    }
   };
 
 
@@ -241,7 +220,7 @@ class solarchvision_UI_toolBar {
         {
           String Bar_Switch = this.Items[i][this.Items[i].length - 2];
 
-          if (Bar_Switch.equals("LayerType")) {
+          if (Bar_Switch.equals("Layer Type")) {
             this.Items[i][0] = nf(current_ObjectCategory + 1, 0);
           }
         }
@@ -315,7 +294,9 @@ class solarchvision_UI_toolBar {
               rect(HelperX, HelperY, HelperW, HelperH);
 
               String HelperText = Bar_Switch;
-              if(this.Items[i].length > 4) HelperText += ": " + this.Items[i][j];
+              if(this.Items[i].length > 4 && this.Items[i][j] != "") {
+                HelperText += ": " + this.Items[i][j];
+              }
 
               fill(0);
               text(HelperText, HelperX, HelperY, HelperW, HelperH);
@@ -328,7 +309,7 @@ class solarchvision_UI_toolBar {
           noStroke();
           rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
 
-          if (Bar_Switch.equals("LayerType")) {
+          if (Bar_Switch.equals("Layer Type")) {
             current_ObjectCategory = j - 1;
 
             if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
@@ -339,13 +320,13 @@ class solarchvision_UI_toolBar {
             SOLARCHVISION_view_changed();
           }
 
-          if (Bar_Switch.equals("Mesh|Solid")) {
+          if (Bar_Switch.equals("Model Type")) {
             User3D.create_MeshOrSolid = j - 1;
 
             ROLLOUT.revise();
           }
 
-          if ((Bar_Switch.equals("Model2DsType")) || (Bar_Switch.equals("BuildingType"))) {
+          if ((Bar_Switch.equals("Living Type")) || (Bar_Switch.equals("Building Type"))) {
             if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allModel1Ds();
             else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
             else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
@@ -376,7 +357,7 @@ class solarchvision_UI_toolBar {
             if ((this.Items[i][j]).equals("Mat3")) UI_set_to_Modify_Seed(3);
           }
 
-          if (Bar_Switch.equals("Change tessellation")) {
+          if (Bar_Switch.equals("Change Tessellation")) {
             if ((this.Items[i][j]).equals("Tes0")) UI_set_to_Modify_Tessellation(0);
             if ((this.Items[i][j]).equals("Tes1")) UI_set_to_Modify_Tessellation(1);
             if ((this.Items[i][j]).equals("Tes2")) UI_set_to_Modify_Tessellation(2);
@@ -420,27 +401,27 @@ class solarchvision_UI_toolBar {
           if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);
           if (Bar_Switch.equals("Scale")) UI_set_to_Modify_Scale(j - 1);
           if (Bar_Switch.equals("Move")) UI_set_to_Modify_Move(j - 1);
-          if (Bar_Switch.equals("GetLength")) UI_set_to_Modify_GetLength(j - 1);
+          if (Bar_Switch.equals("Get Length")) UI_set_to_Modify_GetLength(j - 1);
           if (Bar_Switch.equals("Drop")) UI_set_to_Modify_Drop(j - 1);
 
-          if (Bar_Switch.equals("ProjectionType")) UI_set_to_View_ProjectionType(j - 1);
+          if (Bar_Switch.equals("Projection Type")) UI_set_to_View_ProjectionType(j - 1);
 
-          if (Bar_Switch.equals("PickSelect")) UI_set_to_View_PickSelect(j - 1);
-          if (Bar_Switch.equals("WindowSelect")) UI_set_to_View_WindowSelect(j - 1);
+          if (Bar_Switch.equals("Pick Select")) UI_set_to_View_PickSelect(j - 1);
+          if (Bar_Switch.equals("Window Select")) UI_set_to_View_WindowSelect(j - 1);
 
           if (Bar_Switch.equals("PivotX")) UI_set_to_View_PivotX(j - 2);
           if (Bar_Switch.equals("PivotY")) UI_set_to_View_PivotY(j - 2);
           if (Bar_Switch.equals("PivotZ")) UI_set_to_View_PivotZ(j - 2);
 
-          if (Bar_Switch.equals("LandOrbit")) UI_set_to_View_LandOrbit(0);
+          if (Bar_Switch.equals("Land Orbit")) UI_set_to_View_LandOrbit(0);
 
           if (Bar_Switch.equals("Orbit")) UI_set_to_View_Orbit(j - 1);
-          if (Bar_Switch.equals("CameraRoll")) UI_set_to_View_CameraRoll(j - 1);
-          if (Bar_Switch.equals("TargetRoll")) UI_set_to_View_TargetRoll(j - 1);
+          if (Bar_Switch.equals("Camera Roll")) UI_set_to_View_CameraRoll(j - 1);
+          if (Bar_Switch.equals("Target Roll")) UI_set_to_View_TargetRoll(j - 1);
 
-          if (Bar_Switch.equals("LookAtOrigin")) UI_set_to_View_LookAtOrigin(j - 1);
-          if (Bar_Switch.equals("LookAtDirection")) UI_set_to_View_LookAtDirection(j - 1);
-          if (Bar_Switch.equals("LookAtSelection")) UI_set_to_View_LookAtSelection(j - 1);
+          if (Bar_Switch.equals("Look At Origin")) UI_set_to_View_LookAtOrigin(j - 1);
+          if (Bar_Switch.equals("Look At Direction")) UI_set_to_View_LookAtDirection(j - 1);
+          if (Bar_Switch.equals("Look At Selection")) UI_set_to_View_LookAtSelection(j - 1);
 
           if (Bar_Switch.equals("Pan")) {
 
@@ -453,22 +434,22 @@ class solarchvision_UI_toolBar {
             this.Items[i][0] = "1"; // << set it to default choice next time
           }
 
-          if (Bar_Switch.equals("CameraDistance")) UI_set_to_View_CameraDistance(0);
+          if (Bar_Switch.equals("Camera Distance")) UI_set_to_View_CameraDistance(0);
 
-          if (Bar_Switch.equals("DistMouseXY")) UI_set_to_View_DistMouseXY(0);
+          if (Bar_Switch.equals("Dist XY")) UI_set_to_View_DistMouseXY(0);
 
-          if (Bar_Switch.equals("DistZ")) UI_set_to_View_Truck(0);
+          if (Bar_Switch.equals("Dist Z")) UI_set_to_View_Truck(0);
           if (Bar_Switch.equals("Truck")) UI_set_to_View_Truck(j - 1);
 
-          if (Bar_Switch.equals("3DModelSize")) UI_set_to_View_3DModelSize();
+          if (Bar_Switch.equals("3D Model Size")) UI_set_to_View_3DModelSize();
 
-          if (Bar_Switch.equals("SkydomeSize")) UI_set_to_View_SkydomeSize();
+          if (Bar_Switch.equals("Skydome Size")) UI_set_to_View_SkydomeSize();
 
-          if (Bar_Switch.equals("AllModelSize")) UI_set_to_View_AllModelSize();
+          if (Bar_Switch.equals("All Model Size")) UI_set_to_View_AllModelSize();
 
-          if (Bar_Switch.equals("3DViewSpace")) UI_set_to_Viewport(j - 1);
+          if (Bar_Switch.equals("View Layout")) UI_set_to_Viewport(j - 1);
 
-          if (Bar_Switch.equals("3DViewPoint")) UI_set_to_View_3DViewPoint(j - 1);
+          if (Bar_Switch.equals("View Point")) UI_set_to_View_3DViewPoint(j - 1);
         }
 
 
@@ -481,7 +462,7 @@ class solarchvision_UI_toolBar {
           if (Bar_Switch.equals("Drop")) {
             UI_toolBar.drawDrop(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("GetLength")) {
+          if (Bar_Switch.equals("Get Length")) {
             UI_toolBar.drawGetLength(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Move")) {
@@ -499,7 +480,7 @@ class solarchvision_UI_toolBar {
           if (Bar_Switch.equals("Change Seed/Material")) {
             UI_toolBar.drawSeed(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("Change tessellation")) {
+          if (Bar_Switch.equals("Change Tessellation")) {
             UI_toolBar.drawtessellation(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Change Layer")) {
@@ -518,65 +499,65 @@ class solarchvision_UI_toolBar {
             UI_toolBar.drawFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
 
-          if (Bar_Switch.equals("PickSelect")) {
+          if (Bar_Switch.equals("Pick Select")) {
             UI_toolBar.drawPickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("WindowSelect")) {
+          if (Bar_Switch.equals("Window Select")) {
             UI_toolBar.drawWindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("ProjectionType")) {
+          if (Bar_Switch.equals("Projection Type")) {
             UI_toolBar.drawProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Zoom")) {
             UI_toolBar.drawZOOM(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("LandOrbit")) {
+          if (Bar_Switch.equals("Land Orbit")) {
             UI_toolBar.drawLandOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Orbit")) {
             UI_toolBar.drawOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("CameraRoll")) {
+          if (Bar_Switch.equals("Camera Roll")) {
             UI_toolBar.drawCameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("TargetRoll")) {
+          if (Bar_Switch.equals("Target Roll")) {
             UI_toolBar.drawTargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("CameraDistance")) {
+          if (Bar_Switch.equals("Camera Distance")) {
             UI_toolBar.drawCameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("LookAtOrigin")) {
+          if (Bar_Switch.equals("Look At Origin")) {
             UI_toolBar.drawLookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("LookAtDirection")) {
+          if (Bar_Switch.equals("Look At Direction")) {
             UI_toolBar.drawLookAtDirection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("LookAtSelection")) {
+          if (Bar_Switch.equals("Look At Selection")) {
             UI_toolBar.drawLookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Pan")) {
             UI_toolBar.drawPan(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("DistMouseXY")) {
+          if (Bar_Switch.equals("Dist XY")) {
             UI_toolBar.drawDistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("DistZ")) {
+          if (Bar_Switch.equals("Dist Z")) {
             UI_toolBar.drawDistZ(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
           if (Bar_Switch.equals("Truck")) {
             UI_toolBar.drawTruck(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("3DModelSize")) {
+          if (Bar_Switch.equals("3D Model Size")) {
             UI_toolBar.draw3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("SkydomeSize")) {
+          if (Bar_Switch.equals("Skydome Size")) {
             UI_toolBar.drawSkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
-          if (Bar_Switch.equals("AllModelSize")) {
+          if (Bar_Switch.equals("All Model Size")) {
             UI_toolBar.drawAllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
 
-          if (Bar_Switch.equals("3DViewSpace")) {
+          if (Bar_Switch.equals("View Layout")) {
             UI_toolBar.draw3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
           }
         }
