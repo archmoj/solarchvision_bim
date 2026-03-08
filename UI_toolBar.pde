@@ -259,6 +259,11 @@ class solarchvision_UI_toolBar {
 
               j = n;
             }
+
+            if(HelperState) {
+              HelperState = false;
+              UI_menuBar.revise();
+            }
           }
 
           if (mouseButton == LEFT) {
@@ -276,6 +281,11 @@ class solarchvision_UI_toolBar {
               this.Items[i][0] = nf(n, 0);
 
               j = n;
+            }
+
+            if(HelperState) {
+              HelperState = false;
+              UI_menuBar.revise();
             }
           }
 
