@@ -2816,11 +2816,10 @@ class solarchvision_STUDY {
 
             for (int i = 0; i < 24; i++) {
               if (this.isInHourlyRange(i)) {
-                if ((i+0.5 >= sunrise) && (i+0.5 <= sunset)) {
+                float HOUR_ANGLE = i;
+                float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
-                  float HOUR_ANGLE = i;
-                  float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
-
+                if (SunR[3] > 0) {
                   float Alpha = 90 - funcs.acos_ang(SunR[3]);
                   float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
 
