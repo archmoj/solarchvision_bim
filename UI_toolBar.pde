@@ -361,48 +361,48 @@ class solarchvision_UI_toolBar {
           }
 
           if (Bar_Switch.equals("Change Seed/Material")) {
-            if ((this.Items[i][j]).equals("Mat0")) UI_set_to_Modify_Seed(0);
-            if ((this.Items[i][j]).equals("Mat1")) UI_set_to_Modify_Seed(1);
-            if ((this.Items[i][j]).equals("Mat2")) UI_set_to_Modify_Seed(2);
-            if ((this.Items[i][j]).equals("Mat3")) UI_set_to_Modify_Seed(3);
+            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Seed(0);
+            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Seed(1);
+            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Seed(2);
+            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Seed(3);
           }
 
           if (Bar_Switch.equals("Change Tessellation")) {
-            if ((this.Items[i][j]).equals("Tes0")) UI_set_to_Modify_Tessellation(0);
-            if ((this.Items[i][j]).equals("Tes1")) UI_set_to_Modify_Tessellation(1);
-            if ((this.Items[i][j]).equals("Tes2")) UI_set_to_Modify_Tessellation(2);
-            if ((this.Items[i][j]).equals("Tes3")) UI_set_to_Modify_Tessellation(3);
+            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Tessellation(0);
+            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Tessellation(1);
+            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Tessellation(2);
+            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Tessellation(3);
           }
 
           if (Bar_Switch.equals("Change Layer")) {
-            if ((this.Items[i][j]).equals("Lyr0")) UI_set_to_Modify_Layer(0);
-            if ((this.Items[i][j]).equals("Lyr1")) UI_set_to_Modify_Layer(1);
-            if ((this.Items[i][j]).equals("Lyr2")) UI_set_to_Modify_Layer(2);
-            if ((this.Items[i][j]).equals("Lyr3")) UI_set_to_Modify_Layer(3);
+            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Layer(0);
+            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Layer(1);
+            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Layer(2);
+            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Layer(3);
           }
 
           if (Bar_Switch.equals("Change Visibility")) {
-            if ((this.Items[i][j]).equals("Vsb0")) UI_set_to_Modify_Visibility(0);
-            if ((this.Items[i][j]).equals("Vsb1")) UI_set_to_Modify_Visibility(1);
-            if ((this.Items[i][j]).equals("Vsb2")) UI_set_to_Modify_Visibility(2);
-            if ((this.Items[i][j]).equals("Vsb3")) UI_set_to_Modify_Visibility(3);
+            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Visibility(0);
+            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Visibility(1);
+            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Visibility(2);
+            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Visibility(3);
           }
 
           if (Bar_Switch.equals("Change Weight")) {
-            if ((this.Items[i][j]).equals("Wgt0")) UI_set_to_Modify_Weight(0);
-            if ((this.Items[i][j]).equals("Wgt1")) UI_set_to_Modify_Weight(1);
-            if ((this.Items[i][j]).equals("Wgt2")) UI_set_to_Modify_Weight(2);
-            if ((this.Items[i][j]).equals("Wgt3")) UI_set_to_Modify_Weight(3);
+            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Weight(0);
+            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Weight(1);
+            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Weight(2);
+            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Weight(3);
           }
 
           if (Bar_Switch.equals("Normal")) {
-            if ((this.Items[i][j]).equals("Norm1")) UI_set_to_Modify_Normal(1);
-            if ((this.Items[i][j]).equals("Norm2")) UI_set_to_Modify_Normal(2);
-            if ((this.Items[i][j]).equals("Norm3")) UI_set_to_Modify_Normal(3);
+            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Normal(1);
+            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Normal(2);
+            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Normal(3);
           }
 
           if (Bar_Switch.equals("First Vertex")) {
-            if ((this.Items[i][j]).equals("1stV")) UI_set_to_Modify_FirstVertex(1);
+            if ((this.Items[i][j]).equals("")) UI_set_to_Modify_FirstVertex(1);
           }
 
 
