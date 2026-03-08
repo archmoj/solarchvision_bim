@@ -2,7 +2,7 @@ class solarchvision_Sky3D {
 
   private final static String CLASS_STAMP = "Sky3D";
 
-  boolean displaySurface = false;
+  boolean displaySurface = true;
   int displayTessellation = 3; //3;
   float scale = 4000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 

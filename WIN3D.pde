@@ -54,7 +54,7 @@ class solarchvision_WIN3D {
 
   int FacesShade = SHADE.Surface_Materials; //Shade_Surface_White; // <<<<<
 
-  int Impact_TYPE = Impact_PASSIVE;
+  int Impact_TYPE = Impact_ACTIVE;
 
 
   PGraphics graphics;
