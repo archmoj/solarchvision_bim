@@ -198,14 +198,9 @@ class solarchvision_ROLLOUT {
         //WORLD.autoView = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0,0,1, "Map Auto Fit", WORLD.autoView, 0, 1, 1), 1));
         //WORLD.VIEW_id = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.numMaps - 1, 1), 1));
 
-        LocationLAT = this.Spinner(X_control, Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, LocationLAT_step);
-        LocationLON = this.Spinner(X_control, Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, LocationLON_step);
-        //LocationELE = this.Spinner(X_control, Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, LocationELE_step);
-
-        LocationLAT_step = this.Spinner(X_control, Y_control, 0, 0, 0, "Latitude_step", LocationLAT_step, 0.001, 10, -2);
-        LocationLON_step = this.Spinner(X_control, Y_control, 0, 0, 0, "Longitude_step", LocationLON_step, 0.001, 10, -2);
-        //LocationELE_step = this.Spinner(X_control, Y_control, 0, 0, 0, "Elevation_step", LocationELE_step, 0.125, 1024, -2);
-
+        LocationLAT = this.Spinner(X_control, Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, 0.01);
+        LocationLON = this.Spinner(X_control, Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, 0.01);
+        //LocationELE = this.Spinner(X_control, Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, 1);
       }
 
       if (this.child == 2) { // Stations
