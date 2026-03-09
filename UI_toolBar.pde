@@ -239,7 +239,6 @@ class solarchvision_UI_toolBar {
 
 
 
-
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr)) {
           String Bar_Switch = this.Items[i][this.Items[i].length - 2];
 
@@ -267,199 +266,200 @@ class solarchvision_UI_toolBar {
             } else {
               UI_menuBar.revise();
             }
-          }
+          } else {
 
-          if (mouseButton == RIGHT) {
+            if (mouseButton == RIGHT) {
 
-            if (this.Selection != i) {
-              this.Selection = i;
-            } else {
+              if (this.Selection != i) {
+                this.Selection = i;
+              } else {
 
-              int n = int(this.Items[i][0]);
+                int n = int(this.Items[i][0]);
 
-              n -= 1;
+                n -= 1;
 
-              if (n <= 0) n = this.Items[i].length - 3;
+                if (n <= 0) n = this.Items[i].length - 3;
 
-              this.Items[i][0] = nf(n, 0);
+                this.Items[i][0] = nf(n, 0);
 
-              j = n;
+                j = n;
+              }
+
+              if(HelperState) {
+                HelperState = false;
+                UI_menuBar.revise();
+              }
             }
 
-            if(HelperState) {
-              HelperState = false;
-              UI_menuBar.revise();
-            }
-          }
+            if (mouseButton == LEFT) {
 
-          if (mouseButton == LEFT) {
+              if (this.Selection != i) {
+                this.Selection = i;
+              } else {
 
-            if (this.Selection != i) {
-              this.Selection = i;
-            } else {
+                int n = int(this.Items[i][0]);
 
-              int n = int(this.Items[i][0]);
+                n += 1;
 
-              n += 1;
+                if (n >= this.Items[i].length - 2) n = 1;
 
-              if (n >= this.Items[i].length - 2) n = 1;
+                this.Items[i][0] = nf(n, 0);
 
-              this.Items[i][0] = nf(n, 0);
+                j = n;
+              }
 
-              j = n;
-            }
-
-            if(HelperState) {
-              HelperState = false;
-              UI_menuBar.revise();
-            }
-          }
-
-          fill(255, 127, 0);
-          noStroke();
-          rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
-
-          if (Bar_Switch.equals("Layer Type")) {
-            current_ObjectCategory = j - 1;
-
-            if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-              Select3D.convert_Vertex_to_softSelection();
+              if(HelperState) {
+                HelperState = false;
+                UI_menuBar.revise();
+              }
             }
 
-            ROLLOUT.revise();
-            SOLARCHVISION_view_changed();
+            fill(255, 127, 0);
+            noStroke();
+            rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
+
+            if (Bar_Switch.equals("Layer Type")) {
+              current_ObjectCategory = j - 1;
+
+              if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+                Select3D.convert_Vertex_to_softSelection();
+              }
+
+              ROLLOUT.revise();
+              SOLARCHVISION_view_changed();
+            }
+
+            if (Bar_Switch.equals("Model Type")) {
+              User3D.create_MeshOrSolid = j - 1;
+
+              ROLLOUT.revise();
+            }
+
+            if ((Bar_Switch.equals("Living Type")) || (Bar_Switch.equals("Building Type"))) {
+              if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allModel1Ds();
+              else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
+              else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
+              else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
+              else if ((this.Items[i][j]).equals("Polyline")) UI_set_to_Create_Polyline();
+              else if ((this.Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
+              else if ((this.Items[i][j]).equals("Pyramid")) UI_set_to_Create_Pyramid();
+              else if ((this.Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
+              else if ((this.Items[i][j]).equals("Polygon")) UI_set_to_Create_Polygon();
+              else if ((this.Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
+              else if ((this.Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
+              else if ((this.Items[i][j]).equals("House3")) UI_set_to_Create_House3();
+              else if ((this.Items[i][j]).equals("House2")) UI_set_to_Create_House2();
+              else if ((this.Items[i][j]).equals("House1")) UI_set_to_Create_House1();
+              else if ((this.Items[i][j]).equals("Box")) UI_set_to_Create_Box();
+              else if ((this.Items[i][j]).equals("Icosahedron")) UI_set_to_Create_Octahedron();
+              else if ((this.Items[i][j]).equals("Octahedron")) UI_set_to_Create_Octahedron();
+              else if ((this.Items[i][j]).equals("Sphere")) UI_set_to_Create_Sphere();
+              else if ((this.Items[i][j]).equals("Cylinder")) UI_set_to_Create_Cylinder();
+              else if ((this.Items[i][j]).equals("Cushion")) UI_set_to_Create_Cushion();
+              else if ((this.Items[i][j]).equals("Parametric")) UI_set_to_Create_Parametric(User3D.create_Parametric_Type);
+            }
+
+            if (Bar_Switch.equals("Change Seed/Material")) {
+              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Seed(0);
+              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Seed(1);
+              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Seed(2);
+              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Seed(3);
+            }
+
+            if (Bar_Switch.equals("Change Tessellation")) {
+              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Tessellation(0);
+              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Tessellation(1);
+              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Tessellation(2);
+              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Tessellation(3);
+            }
+
+            if (Bar_Switch.equals("Change Layer")) {
+              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Layer(0);
+              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Layer(1);
+              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Layer(2);
+              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Layer(3);
+            }
+
+            if (Bar_Switch.equals("Change Visibility")) {
+              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Visibility(0);
+              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Visibility(1);
+              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Visibility(2);
+              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Visibility(3);
+            }
+
+            if (Bar_Switch.equals("Change Weight")) {
+              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Weight(0);
+              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Weight(1);
+              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Weight(2);
+              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Weight(3);
+            }
+
+            if (Bar_Switch.equals("Normal")) {
+              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Normal(1);
+              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Normal(2);
+              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Normal(3);
+            }
+
+            if (Bar_Switch.equals("First Vertex")) {
+              if ((this.Items[i][j]).equals("")) UI_set_to_Modify_FirstVertex(1);
+            }
+
+
+
+            if (Bar_Switch.equals("Rotate")) UI_set_to_Modify_Rotate(j - 1);
+            if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);
+            if (Bar_Switch.equals("Scale")) UI_set_to_Modify_Scale(j - 1);
+            if (Bar_Switch.equals("Move")) UI_set_to_Modify_Move(j - 1);
+            if (Bar_Switch.equals("Get Length")) UI_set_to_Modify_GetLength(j - 1);
+            if (Bar_Switch.equals("Drop")) UI_set_to_Modify_Drop(j - 1);
+
+            if (Bar_Switch.equals("Projection Type")) UI_set_to_View_ProjectionType(j - 1);
+
+            if (Bar_Switch.equals("Pick Select")) UI_set_to_View_PickSelect(j - 1);
+            if (Bar_Switch.equals("Window Select")) UI_set_to_View_WindowSelect(j - 1);
+
+            if (Bar_Switch.equals("PivotX")) UI_set_to_View_PivotX(j - 2);
+            if (Bar_Switch.equals("PivotY")) UI_set_to_View_PivotY(j - 2);
+            if (Bar_Switch.equals("PivotZ")) UI_set_to_View_PivotZ(j - 2);
+
+            if (Bar_Switch.equals("Land Orbit")) UI_set_to_View_LandOrbit(0);
+
+            if (Bar_Switch.equals("Orbit")) UI_set_to_View_Orbit(j - 1);
+            if (Bar_Switch.equals("Camera Roll")) UI_set_to_View_CameraRoll(j - 1);
+            if (Bar_Switch.equals("Target Roll")) UI_set_to_View_TargetRoll(j - 1);
+
+            if (Bar_Switch.equals("Look At Origin")) UI_set_to_View_LookAtOrigin(j - 1);
+            if (Bar_Switch.equals("Look At Direction")) UI_set_to_View_LookAtDirection(j - 1);
+            if (Bar_Switch.equals("Look At Selection")) UI_set_to_View_LookAtSelection(j - 1);
+
+            if (Bar_Switch.equals("Pan")) {
+
+              UI_set_to_View_Pan(j - 1);
+            }
+
+            if (Bar_Switch.equals("Zoom")) {
+              UI_set_to_View_ZOOM(j - 1);
+
+              this.Items[i][0] = "1"; // << set it to default choice next time
+            }
+
+            if (Bar_Switch.equals("Camera Distance")) UI_set_to_View_CameraDistance(0);
+
+            if (Bar_Switch.equals("Dist XY")) UI_set_to_View_DistMouseXY(0);
+
+            if (Bar_Switch.equals("Dist Z")) UI_set_to_View_Truck(0);
+            if (Bar_Switch.equals("Truck")) UI_set_to_View_Truck(j - 1);
+
+            if (Bar_Switch.equals("3D Model Size")) UI_set_to_View_3DModelSize();
+
+            if (Bar_Switch.equals("Skydome Size")) UI_set_to_View_SkydomeSize();
+
+            if (Bar_Switch.equals("All Model Size")) UI_set_to_View_AllModelSize();
+
+            if (Bar_Switch.equals("View Layout")) UI_set_to_Viewport(j - 1);
+
+            if (Bar_Switch.equals("View Point")) UI_set_to_View_3DViewPoint(j - 1);
           }
-
-          if (Bar_Switch.equals("Model Type")) {
-            User3D.create_MeshOrSolid = j - 1;
-
-            ROLLOUT.revise();
-          }
-
-          if ((Bar_Switch.equals("Living Type")) || (Bar_Switch.equals("Building Type"))) {
-            if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allModel1Ds();
-            else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
-            else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
-            else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
-            else if ((this.Items[i][j]).equals("Polyline")) UI_set_to_Create_Polyline();
-            else if ((this.Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
-            else if ((this.Items[i][j]).equals("Pyramid")) UI_set_to_Create_Pyramid();
-            else if ((this.Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
-            else if ((this.Items[i][j]).equals("Polygon")) UI_set_to_Create_Polygon();
-            else if ((this.Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
-            else if ((this.Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
-            else if ((this.Items[i][j]).equals("House3")) UI_set_to_Create_House3();
-            else if ((this.Items[i][j]).equals("House2")) UI_set_to_Create_House2();
-            else if ((this.Items[i][j]).equals("House1")) UI_set_to_Create_House1();
-            else if ((this.Items[i][j]).equals("Box")) UI_set_to_Create_Box();
-            else if ((this.Items[i][j]).equals("Icosahedron")) UI_set_to_Create_Octahedron();
-            else if ((this.Items[i][j]).equals("Octahedron")) UI_set_to_Create_Octahedron();
-            else if ((this.Items[i][j]).equals("Sphere")) UI_set_to_Create_Sphere();
-            else if ((this.Items[i][j]).equals("Cylinder")) UI_set_to_Create_Cylinder();
-            else if ((this.Items[i][j]).equals("Cushion")) UI_set_to_Create_Cushion();
-            else if ((this.Items[i][j]).equals("Parametric")) UI_set_to_Create_Parametric(User3D.create_Parametric_Type);
-          }
-
-          if (Bar_Switch.equals("Change Seed/Material")) {
-            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Seed(0);
-            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Seed(1);
-            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Seed(2);
-            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Seed(3);
-          }
-
-          if (Bar_Switch.equals("Change Tessellation")) {
-            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Tessellation(0);
-            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Tessellation(1);
-            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Tessellation(2);
-            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Tessellation(3);
-          }
-
-          if (Bar_Switch.equals("Change Layer")) {
-            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Layer(0);
-            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Layer(1);
-            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Layer(2);
-            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Layer(3);
-          }
-
-          if (Bar_Switch.equals("Change Visibility")) {
-            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Visibility(0);
-            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Visibility(1);
-            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Visibility(2);
-            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Visibility(3);
-          }
-
-          if (Bar_Switch.equals("Change Weight")) {
-            if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Weight(0);
-            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Weight(1);
-            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Weight(2);
-            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Weight(3);
-          }
-
-          if (Bar_Switch.equals("Normal")) {
-            if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Normal(1);
-            if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Normal(2);
-            if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Normal(3);
-          }
-
-          if (Bar_Switch.equals("First Vertex")) {
-            if ((this.Items[i][j]).equals("")) UI_set_to_Modify_FirstVertex(1);
-          }
-
-
-
-          if (Bar_Switch.equals("Rotate")) UI_set_to_Modify_Rotate(j - 1);
-          if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);
-          if (Bar_Switch.equals("Scale")) UI_set_to_Modify_Scale(j - 1);
-          if (Bar_Switch.equals("Move")) UI_set_to_Modify_Move(j - 1);
-          if (Bar_Switch.equals("Get Length")) UI_set_to_Modify_GetLength(j - 1);
-          if (Bar_Switch.equals("Drop")) UI_set_to_Modify_Drop(j - 1);
-
-          if (Bar_Switch.equals("Projection Type")) UI_set_to_View_ProjectionType(j - 1);
-
-          if (Bar_Switch.equals("Pick Select")) UI_set_to_View_PickSelect(j - 1);
-          if (Bar_Switch.equals("Window Select")) UI_set_to_View_WindowSelect(j - 1);
-
-          if (Bar_Switch.equals("PivotX")) UI_set_to_View_PivotX(j - 2);
-          if (Bar_Switch.equals("PivotY")) UI_set_to_View_PivotY(j - 2);
-          if (Bar_Switch.equals("PivotZ")) UI_set_to_View_PivotZ(j - 2);
-
-          if (Bar_Switch.equals("Land Orbit")) UI_set_to_View_LandOrbit(0);
-
-          if (Bar_Switch.equals("Orbit")) UI_set_to_View_Orbit(j - 1);
-          if (Bar_Switch.equals("Camera Roll")) UI_set_to_View_CameraRoll(j - 1);
-          if (Bar_Switch.equals("Target Roll")) UI_set_to_View_TargetRoll(j - 1);
-
-          if (Bar_Switch.equals("Look At Origin")) UI_set_to_View_LookAtOrigin(j - 1);
-          if (Bar_Switch.equals("Look At Direction")) UI_set_to_View_LookAtDirection(j - 1);
-          if (Bar_Switch.equals("Look At Selection")) UI_set_to_View_LookAtSelection(j - 1);
-
-          if (Bar_Switch.equals("Pan")) {
-
-            UI_set_to_View_Pan(j - 1);
-          }
-
-          if (Bar_Switch.equals("Zoom")) {
-            UI_set_to_View_ZOOM(j - 1);
-
-            this.Items[i][0] = "1"; // << set it to default choice next time
-          }
-
-          if (Bar_Switch.equals("Camera Distance")) UI_set_to_View_CameraDistance(0);
-
-          if (Bar_Switch.equals("Dist XY")) UI_set_to_View_DistMouseXY(0);
-
-          if (Bar_Switch.equals("Dist Z")) UI_set_to_View_Truck(0);
-          if (Bar_Switch.equals("Truck")) UI_set_to_View_Truck(j - 1);
-
-          if (Bar_Switch.equals("3D Model Size")) UI_set_to_View_3DModelSize();
-
-          if (Bar_Switch.equals("Skydome Size")) UI_set_to_View_SkydomeSize();
-
-          if (Bar_Switch.equals("All Model Size")) UI_set_to_View_AllModelSize();
-
-          if (Bar_Switch.equals("View Layout")) UI_set_to_Viewport(j - 1);
-
-          if (Bar_Switch.equals("View Point")) UI_set_to_View_3DViewPoint(j - 1);
         }
 
 
