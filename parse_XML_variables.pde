@@ -11,7 +11,6 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   CLIMATIC_SolarForecast = XML_getInt(parent, "CLIMATIC_SolarForecast");
   CLIMATIC_WeatherForecast = XML_getInt(parent, "CLIMATIC_WeatherForecast");
-  SOLARCHVISION_automated = XML_getInt(parent, "SOLARCHVISION_automated");
 
   CLIMATE_TMYEPW_start = XML_getInt(parent, "CLIMATE_TMYEPW_start");
   CLIMATE_TMYEPW_end = XML_getInt(parent, "CLIMATE_TMYEPW_end");

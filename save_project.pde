@@ -18,7 +18,6 @@ void SOLARCHVISION_save_project (String myFile) {
 
     XML_setInt(parent, "CLIMATIC_SolarForecast", CLIMATIC_SolarForecast);
     XML_setInt(parent, "CLIMATIC_WeatherForecast", CLIMATIC_WeatherForecast);
-    XML_setInt(parent, "SOLARCHVISION_automated", SOLARCHVISION_automated);
 
     XML_setInt(parent, "CLIMATE_TMYEPW_start", CLIMATE_TMYEPW_start);
     XML_setInt(parent, "CLIMATE_TMYEPW_end", CLIMATE_TMYEPW_end);
