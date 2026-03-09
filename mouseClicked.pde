@@ -1282,7 +1282,7 @@ void mouseClicked () {
               UI_toolBar.revise();
             }
 
-            if (menu_option.equals("GoTo Selected Camera")) {
+            if (menu_option.equals("Camera View")) {
               if (Select3D.Camera_ids.length > 0) {
                 WIN3D.currentCamera = Select3D.Camera_ids[Select3D.Camera_ids.length - 1];
                 WIN3D.apply_currentCamera();
@@ -1897,39 +1897,39 @@ void mouseClicked () {
               Create3D.add_onLand(3); // 3 = 3D trees
             }
 
-            if (menu_option.equals("Erase All Model1Ds")) {
+            if (menu_option.equals("Delete All Model1Ds")) {
               allModel1Ds.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All Model2Ds")) {
+            if (menu_option.equals("Delete All Model2Ds")) {
               allModel2Ds.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All Groups")) {
+            if (menu_option.equals("Delete All Groups")) {
               allGroups.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All Solids")) {
+            if (menu_option.equals("Delete All Solids")) {
               allSolids.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All Sections")) {
+            if (menu_option.equals("Delete All Sections")) {
               allSections.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All Cameras")) {
+            if (menu_option.equals("Delete All Cameras")) {
               allCameras.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All Faces")) {
+            if (menu_option.equals("Delete All Faces")) {
               allFaces.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All Polylines")) {
+            if (menu_option.equals("Delete All Polylines")) {
               allPolylines.makeEmpty(0);
             }
 
-            if (menu_option.equals("Erase All")) {
+            if (menu_option.equals("Delete All")) {
               SOLARCHVISION_deleteAll();
             }
 
