@@ -1355,11 +1355,11 @@ class solarchvision_Create3D {
     float end_u = 1;
     float end_v = 1;
 
-    if ((n == 6) || (n == 7)) {
+    if ((n == 0) || (n == 6)) {
       start_u = 0;
     }
 
-    if ((n == 4) || (n == 5) || (n == 6) || (n == 7)) {
+    if ((n == 0) || (n == 4) || (n == 5) || (n == 6)) {
       stp_u = 0.05;
       stp_v = 0.05;
     }
@@ -1382,7 +1382,7 @@ class solarchvision_Create3D {
           float y = 0;
           float z = 0;
 
-          if (n == 7) { // LOGO:
+          if (n == 6) { // LOGO
             float x0 = cos(u * PI);
             float y0 = sin(v * PI);
             float z0 = -sin(u * PI) * cos(v * PI);
@@ -1396,7 +1396,7 @@ class solarchvision_Create3D {
               y = y0 / d;
               z = z0 / d;
             }
-          } else if (n == 6) {
+          } else if (n == 0) { // Cushion
             x = cos(u * PI);
             y = sin(v * PI);
             z = -sin(u * PI) * cos(v * PI);

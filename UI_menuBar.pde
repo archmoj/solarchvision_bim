@@ -317,7 +317,6 @@ class solarchvision_UI_menuBar {
       "Parametric 4",
       "Parametric 5",
       "Parametric 6",
-      "Parametric 7",
       "Get dX",
       "Get dY",
       "Get dZ",

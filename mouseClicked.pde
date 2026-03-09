@@ -937,11 +937,6 @@ void mouseClicked () {
               UI_toolBar.highlight("Parametric");
               UI_toolBar.revise();
             }
-            if (menu_option.equals("Parametric 7")) {
-              UI_set_to_Create_Parametric(7);
-              UI_toolBar.highlight("Parametric");
-              UI_toolBar.revise();
-            }
 
             if (menu_option.equals("Pyramid")) {
               UI_set_to_Create_Pyramid();
@@ -3120,7 +3115,7 @@ void mouseClicked () {
 
                       if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
 
-                        Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, 2, rot);
+                        Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, 0, rot);
                       } else if ((px == 2) && (py == 2) && (pz == CubePower)) {
 
                         Create3D.add_SuperCylinder(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_CylinderDegree, rot);
