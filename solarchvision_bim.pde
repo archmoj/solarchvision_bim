@@ -1065,7 +1065,7 @@ solarchvision_UITASK UITASK = new solarchvision_UITASK();
 int numberOfLayers = 0;
 
 solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
-  0.01,
+  0.1,
   0,
   0,
   "m",
