@@ -154,20 +154,19 @@ class solarchvision_ROLLOUT {
     if (this.parent == 0) { // Period & Scenarios
 
       if (this.child == 1) { // Time
+        STUDY.j_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Number of days to plot", STUDY.j_End, 1, 365, 1), 1));
 
-        STUDY.joinDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Join days", STUDY.joinDays, 1, 64, -2), 1));
-        STUDY.j_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Number of days to plot", STUDY.j_End, 1, 61, 1), 1));
+        STUDY.perDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Day step", STUDY.perDays, 1, 182, 1), 1));
 
-        TIME.beginDay = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Plot start date", TIME.beginDay, 0, 364, 1), 1));
+        STUDY.joinDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Join days", STUDY.joinDays, 1, 182, 1), 1));
 
-        //TIME.date = this.Spinner(X_control, Y_control, 1,0,0, "Solar date", TIME.date, 0, 364.5, 0.5);
-        TIME.date = int(this.Spinner(X_control, Y_control, 1, 0, 0, "Solar date", TIME.date, 0, 364, 1));
+        TIME.date = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Days past March equinox", TIME.date, 0, 364, 1), 1));
 
-        TIME.day = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Forecast day", TIME.day, 1, 31, 1), 1));
-        TIME.month = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Forecast month", TIME.month, 1, 12, 1), 1));
-        TIME.year = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Forecast year", TIME.year, 1953, 2100, 1), 1));
+        //TIME.beginDay = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Day of year (0-364)", TIME.beginDay, 0, 364, 1), 1));
 
-        ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
+        TIME.day = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Start day", TIME.day, 1, 31, 1), 1));
+        TIME.month = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Start month", TIME.month, 1, 12, 1), 1));
+        TIME.year = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Start year", TIME.year, 1953, 2100, 1), 1));
       }
 
       if (this.child == 2) { // Ranges
@@ -183,7 +182,7 @@ class solarchvision_ROLLOUT {
         SampleStation_Start = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
         SampleStation_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
 
-
+        ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
       }
 
       if (this.child == 3) { // Filters
@@ -740,7 +739,10 @@ class solarchvision_ROLLOUT {
     text(caption + ":", x - w1 - w2 + t_o, y - t_o);
 
     if (new_value != v) {
-      if (update1 != 0) STUDY.revise();
+      if (update1 != 0) {
+        UI_caseBar.revise();
+        STUDY.revise();
+      }
       if (update2 != 0) WIN3D.revise();
       if (update3 != 0) WORLD.revise();
     }

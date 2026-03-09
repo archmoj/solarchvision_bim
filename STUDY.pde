@@ -40,7 +40,7 @@ class solarchvision_STUDY {
   int j_Start = 0; // constant
   int j_End = 12; //8; //6; //2; //16; // Variable
 
-  float perDays = 30.5; //1; //45; //61; //30.5;
+  float perDays = 30; //1; //45; //61; //30.5;
   int joinDays = 30; //1; //30;//perDays; // it should be set up to 1 in order to plot only one day
 
   boolean PrintTtitle = true;
