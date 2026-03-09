@@ -243,6 +243,32 @@ class solarchvision_UI_toolBar {
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr)) {
           String Bar_Switch = this.Items[i][this.Items[i].length - 2];
 
+          if (mouseButton == CENTER) {
+            HelperState = !HelperState;
+            if(HelperState) {
+              // draw over menu bar
+              float HelperY = cy - cr - SOLARCHVISION_pixel_A;
+              float HelperH = SOLARCHVISION_pixel_A;
+              float HelperX = cx;
+              float HelperW = SOLARCHVISION_pixel_B * 4;
+              if(HelperX + HelperW > width) HelperX -= HelperW - SOLARCHVISION_pixel_B;
+
+              fill(127, 255, 0);
+              noStroke();
+              rect(HelperX, HelperY, HelperW, HelperH);
+
+              String HelperText = Bar_Switch;
+              if(this.Items[i].length > 4 && this.Items[i][j] != "") {
+                HelperText += ": " + this.Items[i][j];
+              }
+
+              fill(0);
+              text(HelperText, HelperX, HelperY, HelperW, HelperH);
+            } else {
+              UI_menuBar.revise();
+            }
+          }
+
           if (mouseButton == RIGHT) {
 
             if (this.Selection != i) {
@@ -285,32 +311,6 @@ class solarchvision_UI_toolBar {
 
             if(HelperState) {
               HelperState = false;
-              UI_menuBar.revise();
-            }
-          }
-
-          if (mouseButton == CENTER) {
-            HelperState = !HelperState;
-            if(HelperState) {
-              // draw over menu bar
-              float HelperY = cy - cr - SOLARCHVISION_pixel_A;
-              float HelperH = SOLARCHVISION_pixel_A;
-              float HelperX = cx;
-              float HelperW = SOLARCHVISION_pixel_B * 4;
-              if(HelperX + HelperW > width) HelperX -= HelperW - SOLARCHVISION_pixel_B;
-
-              fill(127, 255, 0);
-              noStroke();
-              rect(HelperX, HelperY, HelperW, HelperH);
-
-              String HelperText = Bar_Switch;
-              if(this.Items[i].length > 4 && this.Items[i][j] != "") {
-                HelperText += ": " + this.Items[i][j];
-              }
-
-              fill(0);
-              text(HelperText, HelperX, HelperY, HelperW, HelperH);
-            } else {
               UI_menuBar.revise();
             }
           }
