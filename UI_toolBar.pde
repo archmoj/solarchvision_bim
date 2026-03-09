@@ -257,12 +257,23 @@ class solarchvision_UI_toolBar {
               rect(HelperX, HelperY, HelperW, HelperH);
 
               String HelperText = Bar_Switch;
-              if(this.Items[i].length > 4 && this.Items[i][j] != "") {
+              if(
+                this.Items[i].length > 4 &&
+                this.Items[i][j] != "" &&
+                Bar_Switch != "View Point"
+              ) {
                 HelperText += ": " + this.Items[i][j];
               }
 
               fill(0);
               text(HelperText, HelperX, HelperY, HelperW, HelperH);
+
+              noFill();
+              stroke(127, 255, 0);
+              strokeWeight(4);
+              rect(cx + 4, cy - cr + 4, Item_width - 8, SOLARCHVISION_pixel_B - 8);
+              strokeWeight(0);
+
             } else {
               UI_menuBar.revise();
             }
