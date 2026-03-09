@@ -69,7 +69,7 @@ void SOLARCHVISION_save_project (String myFile) {
     XML_setInt(parent, "allMaterials.Selection", allMaterials.Selection);
     XML_setFloat(parent, "OBJECTS_scale", OBJECTS_scale);
 
-    XML_setInt(parent, "FrameVariation", FrameVariation);
+    XML_setInt(parent, "ViewLayout", ViewLayout);
     XML_setInt(parent, "Language_Active", Language_Active);
 
     XML_setInt(parent, "IMPACTS_displayDay", IMPACTS_displayDay);

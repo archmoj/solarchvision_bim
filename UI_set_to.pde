@@ -713,7 +713,7 @@ void UI_set_to_Viewport (int n) {
 
   updateBars = true;
 
-  FrameVariation = n;
+  ViewLayout = n;
   SOLARCHVISION_update_frame_layout();
 
   ROLLOUT.revise();

@@ -1654,11 +1654,11 @@ String[] STAT_N_Title = {
   "Maximum"
 };
 
-int FrameVariation = 0;
+int ViewLayout = 0;
 
 void SOLARCHVISION_update_frame_layout () {
 
-  if (FrameVariation == 0) {
+  if (ViewLayout == 0) {
 
     STUDY.include = true;
     WIN3D.include = true;
@@ -1683,7 +1683,7 @@ void SOLARCHVISION_update_frame_layout () {
     STUDY.dY = 1 * SOLARCHVISION_pixel_H;
     STUDY.view_R = float(STUDY.dY) / float(STUDY.dX);
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
-  } else if (FrameVariation == 1) {
+  } else if (ViewLayout == 1) {
 
     STUDY.include = false;
     WIN3D.include = true;
@@ -1695,7 +1695,7 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D.dY = 2 * SOLARCHVISION_pixel_H;
     WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
     WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
-  } else if (FrameVariation == 2) {
+  } else if (ViewLayout == 2) {
 
     STUDY.include = true;
     WIN3D.include = false;
@@ -1707,7 +1707,7 @@ void SOLARCHVISION_update_frame_layout () {
     STUDY.dY = 2 * SOLARCHVISION_pixel_H;
     STUDY.view_R = float(STUDY.dY) / float(STUDY.dX);
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
-  } else if (FrameVariation == 3) {
+  } else if (ViewLayout == 3) {
 
     STUDY.include = false;
     WIN3D.include = false;

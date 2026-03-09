@@ -59,7 +59,7 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
   allMaterials.Selection = XML_getInt(parent, "allMaterials.Selection");
   OBJECTS_scale = XML_getFloat(parent, "OBJECTS_scale");
 
-  FrameVariation = XML_getInt(parent, "FrameVariation");
+  ViewLayout = XML_getInt(parent, "ViewLayout");
   Language_Active = XML_getInt(parent, "Language_Active");
 
   IMPACTS_displayDay = XML_getInt(parent, "IMPACTS_displayDay");
