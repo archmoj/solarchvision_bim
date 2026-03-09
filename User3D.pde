@@ -22,7 +22,7 @@ class solarchvision_User3D {
   int create_SphereDegree = 4;
   int create_CylinderDegree = 24;
   int create_PolyDegree = 6;
-  int create_Parametric_Type = 0;
+  int create_Parametric_Type = 1;
   int create_Person_Type = 0;
   int create_Plant_Type = 0;
 

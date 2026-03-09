@@ -248,7 +248,7 @@ class solarchvision_ROLLOUT {
 
         User3D.create_PolyDegree = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
 
-        User3D.create_Parametric_Type = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Parametric_Type", User3D.create_Parametric_Type, 0, 7, 1), 1));
+        User3D.create_Parametric_Type = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Parametric_Type", User3D.create_Parametric_Type, 1, 7, 1), 1));
         User3D.create_Person_Type = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
         User3D.create_Plant_Type = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
 
