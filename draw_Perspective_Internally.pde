@@ -763,7 +763,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       };
 
-
       for (int i = 0; i < BoundingBox_Vertices.length; i++) {
 
         float x = BoundingBox_Vertices[i][0] - posX;
@@ -781,46 +780,59 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         BoundingBox_Vertices[i][2] = z;
       }
 
-      int[][] BoundingBox_Faces = {
-        {
-          3, 2, 1, 0
+      boolean isEmpty = true;
+      for (int i = 1; i < BoundingBox_Vertices.length; i++) {
+        if(
+          BoundingBox_Vertices[0][0] != BoundingBox_Vertices[i][0] ||
+          BoundingBox_Vertices[0][1] != BoundingBox_Vertices[i][1] ||
+          BoundingBox_Vertices[0][2] != BoundingBox_Vertices[i][2]
+        ) {
+          isEmpty = false;
         }
-        , {
-          0, 1, 5, 4
-        }
-        , {
-          1, 2, 6, 5
-        }
-        , {
-          2, 3, 7, 6
-        }
-        , {
-          3, 0, 4, 7
-        }
-        , {
-          4, 5, 6, 7
-        }
-      };
+      }
 
-      for (int f = 0; f < BoundingBox_Faces.length; f++) {
-
-        beginShape();
-
-        for (int g = 0; g < BoundingBox_Faces[f].length; g++) {
-
-          int vNo = BoundingBox_Faces[f][g];
-
-          float x = BoundingBox_Vertices[vNo][0] * OBJECTS_scale;
-          float y = BoundingBox_Vertices[vNo][1] * OBJECTS_scale;
-          float z = -BoundingBox_Vertices[vNo][2] * OBJECTS_scale;
-
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+      if(!isEmpty) {
+        int[][] BoundingBox_Faces = {
+          {
+            3, 2, 1, 0
           }
+          , {
+            0, 1, 5, 4
+          }
+          , {
+            1, 2, 6, 5
+          }
+          , {
+            2, 3, 7, 6
+          }
+          , {
+            3, 0, 4, 7
+          }
+          , {
+            4, 5, 6, 7
+          }
+        };
+
+        for (int f = 0; f < BoundingBox_Faces.length; f++) {
+
+          beginShape();
+
+          for (int g = 0; g < BoundingBox_Faces[f].length; g++) {
+
+            int vNo = BoundingBox_Faces[f][g];
+
+            float x = BoundingBox_Vertices[vNo][0] * OBJECTS_scale;
+            float y = BoundingBox_Vertices[vNo][1] * OBJECTS_scale;
+            float z = -BoundingBox_Vertices[vNo][2] * OBJECTS_scale;
+
+            float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
+
+            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+            }
+          }
+          endShape(CLOSE);
         }
-        endShape(CLOSE);
       }
 
       strokeWeight(0);
