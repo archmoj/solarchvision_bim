@@ -245,17 +245,6 @@ class solarchvision_UI_toolBar {
           if (mouseButton == CENTER) {
             HelperState = !HelperState;
             if(HelperState) {
-              // draw over menu bar
-              float HelperY = cy - cr - SOLARCHVISION_pixel_A;
-              float HelperH = SOLARCHVISION_pixel_A;
-              float HelperX = cx;
-              float HelperW = SOLARCHVISION_pixel_B * 4;
-              if(HelperX + HelperW > width) HelperX -= HelperW - SOLARCHVISION_pixel_B;
-
-              fill(127, 255, 0);
-              noStroke();
-              rect(HelperX, HelperY, HelperW, HelperH);
-
               String HelperText = Bar_Switch;
               if(
                 this.Items[i].length > 4 &&
@@ -264,6 +253,19 @@ class solarchvision_UI_toolBar {
               ) {
                 HelperText += ": " + this.Items[i][j];
               }
+
+              float estimatedWidth = HelperText.length() * MessageSize * 0.55;
+
+              // draw over menu bar
+              float HelperY = cy - cr - SOLARCHVISION_pixel_A;
+              float HelperH = SOLARCHVISION_pixel_A;
+              float HelperX = cx;
+              float HelperW = max(SOLARCHVISION_pixel_B * 2, estimatedWidth);
+              if(HelperX + HelperW > width) HelperX -= HelperW - SOLARCHVISION_pixel_B;
+
+              fill(127, 255, 0);
+              noStroke();
+              rect(HelperX, HelperY, HelperW, HelperH);
 
               fill(0);
               text(HelperText, HelperX, HelperY, HelperW, HelperH);
