@@ -860,93 +860,94 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       strokeWeight(5);
 
-      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
+      if(allGroups.Pivots.length > 0) {
+        for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
-        int OBJ_ID = Select3D.Group_ids[o];
+          int OBJ_ID = Select3D.Group_ids[o];
 
-        float[][] Pivot_Vertices = {
-          {
-            0, 0, 0
+          float[][] Pivot_Vertices = {
+            {
+              0, 0, 0
+            }
+            ,
+            {
+              1, 0, 0
+            }
+            ,
+            {
+              0, 1, 0
+            }
+            ,
+            {
+              0, 0, 1
+            }
+          };
+
+          float x0 = allGroups.Pivots[OBJ_ID][0];
+          float y0 = allGroups.Pivots[OBJ_ID][1];
+          float z0 = allGroups.Pivots[OBJ_ID][2];
+
+          for (int i = 0; i < Pivot_Vertices.length; i++) {
+
+            float x = Pivot_Vertices[i][0];
+            float y = Pivot_Vertices[i][1];
+            float z = Pivot_Vertices[i][2];
+
+            float r = 10; // <<<<<<<<< display size
+
+            x *= r;
+            y *= r;
+            z *= r;
+
+            float[] O = Select3D.translateInside_ReferencePivot(0, 0, 0);
+            float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
+
+            float dx = A[0] - O[0];
+            float dy = A[1] - O[1];
+            float dz = A[2] - O[2];
+
+            Pivot_Vertices[i][0] = x0 + dx;
+            Pivot_Vertices[i][1] = y0 + dy;
+            Pivot_Vertices[i][2] = z0 + dz;
           }
-          ,
-          {
-            1, 0, 0
-          }
-          ,
-          {
-            0, 1, 0
-          }
-          ,
-          {
-            0, 0, 1
-          }
-        };
 
 
-        float x0 = allGroups.Pivots[OBJ_ID][0];
-        float y0 = allGroups.Pivots[OBJ_ID][1];
-        float z0 = allGroups.Pivots[OBJ_ID][2];
+          int[][] Pivot_Lines = {
+            {
+              0, 1
+            }
+            , {
+              0, 2
+            }
+            , {
+              0, 3
+            }
+          };
 
-        for (int i = 0; i < Pivot_Vertices.length; i++) {
+          int f_start = 0;
+          int f_end = Pivot_Lines.length - 1;
 
-          float x = Pivot_Vertices[i][0];
-          float y = Pivot_Vertices[i][1];
-          float z = Pivot_Vertices[i][2];
+          for (int f = f_start; f <= f_end; f++) {
 
-          float r = 10; // <<<<<<<<< display size
+            int a = Pivot_Lines[f][0];
+            int b = Pivot_Lines[f][1];
 
-          x *= r;
-          y *= r;
-          z *= r;
+            float x1 = Pivot_Vertices[a][0] * OBJECTS_scale;
+            float y1 = Pivot_Vertices[a][1] * OBJECTS_scale;
+            float z1 = -Pivot_Vertices[a][2] * OBJECTS_scale;
 
-          float[] O = Select3D.translateInside_ReferencePivot(0, 0, 0);
-          float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
+            float x2 = Pivot_Vertices[b][0] * OBJECTS_scale;
+            float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;
+            float z2 = -Pivot_Vertices[b][2] * OBJECTS_scale;
 
-          float dx = A[0] - O[0];
-          float dy = A[1] - O[1];
-          float dz = A[2] - O[2];
+            float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);
+            float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
-          Pivot_Vertices[i][0] = x0 + dx;
-          Pivot_Vertices[i][1] = y0 + dy;
-          Pivot_Vertices[i][2] = z0 + dz;
-        }
-
-
-        int[][] Pivot_Lines = {
-          {
-            0, 1
-          }
-          , {
-            0, 2
-          }
-          , {
-            0, 3
-          }
-        };
-
-        int f_start = 0;
-        int f_end = Pivot_Lines.length - 1;
-
-        for (int f = f_start; f <= f_end; f++) {
-
-          int a = Pivot_Lines[f][0];
-          int b = Pivot_Lines[f][1];
-
-          float x1 = Pivot_Vertices[a][0] * OBJECTS_scale;
-          float y1 = Pivot_Vertices[a][1] * OBJECTS_scale;
-          float z1 = -Pivot_Vertices[a][2] * OBJECTS_scale;
-
-          float x2 = Pivot_Vertices[b][0] * OBJECTS_scale;
-          float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;
-          float z2 = -Pivot_Vertices[b][2] * OBJECTS_scale;
-
-          float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);
-          float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
-
-          if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
-              if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
-                line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
+            if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+              if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
+                if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
+                  line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
+                }
               }
             }
           }

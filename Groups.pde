@@ -34,42 +34,52 @@ class solarchvision_Groups {
 
 
   int getStart_Polyline (int n) {
+    if(this.Polylines.length < 1) return 0;
     return this.Polylines[n][0];
   }
 
   int getStop_Polyline (int n) {
+    if(this.Polylines.length < 1) return -1;
     return this.Polylines[n][1];
   }
 
   int getStart_Face (int n) {
+    if(this.Faces.length < 1) return 0;
     return this.Faces[n][0];
   }
 
   int getStop_Face (int n) {
+    if(this.Faces.length < 1) return -1;
     return this.Faces[n][1];
   }
 
   int getStart_Solid (int n) {
+    if(this.Solids.length < 1) return 0;
     return this.Solids[n][0];
   }
 
   int getStop_Solid (int n) {
+    if(this.Solids.length < 1) return -1;
     return this.Solids[n][1];
   }
 
   int getStart_Model1D (int n) {
+    if(this.Model1Ds.length < 1) return 0;
     return this.Model1Ds[n][0];
   }
 
   int getStop_Model1D (int n) {
+    if(this.Model1Ds.length < 1) return -1;
     return this.Model1Ds[n][1];
   }
 
   int getStart_Model2D (int n) {
+    if(this.Model2Ds.length < 1) return 0;
     return this.Model2Ds[n][0];
   }
 
   int getStop_Model2D (int n) {
+    if(this.Model2Ds.length < 1) return -1;
     return this.Model2Ds[n][1];
   }
 
