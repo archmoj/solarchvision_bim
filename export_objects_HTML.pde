@@ -145,11 +145,11 @@ void SOLARCHVISION_export_objects_HTML () {
 */
 
 
-  Earth3D.draw(TypeWindow.HTML);
+  // Earth3D.draw(TypeWindow.HTML);
 
-  Land3D.draw(TypeWindow.HTML);
+  // Land3D.draw(TypeWindow.HTML);
 
-  Tropo3D.draw(TypeWindow.HTML);
+  // Tropo3D.draw(TypeWindow.HTML);
 
   allSections.draw(TypeWindow.HTML);
 
