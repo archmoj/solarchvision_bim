@@ -470,6 +470,8 @@ class solarchvision_Sun3D {
 
     int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
 
+    float STUDY_perDays = STUDY.perDays;
+    if(STUDY_perDays <= STUDY.joinDays) STUDY_perDays = STUDY.joinDays + 0.5;
 
     int[] startK_endK = get_startK_endK();
     int start_k = startK_endK[0];
@@ -622,11 +624,11 @@ class solarchvision_Sun3D {
 
       for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-        float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(STUDY.perDays / STUDY.joinDays)][3];
+        float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(STUDY_perDays / STUDY.joinDays)][3];
 
-        for (int more_J = 0; more_J < STUDY.perDays; more_J += STUDY.joinDays) {
+        for (int more_J = 0; more_J < STUDY_perDays; more_J += STUDY.joinDays) {
 
-          now_j = (more_J + j * int(STUDY.perDays) + TIME.beginDay + 365) % 365;
+          now_j = (more_J + j * int(STUDY_perDays) + TIME.beginDay + 365) % 365;
 
           if (now_j >= 365) {
             now_j = now_j % 365;
@@ -700,7 +702,7 @@ class solarchvision_Sun3D {
                 now_i2 = (1 + now_i1) % 24;
                 float i_ratio = i - now_i1;
 
-                now_j = int(more_J + j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+                now_j = int(more_J + j * STUDY_perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
 
                 if (now_j >= 365) {
                   now_j = now_j % 365;
@@ -781,9 +783,9 @@ class solarchvision_Sun3D {
 
 
 
-        for (int more_J = 0; more_J < STUDY.perDays - STUDY.joinDays; more_J += STUDY.joinDays) { //count one less!
+        for (int more_J = 0; more_J < STUDY_perDays - STUDY.joinDays; more_J += STUDY.joinDays) { //count one less!
 
-          now_j = (more_J + j * int(STUDY.perDays) + TIME.beginDay + 365) % 365;
+          now_j = (more_J + j * int(STUDY_perDays) + TIME.beginDay + 365) % 365;
 
           if (now_j >= 365) {
             now_j = now_j % 365;
