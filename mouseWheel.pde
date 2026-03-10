@@ -262,7 +262,7 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D.UI_CurrentTask == UITASK.Rotate) { // rotate
 
-                float r = 5 * Wheel_Value;
+                float r = 5 * -Wheel_Value;
 
                 int the_Vector = Select3D.rotVector;
 
@@ -273,7 +273,7 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D.UI_CurrentTask == UITASK.Scale) { // scale
 
-                float s = pow(pow(2.0, 0.25), Wheel_Value);
+                float s = pow(pow(2.0, 0.25), -Wheel_Value);
 
                 float sx = s;
                 float sy = s;
@@ -302,7 +302,7 @@ void mouseWheel (MouseEvent event) {
 
               if (WIN3D.UI_CurrentTask == UITASK.Move) { // move
 
-                float d = Wheel_Value;
+                float d = -Wheel_Value;
 
                 float dx = d;
                 float dy = d;
@@ -333,7 +333,7 @@ void mouseWheel (MouseEvent event) {
               if (WIN3D.UI_TaskModifyParameter == 0) {
                 if (WIN3D.UI_CurrentTask >= UITASK.Seed_Material) { // other properties
 
-                  int p = int(Wheel_Value);
+                  int p = int(-Wheel_Value);
 
                   Edit3D.selection(p);
 
