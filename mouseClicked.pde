@@ -877,158 +877,100 @@ void mouseClicked () {
 
             if (menu_option.equals("3D-Tree")) {
               UI_set_to_Create_allModel1Ds();
-              UI_toolBar.highlight("3D-Tree");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("2D-Tree")) {
               UI_set_to_Create_Tree();
-              UI_toolBar.highlight("2D-Tree");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Person")) {
               UI_set_to_Create_Person();
-              UI_toolBar.highlight("Person");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Point")) {
               UI_set_to_Create_Vertex();
-              UI_toolBar.highlight("Point");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Polyline")) {
               UI_set_to_Create_Polyline();
-              UI_toolBar.highlight("Polyline");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Surface")) {
               UI_set_to_Create_Face();
-              UI_toolBar.highlight("Surface");
-              UI_toolBar.revise();
             }
 
 
             if (menu_option.equals("Parametric 1")) {
               UI_set_to_Create_Parametric(1);
-              UI_toolBar.highlight("Parametric");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Parametric 2")) {
               UI_set_to_Create_Parametric(2);
-              UI_toolBar.highlight("Parametric");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Parametric 3")) {
               UI_set_to_Create_Parametric(3);
-              UI_toolBar.highlight("Parametric");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Parametric 4")) {
               UI_set_to_Create_Parametric(4);
-              UI_toolBar.highlight("Parametric");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Parametric 5")) {
               UI_set_to_Create_Parametric(5);
-              UI_toolBar.highlight("Parametric");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Parametric 6")) {
               UI_set_to_Create_Parametric(6);
-              UI_toolBar.highlight("Parametric");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Pyramid")) {
               UI_set_to_Create_Pyramid();
-              UI_toolBar.highlight("Pyramid");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Plane")) {
               UI_set_to_Create_Plane();
-              UI_toolBar.highlight("Plane");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Polygon")) {
               UI_set_to_Create_Polygon();
-              UI_toolBar.highlight("Polygon");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Extrude")) {
               UI_set_to_Create_Extrude();
-              UI_toolBar.highlight("Extrude");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Hyper")) {
               UI_set_to_Create_Hyper();
-              UI_toolBar.highlight("Hyper");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("House3")) {
               UI_set_to_Create_House3();
-              UI_toolBar.highlight("House3");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("House2")) {
               UI_set_to_Create_House2();
-              UI_toolBar.highlight("House2");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("House1")) {
               UI_set_to_Create_House1();
-              UI_toolBar.highlight("House1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Box")) {
               UI_set_to_Create_Box();
-              UI_toolBar.highlight("Box");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Icosahedron")) {
               UI_set_to_Create_Icosahedron();
-              UI_toolBar.highlight("Icosahedron");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Octahedron")) {
               UI_set_to_Create_Octahedron();
-              UI_toolBar.highlight("Octahedron");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Sphere")) {
               UI_set_to_Create_Sphere();
-              UI_toolBar.highlight("Sphere");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Cylinder")) {
               UI_set_to_Create_Cylinder();
-              UI_toolBar.highlight("Cylinder");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Cushion")) {
               UI_set_to_Create_Cushion();
-              UI_toolBar.highlight("Cushion");
-              UI_toolBar.revise();
             }
 
 
 
             if (menu_option.equals("Drop on LandSurface")) {
               UI_set_to_Modify_Drop(0);
-              UI_toolBar.highlight("DrL±");
-              UI_toolBar.revise();
 
               Drop3D.selection();
             }
             if (menu_option.equals("Drop on ModelSurface (Down)")) {
               UI_set_to_Modify_Drop(1);
-              UI_toolBar.highlight("DrM-");
-              UI_toolBar.revise();
 
               Drop3D.selection();
             }
             if (menu_option.equals("Drop on ModelSurface (Up)")) {
               UI_set_to_Modify_Drop(2);
-              UI_toolBar.highlight("DrM+");
-              UI_toolBar.revise();
 
               Drop3D.selection();
             }
@@ -1037,156 +979,101 @@ void mouseClicked () {
 
             if (menu_option.equals("Get dX")) {
               UI_set_to_Modify_GetLength(0);
-              UI_toolBar.highlight("GLx");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Get dY")) {
               UI_set_to_Modify_GetLength(1);
-              UI_toolBar.highlight("GLy");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Get dZ")) {
               UI_set_to_Modify_GetLength(2);
-              UI_toolBar.highlight("GLz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Get dXYZ")) {
               UI_set_to_Modify_GetLength(3);
-              UI_toolBar.highlight("GL³");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Get dXY")) {
               UI_set_to_Modify_GetLength(4);
-              UI_toolBar.highlight("GL²");
-              UI_toolBar.revise();
             }
 
 
             if (menu_option.equals("MoveX")) {
               UI_set_to_Modify_Move(0);
-              UI_toolBar.highlight("MVx");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("MoveY")) {
               UI_set_to_Modify_Move(1);
-              UI_toolBar.highlight("MVy");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("MoveZ")) {
               UI_set_to_Modify_Move(2);
-              UI_toolBar.highlight("MVz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Move")) {
               UI_set_to_Modify_Move(3);
-              UI_toolBar.highlight("MV³");
-              UI_toolBar.revise();
             }
 
 
             if (menu_option.equals("ScaleX")) {
               UI_set_to_Modify_Scale(0);
-              UI_toolBar.highlight("SCx");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("ScaleY")) {
               UI_set_to_Modify_Scale(1);
-              UI_toolBar.highlight("SCy");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("ScaleZ")) {
               UI_set_to_Modify_Scale(2);
-              UI_toolBar.highlight("SCz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Scale")) {
               UI_set_to_Modify_Scale(3);
-              UI_toolBar.highlight("SC³");
-              UI_toolBar.revise();
             }
 
 
             if (menu_option.equals("PowerX")) {
               UI_set_to_Modify_Power(0);
-              UI_toolBar.highlight("PWx");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PowerY")) {
               UI_set_to_Modify_Power(1);
-              UI_toolBar.highlight("PWy");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PowerZ")) {
               UI_set_to_Modify_Power(2);
-              UI_toolBar.highlight("PWz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Power")) {
               UI_set_to_Modify_Power(3);
-              UI_toolBar.highlight("PW³");
-              UI_toolBar.revise();
             }
 
 
             if (menu_option.equals("RotateX")) {
               UI_set_to_Modify_Rotate(0);
-              UI_toolBar.highlight("RTx");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("RotateY")) {
               UI_set_to_Modify_Rotate(1);
-              UI_toolBar.highlight("RTy");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("RotateZ")) {
               UI_set_to_Modify_Rotate(2);
-              UI_toolBar.highlight("RTz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Rotate")) {
               UI_set_to_Modify_Rotate(2);
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Pivot")) {
               UI_set_to_Modify_Pivot(0);
-              UI_toolBar.highlight("SPvt0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick Pivot")) {
               UI_set_to_Modify_Pivot(1);
-              UI_toolBar.highlight("SPvt1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign Pivot")) {
               UI_set_to_Modify_Pivot(2);
-              UI_toolBar.highlight("SPvt2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Save Current ReferenceBox")) {
               Select3D.save_current_BoundingBox();
-              UI_toolBar.highlight("<pvt>");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Reset Saved ReferenceBox")) {
               Select3D.apply_saved_BoundingBox();
-              UI_toolBar.highlight(">pvt<");
-              UI_toolBar.revise();
 
               SOLARCHVISION_view_changed();
             }
             if (menu_option.equals("Use Selection ReferenceBox")) {
               Select3D.calculate_BoundingBox();
-              UI_toolBar.highlight("|pvt|");
-              UI_toolBar.revise();
 
               SOLARCHVISION_view_changed();
             }
             if (menu_option.equals("Use Origin ReferenceBox")) {
               Select3D.apply_origin_ReferenceBox();
-              UI_toolBar.highlight(".pvt.");
-              UI_toolBar.revise();
 
               SOLARCHVISION_view_changed();
             }
@@ -1215,20 +1102,14 @@ void mouseClicked () {
 
             if (menu_option.equals("Solid")) {
               UI_set_to_Create_Solid();
-              UI_toolBar.highlight("SLD");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Section")) {
               UI_set_to_Create_Section();
-              UI_toolBar.highlight("SEC");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Camera")) {
               UI_set_to_Create_Camera();
-              UI_toolBar.highlight("CAM");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Viewport >> Camera")) {
@@ -1305,124 +1186,80 @@ void mouseClicked () {
 
             if (menu_option.equals("Change Seed/Material")) {
               UI_set_to_Modify_Seed(0);
-              UI_toolBar.highlight("Mat0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick Seed/Material")) {
               UI_set_to_Modify_Seed(1);
-              UI_toolBar.highlight("Mat1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign Seed/Material")) {
               UI_set_to_Modify_Seed(2);
-              UI_toolBar.highlight("Mat2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change tessellation")) {
               UI_set_to_Modify_Tessellation(0);
-              UI_toolBar.highlight("Tes0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick tessellation")) {
               UI_set_to_Modify_Tessellation(1);
-              UI_toolBar.highlight("Tes1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign tessellation")) {
               UI_set_to_Modify_Tessellation(2);
-              UI_toolBar.highlight("Tes2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change Layer")) {
               UI_set_to_Modify_Layer(0);
-              UI_toolBar.highlight("Lyr0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick Layer")) {
               UI_set_to_Modify_Layer(1);
-              UI_toolBar.highlight("Lyr1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign Layer")) {
               UI_set_to_Modify_Layer(2);
-              UI_toolBar.highlight("Lyr2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change Visibility")) {
               UI_set_to_Modify_Visibility(0);
-              UI_toolBar.highlight("Vsb0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick Visibility")) {
               UI_set_to_Modify_Visibility(1);
-              UI_toolBar.highlight("Vsb1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign Visibility")) {
               UI_set_to_Modify_Visibility(2);
-              UI_toolBar.highlight("Vsb2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change Weight")) {
               UI_set_to_Modify_Weight(0);
-              UI_toolBar.highlight("Wgt0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick Weight")) {
               UI_set_to_Modify_Weight(1);
-              UI_toolBar.highlight("Wgt1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign Weight")) {
               UI_set_to_Modify_Weight(2);
-              UI_toolBar.highlight("Wgt2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Flip Normal")) {
               UI_set_to_Modify_Normal(1);
-              UI_toolBar.highlight("Norm1");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Set-Out Normal")) {
               UI_set_to_Modify_Normal(2);
-              UI_toolBar.highlight("Norm2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Set-In Normal")) {
               UI_set_to_Modify_Normal(3);
-              UI_toolBar.highlight("Norm3");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Get FirstVertex")) {
               UI_set_to_Modify_FirstVertex(1);
-              UI_toolBar.highlight("1stV");
-              UI_toolBar.revise();
             }
 
 
 
             if (menu_option.equals("Change DegreeMax")) {
               UI_set_to_Modify_DegreeMax(0);
-              UI_toolBar.highlight("dgMax0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick DegreeMax")) {
               UI_set_to_Modify_DegreeMax(1);
-              UI_toolBar.highlight("dgMax1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign DegreeMax")) {
               UI_set_to_Modify_DegreeMax(2);
-              UI_toolBar.highlight("dgMax2");
-              UI_toolBar.revise();
             }
 
 
@@ -1430,114 +1267,72 @@ void mouseClicked () {
 
             if (menu_option.equals("Change BranchTilt")) {
               UI_set_to_Modify_BranchTilt(0);
-              UI_toolBar.highlight("bTilt0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick BranchTilt")) {
               UI_set_to_Modify_BranchTilt(1);
-              UI_toolBar.highlight("bTilt1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign BranchTilt")) {
               UI_set_to_Modify_BranchTilt(2);
-              UI_toolBar.highlight("bTilt2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change BranchTwist")) {
               UI_set_to_Modify_BranchTwist(0);
-              UI_toolBar.highlight("bTwist0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick BranchTwist")) {
               UI_set_to_Modify_BranchTwist(1);
-              UI_toolBar.highlight("bTwist1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign BranchTwist")) {
               UI_set_to_Modify_BranchTwist(2);
-              UI_toolBar.highlight("bTwist2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change BranchRatio")) {
               UI_set_to_Modify_BranchRatio(0);
-              UI_toolBar.highlight("bRatio0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick BranchRatio")) {
               UI_set_to_Modify_BranchRatio(1);
-              UI_toolBar.highlight("bRatio1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign BranchRatio")) {
               UI_set_to_Modify_BranchRatio(2);
-              UI_toolBar.highlight("bRatio2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change TreeBase")) {
               UI_set_to_Modify_TreeBase(0);
-              UI_toolBar.highlight("tBase0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick TreeBase")) {
               UI_set_to_Modify_TreeBase(1);
-              UI_toolBar.highlight("tBase1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign TreeBase")) {
               UI_set_to_Modify_TreeBase(2);
-              UI_toolBar.highlight("tBase2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change TrunkSize")) {
               UI_set_to_Modify_TrunkSize(0);
-              UI_toolBar.highlight("trSz0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick TrunkSize")) {
               UI_set_to_Modify_TrunkSize(1);
-              UI_toolBar.highlight("trSz1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign TrunkSize")) {
               UI_set_to_Modify_TrunkSize(2);
-              UI_toolBar.highlight("trSz2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change LeafSize")) {
               UI_set_to_Modify_LeafSize(0);
-              UI_toolBar.highlight("lfSz0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick LeafSize")) {
               UI_set_to_Modify_LeafSize(1);
-              UI_toolBar.highlight("lfSz1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign LeafSize")) {
               UI_set_to_Modify_LeafSize(2);
-              UI_toolBar.highlight("lfSz2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Model1DsProps")) {
               UI_set_to_Modify_Model1DsProps(0);
-              UI_toolBar.highlight("allFP0");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick Model1DsProps")) {
               UI_set_to_Modify_Model1DsProps(1);
-              UI_toolBar.highlight("allFP1");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Assign Model1DsProps")) {
               UI_set_to_Modify_Model1DsProps(2);
-              UI_toolBar.highlight("allFP2");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Change DegreeMax")) {
@@ -1565,13 +1360,9 @@ void mouseClicked () {
 
             if (menu_option.equals("Orthographic")) {
               UI_set_to_View_ProjectionType(0);
-              UI_toolBar.highlight("P<>");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Perspective")) {
               UI_set_to_View_ProjectionType(1);
-              UI_toolBar.highlight("P><");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Invert Selection")) {
@@ -1726,34 +1517,22 @@ void mouseClicked () {
 
             if (menu_option.equals("Pick Select")) {
               UI_set_to_View_PickSelect(0);
-              UI_toolBar.highlight("±PS");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick Select+")) {
               UI_set_to_View_PickSelect(1);
-              UI_toolBar.highlight("+PS");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Pick Select-")) {
               UI_set_to_View_PickSelect(2);
-              UI_toolBar.highlight("-PS");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Window Select")) {
               UI_set_to_View_WindowSelect(0);
-              UI_toolBar.highlight("±WS");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Window Select+")) {
               UI_set_to_View_WindowSelect(1);
-              UI_toolBar.highlight("+WS");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Window Select-")) {
               UI_set_to_View_WindowSelect(2);
-              UI_toolBar.highlight("-WS");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Select Near Selected Vertices")) {
@@ -1931,269 +1710,169 @@ void mouseClicked () {
 
             if (menu_option.equals("TargetRoll")) {
               UI_set_to_View_TargetRoll(0);
-              UI_toolBar.highlight("TRL");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("TargetRollZ")) {
               UI_set_to_View_TargetRoll(1);
-              UI_toolBar.highlight("TRLz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("TargetRollXY")) {
               UI_set_to_View_TargetRoll(2);
-              UI_toolBar.highlight("TRLxy");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("CameraRoll")) {
               UI_set_to_View_CameraRoll(0);
-              UI_toolBar.highlight("CRL");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("CameraRollZ")) {
               UI_set_to_View_CameraRoll(1);
-              UI_toolBar.highlight("CRLz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("CameraRollXY")) {
               UI_set_to_View_CameraRoll(2);
-              UI_toolBar.highlight("CRLxy");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Orbit")) {
               UI_set_to_View_Orbit(0);
-              UI_toolBar.highlight("OR");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("OrbitZ")) {
               UI_set_to_View_Orbit(1);
-              UI_toolBar.highlight("ORz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("OrbitXY")) {
               UI_set_to_View_Orbit(2);
-              UI_toolBar.highlight("ORxy");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("LandOrbit")) {
               UI_set_to_View_LandOrbit(0);
-              UI_toolBar.highlight("LNOR");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Pan")) {
               UI_set_to_View_Pan(0);
-              UI_toolBar.highlight("Pan");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PanX")) {
               UI_set_to_View_Pan(1);
-              UI_toolBar.highlight("PanX");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PanY")) {
               UI_set_to_View_Pan(2);
-              UI_toolBar.highlight("PanY");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Zoom")) {
               UI_set_to_View_ZOOM(0);
-              UI_toolBar.highlight("±ZM");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Zoom as default")) {
               UI_set_to_View_ZOOM(1);
-              UI_toolBar.highlight("0ZM");
-              UI_toolBar.revise();
             }
 
 
             if (menu_option.equals("TruckX")) {
               UI_set_to_View_Truck(1);
-              UI_toolBar.highlight("DIx");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("TruckY")) {
               UI_set_to_View_Truck(2);
-              UI_toolBar.highlight("DIy");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("TruckZ")) {
               UI_set_to_View_Truck(0);
-              UI_toolBar.highlight("DIz");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("DistZ")) {
               UI_set_to_View_Truck(0);
-              UI_toolBar.highlight("±CDZ");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("CameraDistance")) {
               UI_set_to_View_CameraDistance(0);
-              UI_toolBar.highlight("±CDS");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("DistMouseXY")) {
               UI_set_to_View_DistMouseXY(0);
-              UI_toolBar.highlight("±CDM");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Look at origin")) {
               UI_set_to_View_LookAtOrigin(0);
-              UI_toolBar.highlight("LAO");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Look at direction")) {
               UI_set_to_View_LookAtDirection(0);
-              UI_toolBar.highlight("LAD");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Look at selection")) {
               UI_set_to_View_LookAtSelection(0);
-              UI_toolBar.highlight("LAS");
-              UI_toolBar.revise();
             }
 
 
             if (menu_option.equals("3DModelSize")) {
               UI_set_to_View_3DModelSize();
-              UI_toolBar.highlight("±SZ");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("SkydomeSize")) {
               UI_set_to_View_SkydomeSize();
-              UI_toolBar.highlight("±SK");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("AllModelSize")) {
               UI_set_to_View_AllModelSize();
-              UI_toolBar.highlight("±SA");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Display All Viewports")) {
               UI_set_to_Viewport(0);
-              UI_toolBar.highlight("AllViewports");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Enlarge 3D Viewport")) {
               UI_set_to_Viewport(1);
-              UI_toolBar.highlight("Expand3DView");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Enlarge Time Viewport")) {
               UI_set_to_Viewport(2);
-              UI_toolBar.highlight("ExpandTimeView");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Enlarge Map Viewport")) {
               UI_set_to_Viewport(3);
-              UI_toolBar.highlight("ExpandMapView");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("Top")) {
               UI_set_to_View_3DViewPoint(0);
-              UI_toolBar.highlight("Top");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Front")) {
               UI_set_to_View_3DViewPoint(1);
-              UI_toolBar.highlight("Front");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Left")) {
               UI_set_to_View_3DViewPoint(2);
-              UI_toolBar.highlight("Left");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Back")) {
               UI_set_to_View_3DViewPoint(3);
-              UI_toolBar.highlight("Back");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Right")) {
               UI_set_to_View_3DViewPoint(4);
-              UI_toolBar.highlight("Right");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("Bottom")) {
               UI_set_to_View_3DViewPoint(5);
-              UI_toolBar.highlight("Bottom");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("S.W.")) {
               UI_set_to_View_3DViewPoint(6);
-              UI_toolBar.highlight("S.W.");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("S.E.")) {
               UI_set_to_View_3DViewPoint(7);
-              UI_toolBar.highlight("S.E.");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("N.E.")) {
               UI_set_to_View_3DViewPoint(8);
-              UI_toolBar.highlight("N.E.");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("N.W.")) {
               UI_set_to_View_3DViewPoint(9);
-              UI_toolBar.highlight("N.W.");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("PivotX:Minimum")) {
               UI_set_to_View_PivotX(-1);
-              UI_toolBar.highlight("X<");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PivotX:Center")) {
               UI_set_to_View_PivotX(0);
-              UI_toolBar.highlight("X|");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PivotX:Maximum")) {
               UI_set_to_View_PivotX(1);
-              UI_toolBar.highlight("X>");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("PivotY:Minimum")) {
               UI_set_to_View_PivotY(-1);
-              UI_toolBar.highlight("Y<");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PivotY:Center")) {
               UI_set_to_View_PivotY(0);
-              UI_toolBar.highlight("Y|");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PivotY:Maximum")) {
               UI_set_to_View_PivotY(1);
-              UI_toolBar.highlight("Y>");
-              UI_toolBar.revise();
             }
 
             if (menu_option.equals("PivotZ:Minimum")) {
               UI_set_to_View_PivotZ(-1);
-              UI_toolBar.highlight("Z<");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PivotZ:Center")) {
               UI_set_to_View_PivotZ(0);
-              UI_toolBar.highlight("Z|");
-              UI_toolBar.revise();
             }
             if (menu_option.equals("PivotZ:Maximum")) {
               UI_set_to_View_PivotZ(1);
-              UI_toolBar.highlight("Z>");
-              UI_toolBar.revise();
             }
           }
         }
