@@ -3032,7 +3032,7 @@ void mouseClicked () {
                   float y = RxP[2];
                   float z = RxP[3];
 
-                  float rot = 0; //User3D.create_Orientation;
+                  float rot = User3D.create_Orientation;
                   if (rot == 360) rot = WIN3D.rotation_Z;
 
 
