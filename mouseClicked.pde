@@ -183,7 +183,7 @@ void mouseClicked () {
               ROLLOUT.revise();
             }
 
-            if (menu_option.equals("Pre-bake Selected Sections")) {
+            if (menu_option.equals("Prebake Selected Sections")) {
               allSolarImpacts.render_Shadows_selectedSections();
 
               SOLARCHVISION_view_changed();
@@ -611,7 +611,7 @@ void mouseClicked () {
             if (menu_option.equals("Render Viewport")) {
               SOLARCHVISION_RenderViewport();
             }
-            if (menu_option.equals("PreBake Viewport")) {
+            if (menu_option.equals("Prebake Viewport")) {
               SOLARCHVISION_preBakeViewport();
             }
 
