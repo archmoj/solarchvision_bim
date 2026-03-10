@@ -17,8 +17,8 @@ class solarchvision_SolarImpacts {
   float U = 500; // i.e. 500 = 500m
   float V = 500; // i.e. 500 = 500m
 
-  int RES1 = 100; //200;
-  int RES2 = 100; //200;
+  int RES1 = 200;
+  int RES2 = 200;
 
 
 
