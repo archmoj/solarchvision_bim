@@ -187,9 +187,6 @@ void mouseReleased () {
                   User3D.create_Length = abs(dx_rot);
                   User3D.create_Width = abs(dy_rot);
                 }
-                if (WIN3D.UI_TaskModifyParameter == 5) {
-                  User3D.create_Orientation = funcs.atan2_ang(y2 - y1, x2 - x1) + 90;
-                }
 
                 ROLLOUT.revise();
               }

@@ -334,8 +334,7 @@ class solarchvision_UI_menuBar {
       "Get dY",
       "Get dZ",
       "Get dXYZ",
-      "Get dXY",
-      "Get Angle"
+      "Get dXY"
     }
     ,
     {

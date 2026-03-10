@@ -1060,11 +1060,6 @@ void mouseClicked () {
               UI_toolBar.highlight("GL²");
               UI_toolBar.revise();
             }
-            if (menu_option.equals("Get Angle")) {
-              UI_set_to_Modify_GetLength(5);
-              UI_toolBar.highlight("GLa");
-              UI_toolBar.revise();
-            }
 
 
             if (menu_option.equals("MoveX")) {
@@ -3037,7 +3032,7 @@ void mouseClicked () {
                   float y = RxP[2];
                   float z = RxP[3];
 
-                  float rot = User3D.create_Orientation;
+                  float rot = 0; //User3D.create_Orientation;
                   if (rot == 360) rot = WIN3D.rotation_Z;
 
 
