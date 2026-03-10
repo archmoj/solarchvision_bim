@@ -52,40 +52,40 @@ class solarchvision_Edit3D {
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
         int n = allFaces.getMaterial(f);
         n += p;
-        if (n > 8) n = 0;
-        if (n < 0) n = 8;
+        if (n > 8) n = 8;
+        if (n < 0) n = 0;
         allFaces.setMaterial(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
         int n = allFaces.getTessellation(f);
         n += p;
-        if (n > 4) n = 0;
-        if (n < 0) n = 4;
+        if (n > 4) n = 4;
+        if (n < 0) n = 0;
         allFaces.setTessellation(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Layer) {
         int n = allFaces.getLayer(f);
         n += p;
-        if (n > 16) n = 0;
-        if (n < 0) n = 16;
+        if (n > 16) n = 16;
+        if (n < 0) n = 0;
         allFaces.setLayer(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
         int n = allFaces.getVisibility(f);
         n += p;
-        if (n > 2) n = 0;
-        if (n < 0) n = 2;
+        if (n > 2) n = 2;
+        if (n < 0) n = 0;
         allFaces.setVisibility(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Weight) {
         int n = allFaces.getWeight(f);
         n += p;
-        if (n > 20) n = -20;
-        if (n < -20) n = 20;
+        if (n > 20) n = 20;
+        if (n < -20) n = -20;
         allFaces.setWeight(f, n);
       }
     }
@@ -102,40 +102,40 @@ class solarchvision_Edit3D {
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
         int n = allPolylines.getMaterial(f);
         n += p;
-        if (n > 8) n = 0;
-        if (n < 0) n = 8;
+        if (n > 8) n = 8;
+        if (n < 0) n = 0;
         allPolylines.setMaterial(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
         int n = allPolylines.getTessellation(f);
         n += p;
-        if (n > 4) n = 0;
-        if (n < 0) n = 4;
+        if (n > 4) n = 4;
+        if (n < 0) n = 0;
         allPolylines.setTessellation(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Layer) {
         int n = allPolylines.getLayer(f);
         n += p;
-        if (n > 16) n = 0;
-        if (n < 0) n = 16;
+        if (n > 16) n = 16;
+        if (n < 0) n = 0;
         allPolylines.setLayer(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
         int n = allPolylines.getVisibility(f);
         n += p;
-        if (n > 2) n = 0;
-        if (n < 0) n = 2;
+        if (n > 2) n = 2;
+        if (n < 0) n = 0;
         allPolylines.setVisibility(f, n);
       }
 
       if (WIN3D.UI_CurrentTask == UITASK.Weight) {
         int n = allPolylines.getWeight(f);
         n += p;
-        if (n > 20) n = -20;
-        if (n < -20) n = 20;
+        if (n > 20) n = 20;
+        if (n < -20) n = -20;
         allPolylines.setWeight(f, n);
       }
     }
@@ -156,40 +156,40 @@ class solarchvision_Edit3D {
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
             int n = allFaces.getMaterial(f);
             n += p;
-            if (n > 8) n = 0;
-            if (n < 0) n = 8;
+            if (n > 8) n = 8;
+            if (n < 0) n = 0;
             allFaces.setMaterial(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
             int n = allFaces.getTessellation(f);
             n += p;
-            if (n > 4) n = 0;
-            if (n < 0) n = 4;
+            if (n > 4) n = 4;
+            if (n < 0) n = 0;
             allFaces.setTessellation(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Layer) {
             int n = allFaces.getLayer(f);
             n += p;
-            if (n > 16) n = 0;
-            if (n < 0) n = 16;
+            if (n > 16) n = 16;
+            if (n < 0) n = 0;
             allFaces.setLayer(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
             int n = allFaces.getVisibility(f);
             n += p;
-            if (n > 2) n = 0;
-            if (n < 0) n = 2;
+            if (n > 2) n = 2;
+            if (n < 0) n = 0;
             allFaces.setVisibility(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Weight) {
             int n = allFaces.getWeight(f);
             n += p;
-            if (n > 20) n = -20;
-            if (n < -20) n = 20;
+            if (n > 20) n = 20;
+            if (n < -20) n = -20;
             allFaces.setWeight(f, n);
           }
         }
@@ -201,40 +201,40 @@ class solarchvision_Edit3D {
           if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
             int n = allPolylines.getMaterial(f);
             n += p;
-            if (n > 8) n = 0;
-            if (n < 0) n = 8;
+            if (n > 8) n = 8;
+            if (n < 0) n = 0;
             allPolylines.setMaterial(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Tessellation) {
             int n = allPolylines.getTessellation(f);
             n += p;
-            if (n > 4) n = 0;
-            if (n < 0) n = 4;
+            if (n > 4) n = 4;
+            if (n < 0) n = 0;
             allPolylines.setTessellation(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Layer) {
             int n = allPolylines.getLayer(f);
             n += p;
-            if (n > 16) n = 0;
-            if (n < 0) n = 16;
+            if (n > 16) n = 16;
+            if (n < 0) n = 0;
             allPolylines.setLayer(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Visibility) {
             int n = allPolylines.getVisibility(f);
             n += p;
-            if (n > 2) n = 0;
-            if (n < 0) n = 2;
+            if (n > 2) n = 2;
+            if (n < 0) n = 0;
             allPolylines.setVisibility(f, n);
           }
 
           if (WIN3D.UI_CurrentTask == UITASK.Weight) {
             int n = allPolylines.getWeight(f);
             n += p;
-            if (n > 20) n = -20;
-            if (n < -20) n = 20;
+            if (n > 20) n = 20;
+            if (n < -20) n = -20;
             allPolylines.setWeight(f, n);
           }
         }
@@ -260,8 +260,8 @@ class solarchvision_Edit3D {
 
         q += p;
 
-        if (q < 0) q = 0;
-        if (q > 12) q = 12;
+        if (q < 0) q = 12;
+        if (q > 12) q = 0;
 
         allModel1Ds.setDegreeMax(OBJ_ID, q);
 
@@ -405,8 +405,8 @@ class solarchvision_Edit3D {
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
         int n = allCameras.get_type(f);
         n += p;
-        if (n > 1) n = 0;
-        if (n < 0) n = 1;
+        if (n > 1) n = 1;
+        if (n < 0) n = 0;
         allCameras.set_type(f, n);
 
         if (f == WIN3D.currentCamera) WIN3D.ViewType = allCameras.get_type(f);
@@ -427,8 +427,8 @@ class solarchvision_Edit3D {
       if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
         int n = allSections.get_type(f);
         n += p;
-        if (n > 3) n = 0;
-        if (n < 0) n = 3;
+        if (n > 3) n = 3;
+        if (n < 0) n = 0;
         allSections.set_type(f, n);
 
         allSolids_updated = true;
@@ -439,8 +439,8 @@ class solarchvision_Edit3D {
         if (p > 0) n *= 2;
         if (p < 0) n /= 2;
 
-        if (n > 1600) n = 100;
-        if (n < 100) n = 1600;
+        if (n > 1600) n = 1600;
+        if (n < 100) n = 100;
         allSections.set_res1(f, n);
 
         allSections.set_res2(f, n); // also modifying the other one
@@ -506,8 +506,4 @@ class solarchvision_Edit3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
   }
-
-
-
-
 }
