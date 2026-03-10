@@ -152,9 +152,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Move dx=? dy=? dz=?";
-
-      UI_toolBar.highlight("MV³");
-      UI_toolBar.revise();
     }
   }
 
@@ -230,9 +227,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     }
     else {
       return_message = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
-
-      UI_toolBar.highlight("SC³");
-      UI_toolBar.revise();
     }
   }
 
@@ -357,8 +351,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "2Dman m=? x=? y=? z=?";
 
       UI_set_to_Create_Person();
-      UI_toolBar.highlight("Person");
-      UI_toolBar.revise();
     }
   }
 
@@ -390,8 +382,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "2Dtree m=? x=? y=? z=? h=?";
 
       UI_set_to_Create_Tree();
-      UI_toolBar.highlight("2D-Tree");
-      UI_toolBar.revise();
     }
   }
 
@@ -441,8 +431,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "3Dtree m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
 
       UI_set_to_Create_allModel1Ds();
-      UI_toolBar.highlight("3D-Tree");
-      UI_toolBar.revise();
     }
   }
 
@@ -485,8 +473,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
 
       UI_set_to_Create_Box();
-      UI_toolBar.highlight("Box");
-      UI_toolBar.revise();
     }
   }
 
@@ -531,8 +517,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
 
       UI_set_to_Create_Box();
-      UI_toolBar.highlight("Box");
-      UI_toolBar.revise();
     }
   }
 
@@ -579,8 +563,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
       UI_set_to_Create_House3();
-      UI_toolBar.highlight("House3");
-      UI_toolBar.revise();
     }
   }
 
@@ -627,8 +609,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
       UI_set_to_Create_House2();
-      UI_toolBar.highlight("House2");
-      UI_toolBar.revise();
     }
   }
 
@@ -675,8 +655,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
       UI_set_to_Create_House2();
-      UI_toolBar.highlight("House1");
-      UI_toolBar.revise();
     }
   }
 
@@ -721,8 +699,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
 
       UI_set_to_Create_Cylinder();
-      UI_toolBar.highlight("Cylinder");
-      UI_toolBar.revise();
     }
   }
 
@@ -765,8 +741,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
 
       UI_set_to_Create_Sphere();
-      UI_toolBar.highlight("Sphere");
-      UI_toolBar.revise();
     }
   }
 
@@ -820,8 +794,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?";
 
       UI_set_to_Create_Sphere();
-      UI_toolBar.highlight("Sphere");
-      UI_toolBar.revise();
     }
   }
 
@@ -868,8 +840,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
 
       UI_set_to_Create_Cushion();
-      UI_toolBar.highlight("Cushion");
-      UI_toolBar.revise();
     }
   }
 
@@ -915,8 +885,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
 
       UI_set_to_Create_Octahedron();
-      UI_toolBar.highlight("Octahedron");
-      UI_toolBar.revise();
     }
   }
 
@@ -957,8 +925,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
 
       UI_set_to_Create_Icosahedron();
-      UI_toolBar.highlight("Icosahedron");
-      UI_toolBar.revise();
     }
   }
 
@@ -1003,8 +969,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
 
       UI_set_to_Create_Extrude();
-      UI_toolBar.highlight("Extrude");
-      UI_toolBar.revise();
     }
   }
 
@@ -1049,8 +1013,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
 
       UI_set_to_Create_Hyper();
-      UI_toolBar.highlight("Hyper");
-      UI_toolBar.revise();
     }
   }
 
@@ -1093,8 +1055,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
 
       UI_set_to_Create_Plane();
-      UI_toolBar.highlight("Polygon");
-      UI_toolBar.revise();
     }
   }
 
@@ -1492,8 +1452,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
 
       UI_set_to_Create_Solid();
-      UI_toolBar.highlight("SLD");
-      UI_toolBar.revise();
     }
   }
 
@@ -1536,8 +1494,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Section x=? y=? z=? r=? u=? v=? t=? i=? j=?";
 
       UI_set_to_Create_Section();
-      UI_toolBar.highlight("SEC");
-      UI_toolBar.revise();
     }
   }
 
@@ -1580,8 +1536,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Camera px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=? t=?";
 
       UI_set_to_Create_Camera();
-      UI_toolBar.highlight("CAM");
-      UI_toolBar.revise();
     }
   }
 
@@ -1622,8 +1576,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Polyline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
 
       UI_set_to_Create_Polyline();
-      UI_toolBar.highlight("Polyline");
-      UI_toolBar.revise();
     }
   }
 
@@ -1669,8 +1621,6 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       return_message = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
 
       UI_set_to_Create_Polyline();
-      UI_toolBar.highlight("Polyline");
-      UI_toolBar.revise();
     }
   }
 
@@ -1762,220 +1712,138 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
   else if (Command_CAPITAL.equals("DISTZ")) {
     UI_set_to_View_Truck(0);
-    UI_toolBar.highlight("±CDZ");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("DISTC")) {
     UI_set_to_View_CameraDistance(0);
-    UI_toolBar.highlight("±CDS");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("DISTP")) {
     UI_set_to_View_DistMouseXY(0);
-    UI_toolBar.highlight("±CDM");
-    UI_toolBar.revise();
   }
 
 
   else if (Command_CAPITAL.equals("SIZEALL")) {
     UI_set_to_View_AllModelSize();
-    UI_toolBar.highlight("±SA");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("SIZESKY")) {
     UI_set_to_View_SkydomeSize();
-    UI_toolBar.highlight("±SK");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("SIZE3D")) {
     UI_set_to_View_3DModelSize();
-    UI_toolBar.highlight("±SZ");
-    UI_toolBar.revise();
   }
 
   else if (Command_CAPITAL.equals("ALLVIEWPORTS")) {
     UI_set_to_Viewport(0);
-    UI_toolBar.highlight("AllViewports");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("ENLARGE3D")) {
     UI_set_to_Viewport(1);
-    UI_toolBar.highlight("Expand3DView");
-    UI_toolBar.revise();
   }
 
   else if (Command_CAPITAL.equals("LOOKORG")) {
     UI_set_to_View_LookAtOrigin(0);
-    UI_toolBar.highlight("LAO");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("LOOKDIR")) {
     UI_set_to_View_LookAtDirection(0);
-    UI_toolBar.highlight("LAD");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("LOOKSEL")) {
     UI_set_to_View_LookAtSelection(0);
-    UI_toolBar.highlight("LAS");
-    UI_toolBar.revise();
   }
 
   else if (Command_CAPITAL.equals("TRUCKZ")) {
     UI_set_to_View_Truck(0);
-    UI_toolBar.highlight("DIz");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("TRUCKX")) {
     UI_set_to_View_Truck(1);
-    UI_toolBar.highlight("DIx");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("TRUCKY")) {
     UI_set_to_View_Truck(2);
-    UI_toolBar.highlight("DIy");
-    UI_toolBar.revise();
   }
 
   else if (Command_CAPITAL.equals("TARGETROLL")) {
     UI_set_to_View_TargetRoll(0);
-    UI_toolBar.highlight("TRL");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("TARGETROLLZ")) {
     UI_set_to_View_TargetRoll(1);
-    UI_toolBar.highlight("TRLz");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("TARGETROLLXY")) {
     UI_set_to_View_TargetRoll(2);
-    UI_toolBar.highlight("TRLxy");
-    UI_toolBar.revise();
   }
 
   else if (Command_CAPITAL.equals("CAMERAROLL")) {
     UI_set_to_View_CameraRoll(0);
-    UI_toolBar.highlight("CRL");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("CAMERAROLLZ")) {
     UI_set_to_View_CameraRoll(1);
-    UI_toolBar.highlight("CRLz");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("CAMERAROLLXY")) {
     UI_set_to_View_CameraRoll(2);
-    UI_toolBar.highlight("CRLxy");
-    UI_toolBar.revise();
   }
 
 
   else if (Command_CAPITAL.equals("ORBIT")) {
     UI_set_to_View_Orbit(0);
-    UI_toolBar.highlight("OR");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("ORBITZ")) {
     UI_set_to_View_Orbit(1);
-    UI_toolBar.highlight("ORz");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("ORBITXY")) {
     UI_set_to_View_Orbit(2);
-    UI_toolBar.highlight("ORxy");
-    UI_toolBar.revise();
   }
 
   else if (Command_CAPITAL.equals("LANDORBIT")) {
     UI_set_to_View_LandOrbit(0);
-    UI_toolBar.highlight("LNOR");
-    UI_toolBar.revise();
   }
 
   else if (Command_CAPITAL.equals("PAN")) {
     UI_set_to_View_Pan(0);
-    UI_toolBar.highlight("Pan");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("PANX")) {
     UI_set_to_View_Pan(1);
-    UI_toolBar.highlight("PanX");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("PANY")) {
     UI_set_to_View_Pan(2);
-    UI_toolBar.highlight("PanY");
-    UI_toolBar.revise();
   }
 
   else if (Command_CAPITAL.equals("ZOOM")) {
     UI_set_to_View_ZOOM(0);
-    UI_toolBar.highlight("±ZM");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("NORMALZOOM")) {
     UI_set_to_View_ZOOM(1);
-    UI_toolBar.highlight("0ZM");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("ORTHOGRAPHIC")) {
     UI_set_to_View_ProjectionType(0);
-    UI_toolBar.highlight("P<>");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("PERSPECTIVE")) {
     UI_set_to_View_ProjectionType(1);
-    UI_toolBar.highlight("P><");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("TOP")) {
     UI_set_to_View_3DViewPoint(0);
-    UI_toolBar.highlight("Top");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("FRONT")) {
     UI_set_to_View_3DViewPoint(1);
-    UI_toolBar.highlight("Front");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("LEFT")) {
     UI_set_to_View_3DViewPoint(2);
-    UI_toolBar.highlight("Left");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("BACK")) {
     UI_set_to_View_3DViewPoint(3);
-    UI_toolBar.highlight("Back");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("RIGHT")) {
     UI_set_to_View_3DViewPoint(4);
-    UI_toolBar.highlight("Right");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("BOTTOM")) {
     UI_set_to_View_3DViewPoint(5);
-    UI_toolBar.highlight("Bottom");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("S.W.")) {
     UI_set_to_View_3DViewPoint(6);
-    UI_toolBar.highlight("S.W.");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("S.E.")) {
     UI_set_to_View_3DViewPoint(7);
-    UI_toolBar.highlight("S.E.");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("N.E.")) {
     UI_set_to_View_3DViewPoint(8);
-    UI_toolBar.highlight("N.E.");
-    UI_toolBar.revise();
   }
   else if (Command_CAPITAL.equals("N.W.")) {
     UI_set_to_View_3DViewPoint(9);
-    UI_toolBar.highlight("N.W.");
-    UI_toolBar.revise();
   }
 
 
