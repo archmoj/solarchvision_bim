@@ -875,7 +875,7 @@ void mouseClicked () {
               WORLD.revise();
             }
 
-            if (menu_option.equals("3D-Tree")) {
+            if (menu_option.equals("1D-Tree")) {
               UI_set_to_Create_allModel1Ds();
             }
             if (menu_option.equals("2D-Tree")) {
@@ -1667,8 +1667,8 @@ void mouseClicked () {
               Create3D.add_onLand(2); // 2 = 2D trees
             }
 
-            if (menu_option.equals("Add 3D-Trees on Land")) {
-              Create3D.add_onLand(3); // 3 = 3D trees
+            if (menu_option.equals("Add 1D-Trees on Land")) {
+              Create3D.add_onLand(3); // 3 = 1D trees
             }
 
             if (menu_option.equals("Delete All Model1Ds")) {

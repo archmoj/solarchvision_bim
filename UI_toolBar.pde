@@ -86,7 +86,7 @@ class solarchvision_UI_toolBar {
     ,
 
     {
-      "3", "3D-Tree", "2D-Tree", "Person", "Living Type", "1.5"
+      "3", "1D-Tree", "2D-Tree", "Person", "Living Type", "1.5"
     }
     ,
     {
@@ -349,7 +349,7 @@ class solarchvision_UI_toolBar {
             }
 
             if ((Bar_Switch.equals("Living Type")) || (Bar_Switch.equals("Building Type"))) {
-              if ((this.Items[i][j]).equals("3D-Tree")) UI_set_to_Create_allModel1Ds();
+              if ((this.Items[i][j]).equals("1D-Tree")) UI_set_to_Create_allModel1Ds();
               else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
               else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
               else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();

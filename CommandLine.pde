@@ -348,13 +348,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       SOLARCHVISION_view_changed();
     }
     else {
-      return_message = "2Dman m=? x=? y=? z=?";
+      return_message = "Person m=? x=? y=? z=?";
 
       UI_set_to_Create_Person();
     }
   }
 
-  else if (Command_CAPITAL.equals("TREE")) {
+  else if (Command_CAPITAL.equals("TREE2")) {
     if (parts.length > 1) {
       String t = "TREES";
       int m = 0;
@@ -379,13 +379,13 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "2Dtree m=? x=? y=? z=? h=?";
+      return_message = "Tree2 m=? x=? y=? z=? h=?";
 
       UI_set_to_Create_Tree();
     }
   }
 
-  else if (Command_CAPITAL.equals("FRACTALTREE")) {
+  else if (Command_CAPITAL.equals("TREE1")) {
     if (parts.length > 1) {
       int m = 0;
       int seed = 0; //PlantSeed
@@ -428,7 +428,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       }
     }
     else {
-      return_message = "3Dtree m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
+      return_message = "Tree1 m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
 
       UI_set_to_Create_allModel1Ds();
     }

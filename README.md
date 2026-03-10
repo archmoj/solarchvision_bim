@@ -166,7 +166,7 @@ Please note that in above example the `Setup | 3D-model 7` option is selected. A
 You can choose a desired object such as Houses, Parametric Surfaces,
 `Box`, `Cushion`, `Cylinder`, `Sphere`, `Octahedron`, `Icosahedron`,
 `Pyramid`, `Hyper`, `Plane`, `Polygon`, `Extrude`, `Surface`, `Polyline`,
-`Point`, `3D-Tree`, `2D-Tree`, `Person`, and `Camera` from the
+`Point`, `1D-Tree`, `2D-Tree`, `Person`, and `Camera` from the
 `3D-create` menu.
 
 After selecting the desired object, you can use either right-click or
@@ -497,18 +497,18 @@ Scale s=? sx=? sy=? sz=? x=? y=? z=?
 -   `PERSON`: Creates a person
 
 ```
-2Dman m=? x=? y=? z=?
+Person m=? x=? y=? z=?
 ```
 
--   `TREE`: Creates a 2D tree using vertical and horizontal sections
+-   `TREE2`: Creates a 2D tree using vertical and horizontal sections
 
 ```
-2Dtree m=? x=? y=? z=? h=?
+Tree2 m=? x=? y=? z=? h=?
 ```
 
--   `FRACTALTREE`: Creates a parametric fractal tree in 3D
+-   `TREE1`: Creates a parametric fractal tree in 3D
 ```
-3Dtree m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?
+Tree1 m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?
 ```
 
 -   `BOX2P`: Creates a box using two corner points
