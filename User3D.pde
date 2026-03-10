@@ -13,7 +13,7 @@ class solarchvision_User3D {
   float create_Width = 10;
   float create_Height = 10;
   float create_Volume = 0; //3000;
-  float create_Orientation = 360; //0; // 360: random
+  float create_Orientation = 0; // 360: viewport angle
   float create_powX = CubePower;
   float create_powY = CubePower;
   float create_powZ = CubePower;
