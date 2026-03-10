@@ -612,7 +612,6 @@ void UI_set_to_View_LookAtSelection (int n) {
 
   { // automatically set another choice of ineterest
     UI_set_to_View_CameraDistance(0);
-    UI_toolBar.highlight("±CDS");
     UI_toolBar.revise();
   }
 
@@ -640,7 +639,6 @@ void UI_set_to_View_LookAtOrigin (int n) {
     // automatically set another choice of ineterest
 
     UI_set_to_View_Truck(0);
-    UI_toolBar.highlight("±CDZ");
     UI_toolBar.revise();
   }
 
