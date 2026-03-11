@@ -156,7 +156,7 @@ class solarchvision_ROLLOUT {
       if (this.child == 1) { // Time
         STUDY.j_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Number of days to plot", STUDY.j_End, 1, 365, 1), 1));
 
-        STUDY.perDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Day step", STUDY.perDays, 1, 182, 1), 1));
+        STUDY.perDays = funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Day step", STUDY.perDays, 1, 182.5, 0.5), 0.5);
 
         STUDY.joinDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Join days", STUDY.joinDays, 1, 182, 1), 1));
 
