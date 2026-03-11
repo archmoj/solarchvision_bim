@@ -311,8 +311,8 @@ class solarchvision_ROLLOUT {
 
         //Land3D.loadTextures = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
         //Land3D.loadMesh = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
-        //Land3D.skipStart = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1), 1));
-        //Land3D.skipEnd = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1), 1));
+        Land3D.skipStart = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1), 1));
+        Land3D.skipEnd = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1), 1));
         //Land3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
         //Land3D.displayTexture = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture, 0, 1, 1), 1));
         //Land3D.displayPoints = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));
