@@ -304,7 +304,10 @@ class solarchvision_Land3D {
 
         for (int j = 0; j < this.num_columns; j++) {
 
-          if (the_link.equals("")) the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
+          if (the_link.equals("")) {
+            //the_link = "https://maps.googleapis.com/maps/api/elevation/xml?locations=";
+            the_link = "https://api.terraintap.com/elevation/xml?locations=";
+          }
           else the_link += "%7C"; //"|";
 
           double[] LON_LAT = getLandGrid(i,j);
@@ -314,6 +317,9 @@ class solarchvision_Land3D {
 
           the_link += txt_latitude + "," + txt_longitude;
         }
+
+        // Add your API key for api.terraintap.com
+        the_link += "&key=";
 
         println("Try downloading: " + the_link);
 
