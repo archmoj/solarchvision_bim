@@ -2370,11 +2370,11 @@ class solarchvision_Create3D {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_Mesh2(7, 6, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
 
-      allGroups.beginNewGroup(0, -20, 0, 1, 1, 1, 0, 0, 0);
-      this.add_PolygonHyper(7, 4, 0, 1, 0, 0, 0, -20, 4, 8, 8, 4, 0);
+      allGroups.beginNewGroup(0, -15, 0, 1, 1, 1, 0, 0, 0);
+      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, -15, 0, 5, 4, 0, 0);
 
-      allGroups.beginNewGroup(15, 15, 0, 1, 1, 1, 0, 0, 0);
-      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 15, 15, 0, 5, 4, 0, 0);
+      allGroups.beginNewGroup(0, 15, 0, 1, 1, 1, 0, 0, 0);
+      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, 15, 0, 5, 4, 0, 0);
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_House2_Core(7, 4, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
