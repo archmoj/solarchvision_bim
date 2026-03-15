@@ -424,7 +424,6 @@ class solarchvision_UI_menuBar {
       "Offset(expand) Vertices",
       "Offset(shrink) Vertices",
       "——————————————————",
-      "Extrude Polyline Edges",
       "Extrude Face Edges",
       "Optimize Faces",
       "Auto-Normal Selected Faces",

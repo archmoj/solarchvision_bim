@@ -1620,9 +1620,6 @@ void mouseClicked () {
             if (menu_option.equals("Extrude Face Edges")) {
               Modify3D.extrudeFaceEdges_Selection();
             }
-            if (menu_option.equals("Extrude Polyline Edges")) {
-              Modify3D.extrudePolylineEdges_Selection();
-            }
             if (menu_option.equals("Offset(above) Vertices")) {
               Modify3D.offsetVertices_Selection(0, abs(User3D.modify_OffsetAmount));
             }
