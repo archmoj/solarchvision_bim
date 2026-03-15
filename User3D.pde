@@ -44,8 +44,8 @@ class solarchvision_User3D {
   int create_MeshOrSolid = 0; // 0:Mesh 1:Solid
   int create_Snap = 0;
 
-  int modify_TessellateRows = 6;
-  int modify_TessellateColumns = 30;
+  int modify_TessellateRows = 3;
+  int modify_TessellateColumns = 2;
   float modify_OpenningDepth = 1; // 1 = 1m
   float modify_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings)
   float modify_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
