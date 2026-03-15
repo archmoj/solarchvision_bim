@@ -654,7 +654,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
     else {
       return_message = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
-      UI_set_to_Create_House2();
+      UI_set_to_Create_House1();
     }
   }
 
