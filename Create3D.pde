@@ -453,7 +453,7 @@ class solarchvision_Create3D {
       int t4 = allPoints.create(vx[7], vy[7], vz[7]);
 
       int m1 = allPoints.create(vx[8], vy[8], vz[8]);
-      int m2 = allPoints.create(vx[9], vy[9], vz[9]);
+      int m2 = (rx == ry) ? m1 : allPoints.create(vx[9], vy[9], vz[9]);
 
 
       if (m == -1) current_Material = 0;
@@ -478,8 +478,11 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           m1, m2, t3, t4
         };
+        int[] newFace_nodes3 = {
+          m1, t3, t4
+        };
         if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
-        allFaces.create(newFace_nodes);
+        allFaces.create(rx == ry ? newFace_nodes3 : newFace_nodes);
       }
       {//East
         int[] newFace_nodes = {
@@ -513,8 +516,11 @@ class solarchvision_Create3D {
         int[] newFace_nodes = {
           m2, m1, t1, t2
         };
+        int[] newFace_nodes3 = {
+          m1, t1, t2
+        };
         if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
-        allFaces.create(newFace_nodes);
+        allFaces.create(rx == ry ? newFace_nodes3 : newFace_nodes);
       }
       {//Bottom
         int[] newFace_nodes = {
