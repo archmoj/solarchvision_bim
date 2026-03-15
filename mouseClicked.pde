@@ -1630,10 +1630,10 @@ void mouseClicked () {
               Modify3D.offsetVertices_Selection(0, -abs(User3D.modify_OffsetAmount));
             }
             if (menu_option.equals("Offset(expand) Vertices")) {
-              Modify3D.offsetVertices_Selection(1, -abs(User3D.modify_OffsetAmount));
+              Modify3D.offsetVertices_Selection(1, abs(User3D.modify_OffsetAmount));
             }
             if (menu_option.equals("Offset(shrink) Vertices")) {
-              Modify3D.offsetVertices_Selection(1, abs(User3D.modify_OffsetAmount));
+              Modify3D.offsetVertices_Selection(1, -abs(User3D.modify_OffsetAmount));
             }
 
             if (menu_option.equals("Reverse Visibility of All Faces")) {
