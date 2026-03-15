@@ -1534,9 +1534,9 @@ class solarchvision_Modify3D {
 
       this.selectFacesAndGroups_fromCurrentSelection();
 
-      Select3D.deselect_Faces();
-
       int[] primary_list = Select3D.Face_ids;
+
+      Select3D.deselect_Faces();
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
