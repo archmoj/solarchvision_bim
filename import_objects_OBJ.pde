@@ -1,5 +1,7 @@
 void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
 
+  println("Importing OBJ. Please wait...");
+
   if (m == -1) current_Material = 0;
   else current_Material = m;
 
@@ -17,12 +19,17 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
   //println("lines = ", FileALL.length);
 
   float Progress = 0;
+  float printed_Progress = 0;
 
   for (int f = 0; f < FileALL.length; f++) {
 
-    if (1 + Progress < 100 * f / float(FileALL.length)) {
-      Progress = 100 * f / float(FileALL.length);
-      //println("Progress:", int(Progress), "%");
+    Progress = 100 * f / float(FileALL.length);
+    float delta = floor(Progress - printed_Progress);
+    if(delta >= 1) {
+      for(int c = 0; c < delta; c++) {
+        print("█");
+      }
+      printed_Progress = floor(Progress);
     }
 
     lineSTR = FileALL[f];
@@ -83,5 +90,5 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
     }
   }
 
-  println("Progress: 100 %");
+  println();
 }

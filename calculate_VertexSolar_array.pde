@@ -2,6 +2,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
   cursor(WAIT);
 
+  println("Calculating direct and diffuse values at each vertex. Please wait...");
+
   VertexSolar_resize_array();
 
   float keep_STUDY_perDays = STUDY.perDays;
@@ -33,12 +35,17 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   int now_j = 0;
 
   float Progress = 0;
+  float printed_Progress = 0;
 
   for (int f = 0; f < allFaces.nodes.length; f++) {
 
-    if (1 + Progress < 100 * f / float(allFaces.nodes.length)) {
-      Progress = 100 * f / float(allFaces.nodes.length);
-      //println("Progress:", int(Progress), "%");
+    Progress = 100 * f / float(allFaces.nodes.length);
+    float delta = floor(Progress - printed_Progress);
+    if(delta >= 1) {
+      for(int c = 0; c < delta; c++) {
+        print("█");
+      }
+      printed_Progress = floor(Progress);
     }
 
     int vsb = allFaces.getVisibility(f);
@@ -350,6 +357,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
       }
     }
   }
+
+  println();
 
   cursor(ARROW);
 }

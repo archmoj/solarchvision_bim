@@ -1,6 +1,8 @@
 void SOLARCHVISION_RenderViewport () {
 
-  println("Render started!");
+  cursor(WAIT);
+
+  println("Rendering Viewport. Please wait...");
 
   int PAL_type = 0;
   int PAL_direction = 1;
@@ -26,21 +28,23 @@ void SOLARCHVISION_RenderViewport () {
   Image_RGBA.loadPixels();
 
   float Progress = 0;
-
-
-
+  float printed_Progress = 0;
 
   for (int np = 0; np < (RES1 * RES2); np++) {
+    Progress = 100 * np / float(RES1 * RES2);
+    float delta = floor(Progress - printed_Progress);
+    if(delta >= 1) {
+      for(int c = 0; c < delta; c++) {
+        print("█");
+      }
+      printed_Progress = floor(Progress);
+    }
+
     int Image_X = np % RES1;
     int Image_Y = np / RES1;
 
     Image_X -= 0.5 * WIN3D.dX;
     Image_Y -= 0.5 * WIN3D.dY;
-
-    if (1 + Progress < 100 * np / float(RES1 * RES2)) {
-      Progress = 100 * np / float(RES1 * RES2);
-      //println("Progress:", int(Progress), "%");
-    }
 
     float[] ray_direction = new float [3];
 
@@ -207,10 +211,13 @@ void SOLARCHVISION_RenderViewport () {
     else Image_RGBA.pixels[np] = color(0,0,0,0);
   }
 
+  println();
+
   Image_RGBA.updatePixels();
 
   String myFile = Folder_ScreenShots + "/" + createStamp(1, "Render") + ".png";
   Image_RGBA.save(myFile);
   println("File created:" + myFile);
 
+  cursor(ARROW);
 }

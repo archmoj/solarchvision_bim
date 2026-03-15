@@ -2,7 +2,7 @@ void SOLARCHVISION_preBakeViewport () {
 
   cursor(WAIT);
 
-  println("PreBaking Direct and Diffuse Models. Please wait...");
+  println("PreBaking for Direct and Diffuse models. Please wait...");
 
   Camera_Variation = 0;
 
@@ -83,14 +83,19 @@ void SOLARCHVISION_preBakeViewport () {
   }
 
   float Progress = 0;
+  float printed_Progress = 0;
 
   for (int np = 0; np < (RES1 * RES2); np++) {
     int Image_X = np % RES1;
     int Image_Y = np / RES1;
 
-    if (1 + Progress < 100 * np / float(RES1 * RES2)) {
-      Progress = 100 * np / float(RES1 * RES2);
-      //println("Progress:", int(Progress), "%");
+    Progress = 100 * np / float(RES1 * RES2);
+    float delta = floor(Progress - printed_Progress);
+    if(delta >= 1) {
+      for(int c = 0; c < delta; c++) {
+        print("█");
+      }
+      printed_Progress = floor(Progress);
     }
 
     Image_X -= 0.5 * WIN3D.dX;
@@ -270,7 +275,7 @@ void SOLARCHVISION_preBakeViewport () {
 
   }
 
-  println("Progress: 100 %");
+  println();
 
   n_Map = -1;
   for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
