@@ -413,7 +413,7 @@ class solarchvision_WIN3D {
       }
 
       this.graphics.noStroke();
-      this.graphics.fill(0);
+      this.graphics.fill(127);
 
       String txt = "";
 
