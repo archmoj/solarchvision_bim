@@ -358,6 +358,10 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
     }
   }
 
+  for(int c = 0; c < floor(100 - printed_Progress); c++) {
+    print("█");
+  }
+
   println();
 
   cursor(ARROW);

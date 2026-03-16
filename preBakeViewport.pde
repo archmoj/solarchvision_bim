@@ -275,6 +275,9 @@ void SOLARCHVISION_preBakeViewport () {
 
   }
 
+  for(int c = 0; c < floor(100 - printed_Progress); c++) {
+    print("█");
+  }
   println();
 
   n_Map = -1;

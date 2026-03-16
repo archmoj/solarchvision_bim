@@ -211,6 +211,9 @@ void SOLARCHVISION_RenderViewport () {
     else Image_RGBA.pixels[np] = color(0,0,0,0);
   }
 
+  for(int c = 0; c < floor(100 - printed_Progress); c++) {
+    print("█");
+  }
   println();
 
   Image_RGBA.updatePixels();

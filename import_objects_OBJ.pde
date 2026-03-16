@@ -89,6 +89,9 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
       allFaces.create(newFace);
     }
   }
-
+  
+  for(int c = 0; c < floor(100 - printed_Progress); c++) {
+    print("█");
+  }
   println();
 }
