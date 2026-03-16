@@ -36,7 +36,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
   float Progress = 0;
   float printed_Progress = 0;
-
+  progressBarHeader();
   for (int f = 0; f < allFaces.nodes.length; f++) {
 
     Progress = 100 * f / float(allFaces.nodes.length);

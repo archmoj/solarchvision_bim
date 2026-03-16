@@ -29,7 +29,7 @@ void SOLARCHVISION_RenderViewport () {
 
   float Progress = 0;
   float printed_Progress = 0;
-
+  progressBarHeader();
   for (int np = 0; np < (RES1 * RES2); np++) {
     Progress = 100 * np / float(RES1 * RES2);
     float delta = floor(Progress - printed_Progress);

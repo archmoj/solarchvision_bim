@@ -84,7 +84,7 @@ void SOLARCHVISION_preBakeViewport () {
 
   float Progress = 0;
   float printed_Progress = 0;
-
+  progressBarHeader();
   for (int np = 0; np < (RES1 * RES2); np++) {
     int Image_X = np % RES1;
     int Image_Y = np / RES1;

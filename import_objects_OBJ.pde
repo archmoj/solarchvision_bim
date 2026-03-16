@@ -20,7 +20,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
 
   float Progress = 0;
   float printed_Progress = 0;
-
+  progressBarHeader();
   for (int f = 0; f < FileALL.length; f++) {
 
     Progress = 100 * f / float(FileALL.length);
