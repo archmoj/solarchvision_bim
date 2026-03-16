@@ -207,14 +207,14 @@ void SOLARCHVISION_preBakeViewport () {
           //if (SunMask <= 0) SunMask = 0; // removes backing faces
 
           // when SHD = 0;
-          Direct_RGBA[n_Map][0].pixels[np] = color(255 * SunMask, 255);
+          Direct_RGBA[n_Map][0].pixels[np] = (SunR[3] < 0) ? color(0, 255) : color(255 * SunMask, 255);
 
           // when SHD = 1;
 
           lastHitDirect[n_Map] = SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, lastHitDirect[n_Map]);
 
           if (lastHitDirect[n_Map] == 0) {
-            Direct_RGBA[n_Map][1].pixels[np] = color(255 * SunMask, 255);
+            Direct_RGBA[n_Map][1].pixels[np] = (SunR[3] < 0) ? color(0, 255) : color(255 * SunMask, 255);
           }
           else Direct_RGBA[n_Map][1].pixels[np] = color(0, 255);
         }
