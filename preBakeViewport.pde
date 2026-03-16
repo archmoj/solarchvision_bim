@@ -150,35 +150,6 @@ void SOLARCHVISION_preBakeViewport () {
       float[] face_norm = {RxP[5], RxP[6], RxP[7]};
       face_norm = funcs.vec3_unit(face_norm);
 
-      if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces
-        face_norm[0] *= -1;
-        face_norm[1] *= -1;
-        face_norm[2] *= -1;
-      }
-
-      float Alpha = 90 - funcs.acos_ang(face_norm[2]);
-      float Beta = 180 - funcs.atan2_ang(face_norm[0], face_norm[1]);
-
-      float[] VECT = {
-        0, 0, 0
-      };
-
-      if (abs(Alpha) > 89.99) {
-        VECT[0] = 0;
-        VECT[1] = 0;
-        VECT[2] = 1;
-      } else if (Alpha < -89.99) {
-        VECT[0] = 0;
-        VECT[1] = 0;
-        VECT[2] = -1;
-      } else {
-        VECT[0] = funcs.sin_ang(Beta);
-        VECT[1] = -funcs.cos_ang(Beta);
-        VECT[2] = funcs.tan_ang(Alpha);
-      }
-
-      VECT = funcs.vec3_unit(VECT);
-
       {
 
         for (int n_Ray = 0; n_Ray < DiffuseVectors.length; n_Ray++) {
@@ -192,7 +163,7 @@ void SOLARCHVISION_preBakeViewport () {
           ray_direction[1] = DiffuseVectors[n_Ray][1];
           ray_direction[2] = DiffuseVectors[n_Ray][2];
 
-          float SkyMask = funcs.vec_dot(funcs.vec3_unit(DiffuseVectors[n_Ray]), funcs.vec3_unit(VECT));
+          float SkyMask = funcs.vec_dot(funcs.vec3_unit(DiffuseVectors[n_Ray]), funcs.vec3_unit(face_norm));
           //if (SkyMask <= 0) SkyMask = 0; // removes backing faces
 
           // when SHD = 0;
@@ -232,7 +203,7 @@ void SOLARCHVISION_preBakeViewport () {
           ray_direction[1] = DirectVector[1];
           ray_direction[2] = DirectVector[2];
 
-          float SunMask = funcs.vec_dot(funcs.vec3_unit(DirectVector), funcs.vec3_unit(VECT));
+          float SunMask = funcs.vec_dot(funcs.vec3_unit(DirectVector), funcs.vec3_unit(face_norm));
           //if (SunMask <= 0) SunMask = 0; // removes backing faces
 
           // when SHD = 0;
