@@ -106,7 +106,7 @@ void SOLARCHVISION_RenderViewport () {
 
 
       float Alpha = 90 - funcs.acos_ang(face_norm[2]);
-      float Beta = 180 - funcs.atan2_ang(face_norm[0], face_norm[1]);
+      //float Beta = 180 - funcs.atan2_ang(face_norm[0], face_norm[1]);
 
       float valuesSUM_RAD = 0;
       float valuesSUM_EFF_P = 0;
@@ -121,32 +121,12 @@ void SOLARCHVISION_RenderViewport () {
 
       //float[] SunR = funcs.SunPositionRadiation( DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k]);
       float[] SunR = funcs.SunPositionRadiation(0, 12, 0);
-      float[] VECT = {
-        0, 0, 0
-      };
-
-      if (abs(Alpha) > 89.99) {
-        VECT[0] = 0;
-        VECT[1] = 0;
-        VECT[2] = 1;
-      } else if (Alpha < -89.99) {
-        VECT[0] = 0;
-        VECT[1] = 0;
-        VECT[2] = -1;
-      } else {
-        VECT[0] = funcs.sin_ang(Beta);
-        VECT[1] = -funcs.cos_ang(Beta);
-        VECT[2] = funcs.tan_ang(Alpha);
-      }
-
-      VECT = funcs.vec3_unit(VECT);
-
 
       float[] SunV = {
         SunR[1], SunR[2], SunR[3]
       };
 
-      float SunMask = funcs.vec_dot(funcs.vec3_unit(SunV), funcs.vec3_unit(VECT));
+      float SunMask = funcs.vec_dot(funcs.vec3_unit(SunV), funcs.vec3_unit(face_norm));
       if (SunMask <= 0) SunMask = 0; // removes backing faces
 
       float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
