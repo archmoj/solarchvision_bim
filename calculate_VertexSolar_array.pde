@@ -34,6 +34,11 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   int now_i = 0;
   int now_j = 0;
 
+  int[][] PROCESSED_DAILY_SCENARIOS = {
+    {
+    }
+  };
+
   float Progress = 0;
   float printed_Progress = 0;
   progressBarHeader();
@@ -158,7 +163,20 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
               float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-              int[] Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+              int[] Normals_COL_N;
+
+              if (PROCESSED_DAILY_SCENARIOS.length > j - J_START + 1) {
+                Normals_COL_N = PROCESSED_DAILY_SCENARIOS[j - J_START + 1];
+              } else {
+                Normals_COL_N = new int [9];
+                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+
+                int[][] newNormals = {
+                  Normals_COL_N
+                };
+                PROCESSED_DAILY_SCENARIOS = (int[][]) concat(PROCESSED_DAILY_SCENARIOS, newNormals);
+                //println("length of PROCESSED_DAILY_SCENARIOS =", PROCESSED_DAILY_SCENARIOS.length);
+              }
 
               int nk = Normals_COL_N[l];
 
