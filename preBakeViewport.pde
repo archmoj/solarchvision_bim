@@ -164,7 +164,7 @@ void SOLARCHVISION_preBakeViewport () {
           ray_direction[2] = DiffuseVectors[n_Ray][2];
 
           float SkyMask = funcs.vec_dot(funcs.vec3_unit(DiffuseVectors[n_Ray]), funcs.vec3_unit(face_norm));
-          //if (SkyMask <= 0) SkyMask = 0; // removes backing faces
+          if (SkyMask < 0) SkyMask = 0; // removes backing faces
 
           // when SHD = 0;
           Diffuse_Matrix[0][np] += SkyMask / float(DiffuseVectors.length);
