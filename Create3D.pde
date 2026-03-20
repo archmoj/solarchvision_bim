@@ -2339,6 +2339,8 @@ class solarchvision_Create3D {
 
   void add_DefaultModel (int n) {
 
+    VertexSolar_rebuild_array = true;
+
     if (Land3D.loadMesh) {
 
       Create3D.add_onLand(1); // 1 = people
