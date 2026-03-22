@@ -58,8 +58,8 @@ void SOLARCHVISION_load_project (String myFile) {
     allSolarImpacts.rebuild_Image_array = true;
     allWindRoses.rebuild_Image_array = true;
 
-    VertexSolar_rebuild_array = true;
-    GlobalSolar_rebuild_array = true;
+    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
 
     VertexSolar_resize_array();
     GlobalSolar_resize_array();

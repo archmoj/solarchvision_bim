@@ -216,8 +216,8 @@ class solarchvision_STUDY {
            */
           DevelopData_update = true;
 
-          VertexSolar_rebuild_array = true;
-          GlobalSolar_rebuild_array = true;
+          if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+          if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
           allSolarImpacts.rebuild_Image_array = true;
           allWindRoses.rebuild_Image_array = true;
           allSections.resize_solarImpact_array();

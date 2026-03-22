@@ -447,8 +447,8 @@ void draw () {
         if (pre_STUDY_j_End != STUDY.j_End) {
           UI_caseBar.revise();
 
-          VertexSolar_rebuild_array = true;
-          GlobalSolar_rebuild_array = true;
+          if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+          if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
           allSolarImpacts.rebuild_Image_array = true;
           allWindRoses.rebuild_Image_array = true;
 
@@ -2499,8 +2499,9 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 1)) {
 
-    VertexSolar_rebuild_array = true;
-    GlobalSolar_rebuild_array = true;
+    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+
     allWindRoses.rebuild_Image_array = true;
     allSolarImpacts.rebuild_Image_array = true;
 
