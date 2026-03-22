@@ -2339,7 +2339,8 @@ class solarchvision_Create3D {
 
   void add_DefaultModel (int n) {
 
-    VertexSolar_rebuild_array = true;
+    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+
 
     if (Land3D.loadMesh) {
 
