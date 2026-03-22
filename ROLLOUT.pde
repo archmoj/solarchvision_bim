@@ -31,7 +31,7 @@ class solarchvision_ROLLOUT {
 
   int cX = 2 * SOLARCHVISION_pixel_W;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
-  int dX = 1 * SOLARCHVISION_pixel_H;
+  int dX = 430;
   int dY = 2 * SOLARCHVISION_pixel_H;
   float view_R = float(dY) / float(dX);
   float view_S = SOLARCHVISION_pixel_H / 325.0; //1; //0.75; // ?????

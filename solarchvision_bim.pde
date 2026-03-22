@@ -1,46 +1,26 @@
 import processing.pdf.*;
 
-int SOLARCHVISION_pixel_H = 400;
-int SOLARCHVISION_pixel_W = 724;
-
 float MessageSize = 16.0;
 int SOLARCHVISION_pixel_A = 24; // menu bar
 int SOLARCHVISION_pixel_B = 42; // 3D tool bar
 int SOLARCHVISION_pixel_C = 72; // case bar
 int SOLARCHVISION_pixel_D = 72; // command bar
 
-/*
-  If you modify the above values (e.g., scale them by a constant factor)
-  to fit your screen resolution, ensure that you also update the size() call
-  inside setup() by recalculating the width and height using the same scale factor
-  or according to the formulas below:
-
-  width: 2 * SOLARCHVISION_pixel_W + ROLLOUT.dX
-  height: SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D
-
-  You should search for the size call like this and modify that.
+int SOLARCHVISION_pixel_H = 100; // just an initial value
+int SOLARCHVISION_pixel_W = 100; // just an initial value
 
 void setup () {
-  size(1846, 1016, P2D);
+  fullScreen(P2D);
 
-}
-*/
+  SOLARCHVISION_pixel_W = (width - 430) / 2; // 430 is ROLLOUT.dX
+  SOLARCHVISION_pixel_H = (height - (SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) / 2;
 
-class solarchvision_MESSAGE {
-
-  private final static String CLASS_STAMP = "MESSAGE";
-
-  int cX = 0;
-  int cY = 495;
-  int dX = 1846;
-  int dY = int(2 * MessageSize);
-}
-
-solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
-
-void setup () {
-  size(1846, 1016, P2D);
-  //size(2 * SOLARCHVISION_pixel_W + ROLLOUT.dX, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D, P2D);
+  // resize windows
+  MESSAGE = new solarchvision_MESSAGE();
+  ROLLOUT = new solarchvision_ROLLOUT();
+  WIN3D = new solarchvision_WIN3D();
+  WORLD = new solarchvision_WORLD();
+  STUDY = new solarchvision_STUDY();
 
   SOLARCHVISION_draw_frameIcon();
 
@@ -1322,6 +1302,19 @@ float Develop_AngleInclination = 45; // 90 = horizontal surface, 0 = Vertical su
 float Develop_AngleOrientation = 0; // 0 = South, 90 = East
 
 solarchvision_SHADE SHADE = new solarchvision_SHADE();
+
+
+class solarchvision_MESSAGE {
+
+  String CLASS_STAMP = "MESSAGE";
+
+  int cX = 0;
+  int cY = height / 2;
+  int dX = width;
+  int dY = int(2 * MessageSize);
+}
+
+solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
 
 solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
 

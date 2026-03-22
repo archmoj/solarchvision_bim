@@ -94,21 +94,6 @@ You should adjust the `BaseFolder` variable inside `solarchvision_bim.pde`.
 String BaseFolder = "/home/solarch/org/solarchvision_bim";
 ```
 
-Also to your screen resolution you may need to scale initial values of following
-variables and the size() function:
-``` java
-int SOLARCHVISION_pixel_H = 400;
-int SOLARCHVISION_pixel_W = 724;
-
-float MessageSize = 16.0;
-int SOLARCHVISION_pixel_A = 24; // menu bar
-int SOLARCHVISION_pixel_B = 42; // 3D tool bar
-int SOLARCHVISION_pixel_C = 72; // case bar
-int SOLARCHVISION_pixel_D = 72; // command bar
-
-size(1846, 1016, P2D);
-```
-
 ## Run using Processing IDE
 
 The `solarchvision_bim` sketch can be opened in the Processing IDE and
