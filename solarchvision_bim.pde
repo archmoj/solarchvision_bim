@@ -2498,10 +2498,6 @@ void SOLARCHVISION_draw_frameIcon () {
 void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 1)) {
-
-    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
-    if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-
     allWindRoses.rebuild_Image_array = true;
     allSolarImpacts.rebuild_Image_array = true;
 
@@ -2530,6 +2526,19 @@ void SOLARCHVISION_update_station (int Step) {
   if ((Step == 0) || (Step == 6)) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
   if ((Step == 0) || (Step == 7)) Land3D.update_mesh();
+
+  if ((Step == 0) || (Step == 1)) {
+    if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+      SOLARCHVISION_calculate_VertexSolar_array();
+    }
+
+    if (
+      WIN3D.FacesShade == SHADE.Vertex_Solar || // to render sky
+      WIN3D.FacesShade == SHADE.Global_Solar
+    ) {
+      SOLARCHVISION_calculate_GlobalSolar_array();
+    }
+  }
 }
 
 void SOLARCHVISION_update_models (int Step) {
