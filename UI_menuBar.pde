@@ -4,7 +4,7 @@ class solarchvision_UI_menuBar {
 
   boolean update = true;
 
-  float width_parent = 4.5 * SOLARCHVISION_pixel_A;
+  float width_parent = 7 * MessageSize;
   float width_child = width_parent; // i.e. minimum size
 
   int selected_parent = -1;
