@@ -10,7 +10,7 @@ class solarchvision_ROLLOUT {
     }
     ,
     {
-      "Geometries & Space", "Create", "Modify", "Solid", "Fractal Tree", "Environment", "Viewport", "Simulation", "Other"
+      "Geometry & Space", "Create", "Modify", "Solid", "Fractal Tree", "Environment", "Viewport", "Simulation", "Other"
     }
     ,
     {
@@ -220,7 +220,7 @@ class solarchvision_ROLLOUT {
         WORLD.displayAll_NAEFS = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
         //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
       }
-    } else if (this.parent == 2) { // Geometries & Space
+    } else if (this.parent == 2) { // Geometry & Space
       if (this.child == 1) { // Create
 
         //addToLastGroup = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
