@@ -87,31 +87,31 @@ void draw () {
     strokeWeight(0);
     stroke(191);
     fill(191);
-    ellipse(0.2 * width, 0.5 * height - 0.75 * MessageSize - cr, 2 * cr, 2 * cr);
+    ellipse(0.2 * width, 0.5 * height - cr, 2 * cr, 2 * cr);
 
-    SOLARCHVISION_draw_logo(0.2 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, 1, 1);
+    SOLARCHVISION_draw_logo(0.2 * width, 0.5 * height - cr, 0, cr, 1, 1);
     strokeWeight(2);
     stroke(0);
     noFill();
-    ellipse(0.2 * width, 0.5 * height - 0.75 * MessageSize - cr, 2 * cr, 2 * cr);
+    ellipse(0.2 * width, 0.5 * height - cr, 2 * cr, 2 * cr);
 
-    SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, 0, 1);
-    SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, 0, 2);
+    SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - cr, 0, cr, 0, 1);
+    SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - cr, 0, cr, 0, 2);
     strokeWeight(2);
     stroke(0);
     noFill();
-    ellipse(0.5 * width, 0.5 * height - 0.75 * MessageSize - cr, 2 * cr, 2 * cr);
+    ellipse(0.5 * width, 0.5 * height - cr, 2 * cr, 2 * cr);
 
     strokeWeight(0);
     stroke(191);
     fill(191);
-    ellipse(0.8 * width, 0.5 * height - 0.75 * MessageSize - cr, 2 * cr, 2 * cr);
+    ellipse(0.8 * width, 0.5 * height - cr, 2 * cr, 2 * cr);
 
-    SOLARCHVISION_draw_logo(0.8 * width, 0.5 * height - 0.75 * MessageSize - cr, 0, cr, -1, 1);
+    SOLARCHVISION_draw_logo(0.8 * width, 0.5 * height - cr, 0, cr, -1, 1);
     strokeWeight(2);
     stroke(0);
     noFill();
-    ellipse(0.8 * width, 0.5 * height - 0.75 * MessageSize - cr, 2 * cr, 2 * cr);
+    ellipse(0.8 * width, 0.5 * height - cr, 2 * cr, 2 * cr);
 
     strokeWeight(0);
 
