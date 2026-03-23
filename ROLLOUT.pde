@@ -71,7 +71,7 @@ class solarchvision_ROLLOUT {
 
       for (int i = 0; i < allRollouts.length; i++) {
 
-        float cx = this.cX + (150 * (i % 2) + 5) * this.view_S;
+        float cx = this.cX + (170 * (i % 2) + 5) * this.view_S;
         float cy = Y_control;
         float cr = 6.75 * this.view_S;
 
