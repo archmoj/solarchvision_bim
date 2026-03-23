@@ -75,7 +75,7 @@ void draw () {
     cr = SOLARCHVISION_pixel_W / 4.0;
     //PImage SOLARCHVISION_logo = loadImage(BaseFolder + "/input/images/logo/SOLARCHVISION.jpg");
     //imageMode(CENTER);
-    //image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * MessageSize - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
+    //image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
     imageMode(CORNER);
 
     strokeWeight(1);
