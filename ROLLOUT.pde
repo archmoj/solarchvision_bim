@@ -31,10 +31,10 @@ class solarchvision_ROLLOUT {
 
   int cX = 2 * SOLARCHVISION_pixel_W;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
-  int dX = 420;
+  int dX = int(27 * MessageSize);
   int dY = 2 * SOLARCHVISION_pixel_H;
   float view_R = float(dY) / float(dX);
-  float view_S = SOLARCHVISION_pixel_H / 325.0; //1; //0.75; // ?????
+  float view_S = MessageSize / 12;
 
   boolean update = true;
   boolean include = true;
