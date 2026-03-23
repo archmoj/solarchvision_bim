@@ -1,6 +1,6 @@
 import processing.pdf.*;
 
-float MessageSize = 16.0;
+float MessageSize = 15.0;
 int SOLARCHVISION_pixel_A = 24; // menu bar
 int SOLARCHVISION_pixel_B = 42; // 3D tool bar
 int SOLARCHVISION_pixel_C = 72; // case bar
@@ -12,7 +12,7 @@ int SOLARCHVISION_pixel_W = 100; // just an initial value
 void setup () {
   fullScreen(P2D);
 
-  SOLARCHVISION_pixel_W = (width - 430) / 2; // 430 is ROLLOUT.dX
+  SOLARCHVISION_pixel_W = (width - ROLLOUT.dX) / 2;
   SOLARCHVISION_pixel_H = (height - (SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) / 2;
 
   // resize windows
