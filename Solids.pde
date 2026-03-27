@@ -7,9 +7,9 @@ class solarchvision_Solids {
   }
 
   boolean displayAll = true;
-  int pallet_CLR = 17; //1;
-  int pallet_DIR = -1;
-  float pallet_MLT = 0.5; //1;
+  int palette_CLR = 17; //1;
+  int palette_DIR = -1;
+  float palette_MLT = 0.5; //1;
 
   float[][] DEF;
 
@@ -582,9 +582,9 @@ class solarchvision_Solids {
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
-    XML_setInt(parent, "pallet_CLR", this.pallet_CLR);
-    XML_setInt(parent, "pallet_DIR", this.pallet_DIR);
-    XML_setFloat(parent, "pallet_MLT", this.pallet_MLT);
+    XML_setInt(parent, "palette_CLR", this.palette_CLR);
+    XML_setInt(parent, "palette_DIR", this.palette_DIR);
+    XML_setFloat(parent, "palette_MLT", this.palette_MLT);
   }
 
 
@@ -618,9 +618,9 @@ class solarchvision_Solids {
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
-    this.pallet_CLR = XML_getInt(parent, "pallet_CLR");
-    this.pallet_DIR = XML_getInt(parent, "pallet_DIR");
-    this.pallet_MLT = XML_getFloat(parent, "pallet_MLT");
+    this.palette_CLR = XML_getInt(parent, "palette_CLR");
+    this.palette_DIR = XML_getInt(parent, "palette_DIR");
+    this.palette_MLT = XML_getFloat(parent, "palette_MLT");
   }
 
 }

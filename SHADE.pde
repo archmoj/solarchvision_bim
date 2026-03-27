@@ -211,16 +211,16 @@ class solarchvision_SHADE {
     if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
         (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_type = allFaces.ACTIVE_pallet_CLR;
-      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_type = allFaces.PASSIVE_pallet_CLR;
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_type = allFaces.ACTIVE_palette_CLR;
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_type = allFaces.PASSIVE_palette_CLR;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_type = allSolids.pallet_CLR;
+      PAL_type = allSolids.palette_CLR;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_type = Land3D.pallet_CLR;
+      PAL_type = Land3D.palette_CLR;
     }
 
     return PAL_type;
@@ -234,16 +234,16 @@ class solarchvision_SHADE {
     if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
         (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_direction = allFaces.ACTIVE_pallet_DIR;
-      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_direction = allFaces.PASSIVE_pallet_DIR;
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_direction = allFaces.ACTIVE_palette_DIR;
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_direction = allFaces.PASSIVE_palette_DIR;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_direction = allSolids.pallet_DIR;
+      PAL_direction = allSolids.palette_DIR;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_direction = Land3D.pallet_DIR;
+      PAL_direction = Land3D.palette_DIR;
     }
 
     return PAL_direction;
@@ -257,16 +257,16 @@ class solarchvision_SHADE {
     if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
         (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
 
-      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
-      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = allFaces.ACTIVE_palette_MLT;
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = allFaces.PASSIVE_palette_MLT;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
-      PAL_multiplier = allSolids.pallet_MLT;
+      PAL_multiplier = allSolids.palette_MLT;
     }
 
     if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-      PAL_multiplier = Land3D.pallet_MLT;
+      PAL_multiplier = Land3D.palette_MLT;
     }
 
     return PAL_multiplier;

@@ -474,9 +474,9 @@ class solarchvision_SolidImpacts {
       this.Contours_V2Lines[0][1] = 0;
 
 
-      int PAL_type = allSolids.pallet_CLR;
-      int PAL_direction = allSolids.pallet_DIR;
-      float PAL_multiplier = allSolids.pallet_MLT;
+      int PAL_type = allSolids.palette_CLR;
+      int PAL_direction = allSolids.palette_DIR;
+      float PAL_multiplier = allSolids.palette_MLT;
 
       this.Image.loadPixels();
 

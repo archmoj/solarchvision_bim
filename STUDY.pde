@@ -2,21 +2,21 @@ class solarchvision_STUDY {
 
   private final static String CLASS_STAMP = "STUDY";
 
-  int SORT_pallet_CLR = -1;
-  int SORT_pallet_DIR = -1;
-  float SORT_pallet_MLT = 2;
+  int SORT_palette_CLR = -1;
+  int SORT_palette_DIR = -1;
+  float SORT_palette_MLT = 2;
 
-  int PROB_pallet_CLR = -1;
-  int PROB_pallet_DIR = 1;
-  float PROB_pallet_MLT = 0.5;
+  int PROB_palette_CLR = -1;
+  int PROB_palette_DIR = 1;
+  float PROB_palette_MLT = 0.5;
 
-  int ACTIVE_pallet_CLR = 19; //15; //14;
-  int ACTIVE_pallet_DIR = 1;
-  float ACTIVE_pallet_MLT = 1; //2;
+  int ACTIVE_palette_CLR = 19; //15; //14;
+  int ACTIVE_palette_DIR = 1;
+  float ACTIVE_palette_MLT = 1; //2;
 
-  int PASSIVE_pallet_CLR = 1;
-  int PASSIVE_pallet_DIR = 1;
-  float PASSIVE_pallet_MLT = 0.5;
+  int PASSIVE_palette_CLR = 1;
+  int PASSIVE_palette_DIR = 1;
+  float PASSIVE_palette_MLT = 0.5;
 
 
   int cX = 0;
@@ -635,9 +635,9 @@ class solarchvision_STUDY {
     //println("_pix=", _pix);
 
 
-    int PAL_type = this.PROB_pallet_CLR;
-    int PAL_direction = this.PROB_pallet_DIR;
-    float PAL_multiplier = this.PROB_pallet_MLT;
+    int PAL_type = this.PROB_palette_CLR;
+    int PAL_direction = this.PROB_palette_DIR;
+    float PAL_multiplier = this.PROB_palette_MLT;
 
     float txt_max_width = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
     float txt_max_height = _pix;
@@ -785,9 +785,9 @@ class solarchvision_STUDY {
 
   void drawSorted (int i, int j, float[] valuesA, float[] valuesB, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-    int PAL_type = this.SORT_pallet_CLR;
-    int PAL_direction = this.SORT_pallet_DIR;
-    float PAL_multiplier = this.SORT_pallet_MLT;
+    int PAL_type = this.SORT_palette_CLR;
+    int PAL_direction = this.SORT_palette_DIR;
+    float PAL_multiplier = this.SORT_palette_MLT;
 
     float[] sortedvaluesA = sort(valuesA);
     int num_sortedvaluesA = 0;
@@ -1791,11 +1791,11 @@ class solarchvision_STUDY {
       int PAL_direction = 1;
 
       if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_pallet_CLR;
-        PAL_direction = this.ACTIVE_pallet_DIR;
+        PAL_type = this.ACTIVE_palette_CLR;
+        PAL_direction = this.ACTIVE_palette_DIR;
       }
       if (this.Impact_TYPE == Impact_PASSIVE) {
-        //PAL_type = this.ACTIVE_pallet_CLR; PAL_direction = this.ACTIVE_pallet_DIR;
+        //PAL_type = this.ACTIVE_palette_CLR; PAL_direction = this.ACTIVE_palette_DIR;
         PAL_type = 12;
         PAL_direction = -1;
       }
@@ -2166,14 +2166,14 @@ class solarchvision_STUDY {
         float PAL_multiplier = 1;
 
         if (this.Impact_TYPE == Impact_ACTIVE) {
-          PAL_type = allFaces.ACTIVE_pallet_CLR;
-          PAL_direction = allFaces.ACTIVE_pallet_DIR;
-          PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
+          PAL_type = allFaces.ACTIVE_palette_CLR;
+          PAL_direction = allFaces.ACTIVE_palette_DIR;
+          PAL_multiplier = allFaces.ACTIVE_palette_MLT;
         }
         if (this.Impact_TYPE == Impact_PASSIVE) {
-          PAL_type = allFaces.PASSIVE_pallet_CLR;
-          PAL_direction = allFaces.PASSIVE_pallet_DIR;
-          PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
+          PAL_type = allFaces.PASSIVE_palette_CLR;
+          PAL_direction = allFaces.PASSIVE_palette_DIR;
+          PAL_multiplier = allFaces.PASSIVE_palette_MLT;
         }
 
         int l = this.ImpactLayer;
@@ -2359,17 +2359,17 @@ class solarchvision_STUDY {
       int PAL_direction = 1;
 
       if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_pallet_CLR;
-        PAL_direction = this.ACTIVE_pallet_DIR;
+        PAL_type = this.ACTIVE_palette_CLR;
+        PAL_direction = this.ACTIVE_palette_DIR;
       }
       if (this.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = this.PASSIVE_pallet_CLR;
-        PAL_direction = this.PASSIVE_pallet_DIR;
+        PAL_type = this.PASSIVE_palette_CLR;
+        PAL_direction = this.PASSIVE_palette_DIR;
       }
 
       float PAL_multiplier = 1;
-      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
+      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
+      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
 
 
       int l = this.ImpactLayer;
@@ -2770,17 +2770,17 @@ class solarchvision_STUDY {
       int PAL_direction = 1;
 
       if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_pallet_CLR;
-        PAL_direction = this.ACTIVE_pallet_DIR;
+        PAL_type = this.ACTIVE_palette_CLR;
+        PAL_direction = this.ACTIVE_palette_DIR;
       }
       if (this.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = this.PASSIVE_pallet_CLR;
-        PAL_direction = this.PASSIVE_pallet_DIR;
+        PAL_type = this.PASSIVE_palette_CLR;
+        PAL_direction = this.PASSIVE_palette_DIR;
       }
 
       float PAL_multiplier = 1;
-      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
+      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
+      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
 
       this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
@@ -3044,17 +3044,17 @@ class solarchvision_STUDY {
       int PAL_direction = 1;
 
       if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
-        PAL_type = this.ACTIVE_pallet_CLR;
-        PAL_direction = this.ACTIVE_pallet_DIR;
+        PAL_type = this.ACTIVE_palette_CLR;
+        PAL_direction = this.ACTIVE_palette_DIR;
       }
       if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
-        PAL_type = this.PASSIVE_pallet_CLR;
-        PAL_direction = this.PASSIVE_pallet_DIR;
+        PAL_type = this.PASSIVE_palette_CLR;
+        PAL_direction = this.PASSIVE_palette_DIR;
       }
 
       float PAL_multiplier = 1;
-      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
+      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
+      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
 
       float pal_length = 400;
       float pal_ox = 700;
@@ -3170,18 +3170,18 @@ class solarchvision_STUDY {
     XML_setBoolean(parent, "export_info_node", this.export_info_node);
     XML_setBoolean(parent, "export_info_norm", this.export_info_norm);
     XML_setBoolean(parent, "export_info_prob", this.export_info_prob);
-    XML_setInt(parent, "SORT_pallet_CLR", this.SORT_pallet_CLR);
-    XML_setInt(parent, "SORT_pallet_DIR", this.SORT_pallet_DIR);
-    XML_setFloat(parent, "SORT_pallet_MLT", this.SORT_pallet_MLT);
-    XML_setInt(parent, "PROB_pallet_CLR", this.PROB_pallet_CLR);
-    XML_setInt(parent, "PROB_pallet_DIR", this.PROB_pallet_DIR);
-    XML_setFloat(parent, "PROB_pallet_MLT", this.PROB_pallet_MLT);
-    XML_setInt(parent, "ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
-    XML_setInt(parent, "ACTIVE_pallet_DIR", this.ACTIVE_pallet_DIR);
-    XML_setFloat(parent, "ACTIVE_pallet_MLT", this.ACTIVE_pallet_MLT);
-    XML_setInt(parent, "PASSIVE_pallet_CLR", this.PASSIVE_pallet_CLR);
-    XML_setInt(parent, "PASSIVE_pallet_DIR", this.PASSIVE_pallet_DIR);
-    XML_setFloat(parent, "PASSIVE_pallet_MLT", this.PASSIVE_pallet_MLT);
+    XML_setInt(parent, "SORT_palette_CLR", this.SORT_palette_CLR);
+    XML_setInt(parent, "SORT_palette_DIR", this.SORT_palette_DIR);
+    XML_setFloat(parent, "SORT_palette_MLT", this.SORT_palette_MLT);
+    XML_setInt(parent, "PROB_palette_CLR", this.PROB_palette_CLR);
+    XML_setInt(parent, "PROB_palette_DIR", this.PROB_palette_DIR);
+    XML_setFloat(parent, "PROB_palette_MLT", this.PROB_palette_MLT);
+    XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
+    XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
+    XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
+    XML_setInt(parent, "PASSIVE_palette_CLR", this.PASSIVE_palette_CLR);
+    XML_setInt(parent, "PASSIVE_palette_DIR", this.PASSIVE_palette_DIR);
+    XML_setFloat(parent, "PASSIVE_palette_MLT", this.PASSIVE_palette_MLT);
 
     XML_setFloat(parent, "O_scale", this.O_scale);
     XML_setFloat(parent, "W_scale", this.W_scale);
@@ -3226,18 +3226,18 @@ class solarchvision_STUDY {
     this.export_info_node = XML_getBoolean(parent, "export_info_node");
     this.export_info_norm = XML_getBoolean(parent, "export_info_norm");
     this.export_info_prob = XML_getBoolean(parent, "export_info_prob");
-    this.SORT_pallet_CLR = XML_getInt(parent, "SORT_pallet_CLR");
-    this.SORT_pallet_DIR = XML_getInt(parent, "SORT_pallet_DIR");
-    this.SORT_pallet_MLT = XML_getFloat(parent, "SORT_pallet_MLT");
-    this.PROB_pallet_CLR = XML_getInt(parent, "PROB_pallet_CLR");
-    this.PROB_pallet_DIR = XML_getInt(parent, "PROB_pallet_DIR");
-    this.PROB_pallet_MLT = XML_getFloat(parent, "PROB_pallet_MLT");
-    this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
-    this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
-    this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
-    this.PASSIVE_pallet_CLR = XML_getInt(parent, "PASSIVE_pallet_CLR");
-    this.PASSIVE_pallet_DIR = XML_getInt(parent, "PASSIVE_pallet_DIR");
-    this.PASSIVE_pallet_MLT = XML_getFloat(parent, "PASSIVE_pallet_MLT");
+    this.SORT_palette_CLR = XML_getInt(parent, "SORT_palette_CLR");
+    this.SORT_palette_DIR = XML_getInt(parent, "SORT_palette_DIR");
+    this.SORT_palette_MLT = XML_getFloat(parent, "SORT_palette_MLT");
+    this.PROB_palette_CLR = XML_getInt(parent, "PROB_palette_CLR");
+    this.PROB_palette_DIR = XML_getInt(parent, "PROB_palette_DIR");
+    this.PROB_palette_MLT = XML_getFloat(parent, "PROB_palette_MLT");
+    this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
+    this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
+    this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");
+    this.PASSIVE_palette_CLR = XML_getInt(parent, "PASSIVE_palette_CLR");
+    this.PASSIVE_palette_DIR = XML_getInt(parent, "PASSIVE_palette_DIR");
+    this.PASSIVE_palette_MLT = XML_getFloat(parent, "PASSIVE_palette_MLT");
 
 
     this.O_scale = XML_getFloat(parent, "O_scale");

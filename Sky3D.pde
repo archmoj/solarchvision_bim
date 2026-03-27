@@ -7,13 +7,13 @@ class solarchvision_Sky3D {
   float scale = 4000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 
-  int ACTIVE_pallet_CLR = 18; //-1; //7; //8;
-  int ACTIVE_pallet_DIR = 1; //-1;
-  float ACTIVE_pallet_MLT = 0.5; //1; //0.25;
+  int ACTIVE_palette_CLR = 18; //-1; //7; //8;
+  int ACTIVE_palette_DIR = 1; //-1;
+  float ACTIVE_palette_MLT = 0.5; //1; //0.25;
 
-  int PASSIVE_pallet_CLR = 18;
-  int PASSIVE_pallet_DIR = -1;
-  float PASSIVE_pallet_MLT = 0.5;
+  int PASSIVE_palette_CLR = 18;
+  int PASSIVE_palette_DIR = -1;
+  float PASSIVE_palette_MLT = 0.5;
 
   float stp_slp;
   float stp_dir;
@@ -44,14 +44,14 @@ class solarchvision_Sky3D {
       float PAL_multiplier = 1;
 
       if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_pallet_CLR;
-        PAL_direction = this.ACTIVE_pallet_DIR;
-        PAL_multiplier = this.ACTIVE_pallet_MLT;
+        PAL_type = this.ACTIVE_palette_CLR;
+        PAL_direction = this.ACTIVE_palette_DIR;
+        PAL_multiplier = this.ACTIVE_palette_MLT;
       }
       if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = this.PASSIVE_pallet_CLR;
-        PAL_direction = this.PASSIVE_pallet_DIR;
-        PAL_multiplier = this.PASSIVE_pallet_MLT;
+        PAL_type = this.PASSIVE_palette_CLR;
+        PAL_direction = this.PASSIVE_palette_DIR;
+        PAL_multiplier = this.PASSIVE_palette_MLT;
       }
 
       if (target_window == TypeWindow.OBJ3D) {
@@ -64,19 +64,19 @@ class solarchvision_Sky3D {
 
           if (User3D.export_MaterialLibrary) {
 
-            the_filename = "skyPatternPallet.bmp";
+            the_filename = "skyPatternPalette.bmp";
 
             TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.export_PalletResolution;
-            int RES2 = User3D.export_PalletResolution / 16;
+            int RES1 = User3D.export_PaletteResolution;
+            int RES2 = User3D.export_PaletteResolution / 16;
 
-            PImage pallet_Texture = createImage(RES1, RES2, ARGB);
+            PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
 
-            pallet_Texture.loadPixels();
+            palette_Texture.loadPixels();
 
             for (int np = 0; np < (RES1 * RES2); np++) {
               int Image_X = np % RES1;
@@ -90,12 +90,12 @@ class solarchvision_Sky3D {
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
-              pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+              palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
             }
 
-            pallet_Texture.updatePixels();
+            palette_Texture.updatePixels();
 
-            pallet_Texture.save(TEXTURE_path);
+            palette_Texture.save(TEXTURE_path);
 
 
             mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -303,12 +303,12 @@ class solarchvision_Sky3D {
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
     XML_setFloat(parent, "scale", this.scale);
-    XML_setInt(parent, "ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
-    XML_setInt(parent, "ACTIVE_pallet_DIR", this.ACTIVE_pallet_DIR);
-    XML_setFloat(parent, "ACTIVE_pallet_MLT", this.ACTIVE_pallet_MLT);
-    XML_setInt(parent, "PASSIVE_pallet_CLR", this.PASSIVE_pallet_CLR);
-    XML_setInt(parent, "PASSIVE_pallet_DIR", this.PASSIVE_pallet_DIR);
-    XML_setFloat(parent, "PASSIVE_pallet_MLT", this.PASSIVE_pallet_MLT);
+    XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
+    XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
+    XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
+    XML_setInt(parent, "PASSIVE_palette_CLR", this.PASSIVE_palette_CLR);
+    XML_setInt(parent, "PASSIVE_palette_DIR", this.PASSIVE_palette_DIR);
+    XML_setFloat(parent, "PASSIVE_palette_MLT", this.PASSIVE_palette_MLT);
 
     XML_setFloat(parent, "stp_slp", this.stp_slp);
     XML_setFloat(parent, "stp_dir", this.stp_dir);
@@ -328,12 +328,12 @@ class solarchvision_Sky3D {
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
     this.scale = XML_getFloat(parent, "scale");
-    this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
-    this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
-    this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
-    this.PASSIVE_pallet_CLR = XML_getInt(parent, "PASSIVE_pallet_CLR");
-    this.PASSIVE_pallet_DIR = XML_getInt(parent, "PASSIVE_pallet_DIR");
-    this.PASSIVE_pallet_MLT = XML_getFloat(parent, "PASSIVE_pallet_MLT");
+    this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
+    this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
+    this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");
+    this.PASSIVE_palette_CLR = XML_getInt(parent, "PASSIVE_palette_CLR");
+    this.PASSIVE_palette_DIR = XML_getInt(parent, "PASSIVE_palette_DIR");
+    this.PASSIVE_palette_MLT = XML_getFloat(parent, "PASSIVE_palette_MLT");
 
     this.stp_slp = XML_getFloat(parent, "stp_slp");
     this.stp_dir = XML_getFloat(parent, "stp_dir");

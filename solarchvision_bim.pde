@@ -301,9 +301,9 @@ void draw () {
         pre_Land3D_loadMesh = Land3D.loadMesh;
         pre_Land3D_loadTextures = Land3D.loadTextures;
 
-        pre_allSolids_pallet_CLR = allSolids.pallet_CLR;
-        pre_allSolids_pallet_DIR = allSolids.pallet_DIR;
-        pre_allSolids_pallet_MLT = allSolids.pallet_MLT;
+        pre_allSolids_palette_CLR = allSolids.palette_CLR;
+        pre_allSolids_palette_DIR = allSolids.palette_DIR;
+        pre_allSolids_palette_MLT = allSolids.palette_MLT;
 
         pre_USER_create_powAll = User3D.create_powAll;
 
@@ -672,17 +672,17 @@ void draw () {
           ROLLOUT.revise();
         }
 
-        if (pre_allSolids_pallet_CLR != allSolids.pallet_CLR) {
+        if (pre_allSolids_palette_CLR != allSolids.palette_CLR) {
           allSolidImpacts.calculate_Impact_selectedSections();
 
           SOLARCHVISION_view_changed();
         }
-        if (pre_allSolids_pallet_DIR != allSolids.pallet_DIR) {
+        if (pre_allSolids_palette_DIR != allSolids.palette_DIR) {
           allSolidImpacts.calculate_Impact_selectedSections();
 
           SOLARCHVISION_view_changed();
         }
-        if (pre_allSolids_pallet_MLT != allSolids.pallet_MLT) {
+        if (pre_allSolids_palette_MLT != allSolids.palette_MLT) {
           allSolidImpacts.calculate_Impact_selectedSections();
 
           SOLARCHVISION_view_changed();
@@ -1554,9 +1554,9 @@ int pre_STUDY_CurrentLayer_id;
 int pre_STUDY_SkyScenario;
 int pre_STUDY_PlotImpacts;
 
-int pre_allSolids_pallet_CLR;
-int pre_allSolids_pallet_DIR;
-float pre_allSolids_pallet_MLT;
+int pre_allSolids_palette_CLR;
+int pre_allSolids_palette_DIR;
+float pre_allSolids_palette_MLT;
 
 float pre_allSolidImpacts_Grade;
 float pre_allSolidImpacts_Power;

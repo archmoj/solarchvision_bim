@@ -447,50 +447,50 @@ class solarchvision_ROLLOUT {
 
         //COLOR_STYLE_Current = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
 
-        STUDY.ACTIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_CLR", STUDY.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.ACTIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_DIR", STUDY.ACTIVE_pallet_DIR, -2, 2, 1), 1));
-        STUDY.ACTIVE_pallet_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_pallet_MLT", STUDY.ACTIVE_pallet_MLT, 0.125, 8, -2);
+        STUDY.ACTIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_CLR", STUDY.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.ACTIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_DIR", STUDY.ACTIVE_palette_DIR, -2, 2, 1), 1));
+        STUDY.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_MLT", STUDY.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        STUDY.PASSIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_CLR", STUDY.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_DIR", STUDY.PASSIVE_pallet_DIR, -2, 2, 2), 1));
-        STUDY.PASSIVE_pallet_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_pallet_MLT", STUDY.PASSIVE_pallet_MLT, 0.125, 8, -2);
+        STUDY.PASSIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_CLR", STUDY.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.PASSIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_DIR", STUDY.PASSIVE_palette_DIR, -2, 2, 2), 1));
+        STUDY.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_MLT", STUDY.PASSIVE_palette_MLT, 0.125, 8, -2);
 
-        STUDY.SORT_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_pallet_CLR", STUDY.SORT_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.SORT_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_pallet_DIR", STUDY.SORT_pallet_DIR, -2, 2, 2), 1));
-        STUDY.SORT_pallet_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_pallet_MLT", STUDY.SORT_pallet_MLT, 0.125, 8, -2);
+        STUDY.SORT_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_CLR", STUDY.SORT_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.SORT_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_DIR", STUDY.SORT_palette_DIR, -2, 2, 2), 1));
+        STUDY.SORT_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_MLT", STUDY.SORT_palette_MLT, 0.125, 8, -2);
 
-        STUDY.PROB_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_pallet_CLR", STUDY.PROB_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.PROB_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_pallet_DIR", STUDY.PROB_pallet_DIR, -2, 2, 2), 1));
-        STUDY.PROB_pallet_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_pallet_MLT", STUDY.PROB_pallet_MLT, 0.125, 8, -2);
+        STUDY.PROB_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_CLR", STUDY.PROB_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        STUDY.PROB_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_DIR", STUDY.PROB_palette_DIR, -2, 2, 2), 1));
+        STUDY.PROB_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_MLT", STUDY.PROB_palette_MLT, 0.125, 8, -2);
 
         STUDY.O_scale = this.Spinner(X_control, Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
       }
 
       if (this.child == 3) { // 3D-Solar
 
-        allFaces.ACTIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_CLR", allFaces.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allFaces.ACTIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_DIR", allFaces.ACTIVE_pallet_DIR, -2, 2, 1), 1));
-        allFaces.ACTIVE_pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_pallet_MLT", allFaces.ACTIVE_pallet_MLT, 0.125, 8, -2);
+        allFaces.ACTIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_CLR", allFaces.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allFaces.ACTIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_DIR", allFaces.ACTIVE_palette_DIR, -2, 2, 1), 1));
+        allFaces.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_MLT", allFaces.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        allFaces.PASSIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_CLR", allFaces.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allFaces.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_DIR", allFaces.PASSIVE_pallet_DIR, -2, 2, 2), 1));
-        allFaces.PASSIVE_pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_pallet_MLT", allFaces.PASSIVE_pallet_MLT, 0.125, 8, -2);
+        allFaces.PASSIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_CLR", allFaces.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allFaces.PASSIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_DIR", allFaces.PASSIVE_palette_DIR, -2, 2, 2), 1));
+        allFaces.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_MLT", allFaces.PASSIVE_palette_MLT, 0.125, 8, -2);
 
-        Sky3D.ACTIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_CLR", Sky3D.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sky3D.ACTIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_DIR", Sky3D.ACTIVE_pallet_DIR, -2, 2, 1), 1));
-        Sky3D.ACTIVE_pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_pallet_MLT", Sky3D.ACTIVE_pallet_MLT, 0.125, 8, -2);
+        Sky3D.ACTIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_CLR", Sky3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sky3D.ACTIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_DIR", Sky3D.ACTIVE_palette_DIR, -2, 2, 1), 1));
+        Sky3D.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_MLT", Sky3D.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        Sky3D.PASSIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_CLR", Sky3D.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sky3D.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_DIR", Sky3D.PASSIVE_pallet_DIR, -2, 2, 2), 1));
-        Sky3D.PASSIVE_pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_pallet_MLT", Sky3D.PASSIVE_pallet_MLT, 0.125, 8, -2);
+        Sky3D.PASSIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_CLR", Sky3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sky3D.PASSIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_DIR", Sky3D.PASSIVE_palette_DIR, -2, 2, 2), 1));
+        Sky3D.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_MLT", Sky3D.PASSIVE_palette_MLT, 0.125, 8, -2);
 
-        Sun3D.ACTIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_CLR", Sun3D.ACTIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D.ACTIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_DIR", Sun3D.ACTIVE_pallet_DIR, -2, 2, 1), 1));
-        Sun3D.ACTIVE_pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_pallet_MLT", Sun3D.ACTIVE_pallet_MLT, 0.125, 8, -2);
+        Sun3D.ACTIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_CLR", Sun3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sun3D.ACTIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_DIR", Sun3D.ACTIVE_palette_DIR, -2, 2, 1), 1));
+        Sun3D.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_MLT", Sun3D.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        Sun3D.PASSIVE_pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_CLR", Sun3D.PASSIVE_pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D.PASSIVE_pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_DIR", Sun3D.PASSIVE_pallet_DIR, -2, 2, 2), 1));
-        Sun3D.PASSIVE_pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_pallet_MLT", Sun3D.PASSIVE_pallet_MLT, 0.125, 8, -2);
+        Sun3D.PASSIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_CLR", Sun3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Sun3D.PASSIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_DIR", Sun3D.PASSIVE_palette_DIR, -2, 2, 2), 1));
+        Sun3D.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_MLT", Sun3D.PASSIVE_palette_MLT, 0.125, 8, -2);
       }
 
 
@@ -498,17 +498,17 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 4) { // 3D-Solid
 
-        allSolids.pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.pallet_CLR", allSolids.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allSolids.pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.pallet_DIR", allSolids.pallet_DIR, -2, 2, 2), 1));
-        allSolids.pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.pallet_MLT", allSolids.pallet_MLT, 0.0001, 64, -2);
+        allSolids.palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allSolids.palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_DIR", allSolids.palette_DIR, -2, 2, 2), 1));
+        allSolids.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_MLT", allSolids.palette_MLT, 0.0001, 64, -2);
 
-        Land3D.pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.pallet_CLR", Land3D.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Land3D.pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.pallet_DIR", Land3D.pallet_DIR, -2, 2, 2), 1));
-        Land3D.pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.pallet_MLT", Land3D.pallet_MLT, 0.001, 0.5, -2);
+        Land3D.palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_CLR", Land3D.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        Land3D.palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_DIR", Land3D.palette_DIR, -2, 2, 2), 1));
+        Land3D.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_MLT", Land3D.palette_MLT, 0.001, 0.5, -2);
 
-        allWindFlows.pallet_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.pallet_CLR", allWindFlows.pallet_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allWindFlows.pallet_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.pallet_DIR", allWindFlows.pallet_DIR, -2, 2, 2), 1));
-        allWindFlows.pallet_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.pallet_MLT", allWindFlows.pallet_MLT, 0.01, 1.0, -2);
+        allWindFlows.palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_CLR", allWindFlows.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        allWindFlows.palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_DIR", allWindFlows.palette_DIR, -2, 2, 2), 1));
+        allWindFlows.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_MLT", allWindFlows.palette_MLT, 0.01, 1.0, -2);
       }
 
 
@@ -577,7 +577,7 @@ class solarchvision_ROLLOUT {
 
         //User3D.export_MaterialLibrary = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.MaterialLibrary", User3D.export_MaterialLibrary, 0, 1, 1), 1));
         //User3D.export_BackSides = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.BackSides", User3D.export_BackSides, 0, 1, 1), 1));
-        //User3D.export_PalletResolution = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PalletResolution", User3D.export_PalletResolution, 32, 2048, -2), 1));
+        //User3D.export_PaletteResolution = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PaletteResolution", User3D.export_PaletteResolution, 32, 2048, -2), 1));
       }
 
       if (this.child == 2) { // Media

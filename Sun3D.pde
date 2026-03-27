@@ -2,13 +2,13 @@ class solarchvision_Sun3D {
 
   private final static String CLASS_STAMP = "Sun3D";
 
-  int ACTIVE_pallet_CLR = 15;
-  int ACTIVE_pallet_DIR = 1;
-  float ACTIVE_pallet_MLT = 1;
+  int ACTIVE_palette_CLR = 15;
+  int ACTIVE_palette_DIR = 1;
+  float ACTIVE_palette_MLT = 1;
 
-  int PASSIVE_pallet_CLR = 18;
-  int PASSIVE_pallet_DIR = -1;
-  float PASSIVE_pallet_MLT = 0.5;
+  int PASSIVE_palette_CLR = 18;
+  int PASSIVE_palette_DIR = -1;
+  float PASSIVE_palette_MLT = 0.5;
 
   boolean displayGrid = true;
   boolean displayPath = true;
@@ -268,17 +268,17 @@ class solarchvision_Sun3D {
       int PAL_direction = 1;
 
       if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_pallet_CLR;
-        PAL_direction = this.ACTIVE_pallet_DIR;
+        PAL_type = this.ACTIVE_palette_CLR;
+        PAL_direction = this.ACTIVE_palette_DIR;
       }
       if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = this.PASSIVE_pallet_CLR;
-        PAL_direction = this.PASSIVE_pallet_DIR;
+        PAL_type = this.PASSIVE_palette_CLR;
+        PAL_direction = this.PASSIVE_palette_DIR;
       }
 
       float PAL_multiplier = 1;
-      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_pallet_MLT;
-      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_pallet_MLT;
+      if (WIN3D.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
+      if (WIN3D.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
 
 
 
@@ -513,27 +513,27 @@ class solarchvision_Sun3D {
     if (target_window == TypeWindow.STUDY) {
 
       if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = STUDY.ACTIVE_pallet_CLR;
-        PAL_direction = STUDY.ACTIVE_pallet_DIR;
-        PAL_multiplier = STUDY.ACTIVE_pallet_MLT;
+        PAL_type = STUDY.ACTIVE_palette_CLR;
+        PAL_direction = STUDY.ACTIVE_palette_DIR;
+        PAL_multiplier = STUDY.ACTIVE_palette_MLT;
       }
       if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = STUDY.PASSIVE_pallet_CLR;
-        PAL_direction = STUDY.PASSIVE_pallet_DIR;
-        PAL_multiplier = STUDY.PASSIVE_pallet_MLT;
+        PAL_type = STUDY.PASSIVE_palette_CLR;
+        PAL_direction = STUDY.PASSIVE_palette_DIR;
+        PAL_multiplier = STUDY.PASSIVE_palette_MLT;
       }
     }
     else {
 
       if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_pallet_CLR;
-        PAL_direction = this.ACTIVE_pallet_DIR;
-        PAL_multiplier = this.ACTIVE_pallet_MLT;
+        PAL_type = this.ACTIVE_palette_CLR;
+        PAL_direction = this.ACTIVE_palette_DIR;
+        PAL_multiplier = this.ACTIVE_palette_MLT;
       }
       if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = this.PASSIVE_pallet_CLR;
-        PAL_direction = this.PASSIVE_pallet_DIR;
-        PAL_multiplier = this.PASSIVE_pallet_MLT;
+        PAL_type = this.PASSIVE_palette_CLR;
+        PAL_direction = this.PASSIVE_palette_DIR;
+        PAL_multiplier = this.PASSIVE_palette_MLT;
       }
     }
 
@@ -547,19 +547,19 @@ class solarchvision_Sun3D {
 
       if (User3D.export_MaterialLibrary) {
 
-        the_filename = "sunPatternPallet.bmp";
+        the_filename = "sunPatternPalette.bmp";
 
         TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
         println("Saving texture:", TEXTURE_path);
 
-        int RES1 = User3D.export_PalletResolution;
-        int RES2 = User3D.export_PalletResolution / 16;
+        int RES1 = User3D.export_PaletteResolution;
+        int RES2 = User3D.export_PaletteResolution / 16;
 
-        PImage pallet_Texture = createImage(RES1, RES2, ARGB);
+        PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
 
-        pallet_Texture.loadPixels();
+        palette_Texture.loadPixels();
 
         for (int np = 0; np < (RES1 * RES2); np++) {
           int Image_X = np % RES1;
@@ -573,12 +573,12 @@ class solarchvision_Sun3D {
 
           float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
-          pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+          palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
         }
 
-        pallet_Texture.updatePixels();
+        palette_Texture.updatePixels();
 
-        pallet_Texture.save(TEXTURE_path);
+        palette_Texture.save(TEXTURE_path);
 
 
         mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -954,12 +954,12 @@ class solarchvision_Sun3D {
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 
-    XML_setInt(parent, "ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
-    XML_setInt(parent, "ACTIVE_pallet_DIR", this.ACTIVE_pallet_DIR);
-    XML_setFloat(parent, "ACTIVE_pallet_MLT", this.ACTIVE_pallet_MLT);
-    XML_setInt(parent, "PASSIVE_pallet_CLR", this.PASSIVE_pallet_CLR);
-    XML_setInt(parent, "PASSIVE_pallet_DIR", this.PASSIVE_pallet_DIR);
-    XML_setFloat(parent, "PASSIVE_pallet_MLT", this.PASSIVE_pallet_MLT);
+    XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
+    XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
+    XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
+    XML_setInt(parent, "PASSIVE_palette_CLR", this.PASSIVE_palette_CLR);
+    XML_setInt(parent, "PASSIVE_palette_DIR", this.PASSIVE_palette_DIR);
+    XML_setFloat(parent, "PASSIVE_palette_MLT", this.PASSIVE_palette_MLT);
 
     XML_setBoolean(parent, "displayGrid", this.displayGrid);
     XML_setBoolean(parent, "displayPath", this.displayPath);
@@ -977,12 +977,12 @@ class solarchvision_Sun3D {
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
-    this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
-    this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
-    this.PASSIVE_pallet_CLR = XML_getInt(parent, "PASSIVE_pallet_CLR");
-    this.PASSIVE_pallet_DIR = XML_getInt(parent, "PASSIVE_pallet_DIR");
-    this.PASSIVE_pallet_MLT = XML_getFloat(parent, "PASSIVE_pallet_MLT");
+    this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
+    this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
+    this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");
+    this.PASSIVE_palette_CLR = XML_getInt(parent, "PASSIVE_palette_CLR");
+    this.PASSIVE_palette_DIR = XML_getInt(parent, "PASSIVE_palette_DIR");
+    this.PASSIVE_palette_MLT = XML_getFloat(parent, "PASSIVE_palette_MLT");
 
     this.displayGrid = XML_getBoolean(parent, "displayGrid");
     this.displayPath = XML_getBoolean(parent, "displayPath");

@@ -9,14 +9,14 @@ void SOLARCHVISION_RenderViewport () {
   float PAL_multiplier = 1;
 
   if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
-    PAL_type = allFaces.ACTIVE_pallet_CLR;
-    PAL_direction = allFaces.ACTIVE_pallet_DIR;
-    PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
+    PAL_type = allFaces.ACTIVE_palette_CLR;
+    PAL_direction = allFaces.ACTIVE_palette_DIR;
+    PAL_multiplier = allFaces.ACTIVE_palette_MLT;
   }
   if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
-    PAL_type = allFaces.PASSIVE_pallet_CLR;
-    PAL_direction = allFaces.PASSIVE_pallet_DIR;
-    PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
+    PAL_type = allFaces.PASSIVE_palette_CLR;
+    PAL_direction = allFaces.PASSIVE_palette_DIR;
+    PAL_multiplier = allFaces.PASSIVE_palette_MLT;
   }
 
 

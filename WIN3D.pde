@@ -191,7 +191,7 @@ class solarchvision_WIN3D {
         this.graphics.popMatrix();
 
 
-        this.drawPallet();
+        this.drawPalette();
 
         this.graphics.endDraw();
 
@@ -265,7 +265,7 @@ class solarchvision_WIN3D {
 
 
 
-  void drawPallet () {
+  void drawPalette () {
 
     boolean draw_pal = false;
 
@@ -277,14 +277,14 @@ class solarchvision_WIN3D {
         (this.FacesShade == SHADE.Vertex_Solar)) {
 
       if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = allFaces.ACTIVE_pallet_CLR;
-        PAL_direction = allFaces.ACTIVE_pallet_DIR;
-        PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
+        PAL_type = allFaces.ACTIVE_palette_CLR;
+        PAL_direction = allFaces.ACTIVE_palette_DIR;
+        PAL_multiplier = allFaces.ACTIVE_palette_MLT;
       }
       if (this.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = allFaces.PASSIVE_pallet_CLR;
-        PAL_direction = allFaces.PASSIVE_pallet_DIR;
-        PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
+        PAL_type = allFaces.PASSIVE_palette_CLR;
+        PAL_direction = allFaces.PASSIVE_palette_DIR;
+        PAL_multiplier = allFaces.PASSIVE_palette_MLT;
       }
 
       draw_pal = true;
@@ -292,18 +292,18 @@ class solarchvision_WIN3D {
 
     if (this.FacesShade == SHADE.Vertex_Elevation) {
 
-      PAL_type = Land3D.pallet_CLR;
-      PAL_direction = Land3D.pallet_DIR;
-      PAL_multiplier = Land3D.pallet_MLT;
+      PAL_type = Land3D.palette_CLR;
+      PAL_direction = Land3D.palette_DIR;
+      PAL_multiplier = Land3D.palette_MLT;
 
       draw_pal = true;
     }
 
     if (this.FacesShade == SHADE.Vertex_Solid) {
 
-      PAL_type = allSolids.pallet_CLR;
-      PAL_direction = allSolids.pallet_DIR;
-      PAL_multiplier = allSolids.pallet_MLT;
+      PAL_type = allSolids.palette_CLR;
+      PAL_direction = allSolids.palette_DIR;
+      PAL_multiplier = allSolids.palette_MLT;
 
       draw_pal = true;
     }

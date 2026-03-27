@@ -61,7 +61,7 @@ class solarchvision_User3D {
 
   boolean export_MaterialLibrary = true;
   boolean export_BackSides = true;
-  int export_PalletResolution = 256;
+  int export_PaletteResolution = 256;
 
   public void to_XML (XML xml) {
 
@@ -123,7 +123,7 @@ class solarchvision_User3D {
     XML_setInt(parent, "export_PolyToPoly", this.export_PolyToPoly);
     XML_setBoolean(parent, "export_MaterialLibrary", this.export_MaterialLibrary);
     XML_setBoolean(parent, "export_BackSides", this.export_BackSides);
-    XML_setInt(parent, "export_PalletResolution", this.export_PalletResolution);
+    XML_setInt(parent, "export_PaletteResolution", this.export_PaletteResolution);
 
   }
 
@@ -188,7 +188,7 @@ class solarchvision_User3D {
     this.export_PolyToPoly = XML_getInt(parent, "export_PolyToPoly");
     this.export_MaterialLibrary  = XML_getBoolean(parent, "export_MaterialLibrary");
     this.export_BackSides = XML_getBoolean(parent, "export_BackSides");
-    this.export_PalletResolution = XML_getInt(parent, "export_PalletResolution");
+    this.export_PaletteResolution = XML_getInt(parent, "export_PaletteResolution");
 
   }
 

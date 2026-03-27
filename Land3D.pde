@@ -12,9 +12,9 @@ class solarchvision_Land3D {
 
   int displayTessellation = 0; //0; //2;
 
-  int pallet_CLR = 1;
-  int pallet_DIR = -1;
-  float pallet_MLT = 0.05;
+  int palette_CLR = 1;
+  int palette_DIR = -1;
+  float palette_MLT = 0.05;
 
   float[][][] Mesh;
 
@@ -1262,9 +1262,9 @@ class solarchvision_Land3D {
       XML_setBoolean(parent, "displayPoints", this.displayPoints);
       XML_setBoolean(parent, "displayTexture", this.displayTexture);
       XML_setBoolean(parent, "displayDepth", this.displayDepth);
-      XML_setInt(parent, "pallet_CLR", this.pallet_CLR);
-      XML_setInt(parent, "pallet_DIR", this.pallet_DIR);
-      XML_setFloat(parent, "pallet_MLT", this.pallet_MLT);
+      XML_setInt(parent, "palette_CLR", this.palette_CLR);
+      XML_setInt(parent, "palette_DIR", this.palette_DIR);
+      XML_setFloat(parent, "palette_MLT", this.palette_MLT);
       XML_setInt(parent, "skipStart", this.skipStart);
       XML_setInt(parent, "skipEnd", this.skipEnd);
       XML_setInt(parent, "num_rows", this.num_rows);
@@ -1351,9 +1351,9 @@ class solarchvision_Land3D {
       this.displayPoints = XML_getBoolean(parent, "displayPoints");
       this.displayTexture = XML_getBoolean(parent, "displayTexture");
       this.displayDepth = XML_getBoolean(parent, "displayDepth");
-      this.pallet_CLR = XML_getInt(parent, "pallet_CLR");
-      this.pallet_DIR = XML_getInt(parent, "pallet_DIR");
-      this.pallet_MLT = XML_getFloat(parent, "pallet_MLT");
+      this.palette_CLR = XML_getInt(parent, "palette_CLR");
+      this.palette_DIR = XML_getInt(parent, "palette_DIR");
+      this.palette_MLT = XML_getFloat(parent, "palette_MLT");
       this.skipStart = XML_getInt(parent, "skipStart");
       this.skipEnd = XML_getInt(parent, "skipEnd");
       this.num_rows = XML_getInt(parent, "num_rows");

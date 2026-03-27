@@ -12,13 +12,13 @@ class solarchvision_Faces {
 
   int displayTessellation = 2;
 
-  int ACTIVE_pallet_CLR = 19; //15; //14;
-  int ACTIVE_pallet_DIR = 1;
-  float ACTIVE_pallet_MLT = 1;
+  int ACTIVE_palette_CLR = 19; //15; //14;
+  int ACTIVE_palette_DIR = 1;
+  float ACTIVE_palette_MLT = 1;
 
-  int PASSIVE_pallet_CLR = 1;
-  int PASSIVE_pallet_DIR = 1;
-  float PASSIVE_pallet_MLT = 0.5;
+  int PASSIVE_palette_CLR = 1;
+  int PASSIVE_palette_DIR = 1;
+  float PASSIVE_palette_MLT = 0.5;
 
 
   int[][] nodes;
@@ -516,19 +516,19 @@ class solarchvision_Faces {
 
           if (User3D.export_MaterialLibrary) {
 
-            the_filename = "shadePallet.bmp";
+            the_filename = "shadePalette.bmp";
 
             TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.export_PalletResolution;
-            int RES2 = User3D.export_PalletResolution / 16;
+            int RES1 = User3D.export_PaletteResolution;
+            int RES2 = User3D.export_PaletteResolution / 16;
 
-            PImage pallet_Texture = createImage(RES1, RES2, ARGB);
+            PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
 
-            pallet_Texture.loadPixels();
+            palette_Texture.loadPixels();
 
             for (int np = 0; np < (RES1 * RES2); np++) {
               int Image_X = np % RES1;
@@ -545,12 +545,12 @@ class solarchvision_Faces {
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
-              pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+              palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
             }
 
-            pallet_Texture.updatePixels();
+            palette_Texture.updatePixels();
 
-            pallet_Texture.save(TEXTURE_path);
+            palette_Texture.save(TEXTURE_path);
 
 
 
@@ -825,7 +825,7 @@ class solarchvision_Faces {
 
           } else {
 
-            the_filename = "shadePallet.bmp";
+            the_filename = "shadePalette.bmp";
 
             TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
@@ -835,12 +835,12 @@ class solarchvision_Faces {
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.export_PalletResolution;
-            int RES2 = User3D.export_PalletResolution / 16;
+            int RES1 = User3D.export_PaletteResolution;
+            int RES2 = User3D.export_PaletteResolution / 16;
 
-            PImage pallet_Texture = createImage(RES1, RES2, ARGB);
+            PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
-            pallet_Texture.loadPixels();
+            palette_Texture.loadPixels();
 
             for (int np = 0; np < (RES1 * RES2); np++) {
               int Image_X = np % RES1;
@@ -858,12 +858,12 @@ class solarchvision_Faces {
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
-              pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+              palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
             }
 
-            pallet_Texture.updatePixels();
+            palette_Texture.updatePixels();
 
-            pallet_Texture.save(TEXTURE_path);
+            palette_Texture.save(TEXTURE_path);
 
           }
         }
@@ -1511,12 +1511,12 @@ class solarchvision_Faces {
     XML_setBoolean(parent, "displayEdges", this.displayEdges);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
 
-    XML_setInt(parent, "ACTIVE_pallet_CLR", this.ACTIVE_pallet_CLR);
-    XML_setInt(parent, "ACTIVE_pallet_DIR", this.ACTIVE_pallet_DIR);
-    XML_setFloat(parent, "ACTIVE_pallet_MLT", this.ACTIVE_pallet_MLT);
-    XML_setInt(parent, "PASSIVE_pallet_CLR", this.PASSIVE_pallet_CLR);
-    XML_setInt(parent, "PASSIVE_pallet_DIR", this.PASSIVE_pallet_DIR);
-    XML_setFloat(parent, "PASSIVE_pallet_MLT", this.PASSIVE_pallet_MLT);
+    XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
+    XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
+    XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
+    XML_setInt(parent, "PASSIVE_palette_CLR", this.PASSIVE_palette_CLR);
+    XML_setInt(parent, "PASSIVE_palette_DIR", this.PASSIVE_palette_DIR);
+    XML_setFloat(parent, "PASSIVE_palette_MLT", this.PASSIVE_palette_MLT);
   }
 
   public void from_XML (XML xml) {
@@ -1554,12 +1554,12 @@ class solarchvision_Faces {
     this.displayEdges = XML_getBoolean(parent, "displayEdges");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
 
-    this.ACTIVE_pallet_CLR = XML_getInt(parent, "ACTIVE_pallet_CLR");
-    this.ACTIVE_pallet_DIR = XML_getInt(parent, "ACTIVE_pallet_DIR");
-    this.ACTIVE_pallet_MLT = XML_getFloat(parent, "ACTIVE_pallet_MLT");
-    this.PASSIVE_pallet_CLR = XML_getInt(parent, "PASSIVE_pallet_CLR");
-    this.PASSIVE_pallet_DIR = XML_getInt(parent, "PASSIVE_pallet_DIR");
-    this.PASSIVE_pallet_MLT = XML_getFloat(parent, "PASSIVE_pallet_MLT");
+    this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
+    this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
+    this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");
+    this.PASSIVE_palette_CLR = XML_getInt(parent, "PASSIVE_palette_CLR");
+    this.PASSIVE_palette_DIR = XML_getInt(parent, "PASSIVE_palette_DIR");
+    this.PASSIVE_palette_MLT = XML_getFloat(parent, "PASSIVE_palette_MLT");
   }
 
 }

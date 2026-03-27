@@ -4,9 +4,9 @@ class solarchvision_WindFlow {
 
   boolean displayAll = false;
 
-  int pallet_CLR = 18;
-  int pallet_DIR = -1;
-  float pallet_MLT = 1;
+  int palette_CLR = 18;
+  int palette_DIR = -1;
+  float palette_MLT = 1;
 
 
 
@@ -25,9 +25,9 @@ class solarchvision_WindFlow {
 
     if (proceed) {
 
-      int PAL_type = allWindFlows.pallet_CLR;
-      int PAL_direction = allWindFlows.pallet_DIR;
-      float PAL_multiplier = allWindFlows.pallet_MLT;
+      int PAL_type = allWindFlows.palette_CLR;
+      int PAL_direction = allWindFlows.palette_DIR;
+      float PAL_multiplier = allWindFlows.palette_MLT;
 
 
 
@@ -37,19 +37,19 @@ class solarchvision_WindFlow {
 
         if (User3D.export_MaterialLibrary) {
 
-          the_filename = "WindFlowPallet.bmp";
+          the_filename = "WindFlowPalette.bmp";
 
           String TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
           println("Saving texture:", TEXTURE_path);
 
-          int RES1 = User3D.export_PalletResolution;
-          int RES2 = User3D.export_PalletResolution / 16;
+          int RES1 = User3D.export_PaletteResolution;
+          int RES2 = User3D.export_PaletteResolution / 16;
 
-          PImage pallet_Texture = createImage(RES1, RES2, ARGB);
+          PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
 
-          pallet_Texture.loadPixels();
+          palette_Texture.loadPixels();
 
           for (int np = 0; np < (RES1 * RES2); np++) {
             int Image_X = np % RES1;
@@ -61,12 +61,12 @@ class solarchvision_WindFlow {
 
             float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
-            pallet_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+            palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
           }
 
-          pallet_Texture.updatePixels();
+          palette_Texture.updatePixels();
 
-          pallet_Texture.save(TEXTURE_path);
+          palette_Texture.save(TEXTURE_path);
 
 
           mtlOutput.println("newmtl " + "WindFlow");
@@ -112,7 +112,7 @@ class solarchvision_WindFlow {
             float z2 = allSolidImpacts.Wind_Vertices[n2][2];
 
 
-            float _val = allWindFlows.pallet_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+            float _val = allWindFlows.palette_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
             float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
             if (PAL_direction == -1) _u = 1 - _u;
@@ -225,7 +225,7 @@ class solarchvision_WindFlow {
           float z2 = allSolidImpacts.Wind_Vertices[n2][2];
 
 
-          float _val = this.pallet_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+          float _val = this.palette_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
           float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
           if (PAL_direction == -1) _u = 1 - _u;
@@ -311,9 +311,9 @@ class solarchvision_WindFlow {
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
 
-    XML_setInt(parent, "pallet_CLR", this.pallet_CLR);
-    XML_setInt(parent, "pallet_DIR", this.pallet_DIR);
-    XML_setFloat(parent, "pallet_MLT", this.pallet_MLT);
+    XML_setInt(parent, "palette_CLR", this.palette_CLR);
+    XML_setInt(parent, "palette_DIR", this.palette_DIR);
+    XML_setFloat(parent, "palette_MLT", this.palette_MLT);
 
   }
 
@@ -326,9 +326,9 @@ class solarchvision_WindFlow {
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
 
-    this.pallet_CLR = XML_getInt(parent, "pallet_CLR");
-    this.pallet_DIR = XML_getInt(parent, "pallet_DIR");
-    this.pallet_MLT = XML_getFloat(parent, "pallet_MLT");
+    this.palette_CLR = XML_getInt(parent, "palette_CLR");
+    this.palette_DIR = XML_getInt(parent, "palette_DIR");
+    this.palette_MLT = XML_getFloat(parent, "palette_MLT");
 
   }
 }

@@ -311,9 +311,9 @@ class solarchvision_SolarImpacts {
                   if (q == Impact_ACTIVE) {
                     valuesSUM = Image_G;
 
-                    PAL_type = allFaces.ACTIVE_pallet_CLR;
-                    PAL_direction = allFaces.ACTIVE_pallet_DIR;
-                    PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
+                    PAL_type = allFaces.ACTIVE_palette_CLR;
+                    PAL_direction = allFaces.ACTIVE_palette_DIR;
+                    PAL_multiplier = allFaces.ACTIVE_palette_MLT;
 
                     //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                     //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -330,9 +330,9 @@ class solarchvision_SolarImpacts {
 
                     valuesSUM = COMPARISON;
 
-                    PAL_type = allFaces.PASSIVE_pallet_CLR;
-                    PAL_direction = allFaces.PASSIVE_pallet_DIR;
-                    PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
+                    PAL_type = allFaces.PASSIVE_palette_CLR;
+                    PAL_direction = allFaces.PASSIVE_palette_DIR;
+                    PAL_multiplier = allFaces.PASSIVE_palette_MLT;
 
                     //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                     _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
@@ -403,9 +403,9 @@ class solarchvision_SolarImpacts {
               if (q == Impact_ACTIVE) {
                 valuesSUM = Image_G;
 
-                PAL_type = allFaces.ACTIVE_pallet_CLR;
-                PAL_direction = allFaces.ACTIVE_pallet_DIR;
-                PAL_multiplier = allFaces.ACTIVE_pallet_MLT;
+                PAL_type = allFaces.ACTIVE_palette_CLR;
+                PAL_direction = allFaces.ACTIVE_palette_DIR;
+                PAL_multiplier = allFaces.ACTIVE_palette_MLT;
 
                 //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -422,9 +422,9 @@ class solarchvision_SolarImpacts {
 
                 valuesSUM = COMPARISON;
 
-                PAL_type = allFaces.PASSIVE_pallet_CLR;
-                PAL_direction = allFaces.PASSIVE_pallet_DIR;
-                PAL_multiplier = allFaces.PASSIVE_pallet_MLT;
+                PAL_type = allFaces.PASSIVE_palette_CLR;
+                PAL_direction = allFaces.PASSIVE_palette_DIR;
+                PAL_multiplier = allFaces.PASSIVE_palette_MLT;
 
                 //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
