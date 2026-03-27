@@ -111,6 +111,7 @@ class solarchvision_STUDY {
 
 
   void keyPressed (KeyEvent e) {
+    if(STUDY.include == false) return;
 
     if (e.isAltDown()) {
     } else if (e.isControlDown()) {

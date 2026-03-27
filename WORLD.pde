@@ -610,6 +610,7 @@ class solarchvision_WORLD {
 
 
   void keyPressed (KeyEvent e) {
+    if(WORLD.include == false) return;
 
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
       switch(key) {

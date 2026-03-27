@@ -451,6 +451,7 @@ class solarchvision_WIN3D {
 
 
   void keyPressed (KeyEvent e) {
+    if(WIN3D.include == false) return;
 
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
 
