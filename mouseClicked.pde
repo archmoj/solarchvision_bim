@@ -1978,8 +1978,6 @@ void mouseClicked () {
                     STATION.setElevation(NAEFS_Coordinates[f].getElevation());
                     STATION.setTimelong(NAEFS_Coordinates[f].getTimelong());
 
-                    ROLLOUT.parent = 0;
-                    ROLLOUT.child = 1;
                     ROLLOUT.revise();
 
 
@@ -2033,8 +2031,6 @@ void mouseClicked () {
                     STATION.setElevation(CWEEDS_coordinates[f].getElevation());
                     STATION.setTimelong(funcs.roundTo(STATION.getLongitude(), 15));
 
-                    ROLLOUT.parent = 0;
-                    ROLLOUT.child = 1;
                     ROLLOUT.revise();
 
                     SOLARCHVISION_update_station(1);
@@ -2090,8 +2086,6 @@ void mouseClicked () {
                     STATION.setElevation(CLMREC_Coordinates[f].getElevation());
                     STATION.setTimelong(CLMREC_Coordinates[f].getTimelong());
 
-                    ROLLOUT.parent = 0;
-                    ROLLOUT.child = 1;
                     ROLLOUT.revise();
 
                     SOLARCHVISION_update_station(1);
@@ -2143,8 +2137,6 @@ void mouseClicked () {
                     STATION.setElevation(TMYEPW_Coordinates[f].getElevation());
                     STATION.setTimelong(TMYEPW_Coordinates[f].getTimelong());
 
-                    ROLLOUT.parent = 0;
-                    ROLLOUT.child = 1;
                     ROLLOUT.revise();
 
                     SOLARCHVISION_update_station(1);
