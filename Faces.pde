@@ -292,16 +292,17 @@ class solarchvision_Faces {
                       255, 255, 255, 255
                     };
 
+                    int s_next = (s + 1) % subFace.length;
+                    int s_prev = (s + subFace.length - 1) % subFace.length;
+
                     if (WIN3D.FacesShade == SHADE.Global_Solar) {
-                      int s_next = (s + 1) % subFace.length;
-                      int s_prev = (s + subFace.length - 1) % subFace.length;
 
                       COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                     }
 
                     if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
 
-                      COL = SHADE.vertexRender_Vertex_Solar(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+                      COL = SHADE.vertexRender_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                     }
 
                     if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
@@ -685,9 +686,10 @@ class solarchvision_Faces {
 
                           float _u = 0;
 
+                          int s_next = (s + 1) % subFace.length;
+                          int s_prev = (s + subFace.length - 1) % subFace.length;
+
                           if (WIN3D.FacesShade == SHADE.Global_Solar) {
-                            int s_next = (s + 1) % subFace.length;
-                            int s_prev = (s + subFace.length - 1) % subFace.length;
 
                             if (back_or_front == 0) {
                               int s_temp = s_next;
@@ -700,7 +702,7 @@ class solarchvision_Faces {
 
                           if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
 
-                            _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+                            _u = SHADE.vertexU_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                           }
 
                           if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
@@ -960,10 +962,10 @@ class solarchvision_Faces {
 
                         float _u = 0;
 
+                        int s_next = (s + 1) % subFace.length;
+                        int s_prev = (s + subFace.length - 1) % subFace.length;
 
                         if (WIN3D.FacesShade == SHADE.Global_Solar) {
-                          int s_next = (s + 1) % subFace.length;
-                          int s_prev = (s + subFace.length - 1) % subFace.length;
 
                           if (back_or_front == 0) {
                             int s_temp = s_next;
@@ -976,7 +978,7 @@ class solarchvision_Faces {
 
                         if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
 
-                          _u = SHADE.vertexU_Vertex_Solar(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+                          _u = SHADE.vertexU_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                         }
 
                         if (WIN3D.FacesShade == SHADE.Vertex_Solid) {

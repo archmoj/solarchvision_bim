@@ -34,9 +34,9 @@ class solarchvision_SHADE {
   }
 
 
-  float[] vertexRender_Vertex_Solar (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  float[] vertexRender_Vertex_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_type, int PAL_direction, float PAL_multiplier) {
 
-    float _u = this.vertexU_Vertex_Solar(VERTEX_now, PAL_type, PAL_direction, PAL_multiplier);
+    float _u = this.vertexU_Vertex_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_type, PAL_direction, PAL_multiplier);
 
     float[] COL = {0,0,0,0}; // default color for undefined values
 
@@ -48,9 +48,13 @@ class solarchvision_SHADE {
   }
 
 
-  float vertexU_Vertex_Solar (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  float vertexU_Vertex_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_type, int PAL_direction, float PAL_multiplier) {
 
-    float val = this.get_SolarImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
+    float val = this.get_SolarImpact_atXYZ(
+      VERTEX_now[0], VERTEX_now[1], VERTEX_now[2],
+      VERTEX_prev[0], VERTEX_prev[1], VERTEX_prev[2],
+      VERTEX_next[0], VERTEX_next[1], VERTEX_next[2]
+    );
 
     float _u = FLOAT_undefined;
 
@@ -68,11 +72,11 @@ class solarchvision_SHADE {
   }
 
 
-  float get_SolarImpact_atXYZ (float x, float y, float z) {
+  float get_SolarImpact_atXYZ (float x, float y, float z, float x2, float y2, float z2, float x3, float y3, float z3) {
 
     float v = FLOAT_undefined;
 
-    int q = this.findID_SolarImpact_atXYZ(x, y, z);
+    int q = this.findID_SolarImpact_atXYZ(x, y, z, x2, y2, z2, x3, y3, z3);
 
     if (q >= 0) {
       v = VertexSolar_amounts[WIN3D.Impact_TYPE][IMPACTS_displayDay][q];
@@ -82,7 +86,7 @@ class solarchvision_SHADE {
   }
 
 
-  int findID_SolarImpact_atXYZ (float x, float y, float z) {
+  int findID_SolarImpact_atXYZ (float x, float y, float z, float x2, float y2, float z2, float x3, float y3, float z3) {
 
     int n = -1;
 
@@ -91,8 +95,20 @@ class solarchvision_SHADE {
       if (x == VertexSolar_XYZ[q][0]) {
       if (y == VertexSolar_XYZ[q][1]) {
       if (z == VertexSolar_XYZ[q][2]) {
+      if (x2 == VertexSolar_XYZ[q][3]) {
+      if (y2 == VertexSolar_XYZ[q][4]) {
+      if (z2 == VertexSolar_XYZ[q][5]) {
+      if (x3 == VertexSolar_XYZ[q][6]) {
+      if (y3 == VertexSolar_XYZ[q][7]) {
+      if (z3 == VertexSolar_XYZ[q][8]) {
         n = q;
         break;
+      }
+      }
+      }
+      }
+      }
+      }
       }
       }
       }

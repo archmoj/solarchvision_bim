@@ -79,13 +79,16 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
         for (int s = 0; s < subFace.length; s++) {
 
-          int q = SHADE.findID_SolarImpact_atXYZ(subFace[s][0], subFace[s][1], subFace[s][2]);
+          int s_next = (s + 1) % subFace.length;
+          int s_prev = (s + subFace.length - 1) % subFace.length;
+
+          int q = SHADE.findID_SolarImpact_atXYZ(
+            subFace[s][0], subFace[s][1], subFace[s][2],
+            subFace[s_prev][0], subFace[s_prev][1], subFace[s_prev][2],
+            subFace[s_next][0], subFace[s_next][1], subFace[s_next][2]
+          );
 
           if (q < 0) { // this will compute and add new points to the list only if there are not computed before.
-
-            int s_next = (s + 1) % subFace.length;
-            int s_prev = (s + subFace.length - 1) % subFace.length;
-
             PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
             PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
             PVector UV = U.cross(V);
@@ -340,7 +343,9 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
             float[][] ADD_values_XYZ = {
               {
-                subFace[s][0], subFace[s][1], subFace[s][2]
+                subFace[s][0], subFace[s][1], subFace[s][2],
+                subFace[s_prev][0], subFace[s_prev][1], subFace[s_prev][2],
+                subFace[s_next][0], subFace[s_next][1], subFace[s_next][2]
               }
             };
             VertexSolar_XYZ = (float[][]) concat(VertexSolar_XYZ, ADD_values_XYZ);
