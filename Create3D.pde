@@ -2354,6 +2354,30 @@ class solarchvision_Create3D {
 
     if (n == 1) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(7, 5, 0, 1, 0, 0, -15, -15, 0, 15, 15, 0);
+
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, 0, 5, 5, 4, 0, 0);
+    }
+
+    if (n == 2) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(7, 5, 0, 1, 0, 0, -16, -16, 0, 16, 16, 0);
+
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Box_Corners(-1, 4, 0, 1, 0, 0, -8, -8, 0, 8, 8, 8);
+
+      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, -8, -10, 4, 8, -8, 8);
+
+      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, -10, -8, 4, -8, 8, 8);
+
+      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, 8, 10, 4, -8, 8, 8);
+
+      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, 10, 8, 4, 8, -8, 8);
+    }
+
+    if (n == 3) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_Mesh2(7, 5, 0, 1, 0, 0, -50, -50, 0, 50, 50, 0);
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -2375,28 +2399,6 @@ class solarchvision_Create3D {
       this.add_Box_Corners(-1, 2, 0, 1, 0, 0, -18, 0, 2.9, 0, 18, 3);
     }
 
-    if (n == 2) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 6, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
-
-      allGroups.beginNewGroup(0, -15, 0, 1, 1, 1, 0, 0, 0);
-      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, -15, 0, 5, 4, 0, 0);
-
-      allGroups.beginNewGroup(0, 15, 0, 1, 1, 1, 0, 0, 0);
-      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, 15, 0, 5, 4, 0, 0);
-
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_House2_Core(7, 2, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
-    }
-
-    if (n == 3) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -15, -15, 0, 15, 15, 0);
-
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_House2_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
-    }
-
     if (n == 4) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       this.add_Mesh2(7, 5, 0, 1, 0, 0, -15, -15, 0, 15, 15, 0);
@@ -2410,23 +2412,21 @@ class solarchvision_Create3D {
       this.add_Mesh2(7, 5, 0, 1, 0, 0, -15, -15, 0, 15, 15, 0);
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, 0, 5, 5, 4, 0, 0);
+      this.add_House2_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
     }
 
     if (n == 6) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -16, -16, 0, 16, 16, 0);
+      this.add_Mesh2(7, 6, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
+
+      allGroups.beginNewGroup(0, -15, 0, 1, 1, 1, 0, 0, 0);
+      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, -15, 0, 5, 4, 0, 0);
+
+      allGroups.beginNewGroup(0, 15, 0, 1, 1, 1, 0, 0, 0);
+      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, 15, 0, 5, 4, 0, 0);
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Box_Corners(-1, 4, 0, 1, 0, 0, -8, -8, 0, 8, 8, 8);
-
-      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, -8, -10, 4, 8, -8, 8);
-
-      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, -10, -8, 4, -8, 8, 8);
-
-      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, 8, 10, 4, -8, 8, 8);
-
-      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, 10, 8, 4, 8, -8, 8);
+      this.add_House2_Core(7, 2, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
     }
 
     if (n == 7) {
