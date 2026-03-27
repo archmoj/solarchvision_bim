@@ -2413,8 +2413,58 @@ class solarchvision_Create3D {
       this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, 0, 5, 5, 4, 0, 0);
     }
 
-
     if (n == 6) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(7, 5, 0, 1, 0, 0, -16, -16, 0, 16, 16, 0);
+
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Box_Corners(-1, 4, 0, 1, 0, 0, -8, -8, 0, 8, 8, 8);
+
+      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, -8, -10, 4, 8, -8, 8);
+
+      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, -10, -8, 4, -8, 8, 8);
+
+      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, 8, 10, 4, -8, 8, 8);
+
+      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, 10, 8, 4, 8, -8, 8);
+    }
+
+    if (n == 7) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(7, 6, 0, 1, 0, 0, -50, -50, 0, 50, 50, 0);
+
+      {
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        float x = 0;
+        float y = 0;
+        float z = 0;
+        float r = 10;
+        this.add_CrystalSphere(1, 0, 0, 1, 0, 0, x, y, z, r, 5, 0, 90);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+      }
+
+      {
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        float x = -20;
+        float y = -20;
+        float z = 0;
+        float r = 8;
+        this.add_CrystalSphere(2, 0, 0, 1, 0, 0, x, y, z, r, 4, 0, 90);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+      }
+
+      {
+        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        float x = 0;
+        float y = 20;
+        float z = 0;
+        float r = 6;
+        this.add_CrystalSphere(3, 0, 0, 1, 0, 0, x, y, z, r, 3, 0, 90);
+        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+      }
+    }
+
+    if (n == 8) {
       //Complex used in the YC book:
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -2456,41 +2506,6 @@ class solarchvision_Create3D {
       this.add_Box_Corners(-1, t, 0, 1, 0, 0, 42, 42, 0, 66, 48, 12);
       this.add_Box_Corners(-1, t, 0, 1, 0, 0, 42, 72, 0, 66, 78, 12);
       this.add_Box_Corners(-1, t, 0, 1, 0, 0, 66, 42, 0, 78, 78, 12);
-    }
-
-    if (n == 7) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 6, 0, 1, 0, 0, -50, -50, 0, 50, 50, 0);
-
-      {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        float x = 0;
-        float y = 0;
-        float z = 0;
-        float r = 10;
-        this.add_CrystalSphere(1, 0, 0, 1, 0, 0, x, y, z, r, 5, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
-      }
-
-      {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        float x = -20;
-        float y = -20;
-        float z = 0;
-        float r = 8;
-        this.add_CrystalSphere(2, 0, 0, 1, 0, 0, x, y, z, r, 4, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
-      }
-
-      {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        float x = 0;
-        float y = 20;
-        float z = 0;
-        float r = 6;
-        this.add_CrystalSphere(3, 0, 0, 1, 0, 0, x, y, z, r, 3, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
-      }
     }
   }
 
