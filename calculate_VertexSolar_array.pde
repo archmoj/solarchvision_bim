@@ -92,31 +92,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
             float[] W = {
               UV.x, UV.y, UV.z
             };
-            W = funcs.vec3_unit(W);
 
-            float Alpha = funcs.asin_ang(W[2]);
-            float Beta = funcs.atan2_ang(W[1], W[0]) + 90;
-
-            float[] VECT = {
-              0, 0, 0
-            };
-
-            if (abs(Alpha) > 89.99) {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = 1;
-            } else if (Alpha < -89.99) {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = -1;
-            } else {
-              VECT[0] = funcs.sin_ang(Beta);
-              VECT[1] = -funcs.cos_ang(Beta);
-              VECT[2] = funcs.tan_ang(Alpha);
-            }
-
-            VECT = funcs.vec3_unit(VECT);
-
+            float[] VECT = funcs.vec3_unit(W);
 
             float SkyMask = 0;
 
@@ -125,7 +102,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
                 DiffuseVectors[i][0], DiffuseVectors[i][1], DiffuseVectors[i][2]
               };
 
-              float tmp = funcs.vec_dot(funcs.vec3_unit(SkyV), funcs.vec3_unit(VECT));
+              float tmp = funcs.vec_dot(funcs.vec3_unit(SkyV), VECT);
               if (tmp <= 0) tmp = 0; // removes backing faces
 
               SkyMask += tmp / float(DiffuseVectors.length);
