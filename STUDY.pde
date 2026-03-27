@@ -2292,7 +2292,7 @@ class solarchvision_STUDY {
           this.graphics.textSize(15.0 * this.view_S);
           this.graphics.textAlign(CENTER, CENTER);
           if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-          if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+          if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
         }
 
         if (this.PrintTtitle) {
@@ -2714,7 +2714,7 @@ class solarchvision_STUDY {
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
         if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       }
 
 
@@ -2904,7 +2904,7 @@ class solarchvision_STUDY {
 
                     this.graphics.textAlign(CENTER, CENTER);
                     if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
-                    if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(valuesSUM), 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+                    if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
                   }
                 }
               }
@@ -2973,7 +2973,7 @@ class solarchvision_STUDY {
         this.graphics.textAlign(CENTER, CENTER);
 
         if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       }
 
 
@@ -3095,7 +3095,7 @@ class solarchvision_STUDY {
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
         if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
-        if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+        if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
       }
 
 

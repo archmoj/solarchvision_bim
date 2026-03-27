@@ -400,7 +400,7 @@ class solarchvision_WIN3D {
             (this.FacesShade == SHADE.Vertex_Solar)) {
 
           if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
-          if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y, 0);
+          if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y, 0);
         }
 
         if (this.FacesShade == SHADE.Vertex_Elevation) {
