@@ -9,7 +9,7 @@ class solarchvision_Solids {
   boolean displayAll = true;
   int pallet_CLR = 17; //1;
   int pallet_DIR = -1;
-  float pallet_MLT = 0.4; //1;
+  float pallet_MLT = 0.5; //1;
 
   float[][] DEF;
 

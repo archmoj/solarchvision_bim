@@ -8,7 +8,7 @@ class solarchvision_Sun3D {
 
   int PASSIVE_pallet_CLR = 18;
   int PASSIVE_pallet_DIR = -1;
-  float PASSIVE_pallet_MLT = 0.4;
+  float PASSIVE_pallet_MLT = 0.5;
 
   boolean displayGrid = true;
   boolean displayPath = true;
