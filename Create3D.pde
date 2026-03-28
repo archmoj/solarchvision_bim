@@ -2468,7 +2468,7 @@ class solarchvision_Create3D {
       //Complex used in the YC book:
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(8, 6, 0, 1, 0, 0, -100, -100, 0, 100, 100, 0);
+      this.add_Mesh2(8, 6, 0, 1, 0, 0, -96, -96, 0, 96, 96, 0);
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       int t = 2;
