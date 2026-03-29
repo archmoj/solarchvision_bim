@@ -2431,7 +2431,7 @@ class solarchvision_Create3D {
 
     if (n == 7) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 6, 0, 1, 0, 0, -50, -50, 0, 50, 50, 0);
+      this.add_Mesh2(7, 5, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
 
       {
         allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
