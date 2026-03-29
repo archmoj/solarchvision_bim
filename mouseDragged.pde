@@ -44,19 +44,35 @@ void mouseDragged () {
               }
             }
 
-            if ((WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) ||
-                (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ)) { // viewport
+            if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) {
 
-              if (mouseButton == LEFT) { // CameraRollXY
-                // println("CameraRollXY");
-                WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotation_T);
+              if (mouseButton == LEFT) { // PanX
+                // println("PanX");
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
 
                 SOLARCHVISION_view_changed();
               }
 
-              if (mouseButton == RIGHT) { // CameraRollZ
-                // println("CameraRollZ");
-                WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotation_T);
+              if (mouseButton == RIGHT) { // PanY
+                // println("PanY");
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
+
+                SOLARCHVISION_view_changed();
+              }
+            }
+
+            if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ) {
+
+              if (mouseButton == LEFT) { // PanY
+                // println("PanY");
+                WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
+
+                SOLARCHVISION_view_changed();
+              }
+
+              if (mouseButton == RIGHT) { // PanX
+                // println("PanX");
+                WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
 
                 SOLARCHVISION_view_changed();
               }
