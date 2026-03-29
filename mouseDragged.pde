@@ -29,14 +29,14 @@ void mouseDragged () {
             if (WIN3D.UI_CurrentTask == UITASK.LandOrbit_Pan_TargetRollZ) { // viewport
 
               if (mouseButton == LEFT) { // CameraLandOrbit
-
+                // println("CameraLandOrbit");
                 WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.rotation_T);
 
                 SOLARCHVISION_view_changed();
               }
 
               if (mouseButton == RIGHT) { // Pan
-
+                // println("Pan");
                 WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
                 WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
 
@@ -48,15 +48,15 @@ void mouseDragged () {
                 (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRollXY
-
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_T);
+                // println("CameraRollXY");
+                WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotation_T);
 
                 SOLARCHVISION_view_changed();
               }
 
               if (mouseButton == RIGHT) { // CameraRollZ
-
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_T);
+                // println("CameraRollZ");
+                WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotation_T);
 
                 SOLARCHVISION_view_changed();
               }
@@ -67,7 +67,7 @@ void mouseDragged () {
                 (WIN3D.UI_CurrentTask == UITASK.PickSelect)) { // viewport
 
               if (mouseButton == LEFT) { // Pan
-
+                // println("Pan");
                 WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
                 WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
 
@@ -75,7 +75,7 @@ void mouseDragged () {
               }
 
               if (mouseButton == RIGHT) { // TargetRoll
-
+                // println("TargetRoll");
                 WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T;
                 WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
@@ -89,16 +89,16 @@ void mouseDragged () {
                 (WIN3D.UI_CurrentTask == UITASK.CameraDistance_TargetRollXY_TargetRollZ)) { // viewport
 
               if (mouseButton == LEFT) { // CameraRoll
+                // println("CameraRoll");
+                WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotation_T);
 
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_T);
-
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_T);
+                WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotation_T);
 
                 SOLARCHVISION_view_changed();
               }
 
               if (mouseButton == RIGHT) { // Pan
-
+                // println("Pan");
                 WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
                 WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
 
@@ -109,15 +109,15 @@ void mouseDragged () {
             if (WIN3D.UI_CurrentTask == UITASK.CameraRollXY_CameraRollZ) { // viewport
 
               if (mouseButton == LEFT) { // CameraRollXY
-
-                WIN3D.rotateXY_3DViewport_around_Selection(10 * dx * WIN3D.rotation_T);
+                // println("CameraRollXY");
+                WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotation_T);
 
                 SOLARCHVISION_view_changed();
               }
 
               if (mouseButton == RIGHT) { // CameraRollZ
-
-                WIN3D.rotateZ_3DViewport_around_Selection(10 * dy * WIN3D.rotation_T);
+                // println("CameraRollZ");
+                WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotation_T);
 
                 SOLARCHVISION_view_changed();
               }
@@ -126,7 +126,7 @@ void mouseDragged () {
             if (WIN3D.UI_CurrentTask == UITASK.TargetRoll_Pan) { // viewport
 
               if (mouseButton == LEFT) { // TargetRoll
-
+                // println("TargetRoll");
                 WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T;
                 WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
@@ -136,7 +136,7 @@ void mouseDragged () {
               }
 
               if (mouseButton == RIGHT) { // Pan
-
+                // println("Pan");
                 WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
                 WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
 
@@ -150,7 +150,7 @@ void mouseDragged () {
                 (mouseButton == LEFT && WIN3D.UI_OptionXorY == 1) ||
                 (mouseButton == RIGHT && WIN3D.UI_OptionXorY == 0)
               ) { // TargetRollXY
-
+                // println("TargetRollXY");
                 WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T;
 
                 WIN3D.reverseTransform_3DViewport();
@@ -162,7 +162,7 @@ void mouseDragged () {
                 (mouseButton == LEFT && WIN3D.UI_OptionXorY == 0) ||
                 (mouseButton == RIGHT && WIN3D.UI_OptionXorY == 1)
               ) { // TargetRollZ
-
+                // println("TargetRollZ");
                 WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
                 WIN3D.reverseTransform_3DViewport();
@@ -175,8 +175,8 @@ void mouseDragged () {
                 (WIN3D.UI_CurrentTask == UITASK.SkydomeSize) ||
                 (WIN3D.UI_CurrentTask == UITASK.AllModelSize)) { // viewport
 
-              if (mouseButton == LEFT) { // orbit
-
+              if (mouseButton == LEFT) { // Orbit
+                // println("Orbit");
                 WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
                 WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
 
@@ -184,7 +184,7 @@ void mouseDragged () {
               }
 
               if (mouseButton == RIGHT) { // Pan
-
+                // println("Pan");
                 WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
                 WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
 
@@ -195,14 +195,14 @@ void mouseDragged () {
             if (WIN3D.UI_CurrentTask == UITASK.Pan_Height) {
 
               if (mouseButton == LEFT) { // move Y
-
+                // println("move Y");
                 WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
 
                 SOLARCHVISION_view_changed();
               }
 
               if (mouseButton == RIGHT) { // move X
-
+                // println("move X");
                 WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
 
                 SOLARCHVISION_view_changed();
@@ -212,7 +212,7 @@ void mouseDragged () {
             if (WIN3D.UI_CurrentTask == UITASK.ModelSize_Pan_TargetRoll) { // viewport
 
               if (mouseButton == LEFT) { // Pan
-
+                // println("Pan");
                 WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
                 WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
 
@@ -220,7 +220,7 @@ void mouseDragged () {
               }
 
               if (mouseButton == RIGHT) { // TargetRoll
-
+                // println("TargetRoll");
                 WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T;
                 WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
 
@@ -233,7 +233,7 @@ void mouseDragged () {
             if (WIN3D.UI_CurrentTask == UITASK.Truck_Orbit) { // viewport:different functions
 
               if (WIN3D.UI_TaskModifyParameter == 0) { // Truck
-
+                // println("Truck");
                 if (WIN3D.UI_OptionXorY == 0) {
                   if (mouseButton == LEFT) WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
                   if (mouseButton == RIGHT) WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
@@ -250,8 +250,8 @@ void mouseDragged () {
               }
 
 
-              if (WIN3D.UI_TaskModifyParameter == 1) {  // Orbit
-
+              if (WIN3D.UI_TaskModifyParameter == 1) { // Orbit
+                // println("Orbit");
                 if (WIN3D.UI_OptionXorY == 0) {
                   if (mouseButton == LEFT) WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
                   if (mouseButton == RIGHT) WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
