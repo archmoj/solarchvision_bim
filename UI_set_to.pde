@@ -655,11 +655,11 @@ void UI_set_to_View_Pan (int n) {
   }
 
   if (n == 1) {
-    WIN3D.UI_CurrentTask = UITASK.PanX_TargetRollXY_TargetRollZ;
+    WIN3D.UI_CurrentTask = UITASK.PanX_TargetRoll;
   }
 
   if (n == 2) {
-    WIN3D.UI_CurrentTask = UITASK.PanY_TargetRollXY_TargetRollZ;
+    WIN3D.UI_CurrentTask = UITASK.PanY_TargetRoll;
   }
 
 

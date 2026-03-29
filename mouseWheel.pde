@@ -483,14 +483,14 @@ void mouseWheel (MouseEvent event) {
                 SOLARCHVISION_view_changed();
               }
 
-              if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) { // viewport:PanX
+              if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRoll) { // viewport:PanX
 
                 WIN3D.position_X += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
 
                 SOLARCHVISION_view_changed();
               }
 
-              if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ) { // viewport:PanY
+              if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRoll) { // viewport:PanY
 
                 WIN3D.position_Y += Wheel_Value * WIN3D.position_T * OBJECTS_scale;
 

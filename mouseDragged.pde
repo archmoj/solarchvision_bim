@@ -44,7 +44,7 @@ void mouseDragged () {
               }
             }
 
-            if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRollXY_TargetRollZ) {
+            if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRoll) {
 
               if (mouseButton == LEFT) { // PanX
                 // println("PanX");
@@ -61,7 +61,7 @@ void mouseDragged () {
               }
             }
 
-            if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRollXY_TargetRollZ) {
+            if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRoll) {
 
               if (mouseButton == LEFT) { // PanY
                 // println("PanY");

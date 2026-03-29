@@ -7,8 +7,8 @@ class solarchvision_UITASK {
   int LandOrbit_Pan_TargetRollZ = num++;
   int LookAtDirection = num++;
   int DistMouseXY_TargetRollXY_TargetRollZ = num++;
-  int PanY_TargetRollXY_TargetRollZ = num++;
-  int PanX_TargetRollXY_TargetRollZ = num++;
+  int PanY_TargetRoll = num++;
+  int PanX_TargetRoll = num++;
   int Pan_TargetRoll = num++;
   int CameraDistance_TargetRollXY_TargetRollZ = num++;
   int CameraRoll_Pan = num++;
