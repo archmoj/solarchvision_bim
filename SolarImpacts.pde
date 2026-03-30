@@ -190,18 +190,8 @@ class solarchvision_SolarImpacts {
                         values_E_dif = 0.001 * Pd;
 
                         for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE++) {
-                          float RAD_VALUE = 0;
-                          float EFF_VALUE = 0;
-                          if (RAD_TYPE == 0) {
-                            RAD_VALUE = values_R_dir;
-                            EFF_VALUE = values_E_dir;
-                          } else {
-                            //float MULT_dif = 2.0;
-                            float MULT_dif = FLOAT_e; // 2.718
-
-                            RAD_VALUE = values_R_dif * MULT_dif;
-                            EFF_VALUE = values_E_dif * MULT_dif;
-                          }
+                          float RAD_VALUE = values_R_dir;
+                          float EFF_VALUE = values_E_dir;
 
                           PImage[] Shadings = new PImage [2];
                           for (int SHD = 0; SHD <= 1; SHD++) {
@@ -219,7 +209,7 @@ class solarchvision_SolarImpacts {
                             File_Name += "_Camera" + nf(Camera_Variation, 2) + ".png";
 
 
-                            println(File_Name);
+                            // println(File_Name);
                             Shadings[SHD]  = loadImage(File_Name);
                           }
 
