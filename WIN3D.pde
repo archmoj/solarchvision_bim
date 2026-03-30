@@ -273,8 +273,11 @@ class solarchvision_WIN3D {
     int PAL_direction = 1;
     float PAL_multiplier = 1;
 
-    if ((this.FacesShade == SHADE.Global_Solar) ||
-        (this.FacesShade == SHADE.Vertex_Solar)) {
+    if (
+      (this.FacesShade == SHADE.Global_Solar) ||
+      (this.FacesShade == SHADE.Vertex_Solar) ||
+      (allSolarImpacts.displayImage && allSections.SolarImpact.length > 0)
+    ) {
 
       if (this.Impact_TYPE == Impact_ACTIVE) {
         PAL_type = allFaces.ACTIVE_palette_CLR;
@@ -356,8 +359,11 @@ class solarchvision_WIN3D {
 
         float _u = 0.2 * q - 0.5;
 
-        if ((this.FacesShade == SHADE.Global_Solar) ||
-            (this.FacesShade == SHADE.Vertex_Solar)) {
+        if (
+          (this.FacesShade == SHADE.Global_Solar) ||
+          (this.FacesShade == SHADE.Vertex_Solar) ||
+          (allSolarImpacts.displayImage && allSections.SolarImpact.length > 0)
+        ) {
 
           if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
           if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
@@ -396,8 +402,11 @@ class solarchvision_WIN3D {
 
 
 
-        if ((this.FacesShade == SHADE.Global_Solar) ||
-            (this.FacesShade == SHADE.Vertex_Solar)) {
+        if (
+          (this.FacesShade == SHADE.Global_Solar) ||
+          (this.FacesShade == SHADE.Vertex_Solar) ||
+          (allSolarImpacts.displayImage && allSections.SolarImpact.length > 0)
+        ) {
 
           if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
           if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y, 0);
