@@ -260,11 +260,8 @@ class solarchvision_SolarImpacts {
               float valuesMUL = 0;
 
               if (valuesNUM != 0) {
-                //valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
-                //valuesMUL = int(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * valuesNUM);
-                valuesMUL = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * valuesNUM);
+                valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
               }
-
 
               for (int q = 0; q < numberOfImpactVariations; q++) {
                 Image_RGBA[q].loadPixels();

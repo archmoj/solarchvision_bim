@@ -2799,9 +2799,6 @@ class solarchvision_STUDY {
 
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-        float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE);
-        float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
-
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
         Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
