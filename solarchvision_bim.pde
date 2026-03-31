@@ -886,6 +886,8 @@ solarchvision_STATION STATION = new solarchvision_STATION(
   //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "MONTREAL_DORVAL_QC_CA", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
   "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "TORONTO_PEARSON_INTL_ON_CA", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "CAN_ON_Toronto.716240_CWEC"
   //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "VANCOUVER_INTL_BC_CA", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "CAN_BC_Vancouver.718920_CWEC"
+
+  //"", "Dusseldorf", "NW", "DE", 51.28, 6.78, 15, 44, "", "", "DEU_Dusseldorf.104000_IWEC"
 );
 
 solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE();
