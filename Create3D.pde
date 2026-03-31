@@ -2515,6 +2515,11 @@ class solarchvision_Create3D {
       this.add_Box_Corners(-1, t, 0, 1, 0, 0, 42, 72, 0, 66, 78, 12);
       this.add_Box_Corners(-1, t, 0, 1, 0, 0, 66, 42, 0, 78, 78, 12);
     }
+
+    if (n == 10) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      allSections.create(0, 0, 0.1, 0, 50, 50, 1, 200, 200);
+    }
   }
 
   int maximum_default_models = 6;
