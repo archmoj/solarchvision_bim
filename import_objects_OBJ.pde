@@ -53,6 +53,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
 
       int[] v = {
         allPoints.create(x, y, z)
+        //allPoints.create(x, -z, y)
       };
 
       importVerticeNumber = concat(importVerticeNumber, v);
@@ -89,7 +90,7 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
       allFaces.create(newFace);
     }
   }
-  
+
   for(int c = 0; c < floor(100 - printed_Progress); c++) {
     print("█");
   }
