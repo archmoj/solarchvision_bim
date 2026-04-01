@@ -52,8 +52,8 @@ void SOLARCHVISION_import_objects_OBJ (String FileName, int m, int tes, int lyr,
       float z = cz + sz * float(parts[3]);
 
       int[] v = {
-        allPoints.create(x, y, z)
-        //allPoints.create(x, -z, y)
+        //allPoints.create(x, y, z)
+        allPoints.create(x, -z, y)
       };
 
       importVerticeNumber = concat(importVerticeNumber, v);
