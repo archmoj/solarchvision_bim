@@ -9,7 +9,7 @@ void SOLARCHVISION_preBakeViewport () {
   allSolarImpacts.sectionType = 1; // <<<<< so that it analyzed later!
 
   int start_DATE_ANGLE = 0;
-  int step_DATE_ANGLE = 15;
+  int step_DATE_ANGLE = 30;
   int end_DATE_ANGLE = 360 - step_DATE_ANGLE;
 
   int start_HOUR = 4; // to make it faster. Also the images are not needed out of this period.
