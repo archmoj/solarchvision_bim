@@ -30,8 +30,8 @@ class solarchvision_SolidImpacts {
     100, 100, 100, 100
   }; // i.e. 100m
 
-  int RES1 = 200; //400;
-  int RES2 = 200; //400;
+  int RES1 = 400;
+  int RES2 = 400;
 
   PImage Image = createImage(this.RES1, this.RES2, ARGB);
 
