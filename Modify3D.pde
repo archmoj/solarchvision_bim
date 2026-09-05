@@ -1595,53 +1595,52 @@ class solarchvision_Modify3D {
               top_Vertex_ids[s] = allPoints.create(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
             }
 
-            for (int s = 0; s < allFaces.nodes[f].length; s++) {
+            int nSides = allFaces.nodes[f].length;
 
-              int s_next = (s + 1) % allFaces.nodes[f].length;
+            int[][] newFace_nodes_batch = new int [nSides + 1][];
+            int[][] newFace_options_batch = new int [nSides + 1][];
+
+            int face_Material = allFaces.getMaterial(f);
+            int face_Tessellation = allFaces.getTessellation(f);
+            int face_Layer = allFaces.getLayer(f);
+            int face_Visibility = allFaces.getVisibility(f);
+            int face_Weight = allFaces.getWeight(f);
+            int face_Close = allFaces.getClose(f);
+
+            for (int s = 0; s < nSides; s++) {
+
+              int s_next = (s + 1) % nSides;
 
               if (User3D.modify_OpenningDepth < 0) { // reverse direction for negative extrude heights
-                int[][] newFace_nodes = {
-                  {
-                    base_Vertex_ids[s], top_Vertex_ids[s], top_Vertex_ids[s_next], base_Vertex_ids[s_next]
-                  }
+                newFace_nodes_batch[s] = new int[] {
+                  base_Vertex_ids[s], top_Vertex_ids[s], top_Vertex_ids[s_next], base_Vertex_ids[s_next]
                 };
-                allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes);
               } else {
-                int[][] newFace_nodes = {
-                  {
-                    base_Vertex_ids[s], base_Vertex_ids[s_next], top_Vertex_ids[s_next], top_Vertex_ids[s]
-                  }
+                newFace_nodes_batch[s] = new int[] {
+                  base_Vertex_ids[s], base_Vertex_ids[s_next], top_Vertex_ids[s_next], top_Vertex_ids[s]
                 };
-                allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes);
               }
 
-              int[][] newFace_options = {
-                {
-                  allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f)
-                }
+              newFace_options_batch[s] = new int[] {
+                face_Material, face_Tessellation, face_Layer, face_Visibility, face_Weight, face_Close
               };
-              allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);
             }
 
             { // adding the cap
-              int[][] newFace_nodes = {
-                top_Vertex_ids
+              newFace_nodes_batch[nSides] = top_Vertex_ids;
+              newFace_options_batch[nSides] = new int[] {
+                face_Material, face_Tessellation, face_Layer, face_Visibility, face_Weight, face_Close
               };
-              allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes);
-
-              int[][] newFace_options = {
-                {
-                  allFaces.getMaterial(f), allFaces.getTessellation(f), allFaces.getLayer(f), allFaces.getVisibility(f), allFaces.getWeight(f), allFaces.getClose(f)
-                }
-              };
-              allFaces.options =  (int[][]) concat(allFaces.options, newFace_options);
-
-              int[] lastFace = {
-                allFaces.nodes.length - 1
-              };
-
-              Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, lastFace);
             }
+
+            allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes_batch);
+            allFaces.options = (int[][]) concat(allFaces.options, newFace_options_batch);
+
+            int[] lastFace = {
+              allFaces.nodes.length - 1
+            };
+
+            Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, lastFace);
 
             allGroups.Faces[allGroups.num - 1][1] = allFaces.nodes.length - 1;
           }
