@@ -115,7 +115,7 @@ class solarchvision_Clone3D {
             vertexIndexMap.put(vNo, vertex_listed);
             nextNewVertexIndex++;
           }
-          newFace_nodes.append(number_of_Vertices_before + vertex_listed - 1);
+          newFace_nodes.append(number_of_Vertices_before + vertex_listed);
         }
         current_Material = allFaces.getMaterial(f);
         current_Tessellation = allFaces.getTessellation(f);
@@ -336,8 +336,6 @@ class solarchvision_Clone3D {
             current_Layer = allFaces.getLayer(f);
             current_Visibility = allFaces.getVisibility(f);
             allFaces.create(newFace_nodes.array());
-            println("newFace_nodes");
-            println(newFace_nodes.array());
           }
         }
       }
