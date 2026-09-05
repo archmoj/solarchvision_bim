@@ -4,6 +4,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
   println("Calculating direct and diffuse values at each vertex. Please wait...");
 
+  SOLARCHVISION_buildFaceGrid();
+
   VertexSolar_resize_array();
 
   float keep_STUDY_perDays = STUDY.perDays;

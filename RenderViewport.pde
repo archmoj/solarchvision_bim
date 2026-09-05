@@ -4,6 +4,8 @@ void SOLARCHVISION_RenderViewport () {
 
   println("Rendering Viewport. Please wait...");
 
+  SOLARCHVISION_buildFaceGrid();
+
   int PAL_type = 0;
   int PAL_direction = 1;
   float PAL_multiplier = 1;

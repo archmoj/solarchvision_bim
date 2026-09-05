@@ -4,6 +4,8 @@ void SOLARCHVISION_preBakeViewport () {
 
   println("PreBaking for Direct and Diffuse models. Please wait...");
 
+  SOLARCHVISION_buildFaceGrid();
+
   Camera_Variation = 0;
 
   allSolarImpacts.sectionType = 1; // <<<<< so that it analyzed later!
