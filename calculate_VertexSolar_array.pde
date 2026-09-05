@@ -41,6 +41,15 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
     }
   };
 
+  int numDaySlots = VertexSolar_amounts[Impact_ACTIVE].length;
+  FloatList[] activeDayValues = new FloatList [numDaySlots];
+  FloatList[] passiveDayValues = new FloatList [numDaySlots];
+  for (int idx = 0; idx < numDaySlots; idx++) {
+    activeDayValues[idx] = new FloatList();
+    passiveDayValues[idx] = new FloatList();
+  }
+  ArrayList<float[]> vertexXYZ_list = new ArrayList<float[]>();
+
   float Progress = 0;
   float printed_Progress = 0;
   progressBarHeader();
@@ -295,15 +304,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
               //println("3D-Model >> valuesSUM_RAD:", valuesSUM_RAD, "|COMPARISON:", COMPARISON);
 
-              float[] ADDvalues_RAD = {
-                valuesSUM_RAD
-              };
-              VertexSolar_amounts[Impact_ACTIVE][j + 1] = (float[]) concat(VertexSolar_amounts[Impact_ACTIVE][j + 1], ADDvalues_RAD);
-
-              float[] ADDvalues_EFF = {
-                COMPARISON
-              };
-              VertexSolar_amounts[Impact_PASSIVE][j + 1] = (float[]) concat(VertexSolar_amounts[Impact_PASSIVE][j + 1], ADDvalues_EFF);
+              activeDayValues[j + 1].append(valuesSUM_RAD);
+              passiveDayValues[j + 1].append(COMPARISON);
 
             }
 
@@ -333,24 +335,14 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
             //println("3D-Model >> valuesSUM_RAD:", valuesSUM_RAD, "|COMPARISON:", COMPARISON);
 
-            float[] ADDvalues_RAD = {
-              TOTALvaluesSUM_RAD
-            };
-            VertexSolar_amounts[Impact_ACTIVE][0] = (float[]) concat(VertexSolar_amounts[Impact_ACTIVE][0], ADDvalues_RAD);
+            activeDayValues[0].append(TOTALvaluesSUM_RAD);
+            passiveDayValues[0].append(COMPARISON);
 
-            float[] ADDvalues_EFF = {
-              COMPARISON
-            };
-            VertexSolar_amounts[Impact_PASSIVE][0] = (float[]) concat(VertexSolar_amounts[Impact_PASSIVE][0], ADDvalues_EFF);
-
-            float[][] ADD_values_XYZ = {
-              {
-                subFace[s][0], subFace[s][1], subFace[s][2],
-                subFace[s_prev][0], subFace[s_prev][1], subFace[s_prev][2],
-                subFace[s_next][0], subFace[s_next][1], subFace[s_next][2]
-              }
-            };
-            VertexSolar_XYZ = (float[][]) concat(VertexSolar_XYZ, ADD_values_XYZ);
+            vertexXYZ_list.add(new float[] {
+              subFace[s][0], subFace[s][1], subFace[s][2],
+              subFace[s_prev][0], subFace[s_prev][1], subFace[s_prev][2],
+              subFace[s_next][0], subFace[s_next][1], subFace[s_next][2]
+            });
 
           }
 
@@ -358,6 +350,16 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
       }
     }
+  }
+
+  for (int idx = 0; idx < numDaySlots; idx++) {
+    VertexSolar_amounts[Impact_ACTIVE][idx] = activeDayValues[idx].array();
+    VertexSolar_amounts[Impact_PASSIVE][idx] = passiveDayValues[idx].array();
+  }
+
+  VertexSolar_XYZ = new float [vertexXYZ_list.size()][9];
+  for (int idx = 0; idx < vertexXYZ_list.size(); idx++) {
+    VertexSolar_XYZ[idx] = vertexXYZ_list.get(idx);
   }
 
   for(int c = 0; c < floor(100 - printed_Progress); c++) {
