@@ -210,24 +210,17 @@ class solarchvision_Functions {
   }
 
   float[] centroid (float[][] a) {
-
-    float[] b = a[0]; // initializing to the first node
-
-    // adding other nodes
-    for (int i = a.length - 1; i > 0; --i) { // not the first one!
-      for (int j = b.length - 1; j > -1; --j) {
+    float[] b = new float[a[0].length];
+    for (int i = 0; i < a.length; i++) {
+      for (int j = 0; j < b.length; j++) {
         b[j] += a[i][j];
       }
     }
-
-    // dividing to the number of nodes
-    for (int j = b.length - 1; j > -1; --j) {
+    for (int j = 0; j < b.length; j++) {
       b[j] /= float(a.length);
     }
-
     return b;
   }
-
 
   float bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
 
