@@ -1028,15 +1028,11 @@ class solarchvision_Create3D {
       current_Weight = wgt;
       current_Closed = clz;
 
-      int[] newFace_nodes = {
-        allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h)
-      };
+      int[] newFace_nodes = new int [n];
+      newFace_nodes[0] = allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h);
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n);
-        int[] f = {
-          allPoints.create(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)
-        };
-        newFace_nodes = concat(newFace_nodes, f);
+        newFace_nodes[i] = allPoints.create(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h);
       }
 
       allFaces.create(newFace_nodes);
@@ -1058,15 +1054,11 @@ class solarchvision_Create3D {
       current_Weight = wgt;
       current_Closed = clz;
 
-      int[] newFace_nodes = {
-        allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz)
-      };
+      int[] newFace_nodes = new int [n];
+      newFace_nodes[0] = allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz);
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n) + rot;
-        int[] f = {
-          allPoints.create(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz)
-        };
-        newFace_nodes = concat(newFace_nodes, f);
+        newFace_nodes[i] = allPoints.create(cx + r * funcs.cos_ang(t), cy + r * funcs.sin_ang(t), cz);
       }
 
       allFaces.create(newFace_nodes);
@@ -1094,26 +1086,18 @@ class solarchvision_Create3D {
       vT[0] = allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz + 0.5 * h);
       vB[0] = allPoints.create(cx + r * funcs.cos_ang(rot), cy + r * funcs.sin_ang(rot), cz - 0.5 * h);
 
-      int[] newFace_nodesT = {
-        vT[0]
-      };
-      int[] newFace_nodesB = {
-        vB[0]
-      };
+      int[] newFace_nodesT = new int [n];
+      int[] newFace_nodesB = new int [n];
+      newFace_nodesT[0] = vT[0];
+      newFace_nodesB[0] = vB[0];
       for (int i = 1; i < n; i++) {
         float t = i * 360.0 / float(n);
 
         vT[i] = allPoints.create(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz + 0.5 * h);
         vB[i] = allPoints.create(cx + r * funcs.cos_ang(t + rot), cy + r * funcs.sin_ang(t + rot), cz - 0.5 * h);
-        int[] fT = {
-          vT[i]
-        };
-        int[] fB = {
-          vB[i]
-        };
 
-        newFace_nodesT = concat(newFace_nodesT, fT);
-        newFace_nodesB = concat(newFace_nodesB, fB);
+        newFace_nodesT[i] = vT[i];
+        newFace_nodesB[i] = vB[i];
       }
 
       if (m == -1) current_Material = 0;
@@ -1564,33 +1548,22 @@ class solarchvision_Create3D {
     } else if (isSky == 1) {
 
 
-      skyVertices = new float [0][3];
-      skyFaces = new int [0][1];
+      skyVertices = new float [POINTER_TempObjectVertices][3];
+      skyFaces = new int [POINTER_TempObjectFaces][4];
 
       for (int i = 0; i < POINTER_TempObjectVertices; i++) {
 
-        float x = TempObjectVertices[i][0];
-        float y = TempObjectVertices[i][1];
-        float z = TempObjectVertices[i][2];
-
-        float[][] newVertex = {
-          {
-            x, y, z
-          }
-        };
-
-        skyVertices = (float[][]) concat(skyVertices, newVertex);
+        skyVertices[i][0] = TempObjectVertices[i][0];
+        skyVertices[i][1] = TempObjectVertices[i][1];
+        skyVertices[i][2] = TempObjectVertices[i][2];
       }
 
       for (int i = 0; i < POINTER_TempObjectFaces; i++) {
 
-        int[][] newFace_nodes = {
-          {
-            TempObjectFaces[i][0], TempObjectFaces[i][1], TempObjectFaces[i][2], TempObjectFaces[i][3]
-          }
-        };
-
-        skyFaces = (int[][]) concat(skyFaces, newFace_nodes);
+        skyFaces[i][0] = TempObjectFaces[i][0];
+        skyFaces[i][1] = TempObjectFaces[i][1];
+        skyFaces[i][2] = TempObjectFaces[i][2];
+        skyFaces[i][3] = TempObjectFaces[i][3];
       }
 
 
@@ -1667,26 +1640,18 @@ class solarchvision_Create3D {
     vT[0] = this.addToTempObjectVertices(1, 0, 1);
     vB[0] = this.addToTempObjectVertices(1, 0, -1);
 
-    int[] newFace_nodesT = {
-      vT[0]
-    };
-    int[] newFace_nodesB = {
-      vB[0]
-    };
+    int[] newFace_nodesT = new int [n];
+    int[] newFace_nodesB = new int [n];
+    newFace_nodesT[0] = vT[0];
+    newFace_nodesB[0] = vB[0];
     for (int i = 1; i < n; i++) {
       float rot = i * 360.0 / float(n);
 
       vT[i] = this.addToTempObjectVertices(funcs.cos_ang(rot), funcs.sin_ang(rot), 1);
       vB[i] = this.addToTempObjectVertices(funcs.cos_ang(rot), funcs.sin_ang(rot), -1);
-      int[] fT = {
-        vT[i]
-      };
-      int[] fB = {
-        vB[i]
-      };
 
-      newFace_nodesT = concat(newFace_nodesT, fT);
-      newFace_nodesB = concat(newFace_nodesB, fB);
+      newFace_nodesT[i] = vT[i];
+      newFace_nodesB[i] = vB[i];
     }
 
     this.addToTempObjectFaces(newFace_nodesT, 0); // 0:check_duplicates
@@ -1762,14 +1727,14 @@ class solarchvision_Create3D {
     if (vertex_existed == 0) {
 
       if (POINTER_TempObjectVertices >= TempObjectVertices.length) {
-        TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertex);
-      } else {
-        //TempObjectVertices[POINTER_TempObjectVertices] = new int [3];
-
-        TempObjectVertices[POINTER_TempObjectVertices][0] = x;
-        TempObjectVertices[POINTER_TempObjectVertices][1] = y;
-        TempObjectVertices[POINTER_TempObjectVertices][2] = z;
+        int growBy = max(64, TempObjectVertices.length);
+        float[][] extraCapacity = new float [growBy][3];
+        TempObjectVertices = (float[][]) concat(TempObjectVertices, extraCapacity);
       }
+
+      TempObjectVertices[POINTER_TempObjectVertices][0] = x;
+      TempObjectVertices[POINTER_TempObjectVertices][1] = y;
+      TempObjectVertices[POINTER_TempObjectVertices][2] = z;
 
       vertex_existed = POINTER_TempObjectVertices;
 
@@ -1821,16 +1786,15 @@ class solarchvision_Create3D {
     if (face_existed == 0) {
 
       if (POINTER_TempObjectFaces >= TempObjectFaces.length) {
-        int[][] newFace_nodes = {
-          f
-        };
-        TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace_nodes);
-      } else {
-        TempObjectFaces[POINTER_TempObjectFaces] = new int [f.length];
+        int growBy = max(64, TempObjectFaces.length);
+        int[][] extraCapacity = new int [growBy][1];
+        TempObjectFaces = (int[][]) concat(TempObjectFaces, extraCapacity);
+      }
 
-        for (int i = 0; i < f.length; i++) {
-          TempObjectFaces[POINTER_TempObjectFaces][i] = f[i];
-        }
+      TempObjectFaces[POINTER_TempObjectFaces] = new int [f.length];
+
+      for (int i = 0; i < f.length; i++) {
+        TempObjectFaces[POINTER_TempObjectFaces][i] = f[i];
       }
 
       face_existed = POINTER_TempObjectFaces;
@@ -1999,6 +1963,7 @@ class solarchvision_Create3D {
         0, 0, 0, 0
       }
     };
+    int treesCount = 1; // index 0 is a sentinel row; real trees start at 1
 
     int tessellation = Land3D.displayTessellation;
     if (WIN3D.FacesShade == SHADE.Surface_Base) {
@@ -2115,7 +2080,7 @@ class solarchvision_Create3D {
 
                     int foundNearTree = 0;
 
-                    for (int f = 1; f < treesXYZS.length; f++) {
+                    for (int f = 1; f < treesCount; f++) {
 
                       float x0 = treesXYZS[f][0];
                       float y0 = treesXYZS[f][1];
@@ -2144,12 +2109,17 @@ class solarchvision_Create3D {
                       }
 
 
-                      float[][] newTree = {
-                        {
-                          x, y, z, s
-                        }
-                      };
-                      treesXYZS = (float [][]) concat(treesXYZS, newTree);
+                      if (treesCount >= treesXYZS.length) {
+                        int growBy = max(64, treesXYZS.length);
+                        float[][] extraCapacity = new float [growBy][4];
+                        treesXYZS = (float[][]) concat(treesXYZS, extraCapacity);
+                      }
+
+                      treesXYZS[treesCount][0] = x;
+                      treesXYZS[treesCount][1] = y;
+                      treesXYZS[treesCount][2] = z;
+                      treesXYZS[treesCount][3] = s;
+                      treesCount += 1;
                     }
                     //}
                   }
