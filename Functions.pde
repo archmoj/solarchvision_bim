@@ -515,7 +515,11 @@ class solarchvision_Functions {
   }
 
   boolean arePointsClose(float[] point1, float[] point2) {
-    return this.is_zero(this.vec3_mag(this.vec3_diff(point1, point2)), this.EPSILON_POSITION);
+    float dx = point2[0] - point1[0];
+    float dy = point2[1] - point1[1];
+    float dz = point2[2] - point1[2];
+    float tol = this.EPSILON_POSITION;
+    return (dx * dx + dy * dy + dz * dz) < (tol * tol);
   }
 
   boolean are3PointsIn1Line(float[] point1, float[] point2, float[] point3) {
