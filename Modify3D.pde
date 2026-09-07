@@ -73,6 +73,38 @@ class solarchvision_Modify3D {
     }
   }
 
+  void compactRemovedVertices (boolean[] toRemove) {
+
+    int n = allVertices.length;
+    int[] remap = new int [n];
+    ArrayList<float[]> kept = new ArrayList<float[]>();
+
+    int next = 0;
+    for (int i = 0; i < n; i++) {
+      if (toRemove[i]) {
+        remap[i] = -1; // no longer referenced by anything after relabeling above
+      } else {
+        remap[i] = next;
+        kept.add(allVertices[i]);
+        next++;
+      }
+    }
+
+    allVertices = kept.toArray(new float[0][]);
+
+    for (int i = 0; i < allFaces.nodes.length; i++) {
+      for (int j = 0; j < allFaces.nodes[i].length; j++) {
+        allFaces.nodes[i][j] = remap[allFaces.nodes[i][j]];
+      }
+    }
+
+    for (int i = 0; i < allPolylines.nodes.length; i++) {
+      for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+        allPolylines.nodes[i][j] = remap[allPolylines.nodes[i][j]];
+      }
+    }
+  }
+
 
   void weldSceneVertices_Selection (float max_distance) {
 
@@ -82,6 +114,8 @@ class solarchvision_Modify3D {
         (current_ObjectCategory == ObjectCategory.VERTEX)) {
 
       this.selectVertices_fromCurrentSelection();
+
+      boolean[] toRemove = new boolean [allVertices.length]; // deferred deletions, compacted once at the end
 
       for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
 
@@ -135,32 +169,11 @@ class solarchvision_Modify3D {
 
           int q = found;
 
-          {
-            float[][] startList = (float[][]) subset(allVertices, 0, q);
-            float[][] endList = (float[][]) subset(allVertices, q + 1);
-
-            allVertices = (float[][]) concat(startList, endList);
-          }
-
-          for (int i = 0; i < allFaces.nodes.length; i++) {
-            for (int j = 0; j < allFaces.nodes[i].length; j++) {
-              if (allFaces.nodes[i][j] > q) {
-
-                allFaces.nodes[i][j] -= 1;
-              }
-            }
-          }
-
-          for (int i = 0; i < allPolylines.nodes.length; i++) {
-            for (int j = 0; j < allPolylines.nodes[i].length; j++) {
-              if (allPolylines.nodes[i][j] > q) {
-
-                allPolylines.nodes[i][j] -= 1;
-              }
-            }
-          }
+          toRemove[q] = true; // splice + index-shift deferred to a single pass below
         }
       }
+
+      this.compactRemovedVertices(toRemove);
 
       Select3D.deselect_Vertices();
     }
@@ -180,6 +193,8 @@ class solarchvision_Modify3D {
 
       Select3D.convert_Vertices_to_Faces();
       Select3D.convert_Vertices_to_Polylines();
+
+      boolean[] toRemove = new boolean [allVertices.length]; // deferred deletions, compacted once at the end
 
       for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
 
@@ -227,32 +242,11 @@ class solarchvision_Modify3D {
 
           int q = found;
 
-          {
-            float[][] startList = (float[][]) subset(allVertices, 0, q);
-            float[][] endList = (float[][]) subset(allVertices, q + 1);
-
-            allVertices = (float[][]) concat(startList, endList);
-          }
-
-          for (int i = 0; i < allFaces.nodes.length; i++) {
-            for (int j = 0; j < allFaces.nodes[i].length; j++) {
-              if (allFaces.nodes[i][j] > q) {
-
-                allFaces.nodes[i][j] -= 1;
-              }
-            }
-          }
-
-          for (int i = 0; i < allPolylines.nodes.length; i++) {
-            for (int j = 0; j < allPolylines.nodes[i].length; j++) {
-              if (allPolylines.nodes[i][j] > q) {
-
-                allPolylines.nodes[i][j] -= 1;
-              }
-            }
-          }
+          toRemove[q] = true; // splice + index-shift deferred to a single pass below
         }
       }
+
+      this.compactRemovedVertices(toRemove);
 
       Select3D.deselect_Vertices();
     }
@@ -438,14 +432,13 @@ class solarchvision_Modify3D {
 
   int[] remove_item_from_primary_list (int q, int[] primary_list) {
     // to avoid processing the faces twice they should be deleted from the list.
-    for (int i = q + 1; i < primary_list.length; i++) {
-      primary_list[i] -= 1;
+    int[] result = new int [primary_list.length - 1];
+    int w = 0;
+    for (int i = 0; i < primary_list.length; i++) {
+      if (i == q) continue;
+      result[w++] = (i > q) ? (primary_list[i] - 1) : primary_list[i];
     }
-    int[] startList = (int[]) subset(primary_list, 0, q);
-    int[] endList = (int[]) subset(primary_list, q + 1);
-    primary_list = (int[]) concat(startList, endList);
-
-    return primary_list;
+    return result;
   }
 
 
@@ -477,12 +470,16 @@ class solarchvision_Modify3D {
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object
 
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-            int[][] midList_Faces_nodes = (int[][]) subset(allFaces.nodes, f, 1);
+            // ArrayList accumulator instead of growing an array one concat() per new face
+            // (was O(size) copy per iteration -> O(n^2) total; now O(1) amortized per add).
+            ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+            midList_Faces_nodes_L.add(allFaces.nodes[f]); // same reference as before (subset() also copied the reference, not the data)
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
 
             int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_options = (int[][]) subset(allFaces.options, f, 1);
+            ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+            midList_Faces_options_L.add(allFaces.options[f]);
             int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
             {
@@ -531,19 +528,15 @@ class solarchvision_Modify3D {
 
                 int s_next = (s + 1) % allFaces.nodes[f].length;
 
-                int[][] newFace_nodes = {
-                  {
-                    new_Vertex_ids[s], allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_Vertex_ids[s_next]
-                  }
+                int[] newFace_nodes = {
+                  new_Vertex_ids[s], allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_Vertex_ids[s_next]
                 };
-                int[][] newFace_options = {
-                  {
-                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                  }
+                int[] newFace_options = {
+                  current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                 };
 
-                midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                midList_Faces_nodes_L.add(newFace_nodes);
+                midList_Faces_options_L.add(newFace_options);
               }
 
 
@@ -553,6 +546,9 @@ class solarchvision_Modify3D {
                 }
               }
             }
+
+            int[][] midList_Faces_nodes = midList_Faces_nodes_L.toArray(new int[0][]);
+            int[][] midList_Faces_options = midList_Faces_options_L.toArray(new int[0][]);
 
             startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
             startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
@@ -595,12 +591,14 @@ class solarchvision_Modify3D {
             allGroups.inserted_nFaces(OBJ_ID, f, 2 * allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object
 
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-            int[][] midList_Faces_nodes = (int[][]) subset(allFaces.nodes, f, 1);
+            ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+            midList_Faces_nodes_L.add(allFaces.nodes[f]);
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
 
             int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_options = (int[][]) subset(allFaces.options, f, 1);
+            ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+            midList_Faces_options_L.add(allFaces.options[f]);
             int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
             {
@@ -665,35 +663,27 @@ class solarchvision_Modify3D {
                 int s_next = (s + 1) % allFaces.nodes[f].length;
 
                 {
-                  int[][] newFace_nodes = {
-                    {
-                      allFaces.nodes[f][s], new_B_EdgeVertex_ids[s], new_CenterVertex_ids[s], new_A_EdgeVertex_ids[s]
-                    }
+                  int[] newFace_nodes = {
+                    allFaces.nodes[f][s], new_B_EdgeVertex_ids[s], new_CenterVertex_ids[s], new_A_EdgeVertex_ids[s]
                   };
-                  int[][] newFace_options = {
-                    {
-                      current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                    }
+                  int[] newFace_options = {
+                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                   };
 
-                  midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                  midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                  midList_Faces_nodes_L.add(newFace_nodes);
+                  midList_Faces_options_L.add(newFace_options);
                 }
 
                 {
-                  int[][] newFace_nodes = {
-                    {
-                      new_B_EdgeVertex_ids[s], new_A_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s]
-                    }
+                  int[] newFace_nodes = {
+                    new_B_EdgeVertex_ids[s], new_A_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s]
                   };
-                  int[][] newFace_options = {
-                    {
-                      current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                    }
+                  int[] newFace_options = {
+                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                   };
 
-                  midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                  midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                  midList_Faces_nodes_L.add(newFace_nodes);
+                  midList_Faces_options_L.add(newFace_options);
                 }
               }
 
@@ -704,6 +694,9 @@ class solarchvision_Modify3D {
                 }
               }
             }
+
+            int[][] midList_Faces_nodes = midList_Faces_nodes_L.toArray(new int[0][]);
+            int[][] midList_Faces_options = midList_Faces_options_L.toArray(new int[0][]);
 
             startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
             startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
@@ -748,12 +741,14 @@ class solarchvision_Modify3D {
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object
 
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-            int[][] midList_Faces_nodes = (int[][]) subset(allFaces.nodes, f, 1);
+            ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+            midList_Faces_nodes_L.add(allFaces.nodes[f]);
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
 
             int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_options = (int[][]) subset(allFaces.options, f, 1);
+            ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+            midList_Faces_options_L.add(allFaces.options[f]);
             int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
             {
@@ -811,19 +806,15 @@ class solarchvision_Modify3D {
 
                 int s_next = (s + 1) % allFaces.nodes[f].length;
 
-                int[][] newFace_nodes = {
-                  {
-                    new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s]
-                  }
+                int[] newFace_nodes = {
+                  new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s]
                 };
-                int[][] newFace_options = {
-                  {
-                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                  }
+                int[] newFace_options = {
+                  current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                 };
 
-                midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                midList_Faces_nodes_L.add(newFace_nodes);
+                midList_Faces_options_L.add(newFace_options);
               }
 
 
@@ -833,6 +824,9 @@ class solarchvision_Modify3D {
                 }
               }
             }
+
+            int[][] midList_Faces_nodes = midList_Faces_nodes_L.toArray(new int[0][]);
+            int[][] midList_Faces_options = midList_Faces_options_L.toArray(new int[0][]);
 
             startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
             startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
@@ -876,12 +870,14 @@ class solarchvision_Modify3D {
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length); // because adding the faces also changes the end pointer of the same object
 
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-            int[][] midList_Faces_nodes = (int[][]) subset(allFaces.nodes, f, 1);
+            ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+            midList_Faces_nodes_L.add(allFaces.nodes[f]);
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
 
             int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_options = (int[][]) subset(allFaces.options, f, 1);
+            ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+            midList_Faces_options_L.add(allFaces.options[f]);
             int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
             {
@@ -934,19 +930,15 @@ class solarchvision_Modify3D {
 
                 int s_next = (s + 1) % allFaces.nodes[f].length;
 
-                int[][] newFace_nodes = {
-                  {
-                    new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next]
-                  }
+                int[] newFace_nodes = {
+                  new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next]
                 };
-                int[][] newFace_options = {
-                  {
-                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                  }
+                int[] newFace_options = {
+                  current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                 };
 
-                midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                midList_Faces_nodes_L.add(newFace_nodes);
+                midList_Faces_options_L.add(newFace_options);
               }
 
 
@@ -956,6 +948,9 @@ class solarchvision_Modify3D {
                 }
               }
             }
+
+            int[][] midList_Faces_nodes = midList_Faces_nodes_L.toArray(new int[0][]);
+            int[][] midList_Faces_options = midList_Faces_options_L.toArray(new int[0][]);
 
             startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
             startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
@@ -983,6 +978,7 @@ class solarchvision_Modify3D {
       this.selectFacesAndGroups_fromCurrentSelection();
 
       int[] primary_list = Select3D.Face_ids;
+      ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
@@ -1002,12 +998,12 @@ class solarchvision_Modify3D {
               allGroups.inserted_nFaces(OBJ_ID, f, User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1); // because adding the faces also changes the end pointer of the same object
 
               int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-              int[][] midList_Faces_nodes = new int [0][0];
+              ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
               int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
 
               int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-              int[][] midList_Faces_options = new int [0][0];
+              ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
               int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
               {
@@ -1080,29 +1076,25 @@ class solarchvision_Modify3D {
                     int s10 = s00 + (User3D.modify_TessellateRows + 1);
                     int s11 = s00 + (User3D.modify_TessellateRows + 1) + 1;
 
-                    int[][] newFace_nodes = {
-                      {
-                        new_EdgeVertex_ids[s00], new_EdgeVertex_ids[s10], new_EdgeVertex_ids[s11], new_EdgeVertex_ids[s01]
-                      }
+                    int[] newFace_nodes = {
+                      new_EdgeVertex_ids[s00], new_EdgeVertex_ids[s10], new_EdgeVertex_ids[s11], new_EdgeVertex_ids[s01]
                     };
-                    int[][] newFace_options = {
-                      {
-                        current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                      }
+                    int[] newFace_options = {
+                      current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                     };
 
-                    midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                    midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                    midList_Faces_nodes_L.add(newFace_nodes);
+                    midList_Faces_options_L.add(newFace_options);
 
                     if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
-                      int[] newFace_nodes_number = {
-                        f + s
-                      };
-                      Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFace_nodes_number);
+                      newFaceIndices_L.add(f + s);
                     }
                   }
                 }
               }
+
+              int[][] midList_Faces_nodes = midList_Faces_nodes_L.toArray(new int[0][]);
+              int[][] midList_Faces_options = midList_Faces_options_L.toArray(new int[0][]);
 
               startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
               startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
@@ -1116,6 +1108,11 @@ class solarchvision_Modify3D {
         }
       }
 
+      if (newFaceIndices_L.size() > 0) {
+        int[] newFaceIndices = new int [newFaceIndices_L.size()];
+        for (int i = 0; i < newFaceIndices.length; i++) newFaceIndices[i] = newFaceIndices_L.get(i);
+        Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFaceIndices);
+      }
 
       SOLARCHVISION_switch_category(ObjectCategory.FACE);
     }
@@ -1131,6 +1128,7 @@ class solarchvision_Modify3D {
       this.selectFacesAndGroups_fromCurrentSelection();
 
       int[] primary_list = Select3D.Face_ids;
+      ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
@@ -1148,12 +1146,12 @@ class solarchvision_Modify3D {
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object
 
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-            int[][] midList_Faces_nodes = new int [0][0];
+            ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
 
             int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_options = new int [0][0];
+            ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
             int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
             {
@@ -1207,28 +1205,24 @@ class solarchvision_Modify3D {
 
                 int s_next = (s + 1) % allFaces.nodes[f].length;
 
-                int[][] newFace_nodes = {
-                  {
-                    new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_number
-                  }
+                int[] newFace_nodes = {
+                  new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_number
                 };
-                int[][] newFace_options = {
-                  {
-                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                  }
+                int[] newFace_options = {
+                  current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                 };
 
-                midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                midList_Faces_nodes_L.add(newFace_nodes);
+                midList_Faces_options_L.add(newFace_options);
 
                 if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
-                  int[] newFace_nodes_number = {
-                    f + s
-                  };
-                  Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFace_nodes_number);
+                  newFaceIndices_L.add(f + s);
                 }
               }
             }
+
+            int[][] midList_Faces_nodes = midList_Faces_nodes_L.toArray(new int[0][]);
+            int[][] midList_Faces_options = midList_Faces_options_L.toArray(new int[0][]);
 
             startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
             startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
@@ -1241,6 +1235,11 @@ class solarchvision_Modify3D {
         }
       }
 
+      if (newFaceIndices_L.size() > 0) {
+        int[] newFaceIndices = new int [newFaceIndices_L.size()];
+        for (int i = 0; i < newFaceIndices.length; i++) newFaceIndices[i] = newFaceIndices_L.get(i);
+        Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFaceIndices);
+      }
 
       SOLARCHVISION_switch_category(ObjectCategory.FACE);
     }
@@ -1256,6 +1255,7 @@ class solarchvision_Modify3D {
       this.selectFacesAndGroups_fromCurrentSelection();
 
       int[] primary_list = Select3D.Face_ids;
+      ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
@@ -1273,12 +1273,12 @@ class solarchvision_Modify3D {
             allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object
 
             int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-            int[][] midList_Faces_nodes = new int [0][0];
+            ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
             int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
 
             int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-            int[][] midList_Faces_options = new int [0][0];
+            ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
             int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
             {
@@ -1315,28 +1315,24 @@ class solarchvision_Modify3D {
 
                 int s_next = (s + 1) % allFaces.nodes[f].length;
 
-                int[][] newFace_nodes = {
-                  {
-                    allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number
-                  }
+                int[] newFace_nodes = {
+                  allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number
                 };
-                int[][] newFace_options = {
-                  {
-                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                  }
+                int[] newFace_options = {
+                  current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                 };
 
-                midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                midList_Faces_nodes_L.add(newFace_nodes);
+                midList_Faces_options_L.add(newFace_options);
 
                 if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
-                  int[] newFace_nodes_number = {
-                    f + s
-                  };
-                  Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFace_nodes_number);
+                  newFaceIndices_L.add(f + s);
                 }
               }
             }
+
+            int[][] midList_Faces_nodes = midList_Faces_nodes_L.toArray(new int[0][]);
+            int[][] midList_Faces_options = midList_Faces_options_L.toArray(new int[0][]);
 
             startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
             startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
@@ -1349,6 +1345,11 @@ class solarchvision_Modify3D {
         }
       }
 
+      if (newFaceIndices_L.size() > 0) {
+        int[] newFaceIndices = new int [newFaceIndices_L.size()];
+        for (int i = 0; i < newFaceIndices.length; i++) newFaceIndices[i] = newFaceIndices_L.get(i);
+        Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFaceIndices);
+      }
 
       SOLARCHVISION_switch_category(ObjectCategory.FACE);
     }
@@ -1366,6 +1367,7 @@ class solarchvision_Modify3D {
       this.selectFacesAndGroups_fromCurrentSelection();
 
       int[] primary_list = Select3D.Face_ids;
+      ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
@@ -1385,12 +1387,12 @@ class solarchvision_Modify3D {
               allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object
 
               int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
-              int[][] midList_Faces_nodes = new int [0][0];
+              ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
               int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
 
               int[][] startList_Faces_options = (int[][]) subset(allFaces.options, 0, f);
-              int[][] midList_Faces_options = new int [0][0];
+              ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
               int[][] endList_Faces_options = (int[][]) subset(allFaces.options, f + 1);
 
               {
@@ -1427,28 +1429,24 @@ class solarchvision_Modify3D {
 
                   int s_next = (s + 1) % allFaces.nodes[f].length;
 
-                  int[][] newFace_nodes = {
-                    {
-                      allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number
-                    }
+                  int[] newFace_nodes = {
+                    allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number
                   };
-                  int[][] newFace_options = {
-                    {
-                      current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
-                    }
+                  int[] newFace_options = {
+                    current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed
                   };
 
-                  midList_Faces_nodes = (int[][]) concat(midList_Faces_nodes, newFace_nodes);
-                  midList_Faces_options = (int[][]) concat(midList_Faces_options, newFace_options);
+                  midList_Faces_nodes_L.add(newFace_nodes);
+                  midList_Faces_options_L.add(newFace_options);
 
                   if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
-                    int[] newFace_nodes_number = {
-                      f + s
-                    };
-                    Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFace_nodes_number);
+                    newFaceIndices_L.add(f + s);
                   }
                 }
               }
+
+              int[][] midList_Faces_nodes = midList_Faces_nodes_L.toArray(new int[0][]);
+              int[][] midList_Faces_options = midList_Faces_options_L.toArray(new int[0][]);
 
               startList_Faces_nodes = (int[][]) concat(startList_Faces_nodes, midList_Faces_nodes);
               startList_Faces_options = (int[][]) concat(startList_Faces_options, midList_Faces_options);
@@ -1462,6 +1460,11 @@ class solarchvision_Modify3D {
         }
       }
 
+      if (newFaceIndices_L.size() > 0) {
+        int[] newFaceIndices = new int [newFaceIndices_L.size()];
+        for (int i = 0; i < newFaceIndices.length; i++) newFaceIndices[i] = newFaceIndices_L.get(i);
+        Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFaceIndices);
+      }
 
       SOLARCHVISION_switch_category(ObjectCategory.FACE);
     }
@@ -1503,17 +1506,18 @@ class solarchvision_Modify3D {
 
             float[][] new_Vertices = funcs.optimizeVertices(base_Vertices);
 
-            int[] newList = new int[0];
+            ArrayList<Integer> newList_L = new ArrayList<Integer>();
             // finding ids of new vertices in old vertices
             for (int k = 0; k < new_Vertices.length; k++) {
               for (int s = 0; s < base_Vertices.length; s++) {
                 if (funcs.arePointsClose(new_Vertices[k], base_Vertices[s])) {
-                  int[] newItem = {allFaces.nodes[f][s]};
-                  newList = (int []) concat(newList, newItem);
+                  newList_L.add(allFaces.nodes[f][s]);
                   break;
                 }
               }
             }
+            int[] newList = new int [newList_L.size()];
+            for (int k = 0; k < newList.length; k++) newList[k] = newList_L.get(k);
             allFaces.nodes[f] = newList;
           }
 
@@ -1537,6 +1541,12 @@ class solarchvision_Modify3D {
       int[] primary_list = Select3D.Face_ids;
 
       Select3D.deselect_Faces();
+
+      int baseLen = allFaces.nodes.length;
+      int runningCount = 0;
+      ArrayList<int[]> newFace_nodes_all = new ArrayList<int[]>();
+      ArrayList<int[]> newFace_options_all = new ArrayList<int[]>();
+      ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
@@ -1633,20 +1643,33 @@ class solarchvision_Modify3D {
               };
             }
 
-            allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes_batch);
-            allFaces.options = (int[][]) concat(allFaces.options, newFace_options_batch);
+            for (int s = 0; s < newFace_nodes_batch.length; s++) {
+              newFace_nodes_all.add(newFace_nodes_batch[s]);
+              newFace_options_all.add(newFace_options_batch[s]);
+            }
+            runningCount += newFace_nodes_batch.length;
 
-            int[] lastFace = {
-              allFaces.nodes.length - 1
-            };
+            int lastFaceIndex = baseLen + runningCount - 1;
 
-            Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, lastFace);
+            newFaceIndices_L.add(lastFaceIndex);
 
-            allGroups.Faces[allGroups.num - 1][1] = allFaces.nodes.length - 1;
+            allGroups.Faces[allGroups.num - 1][1] = lastFaceIndex;
           }
         }
       }
 
+      if (newFace_nodes_all.size() > 0) {
+
+        int[][] newFace_nodes_batch_all = newFace_nodes_all.toArray(new int[0][]);
+        int[][] newFace_options_batch_all = newFace_options_all.toArray(new int[0][]);
+
+        allFaces.nodes = (int[][]) concat(allFaces.nodes, newFace_nodes_batch_all);
+        allFaces.options = (int[][]) concat(allFaces.options, newFace_options_batch_all);
+
+        int[] newFaceIndices = new int [newFaceIndices_L.size()];
+        for (int i = 0; i < newFaceIndices.length; i++) newFaceIndices[i] = newFaceIndices_L.get(i);
+        Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFaceIndices);
+      }
 
       SOLARCHVISION_selection_changed();
     }
