@@ -862,7 +862,7 @@ void draw () {
       STUDY.record_PDF = false;
     }
 
-    if((Render_RGBA != null) && (WIN3D.revised_since_last_render == false)) {
+    if((Render_RGBA != null) && WIN3D.showRender) {
       image(Render_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
     }
 

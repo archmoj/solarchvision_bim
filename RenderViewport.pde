@@ -212,5 +212,5 @@ void SOLARCHVISION_RenderViewport () {
 
   cursor(ARROW);
 
-  WIN3D.revised_since_last_render = false;
+  WIN3D.showRender = true;
 }
