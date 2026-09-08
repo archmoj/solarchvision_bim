@@ -825,6 +825,11 @@ void draw () {
 
             WIN3D.drawView();
           }
+
+          if (WIN3D.showRender) {
+            WIN3D.showRender = false;
+            image(Render_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
+          }
         }
 
         if(updateBars) {
@@ -861,11 +866,6 @@ void draw () {
     } else {
       STUDY.record_PDF = false;
     }
-
-    if((Render_RGBA != null) && WIN3D.showRender) {
-      image(Render_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
-    }
-
 
     //WIN3D.updated();
     //WORLD.updated();
