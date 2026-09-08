@@ -122,7 +122,7 @@ void SOLARCHVISION_RenderViewport () {
 
 
       //float[] SunR = funcs.SunPositionRadiation( DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k]);
-      float[] SunR = funcs.SunPositionRadiation(0, 12, 0);
+      float[] SunR = funcs.SunPositionRadiation(0, 11, 0);
 
       float[] SunV = {
         SunR[1], SunR[2], SunR[3]
