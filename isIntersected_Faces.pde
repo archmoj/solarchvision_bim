@@ -277,14 +277,15 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
 
   int safetyCounter = gridNx + gridNy + gridNz + 4; // traversal can't exceed this many steps
 
+  int bestFace = 0;
+  float bestDist = FLOAT_huge;
+
   while (safetyCounter-- > 0) {
     if (ix < 0 || ix >= gridNx || iy < 0 || iy >= gridNy || iz < 0 || iz >= gridNz) {
-      return 0; // walked out of the grid without a hit
+      return bestFace; // walked out of the grid; return best hit found so far (0 if none)
     }
 
     IntList cellFaces = gridCells[cellFlatIndex(ix, iy, iz)];
-    int bestFace = 0;
-    float bestDist = FLOAT_huge;
 
     for (int k = 0; k < cellFaces.size(); k++) {
       int f = cellFaces.get(k);
