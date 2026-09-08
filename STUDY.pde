@@ -2143,6 +2143,15 @@ class solarchvision_STUDY {
         int RES1 = allSolarImpacts.RES1;
         int RES2 = allSolarImpacts.RES2;
 
+        float sizeX = (180 * this.rect_scale) * sx_Plot;
+        float sizeY = sizeX;
+        float aspect = 1.0 * RES1 / RES2;
+        if (aspect > 1) {
+          sizeY /= aspect;
+        } else if (aspect < 1) {
+          sizeX *= aspect;
+        }
+
         if (this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
         if (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
@@ -2201,7 +2210,7 @@ class solarchvision_STUDY {
           this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
           this.graphics.imageMode(CENTER);
-          this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, 0, int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
+          this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
 
           this.graphics.stroke(0);
           this.graphics.fill(0);
@@ -2231,7 +2240,7 @@ class solarchvision_STUDY {
           this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
           this.graphics.imageMode(CENTER);
-          this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][0], (j + 100 * this.rect_scale) * sx_Plot, 0, int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
+          this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][0], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
 
           this.graphics.stroke(0);
           this.graphics.fill(0);
