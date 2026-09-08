@@ -206,9 +206,11 @@ void SOLARCHVISION_RenderViewport () {
 
   Render_RGBA.updatePixels();
 
+  /*
   String myFile = Folder_ScreenShots + "/" + createStamp(1, "Render") + ".png";
   Render_RGBA.save(myFile);
   println("File created:" + myFile);
+  */
 
   cursor(ARROW);
 
