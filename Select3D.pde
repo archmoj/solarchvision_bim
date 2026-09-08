@@ -69,6 +69,19 @@ class solarchvision_Select3D {
 
 
 
+  int[] appendId (int[] arr, int id) {
+    int[] out = new int[arr.length + 1];
+    arrayCopy(arr, out, arr.length);
+    out[arr.length] = id;
+    return out;
+  }
+
+  int[] removeIdAt (int[] arr, int index) {
+    int[] out = new int[arr.length - 1];
+    arrayCopy(arr, 0, out, 0, index);
+    arrayCopy(arr, index + 1, out, index, arr.length - index - 1);
+    return out;
+  }
 
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
 
@@ -777,18 +790,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.LandPoint_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.LandPoint_ids, found_at + 1);
-
-        this.LandPoint_ids = (int[]) concat(startList, endList);
+        this.LandPoint_ids = removeIdAt(this.LandPoint_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.LandPoint_ids = (int[]) concat(this.LandPoint_ids, newObject_id);
+        this.LandPoint_ids = appendId(this.LandPoint_ids, OBJ_ID);
       }
     }
 
@@ -822,18 +828,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Model1D_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Model1D_ids, found_at + 1);
-
-        this.Model1D_ids = (int[]) concat(startList, endList);
+        this.Model1D_ids = removeIdAt(this.Model1D_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Model1D_ids = (int[]) concat(this.Model1D_ids, newObject_id);
+        this.Model1D_ids = appendId(this.Model1D_ids, OBJ_ID);
       }
     }
 
@@ -867,18 +866,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Model2D_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Model2D_ids, found_at + 1);
-
-        this.Model2D_ids = (int[]) concat(startList, endList);
+        this.Model2D_ids = removeIdAt(this.Model2D_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Model2D_ids = (int[]) concat(this.Model2D_ids, newObject_id);
+        this.Model2D_ids = appendId(this.Model2D_ids, OBJ_ID);
       }
     }
 
@@ -921,18 +913,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Group_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Group_ids, found_at + 1);
-
-        this.Group_ids = (int[]) concat(startList, endList);
+        this.Group_ids = removeIdAt(this.Group_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Group_ids = (int[]) concat(this.Group_ids, newObject_id);
+        this.Group_ids = appendId(this.Group_ids, OBJ_ID);
       }
     }
 
@@ -965,18 +950,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Face_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Face_ids, found_at + 1);
-
-        this.Face_ids = (int[]) concat(startList, endList);
+        this.Face_ids = removeIdAt(this.Face_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Face_ids = (int[]) concat(this.Face_ids, newObject_id);
+        this.Face_ids = appendId(this.Face_ids, OBJ_ID);
       }
     }
 
@@ -1009,18 +987,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Polyline_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Polyline_ids, found_at + 1);
-
-        this.Polyline_ids = (int[]) concat(startList, endList);
+        this.Polyline_ids = removeIdAt(this.Polyline_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Polyline_ids = (int[]) concat(this.Polyline_ids, newObject_id);
+        this.Polyline_ids = appendId(this.Polyline_ids, OBJ_ID);
       }
     }
 
@@ -1073,18 +1044,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Vertex_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Vertex_ids, found_at + 1);
-
-        this.Vertex_ids = (int[]) concat(startList, endList);
+        this.Vertex_ids = removeIdAt(this.Vertex_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Vertex_ids = (int[]) concat(this.Vertex_ids, newObject_id);
+        this.Vertex_ids = appendId(this.Vertex_ids, OBJ_ID);
       }
     }
 
@@ -1119,18 +1083,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Solid_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Solid_ids, found_at + 1);
-
-        this.Solid_ids = (int[]) concat(startList, endList);
+        this.Solid_ids = removeIdAt(this.Solid_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Solid_ids = (int[]) concat(this.Solid_ids, newObject_id);
+        this.Solid_ids = appendId(this.Solid_ids, OBJ_ID);
       }
     }
 
@@ -1165,18 +1122,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Section_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Section_ids, found_at + 1);
-
-        this.Section_ids = (int[]) concat(startList, endList);
+        this.Section_ids = removeIdAt(this.Section_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Section_ids = (int[]) concat(this.Section_ids, newObject_id);
+        this.Section_ids = appendId(this.Section_ids, OBJ_ID);
       }
     }
 
@@ -1209,18 +1159,11 @@ class solarchvision_Select3D {
       }
 
       if (use_it == -1) {
-        int[] startList = (int[]) subset(this.Camera_ids, 0, found_at);
-        int[] endList = (int[]) subset(this.Camera_ids, found_at + 1);
-
-        this.Camera_ids = (int[]) concat(startList, endList);
+        this.Camera_ids = removeIdAt(this.Camera_ids, found_at);
       }
 
       if (use_it == 1) {
-        int[] newObject_id = {
-          OBJ_ID
-        };
-
-        this.Camera_ids = (int[]) concat(this.Camera_ids, newObject_id);
+        this.Camera_ids = appendId(this.Camera_ids, OBJ_ID);
       }
 
     }
@@ -1308,18 +1251,11 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.LandPoint_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.LandPoint_ids, found_at + 1);
-
-            this.LandPoint_ids = (int[]) concat(startList, endList);
+            this.LandPoint_ids = removeIdAt(this.LandPoint_ids, found_at);
           }
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.LandPoint_ids = (int[]) concat(this.LandPoint_ids, newObject_id);
+            this.LandPoint_ids = appendId(this.LandPoint_ids, OBJ_ID);
           }
         }
       }
@@ -1402,18 +1338,11 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Model1D_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Model1D_ids, found_at + 1);
-
-            this.Model1D_ids = (int[]) concat(startList, endList);
+            this.Model1D_ids = removeIdAt(this.Model1D_ids, found_at);
           }
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Model1D_ids = (int[]) concat(this.Model1D_ids, newObject_id);
+            this.Model1D_ids = appendId(this.Model1D_ids, OBJ_ID);
           }
         }
       }
@@ -1544,18 +1473,11 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Group_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Group_ids, found_at + 1);
-
-            this.Group_ids = (int[]) concat(startList, endList);
+            this.Group_ids = removeIdAt(this.Group_ids, found_at);
           }
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Group_ids = (int[]) concat(this.Group_ids, newObject_id);
+            this.Group_ids = appendId(this.Group_ids, OBJ_ID);
           }
         }
       }
@@ -1633,18 +1555,11 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Face_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Face_ids, found_at + 1);
-
-            this.Face_ids = (int[]) concat(startList, endList);
+            this.Face_ids = removeIdAt(this.Face_ids, found_at);
           }
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Face_ids = (int[]) concat(this.Face_ids, newObject_id);
+            this.Face_ids = appendId(this.Face_ids, OBJ_ID);
           }
         }
       }
@@ -1721,18 +1636,11 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Polyline_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Polyline_ids, found_at + 1);
-
-            this.Polyline_ids = (int[]) concat(startList, endList);
+            this.Polyline_ids = removeIdAt(this.Polyline_ids, found_at);
           }
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Polyline_ids = (int[]) concat(this.Polyline_ids, newObject_id);
+            this.Polyline_ids = appendId(this.Polyline_ids, OBJ_ID);
           }
         }
       }
@@ -1798,18 +1706,11 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Vertex_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Vertex_ids, found_at + 1);
-
-            this.Vertex_ids = (int[]) concat(startList, endList);
+            this.Vertex_ids = removeIdAt(this.Vertex_ids, found_at);
           }
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Vertex_ids = (int[]) concat(this.Vertex_ids, newObject_id);
+            this.Vertex_ids = appendId(this.Vertex_ids, OBJ_ID);
           }
         }
       }
@@ -1893,21 +1794,14 @@ class solarchvision_Select3D {
 
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Model2D_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Model2D_ids, found_at + 1);
-
-            this.Model2D_ids = (int[]) concat(startList, endList);
+            this.Model2D_ids = removeIdAt(this.Model2D_ids, found_at);
           }
 
 
 
           if (use_it == 1) {
 
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Model2D_ids = (int[]) concat(this.Model2D_ids, newObject_id);
+            this.Model2D_ids = appendId(this.Model2D_ids, OBJ_ID);
 
             // skip the same object's drawn faces
             f += allModel2Ds.num_visualFaces - (f % allModel2Ds.num_visualFaces) - 1;
@@ -1994,20 +1888,13 @@ class solarchvision_Select3D {
 
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Solid_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Solid_ids, found_at + 1);
-
-            this.Solid_ids = (int[]) concat(startList, endList);
+            this.Solid_ids = removeIdAt(this.Solid_ids, found_at);
           }
 
 
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Solid_ids = (int[]) concat(this.Solid_ids, newObject_id);
+            this.Solid_ids = appendId(this.Solid_ids, OBJ_ID);
 
             // skip the same object's drawn faces
             f += allSolids.num_visualFaces - (f % allSolids.num_visualFaces) - 1;
@@ -2091,18 +1978,11 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Section_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Section_ids, found_at + 1);
-
-            this.Section_ids = (int[]) concat(startList, endList);
+            this.Section_ids = removeIdAt(this.Section_ids, found_at);
           }
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Section_ids = (int[]) concat(this.Section_ids, newObject_id);
+            this.Section_ids = appendId(this.Section_ids, OBJ_ID);
           }
         }
       }
@@ -2184,18 +2064,11 @@ class solarchvision_Select3D {
           }
 
           if (use_it == -1) {
-            int[] startList = (int[]) subset(this.Camera_ids, 0, found_at);
-            int[] endList = (int[]) subset(this.Camera_ids, found_at + 1);
-
-            this.Camera_ids = (int[]) concat(startList, endList);
+            this.Camera_ids = removeIdAt(this.Camera_ids, found_at);
           }
 
           if (use_it == 1) {
-            int[] newObject_id = {
-              OBJ_ID
-            };
-
-            this.Camera_ids = (int[]) concat(this.Camera_ids, newObject_id);
+            this.Camera_ids = appendId(this.Camera_ids, OBJ_ID);
           }
         }
       }
@@ -2376,282 +2249,142 @@ class solarchvision_Select3D {
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
       int[] pre_Selection_LandPoint_ids = sort(this.LandPoint_ids);
 
-      this.LandPoint_ids = new int [0];
-
-      for (int i = 0; i < Land3D.num_rows * Land3D.num_columns; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_LandPoint_ids.length; j++) {
-
-          if (pre_Selection_LandPoint_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_LandPoint_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.LandPoint_ids = concat(this.LandPoint_ids, new_Item);
-        }
+      int total_LandPoint = Land3D.num_rows * Land3D.num_columns;
+      IntList inverted_LandPoint = new IntList();
+      int j_LandPoint = 0;
+      for (int i = 0; i < total_LandPoint; i++) {
+        while (j_LandPoint < pre_Selection_LandPoint_ids.length && pre_Selection_LandPoint_ids[j_LandPoint] < i) j_LandPoint++;
+        boolean isSelected_LandPoint = (j_LandPoint < pre_Selection_LandPoint_ids.length && pre_Selection_LandPoint_ids[j_LandPoint] == i);
+        if (!isSelected_LandPoint) inverted_LandPoint.append(i);
       }
+      this.LandPoint_ids = inverted_LandPoint.array();
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
       int[] pre_Selection_Model1D_ids = sort(this.Model1D_ids);
 
-      this.Model1D_ids = new int [0];
-
-      for (int i = 0; i < allModel1Ds.num; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Model1D_ids.length; j++) {
-
-          if (pre_Selection_Model1D_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Model1D_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Model1D_ids = concat(this.Model1D_ids, new_Item);
-        }
+      int total_Model1D = allModel1Ds.num;
+      IntList inverted_Model1D = new IntList();
+      int j_Model1D = 0;
+      for (int i = 0; i < total_Model1D; i++) {
+        while (j_Model1D < pre_Selection_Model1D_ids.length && pre_Selection_Model1D_ids[j_Model1D] < i) j_Model1D++;
+        boolean isSelected_Model1D = (j_Model1D < pre_Selection_Model1D_ids.length && pre_Selection_Model1D_ids[j_Model1D] == i);
+        if (!isSelected_Model1D) inverted_Model1D.append(i);
       }
+      this.Model1D_ids = inverted_Model1D.array();
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
       int[] pre_Selection_Model2D_ids = sort(this.Model2D_ids);
 
-      this.Model2D_ids = new int [0];
-
-      for (int i = 0; i < allModel2Ds.num; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Model2D_ids.length; j++) {
-
-          if (pre_Selection_Model2D_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Model2D_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Model2D_ids = concat(this.Model2D_ids, new_Item);
-        }
+      int total_Model2D = allModel2Ds.num;
+      IntList inverted_Model2D = new IntList();
+      int j_Model2D = 0;
+      for (int i = 0; i < total_Model2D; i++) {
+        while (j_Model2D < pre_Selection_Model2D_ids.length && pre_Selection_Model2D_ids[j_Model2D] < i) j_Model2D++;
+        boolean isSelected_Model2D = (j_Model2D < pre_Selection_Model2D_ids.length && pre_Selection_Model2D_ids[j_Model2D] == i);
+        if (!isSelected_Model2D) inverted_Model2D.append(i);
       }
+      this.Model2D_ids = inverted_Model2D.array();
     }
 
     if (current_ObjectCategory == ObjectCategory.GROUP) {
       int[] pre_Selection_Group_ids = sort(this.Group_ids);
 
-      this.Group_ids = new int [0];
-
-      for (int i = 0; i < allGroups.num; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Group_ids.length; j++) {
-
-          if (pre_Selection_Group_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Group_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Group_ids = concat(this.Group_ids, new_Item);
-        }
+      int total_Group = allGroups.num;
+      IntList inverted_Group = new IntList();
+      int j_Group = 0;
+      for (int i = 0; i < total_Group; i++) {
+        while (j_Group < pre_Selection_Group_ids.length && pre_Selection_Group_ids[j_Group] < i) j_Group++;
+        boolean isSelected_Group = (j_Group < pre_Selection_Group_ids.length && pre_Selection_Group_ids[j_Group] == i);
+        if (!isSelected_Group) inverted_Group.append(i);
       }
+      this.Group_ids = inverted_Group.array();
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
       int[] pre_Selection_Face_ids = sort(this.Face_ids);
 
-      this.Face_ids = new int [0];
-
-      for (int i = 0; i < allFaces.nodes.length; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Face_ids.length; j++) {
-
-          if (pre_Selection_Face_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Face_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Face_ids = concat(this.Face_ids, new_Item);
-        }
+      int total_Face = allFaces.nodes.length;
+      IntList inverted_Face = new IntList();
+      int j_Face = 0;
+      for (int i = 0; i < total_Face; i++) {
+        while (j_Face < pre_Selection_Face_ids.length && pre_Selection_Face_ids[j_Face] < i) j_Face++;
+        boolean isSelected_Face = (j_Face < pre_Selection_Face_ids.length && pre_Selection_Face_ids[j_Face] == i);
+        if (!isSelected_Face) inverted_Face.append(i);
       }
+      this.Face_ids = inverted_Face.array();
     }
 
     if (current_ObjectCategory == ObjectCategory.POLYLINE) {
       int[] pre_Selection_Polyline_ids = sort(this.Polyline_ids);
 
-      this.Polyline_ids = new int [0];
-
-      for (int i = 0; i < allPolylines.nodes.length; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Polyline_ids.length; j++) {
-
-          if (pre_Selection_Polyline_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Polyline_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Polyline_ids = concat(this.Polyline_ids, new_Item);
-        }
+      int total_Polyline = allPolylines.nodes.length;
+      IntList inverted_Polyline = new IntList();
+      int j_Polyline = 0;
+      for (int i = 0; i < total_Polyline; i++) {
+        while (j_Polyline < pre_Selection_Polyline_ids.length && pre_Selection_Polyline_ids[j_Polyline] < i) j_Polyline++;
+        boolean isSelected_Polyline = (j_Polyline < pre_Selection_Polyline_ids.length && pre_Selection_Polyline_ids[j_Polyline] == i);
+        if (!isSelected_Polyline) inverted_Polyline.append(i);
       }
+      this.Polyline_ids = inverted_Polyline.array();
     }
 
 
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
       int[] pre_Selection_Vertex_ids = sort(this.Vertex_ids);
 
-      this.Vertex_ids = new int [0];
-
-      for (int i = 0; i < allPoints.getLength(); i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Vertex_ids.length; j++) {
-
-          if (pre_Selection_Vertex_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Vertex_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Vertex_ids = concat(this.Vertex_ids, new_Item);
-        }
+      int total_Vertex = allPoints.getLength();
+      IntList inverted_Vertex = new IntList();
+      int j_Vertex = 0;
+      for (int i = 0; i < total_Vertex; i++) {
+        while (j_Vertex < pre_Selection_Vertex_ids.length && pre_Selection_Vertex_ids[j_Vertex] < i) j_Vertex++;
+        boolean isSelected_Vertex = (j_Vertex < pre_Selection_Vertex_ids.length && pre_Selection_Vertex_ids[j_Vertex] == i);
+        if (!isSelected_Vertex) inverted_Vertex.append(i);
       }
+      this.Vertex_ids = inverted_Vertex.array();
     }
 
     if (current_ObjectCategory == ObjectCategory.SOLID) {
       int[] pre_Selection_Solid_ids = sort(this.Solid_ids);
 
-      this.Solid_ids = new int [0];
-
-      for (int i = 0; i < allSolids.DEF.length; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Solid_ids.length; j++) {
-
-          if (pre_Selection_Solid_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Solid_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Solid_ids = concat(this.Solid_ids, new_Item);
-        }
+      int total_Solid = allSolids.DEF.length;
+      IntList inverted_Solid = new IntList();
+      int j_Solid = 0;
+      for (int i = 0; i < total_Solid; i++) {
+        while (j_Solid < pre_Selection_Solid_ids.length && pre_Selection_Solid_ids[j_Solid] < i) j_Solid++;
+        boolean isSelected_Solid = (j_Solid < pre_Selection_Solid_ids.length && pre_Selection_Solid_ids[j_Solid] == i);
+        if (!isSelected_Solid) inverted_Solid.append(i);
       }
+      this.Solid_ids = inverted_Solid.array();
     }
 
     if (current_ObjectCategory == ObjectCategory.SECTION) {
       int[] pre_Selection_Section_ids = sort(this.Section_ids);
 
-      this.Section_ids = new int [0];
-
-      for (int i = 0; i < allSections.num; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Section_ids.length; j++) {
-
-          if (pre_Selection_Section_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Section_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Section_ids = concat(this.Section_ids, new_Item);
-        }
+      int total_Section = allSections.num;
+      IntList inverted_Section = new IntList();
+      int j_Section = 0;
+      for (int i = 0; i < total_Section; i++) {
+        while (j_Section < pre_Selection_Section_ids.length && pre_Selection_Section_ids[j_Section] < i) j_Section++;
+        boolean isSelected_Section = (j_Section < pre_Selection_Section_ids.length && pre_Selection_Section_ids[j_Section] == i);
+        if (!isSelected_Section) inverted_Section.append(i);
       }
+      this.Section_ids = inverted_Section.array();
     }
 
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
       int[] pre_Selection_Camera_ids = sort(this.Camera_ids);
 
-      this.Camera_ids = new int [0];
-
-      for (int i = 0; i < allCameras.num; i++) {
-        int found = -1;
-
-        for (int j = 0; j < pre_Selection_Camera_ids.length; j++) {
-
-          if (pre_Selection_Camera_ids[j] == i) {
-            found = 1;
-            break;
-          } else if (pre_Selection_Camera_ids[j] > i) {
-            break;
-          }
-        }
-
-        if (found == -1) {
-          int[] new_Item = {
-            i
-          };
-
-          this.Camera_ids = concat(this.Camera_ids, new_Item);
-        }
+      int total_Camera = allCameras.num;
+      IntList inverted_Camera = new IntList();
+      int j_Camera = 0;
+      for (int i = 0; i < total_Camera; i++) {
+        while (j_Camera < pre_Selection_Camera_ids.length && pre_Selection_Camera_ids[j_Camera] < i) j_Camera++;
+        boolean isSelected_Camera = (j_Camera < pre_Selection_Camera_ids.length && pre_Selection_Camera_ids[j_Camera] == i);
+        if (!isSelected_Camera) inverted_Camera.append(i);
       }
+      this.Camera_ids = inverted_Camera.array();
     }
 
     SOLARCHVISION_selection_changed();
@@ -2768,7 +2501,8 @@ class solarchvision_Select3D {
 
   void convert_Model1Ds_to_Groups () {
 
-    this.Group_ids = new int [0];
+    boolean[] Group_seen = new boolean[allGroups.num];
+    IntList Group_ids_buf = new IntList();
 
     for (int i = 0; i < this.Model1D_ids.length; i++) {
 
@@ -2778,29 +2512,23 @@ class solarchvision_Select3D {
 
         if ((allGroups.getStart_Model1D(OBJ_ID) <= f) && (f <= allGroups.getStop_Model1D(OBJ_ID))) {
 
-          int previously_added = 0;
-          for (int q = 0; q < this.Group_ids.length; q++) {
-            if (this.Group_ids[q] == OBJ_ID) {
-              previously_added = 1;
-              break;
-            }
-          }
-          if (previously_added == 0) {
-            int[] new_Item = {
-              OBJ_ID
-            };
-            this.Group_ids = concat(this.Group_ids, new_Item);
+          if (!Group_seen[OBJ_ID]) {
+            Group_seen[OBJ_ID] = true;
+            Group_ids_buf.append(OBJ_ID);
           }
         }
       }
     }
+
+    this.Group_ids = Group_ids_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
 
   void convert_Model2Ds_to_Groups () {
 
-    this.Group_ids = new int [0];
+    boolean[] Group_seen = new boolean[allGroups.num];
+    IntList Group_ids_buf = new IntList();
 
     for (int i = 0; i < this.Model2D_ids.length; i++) {
 
@@ -2810,22 +2538,15 @@ class solarchvision_Select3D {
 
         if ((allGroups.getStart_Model2D(OBJ_ID) <= f) && (f <= allGroups.getStop_Model2D(OBJ_ID))) {
 
-          int previously_added = 0;
-          for (int q = 0; q < this.Group_ids.length; q++) {
-            if (this.Group_ids[q] == OBJ_ID) {
-              previously_added = 1;
-              break;
-            }
-          }
-          if (previously_added == 0) {
-            int[] new_Item = {
-              OBJ_ID
-            };
-            this.Group_ids = concat(this.Group_ids, new_Item);
+          if (!Group_seen[OBJ_ID]) {
+            Group_seen[OBJ_ID] = true;
+            Group_ids_buf.append(OBJ_ID);
           }
         }
       }
     }
+
+    this.Group_ids = Group_ids_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -2833,7 +2554,8 @@ class solarchvision_Select3D {
 
   void convert_Solids_to_Groups () {
 
-    this.Group_ids = new int [0];
+    boolean[] Group_seen = new boolean[allGroups.num];
+    IntList Group_ids_buf = new IntList();
 
     for (int i = 0; i < this.Solid_ids.length; i++) {
 
@@ -2843,31 +2565,23 @@ class solarchvision_Select3D {
 
         if ((allGroups.getStart_Solid(OBJ_ID) <= f) && (f <= allGroups.getStop_Solid(OBJ_ID))) {
 
-          int previously_added = 0;
-          for (int q = 0; q < this.Group_ids.length; q++) {
-
-
-            if (this.Group_ids[q] == OBJ_ID) {
-              previously_added = 1;
-              break;
-            }
-          }
-          if (previously_added == 0) {
-            int[] new_Item = {
-              OBJ_ID
-            };
-            this.Group_ids = concat(this.Group_ids, new_Item);
+          if (!Group_seen[OBJ_ID]) {
+            Group_seen[OBJ_ID] = true;
+            Group_ids_buf.append(OBJ_ID);
           }
         }
       }
     }
+
+    this.Group_ids = Group_ids_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
 
   void convert_Faces_to_Groups () {
 
-    this.Group_ids = new int [0];
+    boolean[] Group_seen = new boolean[allGroups.num];
+    IntList Group_ids_buf = new IntList();
 
     for (int i = 0; i < this.Face_ids.length; i++) {
 
@@ -2879,30 +2593,24 @@ class solarchvision_Select3D {
 
           if ((allGroups.getStart_Face(OBJ_ID) <= f) && (f <= allGroups.getStop_Face(OBJ_ID))) {
 
-            int previously_added = 0;
-            for (int q = 0; q < this.Group_ids.length; q++) {
-              if (this.Group_ids[q] == OBJ_ID) {
-                previously_added = 1;
-                break;
-              }
-            }
-            if (previously_added == 0) {
-              int[] new_Item = {
-                OBJ_ID
-              };
-              this.Group_ids = concat(this.Group_ids, new_Item);
+            if (!Group_seen[OBJ_ID]) {
+              Group_seen[OBJ_ID] = true;
+              Group_ids_buf.append(OBJ_ID);
             }
           }
         }
       }
     }
 
+    this.Group_ids = Group_ids_buf.array();
+
     SOLARCHVISION_selection_changed();
   }
 
   void convert_Polylines_to_Groups () {
 
-    this.Group_ids = new int [0];
+    boolean[] Group_seen = new boolean[allGroups.num];
+    IntList Group_ids_buf = new IntList();
 
     for (int i = 0; i < this.Polyline_ids.length; i++) {
 
@@ -2914,23 +2622,16 @@ class solarchvision_Select3D {
 
           if ((allGroups.getStart_Polyline(OBJ_ID) <= f) && (f <= allGroups.getStop_Polyline(OBJ_ID))) {
 
-            int previously_added = 0;
-            for (int q = 0; q < this.Group_ids.length; q++) {
-              if (this.Group_ids[q] == OBJ_ID) {
-                previously_added = 1;
-                break;
-              }
-            }
-            if (previously_added == 0) {
-              int[] new_Item = {
-                OBJ_ID
-              };
-              this.Group_ids = concat(this.Group_ids, new_Item);
+            if (!Group_seen[OBJ_ID]) {
+              Group_seen[OBJ_ID] = true;
+              Group_ids_buf.append(OBJ_ID);
             }
           }
         }
       }
     }
+
+    this.Group_ids = Group_ids_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -2939,7 +2640,8 @@ class solarchvision_Select3D {
 
   void convert_Vertices_to_Groups () {
 
-    this.Group_ids = new int [0];
+    boolean[] Group_seen = new boolean[allGroups.num];
+    IntList Group_ids_buf = new IntList();
 
     for (int i = 0; i < this.Vertex_ids.length; i++) {
 
@@ -2955,18 +2657,9 @@ class solarchvision_Select3D {
 
               if ((allGroups.getStart_Face(OBJ_ID) <= f) && (f <= allGroups.getStop_Face(OBJ_ID))) {
 
-                int previously_added = 0;
-                for (int q = 0; q < this.Group_ids.length; q++) {
-                  if (this.Group_ids[q] == OBJ_ID) {
-                    previously_added = 1;
-                    break;
-                  }
-                }
-                if (previously_added == 0) {
-                  int[] new_Item = {
-                    OBJ_ID
-                  };
-                  this.Group_ids = concat(this.Group_ids, new_Item);
+                if (!Group_seen[OBJ_ID]) {
+                  Group_seen[OBJ_ID] = true;
+                  Group_ids_buf.append(OBJ_ID);
                 }
               }
             }
@@ -2984,18 +2677,9 @@ class solarchvision_Select3D {
 
               if ((allGroups.getStart_Polyline(OBJ_ID) <= f) && (f <= allGroups.getStop_Polyline(OBJ_ID))) {
 
-                int previously_added = 0;
-                for (int q = 0; q < this.Group_ids.length; q++) {
-                  if (this.Group_ids[q] == OBJ_ID) {
-                    previously_added = 1;
-                    break;
-                  }
-                }
-                if (previously_added == 0) {
-                  int[] new_Item = {
-                    OBJ_ID
-                  };
-                  this.Group_ids = concat(this.Group_ids, new_Item);
+                if (!Group_seen[OBJ_ID]) {
+                  Group_seen[OBJ_ID] = true;
+                  Group_ids_buf.append(OBJ_ID);
                 }
               }
             }
@@ -3004,13 +2688,16 @@ class solarchvision_Select3D {
       }
     }
 
+    this.Group_ids = Group_ids_buf.array();
+
     SOLARCHVISION_selection_changed();
   }
 
 
   void convert_Vertices_to_Faces () {
 
-    this.Face_ids = new int [0];
+    boolean[] Face_seen = new boolean[allFaces.nodes.length];
+    IntList Face_buf = new IntList();
 
     for (int i = 0; i < this.Vertex_ids.length; i++) {
 
@@ -3022,23 +2709,16 @@ class solarchvision_Select3D {
 
           if (allFaces.nodes[f][j] == vNo) {
 
-            int previously_added = 0;
-            for (int q = 0; q < this.Face_ids.length; q++) {
-              if (this.Face_ids[q] == f) {
-                previously_added = 1;
-                break;
-              }
-            }
-            if (previously_added == 0) {
-              int[] new_Item = {
-                f
-              };
-              this.Face_ids = concat(this.Face_ids, new_Item);
+            if (!Face_seen[f]) {
+              Face_seen[f] = true;
+              Face_buf.append(f);
             }
           }
         }
       }
     }
+
+    this.Face_ids = Face_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3046,7 +2726,8 @@ class solarchvision_Select3D {
 
   void convert_Vertices_to_Polylines () {
 
-    this.Polyline_ids = new int [0];
+    boolean[] Polyline_seen = new boolean[allPolylines.nodes.length];
+    IntList Polyline_buf = new IntList();
 
     for (int i = 0; i < this.Vertex_ids.length; i++) {
 
@@ -3058,30 +2739,24 @@ class solarchvision_Select3D {
 
           if (allPolylines.nodes[f][j] == vNo) {
 
-            int previously_added = 0;
-            for (int q = 0; q < this.Polyline_ids.length; q++) {
-              if (this.Polyline_ids[q] == f) {
-                previously_added = 1;
-                break;
-              }
-            }
-            if (previously_added == 0) {
-              int[] new_Item = {
-                f
-              };
-              this.Polyline_ids = concat(this.Polyline_ids, new_Item);
+            if (!Polyline_seen[f]) {
+              Polyline_seen[f] = true;
+              Polyline_buf.append(f);
             }
           }
         }
       }
     }
 
+    this.Polyline_ids = Polyline_buf.array();
+
     SOLARCHVISION_selection_changed();
   }
 
   void convert_Groups_to_Model1Ds () {
 
-    this.Model1D_ids = new int [0];
+    boolean[] Model1D_seen = new boolean[allModel1Ds.num];
+    IntList Model1D_buf = new IntList();
 
     for (int i = 0; i < this.Group_ids.length; i++) {
 
@@ -3089,21 +2764,14 @@ class solarchvision_Select3D {
 
       for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
 
-        int previously_added = 0;
-        for (int q = 0; q < this.Model1D_ids.length; q++) {
-          if (this.Model1D_ids[q] == f) {
-            previously_added = 1;
-            break;
-          }
-        }
-        if (previously_added == 0) {
-          int[] new_Item = {
-            f
-          };
-          this.Model1D_ids = concat(this.Model1D_ids, new_Item);
+        if (!Model1D_seen[f]) {
+          Model1D_seen[f] = true;
+          Model1D_buf.append(f);
         }
       }
     }
+
+    this.Model1D_ids = Model1D_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3111,7 +2779,8 @@ class solarchvision_Select3D {
 
   void convert_Groups_to_Model2Ds () {
 
-    this.Model2D_ids = new int [0];
+    boolean[] Model2D_seen = new boolean[allModel2Ds.num];
+    IntList Model2D_buf = new IntList();
 
     for (int i = 0; i < this.Group_ids.length; i++) {
 
@@ -3119,21 +2788,14 @@ class solarchvision_Select3D {
 
       for (int f = allGroups.getStart_Model2D(OBJ_ID); f <= allGroups.getStop_Model2D(OBJ_ID); f++) {
 
-        int previously_added = 0;
-        for (int q = 0; q < this.Model2D_ids.length; q++) {
-          if (this.Model2D_ids[q] == f) {
-            previously_added = 1;
-            break;
-          }
-        }
-        if (previously_added == 0) {
-          int[] new_Item = {
-            f
-          };
-          this.Model2D_ids = concat(this.Model2D_ids, new_Item);
+        if (!Model2D_seen[f]) {
+          Model2D_seen[f] = true;
+          Model2D_buf.append(f);
         }
       }
     }
+
+    this.Model2D_ids = Model2D_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3142,7 +2804,8 @@ class solarchvision_Select3D {
 
   void convert_Groups_to_Solids () {
 
-    this.Solid_ids = new int [0];
+    boolean[] Solid_seen = new boolean[allSolids.DEF.length];
+    IntList Solid_buf = new IntList();
 
     for (int i = 0; i < this.Group_ids.length; i++) {
 
@@ -3150,21 +2813,14 @@ class solarchvision_Select3D {
 
       for (int f = allGroups.getStart_Solid(OBJ_ID); f <= allGroups.getStop_Solid(OBJ_ID); f++) {
 
-        int previously_added = 0;
-        for (int q = 0; q < this.Solid_ids.length; q++) {
-          if (this.Solid_ids[q] == f) {
-            previously_added = 1;
-            break;
-          }
-        }
-        if (previously_added == 0) {
-          int[] new_Item = {
-            f
-          };
-          this.Solid_ids = concat(this.Solid_ids, new_Item);
+        if (!Solid_seen[f]) {
+          Solid_seen[f] = true;
+          Solid_buf.append(f);
         }
       }
     }
+
+    this.Solid_ids = Solid_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3173,7 +2829,8 @@ class solarchvision_Select3D {
 
   void convert_Groups_to_Faces () {
 
-    this.Face_ids = new int [0];
+    boolean[] Face_seen = new boolean[allFaces.nodes.length];
+    IntList Face_buf = new IntList();
 
     for (int i = 0; i < this.Group_ids.length; i++) {
 
@@ -3181,21 +2838,14 @@ class solarchvision_Select3D {
 
       for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
 
-        int previously_added = 0;
-        for (int q = 0; q < this.Face_ids.length; q++) {
-          if (this.Face_ids[q] == f) {
-            previously_added = 1;
-            break;
-          }
-        }
-        if (previously_added == 0) {
-          int[] new_Item = {
-            f
-          };
-          this.Face_ids = concat(this.Face_ids, new_Item);
+        if (!Face_seen[f]) {
+          Face_seen[f] = true;
+          Face_buf.append(f);
         }
       }
     }
+
+    this.Face_ids = Face_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3203,7 +2853,8 @@ class solarchvision_Select3D {
 
   void convert_Groups_to_Polylines () {
 
-    this.Polyline_ids = new int [0];
+    boolean[] Polyline_seen = new boolean[allPolylines.nodes.length];
+    IntList Polyline_buf = new IntList();
 
     for (int i = 0; i < this.Group_ids.length; i++) {
 
@@ -3211,21 +2862,14 @@ class solarchvision_Select3D {
 
       for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
 
-        int previously_added = 0;
-        for (int q = 0; q < this.Polyline_ids.length; q++) {
-          if (this.Polyline_ids[q] == f) {
-            previously_added = 1;
-            break;
-          }
-        }
-        if (previously_added == 0) {
-          int[] new_Item = {
-            f
-          };
-          this.Polyline_ids = concat(this.Polyline_ids, new_Item);
+        if (!Polyline_seen[f]) {
+          Polyline_seen[f] = true;
+          Polyline_buf.append(f);
         }
       }
     }
+
+    this.Polyline_ids = Polyline_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3234,7 +2878,8 @@ class solarchvision_Select3D {
 
   void convert_Groups_to_Vertices () {
 
-    this.Vertex_ids = new int [0];
+    boolean[] Vertex_seen = new boolean[allPoints.getLength()];
+    IntList Vertex_buf = new IntList();
 
     for (int i = 0; i < this.Group_ids.length; i++) {
 
@@ -3246,18 +2891,9 @@ class solarchvision_Select3D {
 
           int vNo = allFaces.nodes[f][j];
 
-          int previously_added = 0;
-          for (int q = 0; q < this.Vertex_ids.length; q++) {
-            if (this.Vertex_ids[q] == vNo) {
-              previously_added = 1;
-              break;
-            }
-          }
-          if (previously_added == 0) {
-            int[] new_Item = {
-              vNo
-            };
-            this.Vertex_ids = concat(this.Vertex_ids, new_Item);
+          if (!Vertex_seen[vNo]) {
+            Vertex_seen[vNo] = true;
+            Vertex_buf.append(vNo);
           }
         }
       }
@@ -3268,22 +2904,15 @@ class solarchvision_Select3D {
 
           int vNo = allPolylines.nodes[f][j];
 
-          int previously_added = 0;
-          for (int q = 0; q < this.Vertex_ids.length; q++) {
-            if (this.Vertex_ids[q] == vNo) {
-              previously_added = 1;
-              break;
-            }
-          }
-          if (previously_added == 0) {
-            int[] new_Item = {
-              vNo
-            };
-            this.Vertex_ids = concat(this.Vertex_ids, new_Item);
+          if (!Vertex_seen[vNo]) {
+            Vertex_seen[vNo] = true;
+            Vertex_buf.append(vNo);
           }
         }
       }
     }
+
+    this.Vertex_ids = Vertex_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3291,7 +2920,8 @@ class solarchvision_Select3D {
 
   void convert_Faces_to_Vertices () {
 
-    this.Vertex_ids = new int [0];
+    boolean[] Vertex_seen = new boolean[allPoints.getLength()];
+    IntList Vertex_buf = new IntList();
 
     for (int i = 0; i < this.Face_ids.length; i++) {
 
@@ -3301,21 +2931,14 @@ class solarchvision_Select3D {
 
         int vNo = allFaces.nodes[f][j];
 
-        int previously_added = 0;
-        for (int q = 0; q < this.Vertex_ids.length; q++) {
-          if (this.Vertex_ids[q] == vNo) {
-            previously_added = 1;
-            break;
-          }
-        }
-        if (previously_added == 0) {
-          int[] new_Item = {
-            vNo
-          };
-          this.Vertex_ids = concat(this.Vertex_ids, new_Item);
+        if (!Vertex_seen[vNo]) {
+          Vertex_seen[vNo] = true;
+          Vertex_buf.append(vNo);
         }
       }
     }
+
+    this.Vertex_ids = Vertex_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3323,7 +2946,8 @@ class solarchvision_Select3D {
 
   void convert_Polylines_to_Vertices () {
 
-    this.Vertex_ids = new int [0];
+    boolean[] Vertex_seen = new boolean[allPoints.getLength()];
+    IntList Vertex_buf = new IntList();
 
     for (int i = 0; i < this.Polyline_ids.length; i++) {
 
@@ -3333,21 +2957,14 @@ class solarchvision_Select3D {
 
         int vNo = allPolylines.nodes[f][j];
 
-        int previously_added = 0;
-        for (int q = 0; q < this.Vertex_ids.length; q++) {
-          if (this.Vertex_ids[q] == vNo) {
-            previously_added = 1;
-            break;
-          }
-        }
-        if (previously_added == 0) {
-          int[] new_Item = {
-            vNo
-          };
-          this.Vertex_ids = concat(this.Vertex_ids, new_Item);
+        if (!Vertex_seen[vNo]) {
+          Vertex_seen[vNo] = true;
+          Vertex_buf.append(vNo);
         }
       }
     }
+
+    this.Vertex_ids = Vertex_buf.array();
 
     SOLARCHVISION_selection_changed();
   }
@@ -3420,6 +3037,15 @@ class solarchvision_Select3D {
 
       int[] pre_Selection_Vertex_ids = this.Vertex_ids;
 
+      boolean[] Vertex_seen = new boolean[allPoints.getLength()];
+      for (int i = 0; i < this.Vertex_ids.length; i++) {
+        Vertex_seen[this.Vertex_ids[i]] = true;
+      }
+      IntList Vertex_buf = new IntList();
+      for (int i = 0; i < this.Vertex_ids.length; i++) {
+        Vertex_buf.append(this.Vertex_ids[i]);
+      }
+
       for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) {
 
         int isNearEnough = -1;
@@ -3428,19 +3054,7 @@ class solarchvision_Select3D {
 
           int q = pre_Selection_Vertex_ids[i];
 
-          int found = -1;
-
-          for (int j = 0; j < this.Vertex_ids.length; j++) {
-
-            if (vNo == this.Vertex_ids[j]) {
-
-              found = 1;
-
-              break;
-            }
-          }
-
-          if (found == -1) {
+          if (!Vertex_seen[vNo]) {
 
             float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
 
@@ -3455,14 +3069,12 @@ class solarchvision_Select3D {
 
 
         if (isNearEnough == 1) {
-
-          int[] newVertex_id = {
-            vNo
-          };
-
-          this.Vertex_ids = concat(this.Vertex_ids, newVertex_id);
+          Vertex_seen[vNo] = true;
+          Vertex_buf.append(vNo);
         }
       }
+
+      this.Vertex_ids = Vertex_buf.array();
 
       SOLARCHVISION_selection_changed();
     }
@@ -3471,7 +3083,7 @@ class solarchvision_Select3D {
 
   void isolatedVertices_Scene () {
 
-    this.Vertex_ids = new int [0];
+    IntList Vertex_buf = new IntList();
 
     for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) {
 
@@ -3498,16 +3110,11 @@ class solarchvision_Select3D {
       }
 
       if (found == -1) {
-
-        int[] newIsolatedVertex = {
-          vNo
-        };
-
-        this.Vertex_ids = concat(this.Vertex_ids, newIsolatedVertex);
-
-
+        Vertex_buf.append(vNo);
       }
     }
+
+    this.Vertex_ids = Vertex_buf.array();
 
     SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
   }
@@ -3522,7 +3129,8 @@ class solarchvision_Select3D {
 
   int[] get_Face_Vertices () {
 
-    int[] FaceVertices = new int [0];
+    IntList FaceVertices = new IntList();
+    boolean[] seen = new boolean[allPoints.getLength()];
 
     for (int o = this.Face_ids.length - 1; o >= 0; o--) {
 
@@ -3533,32 +3141,21 @@ class solarchvision_Select3D {
       for (int j = 0; j < allFaces.nodes[f].length; j++) {
         int vNo = allFaces.nodes[f][j];
 
-        int vertex_listed = -1;
-
-        for (int q = 0; q < FaceVertices.length; q++) {
-          if (vNo == FaceVertices[q]) {
-            vertex_listed = 1;
-            break;
-          }
-        }
-
-        if (vertex_listed == -1) {
-          int[] newVertexListed = {
-            vNo
-          };
-          FaceVertices = concat(FaceVertices, newVertexListed);
+        if (!seen[vNo]) {
+          seen[vNo] = true;
+          FaceVertices.append(vNo);
         }
       }
     }
 
-
-    return FaceVertices;
+    return FaceVertices.array();
   }
 
 
   int[] get_Polyline_Vertices () {
 
-    int[] PolylineVertices = new int [0];
+    IntList PolylineVertices = new IntList();
+    boolean[] seen = new boolean[allPoints.getLength()];
 
     for (int o = this.Polyline_ids.length - 1; o >= 0; o--) {
 
@@ -3569,32 +3166,22 @@ class solarchvision_Select3D {
       for (int j = 0; j < allPolylines.nodes[f].length; j++) {
         int vNo = allPolylines.nodes[f][j];
 
-        int vertex_listed = -1;
-
-        for (int q = 0; q < PolylineVertices.length; q++) {
-          if (vNo == PolylineVertices[q]) {
-            vertex_listed = 1;
-            break;
-          }
-        }
-
-        if (vertex_listed == -1) {
-          int[] newVertexListed = {
-            vNo
-          };
-          PolylineVertices = concat(PolylineVertices, newVertexListed);
+        if (!seen[vNo]) {
+          seen[vNo] = true;
+          PolylineVertices.append(vNo);
         }
       }
     }
 
-    return PolylineVertices;
+    return PolylineVertices.array();
   }
 
 
 
   int[] get_Group_Vertices () {
 
-    int[] PolymeshVertices = new int [0];
+    IntList PolymeshVertices = new IntList();
+    boolean[] seen = new boolean[allPoints.getLength()];
 
     for (int o = this.Group_ids.length - 1; o >= 0; o--) {
 
@@ -3607,20 +3194,9 @@ class solarchvision_Select3D {
 
             int vNo = allFaces.nodes[f][j];
 
-            int vertex_listed = -1;
-
-            for (int q = 0; q < PolymeshVertices.length; q++) {
-              if (vNo == PolymeshVertices[q]) {
-                vertex_listed = 1;
-                break;
-              }
-            }
-
-            if (vertex_listed == -1) {
-              int[] newVertexListed = {
-                vNo
-              };
-              PolymeshVertices = concat(PolymeshVertices, newVertexListed);
+            if (!seen[vNo]) {
+              seen[vNo] = true;
+              PolymeshVertices.append(vNo);
             }
           }
         }
@@ -3635,27 +3211,16 @@ class solarchvision_Select3D {
 
             int vNo = allPolylines.nodes[f][j];
 
-            int vertex_listed = -1;
-
-            for (int q = 0; q < PolymeshVertices.length; q++) {
-              if (vNo == PolymeshVertices[q]) {
-                vertex_listed = 1;
-                break;
-              }
-            }
-
-            if (vertex_listed == -1) {
-              int[] newVertexListed = {
-                vNo
-              };
-              PolymeshVertices = concat(PolymeshVertices, newVertexListed);
+            if (!seen[vNo]) {
+              seen[vNo] = true;
+              PolymeshVertices.append(vNo);
             }
           }
         }
       }
     }
 
-    return PolymeshVertices;
+    return PolymeshVertices.array();
   }
 
 
