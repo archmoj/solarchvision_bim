@@ -1390,7 +1390,11 @@ class solarchvision_WIN3D {
     this.Impact_TYPE = XML_getInt(parent, "Impact_TYPE");
   }
 
+  boolean revised_since_last_render = false;
+
   void revise () {
+    revised_since_last_render = true;
+
     this.update = true;
   }
   void updated () {

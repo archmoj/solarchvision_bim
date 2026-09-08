@@ -862,6 +862,11 @@ void draw () {
       STUDY.record_PDF = false;
     }
 
+    if((Render_RGBA != null) && (WIN3D.revised_since_last_render == false)) {
+      image(Render_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
+    }
+
+
     //WIN3D.updated();
     //WORLD.updated();
     //STUDY.updated();
@@ -2106,6 +2111,7 @@ int UI_X_moved = -1;
 int UI_Y_moved = -1;
 
 PImage pre_screen;
+PImage Render_RGBA;
 
 void SOLARCHVISION_modify_Viewport_Title () {
 

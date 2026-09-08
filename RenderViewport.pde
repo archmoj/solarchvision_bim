@@ -25,14 +25,17 @@ void SOLARCHVISION_RenderViewport () {
   int RES1 = WIN3D.dX;
   int RES2 = WIN3D.dY;
 
-  PImage Image_RGBA = createImage(RES1, RES2, ARGB);
+  Render_RGBA = createImage(RES1, RES2, ARGB);
 
-  Image_RGBA.loadPixels();
+  Render_RGBA.loadPixels();
 
+  /*
   float Progress = 0;
   float printed_Progress = 0;
   progressBarHeader();
+  */
   for (int np = 0; np < (RES1 * RES2); np++) {
+    /*
     Progress = 100 * np / float(RES1 * RES2);
     float delta = floor(Progress - printed_Progress);
     if(delta >= 1) {
@@ -41,6 +44,7 @@ void SOLARCHVISION_RenderViewport () {
       }
       printed_Progress = floor(Progress);
     }
+    */
 
     int Image_X = np % RES1;
     int Image_Y = np / RES1;
@@ -187,22 +191,26 @@ void SOLARCHVISION_RenderViewport () {
       COL = PAINT.getColorStyle(PAL_type, _u);
 
 
-      Image_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+      Render_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
     }
 
-    else Image_RGBA.pixels[np] = color(0,0,0,0);
+    else Render_RGBA.pixels[np] = color(0,0,0,0);
   }
 
+  /*
   for(int c = 0; c < floor(100 - printed_Progress); c++) {
     print("█");
   }
   println();
+  */
 
-  Image_RGBA.updatePixels();
+  Render_RGBA.updatePixels();
 
   String myFile = Folder_ScreenShots + "/" + createStamp(1, "Render") + ".png";
-  Image_RGBA.save(myFile);
+  Render_RGBA.save(myFile);
   println("File created:" + myFile);
 
   cursor(ARROW);
+
+  WIN3D.revised_since_last_render = false;
 }
