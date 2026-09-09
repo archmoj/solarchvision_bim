@@ -33,27 +33,36 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
   if (new_files_downloaded) {
 
     String folder_inout = Folder_ENSEMBLE_FORECAST;
-    // on Windows:
-    //folder_inout = folder_inout.replace('/', char(92));
 
-    {
-      // on Windows:
-      //String Command1 = "cmd /c \"\"C:\\Program Files (x86)\\7-Zip\\7z.exe\"\" e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
-      String Command1 = "for bz2 in " + folder_inout + "/*.bz2; do 7z e \"$bz2\" -o" + folder_inout + " -y; done";
-      println(Command1);
+    File dir = new File(folder_inout);
+    File[] bz2Files = dir.listFiles((d, name) -> name.endsWith(".bz2"));
+    if (bz2Files != null) {
+      for (File f : bz2Files) {
+        try {
+          ProcessBuilder pb = new ProcessBuilder(
+            "7z", "e", f.getAbsolutePath(), "-o" + folder_inout, "-y"
+          );
+          pb.redirectErrorStream(true);
+          Process p = pb.start();
 
-      // on Windows:
-      //String Command2 = "del " + folder_inout + "\\*.bz2 /q";
-      String Command2 = "rm " + folder_inout + "/*.bz2";
-      println(Command2);
+          // drain output so the process doesn't block if the buffer fills
+          BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+          String line;
+          while ((line = reader.readLine()) != null) {
+            println(line);
+          }
 
-      try {
-        // on Windows:
-        //launch(Command1 + " & " + Command2);
-        exec(new String[]{"bash", "-c", Command1 + " && " + Command2});
-      }
-      catch (Exception e) {
-        println(e);
+          int exitCode = p.waitFor(); // <-- blocks until 7z is actually done
+
+          if (exitCode == 0) {
+            f.delete(); // only delete after a confirmed successful extraction
+          } else {
+            println("7z failed with exit code " + exitCode + " for " + f.getName());
+          }
+        }
+        catch (Exception e) {
+          println(e);
+        }
       }
     }
 

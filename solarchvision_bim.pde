@@ -1,3 +1,5 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import processing.pdf.*;
 
 float MessageSize = 15.0;
