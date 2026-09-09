@@ -122,6 +122,10 @@ int cellFlatIndex(int ix, int iy, int iz) { return (ix * gridNy + iy) * gridNz +
 // Returns dist2intersect (t along the ray) if the ray hits this face's
 // polygon at t > FLOAT_tiny, otherwise FLOAT_huge. Fills P[0..2] on hit.
 float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P) {
+  return SOLARCHVISION_testFaceHit(f, ray_pnt, ray_dir, P, null);
+}
+
+float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N) {
   int[] faceNodes = entireFaces.get(f);
   int n = faceNodes.length;
   if (n <= 2) return FLOAT_huge;
@@ -172,7 +176,9 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
       ? funcs.isInside_Quadrangle(P, A, B, C, D)
       : funcs.isInside_Triangle(P, A, B, D); // D is last vertex, C==B here
 
-    return InPoly ? dist2intersect : FLOAT_huge;
+    if (!InPoly) return FLOAT_huge;
+    if (N != null) { N[0] = nx; N[1] = ny; N[2] = nz; }
+    return dist2intersect;
   }
   else {
     float Gx = 0, Gy = 0, Gz = 0;
@@ -189,13 +195,11 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
       int j_next = (j + 1 == n) ? 0 : j + 1;
       int ai = faceNodes[j];
       int bi = faceNodes[j_next];
-
       float Ax = entirePointsX.get(ai), Ay = entirePointsY.get(ai), Az = entirePointsZ.get(ai);
       float Bx = entirePointsX.get(bi), By = entirePointsY.get(bi), Bz = entirePointsZ.get(bi);
 
       float AGx = Ax - Gx, AGy = Ay - Gy, AGz = Az - Gz;
       float BGx = Bx - Gx, BGy = By - Gy, BGz = Bz - Gz;
-
       float nx = AGy * BGz - AGz * BGy;
       float ny = AGz * BGx - AGx * BGz;
       float nz = AGx * BGy - AGy * BGx;
@@ -217,10 +221,45 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
       float[] A = {Ax, Ay, Az};
       float[] B = {Bx, By, Bz};
       float[] G = {Gx, Gy, Gz};
-      if (funcs.isInside_Triangle(P, A, B, G)) return dist2intersect;
+      if (funcs.isInside_Triangle(P, A, B, G)) {
+        if (N != null) { N[0] = nx; N[1] = ny; N[2] = nz; }
+        return dist2intersect;
+      }
     }
     return FLOAT_huge;
   }
+}
+
+// Note: face index 0 still can't be reported as a hit -- that's an existing
+// limitation of SOLARCHVISION_isIntersected_Faces's "0 == no hit" sentinel,
+// not something introduced here.
+float[] intersectAll (float[] ray_pnt, float[] ray_dir) {
+  return intersectAll(ray_pnt, ray_dir, 0);
+}
+
+float[] intersectAll (float[] ray_pnt, float[] ray_dir, int firstGuess) {
+  float[] return_point = {
+    -1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined,
+    FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined
+  };
+
+  int f = SOLARCHVISION_isIntersected_Faces(ray_pnt, ray_dir, firstGuess);
+  if (f <= 0) return return_point; // no hit
+
+  float[] P = new float[3];
+  float[] N = new float[3];
+  float dist2intersect = SOLARCHVISION_testFaceHit(f, ray_pnt, ray_dir, P, N);
+  if (dist2intersect >= FLOAT_huge) return return_point; // defensive, shouldn't happen
+
+  return_point[0] = f;
+  return_point[1] = P[0];
+  return_point[2] = P[1];
+  return_point[3] = P[2];
+  return_point[4] = dist2intersect;
+  return_point[5] = N[0];
+  return_point[6] = N[1];
+  return_point[7] = N[2];
+  return return_point;
 }
 
 // ---------------------------- ray/box entry test -----------------------------
@@ -339,194 +378,4 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
   }
 
   return 0; // safety fallback, shouldn't normally be reached
-}
-
-float[] intersectAll (float[] ray_pnt, float[] ray_dir) {
-
-  int numFaces = entireFaces.size();
-
-  float[] ray_normal = funcs.vec3_unit(ray_dir);
-
-  float[][] hitPoint = new float [numFaces][7];
-
-  for (int f = 0; f < numFaces; f++) {
-    hitPoint[f][0] = FLOAT_undefined;
-    hitPoint[f][1] = FLOAT_undefined;
-    hitPoint[f][2] = FLOAT_undefined;
-    hitPoint[f][3] = FLOAT_undefined;
-    hitPoint[f][4] = FLOAT_undefined;
-    hitPoint[f][5] = FLOAT_undefined;
-    hitPoint[f][6] = FLOAT_undefined;
-  }
-
-  for (int f = 0; f < numFaces; f++) {
-
-    int n = entireFaces.get(f).length;
-
-    if (n <= 2) continue;
-
-    int[] faceNodes = entireFaces.get(f);
-
-    float X_intersect = FLOAT_undefined;
-    float Y_intersect = FLOAT_undefined;
-    float Z_intersect = FLOAT_undefined;
-    float dist2intersect = FLOAT_undefined;
-    float[] face_norm = {0,0,0};
-
-    boolean InPoly = false;
-
-    if (n < 5) { // works if n==3 or n==4
-
-      float[] A = {
-        entirePointsX.get(faceNodes[0]),
-        entirePointsY.get(faceNodes[0]),
-        entirePointsZ.get(faceNodes[0])
-      };
-      float[] B = {
-        entirePointsX.get(faceNodes[1]),
-        entirePointsY.get(faceNodes[1]),
-        entirePointsZ.get(faceNodes[1])
-      };
-      float[] C = {
-        entirePointsX.get(faceNodes[n - 2]),
-        entirePointsY.get(faceNodes[n - 2]),
-        entirePointsZ.get(faceNodes[n - 2])
-      };
-      float[] D = {
-        entirePointsX.get(faceNodes[n - 1]),
-        entirePointsY.get(faceNodes[n - 1]),
-        entirePointsZ.get(faceNodes[n - 1])
-      };
-
-      float[] AC = funcs.vec3_diff(A, C);
-      float[] BD = funcs.vec3_diff(B, D);
-
-      face_norm = funcs.vec3_cross(AC, BD);
-
-      float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] +
-                                  (A[1] + B[1] + C[1] + D[1]) * face_norm[1] +
-                                  (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);
-
-      float R = -funcs.vec3_dot(ray_dir, face_norm);
-
-      if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-        dist2intersect = FLOAT_huge;
-      }
-      else {
-        dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
-
-        //if (dist2intersect > 0) {
-        if (dist2intersect > FLOAT_tiny) {
-
-          X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-          Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-          Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-
-          float[] P = {X_intersect, Y_intersect, Z_intersect};
-
-          if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
-          else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
-
-        }
-      }
-    }
-    else {
-
-      int[] tmpFace = new int[n];
-      float[] G = {
-        0, 0, 0
-      };
-      for (int j = 0; j < n; j++) {
-        tmpFace[j] = faceNodes[j];
-        G[0] += entirePointsX.get(tmpFace[j]) / float(n);
-        G[1] += entirePointsY.get(tmpFace[j]) / float(n);
-        G[2] += entirePointsZ.get(tmpFace[j]) / float(n);
-      }
-
-      for (int j = 0; j < n; j++) {
-
-        int j_next = (j + 1) % n;
-
-        float[] A = {
-          entirePointsX.get(faceNodes[j]),
-          entirePointsY.get(faceNodes[j]),
-          entirePointsZ.get(faceNodes[j])
-        };
-
-        float[] B = {
-          entirePointsX.get(faceNodes[j_next]),
-          entirePointsY.get(faceNodes[j_next]),
-          entirePointsZ.get(faceNodes[j_next])
-        };
-
-        float[] AG = funcs.vec3_diff(A, G);
-        float[] BG = funcs.vec3_diff(B, G);
-
-        face_norm = funcs.vec3_cross(AG, BG);
-
-        float face_offset = (1.0 / 3.0) * ((A[0] + B[0] + G[0]) * face_norm[0] +
-                                            (A[1] + B[1] + G[1]) * face_norm[1] +
-                                            (A[2] + B[2] + G[2]) * face_norm[2]);
-
-        float R = -funcs.vec3_dot(ray_dir, face_norm);
-
-        if ((R < FLOAT_tiny) && (R > -FLOAT_tiny)) { // the ray is parallel to the plane
-          dist2intersect = FLOAT_huge;
-        }
-        else {
-          dist2intersect = (funcs.vec3_dot(ray_pnt, face_norm) - face_offset) / R;
-
-          //if (dist2intersect > 0) {
-          if (dist2intersect > FLOAT_tiny) {
-
-            X_intersect = dist2intersect * ray_dir[0] + ray_pnt[0];
-            Y_intersect = dist2intersect * ray_dir[1] + ray_pnt[1];
-            Z_intersect = dist2intersect * ray_dir[2] + ray_pnt[2];
-
-            float[] P = {X_intersect, Y_intersect, Z_intersect};
-
-            InPoly = funcs.isInside_Triangle(P, A, B, G);
-
-          }
-        }
-
-        if (InPoly) break;
-      }
-    }
-
-    if (InPoly) {
-      hitPoint[f][0] = X_intersect;
-      hitPoint[f][1] = Y_intersect;
-      hitPoint[f][2] = Z_intersect;
-      hitPoint[f][3] = dist2intersect;
-      hitPoint[f][4] = face_norm[0];
-      hitPoint[f][5] = face_norm[1];
-      hitPoint[f][6] = face_norm[2];
-    }
-  }
-
-  float[] return_point = {-1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
-
-  float pre_dist = FLOAT_undefined;
-
-  for (int f = 0; f < numFaces; f++) {
-
-    if (pre_dist > hitPoint[f][3]) {
-
-      pre_dist = hitPoint[f][3];
-
-      return_point[0] = f;
-      return_point[1] = hitPoint[f][0];
-      return_point[2] = hitPoint[f][1];
-      return_point[3] = hitPoint[f][2];
-      return_point[4] = hitPoint[f][3];
-      return_point[5] = hitPoint[f][4];
-      return_point[6] = hitPoint[f][5];
-      return_point[7] = hitPoint[f][6];
-
-    }
-
-  }
-
-  return return_point;
 }
