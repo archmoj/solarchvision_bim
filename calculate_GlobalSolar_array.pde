@@ -36,19 +36,31 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
   int l = STUDY.ImpactLayer;
 
-  float[][] TOTALvaluesSUM_RAD = new float [1 + int(180 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-  float[][] TOTALvaluesSUM_EFF_P = new float [1 + int(180 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-  float[][] TOTALvaluesSUM_EFF_N = new float [1 + int(180 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-  int[][] TOTALvaluesNUM = new int [1 + int(180 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+  int a_max = int(180 / Sky3D.stp_slp);
+  int b_max = int(360 / Sky3D.stp_dir);
 
-  for (int a = 0; a <= int (180 / Sky3D.stp_slp); a++) {
-    for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+  float[][] TOTALvaluesSUM_RAD = new float [1 + a_max][1 + b_max];
+  float[][] TOTALvaluesSUM_EFF_P = new float [1 + a_max][1 + b_max];
+  float[][] TOTALvaluesSUM_EFF_N = new float [1 + a_max][1 + b_max];
+  int[][] TOTALvaluesNUM = new int [1 + a_max][1 + b_max];
+
+  for (int a = 0; a <= a_max; a++) {
+    for (int b = 0; b < b_max; b++) {
       TOTALvaluesSUM_RAD[a][b] = FLOAT_undefined;
       TOTALvaluesSUM_EFF_P[a][b] = FLOAT_undefined;
       TOTALvaluesSUM_EFF_N[a][b] = FLOAT_undefined;
       TOTALvaluesNUM[a][b] = 0;
     }
   }
+
+  boolean[] hourValid = new boolean [24];
+  float[] cache_SunR1 = new float [24];
+  float[] cache_SunR2 = new float [24];
+  float[] cache_SunR3 = new float [24];
+  float[] cache_R_dir = new float [24];
+  float[] cache_R_dif = new float [24];
+  float[] cache_E_dir = new float [24];
+  float[] cache_E_dif = new float [24];
 
   for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
@@ -72,9 +84,66 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
         int k = int(nk / STUDY.joinDays);
         int j_ADD = nk % STUDY.joinDays;
 
-        for (int a = 0; a <= int (180 / Sky3D.stp_slp); a++) {
+        now_k = k + start_k;
+
+        int now_j_base = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+        if (now_j_base >= 365) {
+          now_j_base = now_j_base % 365;
+        }
+        if (now_j_base < 0) {
+          now_j_base = (now_j_base + 365) % 365;
+        }
+        now_j = now_j_base;
+
+        for (int i = 0; i < 24; i++) {
+          hourValid[i] = false;
+
+          if (STUDY.isInHourlyRange(i)) {
+
+            float HOUR_ANGLE = i;
+            float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+
+            if (SunR[3] > 0) {
+
+              now_i = i;
+
+              Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+              Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+              Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
+              Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+
+              if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
+                values_R_dir = FLOAT_undefined;
+                values_R_dif = FLOAT_undefined;
+                values_E_dir = FLOAT_undefined;
+                values_E_dif = FLOAT_undefined;
+              } else {
+
+                int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
+
+                if (memberCount == 1) {
+                  values_R_dir = 0.001 * Pa;
+                  values_R_dif = 0.001 * Pb;
+                  values_E_dir = 0.001 * Pc;
+                  values_E_dif = 0.001 * Pd;
+
+                  hourValid[i] = true;
+                  cache_SunR1[i] = SunR[1];
+                  cache_SunR2[i] = SunR[2];
+                  cache_SunR3[i] = SunR[3];
+                  cache_R_dir[i] = values_R_dir;
+                  cache_R_dif[i] = values_R_dif;
+                  cache_E_dir[i] = values_E_dir;
+                  cache_E_dif[i] = values_E_dif;
+                }
+              }
+            }
+          }
+        }
+
+        for (int a = 0; a <= a_max; a++) {
           float Alpha = a * Sky3D.stp_slp - 90;
-          for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+          for (int b = 0; b < b_max; b++) {
             float Beta = b * Sky3D.stp_dir;
 
             float valuesSUM_RAD = 0;
@@ -83,63 +152,24 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
             int valuesNUM = 0;
 
             for (int i = 0; i < 24; i++) {
-              if (STUDY.isInHourlyRange(i)) {
+              if (hourValid[i]) {
 
-                float HOUR_ANGLE = i;
-                float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+                if (is_undefined(valuesSUM_RAD)) {
+                  valuesSUM_RAD = 0;
+                  valuesSUM_EFF_P = 0;
+                  valuesSUM_EFF_N = 0;
+                  valuesNUM = 0;
+                } else {
 
-                if (SunR[3] > 0) {
-
-                  now_k = k + start_k;
-                  now_i = i;
-                  now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
-
-                  if (now_j >= 365) {
-                    now_j = now_j % 365;
-                  }
-                  if (now_j < 0) {
-                    now_j = (now_j + 365) % 365;
-                  }
-
-                  Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                  Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                  Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                  Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
-
-                  if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
-                    values_R_dir = FLOAT_undefined;
-                    values_R_dif = FLOAT_undefined;
-                    values_E_dir = FLOAT_undefined;
-                    values_E_dif = FLOAT_undefined;
+                  if (cache_E_dir[i] < 0) {
+                    valuesSUM_EFF_N += -SOLARCHVISION_SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, GlobalAlbedo);
                   } else {
-
-                    int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
-
-                    if (memberCount == 1) {
-                      values_R_dir = 0.001 * Pa;
-                      values_R_dif = 0.001 * Pb;
-                      values_E_dir = 0.001 * Pc;
-                      values_E_dif = 0.001 * Pd;
-
-                      if (is_undefined(valuesSUM_RAD)) {
-                        valuesSUM_RAD = 0;
-                        valuesSUM_EFF_P = 0;
-                        valuesSUM_EFF_N = 0;
-                        valuesNUM = 0;
-                      } else {
-
-                        if (values_E_dir < 0) {
-                          valuesSUM_EFF_N += -SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
-                        } else {
-                          valuesSUM_EFF_P += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
-                        }
-
-                        valuesSUM_RAD += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, GlobalAlbedo);
-
-                        valuesNUM += 1;
-                      }
-                    }
+                    valuesSUM_EFF_P += SOLARCHVISION_SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, GlobalAlbedo);
                   }
+
+                  valuesSUM_RAD += SOLARCHVISION_SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_R_dir[i], cache_R_dif[i], Alpha, Beta, GlobalAlbedo);
+
+                  valuesNUM += 1;
                 }
               }
             }
@@ -192,9 +222,9 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
 
 
-  for (int a = 0; a <= int (180 / Sky3D.stp_slp); a++) {
+  for (int a = 0; a <= a_max; a++) {
     float Alpha = a * Sky3D.stp_slp - 90;
-    for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+    for (int b = 0; b < b_max; b++) {
       float Beta = b * Sky3D.stp_dir;
 
       if (TOTALvaluesNUM[a][b] != 0) {
