@@ -38,34 +38,29 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
     File[] bz2Files = dir.listFiles((d, name) -> name.endsWith(".bz2"));
     if (bz2Files != null) {
       for (File f : bz2Files) {
-        try {
-          ProcessBuilder pb = new ProcessBuilder(
-            "7z", "e", f.getAbsolutePath(), "-o" + folder_inout, "-y"
+        // strip the ".bz2" suffix to get the output filename
+        String outPath = f.getAbsolutePath().substring(0, f.getAbsolutePath().length() - 4);
+        File outFile = new File(outPath);
+
+        try (
+          BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(
+            new BufferedInputStream(new FileInputStream(f))
           );
-          pb.redirectErrorStream(true);
-          Process p = pb.start();
-
-          // drain output so the process doesn't block if the buffer fills
-          BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-          String line;
-          while ((line = reader.readLine()) != null) {
-            println(line);
+          FileOutputStream out = new FileOutputStream(outFile)
+        ) {
+          byte[] buffer = new byte[8192];
+          int n;
+          while ((n = bzIn.read(buffer)) != -1) {
+            out.write(buffer, 0, n);
           }
 
-          int exitCode = p.waitFor(); // <-- blocks until 7z is actually done
-
-          if (exitCode == 0) {
-            f.delete(); // only delete after a confirmed successful extraction
-          } else {
-            println("7z failed with exit code " + exitCode + " for " + f.getName());
-          }
+          f.delete(); // only reached if decompression succeeded without throwing
         }
         catch (Exception e) {
-          println(e);
+          println("Failed to decompress " + f.getName() + ": " + e);
         }
       }
     }
-
     Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);
 
     ENSEMBLE_FORECAST_load = true;

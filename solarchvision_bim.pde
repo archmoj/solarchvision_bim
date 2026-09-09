@@ -1,6 +1,10 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import processing.data.IntList;
 import processing.pdf.*;
+
 
 float MessageSize = 15.0;
 int SOLARCHVISION_pixel_A = 24; // menu bar
