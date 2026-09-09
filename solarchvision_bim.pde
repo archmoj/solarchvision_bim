@@ -1047,7 +1047,7 @@ final int Language_FR = 1;
 int Language_Active = Language_EN;
 
 final float FLOAT_huge = 1000000000;
-final float FLOAT_tiny = 0.05; // don't use very tiny values that could result is shading problems at the intersection of faces
+final float FLOAT_tiny = 0.001; // don't use very tiny values that could result is shading problems
 
 final String STRING_undefined = "N/A";
 final float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data

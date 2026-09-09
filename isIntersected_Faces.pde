@@ -158,8 +158,19 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
     float ny = ACz * BDx - ACx * BDz;
     float nz = ACx * BDy - ACy * BDx;
 
+    // Normalize before the parallel test: the raw cross product's magnitude
+    // scales with the face's size (diagonals squared), so comparing it
+    // directly against a fixed FLOAT_tiny made the "is this ray parallel to
+    // the face" test depend on face area instead of angle -- small faces at
+    // grazing angles (common when the view is near-horizontal) were being
+    // wrongly rejected as "parallel" and silently dropped from render.
+    float nLen = sqrt(nx * nx + ny * ny + nz * nz);
+    if (nLen < FLOAT_tiny) return FLOAT_huge; // degenerate, zero-area face
+    float invNLen = 1.0 / nLen;
+    nx *= invNLen; ny *= invNLen; nz *= invNLen;
+
     float R = -(ray_dir[0] * nx + ray_dir[1] * ny + ray_dir[2] * nz);
-    if (R < FLOAT_tiny && R > -FLOAT_tiny) return FLOAT_huge; // parallel to plane
+    if (R < FLOAT_tiny && R > -FLOAT_tiny) return FLOAT_huge; // ray truly parallel to plane
 
     float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * nx +
                                 (A[1] + B[1] + C[1] + D[1]) * ny +
@@ -203,6 +214,14 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
       float nx = AGy * BGz - AGz * BGy;
       float ny = AGz * BGx - AGx * BGz;
       float nz = AGx * BGy - AGy * BGx;
+
+      // Same fix as the quad/triangle branch above: normalize before the
+      // parallel test so it's angle-based, not scale-dependent on this
+      // triangle-fan wedge's size.
+      float nLen = sqrt(nx * nx + ny * ny + nz * nz);
+      if (nLen < FLOAT_tiny) continue; // degenerate wedge, try next edge
+      float invNLen = 1.0 / nLen;
+      nx *= invNLen; ny *= invNLen; nz *= invNLen;
 
       float R = -(ray_dir[0] * nx + ray_dir[1] * ny + ray_dir[2] * nz);
       if (R < FLOAT_tiny && R > -FLOAT_tiny) continue; // parallel, try next edge
