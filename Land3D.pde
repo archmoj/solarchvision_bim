@@ -318,16 +318,13 @@ class solarchvision_Land3D {
           the_link += txt_latitude + "," + txt_longitude;
         }
 
-        // Add your API key for api.terraintap.com
-        the_link += "&key=";
-
-        println("Try downloading: " + the_link);
+        println("Try downloading: " + the_link); // don't show the API_KEY
 
         try {
-          saveBytes(the_target, loadBytes(the_link));
+          saveBytes(the_target, loadBytes(the_link + "&key=" + TERRAINTAP_API_KEY));
         }
         catch (Exception e) {
-          println("LINK NOT AVAILABLE:", the_link);
+          println("LINK NOT AVAILABLE:", the_link); // don't show the API_KEY
         }
       }
 

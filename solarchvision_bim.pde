@@ -189,62 +189,68 @@ void draw () {
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
-    stroke(255); fill(255); text("update_station(start)", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+    stroke(255); fill(255); text("load .env file", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 11) {
+    SOLARCHVISION_load_env();
+
+    stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
+
+    stroke(255); fill(255); text("update_station(start)", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+  } else if (frameCount == 12) {
     SOLARCHVISION_update_station(1);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_CLIMATE_TMYEPW", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 12) {
+  } else if (frameCount == 13) {
     SOLARCHVISION_update_station(2);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_CLIMATE_CWEEDS", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 13) {
+  } else if (frameCount == 14) {
     SOLARCHVISION_update_station(3);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_CLIMATE_CLMREC", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 14) {
+  } else if (frameCount == 15) {
     SOLARCHVISION_update_station(4);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_ENSEMBLE_OBSERVED", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 15) {
+  } else if (frameCount == 16) {
     SOLARCHVISION_update_station(5);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_ENSEMBLE_FORECAST", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 16) {
+  } else if (frameCount == 17) {
     SOLARCHVISION_update_station(6);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("Land3D.update_mesh", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 17) {
+  } else if (frameCount == 18) {
     SOLARCHVISION_update_station(7);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("Earth3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 18) {
+  } else if (frameCount == 19) {
     Earth3D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("Tropo3D.load_images", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 19) {
+  } else if (frameCount == 20) {
     Tropo3D.load_images();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("build_SkySphere", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
-  } else if (frameCount == 20) {
+  } else if (frameCount == 21) {
 
     SOLARCHVISION_build_SkySphere(1); //1 - 3
     GlobalSolar_resize_array();
@@ -2491,6 +2497,25 @@ void SOLARCHVISION_fetch_project () {
   }
   catch (Exception e) {
     println("Cannot find the hold file:", myFile);
+  }
+}
+
+String TERRAINTAP_API_KEY = "";
+
+void SOLARCHVISION_load_env () {
+  String[] lines = loadStrings(".env");
+  if (lines != null) {
+    int len = lines.length;
+    for (int i = 0; i < len; i++) {
+      String[] parts = lines[i].split("=");
+      if(parts.length > 1) {
+        String key = parts[0];
+        String val = parts[1];
+        if(key.equals("TERRAINTAP_API_KEY")) {
+          TERRAINTAP_API_KEY = val;
+        }
+      }
+    }
   }
 }
 
