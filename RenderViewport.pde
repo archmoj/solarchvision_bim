@@ -2,7 +2,7 @@ void SOLARCHVISION_RenderViewport () {
 
   cursor(WAIT);
 
-  println("Rendering Viewport. Please wait...");
+  // println("Rendering Viewport. Please wait...");
 
   SOLARCHVISION_buildFaceGrid();
 
@@ -21,9 +21,10 @@ void SOLARCHVISION_RenderViewport () {
     PAL_multiplier = allFaces.PASSIVE_palette_MLT;
   }
 
+  float quality = WIN3D.renderQuality;
 
-  int RES1 = WIN3D.dX;
-  int RES2 = WIN3D.dY;
+  int RES1 = round(WIN3D.dX * quality);
+  int RES2 = round(WIN3D.dY * quality);
 
   Render_RGBA = createImage(RES1, RES2, ARGB);
 
@@ -49,8 +50,8 @@ void SOLARCHVISION_RenderViewport () {
     int Image_X = np % RES1;
     int Image_Y = np / RES1;
 
-    Image_X -= 0.5 * WIN3D.dX;
-    Image_Y -= 0.5 * WIN3D.dY;
+    Image_X -= 0.5 * RES1;
+    Image_Y -= 0.5 * RES2;
 
     float[] ray_direction = new float [3];
 
@@ -58,7 +59,10 @@ void SOLARCHVISION_RenderViewport () {
       WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
     };
 
-    float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
+    float[] ray_end = WIN3D.calculate_Click3D(
+      Image_X / quality,
+      Image_Y / quality
+    );
 
     ray_start[0] /= OBJECTS_scale;
     ray_start[1] /= OBJECTS_scale;
