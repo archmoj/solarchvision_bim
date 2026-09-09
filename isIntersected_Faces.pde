@@ -23,19 +23,74 @@ float cellSizeX, cellSizeY, cellSizeZ;
 int[] faceTestStamp;                 // per-face "tested in ray #N" marker
 int currentRayStamp = 0;             // bumped once per ray cast
 
+ArrayList<Float> entirePointsX;
+ArrayList<Float> entirePointsY;
+ArrayList<Float> entirePointsZ;
+ArrayList<int[]> entireFaces;
+
 // ---------------------------- build (call ONCE per geometry) ---------------
 void SOLARCHVISION_buildFaceGrid () {
-  int numFaces = allFaces.nodes.length;
+  entirePointsX = new ArrayList<>();
+  entirePointsY = new ArrayList<>();
+  entirePointsZ = new ArrayList<>();
+  entireFaces = new ArrayList<>();
 
-  int numPoints = allPoints.getLength();
+  int numPoints = 0;
+
+  // collect visible faces
+  int lenFaces = allFaces.nodes.length;
+  for (int f = 0; f < lenFaces; f++) {
+    int vsb = allFaces.getVisibility(f);
+    if (vsb <= 0) continue;
+
+    int mt = allFaces.getMaterial(f);
+
+    int tessellation = allFaces.getTessellation(f);
+
+    int totalNumberOfSubs = 1;
+    if (mt == 0) {
+      tessellation += allFaces.displayTessellation;
+    }
+    if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+
+    float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
+    for (int j = 0; j < allFaces.nodes[f].length; j++) {
+      int vNo = allFaces.nodes[f][j];
+      base_Vertices[j][0] = allPoints.getX(vNo);
+      base_Vertices[j][1] = allPoints.getY(vNo);
+      base_Vertices[j][2] = allPoints.getZ(vNo);
+    }
+
+    for (int n = 0; n < totalNumberOfSubs; n++) {
+      float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
+
+      int len = subFace.length;
+      int[] newFace = new int[len];
+      for (int s = 0; s < len; s++) {
+        newFace[s] = numPoints;
+
+        entirePointsX.add(subFace[s][0]);
+        entirePointsY.add(subFace[s][1]);
+        entirePointsZ.add(subFace[s][2]);
+        numPoints++;
+
+        if(s == len - 1) {
+          entireFaces.add(newFace);
+        }
+      }
+    }
+  }
+
+  int numFaces = entireFaces.size();
 
   // 1) overall bounding box of the scene
   gridMinX = gridMinY = gridMinZ = FLOAT_huge;
   gridMaxX = gridMaxY = gridMaxZ = -FLOAT_huge;
   for (int p = 0; p < numPoints; p++) {
-    float x = allPoints.getX(p);
-    float y = allPoints.getY(p);
-    float z = allPoints.getZ(p);
+    float x = entirePointsX.get(p);
+    float y = entirePointsY.get(p);
+    float z = entirePointsZ.get(p);
+
     if (x < gridMinX) gridMinX = x;
     if (x > gridMaxX) gridMaxX = x;
     if (y < gridMinY) gridMinY = y;
@@ -65,16 +120,17 @@ void SOLARCHVISION_buildFaceGrid () {
   faceTestStamp = new int[numFaces];
 
   // 3) insert each face into every cell its bounding box overlaps
-  for (int f = 1; f < numFaces; f++) { // f==0 skipped, matches original convention
-    int[] nodes = allFaces.nodes[f];
+  for (int f = 0; f < numFaces; f++) {
+    int[] nodes = entireFaces.get(f);
     if (nodes.length <= 2) continue;
 
     float fMinX = FLOAT_huge, fMinY = FLOAT_huge, fMinZ = FLOAT_huge;
     float fMaxX = -FLOAT_huge, fMaxY = -FLOAT_huge, fMaxZ = -FLOAT_huge;
     for (int j = 0; j < nodes.length; j++) {
-      float x = allPoints.getX(nodes[j]);
-      float y = allPoints.getY(nodes[j]);
-      float z = allPoints.getZ(nodes[j]);
+      int idx = nodes[j];
+      float x = entirePointsX.get(idx);
+      float y = entirePointsY.get(idx);
+      float z = entirePointsZ.get(idx);
       if (x < fMinX) fMinX = x;
       if (x > fMaxX) fMaxX = x;
       if (y < fMinY) fMinY = y;
@@ -108,18 +164,31 @@ int cellFlatIndex(int ix, int iy, int iz) { return (ix * gridNy + iy) * gridNz +
 // Returns dist2intersect (t along the ray) if the ray hits this face's
 // polygon at t > FLOAT_tiny, otherwise FLOAT_huge. Fills P[0..2] on hit.
 float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P) {
-  int vsb = allFaces.getVisibility(f);
-  if (vsb <= 0) return FLOAT_huge;
-
-  int[] faceNodes = allFaces.nodes[f];
+  int[] faceNodes = entireFaces.get(f);
   int n = faceNodes.length;
   if (n <= 2) return FLOAT_huge;
 
   if (n < 5) {
-    float[] A = allPoints.getPosition(faceNodes[0]);
-    float[] B = allPoints.getPosition(faceNodes[1]);
-    float[] C = allPoints.getPosition(faceNodes[n - 2]);
-    float[] D = allPoints.getPosition(faceNodes[n - 1]);
+    float[] A = {
+      entirePointsX.get(faceNodes[0]),
+      entirePointsY.get(faceNodes[0]),
+      entirePointsZ.get(faceNodes[0])
+    };
+    float[] B = {
+      entirePointsX.get(faceNodes[1]),
+      entirePointsY.get(faceNodes[1]),
+      entirePointsZ.get(faceNodes[1])
+    };
+    float[] C = {
+      entirePointsX.get(faceNodes[n - 2]),
+      entirePointsY.get(faceNodes[n - 2]),
+      entirePointsZ.get(faceNodes[n - 2])
+    };
+    float[] D = {
+      entirePointsX.get(faceNodes[n - 1]),
+      entirePointsY.get(faceNodes[n - 1]),
+      entirePointsZ.get(faceNodes[n - 1])
+    };
 
     float ACx = A[0] - C[0], ACy = A[1] - C[1], ACz = A[2] - C[2];
     float BDx = B[0] - D[0], BDy = B[1] - D[1], BDz = B[2] - D[2];
@@ -151,9 +220,9 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
     float Gx = 0, Gy = 0, Gz = 0;
     for (int j = 0; j < n; j++) {
       int idx = faceNodes[j];
-      Gx += allPoints.getX(idx);
-      Gy += allPoints.getY(idx);
-      Gz += allPoints.getZ(idx);
+      Gx += entirePointsX.get(idx);
+      Gy += entirePointsY.get(idx);
+      Gz += entirePointsZ.get(idx);
     }
     float invN = 1.0 / n;
     Gx *= invN; Gy *= invN; Gz *= invN;
@@ -163,8 +232,8 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
       int ai = faceNodes[j];
       int bi = faceNodes[j_next];
 
-      float Ax = allPoints.getX(ai), Ay = allPoints.getY(ai), Az = allPoints.getZ(ai);
-      float Bx = allPoints.getX(bi), By = allPoints.getY(bi), Bz = allPoints.getZ(bi);
+      float Ax = entirePointsX.get(ai), Ay = entirePointsY.get(ai), Az = entirePointsZ.get(ai);
+      float Bx = entirePointsX.get(bi), By = entirePointsY.get(bi), Bz = entirePointsZ.get(bi);
 
       float AGx = Ax - Gx, AGy = Ay - Gy, AGz = Az - Gz;
       float BGx = Bx - Gx, BGy = By - Gy, BGz = Bz - Gz;
