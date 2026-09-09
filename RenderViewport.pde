@@ -1,3 +1,6 @@
+int RENDER_HOUR_ANGLE = 8;
+int RENDER_DATE_ANGLE = 0;
+
 void SOLARCHVISION_RenderViewport () {
 
   cursor(WAIT);
@@ -5,6 +8,19 @@ void SOLARCHVISION_RenderViewport () {
   // println("Rendering Viewport. Please wait...");
 
   SOLARCHVISION_buildFaceGrid();
+
+  int DATE_ANGLE = RENDER_DATE_ANGLE;
+  int HOUR_ANGLE = RENDER_HOUR_ANGLE;
+  RENDER_HOUR_ANGLE++;
+  if(RENDER_HOUR_ANGLE > 16) {
+    RENDER_HOUR_ANGLE = 8;
+
+    RENDER_DATE_ANGLE += 90;
+  }
+  if(RENDER_DATE_ANGLE >= 360) {
+    RENDER_DATE_ANGLE = 0;
+  }
+
 
   int PAL_type = 0;
   int PAL_direction = 1;
@@ -130,7 +146,7 @@ void SOLARCHVISION_RenderViewport () {
 
 
       //float[] SunR = funcs.SunPositionRadiation( DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k]);
-      float[] SunR = funcs.SunPositionRadiation(0, 11, 0);
+      float[] SunR = funcs.SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, 0);
 
       float[] SunV = {
         SunR[1], SunR[2], SunR[3]
