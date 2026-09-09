@@ -39,7 +39,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
     {
       // on Windows:
       //String Command1 = "cmd /c \"\"C:\\Program Files (x86)\\7-Zip\\7z.exe\"\" e " + folder_inout + "\\*.bz2 -o" + folder_inout + " -y";
-      String Command1 = "for bz2 in " + folder_inout + "/*.bz2; do 7z e $bz2 -o" + folder_inout + " -y; done";
+      String Command1 = "for bz2 in " + folder_inout + "/*.bz2; do 7z e \"$bz2\" -o" + folder_inout + " -y; done";
       println(Command1);
 
       // on Windows:
@@ -50,7 +50,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       try {
         // on Windows:
         //launch(Command1 + " & " + Command2);
-        exec(Command1 + " && " + Command2);
+        exec(new String[]{"bash", "-c", Command1 + " && " + Command2});
       }
       catch (Exception e) {
         println(e);
