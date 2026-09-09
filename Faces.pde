@@ -340,6 +340,49 @@ class solarchvision_Faces {
         }
       }
 
+      if (target_window == TypeWindow.RENDER) {
+        int lenFaces = this.nodes.length;
+        for (int f = 0; f < lenFaces; f++) {
+          int vsb = this.getVisibility(f);
+          if (vsb <= 0) continue;
+
+          int mt = this.getMaterial(f);
+
+          int tessellation = this.getTessellation(f);
+
+          int totalNumberOfSubs = 1;
+          if (mt == 0) {
+            tessellation += this.displayTessellation;
+          }
+          if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+
+          float[][] base_Vertices = new float [this.nodes[f].length][3];
+          for (int j = 0; j < this.nodes[f].length; j++) {
+            int vNo = this.nodes[f][j];
+            base_Vertices[j][0] = allPoints.getX(vNo);
+            base_Vertices[j][1] = allPoints.getY(vNo);
+            base_Vertices[j][2] = allPoints.getZ(vNo);
+          }
+
+          for (int n = 0; n < totalNumberOfSubs; n++) {
+            float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
+
+            int len = subFace.length;
+            int[] newFace = new int[len];
+            for (int s = 0; s < len; s++) {
+              newFace[s] = entirePointsX.size();
+
+              entirePointsX.add(subFace[s][0]);
+              entirePointsY.add(subFace[s][1]);
+              entirePointsZ.add(subFace[s][2]);
+
+              if(s == len - 1) {
+                entireFaces.add(newFace);
+              }
+            }
+          }
+        }
+      }
 
       if (target_window == TypeWindow.OBJ3D) {
 

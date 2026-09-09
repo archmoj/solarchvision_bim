@@ -12,5 +12,6 @@ class solarchvision_WINDOWTYPE {
   private final static int RAD3D    = 5;
   private final static int HTML     = 6;
   private final static int SHADOW   = 7;
+  private final static int RENDER   = 8;
 
 }

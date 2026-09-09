@@ -35,53 +35,10 @@ void SOLARCHVISION_buildFaceGrid () {
   entirePointsZ = new ArrayList<>();
   entireFaces = new ArrayList<>();
 
-  int numPoints = 0;
-
-  // collect visible faces
-  int lenFaces = allFaces.nodes.length;
-  for (int f = 0; f < lenFaces; f++) {
-    int vsb = allFaces.getVisibility(f);
-    if (vsb <= 0) continue;
-
-    int mt = allFaces.getMaterial(f);
-
-    int tessellation = allFaces.getTessellation(f);
-
-    int totalNumberOfSubs = 1;
-    if (mt == 0) {
-      tessellation += allFaces.displayTessellation;
-    }
-    if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
-
-    float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-    for (int j = 0; j < allFaces.nodes[f].length; j++) {
-      int vNo = allFaces.nodes[f][j];
-      base_Vertices[j][0] = allPoints.getX(vNo);
-      base_Vertices[j][1] = allPoints.getY(vNo);
-      base_Vertices[j][2] = allPoints.getZ(vNo);
-    }
-
-    for (int n = 0; n < totalNumberOfSubs; n++) {
-      float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
-
-      int len = subFace.length;
-      int[] newFace = new int[len];
-      for (int s = 0; s < len; s++) {
-        newFace[s] = numPoints;
-
-        entirePointsX.add(subFace[s][0]);
-        entirePointsY.add(subFace[s][1]);
-        entirePointsZ.add(subFace[s][2]);
-        numPoints++;
-
-        if(s == len - 1) {
-          entireFaces.add(newFace);
-        }
-      }
-    }
-  }
+  allFaces.draw(TypeWindow.RENDER);
 
   int numFaces = entireFaces.size();
+  int numPoints = entirePointsX.size();
 
   // 1) overall bounding box of the scene
   gridMinX = gridMinY = gridMinZ = FLOAT_huge;
