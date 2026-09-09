@@ -255,7 +255,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
   }
 
 
-  keep_STUDY_perDays = STUDY.perDays;
+  STUDY.perDays = keep_STUDY_perDays;
   STUDY.joinDays = keep_STUDY_joinDays;
 
   cursor(ARROW);
