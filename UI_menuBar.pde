@@ -150,7 +150,8 @@ class solarchvision_UI_menuBar {
       "3D-model 7",
       "3D-model 8",
       "3D-model 9",
-      "3D-model 10"
+      "3D-model 10",
+      "3D-model 11"
     }
     ,
     {

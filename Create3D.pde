@@ -2323,6 +2323,14 @@ class solarchvision_Create3D {
     }
 
     if (n == 9) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_Mesh2(7, 0, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
+
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.add_PolygonHyper(0, 0, 0, 1, 0, 0, 0, 0, 5, 10, 10, 4, 0);
+    }
+
+    if (n == 10) {
       //Complex used in the YC book:
 
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -2366,7 +2374,7 @@ class solarchvision_Create3D {
       this.add_Box_Corners(-1, t, 0, 1, 0, 0, 66, 42, 0, 78, 78, 12);
     }
 
-    if (n == 10) {
+    if (n == 11) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       allSections.create(0, 0, 0.1, 0, 50, 50, 1, 200, 200);
     }

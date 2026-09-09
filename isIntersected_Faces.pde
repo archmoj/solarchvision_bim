@@ -34,6 +34,7 @@ void SOLARCHVISION_buildFaceGrid () {
   entirePointsY = new ArrayList<>();
   entirePointsZ = new ArrayList<>();
   entireFaces = new ArrayList<>();
+  entireFaces.add(new int[0]); // Provide an empty item at index 0.
 
   allFaces.draw(TypeWindow.RENDER);
   allModel1Ds.draw(TypeWindow.RENDER);
@@ -249,9 +250,6 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
   }
 }
 
-// Note: face index 0 still can't be reported as a hit -- that's an existing
-// limitation of SOLARCHVISION_isIntersected_Faces's "0 == no hit" sentinel,
-// not something introduced here.
 float[] intersectAll (float[] ray_pnt, float[] ray_dir) {
   return intersectAll(ray_pnt, ray_dir, 0);
 }
