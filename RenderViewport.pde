@@ -21,7 +21,7 @@ void SOLARCHVISION_RenderViewport () {
     RENDER_DATE_ANGLE = 0;
   }
 
-
+  /*
   int PAL_type = 0;
   int PAL_direction = 1;
   float PAL_multiplier = 1;
@@ -36,6 +36,7 @@ void SOLARCHVISION_RenderViewport () {
     PAL_direction = allFaces.PASSIVE_palette_DIR;
     PAL_multiplier = allFaces.PASSIVE_palette_MLT;
   }
+  */
 
   float quality = WIN3D.renderQuality;
 
@@ -135,14 +136,14 @@ void SOLARCHVISION_RenderViewport () {
       //float Beta = 180 - funcs.atan2_ang(face_norm[0], face_norm[1]);
 
       float valuesSUM_RAD = 0;
-      float valuesSUM_EFF_P = 0;
-      float valuesSUM_EFF_N = 0;
-      int valuesNUM = 0;
+      //float valuesSUM_EFF_P = 0;
+      //float valuesSUM_EFF_N = 0;
+      //int valuesNUM = 0;
 
       float values_R_dir = 1;
       float values_R_dif = 1;
-      float values_E_dir = 0.1;
-      float values_E_dif = 0.1;
+      //float values_E_dir = 0.1;
+      //float values_E_dif = 0.1;
 
 
       //float[] SunR = funcs.SunPositionRadiation( DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k]);
@@ -171,6 +172,7 @@ void SOLARCHVISION_RenderViewport () {
       { // removes backing faces
 
         if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) {
+          /*
           if (values_E_dir < 0) {
             valuesSUM_EFF_P += -(values_E_dir * SunMask);
             valuesSUM_EFF_N += -(values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
@@ -178,19 +180,22 @@ void SOLARCHVISION_RenderViewport () {
             valuesSUM_EFF_N += (values_E_dir * SunMask);
             valuesSUM_EFF_P += (values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
           }
+          */
 
           valuesSUM_RAD += (values_R_dif * SkyMask); // only approximate diffuse radiation!
         } else {
+          /*
           if (values_E_dir < 0) {
             valuesSUM_EFF_N += -((values_E_dir * SunMask) + (values_E_dif * SkyMask));
           } else {
             valuesSUM_EFF_P += ((values_E_dir * SunMask) + (values_E_dif * SkyMask));
           }
+          */
 
           valuesSUM_RAD += ((values_R_dir * SunMask) + (values_R_dif * SkyMask)); // calculates total radiation
         }
       }
-      valuesNUM += 1;
+      //valuesNUM += 1;
 
       //-----------------------------
       float valuesSUM = valuesSUM_RAD; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -198,6 +203,7 @@ void SOLARCHVISION_RenderViewport () {
 
       float _u = 0;
 
+      /*
       if (is_defined(valuesSUM)) {
 
         if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
@@ -209,6 +215,8 @@ void SOLARCHVISION_RenderViewport () {
       }
 
       COL = PAINT.getColorStyle(PAL_type, _u);
+      */
+      COL = PAINT.getColorStyle(19, 0.125 * valuesSUM); //
 
 
       Render_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
