@@ -122,21 +122,22 @@ class solarchvision_Select3D {
 
             boolean InPoly = false;
 
-            if (n < 5) { // works if n==3 or n==4
+            if (n == 3) {
 
               float[] A = allPoints.getPosition(allFaces.nodes[f][0]);
               float[] B = allPoints.getPosition(allFaces.nodes[f][1]);
-              float[] C = allPoints.getPosition(allFaces.nodes[f][n - 2]);
-              float[] D = allPoints.getPosition(allFaces.nodes[f][n - 1]);
+              float[] C = allPoints.getPosition(allFaces.nodes[f][2]);
 
               float[] AC = funcs.vec3_diff(A, C);
-              float[] BD = funcs.vec3_diff(B, D);
+              float[] BA = funcs.vec3_diff(B, A);
 
-              face_norm = funcs.vec3_cross(AC, BD);
+              face_norm = funcs.vec3_cross(AC, BA);
 
-              float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * face_norm[0] +
-                                          (A[1] + B[1] + C[1] + D[1]) * face_norm[1] +
-                                          (A[2] + B[2] + C[2] + D[2]) * face_norm[2]);
+              float face_offset = (
+                (A[0] + B[0] + C[0]) * face_norm[0] +
+                (A[1] + B[1] + C[1]) * face_norm[1] +
+                (A[2] + B[2] + C[2]) * face_norm[2]
+              ) / 3.0;
 
               float R = -funcs.vec3_dot(ray_dir, face_norm);
 
@@ -155,8 +156,7 @@ class solarchvision_Select3D {
 
                   float[] P = {X_intersect, Y_intersect, Z_intersect};
 
-                  if (n == 4) InPoly = funcs.isInside_Quadrangle(P, A, B, C, D);
-                  else InPoly = funcs.isInside_Triangle(P, A, B, D); // note D is the last vertex while C=B in this case
+                  InPoly = funcs.isInside_Triangle(P, A, B, C);
 
                 }
               }

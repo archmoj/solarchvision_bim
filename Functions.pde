@@ -206,65 +206,6 @@ class solarchvision_Functions {
     return ((u >= 0) && (v >= 0) && (u + v <= 1));
   }
 
-  boolean isInside_Quadrangle (float[] P, float[] A, float[] B, float[] C, float[] D) {
-    float[] G = {
-      0.25 * (A[0] + B[0] + C[0] + D[0]),
-      0.25 * (A[1] + B[1] + C[1] + D[1]),
-      0.25 * (A[2] + B[2] + C[2] + D[2])
-    };
-
-    float pX = P[0] - G[0];
-    float pY = P[1] - G[1];
-    float pZ = P[2] - G[2];
-    float aX = A[0] - G[0];
-    float aY = A[1] - G[1];
-    float aZ = A[2] - G[2];
-    float bX = B[0] - G[0];
-    float bY = B[1] - G[1];
-    float bZ = B[2] - G[2];
-    float AA = aX * aX + aY * aY + aZ * aZ; // this.vec3_dot(a, a);
-    float AB = aX * bX + aY * bY + aZ * bZ; // this.vec3_dot(a, b);
-    float AP = aX * pX + aY * pY + aZ * pZ; // this.vec3_dot(a, p);
-    float BB = bX * bX + bY * bY + bZ * bZ; // this.vec3_dot(b, b);
-    float BP = bX * pX + bY * pY + bZ * pZ; // this.vec3_dot(b, p);
-    float r = (AA * BB - AB * AB); if (r == 0.0) return false;
-    float u = (BB * AP - AB * BP) / r;
-    float v = (AA * BP - AB * AP) / r;
-    boolean result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-    if (result == false) {
-      float cX = C[0] - G[0];
-      float cY = C[1] - G[1];
-      float cZ = C[2] - G[2];
-      float CC = cX * cX + cY * cY + cZ * cZ; // this.vec3_dot(c, c);
-      float CP = cX * pX + cY * pY + cZ * pZ; // this.vec3_dot(c, p);
-      float BC = bX * cX + bY * cY + bZ * cZ; // this.vec3_dot(b, c);
-      r = (BB * CC - BC * BC); if (r == 0.0) return false;
-      u = (CC * BP - BC * CP) / r;
-      v = (BB * CP - BC * BP) / r;
-      result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-      if (result == false) {
-        float dX = D[0] - G[0];
-        float dY = D[1] - G[1];
-        float dZ = D[2] - G[2];
-        float CD = cX * dX + cY * dY + cZ * dZ; // this.vec3_dot(c, d);
-        float DD = dX * dX + dY * dY + dZ * dZ; // this.vec3_dot(d, d);
-        float DP = dX * pX + dY * pY + dZ * pZ; // this.vec3_dot(d, p);
-        r = (CC * DD - CD * CD); if (r == 0.0) return false;
-        u = (DD * CP - CD * DP) / r;
-        v = (CC * DP - CD * CP) / r;
-        result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-        if (result == false) {
-          float DA = dX * aX + dY * aY + dZ * aZ; // this.vec3_dot(d, a);
-          r = (DD * AA - DA * DA); if (r == 0.0) return false;
-          u = (AA * DP - DA * AP) / r;
-          v = (DD * AP - DA * DP) / r;
-          result = ((u >= 0) && (v >= 0) && (u + v <= 1));
-        }
-      }
-    }
-    return result;
-  }
-
   boolean isInside_Rectangle (float[] P, float[] A, float[] O, float[] B) { // good for rectangular surfaces namely for selecting allModel2Ds, etc.
     float pX = P[0] - O[0];
     float pY = P[1] - O[1];

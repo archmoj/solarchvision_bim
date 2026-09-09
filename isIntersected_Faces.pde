@@ -132,7 +132,7 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
   int n = faceNodes.length;
   if (n <= 2) return FLOAT_huge;
 
-  if (n < 5) {
+  if (n == 3) {
     float[] A = {
       entirePointsX.get(faceNodes[0]),
       entirePointsY.get(faceNodes[0]),
@@ -144,21 +144,16 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
       entirePointsZ.get(faceNodes[1])
     };
     float[] C = {
-      entirePointsX.get(faceNodes[n - 2]),
-      entirePointsY.get(faceNodes[n - 2]),
-      entirePointsZ.get(faceNodes[n - 2])
-    };
-    float[] D = {
-      entirePointsX.get(faceNodes[n - 1]),
-      entirePointsY.get(faceNodes[n - 1]),
-      entirePointsZ.get(faceNodes[n - 1])
+      entirePointsX.get(faceNodes[2]),
+      entirePointsY.get(faceNodes[2]),
+      entirePointsZ.get(faceNodes[2])
     };
 
     float ACx = A[0] - C[0], ACy = A[1] - C[1], ACz = A[2] - C[2];
-    float BDx = B[0] - D[0], BDy = B[1] - D[1], BDz = B[2] - D[2];
-    float nx = ACy * BDz - ACz * BDy;
-    float ny = ACz * BDx - ACx * BDz;
-    float nz = ACx * BDy - ACy * BDx;
+    float BAx = B[0] - A[0], BAy = B[1] - A[1], BAz = B[2] - A[2];
+    float nx = ACy * BAz - ACz * BAy;
+    float ny = ACz * BAx - ACx * BAz;
+    float nz = ACx * BAy - ACy * BAx;
 
     // Normalize before the parallel test: the raw cross product's magnitude
     // scales with the face's size (diagonals squared), so comparing it
@@ -174,9 +169,11 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
     float R = -(ray_dir[0] * nx + ray_dir[1] * ny + ray_dir[2] * nz);
     if (R < FLOAT_tiny && R > -FLOAT_tiny) return FLOAT_huge; // ray truly parallel to plane
 
-    float face_offset = 0.25 * ((A[0] + B[0] + C[0] + D[0]) * nx +
-                                (A[1] + B[1] + C[1] + D[1]) * ny +
-                                (A[2] + B[2] + C[2] + D[2]) * nz);
+    float face_offset = (
+      (A[0] + B[0] + C[0]) * nx +
+      (A[1] + B[1] + C[1]) * ny +
+      (A[2] + B[2] + C[2]) * nz
+    ) / 3.0;
     float numer = (ray_pnt[0] * nx + ray_pnt[1] * ny + ray_pnt[2] * nz) - face_offset;
     float dist2intersect = numer / R;
     if (dist2intersect <= FLOAT_tiny) return FLOAT_huge;
@@ -185,9 +182,7 @@ float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[]
     P[1] = dist2intersect * ray_dir[1] + ray_pnt[1];
     P[2] = dist2intersect * ray_dir[2] + ray_pnt[2];
 
-    boolean InPoly = (n == 4)
-      ? funcs.isInside_Quadrangle(P, A, B, C, D)
-      : funcs.isInside_Triangle(P, A, B, D); // D is last vertex, C==B here
+    boolean InPoly = funcs.isInside_Triangle(P, A, B, C);
 
     if (!InPoly) return FLOAT_huge;
     if (N != null) { N[0] = nx; N[1] = ny; N[2] = nz; }
