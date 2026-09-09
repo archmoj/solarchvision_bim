@@ -673,10 +673,22 @@ class solarchvision_Land3D {
               }
 
 
-
-
+              int[] newFace = new int[subFace.length];
 
               for (int s = 0; s < subFace.length; s++) {
+                if (target_window == TypeWindow.RENDER) {
+                  if(i < 5) { // don't add farther away
+                    newFace[s] = entirePointsX.size();
+
+                    entirePointsX.add(subFace[s][0]);
+                    entirePointsY.add(subFace[s][1]);
+                    entirePointsZ.add(subFace[s][2]);
+
+                    if(s == subFace.length - 1) {
+                      entireFaces.add(newFace);
+                    }
+                  }
+                }
 
                 if (target_window == TypeWindow.SKY2D) {
                   SKY2D_graphics.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
@@ -778,7 +790,13 @@ class solarchvision_Land3D {
 
                   if (target_window == TypeWindow.WIN3D) {
                     if (n_Map != -1) {
-                      WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, u * this.Textures_map[n_Map].width, v * this.Textures_map[n_Map].height);
+                      WIN3D.graphics.vertex(
+                        subFace[s][0] * OBJECTS_scale * WIN3D.scale,
+                        -subFace[s][1] * OBJECTS_scale * WIN3D.scale,
+                        subFace[s][2] * OBJECTS_scale * WIN3D.scale,
+                        u * this.Textures_map[n_Map].width,
+                        v * this.Textures_map[n_Map].height
+                      );
                     }
                     else {
                       WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
@@ -881,12 +899,13 @@ class solarchvision_Land3D {
 
               if (target_window == TypeWindow.LandMesh) {
                 if (i != 0) { // This is to avoid creation of surfaces with duplicate points at the center
-                  int[] newFace = new int[4];
-                  newFace[0] = allPoints.getLength() - 4;
-                  newFace[1] = allPoints.getLength() - 3;
-                  newFace[2] = allPoints.getLength() - 2;
-                  newFace[3] = allPoints.getLength() - 1;
-                  allFaces.create(newFace);
+                  int len = allPoints.getLength();
+                  allFaces.create(new int[] {
+                    len - 4,
+                    len - 3,
+                    len - 2,
+                    len - 1
+                  });
                 }
               }
 
@@ -949,11 +968,15 @@ class solarchvision_Land3D {
             // This is to create a polygon around the center
             if (i == 0) {
 
-              int[] newFace = new int[this.num_columns - 1];
-              for (int j = 0; j < newFace.length; j++) {
-                newFace[j] = allPoints.create(this.Mesh[i + 1][j][0], this.Mesh[i + 1][j][1], this.Mesh[i + 1][j][2]);
+              int[] _face = new int[this.num_columns - 1];
+              for (int j = 0; j < _face.length; j++) {
+                _face[j] = allPoints.create(
+                  this.Mesh[i + 1][j][0],
+                  this.Mesh[i + 1][j][1],
+                  this.Mesh[i + 1][j][2]
+                );
               }
-              allFaces.create(newFace);
+              allFaces.create(_face);
             }
           }
         }

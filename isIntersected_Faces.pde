@@ -38,6 +38,7 @@ void SOLARCHVISION_buildFaceGrid () {
 
   allFaces.draw(TypeWindow.RENDER);
   allModel1Ds.draw(TypeWindow.RENDER);
+  Land3D.draw(TypeWindow.RENDER);
 
   int numFaces = entireFaces.size();
   int numPoints = entirePointsX.size();
