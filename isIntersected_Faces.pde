@@ -299,14 +299,20 @@ boolean rayHitsGridBounds(float[] ray_pnt, float[] ray_dir, float[] tEnterOut) {
 int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
   float[] P = new float[3];
 
-  // fast path: try the previous hit first
+  // fast-path candidate: test the previous hit first, but do NOT return
+  // immediately on a hit -- the ray may have changed enough that a closer
+  // face now exists. Seed the running best-hit with it instead, and let the
+  // grid walk below try to beat it. This is what actually preserves the
+  // "first hit == nearest hit" guarantee for coherent ray batches.
+  int bestFace = 0;
+  float bestDist = FLOAT_huge;
   if (firstGuess > 0) {
     float d = SOLARCHVISION_testFaceHit(firstGuess, ray_pnt, ray_dir, P);
-    if (d < FLOAT_huge) return firstGuess;
+    if (d < bestDist) { bestDist = d; bestFace = firstGuess; }
   }
 
   float[] tEnterBox = new float[1];
-  if (!rayHitsGridBounds(ray_pnt, ray_dir, tEnterBox)) return 0;
+  if (!rayHitsGridBounds(ray_pnt, ray_dir, tEnterBox)) return bestFace; // grid missed; fall back to the candidate (if any)
   float tEnter = tEnterBox[0];
 
   float px = ray_pnt[0] + tEnter * ray_dir[0];
@@ -343,9 +349,6 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
 
   int safetyCounter = gridNx + gridNy + gridNz + 4; // traversal can't exceed this many steps
 
-  int bestFace = 0;
-  float bestDist = FLOAT_huge;
-
   while (safetyCounter-- > 0) {
     if (ix < 0 || ix >= gridNx || iy < 0 || iy >= gridNy || iz < 0 || iz >= gridNz) {
       return bestFace; // walked out of the grid; return best hit found so far (0 if none)
@@ -377,5 +380,5 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
     }
   }
 
-  return 0; // safety fallback, shouldn't normally be reached
+  return bestFace; // safety fallback, shouldn't normally be reached -- still honor any hit found so far
 }
