@@ -22,24 +22,78 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
 
-  float Pa = FLOAT_undefined;
-  float Pb = FLOAT_undefined;
-  float Pc = FLOAT_undefined;
-  float Pd = FLOAT_undefined;
+  int l = STUDY.ImpactLayer;
+  int DATE_step = 1;
+  int J_START = STUDY.j_Start;
+  int J_END = STUDY.j_End;
+  int numDays = J_END - J_START;
+  if (numDays < 0) numDays = 0;
 
-  float values_R_dir;
-  float values_R_dif;
-  float values_E_dir;
-  float values_E_dif;
+  boolean[] TS_dayHasData = new boolean [max(numDays, 1)];
+  float[] TS_DayTime = new float [max(numDays, 1)];
 
-  int now_k = 0;
-  int now_i = 0;
-  int now_j = 0;
+  boolean[][] TS_valid = new boolean [max(numDays, 1)][24];
+  float[][][] TS_SunDir = new float [max(numDays, 1)][24][3];      // raw {SunR[1],SunR[2],SunR[3]}
+  float[][][] TS_SunDirUnit = new float [max(numDays, 1)][24][3];  // unit version, used for SunMask
+  float[][] TS_R_dir = new float [max(numDays, 1)][24];
+  float[][] TS_R_dif = new float [max(numDays, 1)][24];
+  float[][] TS_E_dir = new float [max(numDays, 1)][24];
+  float[][] TS_E_dif = new float [max(numDays, 1)][24];
 
-  int[][] PROCESSED_DAILY_SCENARIOS = {
-    {
+  for (int j = J_START; j < J_END; j += DATE_step) {
+    int jIdx = j - J_START;
+
+    int day_now_j = (j * int(STUDY.perDays) + TIME.beginDay + 365) % 365;
+    if (day_now_j >= 365) day_now_j = day_now_j % 365;
+    if (day_now_j < 0) day_now_j = (day_now_j + 365) % 365;
+
+    float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
+    TS_DayTime[jIdx] = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1);
+
+    int[] Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+    int nk = Normals_COL_N[l];
+
+    if (nk == -1) continue;
+
+    TS_dayHasData[jIdx] = true;
+    int k = int(nk / STUDY.joinDays);
+    int j_ADD = nk % STUDY.joinDays;
+    int now_k = k + start_k;
+
+    int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+    if (now_j >= 365) now_j = now_j % 365;
+    if (now_j < 0) now_j = (now_j + 365) % 365;
+
+    for (int i = 0; i < 24; i++) {
+
+      if (!STUDY.isInHourlyRange(i)) continue;
+
+      float HOUR_ANGLE = i;
+      float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+      if (SunR[3] <= 0) continue;
+
+      float Pa = getValue_CurrentDataSource(i, now_j, now_k, LAYER_dirnorrad.id);
+      float Pb = getValue_CurrentDataSource(i, now_j, now_k, LAYER_difhorrad.id);
+      float Pc = getValue_CurrentDataSource(i, now_j, now_k, LAYER_direffect.id);
+      float Pd = getValue_CurrentDataSource(i, now_j, now_k, LAYER_difeffect.id);
+
+      if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) continue;
+
+      int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
+      if (memberCount != 1) continue;
+
+      float[] SunDir = { SunR[1], SunR[2], SunR[3] };
+      TS_SunDir[jIdx][i] = SunDir;
+      TS_SunDirUnit[jIdx][i] = funcs.vec3_unit(SunDir);
+
+      TS_R_dir[jIdx][i] = 0.001 * Pa;
+      TS_R_dif[jIdx][i] = 0.001 * Pb;
+      TS_E_dir[jIdx][i] = 0.001 * Pc;
+      TS_E_dif[jIdx][i] = 0.001 * Pd;
+
+      TS_valid[jIdx][i] = true;
     }
-  };
+  }
 
   int numDaySlots = VertexSolar_amounts[Impact_ACTIVE].length;
   FloatList[] activeDayValues = new FloatList [numDaySlots];
@@ -107,7 +161,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               UV.x, UV.y, UV.z
             };
 
-            float[] VECT = funcs.vec3_unit(W);
+            float[] VECT = funcs.vec3_unit(W); // already a unit vector -- do not re-normalize it below
 
             float SkyMask = 0;
 
@@ -122,158 +176,71 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               SkyMask += tmp / float(DiffuseVectors.length);
             }
 
-
-
-            int l = STUDY.ImpactLayer;
-
-            int DATE_step = 1;
-
-            int J_START = STUDY.j_Start;
-            int J_END = STUDY.j_End;
-
             float TOTALvaluesSUM_RAD = FLOAT_undefined;
             float TOTALvaluesSUM_EFF_P = FLOAT_undefined;
             float TOTALvaluesSUM_EFF_N = FLOAT_undefined;
             int TOTALvaluesNUM = 0;
 
             for (int j = J_START; j < J_END; j += DATE_step) {
+              int jIdx = j - J_START;
 
               float valuesSUM_RAD = FLOAT_undefined;
               float valuesSUM_EFF_P = FLOAT_undefined;
               float valuesSUM_EFF_N = FLOAT_undefined;
               int valuesNUM = 0;
 
-              now_j = (j * int(STUDY.perDays) + TIME.beginDay + 365) % 365;
-
-              if (now_j >= 365) {
-                now_j = now_j % 365;
-              }
-              if (now_j < 0) {
-                now_j = (now_j + 365) % 365;
-              }
-
-              float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
-
-              int[] Normals_COL_N;
-
-              if (PROCESSED_DAILY_SCENARIOS.length > j - J_START + 1) {
-                Normals_COL_N = PROCESSED_DAILY_SCENARIOS[j - J_START + 1];
-              } else {
-                Normals_COL_N = new int [9];
-                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
-
-                int[][] newNormals = {
-                  Normals_COL_N
-                };
-                PROCESSED_DAILY_SCENARIOS = (int[][]) concat(PROCESSED_DAILY_SCENARIOS, newNormals);
-                //println("length of PROCESSED_DAILY_SCENARIOS =", PROCESSED_DAILY_SCENARIOS.length);
-              }
-
-              int nk = Normals_COL_N[l];
-
-              if (nk != -1) {
-                int k = int(nk / STUDY.joinDays);
-                int j_ADD = nk % STUDY.joinDays;
-
+              if (TS_dayHasData[jIdx]) {
                 for (int i = 0; i < 24; i++) {
 
-                  if (STUDY.isInHourlyRange(i)) {
+                  if (!TS_valid[jIdx][i]) continue;
 
-                    float HOUR_ANGLE = i;
-                    float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+                  float values_R_dir = TS_R_dir[jIdx][i];
+                  float values_R_dif = TS_R_dif[jIdx][i];
+                  float values_E_dir = TS_E_dir[jIdx][i];
+                  float values_E_dif = TS_E_dif[jIdx][i];
 
-                    if (SunR[3] > 0) {
+                  if (is_undefined(valuesSUM_RAD)) {
+                    valuesSUM_RAD = 0;
+                    valuesSUM_EFF_P = 0;
+                    valuesSUM_EFF_N = 0;
+                    valuesNUM = 0;
+                  } else {
 
-                      now_k = k + start_k;
-                      now_i = i;
-                      now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+                    float SunMask = funcs.vec_dot(TS_SunDirUnit[jIdx][i], VECT);
+                    if (SunMask <= 0) SunMask = 0; // removes backing faces
 
-                      if (now_j >= 365) {
-                        now_j = now_j % 365;
-                      }
-                      if (now_j < 0) {
-                        now_j = (now_j + 365) % 365;
-                      }
+                    float[] ray_start = subFace[s];
+                    float[] ray_direction = TS_SunDir[jIdx][i];
 
-                      Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                      Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                      Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                      Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+                    if (funcs.vec_dot(W, ray_direction) > 0) { // removes backing faces
 
-                      if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
-                        values_R_dir = FLOAT_undefined;
-                        values_R_dif = FLOAT_undefined;
-                        values_E_dir = FLOAT_undefined;
-                        values_E_dif = FLOAT_undefined;
-                      } else {
-
-                        int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
-
-                        if (memberCount == 1) {
-                          values_R_dir = 0.001 * Pa;
-                          values_R_dif = 0.001 * Pb;
-                          values_E_dir = 0.001 * Pc;
-                          values_E_dif = 0.001 * Pd;
-
-                          if (is_undefined(valuesSUM_RAD)) {
-                            valuesSUM_RAD = 0;
-                            valuesSUM_EFF_P = 0;
-                            valuesSUM_EFF_N = 0;
-                            valuesNUM = 0;
-                          } else {
-
-
-
-                            float[] SunV = {
-                              SunR[1], SunR[2], SunR[3]
-                            };
-
-                            float SunMask = funcs.vec_dot(funcs.vec3_unit(SunV), funcs.vec3_unit(VECT));
-                            if (SunMask <= 0) SunMask = 0; // removes backing faces
-
-
-
-                            float[] ray_start = subFace[s];
-                            float[] ray_direction = {
-                              SunR[1], SunR[2], SunR[3]
-                            };
-
-                            if (funcs.vec_dot(W, ray_direction) > 0) { // removes backing faces
-
-                              if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) {
-                                if (values_E_dir < 0) {
-                                  valuesSUM_EFF_P += -(values_E_dir * SunMask);
-                                  valuesSUM_EFF_N += -(values_E_dif * SkyMask);
-                                } else {
-                                  valuesSUM_EFF_N += (values_E_dir * SunMask);
-                                  valuesSUM_EFF_P += (values_E_dif * SkyMask);
-                                }
-
-                                valuesSUM_RAD += (values_R_dif * SkyMask);
-                              } else {
-                                if (values_E_dir < 0) {
-                                  valuesSUM_EFF_N += -((values_E_dir * SunMask) + (values_E_dif * SkyMask));
-                                } else {
-                                  valuesSUM_EFF_P += ((values_E_dir * SunMask) + (values_E_dif * SkyMask));
-                                }
-
-                                valuesSUM_RAD += ((values_R_dir * SunMask) + (values_R_dif * SkyMask)); // calculates total radiation
-                              }
-                            }
-                            valuesNUM += 1;
-                          }
+                      if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) {
+                        if (values_E_dir < 0) {
+                          valuesSUM_EFF_P += -(values_E_dir * SunMask);
+                          valuesSUM_EFF_N += -(values_E_dif * SkyMask);
+                        } else {
+                          valuesSUM_EFF_N += (values_E_dir * SunMask);
+                          valuesSUM_EFF_P += (values_E_dif * SkyMask);
                         }
+
+                        valuesSUM_RAD += (values_R_dif * SkyMask);
+                      } else {
+                        if (values_E_dir < 0) {
+                          valuesSUM_EFF_N += -((values_E_dir * SunMask) + (values_E_dif * SkyMask));
+                        } else {
+                          valuesSUM_EFF_P += ((values_E_dir * SunMask) + (values_E_dif * SkyMask));
+                        }
+
+                        valuesSUM_RAD += ((values_R_dir * SunMask) + (values_R_dif * SkyMask)); // calculates total radiation
                       }
                     }
+                    valuesNUM += 1;
                   }
                 }
               }
 
-
               if (valuesNUM != 0) {
-                //float valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
-                //float valuesMUL = int(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * valuesNUM);
-                float valuesMUL = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * valuesNUM);
+                float valuesMUL = TS_DayTime[jIdx] / (1.0 * valuesNUM);
 
                 valuesSUM_RAD *= valuesMUL;
                 valuesSUM_EFF_P *= valuesMUL;
@@ -302,13 +269,10 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               else PERCENTAGE = 0.0;
               COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
 
-              //println("3D-Model >> valuesSUM_RAD:", valuesSUM_RAD, "|COMPARISON:", COMPARISON);
-
               activeDayValues[j + 1].append(valuesSUM_RAD);
               passiveDayValues[j + 1].append(COMPARISON);
 
             }
-
 
             if (TOTALvaluesNUM != 0) {
               TOTALvaluesSUM_RAD /= 1.0 * TOTALvaluesNUM;
@@ -320,23 +284,19 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
               TOTALvaluesSUM_EFF_N = FLOAT_undefined;
             }
 
+            float TOTAL_AVERAGE, TOTAL_PERCENTAGE, TOTAL_COMPARISON;
 
-            float AVERAGE, PERCENTAGE, COMPARISON;
-
-            AVERAGE = (TOTALvaluesSUM_EFF_P - TOTALvaluesSUM_EFF_N);
-            if ((TOTALvaluesSUM_EFF_P + TOTALvaluesSUM_EFF_N) > 0.00001) PERCENTAGE = (TOTALvaluesSUM_EFF_P - TOTALvaluesSUM_EFF_N) / (1.0 * (TOTALvaluesSUM_EFF_P + TOTALvaluesSUM_EFF_N));
-            else PERCENTAGE = 0.0;
-            COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
+            TOTAL_AVERAGE = (TOTALvaluesSUM_EFF_P - TOTALvaluesSUM_EFF_N);
+            if ((TOTALvaluesSUM_EFF_P + TOTALvaluesSUM_EFF_N) > 0.00001) TOTAL_PERCENTAGE = (TOTALvaluesSUM_EFF_P - TOTALvaluesSUM_EFF_N) / (1.0 * (TOTALvaluesSUM_EFF_P + TOTALvaluesSUM_EFF_N));
+            else TOTAL_PERCENTAGE = 0.0;
+            TOTAL_COMPARISON = ((abs(TOTAL_PERCENTAGE)) * TOTAL_AVERAGE);
 
             float valuesSUM = FLOAT_undefined;
             if (WIN3D.Impact_TYPE == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD;
-            if (WIN3D.Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
-
-            //println("3D-Model >> valuesSUM_RAD:", valuesSUM_RAD, "|COMPARISON:", COMPARISON);
+            if (WIN3D.Impact_TYPE == Impact_PASSIVE) valuesSUM = TOTAL_COMPARISON;
 
             activeDayValues[0].append(TOTALvaluesSUM_RAD);
-            passiveDayValues[0].append(COMPARISON);
+            passiveDayValues[0].append(TOTAL_COMPARISON);
 
             vertexXYZ_list.add(new float[] {
               subFace[s][0], subFace[s][1], subFace[s][2],
