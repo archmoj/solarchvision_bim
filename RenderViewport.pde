@@ -94,7 +94,7 @@ void SOLARCHVISION_RenderViewport () {
 
     float[] RxP = new float [8];
 
-    RxP = allFaces.intersect(ray_start, ray_direction);
+    RxP = intersectAll(ray_start, ray_direction);
 
     if (RxP[0] >= 0) {
 
