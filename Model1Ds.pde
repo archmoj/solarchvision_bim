@@ -680,6 +680,27 @@ class solarchvision_Model1Ds {
 
 
 
+    if (target_window == TypeWindow.RENDER) {
+      int len = this.local_vertices.length;
+      int[] newFace = new int[len];
+      for (int j = 0; j < len; j++) {
+        newFace[j] = entirePointsX.size();
+
+        float x = this.local_vertices[j][0];
+        float y = this.local_vertices[j][1];
+        float z = this.local_vertices[j][2];
+
+        entirePointsX.add(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale));
+        entirePointsY.add(-WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale));
+        entirePointsZ.add(WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale));
+
+        if(j == len - 1) {
+          entireFaces.add(newFace);
+        }
+      }
+    }
+
+
 
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.endShape(CLOSE);
