@@ -452,58 +452,6 @@ class solarchvision_Functions {
     return polygonNormal;
   }
 
-
-  // This version projects onto the 2D plane that best preserves the
-  // polygon's area (dropping whichever axis the normal is most aligned
-  // with) and runs a standard O(n) crossing-number test: no trig, no sqrt
-  // in the hot loop, just comparisons and one division per edge crossing.
-  //
-  // If you call this many times for the same polygon (e.g. per-pixel /
-  // per-sample tests), prefer the overload below and pass in a
-  // precomputed normal instead of recomputing it on every call.
-  boolean isPointInPolygon(float[] point, float[][] polygon_vertices) {
-    return this.isPointInPolygon(point, polygon_vertices, this.calculatePolygonNormal(polygon_vertices));
-  }
-
-  boolean isPointInPolygon(float[] point, float[][] polygon_vertices, float[] polygon_normal) {
-    int n = polygon_vertices.length;
-    if (n < 3) return false;
-
-    // Drop the axis the normal is most aligned with, keep the other two
-    // as the 2D projection axes (u, v).
-    float nx = abs(polygon_normal[0]);
-    float ny = abs(polygon_normal[1]);
-    float nz = abs(polygon_normal[2]);
-    int u = 0, v = 1;                          // default: drop z (nz dominant)
-    if (nx >= ny && nx >= nz) { u = 1; v = 2; }      // drop x
-    else if (ny >= nx && ny >= nz) { u = 0; v = 2; } // drop y
-
-    float px = point[u];
-    float py = point[v];
-    float tol = this.EPSILON_POSITION;
-    float epsSq = tol * tol;
-
-    boolean inside = false;
-    for (int i = 0, j = n - 1; i < n; j = i++) {
-      float[] Pi = polygon_vertices[i];
-
-      // sqrt-free exact-vertex check (preserves the original's guarantee
-      // that a point coincident with a vertex is always "inside").
-      float dx = point[0] - Pi[0], dy = point[1] - Pi[1], dz = point[2] - Pi[2];
-      if ((dx * dx + dy * dy + dz * dz) < epsSq) return true;
-
-      float[] Pj = polygon_vertices[j];
-      float xi = Pi[u], yi = Pi[v];
-      float xj = Pj[u], yj = Pj[v];
-
-      if (((yi > py) != (yj > py)) &&
-        (px < (xj - xi) * (py - yi) / (yj - yi) + xi)) {
-        inside = !inside;
-      }
-    }
-    return inside;
-  }
-
   float[][] cleanShape_removeDuplicateVertices (float[][] vertices_IN) {
     float[][] vertices_OUT = new float[0][3];
     int n = vertices_IN.length;
