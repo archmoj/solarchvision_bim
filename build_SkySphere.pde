@@ -8,15 +8,18 @@ void SOLARCHVISION_build_SkySphere (int tessellation) {
   for (int i = 0; i < skyFaces.length; i++) {
     int[] face = skyFaces[i];
     int n = face.length;
-    float invN = 1.0f / n;
+    float invN = 1.0 / n;
 
     float x = 0, y = 0, z = 0;
     for (int j = 0; j < n; j++) {
       float[] v = skyVertices[face[j]];
-      x += v[0] * invN;
-      y += v[1] * invN;
-      z += v[2] * invN;
+      x += v[0];
+      y += v[1];
+      z += v[2];
     }
+    x *= invN;
+    y *= invN;
+    z *= invN;
 
     if (z > 0) {
       diffuseList.add(new float[]{x, y, z});
