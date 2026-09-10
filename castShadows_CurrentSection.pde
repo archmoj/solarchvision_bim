@@ -27,6 +27,16 @@ void SOLARCHVISION_castShadows_CurrentSection () {
     allSolarImpacts.R = 90 - allSolarImpacts.R;
   }
 
+  // allSolarImpacts.sectionType / .R don't change again until the very end
+  // of this function, so the rotation trig only needs to be computed once
+  // instead of on every one of the hundreds of inner-loop iterations below.
+  boolean rotate = (allSolarImpacts.sectionType == 2);
+  float cosR = 0, sinR = 0;
+  if (rotate) {
+    cosR = funcs.cos_ang(-allSolarImpacts.R);
+    sinR = funcs.sin_ang(-allSolarImpacts.R);
+  }
+
   {
     int RAD_TYPE = 0;
 
@@ -40,17 +50,16 @@ void SOLARCHVISION_castShadows_CurrentSection () {
         SunR_Rotated = SunR;
         int SunR_Rotated_check = 3;
 
-        if (allSolarImpacts.sectionType == 2) {
+        if (rotate) {
           float a = SunR_Rotated[1];
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
 
-          SunR_Rotated[1] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
+          SunR_Rotated[1] = a * cosR - b * sinR;
           SunR_Rotated[2] = c;
-          SunR_Rotated[3] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+          SunR_Rotated[3] = a * sinR + b * cosR;
 
           SunR_Rotated_check = 2;
-        } else if (allSolarImpacts.sectionType == 3) {
         }
 
         for (int SHD = 0; SHD <= 1; SHD++) {
@@ -168,17 +177,16 @@ void SOLARCHVISION_castShadows_CurrentSection () {
         SunR_Rotated = SunR;
         int SunR_Rotated_check = 3;
 
-        if (allSolarImpacts.sectionType == 2) {
+        if (rotate) {
           float a = SunR_Rotated[1];
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
 
-          SunR_Rotated[1] = a * funcs.cos_ang(-allSolarImpacts.R) - b * funcs.sin_ang(-allSolarImpacts.R);
+          SunR_Rotated[1] = a * cosR - b * sinR;
           SunR_Rotated[2] = c;
-          SunR_Rotated[3] = a * funcs.sin_ang(-allSolarImpacts.R) + b * funcs.cos_ang(-allSolarImpacts.R);
+          SunR_Rotated[3] = a * sinR + b * cosR;
 
           SunR_Rotated_check = 2;
-        } else if (allSolarImpacts.sectionType == 3) {
         }
 
 
