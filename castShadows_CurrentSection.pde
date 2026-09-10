@@ -70,95 +70,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
           File_Name += "_Camera00";
 
-          TREES_graphics.beginDraw();
-
-          TREES_graphics.blendMode(REPLACE);
-
-          TREES_graphics.fill(255);
-          TREES_graphics.stroke(255);
-          TREES_graphics.strokeWeight(0);
-          TREES_graphics.rectMode(CORNER);
-          TREES_graphics.rect(0, 0, RES1, RES2);
-
-          if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
-
-            TREES_graphics.pushMatrix();
-            TREES_graphics.translate(RES1 / 2, RES2 / 2);
-
-            TREES_graphics.stroke(0);
-            TREES_graphics.fill(0);
-
-            TREES_graphics.blendMode(BLEND);
-
-            allModel2Ds.castShadows(SunR);
-
-            TREES_graphics.popMatrix();
-          }
-
-
-          TREES_graphics.endDraw();
-
-          TREES_graphics.save(File_Name + "_2D.jpg");
-
-
-
-          SHADOW_graphics.beginDraw();
-
-          SHADOW_graphics.blendMode(REPLACE);
-
-          float _val = 0;
-          if (SunR_Rotated[3] > 0) _val = SunR_Rotated[3];
-          SHADOW_graphics.fill(255 * _val);
-          SHADOW_graphics.stroke(255 * _val);
-          SHADOW_graphics.strokeWeight(0);
-          SHADOW_graphics.rectMode(CORNER);
-          SHADOW_graphics.rect(0, 0, RES1, RES2);
-
-          if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
-
-            SHADOW_graphics.pushMatrix();
-            SHADOW_graphics.translate(RES1 / 2, RES2 / 2);
-
-            SHADOW_graphics.stroke(0);
-            SHADOW_graphics.fill(0);
-
-            allFaces.castShadows();
-
-            Land3D.castShadows();
-
-            allModel1Ds.draw(TypeWindow.SHADOW);
-
-            SHADOW_graphics.popMatrix();
-          }
-
-
-          SHADOW_graphics.save(File_Name + "3D_.jpg"); //just to test
-
-          if (allModel2Ds.displayAll) {
-
-            // Use the pixels already sitting in TREES_graphics instead of
-            // reloading the JPEG we just wrote to disk one line above -
-            // avoids a full JPEG encode+decode round trip per frame.
-            // NOTE: this reads the uncompressed render rather than the
-            // JPEG-compressed copy, so the threshold mask may differ very
-            // slightly (fewer compression artifacts) from the original.
-            PImage img = TREES_graphics.get();
-
-            img.filter(THRESHOLD, 0.75); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter.
-
-            SHADOW_graphics.blendMode(DARKEST);
-
-            SHADOW_graphics.tint(255, 255);
-
-            SHADOW_graphics.image(img, 0, 0, RES1, RES2);
-
-            SHADOW_graphics.noTint();
-          }
-
-          SHADOW_graphics.endDraw();
-
-
-          SHADOW_graphics.save(File_Name + ".png");
+          renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name, ".png");
         }
       }
     }
@@ -197,93 +109,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
 
 
-        TREES_graphics.beginDraw();
-
-        TREES_graphics.blendMode(REPLACE);
-
-        TREES_graphics.fill(255);
-        TREES_graphics.stroke(255);
-        TREES_graphics.strokeWeight(0);
-        TREES_graphics.rectMode(CORNER);
-        TREES_graphics.rect(0, 0, RES1, RES2);
-
-        if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
-
-          TREES_graphics.pushMatrix();
-          TREES_graphics.translate(RES1 / 2, RES2 / 2);
-
-          TREES_graphics.stroke(0);
-          TREES_graphics.fill(0);
-
-          TREES_graphics.blendMode(BLEND);
-
-          allModel2Ds.castShadows(SunR);
-
-          TREES_graphics.popMatrix();
-        }
-
-
-        TREES_graphics.endDraw();
-
-        TREES_graphics.save(File_Name + nf(i, 3) + "_2D.jpg");
-
-
-
-        SHADOW_graphics.beginDraw();
-
-        SHADOW_graphics.blendMode(REPLACE);
-
-        float _val = 0;
-        if (SunR_Rotated[3] > 0) _val = SunR_Rotated[3];
-        SHADOW_graphics.fill(255 * _val);
-        SHADOW_graphics.stroke(255 * _val);
-        SHADOW_graphics.strokeWeight(0);
-        SHADOW_graphics.rectMode(CORNER);
-        SHADOW_graphics.rect(0, 0, RES1, RES2);
-
-        if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
-
-          SHADOW_graphics.pushMatrix();
-          SHADOW_graphics.translate(RES1 / 2, RES2 / 2);
-
-          SHADOW_graphics.stroke(0);
-          SHADOW_graphics.fill(0);
-
-          allFaces.castShadows();
-
-          Land3D.castShadows();
-
-          allModel1Ds.draw(TypeWindow.SHADOW);
-
-          SHADOW_graphics.popMatrix();
-        }
-
-        SHADOW_graphics.save(File_Name + "3D_.jpg"); //just to test
-
-        if (allModel2Ds.displayAll) {
-
-          // Use the pixels already sitting in TREES_graphics instead of
-          // reloading the JPEG we just wrote to disk one line above -
-          // avoids a full JPEG encode+decode round trip per frame.
-          // NOTE: this reads the uncompressed render rather than the
-          // JPEG-compressed copy, so the threshold mask may differ very
-          // slightly (fewer compression artifacts) from the original.
-          PImage img = TREES_graphics.get();
-
-          img.filter(THRESHOLD, 0.75); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter.
-
-          SHADOW_graphics.blendMode(DARKEST);
-
-          SHADOW_graphics.tint(255, 255);
-
-          SHADOW_graphics.image(img, 0, 0, RES1, RES2);
-
-          SHADOW_graphics.noTint();
-        }
-
-        SHADOW_graphics.endDraw();
-
-        SHADOW_graphics.save(File_Name + nf(i, 3) + ".jpg");
+        renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name + nf(i, 3), ".jpg");
       }
 
 
@@ -326,4 +152,103 @@ void SOLARCHVISION_castShadows_CurrentSection () {
   allSolarImpacts.R = keep_allSolarImpacts_rotation;
 
   cursor(ARROW);
+}
+
+// Renders one shadow frame (TREES_graphics mask pass + SHADOW_graphics pass)
+// and saves both. This is the logic that used to be duplicated identically
+// in the direct-sun block and the diffuse-sky block; extracted here
+// unchanged, just parameterized on the values that differed between the
+// two call sites (File_Name, and the SHADOW output's extension).
+void renderShadowFrame(float[] SunR, int SunR_Rotated_check, int SHD,
+                        int RES1, int RES2, String File_Name, String finalExt) {
+
+  TREES_graphics.beginDraw();
+
+  TREES_graphics.blendMode(REPLACE);
+
+  TREES_graphics.fill(255);
+  TREES_graphics.stroke(255);
+  TREES_graphics.strokeWeight(0);
+  TREES_graphics.rectMode(CORNER);
+  TREES_graphics.rect(0, 0, RES1, RES2);
+
+  if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
+
+    TREES_graphics.pushMatrix();
+    TREES_graphics.translate(RES1 / 2, RES2 / 2);
+
+    TREES_graphics.stroke(0);
+    TREES_graphics.fill(0);
+
+    TREES_graphics.blendMode(BLEND);
+
+    allModel2Ds.castShadows(SunR);
+
+    TREES_graphics.popMatrix();
+  }
+
+
+  TREES_graphics.endDraw();
+
+  TREES_graphics.save(File_Name + "_2D.jpg");
+
+
+
+  SHADOW_graphics.beginDraw();
+
+  SHADOW_graphics.blendMode(REPLACE);
+
+  float _val = 0;
+  if (SunR_Rotated[3] > 0) _val = SunR_Rotated[3];
+  SHADOW_graphics.fill(255 * _val);
+  SHADOW_graphics.stroke(255 * _val);
+  SHADOW_graphics.strokeWeight(0);
+  SHADOW_graphics.rectMode(CORNER);
+  SHADOW_graphics.rect(0, 0, RES1, RES2);
+
+  if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
+
+    SHADOW_graphics.pushMatrix();
+    SHADOW_graphics.translate(RES1 / 2, RES2 / 2);
+
+    SHADOW_graphics.stroke(0);
+    SHADOW_graphics.fill(0);
+
+    allFaces.castShadows();
+
+    Land3D.castShadows();
+
+    allModel1Ds.draw(TypeWindow.SHADOW);
+
+    SHADOW_graphics.popMatrix();
+  }
+
+
+  SHADOW_graphics.save(File_Name + "3D_.jpg"); //just to test
+
+  if (allModel2Ds.displayAll) {
+
+    // Use the pixels already sitting in TREES_graphics instead of
+    // reloading the JPEG we just wrote to disk one line above -
+    // avoids a full JPEG encode+decode round trip per frame.
+    // NOTE: this reads the uncompressed render rather than the
+    // JPEG-compressed copy, so the threshold mask may differ very
+    // slightly (fewer compression artifacts) from the original.
+    PImage img = TREES_graphics.get();
+
+    img.filter(THRESHOLD, 0.75); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter.
+
+    SHADOW_graphics.blendMode(DARKEST);
+
+    SHADOW_graphics.tint(255, 255);
+
+    SHADOW_graphics.image(img, 0, 0, RES1, RES2);
+
+    SHADOW_graphics.noTint();
+  }
+
+  SHADOW_graphics.endDraw();
+
+
+  SHADOW_graphics.save(File_Name + finalExt);
 }
