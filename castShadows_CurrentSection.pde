@@ -83,7 +83,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
           if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
 
             TREES_graphics.pushMatrix();
-            TREES_graphics.translate(allSolarImpacts.RES1 / 2, allSolarImpacts.RES2 / 2);
+            TREES_graphics.translate(RES1 / 2, RES2 / 2);
 
             TREES_graphics.stroke(0);
             TREES_graphics.fill(0);
@@ -117,7 +117,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
           if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
 
             SHADOW_graphics.pushMatrix();
-            SHADOW_graphics.translate(allSolarImpacts.RES1 / 2, allSolarImpacts.RES2 / 2);
+            SHADOW_graphics.translate(RES1 / 2, RES2 / 2);
 
             SHADOW_graphics.stroke(0);
             SHADOW_graphics.fill(0);
@@ -210,7 +210,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
         if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
 
           TREES_graphics.pushMatrix();
-          TREES_graphics.translate(allSolarImpacts.RES1 / 2, allSolarImpacts.RES2 / 2);
+          TREES_graphics.translate(RES1 / 2, RES2 / 2);
 
           TREES_graphics.stroke(0);
           TREES_graphics.fill(0);
@@ -244,7 +244,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
         if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
 
           SHADOW_graphics.pushMatrix();
-          SHADOW_graphics.translate(allSolarImpacts.RES1 / 2, allSolarImpacts.RES2 / 2);
+          SHADOW_graphics.translate(RES1 / 2, RES2 / 2);
 
           SHADOW_graphics.stroke(0);
           SHADOW_graphics.fill(0);
