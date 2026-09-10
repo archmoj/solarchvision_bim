@@ -55,9 +55,6 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
         for (int SHD = 0; SHD <= 1; SHD++) {
 
-          String[] STR_SHD = {
-            "F", "T"
-          };
           String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
@@ -158,9 +155,6 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
     for (int SHD = 0; SHD <= 1; SHD++) {
 
-      String[] STR_SHD = {
-        "F", "T"
-      };
       String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
       File_Name += "DIF_" + STR_SHD[SHD];

@@ -964,6 +964,8 @@ int current_Visibility = 1;
 int current_Weight = 0;
 int current_Closed = 0;
 
+final String[] STR_SHD = {"F", "T"};
+
 class solarchvision_DATATYPE {
 
   private final static String CLASS_STAMP = "DATATYPE";

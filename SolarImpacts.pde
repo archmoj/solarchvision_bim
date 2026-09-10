@@ -195,9 +195,7 @@ class solarchvision_SolarImpacts {
 
                           PImage[] Shadings = new PImage [2];
                           for (int SHD = 0; SHD <= 1; SHD++) {
-                            String[] STR_SHD = {
-                              "F", "T"
-                            };
+
                             String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
                             if (RAD_TYPE == 0) {
