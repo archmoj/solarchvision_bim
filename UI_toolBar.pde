@@ -198,410 +198,368 @@ class solarchvision_UI_toolBar {
 
   boolean HelperState = false;
 
+  // ---------------------------------------------------------------------
+  // Data layout of a row in `Items`:
+  //   Items[row][0]              -> index of the currently selected option (stored as a String)
+  //   Items[row][1 .. n-3]       -> the selectable option labels for this toolbar item
+  //   Items[row][length - 2]     -> "Bar_Switch": the identifier for which action/icon this item drives
+  //   Items[row][length - 1]     -> width multiplier, relative to `tab`
+  // ---------------------------------------------------------------------
+
   void draw () {
 
-    if (this.update) {
+    if (!this.update) return;
 
-      this.updated();
+    this.updated();
 
-      fill(0);
-      noStroke();
-      rect(0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_B);
+    fill(0);
+    noStroke();
+    rect(0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_B);
 
-      X_control = 0; //0.25 * MessageSize;
-      Y_control = SOLARCHVISION_pixel_A + 0.5 * SOLARCHVISION_pixel_B;
+    X_control = 0; //0.25 * MessageSize;
+    Y_control = SOLARCHVISION_pixel_A + 0.5 * SOLARCHVISION_pixel_B;
 
-      float cx = X_control;
-      float cy = Y_control;
-      float cr = 0.5 * SOLARCHVISION_pixel_B;
+    float cx = X_control;
+    float cy = Y_control;
+    float cr = 0.5 * SOLARCHVISION_pixel_B;
 
-      for (int i = 0; i < this.Items.length; i++) {
+    for (int i = 0; i < this.Items.length; i++) {
+      cx += this.drawItem(i, cx, cy, cr);
+    }
 
-        {
-          String Bar_Switch = this.Items[i][this.Items[i].length - 2];
+    SOLARCHVISION_X_clicked = -1;
+    SOLARCHVISION_Y_clicked = -1;
+  }
 
-          if (Bar_Switch.equals("Layer Type")) {
-            this.Items[i][0] = nf(current_ObjectCategory + 1, 0);
-          }
+  // Draws a single toolbar item (its box, optional click handling, icon/label),
+  // and returns the item's on-screen width so the caller can advance cx.
+  float drawItem (int i, float cx, float cy, float cr) {
+
+    String Bar_Switch = this.Items[i][this.Items[i].length - 2];
+
+    if (Bar_Switch.equals("Layer Type")) {
+      this.Items[i][0] = nf(current_ObjectCategory + 1, 0);
+    }
+
+    int j = int(this.Items[i][0]);
+    float Item_width = this.tab * float(this.Items[i][this.Items[i].length - 1]);
+
+    noFill();
+    stroke(255);
+    strokeWeight(1);
+    rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
+    strokeWeight(0);
+
+    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr)) {
+      j = this.handleClick(i, j, Bar_Switch, cx, cy, cr, Item_width);
+    }
+
+    this.displayText = true;
+
+    this.drawIcon(Bar_Switch, j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
+
+    if (this.displayText) { // writing titles where the icon is not available
+      textAlign(CENTER, CENTER);
+      stroke(255);
+      fill(255);
+      textSize(MessageSize);
+      text(this.Items[i][j], cx + 0.5 * Item_width, cy);
+    }
+
+    return Item_width;
+  }
+
+  // Handles a click/hover on toolbar item i. Returns the (possibly updated) selected index j.
+  int handleClick (int i, int j, String Bar_Switch, float cx, float cy, float cr, float Item_width) {
+
+    if (mouseButton == CENTER) {
+      this.toggleHelper(i, j, Bar_Switch, cx, cy, cr, Item_width);
+      return j;
+    }
+
+    if (mouseButton == RIGHT) {
+      j = this.advanceSelection(i, j, -1);
+      this.dismissHelper();
+    }
+
+    if (mouseButton == LEFT) {
+      j = this.advanceSelection(i, j, 1);
+      this.dismissHelper();
+    }
+
+    fill(255, 127, 0);
+    noStroke();
+    rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
+
+    this.performAction(Bar_Switch, i, j);
+
+    return j;
+  }
+
+  // Shows/hides the tooltip helper for the currently hovered item.
+  void toggleHelper (int i, int j, String Bar_Switch, float cx, float cy, float cr, float Item_width) {
+
+    HelperState = !HelperState;
+
+    if (!HelperState) {
+      UI_menuBar.revise();
+      return;
+    }
+
+    String HelperText = Bar_Switch;
+    if (
+      this.Items[i].length > 4 &&
+      this.Items[i][j] != "" &&
+      Bar_Switch != "View Point"
+    ) {
+      HelperText += ": " + this.Items[i][j];
+    }
+
+    float estimatedWidth = HelperText.length() * MessageSize * 0.55;
+
+    // draw over menu bar
+    float HelperY = cy - cr - SOLARCHVISION_pixel_A;
+    float HelperH = SOLARCHVISION_pixel_A;
+    float HelperX = cx;
+    float HelperW = max(SOLARCHVISION_pixel_B * 2, estimatedWidth);
+    if (HelperX + HelperW > width) HelperX -= HelperW - SOLARCHVISION_pixel_B;
+
+    fill(127, 255, 0);
+    noStroke();
+    rect(HelperX, HelperY, HelperW, HelperH);
+
+    fill(0);
+    text(HelperText, HelperX, HelperY, HelperW, HelperH);
+
+    noFill();
+    stroke(127, 255, 0);
+    strokeWeight(4);
+    rect(cx + 4, cy - cr + 4, Item_width - 8, SOLARCHVISION_pixel_B - 8);
+    strokeWeight(0);
+  }
+
+  // Closes the tooltip helper (if open) and asks the menu bar to redraw.
+  void dismissHelper () {
+    if (HelperState) {
+      HelperState = false;
+      UI_menuBar.revise();
+    }
+  }
+
+  // Cycles the selected option of item i by `direction` (+1 or -1), wrapping around.
+  // On the first click after selecting a different item, it only focuses the item
+  // (matching the original behavior) rather than advancing the selection.
+  int advanceSelection (int i, int j, int direction) {
+
+    if (this.Selection != i) {
+      this.Selection = i;
+      return j;
+    }
+
+    int lastOptionIndex = this.Items[i].length - 3;
+    int n = j + direction;
+
+    if (direction > 0 && n >= this.Items[i].length - 2) n = 1;
+    if (direction < 0 && n <= 0) n = lastOptionIndex;
+
+    this.Items[i][0] = nf(n, 0);
+    return n;
+  }
+
+  // Performs the action associated with a toolbar item once it has been clicked.
+  void performAction (String Bar_Switch, int i, int j) {
+
+    switch (Bar_Switch) {
+
+      case "Layer Type":
+        current_ObjectCategory = j - 1;
+        if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+          Select3D.convert_Vertex_to_softSelection();
         }
-
-
-
-        int j = int(this.Items[i][0]);
-
-        float Item_width = this.tab * float(this.Items[i][this.Items[i].length - 1]);
-
-        noFill();
-        stroke(255);
-        strokeWeight(1);
-        rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
-        strokeWeight(0);
-
-
-
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr)) {
-          String Bar_Switch = this.Items[i][this.Items[i].length - 2];
-
-          if (mouseButton == CENTER) {
-            HelperState = !HelperState;
-            if(HelperState) {
-              String HelperText = Bar_Switch;
-              if(
-                this.Items[i].length > 4 &&
-                this.Items[i][j] != "" &&
-                Bar_Switch != "View Point"
-              ) {
-                HelperText += ": " + this.Items[i][j];
-              }
-
-              float estimatedWidth = HelperText.length() * MessageSize * 0.55;
-
-              // draw over menu bar
-              float HelperY = cy - cr - SOLARCHVISION_pixel_A;
-              float HelperH = SOLARCHVISION_pixel_A;
-              float HelperX = cx;
-              float HelperW = max(SOLARCHVISION_pixel_B * 2, estimatedWidth);
-              if(HelperX + HelperW > width) HelperX -= HelperW - SOLARCHVISION_pixel_B;
-
-              fill(127, 255, 0);
-              noStroke();
-              rect(HelperX, HelperY, HelperW, HelperH);
-
-              fill(0);
-              text(HelperText, HelperX, HelperY, HelperW, HelperH);
-
-              noFill();
-              stroke(127, 255, 0);
-              strokeWeight(4);
-              rect(cx + 4, cy - cr + 4, Item_width - 8, SOLARCHVISION_pixel_B - 8);
-              strokeWeight(0);
-
-            } else {
-              UI_menuBar.revise();
-            }
-          } else {
-
-            if (mouseButton == RIGHT) {
-
-              if (this.Selection != i) {
-                this.Selection = i;
-              } else {
-
-                int n = int(this.Items[i][0]);
-
-                n -= 1;
-
-                if (n <= 0) n = this.Items[i].length - 3;
-
-                this.Items[i][0] = nf(n, 0);
-
-                j = n;
-              }
-
-              if(HelperState) {
-                HelperState = false;
-                UI_menuBar.revise();
-              }
-            }
-
-            if (mouseButton == LEFT) {
-
-              if (this.Selection != i) {
-                this.Selection = i;
-              } else {
-
-                int n = int(this.Items[i][0]);
-
-                n += 1;
-
-                if (n >= this.Items[i].length - 2) n = 1;
-
-                this.Items[i][0] = nf(n, 0);
-
-                j = n;
-              }
-
-              if(HelperState) {
-                HelperState = false;
-                UI_menuBar.revise();
-              }
-            }
-
-            fill(255, 127, 0);
-            noStroke();
-            rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
-
-            if (Bar_Switch.equals("Layer Type")) {
-              current_ObjectCategory = j - 1;
-
-              if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
-                Select3D.convert_Vertex_to_softSelection();
-              }
-
-              ROLLOUT.revise();
-              SOLARCHVISION_view_changed();
-            }
-
-            if (Bar_Switch.equals("Model Type")) {
-              User3D.create_MeshOrSolid = j - 1;
-
-              ROLLOUT.revise();
-            }
-
-            if ((Bar_Switch.equals("Living Type")) || (Bar_Switch.equals("Building Type"))) {
-              if ((this.Items[i][j]).equals("1D-Tree")) UI_set_to_Create_allModel1Ds();
-              else if ((this.Items[i][j]).equals("2D-Tree")) UI_set_to_Create_Tree();
-              else if ((this.Items[i][j]).equals("Person")) UI_set_to_Create_Person();
-              else if ((this.Items[i][j]).equals("Point")) UI_set_to_Create_Vertex();
-              else if ((this.Items[i][j]).equals("Polyline")) UI_set_to_Create_Polyline();
-              else if ((this.Items[i][j]).equals("Surface")) UI_set_to_Create_Face();
-              else if ((this.Items[i][j]).equals("Pyramid")) UI_set_to_Create_Pyramid();
-              else if ((this.Items[i][j]).equals("Plane")) UI_set_to_Create_Plane();
-              else if ((this.Items[i][j]).equals("Polygon")) UI_set_to_Create_Polygon();
-              else if ((this.Items[i][j]).equals("Extrude")) UI_set_to_Create_Extrude();
-              else if ((this.Items[i][j]).equals("Hyper")) UI_set_to_Create_Hyper();
-              else if ((this.Items[i][j]).equals("House3")) UI_set_to_Create_House3();
-              else if ((this.Items[i][j]).equals("House2")) UI_set_to_Create_House2();
-              else if ((this.Items[i][j]).equals("House1")) UI_set_to_Create_House1();
-              else if ((this.Items[i][j]).equals("Box")) UI_set_to_Create_Box();
-              else if ((this.Items[i][j]).equals("Icosahedron")) UI_set_to_Create_Octahedron();
-              else if ((this.Items[i][j]).equals("Octahedron")) UI_set_to_Create_Octahedron();
-              else if ((this.Items[i][j]).equals("Sphere")) UI_set_to_Create_Sphere();
-              else if ((this.Items[i][j]).equals("Cylinder")) UI_set_to_Create_Cylinder();
-              else if ((this.Items[i][j]).equals("Cushion")) UI_set_to_Create_Cushion();
-              else if ((this.Items[i][j]).equals("Parametric")) UI_set_to_Create_Parametric(User3D.create_Parametric_Type);
-            }
-
-            if (Bar_Switch.equals("Change Seed/Material")) {
-              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Seed(0);
-              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Seed(1);
-              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Seed(2);
-              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Seed(3);
-            }
-
-            if (Bar_Switch.equals("Change Tessellation")) {
-              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Tessellation(0);
-              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Tessellation(1);
-              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Tessellation(2);
-              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Tessellation(3);
-            }
-
-            if (Bar_Switch.equals("Change Layer")) {
-              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Layer(0);
-              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Layer(1);
-              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Layer(2);
-              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Layer(3);
-            }
-
-            if (Bar_Switch.equals("Change Visibility")) {
-              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Visibility(0);
-              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Visibility(1);
-              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Visibility(2);
-              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Visibility(3);
-            }
-
-            if (Bar_Switch.equals("Change Weight")) {
-              if ((this.Items[i][j]).equals("0")) UI_set_to_Modify_Weight(0);
-              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Weight(1);
-              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Weight(2);
-              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Weight(3);
-            }
-
-            if (Bar_Switch.equals("Normal")) {
-              if ((this.Items[i][j]).equals("1")) UI_set_to_Modify_Normal(1);
-              if ((this.Items[i][j]).equals("2")) UI_set_to_Modify_Normal(2);
-              if ((this.Items[i][j]).equals("3")) UI_set_to_Modify_Normal(3);
-            }
-
-            if (Bar_Switch.equals("First Vertex")) {
-              if ((this.Items[i][j]).equals("")) UI_set_to_Modify_FirstVertex(1);
-            }
-
-
-
-            if (Bar_Switch.equals("Rotate")) UI_set_to_Modify_Rotate(j - 1);
-            if (Bar_Switch.equals("Power")) UI_set_to_Modify_Power(j - 1);
-            if (Bar_Switch.equals("Scale")) UI_set_to_Modify_Scale(j - 1);
-            if (Bar_Switch.equals("Move")) UI_set_to_Modify_Move(j - 1);
-            if (Bar_Switch.equals("Get Length")) UI_set_to_Modify_GetLength(j - 1);
-            if (Bar_Switch.equals("Drop")) UI_set_to_Modify_Drop(j - 1);
-
-            if (Bar_Switch.equals("Projection Type")) UI_set_to_View_ProjectionType(j - 1);
-
-            if (Bar_Switch.equals("Pick Select")) UI_set_to_View_PickSelect(j - 1);
-            if (Bar_Switch.equals("Window Select")) UI_set_to_View_WindowSelect(j - 1);
-
-            if (Bar_Switch.equals("PivotX")) UI_set_to_View_PivotX(j - 2);
-            if (Bar_Switch.equals("PivotY")) UI_set_to_View_PivotY(j - 2);
-            if (Bar_Switch.equals("PivotZ")) UI_set_to_View_PivotZ(j - 2);
-
-            if (Bar_Switch.equals("Land Orbit")) UI_set_to_View_LandOrbit(0);
-
-            if (Bar_Switch.equals("Orbit")) UI_set_to_View_Orbit(j - 1);
-            if (Bar_Switch.equals("Camera Roll")) UI_set_to_View_CameraRoll(j - 1);
-            if (Bar_Switch.equals("Target Roll")) UI_set_to_View_TargetRoll(j - 1);
-
-            if (Bar_Switch.equals("Look At Origin")) UI_set_to_View_LookAtOrigin(j - 1);
-            if (Bar_Switch.equals("Look At Direction")) UI_set_to_View_LookAtDirection(j - 1);
-            if (Bar_Switch.equals("Look At Selection")) UI_set_to_View_LookAtSelection(j - 1);
-
-            if (Bar_Switch.equals("Pan")) {
-
-              UI_set_to_View_Pan(j - 1);
-            }
-
-            if (Bar_Switch.equals("Zoom")) {
-              UI_set_to_View_ZOOM(j - 1);
-
-              this.Items[i][0] = "1"; // << set it to default choice next time
-            }
-
-            if (Bar_Switch.equals("Camera Distance")) UI_set_to_View_CameraDistance(0);
-
-            if (Bar_Switch.equals("Dist XY")) UI_set_to_View_DistMouseXY(0);
-
-            if (Bar_Switch.equals("Dist Z")) UI_set_to_View_Truck(0);
-            if (Bar_Switch.equals("Truck")) UI_set_to_View_Truck(j - 1);
-
-            if (Bar_Switch.equals("3D Model Size")) UI_set_to_View_3DModelSize();
-
-            if (Bar_Switch.equals("Skydome Size")) UI_set_to_View_SkydomeSize();
-
-            if (Bar_Switch.equals("All Model Size")) UI_set_to_View_AllModelSize();
-
-            if (Bar_Switch.equals("View Layout")) UI_set_to_Viewport(j - 1);
-
-            if (Bar_Switch.equals("View Point")) UI_set_to_View_3DViewPoint(j - 1);
-          }
+        ROLLOUT.revise();
+        SOLARCHVISION_view_changed();
+        break;
+
+      case "Model Type":
+        User3D.create_MeshOrSolid = j - 1;
+        ROLLOUT.revise();
+        break;
+
+      case "Living Type":
+      case "Building Type":
+        switch (this.Items[i][j]) {
+          case "1D-Tree": UI_set_to_Create_allModel1Ds(); break;
+          case "2D-Tree": UI_set_to_Create_Tree(); break;
+          case "Person": UI_set_to_Create_Person(); break;
+          case "Point": UI_set_to_Create_Vertex(); break;
+          case "Polyline": UI_set_to_Create_Polyline(); break;
+          case "Surface": UI_set_to_Create_Face(); break;
+          case "Pyramid": UI_set_to_Create_Pyramid(); break;
+          case "Plane": UI_set_to_Create_Plane(); break;
+          case "Polygon": UI_set_to_Create_Polygon(); break;
+          case "Extrude": UI_set_to_Create_Extrude(); break;
+          case "Hyper": UI_set_to_Create_Hyper(); break;
+          case "House3": UI_set_to_Create_House3(); break;
+          case "House2": UI_set_to_Create_House2(); break;
+          case "House1": UI_set_to_Create_House1(); break;
+          case "Box": UI_set_to_Create_Box(); break;
+          case "Icosahedron": UI_set_to_Create_Icosahedron(); break;
+          case "Octahedron": UI_set_to_Create_Octahedron(); break;
+          case "Sphere": UI_set_to_Create_Sphere(); break;
+          case "Cylinder": UI_set_to_Create_Cylinder(); break;
+          case "Cushion": UI_set_to_Create_Cushion(); break;
+          case "Parametric": UI_set_to_Create_Parametric(User3D.create_Parametric_Type); break;
         }
+        break;
 
-
-        this.displayText = true;
-
-        { // drawing the icons where available
-
-          String Bar_Switch = this.Items[i][this.Items[i].length - 2];
-
-          if (Bar_Switch.equals("Drop")) {
-            UI_toolBar.drawDrop(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Get Length")) {
-            UI_toolBar.drawGetLength(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Move")) {
-            UI_toolBar.drawMove(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Scale")) {
-            UI_toolBar.drawScale(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Power")) {
-            UI_toolBar.drawPower(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Rotate")) {
-            UI_toolBar.drawRotate(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Change Seed/Material")) {
-            UI_toolBar.drawSeed(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Change Tessellation")) {
-            UI_toolBar.drawtessellation(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Change Layer")) {
-            UI_toolBar.drawLayer(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Change Visibility")) {
-            UI_toolBar.drawVisibility(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Change Weight")) {
-            UI_toolBar.drawWeight(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Normal")) {
-            UI_toolBar.drawNormal(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("First Vertex")) {
-            UI_toolBar.drawFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-
-          if (Bar_Switch.equals("Pick Select")) {
-            UI_toolBar.drawPickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Window Select")) {
-            UI_toolBar.drawWindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Projection Type")) {
-            UI_toolBar.drawProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Zoom")) {
-            UI_toolBar.drawZOOM(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Land Orbit")) {
-            UI_toolBar.drawLandOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Orbit")) {
-            UI_toolBar.drawOrbit(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Camera Roll")) {
-            UI_toolBar.drawCameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Target Roll")) {
-            UI_toolBar.drawTargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Camera Distance")) {
-            UI_toolBar.drawCameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Look At Origin")) {
-            UI_toolBar.drawLookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Look At Direction")) {
-            UI_toolBar.drawLookAtDirection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Look At Selection")) {
-            UI_toolBar.drawLookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Pan")) {
-            UI_toolBar.drawPan(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Dist XY")) {
-            UI_toolBar.drawDistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Dist Z")) {
-            UI_toolBar.drawDistZ(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Truck")) {
-            UI_toolBar.drawTruck(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("3D Model Size")) {
-            UI_toolBar.draw3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("Skydome Size")) {
-            UI_toolBar.drawSkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-          if (Bar_Switch.equals("All Model Size")) {
-            UI_toolBar.drawAllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
-
-          if (Bar_Switch.equals("View Layout")) {
-            UI_toolBar.draw3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
-          }
+      case "Change Seed/Material":
+        switch (this.Items[i][j]) {
+          case "0": UI_set_to_Modify_Seed(0); break;
+          case "1": UI_set_to_Modify_Seed(1); break;
+          case "2": UI_set_to_Modify_Seed(2); break;
+          case "3": UI_set_to_Modify_Seed(3); break;
         }
+        break;
 
-        if (this.displayText) { // writing titles where the icon is not available
-
-          textAlign(CENTER, CENTER);
-          stroke(255);
-          fill(255);
-          textSize(MessageSize);
-
-          text(this.Items[i][j], cx + 0.5 * Item_width, cy);
+      case "Change Tessellation":
+        switch (this.Items[i][j]) {
+          case "0": UI_set_to_Modify_Tessellation(0); break;
+          case "1": UI_set_to_Modify_Tessellation(1); break;
+          case "2": UI_set_to_Modify_Tessellation(2); break;
+          case "3": UI_set_to_Modify_Tessellation(3); break;
         }
+        break;
 
+      case "Change Layer":
+        switch (this.Items[i][j]) {
+          case "0": UI_set_to_Modify_Layer(0); break;
+          case "1": UI_set_to_Modify_Layer(1); break;
+          case "2": UI_set_to_Modify_Layer(2); break;
+          case "3": UI_set_to_Modify_Layer(3); break;
+        }
+        break;
 
-        cx += Item_width;
-      }
+      case "Change Visibility":
+        switch (this.Items[i][j]) {
+          case "0": UI_set_to_Modify_Visibility(0); break;
+          case "1": UI_set_to_Modify_Visibility(1); break;
+          case "2": UI_set_to_Modify_Visibility(2); break;
+          case "3": UI_set_to_Modify_Visibility(3); break;
+        }
+        break;
 
+      case "Change Weight":
+        switch (this.Items[i][j]) {
+          case "0": UI_set_to_Modify_Weight(0); break;
+          case "1": UI_set_to_Modify_Weight(1); break;
+          case "2": UI_set_to_Modify_Weight(2); break;
+          case "3": UI_set_to_Modify_Weight(3); break;
+        }
+        break;
 
-      SOLARCHVISION_X_clicked = -1;
-      SOLARCHVISION_Y_clicked = -1;
+      case "Normal":
+        switch (this.Items[i][j]) {
+          case "1": UI_set_to_Modify_Normal(1); break;
+          case "2": UI_set_to_Modify_Normal(2); break;
+          case "3": UI_set_to_Modify_Normal(3); break;
+        }
+        break;
+
+      case "First Vertex":
+        if ((this.Items[i][j]).equals("")) UI_set_to_Modify_FirstVertex(1);
+        break;
+
+      case "Rotate": UI_set_to_Modify_Rotate(j - 1); break;
+      case "Power": UI_set_to_Modify_Power(j - 1); break;
+      case "Scale": UI_set_to_Modify_Scale(j - 1); break;
+      case "Move": UI_set_to_Modify_Move(j - 1); break;
+      case "Get Length": UI_set_to_Modify_GetLength(j - 1); break;
+      case "Drop": UI_set_to_Modify_Drop(j - 1); break;
+
+      case "Projection Type": UI_set_to_View_ProjectionType(j - 1); break;
+
+      case "Pick Select": UI_set_to_View_PickSelect(j - 1); break;
+      case "Window Select": UI_set_to_View_WindowSelect(j - 1); break;
+
+      case "PivotX": UI_set_to_View_PivotX(j - 2); break;
+      case "PivotY": UI_set_to_View_PivotY(j - 2); break;
+      case "PivotZ": UI_set_to_View_PivotZ(j - 2); break;
+
+      case "Land Orbit": UI_set_to_View_LandOrbit(0); break;
+
+      case "Orbit": UI_set_to_View_Orbit(j - 1); break;
+      case "Camera Roll": UI_set_to_View_CameraRoll(j - 1); break;
+      case "Target Roll": UI_set_to_View_TargetRoll(j - 1); break;
+
+      case "Look At Origin": UI_set_to_View_LookAtOrigin(j - 1); break;
+      case "Look At Direction": UI_set_to_View_LookAtDirection(j - 1); break;
+      case "Look At Selection": UI_set_to_View_LookAtSelection(j - 1); break;
+
+      case "Pan": UI_set_to_View_Pan(j - 1); break;
+
+      case "Zoom":
+        UI_set_to_View_ZOOM(j - 1);
+        this.Items[i][0] = "1"; // << set it to default choice next time
+        break;
+
+      case "Camera Distance": UI_set_to_View_CameraDistance(0); break;
+
+      case "Dist XY": UI_set_to_View_DistMouseXY(0); break;
+
+      case "Dist Z": UI_set_to_View_Truck(0); break; // NOTE: intentionally forwards to Truck
+      case "Truck": UI_set_to_View_Truck(j - 1); break;
+
+      case "3D Model Size": UI_set_to_View_3DModelSize(); break;
+
+      case "Skydome Size": UI_set_to_View_SkydomeSize(); break;
+
+      case "All Model Size": UI_set_to_View_AllModelSize(); break;
+
+      case "View Layout": UI_set_to_Viewport(j - 1); break;
+
+      case "View Point": UI_set_to_View_3DViewPoint(j - 1); break;
+    }
+  }
+
+  // Draws the icon for a toolbar item, if one exists for its Bar_Switch.
+  // Each drawX method sets this.displayText = false as a side effect,
+  // so the label is only shown for items with no dedicated icon.
+  void drawIcon (String Bar_Switch, int j, float cx, float cy, float r) {
+
+    switch (Bar_Switch) {
+      case "Drop": this.drawDrop(j, cx, cy, r); break;
+      case "Get Length": this.drawGetLength(j, cx, cy, r); break;
+      case "Move": this.drawMove(j, cx, cy, r); break;
+      case "Scale": this.drawScale(j, cx, cy, r); break;
+      case "Power": this.drawPower(j, cx, cy, r); break;
+      case "Rotate": this.drawRotate(j, cx, cy, r); break;
+      case "Change Seed/Material": this.drawSeed(j, cx, cy, r); break;
+      case "Change Tessellation": this.drawtessellation(j, cx, cy, r); break;
+      case "Change Layer": this.drawLayer(j, cx, cy, r); break;
+      case "Change Visibility": this.drawVisibility(j, cx, cy, r); break;
+      case "Change Weight": this.drawWeight(j, cx, cy, r); break;
+      case "Normal": this.drawNormal(j, cx, cy, r); break;
+      case "First Vertex": this.drawFirstVertex(j, cx, cy, r); break;
+      case "Pick Select": this.drawPickSelect(j, cx, cy, r); break;
+      case "Window Select": this.drawWindowSelect(j, cx, cy, r); break;
+      case "Projection Type": this.drawProjectionType(j, cx, cy, r); break;
+      case "Zoom": this.drawZOOM(j, cx, cy, r); break;
+      case "Land Orbit": this.drawLandOrbit(j, cx, cy, r); break;
+      case "Orbit": this.drawOrbit(j, cx, cy, r); break;
+      case "Camera Roll": this.drawCameraRoll(j, cx, cy, r); break;
+      case "Target Roll": this.drawTargetRoll(j, cx, cy, r); break;
+      case "Camera Distance": this.drawCameraDistance(j, cx, cy, r); break;
+      case "Look At Origin": this.drawLookAtOrigin(j, cx, cy, r); break;
+      case "Look At Direction": this.drawLookAtDirection(j, cx, cy, r); break;
+      case "Look At Selection": this.drawLookAtSelection(j, cx, cy, r); break;
+      case "Pan": this.drawPan(j, cx, cy, r); break;
+      case "Dist XY": this.drawDistMouseXY(j, cx, cy, r); break;
+      case "Dist Z": this.drawDistZ(j, cx, cy, r); break;
+      case "Truck": this.drawTruck(j, cx, cy, r); break;
+      case "3D Model Size": this.draw3DModelSize(j, cx, cy, r); break;
+      case "Skydome Size": this.drawSkydomeSize(j, cx, cy, r); break;
+      case "All Model Size": this.drawAllModelSize(j, cx, cy, r); break;
+      case "View Layout": this.draw3DViewSpace(j, cx, cy, r); break;
     }
   }
 
