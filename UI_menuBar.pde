@@ -2,6 +2,10 @@ class solarchvision_UI_menuBar {
 
   private final static String CLASS_STAMP = "UI_menuBar";
 
+  // ---------------------------------------------------------------------
+  // Layout / interaction state
+  // ---------------------------------------------------------------------
+
   boolean update = true;
 
   float width_parent = 7 * MessageSize;
@@ -10,7 +14,48 @@ class solarchvision_UI_menuBar {
   int selected_parent = -1;
   int selected_child = 0;
 
-  String[][] Items = {
+  // ---------------------------------------------------------------------
+  // Layout constants
+  // ---------------------------------------------------------------------
+
+  private static final float PARENT_TEXT_SIZE_FACTOR = 1.25;
+  private static final float CHILD_ROW_HEIGHT_FACTOR = 0.85;
+  private static final float CHILD_WIDTH_PER_CHAR = 0.55;
+  private static final char DIVIDER_MARK = '—';
+
+  private static final int HOVER_COLOR_R = 255;
+  private static final int HOVER_COLOR_G = 127;
+  private static final int HOVER_COLOR_B = 0;
+
+  // ---------------------------------------------------------------------
+  // Menu data
+  // ---------------------------------------------------------------------
+
+  String[][] Items;
+
+  private int LayersID_in_Bar;
+
+  // Looks up whether a given menu item should be drawn "greyed out"
+  // (i.e. the feature it toggles is currently hidden/off). Uses the
+  // JDK's own java.util.function.BooleanSupplier (a top-level type)
+  // rather than a custom nested interface: Processing classes are
+  // non-static inner classes of the sketch, and older Java versions
+  // don't allow declaring a (implicitly static) member interface
+  // inside a non-static inner class.
+  private HashMap<String, java.util.function.BooleanSupplier> disabledStateByItem;
+
+  solarchvision_UI_menuBar () { // constructor
+    this.Items = buildMenuItems();
+    populateLayerMenu();
+    this.disabledStateByItem = buildDisabledStateLookup();
+  }
+
+  // ---------------------------------------------------------------------
+  // Data setup
+  // ---------------------------------------------------------------------
+
+  private String[][] buildMenuItems() {
+    return new String[][] {
     {
       "About",
       "SOLARCHVISION-BIM6D",
@@ -541,467 +586,237 @@ class solarchvision_UI_menuBar {
       "Change LeafSize"
     }
   };
+  }
 
-
-
-
-
-  private int LayersID_in_Bar;
-
-  solarchvision_UI_menuBar () { // constructor
-
-    // finding id of "Layer" in the list
-
+  // Finds the "Layer" tab and rebuilds its child items from the live
+  // layer list plus the fixed set of "developed" analysis layers.
+  private void populateLayerMenu() {
     LayersID_in_Bar = -1;
     for (int i = 0; i < this.Items.length; i++) {
-       if (this.Items[i][0].equals("Layer")) {
-         LayersID_in_Bar = i;
-         break;
-       }
+      if (this.Items[i][0].equals("Layer")) {
+        LayersID_in_Bar = i;
+        break;
+      }
     }
 
-    this.Items[LayersID_in_Bar] = new String [numberOfLayers + numberOfDevelopedLayers + 1]; // +1 for the divider
-
+    this.Items[LayersID_in_Bar] = new String[numberOfLayers + numberOfDevelopedLayers + 1]; // +1 for the divider
     this.Items[LayersID_in_Bar][0] = "Layer";
 
     for (int i = 0; i < numberOfLayers; i++) {
-
       this.Items[LayersID_in_Bar][i + 1] = allLayers[i].descriptions[Language_EN];
     }
 
-    this.Items[LayersID_in_Bar][numberOfLayers + 0] = "———————————————————";
-    this.Items[LayersID_in_Bar][numberOfLayers + 1] = "Wind power";
-    this.Items[LayersID_in_Bar][numberOfLayers + 2] = "Radiation on solar tracker";
-    this.Items[LayersID_in_Bar][numberOfLayers + 3] = "Radiation on surface with inclination";
-    this.Items[LayersID_in_Bar][numberOfLayers + 4] = "Radiation on South surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 5] = "Radiation on East surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 6] = "Radiation on North surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 7] = "Radiation on West surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 8] = "Radiation on S.E. surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 9] = "Radiation on N.E. surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 10] = "Radiation on N.W. surface";
-    this.Items[LayersID_in_Bar][numberOfLayers + 11] = "Radiation on S.W. surface";
-
+    int base = numberOfLayers;
+    this.Items[LayersID_in_Bar][base + 0] = "———————————————————";
+    this.Items[LayersID_in_Bar][base + 1] = "Wind power";
+    this.Items[LayersID_in_Bar][base + 2] = "Radiation on solar tracker";
+    this.Items[LayersID_in_Bar][base + 3] = "Radiation on surface with inclination";
+    this.Items[LayersID_in_Bar][base + 4] = "Radiation on South surface";
+    this.Items[LayersID_in_Bar][base + 5] = "Radiation on East surface";
+    this.Items[LayersID_in_Bar][base + 6] = "Radiation on North surface";
+    this.Items[LayersID_in_Bar][base + 7] = "Radiation on West surface";
+    this.Items[LayersID_in_Bar][base + 8] = "Radiation on S.E. surface";
+    this.Items[LayersID_in_Bar][base + 9] = "Radiation on N.E. surface";
+    this.Items[LayersID_in_Bar][base + 10] = "Radiation on N.W. surface";
+    this.Items[LayersID_in_Bar][base + 11] = "Radiation on S.W. surface";
   }
 
+  // Builds the lookup used to grey out toggle-style menu items whose
+  // underlying feature is currently switched off.
+  private HashMap<String, java.util.function.BooleanSupplier> buildDisabledStateLookup() {
+    HashMap<String, java.util.function.BooleanSupplier> map = new HashMap<String, java.util.function.BooleanSupplier>();
+
+    // "Location" menu
+    map.put(toggleKey("Location", "Show/Hide SWOB stations"),   () -> WORLD.displayAll_SWOB == 0);
+    map.put(toggleKey("Location", "Show/Hide SWOB nearest"),    () -> !WORLD.displayNear_SWOB);
+    map.put(toggleKey("Location", "Show/Hide NAEFS stations"),  () -> WORLD.displayAll_NAEFS == 0);
+    map.put(toggleKey("Location", "Show/Hide NAEFS nearest"),   () -> !WORLD.displayNear_NAEFS);
+    map.put(toggleKey("Location", "Show/Hide CWEEDS stations"), () -> WORLD.displayAll_CWEEDS == 0);
+    map.put(toggleKey("Location", "Show/Hide CWEEDS nearest"),  () -> !WORLD.displayNear_CWEEDS);
+    map.put(toggleKey("Location", "Show/Hide CLMREC stations"), () -> WORLD.displayAll_CLMREC == 0);
+    map.put(toggleKey("Location", "Show/Hide CLMREC nearest"),  () -> !WORLD.displayNear_CLMREC);
+    map.put(toggleKey("Location", "Show/Hide TMYEPW stations"), () -> WORLD.displayAll_TMYEPW == 0);
+    map.put(toggleKey("Location", "Show/Hide TMYEPW nearest"),  () -> !WORLD.displayNear_TMYEPW);
+
+    // "3D-display" menu
+    map.put(toggleKey("3D-display", "Show/Hide Land Mesh"),     () -> !Land3D.displaySurface);
+    map.put(toggleKey("3D-display", "Show/Hide Land Texture"),  () -> !Land3D.displayTexture);
+    map.put(toggleKey("3D-display", "Show/Hide Land Points"),   () -> !Land3D.displayPoints);
+    map.put(toggleKey("3D-display", "Show/Hide Land Depth"),    () -> !Land3D.displayDepth);
+    map.put(toggleKey("3D-display", "Show/Hide Vertices"),      () -> !allPoints.displayAll);
+    map.put(toggleKey("3D-display", "Show/Hide Edges"),         () -> !allFaces.displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Normals"),       () -> !allFaces.displayNormals);
+    map.put(toggleKey("3D-display", "Show/Hide Leaves"),        () -> !allModel1Ds.displayLeaves);
+    map.put(toggleKey("3D-display", "Show/Hide Model1Ds"),      () -> !allModel1Ds.displayAll);
+    map.put(toggleKey("3D-display", "Show/Hide Model2Ds"),      () -> !allModel2Ds.displayAll);
+    map.put(toggleKey("3D-display", "Show/Hide Polylines"),     () -> !allPolylines.displayAll);
+    map.put(toggleKey("3D-display", "Show/Hide Faces"),         () -> !allFaces.displayAll);
+    map.put(toggleKey("3D-display", "Show/Hide Solids"),        () -> !allSolids.displayAll);
+    map.put(toggleKey("3D-display", "Show/Hide Sections"),      () -> !allSections.displayAll);
+    map.put(toggleKey("3D-display", "Show/Hide Cameras"),       () -> !allCameras.displayAll);
+    map.put(toggleKey("3D-display", "Show/Hide Sky"),           () -> !Sky3D.displaySurface);
+    map.put(toggleKey("3D-display", "Show/Hide Sun Grid"),      () -> !Sun3D.displayGrid);
+    map.put(toggleKey("3D-display", "Show/Hide Sun Path"),      () -> !Sun3D.displayPath);
+    map.put(toggleKey("3D-display", "Show/Hide Sun Pattern"),   () -> !Sun3D.displayPattern);
+    map.put(toggleKey("3D-display", "Show/Hide Sun Surface"),   () -> !Sun3D.displaySurface);
+    map.put(toggleKey("3D-display", "Show/Hide Moon Surface"),  () -> !Moon3D.displaySurface);
+    map.put(toggleKey("3D-display", "Show/Hide Earth Surface"), () -> !Earth3D.displaySurface);
+    map.put(toggleKey("3D-display", "Show/Hide Troposphere"),   () -> !Tropo3D.displaySurface);
+    map.put(toggleKey("3D-display", "Show/Hide Solar Section"), () -> !allSolarImpacts.displayImage);
+    map.put(toggleKey("3D-display", "Show/Hide Solid Section"), () -> !allSolidImpacts.displayImage);
+    map.put(toggleKey("3D-display", "Show/Hide Wind Flow"),     () -> !allWindFlows.displayAll);
+
+    map.put(toggleKey("3D-display", "Show/Hide Selected Solids"),                 () -> !Select3D.Solid_displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Sections"),               () -> !Select3D.Section_displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Cameras"),                () -> !Select3D.Camera_displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected LandPoints"),             () -> !Select3D.LandPoint_displayPoints);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Faces"),                  () -> !Select3D.Face_displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines"),              () -> !Select3D.Polyline_displayVertices);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.Face_displayVertexCount);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.Polyline_displayVertexCount);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Vertices"),               () -> !Select3D.Vertex_displayVertices);
+    map.put(toggleKey("3D-display", "Show/Hide Selected REF Pivot"),              () -> !Select3D.displayReferencePivot);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Group Pivot"),            () -> !Select3D.Group_displayPivot);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Group Edges"),            () -> !Select3D.Group_displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Group Box"),              () -> !Select3D.Group_displayBox);
+    map.put(toggleKey("3D-display", "Show/Hide Selected 2D Edges"),               () -> !Select3D.Model2D_displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected 1D Edges"),               () -> !Select3D.Model1D_displayEdges);
+
+    return map;
+  }
+
+  private String toggleKey(String parentLabel, String childLabel) {
+    return parentLabel + "\u0000" + childLabel;
+  }
+
+  private boolean isItemDisabled(int parentIndex, int childIndex) {
+    java.util.function.BooleanSupplier state = disabledStateByItem.get(toggleKey(this.Items[parentIndex][0], this.Items[parentIndex][childIndex]));
+    return (state != null) && state.getAsBoolean();
+  }
+
+  private boolean isDivider(String label) {
+    return label.charAt(0) == DIVIDER_MARK;
+  }
+
+  // ---------------------------------------------------------------------
+  // Drawing
+  // ---------------------------------------------------------------------
 
   void draw () {
+    if (!this.update) return;
 
-    if (this.update) {
+    this.updated();
 
-      //println("update BAR!");
+    fill(127);
+    noStroke();
+    rect(0, 0, width, SOLARCHVISION_pixel_A);
 
-      this.updated();
+    X_control = 0; //0.25 * MessageSize;
+    Y_control = 0.5 * SOLARCHVISION_pixel_A;
 
-      fill(127);
-      noStroke();
+    for (int i = 0; i < this.Items.length; i++) {
+      float cx = X_control + i * this.width_parent;
+      float cy = Y_control;
+      float cr = 0.5 * SOLARCHVISION_pixel_A;
 
-      rect(0, 0, width, SOLARCHVISION_pixel_A);
+      drawParentTab(i, cx, cy, cr);
 
-      X_control = 0; //0.25 * MessageSize;
-      Y_control = 0.5 * SOLARCHVISION_pixel_A;
-
-      for (int i = 0; i < this.Items.length; i++) {
-
-        float cx = X_control + i * this.width_parent;
-        float cy = Y_control;
-        float cr = 0.5 * SOLARCHVISION_pixel_A;
-
-        if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr)) {
-
-          if (this.selected_parent == -1) {
-
-            pre_screen = get(0, SOLARCHVISION_pixel_A, width, height - SOLARCHVISION_pixel_A);
-
-            //println("Screen GET!");
-          }
-
-          this.selected_parent = i;
-
-          this.selected_child = 0;
-        }
-
-
-        textAlign(LEFT, CENTER);
-        textSize(1.25 * MessageSize);
-
-        if (this.selected_parent == i) {
-          stroke(0);
-          fill(0);
-        } else {
-          stroke(255);
-          fill(255);
-        }
-
-        text(this.Items[i][0], cx + 0.5 * MessageSize, cy - 0.125 * MessageSize);
-
-
-
-        if (this.selected_parent == i) {
-
-          image(pre_screen, 0, SOLARCHVISION_pixel_A);
-
-          this.selected_child = 0;
-
-
-          float widthChildren = this.width_child;
-
-          for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
-            float estimatedWidth = this.Items[this.selected_parent][j].length() * MessageSize * 0.55;
-            if (widthChildren < estimatedWidth) widthChildren = estimatedWidth;
-          }
-
-          for (int j = 1; j < this.Items[this.selected_parent].length; j++) {
-            if (
-              (this.Items[this.selected_parent][j].charAt(0) != '—') &&
-              (isInside(UI_X_moved, UI_Y_moved, cx, ceil(cy - cr + j * SOLARCHVISION_pixel_A * 0.85) + 1, cx + widthChildren, floor(cy + cr + j * SOLARCHVISION_pixel_A * 0.85) - 1))
-            ) {
-
-              this.selected_child = j;
-
-              fill(255, 127, 0);
-              noStroke();
-              rect(cx, cy - cr + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * 0.85, widthChildren, SOLARCHVISION_pixel_A * 0.85);
-            } else {
-
-              fill(0, 223);
-              noStroke();
-              rect(cx, cy - cr + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * 0.85, widthChildren, SOLARCHVISION_pixel_A * 0.85);
-            }
-
-            textAlign(LEFT, CENTER);
-
-            if (this.selected_child == j) {
-
-              stroke(0);
-              fill(0);
-            } else {
-              stroke(255);
-              fill(255);
-
-              if (this.Items[i][0].equals("Location")) {
-                if (this.Items[i][j].equals("Show/Hide SWOB stations")) {
-                  if (WORLD.displayAll_SWOB == 0) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide SWOB nearest")) {
-                  if (WORLD.displayNear_SWOB == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide NAEFS stations")) {
-                  if (WORLD.displayAll_NAEFS == 0) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide NAEFS nearest")) {
-                  if (WORLD.displayNear_NAEFS == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide CWEEDS stations")) {
-                  if (WORLD.displayAll_CWEEDS == 0) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide CWEEDS nearest")) {
-                  if (WORLD.displayNear_CWEEDS == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide CLMREC stations")) {
-                  if (WORLD.displayAll_CLMREC == 0) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide CLMREC nearest")) {
-                  if (WORLD.displayNear_CLMREC == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide TMYEPW stations")) {
-                  if (WORLD.displayAll_TMYEPW == 0) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide TMYEPW nearest")) {
-                  if (WORLD.displayNear_TMYEPW == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-              }
-
-              if (this.Items[i][0].equals("3D-display")) {
-                if (this.Items[i][j].equals("Show/Hide Land Mesh")) {
-                  if (Land3D.displaySurface == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Land Texture")) {
-                  if (Land3D.displayTexture == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Land Points")) {
-                  if (Land3D.displayPoints == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Land Depth")) {
-                  if (Land3D.displayDepth == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Vertices")) {
-                  if (allPoints.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Edges")) {
-                  if (allFaces.displayEdges == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Normals")) {
-                  if (allFaces.displayNormals == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Leaves")) {
-                  if (allModel1Ds.displayLeaves == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Model1Ds")) {
-                  if (allModel1Ds.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Model2Ds")) {
-                  if (allModel2Ds.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Polylines")) {
-                  if (allFaces.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Faces")) {
-                  if (allFaces.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Solids")) {
-                  if (allSolids.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Sections")) {
-                  if (allSections.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Cameras")) {
-                  if (allCameras.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Sky")) {
-                  if (Sky3D.displaySurface == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Sun Grid")) {
-                  if (Sun3D.displayGrid == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Sun Path")) {
-                  if (Sun3D.displayPath == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Sun Pattern")) {
-                  if (Sun3D.displayPattern == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Sun Surface")) {
-                  if (Sun3D.displaySurface == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Moon Surface")) {
-                  if (Moon3D.displaySurface == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Earth Surface")) {
-                  if (Earth3D.displaySurface == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Troposphere")) {
-                  if (Tropo3D.displaySurface == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Solar Section")) {
-                  if (allSolarImpacts.displayImage == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Solid Section")) {
-                  if (allSolidImpacts.displayImage == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Wind Flow")) {
-                  if (allWindFlows.displayAll == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Solids")) {
-                  if (Select3D.Solid_displayEdges == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Sections")) {
-                  if (Select3D.Section_displayEdges == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Cameras")) {
-                  if (Select3D.Camera_displayEdges == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected LandPoints")) {
-                  if (Select3D.LandPoint_displayPoints == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Faces")) {
-                  if (Select3D.Face_displayEdges == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Polylines")) {
-                  if (Select3D.Polyline_displayVertices == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Faces Vertex Count")) {
-                  if (Select3D.Face_displayVertexCount == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Polylines Vertex Count")) {
-                  if (Select3D.Polyline_displayVertexCount == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Vertices")) {
-                  if (Select3D.Vertex_displayVertices == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected REF Pivot")) {
-                  if (Select3D.displayReferencePivot == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Group Pivot")) {
-                  if (Select3D.displayReferencePivot == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Group Edges")) {
-                  if (Select3D.Group_displayEdges == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected Group Box")) {
-                  if (Select3D.Group_displayBox == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected 2D Edges")) {
-                  if (Select3D.Model2D_displayEdges == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-                if (this.Items[i][j].equals("Show/Hide Selected 1D Edges")) {
-                  if (Select3D.Model1D_displayEdges == false) {
-                    stroke(127);
-                    fill(127);
-                  }
-                }
-              }
-            }
-
-            textSize(MessageSize);
-            text(this.Items[i][j], cx + 0.5 * MessageSize, cy - 0.1 * MessageSize + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * 0.85);
-          }
-        }
+      if (this.selected_parent == i) {
+        drawChildMenu(i, cx, cy, cr);
       }
-
-      SOLARCHVISION_X_clicked = -1;
-      SOLARCHVISION_Y_clicked = -1;
     }
 
+    SOLARCHVISION_X_clicked = -1;
+    SOLARCHVISION_Y_clicked = -1;
+  }
+
+  // Draws a single top-level tab (e.g. "File", "Tools", ...) and updates
+  // selection state when the mouse is hovering over it.
+  private void drawParentTab(int i, float cx, float cy, float cr) {
+    if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr)) {
+      if (this.selected_parent == -1) {
+        pre_screen = get(0, SOLARCHVISION_pixel_A, width, height - SOLARCHVISION_pixel_A);
+        //println("Screen GET!");
+      }
+      this.selected_parent = i;
+      this.selected_child = 0;
+    }
+
+    textAlign(LEFT, CENTER);
+    textSize(PARENT_TEXT_SIZE_FACTOR * MessageSize);
+
+    if (this.selected_parent == i) {
+      stroke(0);
+      fill(0);
+    } else {
+      stroke(255);
+      fill(255);
+    }
+
+    text(this.Items[i][0], cx + 0.5 * MessageSize, cy - 0.125 * MessageSize);
+  }
+
+  // Draws the dropdown for the currently open parent tab.
+  private void drawChildMenu(int i, float cx, float cy, float cr) {
+    image(pre_screen, 0, SOLARCHVISION_pixel_A);
+    this.selected_child = 0;
+
+    float widthChildren = computeChildMenuWidth(i);
+
+    for (int j = 1; j < this.Items[i].length; j++) {
+      drawChildRow(i, j, cx, cy, cr, widthChildren);
+    }
+  }
+
+  // The dropdown is at least as wide as width_child, but grows to fit
+  // its longest label.
+  private float computeChildMenuWidth(int parentIndex) {
+    float widthChildren = this.width_child;
+    for (int j = 1; j < this.Items[parentIndex].length; j++) {
+      float estimatedWidth = this.Items[parentIndex][j].length() * MessageSize * CHILD_WIDTH_PER_CHAR;
+      if (widthChildren < estimatedWidth) widthChildren = estimatedWidth;
+    }
+    return widthChildren;
+  }
+
+  // Draws one row (item or divider) of an open dropdown, including hover
+  // highlighting and the disabled/greyed-out state.
+  private void drawChildRow(int i, int j, float cx, float cy, float cr, float widthChildren) {
+    float rowTop = cy - cr + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR;
+    float rowHeight = SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR;
+
+    String label = this.Items[i][j];
+    boolean isSelectable = !isDivider(label);
+
+    boolean isHovered = isSelectable && isInside(
+      UI_X_moved, UI_Y_moved,
+      cx, ceil(cy - cr + j * SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR) + 1,
+      cx + widthChildren, floor(cy + cr + j * SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR) - 1
+    );
+
+    if (isHovered) {
+      this.selected_child = j;
+      fill(HOVER_COLOR_R, HOVER_COLOR_G, HOVER_COLOR_B);
+    } else {
+      fill(0, 223);
+    }
+    noStroke();
+    rect(cx, rowTop, widthChildren, rowHeight);
+
+    textAlign(LEFT, CENTER);
+    if (this.selected_child == j) {
+      stroke(0);
+      fill(0);
+    } else if (isItemDisabled(i, j)) {
+      stroke(127);
+      fill(127);
+    } else {
+      stroke(255);
+      fill(255);
+    }
+
+    textSize(MessageSize);
+    text(label, cx + 0.5 * MessageSize, rowTop + cr - 0.1 * MessageSize);
   }
 
   void revise () {
