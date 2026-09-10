@@ -136,7 +136,13 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
           if (allModel2Ds.displayAll) {
 
-            PImage img = loadImage(File_Name + "_2D.jpg");
+            // Use the pixels already sitting in TREES_graphics instead of
+            // reloading the JPEG we just wrote to disk one line above -
+            // avoids a full JPEG encode+decode round trip per frame.
+            // NOTE: this reads the uncompressed render rather than the
+            // JPEG-compressed copy, so the threshold mask may differ very
+            // slightly (fewer compression artifacts) from the original.
+            PImage img = TREES_graphics.get();
 
             img.filter(THRESHOLD, 0.75); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter.
 
@@ -256,7 +262,13 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
         if (allModel2Ds.displayAll) {
 
-          PImage img = loadImage(File_Name + nf(i, 3) + "_2D.jpg");
+          // Use the pixels already sitting in TREES_graphics instead of
+          // reloading the JPEG we just wrote to disk one line above -
+          // avoids a full JPEG encode+decode round trip per frame.
+          // NOTE: this reads the uncompressed render rather than the
+          // JPEG-compressed copy, so the threshold mask may differ very
+          // slightly (fewer compression artifacts) from the original.
+          PImage img = TREES_graphics.get();
 
           img.filter(THRESHOLD, 0.75); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter.
 
