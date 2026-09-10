@@ -86,6 +86,8 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
       File_Name += "DIF_" + STR_SHD[SHD];
 
+      PImage[] shadowFrames = new PImage[DiffuseVectors.length];
+
       for (int i = 0; i < DiffuseVectors.length; i++) {
 
         float[] SunR= {
@@ -110,6 +112,13 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
 
         renderShadowFrame(SunR, SunR_Rotated_check, SHD, RES1, RES2, File_Name + nf(i, 3), ".jpg");
+
+        // Grab the frame we just rendered straight from SHADOW_graphics
+        // instead of reloading the JPEG renderShadowFrame() just saved -
+        // same round-trip-avoidance as the TREES_graphics change earlier,
+        // applied here since these per-diffuse-vector frames get
+        // recomposited into DIFFUSE_graphics right below.
+        shadowFrames[i] = SHADOW_graphics.get();
       }
 
 
@@ -130,7 +139,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
       for (int i = 0; i < DiffuseVectors.length; i++) {
 
-        PImage img = loadImage(File_Name + nf(i, 3) + ".jpg");
+        PImage img = shadowFrames[i];
 
         DIFFUSE_graphics.blendMode(ADD);
 
