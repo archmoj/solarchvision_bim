@@ -126,13 +126,15 @@ void SOLARCHVISION_castShadows_CurrentSection () {
       DIFFUSE_graphics.rectMode(CORNER);
       DIFFUSE_graphics.rect(0, 0, RES1, RES2);
 
+      float tintAlpha = 255 / (0.5 * DiffuseVectors.length);
+
       for (int i = 0; i < DiffuseVectors.length; i++) {
 
         PImage img = loadImage(File_Name + nf(i, 3) + ".jpg");
 
         DIFFUSE_graphics.blendMode(ADD);
 
-        DIFFUSE_graphics.tint(255, 255 / (0.5 * DiffuseVectors.length));
+        DIFFUSE_graphics.tint(255, tintAlpha);
 
         DIFFUSE_graphics.image(img, 0, 0, RES1, RES2);
 
