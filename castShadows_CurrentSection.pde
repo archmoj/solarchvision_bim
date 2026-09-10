@@ -4,6 +4,12 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
   SceneName = "Section_" + Section_Stamp();
 
+  // Folder_Shadings, NearLatitude_Stamp(), and SceneName are all fixed for
+  // the rest of this call, so this shared path prefix only needs building
+  // once instead of on every SHD iteration below (up to 816 times in the
+  // direct-sun block alone).
+  String ScenePathPrefix = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
+
 
   int RES1 = allSolarImpacts.RES1;
   int RES2 = allSolarImpacts.RES2;
@@ -64,7 +70,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
         for (int SHD = 0; SHD <= 1; SHD++) {
 
-          String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
+          String File_Name = ScenePathPrefix;
 
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
 
@@ -88,7 +94,7 @@ void SOLARCHVISION_castShadows_CurrentSection () {
 
     for (int SHD = 0; SHD <= 1; SHD++) {
 
-      String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
+      String File_Name = ScenePathPrefix;
 
       File_Name += "DIF_" + STR_SHD[SHD];
 
