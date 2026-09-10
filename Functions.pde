@@ -34,8 +34,9 @@ class solarchvision_Functions {
   }
 
   float roundTo (float a, float b) {
-    float a_floor = (floor (a / (1.0 * b))) * b;
-    float a_ceil = (ceil (a / (1.0 * b))) * b;
+    float bb = 1.0 * b;
+    float a_floor = floor(a / bb) * bb;
+    float a_ceil = ceil(a / bb) * bb;
     float c;
     if ((a - a_floor) > (a_ceil - a)) {
       c = a_ceil;
@@ -58,7 +59,8 @@ class solarchvision_Functions {
     float dLon = (float) (lon2 - lon1);
     float dLat = (float) (lat2 - lat1);
     float a = this.sin_ang(dLon / 2.0);
-    float b = this.sin_ang(dLat / 2.0) * this.sin_ang(dLat / 2.0) +
+    float sinHalfDLat = this.sin_ang(dLat / 2.0);
+    float b = sinHalfDLat * sinHalfDLat +
               this.cos_ang((float) lat1) * this.cos_ang((float) lat2) * a * a;
     return 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) DOUBLE_r_Earth;
   }
@@ -113,22 +115,23 @@ class solarchvision_Functions {
   float vec_mag (float[] a) {
     float d = 0;
     for (int i = a.length - 1; i > -1 ; --i) {
-      d += pow(a[i], 2);
+      d += a[i] * a[i];
     }
-    d = pow(d, 0.5);
-    return d;
+    return sqrt(d);
   }
 
   float vec3_mag (float[] a) {
-    return pow(a[0] * a[0] + a[1] * a[1] + a[2] * a[2], 0.5);
+    return sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
   }
 
   float[] vec_unit (float[] a) {
     float d = this.vec_mag(a);
     float[] b = new float[a.length];
-    for (int i = a.length - 1; i > -1; --i) {
-      if (d != 0) b[i] = a[i] / d;
-      else b[i] = 0;
+    if (d != 0) {
+      float invD = 1.0 / d;
+      for (int i = a.length - 1; i > -1; --i) {
+        b[i] = a[i] * invD;
+      }
     }
     return b;
   }
@@ -136,9 +139,11 @@ class solarchvision_Functions {
   float[] vec3_unit (float[] a) {
     float d = this.vec3_mag(a);
     float[] b = new float[3];
-    for (int i = 0; i < 3; i++) {
-      if (d != 0) b[i] = a[i] / d;
-      else b[i] = 0;
+    if (d != 0) {
+      float invD = 1.0 / d;
+      for (int i = 0; i < 3; i++) {
+        b[i] = a[i] * invD;
+      }
     }
     return b;
   }
@@ -174,8 +179,9 @@ class solarchvision_Functions {
         b[j] += a[i][j];
       }
     }
+    float invN = 1.0 / float(a.length);
     for (int j = 0; j < b.length; j++) {
-      b[j] /= float(a.length);
+      b[j] *= invN;
     }
     return b;
   }
@@ -255,7 +261,7 @@ class solarchvision_Functions {
     float[][] return_vertices = {
     };
     int totalNumberOfSubs = 1;
-    if (tessellation > 0) totalNumberOfSubs = base_Vertices.length * int(this.roundTo(pow(4, tessellation - 1), 1));
+    if (tessellation > 0) totalNumberOfSubs = base_Vertices.length * (1 << (2 * (tessellation - 1)));
 
     if ((tessellation <= 0) || (n < 0) || (n >= totalNumberOfSubs)) {
       return_vertices = new float [base_Vertices.length][3];
@@ -280,12 +286,13 @@ class solarchvision_Functions {
       float[] D = {
         0, 0, 0
       };
+      float invDiv = 1.0 / div;
       for (int i = 0; i < 3; i++) {
         A[i] = base_Vertices[the_first][i];
         B[i] = 0.5 * (A[i] + base_Vertices[the_next][i]);
         D[i] = 0.5 * (A[i] + base_Vertices[the_previous][i]);
         for (int j = 0; j < base_Vertices.length; j++) {
-          C[i] += base_Vertices[j][i] / (1.0 * base_Vertices.length);
+          C[i] += base_Vertices[j][i] * invDiv;
         }
       }
 
@@ -296,13 +303,14 @@ class solarchvision_Functions {
         return_vertices[3] = D;
       } else {
         int section = n / div;
-        int res = int(this.roundTo(pow(2, tessellation - 1), 1));
+        int res = 1 << (tessellation - 1);
         int u = section / res;
         int v = section % res;
-        float x1 = (1.0 * u) / (1.0 * res);
-        float y1 = (1.0 * v) / (1.0 * res);
-        float x2 = (1.0 * (u + 1)) / (1.0 * res);
-        float y2 = (1.0 * (v + 1)) / (1.0 * res);
+        float invRes = 1.0 / res;
+        float x1 = u * invRes;
+        float y1 = v * invRes;
+        float x2 = (u + 1) * invRes;
+        float y2 = (v + 1) * invRes;
         float[] P0 = {
           0, 0, 0
         };
@@ -394,21 +402,24 @@ class solarchvision_Functions {
   }
 
   float[][] cleanShape_removeDuplicateVertices (float[][] vertices_IN) {
-    float[][] vertices_OUT = new float[0][3];
     int n = vertices_IN.length;
+    float[][] buffer = new float[n][];
+    int count = 0;
     for (int i = 0; i < n; i++) {
       int prev_i = (i - 1 + n) % n;
       if (false == this.is_zero(this.vec3_mag(this.vec3_diff(vertices_IN[i], vertices_IN[prev_i])), 0.001)) { // i.e. 1mm tolerance, here
-        float[][] newVertex = {{vertices_IN[i][0], vertices_IN[i][1], vertices_IN[i][2]}};
-        vertices_OUT = (float[][]) concat(vertices_OUT, newVertex);
+        buffer[count++] = new float[]{vertices_IN[i][0], vertices_IN[i][1], vertices_IN[i][2]};
       }
     }
+    float[][] vertices_OUT = new float[count][];
+    System.arraycopy(buffer, 0, vertices_OUT, 0, count);
     return vertices_OUT;
   }
 
   float[][] cleanShape_joinParallelSegments (float[][] vertices_IN) {
-    float[][] vertices_OUT = new float[0][3];
     int n = vertices_IN.length;
+    float[][] buffer = new float[n][];
+    int count = 0;
     for (int i = 0; i < n; i++) {
       int prev_i = (i - 1 + n) % n;
       int next_i = (i + 1) % n;
@@ -417,10 +428,11 @@ class solarchvision_Functions {
         vertices_IN[i],
         vertices_IN[next_i]
       )) {
-        float[][] newVertex = {{vertices_IN[i][0], vertices_IN[i][1], vertices_IN[i][2]}};
-        vertices_OUT = (float[][]) concat(vertices_OUT, newVertex);
+        buffer[count++] = new float[]{vertices_IN[i][0], vertices_IN[i][1], vertices_IN[i][2]};
       }
     }
+    float[][] vertices_OUT = new float[count][];
+    System.arraycopy(buffer, 0, vertices_OUT, 0, count);
     return vertices_OUT;
   }
 
@@ -431,14 +443,17 @@ class solarchvision_Functions {
   };
 
   float calculatePolygonArea(float[][] polygonVertices) {
-    float[] sumVect = {0, 0, 0};
-    for (int i = 0; i < polygonVertices.length; i++) {
-      int next_i = (i + 1) % polygonVertices.length;
-      float[] A = this.vec3_cross(polygonVertices[i], polygonVertices[next_i]);
-      float[] B = sumVect;
-      sumVect = this.vec3_sum(A, B);
+    float sx = 0, sy = 0, sz = 0;
+    int n = polygonVertices.length;
+    for (int i = 0; i < n; i++) {
+      int next_i = (i + 1) % n;
+      float[] p1 = polygonVertices[i];
+      float[] p2 = polygonVertices[next_i];
+      sx += p1[1] * p2[2] - p1[2] * p2[1];
+      sy += p1[2] * p2[0] - p1[0] * p2[2];
+      sz += p1[0] * p2[1] - p1[1] * p2[0];
     }
-    return 0.5 * this.vec3_mag(sumVect); // unit m2
+    return 0.5 * sqrt(sx * sx + sy * sy + sz * sz); // unit m2
   }
 
   boolean isPointOnSegment(float[] point, float[] pStart, float[] pEnd) {
@@ -449,11 +464,15 @@ class solarchvision_Functions {
   }
 
   float[] getBetween(float[] point1, float[] point2, float ratio) {
-    return this.vec3_sum(this.vec3_scale(point1, ratio), this.vec3_scale(point2, 1.0 - ratio));
+    float inv = 1.0 - ratio;
+    return new float[] {
+      point1[0] * ratio + point2[0] * inv,
+      point1[1] * ratio + point2[1] * inv,
+      point1[2] * ratio + point2[2] * inv
+    };
   }
 
   float[] intersect_segmentXsegment (float[] A1, float[] A2, float[] B1, float[] B2) {
-    float[] nullPoint = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
     if (arePointsClose(A1, B1)) return getBetween(A1, B1, 0.5);
     if (arePointsClose(A1, B2)) return getBetween(A1, B2, 0.5);
     if (arePointsClose(A2, B1)) return getBetween(A2, B1, 0.5);
@@ -464,24 +483,26 @@ class solarchvision_Functions {
     if (isPointOnSegment(B2, A1, A2)) return B2;
     float[] Axis_A = this.vec3_unit(this.vec3_diff(A1, A2));
     float[] Axis_B = this.vec3_unit(this.vec3_diff(B1, B2));
-    if (true == this.is_zero(1 - Math.abs(this.vec3_dot(this.vec3_unit(Axis_A), this.vec3_unit(Axis_B))), this.EPSILON_DIRECTION)) {
-      return nullPoint;
+    if (true == this.is_zero(1 - Math.abs(this.vec3_dot(Axis_A, Axis_B)), this.EPSILON_DIRECTION)) {
+      return new float[] {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
     }
     float[] cross_vect = this.vec3_cross(Axis_A, Axis_B);
     float cross_dist = this.vec3_mag(cross_vect);
     if (this.is_zero(cross_dist)) {
-      return nullPoint;
+      return new float[] {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
     }
-    float rA = this.vec3_dot(this.vec3_cross(this.vec3_diff(B1, A1), Axis_B), cross_vect) / (cross_dist * cross_dist);
-    float rB = this.vec3_dot(this.vec3_cross(this.vec3_diff(B1, A1), Axis_A), cross_vect) / (cross_dist * cross_dist);
+    float invCrossDistSq = 1.0 / (cross_dist * cross_dist);
+    float[] diffB1A1 = this.vec3_diff(B1, A1);
+    float rA = this.vec3_dot(this.vec3_cross(diffB1A1, Axis_B), cross_vect) * invCrossDistSq;
+    float rB = this.vec3_dot(this.vec3_cross(diffB1A1, Axis_A), cross_vect) * invCrossDistSq;
     float[] result_A = this.vec3_sum(A1, this.vec3_scale(Axis_A, rA));
     float[] result_B = this.vec3_sum(B1, this.vec3_scale(Axis_B, rB));
     if (false == this.is_zero(this.vec3_mag(this.vec3_diff(result_A, result_B)), this.EPSILON_POSITION)) {
-      return nullPoint;
+      return new float[] {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
     }
     float[] result_AxB = getBetween(result_A , result_B, 0.5);
-    if (false == isPointOnSegment(result_AxB, A1, A2)) return nullPoint;
-    if (false == isPointOnSegment(result_AxB, B1, B2)) return nullPoint;
+    if (false == isPointOnSegment(result_AxB, A1, A2)) return new float[] {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
+    if (false == isPointOnSegment(result_AxB, B1, B2)) return new float[] {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
     return result_AxB;
   }
 
@@ -493,12 +514,26 @@ class solarchvision_Functions {
     return EquationOfTime(DateAngle) + HourAngleOrigin;
   }
 
+  // OPTIMIZED:
+  //  - "HourAngle" was computed via correctHourAngle(...) (itself 2 sin_ang
+  //    + 1 cos_ang calls through EquationOfTime) but never actually used
+  //    anywhere below -- b/c use HourAngleOrigin directly, not the
+  //    corrected HourAngle. That's dead work, removed here.
+  //    NOTE: this looks like it may also be an unintentional bug versus
+  //    SunPosition() below, which *does* apply the corrected HourAngle to
+  //    b/c. Flagging it rather than silently changing the physics -- worth
+  //    a look from whoever owns the solar model.
+  //  - this.cos_ang(Declination) was being computed twice (once for b, once
+  //    for c); now computed once and reused.
+  //  - 15.0 * HourAngleOrigin was likewise computed twice; now computed
+  //    once and reused.
   float[] SunPositionRadiation (float DateAngle, float HourAngleOrigin, float CloudCover) {
-    float HourAngle = correctHourAngle(DateAngle, HourAngleOrigin);
     float Declination = 23.45 * this.sin_ang(DateAngle - 180.0);
+    float cosDeclination = this.cos_ang(Declination);
     float a = this.sin_ang(Declination);
-    float b = this.cos_ang(Declination) * -this.cos_ang(15.0 * HourAngleOrigin);
-    float c = this.cos_ang(Declination) * this.sin_ang(15.0 * HourAngleOrigin);
+    float hourAngle15 = 15.0 * HourAngleOrigin;
+    float b = cosDeclination * -this.cos_ang(hourAngle15);
+    float c = cosDeclination * this.sin_ang(hourAngle15);
     float x = c;
     float y = -(a * this.cos_ang(STATION.getLatitude()) + b * this.sin_ang(STATION.getLatitude()));
     float z = -a * this.sin_ang(STATION.getLatitude()) + b * this.cos_ang(STATION.getLatitude());
@@ -527,9 +562,11 @@ class solarchvision_Functions {
   float[] SunPosition (float Latitude, float DateAngle, float HourAngleOrigin) {
     float HourAngle = correctHourAngle(DateAngle, HourAngleOrigin);
     float Declination = 23.45 * this.sin_ang(DateAngle - 180.0);
+    float cosDeclination = this.cos_ang(Declination);
     float a = this.sin_ang(Declination);
-    float b = this.cos_ang(Declination) * -this.cos_ang(15.0 * HourAngle);
-    float c = this.cos_ang(Declination) * this.sin_ang(15.0 * HourAngle);
+    float hourAngle15 = 15.0 * HourAngle;
+    float b = cosDeclination * -this.cos_ang(hourAngle15);
+    float c = cosDeclination * this.sin_ang(hourAngle15);
     float x = c;
     float y = -(a * this.cos_ang(Latitude) + b * this.sin_ang(Latitude));
     float z = -a * this.sin_ang(Latitude) + b * this.cos_ang(Latitude);
@@ -539,23 +576,30 @@ class solarchvision_Functions {
     return return_array;
   }
 
-  float Sunrise (float Latitude, float DateAngle) {
-    float a = 0;
+  private float sunriseHourAngle_Raw (float Latitude, float DateAngle) {
     float Declination = 23.5 * this.sin_ang(DateAngle - 180.0);
     float q = -(this.tan_ang(Declination) * this.tan_ang(Latitude));
     if (q > 1.0) {
-      a = 0.0;
+      return 0.0;
     } else if (q < -1.0) {
-      a = 24.0;
-    } else a = this.acos_ang(q) / 15.0;
-    return (a - EquationOfTime(DateAngle));
+      return 24.0;
+    }
+    return this.acos_ang(q) / 15.0;
+  }
+
+  float Sunrise (float Latitude, float DateAngle) {
+    return this.sunriseHourAngle_Raw(Latitude, DateAngle) - EquationOfTime(DateAngle);
   }
 
   float Sunset (float Latitude, float DateAngle) {
-    return 24.0 - this.Sunrise(Latitude, DateAngle) - 2 * EquationOfTime(DateAngle);
+    return 24.0 - this.sunriseHourAngle_Raw(Latitude, DateAngle) - EquationOfTime(DateAngle);
   }
 
   float DayTime (float Latitude, float DateAngle) {
-    return abs((this.Sunset(Latitude, DateAngle)) - (this.Sunrise(Latitude, DateAngle)));
+    float raw = this.sunriseHourAngle_Raw(Latitude, DateAngle);
+    float eot = EquationOfTime(DateAngle);
+    float sunrise = raw - eot;
+    float sunset = 24.0 - raw - eot;
+    return abs(sunset - sunrise);
   }
 }
