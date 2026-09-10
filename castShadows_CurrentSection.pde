@@ -80,6 +80,12 @@ void SOLARCHVISION_castShadows_CurrentSection () {
   {
     int RAD_TYPE = 1;
 
+    // Created once here instead of inside the SHD loop below (was being
+    // recreated twice per call) - matches the pattern already used for
+    // TREES_graphics/SHADOW_graphics, which are created once and reused
+    // via beginDraw()/rect() each pass rather than reallocated.
+    PGraphics DIFFUSE_graphics = createGraphics(RES1, RES2, P2D);
+
     for (int SHD = 0; SHD <= 1; SHD++) {
 
       String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
@@ -122,8 +128,6 @@ void SOLARCHVISION_castShadows_CurrentSection () {
       }
 
 
-
-      PGraphics DIFFUSE_graphics = createGraphics(RES1, RES2, P2D);
 
       DIFFUSE_graphics.beginDraw();
 
