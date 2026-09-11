@@ -1553,135 +1553,11 @@ class solarchvision_STUDY {
 
     cursor(WAIT);
 
-
     if (this.update) {
-
-      if (this.record_PDF) this.ImageScale = 1;
-      else if (this.record_IMG) this.ImageScale = 2;
-      else this.ImageScale = 1;
-
-      if(prev_ImageScale != this.ImageScale) {
-        prev_ImageScale = this.ImageScale;
-
-        // we need to redraw these due to gl context lost
-        WORLD.revise();
-        WIN3D.revise();
-        STUDY.revise();
-        ROLLOUT.revise();
-        UI_menuBar.revise();
-        UI_toolBar.revise();
-        UI_caseBar.revise();
-        UI_commandBar.revise();
-      }
-
-      //////////////////////////////////
-      this.dX *= this.ImageScale;
-      this.dY *= this.ImageScale;
-      this.T_scale *= this.ImageScale;
-      //////////////////////////////////
-
-      if (this.record_PDF) {
-        println("PDF:begin");
-        this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(createStamp(1, CLASS_STAMP)) + ".pdf");
-        beginRecord(this.graphics);
-      } else if (this.ImageScale != 1) {
-        println("IMG:high-res");
-        this.graphics = createGraphics(this.dX, this.dY, P2D);
-        this.graphics.beginDraw();
-      } else {
-        this.graphics.beginDraw();
-      }
-
-      DrawnFrame += 1;
-      //println("frame:", DrawnFrame);
-
-      if (DevelopData_update) {
-        if (CurrentLayer_id == LAYER_developed.id) {
-          SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
-
-        }
-      }
-
-
-      this.view_S = (this.dX / 2100.0);
-      this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-
-
-      this.position_X = -0.333 * this.dX;
-
-      this.position_Y = 1.0 * this.dY;
-
-
-      this.graphics.background(255);
-
-      this.graphics.blendMode(BLEND);
-
-      this.graphics.strokeJoin(ROUND);
-
-      this.graphics.textFont(SOLARCHVISION_font);
-
-      this.graphics.strokeWeight(0);
-
-      //this.graphics.translate(this.position_X * -0.25, this.position_Y * 0.5);
-      this.graphics.translate(this.position_X * -0.425, this.position_Y * 0.5);
-
-      this.setupPlot();
-
-      //this.graphics.translate(this.position_X * 0.25, this.position_Y * 0.5);
-      this.graphics.translate(this.position_X * 0.425, this.position_Y * 0.5);
-
-      this.graphics.strokeWeight(this.T_scale * 1);
-
-      this.graphics.stroke(63);
-      this.graphics.fill(63);
-      this.graphics.textAlign(CENTER, CENTER);
-
-      String txt = "SOLARCHVISION post-processing";
-
-      if (CurrentDataSource == dataID_CLIMATE_TMYEPW) txt += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
-      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) txt += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment and Climate Change Canada)";
-      if (CurrentDataSource == dataID_CLIMATE_CLMREC) txt += " based on Environment and Climate Change Canada's Climate website";
-      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) txt += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
-      if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) txt += " based on real-time Surface Weather Observation (SWOB - Environment and Climate Change Canada)";
-
-      //txt += ", www.solarchvision.com";
-
-      this.graphics.textSize(this.dX * 0.01);
-      ///this.graphics.text(txt, this.dX * 0.55, this.dY * -0.1666 / this.view_R, 0);
-
-      if (this.record_PDF) {
-        endRecord();
-
-        String myFile = MAKE_Filename(createStamp(0, CLASS_STAMP)) + ".pdf";
-        println("File created:" + myFile);
-      } else {
-        this.graphics.endDraw();
-
-        if ((this.record_IMG) || (this.record_AUTO)) {
-          String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP)) + ".jpg";
-          this.graphics.save(myFile);
-          println("File created:" + myFile);
-        }
-
-        imageMode(CORNER);
-        image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
-      }
-
-      //////////////////////////////////
-      this.dX /= this.ImageScale;
-      this.dY /= this.ImageScale;
-      this.T_scale /= this.ImageScale;
-      //////////////////////////////////
-
-      if ((this.ImageScale != 1) || (this.record_PDF)) {
-        this.graphics = createGraphics(this.dX, this.dY, P2D);
-        this.updated(); //1;
-      } else {
-        this.updated();
-      }
-
-
-      if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;
+      updateImageScale();
+      beginFrame();
+      renderFrame();
+      endFrame();
     }
 
     this.export_info_node = false;
@@ -1689,6 +1565,150 @@ class solarchvision_STUDY {
     this.export_info_prob = false;
 
     cursor(ARROW);
+  }
+
+  // Decides this.ImageScale from the current record_PDF / record_IMG flags.
+  // If it changed since last frame, several views need a full redraw because
+  // switching resolution loses the GL context.
+  private void updateImageScale () {
+    if (this.record_PDF) this.ImageScale = 1;
+    else if (this.record_IMG) this.ImageScale = 2;
+    else this.ImageScale = 1;
+
+    if (prev_ImageScale != this.ImageScale) {
+      prev_ImageScale = this.ImageScale;
+
+      // we need to redraw these due to gl context lost
+      WORLD.revise();
+      WIN3D.revise();
+      STUDY.revise();
+      ROLLOUT.revise();
+      UI_menuBar.revise();
+      UI_toolBar.revise();
+      UI_caseBar.revise();
+      UI_commandBar.revise();
+    }
+  }
+
+  // Scales the canvas dimensions up by ImageScale (for PDF/high-res export)
+  // and opens the right PGraphics context: a PDF recorder, a scaled-up P2D
+  // buffer, or the existing on-screen graphics.
+  private void beginFrame () {
+    //////////////////////////////////
+    this.dX *= this.ImageScale;
+    this.dY *= this.ImageScale;
+    this.T_scale *= this.ImageScale;
+    //////////////////////////////////
+
+    if (this.record_PDF) {
+      println("PDF:begin");
+      this.graphics = createGraphics(this.dX, this.dY, PDF, MAKE_Filename(createStamp(1, CLASS_STAMP)) + ".pdf");
+      beginRecord(this.graphics);
+    } else if (this.ImageScale != 1) {
+      println("IMG:high-res");
+      this.graphics = createGraphics(this.dX, this.dY, P2D);
+      this.graphics.beginDraw();
+    } else {
+      this.graphics.beginDraw();
+    }
+  }
+
+  // The actual drawing pass: refreshes developed data if needed, sets up the
+  // canvas (background, blend mode, font), then delegates the plot itself to
+  // setupPlot().
+  private void renderFrame () {
+    DrawnFrame += 1;
+    //println("frame:", DrawnFrame);
+
+    if (DevelopData_update) {
+      if (CurrentLayer_id == LAYER_developed.id) {
+        SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
+      }
+    }
+
+    this.view_S = (this.dX / 2100.0);
+    this.U_scale = 18.0 / float(this.j_End - this.j_Start);
+
+    this.position_X = -0.333 * this.dX;
+    this.position_Y = 1.0 * this.dY;
+
+    this.graphics.background(255);
+
+    this.graphics.blendMode(BLEND);
+
+    this.graphics.strokeJoin(ROUND);
+
+    this.graphics.textFont(SOLARCHVISION_font);
+
+    this.graphics.strokeWeight(0);
+
+    //this.graphics.translate(this.position_X * -0.25, this.position_Y * 0.5);
+    this.graphics.translate(this.position_X * -0.425, this.position_Y * 0.5);
+
+    this.setupPlot();
+
+    //this.graphics.translate(this.position_X * 0.25, this.position_Y * 0.5);
+    this.graphics.translate(this.position_X * 0.425, this.position_Y * 0.5);
+
+    this.graphics.strokeWeight(this.T_scale * 1);
+
+    this.graphics.stroke(63);
+    this.graphics.fill(63);
+    this.graphics.textAlign(CENTER, CENTER);
+
+    // NOTE: this caption is built but never actually drawn - the this.graphics.text(txt, ...)
+    // call below is commented out in the original source. Preserved as-is (dead code, not
+    // functional) rather than removed, in case it's meant to be re-enabled later.
+    String txt = "SOLARCHVISION post-processing";
+
+    if (CurrentDataSource == dataID_CLIMATE_TMYEPW) txt += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
+    if (CurrentDataSource == dataID_CLIMATE_CWEEDS) txt += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment and Climate Change Canada)";
+    if (CurrentDataSource == dataID_CLIMATE_CLMREC) txt += " based on Environment and Climate Change Canada's Climate website";
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) txt += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
+    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) txt += " based on real-time Surface Weather Observation (SWOB - Environment and Climate Change Canada)";
+
+    //txt += ", www.solarchvision.com";
+
+    this.graphics.textSize(this.dX * 0.01);
+    ///this.graphics.text(txt, this.dX * 0.55, this.dY * -0.1666 / this.view_R, 0);
+  }
+
+  // Closes out the recording/drawing (writing a PDF or JPEG if requested,
+  // otherwise blitting the buffer to screen), then restores the canvas
+  // dimensions that beginFrame() scaled up.
+  private void endFrame () {
+    if (this.record_PDF) {
+      endRecord();
+
+      String myFile = MAKE_Filename(createStamp(0, CLASS_STAMP)) + ".pdf";
+      println("File created:" + myFile);
+    } else {
+      this.graphics.endDraw();
+
+      if ((this.record_IMG) || (this.record_AUTO)) {
+        String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP)) + ".jpg";
+        this.graphics.save(myFile);
+        println("File created:" + myFile);
+      }
+
+      imageMode(CORNER);
+      image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
+    }
+
+    //////////////////////////////////
+    this.dX /= this.ImageScale;
+    this.dY /= this.ImageScale;
+    this.T_scale /= this.ImageScale;
+    //////////////////////////////////
+
+    if ((this.ImageScale != 1) || (this.record_PDF)) {
+      this.graphics = createGraphics(this.dX, this.dY, P2D);
+      this.updated(); //1;
+    } else {
+      this.updated();
+    }
+
+    if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;
   }
 
 
