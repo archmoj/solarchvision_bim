@@ -1,6 +1,12 @@
 class solarchvision_Sun3D {
   private final static String CLASS_STAMP = "Sun3D";
 
+  private final static float LONGITUDE_SPAN = 360.0;
+  private final static float LATITUDE_SPAN  = 180.0;
+  private final static float SUN_RADIUS_Mm  = 696.0;    // sun radius, in megameters
+  private final static float SUN_DISTANCE_Mm = 150000.0; // ~1 AU, in megameters
+  private final static float METERS_PER_MEGAMETER = 1000000.0;
+
   int ACTIVE_palette_CLR = 15;
   int ACTIVE_palette_DIR = 1;
   float ACTIVE_palette_MLT = 1;
@@ -16,6 +22,11 @@ class solarchvision_Sun3D {
 
   String Filename = BaseFolder + "/input/images/sun/Sun.jpg";
   PImage Map;
+
+  class FaceVertex {
+    float x, y, z;
+    float u, v;
+  }
 
   void load_images () {
     Map = loadImage(Filename);
@@ -57,73 +68,101 @@ class solarchvision_Sun3D {
     if (!this.displaySurface) return;
 
     WIN3D.graphics.noStroke();
-    float ScaleX = 1;
-    float ScaleY = 1;
+
+    float ScaleX  = 1;
+    float ScaleY  = 1;
     float CEN_lon = 0;
     float CEN_lat = 0;
+
     float delta_Alpha = -5;
-    float delta_Beta = -10;
-    float r = 696.0 * Planetary_Magnification; // * 1000000; // multiply this later
-    float d = 150000.0;                        // * 1000000; // multiply this later
+    float delta_Beta  = -10;
+
+    float r = SUN_RADIUS_Mm * Planetary_Magnification;
+    float d = SUN_DISTANCE_Mm;
 
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-        float[][] subFace = new float[4][5];
-
-        for (int s = 0; s < 4; s++) {
-          float a = Alpha;
-          float b = Beta;
-          if ((s == 2) || (s == 3)) a += delta_Alpha;
-          if ((s == 1) || (s == 2)) b += delta_Beta;
-
-          float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
-          float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
-          float z0 = r * funcs.sin_ang(a);
-
-          if (this.displayTexture) {
-            float lon = b - CEN_lon;
-            float lat = a - CEN_lat;
-            subFace[s][3] = (lon / ScaleX / 360.0 + 0.5);
-            subFace[s][4] = (-lat / ScaleY / 180.0 + 0.5);
-          }
-
-          // rotating to location coordinates
-          float tb = 0;
-          float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
-          float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
-          float z1 = z0;
-
-          float ta = -90 - STATION.getLatitude();
-          float x2 = x1;
-          float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
-          float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
-
-          // scale it here!
-          x2 *= 1000000.0;
-          y2 *= 1000000.0;
-          z2 *= 1000000.0;
-
-          // move it to scale here!
-          y2 += 1000000.0 * d * funcs.sin_ang(-STATION.getLatitude());
-          z2 += 1000000.0 * d * funcs.cos_ang(-STATION.getLatitude());
-
-          subFace[s][0] = x2;
-          subFace[s][1] = y2;
-          subFace[s][2] = z2;
-        }
-
-        WIN3D.graphics.beginShape();
-        if (this.displayTexture) WIN3D.graphics.texture(this.Map);
-        for (int s = 0; s < subFace.length; s++) {
-          WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale,
-                                 -subFace[s][1] * OBJECTS_scale * WIN3D.scale,
-                                 subFace[s][2] * OBJECTS_scale * WIN3D.scale,
-                                 subFace[s][3] * this.Map.width,
-                                 subFace[s][4] * this.Map.height);
-        }
-        WIN3D.graphics.endShape(CLOSE);
+        FaceVertex[] subFace = buildSubFace(Alpha, Beta, delta_Alpha, delta_Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY);
+        writeFaceWIN3D(subFace);
       }
     }
+  }
+
+
+  private FaceVertex[] buildSubFace (float Alpha, float Beta, float delta_Alpha, float delta_Beta,
+                                      float r, float d, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
+    FaceVertex[] subFace = new FaceVertex[4];
+
+    float tb = 0;
+    float stationLat = STATION.getLatitude();
+    float ta = -90 - stationLat;
+
+    for (int s = 0; s < 4; s++) {
+      FaceVertex vtx = new FaceVertex();
+
+      float a = Alpha;
+      float b = Beta;
+      if (s == 2 || s == 3) a += delta_Alpha;
+      if (s == 1 || s == 2) b += delta_Beta;
+
+      // corner position on the sun disc
+      float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
+      float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+      float z0 = r * funcs.sin_ang(a);
+
+      if (this.displayTexture) {
+        float lon = b - CEN_lon;
+        float lat = a - CEN_lat;
+        vtx.u = (lon / ScaleX / LONGITUDE_SPAN + 0.5);
+        vtx.v = (-lat / ScaleY / LATITUDE_SPAN + 0.5);
+      }
+
+      // rotate to location coordinates
+      float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
+      float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
+      float z1 = z0;
+
+      float x2 = x1;
+      float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
+      float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
+
+      // scale from megameters to meters
+      x2 *= METERS_PER_MEGAMETER;
+      y2 *= METERS_PER_MEGAMETER;
+      z2 *= METERS_PER_MEGAMETER;
+
+      // move out to the sun's distance, above the station
+      y2 += METERS_PER_MEGAMETER * d * funcs.sin_ang(-stationLat);
+      z2 += METERS_PER_MEGAMETER * d * funcs.cos_ang(-stationLat);
+
+      vtx.x = x2;
+      vtx.y = y2;
+      vtx.z = z2;
+
+      subFace[s] = vtx;
+    }
+
+    return subFace;
+  }
+
+
+  private void writeFaceWIN3D (FaceVertex[] subFace) {
+    WIN3D.graphics.beginShape();
+    if (this.displayTexture) {
+      WIN3D.graphics.texture(this.Map);
+    }
+
+    for (int s = 0; s < subFace.length; s++) {
+      WIN3D.graphics.vertex(
+        subFace[s].x * OBJECTS_scale * WIN3D.scale,
+        -subFace[s].y * OBJECTS_scale * WIN3D.scale,
+        subFace[s].z * OBJECTS_scale * WIN3D.scale,
+        subFace[s].u * this.Map.width,
+        subFace[s].v * this.Map.height
+      );
+    }
+
+    WIN3D.graphics.endShape(CLOSE);
   }
 
   private void drawGridSegment (int target_window, float[] SunA, float[] SunB, float s_SunPath) {
@@ -403,10 +442,8 @@ class solarchvision_Sun3D {
       }
 
       for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
-        // SunPathMesh[hourIndex][dayRow] = {Alpha, Beta, impactValue}
         float[][][] SunPathMesh = new float[24 * TES_hour][1 + int(STUDY_perDays / STUDY.joinDays)][3];
 
-        // --- Pass 1: sample sun position + impact value across the day(s) ---
         for (int more_J = 0; more_J < STUDY_perDays; more_J += STUDY.joinDays) {
           int now_j = wrapDayIndex(more_J + j * int(STUDY_perDays) + TIME.beginDay);
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
