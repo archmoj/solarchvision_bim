@@ -758,7 +758,7 @@ class solarchvision_WIN3D {
           break;
 
         case ' ':
-          SOLARCHVISION_RenderViewport();
+          SOLARCHVISION_ShadeViewport();
           break;
 
         }
@@ -1396,7 +1396,7 @@ class solarchvision_WIN3D {
     this.update = false;
   }
 
-  float renderQuality = 0.75f;
-  boolean showRender = false;
+  float shadingQuality = 0.75f;
+  boolean showShading = false;
   boolean showSolarImpact = false;
 }

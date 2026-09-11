@@ -221,7 +221,7 @@ class solarchvision_UI_menuBar {
       "Urban solar potential (active)",
       "Urban solar potential (passive)",
       "————————————————",
-      "Render Viewport",
+      "Shade Viewport",
       "————————————————",
       "Prebake Viewport",
       "Prebake Selected Sections",

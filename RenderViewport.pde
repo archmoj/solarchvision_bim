@@ -1,28 +1,30 @@
-int RENDER_HOUR_ANGLE = 8;
-int RENDER_DATE_ANGLE = 0;
+int SHADE_HOUR_ANGLE = 8;
+int SHADE_DATE_ANGLE = 0;
 
-void SOLARCHVISION_RenderViewport () {
+PImage Shade_RGBA;
+
+void SOLARCHVISION_ShadeViewport () {
   cursor(WAIT);
   SOLARCHVISION_buildFaceGrid();
 
-  int DATE_ANGLE = RENDER_DATE_ANGLE;
-  int HOUR_ANGLE = RENDER_HOUR_ANGLE;
+  int DATE_ANGLE = SHADE_DATE_ANGLE;
+  int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
-  RENDER_HOUR_ANGLE++;
-  if (RENDER_HOUR_ANGLE > 16) {
-    RENDER_HOUR_ANGLE = 8;
-    RENDER_DATE_ANGLE += 90;
+  SHADE_HOUR_ANGLE++;
+  if (SHADE_HOUR_ANGLE > 16) {
+    SHADE_HOUR_ANGLE = 8;
+    SHADE_DATE_ANGLE += 90;
   }
-  if (RENDER_DATE_ANGLE >= 360) {
-    RENDER_DATE_ANGLE = 0;
+  if (SHADE_DATE_ANGLE >= 360) {
+    SHADE_DATE_ANGLE = 0;
   }
 
-  float quality = WIN3D.renderQuality;
+  float quality = WIN3D.shadingQuality;
   int RES1 = round(WIN3D.dX * quality);
   int RES2 = round(WIN3D.dY * quality);
 
-  Render_RGBA = createImage(RES1, RES2, ARGB);
-  Render_RGBA.loadPixels();
+  Shade_RGBA = createImage(RES1, RES2, ARGB);
+  Shade_RGBA.loadPixels();
 
   float invQuality = 1.0 / quality;
   float invScale    = 1.0 / OBJECTS_scale;
@@ -108,14 +110,14 @@ void SOLARCHVISION_RenderViewport () {
         }
 
         float v = valuesSUM_RAD * 150;
-        Render_RGBA.pixels[np] = color(v, v, v, 255);
+        Shade_RGBA.pixels[np] = color(v, v, v, 255);
       } else {
-        Render_RGBA.pixels[np] = color(0, 0, 0, 0);
+        Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
       }
     }
   }
 
-  Render_RGBA.updatePixels();
+  Shade_RGBA.updatePixels();
   cursor(ARROW);
-  WIN3D.showRender = true;
+  WIN3D.showShading = true;
 }

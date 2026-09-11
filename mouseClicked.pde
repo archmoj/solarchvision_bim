@@ -608,8 +608,8 @@ void mouseClicked () {
               SOLARCHVISION_view_changed();
             }
 
-            if (menu_option.equals("Render Viewport")) {
-              SOLARCHVISION_RenderViewport();
+            if (menu_option.equals("Shade Viewport")) {
+              SOLARCHVISION_ShadeViewport();
             }
             if (menu_option.equals("Prebake Viewport")) {
               SOLARCHVISION_preBakeViewport();

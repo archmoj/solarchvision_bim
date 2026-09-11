@@ -838,9 +838,9 @@ void draw () {
             WIN3D.drawView();
           }
 
-          if (WIN3D.showRender) {
-            WIN3D.showRender = false;
-            image(Render_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
+          if (WIN3D.showShading) {
+            WIN3D.showShading = false;
+            image(Shade_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
           }
 
           if (WIN3D.showSolarImpact) {
@@ -2165,7 +2165,6 @@ int UI_X_moved = -1;
 int UI_Y_moved = -1;
 
 PImage pre_screen;
-PImage Render_RGBA;
 
 void SOLARCHVISION_modify_Viewport_Title () {
 

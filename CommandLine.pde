@@ -1845,9 +1845,9 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       break;
     }
 
-    case "RENDER.VIEWPORT": {
+    case "SHADE.VIEWPORT": {
 
-      SOLARCHVISION_RenderViewport();
+      SOLARCHVISION_ShadeViewport();
 
       break;
     }

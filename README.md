@@ -636,7 +636,7 @@ Includes commands such as:
 -   `SHADE.REAL`: Per-vertex solar values shading
 -   `SHADE.SOLID`: Solid parameter shading
 -   `SHADE.ELEVATION`: Elevation shading
--   `RENDER.VIEWPORT`: Renders the viewport
+-   `SHADE.VIEWPORT`: Shades the viewport
 -   `PREBAKE.VIEWPORT`: Pre-bakes the viewport
 
 
