@@ -292,6 +292,16 @@ class solarchvision_Modify3D {
     return (startFace <= f) && (f <= endFace);
   }
 
+  // Every selected face belongs to exactly one selected group, so a single scan over
+  // Select3D.Group_ids is enough to find it - no need for the old nested Group x Face loop.
+  private int findOwningGroupId (int f) {
+    for (int i = 0; i < Select3D.Group_ids.length; i++) {
+      int OBJ_ID = Select3D.Group_ids[i];
+      if (isFaceInGroupRange(f, OBJ_ID)) return OBJ_ID;
+    }
+    return -1;
+  }
+
   private float[][] faceBaseVertices (int f) {
     int n = allFaces.nodes[f].length;
     float[][] base_Vertices = new float[n][3];
@@ -618,20 +628,25 @@ class solarchvision_Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
     ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    // Walk Select3D.Face_ids itself, largest index first. allGroups.inserted_nFaces() shifts
+    // Select3D.Face_ids in place with the correct amount as we go, so (unlike the old detached
+    // "primary_list" copy with its hard-coded -1 shift) the indices read here are always
+    // up to date. newFaceIndices_L is a separate list, so we shift it ourselves below.
+    for (int q = Select3D.Face_ids.length - 1; q >= 0; q--) {
+      int f = Select3D.Face_ids[q];
+      if (allFaces.nodes[f].length != 4) continue;
 
-      for (int q = primary_list.length - 1; q >= 0; q--) {
-        int f = primary_list[q];
-        if (allFaces.nodes[f].length != 4) continue;
-        if (!isFaceInGroupRange(f, OBJ_ID)) continue;
+      int OBJ_ID = this.findOwningGroupId(f);
+      if (OBJ_ID == -1) continue;
 
-        allGroups.inserted_nFaces(OBJ_ID, f, User3D.modify_TessellateColumns * User3D.modify_TessellateRows - 1); // because adding the faces also changes the end pointer of the same object
+      int nNewFaces = User3D.modify_TessellateColumns * User3D.modify_TessellateRows;
+      int netShift = nNewFaces - 1;
 
-        ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+      allGroups.inserted_nFaces(OBJ_ID, f, netShift); // because adding the faces also changes the end pointer of the same object
+
+      ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
         ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
 
         float[][] base_Vertices = faceBaseVertices(f);
@@ -686,15 +701,18 @@ class solarchvision_Modify3D {
 
             midList_Faces_nodes_L.add(newFace_nodes);
             midList_Faces_options_L.add(newFace_options);
-
-            if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
-              newFaceIndices_L.add(f + s);
-            }
-          }
         }
+      }
 
-        spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
-        primary_list = this.remove_item_from_primary_list(q, primary_list);
+      spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
+
+      // Keep any already-recorded new-face indices from previously processed (larger-index)
+      // faces in sync with this splice, then queue up this face's own new pieces.
+      for (int i = 0; i < newFaceIndices_L.size(); i++) {
+        if (newFaceIndices_L.get(i) > f) newFaceIndices_L.set(i, newFaceIndices_L.get(i) + netShift);
+      }
+      for (int s = 1; s < nNewFaces; s++) { // the first tessellated face (s == 0) replaces the base face
+        newFaceIndices_L.add(f + s);
       }
     }
 
@@ -706,60 +724,63 @@ class solarchvision_Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
     ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int q = Select3D.Face_ids.length - 1; q >= 0; q--) {
+      int f = Select3D.Face_ids[q];
+      int OBJ_ID = this.findOwningGroupId(f);
+      if (OBJ_ID == -1) continue;
 
-      for (int q = primary_list.length - 1; q >= 0; q--) {
-        int f = primary_list[q];
-        if (!isFaceInGroupRange(f, OBJ_ID)) continue;
+      int n = allFaces.nodes[f].length;
+      int netShift = n - 1;
 
-        allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object
+      allGroups.inserted_nFaces(OBJ_ID, f, netShift); // because adding the faces also changes the end pointer of the same object
 
-        ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
-        ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+      ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+      ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
 
-        float[][] base_Vertices = faceBaseVertices(f);
-        float[] G_face = faceCentroid(base_Vertices);
+      float[][] base_Vertices = faceBaseVertices(f);
+      float[] G_face = faceCentroid(base_Vertices);
 
-        float[][] new_EdgeVertices = new float[allFaces.nodes[f].length][3];
-        for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          int s_prev = (s + allFaces.nodes[f].length - 1) % allFaces.nodes[f].length;
-          for (int j = 0; j < 3; j++) {
-            new_EdgeVertices[s][j] = 0.5 * base_Vertices[s][j] + 0.5 * base_Vertices[s_prev][j];
-          }
+      float[][] new_EdgeVertices = new float[n][3];
+      for (int s = 0; s < n; s++) {
+        int s_prev = (s + n - 1) % n;
+        for (int j = 0; j < 3; j++) {
+          new_EdgeVertices[s][j] = 0.5 * base_Vertices[s][j] + 0.5 * base_Vertices[s_prev][j];
         }
+      }
 
-        int[] new_EdgeVertex_ids = new int[allFaces.nodes[f].length]; // on the edge
-        for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
-        }
+      int[] new_EdgeVertex_ids = new int[n]; // on the edge
+      for (int s = 0; s < n; s++) {
+        new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+      }
 
-        int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
+      int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
 
-        current_Material = allFaces.getMaterial(f);
-        current_Tessellation = allFaces.getTessellation(f);
-        current_Layer = allFaces.getLayer(f);
-        current_Visibility = allFaces.getVisibility(f);
+      current_Material = allFaces.getMaterial(f);
+      current_Tessellation = allFaces.getTessellation(f);
+      current_Layer = allFaces.getLayer(f);
+      current_Visibility = allFaces.getVisibility(f);
 
-        for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          int s_next = (s + 1) % allFaces.nodes[f].length;
+      for (int s = 0; s < n; s++) {
+        int s_next = (s + 1) % n;
 
-          int[] newFace_nodes = { new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_number };
-          int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+        int[] newFace_nodes = { new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_number };
+        int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
 
-          midList_Faces_nodes_L.add(newFace_nodes);
-          midList_Faces_options_L.add(newFace_options);
+        midList_Faces_nodes_L.add(newFace_nodes);
+        midList_Faces_options_L.add(newFace_options);
+      }
 
-          if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
-            newFaceIndices_L.add(f + s);
-          }
-        }
+      spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
 
-        spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
-        primary_list = this.remove_item_from_primary_list(q, primary_list);
+      // Keep any already-recorded new-face indices from previously processed (larger-index)
+      // faces in sync with this splice, then queue up this face's own new pieces.
+      for (int i = 0; i < newFaceIndices_L.size(); i++) {
+        if (newFaceIndices_L.get(i) > f) newFaceIndices_L.set(i, newFaceIndices_L.get(i) + netShift);
+      }
+      for (int s = 1; s < n; s++) { // the first tessellated face (s == 0) replaces the base face
+        newFaceIndices_L.add(f + s);
       }
     }
 
@@ -771,46 +792,49 @@ class solarchvision_Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
     ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int q = Select3D.Face_ids.length - 1; q >= 0; q--) {
+      int f = Select3D.Face_ids[q];
+      int OBJ_ID = this.findOwningGroupId(f);
+      if (OBJ_ID == -1) continue;
 
-      for (int q = primary_list.length - 1; q >= 0; q--) {
-        int f = primary_list[q];
-        if (!isFaceInGroupRange(f, OBJ_ID)) continue;
+      int n = allFaces.nodes[f].length;
+      int netShift = n - 1;
 
-        allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object
+      allGroups.inserted_nFaces(OBJ_ID, f, netShift); // because adding the faces also changes the end pointer of the same object
 
-        ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
-        ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+      ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+      ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
 
-        float[][] base_Vertices = faceBaseVertices(f);
-        float[] G_face = faceCentroid(base_Vertices);
-        int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
+      float[][] base_Vertices = faceBaseVertices(f);
+      float[] G_face = faceCentroid(base_Vertices);
+      int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
 
-        current_Material = allFaces.getMaterial(f);
-        current_Tessellation = allFaces.getTessellation(f);
-        current_Layer = allFaces.getLayer(f);
-        current_Visibility = allFaces.getVisibility(f);
+      current_Material = allFaces.getMaterial(f);
+      current_Tessellation = allFaces.getTessellation(f);
+      current_Layer = allFaces.getLayer(f);
+      current_Visibility = allFaces.getVisibility(f);
 
-        for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          int s_next = (s + 1) % allFaces.nodes[f].length;
+      for (int s = 0; s < n; s++) {
+        int s_next = (s + 1) % n;
 
-          int[] newFace_nodes = { allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number };
-          int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+        int[] newFace_nodes = { allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number };
+        int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
 
-          midList_Faces_nodes_L.add(newFace_nodes);
-          midList_Faces_options_L.add(newFace_options);
+        midList_Faces_nodes_L.add(newFace_nodes);
+        midList_Faces_options_L.add(newFace_options);
+      }
 
-          if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
-            newFaceIndices_L.add(f + s);
-          }
-        }
+      spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
 
-        spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
-        primary_list = this.remove_item_from_primary_list(q, primary_list);
+      // Keep any already-recorded new-face indices from previously processed (larger-index)
+      // faces in sync with this splice, then queue up this face's own new pieces.
+      for (int i = 0; i < newFaceIndices_L.size(); i++) {
+        if (newFaceIndices_L.get(i) > f) newFaceIndices_L.set(i, newFaceIndices_L.get(i) + netShift);
+      }
+      for (int s = 1; s < n; s++) { // the first tessellated face (s == 0) replaces the base face
+        newFaceIndices_L.add(f + s);
       }
     }
 
