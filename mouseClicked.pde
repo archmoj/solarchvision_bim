@@ -538,13 +538,7 @@ void mouseClicked () {
                           else if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setWeight      (f, User3D.default_Weight);
                         }
                         if (WIN3D.UI_TaskModifyParameter == 3) { // Assign(all)
-                          int OBJ_ID = 0;
-                          for (int i = 0; i < allGroups.num; i++) {
-                            if ((allGroups.Faces[i][0] <= f) && (f <= allGroups.Faces[i][1])) {
-                              OBJ_ID = i;
-                              break;
-                            }
-                          }
+                          int OBJ_ID = allGroups.findGroupContainingFace(f);
 
                           for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
                             if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.default_Material);
@@ -561,13 +555,7 @@ void mouseClicked () {
                           //?????????????????????????????????????????????????
                         }
                         if (WIN3D.UI_TaskModifyParameter == 2) { // Assign
-                          int OBJ_ID = 0;
-                          for (int i = 0; i < allGroups.num; i++) {
-                            if ((allGroups.Faces[i][0] <= f) && (f <= allGroups.Faces[i][1])) {
-                              OBJ_ID = i;
-                              break;
-                            }
-                          }
+                          int OBJ_ID = allGroups.findGroupContainingFace(f);
 
 
                           float[] P = Select3D.getPivot();
@@ -637,13 +625,7 @@ void mouseClicked () {
                             }
                           }
                         } else if (current_ObjectCategory == ObjectCategory.GROUP) {
-                          int OBJ_ID = 0;
-                          for (int i = 0; i < allGroups.num; i++) {
-                            if ((allGroups.Faces[i][0] <= f) && (f <= allGroups.Faces[i][1])) {
-                              OBJ_ID = i;
-                              break;
-                            }
-                          }
+                          int OBJ_ID = allGroups.findGroupContainingFace(f);
 
                           for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
                             int n = allFaces.nodes[q].length;

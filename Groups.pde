@@ -515,7 +515,16 @@ class solarchvision_Groups {
   }
 
 
-
+  int findGroupContainingFace (int f) {
+    int OBJ_ID = 0;
+    for (int i = 0; i < this.num; i++) {
+      if ((this.Faces[i][0] <= f) && (f <= this.Faces[i][1])) {
+        OBJ_ID = i;
+        break;
+      }
+    }
+    return OBJ_ID;
+  }
 
 
   public void to_XML (XML xml) {
