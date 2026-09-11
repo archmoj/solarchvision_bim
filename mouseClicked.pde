@@ -12,6 +12,21 @@ private void SOLARCHVISION_selectNewlyCreated(int countBefore, int countAfter, R
   Select3D.calculate_BoundingBox();
 }
 
+private void SOLARCHVISION_stopAllRecording() {
+  STUDY.record_AUTO = false;
+  STUDY.record_IMG = false;
+  STUDY.record_PDF = false;
+  WORLD.record_AUTO = false;
+  WORLD.record_IMG = false;
+  WORLD.record_PDF = false;
+  WIN3D.record_AUTO = false;
+  WIN3D.record_IMG = false;
+  FRAME_record_AUTO = false;
+  FRAME_record_IMG = false;
+  FRAME_click_IMG = false;
+  FRAME_drag_IMG = false;
+}
+
 void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
@@ -1558,87 +1573,40 @@ private void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_view_changed();
   });
 
+  // Each of these 5 menu actions used to reset the same 12 recording
+  // flags to false and then flip exactly one of them true. Pulling the
+  // reset into SOLARCHVISION_stopAllRecording() means each action states
+  // only what's actually different: which flag turns on.
   SOLARCHVISION_menuActions.put("Stop REC.", () -> {
-    STUDY.record_AUTO = false;
-    STUDY.record_IMG = false;
-    STUDY.record_PDF = false;
-    WORLD.record_AUTO = false;
-    WORLD.record_IMG = false;
-    WORLD.record_PDF = false;
-    WIN3D.record_AUTO = false;
-    WIN3D.record_IMG = false;
-    FRAME_record_AUTO = false;
-    FRAME_record_IMG = false;
-    FRAME_click_IMG = false;
-    FRAME_drag_IMG = false;
+    SOLARCHVISION_stopAllRecording();
 
     ROLLOUT.revise();
   });
 
   SOLARCHVISION_menuActions.put("REC. Time Graph", () -> {
+    SOLARCHVISION_stopAllRecording();
     STUDY.record_AUTO = true;
-    STUDY.record_IMG = false;
-    STUDY.record_PDF = false;
-    WORLD.record_AUTO = false;
-    WORLD.record_IMG = false;
-    WORLD.record_PDF = false;
-    WIN3D.record_AUTO = false;
-    WIN3D.record_IMG = false;
-    FRAME_record_AUTO = false;
-    FRAME_record_IMG = false;
-    FRAME_click_IMG = false;
-    FRAME_drag_IMG = false;
 
     ROLLOUT.revise();
   });
 
   SOLARCHVISION_menuActions.put("REC. Location Graph", () -> {
-    STUDY.record_AUTO = false;
-    STUDY.record_IMG = false;
-    STUDY.record_PDF = false;
+    SOLARCHVISION_stopAllRecording();
     WORLD.record_AUTO = true;
-    WORLD.record_IMG = false;
-    WORLD.record_PDF = false;
-    WIN3D.record_AUTO = false;
-    WIN3D.record_IMG = false;
-    FRAME_record_AUTO = false;
-    FRAME_record_IMG = false;
-    FRAME_click_IMG = false;
-    FRAME_drag_IMG = false;
 
     ROLLOUT.revise();
   });
 
   SOLARCHVISION_menuActions.put("REC. Solid Graph", () -> {
-    STUDY.record_AUTO = false;
-    STUDY.record_IMG = false;
-    STUDY.record_PDF = false;
-    WORLD.record_AUTO = false;
-    WORLD.record_IMG = false;
-    WORLD.record_PDF = false;
+    SOLARCHVISION_stopAllRecording();
     WIN3D.record_AUTO = true;
-    WIN3D.record_IMG = false;
-    FRAME_record_AUTO = false;
-    FRAME_record_IMG = false;
-    FRAME_click_IMG = false;
-    FRAME_drag_IMG = false;
 
     ROLLOUT.revise();
   });
 
   SOLARCHVISION_menuActions.put("REC. Screenshot", () -> {
-    STUDY.record_AUTO = false;
-    STUDY.record_IMG = false;
-    STUDY.record_PDF = false;
-    WORLD.record_AUTO = false;
-    WORLD.record_IMG = false;
-    WORLD.record_PDF = false;
-    WIN3D.record_AUTO = false;
-    WIN3D.record_IMG = false;
+    SOLARCHVISION_stopAllRecording();
     FRAME_record_AUTO = true;
-    FRAME_record_IMG = false;
-    FRAME_click_IMG = false;
-    FRAME_drag_IMG = false;
 
     ROLLOUT.revise();
   });
