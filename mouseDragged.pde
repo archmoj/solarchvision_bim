@@ -172,27 +172,47 @@ void orbitCamera(float dx, float dy) {
 void handleTruckOrbitTask(float dx, float dy) {
   if (WIN3D.UI_TaskModifyParameter == 0) { // Truck
     if (WIN3D.UI_OptionXorY == 0) {
-      if (mouseButton == LEFT) WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
-      if (mouseButton == RIGHT) WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
-      SOLARCHVISION_view_changed();
+      if (mouseButton == LEFT) {
+        WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
+        SOLARCHVISION_view_changed();
+      }
+      if (mouseButton == RIGHT) {
+        WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
+        SOLARCHVISION_view_changed();
+      }
     }
     if (WIN3D.UI_OptionXorY == 1) {
-      if (mouseButton == RIGHT) WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
-      if (mouseButton == LEFT) WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
-      SOLARCHVISION_view_changed();
+      if (mouseButton == RIGHT) {
+        WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
+        SOLARCHVISION_view_changed();
+      }
+      if (mouseButton == LEFT) {
+        WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
+        SOLARCHVISION_view_changed();
+      }
     }
   }
 
   if (WIN3D.UI_TaskModifyParameter == 1) { // Orbit
     if (WIN3D.UI_OptionXorY == 0) {
-      if (mouseButton == LEFT) WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
-      if (mouseButton == RIGHT) WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
-      SOLARCHVISION_view_changed();
+      if (mouseButton == LEFT) {
+        WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
+        SOLARCHVISION_view_changed();
+      }
+      if (mouseButton == RIGHT) {
+        WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
+        SOLARCHVISION_view_changed();
+      }
     }
     if (WIN3D.UI_OptionXorY == 1) {
-      if (mouseButton == RIGHT) WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
-      if (mouseButton == LEFT) WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
-      SOLARCHVISION_view_changed();
+      if (mouseButton == RIGHT) {
+        WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
+        SOLARCHVISION_view_changed();
+      }
+      if (mouseButton == LEFT) {
+        WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
+        SOLARCHVISION_view_changed();
+      }
     }
   }
 }
