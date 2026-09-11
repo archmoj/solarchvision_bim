@@ -636,9 +636,7 @@ void mouseClicked () {
                               }
                             }
                           }
-                        }
-
-                        if (current_ObjectCategory == ObjectCategory.GROUP) {
+                        } else if (current_ObjectCategory == ObjectCategory.GROUP) {
                           int OBJ_ID = 0;
                           for (int i = 0; i < allGroups.num; i++) {
                             if ((allGroups.Faces[i][0] <= f) && (f <= allGroups.Faces[i][1])) {
@@ -736,10 +734,7 @@ void mouseClicked () {
                               allFaces.nodes[f][j] = tmpFace[(j + min_num + n) % n];
                             }
                           }
-                        }
-
-
-                        if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+                        } else if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
                           Select3D.Polyline_ids = new int [1];
                           Select3D.Polyline_ids[0] = f;
@@ -817,10 +812,7 @@ void mouseClicked () {
                           }
                         }
                       }
-                    }
-
-
-                    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                    } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
 
                       int OBJ_ID = int(RxP[0]);
 
