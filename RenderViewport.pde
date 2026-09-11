@@ -107,8 +107,8 @@ void SOLARCHVISION_RenderViewport () {
           valuesSUM_RAD += SunMask; // direct radiation
         }
 
-        float[] COL = PAINT.getColorStyle(19, 0.125 * valuesSUM_RAD);
-        Render_RGBA.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
+        float v = valuesSUM_RAD * 150;
+        Render_RGBA.pixels[np] = color(v, v, v, 255);
       } else {
         Render_RGBA.pixels[np] = color(0, 0, 0, 0);
       }
