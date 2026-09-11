@@ -701,9 +701,7 @@ class solarchvision_STUDY {
 
             float _u = PAL_multiplier * prob_V;
 
-            if (PAL_direction == -1) _u = 1 - _u;
-            if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_direction == 2) _u =  0.5 * _u;
+            _u = applyPalDirection(_u, PAL_direction);
 
             float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
@@ -750,9 +748,7 @@ class solarchvision_STUDY {
 
       float _u = PAL_multiplier * prob_V;
 
-      if (PAL_direction == -1) _u = 1 - _u;
-      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_direction == 2) _u =  0.5 * _u;
+      _u = applyPalDirection(_u, PAL_direction);
 
       float[] COL = PAINT.getColorStyle(PAL_type, _u);
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -812,9 +808,7 @@ class solarchvision_STUDY {
 
       float _u = 0.5 + 0.5 * (PAL_multiplier * sort_V);
 
-      if (PAL_direction == -1) _u = 1 - _u;
-      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_direction == 2) _u =  0.5 * _u;
+      _u = applyPalDirection(_u, PAL_direction);
 
       float[] COL = PAINT.getColorStyle(PAL_type, _u);
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -854,9 +848,7 @@ class solarchvision_STUDY {
 
       float _u = 0.5 + 0.5 * (PAL_multiplier * sort_V);
 
-      if (PAL_direction == -1) _u = 1 - _u;
-      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_direction == 2) _u =  0.5 * _u;
+      _u = applyPalDirection(_u, PAL_direction);
 
       float[] COL = PAINT.getColorStyle(PAL_type, _u);
       this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -1891,9 +1883,7 @@ class solarchvision_STUDY {
                       if (this.Impact_TYPE == Impact_PASSIVE) {
                         _u = 0.5 + 0.5 * (PAL_multiplier * T);
 
-                        if (PAL_direction == -1) _u = 1 - _u;
-                        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                        if (PAL_direction == 2) _u =  0.5 * _u;
+                        _u = applyPalDirection(_u, PAL_direction);
 
                         float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
@@ -2004,9 +1994,7 @@ class solarchvision_STUDY {
                       if (this.Impact_TYPE == Impact_PASSIVE) {
                         _u = 0.5 + 0.5 * (PAL_multiplier * T);
 
-                        if (PAL_direction == -1) _u = 1 - _u;
-                        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                        if (PAL_direction == 2) _u =  0.5 * _u;
+                        _u = applyPalDirection(_u, PAL_direction);
 
                         float[] COL = PAINT.getColorStyle(PAL_type, _u);
                         total_WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
@@ -2073,9 +2061,7 @@ class solarchvision_STUDY {
 
           if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.1 * q;
 
-          if (PAL_direction == -1) _u = 1 - _u;
-          if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_direction == 2) _u =  0.5 * _u;
+          _u = applyPalDirection(_u, PAL_direction);
 
           float[] COL = PAINT.getColorStyle(PAL_type, _u);
           this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -2279,9 +2265,7 @@ class solarchvision_STUDY {
           if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
           if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
 
-          if (PAL_direction == -1) _u = 1 - _u;
-          if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_direction == 2) _u =  0.5 * _u;
+          _u = applyPalDirection(_u, PAL_direction);
 
           float[] COL = PAINT.getColorStyle(PAL_type, _u);
           this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -2541,9 +2525,7 @@ class solarchvision_STUDY {
                   if (this.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
                   if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
 
-                  if (PAL_direction == -1) _u = 1 - _u;
-                  if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_direction == 2) _u =  0.5 * _u;
+                  _u = applyPalDirection(_u, PAL_direction);
 
                   //float[] COL = PAINT.getColorStyle(PAL_type, _u);
                   float[] COL = PAINT.getColorStyle(PAL_type, funcs.roundTo(_u, 0.1));
@@ -2625,9 +2607,7 @@ class solarchvision_STUDY {
               if (this.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
               if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
 
-              if (PAL_direction == -1) _u = 1 - _u;
-              if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_direction == 2) _u =  0.5 * _u;
+              _u = applyPalDirection(_u, PAL_direction);
 
               //float[] COL = PAINT.getColorStyle(PAL_type, _u);
               float[] COL = PAINT.getColorStyle(PAL_type, funcs.roundTo(_u, 0.1));
@@ -2701,9 +2681,7 @@ class solarchvision_STUDY {
         if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
         if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
 
-        if (PAL_direction == -1) _u = 1 - _u;
-        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_direction == 2) _u =  0.5 * _u;
+        _u = applyPalDirection(_u, PAL_direction);
 
         float[] COL = PAINT.getColorStyle(PAL_type, _u);
         this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -2886,9 +2864,7 @@ class solarchvision_STUDY {
                     if (this.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
                     if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
 
-                    if (PAL_direction == -1) _u = 1 - _u;
-                    if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                    if (PAL_direction == 2) _u =  0.5 * _u;
+                    _u = applyPalDirection(_u, PAL_direction);
 
                     float[] COL = PAINT.getColorStyle(PAL_type, _u);
                     this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -2956,9 +2932,7 @@ class solarchvision_STUDY {
         if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
         if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
 
-        if (PAL_direction == -1) _u = 1 - _u;
-        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_direction == 2) _u =  0.5 * _u;
+        _u = applyPalDirection(_u, PAL_direction);
 
         float[] COL = PAINT.getColorStyle(PAL_type, _u);
         this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -3079,9 +3053,7 @@ class solarchvision_STUDY {
         if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) _u = 0.1 * q;
         if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) _u = 0.2 * q - 0.5;
 
-        if (PAL_direction == -1) _u = 1 - _u;
-        if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_direction == 2) _u =  0.5 * _u;
+        _u = applyPalDirection(_u, PAL_direction);
 
         float[] COL = PAINT.getColorStyle(PAL_type, _u);
         this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);

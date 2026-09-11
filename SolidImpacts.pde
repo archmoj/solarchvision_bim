@@ -513,9 +513,7 @@ class solarchvision_SolidImpacts {
 
           float _u = PAL_multiplier * val + 0.5;
 
-          if (PAL_direction == -1) _u = 1 - _u;
-          if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_direction == 2) _u =  0.5 * _u;
+          _u = applyPalDirection(_u, PAL_direction);
 
           float[] COL = PAINT.getColorStyle(PAL_type, _u);
 

@@ -115,9 +115,7 @@ class solarchvision_WindFlow {
             float _val = allWindFlows.palette_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
             float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
-            if (PAL_direction == -1) _u = 1 - _u;
-            if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_direction == 2) _u =  0.5 * _u;
+            _u = applyPalDirection(_u, PAL_direction);
 
             float the_dist = dist(x1, y1, z1, x2, y2, z2);
 
@@ -228,9 +226,7 @@ class solarchvision_WindFlow {
           float _val = this.palette_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
           float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
-          if (PAL_direction == -1) _u = 1 - _u;
-          if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_direction == 2) _u =  0.5 * _u;
+          _u = applyPalDirection(_u, PAL_direction);
 
           float[] COL = PAINT.getColorStyle(PAL_type, _u);
 

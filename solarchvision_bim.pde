@@ -2665,6 +2665,15 @@ void progressBarHeader () {
   println(".........|.........|.........|.........|.........|.........|.........|.........|.........|.........|");
 }
 
+
+float applyPalDirection (float u, int PAL_direction) {
+  if (PAL_direction == -1) return 1 - u;
+  if (PAL_direction == -2) return 0.5 - 0.5 * u;
+  if (PAL_direction == 2)  return 0.5 * u;
+  return u;
+}
+
+
 // TODOs:
 
 /*

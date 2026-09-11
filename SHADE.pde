@@ -12,13 +12,6 @@ class solarchvision_SHADE {
   private final static int Vertex_Elevation   = 6;
   private final static int Options_num        = 7;
 
-  float applyPalDirection (float u, int PAL_direction) {
-    if (PAL_direction == -1) return 1 - u;
-    if (PAL_direction == -2) return 0.5 - 0.5 * u;
-    if (PAL_direction == 2)  return 0.5 * u;
-    return u;
-  }
-
   float impactValueToU (float val, float PAL_multiplier) {
     float _u = FLOAT_undefined;
     if (WIN3D.Impact_TYPE == Impact_ACTIVE)  _u = (0.1 * PAL_multiplier * val);
@@ -54,7 +47,7 @@ class solarchvision_SHADE {
     );
     float _u = FLOAT_undefined;
     if (is_defined(val)) {
-      _u = this.applyPalDirection(this.impactValueToU(val, PAL_multiplier), PAL_direction);
+      _u = applyPalDirection(this.impactValueToU(val, PAL_multiplier), PAL_direction);
     }
     return _u;
   }
@@ -89,7 +82,7 @@ class solarchvision_SHADE {
     allSolidImpacts.complex = 0;
     float val = allSolidImpacts.get_Impact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
     float _u = 0.5 + 0.5 * (PAL_multiplier * val);
-    return this.applyPalDirection(_u, PAL_direction);
+    return applyPalDirection(_u, PAL_direction);
   }
 
   float[] vertexRender_Vertex_Elevation (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
@@ -99,7 +92,7 @@ class solarchvision_SHADE {
 
   float vertexU_Vertex_Elevation (float[] VERTEX_now, int PAL_type, int PAL_direction, float PAL_multiplier) {
     float _u = 0.5 + 0.5 * (PAL_multiplier * VERTEX_now[2]);
-    return this.applyPalDirection(_u, PAL_direction);
+    return applyPalDirection(_u, PAL_direction);
   }
 
   float[] vertexRender_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_type, int PAL_direction, float PAL_multiplier) {
@@ -142,7 +135,7 @@ class solarchvision_SHADE {
 
     float _u = FLOAT_undefined;
     if (is_defined(valuesSUM)) {
-      _u = this.applyPalDirection(this.impactValueToU(valuesSUM, PAL_multiplier), PAL_direction);
+      _u = applyPalDirection(this.impactValueToU(valuesSUM, PAL_multiplier), PAL_direction);
     }
     return _u;
   }

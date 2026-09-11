@@ -393,9 +393,7 @@ class solarchvision_Sun3D {
                     if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * sun_V);
                     if (WIN3D.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * sun_V);
 
-                    if (PAL_direction == -1) _u = 1 - _u;
-                    if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                    if (PAL_direction == 2) _u =  0.5 * _u;
+                    _u = applyPalDirection(_u, PAL_direction);
 
                     float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
@@ -843,9 +841,7 @@ class solarchvision_Sun3D {
                       if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
                       if (WIN3D.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
 
-                      if (PAL_direction == -1) _u = 1 - _u;
-                      if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                      if (PAL_direction == 2) _u =  0.5 * _u;
+                      _u = applyPalDirection(_u, PAL_direction);
 
                       float[] COL = PAINT.getColorStyle(PAL_type, _u);
 

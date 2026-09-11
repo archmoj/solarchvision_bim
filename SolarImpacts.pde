@@ -327,9 +327,7 @@ class solarchvision_SolarImpacts {
                   //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> valuesSUM =", valuesSUM);
                   //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> valuesSUM =", valuesSUM);
 
-                  if (PAL_direction == -1) _u = 1 - _u;
-                  if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_direction == 2) _u =  0.5 * _u;
+                  _u = applyPalDirection(_u, PAL_direction);
 
                   _c = PAINT.getColorStyle(PAL_type, _u);
 
@@ -415,9 +413,7 @@ class solarchvision_SolarImpacts {
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
               }
 
-              if (PAL_direction == -1) _u = 1 - _u;
-              if (PAL_direction == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_direction == 2) _u =  0.5 * _u;
+              _u = applyPalDirection(_u, PAL_direction);
 
               _c = PAINT.getColorStyle(PAL_type, _u);
 
