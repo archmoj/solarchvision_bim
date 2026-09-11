@@ -1839,29 +1839,7 @@ class solarchvision_STUDY {
 
 
 
-  void plotImpact (float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
-
-    this.graphics.pushMatrix();
-    this.graphics.translate(x_Plot, y_Plot);
-
-    float keep_STUDY_perDays = this.perDays;
-    int keep_STUDY_joinDays = this.joinDays;
-
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-
-      this.perDays = 1;
-      this.joinDays = 1;
-    }
-
-    int[] startK_endK = get_startK_endK();
-    int start_k = startK_endK[0];
-    int end_k = startK_endK[1];
-    int count_k = 1 + end_k - start_k;
-    if (count_k < 0) count_k = 0;
-
-
-    if ((this.PlotImpacts == PlotImpacts_WIND_ACTIVE) || (this.PlotImpacts == PlotImpacts_WIND_PASSIVE)) {
+  private void plotImpact_wind (int start_k, int end_k, int count_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
       allWindRoses.resize_Image_array();
 
@@ -2217,12 +2195,10 @@ class solarchvision_STUDY {
       if (allWindRoses.displayImage) {
         SOLARCHVISION_view_changed();
       }
-    }
+  }
 
 
-
-
-    if ((this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) || (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE)) {
+  private void plotImpact_urban (int start_k, int end_k, float sx_Plot) {
 
       if (this.Impacts_update) {
 
@@ -2417,11 +2393,10 @@ class solarchvision_STUDY {
         SOLARCHVISION_view_changed();
       }
 
-    }
+  }
 
 
-
-    if ((this.PlotImpacts == PlotImpacts_GLOBAL_ACTIVE) || (this.PlotImpacts == PlotImpacts_GLOBAL_PASSIVE)) {
+  private void plotImpact_global (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
       if (GlobalSolar_rebuild_array) {
         GlobalSolar_resize_array();
@@ -2820,10 +2795,10 @@ class solarchvision_STUDY {
       }
 
       this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
-    }
+  }
 
 
-    if ((this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) || (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE)) {
+  private void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
       if (this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
       if (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
@@ -3055,10 +3030,10 @@ class solarchvision_STUDY {
         }
       }
 
-    }
+  }
 
 
-    if ((this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) || (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE)) {
+  private void plotImpact_cycles (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
       int l = this.ImpactLayer;
 
@@ -3166,6 +3141,56 @@ class solarchvision_STUDY {
         }
       }
 
+  }
+
+
+  void plotImpact (float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+
+    this.graphics.pushMatrix();
+    this.graphics.translate(x_Plot, y_Plot);
+
+    float keep_STUDY_perDays = this.perDays;
+    int keep_STUDY_joinDays = this.joinDays;
+
+    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
+        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+
+      this.perDays = 1;
+      this.joinDays = 1;
+    }
+
+    int[] startK_endK = get_startK_endK();
+    int start_k = startK_endK[0];
+    int end_k = startK_endK[1];
+    int count_k = 1 + end_k - start_k;
+    if (count_k < 0) count_k = 0;
+
+
+    if ((this.PlotImpacts == PlotImpacts_WIND_ACTIVE) || (this.PlotImpacts == PlotImpacts_WIND_PASSIVE)) {
+      this.plotImpact_wind(start_k, end_k, count_k, x_Plot, y_Plot, sx_Plot, sy_Plot);
+    }
+
+
+
+
+    if ((this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) || (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE)) {
+      this.plotImpact_urban(start_k, end_k, sx_Plot);
+    }
+
+
+
+    if ((this.PlotImpacts == PlotImpacts_GLOBAL_ACTIVE) || (this.PlotImpacts == PlotImpacts_GLOBAL_PASSIVE)) {
+      this.plotImpact_global(start_k, end_k, x_Plot, y_Plot, sx_Plot, sy_Plot);
+    }
+
+
+    if ((this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) || (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE)) {
+      this.plotImpact_sunpath(start_k, end_k, x_Plot, y_Plot, sx_Plot, sy_Plot);
+    }
+
+
+    if ((this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) || (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE)) {
+      this.plotImpact_cycles(start_k, end_k, x_Plot, y_Plot, sx_Plot, sy_Plot);
     }
 
 
