@@ -1841,258 +1841,147 @@ class solarchvision_STUDY {
 
   private void plotImpact_wind (int start_k, int end_k, int count_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-      allWindRoses.resize_Image_array();
+    allWindRoses.resize_Image_array();
 
-      int RES = allWindRoses.RES;
+    int RES = allWindRoses.RES;
 
-      allWindRoses.renderedRES = RES;
+    allWindRoses.renderedRES = RES;
 
-      if (this.PlotImpacts == PlotImpacts_WIND_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == PlotImpacts_WIND_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
+    if (this.PlotImpacts == PlotImpacts_WIND_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+    if (this.PlotImpacts == PlotImpacts_WIND_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
-      float Pa = FLOAT_undefined;
-      float Pb = FLOAT_undefined;
-      float Pc = FLOAT_undefined;
+    float Pa = FLOAT_undefined;
+    float Pb = FLOAT_undefined;
+    float Pc = FLOAT_undefined;
 
-      float[] values_W_dir;
-      float[] values_W_spd;
-      float[] values_W_tmp;
-      values_W_dir = new float [count_k];
-      values_W_spd = new float [count_k];
-      values_W_tmp = new float [count_k];
+    float[] values_W_dir;
+    float[] values_W_spd;
+    float[] values_W_tmp;
+    values_W_dir = new float [count_k];
+    values_W_spd = new float [count_k];
+    values_W_tmp = new float [count_k];
 
-      for (int k = 0; k < count_k; k++) {
-        values_W_dir[k] = FLOAT_undefined;
-        values_W_spd[k] = FLOAT_undefined;
-        values_W_tmp[k] = FLOAT_undefined;
-      }
+    for (int k = 0; k < count_k; k++) {
+      values_W_dir[k] = FLOAT_undefined;
+      values_W_spd[k] = FLOAT_undefined;
+      values_W_tmp[k] = FLOAT_undefined;
+    }
 
-      int PAL_type = 0;
-      int PAL_direction = 1;
+    int PAL_type = 0;
+    int PAL_direction = 1;
 
-      if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_palette_CLR;
-        PAL_direction = this.ACTIVE_palette_DIR;
-      }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
-        //PAL_type = this.ACTIVE_palette_CLR; PAL_direction = this.ACTIVE_palette_DIR;
-        PAL_type = 12;
-        PAL_direction = -1;
-      }
+    if (this.Impact_TYPE == Impact_ACTIVE) {
+      PAL_type = this.ACTIVE_palette_CLR;
+      PAL_direction = this.ACTIVE_palette_DIR;
+    }
+    if (this.Impact_TYPE == Impact_PASSIVE) {
+      //PAL_type = this.ACTIVE_palette_CLR; PAL_direction = this.ACTIVE_palette_DIR;
+      PAL_type = 12;
+      PAL_direction = -1;
+    }
 
-      float PAL_multiplier = 1;
-      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0;
-      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 1.0 / 30.0;
+    float PAL_multiplier = 1;
+    if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0;
+    if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 1.0 / 30.0;
 
-      for (int j = this.j_Start; j < this.j_End; j++) {
+    for (int j = this.j_Start; j < this.j_End; j++) {
 
-        PGraphics WIND_graphics = createGraphics(RES, RES);
-        WIND_graphics.beginDraw();
-        //WIND_graphics.background(255);
-        WIND_graphics.translate(0.5 * RES, 0.5 * RES);
+      PGraphics WIND_graphics = createGraphics(RES, RES);
+      WIND_graphics.beginDraw();
+      //WIND_graphics.background(255);
+      WIND_graphics.translate(0.5 * RES, 0.5 * RES);
 
-        for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
-          for (int i = 0; i < 24; i++) {
-            if (this.isInHourlyRange(i)) {
+      for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
+        for (int i = 0; i < 24; i++) {
+          if (this.isInHourlyRange(i)) {
 
-              for (int k = 0; k < count_k; k++) {
+            for (int k = 0; k < count_k; k++) {
 
-                values_W_dir[k] = FLOAT_undefined;
-                values_W_spd[k] = FLOAT_undefined;
-                values_W_tmp[k] = FLOAT_undefined;
+              values_W_dir[k] = FLOAT_undefined;
+              values_W_spd[k] = FLOAT_undefined;
+              values_W_tmp[k] = FLOAT_undefined;
 
-                int _plot = 1;
+              int _plot = 1;
 
-                if (_plot == 1) {
+              if (_plot == 1) {
 
-                  int now_k = k + start_k;
-                  int now_i = i;
-                  int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
+                int now_k = k + start_k;
+                int now_i = i;
+                int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
 
-                  if (now_j >= 365) {
-                    now_j = now_j % 365;
-                  }
-                  if (now_j < 0) {
-                    now_j = (now_j + 365) % 365;
-                  }
-
-                  Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
-                  Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
-                  Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
-
-                  if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc)) {
-                    values_W_dir[k] = FLOAT_undefined;
-                    values_W_spd[k] = FLOAT_undefined;
-                    values_W_tmp[k] = FLOAT_undefined;
-                  } else {
-                    int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
-
-                    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) memberCount = 0;
-
-                    if (memberCount == 1) {
-
-                      values_W_dir[k] = Pa;
-                      values_W_spd[k] = Pb;
-                      values_W_tmp[k] = Pc;
-
-                      float T = values_W_tmp[k];
-                      float teta = values_W_dir[k];
-                      float D_teta = 15;
-                      float R = (0.5 * RES) * (LAYER_windspd.V_scale / 2.0) * (values_W_spd[k] / 50.0);
-
-                      float R_in = 0; //0.75 * R;
-                      float x1 = R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
-                      float y1 = R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
-                      float x2 = R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
-                      float y2 = R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
-
-                      float x4 = R * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
-                      float y4 = R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
-                      float x3 = R * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
-                      float y3 = R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
-
-                      float _u = 0;
-
-                      if (this.Impact_TYPE == Impact_ACTIVE) {
-
-                        float _s = (this.O_scale / 100) * 255 / (0.333 * count_k);
-
-                        if (this.skyScenario > 1) _s *= 3; // to improve visibility of those cases.
-
-                        _s /= float(this.joinDays);
-
-                        if (_s < 10) _s = 10;
-
-                        WIND_graphics.stroke(0, _s);
-                        WIND_graphics.fill(0, _s);
-
-                        WIND_graphics.strokeWeight(this.T_scale * 0);
-                      }
-                      if (this.Impact_TYPE == Impact_PASSIVE) {
-                        _u = 0.5 + 0.5 * (PAL_multiplier * T);
-
-                        _u = applyPalDirection(_u, PAL_direction);
-
-                        float[] COL = PAINT.getColorStyle(PAL_type, _u);
-
-                        WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-
-                        WIND_graphics.strokeWeight(this.T_scale * 2);
-                        WIND_graphics.noFill();
-                      }
-
-                      WIND_graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-                    }
-                  }
+                if (now_j >= 365) {
+                  now_j = now_j % 365;
                 }
-              }
-            }
-          }
-        }
-        WIND_graphics.endDraw();
-        allWindRoses.Image[j + 1] = WIND_graphics;
-      }
+                if (now_j < 0) {
+                  now_j = (now_j + 365) % 365;
+                }
 
+                Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
+                Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
+                Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
 
+                if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc)) {
+                  values_W_dir[k] = FLOAT_undefined;
+                  values_W_spd[k] = FLOAT_undefined;
+                  values_W_tmp[k] = FLOAT_undefined;
+                } else {
+                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
+                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) memberCount = 0;
 
-      PGraphics total_WIND_graphics = createGraphics(RES, RES);
-      total_WIND_graphics.beginDraw();
-      //total_WIND_graphics.background(255);
-      total_WIND_graphics.translate(0.5 * RES, 0.5 * RES);
+                  if (memberCount == 1) {
 
-      for (int j = this.j_Start; j < this.j_End; j++) {
-        for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
-          for (int i = 0; i < 24; i++) {
-            if (this.isInHourlyRange(i)) {
+                    values_W_dir[k] = Pa;
+                    values_W_spd[k] = Pb;
+                    values_W_tmp[k] = Pc;
 
-              for (int k = 0; k < count_k; k++) {
+                    float T = values_W_tmp[k];
+                    float teta = values_W_dir[k];
+                    float D_teta = 15;
+                    float R = (0.5 * RES) * (LAYER_windspd.V_scale / 2.0) * (values_W_spd[k] / 50.0);
 
-                values_W_dir[k] = FLOAT_undefined;
-                values_W_spd[k] = FLOAT_undefined;
-                values_W_tmp[k] = FLOAT_undefined;
+                    float R_in = 0; //0.75 * R;
+                    float x1 = R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
+                    float y1 = R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
+                    float x2 = R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
+                    float y2 = R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
 
-                int _plot = 1;
+                    float x4 = R * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
+                    float y4 = R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
+                    float x3 = R * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
+                    float y3 = R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
 
-                if (_plot == 1) {
+                    float _u = 0;
 
-                  int now_k = k + start_k;
-                  int now_i = i;
-                  int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
+                    if (this.Impact_TYPE == Impact_ACTIVE) {
 
-                  if (now_j >= 365) {
-                    now_j = now_j % 365;
-                  }
-                  if (now_j < 0) {
-                    now_j = (now_j + 365) % 365;
-                  }
+                      float _s = (this.O_scale / 100) * 255 / (0.333 * count_k);
 
-                  Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
-                  Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
-                  Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
+                      if (this.skyScenario > 1) _s *= 3; // to improve visibility of those cases.
 
-                  if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc)) {
-                    values_W_dir[k] = FLOAT_undefined;
-                    values_W_spd[k] = FLOAT_undefined;
-                    values_W_tmp[k] = FLOAT_undefined;
-                  } else {
-                    int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                      _s /= float(this.joinDays);
 
-                    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) memberCount = 0;
+                      if (_s < 10) _s = 10;
 
-                    if (memberCount == 1) {
+                      WIND_graphics.stroke(0, _s);
+                      WIND_graphics.fill(0, _s);
 
-                      values_W_dir[k] = Pa;
-                      values_W_spd[k] = Pb;
-                      values_W_tmp[k] = Pc;
-
-                      float T = values_W_tmp[k];
-                      float teta = values_W_dir[k];
-                      float D_teta = 15;
-                      float R = (0.5 * RES) * (LAYER_windspd.V_scale / 2.0) * (values_W_spd[k] / 50.0);
-
-                      float R_in = 0; //0.75 * R;
-                      float x1 = R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
-                      float y1 = R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
-                      float x2 = R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
-                      float y2 = R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
-
-                      float x4 = R * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
-                      float y4 = R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
-                      float x3 = R * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
-                      float y3 = R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
-
-                      float _u = 0;
-
-                      if (this.Impact_TYPE == Impact_ACTIVE) {
-
-                        float _s = (this.O_scale / 100) * 255 / (0.333 * count_k) / (this.j_End - this.j_Start);
-
-                        if (this.skyScenario > 1) _s *= 3; // to improve visibility of those cases.
-
-                        _s /= float(this.joinDays);
-
-                        if (_s < 10) _s = 10;
-
-                        total_WIND_graphics.stroke(0, _s);
-                        total_WIND_graphics.fill(0, _s);
-
-                        total_WIND_graphics.strokeWeight(this.T_scale * 0);
-                      }
-                      if (this.Impact_TYPE == Impact_PASSIVE) {
-                        _u = 0.5 + 0.5 * (PAL_multiplier * T);
-
-                        _u = applyPalDirection(_u, PAL_direction);
-
-                        float[] COL = PAINT.getColorStyle(PAL_type, _u);
-                        total_WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-
-                        total_WIND_graphics.strokeWeight(this.T_scale * 2);
-                        total_WIND_graphics.noFill();
-                      }
-
-                      total_WIND_graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                      WIND_graphics.strokeWeight(this.T_scale * 0);
                     }
+                    if (this.Impact_TYPE == Impact_PASSIVE) {
+                      _u = 0.5 + 0.5 * (PAL_multiplier * T);
+
+                      _u = applyPalDirection(_u, PAL_direction);
+
+                      float[] COL = PAINT.getColorStyle(PAL_type, _u);
+
+                      WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
+                      WIND_graphics.strokeWeight(this.T_scale * 2);
+                      WIND_graphics.noFill();
+                    }
+
+                    WIND_graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
                   }
                 }
               }
@@ -2100,310 +1989,235 @@ class solarchvision_STUDY {
           }
         }
       }
-      total_WIND_graphics.endDraw();
-      allWindRoses.Image[0] = total_WIND_graphics;
+      WIND_graphics.endDraw();
+      allWindRoses.Image[j + 1] = WIND_graphics;
+    }
 
-      for (int j = this.j_Start - 1; j < this.j_End; j++) {
-        if ((j != -1) || (this.impact_summary)) {
-          this.graphics.strokeWeight(this.T_scale * 0);
-          this.graphics.stroke(223);
-          this.graphics.fill(223);
-          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
-          this.graphics.strokeWeight(this.T_scale * 2);
-          this.graphics.stroke(255);
-          this.graphics.noFill();
-          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
-          this.graphics.imageMode(CENTER);
-          this.graphics.image(allWindRoses.Image[j + 1], (j + 100 * this.rect_scale) * sx_Plot, 0, int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
+
+    PGraphics total_WIND_graphics = createGraphics(RES, RES);
+    total_WIND_graphics.beginDraw();
+    //total_WIND_graphics.background(255);
+    total_WIND_graphics.translate(0.5 * RES, 0.5 * RES);
+
+    for (int j = this.j_Start; j < this.j_End; j++) {
+      for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
+        for (int i = 0; i < 24; i++) {
+          if (this.isInHourlyRange(i)) {
+
+            for (int k = 0; k < count_k; k++) {
+
+              values_W_dir[k] = FLOAT_undefined;
+              values_W_spd[k] = FLOAT_undefined;
+              values_W_tmp[k] = FLOAT_undefined;
+
+              int _plot = 1;
+
+              if (_plot == 1) {
+
+                int now_k = k + start_k;
+                int now_i = i;
+                int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
+
+                if (now_j >= 365) {
+                  now_j = now_j % 365;
+                }
+                if (now_j < 0) {
+                  now_j = (now_j + 365) % 365;
+                }
+
+                Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
+                Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
+                Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
+
+                if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc)) {
+                  values_W_dir[k] = FLOAT_undefined;
+                  values_W_spd[k] = FLOAT_undefined;
+                  values_W_tmp[k] = FLOAT_undefined;
+                } else {
+                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+
+                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) memberCount = 0;
+
+                  if (memberCount == 1) {
+
+                    values_W_dir[k] = Pa;
+                    values_W_spd[k] = Pb;
+                    values_W_tmp[k] = Pc;
+
+                    float T = values_W_tmp[k];
+                    float teta = values_W_dir[k];
+                    float D_teta = 15;
+                    float R = (0.5 * RES) * (LAYER_windspd.V_scale / 2.0) * (values_W_spd[k] / 50.0);
+
+                    float R_in = 0; //0.75 * R;
+                    float x1 = R_in * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
+                    float y1 = R_in * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
+                    float x2 = R_in * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
+                    float y2 = R_in * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
+
+                    float x4 = R * funcs.cos_ang(90 - (teta - 0.5 * D_teta));
+                    float y4 = R * -funcs.sin_ang(90 - (teta - 0.5 * D_teta));
+                    float x3 = R * funcs.cos_ang(90 - (teta + 0.5 * D_teta));
+                    float y3 = R * -funcs.sin_ang(90 - (teta + 0.5 * D_teta));
+
+                    float _u = 0;
+
+                    if (this.Impact_TYPE == Impact_ACTIVE) {
+
+                      float _s = (this.O_scale / 100) * 255 / (0.333 * count_k) / (this.j_End - this.j_Start);
+
+                      if (this.skyScenario > 1) _s *= 3; // to improve visibility of those cases.
+
+                      _s /= float(this.joinDays);
+
+                      if (_s < 10) _s = 10;
+
+                      total_WIND_graphics.stroke(0, _s);
+                      total_WIND_graphics.fill(0, _s);
+
+                      total_WIND_graphics.strokeWeight(this.T_scale * 0);
+                    }
+                    if (this.Impact_TYPE == Impact_PASSIVE) {
+                      _u = 0.5 + 0.5 * (PAL_multiplier * T);
+
+                      _u = applyPalDirection(_u, PAL_direction);
+
+                      float[] COL = PAINT.getColorStyle(PAL_type, _u);
+                      total_WIND_graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
+                      total_WIND_graphics.strokeWeight(this.T_scale * 2);
+                      total_WIND_graphics.noFill();
+                    }
+
+                    total_WIND_graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                  }
+                }
+              }
+            }
+          }
         }
       }
+    }
+    total_WIND_graphics.endDraw();
+    allWindRoses.Image[0] = total_WIND_graphics;
 
-      this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
-
-      if (this.impact_summary) {
-        int j = -1; // << to put the summary graph before the daily graphs
-
-        int keep_STUDY_j_Start = this.j_Start;
-        int keep_STUDY_j_End = this.j_End;
-        this.j_Start = j;
-        this.j_End = j + 1;
-        this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
-        this.j_Start = keep_STUDY_j_Start;
-        this.j_End = keep_STUDY_j_End;
+    for (int j = this.j_Start - 1; j < this.j_End; j++) {
+      if ((j != -1) || (this.impact_summary)) {
+        this.graphics.strokeWeight(this.T_scale * 0);
+        this.graphics.stroke(223);
+        this.graphics.fill(223);
+        this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
         this.graphics.strokeWeight(this.T_scale * 2);
-        this.graphics.stroke(0);
+        this.graphics.stroke(255);
         this.graphics.noFill();
         this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+
+        this.graphics.imageMode(CENTER);
+        this.graphics.image(allWindRoses.Image[j + 1], (j + 100 * this.rect_scale) * sx_Plot, 0, int((180 * this.rect_scale) * sx_Plot), int((180 * this.rect_scale) * sx_Plot));
       }
+    }
 
-      if (this.Impact_TYPE != Impact_ACTIVE) {
+    this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
-        float pal_length = 400;
-        float pal_ox = 700;
-        float pal_oy = 110;
-        for (int q = 0; q < 11; q++) {
-          float _u = 0;
+    if (this.impact_summary) {
+      int j = -1; // << to put the summary graph before the daily graphs
 
-          if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.1 * q;
+      int keep_STUDY_j_Start = this.j_Start;
+      int keep_STUDY_j_End = this.j_End;
+      this.j_Start = j;
+      this.j_End = j + 1;
+      this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
+      this.j_Start = keep_STUDY_j_Start;
+      this.j_End = keep_STUDY_j_End;
 
-          _u = applyPalDirection(_u, PAL_direction);
+      this.graphics.strokeWeight(this.T_scale * 2);
+      this.graphics.stroke(0);
+      this.graphics.noFill();
+      this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+    }
 
-          float[] COL = PAINT.getColorStyle(PAL_type, _u);
-          this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-          this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+    if (this.Impact_TYPE != Impact_ACTIVE) {
 
-          this.graphics.strokeWeight(0);
-          this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
+      float pal_length = 400;
+      float pal_ox = 700;
+      float pal_oy = 110;
+      for (int q = 0; q < 11; q++) {
+        float _u = 0;
 
-          applyLegendTextStyle(COL);
+        if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.1 * q;
 
-          this.graphics.textSize(15.0 * this.view_S);
-          this.graphics.textAlign(CENTER, CENTER);
+        _u = applyPalDirection(_u, PAL_direction);
 
-          if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-        }
+        float[] COL = PAINT.getColorStyle(PAL_type, _u);
+        this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+        this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
+        this.graphics.strokeWeight(0);
+        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
+
+        applyLegendTextStyle(COL);
+
+        this.graphics.textSize(15.0 * this.view_S);
+        this.graphics.textAlign(CENTER, CENTER);
+
+        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       }
+    }
 
 
-      if (this.PrintTtitle) {
+    if (this.PrintTtitle) {
 
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.strokeWeight(this.T_scale * 0);
+      this.graphics.stroke(0);
+      this.graphics.fill(0);
+      this.graphics.strokeWeight(this.T_scale * 0);
 
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(RIGHT, TOP);
-        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(RIGHT, TOP);
+      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
 
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(LEFT, TOP);
-        if (this.Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(("Wind direction and speed"), 0, 1.1 * sx_Plot / this.U_scale);
-          //?? French
-        }
-        if (this.Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(("Wind direction and speed with air temperature"), 0, 1.1 * sx_Plot / this.U_scale);
-          //?? French
-        }
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(LEFT, TOP);
+      if (this.Impact_TYPE == Impact_ACTIVE) {
+        this.graphics.text(("Wind direction and speed"), 0, 1.1 * sx_Plot / this.U_scale);
+        //?? French
       }
-
-      if (allWindRoses.displayImage) {
-        SOLARCHVISION_view_changed();
+      if (this.Impact_TYPE == Impact_PASSIVE) {
+        this.graphics.text(("Wind direction and speed with air temperature"), 0, 1.1 * sx_Plot / this.U_scale);
+        //?? French
       }
+    }
+
+    if (allWindRoses.displayImage) {
+      SOLARCHVISION_view_changed();
+    }
   }
 
 
   private void plotImpact_urban (int start_k, int end_k, float sx_Plot) {
 
-      if (this.Impacts_update) {
+    if (this.Impacts_update) {
 
-        allSolarImpacts.calculate_Impact_CurrentPreBaked();
+      allSolarImpacts.calculate_Impact_CurrentPreBaked();
 
-        int RES1 = allSolarImpacts.RES1;
-        int RES2 = allSolarImpacts.RES2;
+      int RES1 = allSolarImpacts.RES1;
+      int RES2 = allSolarImpacts.RES2;
 
-        float sizeX = (180 * this.rect_scale) * sx_Plot;
-        float sizeY = sizeX;
-        float aspect = 1.0 * RES1 / RES2;
-        if (aspect > 1) {
-          sizeY /= aspect;
-        } else if (aspect < 1) {
-          sizeX *= aspect;
-        }
-
-        if (this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-        if (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
-
-        float Pa = FLOAT_undefined;
-        float Pb = FLOAT_undefined;
-        float Pc = FLOAT_undefined;
-        float Pd = FLOAT_undefined;
-
-        float values_R_dir;
-        float values_R_dif;
-
-        float values_E_dir;
-        float values_E_dif;
-
-        int now_k = 0;
-        int now_i = 0;
-        int now_j = 0;
-
-        int PAL_type = 0;
-        int PAL_direction = 1;
-        float PAL_multiplier = 1;
-
-        if (this.Impact_TYPE == Impact_ACTIVE) {
-          PAL_type = allFaces.ACTIVE_palette_CLR;
-          PAL_direction = allFaces.ACTIVE_palette_DIR;
-          PAL_multiplier = allFaces.ACTIVE_palette_MLT;
-        }
-        if (this.Impact_TYPE == Impact_PASSIVE) {
-          PAL_type = allFaces.PASSIVE_palette_CLR;
-          PAL_direction = allFaces.PASSIVE_palette_DIR;
-          PAL_multiplier = allFaces.PASSIVE_palette_MLT;
-        }
-
-        int l = this.ImpactLayer;
-
-        for (int j = this.j_Start; j < this.j_End; j++) {
-
-          now_j = (j * int(this.perDays) + TIME.beginDay + 365) % 365;
-
-          if (now_j >= 365) {
-            now_j = now_j % 365;
-          }
-          if (now_j < 0) {
-            now_j = (now_j + 365) % 365;
-          }
-
-
-          this.graphics.strokeWeight(this.T_scale * 0);
-          this.graphics.stroke(223);
-          this.graphics.fill(223);
-          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
-
-          this.graphics.strokeWeight(this.T_scale * 2);
-          this.graphics.stroke(255);
-          this.graphics.noFill();
-          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
-
-          this.graphics.imageMode(CENTER);
-          this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
-
-          this.graphics.stroke(0);
-          this.graphics.fill(0);
-          this.graphics.textAlign(CENTER, CENTER);
-          this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-
-          String scenario_text = "";
-          //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-          //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-          //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-          this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
-        }
-
-        WIN3D.showSolarImpact = true;
-
-        if (this.impact_summary) {
-          int j = -1; // << to put the summary graph before the daily graphs
-
-          this.graphics.strokeWeight(this.T_scale * 0);
-          this.graphics.stroke(223);
-          this.graphics.fill(223);
-          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
-
-          this.graphics.strokeWeight(this.T_scale * 2);
-          this.graphics.stroke(0);
-          this.graphics.noFill();
-          this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
-
-          this.graphics.imageMode(CENTER);
-          this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][0], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
-
-          this.graphics.stroke(0);
-          this.graphics.fill(0);
-          this.graphics.textAlign(CENTER, CENTER);
-          this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        }
-
-        String scenario_text = "";
-        //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-        //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-        //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-        this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
-
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.strokeWeight(0);
-
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.strokeWeight(0);
-
-        this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-        //?? French
-
-
-        float pal_length = 400;
-        float pal_ox = 700;
-        float pal_oy = 110;
-        for (int q = 0; q < 11; q++) {
-          float _u = 0;
-
-          if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-          if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
-
-          _u = applyPalDirection(_u, PAL_direction);
-
-          float[] COL = PAINT.getColorStyle(PAL_type, _u);
-          this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-          this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-
-          this.graphics.strokeWeight(0);
-          this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
-
-          applyLegendTextStyle(COL);
-
-          this.graphics.textSize(15.0 * this.view_S);
-          this.graphics.textAlign(CENTER, CENTER);
-          if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-          if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-        }
-
-        if (this.PrintTtitle) {
-
-          this.graphics.stroke(0);
-          this.graphics.fill(0);
-          this.graphics.strokeWeight(this.T_scale * 0);
-
-          this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-          this.graphics.textAlign(RIGHT, TOP);
-          if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-          if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-          if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-
-
-          String Model_Description = "";
-
-
-          this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-          this.graphics.textAlign(LEFT, TOP);
-          if (this.Impact_TYPE == Impact_ACTIVE) {
-            this.graphics.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
-            //?? French
-          }
-          if (this.Impact_TYPE == Impact_PASSIVE) {
-            this.graphics.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
-            //?? French
-          }
-        }
+      float sizeX = (180 * this.rect_scale) * sx_Plot;
+      float sizeY = sizeX;
+      float aspect = 1.0 * RES1 / RES2;
+      if (aspect > 1) {
+        sizeY /= aspect;
+      } else if (aspect < 1) {
+        sizeX *= aspect;
       }
 
-      if (allSolarImpacts.displayImage) {
-        SOLARCHVISION_view_changed();
-      }
-
-  }
-
-
-  private void plotImpact_global (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
-
-      if (GlobalSolar_rebuild_array) {
-        GlobalSolar_resize_array();
-      }
-
-      if (this.PlotImpacts == PlotImpacts_GLOBAL_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == PlotImpacts_GLOBAL_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
+      if (this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+      if (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
@@ -2412,6 +2226,7 @@ class solarchvision_STUDY {
 
       float values_R_dir;
       float values_R_dif;
+
       float values_E_dir;
       float values_E_dif;
 
@@ -2421,36 +2236,20 @@ class solarchvision_STUDY {
 
       int PAL_type = 0;
       int PAL_direction = 1;
+      float PAL_multiplier = 1;
 
       if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_palette_CLR;
-        PAL_direction = this.ACTIVE_palette_DIR;
+        PAL_type = allFaces.ACTIVE_palette_CLR;
+        PAL_direction = allFaces.ACTIVE_palette_DIR;
+        PAL_multiplier = allFaces.ACTIVE_palette_MLT;
       }
       if (this.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = this.PASSIVE_palette_CLR;
-        PAL_direction = this.PASSIVE_palette_DIR;
+        PAL_type = allFaces.PASSIVE_palette_CLR;
+        PAL_direction = allFaces.PASSIVE_palette_DIR;
+        PAL_multiplier = allFaces.PASSIVE_palette_MLT;
       }
-
-      float PAL_multiplier = 1;
-      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
-      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
-
 
       int l = this.ImpactLayer;
-
-      float[][] TOTALvaluesSUM_RAD = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-      float[][] TOTALvaluesSUM_EFF_P = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-      float[][] TOTALvaluesSUM_EFF_N = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-      int[][] TOTALvaluesNUM = new int [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-
-      for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
-        for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
-          TOTALvaluesSUM_RAD[a][b] = FLOAT_undefined;
-          TOTALvaluesSUM_EFF_P[a][b] = FLOAT_undefined;
-          TOTALvaluesSUM_EFF_N[a][b] = FLOAT_undefined;
-          TOTALvaluesNUM[a][b] = 0;
-        }
-      }
 
       for (int j = this.j_Start; j < this.j_End; j++) {
 
@@ -2463,248 +2262,19 @@ class solarchvision_STUDY {
           now_j = (now_j + 365) % 365;
         }
 
-        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-        int[] Normals_COL_N;
-        Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
-
-        for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
-          if (nk != -1) {
-            int k = int(nk / this.joinDays);
-            int j_ADD = nk % this.joinDays;
-
-            for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
-              float Alpha = a * Sky3D.stp_slp;
-              for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
-                float Beta = b * Sky3D.stp_dir;
-
-                float valuesSUM_RAD = 0;
-                float valuesSUM_EFF_P = 0;
-                float valuesSUM_EFF_N = 0;
-                int valuesNUM = 0;
-
-
-                for (int i = 0; i < 24; i++) {
-                  if (this.isInHourlyRange(i)) {
-                    float HOUR_ANGLE = i;
-                    float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
-
-                    if (SunR[3] > 0) {
-
-                      now_k = k + start_k;
-                      now_i = i;
-                      now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
-
-                      if (now_j >= 365) {
-                        now_j = now_j % 365;
-                      }
-                      if (now_j < 0) {
-                        now_j = (now_j + 365) % 365;
-                      }
-
-                      Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                      Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                      Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                      Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
-
-                      if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
-                        values_R_dir = FLOAT_undefined;
-                        values_R_dif = FLOAT_undefined;
-                        values_E_dir = FLOAT_undefined;
-                        values_E_dif = FLOAT_undefined;
-                      } else {
-
-                        int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
-
-                        if (memberCount == 1) {
-                          values_R_dir = 0.001 * Pa;
-                          values_R_dif = 0.001 * Pb;
-                          values_E_dir = 0.001 * Pc;
-                          values_E_dif = 0.001 * Pd;
-
-                          if (is_undefined(valuesSUM_RAD)) {
-                            valuesSUM_RAD = 0;
-                            valuesSUM_EFF_P = 0;
-                            valuesSUM_EFF_N = 0;
-                            valuesNUM = 0;
-                          } else {
-
-                            if (values_E_dir < 0) {
-                              valuesSUM_EFF_N += -SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
-                            } else {
-                              valuesSUM_EFF_P += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
-                            }
-
-                            valuesSUM_RAD += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, GlobalAlbedo);
-
-                            valuesNUM += 1;
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-
-
-                if (valuesNUM != 0) {
-                  //float valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
-                  //float valuesMUL = int(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * valuesNUM);
-                  float valuesMUL = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * valuesNUM);
-
-                  valuesSUM_RAD *= valuesMUL;
-                  valuesSUM_EFF_P *= valuesMUL;
-                  valuesSUM_EFF_N *= valuesMUL;
-
-                  if (TOTALvaluesNUM[a][b] == 0) {
-                    TOTALvaluesSUM_RAD[a][b] = 0;
-                    TOTALvaluesSUM_EFF_P[a][b] = 0;
-                    TOTALvaluesSUM_EFF_N[a][b] = 0;
-                  }
-
-                  TOTALvaluesSUM_RAD[a][b] += valuesSUM_RAD;
-                  TOTALvaluesSUM_EFF_P[a][b] += valuesSUM_EFF_P;
-                  TOTALvaluesSUM_EFF_N[a][b] += valuesSUM_EFF_N;
-                  TOTALvaluesNUM[a][b] += 1;
-                } else {
-                  valuesSUM_RAD = FLOAT_undefined;
-                  valuesSUM_EFF_P = FLOAT_undefined;
-                  valuesSUM_EFF_N = FLOAT_undefined;
-                }
-
-
-                float AVERAGE, PERCENTAGE, COMPARISON;
-
-                AVERAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N);
-                if ((valuesSUM_EFF_P + valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N) / (1.0 * (valuesSUM_EFF_P + valuesSUM_EFF_N));
-                else PERCENTAGE = 0.0;
-                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-
-                float valuesSUM = FLOAT_undefined;
-                if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
-                if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
-
-                //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> valuesSUM_RAD:", valuesSUM_RAD, "COMPARISON:", COMPARISON);
-
-                if (is_defined(valuesSUM)) {
-
-                  float _u = 0;
-
-                  if (this.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
-                  if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-
-                  _u = applyPalDirection(_u, PAL_direction);
-
-                  //float[] COL = PAINT.getColorStyle(PAL_type, _u);
-                  float[] COL = PAINT.getColorStyle(PAL_type, funcs.roundTo(_u, 0.1));
-                  this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-                  this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-
-
-                  this.graphics.strokeWeight(0);
-
-                  float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-
-                  float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-                  float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-
-                  this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-                }
-              }
-            }
-
-            this.graphics.stroke(0);
-            this.graphics.fill(0);
-            this.graphics.textAlign(CENTER, CENTER);
-            this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-
-            String scenario_text = "";
-            //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-            //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-            //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-            this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / this.U_scale);
-          }
-        }
-      }
-
-
-
-      if (this.impact_summary) {
-
-        int j = -1; // << to put the summary graph before the daily graphs
-
-        for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
-          float Alpha = a * Sky3D.stp_slp;
-          for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
-            float Beta = b * Sky3D.stp_dir;
-
-            if (TOTALvaluesNUM[a][b] != 0) {
-              TOTALvaluesSUM_RAD[a][b] /= 1.0 * TOTALvaluesNUM[a][b];
-              TOTALvaluesSUM_EFF_P[a][b] /= 1.0 * TOTALvaluesNUM[a][b];
-              TOTALvaluesSUM_EFF_N[a][b] /= 1.0 * TOTALvaluesNUM[a][b];
-            } else {
-              TOTALvaluesSUM_RAD[a][b] = FLOAT_undefined;
-              TOTALvaluesSUM_EFF_P[a][b] = FLOAT_undefined;
-              TOTALvaluesSUM_EFF_N[a][b] = FLOAT_undefined;
-            }
-
-
-            float AVERAGE, PERCENTAGE, COMPARISON;
-
-            AVERAGE = (TOTALvaluesSUM_EFF_P[a][b] - TOTALvaluesSUM_EFF_N[a][b]);
-            if ((TOTALvaluesSUM_EFF_P[a][b] + TOTALvaluesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTALvaluesSUM_EFF_P[a][b] - TOTALvaluesSUM_EFF_N[a][b]) / (1.0 * (TOTALvaluesSUM_EFF_P[a][b] + TOTALvaluesSUM_EFF_N[a][b]));
-            else PERCENTAGE = 0.0;
-            COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-
-            float valuesSUM = FLOAT_undefined;
-            if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD[a][b];
-            if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
-
-            //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> (TOTAL) valuesSUM_RAD:", TOTALvaluesSUM_RAD[a][b], "COMPARISON:", COMPARISON);
-
-            if (is_defined(valuesSUM)) {
-
-              float _u = 0;
-
-              if (this.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
-              if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-
-              _u = applyPalDirection(_u, PAL_direction);
-
-              //float[] COL = PAINT.getColorStyle(PAL_type, _u);
-              float[] COL = PAINT.getColorStyle(PAL_type, funcs.roundTo(_u, 0.1));
-              this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-              this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-
-              this.graphics.strokeWeight(0);
-
-              float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-
-              float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-              float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-
-              this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-            }
-          }
-        }
+        this.graphics.strokeWeight(this.T_scale * 0);
+        this.graphics.stroke(223);
+        this.graphics.fill(223);
+        this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
         this.graphics.strokeWeight(this.T_scale * 2);
-        this.graphics.stroke(0);
+        this.graphics.stroke(255);
         this.graphics.noFill();
         this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
+        this.graphics.imageMode(CENTER);
+        this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
 
         this.graphics.stroke(0);
         this.graphics.fill(0);
@@ -2715,17 +2285,32 @@ class solarchvision_STUDY {
         //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
         //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
         //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-        this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / this.U_scale);
-
-        int keep_STUDY_j_Start = this.j_Start;
-        int keep_STUDY_j_End = this.j_End;
-        this.j_Start = j;
-        this.j_End = j + 1;
-        this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
-        this.j_Start = keep_STUDY_j_Start;
-        this.j_End = keep_STUDY_j_End;
+        this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
       }
 
+      WIN3D.showSolarImpact = true;
+
+      if (this.impact_summary) {
+        int j = -1; // << to put the summary graph before the daily graphs
+
+        this.graphics.strokeWeight(this.T_scale * 0);
+        this.graphics.stroke(223);
+        this.graphics.fill(223);
+        this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+
+        this.graphics.strokeWeight(this.T_scale * 2);
+        this.graphics.stroke(0);
+        this.graphics.noFill();
+        this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+
+        this.graphics.imageMode(CENTER);
+        this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][0], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
+
+        this.graphics.stroke(0);
+        this.graphics.fill(0);
+        this.graphics.textAlign(CENTER, CENTER);
+        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      }
 
       String scenario_text = "";
       //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
@@ -2738,8 +2323,16 @@ class solarchvision_STUDY {
       this.graphics.stroke(0);
       this.graphics.fill(0);
       this.graphics.strokeWeight(0);
+
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(RIGHT, CENTER);
+      this.graphics.stroke(0);
+      this.graphics.fill(0);
+      this.graphics.strokeWeight(0);
+
       this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
       //?? French
+
 
       float pal_length = 400;
       float pal_ox = 700;
@@ -2767,7 +2360,6 @@ class solarchvision_STUDY {
         if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       }
 
-
       if (this.PrintTtitle) {
 
         this.graphics.stroke(0);
@@ -2776,370 +2368,778 @@ class solarchvision_STUDY {
 
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(RIGHT, TOP);
-
         if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
         if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
         if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
 
 
+        String Model_Description = "";
+
+
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP);
         if (this.Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(("Solar radiation on hemisphere (kW/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
+          this.graphics.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
         if (this.Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
+          this.graphics.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
       }
+    }
 
-      this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
+    if (allSolarImpacts.displayImage) {
+      SOLARCHVISION_view_changed();
+    }
+
   }
 
 
-  private void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
-      if (this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
+  private void plotImpact_global (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-      float Pa = FLOAT_undefined;
-      float Pb = FLOAT_undefined;
-      float Pc = FLOAT_undefined;
-      float Pd = FLOAT_undefined;
+    if (GlobalSolar_rebuild_array) {
+      GlobalSolar_resize_array();
+    }
 
-      float values_R_dir;
-      float values_R_dif;
-      float values_E_dir;
-      float values_E_dif;
+    if (this.PlotImpacts == PlotImpacts_GLOBAL_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+    if (this.PlotImpacts == PlotImpacts_GLOBAL_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
-      int now_k = 0;
-      int now_i = 0;
-      int now_j = 0;
+    float Pa = FLOAT_undefined;
+    float Pb = FLOAT_undefined;
+    float Pc = FLOAT_undefined;
+    float Pd = FLOAT_undefined;
 
-      int PAL_type = 0;
-      int PAL_direction = 1;
+    float values_R_dir;
+    float values_R_dif;
+    float values_E_dir;
+    float values_E_dif;
 
-      if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = this.ACTIVE_palette_CLR;
-        PAL_direction = this.ACTIVE_palette_DIR;
+    int now_k = 0;
+    int now_i = 0;
+    int now_j = 0;
+
+    int PAL_type = 0;
+    int PAL_direction = 1;
+
+    if (this.Impact_TYPE == Impact_ACTIVE) {
+      PAL_type = this.ACTIVE_palette_CLR;
+      PAL_direction = this.ACTIVE_palette_DIR;
+    }
+    if (this.Impact_TYPE == Impact_PASSIVE) {
+      PAL_type = this.PASSIVE_palette_CLR;
+      PAL_direction = this.PASSIVE_palette_DIR;
+    }
+
+    float PAL_multiplier = 1;
+    if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
+    if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
+
+
+    int l = this.ImpactLayer;
+
+    float[][] TOTALvaluesSUM_RAD = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+    float[][] TOTALvaluesSUM_EFF_P = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+    float[][] TOTALvaluesSUM_EFF_N = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+    int[][] TOTALvaluesNUM = new int [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+
+    for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
+      for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+        TOTALvaluesSUM_RAD[a][b] = FLOAT_undefined;
+        TOTALvaluesSUM_EFF_P[a][b] = FLOAT_undefined;
+        TOTALvaluesSUM_EFF_N[a][b] = FLOAT_undefined;
+        TOTALvaluesNUM[a][b] = 0;
       }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = this.PASSIVE_palette_CLR;
-        PAL_direction = this.PASSIVE_palette_DIR;
+    }
+
+    for (int j = this.j_Start; j < this.j_End; j++) {
+
+      now_j = (j * int(this.perDays) + TIME.beginDay + 365) % 365;
+
+      if (now_j >= 365) {
+        now_j = now_j % 365;
+      }
+      if (now_j < 0) {
+        now_j = (now_j + 365) % 365;
       }
 
-      float PAL_multiplier = 1;
-      if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
-      if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
+      float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
+      int[] Normals_COL_N;
+      Normals_COL_N = new int [9];
+      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
 
-      int l = this.ImpactLayer;
+      for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
+        if (nk != -1) {
+          int k = int(nk / this.joinDays);
+          int j_ADD = nk % this.joinDays;
 
-      for (int j = this.j_Start; j < this.j_End; j++) {
+          for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
+            float Alpha = a * Sky3D.stp_slp;
+            for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+              float Beta = b * Sky3D.stp_dir;
 
-        now_j = (j * int(this.perDays) + TIME.beginDay + 365) % 365;
+              float valuesSUM_RAD = 0;
+              float valuesSUM_EFF_P = 0;
+              float valuesSUM_EFF_N = 0;
+              int valuesNUM = 0;
 
-        if (now_j >= 365) {
-          now_j = now_j % 365;
-        }
-        if (now_j < 0) {
-          now_j = (now_j + 365) % 365;
-        }
 
-        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+              for (int i = 0; i < 24; i++) {
+                if (this.isInHourlyRange(i)) {
+                  float HOUR_ANGLE = i;
+                  float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
-        int[] Normals_COL_N;
-        Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
+                  if (SunR[3] > 0) {
 
-        for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
-          if (nk != -1) {
-            int k = int(nk / this.joinDays);
-            int j_ADD = nk % this.joinDays;
+                    now_k = k + start_k;
+                    now_i = i;
+                    now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
 
-            float valuesSUM_RAD = 0;
-            float valuesSUM_EFF = 0;
-            int valuesNUM = 0;
+                    if (now_j >= 365) {
+                      now_j = now_j % 365;
+                    }
+                    if (now_j < 0) {
+                      now_j = (now_j + 365) % 365;
+                    }
 
-            for (int i = 0; i < 24; i++) {
-              if (this.isInHourlyRange(i)) {
-                float HOUR_ANGLE = i;
-                float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+                    Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+                    Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+                    Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
+                    Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
 
-                if (SunR[3] > 0) {
-                  float Alpha = 90 - funcs.acos_ang(SunR[3]);
-                  float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
+                    if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
+                      values_R_dir = FLOAT_undefined;
+                      values_R_dif = FLOAT_undefined;
+                      values_E_dir = FLOAT_undefined;
+                      values_E_dif = FLOAT_undefined;
+                    } else {
 
-                  now_k = k + start_k;
-                  now_i = i;
-                  now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
+                      int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
-                  if (now_j >= 365) {
-                    now_j = now_j % 365;
-                  }
-                  if (now_j < 0) {
-                    now_j = (now_j + 365) % 365;
-                  }
+                      if (memberCount == 1) {
+                        values_R_dir = 0.001 * Pa;
+                        values_R_dif = 0.001 * Pb;
+                        values_E_dir = 0.001 * Pc;
+                        values_E_dif = 0.001 * Pd;
 
-                  Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                  Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                  Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                  Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+                        if (is_undefined(valuesSUM_RAD)) {
+                          valuesSUM_RAD = 0;
+                          valuesSUM_EFF_P = 0;
+                          valuesSUM_EFF_N = 0;
+                          valuesNUM = 0;
+                        } else {
 
-                  if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
-                    values_R_dir = FLOAT_undefined;
-                    values_R_dif = FLOAT_undefined;
-                    values_E_dir = FLOAT_undefined;
-                    values_E_dif = FLOAT_undefined;
-                  } else {
+                          if (values_E_dir < 0) {
+                            valuesSUM_EFF_N += -SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
+                          } else {
+                            valuesSUM_EFF_P += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
+                          }
 
-                    int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                          valuesSUM_RAD += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, GlobalAlbedo);
 
-                    if (memberCount == 1) {
-                      values_R_dir = 0.001 * Pa;
-                      values_R_dif = 0.001 * Pb;
-                      values_E_dir = 0.001 * Pc;
-                      values_E_dif = 0.001 * Pd;
-
-                      if (is_undefined(valuesSUM_RAD)) {
-                        valuesSUM_RAD = 0;
-                        valuesSUM_EFF = 0;
-                        valuesNUM = 0;
-                      } else {
-                        valuesSUM_RAD = (values_R_dir); // direct beam radiation
-                        valuesSUM_EFF = (values_E_dir); // direct beam effect
-                        valuesNUM = 1;
+                          valuesNUM += 1;
+                        }
                       }
                     }
                   }
-
-                  float valuesSUM = FLOAT_undefined;
-                  if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
-                  if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
-
-                  if (is_defined(valuesSUM)) {
-
-                    float _u = 0;
-
-                    if (this.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
-                    if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
-
-                    _u = applyPalDirection(_u, PAL_direction);
-
-                    float[] COL = PAINT.getColorStyle(PAL_type, _u);
-                    this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-                    this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-
-                    this.graphics.strokeWeight(0);
-
-                    this.graphics.ellipse((j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
-
-                    applyLegendTextStyle(COL);
-
-                    this.graphics.textSize(this.view_S * 4.0 * this.U_scale);
-
-                    this.graphics.textAlign(CENTER, CENTER);
-                    if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
-                    if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
-                  }
                 }
               }
+
+
+              if (valuesNUM != 0) {
+                //float valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
+                //float valuesMUL = int(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE)) / (1.0 * valuesNUM);
+                float valuesMUL = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1) / (1.0 * valuesNUM);
+
+                valuesSUM_RAD *= valuesMUL;
+                valuesSUM_EFF_P *= valuesMUL;
+                valuesSUM_EFF_N *= valuesMUL;
+
+                if (TOTALvaluesNUM[a][b] == 0) {
+                  TOTALvaluesSUM_RAD[a][b] = 0;
+                  TOTALvaluesSUM_EFF_P[a][b] = 0;
+                  TOTALvaluesSUM_EFF_N[a][b] = 0;
+                }
+
+                TOTALvaluesSUM_RAD[a][b] += valuesSUM_RAD;
+                TOTALvaluesSUM_EFF_P[a][b] += valuesSUM_EFF_P;
+                TOTALvaluesSUM_EFF_N[a][b] += valuesSUM_EFF_N;
+                TOTALvaluesNUM[a][b] += 1;
+              } else {
+                valuesSUM_RAD = FLOAT_undefined;
+                valuesSUM_EFF_P = FLOAT_undefined;
+                valuesSUM_EFF_N = FLOAT_undefined;
+              }
+
+
+              float AVERAGE, PERCENTAGE, COMPARISON;
+
+              AVERAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N);
+              if ((valuesSUM_EFF_P + valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (valuesSUM_EFF_P - valuesSUM_EFF_N) / (1.0 * (valuesSUM_EFF_P + valuesSUM_EFF_N));
+              else PERCENTAGE = 0.0;
+              COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+
+
+              float valuesSUM = FLOAT_undefined;
+              if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
+              if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
+
+              //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> valuesSUM_RAD:", valuesSUM_RAD, "COMPARISON:", COMPARISON);
+
+              if (is_defined(valuesSUM)) {
+
+                float _u = 0;
+
+                if (this.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
+                if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+
+                _u = applyPalDirection(_u, PAL_direction);
+
+                //float[] COL = PAINT.getColorStyle(PAL_type, _u);
+                float[] COL = PAINT.getColorStyle(PAL_type, funcs.roundTo(_u, 0.1));
+                this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+                this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
+
+                this.graphics.strokeWeight(0);
+
+                float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+
+                float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+                float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+
+                this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+              }
             }
+          }
 
-            this.graphics.stroke(0);
-            this.graphics.fill(0);
-            this.graphics.textAlign(CENTER, CENTER);
-            this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+          this.graphics.stroke(0);
+          this.graphics.fill(0);
+          this.graphics.textAlign(CENTER, CENTER);
+          this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
-            String scenario_text = "";
-            //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-            //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-            //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-            this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / this.U_scale);
+          String scenario_text = "";
+          //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
+          //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
+          //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+          this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / this.U_scale);
+        }
+      }
+    }
+
+
+
+    if (this.impact_summary) {
+
+      int j = -1; // << to put the summary graph before the daily graphs
+
+      for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
+        float Alpha = a * Sky3D.stp_slp;
+        for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
+          float Beta = b * Sky3D.stp_dir;
+
+          if (TOTALvaluesNUM[a][b] != 0) {
+            TOTALvaluesSUM_RAD[a][b] /= 1.0 * TOTALvaluesNUM[a][b];
+            TOTALvaluesSUM_EFF_P[a][b] /= 1.0 * TOTALvaluesNUM[a][b];
+            TOTALvaluesSUM_EFF_N[a][b] /= 1.0 * TOTALvaluesNUM[a][b];
+          } else {
+            TOTALvaluesSUM_RAD[a][b] = FLOAT_undefined;
+            TOTALvaluesSUM_EFF_P[a][b] = FLOAT_undefined;
+            TOTALvaluesSUM_EFF_N[a][b] = FLOAT_undefined;
+          }
+
+
+          float AVERAGE, PERCENTAGE, COMPARISON;
+
+          AVERAGE = (TOTALvaluesSUM_EFF_P[a][b] - TOTALvaluesSUM_EFF_N[a][b]);
+          if ((TOTALvaluesSUM_EFF_P[a][b] + TOTALvaluesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTALvaluesSUM_EFF_P[a][b] - TOTALvaluesSUM_EFF_N[a][b]) / (1.0 * (TOTALvaluesSUM_EFF_P[a][b] + TOTALvaluesSUM_EFF_N[a][b]));
+          else PERCENTAGE = 0.0;
+          COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+
+
+          float valuesSUM = FLOAT_undefined;
+          if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD[a][b];
+          if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
+
+          //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> (TOTAL) valuesSUM_RAD:", TOTALvaluesSUM_RAD[a][b], "COMPARISON:", COMPARISON);
+
+          if (is_defined(valuesSUM)) {
+
+            float _u = 0;
+
+            if (this.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
+            if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+
+            _u = applyPalDirection(_u, PAL_direction);
+
+            //float[] COL = PAINT.getColorStyle(PAL_type, _u);
+            float[] COL = PAINT.getColorStyle(PAL_type, funcs.roundTo(_u, 0.1));
+            this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+            this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
+            this.graphics.strokeWeight(0);
+
+            float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+
+            float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+
+            this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
           }
         }
       }
+
+      this.graphics.strokeWeight(this.T_scale * 2);
+      this.graphics.stroke(0);
+      this.graphics.noFill();
+      this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
+
+
+      this.graphics.stroke(0);
+      this.graphics.fill(0);
+      this.graphics.textAlign(CENTER, CENTER);
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
       String scenario_text = "";
       //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
       //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
       //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-      this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
+      this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / this.U_scale);
 
-      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-      this.graphics.textAlign(RIGHT, CENTER);
+      int keep_STUDY_j_Start = this.j_Start;
+      int keep_STUDY_j_End = this.j_End;
+      this.j_Start = j;
+      this.j_End = j + 1;
+      this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
+      this.j_Start = keep_STUDY_j_Start;
+      this.j_End = keep_STUDY_j_End;
+    }
+
+
+    String scenario_text = "";
+    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
+    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+    this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
+
+    this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+    this.graphics.textAlign(RIGHT, CENTER);
+    this.graphics.stroke(0);
+    this.graphics.fill(0);
+    this.graphics.strokeWeight(0);
+    this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
+    //?? French
+
+    float pal_length = 400;
+    float pal_ox = 700;
+    float pal_oy = 110;
+    for (int q = 0; q < 11; q++) {
+      float _u = 0;
+
+      if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
+      if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+
+      _u = applyPalDirection(_u, PAL_direction);
+
+      float[] COL = PAINT.getColorStyle(PAL_type, _u);
+      this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+      this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
+      this.graphics.strokeWeight(0);
+      this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
+
+      applyLegendTextStyle(COL);
+
+      this.graphics.textSize(15.0 * this.view_S);
+      this.graphics.textAlign(CENTER, CENTER);
+      if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+    }
+
+
+    if (this.PrintTtitle) {
+
       this.graphics.stroke(0);
       this.graphics.fill(0);
+      this.graphics.strokeWeight(this.T_scale * 0);
+
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(RIGHT, TOP);
+
+      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+
+
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(LEFT, TOP);
+      if (this.Impact_TYPE == Impact_ACTIVE) {
+        this.graphics.text(("Solar radiation on hemisphere (kW/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
+        //?? French
+      }
+      if (this.Impact_TYPE == Impact_PASSIVE) {
+        this.graphics.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
+        //?? French
+      }
+    }
+
+    this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
+  }
+
+
+  private void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+    if (this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
+    if (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
+
+    float Pa = FLOAT_undefined;
+    float Pb = FLOAT_undefined;
+    float Pc = FLOAT_undefined;
+    float Pd = FLOAT_undefined;
+
+    float values_R_dir;
+    float values_R_dif;
+    float values_E_dir;
+    float values_E_dif;
+
+    int now_k = 0;
+    int now_i = 0;
+    int now_j = 0;
+
+    int PAL_type = 0;
+    int PAL_direction = 1;
+
+    if (this.Impact_TYPE == Impact_ACTIVE) {
+      PAL_type = this.ACTIVE_palette_CLR;
+      PAL_direction = this.ACTIVE_palette_DIR;
+    }
+    if (this.Impact_TYPE == Impact_PASSIVE) {
+      PAL_type = this.PASSIVE_palette_CLR;
+      PAL_direction = this.PASSIVE_palette_DIR;
+    }
+
+    float PAL_multiplier = 1;
+    if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
+    if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
+
+    this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
+
+    int l = this.ImpactLayer;
+
+    for (int j = this.j_Start; j < this.j_End; j++) {
+
+      now_j = (j * int(this.perDays) + TIME.beginDay + 365) % 365;
+
+      if (now_j >= 365) {
+        now_j = now_j % 365;
+      }
+      if (now_j < 0) {
+        now_j = (now_j + 365) % 365;
+      }
+
+      float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
+
+      int[] Normals_COL_N;
+      Normals_COL_N = new int [9];
+      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
+
+      for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
+        if (nk != -1) {
+          int k = int(nk / this.joinDays);
+          int j_ADD = nk % this.joinDays;
+
+          float valuesSUM_RAD = 0;
+          float valuesSUM_EFF = 0;
+          int valuesNUM = 0;
+
+          for (int i = 0; i < 24; i++) {
+            if (this.isInHourlyRange(i)) {
+              float HOUR_ANGLE = i;
+              float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+
+              if (SunR[3] > 0) {
+                float Alpha = 90 - funcs.acos_ang(SunR[3]);
+                float Beta = 180 - funcs.atan2_ang(SunR[1], SunR[2]);
+
+                now_k = k + start_k;
+                now_i = i;
+                now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
+
+                if (now_j >= 365) {
+                  now_j = now_j % 365;
+                }
+                if (now_j < 0) {
+                  now_j = (now_j + 365) % 365;
+                }
+
+                Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+                Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+                Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
+                Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+
+                if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
+                  values_R_dir = FLOAT_undefined;
+                  values_R_dif = FLOAT_undefined;
+                  values_E_dir = FLOAT_undefined;
+                  values_E_dif = FLOAT_undefined;
+                } else {
+
+                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+
+                  if (memberCount == 1) {
+                    values_R_dir = 0.001 * Pa;
+                    values_R_dif = 0.001 * Pb;
+                    values_E_dir = 0.001 * Pc;
+                    values_E_dif = 0.001 * Pd;
+
+                    if (is_undefined(valuesSUM_RAD)) {
+                      valuesSUM_RAD = 0;
+                      valuesSUM_EFF = 0;
+                      valuesNUM = 0;
+                    } else {
+                      valuesSUM_RAD = (values_R_dir); // direct beam radiation
+                      valuesSUM_EFF = (values_E_dir); // direct beam effect
+                      valuesNUM = 1;
+                    }
+                  }
+                }
+
+                float valuesSUM = FLOAT_undefined;
+                if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
+                if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
+
+                if (is_defined(valuesSUM)) {
+
+                  float _u = 0;
+
+                  if (this.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
+                  if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
+
+                  _u = applyPalDirection(_u, PAL_direction);
+
+                  float[] COL = PAINT.getColorStyle(PAL_type, _u);
+                  this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+                  this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
+                  this.graphics.strokeWeight(0);
+
+                  this.graphics.ellipse((j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
+
+                  applyLegendTextStyle(COL);
+
+                  this.graphics.textSize(this.view_S * 4.0 * this.U_scale);
+
+                  this.graphics.textAlign(CENTER, CENTER);
+                  if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+                  if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+                }
+              }
+            }
+          }
+
+          this.graphics.stroke(0);
+          this.graphics.fill(0);
+          this.graphics.textAlign(CENTER, CENTER);
+          this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+
+          String scenario_text = "";
+          //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
+          //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
+          //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+          this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / this.U_scale);
+        }
+      }
+    }
+
+    String scenario_text = "";
+    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
+    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+    this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
+
+    this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+    this.graphics.textAlign(RIGHT, CENTER);
+    this.graphics.stroke(0);
+    this.graphics.fill(0);
+    this.graphics.strokeWeight(0);
+    this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
+    //?? French
+
+
+    float pal_length = 400;
+    float pal_ox = 700;
+    float pal_oy = 110;
+    for (int q = 0; q < 11; q++) {
+      float _u = 0;
+
+      if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
+      if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+
+      _u = applyPalDirection(_u, PAL_direction);
+
+      float[] COL = PAINT.getColorStyle(PAL_type, _u);
+      this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+      this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
       this.graphics.strokeWeight(0);
-      this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-      //?? French
+      this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
+
+      applyLegendTextStyle(COL);
+
+      this.graphics.textSize(15.0 * this.view_S);
+      this.graphics.textAlign(CENTER, CENTER);
+
+      if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+    }
 
 
-      float pal_length = 400;
-      float pal_ox = 700;
-      float pal_oy = 110;
-      for (int q = 0; q < 11; q++) {
-        float _u = 0;
+    if (this.PrintTtitle) {
 
-        if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-        if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+      this.graphics.stroke(0);
+      this.graphics.fill(0);
+      this.graphics.strokeWeight(this.T_scale * 0);
 
-        _u = applyPalDirection(_u, PAL_direction);
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(RIGHT, TOP);
 
-        float[] COL = PAINT.getColorStyle(PAL_type, _u);
-        this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-        this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
 
-        this.graphics.strokeWeight(0);
-        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
-        applyLegendTextStyle(COL);
-
-        this.graphics.textSize(15.0 * this.view_S);
-        this.graphics.textAlign(CENTER, CENTER);
-
-        if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(LEFT, TOP);
+      if (this.Impact_TYPE == Impact_ACTIVE) {
+        this.graphics.text(("Direct solar radiation (kWh/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
+        //?? French
       }
-
-
-      if (this.PrintTtitle) {
-
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.strokeWeight(this.T_scale * 0);
-
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(RIGHT, TOP);
-
-        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-
-
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(LEFT, TOP);
-        if (this.Impact_TYPE == Impact_ACTIVE) {
-          this.graphics.text(("Direct solar radiation (kWh/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
-          //?? French
-        }
-        if (this.Impact_TYPE == Impact_PASSIVE) {
-          this.graphics.text(("Direct solar effects (kWh°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
-          //?? French
-        }
+      if (this.Impact_TYPE == Impact_PASSIVE) {
+        this.graphics.text(("Direct solar effects (kWh°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
+        //?? French
       }
+    }
 
   }
 
 
   private void plotImpact_cycles (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-      int l = this.ImpactLayer;
+    int l = this.ImpactLayer;
 
-      int target_window = TypeWindow.STUDY;
+    int target_window = TypeWindow.STUDY;
 
-      Sun3D.drawPattern(TypeWindow.STUDY, x_Plot, y_Plot, 0, sx_Plot);
+    Sun3D.drawPattern(TypeWindow.STUDY, x_Plot, y_Plot, 0, sx_Plot);
 
-      if (this.j_End == 2) {
-        for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
+    if (this.j_End == 2) {
+      for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
 
-          float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+        float ox = (j + STUDY.rect_offset_x) * sx_Plot;
 
-          Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot, 0, sx_Plot, j * 180 - 90, j * 180 + 90);
+        Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot, 0, sx_Plot, j * 180 - 90, j * 180 + 90);
 
-        }
       }
+    }
 
-      this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
+    this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
-      String scenario_text = "";
-      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-      this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
+    String scenario_text = "";
+    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
+    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+    this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
-      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-      this.graphics.textAlign(RIGHT, CENTER);
+    this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+    this.graphics.textAlign(RIGHT, CENTER);
+    this.graphics.stroke(0);
+    this.graphics.fill(0);
+    this.graphics.strokeWeight(0);
+    this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
+    //?? French
+
+    int PAL_type = 0;
+    int PAL_direction = 1;
+
+    if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
+      PAL_type = this.ACTIVE_palette_CLR;
+      PAL_direction = this.ACTIVE_palette_DIR;
+    }
+    if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
+      PAL_type = this.PASSIVE_palette_CLR;
+      PAL_direction = this.PASSIVE_palette_DIR;
+    }
+
+    float PAL_multiplier = 1;
+    if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
+    if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
+
+    float pal_length = 400;
+    float pal_ox = 700;
+    float pal_oy = 110;
+
+    if (this.j_End == 2) {
+      pal_ox = (ViewLayout == 2) ? 700 : 380;
+      pal_oy = (ViewLayout == 2) ? -375 : 275;
+    }
+
+    for (int q = 0; q < 11; q++) {
+      float _u = 0;
+
+      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) _u = 0.1 * q;
+      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) _u = 0.2 * q - 0.5;
+
+      _u = applyPalDirection(_u, PAL_direction);
+
+      float[] COL = PAINT.getColorStyle(PAL_type, _u);
+      this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+      this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
+
+      this.graphics.strokeWeight(0);
+      this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
+
+      applyLegendTextStyle(COL);
+
+      this.graphics.textSize(15.0 * this.view_S);
+      this.graphics.textAlign(CENTER, CENTER);
+      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+    }
+
+
+    if (this.PrintTtitle) {
+
       this.graphics.stroke(0);
       this.graphics.fill(0);
-      this.graphics.strokeWeight(0);
-      this.graphics.text(STAT_N_Title[l], -0.3 * sx_Plot / this.U_scale, 1.2 * sx_Plot / this.U_scale);
-      //?? French
+      this.graphics.strokeWeight(this.T_scale * 0);
 
-      int PAL_type = 0;
-      int PAL_direction = 1;
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(RIGHT, TOP);
 
+      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+
+      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+      this.graphics.textAlign(CENTER, TOP);
       if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
-        PAL_type = this.ACTIVE_palette_CLR;
-        PAL_direction = this.ACTIVE_palette_DIR;
+        this.graphics.text(("Direct solar radiation (kWh/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
+        //?? French
       }
       if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
-        PAL_type = this.PASSIVE_palette_CLR;
-        PAL_direction = this.PASSIVE_palette_DIR;
+        this.graphics.text(("Direct solar effects (kWh°C/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
+        //?? French
       }
-
-      float PAL_multiplier = 1;
-      if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
-      if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
-
-      float pal_length = 400;
-      float pal_ox = 700;
-      float pal_oy = 110;
-
-      if (this.j_End == 2) {
-        pal_ox = (ViewLayout == 2) ? 700 : 380;
-        pal_oy = (ViewLayout == 2) ? -375 : 275;
-      }
-
-      for (int q = 0; q < 11; q++) {
-        float _u = 0;
-
-        if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) _u = 0.1 * q;
-        if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) _u = 0.2 * q - 0.5;
-
-        _u = applyPalDirection(_u, PAL_direction);
-
-        float[] COL = PAINT.getColorStyle(PAL_type, _u);
-        this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-        this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-
-        this.graphics.strokeWeight(0);
-        this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
-
-        applyLegendTextStyle(COL);
-
-        this.graphics.textSize(15.0 * this.view_S);
-        this.graphics.textAlign(CENTER, CENTER);
-        if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
-        if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
-      }
-
-
-      if (this.PrintTtitle) {
-
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.strokeWeight(this.T_scale * 0);
-
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(RIGHT, TOP);
-
-        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-
-        this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-        this.graphics.textAlign(CENTER, TOP);
-        if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
-          this.graphics.text(("Direct solar radiation (kWh/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
-          //?? French
-        }
-        if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
-          this.graphics.text(("Direct solar effects (kWh°C/m²)"), (pal_ox + 5 * (pal_length / 11.0)) * this.view_S + (pal_length / 11.0) * this.view_S, -pal_oy * this.view_S + 25 * this.view_S);
-          //?? French
-        }
-      }
+    }
 
   }
 
