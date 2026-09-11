@@ -3184,10 +3184,12 @@ class solarchvision_STUDY {
       this.drawDailyGrid(x_Plot, y_Plot, sx_Plot, sy_Plot);
     }
 
-    this.perDays = keep_STUDY_perDays;
-    this.joinDays = keep_STUDY_joinDays;
-
-
+    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
+        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    } else {
+      this.perDays = keep_STUDY_perDays;
+      this.joinDays = keep_STUDY_joinDays;
+    }
 
 
     this.graphics.popMatrix();
