@@ -1316,262 +1316,336 @@ class solarchvision_STUDY {
 
   void setupPlot () {
     if ((this.plotSetup == -2) || (this.plotSetup == -1)) {
-      int keep_TIME_BeginDay = TIME.beginDay;
-      float keep_STUDY_perDays = this.perDays;
-      int keep_joinDays = this.joinDays;
-      int keep_STUDY_j_Start = this.j_Start;
-      int keep_STUDY_j_End = this.j_End;
-      float keep_STUDY_U_scale = this.U_scale;
-      int keep_STUDY_PlotImpacts = this.PlotImpacts;
-      int keep_STUDY_Impact_TYPE = this.Impact_TYPE;
-
-      TIME.beginDay = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
-      this.perDays = 183;
-      this.joinDays = 5;
-      this.j_Start = 0;
-      this.j_End = 2;
-      this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-      this.PlotImpacts = (this.plotSetup == -1) ? PlotImpacts_CYCLES_PASSIVE : PlotImpacts_CYCLES_ACTIVE;
-      this.Impact_TYPE = (this.plotSetup == -1) ? Impact_PASSIVE : Impact_ACTIVE;
-
-      float scale = (ViewLayout == 2) ? 1 : 0.65;
-      this.plotImpact(0, 0 * this.view_S, scale * (100.0 * this.U_scale * this.view_S), scale * (-1.0 * this.V_scale * this.view_S));
-
-      TIME.beginDay = keep_TIME_BeginDay;
-      this.perDays = keep_STUDY_perDays;
-      this.joinDays = keep_joinDays;
-      this.j_Start = keep_STUDY_j_Start;
-      this.j_End = keep_STUDY_j_End;
-      this.U_scale = keep_STUDY_U_scale;
-      this.PlotImpacts = keep_STUDY_PlotImpacts;
-      this.Impact_TYPE = keep_STUDY_Impact_TYPE;
+      setupPlot_cycles();
     }
-
 
     if (this.plotSetup == 0) {
-
-      if (ViewLayout == 2) {
-
-        for (int p = 0; p < 3; p++) {
-          this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + p;
-          this.plotImpact(0, (150 - p * 300) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-        }
-        this.ImpactLayer = pre_STUDY_ImpactLayer;
-
-      } else {
-        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
+      setupPlot_0();
     }
-
 
     if (this.plotSetup == 1) {
-      int keep_PlotImpacts = this.PlotImpacts;
-      int keep_CurrentLayer_id = CurrentLayer_id;
-
-      if (ViewLayout == 2) {
-        this.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
-        this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        this.PlotImpacts = PlotImpacts_GLOBAL_ACTIVE;
-        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      changeCurrentLayerTo(LAYER_dirnorrad.id);
-      this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_cloudcover.id);
-      this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = keep_PlotImpacts;
-      changeCurrentLayerTo(keep_CurrentLayer_id);
+      setupPlot_1();
     }
-
 
     if (this.plotSetup == 2) {
-      int keep_PlotImpacts = this.PlotImpacts;
-      int keep_CurrentLayer_id = CurrentLayer_id;
-
-      if (ViewLayout == 2) {
-        this.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
-        this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
-        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      changeCurrentLayerTo(LAYER_direffect.id);
-      this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_drybulb.id);
-      this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = keep_PlotImpacts;
-      changeCurrentLayerTo(keep_CurrentLayer_id);
+      setupPlot_2();
     }
-
 
     if (this.plotSetup == 3) {
-      int keep_PlotImpacts = this.PlotImpacts;
-      int keep_CurrentLayer_id = CurrentLayer_id;
-
-      if (ViewLayout == 2) {
-        this.PlotImpacts = PlotImpacts_WIND_PASSIVE;
-        this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        changeCurrentLayerTo(LAYER_drybulb.id);
-        this.plotHourly(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      this.PlotImpacts = PlotImpacts_WIND_ACTIVE;
-      this.plotImpact(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_windspd.id);
-      this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = keep_PlotImpacts;
-      changeCurrentLayerTo(keep_CurrentLayer_id);
+      setupPlot_3();
     }
-
 
     if (this.plotSetup == 4) {
-      int keep_ImpactLayer = this.ImpactLayer;
-      int keep_PlotImpacts = this.PlotImpacts;
-      int keep_CurrentLayer_id = CurrentLayer_id;
-      boolean keep_displaySorted = this.displaySorted;
-      boolean keep_displayNormals = this.displayNormals;
-      boolean keep_displayRaws = this.displayRaws;
-      boolean keep_displayProbs = this.displayProbs;
-
-      if (ViewLayout == 2) {
-        this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
-
-        this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3);
-        this.plotImpact(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + 2;
-        this.plotImpact(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      changeCurrentLayerTo(LAYER_drybulb.id);
-
-      this.displaySorted = true;
-      this.displayNormals = true;
-      this.displayRaws = false;
-      this.displayProbs = false;
-      this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.displaySorted = false;
-      this.displayNormals = false;
-      this.displayRaws = true;
-      this.displayProbs = true;
-      this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.ImpactLayer = keep_ImpactLayer;
-      this.PlotImpacts = keep_PlotImpacts;
-      changeCurrentLayerTo(keep_CurrentLayer_id);
-      this.displaySorted = keep_displaySorted;
-      this.displayNormals = keep_displayNormals;
-      this.displayRaws = keep_displayRaws;
-      this.displayProbs = keep_displayProbs;
+      setupPlot_4();
     }
-
 
     if (this.plotSetup == 5) {
-      int keep_skyScenario = this.skyScenario;
-      int keep_CurrentLayer_id = CurrentLayer_id;
-
-      changeCurrentLayerTo(LAYER_drybulb.id);
-
-      if (ViewLayout == 2) {
-        this.skyScenario = 1;
-        this.plotHourly(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      this.skyScenario = 4;
-      this.plotHourly(0, ((ViewLayout == 2) ? -150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      if (ViewLayout == 2) {
-        this.skyScenario = 3;
-        this.plotHourly(0, 150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      this.skyScenario = 2;
-      this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.skyScenario = keep_skyScenario;
-      changeCurrentLayerTo(keep_CurrentLayer_id);
+      setupPlot_5();
     }
-
 
     if (this.plotSetup == 6) {
-      int keep_skyScenario = this.skyScenario;
-      int keep_CurrentLayer_id = CurrentLayer_id;
-
-      changeCurrentLayerTo(LAYER_windspd.id);
-
-      if (ViewLayout == 2) {
-        this.skyScenario = 1;
-        this.plotHourly(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      this.skyScenario = 4;
-      this.plotHourly(0, ((ViewLayout == 2) ? -150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      if (ViewLayout == 2) {
-        this.skyScenario = 3;
-        this.plotHourly(0, 150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      this.skyScenario = 2;
-      this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.skyScenario = keep_skyScenario;
-      changeCurrentLayerTo(keep_CurrentLayer_id);
+      setupPlot_6();
     }
-
 
     if (this.plotSetup == 7) {
-      int keep_CurrentLayer_id = CurrentLayer_id;
-
-      if (ViewLayout == 2) {
-        changeCurrentLayerTo(LAYER_pressure.id);
-        this.plotHourly(0, -450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        changeCurrentLayerTo(LAYER_windspd.id);
-        this.plotHourly(0, -150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      changeCurrentLayerTo(LAYER_relhum.id);
-      this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(LAYER_drybulb.id);
-      this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      changeCurrentLayerTo(keep_CurrentLayer_id);
+      setupPlot_7();
     }
-
 
     if (this.plotSetup == 8) {
-      int keep_CurrentLayer_id = CurrentLayer_id;
+      setupPlot_8();
+    }
+  }
+
+  // plotSetup == -2 / -1 : the single "cycles" diagram (annual active/passive
+  // solar cycle) used for the YC-book-style layout. Temporarily overrides the
+  // date window (a fixed, 5-day-joined, half-year view starting at day 183)
+  // and restores every overridden field afterward.
+  private void setupPlot_cycles () {
+    int keep_TIME_BeginDay = TIME.beginDay;
+    float keep_STUDY_perDays = this.perDays;
+    int keep_joinDays = this.joinDays;
+    int keep_STUDY_j_Start = this.j_Start;
+    int keep_STUDY_j_End = this.j_End;
+    float keep_STUDY_U_scale = this.U_scale;
+    int keep_STUDY_PlotImpacts = this.PlotImpacts;
+    int keep_STUDY_Impact_TYPE = this.Impact_TYPE;
+
+    TIME.beginDay = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
+    this.perDays = 183;
+    this.joinDays = 5;
+    this.j_Start = 0;
+    this.j_End = 2;
+    this.U_scale = 18.0 / float(this.j_End - this.j_Start);
+    this.PlotImpacts = (this.plotSetup == -1) ? PlotImpacts_CYCLES_PASSIVE : PlotImpacts_CYCLES_ACTIVE;
+    this.Impact_TYPE = (this.plotSetup == -1) ? Impact_PASSIVE : Impact_ACTIVE;
+
+    float scale = (ViewLayout == 2) ? 1 : 0.65;
+    this.plotImpact(0, 0 * this.view_S, scale * (100.0 * this.U_scale * this.view_S), scale * (-1.0 * this.V_scale * this.view_S));
+
+    TIME.beginDay = keep_TIME_BeginDay;
+    this.perDays = keep_STUDY_perDays;
+    this.joinDays = keep_joinDays;
+    this.j_Start = keep_STUDY_j_Start;
+    this.j_End = keep_STUDY_j_End;
+    this.U_scale = keep_STUDY_U_scale;
+    this.PlotImpacts = keep_STUDY_PlotImpacts;
+    this.Impact_TYPE = keep_STUDY_Impact_TYPE;
+  }
+
+  // plotSetup == 0 : the default layout - one impact diagram (or three, split
+  // by ImpactLayer, in the 2-viewport layout) plus a single hourly plot.
+  private void setupPlot_0 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+    float sy_Plot = -1.0 * this.V_scale * this.view_S;
+
+    if (ViewLayout == 2) {
+      for (int p = 0; p < 3; p++) {
+        this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + p;
+        this.plotImpact(0, (150 - p * 300) * this.view_S, sx_Plot, sy_Plot);
+      }
+      this.ImpactLayer = pre_STUDY_ImpactLayer;
+    } else {
+      this.plotImpact(0, -150 * this.view_S, sx_Plot, sy_Plot);
+    }
+
+    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, sy_Plot);
+  }
+
+  // plotSetup == 1 : direct-normal-radiation focus - urban/global impact
+  // diagrams (2-viewport only) plus hourly plots of direct radiation and
+  // cloud cover.
+  private void setupPlot_1 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+
+    int keep_PlotImpacts = this.PlotImpacts;
+    int keep_CurrentLayer_id = CurrentLayer_id;
+
+    if (ViewLayout == 2) {
+      this.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
+      this.plotImpact(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+      this.PlotImpacts = PlotImpacts_GLOBAL_ACTIVE;
+      this.plotImpact(0, -150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    changeCurrentLayerTo(LAYER_dirnorrad.id);
+    this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    changeCurrentLayerTo(LAYER_cloudcover.id);
+    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    this.PlotImpacts = keep_PlotImpacts;
+    changeCurrentLayerTo(keep_CurrentLayer_id);
+  }
+
+  // plotSetup == 2 : direct-solar-effect focus - urban/global passive-impact
+  // diagrams (2-viewport only) plus hourly plots of direct effect and dry
+  // bulb temperature.
+  private void setupPlot_2 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+
+    int keep_PlotImpacts = this.PlotImpacts;
+    int keep_CurrentLayer_id = CurrentLayer_id;
+
+    if (ViewLayout == 2) {
+      this.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
+      this.plotImpact(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
       this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
-      this.plotImpact(0, ((ViewLayout == 2) ? -450 : -150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      this.PlotImpacts = PlotImpacts_SUNPATH_PASSIVE;
-      this.plotImpact(0, ((ViewLayout == 2) ? -150 : 150) * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-      if (ViewLayout == 2) {
-        changeCurrentLayerTo(LAYER_dirnorrad.id);
-        this.plotHourly(0, 150 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-
-        changeCurrentLayerTo(LAYER_difhorrad.id);
-        this.plotHourly(0, 450 * this.view_S, (100.0 * this.U_scale * this.view_S), (-1.0 * this.V_scale * this.view_S));
-      }
-
-      changeCurrentLayerTo(keep_CurrentLayer_id);
+      this.plotImpact(0, -150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
     }
+
+    changeCurrentLayerTo(LAYER_direffect.id);
+    this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    changeCurrentLayerTo(LAYER_drybulb.id);
+    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    this.PlotImpacts = keep_PlotImpacts;
+    changeCurrentLayerTo(keep_CurrentLayer_id);
+  }
+
+  // plotSetup == 3 : wind focus - wind-impact diagrams plus hourly plots of
+  // dry bulb temperature and wind speed.
+  private void setupPlot_3 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+
+    int keep_PlotImpacts = this.PlotImpacts;
+    int keep_CurrentLayer_id = CurrentLayer_id;
+
+    if (ViewLayout == 2) {
+      this.PlotImpacts = PlotImpacts_WIND_PASSIVE;
+      this.plotImpact(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+      changeCurrentLayerTo(LAYER_drybulb.id);
+      this.plotHourly(0, -150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    this.PlotImpacts = PlotImpacts_WIND_ACTIVE;
+    this.plotImpact(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    changeCurrentLayerTo(LAYER_windspd.id);
+    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    this.PlotImpacts = keep_PlotImpacts;
+    changeCurrentLayerTo(keep_CurrentLayer_id);
+  }
+
+  // plotSetup == 4 : dry-bulb temperature focus - global passive-impact
+  // diagrams plus one hourly plot showing sorted/normal statistics and a
+  // second showing raw data/probabilities, for the same layer.
+  private void setupPlot_4 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+
+    int keep_ImpactLayer = this.ImpactLayer;
+    int keep_PlotImpacts = this.PlotImpacts;
+    int keep_CurrentLayer_id = CurrentLayer_id;
+    boolean keep_displaySorted = this.displaySorted;
+    boolean keep_displayNormals = this.displayNormals;
+    boolean keep_displayRaws = this.displayRaws;
+    boolean keep_displayProbs = this.displayProbs;
+
+    if (ViewLayout == 2) {
+      this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
+
+      this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3);
+      this.plotImpact(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+      this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + 2;
+      this.plotImpact(0, -150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    changeCurrentLayerTo(LAYER_drybulb.id);
+
+    this.displaySorted = true;
+    this.displayNormals = true;
+    this.displayRaws = false;
+    this.displayProbs = false;
+    this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    this.displaySorted = false;
+    this.displayNormals = false;
+    this.displayRaws = true;
+    this.displayProbs = true;
+    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    this.ImpactLayer = keep_ImpactLayer;
+    this.PlotImpacts = keep_PlotImpacts;
+    changeCurrentLayerTo(keep_CurrentLayer_id);
+    this.displaySorted = keep_displaySorted;
+    this.displayNormals = keep_displayNormals;
+    this.displayRaws = keep_displayRaws;
+    this.displayProbs = keep_displayProbs;
+  }
+
+  // plotSetup == 5 : dry bulb temperature across all four sky scenarios, one
+  // hourly plot per scenario.
+  private void setupPlot_5 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+
+    int keep_skyScenario = this.skyScenario;
+    int keep_CurrentLayer_id = CurrentLayer_id;
+
+    changeCurrentLayerTo(LAYER_drybulb.id);
+
+    if (ViewLayout == 2) {
+      this.skyScenario = 1;
+      this.plotHourly(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    this.skyScenario = 4;
+    this.plotHourly(0, ((ViewLayout == 2) ? -150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    if (ViewLayout == 2) {
+      this.skyScenario = 3;
+      this.plotHourly(0, 150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    this.skyScenario = 2;
+    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    this.skyScenario = keep_skyScenario;
+    changeCurrentLayerTo(keep_CurrentLayer_id);
+  }
+
+  // plotSetup == 6 : wind speed across all four sky scenarios, one hourly
+  // plot per scenario. Structurally identical to setupPlot_5(), just on the
+  // wind speed layer instead of dry bulb.
+  private void setupPlot_6 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+
+    int keep_skyScenario = this.skyScenario;
+    int keep_CurrentLayer_id = CurrentLayer_id;
+
+    changeCurrentLayerTo(LAYER_windspd.id);
+
+    if (ViewLayout == 2) {
+      this.skyScenario = 1;
+      this.plotHourly(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    this.skyScenario = 4;
+    this.plotHourly(0, ((ViewLayout == 2) ? -150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    if (ViewLayout == 2) {
+      this.skyScenario = 3;
+      this.plotHourly(0, 150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    this.skyScenario = 2;
+    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    this.skyScenario = keep_skyScenario;
+    changeCurrentLayerTo(keep_CurrentLayer_id);
+  }
+
+  // plotSetup == 7 : atmospheric layers - pressure and wind speed (2-viewport
+  // only), then relative humidity and dry bulb temperature.
+  private void setupPlot_7 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+
+    int keep_CurrentLayer_id = CurrentLayer_id;
+
+    if (ViewLayout == 2) {
+      changeCurrentLayerTo(LAYER_pressure.id);
+      this.plotHourly(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+      changeCurrentLayerTo(LAYER_windspd.id);
+      this.plotHourly(0, -150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    changeCurrentLayerTo(LAYER_relhum.id);
+    this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    changeCurrentLayerTo(LAYER_drybulb.id);
+    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    changeCurrentLayerTo(keep_CurrentLayer_id);
+  }
+
+  // plotSetup == 8 : solar overview - global passive impact and sun-path
+  // diagrams, plus (2-viewport only) hourly plots of direct and diffuse
+  // horizontal radiation.
+  private void setupPlot_8 () {
+    float sx_Plot = 100.0 * this.U_scale * this.view_S;
+
+    int keep_CurrentLayer_id = CurrentLayer_id;
+
+    this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
+    this.plotImpact(0, ((ViewLayout == 2) ? -450 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    this.PlotImpacts = PlotImpacts_SUNPATH_PASSIVE;
+    this.plotImpact(0, ((ViewLayout == 2) ? -150 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+    if (ViewLayout == 2) {
+      changeCurrentLayerTo(LAYER_dirnorrad.id);
+      this.plotHourly(0, 150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+
+      changeCurrentLayerTo(LAYER_difhorrad.id);
+      this.plotHourly(0, 450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    }
+
+    changeCurrentLayerTo(keep_CurrentLayer_id);
   }
 
 
