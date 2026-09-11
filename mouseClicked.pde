@@ -440,30 +440,22 @@ void mouseClicked () {
                     x1 = P[0];
                     y1 = P[1];
                     z1 = P[2];
-                  }
-
-                  if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+                  } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
 
                     x1 = allModel2Ds.getX(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
                     y1 = allModel2Ds.getY(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
                     z1 = allModel2Ds.getZ(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
-                  }
-
-                  if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
 
                     x1 = allModel1Ds.getX(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
                     y1 = allModel1Ds.getY(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
                     z1 = allModel1Ds.getZ(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
-                  }
-
-                  if (current_ObjectCategory == ObjectCategory.SOLID) {
+                  } else if (current_ObjectCategory == ObjectCategory.SOLID) {
 
                     x1 = allSolids.get_posX(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
                     y1 = allSolids.get_posY(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
                     z1 = allSolids.get_posZ(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
-                  }
-
-                  if (current_ObjectCategory == ObjectCategory.VERTEX) {
+                  } else if (current_ObjectCategory == ObjectCategory.VERTEX) {
 
                     x1 = allPoints.getX(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
                     y1 = allPoints.getY(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
