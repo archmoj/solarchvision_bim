@@ -62,7 +62,7 @@ class solarchvision_Functions {
     float sinHalfDLat = this.sin_ang(dLat / 2.0);
     float b = sinHalfDLat * sinHalfDLat +
               this.cos_ang((float) lat1) * this.cos_ang((float) lat2) * a * a;
-    return 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) DOUBLE_r_Earth;
+    return 2 * atan2(sqrt(b), sqrt(1 - b)) * FLOAT_r_Earth;
   }
 
   float[] vec_scale (float[] a, float b) {
