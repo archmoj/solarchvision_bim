@@ -1541,43 +1541,25 @@ class solarchvision_STUDY {
   // plotSetup == 5 : dry bulb temperature across all four sky scenarios, one
   // hourly plot per scenario.
   private void setupPlot_5 () {
-    float sx_Plot = 100.0 * this.U_scale * this.view_S;
-
-    int keep_skyScenario = this.skyScenario;
-    int keep_CurrentLayer_id = CurrentLayer_id;
-
-    changeCurrentLayerTo(LAYER_drybulb.id);
-
-    if (ViewLayout == 2) {
-      this.skyScenario = 1;
-      this.plotHourly(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
-    }
-
-    this.skyScenario = 4;
-    this.plotHourly(0, ((ViewLayout == 2) ? -150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
-
-    if (ViewLayout == 2) {
-      this.skyScenario = 3;
-      this.plotHourly(0, 150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
-    }
-
-    this.skyScenario = 2;
-    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
-
-    this.skyScenario = keep_skyScenario;
-    changeCurrentLayerTo(keep_CurrentLayer_id);
+    setupPlot_acrossSkyScenarios(LAYER_drybulb.id);
   }
 
   // plotSetup == 6 : wind speed across all four sky scenarios, one hourly
-  // plot per scenario. Structurally identical to setupPlot_5(), just on the
-  // wind speed layer instead of dry bulb.
+  // plot per scenario. Shares its implementation with setupPlot_5(); only the
+  // layer differs.
   private void setupPlot_6 () {
+    setupPlot_acrossSkyScenarios(LAYER_windspd.id);
+  }
+
+  // Shared implementation for setupPlot_5() and setupPlot_6(): plots the
+  // given layer across all four sky scenarios, one hourly plot per scenario.
+  private void setupPlot_acrossSkyScenarios (int layerId) {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_skyScenario = this.skyScenario;
     int keep_CurrentLayer_id = CurrentLayer_id;
 
-    changeCurrentLayerTo(LAYER_windspd.id);
+    changeCurrentLayerTo(layerId);
 
     if (ViewLayout == 2) {
       this.skyScenario = 1;
