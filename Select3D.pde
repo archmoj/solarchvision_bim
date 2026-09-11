@@ -83,6 +83,127 @@ class solarchvision_Select3D {
     return out;
   }
 
+  // Toggles OBJ_ID in/out of an id list according to
+  // addNewSelectionToPreviousSelection (0: replace, 1: add, -1: subtract),
+  // and returns the resulting array.
+  int[] toggleSelection (int[] ids, int OBJ_ID) {
+
+    int found_at = -1;
+    int use_it = 0; // 0:nothing 1:add -1:subtract
+
+    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+
+    if (addNewSelectionToPreviousSelection != 0) {
+
+      for (int o = ids.length - 1; o >= 0; o--) {
+        if (ids[o] == OBJ_ID) {
+          found_at = o;
+          if (addNewSelectionToPreviousSelection == 1) {
+            use_it = 0;
+          }
+          if (addNewSelectionToPreviousSelection == -1) {
+            use_it = -1;
+          }
+          break;
+        }
+      }
+    }
+
+    if (use_it == -1) return removeIdAt(ids, found_at);
+    if (use_it == 1) return appendId(ids, OBJ_ID);
+    return ids;
+  }
+
+  // Returns {0, 1, ..., n-1}. Used by selectAll() to select every object of
+  // the current category.
+  int[] rangeIds (int n) {
+    int[] ids = new int[max(n, 0)];
+    for (int i = 0; i < ids.length; i++) ids[i] = i;
+    return ids;
+  }
+
+  // Returns the ids from 0 up to (but not including) total that are NOT
+  // present in `selected`. Used by invertSelection().
+  int[] invertedIds (int[] selected, int total) {
+    int[] sortedSelected = sort(selected);
+    IntList inverted = new IntList();
+    int j = 0;
+    for (int i = 0; i < total; i++) {
+      while (j < sortedSelected.length && sortedSelected[j] < i) j++;
+      boolean isSelected = (j < sortedSelected.length && sortedSelected[j] == i);
+      if (!isSelected) inverted.append(i);
+    }
+    return inverted.array();
+  }
+
+  // Returns {} if total <= 0, otherwise {total - 1}. Used by selectLast()
+  // to select the most recently created object of the current category.
+  int[] lastId (int total) {
+    if (total > 0) {
+      int[] ids = {total - 1};
+      return ids;
+    }
+    return new int[0];
+  }
+
+  String idsToXML (int[] ids) {
+    String txt = "";
+    int ni = ids.length;
+    for (int i = 0; i < ni; i++) {
+      txt += nf(ids[i], 0);
+      if (i < ni - 1) txt += "|";
+    }
+    return txt;
+  }
+
+  int[] idsFromXML (String txt) {
+    if (txt.equals("")) return new int[0];
+    String[] parts = split(txt, "|");
+    int[] ids = new int[parts.length];
+    for (int i = 0; i < parts.length; i++) {
+      ids[i] = int(parts[i]);
+    }
+    return ids;
+  }
+
+  String floatsToXML (float[] values) {
+    String txt = "";
+    int ni = values.length;
+    for (int i = 0; i < ni; i++) {
+      txt += nf(values[i], 0, 4).replace("|", "."); // <<<<
+      if (i < ni - 1) txt += "|";
+    }
+    return txt;
+  }
+
+  float[] floatsFromXML (String txt) {
+    if (txt.equals("")) return new float[0];
+    String[] parts = split(txt, "|");
+    float[] values = new float[parts.length];
+    for (int i = 0; i < parts.length; i++) {
+      values[i] = float(parts[i]);
+    }
+    return values;
+  }
+
+  int rectTest_vertex (float x, float y, float z, float corner1x, float corner1y, float corner2x, float corner2y) {
+
+    float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
+
+    if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+      if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
+        if (mouseButton == RIGHT) return 1;
+      } else {
+        if (mouseButton == LEFT) return 0;
+      }
+    } else {
+      if (mouseButton == LEFT) return 0;
+    }
+    return -1;
+  }
+
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
 
     float[] ray_normal = funcs.vec3_unit(ray_dir);
@@ -765,37 +886,7 @@ class solarchvision_Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.LandPoint_ids.length - 1; o >= 0; o--) {
-          if (this.LandPoint_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.LandPoint_ids = removeIdAt(this.LandPoint_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.LandPoint_ids = appendId(this.LandPoint_ids, OBJ_ID);
-      }
+      this.LandPoint_ids = toggleSelection(this.LandPoint_ids, OBJ_ID);
     }
 
 
@@ -803,37 +894,7 @@ class solarchvision_Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-          if (this.Model1D_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Model1D_ids = removeIdAt(this.Model1D_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Model1D_ids = appendId(this.Model1D_ids, OBJ_ID);
-      }
+      this.Model1D_ids = toggleSelection(this.Model1D_ids, OBJ_ID);
     }
 
 
@@ -841,37 +902,7 @@ class solarchvision_Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
-          if (this.Model2D_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Model2D_ids = removeIdAt(this.Model2D_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Model2D_ids = appendId(this.Model2D_ids, OBJ_ID);
-      }
+      this.Model2D_ids = toggleSelection(this.Model2D_ids, OBJ_ID);
     }
 
 
@@ -888,111 +919,21 @@ class solarchvision_Select3D {
         }
       }
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Group_ids.length - 1; o >= 0; o--) {
-          if (this.Group_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Group_ids = removeIdAt(this.Group_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Group_ids = appendId(this.Group_ids, OBJ_ID);
-      }
+      this.Group_ids = toggleSelection(this.Group_ids, OBJ_ID);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
 
       int OBJ_ID = int(RxP[0]);
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Face_ids.length - 1; o >= 0; o--) {
-          if (this.Face_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Face_ids = removeIdAt(this.Face_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Face_ids = appendId(this.Face_ids, OBJ_ID);
-      }
+      this.Face_ids = toggleSelection(this.Face_ids, OBJ_ID);
     }
 
     if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
       int OBJ_ID = int(RxP[0]);
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Polyline_ids.length - 1; o >= 0; o--) {
-          if (this.Polyline_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Polyline_ids = removeIdAt(this.Polyline_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Polyline_ids = appendId(this.Polyline_ids, OBJ_ID);
-      }
+      this.Polyline_ids = toggleSelection(this.Polyline_ids, OBJ_ID);
     }
 
 
@@ -1019,37 +960,7 @@ class solarchvision_Select3D {
       }
 
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Vertex_ids.length - 1; o >= 0; o--) {
-          if (this.Vertex_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Vertex_ids = removeIdAt(this.Vertex_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Vertex_ids = appendId(this.Vertex_ids, OBJ_ID);
-      }
+      this.Vertex_ids = toggleSelection(this.Vertex_ids, OBJ_ID);
     }
 
 
@@ -1058,37 +969,7 @@ class solarchvision_Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Solid_ids.length - 1; o >= 0; o--) {
-          if (this.Solid_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Solid_ids = removeIdAt(this.Solid_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Solid_ids = appendId(this.Solid_ids, OBJ_ID);
-      }
+      this.Solid_ids = toggleSelection(this.Solid_ids, OBJ_ID);
     }
 
 
@@ -1097,74 +978,14 @@ class solarchvision_Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Section_ids.length - 1; o >= 0; o--) {
-          if (this.Section_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Section_ids = removeIdAt(this.Section_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Section_ids = appendId(this.Section_ids, OBJ_ID);
-      }
+      this.Section_ids = toggleSelection(this.Section_ids, OBJ_ID);
     }
 
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
 
       int OBJ_ID = int(RxP[0]);
 
-      int found_at = -1;
-
-      int use_it = 0; // 0:nothing 1:add -1:subtract
-
-      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-      if (addNewSelectionToPreviousSelection != 0) {
-
-        for (int o = this.Camera_ids.length - 1; o >= 0; o--) {
-          if (this.Camera_ids[o] == OBJ_ID) {
-            found_at = o;
-            if (addNewSelectionToPreviousSelection == 1) {
-              use_it = 0;
-            }
-            if (addNewSelectionToPreviousSelection == -1) {
-              use_it = -1;
-            }
-            break;
-          }
-        }
-      }
-
-      if (use_it == -1) {
-        this.Camera_ids = removeIdAt(this.Camera_ids, found_at);
-      }
-
-      if (use_it == 1) {
-        this.Camera_ids = appendId(this.Camera_ids, OBJ_ID);
-      }
+      this.Camera_ids = toggleSelection(this.Camera_ids, OBJ_ID);
 
     }
 
@@ -1198,27 +1019,11 @@ class solarchvision_Select3D {
           float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
           float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
 
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-
-            if (break_loops == 1) break;
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
+          int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+          if (decision != -1) {
+            include_OBJ_in_newSelection = decision;
+            break_loops = 1;
+            break;
           }
         }
 
@@ -1226,37 +1031,7 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
-
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.LandPoint_ids.length - 1; o >= 0; o--) {
-              if (this.LandPoint_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-          if (use_it == -1) {
-            this.LandPoint_ids = removeIdAt(this.LandPoint_ids, found_at);
-          }
-
-          if (use_it == 1) {
-            this.LandPoint_ids = appendId(this.LandPoint_ids, OBJ_ID);
-          }
+          this.LandPoint_ids = toggleSelection(this.LandPoint_ids, OBJ_ID);
         }
       }
     }
@@ -1284,27 +1059,11 @@ class solarchvision_Select3D {
           float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
           float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-
-            if (break_loops == 1) break;
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
+          int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+          if (decision != -1) {
+            include_OBJ_in_newSelection = decision;
+            break_loops = 1;
+            break;
           }
 
           if (break_loops == 1) break;
@@ -1313,37 +1072,7 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
-
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Model1D_ids.length - 1; o >= 0; o--) {
-              if (this.Model1D_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-          if (use_it == -1) {
-            this.Model1D_ids = removeIdAt(this.Model1D_ids, found_at);
-          }
-
-          if (use_it == 1) {
-            this.Model1D_ids = appendId(this.Model1D_ids, OBJ_ID);
-          }
+          this.Model1D_ids = toggleSelection(this.Model1D_ids, OBJ_ID);
         }
       }
     }
@@ -1373,25 +1102,10 @@ class solarchvision_Select3D {
                 float y = allPoints.getY(vNo) * OBJECTS_scale;
                 float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-                float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                  if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-                    if (mouseButton == RIGHT) {
-                      include_OBJ_in_newSelection = 1;
-                      break_loops = 1;
-                    }
-                  } else {
-                    if (mouseButton == LEFT) {
-                      include_OBJ_in_newSelection = 0;
-                      break_loops = 1;
-                    }
-                  }
-                } else {
-                  if (mouseButton == LEFT) {
-                    include_OBJ_in_newSelection = 0;
-                    break_loops = 1;
-                  }
+                int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+                if (decision != -1) {
+                  include_OBJ_in_newSelection = decision;
+                  break_loops = 1;
                 }
 
                 if (break_loops == 1) break;
@@ -1417,25 +1131,10 @@ class solarchvision_Select3D {
                 float y = allPoints.getY(vNo) * OBJECTS_scale;
                 float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-                float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                  if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-                    if (mouseButton == RIGHT) {
-                      include_OBJ_in_newSelection = 1;
-                      break_loops = 1;
-                    }
-                  } else {
-                    if (mouseButton == LEFT) {
-                      include_OBJ_in_newSelection = 0;
-                      break_loops = 1;
-                    }
-                  }
-                } else {
-                  if (mouseButton == LEFT) {
-                    include_OBJ_in_newSelection = 0;
-                    break_loops = 1;
-                  }
+                int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+                if (decision != -1) {
+                  include_OBJ_in_newSelection = decision;
+                  break_loops = 1;
                 }
 
                 if (break_loops == 1) break;
@@ -1448,37 +1147,7 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
-
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Group_ids.length - 1; o >= 0; o--) {
-              if (this.Group_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-          if (use_it == -1) {
-            this.Group_ids = removeIdAt(this.Group_ids, found_at);
-          }
-
-          if (use_it == 1) {
-            this.Group_ids = appendId(this.Group_ids, OBJ_ID);
-          }
+          this.Group_ids = toggleSelection(this.Group_ids, OBJ_ID);
         }
       }
     }
@@ -1502,25 +1171,10 @@ class solarchvision_Select3D {
           float y = allPoints.getY(vNo) * OBJECTS_scale;
           float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
+          int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+          if (decision != -1) {
+            include_OBJ_in_newSelection = decision;
+            break_loops = 1;
           }
 
           if (break_loops == 1) break;
@@ -1530,37 +1184,7 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
-
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Face_ids.length - 1; o >= 0; o--) {
-              if (this.Face_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-          if (use_it == -1) {
-            this.Face_ids = removeIdAt(this.Face_ids, found_at);
-          }
-
-          if (use_it == 1) {
-            this.Face_ids = appendId(this.Face_ids, OBJ_ID);
-          }
+          this.Face_ids = toggleSelection(this.Face_ids, OBJ_ID);
         }
       }
     }
@@ -1583,25 +1207,10 @@ class solarchvision_Select3D {
           float y = allPoints.getY(vNo) * OBJECTS_scale;
           float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
+          int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+          if (decision != -1) {
+            include_OBJ_in_newSelection = decision;
+            break_loops = 1;
           }
 
           if (break_loops == 1) break;
@@ -1611,37 +1220,7 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
-
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Polyline_ids.length - 1; o >= 0; o--) {
-              if (this.Polyline_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-          if (use_it == -1) {
-            this.Polyline_ids = removeIdAt(this.Polyline_ids, found_at);
-          }
-
-          if (use_it == 1) {
-            this.Polyline_ids = appendId(this.Polyline_ids, OBJ_ID);
-          }
+          this.Polyline_ids = toggleSelection(this.Polyline_ids, OBJ_ID);
         }
       }
     }
@@ -1660,58 +1239,15 @@ class solarchvision_Select3D {
         float y = allPoints.getY(OBJ_ID) * OBJECTS_scale;
         float z = -allPoints.getZ(OBJ_ID) * OBJECTS_scale;
 
-        float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-            }
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-            }
-          }
-        } else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-          }
+        int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+        if (decision != -1) {
+          include_OBJ_in_newSelection = decision;
         }
 
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
-
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Vertex_ids.length - 1; o >= 0; o--) {
-              if (this.Vertex_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-          if (use_it == -1) {
-            this.Vertex_ids = removeIdAt(this.Vertex_ids, found_at);
-          }
-
-          if (use_it == 1) {
-            this.Vertex_ids = appendId(this.Vertex_ids, OBJ_ID);
-          }
+          this.Vertex_ids = toggleSelection(this.Vertex_ids, OBJ_ID);
         }
       }
     }
@@ -1739,27 +1275,11 @@ class solarchvision_Select3D {
           float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
           float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-
-            if (break_loops == 1) break;
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
+          int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+          if (decision != -1) {
+            include_OBJ_in_newSelection = decision;
+            break_loops = 1;
+            break;
           }
 
           if (break_loops == 1) break;
@@ -1768,41 +1288,10 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
+          int previousCount = this.Model2D_ids.length;
+          this.Model2D_ids = toggleSelection(this.Model2D_ids, OBJ_ID);
 
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Model2D_ids.length - 1; o >= 0; o--) {
-              if (this.Model2D_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-
-          if (use_it == -1) {
-            this.Model2D_ids = removeIdAt(this.Model2D_ids, found_at);
-          }
-
-
-
-          if (use_it == 1) {
-
-            this.Model2D_ids = appendId(this.Model2D_ids, OBJ_ID);
-
+          if (this.Model2D_ids.length > previousCount) {
             // skip the same object's drawn faces
             f += allModel2Ds.num_visualFaces - (f % allModel2Ds.num_visualFaces) - 1;
           }
@@ -1833,27 +1322,11 @@ class solarchvision_Select3D {
           float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
           float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-
-            if (break_loops == 1) break;
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
+          int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+          if (decision != -1) {
+            include_OBJ_in_newSelection = decision;
+            break_loops = 1;
+            break;
           }
 
           if (break_loops == 1) break;
@@ -1862,40 +1335,10 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
+          int previousCount = this.Solid_ids.length;
+          this.Solid_ids = toggleSelection(this.Solid_ids, OBJ_ID);
 
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Solid_ids.length - 1; o >= 0; o--) {
-              if (this.Solid_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-
-          if (use_it == -1) {
-            this.Solid_ids = removeIdAt(this.Solid_ids, found_at);
-          }
-
-
-
-          if (use_it == 1) {
-            this.Solid_ids = appendId(this.Solid_ids, OBJ_ID);
-
+          if (this.Solid_ids.length > previousCount) {
             // skip the same object's drawn faces
             f += allSolids.num_visualFaces - (f % allSolids.num_visualFaces) - 1;
           }
@@ -1924,27 +1367,11 @@ class solarchvision_Select3D {
           float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
           float z = -allSections.Vertices[vNo][2] * OBJECTS_scale;
 
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-
-            if (break_loops == 1) break;
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
+          int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+          if (decision != -1) {
+            include_OBJ_in_newSelection = decision;
+            break_loops = 1;
+            break;
           }
 
           if (break_loops == 1) break;
@@ -1953,37 +1380,7 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
-
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Section_ids.length - 1; o >= 0; o--) {
-              if (this.Section_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-          if (use_it == -1) {
-            this.Section_ids = removeIdAt(this.Section_ids, found_at);
-          }
-
-          if (use_it == 1) {
-            this.Section_ids = appendId(this.Section_ids, OBJ_ID);
-          }
+          this.Section_ids = toggleSelection(this.Section_ids, OBJ_ID);
         }
       }
     }
@@ -2010,27 +1407,11 @@ class solarchvision_Select3D {
           float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
           float z = -allCameras.Vertices[vNo][2] * OBJECTS_scale;
 
-          float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
-
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
-              if (mouseButton == RIGHT) {
-                include_OBJ_in_newSelection = 1;
-                break_loops = 1;
-              }
-            } else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }
-            }
-
-            if (break_loops == 1) break;
-          } else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }
+          int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
+          if (decision != -1) {
+            include_OBJ_in_newSelection = decision;
+            break_loops = 1;
+            break;
           }
 
           if (break_loops == 1) break;
@@ -2039,37 +1420,7 @@ class solarchvision_Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int found_at = -1;
-
-          int use_it = 0; // 0:nothing 1:add -1:subtract
-
-          if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-          if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-          if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-
-          if (addNewSelectionToPreviousSelection != 0) {
-
-            for (int o = this.Camera_ids.length - 1; o >= 0; o--) {
-              if (this.Camera_ids[o] == OBJ_ID) {
-                found_at = o;
-                if (addNewSelectionToPreviousSelection == 1) {
-                  use_it = 0;
-                }
-                if (addNewSelectionToPreviousSelection == -1) {
-                  use_it = -1;
-                }
-                break;
-              }
-            }
-          }
-
-          if (use_it == -1) {
-            this.Camera_ids = removeIdAt(this.Camera_ids, found_at);
-          }
-
-          if (use_it == 1) {
-            this.Camera_ids = appendId(this.Camera_ids, OBJ_ID);
-          }
+          this.Camera_ids = toggleSelection(this.Camera_ids, OBJ_ID);
         }
       }
     }
@@ -2171,73 +1522,43 @@ class solarchvision_Select3D {
   void selectAll () {
 
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      this.LandPoint_ids = new int [Land3D.num_rows * Land3D.num_columns];
-      for (int i = 0; i < this.LandPoint_ids.length; i++) {
-        this.LandPoint_ids[i] = i;
-      }
+      this.LandPoint_ids = rangeIds(Land3D.num_rows * Land3D.num_columns);
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1D_ids = new int [allModel1Ds.num];
-      for (int i = 0; i < this.Model1D_ids.length; i++) {
-        this.Model1D_ids[i] = i;
-      }
+      this.Model1D_ids = rangeIds(allModel1Ds.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2D_ids = new int [allModel2Ds.num];
-      for (int i = 0; i < this.Model2D_ids.length; i++) {
-        this.Model2D_ids[i] = i;
-      }
+      this.Model2D_ids = rangeIds(allModel2Ds.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-      this.Group_ids = new int [allGroups.num];
-      for (int i = 0; i < this.Group_ids.length; i++) {
-        this.Group_ids[i] = i;
-      }
+      this.Group_ids = rangeIds(allGroups.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
-      this.Face_ids = new int [allFaces.nodes.length];
-      for (int i = 0; i < this.Face_ids.length; i++) {
-        this.Face_ids[i] = i;
-      }
+      this.Face_ids = rangeIds(allFaces.nodes.length);
     }
 
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      this.Vertex_ids = new int [allPoints.getLength()];
-      for (int i = 0; i < this.Vertex_ids.length; i++) {
-        this.Vertex_ids[i] = i;
-      }
+      this.Vertex_ids = rangeIds(allPoints.getLength());
     }
 
     if (current_ObjectCategory == ObjectCategory.POLYLINE) {
-      this.Polyline_ids = new int [allPolylines.nodes.length];
-      for (int i = 0; i < this.Polyline_ids.length; i++) {
-        this.Polyline_ids[i] = i;
-      }
+      this.Polyline_ids = rangeIds(allPolylines.nodes.length);
     }
 
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.Solid_ids = new int [allSolids.DEF.length];
-      for (int i = 0; i < this.Solid_ids.length; i++) {
-        this.Solid_ids[i] = i;
-      }
+      this.Solid_ids = rangeIds(allSolids.DEF.length);
     }
 
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-      this.Section_ids = new int [allSections.num];
-      for (int i = 0; i < this.Section_ids.length; i++) {
-        this.Section_ids[i] = i;
-      }
+      this.Section_ids = rangeIds(allSections.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      this.Camera_ids = new int [allCameras.num];
-      for (int i = 0; i < this.Camera_ids.length; i++) {
-        this.Camera_ids[i] = i;
-      }
+      this.Camera_ids = rangeIds(allCameras.num);
     }
 
     SOLARCHVISION_selection_changed();
@@ -2247,144 +1568,44 @@ class solarchvision_Select3D {
   void invertSelection () {
 
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      int[] pre_Selection_LandPoint_ids = sort(this.LandPoint_ids);
-
-      int total_LandPoint = Land3D.num_rows * Land3D.num_columns;
-      IntList inverted_LandPoint = new IntList();
-      int j_LandPoint = 0;
-      for (int i = 0; i < total_LandPoint; i++) {
-        while (j_LandPoint < pre_Selection_LandPoint_ids.length && pre_Selection_LandPoint_ids[j_LandPoint] < i) j_LandPoint++;
-        boolean isSelected_LandPoint = (j_LandPoint < pre_Selection_LandPoint_ids.length && pre_Selection_LandPoint_ids[j_LandPoint] == i);
-        if (!isSelected_LandPoint) inverted_LandPoint.append(i);
-      }
-      this.LandPoint_ids = inverted_LandPoint.array();
+      this.LandPoint_ids = invertedIds(this.LandPoint_ids, Land3D.num_rows * Land3D.num_columns);
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      int[] pre_Selection_Model1D_ids = sort(this.Model1D_ids);
-
-      int total_Model1D = allModel1Ds.num;
-      IntList inverted_Model1D = new IntList();
-      int j_Model1D = 0;
-      for (int i = 0; i < total_Model1D; i++) {
-        while (j_Model1D < pre_Selection_Model1D_ids.length && pre_Selection_Model1D_ids[j_Model1D] < i) j_Model1D++;
-        boolean isSelected_Model1D = (j_Model1D < pre_Selection_Model1D_ids.length && pre_Selection_Model1D_ids[j_Model1D] == i);
-        if (!isSelected_Model1D) inverted_Model1D.append(i);
-      }
-      this.Model1D_ids = inverted_Model1D.array();
+      this.Model1D_ids = invertedIds(this.Model1D_ids, allModel1Ds.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      int[] pre_Selection_Model2D_ids = sort(this.Model2D_ids);
-
-      int total_Model2D = allModel2Ds.num;
-      IntList inverted_Model2D = new IntList();
-      int j_Model2D = 0;
-      for (int i = 0; i < total_Model2D; i++) {
-        while (j_Model2D < pre_Selection_Model2D_ids.length && pre_Selection_Model2D_ids[j_Model2D] < i) j_Model2D++;
-        boolean isSelected_Model2D = (j_Model2D < pre_Selection_Model2D_ids.length && pre_Selection_Model2D_ids[j_Model2D] == i);
-        if (!isSelected_Model2D) inverted_Model2D.append(i);
-      }
-      this.Model2D_ids = inverted_Model2D.array();
+      this.Model2D_ids = invertedIds(this.Model2D_ids, allModel2Ds.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-      int[] pre_Selection_Group_ids = sort(this.Group_ids);
-
-      int total_Group = allGroups.num;
-      IntList inverted_Group = new IntList();
-      int j_Group = 0;
-      for (int i = 0; i < total_Group; i++) {
-        while (j_Group < pre_Selection_Group_ids.length && pre_Selection_Group_ids[j_Group] < i) j_Group++;
-        boolean isSelected_Group = (j_Group < pre_Selection_Group_ids.length && pre_Selection_Group_ids[j_Group] == i);
-        if (!isSelected_Group) inverted_Group.append(i);
-      }
-      this.Group_ids = inverted_Group.array();
+      this.Group_ids = invertedIds(this.Group_ids, allGroups.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
-      int[] pre_Selection_Face_ids = sort(this.Face_ids);
-
-      int total_Face = allFaces.nodes.length;
-      IntList inverted_Face = new IntList();
-      int j_Face = 0;
-      for (int i = 0; i < total_Face; i++) {
-        while (j_Face < pre_Selection_Face_ids.length && pre_Selection_Face_ids[j_Face] < i) j_Face++;
-        boolean isSelected_Face = (j_Face < pre_Selection_Face_ids.length && pre_Selection_Face_ids[j_Face] == i);
-        if (!isSelected_Face) inverted_Face.append(i);
-      }
-      this.Face_ids = inverted_Face.array();
+      this.Face_ids = invertedIds(this.Face_ids, allFaces.nodes.length);
     }
 
     if (current_ObjectCategory == ObjectCategory.POLYLINE) {
-      int[] pre_Selection_Polyline_ids = sort(this.Polyline_ids);
-
-      int total_Polyline = allPolylines.nodes.length;
-      IntList inverted_Polyline = new IntList();
-      int j_Polyline = 0;
-      for (int i = 0; i < total_Polyline; i++) {
-        while (j_Polyline < pre_Selection_Polyline_ids.length && pre_Selection_Polyline_ids[j_Polyline] < i) j_Polyline++;
-        boolean isSelected_Polyline = (j_Polyline < pre_Selection_Polyline_ids.length && pre_Selection_Polyline_ids[j_Polyline] == i);
-        if (!isSelected_Polyline) inverted_Polyline.append(i);
-      }
-      this.Polyline_ids = inverted_Polyline.array();
+      this.Polyline_ids = invertedIds(this.Polyline_ids, allPolylines.nodes.length);
     }
 
 
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      int[] pre_Selection_Vertex_ids = sort(this.Vertex_ids);
-
-      int total_Vertex = allPoints.getLength();
-      IntList inverted_Vertex = new IntList();
-      int j_Vertex = 0;
-      for (int i = 0; i < total_Vertex; i++) {
-        while (j_Vertex < pre_Selection_Vertex_ids.length && pre_Selection_Vertex_ids[j_Vertex] < i) j_Vertex++;
-        boolean isSelected_Vertex = (j_Vertex < pre_Selection_Vertex_ids.length && pre_Selection_Vertex_ids[j_Vertex] == i);
-        if (!isSelected_Vertex) inverted_Vertex.append(i);
-      }
-      this.Vertex_ids = inverted_Vertex.array();
+      this.Vertex_ids = invertedIds(this.Vertex_ids, allPoints.getLength());
     }
 
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      int[] pre_Selection_Solid_ids = sort(this.Solid_ids);
-
-      int total_Solid = allSolids.DEF.length;
-      IntList inverted_Solid = new IntList();
-      int j_Solid = 0;
-      for (int i = 0; i < total_Solid; i++) {
-        while (j_Solid < pre_Selection_Solid_ids.length && pre_Selection_Solid_ids[j_Solid] < i) j_Solid++;
-        boolean isSelected_Solid = (j_Solid < pre_Selection_Solid_ids.length && pre_Selection_Solid_ids[j_Solid] == i);
-        if (!isSelected_Solid) inverted_Solid.append(i);
-      }
-      this.Solid_ids = inverted_Solid.array();
+      this.Solid_ids = invertedIds(this.Solid_ids, allSolids.DEF.length);
     }
 
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-      int[] pre_Selection_Section_ids = sort(this.Section_ids);
-
-      int total_Section = allSections.num;
-      IntList inverted_Section = new IntList();
-      int j_Section = 0;
-      for (int i = 0; i < total_Section; i++) {
-        while (j_Section < pre_Selection_Section_ids.length && pre_Selection_Section_ids[j_Section] < i) j_Section++;
-        boolean isSelected_Section = (j_Section < pre_Selection_Section_ids.length && pre_Selection_Section_ids[j_Section] == i);
-        if (!isSelected_Section) inverted_Section.append(i);
-      }
-      this.Section_ids = inverted_Section.array();
+      this.Section_ids = invertedIds(this.Section_ids, allSections.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      int[] pre_Selection_Camera_ids = sort(this.Camera_ids);
-
-      int total_Camera = allCameras.num;
-      IntList inverted_Camera = new IntList();
-      int j_Camera = 0;
-      for (int i = 0; i < total_Camera; i++) {
-        while (j_Camera < pre_Selection_Camera_ids.length && pre_Selection_Camera_ids[j_Camera] < i) j_Camera++;
-        boolean isSelected_Camera = (j_Camera < pre_Selection_Camera_ids.length && pre_Selection_Camera_ids[j_Camera] == i);
-        if (!isSelected_Camera) inverted_Camera.append(i);
-      }
-      this.Camera_ids = inverted_Camera.array();
+      this.Camera_ids = invertedIds(this.Camera_ids, allCameras.num);
     }
 
     SOLARCHVISION_selection_changed();
@@ -2401,85 +1622,40 @@ class solarchvision_Select3D {
   void selectLast () {
 
     if (current_ObjectCategory == ObjectCategory.SECTION) {
-      this.Section_ids = new int [0];
-
-      if (allSections.num > 0) {
-        int[] new_Item = {allSections.num - 1};
-        this.Section_ids = concat(this.Section_ids, new_Item);
-      }
+      this.Section_ids = lastId(allSections.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.CAMERA) {
-      this.Camera_ids = new int [0];
-
-      if (allCameras.num > 0) {
-        int[] new_Item = {allCameras.num - 1};
-        this.Camera_ids = concat(this.Camera_ids, new_Item);
-      }
+      this.Camera_ids = lastId(allCameras.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.SOLID) {
-      this.Solid_ids = new int [0];
-
-      if (allSolids.DEF.length > 0) {
-        int[] new_Item = {allSolids.DEF.length - 1};
-        this.Solid_ids = concat(this.Solid_ids, new_Item);
-      }
+      this.Solid_ids = lastId(allSolids.DEF.length);
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1D_ids = new int [0];
-
-      if (allModel1Ds.num > 0) {
-        int[] new_Item = {allModel1Ds.num - 1};
-        this.Model1D_ids = concat(this.Model1D_ids, new_Item);
-      }
+      this.Model1D_ids = lastId(allModel1Ds.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2D_ids = new int [0];
-
-      if (allModel2Ds.num > 0) {
-        int[] new_Item = {allModel2Ds.num - 1};
-        this.Model2D_ids = concat(this.Model2D_ids, new_Item);
-      }
+      this.Model2D_ids = lastId(allModel2Ds.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.GROUP) {
-      this.Group_ids = new int [0];
-
-      if (allGroups.num > 0) {
-        int[] new_Item = {allGroups.num - 1};
-        this.Group_ids = concat(this.Group_ids, new_Item);
-      }
+      this.Group_ids = lastId(allGroups.num);
     }
 
     if (current_ObjectCategory == ObjectCategory.FACE) {
-      this.Face_ids = new int [0];
-
-      if (allFaces.nodes.length > 0) {
-        int[] new_Item = {allFaces.nodes.length - 1};
-        this.Face_ids = concat(this.Face_ids, new_Item);
-      }
+      this.Face_ids = lastId(allFaces.nodes.length);
     }
 
     if (current_ObjectCategory == ObjectCategory.VERTEX) {
-      this.Vertex_ids = new int [0];
-
-      if (allPoints.getLength() > 0) {
-        int[] new_Item = {allPoints.getLength() - 1};
-        this.Vertex_ids = concat(this.Vertex_ids, new_Item);
-      }
+      this.Vertex_ids = lastId(allPoints.getLength());
     }
 
 
     if (current_ObjectCategory == ObjectCategory.POLYLINE) {
-      this.Polyline_ids = new int [0];
-
-      if (allPolylines.nodes.length > 0) {
-        int[] new_Item = {allPolylines.nodes.length - 1};
-        this.Polyline_ids = concat(this.Polyline_ids, new_Item);
-      }
+      this.Polyline_ids = lastId(allPolylines.nodes.length);
     }
 
     SOLARCHVISION_selection_changed();
@@ -3260,133 +2436,18 @@ class solarchvision_Select3D {
     XML_setFloat(parent, "softPower", this.softPower);
     XML_setFloat(parent, "softRadius", this.softRadius);
 
-    {
-      String txt = "";
-      int ni = LandPoint_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.LandPoint_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_LandPoints", txt);
-    }
-
-    {
-      String txt = "";
-      int ni = Model1D_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Model1D_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Model1Ds", txt);
-    }
-
-
-    {
-      String txt = "";
-      int ni = Model2D_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Model2D_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Model2Ds", txt);
-    }
-
-    {
-      String txt = "";
-      int ni = Group_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Group_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Groups", txt);
-    }
-
-    {
-      String txt = "";
-      int ni = Face_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Face_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Faces", txt);
-    }
-
-
-    {
-      String txt = "";
-      int ni = Polyline_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Polyline_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Polylines", txt);
-    }
-
-
-    {
-      String txt = "";
-      int ni = Solid_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Solid_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Solids", txt);
-    }
-
-    {
-      String txt = "";
-      int ni = Section_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Section_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Sections", txt);
-    }
-
-    {
-      String txt = "";
-      int ni = Camera_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Camera_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Cameras", txt);
-    }
-
-
-
-    {
-      String txt = "";
-      int ni = Vertex_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.Vertex_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "selected_Points", txt);
-    }
-
-
-    {
-      String txt = "";
-      int ni = softSelection_ids.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.softSelection_ids[i], 0);
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "softSelection_ids", txt);
-    }
-
-
-    {
-      String txt = "";
-      int ni = softSelection_values.length;
-      for (int i = 0; i < ni; i++) {
-        txt += nf(this.softSelection_values[i], 0, 4).replace("|", "."); // <<<<
-        if (i < ni - 1) txt += "|";
-      }
-      XML_setString(parent, "softSelection_values", txt);
-    }
-
+    XML_setString(parent, "selected_LandPoints", idsToXML(this.LandPoint_ids));
+    XML_setString(parent, "selected_Model1Ds", idsToXML(this.Model1D_ids));
+    XML_setString(parent, "selected_Model2Ds", idsToXML(this.Model2D_ids));
+    XML_setString(parent, "selected_Groups", idsToXML(this.Group_ids));
+    XML_setString(parent, "selected_Faces", idsToXML(this.Face_ids));
+    XML_setString(parent, "selected_Polylines", idsToXML(this.Polyline_ids));
+    XML_setString(parent, "selected_Solids", idsToXML(this.Solid_ids));
+    XML_setString(parent, "selected_Sections", idsToXML(this.Section_ids));
+    XML_setString(parent, "selected_Cameras", idsToXML(this.Camera_ids));
+    XML_setString(parent, "selected_Points", idsToXML(this.Vertex_ids));
+    XML_setString(parent, "softSelection_ids", idsToXML(this.softSelection_ids));
+    XML_setString(parent, "softSelection_values", floatsToXML(this.softSelection_values));
   }
 
 
@@ -3427,184 +2488,18 @@ class solarchvision_Select3D {
     this.softPower = XML_getFloat(parent, "softPower");
     this.softRadius = XML_getFloat(parent, "softRadius");
 
-
-    {
-      String txt = XML_getString(parent, "selected_LandPoints");
-      if (txt.equals("")) {
-        this.LandPoint_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.LandPoint_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.LandPoint_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-    {
-      String txt = XML_getString(parent, "selected_Model1Ds");
-      if (txt.equals("")) {
-        this.Model1D_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Model1D_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Model1D_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-    {
-      String txt = XML_getString(parent, "selected_Model2Ds");
-      if (txt.equals("")) {
-        this.Model2D_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Model2D_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Model2D_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-    {
-      String txt = XML_getString(parent, "selected_Groups");
-      if (txt.equals("")) {
-        this.Group_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Group_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Group_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-    {
-      String txt = XML_getString(parent, "selected_Faces");
-      if (txt.equals("")) {
-        this.Face_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Face_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Face_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-
-    {
-      String txt = XML_getString(parent, "selected_Polylines");
-      if (txt.equals("")) {
-        this.Polyline_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Polyline_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Polyline_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-
-    {
-      String txt = XML_getString(parent, "selected_Solids");
-      if (txt.equals("")) {
-        this.Solid_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Solid_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Solid_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-
-
-    {
-      String txt = XML_getString(parent, "selected_Sections");
-      if (txt.equals("")) {
-        this.Section_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Section_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Section_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-
-    {
-      String txt = XML_getString(parent, "selected_Cameras");
-      if (txt.equals("")) {
-        this.Camera_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Camera_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Camera_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-
-    {
-      String txt = XML_getString(parent, "selected_Points");
-      if (txt.equals("")) {
-        this.Vertex_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.Vertex_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.Vertex_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-
-    {
-      String txt = XML_getString(parent, "softSelection_ids");
-      if (txt.equals("")) {
-        this.softSelection_ids = new int[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.softSelection_ids = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.softSelection_ids[i] = int(parts[i]);
-        }
-      }
-    }
-
-
-    {
-      String txt = XML_getString(parent, "softSelection_values");
-      if (txt.equals("")) {
-        this.softSelection_values = new float[0];
-      }
-      else {
-        String[] parts = split(txt, "|");
-        this.softSelection_values = new float[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-          this.softSelection_values[i] = float(parts[i]);
-        }
-      }
-    }
-
-
+    this.LandPoint_ids = idsFromXML(XML_getString(parent, "selected_LandPoints"));
+    this.Model1D_ids = idsFromXML(XML_getString(parent, "selected_Model1Ds"));
+    this.Model2D_ids = idsFromXML(XML_getString(parent, "selected_Model2Ds"));
+    this.Group_ids = idsFromXML(XML_getString(parent, "selected_Groups"));
+    this.Face_ids = idsFromXML(XML_getString(parent, "selected_Faces"));
+    this.Polyline_ids = idsFromXML(XML_getString(parent, "selected_Polylines"));
+    this.Solid_ids = idsFromXML(XML_getString(parent, "selected_Solids"));
+    this.Section_ids = idsFromXML(XML_getString(parent, "selected_Sections"));
+    this.Camera_ids = idsFromXML(XML_getString(parent, "selected_Cameras"));
+    this.Vertex_ids = idsFromXML(XML_getString(parent, "selected_Points"));
+    this.softSelection_ids = idsFromXML(XML_getString(parent, "softSelection_ids"));
+    this.softSelection_values = floatsFromXML(XML_getString(parent, "softSelection_values"));
   }
 
 }
