@@ -313,13 +313,6 @@ class solarchvision_Land3D {
 
   private void writeLandMaterials (int target_window) {
     for (int n_Map = 0; n_Map < this.Textures_num; n_Map++) {
-      if (target_window == TypeWindow.RAD3D) {
-        radOutput.println("void plastic " + "LandMap" + nf(n_Map, 0));
-        radOutput.println("0");
-        radOutput.println("0");
-        radOutput.println("5 0 0 0 0 0");
-      }
-
       if (target_window == TypeWindow.HTML) {
         htmlOutput.println("\t\t\t\t<Appearance DEF='LandMap" + nf(n_Map, 0) + "'>");
       }
@@ -533,9 +526,6 @@ class solarchvision_Land3D {
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
     }
-
-    // Note: RAD3D land export historically produced no output here (see file header) -
-    // that hasn't changed, it's just no longer represented by unreachable code.
   }
 
   private void renderLandVertexTextured (int target_window, float[][] subFace, int s, int i, int _turn, int n_Map) {
