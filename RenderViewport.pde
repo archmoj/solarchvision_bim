@@ -89,13 +89,6 @@ void SOLARCHVISION_RenderViewport () {
           face_norm[2] *= -1;
         }
 
-        float Alpha = 90 - funcs.acos_ang(face_norm[2]);
-
-        float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
-        if (SunMask <= 0) SunMask = 0; // removes backing faces
-
-        float SkyMask = 0.5 * (1.0 + (Alpha / 90.0));
-
         ray_start[0] = RxP[1];
         ray_start[1] = RxP[2];
         ray_start[2] = RxP[3];
@@ -103,8 +96,14 @@ void SOLARCHVISION_RenderViewport () {
         ray_direction[1] = SunV[1];
         ray_direction[2] = SunV[2];
 
+        float Alpha = 90 - funcs.acos_ang(face_norm[2]);
+        float SkyMask = 0.5 * (1.0 + (Alpha / 90.0));
+
         float valuesSUM_RAD = SkyMask; // diffuse radiation
         if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) == 0) {
+          float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
+          if (SunMask <= 0) SunMask = 0; // removes backing faces
+
           valuesSUM_RAD += SunMask; // direct radiation
         }
 
