@@ -514,24 +514,12 @@ class solarchvision_Functions {
     return EquationOfTime(DateAngle) + HourAngleOrigin;
   }
 
-  // OPTIMIZED:
-  //  - "HourAngle" was computed via correctHourAngle(...) (itself 2 sin_ang
-  //    + 1 cos_ang calls through EquationOfTime) but never actually used
-  //    anywhere below -- b/c use HourAngleOrigin directly, not the
-  //    corrected HourAngle. That's dead work, removed here.
-  //    NOTE: this looks like it may also be an unintentional bug versus
-  //    SunPosition() below, which *does* apply the corrected HourAngle to
-  //    b/c. Flagging it rather than silently changing the physics -- worth
-  //    a look from whoever owns the solar model.
-  //  - this.cos_ang(Declination) was being computed twice (once for b, once
-  //    for c); now computed once and reused.
-  //  - 15.0 * HourAngleOrigin was likewise computed twice; now computed
-  //    once and reused.
   float[] SunPositionRadiation (float DateAngle, float HourAngleOrigin, float CloudCover) {
+    float HourAngle = correctHourAngle(DateAngle, HourAngleOrigin);
     float Declination = 23.45 * this.sin_ang(DateAngle - 180.0);
     float cosDeclination = this.cos_ang(Declination);
     float a = this.sin_ang(Declination);
-    float hourAngle15 = 15.0 * HourAngleOrigin;
+    float hourAngle15 = 15.0 * HourAngle;
     float b = cosDeclination * -this.cos_ang(hourAngle15);
     float c = cosDeclination * this.sin_ang(hourAngle15);
     float x = c;
