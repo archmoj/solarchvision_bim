@@ -1007,6 +1007,104 @@ class solarchvision_STUDY {
 
 
 
+  // Draws the "[start-end] <layer description>" title above the hourly plot
+  // (top-right: the record range in the current data source's own numbering;
+  // top-left: the active layer's description).
+  private void drawColumnRangeTitle (float sx_Plot, int start_k, int end_k) {
+    this.graphics.stroke(0);
+    this.graphics.fill(0);
+    this.graphics.strokeWeight(this.T_scale * 0);
+
+    this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+    this.graphics.textAlign(RIGHT, CENTER);
+
+    if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
+    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
+
+    this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
+    this.graphics.textAlign(LEFT, CENTER);
+    this.graphics.text((CurrentLayer_descriptions[Language_Active]), 0, 1.0 * sx_Plot / this.U_scale);
+  }
+
+  // Draws the date label (and the "±N days" join-window label, if joining
+  // more than one day) above column j, unless it's been thinned out by the
+  // 1.5/U_scale spacing rule.
+  private void drawDayHeader (int j, float sx_Plot) {
+    this.graphics.stroke(0);
+    this.graphics.fill(0);
+    this.graphics.textAlign(CENTER, CENTER);
+
+    if ((this.U_scale >= 0.75) || (((j - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
+
+      float x = (j - ((0 - 12) / 24.0)) * sx_Plot;
+      float y = -1.4 * sx_Plot / this.U_scale;
+      float h = sx_Plot * 0.2 / this.U_scale;
+
+      this.graphics.textSize(h);
+      this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h);
+      if (this.joinDays > 1) {
+        this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y);
+      }
+    }
+  }
+
+  // Opens (and writes the header row for) the raw/normal/probability export
+  // files for column j, for whichever of the three are currently enabled.
+  // Mirrors closePerDayOutputFiles(), which flushes and closes them again
+  // once column j is fully drawn.
+  private void openPerDayOutputFiles (int j, int count_k, int start_k, int end_k, int DATA_start, String Main_name) {
+    String _FilenamesAdd = "";
+    if (this.joinDays > 1) {
+      _FilenamesAdd = ("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s");
+    }
+    if ((this.export_info_node) && (this.displayRaws)) {
+      FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputRaw[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
+
+      FILE_outputRaw[(j - this.j_Start)].print("Hour\t");
+      for (int k = 0; k < count_k; k++) {
+        FILE_outputRaw[(j - this.j_Start)].print(nf(k, 4) + "        \t");
+      }
+      FILE_outputRaw[(j - this.j_Start)].println("");
+    }
+    if ((this.export_info_norm) && (this.displayNormals)) {
+      FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputNorms[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
+      FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
+      for (int l = 0; l < 9; l++) {
+        FILE_outputNorms[(j - this.j_Start)].print(STAT_N_Title[l] + "\t");
+      }
+      FILE_outputNorms[(j - this.j_Start)].println("");
+    }
+    if ((this.export_info_prob) && (this.displayProbs)) {
+      FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputProbs[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
+
+      FILE_outputProbs[(j - this.j_Start)].print("Hour:\t");
+      FILE_outputProbs[(j - this.j_Start)].println("");
+    }
+  }
+
+  // Flushes and closes whichever of the raw/normal/probability export files
+  // for column j were opened by openPerDayOutputFiles().
+  private void closePerDayOutputFiles (int j) {
+    if ((this.export_info_node) && (this.displayRaws)) {
+      FILE_outputRaw[(j - this.j_Start)].flush();
+      FILE_outputRaw[(j - this.j_Start)].close();
+    }
+
+    if ((this.export_info_norm) && (this.displayNormals)) {
+      FILE_outputNorms[(j - this.j_Start)].flush();
+      FILE_outputNorms[(j - this.j_Start)].close();
+    }
+
+    if ((this.export_info_prob) && (this.displayProbs)) {
+      FILE_outputProbs[(j - this.j_Start)].flush();
+      FILE_outputProbs[(j - this.j_Start)].close();
+    }
+  }
+
   void plotHourly (float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
     int DATA_start = getStart_CurrentDataSource();
@@ -1028,21 +1126,7 @@ class solarchvision_STUDY {
 
 
     if (this.PrintTtitle) {
-
-      this.graphics.stroke(0);
-      this.graphics.fill(0);
-      this.graphics.strokeWeight(this.T_scale * 0);
-
-      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-      this.graphics.textAlign(RIGHT, CENTER);
-
-      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
-
-      this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
-      this.graphics.textAlign(LEFT, CENTER);
-      this.graphics.text((CurrentLayer_descriptions[Language_Active]), 0, 1.0 * sx_Plot / this.U_scale);
+      this.drawColumnRangeTitle(sx_Plot, start_k, end_k);
     }
 
     float Pa = FLOAT_undefined;
@@ -1061,10 +1145,11 @@ class solarchvision_STUDY {
 
     for (int k = 0; k < count_k; k++) {
       for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
-        valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
-        valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
-        valuesSUM[(k * this.joinDays + j_ADD)] = 0; // Note: must be initialized to zero; not undefined.
-        valuesNUM[(k * this.joinDays + j_ADD)] = 0;
+        int idx = k * this.joinDays + j_ADD;
+        valuesA[idx] = FLOAT_undefined;
+        valuesB[idx] = FLOAT_undefined;
+        valuesSUM[idx] = 0; // Note: must be initialized to zero; not undefined.
+        valuesNUM[idx] = 0;
       }
     }
 
@@ -1081,53 +1166,8 @@ class solarchvision_STUDY {
 
     for (int j = this.j_Start; j < this.j_End; j++) {
 
-      this.graphics.stroke(0);
-      this.graphics.fill(0);
-      this.graphics.textAlign(CENTER, CENTER);
-
-      if ((this.U_scale >= 0.75) || (((j - this.j_Start) % int(1.5 / this.U_scale)) == 0)) {
-
-        float x = (j - ((0 - 12) / 24.0)) * sx_Plot;
-        float y = -1.4 * sx_Plot / this.U_scale;
-        float h = sx_Plot * 0.2 / this.U_scale;
-
-        this.graphics.textSize(h);
-        this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h);
-        if (this.joinDays > 1) {
-          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y);
-        }
-      }
-
-      String _FilenamesAdd = "";
-      if (this.joinDays > 1) {
-        _FilenamesAdd = ("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s");
-      }
-      if ((this.export_info_node) && (this.displayRaws)) {
-        FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-        FILE_outputRaw[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
-
-        FILE_outputRaw[(j - this.j_Start)].print("Hour\t");
-        for (int k = 0; k < count_k; k++) {
-          FILE_outputRaw[(j - this.j_Start)].print(nf(k, 4) + "        \t");
-        }
-        FILE_outputRaw[(j - this.j_Start)].println("");
-      }
-      if ((this.export_info_norm) && (this.displayNormals)) {
-        FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-        FILE_outputNorms[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
-        FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
-        for (int l = 0; l < 9; l++) {
-          FILE_outputNorms[(j - this.j_Start)].print(STAT_N_Title[l] + "\t");
-        }
-        FILE_outputNorms[(j - this.j_Start)].println("");
-      }
-      if ((this.export_info_prob) && (this.displayProbs)) {
-        FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-        FILE_outputProbs[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
-
-        FILE_outputProbs[(j - this.j_Start)].print("Hour:\t");
-        FILE_outputProbs[(j - this.j_Start)].println("");
-      }
+      this.drawDayHeader(j, sx_Plot);
+      this.openPerDayOutputFiles(j, count_k, start_k, end_k, DATA_start, Main_name);
 
       for (int i = 0; i < 24; i++) {
         if (this.isInHourlyRange(i)) {
@@ -1137,11 +1177,12 @@ class solarchvision_STUDY {
 
           for (int k = 0; k < count_k; k++) {
             for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
+              int idx = k * this.joinDays + j_ADD;
 
-              valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
-              valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
-              valuesSUM[(k * this.joinDays + j_ADD)] = 0;
-              valuesNUM[(k * this.joinDays + j_ADD)] = 1;
+              valuesA[idx] = FLOAT_undefined;
+              valuesB[idx] = FLOAT_undefined;
+              valuesSUM[idx] = 0;
+              valuesNUM[idx] = 1;
 
               float[] COL = PAINT.getColorStyle(COLOR_STYLE_Current, (1.0 * k / (1 + DATA_end - DATA_start)));
               this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -1175,22 +1216,22 @@ class solarchvision_STUDY {
               Pa = getValue_CurrentDataSource(now_i, now_j, now_k, CurrentLayer_id);
 
               if (is_undefined(Pa)) {
-                valuesA[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+                valuesA[idx] = FLOAT_undefined;
 
                 if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
               } else {
                 int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                 if (memberCount == 1) {
-                  valuesA[(k * this.joinDays + j_ADD)] = Pa;
-                  valuesA[(k * this.joinDays + j_ADD)] += this.V_offset;
+                  valuesA[idx] = Pa;
+                  valuesA[idx] += this.V_offset;
 
-                  valuesSUM[(k * this.joinDays + j_ADD)] += valuesA[(k * this.joinDays + j_ADD)];
-                  valuesNUM[(k * this.joinDays + j_ADD)] += 1;
+                  valuesSUM[idx] += valuesA[idx];
+                  valuesNUM[idx] += 1;
 
                   if ((this.export_info_node) && (this.displayRaws)) {
-                    if (is_defined(valuesA[(k * this.joinDays + j_ADD)])) {
-                      FILE_outputRaw[(j - this.j_Start)].print(nfs(valuesA[(k * this.joinDays + j_ADD)] - this.V_offset, 5, 5) + "\t");
+                    if (is_defined(valuesA[idx])) {
+                      FILE_outputRaw[(j - this.j_Start)].print(nfs(valuesA[idx] - this.V_offset, 5, 5) + "\t");
                     }
                     else {
                       FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
@@ -1202,19 +1243,19 @@ class solarchvision_STUDY {
                     Pb = getValue_CurrentDataSource(next_i, next_j, next_k, CurrentLayer_id);
 
                     if (is_undefined(Pb)) {
-                      valuesB[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+                      valuesB[idx] = FLOAT_undefined;
                     } else {
-                      valuesB[(k * this.joinDays + j_ADD)] = Pb;
-                      valuesB[(k * this.joinDays + j_ADD)] += this.V_offset;
+                      valuesB[idx] = Pb;
+                      valuesB[idx] += this.V_offset;
 
                       if (this.displayRaws) {
-                        if ((CurrentLayer_id == LAYER_winddir.id) && (abs(valuesB[(k * this.joinDays + j_ADD)] - valuesA[(k * this.joinDays + j_ADD)]) > 180)) {
+                        if ((CurrentLayer_id == LAYER_winddir.id) && (abs(valuesB[idx] - valuesA[idx]) > 180)) {
                         } else {
                           Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
-                          Ay_LINES = append(Ay_LINES, valuesA[(k * this.joinDays + j_ADD)] * sy_Plot);
+                          Ay_LINES = append(Ay_LINES, valuesA[idx] * sy_Plot);
 
                           Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
-                          By_LINES = append(By_LINES, valuesB[(k * this.joinDays + j_ADD)] * sy_Plot);
+                          By_LINES = append(By_LINES, valuesB[idx] * sy_Plot);
                         }
                       }
                     }
@@ -1234,14 +1275,15 @@ class solarchvision_STUDY {
             if ((_interval % this.sumInterval) == 0) {
               for (int k = 0; k < count_k; k++) {
                 for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
-                  valuesSUM[(k * this.joinDays + j_ADD)] += valuesA[(k * this.joinDays + j_ADD)];
-                  valuesNUM[(k * this.joinDays + j_ADD)] += 1;
+                  int idx = k * this.joinDays + j_ADD;
+                  valuesSUM[idx] += valuesA[idx];
+                  valuesNUM[idx] += 1;
 
-                  if (valuesNUM[(k * this.joinDays + j_ADD)] != 0) {
-                    valuesSUM[(k * this.joinDays + j_ADD)] /= valuesNUM[(k * this.joinDays + j_ADD)];
+                  if (valuesNUM[idx] != 0) {
+                    valuesSUM[idx] /= valuesNUM[idx];
                   }
                   else {
-                    valuesSUM[(k * this.joinDays + j_ADD)] = FLOAT_undefined;
+                    valuesSUM[idx] = FLOAT_undefined;
                   }
                 }
               }
@@ -1260,21 +1302,7 @@ class solarchvision_STUDY {
         }
       }
 
-      if ((this.export_info_node) && (this.displayRaws)) {
-        FILE_outputRaw[(j - this.j_Start)].flush();
-        FILE_outputRaw[(j - this.j_Start)].close();
-      }
-
-      if ((this.export_info_norm) && (this.displayNormals)) {
-        FILE_outputNorms[(j - this.j_Start)].flush();
-        FILE_outputNorms[(j - this.j_Start)].close();
-      }
-
-      if ((this.export_info_prob) && (this.displayProbs)) {
-        FILE_outputProbs[(j - this.j_Start)].flush();
-        FILE_outputProbs[(j - this.j_Start)].close();
-      }
-
+      this.closePerDayOutputFiles(j);
 
     }
 
