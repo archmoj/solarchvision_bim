@@ -1396,7 +1396,7 @@ class solarchvision_WIN3D {
     this.update = false;
   }
 
-  float renderQuality = 0.5f;
+  float renderQuality = 0.75f;
   boolean showRender = false;
   boolean showSolarImpact = false;
 }
