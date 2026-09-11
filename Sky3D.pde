@@ -13,7 +13,7 @@ class solarchvision_Sky3D {
   float ACTIVE_palette_MLT = 0.5; //1; //0.25;
   int PASSIVE_palette_CLR = 18;
   int PASSIVE_palette_DIR = -1;
-  float PASSIVE_palette_MLT = 0.5;
+  float PASSIVE_palette_MLT = 0.25;
 
   float stp_slp;
   float stp_dir;

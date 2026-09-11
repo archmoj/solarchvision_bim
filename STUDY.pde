@@ -16,7 +16,7 @@ class solarchvision_STUDY {
 
   int PASSIVE_palette_CLR = 1;
   int PASSIVE_palette_DIR = 1;
-  float PASSIVE_palette_MLT = 0.5;
+  float PASSIVE_palette_MLT = 0.25;
 
 
   int cX = 0;
