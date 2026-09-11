@@ -35,6 +35,11 @@ private void SOLARCHVISION_setPlotImpacts(int impacts, boolean showWindRoses) {
   ROLLOUT.revise();
 }
 
+private void SOLARCHVISION_selectAllOfCategory(int category) {
+  SOLARCHVISION_switch_category(category);
+  Select3D.selectAll();
+}
+
 void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
@@ -2677,90 +2682,43 @@ private void SOLARCHVISION_buildMenuActions() {
     Select3D.selectAll();
   });
 
-  SOLARCHVISION_menuActions.put("Select All Cameras", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Cameras", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.CAMERA));
 
-  SOLARCHVISION_menuActions.put("Select All Sections", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.SECTION);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Sections", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.SECTION));
 
-  SOLARCHVISION_menuActions.put("Select All Solids", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.SOLID);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Solids", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.SOLID));
 
-  SOLARCHVISION_menuActions.put("Select All Faces", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Faces", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.FACE));
 
-  SOLARCHVISION_menuActions.put("Select All Polylines", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Polylines", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.POLYLINE));
 
-  SOLARCHVISION_menuActions.put("Select All Verices", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Verices", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Select All Groups", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Groups", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Select All Model1Ds", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Model1Ds", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.MODEL1D));
 
-  SOLARCHVISION_menuActions.put("Select All Model2Ds", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
-    Select3D.selectAll();
-  });
+  SOLARCHVISION_menuActions.put("Select All Model2Ds", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.MODEL2D));
 
-  SOLARCHVISION_menuActions.put("Select Solid", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.SOLID);
-  });
+  SOLARCHVISION_menuActions.put("Select Solid", () -> SOLARCHVISION_switch_category(ObjectCategory.SOLID));
 
-  SOLARCHVISION_menuActions.put("Select Section", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.SECTION);
-  });
+  SOLARCHVISION_menuActions.put("Select Section", () -> SOLARCHVISION_switch_category(ObjectCategory.SECTION));
 
-  SOLARCHVISION_menuActions.put("Select Camera", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
-  });
+  SOLARCHVISION_menuActions.put("Select Camera", () -> SOLARCHVISION_switch_category(ObjectCategory.CAMERA));
 
-  SOLARCHVISION_menuActions.put("Select LandPoint", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.LANDPOINT);
-  });
+  SOLARCHVISION_menuActions.put("Select LandPoint", () -> SOLARCHVISION_switch_category(ObjectCategory.LANDPOINT));
 
-  SOLARCHVISION_menuActions.put("Select Model1Ds", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
-  });
+  SOLARCHVISION_menuActions.put("Select Model1Ds", () -> SOLARCHVISION_switch_category(ObjectCategory.MODEL1D));
 
-  SOLARCHVISION_menuActions.put("Select Model2Ds", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
-  });
+  SOLARCHVISION_menuActions.put("Select Model2Ds", () -> SOLARCHVISION_switch_category(ObjectCategory.MODEL2D));
 
-  SOLARCHVISION_menuActions.put("Select Group", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-  });
+  SOLARCHVISION_menuActions.put("Select Group", () -> SOLARCHVISION_switch_category(ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Select Face", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
-  });
+  SOLARCHVISION_menuActions.put("Select Face", () -> SOLARCHVISION_switch_category(ObjectCategory.FACE));
 
-  SOLARCHVISION_menuActions.put("Select Polyline", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
-  });
+  SOLARCHVISION_menuActions.put("Select Polyline", () -> SOLARCHVISION_switch_category(ObjectCategory.POLYLINE));
 
-  SOLARCHVISION_menuActions.put("Select Vertex", () -> {
-    SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
-  });
+  SOLARCHVISION_menuActions.put("Select Vertex", () -> SOLARCHVISION_switch_category(ObjectCategory.VERTEX));
 
   SOLARCHVISION_menuActions.put("Soft Selection", () -> {
     Select3D.convert_Vertex_to_softSelection();
