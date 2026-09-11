@@ -200,7 +200,17 @@ void mouseClicked () {
 
 
                     SOLARCHVISION_update_station(1);
+
+                    // TODO: download only if it is not already downloaded
+                    download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+
+                    boolean keep_ENSEMBLE_FORECAST_load = ENSEMBLE_FORECAST_load;
+                    // do not load data if it is outside 100Km distance
+                    if(nearest_WORLD_NAEFS_dist > 100000) {
+                      ENSEMBLE_FORECAST_load = false;
+                    }
                     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+                    ENSEMBLE_FORECAST_load = keep_ENSEMBLE_FORECAST_load;
                   }
                 }
               }
