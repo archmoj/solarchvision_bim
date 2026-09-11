@@ -40,6 +40,11 @@ private void SOLARCHVISION_selectAllOfCategory(int category) {
   Select3D.selectAll();
 }
 
+private void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
+  convert.run();
+  SOLARCHVISION_switch_category(newCategory);
+}
+
 void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
@@ -2726,85 +2731,37 @@ private void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_switch_category(ObjectCategory.SOFTVERTEX);
   });
 
-  SOLARCHVISION_menuActions.put("Vertices >> Groups", () -> {
-    Select3D.convert_Vertices_to_Groups();
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-  });
+  SOLARCHVISION_menuActions.put("Vertices >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Vertices_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Faces >> Groups", () -> {
-    Select3D.convert_Faces_to_Groups();
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-  });
+  SOLARCHVISION_menuActions.put("Faces >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Faces_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Faces", () -> {
-    Select3D.convert_Groups_to_Faces();
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
-  });
+  SOLARCHVISION_menuActions.put("Groups >> Faces", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Faces(), ObjectCategory.FACE));
 
-  SOLARCHVISION_menuActions.put("Polylines >> Groups", () -> {
-    Select3D.convert_Polylines_to_Groups();
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-  });
+  SOLARCHVISION_menuActions.put("Polylines >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Polylines_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Polylines", () -> {
-    Select3D.convert_Groups_to_Polylines();
-    SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
-  });
+  SOLARCHVISION_menuActions.put("Groups >> Polylines", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Polylines(), ObjectCategory.POLYLINE));
 
-  SOLARCHVISION_menuActions.put("Polylines >> Vertices", () -> {
-    Select3D.convert_Polylines_to_Vertices();
-    SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
-  });
+  SOLARCHVISION_menuActions.put("Polylines >> Vertices", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Polylines_to_Vertices(), ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Vertices >> Polylines", () -> {
-    Select3D.convert_Vertices_to_Polylines();
-    SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
-  });
+  SOLARCHVISION_menuActions.put("Vertices >> Polylines", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Vertices_to_Polylines(), ObjectCategory.POLYLINE));
 
-  SOLARCHVISION_menuActions.put("Groups >> Vertices", () -> {
-    Select3D.convert_Groups_to_Vertices();
-    SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
-  });
+  SOLARCHVISION_menuActions.put("Groups >> Vertices", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Faces >> Vertices", () -> {
-    Select3D.convert_Faces_to_Vertices();
-    SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
-  });
+  SOLARCHVISION_menuActions.put("Faces >> Vertices", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Faces_to_Vertices(), ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Vertices >> Faces", () -> {
-    Select3D.convert_Vertices_to_Faces();
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
-  });
+  SOLARCHVISION_menuActions.put("Vertices >> Faces", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Vertices_to_Faces(), ObjectCategory.FACE));
 
-  SOLARCHVISION_menuActions.put("Solids >> Groups", () -> {
-    Select3D.convert_Solids_to_Groups();
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-  });
+  SOLARCHVISION_menuActions.put("Solids >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Solids_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Solids", () -> {
-    Select3D.convert_Groups_to_Solids();
-    SOLARCHVISION_switch_category(ObjectCategory.SOLID);
-  });
+  SOLARCHVISION_menuActions.put("Groups >> Solids", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Solids(), ObjectCategory.SOLID));
 
-  SOLARCHVISION_menuActions.put("Model2Ds >> Groups", () -> {
-    Select3D.convert_Model2Ds_to_Groups();
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-  });
+  SOLARCHVISION_menuActions.put("Model2Ds >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Model2Ds_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Model2Ds", () -> {
-    Select3D.convert_Groups_to_Model2Ds();
-    SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
-  });
+  SOLARCHVISION_menuActions.put("Groups >> Model2Ds", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Model2Ds(), ObjectCategory.MODEL2D));
 
-  SOLARCHVISION_menuActions.put("Model1Ds >> Groups", () -> {
-    Select3D.convert_Model1Ds_to_Groups();
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-  });
+  SOLARCHVISION_menuActions.put("Model1Ds >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Model1Ds_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Model1Ds", () -> {
-    Select3D.convert_Groups_to_Model1Ds();
-    SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
-  });
+  SOLARCHVISION_menuActions.put("Groups >> Model1Ds", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Model1Ds(), ObjectCategory.MODEL1D));
 
   SOLARCHVISION_menuActions.put("Pick Select", () -> {
     UI_set_to_View_PickSelect(0);
