@@ -27,6 +27,14 @@ private void SOLARCHVISION_stopAllRecording() {
   FRAME_drag_IMG = false;
 }
 
+private void SOLARCHVISION_setPlotImpacts(int impacts, boolean showWindRoses) {
+  STUDY.PlotImpacts = impacts;
+  STUDY.plotSetup = 0;
+  STUDY.revise();
+  allWindRoses.displayImage = showWindRoses;
+  ROLLOUT.revise();
+}
+
 void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
@@ -1461,85 +1469,25 @@ private void SOLARCHVISION_buildMenuActions() {
     exit();
   });
 
-  SOLARCHVISION_menuActions.put("Wind pattern (active)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_WIND_ACTIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = true;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Wind pattern (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_WIND_ACTIVE, true));
 
-  SOLARCHVISION_menuActions.put("Wind pattern (passive)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_WIND_PASSIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = true;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Wind pattern (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_WIND_PASSIVE, true));
 
-  SOLARCHVISION_menuActions.put("Urban solar potential (active)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = false;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Urban solar potential (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_URBAN_ACTIVE, false));
 
-  SOLARCHVISION_menuActions.put("Urban solar potential (passive)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = false;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Urban solar potential (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_URBAN_PASSIVE, false));
 
-  SOLARCHVISION_menuActions.put("Orientation potential (active)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_GLOBAL_ACTIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = false;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Orientation potential (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_GLOBAL_ACTIVE, false));
 
-  SOLARCHVISION_menuActions.put("Orientation potential (passive)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = false;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Orientation potential (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_GLOBAL_PASSIVE, false));
 
-  SOLARCHVISION_menuActions.put("Hourly sun position (active)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_SUNPATH_ACTIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = false;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Hourly sun position (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_SUNPATH_ACTIVE, false));
 
-  SOLARCHVISION_menuActions.put("Hourly sun position (passive)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_SUNPATH_PASSIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = false;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Hourly sun position (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_SUNPATH_PASSIVE, false));
 
-  SOLARCHVISION_menuActions.put("Annual cycle sun path (active)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_CYCLES_ACTIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = false;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Annual cycle sun path (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_CYCLES_ACTIVE, false));
 
-  SOLARCHVISION_menuActions.put("Annual cycle sun path (passive)", () -> {
-    STUDY.PlotImpacts = PlotImpacts_CYCLES_PASSIVE;
-    STUDY.plotSetup = 0;
-    STUDY.revise();
-    allWindRoses.displayImage = false;
-    ROLLOUT.revise();
-  });
+  SOLARCHVISION_menuActions.put("Annual cycle sun path (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_CYCLES_PASSIVE, false));
 
   SOLARCHVISION_menuActions.put("Prebake Selected Sections", () -> {
     allSolarImpacts.render_Shadows_selectedSections();
