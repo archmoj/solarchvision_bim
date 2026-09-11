@@ -110,242 +110,246 @@ class solarchvision_STUDY {
   }
 
 
+  // Number of PlotImpacts modes (kept in sync with the PlotImpacts_* constants).
+  private final static int PLOT_IMPACTS_MODE_COUNT = 11;
+
+  // Number of plotSetup modes cycled by Ctrl+PageUp/PageDown.
+  private final static int PLOT_SETUP_MODE_COUNT = 10;
+
+  private final static int PAGE_UP_KEYCODE = 16;
+  private final static int PAGE_DOWN_KEYCODE = 11;
+
+  private void requestRedraw () {
+    this.revise();
+    ROLLOUT.revise();
+  }
+
+  private void requestDataRefresh () {
+    DevelopData_update = true;
+    UI_caseBar.revise();
+    this.revise();
+    WIN3D.revise();
+    ROLLOUT.revise();
+  }
+
   void keyPressed (KeyEvent e) {
-    if(STUDY.include == false) return;
+    if (STUDY.include == false) return;
 
     if (e.isAltDown()) {
-    } else if (e.isControlDown()) {
-      if (key == CODED) {
-        switch(keyCode) {
-          case UP :
-          changeCurrentLayerTo((CurrentLayer_id + 1) % numberOfLayers);
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-          case DOWN :
-          changeCurrentLayerTo((CurrentLayer_id + numberOfLayers - 1) % numberOfLayers);
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-          case RIGHT :
-          this.PlotImpacts = (this.PlotImpacts + 1) % 11;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-          case LEFT :
-          this.PlotImpacts = (this.PlotImpacts - 1 + 11) % 11;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-          case 16: // PAGE_UP
-          if(!e.isShiftDown()) {
-            STUDY.plotSetup = -2 + (2 + STUDY.plotSetup + 1) % 10;
-            this.revise();
-            ROLLOUT.revise();
-          }
-          break;
-
-          case 11: // PAGE_DOWN
-          if(!e.isShiftDown()) {
-            STUDY.plotSetup = -2 + (2 + STUDY.plotSetup - 1 + 10) % 10;
-            this.revise();
-            ROLLOUT.revise();
-          }
-          break;
-        }
-      } else {
-        switch(key) {
-        case ';':
-          this.impact_summary = !(this.impact_summary);
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '"' :
-          this.V_scale *= pow(2.0, (1.0 / 2.0));
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '\'' :
-          this.V_scale *= pow(0.5, (1.0 / 2.0));
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        }
-      }
+      return;
     }
 
-    if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
-
-      if (key != CODED) {
-        switch(key) {
-
-        case '>' :
-          this.joinDays += 2;
-          if (this.joinDays > 365) this.joinDays = 365;
-          DevelopData_update = true;
-          UI_caseBar.revise();
-          this.revise();
-          WIN3D.revise();
-          ROLLOUT.revise();
-          break;
-        case '<' :
-          this.joinDays -= 2;
-          if (this.joinDays < 1) this.joinDays = 1;
-          DevelopData_update = true;
-          UI_caseBar.revise();
-          this.revise();
-          WIN3D.revise();
-          ROLLOUT.revise();
-          break;
-
-        case ')' :
-          this.j_End += 1;
-          if (this.j_End > this.j_Start + 61) this.j_End -= 1;
-          this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-          /*
-           if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
-           this.perDays = int(365 / float(this.j_End - this.j_Start));
-           }
-           if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-           this.perDays = 1;
-           }
-           */
-          DevelopData_update = true;
-
-          if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
-          if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-          allSolarImpacts.rebuild_Image_array = true;
-          allWindRoses.rebuild_Image_array = true;
-          allSections.resize_solarImpact_array();
-
-          UI_caseBar.revise();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '(' :
-          this.j_End -= 1;
-          if (this.j_End <= this.j_Start) this.j_End += 1;
-          this.U_scale = 18.0 / float(this.j_End - this.j_Start);
-          /*
-           if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) || CurrentDataSource == dataID_CLIMATE_CLMREC) || (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
-           this.perDays = int(365 / float(this.j_End - this.j_Start));
-           }
-           if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) || (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
-           this.perDays = 1;
-           }
-           */
-          DevelopData_update = true;
-
-          VertexSolar_rebuild_array = true;
-          GlobalSolar_rebuild_array = true;
-          allSolarImpacts.rebuild_Image_array = true;
-          allWindRoses.rebuild_Image_array = true;
-          allSections.resize_solarImpact_array();
-
-          UI_caseBar.revise();
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'S' :
-          this.skyScenario = 1 + (-1 + this.skyScenario + 1) % 4;
-          DevelopData_update = true;
-          this.revise();
-          WIN3D.revise();
-          ROLLOUT.revise();
-          break;
-        case 's' :
-          this.skyScenario = 1 + (-1 + this.skyScenario - 1 + 4) % 4;
-          DevelopData_update = true;
-          this.revise();
-          WIN3D.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'V' :
-          this.displayRaws = !this.displayRaws;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'v' :
-          this.displayRaws = !this.displayRaws;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'm' :
-          this.displaySorted = !this.displaySorted;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'M' :
-          this.displaySorted = !this.displaySorted;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'n' :
-          this.displayNormals = !this.displayNormals;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'N' :
-          this.displayNormals = !this.displayNormals;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case 'b' :
-          this.displayProbs = !this.displayProbs;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case 'B' :
-          this.displayProbs = !this.displayProbs;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '{' :
-          if (this.LevelPix < 32) this.LevelPix *= pow(2.0, (1.0 / 1.0));
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case '}' :
-          if (this.LevelPix > 2) this.LevelPix *= pow(0.5, (1.0 / 1.0));
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        case '[' :
-          if (this.sumInterval > 24) this.sumInterval -= 24;
-          if (this.sumInterval > 6) this.sumInterval -= 6;
-          else if (this.sumInterval > 1) this.sumInterval -= 1;
-          if (this.sumInterval == 5) this.sumInterval = 4;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-        case ']' :
-          if (this.sumInterval < 6) this.sumInterval += 1;
-          else if (this.sumInterval < 24) this.sumInterval += 6;
-          else this.sumInterval += 24;
-          if (this.sumInterval == 5) this.sumInterval = 6;
-          this.revise();
-          ROLLOUT.revise();
-          break;
-
-        }
+    if (e.isControlDown()) {
+      if (key == CODED) {
+        handleCtrlCodedKey(e);
+      } else {
+        handleCtrlCharKey();
       }
+      return;
+    }
+
+    if (key != CODED) {
+      handlePlainCharKey();
     }
   }
 
+  private void handleCtrlCodedKey (KeyEvent e) {
+    switch (keyCode) {
+      case UP :
+        changeCurrentLayerTo((CurrentLayer_id + 1) % numberOfLayers);
+        requestRedraw();
+        break;
 
+      case DOWN :
+        changeCurrentLayerTo((CurrentLayer_id + numberOfLayers - 1) % numberOfLayers);
+        requestRedraw();
+        break;
+
+      case RIGHT :
+        this.PlotImpacts = (this.PlotImpacts + 1) % PLOT_IMPACTS_MODE_COUNT;
+        requestRedraw();
+        break;
+
+      case LEFT :
+        this.PlotImpacts = (this.PlotImpacts - 1 + PLOT_IMPACTS_MODE_COUNT) % PLOT_IMPACTS_MODE_COUNT;
+        requestRedraw();
+        break;
+
+      case PAGE_UP_KEYCODE :
+        if (!e.isShiftDown()) {
+          STUDY.plotSetup = -2 + (2 + STUDY.plotSetup + 1) % PLOT_SETUP_MODE_COUNT;
+          requestRedraw();
+        }
+        break;
+
+      case PAGE_DOWN_KEYCODE :
+        if (!e.isShiftDown()) {
+          STUDY.plotSetup = -2 + (2 + STUDY.plotSetup - 1 + PLOT_SETUP_MODE_COUNT) % PLOT_SETUP_MODE_COUNT;
+          requestRedraw();
+        }
+        break;
+    }
+  }
+
+  private void handleCtrlCharKey () {
+    switch (key) {
+      case ';' :
+        this.impact_summary = !this.impact_summary;
+        requestRedraw();
+        break;
+
+      case '"' :
+        this.V_scale *= sqrt(2.0);
+        requestRedraw();
+        break;
+
+      case '\'' :
+        this.V_scale *= sqrt(0.5);
+        requestRedraw();
+        break;
+    }
+  }
+
+  private void handlePlainCharKey () {
+    switch (key) {
+
+      case '>' :
+        changeJoinDays(2);
+        break;
+      case '<' :
+        changeJoinDays(-2);
+        break;
+
+      case ')' :
+        changeJEnd(1);
+        break;
+      case '(' :
+        changeJEnd(-1);
+        break;
+
+      case 'S' :
+        changeSkyScenario(1);
+        break;
+      case 's' :
+        changeSkyScenario(-1);
+        break;
+
+      case 'V' :
+      case 'v' :
+        this.displayRaws = !this.displayRaws;
+        requestRedraw();
+        break;
+
+      case 'm' :
+      case 'M' :
+        this.displaySorted = !this.displaySorted;
+        requestRedraw();
+        break;
+
+      case 'n' :
+      case 'N' :
+        this.displayNormals = !this.displayNormals;
+        requestRedraw();
+        break;
+
+      case 'b' :
+      case 'B' :
+        this.displayProbs = !this.displayProbs;
+        requestRedraw();
+        break;
+
+      case '{' :
+        if (this.LevelPix < 32) this.LevelPix *= 2.0;
+        requestRedraw();
+        break;
+      case '}' :
+        if (this.LevelPix > 2) this.LevelPix *= 0.5;
+        requestRedraw();
+        break;
+
+      case '[' :
+        decreaseSumInterval();
+        requestRedraw();
+        break;
+      case ']' :
+        increaseSumInterval();
+        requestRedraw();
+        break;
+    }
+  }
+
+  // '>' / '<' : widen or narrow the day-joining (averaging) window, clamped
+  // to [1, 365] days.
+  private void changeJoinDays (int delta) {
+    this.joinDays += delta;
+    if (this.joinDays > 365) this.joinDays = 365;
+    if (this.joinDays < 1) this.joinDays = 1;
+    requestDataRefresh();
+  }
+
+  // ')' / '(' : grow or shrink the number of date columns (j_End), clamped so
+  // the window stays within (j_Start, j_Start + 61] and always at least one
+  // column wide, then flags every dependent view for rebuilding.
+  private void changeJEnd (int delta) {
+    this.j_End += delta;
+    if (delta > 0 && this.j_End > this.j_Start + 61) this.j_End -= delta;
+    if (delta < 0 && this.j_End <= this.j_Start) this.j_End -= delta;
+    this.U_scale = 18.0 / float(this.j_End - this.j_Start);
+
+    DevelopData_update = true;
+
+    VertexSolar_rebuild_array = true;
+    GlobalSolar_rebuild_array = true;
+    allSolarImpacts.rebuild_Image_array = true;
+    allWindRoses.rebuild_Image_array = true;
+    allSections.resize_solarImpact_array();
+
+    UI_caseBar.revise();
+    this.revise();
+    ROLLOUT.revise();
+  }
+
+  // 'S' / 's' : cycle the sky scenario filter forward/backward through its 4
+  // states (1..4).
+  private void changeSkyScenario (int delta) {
+    this.skyScenario = 1 + (((this.skyScenario - 1) + delta) % 4 + 4) % 4;
+    DevelopData_update = true;
+    this.revise();
+    WIN3D.revise();
+    ROLLOUT.revise();
+  }
+
+  // '[' : shrink the hourly summing interval, following the step sequence
+  // ...24 -> 6 -> 1 (skipping 5, snapping it to 4).
+  private void decreaseSumInterval () {
+    if (this.sumInterval > 24) this.sumInterval -= 24;
+    if (this.sumInterval > 6) this.sumInterval -= 6;
+    else if (this.sumInterval > 1) this.sumInterval -= 1;
+    if (this.sumInterval == 5) this.sumInterval = 4;
+  }
+
+  // ']' : grow the hourly summing interval, following the step sequence
+  // 1 -> 6 -> 24... (skipping 5, snapping it to 6).
+  private void increaseSumInterval () {
+    if (this.sumInterval < 6) this.sumInterval += 1;
+    else if (this.sumInterval < 24) this.sumInterval += 6;
+    else this.sumInterval += 24;
+    if (this.sumInterval == 5) this.sumInterval = 6;
+  }
+
+
+
+  private void applyLegendTextStyle (float[] COL) {
+    if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
+      this.graphics.stroke(127);
+      this.graphics.fill(127);
+      this.graphics.strokeWeight(0);
+    } else {
+      this.graphics.stroke(255);
+      this.graphics.fill(255);
+      this.graphics.strokeWeight(2);
+    }
+  }
 
   void drawTimeGrid (float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
     this.graphics.strokeWeight(this.T_scale * 1);
@@ -758,15 +762,7 @@ class solarchvision_STUDY {
 
       this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
-      if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-        this.graphics.stroke(127);
-        this.graphics.fill(127);
-        this.graphics.strokeWeight(0);
-      } else {
-        this.graphics.stroke(255);
-        this.graphics.fill(255);
-        this.graphics.strokeWeight(2);
-      }
+      applyLegendTextStyle(COL);
 
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
@@ -859,15 +855,7 @@ class solarchvision_STUDY {
       this.graphics.strokeWeight(0.5);
       this.graphics.rect((pal_ox + q * (pal_length / 9.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 9.0) * this.view_S, 20 * this.view_S);
 
-      if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-        this.graphics.stroke(127);
-        this.graphics.fill(127);
-        this.graphics.strokeWeight(0);
-      } else {
-        this.graphics.stroke(255);
-        this.graphics.fill(255);
-        this.graphics.strokeWeight(2);
-      }
+      applyLegendTextStyle(COL);
 
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
@@ -2070,15 +2058,7 @@ class solarchvision_STUDY {
           this.graphics.strokeWeight(0);
           this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
-          if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-            this.graphics.stroke(127);
-            this.graphics.fill(127);
-            this.graphics.strokeWeight(0);
-          } else {
-            this.graphics.stroke(255);
-            this.graphics.fill(255);
-            this.graphics.strokeWeight(2);
-          }
+          applyLegendTextStyle(COL);
 
           this.graphics.textSize(15.0 * this.view_S);
           this.graphics.textAlign(CENTER, CENTER);
@@ -2274,15 +2254,7 @@ class solarchvision_STUDY {
           this.graphics.strokeWeight(0);
           this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
-          if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-            this.graphics.stroke(127);
-            this.graphics.fill(127);
-            this.graphics.strokeWeight(0);
-          } else {
-            this.graphics.stroke(255);
-            this.graphics.fill(255);
-            this.graphics.strokeWeight(2);
-          }
+          applyLegendTextStyle(COL);
 
           this.graphics.textSize(15.0 * this.view_S);
           this.graphics.textAlign(CENTER, CENTER);
@@ -2690,15 +2662,7 @@ class solarchvision_STUDY {
         this.graphics.strokeWeight(0);
         this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
-        if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-          this.graphics.stroke(127);
-          this.graphics.fill(127);
-          this.graphics.strokeWeight(0);
-        } else {
-          this.graphics.stroke(255);
-          this.graphics.fill(255);
-          this.graphics.strokeWeight(2);
-        }
+        applyLegendTextStyle(COL);
 
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
@@ -2874,15 +2838,7 @@ class solarchvision_STUDY {
 
                     this.graphics.ellipse((j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
 
-                    if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-                      this.graphics.stroke(127);
-                      this.graphics.fill(127);
-                      this.graphics.strokeWeight(0);
-                    } else {
-                      this.graphics.stroke(255);
-                      this.graphics.fill(255);
-                      this.graphics.strokeWeight(2);
-                    }
+                    applyLegendTextStyle(COL);
 
                     this.graphics.textSize(this.view_S * 4.0 * this.U_scale);
 
@@ -2941,15 +2897,7 @@ class solarchvision_STUDY {
         this.graphics.strokeWeight(0);
         this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
-        if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-          this.graphics.stroke(127);
-          this.graphics.fill(127);
-          this.graphics.strokeWeight(0);
-        } else {
-          this.graphics.stroke(255);
-          this.graphics.fill(255);
-          this.graphics.strokeWeight(2);
-        }
+        applyLegendTextStyle(COL);
 
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
@@ -3062,15 +3010,7 @@ class solarchvision_STUDY {
         this.graphics.strokeWeight(0);
         this.graphics.rect((pal_ox + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S, (pal_length / 11.0) * this.view_S, 20 * this.view_S);
 
-        if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-          this.graphics.stroke(127);
-          this.graphics.fill(127);
-          this.graphics.strokeWeight(0);
-        } else {
-          this.graphics.stroke(255);
-          this.graphics.fill(255);
-          this.graphics.strokeWeight(2);
-        }
+        applyLegendTextStyle(COL);
 
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
