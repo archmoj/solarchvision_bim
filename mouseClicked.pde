@@ -1,5 +1,17 @@
 HashMap<String, Runnable> SOLARCHVISION_menuActions;
 
+private void SOLARCHVISION_selectNewlyCreated(int countBefore, int countAfter, Runnable deselect, java.util.function.IntConsumer selectIndex) {
+  if (countBefore == countAfter) return; // nothing created this click
+
+  deselect.run();
+
+  for (int o = countBefore; o < countAfter; o++) {
+    selectIndex.accept(o);
+  }
+
+  Select3D.calculate_BoundingBox();
+}
+
 void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
@@ -1335,19 +1347,10 @@ void mouseClicked () {
 
                         allSections.create(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
 
-                        if (keep_number_of_allSections != allSections.num) { // if any Section created during the process
-
-                          Select3D.deselect_Sections();
-
-                          for (int o = keep_number_of_allSections; o < allSections.num; o++) {
-
-                            int[] newlyAddedSection = {o};
-
-                            Select3D.Section_ids = concat(Select3D.Section_ids, newlyAddedSection);
-                          }
-
-                          Select3D.calculate_BoundingBox();
-                        }
+                        SOLARCHVISION_selectNewlyCreated(keep_number_of_allSections, allSections.num,
+                          () -> Select3D.deselect_Sections(),
+                          (o) -> { Select3D.Section_ids = concat(Select3D.Section_ids, new int[] {o}); }
+                          );
 
                         allSolidImpacts.X[allSolidImpacts.sectionType] = Section_X;
                         allSolidImpacts.Y[allSolidImpacts.sectionType] = Section_Y;
@@ -1370,79 +1373,30 @@ void mouseClicked () {
 
 
 
-                  if (keep_number_of_allSolids != allSolids.DEF.length) { // if any Solid created during the process
+                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allSolids, allSolids.DEF.length,
+                    () -> Select3D.deselect_Solids(),
+                    (o) -> { Select3D.Solid_ids = concat(Select3D.Solid_ids, new int[] {o}); }
+                    );
 
-                    Select3D.deselect_Solids();
+                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allCameras, allCameras.num,
+                    () -> Select3D.deselect_Cameras(),
+                    (o) -> { Select3D.Camera_ids = concat(Select3D.Camera_ids, new int[] {o}); }
+                    );
 
-                    for (int o = keep_number_of_allSolids; o < allSolids.DEF.length; o++) {
+                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allGroups, allGroups.num,
+                    () -> Select3D.deselect_Groups(),
+                    (o) -> { Select3D.Group_ids = concat(Select3D.Group_ids, new int[] {o}); }
+                    );
 
-                      int[] newlyAddedSolid = {o};
+                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allModel2Ds, allModel2Ds.num,
+                    () -> Select3D.deselect_Model2Ds(),
+                    (o) -> { Select3D.Model2D_ids = concat(Select3D.Model2D_ids, new int[] {o}); }
+                    );
 
-                      Select3D.Solid_ids = concat(Select3D.Solid_ids, newlyAddedSolid);
-                    }
-
-                    Select3D.calculate_BoundingBox();
-                  }
-
-
-
-                  if (keep_number_of_allCameras != allCameras.num) { // if any Camera created during the process
-
-                    Select3D.deselect_Cameras();
-
-                    for (int o = keep_number_of_allCameras; o < allCameras.num; o++) {
-
-                      int[] newlyAddedCamera = {o};
-
-                      Select3D.Camera_ids = concat(Select3D.Camera_ids, newlyAddedCamera);
-                    }
-
-                    Select3D.calculate_BoundingBox();
-                  }
-
-
-                  if (keep_number_of_allGroups != allGroups.num) { // if any Group created during the process
-
-                    Select3D.deselect_Groups();
-
-                    for (int o = keep_number_of_allGroups; o < allGroups.num; o++) {
-
-                      int[] newlyAddedGroup = {o};
-
-                      Select3D.Group_ids = concat(Select3D.Group_ids, newlyAddedGroup);
-                    }
-
-                    Select3D.calculate_BoundingBox();
-                  }
-
-                  if (keep_number_of_allModel2Ds != allModel2Ds.num) { // if any allModel2Ds created during the process
-
-                    Select3D.deselect_Model2Ds();
-
-                    for (int o = keep_number_of_allModel2Ds; o < allModel2Ds.num; o++) {
-
-                      int[] newlyAddedallModel2Ds = {o};
-
-                      Select3D.Model2D_ids = concat(Select3D.Model2D_ids, newlyAddedallModel2Ds);
-                    }
-
-                    Select3D.calculate_BoundingBox();
-                  }
-
-
-                  if (keep_number_of_allModel1Ds != allModel1Ds.num) { // if any allModel1Ds created during the process
-
-                    Select3D.deselect_Model1Ds();
-
-                    for (int o = keep_number_of_allModel1Ds; o < allModel1Ds.num; o++) {
-
-                      int[] newlyAddedallModel1Ds = {o};
-
-                      Select3D.Model1D_ids = concat(Select3D.Model1D_ids, newlyAddedallModel1Ds);
-                    }
-
-                    Select3D.calculate_BoundingBox();
-                  }
+                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allModel1Ds, allModel1Ds.num,
+                    () -> Select3D.deselect_Model1Ds(),
+                    (o) -> { Select3D.Model1D_ids = concat(Select3D.Model1D_ids, new int[] {o}); }
+                    );
 
 
 
