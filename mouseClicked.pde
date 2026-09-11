@@ -182,7 +182,7 @@ void mouseClicked () {
                   STATION.setLatitude(mouse_lat);
                   STATION.setLongitude(mouse_lon);
 
-                  STATION.setFilename_NAEFS(NAEFS_Coordinates[f].getFilename_NAEFS()); // naefs filename
+                  STATION.setFilename_NAEFS("");
 
                   println("nearest naefs filename:", NAEFS_Coordinates[f].getFilename_NAEFS());
 
@@ -208,6 +208,8 @@ void mouseClicked () {
                     // do not load data if it is outside 100Km distance
                     if(nearest_WORLD_NAEFS_dist > 100000) {
                       ENSEMBLE_FORECAST_load = false;
+                    } else {
+                      STATION.setFilename_NAEFS(NAEFS_Coordinates[f].getFilename_NAEFS());
                     }
                     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
                     ENSEMBLE_FORECAST_load = keep_ENSEMBLE_FORECAST_load;
