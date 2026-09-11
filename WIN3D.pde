@@ -758,8 +758,13 @@ class solarchvision_WIN3D {
           break;
 
         case ' ':
-          SOLARCHVISION_ShadeViewport();
+          SOLARCHVISION_ShadeViewport(1);
           break;
+
+        case BACKSPACE:
+          SOLARCHVISION_ShadeViewport(-1);
+          break;
+
 
         }
 

@@ -363,7 +363,8 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 -   `Shift+UP`, `Shift+DOWN`: Move/rotate/scale (or change properties of) the selection
 -   `c` and `C`: Switch the viewport to available cameras in the scene
 -   `ENTER`: Rebuild global & vertex solar energy/impact data
--   `SPACE`: Draft render
+-   `SPACE`: Move time forward & shade viewport
+-   `BACKSPACE`: Move time backward & shade viewport
 
 ------------------------------------------------------------------------
 

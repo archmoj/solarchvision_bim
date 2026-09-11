@@ -609,7 +609,7 @@ void mouseClicked () {
             }
 
             if (menu_option.equals("Shade Viewport")) {
-              SOLARCHVISION_ShadeViewport();
+              SOLARCHVISION_ShadeViewport(0);
             }
             if (menu_option.equals("Prebake Viewport")) {
               SOLARCHVISION_preBakeViewport();

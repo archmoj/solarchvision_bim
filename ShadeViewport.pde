@@ -1,23 +1,16 @@
+PImage Shade_RGBA;
+
 int SHADE_HOUR_ANGLE = 8;
 int SHADE_DATE_ANGLE = 0;
 
-PImage Shade_RGBA;
-
-void SOLARCHVISION_ShadeViewport () {
-  cursor(WAIT);
-  SOLARCHVISION_buildFaceGrid();
-
+void SOLARCHVISION_ShadeViewport (int steps) {
+  if(steps != 0) adjustShadeTime(steps);
   int DATE_ANGLE = SHADE_DATE_ANGLE;
   int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
-  SHADE_HOUR_ANGLE++;
-  if (SHADE_HOUR_ANGLE > 16) {
-    SHADE_HOUR_ANGLE = 8;
-    SHADE_DATE_ANGLE += 90;
-  }
-  if (SHADE_DATE_ANGLE >= 360) {
-    SHADE_DATE_ANGLE = 0;
-  }
+  cursor(WAIT);
+  SOLARCHVISION_buildFaceGrid();
+
 
   float quality = WIN3D.shadingQuality;
   int RES1 = round(WIN3D.dX * quality);
@@ -120,4 +113,32 @@ void SOLARCHVISION_ShadeViewport () {
   Shade_RGBA.updatePixels();
   cursor(ARROW);
   WIN3D.showShading = true;
+}
+
+void adjustShadeTime (int steps) {
+  if(steps > 0) {
+    // step forward
+    for(int i = 0; i < steps; i++) {
+      SHADE_HOUR_ANGLE++;
+      if (SHADE_HOUR_ANGLE > 16) {
+        SHADE_HOUR_ANGLE = 8;
+        SHADE_DATE_ANGLE += 90;
+      }
+      if (SHADE_DATE_ANGLE >= 360) {
+        SHADE_DATE_ANGLE = 0;
+      }
+    }
+  } else if(steps < 0) {
+    // step backward
+    for(int i = 0; i > steps; i--) {
+      SHADE_HOUR_ANGLE--;
+      if (SHADE_HOUR_ANGLE < 8) {
+        SHADE_HOUR_ANGLE = 16;
+        SHADE_DATE_ANGLE -= 90;
+      }
+      if (SHADE_DATE_ANGLE <= -90) {
+        SHADE_DATE_ANGLE = 360 - 90;
+      }
+    }
+  }
 }
