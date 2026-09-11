@@ -831,41 +831,36 @@ class solarchvision_Modify3D {
       for (int q = primary_list.length - 1; q >= 0; q--) {
         int f = primary_list[q];
 
-        if (allFaces.nodes[f].length > 3) { // <<<<<<<<<<< the condition to perform the process
-          if (isFaceInGroupRange(f, OBJ_ID)) {
-            allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object
+        if ((allFaces.nodes[f].length > 3) && isFaceInGroupRange(f, OBJ_ID)) { // <<<<<<<<<<< the condition to perform the process
+          allGroups.inserted_nFaces(OBJ_ID, f, allFaces.nodes[f].length - 1); // because adding the faces also changes the end pointer of the same object
 
-            ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
-            ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
+          ArrayList<int[]> midList_Faces_nodes_L = new ArrayList<int[]>();
+          ArrayList<int[]> midList_Faces_options_L = new ArrayList<int[]>();
 
-            float[][] base_Vertices = faceBaseVertices(f);
-            float[] G_face = faceCentroid(base_Vertices);
-            int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
+          float[][] base_Vertices = faceBaseVertices(f);
+          float[] G_face = faceCentroid(base_Vertices);
+          int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
 
-            current_Material = allFaces.getMaterial(f);
-            current_Tessellation = allFaces.getTessellation(f);
-            current_Layer = allFaces.getLayer(f);
-            current_Visibility = allFaces.getVisibility(f);
+          current_Material = allFaces.getMaterial(f);
+          current_Tessellation = allFaces.getTessellation(f);
+          current_Layer = allFaces.getLayer(f);
+          current_Visibility = allFaces.getVisibility(f);
 
-            for (int s = 0; s < allFaces.nodes[f].length; s++) {
-              int s_next = (s + 1) % allFaces.nodes[f].length;
+          for (int s = 0; s < allFaces.nodes[f].length; s++) {
+            int s_next = (s + 1) % allFaces.nodes[f].length;
 
-              int[] newFace_nodes = { allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number };
-              int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
+            int[] newFace_nodes = { allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_CenterVertex_number };
+            int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
 
-              midList_Faces_nodes_L.add(newFace_nodes);
-              midList_Faces_options_L.add(newFace_options);
+            midList_Faces_nodes_L.add(newFace_nodes);
+            midList_Faces_options_L.add(newFace_options);
 
-              if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
-                newFaceIndices_L.add(f + s);
-              }
+            if (s > 0) { // the first tessellated face was replaced by the base face... so only add other items
+              newFaceIndices_L.add(f + s);
             }
-
-            spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
           }
 
-          // Note (preserved from the original): this is called for every face with
-          // more than 3 sides, even ones outside OBJ_ID's range - not only on a match.
+          spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
           primary_list = this.remove_item_from_primary_list(q, primary_list);
         }
       }
