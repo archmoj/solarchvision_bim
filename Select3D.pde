@@ -188,6 +188,131 @@ class solarchvision_Select3D {
     return values;
   }
 
+  // Appends every index in [start, stop] (inclusive) not already marked in
+  // `seen`, in ascending order.
+  void appendIndicesInRange (int start, int stop, boolean[] seen, IntList buf) {
+    for (int f = start; f <= stop; f++) {
+      if (!seen[f]) {
+        seen[f] = true;
+        buf.append(f);
+      }
+    }
+  }
+
+  // Returns the deduplicated union, over every group in `groupIds`, of that
+  // group's [start, stop] range in `rangeTable`. Used by
+  // convert_Groups_to_Model1Ds/Model2Ds/Solids/Faces/Polylines().
+  int[] rangeUnion (int[][] rangeTable, int[] groupIds, int totalCount) {
+    boolean[] seen = new boolean[totalCount];
+    IntList buf = new IntList();
+    for (int i = 0; i < groupIds.length; i++) {
+      int OBJ_ID = groupIds[i];
+      appendIndicesInRange(rangeTable[OBJ_ID][0], rangeTable[OBJ_ID][1], seen, buf);
+    }
+    return buf.array();
+  }
+
+  // Appends the id of every group in `rangeTable` whose range contains `f`.
+  void appendGroupsContaining (int[][] rangeTable, int f, boolean[] seen, IntList buf) {
+    for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
+      if ((rangeTable[OBJ_ID][0] <= f) && (f <= rangeTable[OBJ_ID][1])) {
+        if (!seen[OBJ_ID]) {
+          seen[OBJ_ID] = true;
+          buf.append(OBJ_ID);
+        }
+      }
+    }
+  }
+
+  // Returns the deduplicated ids of every group in `rangeTable` whose range
+  // contains at least one of `sourceIds`. Used by
+  // convert_Model1Ds_to_Groups, convert_Model2Ds_to_Groups,
+  // convert_Solids_to_Groups, convert_Faces_to_Groups, and
+  // convert_Polylines_to_Groups.
+  int[] groupsContaining (int[][] rangeTable, int[] sourceIds) {
+    boolean[] seen = new boolean[allGroups.num];
+    IntList buf = new IntList();
+    for (int i = 0; i < sourceIds.length; i++) {
+      appendGroupsContaining(rangeTable, sourceIds[i], seen, buf);
+    }
+    return buf.array();
+  }
+
+  // For a single vertex, scans `nodeTable` (allFaces.nodes /
+  // allPolylines.nodes) in ascending order for objects that reference it,
+  // and for each match appends every group in `rangeTable` whose range
+  // contains that object's index. Used by convert_Vertices_to_Groups(),
+  // which calls this once per vertex (for Faces, then for Polylines) to
+  // preserve the original method's per-vertex traversal order exactly.
+  void appendGroupsContainingVertex (int[][] nodeTable, int[][] rangeTable, int vNo, boolean[] seen, IntList buf) {
+    for (int f = 0; f < nodeTable.length; f++) {
+      for (int j = 0; j < nodeTable[f].length; j++) {
+        if (nodeTable[f][j] == vNo) {
+          appendGroupsContaining(rangeTable, f, seen, buf);
+        }
+      }
+    }
+  }
+
+  // Appends every vertex id referenced by objects [start, stop] (inclusive)
+  // in `nodeTable`. Used by convert_Groups_to_Vertices(), which calls this
+  // once per group (for Faces, then for Polylines) to preserve the
+  // original method's per-group traversal order exactly.
+  void appendNodesOfRange (int[][] nodeTable, int start, int stop, boolean[] seen, IntList buf) {
+    for (int f = start; f <= stop; f++) {
+      for (int j = 0; j < nodeTable[f].length; j++) {
+        int vNo = nodeTable[f][j];
+        if (!seen[vNo]) {
+          seen[vNo] = true;
+          buf.append(vNo);
+        }
+      }
+    }
+  }
+
+  // Returns the deduplicated union of every vertex id referenced by the
+  // given object ids in `nodeTable`. Used by convert_Faces_to_Vertices()
+  // and convert_Polylines_to_Vertices().
+  int[] nodesOf (int[][] nodeTable, int[] objectIds) {
+    boolean[] seen = new boolean[allPoints.getLength()];
+    IntList buf = new IntList();
+    for (int i = 0; i < objectIds.length; i++) {
+      int f = objectIds[i];
+      for (int j = 0; j < nodeTable[f].length; j++) {
+        int vNo = nodeTable[f][j];
+        if (!seen[vNo]) {
+          seen[vNo] = true;
+          buf.append(vNo);
+        }
+      }
+    }
+    return buf.array();
+  }
+
+  // Returns the deduplicated ids of the objects in `nodeTable` that
+  // reference at least one of `vertexIds`, preserving the original
+  // "for each vertex, scan objects in ascending order" traversal (and
+  // therefore ordering) of convert_Vertices_to_Faces()/
+  // convert_Vertices_to_Polylines().
+  int[] objectsContainingVertices (int[][] nodeTable, int[] vertexIds) {
+    boolean[] seen = new boolean[nodeTable.length];
+    IntList buf = new IntList();
+    for (int i = 0; i < vertexIds.length; i++) {
+      int vNo = vertexIds[i];
+      for (int f = 0; f < nodeTable.length; f++) {
+        if (seen[f]) continue;
+        for (int j = 0; j < nodeTable[f].length; j++) {
+          if (nodeTable[f][j] == vNo) {
+            seen[f] = true;
+            buf.append(f);
+            break;
+          }
+        }
+      }
+    }
+    return buf.array();
+  }
+
   int rectTest_vertex (float x, float y, float z, float corner1x, float corner1y, float corner2x, float corner2y) {
 
     float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
@@ -1676,139 +1801,34 @@ class solarchvision_Select3D {
 
 
   void convert_Model1Ds_to_Groups () {
-
-    boolean[] Group_seen = new boolean[allGroups.num];
-    IntList Group_ids_buf = new IntList();
-
-    for (int i = 0; i < this.Model1D_ids.length; i++) {
-
-      int f = this.Model1D_ids[i];
-
-      for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
-
-        if ((allGroups.getStart_Model1D(OBJ_ID) <= f) && (f <= allGroups.getStop_Model1D(OBJ_ID))) {
-
-          if (!Group_seen[OBJ_ID]) {
-            Group_seen[OBJ_ID] = true;
-            Group_ids_buf.append(OBJ_ID);
-          }
-        }
-      }
-    }
-
-    this.Group_ids = Group_ids_buf.array();
-
+    this.Group_ids = groupsContaining(allGroups.Model1Ds, this.Model1D_ids);
     SOLARCHVISION_selection_changed();
   }
 
   void convert_Model2Ds_to_Groups () {
-
-    boolean[] Group_seen = new boolean[allGroups.num];
-    IntList Group_ids_buf = new IntList();
-
-    for (int i = 0; i < this.Model2D_ids.length; i++) {
-
-      int f = this.Model2D_ids[i];
-
-      for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
-
-        if ((allGroups.getStart_Model2D(OBJ_ID) <= f) && (f <= allGroups.getStop_Model2D(OBJ_ID))) {
-
-          if (!Group_seen[OBJ_ID]) {
-            Group_seen[OBJ_ID] = true;
-            Group_ids_buf.append(OBJ_ID);
-          }
-        }
-      }
-    }
-
-    this.Group_ids = Group_ids_buf.array();
-
+    this.Group_ids = groupsContaining(allGroups.Model2Ds, this.Model2D_ids);
     SOLARCHVISION_selection_changed();
   }
 
 
   void convert_Solids_to_Groups () {
-
-    boolean[] Group_seen = new boolean[allGroups.num];
-    IntList Group_ids_buf = new IntList();
-
-    for (int i = 0; i < this.Solid_ids.length; i++) {
-
-      int f = this.Solid_ids[i];
-
-      for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
-
-        if ((allGroups.getStart_Solid(OBJ_ID) <= f) && (f <= allGroups.getStop_Solid(OBJ_ID))) {
-
-          if (!Group_seen[OBJ_ID]) {
-            Group_seen[OBJ_ID] = true;
-            Group_ids_buf.append(OBJ_ID);
-          }
-        }
-      }
-    }
-
-    this.Group_ids = Group_ids_buf.array();
-
+    this.Group_ids = groupsContaining(allGroups.Solids, this.Solid_ids);
     SOLARCHVISION_selection_changed();
   }
 
   void convert_Faces_to_Groups () {
-
-    boolean[] Group_seen = new boolean[allGroups.num];
-    IntList Group_ids_buf = new IntList();
-
-    for (int i = 0; i < this.Face_ids.length; i++) {
-
-      int f = this.Face_ids[i];
-
-      for (int j = 0; j < allFaces.nodes[f].length; j++) {
-
-        for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
-
-          if ((allGroups.getStart_Face(OBJ_ID) <= f) && (f <= allGroups.getStop_Face(OBJ_ID))) {
-
-            if (!Group_seen[OBJ_ID]) {
-              Group_seen[OBJ_ID] = true;
-              Group_ids_buf.append(OBJ_ID);
-            }
-          }
-        }
-      }
-    }
-
-    this.Group_ids = Group_ids_buf.array();
-
+    // NOTE: the original repeated this group-membership scan once per node
+    // in each face; since the outcome only depends on the face index (not
+    // which node triggered it) and dedup already prevents double-adding,
+    // that inner loop was redundant. Removed as a behavior-preserving
+    // simplification.
+    this.Group_ids = groupsContaining(allGroups.Faces, this.Face_ids);
     SOLARCHVISION_selection_changed();
   }
 
   void convert_Polylines_to_Groups () {
-
-    boolean[] Group_seen = new boolean[allGroups.num];
-    IntList Group_ids_buf = new IntList();
-
-    for (int i = 0; i < this.Polyline_ids.length; i++) {
-
-      int f = this.Polyline_ids[i];
-
-      for (int j = 0; j < allPolylines.nodes[f].length; j++) {
-
-        for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
-
-          if ((allGroups.getStart_Polyline(OBJ_ID) <= f) && (f <= allGroups.getStop_Polyline(OBJ_ID))) {
-
-            if (!Group_seen[OBJ_ID]) {
-              Group_seen[OBJ_ID] = true;
-              Group_ids_buf.append(OBJ_ID);
-            }
-          }
-        }
-      }
-    }
-
-    this.Group_ids = Group_ids_buf.array();
-
+    // See the note in convert_Faces_to_Groups() above - same simplification.
+    this.Group_ids = groupsContaining(allGroups.Polylines, this.Polyline_ids);
     SOLARCHVISION_selection_changed();
   }
 
@@ -1820,48 +1840,9 @@ class solarchvision_Select3D {
     IntList Group_ids_buf = new IntList();
 
     for (int i = 0; i < this.Vertex_ids.length; i++) {
-
       int vNo = this.Vertex_ids[i];
-
-      for (int f = 0; f < allFaces.nodes.length; f++) {
-
-        for (int j = 0; j < allFaces.nodes[f].length; j++) {
-
-          if (allFaces.nodes[f][j] == vNo) {
-
-            for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
-
-              if ((allGroups.getStart_Face(OBJ_ID) <= f) && (f <= allGroups.getStop_Face(OBJ_ID))) {
-
-                if (!Group_seen[OBJ_ID]) {
-                  Group_seen[OBJ_ID] = true;
-                  Group_ids_buf.append(OBJ_ID);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      for (int f = 0; f < allPolylines.nodes.length; f++) {
-
-        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
-
-          if (allPolylines.nodes[f][j] == vNo) {
-
-            for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
-
-              if ((allGroups.getStart_Polyline(OBJ_ID) <= f) && (f <= allGroups.getStop_Polyline(OBJ_ID))) {
-
-                if (!Group_seen[OBJ_ID]) {
-                  Group_seen[OBJ_ID] = true;
-                  Group_ids_buf.append(OBJ_ID);
-                }
-              }
-            }
-          }
-        }
-      }
+      appendGroupsContainingVertex(allFaces.nodes, allGroups.Faces, vNo, Group_seen, Group_ids_buf);
+      appendGroupsContainingVertex(allPolylines.nodes, allGroups.Polylines, vNo, Group_seen, Group_ids_buf);
     }
 
     this.Group_ids = Group_ids_buf.array();
@@ -1871,182 +1852,44 @@ class solarchvision_Select3D {
 
 
   void convert_Vertices_to_Faces () {
-
-    boolean[] Face_seen = new boolean[allFaces.nodes.length];
-    IntList Face_buf = new IntList();
-
-    for (int i = 0; i < this.Vertex_ids.length; i++) {
-
-      int vNo = this.Vertex_ids[i];
-
-      for (int f = 0; f < allFaces.nodes.length; f++) {
-
-        for (int j = 0; j < allFaces.nodes[f].length; j++) {
-
-          if (allFaces.nodes[f][j] == vNo) {
-
-            if (!Face_seen[f]) {
-              Face_seen[f] = true;
-              Face_buf.append(f);
-            }
-          }
-        }
-      }
-    }
-
-    this.Face_ids = Face_buf.array();
-
+    this.Face_ids = objectsContainingVertices(allFaces.nodes, this.Vertex_ids);
     SOLARCHVISION_selection_changed();
   }
 
 
   void convert_Vertices_to_Polylines () {
-
-    boolean[] Polyline_seen = new boolean[allPolylines.nodes.length];
-    IntList Polyline_buf = new IntList();
-
-    for (int i = 0; i < this.Vertex_ids.length; i++) {
-
-      int vNo = this.Vertex_ids[i];
-
-      for (int f = 0; f < allPolylines.nodes.length; f++) {
-
-        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
-
-          if (allPolylines.nodes[f][j] == vNo) {
-
-            if (!Polyline_seen[f]) {
-              Polyline_seen[f] = true;
-              Polyline_buf.append(f);
-            }
-          }
-        }
-      }
-    }
-
-    this.Polyline_ids = Polyline_buf.array();
-
+    this.Polyline_ids = objectsContainingVertices(allPolylines.nodes, this.Vertex_ids);
     SOLARCHVISION_selection_changed();
   }
 
   void convert_Groups_to_Model1Ds () {
-
-    boolean[] Model1D_seen = new boolean[allModel1Ds.num];
-    IntList Model1D_buf = new IntList();
-
-    for (int i = 0; i < this.Group_ids.length; i++) {
-
-      int OBJ_ID = this.Group_ids[i];
-
-      for (int f = allGroups.getStart_Model1D(OBJ_ID); f <= allGroups.getStop_Model1D(OBJ_ID); f++) {
-
-        if (!Model1D_seen[f]) {
-          Model1D_seen[f] = true;
-          Model1D_buf.append(f);
-        }
-      }
-    }
-
-    this.Model1D_ids = Model1D_buf.array();
-
+    this.Model1D_ids = rangeUnion(allGroups.Model1Ds, this.Group_ids, allModel1Ds.num);
     SOLARCHVISION_selection_changed();
   }
 
 
   void convert_Groups_to_Model2Ds () {
-
-    boolean[] Model2D_seen = new boolean[allModel2Ds.num];
-    IntList Model2D_buf = new IntList();
-
-    for (int i = 0; i < this.Group_ids.length; i++) {
-
-      int OBJ_ID = this.Group_ids[i];
-
-      for (int f = allGroups.getStart_Model2D(OBJ_ID); f <= allGroups.getStop_Model2D(OBJ_ID); f++) {
-
-        if (!Model2D_seen[f]) {
-          Model2D_seen[f] = true;
-          Model2D_buf.append(f);
-        }
-      }
-    }
-
-    this.Model2D_ids = Model2D_buf.array();
-
+    this.Model2D_ids = rangeUnion(allGroups.Model2Ds, this.Group_ids, allModel2Ds.num);
     SOLARCHVISION_selection_changed();
   }
 
 
 
   void convert_Groups_to_Solids () {
-
-    boolean[] Solid_seen = new boolean[allSolids.DEF.length];
-    IntList Solid_buf = new IntList();
-
-    for (int i = 0; i < this.Group_ids.length; i++) {
-
-      int OBJ_ID = this.Group_ids[i];
-
-      for (int f = allGroups.getStart_Solid(OBJ_ID); f <= allGroups.getStop_Solid(OBJ_ID); f++) {
-
-        if (!Solid_seen[f]) {
-          Solid_seen[f] = true;
-          Solid_buf.append(f);
-        }
-      }
-    }
-
-    this.Solid_ids = Solid_buf.array();
-
+    this.Solid_ids = rangeUnion(allGroups.Solids, this.Group_ids, allSolids.DEF.length);
     SOLARCHVISION_selection_changed();
   }
 
 
 
   void convert_Groups_to_Faces () {
-
-    boolean[] Face_seen = new boolean[allFaces.nodes.length];
-    IntList Face_buf = new IntList();
-
-    for (int i = 0; i < this.Group_ids.length; i++) {
-
-      int OBJ_ID = this.Group_ids[i];
-
-      for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
-
-        if (!Face_seen[f]) {
-          Face_seen[f] = true;
-          Face_buf.append(f);
-        }
-      }
-    }
-
-    this.Face_ids = Face_buf.array();
-
+    this.Face_ids = rangeUnion(allGroups.Faces, this.Group_ids, allFaces.nodes.length);
     SOLARCHVISION_selection_changed();
   }
 
 
   void convert_Groups_to_Polylines () {
-
-    boolean[] Polyline_seen = new boolean[allPolylines.nodes.length];
-    IntList Polyline_buf = new IntList();
-
-    for (int i = 0; i < this.Group_ids.length; i++) {
-
-      int OBJ_ID = this.Group_ids[i];
-
-      for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
-
-        if (!Polyline_seen[f]) {
-          Polyline_seen[f] = true;
-          Polyline_buf.append(f);
-        }
-      }
-    }
-
-    this.Polyline_ids = Polyline_buf.array();
-
+    this.Polyline_ids = rangeUnion(allGroups.Polylines, this.Group_ids, allPolylines.nodes.length);
     SOLARCHVISION_selection_changed();
   }
 
@@ -2058,34 +1901,9 @@ class solarchvision_Select3D {
     IntList Vertex_buf = new IntList();
 
     for (int i = 0; i < this.Group_ids.length; i++) {
-
       int OBJ_ID = this.Group_ids[i];
-
-      for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
-
-        for (int j = 0; j < allFaces.nodes[f].length; j++) {
-
-          int vNo = allFaces.nodes[f][j];
-
-          if (!Vertex_seen[vNo]) {
-            Vertex_seen[vNo] = true;
-            Vertex_buf.append(vNo);
-          }
-        }
-      }
-
-      for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
-
-        for (int j = 0; j < allPolylines.nodes[f].length; j++) {
-
-          int vNo = allPolylines.nodes[f][j];
-
-          if (!Vertex_seen[vNo]) {
-            Vertex_seen[vNo] = true;
-            Vertex_buf.append(vNo);
-          }
-        }
-      }
+      appendNodesOfRange(allFaces.nodes, allGroups.getStart_Face(OBJ_ID), allGroups.getStop_Face(OBJ_ID), Vertex_seen, Vertex_buf);
+      appendNodesOfRange(allPolylines.nodes, allGroups.getStart_Polyline(OBJ_ID), allGroups.getStop_Polyline(OBJ_ID), Vertex_seen, Vertex_buf);
     }
 
     this.Vertex_ids = Vertex_buf.array();
@@ -2095,53 +1913,13 @@ class solarchvision_Select3D {
 
 
   void convert_Faces_to_Vertices () {
-
-    boolean[] Vertex_seen = new boolean[allPoints.getLength()];
-    IntList Vertex_buf = new IntList();
-
-    for (int i = 0; i < this.Face_ids.length; i++) {
-
-      int f = this.Face_ids[i];
-
-      for (int j = 0; j < allFaces.nodes[f].length; j++) {
-
-        int vNo = allFaces.nodes[f][j];
-
-        if (!Vertex_seen[vNo]) {
-          Vertex_seen[vNo] = true;
-          Vertex_buf.append(vNo);
-        }
-      }
-    }
-
-    this.Vertex_ids = Vertex_buf.array();
-
+    this.Vertex_ids = nodesOf(allFaces.nodes, this.Face_ids);
     SOLARCHVISION_selection_changed();
   }
 
 
   void convert_Polylines_to_Vertices () {
-
-    boolean[] Vertex_seen = new boolean[allPoints.getLength()];
-    IntList Vertex_buf = new IntList();
-
-    for (int i = 0; i < this.Polyline_ids.length; i++) {
-
-      int f = this.Polyline_ids[i];
-
-      for (int j = 0; j < allPolylines.nodes[f].length; j++) {
-
-        int vNo = allPolylines.nodes[f][j];
-
-        if (!Vertex_seen[vNo]) {
-          Vertex_seen[vNo] = true;
-          Vertex_buf.append(vNo);
-        }
-      }
-    }
-
-    this.Vertex_ids = Vertex_buf.array();
-
+    this.Vertex_ids = nodesOf(allPolylines.nodes, this.Polyline_ids);
     SOLARCHVISION_selection_changed();
   }
 
