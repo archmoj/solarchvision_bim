@@ -104,12 +104,18 @@ class solarchvision_Delete3D {
     int[] ids = sort(Select3D.Camera_ids);
     if (ids.length == 0) return;
 
-    for (int o = ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = ids[o];
-      if (OBJ_ID == WIN3D.currentCamera) {
-        WIN3D.currentCamera = 0;
-        SOLARCHVISION_modify_Viewport_Title();
-      }
+    boolean currentCameraDeleted = false;
+    int shiftBefore = 0;
+    for (int o = 0; o < ids.length; o++) {
+      if (ids[o] == WIN3D.currentCamera) currentCameraDeleted = true;
+      if (ids[o] < WIN3D.currentCamera) shiftBefore++;
+    }
+
+    if (currentCameraDeleted) {
+      WIN3D.currentCamera = 0;
+      SOLARCHVISION_modify_Viewport_Title();
+    } else if (shiftBefore > 0) {
+      WIN3D.currentCamera -= shiftBefore;
     }
 
     allCameras.options = removeIndices(allCameras.options, ids);
@@ -203,6 +209,8 @@ class solarchvision_Delete3D {
   }
 
   void selected_Faces () {
+    Select3D.convert_Faces_to_Vertices();
+
     int[] ids = sort(Select3D.Face_ids);
     if (ids.length == 0) return;
 
@@ -225,6 +233,8 @@ class solarchvision_Delete3D {
   }
 
   void selected_Polylines () {
+    Select3D.convert_Polylines_to_Vertices();
+
     int[] ids = sort(Select3D.Polyline_ids);
     if (ids.length == 0) return;
 
@@ -268,7 +278,6 @@ class solarchvision_Delete3D {
         for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
           for (int j = 0; j < 2; j++) {
             allGroups.Faces[i][j] -= 1 + endFace - startFace;
-            if (allGroups.Faces[i][j] < 0) allGroups.Faces[i][j] = 0;
           }
         }
         int[][] startList = (int[][]) subset(allFaces.nodes, 0, startFace);
@@ -286,7 +295,6 @@ class solarchvision_Delete3D {
         for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
           for (int j = 0; j < 2; j++) {
             allGroups.Polylines[i][j] -= 1 + endPolyline - startPolyline;
-            if (allGroups.Polylines[i][j] < 0) allGroups.Polylines[i][j] = 0;
           }
         }
         int[][] startList = (int[][]) subset(allPolylines.nodes, 0, startPolyline);
@@ -304,7 +312,6 @@ class solarchvision_Delete3D {
         for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
           for (int j = 0; j < 2; j++) {
             allGroups.Model1Ds[i][j] -= 1 + endModel1Ds - startModel1Ds;
-            if (allGroups.Model1Ds[i][j] < 0) allGroups.Model1Ds[i][j] = 0;
           }
         }
         float[][] startListF = (float[][]) subset(allModel1Ds.f_data, 0, startModel1Ds);
@@ -324,7 +331,6 @@ class solarchvision_Delete3D {
         for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
           for (int j = 0; j < 2; j++) {
             allGroups.Model2Ds[i][j] -= 1 + endModel2Ds - startModel2Ds;
-            if (allGroups.Model2Ds[i][j] < 0) allGroups.Model2Ds[i][j] = 0;
           }
         }
         float[][] startListF = (float[][]) subset(allModel2Ds.XYZS, 0, startModel2Ds);
@@ -344,7 +350,6 @@ class solarchvision_Delete3D {
         for (int i = OBJ_ID + 1; i < allGroups.num; i++) {
           for (int j = 0; j < 2; j++) {
             allGroups.Solids[i][j] -= 1 + endSolid - startSolid;
-            if (allGroups.Solids[i][j] < 0) allGroups.Solids[i][j] = 0;
           }
         }
       }
