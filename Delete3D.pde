@@ -5,8 +5,15 @@ class solarchvision_Delete3D {
   private float[][] removeIndices(float[][] arr, int[] ids) {
     if (ids.length == 0) return arr;
     boolean[] remove = new boolean[arr.length];
-    for (int id : ids) remove[id] = true;
-    float[][] result = new float[arr.length - ids.length][];
+    int removedCount = 0;
+    for (int id : ids) {
+      if (id >= 0 && id < arr.length && !remove[id]) {
+        remove[id] = true;
+        removedCount++;
+      }
+    }
+    if (removedCount == 0) return arr;
+    float[][] result = new float[arr.length - removedCount][];
     int k = 0;
     for (int i = 0; i < arr.length; i++) {
       if (!remove[i]) result[k++] = arr[i];
@@ -17,8 +24,15 @@ class solarchvision_Delete3D {
   private int[][] removeIndices(int[][] arr, int[] ids) {
     if (ids.length == 0) return arr;
     boolean[] remove = new boolean[arr.length];
-    for (int id : ids) remove[id] = true;
-    int[][] result = new int[arr.length - ids.length][];
+    int removedCount = 0;
+    for (int id : ids) {
+      if (id >= 0 && id < arr.length && !remove[id]) {
+        remove[id] = true;
+        removedCount++;
+      }
+    }
+    if (removedCount == 0) return arr;
+    int[][] result = new int[arr.length - removedCount][];
     int k = 0;
     for (int i = 0; i < arr.length; i++) {
       if (!remove[i]) result[k++] = arr[i];
@@ -29,8 +43,15 @@ class solarchvision_Delete3D {
   private int[] removeIndices(int[] arr, int[] ids) {
     if (ids.length == 0) return arr;
     boolean[] remove = new boolean[arr.length];
-    for (int id : ids) remove[id] = true;
-    int[] result = new int[arr.length - ids.length];
+    int removedCount = 0;
+    for (int id : ids) {
+      if (id >= 0 && id < arr.length && !remove[id]) {
+        remove[id] = true;
+        removedCount++;
+      }
+    }
+    if (removedCount == 0) return arr;
+    int[] result = new int[arr.length - removedCount];
     int k = 0;
     for (int i = 0; i < arr.length; i++) {
       if (!remove[i]) result[k++] = arr[i];
@@ -41,8 +62,15 @@ class solarchvision_Delete3D {
   private PImage[] removeIndices(PImage[] arr, int[] ids) {
     if (ids.length == 0) return arr;
     boolean[] remove = new boolean[arr.length];
-    for (int id : ids) remove[id] = true;
-    PImage[] result = new PImage[arr.length - ids.length];
+    int removedCount = 0;
+    for (int id : ids) {
+      if (id >= 0 && id < arr.length && !remove[id]) {
+        remove[id] = true;
+        removedCount++;
+      }
+    }
+    if (removedCount == 0) return arr;
+    PImage[] result = new PImage[arr.length - removedCount];
     int k = 0;
     for (int i = 0; i < arr.length; i++) {
       if (!remove[i]) result[k++] = arr[i];
@@ -53,8 +81,15 @@ class solarchvision_Delete3D {
   private PImage[][][] removeIndices(PImage[][][] arr, int[] ids) {
     if (ids.length == 0) return arr;
     boolean[] remove = new boolean[arr.length];
-    for (int id : ids) remove[id] = true;
-    PImage[][][] result = new PImage[arr.length - ids.length][][];
+    int removedCount = 0;
+    for (int id : ids) {
+      if (id >= 0 && id < arr.length && !remove[id]) {
+        remove[id] = true;
+        removedCount++;
+      }
+    }
+    if (removedCount == 0) return arr;
+    PImage[][][] result = new PImage[arr.length - removedCount][][];
     int k = 0;
     for (int i = 0; i < arr.length; i++) {
       if (!remove[i]) result[k++] = arr[i];
