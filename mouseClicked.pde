@@ -966,75 +966,49 @@ void mouseClicked () {
                         Create3D.add_SuperSphere(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, pz, py, pz, rx, ry, rz, User3D.create_SphereDegree, rot);
                       }
 
-
-
-
                       if (User3D.create_MeshOrSolid != 0) {
 
                         allSolids.create(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                       }
-                    }
-
-
-
-                    if (CreateObject == CREATE.Pyramid) {
+                    } else if (CreateObject == CREATE.Pyramid) {
 
                       Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                       Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
                       Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
                       Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
-                    }
-
-
-                    if (CreateObject == CREATE.Plane) {
+                    } else if (CreateObject == CREATE.Plane) {
 
                       Create3D.add_Mesh4(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
-                    }
-
-                    if (CreateObject == CREATE.Polygon) {
+                    } else if (CreateObject == CREATE.Polygon) {
 
                       Create3D.add_PolygonMesh(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, User3D.create_PolyDegree, rot);
-                    }
-
-                    if (CreateObject == CREATE.Hyper) {
+                    } else if (CreateObject == CREATE.Hyper) {
 
                       Create3D.add_PolygonHyper(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
-                    }
-
-
-                    if (CreateObject == CREATE.Extrude) {
+                    } else if (CreateObject == CREATE.Extrude) {
 
                       Create3D.add_PolygonExtrude(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
-                    }
-
-                    if (CreateObject == CREATE.House3) {
+                    } else if (CreateObject == CREATE.House3) {
 
                       float h = ry;
 
                       Create3D.add_House3_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
-                    }
-
-                    if (CreateObject == CREATE.House2) {
+                    } else if (CreateObject == CREATE.House2) {
 
                       float h = ry;
 
                       Create3D.add_House2_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
-                    }
-
-                    if (CreateObject == CREATE.House1) {
+                    } else if (CreateObject == CREATE.House1) {
 
                       float h = ry;
 
                       if (ry > rx) h = rx;
 
                       Create3D.add_House1_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
-                    }
-
-                    if (CreateObject == CREATE.Parametric) {
+                    } else if (CreateObject == CREATE.Parametric) {
 
                       Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_Parametric_Type, rot);
                     }
-
                   }
 
                   if (current_ObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
