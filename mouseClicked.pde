@@ -940,16 +940,14 @@ void mouseClicked () {
 
 
                   //if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.SOLID) || (current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.MODEL2D)) {
-                  if (current_ObjectCategory == ObjectCategory.GROUP) {
+                  if (current_ObjectCategory == ObjectCategory.GROUP) { // begin the group, then create its first mesh/solid
 
                     if (addToLastGroup == false) {
 
                       allGroups.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
                     }
-                  }
 
 
-                  if (current_ObjectCategory == ObjectCategory.GROUP) { // working with meshes
 
                     if (CreateObject == CREATE.SuperOBJ) {
 
@@ -1013,9 +1011,7 @@ void mouseClicked () {
 
                       Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_Parametric_Type, rot);
                     }
-                  }
-
-                  if (current_ObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
+                  } else if (current_ObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
                     if (CreateObject == CREATE.Person) {
 
                       randomSeed(millis());
@@ -1029,9 +1025,7 @@ void mouseClicked () {
                       randomSeed(millis());
                       allModel2Ds.create("TREES", n, x, y, z, 2 * rz);
                     }
-                  }
-
-                  if (current_ObjectCategory == ObjectCategory.MODEL1D) { // working with model1Ds
+                  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) { // working with model1Ds
                     if (CreateObject == CREATE.Model1Ds) {
 
                       randomSeed(millis());
@@ -1042,17 +1036,12 @@ void mouseClicked () {
                                          User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
                                          User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
                     }
-                  }
-
-                  if (current_ObjectCategory == ObjectCategory.VERTEX) { // working with vertices
+                  } else if (current_ObjectCategory == ObjectCategory.VERTEX) { // working with vertices
                     if (CreateObject == CREATE.Vertex) {
                       allPoints.create(x, y, z);
 
                     }
-                  }
-
-
-                  if (current_ObjectCategory == ObjectCategory.FACE) { // working with faces
+                  } else if (current_ObjectCategory == ObjectCategory.FACE) { // working with faces
                     if (CreateObject == CREATE.Face) {
                       allFaces.add_VertexToLastFace(x, y, z);
 
@@ -1061,9 +1050,7 @@ void mouseClicked () {
 
                       Select3D.calculate_BoundingBox();
                     }
-                  }
-
-                  if (current_ObjectCategory == ObjectCategory.POLYLINE) { // working with polylines
+                  } else if (current_ObjectCategory == ObjectCategory.POLYLINE) { // working with polylines
                     if (CreateObject == CREATE.Polyline) {
                       allPolylines.add_VertexToLastPolyline(x, y, z);
 
@@ -1072,18 +1059,11 @@ void mouseClicked () {
 
                       Select3D.calculate_BoundingBox();
                     }
-                  }
-
-
-
-                  if (current_ObjectCategory == ObjectCategory.SOLID) { // working with solids
+                  } else if (current_ObjectCategory == ObjectCategory.SOLID) { // working with solids
                     if (CreateObject == CREATE.Solid) {
                       allSolids.create(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                     }
-                  }
-
-
-                  if (current_ObjectCategory == ObjectCategory.CAMERA) { // working with cameras
+                  } else if (current_ObjectCategory == ObjectCategory.CAMERA) { // working with cameras
                     if (CreateObject == CREATE.Camera) {
 
                       int f = int(RxP[0]);
@@ -1137,10 +1117,7 @@ void mouseClicked () {
                       WIN3D.rotation_T = keep_WIN3D_rotation_T;
                       WIN3D.Zoom = keep_WIN3D_Zoom;
                     }
-                  }
-
-
-                  if (current_ObjectCategory == ObjectCategory.SECTION) { // working with sections
+                  } else if (current_ObjectCategory == ObjectCategory.SECTION) { // working with sections
                     if (CreateObject == CREATE.Section) {
 
                       int createNewSection = 0;
@@ -1360,6 +1337,7 @@ void mouseClicked () {
                         allSolarImpacts.sectionType = Section_Type;
                       }
                     }
+
                   }
 
 
