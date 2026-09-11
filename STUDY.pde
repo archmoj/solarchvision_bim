@@ -3202,7 +3202,7 @@ class solarchvision_STUDY {
       this.drawDailyGrid(x_Plot, y_Plot, sx_Plot, sy_Plot);
     }
 
-    keep_STUDY_perDays = this.perDays;
+    this.perDays = keep_STUDY_perDays;
     this.joinDays = keep_STUDY_joinDays;
 
 
