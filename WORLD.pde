@@ -159,6 +159,90 @@ class solarchvision_WORLD {
   }
 
 
+  // Projects a longitude/latitude onto the current viewport's pixel space.
+  float projX (float lon) {
+    return this.dX * (( 1 * (lon - this.oX) / 360.0) + 0.5) / this.sX;
+  }
+
+  float projY (float lat) {
+    return this.dY * ((-1 * (lat - this.oY) / 180.0) + 0.5) / this.sY;
+  }
+
+  boolean isWithinView (float lon, float lat) {
+    if (lon < this.VIEW_BoundariesX[this.VIEW_id][0]) return false;
+    if (lon > this.VIEW_BoundariesX[this.VIEW_id][1]) return false;
+    if (lat < this.VIEW_BoundariesY[this.VIEW_id][0]) return false;
+    if (lat > this.VIEW_BoundariesY[this.VIEW_id][1]) return false;
+    return true;
+  }
+
+  void drawMarker (float x_point, float y_point, float strokeW, int r, int g, int b, int a, boolean filled, float diameter) {
+    this.graphics.strokeWeight(strokeW);
+    this.graphics.stroke(r, g, b, a);
+    if (filled) this.graphics.fill(r, g, b, a);
+    else this.graphics.noFill();
+    this.graphics.ellipse(x_point, y_point, diameter, diameter);
+  }
+
+  void drawLabel (float x_point, float y_point, String label, float sizeMult) {
+    this.graphics.strokeWeight(0);
+    this.graphics.stroke(0);
+    this.graphics.fill(0);
+    this.graphics.textAlign(RIGHT, CENTER);
+    this.graphics.textSize(sizeMult * MessageSize * this.ImageScale);
+    this.graphics.text(label, x_point, y_point);
+  }
+
+  // Draws every station in `coords` that falls inside the current viewport (when displayAllLevel != 0),
+  // labels it too when displayAllLevel > 1, and separately labels whichever station is nearest to STATION
+  // when displayNear is true. This is the shared "draw all + highlight nearest" behavior used by the
+  // NAEFS/CWEEDS/CLMREC/TMYEPW datasets, which differ only in marker style and label source (code vs city).
+  // Returns the index of the nearest station within `coords`.
+  int drawStationDataset (solarchvision_STATION[] coords, int displayAllLevel, boolean displayNear, float R_station,
+                           float strokeW, int r, int g, int b, int a, boolean filled, float diameterMult,
+                           boolean useCode, float allLabelSizeMult, float nearLabelSizeMult) {
+
+    int nearest = -1;
+    float nearestDist = FLOAT_undefined;
+
+    for (int f = 0; f < coords.length; f++) {
+
+      float _lat = coords[f].getLatitude();
+      float _lon = coords[f].getLongitude();
+      if (_lon > 180) _lon -= 360; // << important!
+
+      if ((displayAllLevel != 0) && this.isWithinView(_lon, _lat)) {
+
+        float x_point = this.projX(_lon);
+        float y_point = this.projY(_lat);
+
+        this.drawMarker(x_point, y_point, strokeW, r, g, b, a, filled, diameterMult * R_station);
+
+        if (displayAllLevel > 1) {
+          this.drawLabel(x_point, y_point, useCode ? coords[f].getCode() : coords[f].getCity(), allLabelSizeMult);
+        }
+      }
+
+      float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+
+      if (nearestDist > d) {
+        nearestDist = d;
+        nearest = f;
+      }
+    }
+
+    if (displayNear && (nearest != -1)) {
+      float _lat = coords[nearest].getLatitude();
+      float _lon = coords[nearest].getLongitude();
+      if (_lon > 180) _lon -= 360; // << important!
+
+      this.drawLabel(this.projX(_lon), this.projY(_lat), useCode ? coords[nearest].getCode() : coords[nearest].getCity(), nearLabelSizeMult);
+    }
+
+    return nearest;
+  }
+
+
   void drawView () {
 
     if (this.update) {
@@ -199,10 +283,10 @@ class solarchvision_WORLD {
       float _lat1 = this.VIEW_BoundariesY[this.VIEW_id][0];
       float _lat2 = this.VIEW_BoundariesY[this.VIEW_id][1];
 
-      int x_point1 = int(this.dX * (( 1 * (_lon1 - this.oX) / 360.0) + 0.5) / this.sX);
-      int y_point1 = int(this.dY * ((-1 * (_lat1 - this.oY) / 180.0) + 0.5) / this.sY);
-      int x_point2 = int(this.dX * (( 1 * (_lon2 - this.oX) / 360.0) + 0.5) / this.sX);
-      int y_point2 = int(this.dY * ((-1 * (_lat2 - this.oY) / 180.0) + 0.5) / this.sY);
+      int x_point1 = int(this.projX(_lon1));
+      int y_point1 = int(this.projY(_lat1));
+      int x_point2 = int(this.projX(_lon2));
+      int y_point2 = int(this.projY(_lat2));
 
 
 
@@ -219,14 +303,7 @@ class solarchvision_WORLD {
         float _lon = STATION.getLongitude();
         if (_lon > 180) _lon -= 360; // << important!
 
-        float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-        float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-        this.graphics.strokeWeight(3 * this.ImageScale);
-        this.graphics.stroke(0, 0, 127, 255);
-        this.graphics.noFill();
-
-        this.graphics.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
+        this.drawMarker(this.projX(_lon), this.projY(_lat), 3 * this.ImageScale, 0, 0, 127, 255, false, 5 * R_station);
       }
 
       for ( int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
@@ -235,36 +312,20 @@ class solarchvision_WORLD {
         nearest_Station_ENSEMBLE_OBSERVED_dist[q] = FLOAT_undefined;
 
         for (int f = 0; f < SWOB_Coordinates.length; f++) {
-          boolean draw_info = false;
-
-          if (this.displayAll_SWOB != 0) draw_info = true;
 
           float _lat = SWOB_Coordinates[f].getLatitude();
           float _lon = SWOB_Coordinates[f].getLongitude();
           if (_lon > 180) _lon -= 360; // << important!
 
-          if (_lon < this.VIEW_BoundariesX[this.VIEW_id][0]) draw_info = false;
-          if (_lon > this.VIEW_BoundariesX[this.VIEW_id][1]) draw_info = false;
-          if (_lat < this.VIEW_BoundariesY[this.VIEW_id][0]) draw_info = false;
-          if (_lat > this.VIEW_BoundariesY[this.VIEW_id][1]) draw_info = false;
+          if ((this.displayAll_SWOB != 0) && this.isWithinView(_lon, _lat)) {
 
-          if (draw_info) {
+            float x_point = this.projX(_lon);
+            float y_point = this.projY(_lat);
 
-            float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-            float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-            this.graphics.strokeWeight(0);
-            this.graphics.stroke(191, 0, 0, 191);
-            this.graphics.fill(191, 0, 0, 191);
-            this.graphics.ellipse(x_point, y_point, R_station, R_station);
+            this.drawMarker(x_point, y_point, 0, 191, 0, 0, 191, true, R_station);
 
             if (this.displayAll_SWOB > 1) {
-              this.graphics.strokeWeight(0);
-              this.graphics.stroke(0);
-              this.graphics.fill(0);
-              this.graphics.textAlign(RIGHT, CENTER);
-              this.graphics.textSize(MessageSize * this.ImageScale);
-              this.graphics.text(SWOB_Coordinates[f].getCode(), x_point, y_point);
+              this.drawLabel(x_point, y_point, SWOB_Coordinates[f].getCode(), 1.0);
             }
           }
 
@@ -293,15 +354,7 @@ class solarchvision_WORLD {
           float _lon = SWOB_Coordinates[f].getLongitude();
           if (_lon > 180) _lon -= 360; // << important!
 
-          float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-          float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-          this.graphics.strokeWeight(0);
-          this.graphics.stroke(0);
-          this.graphics.fill(0);
-          this.graphics.textAlign(RIGHT, CENTER);
-          this.graphics.textSize(MessageSize * this.ImageScale);
-          this.graphics.text(SWOB_Coordinates[f].getCode(), x_point, y_point);
+          this.drawLabel(this.projX(_lon), this.projY(_lat), SWOB_Coordinates[f].getCode(), 1.0);
           //println(SWOB_Coordinates[f].getCode());
         }
 
@@ -309,264 +362,21 @@ class solarchvision_WORLD {
 
 
 
-      int nearest_WORLD_NAEFS = -1;
-      float nearest_WORLD_NAEFS_dist = FLOAT_undefined;
-
-      for (int f = 0; f < NAEFS_Coordinates.length; f++) {
-        boolean draw_info = false;
-
-        if (this.displayAll_NAEFS != 0) draw_info = true;
-
-        float _lat = NAEFS_Coordinates[f].getLatitude();
-        float _lon = NAEFS_Coordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        if (_lon < this.VIEW_BoundariesX[this.VIEW_id][0]) draw_info = false;
-        if (_lon > this.VIEW_BoundariesX[this.VIEW_id][1]) draw_info = false;
-        if (_lat < this.VIEW_BoundariesY[this.VIEW_id][0]) draw_info = false;
-        if (_lat > this.VIEW_BoundariesY[this.VIEW_id][1]) draw_info = false;
-
-        if (draw_info) {
-
-          float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-          float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-          this.graphics.strokeWeight(0);
-          this.graphics.stroke(0, 63, 0, 127);
-          this.graphics.fill(0, 63, 0, 127);
-
-          this.graphics.ellipse(x_point, y_point, 5 * R_station, 5 * R_station);
-
-          if (this.displayAll_NAEFS > 1) {
-            this.graphics.strokeWeight(0);
-            this.graphics.stroke(0);
-            this.graphics.fill(0);
-            this.graphics.textAlign(RIGHT, CENTER);
-            this.graphics.textSize(MessageSize * this.ImageScale);
-            this.graphics.text(NAEFS_Coordinates[f].getCity(), x_point, y_point);
-          }
-        }
-
-        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-        if (nearest_WORLD_NAEFS_dist > d) {
-          nearest_WORLD_NAEFS_dist = d;
-          nearest_WORLD_NAEFS = f;
-        }
-      }
-
-      if (this.displayNear_NAEFS) {
-        int f = nearest_WORLD_NAEFS;
-
-        float _lat = NAEFS_Coordinates[f].getLatitude();
-        float _lon = NAEFS_Coordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-        float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-        this.graphics.strokeWeight(0);
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.textSize(MessageSize * this.ImageScale);
-        this.graphics.text(NAEFS_Coordinates[f].getCity(), x_point, y_point);
-        //println(NAEFS_Coordinates[f].getCity());
-      }
+      this.drawStationDataset(NAEFS_Coordinates, this.displayAll_NAEFS, this.displayNear_NAEFS, R_station,
+                               0, 0, 63, 0, 127, true, 5, false, 1.0, 1.0);
 
 
-      int nearest_WORLD_CWEEDS = -1;
-      float nearest_WORLD_CWEEDS_dist = FLOAT_undefined;
-
-      for (int f = 0; f < CWEEDS_coordinates.length; f++) {
-        boolean draw_info = false;
-
-        if (this.displayAll_CWEEDS != 0) draw_info = true;
-
-        float _lat = CWEEDS_coordinates[f].getLatitude();
-        float _lon = CWEEDS_coordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        if (_lon < this.VIEW_BoundariesX[this.VIEW_id][0]) draw_info = false;
-        if (_lon > this.VIEW_BoundariesX[this.VIEW_id][1]) draw_info = false;
-        if (_lat < this.VIEW_BoundariesY[this.VIEW_id][0]) draw_info = false;
-        if (_lat > this.VIEW_BoundariesY[this.VIEW_id][1]) draw_info = false;
-
-        if (draw_info) {
-
-          float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-          float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-          this.graphics.strokeWeight(2 * this.ImageScale);
-          this.graphics.stroke(0, 0, 0, 191);
-          this.graphics.noFill();
-          this.graphics.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
-
-          if (this.displayAll_CWEEDS > 1) {
-            this.graphics.strokeWeight(0);
-            this.graphics.stroke(0);
-            this.graphics.fill(0);
-            this.graphics.textAlign(RIGHT, CENTER);
-            this.graphics.textSize(MessageSize * this.ImageScale);
-            this.graphics.text(CWEEDS_coordinates[f].getCity(), x_point, y_point);
-          }
-        }
-
-        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-        if (nearest_WORLD_CWEEDS_dist > d) {
-          nearest_WORLD_CWEEDS_dist = d;
-          nearest_WORLD_CWEEDS = f;
-        }
-      }
-
-      if (this.displayNear_CWEEDS) {
-        int f = nearest_WORLD_CWEEDS;
-
-        float _lat = CWEEDS_coordinates[f].getLatitude();
-        float _lon = CWEEDS_coordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-        float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-        this.graphics.strokeWeight(0);
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.textSize(MessageSize * this.ImageScale);
-        this.graphics.text(CWEEDS_coordinates[f].getCity(), x_point, y_point);
-        //println(CWEEDS_coordinates[f].getCity());
-      }
+      this.drawStationDataset(CWEEDS_coordinates, this.displayAll_CWEEDS, this.displayNear_CWEEDS, R_station,
+                               2 * this.ImageScale, 0, 0, 0, 191, false, 3, false, 1.0, 1.0);
 
 
-      int nearest_WORLD_CLMREC = -1;
-      float nearest_WORLD_CLMREC_dist = FLOAT_undefined;
+      // Note: CLMREC's "show all" labels render at half the usual text size (0.5 mult below),
+      // while its "show nearest" label uses the normal size — preserved as-is from the original.
+      this.drawStationDataset(CLMREC_Coordinates, this.displayAll_CLMREC, this.displayNear_CLMREC, R_station,
+                               1 * this.ImageScale, 0, 0, 0, 191, false, 0.5, false, 0.5, 1.0);
 
-      for (int f = 0; f < CLMREC_Coordinates.length; f++) {
-        boolean draw_info = false;
-
-        if (this.displayAll_CLMREC != 0) draw_info = true;
-
-        float _lat = CLMREC_Coordinates[f].getLatitude();
-        float _lon = CLMREC_Coordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        if (_lon < this.VIEW_BoundariesX[this.VIEW_id][0]) draw_info = false;
-        if (_lon > this.VIEW_BoundariesX[this.VIEW_id][1]) draw_info = false;
-        if (_lat < this.VIEW_BoundariesY[this.VIEW_id][0]) draw_info = false;
-        if (_lat > this.VIEW_BoundariesY[this.VIEW_id][1]) draw_info = false;
-
-        if (draw_info) {
-
-          float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-          float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-          this.graphics.strokeWeight(1 * this.ImageScale);
-          this.graphics.stroke(0, 0, 0, 191);
-          this.graphics.noFill();
-          this.graphics.ellipse(x_point, y_point, 0.5 * R_station, 0.5 * R_station);
-
-          if (this.displayAll_CLMREC > 1) {
-            this.graphics.strokeWeight(0);
-            this.graphics.stroke(0);
-            this.graphics.fill(0);
-            this.graphics.textAlign(RIGHT, CENTER);
-            this.graphics.textSize(0.5 * MessageSize * this.ImageScale);
-            this.graphics.text(CLMREC_Coordinates[f].getCity(), x_point, y_point);
-          }
-        }
-
-        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-        if (nearest_WORLD_CLMREC_dist > d) {
-          nearest_WORLD_CLMREC_dist = d;
-          nearest_WORLD_CLMREC = f;
-        }
-      }
-
-      if (this.displayNear_CLMREC) {
-        int f = nearest_WORLD_CLMREC;
-
-        float _lat = CLMREC_Coordinates[f].getLatitude();
-        float _lon = CLMREC_Coordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-        float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-        this.graphics.strokeWeight(0);
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.textSize(MessageSize * this.ImageScale);
-        this.graphics.text(CLMREC_Coordinates[f].getCity(), x_point, y_point);
-        //println(CLMREC_Coordinates[f].getCity());
-      }
-
-      int nearest_WORLD_TMYEPW = -1;
-      float nearest_WORLD_TMYEPW_dist = FLOAT_undefined;
-
-      for (int f = 0; f < TMYEPW_Coordinates.length; f++) {
-        boolean draw_info = false;
-
-        if (this.displayAll_TMYEPW != 0) draw_info = true;
-
-        float _lat = TMYEPW_Coordinates[f].getLatitude();
-        float _lon = TMYEPW_Coordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        if (_lon < this.VIEW_BoundariesX[this.VIEW_id][0]) draw_info = false;
-        if (_lon > this.VIEW_BoundariesX[this.VIEW_id][1]) draw_info = false;
-        if (_lat < this.VIEW_BoundariesY[this.VIEW_id][0]) draw_info = false;
-        if (_lat > this.VIEW_BoundariesY[this.VIEW_id][1]) draw_info = false;
-
-        if (draw_info) {
-
-          float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-          float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-          this.graphics.strokeWeight(2 * this.ImageScale);
-          this.graphics.stroke(255, 0, 0, 127);
-          this.graphics.noFill();
-          this.graphics.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
-
-          if (this.displayAll_TMYEPW > 1) {
-            this.graphics.strokeWeight(0);
-            this.graphics.stroke(0);
-            this.graphics.fill(0);
-            this.graphics.textAlign(RIGHT, CENTER);
-            this.graphics.textSize(MessageSize * this.ImageScale);
-            this.graphics.text(TMYEPW_Coordinates[f].getCity(), x_point, y_point);
-          }
-        }
-
-        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-        if (nearest_WORLD_TMYEPW_dist > d) {
-          nearest_WORLD_TMYEPW_dist = d;
-          nearest_WORLD_TMYEPW = f;
-        }
-      }
-
-      if (this.displayNear_TMYEPW) {
-        int f = nearest_WORLD_TMYEPW;
-
-        float _lat = TMYEPW_Coordinates[f].getLatitude();
-        float _lon = TMYEPW_Coordinates[f].getLongitude();
-        if (_lon > 180) _lon -= 360; // << important!
-
-        float x_point = this.dX * (( 1 * (_lon - this.oX) / 360.0) + 0.5) / this.sX;
-        float y_point = this.dY * ((-1 * (_lat - this.oY) / 180.0) + 0.5) / this.sY;
-
-        this.graphics.strokeWeight(0);
-        this.graphics.stroke(0);
-        this.graphics.fill(0);
-        this.graphics.textAlign(RIGHT, CENTER);
-        this.graphics.textSize(MessageSize * this.ImageScale);
-        this.graphics.text(TMYEPW_Coordinates[f].getCity(), x_point, y_point);
-        //println(TMYEPW_Coordinates[f].getCity());
-      }
+      this.drawStationDataset(TMYEPW_Coordinates, this.displayAll_TMYEPW, this.displayNear_TMYEPW, R_station,
+                               2 * this.ImageScale, 255, 0, 0, 127, false, 3, false, 1.0, 1.0);
 
 
       this.graphics.strokeWeight(0);
