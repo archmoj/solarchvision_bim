@@ -29,6 +29,44 @@ class solarchvision_ROLLOUT {
 
   private final static String CLASS_STAMP = "ROLLOUT";
 
+  private final static int PARENT_PERIOD_SCENARIOS     = 0; // "Period & Scenarios"
+  private final static int PARENT_LOCATION_DATA        = 1; // "Location & Data"
+  private final static int PARENT_GEOMETRY_SPACE       = 2; // "Geometry & Space"
+  private final static int PARENT_ILLUSTRATION_OPTIONS = 3; // "Illustration Options"
+  private final static int PARENT_POST_PROCESSING      = 4; // "Post-Processing"
+  private final static int PARENT_EXPORT_PRODUCTS      = 5; // "Export Products"
+
+  private final static int CHILD_FIRST = 1; // every category's first sub-tab; used when switching PARENT
+
+  private final static int CHILD_PERIOD_TIME    = 1;
+  private final static int CHILD_PERIOD_RANGES  = 2;
+  private final static int CHILD_PERIOD_FILTERS = 3;
+
+  private final static int CHILD_LOCATION_POINT    = 1;
+  private final static int CHILD_LOCATION_STATIONS = 2;
+
+  private final static int CHILD_GEOMETRY_CREATE       = 1;
+  private final static int CHILD_GEOMETRY_MODIFY       = 2;
+  private final static int CHILD_GEOMETRY_SOLID        = 3;
+  private final static int CHILD_GEOMETRY_FRACTAL_TREE = 4;
+  private final static int CHILD_GEOMETRY_ENVIRONMENT  = 5;
+  private final static int CHILD_GEOMETRY_VIEWPORT     = 6;
+  private final static int CHILD_GEOMETRY_SIMULATION   = 7;
+  private final static int CHILD_GEOMETRY_OTHER        = 8;
+
+  private final static int CHILD_ILLUSTRATION_2D_LAYERS  = 1;
+  private final static int CHILD_ILLUSTRATION_2D_COLORS  = 2;
+  private final static int CHILD_ILLUSTRATION_3D_SOLAR   = 3;
+  private final static int CHILD_ILLUSTRATION_3D_SPATIAL = 4;
+  private final static int CHILD_ILLUSTRATION_SELECTION  = 5;
+
+  private final static int CHILD_POSTPROCESS_INTERPOLATION = 1;
+  private final static int CHILD_POSTPROCESS_DEVELOPED     = 2;
+  private final static int CHILD_POSTPROCESS_IMPACTS       = 3;
+
+  private final static int CHILD_EXPORT_DATA  = 1;
+  private final static int CHILD_EXPORT_MEDIA = 2;
+
   int cX = 2 * SOLARCHVISION_pixel_W;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
   int dX = int(27 * MessageSize);
@@ -39,8 +77,8 @@ class solarchvision_ROLLOUT {
   boolean update = true;
   boolean include = true;
 
-  int parent = 0; // 0: Time, 1: Location, 2: Geometry, etc.
-  int child = 1; // number of the category inside e.g. 1, 2, ...
+  int parent = PARENT_PERIOD_SCENARIOS;
+  int child = CHILD_PERIOD_TIME;
 
 
   void drawView () {
@@ -79,7 +117,7 @@ class solarchvision_ROLLOUT {
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
           this.parent = i;
-          this.child = 1; // <<<<<
+          this.child = CHILD_FIRST; // <<<<<
 
           this.revise();
         }
@@ -151,9 +189,9 @@ class solarchvision_ROLLOUT {
 
 
 
-    if (this.parent == 0) { // Period & Scenarios
+    if (this.parent == PARENT_PERIOD_SCENARIOS) { // Period & Scenarios
 
-      if (this.child == 1) { // Time
+      if (this.child == CHILD_PERIOD_TIME) { // Time
         STUDY.j_End = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Number of days to plot", STUDY.j_End, 1, 365, 1, 1);
 
         STUDY.perDays = funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Day step", STUDY.perDays, 1, 182.5, 0.5), 0.5);
@@ -169,7 +207,7 @@ class solarchvision_ROLLOUT {
         TIME.year = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Start year", TIME.year, 1953, 2100, 1, 1);
       }
 
-      if (this.child == 2) { // Ranges
+      if (this.child == CHILD_PERIOD_RANGES) { // Ranges
         STUDY.i_Start = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1, 1);
         STUDY.i_End = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1, 1);
 
@@ -185,15 +223,15 @@ class solarchvision_ROLLOUT {
         ENSEMBLE_OBSERVED_maxDays = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1, 1);
       }
 
-      if (this.child == 3) { // Filters
+      if (this.child == CHILD_PERIOD_FILTERS) { // Filters
 
         STUDY.skyScenario = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1, 1);
         STUDY.filter = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1, 1);
       }
-    } else if (this.parent == 1) { // Location & data
+    } else if (this.parent == PARENT_LOCATION_DATA) { // Location & data
 
 
-      if (this.child == 1) { // Point
+      if (this.child == CHILD_LOCATION_POINT) { // Point
 
         //WORLD.autoView = this.SpinnerInt(X_control, Y_control, 0,0,1, "Map Auto Fit", WORLD.autoView, 0, 1, 1, 1);
         //WORLD.VIEW_id = this.SpinnerInt(X_control, Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.numMaps - 1, 1, 1);
@@ -203,7 +241,7 @@ class solarchvision_ROLLOUT {
         //LocationELE = this.Spinner(X_control, Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, 1);
       }
 
-      if (this.child == 2) { // Stations
+      if (this.child == CHILD_LOCATION_STATIONS) { // Stations
 
         WORLD.displayAll_TMYEPW = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1, 1);
         //WORLD.displayNear_TMYEPW = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
@@ -220,8 +258,8 @@ class solarchvision_ROLLOUT {
         WORLD.displayAll_NAEFS = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1, 1);
         //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
       }
-    } else if (this.parent == 2) { // Geometry & Space
-      if (this.child == 1) { // Create
+    } else if (this.parent == PARENT_GEOMETRY_SPACE) { // Geometry & Space
+      if (this.child == CHILD_GEOMETRY_CREATE) { // Create
 
         //addToLastGroup = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
 
@@ -254,7 +292,7 @@ class solarchvision_ROLLOUT {
 
       }
 
-      if (this.child == 2) { // Modify
+      if (this.child == CHILD_GEOMETRY_MODIFY) { // Modify
 
         User3D.modify_OpenningDepth = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.OpenningDepth", User3D.modify_OpenningDepth, -10, 10, 0.1);
         User3D.modify_OpenningArea = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.OpenningArea", User3D.modify_OpenningArea, 0, 1, 0.05);
@@ -283,7 +321,7 @@ class solarchvision_ROLLOUT {
         Select3D.alignZ = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.alignZ", Select3D.alignZ, -1, 1, 1, 1);
       }
 
-      if (this.child == 3) { // Solid
+      if (this.child == CHILD_GEOMETRY_SOLID) { // Solid
 
         //User3D.create_powRnd = this.SpinnerInt(X_control, Y_control, 0,0,0, "powRnd" , User3D.create_powRnd, 0, 1, 1, 1);
         User3D.create_powAll = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powAll", User3D.create_powAll, 0.5, CubePower, -2);
@@ -293,7 +331,7 @@ class solarchvision_ROLLOUT {
       }
 
 
-      if (this.child == 4) { // Fractal Tree
+      if (this.child == CHILD_GEOMETRY_FRACTAL_TREE) { // Fractal Tree
 
         User3D.create_Model1D_Type = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Type", User3D.create_Model1D_Type, 0, 0, 1, 1);
         User3D.create_Model1D_DegreeMax = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.DegreeMax", User3D.create_Model1D_DegreeMax, 0, 12, 1, 1);
@@ -307,7 +345,7 @@ class solarchvision_ROLLOUT {
         User3D.create_Model1D_TreeBase = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.TreeBase", User3D.create_Model1D_TreeBase, 0, 4, 0.1), 0.01);
       }
 
-      if (this.child == 5) { // Environment
+      if (this.child == CHILD_GEOMETRY_ENVIRONMENT) { // Environment
 
         //Land3D.loadTextures = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
         //Land3D.loadMesh = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
@@ -345,7 +383,7 @@ class solarchvision_ROLLOUT {
       }
 
 
-      if (this.child == 6) { // Viewport
+      if (this.child == CHILD_GEOMETRY_VIEWPORT) { // Viewport
 
         WIN3D.currentCamera = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1, 1);
 
@@ -362,7 +400,7 @@ class solarchvision_ROLLOUT {
       }
 
 
-      if (this.child == 7) { // Simulation
+      if (this.child == CHILD_GEOMETRY_SIMULATION) { // Simulation
 
         IMPACTS_displayDay = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1, 1);
 
@@ -397,7 +435,7 @@ class solarchvision_ROLLOUT {
         //allWindFlows.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "allWindFlows.displayAll", allWindFlows.displayAll, 0, 1, 1), 1));
       }
 
-      if (this.child == 8) { // Other
+      if (this.child == CHILD_GEOMETRY_OTHER) { // Other
 
         allFaces.displayTessellation = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "3D-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1, 1);
 
@@ -425,9 +463,9 @@ class solarchvision_ROLLOUT {
         OBJECTS_scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2);
       }
 
-    } else if (this.parent == 3) { // Display Options
+    } else if (this.parent == PARENT_ILLUSTRATION_OPTIONS) { // Illustration Options
 
-      if (this.child == 1) { // 2D-Layers
+      if (this.child == CHILD_ILLUSTRATION_2D_LAYERS) { // 2D-Layers
         STUDY.plotSetup = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 8, 1, 1);
 
         //STUDY.update = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
@@ -443,7 +481,7 @@ class solarchvision_ROLLOUT {
         STUDY.LevelPix = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2, 1);
       }
 
-      if (this.child == 2) { // 2D-Colors
+      if (this.child == CHILD_ILLUSTRATION_2D_COLORS) { // 2D-Colors
 
         //COLOR_STYLE_Current = this.SpinnerInt(X_control, Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1, 1);
 
@@ -466,7 +504,7 @@ class solarchvision_ROLLOUT {
         STUDY.O_scale = this.Spinner(X_control, Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
       }
 
-      if (this.child == 3) { // 3D-Solar
+      if (this.child == CHILD_ILLUSTRATION_3D_SOLAR) { // 3D-Solar
 
         allFaces.ACTIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_CLR", allFaces.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
         allFaces.ACTIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_DIR", allFaces.ACTIVE_palette_DIR, -2, 2, 1, 1);
@@ -496,7 +534,7 @@ class solarchvision_ROLLOUT {
 
 
 
-      if (this.child == 4) { // 3D-Solid
+      if (this.child == CHILD_ILLUSTRATION_3D_SPATIAL) { // 3D-Spatial
 
         allSolids.palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allSolids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
         allSolids.palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allSolids.palette_DIR", allSolids.palette_DIR, -2, 2, 2, 1);
@@ -512,7 +550,7 @@ class solarchvision_ROLLOUT {
       }
 
 
-      if (this.child == 5) { // Selection
+      if (this.child == CHILD_ILLUSTRATION_SELECTION) { // Selection
 
         //Select3D.Group_displayPivot = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayPivot", Select3D.Group_displayPivot, 0, 1, 1), 1));
         //Select3D.displayReferencePivot = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.displayReferencePivot", Select3D.displayReferencePivot, 0, 1, 1), 1));
@@ -536,15 +574,15 @@ class solarchvision_ROLLOUT {
 
         //Select3D.LandPoint_displayPoints = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.LandPoint_displayPoints", Select3D.LandPoint_displayPoints, 0, 1, 1), 1));
       }
-    } else if (this.parent == 4) { // Post-Processing
+    } else if (this.parent == PARENT_POST_PROCESSING) { // Post-Processing
 
-      if (this.child == 1) { // Interpolation
+      if (this.child == CHILD_POSTPROCESS_INTERPOLATION) { // Interpolation
 
         Interpolation_Weight = this.Spinner(X_control, Y_control, 1, 0, 0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
         CLIMATIC_SolarForecast = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1, 1);
         CLIMATIC_WeatherForecast = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1, 1);
       }
-      if (this.child == 2) { // Developed
+      if (this.child == CHILD_POSTPROCESS_DEVELOPED) { // Developed
         Develop_Option = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1, 1);
         Develop_DayHour = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1, 1);
 
@@ -554,14 +592,14 @@ class solarchvision_ROLLOUT {
         Develop_AngleInclination = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5, 1);
         Develop_AngleOrientation = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15, 1);
       }
-      if (this.child == 3) { // Impacts
+      if (this.child == CHILD_POSTPROCESS_IMPACTS) { // Impacts
         CurrentDataSource = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Impact Source", CurrentDataSource, 0, MAXIMUM_dataID, 1, 1);
         STUDY.ImpactLayer = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1, 1);
         //STUDY.Impacts_update = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "update impacts", STUDY.Impacts_update, 0, 1, 1), 1));
       }
-    } else if (this.parent == 5) { // Export Products
+    } else if (this.parent == PARENT_EXPORT_PRODUCTS) { // Export Products
 
-      if (this.child == 1) { // Data
+      if (this.child == CHILD_EXPORT_DATA) { // Data
 
         //STUDY.export_info_node = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Export ASCII data", STUDY.export_info_node, 0, 1, 1), 1));
         //STUDY.export_info_norm = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.export_info_norm, 0, 1, 1), 1));
@@ -580,7 +618,7 @@ class solarchvision_ROLLOUT {
         //User3D.export_PaletteResolution = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PaletteResolution", User3D.export_PaletteResolution, 32, 2048, -2), 1));
       }
 
-      if (this.child == 2) { // Media
+      if (this.child == CHILD_EXPORT_MEDIA) { // Media
 
         allSolidImpacts.record_IMG = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_IMG, 0, 1, 1, 1);
         allSolidImpacts.record_PDF = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, 0, 1, 1, 1);
