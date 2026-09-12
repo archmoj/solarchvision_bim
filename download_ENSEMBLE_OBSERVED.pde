@@ -1,10 +1,4 @@
-void download_ENSEMBLE_OBSERVED () {
-
-  // this line tries to update the most recent files! <<
-  int THE_YEAR = year();
-  int THE_MONTH = month();
-  int THE_DAY = day();
-  int THE_HOUR = hour();
+void download_ENSEMBLE_OBSERVED (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
   float THE_DATE = TIME.date;
 
@@ -75,5 +69,5 @@ void download_ENSEMBLE_OBSERVED () {
   }
 
   ENSEMBLE_OBSERVED_load = true;
-  update_ENSEMBLE_OBSERVED();
+  update_ENSEMBLE_OBSERVED(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
 }

@@ -153,7 +153,66 @@ void mouseClicked () {
               WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
             }
 
+            {
+              int nearest_WORLD_SWOB = -1;
+              float nearest_WORLD_SWOB_dist = FLOAT_undefined;
 
+              for (int f = 0; f < SWOB_Coordinates.length; f++) {
+
+                float _lat = SWOB_Coordinates[f].getLatitude();
+                float _lon = SWOB_Coordinates[f].getLongitude();
+                if (_lon > 180) _lon -= 360; // << important!
+
+                float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+
+                if (nearest_WORLD_SWOB_dist > d) {
+                  nearest_WORLD_SWOB_dist = d;
+                  nearest_WORLD_SWOB = f;
+                }
+              }
+
+              {
+                int f = nearest_WORLD_SWOB;
+
+                if (STATION.getFilename_SWOB().equals(SWOB_Coordinates[f].getFilename_SWOB())) {
+                } else {
+
+                  STATION.setLatitude(mouse_lat);
+                  STATION.setLongitude(mouse_lon);
+
+                  STATION.setFilename_SWOB(SWOB_Coordinates[f].getFilename_SWOB());
+
+                  println("nearest naefs filename:", SWOB_Coordinates[f].getFilename_SWOB());
+
+                  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+                    STATION.setCity(SWOB_Coordinates[f].getCity());
+                    STATION.setProvince(SWOB_Coordinates[f].getProvince());
+                    STATION.setCountry(SWOB_Coordinates[f].getCountry());
+
+                    //STATION.setLatitude(SWOB_Coordinates[f].getLatitude());
+                    //STATION.setLongitude(SWOB_Coordinates[f].getLongitude());
+                    STATION.setElevation(SWOB_Coordinates[f].getElevation());
+                    STATION.setTimelong(SWOB_Coordinates[f].getTimelong());
+
+                    ROLLOUT.revise();
+
+
+                    SOLARCHVISION_update_station(1);
+
+                    download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+
+                    boolean keep_ENSEMBLE_OBSERVED_load = ENSEMBLE_OBSERVED_load;
+                    // do not load data if it is outside 100Km distance
+                    if(nearest_WORLD_SWOB_dist > 100000) {
+                      ENSEMBLE_OBSERVED_load = false;
+                      STATION.setFilename_SWOB("?");
+                    }
+                    update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+                    ENSEMBLE_OBSERVED_load = keep_ENSEMBLE_OBSERVED_load;
+                  }
+                }
+              }
+            }
 
             {
               int nearest_WORLD_NAEFS = -1;
@@ -1651,16 +1710,16 @@ private void SOLARCHVISION_buildMenuActions() {
     WIN3D.revise();
   });
 
+  SOLARCHVISION_menuActions.put("Download SWOB", () -> {
+    download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);;
+  });
+
   SOLARCHVISION_menuActions.put("Download NAEFS", () -> {
     download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
   SOLARCHVISION_menuActions.put("Download CLMREC", () -> {
     download_CLIMATE_CLMREC();
-  });
-
-  SOLARCHVISION_menuActions.put("Download SWOB", () -> {
-    download_ENSEMBLE_OBSERVED();
   });
 
   SOLARCHVISION_menuActions.put("Update TMYEPW", () -> {
@@ -1688,7 +1747,7 @@ private void SOLARCHVISION_buildMenuActions() {
     CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
 
     ENSEMBLE_OBSERVED_load = true;
-    update_ENSEMBLE_OBSERVED();
+    update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
   SOLARCHVISION_menuActions.put("Update NAEFS", () -> {
@@ -1751,7 +1810,7 @@ private void SOLARCHVISION_buildMenuActions() {
     STUDY.joinDays = 1;
 
     ENSEMBLE_OBSERVED_load = true;
-    update_ENSEMBLE_OBSERVED();
+    update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
 
     SOLARCHVISION_view_changed();
     WORLD.revise();

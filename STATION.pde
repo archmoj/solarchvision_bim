@@ -10,6 +10,7 @@ class solarchvision_STATION {
   private String city = "";
   private String province = "";
   private String country = "";
+  private String filename_SWOB = "";
   private String filename_NAEFS = "";
   private String filename_CWEEDS = "";
   private String filename_TMYEPW = "";
@@ -23,6 +24,7 @@ class solarchvision_STATION {
   public String getCity () { return this.city; }
   public String getProvince () { return this.province; }
   public String getCountry () { return this.country; }
+  public String getFilename_SWOB () { return this.filename_SWOB; }
   public String getFilename_NAEFS () { return this.filename_NAEFS; }
   public String getFilename_CWEEDS () { return this.filename_CWEEDS; }
   public String getFilename_TMYEPW () { return this.filename_TMYEPW; }
@@ -52,6 +54,9 @@ class solarchvision_STATION {
   public void setCountry (String country) {
     this.country = country;
   }
+  public void setFilename_SWOB (String filename_SWOB) {
+    this.filename_SWOB = filename_NAEFS;
+  }
   public void setFilename_NAEFS (String filename_NAEFS) {
     this.filename_NAEFS = filename_NAEFS;
   }
@@ -68,13 +73,14 @@ class solarchvision_STATION {
 
   public solarchvision_STATION (String code, String city, String province, String country,
                          float latitude, float longitude, float timelong, float elevation,
-                         String filename_NAEFS, String filename_CWEEDS, String filename_TMYEPW) {
+                         String filename_TMYEPW, String filename_CWEEDS, String filename_NAEFS, String filename_SWOB) {
 
     this.code = code;
     this.city = city;
     this.province = province;
     this.country = country;
 
+    this.filename_SWOB = filename_SWOB;
     this.filename_NAEFS = filename_NAEFS;
     this.filename_CWEEDS = filename_CWEEDS;
     this.filename_TMYEPW = filename_TMYEPW;

@@ -479,7 +479,7 @@ void draw () {
         if (pre_CLIMATE_TMYEPW_load != CLIMATE_TMYEPW_load) update_CLIMATE_TMYEPW();
         if (pre_CLIMATE_CWEEDS_load != CLIMATE_CWEEDS_load) update_CLIMATE_CWEEDS();
         if (pre_CLIMATE_CLMREC_load != CLIMATE_CLMREC_load) update_CLIMATE_CLMREC();
-        if (pre_ENSEMBLE_OBSERVED_load != ENSEMBLE_OBSERVED_load) update_ENSEMBLE_OBSERVED();
+        if (pre_ENSEMBLE_OBSERVED_load != ENSEMBLE_OBSERVED_load) update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
         if (pre_ENSEMBLE_FORECAST_load != ENSEMBLE_FORECAST_load) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
         if (pre_WORLD_autoView != WORLD.autoView) {
@@ -940,11 +940,9 @@ String HoldStamp = "";
 String Subfolder_exportMaps = "maps/";
 
 solarchvision_STATION STATION = new solarchvision_STATION(
-  //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "MONTREAL_DORVAL_QC_CA", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"
-  "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "TORONTO_PEARSON_INTL_ON_CA", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "CAN_ON_Toronto.716240_CWEC"
-  //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "VANCOUVER_INTL_BC_CA", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "CAN_BC_Vancouver.718920_CWEC"
-
-  //"", "Dusseldorf", "NW", "DE", 51.28, 6.78, 15, 44, "", "", "DEU_Dusseldorf.104000_IWEC"
+  //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "CAN_PQ_Montreal.Intl.AP.716270_CWEC", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "MONTREAL_DORVAL_QC_CA", ""
+  "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "CAN_ON_Toronto.716240_CWEC", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "TORONTO_PEARSON_INTL_ON_CA", "CYYZ-MAN"
+  //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "CAN_BC_Vancouver.718920_CWEC", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "VANCOUVER_INTL_BC_CA", ""
 );
 
 solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE();
@@ -1292,9 +1290,9 @@ int CLIMATE_CLMREC_start = 2000;
 int CLIMATE_CLMREC_end = year();
 
 int ENSEMBLE_FORECAST_start = 1;
-int ENSEMBLE_FORECAST_end = 43; // NAEFS:1-43, Note we will append REPS/HRDPS or other scenarions at the end  of this list
+int ENSEMBLE_FORECAST_end = 43; // NAEFS:1-43,
 
-int ENSEMBLE_OBSERVED_numNearest = 3;  // <<<<<<<<
+int ENSEMBLE_OBSERVED_numNearest = 1; //3;
 
 int ENSEMBLE_OBSERVED_start = 1;
 int ENSEMBLE_OBSERVED_end = ENSEMBLE_OBSERVED_numNearest;
@@ -2588,7 +2586,7 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 4)) update_CLIMATE_CLMREC();
 
-  if ((Step == 0) || (Step == 5)) update_ENSEMBLE_OBSERVED();
+  if ((Step == 0) || (Step == 5)) update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
 
   if ((Step == 0) || (Step == 6)) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 

@@ -1,4 +1,4 @@
-void update_ENSEMBLE_OBSERVED () {
+void update_ENSEMBLE_OBSERVED (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
   ENSEMBLE_OBSERVED_values = new float [24][365][numberOfLayers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)];
   ENSEMBLE_OBSERVED_flags = new boolean [24][365][numberOfLayers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)]; // true: direct input , false: no-input, interpolated or post-processed
@@ -15,13 +15,6 @@ void update_ENSEMBLE_OBSERVED () {
   }
 
   if (ENSEMBLE_OBSERVED_load) {
-
-    // this line tries to update the most recent files! <<
-    int THE_YEAR = year();
-    int THE_MONTH = month();
-    int THE_DAY = day();
-    int THE_HOUR = hour();
-
 
     float THE_DATE = TIME.date;
 
