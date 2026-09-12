@@ -154,49 +154,49 @@ class solarchvision_ROLLOUT {
     if (this.parent == 0) { // Period & Scenarios
 
       if (this.child == 1) { // Time
-        STUDY.j_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Number of days to plot", STUDY.j_End, 1, 365, 1), 1));
+        STUDY.j_End = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Number of days to plot", STUDY.j_End, 1, 365, 1, 1);
 
         STUDY.perDays = funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Day step", STUDY.perDays, 1, 182.5, 0.5), 0.5);
 
-        STUDY.joinDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Join days", STUDY.joinDays, 1, 182, 1), 1));
+        STUDY.joinDays = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Join days", STUDY.joinDays, 1, 182, 1, 1);
 
-        TIME.date = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Days past March equinox", TIME.date, 0, 364, 1), 1));
+        TIME.date = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Days past March equinox", TIME.date, 0, 364, 1, 1);
 
-        //TIME.beginDay = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Day of year (0-364)", TIME.beginDay, 0, 364, 1), 1));
+        //TIME.beginDay = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Day of year (0-364)", TIME.beginDay, 0, 364, 1, 1);
 
-        TIME.day = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Start day", TIME.day, 1, 31, 1), 1));
-        TIME.month = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Start month", TIME.month, 1, 12, 1), 1));
-        TIME.year = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Start year", TIME.year, 1953, 2100, 1), 1));
+        TIME.day = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Start day", TIME.day, 1, 31, 1, 1);
+        TIME.month = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Start month", TIME.month, 1, 12, 1, 1);
+        TIME.year = this.SpinnerInt(X_control, Y_control, 1, 1, 0, "Start year", TIME.year, 1953, 2100, 1, 1);
       }
 
       if (this.child == 2) { // Ranges
-        STUDY.i_Start = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1), 1));
-        STUDY.i_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1), 1));
+        STUDY.i_Start = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1, 1);
+        STUDY.i_End = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1, 1);
 
-        SampleYear_Start = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
-        SampleYear_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1), 1));
+        SampleYear_Start = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1, 1);
+        SampleYear_End = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1, 1);
 
-        SampleMember_Start = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
-        SampleMember_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1), 1));
+        SampleMember_Start = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1, 1);
+        SampleMember_End = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1, 1);
 
-        SampleStation_Start = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
-        SampleStation_End = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1), 1));
+        SampleStation_Start = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1, 1);
+        SampleStation_End = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1, 1);
 
-        ENSEMBLE_OBSERVED_maxDays = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1), 1));
+        ENSEMBLE_OBSERVED_maxDays = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1, 1);
       }
 
       if (this.child == 3) { // Filters
 
-        STUDY.skyScenario = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1), 1));
-        STUDY.filter = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1), 1));
+        STUDY.skyScenario = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Sky status", STUDY.skyScenario, 1, 4, 1, 1);
+        STUDY.filter = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Hourly/daily filter", STUDY.filter, 0, 1, 1, 1);
       }
     } else if (this.parent == 1) { // Location & data
 
 
       if (this.child == 1) { // Point
 
-        //WORLD.autoView = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0,0,1, "Map Auto Fit", WORLD.autoView, 0, 1, 1), 1));
-        //WORLD.VIEW_id = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.numMaps - 1, 1), 1));
+        //WORLD.autoView = this.SpinnerInt(X_control, Y_control, 0,0,1, "Map Auto Fit", WORLD.autoView, 0, 1, 1, 1);
+        //WORLD.VIEW_id = this.SpinnerInt(X_control, Y_control, 0,0,1, "Map Viewport", WORLD.VIEW_id, 0, WORLD.numMaps - 1, 1, 1);
 
         LocationLAT = this.Spinner(X_control, Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, 0.01);
         LocationLON = this.Spinner(X_control, Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, 0.01);
@@ -205,19 +205,19 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 2) { // Stations
 
-        WORLD.displayAll_TMYEPW = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1), 1));
+        WORLD.displayAll_TMYEPW = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1, 1);
         //WORLD.displayNear_TMYEPW = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
 
-        WORLD.displayAll_CWEEDS = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_CWEEDS", WORLD.displayAll_CWEEDS, 0, 2, 1), 1));
+        WORLD.displayAll_CWEEDS = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "displayAll_CWEEDS", WORLD.displayAll_CWEEDS, 0, 2, 1, 1);
         //WORLD.displayNear_CWEEDS = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_CWEEDS", WORLD.displayNear_CWEEDS, 0, 1, 1), 1));
 
-        WORLD.displayAll_CLMREC = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_CLMREC", WORLD.displayAll_CLMREC, 0, 2, 1), 1));
+        WORLD.displayAll_CLMREC = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "displayAll_CLMREC", WORLD.displayAll_CLMREC, 0, 2, 1, 1);
         //WORLD.displayNear_CLMREC = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_CLMREC", WORLD.displayNear_CLMREC, 0, 1, 1), 1));
 
-        WORLD.displayAll_SWOB = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_SWOB", WORLD.displayAll_SWOB, 0, 2, 1), 1));
+        WORLD.displayAll_SWOB = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "displayAll_SWOB", WORLD.displayAll_SWOB, 0, 2, 1, 1);
         //WORLD.displayNear_SWOB = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_SWOB", WORLD.displayNear_SWOB, 0, 1, 1), 1));
 
-        WORLD.displayAll_NAEFS = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1), 1));
+        WORLD.displayAll_NAEFS = this.SpinnerInt(X_control, Y_control, 0, 0, 1, "displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1, 1);
         //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
       }
     } else if (this.parent == 2) { // Geometry & Space
@@ -225,12 +225,12 @@ class solarchvision_ROLLOUT {
 
         //addToLastGroup = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
 
-        User3D.default_Material = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Material", User3D.default_Material, -1, 8, 1), 1));
-        User3D.default_Tessellation = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Tessellation", User3D.default_Tessellation, 0, 6, 1), 1));
-        User3D.default_Layer = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Layer", User3D.default_Layer, 0, 16, 1), 1));
-        User3D.default_Visibility = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Visibility", User3D.default_Visibility, -1, 1, 1), 1));
-        User3D.default_Weight = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0,0,0, "3D-create.Weight" , User3D.default_Weight, -20, 20, 1), 1));
-        User3D.default_Closed = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0,0,0, "3D-create.Closed" , User3D.default_Closed, 0, 1, 1), 1));
+        User3D.default_Material = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Material", User3D.default_Material, -1, 8, 1, 1);
+        User3D.default_Tessellation = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Tessellation", User3D.default_Tessellation, 0, 6, 1, 1);
+        User3D.default_Layer = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Layer", User3D.default_Layer, 0, 16, 1, 1);
+        User3D.default_Visibility = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Visibility", User3D.default_Visibility, -1, 1, 1, 1);
+        User3D.default_Weight = this.SpinnerInt(X_control, Y_control, 0,0,0, "3D-create.Weight" , User3D.default_Weight, -20, 20, 1, 1);
+        User3D.default_Closed = this.SpinnerInt(X_control, Y_control, 0,0,0, "3D-create.Closed" , User3D.default_Closed, 0, 1, 1, 1);
 
         User3D.create_Orientation = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Orientation", User3D.create_Orientation, 0, 360, 15);
 
@@ -240,17 +240,17 @@ class solarchvision_ROLLOUT {
 
         User3D.create_Volume = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Volume", User3D.create_Volume, 0, 25000, 1000);
 
-        User3D.create_Snap = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Snap", User3D.create_Snap, 0, 1, 1), 1));
+        User3D.create_Snap = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Snap", User3D.create_Snap, 0, 1, 1, 1);
 
-        User3D.create_SphereDegree = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.SphereDegree", User3D.create_SphereDegree, 0, 5, 1), 1));
+        User3D.create_SphereDegree = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.SphereDegree", User3D.create_SphereDegree, 0, 5, 1, 1);
 
-        User3D.create_CylinderDegree = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.CylinderDegree", User3D.create_CylinderDegree, 3, 36, 1), 1));
+        User3D.create_CylinderDegree = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.CylinderDegree", User3D.create_CylinderDegree, 3, 36, 1, 1);
 
-        User3D.create_PolyDegree = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.PolyDegree", User3D.create_PolyDegree, 3, 36, 1), 1));
+        User3D.create_PolyDegree = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.PolyDegree", User3D.create_PolyDegree, 3, 36, 1, 1);
 
-        User3D.create_Parametric_Type = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Parametric_Type", User3D.create_Parametric_Type, 1, 6, 1), 1));
-        User3D.create_Person_Type = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1), 1));
-        User3D.create_Plant_Type = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1), 1));
+        User3D.create_Parametric_Type = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Parametric_Type", User3D.create_Parametric_Type, 1, 6, 1, 1);
+        User3D.create_Person_Type = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Person_Type", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1, 1);
+        User3D.create_Plant_Type = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Plant_Type", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1, 1);
 
       }
 
@@ -260,8 +260,8 @@ class solarchvision_ROLLOUT {
         User3D.modify_OpenningArea = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.OpenningArea", User3D.modify_OpenningArea, 0, 1, 0.05);
         User3D.modify_OpenningDeviation = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.OpenningDeviation", User3D.modify_OpenningDeviation, 0, 1, 0.05);
 
-        User3D.modify_TessellateRows = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.TessellateRows", User3D.modify_TessellateRows, 1, 100, 1), 1));
-        User3D.modify_TessellateColumns = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.TessellateColumns", User3D.modify_TessellateColumns, 1, 100, 1), 1));
+        User3D.modify_TessellateRows = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-modify.TessellateRows", User3D.modify_TessellateRows, 1, 100, 1, 1);
+        User3D.modify_TessellateColumns = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-modify.TessellateColumns", User3D.modify_TessellateColumns, 1, 100, 1, 1);
 
         User3D.modify_OffsetAmount = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.OffsetAmount", User3D.modify_OffsetAmount, 0, 25, 0.001);
 
@@ -270,22 +270,22 @@ class solarchvision_ROLLOUT {
         Select3D.softPower = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softPower", Select3D.softPower, 0.125, 8, -2);
         Select3D.softRadius = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softRadius", Select3D.softRadius, 0.01, 100, -2);
 
-        Select3D.posVector = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posVector", Select3D.posVector, 0, 3, 1), 1));
-        Select3D.rotVector =  int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotVector", Select3D.rotVector, 0, 2, 1), 1));
-        Select3D.scaleVector =  int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleVector", Select3D.scaleVector, 0, 3, 1), 1));
+        Select3D.posVector = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.posVector", Select3D.posVector, 0, 3, 1, 1);
+        Select3D.rotVector =  this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.rotVector", Select3D.rotVector, 0, 2, 1, 1);
+        Select3D.scaleVector =  this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.scaleVector", Select3D.scaleVector, 0, 3, 1, 1);
 
-        Select3D.posValue = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posValue", Select3D.posValue, -50, 50, 1), 1));
-        Select3D.rotValue = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotValue", Select3D.rotValue, -180, 180, 5), 5));
-        Select3D.scaleValue = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleValue", Select3D.scaleValue, -8, 8, 0.5), 0.5));
+        Select3D.posValue = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.posValue", Select3D.posValue, -50, 50, 1, 1);
+        Select3D.rotValue = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.rotValue", Select3D.rotValue, -180, 180, 5, 5);
+        Select3D.scaleValue = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.scaleValue", Select3D.scaleValue, -8, 8, 0.5, 0.5);
 
-        Select3D.alignX = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignX", Select3D.alignX, -1, 1, 1), 1));
-        Select3D.alignY = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignY", Select3D.alignY, -1, 1, 1), 1));
-        Select3D.alignZ = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignZ", Select3D.alignZ, -1, 1, 1), 1));
+        Select3D.alignX = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.alignX", Select3D.alignX, -1, 1, 1, 1);
+        Select3D.alignY = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.alignY", Select3D.alignY, -1, 1, 1, 1);
+        Select3D.alignZ = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-select.alignZ", Select3D.alignZ, -1, 1, 1, 1);
       }
 
       if (this.child == 3) { // Solid
 
-        //User3D.create_powRnd = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0,0,0, "powRnd" , User3D.create_powRnd, 0, 1, 1), 1));
+        //User3D.create_powRnd = this.SpinnerInt(X_control, Y_control, 0,0,0, "powRnd" , User3D.create_powRnd, 0, 1, 1, 1);
         User3D.create_powAll = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powAll", User3D.create_powAll, 0.5, CubePower, -2);
         User3D.create_powX = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powX", User3D.create_powX, 0.5, CubePower, -2);
         User3D.create_powY = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powY", User3D.create_powY, 0.5, CubePower, -2);
@@ -295,9 +295,9 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 4) { // Fractal Tree
 
-        User3D.create_Model1D_Type = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Type", User3D.create_Model1D_Type, 0, 0, 1), 1));
-        User3D.create_Model1D_DegreeMax = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.DegreeMax", User3D.create_Model1D_DegreeMax, 0, 12, 1), 1));
-        User3D.create_Model1D_Seed = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Seed", User3D.create_Model1D_Seed, -1, 32767, 1), 1));
+        User3D.create_Model1D_Type = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Type", User3D.create_Model1D_Type, 0, 0, 1, 1);
+        User3D.create_Model1D_DegreeMax = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.DegreeMax", User3D.create_Model1D_DegreeMax, 0, 12, 1, 1);
+        User3D.create_Model1D_Seed = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-create.Seed", User3D.create_Model1D_Seed, -1, 32767, 1, 1);
         User3D.create_Model1D_TrunkSize = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1), 0.1);
         User3D.create_Model1D_LeafSize = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.LeafSize", User3D.create_Model1D_LeafSize, 0, 1, 0.01), 0.1);
 
@@ -311,8 +311,8 @@ class solarchvision_ROLLOUT {
 
         //Land3D.loadTextures = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
         //Land3D.loadMesh = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
-        Land3D.skipStart = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1), 1));
-        Land3D.skipEnd = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1), 1));
+        Land3D.skipStart = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Land3D.skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1, 1);
+        Land3D.skipEnd = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Land3D.skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1, 1);
         //Land3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
         //Land3D.displayTexture = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture, 0, 1, 1), 1));
         //Land3D.displayPoints = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));
@@ -347,12 +347,12 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 6) { // Viewport
 
-        WIN3D.currentCamera = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1), 1));
+        WIN3D.currentCamera = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1, 1);
 
         WIN3D.CAM_clipNear = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
         WIN3D.CAM_clipFar = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
 
-        //WIN3D.FacesShade = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0,1,0, "FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1), 1));
+        //WIN3D.FacesShade = this.SpinnerInt(X_control, Y_control, 0,1,0, "FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1, 1);
 
         //allPoints.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayVertices", allPoints.displayAll, 0, 1, 1), 1));
         //allFaces.displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayEdges", allFaces.displayEdges, 0, 1, 1), 1));
@@ -364,13 +364,13 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 7) { // Simulation
 
-        IMPACTS_displayDay = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1), 1));
+        IMPACTS_displayDay = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1, 1);
 
         //allSolarImpacts.displayImage = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolarImpacts.displayImage", allSolarImpacts.displayImage, 0, 1, 1), 1));
         //allSolidImpacts.displayImage = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.displayImage", allSolidImpacts.displayImage, 0, 1, 1), 1));
 
-        allSolarImpacts.sectionType = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolarImpacts.sectionType", allSolarImpacts.sectionType, 0, 3, 1), 1));
-        allSolidImpacts.sectionType = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1), 1));
+        allSolarImpacts.sectionType = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allSolarImpacts.sectionType", allSolarImpacts.sectionType, 0, 3, 1, 1);
+        allSolidImpacts.sectionType = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allSolidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1, 1);
 
 
         allSolidImpacts.Grade = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2);
@@ -389,7 +389,7 @@ class solarchvision_ROLLOUT {
         allSolidImpacts.WindDirection = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15);
 
 
-        allSolidImpacts.Process_subDivisions = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "allSolidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1), 1));
+        allSolidImpacts.Process_subDivisions = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "allSolidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1, 1);
 
         //allSolidImpacts.displayPoints = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "allSolidImpacts.displayPoints", allSolidImpacts.displayPoints, 0, 1, 1), 1));
         //allSolidImpacts.displayLines = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "allSolidImpacts.displayLines", allSolidImpacts.displayLines, 0, 1, 1), 1));
@@ -399,11 +399,11 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 8) { // Other
 
-        allFaces.displayTessellation = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "3D-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1), 1));
+        allFaces.displayTessellation = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "3D-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1, 1);
 
-        Land3D.displayTessellation = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1), 1));
+        Land3D.displayTessellation = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1, 1);
 
-        Sky3D.displayTessellation = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.displayTessellation", Sky3D.displayTessellation, 0, 4, 1), 1));
+        Sky3D.displayTessellation = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sky.displayTessellation", Sky3D.displayTessellation, 0, 4, 1, 1);
         Sky3D.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 1, 4000000, -2);
 
         BIOSPHERE_drawResolution = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "Biosphere_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
@@ -428,7 +428,7 @@ class solarchvision_ROLLOUT {
     } else if (this.parent == 3) { // Display Options
 
       if (this.child == 1) { // 2D-Layers
-        STUDY.plotSetup = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 8, 1), 1));
+        STUDY.plotSetup = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 8, 1, 1);
 
         //STUDY.update = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
 
@@ -439,28 +439,28 @@ class solarchvision_ROLLOUT {
         //STUDY.displaySorted = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted, 0, 1, 1), 1));
         //STUDY.displayNormals = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Draw statistics", STUDY.displayNormals, 0, 1, 1), 1));
         //STUDY.displayProbs = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Draw probabilities", STUDY.displayProbs, 0, 1, 1), 1));
-        STUDY.sumInterval = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Probabilities interval", STUDY.sumInterval, 1, 24, 1), 1));
-        STUDY.LevelPix = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2), 1));
+        STUDY.sumInterval = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Probabilities interval", STUDY.sumInterval, 1, 24, 1, 1);
+        STUDY.LevelPix = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2, 1);
       }
 
       if (this.child == 2) { // 2D-Colors
 
-        //COLOR_STYLE_Current = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1), 1));
+        //COLOR_STYLE_Current = this.SpinnerInt(X_control, Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1, 1);
 
-        STUDY.ACTIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_CLR", STUDY.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.ACTIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_DIR", STUDY.ACTIVE_palette_DIR, -2, 2, 1), 1));
+        STUDY.ACTIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_CLR", STUDY.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        STUDY.ACTIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_DIR", STUDY.ACTIVE_palette_DIR, -2, 2, 1, 1);
         STUDY.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_MLT", STUDY.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        STUDY.PASSIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_CLR", STUDY.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.PASSIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_DIR", STUDY.PASSIVE_palette_DIR, -2, 2, 2), 1));
+        STUDY.PASSIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_CLR", STUDY.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        STUDY.PASSIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_DIR", STUDY.PASSIVE_palette_DIR, -2, 2, 2, 1);
         STUDY.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_MLT", STUDY.PASSIVE_palette_MLT, 0.125, 8, -2);
 
-        STUDY.SORT_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_CLR", STUDY.SORT_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.SORT_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_DIR", STUDY.SORT_palette_DIR, -2, 2, 2), 1));
+        STUDY.SORT_palette_CLR = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_CLR", STUDY.SORT_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        STUDY.SORT_palette_DIR = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_DIR", STUDY.SORT_palette_DIR, -2, 2, 2, 1);
         STUDY.SORT_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_MLT", STUDY.SORT_palette_MLT, 0.125, 8, -2);
 
-        STUDY.PROB_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_CLR", STUDY.PROB_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        STUDY.PROB_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_DIR", STUDY.PROB_palette_DIR, -2, 2, 2), 1));
+        STUDY.PROB_palette_CLR = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_CLR", STUDY.PROB_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        STUDY.PROB_palette_DIR = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_DIR", STUDY.PROB_palette_DIR, -2, 2, 2, 1);
         STUDY.PROB_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_MLT", STUDY.PROB_palette_MLT, 0.125, 8, -2);
 
         STUDY.O_scale = this.Spinner(X_control, Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
@@ -468,28 +468,28 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 3) { // 3D-Solar
 
-        allFaces.ACTIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_CLR", allFaces.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allFaces.ACTIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_DIR", allFaces.ACTIVE_palette_DIR, -2, 2, 1), 1));
+        allFaces.ACTIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_CLR", allFaces.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        allFaces.ACTIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_DIR", allFaces.ACTIVE_palette_DIR, -2, 2, 1, 1);
         allFaces.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_MLT", allFaces.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        allFaces.PASSIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_CLR", allFaces.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allFaces.PASSIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_DIR", allFaces.PASSIVE_palette_DIR, -2, 2, 2), 1));
+        allFaces.PASSIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_CLR", allFaces.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        allFaces.PASSIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_DIR", allFaces.PASSIVE_palette_DIR, -2, 2, 2, 1);
         allFaces.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_MLT", allFaces.PASSIVE_palette_MLT, 0.125, 8, -2);
 
-        Sky3D.ACTIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_CLR", Sky3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sky3D.ACTIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_DIR", Sky3D.ACTIVE_palette_DIR, -2, 2, 1), 1));
+        Sky3D.ACTIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_CLR", Sky3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        Sky3D.ACTIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_DIR", Sky3D.ACTIVE_palette_DIR, -2, 2, 1, 1);
         Sky3D.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_MLT", Sky3D.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        Sky3D.PASSIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_CLR", Sky3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sky3D.PASSIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_DIR", Sky3D.PASSIVE_palette_DIR, -2, 2, 2), 1));
+        Sky3D.PASSIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_CLR", Sky3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        Sky3D.PASSIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_DIR", Sky3D.PASSIVE_palette_DIR, -2, 2, 2, 1);
         Sky3D.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_MLT", Sky3D.PASSIVE_palette_MLT, 0.125, 8, -2);
 
-        Sun3D.ACTIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_CLR", Sun3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D.ACTIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_DIR", Sun3D.ACTIVE_palette_DIR, -2, 2, 1), 1));
+        Sun3D.ACTIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_CLR", Sun3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        Sun3D.ACTIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_DIR", Sun3D.ACTIVE_palette_DIR, -2, 2, 1, 1);
         Sun3D.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_MLT", Sun3D.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        Sun3D.PASSIVE_palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_CLR", Sun3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Sun3D.PASSIVE_palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_DIR", Sun3D.PASSIVE_palette_DIR, -2, 2, 2), 1));
+        Sun3D.PASSIVE_palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_CLR", Sun3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        Sun3D.PASSIVE_palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_DIR", Sun3D.PASSIVE_palette_DIR, -2, 2, 2, 1);
         Sun3D.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_MLT", Sun3D.PASSIVE_palette_MLT, 0.125, 8, -2);
       }
 
@@ -498,16 +498,16 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 4) { // 3D-Solid
 
-        allSolids.palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allSolids.palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_DIR", allSolids.palette_DIR, -2, 2, 2), 1));
+        allSolids.palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allSolids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        allSolids.palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allSolids.palette_DIR", allSolids.palette_DIR, -2, 2, 2, 1);
         allSolids.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_MLT", allSolids.palette_MLT, 0.0001, 64, -2);
 
-        Land3D.palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_CLR", Land3D.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        Land3D.palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_DIR", Land3D.palette_DIR, -2, 2, 2), 1));
+        Land3D.palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Land3D.palette_CLR", Land3D.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        Land3D.palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "Land3D.palette_DIR", Land3D.palette_DIR, -2, 2, 2, 1);
         Land3D.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_MLT", Land3D.palette_MLT, 0.001, 0.5, -2);
 
-        allWindFlows.palette_CLR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_CLR", allWindFlows.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1), 1));
-        allWindFlows.palette_DIR = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_DIR", allWindFlows.palette_DIR, -2, 2, 2), 1));
+        allWindFlows.palette_CLR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_CLR", allWindFlows.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, 1);
+        allWindFlows.palette_DIR = this.SpinnerInt(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_DIR", allWindFlows.palette_DIR, -2, 2, 2, 1);
         allWindFlows.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_MLT", allWindFlows.palette_MLT, 0.01, 1.0, -2);
       }
 
@@ -541,22 +541,22 @@ class solarchvision_ROLLOUT {
       if (this.child == 1) { // Interpolation
 
         Interpolation_Weight = this.Spinner(X_control, Y_control, 1, 0, 0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
-        CLIMATIC_SolarForecast = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1), 1));
-        CLIMATIC_WeatherForecast = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1), 1));
+        CLIMATIC_SolarForecast = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1, 1);
+        CLIMATIC_WeatherForecast = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1, 1);
       }
       if (this.child == 2) { // Developed
-        Develop_Option = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1), 1));
-        Develop_DayHour = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1), 1));
+        Develop_Option = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1, 1);
+        Develop_DayHour = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Develop_DayHour", Develop_DayHour, 0, 3, 1, 1);
 
-        STUDY.TrendJoinHours = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Trend period hours", STUDY.TrendJoinHours, 1, 24 * 16, 1), 1));
-        STUDY.TrendJoinType = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Weighted/equal trend", STUDY.TrendJoinType, -1, 1, 2), 1));
+        STUDY.TrendJoinHours = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Trend period hours", STUDY.TrendJoinHours, 1, 24 * 16, 1, 1);
+        STUDY.TrendJoinType = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Weighted/equal trend", STUDY.TrendJoinType, -1, 1, 2, 1);
 
-        Develop_AngleInclination = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5), 1));
-        Develop_AngleOrientation = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15), 1));
+        Develop_AngleInclination = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Inclination angle", Develop_AngleInclination, 0, 90, 5, 1);
+        Develop_AngleOrientation = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15, 1);
       }
       if (this.child == 3) { // Impacts
-        CurrentDataSource = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Impact Source", CurrentDataSource, 0, MAXIMUM_dataID, 1), 1));
-        STUDY.ImpactLayer = int(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1), 1));
+        CurrentDataSource = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Impact Source", CurrentDataSource, 0, MAXIMUM_dataID, 1, 1);
+        STUDY.ImpactLayer = this.SpinnerInt(X_control, Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1, 1);
         //STUDY.Impacts_update = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "update impacts", STUDY.Impacts_update, 0, 1, 1), 1));
       }
     } else if (this.parent == 5) { // Export Products
@@ -569,11 +569,11 @@ class solarchvision_ROLLOUT {
 
 
         User3D.export_Scale = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.Scale", User3D.export_Scale, .001, 1000, -0.1);
-        User3D.export_FlipZYaxis = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.FlipZYaxis", User3D.export_FlipZYaxis, 0, 1, 1), 1));
+        User3D.export_FlipZYaxis = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-export.FlipZYaxis", User3D.export_FlipZYaxis, 0, 1, 1, 1);
 
-        User3D.export_PrecisionVertex = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PrecisionVertex", User3D.export_PrecisionVertex, 0, 6, 1), 1));
-        User3D.export_PrecisionVtexture = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PrecisionVtexture", User3D.export_PrecisionVtexture, 0, 6, 1), 1));
-        User3D.export_PolyToPoly = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PolyToPoly", User3D.export_PolyToPoly, 0, 1, 1), 1));
+        User3D.export_PrecisionVertex = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-export.PrecisionVertex", User3D.export_PrecisionVertex, 0, 6, 1, 1);
+        User3D.export_PrecisionVtexture = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-export.PrecisionVtexture", User3D.export_PrecisionVtexture, 0, 6, 1, 1);
+        User3D.export_PolyToPoly = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "3D-export.PolyToPoly", User3D.export_PolyToPoly, 0, 1, 1, 1);
 
         //User3D.export_MaterialLibrary = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.MaterialLibrary", User3D.export_MaterialLibrary, 0, 1, 1), 1));
         //User3D.export_BackSides = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.BackSides", User3D.export_BackSides, 0, 1, 1), 1));
@@ -582,10 +582,10 @@ class solarchvision_ROLLOUT {
 
       if (this.child == 2) { // Media
 
-        allSolidImpacts.record_IMG = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_IMG, 0, 1, 1), 1));
-        allSolidImpacts.record_PDF = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, 0, 1, 1), 1));
+        allSolidImpacts.record_IMG = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "Record SolidImpact in JPG", allSolidImpacts.record_IMG, 0, 1, 1, 1);
+        allSolidImpacts.record_PDF = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, 0, 1, 1, 1);
 
-        allSolarImpacts.record_IMG = int(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "Record Solar Analysis in JPG", allSolarImpacts.record_IMG, 0, 1, 1), 1));
+        allSolarImpacts.record_IMG = this.SpinnerInt(X_control, Y_control, 0, 0, 0, "Record Solar Analysis in JPG", allSolarImpacts.record_IMG, 0, 1, 1, 1);
       }
 
     }
@@ -598,6 +598,9 @@ class solarchvision_ROLLOUT {
     }
   }
 
+  int SpinnerInt (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, float roundStep) {
+    return int(funcs.roundTo(this.Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v), roundStep));
+  }
 
   float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
 
