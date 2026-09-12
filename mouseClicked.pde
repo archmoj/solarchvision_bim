@@ -45,6 +45,37 @@ private void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
   SOLARCHVISION_switch_category(newCategory);
 }
 
+// Result of a nearest-station search: which index in the array was closest, and how far (in the
+// same units funcs.lon_lat_dist returns) it was from STATION's current position.
+class SOLARCHVISION_NearestStation {
+  int index = -1;
+  float dist = FLOAT_undefined;
+}
+
+// Shared by the SWOB/NAEFS/CWEEDS/CLMREC/TMYEPW "which station did the user click nearest to"
+// lookups in mouseClicked(): scans `coords` and returns the index (and distance) of whichever
+// station is closest to STATION's current longitude/latitude.
+SOLARCHVISION_NearestStation SOLARCHVISION_findNearestStation (solarchvision_STATION[] coords) {
+
+  SOLARCHVISION_NearestStation nearest = new SOLARCHVISION_NearestStation();
+
+  for (int f = 0; f < coords.length; f++) {
+
+    float _lat = coords[f].getLatitude();
+    float _lon = coords[f].getLongitude();
+    if (_lon > 180) _lon -= 360; // << important!
+
+    float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+
+    if (nearest.dist > d) {
+      nearest.dist = d;
+      nearest.index = f;
+    }
+  }
+
+  return nearest;
+}
+
 void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
@@ -154,25 +185,11 @@ void mouseClicked () {
             }
 
             {
-              int nearest_WORLD_SWOB = -1;
-              float nearest_WORLD_SWOB_dist = FLOAT_undefined;
-
-              for (int f = 0; f < SWOB_Coordinates.length; f++) {
-
-                float _lat = SWOB_Coordinates[f].getLatitude();
-                float _lon = SWOB_Coordinates[f].getLongitude();
-                if (_lon > 180) _lon -= 360; // << important!
-
-                float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-                if (nearest_WORLD_SWOB_dist > d) {
-                  nearest_WORLD_SWOB_dist = d;
-                  nearest_WORLD_SWOB = f;
-                }
-              }
+              SOLARCHVISION_NearestStation nearest_WORLD_SWOB_result = SOLARCHVISION_findNearestStation(SWOB_Coordinates);
+              float nearest_WORLD_SWOB_dist = nearest_WORLD_SWOB_result.dist;
 
               {
-                int f = nearest_WORLD_SWOB;
+                int f = nearest_WORLD_SWOB_result.index;
 
                 if (STATION.getFilename_SWOB().equals(SWOB_Coordinates[f].getFilename_SWOB())) {
                 } else {
@@ -215,25 +232,11 @@ void mouseClicked () {
             }
 
             {
-              int nearest_WORLD_NAEFS = -1;
-              float nearest_WORLD_NAEFS_dist = FLOAT_undefined;
-
-              for (int f = 0; f < NAEFS_Coordinates.length; f++) {
-
-                float _lat = NAEFS_Coordinates[f].getLatitude();
-                float _lon = NAEFS_Coordinates[f].getLongitude();
-                if (_lon > 180) _lon -= 360; // << important!
-
-                float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-                if (nearest_WORLD_NAEFS_dist > d) {
-                  nearest_WORLD_NAEFS_dist = d;
-                  nearest_WORLD_NAEFS = f;
-                }
-              }
+              SOLARCHVISION_NearestStation nearest_WORLD_NAEFS_result = SOLARCHVISION_findNearestStation(NAEFS_Coordinates);
+              float nearest_WORLD_NAEFS_dist = nearest_WORLD_NAEFS_result.dist;
 
               {
-                int f = nearest_WORLD_NAEFS;
+                int f = nearest_WORLD_NAEFS_result.index;
 
                 if (STATION.getFilename_NAEFS().equals(NAEFS_Coordinates[f].getFilename_NAEFS())) {
                 } else {
@@ -277,22 +280,7 @@ void mouseClicked () {
 
 
             {
-              int nearest_WORLD_CWEEDS = -1;
-              float nearest_WORLD_CWEEDS_dist = FLOAT_undefined;
-
-              for (int f = 0; f < CWEEDS_coordinates.length; f++) {
-
-                float _lat = CWEEDS_coordinates[f].getLatitude();
-                float _lon = CWEEDS_coordinates[f].getLongitude();
-                if (_lon > 180) _lon -= 360; // << important!
-
-                float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-                if (nearest_WORLD_CWEEDS_dist > d) {
-                  nearest_WORLD_CWEEDS_dist = d;
-                  nearest_WORLD_CWEEDS = f;
-                }
-              }
+              int nearest_WORLD_CWEEDS = SOLARCHVISION_findNearestStation(CWEEDS_coordinates).index;
 
               {
                 int f = nearest_WORLD_CWEEDS;
@@ -328,26 +316,10 @@ void mouseClicked () {
             }
 
             {
-              int nearest_WORLD_CLMREC = -1;
-              float nearest_WORLD_CLMREC_dist = FLOAT_undefined;
-
-              for (int f = 0; f < CLMREC_Coordinates.length; f++) {
-
-                //if (int(CLMREC_Coordinates[f].getEndyear()) == 2016)
-                { // only use stations with this condition
-
-                  float _lat = CLMREC_Coordinates[f].getLatitude();
-                  float _lon = CLMREC_Coordinates[f].getLongitude();
-                  if (_lon > 180) _lon -= 360; // << important!
-
-                  float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-                  if (nearest_WORLD_CLMREC_dist > d) {
-                    nearest_WORLD_CLMREC_dist = d;
-                    nearest_WORLD_CLMREC = f;
-                  }
-                }
-              }
+              // Note: the original loop here wrapped its body in a block guarded by a
+              // commented-out `getEndyear() == 2016` filter, which was inert (never executed),
+              // so a plain nearest-station search below is behaviorally identical.
+              int nearest_WORLD_CLMREC = SOLARCHVISION_findNearestStation(CLMREC_Coordinates).index;
 
               {
                 int f = nearest_WORLD_CLMREC;
@@ -384,22 +356,7 @@ void mouseClicked () {
 
 
             {
-              int nearest_WORLD_TMYEPW = -1;
-              float nearest_WORLD_TMYEPW_dist = FLOAT_undefined;
-
-              for (int f = 0; f < TMYEPW_Coordinates.length; f++) {
-
-                float _lat = TMYEPW_Coordinates[f].getLatitude();
-                float _lon = TMYEPW_Coordinates[f].getLongitude();
-                if (_lon > 180) _lon -= 360; // << important!
-
-                float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
-
-                if (nearest_WORLD_TMYEPW_dist > d) {
-                  nearest_WORLD_TMYEPW_dist = d;
-                  nearest_WORLD_TMYEPW = f;
-                }
-              }
+              int nearest_WORLD_TMYEPW = SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
 
               {
                 int f = nearest_WORLD_TMYEPW;
