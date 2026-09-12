@@ -29,20 +29,24 @@ void download_ENSEMBLE_OBSERVED () {
     THE_MONTH = TIME.getMonth_fromDate(THE_DATE);
     THE_DAY = TIME.getDay_fromDate(THE_DATE);
 
+    String dayStr = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2);
+
     for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
       int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
 
       if (f != -1) {
 
-        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + SWOB_Coordinates[f].getCode() + "-swob.xml";
+        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" +
+          SWOB_Coordinates[f].getCode() + "-swob.xml";
 
         String the_target = Folder_ENSEMBLE_OBSERVED + "/" + FN;
 
         File dir = new File(the_target);
         if (!dir.isFile()) {
 
-          String the_link = "https://dd.weather.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + split(SWOB_Coordinates[f].getCode(),'-')[0] + "/" + FN;
+          String the_link = "https://dd.weather.gc.ca/" + dayStr +"/WXO-DD/observations/swob-ml/" + dayStr + "/" +
+            split(SWOB_Coordinates[f].getCode(),'-')[0] + "/" + FN;
 
           println("Try downloading: " + the_link);
 
