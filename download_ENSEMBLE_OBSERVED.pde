@@ -1,29 +1,22 @@
 void download_ENSEMBLE_OBSERVED (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  float THE_DATE = TIME.date;
+  Calendar timeNow = Calendar.getInstance();
+  timeNow.set(Calendar.YEAR,  THE_YEAR);
+  timeNow.set(Calendar.MONTH, THE_MONTH - 1);
+  timeNow.set(Calendar.DATE,  THE_DAY);
+  timeNow.set(Calendar.HOUR_OF_DAY, THE_HOUR);
+  timeNow.add(Calendar.HOUR_OF_DAY, (int) -STATION.getTimelong() / 15);
 
-  int now_i = int(THE_HOUR);
-  int now_j = TIME.convert2Date(THE_MONTH, THE_DAY);
-
-  now_i += int(-STATION.getTimelong() / 15);
-  if (now_i > 23) {
-    now_i -= 24;
-    now_j += 1;
-    if (now_j > 364) {
-      now_j -= 365;
-      THE_YEAR += 1;
-    }
-    THE_DATE += 1;
-    if (THE_DATE > 364) THE_DATE -= 365;
-  }
-  THE_HOUR = now_i;
-
+  timeNow.add(Calendar.HOUR_OF_DAY, 1);
   for (int j_for = 0; j_for < ENSEMBLE_OBSERVED_maxDays * 24; j_for++) {
+    timeNow.add(Calendar.HOUR_OF_DAY, -1);
 
-    THE_MONTH = TIME.getMonth_fromDate(THE_DATE);
-    THE_DAY = TIME.getDay_fromDate(THE_DATE);
+    int YEAR = timeNow.get(Calendar.YEAR);
+    int MONTH = timeNow.get(Calendar.MONTH) + 1;
+    int DAY = timeNow.get(Calendar.DATE);
+    int HOUR = timeNow.get(Calendar.HOUR_OF_DAY);
 
-    String dayStr = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2);
+    String dayStr = nf(YEAR, 4) + nf(MONTH, 2) + nf(DAY, 2);
 
     for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
 
@@ -31,7 +24,7 @@ void download_ENSEMBLE_OBSERVED (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
 
       if (f != -1) {
 
-        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" +
+        String FN = nf(YEAR, 4) + "-" + nf(MONTH, 2) + "-" + nf(DAY, 2) + "-" + nf(HOUR, 2) + "00-" +
           SWOB_Coordinates[f].getCode() + "-swob.xml";
 
         String the_target = Folder_ENSEMBLE_OBSERVED + "/" + FN;
@@ -53,19 +46,6 @@ void download_ENSEMBLE_OBSERVED (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
         }
       }
     }
-
-    now_i -= 1;
-    if (now_i < 0) {
-      now_i += 24;
-      now_j -= 1;
-      if (now_j < 0) {
-        now_j += 365;
-        THE_YEAR -= 1;
-      }
-      THE_DATE -= 1;
-      if (THE_DATE < 0) THE_DATE += 364;
-    }
-    THE_HOUR = now_i;
   }
 
   ENSEMBLE_OBSERVED_load = true;
