@@ -85,17 +85,22 @@ class solarchvision_ROLLOUT {
   private int CHILD_EXPORT_DATA;
   private int CHILD_EXPORT_MEDIA;
 
-  private final static int FIRST_CHILD = 1; // every category's first sub-tab index; used when switching PARENT
-
   private ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
   private int _lastParentIndex = -1; // which category pushChild() appends into
   private int parent;
   private int child;
+  private int[] selectedChildForParent;
+  private final static int FIRST_CHILD = 1;
 
   public solarchvision_ROLLOUT () {
     buildAllRollouts();
-    parent = PARENT_PERIOD_SCENARIOS;
-    child = CHILD_PERIOD_TIME;
+    parent = PARENT_PERIOD_SCENARIOS; // default parent
+    child = CHILD_PERIOD_TIME; // default child
+
+    selectedChildForParent = new int[allRollouts.size()];
+    for (int i = 0; i < selectedChildForParent.length; i++) {
+      selectedChildForParent[i] = FIRST_CHILD;
+    }
   }
 
   private int pushParent (String label) {
@@ -150,7 +155,7 @@ class solarchvision_ROLLOUT {
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
           this.parent = i;
-          this.child = FIRST_CHILD;
+          this.child = selectedChildForParent[i];
 
           this.revise();
         }
@@ -192,6 +197,7 @@ class solarchvision_ROLLOUT {
 
         if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr)) {
           this.child = i;
+          selectedChildForParent[this.parent] = i; // remember this choice for next time this category is opened
 
           this.revise();
         }
