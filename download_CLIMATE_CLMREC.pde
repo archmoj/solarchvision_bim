@@ -29,8 +29,6 @@ void download_CLIMATE_CLMREC () {
       }
     }
 
-    Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
-
     CLIMATE_CLMREC_load = true;
     update_CLIMATE_CLMREC();
   }

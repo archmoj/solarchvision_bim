@@ -1070,12 +1070,6 @@ PrintWriter[] FILE_outputRaw;
 PrintWriter[] FILE_outputNorms;
 PrintWriter[] FILE_outputProbs;
 
-String[] Files_CLIMATE_TMYEPW;
-String[] Files_CLIMATE_CWEEDS;
-String[] Files_CLIMATE_CLMREC;
-String[] Files_ENSEMBLE_OBSERVED;
-String[] Files_ENSEMBLE_FORECAST;
-
 String Folder_CLIMATE_TMYEPW;
 String Folder_CLIMATE_CWEEDS;
 String Folder_CLIMATE_CLMREC;
@@ -2632,13 +2626,6 @@ void SOLARCHVISION_update_folders () {
   Folder_CLIMATE_CLMREC = BaseFolder + "/input/climate/CLMREC";
   Folder_CLIMATE_TMYEPW = BaseFolder + "/input/climate/TMYEPW";
   Folder_CLIMATE_CWEEDS = BaseFolder + "/input/climate/CWEEDS";
-
-  Files_CLIMATE_CLMREC = OPESYS.getFiles(Folder_CLIMATE_CLMREC);
-  Files_CLIMATE_TMYEPW = OPESYS.getFiles(Folder_CLIMATE_TMYEPW);
-  Files_CLIMATE_CWEEDS = OPESYS.getFiles(Folder_CLIMATE_CWEEDS);
-
-  Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
-  Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);
 
   Folder_Coordinates      = BaseFolder + "/input/coordinates";
   WORLD.ViewFolder      = BaseFolder + "/input/images/worldmap";

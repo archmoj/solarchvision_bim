@@ -1,7 +1,5 @@
 void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);
-
   boolean new_files_downloaded = false;
 
   for (int f = 0; f < numberOfLayers; f++) {
@@ -69,7 +67,6 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
         }
       }
     }
-    Files_ENSEMBLE_FORECAST = OPESYS.getFiles(Folder_ENSEMBLE_FORECAST);
 
     ENSEMBLE_FORECAST_load = true;
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);

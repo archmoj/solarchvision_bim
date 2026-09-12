@@ -74,8 +74,6 @@ void download_ENSEMBLE_OBSERVED () {
     THE_HOUR = now_i;
   }
 
-  Files_ENSEMBLE_OBSERVED = OPESYS.getFiles(Folder_ENSEMBLE_OBSERVED);
-
   ENSEMBLE_OBSERVED_load = true;
   update_ENSEMBLE_OBSERVED();
 }
