@@ -45,12 +45,10 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
   int[][] TOTALvaluesNUM = new int [1 + a_max][1 + b_max];
 
   for (int a = 0; a <= a_max; a++) {
-    for (int b = 0; b < b_max; b++) {
-      TOTALvaluesSUM_RAD[a][b] = FLOAT_undefined;
-      TOTALvaluesSUM_EFF_P[a][b] = FLOAT_undefined;
-      TOTALvaluesSUM_EFF_N[a][b] = FLOAT_undefined;
-      TOTALvaluesNUM[a][b] = 0;
-    }
+    java.util.Arrays.fill(TOTALvaluesSUM_RAD[a],   FLOAT_undefined);
+    java.util.Arrays.fill(TOTALvaluesSUM_EFF_P[a], FLOAT_undefined);
+    java.util.Arrays.fill(TOTALvaluesSUM_EFF_N[a], FLOAT_undefined);
+    java.util.Arrays.fill(TOTALvaluesNUM[a],       0);
   }
 
   boolean[] hourValid = new boolean [24];

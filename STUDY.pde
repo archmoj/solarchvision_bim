@@ -1143,15 +1143,10 @@ class solarchvision_STUDY {
     valuesSUM = new float [count_k * this.joinDays];
     valuesNUM = new float [count_k * this.joinDays];
 
-    for (int k = 0; k < count_k; k++) {
-      for (int j_ADD = 0; j_ADD < this.joinDays; j_ADD++) {
-        int idx = k * this.joinDays + j_ADD;
-        valuesA[idx] = FLOAT_undefined;
-        valuesB[idx] = FLOAT_undefined;
-        valuesSUM[idx] = 0; // Note: must be initialized to zero; not undefined.
-        valuesNUM[idx] = 0;
-      }
-    }
+    java.util.Arrays.fill(valuesA, FLOAT_undefined);
+    java.util.Arrays.fill(valuesB, FLOAT_undefined);
+    java.util.Arrays.fill(valuesSUM, 0);   // Note: must be initialized to zero; not undefined.
+    java.util.Arrays.fill(valuesNUM, 0);
 
     float[] Ax_LINES = new float [0];
     float[] Ay_LINES = new float [0];
@@ -1843,11 +1838,9 @@ class solarchvision_STUDY {
     values_W_spd = new float [count_k];
     values_W_tmp = new float [count_k];
 
-    for (int k = 0; k < count_k; k++) {
-      values_W_dir[k] = FLOAT_undefined;
-      values_W_spd[k] = FLOAT_undefined;
-      values_W_tmp[k] = FLOAT_undefined;
-    }
+    java.util.Arrays.fill(values_W_dir, FLOAT_undefined);
+    java.util.Arrays.fill(values_W_spd, FLOAT_undefined);
+    java.util.Arrays.fill(values_W_tmp, FLOAT_undefined);
 
     int PAL_type = 0;
     int PAL_direction = 1;
@@ -1877,11 +1870,11 @@ class solarchvision_STUDY {
         for (int i = 0; i < 24; i++) {
           if (this.isInHourlyRange(i)) {
 
-            for (int k = 0; k < count_k; k++) {
+            java.util.Arrays.fill(values_W_dir, FLOAT_undefined);
+            java.util.Arrays.fill(values_W_spd, FLOAT_undefined);
+            java.util.Arrays.fill(values_W_tmp, FLOAT_undefined);
 
-              values_W_dir[k] = FLOAT_undefined;
-              values_W_spd[k] = FLOAT_undefined;
-              values_W_tmp[k] = FLOAT_undefined;
+            for (int k = 0; k < count_k; k++) {
 
               int _plot = 1;
 
@@ -1986,11 +1979,11 @@ class solarchvision_STUDY {
         for (int i = 0; i < 24; i++) {
           if (this.isInHourlyRange(i)) {
 
-            for (int k = 0; k < count_k; k++) {
+            java.util.Arrays.fill(values_W_dir, FLOAT_undefined);
+            java.util.Arrays.fill(values_W_spd, FLOAT_undefined);
+            java.util.Arrays.fill(values_W_tmp, FLOAT_undefined);
 
-              values_W_dir[k] = FLOAT_undefined;
-              values_W_spd[k] = FLOAT_undefined;
-              values_W_tmp[k] = FLOAT_undefined;
+            for (int k = 0; k < count_k; k++) {
 
               int _plot = 1;
 
@@ -2422,12 +2415,10 @@ class solarchvision_STUDY {
     int[][] TOTALvaluesNUM = new int [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
 
     for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
-      for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
-        TOTALvaluesSUM_RAD[a][b] = FLOAT_undefined;
-        TOTALvaluesSUM_EFF_P[a][b] = FLOAT_undefined;
-        TOTALvaluesSUM_EFF_N[a][b] = FLOAT_undefined;
-        TOTALvaluesNUM[a][b] = 0;
-      }
+      java.util.Arrays.fill(TOTALvaluesSUM_RAD[a], FLOAT_undefined);
+      java.util.Arrays.fill(TOTALvaluesSUM_EFF_P[a], FLOAT_undefined);
+      java.util.Arrays.fill(TOTALvaluesSUM_EFF_N[a], FLOAT_undefined);
+      java.util.Arrays.fill(TOTALvaluesNUM[a], 0);
     }
 
     for (int j = this.j_Start; j < this.j_End; j++) {

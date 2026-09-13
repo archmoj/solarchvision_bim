@@ -62,9 +62,7 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
     if (q < 0) q = 0;
     return_array[STAT_N_M25] = _values[q];
   } else {
-    for (int i = 0; i < return_array.length; i++) {
-      return_array[i] = FLOAT_undefined;
-    }
+    java.util.Arrays.fill(return_array, FLOAT_undefined);
   }
 
   return return_array;

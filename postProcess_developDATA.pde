@@ -27,9 +27,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
     float[] valuesSUM;
     valuesSUM = new float [count_k];
 
-    for (int k = 0; k < count_k; k++) {
-      valuesSUM[k] = FLOAT_undefined;
-    }
+    java.util.Arrays.fill(valuesSUM, FLOAT_undefined);
 
     for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) {
       for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {

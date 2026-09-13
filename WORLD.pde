@@ -306,11 +306,10 @@ class solarchvision_WORLD {
         this.drawMarker(this.projX(_lon), this.projY(_lat), 3 * this.ImageScale, 0, 0, 127, 255, false, 5 * R_station);
       }
 
+      java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_id, -1);
+      java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_dist, FLOAT_undefined);
+
       for ( int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
-
-        nearest_Station_ENSEMBLE_OBSERVED_id[q] = -1;
-        nearest_Station_ENSEMBLE_OBSERVED_dist[q] = FLOAT_undefined;
-
         for (int f = 0; f < SWOB_Coordinates.length; f++) {
 
           float _lat = SWOB_Coordinates[f].getLatitude();

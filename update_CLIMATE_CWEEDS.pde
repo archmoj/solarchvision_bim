@@ -6,10 +6,8 @@ void update_CLIMATE_CWEEDS () {
   for (int i = 0; i < 24; i++) {
     for (int j = 0; j < 365; j++) {
       for (int l = 0; l < numberOfLayers; l++) {
-        for (int k = 0; k < (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start); k++) {
-          CLIMATE_CWEEDS_values[i][j][l][k] = FLOAT_undefined;
-          CLIMATE_CWEEDS_flags[i][j][l][k] = false;
-        }
+        java.util.Arrays.fill(CLIMATE_CWEEDS_values[i][j][l], FLOAT_undefined);
+        java.util.Arrays.fill(CLIMATE_CWEEDS_flags[i][j][l], false);
       }
     }
   }
