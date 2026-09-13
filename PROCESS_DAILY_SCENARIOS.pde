@@ -10,7 +10,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
 
   int layerDirId = needEFF ? LAYER_direffect.id : LAYER_dirnorrad.id;
   int layerDifId = needEFF ? LAYER_difeffect.id : LAYER_difhorrad.id;
-  float scaleDir = needEFF ? 0.0001 : 0.001;
+  float scaleDir = 0.001;
 
   float[] valuesSUM = new float[total];
   float[] valuesNUM = new float[total]; // already 0-initialized by Processing/Java
@@ -50,10 +50,9 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
         float valueDif = 0;
 
         if (!needEFF) {
-          // RAD path: diffuse term is 0.001 * Pdif.
           float Pdif = getValue_CurrentDataSource(i, now_j, now_k, layerDifId);
           if (is_undefined(Pdif)) continue;
-          valueDif = 0.001 * Pdif;
+          valueDif = scaleDir * Pdif;
         }
         // EFF path: the original always forced values_E_dif = 0 and never
         // used Pd, so the diffuse-effect layer is never fetched at all here.
