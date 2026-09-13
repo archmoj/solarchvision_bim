@@ -115,7 +115,7 @@ class solarchvision_SolarImpacts {
 
           //println(DATE_ANGLE, DATE_ANGLE_approximate);
 
-          int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+          int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
 
           //println("j =", j);
 

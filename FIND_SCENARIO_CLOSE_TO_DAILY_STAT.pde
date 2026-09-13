@@ -1,4 +1,4 @@
-int SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int l, int start_k, int end_k, int j, float DATE_ANGLE, int Impact_TYPE) {
+int SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, float DATE_ANGLE, int Impact_TYPE) {
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;

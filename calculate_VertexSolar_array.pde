@@ -50,7 +50,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
     float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
     TS_DayTime[jIdx] = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1);
 
-    int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+    int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
 
     if (nk == -1) continue;
 

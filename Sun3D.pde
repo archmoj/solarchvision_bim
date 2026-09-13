@@ -275,7 +275,7 @@ class solarchvision_Sun3D {
       int now_j = wrapDayIndex(j * int(STUDY.perDays) + TIME.beginDay);
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l,
+      int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
         start_k, end_k, j, DATE_ANGLE,
         target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
 
@@ -453,7 +453,7 @@ class solarchvision_Sun3D {
 
           int keep_filter_type = STUDY.filter;
           STUDY.filter = filter_HOURLY;
-          int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l,
+          int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
             start_k, end_k, more_J + j, DATE_ANGLE,
             target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
           STUDY.filter = keep_filter_type;
