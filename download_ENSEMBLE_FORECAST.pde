@@ -44,8 +44,10 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
     File[] bz2Files = dir.listFiles((d, name) -> name.endsWith(".bz2"));
     if (bz2Files != null) {
       for (File f : bz2Files) {
+        String p = f.getAbsolutePath();
+
         // strip the ".bz2" suffix to get the output filename
-        String outPath = f.getAbsolutePath().substring(0, f.getAbsolutePath().length() - 4);
+        String outPath = p.substring(0, p.length() - 4);
         File outFile = new File(outPath);
 
         try (
@@ -63,7 +65,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
           f.delete(); // only reached if decompression succeeded without throwing
         }
         catch (Exception e) {
-          println("Failed to decompress " + f.getName() + ": " + e);
+          // println("Failed to decompress " + f.getName() + ": " + e);
         }
       }
     }
