@@ -34,9 +34,6 @@ void setup () {
   TIME.date = (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (TIME.hour >= 12) TIME.date += 0.5;
 
-  allMaterials.empty_DirectArea();
-  allMaterials.empty_DiffuseArea();
-
   VertexSolar_resize_array();
   GlobalSolar_resize_array();
 
