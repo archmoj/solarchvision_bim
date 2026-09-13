@@ -1909,8 +1909,6 @@ class solarchvision_STUDY {
                 } else {
                   boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
-                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) isMemberCounted = false;
-
                   if (isMemberCounted) {
 
                     values_W_dir[k] = Pa;
@@ -2019,8 +2017,6 @@ class solarchvision_STUDY {
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
                   boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
-
-                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) isMemberCounted = false;
 
                   if (isMemberCounted) {
 
