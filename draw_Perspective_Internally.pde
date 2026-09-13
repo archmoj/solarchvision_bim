@@ -51,7 +51,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -78,7 +78,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          if (isInside(Image_XYZ[0], Image_XYZ[1], winX1 + R, winY1 + R, winX2 - R, winY2 - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
         }
 
       }
@@ -95,7 +95,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -149,7 +149,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -203,7 +203,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -264,7 +264,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -323,7 +323,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -378,7 +378,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -448,7 +448,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       fill(0);
 
@@ -472,7 +472,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], winX1, winY1, winX2, winY2)) {
               text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
             }
           }
@@ -492,7 +492,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       fill(0);
 
@@ -516,7 +516,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], winX1, winY1, winX2, winY2)) {
               text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
             }
           }
@@ -536,7 +536,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -559,7 +559,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          if (isInside(Image_XYZ[0], Image_XYZ[1], winX1 + R, winY1 + R, winX2 - R, winY2 - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
         }
       }
 
@@ -577,7 +577,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       strokeWeight(0);
 
@@ -598,7 +598,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX + R, -0.5 * WIN3D.dY + R, 0.5 * WIN3D.dX - R, 0.5 * WIN3D.dY - R)) {
+          if (isInside(Image_XYZ[0], Image_XYZ[1], winX1 + R, winY1 + R, winX2 - R, winY2 - R)) {
 
             float[] COL = PAINT.getColorStyle(14, _u); // <<<<<<<<<<<<<<<<<
             fill(COL[1], COL[2], COL[3], COL[0]);
@@ -624,7 +624,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -844,7 +844,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -1013,7 +1013,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       pushMatrix();
 
-      translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+      translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
       noFill();
 
@@ -1105,8 +1105,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
             if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
-                if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
+              if (isInside(Image_XYZa[0], Image_XYZa[1], winX1, winY1, winX2, winY2)) {
+                if (isInside(Image_XYZb[0], Image_XYZb[1], winX1, winY1, winX2, winY2)) {
                   line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
                 }
               }
@@ -1128,7 +1128,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
     pushMatrix();
 
-    translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
+    translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
     noFill();
 
@@ -1216,8 +1216,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
       if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-        if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
-          if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) {
+        if (isInside(Image_XYZa[0], Image_XYZa[1], winX1, winY1, winX2, winY2)) {
+          if (isInside(Image_XYZb[0], Image_XYZb[1], winX1, winY1, winX2, winY2)) {
             line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
           }
         }
