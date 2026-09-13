@@ -1,4 +1,4 @@
-int SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS (float[] _values, int l) {
+int SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_STAT (float[] _values, int l) {
   float[] _normals = SOLARCHVISION_NORMAL(_values);
   int n = _values.length;
 

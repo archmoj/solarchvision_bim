@@ -62,5 +62,5 @@ int SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int l, int start_k, int end_k, int j,
     }
   }
 
-  return SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS(valuesSUM, l);
+  return SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_STAT(valuesSUM, l);
 }
