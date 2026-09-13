@@ -1220,9 +1220,9 @@ class solarchvision_STUDY {
 
                 if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
               } else {
-                int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
-                if (memberCount == 1) {
+                if (isMemberCounted) {
                   valuesA[idx] = Pa;
                   valuesA[idx] += this.V_offset;
 
@@ -1907,11 +1907,11 @@ class solarchvision_STUDY {
                   values_W_spd[k] = FLOAT_undefined;
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
-                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
-                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) memberCount = 0;
+                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) isMemberCounted = false;
 
-                  if (memberCount == 1) {
+                  if (isMemberCounted) {
 
                     values_W_dir[k] = Pa;
                     values_W_spd[k] = Pb;
@@ -2018,11 +2018,11 @@ class solarchvision_STUDY {
                   values_W_spd[k] = FLOAT_undefined;
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
-                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
-                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) memberCount = 0;
+                  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) && (ENSEMBLE_FORECAST_flags[now_i][now_j][LAYER_winddir.id][now_k] == false)) isMemberCounted = false;
 
-                  if (memberCount == 1) {
+                  if (isMemberCounted) {
 
                     values_W_dir[k] = Pa;
                     values_W_spd[k] = Pb;
@@ -2497,9 +2497,9 @@ class solarchvision_STUDY {
                       values_E_dif = FLOAT_undefined;
                     } else {
 
-                      int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                      boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
-                      if (memberCount == 1) {
+                      if (isMemberCounted) {
                         values_R_dir = 0.001 * Pa;
                         values_R_dif = 0.001 * Pb;
                         values_E_dir = 0.001 * Pc;
@@ -2876,9 +2876,9 @@ class solarchvision_STUDY {
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
-                  if (memberCount == 1) {
+                  if (isMemberCounted) {
                     values_R_dir = 0.001 * Pa;
                     values_R_dif = 0.001 * Pb;
                     values_E_dir = 0.001 * Pc;

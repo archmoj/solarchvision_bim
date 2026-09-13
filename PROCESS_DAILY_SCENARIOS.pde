@@ -50,8 +50,8 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
         float Pdif = getValue_CurrentDataSource(i, now_j, now_k, layerDifId);
         if (is_undefined(Pdif)) continue;
 
-        int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
-        if (memberCount != 1) continue;
+        boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
+        if (!isMemberCounted) continue;
 
         if (is_undefined(valuesSUM[idx])) {
           valuesSUM[idx] = 0;

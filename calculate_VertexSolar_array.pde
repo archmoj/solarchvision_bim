@@ -79,8 +79,8 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
       if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) continue;
 
-      int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
-      if (memberCount != 1) continue;
+      boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
+      if (!isMemberCounted) continue;
 
       float[] SunDir = { SunR[1], SunR[2], SunR[3] };
       TS_SunDir[jIdx][i] = SunDir;

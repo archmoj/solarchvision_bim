@@ -181,9 +181,9 @@ class solarchvision_SolarImpacts {
                       values_E_dif = FLOAT_undefined;
                     } else {
 
-                      int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
+                      boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
 
-                      if (memberCount == 1) {
+                      if (isMemberCounted) {
                         values_R_dir = 0.001 * Pa;
                         values_R_dif = 0.001 * Pb;
                         values_E_dir = 0.001 * Pc;

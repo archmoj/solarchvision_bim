@@ -1,4 +1,4 @@
-int SOLARCHVISION_filter (int dataID, int cloudCover_id, int type_of_filter, int scenario_of_sky, int now_i, int now_j, int now_k) {
+boolean SOLARCHVISION_filter (int dataID, int cloudCover_id, int type_of_filter, int scenario_of_sky, int now_i, int now_j, int now_k) {
 
   float total_sky = 0;
   int num_sky = 0;
@@ -30,16 +30,14 @@ int SOLARCHVISION_filter (int dataID, int cloudCover_id, int type_of_filter, int
   }
 
 
-  int _return = 0;
-
   if (num_sky != 0) {
     total_sky /= num_sky;
 
-    if (scenario_of_sky == 1) _return = 1;
-    else if ((scenario_of_sky == 4) && (total_sky <= 3.33)) _return = 1;
-    else if ((scenario_of_sky == 3) && (total_sky > 3.33) && (total_sky <= 6.66)) _return = 1;
-    else if ((scenario_of_sky == 2) && (total_sky > 6.66)) _return = 1;
+    if (scenario_of_sky == 1) return true;
+    else if ((scenario_of_sky == 4) && (total_sky <= 3.33)) return true;
+    else if ((scenario_of_sky == 3) && (total_sky > 3.33) && (total_sky <= 6.66)) return true;
+    else if ((scenario_of_sky == 2) && (total_sky > 6.66)) return true;
   }
 
-  return _return;
+  return false;
 }
