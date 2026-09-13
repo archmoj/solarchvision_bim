@@ -2253,9 +2253,9 @@ class solarchvision_STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
         String scenario_text = "";
-        //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-        //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-        //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+        //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
+        //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
+        //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
         this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
       }
 
@@ -2284,9 +2284,9 @@ class solarchvision_STUDY {
       }
 
       String scenario_text = "";
-      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
+      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
+      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
       this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
@@ -2434,11 +2434,9 @@ class solarchvision_STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int[] Normals_COL_N;
-      Normals_COL_N = new int [9];
-      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
+      int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l, start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
 
-      for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
+      {
         if (nk != -1) {
           int k = int(nk / this.joinDays);
           int j_ADD = nk % this.joinDays;
@@ -2594,9 +2592,9 @@ class solarchvision_STUDY {
           this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
           String scenario_text = "";
-          //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-          //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-          //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+          //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
+          //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
+          //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
           this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / this.U_scale);
         }
       }
@@ -2681,9 +2679,9 @@ class solarchvision_STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
       String scenario_text = "";
-      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
+      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
+      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
       this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / this.U_scale);
 
       int keep_STUDY_j_Start = this.j_Start;
@@ -2697,9 +2695,9 @@ class solarchvision_STUDY {
 
 
     String scenario_text = "";
-    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
+    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
     this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
@@ -2818,11 +2816,9 @@ class solarchvision_STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int[] Normals_COL_N;
-      Normals_COL_N = new int [9];
-      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
+      int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l, start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
 
-      for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
+      {
         if (nk != -1) {
           int k = int(nk / this.joinDays);
           int j_ADD = nk % this.joinDays;
@@ -2922,18 +2918,18 @@ class solarchvision_STUDY {
           this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
           String scenario_text = "";
-          //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-          //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-          //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+          //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
+          //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
+          //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
           this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / this.U_scale);
         }
       }
     }
 
     String scenario_text = "";
-    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
+    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
     this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
@@ -3023,9 +3019,9 @@ class solarchvision_STUDY {
     this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
     String scenario_text = "";
-    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CWEEDS_start - 1, 0);
-    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_CLMREC_start - 1, 0);
-    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
+    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
+    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
     this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);

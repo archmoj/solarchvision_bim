@@ -275,11 +275,10 @@ class solarchvision_Sun3D {
       int now_j = wrapDayIndex(j * int(STUDY.perDays) + TIME.beginDay);
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int[] Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(
+      int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l,
         start_k, end_k, j, DATE_ANGLE,
         target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
 
-      int nk = Normals_COL_N[l];
       if (nk == -1) continue;
 
       int k = int(nk / STUDY.joinDays);
@@ -450,16 +449,15 @@ class solarchvision_Sun3D {
           float sunrise_origin = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
           float sunset_origin = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
 
-          int[] Normals_COL_N;
+          int l = STUDY.ImpactLayer;
+
           int keep_filter_type = STUDY.filter;
           STUDY.filter = filter_HOURLY;
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(
+          int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l,
             start_k, end_k, more_J + j, DATE_ANGLE,
             target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
           STUDY.filter = keep_filter_type;
 
-          int l = STUDY.ImpactLayer;
-          int nk = Normals_COL_N[l];
           int row_J = more_J / STUDY.joinDays;
 
           if (nk != -1) {

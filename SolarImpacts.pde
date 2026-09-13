@@ -115,14 +115,11 @@ class solarchvision_SolarImpacts {
 
           //println(DATE_ANGLE, DATE_ANGLE_approximate);
 
-          int[] Normals_COL_N;
-          Normals_COL_N = new int [9];
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+          int nk = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
 
           //println("j =", j);
-          //println(Normals_COL_N);
 
-          for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk++) {
+          {
             if (nk != -1) {
               int k = int(nk / STUDY.joinDays);
               int j_ADD = nk % STUDY.joinDays;
