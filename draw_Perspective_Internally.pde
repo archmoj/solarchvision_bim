@@ -1,4 +1,49 @@
+float[][] clipPolygon_toWindow (float[][] poly, float xmin, float ymin, float xmax, float ymax) {
+  float[][] result = poly;
+  result = clipPolygon_halfPlane(result,  1,  0, xmin);  //  x >= xmin
+  result = clipPolygon_halfPlane(result, -1,  0, -xmax); //  x <= xmax
+  result = clipPolygon_halfPlane(result,  0,  1, ymin);  //  y >= ymin
+  result = clipPolygon_halfPlane(result,  0, -1, -ymax); //  y <= ymax
+  return result;
+}
+
+float[][] clipPolygon_halfPlane (float[][] poly, float nx, float ny, float d) {
+  int n = poly.length;
+  if (n == 0) return poly;
+
+  ArrayList<float[]> out = new ArrayList<float[]>();
+
+  for (int i = 0; i < n; i++) {
+    float[] curr = poly[i];
+    float[] prev = poly[(i - 1 + n) % n];
+
+    boolean currIn = (nx * curr[0] + ny * curr[1] - d) >= 0;
+    boolean prevIn = (nx * prev[0] + ny * prev[1] - d) >= 0;
+
+    if (currIn != prevIn) {
+      out.add(clipPolygon_intersect(prev, curr, nx, ny, d));
+    }
+    if (currIn) {
+      out.add(curr);
+    }
+  }
+
+  return out.toArray(new float[out.size()][]);
+}
+
+float[] clipPolygon_intersect (float[] a, float[] b, float nx, float ny, float d) {
+  float da = nx * a[0] + ny * a[1] - d;
+  float db = nx * b[0] + ny * b[1] - d;
+  float t = da / (da - db);
+  return new float[]{ a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]) };
+}
+
 void SOLARCHVISION_draw_Perspective_Internally () {
+
+  float winX1 = -0.5 * WIN3D.dX;
+  float winY1 = -0.5 * WIN3D.dY;
+  float winX2 =  0.5 * WIN3D.dX;
+  float winY2 =  0.5 * WIN3D.dY;
 
   if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
 
@@ -62,7 +107,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           int f = Select3D.Camera_ids[o];
 
-          beginShape();
+          ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
           for (int j = 0; j < allCameras.Faces[f].length; j++) {
 
@@ -75,10 +120,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+              faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
             }
           }
 
+          float[][] clippedVertices = clipPolygon_toWindow(
+            faceVertices.toArray(new float[faceVertices.size()][]),
+            winX1, winY1, winX2, winY2
+            );
+
+          beginShape();
+          for (int j = 0; j < clippedVertices.length; j++) {
+            vertex(clippedVertices[j][0], clippedVertices[j][1]);
+          }
           endShape(CLOSE);
         }
       }
@@ -107,7 +161,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           int f = Select3D.Section_ids[o];
 
-          beginShape();
+          ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
           for (int j = 0; j < allSections.Faces[f].length; j++) {
 
@@ -120,10 +174,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+              faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
             }
           }
 
+          float[][] clippedVertices = clipPolygon_toWindow(
+            faceVertices.toArray(new float[faceVertices.size()][]),
+            winX1, winY1, winX2, winY2
+            );
+
+          beginShape();
+          for (int j = 0; j < clippedVertices.length; j++) {
+            vertex(clippedVertices[j][0], clippedVertices[j][1]);
+          }
           endShape(CLOSE);
         }
       }
@@ -156,7 +219,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             int f = OBJ_ID * allSolids.num_visualFaces + plane_type;
 
-            beginShape();
+            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
             for (int j = 0; j < allSolids.Faces[f].length; j++) {
 
@@ -169,10 +232,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+                faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
               }
             }
 
+            float[][] clippedVertices = clipPolygon_toWindow(
+              faceVertices.toArray(new float[faceVertices.size()][]),
+              winX1, winY1, winX2, winY2
+              );
+
+            beginShape();
+            for (int j = 0; j < clippedVertices.length; j++) {
+              vertex(clippedVertices[j][0], clippedVertices[j][1]);
+            }
             endShape(CLOSE);
           }
         }
@@ -208,7 +280,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             int f = OBJ_ID * allModel2Ds.num_visualFaces + plane_type;
 
-            beginShape();
+            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
             for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
 
@@ -221,10 +293,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+                faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
               }
             }
 
+            float[][] clippedVertices = clipPolygon_toWindow(
+              faceVertices.toArray(new float[faceVertices.size()][]),
+              winX1, winY1, winX2, winY2
+              );
+
+            beginShape();
+            for (int j = 0; j < clippedVertices.length; j++) {
+              vertex(clippedVertices[j][0], clippedVertices[j][1]);
+            }
             endShape(CLOSE);
           }
         }
@@ -254,7 +335,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           int f = Select3D.Model1D_ids[o];
 
-          beginShape();
+          ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
           for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
 
@@ -267,10 +348,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+              faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
             }
           }
 
+          float[][] clippedVertices = clipPolygon_toWindow(
+            faceVertices.toArray(new float[faceVertices.size()][]),
+            winX1, winY1, winX2, winY2
+            );
+
+          beginShape();
+          for (int j = 0; j < clippedVertices.length; j++) {
+            vertex(clippedVertices[j][0], clippedVertices[j][1]);
+          }
           endShape(CLOSE);
 
         }
@@ -319,7 +409,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-          beginShape();
+          ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
           for (int s = 0; s < subFace.length; s++) {
 
@@ -330,10 +420,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+              faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
             }
           }
 
+          float[][] clippedVertices = clipPolygon_toWindow(
+            faceVertices.toArray(new float[faceVertices.size()][]),
+            winX1, winY1, winX2, winY2
+            );
+
+          beginShape();
+          for (int s = 0; s < clippedVertices.length; s++) {
+            vertex(clippedVertices[s][0], clippedVertices[s][1]);
+          }
           endShape(CLOSE);
         }
 
@@ -560,7 +659,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
               float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-              beginShape();
+              ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
               for (int s = 0; s < subFace.length; s++) {
 
@@ -571,10 +670,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
                 if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+                  faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
                 }
               }
 
+              float[][] clippedVertices = clipPolygon_toWindow(
+                faceVertices.toArray(new float[faceVertices.size()][]),
+                winX1, winY1, winX2, winY2
+                );
+
+              beginShape();
+              for (int s = 0; s < clippedVertices.length; s++) {
+                vertex(clippedVertices[s][0], clippedVertices[s][1]);
+              }
               endShape(CLOSE);
             }
           }
@@ -584,7 +692,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
           if ((0 <= f) && (f < allPolylines.nodes.length)) {
 
-            beginShape();
+            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
             for (int vNo = 0; vNo < allPolylines.nodes[f].length; vNo++) {
 
@@ -595,10 +703,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+                faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
               }
             }
 
+            float[][] clippedVertices = clipPolygon_toWindow(
+              faceVertices.toArray(new float[faceVertices.size()][]),
+              winX1, winY1, winX2, winY2
+              );
+
+            beginShape();
+            for (int vNo = 0; vNo < clippedVertices.length; vNo++) {
+              vertex(clippedVertices[vNo][0], clippedVertices[vNo][1]);
+            }
             endShape(CLOSE);
           }
         }
@@ -608,7 +725,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           if ((0 <= f) && (f < allModel1Ds.Faces.length)) {
 
-            beginShape();
+            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
             for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
 
@@ -621,10 +738,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+                faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
               }
             }
 
+            float[][] clippedVertices = clipPolygon_toWindow(
+              faceVertices.toArray(new float[faceVertices.size()][]),
+              winX1, winY1, winX2, winY2
+              );
+
+            beginShape();
+            for (int j = 0; j < clippedVertices.length; j++) {
+              vertex(clippedVertices[j][0], clippedVertices[j][1]);
+            }
             endShape(CLOSE);
           }
         }
@@ -634,7 +760,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           if ((0 <= f) && (f < allModel2Ds.Faces.length)) {
 
-            beginShape();
+            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
             for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
 
@@ -647,10 +773,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
               if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+                faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
               }
             }
 
+            float[][] clippedVertices = clipPolygon_toWindow(
+              faceVertices.toArray(new float[faceVertices.size()][]),
+              winX1, winY1, winX2, winY2
+              );
+
+            beginShape();
+            for (int j = 0; j < clippedVertices.length; j++) {
+              vertex(clippedVertices[j][0], clippedVertices[j][1]);
+            }
             endShape(CLOSE);
           }
         }
@@ -665,7 +800,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
               if ((0 <= f) && (f < allSolids.Faces.length)) {
 
-                beginShape();
+                ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
                 for (int j = 0; j < allSolids.Faces[f].length; j++) {
 
@@ -678,10 +813,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                   float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
                   if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                    if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+                    faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
                   }
                 }
 
+                float[][] clippedVertices = clipPolygon_toWindow(
+                  faceVertices.toArray(new float[faceVertices.size()][]),
+                  winX1, winY1, winX2, winY2
+                  );
+
+                beginShape();
+                for (int j = 0; j < clippedVertices.length; j++) {
+                  vertex(clippedVertices[j][0], clippedVertices[j][1]);
+                }
                 endShape(CLOSE);
               }
             }
@@ -815,7 +959,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
         for (int f = 0; f < BoundingBox_Faces.length; f++) {
 
-          beginShape();
+          // First gather all the projected vertices for this face into a
+          // polygon (skipping ones behind the camera, same as before).
+          ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
           for (int g = 0; g < BoundingBox_Faces[f].length; g++) {
 
@@ -828,8 +974,23 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
             if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D.dX, -0.5 * WIN3D.dY, 0.5 * WIN3D.dX, 0.5 * WIN3D.dY)) vertex(Image_XYZ[0], Image_XYZ[1]);
+              faceVertices.add(new float[]{ Image_XYZ[0], Image_XYZ[1] });
             }
+          }
+
+          // Then clip the whole polygon against the window at once: any
+          // vertex outside gets trimmed to the window boundary, and the
+          // shape continues along the window's edge(s)/corner(s) wherever
+          // it exits and re-enters, instead of drawing a straight line
+          // through the invisible area outside the window.
+          float[][] clippedVertices = clipPolygon_toWindow(
+            faceVertices.toArray(new float[faceVertices.size()][]),
+            winX1, winY1, winX2, winY2
+            );
+
+          beginShape();
+          for (int g = 0; g < clippedVertices.length; g++) {
+            vertex(clippedVertices[g][0], clippedVertices[g][1]);
           }
           endShape(CLOSE);
         }
