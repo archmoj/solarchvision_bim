@@ -14,13 +14,13 @@ class solarchvision_WIN3D {
 
   float position_X = 0;
   float position_Y = 5;
-  float position_Z = 60;
-  float position_T = 1.0;
+  float position_Z = 55;
+  float position_T = 1.0; // step
 
-  float rotation_X = 90; //90; //75; //0;
+  float rotation_X = 90;
   float rotation_Y = 0;
-  float rotation_Z = 90; //0; //180; //135;
-  float rotation_T = 5.0;
+  float rotation_Z = -45.0;
+  float rotation_T = 5.0; // step
 
   float Zoom = 90.0; //60.0; // / (SOLARCHVISION_pixel_H / 300.0);
 
