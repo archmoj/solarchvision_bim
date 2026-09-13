@@ -719,10 +719,7 @@ class solarchvision_Model1Ds {
     float[][] hitPoint = new float [this.Faces.length][4];
 
     for (int f = 0; f < this.Faces.length; f++) {
-      hitPoint[f][0] = FLOAT_undefined;
-      hitPoint[f][1] = FLOAT_undefined;
-      hitPoint[f][2] = FLOAT_undefined;
-      hitPoint[f][3] = FLOAT_undefined;
+      java.util.Arrays.fill(hitPoint[f], FLOAT_undefined);
     }
 
     for (int f = 0; f < this.Faces.length; f++) {

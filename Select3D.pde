@@ -336,13 +336,7 @@ class solarchvision_Select3D {
     float[][] hitPoint = new float [this.Face_ids.length][7];
 
     for (int o = 0; o < this.Face_ids.length; o++) {
-      hitPoint[o][0] = FLOAT_undefined;
-      hitPoint[o][1] = FLOAT_undefined;
-      hitPoint[o][2] = FLOAT_undefined;
-      hitPoint[o][3] = FLOAT_undefined;
-      hitPoint[o][4] = FLOAT_undefined;
-      hitPoint[o][5] = FLOAT_undefined;
-      hitPoint[o][6] = FLOAT_undefined;
+      java.util.Arrays.fill(hitPoint[o], FLOAT_undefined);
     }
 
 

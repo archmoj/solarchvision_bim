@@ -92,9 +92,7 @@ class solarchvision_Land3D {
     this.Mesh = new float[this.num_rows][this.num_columns][3];
     for (int i = 0; i < this.num_rows; i++) {
       for (int j = 0; j < this.num_columns; j++) {
-        this.Mesh[i][j][0] = FLOAT_undefined;
-        this.Mesh[i][j][1] = FLOAT_undefined;
-        this.Mesh[i][j][2] = FLOAT_undefined;
+        java.util.Arrays.fill(this.Mesh[i][j], FLOAT_undefined);
       }
     }
 
