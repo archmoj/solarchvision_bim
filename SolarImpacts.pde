@@ -117,236 +117,231 @@ class solarchvision_SolarImpacts {
 
           int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
 
-          //println("j =", j);
+          if (nk == -1) continue;
+          int k = int(nk / STUDY.joinDays);
+          int j_ADD = nk % STUDY.joinDays;
 
-          {
-            if (nk != -1) {
-              int k = int(nk / STUDY.joinDays);
-              int j_ADD = nk % STUDY.joinDays;
+          float[][][][] Matrix_ARGB;
 
-              float[][][][] Matrix_ARGB;
+          Matrix_ARGB = new float [2][4][RES1][RES2];
 
-              Matrix_ARGB = new float [2][4][RES1][RES2];
+          for (int np = 0; np < (RES1 * RES2); np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
 
-              for (int np = 0; np < (RES1 * RES2); np++) {
-                int Image_X = np % RES1;
-                int Image_Y = np / RES1;
+            for (int q = 0; q < numberOfImpactVariations; q++) {
+              Matrix_ARGB[q][0][Image_X][Image_Y] = FLOAT_undefined;
+              Matrix_ARGB[q][1][Image_X][Image_Y] = FLOAT_undefined;
+              Matrix_ARGB[q][2][Image_X][Image_Y] = FLOAT_undefined;
+              Matrix_ARGB[q][3][Image_X][Image_Y] = FLOAT_undefined;
+            }
+          }
 
-                for (int q = 0; q < numberOfImpactVariations; q++) {
-                  Matrix_ARGB[q][0][Image_X][Image_Y] = FLOAT_undefined;
-                  Matrix_ARGB[q][1][Image_X][Image_Y] = FLOAT_undefined;
-                  Matrix_ARGB[q][2][Image_X][Image_Y] = FLOAT_undefined;
-                  Matrix_ARGB[q][3][Image_X][Image_Y] = FLOAT_undefined;
+          PImage[] Image_RGBA = new PImage[2];
+          for (int q = 0; q < numberOfImpactVariations; q++) {
+            Image_RGBA[q] = createImage(RES1, RES2, RGB);
+          }
+
+          int valuesNUM = 0;
+
+          for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period.
+            if (STUDY.isInHourlyRange(i)) {
+
+              float HOUR_ANGLE = i;
+              float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+
+              if (SunR[3] > 0) {
+
+                now_k = k + start_k;
+                now_i = i;
+                now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+
+                if (now_j >= 365) {
+                  now_j = now_j % 365;
                 }
-              }
+                if (now_j < 0) {
+                  now_j = (now_j + 365) % 365;
+                }
 
-              PImage[] Image_RGBA = new PImage[2];
-              for (int q = 0; q < numberOfImpactVariations; q++) {
-                Image_RGBA[q] = createImage(RES1, RES2, RGB);
-              }
+                Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+                Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+                Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
+                Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
 
-              int valuesNUM = 0;
+                if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
+                  values_R_dir = FLOAT_undefined;
+                  values_R_dif = FLOAT_undefined;
+                  values_E_dir = FLOAT_undefined;
+                  values_E_dif = FLOAT_undefined;
+                } else {
 
-              for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period.
-                if (STUDY.isInHourlyRange(i)) {
+                  boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
 
-                  float HOUR_ANGLE = i;
-                  float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+                  if (isMemberCounted) {
+                    values_R_dir = 0.001 * Pa;
+                    values_R_dif = 0.001 * Pb;
+                    values_E_dir = 0.001 * Pc;
+                    values_E_dif = 0.001 * Pd;
 
-                  if (SunR[3] > 0) {
+                    for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE++) {
+                      float RAD_VALUE = values_R_dir;
+                      float EFF_VALUE = values_E_dir;
 
-                    now_k = k + start_k;
-                    now_i = i;
-                    now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+                      PImage[] Shadings = new PImage [2];
+                      for (int SHD = 0; SHD <= 1; SHD++) {
 
-                    if (now_j >= 365) {
-                      now_j = now_j % 365;
-                    }
-                    if (now_j < 0) {
-                      now_j = (now_j + 365) % 365;
-                    }
+                        String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
-                    Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                    Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                    Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                    Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+                        if (RAD_TYPE == 0) {
+                          File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+                        } else {
+                          File_Name += "DIF_" + STR_SHD[SHD];
+                        }
 
-                    if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
-                      values_R_dir = FLOAT_undefined;
-                      values_R_dif = FLOAT_undefined;
-                      values_E_dir = FLOAT_undefined;
-                      values_E_dif = FLOAT_undefined;
-                    } else {
-
-                      boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
-
-                      if (isMemberCounted) {
-                        values_R_dir = 0.001 * Pa;
-                        values_R_dif = 0.001 * Pb;
-                        values_E_dir = 0.001 * Pc;
-                        values_E_dif = 0.001 * Pd;
-
-                        for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE++) {
-                          float RAD_VALUE = values_R_dir;
-                          float EFF_VALUE = values_E_dir;
-
-                          PImage[] Shadings = new PImage [2];
-                          for (int SHD = 0; SHD <= 1; SHD++) {
-
-                            String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
-
-                            if (RAD_TYPE == 0) {
-                              File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
-                            } else {
-                              File_Name += "DIF_" + STR_SHD[SHD];
-                            }
-
-                            File_Name += "_Camera" + nf(Camera_Variation, 2) + ".png";
+                        File_Name += "_Camera" + nf(Camera_Variation, 2) + ".png";
 
 
-                            // println(File_Name);
-                            Shadings[SHD]  = loadImage(File_Name);
-                          }
+                        // println(File_Name);
+                        Shadings[SHD]  = loadImage(File_Name);
+                      }
 
-                          for (int np = 0; np < (RES1 * RES2); np++) {
-                            int Image_X = np % RES1;
-                            int Image_Y = np / RES1;
+                      for (int np = 0; np < (RES1 * RES2); np++) {
+                        int Image_X = np % RES1;
+                        int Image_Y = np / RES1;
 
-                            for (int q = 0; q < numberOfImpactVariations; q++) {
-                              if (is_undefined(Matrix_ARGB[q][0][Image_X][Image_Y])) {
+                        for (int q = 0; q < numberOfImpactVariations; q++) {
+                          if (is_undefined(Matrix_ARGB[q][0][Image_X][Image_Y])) {
 
-                                Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
-                                Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
-                                Matrix_ARGB[q][2][Image_X][Image_Y] = 0;
-                                Matrix_ARGB[q][3][Image_X][Image_Y] = 0;
-                              }
-                            }
-
-                            color COL0 = Shadings[0].get(Image_X, Image_Y);
-                            color COL1 = Shadings[1].get(Image_X, Image_Y);
-                            //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-                            float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0;
-                            float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
-
-                            float COL_Alpha = (COL1 >> 24 & 0xFF);
-
-                            Matrix_ARGB[Impact_ACTIVE][0][Image_X][Image_Y] = COL_Alpha;
-                            Matrix_ARGB[Impact_PASSIVE][0][Image_X][Image_Y] = COL_Alpha;
-
-                            Matrix_ARGB[Impact_ACTIVE][2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
-
-                            if (EFF_VALUE < 0) {
-                              Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
-                              if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1);
-                            } else {
-                              Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
-                              if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
-                            }
-
-                            if (np == 0) valuesNUM += 1;
+                            Matrix_ARGB[q][0][Image_X][Image_Y] = 0;
+                            Matrix_ARGB[q][1][Image_X][Image_Y] = 0;
+                            Matrix_ARGB[q][2][Image_X][Image_Y] = 0;
+                            Matrix_ARGB[q][3][Image_X][Image_Y] = 0;
                           }
                         }
+
+                        color COL0 = Shadings[0].get(Image_X, Image_Y);
+                        color COL1 = Shadings[1].get(Image_X, Image_Y);
+                        //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+                        float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0;
+                        float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
+
+                        float COL_Alpha = (COL1 >> 24 & 0xFF);
+
+                        Matrix_ARGB[Impact_ACTIVE][0][Image_X][Image_Y] = COL_Alpha;
+                        Matrix_ARGB[Impact_PASSIVE][0][Image_X][Image_Y] = COL_Alpha;
+
+                        Matrix_ARGB[Impact_ACTIVE][2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
+
+                        if (EFF_VALUE < 0) {
+                          Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
+                          if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1);
+                        } else {
+                          Matrix_ARGB[Impact_PASSIVE][3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
+                          if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
+                        }
+
+                        if (np == 0) valuesNUM += 1;
                       }
                     }
                   }
                 }
               }
-
-              float valuesMUL = 0;
-
-              if (valuesNUM != 0) {
-                valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
-              }
-
-              for (int q = 0; q < numberOfImpactVariations; q++) {
-                Image_RGBA[q].loadPixels();
-              }
-
-              for (int np = 0; np < (RES1 * RES2); np++) {
-                int Image_X = np % RES1;
-                int Image_Y = np / RES1;
-
-                for (int q = 0; q < numberOfImpactVariations; q++) {
-
-                  float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * valuesMUL;
-                  float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * valuesMUL;
-                  float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * valuesMUL;
-                  float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * valuesMUL;
-
-                  total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
-                  total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
-                  total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
-                  total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
-
-                  float[] _c = {
-                    0, 0, 0, 0
-                  };
-
-                  float _u = 0;
-
-                  float valuesSUM = FLOAT_undefined;
-
-                  int PAL_type = 0;
-                  int PAL_direction = 1;
-                  float PAL_multiplier = 1;
-
-                  if (q == Impact_ACTIVE) {
-                    valuesSUM = Image_G;
-
-                    PAL_type = allFaces.ACTIVE_palette_CLR;
-                    PAL_direction = allFaces.ACTIVE_palette_DIR;
-                    PAL_multiplier = allFaces.ACTIVE_palette_MLT;
-
-                    //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-                    //_u = (0.1 * PAL_multiplier * valuesSUM);
-                    _u = (0.2 * PAL_multiplier * valuesSUM);
-                  }
-
-                  if (q == Impact_PASSIVE) {
-                    float AVERAGE, PERCENTAGE, COMPARISON;
-
-                    AVERAGE = (Image_B - Image_R);
-                    if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
-                    else PERCENTAGE = 0.0;
-                    COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-
-                    valuesSUM = COMPARISON;
-
-                    PAL_type = allFaces.PASSIVE_palette_CLR;
-                    PAL_direction = allFaces.PASSIVE_palette_DIR;
-                    PAL_multiplier = allFaces.PASSIVE_palette_MLT;
-
-                    //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
-                    _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
-                  }
-
-
-                  //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> valuesSUM =", valuesSUM);
-                  //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> valuesSUM =", valuesSUM);
-
-                  _u = applyPalDirection(_u, PAL_direction);
-
-                  _c = PAINT.getColorStyle(PAL_type, _u);
-
-                  if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
-                  else Image_RGBA[q].pixels[np] = color(223, 223, 223);
-                }
-              }
-
-              for (int q = 0; q < numberOfImpactVariations; q++) {
-                Image_RGBA[q].updatePixels();
-
-
-                //if (Camera_Variation == 0) {
-                this.Image[q][j + 1] = Image_RGBA[q];
-                if (this.record_IMG == 1) {
-                  String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(j + 1, 0) + ".jpg";
-                  this.Image[q][j + 1].save(myFile);
-                  println("File created:" + myFile);
-                }
-                //}
-              }
             }
+          }
+
+          float valuesMUL = 0;
+
+          if (valuesNUM != 0) {
+            valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
+          }
+
+          for (int q = 0; q < numberOfImpactVariations; q++) {
+            Image_RGBA[q].loadPixels();
+          }
+
+          for (int np = 0; np < (RES1 * RES2); np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
+
+            for (int q = 0; q < numberOfImpactVariations; q++) {
+
+              float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * valuesMUL;
+              float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * valuesMUL;
+              float Image_G = Matrix_ARGB[q][2][Image_X][Image_Y] * valuesMUL;
+              float Image_B = Matrix_ARGB[q][3][Image_X][Image_Y] * valuesMUL;
+
+              total_Matrix_ARGB[q][0][Image_X][Image_Y] += Image_A;
+              total_Matrix_ARGB[q][1][Image_X][Image_Y] += Image_R;
+              total_Matrix_ARGB[q][2][Image_X][Image_Y] += Image_G;
+              total_Matrix_ARGB[q][3][Image_X][Image_Y] += Image_B;
+
+              float[] _c = {
+                0, 0, 0, 0
+              };
+
+              float _u = 0;
+
+              float valuesSUM = FLOAT_undefined;
+
+              int PAL_type = 0;
+              int PAL_direction = 1;
+              float PAL_multiplier = 1;
+
+              if (q == Impact_ACTIVE) {
+                valuesSUM = Image_G;
+
+                PAL_type = allFaces.ACTIVE_palette_CLR;
+                PAL_direction = allFaces.ACTIVE_palette_DIR;
+                PAL_multiplier = allFaces.ACTIVE_palette_MLT;
+
+                //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+                //_u = (0.1 * PAL_multiplier * valuesSUM);
+                _u = (0.2 * PAL_multiplier * valuesSUM);
+              }
+
+              if (q == Impact_PASSIVE) {
+                float AVERAGE, PERCENTAGE, COMPARISON;
+
+                AVERAGE = (Image_B - Image_R);
+                if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R));
+                else PERCENTAGE = 0.0;
+                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+
+                valuesSUM = COMPARISON;
+
+                PAL_type = allFaces.PASSIVE_palette_CLR;
+                PAL_direction = allFaces.PASSIVE_palette_DIR;
+                PAL_multiplier = allFaces.PASSIVE_palette_MLT;
+
+                //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+                _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
+              }
+
+
+              //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> valuesSUM =", valuesSUM);
+              //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> valuesSUM =", valuesSUM);
+
+              _u = applyPalDirection(_u, PAL_direction);
+
+              _c = PAINT.getColorStyle(PAL_type, _u);
+
+              if (Image_A != 0) Image_RGBA[q].pixels[np] = color(_c[1], _c[2], _c[3]);
+              else Image_RGBA[q].pixels[np] = color(223, 223, 223);
+            }
+          }
+
+          for (int q = 0; q < numberOfImpactVariations; q++) {
+            Image_RGBA[q].updatePixels();
+
+
+            //if (Camera_Variation == 0) {
+            this.Image[q][j + 1] = Image_RGBA[q];
+            if (this.record_IMG == 1) {
+              String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(j + 1, 0) + ".jpg";
+              this.Image[q][j + 1].save(myFile);
+              println("File created:" + myFile);
+            }
+            //}
           }
         }
 
