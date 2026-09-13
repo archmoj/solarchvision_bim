@@ -10,17 +10,16 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
 
   int layerDirId = needEFF ? LAYER_direffect.id : LAYER_dirnorrad.id;
   int layerDifId = needEFF ? LAYER_difeffect.id : LAYER_difhorrad.id;
-  float scaleDir = 0.001;
 
   float[] valuesSUM = new float[total];
   float[] valuesNUM = new float[total]; // already 0-initialized by Processing/Java
   java.util.Arrays.fill(valuesSUM, FLOAT_undefined);
 
   float lat = STATION.getLatitude();
-  float[] sunFactor = new float[24];
+  float[] allSunZ = new float[24];
   for (int i = 0; i < 24; i++) {
     float[] SunR = funcs.SunPosition(lat, DATE_ANGLE, i);
-    sunFactor[i] = SunR[3];
+    allSunZ[i] = SunR[3];
   }
 
   float baseJ = j * STUDY.perDays + TIME.beginDay + 365 - int(funcs.roundTo(0.5 * joinDays, 1));
@@ -37,7 +36,9 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
     int now_j = nowJ[j_ADD];
 
     for (int i = 0; i < 24; i++) {
-      float sunFac = sunFactor[i];
+      float z = allSunZ[i];
+
+      if(z <= 0) continue;
 
       for (int k = 0; k < count_k; k++) {
         int now_k = k + start_k;
@@ -46,16 +47,8 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
         float Pdir = getValue_CurrentDataSource(i, now_j, now_k, layerDirId);
         if (is_undefined(Pdir)) continue;
 
-        float valueDir = scaleDir * Pdir;
-        float valueDif = 0;
-
-        if (!needEFF) {
-          float Pdif = getValue_CurrentDataSource(i, now_j, now_k, layerDifId);
-          if (is_undefined(Pdif)) continue;
-          valueDif = scaleDir * Pdif;
-        }
-        // EFF path: the original always forced values_E_dif = 0 and never
-        // used Pd, so the diffuse-effect layer is never fetched at all here.
+        float Pdif = getValue_CurrentDataSource(i, now_j, now_k, layerDifId);
+        if (is_undefined(Pdif)) continue;
 
         int memberCount = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
         if (memberCount != 1) continue;
@@ -63,7 +56,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int start_k, int end_k, int j, floa
         if (is_undefined(valuesSUM[idx])) {
           valuesSUM[idx] = 0;
         }
-        valuesSUM[idx] += (valueDir * sunFac) + valueDif; // total horizontal radiation or direct effect
+        valuesSUM[idx] += 0.001 * ((Pdir * z) + Pdif); // total horizontal radiation/effect
         valuesNUM[idx] += 1;
       }
     }
