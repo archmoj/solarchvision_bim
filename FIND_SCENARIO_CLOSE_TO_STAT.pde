@@ -1,17 +1,16 @@
-int SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_STAT (float[] _values, int l) {
-  float[] _normals = SOLARCHVISION_NORMAL(_values);
-  int n = _values.length;
+int SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_STAT (float[] values, int l) {
+  float normal = SOLARCHVISION_NORMAL(values)[l];
+  int n = values.length;
 
   int out = -1;
-  float _normal = _normals[l];
 
-  if (is_defined(_normal)) {
-    float _dist = FLOAT_undefined;
+  if (is_defined(normal)) {
+    float dist = FLOAT_undefined;
 
     for (int i = 0; i < n; i++) {
-      float diff = abs(_normal - _values[i]);
-      if (diff < _dist) {
-        _dist = diff;
+      float diff = abs(normal - values[i]);
+      if (diff < dist) {
+        dist = diff;
         out = i;
         if (diff == 0) break; // can't do better than an exact match
       }
