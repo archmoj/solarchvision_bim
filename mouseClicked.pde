@@ -175,7 +175,7 @@ void mouseClicked () {
             STATION.setLongitude(mouse_lon);
 
             if (mouseButton == LEFT) {
-              WORLD.Zoom = 8;
+              WORLD.Zoom = 9;
             }
 
             if ((pre_LocationLAT != LocationLAT) ||

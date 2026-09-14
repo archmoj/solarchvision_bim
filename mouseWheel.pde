@@ -163,7 +163,7 @@ void handleWorldZoomWheel(float wheelValue) {
   if (wheelValue > 0) WORLD.Zoom -= 1;
 
   if (WORLD.Zoom < 1) WORLD.Zoom = 1;
-  if (WORLD.Zoom > 8) WORLD.Zoom = 8;
+  if (WORLD.Zoom > 9) WORLD.Zoom = 9;
 
   if (oldZoom != WORLD.Zoom) {
     WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);

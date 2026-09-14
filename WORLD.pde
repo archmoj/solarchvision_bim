@@ -20,7 +20,7 @@ class solarchvision_WORLD {
 
 
   int numMaps;
-  int Zoom = 8; //1:A 2:B 3:C 4:D 5:E 6:E(2x) 7:E(4x) 8:E(8x) and 0:L <<<
+  int Zoom = 9; //1:A 2:B 3:C 4:D 5:E 6:E(2x) 7:E(4x) 8:E(8x) 9:E(16x) and 0:L <<<
 
   boolean autoView = true;
 
@@ -114,9 +114,10 @@ class solarchvision_WORLD {
           if (started_with.equals("C")) check_it = true;
         } else if (this.Zoom == 4) {
           if (started_with.equals("D")) check_it = true;
-        } else if ((this.Zoom == 5) || (this.Zoom == 6) || (this.Zoom == 7) || (this.Zoom == 8)) {
-          // 6, 7, and 8 reuse the same "E" bitmaps as 5 - drawView() crops
-          // and scales them further in rather than loading dedicated images.
+        } else if ((this.Zoom == 5) || (this.Zoom == 6) || (this.Zoom == 7) || (this.Zoom == 8) || (this.Zoom == 9)) {
+          // 6, 7, 8, and 9 reuse the same "E" bitmaps as 5 - drawView()
+          // crops and scales them further in rather than loading dedicated
+          // images.
           if (started_with.equals("E")) check_it = true;
         } else {
           check_it = true;
@@ -354,10 +355,11 @@ class solarchvision_WORLD {
       float viewLat1 = fullLat1;
       float viewLat2 = fullLat2;
 
-      if ((this.Zoom == 6) || (this.Zoom == 7) || (this.Zoom == 8)) {
+      if ((this.Zoom == 6) || (this.Zoom == 7) || (this.Zoom == 8) || (this.Zoom == 9)) {
         float zoomFactor = 0.5; // fraction of the full E extent shown
         if (this.Zoom == 7) zoomFactor = 0.25;
         else if (this.Zoom == 8) zoomFactor = 0.125;
+        else if (this.Zoom == 9) zoomFactor = 0.0625;
 
         float centerLon = STATION.getLongitude();
         float centerLat = STATION.getLatitude();
@@ -580,13 +582,13 @@ class solarchvision_WORLD {
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
       switch(key) {
       case '`' :
-        this.Zoom = (this.Zoom - 1 + 9) % 9;
+        this.Zoom = (this.Zoom - 1 + 10) % 10;
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
 
       case '~' :
-        this.Zoom = (this.Zoom + 1) % 9;
+        this.Zoom = (this.Zoom + 1) % 10;
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
