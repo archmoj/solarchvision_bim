@@ -6,7 +6,7 @@ class solarchvision_Cameras {
     makeEmpty(0);
   }
 
-  boolean displayAll = false;
+  boolean displayAll = true;
 
   float[][] options;
   int[] Type;
