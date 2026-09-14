@@ -1,22 +1,22 @@
 class solarchvision_OVERLAY3D {
 
-  final DrawStyle LANDPOINT_STYLE       = new DrawStyle(4, color(255, 0, 255, 127)); // magenta stroke, no fill
-  final DrawStyle CAMERA_STYLE          = new DrawStyle(2, color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle SECTION_STYLE         = new DrawStyle(2, color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle SOLID_STYLE           = new DrawStyle(4, color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle MODEL2D_STYLE         = new DrawStyle(2, color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle MODEL1D_STYLE         = new DrawStyle(2, color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle FACE_EDGE_STYLE       = new DrawStyle(2, color(127, 0, 255));      // purple stroke, no fill
-  final DrawStyle FACE_LABEL_STYLE      = new DrawStyle(2, color(0), color(0));      // black stroke + fill
-  final DrawStyle POLYLINE_LABEL_STYLE  = new DrawStyle(2, color(0), color(0));      // black stroke + fill
-  final DrawStyle VERTEX_STYLE          = new DrawStyle(2, color(255, 0, 255, 127)); // magenta stroke, no fill
-  final DrawStyle SOFTVERTEX_STYLE      = new DrawStyle(4, color(0));                // color set dynamically per-vertex, no fill
-  final DrawStyle GROUP_EDGE_STYLE      = new DrawStyle(2, color(127));              // grey stroke, no fill
-  final DrawStyle GROUP_BOX_STYLE       = new DrawStyle(4, color(0, 127, 0, 127));   // green stroke, no fill
-  final DrawStyle GROUP_PIVOT_STYLE     = new DrawStyle(2, color(255, 127, 0, 127)); // orange stroke, no fill
-  final DrawStyle AXIS_X_STYLE          = new DrawStyle(2, color(255, 0, 0));        // red stroke, no fill
-  final DrawStyle AXIS_Y_STYLE          = new DrawStyle(2, color(0, 0, 255));        // blue stroke, no fill
-  final DrawStyle AXIS_Z_STYLE          = new DrawStyle(2, color(127, 127, 0));      // olive stroke, no fill
+  final DrawStyle LANDPOINT_STYLE      = new DrawStyle(4, color(255, 0, 255, 127));
+  final DrawStyle CAMERA_STYLE         = new DrawStyle(2, color(255, 127, 0), color(0, 31));
+  final DrawStyle SECTION_STYLE        = new DrawStyle(2, color(255, 127, 0), color(0, 31));
+  final DrawStyle SOLID_STYLE          = new DrawStyle(4, color(255, 127, 0), color(0, 31));
+  final DrawStyle MODEL2D_STYLE        = new DrawStyle(2, color(255, 127, 0), color(0, 31));
+  final DrawStyle MODEL1D_STYLE        = new DrawStyle(2, color(255, 127, 0), color(0, 31));
+  final DrawStyle FACE_EDGE_STYLE      = new DrawStyle(2, color(127, 0, 255), color(0, 31));
+  final DrawStyle FACE_LABEL_STYLE     = new DrawStyle(2, color(0), color(0));
+  final DrawStyle POLYLINE_LABEL_STYLE = new DrawStyle(2, color(0), color(0));
+  final DrawStyle VERTEX_STYLE         = new DrawStyle(2, color(255, 0, 255, 127));
+  final DrawStyle SOFTVERTEX_STYLE     = new DrawStyle(4, color(0));
+  final DrawStyle GROUP_EDGE_STYLE     = new DrawStyle(2, color(127), color(0, 15));
+  final DrawStyle GROUP_BOX_STYLE      = new DrawStyle(4, color(0, 127, 0, 127), color(0, 15));
+  final DrawStyle GROUP_PIVOT_STYLE    = new DrawStyle(2, color(255, 127, 0, 127));
+  final DrawStyle AXIS_X_STYLE         = new DrawStyle(2, color(255, 0, 0));
+  final DrawStyle AXIS_Y_STYLE         = new DrawStyle(2, color(0, 0, 255));
+  final DrawStyle AXIS_Z_STYLE         = new DrawStyle(2, color(0, 255, 0));
 
   class DrawStyle {
     int strokeWeight;
