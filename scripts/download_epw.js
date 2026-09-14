@@ -1,69 +1,62 @@
-'use strict';
+// Requires Node.js 18+ (uses the built-in global fetch).
 
-var outFolder = '/home/solarch/org/solarchvision_bim/input/climate/TMYEPW/';
-var fs = require('fs');
-var https = require('https');
+const fs = require('fs/promises');
+const path = require('path');
 
-var currentFiles = fs.readdirSync(outFolder);
+const OUT_FOLDER = '/home/solarch/org/solarchvision_bim/input/climate/TMYEPW/';
+const GEOJSON_URL =
+  'https://gist.githubusercontent.com/Myoldmopar/8c58eba49c0a40fdbbfd8cce36a0a96e/raw/830a33ec7e57aec610446d02c53e664c711c48d6/master.geojson';
 
-function getFilename(str) {
-    var parts = str.split('/');
-    return parts[parts.length - 1];
+// The geojson stores each EPW link as a literal `<a href=...>` snippet
+// rather than a plain URL, so pull the href attribute out of it.
+function extractHref(anchorHtml) {
+  const match = anchorHtml.match(/href=["']?([^"'>]+)["']?/);
+  return match ? match[1] : null;
 }
 
-function getURL(url, cb) {
-    https.get(url, function (res) {
-        var str = '';
-
-        res.on('data', function (chunk) {
-            str += chunk;
-        });
-
-        res.on('end', function () {
-            return cb(str);
-        });
-    }).on('error', function (error) {
-        console.error(error.message);
-    });
+async function fetchText(url) {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Request failed (${res.status} ${res.statusText}): ${url}`);
+  }
+  return res.text();
 }
 
-getURL(
-    'https://gist.githubusercontent.com/Myoldmopar/8c58eba49c0a40fdbbfd8cce36a0a96e/raw/830a33ec7e57aec610446d02c53e664c711c48d6/master.geojson',
-    function (geoStr) {
-        var list = JSON.parse(geoStr).features.map(function (a) {
-            return a.properties.epw;
-        });
+async function downloadEpwFiles() {
+  const [currentFiles, geoStr] = await Promise.all([
+    fs.readdir(OUT_FOLDER),
+    fetchText(GEOJSON_URL),
+  ]);
 
-        list = list.map(function (a) {
-            var hrefStart = a.indexOf('=') + 1;
-            var hrefEnd = a.indexOf('>');
-            return a.substring(hrefStart, hrefEnd);
-        });
+  const currentFileSet = new Set(currentFiles);
 
-        var download = function (n) {
-            var url = list[n];
-            if (!url) return;
+  const urls = JSON.parse(geoStr)
+    .features.map((feature) => extractHref(feature.properties.epw))
+    .filter(Boolean);
 
-            // skip when already exist
-            if (currentFiles.indexOf(getFilename(url)) !== -1) {
-                // download next
-                return download(n + 1);
-            }
+  // Downloaded one at a time (not in parallel) to avoid hammering the server.
+  for (const url of urls) {
+    const filename = path.basename(url);
 
-            getURL(url, function (str) {
-                var filepath = outFolder + getFilename(url);
-                console.log('downloading:', url);
-
-                fs.writeFile(filepath, str, 'utf8', function () {
-                    console.log('downloaded:', filepath);
-
-                    // download next
-                    return download(n + 1);
-                });
-            });
-        };
-
-        // download first
-        download(0);
+    if (currentFileSet.has(filename)) {
+      continue; // already downloaded
     }
-);
+
+    try {
+      console.log('downloading:', url);
+      const contents = await fetchText(url);
+
+      const filepath = path.join(OUT_FOLDER, filename);
+      await fs.writeFile(filepath, contents, 'utf8');
+
+      console.log('downloaded:', filepath);
+    } catch (error) {
+      console.error(`failed to download ${url}:`, error.message);
+    }
+  }
+}
+
+downloadEpwFiles().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
