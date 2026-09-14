@@ -356,6 +356,26 @@ boolean SOLARCHVISION_handleTMYEPWPickListScrollDrag () {
   return true;
 }
 
+// Handles a click while the picker list is showing: picks the row it
+// landed on (if any), or just cancels the list if it landed elsewhere.
+// Either way the click is fully consumed - returns true whenever the
+// picker was active, so the caller can skip treating this same click as
+// picking a new map location.
+boolean SOLARCHVISION_handleTMYEPWPickListClick () {
+  if (!TMYEPW_pickList_active) return false;
+
+  int rowIndex = SOLARCHVISION_TMYEPW_pickListRowAt(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked);
+  if (rowIndex >= 0) {
+    int f = TMYEPW_pickList_indices[rowIndex];
+    SOLARCHVISION_selectTMYEPWStation(f, TMYEPW_pickList_mouseLon, TMYEPW_pickList_mouseLat);
+  }
+
+  TMYEPW_pickList_active = false;
+  TMYEPW_pickList_indices = new int[0];
+
+  return true;
+}
+
 // Assigns TMYEPW station `f` to STATION and (if TMYEPW is the active data
 // source) reloads its data - shared by both the direct single-nearest-hit
 // path and the "user picked a row from the list" path.
@@ -479,11 +499,12 @@ void mouseClicked () {
         if (WORLD.include) {
           if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
-            // Paging the picker list's scrollbar track isn't a "pick a
-            // location on the map" click, so handle it here and skip
-            // everything below (STATION repositioning, nearest-station
-            // lookups, etc.) entirely for this click.
-            if (SOLARCHVISION_handleTMYEPWPickListTrackClick()) {
+            // Clicks meant for the picker list (picking a row, or
+            // clicking away to cancel it) or its scrollbar track aren't
+            // "pick a location on the map" clicks, so handle them here
+            // and skip everything below (STATION repositioning,
+            // nearest-station lookups, etc.) entirely for this click.
+            if (SOLARCHVISION_handleTMYEPWPickListTrackClick() || SOLARCHVISION_handleTMYEPWPickListClick()) {
               // handled - fall through to the shared revise() calls below
             } else {
 
@@ -676,38 +697,23 @@ void mouseClicked () {
 
 
             {
-              // If the picker list from a previous click is showing and
-              // this click landed on one of its rows, handle that
-              // selection and skip the usual nearest-station logic below
-              // entirely for this click.
-              boolean handledViaPickList = false;
+              // A click while the picker list was showing (row pick, or
+              // click-away-to-cancel) is already fully handled upfront by
+              // SOLARCHVISION_handleTMYEPWPickListClick() above, so
+              // TMYEPW_pickList_active is guaranteed false here.
+              int[] nearby = SOLARCHVISION_findNearbyStations(TMYEPW_Coordinates, mouse_lon, mouse_lat, TMYEPW_PICKLIST_MAX_DIST, TMYEPW_PICKLIST_MAX_COUNT);
 
-              if (TMYEPW_pickList_active) {
-                int rowIndex = SOLARCHVISION_TMYEPW_pickListRowAt(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked);
-                if (rowIndex >= 0) {
-                  int f = TMYEPW_pickList_indices[rowIndex];
-                  SOLARCHVISION_selectTMYEPWStation(f, TMYEPW_pickList_mouseLon, TMYEPW_pickList_mouseLat);
-                  handledViaPickList = true;
-                }
-                TMYEPW_pickList_active = false;
-                TMYEPW_pickList_indices = new int[0];
-              }
-
-              if (!handledViaPickList) {
-                int[] nearby = SOLARCHVISION_findNearbyStations(TMYEPW_Coordinates, mouse_lon, mouse_lat, TMYEPW_PICKLIST_MAX_DIST, TMYEPW_PICKLIST_MAX_COUNT);
-
-                if (nearby.length > 1) {
-                  // Multiple TMYEPW stations this close together - let the
-                  // user pick one instead of silently guessing.
-                  TMYEPW_pickList_active = true;
-                  TMYEPW_pickList_indices = nearby;
-                  TMYEPW_pickList_mouseLon = mouse_lon;
-                  TMYEPW_pickList_mouseLat = mouse_lat;
-                  TMYEPW_pickList_scrollOffset = 0;
-                } else {
-                  int f = (nearby.length == 1) ? nearby[0] : SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
-                  SOLARCHVISION_selectTMYEPWStation(f, mouse_lon, mouse_lat);
-                }
+              if (nearby.length > 1) {
+                // Multiple TMYEPW stations this close together - let the
+                // user pick one instead of silently guessing.
+                TMYEPW_pickList_active = true;
+                TMYEPW_pickList_indices = nearby;
+                TMYEPW_pickList_mouseLon = mouse_lon;
+                TMYEPW_pickList_mouseLat = mouse_lat;
+                TMYEPW_pickList_scrollOffset = 0;
+              } else {
+                int f = (nearby.length == 1) ? nearby[0] : SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
+                SOLARCHVISION_selectTMYEPWStation(f, mouse_lon, mouse_lat);
               }
             }
 
