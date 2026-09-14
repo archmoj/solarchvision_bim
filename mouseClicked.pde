@@ -177,8 +177,6 @@ void mouseClicked () {
             if ((pre_LocationLAT != LocationLAT) ||
                 (pre_LocationLON != LocationLON)) {
 
-              WORLD.resetPan();
-
               WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
             }
 

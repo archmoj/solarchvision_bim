@@ -124,6 +124,7 @@ class solarchvision_WORLD {
     int return_VIEWPORT = this.VIEW_id;
 
     if (this.autoView) {
+      this.resetPan();
 
       float d1 = FLOAT_undefined;
       float d2 = FLOAT_undefined;
