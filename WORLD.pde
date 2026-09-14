@@ -181,7 +181,13 @@ class solarchvision_WORLD {
     this.graphics.stroke(r, g, b, a);
     if (filled) this.graphics.fill(r, g, b, a);
     else this.graphics.noFill();
-    this.graphics.ellipse(x_point, y_point, diameter, diameter);
+
+    this.graphics.rect(
+      x_point - diameter / 2,
+      y_point - diameter / 2,
+      diameter,
+      diameter
+    );
   }
 
   void drawLabel (float x_point, float y_point, String label, float sizeMult) {
@@ -304,8 +310,6 @@ class solarchvision_WORLD {
       float R_station = 2 * this.ImageScale;
       if (this.VIEW_displayGrid[this.VIEW_id] == 1) R_station = 5;
 
-      this.graphics.ellipseMode(CENTER);
-
       {
         float _lat = STATION.getLatitude();
         float _lon = STATION.getLongitude();
@@ -322,7 +326,7 @@ class solarchvision_WORLD {
       java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_id, -1);
       java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_dist, FLOAT_undefined);
 
-      for ( int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
+      for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
         for (int f = 0; f < SWOB_Coordinates.length; f++) {
 
           float _lat = SWOB_Coordinates[f].getLatitude();
