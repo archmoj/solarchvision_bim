@@ -938,9 +938,9 @@ String HoldStamp = "";
 String Subfolder_exportMaps = "maps/";
 
 solarchvision_STATION STATION = new solarchvision_STATION(
-  //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "CAN_PQ_Montreal.Intl.AP.716270_CWEC", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "MONTREAL_DORVAL_QC_CA", ""
-  "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "CAN_ON_Toronto.716240_CWEC", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "TORONTO_PEARSON_INTL_ON_CA", "CYYZ-MAN"
-  //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "CAN_BC_Vancouver.718920_CWEC", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "VANCOUVER_INTL_BC_CA", ""
+  //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "", "CAN_PQ_Montreal.Intl.AP.716270_CWEC", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "MONTREAL_DORVAL_QC_CA", ""
+  "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "", "CAN_ON_Toronto.716240_CWEC", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "TORONTO_PEARSON_INTL_ON_CA", "CYYZ-MAN"
+  //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "", "CAN_BC_Vancouver.718920_CWEC", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "VANCOUVER_INTL_BC_CA", ""
 );
 
 solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE();
@@ -2217,7 +2217,7 @@ solarchvision_STATION[] TMYEPW_Coordinates;
 
 void inputCoordinates_TMYEPW () {
 
-  String[] FileALL = loadStrings(Folder_Coordinates + "/TMYEPW.txt");
+  String[] FileALL = loadStrings(Folder_Coordinates + "/TMYEPW.csv");
 
   String lineSTR;
 
@@ -2232,14 +2232,20 @@ void inputCoordinates_TMYEPW () {
 
     TMYEPW_Coordinates[f] = new solarchvision_STATION();
 
-    TMYEPW_Coordinates[f].setCity(parts[1]);
-    TMYEPW_Coordinates[f].setProvince(parts[2]);
-    TMYEPW_Coordinates[f].setCountry(parts[3]);
-    TMYEPW_Coordinates[f].setLatitude(float(parts[6]));
-    TMYEPW_Coordinates[f].setLongitude(float(parts[7]));
-    TMYEPW_Coordinates[f].setTimelong(float(parts[8]) * 15);
-    TMYEPW_Coordinates[f].setElevation(float(parts[9]));
-    TMYEPW_Coordinates[f].setFilename_TMYEPW(parts[10]);
+    TMYEPW_Coordinates[f].setCountry(parts[0]);
+    TMYEPW_Coordinates[f].setProvince(parts[1]);
+    TMYEPW_Coordinates[f].setCity(parts[2]);
+    TMYEPW_Coordinates[f].setLatitude(float(parts[5]));
+    TMYEPW_Coordinates[f].setLongitude(float(parts[6]));
+    TMYEPW_Coordinates[f].setTimelong(float(parts[7]) * 15);
+    TMYEPW_Coordinates[f].setElevation(float(parts[8]));
+
+    String url = parts[9];
+    TMYEPW_Coordinates[f].setDownloadURL_TMYEPW(url);
+
+    int lastSlashIndex = url.lastIndexOf('/');
+    String filename = url.substring(lastSlashIndex + 1).replace(".zip", "");
+    TMYEPW_Coordinates[f].setFilename_TMYEPW(filename);
   }
 }
 
