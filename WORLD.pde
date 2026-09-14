@@ -158,7 +158,7 @@ class solarchvision_WORLD {
             float d_Center = dist(pointLongitude, pointLatitude, 0.5 * (this.VIEW_BoundariesX[i][0] + this.VIEW_BoundariesX[i][1]), 0.5 * (this.VIEW_BoundariesY[i][0] + this.VIEW_BoundariesY[i][1]));
             float d_Size = dist(this.VIEW_BoundariesX[i][0], this.VIEW_BoundariesY[i][0], this.VIEW_BoundariesX[i][1], this.VIEW_BoundariesY[i][1]);
 
-            if (d2 > 0.95 * d_Size) {
+            if (d2 > 0.99 * d_Size) {
               if (d1 > d_Center) {
                 d1 = d_Center;
                 d2 = d_Size;
