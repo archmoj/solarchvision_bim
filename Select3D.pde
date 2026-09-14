@@ -1000,6 +1000,10 @@ class solarchvision_Select3D {
 
     if (addNewSelectionToPreviousSelection == 0) this.deselectAll();
 
+    if (RxP[0] < 0) { // hit nothing: leave the (just-cleared) selection as is
+      SOLARCHVISION_selection_changed();
+      return;
+    }
 
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
 

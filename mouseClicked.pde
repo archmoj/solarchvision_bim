@@ -484,7 +484,12 @@ void mouseClicked () {
 
               //println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[1], RxP[2], RxP[3], RxP[4], RxP[0]);
 
-              if (RxP[0] >= 0) {
+              if ((WIN3D.UI_CurrentTask != UITASK.Create) && (WIN3D.UI_CurrentTask != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
+
+                Select3D.selectPick(RxP);
+              }
+
+              else if (RxP[0] >= 0) {
 
                 if (WIN3D.UI_CurrentTask == UITASK.Move) { // move
 
@@ -891,9 +896,6 @@ void mouseClicked () {
 
                     SOLARCHVISION_model_changed();
 
-                  } else if ((WIN3D.UI_CurrentTask != UITASK.Create) && (WIN3D.UI_CurrentTask != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
-
-                    Select3D.selectPick(RxP);
                   }
                 }
 
