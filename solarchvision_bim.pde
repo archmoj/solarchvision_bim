@@ -1516,6 +1516,14 @@ int saved_alignZ = Select3D.alignZ;
 
 int addNewSelectionToPreviousSelection = 0; // internal
 
+// Remembers what addNewSelectionToPreviousSelection was set to right
+// before Ctrl/Alt overrode it, so keyReleased() can restore that value
+// instead of always resetting to 0. Guarded by the boolean below so key
+// repeat events (which keep firing keyPressed while a key is held) don't
+// keep overwriting the backup with the already-overridden value.
+int addNewSelectionToPreviousSelection_beforeModifierKey = 0;
+boolean addNewSelectionToPreviousSelection_isOverridden = false;
+
 boolean addToLastGroup = false; // internal
 
 float pre_TIME_Date;
@@ -1790,7 +1798,21 @@ void keyPressed (KeyEvent e) {
         image(pre_screen, 0, SOLARCHVISION_pixel_A);
       }
 
-      addNewSelectionToPreviousSelection = 0;
+      if (e.isControlDown()) {
+        if (!addNewSelectionToPreviousSelection_isOverridden) {
+          addNewSelectionToPreviousSelection_beforeModifierKey = addNewSelectionToPreviousSelection;
+          addNewSelectionToPreviousSelection_isOverridden = true;
+        }
+        addNewSelectionToPreviousSelection = 1;
+      } else if (e.isAltDown()) {
+        if (!addNewSelectionToPreviousSelection_isOverridden) {
+          addNewSelectionToPreviousSelection_beforeModifierKey = addNewSelectionToPreviousSelection;
+          addNewSelectionToPreviousSelection_isOverridden = true;
+        }
+        addNewSelectionToPreviousSelection = -1;
+      } else {
+        addNewSelectionToPreviousSelection = 0;
+      }
 
       if (typeUserCommand == 0) {
 
@@ -1834,7 +1856,12 @@ void keyPressed (KeyEvent e) {
 
 void keyReleased () {
 
-  addNewSelectionToPreviousSelection = 0;
+  if ((key == CODED) && ((keyCode == CONTROL) || (keyCode == ALT))) {
+    addNewSelectionToPreviousSelection = addNewSelectionToPreviousSelection_beforeModifierKey;
+    addNewSelectionToPreviousSelection_isOverridden = false;
+  } else {
+    addNewSelectionToPreviousSelection = 0;
+  }
 }
 
 PrintWriter mtlOutput;
