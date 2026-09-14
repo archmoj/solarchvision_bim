@@ -1367,11 +1367,13 @@ class solarchvision_MESSAGE {
 
 solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
 
-solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
+solarchvision_STUDY STUDY = new solarchvision_STUDY();
 
 solarchvision_WORLD WORLD = new solarchvision_WORLD();
 
-solarchvision_STUDY STUDY = new solarchvision_STUDY();
+solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
+
+solarchvision_OVERLAY3D OVERLAY3D = new solarchvision_OVERLAY3D();
 
 solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
 

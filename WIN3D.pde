@@ -160,7 +160,7 @@ class solarchvision_WIN3D {
       this.updated();
     } else {
       this.updated();
-      SOLARCHVISION_draw_Perspective_Internally();
+      OVERLAY3D.draw();
     }
   }
 
