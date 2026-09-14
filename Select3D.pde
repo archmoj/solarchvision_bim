@@ -315,7 +315,7 @@ class solarchvision_Select3D {
 
   int rectTest_vertex (float x, float y, float z, float corner1x, float corner1y, float corner2x, float corner2y) {
 
-    float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
+    float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, -z);
 
     if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
       if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
@@ -1136,7 +1136,7 @@ class solarchvision_Select3D {
 
           float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
           float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
-          float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
+          float z = Land3D.Mesh[i][j][2] * OBJECTS_scale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1176,7 +1176,7 @@ class solarchvision_Select3D {
 
           float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
           float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-          float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+          float z = allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1219,7 +1219,7 @@ class solarchvision_Select3D {
 
                 float x = allPoints.getX(vNo) * OBJECTS_scale;
                 float y = allPoints.getY(vNo) * OBJECTS_scale;
-                float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+                float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
                 int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
                 if (decision != -1) {
@@ -1248,7 +1248,7 @@ class solarchvision_Select3D {
 
                 float x = allPoints.getX(vNo) * OBJECTS_scale;
                 float y = allPoints.getY(vNo) * OBJECTS_scale;
-                float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+                float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
                 int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
                 if (decision != -1) {
@@ -1288,7 +1288,7 @@ class solarchvision_Select3D {
 
           float x = allPoints.getX(vNo) * OBJECTS_scale;
           float y = allPoints.getY(vNo) * OBJECTS_scale;
-          float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+          float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1324,7 +1324,7 @@ class solarchvision_Select3D {
 
           float x = allPoints.getX(vNo) * OBJECTS_scale;
           float y = allPoints.getY(vNo) * OBJECTS_scale;
-          float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+          float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1356,7 +1356,7 @@ class solarchvision_Select3D {
 
         float x = allPoints.getX(OBJ_ID) * OBJECTS_scale;
         float y = allPoints.getY(OBJ_ID) * OBJECTS_scale;
-        float z = -allPoints.getZ(OBJ_ID) * OBJECTS_scale;
+        float z = allPoints.getZ(OBJ_ID) * OBJECTS_scale;
 
         int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
         if (decision != -1) {
@@ -1392,7 +1392,7 @@ class solarchvision_Select3D {
 
           float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
           float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-          float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+          float z = allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1439,7 +1439,7 @@ class solarchvision_Select3D {
 
           float x = allSolids.Vertices[vNo][0] * OBJECTS_scale;
           float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
-          float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
+          float z = allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1484,7 +1484,7 @@ class solarchvision_Select3D {
 
           float x = allSections.Vertices[vNo][0] * OBJECTS_scale;
           float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
-          float z = -allSections.Vertices[vNo][2] * OBJECTS_scale;
+          float z = allSections.Vertices[vNo][2] * OBJECTS_scale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1524,7 +1524,7 @@ class solarchvision_Select3D {
 
           float x = allCameras.Vertices[vNo][0] * OBJECTS_scale;
           float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
-          float z = -allCameras.Vertices[vNo][2] * OBJECTS_scale;
+          float z = allCameras.Vertices[vNo][2] * OBJECTS_scale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
