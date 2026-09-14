@@ -17,7 +17,7 @@ const readline = require('readline');
 const zlib = require('zlib');
 
 const OUT_FOLDER = path.join(__dirname, '..', 'input', 'climate', 'TMYEPW');
-const CSV_PATH = path.join(__dirname, 'epw_stations.csv'); // used when no argument is given
+const CSV_PATH = path.join(__dirname, '..', 'input', 'coordinates', 'TMYEPW.csv'); // used when no argument is given
 
 const BAR_WIDTH = 100; // one '█' per percent, matching the header below
 
@@ -131,6 +131,8 @@ function parseStationList(csvText) {
   return rows
     .slice(1)
     .filter((row) => row[0] === "CAN" && row[1] === "ON") // Only download Canada/Ontario
+    .filter((row) => row[4] !== "NRC2022v1") // Skip Canada NRC Future climate files
+
     .map((row) => ({
       station: row[2] || '',
       url: (row[urlIndex] || '').trim(),
