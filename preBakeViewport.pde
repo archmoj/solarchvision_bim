@@ -39,48 +39,54 @@ void SOLARCHVISION_preBakeViewport () {
 
   float[][] Diffuse_Matrix = new float [2][(RES1 * RES2)];
 
-  for (int SHD = 0; SHD <= 1; SHD++) {
-    for (int np = 0; np < (RES1 * RES2); np++) {
-      Diffuse_Matrix[SHD][np] = 0;
+  int numDateAngles = (end_DATE_ANGLE - start_DATE_ANGLE) / step_DATE_ANGLE + 1;
+  int numHours = (end_HOUR - start_HOUR) / step_HOUR + 1;
+  int n_Map = numDateAngles * numHours;
+
+  int[] Map_DATE_ANGLE = new int [n_Map];
+  float[] Map_HOUR_ANGLE = new float [n_Map];
+
+  {
+    int m = 0;
+    for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+      for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) {
+        Map_DATE_ANGLE[m] = DATE_ANGLE;
+        Map_HOUR_ANGLE[m] = i;
+        m += 1;
+      }
     }
   }
 
-  int n_Map = 0;
-  for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+  float[][] Map_DirectVector = new float [n_Map][3];
+  float[][] Map_UnitDirectVector = new float [n_Map][3];
+  boolean[] Map_SunBelowHorizon = new boolean [n_Map];
 
-    for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) {
-      n_Map += 1;
-    }
+  for (int m = 0; m < n_Map; m++) {
+    float[] SunR = funcs.SunPosition(STATION.getLatitude(), Map_DATE_ANGLE[m], Map_HOUR_ANGLE[m]);
+
+    Map_DirectVector[m][0] = SunR[1];
+    Map_DirectVector[m][1] = SunR[2];
+    Map_DirectVector[m][2] = SunR[3];
+
+    Map_UnitDirectVector[m] = funcs.vec3_unit(Map_DirectVector[m]);
+
+    Map_SunBelowHorizon[m] = (SunR[3] < 0);
   }
 
   PImage[][] Direct_RGBA = new PImage [n_Map][2];
 
+  int[] lastHitDirect = new int [n_Map]; // zero-filled by default
+  int[] lastHitDiffuse = new int [DiffuseVectors.length]; // zero-filled by default
 
-  int[] lastHitDirect = new int [n_Map];
-
-  for (int i = 0; i < lastHitDirect.length; i++) {
-    lastHitDirect[i] = 0;
+  float[][] UnitDiffuseVectors = new float [DiffuseVectors.length][3];
+  for (int n_Ray = 0; n_Ray < DiffuseVectors.length; n_Ray++) {
+    UnitDiffuseVectors[n_Ray] = funcs.vec3_unit(DiffuseVectors[n_Ray]);
   }
 
-  int[] lastHitDiffuse = new int [DiffuseVectors.length];
-
-  for (int i = 0; i < lastHitDiffuse.length; i++) {
-    lastHitDiffuse[i] = 0;
-  }
-
-
-  n_Map = -1;
-  for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
-
-    for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) {
-      n_Map += 1;
-
-      for (int SHD = 0; SHD <= 1; SHD++) {
-
-        Direct_RGBA[n_Map][SHD] = createImage(RES1, RES2, ARGB);
-
-        Direct_RGBA[n_Map][SHD].loadPixels();
-      }
+  for (int m = 0; m < n_Map; m++) {
+    for (int SHD = 0; SHD <= 1; SHD++) {
+      Direct_RGBA[m][SHD] = createImage(RES1, RES2, ARGB);
+      Direct_RGBA[m][SHD].loadPixels();
     }
   }
 
@@ -137,9 +143,7 @@ void SOLARCHVISION_preBakeViewport () {
     ray_direction[2] = ray_end[2] - ray_start[2];
 
 
-    float[] RxP = new float [8];
-
-    RxP = intersectAll(ray_start, ray_direction);
+    float[] RxP = intersectAll(ray_start, ray_direction);
 
     if (RxP[0] >= 0) {
 
@@ -165,7 +169,7 @@ void SOLARCHVISION_preBakeViewport () {
           ray_direction[1] = DiffuseVectors[n_Ray][1];
           ray_direction[2] = DiffuseVectors[n_Ray][2];
 
-          float SkyMask = funcs.vec_dot(funcs.vec3_unit(DiffuseVectors[n_Ray]), funcs.vec3_unit(face_norm));
+          float SkyMask = funcs.vec_dot(UnitDiffuseVectors[n_Ray], face_norm);
           if (SkyMask < 0) SkyMask = 0; // removes backing faces
 
           // when SHD = 0;
@@ -182,66 +186,43 @@ void SOLARCHVISION_preBakeViewport () {
       }
 
 
-      n_Map = -1;
-      for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+      for (int m = 0; m < n_Map; m++) {
 
-        for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) {
-          n_Map += 1;
+        // new trace
+        ray_start[0] = RxP[1];
+        ray_start[1] = RxP[2];
+        ray_start[2] = RxP[3];
 
-          float HOUR_ANGLE = i;
+        ray_direction[0] = Map_DirectVector[m][0];
+        ray_direction[1] = Map_DirectVector[m][1];
+        ray_direction[2] = Map_DirectVector[m][2];
 
-          float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
+        float SunMask = funcs.vec_dot(Map_UnitDirectVector[m], face_norm);
+        //if (SunMask <= 0) SunMask = 0; // removes backing faces
 
-          float[] DirectVector = {
-            SunR[1], SunR[2], SunR[3]
-          };
+        // when SHD = 0;
+        Direct_RGBA[m][0].pixels[np] = Map_SunBelowHorizon[m] ? color(0, 255) : color(255 * SunMask, 255);
 
-          // new trace
-          ray_start[0] = RxP[1];
-          ray_start[1] = RxP[2];
-          ray_start[2] = RxP[3];
+        // when SHD = 1;
 
-          ray_direction[0] = DirectVector[0];
-          ray_direction[1] = DirectVector[1];
-          ray_direction[2] = DirectVector[2];
+        lastHitDirect[m] = SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, lastHitDirect[m]);
 
-          float SunMask = funcs.vec_dot(funcs.vec3_unit(DirectVector), funcs.vec3_unit(face_norm));
-          //if (SunMask <= 0) SunMask = 0; // removes backing faces
-
-          // when SHD = 0;
-          Direct_RGBA[n_Map][0].pixels[np] = (SunR[3] < 0) ? color(0, 255) : color(255 * SunMask, 255);
-
-          // when SHD = 1;
-
-          lastHitDirect[n_Map] = SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, lastHitDirect[n_Map]);
-
-          if (lastHitDirect[n_Map] == 0) {
-            Direct_RGBA[n_Map][1].pixels[np] = (SunR[3] < 0) ? color(0, 255) : color(255 * SunMask, 255);
-          }
-          else Direct_RGBA[n_Map][1].pixels[np] = color(0, 255);
+        if (lastHitDirect[m] == 0) {
+          Direct_RGBA[m][1].pixels[np] = Map_SunBelowHorizon[m] ? color(0, 255) : color(255 * SunMask, 255);
         }
+        else Direct_RGBA[m][1].pixels[np] = color(0, 255);
       }
     }
     else {
 
-      n_Map = -1;
-      for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
-
-        for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) {
-          n_Map += 1;
-
-          for (int SHD = 0; SHD <= 1; SHD++) {
-
-            Direct_RGBA[n_Map][SHD].pixels[np] = color(0,0,0,0);
-
-          }
+      for (int m = 0; m < n_Map; m++) {
+        for (int SHD = 0; SHD <= 1; SHD++) {
+          Direct_RGBA[m][SHD].pixels[np] = color(0,0,0,0);
         }
       }
 
       for (int SHD = 0; SHD <= 1; SHD++) {
-
         Diffuse_Matrix[SHD][np] = FLOAT_undefined;
-
       }
 
     }
@@ -253,28 +234,21 @@ void SOLARCHVISION_preBakeViewport () {
   }
   println();
 
-  n_Map = -1;
-  for (int DATE_ANGLE = start_DATE_ANGLE; DATE_ANGLE <= end_DATE_ANGLE; DATE_ANGLE += step_DATE_ANGLE) {
+  for (int m = 0; m < n_Map; m++) {
 
-    for (int i = start_HOUR; i <= end_HOUR; i += step_HOUR) {
-      n_Map += 1;
+    for (int SHD = 0; SHD <= 1; SHD++) {
 
-      float HOUR_ANGLE = i;
+      String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
 
-      for (int SHD = 0; SHD <= 1; SHD++) {
+      File_Name += nf(Map_DATE_ANGLE[m], 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(Map_HOUR_ANGLE[m] * 100, 1.0)), 4);
 
-        String File_Name = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName;
+      File_Name += "_Camera" + nf(Camera_Variation, 2);
 
-        File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+      Direct_RGBA[m][SHD].updatePixels();
 
-        File_Name += "_Camera" + nf(Camera_Variation, 2);
+      Direct_RGBA[m][SHD].save(File_Name + ".png");
 
-        Direct_RGBA[n_Map][SHD].updatePixels();
-
-        Direct_RGBA[n_Map][SHD].save(File_Name + ".png");
-
-        println(File_Name + ".png");
-      }
+      println(File_Name + ".png");
     }
   }
 
