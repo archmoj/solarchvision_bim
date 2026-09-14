@@ -2,11 +2,11 @@ void download_CLIMATE_TMYEPW () {
 
   boolean new_files_downloaded = false;
 
-  String FN = STATION.getFilename_NAEFS() + ".epw";
+  String FN = STATION.getFilename_TMYEPW();
 
   String the_target = Folder_CLIMATE_TMYEPW + "/" + FN;
 
-  File dir = new File(the_target);
+  File dir = new File(the_target + ".epw");
   if (!dir.isFile()) {
 
     String the_link = STATION.getDownload_TMYEPW();
@@ -14,7 +14,7 @@ void download_CLIMATE_TMYEPW () {
     println("Try downloading: " + the_link);
 
     try {
-      saveBytes(the_target, loadBytes(the_link));
+      saveBytes(the_target + ".zip", loadBytes(the_link));
 
       new_files_downloaded = true;
     }
@@ -38,21 +38,34 @@ void download_CLIMATE_TMYEPW () {
         File outFile = new File(outPath);
 
         try (
-          BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(
-            new BufferedInputStream(new FileInputStream(f))
-          );
-          FileOutputStream out = new FileOutputStream(outFile)
+          ZipInputStream zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(f)))
         ) {
-          byte[] buffer = new byte[8192];
-          int n;
-          while ((n = bzIn.read(buffer)) != -1) {
-            out.write(buffer, 0, n);
+          ZipEntry entry;
+          boolean foundEpw = false;
+
+          while ((entry = zipIn.getNextEntry()) != null) {
+            if (entry.getName().toLowerCase().endsWith(".epw")) {
+
+              try (FileOutputStream out = new FileOutputStream(outFile)) {
+                byte[] buffer = new byte[8192];
+                int n;
+                while ((n = zipIn.read(buffer)) != -1) {
+                  out.write(buffer, 0, n);
+                }
+              }
+
+              foundEpw = true;
+              break; // ignore the archive's other files (.stat, .ddy, .clm, .wea, .rain, etc.)
+            }
+            zipIn.closeEntry();
           }
 
-          f.delete(); // only reached if decompression succeeded without throwing
+          if (foundEpw) {
+            f.delete(); // only reached if extraction succeeded without throwing
+          }
         }
         catch (Exception e) {
-          // println("Failed to decompress " + f.getName() + ": " + e);
+          // println("Failed to extract " + f.getName() + ": " + e);
         }
       }
     }
