@@ -8,6 +8,20 @@ class solarchvision_WORLD {
   // offsets
   float oX = 0;
   float oY = 0;
+
+  // The lon/lat window actually shown on screen right now - set
+  // alongside oX/oY/sX/sY wherever the background is drawn. For Zoom 1,
+  // 2, and the "L" catch-all this equals VIEW_BoundariesX/Y[VIEW_id]; for
+  // panned/tiled zoom levels (see drawZoomedTiles) it's the panned
+  // window, which can differ from - and extend beyond - the home tile's
+  // own boundary. isWithinView() checks against these, not VIEW_id's
+  // bounds, so stations in a composited neighboring tile aren't wrongly
+  // filtered out.
+  float viewWindowLon1 = 0;
+  float viewWindowLon2 = 0;
+  float viewWindowLat1 = 0;
+  float viewWindowLat2 = 0;
+
   // (top-left) corner
   int cX = 0;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
@@ -172,11 +186,113 @@ class solarchvision_WORLD {
   }
 
   boolean isWithinView (float lon, float lat) {
-    if (lon < this.VIEW_BoundariesX[this.VIEW_id][0]) return false;
-    if (lon > this.VIEW_BoundariesX[this.VIEW_id][1]) return false;
-    if (lat < this.VIEW_BoundariesY[this.VIEW_id][0]) return false;
-    if (lat > this.VIEW_BoundariesY[this.VIEW_id][1]) return false;
+    if (lon < this.viewWindowLon1) return false;
+    if (lon > this.viewWindowLon2) return false;
+    if (lat < this.viewWindowLat1) return false;
+    if (lat > this.viewWindowLat2) return false;
     return true;
+  }
+
+  // Draws a lon/lat window of size `zoomFactor` × the native span of a
+  // `prefix`-lettered tile (e.g. "E"), centered on STATION instead of
+  // anchored to whichever single tile's fixed grid cell contains it.
+  // Since the centered window can extend past that tile's own edge, this
+  // composites every `prefix` tile that overlaps the window - so panning
+  // past one tile's boundary reveals its neighbor instead of blank space.
+  // Also sets oX/oY/sX/sY so markers/labels drawn afterward line up with
+  // this same (possibly panned) window.
+  void drawZoomedTiles (String prefix, float zoomFactor) {
+
+    // Find the tile STATION currently sits inside (to size the window to
+    // that zoom level's native tile span), and the combined bounds of
+    // every same-prefix tile (so the window never pans past the edge of
+    // the available map data).
+    int homeTile = -1;
+    float combinedLon1 = FLOAT_undefined;
+    float combinedLon2 = -FLOAT_undefined;
+    float combinedLat1 = FLOAT_undefined;
+    float combinedLat2 = -FLOAT_undefined;
+
+    float centerLon = STATION.getLongitude();
+    float centerLat = STATION.getLatitude();
+    if (centerLon > 180) centerLon -= 360; // << important!
+
+    for (int i = 0; i < this.numMaps; i++) {
+      if (!this.VIEW_Filenames[i].substring(0, 1).equals(prefix)) continue;
+
+      if (this.VIEW_BoundariesX[i][0] < combinedLon1) combinedLon1 = this.VIEW_BoundariesX[i][0];
+      if (this.VIEW_BoundariesX[i][1] > combinedLon2) combinedLon2 = this.VIEW_BoundariesX[i][1];
+      if (this.VIEW_BoundariesY[i][0] < combinedLat1) combinedLat1 = this.VIEW_BoundariesY[i][0];
+      if (this.VIEW_BoundariesY[i][1] > combinedLat2) combinedLat2 = this.VIEW_BoundariesY[i][1];
+
+      if (isInside(centerLon, centerLat, this.VIEW_BoundariesX[i][0], this.VIEW_BoundariesY[i][0], this.VIEW_BoundariesX[i][1], this.VIEW_BoundariesY[i][1])) {
+        homeTile = i;
+      }
+    }
+
+    if (homeTile == -1) homeTile = this.VIEW_id; // fallback: STATION fell outside every same-prefix tile
+
+    float nativeLonSpan = this.VIEW_BoundariesX[homeTile][1] - this.VIEW_BoundariesX[homeTile][0];
+    float nativeLatSpan = this.VIEW_BoundariesY[homeTile][1] - this.VIEW_BoundariesY[homeTile][0];
+
+    float halfLonSpan = 0.5 * zoomFactor * nativeLonSpan;
+    float halfLatSpan = 0.5 * zoomFactor * nativeLatSpan;
+
+    float viewLon1 = centerLon - halfLonSpan;
+    float viewLon2 = centerLon + halfLonSpan;
+    float viewLat1 = centerLat - halfLatSpan;
+    float viewLat2 = centerLat + halfLatSpan;
+
+    // Keep the window within the combined extent of every same-prefix
+    // tile instead of panning past the edge of the available map data.
+    if (viewLon1 < combinedLon1) { viewLon2 += combinedLon1 - viewLon1; viewLon1 = combinedLon1; }
+    if (viewLon2 > combinedLon2) { viewLon1 -= viewLon2 - combinedLon2; viewLon2 = combinedLon2; }
+    if (viewLat1 < combinedLat1) { viewLat2 += combinedLat1 - viewLat1; viewLat1 = combinedLat1; }
+    if (viewLat2 > combinedLat2) { viewLat1 -= viewLat2 - combinedLat2; viewLat2 = combinedLat2; }
+
+    // Set the lon/lat -> pixel mapping for this (possibly panned) window
+    // before compositing, so projX/projY below place each tile's portion
+    // at the correct screen position. Also record the window itself so
+    // isWithinView() reflects it, not just the home tile's own bounds.
+    this.oX = viewLon1 + 180;
+    this.oY = viewLat2 - 90;
+    this.sX = (viewLon2 - viewLon1) / 360.0;
+    this.sY = (viewLat2 - viewLat1) / 180.0;
+
+    this.viewWindowLon1 = viewLon1;
+    this.viewWindowLon2 = viewLon2;
+    this.viewWindowLat1 = viewLat1;
+    this.viewWindowLat2 = viewLat2;
+
+    for (int i = 0; i < this.numMaps; i++) {
+      if (!this.VIEW_Filenames[i].substring(0, 1).equals(prefix)) continue;
+
+      float tileLon1 = this.VIEW_BoundariesX[i][0];
+      float tileLon2 = this.VIEW_BoundariesX[i][1];
+      float tileLat1 = this.VIEW_BoundariesY[i][0];
+      float tileLat2 = this.VIEW_BoundariesY[i][1];
+
+      float overlapLon1 = max(tileLon1, viewLon1);
+      float overlapLon2 = min(tileLon2, viewLon2);
+      float overlapLat1 = max(tileLat1, viewLat1);
+      float overlapLat2 = min(tileLat2, viewLat2);
+
+      if ((overlapLon1 >= overlapLon2) || (overlapLat1 >= overlapLat2)) continue; // no overlap with this tile
+
+      PImage tileImage = (i == this.VIEW_id) ? this.ViewImage : loadImage(this.ViewFolder + "/" + this.VIEW_Filenames[i]);
+
+      float destX1 = this.projX(overlapLon1);
+      float destX2 = this.projX(overlapLon2);
+      float destY1 = this.projY(overlapLat2);
+      float destY2 = this.projY(overlapLat1);
+
+      int u1 = int(tileImage.width * (overlapLon1 - tileLon1) / (tileLon2 - tileLon1));
+      int u2 = int(tileImage.width * (overlapLon2 - tileLon1) / (tileLon2 - tileLon1));
+      int v1 = int(tileImage.height * (tileLat2 - overlapLat2) / (tileLat2 - tileLat1));
+      int v2 = int(tileImage.height * (tileLat2 - overlapLat1) / (tileLat2 - tileLat1));
+
+      this.graphics.image(tileImage, destX1, destY1, destX2 - destX1, destY2 - destY1, u1, v1, u2, v2);
+    }
   }
 
   void drawMarker (float x_point, float y_point, float strokeW, int r, int g, int b, int a, boolean filled, float diameter) {
@@ -341,68 +457,45 @@ class solarchvision_WORLD {
 
       this.graphics.background(0, 0, 0);
 
-      float fullLon1 = this.VIEW_BoundariesX[this.VIEW_id][0];
-      float fullLon2 = this.VIEW_BoundariesX[this.VIEW_id][1];
-      float fullLat1 = this.VIEW_BoundariesY[this.VIEW_id][0];
-      float fullLat2 = this.VIEW_BoundariesY[this.VIEW_id][1];
-
-      // Zoom 6 and 7 have no bitmaps of their own - they reuse the same
-      // "E" image loaded for Zoom 5, cropped to a smaller lon/lat window
-      // centered on the current station and stretched to fill the canvas,
-      // so no extra bitmaps need to be produced/saved for them.
-      float viewLon1 = fullLon1;
-      float viewLon2 = fullLon2;
-      float viewLat1 = fullLat1;
-      float viewLat2 = fullLat2;
-
-      if ((this.Zoom == 6) || (this.Zoom == 7) || (this.Zoom == 8) || (this.Zoom == 9)) {
-        float zoomFactor = 0.5; // fraction of the full E extent shown
-        if (this.Zoom == 7) zoomFactor = 0.25;
+      if (this.Zoom == 3) {
+        this.drawZoomedTiles("C", 1.0);
+      } else if (this.Zoom == 4) {
+        this.drawZoomedTiles("D", 1.0);
+      } else if ((this.Zoom == 5) || (this.Zoom == 6) || (this.Zoom == 7) || (this.Zoom == 8) || (this.Zoom == 9)) {
+        // 6, 7, 8, and 9 have no bitmaps of their own - they reuse the
+        // same "E" images as 5, at progressively closer zoom fractions.
+        float zoomFactor = 1.0;
+        if (this.Zoom == 6) zoomFactor = 0.5;
+        else if (this.Zoom == 7) zoomFactor = 0.25;
         else if (this.Zoom == 8) zoomFactor = 0.125;
         else if (this.Zoom == 9) zoomFactor = 0.0625;
 
-        float centerLon = STATION.getLongitude();
-        float centerLat = STATION.getLatitude();
-        if (centerLon > 180) centerLon -= 360; // << important!
-
-        float halfLonSpan = 0.5 * zoomFactor * (fullLon2 - fullLon1);
-        float halfLatSpan = 0.5 * zoomFactor * (fullLat2 - fullLat1);
-
-        viewLon1 = centerLon - halfLonSpan;
-        viewLon2 = centerLon + halfLonSpan;
-        viewLat1 = centerLat - halfLatSpan;
-        viewLat2 = centerLat + halfLatSpan;
-
-        // Slide the window back inside the loaded bitmap's own extent
-        // instead of cropping past its edge.
-        if (viewLon1 < fullLon1) { viewLon2 += fullLon1 - viewLon1; viewLon1 = fullLon1; }
-        if (viewLon2 > fullLon2) { viewLon1 -= viewLon2 - fullLon2; viewLon2 = fullLon2; }
-        if (viewLat1 < fullLat1) { viewLat2 += fullLat1 - viewLat1; viewLat1 = fullLat1; }
-        if (viewLat2 > fullLat2) { viewLat1 -= viewLat2 - fullLat2; viewLat2 = fullLat2; }
-
-        // Map the lon/lat crop window back to pixel coordinates within
-        // the source bitmap, and draw just that region stretched to fill
-        // the canvas instead of the whole image.
-        int u1 = int(this.ViewImage.width * (viewLon1 - fullLon1) / (fullLon2 - fullLon1));
-        int u2 = int(this.ViewImage.width * (viewLon2 - fullLon1) / (fullLon2 - fullLon1));
-        int v1 = int(this.ViewImage.height * (fullLat2 - viewLat2) / (fullLat2 - fullLat1));
-        int v2 = int(this.ViewImage.height * (fullLat2 - viewLat1) / (fullLat2 - fullLat1));
-
-        this.graphics.image(this.ViewImage, 0, 0, this.dX, this.dY, u1, v1, u2, v2);
+        this.drawZoomedTiles("E", zoomFactor);
       } else {
+        // Zoom 1, 2, and the "L" catch-all (0) keep showing the whole
+        // selected tile unpanned, same as before.
         this.graphics.image(this.ViewImage, 0, 0, this.dX, this.dY);
+
+        this.oX = this.VIEW_BoundariesX[this.VIEW_id][0] + 180;
+        this.oY = this.VIEW_BoundariesY[this.VIEW_id][1] - 90;
+
+        this.sX = (this.VIEW_BoundariesX[this.VIEW_id][1] - this.VIEW_BoundariesX[this.VIEW_id][0]) / 360.0;
+        this.sY = (this.VIEW_BoundariesY[this.VIEW_id][1] - this.VIEW_BoundariesY[this.VIEW_id][0]) / 180.0;
+
+        this.viewWindowLon1 = this.VIEW_BoundariesX[this.VIEW_id][0];
+        this.viewWindowLon2 = this.VIEW_BoundariesX[this.VIEW_id][1];
+        this.viewWindowLat1 = this.VIEW_BoundariesY[this.VIEW_id][0];
+        this.viewWindowLat2 = this.VIEW_BoundariesY[this.VIEW_id][1];
       }
 
-      this.oX = viewLon1 + 180;
-      this.oY = viewLat2 - 90;
-
-      this.sX = (viewLon2 - viewLon1) / 360.0;
-      this.sY = (viewLat2 - viewLat1) / 180.0;
-
-      float _lon1 = viewLon1;
-      float _lon2 = viewLon2;
-      float _lat1 = viewLat1;
-      float _lat2 = viewLat2;
+      // Derived from oX/oY/sX/sY (set above, however the background was
+      // drawn) rather than tracked separately - kept only because
+      // x_point1/y_point1/x_point2/y_point2 below were already unused
+      // before this change.
+      float _lon1 = this.oX - 180;
+      float _lon2 = _lon1 + 360 * this.sX;
+      float _lat2 = this.oY + 90;
+      float _lat1 = _lat2 - 180 * this.sY;
 
       int x_point1 = int(this.projX(_lon1));
       int y_point1 = int(this.projY(_lat1));
