@@ -20,7 +20,7 @@ class solarchvision_WORLD {
 
 
   int numMaps;
-  int Zoom = 6; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
+  int Zoom = 8; //1:A 2:B 3:C 4:D 5:E 6:E(2x) 7:E(4x) and 0:L <<<
 
   boolean autoView = true;
 
@@ -114,7 +114,9 @@ class solarchvision_WORLD {
           if (started_with.equals("C")) check_it = true;
         } else if (this.Zoom == 4) {
           if (started_with.equals("D")) check_it = true;
-        } else if (this.Zoom == 5) {
+        } else if ((this.Zoom == 5) || (this.Zoom == 6) || (this.Zoom == 7)) {
+          // 6 and 7 reuse the same "E" bitmaps as 5 - drawView() crops and
+          // scales them further in rather than loading dedicated images.
           if (started_with.equals("E")) check_it = true;
         } else {
           check_it = true;
@@ -338,18 +340,65 @@ class solarchvision_WORLD {
 
       this.graphics.background(0, 0, 0);
 
-      this.graphics.image(this.ViewImage, 0, 0, this.dX, this.dY);
+      float fullLon1 = this.VIEW_BoundariesX[this.VIEW_id][0];
+      float fullLon2 = this.VIEW_BoundariesX[this.VIEW_id][1];
+      float fullLat1 = this.VIEW_BoundariesY[this.VIEW_id][0];
+      float fullLat2 = this.VIEW_BoundariesY[this.VIEW_id][1];
 
-      this.oX = this.VIEW_BoundariesX[this.VIEW_id][0] + 180;
-      this.oY = this.VIEW_BoundariesY[this.VIEW_id][1] - 90;
+      // Zoom 6 and 7 have no bitmaps of their own - they reuse the same
+      // "E" image loaded for Zoom 5, cropped to a smaller lon/lat window
+      // centered on the current station and stretched to fill the canvas,
+      // so no extra bitmaps need to be produced/saved for them.
+      float viewLon1 = fullLon1;
+      float viewLon2 = fullLon2;
+      float viewLat1 = fullLat1;
+      float viewLat2 = fullLat2;
 
-      this.sX = (this.VIEW_BoundariesX[this.VIEW_id][1] - this.VIEW_BoundariesX[this.VIEW_id][0]) / 360.0;
-      this.sY = (this.VIEW_BoundariesY[this.VIEW_id][1] - this.VIEW_BoundariesY[this.VIEW_id][0]) / 180.0;
+      if ((this.Zoom == 6) || (this.Zoom == 7)) {
+        float zoomFactor = (this.Zoom == 6) ? 0.5 : 0.25; // fraction of the full E extent shown
 
-      float _lon1 = this.VIEW_BoundariesX[this.VIEW_id][0];
-      float _lon2 = this.VIEW_BoundariesX[this.VIEW_id][1];
-      float _lat1 = this.VIEW_BoundariesY[this.VIEW_id][0];
-      float _lat2 = this.VIEW_BoundariesY[this.VIEW_id][1];
+        float centerLon = STATION.getLongitude();
+        float centerLat = STATION.getLatitude();
+        if (centerLon > 180) centerLon -= 360; // << important!
+
+        float halfLonSpan = 0.5 * zoomFactor * (fullLon2 - fullLon1);
+        float halfLatSpan = 0.5 * zoomFactor * (fullLat2 - fullLat1);
+
+        viewLon1 = centerLon - halfLonSpan;
+        viewLon2 = centerLon + halfLonSpan;
+        viewLat1 = centerLat - halfLatSpan;
+        viewLat2 = centerLat + halfLatSpan;
+
+        // Slide the window back inside the loaded bitmap's own extent
+        // instead of cropping past its edge.
+        if (viewLon1 < fullLon1) { viewLon2 += fullLon1 - viewLon1; viewLon1 = fullLon1; }
+        if (viewLon2 > fullLon2) { viewLon1 -= viewLon2 - fullLon2; viewLon2 = fullLon2; }
+        if (viewLat1 < fullLat1) { viewLat2 += fullLat1 - viewLat1; viewLat1 = fullLat1; }
+        if (viewLat2 > fullLat2) { viewLat1 -= viewLat2 - fullLat2; viewLat2 = fullLat2; }
+
+        // Map the lon/lat crop window back to pixel coordinates within
+        // the source bitmap, and draw just that region stretched to fill
+        // the canvas instead of the whole image.
+        int u1 = int(this.ViewImage.width * (viewLon1 - fullLon1) / (fullLon2 - fullLon1));
+        int u2 = int(this.ViewImage.width * (viewLon2 - fullLon1) / (fullLon2 - fullLon1));
+        int v1 = int(this.ViewImage.height * (fullLat2 - viewLat2) / (fullLat2 - fullLat1));
+        int v2 = int(this.ViewImage.height * (fullLat2 - viewLat1) / (fullLat2 - fullLat1));
+
+        this.graphics.image(this.ViewImage, 0, 0, this.dX, this.dY, u1, v1, u2, v2);
+      } else {
+        this.graphics.image(this.ViewImage, 0, 0, this.dX, this.dY);
+      }
+
+      this.oX = viewLon1 + 180;
+      this.oY = viewLat2 - 90;
+
+      this.sX = (viewLon2 - viewLon1) / 360.0;
+      this.sY = (viewLat2 - viewLat1) / 180.0;
+
+      float _lon1 = viewLon1;
+      float _lon2 = viewLon2;
+      float _lat1 = viewLat1;
+      float _lat2 = viewLat2;
 
       int x_point1 = int(this.projX(_lon1));
       int y_point1 = int(this.projY(_lat1));
@@ -529,13 +578,13 @@ class solarchvision_WORLD {
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
       switch(key) {
       case '`' :
-        this.Zoom = (this.Zoom - 1 + 6) % 6;
+        this.Zoom = (this.Zoom - 1 + 8) % 8;
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
 
       case '~' :
-        this.Zoom = (this.Zoom + 1) % 6;
+        this.Zoom = (this.Zoom + 1) % 8;
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
