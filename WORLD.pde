@@ -199,6 +199,30 @@ class solarchvision_WORLD {
     this.graphics.text(label, x_point, y_point);
   }
 
+  // Sets the marker style once (stroke/fill are the same for every marker
+  // in a batch) and opens a single QUADS shape that addMarkerToBatch()
+  // adds vertices to - drawing thousands of markers as one shape is far
+  // faster than one graphics.rect() draw call per marker.
+  void beginMarkerBatch (float strokeW, int r, int g, int b, int a, boolean filled) {
+    this.graphics.strokeWeight(strokeW);
+    this.graphics.stroke(r, g, b, a);
+    if (filled) this.graphics.fill(r, g, b, a);
+    else this.graphics.noFill();
+    this.graphics.beginShape(QUADS);
+  }
+
+  void addMarkerToBatch (float x_point, float y_point, float diameter) {
+    float half = 0.5 * diameter;
+    this.graphics.vertex(x_point - half, y_point - half);
+    this.graphics.vertex(x_point + half, y_point - half);
+    this.graphics.vertex(x_point + half, y_point + half);
+    this.graphics.vertex(x_point - half, y_point + half);
+  }
+
+  void endMarkerBatch () {
+    this.graphics.endShape();
+  }
+
   // Draws every station in `coords` that falls inside the current viewport (when displayAllLevel != 0),
   // labels it too when displayAllLevel > 1, and separately labels whichever station is nearest to STATION
   // when displayNear is true. This is the shared "draw all + highlight nearest" behavior used by the
@@ -211,33 +235,63 @@ class solarchvision_WORLD {
     int nearest = -1;
     float nearestDist = FLOAT_undefined;
 
+    boolean drawingAll = (displayAllLevel != 0);
+    boolean drawingLabels = drawingAll && (displayAllLevel > 1);
+    float diameter = diameterMult * R_station;
+
+    // Every marker (and every label) drawn by this call shares the exact
+    // same style, so set stroke/fill/text style once here instead of
+    // redundantly on every single point, and batch all markers into one
+    // shape instead of one draw call per point.
+    if (drawingAll) {
+      this.beginMarkerBatch(strokeW, r, g, b, a, filled);
+    }
+    if (drawingLabels) {
+      this.graphics.strokeWeight(0);
+      this.graphics.stroke(0);
+      this.graphics.fill(0);
+      this.graphics.textAlign(RIGHT, CENTER);
+      this.graphics.textSize(allLabelSizeMult * MessageSize * this.ImageScale);
+    }
+
     for (int f = 0; f < coords.length; f++) {
 
       float _lat = coords[f].getLatitude();
       float _lon = coords[f].getLongitude();
       if (_lon > 180) _lon -= 360; // << important!
 
-      if (displayAllLevel != 0) {
+      // Check the cheap lon/lat viewport bounds before paying for the
+      // projection math and the pixel-space isInside check below.
+      if (drawingAll && this.isWithinView(_lon, _lat)) {
 
         float x_point = this.projX(_lon);
         float y_point = this.projY(_lat);
 
-        if (this.isWithinView(_lon, _lat) && isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
+        if (isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
 
-          this.drawMarker(x_point, y_point, strokeW, r, g, b, a, filled, diameterMult * R_station);
+          this.addMarkerToBatch(x_point, y_point, diameter);
 
-          if (displayAllLevel > 1) {
-            this.drawLabel(x_point, y_point, useCode ? coords[f].getCode() : coords[f].getCity(), allLabelSizeMult);
+          if (drawingLabels) {
+            this.graphics.text(useCode ? coords[f].getCode() : coords[f].getCity(), x_point, y_point);
           }
         }
       }
 
-      float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
+      // The "nearest" result is only used for the displayNear label
+      // below (every caller discards drawStationDataset's return value),
+      // so skip the distance calculation entirely when it won't be used.
+      if (displayNear) {
+        float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-      if (nearestDist > d) {
-        nearestDist = d;
-        nearest = f;
+        if (nearestDist > d) {
+          nearestDist = d;
+          nearest = f;
+        }
       }
+    }
+
+    if (drawingAll) {
+      this.endMarkerBatch();
     }
 
     if (displayNear && (nearest != -1)) {
@@ -323,6 +377,47 @@ class solarchvision_WORLD {
         }
       }
 
+      // Draws every SWOB station once - this doesn't depend on q, so it's
+      // its own pass instead of being redrawn ENSEMBLE_OBSERVED_numNearest
+      // times inside the nearest-station bookkeeping loop below.
+      if (this.displayAll_SWOB != 0) {
+
+        this.beginMarkerBatch(0, 191, 0, 0, 191, true);
+
+        boolean drawingSwobLabels = this.displayAll_SWOB > 1;
+        if (drawingSwobLabels) {
+          this.graphics.strokeWeight(0);
+          this.graphics.stroke(0);
+          this.graphics.fill(0);
+          this.graphics.textAlign(RIGHT, CENTER);
+          this.graphics.textSize(1.0 * MessageSize * this.ImageScale);
+        }
+
+        for (int f = 0; f < SWOB_Coordinates.length; f++) {
+
+          float _lat = SWOB_Coordinates[f].getLatitude();
+          float _lon = SWOB_Coordinates[f].getLongitude();
+          if (_lon > 180) _lon -= 360; // << important!
+
+          if (this.isWithinView(_lon, _lat)) {
+
+            float x_point = this.projX(_lon);
+            float y_point = this.projY(_lat);
+
+            if (isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
+
+              this.addMarkerToBatch(x_point, y_point, R_station);
+
+              if (drawingSwobLabels) {
+                this.graphics.text(SWOB_Coordinates[f].getCode(), x_point, y_point);
+              }
+            }
+          }
+        }
+
+        this.endMarkerBatch();
+      }
+
       java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_id, -1);
       java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_dist, FLOAT_undefined);
 
@@ -332,21 +427,6 @@ class solarchvision_WORLD {
           float _lat = SWOB_Coordinates[f].getLatitude();
           float _lon = SWOB_Coordinates[f].getLongitude();
           if (_lon > 180) _lon -= 360; // << important!
-
-          if (this.displayAll_SWOB != 0) {
-
-            float x_point = this.projX(_lon);
-            float y_point = this.projY(_lat);
-
-            if (this.isWithinView(_lon, _lat) && isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
-
-              this.drawMarker(x_point, y_point, 0, 191, 0, 0, 191, true, R_station);
-
-              if (this.displayAll_SWOB > 1) {
-                this.drawLabel(x_point, y_point, SWOB_Coordinates[f].getCode(), 1.0);
-              }
-            }
-          }
 
           float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
