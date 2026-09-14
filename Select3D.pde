@@ -315,7 +315,7 @@ class solarchvision_Select3D {
 
   int rectTest_vertex (float x, float y, float z, float corner1x, float corner1y, float corner2x, float corner2y) {
 
-    float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, -z);
+    float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
     if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
       if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y)) {
