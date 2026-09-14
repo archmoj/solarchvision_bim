@@ -15,7 +15,9 @@ void mouseWheel(MouseEvent event) {
   SOLARCHVISION_Y_clicked = mouseY;
 
   handleCaseBarWheel(Wheel_Value);
-  handleWorldZoomWheel(Wheel_Value);
+  if (!SOLARCHVISION_handleTMYEPWPickListWheel(Wheel_Value)) {
+    handleWorldZoomWheel(Wheel_Value);
+  }
   handleWin3DWheel(Wheel_Value);
 }
 

@@ -128,39 +128,93 @@ int[] SOLARCHVISION_findNearbyStations (solarchvision_STATION[] coords, float lo
 // TMYEPW_PICKLIST_MAX_DIST of the click, we show up to
 // TMYEPW_PICKLIST_MAX_COUNT of them as a clickable list inside the WORLD
 // view instead of silently guessing one, and wait for a follow-up click
-// on one of the list rows to choose it.
+// on one of the list rows to choose it. Since the list can hold more
+// rows than fit in WORLD's viewport, it scrolls, with a vertical
+// scrollbar that can be dragged, clicked (to page), or operated with the
+// mouse wheel.
 
 final float TMYEPW_PICKLIST_MAX_DIST = 10000; // metres (10 km)
 final int TMYEPW_PICKLIST_MAX_COUNT = 50;
+final float TMYEPW_PICKLIST_SCROLLBAR_WIDTH = 14;
 
 boolean TMYEPW_pickList_active = false;
 int[] TMYEPW_pickList_indices = new int[0];
 float TMYEPW_pickList_mouseLon = 0;
 float TMYEPW_pickList_mouseLat = 0;
+int TMYEPW_pickList_scrollOffset = 0; // index (into TMYEPW_pickList_indices) of the first visible row
+
+boolean TMYEPW_scrollThumbDragging = false;
+float TMYEPW_scrollDrag_startMouseY = 0;
+int TMYEPW_scrollDrag_startOffset = 0;
 
 float rowHeight = 1.6 * MessageSize;
 
-// Shared layout for one row of the picker list, in absolute screen
-// coordinates - used by both the drawing code and the click hit-test
-// below so they always agree on where each row is.
-float[] SOLARCHVISION_TMYEPW_pickListRowRect (int row) {
+boolean SOLARCHVISION_TMYEPW_pickList_needsScrollbar () {
+  return TMYEPW_pickList_indices.length > SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
+}
+
+int SOLARCHVISION_TMYEPW_pickList_visibleRowCount () {
   float pad = 10;
+  return max(1, int((WORLD.dY - 2 * pad) / rowHeight));
+}
+
+// Shared layout for one *visible* row (0 = topmost row on screen) of the
+// picker list, in absolute screen coordinates - used by both the drawing
+// code and the click hit-test below so they always agree on where each
+// row is. To get the absolute index into TMYEPW_pickList_indices for a
+// visible row, add TMYEPW_pickList_scrollOffset to it.
+float[] SOLARCHVISION_TMYEPW_pickListRowRect (int visibleRow) {
+  float pad = 10;
+  float scrollBarWidth = SOLARCHVISION_TMYEPW_pickList_needsScrollbar() ? TMYEPW_PICKLIST_SCROLLBAR_WIDTH + 4 : 0;
+
   float x = WORLD.cX + pad;
-  float y = WORLD.cY + pad + row * rowHeight;
-  float w = WORLD.dX - 2 * pad;
+  float y = WORLD.cY + pad + visibleRow * rowHeight;
+  float w = WORLD.dX - 2 * pad - scrollBarWidth;
   float h = rowHeight - 2;
   return new float[]{ x, y, w, h };
 }
 
-// Returns which pick-list row (if any) a screen point falls on, or -1.
+// Track (full scrollable area) and thumb (draggable handle) rectangles
+// for the scrollbar, in absolute screen coordinates.
+float[] SOLARCHVISION_TMYEPW_pickListScrollTrackRect () {
+  float pad = 10;
+  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
+  int shownRows = min(visibleRowCount, TMYEPW_pickList_indices.length);
+
+  float x = WORLD.cX + WORLD.dX - pad - TMYEPW_PICKLIST_SCROLLBAR_WIDTH;
+  float y = WORLD.cY + pad;
+  float w = TMYEPW_PICKLIST_SCROLLBAR_WIDTH;
+  float h = shownRows * rowHeight;
+  return new float[]{ x, y, w, h };
+}
+
+float[] SOLARCHVISION_TMYEPW_pickListScrollThumbRect () {
+  float[] track = SOLARCHVISION_TMYEPW_pickListScrollTrackRect();
+
+  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
+  int total = TMYEPW_pickList_indices.length;
+  int maxOffset = max(1, total - visibleRowCount);
+
+  float thumbHeight = min(track[3], max(20, track[3] * (float(visibleRowCount) / float(total))));
+  float travel = track[3] - thumbHeight;
+  float thumbY = track[1] + travel * (float(TMYEPW_pickList_scrollOffset) / float(maxOffset));
+
+  return new float[]{ track[0], thumbY, track[2], thumbHeight };
+}
+
+// Returns which pick-list row (if any) a screen point falls on, as an
+// absolute index into TMYEPW_pickList_indices, or -1.
 int SOLARCHVISION_TMYEPW_pickListRowAt (float clickX, float clickY) {
-  for (int row = 0; row < TMYEPW_pickList_indices.length; row++) {
-    float[] r = SOLARCHVISION_TMYEPW_pickListRowRect(row);
+  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
+  int maxVisible = min(visibleRowCount, TMYEPW_pickList_indices.length - TMYEPW_pickList_scrollOffset);
+
+  for (int visibleRow = 0; visibleRow < maxVisible; visibleRow++) {
+    float[] r = SOLARCHVISION_TMYEPW_pickListRowRect(visibleRow);
     float x = r[0];
     float y = r[1];
     float w = r[2];
-    float h = rowHeight; // Not using r[3] because we don't want to pick new stations from 2 pixels between boxes
-    if (isInside(clickX, clickY, r[0], r[1], r[0] + r[2], r[1] + r[3])) return row;
+    float h = rowHeight; // full row height (not r[3]) so there's no dead zone between rows
+    if (isInside(clickX, clickY, x, y, x + w, y + h)) return TMYEPW_pickList_scrollOffset + visibleRow;
   }
   return -1;
 }
@@ -173,11 +227,15 @@ void SOLARCHVISION_drawTMYEPWPickList () {
   textAlign(LEFT, CENTER);
   textSize(MessageSize);
 
-  for (int row = 0; row < TMYEPW_pickList_indices.length; row++) {
-    float[] r = SOLARCHVISION_TMYEPW_pickListRowRect(row);
-    int f = TMYEPW_pickList_indices[row];
+  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
+  int maxVisible = min(visibleRowCount, TMYEPW_pickList_indices.length - TMYEPW_pickList_scrollOffset);
 
-    String label = nf(row + 1) + ". " + TMYEPW_Coordinates[f].getFilename_TMYEPW();
+  for (int visibleRow = 0; visibleRow < maxVisible; visibleRow++) {
+    float[] r = SOLARCHVISION_TMYEPW_pickListRowRect(visibleRow);
+    int absIndex = TMYEPW_pickList_scrollOffset + visibleRow;
+    int f = TMYEPW_pickList_indices[absIndex];
+
+    String label = nf(absIndex + 1) + ". " + TMYEPW_Coordinates[f].getFilename_TMYEPW();
 
     noStroke();
     fill(255, 220);
@@ -193,7 +251,109 @@ void SOLARCHVISION_drawTMYEPWPickList () {
     text(label, r[0] + 4, r[1] + 0.5 * r[3]);
   }
 
+  if (SOLARCHVISION_TMYEPW_pickList_needsScrollbar()) {
+    float[] track = SOLARCHVISION_TMYEPW_pickListScrollTrackRect();
+    float[] thumb = SOLARCHVISION_TMYEPW_pickListScrollThumbRect();
+
+    noStroke();
+    fill(230, 230);
+    rect(track[0], track[1], track[2], track[3]);
+
+    stroke(0);
+    strokeWeight(1);
+    fill(160);
+    rect(thumb[0], thumb[1], thumb[2], thumb[3]);
+  }
+
   popStyle();
+}
+
+// Handles a click on the scrollbar *track* (paging up/down a page at a
+// time) - a click directly on the thumb is left alone here since that's
+// the start of a drag, handled by SOLARCHVISION_handleTMYEPWPickListScrollDrag()
+// in mouseDragged.pde. Returns true if the click was on the track at all
+// (whether or not it actually moved anything), so the caller can skip
+// treating this click as picking a map location.
+boolean SOLARCHVISION_handleTMYEPWPickListTrackClick () {
+  if (!TMYEPW_pickList_active) return false;
+  if (!SOLARCHVISION_TMYEPW_pickList_needsScrollbar()) return false;
+
+  float[] track = SOLARCHVISION_TMYEPW_pickListScrollTrackRect();
+  if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, track[0], track[1], track[0] + track[2], track[1] + track[3])) return false;
+
+  float[] thumb = SOLARCHVISION_TMYEPW_pickListScrollThumbRect();
+
+  if ((SOLARCHVISION_Y_clicked < thumb[1]) || (SOLARCHVISION_Y_clicked > thumb[1] + thumb[3])) {
+    int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
+    int maxOffset = max(0, TMYEPW_pickList_indices.length - visibleRowCount);
+    int page = max(1, visibleRowCount - 1);
+
+    if (SOLARCHVISION_Y_clicked < thumb[1]) {
+      TMYEPW_pickList_scrollOffset = constrain(TMYEPW_pickList_scrollOffset - page, 0, maxOffset);
+    } else {
+      TMYEPW_pickList_scrollOffset = constrain(TMYEPW_pickList_scrollOffset + page, 0, maxOffset);
+    }
+  }
+  // else: clicked directly on the thumb - that's a drag start, not a page click.
+
+  return true;
+}
+
+// Scrolls the picker list in response to the mouse wheel, if it's
+// showing and the mouse is over WORLD. Returns true if it consumed the
+// event (so e.g. WORLD's zoom-on-wheel doesn't also fire).
+boolean SOLARCHVISION_handleTMYEPWPickListWheel (float wheelValue) {
+  if (!TMYEPW_pickList_active) return false;
+  if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return false;
+
+  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
+  int maxOffset = max(0, TMYEPW_pickList_indices.length - visibleRowCount);
+  if (maxOffset == 0) return false; // nothing to scroll - let the event fall through (e.g. to zoom)
+
+  TMYEPW_pickList_scrollOffset = constrain(TMYEPW_pickList_scrollOffset + ((wheelValue > 0) ? 1 : -1), 0, maxOffset);
+
+  WORLD.revise();
+  return true;
+}
+
+// Drags the scrollbar thumb. Returns true if this drag is (or just
+// became) a thumb drag, so the caller can skip other drag handling (e.g.
+// panning WORLD) for the same drag gesture.
+boolean SOLARCHVISION_handleTMYEPWPickListScrollDrag () {
+  if (!TMYEPW_pickList_active) return false;
+  if (!SOLARCHVISION_TMYEPW_pickList_needsScrollbar()) return false;
+
+  if (!TMYEPW_scrollThumbDragging) {
+    if (dragging_started != 0) return false; // some other drag already claimed this gesture
+
+    float[] thumb = SOLARCHVISION_TMYEPW_pickListScrollThumbRect();
+    if (!isInside(pmouseX, pmouseY, thumb[0], thumb[1], thumb[0] + thumb[2], thumb[1] + thumb[3])) return false;
+
+    TMYEPW_scrollThumbDragging = true;
+    dragging_started = 1;
+    SOLARCHVISION_X_click1 = pmouseX;
+    SOLARCHVISION_Y_click1 = pmouseY;
+    TMYEPW_scrollDrag_startMouseY = pmouseY;
+    TMYEPW_scrollDrag_startOffset = TMYEPW_pickList_scrollOffset;
+  }
+
+  float[] track = SOLARCHVISION_TMYEPW_pickListScrollTrackRect();
+  float[] thumb = SOLARCHVISION_TMYEPW_pickListScrollThumbRect();
+
+  float travel = track[3] - thumb[3]; // how far the thumb can move within the track
+  if (travel > 0) {
+    int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
+    int maxOffset = max(1, TMYEPW_pickList_indices.length - visibleRowCount);
+    float rowsPerPixel = maxOffset / travel;
+
+    float deltaY = mouseY - TMYEPW_scrollDrag_startMouseY;
+    int newOffset = TMYEPW_scrollDrag_startOffset + round(deltaY * rowsPerPixel);
+
+    TMYEPW_pickList_scrollOffset = constrain(newOffset, 0, maxOffset);
+  }
+
+  WORLD.revise();
+  return true;
 }
 
 // Assigns TMYEPW station `f` to STATION and (if TMYEPW is the active data
@@ -318,6 +478,14 @@ void mouseClicked () {
 
         if (WORLD.include) {
           if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
+
+            // Paging the picker list's scrollbar track isn't a "pick a
+            // location on the map" click, so handle it here and skip
+            // everything below (STATION repositioning, nearest-station
+            // lookups, etc.) entirely for this click.
+            if (SOLARCHVISION_handleTMYEPWPickListTrackClick()) {
+              // handled - fall through to the shared revise() calls below
+            } else {
 
             float mouse_lon = 360.0 * ((mouseX - WORLD.cX) * WORLD.sX / WORLD.dX - 0.5) + WORLD.oX;
             float mouse_lat = -180.0 * ((mouseY - WORLD.cY) * WORLD.sY / WORLD.dY - 0.5) + WORLD.oY;
@@ -535,6 +703,7 @@ void mouseClicked () {
                   TMYEPW_pickList_indices = nearby;
                   TMYEPW_pickList_mouseLon = mouse_lon;
                   TMYEPW_pickList_mouseLat = mouse_lat;
+                  TMYEPW_pickList_scrollOffset = 0;
                 } else {
                   int f = (nearby.length == 1) ? nearby[0] : SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
                   SOLARCHVISION_selectTMYEPWStation(f, mouse_lon, mouse_lat);
@@ -544,6 +713,8 @@ void mouseClicked () {
 
 
 
+
+            }
 
             WORLD.revise();
             WIN3D.revise();
