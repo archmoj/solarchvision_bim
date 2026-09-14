@@ -74,6 +74,13 @@ class solarchvision_WORLD {
   int[] VIEW_displayGrid;
   String[] VIEW_Filenames;
 
+  // Caches neighbor tiles loaded by drawZoomedTiles() (see getTileImage()
+  // below) so panning doesn't re-hit disk for the same tile file on every
+  // single frame - loadImage() is comparatively slow, and without this a
+  // pan that keeps overlapping the same neighboring tile reloaded it from
+  // disk on every redraw, which is what was causing the lag while panning.
+  PImage[] VIEW_ImageCache;
+
   int displayAll_SWOB = 0; // 0-2
   int displayAll_NAEFS = 0; // 0-2
   int displayAll_CWEEDS = 0; // 0-2
@@ -98,6 +105,7 @@ class solarchvision_WORLD {
     this.VIEW_BoundariesY = new float [this.numMaps][2];
 
     this.VIEW_displayGrid = new int [this.numMaps];
+    this.VIEW_ImageCache = new PImage [this.numMaps];
 
     for (int i = 0; i < this.numMaps; i++) {
       String MapFilename = this.ViewFolder + "/" + this.VIEW_Filenames[i];
@@ -188,6 +196,16 @@ class solarchvision_WORLD {
     println("Loading:", this.ViewFolder + "/" + this.VIEW_Filenames[n]);
 
     this.ViewImage = loadImage(this.ViewFolder + "/" + this.VIEW_Filenames[n]);
+    this.VIEW_ImageCache[n] = this.ViewImage; // keep the cache consistent with the currently-selected tile too
+  }
+
+  // Returns tile i's image, loading it from disk (and caching it) only
+  // the first time it's needed - see VIEW_ImageCache above.
+  PImage getTileImage (int i) {
+    if (this.VIEW_ImageCache[i] == null) {
+      this.VIEW_ImageCache[i] = loadImage(this.ViewFolder + "/" + this.VIEW_Filenames[i]);
+    }
+    return this.VIEW_ImageCache[i];
   }
 
 
@@ -299,7 +317,7 @@ class solarchvision_WORLD {
 
       if ((overlapLon1 >= overlapLon2) || (overlapLat1 >= overlapLat2)) continue; // no overlap with this tile
 
-      PImage tileImage = (i == this.VIEW_id) ? this.ViewImage : loadImage(this.ViewFolder + "/" + this.VIEW_Filenames[i]);
+      PImage tileImage = this.getTileImage(i);
 
       float destX1 = this.projX(overlapLon1);
       float destX2 = this.projX(overlapLon2);
