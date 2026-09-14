@@ -121,9 +121,7 @@ class solarchvision_OVERLAY3D {
               }
             }
 
-            drawClosedShape(faceVertices,
-              CAMERA_STYLE.innerWinX1, CAMERA_STYLE.innerWinY1, CAMERA_STYLE.innerWinX2, CAMERA_STYLE.innerWinY2
-            );
+            drawClosedShape(faceVertices, CAMERA_STYLE);
           }
         }
 
@@ -157,9 +155,7 @@ class solarchvision_OVERLAY3D {
             }
           }
 
-          drawClosedShape(faceVertices,
-            SECTION_STYLE.innerWinX1, SECTION_STYLE.innerWinY1, SECTION_STYLE.innerWinX2, SECTION_STYLE.innerWinY2
-          );
+          drawClosedShape(faceVertices, SECTION_STYLE);
         }
       }
     }
@@ -195,9 +191,7 @@ class solarchvision_OVERLAY3D {
               }
             }
 
-            drawClosedShape(faceVertices,
-              SOLID_STYLE.innerWinX1, SOLID_STYLE.innerWinY1, SOLID_STYLE.innerWinX2, SOLID_STYLE.innerWinY2
-            );
+            drawClosedShape(faceVertices, SOLID_STYLE);
           }
         }
       }
@@ -234,9 +228,7 @@ class solarchvision_OVERLAY3D {
               }
             }
 
-            drawClosedShape(faceVertices,
-              MODEL2D_STYLE.innerWinX1, MODEL2D_STYLE.innerWinY1, MODEL2D_STYLE.innerWinX2, MODEL2D_STYLE.innerWinY2
-            );
+            drawClosedShape(faceVertices, MODEL2D_STYLE);
           }
         }
       }
@@ -269,9 +261,7 @@ class solarchvision_OVERLAY3D {
             }
           }
 
-          drawClosedShape(faceVertices,
-            MODEL1D_STYLE.innerWinX1, MODEL1D_STYLE.innerWinY1, MODEL1D_STYLE.innerWinX2, MODEL1D_STYLE.innerWinY2
-          );
+          drawClosedShape(faceVertices, MODEL1D_STYLE);
 
         }
       }
@@ -322,9 +312,7 @@ class solarchvision_OVERLAY3D {
               }
             }
 
-            drawClosedShape(faceVertices,
-              FACE_EDGE_STYLE.innerWinX1, FACE_EDGE_STYLE.innerWinY1, FACE_EDGE_STYLE.innerWinX2, FACE_EDGE_STYLE.innerWinY2
-            );
+            drawClosedShape(faceVertices, FACE_EDGE_STYLE);
           }
         }
       }
@@ -515,9 +503,7 @@ class solarchvision_OVERLAY3D {
                   }
                 }
 
-                drawClosedShape(faceVertices,
-                  GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-                );
+                drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
               }
             }
           }
@@ -541,9 +527,7 @@ class solarchvision_OVERLAY3D {
                 }
               }
 
-              drawClosedShape(faceVertices,
-                GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-              );
+              drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
             }
           }
 
@@ -569,9 +553,7 @@ class solarchvision_OVERLAY3D {
                 }
               }
 
-              drawClosedShape(faceVertices,
-                GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-              );
+              drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
             }
           }
 
@@ -597,9 +579,7 @@ class solarchvision_OVERLAY3D {
                 }
               }
 
-              drawClosedShape(faceVertices,
-                GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-              );
+              drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
             }
           }
 
@@ -630,9 +610,7 @@ class solarchvision_OVERLAY3D {
                     }
                   }
 
-                  drawClosedShape(faceVertices,
-                    GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-                  );
+                  drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
                 }
               }
             }
@@ -753,8 +731,6 @@ class solarchvision_OVERLAY3D {
 
           for (int f = 0; f < BoundingBox_Faces.length; f++) {
 
-            // First gather all the projected vertices for this face into a
-            // polygon (skipping ones behind the camera, same as before).
             ArrayList<float[]> faceVertices = new ArrayList<float[]>();
 
             for (int g = 0; g < BoundingBox_Faces[f].length; g++) {
@@ -772,14 +748,7 @@ class solarchvision_OVERLAY3D {
               }
             }
 
-            // Then clip the whole polygon against the window at once: any
-            // vertex outside gets trimmed to the window boundary, and the
-            // shape continues along the window's edge(s)/corner(s) wherever
-            // it exits and re-enters, instead of drawing a straight line
-            // through the invisible area outside the window.
-            drawClosedShape(faceVertices,
-              GROUP_BOX_STYLE.innerWinX1, GROUP_BOX_STYLE.innerWinY1, GROUP_BOX_STYLE.innerWinX2, GROUP_BOX_STYLE.innerWinY2
-            );
+            drawClosedShape(faceVertices, GROUP_BOX_STYLE);
           }
         }
 
@@ -1042,12 +1011,12 @@ class solarchvision_OVERLAY3D {
     return new float[]{ a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]) };
   }
 
-  // Clips faceVertices to the given window bounds, then draws the resulting
-  // shape.
-  void drawClosedShape (ArrayList<float[]> faceVertices, float xmin, float ymin, float xmax, float ymax) {
+  // Clips faceVertices to the given style's window bounds, then draws the
+  // resulting shape.
+  void drawClosedShape (ArrayList<float[]> faceVertices, DrawStyle style) {
     float[][] vertices = clipPolygon_toWindow(
       faceVertices.toArray(new float[faceVertices.size()][]),
-      xmin, ymin, xmax, ymax
+      style.innerWinX1, style.innerWinY1, style.innerWinX2, style.innerWinY2
     );
 
     beginShape();
