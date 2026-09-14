@@ -933,9 +933,9 @@ class solarchvision_WIN3D {
   float[] calculate_CameraSpace_Internally (float x, float y, float z) {
     x -= this.CAM_x;
     y -= this.CAM_y;
-    z += this.CAM_z;
+    z -= this.CAM_z;
 
-    float[] r1 = rotateAroundZ(x, y, z, -this.rotation_Z);
+    float[] r1 = rotateAroundZ(x, y, -z, -this.rotation_Z);
     float[] r2 = rotateAroundX(r1[0], r1[1], r1[2], this.rotation_X);
 
     return new float[] { r2[0], r2[1], r2[2] };

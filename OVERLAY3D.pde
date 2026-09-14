@@ -85,7 +85,7 @@ class solarchvision_OVERLAY3D {
 
           float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
           float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
-          float z = -Land3D.Mesh[i][j][2] * OBJECTS_scale;
+          float z = Land3D.Mesh[i][j][2] * OBJECTS_scale;
 
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -117,7 +117,7 @@ class solarchvision_OVERLAY3D {
 
               float x = allCameras.Vertices[vNo][0] * OBJECTS_scale;
               float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allCameras.Vertices[vNo][2] * OBJECTS_scale;
+              float z = allCameras.Vertices[vNo][2] * OBJECTS_scale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -147,7 +147,7 @@ class solarchvision_OVERLAY3D {
 
             float x = allSections.Vertices[vNo][0] * OBJECTS_scale;
             float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
-            float z = -allSections.Vertices[vNo][2] * OBJECTS_scale;
+            float z = allSections.Vertices[vNo][2] * OBJECTS_scale;
 
             camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
           }
@@ -179,7 +179,7 @@ class solarchvision_OVERLAY3D {
 
               float x = allSolids.Vertices[vNo][0] * OBJECTS_scale;
               float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
+              float z = allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -212,7 +212,7 @@ class solarchvision_OVERLAY3D {
 
               float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
               float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+              float z = allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -241,7 +241,7 @@ class solarchvision_OVERLAY3D {
 
             float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
             float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-            float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+            float z = allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
             camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
           }
@@ -288,7 +288,7 @@ class solarchvision_OVERLAY3D {
 
               float x = subFace[s][0] * OBJECTS_scale;
               float y = subFace[s][1] * OBJECTS_scale;
-              float z = -subFace[s][2] * OBJECTS_scale;
+              float z = subFace[s][2] * OBJECTS_scale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -315,7 +315,7 @@ class solarchvision_OVERLAY3D {
 
             float x = allPoints.getX(vNo) * OBJECTS_scale;
             float y = allPoints.getY(vNo) * OBJECTS_scale;
-            float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+            float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -349,7 +349,7 @@ class solarchvision_OVERLAY3D {
 
             float x = allPoints.getX(vNo) * OBJECTS_scale;
             float y = allPoints.getY(vNo) * OBJECTS_scale;
-            float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+            float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -381,7 +381,7 @@ class solarchvision_OVERLAY3D {
 
           float x = allPoints.getX(vNo) * OBJECTS_scale;
           float y = allPoints.getY(vNo) * OBJECTS_scale;
-          float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+          float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -413,7 +413,7 @@ class solarchvision_OVERLAY3D {
 
           float x = allPoints.getX(vNo) * OBJECTS_scale;
           float y = allPoints.getY(vNo) * OBJECTS_scale;
-          float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+          float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -475,7 +475,7 @@ class solarchvision_OVERLAY3D {
 
                   float x = subFace[s][0] * OBJECTS_scale;
                   float y = subFace[s][1] * OBJECTS_scale;
-                  float z = -subFace[s][2] * OBJECTS_scale;
+                  float z = subFace[s][2] * OBJECTS_scale;
 
                   camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
                 }
@@ -495,7 +495,7 @@ class solarchvision_OVERLAY3D {
 
                 float x = allPoints.getX(vNo) * OBJECTS_scale;
                 float y = allPoints.getY(vNo) * OBJECTS_scale;
-                float z = -allPoints.getZ(vNo) * OBJECTS_scale;
+                float z = allPoints.getZ(vNo) * OBJECTS_scale;
 
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
@@ -517,7 +517,7 @@ class solarchvision_OVERLAY3D {
 
                 float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
                 float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-                float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+                float z = allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
@@ -539,7 +539,7 @@ class solarchvision_OVERLAY3D {
 
                 float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
                 float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-                float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+                float z = allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
@@ -566,7 +566,7 @@ class solarchvision_OVERLAY3D {
 
                     float x = allSolids.Vertices[vNo][0] * OBJECTS_scale;
                     float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
-                    float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
+                    float z = allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
                     camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
                   }
@@ -700,7 +700,7 @@ class solarchvision_OVERLAY3D {
 
               float x = BoundingBox_Vertices[vNo][0] * OBJECTS_scale;
               float y = BoundingBox_Vertices[vNo][1] * OBJECTS_scale;
-              float z = -BoundingBox_Vertices[vNo][2] * OBJECTS_scale;
+              float z = BoundingBox_Vertices[vNo][2] * OBJECTS_scale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -797,11 +797,11 @@ class solarchvision_OVERLAY3D {
 
               float x1 = Pivot_Vertices[a][0] * OBJECTS_scale;
               float y1 = Pivot_Vertices[a][1] * OBJECTS_scale;
-              float z1 = -Pivot_Vertices[a][2] * OBJECTS_scale;
+              float z1 = Pivot_Vertices[a][2] * OBJECTS_scale;
 
               float x2 = Pivot_Vertices[b][0] * OBJECTS_scale;
               float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;
-              float z2 = -Pivot_Vertices[b][2] * OBJECTS_scale;
+              float z2 = Pivot_Vertices[b][2] * OBJECTS_scale;
 
               float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);
               float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
@@ -900,11 +900,11 @@ class solarchvision_OVERLAY3D {
 
         float x1 = Pivot_Vertices[a][0] * OBJECTS_scale;
         float y1 = Pivot_Vertices[a][1] * OBJECTS_scale;
-        float z1 = -Pivot_Vertices[a][2] * OBJECTS_scale;
+        float z1 = Pivot_Vertices[a][2] * OBJECTS_scale;
 
         float x2 = Pivot_Vertices[b][0] * OBJECTS_scale;
         float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;
-        float z2 = -Pivot_Vertices[b][2] * OBJECTS_scale;
+        float z2 = Pivot_Vertices[b][2] * OBJECTS_scale;
 
         float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);
         float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
