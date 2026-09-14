@@ -924,17 +924,28 @@ class solarchvision_WIN3D {
     return new float[] { PNT_x, PNT_y, -PNT_z };
   }
 
-  float[] calculate_Perspective_Internally (float x, float y, float z) {
+  // Transforms an object-space point into camera space (translated,
+  // rotated, but not yet projected). Exposed separately from
+  // calculate_Perspective_Internally so callers can interpolate two
+  // camera-space points against the near plane (z == 0) before
+  // projecting - e.g. when a line segment has one end in front of the
+  // camera and one end behind it.
+  float[] calculate_CameraSpace_Internally (float x, float y, float z) {
     x -= this.CAM_x;
     y -= this.CAM_y;
     z += this.CAM_z;
 
     float[] r1 = rotateAroundZ(x, y, z, -this.rotation_Z);
     float[] r2 = rotateAroundX(r1[0], r1[1], r1[2], this.rotation_X);
-    x = r2[0];
-    y = r2[1];
-    z = r2[2];
 
+    return new float[] { r2[0], r2[1], r2[2] };
+  }
+
+  // Projects an already camera-space point (see
+  // calculate_CameraSpace_Internally) to image space. Returns undefined
+  // Image_X/Image_Y and a negative Image_Z whenever z <= 0, i.e. the
+  // point is behind (or exactly at) the camera plane.
+  float[] calculate_Perspective_fromCameraSpace (float x, float y, float z) {
     float Image_X = FLOAT_undefined;
     float Image_Y = FLOAT_undefined;
     float Image_Z = -FLOAT_undefined; // negative so that it's automatically illuminated by draw()
@@ -953,6 +964,11 @@ class solarchvision_WIN3D {
     }
 
     return new float[] { Image_X, Image_Y, Image_Z };
+  }
+
+  float[] calculate_Perspective_Internally (float x, float y, float z) {
+    float[] cam = calculate_CameraSpace_Internally(x, y, z);
+    return calculate_Perspective_fromCameraSpace(cam[0], cam[1], cam[2]);
   }
 
 
