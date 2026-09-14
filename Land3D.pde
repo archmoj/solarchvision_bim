@@ -494,6 +494,10 @@ class solarchvision_Land3D {
       SKY2D_graphics.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
     }
 
+    if ((target_window == TypeWindow.LandMesh) && (i != 0)) { // avoid duplicate points at the center
+      allPoints.create(subFace[s][0], subFace[s][1], subFace[s][2]);
+    }
+
     if (!this.displayTexture) {
       renderLandVertexShaded(target_window, subFace, s, PAL_type, PAL_direction, PAL_multiplier);
     } else {
@@ -555,10 +559,6 @@ class solarchvision_Land3D {
         SOLARCHVISION_OBJprintVtexture(u, v, 0);
       }
       if (_turn == 3) num_vertices_added += 1;
-    }
-
-    if ((target_window == TypeWindow.LandMesh) && (i != 0)) { // avoid duplicate points at the center
-      allPoints.create(subFace[s][0], subFace[s][1], subFace[s][2]);
     }
 
     if ((target_window == TypeWindow.HTML) && (n_Map != -1)) {
