@@ -211,15 +211,18 @@ class solarchvision_WORLD {
       float _lon = coords[f].getLongitude();
       if (_lon > 180) _lon -= 360; // << important!
 
-      if ((displayAllLevel != 0) && this.isWithinView(_lon, _lat)) {
+      if (displayAllLevel != 0) {
 
         float x_point = this.projX(_lon);
         float y_point = this.projY(_lat);
 
-        this.drawMarker(x_point, y_point, strokeW, r, g, b, a, filled, diameterMult * R_station);
+        if (this.isWithinView(_lon, _lat) && isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
 
-        if (displayAllLevel > 1) {
-          this.drawLabel(x_point, y_point, useCode ? coords[f].getCode() : coords[f].getCity(), allLabelSizeMult);
+          this.drawMarker(x_point, y_point, strokeW, r, g, b, a, filled, diameterMult * R_station);
+
+          if (displayAllLevel > 1) {
+            this.drawLabel(x_point, y_point, useCode ? coords[f].getCode() : coords[f].getCity(), allLabelSizeMult);
+          }
         }
       }
 
@@ -236,7 +239,12 @@ class solarchvision_WORLD {
       float _lon = coords[nearest].getLongitude();
       if (_lon > 180) _lon -= 360; // << important!
 
-      this.drawLabel(this.projX(_lon), this.projY(_lat), useCode ? coords[nearest].getCode() : coords[nearest].getCity(), nearLabelSizeMult);
+      float x_point = this.projX(_lon);
+      float y_point = this.projY(_lat);
+
+      if (isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
+        this.drawLabel(x_point, y_point, useCode ? coords[nearest].getCode() : coords[nearest].getCity(), nearLabelSizeMult);
+      }
     }
 
     return nearest;
@@ -303,7 +311,12 @@ class solarchvision_WORLD {
         float _lon = STATION.getLongitude();
         if (_lon > 180) _lon -= 360; // << important!
 
-        this.drawMarker(this.projX(_lon), this.projY(_lat), 3 * this.ImageScale, 0, 0, 127, 255, false, 5 * R_station);
+        float x_point = this.projX(_lon);
+        float y_point = this.projY(_lat);
+
+        if (isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
+          this.drawMarker(x_point, y_point, 3 * this.ImageScale, 0, 0, 127, 255, false, 5 * R_station);
+        }
       }
 
       java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_id, -1);
@@ -316,15 +329,18 @@ class solarchvision_WORLD {
           float _lon = SWOB_Coordinates[f].getLongitude();
           if (_lon > 180) _lon -= 360; // << important!
 
-          if ((this.displayAll_SWOB != 0) && this.isWithinView(_lon, _lat)) {
+          if (this.displayAll_SWOB != 0) {
 
             float x_point = this.projX(_lon);
             float y_point = this.projY(_lat);
 
-            this.drawMarker(x_point, y_point, 0, 191, 0, 0, 191, true, R_station);
+            if (this.isWithinView(_lon, _lat) && isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
 
-            if (this.displayAll_SWOB > 1) {
-              this.drawLabel(x_point, y_point, SWOB_Coordinates[f].getCode(), 1.0);
+              this.drawMarker(x_point, y_point, 0, 191, 0, 0, 191, true, R_station);
+
+              if (this.displayAll_SWOB > 1) {
+                this.drawLabel(x_point, y_point, SWOB_Coordinates[f].getCode(), 1.0);
+              }
             }
           }
 
@@ -353,7 +369,12 @@ class solarchvision_WORLD {
           float _lon = SWOB_Coordinates[f].getLongitude();
           if (_lon > 180) _lon -= 360; // << important!
 
-          this.drawLabel(this.projX(_lon), this.projY(_lat), SWOB_Coordinates[f].getCode(), 1.0);
+          float x_point = this.projX(_lon);
+          float y_point = this.projY(_lat);
+
+          if (isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
+            this.drawLabel(x_point, y_point, SWOB_Coordinates[f].getCode(), 1.0);
+          }
           //println(SWOB_Coordinates[f].getCode());
         }
 
