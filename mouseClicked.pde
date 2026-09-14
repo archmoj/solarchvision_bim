@@ -368,6 +368,7 @@ void mouseClicked () {
                   STATION.setLongitude(mouse_lon);
 
                   STATION.setFilename_TMYEPW(TMYEPW_Coordinates[f].getFilename_TMYEPW()); // epw filename
+                  STATION.setDownload_TMYEPW(TMYEPW_Coordinates[f].getDownload_TMYEPW()); // epw filename
 
                   println("nearest epw filename:", TMYEPW_Coordinates[f].getFilename_TMYEPW());
 
@@ -384,7 +385,12 @@ void mouseClicked () {
                     ROLLOUT.revise();
 
                     SOLARCHVISION_update_station(1);
+
+                    download_CLIMATE_TMYEPW();
+
+                    boolean keep_CLIMATE_TMYEPW_load = CLIMATE_TMYEPW_load;
                     update_CLIMATE_TMYEPW();
+                    CLIMATE_TMYEPW_load = keep_CLIMATE_TMYEPW_load;
                   }
                 }
               }
@@ -1679,6 +1685,10 @@ private void SOLARCHVISION_buildMenuActions() {
 
   SOLARCHVISION_menuActions.put("Download CLMREC", () -> {
     download_CLIMATE_CLMREC();
+  });
+
+  SOLARCHVISION_menuActions.put("Download TMYEPW", () -> {
+    download_CLIMATE_TMYEPW();
   });
 
   SOLARCHVISION_menuActions.put("Update TMYEPW", () -> {

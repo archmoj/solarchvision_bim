@@ -2,6 +2,8 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import processing.data.IntList;
 import processing.pdf.*;
@@ -2241,7 +2243,7 @@ void inputCoordinates_TMYEPW () {
     TMYEPW_Coordinates[f].setElevation(float(parts[8]));
 
     String url = parts[9];
-    TMYEPW_Coordinates[f].setDownloadURL_TMYEPW(url);
+    TMYEPW_Coordinates[f].setDownload_TMYEPW(url);
 
     int lastSlashIndex = url.lastIndexOf('/');
     String filename = url.substring(lastSlashIndex + 1).replace(".zip", "");

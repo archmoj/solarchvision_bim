@@ -14,7 +14,7 @@ class solarchvision_STATION {
   private String filename_NAEFS = "";
   private String filename_CWEEDS = "";
   private String filename_TMYEPW = "";
-  private String downloadURL_TMYEPW = "";
+  private String Download_TMYEPW = "";
 
 
   public float getElevation () { return this.elevation; }
@@ -29,7 +29,7 @@ class solarchvision_STATION {
   public String getFilename_NAEFS () { return this.filename_NAEFS; }
   public String getFilename_CWEEDS () { return this.filename_CWEEDS; }
   public String getFilename_TMYEPW () { return this.filename_TMYEPW; }
-  public String downloadURL_TMYEPW () { return this.downloadURL_TMYEPW; }
+  public String getDownload_TMYEPW () { return this.Download_TMYEPW; }
 
 
   public void setElevation (float elevation) {
@@ -68,8 +68,8 @@ class solarchvision_STATION {
   public void setFilename_TMYEPW (String filename_TMYEPW) {
     this.filename_TMYEPW = filename_TMYEPW;
   }
-  public void setDownloadURL_TMYEPW (String downloadURL_TMYEPW) {
-    this.downloadURL_TMYEPW = downloadURL_TMYEPW;
+  public void setDownload_TMYEPW (String Download_TMYEPW) {
+    this.Download_TMYEPW = Download_TMYEPW;
   }
 
   public solarchvision_STATION () {
@@ -78,7 +78,7 @@ class solarchvision_STATION {
 
   public solarchvision_STATION (String code, String city, String province, String country,
                          float latitude, float longitude, float timelong, float elevation,
-                         String downloadURL_TMYEPW, String filename_TMYEPW,
+                         String Download_TMYEPW, String filename_TMYEPW,
                          String filename_CWEEDS, String filename_NAEFS, String filename_SWOB) {
 
     this.code = code;
