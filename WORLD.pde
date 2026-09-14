@@ -23,9 +23,11 @@ class solarchvision_WORLD {
   float viewWindowLat2 = 0;
 
   // Drag-to-pan offset (degrees) applied on top of STATION's lon/lat when
-  // computing the center of a Zoom > 2 window in drawZoomedTiles(). Reset
-  // to 0 whenever the Zoom level changes, so each zoom level starts
-  // centered on STATION and only drifts from it if the user drags.
+  // computing the center of a Zoom > 2 window in drawZoomedTiles(). Left
+  // as-is across zoom-level changes so the effective center (STATION +
+  // this offset) stays put when zooming, instead of snapping back to
+  // STATION. resetPan() is available for callers that do want to
+  // explicitly re-center on STATION.
   float panOffsetLon = 0;
   float panOffsetLat = 0;
 
@@ -46,7 +48,7 @@ class solarchvision_WORLD {
 
 
   int numMaps;
-  int Zoom = 9; //1:A 2:B 3:C 4:D 5:E 6:E(2x) 7:E(4x) 8:E(8x) 9:E(16x) and 0:L <<<
+  int Zoom = 8; //1:A 2:B 3:C 4:D 5:E 6:E(2x) 7:E(4x) 8:E(8x) 9:E(16x) and 0:L <<<
 
   boolean autoView = true;
 
@@ -693,14 +695,12 @@ class solarchvision_WORLD {
       switch(key) {
       case '`' :
         this.Zoom = (this.Zoom - 1 + 10) % 10;
-        this.resetPan();
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
 
       case '~' :
         this.Zoom = (this.Zoom + 1) % 10;
-        this.resetPan();
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;

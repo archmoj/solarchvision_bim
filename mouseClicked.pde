@@ -174,12 +174,10 @@ void mouseClicked () {
             STATION.setLatitude(mouse_lat);
             STATION.setLongitude(mouse_lon);
 
-            if (mouseButton == LEFT) {
-              WORLD.Zoom = 9;
-            }
-
             if ((pre_LocationLAT != LocationLAT) ||
                 (pre_LocationLON != LocationLON)) {
+
+              WORLD.resetPan();
 
               WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
             }
@@ -193,7 +191,6 @@ void mouseClicked () {
 
                 if (STATION.getFilename_SWOB().equals(SWOB_Coordinates[f].getFilename_SWOB())) {
                 } else {
-
                   STATION.setLatitude(mouse_lat);
                   STATION.setLongitude(mouse_lon);
 

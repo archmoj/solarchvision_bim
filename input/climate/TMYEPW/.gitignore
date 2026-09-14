@@ -1,5 +1,7 @@
 *.epw
 *.EPW
+*.zip
+*.ZIP
 
 !CAN_PQ_Montreal.Intl.AP.716270_CWEC.epw
 !CAN_ON_Toronto.716240_CWEC.epw
