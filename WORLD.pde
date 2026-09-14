@@ -668,6 +668,10 @@ class solarchvision_WORLD {
 
         imageMode(CORNER);
         image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
+
+        // Drawn directly on the main canvas (not inside this.graphics) so
+        // it's redrawn/cleared in step with WORLD's own next repaint.
+        SOLARCHVISION_drawTMYEPWPickList();
       }
 
 

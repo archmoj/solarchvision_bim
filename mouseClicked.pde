@@ -76,6 +76,163 @@ SOLARCHVISION_NearestStation SOLARCHVISION_findNearestStation (solarchvision_STA
   return nearest;
 }
 
+// Like SOLARCHVISION_findNearestStation, but returns up to `maxCount` indices
+// of stations within `maxDist` (same units as funcs.lon_lat_dist) of the
+// given (lon, lat), sorted by ascending distance. Used to detect when
+// several TMYEPW stations sit close enough together that a click can't
+// unambiguously pick one, so they can be offered as a list instead.
+int[] SOLARCHVISION_findNearbyStations (solarchvision_STATION[] coords, float lon, float lat, float maxDist, int maxCount) {
+
+  IntList indices = new IntList();
+  FloatList dists = new FloatList();
+
+  for (int f = 0; f < coords.length; f++) {
+
+    float _lat = coords[f].getLatitude();
+    float _lon = coords[f].getLongitude();
+    if (_lon > 180) _lon -= 360; // << important!
+
+    float d = funcs.lon_lat_dist(_lon, _lat, lon, lat);
+
+    if (d <= maxDist) {
+      indices.append(f);
+      dists.append(d);
+    }
+  }
+
+  // Insertion sort by ascending distance - candidate counts here are tiny.
+  for (int i = 1; i < indices.size(); i++) {
+    int idx = indices.get(i);
+    float dist = dists.get(i);
+    int j = i - 1;
+    while ((j >= 0) && (dists.get(j) > dist)) {
+      indices.set(j + 1, indices.get(j));
+      dists.set(j + 1, dists.get(j));
+      j--;
+    }
+    indices.set(j + 1, idx);
+    dists.set(j + 1, dist);
+  }
+
+  int n = min(indices.size(), maxCount);
+  int[] result = new int[n];
+  for (int i = 0; i < n; i++) {
+    result[i] = indices.get(i);
+  }
+  return result;
+}
+
+// --- TMYEPW "multiple nearby stations" picker -------------------------
+//
+// When a WORLD click finds more than one TMYEPW station within
+// TMYEPW_PICKLIST_MAX_DIST of the click, we show up to
+// TMYEPW_PICKLIST_MAX_COUNT of them as a clickable list inside the WORLD
+// view instead of silently guessing one, and wait for a follow-up click
+// on one of the list rows to choose it.
+
+final float TMYEPW_PICKLIST_MAX_DIST = 10000; // metres (10 km)
+final int TMYEPW_PICKLIST_MAX_COUNT = 50;
+
+boolean TMYEPW_pickList_active = false;
+int[] TMYEPW_pickList_indices = new int[0];
+float TMYEPW_pickList_mouseLon = 0;
+float TMYEPW_pickList_mouseLat = 0;
+
+float rowHeight = 1.6 * MessageSize;
+
+// Shared layout for one row of the picker list, in absolute screen
+// coordinates - used by both the drawing code and the click hit-test
+// below so they always agree on where each row is.
+float[] SOLARCHVISION_TMYEPW_pickListRowRect (int row) {
+  float pad = 10;
+  float x = WORLD.cX + pad;
+  float y = WORLD.cY + pad + row * rowHeight;
+  float w = WORLD.dX - 2 * pad;
+  float h = rowHeight - 2;
+  return new float[]{ x, y, w, h };
+}
+
+// Returns which pick-list row (if any) a screen point falls on, or -1.
+int SOLARCHVISION_TMYEPW_pickListRowAt (float clickX, float clickY) {
+  for (int row = 0; row < TMYEPW_pickList_indices.length; row++) {
+    float[] r = SOLARCHVISION_TMYEPW_pickListRowRect(row);
+    float x = r[0];
+    float y = r[1];
+    float w = r[2];
+    float h = rowHeight; // Not using r[3] because we don't want to pick new stations from 2 pixels between boxes
+    if (isInside(clickX, clickY, r[0], r[1], r[0] + r[2], r[1] + r[3])) return row;
+  }
+  return -1;
+}
+
+void SOLARCHVISION_drawTMYEPWPickList () {
+  if (!TMYEPW_pickList_active) return;
+
+  pushStyle();
+
+  textAlign(LEFT, CENTER);
+  textSize(MessageSize);
+
+  for (int row = 0; row < TMYEPW_pickList_indices.length; row++) {
+    float[] r = SOLARCHVISION_TMYEPW_pickListRowRect(row);
+    int f = TMYEPW_pickList_indices[row];
+
+    String label = nf(row + 1) + ". " + TMYEPW_Coordinates[f].getFilename_TMYEPW();
+
+    noStroke();
+    fill(255, 220);
+    rect(r[0], r[1], r[2], r[3]);
+
+    stroke(0);
+    strokeWeight(1);
+    noFill();
+    rect(r[0], r[1], r[2], r[3]);
+
+    noStroke();
+    fill(0);
+    text(label, r[0] + 4, r[1] + 0.5 * r[3]);
+  }
+
+  popStyle();
+}
+
+// Assigns TMYEPW station `f` to STATION and (if TMYEPW is the active data
+// source) reloads its data - shared by both the direct single-nearest-hit
+// path and the "user picked a row from the list" path.
+void SOLARCHVISION_selectTMYEPWStation (int f, float mouse_lon, float mouse_lat) {
+
+  if (STATION.getFilename_TMYEPW().equals(TMYEPW_Coordinates[f].getFilename_TMYEPW())) return;
+
+  STATION.setLatitude(mouse_lat);
+  STATION.setLongitude(mouse_lon);
+
+  STATION.setFilename_TMYEPW(TMYEPW_Coordinates[f].getFilename_TMYEPW()); // epw filename
+  STATION.setDownload_TMYEPW(TMYEPW_Coordinates[f].getDownload_TMYEPW()); // epw filename
+
+  println("nearest epw filename:", TMYEPW_Coordinates[f].getFilename_TMYEPW());
+
+  if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
+    STATION.setCity(TMYEPW_Coordinates[f].getCity());
+    STATION.setProvince(TMYEPW_Coordinates[f].getProvince());
+    STATION.setCountry(TMYEPW_Coordinates[f].getCountry());
+
+    //STATION.setLatitude(TMYEPW_Coordinates[f].getLatitude());
+    //STATION.setLongitude(TMYEPW_Coordinates[f].getLongitude());
+    STATION.setElevation(TMYEPW_Coordinates[f].getElevation());
+    STATION.setTimelong(TMYEPW_Coordinates[f].getTimelong());
+
+    ROLLOUT.revise();
+
+    SOLARCHVISION_update_station(1);
+
+    download_CLIMATE_TMYEPW();
+
+    boolean keep_CLIMATE_TMYEPW_load = CLIMATE_TMYEPW_load;
+    update_CLIMATE_TMYEPW();
+    CLIMATE_TMYEPW_load = keep_CLIMATE_TMYEPW_load;
+  }
+}
+
 void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
@@ -351,42 +508,36 @@ void mouseClicked () {
 
 
             {
-              int nearest_WORLD_TMYEPW = SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
+              // If the picker list from a previous click is showing and
+              // this click landed on one of its rows, handle that
+              // selection and skip the usual nearest-station logic below
+              // entirely for this click.
+              boolean handledViaPickList = false;
 
-              {
-                int f = nearest_WORLD_TMYEPW;
+              if (TMYEPW_pickList_active) {
+                int rowIndex = SOLARCHVISION_TMYEPW_pickListRowAt(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked);
+                if (rowIndex >= 0) {
+                  int f = TMYEPW_pickList_indices[rowIndex];
+                  SOLARCHVISION_selectTMYEPWStation(f, TMYEPW_pickList_mouseLon, TMYEPW_pickList_mouseLat);
+                  handledViaPickList = true;
+                }
+                TMYEPW_pickList_active = false;
+                TMYEPW_pickList_indices = new int[0];
+              }
 
-                if (STATION.getFilename_TMYEPW().equals(TMYEPW_Coordinates[f].getFilename_TMYEPW())) {
+              if (!handledViaPickList) {
+                int[] nearby = SOLARCHVISION_findNearbyStations(TMYEPW_Coordinates, mouse_lon, mouse_lat, TMYEPW_PICKLIST_MAX_DIST, TMYEPW_PICKLIST_MAX_COUNT);
+
+                if (nearby.length > 1) {
+                  // Multiple TMYEPW stations this close together - let the
+                  // user pick one instead of silently guessing.
+                  TMYEPW_pickList_active = true;
+                  TMYEPW_pickList_indices = nearby;
+                  TMYEPW_pickList_mouseLon = mouse_lon;
+                  TMYEPW_pickList_mouseLat = mouse_lat;
                 } else {
-
-                  STATION.setLatitude(mouse_lat);
-                  STATION.setLongitude(mouse_lon);
-
-                  STATION.setFilename_TMYEPW(TMYEPW_Coordinates[f].getFilename_TMYEPW()); // epw filename
-                  STATION.setDownload_TMYEPW(TMYEPW_Coordinates[f].getDownload_TMYEPW()); // epw filename
-
-                  println("nearest epw filename:", TMYEPW_Coordinates[f].getFilename_TMYEPW());
-
-                  if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
-                    STATION.setCity(TMYEPW_Coordinates[f].getCity());
-                    STATION.setProvince(TMYEPW_Coordinates[f].getProvince());
-                    STATION.setCountry(TMYEPW_Coordinates[f].getCountry());
-
-                    //STATION.setLatitude(TMYEPW_Coordinates[f].getLatitude());
-                    //STATION.setLongitude(TMYEPW_Coordinates[f].getLongitude());
-                    STATION.setElevation(TMYEPW_Coordinates[f].getElevation());
-                    STATION.setTimelong(TMYEPW_Coordinates[f].getTimelong());
-
-                    ROLLOUT.revise();
-
-                    SOLARCHVISION_update_station(1);
-
-                    download_CLIMATE_TMYEPW();
-
-                    boolean keep_CLIMATE_TMYEPW_load = CLIMATE_TMYEPW_load;
-                    update_CLIMATE_TMYEPW();
-                    CLIMATE_TMYEPW_load = keep_CLIMATE_TMYEPW_load;
-                  }
+                  int f = (nearby.length == 1) ? nearby[0] : SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
+                  SOLARCHVISION_selectTMYEPWStation(f, mouse_lon, mouse_lat);
                 }
               }
             }
