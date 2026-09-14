@@ -4,8 +4,20 @@ void mouseDragged() {
 
   if (FRAME_drag_IMG) {
     startFrameDragIfNeeded();
-  } else if (WIN3D.include) {
+    return;
+  }
+
+  // Not mutually exclusive: both handlers internally gate on whether the
+  // mouse is actually within their own view's rectangle, so a drag over
+  // WORLD still reaches handleWorldDrag() even when WIN3D.include is also
+  // true (previously this was an else-if chain, so handleWorldDrag()
+  // could never run whenever WIN3D happened to be included).
+  if (WIN3D.include) {
     handleWin3DDrag();
+  }
+
+  if (WORLD.include) {
+    handleWorldDrag();
   }
 }
 
@@ -32,6 +44,37 @@ void handleWin3DDrag() {
   float dy = (mouseY - pmouseY) / float(WIN3D.dY);
 
   dispatchWin3DTaskDrag(dx, dy);
+}
+
+// Pans WORLD's centered/tiled view (Zoom > 2 - see drawZoomedTiles) by
+// dragging: the map moves with the cursor, same as handleWin3DDrag()'s
+// panBothAxes() convention for the 3D viewport.
+void handleWorldDrag() {
+  if (WORLD.Zoom <= 2) return; // Zoom 1, 2, and the "L" catch-all aren't panned
+
+  boolean wasInside = isInside(pmouseX, pmouseY, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY);
+  boolean isNowInside = isInside(mouseX, mouseY, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY);
+  if (!wasInside || !isNowInside) return;
+
+  if (dragging_started == 0) {
+    SOLARCHVISION_X_click1 = pmouseX;
+    SOLARCHVISION_Y_click1 = pmouseY;
+    dragging_started = 1;
+  }
+
+  float dxPixels = mouseX - pmouseX;
+  float dyPixels = mouseY - pmouseY;
+
+  // Degrees-per-pixel at the current zoom, derived from projX/projY's
+  // own lon/lat -> pixel mapping (dX/dY canvas size, sX/sY fraction of
+  // the full 360°/180° world shown).
+  float lonPerPixel = (360.0 * WORLD.sX) / WORLD.dX;
+  float latPerPixel = (180.0 * WORLD.sY) / WORLD.dY;
+
+  WORLD.panOffsetLon -= dxPixels * lonPerPixel;
+  WORLD.panOffsetLat += dyPixels * latPerPixel; // screen Y grows downward, latitude grows upward
+
+  WORLD.revise();
 }
 
 void dispatchWin3DTaskDrag(float dx, float dy) {

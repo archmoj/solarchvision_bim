@@ -22,6 +22,18 @@ class solarchvision_WORLD {
   float viewWindowLat1 = 0;
   float viewWindowLat2 = 0;
 
+  // Drag-to-pan offset (degrees) applied on top of STATION's lon/lat when
+  // computing the center of a Zoom > 2 window in drawZoomedTiles(). Reset
+  // to 0 whenever the Zoom level changes, so each zoom level starts
+  // centered on STATION and only drifts from it if the user drags.
+  float panOffsetLon = 0;
+  float panOffsetLat = 0;
+
+  void resetPan () {
+    this.panOffsetLon = 0;
+    this.panOffsetLat = 0;
+  }
+
   // (top-left) corner
   int cX = 0;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
@@ -203,10 +215,10 @@ class solarchvision_WORLD {
   // this same (possibly panned) window.
   void drawZoomedTiles (String prefix, float zoomFactor) {
 
-    // Find the tile STATION currently sits inside (to size the window to
-    // that zoom level's native tile span), and the combined bounds of
-    // every same-prefix tile (so the window never pans past the edge of
-    // the available map data).
+    // Find the tile the (possibly drag-panned) center currently sits
+    // inside (to size the window to that zoom level's native tile span),
+    // and the combined bounds of every same-prefix tile (so the window
+    // never pans past the edge of the available map data).
     int homeTile = -1;
     float combinedLon1 = FLOAT_undefined;
     float combinedLon2 = -FLOAT_undefined;
@@ -216,6 +228,11 @@ class solarchvision_WORLD {
     float centerLon = STATION.getLongitude();
     float centerLat = STATION.getLatitude();
     if (centerLon > 180) centerLon -= 360; // << important!
+
+    centerLon += this.panOffsetLon;
+    centerLat += this.panOffsetLat;
+    if (centerLon > 180) centerLon -= 360; // wrap in case dragging pushed it past the antimeridian
+    if (centerLon < -180) centerLon += 360;
 
     for (int i = 0; i < this.numMaps; i++) {
       if (!this.VIEW_Filenames[i].substring(0, 1).equals(prefix)) continue;
@@ -676,12 +693,14 @@ class solarchvision_WORLD {
       switch(key) {
       case '`' :
         this.Zoom = (this.Zoom - 1 + 10) % 10;
+        this.resetPan();
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
 
       case '~' :
         this.Zoom = (this.Zoom + 1) % 10;
+        this.resetPan();
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
