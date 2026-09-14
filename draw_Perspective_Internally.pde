@@ -1,43 +1,3 @@
-float[][] clipPolygon_toWindow (float[][] poly, float xmin, float ymin, float xmax, float ymax) {
-  float[][] result = poly;
-  result = clipPolygon_halfPlane(result,  1,  0, xmin);  //  x >= xmin
-  result = clipPolygon_halfPlane(result, -1,  0, -xmax); //  x <= xmax
-  result = clipPolygon_halfPlane(result,  0,  1, ymin);  //  y >= ymin
-  result = clipPolygon_halfPlane(result,  0, -1, -ymax); //  y <= ymax
-  return result;
-}
-
-float[][] clipPolygon_halfPlane (float[][] poly, float nx, float ny, float d) {
-  int n = poly.length;
-  if (n == 0) return poly;
-
-  ArrayList<float[]> out = new ArrayList<float[]>();
-
-  for (int i = 0; i < n; i++) {
-    float[] curr = poly[i];
-    float[] prev = poly[(i - 1 + n) % n];
-
-    boolean currIn = (nx * curr[0] + ny * curr[1] - d) >= 0;
-    boolean prevIn = (nx * prev[0] + ny * prev[1] - d) >= 0;
-
-    if (currIn != prevIn) {
-      out.add(clipPolygon_intersect(prev, curr, nx, ny, d));
-    }
-    if (currIn) {
-      out.add(curr);
-    }
-  }
-
-  return out.toArray(new float[out.size()][]);
-}
-
-float[] clipPolygon_intersect (float[] a, float[] b, float nx, float ny, float d) {
-  float da = nx * a[0] + ny * a[1] - d;
-  float db = nx * b[0] + ny * b[1] - d;
-  float t = da / (da - db);
-  return new float[]{ a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]) };
-}
-
 void SOLARCHVISION_draw_Perspective_Internally () {
 
   final int STROKE_WEIGHT = 4;
@@ -1202,4 +1162,44 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   }
 
   strokeWeight(0);
+}
+
+float[][] clipPolygon_toWindow (float[][] poly, float xmin, float ymin, float xmax, float ymax) {
+  float[][] result = poly;
+  result = clipPolygon_halfPlane(result,  1,  0, xmin);  //  x >= xmin
+  result = clipPolygon_halfPlane(result, -1,  0, -xmax); //  x <= xmax
+  result = clipPolygon_halfPlane(result,  0,  1, ymin);  //  y >= ymin
+  result = clipPolygon_halfPlane(result,  0, -1, -ymax); //  y <= ymax
+  return result;
+}
+
+float[][] clipPolygon_halfPlane (float[][] poly, float nx, float ny, float d) {
+  int n = poly.length;
+  if (n == 0) return poly;
+
+  ArrayList<float[]> out = new ArrayList<float[]>();
+
+  for (int i = 0; i < n; i++) {
+    float[] curr = poly[i];
+    float[] prev = poly[(i - 1 + n) % n];
+
+    boolean currIn = (nx * curr[0] + ny * curr[1] - d) >= 0;
+    boolean prevIn = (nx * prev[0] + ny * prev[1] - d) >= 0;
+
+    if (currIn != prevIn) {
+      out.add(clipPolygon_intersect(prev, curr, nx, ny, d));
+    }
+    if (currIn) {
+      out.add(curr);
+    }
+  }
+
+  return out.toArray(new float[out.size()][]);
+}
+
+float[] clipPolygon_intersect (float[] a, float[] b, float nx, float ny, float d) {
+  float da = nx * a[0] + ny * a[1] - d;
+  float db = nx * b[0] + ny * b[1] - d;
+  float t = da / (da - db);
+  return new float[]{ a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]) };
 }
