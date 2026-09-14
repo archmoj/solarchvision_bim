@@ -1,33 +1,3 @@
-// Bundles the stroke color and fill color used for one visual case. If the
-// fill color is fully transparent (alpha == 0), applyStyle() calls
-// noFill() instead of fill() for that case.
-class DrawStyle {
-  color strokeColor;
-  color fillColor;
-
-  // Stroke-only convenience constructor: fill defaults to fully
-  // transparent, which applyStyle() treats as "no fill".
-  DrawStyle (color strokeColor) {
-    this(strokeColor, color(0, 0, 0, 0));
-  }
-
-  DrawStyle (color strokeColor, color fillColor) {
-    this.strokeColor = strokeColor;
-    this.fillColor = fillColor;
-  }
-}
-
-// Applies a DrawStyle's stroke, and its fill if not transparent
-// (otherwise calls noFill()).
-void applyStyle (DrawStyle style) {
-  stroke(style.strokeColor);
-  if (alpha(style.fillColor) == 0) {
-    noFill();
-  } else {
-    fill(style.fillColor);
-  }
-}
-
 void SOLARCHVISION_draw_Perspective_Internally () {
 
   final float winX1 = -0.5 * WIN3D.dX;
@@ -35,30 +5,59 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   final float winX2 =  0.5 * WIN3D.dX;
   final float winY2 =  0.5 * WIN3D.dY;
 
-  final int STROKE_WEIGHT = 4;
-  final float pad = 0.5 * STROKE_WEIGHT + 1;
+  class DrawStyle {
+    int strokeWeight;
+    color strokeColor;
+    color fillColor;
 
-  final float innerWinX1 = winX1 + pad;
-  final float innerWinY1 = winY1 + pad;
-  final float innerWinX2 = winX2 - pad;
-  final float innerWinY2 = winY2 - pad;
+    float innerWinX1, innerWinY1, innerWinX2, innerWinY2;
 
-  final DrawStyle LANDPOINT_STYLE       = new DrawStyle(color(255, 0, 255, 127)); // magenta stroke, no fill
-  final DrawStyle CAMERA_STYLE          = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle SECTION_STYLE         = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle SOLID_STYLE           = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle MODEL2D_STYLE         = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle MODEL1D_STYLE         = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
-  final DrawStyle FACE_EDGE_STYLE       = new DrawStyle(color(127, 0, 255));      // purple stroke, no fill
-  final DrawStyle FACE_LABEL_STYLE      = new DrawStyle(color(0), color(0));      // black stroke + fill
-  final DrawStyle POLYLINE_LABEL_STYLE  = new DrawStyle(color(0), color(0));      // black stroke + fill
-  final DrawStyle VERTEX_STYLE          = new DrawStyle(color(255, 0, 255, 127)); // magenta stroke, no fill
-  final DrawStyle GROUP_EDGE_STYLE      = new DrawStyle(color(127));              // grey stroke, no fill
-  final DrawStyle GROUP_BOX_STYLE       = new DrawStyle(color(0, 127, 0, 127));   // green stroke, no fill
-  final DrawStyle GROUP_PIVOT_STYLE     = new DrawStyle(color(255, 127, 0, 127)); // orange stroke, no fill
-  final DrawStyle AXIS_X_STYLE          = new DrawStyle(color(255, 0, 0));        // red stroke, no fill
-  final DrawStyle AXIS_Y_STYLE          = new DrawStyle(color(0, 0, 255));        // blue stroke, no fill
-  final DrawStyle AXIS_Z_STYLE          = new DrawStyle(color(127, 127, 0));      // olive stroke, no fill
+    // Stroke-only convenience constructor: fill defaults to fully
+    // transparent, which applyStyle() treats as "no fill".
+    DrawStyle (int strokeWeight, color strokeColor) {
+      this(strokeWeight, strokeColor, color(0, 0, 0, 0));
+    }
+
+    DrawStyle (int strokeWeight, color strokeColor, color fillColor) {
+      this.strokeWeight = strokeWeight;
+      this.strokeColor = strokeColor;
+      this.fillColor = fillColor;
+    }
+
+    void applyStyle () {
+      strokeWeight(this.strokeWeight);
+      stroke(strokeColor);
+      if (alpha(fillColor) == 0) {
+        noFill();
+      } else {
+        fill(fillColor);
+      }
+
+      float pad = 0.5 * strokeWeight + 1;
+      innerWinX1 = winX1 + pad;
+      innerWinY1 = winY1 + pad;
+      innerWinX2 = winX2 - pad;
+      innerWinY2 = winY2 - pad;
+    }
+  }
+
+  final DrawStyle LANDPOINT_STYLE       = new DrawStyle(4, color(255, 0, 255, 127)); // magenta stroke, no fill
+  final DrawStyle CAMERA_STYLE          = new DrawStyle(2, color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle SECTION_STYLE         = new DrawStyle(2, color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle SOLID_STYLE           = new DrawStyle(4, color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle MODEL2D_STYLE         = new DrawStyle(2, color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle MODEL1D_STYLE         = new DrawStyle(2, color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle FACE_EDGE_STYLE       = new DrawStyle(2, color(127, 0, 255));      // purple stroke, no fill
+  final DrawStyle FACE_LABEL_STYLE      = new DrawStyle(2, color(0), color(0));      // black stroke + fill
+  final DrawStyle POLYLINE_LABEL_STYLE  = new DrawStyle(2, color(0), color(0));      // black stroke + fill
+  final DrawStyle VERTEX_STYLE          = new DrawStyle(2, color(255, 0, 255, 127)); // magenta stroke, no fill
+  final DrawStyle SOFTVERTEX_STYLE      = new DrawStyle(4, color(0));                // color set dynamically per-vertex, no fill
+  final DrawStyle GROUP_EDGE_STYLE      = new DrawStyle(2, color(127));              // grey stroke, no fill
+  final DrawStyle GROUP_BOX_STYLE       = new DrawStyle(4, color(0, 127, 0, 127));   // green stroke, no fill
+  final DrawStyle GROUP_PIVOT_STYLE     = new DrawStyle(2, color(255, 127, 0, 127)); // orange stroke, no fill
+  final DrawStyle AXIS_X_STYLE          = new DrawStyle(2, color(255, 0, 0));        // red stroke, no fill
+  final DrawStyle AXIS_Y_STYLE          = new DrawStyle(2, color(0, 0, 255));        // blue stroke, no fill
+  final DrawStyle AXIS_Z_STYLE          = new DrawStyle(2, color(127, 127, 0));      // olive stroke, no fill
 
   if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
 
@@ -68,9 +67,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(LANDPOINT_STYLE);
-
-      strokeWeight(STROKE_WEIGHT);
+      LANDPOINT_STYLE.applyStyle();
 
       ellipseMode(CENTER);
 
@@ -91,7 +88,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], innerWinX1 + R, innerWinY1 + R, innerWinX2 - R, innerWinY2 - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          if (isInside(Image_XYZ[0], Image_XYZ[1], LANDPOINT_STYLE.innerWinX1 + R, LANDPOINT_STYLE.innerWinY1 + R, LANDPOINT_STYLE.innerWinX2 - R, LANDPOINT_STYLE.innerWinY2 - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
         }
 
       }
@@ -108,8 +105,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(CAMERA_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      CAMERA_STYLE.applyStyle();
 
       {
         for (int o = Select3D.Camera_ids.length - 1; o >= 0; o--) {
@@ -135,7 +131,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           float[][] clippedVertices = clipPolygon_toWindow(
             faceVertices.toArray(new float[faceVertices.size()][]),
-            innerWinX1, innerWinY1, innerWinX2, innerWinY2
+            CAMERA_STYLE.innerWinX1, CAMERA_STYLE.innerWinY1, CAMERA_STYLE.innerWinX2, CAMERA_STYLE.innerWinY2
             );
 
           beginShape();
@@ -158,8 +154,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(SECTION_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      SECTION_STYLE.applyStyle();
 
       {
         for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
@@ -185,7 +180,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           float[][] clippedVertices = clipPolygon_toWindow(
             faceVertices.toArray(new float[faceVertices.size()][]),
-            innerWinX1, innerWinY1, innerWinX2, innerWinY2
+            SECTION_STYLE.innerWinX1, SECTION_STYLE.innerWinY1, SECTION_STYLE.innerWinX2, SECTION_STYLE.innerWinY2
             );
 
           beginShape();
@@ -208,8 +203,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(SOLID_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      SOLID_STYLE.applyStyle();
 
       {
         for (int o = Select3D.Solid_ids.length - 1; o >= 0; o--) {
@@ -239,7 +233,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             float[][] clippedVertices = clipPolygon_toWindow(
               faceVertices.toArray(new float[faceVertices.size()][]),
-              innerWinX1, innerWinY1, innerWinX2, innerWinY2
+              SOLID_STYLE.innerWinX1, SOLID_STYLE.innerWinY1, SOLID_STYLE.innerWinX2, SOLID_STYLE.innerWinY2
               );
 
             beginShape();
@@ -265,8 +259,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(MODEL2D_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      MODEL2D_STYLE.applyStyle();
 
       {
         for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
@@ -296,7 +289,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             float[][] clippedVertices = clipPolygon_toWindow(
               faceVertices.toArray(new float[faceVertices.size()][]),
-              innerWinX1, innerWinY1, innerWinX2, innerWinY2
+              MODEL2D_STYLE.innerWinX1, MODEL2D_STYLE.innerWinY1, MODEL2D_STYLE.innerWinX2, MODEL2D_STYLE.innerWinY2
               );
 
             beginShape();
@@ -320,8 +313,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(MODEL1D_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      MODEL1D_STYLE.applyStyle();
 
       {
         for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
@@ -347,7 +339,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           float[][] clippedVertices = clipPolygon_toWindow(
             faceVertices.toArray(new float[faceVertices.size()][]),
-            innerWinX1, innerWinY1, innerWinX2, innerWinY2
+            MODEL1D_STYLE.innerWinX1, MODEL1D_STYLE.innerWinY1, MODEL1D_STYLE.innerWinX2, MODEL1D_STYLE.innerWinY2
             );
 
           beginShape();
@@ -371,8 +363,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(FACE_EDGE_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      FACE_EDGE_STYLE.applyStyle();
 
       for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
 
@@ -415,7 +406,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
           float[][] clippedVertices = clipPolygon_toWindow(
             faceVertices.toArray(new float[faceVertices.size()][]),
-            innerWinX1, innerWinY1, innerWinX2, innerWinY2
+            FACE_EDGE_STYLE.innerWinX1, FACE_EDGE_STYLE.innerWinY1, FACE_EDGE_STYLE.innerWinX2, FACE_EDGE_STYLE.innerWinY2
             );
 
           beginShape();
@@ -437,8 +428,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(FACE_LABEL_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      FACE_LABEL_STYLE.applyStyle();
 
       textSize(1.5 * MessageSize);
       textAlign(CENTER, BOTTOM);
@@ -457,7 +447,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], innerWinX1, innerWinY1, innerWinX2, innerWinY2)) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], FACE_LABEL_STYLE.innerWinX1, FACE_LABEL_STYLE.innerWinY1, FACE_LABEL_STYLE.innerWinX2, FACE_LABEL_STYLE.innerWinY2)) {
               text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
             }
           }
@@ -477,8 +467,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(POLYLINE_LABEL_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      POLYLINE_LABEL_STYLE.applyStyle();
 
       textSize(1.5 * MessageSize);
       textAlign(CENTER, BOTTOM);
@@ -497,7 +486,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], innerWinX1, innerWinY1, innerWinX2, innerWinY2)) {
+            if (isInside(Image_XYZ[0], Image_XYZ[1], POLYLINE_LABEL_STYLE.innerWinX1, POLYLINE_LABEL_STYLE.innerWinY1, POLYLINE_LABEL_STYLE.innerWinX2, POLYLINE_LABEL_STYLE.innerWinY2)) {
               text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
             }
           }
@@ -517,9 +506,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(VERTEX_STYLE);
-
-      strokeWeight(STROKE_WEIGHT);
+      VERTEX_STYLE.applyStyle();
 
       ellipseMode(CENTER);
 
@@ -536,7 +523,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], innerWinX1 + R, innerWinY1 + R, innerWinX2 - R, innerWinY2 - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          if (isInside(Image_XYZ[0], Image_XYZ[1], VERTEX_STYLE.innerWinX1 + R, VERTEX_STYLE.innerWinY1 + R, VERTEX_STYLE.innerWinX2 - R, VERTEX_STYLE.innerWinY2 - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
         }
       }
 
@@ -554,7 +541,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      strokeWeight(STROKE_WEIGHT);
+      SOFTVERTEX_STYLE.applyStyle();
 
       ellipseMode(CENTER);
 
@@ -573,7 +560,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], innerWinX1 + R, innerWinY1 + R, innerWinX2 - R, innerWinY2 - R)) {
+          if (isInside(Image_XYZ[0], Image_XYZ[1], SOFTVERTEX_STYLE.innerWinX1 + R, SOFTVERTEX_STYLE.innerWinY1 + R, SOFTVERTEX_STYLE.innerWinX2 - R, SOFTVERTEX_STYLE.innerWinY2 - R)) {
 
             float[] COL = PAINT.getColorStyle(14, _u); // <<<<<<<<<<<<<<<<<
             fill(COL[1], COL[2], COL[3], COL[0]);
@@ -599,8 +586,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(GROUP_EDGE_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      GROUP_EDGE_STYLE.applyStyle();
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
@@ -647,7 +633,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
               float[][] clippedVertices = clipPolygon_toWindow(
                 faceVertices.toArray(new float[faceVertices.size()][]),
-                innerWinX1, innerWinY1, innerWinX2, innerWinY2
+                GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
                 );
 
               beginShape();
@@ -680,7 +666,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             float[][] clippedVertices = clipPolygon_toWindow(
               faceVertices.toArray(new float[faceVertices.size()][]),
-              innerWinX1, innerWinY1, innerWinX2, innerWinY2
+              GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
               );
 
             beginShape();
@@ -715,7 +701,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             float[][] clippedVertices = clipPolygon_toWindow(
               faceVertices.toArray(new float[faceVertices.size()][]),
-              innerWinX1, innerWinY1, innerWinX2, innerWinY2
+              GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
               );
 
             beginShape();
@@ -750,7 +736,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
             float[][] clippedVertices = clipPolygon_toWindow(
               faceVertices.toArray(new float[faceVertices.size()][]),
-              innerWinX1, innerWinY1, innerWinX2, innerWinY2
+              GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
               );
 
             beginShape();
@@ -790,7 +776,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
                 float[][] clippedVertices = clipPolygon_toWindow(
                   faceVertices.toArray(new float[faceVertices.size()][]),
-                  innerWinX1, innerWinY1, innerWinX2, innerWinY2
+                  GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
                   );
 
                 beginShape();
@@ -815,8 +801,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(GROUP_BOX_STYLE);
-      strokeWeight(STROKE_WEIGHT);
+      GROUP_BOX_STYLE.applyStyle();
 
       int keep_selection_alignX = Select3D.alignX;
       int keep_selection_alignY = Select3D.alignY;
@@ -952,7 +937,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           // through the invisible area outside the window.
           float[][] clippedVertices = clipPolygon_toWindow(
             faceVertices.toArray(new float[faceVertices.size()][]),
-            innerWinX1, innerWinY1, innerWinX2, innerWinY2
+            GROUP_BOX_STYLE.innerWinX1, GROUP_BOX_STYLE.innerWinY1, GROUP_BOX_STYLE.innerWinX2, GROUP_BOX_STYLE.innerWinY2
             );
 
           beginShape();
@@ -980,9 +965,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      applyStyle(GROUP_PIVOT_STYLE);
-
-      strokeWeight(STROKE_WEIGHT);
+      GROUP_PIVOT_STYLE.applyStyle();
 
       if(allGroups.Pivots.length > 0) {
         for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
@@ -1068,8 +1051,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
             if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZa[0], Image_XYZa[1], innerWinX1, innerWinY1, innerWinX2, innerWinY2)) {
-                if (isInside(Image_XYZb[0], Image_XYZb[1], innerWinX1, innerWinY1, innerWinX2, innerWinY2)) {
+              if (isInside(Image_XYZa[0], Image_XYZa[1], GROUP_PIVOT_STYLE.innerWinX1, GROUP_PIVOT_STYLE.innerWinY1, GROUP_PIVOT_STYLE.innerWinX2, GROUP_PIVOT_STYLE.innerWinY2)) {
+                if (isInside(Image_XYZb[0], Image_XYZb[1], GROUP_PIVOT_STYLE.innerWinX1, GROUP_PIVOT_STYLE.innerWinY1, GROUP_PIVOT_STYLE.innerWinX2, GROUP_PIVOT_STYLE.innerWinY2)) {
                   line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
                 }
               }
@@ -1085,15 +1068,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
 
-  else if (Select3D.displayReferencePivot) {
+  if (Select3D.displayReferencePivot) {
 
     pushMatrix();
 
     translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
-
-    // stroke and fill are set per-axis below via AXIS_X/Y/Z_STYLE
-
-    strokeWeight(STROKE_WEIGHT);
 
     float[][] Pivot_Vertices = {
       {
@@ -1158,9 +1137,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
     for (int f = 0; f < Pivot_Lines.length; f++) {
 
-      if (f == 0) stroke(AXIS_X_STYLE.strokeColor);
-      else if (f == 1) stroke(AXIS_Y_STYLE.strokeColor);
-      else if (f == 2) stroke(AXIS_Z_STYLE.strokeColor);
+      DrawStyle axisStyle;
+      if (f == 0) axisStyle = AXIS_X_STYLE;
+      else if (f == 1) axisStyle = AXIS_Y_STYLE;
+      else axisStyle = AXIS_Z_STYLE;
+
+      axisStyle.applyStyle();
 
       int a = Pivot_Lines[f][0];
       int b = Pivot_Lines[f][1];
@@ -1177,8 +1159,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
 
       if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-        if (isInside(Image_XYZa[0], Image_XYZa[1], innerWinX1, innerWinY1, innerWinX2, innerWinY2)) {
-          if (isInside(Image_XYZb[0], Image_XYZb[1], innerWinX1, innerWinY1, innerWinX2, innerWinY2)) {
+        if (isInside(Image_XYZa[0], Image_XYZa[1], axisStyle.innerWinX1, axisStyle.innerWinY1, axisStyle.innerWinX2, axisStyle.innerWinY2)) {
+          if (isInside(Image_XYZb[0], Image_XYZb[1], axisStyle.innerWinX1, axisStyle.innerWinY1, axisStyle.innerWinX2, axisStyle.innerWinY2)) {
             line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
           }
         }
