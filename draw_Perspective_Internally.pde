@@ -40,10 +40,12 @@ float[] clipPolygon_intersect (float[] a, float[] b, float nx, float ny, float d
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
-  float winX1 = -0.5 * WIN3D.dX;
-  float winY1 = -0.5 * WIN3D.dY;
-  float winX2 =  0.5 * WIN3D.dX;
-  float winY2 =  0.5 * WIN3D.dY;
+  final int STROKE_WEIGHT = 4;
+
+  final float winX1 = -0.5 * WIN3D.dX;
+  final float winY1 = -0.5 * WIN3D.dY;
+  final float winX2 =  0.5 * WIN3D.dX;
+  final float winY2 =  0.5 * WIN3D.dY;
 
   if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
 
@@ -57,7 +59,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       stroke(255, 0, 255, 127);
 
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       ellipseMode(CENTER);
 
@@ -83,13 +85,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
-  if (current_ObjectCategory == ObjectCategory.CAMERA) {
+  else if (current_ObjectCategory == ObjectCategory.CAMERA) {
 
     if (Select3D.Camera_displayEdges) {
 
@@ -100,7 +100,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       noFill();
 
       stroke(255, 127, 0);
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       {
         for (int o = Select3D.Camera_ids.length - 1; o >= 0; o--) {
@@ -137,13 +137,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
-  if (current_ObjectCategory == ObjectCategory.SECTION) {
+  else if (current_ObjectCategory == ObjectCategory.SECTION) {
 
     if (Select3D.Section_displayEdges) {
 
@@ -154,7 +152,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       noFill();
 
       stroke(255, 127, 0);
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       {
         for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
@@ -191,13 +189,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
-  if (current_ObjectCategory == ObjectCategory.SOLID) {
+  else if (current_ObjectCategory == ObjectCategory.SOLID) {
 
     if (Select3D.Solid_displayEdges) {
 
@@ -208,7 +204,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       noFill();
 
       stroke(255, 127, 0);
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       {
         for (int o = Select3D.Solid_ids.length - 1; o >= 0; o--) {
@@ -252,13 +248,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       }
 
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
-  if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+  else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
 
     if (Select3D.Model2D_displayEdges) {
 
@@ -269,7 +263,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       noFill();
 
       stroke(255, 127, 0);
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       {
         for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
@@ -311,13 +305,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
-  if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+  else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
 
     if (Select3D.Model1D_displayEdges) {
 
@@ -328,7 +320,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       noFill();
 
       stroke(255, 127, 0);
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       {
         for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
@@ -366,13 +358,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
-  if (current_ObjectCategory == ObjectCategory.FACE) {
+  else if (current_ObjectCategory == ObjectCategory.FACE) {
 
     if (Select3D.Face_displayEdges) {
 
@@ -383,7 +373,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       noFill();
 
       stroke(127, 0, 255);
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
 
@@ -438,8 +428,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
 
@@ -453,7 +441,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       fill(0);
 
       stroke(0);
-      strokeWeight(0);
+      strokeWeight(STROKE_WEIGHT);
 
       textSize(1.5 * MessageSize);
       textAlign(CENTER, BOTTOM);
@@ -479,14 +467,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
 
-  if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+  else if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
     if (Select3D.Polyline_displayVertexCount) {
 
@@ -497,7 +483,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       fill(0);
 
       stroke(0);
-      strokeWeight(0);
+      strokeWeight(STROKE_WEIGHT);
 
       textSize(1.5 * MessageSize);
       textAlign(CENTER, BOTTOM);
@@ -523,14 +509,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
 
-  if (current_ObjectCategory == ObjectCategory.VERTEX) {
+  else if (current_ObjectCategory == ObjectCategory.VERTEX) {
 
     if (Select3D.Vertex_displayVertices) {
 
@@ -542,7 +526,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       stroke(255, 0, 255, 127);
 
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       ellipseMode(CENTER);
 
@@ -563,15 +547,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       }
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
 
 
-  if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+  else if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
 
     if (Select3D.Vertex_displayVertices) {
 
@@ -579,7 +561,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      strokeWeight(0);
+      strokeWeight(STROKE_WEIGHT);
 
       ellipseMode(CENTER);
 
@@ -610,15 +592,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       }
 
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
 
 
-  if (current_ObjectCategory == ObjectCategory.GROUP) {
+  else if (current_ObjectCategory == ObjectCategory.GROUP) {
 
     if (Select3D.Group_displayEdges) {
 
@@ -629,7 +609,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       noFill();
 
       stroke(127);
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
@@ -834,8 +814,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       }
 
 
-      strokeWeight(0);
-
       popMatrix();
     }
 
@@ -849,7 +827,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       noFill();
 
       stroke(0, 127, 0, 127);
-      strokeWeight(2);
+      strokeWeight(STROKE_WEIGHT);
 
       int keep_selection_alignX = Select3D.alignX;
       int keep_selection_alignY = Select3D.alignY;
@@ -996,8 +974,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         }
       }
 
-      strokeWeight(0);
-
       popMatrix();
 
 
@@ -1019,7 +995,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       stroke(255, 127, 0, 127);
 
-      strokeWeight(5);
+      strokeWeight(STROKE_WEIGHT);
 
       if(allGroups.Pivots.length > 0) {
         for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
@@ -1116,15 +1092,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       }
 
 
-      strokeWeight(0);
-
       popMatrix();
     }
   }
 
 
 
-  if (Select3D.displayReferencePivot) {
+  else if (Select3D.displayReferencePivot) {
 
     pushMatrix();
 
@@ -1132,7 +1106,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
     noFill();
 
-    strokeWeight(2);
+    strokeWeight(STROKE_WEIGHT);
 
     float[][] Pivot_Vertices = {
       {
@@ -1224,8 +1198,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       }
     }
 
-    strokeWeight(0);
-
     popMatrix();
   }
+
+  strokeWeight(0);
 }
