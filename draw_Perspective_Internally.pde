@@ -129,21 +129,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             }
           }
 
-          float[][] clippedVertices = clipPolygon_toWindow(
-            faceVertices.toArray(new float[faceVertices.size()][]),
+          drawClosedShape(faceVertices,
             CAMERA_STYLE.innerWinX1, CAMERA_STYLE.innerWinY1, CAMERA_STYLE.innerWinX2, CAMERA_STYLE.innerWinY2
-            );
-
-          beginShape();
-          for (int j = 0; j < clippedVertices.length; j++) {
-            vertex(clippedVertices[j][0], clippedVertices[j][1]);
-          }
-          // Repeat the first vertex instead of using endShape(CLOSE),
-          // which was causing rendering artifacts on the closing edge.
-          if (clippedVertices.length > 0) {
-            vertex(clippedVertices[0][0], clippedVertices[0][1]);
-          }
-          endShape();
+          );
         }
       }
 
@@ -183,21 +171,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             }
           }
 
-          float[][] clippedVertices = clipPolygon_toWindow(
-            faceVertices.toArray(new float[faceVertices.size()][]),
+          drawClosedShape(faceVertices,
             SECTION_STYLE.innerWinX1, SECTION_STYLE.innerWinY1, SECTION_STYLE.innerWinX2, SECTION_STYLE.innerWinY2
-            );
-
-          beginShape();
-          for (int j = 0; j < clippedVertices.length; j++) {
-            vertex(clippedVertices[j][0], clippedVertices[j][1]);
-          }
-          // Repeat the first vertex instead of using endShape(CLOSE),
-          // which was causing rendering artifacts on the closing edge.
-          if (clippedVertices.length > 0) {
-            vertex(clippedVertices[0][0], clippedVertices[0][1]);
-          }
-          endShape();
+          );
         }
       }
 
@@ -241,21 +217,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               }
             }
 
-            float[][] clippedVertices = clipPolygon_toWindow(
-              faceVertices.toArray(new float[faceVertices.size()][]),
+            drawClosedShape(faceVertices,
               SOLID_STYLE.innerWinX1, SOLID_STYLE.innerWinY1, SOLID_STYLE.innerWinX2, SOLID_STYLE.innerWinY2
-              );
-
-            beginShape();
-            for (int j = 0; j < clippedVertices.length; j++) {
-              vertex(clippedVertices[j][0], clippedVertices[j][1]);
-            }
-            // Repeat the first vertex instead of using endShape(CLOSE),
-            // which was causing rendering artifacts on the closing edge.
-            if (clippedVertices.length > 0) {
-              vertex(clippedVertices[0][0], clippedVertices[0][1]);
-            }
-            endShape();
+            );
           }
         }
 
@@ -302,21 +266,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               }
             }
 
-            float[][] clippedVertices = clipPolygon_toWindow(
-              faceVertices.toArray(new float[faceVertices.size()][]),
+            drawClosedShape(faceVertices,
               MODEL2D_STYLE.innerWinX1, MODEL2D_STYLE.innerWinY1, MODEL2D_STYLE.innerWinX2, MODEL2D_STYLE.innerWinY2
-              );
-
-            beginShape();
-            for (int j = 0; j < clippedVertices.length; j++) {
-              vertex(clippedVertices[j][0], clippedVertices[j][1]);
-            }
-            // Repeat the first vertex instead of using endShape(CLOSE),
-            // which was causing rendering artifacts on the closing edge.
-            if (clippedVertices.length > 0) {
-              vertex(clippedVertices[0][0], clippedVertices[0][1]);
-            }
-            endShape();
+            );
           }
         }
       }
@@ -357,21 +309,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             }
           }
 
-          float[][] clippedVertices = clipPolygon_toWindow(
-            faceVertices.toArray(new float[faceVertices.size()][]),
+          drawClosedShape(faceVertices,
             MODEL1D_STYLE.innerWinX1, MODEL1D_STYLE.innerWinY1, MODEL1D_STYLE.innerWinX2, MODEL1D_STYLE.innerWinY2
-            );
-
-          beginShape();
-          for (int j = 0; j < clippedVertices.length; j++) {
-            vertex(clippedVertices[j][0], clippedVertices[j][1]);
-          }
-          // Repeat the first vertex instead of using endShape(CLOSE),
-          // which was causing rendering artifacts on the closing edge.
-          if (clippedVertices.length > 0) {
-            vertex(clippedVertices[0][0], clippedVertices[0][1]);
-          }
-          endShape();
+          );
 
         }
       }
@@ -429,21 +369,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             }
           }
 
-          float[][] clippedVertices = clipPolygon_toWindow(
-            faceVertices.toArray(new float[faceVertices.size()][]),
+          drawClosedShape(faceVertices,
             FACE_EDGE_STYLE.innerWinX1, FACE_EDGE_STYLE.innerWinY1, FACE_EDGE_STYLE.innerWinX2, FACE_EDGE_STYLE.innerWinY2
-            );
-
-          beginShape();
-          for (int s = 0; s < clippedVertices.length; s++) {
-            vertex(clippedVertices[s][0], clippedVertices[s][1]);
-          }
-          // Repeat the first vertex instead of using endShape(CLOSE),
-          // which was causing rendering artifacts on the closing edge.
-          if (clippedVertices.length > 0) {
-            vertex(clippedVertices[0][0], clippedVertices[0][1]);
-          }
-          endShape();
+          );
         }
 
       }
@@ -661,21 +589,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 }
               }
 
-              float[][] clippedVertices = clipPolygon_toWindow(
-                faceVertices.toArray(new float[faceVertices.size()][]),
+              drawClosedShape(faceVertices,
                 GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-                );
-
-              beginShape();
-              for (int s = 0; s < clippedVertices.length; s++) {
-                vertex(clippedVertices[s][0], clippedVertices[s][1]);
-              }
-              // Repeat the first vertex instead of using endShape(CLOSE),
-              // which was causing rendering artifacts on the closing edge.
-              if (clippedVertices.length > 0) {
-                vertex(clippedVertices[0][0], clippedVertices[0][1]);
-              }
-              endShape();
+              );
             }
           }
         }
@@ -699,21 +615,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               }
             }
 
-            float[][] clippedVertices = clipPolygon_toWindow(
-              faceVertices.toArray(new float[faceVertices.size()][]),
+            drawClosedShape(faceVertices,
               GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-              );
-
-            beginShape();
-            for (int vNo = 0; vNo < clippedVertices.length; vNo++) {
-              vertex(clippedVertices[vNo][0], clippedVertices[vNo][1]);
-            }
-            // Repeat the first vertex instead of using endShape(CLOSE),
-            // which was causing rendering artifacts on the closing edge.
-            if (clippedVertices.length > 0) {
-              vertex(clippedVertices[0][0], clippedVertices[0][1]);
-            }
-            endShape();
+            );
           }
         }
 
@@ -739,21 +643,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               }
             }
 
-            float[][] clippedVertices = clipPolygon_toWindow(
-              faceVertices.toArray(new float[faceVertices.size()][]),
+            drawClosedShape(faceVertices,
               GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-              );
-
-            beginShape();
-            for (int j = 0; j < clippedVertices.length; j++) {
-              vertex(clippedVertices[j][0], clippedVertices[j][1]);
-            }
-            // Repeat the first vertex instead of using endShape(CLOSE),
-            // which was causing rendering artifacts on the closing edge.
-            if (clippedVertices.length > 0) {
-              vertex(clippedVertices[0][0], clippedVertices[0][1]);
-            }
-            endShape();
+            );
           }
         }
 
@@ -779,21 +671,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               }
             }
 
-            float[][] clippedVertices = clipPolygon_toWindow(
-              faceVertices.toArray(new float[faceVertices.size()][]),
+            drawClosedShape(faceVertices,
               GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-              );
-
-            beginShape();
-            for (int j = 0; j < clippedVertices.length; j++) {
-              vertex(clippedVertices[j][0], clippedVertices[j][1]);
-            }
-            // Repeat the first vertex instead of using endShape(CLOSE),
-            // which was causing rendering artifacts on the closing edge.
-            if (clippedVertices.length > 0) {
-              vertex(clippedVertices[0][0], clippedVertices[0][1]);
-            }
-            endShape();
+            );
           }
         }
 
@@ -824,21 +704,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                   }
                 }
 
-                float[][] clippedVertices = clipPolygon_toWindow(
-                  faceVertices.toArray(new float[faceVertices.size()][]),
+                drawClosedShape(faceVertices,
                   GROUP_EDGE_STYLE.innerWinX1, GROUP_EDGE_STYLE.innerWinY1, GROUP_EDGE_STYLE.innerWinX2, GROUP_EDGE_STYLE.innerWinY2
-                  );
-
-                beginShape();
-                for (int j = 0; j < clippedVertices.length; j++) {
-                  vertex(clippedVertices[j][0], clippedVertices[j][1]);
-                }
-                // Repeat the first vertex instead of using endShape(CLOSE),
-                // which was causing rendering artifacts on the closing edge.
-                if (clippedVertices.length > 0) {
-                  vertex(clippedVertices[0][0], clippedVertices[0][1]);
-                }
-                endShape();
+                );
               }
             }
           }
@@ -990,21 +858,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           // shape continues along the window's edge(s)/corner(s) wherever
           // it exits and re-enters, instead of drawing a straight line
           // through the invisible area outside the window.
-          float[][] clippedVertices = clipPolygon_toWindow(
-            faceVertices.toArray(new float[faceVertices.size()][]),
+          drawClosedShape(faceVertices,
             GROUP_BOX_STYLE.innerWinX1, GROUP_BOX_STYLE.innerWinY1, GROUP_BOX_STYLE.innerWinX2, GROUP_BOX_STYLE.innerWinY2
-            );
-
-          beginShape();
-          for (int g = 0; g < clippedVertices.length; g++) {
-            vertex(clippedVertices[g][0], clippedVertices[g][1]);
-          }
-          // Repeat the first vertex instead of using endShape(CLOSE),
-          // which was causing rendering artifacts on the closing edge.
-          if (clippedVertices.length > 0) {
-            vertex(clippedVertices[0][0], clippedVertices[0][1]);
-          }
-          endShape();
+          );
         }
       }
 
@@ -1271,4 +1127,25 @@ float[] clipPolygon_intersect (float[] a, float[] b, float nx, float ny, float d
   float db = nx * b[0] + ny * b[1] - d;
   float t = da / (da - db);
   return new float[]{ a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]) };
+}
+
+// Clips faceVertices to the given window bounds, then draws the resulting
+// shape.
+void drawClosedShape (ArrayList<float[]> faceVertices, float xmin, float ymin, float xmax, float ymax) {
+  float[][] vertices = clipPolygon_toWindow(
+    faceVertices.toArray(new float[faceVertices.size()][]),
+    xmin, ymin, xmax, ymax
+  );
+
+  beginShape();
+  for (int i = 0; i < vertices.length; i++) {
+    vertex(vertices[i][0], vertices[i][1]);
+  }
+
+  // Repeats the first vertex at the end instead of using endShape(CLOSE),
+  // which was causing rendering artifacts on the closing vertex.
+  if (vertices.length > 0) {
+    vertex(vertices[0][0], vertices[0][1]);
+  }
+  endShape();
 }
