@@ -25,49 +25,38 @@ void download_CLIMATE_TMYEPW () {
 
   if (new_files_downloaded) {
 
-    String folder_inout = Folder_CLIMATE_TMYEPW;
+    File f = new File(the_target + ".zip");
+    File outFile = new File(the_target + ".epw");
 
-    dir = new File(folder_inout);
-    File[] zipFiles = dir.listFiles((d, name) -> name.endsWith(".zip"));
-    if (zipFiles != null) {
-      for (File f : zipFiles) {
-        String p = f.getAbsolutePath();
+    try (
+      ZipInputStream zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(f)))
+    ) {
+      ZipEntry entry;
+      boolean foundEpw = false;
 
-        // strip the ".zip" suffix to get the output filename and add .epw
-        String outPath = p.substring(0, p.length() - 4) + ".epw";
-        File outFile = new File(outPath);
+      while ((entry = zipIn.getNextEntry()) != null) {
+        if (entry.getName().toLowerCase().endsWith(".epw")) {
 
-        try (
-          ZipInputStream zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(f)))
-        ) {
-          ZipEntry entry;
-          boolean foundEpw = false;
-
-          while ((entry = zipIn.getNextEntry()) != null) {
-            if (entry.getName().toLowerCase().endsWith(".epw")) {
-
-              try (FileOutputStream out = new FileOutputStream(outFile)) {
-                byte[] buffer = new byte[8192];
-                int n;
-                while ((n = zipIn.read(buffer)) != -1) {
-                  out.write(buffer, 0, n);
-                }
-              }
-
-              foundEpw = true;
-              break; // ignore the archive's other files (.stat, .ddy, .clm, .wea, .rain, etc.)
+          try (FileOutputStream out = new FileOutputStream(outFile)) {
+            byte[] buffer = new byte[8192];
+            int n;
+            while ((n = zipIn.read(buffer)) != -1) {
+              out.write(buffer, 0, n);
             }
-            zipIn.closeEntry();
           }
 
-          if (foundEpw) {
-            f.delete(); // only reached if extraction succeeded without throwing
-          }
+          foundEpw = true;
+          break; // ignore the archive's other files (.stat, .ddy, .clm, .wea, .rain, etc.)
         }
-        catch (Exception e) {
-          // println("Failed to extract " + f.getName() + ": " + e);
-        }
+        zipIn.closeEntry();
       }
+
+      if (foundEpw) {
+        f.delete(); // only reached if extraction succeeded without throwing
+      }
+    }
+    catch (Exception e) {
+      // println("Failed to extract " + f.getName() + ": " + e);
     }
 
     CLIMATE_TMYEPW_load = true;
