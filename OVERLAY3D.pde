@@ -55,51 +55,9 @@ class solarchvision_OVERLAY3D {
   final DrawStyle AXIS_Y_STYLE          = new DrawStyle(2, color(0, 0, 255));        // blue stroke, no fill
   final DrawStyle AXIS_Z_STYLE          = new DrawStyle(2, color(127, 127, 0));      // olive stroke, no fill
 
-  // Accumulates a face's vertices into an image-space vertex list,
-  // clipping against the camera's near plane (camera-space z == 0)
-  // instead of just dropping vertices behind the camera. Without this, a
-  // face edge that crosses from in front of the camera to behind it would
-  // either vanish or (worse) connect two unrelated points with a bogus
-  // straight edge once the polygon is later clipped to the window.
-  //
-  // Usage: create one instance per face/polyline, call addVertex() for
-  // each of its vertices in order (in object space, same as passed to
-  // WIN3D.calculate_Perspective_Internally elsewhere), then use the
-  // populated faceVertices list as before.
-  class NearPlaneClipper {
-    final float NEAR_Z = 0.0001; // just in front of the camera plane, to avoid dividing by zero
-
-    boolean havePrev = false;
-    float[] prevCam;
-
-    void addVertex (ArrayList<float[]> faceVertices, float x, float y, float z) {
-      float[] cam = WIN3D.calculate_CameraSpace_Internally(x, y, z);
-      boolean isFront = cam[2] > 0;
-
-      if (havePrev) {
-        boolean prevFront = prevCam[2] > 0;
-        if (isFront != prevFront) {
-          // The edge from the previous vertex to this one crosses the
-          // near plane: add the crossing point instead of silently
-          // dropping it.
-          float t = (NEAR_Z - prevCam[2]) / (cam[2] - prevCam[2]);
-          float crossX = prevCam[0] + t * (cam[0] - prevCam[0]);
-          float crossY = prevCam[1] + t * (cam[1] - prevCam[1]);
-
-          float[] crossImage = WIN3D.calculate_Perspective_fromCameraSpace(crossX, crossY, NEAR_Z);
-          faceVertices.add(new float[]{ crossImage[0], crossImage[1] });
-        }
-      }
-
-      if (isFront) {
-        float[] image = WIN3D.calculate_Perspective_fromCameraSpace(cam[0], cam[1], cam[2]);
-        faceVertices.add(new float[]{ image[0], image[1] });
-      }
-
-      prevCam = cam;
-      havePrev = true;
-    }
-  }
+  // How far in front of the camera plane a point must be to count as
+  // visible - just above zero, so the projection never divides by zero.
+  final float NEAR_Z = 0.0001;
 
   void draw () {
     pushMatrix();
@@ -150,8 +108,7 @@ class solarchvision_OVERLAY3D {
 
             int f = Select3D.Camera_ids[o];
 
-            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-            NearPlaneClipper nearClip = new NearPlaneClipper();
+            ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
             for (int j = 0; j < allCameras.Faces[f].length; j++) {
 
@@ -161,10 +118,10 @@ class solarchvision_OVERLAY3D {
               float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
               float z = -allCameras.Vertices[vNo][2] * OBJECTS_scale;
 
-              nearClip.addVertex(faceVertices, x, y, z);
+              camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(faceVertices, CAMERA_STYLE);
+            drawClosedShape(camVertices, CAMERA_STYLE);
           }
         }
 
@@ -181,8 +138,7 @@ class solarchvision_OVERLAY3D {
 
           int f = Select3D.Section_ids[o];
 
-          ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-          NearPlaneClipper nearClip = new NearPlaneClipper();
+          ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
           for (int j = 0; j < allSections.Faces[f].length; j++) {
 
@@ -192,10 +148,10 @@ class solarchvision_OVERLAY3D {
             float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
             float z = -allSections.Vertices[vNo][2] * OBJECTS_scale;
 
-            nearClip.addVertex(faceVertices, x, y, z);
+            camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
           }
 
-          drawClosedShape(faceVertices, SECTION_STYLE);
+          drawClosedShape(camVertices, SECTION_STYLE);
         }
       }
     }
@@ -214,8 +170,7 @@ class solarchvision_OVERLAY3D {
 
             int f = OBJ_ID * allSolids.num_visualFaces + plane_type;
 
-            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-            NearPlaneClipper nearClip = new NearPlaneClipper();
+            ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
             for (int j = 0; j < allSolids.Faces[f].length; j++) {
 
@@ -225,10 +180,10 @@ class solarchvision_OVERLAY3D {
               float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
               float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
-              nearClip.addVertex(faceVertices, x, y, z);
+              camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(faceVertices, SOLID_STYLE);
+            drawClosedShape(camVertices, SOLID_STYLE);
           }
         }
       }
@@ -248,8 +203,7 @@ class solarchvision_OVERLAY3D {
 
             int f = OBJ_ID * allModel2Ds.num_visualFaces + plane_type;
 
-            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-            NearPlaneClipper nearClip = new NearPlaneClipper();
+            ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
             for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
 
@@ -259,10 +213,10 @@ class solarchvision_OVERLAY3D {
               float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
               float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-              nearClip.addVertex(faceVertices, x, y, z);
+              camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(faceVertices, MODEL2D_STYLE);
+            drawClosedShape(camVertices, MODEL2D_STYLE);
           }
         }
       }
@@ -278,8 +232,7 @@ class solarchvision_OVERLAY3D {
 
           int f = Select3D.Model1D_ids[o];
 
-          ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-          NearPlaneClipper nearClip = new NearPlaneClipper();
+          ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
           for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
 
@@ -289,10 +242,10 @@ class solarchvision_OVERLAY3D {
             float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
             float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-            nearClip.addVertex(faceVertices, x, y, z);
+            camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
           }
 
-          drawClosedShape(faceVertices, MODEL1D_STYLE);
+          drawClosedShape(camVertices, MODEL1D_STYLE);
 
         }
       }
@@ -328,8 +281,7 @@ class solarchvision_OVERLAY3D {
 
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-            NearPlaneClipper nearClip = new NearPlaneClipper();
+            ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
             for (int s = 0; s < subFace.length; s++) {
 
@@ -337,10 +289,10 @@ class solarchvision_OVERLAY3D {
               float y = subFace[s][1] * OBJECTS_scale;
               float z = -subFace[s][2] * OBJECTS_scale;
 
-              nearClip.addVertex(faceVertices, x, y, z);
+              camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(faceVertices, FACE_EDGE_STYLE);
+            drawClosedShape(camVertices, FACE_EDGE_STYLE);
           }
         }
       }
@@ -516,8 +468,7 @@ class solarchvision_OVERLAY3D {
 
                 float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-                ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-                NearPlaneClipper nearClip = new NearPlaneClipper();
+                ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
                 for (int s = 0; s < subFace.length; s++) {
 
@@ -525,10 +476,10 @@ class solarchvision_OVERLAY3D {
                   float y = subFace[s][1] * OBJECTS_scale;
                   float z = -subFace[s][2] * OBJECTS_scale;
 
-                  nearClip.addVertex(faceVertices, x, y, z);
+                  camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
                 }
 
-                drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
+                drawClosedShape(camVertices, GROUP_EDGE_STYLE);
               }
             }
           }
@@ -537,8 +488,7 @@ class solarchvision_OVERLAY3D {
           for (int f = allGroups.getStart_Polyline(OBJ_ID); f <= allGroups.getStop_Polyline(OBJ_ID); f++) {
             if ((0 <= f) && (f < allPolylines.nodes.length)) {
 
-              ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-              NearPlaneClipper nearClip = new NearPlaneClipper();
+              ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
               for (int vNo = 0; vNo < allPolylines.nodes[f].length; vNo++) {
 
@@ -546,10 +496,10 @@ class solarchvision_OVERLAY3D {
                 float y = allPoints.getY(vNo) * OBJECTS_scale;
                 float z = -allPoints.getZ(vNo) * OBJECTS_scale;
 
-                nearClip.addVertex(faceVertices, x, y, z);
+                camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
 
-              drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
+              drawClosedShape(camVertices, GROUP_EDGE_STYLE);
             }
           }
 
@@ -558,8 +508,7 @@ class solarchvision_OVERLAY3D {
 
             if ((0 <= f) && (f < allModel1Ds.Faces.length)) {
 
-              ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-              NearPlaneClipper nearClip = new NearPlaneClipper();
+              ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
               for (int j = 0; j < allModel1Ds.Faces[f].length; j++) {
 
@@ -569,10 +518,10 @@ class solarchvision_OVERLAY3D {
                 float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
                 float z = -allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-                nearClip.addVertex(faceVertices, x, y, z);
+                camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
 
-              drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
+              drawClosedShape(camVertices, GROUP_EDGE_STYLE);
             }
           }
 
@@ -581,8 +530,7 @@ class solarchvision_OVERLAY3D {
 
             if ((0 <= f) && (f < allModel2Ds.Faces.length)) {
 
-              ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-              NearPlaneClipper nearClip = new NearPlaneClipper();
+              ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
               for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
 
@@ -592,10 +540,10 @@ class solarchvision_OVERLAY3D {
                 float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
                 float z = -allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
 
-                nearClip.addVertex(faceVertices, x, y, z);
+                camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
 
-              drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
+              drawClosedShape(camVertices, GROUP_EDGE_STYLE);
             }
           }
 
@@ -609,8 +557,7 @@ class solarchvision_OVERLAY3D {
 
                 if ((0 <= f) && (f < allSolids.Faces.length)) {
 
-                  ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-                  NearPlaneClipper nearClip = new NearPlaneClipper();
+                  ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
                   for (int j = 0; j < allSolids.Faces[f].length; j++) {
 
@@ -620,10 +567,10 @@ class solarchvision_OVERLAY3D {
                     float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
                     float z = -allSolids.Vertices[vNo][2] * OBJECTS_scale;
 
-                    nearClip.addVertex(faceVertices, x, y, z);
+                    camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
                   }
 
-                  drawClosedShape(faceVertices, GROUP_EDGE_STYLE);
+                  drawClosedShape(camVertices, GROUP_EDGE_STYLE);
                 }
               }
             }
@@ -744,8 +691,7 @@ class solarchvision_OVERLAY3D {
 
           for (int f = 0; f < BoundingBox_Faces.length; f++) {
 
-            ArrayList<float[]> faceVertices = new ArrayList<float[]>();
-            NearPlaneClipper nearClip = new NearPlaneClipper();
+            ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
             for (int g = 0; g < BoundingBox_Faces[f].length; g++) {
 
@@ -755,10 +701,10 @@ class solarchvision_OVERLAY3D {
               float y = BoundingBox_Vertices[vNo][1] * OBJECTS_scale;
               float z = -BoundingBox_Vertices[vNo][2] * OBJECTS_scale;
 
-              nearClip.addVertex(faceVertices, x, y, z);
+              camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(faceVertices, GROUP_BOX_STYLE);
+            drawClosedShape(camVertices, GROUP_BOX_STYLE);
           }
         }
 
@@ -981,6 +927,42 @@ class solarchvision_OVERLAY3D {
 
 
 
+  // Clips a closed polygon of camera-space points ({x, y, z} triples)
+  // against the near plane (z > NEAR_Z), using the same cyclic
+  // Sutherland-Hodgman technique as clipPolygon_halfPlane below -
+  // including the edge that wraps from the last vertex back to the
+  // first, so a polygon that starts (or ends) behind the camera still
+  // gets a correctly clipped edge there instead of drawClosedShape later
+  // connecting mismatched points with a bogus diagonal.
+  float[][] clipPolygon_nearPlane (float[][] poly) {
+    int n = poly.length;
+    if (n == 0) return poly;
+
+    ArrayList<float[]> out = new ArrayList<float[]>();
+
+    for (int i = 0; i < n; i++) {
+      float[] curr = poly[i];
+      float[] prev = poly[(i - 1 + n) % n];
+
+      boolean currIn = curr[2] > NEAR_Z;
+      boolean prevIn = prev[2] > NEAR_Z;
+
+      if (currIn != prevIn) {
+        float t = (NEAR_Z - prev[2]) / (curr[2] - prev[2]);
+        out.add(new float[]{
+          prev[0] + t * (curr[0] - prev[0]),
+          prev[1] + t * (curr[1] - prev[1]),
+          NEAR_Z
+        });
+      }
+      if (currIn) {
+        out.add(curr);
+      }
+    }
+
+    return out.toArray(new float[out.size()][]);
+  }
+
   float[][] clipPolygon_toWindow (float[][] poly, float xmin, float ymin, float xmax, float ymax) {
     float[][] result = poly;
     result = clipPolygon_halfPlane(result,  1,  0, xmin);  //  x >= xmin
@@ -1021,9 +1003,22 @@ class solarchvision_OVERLAY3D {
     return new float[]{ a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]) };
   }
 
-  // Clips faceVertices to the given style's window bounds, then draws the
-  // resulting shape.
-  void drawClosedShape (ArrayList<float[]> faceVertices, DrawStyle style) {
+  // Clips camVertices (camera-space {x, y, z} triples, in order around the
+  // face/polyline) against the near plane, projects the surviving points
+  // to image space, clips those against the given style's window bounds,
+  // and draws the resulting shape.
+  void drawClosedShape (ArrayList<float[]> camVertices, DrawStyle style) {
+    float[][] nearClipped = clipPolygon_nearPlane(
+      camVertices.toArray(new float[camVertices.size()][])
+    );
+
+    ArrayList<float[]> faceVertices = new ArrayList<float[]>();
+    for (int i = 0; i < nearClipped.length; i++) {
+      float[] cam = nearClipped[i];
+      float[] image = WIN3D.calculate_Perspective_fromCameraSpace(cam[0], cam[1], cam[2]);
+      faceVertices.add(new float[]{ image[0], image[1] });
+    }
+
     float[][] vertices = clipPolygon_toWindow(
       faceVertices.toArray(new float[faceVertices.size()][]),
       style.innerWinX1, style.innerWinY1, style.innerWinX2, style.innerWinY2
