@@ -1,3 +1,33 @@
+// Bundles the stroke color and fill color used for one visual case. If the
+// fill color is fully transparent (alpha == 0), applyStyle() calls
+// noFill() instead of fill() for that case.
+class DrawStyle {
+  color strokeColor;
+  color fillColor;
+
+  // Stroke-only convenience constructor: fill defaults to fully
+  // transparent, which applyStyle() treats as "no fill".
+  DrawStyle (color strokeColor) {
+    this(strokeColor, color(0, 0, 0, 0));
+  }
+
+  DrawStyle (color strokeColor, color fillColor) {
+    this.strokeColor = strokeColor;
+    this.fillColor = fillColor;
+  }
+}
+
+// Applies a DrawStyle's stroke, and its fill if not transparent
+// (otherwise calls noFill()).
+void applyStyle (DrawStyle style) {
+  stroke(style.strokeColor);
+  if (alpha(style.fillColor) == 0) {
+    noFill();
+  } else {
+    fill(style.fillColor);
+  }
+}
+
 void SOLARCHVISION_draw_Perspective_Internally () {
 
   final float winX1 = -0.5 * WIN3D.dX;
@@ -13,6 +43,23 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   final float innerWinX2 = winX2 - pad;
   final float innerWinY2 = winY2 - pad;
 
+  final DrawStyle LANDPOINT_STYLE       = new DrawStyle(color(255, 0, 255, 127)); // magenta stroke, no fill
+  final DrawStyle CAMERA_STYLE          = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle SECTION_STYLE         = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle SOLID_STYLE           = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle MODEL2D_STYLE         = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle MODEL1D_STYLE         = new DrawStyle(color(255, 127, 0));      // orange stroke, no fill
+  final DrawStyle FACE_EDGE_STYLE       = new DrawStyle(color(127, 0, 255));      // purple stroke, no fill
+  final DrawStyle FACE_LABEL_STYLE      = new DrawStyle(color(0), color(0));      // black stroke + fill
+  final DrawStyle POLYLINE_LABEL_STYLE  = new DrawStyle(color(0), color(0));      // black stroke + fill
+  final DrawStyle VERTEX_STYLE          = new DrawStyle(color(255, 0, 255, 127)); // magenta stroke, no fill
+  final DrawStyle GROUP_EDGE_STYLE      = new DrawStyle(color(127));              // grey stroke, no fill
+  final DrawStyle GROUP_BOX_STYLE       = new DrawStyle(color(0, 127, 0, 127));   // green stroke, no fill
+  final DrawStyle GROUP_PIVOT_STYLE     = new DrawStyle(color(255, 127, 0, 127)); // orange stroke, no fill
+  final DrawStyle AXIS_X_STYLE          = new DrawStyle(color(255, 0, 0));        // red stroke, no fill
+  final DrawStyle AXIS_Y_STYLE          = new DrawStyle(color(0, 0, 255));        // blue stroke, no fill
+  final DrawStyle AXIS_Z_STYLE          = new DrawStyle(color(127, 127, 0));      // olive stroke, no fill
+
   if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
 
     if (Select3D.LandPoint_displayPoints) {
@@ -21,9 +68,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(255, 0, 255, 127);
+      applyStyle(LANDPOINT_STYLE);
 
       strokeWeight(STROKE_WEIGHT);
 
@@ -63,9 +108,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(255, 127, 0);
+      applyStyle(CAMERA_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       {
@@ -115,9 +158,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(255, 127, 0);
+      applyStyle(SECTION_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       {
@@ -167,9 +208,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(255, 127, 0);
+      applyStyle(SOLID_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       {
@@ -226,9 +265,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(255, 127, 0);
+      applyStyle(MODEL2D_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       {
@@ -283,9 +320,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(255, 127, 0);
+      applyStyle(MODEL1D_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       {
@@ -336,9 +371,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(127, 0, 255);
+      applyStyle(FACE_EDGE_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
@@ -404,9 +437,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      fill(0);
-
-      stroke(0);
+      applyStyle(FACE_LABEL_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       textSize(1.5 * MessageSize);
@@ -446,9 +477,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      fill(0);
-
-      stroke(0);
+      applyStyle(POLYLINE_LABEL_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       textSize(1.5 * MessageSize);
@@ -488,9 +517,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(255, 0, 255, 127);
+      applyStyle(VERTEX_STYLE);
 
       strokeWeight(STROKE_WEIGHT);
 
@@ -572,9 +599,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(127);
+      applyStyle(GROUP_EDGE_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
@@ -790,9 +815,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(0, 127, 0, 127);
+      applyStyle(GROUP_BOX_STYLE);
       strokeWeight(STROKE_WEIGHT);
 
       int keep_selection_alignX = Select3D.alignX;
@@ -957,9 +980,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-      noFill();
-
-      stroke(255, 127, 0, 127);
+      applyStyle(GROUP_PIVOT_STYLE);
 
       strokeWeight(STROKE_WEIGHT);
 
@@ -1070,7 +1091,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
     translate(WIN3D.cX + winX2, WIN3D.cY + winY2);
 
-    noFill();
+    // stroke and fill are set per-axis below via AXIS_X/Y/Z_STYLE
 
     strokeWeight(STROKE_WEIGHT);
 
@@ -1137,9 +1158,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
     for (int f = 0; f < Pivot_Lines.length; f++) {
 
-      if (f == 0) stroke(255, 0, 0);
-      if (f == 1) stroke(0, 0, 255);
-      if (f == 2) stroke(127, 127, 0);
+      if (f == 0) stroke(AXIS_X_STYLE.strokeColor);
+      else if (f == 1) stroke(AXIS_Y_STYLE.strokeColor);
+      else if (f == 2) stroke(AXIS_Z_STYLE.strokeColor);
 
       int a = Pivot_Lines[f][0];
       int b = Pivot_Lines[f][1];
