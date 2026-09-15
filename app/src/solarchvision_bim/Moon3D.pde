@@ -7,6 +7,9 @@ class solarchvision_Moon3D {
   private final static float MOON_RADIUS_M = 1737000.0;
   private final static float EARTH_MOON_DISTANCE_M = 384400000.0;
 
+  float lat_step = 5; //in degrees
+  float lon_step  = 10; //in degrees
+
   boolean displaySurface = false;
   boolean displayTexture = true;
 
@@ -32,21 +35,18 @@ class solarchvision_Moon3D {
     float CEN_lon = 0;
     float CEN_lat = 0;
 
-    float delta_Alpha = -5;
-    float delta_Beta  = -10;
-
     float r = MOON_RADIUS_M * Planetary_Magnification;
     float d = EARTH_MOON_DISTANCE_M - FLOAT_r_Earth;
 
-    for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-      for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-        FaceVertex[] subFace = buildSubFace(Alpha, Beta, delta_Alpha, delta_Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY);
+    for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
+      for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
+        FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY);
         writeFaceWIN3D(subFace);
       }
     }
   }
 
-  private FaceVertex[] buildSubFace (float Alpha, float Beta, float delta_Alpha, float delta_Beta,
+  private FaceVertex[] buildSubFace (float Alpha, float Beta,
                                       float r, float d, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
     FaceVertex[] subFace = new FaceVertex[4];
 
@@ -59,8 +59,8 @@ class solarchvision_Moon3D {
 
       float a = Alpha;
       float b = Beta;
-      if (s == 2 || s == 3) a += delta_Alpha;
-      if (s == 1 || s == 2) b += delta_Beta;
+      if (s == 2 || s == 3) a -= this.lat_step;
+      if (s == 1 || s == 2) b -= this.lon_step;
 
       // corner position on the moon sphere
       float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a);

@@ -11,6 +11,9 @@ class solarchvision_Tropo3D {
   private final static int   TROPO_DOWNLOAD_HEIGHT = 600;  // 900
   private final static float TROPO_BOUNDARY_HALF_SPAN = 5;
 
+  float lat_step = 1; //in degrees
+  float lon_step  = 1; //in degrees
+
   int i_Map = 0; // TODO: export it or reset it?
 
   boolean displaySurface = false;
@@ -354,8 +357,6 @@ class solarchvision_Tropo3D {
     float CEN_lon = 0.5 * (this.BoundariesX[n_Map][0] + this.BoundariesX[n_Map][1]);
     float CEN_lat = 0.5 * (this.BoundariesY[n_Map][0] + this.BoundariesY[n_Map][1]);
 
-    float delta_Alpha = -BIOSPHERE_drawResolution;
-    float delta_Beta  = -BIOSPHERE_drawResolution;
     float r = FLOAT_r_Earth + TROPOSPHERE_ALTITUDE_M;
 
     num_vertices_added = 0;
@@ -364,10 +365,10 @@ class solarchvision_Tropo3D {
 
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
-      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+      for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
+        for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
           f += 1;
-          FaceVertex[] subFace = buildSubFace(Alpha, Beta, delta_Alpha, delta_Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
+          FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
           if (!allUVsInRange(subFace)) continue; // outside this tile's texture, nothing to draw
           drawFace(target_window, subFace, n_Map, f, _turn);
         }
@@ -433,7 +434,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private FaceVertex[] buildSubFace (float Alpha, float Beta, float delta_Alpha, float delta_Beta,
+  private FaceVertex[] buildSubFace (float Alpha, float Beta,
                                       float r, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
     FaceVertex[] subFace = new FaceVertex[4];
 
@@ -445,8 +446,8 @@ class solarchvision_Tropo3D {
 
       float a = Alpha;
       float b = Beta;
-      if (s == 2 || s == 3) a += delta_Alpha;
-      if (s == 1 || s == 2) b += delta_Beta;
+      if (s == 2 || s == 3) a -= this.lat_step;
+      if (s == 1 || s == 2) b -= this.lon_step;
 
       // corner position on the troposphere shell
       float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a);

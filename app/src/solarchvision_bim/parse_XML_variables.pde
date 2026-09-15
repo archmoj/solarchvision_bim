@@ -64,8 +64,6 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   IMPACTS_displayDay = XML_getInt(parent, "IMPACTS_displayDay");
 
-  BIOSPHERE_drawResolution = XML_getFloat(parent, "BIOSPHERE_drawResolution");
-
   String new_Default_Font = XML_getString(parent, "Default_Font");
   if (Default_Font.equals(new_Default_Font)) {
   } else {

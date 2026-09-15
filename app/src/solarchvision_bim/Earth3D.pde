@@ -6,6 +6,9 @@ class solarchvision_Earth3D {
   private final static float LATITUDE_SPAN  = 180.0;
   private final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
 
+  float lat_step = 1; //0.1; //in degrees
+  float lon_step  = 1; //0.1; //in degrees
+
   boolean displaySurface = true;
   boolean displayTexture = true;
 
@@ -256,8 +259,6 @@ class solarchvision_Earth3D {
     float CEN_lon = 0.5 * (bx1 + bx2);
     float CEN_lat = 0.5 * (by1 + by2);
 
-    float delta_Alpha = -BIOSPHERE_drawResolution;
-    float delta_Beta  = -BIOSPHERE_drawResolution;
     float r = FLOAT_r_Earth;
 
     if (target_window == TypeWindow.HTML || target_window == TypeWindow.OBJ3D) {
@@ -283,16 +284,16 @@ class solarchvision_Earth3D {
 
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
-      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+      for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
         if(Alpha > stationLat + clipRadiusDegrees) continue;
         if(Alpha < stationLat - clipRadiusDegrees) continue;
 
-        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+        for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
           if(Beta > stationLon + clipRadiusDegrees) continue;
           if(Beta < stationLon - clipRadiusDegrees) continue;
 
           f += 1;
-          FaceVertex[] subFace = buildSubFace(Alpha, Beta, delta_Alpha, delta_Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
+          FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
 
           if (isWin3D) {
             addFaceWIN3D(subFace, textureImage);
@@ -396,7 +397,7 @@ class solarchvision_Earth3D {
     }
   }
 
-  private FaceVertex[] buildSubFace (float Alpha, float Beta, float delta_Alpha, float delta_Beta,
+  private FaceVertex[] buildSubFace (float Alpha, float Beta,
                                       float r, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
     FaceVertex[] subFace = new FaceVertex[4];
 
@@ -408,8 +409,8 @@ class solarchvision_Earth3D {
 
       float a = Alpha;
       float b = Beta;
-      if (s == 2 || s == 3) a += delta_Alpha;
-      if (s == 1 || s == 2) b += delta_Beta;
+      if (s == 2 || s == 3) a -= this.lat_step;
+      if (s == 1 || s == 2) b -= this.lon_step;
 
       float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
       float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);

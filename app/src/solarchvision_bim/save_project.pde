@@ -74,8 +74,6 @@ void SOLARCHVISION_save_project (String myFile) {
 
     XML_setInt(parent, "IMPACTS_displayDay", IMPACTS_displayDay);
 
-    XML_setFloat(parent, "BIOSPHERE_drawResolution", BIOSPHERE_drawResolution);
-
     XML_setString(parent, "Default_Font", Default_Font);
   }
 
