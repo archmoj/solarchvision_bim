@@ -19,6 +19,7 @@ class solarchvision_ROLLOUT {
   private String spinnerEditText = "";
   private int spinnerEditCursor = 0;
   private boolean spinnerEditCommit = false;
+  private boolean spinnerEditStateChanged = false;
 
   private void buildAllRollouts () {
 
@@ -128,6 +129,8 @@ class solarchvision_ROLLOUT {
   }
 
   void drawView () {
+
+    this.spinnerEditStateChanged = false;
 
     stroke(255);
     fill(255);
@@ -681,6 +684,10 @@ class solarchvision_ROLLOUT {
         SOLARCHVISION_Y_clicked = -1;
       }
     }
+
+    if (this.spinnerEditStateChanged) {
+      this.drawView();
+    }
   }
 
   int SpinnerInt (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, float roundStep) {
@@ -738,6 +745,8 @@ class solarchvision_ROLLOUT {
 
       editingThis = false;
 
+      this.spinnerEditStateChanged = true;
+
       ROLLOUT.revise();
     }
 
@@ -750,6 +759,8 @@ class solarchvision_ROLLOUT {
         this.spinnerEditCursor = this.spinnerEditText.length();
         this.spinnerEditCommit = false;
         editingThis = true;
+
+        this.spinnerEditStateChanged = true;
       }
 
       SOLARCHVISION_X_clicked = -1;
@@ -903,18 +914,10 @@ class solarchvision_ROLLOUT {
     this.update = false;
   }
 
-  // True while a spinner is in keyboard-edit mode (its gray caption area was
-  // clicked). While this is true, callers should route key events here
-  // instead of to the 3D/study/world navigation shortcuts.
   boolean isEditingSpinner () {
     return this.spinnerEditActive;
   }
 
-  // Handles typing into a spinner that is currently in edit mode: digits,
-  // ".", and a leading "-" insert at the cursor position; left/right move
-  // the cursor; backspace/delete remove the character before/at the cursor;
-  // and enter validates and commits the new value (clamped to
-  // [min_v, max_v] on the next Spinner() call for that caption).
   void keyPressed (KeyEvent e) {
 
     if (!this.spinnerEditActive) return;
