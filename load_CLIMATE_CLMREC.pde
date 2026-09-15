@@ -12,8 +12,12 @@ void load_CLIMATE_CLMREC (String FileName) {
     lineSTR = FileALL[f];
     //println(lineSTR);
 
+    if (lineSTR.trim().length() == 0) continue; // skip blank lines (e.g. a trailing empty line at EOF)
+
     lineSTR = lineSTR.replace("\"", "");
     String[] parts = split(lineSTR, ",");
+
+    if (parts.length < 5) continue; // not a well-formed data row - skip it
 
     int CLIMATE_YEAR = int(parts[1]);
     int CLIMATE_MONTH = int(parts[2]);

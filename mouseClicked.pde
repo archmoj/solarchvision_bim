@@ -477,7 +477,7 @@ StationPicker TMYEPW_PICKER = new StationPicker("TMYEPW", 10000, 50, dataID_CLIM
 
 StationPicker CLMREC_PICKER = new StationPicker("CLMREC", 25000, 50, dataID_CLIMATE_CLMREC) {
   solarchvision_STATION[] getCoords () { return CLMREC_Coordinates; }
-  String getLabel (int f) { return CLMREC_Coordinates[f].getFilename_CWEEDS(); }
+  String getLabel (int f) { return CLMREC_Coordinates[f].getCity() + ", " + CLMREC_Coordinates[f].getProvince(); }
   void select (int f, float lon, float lat) { SOLARCHVISION_selectCLMRECStation(f, lon, lat); }
 };
 
@@ -495,7 +495,7 @@ StationPicker NAEFS_PICKER = new StationPicker("NAEFS", 50000, 50, dataID_ENSEMB
 
 StationPicker SWOB_PICKER = new StationPicker("SWOB", 25000, 50, dataID_ENSEMBLE_OBSERVED) {
   solarchvision_STATION[] getCoords () { return SWOB_Coordinates; }
-  String getLabel (int f) { return SWOB_Coordinates[f].getFilename_SWOB(); }
+  String getLabel (int f) { return SWOB_Coordinates[f].getCode(); }
   void select (int f, float lon, float lat) { SOLARCHVISION_selectSWOBStation(f, lon, lat); }
 };
 
