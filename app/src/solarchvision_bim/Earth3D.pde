@@ -97,10 +97,20 @@ class solarchvision_Earth3D {
 
     if (isWin3D) beginWIN3DSphere(n_Map);
 
+    float stationLon = STATION.getLongitude();
+    float stationLat = STATION.getLatitude();
+    float clipRadiusDegrees = 5;
+
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
       for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+        if(Alpha > stationLat + clipRadiusDegrees) continue;
+        if(Alpha < stationLat - clipRadiusDegrees) continue;
+
         for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+          if(Beta > stationLon + clipRadiusDegrees) continue;
+          if(Beta < stationLon - clipRadiusDegrees) continue;
+
           f += 1;
           FaceVertex[] subFace = buildSubFace(Alpha, Beta, delta_Alpha, delta_Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
 
