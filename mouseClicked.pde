@@ -703,16 +703,19 @@ void mouseClicked () {
               // TMYEPW_pickList_active is guaranteed false here.
               int[] nearby = SOLARCHVISION_findNearbyStations(TMYEPW_Coordinates, mouse_lon, mouse_lat, TMYEPW_PICKLIST_MAX_DIST, TMYEPW_PICKLIST_MAX_COUNT);
 
-              if (nearby.length > 1) {
+              if ((nearby.length > 1) && (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
                 // Multiple TMYEPW stations this close together - let the
-                // user pick one instead of silently guessing.
+                // user pick one instead of silently guessing. Only shown
+                // while TMYEPW is the active data source; otherwise (e.g.
+                // browsing NAEFS/CWEEDS/CLMREC) just quietly track the
+                // single nearest one below, same as the other datasets do.
                 TMYEPW_pickList_active = true;
                 TMYEPW_pickList_indices = nearby;
                 TMYEPW_pickList_mouseLon = mouse_lon;
                 TMYEPW_pickList_mouseLat = mouse_lat;
                 TMYEPW_pickList_scrollOffset = 0;
               } else {
-                int f = (nearby.length == 1) ? nearby[0] : SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
+                int f = (nearby.length > 0) ? nearby[0] : SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
                 SOLARCHVISION_selectTMYEPWStation(f, mouse_lon, mouse_lat);
               }
             }
