@@ -87,16 +87,60 @@ class solarchvision_Earth3D {
 
     int end_turn = (target_window == TypeWindow.OBJ3D) ? 3 : 1;
 
+    // At the default resolution this grid is 180x360 = 64,800 quads. The
+    // WIN3D path used to open a separate beginShape()/texture()/endShape()
+    // for every single one of them - i.e. up to 64,800 texture-bind calls
+    // per frame. Batch them into one shape instead: the whole sphere uses a
+    // single texture image (this.Map[n_Map]) for the whole draw() call, so
+    // there's no need to rebind it per quad.
+    boolean isWin3D = (target_window == TypeWindow.WIN3D);
+
+    if (isWin3D) beginWIN3DSphere(n_Map);
+
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
       for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
         for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
           f += 1;
           FaceVertex[] subFace = buildSubFace(Alpha, Beta, delta_Alpha, delta_Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
-          drawFace(target_window, subFace, n_Map, f, _turn);
+
+          if (isWin3D) {
+            addFaceWIN3D(subFace, n_Map);
+          } else {
+            drawFace(target_window, subFace, n_Map, f, _turn);
+          }
         }
       }
     }
+
+    if (isWin3D) endWIN3DSphere();
+  }
+
+  private void beginWIN3DSphere (int n_Map) {
+    WIN3D.graphics.strokeWeight(1);
+    WIN3D.graphics.noStroke();
+    WIN3D.graphics.beginShape(QUADS);
+    if (this.displayTexture) {
+      WIN3D.graphics.texture(this.Map[n_Map]);
+    }
+  }
+
+  private void addFaceWIN3D (FaceVertex[] subFace, int n_Map) {
+    for (int s = 0; s < subFace.length; s++) {
+      float u = clamp01(subFace[s].u);
+      float v = clamp01(subFace[s].v);
+      WIN3D.graphics.vertex(
+        subFace[s].x * OBJECTS_scale * WIN3D.scale,
+        -subFace[s].y * OBJECTS_scale * WIN3D.scale,
+        subFace[s].z * OBJECTS_scale * WIN3D.scale,
+        u * this.Map[n_Map].width,
+        v * this.Map[n_Map].height
+      );
+    }
+  }
+
+  private void endWIN3DSphere () {
+    WIN3D.graphics.endShape();
   }
 
   private void writeMaterial (int target_window, int n_Map) {
@@ -210,10 +254,6 @@ class solarchvision_Earth3D {
       writeFaceHTML(subFace, n_Map);
       return;
     }
-    if (target_window == TypeWindow.WIN3D) {
-      writeFaceWIN3D(subFace, n_Map);
-      return;
-    }
     if (target_window == TypeWindow.OBJ3D) {
       writeFaceOBJ(subFace, f, _turn);
     }
@@ -255,29 +295,6 @@ class solarchvision_Earth3D {
 
     htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
     htmlOutput.println("\t\t\t\t</shape>");
-  }
-
-  private void writeFaceWIN3D (FaceVertex[] subFace, int n_Map) {
-    WIN3D.graphics.strokeWeight(1);
-    WIN3D.graphics.beginShape();
-    WIN3D.graphics.noStroke();
-    if (this.displayTexture) {
-      WIN3D.graphics.texture(this.Map[n_Map]);
-    }
-
-    for (int s = 0; s < subFace.length; s++) {
-      float u = clamp01(subFace[s].u);
-      float v = clamp01(subFace[s].v);
-      WIN3D.graphics.vertex(
-        subFace[s].x * OBJECTS_scale * WIN3D.scale,
-        -subFace[s].y * OBJECTS_scale * WIN3D.scale,
-        subFace[s].z * OBJECTS_scale * WIN3D.scale,
-        u * this.Map[n_Map].width,
-        v * this.Map[n_Map].height
-      );
-    }
-
-    WIN3D.graphics.endShape(CLOSE);
   }
 
   private void writeFaceOBJ (FaceVertex[] subFace, int f, int _turn) {
