@@ -758,7 +758,7 @@ class solarchvision_ROLLOUT {
     if (new_value > max_v) new_value = max_v;
 
     float cx, cy, cr;
-    float w1, w2, h, o, t_o;
+    float w1, w2, h, o, t_oW, t_oH;
 
     //w1 = 32.5 * ROLLOUT.view_S;
     //w2 = 142.5 * ROLLOUT.view_S;
@@ -768,7 +768,8 @@ class solarchvision_ROLLOUT {
 
     h = 16 * ROLLOUT.view_S;
     o = 2 * ROLLOUT.view_S;
-    t_o = h * ROLLOUT.view_S / 8.0;
+    t_oW = h * ROLLOUT.view_S / 8.0;
+    t_oH = t_oW - 2; // move text 2 pixels down to display nicely
 
     Y_control += 25 * ROLLOUT.view_S; //(h + 2 * o) * 1.25;
 
@@ -929,14 +930,14 @@ class solarchvision_ROLLOUT {
 
       textAlign(LEFT, CENTER);
       String textWithCursor = this.spinnerEditText.substring(0, this.spinnerEditCursor) + "|" + this.spinnerEditText.substring(this.spinnerEditCursor);
-      text(textWithCursor, x - w1 + t_o, y - t_o);
+      text(textWithCursor, x - w1 + t_oW, y - t_oH);
     } else {
 
       textAlign(RIGHT, CENTER);
       if ((new_value == int(new_value)) || (new_value >= 100)) {
-        text(String.valueOf(int(new_value)), x - t_o, y - t_o);
+        text(String.valueOf(int(new_value)), x - t_oW, y - t_oH);
       } else {
-        text(nf(new_value, 0, 0), x - t_o, y - t_o);
+        text(nf(new_value, 0, 0), x - t_oW, y - t_oH);
       }
     }
 
@@ -946,9 +947,9 @@ class solarchvision_ROLLOUT {
     fill(0);
     //textSize(1.0 * h);
     textSize(0.85 * h);
-    //textAlign(RIGHT, CENTER); text(caption + ":", x - w1 - t_o, y - t_o);
+    //textAlign(RIGHT, CENTER); text(caption + ":", x - w1 - t_oW, y - t_oH);
     textAlign(LEFT, CENTER);
-    text(caption + ":", x - w1 - w2 + t_o, y - t_o);
+    text(caption + ":", x - w1 - w2 + t_oW, y - t_oH);
 
     if (new_value != v) {
       if (update1 != 0) {
