@@ -65,57 +65,191 @@ class solarchvision_Earth3D {
     return value;
   }
 
-  // Prefer a high-resolution "E" tile from WORLD's local tile system
+  // Prefer high-resolution "E" tiles from WORLD's local tile system
   // (input/images/worldmap) over the low-res whole-globe A/B images below,
   // since draw() only renders a small patch of the globe around the
-  // station now (see the clip in draw()) - there's no need for whole-globe
-  // coverage, and the "E" tiles are much more detailed per degree. Falls
-  // back to A/B (see resize_images()/load_images() below) for locations no
-  // "E" tile covers.
-  private int findWorldTileForStation () {
-    float lon = STATION.getLongitude();
-    float lat = STATION.getLatitude();
+  // station now (see the clip radius in draw()) - there's no need for
+  // whole-globe coverage, and the "E" tiles are much more detailed per
+  // degree. Falls back to A/B (see resize_images()/load_images() below)
+  // for locations no "E" tile covers.
+  //
+  // The clip window can straddle more than one "E" tile (the station can
+  // sit near a tile edge), so this doesn't just look up a single tile: it
+  // uses one directly when it fully contains the clip window (best
+  // quality, no resampling), or composites every overlapping tile into one
+  // mosaic image otherwise - mirroring the overlap/crop math WORLD.pde's
+  // own drawZoomedTiles() uses to composite neighboring tiles on screen.
+  //
+  // Cached and only rebuilt when the station's location actually changes,
+  // since compositing a mosaic is comparatively expensive and draw() can
+  // run every frame while navigating.
+  private PImage cachedTextureImage = null;
+  private float cachedTextureBx1, cachedTextureBx2, cachedTextureBy1, cachedTextureBy2;
+  private String cachedTextureLabel = "";
+  private String cachedTexturePath = ""; // "" means synthetic/composited - no single file to copy for export
+  private String cachedTextureFilename = "";
+  private float cachedStationLon = Float.NaN;
+  private float cachedStationLat = Float.NaN;
 
+  private void resolveTextureSource (float clipRadiusDegrees) {
+    float stationLon = STATION.getLongitude();
+    float stationLat = STATION.getLatitude();
+
+    if ((this.cachedTextureImage != null) &&
+        (abs(stationLon - this.cachedStationLon) < 0.0001) &&
+        (abs(stationLat - this.cachedStationLat) < 0.0001)) {
+      return; // still valid - station hasn't moved
+    }
+
+    IntList overlapping = new IntList();
     for (int i = 0; i < WORLD.numMaps; i++) {
       if (!WORLD.VIEW_Filenames[i].substring(0, 1).equals("E")) continue;
-      if (isInside(lon, lat, WORLD.VIEW_BoundariesX[i][0], WORLD.VIEW_BoundariesY[i][0], WORLD.VIEW_BoundariesX[i][1], WORLD.VIEW_BoundariesY[i][1])) {
-        return i;
-      }
+
+      float tLon1 = WORLD.VIEW_BoundariesX[i][0];
+      float tLon2 = WORLD.VIEW_BoundariesX[i][1];
+      float tLat1 = WORLD.VIEW_BoundariesY[i][0];
+      float tLat2 = WORLD.VIEW_BoundariesY[i][1];
+
+      boolean overlaps = (tLon2 > stationLon - clipRadiusDegrees) && (tLon1 < stationLon + clipRadiusDegrees) &&
+                          (tLat2 > stationLat - clipRadiusDegrees) && (tLat1 < stationLat + clipRadiusDegrees);
+      if (overlaps) overlapping.append(i);
     }
-    return -1;
+
+    if (overlapping.size() == 0) {
+      useFallbackABTexture();
+    } else if ((overlapping.size() == 1) && worldTileFullyCoversWindow(overlapping.get(0), stationLon, stationLat, clipRadiusDegrees)) {
+      useWorldTileDirectly(overlapping.get(0));
+    } else {
+      compositeWorldTiles(overlapping, stationLon, stationLat, clipRadiusDegrees);
+    }
+
+    this.cachedStationLon = stationLon;
+    this.cachedStationLat = stationLat;
+  }
+
+  private boolean worldTileFullyCoversWindow (int tileIndex, float stationLon, float stationLat, float clipRadiusDegrees) {
+    return (WORLD.VIEW_BoundariesX[tileIndex][0] <= stationLon - clipRadiusDegrees) &&
+           (WORLD.VIEW_BoundariesX[tileIndex][1] >= stationLon + clipRadiusDegrees) &&
+           (WORLD.VIEW_BoundariesY[tileIndex][0] <= stationLat - clipRadiusDegrees) &&
+           (WORLD.VIEW_BoundariesY[tileIndex][1] >= stationLat + clipRadiusDegrees);
+  }
+
+  private void useWorldTileDirectly (int tileIndex) {
+    this.cachedTextureImage    = WORLD.getTileImage(tileIndex);
+    this.cachedTextureBx1      = WORLD.VIEW_BoundariesX[tileIndex][0];
+    this.cachedTextureBx2      = WORLD.VIEW_BoundariesX[tileIndex][1];
+    this.cachedTextureBy1      = WORLD.VIEW_BoundariesY[tileIndex][0];
+    this.cachedTextureBy2      = WORLD.VIEW_BoundariesY[tileIndex][1];
+    this.cachedTexturePath     = WORLD.ViewFolder + "/" + WORLD.VIEW_Filenames[tileIndex];
+    this.cachedTextureFilename = WORLD.VIEW_Filenames[tileIndex];
+    this.cachedTextureLabel    = "EarthSphereE" + nf(tileIndex, 0);
+  }
+
+  private void useFallbackABTexture () {
+    int n_Map = currentMapIndex();
+    this.cachedTextureImage    = this.Map[n_Map];
+    this.cachedTextureBx1      = this.BoundariesX[n_Map][0];
+    this.cachedTextureBx2      = this.BoundariesX[n_Map][1];
+    this.cachedTextureBy1      = this.BoundariesY[n_Map][0];
+    this.cachedTextureBy2      = this.BoundariesY[n_Map][1];
+    this.cachedTexturePath     = this.Path + "/" + this.Filenames[n_Map];
+    this.cachedTextureFilename = this.Filenames[n_Map];
+    this.cachedTextureLabel    = "EarthSphere" + nf(n_Map, 0);
+  }
+
+  // Composites every tile in `overlapping` into one square mosaic image
+  // covering the clip window (clamped to the tiles' own combined extent,
+  // same as WORLD.drawZoomedTiles() does, so the mosaic doesn't reserve
+  // space for area with no image data at all). Points that still fall
+  // outside that combined extent simply sample the mosaic's clamped edge
+  // pixel (see clamp01() in buildSubFace()'s callers) rather than showing
+  // a hard-edged gap.
+  private void compositeWorldTiles (IntList overlapping, float stationLon, float stationLat, float clipRadiusDegrees) {
+
+    float winLon1 = stationLon - clipRadiusDegrees;
+    float winLon2 = stationLon + clipRadiusDegrees;
+    float winLat1 = stationLat - clipRadiusDegrees;
+    float winLat2 = stationLat + clipRadiusDegrees;
+
+    float combinedLon1 = FLOAT_undefined;
+    float combinedLon2 = -FLOAT_undefined;
+    float combinedLat1 = FLOAT_undefined;
+    float combinedLat2 = -FLOAT_undefined;
+
+    for (int k = 0; k < overlapping.size(); k++) {
+      int i = overlapping.get(k);
+      combinedLon1 = min(combinedLon1, WORLD.VIEW_BoundariesX[i][0]);
+      combinedLon2 = max(combinedLon2, WORLD.VIEW_BoundariesX[i][1]);
+      combinedLat1 = min(combinedLat1, WORLD.VIEW_BoundariesY[i][0]);
+      combinedLat2 = max(combinedLat2, WORLD.VIEW_BoundariesY[i][1]);
+    }
+
+    winLon1 = max(winLon1, combinedLon1);
+    winLon2 = min(winLon2, combinedLon2);
+    winLat1 = max(winLat1, combinedLat1);
+    winLat2 = min(winLat2, combinedLat2);
+
+    int outputSize = 1024;
+    PGraphics buffer = createGraphics(outputSize, outputSize);
+    buffer.beginDraw();
+    buffer.background(0);
+
+    for (int k = 0; k < overlapping.size(); k++) {
+      int i = overlapping.get(k);
+
+      PImage tileImage = WORLD.getTileImage(i);
+
+      float tileLon1 = WORLD.VIEW_BoundariesX[i][0];
+      float tileLon2 = WORLD.VIEW_BoundariesX[i][1];
+      float tileLat1 = WORLD.VIEW_BoundariesY[i][0];
+      float tileLat2 = WORLD.VIEW_BoundariesY[i][1];
+
+      float overlapLon1 = max(tileLon1, winLon1);
+      float overlapLon2 = min(tileLon2, winLon2);
+      float overlapLat1 = max(tileLat1, winLat1);
+      float overlapLat2 = min(tileLat2, winLat2);
+
+      if ((overlapLon1 >= overlapLon2) || (overlapLat1 >= overlapLat2)) continue; // no overlap with this tile
+
+      int u1 = int(tileImage.width  * (overlapLon1 - tileLon1) / (tileLon2 - tileLon1));
+      int u2 = min(tileImage.width,  int(ceil(tileImage.width  * (overlapLon2 - tileLon1) / (tileLon2 - tileLon1))));
+      int v1 = int(tileImage.height * (tileLat2 - overlapLat2) / (tileLat2 - tileLat1));
+      int v2 = min(tileImage.height, int(ceil(tileImage.height * (tileLat2 - overlapLat1) / (tileLat2 - tileLat1))));
+
+      float destX1 = outputSize * (overlapLon1 - winLon1) / (winLon2 - winLon1);
+      float destX2 = outputSize * (overlapLon2 - winLon1) / (winLon2 - winLon1);
+      float destY1 = outputSize * (winLat2 - overlapLat2) / (winLat2 - winLat1);
+      float destY2 = outputSize * (winLat2 - overlapLat1) / (winLat2 - winLat1);
+
+      buffer.image(tileImage, destX1, destY1, destX2 - destX1, destY2 - destY1, u1, v1, u2, v2);
+    }
+
+    buffer.endDraw();
+
+    this.cachedTextureImage    = buffer.get();
+    this.cachedTextureBx1      = winLon1;
+    this.cachedTextureBx2      = winLon2;
+    this.cachedTextureBy1      = winLat1;
+    this.cachedTextureBy2      = winLat2;
+    this.cachedTexturePath     = ""; // synthetic - writeTextureMap() saves cachedTextureImage directly
+    this.cachedTextureFilename = "EarthSphereE_mosaic.jpg";
+    this.cachedTextureLabel    = "EarthSphereEmosaic";
   }
 
   void draw (int target_window) {
     if (!shouldDraw(target_window)) return;
 
-    int worldTile = findWorldTileForStation();
+    float clipRadiusDegrees = 5;
+    resolveTextureSource(clipRadiusDegrees);
 
-    PImage textureImage;
-    float bx1, bx2, by1, by2;
-    String texturePath;
-    String textureFilename;
-    String textureLabel;
-
-    if (worldTile != -1) {
-      textureImage     = WORLD.getTileImage(worldTile);
-      bx1              = WORLD.VIEW_BoundariesX[worldTile][0];
-      bx2              = WORLD.VIEW_BoundariesX[worldTile][1];
-      by1              = WORLD.VIEW_BoundariesY[worldTile][0];
-      by2              = WORLD.VIEW_BoundariesY[worldTile][1];
-      texturePath      = WORLD.ViewFolder + "/" + WORLD.VIEW_Filenames[worldTile];
-      textureFilename  = WORLD.VIEW_Filenames[worldTile];
-      textureLabel     = "EarthSphereE" + nf(worldTile, 0);
-    } else {
-      int n_Map        = currentMapIndex();
-      textureImage     = this.Map[n_Map];
-      bx1              = this.BoundariesX[n_Map][0];
-      bx2              = this.BoundariesX[n_Map][1];
-      by1              = this.BoundariesY[n_Map][0];
-      by2              = this.BoundariesY[n_Map][1];
-      texturePath      = this.Path + "/" + this.Filenames[n_Map];
-      textureFilename  = this.Filenames[n_Map];
-      textureLabel     = "EarthSphere" + nf(n_Map, 0);
-    }
+    PImage textureImage    = this.cachedTextureImage;
+    float bx1              = this.cachedTextureBx1;
+    float bx2              = this.cachedTextureBx2;
+    float by1              = this.cachedTextureBy1;
+    float by2              = this.cachedTextureBy2;
+    String texturePath     = this.cachedTexturePath;
+    String textureFilename = this.cachedTextureFilename;
+    String textureLabel    = this.cachedTextureLabel;
 
     float ScaleX  = (bx2 - bx1) / LONGITUDE_SPAN;
     float ScaleY  = (by2 - by1) / LATITUDE_SPAN;
@@ -146,7 +280,6 @@ class solarchvision_Earth3D {
 
     float stationLon = STATION.getLongitude();
     float stationLat = STATION.getLatitude();
-    float clipRadiusDegrees = 5;
 
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
@@ -244,8 +377,15 @@ class solarchvision_Earth3D {
   private void writeTextureMap (int target_window, String texturePath, String textureFilename) {
     String new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + textureFilename;
 
-    println("Copying texture:", texturePath, ">", new_Texture_path);
-    saveBytes(new_Texture_path, loadBytes(texturePath));
+    if (texturePath.equals("")) {
+      // Synthetic/composited mosaic - there's no single source file on
+      // disk to copy, so save the in-memory image itself.
+      println("Saving composited texture:", new_Texture_path);
+      this.cachedTextureImage.save(new_Texture_path);
+    } else {
+      println("Copying texture:", texturePath, ">", new_Texture_path);
+      saveBytes(new_Texture_path, loadBytes(texturePath));
+    }
 
     if (target_window == TypeWindow.OBJ3D) {
       mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + textureFilename); // diffuse map
