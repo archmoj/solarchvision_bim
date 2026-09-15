@@ -333,7 +333,7 @@ class solarchvision_Select3D {
 
     float[] ray_normal = funcs.vec3_unit(ray_dir);
 
-    float[][] hitPoint = new float [this.Face_ids.length][7];
+    float[][] hitPoint = new float [this.Face_ids.length][8];
 
     for (int o = 0; o < this.Face_ids.length; o++) {
       java.util.Arrays.fill(hitPoint[o], FLOAT_undefined);
@@ -466,13 +466,14 @@ class solarchvision_Select3D {
             }
 
             if (InPoly) {
-              hitPoint[f][0] = X_intersect;
-              hitPoint[f][1] = Y_intersect;
-              hitPoint[f][2] = Z_intersect;
-              hitPoint[f][3] = dist2intersect;
-              hitPoint[f][4] = face_norm[0];
-              hitPoint[f][5] = face_norm[1];
-              hitPoint[f][6] = face_norm[2];
+              hitPoint[o][0] = X_intersect;
+              hitPoint[o][1] = Y_intersect;
+              hitPoint[o][2] = Z_intersect;
+              hitPoint[o][3] = dist2intersect;
+              hitPoint[o][4] = face_norm[0];
+              hitPoint[o][5] = face_norm[1];
+              hitPoint[o][6] = face_norm[2];
+              hitPoint[o][7] = f;
             }
 
           }
@@ -490,7 +491,7 @@ class solarchvision_Select3D {
 
         pre_dist = hitPoint[o][3];
 
-        return_point[0] = o;
+        return_point[0] = hitPoint[o][7];
         return_point[1] = hitPoint[o][0];
         return_point[2] = hitPoint[o][1];
         return_point[3] = hitPoint[o][2];
