@@ -104,6 +104,8 @@ class solarchvision_OVERLAY3D {
 
         CAMERA_STYLE.applyStyle();
 
+        ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
+
         {
           for (int o = Select3D.Camera_ids.length - 1; o >= 0; o--) {
 
@@ -122,10 +124,11 @@ class solarchvision_OVERLAY3D {
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(camVertices, CAMERA_STYLE);
+            drawClosedShape(camVertices, CAMERA_STYLE, edgeBatch);
           }
         }
 
+        drawEdgeBatch(edgeBatch, CAMERA_STYLE);
       }
     }
 
@@ -134,6 +137,8 @@ class solarchvision_OVERLAY3D {
       if (Select3D.Section_displayEdges) {
 
         SECTION_STYLE.applyStyle();
+
+        ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
         for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
 
@@ -152,8 +157,10 @@ class solarchvision_OVERLAY3D {
             camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
           }
 
-          drawClosedShape(camVertices, SECTION_STYLE);
+          drawClosedShape(camVertices, SECTION_STYLE, edgeBatch);
         }
+
+        drawEdgeBatch(edgeBatch, SECTION_STYLE);
       }
     }
 
@@ -162,6 +169,8 @@ class solarchvision_OVERLAY3D {
       if (Select3D.Solid_displayEdges) {
 
         SOLID_STYLE.applyStyle();
+
+        ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
         for (int o = Select3D.Solid_ids.length - 1; o >= 0; o--) {
 
@@ -184,9 +193,11 @@ class solarchvision_OVERLAY3D {
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(camVertices, SOLID_STYLE);
+            drawClosedShape(camVertices, SOLID_STYLE, edgeBatch);
           }
         }
+
+        drawEdgeBatch(edgeBatch, SOLID_STYLE);
       }
     }
 
@@ -195,6 +206,8 @@ class solarchvision_OVERLAY3D {
       if (Select3D.Model2D_displayEdges) {
 
         MODEL2D_STYLE.applyStyle();
+
+        ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
         for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
 
@@ -217,9 +230,11 @@ class solarchvision_OVERLAY3D {
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(camVertices, MODEL2D_STYLE);
+            drawClosedShape(camVertices, MODEL2D_STYLE, edgeBatch);
           }
         }
+
+        drawEdgeBatch(edgeBatch, MODEL2D_STYLE);
       }
     }
 
@@ -228,6 +243,8 @@ class solarchvision_OVERLAY3D {
       if (Select3D.Model1D_displayEdges) {
 
         MODEL1D_STYLE.applyStyle();
+
+        ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
         for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
 
@@ -246,9 +263,11 @@ class solarchvision_OVERLAY3D {
             camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
           }
 
-          drawClosedShape(camVertices, MODEL1D_STYLE);
+          drawClosedShape(camVertices, MODEL1D_STYLE, edgeBatch);
 
         }
+
+        drawEdgeBatch(edgeBatch, MODEL1D_STYLE);
       }
     }
 
@@ -257,6 +276,8 @@ class solarchvision_OVERLAY3D {
       if (Select3D.Face_displayEdges) {
 
         FACE_EDGE_STYLE.applyStyle();
+
+        ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
         for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
 
@@ -293,9 +314,11 @@ class solarchvision_OVERLAY3D {
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(camVertices, FACE_EDGE_STYLE);
+            drawClosedShape(camVertices, FACE_EDGE_STYLE, edgeBatch);
           }
         }
+
+        drawEdgeBatch(edgeBatch, FACE_EDGE_STYLE);
       }
 
 
@@ -441,6 +464,8 @@ class solarchvision_OVERLAY3D {
 
         GROUP_EDGE_STYLE.applyStyle();
 
+        ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
+
         for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
 
           int OBJ_ID = Select3D.Group_ids[o];
@@ -480,7 +505,7 @@ class solarchvision_OVERLAY3D {
                   camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
                 }
 
-                drawClosedShape(camVertices, GROUP_EDGE_STYLE);
+                drawClosedShape(camVertices, GROUP_EDGE_STYLE, edgeBatch);
               }
             }
           }
@@ -500,7 +525,7 @@ class solarchvision_OVERLAY3D {
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
 
-              drawClosedShape(camVertices, GROUP_EDGE_STYLE);
+              drawClosedShape(camVertices, GROUP_EDGE_STYLE, edgeBatch);
             }
           }
 
@@ -522,7 +547,7 @@ class solarchvision_OVERLAY3D {
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
 
-              drawClosedShape(camVertices, GROUP_EDGE_STYLE);
+              drawClosedShape(camVertices, GROUP_EDGE_STYLE, edgeBatch);
             }
           }
 
@@ -544,7 +569,7 @@ class solarchvision_OVERLAY3D {
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
 
-              drawClosedShape(camVertices, GROUP_EDGE_STYLE);
+              drawClosedShape(camVertices, GROUP_EDGE_STYLE, edgeBatch);
             }
           }
 
@@ -571,18 +596,22 @@ class solarchvision_OVERLAY3D {
                     camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
                   }
 
-                  drawClosedShape(camVertices, GROUP_EDGE_STYLE);
+                  drawClosedShape(camVertices, GROUP_EDGE_STYLE, edgeBatch);
                 }
               }
             }
           }
         }
+
+        drawEdgeBatch(edgeBatch, GROUP_EDGE_STYLE);
       }
 
 
       if (Select3D.Group_displayBox) {
 
         GROUP_BOX_STYLE.applyStyle();
+
+        ArrayList<float[][]> boxEdgeBatch = new ArrayList<float[][]>();
 
         int keep_selection_alignX = Select3D.alignX;
         int keep_selection_alignY = Select3D.alignY;
@@ -705,10 +734,11 @@ class solarchvision_OVERLAY3D {
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
 
-            drawClosedShape(camVertices, GROUP_BOX_STYLE);
+            drawClosedShape(camVertices, GROUP_BOX_STYLE, boxEdgeBatch);
           }
         }
 
+        drawEdgeBatch(boxEdgeBatch, GROUP_BOX_STYLE);
 
 
         Select3D.alignX = keep_selection_alignX;
@@ -1005,9 +1035,9 @@ class solarchvision_OVERLAY3D {
 
   // Clips camVertices (camera-space {x, y, z} triples, in order around the
   // face/polyline) against the near plane, projects the surviving points
-  // to image space, clips those against the given style's window bounds,
-  // and draws the resulting shape.
-  void drawClosedShape (ArrayList<float[]> camVertices, DrawStyle style) {
+  // to image space, and clips those against the given style's window
+  // bounds. Returns the resulting 2D vertex loop (possibly empty).
+  private float[][] clipAndProject (ArrayList<float[]> camVertices, DrawStyle style) {
     float[][] nearClipped = clipPolygon_nearPlane(
       camVertices.toArray(new float[camVertices.size()][])
     );
@@ -1019,21 +1049,60 @@ class solarchvision_OVERLAY3D {
       faceVertices.add(new float[]{ image[0], image[1] });
     }
 
-    float[][] vertices = clipPolygon_toWindow(
+    return clipPolygon_toWindow(
       faceVertices.toArray(new float[faceVertices.size()][]),
       style.innerWinX1, style.innerWinY1, style.innerWinX2, style.innerWinY2
     );
+  }
 
-    beginShape();
-    for (int i = 0; i < vertices.length; i++) {
-      vertex(vertices[i][0], vertices[i][1]);
+  // Fills the clipped shape immediately if the style has a fill (fill
+  // topology varies per shape, so unlike the outline below it isn't safe
+  // to batch without triangulating), then records its outline into
+  // edgeBatch for drawEdgeBatch() to stroke afterward - every shape drawn
+  // for a given style/category shares the exact same stroke color and
+  // weight, so there's nothing per-shape lost by drawing all their
+  // outlines in one batched pass instead of each shape also stroking its
+  // own outline individually as part of its own beginShape()/endShape().
+  void drawClosedShape (ArrayList<float[]> camVertices, DrawStyle style, ArrayList<float[][]> edgeBatch) {
+    float[][] vertices = clipAndProject(camVertices, style);
+
+    if (vertices.length == 0) return;
+
+    if (alpha(style.fillColor) != 0) {
+      noStroke();
+      fill(style.fillColor);
+      beginShape();
+      for (int i = 0; i < vertices.length; i++) {
+        vertex(vertices[i][0], vertices[i][1]);
+      }
+      endShape(CLOSE);
     }
 
-    // Repeats the first vertex at the end instead of using endShape(CLOSE),
-    // which was causing rendering artifacts on the closing vertex.
-    if (vertices.length > 0) {
-      vertex(vertices[0][0], vertices[0][1]);
+    edgeBatch.add(vertices);
+  }
+
+  // Strokes every shape recorded by drawClosedShape() above in one
+  // beginShape(LINES) pass.
+  void drawEdgeBatch (ArrayList<float[][]> edgeBatch, DrawStyle style) {
+    if (edgeBatch.size() == 0) return;
+
+    noFill();
+    strokeWeight(style.strokeWeight);
+    stroke(style.strokeColor);
+
+    beginShape(LINES);
+    for (int p = 0; p < edgeBatch.size(); p++) {
+      float[][] vertices = edgeBatch.get(p);
+      int n = vertices.length;
+
+      for (int i = 0; i < n; i++) {
+        int i_next = (i + 1) % n;
+        vertex(vertices[i][0], vertices[i][1]);
+        vertex(vertices[i_next][0], vertices[i_next][1]);
+      }
     }
     endShape();
   }
+
+
 }
