@@ -762,10 +762,14 @@ class solarchvision_ROLLOUT {
     );
   }
 
+  private String formatSpinnerValue (float value) {
+    return nf(value, 0, 0);
+  }
+
   private void beginSpinnerEdit (String caption, float value) {
     this.spinnerEditActive = true;
     this.spinnerEditCaption = caption;
-    this.spinnerEditText = (value == int(value)) ? String.valueOf(int(value)) : String.valueOf(value);
+    this.spinnerEditText = this.formatSpinnerValue(value);
     this.spinnerEditCursor = this.spinnerEditText.length();
     this.spinnerEditCommit = false;
     this.spinnerEditStateChanged = true;
@@ -960,11 +964,7 @@ class solarchvision_ROLLOUT {
     } else {
 
       textAlign(RIGHT, CENTER);
-      if ((new_value == int(new_value)) || (new_value >= 100)) {
-        text(String.valueOf(int(new_value)), x - t_oW, y - t_oH);
-      } else {
-        text(nf(new_value, 0, 0), x - t_oW, y - t_oH);
-      }
+      text(this.formatSpinnerValue(new_value), x - t_oW, y - t_oH);
     }
 
 
