@@ -229,9 +229,10 @@ class solarchvision_Faces {
           }
         }
 
-        WIN3D.graphics.strokeWeight(1);
-        WIN3D.graphics.stroke(0, 0, 0);
-        if (this.displayEdges == false) WIN3D.graphics.noStroke();
+        // afterward instead.
+        WIN3D.graphics.noStroke();
+
+        ArrayList<float[][]> edgePolygons = this.displayEdges ? new ArrayList<float[][]>() : null;
 
         int PAL_type = SHADE.get_PAL_type();
         int PAL_direction = SHADE.get_PAL_direction();
@@ -249,15 +250,27 @@ class solarchvision_Faces {
 
               WIN3D.graphics.beginShape();
 
+              float[][] edgePolygon = this.displayEdges ? new float[this.nodes[f].length][3] : null;
+
               for (int j = 0; j < this.nodes[f].length; j++) {
                 int vNo = this.nodes[f][j];
 
-                WIN3D.graphics.vertex(allPoints.getX(vNo) * OBJECTS_scale * WIN3D.scale,
-                                     -allPoints.getY(vNo) * OBJECTS_scale * WIN3D.scale,
-                                      allPoints.getZ(vNo) * OBJECTS_scale * WIN3D.scale);
+                float px =  allPoints.getX(vNo) * OBJECTS_scale * WIN3D.scale;
+                float py = -allPoints.getY(vNo) * OBJECTS_scale * WIN3D.scale;
+                float pz =  allPoints.getZ(vNo) * OBJECTS_scale * WIN3D.scale;
+
+                WIN3D.graphics.vertex(px, py, pz);
+
+                if (this.displayEdges) {
+                  edgePolygon[j][0] = px;
+                  edgePolygon[j][1] = py;
+                  edgePolygon[j][2] = pz;
+                }
               }
 
               WIN3D.graphics.endShape(CLOSE);
+
+              if (this.displayEdges) edgePolygons.add(edgePolygon);
             } else {
 
               int mt = this.getMaterial(f);
@@ -283,6 +296,8 @@ class solarchvision_Faces {
                 float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
                 WIN3D.graphics.beginShape();
+
+                float[][] edgePolygon = this.displayEdges ? new float[subFace.length][3] : null;
 
                 for (int s = 0; s < subFace.length; s++) {
 
@@ -328,15 +343,46 @@ class solarchvision_Faces {
                     WIN3D.graphics.noFill();
                   }
 
-                  WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale,
-                                       -subFace[s][1] * OBJECTS_scale * WIN3D.scale,
-                                        subFace[s][2] * OBJECTS_scale * WIN3D.scale);
+                  float px =  subFace[s][0] * OBJECTS_scale * WIN3D.scale;
+                  float py = -subFace[s][1] * OBJECTS_scale * WIN3D.scale;
+                  float pz =  subFace[s][2] * OBJECTS_scale * WIN3D.scale;
+
+                  WIN3D.graphics.vertex(px, py, pz);
+
+                  if (this.displayEdges) {
+                    edgePolygon[s][0] = px;
+                    edgePolygon[s][1] = py;
+                    edgePolygon[s][2] = pz;
+                  }
                 }
 
                 WIN3D.graphics.endShape(CLOSE);
+
+                if (this.displayEdges) edgePolygons.add(edgePolygon);
               }
             }
           }
+        }
+
+        if (this.displayEdges) {
+          WIN3D.graphics.stroke(0, 0, 0);
+          WIN3D.graphics.strokeWeight(1);
+          WIN3D.graphics.noFill();
+          WIN3D.graphics.beginShape(LINES);
+
+          int len = edgePolygons.size();
+          for (int p = 0; p < len; p++) {
+            float[][] poly = edgePolygons.get(p);
+            int n = poly.length;
+
+            for (int s = 0; s < n; s++) {
+              int s_next = (s + 1) % n;
+              WIN3D.graphics.vertex(poly[s][0], poly[s][1], poly[s][2]);
+              WIN3D.graphics.vertex(poly[s_next][0], poly[s_next][1], poly[s_next][2]);
+            }
+          }
+
+          WIN3D.graphics.endShape();
         }
       }
 
