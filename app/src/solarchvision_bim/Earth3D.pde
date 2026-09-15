@@ -65,22 +65,69 @@ class solarchvision_Earth3D {
     return value;
   }
 
+  // Prefer a high-resolution "E" tile from WORLD's local tile system
+  // (input/images/worldmap) over the low-res whole-globe A/B images below,
+  // since draw() only renders a small patch of the globe around the
+  // station now (see the clip in draw()) - there's no need for whole-globe
+  // coverage, and the "E" tiles are much more detailed per degree. Falls
+  // back to A/B (see resize_images()/load_images() below) for locations no
+  // "E" tile covers.
+  private int findWorldTileForStation () {
+    float lon = STATION.getLongitude();
+    float lat = STATION.getLatitude();
+
+    for (int i = 0; i < WORLD.numMaps; i++) {
+      if (!WORLD.VIEW_Filenames[i].substring(0, 1).equals("E")) continue;
+      if (isInside(lon, lat, WORLD.VIEW_BoundariesX[i][0], WORLD.VIEW_BoundariesY[i][0], WORLD.VIEW_BoundariesX[i][1], WORLD.VIEW_BoundariesY[i][1])) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   void draw (int target_window) {
     if (!shouldDraw(target_window)) return;
 
-    int n_Map = currentMapIndex();
+    int worldTile = findWorldTileForStation();
 
-    float ScaleX  = (this.BoundariesX[n_Map][1] - this.BoundariesX[n_Map][0]) / LONGITUDE_SPAN;
-    float ScaleY  = (this.BoundariesY[n_Map][1] - this.BoundariesY[n_Map][0]) / LATITUDE_SPAN;
-    float CEN_lon = 0.5 * (this.BoundariesX[n_Map][0] + this.BoundariesX[n_Map][1]);
-    float CEN_lat = 0.5 * (this.BoundariesY[n_Map][0] + this.BoundariesY[n_Map][1]);
+    PImage textureImage;
+    float bx1, bx2, by1, by2;
+    String texturePath;
+    String textureFilename;
+    String textureLabel;
+
+    if (worldTile != -1) {
+      textureImage     = WORLD.getTileImage(worldTile);
+      bx1              = WORLD.VIEW_BoundariesX[worldTile][0];
+      bx2              = WORLD.VIEW_BoundariesX[worldTile][1];
+      by1              = WORLD.VIEW_BoundariesY[worldTile][0];
+      by2              = WORLD.VIEW_BoundariesY[worldTile][1];
+      texturePath      = WORLD.ViewFolder + "/" + WORLD.VIEW_Filenames[worldTile];
+      textureFilename  = WORLD.VIEW_Filenames[worldTile];
+      textureLabel     = "EarthSphereE" + nf(worldTile, 0);
+    } else {
+      int n_Map        = currentMapIndex();
+      textureImage     = this.Map[n_Map];
+      bx1              = this.BoundariesX[n_Map][0];
+      bx2              = this.BoundariesX[n_Map][1];
+      by1              = this.BoundariesY[n_Map][0];
+      by2              = this.BoundariesY[n_Map][1];
+      texturePath      = this.Path + "/" + this.Filenames[n_Map];
+      textureFilename  = this.Filenames[n_Map];
+      textureLabel     = "EarthSphere" + nf(n_Map, 0);
+    }
+
+    float ScaleX  = (bx2 - bx1) / LONGITUDE_SPAN;
+    float ScaleY  = (by2 - by1) / LATITUDE_SPAN;
+    float CEN_lon = 0.5 * (bx1 + bx2);
+    float CEN_lat = 0.5 * (by1 + by2);
 
     float delta_Alpha = -BIOSPHERE_drawResolution;
     float delta_Beta  = -BIOSPHERE_drawResolution;
     float r = FLOAT_r_Earth;
 
     if (target_window == TypeWindow.HTML || target_window == TypeWindow.OBJ3D) {
-      writeMaterial(target_window, n_Map);
+      writeMaterial(target_window, textureLabel, texturePath, textureFilename);
     }
 
     num_vertices_added = 0;
@@ -91,11 +138,11 @@ class solarchvision_Earth3D {
     // WIN3D path used to open a separate beginShape()/texture()/endShape()
     // for every single one of them - i.e. up to 64,800 texture-bind calls
     // per frame. Batch them into one shape instead: the whole sphere uses a
-    // single texture image (this.Map[n_Map]) for the whole draw() call, so
-    // there's no need to rebind it per quad.
+    // single texture image for the whole draw() call, so there's no need
+    // to rebind it per quad.
     boolean isWin3D = (target_window == TypeWindow.WIN3D);
 
-    if (isWin3D) beginWIN3DSphere(n_Map);
+    if (isWin3D) beginWIN3DSphere(textureImage);
 
     float stationLon = STATION.getLongitude();
     float stationLat = STATION.getLatitude();
@@ -115,9 +162,9 @@ class solarchvision_Earth3D {
           FaceVertex[] subFace = buildSubFace(Alpha, Beta, delta_Alpha, delta_Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
 
           if (isWin3D) {
-            addFaceWIN3D(subFace, n_Map);
+            addFaceWIN3D(subFace, textureImage);
           } else {
-            drawFace(target_window, subFace, n_Map, f, _turn);
+            drawFace(target_window, subFace, textureLabel, f, _turn);
           }
         }
       }
@@ -126,16 +173,16 @@ class solarchvision_Earth3D {
     if (isWin3D) endWIN3DSphere();
   }
 
-  private void beginWIN3DSphere (int n_Map) {
+  private void beginWIN3DSphere (PImage textureImage) {
     WIN3D.graphics.strokeWeight(1);
     WIN3D.graphics.noStroke();
     WIN3D.graphics.beginShape(QUADS);
     if (this.displayTexture) {
-      WIN3D.graphics.texture(this.Map[n_Map]);
+      WIN3D.graphics.texture(textureImage);
     }
   }
 
-  private void addFaceWIN3D (FaceVertex[] subFace, int n_Map) {
+  private void addFaceWIN3D (FaceVertex[] subFace, PImage textureImage) {
     for (int s = 0; s < subFace.length; s++) {
       float u = clamp01(subFace[s].u);
       float v = clamp01(subFace[s].v);
@@ -143,8 +190,8 @@ class solarchvision_Earth3D {
         subFace[s].x * OBJECTS_scale * WIN3D.scale,
         -subFace[s].y * OBJECTS_scale * WIN3D.scale,
         subFace[s].z * OBJECTS_scale * WIN3D.scale,
-        u * this.Map[n_Map].width,
-        v * this.Map[n_Map].height
+        u * textureImage.width,
+        v * textureImage.height
       );
     }
   }
@@ -153,16 +200,16 @@ class solarchvision_Earth3D {
     WIN3D.graphics.endShape();
   }
 
-  private void writeMaterial (int target_window, int n_Map) {
+  private void writeMaterial (int target_window, String textureLabel, String texturePath, String textureFilename) {
     if (User3D.export_MaterialLibrary) {
       if (target_window == TypeWindow.HTML) {
-        htmlOutput.println("\t\t\t\t<Appearance DEF='EarthSphere" + nf(n_Map, 0) + "'>");
+        htmlOutput.println("\t\t\t\t<Appearance DEF='" + textureLabel + "'>");
       }
       if (target_window == TypeWindow.OBJ3D) {
         writeMTLHeader();
       }
       if (this.displayTexture) {
-        writeTextureMap(target_window, n_Map);
+        writeTextureMap(target_window, texturePath, textureFilename);
       }
     }
 
@@ -194,20 +241,18 @@ class solarchvision_Earth3D {
     mtlOutput.println("\tTf 1.000 1.000 1.000"); // transmission filter
   }
 
-  private void writeTextureMap (int target_window, int n_Map) {
-    String old_Texture_path = this.Path + "/" + this.Filenames[n_Map];
-    String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1);
-    String new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
+  private void writeTextureMap (int target_window, String texturePath, String textureFilename) {
+    String new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + textureFilename;
 
-    println("Copying texture:", old_Texture_path, ">", new_Texture_path);
-    saveBytes(new_Texture_path, loadBytes(old_Texture_path));
+    println("Copying texture:", texturePath, ">", new_Texture_path);
+    saveBytes(new_Texture_path, loadBytes(texturePath));
 
     if (target_window == TypeWindow.OBJ3D) {
-      mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + the_filename); // diffuse map
-      mtlOutput.println("\tmap_d " + Subfolder_exportMaps + the_filename);  // alpha map
+      mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + textureFilename); // diffuse map
+      mtlOutput.println("\tmap_d " + Subfolder_exportMaps + textureFilename);  // alpha map
     }
     if (target_window == TypeWindow.HTML) {
-      htmlOutput.println("\t\t\t\t\t<ImageTexture url='" + Subfolder_exportMaps + the_filename + "'><ImageTexture/>");
+      htmlOutput.println("\t\t\t\t\t<ImageTexture url='" + Subfolder_exportMaps + textureFilename + "'><ImageTexture/>");
     }
   }
 
@@ -259,9 +304,9 @@ class solarchvision_Earth3D {
   }
 
 
-  private void drawFace (int target_window, FaceVertex[] subFace, int n_Map, int f, int _turn) {
+  private void drawFace (int target_window, FaceVertex[] subFace, String textureLabel, int f, int _turn) {
     if (target_window == TypeWindow.HTML) {
-      writeFaceHTML(subFace, n_Map);
+      writeFaceHTML(subFace, textureLabel);
       return;
     }
     if (target_window == TypeWindow.OBJ3D) {
@@ -269,11 +314,9 @@ class solarchvision_Earth3D {
     }
   }
 
-  private void writeFaceHTML (FaceVertex[] subFace, int n_Map) {
+  private void writeFaceHTML (FaceVertex[] subFace, String textureLabel) {
     htmlOutput.println("\t\t\t\t<shape>");
-    if (n_Map != -1) {
-      htmlOutput.println("\t\t\t\t\t<Appearance USE='EarthSphere" + nf(n_Map, 0) + "'></Appearance>");
-    }
+    htmlOutput.println("\t\t\t\t\t<Appearance USE='" + textureLabel + "'></Appearance>");
 
     htmlOutput.print("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
     htmlOutput.print(" coordIndex='");
@@ -292,16 +335,14 @@ class solarchvision_Earth3D {
     }
     htmlOutput.println("'></Coordinate>");
 
-    if (n_Map != -1) {
-      htmlOutput.print("\t\t\t\t\t\t<TextureCoordinate point='");
-      for (int s = 0; s < subFace.length; s++) {
-        if (s > 0) htmlOutput.print(",");
-        float u = clamp01(subFace[s].u);
-        float v = 1 - clamp01(subFace[s].v); // mirroring the image
-        SOLARCHVISION_HTMLprintVtexture(u, v);
-      }
-      htmlOutput.println("'></TextureCoordinate>");
+    htmlOutput.print("\t\t\t\t\t\t<TextureCoordinate point='");
+    for (int s = 0; s < subFace.length; s++) {
+      if (s > 0) htmlOutput.print(",");
+      float u = clamp01(subFace[s].u);
+      float v = 1 - clamp01(subFace[s].v); // mirroring the image
+      SOLARCHVISION_HTMLprintVtexture(u, v);
     }
+    htmlOutput.println("'></TextureCoordinate>");
 
     htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
     htmlOutput.println("\t\t\t\t</shape>");
