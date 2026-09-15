@@ -290,24 +290,24 @@ class solarchvision_ROLLOUT {
       if (this.child == CHILD_LOCATION_STATIONS) {
 
         WORLD.displayAll_TMYEPW = this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_TMYEPW", WORLD.displayAll_TMYEPW, 0, 2, 1);
-        //WORLD.displayNear_TMYEPW = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_TMYEPW", WORLD.displayNear_TMYEPW, 0, 1, 1), 1));
+        WORLD.displayNear_TMYEPW = this.Spinner(X_control, Y_control, 0, 0, 1, "displayNear_TMYEPW", WORLD.displayNear_TMYEPW);
 
         WORLD.displayAll_CWEEDS = this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_CWEEDS", WORLD.displayAll_CWEEDS, 0, 2, 1);
-        //WORLD.displayNear_CWEEDS = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_CWEEDS", WORLD.displayNear_CWEEDS, 0, 1, 1), 1));
+        WORLD.displayNear_CWEEDS = this.Spinner(X_control, Y_control, 0, 0, 1, "displayNear_CWEEDS", WORLD.displayNear_CWEEDS);
 
         WORLD.displayAll_CLMREC = this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_CLMREC", WORLD.displayAll_CLMREC, 0, 2, 1);
-        //WORLD.displayNear_CLMREC = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_CLMREC", WORLD.displayNear_CLMREC, 0, 1, 1), 1));
+        WORLD.displayNear_CLMREC = this.Spinner(X_control, Y_control, 0, 0, 1, "displayNear_CLMREC", WORLD.displayNear_CLMREC);
 
         WORLD.displayAll_SWOB = this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_SWOB", WORLD.displayAll_SWOB, 0, 2, 1);
-        //WORLD.displayNear_SWOB = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_SWOB", WORLD.displayNear_SWOB, 0, 1, 1), 1));
+        WORLD.displayNear_SWOB = this.Spinner(X_control, Y_control, 0, 0, 1, "displayNear_SWOB", WORLD.displayNear_SWOB);
 
         WORLD.displayAll_NAEFS = this.Spinner(X_control, Y_control, 0, 0, 1, "displayAll_NAEFS", WORLD.displayAll_NAEFS, 0, 2, 1);
-        //WORLD.displayNear_NAEFS = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 1, "WORLD.displayNear_NAEFS", WORLD.displayNear_NAEFS, 0, 1, 1), 1));
+        WORLD.displayNear_NAEFS = this.Spinner(X_control, Y_control, 0, 0, 1, "displayNear_NAEFS", WORLD.displayNear_NAEFS);
       }
     } else if (this.parent == PARENT_GEOMETRY) {
       if (this.child == CHILD_GEOMETRY_CREATE) {
 
-        //addToLastGroup = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup, 0, 1, 1), 1));
+        addToLastGroup = this.Spinner(X_control, Y_control, 0, 1, 0, "addToLastGroup", addToLastGroup);
 
         User3D.default_Material = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Material", User3D.default_Material, -1, 8, 1);
         User3D.default_Tessellation = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Tessellation", User3D.default_Tessellation, 0, 6, 1);
@@ -391,39 +391,39 @@ class solarchvision_ROLLOUT {
 
       if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
 
-        //Land3D.loadTextures = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, 0, 1, 1), 1));
-        //Land3D.loadMesh = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, 0, 1, 1), 1));
+        Land3D.loadTextures = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures);
+        Land3D.loadMesh = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh);
         Land3D.skipStart = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1);
         Land3D.skipEnd = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1);
-        //Land3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface, 0, 1, 1), 1));
-        //Land3D.displayTexture = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture, 0, 1, 1), 1));
-        //Land3D.displayPoints = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints, 0, 1, 1), 1));
-        //Land3D.displayDepth = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth, 0, 1, 1), 1));
+        Land3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface);
+        Land3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayTexture", Land3D.displayTexture);
+        Land3D.displayPoints = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayPoints", Land3D.displayPoints);
+        Land3D.displayDepth = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displayDepth", Land3D.displayDepth);
 
-        //allModel2Ds.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allModel2Ds.displayAll", allModel2Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allModel1Ds.displayAll", allModel1Ds.displayAll, 0, 1, 1), 1));
-        //allModel1Ds.displayLeaves = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allModel1Ds.displayLeaves", allModel1Ds.displayLeaves, 0, 1, 1), 1));
-        //allPolylines.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allPolylines.displayAll", allPolylines.displayAll, 0, 1, 1), 1));
-        //allFaces.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.displayAll", allFaces.displayAll, 0, 1, 1), 1));
+        allModel2Ds.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "model2Ds.displayAll", allModel2Ds.displayAll);
+        allModel1Ds.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "model1Ds.displayAll", allModel1Ds.displayAll);
+        allModel1Ds.displayLeaves = this.Spinner(X_control, Y_control, 0, 1, 0, "model1Ds.displayLeaves", allModel1Ds.displayLeaves);
+        allPolylines.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "polylines.displayAll", allPolylines.displayAll);
+        allFaces.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.displayAll", allFaces.displayAll);
 
-        //allSolids.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.displayAll", allSolids.displayAll, 0, 1, 1), 1));
+        allSolids.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.displayAll", allSolids.displayAll);
 
-        //allSections.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSections.displayAll", allSections.displayAll, 0, 1, 1), 1));
-
-
-
-
-        //allWindRoses.displayImage = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allWindRoses.displayImage", allWindRoses.displayImage, 0, 1, 1), 1));
-
-        allWindRoses.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "allWindRoses.scale", allWindRoses.scale, 50, 3200, -2);
-        allWindRoses.RES = int(this.Spinner(X_control, Y_control, 0, 1, 0, "allWindRoses.resolution", allWindRoses.RES, 200, 600, 100));
+        allSections.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "sections.displayAll", allSections.displayAll);
 
 
 
-        //Sky3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface, 0, 1, 1), 1));
 
-        //Sun3D.displayPath = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displayPath", Sun3D.displayPath, 0, 1, 1), 1));
-        //Sun3D.displayPattern = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displayPattern", Sun3D.displayPattern, 0, 1, 1), 1));
+        allWindRoses.displayImage = this.Spinner(X_control, Y_control, 0, 1, 0, "windRoses.displayImage", allWindRoses.displayImage);
+
+        allWindRoses.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "windRoses.scale", allWindRoses.scale, 50, 3200, -2);
+        allWindRoses.RES = int(this.Spinner(X_control, Y_control, 0, 1, 0, "windRoses.resolution", allWindRoses.RES, 200, 600, 100));
+
+
+
+        Sky3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.displaySurface", Sky3D.displaySurface);
+
+        Sun3D.displayPath = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displayPath", Sun3D.displayPath);
+        Sun3D.displayPattern = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displayPattern", Sun3D.displayPattern);
       }
 
 
@@ -434,13 +434,12 @@ class solarchvision_ROLLOUT {
         WIN3D.CAM_clipNear = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
         WIN3D.CAM_clipFar = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
 
-        //WIN3D.FacesShade = this.Spinner(X_control, Y_control, 0,1,0, "FacesShade", WIN3D.FacesShade, 0, SHADE.Options_num - 1, 1);
 
-        //allPoints.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayVertices", allPoints.displayAll, 0, 1, 1), 1));
-        //allFaces.displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayEdges", allFaces.displayEdges, 0, 1, 1), 1));
-        //allFaces.displayNormals = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayNormals", allFaces.displayNormals, 0, 1, 1), 1));
+        allPoints.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayVertices", allPoints.displayAll);
+        allFaces.displayEdges = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayEdges", allFaces.displayEdges);
+        allFaces.displayNormals = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayNormals", allFaces.displayNormals);
 
-        //allCameras.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allCameras.displayAll", allCameras.displayAll, 0, 1, 1), 1));
+        allCameras.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "cameras.displayAll", allCameras.displayAll);
       }
 
 
@@ -448,35 +447,35 @@ class solarchvision_ROLLOUT {
 
         IMPACTS_displayDay = this.Spinner(X_control, Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1);
 
-        //allSolarImpacts.displayImage = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolarImpacts.displayImage", allSolarImpacts.displayImage, 0, 1, 1), 1));
-        //allSolidImpacts.displayImage = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.displayImage", allSolidImpacts.displayImage, 0, 1, 1), 1));
+        allSolarImpacts.displayImage = this.Spinner(X_control, Y_control, 0, 1, 0, "solarImpacts.displayImage", allSolarImpacts.displayImage);
+        allSolidImpacts.displayImage = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.displayImage", allSolidImpacts.displayImage);
 
-        allSolarImpacts.sectionType = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolarImpacts.sectionType", allSolarImpacts.sectionType, 0, 3, 1);
-        allSolidImpacts.sectionType = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1);
-
-
-        allSolidImpacts.Grade = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2);
-        allSolidImpacts.Power = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.Power", allSolidImpacts.Power, 0.0001, 64.0, -2);
-        allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.R[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], -360, 360, -2);
-        allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.Z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], -1000, 1000, -2);
-        allSolidImpacts.positionStep = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.positionStep", allSolidImpacts.positionStep, 5, 80, -2);
-
-        allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.U[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], 0.125, 3200, -2);
-        allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.V[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], 0.125, 3200, -2);
-        allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.X[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], -10000, 10000, -2);
-        allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.Y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], -10000, 10000, -2);
+        allSolarImpacts.sectionType = this.Spinner(X_control, Y_control, 0, 1, 0, "solarImpacts.sectionType", allSolarImpacts.sectionType, 0, 3, 1);
+        allSolidImpacts.sectionType = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1);
 
 
-        allSolidImpacts.WindSpeed = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.WindSpeed (m/s)", allSolidImpacts.WindSpeed, 1, 16, -2);
-        allSolidImpacts.WindDirection = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15);
+        allSolidImpacts.Grade = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2);
+        allSolidImpacts.Power = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Power", allSolidImpacts.Power, 0.0001, 64.0, -2);
+        allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.R[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], -360, 360, -2);
+        allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], -1000, 1000, -2);
+        allSolidImpacts.positionStep = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.positionStep", allSolidImpacts.positionStep, 5, 80, -2);
+
+        allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.U[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], 0.125, 3200, -2);
+        allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.V[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], 0.125, 3200, -2);
+        allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.X[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], -10000, 10000, -2);
+        allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], -10000, 10000, -2);
 
 
-        allSolidImpacts.Process_subDivisions = this.Spinner(X_control, Y_control, 0, 0, 0, "allSolidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1);
+        allSolidImpacts.WindSpeed = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindSpeed (m/s)", allSolidImpacts.WindSpeed, 1, 16, -2);
+        allSolidImpacts.WindDirection = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15);
 
-        //allSolidImpacts.displayPoints = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "allSolidImpacts.displayPoints", allSolidImpacts.displayPoints, 0, 1, 1), 1));
-        //allSolidImpacts.displayLines = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "allSolidImpacts.displayLines", allSolidImpacts.displayLines, 0, 1, 1), 1));
 
-        //allWindFlows.displayAll = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "allWindFlows.displayAll", allWindFlows.displayAll, 0, 1, 1), 1));
+        allSolidImpacts.Process_subDivisions = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1);
+
+        allSolidImpacts.displayPoints = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.displayPoints", allSolidImpacts.displayPoints);
+        allSolidImpacts.displayLines = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.displayLines", allSolidImpacts.displayLines);
+
+        allWindFlows.displayAll = this.Spinner(X_control, Y_control, 0, 0, 0, "windFlows.displayAll", allWindFlows.displayAll);
       }
 
       if (this.child == CHILD_GEOMETRY_OTHER) {
@@ -490,17 +489,17 @@ class solarchvision_ROLLOUT {
 
         BIOSPHERE_drawResolution = this.Spinner(X_control, Y_control, 0, 0, 0, "Biosphere_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1);
 
-        //Tropo3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
-        //Tropo3D.displayTexture = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));
+        Tropo3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface);
+        Tropo3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture);
 
-        //Earth3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface, 0, 1, 1), 1));
-        //Earth3D.displayTexture = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture, 0, 1, 1), 1));
+        Earth3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface);
+        Earth3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture);
 
-        //Moon3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface, 0, 1, 1), 1));
-        //Moon3D.displayTexture = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture, 0, 1, 1), 1));
+        Moon3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface);
+        Moon3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture);
 
-        //Sun3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface, 0, 1, 1), 1));
-        //Sun3D.displayTexture = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture, 0, 1, 1), 1));
+        Sun3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface);
+        Sun3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture);
 
         Planetary_Magnification = this.Spinner(X_control, Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
 
@@ -512,22 +511,17 @@ class solarchvision_ROLLOUT {
       if (this.child == CHILD_ILLUSTRATION_2D_LAYERS) {
         STUDY.plotSetup = this.Spinner(X_control, Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 8, 1);
 
-        //STUDY.update = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Redraw scene", STUDY.update, 0, 1, 1), 1));
-
-        //STUDY.V_scale = this.Spinner(X_control, Y_control, 1, 0, 0, "V_scale[" + nf(CurrentLayer_id, 2) + "]", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
         STUDY.V_scale = this.Spinner(X_control, Y_control, 1, 0, 0, "Scale (" + allLayers[CurrentLayer_id].descriptions[Language_EN] + ")", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
 
-        //STUDY.displayRaws = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Draw data", STUDY.displayRaws, 0, 1, 1), 1));
-        //STUDY.displaySorted = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted, 0, 1, 1), 1));
-        //STUDY.displayNormals = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Draw statistics", STUDY.displayNormals, 0, 1, 1), 1));
-        //STUDY.displayProbs = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Draw probabilities", STUDY.displayProbs, 0, 1, 1), 1));
+        STUDY.displayRaws = this.Spinner(X_control, Y_control, 1, 0, 0, "Draw data", STUDY.displayRaws);
+        STUDY.displaySorted = this.Spinner(X_control, Y_control, 1, 0, 0, "Draw sorted", STUDY.displaySorted);
+        STUDY.displayNormals = this.Spinner(X_control, Y_control, 1, 0, 0, "Draw statistics", STUDY.displayNormals);
+        STUDY.displayProbs = this.Spinner(X_control, Y_control, 1, 0, 0, "Draw probabilities", STUDY.displayProbs);
         STUDY.sumInterval = this.Spinner(X_control, Y_control, 1, 0, 0, "Probabilities interval", STUDY.sumInterval, 1, 24, 1);
         STUDY.LevelPix = this.Spinner(X_control, Y_control, 1, 0, 0, "Probabilities range", STUDY.LevelPix, 2, 32, -2, 1);
       }
 
       if (this.child == CHILD_ILLUSTRATION_2D_COLORS) {
-
-        //COLOR_STYLE_Current = this.Spinner(X_control, Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE_Current, -1, (COLOR_STYLE_Number - 1), 1);
 
         STUDY.ACTIVE_palette_CLR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_CLR", STUDY.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         STUDY.ACTIVE_palette_DIR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_DIR", STUDY.ACTIVE_palette_DIR, -2, 2, 1);
@@ -550,13 +544,13 @@ class solarchvision_ROLLOUT {
 
       if (this.child == CHILD_ILLUSTRATION_3D_SOLAR) {
 
-        allFaces.ACTIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_CLR", allFaces.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
-        allFaces.ACTIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_DIR", allFaces.ACTIVE_palette_DIR, -2, 2, 1);
-        allFaces.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.ACTIVE_palette_MLT", allFaces.ACTIVE_palette_MLT, 0.125, 8, -2);
+        allFaces.ACTIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.ACTIVE_palette_CLR", allFaces.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+        allFaces.ACTIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.ACTIVE_palette_DIR", allFaces.ACTIVE_palette_DIR, -2, 2, 1);
+        allFaces.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.ACTIVE_palette_MLT", allFaces.ACTIVE_palette_MLT, 0.125, 8, -2);
 
-        allFaces.PASSIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_CLR", allFaces.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
-        allFaces.PASSIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_DIR", allFaces.PASSIVE_palette_DIR, -2, 2, 2, 1);
-        allFaces.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allFaces.PASSIVE_palette_MLT", allFaces.PASSIVE_palette_MLT, 0.125, 8, -2);
+        allFaces.PASSIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.PASSIVE_palette_CLR", allFaces.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+        allFaces.PASSIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.PASSIVE_palette_DIR", allFaces.PASSIVE_palette_DIR, -2, 2, 2, 1);
+        allFaces.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.PASSIVE_palette_MLT", allFaces.PASSIVE_palette_MLT, 0.125, 8, -2);
 
         Sky3D.ACTIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_CLR", Sky3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         Sky3D.ACTIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_DIR", Sky3D.ACTIVE_palette_DIR, -2, 2, 1);
@@ -580,43 +574,43 @@ class solarchvision_ROLLOUT {
 
       if (this.child == CHILD_ILLUSTRATION_3D_SPATIAL) {
 
-        allSolids.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
-        allSolids.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_DIR", allSolids.palette_DIR, -2, 2, 2, 1);
-        allSolids.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allSolids.palette_MLT", allSolids.palette_MLT, 0.0001, 64, -2);
+        allSolids.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+        allSolids.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_DIR", allSolids.palette_DIR, -2, 2, 2, 1);
+        allSolids.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_MLT", allSolids.palette_MLT, 0.0001, 64, -2);
 
         Land3D.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_CLR", Land3D.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         Land3D.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_DIR", Land3D.palette_DIR, -2, 2, 2, 1);
         Land3D.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_MLT", Land3D.palette_MLT, 0.001, 0.5, -2);
 
-        allWindFlows.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_CLR", allWindFlows.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
-        allWindFlows.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_DIR", allWindFlows.palette_DIR, -2, 2, 2, 1);
-        allWindFlows.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "allWindFlows.palette_MLT", allWindFlows.palette_MLT, 0.01, 1.0, -2);
+        allWindFlows.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "windFlows.palette_CLR", allWindFlows.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+        allWindFlows.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "windFlows.palette_DIR", allWindFlows.palette_DIR, -2, 2, 2, 1);
+        allWindFlows.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "windFlows.palette_MLT", allWindFlows.palette_MLT, 0.01, 1.0, -2);
       }
 
 
       if (this.child == CHILD_ILLUSTRATION_SELECTION) {
 
-        //Select3D.Group_displayPivot = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayPivot", Select3D.Group_displayPivot, 0, 1, 1), 1));
-        //Select3D.displayReferencePivot = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.displayReferencePivot", Select3D.displayReferencePivot, 0, 1, 1), 1));
-        //Select3D.Group_displayBox = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayBox", Select3D.Group_displayBox, 0, 1, 1), 1));
-        //Select3D.Group_displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayEdges", Select3D.Group_displayEdges, 0, 1, 1), 1));
+        Select3D.Group_displayPivot = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayPivot", Select3D.Group_displayPivot);
+        Select3D.displayReferencePivot = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.displayReferencePivot", Select3D.displayReferencePivot);
+        Select3D.Group_displayBox = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayBox", Select3D.Group_displayBox);
+        Select3D.Group_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayEdges", Select3D.Group_displayEdges);
 
-        //Select3D.Face_displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Face_displayEdges", Select3D.Face_displayEdges, 0, 1, 1), 1));
-        //Select3D.Face_displayVertexCount = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Face_displayVertexCount", Select3D.Face_displayVertexCount, 0, 1, 1), 1));
-        //Select3D.Polyline_displayVertexCount = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Polyline_displayVertexCount", Select3D.Polyline_displayVertexCount, 0, 1, 1), 1));
-        //Select3D.Vertex_displayVertices = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Vertex_displayVertices", Select3D.Vertex_displayVertices, 0, 1, 1), 1));
-        //Select3D.Polyline_displayVertices = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Polyline_displayVertices", Select3D.Polyline_displayVertices, 0, 1, 1), 1));
+        Select3D.Face_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Face_displayEdges", Select3D.Face_displayEdges);
+        Select3D.Face_displayVertexCount = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Face_displayVertexCount", Select3D.Face_displayVertexCount);
+        Select3D.Polyline_displayVertexCount = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Polyline_displayVertexCount", Select3D.Polyline_displayVertexCount);
+        Select3D.Vertex_displayVertices = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Vertex_displayVertices", Select3D.Vertex_displayVertices);
+        Select3D.Polyline_displayVertices = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Polyline_displayVertices", Select3D.Polyline_displayVertices);
 
-        //Select3D.Model2D_displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Model2D_displayEdges", Select3D.Model2D_displayEdges, 0, 1, 1), 1));
-        //Select3D.Model1D_displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Model1D_displayEdges", Select3D.Model1D_displayEdges, 0, 1, 1), 1));
+        Select3D.Model2D_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Model2D_displayEdges", Select3D.Model2D_displayEdges);
+        Select3D.Model1D_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Model1D_displayEdges", Select3D.Model1D_displayEdges);
 
-        //Select3D.Solid_displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Solid_displayEdges", Select3D.Solid_displayEdges, 0, 1, 1), 1));
+        Select3D.Solid_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Solid_displayEdges", Select3D.Solid_displayEdges);
 
-        //Select3D.Section_displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Section_displayEdges", Select3D.Section_displayEdges, 0, 1, 1), 1));
+        Select3D.Section_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Section_displayEdges", Select3D.Section_displayEdges);
 
-        //Select3D.Camera_displayEdges = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Camera_displayEdges", Select3D.Camera_displayEdges, 0, 1, 1), 1));
+        Select3D.Camera_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Camera_displayEdges", Select3D.Camera_displayEdges);
 
-        //Select3D.LandPoint_displayPoints = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.LandPoint_displayPoints", Select3D.LandPoint_displayPoints, 0, 1, 1), 1));
+        Select3D.LandPoint_displayPoints = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.LandPoint_displayPoints", Select3D.LandPoint_displayPoints);
       }
     } else if (this.parent == PARENT_POSTPROCESS) {
 
@@ -639,15 +633,14 @@ class solarchvision_ROLLOUT {
       if (this.child == CHILD_POSTPROCESS_IMPACTS) {
         CurrentDataSource = this.Spinner(X_control, Y_control, 1, 0, 0, "Impact Source", CurrentDataSource, 0, MAXIMUM_dataID, 1);
         STUDY.ImpactLayer = this.Spinner(X_control, Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1);
-        //STUDY.Impacts_update = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "update impacts", STUDY.Impacts_update, 0, 1, 1), 1));
       }
     } else if (this.parent == PARENT_EXPORT) {
 
       if (this.child == CHILD_EXPORT_DATA) {
 
-        //STUDY.export_info_node = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Export ASCII data", STUDY.export_info_node, 0, 1, 1), 1));
-        //STUDY.export_info_norm = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.export_info_norm, 0, 1, 1), 1));
-        //STUDY.export_info_prob = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.export_info_prob, 0, 1, 1), 1));
+        STUDY.export_info_node = this.Spinner(X_control, Y_control, 1, 0, 0, "Export ASCII data", STUDY.export_info_node);
+        STUDY.export_info_norm = this.Spinner(X_control, Y_control, 1, 0, 0, "Export ASCII statistics", STUDY.export_info_norm);
+        STUDY.export_info_prob = this.Spinner(X_control, Y_control, 1, 0, 0, "Export ASCII probabilities", STUDY.export_info_prob);
 
 
         User3D.export_Scale = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.Scale", User3D.export_Scale, .001, 1000, -0.1);
@@ -657,9 +650,9 @@ class solarchvision_ROLLOUT {
         User3D.export_PrecisionVtexture = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PrecisionVtexture", User3D.export_PrecisionVtexture, 0, 6, 1);
         User3D.export_PolyToPoly = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PolyToPoly", User3D.export_PolyToPoly, 0, 1, 1);
 
-        //User3D.export_MaterialLibrary = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.MaterialLibrary", User3D.export_MaterialLibrary, 0, 1, 1), 1));
-        //User3D.export_BackSides = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.BackSides", User3D.export_BackSides, 0, 1, 1), 1));
-        //User3D.export_PaletteResolution = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PaletteResolution", User3D.export_PaletteResolution, 32, 2048, -2), 1));
+        User3D.export_MaterialLibrary = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.MaterialLibrary", User3D.export_MaterialLibrary);
+        User3D.export_BackSides = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.BackSides", User3D.export_BackSides);
+        User3D.export_PaletteResolution = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-export.PaletteResolution", User3D.export_PaletteResolution, 32, 2048, -2, 1);
       }
 
       if (this.child == CHILD_EXPORT_MEDIA) {
@@ -682,6 +675,32 @@ class solarchvision_ROLLOUT {
     if (this.spinnerEditStateChanged) {
       this.drawView();
     }
+  }
+
+  boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v) {
+    int min_v = 0;
+    int max_v = 1;
+    int stp_v = 1;
+    int roundStep = stp_v;
+    return (
+      funcs.roundTo(
+        this._Spinner(x, y, update1, update2, update3, caption, v ? 1.0 : 0.0, (float) min_v, (float) max_v, (float) stp_v),
+        roundStep
+      )
+    ) > 0.5;
+  }
+
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v) {
+    int min_v = 0;
+    int max_v = 1;
+    int stp_v = 1;
+    int roundStep = stp_v;
+    return int(
+      funcs.roundTo(
+        this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v),
+        roundStep
+      )
+    );
   }
 
   int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v) {
