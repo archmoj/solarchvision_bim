@@ -164,7 +164,7 @@ class solarchvision_ROLLOUT {
 
         textAlign(LEFT, CENTER);
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
+        if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
           this.parent = i;
           this.child = selectedChildForParent[i];
 
@@ -206,7 +206,7 @@ class solarchvision_ROLLOUT {
 
         textAlign(LEFT, CENTER);
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr)) {
+        if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr)) {
           this.child = i;
           selectedChildForParent[this.parent] = i; // remember this choice for next time this category is opened
 
@@ -807,7 +807,7 @@ class solarchvision_ROLLOUT {
       ROLLOUT.revise();
     }
 
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o)) {
+    if ((!this.spinnerEditActive || editingThis) && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o)) {
 
       if (!editingThis) {
         this.spinnerEditActive = true;
@@ -837,7 +837,7 @@ class solarchvision_ROLLOUT {
     cr = 0.25 * (h + 2 * o);
     triangle(cx + cr * funcs.cos_ang(270), cy + 0.75 * cr * funcs.sin_ang(270), cx + 0.75 * cr * funcs.cos_ang(30), cy + 0.75 * cr * funcs.sin_ang(30), cx + 0.75 * cr * funcs.cos_ang(150), cy + 0.75 * cr * funcs.sin_ang(150));
 
-    if (!editingThis && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
+    if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
       if (mouseButton == LEFT) {
 
         if (stp_v < 0) {
@@ -854,7 +854,7 @@ class solarchvision_ROLLOUT {
     cy += 2 * cr;
     triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
 
-    if (!editingThis && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
+    if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
 
       if (mouseButton == LEFT) {
 
@@ -894,7 +894,7 @@ class solarchvision_ROLLOUT {
       q = (new_value - min_v) / (max_v - min_v);
     }
 
-    if (!editingThis && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
+    if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
 
       q = 1;
 
