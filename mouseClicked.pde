@@ -138,9 +138,11 @@ int[] SOLARCHVISION_findNearbyStations (solarchvision_STATION[] coords, float lo
 
 final float PICKLIST_SCROLLBAR_WIDTH = 14;
 float rowHeight = 1.6 * MessageSize;
+float headerHeight = 1.6 * MessageSize;
 
 abstract class StationPicker {
 
+  String name;      // shown in the title bar, e.g. "Pick TMYEPW Station"
   float maxDist;    // metres
   int maxCount;
   int dataSourceID; // only offer the list while CurrentDataSource == this
@@ -155,7 +157,8 @@ abstract class StationPicker {
   float scrollDrag_startMouseY = 0;
   int scrollDrag_startOffset = 0;
 
-  StationPicker (float maxDist, int maxCount, int dataSourceID) {
+  StationPicker (String name, float maxDist, int maxCount, int dataSourceID) {
+    this.name = name;
     this.maxDist = maxDist;
     this.maxCount = maxCount;
     this.dataSourceID = dataSourceID;
@@ -179,20 +182,32 @@ abstract class StationPicker {
 
   int visibleRowCount () {
     float pad = 10;
-    return max(1, int((WORLD.dY - 2 * pad) / rowHeight));
+    return max(1, int((WORLD.dY - 2 * pad - headerHeight) / rowHeight));
   }
 
-  // Shared layout for one *visible* row (0 = topmost row on screen), in
-  // absolute screen coordinates - used by both the drawing code and the
-  // click hit-test below so they always agree on where each row is. To
-  // get the absolute index into `indices` for a visible row, add
-  // `scrollOffset` to it.
+  // Title bar above the rows, in absolute screen coordinates - drawn
+  // every time this picker draws (including while the scrollbar is being
+  // dragged), so it stays put rather than only appearing momentarily.
+  float[] headerRect () {
+    float pad = 10;
+    float x = WORLD.cX + pad;
+    float y = WORLD.cY + pad;
+    float w = WORLD.dX - 2 * pad;
+    float h = headerHeight - 2;
+    return new float[]{ x, y, w, h };
+  }
+
+  // Shared layout for one *visible* row (0 = topmost row on screen,
+  // right below the title bar), in absolute screen coordinates - used by
+  // both the drawing code and the click hit-test below so they always
+  // agree on where each row is. To get the absolute index into `indices`
+  // for a visible row, add `scrollOffset` to it.
   float[] rowRect (int visibleRow) {
     float pad = 10;
     float scrollBarWidth = this.needsScrollbar() ? PICKLIST_SCROLLBAR_WIDTH + 4 : 0;
 
     float x = WORLD.cX + pad;
-    float y = WORLD.cY + pad + visibleRow * rowHeight;
+    float y = WORLD.cY + pad + headerHeight + visibleRow * rowHeight;
     float w = WORLD.dX - 2 * pad - scrollBarWidth;
     float h = rowHeight - 2;
     return new float[]{ x, y, w, h };
@@ -206,7 +221,7 @@ abstract class StationPicker {
     int shownRows = min(visibleRowCount, this.indices.length);
 
     float x = WORLD.cX + WORLD.dX - pad - PICKLIST_SCROLLBAR_WIDTH;
-    float y = WORLD.cY + pad;
+    float y = WORLD.cY + pad + headerHeight;
     float w = PICKLIST_SCROLLBAR_WIDTH;
     float h = shownRows * rowHeight;
     return new float[]{ x, y, w, h };
@@ -248,8 +263,27 @@ abstract class StationPicker {
 
     pushStyle();
 
-    textAlign(LEFT, CENTER);
     textSize(MessageSize);
+
+    // Title bar - drawn every time (not just on the first frame), so it
+    // stays in place while the scrollbar is being dragged/scrolled.
+    float[] header = this.headerRect();
+
+    noStroke();
+    fill(60, 230);
+    rect(header[0], header[1], header[2], header[3]);
+
+    stroke(0);
+    strokeWeight(1);
+    noFill();
+    rect(header[0], header[1], header[2], header[3]);
+
+    noStroke();
+    fill(255);
+    textAlign(CENTER, CENTER);
+    text("Pick " + this.name + " Station", header[0] + 0.5 * header[2], header[1] + 0.5 * header[3]);
+
+    textAlign(LEFT, CENTER);
 
     int visibleRowCount = this.visibleRowCount();
     int maxVisible = min(visibleRowCount, this.indices.length - this.scrollOffset);
@@ -435,31 +469,31 @@ abstract class StationPicker {
   }
 }
 
-StationPicker TMYEPW_PICKER = new StationPicker(10000, 50, dataID_CLIMATE_TMYEPW) {
+StationPicker TMYEPW_PICKER = new StationPicker("TMYEPW", 10000, 50, dataID_CLIMATE_TMYEPW) {
   solarchvision_STATION[] getCoords () { return TMYEPW_Coordinates; }
   String getLabel (int f) { return TMYEPW_Coordinates[f].getFilename_TMYEPW(); }
   void select (int f, float lon, float lat) { SOLARCHVISION_selectTMYEPWStation(f, lon, lat); }
 };
 
-StationPicker CLMREC_PICKER = new StationPicker(25000, 50, dataID_CLIMATE_CLMREC) {
+StationPicker CLMREC_PICKER = new StationPicker("CLMREC", 25000, 50, dataID_CLIMATE_CLMREC) {
   solarchvision_STATION[] getCoords () { return CLMREC_Coordinates; }
   String getLabel (int f) { return CLMREC_Coordinates[f].getFilename_CWEEDS(); }
   void select (int f, float lon, float lat) { SOLARCHVISION_selectCLMRECStation(f, lon, lat); }
 };
 
-StationPicker CWEEDS_PICKER = new StationPicker(50000, 50, dataID_CLIMATE_CWEEDS) {
+StationPicker CWEEDS_PICKER = new StationPicker("CWEEDS", 50000, 50, dataID_CLIMATE_CWEEDS) {
   solarchvision_STATION[] getCoords () { return CWEEDS_coordinates; }
   String getLabel (int f) { return CWEEDS_coordinates[f].getFilename_CWEEDS(); }
   void select (int f, float lon, float lat) { SOLARCHVISION_selectCWEEDSStation(f, lon, lat); }
 };
 
-StationPicker NAEFS_PICKER = new StationPicker(50000, 50, dataID_ENSEMBLE_FORECAST) {
+StationPicker NAEFS_PICKER = new StationPicker("NAEFS", 50000, 50, dataID_ENSEMBLE_FORECAST) {
   solarchvision_STATION[] getCoords () { return NAEFS_Coordinates; }
   String getLabel (int f) { return NAEFS_Coordinates[f].getFilename_NAEFS(); }
   void select (int f, float lon, float lat) { SOLARCHVISION_selectNAEFSStation(f, lon, lat); }
 };
 
-StationPicker SWOB_PICKER = new StationPicker(25000, 50, dataID_ENSEMBLE_OBSERVED) {
+StationPicker SWOB_PICKER = new StationPicker("SWOB", 25000, 50, dataID_ENSEMBLE_OBSERVED) {
   solarchvision_STATION[] getCoords () { return SWOB_Coordinates; }
   String getLabel (int f) { return SWOB_Coordinates[f].getFilename_SWOB(); }
   void select (int f, float lon, float lat) { SOLARCHVISION_selectSWOBStation(f, lon, lat); }
