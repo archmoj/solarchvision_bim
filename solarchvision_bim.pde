@@ -1820,9 +1820,13 @@ void keyPressed (KeyEvent e) {
 
         UI_commandBar.updated();
 
-        STUDY.keyPressed(e);
-        WORLD.keyPressed(e);
-        WIN3D.keyPressed(e);
+        if (ROLLOUT.isEditingSpinner()) {
+          ROLLOUT.keyPressed(e);
+        } else {
+          STUDY.keyPressed(e);
+          WORLD.keyPressed(e);
+          WIN3D.keyPressed(e);
+        }
       }
       else {
 

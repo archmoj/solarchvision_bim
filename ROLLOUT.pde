@@ -12,6 +12,14 @@ class solarchvision_ROLLOUT {
   boolean update = true;
   boolean include = true;
 
+  // Spinner text-edit state: which spinner (identified by its caption) is
+  // currently accepting keyboard input, and the value being typed so far.
+  private boolean spinnerEditActive = false;
+  private String spinnerEditCaption = "";
+  private String spinnerEditText = "";
+  private int spinnerEditCursor = 0;
+  private boolean spinnerEditCommit = false;
+
   private void buildAllRollouts () {
 
     PARENT_PERIOD_SCENARIOS = pushParent("Period & Scenarios");
@@ -701,6 +709,54 @@ class solarchvision_ROLLOUT {
 
     Y_control += 25 * ROLLOUT.view_S; //(h + 2 * o) * 1.25;
 
+    // --- Spinner text-edit -------------------------------------------------
+    // Clicking the gray caption area on the left of the spinner (the part of
+    // the control not covered by the white value box) enables direct
+    // keyboard entry of this spinner's value. Only one spinner can be in
+    // edit mode at a time; it is tracked by its caption string.
+    boolean editingThis = this.spinnerEditActive && this.spinnerEditCaption.equals(caption);
+
+    if (editingThis && this.spinnerEditCommit) {
+
+      float typed_value = v;
+      try {
+        typed_value = Float.parseFloat(this.spinnerEditText);
+      }
+      catch (Exception ex) {
+        typed_value = v;
+      }
+
+      new_value = typed_value;
+      if (new_value < min_v) new_value = min_v;
+      if (new_value > max_v) new_value = max_v;
+
+      this.spinnerEditActive = false;
+      this.spinnerEditCaption = "";
+      this.spinnerEditText = "";
+      this.spinnerEditCursor = 0;
+      this.spinnerEditCommit = false;
+
+      editingThis = false;
+
+      ROLLOUT.revise();
+    }
+
+    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o)) {
+
+      if (!editingThis) {
+        this.spinnerEditActive = true;
+        this.spinnerEditCaption = caption;
+        this.spinnerEditText = (new_value == int(new_value)) ? String.valueOf(int(new_value)) : String.valueOf(new_value);
+        this.spinnerEditCursor = this.spinnerEditText.length();
+        this.spinnerEditCommit = false;
+        editingThis = true;
+      }
+
+      SOLARCHVISION_X_clicked = -1;
+      SOLARCHVISION_Y_clicked = -1;
+    }
+    // -------------------------------------------------------------------
+
     strokeWeight(0);
     stroke(0);
     fill(0);
@@ -713,7 +769,7 @@ class solarchvision_ROLLOUT {
     cr = 0.25 * (h + 2 * o);
     triangle(cx + cr * funcs.cos_ang(270), cy + 0.75 * cr * funcs.sin_ang(270), cx + 0.75 * cr * funcs.cos_ang(30), cy + 0.75 * cr * funcs.sin_ang(30), cx + 0.75 * cr * funcs.cos_ang(150), cy + 0.75 * cr * funcs.sin_ang(150));
 
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
+    if (!editingThis && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
       if (mouseButton == LEFT) {
 
         if (stp_v < 0) {
@@ -730,7 +786,7 @@ class solarchvision_ROLLOUT {
     cy += 2 * cr;
     triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
 
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
+    if (!editingThis && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
 
       if (mouseButton == LEFT) {
 
@@ -751,8 +807,13 @@ class solarchvision_ROLLOUT {
 
 
     strokeWeight(0);
-    stroke(191);
-    fill(191);
+    if (editingThis) {
+      stroke(255, 127, 0);
+      fill(255, 127, 0);
+    } else {
+      stroke(191);
+      fill(191);
+    }
     rect(x - (w1 + w2) - o, y - (h / 2) - o, (w1 + w2) + 2 * o, h + 2 * o);
 
     stroke(255);
@@ -765,7 +826,7 @@ class solarchvision_ROLLOUT {
       q = (new_value - min_v) / (max_v - min_v);
     }
 
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
+    if (!editingThis && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
 
       q = 1;
 
@@ -796,11 +857,20 @@ class solarchvision_ROLLOUT {
     stroke(0);
     fill(0);
     textSize(1.0 * h);
-    textAlign(RIGHT, CENTER);
-    if ((new_value == int(new_value)) || (new_value >= 100)) {
-      text(String.valueOf(int(new_value)), x - t_o, y - t_o);
+
+    if (editingThis) {
+
+      textAlign(LEFT, CENTER);
+      String textWithCursor = this.spinnerEditText.substring(0, this.spinnerEditCursor) + "|" + this.spinnerEditText.substring(this.spinnerEditCursor);
+      text(textWithCursor, x - w1 + t_o, y - t_o);
     } else {
-      text(nf(new_value, 0, 0), x - t_o, y - t_o);
+
+      textAlign(RIGHT, CENTER);
+      if ((new_value == int(new_value)) || (new_value >= 100)) {
+        text(String.valueOf(int(new_value)), x - t_o, y - t_o);
+      } else {
+        text(nf(new_value, 0, 0), x - t_o, y - t_o);
+      }
     }
 
 
@@ -831,5 +901,79 @@ class solarchvision_ROLLOUT {
   }
   void updated () {
     this.update = false;
+  }
+
+  // True while a spinner is in keyboard-edit mode (its gray caption area was
+  // clicked). While this is true, callers should route key events here
+  // instead of to the 3D/study/world navigation shortcuts.
+  boolean isEditingSpinner () {
+    return this.spinnerEditActive;
+  }
+
+  // Handles typing into a spinner that is currently in edit mode: digits,
+  // ".", and a leading "-" insert at the cursor position; left/right move
+  // the cursor; backspace/delete remove the character before/at the cursor;
+  // and enter validates and commits the new value (clamped to
+  // [min_v, max_v] on the next Spinner() call for that caption).
+  void keyPressed (KeyEvent e) {
+
+    if (!this.spinnerEditActive) return;
+    if (e.isAltDown() || e.isControlDown()) return;
+
+    if (key == CODED) {
+      switch (keyCode) {
+
+        case LEFT:
+          if (this.spinnerEditCursor > 0) this.spinnerEditCursor--;
+          break;
+
+        case RIGHT:
+          if (this.spinnerEditCursor < this.spinnerEditText.length()) this.spinnerEditCursor++;
+          break;
+      }
+
+      this.revise();
+      return;
+    }
+
+    switch (key) {
+
+      case ENTER:
+        this.spinnerEditCommit = true;
+        break;
+
+      case BACKSPACE:
+        if (this.spinnerEditCursor > 0) {
+          this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor - 1) + this.spinnerEditText.substring(this.spinnerEditCursor);
+          this.spinnerEditCursor--;
+        }
+        break;
+
+      case DELETE:
+        if (this.spinnerEditCursor < this.spinnerEditText.length()) {
+          this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor) + this.spinnerEditText.substring(this.spinnerEditCursor + 1);
+        }
+        break;
+
+      case '-':
+        // A minus sign is only meaningful as the very first character.
+        if ((this.spinnerEditCursor == 0) && ((this.spinnerEditText.length() == 0) || (this.spinnerEditText.charAt(0) != '-'))) {
+          this.spinnerEditText = "-" + this.spinnerEditText;
+          this.spinnerEditCursor++;
+        }
+        break;
+
+      default:
+        if ((key >= '0') && (key <= '9')) {
+          this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor) + key + this.spinnerEditText.substring(this.spinnerEditCursor);
+          this.spinnerEditCursor++;
+        } else if ((key == '.') && (this.spinnerEditText.indexOf('.') == -1)) {
+          this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor) + key + this.spinnerEditText.substring(this.spinnerEditCursor);
+          this.spinnerEditCursor++;
+        }
+        break;
+    }
+
+    this.revise();
   }
 }
