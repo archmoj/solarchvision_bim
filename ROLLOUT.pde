@@ -244,7 +244,7 @@ class solarchvision_ROLLOUT {
       if (this.child == CHILD_PERIOD_TIME) {
         STUDY.j_End = this.Spinner(X_control, Y_control, 1, 1, 0, "Number of days to plot", STUDY.j_End, 1, 365, 1, 1);
 
-        STUDY.perDays = funcs.roundTo(this.Spinner(X_control, Y_control, 1, 1, 0, "Day step", STUDY.perDays, 1, 182.5, 0.5), 0.5);
+        STUDY.perDays = this.Spinner(X_control, Y_control, 1, 1, 0, "Day step", STUDY.perDays, 1.0, 182.5, 0.5, 0.5);
 
         STUDY.joinDays = this.Spinner(X_control, Y_control, 1, 1, 0, "Join days", STUDY.joinDays, 1, 182, 1, 1);
 
@@ -707,6 +707,16 @@ class solarchvision_ROLLOUT {
       )
     );
   }
+
+  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, float roundStep) {
+    return (
+      funcs.roundTo(
+        this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v),
+        roundStep
+      )
+    );
+  }
+
 
   float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
     return this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v);
