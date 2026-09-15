@@ -70,6 +70,8 @@ void draw () {
 
   //println("frameCount:", frameCount);
 
+  WIN3D.processHeldKey();
+
   if (frameCount == 1) {
 
     background(223);
@@ -1865,6 +1867,8 @@ void keyPressed (KeyEvent e) {
 }
 
 void keyReleased () {
+
+  WIN3D.keyReleased();
 
   if ((key == CODED) && ((keyCode == CONTROL) || (keyCode == ALT))) {
     addNewSelectionToPreviousSelection = addNewSelectionToPreviousSelection_beforeModifierKey;

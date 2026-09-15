@@ -413,20 +413,102 @@ class solarchvision_WIN3D {
     ROLLOUT.revise();
   }
 
+  // --- Continuous key-hold navigation ---------------------------------
+  // Processing 4's P2D/P3D (JOGL/NEWT) windowing surface, unlike v2, does
+  // not forward the OS's key-repeat events while a key is held down: a
+  // held key only ever produces a single keyPressed(). To get the old
+  // "keep navigating until key up" behavior back, we instead track which
+  // navigation key is currently held and re-run its action once per frame
+  // (from draw(), via processHeldKey()) for as long as it stays held,
+  // rather than relying on repeat events that Processing no longer sends.
+  private boolean navKeyHeld = false;
+  private boolean navKeyRepeatable = false;
+  private boolean navKeyCoded = false;
+  private char navKeyChar = 0;
+  private int navKeyCode = 0;
+  private boolean navKeyShift = false;
+
   void keyPressed (KeyEvent e) {
     if (!this.include) return;
     if (e.isAltDown() || e.isControlDown()) return;
 
-    if (key == CODED) {
-      if (e.isShiftDown()) {
-        handleShiftedArrowKeys(keyCode);
-      } else {
-        handleArrowKeys(keyCode);
-      }
-    } else {
-      handleCommandKey(e);
+    this.navKeyCoded = (key == CODED);
+    this.navKeyChar = key;
+    this.navKeyCode = keyCode;
+    this.navKeyShift = e.isShiftDown();
+
+    // Arrow keys / Shift+arrows (camera or selection nudges) always repeat
+    // while held; among the plain command keys, only the incremental
+    // view rotate/pan/zoom ones do. Everything else (camera cycling,
+    // shading toggle, day-cycle, Delete, rebuild-trigger, snap-to-look,
+    // Shift+Tab) is a discrete/one-shot/destructive action and must stay
+    // single-press only, regardless of how long the key is held.
+    this.navKeyRepeatable = this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar);
+
+    this.navKeyHeld = true;
+
+    this.dispatchNavKey();
+  }
+
+  private boolean isRepeatableCommandKey (char cmdKey) {
+    switch (cmdKey) {
+      case ',':
+      case '.':
+      case '0':
+      case '4':
+      case '6':
+      case '8':
+      case '2':
+      case '1':
+      case '3':
+      case '7':
+      case '9':
+      case '*':
+      case '/':
+      case '+':
+      case '-':
+        return true;
+      default:
+        return false;
     }
   }
+
+  // Called once per frame from the sketch's draw(); re-fires the held
+  // key's action for as long as it remains held and is repeatable.
+  void processHeldKey () {
+    if (this.include && this.navKeyHeld && this.navKeyRepeatable) {
+      this.dispatchNavKey();
+    }
+  }
+
+  // Uses the global keyReleased() (no KeyEvent overload needed, matching
+  // the sketch's existing keyReleased() convention) so it can be called
+  // unconditionally without worrying about which handler owns the event.
+  void keyReleased () {
+    if (!this.navKeyHeld) return;
+
+    boolean releasedCoded = (key == CODED);
+    if (releasedCoded != this.navKeyCoded) return;
+
+    if (releasedCoded) {
+      if (keyCode == this.navKeyCode) this.navKeyHeld = false;
+    } else {
+      if (key == this.navKeyChar) this.navKeyHeld = false;
+    }
+  }
+
+  private void dispatchNavKey () {
+    if (this.navKeyCoded) {
+      if (this.navKeyShift) {
+        handleShiftedArrowKeys(this.navKeyCode);
+      } else {
+        handleArrowKeys(this.navKeyCode);
+      }
+    } else {
+      handleCommandKey(this.navKeyChar, this.navKeyShift);
+    }
+  }
+  // ---------------------------------------------------------------------
 
   private void handleShiftedArrowKeys (int keyCode) {
     switch (keyCode) {
@@ -505,11 +587,11 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void handleCommandKey (KeyEvent e) {
-    switch (key) {
+  private void handleCommandKey (char cmdKey, boolean shiftDown) {
+    switch (cmdKey) {
 
       case TAB:
-        if (e.isShiftDown()) {
+        if (shiftDown) {
           this.Impact_TYPE = (this.Impact_TYPE + 1) % numberOfImpactVariations;
           if (this.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
           if (this.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
