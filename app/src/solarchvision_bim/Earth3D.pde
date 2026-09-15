@@ -31,6 +31,22 @@ class solarchvision_Earth3D {
     return value;
   }
 
+  // Shifts lon by a multiple of 360 so it falls within 180 degrees of
+  // referenceLon. Tile boundaries and the render loop's own Beta both
+  // range over a fixed (-180, 180] domain, so without this, a station
+  // within clipRadiusDegrees of the antimeridian would silently miss every
+  // tile (and every drawn cell) on the far side of the seam - not a "no
+  // tile" case (so the null-texture fallback wouldn't even catch it), but
+  // a wrong/incomplete result. Longitude is periodic, so shifting values
+  // into a consistent local frame near referenceLon doesn't change what
+  // they represent.
+  private float unwrapLon (float lon, float referenceLon) {
+    float unwrapped = lon;
+    while (unwrapped - referenceLon > 180) unwrapped -= 360;
+    while (unwrapped - referenceLon < -180) unwrapped += 360;
+    return unwrapped;
+  }
+
   // Earth3D depends only on WORLD's local "E" tile system
   // (input/images/worldmap), never on any whole-globe image of its own -
   // draw() only renders a small patch of the globe around the station (see
@@ -70,8 +86,8 @@ class solarchvision_Earth3D {
     for (int i = 0; i < WORLD.numMaps; i++) {
       if (!WORLD.VIEW_Filenames[i].substring(0, 1).equals("E")) continue;
 
-      float tLon1 = WORLD.VIEW_BoundariesX[i][0];
-      float tLon2 = WORLD.VIEW_BoundariesX[i][1];
+      float tLon1 = unwrapLon(WORLD.VIEW_BoundariesX[i][0], stationLon);
+      float tLon2 = unwrapLon(WORLD.VIEW_BoundariesX[i][1], stationLon);
       float tLat1 = WORLD.VIEW_BoundariesY[i][0];
       float tLat2 = WORLD.VIEW_BoundariesY[i][1];
 
@@ -83,7 +99,7 @@ class solarchvision_Earth3D {
     if (overlapping.size() == 0) {
       this.cachedTextureImage = null; // no local tile covers this location - nothing to draw
     } else if ((overlapping.size() == 1) && worldTileFullyCoversWindow(overlapping.get(0), stationLon, stationLat)) {
-      useWorldTileDirectly(overlapping.get(0));
+      useWorldTileDirectly(overlapping.get(0), stationLon);
     } else {
       compositeWorldTiles(overlapping, stationLon, stationLat);
     }
@@ -93,16 +109,19 @@ class solarchvision_Earth3D {
   }
 
   private boolean worldTileFullyCoversWindow (int tileIndex, float stationLon, float stationLat) {
-    return (WORLD.VIEW_BoundariesX[tileIndex][0] <= stationLon - this.clipRadiusDegrees) &&
-           (WORLD.VIEW_BoundariesX[tileIndex][1] >= stationLon + this.clipRadiusDegrees) &&
+    float tLon1 = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][0], stationLon);
+    float tLon2 = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][1], stationLon);
+
+    return (tLon1 <= stationLon - this.clipRadiusDegrees) &&
+           (tLon2 >= stationLon + this.clipRadiusDegrees) &&
            (WORLD.VIEW_BoundariesY[tileIndex][0] <= stationLat - this.clipRadiusDegrees) &&
            (WORLD.VIEW_BoundariesY[tileIndex][1] >= stationLat + this.clipRadiusDegrees);
   }
 
-  private void useWorldTileDirectly (int tileIndex) {
+  private void useWorldTileDirectly (int tileIndex, float stationLon) {
     this.cachedTextureImage    = WORLD.getTileImage(tileIndex);
-    this.cachedTextureBx1      = WORLD.VIEW_BoundariesX[tileIndex][0];
-    this.cachedTextureBx2      = WORLD.VIEW_BoundariesX[tileIndex][1];
+    this.cachedTextureBx1      = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][0], stationLon);
+    this.cachedTextureBx2      = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][1], stationLon);
     this.cachedTextureBy1      = WORLD.VIEW_BoundariesY[tileIndex][0];
     this.cachedTextureBy2      = WORLD.VIEW_BoundariesY[tileIndex][1];
     this.cachedTexturePath     = WORLD.ViewFolder + "/" + WORLD.VIEW_Filenames[tileIndex];
@@ -131,8 +150,8 @@ class solarchvision_Earth3D {
 
     for (int k = 0; k < overlapping.size(); k++) {
       int i = overlapping.get(k);
-      combinedLon1 = min(combinedLon1, WORLD.VIEW_BoundariesX[i][0]);
-      combinedLon2 = max(combinedLon2, WORLD.VIEW_BoundariesX[i][1]);
+      combinedLon1 = min(combinedLon1, unwrapLon(WORLD.VIEW_BoundariesX[i][0], stationLon));
+      combinedLon2 = max(combinedLon2, unwrapLon(WORLD.VIEW_BoundariesX[i][1], stationLon));
       combinedLat1 = min(combinedLat1, WORLD.VIEW_BoundariesY[i][0]);
       combinedLat2 = max(combinedLat2, WORLD.VIEW_BoundariesY[i][1]);
     }
@@ -152,8 +171,8 @@ class solarchvision_Earth3D {
 
       PImage tileImage = WORLD.getTileImage(i);
 
-      float tileLon1 = WORLD.VIEW_BoundariesX[i][0];
-      float tileLon2 = WORLD.VIEW_BoundariesX[i][1];
+      float tileLon1 = unwrapLon(WORLD.VIEW_BoundariesX[i][0], stationLon);
+      float tileLon2 = unwrapLon(WORLD.VIEW_BoundariesX[i][1], stationLon);
       float tileLat1 = WORLD.VIEW_BoundariesY[i][0];
       float tileLat2 = WORLD.VIEW_BoundariesY[i][1];
 
@@ -240,11 +259,12 @@ class solarchvision_Earth3D {
         if(Alpha < stationLat - this.clipRadiusDegrees) continue;
 
         for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
-          if(Beta > stationLon + this.clipRadiusDegrees) continue;
-          if(Beta < stationLon - this.clipRadiusDegrees) continue;
+          float unwrappedBeta = unwrapLon(Beta, stationLon);
+          if (unwrappedBeta > stationLon + this.clipRadiusDegrees) continue;
+          if (unwrappedBeta < stationLon - this.clipRadiusDegrees) continue;
 
           f += 1;
-          FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
+          FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
 
           if (isWin3D) {
             addFaceWIN3D(subFace, textureImage);
