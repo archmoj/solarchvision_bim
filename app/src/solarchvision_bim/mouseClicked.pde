@@ -137,8 +137,9 @@ int[] SOLARCHVISION_findNearbyStations (solarchvision_STATION[] coords, float lo
 // only opens while its own dataset is the active CurrentDataSource.
 
 final float PICKLIST_SCROLLBAR_WIDTH = 14;
-float rowHeight = 1.6 * MessageSize;
-float headerHeight = 1.6 * MessageSize;
+final float pad = 1.6 * MessageSize;
+final float rowHeight = 1.6 * MessageSize;
+final float headerHeight = 1.6 * MessageSize;
 
 abstract class StationPicker {
 
@@ -181,7 +182,6 @@ abstract class StationPicker {
   }
 
   int visibleRowCount () {
-    float pad = 10;
     return max(1, int((WORLD.dY - 2 * pad - headerHeight) / rowHeight));
   }
 
@@ -189,7 +189,6 @@ abstract class StationPicker {
   // every time this picker draws (including while the scrollbar is being
   // dragged), so it stays put rather than only appearing momentarily.
   float[] headerRect () {
-    float pad = 10;
     float x = WORLD.cX + pad;
     float y = WORLD.cY + pad;
     float w = WORLD.dX - 2 * pad;
@@ -203,7 +202,6 @@ abstract class StationPicker {
   // agree on where each row is. To get the absolute index into `indices`
   // for a visible row, add `scrollOffset` to it.
   float[] rowRect (int visibleRow) {
-    float pad = 10;
     float scrollBarWidth = this.needsScrollbar() ? PICKLIST_SCROLLBAR_WIDTH + 4 : 0;
 
     float x = WORLD.cX + pad;
@@ -216,7 +214,6 @@ abstract class StationPicker {
   // Track (full scrollable area) and thumb (draggable handle) rectangles
   // for the scrollbar, in absolute screen coordinates.
   float[] scrollTrackRect () {
-    float pad = 10;
     int visibleRowCount = this.visibleRowCount();
     int shownRows = min(visibleRowCount, this.indices.length);
 
