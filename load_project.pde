@@ -28,10 +28,10 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     // loading only weather data //
+    SOLARCHVISION_update_station(1);
     SOLARCHVISION_update_station(2);
     SOLARCHVISION_update_station(3);
     SOLARCHVISION_update_station(4);
-    SOLARCHVISION_update_station(5);
     ///////////////////////////////
 
     addNewSelectionToPreviousSelection = 0;

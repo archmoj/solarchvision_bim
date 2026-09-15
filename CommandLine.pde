@@ -1866,7 +1866,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
         STATION.setLatitude(float(parts[2]));
         STATION.setLongitude(float(parts[1]));
 
-        SOLARCHVISION_update_station(1);
+        SOLARCHVISION_update_station(0);
       }
       else {
         return_message = "LonLat ? ?";

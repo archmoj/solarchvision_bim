@@ -567,7 +567,7 @@ void SOLARCHVISION_selectTMYEPWStation (int f, float mouse_lon, float mouse_lat)
 
     ROLLOUT.revise();
 
-    SOLARCHVISION_update_station(1);
+    SOLARCHVISION_update_station(0);
 
     download_CLIMATE_TMYEPW();
 
@@ -602,7 +602,7 @@ void SOLARCHVISION_selectCLMRECStation (int f, float mouse_lon, float mouse_lat)
 
     ROLLOUT.revise();
 
-    SOLARCHVISION_update_station(1);
+    SOLARCHVISION_update_station(0);
     update_CLIMATE_CLMREC();
   }
 }
@@ -632,7 +632,7 @@ void SOLARCHVISION_selectCWEEDSStation (int f, float mouse_lon, float mouse_lat)
 
     ROLLOUT.revise();
 
-    SOLARCHVISION_update_station(1);
+    SOLARCHVISION_update_station(0);
     update_CLIMATE_CWEEDS();
   }
 }
@@ -665,7 +665,7 @@ void SOLARCHVISION_selectNAEFSStation (int f, float mouse_lon, float mouse_lat) 
 
     ROLLOUT.revise();
 
-    SOLARCHVISION_update_station(1);
+    SOLARCHVISION_update_station(0);
 
     download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
@@ -712,7 +712,7 @@ void SOLARCHVISION_selectSWOBStation (int f, float mouse_lon, float mouse_lat) {
 
     ROLLOUT.revise();
 
-    SOLARCHVISION_update_station(1);
+    SOLARCHVISION_update_station(0);
 
     download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
 
@@ -1922,7 +1922,7 @@ private void SOLARCHVISION_buildMenuActions() {
 
     SOLARCHVISION_deleteAll();
 
-    //SOLARCHVISION_update_station(0);
+    //SOLARCHVISION_update_station(-1);
   });
 
   SOLARCHVISION_menuActions.put("Save", () -> {
@@ -2117,7 +2117,7 @@ private void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("Update Station", () -> {
-    SOLARCHVISION_update_station(0);
+    SOLARCHVISION_update_station(-1);
   });
 
   SOLARCHVISION_menuActions.put("Load Land Mesh", () -> {

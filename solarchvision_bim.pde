@@ -197,43 +197,43 @@ void draw () {
 
     stroke(255); fill(255); text("update_station(start)", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 12) {
-    SOLARCHVISION_update_station(1);
+    SOLARCHVISION_update_station(0);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_CLIMATE_TMYEPW", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 13) {
-    SOLARCHVISION_update_station(2);
+    SOLARCHVISION_update_station(1);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_CLIMATE_CWEEDS", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 14) {
-    SOLARCHVISION_update_station(3);
+    SOLARCHVISION_update_station(2);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_CLIMATE_CLMREC", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 15) {
-    SOLARCHVISION_update_station(4);
+    SOLARCHVISION_update_station(3);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_ENSEMBLE_OBSERVED", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 16) {
-    SOLARCHVISION_update_station(5);
+    SOLARCHVISION_update_station(4);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("update_ENSEMBLE_FORECAST", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 17) {
-    SOLARCHVISION_update_station(6);
+    SOLARCHVISION_update_station(5);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
     stroke(255); fill(255); text("Land3D.update_mesh", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 18) {
-    SOLARCHVISION_update_station(7);
+    SOLARCHVISION_update_station(6);
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 
@@ -2605,7 +2605,7 @@ void SOLARCHVISION_draw_frameIcon () {
 
 void SOLARCHVISION_update_station (int Step) {
 
-  if ((Step == 0) || (Step == 1)) {
+  if ((Step == -1) || (Step == 0)) {
     allWindRoses.rebuild_Image_array = true;
     allSolarImpacts.rebuild_Image_array = true;
 
@@ -2623,19 +2623,19 @@ void SOLARCHVISION_update_station (int Step) {
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
   }
 
-  if ((Step == 0) || (Step == 2)) update_CLIMATE_TMYEPW();
+  if ((Step == -1) || (Step == 1)) update_CLIMATE_TMYEPW();
 
-  if ((Step == 0) || (Step == 3)) update_CLIMATE_CWEEDS();
+  if ((Step == -1) || (Step == 2)) update_CLIMATE_CWEEDS();
 
-  if ((Step == 0) || (Step == 4)) update_CLIMATE_CLMREC();
+  if ((Step == -1) || (Step == 3)) update_CLIMATE_CLMREC();
 
-  if ((Step == 0) || (Step == 5)) update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+  if ((Step == -1) || (Step == 4)) update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-  if ((Step == 0) || (Step == 6)) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+  if ((Step == -1) || (Step == 5)) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-  if ((Step == 0) || (Step == 7)) Land3D.update_mesh();
+  if ((Step == -1) || (Step == 6)) Land3D.update_mesh();
 
-  if ((Step == 0) || (Step == 1)) {
+  if ((Step == -1) || (Step == 0)) {
     if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
       SOLARCHVISION_calculate_VertexSolar_array();
     }
