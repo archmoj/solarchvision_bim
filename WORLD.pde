@@ -93,6 +93,19 @@ class solarchvision_WORLD {
   boolean displayNear_CLMREC = false;
   boolean displayNear_TMYEPW = false;
 
+  void hideAllMarkersAndLabels () {
+    this.displayAll_TMYEPW = 0;
+    this.displayNear_TMYEPW =  false;
+    this.displayAll_CWEEDS = 0;
+    this.displayNear_CWEEDS = false;
+    this.displayAll_CLMREC = 0;
+    this.displayNear_CLMREC = false;
+    this.displayAll_SWOB = 0;
+    this.displayNear_SWOB = false;
+    this.displayAll_NAEFS = 0;
+    this.displayNear_NAEFS = false;
+  }
+
   void listAllImages () {
 
     this.VIEW_Filenames = sort(OPESYS.getFiles(this.ViewFolder));
@@ -754,7 +767,7 @@ class solarchvision_WORLD {
 
 
   void keyPressed (KeyEvent e) {
-    if(WORLD.include == false) return;
+    if(this.include == false) return;
 
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
       switch(key) {

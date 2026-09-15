@@ -2194,6 +2194,8 @@ private void SOLARCHVISION_buildMenuActions() {
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
+
+
   SOLARCHVISION_menuActions.put("Use typical year (TMY)", () -> {
     CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
@@ -2206,6 +2208,7 @@ private void SOLARCHVISION_buildMenuActions() {
     ROLLOUT.revise();
     UI_caseBar.revise();
 
+    WORLD.hideAllMarkersAndLabels();
     WORLD.displayAll_TMYEPW = 1;
     WORLD.displayNear_TMYEPW = true;
   });
@@ -2222,6 +2225,7 @@ private void SOLARCHVISION_buildMenuActions() {
     ROLLOUT.revise();
     UI_caseBar.revise();
 
+    WORLD.hideAllMarkersAndLabels();
     WORLD.displayAll_CWEEDS = 1;
     WORLD.displayNear_CWEEDS = true;
   });
@@ -2238,6 +2242,7 @@ private void SOLARCHVISION_buildMenuActions() {
     ROLLOUT.revise();
     UI_caseBar.revise();
 
+    WORLD.hideAllMarkersAndLabels();
     WORLD.displayAll_CLMREC = 1;
     WORLD.displayNear_CLMREC = true;
   });
@@ -2255,6 +2260,7 @@ private void SOLARCHVISION_buildMenuActions() {
     ROLLOUT.revise();
     UI_caseBar.revise();
 
+    WORLD.hideAllMarkersAndLabels();
     WORLD.displayAll_SWOB = 1;
     WORLD.displayNear_SWOB = true;
   });
@@ -2272,6 +2278,7 @@ private void SOLARCHVISION_buildMenuActions() {
     ROLLOUT.revise();
     UI_caseBar.revise();
 
+    WORLD.hideAllMarkersAndLabels();
     WORLD.displayAll_NAEFS = 1;
     WORLD.displayNear_NAEFS = true;
   });
