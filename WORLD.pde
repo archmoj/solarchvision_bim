@@ -731,7 +731,7 @@ class solarchvision_WORLD {
 
         // Drawn directly on the main canvas (not inside this.graphics) so
         // it's redrawn/cleared in step with WORLD's own next repaint.
-        SOLARCHVISION_drawTMYEPWPickList();
+        SOLARCHVISION_drawPickLists();
       }
 
 

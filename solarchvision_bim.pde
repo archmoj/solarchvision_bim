@@ -1847,9 +1847,7 @@ void keyPressed (KeyEvent e) {
           if(key == ESC) {
             key = 0; // Overrides the default ESC key behavior that exits a Processing sketch
 
-            if (TMYEPW_pickList_active) {
-              TMYEPW_pickList_active = false;
-              TMYEPW_pickList_indices = new int[0];
+            if (SOLARCHVISION_cancelActivePickList()) {
               WORLD.revise();
             }
           }

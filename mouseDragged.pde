@@ -10,7 +10,7 @@ void mouseDragged() {
   // Dragging the picker list's scrollbar thumb takes priority: if this
   // drag gesture is grabbing (or already grabbed) the thumb, don't also
   // let WORLD interpret the same drag as panning the map.
-  if (SOLARCHVISION_handleTMYEPWPickListScrollDrag()) return;
+  if (SOLARCHVISION_handlePickListScrollDrag()) return;
 
   // Not mutually exclusive: both handlers internally gate on whether the
   // mouse is actually within their own view's rectangle, so a drag over

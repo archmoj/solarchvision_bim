@@ -122,258 +122,387 @@ int[] SOLARCHVISION_findNearbyStations (solarchvision_STATION[] coords, float lo
   return result;
 }
 
-// --- TMYEPW "multiple nearby stations" picker -------------------------
+// --- "Multiple nearby stations" picker, generalized across datasets ---
 //
-// When a WORLD click finds more than one TMYEPW station within
-// TMYEPW_PICKLIST_MAX_DIST of the click, we show up to
-// TMYEPW_PICKLIST_MAX_COUNT of them as a clickable list inside the WORLD
-// view instead of silently guessing one, and wait for a follow-up click
-// on one of the list rows to choose it. Since the list can hold more
-// rows than fit in WORLD's viewport, it scrolls, with a vertical
-// scrollbar that can be dragged, clicked (to page), or operated with the
-// mouse wheel.
+// When a WORLD click finds more than one station of the *active* dataset
+// within that dataset's own distance threshold, we show up to maxCount of
+// them as a clickable list inside the WORLD view instead of silently
+// guessing one, and wait for a follow-up click on one of the list rows to
+// choose it. Since the list can hold more rows than fit in WORLD's
+// viewport, it scrolls, with a vertical scrollbar that can be dragged,
+// clicked (to page), or operated with the mouse wheel. Originally built
+// just for TMYEPW; each dataset gets its own instance below, configured
+// with its own distance threshold, row-label text, and selection
+// behavior - at most one can ever be showing at a time, since a picker
+// only opens while its own dataset is the active CurrentDataSource.
 
-final float TMYEPW_PICKLIST_MAX_DIST = 10000; // metres (10 km)
-final int TMYEPW_PICKLIST_MAX_COUNT = 50;
-final float TMYEPW_PICKLIST_SCROLLBAR_WIDTH = 14;
-
-boolean TMYEPW_pickList_active = false;
-int[] TMYEPW_pickList_indices = new int[0];
-float TMYEPW_pickList_mouseLon = 0;
-float TMYEPW_pickList_mouseLat = 0;
-int TMYEPW_pickList_scrollOffset = 0; // index (into TMYEPW_pickList_indices) of the first visible row
-
-boolean TMYEPW_scrollThumbDragging = false;
-float TMYEPW_scrollDrag_startMouseY = 0;
-int TMYEPW_scrollDrag_startOffset = 0;
-
+final float PICKLIST_SCROLLBAR_WIDTH = 14;
 float rowHeight = 1.6 * MessageSize;
 
-boolean SOLARCHVISION_TMYEPW_pickList_needsScrollbar () {
-  return TMYEPW_pickList_indices.length > SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
-}
+abstract class StationPicker {
 
-int SOLARCHVISION_TMYEPW_pickList_visibleRowCount () {
-  float pad = 10;
-  return max(1, int((WORLD.dY - 2 * pad) / rowHeight));
-}
+  float maxDist;    // metres
+  int maxCount;
+  int dataSourceID; // only offer the list while CurrentDataSource == this
 
-// Shared layout for one *visible* row (0 = topmost row on screen) of the
-// picker list, in absolute screen coordinates - used by both the drawing
-// code and the click hit-test below so they always agree on where each
-// row is. To get the absolute index into TMYEPW_pickList_indices for a
-// visible row, add TMYEPW_pickList_scrollOffset to it.
-float[] SOLARCHVISION_TMYEPW_pickListRowRect (int visibleRow) {
-  float pad = 10;
-  float scrollBarWidth = SOLARCHVISION_TMYEPW_pickList_needsScrollbar() ? TMYEPW_PICKLIST_SCROLLBAR_WIDTH + 4 : 0;
+  boolean active = false;
+  int[] indices = new int[0];
+  float mouseLon = 0;
+  float mouseLat = 0;
+  int scrollOffset = 0; // index (into indices) of the first visible row
 
-  float x = WORLD.cX + pad;
-  float y = WORLD.cY + pad + visibleRow * rowHeight;
-  float w = WORLD.dX - 2 * pad - scrollBarWidth;
-  float h = rowHeight - 2;
-  return new float[]{ x, y, w, h };
-}
+  boolean scrollThumbDragging = false;
+  float scrollDrag_startMouseY = 0;
+  int scrollDrag_startOffset = 0;
 
-// Track (full scrollable area) and thumb (draggable handle) rectangles
-// for the scrollbar, in absolute screen coordinates.
-float[] SOLARCHVISION_TMYEPW_pickListScrollTrackRect () {
-  float pad = 10;
-  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
-  int shownRows = min(visibleRowCount, TMYEPW_pickList_indices.length);
-
-  float x = WORLD.cX + WORLD.dX - pad - TMYEPW_PICKLIST_SCROLLBAR_WIDTH;
-  float y = WORLD.cY + pad;
-  float w = TMYEPW_PICKLIST_SCROLLBAR_WIDTH;
-  float h = shownRows * rowHeight;
-  return new float[]{ x, y, w, h };
-}
-
-float[] SOLARCHVISION_TMYEPW_pickListScrollThumbRect () {
-  float[] track = SOLARCHVISION_TMYEPW_pickListScrollTrackRect();
-
-  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
-  int total = TMYEPW_pickList_indices.length;
-  int maxOffset = max(1, total - visibleRowCount);
-
-  float thumbHeight = min(track[3], max(20, track[3] * (float(visibleRowCount) / float(total))));
-  float travel = track[3] - thumbHeight;
-  float thumbY = track[1] + travel * (float(TMYEPW_pickList_scrollOffset) / float(maxOffset));
-
-  return new float[]{ track[0], thumbY, track[2], thumbHeight };
-}
-
-// Returns which pick-list row (if any) a screen point falls on, as an
-// absolute index into TMYEPW_pickList_indices, or -1.
-int SOLARCHVISION_TMYEPW_pickListRowAt (float clickX, float clickY) {
-  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
-  int maxVisible = min(visibleRowCount, TMYEPW_pickList_indices.length - TMYEPW_pickList_scrollOffset);
-
-  for (int visibleRow = 0; visibleRow < maxVisible; visibleRow++) {
-    float[] r = SOLARCHVISION_TMYEPW_pickListRowRect(visibleRow);
-    float x = r[0];
-    float y = r[1];
-    float w = r[2];
-    float h = rowHeight; // full row height (not r[3]) so there's no dead zone between rows
-    if (isInside(clickX, clickY, x, y, x + w, y + h)) return TMYEPW_pickList_scrollOffset + visibleRow;
-  }
-  return -1;
-}
-
-void SOLARCHVISION_drawTMYEPWPickList () {
-  if (!TMYEPW_pickList_active) return;
-
-  pushStyle();
-
-  textAlign(LEFT, CENTER);
-  textSize(MessageSize);
-
-  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
-  int maxVisible = min(visibleRowCount, TMYEPW_pickList_indices.length - TMYEPW_pickList_scrollOffset);
-
-  for (int visibleRow = 0; visibleRow < maxVisible; visibleRow++) {
-    float[] r = SOLARCHVISION_TMYEPW_pickListRowRect(visibleRow);
-    int absIndex = TMYEPW_pickList_scrollOffset + visibleRow;
-    int f = TMYEPW_pickList_indices[absIndex];
-
-    String label = nf(absIndex + 1) + ". " + TMYEPW_Coordinates[f].getFilename_TMYEPW();
-
-    noStroke();
-    fill(255, 220);
-    rect(r[0], r[1], r[2], r[3]);
-
-    stroke(0);
-    strokeWeight(1);
-    noFill();
-    rect(r[0], r[1], r[2], r[3]);
-
-    noStroke();
-    fill(0);
-    text(label, r[0] + 4, r[1] + 0.5 * r[3]);
+  StationPicker (float maxDist, int maxCount, int dataSourceID) {
+    this.maxDist = maxDist;
+    this.maxCount = maxCount;
+    this.dataSourceID = dataSourceID;
   }
 
-  if (SOLARCHVISION_TMYEPW_pickList_needsScrollbar()) {
-    float[] track = SOLARCHVISION_TMYEPW_pickListScrollTrackRect();
-    float[] thumb = SOLARCHVISION_TMYEPW_pickListScrollThumbRect();
+  // Supplied per dataset below. getCoords() reads the dataset's global
+  // coordinates array live (e.g. `return TMYEPW_Coordinates;`) rather
+  // than this class capturing it once at construction time - these
+  // pickers are themselves top-level field initializers, which Processing
+  // runs before setup() has populated the actual coordinate arrays (they
+  // start out null and are only filled in later by e.g.
+  // inputCoordinates_TMYEPW()), so capturing the array in the constructor
+  // would have permanently captured null.
+  abstract solarchvision_STATION[] getCoords ();
+  abstract String getLabel (int f);
+  abstract void select (int f, float lon, float lat);
 
-    noStroke();
-    fill(230, 230);
-    rect(track[0], track[1], track[2], track[3]);
-
-    stroke(0);
-    strokeWeight(1);
-    fill(160);
-    rect(thumb[0], thumb[1], thumb[2], thumb[3]);
+  boolean needsScrollbar () {
+    return this.indices.length > this.visibleRowCount();
   }
 
-  popStyle();
-}
+  int visibleRowCount () {
+    float pad = 10;
+    return max(1, int((WORLD.dY - 2 * pad) / rowHeight));
+  }
 
-// Handles a click on the scrollbar *track* (paging up/down a page at a
-// time) - a click directly on the thumb is left alone here since that's
-// the start of a drag, handled by SOLARCHVISION_handleTMYEPWPickListScrollDrag()
-// in mouseDragged.pde. Returns true if the click was on the track at all
-// (whether or not it actually moved anything), so the caller can skip
-// treating this click as picking a map location.
-boolean SOLARCHVISION_handleTMYEPWPickListTrackClick () {
-  if (!TMYEPW_pickList_active) return false;
-  if (!SOLARCHVISION_TMYEPW_pickList_needsScrollbar()) return false;
+  // Shared layout for one *visible* row (0 = topmost row on screen), in
+  // absolute screen coordinates - used by both the drawing code and the
+  // click hit-test below so they always agree on where each row is. To
+  // get the absolute index into `indices` for a visible row, add
+  // `scrollOffset` to it.
+  float[] rowRect (int visibleRow) {
+    float pad = 10;
+    float scrollBarWidth = this.needsScrollbar() ? PICKLIST_SCROLLBAR_WIDTH + 4 : 0;
 
-  float[] track = SOLARCHVISION_TMYEPW_pickListScrollTrackRect();
-  if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, track[0], track[1], track[0] + track[2], track[1] + track[3])) return false;
+    float x = WORLD.cX + pad;
+    float y = WORLD.cY + pad + visibleRow * rowHeight;
+    float w = WORLD.dX - 2 * pad - scrollBarWidth;
+    float h = rowHeight - 2;
+    return new float[]{ x, y, w, h };
+  }
 
-  float[] thumb = SOLARCHVISION_TMYEPW_pickListScrollThumbRect();
+  // Track (full scrollable area) and thumb (draggable handle) rectangles
+  // for the scrollbar, in absolute screen coordinates.
+  float[] scrollTrackRect () {
+    float pad = 10;
+    int visibleRowCount = this.visibleRowCount();
+    int shownRows = min(visibleRowCount, this.indices.length);
 
-  if ((SOLARCHVISION_Y_clicked < thumb[1]) || (SOLARCHVISION_Y_clicked > thumb[1] + thumb[3])) {
-    int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
-    int maxOffset = max(0, TMYEPW_pickList_indices.length - visibleRowCount);
-    int page = max(1, visibleRowCount - 1);
+    float x = WORLD.cX + WORLD.dX - pad - PICKLIST_SCROLLBAR_WIDTH;
+    float y = WORLD.cY + pad;
+    float w = PICKLIST_SCROLLBAR_WIDTH;
+    float h = shownRows * rowHeight;
+    return new float[]{ x, y, w, h };
+  }
 
-    if (SOLARCHVISION_Y_clicked < thumb[1]) {
-      TMYEPW_pickList_scrollOffset = constrain(TMYEPW_pickList_scrollOffset - page, 0, maxOffset);
+  float[] scrollThumbRect () {
+    float[] track = this.scrollTrackRect();
+
+    int visibleRowCount = this.visibleRowCount();
+    int total = this.indices.length;
+    int maxOffset = max(1, total - visibleRowCount);
+
+    float thumbHeight = min(track[3], max(20, track[3] * (float(visibleRowCount) / float(total))));
+    float travel = track[3] - thumbHeight;
+    float thumbY = track[1] + travel * (float(this.scrollOffset) / float(maxOffset));
+
+    return new float[]{ track[0], thumbY, track[2], thumbHeight };
+  }
+
+  // Returns which pick-list row (if any) a screen point falls on, as an
+  // absolute index into `indices`, or -1.
+  int rowAt (float clickX, float clickY) {
+    int visibleRowCount = this.visibleRowCount();
+    int maxVisible = min(visibleRowCount, this.indices.length - this.scrollOffset);
+
+    for (int visibleRow = 0; visibleRow < maxVisible; visibleRow++) {
+      float[] r = this.rowRect(visibleRow);
+      float x = r[0];
+      float y = r[1];
+      float w = r[2];
+      float h = rowHeight; // full row height (not r[3]) so there's no dead zone between rows
+      if (isInside(clickX, clickY, x, y, x + w, y + h)) return this.scrollOffset + visibleRow;
+    }
+    return -1;
+  }
+
+  void draw () {
+    if (!this.active) return;
+
+    pushStyle();
+
+    textAlign(LEFT, CENTER);
+    textSize(MessageSize);
+
+    int visibleRowCount = this.visibleRowCount();
+    int maxVisible = min(visibleRowCount, this.indices.length - this.scrollOffset);
+
+    for (int visibleRow = 0; visibleRow < maxVisible; visibleRow++) {
+      float[] r = this.rowRect(visibleRow);
+      int absIndex = this.scrollOffset + visibleRow;
+      int f = this.indices[absIndex];
+
+      String label = nf(absIndex + 1) + ". " + this.getLabel(f);
+
+      noStroke();
+      fill(255, 220);
+      rect(r[0], r[1], r[2], r[3]);
+
+      stroke(0);
+      strokeWeight(1);
+      noFill();
+      rect(r[0], r[1], r[2], r[3]);
+
+      noStroke();
+      fill(0);
+      text(label, r[0] + 4, r[1] + 0.5 * r[3]);
+    }
+
+    if (this.needsScrollbar()) {
+      float[] track = this.scrollTrackRect();
+      float[] thumb = this.scrollThumbRect();
+
+      noStroke();
+      fill(230, 230);
+      rect(track[0], track[1], track[2], track[3]);
+
+      stroke(0);
+      strokeWeight(1);
+      fill(160);
+      rect(thumb[0], thumb[1], thumb[2], thumb[3]);
+    }
+
+    popStyle();
+  }
+
+  // Handles a click on the scrollbar *track* (paging up/down a page at a
+  // time) - a click directly on the thumb is left alone here since that's
+  // the start of a drag, handled by handleScrollDrag() below. Returns
+  // true if the click was on the track at all (whether or not it actually
+  // moved anything), so the caller can skip treating this click as
+  // picking a map location.
+  boolean handleTrackClick () {
+    if (!this.active) return false;
+    if (!this.needsScrollbar()) return false;
+
+    float[] track = this.scrollTrackRect();
+    if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, track[0], track[1], track[0] + track[2], track[1] + track[3])) return false;
+
+    float[] thumb = this.scrollThumbRect();
+
+    if ((SOLARCHVISION_Y_clicked < thumb[1]) || (SOLARCHVISION_Y_clicked > thumb[1] + thumb[3])) {
+      int visibleRowCount = this.visibleRowCount();
+      int maxOffset = max(0, this.indices.length - visibleRowCount);
+      int page = max(1, visibleRowCount - 1);
+
+      if (SOLARCHVISION_Y_clicked < thumb[1]) {
+        this.scrollOffset = constrain(this.scrollOffset - page, 0, maxOffset);
+      } else {
+        this.scrollOffset = constrain(this.scrollOffset + page, 0, maxOffset);
+      }
+    }
+    // else: clicked directly on the thumb - that's a drag start, not a page click.
+
+    return true;
+  }
+
+  // Scrolls the picker list in response to the mouse wheel, if it's
+  // showing and the mouse is over WORLD. Returns true if it consumed the
+  // event (so e.g. WORLD's zoom-on-wheel doesn't also fire).
+  boolean handleWheel (float wheelValue) {
+    if (!this.active) return false;
+    if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return false;
+
+    int visibleRowCount = this.visibleRowCount();
+    int maxOffset = max(0, this.indices.length - visibleRowCount);
+    if (maxOffset == 0) return false; // nothing to scroll - let the event fall through (e.g. to zoom)
+
+    this.scrollOffset = constrain(this.scrollOffset + ((wheelValue > 0) ? 1 : -1), 0, maxOffset);
+
+    WORLD.revise();
+    return true;
+  }
+
+  // Drags the scrollbar thumb. Returns true if this drag is (or just
+  // became) a thumb drag, so the caller can skip other drag handling
+  // (e.g. panning WORLD) for the same drag gesture.
+  boolean handleScrollDrag () {
+    if (!this.active) return false;
+    if (!this.needsScrollbar()) return false;
+
+    if (!this.scrollThumbDragging) {
+      if (dragging_started != 0) return false; // some other drag already claimed this gesture
+
+      float[] thumb = this.scrollThumbRect();
+      if (!isInside(pmouseX, pmouseY, thumb[0], thumb[1], thumb[0] + thumb[2], thumb[1] + thumb[3])) return false;
+
+      this.scrollThumbDragging = true;
+      dragging_started = 1;
+      SOLARCHVISION_X_click1 = pmouseX;
+      SOLARCHVISION_Y_click1 = pmouseY;
+      this.scrollDrag_startMouseY = pmouseY;
+      this.scrollDrag_startOffset = this.scrollOffset;
+    }
+
+    float[] track = this.scrollTrackRect();
+    float[] thumb = this.scrollThumbRect();
+
+    float travel = track[3] - thumb[3]; // how far the thumb can move within the track
+    if (travel > 0) {
+      int visibleRowCount = this.visibleRowCount();
+      int maxOffset = max(1, this.indices.length - visibleRowCount);
+      float rowsPerPixel = maxOffset / travel;
+
+      float deltaY = mouseY - this.scrollDrag_startMouseY;
+      int newOffset = this.scrollDrag_startOffset + round(deltaY * rowsPerPixel);
+
+      this.scrollOffset = constrain(newOffset, 0, maxOffset);
+    }
+
+    WORLD.revise();
+    return true;
+  }
+
+  // Handles a click while the picker list is showing: picks the row it
+  // landed on (if any), or just cancels the list if it landed elsewhere.
+  // Either way the click is fully consumed - returns true whenever this
+  // picker was active, so the caller can skip treating this same click as
+  // picking a new map location.
+  boolean handleClick () {
+    if (!this.active) return false;
+
+    int rowIndex = this.rowAt(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked);
+    if (rowIndex >= 0) {
+      int f = this.indices[rowIndex];
+      this.select(f, this.mouseLon, this.mouseLat);
+    }
+
+    this.active = false;
+    this.indices = new int[0];
+
+    return true;
+  }
+
+  // Cancels the list without selecting anything (e.g. Esc). No-op if this
+  // picker isn't the one currently active. Returns true if it was.
+  boolean cancel () {
+    if (!this.active) return false;
+
+    this.active = false;
+    this.indices = new int[0];
+
+    return true;
+  }
+
+  // Called from this dataset's own click handling: finds nearby
+  // candidates around (lon, lat); if there's more than one AND this
+  // dataset is the active data source, shows the picker instead of
+  // guessing. Otherwise (0 or 1 candidate, or a different dataset is
+  // active) just quietly selects the single nearest one, same as every
+  // dataset did before pickers existed.
+  void handleMapClick (float lon, float lat) {
+    solarchvision_STATION[] coords = this.getCoords();
+    int[] nearby = SOLARCHVISION_findNearbyStations(coords, lon, lat, this.maxDist, this.maxCount);
+
+    if ((nearby.length > 1) && (CurrentDataSource == this.dataSourceID)) {
+      this.active = true;
+      this.indices = nearby;
+      this.mouseLon = lon;
+      this.mouseLat = lat;
+      this.scrollOffset = 0;
     } else {
-      TMYEPW_pickList_scrollOffset = constrain(TMYEPW_pickList_scrollOffset + page, 0, maxOffset);
+      int f = (nearby.length > 0) ? nearby[0] : SOLARCHVISION_findNearestStation(coords).index;
+      this.select(f, lon, lat);
     }
   }
-  // else: clicked directly on the thumb - that's a drag start, not a page click.
-
-  return true;
 }
 
-// Scrolls the picker list in response to the mouse wheel, if it's
-// showing and the mouse is over WORLD. Returns true if it consumed the
-// event (so e.g. WORLD's zoom-on-wheel doesn't also fire).
-boolean SOLARCHVISION_handleTMYEPWPickListWheel (float wheelValue) {
-  if (!TMYEPW_pickList_active) return false;
-  if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return false;
+StationPicker TMYEPW_PICKER = new StationPicker(10000, 50, dataID_CLIMATE_TMYEPW) {
+  solarchvision_STATION[] getCoords () { return TMYEPW_Coordinates; }
+  String getLabel (int f) { return TMYEPW_Coordinates[f].getFilename_TMYEPW(); }
+  void select (int f, float lon, float lat) { SOLARCHVISION_selectTMYEPWStation(f, lon, lat); }
+};
 
-  int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
-  int maxOffset = max(0, TMYEPW_pickList_indices.length - visibleRowCount);
-  if (maxOffset == 0) return false; // nothing to scroll - let the event fall through (e.g. to zoom)
+StationPicker CLMREC_PICKER = new StationPicker(25000, 50, dataID_CLIMATE_CLMREC) {
+  solarchvision_STATION[] getCoords () { return CLMREC_Coordinates; }
+  String getLabel (int f) { return CLMREC_Coordinates[f].getFilename_CWEEDS(); }
+  void select (int f, float lon, float lat) { SOLARCHVISION_selectCLMRECStation(f, lon, lat); }
+};
 
-  TMYEPW_pickList_scrollOffset = constrain(TMYEPW_pickList_scrollOffset + ((wheelValue > 0) ? 1 : -1), 0, maxOffset);
+StationPicker CWEEDS_PICKER = new StationPicker(50000, 50, dataID_CLIMATE_CWEEDS) {
+  solarchvision_STATION[] getCoords () { return CWEEDS_coordinates; }
+  String getLabel (int f) { return CWEEDS_coordinates[f].getFilename_CWEEDS(); }
+  void select (int f, float lon, float lat) { SOLARCHVISION_selectCWEEDSStation(f, lon, lat); }
+};
 
-  WORLD.revise();
-  return true;
+StationPicker NAEFS_PICKER = new StationPicker(50000, 50, dataID_ENSEMBLE_FORECAST) {
+  solarchvision_STATION[] getCoords () { return NAEFS_Coordinates; }
+  String getLabel (int f) { return NAEFS_Coordinates[f].getFilename_NAEFS(); }
+  void select (int f, float lon, float lat) { SOLARCHVISION_selectNAEFSStation(f, lon, lat); }
+};
+
+StationPicker SWOB_PICKER = new StationPicker(25000, 50, dataID_ENSEMBLE_OBSERVED) {
+  solarchvision_STATION[] getCoords () { return SWOB_Coordinates; }
+  String getLabel (int f) { return SWOB_Coordinates[f].getFilename_SWOB(); }
+  void select (int f, float lon, float lat) { SOLARCHVISION_selectSWOBStation(f, lon, lat); }
+};
+
+// At most one of these is ever active at once, since a picker only opens
+// while its own dataset is CurrentDataSource - but each dispatcher below
+// still has to check all of them to find out which (if any) that is.
+StationPicker[] ALL_PICKERS = { TMYEPW_PICKER, CLMREC_PICKER, CWEEDS_PICKER, NAEFS_PICKER, SWOB_PICKER };
+
+void SOLARCHVISION_drawPickLists () {
+  for (StationPicker picker : ALL_PICKERS) picker.draw();
 }
 
-// Drags the scrollbar thumb. Returns true if this drag is (or just
-// became) a thumb drag, so the caller can skip other drag handling (e.g.
-// panning WORLD) for the same drag gesture.
-boolean SOLARCHVISION_handleTMYEPWPickListScrollDrag () {
-  if (!TMYEPW_pickList_active) return false;
-  if (!SOLARCHVISION_TMYEPW_pickList_needsScrollbar()) return false;
-
-  if (!TMYEPW_scrollThumbDragging) {
-    if (dragging_started != 0) return false; // some other drag already claimed this gesture
-
-    float[] thumb = SOLARCHVISION_TMYEPW_pickListScrollThumbRect();
-    if (!isInside(pmouseX, pmouseY, thumb[0], thumb[1], thumb[0] + thumb[2], thumb[1] + thumb[3])) return false;
-
-    TMYEPW_scrollThumbDragging = true;
-    dragging_started = 1;
-    SOLARCHVISION_X_click1 = pmouseX;
-    SOLARCHVISION_Y_click1 = pmouseY;
-    TMYEPW_scrollDrag_startMouseY = pmouseY;
-    TMYEPW_scrollDrag_startOffset = TMYEPW_pickList_scrollOffset;
-  }
-
-  float[] track = SOLARCHVISION_TMYEPW_pickListScrollTrackRect();
-  float[] thumb = SOLARCHVISION_TMYEPW_pickListScrollThumbRect();
-
-  float travel = track[3] - thumb[3]; // how far the thumb can move within the track
-  if (travel > 0) {
-    int visibleRowCount = SOLARCHVISION_TMYEPW_pickList_visibleRowCount();
-    int maxOffset = max(1, TMYEPW_pickList_indices.length - visibleRowCount);
-    float rowsPerPixel = maxOffset / travel;
-
-    float deltaY = mouseY - TMYEPW_scrollDrag_startMouseY;
-    int newOffset = TMYEPW_scrollDrag_startOffset + round(deltaY * rowsPerPixel);
-
-    TMYEPW_pickList_scrollOffset = constrain(newOffset, 0, maxOffset);
-  }
-
-  WORLD.revise();
-  return true;
+boolean SOLARCHVISION_handlePickListTrackClick () {
+  for (StationPicker picker : ALL_PICKERS) if (picker.handleTrackClick()) return true;
+  return false;
 }
 
-// Handles a click while the picker list is showing: picks the row it
-// landed on (if any), or just cancels the list if it landed elsewhere.
-// Either way the click is fully consumed - returns true whenever the
-// picker was active, so the caller can skip treating this same click as
-// picking a new map location.
-boolean SOLARCHVISION_handleTMYEPWPickListClick () {
-  if (!TMYEPW_pickList_active) return false;
+boolean SOLARCHVISION_handlePickListClick () {
+  for (StationPicker picker : ALL_PICKERS) if (picker.handleClick()) return true;
+  return false;
+}
 
-  int rowIndex = SOLARCHVISION_TMYEPW_pickListRowAt(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked);
-  if (rowIndex >= 0) {
-    int f = TMYEPW_pickList_indices[rowIndex];
-    SOLARCHVISION_selectTMYEPWStation(f, TMYEPW_pickList_mouseLon, TMYEPW_pickList_mouseLat);
-  }
+boolean SOLARCHVISION_handlePickListWheel (float wheelValue) {
+  for (StationPicker picker : ALL_PICKERS) if (picker.handleWheel(wheelValue)) return true;
+  return false;
+}
 
-  TMYEPW_pickList_active = false;
-  TMYEPW_pickList_indices = new int[0];
+boolean SOLARCHVISION_handlePickListScrollDrag () {
+  for (StationPicker picker : ALL_PICKERS) if (picker.handleScrollDrag()) return true;
+  return false;
+}
 
-  return true;
+void SOLARCHVISION_resetPickListDragState () {
+  for (StationPicker picker : ALL_PICKERS) picker.scrollThumbDragging = false;
+}
+
+// Cancels whichever picker (if any) is currently showing, without
+// selecting anything - used by Esc. At most one is ever active, so this
+// stops at the first one found.
+boolean SOLARCHVISION_cancelActivePickList () {
+  for (StationPicker picker : ALL_PICKERS) if (picker.cancel()) return true;
+  return false;
 }
 
 // Assigns TMYEPW station `f` to STATION and (if TMYEPW is the active data
@@ -410,6 +539,162 @@ void SOLARCHVISION_selectTMYEPWStation (int f, float mouse_lon, float mouse_lat)
     boolean keep_CLIMATE_TMYEPW_load = CLIMATE_TMYEPW_load;
     update_CLIMATE_TMYEPW();
     CLIMATE_TMYEPW_load = keep_CLIMATE_TMYEPW_load;
+  }
+}
+
+// Same shape as SOLARCHVISION_selectTMYEPWStation above, for CLMREC.
+void SOLARCHVISION_selectCLMRECStation (int f, float mouse_lon, float mouse_lat) {
+
+  if (STATION.getFilename_CWEEDS().equals(CLMREC_Coordinates[f].getFilename_CWEEDS())) return;
+
+  STATION.setLatitude(mouse_lat);
+  STATION.setLongitude(mouse_lon);
+
+  STATION.setFilename_CWEEDS(CLMREC_Coordinates[f].getFilename_CWEEDS()); // CLMREC filename
+
+  println("nearest CLMREC filename:", CLMREC_Coordinates[f].getFilename_CWEEDS());
+
+  if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
+
+    STATION.setCity(CLMREC_Coordinates[f].getCity());
+    STATION.setProvince(CLMREC_Coordinates[f].getProvince());
+    STATION.setCountry(CLMREC_Coordinates[f].getCountry());
+
+    //STATION.setLatitude(CLMREC_Coordinates[f].getLatitude());
+    //STATION.setLongitude(CLMREC_Coordinates[f].getLongitude());
+    STATION.setElevation(CLMREC_Coordinates[f].getElevation());
+    STATION.setTimelong(CLMREC_Coordinates[f].getTimelong());
+
+    ROLLOUT.revise();
+
+    SOLARCHVISION_update_station(1);
+    update_CLIMATE_CLMREC();
+  }
+}
+
+// Same shape as SOLARCHVISION_selectTMYEPWStation above, for CWEEDS.
+void SOLARCHVISION_selectCWEEDSStation (int f, float mouse_lon, float mouse_lat) {
+
+  if (STATION.getFilename_CWEEDS().equals(CWEEDS_coordinates[f].getFilename_CWEEDS())) return;
+
+  STATION.setLatitude(mouse_lat);
+  STATION.setLongitude(mouse_lon);
+
+  STATION.setFilename_CWEEDS(CWEEDS_coordinates[f].getFilename_CWEEDS()); // CWEEDS filename
+
+  println("nearest CWEEDS filename:", CWEEDS_coordinates[f].getFilename_CWEEDS());
+
+  if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
+
+    STATION.setCity(CWEEDS_coordinates[f].getCity());
+    STATION.setProvince(CWEEDS_coordinates[f].getProvince());
+    STATION.setCountry(CWEEDS_coordinates[f].getCountry());
+
+    //STATION.setLatitude(CWEEDS_coordinates[f].getLatitude());
+    //STATION.setLongitude(CWEEDS_coordinates[f].getLongitude());
+    STATION.setElevation(CWEEDS_coordinates[f].getElevation());
+    STATION.setTimelong(funcs.roundTo(STATION.getLongitude(), 15));
+
+    ROLLOUT.revise();
+
+    SOLARCHVISION_update_station(1);
+    update_CLIMATE_CWEEDS();
+  }
+}
+
+// Same shape as SOLARCHVISION_selectTMYEPWStation above, for NAEFS. Also
+// preserves the original ">100km => don't load" behavior, using the
+// distance from the clicked location to the selected station (matching
+// what the original inline code computed via STATION's just-updated
+// position before this function existed).
+void SOLARCHVISION_selectNAEFSStation (int f, float mouse_lon, float mouse_lat) {
+
+  if (STATION.getFilename_NAEFS().equals(NAEFS_Coordinates[f].getFilename_NAEFS())) return;
+
+  STATION.setLatitude(mouse_lat);
+  STATION.setLongitude(mouse_lon);
+
+  STATION.setFilename_NAEFS(NAEFS_Coordinates[f].getFilename_NAEFS());
+
+  println("nearest naefs filename:", NAEFS_Coordinates[f].getFilename_NAEFS());
+
+  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+    STATION.setCity(NAEFS_Coordinates[f].getCity());
+    STATION.setProvince(NAEFS_Coordinates[f].getProvince());
+    STATION.setCountry(NAEFS_Coordinates[f].getCountry());
+
+    //STATION.setLatitude(NAEFS_Coordinates[f].getLatitude());
+    //STATION.setLongitude(NAEFS_Coordinates[f].getLongitude());
+    STATION.setElevation(NAEFS_Coordinates[f].getElevation());
+    STATION.setTimelong(NAEFS_Coordinates[f].getTimelong());
+
+    ROLLOUT.revise();
+
+    SOLARCHVISION_update_station(1);
+
+    download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+
+    boolean keep_ENSEMBLE_FORECAST_load = ENSEMBLE_FORECAST_load;
+
+    float _lat = NAEFS_Coordinates[f].getLatitude();
+    float _lon = NAEFS_Coordinates[f].getLongitude();
+    if (_lon > 180) _lon -= 360; // << important!
+    float dist = funcs.lon_lat_dist(_lon, _lat, mouse_lon, mouse_lat);
+
+    // do not load data if it is outside 100Km distance
+    if (dist > 100000) {
+      ENSEMBLE_FORECAST_load = false;
+      STATION.setFilename_NAEFS("?");
+    }
+    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ENSEMBLE_FORECAST_load = keep_ENSEMBLE_FORECAST_load;
+  }
+}
+
+// Same shape as SOLARCHVISION_selectTMYEPWStation above, for SWOB. Also
+// preserves the original ">100km => don't load" behavior - see the note
+// on SOLARCHVISION_selectNAEFSStation above.
+void SOLARCHVISION_selectSWOBStation (int f, float mouse_lon, float mouse_lat) {
+
+  if (STATION.getFilename_SWOB().equals(SWOB_Coordinates[f].getFilename_SWOB())) return;
+
+  STATION.setLatitude(mouse_lat);
+  STATION.setLongitude(mouse_lon);
+
+  STATION.setFilename_SWOB(SWOB_Coordinates[f].getFilename_SWOB());
+
+  println("nearest swob filename:", SWOB_Coordinates[f].getFilename_SWOB());
+
+  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+    STATION.setCity(SWOB_Coordinates[f].getCity());
+    STATION.setProvince(SWOB_Coordinates[f].getProvince());
+    STATION.setCountry(SWOB_Coordinates[f].getCountry());
+
+    //STATION.setLatitude(SWOB_Coordinates[f].getLatitude());
+    //STATION.setLongitude(SWOB_Coordinates[f].getLongitude());
+    STATION.setElevation(SWOB_Coordinates[f].getElevation());
+    STATION.setTimelong(SWOB_Coordinates[f].getTimelong());
+
+    ROLLOUT.revise();
+
+    SOLARCHVISION_update_station(1);
+
+    download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+
+    boolean keep_ENSEMBLE_OBSERVED_load = ENSEMBLE_OBSERVED_load;
+
+    float _lat = SWOB_Coordinates[f].getLatitude();
+    float _lon = SWOB_Coordinates[f].getLongitude();
+    if (_lon > 180) _lon -= 360; // << important!
+    float dist = funcs.lon_lat_dist(_lon, _lat, mouse_lon, mouse_lat);
+
+    // do not load data if it is outside 100Km distance
+    if (dist > 100000) {
+      ENSEMBLE_OBSERVED_load = false;
+      STATION.setFilename_SWOB("?");
+    }
+    update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ENSEMBLE_OBSERVED_load = keep_ENSEMBLE_OBSERVED_load;
   }
 }
 
@@ -504,7 +789,7 @@ void mouseClicked () {
             // "pick a location on the map" clicks, so handle them here
             // and skip everything below (STATION repositioning,
             // nearest-station lookups, etc.) entirely for this click.
-            if (SOLARCHVISION_handleTMYEPWPickListTrackClick() || SOLARCHVISION_handleTMYEPWPickListClick()) {
+            if (SOLARCHVISION_handlePickListTrackClick() || SOLARCHVISION_handlePickListClick()) {
               // handled - fall through to the shared revise() calls below
             } else {
 
@@ -526,199 +811,21 @@ void mouseClicked () {
               WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
             }
 
-            {
-              SOLARCHVISION_NearestStation nearest_WORLD_SWOB_result = SOLARCHVISION_findNearestStation(SWOB_Coordinates);
-              float nearest_WORLD_SWOB_dist = nearest_WORLD_SWOB_result.dist;
-
-              {
-                int f = nearest_WORLD_SWOB_result.index;
-
-                if (STATION.getFilename_SWOB().equals(SWOB_Coordinates[f].getFilename_SWOB())) {
-                } else {
-                  STATION.setLatitude(mouse_lat);
-                  STATION.setLongitude(mouse_lon);
-
-                  STATION.setFilename_SWOB(SWOB_Coordinates[f].getFilename_SWOB());
-
-                  println("nearest naefs filename:", SWOB_Coordinates[f].getFilename_SWOB());
-
-                  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
-                    STATION.setCity(SWOB_Coordinates[f].getCity());
-                    STATION.setProvince(SWOB_Coordinates[f].getProvince());
-                    STATION.setCountry(SWOB_Coordinates[f].getCountry());
-
-                    //STATION.setLatitude(SWOB_Coordinates[f].getLatitude());
-                    //STATION.setLongitude(SWOB_Coordinates[f].getLongitude());
-                    STATION.setElevation(SWOB_Coordinates[f].getElevation());
-                    STATION.setTimelong(SWOB_Coordinates[f].getTimelong());
-
-                    ROLLOUT.revise();
-
-
-                    SOLARCHVISION_update_station(1);
-
-                    download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
-
-                    boolean keep_ENSEMBLE_OBSERVED_load = ENSEMBLE_OBSERVED_load;
-                    // do not load data if it is outside 100Km distance
-                    if(nearest_WORLD_SWOB_dist > 100000) {
-                      ENSEMBLE_OBSERVED_load = false;
-                      STATION.setFilename_SWOB("?");
-                    }
-                    update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
-                    ENSEMBLE_OBSERVED_load = keep_ENSEMBLE_OBSERVED_load;
-                  }
-                }
-              }
-            }
-
-            {
-              SOLARCHVISION_NearestStation nearest_WORLD_NAEFS_result = SOLARCHVISION_findNearestStation(NAEFS_Coordinates);
-              float nearest_WORLD_NAEFS_dist = nearest_WORLD_NAEFS_result.dist;
-
-              {
-                int f = nearest_WORLD_NAEFS_result.index;
-
-                if (STATION.getFilename_NAEFS().equals(NAEFS_Coordinates[f].getFilename_NAEFS())) {
-                } else {
-
-                  STATION.setLatitude(mouse_lat);
-                  STATION.setLongitude(mouse_lon);
-
-                  STATION.setFilename_NAEFS(NAEFS_Coordinates[f].getFilename_NAEFS());
-
-                  println("nearest naefs filename:", NAEFS_Coordinates[f].getFilename_NAEFS());
-
-                  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-                    STATION.setCity(NAEFS_Coordinates[f].getCity());
-                    STATION.setProvince(NAEFS_Coordinates[f].getProvince());
-                    STATION.setCountry(NAEFS_Coordinates[f].getCountry());
-
-                    //STATION.setLatitude(NAEFS_Coordinates[f].getLatitude());
-                    //STATION.setLongitude(NAEFS_Coordinates[f].getLongitude());
-                    STATION.setElevation(NAEFS_Coordinates[f].getElevation());
-                    STATION.setTimelong(NAEFS_Coordinates[f].getTimelong());
-
-                    ROLLOUT.revise();
-
-
-                    SOLARCHVISION_update_station(1);
-
-                    download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-
-                    boolean keep_ENSEMBLE_FORECAST_load = ENSEMBLE_FORECAST_load;
-                    // do not load data if it is outside 100Km distance
-                    if(nearest_WORLD_NAEFS_dist > 100000) {
-                      ENSEMBLE_FORECAST_load = false;
-                      STATION.setFilename_NAEFS("?");
-                    }
-                    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-                    ENSEMBLE_FORECAST_load = keep_ENSEMBLE_FORECAST_load;
-                  }
-                }
-              }
-            }
-
-
-            {
-              int nearest_WORLD_CWEEDS = SOLARCHVISION_findNearestStation(CWEEDS_coordinates).index;
-
-              {
-                int f = nearest_WORLD_CWEEDS;
-
-                if (STATION.getFilename_CWEEDS().equals(CWEEDS_coordinates[f].getFilename_CWEEDS())) {
-                } else {
-
-                  STATION.setLatitude(mouse_lat);
-                  STATION.setLongitude(mouse_lon);
-
-                  STATION.setFilename_CWEEDS(CWEEDS_coordinates[f].getFilename_CWEEDS()); // CWEEDS filename
-
-                  println("nearest CWEEDS filename:", CWEEDS_coordinates[f].getFilename_CWEEDS());
-
-                  if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
-
-                    STATION.setCity(CWEEDS_coordinates[f].getCity());
-                    STATION.setProvince(CWEEDS_coordinates[f].getProvince());
-                    STATION.setCountry(CWEEDS_coordinates[f].getCountry());
-
-                    //STATION.setLatitude(CWEEDS_coordinates[f].getLatitude());
-                    //STATION.setLongitude(CWEEDS_coordinates[f].getLongitude());
-                    STATION.setElevation(CWEEDS_coordinates[f].getElevation());
-                    STATION.setTimelong(funcs.roundTo(STATION.getLongitude(), 15));
-
-                    ROLLOUT.revise();
-
-                    SOLARCHVISION_update_station(1);
-                    update_CLIMATE_CWEEDS();
-                  }
-                }
-              }
-            }
-
-            {
-              // Note: the original loop here wrapped its body in a block guarded by a
-              // commented-out `getEndyear() == 2016` filter, which was inert (never executed),
-              // so a plain nearest-station search below is behaviorally identical.
-              int nearest_WORLD_CLMREC = SOLARCHVISION_findNearestStation(CLMREC_Coordinates).index;
-
-              {
-                int f = nearest_WORLD_CLMREC;
-
-                if (STATION.getFilename_CWEEDS().equals(CLMREC_Coordinates[f].getFilename_CWEEDS())) {
-                } else {
-
-                  STATION.setLatitude(mouse_lat);
-                  STATION.setLongitude(mouse_lon);
-
-                  STATION.setFilename_CWEEDS(CLMREC_Coordinates[f].getFilename_CWEEDS()); // CLMREC filename
-
-                  println("nearest CLMREC filename:", CLMREC_Coordinates[f].getFilename_CWEEDS());
-
-                  if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
-
-                    STATION.setCity(CLMREC_Coordinates[f].getCity());
-                    STATION.setProvince(CLMREC_Coordinates[f].getProvince());
-                    STATION.setCountry(CLMREC_Coordinates[f].getCountry());
-
-                    //STATION.setLatitude(CLMREC_Coordinates[f].getLatitude());
-                    //STATION.setLongitude(CLMREC_Coordinates[f].getLongitude());
-                    STATION.setElevation(CLMREC_Coordinates[f].getElevation());
-                    STATION.setTimelong(CLMREC_Coordinates[f].getTimelong());
-
-                    ROLLOUT.revise();
-
-                    SOLARCHVISION_update_station(1);
-                    update_CLIMATE_CLMREC();
-                  }
-                }
-              }
-            }
-
-
-            {
-              // A click while the picker list was showing (row pick, or
-              // click-away-to-cancel) is already fully handled upfront by
-              // SOLARCHVISION_handleTMYEPWPickListClick() above, so
-              // TMYEPW_pickList_active is guaranteed false here.
-              int[] nearby = SOLARCHVISION_findNearbyStations(TMYEPW_Coordinates, mouse_lon, mouse_lat, TMYEPW_PICKLIST_MAX_DIST, TMYEPW_PICKLIST_MAX_COUNT);
-
-              if ((nearby.length > 1) && (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
-                // Multiple TMYEPW stations this close together - let the
-                // user pick one instead of silently guessing. Only shown
-                // while TMYEPW is the active data source; otherwise (e.g.
-                // browsing NAEFS/CWEEDS/CLMREC) just quietly track the
-                // single nearest one below, same as the other datasets do.
-                TMYEPW_pickList_active = true;
-                TMYEPW_pickList_indices = nearby;
-                TMYEPW_pickList_mouseLon = mouse_lon;
-                TMYEPW_pickList_mouseLat = mouse_lat;
-                TMYEPW_pickList_scrollOffset = 0;
-              } else {
-                int f = (nearby.length > 0) ? nearby[0] : SOLARCHVISION_findNearestStation(TMYEPW_Coordinates).index;
-                SOLARCHVISION_selectTMYEPWStation(f, mouse_lon, mouse_lat);
-              }
-            }
+            // Each picker's handleMapClick() finds nearby candidates of its
+            // own dataset around (mouse_lon, mouse_lat); if there's more
+            // than one AND that dataset is the active CurrentDataSource, it
+            // shows its own pick list instead of guessing - otherwise it
+            // quietly selects the single nearest one, same as every
+            // dataset did before pickers existed. A click while any
+            // picker's list was showing (row pick, or click-away-to-cancel)
+            // is already fully handled upfront by
+            // SOLARCHVISION_handlePickListClick() above, so no picker can
+            // still be active here.
+            SWOB_PICKER.handleMapClick(mouse_lon, mouse_lat);
+            NAEFS_PICKER.handleMapClick(mouse_lon, mouse_lat);
+            CWEEDS_PICKER.handleMapClick(mouse_lon, mouse_lat);
+            CLMREC_PICKER.handleMapClick(mouse_lon, mouse_lat);
+            TMYEPW_PICKER.handleMapClick(mouse_lon, mouse_lat);
 
 
 

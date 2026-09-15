@@ -3,7 +3,7 @@ void mouseReleased() {
   if (SOLARCHVISION_automated != 0) return;
   if (dragging_started == 0) return;
 
-  TMYEPW_scrollThumbDragging = false;
+  SOLARCHVISION_resetPickListDragState();
 
   normalizeClickRegion();
 
