@@ -31,6 +31,13 @@ class solarchvision_Land3D {
   int skipStart = 1;
   int skipEnd = 0;
 
+  // Accumulates every land cell's outline (in WIN3D screen space) while
+  // draw(WIN3D) runs, so all of them can be stroked in one batched
+  // beginShape(LINES) pass at the end instead of each cell also stroking
+  // its own outline as part of its individual beginShape()/endShape() -
+  // see beginLandShape()/drawLandSubFace()/flushLandEdgeBatch() below.
+  private ArrayList<float[][]> winEdgeBatch = null;
+
   void update_textures () {
     this.Textures_U_scale = new float[0];
     this.Textures_V_scale = new float[0];
@@ -252,6 +259,8 @@ class solarchvision_Land3D {
   void draw (int target_window) {
     if (!shouldDraw(target_window)) return;
 
+    if (target_window == TypeWindow.WIN3D) this.winEdgeBatch = new ArrayList<float[][]>();
+
     int PAL_type = SHADE.get_PAL_type();
     int PAL_direction = SHADE.get_PAL_direction();
     float PAL_multiplier = SHADE.get_PAL_multiplier();
@@ -300,6 +309,7 @@ class solarchvision_Land3D {
 
     if (target_window == TypeWindow.WIN3D) {
       drawLandPoints();
+      flushLandEdgeBatch();
     }
 
     if (target_window == TypeWindow.LandMesh) {
@@ -403,9 +413,65 @@ class solarchvision_Land3D {
 
     endLandShape(target_window, i, n_Map, _turn);
 
+    if ((target_window == TypeWindow.WIN3D) && shouldStrokeLandSubFace(n_Map)) {
+      this.winEdgeBatch.add(projectLandSubFaceForWIN3D(subFace));
+    }
+
     if (this.displayTexture && this.displayDepth) {
       writeLandDepthWalls(target_window, subFace, n_Map);
     }
+  }
+
+  // Reproduces, per subface, the exact stroke on/off rule the old
+  // per-shape code applied: with texturing off, edges follow the global
+  // allFaces.displayEdges toggle; with texturing on, a cell only gets an
+  // outline when no texture tile actually covers it (n_Map == -1) - shown
+  // as a visual placeholder for the gap - regardless of displayEdges.
+  private boolean shouldStrokeLandSubFace (int n_Map) {
+    if (this.displayTexture) return (n_Map == -1);
+    return allFaces.displayEdges;
+  }
+
+  // Projects a subface's raw coordinates into the same WIN3D screen-space
+  // values passed to vertex() in renderLandVertexShaded()/
+  // renderLandVertexTextured(), for later batched stroking.
+  private float[][] projectLandSubFaceForWIN3D (float[][] subFace) {
+    float[][] poly = new float[subFace.length][3];
+    for (int s = 0; s < subFace.length; s++) {
+      poly[s][0] =  subFace[s][0] * OBJECTS_scale * WIN3D.scale;
+      poly[s][1] = -subFace[s][1] * OBJECTS_scale * WIN3D.scale;
+      poly[s][2] =  subFace[s][2] * OBJECTS_scale * WIN3D.scale;
+    }
+    return poly;
+  }
+
+  // Strokes every subface outline recorded above in one beginShape(LINES)
+  // pass - they all share the exact same black, weight-1 stroke, so
+  // there's nothing per-cell lost by batching them.
+  private void flushLandEdgeBatch () {
+    if ((this.winEdgeBatch == null) || (this.winEdgeBatch.size() == 0)) {
+      this.winEdgeBatch = null;
+      return;
+    }
+
+    WIN3D.graphics.noFill();
+    WIN3D.graphics.strokeWeight(1);
+    WIN3D.graphics.stroke(0, 0, 0);
+    WIN3D.graphics.beginShape(LINES);
+
+    for (int p = 0; p < this.winEdgeBatch.size(); p++) {
+      float[][] poly = this.winEdgeBatch.get(p);
+      int n = poly.length;
+
+      for (int s = 0; s < n; s++) {
+        int s_next = (s + 1) % n;
+        WIN3D.graphics.vertex(poly[s][0], poly[s][1], poly[s][2]);
+        WIN3D.graphics.vertex(poly[s_next][0], poly[s_next][1], poly[s_next][2]);
+      }
+    }
+
+    WIN3D.graphics.endShape();
+    this.winEdgeBatch = null;
   }
 
   private int selectLandTextureMap (float[][] subFace) {
@@ -436,18 +502,13 @@ class solarchvision_Land3D {
 
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.beginShape();
-      WIN3D.graphics.strokeWeight(1);
-      WIN3D.graphics.stroke(0, 0, 0);
-      if (!allFaces.displayEdges) WIN3D.graphics.noStroke();
-      if (this.displayTexture) WIN3D.graphics.noStroke();
+      WIN3D.graphics.noStroke();
 
       if (this.displayTexture) {
         if (n_Map != -1) {
           WIN3D.graphics.texture(this.Textures_map[n_Map]);
         } else {
           WIN3D.graphics.noFill();
-          WIN3D.graphics.strokeWeight(1);
-          WIN3D.graphics.stroke(0, 0, 0);
         }
       }
     }
