@@ -224,7 +224,41 @@ class solarchvision_Sky3D {
     }
   }
 
+  // The tessellated sky-dome geometry (positions only) depends solely on
+  // skyFaces/skyVertices/displayTessellation - never on the camera or on
+  // sun/impact data. Previously it was rebuilt from scratch on every call
+  // (i.e. every single rendered frame, including every frame of a mouse
+  // drag or a held navigation key). Cache it per tessellation level instead.
+  private int cachedTessellationLevel = -1;
+  private float[][][][] cachedSubFacesByFace = null;
+
+  // Call whenever skyFaces/skyVertices are rebuilt (e.g. re-creating the
+  // sky dome geometry), since the cache above is otherwise only keyed on
+  // the tessellation level and wouldn't notice the underlying mesh itself
+  // changed.
+  void invalidateTessellationCache () {
+    this.cachedSubFacesByFace = null;
+  }
+
   private float[][][] getTessellatedSubFaces (int f, int tessellation) {
+    if ((this.cachedSubFacesByFace == null) || (this.cachedTessellationLevel != tessellation)) {
+      this.rebuildTessellationCache(tessellation);
+    }
+
+    return this.cachedSubFacesByFace[f];
+  }
+
+  private void rebuildTessellationCache (int tessellation) {
+    this.cachedSubFacesByFace = new float[skyFaces.length][][][];
+
+    for (int f = 0; f < skyFaces.length; f++) {
+      this.cachedSubFacesByFace[f] = computeTessellatedSubFaces(f, tessellation);
+    }
+
+    this.cachedTessellationLevel = tessellation;
+  }
+
+  private float[][][] computeTessellatedSubFaces (int f, int tessellation) {
     int totalNumberOfSubs = 1;
     if (tessellation > 0) {
       totalNumberOfSubs = skyFaces[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));

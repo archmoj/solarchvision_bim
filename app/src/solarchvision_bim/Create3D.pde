@@ -1449,6 +1449,8 @@ class solarchvision_Create3D {
 
       POINTER_TempObjectVertices = 0;
       POINTER_TempObjectFaces = 0;
+
+      Sky3D.invalidateTessellationCache();
     } else {
       // Nothing. In this case we should add temp object outside this function. See SuperSphere
     }
