@@ -14,7 +14,6 @@ developed by [Mojtaba Samimi
     -   [Before running the program](#before-running-the-program)
     -   [Run using Processing IDE](#run-using-processing-ide)
     -   [Run using command line](#run-using-command-line)
-    -   [Download EPW files](#download-epw-files)
     -   [Download CWEEDS files](#download-cweeds-files)
 -   [Graphical User Interface](#graphical-user-interface)
     -   [Adding an object to the scene](#adding-an-object-to-the-scene)
@@ -26,6 +25,7 @@ developed by [Mojtaba Samimi
     -   [Climatic studies](#climatic-studies)
     -   [Weather layers](#weather-layers)
     -   [Location menu](#location-menu)
+        -   [Picking a station on the map](#picking-a-station-on-the-map)
     -   [Case bar](#case-bar)
         -   [Range Sliders](#range-sliders)
         -   [Statistical Options](#statistical-options)
@@ -111,24 +111,10 @@ containing the `solarchvision_bim` folder.
 <PATH-TO-PROCESSING>/processing-java --sketch=solarchvision_bim --run
 ```
 
-## Download EPW files
-
-To download EPW/TMY (Typical Meteorological Year) data for various
-locations, a script is provided inside the `scripts` folder.
-
-You need to adjust the `outFolder` variable in the `download_epw.js`
-file to point to your installation directory.
-
-In addition, [`node.js`](https://nodejs.org/en) is required to run the
-script.
-
-``` sh
-node scripts/download_epw.js
-```
 
 ## Download CWEEDS files
 
-For locations in `Canada`, there is another database called `CWEEDS`,
+For locations in `Canada`, there is a database called `CWEEDS`,
 which includes multi-year climate data under the Engineering Climate
 Datasets (https://climate.weather.gc.ca/prods_servs/engineering_e.html).
 
@@ -297,6 +283,31 @@ Additional features include:
     cloud formations using datasets such as HRDPS (High Resolution Deterministic Prediction System) or
     GDPS (Global Deterministic Prediction System)
 
+### Picking a station on the map
+
+Clicking inside the world viewport assigns the nearest station of the
+*currently active* dataset (`TMYEPW`, `CWEEDS`, `CLMREC`, `NAEFS`, or
+`SWOB`) to the project. If one or more stations of that dataset fall
+within its own search radius of the click, a scrollable picker list
+appears instead of guessing automatically:
+
+| Dataset  | Search radius |
+|----------|----------------|
+| `TMYEPW` | 10 km          |
+| `CLMREC` | 25 km          |
+| `CWEEDS` | 50 km          |
+| `NAEFS`  | 50 km          |
+| `SWOB`   | 25 km          |
+
+While the picker is showing:
+
+-   Click a row to select that station.
+-   Click anywhere else in the world viewport, or press `ESC`, to
+    cancel without changing the current selection.
+-   If the list is longer than fits on screen, scroll it with the
+    mouse wheel, drag the scrollbar thumb, or click the scrollbar
+    track to page up/down.
+
 ------------------------------------------------------------------------
 
 ## Case bar
@@ -344,10 +355,11 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 ------------------------------------------------------------------------
 
 ### Camera and viewport control
--   `` ` `` and `~`: Zoom in and out in the world viewport
+-   `` ` `` and `~`: Cycle backward/forward through the world
+    viewport's zoom levels
 -   `+` and `-`: Zoom in and out in the 3D viewport
 -   `,` and `.`: Move the camera closer and farther
--   `2` and `8`: RRotate the camera up and down
+-   `2` and `8`: Rotate the camera up and down
 -   `4` and `6`: Rotate the camera left and right
 -   `1` and `3`: Move the camera left and right
 -   `7` and `9`: Move the camera up and down
