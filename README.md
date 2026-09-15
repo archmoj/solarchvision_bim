@@ -108,7 +108,7 @@ Please note that the command must be executed from the parent directory
 containing the `solarchvision_bim` folder.
 
 ``` sh
-<PATH-TO-PROCESSING>/processing-java --sketch=solarchvision_bim --run
+<PATH-TO-PROCESSING>/processing-java --sketch=app/src/solarchvision_bim --run
 ```
 
 
