@@ -412,16 +412,17 @@ abstract class StationPicker {
   }
 
   // Called from this dataset's own click handling: finds nearby
-  // candidates around (lon, lat); if there's more than one AND this
-  // dataset is the active data source, shows the picker instead of
-  // guessing. Otherwise (0 or 1 candidate, or a different dataset is
-  // active) just quietly selects the single nearest one, same as every
-  // dataset did before pickers existed.
+  // candidates around (lon, lat); if there's at least one AND this
+  // dataset is the active data source, shows the picker (even for a
+  // single candidate, so the user can see/confirm it or click away to
+  // cancel) instead of silently guessing. Otherwise (0 candidates within
+  // range, or a different dataset is active) just quietly selects the
+  // single nearest one, same as every dataset did before pickers existed.
   void handleMapClick (float lon, float lat) {
     solarchvision_STATION[] coords = this.getCoords();
     int[] nearby = SOLARCHVISION_findNearbyStations(coords, lon, lat, this.maxDist, this.maxCount);
 
-    if ((nearby.length > 1) && (CurrentDataSource == this.dataSourceID)) {
+    if ((nearby.length > 0) && (CurrentDataSource == this.dataSourceID)) {
       this.active = true;
       this.indices = nearby;
       this.mouseLon = lon;
