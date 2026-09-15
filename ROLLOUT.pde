@@ -322,9 +322,9 @@ class solarchvision_ROLLOUT {
 
         User3D.create_Orientation = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Orientation", User3D.create_Orientation, 0, 360, 15);
 
-        User3D.create_Length = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Length", User3D.create_Length, -50, 150, -2), 0.5);
-        User3D.create_Width = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Width", User3D.create_Width, -50, 150, -2), 0.5);
-        User3D.create_Height = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Height", User3D.create_Height, -50, 150, -2), 0.5);
+        User3D.create_Length = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Length", User3D.create_Length, -50.0, 150.0, -2.0, 0.5);
+        User3D.create_Width = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Width", User3D.create_Width, -50.0, 150.0, -2.0, 0.5);
+        User3D.create_Height = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Height", User3D.create_Height, -50.0, 150.0, -2.0, 0.5);
 
         User3D.create_Volume = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Volume", User3D.create_Volume, 0, 25000, 1000);
 
@@ -355,16 +355,16 @@ class solarchvision_ROLLOUT {
 
         User3D.modify_WeldTreshold = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.WeldTreshold", User3D.modify_WeldTreshold, 0, 10, 0.001);
 
-        Select3D.softPower = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softPower", Select3D.softPower, 0.125, 8, -2);
+        Select3D.softPower = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softPower", Select3D.softPower, 0.125, 8.0, -2);
         Select3D.softRadius = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softRadius", Select3D.softRadius, 0.01, 100, -2);
 
         Select3D.posVector = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posVector", Select3D.posVector, 0, 3, 1, 1);
         Select3D.rotVector =  this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotVector", Select3D.rotVector, 0, 2, 1, 1);
         Select3D.scaleVector =  this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleVector", Select3D.scaleVector, 0, 3, 1, 1);
 
-        Select3D.posValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posValue", Select3D.posValue, -50, 50, 1, 1);
-        Select3D.rotValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotValue", Select3D.rotValue, -180, 180, 5, 5);
-        Select3D.scaleValue = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleValue", Select3D.scaleValue, -8, 8, 0.5), 0.5);
+        Select3D.posValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posValue", Select3D.posValue, -50.0, 50.0, 1.0, 1.0);
+        Select3D.rotValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotValue", Select3D.rotValue, -180.0, 180.0, 5.0, 5.0);
+        Select3D.scaleValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleValue", Select3D.scaleValue, -8.0, 8.0, 0.5, 0.5);
 
         Select3D.alignX = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignX", Select3D.alignX, -1, 1, 1, 1);
         Select3D.alignY = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignY", Select3D.alignY, -1, 1, 1, 1);
@@ -386,13 +386,13 @@ class solarchvision_ROLLOUT {
         User3D.create_Model1D_Type = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Type", User3D.create_Model1D_Type, 0, 0, 1, 1);
         User3D.create_Model1D_DegreeMax = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.DegreeMax", User3D.create_Model1D_DegreeMax, 0, 12, 1, 1);
         User3D.create_Model1D_Seed = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Seed", User3D.create_Model1D_Seed, -1, 32767, 1, 1);
-        User3D.create_Model1D_TrunkSize = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1), 0.1);
-        User3D.create_Model1D_LeafSize = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.LeafSize", User3D.create_Model1D_LeafSize, 0, 1, 0.01), 0.1);
+        User3D.create_Model1D_TrunkSize = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.TrunkSize", User3D.create_Model1D_TrunkSize, 0, 10, 0.1, 0.1);
+        User3D.create_Model1D_LeafSize = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.LeafSize", User3D.create_Model1D_LeafSize, 0, 1, 0.01, 0.1);
 
-        User3D.create_Model1D_BranchTilt = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.BranchTilt", User3D.create_Model1D_BranchTilt, 0, 360, 5), 0.1);
-        User3D.create_Model1D_BranchTwist = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.BranchTwist", User3D.create_Model1D_BranchTwist, 0, 360, 5), 0.1);
-        User3D.create_Model1D_BranchRatio = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.BranchRatio", User3D.create_Model1D_BranchRatio, 0.05, 1, 0.05), 0.01);
-        User3D.create_Model1D_TreeBase = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.TreeBase", User3D.create_Model1D_TreeBase, 0, 4, 0.1), 0.01);
+        User3D.create_Model1D_BranchTilt = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.BranchTilt", User3D.create_Model1D_BranchTilt, 0, 360, 5, 0.1);
+        User3D.create_Model1D_BranchTwist = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.BranchTwist", User3D.create_Model1D_BranchTwist, 0, 360, 5, 0.1);
+        User3D.create_Model1D_BranchRatio = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.BranchRatio", User3D.create_Model1D_BranchRatio, 0.05, 1, 0.05, 0.01);
+        User3D.create_Model1D_TreeBase = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.TreeBase", User3D.create_Model1D_TreeBase, 0, 4, 0.1, 0.01);
       }
 
       if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
@@ -494,7 +494,7 @@ class solarchvision_ROLLOUT {
         Sky3D.displayTessellation = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.displayTessellation", Sky3D.displayTessellation, 0, 4, 1, 1);
         Sky3D.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 1, 4000000, -2);
 
-        BIOSPHERE_drawResolution = funcs.roundTo(this.Spinner(X_control, Y_control, 0, 0, 0, "Biosphere_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1), 1);
+        BIOSPHERE_drawResolution = this.Spinner(X_control, Y_control, 0, 0, 0, "Biosphere_drawResolution", BIOSPHERE_drawResolution, 1, 10, 1, 1);
 
         //Tropo3D.displaySurface = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface, 0, 1, 1), 1));
         //Tropo3D.displayTexture = boolean(funcs.roundTo(this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture, 0, 1, 1), 1));
