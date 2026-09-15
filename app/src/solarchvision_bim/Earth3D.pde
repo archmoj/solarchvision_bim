@@ -280,7 +280,7 @@ class solarchvision_Earth3D {
 
   private void beginWIN3DSphere (PImage textureImage) {
     WIN3D.graphics.strokeWeight(1);
-    WIN3D.graphics.noStroke();
+    WIN3D.graphics.stroke(0);
     WIN3D.graphics.beginShape(QUADS);
     if (this.displayTexture) {
       WIN3D.graphics.texture(textureImage);
