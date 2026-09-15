@@ -350,7 +350,7 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 
 ### General
 -   `TAB`: Enable or disable the command bar
--   `Shift+TAB`: Switch between active and passive views inside the 3D viewport
+-   `Shift+TAB`: Switch between active and passive impact views inside the 3D viewport
 
 ------------------------------------------------------------------------
 
@@ -363,7 +363,7 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 -   `4` and `6`: Rotate the camera left and right
 -   `1` and `3`: Move the camera left and right
 -   `7` and `9`: Move the camera up and down
--   `5`: Rotate the camera to look at the origin
+-   `5`: Rotate the camera to look at the current selection (or the origin if nothing is selected)
 -   `0`: Move the camera closer
 -   `/` and `*`: Move the camera toward and away from the selection
 -   `UP`, `DOWN`, `LEFT` and `RIGHT`: Rotate the camera around the selection
@@ -387,9 +387,11 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 ------------------------------------------------------------------------
 
 ### Layout and graph controls
--   `Ctrl+UP` and `Ctrl+DOWN`: Change the current weather layer displayed in the hourly graph (Layout 0 — default layout)
--   `Ctrl+LEFT` and `Ctrl+RIGHT`: Change the current impact layer displayed in the daily graph (Layout 0 — default layout)
--   `Ctrl+PAGE_UP` and `Ctrl+PAGE_DOWN`: Switch between layouts (enlarge the time viewport to view the full layout)
+The shortcuts in this section, as well as in "Graph scaling and display options" and "Graph visualization modes" below, act on the time viewport.
+
+-   `Ctrl+UP` and `Ctrl+DOWN`: Change the current weather layer displayed in the hourly graph
+-   `Ctrl+LEFT` and `Ctrl+RIGHT`: Change the current impact layer displayed in the daily graph
+-   `Ctrl+PAGE_UP` and `Ctrl+PAGE_DOWN`: Switch between the numbered diagram `Layout`s available from the `Setup` menu (enlarge the time viewport, i.e. the `graph` View Layout, to view the full layout)
 -   `Ctrl+;`: Show or hide the impact summary
 
 ------------------------------------------------------------------------
