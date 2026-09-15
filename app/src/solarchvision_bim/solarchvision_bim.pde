@@ -2218,8 +2218,8 @@ solarchvision_UI_commandBar UI_commandBar = new solarchvision_UI_commandBar();
 
 solarchvision_UI_caseBar UI_caseBar = new solarchvision_UI_caseBar();
 
-String[] allCommands = {"SOLARCHVISION Command Input:", ""};
-String[] allMessages = {"SOLARCHVISION Command Output:", ""};
+String[] allCommands = {"Command Input:", ""};
+String[] allMessages = {"Command Output:", ""};
 
 int typeUserCommand = 0;
 

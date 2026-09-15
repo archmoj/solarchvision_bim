@@ -444,7 +444,7 @@ class solarchvision_UI_caseBar {
         fill(255);
       }
       textSize(1.125 * MessageSize);
-      text(STAT_N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1125 * MessageSize);
+      text(STAT_N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2));
     }
   }
 }
