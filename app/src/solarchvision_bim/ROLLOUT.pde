@@ -21,6 +21,17 @@ class solarchvision_ROLLOUT {
   private boolean spinnerEditCommit = false;
   private boolean spinnerEditStateChanged = false;
 
+  // Captions of every spinner drawn on the current page, in on-screen
+  // order, rebuilt each drawView() pass. Used by Tab / Shift+Tab to know
+  // which spinner comes next/previous.
+  private ArrayList<String> spinnerOrderThisPass = new ArrayList<String>();
+
+  // Set by Tab / Shift+Tab to request that a specific spinner (identified
+  // by caption) become the new edit target. The actual switch happens once
+  // that spinner's own _Spinner() call is reached, since only there is its
+  // live value known (needed to seed the typed text).
+  private String spinnerEditPendingCaption = null;
+
   private void buildAllRollouts () {
 
     PARENT_PERIOD_SCENARIOS = pushParent("Period & Scenarios");
@@ -131,6 +142,7 @@ class solarchvision_ROLLOUT {
   void drawView () {
 
     this.spinnerEditStateChanged = false;
+    this.spinnerOrderThisPass.clear();
 
     stroke(255);
     fill(255);
@@ -750,6 +762,15 @@ class solarchvision_ROLLOUT {
     );
   }
 
+  private void beginSpinnerEdit (String caption, float value) {
+    this.spinnerEditActive = true;
+    this.spinnerEditCaption = caption;
+    this.spinnerEditText = (value == int(value)) ? String.valueOf(int(value)) : String.valueOf(value);
+    this.spinnerEditCursor = this.spinnerEditText.length();
+    this.spinnerEditCommit = false;
+    this.spinnerEditStateChanged = true;
+  }
+
   float _Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
 
     float new_value = v;
@@ -772,6 +793,8 @@ class solarchvision_ROLLOUT {
     t_oH = t_oW - 2; // move text 2 pixels down to display nicely
 
     Y_control += 25 * ROLLOUT.view_S; //(h + 2 * o) * 1.25;
+
+    this.spinnerOrderThisPass.add(caption);
 
     // --- Spinner text-edit -------------------------------------------------
     // Clicking the gray caption area on the left of the spinner (the part of
@@ -807,17 +830,20 @@ class solarchvision_ROLLOUT {
       ROLLOUT.revise();
     }
 
+    // Tab / Shift+Tab requested this spinner become the new edit target.
+    if ((this.spinnerEditPendingCaption != null) && this.spinnerEditPendingCaption.equals(caption) && !editingThis) {
+
+      this.beginSpinnerEdit(caption, new_value);
+      this.spinnerEditPendingCaption = null;
+
+      editingThis = true;
+    }
+
     if ((!this.spinnerEditActive || editingThis) && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o)) {
 
       if (!editingThis) {
-        this.spinnerEditActive = true;
-        this.spinnerEditCaption = caption;
-        this.spinnerEditText = (new_value == int(new_value)) ? String.valueOf(int(new_value)) : String.valueOf(new_value);
-        this.spinnerEditCursor = this.spinnerEditText.length();
-        this.spinnerEditCommit = false;
+        this.beginSpinnerEdit(caption, new_value);
         editingThis = true;
-
-        this.spinnerEditStateChanged = true;
       }
 
       SOLARCHVISION_X_clicked = -1;
@@ -1010,6 +1036,27 @@ class solarchvision_ROLLOUT {
         this.spinnerEditText = "";
         this.spinnerEditCursor = 0;
         this.spinnerEditCommit = false;
+        this.spinnerEditPendingCaption = null;
+        break;
+
+      case TAB:
+        // Cancel the current edit (typed text is dropped, same as Esc) and
+        // move to editing the next (Tab) or previous (Shift+Tab) spinner
+        // displayed on this page, wrapping around at the ends. The actual
+        // switch is deferred to that spinner's own _Spinner() call, since
+        // only there is its live value known to seed the typed text.
+        {
+          int n = this.spinnerOrderThisPass.size();
+
+          if (n > 1) {
+            int idx = this.spinnerOrderThisPass.indexOf(this.spinnerEditCaption);
+            if (idx == -1) idx = 0;
+
+            int nextIdx = e.isShiftDown() ? ((idx - 1 + n) % n) : ((idx + 1) % n);
+
+            this.spinnerEditPendingCaption = this.spinnerOrderThisPass.get(nextIdx);
+          }
+        }
         break;
 
       case BACKSPACE:

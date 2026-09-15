@@ -1841,7 +1841,7 @@ void keyPressed (KeyEvent e) {
           switch(key) {
 
             case TAB:
-              if (e.isShiftDown() != true) {
+              if ((e.isShiftDown() != true) && !ROLLOUT.isEditingSpinner()) {
                 typeUserCommand = (typeUserCommand + 1) % 2;
                 UI_commandBar.revise();
               }
