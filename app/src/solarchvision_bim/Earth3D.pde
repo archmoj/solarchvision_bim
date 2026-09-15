@@ -4,7 +4,6 @@ class solarchvision_Earth3D {
 
   private final static float LONGITUDE_SPAN = 360.0;
   private final static float LATITUDE_SPAN  = 180.0;
-  private final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
 
   float lat_step = 1; //0.1; //in degrees
   float lon_step  = 1; //0.1; //in degrees
@@ -14,42 +13,9 @@ class solarchvision_Earth3D {
   boolean displaySurface = true;
   boolean displayTexture = true;
 
-  PImage[] Map;
-  float[][] BoundariesX;
-  float[][] BoundariesY;
-
-  String Path = BaseFolder + "/input/images/earth";
-  String[] Filenames = sort(OPESYS.getFiles(this.Path));
-
   class FaceVertex {
     float x, y, z;
     float u, v;
-  }
-
-  void resize_images () {
-    int n = this.Filenames.length;
-    this.Map = new PImage [n];
-    this.BoundariesX = new float [n][2];
-    this.BoundariesY = new float [n][2];
-  }
-
-  void load_images () {
-    for (int i = 0; i < this.Filenames.length; i++) {
-      loadOneImage(i);
-    }
-  }
-
-  private void loadOneImage (int i) {
-    String MapFilename = this.Path + "/" + this.Filenames[i];
-    String[] Parts = split(this.Filenames[i], '_');
-
-    this.BoundariesX[i][0] = -float(Parts[1]) * BOUNDARY_SCALE;
-    this.BoundariesY[i][0] =  float(Parts[2]) * BOUNDARY_SCALE;
-    this.BoundariesX[i][1] = -float(Parts[3]) * BOUNDARY_SCALE;
-    this.BoundariesY[i][1] =  float(Parts[4]) * BOUNDARY_SCALE;
-
-    println("Loading:", MapFilename);
-    this.Map[i] = loadImage(MapFilename);
   }
 
   private boolean shouldDraw (int target_window) {
@@ -59,24 +25,19 @@ class solarchvision_Earth3D {
     return true;
   }
 
-  private int currentMapIndex () {
-    if (IMPACTS_displayDay < this.Map.length) return IMPACTS_displayDay;
-    return 0;
-  }
-
   private float clamp01 (float value) {
     if (value > 1) return 1;
     if (value < 0) return 0;
     return value;
   }
 
-  // Prefer high-resolution "E" tiles from WORLD's local tile system
-  // (input/images/worldmap) over the low-res whole-globe A/B images below,
-  // since draw() only renders a small patch of the globe around the
-  // station now (see the clip radius in draw()) - there's no need for
-  // whole-globe coverage, and the "E" tiles are much more detailed per
-  // degree. Falls back to A/B (see resize_images()/load_images() below)
-  // for locations no "E" tile covers.
+  // Earth3D depends only on WORLD's local "E" tile system
+  // (input/images/worldmap), never on any whole-globe image of its own -
+  // draw() only renders a small patch of the globe around the station (see
+  // clipRadiusDegrees below), so there's no need for whole-globe coverage,
+  // and the "E" tiles are far more detailed per degree. Locations no "E"
+  // tile covers simply aren't drawn (see draw()'s early return below)
+  // rather than falling back to a lower-resolution image.
   //
   // The clip window can straddle more than one "E" tile (the station can
   // sit near a tile edge), so this doesn't just look up a single tile: it
@@ -100,10 +61,9 @@ class solarchvision_Earth3D {
     float stationLon = STATION.getLongitude();
     float stationLat = STATION.getLatitude();
 
-    if ((this.cachedTextureImage != null) &&
-        (abs(stationLon - this.cachedStationLon) < 0.0001) &&
+    if ((abs(stationLon - this.cachedStationLon) < 0.0001) &&
         (abs(stationLat - this.cachedStationLat) < 0.0001)) {
-      return; // still valid - station hasn't moved
+      return; // still valid - station hasn't moved (whether or not a texture was found last time)
     }
 
     IntList overlapping = new IntList();
@@ -121,7 +81,7 @@ class solarchvision_Earth3D {
     }
 
     if (overlapping.size() == 0) {
-      useFallbackABTexture();
+      this.cachedTextureImage = null; // no local tile covers this location - nothing to draw
     } else if ((overlapping.size() == 1) && worldTileFullyCoversWindow(overlapping.get(0), stationLon, stationLat)) {
       useWorldTileDirectly(overlapping.get(0));
     } else {
@@ -148,18 +108,6 @@ class solarchvision_Earth3D {
     this.cachedTexturePath     = WORLD.ViewFolder + "/" + WORLD.VIEW_Filenames[tileIndex];
     this.cachedTextureFilename = WORLD.VIEW_Filenames[tileIndex];
     this.cachedTextureLabel    = "EarthSphereE" + nf(tileIndex, 0);
-  }
-
-  private void useFallbackABTexture () {
-    int n_Map = currentMapIndex();
-    this.cachedTextureImage    = this.Map[n_Map];
-    this.cachedTextureBx1      = this.BoundariesX[n_Map][0];
-    this.cachedTextureBx2      = this.BoundariesX[n_Map][1];
-    this.cachedTextureBy1      = this.BoundariesY[n_Map][0];
-    this.cachedTextureBy2      = this.BoundariesY[n_Map][1];
-    this.cachedTexturePath     = this.Path + "/" + this.Filenames[n_Map];
-    this.cachedTextureFilename = this.Filenames[n_Map];
-    this.cachedTextureLabel    = "EarthSphere" + nf(n_Map, 0);
   }
 
   // Composites every tile in `overlapping` into one square mosaic image
@@ -245,6 +193,8 @@ class solarchvision_Earth3D {
     if (!shouldDraw(target_window)) return;
 
     resolveTextureSource();
+
+    if (this.cachedTextureImage == null) return; // no local "E" tile covers this location
 
     PImage textureImage    = this.cachedTextureImage;
     float bx1              = this.cachedTextureBx1;
