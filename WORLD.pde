@@ -319,15 +319,28 @@ class solarchvision_WORLD {
 
       PImage tileImage = this.getTileImage(i);
 
-      float destX1 = this.projX(overlapLon1);
-      float destX2 = this.projX(overlapLon2);
-      float destY1 = this.projY(overlapLat2);
-      float destY2 = this.projY(overlapLat1);
-
       int u1 = int(tileImage.width * (overlapLon1 - tileLon1) / (tileLon2 - tileLon1));
-      int u2 = int(tileImage.width * (overlapLon2 - tileLon1) / (tileLon2 - tileLon1));
+      int u2 = min(tileImage.width, int(ceil(tileImage.width * (overlapLon2 - tileLon1) / (tileLon2 - tileLon1))));
       int v1 = int(tileImage.height * (tileLat2 - overlapLat2) / (tileLat2 - tileLat1));
-      int v2 = int(tileImage.height * (tileLat2 - overlapLat1) / (tileLat2 - tileLat1));
+      int v2 = min(tileImage.height, int(ceil(tileImage.height * (tileLat2 - overlapLat1) / (tileLat2 - tileLat1))));
+
+      // u1/u2/v1/v2 must be integers (a hard constraint of this image()
+      // overload). u1/v1 (the near/top-left edge) round down and u2/v2
+      // (the far/bottom-right edge) round up, so the corrected window
+      // below always covers *at least* the true visible area rather than
+      // falling slightly short of it - rounding both edges down would
+      // leave the corrected right/bottom edge short of the canvas,
+      // producing a visible gap there (worse at high zoom, where the
+      // window samples fewer source pixels to begin with).
+      float correctedOverlapLon1 = tileLon1 + (tileLon2 - tileLon1) * u1 / float(tileImage.width);
+      float correctedOverlapLon2 = tileLon1 + (tileLon2 - tileLon1) * u2 / float(tileImage.width);
+      float correctedOverlapLat2 = tileLat2 - (tileLat2 - tileLat1) * v1 / float(tileImage.height);
+      float correctedOverlapLat1 = tileLat2 - (tileLat2 - tileLat1) * v2 / float(tileImage.height);
+
+      float destX1 = this.projX(correctedOverlapLon1);
+      float destX2 = this.projX(correctedOverlapLon2);
+      float destY1 = this.projY(correctedOverlapLat2);
+      float destY2 = this.projY(correctedOverlapLat1);
 
       this.graphics.image(tileImage, destX1, destY1, destX2 - destX1, destY2 - destY1, u1, v1, u2, v2);
     }
@@ -403,13 +416,14 @@ class solarchvision_WORLD {
     if (drawingAll) {
       this.beginMarkerBatch(strokeW, r, g, b, a, filled);
     }
-    if (drawingLabels) {
-      this.graphics.strokeWeight(0);
-      this.graphics.stroke(0);
-      this.graphics.fill(0);
-      this.graphics.textAlign(RIGHT, CENTER);
-      this.graphics.textSize(allLabelSizeMult * MessageSize * this.ImageScale);
-    }
+
+    // Labels are collected here and drawn only after endMarkerBatch()
+    // below, instead of calling graphics.text() while the marker batch's
+    // beginShape(QUADS) is still open - interleaving other drawing calls
+    // inside an open shape isn't supported and was producing stale-looking
+    // label positions (the actual bug behind "labels still lag").
+    ArrayList<float[]> labelPositions = new ArrayList<float[]>();
+    ArrayList<String> labelTexts = new ArrayList<String>();
 
     for (int f = 0; f < coords.length; f++) {
 
@@ -429,7 +443,8 @@ class solarchvision_WORLD {
           this.addMarkerToBatch(x_point, y_point, diameter);
 
           if (drawingLabels) {
-            this.graphics.text(useCode ? coords[f].getCode() : coords[f].getCity(), x_point, y_point);
+            labelPositions.add(new float[]{ x_point, y_point });
+            labelTexts.add(useCode ? coords[f].getCode() : coords[f].getCity());
           }
         }
       }
@@ -449,6 +464,19 @@ class solarchvision_WORLD {
 
     if (drawingAll) {
       this.endMarkerBatch();
+    }
+
+    if (drawingLabels) {
+      this.graphics.strokeWeight(0);
+      this.graphics.stroke(0);
+      this.graphics.fill(0);
+      this.graphics.textAlign(RIGHT, CENTER);
+      this.graphics.textSize(allLabelSizeMult * MessageSize * this.ImageScale);
+
+      for (int i = 0; i < labelTexts.size(); i++) {
+        float[] p = labelPositions.get(i);
+        this.graphics.text(labelTexts.get(i), p[0], p[1]);
+      }
     }
 
     if (displayNear && (nearest != -1)) {
@@ -569,13 +597,13 @@ class solarchvision_WORLD {
         this.beginMarkerBatch(0, 191, 0, 0, 191, true);
 
         boolean drawingSwobLabels = this.displayAll_SWOB > 1;
-        if (drawingSwobLabels) {
-          this.graphics.strokeWeight(0);
-          this.graphics.stroke(0);
-          this.graphics.fill(0);
-          this.graphics.textAlign(RIGHT, CENTER);
-          this.graphics.textSize(1.0 * MessageSize * this.ImageScale);
-        }
+
+        // Collected here and drawn only after endMarkerBatch() below -
+        // see the matching note in drawStationDataset() for why calling
+        // graphics.text() while the marker batch's beginShape(QUADS) is
+        // still open isn't safe.
+        ArrayList<float[]> labelPositions = new ArrayList<float[]>();
+        ArrayList<String> labelTexts = new ArrayList<String>();
 
         for (int f = 0; f < SWOB_Coordinates.length; f++) {
 
@@ -593,13 +621,27 @@ class solarchvision_WORLD {
               this.addMarkerToBatch(x_point, y_point, R_station);
 
               if (drawingSwobLabels) {
-                this.graphics.text(SWOB_Coordinates[f].getCode(), x_point, y_point);
+                labelPositions.add(new float[]{ x_point, y_point });
+                labelTexts.add(SWOB_Coordinates[f].getCode());
               }
             }
           }
         }
 
         this.endMarkerBatch();
+
+        if (drawingSwobLabels) {
+          this.graphics.strokeWeight(0);
+          this.graphics.stroke(0);
+          this.graphics.fill(0);
+          this.graphics.textAlign(RIGHT, CENTER);
+          this.graphics.textSize(1.0 * MessageSize * this.ImageScale);
+
+          for (int i = 0; i < labelTexts.size(); i++) {
+            float[] p = labelPositions.get(i);
+            this.graphics.text(labelTexts.get(i), p[0], p[1]);
+          }
+        }
       }
 
       java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_id, -1);
