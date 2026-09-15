@@ -1002,6 +1002,16 @@ class solarchvision_ROLLOUT {
         this.spinnerEditCommit = true;
         break;
 
+      case ESC:
+        // Cancel editing: drop the typed text and leave the spinner's
+        // actual value untouched (it was never applied during editing).
+        this.spinnerEditActive = false;
+        this.spinnerEditCaption = "";
+        this.spinnerEditText = "";
+        this.spinnerEditCursor = 0;
+        this.spinnerEditCommit = false;
+        break;
+
       case BACKSPACE:
         if (this.spinnerEditCursor > 0) {
           this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor - 1) + this.spinnerEditText.substring(this.spinnerEditCursor);
