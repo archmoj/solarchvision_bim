@@ -316,13 +316,13 @@ class solarchvision_ROLLOUT {
         User3D.default_Weight = this.Spinner(X_control, Y_control, 0,0,0, "3D-create.Weight" , User3D.default_Weight, -20, 20, 1);
         User3D.default_Closed = this.Spinner(X_control, Y_control, 0,0,0, "3D-create.Closed" , User3D.default_Closed, 0, 1, 1);
 
-        User3D.create_Orientation = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Orientation", User3D.create_Orientation, 0, 360, 15);
+        User3D.create_Orientation = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Orientation", User3D.create_Orientation, 0, 360, 1, 0.001);
 
-        User3D.create_Length = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Length", User3D.create_Length, -50.0, 150.0, -2.0, 0.5);
-        User3D.create_Width = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Width", User3D.create_Width, -50.0, 150.0, -2.0, 0.5);
-        User3D.create_Height = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Height", User3D.create_Height, -50.0, 150.0, -2.0, 0.5);
+        User3D.create_Length = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Length (rand negative)", User3D.create_Length, -100.0, 1000.0, 1.0, 0.001);
+        User3D.create_Width = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Width (rand negative)", User3D.create_Width, -100.0, 1000.0, 1.0, 0.001);
+        User3D.create_Height = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Height (rand negative)", User3D.create_Height, -100.0, 1000.0, 1.0, 0.001);
 
-        User3D.create_Volume = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Volume", User3D.create_Volume, 0, 25000, 1000);
+        User3D.create_Volume = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Volume", User3D.create_Volume, 0, 1000000000, 1, 0.001);
 
         User3D.create_Snap = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.Snap", User3D.create_Snap, 0, 1, 1);
 
@@ -358,9 +358,9 @@ class solarchvision_ROLLOUT {
         Select3D.rotVector =  this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotVector", Select3D.rotVector, 0, 2, 1);
         Select3D.scaleVector =  this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleVector", Select3D.scaleVector, 0, 3, 1);
 
-        Select3D.posValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posValue", Select3D.posValue, -50.0, 50.0, 1.0);
-        Select3D.rotValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotValue", Select3D.rotValue, -180.0, 180.0, 5.0);
-        Select3D.scaleValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleValue", Select3D.scaleValue, -8.0, 8.0, 0.5);
+        Select3D.posValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posValue", Select3D.posValue, -50.0, 50.0, 1.0, 0.001);
+        Select3D.rotValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotValue", Select3D.rotValue, -180.0, 180.0, 1.0, 0.001);
+        Select3D.scaleValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleValue", Select3D.scaleValue, -8.0, 8.0, 1.0, 0.001);
 
         Select3D.alignX = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignX", Select3D.alignX, -1, 1, 1);
         Select3D.alignY = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignY", Select3D.alignY, -1, 1, 1);
