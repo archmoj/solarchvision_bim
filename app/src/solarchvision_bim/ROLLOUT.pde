@@ -363,8 +363,8 @@ class solarchvision_ROLLOUT {
 
         User3D.modify_WeldTreshold = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.WeldTreshold", User3D.modify_WeldTreshold, 0, 10, 0.001);
 
-        Select3D.softPower = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softPower", Select3D.softPower, 0.125, 8.0, -2);
-        Select3D.softRadius = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softRadius", Select3D.softRadius, 0.01, 100, -2);
+        Select3D.softPower = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softPower", Select3D.softPower, 0.125, 8.0, -2, 0.001);
+        Select3D.softRadius = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softRadius", Select3D.softRadius, 0.01, 100, -2, 0.001);
 
         Select3D.posVector = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posVector", Select3D.posVector, 0, 3, 1);
         Select3D.rotVector =  this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotVector", Select3D.rotVector, 0, 2, 1);
@@ -380,10 +380,10 @@ class solarchvision_ROLLOUT {
       }
 
       if (this.child == CHILD_GEOMETRY_SOLID) {
-        User3D.create_powAll = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powAll", User3D.create_powAll, 0.5, CubePower, -2);
-        User3D.create_powX = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powX", User3D.create_powX, 0.5, CubePower, -2);
-        User3D.create_powY = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powY", User3D.create_powY, 0.5, CubePower, -2);
-        User3D.create_powZ = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powZ", User3D.create_powZ, 0.5, CubePower, -2);
+        User3D.create_powAll = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powAll", User3D.create_powAll, 0.5, CubePower, -2, 0.001);
+        User3D.create_powX = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powX", User3D.create_powX, 0.5, CubePower, -2, 0.001);
+        User3D.create_powY = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powY", User3D.create_powY, 0.5, CubePower, -2, 0.001);
+        User3D.create_powZ = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powZ", User3D.create_powZ, 0.5, CubePower, -2, 0.001);
       }
 
 
@@ -427,7 +427,7 @@ class solarchvision_ROLLOUT {
 
         allWindRoses.displayImage = this.Spinner(X_control, Y_control, 0, 1, 0, "windRoses.displayImage", allWindRoses.displayImage);
 
-        allWindRoses.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "windRoses.scale", allWindRoses.scale, 50, 3200, -2);
+        allWindRoses.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "windRoses.scale", allWindRoses.scale, 50, 3200, -2, 0.001);
         allWindRoses.RES = int(this.Spinner(X_control, Y_control, 0, 1, 0, "windRoses.resolution", allWindRoses.RES, 200, 600, 100));
 
 
@@ -443,8 +443,8 @@ class solarchvision_ROLLOUT {
 
         WIN3D.currentCamera = this.Spinner(X_control, Y_control, 0, 1, 0, "currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1);
 
-        WIN3D.CAM_clipNear = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2);
-        WIN3D.CAM_clipFar = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2);
+        WIN3D.CAM_clipNear = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2, 0.001);
+        WIN3D.CAM_clipFar = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2, 0.001);
 
 
         allPoints.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayVertices", allPoints.displayAll);
@@ -466,19 +466,19 @@ class solarchvision_ROLLOUT {
         allSolidImpacts.sectionType = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1);
 
 
-        allSolidImpacts.Grade = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2);
-        allSolidImpacts.Power = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Power", allSolidImpacts.Power, 0.0001, 64.0, -2);
-        allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.R[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], -360, 360, -2);
-        allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], -1000, 1000, -2);
-        allSolidImpacts.positionStep = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.positionStep", allSolidImpacts.positionStep, 5, 80, -2);
+        allSolidImpacts.Grade = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2, 0.001);
+        allSolidImpacts.Power = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Power", allSolidImpacts.Power, 0.0001, 64.0, -2, 0.001);
+        allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.R[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], -360, 360, -2, 0.001);
+        allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], -1000, 1000, -2, 0.001);
+        allSolidImpacts.positionStep = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.positionStep", allSolidImpacts.positionStep, 5, 80, -2, 0.001);
 
-        allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.U[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], 0.125, 3200, -2);
-        allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.V[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], 0.125, 3200, -2);
-        allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.X[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], -10000, 10000, -2);
-        allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], -10000, 10000, -2);
+        allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.U[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], 0.125, 3200, -2, 0.001);
+        allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.V[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], 0.125, 3200, -2, 0.001);
+        allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.X[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], -10000, 10000, -2, 0.001);
+        allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], -10000, 10000, -2, 0.001);
 
 
-        allSolidImpacts.WindSpeed = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindSpeed (m/s)", allSolidImpacts.WindSpeed, 1, 16, -2);
+        allSolidImpacts.WindSpeed = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindSpeed (m/s)", allSolidImpacts.WindSpeed, 1, 16, -2, 0.001);
         allSolidImpacts.WindDirection = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15);
 
 
@@ -497,7 +497,7 @@ class solarchvision_ROLLOUT {
         Land3D.displayTessellation = this.Spinner(X_control, Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1);
 
         Sky3D.displayTessellation = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.displayTessellation", Sky3D.displayTessellation, 0, 4, 1);
-        Sky3D.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 1, 4000000, -2);
+        Sky3D.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 1, 4000000, -2, 0.001);
 
         Tropo3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface);
         Tropo3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture);
@@ -537,19 +537,19 @@ class solarchvision_ROLLOUT {
 
         STUDY.ACTIVE_palette_CLR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_CLR", STUDY.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         STUDY.ACTIVE_palette_DIR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_DIR", STUDY.ACTIVE_palette_DIR, -2, 2, 1);
-        STUDY.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_MLT", STUDY.ACTIVE_palette_MLT, 0.125, 8, -2);
+        STUDY.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.ACTIVE_palette_MLT", STUDY.ACTIVE_palette_MLT, 0.125, 8, -2, 0.001);
 
         STUDY.PASSIVE_palette_CLR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_CLR", STUDY.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         STUDY.PASSIVE_palette_DIR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_DIR", STUDY.PASSIVE_palette_DIR, -2, 2, 2, 1);
-        STUDY.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_MLT", STUDY.PASSIVE_palette_MLT, 0.125, 8, -2);
+        STUDY.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PASSIVE_palette_MLT", STUDY.PASSIVE_palette_MLT, 0.125, 8, -2, 0.001);
 
         STUDY.SORT_palette_CLR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_CLR", STUDY.SORT_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         STUDY.SORT_palette_DIR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_DIR", STUDY.SORT_palette_DIR, -2, 2, 2, 1);
-        STUDY.SORT_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_MLT", STUDY.SORT_palette_MLT, 0.125, 8, -2);
+        STUDY.SORT_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.SORT_palette_MLT", STUDY.SORT_palette_MLT, 0.125, 8, -2, 0.001);
 
         STUDY.PROB_palette_CLR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_CLR", STUDY.PROB_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         STUDY.PROB_palette_DIR = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_DIR", STUDY.PROB_palette_DIR, -2, 2, 2, 1);
-        STUDY.PROB_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_MLT", STUDY.PROB_palette_MLT, 0.125, 8, -2);
+        STUDY.PROB_palette_MLT = this.Spinner(X_control, Y_control, 1, 0, 0, "STUDY.PROB_palette_MLT", STUDY.PROB_palette_MLT, 0.125, 8, -2, 0.001);
 
         STUDY.O_scale = this.Spinner(X_control, Y_control, 1, 0, 0, "Windose opacity scale", STUDY.O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
       }
@@ -558,27 +558,27 @@ class solarchvision_ROLLOUT {
 
         allFaces.ACTIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.ACTIVE_palette_CLR", allFaces.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         allFaces.ACTIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.ACTIVE_palette_DIR", allFaces.ACTIVE_palette_DIR, -2, 2, 1);
-        allFaces.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.ACTIVE_palette_MLT", allFaces.ACTIVE_palette_MLT, 0.125, 8, -2);
+        allFaces.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.ACTIVE_palette_MLT", allFaces.ACTIVE_palette_MLT, 0.125, 8, -2, 0.001);
 
         allFaces.PASSIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.PASSIVE_palette_CLR", allFaces.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         allFaces.PASSIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.PASSIVE_palette_DIR", allFaces.PASSIVE_palette_DIR, -2, 2, 2, 1);
-        allFaces.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.PASSIVE_palette_MLT", allFaces.PASSIVE_palette_MLT, 0.125, 8, -2);
+        allFaces.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "faces.PASSIVE_palette_MLT", allFaces.PASSIVE_palette_MLT, 0.125, 8, -2, 0.001);
 
         Sky3D.ACTIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_CLR", Sky3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         Sky3D.ACTIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_DIR", Sky3D.ACTIVE_palette_DIR, -2, 2, 1);
-        Sky3D.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_MLT", Sky3D.ACTIVE_palette_MLT, 0.125, 8, -2);
+        Sky3D.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.ACTIVE_palette_MLT", Sky3D.ACTIVE_palette_MLT, 0.125, 8, -2, 0.001);
 
         Sky3D.PASSIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_CLR", Sky3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         Sky3D.PASSIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_DIR", Sky3D.PASSIVE_palette_DIR, -2, 2, 2, 1);
-        Sky3D.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_MLT", Sky3D.PASSIVE_palette_MLT, 0.125, 8, -2);
+        Sky3D.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky3D.PASSIVE_palette_MLT", Sky3D.PASSIVE_palette_MLT, 0.125, 8, -2, 0.001);
 
         Sun3D.ACTIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_CLR", Sun3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         Sun3D.ACTIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_DIR", Sun3D.ACTIVE_palette_DIR, -2, 2, 1);
-        Sun3D.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_MLT", Sun3D.ACTIVE_palette_MLT, 0.125, 8, -2);
+        Sun3D.ACTIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.ACTIVE_palette_MLT", Sun3D.ACTIVE_palette_MLT, 0.125, 8, -2, 0.001);
 
         Sun3D.PASSIVE_palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_CLR", Sun3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         Sun3D.PASSIVE_palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_DIR", Sun3D.PASSIVE_palette_DIR, -2, 2, 2, 1);
-        Sun3D.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_MLT", Sun3D.PASSIVE_palette_MLT, 0.125, 8, -2);
+        Sun3D.PASSIVE_palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.PASSIVE_palette_MLT", Sun3D.PASSIVE_palette_MLT, 0.125, 8, -2, 0.001);
       }
 
 
@@ -588,15 +588,15 @@ class solarchvision_ROLLOUT {
 
         allSolids.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         allSolids.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_DIR", allSolids.palette_DIR, -2, 2, 2, 1);
-        allSolids.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_MLT", allSolids.palette_MLT, 0.0001, 64, -2);
+        allSolids.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_MLT", allSolids.palette_MLT, 0.0001, 64, -2, 0.001);
 
         Land3D.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_CLR", Land3D.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         Land3D.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_DIR", Land3D.palette_DIR, -2, 2, 2, 1);
-        Land3D.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_MLT", Land3D.palette_MLT, 0.001, 0.5, -2);
+        Land3D.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_MLT", Land3D.palette_MLT, 0.001, 0.5, -2, 0.001);
 
         allWindFlows.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "windFlows.palette_CLR", allWindFlows.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         allWindFlows.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "windFlows.palette_DIR", allWindFlows.palette_DIR, -2, 2, 2, 1);
-        allWindFlows.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "windFlows.palette_MLT", allWindFlows.palette_MLT, 0.01, 1.0, -2);
+        allWindFlows.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "windFlows.palette_MLT", allWindFlows.palette_MLT, 0.01, 1.0, -2, 0.001);
       }
 
 
