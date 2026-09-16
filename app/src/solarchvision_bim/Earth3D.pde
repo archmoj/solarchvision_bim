@@ -267,7 +267,8 @@ class solarchvision_Earth3D {
 
     if (isWin3D) beginWIN3DSphere(textureImage);
 
-    ArrayList<float[][]> gridEdgeBatch = isWin3D ? new ArrayList<float[][]>() : null;
+    ArrayList<float[][]> majorGridEdgeBatch = isWin3D ? new ArrayList<float[][]>() : null;
+    ArrayList<float[][]> minorGridEdgeBatch = isWin3D ? new ArrayList<float[][]>() : null;
 
     float stationLon = STATION.getLongitude();
     float stationLat = STATION.getLatitude();
@@ -288,7 +289,7 @@ class solarchvision_Earth3D {
 
           if (isWin3D) {
             addFaceWIN3D(subFace, textureImage);
-            collectGridEdges(subFace, Alpha, unwrappedBeta, gridEdgeBatch);
+            collectGridEdges(subFace, Alpha, unwrappedBeta, majorGridEdgeBatch, minorGridEdgeBatch);
           } else {
             drawFace(target_window, subFace, textureLabel, f, _turn);
           }
@@ -298,7 +299,8 @@ class solarchvision_Earth3D {
 
     if (isWin3D) {
       endWIN3DSphere();
-      flushGridEdgeBatch(gridEdgeBatch);
+      flushEdgeBatch(majorGridEdgeBatch, color(0), 2);      // round-degree grid, black
+      flushEdgeBatch(minorGridEdgeBatch, color(255), 1);    // finer mesh tessellation, white
     }
   }
 
@@ -340,40 +342,41 @@ class solarchvision_Earth3D {
   // subFace's 4 corners are, in order: (Alpha, Beta), (Alpha, Beta -
   // lon_step), (Alpha - lat_step, Beta - lon_step), (Alpha - lat_step,
   // Beta) - see buildSubFace(). So its 4 edges each run along a constant
-  // latitude or longitude; only record the ones that land on a round grid
-  // line (see isRoundGridLine()) rather than every mesh edge, so a finer
-  // lat_step/lon_step doesn't crowd the displayed grid with extra lines.
-  private void collectGridEdges (FaceVertex[] subFace, float Alpha, float Beta, ArrayList<float[][]> batch) {
+  // latitude or longitude. Edges landing on a round grid line (see
+  // isRoundGridLine()) go into the major (black) batch; every other edge -
+  // i.e. the mesh's own finer tessellation lines - goes into the minor
+  // (white) batch instead, so a finer lat_step/lon_step is still visible
+  // as the actual model tessellation without crowding the round-degree
+  // grid itself with extra lines.
+  private void collectGridEdges (FaceVertex[] subFace, float Alpha, float Beta, ArrayList<float[][]> majorBatch, ArrayList<float[][]> minorBatch) {
     float latTop    = Alpha;
     float latBottom = Alpha - this.lat_step;
     float lonLeft   = Beta - this.lon_step;
     float lonRight  = Beta;
 
-    if (isRoundGridLine(latTop, this.gridStepDegrees)) {
-      batch.add(new float[][] { projectEarthVertexForWIN3D(subFace[0]), projectEarthVertexForWIN3D(subFace[1]) });
-    }
-    if (isRoundGridLine(latBottom, this.gridStepDegrees)) {
-      batch.add(new float[][] { projectEarthVertexForWIN3D(subFace[2]), projectEarthVertexForWIN3D(subFace[3]) });
-    }
-    if (isRoundGridLine(lonLeft, this.gridStepDegrees)) {
-      batch.add(new float[][] { projectEarthVertexForWIN3D(subFace[1]), projectEarthVertexForWIN3D(subFace[2]) });
-    }
-    if (isRoundGridLine(lonRight, this.gridStepDegrees)) {
-      batch.add(new float[][] { projectEarthVertexForWIN3D(subFace[3]), projectEarthVertexForWIN3D(subFace[0]) });
-    }
+    addGridEdge(latTop,    majorBatch, minorBatch, subFace[0], subFace[1]);
+    addGridEdge(latBottom, majorBatch, minorBatch, subFace[2], subFace[3]);
+    addGridEdge(lonLeft,   majorBatch, minorBatch, subFace[1], subFace[2]);
+    addGridEdge(lonRight,  majorBatch, minorBatch, subFace[3], subFace[0]);
   }
 
-  // Strokes every recorded grid-line segment in one beginShape(LINES) pass,
-  // kept entirely separate from the textured fill pass above - they all
-  // share the same fixed black, weight-1 stroke, so there's nothing
-  // per-segment lost by batching them, and this way the grid can be
-  // toggled/styled independently of the fill without touching that pass.
-  private void flushGridEdgeBatch (ArrayList<float[][]> batch) {
+  private void addGridEdge (float value, ArrayList<float[][]> majorBatch, ArrayList<float[][]> minorBatch, FaceVertex a, FaceVertex b) {
+    ArrayList<float[][]> batch = isRoundGridLine(value, this.gridStepDegrees) ? majorBatch : minorBatch;
+    batch.add(new float[][] { projectEarthVertexForWIN3D(a), projectEarthVertexForWIN3D(b) });
+  }
+
+  // Strokes every recorded segment in one beginShape(LINES) pass, kept
+  // entirely separate from the textured fill pass above and from the
+  // other edge batch - they all share the same stroke color/weight within
+  // one batch, so there's nothing per-segment lost by batching them, and
+  // this way each grid can be toggled/styled independently of the fill and
+  // of each other without touching those passes.
+  private void flushEdgeBatch (ArrayList<float[][]> batch, int strokeColor, float weight) {
     if ((batch == null) || (batch.size() == 0)) return;
 
     WIN3D.graphics.noFill();
-    WIN3D.graphics.strokeWeight(2);
-    WIN3D.graphics.stroke(0);
+    WIN3D.graphics.strokeWeight(weight);
+    WIN3D.graphics.stroke(strokeColor);
     WIN3D.graphics.beginShape(LINES);
 
     for (int p = 0; p < batch.size(); p++) {
