@@ -693,7 +693,7 @@ class solarchvision_ROLLOUT {
     int min_v = 0;
     int max_v = 1;
     int stp_v = 1;
-    int roundStep = stp_v;
+    int roundStep = Math.abs(stp_v);
     return (
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, v ? 1.0 : 0.0, (float) min_v, (float) max_v, (float) stp_v),
@@ -706,7 +706,7 @@ class solarchvision_ROLLOUT {
     int min_v = 0;
     int max_v = 1;
     int stp_v = 1;
-    int roundStep = stp_v;
+    int roundStep = Math.abs(stp_v);
     return int(
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v),
@@ -716,7 +716,7 @@ class solarchvision_ROLLOUT {
   }
 
   int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v) {
-    int roundStep = stp_v;
+    int roundStep = Math.abs(stp_v);
     return int(
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v),
@@ -753,7 +753,7 @@ class solarchvision_ROLLOUT {
   }
 
   float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
-    float roundStep = stp_v;
+    float roundStep = Math.abs(stp_v);
     return (
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v),
