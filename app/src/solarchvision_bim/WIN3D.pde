@@ -525,11 +525,11 @@ class solarchvision_WIN3D {
   private void handleCtrlCommandKey (char cmdKey) {
     switch (cmdKey) {
       case ',':
-        moveWin3DTowardsSelection(-0.26);
+        moveWin3DTowardsSelection(-0.5);
         break;
 
       case '.':
-        moveWin3DTowardsSelection(0.25);
+        moveWin3DTowardsSelection(0.5);
         break;
     }
   }
