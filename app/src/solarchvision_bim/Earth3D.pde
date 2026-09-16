@@ -16,7 +16,20 @@ class solarchvision_Earth3D {
   // multiple of gridStepDegrees are drawn (see isRoundGridLine() below).
   float gridStepDegrees = 1;
 
-  float clipRadiusDegrees = 5;
+  float clipRadiusDegrees_Lat = 5;
+
+  // Longitude degrees cover progressively less ground distance at higher
+  // latitudes as meridians converge (ground distance per degree of
+  // longitude scales with cos(latitude)). Dividing by that same factor
+  // keeps the covered ground width roughly constant regardless of
+  // latitude: equal to clipRadiusDegrees_Lat at the equator, growing
+  // toward the poles (where a much wider longitude span covers the same
+  // shrinking ground distance). Recomputed in resolveTextureSource()
+  // (rounded to a whole degree, floored at 1) whenever the station moves -
+  // read directly everywhere else that needs it
+  // (worldTileFullyCoversWindow(), compositeWorldTiles(), draw()'s render
+  // loop), the same way clipRadiusDegrees_Lat is.
+  float clipRadiusDegrees_Lon = 5;
 
   boolean displaySurface = true;
   boolean displayTexture = true;
@@ -52,7 +65,7 @@ class solarchvision_Earth3D {
   // Shifts lon by a multiple of 360 so it falls within 180 degrees of
   // referenceLon. Tile boundaries and the render loop's own Beta both
   // range over a fixed (-180, 180] domain, so without this, a station
-  // within clipRadiusDegrees of the antimeridian would silently miss every
+  // within clipRadiusDegrees_Lon of the antimeridian would silently miss every
   // tile (and every drawn cell) on the far side of the seam - not a "no
   // tile" case (so the null-texture fallback wouldn't even catch it), but
   // a wrong/incomplete result. Longitude is periodic, so shifting values
@@ -65,10 +78,15 @@ class solarchvision_Earth3D {
     return unwrapped;
   }
 
+  private float computeClipRadiusDegreesLon (float stationLat) {
+    float lon = round(this.clipRadiusDegrees_Lat / funcs.cos_ang(stationLat));
+    return max(lon, 1);
+  }
+
   // Earth3D depends only on WORLD's local "E" tile system
   // (input/images/worldmap), never on any whole-globe image of its own -
   // draw() only renders a small patch of the globe around the station (see
-  // clipRadiusDegrees below), so there's no need for whole-globe coverage,
+  // clipRadiusDegrees_Lat/clipRadiusDegrees_Lon below), so there's no need for whole-globe coverage,
   // and the "E" tiles are far more detailed per degree. Locations no "E"
   // tile covers simply aren't drawn (see draw()'s early return below)
   // rather than falling back to a lower-resolution image.
@@ -100,6 +118,8 @@ class solarchvision_Earth3D {
       return; // still valid - station hasn't moved (whether or not a texture was found last time)
     }
 
+    this.clipRadiusDegrees_Lon = computeClipRadiusDegreesLon(stationLat);
+
     IntList overlapping = new IntList();
     for (int i = 0; i < WORLD.numMaps; i++) {
       if (!WORLD.VIEW_Filenames[i].substring(0, 1).equals("E")) continue;
@@ -109,8 +129,8 @@ class solarchvision_Earth3D {
       float tLat1 = WORLD.VIEW_BoundariesY[i][0];
       float tLat2 = WORLD.VIEW_BoundariesY[i][1];
 
-      boolean overlaps = (tLon2 > stationLon - this.clipRadiusDegrees) && (tLon1 < stationLon + this.clipRadiusDegrees) &&
-                          (tLat2 > stationLat - this.clipRadiusDegrees) && (tLat1 < stationLat + this.clipRadiusDegrees);
+      boolean overlaps = (tLon2 > stationLon - this.clipRadiusDegrees_Lon) && (tLon1 < stationLon + this.clipRadiusDegrees_Lon) &&
+                          (tLat2 > stationLat - this.clipRadiusDegrees_Lat) && (tLat1 < stationLat + this.clipRadiusDegrees_Lat);
       if (overlaps) overlapping.append(i);
     }
 
@@ -130,10 +150,10 @@ class solarchvision_Earth3D {
     float tLon1 = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][0], stationLon);
     float tLon2 = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][1], stationLon);
 
-    return (tLon1 <= stationLon - this.clipRadiusDegrees) &&
-           (tLon2 >= stationLon + this.clipRadiusDegrees) &&
-           (WORLD.VIEW_BoundariesY[tileIndex][0] <= stationLat - this.clipRadiusDegrees) &&
-           (WORLD.VIEW_BoundariesY[tileIndex][1] >= stationLat + this.clipRadiusDegrees);
+    return (tLon1 <= stationLon - this.clipRadiusDegrees_Lon) &&
+           (tLon2 >= stationLon + this.clipRadiusDegrees_Lon) &&
+           (WORLD.VIEW_BoundariesY[tileIndex][0] <= stationLat - this.clipRadiusDegrees_Lat) &&
+           (WORLD.VIEW_BoundariesY[tileIndex][1] >= stationLat + this.clipRadiusDegrees_Lat);
   }
 
   private void useWorldTileDirectly (int tileIndex, float stationLon) {
@@ -156,10 +176,10 @@ class solarchvision_Earth3D {
   // a hard-edged gap.
   private void compositeWorldTiles (IntList overlapping, float stationLon, float stationLat) {
 
-    float winLon1 = stationLon - this.clipRadiusDegrees;
-    float winLon2 = stationLon + this.clipRadiusDegrees;
-    float winLat1 = stationLat - this.clipRadiusDegrees;
-    float winLat2 = stationLat + this.clipRadiusDegrees;
+    float winLon1 = stationLon - this.clipRadiusDegrees_Lon;
+    float winLon2 = stationLon + this.clipRadiusDegrees_Lon;
+    float winLat1 = stationLat - this.clipRadiusDegrees_Lat;
+    float winLat2 = stationLat + this.clipRadiusDegrees_Lat;
 
     float combinedLon1 = FLOAT_undefined;
     float combinedLon2 = -FLOAT_undefined;
@@ -276,13 +296,13 @@ class solarchvision_Earth3D {
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
       for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
-        if(Alpha > stationLat + this.clipRadiusDegrees) continue;
-        if(Alpha < stationLat - this.clipRadiusDegrees) continue;
+        if(Alpha > stationLat + this.clipRadiusDegrees_Lat) continue;
+        if(Alpha < stationLat - this.clipRadiusDegrees_Lat) continue;
 
         for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
           float unwrappedBeta = unwrapLon(Beta, stationLon);
-          if (unwrappedBeta > stationLon + this.clipRadiusDegrees) continue;
-          if (unwrappedBeta < stationLon - this.clipRadiusDegrees) continue;
+          if (unwrappedBeta > stationLon + this.clipRadiusDegrees_Lon) continue;
+          if (unwrappedBeta < stationLon - this.clipRadiusDegrees_Lon) continue;
 
           f += 1;
           FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
