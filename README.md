@@ -7,6 +7,7 @@ developed by [Mojtaba Samimi
 # Table of contents
 
 -   [Copyright and license](#copyright-and-license)
+-   [Recent changes](#recent-changes)
 -   [Installation](#installation)
     -   [Clone using SSH](#clone-using-ssh)
     -   [Clone using HTTPS](#clone-using-https)
@@ -54,6 +55,39 @@ developed by [Mojtaba Samimi
 
 The code and documentation are released under the [GPL
 v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
+
+# Recent changes
+
+A high-level summary of what's changed:
+
+-   **Earth model overhaul** — The 3D Earth globe now composites
+    high-resolution local world-map tiles for its surface texture, rendering
+    only the area around the project's location for performance, with a
+    lat/lon grid overlay and elevation-based terrain relief
+-   **World and location views** — The world map view gained panning,
+    additional zoom levels, and image caching for smoother transitions; the
+    station and EPW file pickers were improved with multi-file support,
+    scrollbars, cancel support, and clearer titles; several weather data
+    sources (EPW/TMY, NAEFS and SWOB) received download upgrades.
+-   **Rendering and shadows** — Added shadow casting for trees, render
+    preview support, and various shading-quality and viewport-shading
+    improvements.
+-   **Editable spinners** — Numeric spinner controls throughout the UI can
+    now be edited directly by clicking and typing, with familiar text-entry
+    controls (cursor movement, selection-free editing, Escape to cancel),
+    in addition to the existing drag/click adjustment.
+-   **Selection overlays** — A dedicated overlay system now draws
+    selection highlights (bounding boxes, edges, pivots) separately from
+    the model geometry, with camera clipping and styling fixes.
+-   **Performance improvements** — Wide-ranging optimizations across
+    geometry and intersection algorithms, array/memory handling, shading
+    calculations, and the rendering and selection pipelines.
+-   **Cross-platform reliability** — Replaced a shell/7z dependency with a
+    pure-Java decompression path for better cross-platform support;
+    weather-data API keys are now read from a `.env` file.
+-   **Project structure and internal cleanup** — Source files were
+    reorganized under `app/src/solarchvision_bim`, alongside broad internal
+    refactoring for maintainability.
 
 # Installation
 
