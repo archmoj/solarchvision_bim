@@ -80,6 +80,7 @@ class solarchvision_Earth3D {
 
   private float computeClipRadiusDegreesLon (float stationLat) {
     float lon = round(this.clipRadiusDegrees_Lat / funcs.cos_ang(stationLat));
+    lon = min(lon, 180); // beyond 180 the window already covers every longitude - and cos_ang(90) = 0 would otherwise blow this up as stationLat approaches a pole
     return max(lon, 1);
   }
 
