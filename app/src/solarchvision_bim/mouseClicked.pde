@@ -843,6 +843,13 @@ void mouseClicked () {
               WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
             }
 
+            if (mouseButton == LEFT) {
+              WORLD.Zoom = max(WORLD.Zoom, 5); // zoom in to confirm exactly where the click landed
+            }
+            // Right click keeps the current zoom level instead, for
+            // comparing several rough locations across a wider area
+            // without the view snapping in on every click.
+
             // Each picker's handleMapClick() finds nearby candidates of its
             // own dataset around (mouse_lon, mouse_lat); if there's more
             // than one AND that dataset is the active CurrentDataSource, it

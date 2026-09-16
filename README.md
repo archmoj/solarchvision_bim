@@ -321,9 +321,18 @@ Additional features include:
 
 Clicking inside the world viewport assigns the nearest station of the
 *currently active* dataset (`TMYEPW`, `CWEEDS`, `CLMREC`, `NAEFS`, or
-`SWOB`) to the project. If one or more stations of that dataset fall
+`SWOB`) to the project.
+
+Left-clicking also zooms the world viewport in to the most detailed
+level, to confirm exactly where the click landed. Right-click picks a
+station the same way but keeps the current zoom level, which is handy
+for comparing several rough locations across a wider area without the
+view zooming in on every click.
+
+If one or more stations of that dataset fall
 within its own search radius of the click, a scrollable picker list
 appears instead of guessing automatically:
+
 
 | Dataset  | Search radius |
 |----------|----------------|
