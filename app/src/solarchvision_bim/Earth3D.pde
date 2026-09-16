@@ -6,8 +6,16 @@ class solarchvision_Earth3D {
   private final static float LATITUDE_SPAN  = 180.0;
   private final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
 
-  // maintains balance between mesh resolution and mesh size to maintain performance
-  float BALANCE = 1.0; // 0.25, 0.5, 1, 2, 4,
+  // Trades off area shown vs. mesh detail per area, at roughly constant
+  // total mesh complexity: scales the clip radius (how much of the globe
+  // is rendered around the station) and lat_step/lon_step (the mesh's own
+  // tessellation resolution) together, since clipRadiusDegrees_X /
+  // lat_step (or lon_step) - i.e. vertex count - stays fixed either way.
+  // Exposed as a spinner (see ROLLOUT.pde); whenever it changes,
+  // recomputeLevelOfDetailDependents() must be called to keep
+  // clipRadiusDegrees_Lat/Lon and lat_step/lon_step in sync, since those
+  // are plain stored fields, not computed on the fly.
+  float levelOfDetail = 1.0; // 0.25, 0.5, 1, 2, 4,
 
   // Spacing (in degrees) of the displayed lat/lon grid lines - independent
   // of lat_step/lon_step, which are the mesh's own tessellation
@@ -17,7 +25,7 @@ class solarchvision_Earth3D {
   // multiple of gridStepDegrees are drawn (see isRoundGridLine() below).
   float gridStepDegrees = 1;
 
-  float clipRadiusDegrees_Lat = 2.0 / BALANCE;
+  float clipRadiusDegrees_Lat = 2.0 / levelOfDetail;
 
   // Longitude degrees cover progressively less ground distance at higher
   // latitudes as meridians converge (ground distance per degree of
@@ -30,10 +38,21 @@ class solarchvision_Earth3D {
   // read directly everywhere else that needs it
   // (worldTileFullyCoversWindow(), compositeWorldTiles(), draw()'s render
   // loop), the same way clipRadiusDegrees_Lat is.
-  float clipRadiusDegrees_Lon = 2.0 / BALANCE;;
+  float clipRadiusDegrees_Lon = 2.0 / levelOfDetail;
 
   float lat_step = clipRadiusDegrees_Lat / 32.0; //in degrees
   float lon_step  = clipRadiusDegrees_Lon / 32.0; //in degrees
+
+  // Recomputes everything levelOfDetail drives. Call this after changing
+  // levelOfDetail at runtime (e.g. from the exposed spinner) - the fields
+  // above are plain stored values, not recomputed automatically.
+  void recomputeLevelOfDetailDependents () {
+    this.clipRadiusDegrees_Lat = 2.0 / this.levelOfDetail;
+    this.clipRadiusDegrees_Lon = 2.0 / this.levelOfDetail;
+    this.lat_step = this.clipRadiusDegrees_Lat / 32.0;
+    this.lon_step = this.clipRadiusDegrees_Lon / 32.0;
+  }
+
 
   boolean displaySurface = true;
   boolean displayTexture = true;
@@ -815,6 +834,7 @@ class solarchvision_Earth3D {
     XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setBoolean(parent, "displayTexture", this.displayTexture);
+    XML_setFloat(parent, "levelOfDetail", this.levelOfDetail);
   }
 
   public void from_XML (XML xml) {
@@ -822,5 +842,7 @@ class solarchvision_Earth3D {
     XML parent = xml.getChild(this.CLASS_STAMP);
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTexture = XML_getBoolean(parent, "displayTexture");
+    this.levelOfDetail = XML_getFloat(parent, "levelOfDetail");
+    this.recomputeLevelOfDetailDependents();
   }
 }

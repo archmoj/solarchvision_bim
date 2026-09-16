@@ -504,6 +504,8 @@ class solarchvision_ROLLOUT {
 
         Earth3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface);
         Earth3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture);
+        Earth3D.levelOfDetail = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.levelOfDetail", Earth3D.levelOfDetail, 1.0 / 32.0, 32.0, -2, 0.000001);
+        Earth3D.recomputeLevelOfDetailDependents();
 
         Moon3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface);
         Moon3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture);
@@ -513,7 +515,7 @@ class solarchvision_ROLLOUT {
 
         Planetary_Magnification = this.Spinner(X_control, Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
 
-        OBJECTS_scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2);
+        OBJECTS_scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2, 0.000001);
       }
 
     } else if (this.parent == PARENT_ILLUSTRATION) {
