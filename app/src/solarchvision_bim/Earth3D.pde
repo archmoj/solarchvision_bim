@@ -50,6 +50,7 @@ class solarchvision_Earth3D {
   class FaceVertex {
     float x, y, z;
     float u, v;
+    float elevationBump; // the raw bump from computeElevationBump(), isolated from z's curvature term - see buildSubFace() and addFaceWIN3D()'s Vertex_Elevation handling
   }
 
   void resize_images () {
@@ -79,7 +80,7 @@ class solarchvision_Earth3D {
   }
 
   private boolean shouldDraw (int target_window) {
-    if (!this.displaySurface || !this.displayTexture) return false;
+    if (!this.displaySurface) return false;
     if (target_window == TypeWindow.STUDY) return false;
     if (target_window == TypeWindow.WORLD) return false;
     return true;
@@ -349,23 +350,41 @@ class solarchvision_Earth3D {
 
     resolveTextureSource();
 
-    if (this.cachedTextureImage == null) return; // no local "E" tile covers this location
+    // Shaded WIN3D rendering (displayTexture false) doesn't need a
+    // worldmap texture tile at all - it colors vertices from the
+    // elevation image (this.Map[0], loaded separately, global coverage)
+    // and the vertex's own position, not from cachedTextureImage. Only
+    // bail out here when a texture is actually required: textured WIN3D
+    // rendering, or HTML/OBJ export (which doesn't support shaded
+    // rendering in this implementation).
+    boolean needsTexture = this.displayTexture || (target_window != TypeWindow.WIN3D);
+    if (needsTexture && (this.cachedTextureImage == null)) return; // no local "E" tile covers this location
 
     PImage textureImage    = this.cachedTextureImage;
-    float bx1              = this.cachedTextureBx1;
-    float bx2              = this.cachedTextureBx2;
-    float by1              = this.cachedTextureBy1;
-    float by2              = this.cachedTextureBy2;
-    String texturePath     = this.cachedTexturePath;
-    String textureFilename = this.cachedTextureFilename;
-    String textureLabel    = this.cachedTextureLabel;
+    float bx1              = 0;
+    float bx2              = 0;
+    float by1              = 0;
+    float by2              = 0;
+    String texturePath     = "";
+    String textureFilename = "";
+    String textureLabel    = "";
+
+    if (this.cachedTextureImage != null) {
+      bx1              = this.cachedTextureBx1;
+      bx2              = this.cachedTextureBx2;
+      by1              = this.cachedTextureBy1;
+      by2              = this.cachedTextureBy2;
+      texturePath      = this.cachedTexturePath;
+      textureFilename  = this.cachedTextureFilename;
+      textureLabel     = this.cachedTextureLabel;
+    }
 
     float ScaleX  = (bx2 - bx1) / LONGITUDE_SPAN;
     float ScaleY  = (by2 - by1) / LATITUDE_SPAN;
     float CEN_lon = 0.5 * (bx1 + bx2);
     float CEN_lat = 0.5 * (by1 + by2);
 
-    if (target_window == TypeWindow.HTML || target_window == TypeWindow.OBJ3D) {
+    if (this.displayTexture && (target_window == TypeWindow.HTML || target_window == TypeWindow.OBJ3D)) {
       writeMaterial(target_window, textureLabel, texturePath, textureFilename);
     }
 
@@ -416,6 +435,10 @@ class solarchvision_Earth3D {
     float bilinearBump = computeElevationBumpBilinear(stationLat, stationLon);
     float stationElevationBump = (singleSampleBump > bilinearBump) ? singleSampleBump : (singleSampleBump * 2 + bilinearBump) / 3.0;
 
+    int PAL_type = SHADE.get_PAL_type();
+    int PAL_direction = SHADE.get_PAL_direction();
+    float PAL_multiplier = SHADE.get_PAL_multiplier();
+
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
       for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
@@ -431,7 +454,7 @@ class solarchvision_Earth3D {
           FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
 
           if (isWin3D) {
-            addFaceWIN3D(subFace, textureImage);
+            addFaceWIN3D(subFace, textureImage, PAL_type, PAL_direction, PAL_multiplier);
             collectGridEdges(subFace, Alpha, unwrappedBeta, majorGridEdgeBatch, minorGridEdgeBatch);
           } else {
             drawFace(target_window, subFace, textureLabel, f, _turn);
@@ -456,7 +479,45 @@ class solarchvision_Earth3D {
     }
   }
 
-  private void addFaceWIN3D (FaceVertex[] subFace, PImage textureImage) {
+  // Textured mode (this.displayTexture true) samples the elevation image as
+  // before. Shaded mode (false) instead colors each vertex per
+  // WIN3D.FacesShade - currently SHADE.Global_Solar (sky-bucket solar
+  // exposure, needs this vertex's neighbors within the same subface, same
+  // as Faces.pde/Land3D.pde) and SHADE.Vertex_Elevation (colored by the
+  // vertex's own bumped height) - falling back to plain white for any
+  // other FacesShade value, matching Land3D's own default. Both modes
+  // stay inside the single batched beginShape(QUADS) from
+  // beginWIN3DSphere(): a texture binds once for the whole shape, and
+  // per-vertex fill() works the same way within one shape too.
+  private void addFaceWIN3D (FaceVertex[] subFace, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
+    if (!this.displayTexture) {
+      for (int s = 0; s < subFace.length; s++) {
+        int s_prev = (s + subFace.length - 1) % subFace.length;
+        int s_next = (s + 1) % subFace.length;
+
+        float[] VERTEX_now  = { subFace[s].x,      subFace[s].y,      subFace[s].z };
+        float[] VERTEX_prev = { subFace[s_prev].x,  subFace[s_prev].y,  subFace[s_prev].z };
+        float[] VERTEX_next = { subFace[s_next].x,  subFace[s_next].y,  subFace[s_next].z };
+
+        float[] COL = { 255, 255, 255, 255 };
+        if (WIN3D.FacesShade == SHADE.Global_Solar) {
+          COL = SHADE.vertexRender_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_type, PAL_direction, PAL_multiplier);
+        }
+        if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+          float[] VERTEX_elevation = { subFace[s].x, subFace[s].y, subFace[s].elevationBump };
+          COL = SHADE.vertexRender_Vertex_Elevation(VERTEX_elevation, PAL_type, PAL_direction, PAL_multiplier);
+        }
+
+        WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+        WIN3D.graphics.vertex(
+          subFace[s].x * OBJECTS_scale * WIN3D.scale,
+          -subFace[s].y * OBJECTS_scale * WIN3D.scale,
+          subFace[s].z * OBJECTS_scale * WIN3D.scale
+        );
+      }
+      return;
+    }
+
     for (int s = 0; s < subFace.length; s++) {
       float u = clamp01(subFace[s].u);
       float v = clamp01(subFace[s].v);
@@ -619,7 +680,8 @@ class solarchvision_Earth3D {
       // Bump this vertex outward along its own radial direction (i.e.
       // just extend the sphere's radius for this one vertex) based on the
       // texture pixel under it, so the model isn't perfectly smooth.
-      double bumpedR = DOUBLE_r_Earth + computeElevationBump(a, b);
+      float rawBump = computeElevationBump(a, b);
+      double bumpedR = DOUBLE_r_Earth + rawBump;
 
       double x0 = bumpedR * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
       double y0 = bumpedR * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
@@ -639,6 +701,14 @@ class solarchvision_Earth3D {
       vtx.x = (float) x2;
       vtx.y = (float) y2;
       vtx.z = (float) z2;
+      // Unlike z (which folds in Earth's own curvature - tens of meters
+      // just a fraction of a degree from the station, kilometers by a few
+      // degrees out), this is real terrain elevation only, relative to the
+      // station's own baseline. SHADE.vertexU_Vertex_Elevation()'s palette
+      // multiplier (Land3D.palette_MLT) is calibrated for that kind of
+      // range; feeding it z directly would saturate almost everywhere
+      // except right next to the station.
+      vtx.elevationBump = rawBump - stationElevationBump;
 
       subFace[s] = vtx;
     }
