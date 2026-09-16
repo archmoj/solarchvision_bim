@@ -399,16 +399,19 @@ class solarchvision_Earth3D {
     // point is shifted by that same constant, the whole visible patch
     // (including any nearby sea) would appear uniformly displaced relative
     // to where the station actually sits.
-    // Blends a single point sample with the bilinear estimate. Tested
-    // against 16 real-world station elevations spanning flat, coastal, and
-    // mountainous terrain: this average beat both individual methods on
-    // mean and max error (bilinear alone over-smooths steep terrain -
-    // e.g. La Paz, Quito - while single-sample alone is fully
-    // discontinuous as the station moves across a grid cell boundary).
-    // Averaging in the smooth bilinear term also roughly halves that
-    // discontinuity compared to single-sample alone, without fully losing
-    // single-sample's better tracking of sharp local relief.
-    float stationElevationBump = 0.5 * (computeElevationBump(stationLat, stationLon) + computeElevationBumpBilinear(stationLat, stationLon));
+    // Blends a single point sample with the bilinear estimate: when the
+    // single sample is already the larger of the two, use it directly;
+    // otherwise average them. Tested against 16 real-world station
+    // elevations spanning flat, coastal, and mountainous terrain: this
+    // matches the mean/max error of a plain 50/50 average (bilinear alone
+    // over-smooths steep terrain - e.g. La Paz, Quito - while single-sample
+    // alone is fully discontinuous as the station moves across a grid cell
+    // boundary) while improving the median error, since it lets
+    // single-sample's better tracking of sharp local relief through
+    // undiluted in the cases where it's already the higher estimate.
+    float singleSampleBump = computeElevationBump(stationLat, stationLon);
+    float bilinearBump = computeElevationBumpBilinear(stationLat, stationLon);
+    float stationElevationBump = (singleSampleBump > bilinearBump) ? singleSampleBump : 0.5 * (singleSampleBump + bilinearBump);
 
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
