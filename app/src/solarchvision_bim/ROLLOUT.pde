@@ -504,7 +504,7 @@ class solarchvision_ROLLOUT {
 
         Earth3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.displaySurface", Earth3D.displaySurface);
         Earth3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.displayTexture", Earth3D.displayTexture);
-        Earth3D.levelOfDetail = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.levelOfDetail", Earth3D.levelOfDetail, 1.0 / 32.0, 32.0, -2, 0.000001);
+        Earth3D.levelOfDetail = this.Spinner(X_control, Y_control, 0, 1, 0, "Earth3D.levelOfDetail", Earth3D.levelOfDetail, 1.0 / 16.0, 16.0, -2, 0.001);
         Earth3D.recomputeLevelOfDetailDependents();
 
         Moon3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface);

@@ -226,14 +226,16 @@ class solarchvision_Earth3D {
   private String cachedTextureFilename = "";
   private float cachedStationLon = Float.NaN;
   private float cachedStationLat = Float.NaN;
+  private float cachedLevelOfDetail = Float.NaN;
 
   private void resolveTextureSource () {
     float stationLon = STATION.getLongitude();
     float stationLat = STATION.getLatitude();
 
     if ((abs(stationLon - this.cachedStationLon) < 0.0001) &&
-        (abs(stationLat - this.cachedStationLat) < 0.0001)) {
-      return; // still valid - station hasn't moved (whether or not a texture was found last time)
+        (abs(stationLat - this.cachedStationLat) < 0.0001) &&
+        (abs(this.levelOfDetail - this.cachedLevelOfDetail) < 0.0001)) {
+      return; // still valid - station hasn't moved and levelOfDetail hasn't changed (whether or not a texture was found last time)
     }
 
     this.clipRadiusDegrees_Lon = computeClipRadiusDegreesLon(stationLat);
@@ -262,6 +264,7 @@ class solarchvision_Earth3D {
 
     this.cachedStationLon = stationLon;
     this.cachedStationLat = stationLat;
+    this.cachedLevelOfDetail = this.levelOfDetail;
   }
 
   private boolean worldTileFullyCoversWindow (int tileIndex, float stationLon, float stationLat) {
