@@ -430,6 +430,19 @@ class solarchvision_WIN3D {
 
   void keyPressed (KeyEvent e) {
     if (!this.include) return;
+
+    if (e.isControlDown() && !e.isAltDown()) {
+      switch (key) {
+        case ',':
+          moveWin3DTowardsSelection(-0.26);
+          break;
+
+        case '.':
+          moveWin3DTowardsSelection(0.25);
+          break;
+      }
+    }
+
     if (e.isAltDown() || e.isControlDown()) return;
 
     this.navKeyCoded = (key == CODED);

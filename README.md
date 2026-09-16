@@ -401,6 +401,7 @@ When the command bar is disabled (default mode), you can use keyboard shortcuts 
 -   `` ` `` and `~`: Cycle backward/forward through the world
     viewport's zoom levels
 -   `+` and `-`: Zoom in and out in the 3D viewport
+-   `Ctrl+,` and `Ctrl+.`: Move the camera closer and farther to the selection
 -   `,` and `.`: Move the camera closer and farther
 -   `2` and `8`: Rotate the camera up and down
 -   `4` and `6`: Rotate the camera left and right
@@ -672,6 +673,7 @@ Includes commands such as:
 -   `ORBIT`, `ORBITZ`, `ORBITXY`
 -   `CAMERAROLL`, `CAMERAROLLZ`, `CAMERAROLLXY`
 -   `TARGETROLL`, `TARGETROLLZ`, `TARGETROLLXY`
+-   `DISTC`, `DISTZ`, `DISTXY`, `DISTP`
 -   `ZOOM`, `NORMALZOOM`
 -   `PERSPECTIVE`, `ORTHOGRAPHIC`
 
