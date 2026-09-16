@@ -4,9 +4,10 @@ class solarchvision_Earth3D {
 
   private final static float LONGITUDE_SPAN = 360.0;
   private final static float LATITUDE_SPAN  = 180.0;
+  private final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
 
-  float lat_step = 0.125; //in degrees
-  float lon_step  = 0.125; //in degrees
+  // maintains balance between mesh resolution and mesh size to maintain performance
+  float BALANCE = 1.0; // 0.25, 0.5, 1, 2, 4,
 
   // Spacing (in degrees) of the displayed lat/lon grid lines - independent
   // of lat_step/lon_step, which are the mesh's own tessellation
@@ -16,7 +17,7 @@ class solarchvision_Earth3D {
   // multiple of gridStepDegrees are drawn (see isRoundGridLine() below).
   float gridStepDegrees = 1;
 
-  float clipRadiusDegrees_Lat = 5;
+  float clipRadiusDegrees_Lat = 2.0 / BALANCE;
 
   // Longitude degrees cover progressively less ground distance at higher
   // latitudes as meridians converge (ground distance per degree of
@@ -29,14 +30,52 @@ class solarchvision_Earth3D {
   // read directly everywhere else that needs it
   // (worldTileFullyCoversWindow(), compositeWorldTiles(), draw()'s render
   // loop), the same way clipRadiusDegrees_Lat is.
-  float clipRadiusDegrees_Lon = 5;
+  float clipRadiusDegrees_Lon = 2.0 / BALANCE;;
+
+  float lat_step = clipRadiusDegrees_Lat / 32.0; //in degrees
+  float lon_step  = clipRadiusDegrees_Lon / 32.0; //in degrees
 
   boolean displaySurface = true;
   boolean displayTexture = true;
 
+  PImage[] Map;
+  float[][] BoundariesX;
+  float[][] BoundariesY;
+
+  String Path = BaseFolder + "/input/images/earth";
+  String[] Filenames = new String[] {
+    "Z_180000_-090000_-180000_090000_EN_FR_.jpg"
+  };
+
   class FaceVertex {
     float x, y, z;
     float u, v;
+  }
+
+  void resize_images () {
+    int n = this.Filenames.length;
+    this.Map = new PImage [n];
+    this.BoundariesX = new float [n][2];
+    this.BoundariesY = new float [n][2];
+  }
+
+  void load_images () {
+    for (int i = 0; i < this.Filenames.length; i++) {
+      loadOneImage(i);
+    }
+  }
+
+  private void loadOneImage (int i) {
+    String MapFilename = this.Path + "/" + this.Filenames[i];
+    String[] Parts = split(this.Filenames[i], '_');
+
+    this.BoundariesX[i][0] = -float(Parts[1]) * BOUNDARY_SCALE;
+    this.BoundariesY[i][0] =  float(Parts[2]) * BOUNDARY_SCALE;
+    this.BoundariesX[i][1] = -float(Parts[3]) * BOUNDARY_SCALE;
+    this.BoundariesY[i][1] =  float(Parts[4]) * BOUNDARY_SCALE;
+
+    println("Loading:", MapFilename);
+    this.Map[i] = loadImage(MapFilename);
   }
 
   private boolean shouldDraw (int target_window) {
@@ -50,6 +89,35 @@ class solarchvision_Earth3D {
     if (value > 1) return 1;
     if (value < 0) return 0;
     return value;
+  }
+
+  // elevation estimate (meters)
+  private float computeElevationBump (float Alpha, float Beta) {
+    int i = 0; // pick the first image - there is only one.
+    PImage textureImage = this.Map[i];
+
+    // Beta can arrive unwrapped relative to the station (see unwrapLon()
+    // in draw()), i.e. outside the image's actual -180..180 range for
+    // stations near the antimeridian. Wrap it back in first, or those
+    // cells would all get clamped to one edge column instead of sampling
+    // the geographically correct side.
+    float wrappedBeta = Beta;
+    while (wrappedBeta > this.BoundariesX[i][1]) wrappedBeta -= 360;
+    while (wrappedBeta < this.BoundariesX[i][0]) wrappedBeta += 360;
+
+    float u = (wrappedBeta - this.BoundariesX[i][0]) / (this.BoundariesX[i][1] - this.BoundariesX[i][0]);
+    float v = (this.BoundariesY[i][1] - Alpha) / (this.BoundariesY[i][1] - this.BoundariesY[i][0]);
+
+    int px = constrain(int(u * textureImage.width), 0, textureImage.width - 1);
+    int py = constrain(int(v * textureImage.height), 0, textureImage.height - 1);
+
+    color c = textureImage.get(px, py);
+
+    float brightness = green(c);
+
+    float z = 6400.0 * // as applied by NASA map: https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/topography-bathymetry-maps/
+      brightness / 255.0;
+    return z;
   }
 
   // True when value is (within floating-point tolerance) a multiple of
@@ -268,8 +336,6 @@ class solarchvision_Earth3D {
     float CEN_lon = 0.5 * (bx1 + bx2);
     float CEN_lat = 0.5 * (by1 + by2);
 
-    float r = FLOAT_r_Earth;
-
     if (target_window == TypeWindow.HTML || target_window == TypeWindow.OBJ3D) {
       writeMaterial(target_window, textureLabel, texturePath, textureFilename);
     }
@@ -294,6 +360,18 @@ class solarchvision_Earth3D {
     float stationLon = STATION.getLongitude();
     float stationLat = STATION.getLatitude();
 
+    // Used as the "ground plane" baseline in buildSubFace(), instead of
+    // STATION.getElevation() - the elevation image's own estimate at other
+    // points is what shapes the surrounding terrain, so the baseline needs
+    // to come from that same source evaluated at the station's own
+    // coordinate. Mixing in STATION.getElevation() (an independent,
+    // differently-calibrated value) instead would offset the station's own
+    // ground by however much the two disagree - and since every nearby
+    // point is shifted by that same constant, the whole visible patch
+    // (including any nearby sea) would appear uniformly displaced relative
+    // to where the station actually sits.
+    float stationElevationBump = computeElevationBump(stationLat, stationLon);
+
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
       for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
@@ -306,7 +384,7 @@ class solarchvision_Earth3D {
           if (unwrappedBeta < stationLon - this.clipRadiusDegrees_Lon) continue;
 
           f += 1;
-          FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, r, CEN_lon, CEN_lat, ScaleX, ScaleY);
+          FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
 
           if (isWin3D) {
             addFaceWIN3D(subFace, textureImage);
@@ -473,7 +551,7 @@ class solarchvision_Earth3D {
   }
 
   private FaceVertex[] buildSubFace (float Alpha, float Beta,
-                                      float r, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
+                                      float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
     FaceVertex[] subFace = new FaceVertex[4];
 
     float tb = -STATION.getLongitude();
@@ -487,10 +565,6 @@ class solarchvision_Earth3D {
       if (s == 2 || s == 3) a -= this.lat_step;
       if (s == 1 || s == 2) b -= this.lon_step;
 
-      float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
-      float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
-      float z0 = r * funcs.sin_ang(a);
-
       if (this.displayTexture) {
         float lon = b - CEN_lon;
         float lat = a - CEN_lat;
@@ -498,20 +572,29 @@ class solarchvision_Earth3D {
         vtx.v = (-lat / ScaleY / LATITUDE_SPAN + 0.5);
       }
 
+      // Bump this vertex outward along its own radial direction (i.e.
+      // just extend the sphere's radius for this one vertex) based on the
+      // texture pixel under it, so the model isn't perfectly smooth.
+      double bumpedR = DOUBLE_r_Earth + computeElevationBump(a, b);
+
+      double x0 = bumpedR * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
+      double y0 = bumpedR * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+      double z0 = bumpedR * funcs.sin_ang(a);
+
       // rotate so the station's location sits at the model origin/orientation
-      float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
-      float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
-      float z1 = z0;
+      double x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
+      double y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
+      double z1 = z0;
 
-      float x2 = x1;
-      float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
-      float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
+      double x2 = x1;
+      double y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
+      double z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
 
-      z2 -= FLOAT_r_Earth; // drop the globe below the station
+      z2 -= DOUBLE_r_Earth + stationElevationBump; // drop the globe below the station
 
-      vtx.x = x2;
-      vtx.y = y2;
-      vtx.z = z2;
+      vtx.x = (float) x2;
+      vtx.y = (float) y2;
+      vtx.z = (float) z2;
 
       subFace[s] = vtx;
     }
