@@ -427,24 +427,20 @@ class solarchvision_WIN3D {
   private char navKeyChar = 0;
   private int navKeyCode = 0;
   private boolean navKeyShift = false;
+  private boolean navKeyCtrl = false;
 
   void keyPressed (KeyEvent e) {
     if (!this.include) return;
+    if (e.isAltDown()) return;
 
-    if (e.isControlDown() && !e.isAltDown()) {
-      switch (key) {
-        case ',':
-          moveWin3DTowardsSelection(-0.26);
-          break;
+    boolean ctrlDown = e.isControlDown();
 
-        case '.':
-          moveWin3DTowardsSelection(0.25);
-          break;
-      }
-    }
+    // Ctrl+,/Ctrl+. (move camera closer/farther to the selection) are the
+    // only Ctrl-modified shortcuts this handler owns; every other Ctrl
+    // combination is left alone, matching the previous behavior.
+    if (ctrlDown && (key != ',') && (key != '.')) return;
 
-    if (e.isAltDown() || e.isControlDown()) return;
-
+    this.navKeyCtrl = ctrlDown;
     this.navKeyCoded = (key == CODED);
     this.navKeyChar = key;
     this.navKeyCode = keyCode;
@@ -452,10 +448,12 @@ class solarchvision_WIN3D {
 
     // Arrow keys / Shift+arrows (camera or selection nudges) always repeat
     // while held; among the plain command keys, only the incremental
-    // view rotate/pan/zoom ones do. Everything else (camera cycling,
-    // shading toggle, day-cycle, Delete, rebuild-trigger, snap-to-look,
-    // Shift+Tab) is a discrete/one-shot/destructive action and must stay
-    // single-press only, regardless of how long the key is held.
+    // view rotate/pan/zoom ones do (this also covers Ctrl+,/Ctrl+., since
+    // ',' and '.' are already repeatable below regardless of Ctrl).
+    // Everything else (camera cycling, shading toggle, day-cycle, Delete,
+    // rebuild-trigger, snap-to-look, Shift+Tab) is a discrete/one-shot/
+    // destructive action and must stay single-press only, regardless of
+    // how long the key is held.
     this.navKeyRepeatable = this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar);
 
     this.navKeyHeld = true;
@@ -517,8 +515,22 @@ class solarchvision_WIN3D {
       } else {
         handleArrowKeys(this.navKeyCode);
       }
+    } else if (this.navKeyCtrl) {
+      handleCtrlCommandKey(this.navKeyChar);
     } else {
       handleCommandKey(this.navKeyChar, this.navKeyShift);
+    }
+  }
+
+  private void handleCtrlCommandKey (char cmdKey) {
+    switch (cmdKey) {
+      case ',':
+        moveWin3DTowardsSelection(-0.26);
+        break;
+
+      case '.':
+        moveWin3DTowardsSelection(0.25);
+        break;
     }
   }
   // ---------------------------------------------------------------------
