@@ -5,10 +5,18 @@ class solarchvision_Earth3D {
   private final static float LONGITUDE_SPAN = 360.0;
   private final static float LATITUDE_SPAN  = 180.0;
 
-  float lat_step = 1; //0.1; //in degrees
-  float lon_step  = 1; //0.1; //in degrees
+  float lat_step = 0.125; //in degrees
+  float lon_step  = 0.125; //in degrees
 
-  float clipRadiusDegrees = 10;
+  // Spacing (in degrees) of the displayed lat/lon grid lines - independent
+  // of lat_step/lon_step, which are the mesh's own tessellation
+  // resolution. This lets lat_step/lon_step be lowered (e.g. to 0.5 or
+  // 0.25) for a smoother/more detailed sphere without also crowding the
+  // grid with a line at every tiny mesh row - only edges that land on a
+  // multiple of gridStepDegrees are drawn (see isRoundGridLine() below).
+  float gridStepDegrees = 1;
+
+  float clipRadiusDegrees = 5;
 
   boolean displaySurface = true;
   boolean displayTexture = true;
@@ -29,6 +37,16 @@ class solarchvision_Earth3D {
     if (value > 1) return 1;
     if (value < 0) return 0;
     return value;
+  }
+
+  // True when value is (within floating-point tolerance) a multiple of
+  // gridStepDegrees - used to decide whether a mesh edge coincides with a
+  // displayed grid line, independent of the mesh's own (possibly much
+  // finer) tessellation step.
+  private boolean isRoundGridLine (float value, float step) {
+    if (step <= 0) return false;
+    float nearest = round(value / step) * step;
+    return abs(value - nearest) < 0.0001;
   }
 
   // Shifts lon by a multiple of 360 so it falls within 180 degrees of
@@ -249,6 +267,8 @@ class solarchvision_Earth3D {
 
     if (isWin3D) beginWIN3DSphere(textureImage);
 
+    ArrayList<float[][]> gridEdgeBatch = isWin3D ? new ArrayList<float[][]>() : null;
+
     float stationLon = STATION.getLongitude();
     float stationLat = STATION.getLatitude();
 
@@ -268,6 +288,7 @@ class solarchvision_Earth3D {
 
           if (isWin3D) {
             addFaceWIN3D(subFace, textureImage);
+            collectGridEdges(subFace, Alpha, unwrappedBeta, gridEdgeBatch);
           } else {
             drawFace(target_window, subFace, textureLabel, f, _turn);
           }
@@ -275,12 +296,15 @@ class solarchvision_Earth3D {
       }
     }
 
-    if (isWin3D) endWIN3DSphere();
+    if (isWin3D) {
+      endWIN3DSphere();
+      flushGridEdgeBatch(gridEdgeBatch);
+    }
   }
 
   private void beginWIN3DSphere (PImage textureImage) {
     WIN3D.graphics.strokeWeight(1);
-    WIN3D.graphics.stroke(0);
+    WIN3D.graphics.noStroke();
     WIN3D.graphics.beginShape(QUADS);
     if (this.displayTexture) {
       WIN3D.graphics.texture(textureImage);
@@ -302,6 +326,62 @@ class solarchvision_Earth3D {
   }
 
   private void endWIN3DSphere () {
+    WIN3D.graphics.endShape();
+  }
+
+  private float[] projectEarthVertexForWIN3D (FaceVertex v) {
+    return new float[] {
+       v.x * OBJECTS_scale * WIN3D.scale,
+      -v.y * OBJECTS_scale * WIN3D.scale,
+       v.z * OBJECTS_scale * WIN3D.scale
+    };
+  }
+
+  // subFace's 4 corners are, in order: (Alpha, Beta), (Alpha, Beta -
+  // lon_step), (Alpha - lat_step, Beta - lon_step), (Alpha - lat_step,
+  // Beta) - see buildSubFace(). So its 4 edges each run along a constant
+  // latitude or longitude; only record the ones that land on a round grid
+  // line (see isRoundGridLine()) rather than every mesh edge, so a finer
+  // lat_step/lon_step doesn't crowd the displayed grid with extra lines.
+  private void collectGridEdges (FaceVertex[] subFace, float Alpha, float Beta, ArrayList<float[][]> batch) {
+    float latTop    = Alpha;
+    float latBottom = Alpha - this.lat_step;
+    float lonLeft   = Beta - this.lon_step;
+    float lonRight  = Beta;
+
+    if (isRoundGridLine(latTop, this.gridStepDegrees)) {
+      batch.add(new float[][] { projectEarthVertexForWIN3D(subFace[0]), projectEarthVertexForWIN3D(subFace[1]) });
+    }
+    if (isRoundGridLine(latBottom, this.gridStepDegrees)) {
+      batch.add(new float[][] { projectEarthVertexForWIN3D(subFace[2]), projectEarthVertexForWIN3D(subFace[3]) });
+    }
+    if (isRoundGridLine(lonLeft, this.gridStepDegrees)) {
+      batch.add(new float[][] { projectEarthVertexForWIN3D(subFace[1]), projectEarthVertexForWIN3D(subFace[2]) });
+    }
+    if (isRoundGridLine(lonRight, this.gridStepDegrees)) {
+      batch.add(new float[][] { projectEarthVertexForWIN3D(subFace[3]), projectEarthVertexForWIN3D(subFace[0]) });
+    }
+  }
+
+  // Strokes every recorded grid-line segment in one beginShape(LINES) pass,
+  // kept entirely separate from the textured fill pass above - they all
+  // share the same fixed black, weight-1 stroke, so there's nothing
+  // per-segment lost by batching them, and this way the grid can be
+  // toggled/styled independently of the fill without touching that pass.
+  private void flushGridEdgeBatch (ArrayList<float[][]> batch) {
+    if ((batch == null) || (batch.size() == 0)) return;
+
+    WIN3D.graphics.noFill();
+    WIN3D.graphics.strokeWeight(2);
+    WIN3D.graphics.stroke(0);
+    WIN3D.graphics.beginShape(LINES);
+
+    for (int p = 0; p < batch.size(); p++) {
+      float[][] seg = batch.get(p);
+      WIN3D.graphics.vertex(seg[0][0], seg[0][1], seg[0][2]);
+      WIN3D.graphics.vertex(seg[1][0], seg[1][1], seg[1][2]);
+    }
+
     WIN3D.graphics.endShape();
   }
 
