@@ -466,6 +466,13 @@ class solarchvision_Earth3D {
     int PAL_direction = SHADE.get_PAL_direction();
     float PAL_multiplier = SHADE.get_PAL_multiplier();
 
+    // Only needed when actually fan-filling the station's grid cell, but
+    // it's a single vertex (not per-cell), so build it once up front
+    // rather than re-deriving it on every matching iteration below.
+    FaceVertex stationVertex = (isWin3D && (this.fillStationGridCell == -1))
+      ? buildStationVertex(CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump)
+      : null;
+
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       int f = 0;
       for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
@@ -486,6 +493,15 @@ class solarchvision_Earth3D {
           if (isWin3D) {
             if (!skipFill) {
               addFaceWIN3D(subFace, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+            } else if (fillGap) {
+              // Fan-fill the skipped cell with 4 triangles running from
+              // each of its edges to the station itself (subFace's 4
+              // corners, taken consecutively, are exactly that cell's 4
+              // edges - see collectGridEdges()).
+              addTriangleWIN3D(stationVertex, subFace[0], subFace[1], textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              addTriangleWIN3D(stationVertex, subFace[1], subFace[2], textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              addTriangleWIN3D(stationVertex, subFace[2], subFace[3], textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              addTriangleWIN3D(stationVertex, subFace[3], subFace[0], textureImage, PAL_type, PAL_direction, PAL_multiplier);
             }
             collectGridEdges(subFace, Alpha, unwrappedBeta, majorGridEdgeBatch, minorGridEdgeBatch);
           } else if (!skipFill) {
@@ -561,6 +577,19 @@ class solarchvision_Earth3D {
         v * textureImage.height
       );
     }
+  }
+
+  // Renders one triangle (a, b, c) inside the batched beginShape(QUADS)
+  // from beginWIN3DSphere() by duplicating c as a 4th, degenerate vertex -
+  // the a-b-c-c "quad" has a zero-length edge (c to c) and so draws as
+  // the plain triangle a-b-c. Reuses addFaceWIN3D() for the actual vertex
+  // emission so texturing/shading stay identical to every other face.
+  // Used by draw() to fan-fill the station's own grid cell with 4
+  // triangles meeting at the station (fillStationGridCell == -1) instead
+  // of leaving it empty (fillStationGridCell == 0).
+  private void addTriangleWIN3D (FaceVertex a, FaceVertex b, FaceVertex c, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
+    FaceVertex[] triangleAsQuad = { a, b, c, c };
+    addFaceWIN3D(triangleAsQuad, textureImage, PAL_type, PAL_direction, PAL_multiplier);
   }
 
   private void endWIN3DSphere () {
@@ -687,65 +716,88 @@ class solarchvision_Earth3D {
     }
   }
 
-  private FaceVertex[] buildSubFace (float Alpha, float Beta,
-                                      float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
-    FaceVertex[] subFace = new FaceVertex[4];
+  // Builds a single vertex at geographic (a, b), in the same rotated/bumped
+  // model space buildSubFace()'s 4 corners live in - i.e. the sphere
+  // rotated so the station's own (lat, lon) sits at the model
+  // origin/orientation, with elevation baselined against the station (see
+  // stationElevationBump in draw()). Extracted out of buildSubFace() so
+  // buildStationVertex() can place a single vertex (the station itself)
+  // in that same space, e.g. for the triangle fan fillStationGridCell ==
+  // -1 draws (see draw()).
+  private FaceVertex buildVertex (float a, float b,
+                                   float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
+    FaceVertex vtx = new FaceVertex();
 
     float tb = -STATION.getLongitude();
     float ta = 90 - STATION.getLatitude();
 
-    for (int s = 0; s < 4; s++) {
-      FaceVertex vtx = new FaceVertex();
+    if (this.displayTexture) {
+      float lon = b - CEN_lon;
+      float lat = a - CEN_lat;
+      vtx.u = (lon / ScaleX / LONGITUDE_SPAN + 0.5);
+      vtx.v = (-lat / ScaleY / LATITUDE_SPAN + 0.5);
+    }
 
+    // Bump this vertex outward along its own radial direction (i.e.
+    // just extend the sphere's radius for this one vertex) based on the
+    // texture pixel under it, so the model isn't perfectly smooth.
+    float rawBump = computeElevationBump(a, b);
+    double bumpedR = DOUBLE_r_Earth + rawBump;
+
+    double x0 = bumpedR * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
+    double y0 = bumpedR * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+    double z0 = bumpedR * funcs.sin_ang(a);
+
+    // rotate so the station's location sits at the model origin/orientation
+    double x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
+    double y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
+    double z1 = z0;
+
+    double x2 = x1;
+    double y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
+    double z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
+
+    z2 -= DOUBLE_r_Earth + stationElevationBump; // drop the globe below the station
+
+    vtx.x = (float) x2;
+    vtx.y = (float) y2;
+    vtx.z = (float) z2;
+    // Unlike z (which folds in Earth's own curvature - tens of meters
+    // just a fraction of a degree from the station, kilometers by a few
+    // degrees out), this is real terrain elevation only, relative to the
+    // station's own baseline. SHADE.vertexU_Vertex_Elevation()'s palette
+    // multiplier (Land3D.palette_MLT) is calibrated for that kind of
+    // range; feeding it z directly would saturate almost everywhere
+    // except right next to the station.
+    vtx.elevationBump = rawBump - stationElevationBump;
+
+    return vtx;
+  }
+
+  private FaceVertex[] buildSubFace (float Alpha, float Beta,
+                                      float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
+    FaceVertex[] subFace = new FaceVertex[4];
+
+    for (int s = 0; s < 4; s++) {
       float a = Alpha;
       float b = Beta;
       if (s == 2 || s == 3) a -= this.lat_step;
       if (s == 1 || s == 2) b -= this.lon_step;
 
-      if (this.displayTexture) {
-        float lon = b - CEN_lon;
-        float lat = a - CEN_lat;
-        vtx.u = (lon / ScaleX / LONGITUDE_SPAN + 0.5);
-        vtx.v = (-lat / ScaleY / LATITUDE_SPAN + 0.5);
-      }
-
-      // Bump this vertex outward along its own radial direction (i.e.
-      // just extend the sphere's radius for this one vertex) based on the
-      // texture pixel under it, so the model isn't perfectly smooth.
-      float rawBump = computeElevationBump(a, b);
-      double bumpedR = DOUBLE_r_Earth + rawBump;
-
-      double x0 = bumpedR * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
-      double y0 = bumpedR * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
-      double z0 = bumpedR * funcs.sin_ang(a);
-
-      // rotate so the station's location sits at the model origin/orientation
-      double x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
-      double y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
-      double z1 = z0;
-
-      double x2 = x1;
-      double y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
-      double z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
-
-      z2 -= DOUBLE_r_Earth + stationElevationBump; // drop the globe below the station
-
-      vtx.x = (float) x2;
-      vtx.y = (float) y2;
-      vtx.z = (float) z2;
-      // Unlike z (which folds in Earth's own curvature - tens of meters
-      // just a fraction of a degree from the station, kilometers by a few
-      // degrees out), this is real terrain elevation only, relative to the
-      // station's own baseline. SHADE.vertexU_Vertex_Elevation()'s palette
-      // multiplier (Land3D.palette_MLT) is calibrated for that kind of
-      // range; feeding it z directly would saturate almost everywhere
-      // except right next to the station.
-      vtx.elevationBump = rawBump - stationElevationBump;
-
-      subFace[s] = vtx;
+      subFace[s] = buildVertex(a, b, CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
     }
 
     return subFace;
+  }
+
+  // The station's own (lat, lon), built through the same buildVertex()
+  // pipeline as every other vertex - which is exactly what puts it at the
+  // model origin (0, 0, 0): buildVertex() rotates so the station's
+  // location sits at the model origin/orientation, then drops the globe
+  // by DOUBLE_r_Earth + stationElevationBump, and stationElevationBump is
+  // itself derived from the station's own coordinate (see draw()).
+  private FaceVertex buildStationVertex (float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
+    return buildVertex(STATION.getLatitude(), STATION.getLongitude(), CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
   }
 
 
