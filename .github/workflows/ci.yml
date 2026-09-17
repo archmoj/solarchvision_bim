@@ -1,0 +1,72 @@
+name: Java CI for solarchvision_bim
+
+on:
+  push:
+    branches: '**'
+  pull_request:
+    branches: '**'
+  workflow_dispatch: # Allows you to also trigger this job manually via the GitHub UI
+
+permissions:
+  contents: read
+
+env:
+  # Keep these in sync with test/run_tests.sh's PROCESSING_HOME default
+  # and test/install_junit.sh's LATEST_VERSION.
+  PROCESSING_VERSION: 4.3.4
+  PROCESSING_TAG: processing-1297-4.3.4
+  JUNIT_VERSION: 6.1.3
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Processing isn't on any package registry, so cache the extracted
+      # install across runs - it's a ~220MB download every time otherwise.
+      - name: Cache Processing install
+        id: cache-processing
+        uses: actions/cache@v4
+        with:
+          path: ~/processing/${{ env.PROCESSING_VERSION }}
+          key: processing-${{ env.PROCESSING_VERSION }}-linux-x64
+
+      - name: Install Processing
+        if: steps.cache-processing.outputs.cache-hit != 'true'
+        run: |
+          curl -fL -o /tmp/processing.tgz \
+            "https://github.com/processing/processing4/releases/download/${PROCESSING_TAG}/processing-${PROCESSING_VERSION}-linux-x64.tgz"
+          mkdir -p ~/processing
+          tar -xf /tmp/processing.tgz -C /tmp
+          mv "/tmp/processing-${PROCESSING_VERSION}" "$HOME/processing/${PROCESSING_VERSION}"
+
+      # test/run_tests.sh looks for the JUnit console launcher under
+      # test/lib/ - reuse test/install_junit.sh (the same script
+      # documented in test/README.md) rather than duplicating the
+      # download/verify logic here.
+      - name: Cache JUnit console launcher
+        id: cache-junit
+        uses: actions/cache@v4
+        with:
+          path: test/lib
+          key: junit-console-standalone-${{ env.JUNIT_VERSION }}
+
+      - name: Install JUnit console launcher
+        if: steps.cache-junit.outputs.cache-hit != 'true'
+        working-directory: test
+        run: |
+          chmod +x install_junit.sh
+          ./install_junit.sh
+
+      - name: Run tests
+        run: |
+          chmod +x test/run_tests.sh
+          ./test/run_tests.sh
