@@ -15,7 +15,24 @@ class solarchvision_Earth3D {
   // recomputeLevelOfDetailDependents() must be called to keep
   // clipRadiusDegrees_Lat/Lon and lat_step/lon_step in sync, since those
   // are plain stored fields, not computed on the fly.
-  float levelOfDetail = 1.0; // 0.25, 0.5, 1, 2, 4,
+  float levelOfDetail = 4.0; // 0.25, 0.5, 1, 2, 4,
+
+  solarchvision_Earth3D () { // constructor
+    recomputeLevelOfDetailDependents();
+  }
+
+  float clipRadiusDegrees_Lat = -1;
+  float clipRadiusDegrees_Lon = -1;
+
+  float lat_step = -1;
+  float lon_step = -1;
+
+  void recomputeLevelOfDetailDependents () {
+    this.clipRadiusDegrees_Lat = 4.0 / this.levelOfDetail;
+    this.clipRadiusDegrees_Lon = 4.0 / this.levelOfDetail;
+    this.lat_step = this.clipRadiusDegrees_Lat / 32.0;
+    this.lon_step = this.clipRadiusDegrees_Lon / 32.0;
+  }
 
   // Spacing (in degrees) of the displayed lat/lon grid lines - independent
   // of lat_step/lon_step, which are the mesh's own tessellation
@@ -24,35 +41,6 @@ class solarchvision_Earth3D {
   // grid with a line at every tiny mesh row - only edges that land on a
   // multiple of gridStepDegrees are drawn (see isRoundGridLine() below).
   float gridStepDegrees = 1;
-
-  float clipRadiusDegrees_Lat = 2.0 / levelOfDetail;
-
-  // Longitude degrees cover progressively less ground distance at higher
-  // latitudes as meridians converge (ground distance per degree of
-  // longitude scales with cos(latitude)). Dividing by that same factor
-  // keeps the covered ground width roughly constant regardless of
-  // latitude: equal to clipRadiusDegrees_Lat at the equator, growing
-  // toward the poles (where a much wider longitude span covers the same
-  // shrinking ground distance). Recomputed in resolveTextureSource()
-  // (rounded to a whole degree, floored at 1) whenever the station moves -
-  // read directly everywhere else that needs it
-  // (worldTileFullyCoversWindow(), compositeWorldTiles(), draw()'s render
-  // loop), the same way clipRadiusDegrees_Lat is.
-  float clipRadiusDegrees_Lon = 2.0 / levelOfDetail;
-
-  float lat_step = clipRadiusDegrees_Lat / 32.0; //in degrees
-  float lon_step  = clipRadiusDegrees_Lon / 32.0; //in degrees
-
-  // Recomputes everything levelOfDetail drives. Call this after changing
-  // levelOfDetail at runtime (e.g. from the exposed spinner) - the fields
-  // above are plain stored values, not recomputed automatically.
-  void recomputeLevelOfDetailDependents () {
-    this.clipRadiusDegrees_Lat = 2.0 / this.levelOfDetail;
-    this.clipRadiusDegrees_Lon = 2.0 / this.levelOfDetail;
-    this.lat_step = this.clipRadiusDegrees_Lat / 32.0;
-    this.lon_step = this.clipRadiusDegrees_Lon / 32.0;
-  }
-
 
   boolean displaySurface = true;
   boolean displayTexture = true;
