@@ -843,15 +843,19 @@ class solarchvision_UI_rollout {
       editingThis = true;
     }
 
-    if ((!this.spinnerEditActive || editingThis) && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o)) {
+    if ((!this.spinnerEditActive || editingThis) && (
+      isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o) || // gray area
+      isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1,          y - (h / 2), x,          y + (h / 2))        // bar area
+    )) {
+      if (mouseButton == LEFT) {
+        if (!editingThis) {
+          this.beginSpinnerEdit(caption, new_value);
+          editingThis = true;
+        }
 
-      if (!editingThis) {
-        this.beginSpinnerEdit(caption, new_value);
-        editingThis = true;
+        SOLARCHVISION_X_clicked = -1;
+        SOLARCHVISION_Y_clicked = -1;
       }
-
-      SOLARCHVISION_X_clicked = -1;
-      SOLARCHVISION_Y_clicked = -1;
     }
     // -------------------------------------------------------------------
 
@@ -925,19 +929,20 @@ class solarchvision_UI_rollout {
     }
 
     if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
+      if (mouseButton == RIGHT) { // change value by right click over the bar
+        q = 1;
 
-      q = 1;
+        if (max_v - min_v > 0.001) {
+          q = (SOLARCHVISION_X_clicked - (x - w1)) / w1;
+        }
 
-      if (max_v - min_v > 0.001) {
-        q = (SOLARCHVISION_X_clicked - (x - w1)) / w1;
+        new_value = min_v + q * (max_v - min_v);
+
+        if (new_value < min_v) new_value = max_v;
+        if (new_value > max_v) new_value = min_v;
+
+        UI_rollout.revise();
       }
-
-      new_value = min_v + q * (max_v - min_v);
-
-      if (new_value < min_v) new_value = max_v;
-      if (new_value > max_v) new_value = min_v;
-
-      UI_rollout.revise();
     }
 
     strokeWeight(0);
