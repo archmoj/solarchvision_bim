@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
 
 // Exercises the small, self-contained helpers in Modify3D.pde -
 // remove_item_from_primary_list (pure, already package-private),
@@ -736,10 +737,9 @@ class ModifyGeometryTest {
     // Select3D.intersect() unconditionally skips face index 0
     // (`if (f > 0)`), so a lone selected face sitting at index 0 can
     // never register a hit against anything - not even itself - no
-    // matter which way it's wound. This only confirms the "nothing to
-    // compare against" case; the actual flip-on-hit branch needs a
-    // second face for the ray to hit, which risks landing exactly on
-    // the acceptance boundary of the self-test and wasn't attempted here.
+    // matter which way it's wound. See
+    // autoNormalFaces_reversesAFaceWhoseNormalPointsIntoAnotherFace
+    // near the end of this file for the case where a hit actually occurs.
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.allFaces.options = new int[][]{{0, 0, 0, 1, 0, 0}}; // visible
@@ -750,5 +750,353 @@ class ModifyGeometryTest {
     app.Modify3D.autoNormalFaces_Selection();
 
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
+  }
+
+  // --- insertCornerOpennings_Selection (a full integration test) ------
+  //
+  // Inset a single new corner point per side, forming n new quads
+  // between each original edge and the shrunk (inset) base face.
+
+  @Test
+  void insertCornerOpennings_insetsTheBaseFaceAndRingsItWithQuadsFromTheOriginalEdges () {
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modify_OpenningArea = 0.25f; // sqrt(0.25) = 0.5
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.Face_ids = new int[]{0};
+    app.current_ObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.insertCornerOpennings_Selection();
+
+    assertEquals(5, app.allFaces.nodes.length); // the inset base face + 4 new quads
+    assertEquals(8, app.allVertices.length);    // 4 original + 4 new inset corners
+
+    assertArrayEquals(new float[]{0.5f, 0.5f, 0}, app.allVertices[4], 0.0001f);
+    assertArrayEquals(new float[]{1.5f, 0.5f, 0}, app.allVertices[5], 0.0001f);
+    assertArrayEquals(new float[]{1.5f, 1.5f, 0}, app.allVertices[6], 0.0001f);
+    assertArrayEquals(new float[]{0.5f, 1.5f, 0}, app.allVertices[7], 0.0001f);
+
+    assertArrayEquals(new int[]{4, 5, 6, 7}, app.allFaces.nodes[0]); // the inset base face
+    // Each new quad connects one inset corner, the two ORIGINAL corners
+    // of that side, and the next side's inset corner.
+    assertArrayEquals(new int[]{4, 0, 1, 5}, app.allFaces.nodes[1]);
+    assertArrayEquals(new int[]{5, 1, 2, 6}, app.allFaces.nodes[2]);
+    assertArrayEquals(new int[]{6, 2, 3, 7}, app.allFaces.nodes[3]);
+    assertArrayEquals(new int[]{7, 3, 0, 4}, app.allFaces.nodes[4]);
+
+    // Same as insertEdgeOpennings: the group grows by n=4 (base kept +
+    // 4 new = 5 faces total), and the selection is left untouched (no
+    // appendNewFaceSelection call in this function either).
+    assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]);
+    assertArrayEquals(new int[]{0}, app.Select3D.Face_ids);
+  }
+
+  // --- insertParallelOpennings_Selection (a full integration test) ----
+  //
+  // Two new "edge" points per side (deviation-weighted toward the
+  // corner from each neighboring midpoint) plus one "center" point per
+  // side (area-weighted toward the centroid) - 3n new points and 2n new
+  // quads total, considerably more than the other two openings variants.
+
+  @Test
+  void insertParallelOpennings_ringsTheBaseFaceWithPairedQuadsPerSide () {
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modify_OpenningDeviation = 0.5f;
+    app.User3D.modify_OpenningArea = 0.25f; // sqrt(0.25) = 0.5
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.Face_ids = new int[]{0};
+    app.current_ObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.insertParallelOpennings_Selection();
+
+    assertEquals(9, app.allFaces.nodes.length); // the (re-shaped) base face + 4 sides x 2 quads
+    assertEquals(16, app.allVertices.length);   // 4 original + 4 sides x 3 new points (A, B, center)
+
+    // Per side s, points are created in the order A[s], B[s], center[s].
+    assertArrayEquals(new float[]{0, 0.5f, 0}, app.allVertices[4], 0.0001f);  // A0
+    assertArrayEquals(new float[]{0.5f, 0, 0}, app.allVertices[5], 0.0001f);  // B0
+    assertArrayEquals(new float[]{0.5f, 0.5f, 0}, app.allVertices[6], 0.0001f); // center0
+    assertArrayEquals(new float[]{1.5f, 0, 0}, app.allVertices[7], 0.0001f);  // A1
+    assertArrayEquals(new float[]{2, 0.5f, 0}, app.allVertices[8], 0.0001f);  // B1
+    assertArrayEquals(new float[]{1.5f, 0.5f, 0}, app.allVertices[9], 0.0001f); // center1
+
+    // The base face is reshaped to the ring of per-side center points.
+    assertArrayEquals(new int[]{6, 9, 12, 15}, app.allFaces.nodes[0]);
+
+    // Two new quads for side 0: one from the original corner out to
+    // (B0, center0, A0), and one bridging center0 to center1 via B0/A1.
+    assertArrayEquals(new int[]{0, 5, 6, 4}, app.allFaces.nodes[1]);
+    assertArrayEquals(new int[]{5, 7, 9, 6}, app.allFaces.nodes[2]);
+
+    // Like the corner/edge variants, no appendNewFaceSelection call.
+    assertArrayEquals(new int[]{0}, app.Select3D.Face_ids);
+  }
+
+  // --- insertRotatedOpennings_Selection (a full integration test) -----
+  //
+  // One edge point per side (same as insertEdgeOpennings_Selection),
+  // then one center point derived from THAT edge point (not directly
+  // from the original corner) - each side becomes a single 5-sided
+  // face touching the original corner, both its neighboring edge
+  // points, and both their derived center points.
+
+  @Test
+  void insertRotatedOpennings_buildsAPentagonPerSideFromEdgeThenCenterPoints () {
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modify_OpenningDeviation = 0.5f;
+    app.User3D.modify_OpenningArea = 0.25f; // sqrt(0.25) = 0.5
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.Face_ids = new int[]{0};
+    app.current_ObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.insertRotatedOpennings_Selection();
+
+    assertEquals(5, app.allFaces.nodes.length); // the reshaped base face + 4 pentagons
+    assertEquals(12, app.allVertices.length);   // 4 original + 4 sides x 2 new points (edge, center)
+
+    // Per side s, points are created in the order edge[s], center[s].
+    assertArrayEquals(new float[]{0, 1, 0}, app.allVertices[4], 0.0001f);   // edge0 (same as insertEdgeOpennings')
+    assertArrayEquals(new float[]{0.5f, 1, 0}, app.allVertices[5], 0.0001f); // center0, derived from edge0
+    assertArrayEquals(new float[]{1, 0, 0}, app.allVertices[6], 0.0001f);   // edge1
+    assertArrayEquals(new float[]{1, 0.5f, 0}, app.allVertices[7], 0.0001f); // center1
+
+    assertArrayEquals(new int[]{5, 7, 9, 11}, app.allFaces.nodes[0]); // reshaped to the center ring
+
+    // Side 0's pentagon: its own edge point, the original corner,
+    // the next side's edge point, then back through both center points.
+    assertArrayEquals(new int[]{4, 0, 6, 7, 5}, app.allFaces.nodes[1]);
+
+    assertArrayEquals(new int[]{0}, app.Select3D.Face_ids);
+  }
+
+  // --- tessellateRowsColumns_Selection (a full integration test) ------
+  //
+  // Requires exactly a 4-node face (unlike the other tessellate*/
+  // insert* functions, which work on any n-gon), subdividing it into a
+  // Columns x Rows grid of quads via bilinear interpolation - the 4
+  // corner grid points are reused as the ORIGINAL corner node ids
+  // rather than newly created points, which is what this test is
+  // specifically checking.
+
+  @Test
+  void tessellateRowsColumns_subdividesAQuadIntoAGridReusingItsOwnCorners () {
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modify_TessellateColumns = 2;
+    app.User3D.modify_TessellateRows = 2;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.Face_ids = new int[]{0};
+    app.current_ObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.tessellateRowsColumns_Selection();
+
+    assertEquals(4, app.allFaces.nodes.length); // 2x2 = 4 sub-quads (the original face becomes the first one)
+    assertEquals(9, app.allVertices.length);    // 4 original corners (reused) + 5 new interior/edge points
+
+    // The 4 interior/edge-midpoint grid points that aren't one of the
+    // original 4 corners, in creation order.
+    assertArrayEquals(new float[]{0, 1, 0}, app.allVertices[4], 0.0001f); // left edge midpoint
+    assertArrayEquals(new float[]{1, 0, 0}, app.allVertices[5], 0.0001f); // bottom edge midpoint
+    assertArrayEquals(new float[]{1, 1, 0}, app.allVertices[6], 0.0001f); // center
+    assertArrayEquals(new float[]{1, 2, 0}, app.allVertices[7], 0.0001f); // top edge midpoint
+    assertArrayEquals(new float[]{2, 1, 0}, app.allVertices[8], 0.0001f); // right edge midpoint
+
+    assertArrayEquals(new int[]{0, 5, 6, 4}, app.allFaces.nodes[0]); // bottom-left, reusing corner 0
+    assertArrayEquals(new int[]{4, 6, 7, 3}, app.allFaces.nodes[1]); // top-left, reusing corner 3
+    assertArrayEquals(new int[]{5, 1, 8, 6}, app.allFaces.nodes[2]); // bottom-right, reusing corner 1
+    assertArrayEquals(new int[]{6, 8, 2, 7}, app.allFaces.nodes[3]); // top-right, reusing corner 2
+
+    assertArrayEquals(new int[]{0, 3}, app.allGroups.Faces[0]); // grew by netShift = nNewFaces-1 = 3
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.Face_ids);
+  }
+
+  // --- extrudeFaceEdges_Selection (a full integration test) -----------
+  //
+  // Unlike every other function tested above, this one is purely
+  // additive: the original face is left completely untouched, and the
+  // new side walls + cap are appended to the end of allFaces.nodes
+  // rather than spliced in at the source face's position. It also
+  // creates a brand-new group per processed group (allGroups.
+  // beginNewGroup) rather than growing the existing one, and - worth
+  // calling out specifically - only the CAP face's index ends up in
+  // Select3D.Face_ids afterward, not the side walls.
+
+  @Test
+  void extrudeFaceEdges_appendsWallsAndACapWithoutTouchingTheOriginalFace () {
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {0, 2, 0}}; // a flat triangle, facing +Z
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.User3D.modify_OpenningDepth = 1f;
+
+    app.allGroups.makeEmpty(1);
+    app.allGroups.Faces[0] = new int[]{0, 0};
+
+    app.Select3D.Face_ids = new int[]{0};
+    app.current_ObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.extrudeFaceEdges_Selection();
+
+    assertEquals(5, app.allFaces.nodes.length); // original + 3 side walls + 1 cap
+    assertEquals(9, app.allVertices.length);    // 3 original + 3 duplicated base points + 3 top points
+
+    // The original face is untouched.
+    assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
+
+    // Points are created per corner, interleaved: base[s] then top[s].
+    assertArrayEquals(new float[]{0, 0, 1}, app.allVertices[4], 0.0001f); // top0 = corner0 pushed up by the +Z normal
+    assertArrayEquals(new float[]{2, 0, 1}, app.allVertices[6], 0.0001f); // top1
+    assertArrayEquals(new float[]{0, 2, 1}, app.allVertices[8], 0.0001f); // top2
+
+    assertArrayEquals(new int[]{3, 5, 6, 4}, app.allFaces.nodes[1]); // side wall 0-1
+    assertArrayEquals(new int[]{5, 7, 8, 6}, app.allFaces.nodes[2]); // side wall 1-2
+    assertArrayEquals(new int[]{7, 3, 4, 8}, app.allFaces.nodes[3]); // side wall 2-0
+    assertArrayEquals(new int[]{4, 6, 8}, app.allFaces.nodes[4]);    // the cap, from the top points
+
+    // A brand-new group was created (not an extension of group 0),
+    // spanning just the 4 new faces (indices 1-4) - the original
+    // face's group membership is untouched.
+    assertEquals(2, app.allGroups.num);
+    assertArrayEquals(new int[]{1, 4}, app.allGroups.Faces[1]);
+
+    // Only the cap's index ends up selected - not the 3 side walls.
+    assertArrayEquals(new int[]{4}, app.Select3D.Face_ids);
+  }
+
+  // --- flatten_LandPoints ------------------------------------------
+
+  @Test
+  void flattenLandPoints_zerosOutElevationOnlyAtTheSelectedGridCells () {
+    app.Land3D.num_columns = 3;
+    app.Land3D.Mesh = new float[2][3][3];
+    for (float[][] row : app.Land3D.Mesh) {
+      for (float[] cell : row) cell[2] = 99f; // give every cell a distinctive, nonzero elevation
+    }
+
+    // Flat index 1 -> row 0, col 1. Flat index 4 -> row 1, col 1.
+    app.Select3D.LandPoint_ids = new int[]{1, 4};
+
+    app.Modify3D.flatten_LandPoints();
+
+    assertEquals(0f, app.Land3D.Mesh[0][1][2], 0.0001f);
+    assertEquals(0f, app.Land3D.Mesh[1][1][2], 0.0001f);
+    // Untouched cells keep their original elevation.
+    assertEquals(99f, app.Land3D.Mesh[0][0][2], 0.0001f);
+    assertEquals(99f, app.Land3D.Mesh[1][2][2], 0.0001f);
+  }
+
+  // --- autoNormalFaces_Selection: the flip-on-hit case ----------------
+
+  @Test
+  void autoNormalFaces_reversesAFaceWhoseNormalPointsIntoAnotherFace () {
+    // A small triangle at z=0 whose normal (computed from the centroid
+    // outward through its own first two corners) points straight up
+    // (+Z), toward a large triangle sitting at z=5 directly above it.
+    // Verified numerically beforehand, including that neither face's
+    // ray registers a spurious hit against ITSELF (dist2intersect for a
+    // ray starting exactly on its own face's plane comes out at/under
+    // FLOAT_tiny, correctly rejected) and that the large triangle's own
+    // ray - which points further away in +Z, not back down toward z=0 -
+    // never reaches the small triangle either.
+    app.allVertices = new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {0, 1, 0},        // face 1 (index 0 is an unused placeholder below)
+      {-10, -10, 5}, {10, -10, 5}, {0, 10, 5} // face 2
+    };
+    app.allFaces.nodes = new int[][]{
+      {0, 1, 2}, // index 0: placeholder, never selected/touched
+      {0, 1, 2}, // index 1: the small triangle - should get reversed
+      {3, 4, 5}  // index 2: the large triangle - should stay unchanged
+    };
+    app.allFaces.options = new int[][]{
+      {0, 0, 0, 1, 0, 0}, {0, 0, 0, 1, 0, 0}, {0, 0, 0, 1, 0, 0}
+    };
+
+    app.Select3D.Face_ids = new int[]{1, 2};
+    app.current_ObjectCategory = app.ObjectCategory.FACE;
+
+    app.Modify3D.autoNormalFaces_Selection();
+
+    assertArrayEquals(new int[]{2, 1, 0}, app.allFaces.nodes[1]); // fully reversed
+    assertArrayEquals(new int[]{3, 4, 5}, app.allFaces.nodes[2]); // unchanged - its own ray hit nothing
+  }
+
+  // --- findOwningGroupId, spliceFaceWithNewFaces, appendNewFaceSelection ---
+  //
+  // These three are exercised indirectly by nearly every integration
+  // test above, but hadn't been checked in isolation - direct tests
+  // pin down their own specific contracts more precisely.
+
+  @Test
+  void findOwningGroupId_onlySearchesWithinGroupIdsNotEveryGroup () {
+    app.allGroups.makeEmpty(3);
+    app.allGroups.Faces[0] = new int[]{0, 1};
+    app.allGroups.Faces[1] = new int[]{2, 3}; // deliberately excluded from Group_ids below
+    app.allGroups.Faces[2] = new int[]{4, 5};
+
+    app.Select3D.Group_ids = new int[]{0, 2}; // group 1 is not searchable, even though it exists
+
+    assertEquals(0, app.Modify3D.findOwningGroupId(0));
+    assertEquals(2, app.Modify3D.findOwningGroupId(5));
+    assertEquals(-1, app.Modify3D.findOwningGroupId(3)); // owned by group 1, which isn't in Group_ids
+  }
+
+  @Test
+  void spliceFaceWithNewFaces_replacesOneFaceWithSeveralInPlace () {
+    app.allFaces.nodes = new int[][]{{0}, {1}, {2}};
+    app.allFaces.options = new int[][]{{100}, {101}, {102}};
+
+    ArrayList<int[]> midNodes = new ArrayList<int[]>();
+    midNodes.add(new int[]{10});
+    midNodes.add(new int[]{11});
+    ArrayList<int[]> midOptions = new ArrayList<int[]>();
+    midOptions.add(new int[]{110});
+    midOptions.add(new int[]{111});
+
+    app.Modify3D.spliceFaceWithNewFaces(1, midNodes, midOptions);
+
+    assertEquals(4, app.allFaces.nodes.length);
+    assertArrayEquals(new int[]{0}, app.allFaces.nodes[0]);   // face before the splice point, untouched
+    assertArrayEquals(new int[]{10}, app.allFaces.nodes[1]);  // the two new faces...
+    assertArrayEquals(new int[]{11}, app.allFaces.nodes[2]);  // ...replacing the original face 1
+    assertArrayEquals(new int[]{2}, app.allFaces.nodes[3]);   // face after the splice point, untouched
+
+    assertArrayEquals(new int[]{110}, app.allFaces.options[1]);
+    assertArrayEquals(new int[]{111}, app.allFaces.options[2]);
+  }
+
+  @Test
+  void appendNewFaceSelection_concatenatesOntoTheExistingSelection () {
+    app.Select3D.Face_ids = new int[]{5};
+
+    ArrayList<Integer> newIndices = new ArrayList<Integer>();
+    newIndices.add(7);
+    newIndices.add(8);
+    app.Modify3D.appendNewFaceSelection(newIndices);
+
+    assertArrayEquals(new int[]{5, 7, 8}, app.Select3D.Face_ids);
+  }
+
+  @Test
+  void appendNewFaceSelection_isANoOpForAnEmptyList () {
+    app.Select3D.Face_ids = new int[]{5};
+    app.Modify3D.appendNewFaceSelection(new ArrayList<Integer>());
+    assertArrayEquals(new int[]{5}, app.Select3D.Face_ids);
   }
 }
