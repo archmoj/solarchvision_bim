@@ -542,20 +542,54 @@ class ModifyGeometryTest {
     assertEquals(0, app.Select3D.Vertex_ids.length); // deselected afterward
   }
 
+  // --- weldSceneVertices_Selection (a full integration test) ----------
+  //
+  // Fixed bug: this function used to declare `int found = -1;`
+  // immediately followed by `if (found != -1) { ... }` around both its
+  // faces-search and polylines-search loops - a condition that could
+  // never be true, since `found` was just set to -1 with nothing in
+  // between to change it. Both searches were unreachable dead code, so
+  // the function did nothing except select vertices, build an all-false
+  // toRemove array, and deselect - no welding ever actually happened.
+  // Fixed by removing those two guards (see Modify3D.pde); `found` is
+  // what those searches COMPUTE, not a precondition for running them,
+  // matching the pattern weldObjectsVertices_Selection already used
+  // correctly.
+  //
+  // Note the weld direction here: iterating Vertex_ids from largest to
+  // smallest and only matching `q > vNo` means a higher-indexed vertex
+  // gets welded INTO a lower-indexed one - the lower index always
+  // survives.
+
+  @Test
+  void weldSceneVertices_mergesNearbyVerticesAcrossTheWholeSceneNotJustTheSelection () {
+    // Point 0 and point 1 are 0.001 apart; point 2 is far away.
+    app.allVertices = new float[][]{{0, 0, 0}, {0.001f, 0, 0}, {5, 5, 5}};
+    app.allFaces.nodes = new int[][]{{1}}; // one face referencing the higher-indexed point of the close pair
+    app.allPolylines.nodes = new int[0][];
+
+    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.Vertex_ids = new int[]{0, 1, 2};
+
+    app.Modify3D.weldSceneVertices_Selection(0.01f);
+
+    // Point 1 (the higher index) got welded into point 0 (the lower
+    // index, which survives) and removed; point 2 (too far to merge)
+    // becomes the new index 1 after compaction.
+    assertEquals(2, app.allVertices.length);
+    assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
+    assertArrayEquals(new float[]{5, 5, 5}, app.allVertices[1], 0.0001f);
+
+    assertArrayEquals(new int[]{0}, app.allFaces.nodes[0]); // redirected from 1 to the surviving 0
+
+    assertEquals(0, app.Select3D.Vertex_ids.length); // deselected afterward
+  }
+
   // --- weldObjectsVertices_Selection (a full integration test) --------
   //
-  // NOTE: this function's sibling, weldSceneVertices_Selection, has a
-  // dead-code bug - it declares `int found = -1;` immediately followed
-  // by `if (found != -1) { ... }`, so that condition can never be true
-  // and the entire welding logic (both the faces and polylines search
-  // loops) never runs. weldSceneVertices_Selection is therefore
-  // currently a no-op in practice (it selects vertices, builds an
-  // all-false toRemove array, and deselects - nothing is ever welded).
-  // Flagged separately rather than fixed here; no test is written
-  // against that function since testing broken behavior isn't useful,
-  // and the correct fix isn't assumed without confirmation. This
-  // function does NOT share that bug - its search loop has no such
-  // guard - so it's tested normally below.
+  // This function does NOT share weldSceneVertices_Selection's bug
+  // (fixed above) - its search loop has no such guard - so it was
+  // already tested correctly.
 
   @Test
   void weldObjectsVertices_mergesNearbyVerticesAndRedirectsAllReferences () {

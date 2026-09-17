@@ -1,6 +1,6 @@
 class solarchvision_Modify3D {
 
-  private final static String CLASS_STAMP = "Modify3D";
+  final static String CLASS_STAMP = "Modify3D";
 
   void selectVertices_fromCurrentSelection () {
     if (current_ObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Vertices();
@@ -93,31 +93,27 @@ class solarchvision_Modify3D {
       int vNo = Select3D.Vertex_ids[o];
       int found = -1;
 
-      if (found != -1) {
-        for (int i = 0; i < allFaces.nodes.length; i++) {
-          for (int j = 0; j < allFaces.nodes[i].length; j++) {
-            int q = allFaces.nodes[i][j];
-            if (q > vNo) { // it is faster than (q != vNo)
-              float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-              if (d <= max_distance) {
-                allFaces.nodes[i][j] = vNo;
-                found = q;
-              }
+      for (int i = 0; i < allFaces.nodes.length; i++) {
+        for (int j = 0; j < allFaces.nodes[i].length; j++) {
+          int q = allFaces.nodes[i][j];
+          if (q > vNo) { // it is faster than (q != vNo)
+            float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+            if (d <= max_distance) {
+              allFaces.nodes[i][j] = vNo;
+              found = q;
             }
           }
         }
       }
 
-      if (found != -1) {
-        for (int i = 0; i < allPolylines.nodes.length; i++) {
-          for (int j = 0; j < allPolylines.nodes[i].length; j++) {
-            int q = allPolylines.nodes[i][j];
-            if (q > vNo) { // it is faster than (q != vNo)
-              float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-              if (d <= max_distance) {
-                allPolylines.nodes[i][j] = vNo;
-                found = q;
-              }
+      for (int i = 0; i < allPolylines.nodes.length; i++) {
+        for (int j = 0; j < allPolylines.nodes[i].length; j++) {
+          int q = allPolylines.nodes[i][j];
+          if (q > vNo) { // it is faster than (q != vNo)
+            float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+            if (d <= max_distance) {
+              allPolylines.nodes[i][j] = vNo;
+              found = q;
             }
           }
         }
@@ -292,7 +288,7 @@ class solarchvision_Modify3D {
     return (startFace <= f) && (f <= endFace);
   }
 
-  private int findOwningGroupId (int f) {
+  int findOwningGroupId (int f) {
     for (int i = 0; i < Select3D.Group_ids.length; i++) {
       int OBJ_ID = Select3D.Group_ids[i];
       if (isFaceInGroupRange(f, OBJ_ID)) return OBJ_ID;
@@ -321,7 +317,7 @@ class solarchvision_Modify3D {
     return G;
   }
 
-  private void spliceFaceWithNewFaces (int f, ArrayList<int[]> midNodes, ArrayList<int[]> midOptions) {
+  void spliceFaceWithNewFaces (int f, ArrayList<int[]> midNodes, ArrayList<int[]> midOptions) {
     int[][] startList_Faces_nodes = (int[][]) subset(allFaces.nodes, 0, f);
     int[][] endList_Faces_nodes = (int[][]) subset(allFaces.nodes, f + 1);
 
@@ -338,7 +334,7 @@ class solarchvision_Modify3D {
     allFaces.options = (int[][]) concat(startList_Faces_options, endList_Faces_options);
   }
 
-  private void appendNewFaceSelection (ArrayList<Integer> newFaceIndices_L) {
+  void appendNewFaceSelection (ArrayList<Integer> newFaceIndices_L) {
     if (newFaceIndices_L.size() == 0) return;
     int[] newFaceIndices = new int[newFaceIndices_L.size()];
     for (int i = 0; i < newFaceIndices.length; i++) newFaceIndices[i] = newFaceIndices_L.get(i);
