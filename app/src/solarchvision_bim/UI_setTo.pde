@@ -1,4 +1,4 @@
-void UI_set_to_Create_Nothing () {
+void UI_setTo_Create_Nothing () {
 
   CreateObject = CREATE.Nothing;
 
@@ -8,37 +8,37 @@ void UI_set_to_Create_Nothing () {
 }
 
 
-void UI_set_to_Create_allModel1Ds () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_allModel1Ds () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Model1Ds;
   SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
 }
 
 
-void UI_set_to_Create_Tree () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Tree () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Plant;
   SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
 }
 
-void UI_set_to_Create_Person () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Person () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Person;
   SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
 }
 
-void UI_set_to_Create_Vertex () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Vertex () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Vertex;
   SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
 }
 
-void UI_set_to_Create_Face () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Face () {
+  UI_setTo_Create_Nothing();
 
   current_Material = User3D.default_Material;
   current_Tessellation = User3D.default_Tessellation;
@@ -53,8 +53,8 @@ void UI_set_to_Create_Face () {
   SOLARCHVISION_switch_category(ObjectCategory.FACE);
 }
 
-void UI_set_to_Create_Polyline () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Polyline () {
+  UI_setTo_Create_Nothing();
 
   current_Material = User3D.default_Material;
   current_Tessellation = User3D.default_Tessellation;
@@ -69,23 +69,23 @@ void UI_set_to_Create_Polyline () {
   SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
 }
 
-void UI_set_to_Create_Solid () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Solid () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Solid;
   SOLARCHVISION_switch_category(ObjectCategory.SOLID);
 }
 
-void UI_set_to_Create_Section () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Section () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Section;
   SOLARCHVISION_switch_category(ObjectCategory.SECTION);
 }
 
 
-void UI_set_to_Create_Camera () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Camera () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Camera;
   SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
@@ -96,8 +96,8 @@ void UI_set_to_Create_Camera () {
 
 
 
-void UI_set_to_Create_Parametric (int n) {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Parametric (int n) {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Parametric;
   User3D.create_Parametric_Type = n;
@@ -105,64 +105,64 @@ void UI_set_to_Create_Parametric (int n) {
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Pyramid () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Pyramid () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Pyramid;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Plane () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Plane () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Plane;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Polygon () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Polygon () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Polygon;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Extrude () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Extrude () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Extrude;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Hyper () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Hyper () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Hyper;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_House3 () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_House3 () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.House3;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_House2 () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_House2 () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.House2;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_House1 () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_House1 () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.House1;
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Box () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Box () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.SuperOBJ;
 
@@ -174,8 +174,8 @@ void UI_set_to_Create_Box () {
 }
 
 
-void UI_set_to_Create_Icosahedron () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Icosahedron () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.SuperOBJ;
 
@@ -186,8 +186,8 @@ void UI_set_to_Create_Icosahedron () {
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Octahedron () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Octahedron () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.SuperOBJ;
 
@@ -198,8 +198,8 @@ void UI_set_to_Create_Octahedron () {
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Sphere () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Sphere () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.SuperOBJ;
 
@@ -210,8 +210,8 @@ void UI_set_to_Create_Sphere () {
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Cylinder () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Cylinder () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.SuperOBJ;
 
@@ -222,8 +222,8 @@ void UI_set_to_Create_Cylinder () {
   SOLARCHVISION_switch_category(ObjectCategory.GROUP);
 }
 
-void UI_set_to_Create_Cushion () {
-  UI_set_to_Create_Nothing();
+void UI_setTo_Create_Cushion () {
+  UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.SuperOBJ;
 
@@ -237,7 +237,7 @@ void UI_set_to_Create_Cushion () {
 
 
 
-void UI_set_to_Modify_Move (int n) {
+void UI_setTo_Modify_Move (int n) {
   WIN3D.UI_CurrentTask = UITASK.Move;
 
   Select3D.posVector = n;
@@ -245,7 +245,7 @@ void UI_set_to_Modify_Move (int n) {
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Scale (int n) {
+void UI_setTo_Modify_Scale (int n) {
   WIN3D.UI_CurrentTask = UITASK.Scale;
 
   Select3D.scaleVector = n;
@@ -254,7 +254,7 @@ void UI_set_to_Modify_Scale (int n) {
 }
 
 
-void UI_set_to_Modify_Rotate (int n) {
+void UI_setTo_Modify_Rotate (int n) {
   WIN3D.UI_CurrentTask = UITASK.Rotate;
 
   Select3D.rotVector = n;
@@ -262,70 +262,70 @@ void UI_set_to_Modify_Rotate (int n) {
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Seed (int n) {
+void UI_setTo_Modify_Seed (int n) {
   WIN3D.UI_CurrentTask = UITASK.Seed_Material;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Tessellation (int n) {
+void UI_setTo_Modify_Tessellation (int n) {
   WIN3D.UI_CurrentTask = UITASK.Tessellation;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Layer (int n) {
+void UI_setTo_Modify_Layer (int n) {
   WIN3D.UI_CurrentTask = UITASK.Layer;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Visibility (int n) {
+void UI_setTo_Modify_Visibility (int n) {
   WIN3D.UI_CurrentTask = UITASK.Visibility;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Weight (int n) {
+void UI_setTo_Modify_Weight (int n) {
   WIN3D.UI_CurrentTask = UITASK.Weight;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_DegreeMax (int n) {
+void UI_setTo_Modify_DegreeMax (int n) {
   WIN3D.UI_CurrentTask = UITASK.DegreeMax;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_BranchTilt (int n) {
+void UI_setTo_Modify_BranchTilt (int n) {
   WIN3D.UI_CurrentTask = UITASK.BranchTilt;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_BranchTwist (int n) {
+void UI_setTo_Modify_BranchTwist (int n) {
   WIN3D.UI_CurrentTask = UITASK.BranchTwist;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_BranchRatio (int n) {
+void UI_setTo_Modify_BranchRatio (int n) {
   WIN3D.UI_CurrentTask = UITASK.BranchRatio;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_TreeBase (int n) {
+void UI_setTo_Modify_TreeBase (int n) {
   WIN3D.UI_CurrentTask = UITASK.TreeBase;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
@@ -333,42 +333,42 @@ void UI_set_to_Modify_TreeBase (int n) {
 }
 
 
-void UI_set_to_Modify_TrunkSize (int n) {
+void UI_setTo_Modify_TrunkSize (int n) {
   WIN3D.UI_CurrentTask = UITASK.TrunkSize;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_LeafSize (int n) {
+void UI_setTo_Modify_LeafSize (int n) {
   WIN3D.UI_CurrentTask = UITASK.LeafSize;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Model1DsProps (int n) {
+void UI_setTo_Modify_Model1DsProps (int n) {
   WIN3D.UI_CurrentTask = UITASK.Model1DsProps;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Pivot (int n) {
+void UI_setTo_Modify_Pivot (int n) {
   WIN3D.UI_CurrentTask = UITASK.Pivot;
   WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Normal (int n) {
+void UI_setTo_Modify_Normal (int n) {
   WIN3D.UI_CurrentTask = UITASK.Normal;
   WIN3D.UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot
 
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_FirstVertex (int n) {
+void UI_setTo_Modify_FirstVertex (int n) {
   WIN3D.UI_CurrentTask = UITASK.FirstVertex;
   WIN3D.UI_TaskModifyParameter = n; // 1:default
 
@@ -378,7 +378,7 @@ void UI_set_to_Modify_FirstVertex (int n) {
 
 
 
-void UI_set_to_Modify_Drop (int n) {
+void UI_setTo_Modify_Drop (int n) {
   WIN3D.UI_CurrentTask = UITASK.Drop;
 
   WIN3D.UI_TaskModifyParameter = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
@@ -387,7 +387,7 @@ void UI_set_to_Modify_Drop (int n) {
 }
 
 
-void UI_set_to_Modify_GetLength (int n) {
+void UI_setTo_Modify_GetLength (int n) {
   WIN3D.UI_CurrentTask = UITASK.GetLength;
 
   WIN3D.UI_TaskModifyParameter = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane)
@@ -395,7 +395,7 @@ void UI_set_to_Modify_GetLength (int n) {
   UI_rollout.revise();
 }
 
-void UI_set_to_Modify_Power (int n) {
+void UI_setTo_Modify_Power (int n) {
 
   if (n == 0) WIN3D.UI_CurrentTask = UITASK.PowerX; // x
   if (n == 1) WIN3D.UI_CurrentTask = UITASK.PowerY; // y
@@ -416,7 +416,7 @@ void UI_set_to_Modify_Power (int n) {
 
 
 
-void UI_set_to_View_ProjectionType (int n) {
+void UI_setTo_View_ProjectionType (int n) {
   WIN3D.ViewType = n;
 
   UI_rollout.revise();
@@ -424,7 +424,7 @@ void UI_set_to_View_ProjectionType (int n) {
   SOLARCHVISION_view_changed();
 }
 
-void UI_set_to_View_PickSelect (int n) {
+void UI_setTo_View_PickSelect (int n) {
 
   WIN3D.UI_CurrentTask = UITASK.PickSelect;
 
@@ -441,7 +441,7 @@ void UI_set_to_View_PickSelect (int n) {
   UI_rollout.revise();
 }
 
-void UI_set_to_View_WindowSelect (int n) {
+void UI_setTo_View_WindowSelect (int n) {
   WIN3D.UI_CurrentTask = UITASK.RectSelect;
 
   addNewSelectionToPreviousSelection = 0;
@@ -457,7 +457,7 @@ void UI_set_to_View_WindowSelect (int n) {
   UI_rollout.revise();
 }
 
-void UI_set_to_View_PivotX (int n) {
+void UI_setTo_View_PivotX (int n) {
 
   Select3D.alignX = n;
 
@@ -466,7 +466,7 @@ void UI_set_to_View_PivotX (int n) {
   SOLARCHVISION_view_changed();
 }
 
-void UI_set_to_View_PivotY (int n) {
+void UI_setTo_View_PivotY (int n) {
 
   Select3D.alignY = n;
 
@@ -475,7 +475,7 @@ void UI_set_to_View_PivotY (int n) {
   SOLARCHVISION_view_changed();
 }
 
-void UI_set_to_View_PivotZ (int n) {
+void UI_setTo_View_PivotZ (int n) {
 
   Select3D.alignZ = n;
 
@@ -485,7 +485,7 @@ void UI_set_to_View_PivotZ (int n) {
 }
 
 
-void UI_set_to_View_Truck (int n) {
+void UI_setTo_View_Truck (int n) {
 
   if (n == 0) {
     WIN3D.UI_CurrentTask = UITASK.Zoom_Orbit_Pan;
@@ -507,7 +507,7 @@ void UI_set_to_View_Truck (int n) {
 }
 
 
-void UI_set_to_View_DistMouseXY (int n) {
+void UI_setTo_View_DistMouseXY (int n) {
 
   if (n == 0) {
     WIN3D.UI_CurrentTask = UITASK.DistMouseXY_TargetRollXY_TargetRollZ;
@@ -518,7 +518,7 @@ void UI_set_to_View_DistMouseXY (int n) {
 
 
 
-void UI_set_to_View_CameraDistance (int n) {
+void UI_setTo_View_CameraDistance (int n) {
 
   if (n == 0) {
     WIN3D.UI_CurrentTask = UITASK.CameraDistance_TargetRollXY_TargetRollZ;
@@ -529,7 +529,7 @@ void UI_set_to_View_CameraDistance (int n) {
 
 
 
-void UI_set_to_View_CameraRoll (int n) {
+void UI_setTo_View_CameraRoll (int n) {
 
   if (n == 0) {
     WIN3D.UI_CurrentTask = UITASK.CameraRoll_Pan;
@@ -552,7 +552,7 @@ void UI_set_to_View_CameraRoll (int n) {
 
 
 
-void UI_set_to_View_TargetRoll (int n) {
+void UI_setTo_View_TargetRoll (int n) {
 
   if (n == 0) {
     WIN3D.UI_CurrentTask = UITASK.TargetRoll_Pan;
@@ -574,7 +574,7 @@ void UI_set_to_View_TargetRoll (int n) {
 }
 
 
-void UI_set_to_View_Orbit (int n) {
+void UI_setTo_View_Orbit (int n) {
 
   if (n == 0) {
     WIN3D.UI_CurrentTask = UITASK.Zoom_Orbit_Pan;
@@ -597,7 +597,7 @@ void UI_set_to_View_Orbit (int n) {
 
 
 
-void UI_set_to_View_LandOrbit (int n) {
+void UI_setTo_View_LandOrbit (int n) {
 
   WIN3D.UI_CurrentTask = UITASK.LandOrbit_Pan_TargetRollZ;
 
@@ -606,12 +606,12 @@ void UI_set_to_View_LandOrbit (int n) {
 
 
 
-void UI_set_to_View_LookAtSelection (int n) {
+void UI_setTo_View_LookAtSelection (int n) {
 
   WIN3D.look_3DViewport_towards_Selection();
 
   { // automatically set another choice of ineterest
-    UI_set_to_View_CameraDistance(0);
+    UI_setTo_View_CameraDistance(0);
     UI_toolBar.revise();
   }
 
@@ -621,7 +621,7 @@ void UI_set_to_View_LookAtSelection (int n) {
 }
 
 
-void UI_set_to_View_LookAtDirection (int n) {
+void UI_setTo_View_LookAtDirection (int n) {
 
   WIN3D.UI_CurrentTask = UITASK.LookAtDirection;
 
@@ -629,7 +629,7 @@ void UI_set_to_View_LookAtDirection (int n) {
 }
 
 
-void UI_set_to_View_LookAtOrigin (int n) {
+void UI_setTo_View_LookAtOrigin (int n) {
 
   WIN3D.position_X = 0;
   WIN3D.position_Y = 0;
@@ -638,7 +638,7 @@ void UI_set_to_View_LookAtOrigin (int n) {
   {
     // automatically set another choice of ineterest
 
-    UI_set_to_View_Truck(0);
+    UI_setTo_View_Truck(0);
     UI_toolBar.revise();
   }
 
@@ -648,7 +648,7 @@ void UI_set_to_View_LookAtOrigin (int n) {
 }
 
 
-void UI_set_to_View_Pan (int n) {
+void UI_setTo_View_Pan (int n) {
 
   if (n == 0) {
     WIN3D.UI_CurrentTask = UITASK.Pan_TargetRoll;
@@ -666,7 +666,7 @@ void UI_set_to_View_Pan (int n) {
   UI_rollout.revise();
 }
 
-void UI_set_to_View_ZOOM (int n) {
+void UI_setTo_View_ZOOM (int n) {
   WIN3D.UI_CurrentTask = UITASK.Pan_Height;
 
   UI_rollout.revise();
@@ -678,7 +678,7 @@ void UI_set_to_View_ZOOM (int n) {
   }
 }
 
-void UI_set_to_View_3DModelSize () {
+void UI_setTo_View_3DModelSize () {
 
   WIN3D.UI_CurrentTask = UITASK.ModelSize_Pan_TargetRoll;
 
@@ -687,7 +687,7 @@ void UI_set_to_View_3DModelSize () {
   SOLARCHVISION_view_changed();
 }
 
-void UI_set_to_View_SkydomeSize () {
+void UI_setTo_View_SkydomeSize () {
 
   WIN3D.UI_CurrentTask = UITASK.SkydomeSize;
 
@@ -696,7 +696,7 @@ void UI_set_to_View_SkydomeSize () {
   SOLARCHVISION_view_changed();
 }
 
-void UI_set_to_View_AllModelSize () {
+void UI_setTo_View_AllModelSize () {
 
   WIN3D.UI_CurrentTask = UITASK.AllModelSize;
 
@@ -707,7 +707,7 @@ void UI_set_to_View_AllModelSize () {
 
 boolean updateBars = false;
 
-void UI_set_to_Viewport (int n) {
+void UI_setTo_Viewport (int n) {
 
   updateBars = true;
 
@@ -717,7 +717,7 @@ void UI_set_to_Viewport (int n) {
   UI_rollout.revise();
 }
 
-void UI_set_to_View_3DViewPoint (int n) {
+void UI_setTo_View_3DViewPoint (int n) {
 
   WIN3D.currentCamera = 0;
 

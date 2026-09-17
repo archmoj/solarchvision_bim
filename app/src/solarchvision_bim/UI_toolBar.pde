@@ -388,136 +388,136 @@ class solarchvision_UI_toolBar {
       case "Living Type":
       case "Building Type":
         switch (this.Items[i][j]) {
-          case "1D-Tree": UI_set_to_Create_allModel1Ds(); break;
-          case "2D-Tree": UI_set_to_Create_Tree(); break;
-          case "Person": UI_set_to_Create_Person(); break;
-          case "Point": UI_set_to_Create_Vertex(); break;
-          case "Polyline": UI_set_to_Create_Polyline(); break;
-          case "Surface": UI_set_to_Create_Face(); break;
-          case "Pyramid": UI_set_to_Create_Pyramid(); break;
-          case "Plane": UI_set_to_Create_Plane(); break;
-          case "Polygon": UI_set_to_Create_Polygon(); break;
-          case "Extrude": UI_set_to_Create_Extrude(); break;
-          case "Hyper": UI_set_to_Create_Hyper(); break;
-          case "House3": UI_set_to_Create_House3(); break;
-          case "House2": UI_set_to_Create_House2(); break;
-          case "House1": UI_set_to_Create_House1(); break;
-          case "Box": UI_set_to_Create_Box(); break;
-          case "Icosahedron": UI_set_to_Create_Icosahedron(); break;
-          case "Octahedron": UI_set_to_Create_Octahedron(); break;
-          case "Sphere": UI_set_to_Create_Sphere(); break;
-          case "Cylinder": UI_set_to_Create_Cylinder(); break;
-          case "Cushion": UI_set_to_Create_Cushion(); break;
-          case "Parametric": UI_set_to_Create_Parametric(User3D.create_Parametric_Type); break;
+          case "1D-Tree": UI_setTo_Create_allModel1Ds(); break;
+          case "2D-Tree": UI_setTo_Create_Tree(); break;
+          case "Person": UI_setTo_Create_Person(); break;
+          case "Point": UI_setTo_Create_Vertex(); break;
+          case "Polyline": UI_setTo_Create_Polyline(); break;
+          case "Surface": UI_setTo_Create_Face(); break;
+          case "Pyramid": UI_setTo_Create_Pyramid(); break;
+          case "Plane": UI_setTo_Create_Plane(); break;
+          case "Polygon": UI_setTo_Create_Polygon(); break;
+          case "Extrude": UI_setTo_Create_Extrude(); break;
+          case "Hyper": UI_setTo_Create_Hyper(); break;
+          case "House3": UI_setTo_Create_House3(); break;
+          case "House2": UI_setTo_Create_House2(); break;
+          case "House1": UI_setTo_Create_House1(); break;
+          case "Box": UI_setTo_Create_Box(); break;
+          case "Icosahedron": UI_setTo_Create_Icosahedron(); break;
+          case "Octahedron": UI_setTo_Create_Octahedron(); break;
+          case "Sphere": UI_setTo_Create_Sphere(); break;
+          case "Cylinder": UI_setTo_Create_Cylinder(); break;
+          case "Cushion": UI_setTo_Create_Cushion(); break;
+          case "Parametric": UI_setTo_Create_Parametric(User3D.create_Parametric_Type); break;
         }
         break;
 
       case "Change Seed/Material":
         switch (this.Items[i][j]) {
-          case "0": UI_set_to_Modify_Seed(0); break;
-          case "1": UI_set_to_Modify_Seed(1); break;
-          case "2": UI_set_to_Modify_Seed(2); break;
-          case "3": UI_set_to_Modify_Seed(3); break;
+          case "0": UI_setTo_Modify_Seed(0); break;
+          case "1": UI_setTo_Modify_Seed(1); break;
+          case "2": UI_setTo_Modify_Seed(2); break;
+          case "3": UI_setTo_Modify_Seed(3); break;
         }
         break;
 
       case "Change Tessellation":
         switch (this.Items[i][j]) {
-          case "0": UI_set_to_Modify_Tessellation(0); break;
-          case "1": UI_set_to_Modify_Tessellation(1); break;
-          case "2": UI_set_to_Modify_Tessellation(2); break;
-          case "3": UI_set_to_Modify_Tessellation(3); break;
+          case "0": UI_setTo_Modify_Tessellation(0); break;
+          case "1": UI_setTo_Modify_Tessellation(1); break;
+          case "2": UI_setTo_Modify_Tessellation(2); break;
+          case "3": UI_setTo_Modify_Tessellation(3); break;
         }
         break;
 
       case "Change Layer":
         switch (this.Items[i][j]) {
-          case "0": UI_set_to_Modify_Layer(0); break;
-          case "1": UI_set_to_Modify_Layer(1); break;
-          case "2": UI_set_to_Modify_Layer(2); break;
-          case "3": UI_set_to_Modify_Layer(3); break;
+          case "0": UI_setTo_Modify_Layer(0); break;
+          case "1": UI_setTo_Modify_Layer(1); break;
+          case "2": UI_setTo_Modify_Layer(2); break;
+          case "3": UI_setTo_Modify_Layer(3); break;
         }
         break;
 
       case "Change Visibility":
         switch (this.Items[i][j]) {
-          case "0": UI_set_to_Modify_Visibility(0); break;
-          case "1": UI_set_to_Modify_Visibility(1); break;
-          case "2": UI_set_to_Modify_Visibility(2); break;
-          case "3": UI_set_to_Modify_Visibility(3); break;
+          case "0": UI_setTo_Modify_Visibility(0); break;
+          case "1": UI_setTo_Modify_Visibility(1); break;
+          case "2": UI_setTo_Modify_Visibility(2); break;
+          case "3": UI_setTo_Modify_Visibility(3); break;
         }
         break;
 
       case "Change Weight":
         switch (this.Items[i][j]) {
-          case "0": UI_set_to_Modify_Weight(0); break;
-          case "1": UI_set_to_Modify_Weight(1); break;
-          case "2": UI_set_to_Modify_Weight(2); break;
-          case "3": UI_set_to_Modify_Weight(3); break;
+          case "0": UI_setTo_Modify_Weight(0); break;
+          case "1": UI_setTo_Modify_Weight(1); break;
+          case "2": UI_setTo_Modify_Weight(2); break;
+          case "3": UI_setTo_Modify_Weight(3); break;
         }
         break;
 
       case "Normal":
         switch (this.Items[i][j]) {
-          case "1": UI_set_to_Modify_Normal(1); break;
-          case "2": UI_set_to_Modify_Normal(2); break;
-          case "3": UI_set_to_Modify_Normal(3); break;
+          case "1": UI_setTo_Modify_Normal(1); break;
+          case "2": UI_setTo_Modify_Normal(2); break;
+          case "3": UI_setTo_Modify_Normal(3); break;
         }
         break;
 
       case "First Vertex":
-        if ((this.Items[i][j]).equals("")) UI_set_to_Modify_FirstVertex(1);
+        if ((this.Items[i][j]).equals("")) UI_setTo_Modify_FirstVertex(1);
         break;
 
-      case "Rotate": UI_set_to_Modify_Rotate(j - 1); break;
-      case "Power": UI_set_to_Modify_Power(j - 1); break;
-      case "Scale": UI_set_to_Modify_Scale(j - 1); break;
-      case "Move": UI_set_to_Modify_Move(j - 1); break;
-      case "Get Length": UI_set_to_Modify_GetLength(j - 1); break;
-      case "Drop": UI_set_to_Modify_Drop(j - 1); break;
+      case "Rotate": UI_setTo_Modify_Rotate(j - 1); break;
+      case "Power": UI_setTo_Modify_Power(j - 1); break;
+      case "Scale": UI_setTo_Modify_Scale(j - 1); break;
+      case "Move": UI_setTo_Modify_Move(j - 1); break;
+      case "Get Length": UI_setTo_Modify_GetLength(j - 1); break;
+      case "Drop": UI_setTo_Modify_Drop(j - 1); break;
 
-      case "Projection Type": UI_set_to_View_ProjectionType(j - 1); break;
+      case "Projection Type": UI_setTo_View_ProjectionType(j - 1); break;
 
-      case "Pick Select": UI_set_to_View_PickSelect(j - 1); break;
-      case "Window Select": UI_set_to_View_WindowSelect(j - 1); break;
+      case "Pick Select": UI_setTo_View_PickSelect(j - 1); break;
+      case "Window Select": UI_setTo_View_WindowSelect(j - 1); break;
 
-      case "PivotX": UI_set_to_View_PivotX(j - 2); break;
-      case "PivotY": UI_set_to_View_PivotY(j - 2); break;
-      case "PivotZ": UI_set_to_View_PivotZ(j - 2); break;
+      case "PivotX": UI_setTo_View_PivotX(j - 2); break;
+      case "PivotY": UI_setTo_View_PivotY(j - 2); break;
+      case "PivotZ": UI_setTo_View_PivotZ(j - 2); break;
 
-      case "Land Orbit": UI_set_to_View_LandOrbit(0); break;
+      case "Land Orbit": UI_setTo_View_LandOrbit(0); break;
 
-      case "Orbit": UI_set_to_View_Orbit(j - 1); break;
-      case "Camera Roll": UI_set_to_View_CameraRoll(j - 1); break;
-      case "Target Roll": UI_set_to_View_TargetRoll(j - 1); break;
+      case "Orbit": UI_setTo_View_Orbit(j - 1); break;
+      case "Camera Roll": UI_setTo_View_CameraRoll(j - 1); break;
+      case "Target Roll": UI_setTo_View_TargetRoll(j - 1); break;
 
-      case "Look At Origin": UI_set_to_View_LookAtOrigin(j - 1); break;
-      case "Look At Direction": UI_set_to_View_LookAtDirection(j - 1); break;
-      case "Look At Selection": UI_set_to_View_LookAtSelection(j - 1); break;
+      case "Look At Origin": UI_setTo_View_LookAtOrigin(j - 1); break;
+      case "Look At Direction": UI_setTo_View_LookAtDirection(j - 1); break;
+      case "Look At Selection": UI_setTo_View_LookAtSelection(j - 1); break;
 
-      case "Pan": UI_set_to_View_Pan(j - 1); break;
+      case "Pan": UI_setTo_View_Pan(j - 1); break;
 
       case "Zoom":
-        UI_set_to_View_ZOOM(j - 1);
+        UI_setTo_View_ZOOM(j - 1);
         this.Items[i][0] = "1"; // << set it to default choice next time
         break;
 
-      case "Camera Distance": UI_set_to_View_CameraDistance(0); break;
+      case "Camera Distance": UI_setTo_View_CameraDistance(0); break;
 
-      case "Dist XY": UI_set_to_View_DistMouseXY(0); break;
+      case "Dist XY": UI_setTo_View_DistMouseXY(0); break;
 
-      case "Dist Z": UI_set_to_View_Truck(0); break; // NOTE: intentionally forwards to Truck
-      case "Truck": UI_set_to_View_Truck(j - 1); break;
+      case "Dist Z": UI_setTo_View_Truck(0); break; // NOTE: intentionally forwards to Truck
+      case "Truck": UI_setTo_View_Truck(j - 1); break;
 
-      case "3D Model Size": UI_set_to_View_3DModelSize(); break;
+      case "3D Model Size": UI_setTo_View_3DModelSize(); break;
 
-      case "Skydome Size": UI_set_to_View_SkydomeSize(); break;
+      case "Skydome Size": UI_setTo_View_SkydomeSize(); break;
 
-      case "All Model Size": UI_set_to_View_AllModelSize(); break;
+      case "All Model Size": UI_setTo_View_AllModelSize(); break;
 
-      case "View Layout": UI_set_to_Viewport(j - 1); break;
+      case "View Layout": UI_setTo_Viewport(j - 1); break;
 
-      case "View Point": UI_set_to_View_3DViewPoint(j - 1); break;
+      case "View Point": UI_setTo_View_3DViewPoint(j - 1); break;
     }
   }
 

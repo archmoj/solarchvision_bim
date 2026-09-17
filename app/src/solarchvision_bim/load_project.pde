@@ -38,7 +38,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     addToLastGroup = false;
 
-    UI_set_to_Create_Nothing();
+    UI_setTo_Create_Nothing();
 
     WORLD.autoView = true;
 

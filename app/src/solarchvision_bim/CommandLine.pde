@@ -239,7 +239,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Rotate[X|Y|Z] r=? x=? y=? z=?";
 
-        UI_set_to_Modify_Rotate(2);
+        UI_setTo_Modify_Rotate(2);
         UI_toolBar.revise();
       }
 
@@ -391,7 +391,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Person m=? x=? y=? z=?";
 
-        UI_set_to_Create_Person();
+        UI_setTo_Create_Person();
       }
 
       break;
@@ -416,7 +416,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Tree2 m=? x=? y=? z=? h=?";
 
-        UI_set_to_Create_Tree();
+        UI_setTo_Create_Tree();
       }
 
       break;
@@ -468,7 +468,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Tree1 m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
 
-        UI_set_to_Create_allModel1Ds();
+        UI_setTo_Create_allModel1Ds();
       }
 
       break;
@@ -499,7 +499,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
 
-        UI_set_to_Create_Box();
+        UI_setTo_Create_Box();
       }
 
       break;
@@ -531,7 +531,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
 
-        UI_set_to_Create_Box();
+        UI_setTo_Create_Box();
       }
 
       break;
@@ -564,7 +564,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
-        UI_set_to_Create_House3();
+        UI_setTo_Create_House3();
       }
 
       break;
@@ -597,7 +597,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
-        UI_set_to_Create_House2();
+        UI_setTo_Create_House2();
       }
 
       break;
@@ -630,7 +630,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
 
-        UI_set_to_Create_House1();
+        UI_setTo_Create_House1();
       }
 
       break;
@@ -662,7 +662,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
 
-        UI_set_to_Create_Cylinder();
+        UI_setTo_Create_Cylinder();
       }
 
       break;
@@ -693,7 +693,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
 
-        UI_set_to_Create_Sphere();
+        UI_setTo_Create_Sphere();
       }
 
       break;
@@ -729,7 +729,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?";
 
-        UI_set_to_Create_Sphere();
+        UI_setTo_Create_Sphere();
       }
 
       break;
@@ -762,7 +762,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
 
-        UI_set_to_Create_Cushion();
+        UI_setTo_Create_Cushion();
       }
 
       break;
@@ -794,7 +794,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
 
-        UI_set_to_Create_Octahedron();
+        UI_setTo_Create_Octahedron();
       }
 
       break;
@@ -824,7 +824,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
 
-        UI_set_to_Create_Icosahedron();
+        UI_setTo_Create_Icosahedron();
       }
 
       break;
@@ -856,7 +856,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
 
-        UI_set_to_Create_Extrude();
+        UI_setTo_Create_Extrude();
       }
 
       break;
@@ -888,7 +888,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
 
-        UI_set_to_Create_Hyper();
+        UI_setTo_Create_Hyper();
       }
 
       break;
@@ -919,7 +919,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
 
-        UI_set_to_Create_Plane();
+        UI_setTo_Create_Plane();
       }
 
       break;
@@ -1186,7 +1186,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
 
-        UI_set_to_Create_Solid();
+        UI_setTo_Create_Solid();
       }
 
       break;
@@ -1215,7 +1215,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Section x=? y=? z=? r=? u=? v=? t=? i=? j=?";
 
-        UI_set_to_Create_Section();
+        UI_setTo_Create_Section();
       }
 
       break;
@@ -1245,7 +1245,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Camera px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=? t=?";
 
-        UI_set_to_Create_Camera();
+        UI_setTo_Create_Camera();
       }
 
       break;
@@ -1287,7 +1287,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Polyline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
 
-        UI_set_to_Create_Polyline();
+        UI_setTo_Create_Polyline();
       }
 
       break;
@@ -1335,7 +1335,7 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       else {
         return_message = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
 
-        UI_set_to_Create_Polyline();
+        UI_setTo_Create_Polyline();
       }
 
       break;
@@ -1346,15 +1346,15 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
       if (parts.length > 1) {
         for (int q = 1; q < parts.length; q++) {
           String low_case = parts[q].toLowerCase();
-               if (low_case.equals("minx")) UI_set_to_View_PivotX(-1);
-          else if (low_case.equals("midx")) UI_set_to_View_PivotX(0);
-          else if (low_case.equals("maxx")) UI_set_to_View_PivotX(1);
-          else if (low_case.equals("miny")) UI_set_to_View_PivotY(-1);
-          else if (low_case.equals("midy")) UI_set_to_View_PivotY(0);
-          else if (low_case.equals("maxy")) UI_set_to_View_PivotY(1);
-          else if (low_case.equals("minz")) UI_set_to_View_PivotZ(-1);
-          else if (low_case.equals("midz")) UI_set_to_View_PivotZ(0);
-          else if (low_case.equals("maxz")) UI_set_to_View_PivotZ(1);
+               if (low_case.equals("minx")) UI_setTo_View_PivotX(-1);
+          else if (low_case.equals("midx")) UI_setTo_View_PivotX(0);
+          else if (low_case.equals("maxx")) UI_setTo_View_PivotX(1);
+          else if (low_case.equals("miny")) UI_setTo_View_PivotY(-1);
+          else if (low_case.equals("midy")) UI_setTo_View_PivotY(0);
+          else if (low_case.equals("maxy")) UI_setTo_View_PivotY(1);
+          else if (low_case.equals("minz")) UI_setTo_View_PivotZ(-1);
+          else if (low_case.equals("midz")) UI_setTo_View_PivotZ(0);
+          else if (low_case.equals("maxz")) UI_setTo_View_PivotZ(1);
         }
         SOLARCHVISION_view_changed();
       }
@@ -1495,287 +1495,287 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
     case "DISTZ": {
 
-      UI_set_to_View_Truck(0);
+      UI_setTo_View_Truck(0);
 
       break;
     }
 
     case "DISTC": {
 
-      UI_set_to_View_CameraDistance(0);
+      UI_setTo_View_CameraDistance(0);
 
       break;
     }
 
     case "DISTP": {
 
-      UI_set_to_View_DistMouseXY(0);
+      UI_setTo_View_DistMouseXY(0);
 
       break;
     }
 
     case "SIZEALL": {
 
-      UI_set_to_View_AllModelSize();
+      UI_setTo_View_AllModelSize();
 
       break;
     }
 
     case "SIZESKY": {
 
-      UI_set_to_View_SkydomeSize();
+      UI_setTo_View_SkydomeSize();
 
       break;
     }
 
     case "SIZE3D": {
 
-      UI_set_to_View_3DModelSize();
+      UI_setTo_View_3DModelSize();
 
       break;
     }
 
     case "ALLVIEWPORTS": {
 
-      UI_set_to_Viewport(0);
+      UI_setTo_Viewport(0);
 
       break;
     }
 
     case "ENLARGE3D": {
 
-      UI_set_to_Viewport(1);
+      UI_setTo_Viewport(1);
 
       break;
     }
 
     case "LOOKORG": {
 
-      UI_set_to_View_LookAtOrigin(0);
+      UI_setTo_View_LookAtOrigin(0);
 
       break;
     }
 
     case "LOOKDIR": {
 
-      UI_set_to_View_LookAtDirection(0);
+      UI_setTo_View_LookAtDirection(0);
 
       break;
     }
 
     case "LOOKSEL": {
 
-      UI_set_to_View_LookAtSelection(0);
+      UI_setTo_View_LookAtSelection(0);
 
       break;
     }
 
     case "TRUCKZ": {
 
-      UI_set_to_View_Truck(0);
+      UI_setTo_View_Truck(0);
 
       break;
     }
 
     case "TRUCKX": {
 
-      UI_set_to_View_Truck(1);
+      UI_setTo_View_Truck(1);
 
       break;
     }
 
     case "TRUCKY": {
 
-      UI_set_to_View_Truck(2);
+      UI_setTo_View_Truck(2);
 
       break;
     }
 
     case "TARGETROLL": {
 
-      UI_set_to_View_TargetRoll(0);
+      UI_setTo_View_TargetRoll(0);
 
       break;
     }
 
     case "TARGETROLLZ": {
 
-      UI_set_to_View_TargetRoll(1);
+      UI_setTo_View_TargetRoll(1);
 
       break;
     }
 
     case "TARGETROLLXY": {
 
-      UI_set_to_View_TargetRoll(2);
+      UI_setTo_View_TargetRoll(2);
 
       break;
     }
 
     case "CAMERAROLL": {
 
-      UI_set_to_View_CameraRoll(0);
+      UI_setTo_View_CameraRoll(0);
 
       break;
     }
 
     case "CAMERAROLLZ": {
 
-      UI_set_to_View_CameraRoll(1);
+      UI_setTo_View_CameraRoll(1);
 
       break;
     }
 
     case "CAMERAROLLXY": {
 
-      UI_set_to_View_CameraRoll(2);
+      UI_setTo_View_CameraRoll(2);
 
       break;
     }
 
     case "ORBIT": {
 
-      UI_set_to_View_Orbit(0);
+      UI_setTo_View_Orbit(0);
 
       break;
     }
 
     case "ORBITZ": {
 
-      UI_set_to_View_Orbit(1);
+      UI_setTo_View_Orbit(1);
 
       break;
     }
 
     case "ORBITXY": {
 
-      UI_set_to_View_Orbit(2);
+      UI_setTo_View_Orbit(2);
 
       break;
     }
 
     case "LANDORBIT": {
 
-      UI_set_to_View_LandOrbit(0);
+      UI_setTo_View_LandOrbit(0);
 
       break;
     }
 
     case "PAN": {
 
-      UI_set_to_View_Pan(0);
+      UI_setTo_View_Pan(0);
 
       break;
     }
 
     case "PANX": {
 
-      UI_set_to_View_Pan(1);
+      UI_setTo_View_Pan(1);
 
       break;
     }
 
     case "PANY": {
 
-      UI_set_to_View_Pan(2);
+      UI_setTo_View_Pan(2);
 
       break;
     }
 
     case "ZOOM": {
 
-      UI_set_to_View_ZOOM(0);
+      UI_setTo_View_ZOOM(0);
 
       break;
     }
 
     case "NORMALZOOM": {
 
-      UI_set_to_View_ZOOM(1);
+      UI_setTo_View_ZOOM(1);
 
       break;
     }
 
     case "ORTHOGRAPHIC": {
 
-      UI_set_to_View_ProjectionType(0);
+      UI_setTo_View_ProjectionType(0);
 
       break;
     }
 
     case "PERSPECTIVE": {
 
-      UI_set_to_View_ProjectionType(1);
+      UI_setTo_View_ProjectionType(1);
 
       break;
     }
 
     case "TOP": {
 
-      UI_set_to_View_3DViewPoint(0);
+      UI_setTo_View_3DViewPoint(0);
 
       break;
     }
 
     case "FRONT": {
 
-      UI_set_to_View_3DViewPoint(1);
+      UI_setTo_View_3DViewPoint(1);
 
       break;
     }
 
     case "LEFT": {
 
-      UI_set_to_View_3DViewPoint(2);
+      UI_setTo_View_3DViewPoint(2);
 
       break;
     }
 
     case "BACK": {
 
-      UI_set_to_View_3DViewPoint(3);
+      UI_setTo_View_3DViewPoint(3);
 
       break;
     }
 
     case "RIGHT": {
 
-      UI_set_to_View_3DViewPoint(4);
+      UI_setTo_View_3DViewPoint(4);
 
       break;
     }
 
     case "BOTTOM": {
 
-      UI_set_to_View_3DViewPoint(5);
+      UI_setTo_View_3DViewPoint(5);
 
       break;
     }
 
     case "S.W.": {
 
-      UI_set_to_View_3DViewPoint(6);
+      UI_setTo_View_3DViewPoint(6);
 
       break;
     }
 
     case "S.E.": {
 
-      UI_set_to_View_3DViewPoint(7);
+      UI_setTo_View_3DViewPoint(7);
 
       break;
     }
 
     case "N.E.": {
 
-      UI_set_to_View_3DViewPoint(8);
+      UI_setTo_View_3DViewPoint(8);
 
       break;
     }
 
     case "N.W.": {
 
-      UI_set_to_View_3DViewPoint(9);
+      UI_setTo_View_3DViewPoint(9);
 
       break;
     }

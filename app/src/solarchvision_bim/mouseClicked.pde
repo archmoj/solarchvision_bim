@@ -2675,221 +2675,221 @@ private void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("1D-Tree", () -> {
-    UI_set_to_Create_allModel1Ds();
+    UI_setTo_Create_allModel1Ds();
   });
 
   SOLARCHVISION_menuActions.put("2D-Tree", () -> {
-    UI_set_to_Create_Tree();
+    UI_setTo_Create_Tree();
   });
 
   SOLARCHVISION_menuActions.put("Person", () -> {
-    UI_set_to_Create_Person();
+    UI_setTo_Create_Person();
   });
 
   SOLARCHVISION_menuActions.put("Point", () -> {
-    UI_set_to_Create_Vertex();
+    UI_setTo_Create_Vertex();
   });
 
   SOLARCHVISION_menuActions.put("Polyline", () -> {
-    UI_set_to_Create_Polyline();
+    UI_setTo_Create_Polyline();
   });
 
   SOLARCHVISION_menuActions.put("Surface", () -> {
-    UI_set_to_Create_Face();
+    UI_setTo_Create_Face();
   });
 
   SOLARCHVISION_menuActions.put("Parametric 1", () -> {
-    UI_set_to_Create_Parametric(1);
+    UI_setTo_Create_Parametric(1);
   });
 
   SOLARCHVISION_menuActions.put("Parametric 2", () -> {
-    UI_set_to_Create_Parametric(2);
+    UI_setTo_Create_Parametric(2);
   });
 
   SOLARCHVISION_menuActions.put("Parametric 3", () -> {
-    UI_set_to_Create_Parametric(3);
+    UI_setTo_Create_Parametric(3);
   });
 
   SOLARCHVISION_menuActions.put("Parametric 4", () -> {
-    UI_set_to_Create_Parametric(4);
+    UI_setTo_Create_Parametric(4);
   });
 
   SOLARCHVISION_menuActions.put("Parametric 5", () -> {
-    UI_set_to_Create_Parametric(5);
+    UI_setTo_Create_Parametric(5);
   });
 
   SOLARCHVISION_menuActions.put("Parametric 6", () -> {
-    UI_set_to_Create_Parametric(6);
+    UI_setTo_Create_Parametric(6);
   });
 
   SOLARCHVISION_menuActions.put("Pyramid", () -> {
-    UI_set_to_Create_Pyramid();
+    UI_setTo_Create_Pyramid();
   });
 
   SOLARCHVISION_menuActions.put("Plane", () -> {
-    UI_set_to_Create_Plane();
+    UI_setTo_Create_Plane();
   });
 
   SOLARCHVISION_menuActions.put("Polygon", () -> {
-    UI_set_to_Create_Polygon();
+    UI_setTo_Create_Polygon();
   });
 
   SOLARCHVISION_menuActions.put("Extrude", () -> {
-    UI_set_to_Create_Extrude();
+    UI_setTo_Create_Extrude();
   });
 
   SOLARCHVISION_menuActions.put("Hyper", () -> {
-    UI_set_to_Create_Hyper();
+    UI_setTo_Create_Hyper();
   });
 
   SOLARCHVISION_menuActions.put("House3", () -> {
-    UI_set_to_Create_House3();
+    UI_setTo_Create_House3();
   });
 
   SOLARCHVISION_menuActions.put("House2", () -> {
-    UI_set_to_Create_House2();
+    UI_setTo_Create_House2();
   });
 
   SOLARCHVISION_menuActions.put("House1", () -> {
-    UI_set_to_Create_House1();
+    UI_setTo_Create_House1();
   });
 
   SOLARCHVISION_menuActions.put("Box", () -> {
-    UI_set_to_Create_Box();
+    UI_setTo_Create_Box();
   });
 
   SOLARCHVISION_menuActions.put("Icosahedron", () -> {
-    UI_set_to_Create_Icosahedron();
+    UI_setTo_Create_Icosahedron();
   });
 
   SOLARCHVISION_menuActions.put("Octahedron", () -> {
-    UI_set_to_Create_Octahedron();
+    UI_setTo_Create_Octahedron();
   });
 
   SOLARCHVISION_menuActions.put("Sphere", () -> {
-    UI_set_to_Create_Sphere();
+    UI_setTo_Create_Sphere();
   });
 
   SOLARCHVISION_menuActions.put("Cylinder", () -> {
-    UI_set_to_Create_Cylinder();
+    UI_setTo_Create_Cylinder();
   });
 
   SOLARCHVISION_menuActions.put("Cushion", () -> {
-    UI_set_to_Create_Cushion();
+    UI_setTo_Create_Cushion();
   });
 
   SOLARCHVISION_menuActions.put("Drop on LandSurface", () -> {
-    UI_set_to_Modify_Drop(0);
+    UI_setTo_Modify_Drop(0);
 
     Drop3D.selection();
   });
 
   SOLARCHVISION_menuActions.put("Drop on ModelSurface (Down)", () -> {
-    UI_set_to_Modify_Drop(1);
+    UI_setTo_Modify_Drop(1);
 
     Drop3D.selection();
   });
 
   SOLARCHVISION_menuActions.put("Drop on ModelSurface (Up)", () -> {
-    UI_set_to_Modify_Drop(2);
+    UI_setTo_Modify_Drop(2);
 
     Drop3D.selection();
   });
 
   SOLARCHVISION_menuActions.put("Get dX", () -> {
-    UI_set_to_Modify_GetLength(0);
+    UI_setTo_Modify_GetLength(0);
   });
 
   SOLARCHVISION_menuActions.put("Get dY", () -> {
-    UI_set_to_Modify_GetLength(1);
+    UI_setTo_Modify_GetLength(1);
   });
 
   SOLARCHVISION_menuActions.put("Get dZ", () -> {
-    UI_set_to_Modify_GetLength(2);
+    UI_setTo_Modify_GetLength(2);
   });
 
   SOLARCHVISION_menuActions.put("Get dXYZ", () -> {
-    UI_set_to_Modify_GetLength(3);
+    UI_setTo_Modify_GetLength(3);
   });
 
   SOLARCHVISION_menuActions.put("Get dXY", () -> {
-    UI_set_to_Modify_GetLength(4);
+    UI_setTo_Modify_GetLength(4);
   });
 
   SOLARCHVISION_menuActions.put("MoveX", () -> {
-    UI_set_to_Modify_Move(0);
+    UI_setTo_Modify_Move(0);
   });
 
   SOLARCHVISION_menuActions.put("MoveY", () -> {
-    UI_set_to_Modify_Move(1);
+    UI_setTo_Modify_Move(1);
   });
 
   SOLARCHVISION_menuActions.put("MoveZ", () -> {
-    UI_set_to_Modify_Move(2);
+    UI_setTo_Modify_Move(2);
   });
 
   SOLARCHVISION_menuActions.put("Move", () -> {
-    UI_set_to_Modify_Move(3);
+    UI_setTo_Modify_Move(3);
   });
 
   SOLARCHVISION_menuActions.put("ScaleX", () -> {
-    UI_set_to_Modify_Scale(0);
+    UI_setTo_Modify_Scale(0);
   });
 
   SOLARCHVISION_menuActions.put("ScaleY", () -> {
-    UI_set_to_Modify_Scale(1);
+    UI_setTo_Modify_Scale(1);
   });
 
   SOLARCHVISION_menuActions.put("ScaleZ", () -> {
-    UI_set_to_Modify_Scale(2);
+    UI_setTo_Modify_Scale(2);
   });
 
   SOLARCHVISION_menuActions.put("Scale", () -> {
-    UI_set_to_Modify_Scale(3);
+    UI_setTo_Modify_Scale(3);
   });
 
   SOLARCHVISION_menuActions.put("PowerX", () -> {
-    UI_set_to_Modify_Power(0);
+    UI_setTo_Modify_Power(0);
   });
 
   SOLARCHVISION_menuActions.put("PowerY", () -> {
-    UI_set_to_Modify_Power(1);
+    UI_setTo_Modify_Power(1);
   });
 
   SOLARCHVISION_menuActions.put("PowerZ", () -> {
-    UI_set_to_Modify_Power(2);
+    UI_setTo_Modify_Power(2);
   });
 
   SOLARCHVISION_menuActions.put("Power", () -> {
-    UI_set_to_Modify_Power(3);
+    UI_setTo_Modify_Power(3);
   });
 
   SOLARCHVISION_menuActions.put("RotateX", () -> {
-    UI_set_to_Modify_Rotate(0);
+    UI_setTo_Modify_Rotate(0);
   });
 
   SOLARCHVISION_menuActions.put("RotateY", () -> {
-    UI_set_to_Modify_Rotate(1);
+    UI_setTo_Modify_Rotate(1);
   });
 
   SOLARCHVISION_menuActions.put("RotateZ", () -> {
-    UI_set_to_Modify_Rotate(2);
+    UI_setTo_Modify_Rotate(2);
   });
 
   SOLARCHVISION_menuActions.put("Rotate", () -> {
-    UI_set_to_Modify_Rotate(2);
+    UI_setTo_Modify_Rotate(2);
   });
 
   SOLARCHVISION_menuActions.put("Pivot", () -> {
-    UI_set_to_Modify_Pivot(0);
+    UI_setTo_Modify_Pivot(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick Pivot", () -> {
-    UI_set_to_Modify_Pivot(1);
+    UI_setTo_Modify_Pivot(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign Pivot", () -> {
-    UI_set_to_Modify_Pivot(2);
+    UI_setTo_Modify_Pivot(2);
   });
 
   SOLARCHVISION_menuActions.put("Save Current ReferenceBox", () -> {
@@ -2933,15 +2933,15 @@ private void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("Solid", () -> {
-    UI_set_to_Create_Solid();
+    UI_setTo_Create_Solid();
   });
 
   SOLARCHVISION_menuActions.put("Section", () -> {
-    UI_set_to_Create_Section();
+    UI_setTo_Create_Section();
   });
 
   SOLARCHVISION_menuActions.put("Camera", () -> {
-    UI_set_to_Create_Camera();
+    UI_setTo_Create_Camera();
   });
 
   SOLARCHVISION_menuActions.put("Viewport >> Camera", () -> {
@@ -3013,183 +3013,183 @@ private void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("Change Seed/Material", () -> {
-    UI_set_to_Modify_Seed(0);
+    UI_setTo_Modify_Seed(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick Seed/Material", () -> {
-    UI_set_to_Modify_Seed(1);
+    UI_setTo_Modify_Seed(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign Seed/Material", () -> {
-    UI_set_to_Modify_Seed(2);
+    UI_setTo_Modify_Seed(2);
   });
 
   SOLARCHVISION_menuActions.put("Change tessellation", () -> {
-    UI_set_to_Modify_Tessellation(0);
+    UI_setTo_Modify_Tessellation(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick tessellation", () -> {
-    UI_set_to_Modify_Tessellation(1);
+    UI_setTo_Modify_Tessellation(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign tessellation", () -> {
-    UI_set_to_Modify_Tessellation(2);
+    UI_setTo_Modify_Tessellation(2);
   });
 
   SOLARCHVISION_menuActions.put("Change Layer", () -> {
-    UI_set_to_Modify_Layer(0);
+    UI_setTo_Modify_Layer(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick Layer", () -> {
-    UI_set_to_Modify_Layer(1);
+    UI_setTo_Modify_Layer(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign Layer", () -> {
-    UI_set_to_Modify_Layer(2);
+    UI_setTo_Modify_Layer(2);
   });
 
   SOLARCHVISION_menuActions.put("Change Visibility", () -> {
-    UI_set_to_Modify_Visibility(0);
+    UI_setTo_Modify_Visibility(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick Visibility", () -> {
-    UI_set_to_Modify_Visibility(1);
+    UI_setTo_Modify_Visibility(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign Visibility", () -> {
-    UI_set_to_Modify_Visibility(2);
+    UI_setTo_Modify_Visibility(2);
   });
 
   SOLARCHVISION_menuActions.put("Change Weight", () -> {
-    UI_set_to_Modify_Weight(0);
+    UI_setTo_Modify_Weight(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick Weight", () -> {
-    UI_set_to_Modify_Weight(1);
+    UI_setTo_Modify_Weight(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign Weight", () -> {
-    UI_set_to_Modify_Weight(2);
+    UI_setTo_Modify_Weight(2);
   });
 
   SOLARCHVISION_menuActions.put("Flip Normal", () -> {
-    UI_set_to_Modify_Normal(1);
+    UI_setTo_Modify_Normal(1);
   });
 
   SOLARCHVISION_menuActions.put("Set-Out Normal", () -> {
-    UI_set_to_Modify_Normal(2);
+    UI_setTo_Modify_Normal(2);
   });
 
   SOLARCHVISION_menuActions.put("Set-In Normal", () -> {
-    UI_set_to_Modify_Normal(3);
+    UI_setTo_Modify_Normal(3);
   });
 
   SOLARCHVISION_menuActions.put("Get FirstVertex", () -> {
-    UI_set_to_Modify_FirstVertex(1);
+    UI_setTo_Modify_FirstVertex(1);
   });
 
   SOLARCHVISION_menuActions.put("Change DegreeMax", () -> {
-    UI_set_to_Modify_DegreeMax(0);
+    UI_setTo_Modify_DegreeMax(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick DegreeMax", () -> {
-    UI_set_to_Modify_DegreeMax(1);
+    UI_setTo_Modify_DegreeMax(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign DegreeMax", () -> {
-    UI_set_to_Modify_DegreeMax(2);
+    UI_setTo_Modify_DegreeMax(2);
   });
 
   SOLARCHVISION_menuActions.put("Change BranchTilt", () -> {
-    UI_set_to_Modify_BranchTilt(0);
+    UI_setTo_Modify_BranchTilt(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick BranchTilt", () -> {
-    UI_set_to_Modify_BranchTilt(1);
+    UI_setTo_Modify_BranchTilt(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign BranchTilt", () -> {
-    UI_set_to_Modify_BranchTilt(2);
+    UI_setTo_Modify_BranchTilt(2);
   });
 
   SOLARCHVISION_menuActions.put("Change BranchTwist", () -> {
-    UI_set_to_Modify_BranchTwist(0);
+    UI_setTo_Modify_BranchTwist(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick BranchTwist", () -> {
-    UI_set_to_Modify_BranchTwist(1);
+    UI_setTo_Modify_BranchTwist(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign BranchTwist", () -> {
-    UI_set_to_Modify_BranchTwist(2);
+    UI_setTo_Modify_BranchTwist(2);
   });
 
   SOLARCHVISION_menuActions.put("Change BranchRatio", () -> {
-    UI_set_to_Modify_BranchRatio(0);
+    UI_setTo_Modify_BranchRatio(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick BranchRatio", () -> {
-    UI_set_to_Modify_BranchRatio(1);
+    UI_setTo_Modify_BranchRatio(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign BranchRatio", () -> {
-    UI_set_to_Modify_BranchRatio(2);
+    UI_setTo_Modify_BranchRatio(2);
   });
 
   SOLARCHVISION_menuActions.put("Change TreeBase", () -> {
-    UI_set_to_Modify_TreeBase(0);
+    UI_setTo_Modify_TreeBase(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick TreeBase", () -> {
-    UI_set_to_Modify_TreeBase(1);
+    UI_setTo_Modify_TreeBase(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign TreeBase", () -> {
-    UI_set_to_Modify_TreeBase(2);
+    UI_setTo_Modify_TreeBase(2);
   });
 
   SOLARCHVISION_menuActions.put("Change TrunkSize", () -> {
-    UI_set_to_Modify_TrunkSize(0);
+    UI_setTo_Modify_TrunkSize(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick TrunkSize", () -> {
-    UI_set_to_Modify_TrunkSize(1);
+    UI_setTo_Modify_TrunkSize(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign TrunkSize", () -> {
-    UI_set_to_Modify_TrunkSize(2);
+    UI_setTo_Modify_TrunkSize(2);
   });
 
   SOLARCHVISION_menuActions.put("Change LeafSize", () -> {
-    UI_set_to_Modify_LeafSize(0);
+    UI_setTo_Modify_LeafSize(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick LeafSize", () -> {
-    UI_set_to_Modify_LeafSize(1);
+    UI_setTo_Modify_LeafSize(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign LeafSize", () -> {
-    UI_set_to_Modify_LeafSize(2);
+    UI_setTo_Modify_LeafSize(2);
   });
 
   SOLARCHVISION_menuActions.put("Model1DsProps", () -> {
-    UI_set_to_Modify_Model1DsProps(0);
+    UI_setTo_Modify_Model1DsProps(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick Model1DsProps", () -> {
-    UI_set_to_Modify_Model1DsProps(1);
+    UI_setTo_Modify_Model1DsProps(1);
   });
 
   SOLARCHVISION_menuActions.put("Assign Model1DsProps", () -> {
-    UI_set_to_Modify_Model1DsProps(2);
+    UI_setTo_Modify_Model1DsProps(2);
   });
 
   SOLARCHVISION_menuActions.put("Orthographic", () -> {
-    UI_set_to_View_ProjectionType(0);
+    UI_setTo_View_ProjectionType(0);
   });
 
   SOLARCHVISION_menuActions.put("Perspective", () -> {
-    UI_set_to_View_ProjectionType(1);
+    UI_setTo_View_ProjectionType(1);
   });
 
   SOLARCHVISION_menuActions.put("Invert Selection", () -> {
@@ -3281,27 +3281,27 @@ private void SOLARCHVISION_buildMenuActions() {
   SOLARCHVISION_menuActions.put("Groups >> Model1Ds", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Model1Ds(), ObjectCategory.MODEL1D));
 
   SOLARCHVISION_menuActions.put("Pick Select", () -> {
-    UI_set_to_View_PickSelect(0);
+    UI_setTo_View_PickSelect(0);
   });
 
   SOLARCHVISION_menuActions.put("Pick Select+", () -> {
-    UI_set_to_View_PickSelect(1);
+    UI_setTo_View_PickSelect(1);
   });
 
   SOLARCHVISION_menuActions.put("Pick Select-", () -> {
-    UI_set_to_View_PickSelect(2);
+    UI_setTo_View_PickSelect(2);
   });
 
   SOLARCHVISION_menuActions.put("Window Select", () -> {
-    UI_set_to_View_WindowSelect(0);
+    UI_setTo_View_WindowSelect(0);
   });
 
   SOLARCHVISION_menuActions.put("Window Select+", () -> {
-    UI_set_to_View_WindowSelect(1);
+    UI_setTo_View_WindowSelect(1);
   });
 
   SOLARCHVISION_menuActions.put("Window Select-", () -> {
-    UI_set_to_View_WindowSelect(2);
+    UI_setTo_View_WindowSelect(2);
   });
 
   SOLARCHVISION_menuActions.put("Select Near Selected Vertices", () -> {
@@ -3505,203 +3505,203 @@ private void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("TargetRoll", () -> {
-    UI_set_to_View_TargetRoll(0);
+    UI_setTo_View_TargetRoll(0);
   });
 
   SOLARCHVISION_menuActions.put("TargetRollZ", () -> {
-    UI_set_to_View_TargetRoll(1);
+    UI_setTo_View_TargetRoll(1);
   });
 
   SOLARCHVISION_menuActions.put("TargetRollXY", () -> {
-    UI_set_to_View_TargetRoll(2);
+    UI_setTo_View_TargetRoll(2);
   });
 
   SOLARCHVISION_menuActions.put("CameraRoll", () -> {
-    UI_set_to_View_CameraRoll(0);
+    UI_setTo_View_CameraRoll(0);
   });
 
   SOLARCHVISION_menuActions.put("CameraRollZ", () -> {
-    UI_set_to_View_CameraRoll(1);
+    UI_setTo_View_CameraRoll(1);
   });
 
   SOLARCHVISION_menuActions.put("CameraRollXY", () -> {
-    UI_set_to_View_CameraRoll(2);
+    UI_setTo_View_CameraRoll(2);
   });
 
   SOLARCHVISION_menuActions.put("Orbit", () -> {
-    UI_set_to_View_Orbit(0);
+    UI_setTo_View_Orbit(0);
   });
 
   SOLARCHVISION_menuActions.put("OrbitZ", () -> {
-    UI_set_to_View_Orbit(1);
+    UI_setTo_View_Orbit(1);
   });
 
   SOLARCHVISION_menuActions.put("OrbitXY", () -> {
-    UI_set_to_View_Orbit(2);
+    UI_setTo_View_Orbit(2);
   });
 
   SOLARCHVISION_menuActions.put("LandOrbit", () -> {
-    UI_set_to_View_LandOrbit(0);
+    UI_setTo_View_LandOrbit(0);
   });
 
   SOLARCHVISION_menuActions.put("Pan", () -> {
-    UI_set_to_View_Pan(0);
+    UI_setTo_View_Pan(0);
   });
 
   SOLARCHVISION_menuActions.put("PanX", () -> {
-    UI_set_to_View_Pan(1);
+    UI_setTo_View_Pan(1);
   });
 
   SOLARCHVISION_menuActions.put("PanY", () -> {
-    UI_set_to_View_Pan(2);
+    UI_setTo_View_Pan(2);
   });
 
   SOLARCHVISION_menuActions.put("Zoom", () -> {
-    UI_set_to_View_ZOOM(0);
+    UI_setTo_View_ZOOM(0);
   });
 
   SOLARCHVISION_menuActions.put("Zoom as default", () -> {
-    UI_set_to_View_ZOOM(1);
+    UI_setTo_View_ZOOM(1);
   });
 
   SOLARCHVISION_menuActions.put("TruckX", () -> {
-    UI_set_to_View_Truck(1);
+    UI_setTo_View_Truck(1);
   });
 
   SOLARCHVISION_menuActions.put("TruckY", () -> {
-    UI_set_to_View_Truck(2);
+    UI_setTo_View_Truck(2);
   });
 
   SOLARCHVISION_menuActions.put("TruckZ", () -> {
-    UI_set_to_View_Truck(0);
+    UI_setTo_View_Truck(0);
   });
 
   SOLARCHVISION_menuActions.put("DistZ", () -> {
-    UI_set_to_View_Truck(0);
+    UI_setTo_View_Truck(0);
   });
 
   SOLARCHVISION_menuActions.put("CameraDistance", () -> {
-    UI_set_to_View_CameraDistance(0);
+    UI_setTo_View_CameraDistance(0);
   });
 
   SOLARCHVISION_menuActions.put("DistMouseXY", () -> {
-    UI_set_to_View_DistMouseXY(0);
+    UI_setTo_View_DistMouseXY(0);
   });
 
   SOLARCHVISION_menuActions.put("Look at origin", () -> {
-    UI_set_to_View_LookAtOrigin(0);
+    UI_setTo_View_LookAtOrigin(0);
   });
 
   SOLARCHVISION_menuActions.put("Look at direction", () -> {
-    UI_set_to_View_LookAtDirection(0);
+    UI_setTo_View_LookAtDirection(0);
   });
 
   SOLARCHVISION_menuActions.put("Look at selection", () -> {
-    UI_set_to_View_LookAtSelection(0);
+    UI_setTo_View_LookAtSelection(0);
   });
 
   SOLARCHVISION_menuActions.put("3DModelSize", () -> {
-    UI_set_to_View_3DModelSize();
+    UI_setTo_View_3DModelSize();
   });
 
   SOLARCHVISION_menuActions.put("SkydomeSize", () -> {
-    UI_set_to_View_SkydomeSize();
+    UI_setTo_View_SkydomeSize();
   });
 
   SOLARCHVISION_menuActions.put("AllModelSize", () -> {
-    UI_set_to_View_AllModelSize();
+    UI_setTo_View_AllModelSize();
   });
 
   SOLARCHVISION_menuActions.put("Display All Viewports", () -> {
-    UI_set_to_Viewport(0);
+    UI_setTo_Viewport(0);
   });
 
   SOLARCHVISION_menuActions.put("Enlarge 3D Viewport", () -> {
-    UI_set_to_Viewport(1);
+    UI_setTo_Viewport(1);
   });
 
   SOLARCHVISION_menuActions.put("Enlarge Time Viewport", () -> {
-    UI_set_to_Viewport(2);
+    UI_setTo_Viewport(2);
   });
 
   SOLARCHVISION_menuActions.put("Enlarge Map Viewport", () -> {
-    UI_set_to_Viewport(3);
+    UI_setTo_Viewport(3);
   });
 
   SOLARCHVISION_menuActions.put("Top", () -> {
-    UI_set_to_View_3DViewPoint(0);
+    UI_setTo_View_3DViewPoint(0);
   });
 
   SOLARCHVISION_menuActions.put("Front", () -> {
-    UI_set_to_View_3DViewPoint(1);
+    UI_setTo_View_3DViewPoint(1);
   });
 
   SOLARCHVISION_menuActions.put("Left", () -> {
-    UI_set_to_View_3DViewPoint(2);
+    UI_setTo_View_3DViewPoint(2);
   });
 
   SOLARCHVISION_menuActions.put("Back", () -> {
-    UI_set_to_View_3DViewPoint(3);
+    UI_setTo_View_3DViewPoint(3);
   });
 
   SOLARCHVISION_menuActions.put("Right", () -> {
-    UI_set_to_View_3DViewPoint(4);
+    UI_setTo_View_3DViewPoint(4);
   });
 
   SOLARCHVISION_menuActions.put("Bottom", () -> {
-    UI_set_to_View_3DViewPoint(5);
+    UI_setTo_View_3DViewPoint(5);
   });
 
   SOLARCHVISION_menuActions.put("S.W.", () -> {
-    UI_set_to_View_3DViewPoint(6);
+    UI_setTo_View_3DViewPoint(6);
   });
 
   SOLARCHVISION_menuActions.put("S.E.", () -> {
-    UI_set_to_View_3DViewPoint(7);
+    UI_setTo_View_3DViewPoint(7);
   });
 
   SOLARCHVISION_menuActions.put("N.E.", () -> {
-    UI_set_to_View_3DViewPoint(8);
+    UI_setTo_View_3DViewPoint(8);
   });
 
   SOLARCHVISION_menuActions.put("N.W.", () -> {
-    UI_set_to_View_3DViewPoint(9);
+    UI_setTo_View_3DViewPoint(9);
   });
 
   SOLARCHVISION_menuActions.put("PivotX:Minimum", () -> {
-    UI_set_to_View_PivotX(-1);
+    UI_setTo_View_PivotX(-1);
   });
 
   SOLARCHVISION_menuActions.put("PivotX:Center", () -> {
-    UI_set_to_View_PivotX(0);
+    UI_setTo_View_PivotX(0);
   });
 
   SOLARCHVISION_menuActions.put("PivotX:Maximum", () -> {
-    UI_set_to_View_PivotX(1);
+    UI_setTo_View_PivotX(1);
   });
 
   SOLARCHVISION_menuActions.put("PivotY:Minimum", () -> {
-    UI_set_to_View_PivotY(-1);
+    UI_setTo_View_PivotY(-1);
   });
 
   SOLARCHVISION_menuActions.put("PivotY:Center", () -> {
-    UI_set_to_View_PivotY(0);
+    UI_setTo_View_PivotY(0);
   });
 
   SOLARCHVISION_menuActions.put("PivotY:Maximum", () -> {
-    UI_set_to_View_PivotY(1);
+    UI_setTo_View_PivotY(1);
   });
 
   SOLARCHVISION_menuActions.put("PivotZ:Minimum", () -> {
-    UI_set_to_View_PivotZ(-1);
+    UI_setTo_View_PivotZ(-1);
   });
 
   SOLARCHVISION_menuActions.put("PivotZ:Center", () -> {
-    UI_set_to_View_PivotZ(0);
+    UI_setTo_View_PivotZ(0);
   });
 
   SOLARCHVISION_menuActions.put("PivotZ:Maximum", () -> {
-    UI_set_to_View_PivotZ(1);
+    UI_setTo_View_PivotZ(1);
   });
 
   for (int n = -2; n <= 8; n++) {
