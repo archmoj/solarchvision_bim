@@ -705,3 +705,435 @@ Includes commands such as:
 ## [BIM6D Presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
 ## [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
 ## [TU-Berlin book: Intelligent Design using Solar-Climatic Vision (Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION)](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
+
+
+# SOLARCHVISION-BIM — Technical Overview
+
+## Overview
+
+**SOLARCHVISION-BIM** is an open-source Processing/Java-based 3D BIM and environmental simulation platform that integrates building and site geometry with geographic, meteorological, climate, solar, and environmental datasets.
+
+The application combines a custom 3D modeling and geometry engine, interactive CAD-style editing, geospatial visualization, time-dependent solar radiation and shadow analysis, wind-flow visualization, scenario and statistical analysis, and export/persistence workflows in a unified desktop environment.
+
+A central characteristic of the platform is the integration of:
+
+```text
+3D / BIM Geometry
+       +
+Geographic Context
+       +
+Weather / Climate Data
+       +
+Time & Scenarios
+       +
+Environmental Analysis
+       +
+3D Scientific Visualization
+```
+
+This allows building and urban-environment models to be analyzed using time-dependent environmental and meteorological information rather than being limited to static geometric visualization.
+
+## Major Technical Subsystems
+
+### 1. 3D Modeling and Geometry Engine
+
+SOLARCHVISION-BIM implements its own lightweight geometric modeling system rather than functioning only as a viewer.
+
+Core geometry components include:
+
+- Points
+- Faces
+- Solids
+- Groups
+- Polylines
+- Materials
+- 1D models
+- 2D models
+
+The geometry system supports vertex and face management, surface normals, tessellation, transformations, rotation, scaling, translation, geometric intersections, surface operations, object grouping, material assignment, visibility, and layer management.
+
+This geometry layer provides the foundation for both visualization and environmental calculations.
+
+### 2. Interactive CAD-Style Modeling
+
+The application contains dedicated modules for interactive 3D operations, including:
+
+- Create
+- Select
+- Move
+- Rotate
+- Scale
+- Modify
+- Clone
+- Delete
+- Drop
+- Edit
+
+Users can create and manipulate objects directly within the 3D environment. The interaction system includes 3D picking, screen-to-world coordinate operations, object and face selection, mouse-based navigation, and CAD-style viewport interaction.
+
+### 3. Parametric and Procedural Objects
+
+The modeling system supports generated objects and procedural 1D/2D representations.
+
+The procedural vegetation system includes parameters such as species/type, random seed, branching degree, scale, rotation, branch tilt, branch twist, branch ratio, trunk dimensions, and leaf dimensions.
+
+This allows vegetation and environmental context to be represented as computational objects rather than only imported static models.
+
+### 4. 3D Rendering and Visualization
+
+The application uses Processing's `P2D` and `P3D` rendering systems and maintains multiple rendering surfaces for different views.
+
+Major visualization areas include:
+
+- 3D modeling viewport
+- Geographic/world viewport
+- Environmental study viewport
+- Analytical overlays
+
+The rendering system supports perspective and orthographic views, camera transformations, zooming, rotation, directional views, object-centered navigation, 3D overlays, surface and edge rendering, tessellation control, and analytical visualization.
+
+The rendering architecture includes batching, clipping, caching, and selective geographic rendering to improve interactive performance.
+
+### 5. Solar Position and Radiation Analysis
+
+Solar analysis is one of the core environmental capabilities.
+
+The system calculates solar position using project geographic coordinates and time information, including latitude, longitude, date, and hour.
+
+Solar calculations incorporate:
+
+- Direct radiation
+- Diffuse radiation
+- Effective direct radiation
+- Effective diffuse radiation
+- Solar direction vectors
+- Surface geometry
+- Shading/obstruction effects
+
+A simplified workflow is:
+
+```text
+Geographic Location
+        ↓
+Date / Time
+        ↓
+Solar Position
+        ↓
+Weather / Climate Radiation
+        ↓
+3D Geometry
+        ↓
+Shadow / Occlusion Analysis
+        ↓
+Surface Solar Impact
+        ↓
+Visualization / Statistical Study
+```
+
+### 6. Surface-Level Solar Analysis
+
+The solar analysis engine can process radiation at a spatially detailed level rather than assigning a single value to an entire building.
+
+The implementation maintains time-dependent arrays for sun direction, unit sun direction, direct radiation, diffuse radiation, effective direct radiation, and effective diffuse radiation.
+
+Solar calculations are combined with geometric surfaces and sub-surface processing to estimate spatially varying environmental impacts.
+
+### 7. Shadow and Occlusion Analysis
+
+The project contains dedicated shadow-casting and geometric intersection functionality.
+
+Shadow calculations use solar direction, 3D geometry, surface geometry, ray/face intersections, and spatial sections.
+
+This accounts for the effect of surrounding geometry on solar exposure and distinguishes theoretical incoming radiation from radiation affected by the modeled environment.
+
+### 8. Environmental Impact Fields
+
+The environmental analysis architecture is not limited to object-level results.
+
+The system can calculate impact values at arbitrary 3D positions `(x, y, z)` and generate spatial fields for environmental quantities.
+
+Impact visualization can include:
+
+- Points
+- Lines
+- Contours
+- Raster/image-based representations
+- 3D visualization
+
+This provides a bridge between numerical environmental analysis and spatial scientific visualization.
+
+### 9. Wind Visualization and Analysis
+
+The project contains a dedicated wind-analysis subsystem.
+
+Components include wind-flow visualization, wind-rose visualization, wind speed, wind direction, and environmental impact calculations.
+
+The system can represent wind as a spatial/vector field around modeled solids and visualize resulting flow or impact patterns in 3D.
+
+### 10. Weather and Climate Data Integration
+
+SOLARCHVISION-BIM contains dedicated data-ingestion and processing workflows for environmental datasets.
+
+Supported data workflows include:
+
+- EPW / TMY
+- CWEEDS
+- CLMREC
+- Ensemble forecast data
+- Ensemble observed data
+- Meteorological station data
+
+The architecture separates data acquisition/loading from post-processing and analysis:
+
+```text
+Download / Load
+      ↓
+Data Validation / Processing
+      ↓
+Post-Processing
+      ↓
+Environmental Variables
+      ↓
+Analysis
+      ↓
+Visualization
+```
+
+### 11. Ensemble and Scenario Analysis
+
+The project includes dedicated modules for ensemble forecast and observed data.
+
+The analysis engine recognizes ensemble forecast and observation datasets and incorporates them into temporal and statistical study workflows.
+
+The study system supports scenario-oriented analysis, allowing environmental results to be examined across multiple possible weather or climate conditions.
+
+### 12. Statistical Study Engine
+
+The study engine manages:
+
+- Analysis periods
+- Hours
+- Days
+- Scenarios
+- Filters
+- Statistical layers
+- Probability
+- Percentiles
+- Sorted data
+- Normalized data
+- Trends
+- Impact summaries
+
+Statistical analysis includes minimum, average, maximum, percentile analysis, probability-based visualization, scenario selection, and statistical filtering.
+
+The system can also identify scenarios that are close to specified daily statistical conditions.
+
+### 13. Cloud and Atmospheric Scenario Analysis
+
+The study engine can distinguish different atmospheric/cloud conditions, including scenario groups based on total cloud cover.
+
+This provides a mechanism for examining how atmospheric conditions influence solar and environmental results.
+
+### 14. Geographic and Earth Modeling
+
+The application contains a geographic visualization subsystem centered around an Earth/world model.
+
+Capabilities include:
+
+- Latitude/longitude positioning
+- Geographic projections
+- World maps
+- Map tiles
+- Geographic boundaries
+- Station locations
+- Zoom levels
+- Terrain/land visualization
+- Project-location-based map rendering
+
+Map imagery can be cached and geographically limited to the relevant project/view region to reduce unnecessary processing and improve performance.
+
+### 15. Meteorological Station System
+
+The station subsystem connects geographic locations with environmental datasets.
+
+Station information can include:
+
+- Station code
+- City
+- Province
+- Country
+- Elevation
+- Latitude
+- Longitude
+- Time longitude
+- Dataset filenames
+
+Supported station-related datasets include NAEFS, CWEEDS, TMY/EPW, CLMREC, and observational datasets.
+
+This creates a direct relationship between:
+
+```text
+Project Location
+      ↓
+Meteorological Station
+      ↓
+Environmental Dataset
+      ↓
+Environmental Analysis
+```
+
+### 16. Sun, Moon, Sky, and Atmospheric Visualization
+
+The 3D environment includes dedicated representations of the Sun, Moon, Sky, and Troposphere.
+
+The sun model is connected to solar-position calculations, making the celestial visualization consistent with analysis time and geographic location.
+
+The atmospheric visualization subsystem supports time-dependent imagery and geographically bounded image layers.
+
+### 17. Time-Dependent Simulation
+
+Time is a fundamental component of the platform.
+
+The application maintains temporal state including year, month, day, hour, day-of-year, and analysis period.
+
+Environmental calculations can therefore be evaluated across:
+
+- Hours
+- Days
+- Seasons
+- Annual periods
+- Forecast periods
+- Multiple scenarios
+
+### 18. Multi-Viewport Architecture
+
+The application separates visualization into several functional views.
+
+**3D View** — modeling, camera navigation, object manipulation, and environmental visualization.
+
+**World View** — geographic context, map visualization, station locations, and geographic data.
+
+**Study View** — statistical analysis, environmental results, scenario analysis, and time-series visualization.
+
+### 19. Command-Line and Scripting System
+
+SOLARCHVISION-BIM includes an internal command-line system.
+
+Commands can be entered interactively and can also be executed from scripts/text files. The command system supports parameterized commands using key/value-style arguments.
+
+This provides an additional automation and reproducibility mechanism alongside the graphical interface.
+
+### 20. Project Persistence
+
+The application contains project save/load functionality using structured XML data.
+
+Project information can include:
+
+- Model geometry
+- Layers
+- Materials
+- Station information
+- Time state
+- Study configuration
+- Analysis settings
+- Object properties
+
+### 21. Layer and Material Systems
+
+The layer system provides a common abstraction for environmental and visualization variables.
+
+Layers can include ID, unit, name, descriptions, scale, offset, and display thresholds.
+
+The material system associates materials with geometric faces and supports consistent rendering and object representation.
+
+### 22. Import and Export
+
+The application provides multiple export workflows, including:
+
+- OBJ geometry
+- Time-series OBJ
+- Date-series OBJ
+- RAD
+- SCR
+- HTML
+
+The OBJ time/date-series export is useful for transferring time-dependent model states or analytical geometry into external workflows.
+
+## Architecture at a Glance
+
+```text
+                       SOLARCHVISION-BIM
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+   3D/BIM Model         Climate / Weather      Geospatial
+        │                     │                     │
+   ┌────┼────┐          ┌─────┼─────┐          ┌────┼────┐
+   │    │    │          │     │     │          │    │    │
+ Points Faces Solids   EPW  CWEEDS Ensemble   Earth Maps Stations
+   │    │    │          │     │     │          │    │    │
+   └────┼────┘          └─────┼─────┘          └────┼────┘
+        │                     │                     │
+        └─────────────────────┼─────────────────────┘
+                              │
+                     Time / Scenario Engine
+                              │
+                 ┌────────────┼────────────┐
+                 │            │            │
+               Solar        Shadow        Wind
+              Analysis     Analysis     Analysis
+                 │            │            │
+                 └────────────┼────────────┘
+                              │
+                     Statistical Studies
+                              │
+                 ┌────────────┼────────────┐
+                 │            │            │
+             3D View      Study View    World View
+                 │            │            │
+                 └────────────┼────────────┘
+                              │
+                    Export / Persistence
+```
+
+## Technical Character
+
+SOLARCHVISION-BIM combines:
+
+- 3D computer graphics
+- Computational geometry
+- BIM / CAD modeling
+- Scientific computing
+- Environmental simulation
+- Solar-energy analysis
+- Meteorological data processing
+- Climate-data analysis
+- GIS/geospatial visualization
+- Statistical/scenario analysis
+- Interactive visualization
+- Data import/export
+- Scriptable workflows
+
+The most significant architectural characteristic is the integration of **geometric modeling and environmental data**.
+
+A conventional BIM workflow primarily represents buildings and their relationships. A conventional scientific-visualization workflow primarily represents datasets. SOLARCHVISION-BIM connects the two:
+
+```text
+Building / Urban Geometry
+          +
+Geographic Location
+          +
+Weather / Climate Data
+          +
+Time / Scenarios
+          ↓
+Environmental Simulation
+          ↓
+Spatial Impacts
+          ↓
+Interactive 3D Visualization
+          ↓
+Statistical Study / Export
+```
+
+This makes the platform suitable for environmental and climatic analysis of buildings and urban environments.
