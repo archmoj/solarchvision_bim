@@ -32,6 +32,9 @@ class solarchvision_Earth3D {
     this.clipRadiusDegrees_Lon = 4.0 / this.levelOfDetail;
     this.lat_step = this.clipRadiusDegrees_Lat / 32.0;
     this.lon_step = this.clipRadiusDegrees_Lon / 32.0;
+
+    // now recompute this:
+    this.clipRadiusDegrees_Lon = computeClipRadiusDegreesLon(STATION.getLatitude());
   }
 
   // Spacing (in degrees) of the displayed lat/lon grid lines - independent
