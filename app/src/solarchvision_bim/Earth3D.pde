@@ -48,6 +48,8 @@ class solarchvision_Earth3D {
   boolean displaySurface = true;
   boolean displayTexture = true;
 
+  int fillStationGridCell = -1; // -1: fill station cell with triangles point to the station, 0: skip fill, 1: normal fill
+
   PImage[] Map;
   float[][] BoundariesX;
   float[][] BoundariesY;
@@ -158,6 +160,18 @@ class solarchvision_Earth3D {
     float bumpTop     = lerp(bumpTopLeft, bumpTopRight, tLon);
 
     return lerp(bumpBottom, bumpTop, tLat);
+  }
+
+  // True when (Alpha, unwrappedBeta) - a subFace's top-latitude/right-
+  // longitude corner, as passed around the draw() loop - is the same grid
+  // cell that the station's own (lat, lon) falls inside (i.e. the same
+  // alphaTop/betaRight cell computeElevationBumpBilinear() interpolates
+  // between). Used by draw() to implement fillStationGridCell.
+  private boolean isStationGridCell (float Alpha, float unwrappedBeta, float stationLat, float stationLon) {
+    float alphaTop  = 90  - floor((90  - stationLat) / this.lat_step) * this.lat_step;
+    float betaRight = 180 - floor((180 - stationLon) / this.lon_step) * this.lon_step;
+
+    return (abs(Alpha - alphaTop) < 0.0001) && (abs(unwrappedBeta - betaRight) < 0.0001);
   }
 
   // True when value is (within floating-point tolerance) a multiple of
@@ -466,10 +480,15 @@ class solarchvision_Earth3D {
           f += 1;
           FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
 
+          boolean skipFill = (this.fillStationGridCell != 1) && isStationGridCell(Alpha, unwrappedBeta, stationLat, stationLon);
+          boolean fillGap = skipFill && (this.fillStationGridCell == -1);
+
           if (isWin3D) {
-            addFaceWIN3D(subFace, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+            if (!skipFill) {
+              addFaceWIN3D(subFace, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+            }
             collectGridEdges(subFace, Alpha, unwrappedBeta, majorGridEdgeBatch, minorGridEdgeBatch);
-          } else {
+          } else if (!skipFill) {
             drawFace(target_window, subFace, textureLabel, f, _turn);
           }
         }
