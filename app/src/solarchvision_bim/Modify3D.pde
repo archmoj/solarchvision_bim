@@ -24,14 +24,14 @@ class solarchvision_Modify3D {
     }
   }
 
-  private boolean isPolymeshCategorySelected () {
+  boolean isPolymeshCategorySelected () {
     return (current_ObjectCategory == ObjectCategory.GROUP) ||
            (current_ObjectCategory == ObjectCategory.FACE) ||
            (current_ObjectCategory == ObjectCategory.POLYLINE) ||
            (current_ObjectCategory == ObjectCategory.VERTEX);
   }
 
-  private boolean isGroupOrFaceCategorySelected () {
+  boolean isGroupOrFaceCategorySelected () {
     return (current_ObjectCategory == ObjectCategory.GROUP) ||
            (current_ObjectCategory == ObjectCategory.FACE);
   }
@@ -182,7 +182,7 @@ class solarchvision_Modify3D {
     Select3D.deselect_Vertices();
   }
 
-  private void accumulateOffsetFromRing (int[][] ringNodes, int vNo, int o, int _type, float _amount, float[][] Vertex_offsetValues, int[] Vertex_offsetNum) {
+  void accumulateOffsetFromRing (int[][] ringNodes, int vNo, int o, int _type, float _amount, float[][] Vertex_offsetValues, int[] Vertex_offsetNum) {
     for (int f = 0; f < ringNodes.length; f++) {
       for (int j = 0; j < ringNodes[f].length; j++) {
         if (ringNodes[f][j] != vNo) continue;
@@ -286,14 +286,12 @@ class solarchvision_Modify3D {
     return result;
   }
 
-  private boolean isFaceInGroupRange (int f, int OBJ_ID) {
+  boolean isFaceInGroupRange (int f, int OBJ_ID) {
     int startFace = allGroups.getStart_Face(OBJ_ID);
     int endFace = allGroups.getStop_Face(OBJ_ID);
     return (startFace <= f) && (f <= endFace);
   }
 
-  // Every selected face belongs to exactly one selected group, so a single scan over
-  // Select3D.Group_ids is enough to find it - no need for the old nested Group x Face loop.
   private int findOwningGroupId (int f) {
     for (int i = 0; i < Select3D.Group_ids.length; i++) {
       int OBJ_ID = Select3D.Group_ids[i];
@@ -302,7 +300,7 @@ class solarchvision_Modify3D {
     return -1;
   }
 
-  private float[][] faceBaseVertices (int f) {
+  float[][] faceBaseVertices (int f) {
     int n = allFaces.nodes[f].length;
     float[][] base_Vertices = new float[n][3];
     for (int i = 0; i < n; i++) {
@@ -313,7 +311,7 @@ class solarchvision_Modify3D {
     return base_Vertices;
   }
 
-  private float[] faceCentroid (float[][] base_Vertices) {
+  float[] faceCentroid (float[][] base_Vertices) {
     float[] G = { 0, 0, 0 };
     for (int i = 0; i < base_Vertices.length; i++) {
       for (int j = 0; j < 3; j++) {
