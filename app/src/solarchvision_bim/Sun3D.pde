@@ -35,7 +35,7 @@ class solarchvision_Sun3D {
     Map = loadImage(Filename);
   }
 
-  private int wrapDayIndex (float rawDay) {
+  int wrapDayIndex (float rawDay) {
     int day = int(rawDay + 365) % 365;
     if (day >= 365) day = day % 365;
     if (day < 0) day = (day + 365) % 365;

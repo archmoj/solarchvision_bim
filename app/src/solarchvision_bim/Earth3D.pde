@@ -167,8 +167,6 @@ class solarchvision_Earth3D {
   // cell that the station's own (lat, lon) falls inside (i.e. the same
   // alphaTop/betaRight cell computeElevationBumpBilinear() interpolates
   // between). Used by draw() to implement fillStationGridCell.
-  // Package-private (not private) so EarthGridHelpersTest.java (see
-  // test/) can call it directly without reflection - see test/README.md.
   boolean isStationGridCell (float Alpha, float unwrappedBeta, float stationLat, float stationLon) {
     float alphaTop  = 90  - floor((90  - stationLat) / this.lat_step) * this.lat_step;
     float betaRight = 180 - floor((180 - stationLon) / this.lon_step) * this.lon_step;
@@ -180,8 +178,6 @@ class solarchvision_Earth3D {
   // gridStepDegrees - used to decide whether a mesh edge coincides with a
   // displayed grid line, independent of the mesh's own (possibly much
   // finer) tessellation step.
-  // Package-private (not private) so EarthGridHelpersTest.java (see
-  // test/) can call it directly without reflection - see test/README.md.
   boolean isRoundGridLine (float value, float step) {
     if (step <= 0) return false;
     float nearest = round(value / step) * step;
@@ -197,8 +193,6 @@ class solarchvision_Earth3D {
   // a wrong/incomplete result. Longitude is periodic, so shifting values
   // into a consistent local frame near referenceLon doesn't change what
   // they represent.
-  // Package-private (not private) so EarthGridHelpersTest.java (see
-  // test/) can call it directly without reflection - see test/README.md.
   float unwrapLon (float lon, float referenceLon) {
     float unwrapped = lon;
     while (unwrapped - referenceLon > 180) unwrapped -= 360;
