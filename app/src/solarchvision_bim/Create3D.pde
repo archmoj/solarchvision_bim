@@ -2380,6 +2380,9 @@ class solarchvision_Create3D {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
       allSections.create(0, 0, 0.1, 0, 50, 50, 1, 200, 200);
     }
+
+
+    Select3D.deselectAll();
   }
 
   int maximum_default_models = 6;
