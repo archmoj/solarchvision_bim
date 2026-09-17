@@ -64,20 +64,36 @@ class SolarAtSurfaceTest {
   }
 
   @Test
-  void negativeAlphaBranchIsUnreachableDeadCode () {
-    // Regression/documentation test: the source has
+  void negativeAlphaBranchIsNowReachableAndUsesTheDownwardVector () {
+    // Regression test for a fixed bug: the source used to read
     //   if (abs(Alpha) > 89.99) { VECT = (0,0,1); }
     //   else if (Alpha < -89.99) { VECT = (0,0,-1); }
-    // But Alpha < -89.99 implies abs(Alpha) > 89.99, so the first branch
-    // always wins first - the second branch can never execute for any
-    // value of Alpha. So even at Alpha=-90, the surface's reference
-    // vector actually used is (0,0,1), NOT (0,0,-1) as the dead branch
-    // would suggest. This test locks in that actual (likely unintended)
-    // behavior; see the note flagged alongside this test suite.
-    float result = app.SOLARCHVISION_SolarAtSurface(0, 0, -1, 800, 100, -90, 0, 0);
-    // With VECT=(0,0,1) (not (0,0,-1)): SunMask = dot((0,0,-1),(0,0,1))
-    // = -1 -> clamped to 0. SkyMask at Alpha=-90 is 0. Result: 0, not
-    // the 800 you'd get if the dead branch's (0,0,-1) were actually used.
-    assertEquals(0f, result, EPS);
+    // Since Alpha < -89.99 always implied abs(Alpha) > 89.99, the second
+    // branch could never execute for any value of Alpha - even at
+    // Alpha=-90 the surface's reference vector was always (0,0,1). The
+    // first condition is now Alpha > 89.99 (not abs(Alpha) > 89.99), so
+    // each extreme tilt gets its own vector.
+    //
+    // At Alpha=-90 with a sun vector aligned to the now-correct (0,0,-1):
+    // SunMask=1, SkyMask=0 (0.5*(1+(-90/90))), so the result is driven
+    // entirely by the direct term.
+    float aligned = app.SOLARCHVISION_SolarAtSurface(0, 0, -1, 800, 100, -90, 0, 0);
+    assertEquals(800f, aligned, EPS); // 800*1 + 100*0
+
+    // And a sun pointing the opposite way (up) is now correctly treated
+    // as a backing face for a downward-facing surface, clamping SunMask
+    // to 0 - before the fix this combination was indistinguishable from
+    // the aligned case above (both used VECT=(0,0,1)).
+    float opposite = app.SOLARCHVISION_SolarAtSurface(0, 0, 1, 800, 100, -90, 0, 0);
+    assertEquals(0f, opposite, EPS); // 800*0 + 100*0
+  }
+
+  @Test
+  void positiveAlphaBranchIsUnaffectedByTheFix () {
+    // Alpha=90 behaves exactly as before: Alpha > 89.99 is still true
+    // for positive Alpha, so this branch's condition change (from
+    // abs(Alpha) > 89.99) doesn't alter this case at all.
+    float result = app.SOLARCHVISION_SolarAtSurface(0, 0, 1, 800, 100, 90, 0, 0);
+    assertEquals(900f, result, EPS); // 800*1 + 100*1
   }
 }

@@ -12,7 +12,7 @@ float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float
       0, 0, 0
     };
 
-    if (abs(Alpha) > 89.99) {
+    if (Alpha > 89.99) {
       VECT[0] = 0;
       VECT[1] = 0;
       VECT[2] = 1;
