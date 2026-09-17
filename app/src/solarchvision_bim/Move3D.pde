@@ -97,7 +97,7 @@ class solarchvision_Move3D {
     SOLARCHVISION_model_changed();
   }
 
-  private void moveSolid (int f, float dx, float dy, float dz) {
+  void moveSolid (int f, float dx, float dy, float dz) {
     float Solid_posX = allSolids.get_posX(f);
     float Solid_posY = allSolids.get_posY(f);
     float Solid_posZ = allSolids.get_posZ(f);

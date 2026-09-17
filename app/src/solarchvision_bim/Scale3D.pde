@@ -21,7 +21,7 @@ class solarchvision_Scale3D {
     else if (current_ObjectCategory == ObjectCategory.SECTION)    this.Sections(sx, sy);
   }
 
-  private float[] scalePointAroundPivot (float x, float y, float z, float x0, float y0, float z0, float sx, float sy, float sz) {
+  float[] scalePointAroundPivot (float x, float y, float z, float x0, float y0, float z0, float sx, float sy, float sz) {
     float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
 
     x = sx * (A[0] - x0) + x0;

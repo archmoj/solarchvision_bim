@@ -25,14 +25,14 @@ class solarchvision_Rotate3D {
     else if (current_ObjectCategory == ObjectCategory.GROUP)      this.Groups(r, the_Vector);
   }
 
-  private float[] rotateAroundVector (float x, float y, float z, float r, int the_Vector) {
+  float[] rotateAroundVector (float x, float y, float z, float r, int the_Vector) {
     if (the_Vector == 2) return new float[] { x * cos(r) - y * sin(r), x * sin(r) + y * cos(r), z };
     if (the_Vector == 1) return new float[] { z * sin(r) + x * cos(r), y, z * cos(r) - x * sin(r) };
     if (the_Vector == 0) return new float[] { x, y * cos(r) - z * sin(r), y * sin(r) + z * cos(r) };
     return new float[] { x, y, z };
   }
 
-  private float[] rotatePointAroundReferencePivot (float x, float y, float z, float r, int the_Vector) {
+  float[] rotatePointAroundReferencePivot (float x, float y, float z, float r, int the_Vector) {
     float[] A = Select3D.translateOutside_ReferencePivot(x, y, z);
     float[] R = rotateAroundVector(A[0], A[1], A[2], r, the_Vector);
     return Select3D.translateInside_ReferencePivot(R[0], R[1], R[2]);

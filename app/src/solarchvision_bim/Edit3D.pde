@@ -2,13 +2,13 @@ class solarchvision_Edit3D {
 
   private final static String CLASS_STAMP = "Edit3D";
 
-  private int clamp (int n, int lo, int hi) {
+  int clamp (int n, int lo, int hi) {
     if (n > hi) n = hi;
     if (n < lo) n = lo;
     return n;
   }
 
-  private float clampF (float n, float lo, float hi) {
+  float clampF (float n, float lo, float hi) {
     if (n > hi) n = hi;
     if (n < lo) n = lo;
     return n;
@@ -26,7 +26,7 @@ class solarchvision_Edit3D {
   }
 
   // Shared by Faces() and Groups() (for the faces owned by a group).
-  private void adjustFaceProperties (int f, int p) {
+  void adjustFaceProperties (int f, int p) {
     if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial(f, clamp(allFaces.getMaterial(f) + p, 0, 8));
     else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(f, clamp(allFaces.getTessellation(f) + p, 0, 4));
     else if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer(f, clamp(allFaces.getLayer(f) + p, 0, 16));
@@ -35,7 +35,7 @@ class solarchvision_Edit3D {
   }
 
   // Shared by Polylines() and Groups() (for the polylines owned by a group).
-  private void adjustPolylineProperties (int f, int p) {
+  void adjustPolylineProperties (int f, int p) {
     if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allPolylines.setMaterial(f, clamp(allPolylines.getMaterial(f) + p, 0, 8));
     else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allPolylines.setTessellation(f, clamp(allPolylines.getTessellation(f) + p, 0, 4));
     else if (WIN3D.UI_CurrentTask == UITASK.Layer)         allPolylines.setLayer(f, clamp(allPolylines.getLayer(f) + p, 0, 16));
