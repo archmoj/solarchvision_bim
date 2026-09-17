@@ -492,7 +492,7 @@ class solarchvision_Functions {
       return new float[] {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined};
     }
     float invCrossDistSq = 1.0 / (cross_dist * cross_dist);
-    float[] diffB1A1 = this.vec3_diff(B1, A1);
+    float[] diffB1A1 = this.vec3_diff(A1, B1);
     float rA = this.vec3_dot(this.vec3_cross(diffB1A1, Axis_B), cross_vect) * invCrossDistSq;
     float rB = this.vec3_dot(this.vec3_cross(diffB1A1, Axis_A), cross_vect) * invCrossDistSq;
     float[] result_A = this.vec3_sum(A1, this.vec3_scale(Axis_A, rA));

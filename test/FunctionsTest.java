@@ -179,6 +179,31 @@ class FunctionsTest {
   }
 
   @Test
+  void intersect_segmentXsegment_findsAGenuineCrossingPoint () {
+    // Regression test for a sign bug in diffB1A1 (see Functions.pde) that
+    // made this branch report ordinary crossing segments as
+    // non-intersecting for any pair that didn't already return early
+    // above (shared endpoint, or one endpoint lying on the other
+    // segment). Covers a few different orientations since the bug's
+    // effect varied with them.
+    assertArrayEquals(new float[]{0, 0, 0}, funcs.intersect_segmentXsegment(
+      new float[]{-1, 0, 0}, new float[]{1, 0, 0},
+      new float[]{0, -1, 0}, new float[]{0, 1, 0}), EPS);
+
+    assertArrayEquals(new float[]{2, 2, 0}, funcs.intersect_segmentXsegment(
+      new float[]{0, 2, 0}, new float[]{4, 2, 0},
+      new float[]{2, 0, 0}, new float[]{2, 4, 0}), EPS);
+
+    assertArrayEquals(new float[]{0, 0, 0}, funcs.intersect_segmentXsegment(
+      new float[]{-2, -2, 0}, new float[]{2, 2, 0},
+      new float[]{-2, 2, 0}, new float[]{2, -2, 0}), EPS);
+
+    assertArrayEquals(new float[]{2, 2, 0}, funcs.intersect_segmentXsegment(
+      new float[]{0, 0, 0}, new float[]{4, 4, 0},
+      new float[]{0, 4, 0}, new float[]{4, 0, 0}), EPS);
+  }
+
+  @Test
   void intersect_segmentXsegment_returnsTheSharedEndpointWhenSegmentsTouch () {
     // A ends exactly where B starts.
     float[] result = funcs.intersect_segmentXsegment(
