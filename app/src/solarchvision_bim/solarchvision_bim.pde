@@ -1050,11 +1050,10 @@ final float FLOAT_huge = 1000000000;
 final float FLOAT_tiny = 0.001; // don't use very tiny values that could result is shading problems
 
 final String STRING_undefined = "N/A";
-final float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
-final float FLOAT_max_defined = 0.95 * FLOAT_undefined;
+final float FLOAT_undefined = Float.MAX_VALUE; // it must be a positive big number that is not included in any data
 
 boolean is_defined (float a) {
-  if (a < FLOAT_max_defined) {
+  if (a < FLOAT_undefined) {
     return true;
   }
   return false;

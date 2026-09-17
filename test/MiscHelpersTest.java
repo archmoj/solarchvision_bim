@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // A grab-bag of small, pure, self-contained helper functions that don't
 // warrant their own dedicated test file:
-//   - is_defined / FLOAT_undefined / FLOAT_max_defined (solarchvision_bim.pde)
+//   - is_defined / FLOAT_undefined (solarchvision_bim.pde)
 //   - applyPalDirection (solarchvision_bim.pde) - wrapper-less tab, plain
 //     package-private method directly on `app`
 //   - solarchvision_Sun3D.wrapDayIndex (Sun3D.pde) - reached through the
@@ -27,12 +27,10 @@ class MiscHelpersTest {
   void is_defined_isTrueBelowTheMaxDefinedThreshold () {
     assertTrue(app.is_defined(0));
     assertTrue(app.is_defined(-1000000)); // negative values are still "defined"
-    assertTrue(app.is_defined(app.FLOAT_max_defined - 1));
   }
 
   @Test
   void is_defined_isFalseAtOrAboveFLOAT_undefined () {
-    assertFalse(app.is_defined(app.FLOAT_max_defined));
     assertFalse(app.is_defined(app.FLOAT_undefined));
     assertFalse(app.is_defined(app.FLOAT_undefined * 2));
   }
