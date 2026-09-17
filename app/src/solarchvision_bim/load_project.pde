@@ -46,7 +46,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     SOLARCHVISION_update_frame_layout();
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
     WORLD.revise();
     STUDY.revise();
     UI_menuBar.revise();

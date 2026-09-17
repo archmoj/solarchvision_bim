@@ -46,7 +46,7 @@ void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
 
   WORLD.revise();
   STUDY.revise();
-  ROLLOUT.revise();
+  UI_rollout.revise();
   UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 

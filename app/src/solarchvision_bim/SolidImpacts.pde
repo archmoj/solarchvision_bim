@@ -1211,7 +1211,7 @@ class solarchvision_SolidImpacts {
     cursor(ARROW);
 
     allWindFlows.displayAll = true;
-    ROLLOUT.revise();
+    UI_rollout.revise();
   }
 
 

@@ -376,13 +376,13 @@ class solarchvision_UI_toolBar {
         if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
           Select3D.convert_Vertex_to_softSelection();
         }
-        ROLLOUT.revise();
+        UI_rollout.revise();
         SOLARCHVISION_view_changed();
         break;
 
       case "Model Type":
         User3D.create_MeshOrSolid = j - 1;
-        ROLLOUT.revise();
+        UI_rollout.revise();
         break;
 
       case "Living Type":

@@ -72,7 +72,7 @@ void load_CLIMATE_TMYEPW (String FileName) {
 
   WORLD.revise();
   STUDY.revise();
-  ROLLOUT.revise();
+  UI_rollout.revise();
   UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 

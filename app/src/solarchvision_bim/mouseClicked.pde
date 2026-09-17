@@ -32,7 +32,7 @@ private void SOLARCHVISION_setPlotImpacts(int impacts, boolean showWindRoses) {
   STUDY.plotSetup = 0;
   STUDY.revise();
   allWindRoses.displayImage = showWindRoses;
-  ROLLOUT.revise();
+  UI_rollout.revise();
 }
 
 private void SOLARCHVISION_selectAllOfCategory(int category) {
@@ -562,7 +562,7 @@ void SOLARCHVISION_selectTMYEPWStation (int f, float mouse_lon, float mouse_lat)
     STATION.setElevation(TMYEPW_Coordinates[f].getElevation());
     STATION.setTimelong(TMYEPW_Coordinates[f].getTimelong());
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
 
     SOLARCHVISION_update_station(0);
 
@@ -597,7 +597,7 @@ void SOLARCHVISION_selectCLMRECStation (int f, float mouse_lon, float mouse_lat)
     STATION.setElevation(CLMREC_Coordinates[f].getElevation());
     STATION.setTimelong(CLMREC_Coordinates[f].getTimelong());
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
 
     SOLARCHVISION_update_station(0);
     update_CLIMATE_CLMREC();
@@ -627,7 +627,7 @@ void SOLARCHVISION_selectCWEEDSStation (int f, float mouse_lon, float mouse_lat)
     STATION.setElevation(CWEEDS_coordinates[f].getElevation());
     STATION.setTimelong(funcs.roundTo(STATION.getLongitude(), 15));
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
 
     SOLARCHVISION_update_station(0);
     update_CLIMATE_CWEEDS();
@@ -660,7 +660,7 @@ void SOLARCHVISION_selectNAEFSStation (int f, float mouse_lon, float mouse_lat) 
     STATION.setElevation(NAEFS_Coordinates[f].getElevation());
     STATION.setTimelong(NAEFS_Coordinates[f].getTimelong());
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
 
     SOLARCHVISION_update_station(0);
 
@@ -707,7 +707,7 @@ void SOLARCHVISION_selectSWOBStation (int f, float mouse_lon, float mouse_lat) {
     STATION.setElevation(SWOB_Coordinates[f].getElevation());
     STATION.setTimelong(SWOB_Coordinates[f].getTimelong());
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
 
     SOLARCHVISION_update_station(0);
 
@@ -809,8 +809,8 @@ void mouseClicked () {
           UI_commandBar.revise();
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, ROLLOUT.cX, ROLLOUT.cY, ROLLOUT.cX + ROLLOUT.dX, ROLLOUT.cY + ROLLOUT.dY)) {
-          ROLLOUT.revise();
+        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, UI_rollout.cX, UI_rollout.cY, UI_rollout.cX + UI_rollout.dX, UI_rollout.cY + UI_rollout.dY)) {
+          UI_rollout.revise();
         }
 
         if (WORLD.include) {
@@ -2044,35 +2044,35 @@ private void SOLARCHVISION_buildMenuActions() {
   SOLARCHVISION_menuActions.put("Stop REC.", () -> {
     SOLARCHVISION_stopAllRecording();
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
   });
 
   SOLARCHVISION_menuActions.put("REC. Time Graph", () -> {
     SOLARCHVISION_stopAllRecording();
     STUDY.record_AUTO = true;
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
   });
 
   SOLARCHVISION_menuActions.put("REC. Location Graph", () -> {
     SOLARCHVISION_stopAllRecording();
     WORLD.record_AUTO = true;
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
   });
 
   SOLARCHVISION_menuActions.put("REC. Solid Graph", () -> {
     SOLARCHVISION_stopAllRecording();
     WIN3D.record_AUTO = true;
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
   });
 
   SOLARCHVISION_menuActions.put("REC. Screenshot", () -> {
     SOLARCHVISION_stopAllRecording();
     FRAME_record_AUTO = true;
 
-    ROLLOUT.revise();
+    UI_rollout.revise();
   });
 
   SOLARCHVISION_menuActions.put("PDF Time Graph", () -> {
@@ -2209,7 +2209,7 @@ private void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_view_changed();
     WORLD.revise();
     STUDY.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
@@ -2226,7 +2226,7 @@ private void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_view_changed();
     WORLD.revise();
     STUDY.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
@@ -2243,7 +2243,7 @@ private void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_view_changed();
     WORLD.revise();
     STUDY.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
@@ -2261,7 +2261,7 @@ private void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_view_changed();
     WORLD.revise();
     STUDY.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
@@ -2279,7 +2279,7 @@ private void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_view_changed();
     WIN3D.revise();
     STUDY.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
@@ -3718,7 +3718,7 @@ private void SOLARCHVISION_buildMenuActions() {
       SOLARCHVISION_deleteAll();
       Create3D.add_DefaultModel(modelIndex);
       allSolidImpacts.calculate_Impact_selectedSections();
-      ROLLOUT.revise();
+      UI_rollout.revise();
       WIN3D.revise();
     });
   }

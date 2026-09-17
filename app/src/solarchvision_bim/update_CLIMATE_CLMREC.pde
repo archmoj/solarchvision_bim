@@ -66,7 +66,7 @@ void update_CLIMATE_CLMREC () {
 
   WORLD.revise();
   STUDY.revise();
-  ROLLOUT.revise();
+  UI_rollout.revise();
   UI_caseBar.revise();
   SOLARCHVISION_view_changed();
 

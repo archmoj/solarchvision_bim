@@ -21,12 +21,12 @@ int SOLARCHVISION_pixel_W = 100; // just an initial value
 void setup () {
   fullScreen(P2D);
 
-  SOLARCHVISION_pixel_W = (width - ROLLOUT.dX) / 2;
+  SOLARCHVISION_pixel_W = (width - UI_rollout.dX) / 2;
   SOLARCHVISION_pixel_H = (height - (SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) / 2;
 
   // resize windows
   MESSAGE = new solarchvision_MESSAGE();
-  ROLLOUT = new solarchvision_ROLLOUT();
+  UI_rollout = new solarchvision_UI_rollout();
   WIN3D = new solarchvision_WIN3D();
   WORLD = new solarchvision_WORLD();
   STUDY = new solarchvision_STUDY();
@@ -276,9 +276,9 @@ void draw () {
     Last_initializationStep = frameCount;
   } else {
 
-    if (ROLLOUT.include) {
-      if (ROLLOUT.update) {
-        ROLLOUT.updated();
+    if (UI_rollout.include) {
+      if (UI_rollout.update) {
+        UI_rollout.updated();
 
         pre_SampleYear_Start = SampleYear_Start;
         pre_SampleYear_End = SampleYear_End;
@@ -395,7 +395,7 @@ void draw () {
 
         pre_STUDY_PlotImpacts = STUDY.PlotImpacts;
 
-        ROLLOUT.drawView();
+        UI_rollout.drawView();
 
         if (pre_STUDY_PlotImpacts != STUDY.PlotImpacts) {
           STUDY.revise();
@@ -457,7 +457,7 @@ void draw () {
           UI_caseBar.revise();
 
           TIME.updateDate();
-          ROLLOUT.drawView();
+          UI_rollout.drawView();
         }
 
         if ((pre_TIME_Year != TIME.year) ||
@@ -475,7 +475,7 @@ void draw () {
           println("DATE:", TIME.date, "\tHOUR:", TIME.hour);
           update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-          ROLLOUT.drawView();
+          UI_rollout.drawView();
         }
 
         if (pre_CLIMATE_TMYEPW_load != CLIMATE_TMYEPW_load) update_CLIMATE_TMYEPW();
@@ -683,7 +683,7 @@ void draw () {
           User3D.create_powY = User3D.create_powAll;
           User3D.create_powZ = User3D.create_powAll;
 
-          ROLLOUT.revise();
+          UI_rollout.revise();
         }
 
         if (pre_allSolids_palette_CLR != allSolids.palette_CLR) {
@@ -1377,7 +1377,7 @@ solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
 
 solarchvision_OVERLAY3D OVERLAY3D = new solarchvision_OVERLAY3D();
 
-solarchvision_ROLLOUT ROLLOUT = new solarchvision_ROLLOUT();
+solarchvision_UI_rollout UI_rollout = new solarchvision_UI_rollout();
 
 float[][]   VertexSolar_XYZ;
 float[][][] VertexSolar_amounts;
@@ -1820,8 +1820,8 @@ void keyPressed (KeyEvent e) {
 
         UI_commandBar.updated();
 
-        if (ROLLOUT.isEditingSpinner()) {
-          ROLLOUT.keyPressed(e);
+        if (UI_rollout.isEditingSpinner()) {
+          UI_rollout.keyPressed(e);
         } else {
           STUDY.keyPressed(e);
           WORLD.keyPressed(e);
@@ -1841,7 +1841,7 @@ void keyPressed (KeyEvent e) {
           switch(key) {
 
             case TAB:
-              if ((e.isShiftDown() != true) && !ROLLOUT.isEditingSpinner()) {
+              if ((e.isShiftDown() != true) && !UI_rollout.isEditingSpinner()) {
                 typeUserCommand = (typeUserCommand + 1) % 2;
                 UI_commandBar.revise();
               }
@@ -1859,7 +1859,7 @@ void keyPressed (KeyEvent e) {
         }
       }
 
-      if ((STUDY.update) || (WORLD.update) || (WIN3D.update) || (ROLLOUT.update)) redraw();
+      if ((STUDY.update) || (WORLD.update) || (WIN3D.update) || (UI_rollout.update)) redraw();
     }
   }
 }

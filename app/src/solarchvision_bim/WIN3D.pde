@@ -410,7 +410,7 @@ class solarchvision_WIN3D {
 
   private void reviseViews () {
     this.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
   }
 
   // --- Continuous key-hold navigation ---------------------------------

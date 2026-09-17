@@ -90,35 +90,35 @@ class solarchvision_Edit3D {
 
         allModel1Ds.setDegreeMax(OBJ_ID, q);
         User3D.create_Model1D_DegreeMax = q;
-        ROLLOUT.revise();
+        UI_rollout.revise();
       }
 
       else if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) {
         float q = allModel1Ds.getBranchTilt(OBJ_ID) + p * 5;
         allModel1Ds.setBranchTilt(OBJ_ID, q);
         User3D.create_Model1D_BranchTilt = q;
-        ROLLOUT.revise();
+        UI_rollout.revise();
       }
 
       else if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) {
         float q = allModel1Ds.getBranchTwist(OBJ_ID) + p * 5;
         allModel1Ds.setBranchTwist(OBJ_ID, q);
         User3D.create_Model1D_BranchTwist = q;
-        ROLLOUT.revise();
+        UI_rollout.revise();
       }
 
       else if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) {
         float q = clampF(allModel1Ds.getBranchRatio(OBJ_ID) + 0.02 * p, 0.1, 1.0);
         allModel1Ds.setBranchRatio(OBJ_ID, q);
         User3D.create_Model1D_BranchRatio = q;
-        ROLLOUT.revise();
+        UI_rollout.revise();
       }
 
       else if (WIN3D.UI_CurrentTask == UITASK.TreeBase) {
         float q = clampF(allModel1Ds.getTreeBase(OBJ_ID) + 0.02 * p, 0.0, 4.0);
         allModel1Ds.setTreeBase(OBJ_ID, q);
         User3D.create_Model1D_TreeBase = q;
-        ROLLOUT.revise();
+        UI_rollout.revise();
       }
 
       else if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) {
@@ -127,7 +127,7 @@ class solarchvision_Edit3D {
 
         allModel1Ds.setTrunkSize(OBJ_ID, q);
         User3D.create_Model1D_TrunkSize = q;
-        ROLLOUT.revise();
+        UI_rollout.revise();
       }
 
       else if (WIN3D.UI_CurrentTask == UITASK.LeafSize) {
@@ -136,7 +136,7 @@ class solarchvision_Edit3D {
 
         allModel1Ds.setLeafSize(OBJ_ID, q);
         User3D.create_Model1D_LeafSize = q;
-        ROLLOUT.revise();
+        UI_rollout.revise();
       }
     }
   }

@@ -460,7 +460,7 @@ class solarchvision_SolarImpacts {
 
     this.displayImage = true;
     allSolidImpacts.displayImage = false;
-    ROLLOUT.revise();
+    UI_rollout.revise();
   }
 
 

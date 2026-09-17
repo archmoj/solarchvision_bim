@@ -11,7 +11,7 @@ class solarchvision_Earth3D {
   // is rendered around the station) and lat_step/lon_step (the mesh's own
   // tessellation resolution) together, since clipRadiusDegrees_X /
   // lat_step (or lon_step) - i.e. vertex count - stays fixed either way.
-  // Exposed as a spinner (see ROLLOUT.pde); whenever it changes,
+  // Exposed as a spinner (see UI_rollout.pde); whenever it changes,
   // recomputeLevelOfDetailDependents() must be called to keep
   // clipRadiusDegrees_Lat/Lon and lat_step/lon_step in sync, since those
   // are plain stored fields, not computed on the fly.

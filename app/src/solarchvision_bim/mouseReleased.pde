@@ -54,7 +54,7 @@ void finishFrameDragSelection() {
 
   WORLD.revise();
   STUDY.revise();
-  ROLLOUT.revise();
+  UI_rollout.revise();
   UI_menuBar.revise();
   UI_toolBar.revise();
   UI_caseBar.revise();
@@ -134,7 +134,7 @@ void performGetLengthMeasurement() {
       break;
   }
 
-  ROLLOUT.revise();
+  UI_rollout.revise();
 }
 
 float[] castClickToWorld(float clickX, float clickY) {

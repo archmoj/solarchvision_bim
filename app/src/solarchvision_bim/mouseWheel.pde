@@ -50,7 +50,7 @@ void handleCaseBarWheel(float wheelValue) {
 }
 
 void reviseStudyAndRegenerate(boolean alsoWorld) {
-  ROLLOUT.revise();
+  UI_rollout.revise();
   STUDY.revise();
   if (alsoWorld) WORLD.revise();
   UI_caseBar.revise();

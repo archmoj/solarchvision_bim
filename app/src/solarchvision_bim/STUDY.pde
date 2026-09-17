@@ -121,7 +121,7 @@ class solarchvision_STUDY {
 
   private void requestRedraw () {
     this.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
   }
 
   private void requestDataRefresh () {
@@ -129,7 +129,7 @@ class solarchvision_STUDY {
     UI_caseBar.revise();
     this.revise();
     WIN3D.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
   }
 
   void keyPressed (KeyEvent e) {
@@ -306,7 +306,7 @@ class solarchvision_STUDY {
 
     UI_caseBar.revise();
     this.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
   }
 
   // 'S' / 's' : cycle the sky scenario filter forward/backward through its 4
@@ -316,7 +316,7 @@ class solarchvision_STUDY {
     DevelopData_update = true;
     this.revise();
     WIN3D.revise();
-    ROLLOUT.revise();
+    UI_rollout.revise();
   }
 
   // '[' : shrink the hourly summing interval, following the step sequence
@@ -1661,7 +1661,7 @@ class solarchvision_STUDY {
       WORLD.revise();
       WIN3D.revise();
       STUDY.revise();
-      ROLLOUT.revise();
+      UI_rollout.revise();
       UI_menuBar.revise();
       UI_toolBar.revise();
       UI_caseBar.revise();

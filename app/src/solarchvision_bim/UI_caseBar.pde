@@ -83,7 +83,7 @@ class solarchvision_UI_caseBar {
   }
 
   void notifyChanged () {
-    ROLLOUT.revise();
+    UI_rollout.revise();
     STUDY.revise();
     SOLARCHVISION_view_changed();
     SOLARCHVISION_find_which_bakings_to_regenerate();
@@ -385,9 +385,9 @@ class solarchvision_UI_caseBar {
   // ---------------------------------------------------------------------
 
   void drawImpactLayerSelector () {
-    float displayBarWidth = ROLLOUT.dX;
+    float displayBarWidth = UI_rollout.dX;
     float displayBarHeight = 4.5 * MessageSize;
-    float offsetX = ROLLOUT.cX + 0.5 * displayBarWidth;
+    float offsetX = UI_rollout.cX + 0.5 * displayBarWidth;
     float offsetY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * displayBarHeight;
 
     handleImpactLayerClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);

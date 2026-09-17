@@ -1,6 +1,6 @@
-class solarchvision_ROLLOUT {
+class solarchvision_UI_rollout {
 
-  private final static String CLASS_STAMP = "ROLLOUT";
+  private final static String CLASS_STAMP = "UI_rollout";
 
   int cX = 2 * SOLARCHVISION_pixel_W;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
@@ -112,7 +112,7 @@ class solarchvision_ROLLOUT {
   private int[] selectedChildForParent;
   private final static int FIRST_CHILD = 1;
 
-  public solarchvision_ROLLOUT () {
+  public solarchvision_UI_rollout () {
     buildAllRollouts();
     parent = PARENT_PERIOD_SCENARIOS; // default parent
     child = CHILD_PERIOD_TIME; // default child
@@ -785,18 +785,18 @@ class solarchvision_ROLLOUT {
     float cx, cy, cr;
     float w1, w2, h, o, t_oW, t_oH;
 
-    //w1 = 32.5 * ROLLOUT.view_S;
-    //w2 = 142.5 * ROLLOUT.view_S;
+    //w1 = 32.5 * UI_rollout.view_S;
+    //w2 = 142.5 * UI_rollout.view_S;
 
-    w1 = 100 * ROLLOUT.view_S;
-    w2 = 200 * ROLLOUT.view_S;
+    w1 = 100 * UI_rollout.view_S;
+    w2 = 200 * UI_rollout.view_S;
 
-    h = 16 * ROLLOUT.view_S;
-    o = 2 * ROLLOUT.view_S;
-    t_oW = h * ROLLOUT.view_S / 8.0;
+    h = 16 * UI_rollout.view_S;
+    o = 2 * UI_rollout.view_S;
+    t_oW = h * UI_rollout.view_S / 8.0;
     t_oH = t_oW - 2; // move text 2 pixels down to display nicely
 
-    Y_control += 25 * ROLLOUT.view_S; //(h + 2 * o) * 1.25;
+    Y_control += 25 * UI_rollout.view_S; //(h + 2 * o) * 1.25;
 
     this.spinnerOrderThisPass.add(caption);
 
@@ -831,7 +831,7 @@ class solarchvision_ROLLOUT {
 
       this.spinnerEditStateChanged = true;
 
-      ROLLOUT.revise();
+      UI_rollout.revise();
     }
 
     // Tab / Shift+Tab requested this spinner become the new edit target.
@@ -937,7 +937,7 @@ class solarchvision_ROLLOUT {
       if (new_value < min_v) new_value = max_v;
       if (new_value > max_v) new_value = min_v;
 
-      ROLLOUT.revise();
+      UI_rollout.revise();
     }
 
     strokeWeight(0);
