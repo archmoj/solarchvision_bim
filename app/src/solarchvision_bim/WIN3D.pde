@@ -201,9 +201,9 @@ class solarchvision_WIN3D {
 
   void drawSceneContents () {
     Sky3D.draw(TypeWindow.WIN3D);
-    Sun3D.drawPattern(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
-    Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
-    Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale, 0, 360);
+    Sun3D.drawPattern(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius);
+    Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius);
+    Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius, 0, 360);
     Sun3D.draw();
     Moon3D.draw();
     Earth3D.draw(TypeWindow.WIN3D);

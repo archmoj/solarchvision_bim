@@ -335,19 +335,19 @@ void scaleObjectsWheel(float wheelValue) {
 }
 
 void scaleSkydomeWheel(float wheelValue) {
-  if (wheelValue > 0) Sky3D.scale *= pow(2.0, 0.25);
-  if (wheelValue < 0) Sky3D.scale /= pow(2.0, 0.25);
+  if (wheelValue > 0)   Sky3D.radius *= pow(2.0, 0.25);
+  if (wheelValue < 0)   Sky3D.radius /= pow(2.0, 0.25);
   SOLARCHVISION_view_changed();
 }
 
 void scaleAllModelWheel(float wheelValue) {
   if (wheelValue > 0) {
     OBJECTS_scale /= pow(2.0, 0.25);
-    Sky3D.scale /= pow(2.0, 0.25);
+      Sky3D.radius /= pow(2.0, 0.25);
   }
   if (wheelValue < 0) {
     OBJECTS_scale *= pow(2.0, 0.25);
-    Sky3D.scale *= pow(2.0, 0.25);
+      Sky3D.radius *= pow(2.0, 0.25);
   }
   SOLARCHVISION_view_changed();
 }

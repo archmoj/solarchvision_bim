@@ -497,7 +497,7 @@ class solarchvision_UI_rollout {
         Land3D.displayTessellation = this.Spinner(X_control, Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1);
 
         Sky3D.displayTessellation = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.displayTessellation", Sky3D.displayTessellation, 0, 4, 1);
-        Sky3D.scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.scale", Sky3D.scale, 1, 4000000, -2, 0.001);
+          Sky3D.radius = this.Spinner(X_control, Y_control, 0, 1, 0, "Sky.scale",   Sky3D.radius, 1, 4000000, -2, 0.001);
 
         Tropo3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displaySurface", Tropo3D.displaySurface);
         Tropo3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Tropo3D.displayTexture", Tropo3D.displayTexture);
@@ -509,9 +509,11 @@ class solarchvision_UI_rollout {
 
         Moon3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displaySurface", Moon3D.displaySurface);
         Moon3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.displayTexture", Moon3D.displayTexture);
+        Moon3D.fitInSkyDome = this.Spinner(X_control, Y_control, 0, 1, 0, "Moon3D.fitInSkyDome", Moon3D.fitInSkyDome);
 
         Sun3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displaySurface", Sun3D.displaySurface);
         Sun3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture);
+        Sun3D.fitInSkyDome = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.fitInSkyDome", Sun3D.fitInSkyDome);
 
         Planetary_Magnification = this.Spinner(X_control, Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
 

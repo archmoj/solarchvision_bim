@@ -1015,7 +1015,7 @@ float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intre
 
 float GlobalAlbedo = 0; // 0-100
 
-float Planetary_Magnification = 4.0; // <<<<<<<<<<
+float Planetary_Magnification = 25.0; // <<<<<<<<<<
 
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;

@@ -4,14 +4,16 @@ class solarchvision_Moon3D {
 
   final static float LONGITUDE_SPAN = 360.0;
   final static float LATITUDE_SPAN  = 180.0;
-  final static float MOON_RADIUS_M = 1737000.0;
-  final static float EARTH_MOON_DISTANCE_M = 384400000.0;
+  final static float MOON_RADIUS = 1737000.0;
+  final static float EARTH_MOON_DISTANCE = 384400000.0;
 
   float lat_step = 5; //in degrees
   float lon_step  = 10; //in degrees
 
   boolean displaySurface = false;
   boolean displayTexture = true;
+
+  boolean fitInSkyDome = true;
 
   String Filename = BaseFolder + "/input/images/moon/Moon.jpg";
   PImage Map;
@@ -35,8 +37,16 @@ class solarchvision_Moon3D {
     float CEN_lon = 0;
     float CEN_lat = 0;
 
-    float r = MOON_RADIUS_M * Planetary_Magnification;
-    float d = EARTH_MOON_DISTANCE_M - FLOAT_r_Earth;
+    float r = MOON_RADIUS * Planetary_Magnification;
+    float d = EARTH_MOON_DISTANCE - FLOAT_r_Earth;
+
+    if(this.fitInSkyDome) {
+      // fit the moon inside the sky sphere
+      // bring it closer and resize it
+      r *= Sky3D.radius / d;
+      d = Sky3D.radius;
+    }
+
 
     for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
@@ -123,6 +133,7 @@ class solarchvision_Moon3D {
     XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setBoolean(parent, "displayTexture", this.displayTexture);
+    XML_setBoolean(parent, "fitInSkyDome", this.fitInSkyDome);
   }
 
   public void from_XML (XML xml) {
@@ -130,5 +141,6 @@ class solarchvision_Moon3D {
     XML parent = xml.getChild(this.CLASS_STAMP);
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTexture = XML_getBoolean(parent, "displayTexture");
+    this.fitInSkyDome = XML_getBoolean(parent, "fitInSkyDome");
   }
 }

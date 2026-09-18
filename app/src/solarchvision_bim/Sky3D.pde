@@ -6,7 +6,7 @@ class solarchvision_Sky3D {
 
   int displayTessellation = 3; //3;
 
-  float scale = 4000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
+  float radius = 4000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
   int ACTIVE_palette_CLR = 18; //-1; //7; //8;
   int ACTIVE_palette_DIR = 1; //-1;
@@ -131,9 +131,9 @@ class solarchvision_Sky3D {
       int s_next = (s + 1) % subFace.length;
       int s_prev = (s + subFace.length - 1) % subFace.length;
 
-      float x = subFace[s][0] * this.scale * WIN3D.scale;
-      float y = subFace[s][1] * this.scale * WIN3D.scale;
-      float z = subFace[s][2] * this.scale * WIN3D.scale;
+      float x = subFace[s][0] * this.radius * WIN3D.scale;
+      float y = subFace[s][1] * this.radius * WIN3D.scale;
+      float z = subFace[s][2] * this.radius * WIN3D.scale;
 
       float u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
 
@@ -199,9 +199,9 @@ class solarchvision_Sky3D {
 
       float[] COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
       WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-      WIN3D.graphics.vertex(subFace[s][0] * this.scale * WIN3D.scale,
-                             -subFace[s][1] * this.scale * WIN3D.scale,
-                             subFace[s][2] * this.scale * WIN3D.scale);
+      WIN3D.graphics.vertex(subFace[s][0] * this.radius * WIN3D.scale,
+                             -subFace[s][1] * this.radius * WIN3D.scale,
+                             subFace[s][2] * this.radius * WIN3D.scale);
     }
     WIN3D.graphics.endShape(CLOSE);
   }
@@ -216,9 +216,9 @@ class solarchvision_Sky3D {
       WIN3D.graphics.beginShape();
       for (int j = 0; j < skyFaces[f].length; j++) {
         int vNo = skyFaces[f][j];
-        WIN3D.graphics.vertex(skyVertices[vNo][0] * this.scale * WIN3D.scale,
-                               -skyVertices[vNo][1] * this.scale * WIN3D.scale,
-                               skyVertices[vNo][2] * this.scale * WIN3D.scale);
+        WIN3D.graphics.vertex(skyVertices[vNo][0] * this.radius * WIN3D.scale,
+                               -skyVertices[vNo][1] * this.radius * WIN3D.scale,
+                               skyVertices[vNo][2] * this.radius * WIN3D.scale);
       }
       WIN3D.graphics.endShape(CLOSE);
     }
@@ -290,7 +290,7 @@ class solarchvision_Sky3D {
     XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
-    XML_setFloat(parent, "scale", this.scale);
+    XML_setFloat(parent, "scale", this.radius);
     XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
     XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
     XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
@@ -309,7 +309,7 @@ class solarchvision_Sky3D {
     XML parent = xml.getChild(this.CLASS_STAMP);
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
-    this.scale = XML_getFloat(parent, "scale");
+    this.radius = XML_getFloat(parent, "scale");
     this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
     this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
     this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");

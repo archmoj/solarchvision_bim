@@ -57,7 +57,7 @@ void SOLARCHVISION_export_objects_OBJ (String suffix) {
 
     float previous_DATE = TIME.date;
 
-    Sun3D.drawCycles(TypeWindow.STUDY, 0, 0, 0, 0.975 * Sky3D.scale);
+    Sun3D.drawCycles(TypeWindow.STUDY, 0, 0, 0, 0.975 *   Sky3D.radius);
 
     STUDY.perDays = keep_STUDY_perDays;
     STUDY.joinDays = keep_STUDY_joinDays;

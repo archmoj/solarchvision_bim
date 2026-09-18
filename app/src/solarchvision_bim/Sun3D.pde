@@ -3,9 +3,9 @@ class solarchvision_Sun3D {
 
   final static float LONGITUDE_SPAN = 360.0;
   final static float LATITUDE_SPAN  = 180.0;
-  final static float SUN_RADIUS_Mm  = 696.0;    // sun radius, in megameters
-  final static float SUN_DISTANCE_Mm = 150000.0; // ~1 AU, in megameters
-  final static float METERS_PER_MEGAMETER = 1000000.0;
+  final static float MEGAMETER = 1000000.0;
+  final static float SUN_RADIUS  = 696.0 * MEGAMETER;
+  final static float SUN_DISTANCE = 150000.0 * MEGAMETER;
 
   float lat_step = 5; //in degrees
   float lon_step  = 10; //in degrees
@@ -20,8 +20,10 @@ class solarchvision_Sun3D {
   boolean displayGrid = true;
   boolean displayPath = true;
   boolean displayPattern = false;
-  boolean displaySurface = false;
+  boolean displaySurface = true;
   boolean displayTexture = true;
+
+  boolean fitInSkyDome = true;
 
   String Filename = BaseFolder + "/input/images/sun/Sun.jpg";
   PImage Map;
@@ -77,8 +79,15 @@ class solarchvision_Sun3D {
     float CEN_lon = 0;
     float CEN_lat = 0;
 
-    float r = SUN_RADIUS_Mm * Planetary_Magnification;
-    float d = SUN_DISTANCE_Mm;
+    float r = SUN_RADIUS * Planetary_Magnification;
+    float d = SUN_DISTANCE;
+
+    if(this.fitInSkyDome) {
+      // fit the sun inside the sky sphere
+      // bring it closer and resize it
+      r *= Sky3D.radius / d;
+      d = Sky3D.radius;
+    }
 
     for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
@@ -96,6 +105,10 @@ class solarchvision_Sun3D {
     float tb = 0;
     float stationLat = STATION.getLatitude();
     float ta = -90 - stationLat;
+
+    float[] SunR = funcs.SunPosition(stationLat, SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
+    float tA = funcs.asin_ang(SunR[3]);
+    float tB = funcs.atan2_ang(SunR[2], SunR[1]);
 
     for (int s = 0; s < 4; s++) {
       FaceVertex vtx = new FaceVertex();
@@ -126,14 +139,10 @@ class solarchvision_Sun3D {
       float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
       float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
 
-      // scale from megameters to meters
-      x2 *= METERS_PER_MEGAMETER;
-      y2 *= METERS_PER_MEGAMETER;
-      z2 *= METERS_PER_MEGAMETER;
-
       // move out to the sun's distance, above the station
-      y2 += METERS_PER_MEGAMETER * d * funcs.sin_ang(-stationLat);
-      z2 += METERS_PER_MEGAMETER * d * funcs.cos_ang(-stationLat);
+      x2 += d * funcs.cos_ang(tB) * funcs.cos_ang(tA);
+      y2 += d * funcs.sin_ang(tB) * funcs.cos_ang(tA);
+      z2 += d * funcs.sin_ang(tA);
 
       vtx.x = x2;
       vtx.y = y2;
@@ -638,6 +647,7 @@ class solarchvision_Sun3D {
     XML_setBoolean(parent, "displayPattern", this.displayPattern);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setBoolean(parent, "displayTexture", this.displayTexture);
+    XML_setBoolean(parent, "fitInSkyDome", this.fitInSkyDome);
   }
 
   public void from_XML (XML xml) {
@@ -654,5 +664,6 @@ class solarchvision_Sun3D {
     this.displayPattern = XML_getBoolean(parent, "displayPattern");
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTexture = XML_getBoolean(parent, "displayTexture");
+    this.fitInSkyDome = XML_getBoolean(parent, "fitInSkyDome");
   }
 }
