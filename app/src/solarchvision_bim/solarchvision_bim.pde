@@ -968,7 +968,7 @@ final String[] STR_SHD = {"F", "T"};
 
 class solarchvision_DATATYPE {
 
-  private final static String CLASS_STAMP = "DATATYPE";
+  final static String CLASS_STAMP = "DATATYPE";
 
   final static int SATELLITE_GOES = 0;
   final static int FORECAST_HRDPS = 1;

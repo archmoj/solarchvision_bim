@@ -1,26 +1,26 @@
 class solarchvision_CREATE {
 
-  private final static String CLASS_STAMP = "CREATE";
+  final static String CLASS_STAMP = "CREATE";
 
-  private final static int Nothing    = 0;
-  private final static int Plane      = 1;
-  private final static int Polygon    = 2;
-  private final static int Extrude    = 3;
-  private final static int Pyramid    = 4;
-  private final static int Hyper      = 5;
-  private final static int House1     = 6;
-  private final static int House2     = 7;
-  private final static int House3     = 8;
-  private final static int SuperOBJ   = 9;
-  private final static int Parametric = 10;
-  private final static int Person     = 11;
-  private final static int Plant      = 12;
-  private final static int Model1Ds   = 13;
-  private final static int Face       = 14;
-  private final static int Vertex     = 15;
-  private final static int Polyline   = 16;
-  private final static int Solid      = 17;
-  private final static int Section    = 18;
-  private final static int Camera     = 19;
+  final static int Nothing    = 0;
+  final static int Plane      = 1;
+  final static int Polygon    = 2;
+  final static int Extrude    = 3;
+  final static int Pyramid    = 4;
+  final static int Hyper      = 5;
+  final static int House1     = 6;
+  final static int House2     = 7;
+  final static int House3     = 8;
+  final static int SuperOBJ   = 9;
+  final static int Parametric = 10;
+  final static int Person     = 11;
+  final static int Plant      = 12;
+  final static int Model1Ds   = 13;
+  final static int Face       = 14;
+  final static int Vertex     = 15;
+  final static int Polyline   = 16;
+  final static int Solid      = 17;
+  final static int Section    = 18;
+  final static int Camera     = 19;
 
 }

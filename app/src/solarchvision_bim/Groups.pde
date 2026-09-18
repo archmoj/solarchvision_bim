@@ -1,6 +1,6 @@
 class solarchvision_Groups {
 
-  private final static String CLASS_STAMP = "Groups";
+  final static String CLASS_STAMP = "Groups";
 
   solarchvision_Groups () { // constructor
     makeEmpty(0);

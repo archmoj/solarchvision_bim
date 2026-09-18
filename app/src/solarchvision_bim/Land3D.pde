@@ -1,6 +1,6 @@
 class solarchvision_Land3D {
 
-  private final static String CLASS_STAMP = "Land3D";
+  final static String CLASS_STAMP = "Land3D";
 
   boolean loadMesh = true;
   boolean loadTextures = true;
@@ -36,7 +36,7 @@ class solarchvision_Land3D {
   // beginShape(LINES) pass at the end instead of each cell also stroking
   // its own outline as part of its individual beginShape()/endShape() -
   // see beginLandShape()/drawLandSubFace()/flushLandEdgeBatch() below.
-  private ArrayList<float[][]> winEdgeBatch = null;
+  ArrayList<float[][]> winEdgeBatch = null;
 
   void update_textures () {
     this.Textures_U_scale = new float[0];
@@ -63,7 +63,7 @@ class solarchvision_Land3D {
     SOLARCHVISION_view_changed();
   }
 
-  private void addLandTextureIfElevationJpg (String filename) {
+  void addLandTextureIfElevationJpg (String filename) {
     println(filename);
 
     int L = filename.length();
@@ -123,7 +123,7 @@ class solarchvision_Land3D {
     this.update_textures();
   }
 
-  private void loadMeshFromFiles () {
+  void loadMeshFromFiles () {
     for (int i = 0; i < this.num_rows; i++) {
       XML FileALL = loadXML(Folder_Land + "/" + nf(i, 0) + ".xml");
       XML[] children0 = FileALL.getChildren("result");
@@ -145,7 +145,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void normalizeMeshElevation () {
+  void normalizeMeshElevation () {
     float h = this.Mesh[0][0][2] + HeightAboveGround;
     for (int i = 0; i < this.num_rows; i++) {
       for (int j = 0; j < this.num_columns; j++) {
@@ -240,14 +240,14 @@ class solarchvision_Land3D {
     this.update_textures();
   }
 
-  private boolean shouldDraw (int target_window) {
+  boolean shouldDraw (int target_window) {
     if (!this.displaySurface || !this.loadMesh) return false;
     if (target_window == TypeWindow.STUDY) return false;
     if (target_window == TypeWindow.WORLD) return false;
     return true;
   }
 
-  private float[][] landCellBaseVertices (int i, int j) {
+  float[][] landCellBaseVertices (int i, int j) {
     return new float[][] {
       { this.Mesh[i][j][0],     this.Mesh[i][j][1],     this.Mesh[i][j][2] },
       { this.Mesh[i+1][j][0],   this.Mesh[i+1][j][1],   this.Mesh[i+1][j][2] },
@@ -319,7 +319,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void writeLandMaterials (int target_window) {
+  void writeLandMaterials (int target_window) {
     for (int n_Map = 0; n_Map < this.Textures_num; n_Map++) {
       if (target_window == TypeWindow.HTML) {
         htmlOutput.println("\t\t\t\t<Appearance DEF='LandMap" + nf(n_Map, 0) + "'>");
@@ -362,7 +362,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void beginLandGroup () {
+  void beginLandGroup () {
     current_Material = User3D.default_Material;
     current_Tessellation = User3D.default_Tessellation;
     current_Layer = User3D.default_Layer;
@@ -373,7 +373,7 @@ class solarchvision_Land3D {
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   }
 
-  private void drawLandRow (int target_window, int i, int tessellation, int totalNumberOfSubs, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void drawLandRow (int target_window, int i, int tessellation, int totalNumberOfSubs, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
     for (int j = 0; j < this.num_columns - 1; j++) {
       drawLandCell(target_window, i, j, tessellation, totalNumberOfSubs, _turn, PAL_type, PAL_direction, PAL_multiplier);
     }
@@ -384,7 +384,7 @@ class solarchvision_Land3D {
   }
 
   // Creates a polygon around the center to close the gap left by skipStart.
-  private void closeLandCenterGap (int i) {
+  void closeLandCenterGap (int i) {
     int[] _face = new int[this.num_columns - 1];
     for (int j = 0; j < _face.length; j++) {
       _face[j] = allPoints.create(this.Mesh[i + 1][j][0], this.Mesh[i + 1][j][1], this.Mesh[i + 1][j][2]);
@@ -392,7 +392,7 @@ class solarchvision_Land3D {
     allFaces.create(_face);
   }
 
-  private void drawLandCell (int target_window, int i, int j, int tessellation, int totalNumberOfSubs, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void drawLandCell (int target_window, int i, int j, int tessellation, int totalNumberOfSubs, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
     float[][] base_Vertices = landCellBaseVertices(i, j);
 
     for (int n = 0; n < totalNumberOfSubs; n++) {
@@ -401,7 +401,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void drawLandSubFace (int target_window, float[][] subFace, int i, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void drawLandSubFace (int target_window, float[][] subFace, int i, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
     int n_Map = selectLandTextureMap(subFace);
 
     beginLandShape(target_window, subFace, n_Map, _turn);
@@ -427,7 +427,7 @@ class solarchvision_Land3D {
   // allFaces.displayEdges toggle; with texturing on, a cell only gets an
   // outline when no texture tile actually covers it (n_Map == -1) - shown
   // as a visual placeholder for the gap - regardless of displayEdges.
-  private boolean shouldStrokeLandSubFace (int n_Map) {
+  boolean shouldStrokeLandSubFace (int n_Map) {
     if (this.displayTexture) return (n_Map == -1);
     return allFaces.displayEdges;
   }
@@ -435,7 +435,7 @@ class solarchvision_Land3D {
   // Projects a subface's raw coordinates into the same WIN3D screen-space
   // values passed to vertex() in renderLandVertexShaded()/
   // renderLandVertexTextured(), for later batched stroking.
-  private float[][] projectLandSubFaceForWIN3D (float[][] subFace) {
+  float[][] projectLandSubFaceForWIN3D (float[][] subFace) {
     float[][] poly = new float[subFace.length][3];
     for (int s = 0; s < subFace.length; s++) {
       poly[s][0] =  subFace[s][0] * OBJECTS_scale * WIN3D.scale;
@@ -448,7 +448,7 @@ class solarchvision_Land3D {
   // Strokes every subface outline recorded above in one beginShape(LINES)
   // pass - they all share the exact same black, weight-1 stroke, so
   // there's nothing per-cell lost by batching them.
-  private void flushLandEdgeBatch () {
+  void flushLandEdgeBatch () {
     if ((this.winEdgeBatch == null) || (this.winEdgeBatch.size() == 0)) {
       this.winEdgeBatch = null;
       return;
@@ -474,7 +474,7 @@ class solarchvision_Land3D {
     this.winEdgeBatch = null;
   }
 
-  private int selectLandTextureMap (float[][] subFace) {
+  int selectLandTextureMap (float[][] subFace) {
     if (!this.displayTexture) return -1;
 
     int n_Map = -1;
@@ -493,7 +493,7 @@ class solarchvision_Land3D {
     return n_Map;
   }
 
-  private void beginLandShape (int target_window, float[][] subFace, int n_Map, int _turn) {
+  void beginLandShape (int target_window, float[][] subFace, int n_Map, int _turn) {
     if (target_window == TypeWindow.SKY2D) {
       SKY2D_graphics.beginShape();
       SKY2D_graphics.fill(255);
@@ -542,7 +542,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void renderLandVertex (int target_window, float[][] subFace, int[] newFace, int s, int i, int _turn, int n_Map, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void renderLandVertex (int target_window, float[][] subFace, int[] newFace, int s, int i, int _turn, int n_Map, int PAL_type, int PAL_direction, float PAL_multiplier) {
     if ((target_window == TypeWindow.RENDER) && (i < 5)) { // don't add points farther away
       newFace[s] = entirePointsX.size();
       entirePointsX.add(subFace[s][0]);
@@ -566,7 +566,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void renderLandVertexShaded (int target_window, float[][] subFace, int s, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void renderLandVertexShaded (int target_window, float[][] subFace, int s, int PAL_type, int PAL_direction, float PAL_multiplier) {
     if (WIN3D.FacesShade != SHADE.Surface_Wire) {
       float[] COL = { 255, 255, 255, 255 };
       int s_next = (s + 1) % subFace.length;
@@ -591,7 +591,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void renderLandVertexTextured (int target_window, float[][] subFace, int s, int i, int _turn, int n_Map) {
+  void renderLandVertexTextured (int target_window, float[][] subFace, int s, int i, int _turn, int n_Map) {
     float u = 0;
     float v = 0;
     if (n_Map != -1) {
@@ -631,7 +631,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void endLandShape (int target_window, int i, int n_Map, int _turn) {
+  void endLandShape (int target_window, int i, int n_Map, int _turn) {
     if (target_window == TypeWindow.HTML) {
       htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");
       htmlOutput.println("\t\t\t\t</shape>");
@@ -655,7 +655,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void writeLandObjFace () {
+  void writeLandObjFace () {
     String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
     String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
     String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
@@ -675,7 +675,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void writeLandDepthWalls (int target_window, float[][] subFace, int n_Map) {
+  void writeLandDepthWalls (int target_window, float[][] subFace, int n_Map) {
     if (target_window != TypeWindow.WIN3D) return;
     WIN3D.graphics.fill(223, 223, 223);
     WIN3D.graphics.noStroke();
@@ -712,7 +712,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void drawLandPoints () {
+  void drawLandPoints () {
     if (!this.displayPoints) return;
 
     WIN3D.graphics.fill(191, 191, 0);
@@ -755,7 +755,7 @@ class solarchvision_Land3D {
     }
   }
 
-  private void castLandSubFaceShadow (float[][] subFace) {
+  void castLandSubFaceShadow (float[][] subFace) {
     for (int s = 0; s < subFace.length; s++) {
       if (allSolarImpacts.sectionType == 2) {
         float a = subFace[s][0];
@@ -794,7 +794,7 @@ class solarchvision_Land3D {
 
   // When the current vertex is below the horizon (z < 0) but its neighbor is above it,
   // clip the shadow edge at the horizon and emit that clipped point instead.
-  private void castLandShadowClippedEdge (float[][] subFace, int s, int s_neighbor, float x, float y, float z) {
+  void castLandShadowClippedEdge (float[][] subFace, int s, int s_neighbor, float x, float y, float z) {
     float z_n = subFace[s_neighbor][2] - allSolarImpacts.Z;
     float x_n = subFace[s_neighbor][0] - z_n * SunR_Rotated[1] / SunR_Rotated[3];
     float y_n = subFace[s_neighbor][1] - z_n * SunR_Rotated[2] / SunR_Rotated[3];
@@ -836,7 +836,7 @@ class solarchvision_Land3D {
   }
 
   // The LAND cell is tested as 4 triangles fanned around its centroid G.
-  private float[] intersectLandCell (int f, float[] ray_pnt, float[] ray_dir) {
+  float[] intersectLandCell (int f, float[] ray_pnt, float[] ray_dir) {
     float[] miss = { FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined };
 
     int LAND_i = f / (this.num_columns - 1);

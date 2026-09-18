@@ -1,6 +1,6 @@
 class solarchvision_UI_rollout {
 
-  private final static String CLASS_STAMP = "UI_rollout";
+  final static String CLASS_STAMP = "UI_rollout";
 
   int cX = 2 * SOLARCHVISION_pixel_W;
   int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
@@ -14,25 +14,25 @@ class solarchvision_UI_rollout {
 
   // Spinner text-edit state: which spinner (identified by its caption) is
   // currently accepting keyboard input, and the value being typed so far.
-  private boolean spinnerEditActive = false;
-  private String spinnerEditCaption = "";
-  private String spinnerEditText = "";
-  private int spinnerEditCursor = 0;
-  private boolean spinnerEditCommit = false;
-  private boolean spinnerEditStateChanged = false;
+  boolean spinnerEditActive = false;
+  String spinnerEditCaption = "";
+  String spinnerEditText = "";
+  int spinnerEditCursor = 0;
+  boolean spinnerEditCommit = false;
+  boolean spinnerEditStateChanged = false;
 
   // Captions of every spinner drawn on the current page, in on-screen
   // order, rebuilt each drawView() pass. Used by Tab / Shift+Tab to know
   // which spinner comes next/previous.
-  private ArrayList<String> spinnerOrderThisPass = new ArrayList<String>();
+  ArrayList<String> spinnerOrderThisPass = new ArrayList<String>();
 
   // Set by Tab / Shift+Tab to request that a specific spinner (identified
   // by caption) become the new edit target. The actual switch happens once
   // that spinner's own _Spinner() call is reached, since only there is its
   // live value known (needed to seed the typed text).
-  private String spinnerEditPendingCaption = null;
+  String spinnerEditPendingCaption = null;
 
-  private void buildAllRollouts () {
+  void buildAllRollouts () {
 
     PARENT_PERIOD_SCENARIOS = pushParent("Period & Scenarios");
     CHILD_PERIOD_TIME = pushChild("Time");
@@ -70,47 +70,47 @@ class solarchvision_UI_rollout {
     CHILD_EXPORT_MEDIA = pushChild("Media");
   }
 
-  private int PARENT_PERIOD_SCENARIOS;
-  private int CHILD_PERIOD_TIME;
-  private int CHILD_PERIOD_RANGES;
-  private int CHILD_PERIOD_FILTERS;
+  int PARENT_PERIOD_SCENARIOS;
+  int CHILD_PERIOD_TIME;
+  int CHILD_PERIOD_RANGES;
+  int CHILD_PERIOD_FILTERS;
 
-  private int PARENT_LOCATION;
-  private int CHILD_LOCATION_POINT;
-  private int CHILD_LOCATION_STATIONS;
+  int PARENT_LOCATION;
+  int CHILD_LOCATION_POINT;
+  int CHILD_LOCATION_STATIONS;
 
-  private int PARENT_GEOMETRY;
-  private int CHILD_GEOMETRY_CREATE;
-  private int CHILD_GEOMETRY_MODIFY;
-  private int CHILD_GEOMETRY_SOLID;
-  private int CHILD_GEOMETRY_FRACTAL_TREE;
-  private int CHILD_GEOMETRY_ENVIRONMENT;
-  private int CHILD_GEOMETRY_VIEWPORT;
-  private int CHILD_GEOMETRY_SIMULATION;
-  private int CHILD_GEOMETRY_OTHER;
+  int PARENT_GEOMETRY;
+  int CHILD_GEOMETRY_CREATE;
+  int CHILD_GEOMETRY_MODIFY;
+  int CHILD_GEOMETRY_SOLID;
+  int CHILD_GEOMETRY_FRACTAL_TREE;
+  int CHILD_GEOMETRY_ENVIRONMENT;
+  int CHILD_GEOMETRY_VIEWPORT;
+  int CHILD_GEOMETRY_SIMULATION;
+  int CHILD_GEOMETRY_OTHER;
 
-  private int PARENT_ILLUSTRATION;
-  private int CHILD_ILLUSTRATION_2D_LAYERS;
-  private int CHILD_ILLUSTRATION_2D_COLORS;
-  private int CHILD_ILLUSTRATION_3D_SOLAR;
-  private int CHILD_ILLUSTRATION_3D_SPATIAL;
-  private int CHILD_ILLUSTRATION_SELECTION;
+  int PARENT_ILLUSTRATION;
+  int CHILD_ILLUSTRATION_2D_LAYERS;
+  int CHILD_ILLUSTRATION_2D_COLORS;
+  int CHILD_ILLUSTRATION_3D_SOLAR;
+  int CHILD_ILLUSTRATION_3D_SPATIAL;
+  int CHILD_ILLUSTRATION_SELECTION;
 
-  private int PARENT_POSTPROCESS;
-  private int CHILD_POSTPROCESS_INTERPOLATION;
-  private int CHILD_POSTPROCESS_DEVELOPED;
-  private int CHILD_POSTPROCESS_IMPACTS;
+  int PARENT_POSTPROCESS;
+  int CHILD_POSTPROCESS_INTERPOLATION;
+  int CHILD_POSTPROCESS_DEVELOPED;
+  int CHILD_POSTPROCESS_IMPACTS;
 
-  private int PARENT_EXPORT;
-  private int CHILD_EXPORT_DATA;
-  private int CHILD_EXPORT_MEDIA;
+  int PARENT_EXPORT;
+  int CHILD_EXPORT_DATA;
+  int CHILD_EXPORT_MEDIA;
 
-  private ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
-  private int _lastParentIndex = -1; // which category pushChild() appends into
-  private int parent;
-  private int child;
-  private int[] selectedChildForParent;
-  private final static int FIRST_CHILD = 1;
+  ArrayList<ArrayList<String>> allRollouts = new ArrayList<ArrayList<String>>();
+  int _lastParentIndex = -1; // which category pushChild() appends into
+  int parent;
+  int child;
+  int[] selectedChildForParent;
+  final static int FIRST_CHILD = 1;
 
   public solarchvision_UI_rollout () {
     buildAllRollouts();
@@ -123,7 +123,7 @@ class solarchvision_UI_rollout {
     }
   }
 
-  private int pushParent (String label) {
+  int pushParent (String label) {
     ArrayList<String> category = new ArrayList<String>();
     category.add(label); // index 0 holds the category's own display label
     allRollouts.add(category);
@@ -132,7 +132,7 @@ class solarchvision_UI_rollout {
     return _lastParentIndex;
   }
 
-  private int pushChild (String label) {
+  int pushChild (String label) {
     ArrayList<String> category = allRollouts.get(_lastParentIndex);
     category.add(label);
 
@@ -762,11 +762,11 @@ class solarchvision_UI_rollout {
     );
   }
 
-  private String formatSpinnerValue (float value) {
+  String formatSpinnerValue (float value) {
     return nf(value, 0, 0);
   }
 
-  private void beginSpinnerEdit (String caption, float value) {
+  void beginSpinnerEdit (String caption, float value) {
     this.spinnerEditActive = true;
     this.spinnerEditCaption = caption;
     this.spinnerEditText = this.formatSpinnerValue(value);

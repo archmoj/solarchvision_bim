@@ -1,6 +1,6 @@
 class solarchvision_OperatingSystem {
 
-  private final static String CLASS_STAMP = "OperatingSystem";
+  final static String CLASS_STAMP = "OperatingSystem";
 
   String[] getFiles (String _Folder) {
     //println(_Folder);

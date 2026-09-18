@@ -1,20 +1,20 @@
 class solarchvision_STATION {
 
-  private final static String CLASS_STAMP = "STATION";
+  final static String CLASS_STAMP = "STATION";
 
-  private float elevation = 0;
-  private float latitude = 0;
-  private float longitude = 0;
-  private float timelong = 0;
-  private String code = "";
-  private String city = "";
-  private String province = "";
-  private String country = "";
-  private String filename_SWOB = "";
-  private String filename_NAEFS = "";
-  private String filename_CWEEDS = "";
-  private String filename_TMYEPW = "";
-  private String Download_TMYEPW = "";
+  float elevation = 0;
+  float latitude = 0;
+  float longitude = 0;
+  float timelong = 0;
+  String code = "";
+  String city = "";
+  String province = "";
+  String country = "";
+  String filename_SWOB = "";
+  String filename_NAEFS = "";
+  String filename_CWEEDS = "";
+  String filename_TMYEPW = "";
+  String Download_TMYEPW = "";
 
 
   public float getElevation () { return this.elevation; }

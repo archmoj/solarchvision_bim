@@ -1,6 +1,6 @@
 class solarchvision_Edit3D {
 
-  private final static String CLASS_STAMP = "Edit3D";
+  final static String CLASS_STAMP = "Edit3D";
 
   int clamp (int n, int lo, int hi) {
     if (n > hi) n = hi;

@@ -1,6 +1,6 @@
 class solarchvision_Select3D {
 
-  private final static String CLASS_STAMP = "Select3D";
+  final static String CLASS_STAMP = "Select3D";
 
   int posVector = 2; // 0:X, 1:Y, 2:Z, 3: All
   int rotVector = 2; // 0:X, 1:Y, 2:Z
@@ -508,7 +508,7 @@ class solarchvision_Select3D {
   }
 
 
-  private boolean update_BoundingBox = true; // internal
+  boolean update_BoundingBox = true; // internal
 
   void revise_BoundingBox () {
     this.update_BoundingBox = true;

@@ -1,6 +1,6 @@
 class solarchvision_WindFlow {
 
-  private final static String CLASS_STAMP = "WindFlow";
+  final static String CLASS_STAMP = "WindFlow";
 
   boolean displayAll = false;
 

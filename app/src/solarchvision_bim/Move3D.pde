@@ -1,6 +1,6 @@
 class solarchvision_Move3D {
 
-  private final static String CLASS_STAMP = "Move3D";
+  final static String CLASS_STAMP = "Move3D";
 
   void selection (float dx, float dy, float dz) {
     /*

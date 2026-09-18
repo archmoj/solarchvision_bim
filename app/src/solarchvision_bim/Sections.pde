@@ -1,6 +1,6 @@
 class solarchvision_Sections {
 
-  private final static String CLASS_STAMP = "Sections";
+  final static String CLASS_STAMP = "Sections";
 
   solarchvision_Sections () {
     makeEmpty(0);
@@ -86,10 +86,10 @@ class solarchvision_Sections {
     }
   }
 
-  private float[][] Vertices;
-  private int[][] Faces;
+  float[][] Vertices;
+  int[][] Faces;
 
-  private boolean shouldDraw (int target_window) {
+  boolean shouldDraw (int target_window) {
     if (!this.displayAll) return false;
     if (target_window == TypeWindow.STUDY) return false;
     if (target_window == TypeWindow.WORLD) return false;
@@ -107,7 +107,7 @@ class solarchvision_Sections {
     }
   }
 
-  private void drawSection (int f, int target_window) {
+  void drawSection (int f, int target_window) {
     int Section_Type = this.get_type(f);
     if (Section_Type == 0) return;
 
@@ -151,7 +151,7 @@ class solarchvision_Sections {
     }
   }
 
-  private void writeSectionMaterial (int f, int target_window, String the_filename) {
+  void writeSectionMaterial (int f, int target_window, String the_filename) {
     String TEXTURE_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
 
     if (allSolarImpacts.displayImage) {
@@ -183,7 +183,7 @@ class solarchvision_Sections {
     }
   }
 
-  private void writeSectionGroupHeader (int f, String the_filename) {
+  void writeSectionGroupHeader (int f, String the_filename) {
     if (User3D.export_PolyToPoly == 1) {
       obj_lastGroupNumber += 1;
       objOutput.println("g Impact_" + nf(f, 0));
@@ -193,7 +193,7 @@ class solarchvision_Sections {
     }
   }
 
-  private void renderSectionFace (int f, float[][] subFace, int target_window, int Section_RES1, int Section_RES2, int _turn) {
+  void renderSectionFace (int f, float[][] subFace, int target_window, int Section_RES1, int Section_RES2, int _turn) {
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.beginShape();
       WIN3D.graphics.noStroke();
@@ -236,7 +236,7 @@ class solarchvision_Sections {
     }
   }
 
-  private void writeSectionObjFace () {
+  void writeSectionObjFace () {
     String n1_txt = nf(obj_lastVertexNumber - 3, 0);
     String n2_txt = nf(obj_lastVertexNumber - 2, 0);
     String n3_txt = nf(obj_lastVertexNumber - 1, 0);
@@ -256,7 +256,7 @@ class solarchvision_Sections {
     }
   }
 
-  private void writeSectionHTML (float[][] subFace, String the_filename) {
+  void writeSectionHTML (float[][] subFace, String the_filename) {
     htmlOutput.println("\t\t\t\t<shape>");
     htmlOutput.println("\t\t\t\t\t<Appearance USE='" + the_filename + "'></Appearance>");
     htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
@@ -285,7 +285,7 @@ class solarchvision_Sections {
 
   // Corner layout for a section quad: {localX, localY, u, v}. Index 0 is the (unused
   // by draw()) center point kept for parity with the original 5-row array.
-  private final float[][] CORNER_LOCAL = {
+  final float[][] CORNER_LOCAL = {
     { 0,  0, 0.5, 0.5 },
     {-1, -1, 0, 1 },
     { 1, -1, 1, 1 },
@@ -320,7 +320,7 @@ class solarchvision_Sections {
 
   // Type 1: horizontal (plan) section. Type 2: vertical section. Type 3: vertical
   // section with rotation measured from 90 degrees instead of 0 - preserved as-is.
-  private float[] rotateSectionCorner (int Section_Type, float a, float b, float c, float Section_R) {
+  float[] rotateSectionCorner (int Section_Type, float a, float b, float c, float Section_R) {
     if (Section_Type == 1) {
       float x = a * funcs.cos_ang(Section_R) - b * funcs.sin_ang(Section_R);
       float y = a * funcs.sin_ang(Section_R) + b * funcs.cos_ang(Section_R);
@@ -359,7 +359,7 @@ class solarchvision_Sections {
     return best;
   }
 
-  private float[] intersectFace (int f, float[] ray_pnt, float[] ray_dir) {
+  float[] intersectFace (int f, float[] ray_pnt, float[] ray_dir) {
     float[] miss = { FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined };
 
     int n = this.Faces[f].length;

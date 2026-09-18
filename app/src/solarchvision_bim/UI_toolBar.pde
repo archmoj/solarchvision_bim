@@ -1,6 +1,6 @@
 class solarchvision_UI_toolBar {
 
-  private final static String CLASS_STAMP = "UI_toolBar";
+  final static String CLASS_STAMP = "UI_toolBar";
 
   boolean update = true;
 

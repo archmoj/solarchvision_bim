@@ -1,10 +1,10 @@
 class solarchvision_Earth3D {
 
-  private final static String CLASS_STAMP = "Earth3D";
+  final static String CLASS_STAMP = "Earth3D";
 
-  private final static float LONGITUDE_SPAN = 360.0;
-  private final static float LATITUDE_SPAN  = 180.0;
-  private final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
+  final static float LONGITUDE_SPAN = 360.0;
+  final static float LATITUDE_SPAN  = 180.0;
+  final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
 
   // Trades off area shown vs. mesh detail per area, at roughly constant
   // total mesh complexity: scales the clip radius (how much of the globe
@@ -78,7 +78,7 @@ class solarchvision_Earth3D {
     }
   }
 
-  private void loadOneImage (int i) {
+  void loadOneImage (int i) {
     String MapFilename = this.Path + "/" + this.Filenames[i];
     String[] Parts = split(this.Filenames[i], '_');
 
@@ -91,21 +91,21 @@ class solarchvision_Earth3D {
     this.Map[i] = loadImage(MapFilename);
   }
 
-  private boolean shouldDraw (int target_window) {
+  boolean shouldDraw (int target_window) {
     if (!this.displaySurface) return false;
     if (target_window == TypeWindow.STUDY) return false;
     if (target_window == TypeWindow.WORLD) return false;
     return true;
   }
 
-  private float clamp01 (float value) {
+  float clamp01 (float value) {
     if (value > 1) return 1;
     if (value < 0) return 0;
     return value;
   }
 
   // elevation estimate (meters)
-  private float computeElevationBump (float Alpha, float Beta) {
+  float computeElevationBump (float Alpha, float Beta) {
     int i = 0; // pick the first image - there is only one.
     PImage textureImage = this.Map[i];
 
@@ -141,7 +141,7 @@ class solarchvision_Earth3D {
   // particular rounding happens to pick; interpolating instead gives a
   // baseline consistent with how the surrounding terrain's own vertices
   // are computed.
-  private float computeElevationBumpBilinear (float lat, float lon) {
+  float computeElevationBumpBilinear (float lat, float lon) {
     float alphaTop    = 90 - floor((90 - lat) / this.lat_step) * this.lat_step;
     float alphaBottom = alphaTop - this.lat_step;
 
@@ -200,7 +200,7 @@ class solarchvision_Earth3D {
     return unwrapped;
   }
 
-  private float computeClipRadiusDegreesLon (float stationLat) {
+  float computeClipRadiusDegreesLon (float stationLat) {
     float lon = round(this.clipRadiusDegrees_Lat / funcs.cos_ang(stationLat));
     lon = min(lon, 180); // beyond 180 the window already covers every longitude - and cos_ang(90) = 0 would otherwise blow this up as stationLat approaches a pole
     return max(lon, 1);
@@ -224,16 +224,16 @@ class solarchvision_Earth3D {
   // Cached and only rebuilt when the station's location actually changes,
   // since compositing a mosaic is comparatively expensive and draw() can
   // run every frame while navigating.
-  private PImage cachedTextureImage = null;
-  private float cachedTextureBx1, cachedTextureBx2, cachedTextureBy1, cachedTextureBy2;
-  private String cachedTextureLabel = "";
-  private String cachedTexturePath = ""; // "" means synthetic/composited - no single file to copy for export
-  private String cachedTextureFilename = "";
-  private float cachedStationLon = Float.NaN;
-  private float cachedStationLat = Float.NaN;
-  private float cachedLevelOfDetail = Float.NaN;
+  PImage cachedTextureImage = null;
+  float cachedTextureBx1, cachedTextureBx2, cachedTextureBy1, cachedTextureBy2;
+  String cachedTextureLabel = "";
+  String cachedTexturePath = ""; // "" means synthetic/composited - no single file to copy for export
+  String cachedTextureFilename = "";
+  float cachedStationLon = Float.NaN;
+  float cachedStationLat = Float.NaN;
+  float cachedLevelOfDetail = Float.NaN;
 
-  private void resolveTextureSource () {
+  void resolveTextureSource () {
     float stationLon = STATION.getLongitude();
     float stationLat = STATION.getLatitude();
 
@@ -272,7 +272,7 @@ class solarchvision_Earth3D {
     this.cachedLevelOfDetail = this.levelOfDetail;
   }
 
-  private boolean worldTileFullyCoversWindow (int tileIndex, float stationLon, float stationLat) {
+  boolean worldTileFullyCoversWindow (int tileIndex, float stationLon, float stationLat) {
     float tLon1 = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][0], stationLon);
     float tLon2 = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][1], stationLon);
 
@@ -282,7 +282,7 @@ class solarchvision_Earth3D {
            (WORLD.VIEW_BoundariesY[tileIndex][1] >= stationLat + this.clipRadiusDegrees_Lat);
   }
 
-  private void useWorldTileDirectly (int tileIndex, float stationLon) {
+  void useWorldTileDirectly (int tileIndex, float stationLon) {
     this.cachedTextureImage    = WORLD.getTileImage(tileIndex);
     this.cachedTextureBx1      = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][0], stationLon);
     this.cachedTextureBx2      = unwrapLon(WORLD.VIEW_BoundariesX[tileIndex][1], stationLon);
@@ -300,7 +300,7 @@ class solarchvision_Earth3D {
   // outside that combined extent simply sample the mosaic's clamped edge
   // pixel (see clamp01() in buildSubFace()'s callers) rather than showing
   // a hard-edged gap.
-  private void compositeWorldTiles (IntList overlapping, float stationLon, float stationLat) {
+  void compositeWorldTiles (IntList overlapping, float stationLon, float stationLat) {
 
     float winLon1 = stationLon - this.clipRadiusDegrees_Lon;
     float winLon2 = stationLon + this.clipRadiusDegrees_Lon;
@@ -518,7 +518,7 @@ class solarchvision_Earth3D {
     }
   }
 
-  private void beginWIN3DSphere (PImage textureImage) {
+  void beginWIN3DSphere (PImage textureImage) {
     WIN3D.graphics.strokeWeight(1);
     WIN3D.graphics.noStroke();
     WIN3D.graphics.beginShape(QUADS);
@@ -537,7 +537,7 @@ class solarchvision_Earth3D {
   // stay inside the single batched beginShape(QUADS) from
   // beginWIN3DSphere(): a texture binds once for the whole shape, and
   // per-vertex fill() works the same way within one shape too.
-  private void addFaceWIN3D (FaceVertex[] subFace, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void addFaceWIN3D (FaceVertex[] subFace, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
     if (!this.displayTexture) {
       for (int s = 0; s < subFace.length; s++) {
         int s_prev = (s + subFace.length - 1) % subFace.length;
@@ -587,16 +587,16 @@ class solarchvision_Earth3D {
   // Used by draw() to fan-fill the station's own grid cell with 4
   // triangles meeting at the station (fillStationGridCell == -1) instead
   // of leaving it empty (fillStationGridCell == 0).
-  private void addTriangleWIN3D (FaceVertex a, FaceVertex b, FaceVertex c, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void addTriangleWIN3D (FaceVertex a, FaceVertex b, FaceVertex c, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
     FaceVertex[] triangleAsQuad = { a, b, c, c };
     addFaceWIN3D(triangleAsQuad, textureImage, PAL_type, PAL_direction, PAL_multiplier);
   }
 
-  private void endWIN3DSphere () {
+  void endWIN3DSphere () {
     WIN3D.graphics.endShape();
   }
 
-  private float[] projectEarthVertexForWIN3D (FaceVertex v) {
+  float[] projectEarthVertexForWIN3D (FaceVertex v) {
     return new float[] {
        v.x * OBJECTS_scale * WIN3D.scale,
       -v.y * OBJECTS_scale * WIN3D.scale,
@@ -613,7 +613,7 @@ class solarchvision_Earth3D {
   // (white) batch instead, so a finer lat_step/lon_step is still visible
   // as the actual model tessellation without crowding the round-degree
   // grid itself with extra lines.
-  private void collectGridEdges (FaceVertex[] subFace, float Alpha, float Beta, ArrayList<float[][]> majorBatch, ArrayList<float[][]> minorBatch) {
+  void collectGridEdges (FaceVertex[] subFace, float Alpha, float Beta, ArrayList<float[][]> majorBatch, ArrayList<float[][]> minorBatch) {
     float latTop    = Alpha;
     float latBottom = Alpha - this.lat_step;
     float lonLeft   = Beta - this.lon_step;
@@ -625,7 +625,7 @@ class solarchvision_Earth3D {
     addGridEdge(lonRight,  majorBatch, minorBatch, subFace[3], subFace[0]);
   }
 
-  private void addGridEdge (float value, ArrayList<float[][]> majorBatch, ArrayList<float[][]> minorBatch, FaceVertex a, FaceVertex b) {
+  void addGridEdge (float value, ArrayList<float[][]> majorBatch, ArrayList<float[][]> minorBatch, FaceVertex a, FaceVertex b) {
     ArrayList<float[][]> batch = isRoundGridLine(value, this.gridStepDegrees) ? majorBatch : minorBatch;
     batch.add(new float[][] { projectEarthVertexForWIN3D(a), projectEarthVertexForWIN3D(b) });
   }
@@ -636,7 +636,7 @@ class solarchvision_Earth3D {
   // one batch, so there's nothing per-segment lost by batching them, and
   // this way each grid can be toggled/styled independently of the fill and
   // of each other without touching those passes.
-  private void flushEdgeBatch (ArrayList<float[][]> batch, int strokeColor, float weight) {
+  void flushEdgeBatch (ArrayList<float[][]> batch, int strokeColor, float weight) {
     if ((batch == null) || (batch.size() == 0)) return;
 
     WIN3D.graphics.noFill();
@@ -653,7 +653,7 @@ class solarchvision_Earth3D {
     WIN3D.graphics.endShape();
   }
 
-  private void writeMaterial (int target_window, String textureLabel, String texturePath, String textureFilename) {
+  void writeMaterial (int target_window, String textureLabel, String texturePath, String textureFilename) {
     if (User3D.export_MaterialLibrary) {
       if (target_window == TypeWindow.HTML) {
         htmlOutput.println("\t\t\t\t<Appearance DEF='" + textureLabel + "'>");
@@ -681,7 +681,7 @@ class solarchvision_Earth3D {
     }
   }
 
-  private void writeMTLHeader () {
+  void writeMTLHeader () {
     mtlOutput.println("newmtl EarthSphere");
     mtlOutput.println("\tilum 2"); // 0: color+ambient off, 1: color+ambient on, 2: highlight on, etc.
     mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
@@ -694,7 +694,7 @@ class solarchvision_Earth3D {
     mtlOutput.println("\tTf 1.000 1.000 1.000"); // transmission filter
   }
 
-  private void writeTextureMap (int target_window, String texturePath, String textureFilename) {
+  void writeTextureMap (int target_window, String texturePath, String textureFilename) {
     String new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + textureFilename;
 
     if (texturePath.equals("")) {
@@ -724,7 +724,7 @@ class solarchvision_Earth3D {
   // buildStationVertex() can place a single vertex (the station itself)
   // in that same space, e.g. for the triangle fan fillStationGridCell ==
   // -1 draws (see draw()).
-  private FaceVertex buildVertex (float a, float b,
+  FaceVertex buildVertex (float a, float b,
                                    float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
     FaceVertex vtx = new FaceVertex();
 
@@ -774,7 +774,7 @@ class solarchvision_Earth3D {
     return vtx;
   }
 
-  private FaceVertex[] buildSubFace (float Alpha, float Beta,
+  FaceVertex[] buildSubFace (float Alpha, float Beta,
                                       float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
     FaceVertex[] subFace = new FaceVertex[4];
 
@@ -796,12 +796,12 @@ class solarchvision_Earth3D {
   // location sits at the model origin/orientation, then drops the globe
   // by DOUBLE_r_Earth + stationElevationBump, and stationElevationBump is
   // itself derived from the station's own coordinate (see draw()).
-  private FaceVertex buildStationVertex (float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
+  FaceVertex buildStationVertex (float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
     return buildVertex(STATION.getLatitude(), STATION.getLongitude(), CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
   }
 
 
-  private void drawFace (int target_window, FaceVertex[] subFace, String textureLabel, int f, int _turn) {
+  void drawFace (int target_window, FaceVertex[] subFace, String textureLabel, int f, int _turn) {
     if (target_window == TypeWindow.HTML) {
       writeFaceHTML(subFace, textureLabel);
       return;
@@ -811,7 +811,7 @@ class solarchvision_Earth3D {
     }
   }
 
-  private void writeFaceHTML (FaceVertex[] subFace, String textureLabel) {
+  void writeFaceHTML (FaceVertex[] subFace, String textureLabel) {
     htmlOutput.println("\t\t\t\t<shape>");
     htmlOutput.println("\t\t\t\t\t<Appearance USE='" + textureLabel + "'></Appearance>");
 
@@ -845,7 +845,7 @@ class solarchvision_Earth3D {
     htmlOutput.println("\t\t\t\t</shape>");
   }
 
-  private void writeFaceOBJ (FaceVertex[] subFace, int f, int _turn) {
+  void writeFaceOBJ (FaceVertex[] subFace, int f, int _turn) {
     for (int s = 0; s < subFace.length; s++) {
       float u = clamp01(subFace[s].u);
       float v = clamp01(subFace[s].v);
@@ -868,7 +868,7 @@ class solarchvision_Earth3D {
     }
   }
 
-  private void writeOBJFaceIndices (int f) {
+  void writeOBJFaceIndices (int f) {
     String n1_txt = nf(obj_lastVertexNumber - 3, 0);
     String n2_txt = nf(obj_lastVertexNumber - 2, 0);
     String n3_txt = nf(obj_lastVertexNumber - 1, 0);

@@ -1,6 +1,6 @@
 class solarchvision_UI_commandBar {
 
-  private final static String CLASS_STAMP = "UI_commandBar";
+  final static String CLASS_STAMP = "UI_commandBar";
 
   boolean update = true;
 

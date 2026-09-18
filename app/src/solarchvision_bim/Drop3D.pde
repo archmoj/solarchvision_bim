@@ -1,6 +1,6 @@
 class solarchvision_Drop3D {
 
-  private final static String CLASS_STAMP = "Drop3D";
+  final static String CLASS_STAMP = "Drop3D";
 
   void selection () {
     if (current_ObjectCategory == ObjectCategory.MODEL1D) this.Model1Ds();
@@ -9,7 +9,7 @@ class solarchvision_Drop3D {
 
   // Casts one ray from ray_start in ray_direction. WIN3D.UI_TaskModifyParameter selects
   // the target: 0 = Land3D, faceParam = allFaces, anything else = no hit.
-  private float[] castRay (float[] ray_start, float[] ray_direction, int faceParam) {
+  float[] castRay (float[] ray_start, float[] ray_direction, int faceParam) {
     if (WIN3D.UI_TaskModifyParameter == 0) {
       return Land3D.intersect(ray_start, ray_direction);
     }
@@ -24,7 +24,7 @@ class solarchvision_Drop3D {
 
   // Tries dropping (x, y, z) straight down first (parameter 1 selects allFaces there);
   // if that misses, tries straight up instead (parameter 2 selects allFaces there).
-  private float[] castDrop (float x, float y, float z) {
+  float[] castDrop (float x, float y, float z) {
     float[] ray_start = { x, y, z };
 
     float[] down = castRay(ray_start, new float[] { 0, 0, -1 }, 1);

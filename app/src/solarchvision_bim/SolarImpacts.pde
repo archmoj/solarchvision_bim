@@ -1,6 +1,6 @@
 class solarchvision_SolarImpacts {
 
-  private final static String CLASS_STAMP = "SolarImpacts";
+  final static String CLASS_STAMP = "SolarImpacts";
 
   boolean rebuild_Image_array = true;
 

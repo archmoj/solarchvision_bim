@@ -1,6 +1,6 @@
 class solarchvision_UI_caseBar {
 
-  private final static String CLASS_STAMP = "UI_caseBar";
+  final static String CLASS_STAMP = "UI_caseBar";
 
   boolean update = true;
   float tab;

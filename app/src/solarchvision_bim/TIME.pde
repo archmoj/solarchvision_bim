@@ -1,16 +1,16 @@
 class solarchvision_TIME {
 
-  private final static String CLASS_STAMP = "TIME";
+  final static String CLASS_STAMP = "TIME";
 
-  private int modelRun = 0; //12;
+  int modelRun = 0; //12;
 
-  private int hour = this.modelRun; //hour();
-  private int year = year();
-  private int month = month(); //1;
-  private int day = day(); //21;
+  int hour = this.modelRun; //hour();
+  int year = year();
+  int month = month(); //1;
+  int day = day(); //21;
 
-  private int beginDay;
-  private float date;
+  int beginDay;
+  float date;
 
   final int interval = 1; //dT
 
@@ -92,15 +92,15 @@ class solarchvision_TIME {
     }
   };
 
-  private final int[] lengthOfMonths = {
+  final int[] lengthOfMonths = {
     31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
   };
 
-  private int[] monthFromDate = new int [365];
-  private int[] dayFromDate = new int [365];
-  private String[] MM = new String [365];
-  private String[] MMDD = new String [365];
-  private String[][] dayOfYear = new String [365][numberOfLanguages];
+  int[] monthFromDate = new int [365];
+  int[] dayFromDate = new int [365];
+  String[] MM = new String [365];
+  String[] MMDD = new String [365];
+  String[][] dayOfYear = new String [365][numberOfLanguages];
 
   int safeDate(float date_IN) {
     return floor(0.001 + (365 + date_IN) % 365);

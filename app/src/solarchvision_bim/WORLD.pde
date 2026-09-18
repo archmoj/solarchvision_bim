@@ -1,6 +1,6 @@
 class solarchvision_WORLD {
 
-  private final static String CLASS_STAMP = "WORLD";
+  final static String CLASS_STAMP = "WORLD";
 
   // scales
   float sX = 1;

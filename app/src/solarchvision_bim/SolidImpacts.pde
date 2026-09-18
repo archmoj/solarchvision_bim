@@ -1,6 +1,6 @@
 class solarchvision_SolidImpacts {
 
-  private final static String CLASS_STAMP = "SolidImpacts";
+  final static String CLASS_STAMP = "SolidImpacts";
 
   boolean displayPoints = false;
   boolean displayLines = true;

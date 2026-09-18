@@ -1,6 +1,6 @@
 class solarchvision_UI_menuBar {
 
-  private final static String CLASS_STAMP = "UI_menuBar";
+  final static String CLASS_STAMP = "UI_menuBar";
 
   // ---------------------------------------------------------------------
   // Layout / interaction state
@@ -18,14 +18,14 @@ class solarchvision_UI_menuBar {
   // Layout constants
   // ---------------------------------------------------------------------
 
-  private static final float PARENT_TEXT_SIZE_FACTOR = 1.25;
-  private static final float CHILD_ROW_HEIGHT_FACTOR = 0.85;
-  private static final float CHILD_WIDTH_PER_CHAR = 0.55;
-  private static final char DIVIDER_MARK = '—';
+  static final float PARENT_TEXT_SIZE_FACTOR = 1.25;
+  static final float CHILD_ROW_HEIGHT_FACTOR = 0.85;
+  static final float CHILD_WIDTH_PER_CHAR = 0.55;
+  static final char DIVIDER_MARK = '—';
 
-  private static final int HOVER_COLOR_R = 255;
-  private static final int HOVER_COLOR_G = 127;
-  private static final int HOVER_COLOR_B = 0;
+  static final int HOVER_COLOR_R = 255;
+  static final int HOVER_COLOR_G = 127;
+  static final int HOVER_COLOR_B = 0;
 
   // ---------------------------------------------------------------------
   // Menu data
@@ -33,7 +33,7 @@ class solarchvision_UI_menuBar {
 
   String[][] Items;
 
-  private int LayersID_in_Bar;
+  int LayersID_in_Bar;
 
   // Looks up whether a given menu item should be drawn "greyed out"
   // (i.e. the feature it toggles is currently hidden/off). Uses the
@@ -42,7 +42,7 @@ class solarchvision_UI_menuBar {
   // non-static inner classes of the sketch, and older Java versions
   // don't allow declaring a (implicitly static) member interface
   // inside a non-static inner class.
-  private HashMap<String, java.util.function.BooleanSupplier> disabledStateByItem;
+  HashMap<String, java.util.function.BooleanSupplier> disabledStateByItem;
 
   solarchvision_UI_menuBar () { // constructor
     this.Items = buildMenuItems();
@@ -54,7 +54,7 @@ class solarchvision_UI_menuBar {
   // Data setup
   // ---------------------------------------------------------------------
 
-  private String[][] buildMenuItems() {
+  String[][] buildMenuItems() {
     return new String[][] {
     {
       "About",
@@ -591,7 +591,7 @@ class solarchvision_UI_menuBar {
 
   // Finds the "Layer" tab and rebuilds its child items from the live
   // layer list plus the fixed set of "developed" analysis layers.
-  private void populateLayerMenu() {
+  void populateLayerMenu() {
     LayersID_in_Bar = -1;
     for (int i = 0; i < this.Items.length; i++) {
       if (this.Items[i][0].equals("Layer")) {
@@ -624,7 +624,7 @@ class solarchvision_UI_menuBar {
 
   // Builds the lookup used to grey out toggle-style menu items whose
   // underlying feature is currently switched off.
-  private HashMap<String, java.util.function.BooleanSupplier> buildDisabledStateLookup() {
+  HashMap<String, java.util.function.BooleanSupplier> buildDisabledStateLookup() {
     HashMap<String, java.util.function.BooleanSupplier> map = new HashMap<String, java.util.function.BooleanSupplier>();
 
     // "Location" menu
@@ -686,16 +686,16 @@ class solarchvision_UI_menuBar {
     return map;
   }
 
-  private String toggleKey(String parentLabel, String childLabel) {
+  String toggleKey(String parentLabel, String childLabel) {
     return parentLabel + "\u0000" + childLabel;
   }
 
-  private boolean isItemDisabled(int parentIndex, int childIndex) {
+  boolean isItemDisabled(int parentIndex, int childIndex) {
     java.util.function.BooleanSupplier state = disabledStateByItem.get(toggleKey(this.Items[parentIndex][0], this.Items[parentIndex][childIndex]));
     return (state != null) && state.getAsBoolean();
   }
 
-  private boolean isDivider(String label) {
+  boolean isDivider(String label) {
     return label.charAt(0) == DIVIDER_MARK;
   }
 
@@ -733,7 +733,7 @@ class solarchvision_UI_menuBar {
 
   // Draws a single top-level tab (e.g. "File", "Tools", ...) and updates
   // selection state when the mouse is hovering over it.
-  private void drawParentTab(int i, float cx, float cy, float cr) {
+  void drawParentTab(int i, float cx, float cy, float cr) {
     if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr)) {
       if (this.selected_parent == -1) {
         pre_screen = get(0, SOLARCHVISION_pixel_A, width, height - SOLARCHVISION_pixel_A);
@@ -758,7 +758,7 @@ class solarchvision_UI_menuBar {
   }
 
   // Draws the dropdown for the currently open parent tab.
-  private void drawChildMenu(int i, float cx, float cy, float cr) {
+  void drawChildMenu(int i, float cx, float cy, float cr) {
     image(pre_screen, 0, SOLARCHVISION_pixel_A);
     this.selected_child = 0;
 
@@ -771,7 +771,7 @@ class solarchvision_UI_menuBar {
 
   // The dropdown is at least as wide as width_child, but grows to fit
   // its longest label.
-  private float computeChildMenuWidth(int parentIndex) {
+  float computeChildMenuWidth(int parentIndex) {
     float widthChildren = this.width_child;
     for (int j = 1; j < this.Items[parentIndex].length; j++) {
       float estimatedWidth = this.Items[parentIndex][j].length() * MessageSize * CHILD_WIDTH_PER_CHAR;
@@ -782,7 +782,7 @@ class solarchvision_UI_menuBar {
 
   // Draws one row (item or divider) of an open dropdown, including hover
   // highlighting and the disabled/greyed-out state.
-  private void drawChildRow(int i, int j, float cx, float cy, float cr, float widthChildren) {
+  void drawChildRow(int i, int j, float cx, float cy, float cr, float widthChildren) {
     float rowTop = cy - cr + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR;
     float rowHeight = SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR;
 

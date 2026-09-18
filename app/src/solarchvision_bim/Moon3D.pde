@@ -1,11 +1,11 @@
 class solarchvision_Moon3D {
 
-  private final static String CLASS_STAMP = "Moon3D";
+  final static String CLASS_STAMP = "Moon3D";
 
-  private final static float LONGITUDE_SPAN = 360.0;
-  private final static float LATITUDE_SPAN  = 180.0;
-  private final static float MOON_RADIUS_M = 1737000.0;
-  private final static float EARTH_MOON_DISTANCE_M = 384400000.0;
+  final static float LONGITUDE_SPAN = 360.0;
+  final static float LATITUDE_SPAN  = 180.0;
+  final static float MOON_RADIUS_M = 1737000.0;
+  final static float EARTH_MOON_DISTANCE_M = 384400000.0;
 
   float lat_step = 5; //in degrees
   float lon_step  = 10; //in degrees
@@ -46,7 +46,7 @@ class solarchvision_Moon3D {
     }
   }
 
-  private FaceVertex[] buildSubFace (float Alpha, float Beta,
+  FaceVertex[] buildSubFace (float Alpha, float Beta,
                                       float r, float d, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
     FaceVertex[] subFace = new FaceVertex[4];
 
@@ -97,7 +97,7 @@ class solarchvision_Moon3D {
     return subFace;
   }
 
-  private void writeFaceWIN3D (FaceVertex[] subFace) {
+  void writeFaceWIN3D (FaceVertex[] subFace) {
     WIN3D.graphics.beginShape();
     WIN3D.graphics.noStroke();
     if (this.displayTexture) {

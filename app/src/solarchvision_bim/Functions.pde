@@ -1,6 +1,6 @@
 class solarchvision_Functions {
 
-  private final static String CLASS_STAMP = "Functions";
+  final static String CLASS_STAMP = "Functions";
 
   final float EPSILON_DIRECTION = 0.001; // to detect parallels.
   final float EPSILON_POSITION = 0.0001; // to detect intersections i.e. in the world coordinate.
@@ -564,7 +564,7 @@ class solarchvision_Functions {
     return return_array;
   }
 
-  private float sunriseHourAngle_Raw (float Latitude, float DateAngle) {
+  float sunriseHourAngle_Raw (float Latitude, float DateAngle) {
     float Declination = 23.5 * this.sin_ang(DateAngle - 180.0);
     float q = -(this.tan_ang(Declination) * this.tan_ang(Latitude));
     if (q > 1.0) {

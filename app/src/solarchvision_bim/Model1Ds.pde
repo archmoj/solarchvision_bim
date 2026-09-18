@@ -1,6 +1,6 @@
 class solarchvision_Model1Ds {
 
-  private final static String CLASS_STAMP = "Model1Ds";
+  final static String CLASS_STAMP = "Model1Ds";
 
   solarchvision_Model1Ds () { // constructor
     makeEmpty(0);

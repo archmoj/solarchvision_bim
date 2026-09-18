@@ -1,6 +1,6 @@
 class solarchvision_STUDY {
 
-  private final static String CLASS_STAMP = "STUDY";
+  final static String CLASS_STAMP = "STUDY";
 
   int SORT_palette_CLR = -1;
   int SORT_palette_DIR = -1;
@@ -111,20 +111,20 @@ class solarchvision_STUDY {
 
 
   // Number of PlotImpacts modes (kept in sync with the PlotImpacts_* constants).
-  private final static int PLOT_IMPACTS_MODE_COUNT = 11;
+  final static int PLOT_IMPACTS_MODE_COUNT = 11;
 
   // Number of plotSetup modes cycled by Ctrl+PageUp/PageDown.
-  private final static int PLOT_SETUP_MODE_COUNT = 10;
+  final static int PLOT_SETUP_MODE_COUNT = 10;
 
-  private final static int PAGE_UP_KEYCODE = 16;
-  private final static int PAGE_DOWN_KEYCODE = 11;
+  final static int PAGE_UP_KEYCODE = 16;
+  final static int PAGE_DOWN_KEYCODE = 11;
 
-  private void requestRedraw () {
+  void requestRedraw () {
     this.revise();
     UI_rollout.revise();
   }
 
-  private void requestDataRefresh () {
+  void requestDataRefresh () {
     DevelopData_update = true;
     UI_caseBar.revise();
     this.revise();
@@ -153,7 +153,7 @@ class solarchvision_STUDY {
     }
   }
 
-  private void handleCtrlCodedKey (KeyEvent e) {
+  void handleCtrlCodedKey (KeyEvent e) {
     switch (keyCode) {
       case UP :
         changeCurrentLayerTo((CurrentLayer_id + 1) % numberOfLayers);
@@ -191,7 +191,7 @@ class solarchvision_STUDY {
     }
   }
 
-  private void handleCtrlCharKey () {
+  void handleCtrlCharKey () {
     switch (key) {
       case ';' :
         this.impact_summary = !this.impact_summary;
@@ -210,7 +210,7 @@ class solarchvision_STUDY {
     }
   }
 
-  private void handlePlainCharKey () {
+  void handlePlainCharKey () {
     switch (key) {
 
       case '>' :
@@ -280,7 +280,7 @@ class solarchvision_STUDY {
 
   // '>' / '<' : widen or narrow the day-joining (averaging) window, clamped
   // to [1, 365] days.
-  private void changeJoinDays (int delta) {
+  void changeJoinDays (int delta) {
     this.joinDays += delta;
     if (this.joinDays > 365) this.joinDays = 365;
     if (this.joinDays < 1) this.joinDays = 1;
@@ -290,7 +290,7 @@ class solarchvision_STUDY {
   // ')' / '(' : grow or shrink the number of date columns (j_End), clamped so
   // the window stays within (j_Start, j_Start + 61] and always at least one
   // column wide, then flags every dependent view for rebuilding.
-  private void changeJEnd (int delta) {
+  void changeJEnd (int delta) {
     this.j_End += delta;
     if (delta > 0 && this.j_End > this.j_Start + 61) this.j_End -= delta;
     if (delta < 0 && this.j_End <= this.j_Start) this.j_End -= delta;
@@ -311,7 +311,7 @@ class solarchvision_STUDY {
 
   // 'S' / 's' : cycle the sky scenario filter forward/backward through its 4
   // states (1..4).
-  private void changeSkyScenario (int delta) {
+  void changeSkyScenario (int delta) {
     this.skyScenario = 1 + (((this.skyScenario - 1) + delta) % 4 + 4) % 4;
     DevelopData_update = true;
     this.revise();
@@ -321,7 +321,7 @@ class solarchvision_STUDY {
 
   // '[' : shrink the hourly summing interval, following the step sequence
   // ...24 -> 6 -> 1 (skipping 5, snapping it to 4).
-  private void decreaseSumInterval () {
+  void decreaseSumInterval () {
     if (this.sumInterval > 24) this.sumInterval -= 24;
     if (this.sumInterval > 6) this.sumInterval -= 6;
     else if (this.sumInterval > 1) this.sumInterval -= 1;
@@ -330,7 +330,7 @@ class solarchvision_STUDY {
 
   // ']' : grow the hourly summing interval, following the step sequence
   // 1 -> 6 -> 24... (skipping 5, snapping it to 6).
-  private void increaseSumInterval () {
+  void increaseSumInterval () {
     if (this.sumInterval < 6) this.sumInterval += 1;
     else if (this.sumInterval < 24) this.sumInterval += 6;
     else this.sumInterval += 24;
@@ -339,7 +339,7 @@ class solarchvision_STUDY {
 
 
 
-  private void applyLegendTextStyle (float[] COL) {
+  void applyLegendTextStyle (float[] COL) {
     if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
       this.graphics.stroke(127);
       this.graphics.fill(127);
@@ -1010,7 +1010,7 @@ class solarchvision_STUDY {
   // Draws the "[start-end] <layer description>" title above the hourly plot
   // (top-right: the record range in the current data source's own numbering;
   // top-left: the active layer's description).
-  private void drawColumnRangeTitle (float sx_Plot, int start_k, int end_k) {
+  void drawColumnRangeTitle (float sx_Plot, int start_k, int end_k) {
     this.graphics.stroke(0);
     this.graphics.fill(0);
     this.graphics.strokeWeight(this.T_scale * 0);
@@ -1030,7 +1030,7 @@ class solarchvision_STUDY {
   // Draws the date label (and the "±N days" join-window label, if joining
   // more than one day) above column j, unless it's been thinned out by the
   // 1.5/U_scale spacing rule.
-  private void drawDayHeader (int j, float sx_Plot) {
+  void drawDayHeader (int j, float sx_Plot) {
     this.graphics.stroke(0);
     this.graphics.fill(0);
     this.graphics.textAlign(CENTER, CENTER);
@@ -1053,7 +1053,7 @@ class solarchvision_STUDY {
   // files for column j, for whichever of the three are currently enabled.
   // Mirrors closePerDayOutputFiles(), which flushes and closes them again
   // once column j is fully drawn.
-  private void openPerDayOutputFiles (int j, int count_k, int start_k, int end_k, int DATA_start, String Main_name) {
+  void openPerDayOutputFiles (int j, int count_k, int start_k, int end_k, int DATA_start, String Main_name) {
     String _FilenamesAdd = "";
     if (this.joinDays > 1) {
       _FilenamesAdd = ("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s");
@@ -1088,7 +1088,7 @@ class solarchvision_STUDY {
 
   // Flushes and closes whichever of the raw/normal/probability export files
   // for column j were opened by openPerDayOutputFiles().
-  private void closePerDayOutputFiles (int j) {
+  void closePerDayOutputFiles (int j) {
     if ((this.export_info_node) && (this.displayRaws)) {
       FILE_outputRaw[(j - this.j_Start)].flush();
       FILE_outputRaw[(j - this.j_Start)].close();
@@ -1355,7 +1355,7 @@ class solarchvision_STUDY {
   // solar cycle) used for the YC-book-style layout. Temporarily overrides the
   // date window (a fixed, 5-day-joined, half-year view starting at day 183)
   // and restores every overridden field afterward.
-  private void setupPlot_cycles () {
+  void setupPlot_cycles () {
     int keep_TIME_BeginDay = TIME.beginDay;
     float keep_STUDY_perDays = this.perDays;
     int keep_joinDays = this.joinDays;
@@ -1389,7 +1389,7 @@ class solarchvision_STUDY {
 
   // plotSetup == 0 : the default layout - one impact diagram (or three, split
   // by ImpactLayer, in the 2-viewport layout) plus a single hourly plot.
-  private void setupPlot_0 () {
+  void setupPlot_0 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
     float sy_Plot = -1.0 * this.V_scale * this.view_S;
 
@@ -1409,7 +1409,7 @@ class solarchvision_STUDY {
   // plotSetup == 1 : direct-normal-radiation focus - urban/global impact
   // diagrams (2-viewport only) plus hourly plots of direct radiation and
   // cloud cover.
-  private void setupPlot_1 () {
+  void setupPlot_1 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_PlotImpacts = this.PlotImpacts;
@@ -1436,7 +1436,7 @@ class solarchvision_STUDY {
   // plotSetup == 2 : direct-solar-effect focus - urban/global passive-impact
   // diagrams (2-viewport only) plus hourly plots of direct effect and dry
   // bulb temperature.
-  private void setupPlot_2 () {
+  void setupPlot_2 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_PlotImpacts = this.PlotImpacts;
@@ -1462,7 +1462,7 @@ class solarchvision_STUDY {
 
   // plotSetup == 3 : wind focus - wind-impact diagrams plus hourly plots of
   // dry bulb temperature and wind speed.
-  private void setupPlot_3 () {
+  void setupPlot_3 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_PlotImpacts = this.PlotImpacts;
@@ -1489,7 +1489,7 @@ class solarchvision_STUDY {
   // plotSetup == 4 : dry-bulb temperature focus - global passive-impact
   // diagrams plus one hourly plot showing sorted/normal statistics and a
   // second showing raw data/probabilities, for the same layer.
-  private void setupPlot_4 () {
+  void setupPlot_4 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_ImpactLayer = this.ImpactLayer;
@@ -1535,20 +1535,20 @@ class solarchvision_STUDY {
 
   // plotSetup == 5 : dry bulb temperature across all four sky scenarios, one
   // hourly plot per scenario.
-  private void setupPlot_5 () {
+  void setupPlot_5 () {
     setupPlot_acrossSkyScenarios(LAYER_drybulb.id);
   }
 
   // plotSetup == 6 : wind speed across all four sky scenarios, one hourly
   // plot per scenario. Shares its implementation with setupPlot_5(); only the
   // layer differs.
-  private void setupPlot_6 () {
+  void setupPlot_6 () {
     setupPlot_acrossSkyScenarios(LAYER_windspd.id);
   }
 
   // Shared implementation for setupPlot_5() and setupPlot_6(): plots the
   // given layer across all four sky scenarios, one hourly plot per scenario.
-  private void setupPlot_acrossSkyScenarios (int layerId) {
+  void setupPlot_acrossSkyScenarios (int layerId) {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_skyScenario = this.skyScenario;
@@ -1578,7 +1578,7 @@ class solarchvision_STUDY {
 
   // plotSetup == 7 : atmospheric layers - pressure and wind speed (2-viewport
   // only), then relative humidity and dry bulb temperature.
-  private void setupPlot_7 () {
+  void setupPlot_7 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_CurrentLayer_id = CurrentLayer_id;
@@ -1603,7 +1603,7 @@ class solarchvision_STUDY {
   // plotSetup == 8 : solar overview - global passive impact and sun-path
   // diagrams, plus (2-viewport only) hourly plots of direct and diffuse
   // horizontal radiation.
-  private void setupPlot_8 () {
+  void setupPlot_8 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_CurrentLayer_id = CurrentLayer_id;
@@ -1649,7 +1649,7 @@ class solarchvision_STUDY {
   // Decides this.ImageScale from the current record_PDF / record_IMG flags.
   // If it changed since last frame, several views need a full redraw because
   // switching resolution loses the GL context.
-  private void updateImageScale () {
+  void updateImageScale () {
     if (this.record_PDF) this.ImageScale = 1;
     else if (this.record_IMG) this.ImageScale = 2;
     else this.ImageScale = 1;
@@ -1672,7 +1672,7 @@ class solarchvision_STUDY {
   // Scales the canvas dimensions up by ImageScale (for PDF/high-res export)
   // and opens the right PGraphics context: a PDF recorder, a scaled-up P2D
   // buffer, or the existing on-screen graphics.
-  private void beginFrame () {
+  void beginFrame () {
     //////////////////////////////////
     this.dX *= this.ImageScale;
     this.dY *= this.ImageScale;
@@ -1695,7 +1695,7 @@ class solarchvision_STUDY {
   // The actual drawing pass: refreshes developed data if needed, sets up the
   // canvas (background, blend mode, font), then delegates the plot itself to
   // setupPlot().
-  private void renderFrame () {
+  void renderFrame () {
     DrawnFrame += 1;
     //println("frame:", DrawnFrame);
 
@@ -1755,7 +1755,7 @@ class solarchvision_STUDY {
   // Closes out the recording/drawing (writing a PDF or JPEG if requested,
   // otherwise blitting the buffer to screen), then restores the canvas
   // dimensions that beginFrame() scaled up.
-  private void endFrame () {
+  void endFrame () {
     if (this.record_PDF) {
       endRecord();
 
@@ -1816,7 +1816,7 @@ class solarchvision_STUDY {
 
 
 
-  private void plotImpact_wind (int start_k, int end_k, int count_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+  void plotImpact_wind (int start_k, int end_k, int count_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
     allWindRoses.resize_Image_array();
 
@@ -2169,7 +2169,7 @@ class solarchvision_STUDY {
   }
 
 
-  private void plotImpact_urban (int start_k, int end_k, float sx_Plot) {
+  void plotImpact_urban (int start_k, int end_k, float sx_Plot) {
 
     if (this.Impacts_update) {
 
@@ -2367,7 +2367,7 @@ class solarchvision_STUDY {
   }
 
 
-  private void plotImpact_global (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+  void plotImpact_global (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
     if (GlobalSolar_rebuild_array) {
       GlobalSolar_resize_array();
@@ -2762,7 +2762,7 @@ class solarchvision_STUDY {
   }
 
 
-  private void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+  void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
     if (this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
     if (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
 
@@ -2992,7 +2992,7 @@ class solarchvision_STUDY {
   }
 
 
-  private void plotImpact_cycles (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
+  void plotImpact_cycles (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
     int l = this.ImpactLayer;
 

@@ -1,6 +1,6 @@
 class solarchvision_PAINT {
 
-  private final static String CLASS_STAMP = "PAINT";
+  final static String CLASS_STAMP = "PAINT";
 
 
   int getOpacity (float O_scale) {

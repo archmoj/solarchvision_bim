@@ -1,6 +1,6 @@
 class solarchvision_LAYER {
 
-  private final static String CLASS_STAMP = "LAYER";
+  final static String CLASS_STAMP = "LAYER";
 
   public int id;
 

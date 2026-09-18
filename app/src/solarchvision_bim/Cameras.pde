@@ -1,6 +1,6 @@
 class solarchvision_Cameras {
 
-  private final static String CLASS_STAMP = "Cameras";
+  final static String CLASS_STAMP = "Cameras";
 
   solarchvision_Cameras () { // constructor
     makeEmpty(0);
@@ -153,8 +153,8 @@ class solarchvision_Cameras {
 
 
 
-  private float[][] Vertices;
-  private int[][] Faces;
+  float[][] Vertices;
+  int[][] Faces;
 
   void draw () {
 

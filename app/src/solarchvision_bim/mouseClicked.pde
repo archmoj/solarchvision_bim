@@ -1,6 +1,6 @@
 HashMap<String, Runnable> SOLARCHVISION_menuActions;
 
-private void SOLARCHVISION_selectNewlyCreated(int countBefore, int countAfter, Runnable deselect, java.util.function.IntConsumer selectIndex) {
+void SOLARCHVISION_selectNewlyCreated(int countBefore, int countAfter, Runnable deselect, java.util.function.IntConsumer selectIndex) {
   if (countBefore == countAfter) return; // nothing created this click
 
   deselect.run();
@@ -12,7 +12,7 @@ private void SOLARCHVISION_selectNewlyCreated(int countBefore, int countAfter, R
   Select3D.calculate_BoundingBox();
 }
 
-private void SOLARCHVISION_stopAllRecording() {
+void SOLARCHVISION_stopAllRecording() {
   STUDY.record_AUTO = false;
   STUDY.record_IMG = false;
   STUDY.record_PDF = false;
@@ -27,7 +27,7 @@ private void SOLARCHVISION_stopAllRecording() {
   FRAME_drag_IMG = false;
 }
 
-private void SOLARCHVISION_setPlotImpacts(int impacts, boolean showWindRoses) {
+void SOLARCHVISION_setPlotImpacts(int impacts, boolean showWindRoses) {
   STUDY.PlotImpacts = impacts;
   STUDY.plotSetup = 0;
   STUDY.revise();
@@ -35,12 +35,12 @@ private void SOLARCHVISION_setPlotImpacts(int impacts, boolean showWindRoses) {
   UI_rollout.revise();
 }
 
-private void SOLARCHVISION_selectAllOfCategory(int category) {
+void SOLARCHVISION_selectAllOfCategory(int category) {
   SOLARCHVISION_switch_category(category);
   Select3D.selectAll();
 }
 
-private void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
+void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
   convert.run();
   SOLARCHVISION_switch_category(newCategory);
 }
@@ -1898,7 +1898,7 @@ void mouseClicked () {
   }
 }
 
-private void SOLARCHVISION_buildMenuActions() {
+void SOLARCHVISION_buildMenuActions() {
   SOLARCHVISION_menuActions = new HashMap<String, Runnable>();
 
   SOLARCHVISION_menuActions.put("SOLARCHVISION-BIM6D", () -> {

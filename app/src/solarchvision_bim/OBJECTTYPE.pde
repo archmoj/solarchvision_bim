@@ -1,6 +1,6 @@
 class solarchvision_OBJECTTYPE {
 
-  private final static String CLASS_STAMP = "OBJECTTYPE";
+  final static String CLASS_STAMP = "OBJECTTYPE";
 
   final static int LANDPOINT = 0;
   final static int MODEL1D = 1;

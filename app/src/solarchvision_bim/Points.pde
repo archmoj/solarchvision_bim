@@ -1,6 +1,6 @@
 class solarchvision_Points {
 
-  private final static String CLASS_STAMP = "Points";
+  final static String CLASS_STAMP = "Points";
 
   solarchvision_Points () { // constructor
     makeEmpty(0);

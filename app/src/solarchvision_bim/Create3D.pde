@@ -1,6 +1,6 @@
 class solarchvision_Create3D {
 
-  private final static String CLASS_STAMP = "Create3D";
+  final static String CLASS_STAMP = "Create3D";
 
   void add_Octahedron (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
 

@@ -1,11 +1,11 @@
 class solarchvision_Sun3D {
-  private final static String CLASS_STAMP = "Sun3D";
+  final static String CLASS_STAMP = "Sun3D";
 
-  private final static float LONGITUDE_SPAN = 360.0;
-  private final static float LATITUDE_SPAN  = 180.0;
-  private final static float SUN_RADIUS_Mm  = 696.0;    // sun radius, in megameters
-  private final static float SUN_DISTANCE_Mm = 150000.0; // ~1 AU, in megameters
-  private final static float METERS_PER_MEGAMETER = 1000000.0;
+  final static float LONGITUDE_SPAN = 360.0;
+  final static float LATITUDE_SPAN  = 180.0;
+  final static float SUN_RADIUS_Mm  = 696.0;    // sun radius, in megameters
+  final static float SUN_DISTANCE_Mm = 150000.0; // ~1 AU, in megameters
+  final static float METERS_PER_MEGAMETER = 1000000.0;
 
   float lat_step = 5; //in degrees
   float lon_step  = 10; //in degrees
@@ -42,7 +42,7 @@ class solarchvision_Sun3D {
     return day;
   }
 
-  private float[] activePalette (boolean useStudySettings) {
+  float[] activePalette (boolean useStudySettings) {
     int type = 0;
     int direction = 1;
     float multiplier = 1;
@@ -59,7 +59,7 @@ class solarchvision_Sun3D {
     return new float[] { type, direction, multiplier };
   }
 
-  private float[] paletteValueToColor (float rawValue, int palType, int palDirection) {
+  float[] paletteValueToColor (float rawValue, int palType, int palDirection) {
     float u = 0;
     if (WIN3D.Impact_TYPE == Impact_ACTIVE) u = rawValue;
     if (WIN3D.Impact_TYPE == Impact_PASSIVE) u = 0.5 + 0.5 * rawValue;
@@ -89,7 +89,7 @@ class solarchvision_Sun3D {
   }
 
 
-  private FaceVertex[] buildSubFace (float Alpha, float Beta,
+  FaceVertex[] buildSubFace (float Alpha, float Beta,
                                       float r, float d, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
     FaceVertex[] subFace = new FaceVertex[4];
 
@@ -146,7 +146,7 @@ class solarchvision_Sun3D {
   }
 
 
-  private void writeFaceWIN3D (FaceVertex[] subFace) {
+  void writeFaceWIN3D (FaceVertex[] subFace) {
     WIN3D.graphics.beginShape();
     if (this.displayTexture) {
       WIN3D.graphics.texture(this.Map);
@@ -165,7 +165,7 @@ class solarchvision_Sun3D {
     WIN3D.graphics.endShape(CLOSE);
   }
 
-  private void drawGridSegment (int target_window, float[] SunA, float[] SunB, float s_SunPath) {
+  void drawGridSegment (int target_window, float[] SunA, float[] SunB, float s_SunPath) {
     if ((SunA[3] <= 0) && (SunB[3] <= 0)) return; // both points below horizon
 
     if (target_window == TypeWindow.WIN3D) {
@@ -353,7 +353,7 @@ class solarchvision_Sun3D {
     TIME.updateDate();
   }
 
-  private void writeSunPatternMaterial (int PAL_type, String filename, String texturePath) {
+  void writeSunPatternMaterial (int PAL_type, String filename, String texturePath) {
     println("Saving texture:", texturePath);
 
     int RES1 = User3D.export_PaletteResolution;
@@ -385,7 +385,7 @@ class solarchvision_Sun3D {
     mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + filename); // diffuse map
   }
 
-  private void writeSunPatternObjFace () {
+  void writeSunPatternObjFace () {
     String n1 = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
     String n2 = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
     String n3 = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);

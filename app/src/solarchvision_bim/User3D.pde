@@ -1,6 +1,6 @@
 class solarchvision_User3D {
 
-  private final static String CLASS_STAMP = "User3D";
+  final static String CLASS_STAMP = "User3D";
 
   int default_Material = 7; //0;
   int default_Tessellation = 0;

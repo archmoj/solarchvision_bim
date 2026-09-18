@@ -1,6 +1,6 @@
 class solarchvision_WindRose {
 
-  private final static String CLASS_STAMP = "WindRose";
+  final static String CLASS_STAMP = "WindRose";
 
   boolean rebuild_Image_array = true;
 

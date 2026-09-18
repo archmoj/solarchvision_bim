@@ -1,15 +1,15 @@
 class solarchvision_Tropo3D {
 
-  private final static String CLASS_STAMP = "Tropo3D";
+  final static String CLASS_STAMP = "Tropo3D";
 
-  private final static float LONGITUDE_SPAN = 360.0;
-  private final static float LATITUDE_SPAN  = 180.0;
-  private final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
-  private final static float TROPOSPHERE_ALTITUDE_M = 10000;
+  final static float LONGITUDE_SPAN = 360.0;
+  final static float LATITUDE_SPAN  = 180.0;
+  final static float BOUNDARY_SCALE = 0.001; // filenames encode boundaries in millidegrees
+  final static float TROPOSPHERE_ALTITUDE_M = 10000;
 
-  private final static int   TROPO_DOWNLOAD_WIDTH  = 1200; // 1800
-  private final static int   TROPO_DOWNLOAD_HEIGHT = 600;  // 900
-  private final static float TROPO_BOUNDARY_HALF_SPAN = 5;
+  final static int   TROPO_DOWNLOAD_WIDTH  = 1200; // 1800
+  final static int   TROPO_DOWNLOAD_HEIGHT = 600;  // 900
+  final static float TROPO_BOUNDARY_HALF_SPAN = 5;
 
   float lat_step = 1; //in degrees
   float lon_step  = 1; //in degrees
@@ -45,7 +45,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private void resetSlot (int i) {
+  void resetSlot (int i) {
     this.Filenames[i] = "";
     this.Map[i] = createImage(2, 2, RGB); // empty and small
     this.BoundariesX[i][0] = 0;
@@ -69,7 +69,7 @@ class solarchvision_Tropo3D {
     SOLARCHVISION_view_changed();
   }
 
-  private DateTimeUTC currentUTC () {
+  DateTimeUTC currentUTC () {
     int[] rightNow = getNow_inUTC();
     DateTimeUTC dt = new DateTimeUTC();
     dt.year  = rightNow[0];
@@ -79,7 +79,7 @@ class solarchvision_Tropo3D {
     return dt;
   }
 
-  private void advanceHourForward (DateTimeUTC dt) {
+  void advanceHourForward (DateTimeUTC dt) {
     dt.hour += 1;
     if (dt.hour > 23) {
       dt.hour -= 24;
@@ -95,7 +95,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private void advanceHourBackward (DateTimeUTC dt) {
+  void advanceHourBackward (DateTimeUTC dt) {
     dt.hour -= 1;
     if (dt.hour < 0) {
       dt.hour += 24;
@@ -111,7 +111,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private void loadSlotIfMatch (int i, String[] allFilenames, String targetHourLabel) {
+  void loadSlotIfMatch (int i, String[] allFilenames, String targetHourLabel) {
     for (int q = 0; q < allFilenames.length; q++) {
       String[] Parts = split(allFilenames[q], '_');
       if (Parts[0].equals(targetHourLabel)) {
@@ -167,7 +167,7 @@ class solarchvision_Tropo3D {
     this.load_images();
   }
 
-  private String buildParameterStamp () {
+  String buildParameterStamp () {
     if (WMS_type == DataType.SATELLITE_GOES) {
       return "";
     }
@@ -213,7 +213,7 @@ class solarchvision_Tropo3D {
     return "_NT&STYLES=CLOUD"; // Cloud cover
   }
 
-  private String buildDomainStamp () {
+  String buildDomainStamp () {
     if (WMS_type == DataType.SATELLITE_GOES)  return "east_vis_1km";
     if (WMS_type == DataType.FORECAST_HRDPS)  return "HRDPS.CONTINENTAL";
     if (WMS_type == DataType.FORECAST_RDPS)   return "RDPS.ETA";
@@ -221,14 +221,14 @@ class solarchvision_Tropo3D {
     return "";
   }
 
-  private void computeDownloadBoundaries (int i) {
+  void computeDownloadBoundaries (int i) {
     this.BoundariesX[i][0] = STATION.getLongitude() - TROPO_BOUNDARY_HALF_SPAN;
     this.BoundariesX[i][1] = STATION.getLongitude() + TROPO_BOUNDARY_HALF_SPAN;
     this.BoundariesY[i][0] = STATION.getLatitude() - TROPO_BOUNDARY_HALF_SPAN * funcs.cos_ang(STATION.getLatitude());
     this.BoundariesY[i][1] = STATION.getLatitude() + TROPO_BOUNDARY_HALF_SPAN * funcs.cos_ang(STATION.getLatitude());
   }
 
-  private String buildRequestUrl (String domainStamp, String parameterStamp, DateTimeUTC dt, int i) {
+  String buildRequestUrl (String domainStamp, String parameterStamp, DateTimeUTC dt, int i) {
     String service = (WMS_type == DataType.SATELLITE_GOES)
       ? "https://mesonet.agron.iastate.edu/cgi-bin/wms/goes/east_vis.cgi"
       : "https://geo.weather.gc.ca/geomet";
@@ -255,7 +255,7 @@ class solarchvision_Tropo3D {
     return link;
   }
 
-  private String buildLocalFilename (int i, int LocationTimeZone, DateTimeUTC dt) {
+  String buildLocalFilename (int i, int LocationTimeZone, DateTimeUTC dt) {
     String fn = nf((dt.hour + LocationTimeZone) % 24, 2) + "_";
     fn += nf(int(funcs.roundTo(-1000 * this.BoundariesX[i][0], 1)), 6) + "_";
     fn += nf(int(funcs.roundTo( 1000 * this.BoundariesY[i][0], 1)), 6) + "_";
@@ -265,7 +265,7 @@ class solarchvision_Tropo3D {
     return fn;
   }
 
-  private boolean tryDownload (String target, String link) {
+  boolean tryDownload (String target, String link) {
     println("Try downloading: " + link);
     try {
       saveBytes(target, loadBytes(link));
@@ -277,7 +277,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private void recolorCloudLayer (String target) {
+  void recolorCloudLayer (String target) {
     println("image processing cloud layer");
     PImage img = loadImage(target);
     img.loadPixels();
@@ -300,7 +300,7 @@ class solarchvision_Tropo3D {
     img.save(target);
   }
 
-  private void recolorSatelliteVisibility (String target) {
+  void recolorSatelliteVisibility (String target) {
     println("image processing cloud layer");
     PImage img = loadImage(target);
     img.loadPixels();
@@ -322,19 +322,19 @@ class solarchvision_Tropo3D {
     img.save(target);
   }
 
-  private boolean shouldDraw (int target_window) {
+  boolean shouldDraw (int target_window) {
     if (!this.displaySurface || !this.displayTexture) return false;
     if (target_window == TypeWindow.STUDY) return false;
     return true;
   }
 
-  private float clamp01 (float value) {
+  float clamp01 (float value) {
     if (value > 1) return 1;
     if (value < 0) return 0;
     return value;
   }
 
-  private boolean allUVsInRange (FaceVertex[] subFace) {
+  boolean allUVsInRange (FaceVertex[] subFace) {
     for (int s = 0; s < subFace.length; s++) {
       if (subFace[s].u < 0 || subFace[s].u > 1) return false;
       if (subFace[s].v < 0 || subFace[s].v > 1) return false;
@@ -376,7 +376,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private void writeMaterial (int target_window, int n_Map) {
+  void writeMaterial (int target_window, int n_Map) {
     if (User3D.export_MaterialLibrary) {
       if (target_window == TypeWindow.HTML) {
         htmlOutput.println("\t\t\t\t<Appearance DEF='TropoSphere" + nf(n_Map, 0) + "'>");
@@ -404,7 +404,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private void writeMTLHeader (int n_Map) {
+  void writeMTLHeader (int n_Map) {
     mtlOutput.println("newmtl TropoSphere" + nf(n_Map, 0));
     mtlOutput.println("\tilum 2"); // 0: color+ambient off, 1: color+ambient on, 2: highlight on, etc.
     mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
@@ -417,7 +417,7 @@ class solarchvision_Tropo3D {
     mtlOutput.println("\tTf 1.000 1.000 1.000"); // transmission filter
   }
 
-  private void writeTextureMap (int target_window, int n_Map) {
+  void writeTextureMap (int target_window, int n_Map) {
     String old_Texture_path = Folder_GEOMET + "/" + this.Filenames[n_Map];
     String the_filename = old_Texture_path.substring(old_Texture_path.lastIndexOf("/") + 1);
     String new_Texture_path = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
@@ -434,7 +434,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private FaceVertex[] buildSubFace (float Alpha, float Beta,
+  FaceVertex[] buildSubFace (float Alpha, float Beta,
                                       float r, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
     FaceVertex[] subFace = new FaceVertex[4];
 
@@ -485,7 +485,7 @@ class solarchvision_Tropo3D {
   }
 
 
-  private void drawFace (int target_window, FaceVertex[] subFace, int n_Map, int f, int _turn) {
+  void drawFace (int target_window, FaceVertex[] subFace, int n_Map, int f, int _turn) {
     if (target_window == TypeWindow.WORLD) {
       writeFaceWORLD(subFace, n_Map);
       return;
@@ -503,7 +503,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private void writeFaceWORLD (FaceVertex[] subFace, int n_Map) {
+  void writeFaceWORLD (FaceVertex[] subFace, int n_Map) {
     WORLD.graphics.beginShape();
     WORLD.graphics.noStroke();
     if (this.displayTexture) {
@@ -526,7 +526,7 @@ class solarchvision_Tropo3D {
     WORLD.graphics.endShape(CLOSE);
   }
 
-  private void writeFaceHTML (FaceVertex[] subFace, int n_Map) {
+  void writeFaceHTML (FaceVertex[] subFace, int n_Map) {
     htmlOutput.println("\t\t\t\t<shape>");
     if (n_Map != -1) {
       htmlOutput.println("\t\t\t\t\t<Appearance USE='TropoSphere" + nf(n_Map, 0) + "'></Appearance>");
@@ -564,7 +564,7 @@ class solarchvision_Tropo3D {
     htmlOutput.println("\t\t\t\t</shape>");
   }
 
-  private void writeFaceWIN3D (FaceVertex[] subFace, int n_Map) {
+  void writeFaceWIN3D (FaceVertex[] subFace, int n_Map) {
     WIN3D.graphics.strokeWeight(1);
     WIN3D.graphics.beginShape();
     WIN3D.graphics.noStroke();
@@ -587,7 +587,7 @@ class solarchvision_Tropo3D {
     WIN3D.graphics.endShape(CLOSE);
   }
 
-  private void writeFaceOBJ (FaceVertex[] subFace, int f, int _turn, int n_Map) {
+  void writeFaceOBJ (FaceVertex[] subFace, int f, int _turn, int n_Map) {
     for (int s = 0; s < subFace.length; s++) {
       float u = clamp01(subFace[s].u);
       float v = clamp01(subFace[s].v);
@@ -610,7 +610,7 @@ class solarchvision_Tropo3D {
     }
   }
 
-  private void writeOBJFaceIndices (int f, int n_Map) {
+  void writeOBJFaceIndices (int f, int n_Map) {
     String n1_txt = nf(obj_lastVertexNumber - 3, 0);
     String n2_txt = nf(obj_lastVertexNumber - 2, 0);
     String n3_txt = nf(obj_lastVertexNumber - 1, 0);

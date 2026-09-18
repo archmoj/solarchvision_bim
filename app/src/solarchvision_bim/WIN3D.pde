@@ -1,6 +1,6 @@
 class solarchvision_WIN3D {
 
-  private final static String CLASS_STAMP = "WIN3D";
+  final static String CLASS_STAMP = "WIN3D";
 
   // scales
   float scale;
@@ -59,24 +59,24 @@ class solarchvision_WIN3D {
   PGraphics graphics;
 
   // Rotates (x, y, z) by angleDeg around the X axis (x is unchanged).
-  private float[] rotateAroundX (float x, float y, float z, float angleDeg) {
+  float[] rotateAroundX (float x, float y, float z, float angleDeg) {
     float ny = y * funcs.cos_ang(angleDeg) - z * funcs.sin_ang(angleDeg);
     float nz = y * funcs.sin_ang(angleDeg) + z * funcs.cos_ang(angleDeg);
     return new float[] { x, ny, nz };
   }
 
   // Rotates (x, y, z) by angleDeg around the Z axis (z is unchanged).
-  private float[] rotateAroundZ (float x, float y, float z, float angleDeg) {
+  float[] rotateAroundZ (float x, float y, float z, float angleDeg) {
     float nx = x * funcs.cos_ang(angleDeg) - y * funcs.sin_ang(angleDeg);
     float ny = x * funcs.sin_ang(angleDeg) + y * funcs.cos_ang(angleDeg);
     return new float[] { nx, ny, z };
   }
 
-  private float[] cameraPositionScaled () {
+  float[] cameraPositionScaled () {
     return new float[] { this.CAM_x / OBJECTS_scale, this.CAM_y / OBJECTS_scale, this.CAM_z / OBJECTS_scale };
   }
 
-  private float[] imageCenterRayScaled () {
+  float[] imageCenterRayScaled () {
     float[] ray_end = WIN3D.calculate_Click3D(0, 0);
     return new float[] { ray_end[0] / OBJECTS_scale, ray_end[1] / OBJECTS_scale, ray_end[2] / OBJECTS_scale };
   }
@@ -138,7 +138,7 @@ class solarchvision_WIN3D {
     endImageScale();
   }
 
-  private void beginImageScale () {
+  void beginImageScale () {
     if (this.record_IMG) this.ImageScale = 1; //2; //3;
     else this.ImageScale = 1;
 
@@ -151,7 +151,7 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void endImageScale () {
+  void endImageScale () {
     this.dX /= this.ImageScale;
     this.dY /= this.ImageScale;
 
@@ -164,7 +164,7 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void renderFrame () {
+  void renderFrame () {
     this.graphics.beginDraw();
 
     this.scale = this.dY / this.refScale; // fits field of view to window's height
@@ -199,7 +199,7 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void drawSceneContents () {
+  void drawSceneContents () {
     Sky3D.draw(TypeWindow.WIN3D);
     Sun3D.drawPattern(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
     Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 * Sky3D.scale);
@@ -223,7 +223,7 @@ class solarchvision_WIN3D {
     allWindFlows.draw(TypeWindow.WIN3D);
   }
 
-  private void saveRecordedFrame () {
+  void saveRecordedFrame () {
     String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP));
 
     if (this.Impact_TYPE == Impact_ACTIVE) myFile += "_RAD";
@@ -255,13 +255,13 @@ class solarchvision_WIN3D {
 
   // --- palette overlay -----------------------------------------------------------------
 
-  private boolean isSolarPaletteMode () {
+  boolean isSolarPaletteMode () {
     return (this.FacesShade == SHADE.Global_Solar) ||
            (this.FacesShade == SHADE.Vertex_Solar) ||
            (allSolarImpacts.displayImage && (allSections.SolarImpact.length > 0));
   }
 
-  private float[] choosePaletteParams () {
+  float[] choosePaletteParams () {
     int type = 0;
     int direction = 1;
     float multiplier = 1;
@@ -329,7 +329,7 @@ class solarchvision_WIN3D {
     this.graphics.popMatrix();
   }
 
-  private void drawPaletteSegment (int q, int PAL_type, int PAL_direction, float PAL_multiplier, float pal_length, float y1, float y2, float y, float txtSize) {
+  void drawPaletteSegment (int q, int PAL_type, int PAL_direction, float PAL_multiplier, float pal_length, float y1, float y2, float y, float txtSize) {
     float x1 = -0.5 * pal_length + q * (pal_length / 11.0);
     float x2 = x1 + (pal_length / 11.0);
     float x = 0.5 * (x1 + x2);
@@ -381,7 +381,7 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void drawPaletteCaption (float pal_length, float y, float y1, float txtSize) {
+  void drawPaletteCaption (float pal_length, float y, float y1, float txtSize) {
     this.graphics.noStroke();
     this.graphics.fill(127);
 
@@ -408,7 +408,7 @@ class solarchvision_WIN3D {
     this.graphics.text(txt, 0, y1 - 1.0 * txtSize, 0);
   }
 
-  private void reviseViews () {
+  void reviseViews () {
     this.revise();
     UI_rollout.revise();
   }
@@ -421,13 +421,13 @@ class solarchvision_WIN3D {
   // navigation key is currently held and re-run its action once per frame
   // (from draw(), via processHeldKey()) for as long as it stays held,
   // rather than relying on repeat events that Processing no longer sends.
-  private boolean navKeyHeld = false;
-  private boolean navKeyRepeatable = false;
-  private boolean navKeyCoded = false;
-  private char navKeyChar = 0;
-  private int navKeyCode = 0;
-  private boolean navKeyShift = false;
-  private boolean navKeyCtrl = false;
+  boolean navKeyHeld = false;
+  boolean navKeyRepeatable = false;
+  boolean navKeyCoded = false;
+  char navKeyChar = 0;
+  int navKeyCode = 0;
+  boolean navKeyShift = false;
+  boolean navKeyCtrl = false;
 
   void keyPressed (KeyEvent e) {
     if (!this.include) return;
@@ -461,7 +461,7 @@ class solarchvision_WIN3D {
     this.dispatchNavKey();
   }
 
-  private boolean isRepeatableCommandKey (char cmdKey) {
+  boolean isRepeatableCommandKey (char cmdKey) {
     switch (cmdKey) {
       case ',':
       case '.':
@@ -508,7 +508,7 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void dispatchNavKey () {
+  void dispatchNavKey () {
     if (this.navKeyCoded) {
       if (this.navKeyShift) {
         handleShiftedArrowKeys(this.navKeyCode);
@@ -522,7 +522,7 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void handleCtrlCommandKey (char cmdKey) {
+  void handleCtrlCommandKey (char cmdKey) {
     switch (cmdKey) {
       case ',':
         moveWin3DTowardsSelection(-0.5);
@@ -535,7 +535,7 @@ class solarchvision_WIN3D {
   }
   // ---------------------------------------------------------------------
 
-  private void handleShiftedArrowKeys (int keyCode) {
+  void handleShiftedArrowKeys (int keyCode) {
     switch (keyCode) {
 
       case UP:
@@ -591,7 +591,7 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void handleArrowKeys (int keyCode) {
+  void handleArrowKeys (int keyCode) {
     switch (keyCode) {
       case DOWN:
         WIN3D.rotateZ_3DViewport_around_Selection(this.rotation_T);
@@ -612,7 +612,7 @@ class solarchvision_WIN3D {
     }
   }
 
-  private void handleCommandKey (char cmdKey, boolean shiftDown) {
+  void handleCommandKey (char cmdKey, boolean shiftDown) {
     switch (cmdKey) {
 
       case TAB:
@@ -769,14 +769,14 @@ class solarchvision_WIN3D {
     WIN3D.lookZ_3DViewport_towards_Direction(Image_X, Image_Y);
   }
 
-  private void rotateZTowards (float xB, float yB) {
+  void rotateZTowards (float xB, float yB) {
     float[] O = cameraPositionScaled();
     float[] A = imageCenterRayScaled();
     this.rotation_Z += funcs.atan2_ang((yB - O[1]), (xB - O[0])) - funcs.atan2_ang((A[1] - O[1]), (A[0] - O[0]));
     WIN3D.reverseTransform_3DViewport();
   }
 
-  private void rotateXTowards (float xB, float yB, float zB) {
+  void rotateXTowards (float xB, float yB, float zB) {
     float[] O = cameraPositionScaled();
     float[] A = imageCenterRayScaled();
     this.rotation_X += funcs.atan2_ang((zB - O[2]), pow(pow(yB - O[1], 2) + pow(xB - O[0], 2), 0.5))
@@ -809,7 +809,7 @@ class solarchvision_WIN3D {
     rotateXTowards(P[0], P[1], P[2]);
   }
 
-  private void moveCameraTowards (float xO, float yO, float zO, float t) {
+  void moveCameraTowards (float xO, float yO, float zO, float t) {
     float[] A = cameraPositionScaled();
 
     float dx = A[0] - xO;

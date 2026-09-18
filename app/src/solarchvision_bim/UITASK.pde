@@ -1,6 +1,6 @@
 class solarchvision_UITASK {
 
-  private final static String CLASS_STAMP = "UITASK";
+  final static String CLASS_STAMP = "UITASK";
 
   int num = 0;
 

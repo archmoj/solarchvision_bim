@@ -1,6 +1,6 @@
 class solarchvision_Clone3D {
 
-  private final static String CLASS_STAMP = "Clone3D";
+  final static String CLASS_STAMP = "Clone3D";
 
   void selection (boolean produce_same_variation) {
     if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
@@ -26,7 +26,7 @@ class solarchvision_Clone3D {
 
   // Appends the integer range [start, endExclusive) onto `ids` and returns
   // the result. Used to select newly-created objects after a clone pass.
-  private int[] appendRange (int[] ids, int start, int endExclusive) {
+  int[] appendRange (int[] ids, int start, int endExclusive) {
     if (start >= endExclusive) return ids;
     int[] added = new int[endExclusive - start];
     for (int i = 0; i < added.length; i++) added[i] = start + i;
@@ -36,7 +36,7 @@ class solarchvision_Clone3D {
   // Clones the vertices referenced by `nodes`. Vertices already present in
   // vertexMap (old vertex id -> new vertex id) are reused instead of being
   // cloned again, so shared edges/vertices stay shared on the clone.
-  private int[] cloneNodes (int[] nodes, HashMap<Integer, Integer> vertexMap) {
+  int[] cloneNodes (int[] nodes, HashMap<Integer, Integer> vertexMap) {
     int[] newNodes = new int[nodes.length];
     for (int j = 0; j < nodes.length; j++) {
       int vNo = nodes[j];
@@ -53,7 +53,7 @@ class solarchvision_Clone3D {
     return newNodes;
   }
 
-  private void cloneFace (int f, HashMap<Integer, Integer> vertexMap) {
+  void cloneFace (int f, HashMap<Integer, Integer> vertexMap) {
     if (f < 0 || f >= allFaces.nodes.length) return;
     int[] newNodes = cloneNodes(allFaces.nodes[f], vertexMap);
     current_Material = allFaces.getMaterial(f);
@@ -63,7 +63,7 @@ class solarchvision_Clone3D {
     allFaces.create(newNodes);
   }
 
-  private void clonePolyline (int f, HashMap<Integer, Integer> vertexMap) {
+  void clonePolyline (int f, HashMap<Integer, Integer> vertexMap) {
     if (f < 0 || f >= allPolylines.nodes.length) return;
     int[] newNodes = cloneNodes(allPolylines.nodes[f], vertexMap);
     current_Material = allPolylines.getMaterial(f);
@@ -77,7 +77,7 @@ class solarchvision_Clone3D {
 
   // randomizeRotationAndSeed matches the extra rot/seed randomization that
   // only happened inside the original Groups() clone of Model1Ds.
-  private void cloneModel1D (int OBJ_ID, boolean produce_same_variation, boolean randomizeRotationAndSeed) {
+  void cloneModel1D (int OBJ_ID, boolean produce_same_variation, boolean randomizeRotationAndSeed) {
     float x = allModel1Ds.getX(OBJ_ID);
     float y = allModel1Ds.getY(OBJ_ID);
     float z = allModel1Ds.getZ(OBJ_ID);
@@ -104,7 +104,7 @@ class solarchvision_Clone3D {
     allModel1Ds.create(n, seed, dMax, x, y, z, d, rot, tilt, twist, ratio, base, trunkSize, leafSize);
   }
 
-  private void cloneModel2D (int OBJ_ID, boolean produce_same_variation) {
+  void cloneModel2D (int OBJ_ID, boolean produce_same_variation) {
     float x = allModel2Ds.getX(OBJ_ID);
     float y = allModel2Ds.getY(OBJ_ID);
     float z = allModel2Ds.getZ(OBJ_ID);
@@ -115,7 +115,7 @@ class solarchvision_Clone3D {
     allModel2Ds.create(family, n, x, y, z, s);
   }
 
-  private void cloneSolid (int OBJ_ID) {
+  void cloneSolid (int OBJ_ID) {
     float posX = allSolids.get_posX(OBJ_ID);
     float posY = allSolids.get_posY(OBJ_ID);
     float posZ = allSolids.get_posZ(OBJ_ID);

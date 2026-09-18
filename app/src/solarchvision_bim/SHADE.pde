@@ -1,16 +1,16 @@
 class solarchvision_SHADE {
 
-  private final static String CLASS_STAMP = "SHADE";
+  final static String CLASS_STAMP = "SHADE";
 
-  private final static int Surface_Wire       = -1;
-  private final static int Surface_Base       = 0;
-  private final static int Surface_White      = 1;
-  private final static int Surface_Materials  = 2;
-  private final static int Global_Solar       = 3;
-  private final static int Vertex_Solar       = 4;
-  private final static int Vertex_Solid       = 5;
-  private final static int Vertex_Elevation   = 6;
-  private final static int Options_num        = 7;
+  final static int Surface_Wire       = -1;
+  final static int Surface_Base       = 0;
+  final static int Surface_White      = 1;
+  final static int Surface_Materials  = 2;
+  final static int Global_Solar       = 3;
+  final static int Vertex_Solar       = 4;
+  final static int Vertex_Solid       = 5;
+  final static int Vertex_Elevation   = 6;
+  final static int Options_num        = 7;
 
   float impactValueToU (float val, float PAL_multiplier) {
     float _u = FLOAT_undefined;

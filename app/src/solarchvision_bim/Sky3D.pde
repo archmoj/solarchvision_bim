@@ -1,6 +1,6 @@
 class solarchvision_Sky3D {
 
-  private final static String CLASS_STAMP = "Sky3D";
+  final static String CLASS_STAMP = "Sky3D";
 
   boolean displaySurface = true;
 
@@ -22,14 +22,14 @@ class solarchvision_Sky3D {
 
   float calculatedResolution = 2.5; //1, 2.5, 5
 
-  private boolean shouldDraw (int target_window) {
+  boolean shouldDraw (int target_window) {
     if (!this.displaySurface) return false;
     if (target_window == TypeWindow.STUDY) return false;
     if (target_window == TypeWindow.WORLD) return false;
     return true;
   }
 
-  private float[] activePalette () {
+  float[] activePalette () {
     int type = 0;
     int direction = 1;
     float multiplier = 1;
@@ -62,7 +62,7 @@ class solarchvision_Sky3D {
     }
   }
 
-  private void drawOBJ (int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void drawOBJ (int PAL_type, int PAL_direction, float PAL_multiplier) {
     boolean shaded = (WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar);
     if (!shaded) return; // sky isn't exported to OBJ except under solar shading
 
@@ -94,7 +94,7 @@ class solarchvision_Sky3D {
     obj_lastVtextureNumber += num_vertices_added;
   }
 
-  private void writeSkyPatternMaterial (int PAL_type, String filename, String texturePath) {
+  void writeSkyPatternMaterial (int PAL_type, String filename, String texturePath) {
     println("Saving texture:", texturePath);
 
     int RES1 = User3D.export_PaletteResolution;
@@ -126,7 +126,7 @@ class solarchvision_Sky3D {
     mtlOutput.println("\tmap_Kd " + Subfolder_exportMaps + filename); // diffuse map
   }
 
-  private void writeFaceOBJ (float[][] subFace, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void writeFaceOBJ (float[][] subFace, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
     for (int s = 0; s < subFace.length; s++) {
       int s_next = (s + 1) % subFace.length;
       int s_prev = (s + subFace.length - 1) % subFace.length;
@@ -157,7 +157,7 @@ class solarchvision_Sky3D {
     }
   }
 
-  private void writeSkyPatternObjFace () {
+  void writeSkyPatternObjFace () {
     String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
     String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
     String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
@@ -176,7 +176,7 @@ class solarchvision_Sky3D {
     }
   }
 
-  private void drawWIN3D (int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void drawWIN3D (int PAL_type, int PAL_direction, float PAL_multiplier) {
     boolean shaded = (WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar);
 
     if (shaded) {
@@ -191,7 +191,7 @@ class solarchvision_Sky3D {
     }
   }
 
-  private void writeFaceWIN3DShaded (float[][] subFace, int PAL_type, int PAL_direction, float PAL_multiplier) {
+  void writeFaceWIN3DShaded (float[][] subFace, int PAL_type, int PAL_direction, float PAL_multiplier) {
     WIN3D.graphics.beginShape();
     for (int s = 0; s < subFace.length; s++) {
       int s_next = (s + 1) % subFace.length;
@@ -206,7 +206,7 @@ class solarchvision_Sky3D {
     WIN3D.graphics.endShape(CLOSE);
   }
 
-  private void writeDomeFlat () {
+  void writeDomeFlat () {
     color c = color(191, 191, 255);
     WIN3D.graphics.noStroke();
     WIN3D.graphics.fill(c); // same flat color regardless of shade mode here
@@ -229,8 +229,8 @@ class solarchvision_Sky3D {
   // sun/impact data. Previously it was rebuilt from scratch on every call
   // (i.e. every single rendered frame, including every frame of a mouse
   // drag or a held navigation key). Cache it per tessellation level instead.
-  private int cachedTessellationLevel = -1;
-  private float[][][][] cachedSubFacesByFace = null;
+  int cachedTessellationLevel = -1;
+  float[][][][] cachedSubFacesByFace = null;
 
   // Call whenever skyFaces/skyVertices are rebuilt (e.g. re-creating the
   // sky dome geometry), since the cache above is otherwise only keyed on
@@ -240,7 +240,7 @@ class solarchvision_Sky3D {
     this.cachedSubFacesByFace = null;
   }
 
-  private float[][][] getTessellatedSubFaces (int f, int tessellation) {
+  float[][][] getTessellatedSubFaces (int f, int tessellation) {
     if ((this.cachedSubFacesByFace == null) || (this.cachedTessellationLevel != tessellation)) {
       this.rebuildTessellationCache(tessellation);
     }
@@ -248,7 +248,7 @@ class solarchvision_Sky3D {
     return this.cachedSubFacesByFace[f];
   }
 
-  private void rebuildTessellationCache (int tessellation) {
+  void rebuildTessellationCache (int tessellation) {
     this.cachedSubFacesByFace = new float[skyFaces.length][][][];
 
     for (int f = 0; f < skyFaces.length; f++) {
@@ -258,7 +258,7 @@ class solarchvision_Sky3D {
     this.cachedTessellationLevel = tessellation;
   }
 
-  private float[][][] computeTessellatedSubFaces (int f, int tessellation) {
+  float[][][] computeTessellatedSubFaces (int f, int tessellation) {
     int totalNumberOfSubs = 1;
     if (tessellation > 0) {
       totalNumberOfSubs = skyFaces[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));

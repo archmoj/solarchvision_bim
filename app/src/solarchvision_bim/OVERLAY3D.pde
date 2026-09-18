@@ -1037,7 +1037,7 @@ class solarchvision_OVERLAY3D {
   // face/polyline) against the near plane, projects the surviving points
   // to image space, and clips those against the given style's window
   // bounds. Returns the resulting 2D vertex loop (possibly empty).
-  private float[][] clipAndProject (ArrayList<float[]> camVertices, DrawStyle style) {
+  float[][] clipAndProject (ArrayList<float[]> camVertices, DrawStyle style) {
     float[][] nearClipped = clipPolygon_nearPlane(
       camVertices.toArray(new float[camVertices.size()][])
     );

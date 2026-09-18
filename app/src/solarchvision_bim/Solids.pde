@@ -1,6 +1,6 @@
 class solarchvision_Solids {
 
-  private final static String CLASS_STAMP = "Solids";
+  final static String CLASS_STAMP = "Solids";
 
   solarchvision_Solids () { // constructor
     makeEmpty(0);
@@ -286,8 +286,8 @@ class solarchvision_Solids {
   int num_visualFaces = 3; // internal - number of faces: XY, YZ, ZX
   int numdisplayAllDegree = 16; //8; // internal - number of each face corners
 
-  private float[][] Vertices;
-  private int[][] Faces;
+  float[][] Vertices;
+  int[][] Faces;
 
   void draw () {
 

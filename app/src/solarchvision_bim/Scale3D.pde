@@ -1,6 +1,6 @@
 class solarchvision_Scale3D {
 
-  private final static String CLASS_STAMP = "Scale3D";
+  final static String CLASS_STAMP = "Scale3D";
 
   void selection (float x0, float y0, float z0, float sx, float sy, float sz) {
     float[] O = Select3D.translateOutside_ReferencePivot(x0, y0, z0);

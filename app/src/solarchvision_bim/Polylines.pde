@@ -1,6 +1,6 @@
 class solarchvision_Polylines {
 
-  private final static String CLASS_STAMP = "Polylines";
+  final static String CLASS_STAMP = "Polylines";
 
   solarchvision_Polylines () { // constructor
     makeEmpty(0);
