@@ -77,6 +77,8 @@ class solarchvision_Move3D {
       int f = FaceVertices[q];
       allPoints.move(f, dx, dy, dz);
     }
+
+    SOLARCHVISION_model_changed();
   }
 
   void Model1Ds (float dx, float dy, float dz) {
