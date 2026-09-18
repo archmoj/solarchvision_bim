@@ -612,6 +612,7 @@ class solarchvision_Solids {
       this.set_rotX(i, float(parts[9]));
       this.set_rotY(i, float(parts[10]));
       this.set_rotZ(i, float(parts[11]));
+      this.set_value(i, float(parts[12]));
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");

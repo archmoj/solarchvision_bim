@@ -180,16 +180,7 @@ class SolidsTest {
   // ================= to_XML / from_XML round trip ======================
 
   @Test
-  void toXMLThenFromXML_roundTripsPositionPowerScaleAndRotationButNotValue () {
-    // Found bug (not fixed here, flagged for confirmation): to_XML
-    // writes all 13 DEF columns, INCLUDING get_value(i) as the very last
-    // field - but from_XML only ever reads parts[0] through parts[11]
-    // (posX/Y/Z, powX/Y/Z, scaleX/Y/Z, rotX/Y/Z), with no matching
-    // `this.set_value(i, float(parts[12]))` call anywhere. The `value`
-    // column is silently written to disk but never restored on load -
-    // it always comes back as 0 (makeEmpty's default) regardless of what
-    // was saved. This test locks in that actual (likely unintended)
-    // behavior rather than the round trip the file's own writer implies.
+  void toXMLThenFromXML_roundTripsEveryFieldIncludingValue () {
     app.allSolids.DEF = new float[][]{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 99}};
     app.allSolids.displayAll = false;
     app.allSolids.palette_CLR = 5;
@@ -205,7 +196,7 @@ class SolidsTest {
     assertEquals(1, fresh.DEF.length);
     assertEquals(1f, fresh.get_posX(0), 0.0001f);
     assertEquals(12f, fresh.get_rotZ(0), 0.0001f);
-    assertEquals(0f, fresh.get_value(0), 0.0001f); // NOT 99 - the bug, locked in as current behavior
+    assertEquals(99f, fresh.get_value(0), 0.0001f); // now correctly restored
 
     assertFalse(fresh.displayAll);
     assertEquals(5, fresh.palette_CLR);
