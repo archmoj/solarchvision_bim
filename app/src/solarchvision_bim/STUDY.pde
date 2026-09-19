@@ -109,6 +109,48 @@ class solarchvision_STUDY {
     return result;
   }
 
+  // Maps (j, j_ADD) - a plotted day column and its within-join-window
+  // offset - to the actual day-of-year index (0-364) those two values
+  // represent, wrapping around the year boundary either direction.
+  // Pulled out of plotHourly()/plotImpact_wind()/plotImpact_global()/
+  // plotImpact_sunpath(), which each computed this identical 8-line
+  // expression inline (character-for-character identical across all 5
+  // call sites, confirmed before extracting) - some as a fresh `int
+  // now_j = ...` declaration, others as a reassignment of an existing
+  // now_j; both call sites now just do `now_j = computeWrappedDayIndex(j,
+  // j_ADD);` instead. Note the `now_j >= 365` branch is unreachable in
+  // practice (Java's % already bounds the preceding expression to
+  // (-364, 364)) - preserved as-is rather than removed, since this is a
+  // refactor, not a behavior change.
+  int computeWrappedDayIndex (int j, int j_ADD) {
+    int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
+
+    if (now_j >= 365) {
+      now_j = now_j % 365;
+    }
+    if (now_j < 0) {
+      now_j = (now_j + 365) % 365;
+    }
+
+    return now_j;
+  }
+
+  // Counts how many values at the start of a sort()-ed array (undefined
+  // values sort to the end) are actually defined - i.e. the number of
+  // real values sort() found, before the run of undefined padding
+  // begins. Pulled out of drawSorted(), which ran this exact loop twice
+  // in a row (once for valuesA, once for valuesB, confirmed identical
+  // before extracting).
+  int countDefinedPrefix (float[] sortedValues) {
+    int count = 0;
+    for (int l = 0; l < sortedValues.length; l++) {
+      if (is_defined(sortedValues[l])) {
+        count += 1;
+      } else break;
+    }
+    return count;
+  }
+
 
   // Number of PlotImpacts modes (kept in sync with the PlotImpacts_* constants).
   final static int PLOT_IMPACTS_MODE_COUNT = 11;
@@ -782,20 +824,10 @@ class solarchvision_STUDY {
     float PAL_multiplier = this.SORT_palette_MLT;
 
     float[] sortedvaluesA = sort(valuesA);
-    int num_sortedvaluesA = 0;
-    for (int l = 0; l < sortedvaluesA.length; l++) {
-      if (is_defined(sortedvaluesA[l])) {
-        num_sortedvaluesA += 1;
-      } else break;
-    }
+    int num_sortedvaluesA = countDefinedPrefix(sortedvaluesA);
 
     float[] sortedvaluesB = sort(valuesB);
-    int num_sortedvaluesB = 0;
-    for (int l = 0; l < sortedvaluesB.length; l++) {
-      if (is_defined(sortedvaluesB[l])) {
-        num_sortedvaluesB += 1;
-      } else break;
-    }
+    int num_sortedvaluesB = countDefinedPrefix(sortedvaluesB);
 
     int num_sortedvaluesAB = min(num_sortedvaluesA, num_sortedvaluesB);
 
@@ -1186,15 +1218,7 @@ class solarchvision_STUDY {
 
               int now_k = k + start_k;
               int now_i = i;
-              int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
-
-
-              if (now_j >= 365) {
-                now_j = now_j % 365;
-              }
-              if (now_j < 0) {
-                now_j = (now_j + 365) % 365;
-              }
+              int now_j = computeWrappedDayIndex(j, j_ADD);
 
               int next_i = now_i + 1;
               int next_j = now_j;
@@ -1882,14 +1906,7 @@ class solarchvision_STUDY {
 
                 int now_k = k + start_k;
                 int now_i = i;
-                int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
-
-                if (now_j >= 365) {
-                  now_j = now_j % 365;
-                }
-                if (now_j < 0) {
-                  now_j = (now_j + 365) % 365;
-                }
+                int now_j = computeWrappedDayIndex(j, j_ADD);
 
                 Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
                 Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
@@ -1991,14 +2008,7 @@ class solarchvision_STUDY {
 
                 int now_k = k + start_k;
                 int now_i = i;
-                int now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
-
-                if (now_j >= 365) {
-                  now_j = now_j % 365;
-                }
-                if (now_j < 0) {
-                  now_j = (now_j + 365) % 365;
-                }
+                int now_j = computeWrappedDayIndex(j, j_ADD);
 
                 Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
                 Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
@@ -2460,14 +2470,7 @@ class solarchvision_STUDY {
 
                 now_k = k + start_k;
                 now_i = i;
-                now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
-
-                if (now_j >= 365) {
-                  now_j = now_j % 365;
-                }
-                if (now_j < 0) {
-                  now_j = (now_j + 365) % 365;
-                }
+                now_j = computeWrappedDayIndex(j, j_ADD);
 
                 Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
                 Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
@@ -2834,14 +2837,7 @@ class solarchvision_STUDY {
 
             now_k = k + start_k;
             now_i = i;
-            now_j = int(j * this.perDays + (j_ADD - int(funcs.roundTo(0.5 * this.joinDays, 1))) + TIME.beginDay + 365) % 365;
-
-            if (now_j >= 365) {
-              now_j = now_j % 365;
-            }
-            if (now_j < 0) {
-              now_j = (now_j + 365) % 365;
-            }
+            now_j = computeWrappedDayIndex(j, j_ADD);
 
             Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
             Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);

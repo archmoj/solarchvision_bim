@@ -4,14 +4,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // Exercises solarchvision_STUDY (STUDY.pde), reached through the
 // pre-constructed `app.STUDY` field - the hourly/daily statistics plot
-// window. At 3298 lines this is the largest file tested in this whole
-// project, but the overwhelming majority of it (applyLegendTextStyle
+// window. At over 3000 lines this is the largest file tested in this
+// whole project, but the overwhelming majority of it (applyLegendTextStyle
 // through plotImpact_cycles/plotImpact, plus openPerDayOutputFiles/
 // closePerDayOutputFiles) is either real rendering (this.graphics calls)
 // or real file output (createWriter/PrintWriter), and none of it is
-// covered here. The testable surface is concentrated in the file's
-// first ~340 lines (keyboard handling and the small state-mutating
-// helpers they call) and its last ~120 lines (to_XML/from_XML).
+// covered here.
+//
+// Two pure computations were pulled out of that rendering code and given
+// their own tests: computeWrappedDayIndex() (an identical 8-line
+// day-of-year-wrapping expression that was duplicated character-for-
+// character across 5 separate call sites in plotHourly()/
+// plotImpact_wind()/plotImpact_global()/plotImpact_sunpath(), confirmed
+// identical via grep before extracting) and countDefinedPrefix() (a
+// "count leading defined values in a sort()-ed array" loop drawSorted()
+// ran twice in a row, once each for its two value series). Both
+// extractions were done by replacing each call site with a call to the
+// new method and re-verifying the surrounding code still reads
+// correctly, not by rewriting the logic itself.
 //
 // NOT covered: keyPressed(KeyEvent e) itself, same reasoning as
 // WIN3DTest - it only checks e.isAltDown()/e.isControlDown() before
@@ -53,7 +63,54 @@ class STUDYTest {
     assertFalse(app.STUDY.isInHourlyRange(12)); // strictly between end and start -> excluded
   }
 
-  // ================= requestRedraw / requestDataRefresh =================
+  // ================= computeWrappedDayIndex (newly extracted) ==========
+
+  @Test
+  void computeWrappedDayIndex_mapsJAndJAddToADayOfYearIndex () {
+    app.STUDY.perDays = 1;
+    app.STUDY.joinDays = 0; // avoids the round(0.5*joinDays) tie-breaking case entirely
+    app.TIME.beginDay = 0;
+
+    assertEquals(0, app.STUDY.computeWrappedDayIndex(0, 0));
+  }
+
+  @Test
+  void computeWrappedDayIndex_wrapsNegativeResultsForward () {
+    app.STUDY.perDays = 1;
+    app.STUDY.joinDays = 0;
+    app.TIME.beginDay = -10;
+
+    assertEquals(355, app.STUDY.computeWrappedDayIndex(0, 0));
+  }
+
+  @Test
+  void computeWrappedDayIndex_wrapsResultsPast365BackToZero () {
+    app.STUDY.perDays = 1;
+    app.STUDY.joinDays = 0;
+    app.TIME.beginDay = 0;
+
+    assertEquals(35, app.STUDY.computeWrappedDayIndex(400, 0));
+  }
+
+  // ================= countDefinedPrefix (newly extracted) ===============
+
+  @Test
+  void countDefinedPrefix_countsLeadingDefinedValues () {
+    float u = app.FLOAT_undefined;
+    assertEquals(3, app.STUDY.countDefinedPrefix(new float[]{1, 2, 3, u, u}));
+  }
+
+  @Test
+  void countDefinedPrefix_isZeroWhenTheFirstValueIsAlreadyUndefined () {
+    float u = app.FLOAT_undefined;
+    assertEquals(0, app.STUDY.countDefinedPrefix(new float[]{u, 1, 2}));
+  }
+
+  @Test
+  void countDefinedPrefix_isTheFullLengthWhenEveryValueIsDefined () {
+    assertEquals(3, app.STUDY.countDefinedPrefix(new float[]{1, 2, 3}));
+  }
+
 
   @Test
   void requestRedraw_flagsStudyForUpdate () {
@@ -205,7 +262,19 @@ class STUDYTest {
 
   @Test
   void handleCtrlCodedKey_cyclesTheCurrentLayerForwardAndBackward () {
-    app.numberOfLayers = app.allLayers.length; // never set outside a real project load
+    // Correction from an earlier pass: this was previously written as
+    // "fixing a numberOfLayers bug" - that was a mistaken conclusion.
+    // numberOfLayers is genuinely 0 at its OWN declaration, but every one
+    // of the 14 LAYER_xxx globals declared immediately afterward
+    // constructs a solarchvision_LAYER, whose constructor does
+    // `this.id = numberOfLayers; numberOfLayers++;` - so by the time a
+    // fresh app finishes constructing, numberOfLayers is already
+    // correctly 14. I'd only traced the explicit `= 0` initializer and
+    // the XML-load path, not this constructor side effect, when I first
+    // called it a bug. This assignment is a harmless no-op (already 14),
+    // kept only to make the test's own setup explicit and independent of
+    // that construction-order detail.
+    app.numberOfLayers = app.allLayers.length;
     app.CurrentLayer_id = 0;
 
     app.keyCode = app.UP;
