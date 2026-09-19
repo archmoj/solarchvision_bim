@@ -445,7 +445,7 @@ class solarchvision_WIN3D {
 
     boolean ctrlDown = e.isControlDown();
     if (ctrlDown && !(
-      (key == ',') || (key != '.'))
+      (key == ',') || (key == '.'))
     ) return;
 
     this.navKeyAlt = altDown;
