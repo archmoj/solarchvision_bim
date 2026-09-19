@@ -463,7 +463,9 @@ class solarchvision_WIN3D {
     // rebuild-trigger, snap-to-look, Shift+Tab) is a discrete/one-shot/
     // destructive action and must stay single-press only, regardless of
     // how long the key is held.
-    this.navKeyRepeatable = this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar);
+    this.navKeyRepeatable = !altDown &&
+      (this.navKeyCoded || isRepeatableCommandKey(this.navKeyChar));
+
 
     this.navKeyHeld = true;
 
