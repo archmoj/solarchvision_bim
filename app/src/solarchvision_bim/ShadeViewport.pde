@@ -1,5 +1,10 @@
 PImage Shade_RGBA;
 
+final int SHADE_FIRST_HOUR = 12 - 5; // 7 a.m.
+final int SHADE_LAST_HOUR = 12 + 5; // 17 p.m.
+final int SHADE_STEP_DAYS = 90;
+
+// initial values of choice
 int SHADE_HOUR_ANGLE = 8;
 int SHADE_DATE_ANGLE = 0;
 
@@ -119,9 +124,9 @@ void SOLARCHVISION_adjustShadeTime (int steps) {
     // step forward
     for(int i = 0; i < steps; i++) {
       SHADE_HOUR_ANGLE++;
-      if (SHADE_HOUR_ANGLE > 16) {
-        SHADE_HOUR_ANGLE = 8;
-        SHADE_DATE_ANGLE += 90;
+      if (SHADE_HOUR_ANGLE > SHADE_LAST_HOUR) {
+        SHADE_HOUR_ANGLE = SHADE_FIRST_HOUR;
+        SHADE_DATE_ANGLE += SHADE_STEP_DAYS;
       }
       if (SHADE_DATE_ANGLE >= 360) {
         SHADE_DATE_ANGLE = 0;
@@ -131,12 +136,12 @@ void SOLARCHVISION_adjustShadeTime (int steps) {
     // step backward
     for(int i = 0; i > steps; i--) {
       SHADE_HOUR_ANGLE--;
-      if (SHADE_HOUR_ANGLE < 8) {
-        SHADE_HOUR_ANGLE = 16;
-        SHADE_DATE_ANGLE -= 90;
+      if (SHADE_HOUR_ANGLE < SHADE_FIRST_HOUR) {
+        SHADE_HOUR_ANGLE = SHADE_LAST_HOUR;
+        SHADE_DATE_ANGLE -= SHADE_STEP_DAYS;
       }
-      if (SHADE_DATE_ANGLE <= -90) {
-        SHADE_DATE_ANGLE = 360 - 90;
+      if (SHADE_DATE_ANGLE <= -SHADE_STEP_DAYS) {
+        SHADE_DATE_ANGLE = 360 - SHADE_STEP_DAYS;
       }
     }
   }
