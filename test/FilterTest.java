@@ -2,15 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises SOLARCHVISION_filter (filter.pde) - classifies an averaged
-// cloud-cover value into one of 4 "sky scenarios". Wrapper-less tab, so
-// it's a plain package-private method directly on `app`.
-//
-// Uses type_of_filter != filter_DAILY so the function only reads a
-// single (now_i, now_j, cloudCover_id, now_k) slot instead of averaging
-// across all 24 hours - letting these tests populate a minimal 1x1x1x1
-// array instead of a full day's worth of data. A fresh `app` per test
-// since each one reassigns that backing array.
 class FilterTest {
 
   private solarchvision_bim app;

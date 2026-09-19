@@ -2,16 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises the pure color/opacity functions in PAINT.pde: getOpacity
-// (a simple scale-and-clamp), every one of the piecewise color ramps
-// (WBGRW, BGR, DBGR, DWBGR, DWYR, VDWBGR, DRYWCBD, DBCW, DRYW), and a
-// handful of getColorStyle's dispatch/remap branches. Reached through
-// the pre-constructed `app.PAINT` field.
-//
-// WYRD is the one ramp left untested - its body is the same shape as
-// DRYW/DBCW (a 4-segment ramp built from `_variable *= -3`) with a
-// different input transform, so it wouldn't add much beyond what DRYW
-// and DBCW already establish about that pattern.
 class PaintTest {
 
   private static solarchvision_bim app;

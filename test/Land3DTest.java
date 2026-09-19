@@ -2,27 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Land3D (Land3D.pde), reached through the
-// pre-constructed `app.Land3D` field.
-//
-// getLandGrid() is already covered directly in LandGridTest.java from an
-// earlier session - not repeated here.
-//
-// NOT covered: update_textures()/addLandTextureIfElevationJpg()/
-// update_mesh()/loadMeshFromFiles()/download_mesh()/download_textures()
-// - all real file/network I/O (OPESYS.getFiles, loadImage, loadXML,
-// loadBytes/saveBytes against a live network endpoint). draw() and its
-// whole rendering family (writeLandMaterials, beginLandGroup,
-// drawLandRow, drawLandCell, drawLandSubFace, beginLandShape,
-// renderLandVertex*, endLandShape, writeLandObjFace,
-// writeLandDepthWalls, drawLandPoints, castShadows,
-// castLandSubFaceShadow, castLandShadowClippedEdge, flushLandEdgeBatch)
-// - real WIN3D.graphics/SHADOW_graphics calls or real file output.
-// flat_mesh()/normalizeMeshElevation()/shouldDraw()/landCellBaseVertices()/
-// shouldStrokeLandSubFace()/projectLandSubFaceForWIN3D()/intersect()
-// ARE covered - all pure math/array logic.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class Land3DTest {
 
   private solarchvision_bim app;

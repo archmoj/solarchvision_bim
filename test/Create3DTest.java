@@ -2,41 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Create3D (Create3D.pde), reached through the
-// pre-constructed `app.Create3D` field. This file is a library of
-// roughly 28 "add_X" geometric-primitive generators (boxes, houses,
-// meshes, polygons, spheres, cylinders, land-scattering helpers).
-//
-// This suite now covers every add_X generator except the two documented
-// below as genuinely infeasible to test meaningfully. Most follow the
-// same shape (validate dimensions, compute corner points via trig,
-// allPoints.create()/allFaces.create(), notify) and are checked with
-// exact, independently-computed vertex positions. A few route through a
-// separate "build in a temp buffer, then flush" tessellation pipeline
-// (addToTempObjectVertices/createLozenge/addTempObjectToScene) that is
-// considerably more involved - those are checked with lighter smoke
-// tests (real geometry appears in the scene, correct branch taken)
-// rather than exact per-vertex math, since replicating that pipeline's
-// output by hand adds a lot of risk of a transcription error for
-// modest additional confidence beyond what the primitives it calls
-// (allPoints.create/allFaces.create) already get elsewhere.
-//
-// NOT covered:
-// - add_Model_2DsFromFile(): calls loadStrings() on a real file
-//   (BaseFolder + "/Import/Hamedan_PEOPLE.txt") that does not exist in
-//   this repository checkout, so calling it would throw rather than
-//   exercise anything meaningful; the per-row allModel2Ds.create() call
-//   it makes is already covered directly in Model2DsTest.java.
-// - add_onLand(): depends on live Land3D terrain-mesh AND texture-image
-//   state (Land3D.Mesh, Land3D.Textures_map, Land3D.Textures_num, etc.)
-//   that would need a full synthetic terrain+texture setup to exercise
-//   meaningfully, and its output is inherently probabilistic (random
-//   accept/reject sampling against pixel colors) rather than a
-//   deterministic function of its inputs - add_onPolar/onPlane/onMesh2
-//   below cover the same underlying allModel1Ds/allModel2Ds dispatch
-//   this function also uses, just via simpler placement math.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class Create3DTest {
 
   private solarchvision_bim app;

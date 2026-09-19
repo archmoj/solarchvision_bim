@@ -2,17 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_User3D (User3D.pde), reached through the
-// pre-constructed `app.User3D` field. This class is pure settings data -
-// no behavior at all beyond to_XML/from_XML - so the only meaningful
-// test is a full round trip across every stored field.
-//
-// Note: to_XML/from_XML each write/read create_Model1D_Type,
-// create_Model1D_DegreeMax, create_Model1D_Seed,
-// create_Model1D_TrunkSize, and create_Model1D_LeafSize TWICE in a row
-// (identical duplicate statements). Harmless - the second write/read of
-// each just repeats the same value - but worth noting as dead
-// duplication rather than a deliberate second field.
 class User3DTest {
 
   private solarchvision_bim app;

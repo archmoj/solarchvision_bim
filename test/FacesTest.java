@@ -2,21 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Faces (Faces.pde), reached through the
-// pre-constructed `app.allFaces` field.
-//
-// NOT covered: draw() and castShadows(). Both are pure rendering code -
-// draw() dispatches on target_window and issues real WIN3D.graphics/
-// SHADOW_graphics calls (beginShape/vertex/endShape, texture export,
-// OBJ/HTML/RAD file writing via objOutput/htmlOutput/radOutput), none of
-// which this suite has a safe way to exercise against a hand-built
-// scene without an actual running sketch/open output file. Every piece
-// of GEOMETRY those two functions rely on (getSubFace via funcs,
-// tessellation counts, base_Vertices construction) is either already
-// covered elsewhere (FunctionsTest.java) or is straightforward array
-// indexing not worth a dedicated test.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class FacesTest {
 
   private solarchvision_bim app;

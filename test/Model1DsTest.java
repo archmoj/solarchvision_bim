@@ -2,20 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Model1Ds (Model1Ds.pde), reached through the
-// pre-constructed `app.allModel1Ds` field.
-//
-// NOT covered: draw() - pure rendering (builds cone/leaf geometry and
-// issues WIN3D.graphics/objOutput/htmlOutput/radOutput calls depending
-// on target_window; none of it is meaningful to assert on without a
-// live graphics context or open output file) and castShadows() -
-// likewise real shadow-polygon rendering via SHADOW_graphics. intersect()
-// IS covered, since it only needs the plain `Vertices`/`Faces` fields
-// (populated here by hand, bypassing draw() entirely) - it's a
-// quad/rectangle test, distinct in shape from Faces.pde's own
-// intersect() (which fans a polygon into triangles instead).
-//
-// A fresh `app` per test since these mutate shared scene state.
 class Model1DsTest {
 
   private solarchvision_bim app;

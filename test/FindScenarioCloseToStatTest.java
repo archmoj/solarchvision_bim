@@ -2,22 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises _FIND_SCENARIO_CLOSE_TO_STAT (FIND_SCENARIO_CLOSE_TO_DAILY_
-// STAT.pde) - given an array of values and a statistic index (one of
-// the STAT_N_* constants NormalStatsTest.java already covers), finds
-// which element of the array is closest to that statistic, computed via
-// SOLARCHVISION_NORMAL. Pure and self-contained: no globals beyond the
-// already-tested NORMAL function and is_defined. Its sibling function,
-// SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT, is the one with all
-// the STUDY/LAYER/TIME/STATION/data-array coupling - not covered here.
-//
-// A note on array order: SOLARCHVISION_NORMAL sorts its input
-// internally, but Processing's sort() "does not modify the original
-// array; a re-ordered array is returned" - so the search loop here
-// still runs over the array in its ORIGINAL, caller-supplied order.
-// oneUnsortedInput below is specifically chosen so the correct answer
-// differs depending on whether that holds or not, to catch a regression
-// either in this function or in an assumption about sort()'s behavior.
 class FindScenarioCloseToStatTest {
 
   private static solarchvision_bim app;

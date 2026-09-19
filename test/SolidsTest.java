@@ -2,18 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Solids (Solids.pde), reached through the
-// pre-constructed `app.allSolids` field.
-//
-// NOT covered: draw() and getCorners() (real WIN3D.graphics rendering of
-// the superellipsoid wireframe) - same reasoning as Cameras' skipped
-// getCorners(). get_Distance() and intersect() ARE covered: both are
-// pure math against public fields, and intersect() is a genuinely
-// distinct shape from every other intersect() in this codebase - it
-// uses a SUM-OF-SUBTENDED-ANGLES point-in-polygon test (AnglesAll > 359)
-// rather than isInside_Triangle/Rectangle.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class SolidsTest {
 
   private solarchvision_bim app;

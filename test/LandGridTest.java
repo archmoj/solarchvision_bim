@@ -2,13 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Land3D.getLandGrid (Land3D.pde) - a pure
-// function that samples a point on a polar grid centered on the
-// station, used to build the terrain mesh's lon/lat lookup points. It's
-// built entirely from funcs (already covered by FunctionsTest.java) and
-// STATION's current position, with no file I/O or loaded mesh data
-// needed. Reached through the pre-constructed `app.Land3D` field;
-// already package-private, no visibility changes needed.
 class LandGridTest {
 
   private static solarchvision_bim app;

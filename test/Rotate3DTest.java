@@ -2,31 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Rotate3D (Rotate3D.pde), reached through the
-// pre-constructed `app.Rotate3D` field. Every function rotates some part
-// of the scene by `r` radians around an explicit pivot (x0, y0, z0) and
-// one of the 3 principal axes (the_Vector: 0=X, 1=Y, 2=Z), dispatched by
-// current_ObjectCategory through selection(). Note selection() itself
-// takes `r` in DEGREES and converts once at the top - every other
-// function here takes `r` in RADIANS directly, since they call cos(r)/
-// sin(r) themselves.
-//
-// rotatePointAroundReferencePivot (used only by Groups()) routes through
-// Select3D.translateOutside_ReferencePivot/translateInside_ReferencePivot,
-// same as Scale3D's scalePointAroundPivot - under Select3D's default
-// state (identity BoundingBox, alignX/Y/Z=0, already confirmed in
-// Select3DTest.java), that reduces to a plain rotateAroundVector call
-// around the world origin, which is what this file's Groups() tests are
-// computed from.
-//
-// NOT covered: Rotate3D.Sections(). Same reasoning as Move3DTest/
-// Scale3DTest's skipped Sections() tests - it unconditionally calls
-// allSolidImpacts.calculate_Impact_selectedSections(), keyed off the
-// SAME Select3D.Section_ids being rotated, so there's no way to test its
-// own logic (a one-line "add degrees to R" update) without also
-// triggering a real solar-impact image recalculation.
-//
-// A fresh `app` per test since these all mutate shared scene state.
 class Rotate3DTest {
 
   private solarchvision_bim app;

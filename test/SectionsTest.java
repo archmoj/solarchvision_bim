@@ -2,18 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Sections (Sections.pde), reached through the
-// pre-constructed `app.allSections` field.
-//
-// NOT covered: draw()/drawSection()/writeSectionMaterial()/
-// writeSectionGroupHeader()/renderSectionFace()/writeSectionObjFace()/
-// writeSectionHTML() - all real rendering and/or file-writing code
-// (WIN3D.graphics calls, objOutput/htmlOutput/mtlOutput println, and -
-// critically - real PImage.save() calls). shouldDraw() and
-// rotateSectionCorner() ARE covered, since both are pure logic with no
-// side effects at all.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class SectionsTest {
 
   private solarchvision_bim app;

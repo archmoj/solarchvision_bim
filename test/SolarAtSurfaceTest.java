@@ -2,14 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises SOLARCHVISION_SolarAtSurface (SolarAtSurface.pde) - a pure
-// function combining a direct-sun mask (dot product against the
-// surface's reference vector) with a sky-view mask, given a surface
-// orientation (Alpha/Beta) and pre-computed sun radiation components.
-//
-// Like isIntersected_Faces.pde, this tab has no `class solarchvision_X`
-// wrapper, so the function is a plain package-private method directly on
-// `app` (`app.SOLARCHVISION_SolarAtSurface(...)`).
 class SolarAtSurfaceTest {
 
   private static solarchvision_bim app;

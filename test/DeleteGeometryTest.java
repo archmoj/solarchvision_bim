@@ -3,14 +3,6 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import processing.core.PImage;
 
-// Exercises Delete3D.pde: the removeIndices overloads (pure array
-// filtering, already package-private after a recent refactor), the two
-// isolatedVertices functions (self-contained given allVertices/allFaces/
-// allPolylines), the selection() dispatcher, and every one of the
-// selected_* deletion functions (Faces, Polylines, Groups, Cameras,
-// Sections, Model1Ds, Model2Ds, Solids).
-//
-// A fresh `app` per test since these all mutate shared scene state.
 class DeleteGeometryTest {
 
   private solarchvision_bim app;

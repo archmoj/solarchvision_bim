@@ -2,15 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// A grab-bag of small, pure, self-contained helper functions that don't
-// warrant their own dedicated test file:
-//   - is_defined / FLOAT_undefined (solarchvision_bim.pde)
-//   - applyPalDirection (solarchvision_bim.pde) - wrapper-less tab, plain
-//     package-private method directly on `app`
-//   - solarchvision_Sun3D.wrapDayIndex (Sun3D.pde) - reached through the
-//     pre-constructed `app.Sun3D` field; made package-private (was
-//     private) so this test can call it directly, same as the other
-//     test files' pattern
 class MiscHelpersTest {
 
   private static solarchvision_bim app;

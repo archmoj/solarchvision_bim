@@ -2,14 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises get_startK_endK (get_startK_endK.pde) - dispatches on
-// CurrentDataSource (same field DataUtilsTest.java covers) to compute a
-// 0-based [start, end] index range from the Sample*_Start/End fields,
-// clamped against each source's own valid range. Wrapper-less tab, so
-// it's a plain package-private method directly on `app`.
-//
-// A fresh `app` per test since these tests mutate CurrentDataSource and
-// the various Sample*_Start/End fields.
 class GetStartKEndKTest {
 
   private solarchvision_bim app;

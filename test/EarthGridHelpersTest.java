@@ -2,25 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises the pure, deterministic grid-cell helpers in Earth3D.pde
-// (solarchvision_Earth3D) directly - no window, no OpenGL/P3D context,
-// no texture images loaded. See test/README.md for how this gets built
-// and run.
-//
-// solarchvision_Earth3D is a non-static inner class - Processing's
-// preprocessor turns every .pde tab's top-level `class solarchvision_X`
-// into an inner class of the generated sketch class (solarchvision_bim),
-// so building one needs a live sketch instance (`app.new
-// solarchvision_Earth3D()`). Constructing solarchvision_bim() itself does
-// NOT open a window or touch the GPU: the main tab's field initializers
-// only build plain data-holder objects (STATION, LAYER, SHADE, WIN3D,
-// ...); the actual graphics surfaces (createGraphics(..., P3D) etc.) are
-// only created later, inside setup(), which these tests never call.
-//
-// isStationGridCell/isRoundGridLine/unwrapLon are declared
-// package-private (not private) in Earth3D.pde specifically so this test
-// class - deliberately left in the same (default/unnamed) package as the
-// generated sketch class - can call them directly, with no reflection.
 class EarthGridHelpersTest {
 
   private static solarchvision_bim app;

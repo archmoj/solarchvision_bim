@@ -2,18 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Functions (the `funcs` global) - trig
-// conversions, vector/geometry math, and solar-position formulas. All of
-// this is pure: no textures, no file I/O, no mutable global state beyond
-// the constants (DOUBLE_r_Earth, FLOAT_r_Earth, ...) declared alongside
-// it in the main tab, which this test reads off the same `app` instance
-// rather than hardcoding.
-//
-// `funcs` is already a package-private instance field on the sketch
-// (`solarchvision_Functions funcs = new solarchvision_Functions();`), so
-// unlike EarthGridHelpersTest there's no need to construct a nested
-// class instance by hand - just build the sketch once and reuse its
-// `funcs` field.
 class FunctionsTest {
 
   private static solarchvision_bim app;

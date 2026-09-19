@@ -2,25 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises DataUtils.pde's getStart/getEnd/getReference/setValue/
-// getValue/setFlag_CurrentDataSource - a family of functions that all
-// dispatch on the same `CurrentDataSource` field to one of 5 backing
-// data sources (CWEEDS, CLMREC, TMYEPW, ENSEMBLE_FORECAST, ENSEMBLE_
-// OBSERVED). Like isIntersected_Faces.pde and SolarAtSurface.pde, this
-// tab has no `class solarchvision_X` wrapper, so these are plain
-// package-private methods directly on `app`.
-//
-// NOT covered: the ENSEMBLE_FORECAST branch of getReference_
-// CurrentDataSource(). It builds its string from TIME.year/month/day/
-// hour, which are private fields in TIME.pde (unlike the other test
-// files, these weren't loosened here) AND are seeded from the real
-// wall-clock date at construction time - so any expected string would
-// either need reflection or would go stale the day after it's written.
-// Not worth either tradeoff for one string-formatting branch.
-//
-// A fresh `app` per test (not shared @BeforeAll) since these tests
-// mutate CurrentDataSource and (for the value/flag tests) reassign the
-// backing arrays - isolating each test avoids cross-test leakage.
 class DataUtilsTest {
 
   private solarchvision_bim app;

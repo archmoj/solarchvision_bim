@@ -3,21 +3,6 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 
-// Exercises solarchvision_Clone3D (Clone3D.pde), reached through the
-// pre-constructed `app.Clone3D` field. Every batch function (Faces,
-// Polylines, Model1Ds, Model2Ds, Solids, Sections, Cameras, Groups)
-// clones the currently-selected objects of its category, appending the
-// clones to the end of the relevant array(s) and leaving only the NEW
-// clones selected afterward.
-//
-// `produce_same_variation` mostly matters for cloneModel1D/cloneModel2D,
-// which otherwise reach for real randomness (randomSeed(millis()),
-// random(...)); tests that exercise the produce_same_variation=false
-// path check the result is still well-formed (right range, right
-// family) rather than asserting exact values, since exact values there
-// are genuinely non-deterministic by design.
-//
-// A fresh `app` per test since these all mutate shared scene state.
 class Clone3DTest {
 
   private solarchvision_bim app;

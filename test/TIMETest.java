@@ -2,26 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_TIME (the `TIME` global) - safeDate's
-// float-to-index wrapping, the Date_Angle <-> day-of-year conversions,
-// and the pre-built calendar lookup tables. All pure and deterministic:
-// createCalendar() (which builds the lookup tables) only does in-memory
-// arithmetic, no file I/O, no station/weather data.
-//
-// `TIME` is already a package-private, pre-constructed instance field on
-// the sketch (`solarchvision_TIME TIME = new solarchvision_TIME();`),
-// and its constructor already calls createCalendar(), so the lookup
-// tables are ready as soon as the sketch is built - no extra setup
-// needed here.
-//
-// A note on indices: createCalendar() starts its (month, day) walk from
-// k=285, not 0, so index 0 lands on March 21 rather than January 1. This
-// is intentional - the table is built around the Iranian/Persian solar
-// calendar, whose new year (Nowruz) begins on the March equinox (March
-// 21 on the Gregorian calendar). convert2Date, in contrast, does count
-// sequentially from a Gregorian January 1 = index 0 - the two are
-// separate, unrelated indexing schemes that happen to live in the same
-// class, not a round-trippable pair.
 class TIMETest {
 
   private static solarchvision_bim app;

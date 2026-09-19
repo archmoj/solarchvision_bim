@@ -2,19 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Cameras (Cameras.pde), reached through the
-// pre-constructed `app.allCameras` field.
-//
-// NOT covered: draw() and getCorners(). getCorners() is technically
-// side-effect-free (it saves/restores WIN3D's camera-transform fields
-// around a call to the pure-math WIN3D.transform_3DViewport()), but it's
-// deep rendering-support machinery only ever used to draw the camera
-// frustum icon - kept out of scope for the same reason similar
-// rendering-adjacent internals were skipped in Model1Ds/Model2Ds.
-// intersect() IS covered - a plain quad/rectangle test against the
-// public Vertices/Faces fields, same shape as Model1Ds.intersect().
-//
-// A fresh `app` per test since these mutate shared scene state.
 class CamerasTest {
 
   private solarchvision_bim app;

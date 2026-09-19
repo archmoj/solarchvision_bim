@@ -2,15 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Points (Points.pde), reached through the
-// pre-constructed `app.allPoints` field. Note this class operates on
-// the GLOBAL `allVertices` array directly (not a field of its own), so
-// assertions here check `app.allVertices` as much as the getters do.
-//
-// NOT covered: draw() - pure rendering (WIN3D.graphics line-drawing for
-// point markers), nothing to verify without a live graphics context.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class PointsTest {
 
   private solarchvision_bim app;

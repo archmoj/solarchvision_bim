@@ -3,36 +3,6 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 
-// Exercises the small, self-contained helpers in Modify3D.pde -
-// remove_item_from_primary_list (pure, already package-private),
-// isPolymeshCategorySelected/isGroupOrFaceCategorySelected (pure given
-// current_ObjectCategory), faceCentroid (pure given a vertex array),
-// isFaceInGroupRange/faceBaseVertices (pure given a small hand-built
-// mesh, bypassing the real scene-building pipeline entirely),
-// compactRemovedVertices (mutates allVertices/allFaces.nodes/
-// allPolylines.nodes in place, but only those - no other scene state),
-// and accumulateOffsetFromRing (pure given a hand-built ring face and
-// output accumulator arrays).
-//
-// The bulk of Modify3D.pde (weldSceneVertices_Selection,
-// insertCornerOpennings_Selection, tessellateRowsColumns_Selection,
-// extrudeFaceEdges_Selection, ...) mutates the live scene graph
-// (allFaces, allPoints, allGroups, Select3D) through many interdependent
-// steps - genuine integration-test territory, not covered here.
-//
-// isPolymeshCategorySelected/isGroupOrFaceCategorySelected/
-// isFaceInGroupRange/faceBaseVertices/faceCentroid/
-// accumulateOffsetFromRing were changed from private to package-private
-// (see Modify3D.pde) so this test can call them directly without
-// reflection - see test/README.md. The ObjectCategory.* constants they
-// (and this test) reference were likewise loosened in OBJECTTYPE.pde,
-// since a private member is only shared between nested classes of the
-// *same* enclosing top-level class, and this test class is a separate
-// top-level class, not a nested class of solarchvision_bim.
-//
-// A fresh `app` per test since several of these tests reassign shared
-// mutable fields (allVertices, allFaces.nodes, allGroups.Faces,
-// current_ObjectCategory).
 class ModifyGeometryTest {
 
   private solarchvision_bim app;

@@ -2,19 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Model2Ds (Model2Ds.pde), reached through the
-// pre-constructed `app.allModel2Ds` field.
-//
-// NOT covered: draw() (real texture-copying, opacity-mask generation,
-// and WIN3D.graphics/htmlOutput/objOutput/radOutput calls - genuine
-// rendering + file I/O), load_images() (reads real image files from
-// disk via OPESYS.getFiles/loadImage), and castShadows() (real
-// SHADOW_graphics polygon output). intersect() IS covered - it needs
-// the plain Vertices/Faces fields (built by hand, bypassing draw()) plus
-// a PImage it samples the alpha channel of, which is buildable entirely
-// in memory via createImage()/loadPixels(), no real files needed.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class Model2DsTest {
 
   private solarchvision_bim app;

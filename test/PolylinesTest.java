@@ -2,16 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Polylines (Polylines.pde), reached through the
-// pre-constructed `app.allPolylines` field. Structurally close to
-// Faces.pde: same 6-column options layout, and the same triangle-or-
-// centroid-fan intersect() shape (using funcs.isInside_Triangle, and
-// likewise returning a raw, un-normalized face_norm).
-//
-// NOT covered: draw() - pure rendering (WIN3D.graphics beginShape/
-// vertex/endShape calls building the tapered stroke geometry).
-//
-// A fresh `app` per test since these mutate shared scene state.
 class PolylinesTest {
 
   private solarchvision_bim app;

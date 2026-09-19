@@ -2,15 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises SOLARCHVISION_findNearestStation and SOLARCHVISION_
-// findNearbyStations (mouseClicked.pde) - pure distance search/sort
-// over an array of solarchvision_STATION objects, built on top of
-// funcs.lon_lat_dist (already covered by FunctionsTest.java). Both
-// functions and the SOLARCHVISION_NearestStation result class are
-// already package-private, so no visibility changes were needed.
-//
-// A fresh `app` per test since findNearestStation reads its reference
-// point from the global `STATION` field, which these tests reposition.
 class NearestStationTest {
 
   private solarchvision_bim app;

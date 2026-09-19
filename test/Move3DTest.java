@@ -2,26 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Move3D (Move3D.pde), reached through the
-// pre-constructed `app.Move3D` field. Every function here moves some
-// part of the scene by a given (dx, dy, dz) offset, dispatched by
-// current_ObjectCategory through selection().
-//
-// NOT covered: Move3D.Sections(). Unlike every other function here, it
-// unconditionally calls allSolidImpacts.calculate_Impact_selectedSections()
-// using the SAME Select3D.Section_ids being moved - so, unlike
-// Solids()/Groups() (where that same call is easy to make a safe no-op
-// by simply leaving the unrelated Section_ids empty), there's no way to
-// test Sections()'s own move logic without also triggering a real
-// solar-impact image recalculation (calculate_Impact_CurrentSection()) -
-// genuine rendering/raycasting territory this suite hasn't verified is
-// safe to invoke against a minimal hand-built scene. The move itself
-// follows the exact same trivial "add dx/dy/dz to a data row" pattern
-// already verified for Model1Ds/Model2Ds/Solids, so nothing new is
-// actually being skipped logic-wise - only the "does the mandatory
-// side effect crash" question is left open.
-//
-// A fresh `app` per test since these all mutate shared scene state.
 class Move3DTest {
 
   private solarchvision_bim app;

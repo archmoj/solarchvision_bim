@@ -2,31 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Scale3D (Scale3D.pde), reached through the
-// pre-constructed `app.Scale3D` field. Every function scales some part
-// of the scene around a given pivot (x0, y0, z0) by (sx, sy, sz),
-// dispatched by current_ObjectCategory through selection().
-//
-// Nearly every function routes each point through scalePointAroundPivot,
-// which itself calls Select3D.translateOutside_ReferencePivot /
-// translateInside_ReferencePivot - already confirmed in Select3DTest.java
-// to be inverse transforms, and under Select3D's DEFAULT state (identity
-// BoundingBox, alignX/Y/Z=0) both reduce to a no-op. That default state
-// is exactly what a freshly-constructed `app` already has, so none of
-// the tests below need to touch BoundingBox/alignX/Y/Z at all -
-// scalePointAroundPivot(x, y, z, x0, y0, z0, sx, sy, sz) reduces cleanly
-// to sx*(x-x0)+x0 (and the same for y/z), which is what every expected
-// value here is computed from.
-//
-// NOT covered: Scale3D.Sections(). Same reasoning as Move3DTest's
-// skipped Sections() test - it unconditionally calls allSolidImpacts.
-// calculate_Impact_selectedSections(), keyed off the SAME
-// Select3D.Section_ids being scaled, so there's no way to test its move
-// logic without also triggering a real solar-impact image
-// recalculation. Its own scale logic (setU/setV) is trivial enough
-// (multiply by sx/sy) that nothing new is really left unverified.
-//
-// A fresh `app` per test since these all mutate shared scene state.
 class Scale3DTest {
 
   private solarchvision_bim app;

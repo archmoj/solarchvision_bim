@@ -2,16 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises SOLARCHVISION_NORMAL (NORMAL.pde) - a pure statistics
-// function that sorts an array of values (some possibly FLOAT_undefined)
-// and returns 9 weighted/positional statistics (min, max, average, three
-// weighted-average variants, and the 25th/50th/75th percentiles). Like
-// isIntersected_Faces.pde and DataUtils.pde, this tab has no `class
-// solarchvision_X` wrapper, so it's a plain package-private method
-// directly on `app`.
-//
-// Every expected value below was independently cross-checked against a
-// Python port of the exact same algorithm before being written here.
 class NormalStatsTest {
 
   private static solarchvision_bim app;

@@ -2,29 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Select3D (Select3D.pde), reached through the
-// pre-constructed `app.Select3D` field. This is the largest source file
-// tested so far (2282 lines), so coverage here is organized into
-// sections mirroring the source's own order.
-//
-// NOT covered: rectTest_vertex and selectRect. Both depend on
-// WIN3D.calculate_Perspective_Internally (live 3D-to-screen camera
-// projection) and the real mouseButton state - genuine
-// rendering/input-dependent integration territory that a hand-built
-// scene can't exercise without a real camera/projection setup.
-// selectPick, by contrast, takes an already-computed hit result as its
-// argument and never touches projection itself, so it IS covered below.
-//
-// Also not given their own direct tests: appendIndicesInRange,
-// appendGroupsContaining, appendGroupsContainingVertex,
-// appendNodesOfRange - these take a raw `IntList buf` parameter (an
-// internal accumulator type), and are fully exercised indirectly
-// through their public-facing callers (rangeUnion, groupsContaining,
-// convert_Vertices_to_Groups, convert_Groups_to_Vertices), which are
-// tested directly below and take/return plain int[] instead.
-//
-// A fresh `app` per test since nearly everything here mutates shared
-// selection/scene state.
 class Select3DTest {
 
   private solarchvision_bim app;

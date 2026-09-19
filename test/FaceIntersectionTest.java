@@ -2,31 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises the spatial-grid math and per-face ray/triangle test in
-// isIntersected_Faces.pde: cellIndexX/Y/Z, cellFlatIndex,
-// rayHitsGridBounds, and SOLARCHVISION_testFaceHit.
-//
-// This .pde tab has no `class solarchvision_X { ... }` wrapper - it's
-// plain fields and functions, so Processing's preprocessor splices them
-// directly into the generated solarchvision_bim class instead of a
-// nested inner class. That means the grid's state (gridMinX, cellSizeX,
-// entirePointsX, entireFaces, ...) is just package-private fields on
-// `app` itself, settable directly - which lets these tests build a tiny,
-// fully-controlled scene (a single triangle, an explicit bounding box)
-// by hand instead of going through the expensive, rendering-dependent
-// SOLARCHVISION_buildFaceGrid() (which walks the real scene via
-// allFaces.draw(TypeWindow.RENDER)).
-//
-// NOT covered here: SOLARCHVISION_isIntersected_Faces() and
-// intersectAll(), the grid-traversal entry points - they need a fully
-// populated grid (gridCells, faceTestStamp, ...) that SOLARCHVISION_
-// buildFaceGrid() would normally set up. Worth adding once there's a way
-// to build that minimal grid state by hand too.
-//
-// A fresh `app` per test (not a shared @BeforeAll instance) since these
-// tests mutate shared mutable fields (entirePointsX, entireFaces, grid
-// bounds) - isolating each test avoids one test's scene leaking into
-// another's.
 class FaceIntersectionTest {
 
   private solarchvision_bim app;

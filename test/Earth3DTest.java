@@ -2,42 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Earth3D (Earth3D.pde), reached through the
-// pre-constructed `app.Earth3D` field.
-//
-// isStationGridCell()/isRoundGridLine()/unwrapLon() are already covered
-// directly in EarthGridHelpersTest.java from an earlier session - not
-// repeated here.
-//
-// NOT covered: resize_images()/load_images()/loadOneImage() (real
-// loadImage() file reads), resolveTextureSource()/
-// worldTileFullyCoversWindow()/useWorldTileDirectly()/
-// compositeWorldTiles() (depend on WORLD's live tile file system on
-// disk), and the whole draw()/rendering family (beginWIN3DSphere,
-// addFaceWIN3D, addTriangleWIN3D, endWIN3DSphere, collectGridEdges,
-// addGridEdge, flushEdgeBatch, writeMaterial, writeMTLHeader,
-// writeTextureMap, drawFace, writeFaceHTML, writeFaceOBJ,
-// writeOBJFaceIndices) - real WIN3D.graphics calls and/or real file
-// output.
-//
-// ALSO not covered, discovered while writing this suite:
-// computeElevationBump() (and everything that calls it -
-// computeElevationBumpBilinear(), buildVertex(), buildSubFace(),
-// buildStationVertex()). It calls PApplet.green(c) internally, which
-// delegates to this.g (the sketch's primary PGraphics) to know the
-// current color mode/range. A real running sketch sets this.g up
-// through Processing's own setup()/draw() lifecycle; a bare
-// `new solarchvision_bim()` never does, leaving it null, and
-// PApplet.createGraphics() - the usual workaround for exercising
-// Processing color utilities standalone - itself throws when this.g is
-// null (it's implemented in terms of an already-existing primary
-// graphics context, so it can't bootstrap one from nothing either).
-// There's no pure-JUnit way to reach these functions without a live
-// Processing surface, so - the same principle as every rendering
-// function skipped elsewhere in this project - they're left untested
-// here rather than worked around with something fragile.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class Earth3DTest {
 
   private solarchvision_bim app;

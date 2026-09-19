@@ -2,19 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Sky3D (Sky3D.pde), reached through the
-// pre-constructed `app.Sky3D` field.
-//
-// NOT covered: draw()/drawOBJ()/writeSkyPatternMaterial()/writeFaceOBJ()/
-// writeSkyPatternObjFace()/drawWIN3D()/writeFaceWIN3DShaded()/
-// writeDomeFlat() - all real rendering (WIN3D.graphics calls) and/or
-// real file output (objOutput/mtlOutput println, PImage.save()).
-// getTessellatedSubFaces()/rebuildTessellationCache()/
-// computeTessellatedSubFaces()/invalidateTessellationCache() ARE
-// covered - all pure math and caching logic against the plain
-// skyFaces/skyVertices fields, no rendering involved.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class Sky3DTest {
 
   private solarchvision_bim app;

@@ -2,14 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_Groups (Groups.pde), reached through the
-// pre-constructed `app.allGroups` field. Its getStart_X/getStop_X/
-// beginNewGroup/inserted_nFaces functions are already exercised
-// indirectly throughout the ModifyGeometryTest/DeleteGeometryTest/
-// Clone3DTest suites, but hadn't been given their own direct tests
-// until now.
-//
-// A fresh `app` per test since these all mutate shared scene state.
 class GroupsTest {
 
   private solarchvision_bim app;
