@@ -551,21 +551,25 @@ class solarchvision_WIN3D {
     switch (keyCode) {
       case RIGHT:
         SOLARCHVISION_adjustShadeTime(1);
+        SOLARCHVISION_ShadeViewport();
         this.revise();
         break;
 
       case LEFT:
         SOLARCHVISION_adjustShadeTime(-1);
+        SOLARCHVISION_ShadeViewport();
         this.revise();
         break;
 
       case UP:
         SOLARCHVISION_adjustShadeTime(24);
+        SOLARCHVISION_ShadeViewport();
         this.revise();
         break;
 
       case DOWN:
         SOLARCHVISION_adjustShadeTime(-24);
+        SOLARCHVISION_ShadeViewport();
         this.revise();
         break;
     }
