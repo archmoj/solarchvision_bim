@@ -3,8 +3,7 @@ PImage Shade_RGBA;
 int SHADE_HOUR_ANGLE = 8;
 int SHADE_DATE_ANGLE = 0;
 
-void SOLARCHVISION_ShadeViewport (int steps) {
-  if(steps != 0) adjustShadeTime(steps);
+void SOLARCHVISION_ShadeViewport () {
   int DATE_ANGLE = SHADE_DATE_ANGLE;
   int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
@@ -115,7 +114,7 @@ void SOLARCHVISION_ShadeViewport (int steps) {
   WIN3D.showShading = true;
 }
 
-void adjustShadeTime (int steps) {
+void SOLARCHVISION_adjustShadeTime (int steps) {
   if(steps > 0) {
     // step forward
     for(int i = 0; i < steps; i++) {

@@ -2359,7 +2359,7 @@ void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("Shade Viewport", () -> {
-    SOLARCHVISION_ShadeViewport(0);
+    SOLARCHVISION_ShadeViewport();
   });
 
   SOLARCHVISION_menuActions.put("Prebake Viewport", () -> {

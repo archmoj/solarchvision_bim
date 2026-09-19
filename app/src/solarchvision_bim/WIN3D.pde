@@ -428,18 +428,27 @@ class solarchvision_WIN3D {
   int navKeyCode = 0;
   boolean navKeyShift = false;
   boolean navKeyCtrl = false;
+  boolean navKeyAlt = false;
 
   void keyPressed (KeyEvent e) {
     if (!this.include) return;
-    if (e.isAltDown()) return;
+
+    boolean altDown = e.isAltDown();
+    if (altDown && !(
+      (key == CODED) && (
+        (keyCode == UP) ||
+        (keyCode == LEFT) ||
+        (keyCode == DOWN) ||
+        (keyCode == RIGHT)
+      )
+    )) return;
 
     boolean ctrlDown = e.isControlDown();
+    if (ctrlDown && !(
+      (key == ',') || (key != '.'))
+    ) return;
 
-    // Ctrl+,/Ctrl+. (move camera closer/farther to the selection) are the
-    // only Ctrl-modified shortcuts this handler owns; every other Ctrl
-    // combination is left alone, matching the previous behavior.
-    if (ctrlDown && (key != ',') && (key != '.')) return;
-
+    this.navKeyAlt = altDown;
     this.navKeyCtrl = ctrlDown;
     this.navKeyCoded = (key == CODED);
     this.navKeyChar = key;
@@ -510,7 +519,9 @@ class solarchvision_WIN3D {
 
   void dispatchNavKey () {
     if (this.navKeyCoded) {
-      if (this.navKeyShift) {
+      if (this.navKeyAlt) {
+        handleAltArrowKeys(this.navKeyCode);
+      } else if (this.navKeyShift) {
         handleShiftedArrowKeys(this.navKeyCode);
       } else {
         handleArrowKeys(this.navKeyCode);
@@ -533,7 +544,30 @@ class solarchvision_WIN3D {
         break;
     }
   }
-  // ---------------------------------------------------------------------
+
+  void handleAltArrowKeys (int keyCode) {
+    switch (keyCode) {
+      case RIGHT:
+        SOLARCHVISION_adjustShadeTime(1);
+        this.revise();
+        break;
+
+      case LEFT:
+        SOLARCHVISION_adjustShadeTime(-1);
+        this.revise();
+        break;
+
+      case UP:
+        SOLARCHVISION_adjustShadeTime(24);
+        this.revise();
+        break;
+
+      case DOWN:
+        SOLARCHVISION_adjustShadeTime(-24);
+        this.revise();
+        break;
+    }
+  }
 
   void handleShiftedArrowKeys (int keyCode) {
     switch (keyCode) {
@@ -755,11 +789,13 @@ class solarchvision_WIN3D {
         break;
 
       case ' ':
-        SOLARCHVISION_ShadeViewport(1);
+        SOLARCHVISION_ShadeViewport();
+        SOLARCHVISION_adjustShadeTime(1);
         break;
 
       case BACKSPACE:
-        SOLARCHVISION_ShadeViewport(-1);
+        SOLARCHVISION_ShadeViewport();
+        SOLARCHVISION_adjustShadeTime(-1);
         break;
     }
   }
