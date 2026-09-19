@@ -940,7 +940,7 @@ class solarchvision_Land3D {
         XML child = parent.addChild("item");
         XML_setInt(child, "id", i);
         XML_setFloat(child, "U_scale", this.Textures_U_scale[i]);
-        XML_setFloat(child, "V_scale", this.Textures_U_scale[i]);
+        XML_setFloat(child, "V_scale", this.Textures_V_scale[i]);
         XML_setContent(child, this.Textures_path[i]);
       }
     }
@@ -995,6 +995,8 @@ class solarchvision_Land3D {
       }
 
       XML[] children = parent.getChildren("item");
+      this.Textures_U_scale = new float [this.Textures_num];
+      this.Textures_V_scale = new float [this.Textures_num];
       for (int i = 0; i < this.Textures_num; i++) {
         this.Textures_U_scale[i] = children[i].getFloat("U_scale");
         this.Textures_V_scale[i] = children[i].getFloat("V_scale");
