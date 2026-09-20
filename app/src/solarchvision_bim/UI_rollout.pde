@@ -515,7 +515,7 @@ class solarchvision_UI_rollout {
         Sun3D.displayTexture = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.displayTexture", Sun3D.displayTexture);
         Sun3D.fitInSkyDome = this.Spinner(X_control, Y_control, 0, 1, 0, "Sun3D.fitInSkyDome", Sun3D.fitInSkyDome);
 
-        Planetary_Magnification = this.Spinner(X_control, Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 100, 1.0);
+        Planetary_Magnification = this.Spinner(X_control, Y_control, 0, 1, 0, "Planetary_Magnification", Planetary_Magnification, 1, 64, -2);
 
         OBJECTS_scale = this.Spinner(X_control, Y_control, 0, 1, 0, "Objects_scale", OBJECTS_scale, 0.0000001, 1000000, -2, 0.000001);
       }
