@@ -46,7 +46,6 @@ class solarchvision_UI_menuBar {
 
   solarchvision_UI_menuBar () { // constructor
     this.Items = buildMenuItems();
-    populateLayerMenu();
     this.disabledStateByItem = buildDisabledStateLookup();
   }
 
@@ -703,10 +702,16 @@ class solarchvision_UI_menuBar {
   // Drawing
   // ---------------------------------------------------------------------
 
+  private boolean isMenuLayerPopulated = false;
+
   void draw () {
     if (!this.update) return;
-
     this.updated();
+
+    if(!isMenuLayerPopulated) {
+      populateLayerMenu();
+      isMenuLayerPopulated = true;
+    }
 
     fill(127);
     noStroke();
