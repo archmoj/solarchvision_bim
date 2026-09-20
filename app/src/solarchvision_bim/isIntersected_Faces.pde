@@ -30,6 +30,9 @@ ArrayList<int[]> entireFaces;
 
 // ---------------------------- build (call ONCE per geometry) ---------------
 void SOLARCHVISION_buildFaceGrid () {
+  if(should_rebuildFaceGrid == false) return;
+  should_rebuildFaceGrid = false;
+
   entirePointsX = new ArrayList<>();
   entirePointsY = new ArrayList<>();
   entirePointsZ = new ArrayList<>();

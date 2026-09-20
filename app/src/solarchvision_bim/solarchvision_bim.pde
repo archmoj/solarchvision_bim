@@ -1937,7 +1937,11 @@ void SOLARCHVISION_model_added () {
   SOLARCHVISION_selection_changed();
 }
 
+boolean should_rebuildFaceGrid = true;
+
 void SOLARCHVISION_model_changed () {
+  should_rebuildFaceGrid = true;
+
   SOLARCHVISION_view_changed();
 }
 
