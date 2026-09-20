@@ -196,6 +196,208 @@ SOLARCHVISION_CameraParams SOLARCHVISION_computeCameraParamsAtPoint (float x, fl
   return cp;
 }
 
+// Result of SOLARCHVISION_computeSectionParams below: the plane
+// parameters (position, rotation, extents, and which of horizontal/
+// vertical it is) for a new section, plus whether one should actually
+// be created at all.
+class SOLARCHVISION_SectionParams {
+  float X, Y, Z, R, U, V;
+  int Type, RES1, RES2;
+  boolean createNew = false;
+}
+
+// Pulled out of mouseClicked()'s "create a section" handling. Two very
+// different cases, both preserved exactly as they were:
+//  - Right-click: always creates a horizontal (Type 1) section centered
+//    exactly at the click point, at allSolidImpacts' current resolution.
+//  - Left-click on a face with more than 2 nodes: derives the section's
+//    own plane from the FACE's geometry instead - rotates the face flat
+//    to find its own minimum bounding rectangle (via each edge's own
+//    angle, "min_Beta"), decides horizontal vs. vertical based on
+//    whichever axis is thinnest, then does a second pass (rebuilding the
+//    face's centroid/normal and comparing it against the resulting
+//    section plane's own normal via allSections.getCorners(), already
+//    covered directly in SectionsTest.java) to detect and correct a
+//    section built "backwards" relative to the face it came from.
+//  - Left-click on a face with 2 or fewer nodes, or when neither mouse
+//    button matches: createNew stays false and every other field is left
+//    at allSolidImpacts' current defaults, matching the original code's
+//    "nothing happens" outcome for that case.
+SOLARCHVISION_SectionParams SOLARCHVISION_computeSectionParams (int f, float[] RxP) {
+  SOLARCHVISION_SectionParams sp = new SOLARCHVISION_SectionParams();
+
+  sp.X = allSolidImpacts.X[allSolidImpacts.sectionType];
+  sp.Y = allSolidImpacts.Y[allSolidImpacts.sectionType];
+  sp.Z = allSolidImpacts.Z[allSolidImpacts.sectionType];
+  sp.R = allSolidImpacts.R[allSolidImpacts.sectionType];
+  sp.U = allSolidImpacts.U[allSolidImpacts.sectionType];
+  sp.V = allSolidImpacts.V[allSolidImpacts.sectionType];
+
+  sp.Type = allSolidImpacts.sectionType;
+  sp.RES1 = allSolidImpacts.RES1;
+  sp.RES2 = allSolidImpacts.RES2;
+
+  if (mouseButton == LEFT) {
+
+    int n = allFaces.nodes[f].length;
+
+    if (n > 2) {
+
+      float min_Beta = 360;
+
+      for (int j = 0; j < n; j++) {
+
+        int j_next = (j + 1) % n;
+
+        float x1 = allPoints.getX(allFaces.nodes[f][j]);
+        float y1 = allPoints.getY(allFaces.nodes[f][j]);
+
+        float x2 = allPoints.getX(allFaces.nodes[f][j_next]);
+        float y2 = allPoints.getY(allFaces.nodes[f][j_next]);
+
+        float Beta = funcs.atan2_ang(y2 - y1, x2 - x1) + 90;
+
+        if (min_Beta > Beta) min_Beta = Beta;
+      }
+
+      float[][] tmpVertices = new float[n][3];
+
+      for (int j = 0; j < n; j++) {
+
+        float x1 = allPoints.getX(allFaces.nodes[f][j]);
+        float y1 = allPoints.getY(allFaces.nodes[f][j]);
+        float z1 = allPoints.getZ(allFaces.nodes[f][j]);
+
+        float x2 = x1 * funcs.cos_ang(-min_Beta) - y1 * funcs.sin_ang(-min_Beta);
+        float y2 = x1 * funcs.sin_ang(-min_Beta) + y1 * funcs.cos_ang(-min_Beta);
+        float z2 = z1;
+
+        tmpVertices[j][0] = x2;
+        tmpVertices[j][1] = y2;
+        tmpVertices[j][2] = z2;
+      }
+
+      float min_x = FLOAT_undefined;
+      float max_x = -FLOAT_undefined;
+      float min_y = FLOAT_undefined;
+      float max_y = -FLOAT_undefined;
+      float min_z = FLOAT_undefined;
+      float max_z = -FLOAT_undefined;
+
+      float[] G = {
+        0, 0, 0
+      };
+      for (int j = 0; j < n; j++) {
+        float the_x = tmpVertices[j][0];
+        float the_y = tmpVertices[j][1];
+        float the_z = tmpVertices[j][2];
+
+        G[0] += the_x / float(n);
+        G[1] += the_y / float(n);
+        G[2] += the_z / float(n);
+
+        if (min_x > the_x) min_x = the_x;
+        if (max_x < the_x) max_x = the_x;
+        if (min_y > the_y) min_y = the_y;
+        if (max_y < the_y) max_y = the_y;
+        if (min_z > the_z) min_z = the_z;
+        if (max_z < the_z) max_z = the_z;
+      }
+
+      if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
+        sp.Type = 1;
+
+        sp.U = max_x - min_x;
+        sp.V = max_y - min_y;
+
+        sp.X = G[0];
+        sp.Y = G[1];
+
+        sp.Z = G[2];
+
+        sp.R = min_Beta;
+      } else {
+        sp.Type = 2;
+
+        sp.U = max_y - min_y;
+        sp.V = max_z - min_z;
+
+        sp.X = -G[1];
+        sp.Y = G[2];
+
+        sp.Z = -G[0];
+
+        sp.R = 90 - min_Beta;
+      }
+
+      // recalculating G...
+      G[0] = 0;
+      G[1] = 0;
+      G[2] = 0;
+      for (int j = 0; j < n; j++) {
+        float the_x = allPoints.getX(allFaces.nodes[f][j]);
+        float the_y = allPoints.getY(allFaces.nodes[f][j]);
+        float the_z = allPoints.getZ(allFaces.nodes[f][j]);
+
+        G[0] += the_x / float(n);
+        G[1] += the_y / float(n);
+        G[2] += the_z / float(n);
+      }
+
+      PVector AG = new PVector(allPoints.getX(allFaces.nodes[f][0]) - G[0], allPoints.getY(allFaces.nodes[f][0]) - G[1], allPoints.getZ(allFaces.nodes[f][0]) - G[2]);
+      PVector BG = new PVector(allPoints.getX(allFaces.nodes[f][1]) - G[0], allPoints.getY(allFaces.nodes[f][1]) - G[1], allPoints.getZ(allFaces.nodes[f][1]) - G[2]);
+
+      PVector GAxGB = AG.cross(BG);
+
+      float[][] ImageVertex = allSections.getCorners(sp.Type, sp.X, sp.Y, sp.Z, sp.R, sp.U, sp.V, sp.RES1, sp.RES2);
+
+      float[] SectionCorner_A = ImageVertex[1];
+      float[] SectionCorner_B = ImageVertex[2];
+      float[] SectionCorner_C = ImageVertex[3];
+      float[] SectionCorner_D = ImageVertex[4];
+
+      float[] ImageCenter = {
+        0, 0, 0
+      };
+      for (int j = 0; j < 3; j++) {
+        ImageCenter[j] = 0.25 * (SectionCorner_A[j] + SectionCorner_B[j] + SectionCorner_C[j] + SectionCorner_D[j]);
+      }
+
+      PVector AG_other = new PVector(SectionCorner_A[0] - ImageCenter[0], SectionCorner_A[1] - ImageCenter[1], SectionCorner_A[2] - ImageCenter[2]);
+      PVector BG_other = new PVector(SectionCorner_B[0] - ImageCenter[0], SectionCorner_B[1] - ImageCenter[1], SectionCorner_B[2] - ImageCenter[2]);
+
+      PVector GAxGB_other = AG_other.cross(BG_other);
+
+      float V = GAxGB_other.dot(GAxGB);
+
+      if (V < 0) {
+        println("flip face!");
+
+        sp.R = 180 + sp.R;
+        sp.Z *= -1;
+        sp.X *= -1;
+      } else {
+        println("face OK!");
+      }
+
+      sp.createNew = true;
+    }
+  }
+
+  if (mouseButton == RIGHT) {
+
+    sp.Type = 1;
+
+    sp.X = RxP[1];
+    sp.Y = RxP[2];
+    sp.Z = RxP[3];
+
+    sp.createNew = true;
+  }
+
+  return sp;
+}
+
 // Decides whether face `f`'s node order should be reversed (to flip
 // which way it faces) and applies that reversal if so - pulled out of
 // mouseClicked()'s UITASK.Normal handling, which ran this exact 40-line
@@ -1632,223 +1834,34 @@ void mouseClicked () {
                   } else if (current_ObjectCategory == ObjectCategory.SECTION) { // working with sections
                     if (CreateObject == CREATE.Section) {
 
-                      int createNewSection = 0;
+                      SOLARCHVISION_SectionParams sp = SOLARCHVISION_computeSectionParams(int(RxP[0]), RxP);
 
-                      float Section_X = allSolidImpacts.X[allSolidImpacts.sectionType];
-                      float Section_Y = allSolidImpacts.Y[allSolidImpacts.sectionType];
-                      float Section_Z = allSolidImpacts.Z[allSolidImpacts.sectionType];
-                      float Section_R = allSolidImpacts.R[allSolidImpacts.sectionType];
-                      float Section_U = allSolidImpacts.U[allSolidImpacts.sectionType];
-                      float Section_V = allSolidImpacts.V[allSolidImpacts.sectionType];
+                      if (sp.createNew) {
 
-                      int Section_Type = allSolidImpacts.sectionType;
-                      int Section_RES1 = allSolidImpacts.RES1;
-                      int Section_RES2 = allSolidImpacts.RES2;
-
-                      if (mouseButton == LEFT) {
-
-                        int f = int(RxP[0]);
-
-                        int n = allFaces.nodes[f].length;
-
-                        if (n > 2) {
-
-                          //float min_Alpha = 90;
-                          float min_Beta = 360;
-
-                          for (int j = 0; j < n; j++) {
-
-                            int j_next = (j + 1) % n;
-
-                            float x1 = allPoints.getX(allFaces.nodes[f][j]);
-                            float y1 = allPoints.getY(allFaces.nodes[f][j]);
-                            float z1 = allPoints.getZ(allFaces.nodes[f][j]);
-
-                            float x2 = allPoints.getX(allFaces.nodes[f][j_next]);
-                            float y2 = allPoints.getY(allFaces.nodes[f][j_next]);
-                            float z2 = allPoints.getZ(allFaces.nodes[f][j_next]);
-
-
-                            //float Alpha = funcs.asin_ang(z2 - z1);
-                            float Beta = funcs.atan2_ang(y2 - y1, x2 - x1) + 90;
-
-                            //if (min_Alpha > Alpha) min_Alpha = Alpha;
-                            if (min_Beta > Beta) min_Beta = Beta;
-                          }
-
-                          //println("min_Alpha", min_Alpha);
-
-                          float[][] tmpVertices = new float[n][3];
-
-
-                          for (int j = 0; j < n; j++) {
-
-                            float x1 = allPoints.getX(allFaces.nodes[f][j]);
-                            float y1 = allPoints.getY(allFaces.nodes[f][j]);
-                            float z1 = allPoints.getZ(allFaces.nodes[f][j]);
-
-                            float x2 = x1 * funcs.cos_ang(-min_Beta) - y1 * funcs.sin_ang(-min_Beta);
-                            float y2 = x1 * funcs.sin_ang(-min_Beta) + y1 * funcs.cos_ang(-min_Beta);
-                            float z2 = z1;
-
-                            tmpVertices[j][0] = x2;
-                            tmpVertices[j][1] = y2;
-                            tmpVertices[j][2] = z2;
-                          }
-
-                          float min_x = FLOAT_undefined;
-                          float max_x = -FLOAT_undefined;
-                          float min_y = FLOAT_undefined;
-                          float max_y = -FLOAT_undefined;
-                          float min_z = FLOAT_undefined;
-                          float max_z = -FLOAT_undefined;
-
-                          float[] G = {
-                            0, 0, 0
-                          };
-                          for (int j = 0; j < n; j++) {
-                            float the_x = tmpVertices[j][0];
-                            float the_y = tmpVertices[j][1];
-                            float the_z = tmpVertices[j][2];
-
-                            G[0] += the_x / float(n);
-                            G[1] += the_y / float(n);
-                            G[2] += the_z / float(n);
-
-                            if (min_x > the_x) min_x = the_x;
-                            if (max_x < the_x) max_x = the_x;
-                            if (min_y > the_y) min_y = the_y;
-                            if (max_y < the_y) max_y = the_y;
-                            if (min_z > the_z) min_z = the_z;
-                            if (max_z < the_z) max_z = the_z;
-                          }
-
-
-
-                          if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
-                            Section_Type = 1;
-
-                            Section_U = max_x - min_x;
-                            Section_V = max_y - min_y;
-
-                            Section_X = G[0];
-                            Section_Y = G[1];
-
-                            Section_Z = G[2];
-
-                            Section_R = min_Beta;
-                          } else {
-                            Section_Type = 2;
-
-                            Section_U = max_y - min_y;
-                            Section_V = max_z - min_z;
-
-                            Section_X = -G[1];
-                            Section_Y = G[2];
-
-                            Section_Z = -G[0];
-
-                            Section_R = 90 - min_Beta;
-                          }
-
-
-                          // recalculating G...
-                          G[0] = 0;
-                          G[1] = 0;
-                          G[2] = 0;
-                          for (int j = 0; j < n; j++) {
-                            float the_x = allPoints.getX(allFaces.nodes[f][j]);
-                            float the_y = allPoints.getY(allFaces.nodes[f][j]);
-                            float the_z = allPoints.getZ(allFaces.nodes[f][j]);
-
-                            G[0] += the_x / float(n);
-                            G[1] += the_y / float(n);
-                            G[2] += the_z / float(n);
-                          }
-
-                          PVector AG = new PVector(allPoints.getX(allFaces.nodes[f][0]) - G[0], allPoints.getY(allFaces.nodes[f][0]) - G[1], allPoints.getZ(allFaces.nodes[f][0]) - G[2]);
-                          PVector BG = new PVector(allPoints.getX(allFaces.nodes[f][1]) - G[0], allPoints.getY(allFaces.nodes[f][1]) - G[1], allPoints.getZ(allFaces.nodes[f][1]) - G[2]);
-
-                          PVector GAxGB = AG.cross(BG);
-
-                          float[][] ImageVertex = allSections.getCorners(Section_Type, Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_RES1, Section_RES2);
-
-                          float[] SectionCorner_A = ImageVertex[1];
-                          float[] SectionCorner_B = ImageVertex[2];
-                          float[] SectionCorner_C = ImageVertex[3];
-                          float[] SectionCorner_D = ImageVertex[4];
-
-                          float[] ImageCenter = {
-                            0, 0, 0
-                          };
-                          for (int j = 0; j < 3; j++) {
-                            ImageCenter[j] = 0.25 * (SectionCorner_A[j] + SectionCorner_B[j] + SectionCorner_C[j] + SectionCorner_D[j]);
-                          }
-
-                          PVector AG_other = new PVector(SectionCorner_A[0] - ImageCenter[0], SectionCorner_A[1] - ImageCenter[1], SectionCorner_A[2] - ImageCenter[2]);
-                          PVector BG_other = new PVector(SectionCorner_B[0] - ImageCenter[0], SectionCorner_B[1] - ImageCenter[1], SectionCorner_B[2] - ImageCenter[2]);
-
-                          PVector GAxGB_other = AG_other.cross(BG_other);
-
-                          //println("GAxGB", GAxGB);
-                          //println("GAxGB_other", GAxGB_other);
-
-                          float V = GAxGB_other.dot(GAxGB);
-
-                          //println("V", nf(V, 0, 6));
-
-                          if (V < 0) {
-                            println("flip face!");
-
-                            Section_R = 180 + Section_R;
-                            Section_Z *= -1;
-                            Section_X *= -1;
-                          } else {
-                            println("face OK!");
-                          }
-
-                          createNewSection = 1;
-
-                        }
-                      }
-
-                      if (mouseButton == RIGHT) {
-
-                        Section_Type = 1;
-
-                        Section_X = RxP[1];
-                        Section_Y = RxP[2];
-                        Section_Z = RxP[3];
-
-
-                        createNewSection = 1;
-                      }
-
-                      if (createNewSection != 0) {
-
-                        allSections.create(Section_X, Section_Y, Section_Z, Section_R, Section_U, Section_V, Section_Type, Section_RES1, Section_RES2);
+                        allSections.create(sp.X, sp.Y, sp.Z, sp.R, sp.U, sp.V, sp.Type, sp.RES1, sp.RES2);
 
                         SOLARCHVISION_selectNewlyCreated(keep_number_of_allSections, allSections.num,
                           () -> Select3D.deselect_Sections(),
                           (o) -> { Select3D.Section_ids = concat(Select3D.Section_ids, new int[] {o}); }
                           );
 
-                        allSolidImpacts.X[allSolidImpacts.sectionType] = Section_X;
-                        allSolidImpacts.Y[allSolidImpacts.sectionType] = Section_Y;
-                        allSolidImpacts.Z[allSolidImpacts.sectionType] = Section_Z;
-                        allSolidImpacts.R[allSolidImpacts.sectionType] = Section_R;
-                        allSolidImpacts.U[allSolidImpacts.sectionType] = Section_U;
-                        allSolidImpacts.V[allSolidImpacts.sectionType] = Section_V;
+                        allSolidImpacts.X[allSolidImpacts.sectionType] = sp.X;
+                        allSolidImpacts.Y[allSolidImpacts.sectionType] = sp.Y;
+                        allSolidImpacts.Z[allSolidImpacts.sectionType] = sp.Z;
+                        allSolidImpacts.R[allSolidImpacts.sectionType] = sp.R;
+                        allSolidImpacts.U[allSolidImpacts.sectionType] = sp.U;
+                        allSolidImpacts.V[allSolidImpacts.sectionType] = sp.V;
 
-                        allSolidImpacts.sectionType = Section_Type;
-                        allSolidImpacts.RES1 = Section_RES1;
-                        allSolidImpacts.RES2 = Section_RES2;
+                        allSolidImpacts.sectionType = sp.Type;
+                        allSolidImpacts.RES1 = sp.RES1;
+                        allSolidImpacts.RES2 = sp.RES2;
 
                         allSolidImpacts.calculate_Impact_selectedSections();
 
-                        allSolarImpacts.sectionType = Section_Type;
+                        allSolarImpacts.sectionType = sp.Type;
                       }
                     }
+
 
                   }
 

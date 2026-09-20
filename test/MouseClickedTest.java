@@ -616,4 +616,97 @@ class MouseClickedTest {
     assertEquals(1, cp.type);
     assertEquals(55f, cp.zoom, 0.0001f);
   }
+
+  // ======= SOLARCHVISION_computeSectionParams (extracted) ================
+
+  @Test
+  void computeSectionParams_horizontalFaceProducesATypeOneSectionAtItsCentroid () {
+    // A flat, CCW-wound square in the XY plane at Z=5 - its bounding box
+    // is thinnest along Z, so this becomes a horizontal (Type 1) section
+    // centered at the face's own centroid. Verified independently in
+    // Python beforehand, including the second-pass "is this section
+    // built backwards" check - this winding does NOT trigger a flip.
+    app.allVertices = new float[][]{{0, 0, 5}, {2, 0, 5}, {2, 2, 5}, {0, 2, 5}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.mouseButton = app.LEFT;
+
+    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 0, 0, 0});
+
+    assertTrue(sp.createNew);
+    assertEquals(1, sp.Type);
+    assertEquals(1f, sp.X, 0.001f);
+    assertEquals(1f, sp.Y, 0.001f);
+    assertEquals(5f, sp.Z, 0.001f);
+    assertEquals(0f, sp.R, 0.001f);
+    assertEquals(2f, sp.U, 0.001f);
+    assertEquals(2f, sp.V, 0.001f);
+  }
+
+  @Test
+  void computeSectionParams_verticalFaceProducesATypeTwoSection () {
+    // A flat square standing in the XZ plane (constant Y) - thinnest
+    // along Y, becoming a vertical (Type 2) section.
+    app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 0, 4}, {0, 0, 4}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.mouseButton = app.LEFT;
+
+    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 0, 0, 0});
+
+    assertTrue(sp.createNew);
+    assertEquals(2, sp.Type);
+    assertEquals(1f, sp.X, 0.001f);
+    assertEquals(2f, sp.Y, 0.001f);
+    assertEquals(0f, sp.Z, 0.001f);
+    assertEquals(2f, sp.U, 0.001f);
+    assertEquals(4f, sp.V, 0.001f);
+  }
+
+  @Test
+  void computeSectionParams_detectsAndCorrectsABackwardsWoundFace () {
+    // Same horizontal square as the first test, but wound clockwise
+    // instead of counter-clockwise - the second-pass consistency check
+    // (comparing the face's own normal against the resulting section
+    // plane's normal) now finds them pointing opposite ways and flips
+    // the section (R += 180, X and Z negated) to compensate. Confirmed
+    // in Python beforehand that this exact winding is what triggers it.
+    app.allVertices = new float[][]{{0, 0, 5}, {0, 2, 5}, {2, 2, 5}, {2, 0, 5}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
+    app.mouseButton = app.LEFT;
+
+    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 0, 0, 0});
+
+    assertEquals(1, sp.Type);
+    assertEquals(-1f, sp.X, 0.001f);
+    assertEquals(1f, sp.Y, 0.001f);
+    assertEquals(-5f, sp.Z, 0.001f);
+    assertEquals(180f, sp.R, 0.001f);
+  }
+
+  @Test
+  void computeSectionParams_rightClickAlwaysCreatesAHorizontalSectionAtTheClickPoint () {
+    app.mouseButton = app.RIGHT;
+
+    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 11, 22, 33});
+
+    assertTrue(sp.createNew);
+    assertEquals(1, sp.Type);
+    assertEquals(11f, sp.X, 0.0001f);
+    assertEquals(22f, sp.Y, 0.0001f);
+    assertEquals(33f, sp.Z, 0.0001f);
+  }
+
+  @Test
+  void computeSectionParams_isANoOpForATwoNodeFaceOnLeftClick () {
+    app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1}}; // only 2 nodes - too few for a plane
+    app.mouseButton = app.LEFT;
+
+    app.allSolidImpacts.X[app.allSolidImpacts.sectionType] = 99;
+    app.allSolidImpacts.sectionType = 0;
+
+    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 0, 0, 0});
+
+    assertFalse(sp.createNew);
+    assertEquals(99f, sp.X, 0.0001f); // left at allSolidImpacts' current default, untouched
+  }
 }
