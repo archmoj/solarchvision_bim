@@ -1,4 +1,4 @@
-int numberOfLayers = 0;
+int _numberOfLayers = 0;
 
 class solarchvision_LAYER {
 
@@ -24,8 +24,8 @@ class solarchvision_LAYER {
     this.descriptions[Language_EN] = description_EN;
     this.descriptions[Language_FR] = description_FR;
 
-    this.id = numberOfLayers;
-    numberOfLayers++;
+    this.id = _numberOfLayers;
+    _numberOfLayers++;
   }
 
   public void to_XML (XML xml) {
