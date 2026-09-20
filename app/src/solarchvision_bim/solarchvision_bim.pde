@@ -19,6 +19,8 @@ int SOLARCHVISION_pixel_H = 100; // just an initial value
 int SOLARCHVISION_pixel_W = 100; // just an initial value
 
 void setup () {
+  parseArgs(args);
+
   fullScreen(P2D);
 
   SOLARCHVISION_pixel_W = (width - UI_rollout.dX) / 2;
@@ -2714,68 +2716,40 @@ float applyPalDirection (float u, int PAL_direction) {
   return u;
 }
 
+void parseArgs(String[] passedArgs) {
+  // Check if any custom arguments were passed via --args
+  if (
+    passedArgs != null &&
+    passedArgs.length > 0 &&
+    passedArgs[0] == "--args"
+  ) {
+    for (int i = 1; i < passedArgs.length; i++) {
+      useArg(passedArgs[i]);
+    }
+  }
+}
 
-// TODOs:
+void useArg(String arg) {
+  String CAP_arg = arg.toUpperCase();
 
-/*
-test these functions:
+  int _at = 0;
+  int input_int = 0;
+  float input_float = 0;
+  String input_str = "";
+  String[] _tokens;
 
-"LandMesh >> Group"
-"LandGap >> Group"
-
-*/
-
-// add to last group remains active when drawing houses then trees are added to the last group!
-
-// Now when adding mulitole objects at once (e.g. trees on land), only the last one selected.
-
-// continue to remove win3d and ui updates from create3D, etc.
-// WIN3D.revise();
-
-// move should keep the same distance of bounding box - now only moves the center
-
-// SOLARCHVISION_snap_Faces --> allFaces.snap...
-
-// please define station elevation data for CWEEDS points!
-
-// remember: should optimize vertices after optimizing faces!
-
-//for (int i = 4; i <= 20; i++) { // to make it faster. Also the images are not available out of this period.
-
-// Tropo3D.draw
-// note we used .... float r = FLOAT_r_Earth + 10000; for clouds
-
-// pick select LandPoint is not written.
-
-// diffuse model used in render is simple see note "adding approximate diffuse radiation effect anyway!"
-
-// snap for Polyline objects is not developed yet.
-
-// don't know if multiple allModel2Ds.Images[n].get(Image_X, Image_Y) in allModel2Ds selection can produce performance problems?
-
-// note: code for SOLARCHVISION_intersect_allSolids might run a bit slow. But it is OK for now.
-
-// should see where else could add snap3D :)
-
-// drop functions only works for allModel2Ds objects and not at Group level
-
-// could add join/explode groups ?
-
-// export and import of polylines
-// converting polylines to faces e.g. Surface, Extrude, Connect
-
-// Modify Normal at Polyline level is not complete...
-
-// Create3D.autoNormalPolyline_Selection
-
-// writing export to rad completed for meshes and land - not Model1Ds and 2Ds yet!
-
-// colud record Climate data flags later.
-
-// exporting shaded land is not written.
-
-// void Rotate3D.selection_Groups
-// serach for Rotate3D.selection_Selection ( need to make them all correct for local pivots!
-// local pivot
-
-// solid rotations inside groups should be translated to locals to avoid problems!
+  _at = CAP_arg.indexOf("AUTO");
+  if (_at == 0) {
+    _tokens = split(CAP_arg, '=');
+    if (_tokens.length > 1) {
+      input_str = _tokens[1];
+      if (input_str.equals("USER")) SOLARCHVISION_automated = USER_INT;
+      else if (input_str.equals("PDF")) SOLARCHVISION_automated = AUTO_PDF;
+      else if (input_str.equals("GIF")) SOLARCHVISION_automated = AUTO_GIF;
+      else if (input_str.equals("BMP")) SOLARCHVISION_automated = AUTO_BMP;
+      else if (input_str.equals("JPG")) SOLARCHVISION_automated = AUTO_JPG;
+      else if (input_str.equals("PNG")) SOLARCHVISION_automated = AUTO_PNG;
+      else if (input_str.equals("TIF")) SOLARCHVISION_automated = AUTO_TIF;
+    }
+  }
+}
