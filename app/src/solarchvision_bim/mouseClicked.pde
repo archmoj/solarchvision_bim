@@ -1182,7 +1182,7 @@ void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
 
-    if (SOLARCHVISION_automated == 0) {
+    if (SOLARCHVISION_automated == USER_INT) {
 
       if (FRAME_click_IMG) {
 

@@ -9,7 +9,7 @@ void mouseWheel(MouseEvent event) {
   mouseWheelConsume = 0;
 
   float Wheel_Value = event.getCount();
-  if (SOLARCHVISION_automated != 0) return;
+  if (SOLARCHVISION_automated != USER_INT) return;
 
   SOLARCHVISION_X_clicked = mouseX;
   SOLARCHVISION_Y_clicked = mouseY;

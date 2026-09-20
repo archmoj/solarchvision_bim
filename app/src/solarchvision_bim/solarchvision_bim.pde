@@ -1027,7 +1027,15 @@ boolean FRAME_drag_IMG = false;
 int CLIMATIC_SolarForecast = 0; //                                   Used for solar radiation only
 int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
 
-int SOLARCHVISION_automated = 0; //0: User interface, 1: Automatic
+static final int USER_INT = 0; // User interface
+static final int AUTO_PDF = 1; // Auto PDF
+static final int AUTO_GIF = 2; // Auto GIF
+static final int AUTO_BMP = 3; // Auto BMP
+static final int AUTO_JPG = 4; // Auto JPG
+static final int AUTO_PNG = 5; // Auto PNG
+static final int AUTO_TIF = 6; // Auto TIF
+
+int SOLARCHVISION_automated = USER_INT;
 
 String[] skyScenario_Title = {
   "", "All", "Cloudy\nPattern", "Partly\nCloudy\nPattern", "Sunny\nPattern"
@@ -1787,7 +1795,7 @@ void keyPressed (KeyEvent e) {
 
   if (frameCount > Last_initializationStep) {
 
-    if (SOLARCHVISION_automated == 0) {
+    if (SOLARCHVISION_automated == USER_INT) {
       SOLARCHVISION_X_clicked = -1;
       SOLARCHVISION_Y_clicked = -1;
 
