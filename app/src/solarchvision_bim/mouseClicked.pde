@@ -45,6 +45,101 @@ void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
   SOLARCHVISION_switch_category(newCategory);
 }
 
+// Decides whether face `f`'s node order should be reversed (to flip
+// which way it faces) and applies that reversal if so - pulled out of
+// mouseClicked()'s UITASK.Normal handling, which ran this exact 40-line
+// block twice in a row: once for a single clicked face (using `f`
+// directly) and once in a loop over every face `q` owned by the clicked
+// face's group (confirmed identical modulo the face-index variable name
+// before extracting). UI_TaskModifyParameter selects the mode: 1 always
+// flips; 2 flips only if the pivot sits on the positive side of the
+// face's own (first-corner, second-corner, centroid) winding plane; 3
+// flips only if it sits on the negative side.
+void SOLARCHVISION_flipFaceOrientationIfNeeded (int f) {
+  int n = allFaces.nodes[f].length;
+  if (n <= 2) return;
+
+  int[] tmpFace = new int[n];
+  float[] G = {
+    0, 0, 0
+  };
+  for (int j = 0; j < n; j++) {
+    tmpFace[j] = allFaces.nodes[f][j];
+    G[0] += allPoints.getX(tmpFace[j]) / float(n);
+    G[1] += allPoints.getY(tmpFace[j]) / float(n);
+    G[2] += allPoints.getZ(tmpFace[j]) / float(n);
+  }
+
+  int flip_face = 0;
+  if (WIN3D.UI_TaskModifyParameter == 1) flip_face = 1;
+  else {
+    PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);
+    PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
+
+    PVector GAxGB = AG.cross(BG);
+
+    float[] P = Select3D.getPivot();
+
+    float x0 = P[0];
+    float y0 = P[1];
+    float z0 = P[2];
+
+    PVector PG = new PVector(x0 - G[0], y0 - G[1], z0 - G[2]);
+
+    float V = PG.dot(GAxGB);
+
+    if (WIN3D.UI_TaskModifyParameter == 2) {
+      if (V > 0) flip_face = 1;
+    }
+    if (WIN3D.UI_TaskModifyParameter == 3) {
+      if (V < 0) flip_face = 1;
+    }
+  }
+
+  if (flip_face == 1) {
+    for (int j = 0; j < n; j++) {
+      allFaces.nodes[f][j] = tmpFace[n - j - 1];
+    }
+  }
+}
+
+// Rotates a face's or polyline's own node array in place so whichever
+// vertex is nearest to the click point `RxP` (its own [1],[2],[3] being
+// the hit's x,y,z) becomes node 0, preserving winding order otherwise -
+// pulled out of mouseClicked()'s UITASK.FirstVertex handling, which ran
+// this exact block twice in a row: once against allFaces.nodes[f] (with
+// Select3D.Face_ids/Face_displayVertexCount) and once against
+// allPolylines.nodes[f] (with Select3D.Polyline_ids/
+// Polyline_displayVertexCount), confirmed identical modulo which array
+// before extracting. `nodeRow` is mutated directly (Java arrays are
+// passed by reference), so the caller doesn't need to reassign anything.
+void SOLARCHVISION_rotateNodesToStartAtNearestVertex (int[] nodeRow, float[] RxP) {
+  int n = nodeRow.length;
+  if (n <= 2) return;
+
+  int min_num = 0;
+  float min_dist = FLOAT_undefined;
+
+  for (int j = 0; j < n; j++) {
+    int vNo = nodeRow[j];
+    float d = dist(RxP[1], RxP[2], RxP[3], allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
+
+    if (min_dist > d) {
+      min_dist = d;
+      min_num = j;
+    }
+  }
+
+  int[] tmpRow = new int[n];
+  for (int j = 0; j < n; j++) {
+    tmpRow[j] = nodeRow[j];
+  }
+
+  for (int j = 0; j < n; j++) {
+    nodeRow[j] = tmpRow[(j + min_num + n) % n];
+  }
+}
+
 // Result of a nearest-station search: which index in the array was closest, and how far (in the
 // same units funcs.lon_lat_dist returns) it was from STATION's current position.
 class SOLARCHVISION_NearestStation {
@@ -1120,106 +1215,17 @@ void mouseClicked () {
 
                           Select3D.Face_displayVertexCount = true;
 
-                          int n = allFaces.nodes[f].length;
-
-                          if (n > 2) {
-                            int[] tmpFace = new int[n];
-                            float[] G = {
-                              0, 0, 0
-                            };
-                            for (int j = 0; j < n; j++) {
-                              tmpFace[j] = allFaces.nodes[f][j];
-                              G[0] += allPoints.getX(tmpFace[j]) / float(n);
-                              G[1] += allPoints.getY(tmpFace[j]) / float(n);
-                              G[2] += allPoints.getZ(tmpFace[j]) / float(n);
-                            }
-
-                            int flip_face = 0;
-                            if (WIN3D.UI_TaskModifyParameter == 1) flip_face = 1;
-                            else {
-                              PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);
-                              PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
-
-                              PVector GAxGB = AG.cross(BG);
-
-                              float[] P = Select3D.getPivot();
-
-                              float x0 = P[0];
-                              float y0 = P[1];
-                              float z0 = P[2];
-
-                              PVector PG = new PVector(x0 - G[0], y0 - G[1], z0 - G[2]);
-
-                              float V = PG.dot(GAxGB);
-
-                              if (WIN3D.UI_TaskModifyParameter == 2) {
-                                if (V > 0) flip_face = 1;
-                              }
-                              if (WIN3D.UI_TaskModifyParameter == 3) {
-                                if (V < 0) flip_face = 1;
-                              }
-                            }
-
-                            if (flip_face == 1) {
-                              for (int j = 0; j < n; j++) {
-                                allFaces.nodes[f][j] = tmpFace[n - j - 1];
-                              }
-                            }
-                          }
+                          SOLARCHVISION_flipFaceOrientationIfNeeded(f);
                         } else if (current_ObjectCategory == ObjectCategory.GROUP) {
                           int OBJ_ID = allGroups.findGroupContainingFace(f);
 
                           for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
-                            int n = allFaces.nodes[q].length;
-
-                            if (n > 2) {
-                              int[] tmpFace = new int[n];
-                              float[] G = {
-                                0, 0, 0
-                              };
-                              for (int j = 0; j < n; j++) {
-                                tmpFace[j] = allFaces.nodes[q][j];
-                                G[0] += allPoints.getX(tmpFace[j]) / float(n);
-                                G[1] += allPoints.getY(tmpFace[j]) / float(n);
-                                G[2] += allPoints.getZ(tmpFace[j]) / float(n);
-                              }
-
-                              int flip_face = 0;
-                              if (WIN3D.UI_TaskModifyParameter == 1) flip_face = 1;
-                              else {
-                                PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);
-                                PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
-
-                                PVector GAxGB = AG.cross(BG);
-
-                                float[] P = Select3D.getPivot();
-
-                                float x0 = P[0];
-                                float y0 = P[1];
-                                float z0 = P[2];
-
-                                PVector PG = new PVector(x0 - G[0], y0 - G[1], z0 - G[2]);
-
-                                float V = PG.dot(GAxGB);
-
-                                if (WIN3D.UI_TaskModifyParameter == 2) {
-                                  if (V > 0) flip_face = 1;
-                                }
-                                if (WIN3D.UI_TaskModifyParameter == 3) {
-                                  if (V < 0) flip_face = 1;
-                                }
-                              }
-
-                              if (flip_face == 1) {
-                                for (int j = 0; j < n; j++) {
-                                  allFaces.nodes[q][j] = tmpFace[n - j - 1];
-                                }
-                              }
-                            }
+                            SOLARCHVISION_flipFaceOrientationIfNeeded(q);
                           }
 
                         }
                       }
+
 
 
                       if (WIN3D.UI_CurrentTask == UITASK.FirstVertex) { //FirstVertex
@@ -1231,33 +1237,7 @@ void mouseClicked () {
 
                           Select3D.Face_displayVertexCount = true;
 
-                          int n = allFaces.nodes[f].length;
-
-                          if (n > 2) {
-
-                            int min_num = 0;
-                            float min_dist = FLOAT_undefined;
-
-                            for (int j = 0; j < n; j++) {
-                              int vNo = allFaces.nodes[f][j];
-
-                              float d = dist(RxP[1], RxP[2], RxP[3], allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-
-                              if (min_dist > d) {
-                                min_dist = d;
-                                min_num = j;
-                              }
-                            }
-
-                            int[] tmpFace = new int[n];
-                            for (int j = 0; j < n; j++) {
-                              tmpFace[j] = allFaces.nodes[f][j];
-                            }
-
-                            for (int j = 0; j < n; j++) {
-                              allFaces.nodes[f][j] = tmpFace[(j + min_num + n) % n];
-                            }
-                          }
+                          SOLARCHVISION_rotateNodesToStartAtNearestVertex(allFaces.nodes[f], RxP);
                         } else if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
                           Select3D.Polyline_ids = new int [1];
@@ -1265,33 +1245,7 @@ void mouseClicked () {
 
                           Select3D.Polyline_displayVertexCount = true;
 
-                          int n = allPolylines.nodes[f].length;
-
-                          if (n > 2) {
-
-                            int min_num = 0;
-                            float min_dist = FLOAT_undefined;
-
-                            for (int j = 0; j < n; j++) {
-                              int vNo = allPolylines.nodes[f][j];
-
-                              float d = dist(RxP[1], RxP[2], RxP[3], allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
-
-                              if (min_dist > d) {
-                                min_dist = d;
-                                min_num = j;
-                              }
-                            }
-
-                            int[] tmpPolyline = new int[n];
-                            for (int j = 0; j < n; j++) {
-                              tmpPolyline[j] = allPolylines.nodes[f][j];
-                            }
-
-                            for (int j = 0; j < n; j++) {
-                              allPolylines.nodes[f][j] = tmpPolyline[(j + min_num + n) % n];
-                            }
-                          }
+                          SOLARCHVISION_rotateNodesToStartAtNearestVertex(allPolylines.nodes[f], RxP);
                         }
 
                       }
