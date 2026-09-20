@@ -232,7 +232,6 @@ class STUDYTest {
 
   @Test
   void handleCtrlCodedKey_cyclesTheCurrentLayerForwardAndBackward () {
-    app.numberOfLayers = app.allLayers.length;
     app.CurrentLayer_id = 0;
 
     app.keyCode = app.UP;

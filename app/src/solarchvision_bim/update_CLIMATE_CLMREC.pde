@@ -1,11 +1,11 @@
 void update_CLIMATE_CLMREC () {
 
-  CLIMATE_CLMREC_values = new float [24][365][numberOfLayers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)];
-  CLIMATE_CLMREC_flags = new boolean [24][365][numberOfLayers][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)]; // true: direct input , false: no-input, interpolated or post-processed
+  CLIMATE_CLMREC_values = new float [24][365][allLayers.length][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)];
+  CLIMATE_CLMREC_flags = new boolean [24][365][allLayers.length][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i++) {
     for (int j = 0; j < 365; j++) {
-      for (int l = 0; l < numberOfLayers; l++) {
+      for (int l = 0; l < allLayers.length; l++) {
         java.util.Arrays.fill(CLIMATE_CLMREC_values[i][j][l], FLOAT_undefined);
         java.util.Arrays.fill(CLIMATE_CLMREC_flags[i][j][l], false);
       }

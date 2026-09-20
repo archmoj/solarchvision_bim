@@ -9,7 +9,7 @@ void SOLARCHVISION_postProcess_fillGaps (int desired_DataSource) {
 
   int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.
 
-  for (int l = 0; l < numberOfLayers; l++) {
+  for (int l = 0; l < allLayers.length; l++) {
 
     for (int k = 0; k < (1 + DATA_end - DATA_start); k++) {
       float pre_v = FLOAT_undefined;

@@ -2,7 +2,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
 
   boolean new_files_downloaded = false;
 
-  for (int f = 0; f < numberOfLayers; f++) {
+  for (int f = 0; f < allLayers.length; f++) {
     if (allLayers[f].name.equals("")) {
     } else {
       String dayStr = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2);

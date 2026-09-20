@@ -39,7 +39,6 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
   Develop_Option = XML_getInt(parent, "Develop_Option");
   Develop_DayHour = XML_getInt(parent, "Develop_DayHour");
   //DevelopData_update = XML_getBoolean(parent, "DevelopData_update");
-  numberOfLayers = XML_getInt(parent, "numberOfLayers");
   Develop_AngleInclination = XML_getFloat(parent, "Develop_AngleInclination");
   Develop_AngleOrientation = XML_getFloat(parent, "Develop_AngleOrientation");
   DevelopLayer_id = XML_getInt(parent, "DevelopLayer_id");

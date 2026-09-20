@@ -141,7 +141,7 @@ void SOLARCHVISION_setDataFlags (int desired_DataSource) {
   // setting the flags
   for (int i = 0; i < 24; i++) {
     for (int j = 0; j < 365; j++) {
-      for (int l = 0; l < numberOfLayers; l++) {
+      for (int l = 0; l < allLayers.length; l++) {
         for (int k = 0; k < (1 + DATA_end - DATA_start); k++) {
           if (is_defined(getValue_CurrentDataSource(i, j, k, l))) {
             setFlag_CurrentDataSource(i, j, k, l, true);

@@ -599,14 +599,14 @@ class solarchvision_UI_menuBar {
       }
     }
 
-    this.Items[LayersID_in_Bar] = new String[numberOfLayers + numberOfDevelopedLayers + 1]; // +1 for the divider
+    this.Items[LayersID_in_Bar] = new String[allLayers.length + numberOfDevelopedLayers + 1]; // +1 for the divider
     this.Items[LayersID_in_Bar][0] = "Layer";
 
-    for (int i = 0; i < numberOfLayers; i++) {
+    for (int i = 0; i < allLayers.length; i++) {
       this.Items[LayersID_in_Bar][i + 1] = allLayers[i].descriptions[Language_EN];
     }
 
-    int base = numberOfLayers;
+    int base = allLayers.length;
     this.Items[LayersID_in_Bar][base + 0] = "———————————————————";
     this.Items[LayersID_in_Bar][base + 1] = "Wind power";
     this.Items[LayersID_in_Bar][base + 2] = "Radiation on solar tracker";

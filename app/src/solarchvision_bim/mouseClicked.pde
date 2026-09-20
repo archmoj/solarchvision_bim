@@ -1210,12 +1210,12 @@ void mouseClicked () {
 
             if (UI_menuBar.Items[UI_menuBar.selected_parent][0].equals("Layer")) {
               if (UI_menuBar.selected_child > 0) {
-                if (UI_menuBar.selected_child < numberOfLayers) {
+                if (UI_menuBar.selected_child < allLayers.length) {
                   changeCurrentLayerTo(UI_menuBar.selected_child - 1);
                   DevelopLayer_id = CurrentLayer_id;
                   STUDY.revise();
                 } else if (menu_option.charAt(0) != '—') {
-                  Develop_Option = UI_menuBar.selected_child - numberOfLayers - 1; // -1 for the divider
+                  Develop_Option = UI_menuBar.selected_child - allLayers.length - 1; // -1 for the divider
                   SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
                   changeCurrentLayerTo(LAYER_developed.id);
                   STUDY.revise();

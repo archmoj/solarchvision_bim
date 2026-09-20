@@ -198,12 +198,12 @@ class solarchvision_STUDY {
   void handleCtrlCodedKey (KeyEvent e) {
     switch (keyCode) {
       case UP :
-        changeCurrentLayerTo((CurrentLayer_id + 1) % numberOfLayers);
+        changeCurrentLayerTo((CurrentLayer_id + 1) % allLayers.length);
         requestRedraw();
         break;
 
       case DOWN :
-        changeCurrentLayerTo((CurrentLayer_id + numberOfLayers - 1) % numberOfLayers);
+        changeCurrentLayerTo((CurrentLayer_id + allLayers.length - 1) % allLayers.length);
         requestRedraw();
         break;
 

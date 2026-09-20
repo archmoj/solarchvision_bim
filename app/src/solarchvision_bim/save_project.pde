@@ -46,7 +46,6 @@ void SOLARCHVISION_save_project (String myFile) {
     XML_setInt(parent, "Develop_Option", Develop_Option);
     XML_setInt(parent, "Develop_DayHour", Develop_DayHour);
     XML_setBoolean(parent, "DevelopData_update", DevelopData_update);
-    XML_setInt(parent, "numberOfLayers", numberOfLayers);
 
     XML_setFloat(parent, "Develop_AngleInclination", Develop_AngleInclination);
     XML_setFloat(parent, "Develop_AngleOrientation", Develop_AngleOrientation);

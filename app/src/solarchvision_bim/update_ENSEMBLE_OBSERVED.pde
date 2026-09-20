@@ -1,11 +1,11 @@
 void update_ENSEMBLE_OBSERVED (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-  ENSEMBLE_OBSERVED_values = new float [24][365][numberOfLayers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)];
-  ENSEMBLE_OBSERVED_flags = new boolean [24][365][numberOfLayers][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)]; // true: direct input , false: no-input, interpolated or post-processed
+  ENSEMBLE_OBSERVED_values = new float [24][365][allLayers.length][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)];
+  ENSEMBLE_OBSERVED_flags = new boolean [24][365][allLayers.length][(1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i++) {
     for (int j = 0; j < 365; j++) {
-      for (int l = 0; l < numberOfLayers; l++) {
+      for (int l = 0; l < allLayers.length; l++) {
         for (int k = 0; k < (1 + ENSEMBLE_OBSERVED_end - ENSEMBLE_OBSERVED_start); k++) {
           ENSEMBLE_OBSERVED_values[i][j][l][k] = FLOAT_undefined;
           ENSEMBLE_OBSERVED_flags[i][j][l][k] = false;
