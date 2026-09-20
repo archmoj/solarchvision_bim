@@ -45,6 +45,157 @@ void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
   SOLARCHVISION_switch_category(newCategory);
 }
 
+// Result of SOLARCHVISION_computeCreateParams below: the concrete
+// position/rotation/half-extents/power-exponents a click should create
+// an object with, derived from the click point (RxP) and the user's
+// current create_* preferences.
+class SOLARCHVISION_CreateParams {
+  float x, y, z, rot, rx, ry, rz, px, py, pz;
+}
+
+// Pulled out of mouseClicked()'s UITASK.Create handling: turns a click's
+// hit point (RxP) plus User3D's create_* preferences into the concrete
+// x/y/z/rot/rx/ry/rz/px/py/pz values every CREATE.* branch downstream
+// then reads (but never further recomputes) to actually build the new
+// object via Create3D.add_X()/allModel1Ds.create()/etc. Those add_X()
+// calls are already covered directly in Create3DTest.java, so this
+// extraction focuses purely on the parameter derivation that used to sit
+// in front of them, previously untested on its own. Note this can call
+// random() in two places (when create_Length/Width/Height is negative,
+// meaning "randomize within this range", and when create_powRnd is on) -
+// callers that want a fully deterministic result should use non-negative
+// lengths and turn create_powRnd off.
+SOLARCHVISION_CreateParams SOLARCHVISION_computeCreateParams (float[] RxP) {
+  SOLARCHVISION_CreateParams p = new SOLARCHVISION_CreateParams();
+
+  p.x = RxP[1];
+  p.y = RxP[2];
+  p.z = RxP[3];
+
+  p.rot = User3D.create_Orientation;
+  if (p.rot == 360) p.rot = WIN3D.rotation_Z;
+
+  p.rx = 0.5 * User3D.create_Length;
+  if (p.rx < 0) p.rx = random(0.25 * abs(p.rx), abs(p.rx));
+
+  p.ry = 0.5 * User3D.create_Width;
+  if (p.ry < 0) p.ry = random(0.25 * abs(p.ry), abs(p.ry));
+
+  p.rz = 0.5 * User3D.create_Height;
+  if (p.rz < 0) p.rz = random(0.25 * abs(p.rz), abs(p.rz));
+
+  p.px = User3D.create_powX;
+  p.py = User3D.create_powY;
+  p.pz = User3D.create_powZ;
+
+  if (User3D.create_powRnd == 1) {
+    p.px = pow(2, int(random(5)) - 1);
+    p.py = p.px;
+    p.pz = p.px;
+  }
+
+  if (User3D.create_Volume != 0) {
+
+    if ((p.rx != 0) && (p.ry != 0)) {
+      p.rz = User3D.create_Volume / (8 * p.rx * p.ry);
+    }
+
+    //---------------------------------------------------
+    float A = 1;
+    // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
+    if (p.pz >= 8) A = 1;
+    else if (p.pz == 4) A = 0.75;
+    else if (p.pz == 2) A = 0.5;
+    else if (p.pz == 1) A = 0.25;
+    else if (p.pz == 0.5) A = 0.125;
+    else if (p.pz == 0.25) A = 0.0625;
+
+    p.rx /= pow(A, (1.0 / 3.0));
+    p.ry /= pow(A, (1.0 / 3.0));
+    p.rz /= pow(A, (1.0 / 3.0));
+    //---------------------------------------------------
+  }
+
+  if ((current_ObjectCategory != ObjectCategory.MODEL1D) &&
+      (current_ObjectCategory != ObjectCategory.MODEL2D) &&
+      (current_ObjectCategory != ObjectCategory.LANDPOINT) &&
+      (current_ObjectCategory != ObjectCategory.CAMERA) &&
+      (current_ObjectCategory != ObjectCategory.SECTION)) {
+
+    p.x -= p.rx * Select3D.alignX;
+    p.y -= p.ry * Select3D.alignY;
+    p.z -= p.rz * Select3D.alignZ;
+  }
+
+  return p;
+}
+
+// Result of SOLARCHVISION_computeCameraParamsAtPoint below: the camera
+// transform (position/rotation/zoom/type) that would put a camera's eye
+// at a given 3D point, looking the same direction as the current
+// viewport.
+class SOLARCHVISION_CameraParams {
+  float pX, pY, pZ, pT, rX, rY, rZ, rT, zoom;
+  int type;
+}
+
+// Pulled out of mouseClicked()'s "create a camera" handling: computes
+// what a new camera's own position_X/Y/Z/T and rotation_X/Y/Z/T would be
+// if its eye sat at (x, y, z + EyeLevel), by temporarily overwriting
+// WIN3D's own CAM_x/y/z and calling its (already directly tested in
+// WIN3DTest.java) reverseTransform_3DViewport(), then restoring every
+// WIN3D field it touched back to what it was - this function's caller
+// used to do that save/compute/restore dance inline, right before
+// allCameras.create(); now it just calls this and passes the result
+// straight through.
+SOLARCHVISION_CameraParams SOLARCHVISION_computeCameraParamsAtPoint (float x, float y, float z) {
+  float keep_CAM_x = WIN3D.CAM_x;
+  float keep_CAM_y = WIN3D.CAM_y;
+  float keep_CAM_z = WIN3D.CAM_z;
+  float keep_position_X = WIN3D.position_X;
+  float keep_position_Y = WIN3D.position_Y;
+  float keep_position_Z = WIN3D.position_Z;
+  float keep_position_T = WIN3D.position_T;
+  float keep_rotation_X = WIN3D.rotation_X;
+  float keep_rotation_Y = WIN3D.rotation_Y;
+  float keep_rotation_Z = WIN3D.rotation_Z;
+  float keep_rotation_T = WIN3D.rotation_T;
+  float keep_Zoom = WIN3D.Zoom;
+
+  WIN3D.CAM_x = x;
+  WIN3D.CAM_y = y;
+  WIN3D.CAM_z = z + EyeLevel;
+
+  WIN3D.reverseTransform_3DViewport();
+
+  SOLARCHVISION_CameraParams cp = new SOLARCHVISION_CameraParams();
+  cp.pX = WIN3D.position_X;
+  cp.pY = WIN3D.position_Y;
+  cp.pZ = WIN3D.position_Z;
+  cp.pT = WIN3D.position_T;
+  cp.rX = WIN3D.rotation_X;
+  cp.rY = WIN3D.rotation_Y;
+  cp.rZ = WIN3D.rotation_Z;
+  cp.rT = WIN3D.rotation_T;
+  cp.zoom = WIN3D.Zoom;
+  cp.type = WIN3D.ViewType;
+
+  WIN3D.CAM_x = keep_CAM_x;
+  WIN3D.CAM_y = keep_CAM_y;
+  WIN3D.CAM_z = keep_CAM_z;
+  WIN3D.position_X = keep_position_X;
+  WIN3D.position_Y = keep_position_Y;
+  WIN3D.position_Z = keep_position_Z;
+  WIN3D.position_T = keep_position_T;
+  WIN3D.rotation_X = keep_rotation_X;
+  WIN3D.rotation_Y = keep_rotation_Y;
+  WIN3D.rotation_Z = keep_rotation_Z;
+  WIN3D.rotation_T = keep_rotation_T;
+  WIN3D.Zoom = keep_Zoom;
+
+  return cp;
+}
+
 // Decides whether face `f`'s node order should be reversed (to flip
 // which way it faces) and applies that reversal if so - pulled out of
 // mouseClicked()'s UITASK.Normal handling, which ran this exact 40-line
@@ -1340,69 +1491,10 @@ void mouseClicked () {
                   int keep_number_of_allSections = allSections.num;
                   int keep_number_of_allCameras = allCameras.num;
 
-                  float x = RxP[1];
-                  float y = RxP[2];
-                  float z = RxP[3];
-
-                  float rot = User3D.create_Orientation;
-                  if (rot == 360) rot = WIN3D.rotation_Z;
-
-
-
-                  float rx = 0.5 * User3D.create_Length;
-                  if (rx < 0) rx = random(0.25 * abs(rx), abs(rx));
-
-                  float ry = 0.5 * User3D.create_Width;
-                  if (ry < 0) ry = random(0.25 * abs(ry), abs(ry));
-
-                  float rz = 0.5 * User3D.create_Height;
-                  if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
-
-
-
-                  float px = User3D.create_powX;
-                  float py = User3D.create_powY;
-                  float pz = User3D.create_powZ;
-
-                  if (User3D.create_powRnd == 1) {
-                    px = pow(2, int(random(5)) - 1);
-                    py = px;
-                    pz = px;
-                  }
-
-                  if (User3D.create_Volume != 0) {
-
-                    if ((rx != 0) && (ry != 0)) {
-                      rz = User3D.create_Volume / (8 * rx * ry);
-                    }
-
-                    //---------------------------------------------------
-                    float A = 1;
-                    // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
-                    if (pz >= 8) A = 1;
-                    else if (pz == 4) A = 0.75;
-                    else if (pz == 2) A = 0.5;
-                    else if (pz == 1) A = 0.25;
-                    else if (pz == 0.5) A = 0.125;
-                    else if (pz == 0.25) A = 0.0625;
-
-                    rx /= pow(A, (1.0 / 3.0));
-                    ry /= pow(A, (1.0 / 3.0));
-                    rz /= pow(A, (1.0 / 3.0));
-                    //---------------------------------------------------
-                  }
-
-
-                  if ((current_ObjectCategory != ObjectCategory.MODEL1D) &&
-                      (current_ObjectCategory != ObjectCategory.MODEL2D) &&
-                      (current_ObjectCategory != ObjectCategory.LANDPOINT) &&
-                      (current_ObjectCategory != ObjectCategory.CAMERA) &&
-                      (current_ObjectCategory != ObjectCategory.SECTION)) {
-
-                    x -= rx * Select3D.alignX;
-                    y -= ry * Select3D.alignY;
-                    z -= rz * Select3D.alignZ;
-                  }
+                  SOLARCHVISION_CreateParams cp = SOLARCHVISION_computeCreateParams(RxP);
+                  float x = cp.x, y = cp.y, z = cp.z, rot = cp.rot;
+                  float rx = cp.rx, ry = cp.ry, rz = cp.rz;
+                  float px = cp.px, py = cp.py, pz = cp.pz;
 
 
 
@@ -1533,56 +1625,9 @@ void mouseClicked () {
                   } else if (current_ObjectCategory == ObjectCategory.CAMERA) { // working with cameras
                     if (CreateObject == CREATE.Camera) {
 
-                      int f = int(RxP[0]);
+                      SOLARCHVISION_CameraParams camParams = SOLARCHVISION_computeCameraParamsAtPoint(RxP[1], RxP[2], RxP[3]);
 
-                      float keep_WIN3D_CAM_x = WIN3D.CAM_x;
-                      float keep_WIN3D_CAM_y = WIN3D.CAM_y;
-                      float keep_WIN3D_CAM_z = WIN3D.CAM_z;
-                      float keep_WIN3D_position_X = WIN3D.position_X;
-                      float keep_WIN3D_position_Y = WIN3D.position_Y;
-                      float keep_WIN3D_position_Z = WIN3D.position_Z;
-                      float keep_WIN3D_position_T = WIN3D.position_T;
-                      float keep_WIN3D_rotation_X = WIN3D.rotation_X;
-                      float keep_WIN3D_rotation_Y = WIN3D.rotation_Y;
-                      float keep_WIN3D_rotation_Z = WIN3D.rotation_Z;
-                      float keep_WIN3D_rotation_T = WIN3D.rotation_T;
-                      float keep_WIN3D_Zoom = WIN3D.Zoom;
-
-                      {
-
-                        WIN3D.CAM_x = RxP[1];
-                        WIN3D.CAM_y = RxP[2];
-                        WIN3D.CAM_z = RxP[3] + EyeLevel;
-
-                        WIN3D.reverseTransform_3DViewport();
-
-                        float Camera_pX = WIN3D.position_X;
-                        float Camera_pY = WIN3D.position_Y;
-                        float Camera_pZ = WIN3D.position_Z;
-                        float Camera_pT = WIN3D.position_T;
-                        float Camera_rX = WIN3D.rotation_X;
-                        float Camera_rY = WIN3D.rotation_Y;
-                        float Camera_rZ = WIN3D.rotation_Z;
-                        float Camera_rT = WIN3D.rotation_T;
-                        float Camera_zoom = WIN3D.Zoom;
-
-                        int Camera_type = WIN3D.ViewType;
-
-                        allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
-                      }
-
-                      WIN3D.CAM_x = keep_WIN3D_CAM_x;
-                      WIN3D.CAM_y = keep_WIN3D_CAM_y;
-                      WIN3D.CAM_z = keep_WIN3D_CAM_z;
-                      WIN3D.position_X = keep_WIN3D_position_X;
-                      WIN3D.position_Y = keep_WIN3D_position_Y;
-                      WIN3D.position_Z = keep_WIN3D_position_Z;
-                      WIN3D.position_T = keep_WIN3D_position_T;
-                      WIN3D.rotation_X = keep_WIN3D_rotation_X;
-                      WIN3D.rotation_Y = keep_WIN3D_rotation_Y;
-                      WIN3D.rotation_Z = keep_WIN3D_rotation_Z;
-                      WIN3D.rotation_T = keep_WIN3D_rotation_T;
-                      WIN3D.Zoom = keep_WIN3D_Zoom;
+                      allCameras.create(camParams.pX, camParams.pY, camParams.pZ, camParams.pT, camParams.rX, camParams.rY, camParams.rZ, camParams.rT, camParams.zoom, camParams.type);
                     }
                   } else if (current_ObjectCategory == ObjectCategory.SECTION) { // working with sections
                     if (CreateObject == CREATE.Section) {

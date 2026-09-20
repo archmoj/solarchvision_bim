@@ -445,4 +445,175 @@ class MouseClickedTest {
     assertEquals(34.5f, app.STATION.getLatitude(), 0.0001f);
     assertEquals("new_station.epw", app.STATION.getFilename_TMYEPW());
   }
+
+  // ============ SOLARCHVISION_computeCreateParams (extracted) ===========
+
+  @Test
+  void computeCreateParams_derivesHalfExtentsAndRotationFromUserPreferences () {
+    app.User3D.create_Orientation = 0; // not 360, so this is used directly rather than falling back to WIN3D.rotation_Z
+    app.User3D.create_Length = 4;  // positive -> deterministic, no randomize
+    app.User3D.create_Width = 6;
+    app.User3D.create_Height = 2;
+    app.User3D.create_powX = 2;
+    app.User3D.create_powY = 2;
+    app.User3D.create_powZ = 2;
+    app.User3D.create_powRnd = 0;
+    app.User3D.create_Volume = 0;
+    app.current_ObjectCategory = app.ObjectCategory.SOLID; // not excluded from the alignment offset
+    app.Select3D.alignX = 0;
+    app.Select3D.alignY = 0;
+    app.Select3D.alignZ = 0;
+
+    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 10, 20, 30});
+
+    assertEquals(10f, p.x, 0.0001f);
+    assertEquals(20f, p.y, 0.0001f);
+    assertEquals(30f, p.z, 0.0001f);
+    assertEquals(0f, p.rot, 0.0001f);
+    assertEquals(2f, p.rx, 0.0001f); // half of create_Length
+    assertEquals(3f, p.ry, 0.0001f); // half of create_Width
+    assertEquals(1f, p.rz, 0.0001f); // half of create_Height
+    assertEquals(2f, p.px, 0.0001f);
+    assertEquals(2f, p.py, 0.0001f);
+    assertEquals(2f, p.pz, 0.0001f);
+  }
+
+  @Test
+  void computeCreateParams_orientation360FallsBackToTheCurrentViewportRotation () {
+    app.User3D.create_Orientation = 360;
+    app.WIN3D.rotation_Z = 47;
+    app.User3D.create_Length = 1;
+    app.User3D.create_Width = 1;
+    app.User3D.create_Height = 1;
+
+    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 0, 0, 0});
+
+    assertEquals(47f, p.rot, 0.0001f);
+  }
+
+  @Test
+  void computeCreateParams_offsetsPositionByHalfExtentsScaledByAlignment () {
+    app.User3D.create_Length = 4; // rx=2
+    app.User3D.create_Width = 6;  // ry=3
+    app.User3D.create_Height = 2; // rz=1
+    app.current_ObjectCategory = app.ObjectCategory.SOLID; // not excluded from this offset
+    app.Select3D.alignX = 1;
+    app.Select3D.alignY = -1;
+    app.Select3D.alignZ = 0;
+
+    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 10, 20, 30});
+
+    assertEquals(10 - 2 * 1, p.x, 0.0001f); // x -= rx * alignX
+    assertEquals(20 - 3 * -1, p.y, 0.0001f); // y -= ry * alignY
+    assertEquals(30f, p.z, 0.0001f); // alignZ=0 -> unchanged
+  }
+
+  @Test
+  void computeCreateParams_skipsTheAlignmentOffsetForModel1DModel2DLandPointCameraAndSection () {
+    app.User3D.create_Length = 4;
+    app.Select3D.alignX = 1; // would shift x if this category weren't excluded
+
+    for (int category : new int[]{
+      app.ObjectCategory.MODEL1D, app.ObjectCategory.MODEL2D, app.ObjectCategory.LANDPOINT,
+      app.ObjectCategory.CAMERA, app.ObjectCategory.SECTION
+    }) {
+      app.current_ObjectCategory = category;
+      solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 10, 20, 30});
+      assertEquals(10f, p.x, 0.0001f, "category " + category + " should not be offset");
+    }
+  }
+
+  @Test
+  void computeCreateParams_derivesHeightFromVolumeWhenVolumeIsSet () {
+    app.User3D.create_Length = 4; // rx=2
+    app.User3D.create_Width = 4;  // ry=2
+    app.User3D.create_Height = 999; // overridden by the volume calculation below
+    app.User3D.create_powX = 2;
+    app.User3D.create_powY = 2;
+    app.User3D.create_powZ = 2; // A=0.5 for pz==2
+    app.User3D.create_Volume = 32; // rz = 32 / (8*2*2) = 1, then divided by A^(1/3)
+
+    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 0, 0, 0});
+
+    float expectedRz = (1f) / (float) Math.pow(0.5, 1.0 / 3.0);
+    assertEquals(expectedRz, p.rz, 0.001f);
+  }
+
+  @Test
+  void computeCreateParams_negativeLengthRandomizesWithinAQuarterToFullOfItsMagnitude () {
+    app.User3D.create_Length = -8; // "randomize" sentinel: 0.5*(-8) = -4 -> rx becomes random(1, 4)
+
+    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 0, 0, 0});
+
+    assertTrue(p.rx >= 1f && p.rx <= 4f);
+  }
+
+  // ======== SOLARCHVISION_computeCameraParamsAtPoint (extracted) ========
+
+  @Test
+  void computeCameraParamsAtPoint_derivesPositionFromCamSpaceUnderIdentityRotation () {
+    // Verified independently in Python beforehand, reusing the same
+    // reverseTransform_3DViewport formula already confirmed in
+    // WIN3DTest.java's round-trip test.
+    app.WIN3D.rotation_X = 0;
+    app.WIN3D.rotation_Z = 0;
+    app.EyeLevel = 1.5f;
+
+    solarchvision_bim.SOLARCHVISION_CameraParams cp = app.SOLARCHVISION_computeCameraParamsAtPoint(10, 20, 30);
+
+    assertEquals(-10f, cp.pX, 0.01f);
+    assertEquals(20f, cp.pY, 0.01f);
+    assertEquals(55.1025f, cp.pZ, 0.01f);
+  }
+
+  @Test
+  void computeCameraParamsAtPoint_accountsForTheCurrentViewportRotation () {
+    app.WIN3D.rotation_X = 90;
+    app.WIN3D.rotation_Z = -45;
+    app.EyeLevel = 1.5f;
+
+    solarchvision_bim.SOLARCHVISION_CameraParams cp = app.SOLARCHVISION_computeCameraParamsAtPoint(10, 20, 30);
+
+    assertEquals(7.0711f, cp.pX, 0.01f);
+    assertEquals(31.5f, cp.pY, 0.01f);
+    assertEquals(107.8157f, cp.pZ, 0.01f);
+  }
+
+  @Test
+  void computeCameraParamsAtPoint_leavesWIN3DsOwnStateExactlyAsItWasBeforeTheCall () {
+    app.WIN3D.CAM_x = 111;
+    app.WIN3D.CAM_y = 222;
+    app.WIN3D.CAM_z = 333;
+    app.WIN3D.position_X = 1;
+    app.WIN3D.position_Y = 2;
+    app.WIN3D.position_Z = 3;
+    app.WIN3D.rotation_X = 4;
+    app.WIN3D.rotation_Y = 5;
+    app.WIN3D.rotation_Z = 6;
+    app.WIN3D.Zoom = 77;
+
+    app.SOLARCHVISION_computeCameraParamsAtPoint(10, 20, 30);
+
+    assertEquals(111f, app.WIN3D.CAM_x, 0.0001f);
+    assertEquals(222f, app.WIN3D.CAM_y, 0.0001f);
+    assertEquals(333f, app.WIN3D.CAM_z, 0.0001f);
+    assertEquals(1f, app.WIN3D.position_X, 0.0001f);
+    assertEquals(2f, app.WIN3D.position_Y, 0.0001f);
+    assertEquals(3f, app.WIN3D.position_Z, 0.0001f);
+    assertEquals(4f, app.WIN3D.rotation_X, 0.0001f);
+    assertEquals(5f, app.WIN3D.rotation_Y, 0.0001f);
+    assertEquals(6f, app.WIN3D.rotation_Z, 0.0001f);
+    assertEquals(77f, app.WIN3D.Zoom, 0.0001f);
+  }
+
+  @Test
+  void computeCameraParamsAtPoint_returnsTheCurrentViewportTypeAndZoom () {
+    app.WIN3D.ViewType = 1;
+    app.WIN3D.Zoom = 55;
+
+    solarchvision_bim.SOLARCHVISION_CameraParams cp = app.SOLARCHVISION_computeCameraParamsAtPoint(0, 0, 0);
+
+    assertEquals(1, cp.type);
+    assertEquals(55f, cp.zoom, 0.0001f);
+  }
 }
