@@ -1806,10 +1806,9 @@ class solarchvision_STUDY {
 
     if ((this.ImageScale != 1) || (this.record_PDF)) {
       this.graphics = createGraphics(this.dX, this.dY, P2D);
-      this.updated(); //1;
-    } else {
-      this.updated();
     }
+
+    this.updated();
 
     if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;
   }

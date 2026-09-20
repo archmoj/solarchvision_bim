@@ -94,7 +94,6 @@ void draw () {
     }
 
     if (STUDY.include && STUDY.update) STUDY.drawView();
-    STUDY.updated();
 
     if (STUDY.record_PDF == false) {
       if (WORLD.include && WORLD.update) WORLD.drawView();
@@ -115,12 +114,7 @@ void draw () {
       STUDY.record_PDF = false;
     }
 
-    //WIN3D.updated();
-    //WORLD.updated();
-    //STUDY.updated();
-
     //noLoop(); // <<<<<<<<<<<<
-
   }
 }
 
