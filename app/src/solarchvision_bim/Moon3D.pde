@@ -62,7 +62,7 @@ class solarchvision_Moon3D {
 
     float tb = 0;
     float stationLat = STATION.getLatitude();
-    float ta = -90 - stationLat;
+    float ta = 90 - stationLat;
 
     for (int s = 0; s < 4; s++) {
       FaceVertex vtx = new FaceVertex();

@@ -104,7 +104,7 @@ class solarchvision_Sun3D {
 
     float tb = 0;
     float stationLat = STATION.getLatitude();
-    float ta = -90 - stationLat;
+    float ta = 90 - stationLat;
 
     float[] SunR = funcs.SunPosition(stationLat, SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
     float tA = funcs.asin_ang(SunR[3]);
