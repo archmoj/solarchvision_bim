@@ -3,7 +3,7 @@ boolean draw_initial_frames () {
 
     background(223);
 
-    SOLARCHVISION_update_folders();
+    SOLARCHVISION_update_project_folders();
 
     float cr;
 

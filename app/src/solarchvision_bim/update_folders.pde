@@ -1,4 +1,4 @@
-void SOLARCHVISION_update_folders () {
+void SOLARCHVISION_update_project_folders () {
 
   Folder_Project = BaseFolder + "/projects/model-01";
 

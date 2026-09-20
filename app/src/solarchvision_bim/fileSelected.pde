@@ -5,6 +5,8 @@ void SOLARCHVISION_update_project_info (File selectedFile) {
 
   println("New ProjectName:", ProjectName);
   println("New Folder_Project:", Folder_Project);
+
+  SOLARCHVISION_update_project_folders();
 }
 
 void SOLARCHVISION_fileSelected_New (File selectedFile) {
