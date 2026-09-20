@@ -86,20 +86,14 @@ void draw () {
       //if (UI_caseBar.update) FRAME_record_IMG = true;
     }
 
-    int Illustrations_Animate = 0;
-
-    //if ((STUDY.update == false) && (WIN3D.update == false)) {
-    if (STUDY.update == false) {
-      //Illustrations_Animate = 1;
-    }
-
     if (STUDY.include && STUDY.update) STUDY.drawView();
-
-    if (STUDY.record_PDF == false) {
+    if (STUDY.record_PDF == true) {
+      STUDY.record_PDF = false;
+    } else {
       if (WORLD.include && WORLD.update) WORLD.drawView();
-
-      if (WORLD.record_PDF == false) {
-
+      if (WORLD.record_PDF == true) {
+        WORLD.record_PDF = false;
+      } else {
         draw_WIN3D_layers();
         draw_UI_layers();
 
@@ -107,11 +101,7 @@ void draw () {
           SOLARCHVISION_RecordFrame();
           FRAME_record_IMG = false;
         }
-      } else {
-        WORLD.record_PDF = false;
       }
-    } else {
-      STUDY.record_PDF = false;
     }
 
     //noLoop(); // <<<<<<<<<<<<
