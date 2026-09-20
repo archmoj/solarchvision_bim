@@ -1,7 +1,8 @@
 PImage Shade_RGBA;
 
-final int SHADE_FIRST_HOUR = 12 - 5; // 7 a.m.
-final int SHADE_LAST_HOUR = 12 + 5; // 17 p.m.
+final int SHADE_HOURS_PER_DAY = 5 * 2;
+final int SHADE_FIRST_HOUR = 12 - SHADE_HOURS_PER_DAY / 2; // 7 a.m.
+final int SHADE_LAST_HOUR = 12 + SHADE_HOURS_PER_DAY / 2; // 17 p.m.
 final int SHADE_STEP_DAYS = 90;
 
 // initial values of choice

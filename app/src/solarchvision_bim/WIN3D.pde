@@ -562,13 +562,13 @@ class solarchvision_WIN3D {
         break;
 
       case UP:
-        SOLARCHVISION_adjustShadeTime(24);
+        SOLARCHVISION_adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
         SOLARCHVISION_ShadeViewport();
         this.revise();
         break;
 
       case DOWN:
-        SOLARCHVISION_adjustShadeTime(-24);
+        SOLARCHVISION_adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
         SOLARCHVISION_ShadeViewport();
         this.revise();
         break;
