@@ -2,24 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_WORLD (WORLD.pde), reached through the
-// pre-constructed `app.WORLD` field. This is the flat 2D world-map
-// overview window (distinct from WIN3D's 3D viewport).
-//
-// NOT covered: listAllImages()/loadImages()/getTileImage() - real file
-// system access (OPESYS.getFiles, loadImage) against a real map-tile
-// folder this checkout doesn't have. drawZoomedTiles()/drawMarker()/
-// drawLabel()/beginMarkerBatch()/addMarkerToBatch()/endMarkerBatch()/
-// drawStationDataset()/drawView()/keyPressed() - all real rendering
-// (this.graphics calls) or, for keyPressed(), trivial glue around
-// FindGoodViewport()+revise() gated on a real KeyEvent's modifier keys,
-// which FindGoodViewport() below already covers more directly.
-// FindGoodViewport() IS covered, with autoView=true set up so the
-// found viewport always matches the starting VIEW_id - deliberately
-// avoiding the one case (a genuinely different viewport being found)
-// that would trigger loadImages()'s real file read.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class WORLDTest {
 
   private solarchvision_bim app;

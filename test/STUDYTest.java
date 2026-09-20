@@ -2,36 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_STUDY (STUDY.pde), reached through the
-// pre-constructed `app.STUDY` field - the hourly/daily statistics plot
-// window. At over 3000 lines this is the largest file tested in this
-// whole project, but the overwhelming majority of it (applyLegendTextStyle
-// through plotImpact_cycles/plotImpact, plus openPerDayOutputFiles/
-// closePerDayOutputFiles) is either real rendering (this.graphics calls)
-// or real file output (createWriter/PrintWriter), and none of it is
-// covered here.
-//
-// Two pure computations were pulled out of that rendering code and given
-// their own tests: computeWrappedDayIndex() (an identical 8-line
-// day-of-year-wrapping expression that was duplicated character-for-
-// character across 5 separate call sites in plotHourly()/
-// plotImpact_wind()/plotImpact_global()/plotImpact_sunpath(), confirmed
-// identical via grep before extracting) and countDefinedPrefix() (a
-// "count leading defined values in a sort()-ed array" loop drawSorted()
-// ran twice in a row, once each for its two value series). Both
-// extractions were done by replacing each call site with a call to the
-// new method and re-verifying the surrounding code still reads
-// correctly, not by rewriting the logic itself.
-//
-// NOT covered: keyPressed(KeyEvent e) itself, same reasoning as
-// WIN3DTest - it only checks e.isAltDown()/e.isControlDown() before
-// delegating, so its sub-handlers are exercised directly instead.
-// handleCtrlCodedKey's PAGE_UP_KEYCODE/PAGE_DOWN_KEYCODE cases
-// specifically need e.isShiftDown(), so those two are also left out;
-// its other four cases (arrow-key layer/impact cycling) don't touch the
-// KeyEvent at all and are covered directly.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class STUDYTest {
 
   private solarchvision_bim app;
@@ -262,18 +232,6 @@ class STUDYTest {
 
   @Test
   void handleCtrlCodedKey_cyclesTheCurrentLayerForwardAndBackward () {
-    // Correction from an earlier pass: this was previously written as
-    // "fixing a numberOfLayers bug" - that was a mistaken conclusion.
-    // numberOfLayers is genuinely 0 at its OWN declaration, but every one
-    // of the 14 LAYER_xxx globals declared immediately afterward
-    // constructs a solarchvision_LAYER, whose constructor does
-    // `this.id = numberOfLayers; numberOfLayers++;` - so by the time a
-    // fresh app finishes constructing, numberOfLayers is already
-    // correctly 14. I'd only traced the explicit `= 0` initializer and
-    // the XML-load path, not this constructor side effect, when I first
-    // called it a bug. This assignment is a harmless no-op (already 14),
-    // kept only to make the test's own setup explicit and independent of
-    // that construction-order detail.
     app.numberOfLayers = app.allLayers.length;
     app.CurrentLayer_id = 0;
 

@@ -2,27 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_WIN3D (WIN3D.pde), reached through the
-// pre-constructed `app.WIN3D` field - the 3D viewport window.
-//
-// NOT covered: drawView()/renderFrame()/drawSceneContents()/
-// saveRecordedFrame()/beginImageScale()/endImageScale()/put_3DViewport()/
-// draw_referencePivot()/drawPalette()/drawPaletteSegment()/
-// drawPaletteCaption() - all real rendering (this.graphics calls).
-// keyPressed(KeyEvent e) itself is also not covered directly: it only
-// parses a real KeyEvent's modifier keys into the navKey* fields before
-// calling dispatchNavKey() - constructing a genuine
-// processing.event.KeyEvent with the right modifier bit flags isn't
-// something this suite could verify correctly without being able to
-// actually run the result, so dispatchNavKey() and its handlers are
-// exercised directly instead, by setting the navKey* fields exactly as
-// keyPressed() itself would have. handleAltArrowKeys() is also not
-// covered: every one of its branches calls SOLARCHVISION_ShadeViewport(),
-// which calls cursor() - a real Processing surface method, the same
-// category of environment dependency as the this.g-needing color
-// utilities found while testing Earth3D.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class WIN3DTest {
 
   private solarchvision_bim app;
