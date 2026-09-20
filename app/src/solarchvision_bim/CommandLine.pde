@@ -86,14 +86,14 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
     case "OPEN": {
 
-      selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
+      selectInput("Select a file to open:", "_fileSelected_Open");
 
       break;
     }
 
     case "SAVE.AS": {
 
-      selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
+      selectOutput("Select a file to write to:", "_fileSelected_SaveAs");
 
       break;
     }
@@ -121,14 +121,14 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
     case "IMPORT": {
 
-      selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
+      selectInput("Select OBJ file to import:", "_fileSelected_Import_OBJ");
 
       break;
     }
 
     case "EXECUTE": {
 
-      selectInput("Select TXT file to execute:", "SOLARCHVISION_SelectFile_Execute_CommandFile");
+      selectInput("Select TXT file to execute:", "_fileSelected_Run_Commands");
 
       break;
     }

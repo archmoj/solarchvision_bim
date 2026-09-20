@@ -32,7 +32,10 @@ String Folder_Coordinates = BaseFolder + "/input/coordinates";
 String Folder_Land;
 String Folder_People = BaseFolder + "/input/images/people";
 String Folder_Trees = BaseFolder + "/input/images/trees";
-String Folder_Import = BaseFolder + "/import";;
+
+String Folder_Command = BaseFolder + "/command";
+String Folder_Import = BaseFolder + "/import";
+
 String Folder_Export;
 String Folder_Project;
 String Folder_Graphics;

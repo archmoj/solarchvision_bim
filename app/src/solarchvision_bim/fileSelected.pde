@@ -1,3 +1,24 @@
+void SOLARCHVISION_selectFile_New () {
+  selectInput("Specify project name:", "_fileSelected_New", new File(Folder_Project + "/_.xml"));
+}
+
+void SOLARCHVISION_selectFile_Open () {
+  selectInput("Select a file to open:", "_fileSelected_Open", new File(Folder_Project + "/_.xml"));
+}
+
+void SOLARCHVISION_selectFile_SaveAs () {
+  selectOutput("Select a file to write to:", "_fileSelected_SaveAs", new File(Folder_Project + "/_.xml"));
+}
+
+void SOLARCHVISION_selectFile_Import_OBJ () {
+  selectInput("Select OBJ file to import:", "_fileSelected_Import_OBJ", new File(Folder_Import + "/_.obj"));
+}
+
+void SOLARCHVISION_selectFile_Run_Command () {
+  selectInput("Select TXT file to execute:", "_fileSelected_Run_Commands", new File(Folder_Command + "/_.txt"));
+}
+
+
 void SOLARCHVISION_update_project_info (File selectedFile) {
 
   ProjectName = selectedFile.getName().replace(".xml", "").replace(".XML", ""); // should work most of the times!
@@ -9,7 +30,7 @@ void SOLARCHVISION_update_project_info (File selectedFile) {
   SOLARCHVISION_update_project_folders();
 }
 
-void SOLARCHVISION_fileSelected_New (File selectedFile) {
+void _fileSelected_New (File selectedFile) {
 
   String Filename = "";
 
@@ -23,7 +44,7 @@ void SOLARCHVISION_fileSelected_New (File selectedFile) {
   }
 }
 
-void SOLARCHVISION_fileSelected_Open (File selectedFile) {
+void _fileSelected_Open (File selectedFile) {
 
   String Filename = "";
 
@@ -43,7 +64,7 @@ void SOLARCHVISION_fileSelected_Open (File selectedFile) {
   }
 }
 
-void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
+void _fileSelected_SaveAs (File selectedFile) {
 
   String Filename = "";
 
@@ -59,7 +80,7 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
   }
 }
 
-void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
+void _fileSelected_Import_OBJ (File selectedFile) {
 
   String Filename = "";
 
@@ -90,7 +111,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
   }
 }
 
-void SOLARCHVISION_SelectFile_Execute_CommandFile (File selectedFile) {
+void _fileSelected_Run_Commands (File selectedFile) {
 
   String Filename = "";
 

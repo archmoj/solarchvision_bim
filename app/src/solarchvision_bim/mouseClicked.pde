@@ -1934,7 +1934,7 @@ void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_hold_project();
     /////////////////////////////
 
-    selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New", new File(Folder_Project + "/_.xml"));
+    SOLARCHVISION_selectFile_New ();
 
     SOLARCHVISION_deleteAll();
 
@@ -1954,19 +1954,19 @@ void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("Open...", () -> {
-    selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open", new File(Folder_Project + "/_.xml"));
+    selectInput("Select a file to open:", "_fileSelected_Open", new File(Folder_Project + "/_.xml"));
   });
 
   SOLARCHVISION_menuActions.put("Save As...", () -> {
-    selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs", new File(Folder_Project + "/_.xml"));
+    selectOutput("Select a file to write to:", "_fileSelected_SaveAs", new File(Folder_Project + "/_.xml"));
   });
 
   SOLARCHVISION_menuActions.put("Import 3D-model...", () -> {
-    selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel", new File(Folder_Import + "/_.obj"));
+    selectInput("Select OBJ file to import:", "_fileSelected_Import_OBJ", new File(Folder_Import + "/_.obj"));
   });
 
   SOLARCHVISION_menuActions.put("Import Command File...", () -> {
-    selectInput("Select TXT file to execute:", "SOLARCHVISION_SelectFile_Execute_CommandFile");
+    selectInput("Select TXT file to execute:", "_fileSelected_Run_Commands");
   });
 
   SOLARCHVISION_menuActions.put("Export 3D-model > OBJ (time-series)", () -> {
