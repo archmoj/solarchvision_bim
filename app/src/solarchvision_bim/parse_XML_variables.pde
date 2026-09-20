@@ -121,20 +121,9 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
 
   allSolarImpacts.from_XML(xml);
 
-  LAYER_ceilingsky.from_XML(xml);
-  LAYER_cloudcover.from_XML(xml);
-  LAYER_winddir.from_XML(xml);
-  LAYER_windspd.from_XML(xml);
-  LAYER_pressure.from_XML(xml);
-  LAYER_drybulb.from_XML(xml);
-  LAYER_relhum.from_XML(xml);
-  LAYER_dirnorrad.from_XML(xml);
-  LAYER_difhorrad.from_XML(xml);
-  LAYER_glohorrad.from_XML(xml);
-  LAYER_direffect.from_XML(xml);
-  LAYER_difeffect.from_XML(xml);
-  LAYER_precipitation.from_XML(xml);
-  LAYER_developed.from_XML(xml);
+  for (int i = 0; i < allLayers.length; i++) {
+    allLayers[i].from_XML(xml);
+  }
 
   println("End of loading XML");
 }

@@ -127,20 +127,9 @@ void SOLARCHVISION_save_project (String myFile) {
 
   allSolarImpacts.to_XML(xml);
 
-  LAYER_ceilingsky.to_XML(xml);
-  LAYER_cloudcover.to_XML(xml);
-  LAYER_winddir.to_XML(xml);
-  LAYER_windspd.to_XML(xml);
-  LAYER_pressure.to_XML(xml);
-  LAYER_drybulb.to_XML(xml);
-  LAYER_relhum.to_XML(xml);
-  LAYER_dirnorrad.to_XML(xml);
-  LAYER_difhorrad.to_XML(xml);
-  LAYER_glohorrad.to_XML(xml);
-  LAYER_direffect.to_XML(xml);
-  LAYER_difeffect.to_XML(xml);
-  LAYER_precipitation.to_XML(xml);
-  LAYER_developed.to_XML(xml);
+  for (int i = 0; i < allLayers.length; i++) {
+    allLayers[i].to_XML(xml);
+  }
 
   saveXML(xml, myFile);
 
