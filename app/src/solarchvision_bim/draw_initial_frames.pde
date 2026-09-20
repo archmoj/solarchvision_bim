@@ -1,4 +1,4 @@
-boolean drawInitialFrames () {
+boolean draw_initial_frames () {
   if (frameCount == 1) {
 
     background(223);

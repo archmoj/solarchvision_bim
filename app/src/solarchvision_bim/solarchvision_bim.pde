@@ -74,7 +74,7 @@ void draw () {
 
   WIN3D.processHeldKey();
 
-  if (!drawInitialFrames()) {
+  if (!draw_initial_frames()) {
     applyRolloutUpdate();
 
     if (FRAME_record_AUTO) {
@@ -93,48 +93,16 @@ void draw () {
       //Illustrations_Animate = 1;
     }
 
-    if (STUDY.include) {
-      if (STUDY.update) {
-
-        STUDY.drawView();
-      }
-    }
+    if (STUDY.include && STUDY.update) STUDY.drawView();
     STUDY.updated();
 
     if (STUDY.record_PDF == false) {
-      if (WORLD.include) {
-        if (WORLD.update) {
-
-          WORLD.drawView();
-        }
-      }
+      if (WORLD.include && WORLD.update) WORLD.drawView();
 
       if (WORLD.record_PDF == false) {
+
         draw_WIN3D_layers();
-
-        if(updateBars) {
-          updateBars = false;
-          UI_menuBar.revise();
-          UI_toolBar.revise();
-          UI_caseBar.revise();
-          UI_commandBar.revise();
-        }
-
-        if (UI_menuBar.update) {
-          UI_menuBar.draw();
-        }
-
-        if (UI_toolBar.update) {
-          UI_toolBar.draw();
-        }
-
-        if (UI_caseBar.update) {
-          UI_caseBar.draw();
-        }
-
-        if (UI_commandBar.update) {
-          UI_commandBar.draw();
-        }
+        draw_UI_layers();
 
         if (FRAME_record_IMG) {
           SOLARCHVISION_RecordFrame();
