@@ -1,6 +1,6 @@
 void mouseDragged() {
   if (frameCount <= Last_initializationStep) return;
-  if (SOLARCHVISION_automated != USER_INT) return;
+  if (SOLARCHVISION_automated != USER_GUI) return;
 
   if (FRAME_drag_IMG) {
     startFrameDragIfNeeded();

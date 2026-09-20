@@ -119,7 +119,7 @@ void keyPressed (KeyEvent e) {
 
   if (frameCount > Last_initializationStep) {
 
-    if (SOLARCHVISION_automated == USER_INT) {
+    if (SOLARCHVISION_automated == USER_GUI) {
       SOLARCHVISION_X_clicked = -1;
       SOLARCHVISION_Y_clicked = -1;
 
