@@ -13,7 +13,7 @@ void SOLARCHVISION_fileSelected_New (File selectedFile) {
 
   if (selectedFile == null) {
   } else {
-    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
+    Filename = _getSelectedFile(selectedFile);
 
     println("New project:", Filename);
 
@@ -27,7 +27,7 @@ void SOLARCHVISION_fileSelected_Open (File selectedFile) {
 
   if (selectedFile == null) {
   } else {
-    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
+    Filename = _getSelectedFile(selectedFile);
 
     println("Loading:", Filename);
 
@@ -47,7 +47,7 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
 
   if (selectedFile == null) {
   } else {
-    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
+    Filename = _getSelectedFile(selectedFile);
 
     println("Saving to:", Filename);
 
@@ -63,7 +63,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
   if (selectedFile == null) {
   } else {
-    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
+    Filename = _getSelectedFile(selectedFile);
 
     if (allGroups.num == 0) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -94,10 +94,14 @@ void SOLARCHVISION_SelectFile_Execute_CommandFile (File selectedFile) {
 
   if (selectedFile == null) {
   } else {
-    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
+    Filename = _getSelectedFile(selectedFile);
 
     println("Executing:", Filename);
 
     SOLARCHVISION_execute_commands_TXT(Filename);
   }
+}
+
+String _getSelectedFile(File selectedFile) {
+  return selectedFile.getAbsolutePath().replace(char(92), '/');
 }
