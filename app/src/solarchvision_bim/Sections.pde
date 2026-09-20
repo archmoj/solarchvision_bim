@@ -392,7 +392,7 @@ class solarchvision_Sections {
   }
 
   public void to_XML (XML xml) {
-    println("Saving:" + this.CLASS_STAMP);
+    //println("Saving:" + this.CLASS_STAMP);
     {
       XML parent = xml.addChild(this.CLASS_STAMP);
       int ni = this.num;
@@ -466,7 +466,7 @@ class solarchvision_Sections {
   }
 
   public void from_XML (XML xml) {
-    println("Loading:" + this.CLASS_STAMP);
+    //println("Loading:" + this.CLASS_STAMP);
     {
       XML parent = xml.getChild(this.CLASS_STAMP);
       int ni = XML_getInt(parent, "ni");

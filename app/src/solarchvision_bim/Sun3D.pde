@@ -634,7 +634,7 @@ class solarchvision_Sun3D {
 
 
   public void to_XML (XML xml) {
-    println("Saving:" + this.CLASS_STAMP);
+    //println("Saving:" + this.CLASS_STAMP);
     XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
     XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
@@ -651,7 +651,7 @@ class solarchvision_Sun3D {
   }
 
   public void from_XML (XML xml) {
-    println("Loading:" + this.CLASS_STAMP);
+    //println("Loading:" + this.CLASS_STAMP);
     XML parent = xml.getChild(this.CLASS_STAMP);
     this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
     this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");

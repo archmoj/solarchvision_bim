@@ -371,13 +371,13 @@ SOLARCHVISION_SectionParams SOLARCHVISION_computeSectionParams (int f, float[] R
       float V = GAxGB_other.dot(GAxGB);
 
       if (V < 0) {
-        println("flip face!");
+        //println("flip face!");
 
         sp.R = 180 + sp.R;
         sp.Z *= -1;
         sp.X *= -1;
       } else {
-        println("face OK!");
+        //println("face OK!");
       }
 
       sp.createNew = true;

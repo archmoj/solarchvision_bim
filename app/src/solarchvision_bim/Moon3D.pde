@@ -129,7 +129,7 @@ class solarchvision_Moon3D {
 
 
   public void to_XML (XML xml) {
-    println("Saving:" + this.CLASS_STAMP);
+    //println("Saving:" + this.CLASS_STAMP);
     XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setBoolean(parent, "displayTexture", this.displayTexture);
@@ -137,7 +137,7 @@ class solarchvision_Moon3D {
   }
 
   public void from_XML (XML xml) {
-    println("Loading:" + this.CLASS_STAMP);
+    //println("Loading:" + this.CLASS_STAMP);
     XML parent = xml.getChild(this.CLASS_STAMP);
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTexture = XML_getBoolean(parent, "displayTexture");

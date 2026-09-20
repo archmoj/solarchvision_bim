@@ -809,7 +809,7 @@ class solarchvision_Model1Ds {
 
   public void to_XML (XML xml) {
 
-    println("Saving:" + this.CLASS_STAMP);
+    //println("Saving:" + this.CLASS_STAMP);
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 
@@ -856,7 +856,7 @@ class solarchvision_Model1Ds {
 
   public void from_XML (XML xml) {
 
-    println("Loading:" + this.CLASS_STAMP);
+    //println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
