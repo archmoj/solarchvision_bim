@@ -1,3 +1,5 @@
+int numberOfLayers = 0;
+
 class solarchvision_LAYER {
 
   final static String CLASS_STAMP = "LAYER";
