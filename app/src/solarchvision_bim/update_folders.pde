@@ -1,23 +1,11 @@
 void SOLARCHVISION_update_folders () {
 
-  Folder_Import = BaseFolder + "/import";
-
   Folder_Project = BaseFolder + "/projects/model-01";
 
   Folder_GEOMET = Folder_Project + "/data/GEOMET" + "/" + RunStamp;
 
   Folder_ENSEMBLE_FORECAST = Folder_Project + "/data/NAEFS";
   Folder_ENSEMBLE_OBSERVED = Folder_Project + "/data/SWOB";
-
-  Folder_CLIMATE_CLMREC = BaseFolder + "/input/climate/CLMREC";
-  Folder_CLIMATE_TMYEPW = BaseFolder + "/input/climate/TMYEPW";
-  Folder_CLIMATE_CWEEDS = BaseFolder + "/input/climate/CWEEDS";
-
-  Folder_Coordinates = BaseFolder + "/input/coordinates";
-  WORLD.ViewFolder   = BaseFolder + "/input/images/worldmap";
-
-  Folder_People = BaseFolder + "/input/images/people";
-  Folder_Trees  = BaseFolder + "/input/images/trees";
 
   Folder_Shadings = Folder_Project + "/shadings";
 
@@ -32,19 +20,19 @@ void SOLARCHVISION_update_folders () {
   if (filenames != null) SavedScreenShots = filenames.length;
 }
 
-String Folder_CLIMATE_TMYEPW;
-String Folder_CLIMATE_CWEEDS;
-String Folder_CLIMATE_CLMREC;
+String Folder_CLIMATE_TMYEPW = BaseFolder + "/input/climate/TMYEPW";
+String Folder_CLIMATE_CWEEDS = BaseFolder + "/input/climate/CWEEDS";
+String Folder_CLIMATE_CLMREC = BaseFolder + "/input/climate/CLMREC";
 String Folder_ENSEMBLE_OBSERVED;
 String Folder_ENSEMBLE_FORECAST;
 String Folder_GEOMET;
 
-String Folder_Coordinates;
+String Folder_Coordinates = BaseFolder + "/input/coordinates";
 
 String Folder_Land;
-String Folder_People;
-String Folder_Trees;
-String Folder_Import;
+String Folder_People = BaseFolder + "/input/images/people";
+String Folder_Trees = BaseFolder + "/input/images/trees";
+String Folder_Import = BaseFolder + "/import";;
 String Folder_Export;
 String Folder_Project;
 String Folder_Graphics;

@@ -58,7 +58,7 @@ class solarchvision_WORLD {
 
   float ImageScale = 1.0;
 
-  String ViewFolder;
+  String ViewFolder = BaseFolder + "/input/images/worldmap";
 
   PImage ViewImage;
 
