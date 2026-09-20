@@ -10,7 +10,7 @@ import processing.pdf.*;
 
 String SOLARCHVISION_version = "2026";
 
-String BaseFolder = "/home/solarch/org/solarchvision_bim";
+String BaseFolder = sketchPath();
 String SceneName = "";
 
 float MessageSize = 15.0;
