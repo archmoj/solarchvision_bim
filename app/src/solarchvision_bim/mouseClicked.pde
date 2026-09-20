@@ -1934,7 +1934,7 @@ void SOLARCHVISION_buildMenuActions() {
     SOLARCHVISION_hold_project();
     /////////////////////////////
 
-    selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New");
+    selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New", new File(Folder_Project + "/_.xml"));
 
     SOLARCHVISION_deleteAll();
 
@@ -1954,15 +1954,15 @@ void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("Open...", () -> {
-    selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
+    selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open", new File(Folder_Project + "/_.xml"));
   });
 
   SOLARCHVISION_menuActions.put("Save As...", () -> {
-    selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
+    selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs", new File(Folder_Project + "/_.xml"));
   });
 
   SOLARCHVISION_menuActions.put("Import 3D-model...", () -> {
-    selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
+    selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel", new File(Folder_Import + "/_.obj"));
   });
 
   SOLARCHVISION_menuActions.put("Import Command File...", () -> {

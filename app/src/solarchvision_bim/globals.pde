@@ -138,24 +138,7 @@ PrintWriter[] FILE_outputRaw;
 PrintWriter[] FILE_outputNorms;
 PrintWriter[] FILE_outputProbs;
 
-String Folder_CLIMATE_TMYEPW;
-String Folder_CLIMATE_CWEEDS;
-String Folder_CLIMATE_CLMREC;
-String Folder_ENSEMBLE_OBSERVED;
-String Folder_ENSEMBLE_FORECAST;
-String Folder_GEOMET;
 
-String Folder_Coordinates;
-
-String Folder_Land;
-String Folder_People;
-String Folder_Trees;
-String Folder_Export;
-String Folder_Project;
-String Folder_Graphics;
-String Folder_Export3D;
-String Folder_ScreenShots;
-String Folder_Shadings;
 
 solarchvision_OperatingSystem OPESYS = new solarchvision_OperatingSystem();
 
