@@ -65,10 +65,7 @@ class solarchvision_UI_consoleBar {
 
   void keyPressed (KeyEvent e) {
     if (e.isControlDown() && (!e.isAltDown()) && (e.getKeyCode() == 86)) { // key code 86 corresponds to V (Ctrl+V)
-      String[] allLines = split(
-        getClipboardText(),
-        "\\R" // Splits by any line break sequence (\n, \r, or \r\n)
-      );
+      String[] allLines = split(getClipboardText(), '\n');
 
       for (int i = 0; i < allLines.length; i++) {
         String line = allLines[i];
