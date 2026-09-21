@@ -163,7 +163,7 @@ void keyPressed (KeyEvent e) {
 
         UI_commandBar.revise();
 
-        CommandLine_keyPressed(e);
+        console_keyPressed(e);
       }
 
       if ((e.isAltDown() != true) && (e.isControlDown() != true)) {

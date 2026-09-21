@@ -1,4 +1,4 @@
-void CommandLine_keyPressed (KeyEvent e) {
+void console_keyPressed (KeyEvent e) {
   if ((!e.isAltDown()) && (!e.isControlDown())) {
 
     if (key != CODED) {
