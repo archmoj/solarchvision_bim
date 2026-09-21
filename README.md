@@ -503,6 +503,10 @@ variants are accepted.
 -   `EXPORT.SCR`: Exports the scene in AutoCAD `.scr` format
 -   `RUN.SCRIPT`: Executes a `.txt` script file containing multiple SOLARCHVISION
     commands
+-   `REC.PNG`: Records the frame (screenshot) in `.png` format
+-   `REC.JPG`: Records the frame (screenshot) in `.jpg` format
+-   `REC.TIF`: Records the frame (screenshot) in `.tif` format
+-   `REC.BMP`: Records the frame (screenshot) in `.bmp` format
 -   `QUIT` or `EXIT`: Exits the software
 
 ------------------------------------------------------------------------

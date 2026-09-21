@@ -79,6 +79,13 @@ void draw () {
   WIN3D.processHeldKey();
 
   if (!draw_initial_frames()) {
+    if(!runAfterInitialization.equals("")) {
+      if(frameCount == 1 + Last_initializationStep) {
+        _fileSelected_RunScript(new File(runAfterInitialization));
+        runAfterInitialization = "";
+      }
+    }
+
     applyRolloutUpdate();
 
     if (FRAME_record_AUTO) {
@@ -108,6 +115,12 @@ void draw () {
       }
     }
 
+    if (SOLARCHVISION_control == USER_AUTO) {
+      if(frameCount == 2 + Last_initializationStep) {
+        exit();
+      }
+    }
+
     //noLoop(); // <<<<<<<<<<<<
   }
 }
@@ -119,7 +132,7 @@ void keyPressed (KeyEvent e) {
 
   if (frameCount > Last_initializationStep) {
 
-    if (SOLARCHVISION_automated == USER_GUI) {
+    if (SOLARCHVISION_control == USER_GUI) {
       SOLARCHVISION_X_clicked = -1;
       SOLARCHVISION_Y_clicked = -1;
 

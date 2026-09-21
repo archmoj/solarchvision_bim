@@ -1,6 +1,6 @@
 void mouseReleased() {
   if (frameCount <= Last_initializationStep) return;
-  if (SOLARCHVISION_automated != USER_GUI) return;
+  if (SOLARCHVISION_control != USER_GUI) return;
   if (dragging_started == 0) return;
 
   SOLARCHVISION_resetPickListDragState();

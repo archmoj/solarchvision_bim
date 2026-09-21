@@ -2,14 +2,29 @@ void SOLARCHVISION_runScriptFile (String FileName) {
   String[] FileALL = loadStrings(FileName);
   for (int f = 0; f < FileALL.length; f++) {
     String lineSTR = FileALL[f];
-    SOLARCHVISION_runScriptLine(lineSTR);
+
+    if(!lineSTR.equals("")) {
+      println("cmd:", lineSTR);
+
+      String hint = SOLARCHVISION_runScriptLine(lineSTR);
+
+      if(!hint.equals("")) {
+        println("out:", hint);
+      }
+    }
   }
 }
 
 String SOLARCHVISION_runScriptLine (String lineSTR) {
   String hint = "";
 
-  lineSTR = lineSTR.replace("\"", "");
+  lineSTR = lineSTR
+    .replace("\"", "")
+    .replace(",", " ")      // replace commas with spaces
+    .replaceAll(" +", " ")  // replace multiple spaces with a single space
+    .replace("=", ":")      // replace equal with colon
+    .replaceAll(":+", ":"); // replace multiple colons with a single colon
+
   String[] parts = split(lineSTR, ' ');
   String Command_CAPITAL = parts[0].toUpperCase();
 
@@ -70,7 +85,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
     }
 
     case "RUN.SCRIPT": {
-      if (parts.length > 1) _fileSelected_RunScript(new File(parts[1]));
+      if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Command + "/" + parts[1]));
       else SOLARCHVISION_selectFile_RunScript();
       break;
     }
@@ -100,13 +115,33 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       break;
     }
 
+    case "REC.PNG": {
+      SOLARCHVISION_screenShot(".png");
+      break;
+    }
+
+    case "REC.JPG": {
+      SOLARCHVISION_screenShot(".jpg");
+      break;
+    }
+
+    case "REC.TIF": {
+      SOLARCHVISION_screenShot(".tif");
+      break;
+    }
+
+    case "REC.BMP": {
+      SOLARCHVISION_screenShot(".bmp");
+      break;
+    }
+
     case "MOVE": {
       if (parts.length > 1) {
         float dx = 0;
         float dy = 0;
         float dz = 0;
         for (int q = 1; q < parts.length; q++) {
-          String[] parameters = split(parts[q], '=');
+          String[] parameters = split(parts[q], ':');
           if (parameters.length > 1) {
             String low_case = parameters[0].toLowerCase();
                  if (low_case.equals("dx")) dx = float(parameters[1]);
@@ -142,7 +177,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float z = 0;
         float r = 0;
         for (int q = 1; q < parts.length; q++) {
-          String[] parameters = split(parts[q], '=');
+          String[] parameters = split(parts[q], ':');
           if (parameters.length > 1) {
             String low_case = parameters[0].toLowerCase();
                  if (low_case.equals("r")) r = float(parameters[1]);
@@ -174,7 +209,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float y = 0;
         float z = 0;
         for (int q = 1; q < parts.length; q++) {
-          String[] parameters = split(parts[q], '=');
+          String[] parameters = split(parts[q], ':');
           if (parameters.length > 1) {
             String low_case = parameters[0].toLowerCase();
                  if (low_case.equals("s")) {sx = float(parameters[1]); sy = sx; sz = sx;}
@@ -342,7 +377,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float Lf = 0.1; //LeafSize
 
         for (int q = 1; q < parts.length; q++) {
-          String[] parameters = split(parts[q], '=');
+          String[] parameters = split(parts[q], ':');
           if (parameters.length > 1) {
             String low_case = parameters[0].toLowerCase();
                  if (low_case.equals("m")) m = int(parameters[1]);
@@ -1069,7 +1104,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         int clz = 0;
         float[][] points = new float [0][3];
         for (int q = 1; q < parts.length; q++) {
-          String[] parameters = split(parts[q], '=');
+          String[] parameters = split(parts[q], ':');
           if (parameters.length > 1) {
             String low_case = parameters[0].toLowerCase();
                  if (low_case.equals("m")) m = int(parameters[1]);
@@ -1114,7 +1149,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float rot = 0;
         float ang = 360; // complete circle
         for (int q = 1; q < parts.length; q++) {
-          String[] parameters = split(parts[q], '=');
+          String[] parameters = split(parts[q], ':');
           if (parameters.length > 1) {
             String low_case = parameters[0].toLowerCase();
                  if (low_case.equals("m")) m = int(parameters[1]);
@@ -1570,7 +1605,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
 HashMap<String,String> parseParams(String[] parts) {
   HashMap<String,String> p = new HashMap<String,String>();
   for (int q = 1; q < parts.length; q++) {
-    String[] kv = split(parts[q], '=');
+    String[] kv = split(parts[q], ':');
     if (kv.length > 1) {
       p.put(kv[0].toLowerCase(), kv[1]);
     }

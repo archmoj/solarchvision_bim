@@ -2,7 +2,7 @@ void mouseMoved () {
 
   if (frameCount > Last_initializationStep) {
 
-    if (SOLARCHVISION_automated == USER_GUI) {
+    if (SOLARCHVISION_control == USER_GUI) {
 
       if (UI_menuBar.selected_parent != -1) {
 

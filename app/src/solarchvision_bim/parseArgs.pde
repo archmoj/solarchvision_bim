@@ -11,6 +11,8 @@ void parseArgs(String[] passedArgs) {
   }
 }
 
+String runAfterInitialization = "";
+
 void _useArg(String arg) {
   String CAP_arg = arg.toUpperCase();
 
@@ -20,16 +22,22 @@ void _useArg(String arg) {
   String input_str = "";
   String[] _tokens;
 
-  _at = CAP_arg.indexOf("AUTO");
+  _at = CAP_arg.indexOf("USER");
   if (_at == 0) {
     _tokens = split(CAP_arg, '=');
     if (_tokens.length > 1) {
       input_str = _tokens[1];
-      if (input_str.equals("USER")) SOLARCHVISION_automated = USER_GUI;
-      else if (input_str.equals("PNG")) SOLARCHVISION_automated = AUTO_PNG;
-      else if (input_str.equals("JPG")) SOLARCHVISION_automated = AUTO_JPG;
-      else if (input_str.equals("TIF")) SOLARCHVISION_automated = AUTO_TIF;
-      else if (input_str.equals("BMP")) SOLARCHVISION_automated = AUTO_BMP;
+      if (input_str.equals("GUI")) SOLARCHVISION_control = USER_GUI;
+      else if (input_str.equals("AUTO")) SOLARCHVISION_control = USER_AUTO;
+    }
+  }
+
+  _at = CAP_arg.indexOf("RUN");
+  if (_at == 0) {
+    _tokens = split(arg, '=');
+    if (_tokens.length > 1) {
+      input_str = _tokens[1];
+      if (!input_str.equals("")) runAfterInitialization = input_str;
     }
   }
 }

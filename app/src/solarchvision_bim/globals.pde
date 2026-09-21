@@ -91,12 +91,9 @@ int CLIMATIC_SolarForecast = 0; //                                   Used for so
 int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
 
 static final int USER_GUI = 0;
-static final int AUTO_PNG = 1;
-static final int AUTO_JPG = 2;
-static final int AUTO_TIF = 3;
-static final int AUTO_BMP = 4;
+static final int USER_AUTO = 1;
 
-int SOLARCHVISION_automated = USER_GUI;
+int SOLARCHVISION_control = USER_GUI;
 
 String[] skyScenario_Title = {
   "", "All", "Cloudy\nPattern", "Partly\nCloudy\nPattern", "Sunny\nPattern"
@@ -285,9 +282,20 @@ String createStamp (int increment, String CLASS_STAMP) {
   return txt;
 }
 
+String ScreenShotType = ".jpg";
+
 void SOLARCHVISION_RecordFrame () {
 
-  saveFrame(Folder_ScreenShots + "/" + createStamp(1, "Screen") + ".jpg");
+  String Filename = Folder_ScreenShots + "/" + createStamp(1, "Screen") + ScreenShotType;
+
+  println("saving:", Filename);
+
+  saveFrame(Filename);
+}
+
+void SOLARCHVISION_screenShot (String fileFormat) {
+  ScreenShotType = fileFormat;
+  FRAME_record_IMG = true;
 }
 
 String MAKE_Filename (String beginName) {
