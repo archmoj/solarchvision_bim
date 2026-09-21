@@ -7,7 +7,8 @@ void SOLARCHVISION_runScriptFile (String FileName) {
 }
 
 String SOLARCHVISION_runScriptLine (String lineSTR) {
-  String return_message = "";
+  String hint = "";
+
   lineSTR = lineSTR.replace("\"", "");
   String[] parts = split(lineSTR, ' ');
   String Command_CAPITAL = parts[0].toUpperCase();
@@ -122,7 +123,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_view_changed();
       }
       else {
-        return_message = "Move dx=? dy=? dz=?";
+        hint = "Move dx=? dy=? dz=?";
       }
       break;
     }
@@ -157,7 +158,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_view_changed();
       }
       else {
-        return_message = "Rotate[X|Y|Z] r=? x=? y=? z=?";
+        hint = "Rotate[X|Y|Z] r=? x=? y=? z=?";
         UI_setTo_Modify_Rotate(2);
         UI_toolBar.revise();
       }
@@ -195,7 +196,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_view_changed();
       }
       else {
-        return_message = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
+        hint = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
       }
       break;
     }
@@ -219,7 +220,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_view_changed();
       }
       else {
-        return_message = "Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras";
+        hint = "Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras";
       }
       break;
     }
@@ -247,7 +248,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_view_changed();
       }
       else {
-        return_message = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
+        hint = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
       }
       break;
     }
@@ -279,7 +280,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_view_changed();
       }
       else {
-        return_message = "Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint";
+        hint = "Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint";
       }
       break;
     }
@@ -296,7 +297,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_view_changed();
       }
       else {
-        return_message = "Person m=? x=? y=? z=?";
+        hint = "Person m=? x=? y=? z=?";
         UI_setTo_Create_Person();
       }
       break;
@@ -317,7 +318,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Tree2 m=? x=? y=? z=? h=?";
+        hint = "Tree2 m=? x=? y=? z=? h=?";
         UI_setTo_Create_Tree();
       }
       break;
@@ -366,7 +367,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Tree1 m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
+        hint = "Tree1 m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
         UI_setTo_Create_allModel1Ds();
       }
       break;
@@ -393,7 +394,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
+        hint = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
         UI_setTo_Create_Box();
       }
       break;
@@ -421,7 +422,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
+        hint = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
         UI_setTo_Create_Box();
       }
       break;
@@ -450,7 +451,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
+        hint = "House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
         UI_setTo_Create_House3();
       }
       break;
@@ -479,7 +480,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
+        hint = "House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
         UI_setTo_Create_House2();
       }
       break;
@@ -508,7 +509,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
+        hint = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
         UI_setTo_Create_House1();
       }
       break;
@@ -536,7 +537,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
+        hint = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
         UI_setTo_Create_Cylinder();
       }
       break;
@@ -563,7 +564,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
+        hint = "Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
         UI_setTo_Create_Sphere();
       }
       break;
@@ -595,7 +596,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?";
+        hint = "SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?";
         UI_setTo_Create_Sphere();
       }
       break;
@@ -624,7 +625,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
+        hint = "Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
         UI_setTo_Create_Cushion();
       }
       break;
@@ -652,7 +653,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
+        hint = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
         UI_setTo_Create_Octahedron();
       }
       break;
@@ -678,7 +679,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
+        hint = "Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
         UI_setTo_Create_Icosahedron();
       }
       break;
@@ -706,7 +707,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
+        hint = "PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
         UI_setTo_Create_Extrude();
       }
       break;
@@ -734,7 +735,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
+        hint = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
         UI_setTo_Create_Hyper();
       }
       break;
@@ -761,7 +762,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
+        hint = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
         UI_setTo_Create_Plane();
       }
       break;
@@ -788,7 +789,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
+        hint = "Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
       }
       break;
     }
@@ -817,7 +818,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Mesh3 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=?";
+        hint = "Mesh3 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=?";
       }
       break;
     }
@@ -849,7 +850,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Mesh4 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=?";
+        hint = "Mesh4 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=?";
       }
       break;
     }
@@ -884,7 +885,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Mesh5 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=? x5=? y5=? z5=?";
+        hint = "Mesh5 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=? x5=? y5=? z5=?";
       }
       break;
     }
@@ -922,7 +923,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Mesh6 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=? x5=? y5=? z5=? x6=? y6=? z6=?";
+        hint = "Mesh6 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=? x5=? y5=? z5=? x6=? y6=? z6=?";
       }
       break;
     }
@@ -949,7 +950,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "H_Shade m=? tes=? lyr=? x=? y=? z=? d=? w=? a=? b=?";
+        hint = "H_Shade m=? tes=? lyr=? x=? y=? z=? d=? w=? a=? b=?";
       }
       break;
     }
@@ -976,7 +977,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "V_Shade m=? tes=? lyr=? x=? y=? z=? d=? h=? a=? b=?";
+        hint = "V_Shade m=? tes=? lyr=? x=? y=? z=? d=? h=? a=? b=?";
       }
       break;
     }
@@ -1003,7 +1004,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
+        hint = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
         UI_setTo_Create_Solid();
       }
       break;
@@ -1027,7 +1028,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Section x=? y=? z=? r=? u=? v=? t=? i=? j=?";
+        hint = "Section x=? y=? z=? r=? u=? v=? t=? i=? j=?";
         UI_setTo_Create_Section();
       }
       break;
@@ -1052,7 +1053,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Camera px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=? t=?";
+        hint = "Camera px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=? t=?";
         UI_setTo_Create_Camera();
       }
       break;
@@ -1091,7 +1092,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Polyline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
+        hint = "Polyline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
         UI_setTo_Create_Polyline();
       }
       break;
@@ -1136,7 +1137,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
       }
       else {
-        return_message = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
+        hint = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
         UI_setTo_Create_Polyline();
       }
       break;
@@ -1159,7 +1160,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_view_changed();
       }
       else {
-        return_message = "PIVOT minX midY maxZ or other variations";
+        hint = "PIVOT minX midY maxZ or other variations";
       }
       break;
     }
@@ -1531,7 +1532,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_update_station(0);
       }
       else {
-        return_message = "SetLonLat ? ?";
+        hint = "SetLonLat ? ?";
       }
       break;
     }
@@ -1542,7 +1543,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_update_station(0);
       }
       else {
-        return_message = "SetLon ?";
+        hint = "SetLon ?";
       }
       break;
     }
@@ -1553,7 +1554,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         SOLARCHVISION_update_station(0);
       }
       else {
-        return_message = "SetLat ?";
+        hint = "SetLat ?";
       }
       break;
     }
@@ -1563,7 +1564,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       break;
   }
 
-  return return_message;
+  return hint;
 }
 
 HashMap<String,String> parseParams(String[] parts) {
