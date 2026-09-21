@@ -293,7 +293,7 @@ class solarchvision_Delete3D {
 
   void selected_Groups () {
     /////////////////////////////
-    //SOLARCHVISION_hold_project();
+    //SOLARCHVISION_holdProject();
     /////////////////////////////
     Select3D.convert_Groups_to_Vertices();
 

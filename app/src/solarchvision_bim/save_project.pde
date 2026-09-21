@@ -1,4 +1,4 @@
-void SOLARCHVISION_save_project (String myFile) {
+void SOLARCHVISION_saveProject (String myFile) {
 
   myFile = myFile.replace(char(92), '/');
 

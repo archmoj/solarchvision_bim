@@ -721,16 +721,16 @@ float[] SunR_Rotated;
 
 String save_folder = "";
 
-void SOLARCHVISION_hold_project () {
+void SOLARCHVISION_holdProject () {
 
   HoldStamp = nf(millis(), 0);
 
   String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
 
-  SOLARCHVISION_save_project(myFile);
+  SOLARCHVISION_saveProject(myFile);
 }
 
-void SOLARCHVISION_fetch_project () {
+void SOLARCHVISION_fetchProject () {
 
   String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
 

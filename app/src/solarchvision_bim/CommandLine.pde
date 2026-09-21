@@ -17,7 +17,7 @@ int getI(HashMap<String,String> p, String key, int def) {
   return p.containsKey(key) ? int(p.get(key)) : def;
 }
 
-void COMIN_keyPressed (KeyEvent e) {
+void CommandLine_keyPressed (KeyEvent e) {
   if ((!e.isAltDown()) && (!e.isControlDown())) {
 
     if (key != CODED) {
@@ -27,7 +27,7 @@ void COMIN_keyPressed (KeyEvent e) {
           String[] newCommand = {""};
           String[] newMessage = {""};
 
-          allMessages[allMessages.length - 1] = SOLARCHVISION_executeCommand(allCommands[allCommands.length - 1]);
+          allMessages[allMessages.length - 1] = SOLARCHVISION_runScriptLine(allCommands[allCommands.length - 1]);
 
           allCommands = concat(allCommands, newCommand);
           allMessages = concat(allMessages, newMessage);
@@ -49,7 +49,7 @@ void COMIN_keyPressed (KeyEvent e) {
   }
 }
 
-void SOLARCHVISION_execute_commands_TXT (String FileName) {
+void SOLARCHVISION_runScriptFile (String FileName) {
 
   String[] FileALL = loadStrings(FileName);
 
@@ -57,12 +57,12 @@ void SOLARCHVISION_execute_commands_TXT (String FileName) {
 
     String lineSTR = FileALL[f];
 
-    SOLARCHVISION_executeCommand(lineSTR);
+    SOLARCHVISION_runScriptLine(lineSTR);
   }
 
 }
 
-String SOLARCHVISION_executeCommand (String lineSTR) {
+String SOLARCHVISION_runScriptLine (String lineSTR) {
 
   String return_message = "";
 
@@ -100,21 +100,21 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
     case "SAVE": {
 
-      SOLARCHVISION_save_project(Folder_Project + "/" + ProjectName + ".xml");
+      SOLARCHVISION_saveProject(Folder_Project + "/" + ProjectName + ".xml");
 
       break;
     }
 
     case "HOLD": {
 
-      SOLARCHVISION_hold_project();
+      SOLARCHVISION_holdProject();
 
       break;
     }
 
     case "FETCH": {
 
-      SOLARCHVISION_fetch_project();
+      SOLARCHVISION_fetchProject();
 
       break;
     }

@@ -1931,7 +1931,7 @@ void SOLARCHVISION_buildMenuActions() {
 
   SOLARCHVISION_menuActions.put("New", () -> {
     /////////////////////////////
-    SOLARCHVISION_hold_project();
+    SOLARCHVISION_holdProject();
     /////////////////////////////
 
     SOLARCHVISION_selectFile_New();
@@ -1942,15 +1942,15 @@ void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("Save", () -> {
-    SOLARCHVISION_save_project(Folder_Project + "/" + ProjectName + ".xml");
+    SOLARCHVISION_saveProject(Folder_Project + "/" + ProjectName + ".xml");
   });
 
   SOLARCHVISION_menuActions.put("Hold", () -> {
-    SOLARCHVISION_hold_project();
+    SOLARCHVISION_holdProject();
   });
 
   SOLARCHVISION_menuActions.put("Fetch", () -> {
-    SOLARCHVISION_fetch_project();
+    SOLARCHVISION_fetchProject();
   });
 
   SOLARCHVISION_menuActions.put("Open...", () -> {

@@ -76,7 +76,7 @@ void _fileSelected_SaveAs (File selectedFile) {
 
     SOLARCHVISION_update_project_info(selectedFile);
 
-    SOLARCHVISION_save_project(Filename);
+    SOLARCHVISION_saveProject(Filename);
   }
 }
 
@@ -121,7 +121,7 @@ void _fileSelected_RunScript (File selectedFile) {
 
     println("Executing:", Filename);
 
-    SOLARCHVISION_execute_commands_TXT(Filename);
+    SOLARCHVISION_runScriptFile(Filename);
   }
 }
 
