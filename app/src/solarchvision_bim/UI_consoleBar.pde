@@ -62,7 +62,9 @@ class solarchvision_UI_consoleBar {
   void keyPressed (KeyEvent e) {
     if ((!e.isAltDown()) && (!e.isControlDown())) {
 
-      if (key != CODED) {
+      if(key == 22) { // ASCII code 22 corresponds to Ctrl+V
+        allCommands[allCommands.length - 1] += pasteTextFromClipboard();
+      } else if (key != CODED) {
         switch(key) {
 
           case ENTER:
@@ -90,4 +92,20 @@ class solarchvision_UI_consoleBar {
       }
     }
   }
+}
+
+private static String pasteTextFromClipboard () {
+  try {
+      Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+      Transferable contents = clipboard.getContents(null);
+      if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+          return (String) contents.getTransferData(DataFlavor.stringFlavor);
+      }
+  } catch (UnsupportedFlavorException | IOException e) {
+      e.printStackTrace();
+  } catch (IllegalStateException e) {
+      System.err.println("Clipboard is busy. Try again.");
+  }
+
+  return null;
 }
