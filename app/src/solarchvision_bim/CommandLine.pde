@@ -135,35 +135,35 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
     case "EXPORT.OBJ.TIMESERIES": {
 
-      SOLARCHVISION_export_objects_OBJ_timeSeries();
+      SOLARCHVISION_exportObj_timeSeries();
 
       break;
     }
 
     case "EXPORT.OBJ.DATESERIES": {
 
-      SOLARCHVISION_export_objects_OBJ_dateSeries();
+      SOLARCHVISION_exportObj_dateSeries();
 
       break;
     }
 
     case "EXPORT.OBJ": {
 
-      SOLARCHVISION_export_objects_OBJ("");
+      SOLARCHVISION_exportObj("");
 
       break;
     }
 
     case "EXPORT.RAD": {
 
-      SOLARCHVISION_export_objects_RAD();
+      SOLARCHVISION_exportRadiance();
 
       break;
     }
 
     case "EXPORT.SCR": {
 
-      SOLARCHVISION_export_objects_SCR();
+      SOLARCHVISION_exportAutocadScript();
 
       break;
     }

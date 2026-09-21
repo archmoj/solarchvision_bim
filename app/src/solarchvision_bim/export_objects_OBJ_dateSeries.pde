@@ -1,4 +1,4 @@
-void SOLARCHVISION_export_objects_OBJ_dateSeries () {
+void SOLARCHVISION_exportObj_dateSeries () {
 
   int keep_IMPACTS_displayDay = IMPACTS_displayDay;
 
@@ -6,7 +6,7 @@ void SOLARCHVISION_export_objects_OBJ_dateSeries () {
 
     IMPACTS_displayDay = j;
 
-    SOLARCHVISION_export_objects_OBJ("_" + nf(j, 3));
+    SOLARCHVISION_exportObj("_" + nf(j, 3));
 
   }
 

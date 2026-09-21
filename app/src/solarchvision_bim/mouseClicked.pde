@@ -1970,27 +1970,27 @@ void SOLARCHVISION_buildMenuActions() {
   });
 
   SOLARCHVISION_menuActions.put("Export 3D-model > OBJ (time-series)", () -> {
-    SOLARCHVISION_export_objects_OBJ_timeSeries();
+    SOLARCHVISION_exportObj_timeSeries();
   });
 
   SOLARCHVISION_menuActions.put("Export 3D-model > OBJ (date-series)", () -> {
-    SOLARCHVISION_export_objects_OBJ_dateSeries();
+    SOLARCHVISION_exportObj_dateSeries();
   });
 
   SOLARCHVISION_menuActions.put("Export 3D-model > OBJ", () -> {
-    SOLARCHVISION_export_objects_OBJ("");
+    SOLARCHVISION_exportObj("");
   });
 
   SOLARCHVISION_menuActions.put("Export 3D-model > HTML", () -> {
-    SOLARCHVISION_export_objects_HTML();
+    SOLARCHVISION_exportHtml();
   });
 
   SOLARCHVISION_menuActions.put("Export 3D-model > RAD", () -> {
-    SOLARCHVISION_export_objects_RAD();
+    SOLARCHVISION_exportRadiance();
   });
 
   SOLARCHVISION_menuActions.put("Export 3D-model > SCR", () -> {
-    SOLARCHVISION_export_objects_SCR();
+    SOLARCHVISION_exportAutocadScript();
   });
 
   SOLARCHVISION_menuActions.put("Quit", () -> {
