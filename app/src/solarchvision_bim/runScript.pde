@@ -22,23 +22,9 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       break;
     }
 
-    case "NEW": {
-      SOLARCHVISION_selectFile_New();
-      break;
-    }
-
-    case "OPEN": {
-      SOLARCHVISION_selectFile_Open();
-      break;
-    }
-
-    case "SAVE.AS": {
-      SOLARCHVISION_selectFile_SaveAs();
-      break;
-    }
-
-    case "SAVE": {
-      SOLARCHVISION_saveProject(Folder_Project + "/" + ProjectName + ".xml");
+    case "QUIT":
+    case "EXIT": {
+      exit();
       break;
     }
 
@@ -52,13 +38,39 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       break;
     }
 
-    case "IMPORT": {
-      SOLARCHVISION_selectFile_ImportObj();
+    case "NEW": {
+      if (parts.length > 1) _fileSelected_New(new File(parts[1]));
+      else SOLARCHVISION_selectFile_New();
       break;
     }
 
-    case "EXECUTE": {
-      SOLARCHVISION_selectFile_RunScript();
+    case "OPEN": {
+      if (parts.length > 1) _fileSelected_Open(new File(parts[1]));
+      else SOLARCHVISION_selectFile_Open();
+      break;
+    }
+
+    case "SAVE.AS": {
+      if (parts.length > 1) _fileSelected_SaveAs(new File(parts[1]));
+      else SOLARCHVISION_selectFile_SaveAs();
+      break;
+    }
+
+    case "SAVE": {
+      if (parts.length > 1) SOLARCHVISION_saveProject(parts[1]);
+      else SOLARCHVISION_saveProject(Folder_Project + "/" + ProjectName + ".xml");
+      break;
+    }
+
+    case "IMPORT.OBJ": {
+      if (parts.length > 1) _fileSelected_ImportObj(new File(parts[1]));
+      else SOLARCHVISION_selectFile_ImportObj();
+      break;
+    }
+
+    case "RUN.SCRIPT": {
+      if (parts.length > 1) _fileSelected_RunScript(new File(parts[1]));
+      else SOLARCHVISION_selectFile_RunScript();
       break;
     }
 
@@ -84,11 +96,6 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
 
     case "EXPORT.SCR": {
       SOLARCHVISION_exportAutocadScript();
-      break;
-    }
-
-    case "QUIT": {
-      exit();
       break;
     }
 
@@ -1517,14 +1524,36 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       break;
     }
 
-    case "LONLAT": {
+    case "SETLONLAT": {
       if (parts.length > 2) {
         STATION.setLatitude(float(parts[2]));
         STATION.setLongitude(float(parts[1]));
         SOLARCHVISION_update_station(0);
       }
       else {
-        return_message = "LonLat ? ?";
+        return_message = "SetLonLat ? ?";
+      }
+      break;
+    }
+
+    case "SETLON": {
+      if (parts.length > 1) {
+        STATION.setLongitude(float(parts[1]));
+        SOLARCHVISION_update_station(0);
+      }
+      else {
+        return_message = "SetLon ?";
+      }
+      break;
+    }
+
+    case "SETLAT": {
+      if (parts.length > 1) {
+        STATION.setLatitude(float(parts[1]));
+        SOLARCHVISION_update_station(0);
+      }
+      else {
+        return_message = "SetLat ?";
       }
       break;
     }

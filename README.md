@@ -487,31 +487,44 @@ variants are accepted.
 ------------------------------------------------------------------------
 
 -   `CLS`: Clears the command line screen
+-   `NEW`: New project
 -   `OPEN`: Opens a saved project
 -   `SAVE.AS`: Saves the project with a new name
 -   `SAVE`: Saves the project
 -   `HOLD`: Holds the scene
 -   `FETCH`: Fetches the scene
--   `IMPORT`: Imports an OBJ file
--   `EXECUTE`: Executes a script file containing multiple SOLARCHVISION
-    commands
--   `EXPORT.OBJ.TIMESERIES`: Exports the scene in OBJ format at
+-   `IMPORT.OBJ`: Imports a `.obj` file
+-   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
     different hours (multiple files)
--   `EXPORT.OBJ.DATESERIES`: Exports the scene in OBJ format at
+-   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at
     different days (multiple files)
--   `EXPORT.OBJ`: Exports the scene in OBJ format
--   `EXPORT.RAD`: Exports the scene in Radiance RAD format
--   `EXPORT.SCR`: Exports the scene in AutoCAD SCR format
--   `QUIT`: Exits the software
+-   `EXPORT.OBJ`: Exports the scene in `.obj` format
+-   `EXPORT.RAD`: Exports the scene in Radiance `.rad` format
+-   `EXPORT.SCR`: Exports the scene in AutoCAD `.scr` format
+-   `RUN.SCRIPT`: Executes a `.txt` script file containing multiple SOLARCHVISION
+    commands
+-   `QUIT` or `EXIT`: Exits the software
 
 ------------------------------------------------------------------------
 
 ### Location
 
--   `LONLAT`: Sets the longitude and latitude of the location
+-   `SETLONLAT`: Sets the longitude and latitude of the location
 
 ```
-LonLat ? ?
+SetLonLat ? ?
+```
+
+-   `SETLON`: Sets the longitude of the location
+
+```
+SetLon ?
+```
+
+-   `SETLAT`: Sets the latitude of the location
+
+```
+SetLat ?
 ```
 
 ------------------------------------------------------------------------
