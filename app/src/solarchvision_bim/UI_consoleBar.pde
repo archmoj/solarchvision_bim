@@ -59,22 +59,40 @@ class solarchvision_UI_consoleBar {
     this.update = false;
   }
 
-  void keyPressed (KeyEvent e) {
-    if ((!e.isAltDown()) && (!e.isControlDown())) {
+  String runLastCommand() {
+    return SOLARCHVISION_runScriptLine(allCommands[allCommands.length - 1]);
+  }
 
-      if(key == 22) { // ASCII code 22 corresponds to Ctrl+V
-        allCommands[allCommands.length - 1] += pasteTextFromClipboard();
-      } else if (key != CODED) {
+  void keyPressed (KeyEvent e) {
+    if (e.isControlDown() && (!e.isAltDown()) && (e.getKeyCode() == 86)) { // key code 86 corresponds to V (Ctrl+V)
+      String[] allLines = split(
+        getClipboardText(),
+        "\\R" // Splits by any line break sequence (\n, \r, or \r\n)
+      );
+
+      for (int i = 0; i < allLines.length; i++) {
+        String line = allLines[i];
+        if(i == 0) {
+          allCommands[allCommands.length - 1] += line;
+        } else {
+          // run previous command before adding new line
+          allMessages[allMessages.length - 1] = runLastCommand();
+          allCommands = concat(allCommands, new String[] {""});
+          allMessages = concat(allMessages, new String[] {""});
+
+          // add new line
+          allCommands[allCommands.length - 1] = line;
+        }
+      }
+    } else if ((!e.isAltDown()) && (!e.isControlDown())) {
+
+      if (key != CODED) {
         switch(key) {
 
           case ENTER:
-            String[] newCommand = {""};
-            String[] newMessage = {""};
-
-            allMessages[allMessages.length - 1] = SOLARCHVISION_runScriptLine(allCommands[allCommands.length - 1]);
-
-            allCommands = concat(allCommands, newCommand);
-            allMessages = concat(allMessages, newMessage);
+            allMessages[allMessages.length - 1] = runLastCommand();
+            allCommands = concat(allCommands, new String[] {""});
+            allMessages = concat(allMessages, new String[] {""});
             break;
 
           case BACKSPACE:
@@ -94,7 +112,7 @@ class solarchvision_UI_consoleBar {
   }
 }
 
-private static String pasteTextFromClipboard () {
+private static String getClipboardText () {
   try {
       Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
       Transferable contents = clipboard.getContents(null);

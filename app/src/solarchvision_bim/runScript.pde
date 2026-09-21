@@ -1,5 +1,10 @@
 void SOLARCHVISION_runScriptFile (String FileName) {
   String[] FileALL = loadStrings(FileName);
+
+  SOLARCHVISION_runScriptLines(FileALL);
+}
+
+void SOLARCHVISION_runScriptLines (String[] FileALL) {
   for (int f = 0; f < FileALL.length; f++) {
     String lineSTR = FileALL[f];
 
