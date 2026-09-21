@@ -22,13 +22,18 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       break;
     }
 
+    case "NEW": {
+      SOLARCHVISION_selectFile_New();
+      break;
+    }
+
     case "OPEN": {
-      selectInput("Select a file to open:", "_fileSelected_Open");
+      SOLARCHVISION_selectFile_Open();
       break;
     }
 
     case "SAVE.AS": {
-      selectOutput("Select a file to write to:", "_fileSelected_SaveAs");
+      SOLARCHVISION_selectFile_SaveAs();
       break;
     }
 
@@ -48,12 +53,12 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
     }
 
     case "IMPORT": {
-      selectInput("Select OBJ file to import:", "_fileSelected_ImportObj");
+      SOLARCHVISION_selectFile_ImportObj();
       break;
     }
 
     case "EXECUTE": {
-      selectInput("Select TXT file to execute:", "_fileSelected_RunScript");
+      SOLARCHVISION_selectFile_RunScript();
       break;
     }
 
