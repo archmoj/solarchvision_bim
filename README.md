@@ -587,7 +587,7 @@ Tree2 m=? x=? y=? z=? h=?
 
 -   `TREE1`: Creates a parametric fractal tree in 3D
 ```
-Tree1 m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?
+Tree1 m=? seed=? degree=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? trunk=? leaf=?
 ```
 
 -   `BOX2P`: Creates a box using two corner points

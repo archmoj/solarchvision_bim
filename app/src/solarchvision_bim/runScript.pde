@@ -351,7 +351,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
-        float h = getF(p, "h", 5.0);
+        float h = getF(p, "h", 10.0);
         if (h != 0) {
           allModel2Ds.create(t, m, x, y, z, h);
           SOLARCHVISION_view_changed();
@@ -366,20 +366,21 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
 
     case "TREE1": {
       if (parts.length > 1) {
+
         int m = 0;
-        int seed = 0; //PlantSeed
-        int degree = 5; //PlantDegree
+        int seed = -1;
+        int degree = 8;
         float x = 0;
         float y = 0;
         float z = 0;
-        float h = 5.0;
-        float r = floor(random(360));
-        float tilt = floor(random(90));
-        float twist = floor(random(360));
-        float ratio = 0.5 + random(0.5);
-        float base = 0.0 + random(2.0);
-        float Tk = 1.0; //TrunkSize
-        float Lf = 0.1; //LeafSize
+        float h = 10;
+        float r = 0;
+        float tilt = 60;
+        float twist = 137.5;
+        float ratio = 0.8;
+        float base = 2.0;
+        float trunk = 1.0;
+        float leaf = 0.1;
 
         for (int q = 1; q < parts.length; q++) {
           String[] parameters = split(parts[q], ':');
@@ -392,22 +393,22 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
             else if (low_case.equals("y")) y = float(parameters[1]);
             else if (low_case.equals("z")) z = float(parameters[1]);
             else if (low_case.equals("h")) h = float(parameters[1]);
-            else if (low_case.equals("r")) r = float(parameters[1]) * PI / 180.0;
-            else if (low_case.equals("tilt")) tilt = float(parameters[1]) * PI / 180.0;
-            else if (low_case.equals("twist")) twist = float(parameters[1]) * PI / 180.0;
+            else if (low_case.equals("r")) r = float(parameters[1]);
+            else if (low_case.equals("tilt")) tilt = float(parameters[1]);
+            else if (low_case.equals("twist")) twist = float(parameters[1]);
             else if (low_case.equals("ratio")) ratio = float(parameters[1]);
             else if (low_case.equals("base")) base = float(parameters[1]);
-            else if (low_case.equals("tk")) Tk = float(parameters[1]);
-            else if (low_case.equals("lf")) Lf = float(parameters[1]);
+            else if (low_case.equals("trunk")) trunk = float(parameters[1]);
+            else if (low_case.equals("leaf")) leaf = float(parameters[1]);
           }
         }
         if (h != 0) {
-          allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, Tk, Lf);
+          allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, trunk, leaf);
           SOLARCHVISION_view_changed();
         }
       }
       else {
-        hint = "Tree1 m=? degree=? seed=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? Tk=? Lf=?";
+        hint = "Tree1 m=? seed=? degree=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? trunk=? leaf=?";
         UI_setTo_Create_allModel1Ds();
       }
       break;
