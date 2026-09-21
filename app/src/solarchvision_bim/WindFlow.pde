@@ -301,7 +301,7 @@ class solarchvision_WindFlow {
 
   public void to_XML (XML xml) {
 
-    //println("Saving:" + this.CLASS_STAMP);
+    //printlnSaving(this.CLASS_STAMP);
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 

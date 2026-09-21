@@ -30,7 +30,7 @@ class solarchvision_LAYER {
 
   public void to_XML (XML xml) {
 
-    println("Saving:" + this.CLASS_STAMP + "_" + nf(this.id, 0));
+    printlnSaving(this.CLASS_STAMP + "_" + nf(this.id, 0));
 
     XML parent = xml.addChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
 

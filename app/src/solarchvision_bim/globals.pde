@@ -282,13 +282,52 @@ String createStamp (int increment, String CLASS_STAMP) {
   return txt;
 }
 
+final String ANSI_RESET = "\u001B[0m";
+
+final String ANSI_BLACK = "\u001B[30m";
+final String ANSI_RED = "\u001B[31m";
+final String ANSI_GREEN = "\u001B[32m";
+final String ANSI_YELLOW = "\u001B[33m";
+final String ANSI_BLUE = "\u001B[34m";
+final String ANSI_PURPLE = "\u001B[35m";
+final String ANSI_CYAN = "\u001B[36m";
+
+final String ANSI_BLACK_BG = "\u001B[40m";
+final String ANSI_RED_BG = "\u001B[41m";
+final String ANSI_GREEN_BG = "\u001B[42m";
+final String ANSI_YELLOW_BG = "\u001B[43m";
+final String ANSI_BLUE_BG = "\u001B[44m";
+final String ANSI_PURPLE_BG = "\u001B[45m";
+final String ANSI_CYAN_BG = "\u001B[46m";
+
+final String OSC8_START = "\u001B]8;;";
+final String OSC8_END = "\u001B\\";
+final String OSC8_CLOSE = "\u001B]8;;\u001B\\";
+
+String terminalLink(String path) {
+  File file = new File(path);
+  String linkText = path; // file.getName();
+  String fileUri = "file://" + file.getAbsolutePath();
+
+  return (OSC8_START + fileUri + OSC8_END + linkText + OSC8_CLOSE);
+}
+
+String terminalLinkColor(String path) {
+ return (ANSI_BLACK + ANSI_YELLOW_BG + terminalLink(path) + ANSI_RESET);
+}
+
+void printlnSaving(String path) {
+  println("Saving:", terminalLinkColor(path));
+}
+
+
 String ScreenShotType = ".jpg";
 
 void SOLARCHVISION_RecordFrame () {
 
   String Filename = Folder_ScreenShots + "/" + createStamp(1, "Screen") + ScreenShotType;
 
-  println("saving:", Filename);
+  printlnSaving(Filename);
 
   saveFrame(Filename);
 }

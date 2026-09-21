@@ -895,7 +895,7 @@ class solarchvision_Earth3D {
 
 
   public void to_XML (XML xml) {
-    //println("Saving:" + this.CLASS_STAMP);
+    //printlnSaving(this.CLASS_STAMP);
     XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setBoolean(parent, "displayTexture", this.displayTexture);
