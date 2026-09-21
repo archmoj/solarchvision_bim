@@ -1689,7 +1689,7 @@ class solarchvision_STUDY {
       UI_menuBar.revise();
       UI_toolBar.revise();
       UI_caseBar.revise();
-      UI_commandBar.revise();
+      UI_consoleBar.revise();
     }
   }
 

@@ -197,7 +197,7 @@ boolean draw_initial_frames () {
     UI_menuBar.revise();
     UI_toolBar.revise();
     UI_caseBar.revise();
-    UI_commandBar.revise();
+    UI_consoleBar.revise();
 
     InitializationStep = frameCount;
     Last_initializationStep = frameCount;

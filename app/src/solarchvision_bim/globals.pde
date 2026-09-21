@@ -693,7 +693,7 @@ solarchvision_UI_menuBar UI_menuBar = new solarchvision_UI_menuBar();
 
 solarchvision_UI_toolBar UI_toolBar = new solarchvision_UI_toolBar();
 
-solarchvision_UI_commandBar UI_commandBar = new solarchvision_UI_commandBar();
+solarchvision_UI_consoleBar UI_consoleBar = new solarchvision_UI_consoleBar();
 
 solarchvision_UI_caseBar UI_caseBar = new solarchvision_UI_caseBar();
 

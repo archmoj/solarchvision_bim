@@ -149,7 +149,7 @@ void keyPressed (KeyEvent e) {
 
       if (typeUserCommand == 0) {
 
-        UI_commandBar.updated();
+        UI_consoleBar.updated();
 
         if (UI_rollout.isEditingSpinner()) {
           UI_rollout.keyPressed(e);
@@ -161,9 +161,9 @@ void keyPressed (KeyEvent e) {
       }
       else {
 
-        UI_commandBar.revise();
+        UI_consoleBar.revise();
 
-        console_keyPressed(e);
+        UI_consoleBar.keyPressed(e);
       }
 
       if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
@@ -174,7 +174,7 @@ void keyPressed (KeyEvent e) {
             case TAB:
               if ((e.isShiftDown() != true) && !UI_rollout.isEditingSpinner()) {
                 typeUserCommand = (typeUserCommand + 1) % 2;
-                UI_commandBar.revise();
+                UI_consoleBar.revise();
               }
               break;
           }
