@@ -121,14 +121,14 @@ String SOLARCHVISION_executeCommand (String lineSTR) {
 
     case "IMPORT": {
 
-      selectInput("Select OBJ file to import:", "_fileSelected_Import_OBJ");
+      selectInput("Select OBJ file to import:", "_fileSelected_ImportObj");
 
       break;
     }
 
     case "EXECUTE": {
 
-      selectInput("Select TXT file to execute:", "_fileSelected_Run_Commands");
+      selectInput("Select TXT file to execute:", "_fileSelected_RunScript");
 
       break;
     }
