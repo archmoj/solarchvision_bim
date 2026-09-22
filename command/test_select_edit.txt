@@ -1,0 +1,29 @@
+SetLonLat -79.38 43.65
+
+Delete all
+
+Box m:0 tes:0 lyr:0 x:0 y:0 z:0 dx:8 dy:8 dz:8 r:0
+
+Select last
+Copy n:3 dx:16 dy:0 dz:0
+
+Select last
+Move dx:0 dy:0 dz:6
+
+Select last
+RotateZ r:30 x:48 y:0 z:6
+
+Select last
+Scale s:0.6 x:48 y:0 z:6
+
+Box m:3 tes:0 lyr:0 x:0 y:40 z:0 dx:6 dy:6 dz:6 r:0
+Select last
+Delete selection
+
+Select nothing
+
+S.E.
+SIZEALL
+Shade.Materials
+
+REC.png

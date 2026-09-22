@@ -1,0 +1,30 @@
+SetLonLat -79.38 43.65
+
+Delete all
+
+Box m:0 tes:0 lyr:0 x:-15 y:-15 z:0 dx:8 dy:8 dz:8 r:0
+Box m:1 tes:0 lyr:0 x:15 y:-15 z:0 dx:8 dy:8 dz:8 r:0
+Box m:2 tes:0 lyr:0 x:0 y:15 z:0 dx:8 dy:8 dz:12 r:0
+
+Camera px:40 py:-40 pz:30 pt:1 rx:0 ry:0 rz:0 rt:5 a:60 t:1
+
+Select nothing
+
+Shade.Materials
+ALLVIEWPORTS
+
+Top
+Front
+Right
+Back
+Left
+Bottom
+S.W.
+N.E.
+N.W.
+Perspective
+Orthographic
+S.E.
+SIZEALL
+
+REC.png

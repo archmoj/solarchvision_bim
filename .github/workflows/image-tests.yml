@@ -1,0 +1,151 @@
+name: Image tests
+
+on:
+  push:
+    branches: '**'
+  pull_request:
+    branches: '**'
+  workflow_dispatch:
+    inputs:
+      update_baselines:
+        description: 'Regenerate baseline images and upload them for review, instead of comparing against the current ones'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  # Keep in sync with .github/workflows/ci.yml and run.sh.
+  PROCESSING_VERSION: 4.3.4
+  PROCESSING_TAG: processing-1297-4.3.4
+
+jobs:
+  image-tests:
+    if: ${{ !inputs.update_baselines }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # Same cache key/path as ci.yml, so both workflows share the download.
+      - name: Cache Processing install
+        id: cache-processing
+        uses: actions/cache@v4
+        with:
+          path: ~/processing/${{ env.PROCESSING_VERSION }}
+          key: processing-${{ env.PROCESSING_VERSION }}-linux-x64
+
+      - name: Install Processing
+        if: steps.cache-processing.outputs.cache-hit != 'true'
+        run: |
+          curl -fL -o /tmp/processing.tgz \
+            "https://github.com/processing/processing4/releases/download/${PROCESSING_TAG}/processing-${PROCESSING_VERSION}-linux-x64.tgz"
+          mkdir -p ~/processing
+          tar -xf /tmp/processing.tgz -C /tmp
+          mv "/tmp/processing-${PROCESSING_VERSION}" "$HOME/processing/${PROCESSING_VERSION}"
+
+      # xvfb-run ships preinstalled on the ubuntu-latest runner image, so
+      # there's nothing to apt-get for the display itself - just the
+      # Python side of the image diff.
+      - name: Install image-diff dependencies
+        run: pip install pillow numpy
+
+      - name: Make test script executable
+        run: chmod +x test/image/run_image_tests.sh
+
+      # xvfb-run --auto-servernum, no extra GL/mesa flags: same pattern
+      # used successfully for another JOGL/Processing-based sketch at
+      # https://github.com/archmoj/grib2_solarchvision/blob/master/.github/workflows/scheduled-job.yml
+      # Wrapped in a retry since a fresh X server can occasionally race
+      # with the JOGL context on its first attempt.
+      - name: Run image tests
+        uses: nick-fields/retry@v4
+        env:
+          STRICT: '1'
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: xvfb-run --auto-servernum test/image/run_image_tests.sh
+
+      - name: Upload actual/diff images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-test-results
+          path: |
+            test/image/actual
+            test/image/diff
+          if-no-files-found: warn
+          retention-days: 14
+
+  update-baselines:
+    if: ${{ inputs.update_baselines }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Cache Processing install
+        id: cache-processing
+        uses: actions/cache@v4
+        with:
+          path: ~/processing/${{ env.PROCESSING_VERSION }}
+          key: processing-${{ env.PROCESSING_VERSION }}-linux-x64
+
+      - name: Install Processing
+        if: steps.cache-processing.outputs.cache-hit != 'true'
+        run: |
+          curl -fL -o /tmp/processing.tgz \
+            "https://github.com/processing/processing4/releases/download/${PROCESSING_TAG}/processing-${PROCESSING_VERSION}-linux-x64.tgz"
+          mkdir -p ~/processing
+          tar -xf /tmp/processing.tgz -C /tmp
+          mv "/tmp/processing-${PROCESSING_VERSION}" "$HOME/processing/${PROCESSING_VERSION}"
+
+      - name: Install image-diff dependencies
+        run: pip install pillow numpy
+
+      - name: Make test script executable
+        run: chmod +x test/image/run_image_tests.sh
+
+      - name: Regenerate baselines
+        uses: nick-fields/retry@v4
+        env:
+          UPDATE_BASELINES: '1'
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: xvfb-run --auto-servernum test/image/run_image_tests.sh
+
+      # Uploaded, not committed: baselines should be eyeballed by a human
+      # before they're trusted as "correct". Download the artifact, check
+      # the images, then copy the ones you approve into test/image/baseline/
+      # in a normal commit.
+      - name: Upload regenerated baselines for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: new-baselines
+          path: test/image/baseline
+          retention-days: 14

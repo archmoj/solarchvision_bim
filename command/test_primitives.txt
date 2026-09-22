@@ -1,0 +1,20 @@
+SetLonLat -79.38 43.65
+
+Delete all
+
+Box m:0 tes:0 lyr:0 x:-30 y:-10 z:0 dx:8 dy:8 dz:8 r:0
+Cylinder m:1 tes:0 lyr:0 x:-10 y:-10 z:0 d:8 h:8 deg:16 r:0
+Sphere m:2 tes:0 lyr:0 x:10 y:-10 z:0 d:8 deg:3 r:0
+Octahedron m:3 tes:0 lyr:0 x:30 y:-10 z:0 dx:8 dy:8 dz:8 r:0
+
+Icosahedron m:4 tes:0 lyr:0 x:-30 y:10 z:0 d:8 r:0
+Cushion m:5 tes:0 lyr:0 x:-10 y:10 z:0 dx:8 dy:8 dz:8 deg:3 r:0
+SuperSphere m:6 tes:0 lyr:0 x:10 y:10 z:0 dx:8 dy:8 dz:8 px:4 py:4 pz:2 deg:3 r:0
+
+Select nothing
+
+S.E.
+SIZEALL
+Shade.Materials
+
+REC.png

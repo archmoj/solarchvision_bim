@@ -1,0 +1,20 @@
+SetLonLat -79.38 43.65
+
+Delete all
+
+Person m:0 x:-40 y:-10 z:0
+Person m:0 x:-40 y:10 z:0
+
+Tree1 m:0 x:-15 y:-10 z:0 h:12 degree:8 seed:1 r:0 tilt:60 twist:137.5 ratio:0.8 base:2 trunk:1 leaf:0.2
+Tree1 m:0 x:-15 y:10 z:0 h:14 degree:6 seed:2 r:0 tilt:55 twist:137.5 ratio:0.75 base:2 trunk:1 leaf:0.2
+
+Tree2 m:0 x:10 y:-10 z:0 h:10
+Tree2 m:0 x:10 y:10 z:0 h:13
+
+Select nothing
+
+S.E.
+SIZEALL
+Shade.Materials
+
+REC.png
