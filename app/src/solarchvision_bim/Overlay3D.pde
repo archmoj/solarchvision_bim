@@ -1,4 +1,4 @@
-class OVERLAY3D {
+class Overlay3D {
 
   final DrawStyle LANDPOINT_STYLE      = new DrawStyle(4, color(255, 0, 255, 127));
   final DrawStyle CAMERA_STYLE         = new DrawStyle(2, color(255, 127, 0), color(0, 31));

@@ -160,7 +160,7 @@ class WIN3D {
       this.updated();
     } else {
       this.updated();
-      OVERLAY3D.draw();
+      Overlay3D.draw();
     }
   }
 
