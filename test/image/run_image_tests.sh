@@ -13,6 +13,7 @@ set -euo pipefail
 #   UPDATE_BASELINES=1 test/image/run_image_tests.sh    # (re)generate baselines instead of comparing
 #   STRICT=1 test/image/run_image_tests.sh              # fail (not just warn) when a baseline is missing
 #   IMAGE_DIFF_THRESHOLD=1.0 test/image/run_image_tests.sh  # allow up to 1% of pixels to differ
+#   PER_SCRIPT_TIMEOUT=600 test/image/run_image_tests.sh    # seconds allowed per script (default 300)
 #
 # Requires:
 #   - PROCESSING_HOME pointing at a Processing 4 install
@@ -42,6 +43,7 @@ DIFF_DIR="$IMAGE_TEST_DIR/diff"
 UPDATE_BASELINES="${UPDATE_BASELINES:-0}"
 STRICT="${STRICT:-0}"
 THRESHOLD="${IMAGE_DIFF_THRESHOLD:-0.5}" # max % of pixels allowed to differ
+PER_SCRIPT_TIMEOUT="${PER_SCRIPT_TIMEOUT:-300}" # seconds allowed per script
 
 mkdir -p "$ACTUAL_DIR" "$DIFF_DIR" "$BASELINE_DIR"
 
@@ -87,10 +89,27 @@ for script in "${SCRIPTS[@]}"; do
   # see test/image/README.md#note-on-processing-javas-exit-code. Capture it
   # for the log without letting `set -e` abort the loop over it; the real
   # check is "did a screenshot actually appear", right below.
+  #
+  # Each run also takes a while on its own: frameRate(24) and
+  # Last_initializationStep = 1000 in solarchvision_bim.pde mean the intro
+  # sequence alone takes >=1000/24 ~= 42s before RUN=... even starts, before
+  # JVM/GL startup and the render itself. PER_SCRIPT_TIMEOUT bounds a single
+  # stuck run instead of letting it silently eat the whole job's time
+  # budget; print start/elapsed so slow runs are visible in the log instead
+  # of guessed at.
+  start_ts="$(date +%s)"
+  echo "  started $(date -u +%H:%M:%S) UTC"
   processing_exit=0
-  "$PROCESSING_JAVA" --sketch="$SKETCH_DIR" --run --args "USER=AUTO" "RUN=command/$script" || processing_exit=$?
-  if [ "$processing_exit" -ne 0 ]; then
-    echo "  note: processing-java exited $processing_exit (expected under USER=AUTO; checking for the screenshot instead)"
+  timeout "$PER_SCRIPT_TIMEOUT" "$PROCESSING_JAVA" --sketch="$SKETCH_DIR" --run --args "USER=AUTO" "RUN=command/$script" || processing_exit=$?
+  elapsed=$(( $(date +%s) - start_ts ))
+  if [ "$processing_exit" -eq 124 ]; then
+    echo "  FAIL: command/$script timed out after ${elapsed}s (PER_SCRIPT_TIMEOUT=${PER_SCRIPT_TIMEOUT})"
+    overall_status=1
+    continue
+  elif [ "$processing_exit" -ne 0 ]; then
+    echo "  note: processing-java exited $processing_exit after ${elapsed}s (expected under USER=AUTO; checking for the screenshot instead)"
+  else
+    echo "  finished after ${elapsed}s"
   fi
 
   new_png="$(find "$SCREENSHOTS_ROOT" -name '*.png' -newer "$marker" -print 2>/dev/null | sort | tail -n 1)"

@@ -138,3 +138,25 @@ doesn't abort the loop after the very first test) and logs a note instead.
 The actual check is whether a new screenshot file showed up under
 `app/src/solarchvision_bim/projects/model-01/export/screenshots/`, which is
 what genuinely indicates the script ran.
+
+## Note on per-run timing
+
+Each script takes a real chunk of wall-clock time on its own:
+`frameRate(24)` and `Last_initializationStep = 1000` in
+`solarchvision_bim.pde` mean the intro sequence alone takes at least
+`1000 / 24 ~= 42s` before `RUN=...` even starts, on top of JVM startup, GL
+context creation, and the render itself. Running all 7
+`command/test_*.txt` scripts sequentially can add up to well over the
+default timeout of a CI step — this is what caused an early version of
+`.github/workflows/image-tests.yml` (`timeout_minutes: 15`) to have the
+whole job killed mid-run with nothing more informative than "Child_process
+exited with error code 1" and no further per-script output.
+
+Two things address this:
+- `run_image_tests.sh` prints a start time and elapsed seconds for each
+  script, so a slow run is visible in the log instead of guessed at, and
+  wraps each one in its own `PER_SCRIPT_TIMEOUT` (default 300s, override
+  with the env var) so a single stuck script fails cleanly and the loop
+  moves on, rather than silently consuming the whole job's time budget.
+- The workflow's `timeout_minutes` is set generously (45) to give all 7
+  scripts real headroom to run one after another.
