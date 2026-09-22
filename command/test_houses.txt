@@ -1,5 +1,3 @@
-SetLonLat -79.38 43.65
-
 Delete all
 
 House1 m:0 tes:0 lyr:0 x:-20 y:0 z:0 dx:8 dy:8 dz:6 h:3 r:0

@@ -1,5 +1,3 @@
-SetLonLat -79.38 43.65
-
 Delete all
 
 PolygonMesh m:0 tes:0 lyr:0 x:-60 y:-20 z:0 d:8 deg:6 r:0
