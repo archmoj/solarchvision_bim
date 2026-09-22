@@ -23,7 +23,14 @@ env:
 jobs:
   image-tests:
     if: ${{ !inputs.update_baselines }}
-    runs-on: ubuntu-latest
+    # Not ubuntu-latest (24.04): its GLVND-based Mesa build segfaults inside
+    # libGLX_mesa.so when JOGL (bundled in Processing 4.3.4) sets up its
+    # shared GL context, regardless of LIBGL_ALWAYS_SOFTWARE / vblank_mode /
+    # __GLX_VENDOR_LIBRARY_NAME - the crash address never moves, which
+    # points to an ABI mismatch rather than a config problem. Ubuntu 22.04's
+    # older Mesa doesn't hit this; see actions/runner-images#11517 for the
+    # same class of Mesa-on-24.04 regression in other projects.
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -56,9 +63,9 @@ jobs:
           tar -xf /tmp/processing.tgz -C /tmp
           mv "/tmp/processing-${PROCESSING_VERSION}" "$HOME/processing/${PROCESSING_VERSION}"
 
-      # xvfb-run ships preinstalled on the ubuntu-latest runner image, so
-      # there's nothing to apt-get for the display itself - just the
-      # Python side of the image diff.
+      # xvfb-run ships preinstalled on ubuntu-22.04 too, so there's nothing
+      # to apt-get for the display itself - just the Python side of the
+      # image diff.
       - name: Install image-diff dependencies
         run: pip install pillow numpy
 
@@ -74,6 +81,7 @@ jobs:
         uses: nick-fields/retry@v4
         env:
           STRICT: '1'
+          LIBGL_ALWAYS_SOFTWARE: '1'
         with:
           max_attempts: 2
           timeout_minutes: 15
@@ -92,7 +100,8 @@ jobs:
 
   update-baselines:
     if: ${{ inputs.update_baselines }}
-    runs-on: ubuntu-latest
+    # Same reasoning as the image-tests job above.
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -134,6 +143,7 @@ jobs:
         uses: nick-fields/retry@v4
         env:
           UPDATE_BASELINES: '1'
+          LIBGL_ALWAYS_SOFTWARE: '1'
         with:
           max_attempts: 2
           timeout_minutes: 15

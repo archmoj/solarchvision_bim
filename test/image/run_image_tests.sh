@@ -21,8 +21,9 @@ set -euo pipefail
 #   - a display. On a headless machine/CI, wrap the whole invocation with
 #     `xvfb-run --auto-servernum`, e.g.:
 #       xvfb-run --auto-servernum test/image/run_image_tests.sh
-#     See test/image/README.md for troubleshooting if the sketch's OpenGL
-#     (P3D) context crashes under Xvfb.
+#     On ubuntu-24.04/ubuntu-latest this crashes the JVM (a JOGL/Mesa ABI
+#     issue, not a config problem - see test/image/README.md); use
+#     ubuntu-22.04 instead. .github/workflows/image-tests.yml already does.
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"

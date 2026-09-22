@@ -102,27 +102,23 @@ it needs a display. On CI / a headless box:
 xvfb-run --auto-servernum test/image/run_image_tests.sh
 ```
 
-`xvfb-run` ships preinstalled on GitHub's `ubuntu-latest` runners, so
-`.github/workflows/image-tests.yml` doesn't `apt-get install` anything for
-the display — it just calls `xvfb-run --auto-servernum ...` directly,
-wrapped in a retry (`nick-fields/retry@v4`, 2 attempts) since a fresh X
-server can occasionally race with the JOGL context on its first attempt.
-This mirrors the pattern already working for another JOGL/Processing-based
-sketch in
-[archmoj/grib2_solarchvision](https://github.com/archmoj/grib2_solarchvision/blob/master/.github/workflows/scheduled-job.yml).
+**On `ubuntu-24.04`/`ubuntu-latest` runners this crashes the JVM** with a
+native `SIGSEGV` inside `libGLX_mesa.so` (from JOGL's `SharedResourceRunner`
+setting up its shared GL context) — reliably, at the same crash address,
+regardless of `LIBGL_ALWAYS_SOFTWARE`, `vblank_mode`, `LIBGL_ALWAYS_INDIRECT`,
+or `__GLX_VENDOR_LIBRARY_NAME`. That insensitivity to every runtime flag
+points to a binary (ABI) incompatibility between the JOGL native library
+bundled in Processing 4.3.4 and Ubuntu 24.04's newer GLVND-based Mesa, not a
+missing config flag — `actions/runner-images#11517` documents the same class
+of Mesa-on-24.04 regression for another project.
 
-If it still fails with a native `SIGSEGV` inside `libGLX_mesa.so`/JOGL (a
-known JOGL + software-Mesa issue, more likely on constrained/single-core
-machines than on standard GitHub runners), try forcing software rendering
-explicitly and disabling the vsync query path that tends to trigger it:
+**The fix that actually works here: run on `ubuntu-22.04`, not
+`ubuntu-latest`.** `.github/workflows/image-tests.yml` pins both jobs to
+`ubuntu-22.04` for exactly this reason. Locally, use whatever's on hand —
+a VM or container running Ubuntu 22.04 (or any distro with an
+older/non-GLVND Mesa) will work; a fresh Ubuntu 24.04 machine likely won't
+without patching Processing's bundled JOGL jars, which is out of scope here.
 
-```sh
-LIBGL_ALWAYS_SOFTWARE=1 vblank_mode=0 xvfb-run --auto-servernum test/image/run_image_tests.sh
-```
-
-An earlier version of the workflow set those two variables and installed
-extra Mesa packages up front; they were removed once the plain
-`xvfb-run --auto-servernum` + retry pattern above was confirmed to be all
-another project in this org actually needed. Bring them back (as job-level
-`env:` in `.github/workflows/image-tests.yml`) if a real CI run hits the
-JOGL crash.
+`LIBGL_ALWAYS_SOFTWARE=1` is still set in the workflow as a normal, harmless
+"use the software rasterizer, there's no real GPU here" hint for Xvfb — it
+just isn't what fixes the crash above.
