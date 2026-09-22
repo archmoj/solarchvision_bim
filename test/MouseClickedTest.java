@@ -58,6 +58,17 @@ import static org.junit.jupiter.api.Assertions.*;
 // are already covered directly in NearestStationTest.java from an
 // earlier session, not repeated here.
 //
+// A fourth function, SOLARCHVISION_computeClickRay, was extracted this
+// session as well - and unlike the others, it genuinely deduplicates
+// code across two different files: WIN3D.pde's own
+// rotateXY_3DViewport_around_LandIntersection() had this exact "turn a
+// screen click into a 3D ray, accounting for perspective vs.
+// orthographic view" setup inlined a second time, confirmed
+// character-for-character identical (modulo `this.` vs `WIN3D.` on the
+// handful of fields it reads, since that copy lived inside the WIN3D
+// class itself) before extracting - both call sites now call this one
+// function instead.
+//
 // A fresh `app` per test since these mutate shared scene state.
 class MouseClickedTest {
 
@@ -932,5 +943,118 @@ class MouseClickedTest {
     app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
 
     assertEquals(-1f, app.User3D.create_Model1D_BranchTwist, 0.0001f); // untouched
+  }
+
+  // ========= SOLARCHVISION_computeClickRay (extracted) ===================
+  // Also de-duplicates: WIN3D.rotateXY_3DViewport_around_LandIntersection()
+  // used to have this exact ray setup inlined a second time (confirmed
+  // character-for-character identical, modulo `this.` vs `WIN3D.`, before
+  // extracting) - it now calls this too.
+
+  @Test
+  void computeClickRay_perspectiveAtImageCenterWithNoRotation_matchesHandComputedValue () {
+    // Same setup as WIN3DTest's calculateClick3D_atImageCenterWithNoRotation...
+    // test, so ray_end is already confirmed there; this only checks the
+    // extra ray_start/direction arithmetic layered on top of it.
+    app.WIN3D.ViewType = 1; // perspective
+    app.WIN3D.scale = 1;
+    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
+    app.WIN3D.rotation_X = 0;
+    app.WIN3D.rotation_Z = 0;
+    app.WIN3D.CAM_x = 0;
+    app.WIN3D.CAM_y = 0;
+    app.WIN3D.CAM_z = 10;
+    app.OBJECTS_scale = 1;
+
+    solarchvision_bim.SOLARCHVISION_ClickRay ray = app.SOLARCHVISION_computeClickRay(0, 0);
+
+    assertArrayEquals(new float[]{0, 0, 10}, ray.start, 0.001f);
+
+    float pntZ = (float) (0.5 / Math.tan(0.5 * Math.PI / 3.0));
+    assertArrayEquals(new float[]{0, 0, -pntZ}, ray.direction, 0.001f);
+  }
+
+  @Test
+  void computeClickRay_dividesTheCameraPositionByObjectsScale () {
+    app.WIN3D.ViewType = 1;
+    app.WIN3D.scale = 1;
+    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
+    app.WIN3D.CAM_x = 20;
+    app.WIN3D.CAM_y = 0;
+    app.WIN3D.CAM_z = 0;
+    app.OBJECTS_scale = 2;
+
+    solarchvision_bim.SOLARCHVISION_ClickRay ray = app.SOLARCHVISION_computeClickRay(0, 0);
+
+    assertEquals(10f, ray.start[0], 0.001f); // 20 / 2
+  }
+
+  @Test
+  void computeClickRay_perspectiveAlwaysStartsAtTheCameraRegardlessOfClickPosition () {
+    // In perspective, every ray shares the same origin (the camera) -
+    // only the direction changes with where on screen you clicked.
+    app.WIN3D.ViewType = 1;
+    app.WIN3D.scale = 1;
+    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
+    app.WIN3D.CAM_x = 5;
+    app.WIN3D.CAM_y = -3;
+    app.WIN3D.CAM_z = 10;
+    app.OBJECTS_scale = 1;
+
+    solarchvision_bim.SOLARCHVISION_ClickRay centerRay = app.SOLARCHVISION_computeClickRay(0, 0);
+    solarchvision_bim.SOLARCHVISION_ClickRay offCenterRay = app.SOLARCHVISION_computeClickRay(80, -40);
+
+    assertArrayEquals(centerRay.start, offCenterRay.start, 0.0001f);
+    assertNotEquals(centerRay.direction[0], offCenterRay.direction[0], 0.0001f);
+  }
+
+  @Test
+  void computeClickRay_orthographicAtImageCenterStartsExactlyAtTheCamera () {
+    // At the image center, ray_end (0,0) equals ray_center (0,0), so
+    // the orthographic offset is exactly zero and the start point
+    // matches the plain camera position, same as the perspective case.
+    app.WIN3D.ViewType = 0; // orthographic
+    app.WIN3D.scale = 1;
+    app.WIN3D.rotation_X = 0;
+    app.WIN3D.rotation_Z = 0;
+    app.WIN3D.CAM_x = 1;
+    app.WIN3D.CAM_y = 2;
+    app.WIN3D.CAM_z = 3;
+    app.WIN3D.position_X = 7;
+    app.WIN3D.position_Y = 8;
+    app.WIN3D.position_Z = 9;
+    app.WIN3D.refScale = 100;
+    app.WIN3D.Zoom = 90;
+    app.OBJECTS_scale = 1;
+
+    solarchvision_bim.SOLARCHVISION_ClickRay ray = app.SOLARCHVISION_computeClickRay(0, 0);
+
+    assertArrayEquals(new float[]{1, 2, 3}, ray.start, 0.001f);
+  }
+
+  @Test
+  void computeClickRay_orthographicRaysStayParallelRegardlessOfClickPosition () {
+    // The defining property of orthographic projection: unlike
+    // perspective, the ray's DIRECTION is the same no matter where on
+    // screen you clicked - only its start point shifts.
+    app.WIN3D.ViewType = 0; // orthographic
+    app.WIN3D.scale = 1;
+    app.WIN3D.rotation_X = 0;
+    app.WIN3D.rotation_Z = 0;
+    app.WIN3D.CAM_x = 0;
+    app.WIN3D.CAM_y = 0;
+    app.WIN3D.CAM_z = 10;
+    app.WIN3D.position_X = 3;
+    app.WIN3D.position_Y = 4;
+    app.WIN3D.position_Z = 0;
+    app.WIN3D.refScale = 100;
+    app.WIN3D.Zoom = 90;
+    app.OBJECTS_scale = 1;
+
+    solarchvision_bim.SOLARCHVISION_ClickRay centerRay = app.SOLARCHVISION_computeClickRay(0, 0);
+    solarchvision_bim.SOLARCHVISION_ClickRay offCenterRay = app.SOLARCHVISION_computeClickRay(50, -30);
+
+    assertArrayEquals(centerRay.direction, offCenterRay.direction, 0.0001f);
+    assertNotEquals(centerRay.start[0], offCenterRay.start[0], 0.0001f); // but the start point does shift
   }
 }

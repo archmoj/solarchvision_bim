@@ -932,32 +932,9 @@ class solarchvision_WIN3D {
     float Image_X = SOLARCHVISION_X_click1 - (this.cX + 0.5 * this.dX);
     float Image_Y = SOLARCHVISION_Y_click1 - (this.cY + 0.5 * this.dY);
 
-    float[] ray_direction = new float[3];
-    float[] ray_start = { this.CAM_x, this.CAM_y, this.CAM_z };
-    float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
-
-    ray_start[0] /= OBJECTS_scale;
-    ray_start[1] /= OBJECTS_scale;
-    ray_start[2] /= OBJECTS_scale;
-
-    ray_end[0] /= OBJECTS_scale;
-    ray_end[1] /= OBJECTS_scale;
-    ray_end[2] /= OBJECTS_scale;
-
-    if (this.ViewType == 0) {
-      float[] ray_center = WIN3D.calculate_Click3D(0, 0);
-      ray_center[0] /= OBJECTS_scale;
-      ray_center[1] /= OBJECTS_scale;
-      ray_center[2] /= OBJECTS_scale;
-
-      ray_start[0] += ray_end[0] - ray_center[0];
-      ray_start[1] += ray_end[1] - ray_center[1];
-      ray_start[2] += ray_end[2] - ray_center[2];
-    }
-
-    ray_direction[0] = ray_end[0] - ray_start[0];
-    ray_direction[1] = ray_end[1] - ray_start[1];
-    ray_direction[2] = ray_end[2] - ray_start[2];
+    SOLARCHVISION_ClickRay ray = SOLARCHVISION_computeClickRay(Image_X, Image_Y);
+    float[] ray_start = ray.start;
+    float[] ray_direction = ray.direction;
 
     float[] RxP = Land3D.intersect(ray_start, ray_direction);
     if (RxP[0] < 0) return;

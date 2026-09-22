@@ -172,6 +172,65 @@ void SOLARCHVISION_pickOrAssignModel1DProperty (int OBJ_ID) {
   }
 }
 
+// Result of SOLARCHVISION_computeClickRay below: a 3D ray (a start
+// point plus a direction) corresponding to a click at 3D-viewport-local
+// coordinates (Image_X, Image_Y) - i.e. mouseX/mouseY already offset by
+// the viewport's own center, as WIN3D.calculate_Click3D expects.
+class SOLARCHVISION_ClickRay {
+  float[] start;
+  float[] direction = new float [3];
+}
+
+// Pulled out of mouseClicked()'s WIN3D-picking handling. Confirmed
+// character-for-character identical (modulo `this.` vs `WIN3D.` on the
+// fields it reads, since one copy lived inside the WIN3D class itself)
+// to WIN3D.rotateXY_3DViewport_around_LandIntersection()'s own inline
+// ray setup before extracting - both replaced with a call to this.
+// Turns a click point into a ray in WORLD (unscaled, i.e. /
+// OBJECTS_scale) space: starts at the current camera position, aimed
+// through WIN3D.calculate_Click3D(Image_X, Image_Y) (already covered
+// directly in WIN3DTest.java) - except in orthographic view (ViewType
+// == 0), where there's no real camera point to start from, so the
+// start point is instead offset from the camera position by however far
+// calculate_Click3D(Image_X, Image_Y) itself differs from
+// calculate_Click3D(0, 0), keeping parallel rays parallel.
+SOLARCHVISION_ClickRay SOLARCHVISION_computeClickRay (float Image_X, float Image_Y) {
+  SOLARCHVISION_ClickRay ray = new SOLARCHVISION_ClickRay();
+
+  float[] ray_start = {
+    WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
+  };
+
+  float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
+
+  ray_start[0] /= OBJECTS_scale;
+  ray_start[1] /= OBJECTS_scale;
+  ray_start[2] /= OBJECTS_scale;
+
+  ray_end[0] /= OBJECTS_scale;
+  ray_end[1] /= OBJECTS_scale;
+  ray_end[2] /= OBJECTS_scale;
+
+  if (WIN3D.ViewType == 0) {
+    float[] ray_center = WIN3D.calculate_Click3D(0, 0);
+
+    ray_center[0] /= OBJECTS_scale;
+    ray_center[1] /= OBJECTS_scale;
+    ray_center[2] /= OBJECTS_scale;
+
+    ray_start[0] += ray_end[0] - ray_center[0];
+    ray_start[1] += ray_end[1] - ray_center[1];
+    ray_start[2] += ray_end[2] - ray_center[2];
+  }
+
+  ray.start = ray_start;
+  ray.direction[0] = ray_end[0] - ray_start[0];
+  ray.direction[1] = ray_end[1] - ray_start[1];
+  ray.direction[2] = ray_end[2] - ray_start[2];
+
+  return ray;
+}
+
 // Result of SOLARCHVISION_computeCreateParams below: the concrete
 // position/rotation/half-extents/power-exponents a click should create
 // an object with, derived from the click point (RxP) and the user's
@@ -1468,37 +1527,9 @@ void mouseClicked () {
             }
             else {
 
-              float[] ray_direction = new float [3];
-
-              float[] ray_start = {
-                WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
-              };
-
-              float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
-
-              ray_start[0] /= OBJECTS_scale;
-              ray_start[1] /= OBJECTS_scale;
-              ray_start[2] /= OBJECTS_scale;
-
-              ray_end[0] /= OBJECTS_scale;
-              ray_end[1] /= OBJECTS_scale;
-              ray_end[2] /= OBJECTS_scale;
-
-              if (WIN3D.ViewType == 0) {
-                float[] ray_center = WIN3D.calculate_Click3D(0, 0);
-
-                ray_center[0] /= OBJECTS_scale;
-                ray_center[1] /= OBJECTS_scale;
-                ray_center[2] /= OBJECTS_scale;
-
-                ray_start[0] += ray_end[0] - ray_center[0];
-                ray_start[1] += ray_end[1] - ray_center[1];
-                ray_start[2] += ray_end[2] - ray_center[2];
-              }
-
-              ray_direction[0] = ray_end[0] - ray_start[0];
-              ray_direction[1] = ray_end[1] - ray_start[1];
-              ray_direction[2] = ray_end[2] - ray_start[2];
+              SOLARCHVISION_ClickRay ray = SOLARCHVISION_computeClickRay(Image_X, Image_Y);
+              float[] ray_start = ray.start;
+              float[] ray_direction = ray.direction;
 
               float[] RxP = new float [8];
 
