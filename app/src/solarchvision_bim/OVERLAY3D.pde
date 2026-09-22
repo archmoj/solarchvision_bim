@@ -60,6 +60,180 @@ class solarchvision_OVERLAY3D {
   // visible - just above zero, so the projection never divides by zero.
   final float NEAR_Z = 0.0001;
 
+  // Result of computeFaceTessellation below: how many tessellated
+  // sub-faces face `f` should be split into for drawing, the effective
+  // tessellation level used to compute that count, and the face's own
+  // untessellated vertex loop (each sub-face is derived from this via
+  // funcs.getSubFace(base_Vertices, tessellation, n)).
+  class FaceTessellation {
+    int tessellation;
+    int totalNumberOfSubs;
+    float[][] base_Vertices;
+  }
+
+  // Pulled out of draw()'s FACE and GROUP-of-faces handling: both ran
+  // an identical block computing face f's effective tessellation level
+  // (bumped up by allFaces.displayTessellation whenever the face has no
+  // material assigned, i.e. material==0) and the resulting sub-face
+  // count, plus the face's own base vertex loop that
+  // funcs.getSubFace(base_Vertices, tessellation, n) later splits -
+  // confirmed character-for-character identical (modulo indentation)
+  // before extracting; both call sites now call this instead.
+  FaceTessellation computeFaceTessellation (int f) {
+    FaceTessellation r = new FaceTessellation();
+
+    r.tessellation = allFaces.getTessellation(f);
+
+    r.totalNumberOfSubs = 1;
+    if (allFaces.getMaterial(f) == 0) {
+      r.tessellation += allFaces.displayTessellation;
+    }
+    if (r.tessellation > 0) r.totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, r.tessellation - 1), 1));
+
+    r.base_Vertices = new float [allFaces.nodes[f].length][3];
+    for (int j = 0; j < allFaces.nodes[f].length; j++) {
+      int vNo = allFaces.nodes[f][j];
+      r.base_Vertices[j][0] = allPoints.getX(vNo);
+      r.base_Vertices[j][1] = allPoints.getY(vNo);
+      r.base_Vertices[j][2] = allPoints.getZ(vNo);
+    }
+
+    return r;
+  }
+
+  // Result of computePivotAxisVertices below: the 4 vertices (the
+  // origin, plus one endpoint per X/Y/Z axis) of a small 3-axis
+  // reference triad centered at (x0,y0,z0), scaled by r, and oriented
+  // per Select3D's current alignment/rotation (via
+  // translateInside_ReferencePivot, already covered directly in
+  // Select3DTest.java).
+  //
+  // Pulled out of draw()'s two pivot-triad displays - a selected
+  // GROUP's own stored pivot (allGroups.Pivots[OBJ_ID], r=10) and the
+  // general reference pivot (Select3D.getPivot(), r=5) - which ran an
+  // identical block apart from those two inputs; confirmed character-
+  // for-character identical (modulo r/x0/y0/z0) before extracting.
+  float[][] computePivotAxisVertices (float x0, float y0, float z0, float r) {
+    float[][] vertices = {
+      { 0, 0, 0 },
+      { 1, 0, 0 },
+      { 0, 1, 0 },
+      { 0, 0, 1 }
+    };
+
+    for (int i = 0; i < vertices.length; i++) {
+
+      float x = vertices[i][0] * r;
+      float y = vertices[i][1] * r;
+      float z = vertices[i][2] * r;
+
+      float[] O = Select3D.translateInside_ReferencePivot(0, 0, 0);
+      float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
+
+      vertices[i][0] = x0 + (A[0] - O[0]);
+      vertices[i][1] = y0 + (A[1] - O[1]);
+      vertices[i][2] = z0 + (A[2] - O[2]);
+    }
+
+    return vertices;
+  }
+
+  // Result of computeGroupBoxVertices below: the 8 corners of a
+  // selected GROUP's bounding box, passed through
+  // Select3D.translateInside_ReferencePivot() (already covered directly
+  // in Select3DTest.java) so a box with its own local rotation set (via
+  // Select3D.BoundingBox's rotX/Y/Z columns) is drawn matching that
+  // orientation - under the common case of an axis-aligned, unit-scale
+  // box this transform is an exact round trip back to the original
+  // corner (translateInside_ReferencePivot re-adds the box's own
+  // reference position after rotating/scaling, so a zero rotation and
+  // unit scale cancel out to the identity). Also reports whether the
+  // box is degenerate (every corner coincides, e.g. an empty or
+  // single-point selection) - in which case draw() skips drawing it
+  // entirely.
+  //
+  // Pulled out of draw()'s Group_displayBox handling: this was the
+  // purely computational front half of that block (temporarily forcing
+  // Select3D's alignX/Y/Z to 0 so the box is measured from its own
+  // centre, deriving the 8 corners from Select3D.BoundingBox's min/max
+  // rows, transforming each through translateInside_ReferencePivot,
+  // then checking whether they're all still coincident) - the drawing
+  // loop that follows it, and the alignX/Y/Z save/restore around the
+  // whole thing, are preserved here too since restoring Select3D's
+  // align fields is this function's responsibility, not the caller's.
+  class GroupBoxVertices {
+    float[][] vertices; // 8 corners, transformed per the box's own rotation (see above)
+    boolean isEmpty;
+  }
+
+  GroupBoxVertices computeGroupBoxVertices () {
+    int keep_selection_alignX = Select3D.alignX;
+    int keep_selection_alignY = Select3D.alignY;
+    int keep_selection_alignZ = Select3D.alignZ;
+
+    Select3D.alignX = 0; // apply the centre
+    Select3D.alignY = 0; // apply the centre
+    Select3D.alignZ = 0; // apply the centre
+
+    float[] P = Select3D.getPivot();
+
+    float posX = P[0];
+    float posY = P[1];
+    float posZ = P[2];
+
+    float posX_min = Select3D.BoundingBox[0][0];
+    float posY_min = Select3D.BoundingBox[0][1];
+    float posZ_min = Select3D.BoundingBox[0][2];
+
+    float posX_max = Select3D.BoundingBox[2][0];
+    float posY_max = Select3D.BoundingBox[2][1];
+    float posZ_max = Select3D.BoundingBox[2][2];
+
+    float[][] BoundingBox_Vertices = {
+      { posX_min, posY_min, posZ_min },
+      { posX_max, posY_min, posZ_min },
+      { posX_max, posY_max, posZ_min },
+      { posX_min, posY_max, posZ_min },
+      { posX_min, posY_min, posZ_max },
+      { posX_max, posY_min, posZ_max },
+      { posX_max, posY_max, posZ_max },
+      { posX_min, posY_max, posZ_max }
+    };
+
+    for (int i = 0; i < BoundingBox_Vertices.length; i++) {
+
+      float x = BoundingBox_Vertices[i][0] - posX;
+      float y = BoundingBox_Vertices[i][1] - posY;
+      float z = BoundingBox_Vertices[i][2] - posZ;
+
+      float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
+
+      BoundingBox_Vertices[i][0] = A[0];
+      BoundingBox_Vertices[i][1] = A[1];
+      BoundingBox_Vertices[i][2] = A[2];
+    }
+
+    boolean isEmpty = true;
+    for (int i = 1; i < BoundingBox_Vertices.length; i++) {
+      if (
+        BoundingBox_Vertices[0][0] != BoundingBox_Vertices[i][0] ||
+        BoundingBox_Vertices[0][1] != BoundingBox_Vertices[i][1] ||
+        BoundingBox_Vertices[0][2] != BoundingBox_Vertices[i][2]
+      ) {
+        isEmpty = false;
+      }
+    }
+
+    Select3D.alignX = keep_selection_alignX;
+    Select3D.alignY = keep_selection_alignY;
+    Select3D.alignZ = keep_selection_alignZ;
+
+    GroupBoxVertices r = new GroupBoxVertices();
+    r.vertices = BoundingBox_Vertices;
+    r.isEmpty = isEmpty;
+    return r;
+  }
+
   void draw () {
     pushMatrix();
 
@@ -283,21 +457,10 @@ class solarchvision_OVERLAY3D {
 
           int f = Select3D.Face_ids[o];
 
-          int tessellation = allFaces.getTessellation(f);
-
-          int totalNumberOfSubs = 1;
-          if (allFaces.getMaterial(f) == 0) {
-            tessellation += allFaces.displayTessellation;
-          }
-          if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
-
-          float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-          for (int j = 0; j < allFaces.nodes[f].length; j++) {
-            int vNo = allFaces.nodes[f][j];
-            base_Vertices[j][0] = allPoints.getX(vNo);
-            base_Vertices[j][1] = allPoints.getY(vNo);
-            base_Vertices[j][2] = allPoints.getZ(vNo);
-          }
+          FaceTessellation ft = computeFaceTessellation(f);
+          int tessellation = ft.tessellation;
+          int totalNumberOfSubs = ft.totalNumberOfSubs;
+          float[][] base_Vertices = ft.base_Vertices;
 
           for (int n = 0; n < totalNumberOfSubs; n++) {
 
@@ -474,21 +637,10 @@ class solarchvision_OVERLAY3D {
           for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
             if ((0 <= f) && (f < allFaces.nodes.length)) {
 
-              int tessellation = allFaces.getTessellation(f);
-
-              int totalNumberOfSubs = 1;
-              if (allFaces.getMaterial(f) == 0) {
-                tessellation += allFaces.displayTessellation;
-              }
-              if (tessellation > 0) totalNumberOfSubs = allFaces.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
-
-              float[][] base_Vertices = new float [allFaces.nodes[f].length][3];
-              for (int j = 0; j < allFaces.nodes[f].length; j++) {
-                int vNo = allFaces.nodes[f][j];
-                base_Vertices[j][0] = allPoints.getX(vNo);
-                base_Vertices[j][1] = allPoints.getY(vNo);
-                base_Vertices[j][2] = allPoints.getZ(vNo);
-              }
+              FaceTessellation ft = computeFaceTessellation(f);
+              int tessellation = ft.tessellation;
+              int totalNumberOfSubs = ft.totalNumberOfSubs;
+              float[][] base_Vertices = ft.base_Vertices;
 
               for (int n = 0; n < totalNumberOfSubs; n++) {
 
@@ -613,91 +765,10 @@ class solarchvision_OVERLAY3D {
 
         ArrayList<float[][]> boxEdgeBatch = new ArrayList<float[][]>();
 
-        int keep_selection_alignX = Select3D.alignX;
-        int keep_selection_alignY = Select3D.alignY;
-        int keep_selection_alignZ = Select3D.alignZ;
+        GroupBoxVertices gbv = computeGroupBoxVertices();
+        float[][] BoundingBox_Vertices = gbv.vertices;
 
-        Select3D.alignX = 0; // apply the centre
-        Select3D.alignY = 0; // apply the centre
-        Select3D.alignZ = 0; // apply the centre
-
-        float[] P = Select3D.getPivot();
-
-        float posX = P[0];
-        float posY = P[1];
-        float posZ = P[2];
-
-        float posX_min = Select3D.BoundingBox[0][0];
-        float posY_min = Select3D.BoundingBox[0][1];
-        float posZ_min = Select3D.BoundingBox[0][2];
-
-        float posX_max = Select3D.BoundingBox[2][0];
-        float posY_max = Select3D.BoundingBox[2][1];
-        float posZ_max = Select3D.BoundingBox[2][2];
-
-        float[][] BoundingBox_Vertices = {
-          {
-            posX_min, posY_min, posZ_min
-          }
-          ,
-          {
-            posX_max, posY_min, posZ_min
-          }
-          ,
-          {
-            posX_max, posY_max, posZ_min
-          }
-          ,
-          {
-            posX_min, posY_max, posZ_min
-          }
-          ,
-          {
-            posX_min, posY_min, posZ_max
-          }
-          ,
-          {
-            posX_max, posY_min, posZ_max
-          }
-          ,
-          {
-            posX_max, posY_max, posZ_max
-          }
-          ,
-          {
-            posX_min, posY_max, posZ_max
-          }
-        };
-
-        for (int i = 0; i < BoundingBox_Vertices.length; i++) {
-
-          float x = BoundingBox_Vertices[i][0] - posX;
-          float y = BoundingBox_Vertices[i][1] - posY;
-          float z = BoundingBox_Vertices[i][2] - posZ;
-
-          float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
-
-          x = A[0];
-          y = A[1];
-          z = A[2];
-
-          BoundingBox_Vertices[i][0] = x;
-          BoundingBox_Vertices[i][1] = y;
-          BoundingBox_Vertices[i][2] = z;
-        }
-
-        boolean isEmpty = true;
-        for (int i = 1; i < BoundingBox_Vertices.length; i++) {
-          if(
-            BoundingBox_Vertices[0][0] != BoundingBox_Vertices[i][0] ||
-            BoundingBox_Vertices[0][1] != BoundingBox_Vertices[i][1] ||
-            BoundingBox_Vertices[0][2] != BoundingBox_Vertices[i][2]
-          ) {
-            isEmpty = false;
-          }
-        }
-
-        if(!isEmpty) {
+        if(!gbv.isEmpty) {
           int[][] BoundingBox_Faces = {
             {
               3, 2, 1, 0
@@ -739,11 +810,6 @@ class solarchvision_OVERLAY3D {
         }
 
         drawEdgeBatch(boxEdgeBatch, GROUP_BOX_STYLE);
-
-
-        Select3D.alignX = keep_selection_alignX;
-        Select3D.alignY = keep_selection_alignY;
-        Select3D.alignZ = keep_selection_alignZ;
       }
 
 
@@ -758,51 +824,11 @@ class solarchvision_OVERLAY3D {
 
             int OBJ_ID = Select3D.Group_ids[o];
 
-            float[][] Pivot_Vertices = {
-              {
-                0, 0, 0
-              }
-              ,
-              {
-                1, 0, 0
-              }
-              ,
-              {
-                0, 1, 0
-              }
-              ,
-              {
-                0, 0, 1
-              }
-            };
-
             float x0 = allGroups.Pivots[OBJ_ID][0];
             float y0 = allGroups.Pivots[OBJ_ID][1];
             float z0 = allGroups.Pivots[OBJ_ID][2];
 
-            for (int i = 0; i < Pivot_Vertices.length; i++) {
-
-              float x = Pivot_Vertices[i][0];
-              float y = Pivot_Vertices[i][1];
-              float z = Pivot_Vertices[i][2];
-
-              float r = 10; // <<<<<<<<< display size
-
-              x *= r;
-              y *= r;
-              z *= r;
-
-              float[] O = Select3D.translateInside_ReferencePivot(0, 0, 0);
-              float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
-
-              float dx = A[0] - O[0];
-              float dy = A[1] - O[1];
-              float dz = A[2] - O[2];
-
-              Pivot_Vertices[i][0] = x0 + dx;
-              Pivot_Vertices[i][1] = y0 + dy;
-              Pivot_Vertices[i][2] = z0 + dz;
-            }
+            float[][] Pivot_Vertices = computePivotAxisVertices(x0, y0, z0, 10);
 
 
             int[][] Pivot_Lines = {
@@ -855,53 +881,13 @@ class solarchvision_OVERLAY3D {
 
     if (Select3D.displayReferencePivot) {
 
-      float[][] Pivot_Vertices = {
-        {
-          0, 0, 0
-        }
-        ,
-        {
-          1, 0, 0
-        }
-        ,
-        {
-          0, 1, 0
-        }
-        ,
-        {
-          0, 0, 1
-        }
-      };
-
       float[] P = Select3D.getPivot();
 
       float x0 = P[0];
       float y0 = P[1];
       float z0 = P[2];
 
-      for (int i = 0; i < Pivot_Vertices.length; i++) {
-
-        float x = Pivot_Vertices[i][0];
-        float y = Pivot_Vertices[i][1];
-        float z = Pivot_Vertices[i][2];
-
-        float r = 5; // <<<<<<<<< display size
-
-        x *= r;
-        y *= r;
-        z *= r;
-
-        float[] O = Select3D.translateInside_ReferencePivot(0, 0, 0);
-        float[] A = Select3D.translateInside_ReferencePivot(x, y, z);
-
-        float dx = A[0] - O[0];
-        float dy = A[1] - O[1];
-        float dz = A[2] - O[2];
-
-        Pivot_Vertices[i][0] = x0 + dx;
-        Pivot_Vertices[i][1] = y0 + dy;
-        Pivot_Vertices[i][2] = z0 + dz;
-      }
+      float[][] Pivot_Vertices = computePivotAxisVertices(x0, y0, z0, 5);
 
       int[][] Pivot_Lines = {
         {
