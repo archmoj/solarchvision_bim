@@ -11,11 +11,13 @@ permissions:
   contents: read
 
 env:
-  # Keep these in sync with test/run_tests.sh's PROCESSING_HOME default
-  # and test/install_junit.sh's LATEST_VERSION.
+  # Keep these in sync with test/run_tests.sh's PROCESSING_HOME default,
+  # test/install_junit.sh's LATEST_VERSION, and test/install_jacoco.sh's
+  # LATEST_VERSION.
   PROCESSING_VERSION: 4.3.4
   PROCESSING_TAG: processing-1297-4.3.4
   JUNIT_VERSION: 6.1.3
+  JACOCO_VERSION: 0.8.15
 
 jobs:
   test:
@@ -66,7 +68,72 @@ jobs:
           chmod +x install_junit.sh
           ./install_junit.sh
 
+      # test/run_tests.sh generates a coverage report automatically
+      # whenever jacocoagent.jar/jacococli.jar are found under
+      # test/lib/jacoco/ - reuse test/install_jacoco.sh (documented in
+      # test/README.md) the same way the JUnit launcher is installed
+      # above. This is intentionally optional at the run_tests.sh level
+      # (a local dev running the tests doesn't need it), but CI always
+      # installs it so every run gets a coverage report.
+      - name: Cache JaCoCo
+        id: cache-jacoco
+        uses: actions/cache@v4
+        with:
+          path: test/lib/jacoco
+          key: jacoco-${{ env.JACOCO_VERSION }}
+
+      - name: Install JaCoCo
+        if: steps.cache-jacoco.outputs.cache-hit != 'true'
+        working-directory: test
+        run: |
+          chmod +x install_jacoco.sh
+          ./install_jacoco.sh
+
       - name: Run tests
         run: |
           chmod +x test/run_tests.sh
           ./test/run_tests.sh
+
+      # run_tests.sh always writes here when coverage is enabled,
+      # win or lose - upload it even if the tests failed above, so a
+      # failing PR still shows what was (and wasn't) covered.
+      - name: Publish coverage summary
+        if: always()
+        run: |
+          if [ -f build/test/coverage/coverage.csv ]; then
+            {
+              echo "### Coverage"
+              echo
+              echo "| Metric | Coverage |"
+              echo "| --- | --- |"
+              awk -F, '
+                NR == 1 { next }
+                {
+                  instr_missed += $4; instr_covered += $5;
+                  branch_missed += $6; branch_covered += $7;
+                  line_missed += $8; line_covered += $9;
+                }
+                END {
+                  printf "| Instructions | %.1f%% (%d/%d) |\n", 100*instr_covered/(instr_covered+instr_missed), instr_covered, instr_covered+instr_missed;
+                  printf "| Branches | %.1f%% (%d/%d) |\n", 100*branch_covered/(branch_covered+branch_missed), branch_covered, branch_covered+branch_missed;
+                  printf "| Lines | %.1f%% (%d/%d) |\n", 100*line_covered/(line_covered+line_missed), line_covered, line_covered+line_missed;
+                }
+              ' build/test/coverage/coverage.csv
+              echo
+              echo "Full HTML/XML report: see the \`coverage-report\` artifact on this run."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No coverage.csv found - coverage generation may have failed; see the Run tests step above." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            build/test/coverage/html
+            build/test/coverage/coverage.xml
+            build/test/coverage/coverage.csv
+          if-no-files-found: warn
+          retention-days: 14

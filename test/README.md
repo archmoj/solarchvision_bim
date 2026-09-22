@@ -40,6 +40,39 @@ Then:
 ./test/run_tests.sh
 ```
 
+## Coverage
+
+`run_tests.sh` generates a [JaCoCo](https://www.jacoco.org/jacoco/) coverage
+report automatically whenever it finds `jacocoagent.jar`/`jacococli.jar`
+under `test/lib/jacoco/` - it's entirely optional, skipped (not an error)
+otherwise, so installing it isn't part of the one-time setup above.
+
+To get a report locally:
+
+```sh
+./test/install_jacoco.sh   # run from inside test/, like install_junit.sh
+cd ..
+./test/run_tests.sh
+```
+
+This writes, under `build/test/coverage/`:
+
+- `html/index.html` - browsable, per-package/class coverage
+- `coverage.xml` - machine-readable, for CI tooling (e.g. a coverage-diff
+  or badge action)
+- `coverage.csv` - the same data, one row per class
+
+and prints a quick instructions/branches/lines summary to the terminal.
+There's no source-highlighted view in the HTML report - the real source is
+the `.pde` tabs, not the single `.java` file Processing generates from
+them, so line numbers in an annotated source view wouldn't line up with
+anything in `app/src/solarchvision_bim/`; the class/method/line/branch
+percentages themselves aren't affected by that.
+
+CI (`.github/workflows/ci.yml`) always installs JaCoCo, so every run gets
+a coverage report: a summary table in the workflow's Job Summary, and the
+full HTML/XML/CSV report uploaded as a `coverage-report` build artifact.
+
 ## Extending this
 
 Anything that touches `WIN3D.graphics`, `PImage`, or live UI/mouse state

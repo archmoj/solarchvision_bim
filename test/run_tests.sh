@@ -12,6 +12,10 @@
 #      includes the version (e.g. junit-platform-console-standalone-6.1.3.jar),
 #      which is fine, it's picked up automatically below. Set JUNIT_JAR
 #      instead if you'd rather point at a jar living somewhere else.
+#   3. Optional - for a coverage report, run test/install_jacoco.sh (from
+#      inside test/) to drop jacocoagent.jar/jacococli.jar under
+#      test/lib/jacoco/. Coverage is skipped, not an error, if these
+#      aren't found - only JUnit is required to just run the tests.
 #
 # Usage:
 #   ./test/run_tests.sh
@@ -46,6 +50,21 @@ if [ -z "${JUNIT_JAR:-}" ] || [ ! -f "$JUNIT_JAR" ]; then
 fi
 
 echo "==> Using JUnit console launcher: $JUNIT_JAR"
+
+# Coverage is opt-in-by-presence: only enabled when both jars are
+# actually there (test/install_jacoco.sh puts them under
+# test/lib/jacoco/), so this script still runs with only JUnit
+# installed - CI always has jacoco installed (see .github/workflows/ci.yml),
+# a local dev who just wants to run the tests doesn't need to.
+JACOCO_AGENT_JAR="${JACOCO_AGENT_JAR:-test/lib/jacoco/jacocoagent.jar}"
+JACOCO_CLI_JAR="${JACOCO_CLI_JAR:-test/lib/jacoco/jacococli.jar}"
+COVERAGE_ENABLED=0
+if [ -f "$JACOCO_AGENT_JAR" ] && [ -f "$JACOCO_CLI_JAR" ]; then
+  COVERAGE_ENABLED=1
+  echo "==> JaCoCo found - coverage report will be generated"
+else
+  echo "==> JaCoCo not found under test/lib/jacoco/ - skipping coverage (run test/install_jacoco.sh to enable it)"
+fi
 
 # javac isn't always on PATH (e.g. a JRE-only install has `java` but not
 # `javac`) - fall back to the JDK Processing itself bundles internally
@@ -117,7 +136,75 @@ mkdir -p "$TEST_CLASSES"
 "$JAVAC_BIN" -cp "$CLASSPATH" -d "$TEST_CLASSES" test/*.java
 
 echo "==> Running tests"
-"$JAVA_BIN" -cp "$CLASSPATH:$TEST_CLASSES" \
+
+# -javaagent has to be a JVM option (before the class/launcher name),
+# so it's built as a single optional string and only actually passed
+# when coverage is enabled - ${JAVA_AGENT_ARG:+"$JAVA_AGENT_ARG"} below
+# expands to nothing at all (not an empty-string argument) when unset,
+# and avoids relying on bash-array expansion under `set -u`, which
+# isn't reliable on every bash this might run under (e.g. macOS's
+# stock bash 3.2).
+JAVA_AGENT_ARG=""
+JACOCO_EXEC="$BUILD_DIR/jacoco.exec"
+if [ "$COVERAGE_ENABLED" -eq 1 ]; then
+  rm -f "$JACOCO_EXEC"
+  # includes=solarchvision_bim* - every sketch class (the main class
+  # itself, plus every .pde tab's non-static inner class, e.g.
+  # solarchvision_bim$solarchvision_WIN3D) starts with that prefix;
+  # this keeps JUnit/Processing/JDK classes out of the instrumented set
+  # and the resulting report.
+  JAVA_AGENT_ARG="-javaagent:${JACOCO_AGENT_JAR}=destfile=${JACOCO_EXEC},includes=solarchvision_bim*"
+fi
+
+set +e
+"$JAVA_BIN" ${JAVA_AGENT_ARG:+"$JAVA_AGENT_ARG"} -cp "$CLASSPATH:$TEST_CLASSES" \
   org.junit.platform.console.ConsoleLauncher execute \
   --scan-classpath="$TEST_CLASSES" \
   --details=tree
+TEST_EXIT_CODE=$?
+set -e
+
+if [ "$COVERAGE_ENABLED" -eq 1 ]; then
+  if [ -f "$JACOCO_EXEC" ]; then
+    echo "==> Generating coverage report"
+    COVERAGE_DIR="$BUILD_DIR/coverage"
+    mkdir -p "$COVERAGE_DIR"
+    # --sourcefiles is deliberately omitted: the real source is the
+    # .pde tabs, not the single .java file Processing generates from
+    # them, so line numbers in a source-annotated HTML view wouldn't
+    # line up with anything in app/src/solarchvision_bim/ - the
+    # class/method/line/branch percentages below (and in the XML/CSV,
+    # for CI tooling) are unaffected by that and still accurate.
+    "$JAVA_BIN" -jar "$JACOCO_CLI_JAR" report "$JACOCO_EXEC" \
+      --classfiles "$MAIN_CLASS_DIR" \
+      --name solarchvision_bim \
+      --html "$COVERAGE_DIR/html" \
+      --xml "$COVERAGE_DIR/coverage.xml" \
+      --csv "$COVERAGE_DIR/coverage.csv"
+
+    echo "==> Coverage report: $COVERAGE_DIR/html/index.html (also: coverage.xml, coverage.csv)"
+
+    # Quick totals across every class JaCoCo tracked, in case nobody
+    # opens the HTML report - INSTRUCTION and LINE are the two people
+    # most often mean by "coverage %"; BRANCH catches missed if/else
+    # arms the other two can look fine while still missing.
+    awk -F, '
+      NR == 1 { next }
+      {
+        instr_missed += $4; instr_covered += $5;
+        branch_missed += $6; branch_covered += $7;
+        line_missed += $8; line_covered += $9;
+      }
+      END {
+        printf "==> Coverage summary:\n";
+        printf "      Instructions: %5.1f%% (%d/%d)\n", 100*instr_covered/(instr_covered+instr_missed), instr_covered, instr_covered+instr_missed;
+        printf "      Branches:     %5.1f%% (%d/%d)\n", 100*branch_covered/(branch_covered+branch_missed), branch_covered, branch_covered+branch_missed;
+        printf "      Lines:        %5.1f%% (%d/%d)\n", 100*line_covered/(line_covered+line_missed), line_covered, line_covered+line_missed;
+      }
+    ' "$COVERAGE_DIR/coverage.csv"
+  else
+    echo "==> warning: coverage was enabled but $JACOCO_EXEC was never written (tests may have failed before any ran)" >&2
+  fi
+fi
+
+exit "$TEST_EXIT_CODE"
