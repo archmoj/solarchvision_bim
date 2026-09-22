@@ -2,30 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises mouseWheel.pde's standalone helper functions, reached
-// directly on `app`. Like mouseDragged.pde/mouseReleased.pde, this file
-// was already broken into small, mostly pure functions.
-//
-// handleMoveWheel was changed during this session to call the already-
-// extracted SOLARCHVISION_computeMoveDelta (mouseClicked.pde) instead
-// of its own inline copy of the same posVector-based axis-zeroing
-// logic - a third occurrence of that pattern, after mouseClicked()
-// itself and (before extraction) nowhere else. Covered below via its
-// effect on a selected vertex.
-//
-// NOT covered: mouseWheel(MouseEvent) itself (needs a real MouseEvent
-// and reads a static frameCount gate identical in spirit to the other
-// two files' top-level dispatchers), handleCaseBarWheel's own
-// coordinate hit-testing (isInside against the case bar's on-screen
-// layout - the same kind of UI hit-testing this test suite's sibling
-// files already treat as out of scope, in favor of testing the
-// functions it dispatches to directly), and
-// handleRotateWheel/handleScaleWheel/handlePropertyEditWheel, each a
-// one-line pass-through to Rotate3D.selection/Scale3D.selection/
-// Edit3D.selection - already covered directly in their own test files,
-// so re-testing the wrapper here would mostly just re-test those.
-//
-// A fresh `app` per test since these mutate shared scene/viewport state.
 class MouseWheelTest {
 
   private solarchvision_bim app;

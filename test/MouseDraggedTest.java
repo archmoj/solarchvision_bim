@@ -2,25 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises mouseDragged.pde's standalone helper functions, reached
-// directly on `app` (they're top-level functions, not methods of a
-// class field). Unlike mouseClicked.pde before this session's work,
-// this file was already broken into small, mostly pure functions - no
-// further extraction was needed here, just tests.
-//
-// NOT covered: mouseDragged() itself (the thin top-level dispatcher -
-// FRAME_drag_IMG / pick-list-drag / WIN3D-vs-WORLD gating, exercised
-// well enough via handleWin3DDrag/handleWorldDrag below), and
-// rotateCameraXY/rotateCameraZ/rotateCameraBoth/rotateCameraAroundLand,
-// which are thin wrappers around WIN3D.rotateXY_3DViewport_around_
-// Selection/rotateZ_3DViewport_around_Selection/rotateXY_3DViewport_
-// around_LandIntersection - each of those three is either already
-// tested directly (the LandIntersection one via its own
-// SOLARCHVISION_computeClickRay dependency) or would need the same
-// Select3D.getPivot() scene setup already covered in Select3DTest.java;
-// testing the one-line wrapper on top would mostly just re-test that.
-//
-// A fresh `app` per test since these mutate shared scene/viewport state.
 class MouseDraggedTest {
 
   private solarchvision_bim app;

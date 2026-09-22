@@ -2,22 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises mouseReleased.pde's standalone helper functions, reached
-// directly on `app`. Like mouseDragged.pde, this file was already
-// broken into small, mostly pure functions - the one exception was
-// castClickToWorld(), which had its own inline copy of the same ray
-// setup already extracted into SOLARCHVISION_computeClickRay
-// (mouseClicked.pde) during an earlier session; it's now pointed at
-// that function instead, removing a third copy of that logic.
-//
-// NOT covered: mouseReleased() itself (the thin top-level dispatcher),
-// finishFrameDragSelection() and performRectSelect(), both of which
-// draw directly (rect/stroke/fill/pushMatrix) - consistent with this
-// test suite's existing policy elsewhere of not exercising drawing
-// code, which needs a real graphics context this headless setup
-// doesn't have.
-//
-// A fresh `app` per test since these mutate shared scene/viewport state.
 class MouseReleasedTest {
 
   private solarchvision_bim app;

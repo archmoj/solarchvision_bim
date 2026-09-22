@@ -2,33 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Exercises solarchvision_OVERLAY3D's pure, non-drawing helper methods,
-// reached on app.OVERLAY3D (they're instance methods of that class, not
-// top-level functions).
-//
-// computeFaceTessellation, computePivotAxisVertices and
-// computeGroupBoxVertices were all extracted from draw() (across two
-// sessions): each pulled out an identical block that used to be
-// duplicated inline at two call sites - confirmed character-for-
-// character identical (modulo indentation, and for
-// computePivotAxisVertices, its r/x0/y0/z0 inputs) before extracting.
-// computeGroupBoxVertices also owns the Select3D.alignX/Y/Z save/
-// restore that used to wrap its call site, since forcing (and
-// restoring) that alignment is part of what "measure this box from its
-// own centre" means, not something the caller should have to remember.
-//
-// The clipPolygon_*/clipAndProject family were NOT extracted - they
-// were already standalone, non-drawing methods (no pushMatrix/fill/
-// stroke/vertex calls) sitting right next to draw(), just never
-// covered by a test until now.
-//
-// NOT covered: draw() itself and drawClosedShape()/drawEdgeBatch(),
-// which draw directly (pushMatrix/translate/ellipse/line/beginShape/
-// vertex/fill/stroke) - consistent with this test suite's policy
-// elsewhere of not exercising drawing code, which needs a real graphics
-// context this headless setup doesn't have.
-//
-// A fresh `app` per test since these mutate shared scene state.
 class OVERLAY3DTest {
 
   private solarchvision_bim app;
