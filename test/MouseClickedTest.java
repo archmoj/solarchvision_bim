@@ -82,6 +82,18 @@ import static org.junit.jupiter.api.Assertions.*;
 // was already inert (commented out), so removing it doesn't change
 // behavior.
 //
+// SOLARCHVISION_classifySuperOBJShape was also extracted this session:
+// mouseClicked()'s CREATE.SuperOBJ handling used px/py/pz (the create
+// power-exponents) to decide, via a chain of exact-equality checks,
+// which of five dedicated Create3D.add_X() calls to make instead of
+// the general (heavier) add_SuperSphere() - this pulls out just that
+// classification (not the actual creation calls, which stay inline)
+// into its own testable function returning one of five
+// SUPEROBJ_SHAPE_* constants. One pre-existing quirk in the
+// add_SuperSphere() call itself was left untouched, not "discovered
+// and fixed" as part of this: it passes (pz, py, pz) instead of the
+// expected (px, py, pz) - px's own value is never actually used there.
+//
 // A fresh `app` per test since these mutate shared scene state.
 class MouseClickedTest {
 
@@ -1165,5 +1177,47 @@ class MouseClickedTest {
     float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
 
     assertArrayEquals(new float[]{0, 0, 5}, d, 0.0001f);
+  }
+
+  // ====== SOLARCHVISION_classifySuperOBJShape (extracted) ================
+
+  @Test
+  void classifySuperOBJShape_cubePowerCubePowerTwoIsParametric () {
+    app.CubePower = 16;
+    assertEquals(app.SUPEROBJ_SHAPE_PARAMETRIC, app.SOLARCHVISION_classifySuperOBJShape(16, 16, 2));
+  }
+
+  @Test
+  void classifySuperOBJShape_twoTwoCubePowerIsSuperCylinder () {
+    app.CubePower = 16;
+    assertEquals(app.SUPEROBJ_SHAPE_SUPERCYLINDER, app.SOLARCHVISION_classifySuperOBJShape(2, 2, 16));
+  }
+
+  @Test
+  void classifySuperOBJShape_cubePowerCubePowerCubePowerIsBox () {
+    app.CubePower = 16;
+    assertEquals(app.SUPEROBJ_SHAPE_BOX, app.SOLARCHVISION_classifySuperOBJShape(16, 16, 16));
+  }
+
+  @Test
+  void classifySuperOBJShape_oneOneOneIsOctahedron () {
+    assertEquals(app.SUPEROBJ_SHAPE_OCTAHEDRON, app.SOLARCHVISION_classifySuperOBJShape(1, 1, 1));
+  }
+
+  @Test
+  void classifySuperOBJShape_anythingElseFallsBackToSuperSphere () {
+    app.CubePower = 16;
+    assertEquals(app.SUPEROBJ_SHAPE_SUPERSPHERE, app.SOLARCHVISION_classifySuperOBJShape(4, 4, 4));
+    assertEquals(app.SUPEROBJ_SHAPE_SUPERSPHERE, app.SOLARCHVISION_classifySuperOBJShape(2, 2, 2));
+  }
+
+  @Test
+  void classifySuperOBJShape_checksInOrderSoCubePowerCubePowerCubePowerNeverMatchesParametricFirst () {
+    // pz==CubePower (16) here, not 2 - so this must NOT be classified
+    // as Parametric even though px and py both equal CubePower too;
+    // guards against a sloppy re-implementation collapsing the first
+    // and third branches.
+    app.CubePower = 16;
+    assertEquals(app.SUPEROBJ_SHAPE_BOX, app.SOLARCHVISION_classifySuperOBJShape(16, 16, 16));
   }
 }

@@ -248,6 +248,38 @@ float[] SOLARCHVISION_computeMoveDelta (float x1, float y1, float z1, float x2, 
   return new float[]{dx, dy, dz};
 }
 
+// Which of add_ParametricSurface/add_SuperCylinder/add_Box_Core/
+// add_Octahedron/add_SuperSphere a SuperOBJ create should call -
+// returned by SOLARCHVISION_classifySuperOBJShape below.
+final int SUPEROBJ_SHAPE_PARAMETRIC = 0;
+final int SUPEROBJ_SHAPE_SUPERCYLINDER = 1;
+final int SUPEROBJ_SHAPE_BOX = 2;
+final int SUPEROBJ_SHAPE_OCTAHEDRON = 3;
+final int SUPEROBJ_SHAPE_SUPERSPHERE = 4; // the fallback: anything not matching one of the other four
+
+// Pulled out of mouseClicked()'s CREATE.SuperOBJ handling: SuperOBJ's
+// px/py/pz power-exponents double as a shape picker - certain exact
+// combinations (checked in this order, first match wins) mean "this is
+// really a parametric surface / cylinder / box / octahedron in
+// disguise", and Create3D has a dedicated, more efficient add_X() for
+// each of those instead of going through the general (and heavier)
+// add_SuperSphere() every other combination falls through to. Purely
+// the classification, not the actual creation - so it's testable
+// without touching the scene at all.
+int SOLARCHVISION_classifySuperOBJShape (float px, float py, float pz) {
+  if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
+    return SUPEROBJ_SHAPE_PARAMETRIC;
+  } else if ((px == 2) && (py == 2) && (pz == CubePower)) {
+    return SUPEROBJ_SHAPE_SUPERCYLINDER;
+  } else if ((px == CubePower) && (py == CubePower) && (pz == CubePower)) {
+    return SUPEROBJ_SHAPE_BOX;
+  } else if ((px == 1) && (py == 1) && (pz == 1)) {
+    return SUPEROBJ_SHAPE_OCTAHEDRON;
+  } else {
+    return SUPEROBJ_SHAPE_SUPERSPHERE;
+  }
+}
+
 // Result of SOLARCHVISION_computeClickRay below: a 3D ray (a start
 // point plus a direction) corresponding to a click at 3D-viewport-local
 // coordinates (Image_X, Image_Y) - i.e. mouseX/mouseY already offset by
@@ -1803,16 +1835,18 @@ void mouseClicked () {
 
                     if (CreateObject == CREATE.SuperOBJ) {
 
-                      if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
+                      int shape = SOLARCHVISION_classifySuperOBJShape(px, py, pz);
+
+                      if (shape == SUPEROBJ_SHAPE_PARAMETRIC) {
 
                         Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, 0, rot);
-                      } else if ((px == 2) && (py == 2) && (pz == CubePower)) {
+                      } else if (shape == SUPEROBJ_SHAPE_SUPERCYLINDER) {
 
                         Create3D.add_SuperCylinder(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_CylinderDegree, rot);
-                      } else if ((px == CubePower) && (py == CubePower) && (pz == CubePower)) {
+                      } else if (shape == SUPEROBJ_SHAPE_BOX) {
 
                         Create3D.add_Box_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, rot);
-                      } else if ((px == 1) && (py == 1) && (pz == 1)) {
+                      } else if (shape == SUPEROBJ_SHAPE_OCTAHEDRON) {
 
                         Create3D.add_Octahedron(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, rot);
                       } else {
