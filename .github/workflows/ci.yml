@@ -136,4 +136,4 @@ jobs:
             build/test/coverage/coverage.xml
             build/test/coverage/coverage.csv
           if-no-files-found: warn
-          retention-days: 14
+          retention-days: 2

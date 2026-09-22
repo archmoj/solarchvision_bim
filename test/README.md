@@ -57,17 +57,19 @@ cd ..
 
 This writes, under `build/test/coverage/`:
 
-- `html/index.html` - browsable, per-package/class coverage
+- `html/index.html` - browsable, per-package/class coverage, including a
+  source-highlighted view per class
 - `coverage.xml` - machine-readable, for CI tooling (e.g. a coverage-diff
   or badge action)
 - `coverage.csv` - the same data, one row per class
 
 and prints a quick instructions/branches/lines summary to the terminal.
-There's no source-highlighted view in the HTML report - the real source is
-the `.pde` tabs, not the single `.java` file Processing generates from
-them, so line numbers in an annotated source view wouldn't line up with
-anything in `app/src/solarchvision_bim/`; the class/method/line/branch
-percentages themselves aren't affected by that.
+The source-highlighted view is against Processing's own generated
+`solarchvision_bim.java` (found automatically under `build/test/`, next
+to the compiled classes) rather than the original `.pde` tabs - that's
+genuinely what the compiled bytecode maps to, so the line numbers there
+are accurate, just not the same line numbers you'd see editing the `.pde`
+files directly in `app/src/solarchvision_bim/`.
 
 CI (`.github/workflows/ci.yml`) always installs JaCoCo, so every run gets
 a coverage report: a summary table in the workflow's Job Summary, and the

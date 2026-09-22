@@ -128,6 +128,23 @@ MAIN_CLASS_DIR="$(dirname "$MAIN_CLASS_PATH")"
 
 echo "==> Found compiled sketch classes under: $MAIN_CLASS_DIR"
 
+# Processing's own preprocessor merges every .pde tab into one generated
+# solarchvision_bim.java before compiling it - that's the file every
+# class's bytecode SourceFile attribute actually points to (every tab's
+# class becomes a non-static inner class of it, see test/README.md), so
+# it's what JaCoCo needs for source-annotated HTML coverage, not the
+# .pde tabs themselves. --build emits it alongside (or near) the .class
+# files; if it's missing for some reason, the coverage report below
+# just won't have source-highlighted pages, which is only cosmetic.
+SOURCE_FILE_PATH="$(find "$BUILD_DIR" -name 'solarchvision_bim.java' -print -quit)"
+SOURCE_DIR=""
+if [ -n "$SOURCE_FILE_PATH" ]; then
+  SOURCE_DIR="$(dirname "$SOURCE_FILE_PATH")"
+  echo "==> Found generated sketch source under: $SOURCE_DIR"
+else
+  echo "==> warning: solarchvision_bim.java not found under $BUILD_DIR - coverage report (if generated) will have no source-highlighted view" >&2
+fi
+
 CLASSPATH="$CORE_JAR:$JUNIT_JAR:$MAIN_CLASS_DIR"
 
 echo "==> Compiling tests"
@@ -169,14 +186,18 @@ if [ "$COVERAGE_ENABLED" -eq 1 ]; then
     echo "==> Generating coverage report"
     COVERAGE_DIR="$BUILD_DIR/coverage"
     mkdir -p "$COVERAGE_DIR"
-    # --sourcefiles is deliberately omitted: the real source is the
-    # .pde tabs, not the single .java file Processing generates from
-    # them, so line numbers in a source-annotated HTML view wouldn't
-    # line up with anything in app/src/solarchvision_bim/ - the
-    # class/method/line/branch percentages below (and in the XML/CSV,
-    # for CI tooling) are unaffected by that and still accurate.
+    # --sourcefiles points at Processing's generated solarchvision_bim.java
+    # (found above), when we found it, so the HTML report's per-class
+    # pages show real, accurate line-by-line coverage - just against
+    # that generated file's own line numbers, not the original .pde
+    # tabs', since that's genuinely what the compiled bytecode maps to.
+    SOURCEFILES_ARG=""
+    if [ -n "$SOURCE_DIR" ]; then
+      SOURCEFILES_ARG="--sourcefiles"
+    fi
     "$JAVA_BIN" -jar "$JACOCO_CLI_JAR" report "$JACOCO_EXEC" \
       --classfiles "$MAIN_CLASS_DIR" \
+      ${SOURCEFILES_ARG:+"$SOURCEFILES_ARG" "$SOURCE_DIR"} \
       --name solarchvision_bim \
       --html "$COVERAGE_DIR/html" \
       --xml "$COVERAGE_DIR/coverage.xml" \
