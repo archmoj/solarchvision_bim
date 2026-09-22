@@ -5,11 +5,24 @@ and image-diffs the screenshot each one produces, to catch unintended visual
 regressions (a broken shading mode, a camera command that stops working, a
 geometry command that silently changes its output, etc).
 
+Split into two independent steps:
+- **`make_baseline.py`** — runs the sketch, one `processing-java` process
+  per `command/test_*.txt`, and saves each screenshot to
+  `test/image/actual/<name>.png` (or `test/image/baseline/<name>.png` with
+  `--baseline`). Rendering is the flaky half of this pipeline (JVM/GL
+  startup, Xvfb), so **retries are per test, not per batch**: if
+  `test_houses` fails, only `test_houses` is retried — the 6 tests that
+  already succeeded aren't re-run.
+- **`compare_pixels.py`** — pixel-diffs `test/image/actual/<name>.png`
+  against `test/image/baseline/<name>.png` and writes a red-highlighted
+  diff to `test/image/diff/<name>.png`. Purely deterministic, no retries:
+  a pixel comparison is either right or it isn't.
+
 ## How it works
 
 1. `command/test_*.txt` each build a small, non-intersecting scene, set a
    camera/view, and end in exactly one `REC.png` (see `command/TESTS.md`).
-2. `run_image_tests.sh` runs each script through the sketch in headless mode:
+2. `make_baseline.py` runs each script through the sketch in headless mode:
    ```
    processing-java --sketch=app/src/solarchvision_bim --run \
      --args USER=AUTO RUN=command/test_primitives.txt
@@ -17,15 +30,12 @@ geometry command that silently changes its output, etc).
    (the same `USER=AUTO RUN=...` mechanism as `./run.sh USER=AUTO
    RUN=command/test.txt` — see `app/src/solarchvision_bim/parseArgs.pde` and
    `solarchvision_bim.pde`: `USER=AUTO` makes the sketch run the script
-   ~1000 frames after startup and then call `exit()` on its own, so no
-   further input is needed).
+   ~1000 frames after startup and then call `exit()` on its own).
 3. Each script's single screenshot is found under
    `app/src/solarchvision_bim/projects/model-01/export/screenshots/` (by
-   timestamp — whatever appeared after the run started) and copied to
-   `test/image/actual/<test-name>.png`.
-4. `compare_images.py` diffs it against `test/image/baseline/<test-name>.png`
-   pixel-by-pixel and writes a red-highlighted diff to
-   `test/image/diff/<test-name>.png`.
+   mtime, whatever appeared after that test's run started) and copied to
+   `test/image/actual/<name>.png` (or `baseline/` with `--baseline`).
+4. `compare_pixels.py` diffs `actual/` against `baseline/`.
 
 ## Running locally
 
@@ -35,19 +45,18 @@ with Pillow + numpy:
 ```sh
 pip install pillow numpy
 export PROCESSING_HOME=~/processing/4.3.4   # wherever it's installed
-test/image/run_image_tests.sh
+xvfb-run --auto-servernum python3 test/image/make_baseline.py
+python3 test/image/compare_pixels.py
 ```
 
-On a headless machine, wrap it in `xvfb-run` (see Troubleshooting below):
+(`xvfb-run` only wraps `make_baseline.py` — `compare_pixels.py` doesn't
+touch the sketch at all, no display needed.)
+
+Run a subset by naming tests (without `.txt`):
 
 ```sh
-xvfb-run -a test/image/run_image_tests.sh
-```
-
-Run a subset by naming files:
-
-```sh
-test/image/run_image_tests.sh test_houses.txt test_primitives.txt
+python3 test/image/make_baseline.py test_houses test_primitives
+python3 test/image/compare_pixels.py test_houses test_primitives
 ```
 
 ## Baselines
@@ -56,33 +65,25 @@ test/image/run_image_tests.sh test_houses.txt test_primitives.txt
 has generated real baseline images yet**. To seed or refresh them:
 
 ```sh
-UPDATE_BASELINES=1 xvfb-run -a test/image/run_image_tests.sh
+xvfb-run --auto-servernum python3 test/image/make_baseline.py --baseline
 ```
 
 then **look at every image in `test/image/baseline/` before committing** —
 this step trusts whatever the sketch currently renders, so a bug would get
-baked in as "correct" otherwise. The CI workflow (`update-baselines` job,
-triggered manually) does the same thing but uploads the results as a build
+baked in as "correct" otherwise. The CI workflow's `update-baselines` job
+(triggered manually) does the same thing but uploads the results as a build
 artifact for review rather than committing them directly.
 
-Without a baseline for a given test, `run_image_tests.sh` prints a `WARN`
-and continues locally, but the CI workflow runs with `STRICT=1`, so a
-missing baseline is a hard failure there — every test needs a reviewed
-baseline before it's meaningful in CI.
+Without a baseline for a given test, `compare_pixels.py` reports it as a
+real failure by default. Pass `--allow-missing-baseline` for a warn-instead-of-fail local/dev run.
 
 ## Thresholds
 
-`compare_images.py` treats a pixel as "different" if any channel differs by
+`compare_pixels.py` treats a pixel as "different" if any channel differs by
 more than `--pixel-tolerance` (default `12`, to absorb minor antialiasing
 noise), and fails if more than `--threshold` percent of pixels differ
-(default `0.5`). Override per run with:
-
-```sh
-IMAGE_DIFF_THRESHOLD=1.0 test/image/run_image_tests.sh
-```
-
-Loosen this if the renderer turns out to have some inherent
-run-to-run jitter (e.g. timing-dependent antialiasing); tighten it once the
+(default `0.5`, or set `IMAGE_DIFF_THRESHOLD`). Loosen this if the renderer
+turns out to have some inherent run-to-run jitter; tighten it once the
 tests have proven stable.
 
 ## Adding a new test
@@ -90,16 +91,16 @@ tests have proven stable.
 1. Add `command/test_<name>.txt`, following the existing scripts as a
    template: `Delete all` first, space objects out so nothing intersects,
    set a view + `SIZEALL`, end in exactly one `REC.png`.
-2. `UPDATE_BASELINES=1 test/image/run_image_tests.sh test_<name>.txt`,
-   review the resulting `test/image/baseline/test_<name>.png`, commit it.
+2. `python3 test/image/make_baseline.py test_<name> --baseline`, review the
+   resulting `test/image/baseline/test_<name>.png`, commit it.
 
 ## Troubleshooting: headless rendering
 
 The sketch opens a real `P3D` (OpenGL) window even in `USER=AUTO` mode, so
-it needs a display. On CI / a headless box:
+it needs a display:
 
 ```sh
-xvfb-run --auto-servernum test/image/run_image_tests.sh
+xvfb-run --auto-servernum python3 test/image/make_baseline.py
 ```
 
 **On `ubuntu-24.04`/`ubuntu-latest` runners this crashes the JVM** with a
@@ -114,10 +115,7 @@ of Mesa-on-24.04 regression for another project.
 
 **The fix that actually works here: run on `ubuntu-22.04`, not
 `ubuntu-latest`.** `.github/workflows/image-tests.yml` pins both jobs to
-`ubuntu-22.04` for exactly this reason. Locally, use whatever's on hand —
-a VM or container running Ubuntu 22.04 (or any distro with an
-older/non-GLVND Mesa) will work; a fresh Ubuntu 24.04 machine likely won't
-without patching Processing's bundled JOGL jars, which is out of scope here.
+`ubuntu-22.04` for exactly this reason.
 
 `LIBGL_ALWAYS_SOFTWARE=1` is still set in the workflow as a normal, harmless
 "use the software rasterizer, there's no real GPU here" hint for Xvfb — it
@@ -132,46 +130,27 @@ actually succeeded. JOGL's shutdown also prints an `X11Util: Open X11
 Display Connections: ...` warning at exit; that's normal noise from
 `Xvfb`/JOGL cleanup, not an error.
 
-Because of this, `run_image_tests.sh` doesn't treat `processing-java`'s
-exit code as the success signal — it explicitly catches it (so `set -e`
-doesn't abort the loop after the very first test) and logs a note instead.
-The actual check is whether a new screenshot file showed up under
+Because of this, `make_baseline.py` doesn't treat `processing-java`'s exit
+code as the success signal — it logs a note and moves on. The actual check
+is whether a new screenshot file showed up under
 `app/src/solarchvision_bim/projects/model-01/export/screenshots/`, which is
-what genuinely indicates the script ran.
+what genuinely indicates the run produced something.
 
-## Note on per-run timing
+## Note on per-run timing and per-test retry
 
-Each script takes a real chunk of wall-clock time on its own:
-`frameRate(24)` and `Last_initializationStep = 1000` in
-`solarchvision_bim.pde` mean the intro sequence alone takes at least
-`1000 / 24 ~= 42s` before `RUN=...` even starts, on top of JVM startup, GL
-context creation, and the render itself. Running all 7
-`command/test_*.txt` scripts sequentially can add up to well over the
-default timeout of a CI step — this is what caused an early version of
-`.github/workflows/image-tests.yml` (`timeout_minutes: 15`) to have the
-whole job killed mid-run with nothing more informative than "Child_process
-exited with error code 1" and no further per-script output.
+`make_baseline.py` bounds each *attempt* with `PER_TEST_TIMEOUT` (default
+300s, override with the env var) and retries only that one test up to
+`MAX_RETRY` times (default 0) if it comes back empty — a flaky render of
+one test doesn't cost re-running the others. `timeout-minutes: 30` on the
+workflow step is a last-resort safety net for the whole batch (e.g. if
+`xvfb-run`/`Xvfb` itself wedges), not the normal path.
 
-Two things address this:
-- `run_image_tests.sh` prints a start time and elapsed seconds for each
-  script, so a slow run is visible in the log instead of guessed at, and
-  wraps each one in its own `PER_SCRIPT_TIMEOUT` (default 300s, override
-  with the env var) so a single stuck script fails cleanly and the loop
-  moves on, rather than silently consuming the whole job's time budget.
-- The workflow's `timeout_minutes` is set generously (45) to give all 7
-  scripts real headroom to run one after another.
-
-## Note on `set -e`
-
-`run_image_tests.sh` deliberately does **not** use `set -e` (only
-`set -uo pipefail`). This script's whole job is to process every
-`command/test_*.txt` independently and keep going past a single test's
-failure, which is fundamentally incompatible with `-e` aborting the script
-on the first nonzero exit anywhere in the loop — including a plain command
-substitution with no `||` fallback, which aborts silently with no error
-message at all. That bit two different lines during development: the
-`processing-java` invocation (exit code semantics above), and a
-`find | sort | tail` pipeline that occasionally raced with the JVM's own
-shutdown/cleanup in the same screenshots directory. Every real
-success/failure check in the script uses its own explicit `if`/`exit`, so
-nothing relies on `-e`.
+`processing-java` is a plain shell script that runs `java` as a **foreground
+child process**, not via `exec` — so killing just its own PID on a timeout
+would leave the JVM running in the background. Across several timed-out
+tests that can add up to real resource exhaustion (leaked X11 connections,
+memory) that plausibly explains later tests failing even when they'd have
+been fine in isolation. `make_baseline.py` avoids this by starting
+`processing-java` in its own process group (`start_new_session=True`) and
+killing the *whole group* on timeout (`os.killpg(...)`), not just the
+top-level process.

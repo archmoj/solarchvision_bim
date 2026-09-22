@@ -69,32 +69,24 @@ jobs:
       - name: Install image-diff dependencies
         run: pip install pillow numpy
 
-      - name: Make test script executable
-        run: chmod +x test/image/run_image_tests.sh
-
-      # xvfb-run --auto-servernum, no extra GL/mesa flags: same pattern
-      # used successfully for another JOGL/Processing-based sketch at
-      # https://github.com/archmoj/grib2_solarchvision/blob/master/.github/workflows/scheduled-job.yml
-      #
-      # timeout_minutes is generous on purpose: frameRate(24) and
-      # Last_initializationStep = 1000 in solarchvision_bim.pde mean each of
-      # the 7 command/test_*.txt scripts takes >=1000/24 ~= 42s just for the
-      # intro sequence, before JVM/GL startup and the render itself - a
-      # 15-minute budget for all 7 sequentially was too tight and caused the
-      # whole job to be killed mid-run with no clear error. run_image_tests.sh
-      # has its own PER_SCRIPT_TIMEOUT (default 300s) so one stuck script
-      # fails on its own instead of silently eating this budget; the retry
-      # (2 attempts) stays for genuine transient issues, e.g. a fresh X
-      # server racing with the JOGL context on its first attempt.
-      - name: Run image tests
-        uses: nick-fields/retry@v4
+      # One process per test, retried on its own if it fails - see
+      # make_baseline.py's docstring. No wrapping retry action here: a
+      # whole-batch retry would re-run every test that already succeeded
+      # just because one flaked, which is exactly what per-test retry
+      # inside the script avoids. timeout-minutes is a last-resort safety
+      # net in case xvfb-run/Xvfb itself hangs, not the normal path -
+      # PER_TEST_TIMEOUT (default 300s) bounds each test's own attempts.
+      - name: Generate test images (make_baseline.py)
+        timeout-minutes: 30
         env:
-          STRICT: '1'
           LIBGL_ALWAYS_SOFTWARE: '1'
-        with:
-          max_attempts: 2
-          timeout_minutes: 45
-          command: xvfb-run --auto-servernum test/image/run_image_tests.sh
+        run: xvfb-run --auto-servernum python3 test/image/make_baseline.py
+
+      # Always runs, even if generation above had failures, so whatever did
+      # get produced is still compared and its diff is visible.
+      - name: Compare pixels (compare_pixels.py)
+        if: always()
+        run: python3 test/image/compare_pixels.py
 
       - name: Upload actual/diff images
         if: always()
@@ -142,23 +134,11 @@ jobs:
           tar -xf /tmp/processing.tgz -C /tmp
           mv "/tmp/processing-${PROCESSING_VERSION}" "$HOME/processing/${PROCESSING_VERSION}"
 
-      - name: Install image-diff dependencies
-        run: pip install pillow numpy
-
-      - name: Make test script executable
-        run: chmod +x test/image/run_image_tests.sh
-
-      # See the "Run image tests" step above for why timeout_minutes is 45,
-      # not the retry action's usual default.
-      - name: Regenerate baselines
-        uses: nick-fields/retry@v4
+      - name: Regenerate baselines (make_baseline.py --baseline)
+        timeout-minutes: 30
         env:
-          UPDATE_BASELINES: '1'
           LIBGL_ALWAYS_SOFTWARE: '1'
-        with:
-          max_attempts: 2
-          timeout_minutes: 45
-          command: xvfb-run --auto-servernum test/image/run_image_tests.sh
+        run: xvfb-run --auto-servernum python3 test/image/make_baseline.py --baseline
 
       # Uploaded, not committed: baselines should be eyeballed by a human
       # before they're trusted as "correct". Download the artifact, check
