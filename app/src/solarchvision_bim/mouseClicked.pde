@@ -172,6 +172,82 @@ void SOLARCHVISION_pickOrAssignModel1DProperty (int OBJ_ID) {
   }
 }
 
+// Pulled out of mouseClicked()'s UITASK.Move handling: for whichever
+// object category is currently selected, finds the single reference
+// point a move should be measured from - the selection's own pivot for
+// a GROUP (via Select3D.getPivot(), already covered directly in
+// Select3DTest.java), or the position of the LAST selected id for
+// MODEL2D/MODEL1D/SOLID/VERTEX (matching the original: only ever the
+// last one, even for a multi-object selection). Returns
+// {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined} for any other
+// category (POLYLINE, FACE, CAMERA, SECTION, LANDPOINT), same as the
+// original inline code left x1/y1/z1 unset (and therefore "undefined")
+// for those.
+float[] SOLARCHVISION_getMoveOriginPoint () {
+  float x1 = FLOAT_undefined;
+  float y1 = FLOAT_undefined;
+  float z1 = FLOAT_undefined;
+
+  if (current_ObjectCategory == ObjectCategory.GROUP) {
+
+    float[] P = Select3D.getPivot();
+
+    x1 = P[0];
+    y1 = P[1];
+    z1 = P[2];
+  } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+
+    x1 = allModel2Ds.getX(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
+    y1 = allModel2Ds.getY(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
+    z1 = allModel2Ds.getZ(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
+  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+
+    x1 = allModel1Ds.getX(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
+    y1 = allModel1Ds.getY(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
+    z1 = allModel1Ds.getZ(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
+  } else if (current_ObjectCategory == ObjectCategory.SOLID) {
+
+    x1 = allSolids.get_posX(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
+    y1 = allSolids.get_posY(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
+    z1 = allSolids.get_posZ(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
+  } else if (current_ObjectCategory == ObjectCategory.VERTEX) {
+
+    x1 = allPoints.getX(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
+    y1 = allPoints.getY(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
+    z1 = allPoints.getZ(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
+  }
+
+  return new float[]{x1, y1, z1};
+}
+
+// Pulled out of mouseClicked()'s UITASK.Move handling: the move vector
+// from (x1,y1,z1) to (x2,y2,z2), then zeroed down to a single axis
+// according to Select3D.posVector - 0 keeps only X, 1 keeps only Y, 2
+// keeps only Z (posVector's own default), and any other value
+// (typically 3, meaning "All") leaves all three components as-is.
+float[] SOLARCHVISION_computeMoveDelta (float x1, float y1, float z1, float x2, float y2, float z2) {
+  float dx = x2 - x1;
+  float dy = y2 - y1;
+  float dz = z2 - z1;
+
+  int the_Vector = Select3D.posVector;
+
+  if (the_Vector == 0) {
+    dy = 0;
+    dz = 0;
+  }
+  if (the_Vector == 1) {
+    dz = 0;
+    dx = 0;
+  }
+  if (the_Vector == 2) {
+    dx = 0;
+    dy = 0;
+  }
+
+  return new float[]{dx, dy, dz};
+}
+
 // Result of SOLARCHVISION_computeClickRay below: a 3D ray (a start
 // point plus a direction) corresponding to a click at 3D-viewport-local
 // coordinates (Image_X, Image_Y) - i.e. mouseX/mouseY already offset by
@@ -1577,38 +1653,10 @@ void mouseClicked () {
 
                 if (WIN3D.UI_CurrentTask == UITASK.Move) { // move
 
-                  float x1 = FLOAT_undefined;
-                  float y1 = FLOAT_undefined;
-                  float z1 = FLOAT_undefined;
-
-                  if (current_ObjectCategory == ObjectCategory.GROUP) {
-
-                    float[] P = Select3D.getPivot();
-
-                    x1 = P[0];
-                    y1 = P[1];
-                    z1 = P[2];
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
-
-                    x1 = allModel2Ds.getX(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
-                    y1 = allModel2Ds.getY(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
-                    z1 = allModel2Ds.getZ(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
-
-                    x1 = allModel1Ds.getX(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
-                    y1 = allModel1Ds.getY(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
-                    z1 = allModel1Ds.getZ(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
-                  } else if (current_ObjectCategory == ObjectCategory.SOLID) {
-
-                    x1 = allSolids.get_posX(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
-                    y1 = allSolids.get_posY(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
-                    z1 = allSolids.get_posZ(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
-                  } else if (current_ObjectCategory == ObjectCategory.VERTEX) {
-
-                    x1 = allPoints.getX(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
-                    y1 = allPoints.getY(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
-                    z1 = allPoints.getZ(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
-                  }
+                  float[] origin = SOLARCHVISION_getMoveOriginPoint();
+                  float x1 = origin[0];
+                  float y1 = origin[1];
+                  float z1 = origin[2];
 
                   if ((is_defined(x1)) &&
                       (is_defined(y1)) &&
@@ -1618,36 +1666,9 @@ void mouseClicked () {
                     float y2 = RxP[2];
                     float z2 = RxP[3];
 
-                    float dx, dy, dz;
+                    float[] d = SOLARCHVISION_computeMoveDelta(x1, y1, z1, x2, y2, z2);
 
-                    /*
-                    float[] p = Select3D.translateOutside_ReferencePivot(x2, y2, z2);
-                    dx = p[0] - x1;
-                    dy = p[1] - y1;
-                    dz = p[2] - z1;
-                    */
-                    dx = x2 - x1;
-                    dy = y2 - y1;
-                    dz = z2 - z1;
-
-
-
-                    int the_Vector = Select3D.posVector;
-
-                    if (the_Vector == 0) {
-                      dy = 0;
-                      dz = 0;
-                    }
-                    if (the_Vector == 1) {
-                      dz = 0;
-                      dx = 0;
-                    }
-                    if (the_Vector == 2) {
-                      dx = 0;
-                      dy = 0;
-                    }
-
-                    Move3D.selection(dx, dy, dz);
+                    Move3D.selection(d[0], d[1], d[2]);
 
                     SOLARCHVISION_model_changed();
                   }

@@ -69,6 +69,19 @@ import static org.junit.jupiter.api.Assertions.*;
 // class itself) before extracting - both call sites now call this one
 // function instead.
 //
+// Two more functions, SOLARCHVISION_getMoveOriginPoint and
+// SOLARCHVISION_computeMoveDelta, were extracted from mouseClicked()'s
+// UITASK.Move handling this session: finding the selected object's own
+// reference point (a GROUP's pivot, or the last-selected id's position
+// for MODEL2D/MODEL1D/SOLID/VERTEX - any other category left
+// undefined, same as before) and turning that plus the clicked point
+// into a move vector constrained to Select3D.posVector's axis. A small,
+// genuinely dead commented-out alternative implementation
+// (Select3D.translateOutside_ReferencePivot(...)) that sat in the
+// original delta computation was dropped during the extraction - it
+// was already inert (commented out), so removing it doesn't change
+// behavior.
+//
 // A fresh `app` per test since these mutate shared scene state.
 class MouseClickedTest {
 
@@ -1056,5 +1069,101 @@ class MouseClickedTest {
 
     assertArrayEquals(centerRay.direction, offCenterRay.direction, 0.0001f);
     assertNotEquals(centerRay.start[0], offCenterRay.start[0], 0.0001f); // but the start point does shift
+  }
+
+  // ========== SOLARCHVISION_getMoveOriginPoint (extracted) ===============
+
+  @Test
+  void getMoveOriginPoint_forAGroupReturnsTheSelectionsPivot () {
+    // Same BoundingBox/align setup already confirmed directly in
+    // Select3DTest's getPivot test - this only checks that the Move
+    // handling routes GROUP through getPivot() at all.
+    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.Select3D.BoundingBox = new float[][]{
+      {0, 0, 0, 1, 1, 1, 0, 0, 0},
+      {5, 5, 5, 1, 1, 1, 0, 0, 0},
+      {10, 10, 10, 1, 1, 1, 0, 0, 0}
+    };
+    app.Select3D.alignX = 1;
+    app.Select3D.alignY = 1;
+    app.Select3D.alignZ = 1;
+
+    float[] origin = app.SOLARCHVISION_getMoveOriginPoint();
+
+    assertArrayEquals(new float[]{10, 10, 10}, origin, 0.001f);
+  }
+
+  @Test
+  void getMoveOriginPoint_forAModel2DReturnsTheLastSelectedInstancesPosition () {
+    app.current_ObjectCategory = app.ObjectCategory.MODEL2D;
+    app.allModel2Ds.MAP = new int[]{0, 0, 0}; // 3 instances, values unused by getX/Y/Z
+    app.allModel2Ds.XYZS = new float[][]{
+      {1, 1, 1, 1}, {2, 2, 2, 1}, {99, 88, 77, 1} // last one should win
+    };
+    app.Select3D.Model2D_ids = new int[]{0, 2}; // last id is 2, not the last array entry
+
+    float[] origin = app.SOLARCHVISION_getMoveOriginPoint();
+
+    assertArrayEquals(new float[]{99, 88, 77}, origin, 0.0001f);
+  }
+
+  @Test
+  void getMoveOriginPoint_forAVertexReturnsThatPointsCoordinates () {
+    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.allVertices = new float[][]{{0, 0, 0}, {3, 4, 5}};
+    app.Select3D.Vertex_ids = new int[]{1};
+
+    float[] origin = app.SOLARCHVISION_getMoveOriginPoint();
+
+    assertArrayEquals(new float[]{3, 4, 5}, origin, 0.0001f);
+  }
+
+  @Test
+  void getMoveOriginPoint_isUndefinedForACategoryMoveDoesntHandle () {
+    app.current_ObjectCategory = app.ObjectCategory.CAMERA; // not one of the five handled
+
+    float[] origin = app.SOLARCHVISION_getMoveOriginPoint();
+
+    assertFalse(app.is_defined(origin[0]));
+    assertFalse(app.is_defined(origin[1]));
+    assertFalse(app.is_defined(origin[2]));
+  }
+
+  // ========== SOLARCHVISION_computeMoveDelta (extracted) ==================
+
+  @Test
+  void computeMoveDelta_withPosVectorThreeMovesFreelyOnAllThreeAxes () {
+    app.Select3D.posVector = 3; // "All"
+
+    float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
+
+    assertArrayEquals(new float[]{3, 4, 5}, d, 0.0001f);
+  }
+
+  @Test
+  void computeMoveDelta_withPosVectorZeroKeepsOnlyX () {
+    app.Select3D.posVector = 0;
+
+    float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
+
+    assertArrayEquals(new float[]{3, 0, 0}, d, 0.0001f);
+  }
+
+  @Test
+  void computeMoveDelta_withPosVectorOneKeepsOnlyY () {
+    app.Select3D.posVector = 1;
+
+    float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
+
+    assertArrayEquals(new float[]{0, 4, 0}, d, 0.0001f);
+  }
+
+  @Test
+  void computeMoveDelta_withPosVectorTwoKeepsOnlyZ () {
+    app.Select3D.posVector = 2; // posVector's own default
+
+    float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
+
+    assertArrayEquals(new float[]{0, 0, 5}, d, 0.0001f);
   }
 }
