@@ -2,6 +2,10 @@
 """Generate screenshots for command/test_*.txt by running the
 solarchvision_bim sketch headlessly (USER=AUTO), one subprocess per test.
 
+Each test is retried on its own (crash, timeout, or no screenshot produced)
+up to MAX_RETRY times, instead of retrying the whole batch - a flaky render
+of one test shouldn't cost re-running every other test that already succeeded.
+
 Usage:
   python3 test/image/make_baseline.py                 # generate test/image/actual/*.png for every command/test_*.txt
   python3 test/image/make_baseline.py test_houses ...  # generate specific ones only (name without .txt)
@@ -40,14 +44,27 @@ import time
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SKETCH_DIR = os.path.join(REPO_ROOT, "app", "src", "solarchvision_bim")
-SCREENSHOTS_ROOT = os.path.join(SKETCH_DIR, "projects", "model-01", "export", "screenshots")
+# sketchPath() (used as BaseFolder in update_folders.pde) resolves to the
+# process's current working directory in this `processing-java --sketch=...`
+# CLI mode - i.e. REPO_ROOT, since run.sh/the workflow invoke it from there -
+# not to the sketch's own folder under app/src/solarchvision_bim. Confirmed
+# from an actual CI run's own "Saving: .../solarchvision_bim/projects/
+# model-01/export/screenshots/..." log line, with no app/src/solarchvision_bim
+# segment in it. Search both that confirmed-correct root and the originally
+# (wrongly) assumed sketch-relative one, so a future difference in how
+# sketchPath() resolves - e.g. if this is ever run a different way - doesn't
+# silently break this again.
+SCREENSHOTS_ROOTS = [
+    os.path.join(REPO_ROOT, "projects", "model-01", "export", "screenshots"),
+    os.path.join(SKETCH_DIR, "projects", "model-01", "export", "screenshots"),
+]
 COMMAND_DIR = os.path.join(REPO_ROOT, "command")
 IMAGE_TEST_DIR = os.path.join(REPO_ROOT, "test", "image")
 ACTUAL_DIR = os.path.join(IMAGE_TEST_DIR, "actual")
 BASELINE_DIR = os.path.join(IMAGE_TEST_DIR, "baseline")
 
 PER_TEST_TIMEOUT = int(os.environ.get("PER_TEST_TIMEOUT", "300"))
-MAX_RETRY = int(os.environ.get("MAX_RETRY", "0"))
+MAX_RETRY = int(os.environ.get("MAX_RETRY", "2"))
 
 
 def discover_tests():
@@ -65,19 +82,20 @@ def find_processing_java():
 
 
 def newest_screenshot_since(marker_time):
-    """The screenshot this run produced, if any: the newest *.png under
-    SCREENSHOTS_ROOT with an mtime after marker_time. Recursive because
-    screenshots land under a RunStamp=YYYY MMDD_HH subfolder (globals.pde)."""
+    """The screenshot this run produced, if any: the newest *.png under any
+    of SCREENSHOTS_ROOTS with an mtime after marker_time. Recursive because
+    screenshots land under a RunStamp=YYYYMMDD_HH subfolder (globals.pde)."""
     newest_path = None
     newest_mtime = marker_time
-    for path in glob.glob(os.path.join(SCREENSHOTS_ROOT, "**", "*.png"), recursive=True):
-        try:
-            mtime = os.path.getmtime(path)
-        except OSError:
-            continue
-        if mtime > newest_mtime:
-            newest_mtime = mtime
-            newest_path = path
+    for root in SCREENSHOTS_ROOTS:
+        for path in glob.glob(os.path.join(root, "**", "*.png"), recursive=True):
+            try:
+                mtime = os.path.getmtime(path)
+            except OSError:
+                continue
+            if mtime > newest_mtime:
+                newest_mtime = mtime
+                newest_path = path
     return newest_path
 
 
