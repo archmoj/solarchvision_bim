@@ -1,4 +1,4 @@
-void SOLARCHVISION_calculate_GlobalSolar_array () {
+void calculate_GlobalSolar_array () {
 
   cursor(WAIT);
 
@@ -73,7 +73,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
 
     float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-    int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
     if (nk == -1) continue;
 
     int k = int(nk / STUDY.joinDays);
@@ -114,7 +114,7 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
             values_E_dif = FLOAT_undefined;
           } else {
 
-            boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
+            boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
 
             if (isMemberCounted) {
               values_R_dir = 0.001 * Pa;
@@ -157,12 +157,12 @@ void SOLARCHVISION_calculate_GlobalSolar_array () {
             } else {
 
               if (cache_E_dir[i] < 0) {
-                valuesSUM_EFF_N += -SOLARCHVISION_SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, GlobalAlbedo);
+                valuesSUM_EFF_N += -SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, GlobalAlbedo);
               } else {
-                valuesSUM_EFF_P += SOLARCHVISION_SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, GlobalAlbedo);
+                valuesSUM_EFF_P += SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, GlobalAlbedo);
               }
 
-              valuesSUM_RAD += SOLARCHVISION_SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_R_dir[i], cache_R_dif[i], Alpha, Beta, GlobalAlbedo);
+              valuesSUM_RAD += SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_R_dir[i], cache_R_dif[i], Alpha, Beta, GlobalAlbedo);
 
               valuesNUM += 1;
             }

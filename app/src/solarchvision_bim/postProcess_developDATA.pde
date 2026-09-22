@@ -1,4 +1,4 @@
-void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
+void postProcess_developDATA (int desired_DataSource) {
 
   int keep_CurrentDataSource = CurrentDataSource;
 
@@ -153,7 +153,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
 
               if (is_defined(R_dir) && is_defined(R_dif)) {
 
-                valuesSUM[now_k] = SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
+                valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
 
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
@@ -211,7 +211,7 @@ void SOLARCHVISION_postProcess_developDATA (int desired_DataSource) {
 
               if (is_defined(R_dir) && is_defined(R_dif)) {
 
-                valuesSUM[now_k] = SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
+                valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
 
                 setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }

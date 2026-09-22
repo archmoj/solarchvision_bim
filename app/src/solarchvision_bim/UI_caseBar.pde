@@ -19,14 +19,14 @@ class solarchvision_UI_caseBar {
     if (!this.update) return;
 
     this.updated();
-    this.tab = SOLARCHVISION_pixel_C / float(this.Items.length);
+    this.tab = pixel_C / float(this.Items.length);
 
     drawTrackBackground();
     drawTabs();
     drawImpactLayerSelector();
 
-    SOLARCHVISION_X_clicked = -1;
-    SOLARCHVISION_Y_clicked = -1;
+    X_clicked = -1;
+    Y_clicked = -1;
   }
 
   void revise () {
@@ -85,8 +85,8 @@ class solarchvision_UI_caseBar {
   void notifyChanged () {
     UI_rollout.revise();
     STUDY.revise();
-    SOLARCHVISION_view_changed();
-    SOLARCHVISION_find_which_bakings_to_regenerate();
+    view_changed();
+    find_which_bakings_to_regenerate();
   }
 
   // ---------------------------------------------------------------------
@@ -96,15 +96,15 @@ class solarchvision_UI_caseBar {
   void drawTrackBackground () {
     fill(191);
     noStroke();
-    rect(0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_C);
+    rect(0, pixel_A + pixel_B + 2 * pixel_H, width, pixel_C);
   }
 
   void drawTabs () {
     float displayBarHeight = MessageSize;
-    float displayBarWidth = 2 * SOLARCHVISION_pixel_W;
+    float displayBarWidth = 2 * pixel_W;
 
     X_control = 0.5 * displayBarWidth;
-    Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * this.tab;
+    Y_control = pixel_A + pixel_B + 2 * pixel_H + 0.5 * this.tab;
 
     for (int i = 0; i < this.Items.length; i++) {
       float x1 = X_control - 0.3666 * displayBarWidth;
@@ -140,13 +140,13 @@ class solarchvision_UI_caseBar {
   // ---------------------------------------------------------------------
 
   void drawHoursTab (float x1, float y1, float x2, float y2) {
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
+    if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
       if (mouseButton == LEFT) {
-        STUDY.i_Start = scaledIndexFromClick(SOLARCHVISION_X_clicked, x1, x2, 24.0, -0.5);
+        STUDY.i_Start = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
         notifyChanged();
       }
       if (mouseButton == RIGHT) {
-        STUDY.i_End = scaledIndexFromClick(SOLARCHVISION_X_clicked, x1, x2, 24.0, -0.5);
+        STUDY.i_End = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
         notifyChanged();
       }
     }
@@ -195,11 +195,11 @@ class solarchvision_UI_caseBar {
   }
 
   void handleDaysClick (float x1, float y1, float x2, float y2) {
-    if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) return;
+    if (!isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) return;
 
     if (mouseButton == LEFT) {
       float keep_TIME_Date = TIME.date;
-      TIME.date = dayOfYearFromClick(SOLARCHVISION_X_clicked, x1, x2);
+      TIME.date = dayOfYearFromClick(X_clicked, x1, x2);
       TIME.updateDate();
       TIME.beginDay = int(TIME.beginDay + (TIME.date - keep_TIME_Date) + 365) % 365;
       update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
@@ -207,7 +207,7 @@ class solarchvision_UI_caseBar {
     }
 
     if (mouseButton == RIGHT) {
-      float _DATE2 = dayOfYearFromClick(SOLARCHVISION_X_clicked, x1, x2);
+      float _DATE2 = dayOfYearFromClick(X_clicked, x1, x2);
       if (TIME.date > _DATE2) _DATE2 += 365;
       STUDY.perDays = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.j_End - STUDY.j_Start), 0.5);
       if (STUDY.perDays < 1) STUDY.perDays = 1;
@@ -267,8 +267,8 @@ class solarchvision_UI_caseBar {
     int n1 = range[0];
     int n2 = range[1];
 
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
-      int V_selection = n1 + scaledIndexFromClick(SOLARCHVISION_X_clicked, x1, x2, n2 - n1 + 1, -0.5);
+    if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
+      int V_selection = n1 + scaledIndexFromClick(X_clicked, x1, x2, n2 - n1 + 1, -0.5);
       if (mouseButton == LEFT) {
         setScenarioStart(CurrentDataSource, V_selection);
         notifyChanged();
@@ -388,7 +388,7 @@ class solarchvision_UI_caseBar {
     float displayBarWidth = UI_rollout.dX;
     float displayBarHeight = 4.5 * MessageSize;
     float offsetX = UI_rollout.cX + 0.5 * displayBarWidth;
-    float offsetY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * displayBarHeight;
+    float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5 * displayBarHeight;
 
     handleImpactLayerClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
     renderImpactLayerGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
@@ -410,7 +410,7 @@ class solarchvision_UI_caseBar {
   void handleImpactLayerClicks (float offsetX, float offsetY, float w, float h) {
     for (int n = 0; n < 9; n++) {
       float[] b = impactCellBounds(n, offsetX, offsetY, w, h);
-      if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, b[0], b[2], b[1], b[3])) {
+      if (isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) {
         STUDY.ImpactLayer = n;
         notifyChanged();
       }

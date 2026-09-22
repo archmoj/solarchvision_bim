@@ -148,7 +148,7 @@ class solarchvision_Delete3D {
 
     if (currentCameraDeleted) {
       WIN3D.currentCamera = 0;
-      SOLARCHVISION_modify_Viewport_Title();
+      modify_Viewport_Title();
     } else if (shiftBefore > 0) {
       WIN3D.currentCamera -= shiftBefore;
     }
@@ -160,7 +160,7 @@ class solarchvision_Delete3D {
     if (allCameras.num == 0) {
       allCameras.add_first();
     }
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void selected_Sections () {
@@ -173,7 +173,7 @@ class solarchvision_Delete3D {
     allSections.SolarImpact = removeIndices(allSections.SolarImpact, ids);
     allSections.num -= ids.length;
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void selected_Model1Ds () {
@@ -196,7 +196,7 @@ class solarchvision_Delete3D {
     allModel1Ds.i_data = removeIndices(allModel1Ds.i_data, ids);
     allModel1Ds.num -= ids.length;
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void selected_Model2Ds () {
@@ -219,7 +219,7 @@ class solarchvision_Delete3D {
     allModel2Ds.MAP = removeIndices(allModel2Ds.MAP, ids);
     allModel2Ds.num -= ids.length;
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void selected_Solids () {
@@ -240,7 +240,7 @@ class solarchvision_Delete3D {
 
     allSolids.DEF = removeIndices(allSolids.DEF, ids);
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void selected_Faces () {
@@ -264,7 +264,7 @@ class solarchvision_Delete3D {
     allFaces.nodes = removeIndices(allFaces.nodes, ids);
     allFaces.options = removeIndices(allFaces.options, ids);
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void selected_Polylines () {
@@ -288,18 +288,18 @@ class solarchvision_Delete3D {
     allPolylines.nodes = removeIndices(allPolylines.nodes, ids);
     allPolylines.options = removeIndices(allPolylines.options, ids);
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void selected_Groups () {
     /////////////////////////////
-    //SOLARCHVISION_holdProject();
+    //holdProject();
     /////////////////////////////
     Select3D.convert_Groups_to_Vertices();
 
     int[] ids = sort(Select3D.Group_ids);
     if (ids.length == 0) {
-      SOLARCHVISION_model_changed();
+      model_changed();
       return;
     }
 
@@ -405,7 +405,7 @@ class solarchvision_Delete3D {
     allGroups.num -= ids.length;
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void isolatedVertices_Selection () {
@@ -414,7 +414,7 @@ class solarchvision_Delete3D {
 
     if (n == 0) {
       Select3D.deselect_Vertices();
-      SOLARCHVISION_model_changed();
+      model_changed();
       return;
     }
 
@@ -463,7 +463,7 @@ class solarchvision_Delete3D {
     }
 
     Select3D.deselect_Vertices();
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void isolatedVertices_Scene () {
@@ -514,6 +514,6 @@ class solarchvision_Delete3D {
     }
 
     Select3D.deselect_Vertices();
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 }

@@ -1,17 +1,17 @@
-void SOLARCHVISION_runScriptFile (String FileName) {
+void runScriptFile (String FileName) {
   String[] FileALL = loadStrings(FileName);
 
-  SOLARCHVISION_runScriptLines(FileALL);
+  runScriptLines(FileALL);
 }
 
-void SOLARCHVISION_runScriptLines (String[] FileALL) {
+void runScriptLines (String[] FileALL) {
   for (int f = 0; f < FileALL.length; f++) {
     String lineSTR = FileALL[f];
 
     if(!lineSTR.equals("")) {
       println("cmd:", lineSTR);
 
-      String hint = SOLARCHVISION_runScriptLine(lineSTR);
+      String hint = runScriptLine(lineSTR);
 
       if(!hint.equals("")) {
         println("out:", hint);
@@ -20,7 +20,7 @@ void SOLARCHVISION_runScriptLines (String[] FileALL) {
   }
 }
 
-String SOLARCHVISION_runScriptLine (String lineSTR) {
+String runScriptLine (String lineSTR) {
   String hint = "";
 
   lineSTR = lineSTR
@@ -50,93 +50,93 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
     }
 
     case "HOLD": {
-      SOLARCHVISION_holdProject();
+      holdProject();
       break;
     }
 
     case "FETCH": {
-      SOLARCHVISION_fetchProject();
+      fetchProject();
       break;
     }
 
     case "NEW": {
       if (parts.length > 1) _fileSelected_New(new File(parts[1]));
-      else SOLARCHVISION_selectFile_New();
+      else selectFile_New();
       break;
     }
 
     case "OPEN": {
       if (parts.length > 1) _fileSelected_Open(new File(parts[1]));
-      else SOLARCHVISION_selectFile_Open();
+      else selectFile_Open();
       break;
     }
 
     case "SAVE.AS": {
       if (parts.length > 1) _fileSelected_SaveAs(new File(parts[1]));
-      else SOLARCHVISION_selectFile_SaveAs();
+      else selectFile_SaveAs();
       break;
     }
 
     case "SAVE": {
-      if (parts.length > 1) SOLARCHVISION_saveProject(parts[1]);
-      else SOLARCHVISION_saveProject(Folder_Project + "/" + ProjectName + ".xml");
+      if (parts.length > 1) saveProject(parts[1]);
+      else saveProject(Folder_Project + "/" + ProjectName + ".xml");
       break;
     }
 
     case "IMPORT.OBJ": {
       if (parts.length > 1) _fileSelected_ImportObj(new File(parts[1]));
-      else SOLARCHVISION_selectFile_ImportObj();
+      else selectFile_ImportObj();
       break;
     }
 
     case "RUN.SCRIPT": {
       if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Command + "/" + parts[1]));
-      else SOLARCHVISION_selectFile_RunScript();
+      else selectFile_RunScript();
       break;
     }
 
     case "EXPORT.OBJ.TIMESERIES": {
-      SOLARCHVISION_exportObj_timeSeries();
+      exportObj_timeSeries();
       break;
     }
 
     case "EXPORT.OBJ.DATESERIES": {
-      SOLARCHVISION_exportObj_dateSeries();
+      exportObj_dateSeries();
       break;
     }
 
     case "EXPORT.OBJ": {
-      SOLARCHVISION_exportObj("");
+      exportObj("");
       break;
     }
 
     case "EXPORT.RAD": {
-      SOLARCHVISION_exportRadiance();
+      exportRadiance();
       break;
     }
 
     case "EXPORT.SCR": {
-      SOLARCHVISION_exportAutocadScript();
+      exportAutocadScript();
       break;
     }
 
     case "REC.PNG": {
-      SOLARCHVISION_screenShot(".png");
+      screenShot(".png");
       break;
     }
 
     case "REC.JPG": {
-      SOLARCHVISION_screenShot(".jpg");
+      screenShot(".jpg");
       break;
     }
 
     case "REC.TIF": {
-      SOLARCHVISION_screenShot(".tif");
+      screenShot(".tif");
       break;
     }
 
     case "REC.BMP": {
-      SOLARCHVISION_screenShot(".bmp");
+      screenShot(".bmp");
       break;
     }
 
@@ -160,7 +160,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
           }
         }
         Move3D.selection(dx, dy, dz);
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
       else {
         hint = "Move dx=? dy=? dz=?";
@@ -195,7 +195,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
           }
         }
         Rotate3D.selection(x, y, z, r, v);
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
       else {
         hint = "Rotate[X|Y|Z] r=? x=? y=? z=?";
@@ -233,7 +233,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
           }
         }
         Scale3D.selection(x, y, z, sx, sy, sz);
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
       else {
         hint = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
@@ -245,7 +245,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       if (parts.length > 1) {
         for (int q = 1; q < parts.length; q++) {
           String low_case = parts[q].toLowerCase();
-               if (low_case.equals("all")) SOLARCHVISION_deleteAll();
+               if (low_case.equals("all")) deleteAll();
           else if (low_case.equals("groups")) allGroups.makeEmpty(0);
           else if (low_case.equals("model2ds")) allModel2Ds.makeEmpty(0);
           else if (low_case.equals("model1ds")) allModel1Ds.makeEmpty(0);
@@ -257,7 +257,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
           else if (low_case.equals("vertices")) Delete3D.isolatedVertices_Selection();
           else if (low_case.equals("selection")) Delete3D.selection();
         }
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
       else {
         hint = "Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras";
@@ -285,7 +285,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
           if (rz != 0) Rotate3D.selection(0, 0, 0, rz, 2);
         }
 
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
       else {
         hint = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
@@ -297,16 +297,16 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       if (parts.length > 1) {
         for (int q = 1; q < parts.length; q++) {
           String low_case = parts[q].toLowerCase();
-               if (low_case.equals("groups")) SOLARCHVISION_switch_category(ObjectCategory.GROUP);
-          else if (low_case.equals("model2ds")) SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
-          else if (low_case.equals("model1ds")) SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
-          else if (low_case.equals("vertices")) SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
-          else if (low_case.equals("faces")) SOLARCHVISION_switch_category(ObjectCategory.FACE);
-          else if (low_case.equals("lines")) SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
-          else if (low_case.equals("solids")) SOLARCHVISION_switch_category(ObjectCategory.SOLID);
-          else if (low_case.equals("sections")) SOLARCHVISION_switch_category(ObjectCategory.SECTION);
-          else if (low_case.equals("cameras")) SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
-          else if (low_case.equals("landpoints")) SOLARCHVISION_switch_category(ObjectCategory.LANDPOINT);
+               if (low_case.equals("groups")) switch_category(ObjectCategory.GROUP);
+          else if (low_case.equals("model2ds")) switch_category(ObjectCategory.MODEL2D);
+          else if (low_case.equals("model1ds")) switch_category(ObjectCategory.MODEL1D);
+          else if (low_case.equals("vertices")) switch_category(ObjectCategory.VERTEX);
+          else if (low_case.equals("faces")) switch_category(ObjectCategory.FACE);
+          else if (low_case.equals("lines")) switch_category(ObjectCategory.POLYLINE);
+          else if (low_case.equals("solids")) switch_category(ObjectCategory.SOLID);
+          else if (low_case.equals("sections")) switch_category(ObjectCategory.SECTION);
+          else if (low_case.equals("cameras")) switch_category(ObjectCategory.CAMERA);
+          else if (low_case.equals("landpoints")) switch_category(ObjectCategory.LANDPOINT);
         }
 
         for (int q = 1; q < parts.length; q++) {
@@ -317,7 +317,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
           else if (low_case.equals("last")) Select3D.selectLast();
         }
 
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
       else {
         hint = "Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint";
@@ -334,7 +334,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
         allModel2Ds.create(t, m, x, y, z, 2.5);
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
       else {
         hint = "Person m=? x=? y=? z=?";
@@ -354,7 +354,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float h = getF(p, "h", 10.0);
         if (h != 0) {
           allModel2Ds.create(t, m, x, y, z, h);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -404,7 +404,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
         if (h != 0) {
           allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, trunk, leaf);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -431,7 +431,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float z2 = getF(p, "z2", 0);
         if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {
           Create3D.add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -459,7 +459,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -488,7 +488,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_House3_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -517,7 +517,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -546,7 +546,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -574,7 +574,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((d != 0) && (h != 0)) {
           Create3D.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -601,7 +601,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if (d != 0) {
           Create3D.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -633,7 +633,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0) && (px > 0) && (py > 0) && (pz > 0)) {
           Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -662,7 +662,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -690,7 +690,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -716,7 +716,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if (d != 0) {
           Create3D.add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -744,7 +744,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((d != 0) && (h != 0)) {
           Create3D.add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -772,7 +772,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((d != 0) && (h != 0)) {
           Create3D.add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -799,7 +799,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if (d != 0) {
           Create3D.add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -826,7 +826,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float z2 = getF(p, "z2", 0);
         if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {
           Create3D.add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -855,7 +855,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float z3 = getF(p, "z3", 0);
         {
           Create3D.add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -887,7 +887,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float z4 = getF(p, "z4", 0);
         {
           Create3D.add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -922,7 +922,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float z5 = getF(p, "z5", 0);
         {
           Create3D.add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -960,7 +960,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float z6 = getF(p, "z6", 0);
         {
           Create3D.add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -987,7 +987,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float b = getF(p, "b", 0);
         if ((d != 0) && (w != 0)) {
           Create3D.add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -1014,7 +1014,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float b = getF(p, "b", 0);
         if ((d != 0) && (h != 0)) {
           Create3D.add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -1041,7 +1041,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         float rz = getF(p, "rz", 0);
         if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {
           allSolids.create(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -1065,7 +1065,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         int j = getI(p, "j", 200);
         if ((t > 0) && (i > 0) && (j > 0) && (u > 0) && (v > 0)) {
           allSections.create(x, y, z, r, u, v, t, i, j);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -1090,7 +1090,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         int t = getI(p, "t", 1);
         if (a != 0) {
           allCameras.create(px, py, pz, pt, rx, ry, rz, rt, a, t);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -1129,7 +1129,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
         if (points.length > 1) {
           allPolylines.add_Polyline(m, tes, lyr, vsb, wgt, clz, points);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -1174,7 +1174,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
         }
         if ((r != 0) && (deg > 2)) {
           allPolylines.add_Arc(m, tes, lyr, vsb, wgt, clz, x, y, z, r, deg, rot, ang);
-          SOLARCHVISION_view_changed();
+          view_changed();
         }
       }
       else {
@@ -1198,7 +1198,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
           else if (low_case.equals("midz")) UI_setTo_View_PivotZ(0);
           else if (low_case.equals("maxz")) UI_setTo_View_PivotZ(1);
         }
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
       else {
         hint = "PIVOT minX midY maxZ or other variations";
@@ -1208,97 +1208,97 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
 
     case "VERTEX>GROUP": {
       Select3D.convert_Vertices_to_Groups();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "FACE>GROUP": {
       Select3D.convert_Faces_to_Groups();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "GROUP>FACE": {
       Select3D.convert_Groups_to_Faces();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "POLYLINE>GROUP": {
       Select3D.convert_Polylines_to_Groups();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "GROUP>POLYLINE": {
       Select3D.convert_Groups_to_Polylines();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "POLYLINE>VERTEX": {
       Select3D.convert_Polylines_to_Vertices();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "VERTEX>POLYLINE": {
       Select3D.convert_Vertices_to_Polylines();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "GROUP>VERTEX": {
       Select3D.convert_Groups_to_Vertices();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "FACE>VERTEX": {
       Select3D.convert_Faces_to_Vertices();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "VERTEX>FACE": {
       Select3D.convert_Vertices_to_Faces();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SOLID>GROUP": {
       Select3D.convert_Solids_to_Groups();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "GROUP>SOLID": {
       Select3D.convert_Groups_to_Solids();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "2D>GROUP": {
       Select3D.convert_Model2Ds_to_Groups();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "GROUP>2D": {
       Select3D.convert_Groups_to_Model2Ds();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "1D>GROUP": {
       Select3D.convert_Model1Ds_to_Groups();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "GROUP>1D": {
       Select3D.convert_Groups_to_Model1Ds();
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
@@ -1510,59 +1510,59 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
     case "SHADE.WIRE": {
       WIN3D.FacesShade = SHADE.Surface_Wire;
       allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SHADE.BASE": {
       WIN3D.FacesShade = SHADE.Surface_Base;
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SHADE.WHITE": {
       WIN3D.FacesShade = SHADE.Surface_White;
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SHADE.MATERIALS": {
       WIN3D.FacesShade = SHADE.Surface_Materials;
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SHADE.GLOBAL": {
       WIN3D.FacesShade = SHADE.Global_Solar;
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SHADE.REAL": {
       WIN3D.FacesShade = SHADE.Vertex_Solar;
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SHADE.SOLID": {
       WIN3D.FacesShade = SHADE.Vertex_Solid;
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SHADE.ELEVATION": {
       WIN3D.FacesShade = SHADE.Vertex_Elevation;
-      SOLARCHVISION_view_changed();
+      view_changed();
       break;
     }
 
     case "SHADE.VIEWPORT": {
-      SOLARCHVISION_ShadeViewport();
+      ShadeViewport();
       break;
     }
 
     case "PREBAKE.VIEWPORT": {
-      SOLARCHVISION_preBakeViewport();
+      preBakeViewport();
       break;
     }
 
@@ -1570,7 +1570,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
       if (parts.length > 2) {
         STATION.setLatitude(float(parts[2]));
         STATION.setLongitude(float(parts[1]));
-        SOLARCHVISION_update_station(0);
+        update_station(0);
       }
       else {
         hint = "SetLonLat ? ?";
@@ -1581,7 +1581,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
     case "SETLON": {
       if (parts.length > 1) {
         STATION.setLongitude(float(parts[1]));
-        SOLARCHVISION_update_station(0);
+        update_station(0);
       }
       else {
         hint = "SetLon ?";
@@ -1592,7 +1592,7 @@ String SOLARCHVISION_runScriptLine (String lineSTR) {
     case "SETLAT": {
       if (parts.length > 1) {
         STATION.setLatitude(float(parts[1]));
-        SOLARCHVISION_update_station(0);
+        update_station(0);
       }
       else {
         hint = "SetLat ?";

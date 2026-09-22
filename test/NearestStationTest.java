@@ -18,7 +18,7 @@ class NearestStationTest {
     return s;
   }
 
-  // --- SOLARCHVISION_findNearestStation ------------------------------
+  // --- findNearestStation ------------------------------
 
   @Test
   void findNearestStation_picksTheClosestByGreatCircleDistance () {
@@ -31,7 +31,7 @@ class NearestStationTest {
       stationAt(-5, -5)   // medium
     };
 
-    solarchvision_bim.SOLARCHVISION_NearestStation nearest = app.SOLARCHVISION_findNearestStation(coords);
+    solarchvision_bim.NearestStation nearest = app.findNearestStation(coords);
 
     assertEquals(1, nearest.index);
     float expectedDist = app.funcs.lon_lat_dist(1, 1, 0, 0);
@@ -49,13 +49,13 @@ class NearestStationTest {
 
     solarchvision_bim.solarchvision_STATION[] coords = { stationAt(190, 0) };
 
-    solarchvision_bim.SOLARCHVISION_NearestStation nearest = app.SOLARCHVISION_findNearestStation(coords);
+    solarchvision_bim.NearestStation nearest = app.findNearestStation(coords);
 
     assertEquals(0, nearest.index);
     assertEquals(0f, nearest.dist, 1f); // co-located after wrapping, not a near-antipodal distance
   }
 
-  // --- SOLARCHVISION_findNearbyStations -------------------------------
+  // --- findNearbyStations -------------------------------
 
   @Test
   void findNearbyStations_returnsOnlyThoseWithinMaxDistSortedAscending () {
@@ -73,7 +73,7 @@ class NearestStationTest {
     float dist10deg = app.funcs.lon_lat_dist(0, 0, 10.0f, 0);
     float maxDist = 0.5f * (dist1deg + dist10deg);
 
-    int[] result = app.SOLARCHVISION_findNearbyStations(coords, 0, 0, maxDist, 10);
+    int[] result = app.findNearbyStations(coords, 0, 0, maxDist, 10);
 
     assertArrayEquals(new int[]{1, 3, 0}, result); // indices of 0.1, 0.5, 1.0 deg stations, ascending distance
   }
@@ -87,7 +87,7 @@ class NearestStationTest {
     };
 
     float dist1deg = app.funcs.lon_lat_dist(0, 0, 1.0f, 0);
-    int[] result = app.SOLARCHVISION_findNearbyStations(coords, 0, 0, dist1deg + 1f, 2);
+    int[] result = app.findNearbyStations(coords, 0, 0, dist1deg + 1f, 2);
 
     assertEquals(2, result.length);
     assertArrayEquals(new int[]{1, 2}, result); // only the 2 closest (0.1deg, 0.5deg), not the 3rd
@@ -98,7 +98,7 @@ class NearestStationTest {
     solarchvision_bim.solarchvision_STATION[] coords = { stationAt(190, 0) };
     // Reference point at -170: a raw-190 station is co-located with it
     // once wrapped, so it should be found well within a tight maxDist.
-    int[] result = app.SOLARCHVISION_findNearbyStations(coords, -170, 0, 1000f, 10);
+    int[] result = app.findNearbyStations(coords, -170, 0, 1000f, 10);
     assertArrayEquals(new int[]{0}, result);
   }
 }

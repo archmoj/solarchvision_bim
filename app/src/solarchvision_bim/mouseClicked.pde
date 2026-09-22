@@ -1,6 +1,6 @@
-HashMap<String, Runnable> SOLARCHVISION_menuActions;
+HashMap<String, Runnable> menuActions;
 
-void SOLARCHVISION_selectNewlyCreated(int countBefore, int countAfter, Runnable deselect, java.util.function.IntConsumer selectIndex) {
+void selectNewlyCreated(int countBefore, int countAfter, Runnable deselect, java.util.function.IntConsumer selectIndex) {
   if (countBefore == countAfter) return; // nothing created this click
 
   deselect.run();
@@ -12,7 +12,7 @@ void SOLARCHVISION_selectNewlyCreated(int countBefore, int countAfter, Runnable 
   Select3D.calculate_BoundingBox();
 }
 
-void SOLARCHVISION_stopAllRecording() {
+void stopAllRecording() {
   STUDY.record_AUTO = false;
   STUDY.record_IMG = false;
   STUDY.record_PDF = false;
@@ -27,7 +27,7 @@ void SOLARCHVISION_stopAllRecording() {
   FRAME_drag_IMG = false;
 }
 
-void SOLARCHVISION_setPlotImpacts(int impacts, boolean showWindRoses) {
+void setPlotImpacts(int impacts, boolean showWindRoses) {
   STUDY.PlotImpacts = impacts;
   STUDY.plotSetup = 0;
   STUDY.revise();
@@ -35,14 +35,14 @@ void SOLARCHVISION_setPlotImpacts(int impacts, boolean showWindRoses) {
   UI_rollout.revise();
 }
 
-void SOLARCHVISION_selectAllOfCategory(int category) {
-  SOLARCHVISION_switch_category(category);
+void selectAllOfCategory(int category) {
+  switch_category(category);
   Select3D.selectAll();
 }
 
-void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
+void convertAndSwitch(Runnable convert, int newCategory) {
   convert.run();
-  SOLARCHVISION_switch_category(newCategory);
+  switch_category(newCategory);
 }
 
 // Pulled out of mouseClicked()'s UITASK.Pick/Assign(sub)/Assign(all)
@@ -60,7 +60,7 @@ void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
 // than setWeight(...), unlike the identical-looking Pick and
 // Assign(sub) cases just above it - kept as-is since this refactor
 // changes structure, not behavior.
-void SOLARCHVISION_pickOrAssignFaceProperty (int f) {
+void pickOrAssignFaceProperty (int f) {
   if ((WIN3D.UI_CurrentTask != UITASK.Seed_Material) &&
       (WIN3D.UI_CurrentTask != UITASK.Tessellation) &&
       (WIN3D.UI_CurrentTask != UITASK.Layer) &&
@@ -104,7 +104,7 @@ void SOLARCHVISION_pickOrAssignFaceProperty (int f) {
 // here, unlike the FACE property case above) writes the current
 // create_Plant_Type/create_Person_Type back onto MAP[OBJ_ID], carrying
 // that instance's own sign (its flip) forward unchanged.
-void SOLARCHVISION_pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
+void pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
   if (WIN3D.UI_CurrentTask != UITASK.Seed_Material) return;
 
   int n = allModel2Ds.MAP[OBJ_ID];
@@ -139,7 +139,7 @@ void SOLARCHVISION_pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
 // into the matching User3D.create_Model1D_* (Pick,
 // UI_TaskModifyParameter==1) or writes the matching User3D.create_
 // Model1D_* value(s) back onto OBJ_ID (Assign, ==2).
-void SOLARCHVISION_pickOrAssignModel1DProperty (int OBJ_ID) {
+void pickOrAssignModel1DProperty (int OBJ_ID) {
   if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
     if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
     else if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
@@ -183,7 +183,7 @@ void SOLARCHVISION_pickOrAssignModel1DProperty (int OBJ_ID) {
 // category (POLYLINE, FACE, CAMERA, SECTION, LANDPOINT), same as the
 // original inline code left x1/y1/z1 unset (and therefore "undefined")
 // for those.
-float[] SOLARCHVISION_getMoveOriginPoint () {
+float[] getMoveOriginPoint () {
   float x1 = FLOAT_undefined;
   float y1 = FLOAT_undefined;
   float z1 = FLOAT_undefined;
@@ -225,7 +225,7 @@ float[] SOLARCHVISION_getMoveOriginPoint () {
 // according to Select3D.posVector - 0 keeps only X, 1 keeps only Y, 2
 // keeps only Z (posVector's own default), and any other value
 // (typically 3, meaning "All") leaves all three components as-is.
-float[] SOLARCHVISION_computeMoveDelta (float x1, float y1, float z1, float x2, float y2, float z2) {
+float[] computeMoveDelta (float x1, float y1, float z1, float x2, float y2, float z2) {
   float dx = x2 - x1;
   float dy = y2 - y1;
   float dz = z2 - z1;
@@ -250,7 +250,7 @@ float[] SOLARCHVISION_computeMoveDelta (float x1, float y1, float z1, float x2, 
 
 // Which of add_ParametricSurface/add_SuperCylinder/add_Box_Core/
 // add_Octahedron/add_SuperSphere a SuperOBJ create should call -
-// returned by SOLARCHVISION_classifySuperOBJShape below.
+// returned by classifySuperOBJShape below.
 final int SUPEROBJ_SHAPE_PARAMETRIC = 0;
 final int SUPEROBJ_SHAPE_SUPERCYLINDER = 1;
 final int SUPEROBJ_SHAPE_BOX = 2;
@@ -266,7 +266,7 @@ final int SUPEROBJ_SHAPE_SUPERSPHERE = 4; // the fallback: anything not matching
 // add_SuperSphere() every other combination falls through to. Purely
 // the classification, not the actual creation - so it's testable
 // without touching the scene at all.
-int SOLARCHVISION_classifySuperOBJShape (float px, float py, float pz) {
+int classifySuperOBJShape (float px, float py, float pz) {
   if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
     return SUPEROBJ_SHAPE_PARAMETRIC;
   } else if ((px == 2) && (py == 2) && (pz == CubePower)) {
@@ -280,11 +280,11 @@ int SOLARCHVISION_classifySuperOBJShape (float px, float py, float pz) {
   }
 }
 
-// Result of SOLARCHVISION_computeClickRay below: a 3D ray (a start
+// Result of computeClickRay below: a 3D ray (a start
 // point plus a direction) corresponding to a click at 3D-viewport-local
 // coordinates (Image_X, Image_Y) - i.e. mouseX/mouseY already offset by
 // the viewport's own center, as WIN3D.calculate_Click3D expects.
-class SOLARCHVISION_ClickRay {
+class ClickRay {
   float[] start;
   float[] direction = new float [3];
 }
@@ -304,8 +304,8 @@ class SOLARCHVISION_ClickRay {
 // start point is instead offset from the camera position by however far
 // calculate_Click3D(Image_X, Image_Y) itself differs from
 // calculate_Click3D(0, 0), keeping parallel rays parallel.
-SOLARCHVISION_ClickRay SOLARCHVISION_computeClickRay (float Image_X, float Image_Y) {
-  SOLARCHVISION_ClickRay ray = new SOLARCHVISION_ClickRay();
+ClickRay computeClickRay (float Image_X, float Image_Y) {
+  ClickRay ray = new ClickRay();
 
   float[] ray_start = {
     WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
@@ -341,11 +341,11 @@ SOLARCHVISION_ClickRay SOLARCHVISION_computeClickRay (float Image_X, float Image
   return ray;
 }
 
-// Result of SOLARCHVISION_computeCreateParams below: the concrete
+// Result of computeCreateParams below: the concrete
 // position/rotation/half-extents/power-exponents a click should create
 // an object with, derived from the click point (RxP) and the user's
 // current create_* preferences.
-class SOLARCHVISION_CreateParams {
+class CreateParams {
   float x, y, z, rot, rx, ry, rz, px, py, pz;
 }
 
@@ -361,8 +361,8 @@ class SOLARCHVISION_CreateParams {
 // meaning "randomize within this range", and when create_powRnd is on) -
 // callers that want a fully deterministic result should use non-negative
 // lengths and turn create_powRnd off.
-SOLARCHVISION_CreateParams SOLARCHVISION_computeCreateParams (float[] RxP) {
-  SOLARCHVISION_CreateParams p = new SOLARCHVISION_CreateParams();
+CreateParams computeCreateParams (float[] RxP) {
+  CreateParams p = new CreateParams();
 
   p.x = RxP[1];
   p.y = RxP[2];
@@ -426,11 +426,11 @@ SOLARCHVISION_CreateParams SOLARCHVISION_computeCreateParams (float[] RxP) {
   return p;
 }
 
-// Result of SOLARCHVISION_computeCameraParamsAtPoint below: the camera
+// Result of computeCameraParamsAtPoint below: the camera
 // transform (position/rotation/zoom/type) that would put a camera's eye
 // at a given 3D point, looking the same direction as the current
 // viewport.
-class SOLARCHVISION_CameraParams {
+class CameraParams {
   float pX, pY, pZ, pT, rX, rY, rZ, rT, zoom;
   int type;
 }
@@ -444,7 +444,7 @@ class SOLARCHVISION_CameraParams {
 // used to do that save/compute/restore dance inline, right before
 // allCameras.create(); now it just calls this and passes the result
 // straight through.
-SOLARCHVISION_CameraParams SOLARCHVISION_computeCameraParamsAtPoint (float x, float y, float z) {
+CameraParams computeCameraParamsAtPoint (float x, float y, float z) {
   float keep_CAM_x = WIN3D.CAM_x;
   float keep_CAM_y = WIN3D.CAM_y;
   float keep_CAM_z = WIN3D.CAM_z;
@@ -464,7 +464,7 @@ SOLARCHVISION_CameraParams SOLARCHVISION_computeCameraParamsAtPoint (float x, fl
 
   WIN3D.reverseTransform_3DViewport();
 
-  SOLARCHVISION_CameraParams cp = new SOLARCHVISION_CameraParams();
+  CameraParams cp = new CameraParams();
   cp.pX = WIN3D.position_X;
   cp.pY = WIN3D.position_Y;
   cp.pZ = WIN3D.position_Z;
@@ -492,11 +492,11 @@ SOLARCHVISION_CameraParams SOLARCHVISION_computeCameraParamsAtPoint (float x, fl
   return cp;
 }
 
-// Result of SOLARCHVISION_computeSectionParams below: the plane
+// Result of computeSectionParams below: the plane
 // parameters (position, rotation, extents, and which of horizontal/
 // vertical it is) for a new section, plus whether one should actually
 // be created at all.
-class SOLARCHVISION_SectionParams {
+class SectionParams {
   float X, Y, Z, R, U, V;
   int Type, RES1, RES2;
   boolean createNew = false;
@@ -519,8 +519,8 @@ class SOLARCHVISION_SectionParams {
 //    button matches: createNew stays false and every other field is left
 //    at allSolidImpacts' current defaults, matching the original code's
 //    "nothing happens" outcome for that case.
-SOLARCHVISION_SectionParams SOLARCHVISION_computeSectionParams (int f, float[] RxP) {
-  SOLARCHVISION_SectionParams sp = new SOLARCHVISION_SectionParams();
+SectionParams computeSectionParams (int f, float[] RxP) {
+  SectionParams sp = new SectionParams();
 
   sp.X = allSolidImpacts.X[allSolidImpacts.sectionType];
   sp.Y = allSolidImpacts.Y[allSolidImpacts.sectionType];
@@ -704,7 +704,7 @@ SOLARCHVISION_SectionParams SOLARCHVISION_computeSectionParams (int f, float[] R
 // flips; 2 flips only if the pivot sits on the positive side of the
 // face's own (first-corner, second-corner, centroid) winding plane; 3
 // flips only if it sits on the negative side.
-void SOLARCHVISION_flipFaceOrientationIfNeeded (int f) {
+void flipFaceOrientationIfNeeded (int f) {
   int n = allFaces.nodes[f].length;
   if (n <= 2) return;
 
@@ -762,7 +762,7 @@ void SOLARCHVISION_flipFaceOrientationIfNeeded (int f) {
 // Polyline_displayVertexCount), confirmed identical modulo which array
 // before extracting. `nodeRow` is mutated directly (Java arrays are
 // passed by reference), so the caller doesn't need to reassign anything.
-void SOLARCHVISION_rotateNodesToStartAtNearestVertex (int[] nodeRow, float[] RxP) {
+void rotateNodesToStartAtNearestVertex (int[] nodeRow, float[] RxP) {
   int n = nodeRow.length;
   if (n <= 2) return;
 
@@ -791,7 +791,7 @@ void SOLARCHVISION_rotateNodesToStartAtNearestVertex (int[] nodeRow, float[] RxP
 
 // Result of a nearest-station search: which index in the array was closest, and how far (in the
 // same units funcs.lon_lat_dist returns) it was from STATION's current position.
-class SOLARCHVISION_NearestStation {
+class NearestStation {
   int index = -1;
   float dist = FLOAT_undefined;
 }
@@ -799,9 +799,9 @@ class SOLARCHVISION_NearestStation {
 // Shared by the SWOB/NAEFS/CWEEDS/CLMREC/TMYEPW "which station did the user click nearest to"
 // lookups in mouseClicked(): scans `coords` and returns the index (and distance) of whichever
 // station is closest to STATION's current longitude/latitude.
-SOLARCHVISION_NearestStation SOLARCHVISION_findNearestStation (solarchvision_STATION[] coords) {
+NearestStation findNearestStation (solarchvision_STATION[] coords) {
 
-  SOLARCHVISION_NearestStation nearest = new SOLARCHVISION_NearestStation();
+  NearestStation nearest = new NearestStation();
 
   for (int f = 0; f < coords.length; f++) {
 
@@ -820,12 +820,12 @@ SOLARCHVISION_NearestStation SOLARCHVISION_findNearestStation (solarchvision_STA
   return nearest;
 }
 
-// Like SOLARCHVISION_findNearestStation, but returns up to `maxCount` indices
+// Like findNearestStation, but returns up to `maxCount` indices
 // of stations within `maxDist` (same units as funcs.lon_lat_dist) of the
 // given (lon, lat), sorted by ascending distance. Used to detect when
 // several TMYEPW stations sit close enough together that a click can't
 // unambiguously pick one, so they can be offered as a list instead.
-int[] SOLARCHVISION_findNearbyStations (solarchvision_STATION[] coords, float lon, float lat, float maxDist, int maxCount) {
+int[] findNearbyStations (solarchvision_STATION[] coords, float lon, float lat, float maxDist, int maxCount) {
 
   IntList indices = new IntList();
   FloatList dists = new FloatList();
@@ -1078,16 +1078,16 @@ abstract class StationPicker {
     if (!this.needsScrollbar()) return false;
 
     float[] track = this.scrollTrackRect();
-    if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, track[0], track[1], track[0] + track[2], track[1] + track[3])) return false;
+    if (!isInside(X_clicked, Y_clicked, track[0], track[1], track[0] + track[2], track[1] + track[3])) return false;
 
     float[] thumb = this.scrollThumbRect();
 
-    if ((SOLARCHVISION_Y_clicked < thumb[1]) || (SOLARCHVISION_Y_clicked > thumb[1] + thumb[3])) {
+    if ((Y_clicked < thumb[1]) || (Y_clicked > thumb[1] + thumb[3])) {
       int visibleRowCount = this.visibleRowCount();
       int maxOffset = max(0, this.indices.length - visibleRowCount);
       int page = max(1, visibleRowCount - 1);
 
-      if (SOLARCHVISION_Y_clicked < thumb[1]) {
+      if (Y_clicked < thumb[1]) {
         this.scrollOffset = constrain(this.scrollOffset - page, 0, maxOffset);
       } else {
         this.scrollOffset = constrain(this.scrollOffset + page, 0, maxOffset);
@@ -1103,7 +1103,7 @@ abstract class StationPicker {
   // event (so e.g. WORLD's zoom-on-wheel doesn't also fire).
   boolean handleWheel (float wheelValue) {
     if (!this.active) return false;
-    if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return false;
+    if (!isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return false;
 
     int visibleRowCount = this.visibleRowCount();
     int maxOffset = max(0, this.indices.length - visibleRowCount);
@@ -1130,8 +1130,8 @@ abstract class StationPicker {
 
       this.scrollThumbDragging = true;
       dragging_started = 1;
-      SOLARCHVISION_X_click1 = pmouseX;
-      SOLARCHVISION_Y_click1 = pmouseY;
+      X_click1 = pmouseX;
+      Y_click1 = pmouseY;
       this.scrollDrag_startMouseY = pmouseY;
       this.scrollDrag_startOffset = this.scrollOffset;
     }
@@ -1163,7 +1163,7 @@ abstract class StationPicker {
   boolean handleClick () {
     if (!this.active) return false;
 
-    int rowIndex = this.rowAt(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked);
+    int rowIndex = this.rowAt(X_clicked, Y_clicked);
     if (rowIndex >= 0) {
       int f = this.indices[rowIndex];
       this.select(f, this.mouseLon, this.mouseLat);
@@ -1195,7 +1195,7 @@ abstract class StationPicker {
   // single nearest one, same as every dataset did before pickers existed.
   void handleMapClick (float lon, float lat) {
     solarchvision_STATION[] coords = this.getCoords();
-    int[] nearby = SOLARCHVISION_findNearbyStations(coords, lon, lat, this.maxDist, this.maxCount);
+    int[] nearby = findNearbyStations(coords, lon, lat, this.maxDist, this.maxCount);
 
     if ((nearby.length > 0) && (CurrentDataSource == this.dataSourceID)) {
       this.active = true;
@@ -1204,7 +1204,7 @@ abstract class StationPicker {
       this.mouseLat = lat;
       this.scrollOffset = 0;
     } else {
-      int f = (nearby.length > 0) ? nearby[0] : SOLARCHVISION_findNearestStation(coords).index;
+      int f = (nearby.length > 0) ? nearby[0] : findNearestStation(coords).index;
       this.select(f, lon, lat);
     }
   }
@@ -1213,31 +1213,31 @@ abstract class StationPicker {
 StationPicker TMYEPW_PICKER = new StationPicker("TMYEPW", 10000, 50, dataID_CLIMATE_TMYEPW) {
   solarchvision_STATION[] getCoords () { return TMYEPW_Coordinates; }
   String getLabel (int f) { return TMYEPW_Coordinates[f].getFilename_TMYEPW(); }
-  void select (int f, float lon, float lat) { SOLARCHVISION_selectTMYEPWStation(f, lon, lat); }
+  void select (int f, float lon, float lat) { selectTMYEPWStation(f, lon, lat); }
 };
 
 StationPicker CLMREC_PICKER = new StationPicker("CLMREC", 25000, 50, dataID_CLIMATE_CLMREC) {
   solarchvision_STATION[] getCoords () { return CLMREC_Coordinates; }
   String getLabel (int f) { return CLMREC_Coordinates[f].getCity() + ", " + CLMREC_Coordinates[f].getProvince(); }
-  void select (int f, float lon, float lat) { SOLARCHVISION_selectCLMRECStation(f, lon, lat); }
+  void select (int f, float lon, float lat) { selectCLMRECStation(f, lon, lat); }
 };
 
 StationPicker CWEEDS_PICKER = new StationPicker("CWEEDS", 50000, 50, dataID_CLIMATE_CWEEDS) {
   solarchvision_STATION[] getCoords () { return CWEEDS_coordinates; }
   String getLabel (int f) { return CWEEDS_coordinates[f].getFilename_CWEEDS(); }
-  void select (int f, float lon, float lat) { SOLARCHVISION_selectCWEEDSStation(f, lon, lat); }
+  void select (int f, float lon, float lat) { selectCWEEDSStation(f, lon, lat); }
 };
 
 StationPicker NAEFS_PICKER = new StationPicker("NAEFS", 50000, 50, dataID_ENSEMBLE_FORECAST) {
   solarchvision_STATION[] getCoords () { return NAEFS_Coordinates; }
   String getLabel (int f) { return NAEFS_Coordinates[f].getFilename_NAEFS(); }
-  void select (int f, float lon, float lat) { SOLARCHVISION_selectNAEFSStation(f, lon, lat); }
+  void select (int f, float lon, float lat) { selectNAEFSStation(f, lon, lat); }
 };
 
 StationPicker SWOB_PICKER = new StationPicker("SWOB", 25000, 50, dataID_ENSEMBLE_OBSERVED) {
   solarchvision_STATION[] getCoords () { return SWOB_Coordinates; }
   String getLabel (int f) { return SWOB_Coordinates[f].getCode(); }
-  void select (int f, float lon, float lat) { SOLARCHVISION_selectSWOBStation(f, lon, lat); }
+  void select (int f, float lon, float lat) { selectSWOBStation(f, lon, lat); }
 };
 
 // At most one of these is ever active at once, since a picker only opens
@@ -1245,38 +1245,38 @@ StationPicker SWOB_PICKER = new StationPicker("SWOB", 25000, 50, dataID_ENSEMBLE
 // still has to check all of them to find out which (if any) that is.
 StationPicker[] ALL_PICKERS = { TMYEPW_PICKER, CLMREC_PICKER, CWEEDS_PICKER, NAEFS_PICKER, SWOB_PICKER };
 
-void SOLARCHVISION_drawPickLists () {
+void drawPickLists () {
   for (StationPicker picker : ALL_PICKERS) picker.draw();
 }
 
-boolean SOLARCHVISION_handlePickListTrackClick () {
+boolean handlePickListTrackClick () {
   for (StationPicker picker : ALL_PICKERS) if (picker.handleTrackClick()) return true;
   return false;
 }
 
-boolean SOLARCHVISION_handlePickListClick () {
+boolean handlePickListClick () {
   for (StationPicker picker : ALL_PICKERS) if (picker.handleClick()) return true;
   return false;
 }
 
-boolean SOLARCHVISION_handlePickListWheel (float wheelValue) {
+boolean handlePickListWheel (float wheelValue) {
   for (StationPicker picker : ALL_PICKERS) if (picker.handleWheel(wheelValue)) return true;
   return false;
 }
 
-boolean SOLARCHVISION_handlePickListScrollDrag () {
+boolean handlePickListScrollDrag () {
   for (StationPicker picker : ALL_PICKERS) if (picker.handleScrollDrag()) return true;
   return false;
 }
 
-void SOLARCHVISION_resetPickListDragState () {
+void resetPickListDragState () {
   for (StationPicker picker : ALL_PICKERS) picker.scrollThumbDragging = false;
 }
 
 // Cancels whichever picker (if any) is currently showing, without
 // selecting anything - used by Esc. At most one is ever active, so this
 // stops at the first one found.
-boolean SOLARCHVISION_cancelActivePickList () {
+boolean cancelActivePickList () {
   for (StationPicker picker : ALL_PICKERS) if (picker.cancel()) return true;
   return false;
 }
@@ -1284,7 +1284,7 @@ boolean SOLARCHVISION_cancelActivePickList () {
 // Assigns TMYEPW station `f` to STATION and (if TMYEPW is the active data
 // source) reloads its data - shared by both the direct single-nearest-hit
 // path and the "user picked a row from the list" path.
-void SOLARCHVISION_selectTMYEPWStation (int f, float mouse_lon, float mouse_lat) {
+void selectTMYEPWStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getFilename_TMYEPW().equals(TMYEPW_Coordinates[f].getFilename_TMYEPW())) return;
 
@@ -1308,7 +1308,7 @@ void SOLARCHVISION_selectTMYEPWStation (int f, float mouse_lon, float mouse_lat)
 
     UI_rollout.revise();
 
-    SOLARCHVISION_update_station(0);
+    update_station(0);
 
     download_CLIMATE_TMYEPW();
 
@@ -1318,8 +1318,8 @@ void SOLARCHVISION_selectTMYEPWStation (int f, float mouse_lon, float mouse_lat)
   }
 }
 
-// Same shape as SOLARCHVISION_selectTMYEPWStation above, for CLMREC.
-void SOLARCHVISION_selectCLMRECStation (int f, float mouse_lon, float mouse_lat) {
+// Same shape as selectTMYEPWStation above, for CLMREC.
+void selectCLMRECStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getFilename_CWEEDS().equals(CLMREC_Coordinates[f].getFilename_CWEEDS())) return;
 
@@ -1343,13 +1343,13 @@ void SOLARCHVISION_selectCLMRECStation (int f, float mouse_lon, float mouse_lat)
 
     UI_rollout.revise();
 
-    SOLARCHVISION_update_station(0);
+    update_station(0);
     update_CLIMATE_CLMREC();
   }
 }
 
-// Same shape as SOLARCHVISION_selectTMYEPWStation above, for CWEEDS.
-void SOLARCHVISION_selectCWEEDSStation (int f, float mouse_lon, float mouse_lat) {
+// Same shape as selectTMYEPWStation above, for CWEEDS.
+void selectCWEEDSStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getFilename_CWEEDS().equals(CWEEDS_coordinates[f].getFilename_CWEEDS())) return;
 
@@ -1373,17 +1373,17 @@ void SOLARCHVISION_selectCWEEDSStation (int f, float mouse_lon, float mouse_lat)
 
     UI_rollout.revise();
 
-    SOLARCHVISION_update_station(0);
+    update_station(0);
     update_CLIMATE_CWEEDS();
   }
 }
 
-// Same shape as SOLARCHVISION_selectTMYEPWStation above, for NAEFS. Also
+// Same shape as selectTMYEPWStation above, for NAEFS. Also
 // preserves the original ">100km => don't load" behavior, using the
 // distance from the clicked location to the selected station (matching
 // what the original inline code computed via STATION's just-updated
 // position before this function existed).
-void SOLARCHVISION_selectNAEFSStation (int f, float mouse_lon, float mouse_lat) {
+void selectNAEFSStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getFilename_NAEFS().equals(NAEFS_Coordinates[f].getFilename_NAEFS())) return;
 
@@ -1406,7 +1406,7 @@ void SOLARCHVISION_selectNAEFSStation (int f, float mouse_lon, float mouse_lat) 
 
     UI_rollout.revise();
 
-    SOLARCHVISION_update_station(0);
+    update_station(0);
 
     download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
@@ -1427,10 +1427,10 @@ void SOLARCHVISION_selectNAEFSStation (int f, float mouse_lon, float mouse_lat) 
   }
 }
 
-// Same shape as SOLARCHVISION_selectTMYEPWStation above, for SWOB. Also
+// Same shape as selectTMYEPWStation above, for SWOB. Also
 // preserves the original ">100km => don't load" behavior - see the note
-// on SOLARCHVISION_selectNAEFSStation above.
-void SOLARCHVISION_selectSWOBStation (int f, float mouse_lon, float mouse_lat) {
+// on selectNAEFSStation above.
+void selectSWOBStation (int f, float mouse_lon, float mouse_lat) {
 
   if (STATION.getFilename_SWOB().equals(SWOB_Coordinates[f].getFilename_SWOB())) return;
 
@@ -1453,7 +1453,7 @@ void SOLARCHVISION_selectSWOBStation (int f, float mouse_lon, float mouse_lat) {
 
     UI_rollout.revise();
 
-    SOLARCHVISION_update_station(0);
+    update_station(0);
 
     download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
 
@@ -1478,15 +1478,15 @@ void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
 
-    if (SOLARCHVISION_control == USER_GUI) {
+    if (control == USER_GUI) {
 
       if (FRAME_click_IMG) {
 
-        SOLARCHVISION_RecordFrame();
+        RecordFrame();
 
         UI_toolBar.drawMouse(1, mouseX, mouseY, 2 * MessageSize);
 
-        SOLARCHVISION_RecordFrame();
+        RecordFrame();
       }
 
       if ((UI_menuBar.selected_parent != -1)) {
@@ -1495,11 +1495,11 @@ void mouseClicked () {
         if (mouseButton == LEFT) {
           if (UI_menuBar.selected_child != 0) {
 
-            if (SOLARCHVISION_menuActions == null) {
-              SOLARCHVISION_buildMenuActions();
+            if (menuActions == null) {
+              buildMenuActions();
             }
 
-            Runnable menuAction = SOLARCHVISION_menuActions.get(menu_option);
+            Runnable menuAction = menuActions.get(menu_option);
             if (menuAction != null) {
               menuAction.run();
             }
@@ -1512,7 +1512,7 @@ void mouseClicked () {
                   STUDY.revise();
                 } else if (menu_option.charAt(0) != '—') {
                   Develop_Option = UI_menuBar.selected_child - allLayers.length - 1; // -1 for the divider
-                  SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
+                  postProcess_developDATA(CurrentDataSource);
                   changeCurrentLayerTo(LAYER_developed.id);
                   STUDY.revise();
                 }
@@ -1524,28 +1524,28 @@ void mouseClicked () {
         UI_menuBar.selected_parent = -1;
         UI_menuBar.selected_child = 0;
 
-        image(pre_screen, 0, SOLARCHVISION_pixel_A);
+        image(pre_screen, 0, pixel_A);
 
-        SOLARCHVISION_X_clicked = -1;
-        SOLARCHVISION_Y_clicked = -1;
+        X_clicked = -1;
+        Y_clicked = -1;
       } else {
 
-        SOLARCHVISION_X_clicked = mouseX;
-        SOLARCHVISION_Y_clicked = mouseY;
+        X_clicked = mouseX;
+        Y_clicked = mouseY;
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, 0, width, SOLARCHVISION_pixel_A)) {
+        if (isInside(X_clicked, Y_clicked, 0, 0, width, pixel_A)) {
           UI_menuBar.revise();
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B)) {
+        if (isInside(X_clicked, Y_clicked, 0, pixel_A, width, pixel_A + pixel_B)) {
           UI_toolBar.revise();
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C)) {
+        if (isInside(X_clicked, Y_clicked, 0, pixel_A + pixel_B + 2 * pixel_H, width, pixel_A + pixel_B + 2 * pixel_H + pixel_C)) {
           UI_caseBar.revise();
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, 0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C + SOLARCHVISION_pixel_D)) {
+        if (isInside(X_clicked, Y_clicked, 0, pixel_A + pixel_B + 2 * pixel_H + pixel_C, width, pixel_A + pixel_B + 2 * pixel_H + pixel_C + pixel_D)) {
           typeUserCommand = 1;
           UI_consoleBar.revise();
         } else {
@@ -1553,19 +1553,19 @@ void mouseClicked () {
           UI_consoleBar.revise();
         }
 
-        if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, UI_rollout.cX, UI_rollout.cY, UI_rollout.cX + UI_rollout.dX, UI_rollout.cY + UI_rollout.dY)) {
+        if (isInside(X_clicked, Y_clicked, UI_rollout.cX, UI_rollout.cY, UI_rollout.cX + UI_rollout.dX, UI_rollout.cY + UI_rollout.dY)) {
           UI_rollout.revise();
         }
 
         if (WORLD.include) {
-          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
+          if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
             // Clicks meant for the picker list (picking a row, or
             // clicking away to cancel it) or its scrollbar track aren't
             // "pick a location on the map" clicks, so handle them here
             // and skip everything below (STATION repositioning,
             // nearest-station lookups, etc.) entirely for this click.
-            if (SOLARCHVISION_handlePickListTrackClick() || SOLARCHVISION_handlePickListClick()) {
+            if (handlePickListTrackClick() || handlePickListClick()) {
               // handled - fall through to the shared revise() calls below
             } else {
 
@@ -1602,7 +1602,7 @@ void mouseClicked () {
             // dataset did before pickers existed. A click while any
             // picker's list was showing (row pick, or click-away-to-cancel)
             // is already fully handled upfront by
-            // SOLARCHVISION_handlePickListClick() above, so no picker can
+            // handlePickListClick() above, so no picker can
             // still be active here.
             SWOB_PICKER.handleMapClick(mouse_lon, mouse_lat);
             NAEFS_PICKER.handleMapClick(mouse_lon, mouse_lat);
@@ -1621,23 +1621,23 @@ void mouseClicked () {
         }
 
         if (WIN3D.include) {
-          if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
+          if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
             float Image_X = 0;
             float Image_Y = 0;
 
-            Image_X = SOLARCHVISION_X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
-            Image_Y = SOLARCHVISION_Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
+            Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
+            Image_Y = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
 
             if (WIN3D.UI_CurrentTask == UITASK.LookAtDirection) { // viewport:LookAtDirection
 
               WIN3D.look_3DViewport_towards_Direction(Image_X, Image_Y);
 
-              SOLARCHVISION_view_changed();
+              view_changed();
             }
             else {
 
-              SOLARCHVISION_ClickRay ray = SOLARCHVISION_computeClickRay(Image_X, Image_Y);
+              ClickRay ray = computeClickRay(Image_X, Image_Y);
               float[] ray_start = ray.start;
               float[] ray_direction = ray.direction;
 
@@ -1650,7 +1650,7 @@ void mouseClicked () {
                 if ((WIN3D.UI_CurrentTask == UITASK.Create) ||
                     (WIN3D.UI_CurrentTask == UITASK.Move)) {
 
-                   RxP = SOLARCHVISION_snap_Faces(allFaces.intersect(ray_start, ray_direction));
+                   RxP = snap_Faces(allFaces.intersect(ray_start, ray_direction));
 
                 } else {
 
@@ -1667,7 +1667,7 @@ void mouseClicked () {
                   } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
                     RxP = allModel2Ds.intersect(ray_start, ray_direction);
                   } else {
-                    RxP = SOLARCHVISION_snap_Faces(allFaces.intersect(ray_start, ray_direction));
+                    RxP = snap_Faces(allFaces.intersect(ray_start, ray_direction));
                   }
                 }
 
@@ -1687,7 +1687,7 @@ void mouseClicked () {
 
                 if (WIN3D.UI_CurrentTask == UITASK.Move) { // move
 
-                  float[] origin = SOLARCHVISION_getMoveOriginPoint();
+                  float[] origin = getMoveOriginPoint();
                   float x1 = origin[0];
                   float y1 = origin[1];
                   float z1 = origin[2];
@@ -1700,11 +1700,11 @@ void mouseClicked () {
                     float y2 = RxP[2];
                     float z2 = RxP[3];
 
-                    float[] d = SOLARCHVISION_computeMoveDelta(x1, y1, z1, x2, y2, z2);
+                    float[] d = computeMoveDelta(x1, y1, z1, x2, y2, z2);
 
                     Move3D.selection(d[0], d[1], d[2]);
 
-                    SOLARCHVISION_model_changed();
+                    model_changed();
                   }
                 }
 
@@ -1720,7 +1720,7 @@ void mouseClicked () {
 
                       int f = int(RxP[0]);
 
-                      SOLARCHVISION_pickOrAssignFaceProperty(f);
+                      pickOrAssignFaceProperty(f);
 
                       if (WIN3D.UI_CurrentTask == UITASK.Pivot) {
                         if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
@@ -1750,12 +1750,12 @@ void mouseClicked () {
 
                           Select3D.Face_displayVertexCount = true;
 
-                          SOLARCHVISION_flipFaceOrientationIfNeeded(f);
+                          flipFaceOrientationIfNeeded(f);
                         } else if (current_ObjectCategory == ObjectCategory.GROUP) {
                           int OBJ_ID = allGroups.findGroupContainingFace(f);
 
                           for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
-                            SOLARCHVISION_flipFaceOrientationIfNeeded(q);
+                            flipFaceOrientationIfNeeded(q);
                           }
 
                         }
@@ -1772,7 +1772,7 @@ void mouseClicked () {
 
                           Select3D.Face_displayVertexCount = true;
 
-                          SOLARCHVISION_rotateNodesToStartAtNearestVertex(allFaces.nodes[f], RxP);
+                          rotateNodesToStartAtNearestVertex(allFaces.nodes[f], RxP);
                         } else if (current_ObjectCategory == ObjectCategory.POLYLINE) {
 
                           Select3D.Polyline_ids = new int [1];
@@ -1780,7 +1780,7 @@ void mouseClicked () {
 
                           Select3D.Polyline_displayVertexCount = true;
 
-                          SOLARCHVISION_rotateNodesToStartAtNearestVertex(allPolylines.nodes[f], RxP);
+                          rotateNodesToStartAtNearestVertex(allPolylines.nodes[f], RxP);
                         }
 
                       }
@@ -1797,14 +1797,14 @@ void mouseClicked () {
 
                     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
 
-                      SOLARCHVISION_pickOrAssignModel2DSeedMaterial(int(RxP[0]));
+                      pickOrAssignModel2DSeedMaterial(int(RxP[0]));
 
                     } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
 
-                      SOLARCHVISION_pickOrAssignModel1DProperty(int(RxP[0]));
+                      pickOrAssignModel1DProperty(int(RxP[0]));
                     }
 
-                    SOLARCHVISION_model_changed();
+                    model_changed();
 
                   }
                 }
@@ -1818,7 +1818,7 @@ void mouseClicked () {
                   int keep_number_of_allSections = allSections.num;
                   int keep_number_of_allCameras = allCameras.num;
 
-                  SOLARCHVISION_CreateParams cp = SOLARCHVISION_computeCreateParams(RxP);
+                  CreateParams cp = computeCreateParams(RxP);
                   float x = cp.x, y = cp.y, z = cp.z, rot = cp.rot;
                   float rx = cp.rx, ry = cp.ry, rz = cp.rz;
                   float px = cp.px, py = cp.py, pz = cp.pz;
@@ -1837,7 +1837,7 @@ void mouseClicked () {
 
                     if (CreateObject == CREATE.SuperOBJ) {
 
-                      int shape = SOLARCHVISION_classifySuperOBJShape(px, py, pz);
+                      int shape = classifySuperOBJShape(px, py, pz);
 
                       if (shape == SUPEROBJ_SHAPE_PARAMETRIC) {
 
@@ -1954,20 +1954,20 @@ void mouseClicked () {
                   } else if (current_ObjectCategory == ObjectCategory.CAMERA) { // working with cameras
                     if (CreateObject == CREATE.Camera) {
 
-                      SOLARCHVISION_CameraParams camParams = SOLARCHVISION_computeCameraParamsAtPoint(RxP[1], RxP[2], RxP[3]);
+                      CameraParams camParams = computeCameraParamsAtPoint(RxP[1], RxP[2], RxP[3]);
 
                       allCameras.create(camParams.pX, camParams.pY, camParams.pZ, camParams.pT, camParams.rX, camParams.rY, camParams.rZ, camParams.rT, camParams.zoom, camParams.type);
                     }
                   } else if (current_ObjectCategory == ObjectCategory.SECTION) { // working with sections
                     if (CreateObject == CREATE.Section) {
 
-                      SOLARCHVISION_SectionParams sp = SOLARCHVISION_computeSectionParams(int(RxP[0]), RxP);
+                      SectionParams sp = computeSectionParams(int(RxP[0]), RxP);
 
                       if (sp.createNew) {
 
                         allSections.create(sp.X, sp.Y, sp.Z, sp.R, sp.U, sp.V, sp.Type, sp.RES1, sp.RES2);
 
-                        SOLARCHVISION_selectNewlyCreated(keep_number_of_allSections, allSections.num,
+                        selectNewlyCreated(keep_number_of_allSections, allSections.num,
                           () -> Select3D.deselect_Sections(),
                           (o) -> { Select3D.Section_ids = concat(Select3D.Section_ids, new int[] {o}); }
                           );
@@ -1995,27 +1995,27 @@ void mouseClicked () {
 
 
 
-                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allSolids, allSolids.DEF.length,
+                  selectNewlyCreated(keep_number_of_allSolids, allSolids.DEF.length,
                     () -> Select3D.deselect_Solids(),
                     (o) -> { Select3D.Solid_ids = concat(Select3D.Solid_ids, new int[] {o}); }
                     );
 
-                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allCameras, allCameras.num,
+                  selectNewlyCreated(keep_number_of_allCameras, allCameras.num,
                     () -> Select3D.deselect_Cameras(),
                     (o) -> { Select3D.Camera_ids = concat(Select3D.Camera_ids, new int[] {o}); }
                     );
 
-                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allGroups, allGroups.num,
+                  selectNewlyCreated(keep_number_of_allGroups, allGroups.num,
                     () -> Select3D.deselect_Groups(),
                     (o) -> { Select3D.Group_ids = concat(Select3D.Group_ids, new int[] {o}); }
                     );
 
-                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allModel2Ds, allModel2Ds.num,
+                  selectNewlyCreated(keep_number_of_allModel2Ds, allModel2Ds.num,
                     () -> Select3D.deselect_Model2Ds(),
                     (o) -> { Select3D.Model2D_ids = concat(Select3D.Model2D_ids, new int[] {o}); }
                     );
 
-                  SOLARCHVISION_selectNewlyCreated(keep_number_of_allModel1Ds, allModel1Ds.num,
+                  selectNewlyCreated(keep_number_of_allModel1Ds, allModel1Ds.num,
                     () -> Select3D.deselect_Model1Ds(),
                     (o) -> { Select3D.Model1D_ids = concat(Select3D.Model1D_ids, new int[] {o}); }
                     );
@@ -2026,7 +2026,7 @@ void mouseClicked () {
                 }
               }
 
-              SOLARCHVISION_view_changed();
+              view_changed();
             }
           }
         }
@@ -2037,300 +2037,300 @@ void mouseClicked () {
   }
 }
 
-void SOLARCHVISION_buildMenuActions() {
-  SOLARCHVISION_menuActions = new HashMap<String, Runnable>();
+void buildMenuActions() {
+  menuActions = new HashMap<String, Runnable>();
 
-  SOLARCHVISION_menuActions.put("SOLARCHVISION-BIM6D", () -> {
+  menuActions.put("SOLARCHVISION-BIM6D", () -> {
     link("https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1");
   });
 
-  SOLARCHVISION_menuActions.put("Designed & developed by", () -> {
+  menuActions.put("Designed & developed by", () -> {
     link("https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8");
   });
 
-  SOLARCHVISION_menuActions.put("Mojtaba Samimi", () -> {
+  menuActions.put("Mojtaba Samimi", () -> {
     link("https://www.linkedin.com/in/mojtaba-samimi-06178840/");
   });
 
-  SOLARCHVISION_menuActions.put("www.solarchvision.com", () -> {
+  menuActions.put("www.solarchvision.com", () -> {
     link("https://solarchvision.com/");
   });
 
-  SOLARCHVISION_menuActions.put("New", () -> {
+  menuActions.put("New", () -> {
     /////////////////////////////
-    SOLARCHVISION_holdProject();
+    holdProject();
     /////////////////////////////
 
-    SOLARCHVISION_selectFile_New();
+    selectFile_New();
 
-    SOLARCHVISION_deleteAll();
+    deleteAll();
 
-    //SOLARCHVISION_update_station(-1);
+    //update_station(-1);
   });
 
-  SOLARCHVISION_menuActions.put("Save", () -> {
-    SOLARCHVISION_saveProject(Folder_Project + "/" + ProjectName + ".xml");
+  menuActions.put("Save", () -> {
+    saveProject(Folder_Project + "/" + ProjectName + ".xml");
   });
 
-  SOLARCHVISION_menuActions.put("Hold", () -> {
-    SOLARCHVISION_holdProject();
+  menuActions.put("Hold", () -> {
+    holdProject();
   });
 
-  SOLARCHVISION_menuActions.put("Fetch", () -> {
-    SOLARCHVISION_fetchProject();
+  menuActions.put("Fetch", () -> {
+    fetchProject();
   });
 
-  SOLARCHVISION_menuActions.put("Open...", () -> {
-    SOLARCHVISION_selectFile_Open();
+  menuActions.put("Open...", () -> {
+    selectFile_Open();
   });
 
-  SOLARCHVISION_menuActions.put("Save As...", () -> {
-    SOLARCHVISION_selectFile_SaveAs();
+  menuActions.put("Save As...", () -> {
+    selectFile_SaveAs();
   });
 
-  SOLARCHVISION_menuActions.put("Import 3D-model...", () -> {
-    SOLARCHVISION_selectFile_ImportObj();
+  menuActions.put("Import 3D-model...", () -> {
+    selectFile_ImportObj();
   });
 
-  SOLARCHVISION_menuActions.put("Import Command File...", () -> {
-    SOLARCHVISION_selectFile_RunScript();
+  menuActions.put("Import Command File...", () -> {
+    selectFile_RunScript();
   });
 
-  SOLARCHVISION_menuActions.put("Export 3D-model > OBJ (time-series)", () -> {
-    SOLARCHVISION_exportObj_timeSeries();
+  menuActions.put("Export 3D-model > OBJ (time-series)", () -> {
+    exportObj_timeSeries();
   });
 
-  SOLARCHVISION_menuActions.put("Export 3D-model > OBJ (date-series)", () -> {
-    SOLARCHVISION_exportObj_dateSeries();
+  menuActions.put("Export 3D-model > OBJ (date-series)", () -> {
+    exportObj_dateSeries();
   });
 
-  SOLARCHVISION_menuActions.put("Export 3D-model > OBJ", () -> {
-    SOLARCHVISION_exportObj("");
+  menuActions.put("Export 3D-model > OBJ", () -> {
+    exportObj("");
   });
 
-  SOLARCHVISION_menuActions.put("Export 3D-model > HTML", () -> {
-    SOLARCHVISION_exportHtml();
+  menuActions.put("Export 3D-model > HTML", () -> {
+    exportHtml();
   });
 
-  SOLARCHVISION_menuActions.put("Export 3D-model > RAD", () -> {
-    SOLARCHVISION_exportRadiance();
+  menuActions.put("Export 3D-model > RAD", () -> {
+    exportRadiance();
   });
 
-  SOLARCHVISION_menuActions.put("Export 3D-model > SCR", () -> {
-    SOLARCHVISION_exportAutocadScript();
+  menuActions.put("Export 3D-model > SCR", () -> {
+    exportAutocadScript();
   });
 
-  SOLARCHVISION_menuActions.put("Quit", () -> {
+  menuActions.put("Quit", () -> {
     exit();
   });
 
-  SOLARCHVISION_menuActions.put("Wind pattern (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_WIND_ACTIVE, true));
+  menuActions.put("Wind pattern (active)", () -> setPlotImpacts(PlotImpacts_WIND_ACTIVE, true));
 
-  SOLARCHVISION_menuActions.put("Wind pattern (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_WIND_PASSIVE, true));
+  menuActions.put("Wind pattern (passive)", () -> setPlotImpacts(PlotImpacts_WIND_PASSIVE, true));
 
-  SOLARCHVISION_menuActions.put("Urban solar potential (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_URBAN_ACTIVE, false));
+  menuActions.put("Urban solar potential (active)", () -> setPlotImpacts(PlotImpacts_URBAN_ACTIVE, false));
 
-  SOLARCHVISION_menuActions.put("Urban solar potential (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_URBAN_PASSIVE, false));
+  menuActions.put("Urban solar potential (passive)", () -> setPlotImpacts(PlotImpacts_URBAN_PASSIVE, false));
 
-  SOLARCHVISION_menuActions.put("Orientation potential (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_GLOBAL_ACTIVE, false));
+  menuActions.put("Orientation potential (active)", () -> setPlotImpacts(PlotImpacts_GLOBAL_ACTIVE, false));
 
-  SOLARCHVISION_menuActions.put("Orientation potential (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_GLOBAL_PASSIVE, false));
+  menuActions.put("Orientation potential (passive)", () -> setPlotImpacts(PlotImpacts_GLOBAL_PASSIVE, false));
 
-  SOLARCHVISION_menuActions.put("Hourly sun position (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_SUNPATH_ACTIVE, false));
+  menuActions.put("Hourly sun position (active)", () -> setPlotImpacts(PlotImpacts_SUNPATH_ACTIVE, false));
 
-  SOLARCHVISION_menuActions.put("Hourly sun position (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_SUNPATH_PASSIVE, false));
+  menuActions.put("Hourly sun position (passive)", () -> setPlotImpacts(PlotImpacts_SUNPATH_PASSIVE, false));
 
-  SOLARCHVISION_menuActions.put("Annual cycle sun path (active)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_CYCLES_ACTIVE, false));
+  menuActions.put("Annual cycle sun path (active)", () -> setPlotImpacts(PlotImpacts_CYCLES_ACTIVE, false));
 
-  SOLARCHVISION_menuActions.put("Annual cycle sun path (passive)", () -> SOLARCHVISION_setPlotImpacts(PlotImpacts_CYCLES_PASSIVE, false));
+  menuActions.put("Annual cycle sun path (passive)", () -> setPlotImpacts(PlotImpacts_CYCLES_PASSIVE, false));
 
-  SOLARCHVISION_menuActions.put("Prebake Selected Sections", () -> {
+  menuActions.put("Prebake Selected Sections", () -> {
     allSolarImpacts.render_Shadows_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Process Active Impact", () -> {
+  menuActions.put("Process Active Impact", () -> {
     STUDY.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
     allSolarImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Process Passive Impact", () -> {
+  menuActions.put("Process Passive Impact", () -> {
     STUDY.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
     allSolarImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Process Solid Impact", () -> {
+  menuActions.put("Process Solid Impact", () -> {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Run wind 3D-model", () -> {
+  menuActions.put("Run wind 3D-model", () -> {
     allSolidImpacts.calculate_WindFlow();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
   // Each of these 5 menu actions used to reset the same 12 recording
   // flags to false and then flip exactly one of them true. Pulling the
-  // reset into SOLARCHVISION_stopAllRecording() means each action states
+  // reset into stopAllRecording() means each action states
   // only what's actually different: which flag turns on.
-  SOLARCHVISION_menuActions.put("Stop REC.", () -> {
-    SOLARCHVISION_stopAllRecording();
+  menuActions.put("Stop REC.", () -> {
+    stopAllRecording();
 
     UI_rollout.revise();
   });
 
-  SOLARCHVISION_menuActions.put("REC. Time Graph", () -> {
-    SOLARCHVISION_stopAllRecording();
+  menuActions.put("REC. Time Graph", () -> {
+    stopAllRecording();
     STUDY.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  SOLARCHVISION_menuActions.put("REC. Location Graph", () -> {
-    SOLARCHVISION_stopAllRecording();
+  menuActions.put("REC. Location Graph", () -> {
+    stopAllRecording();
     WORLD.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  SOLARCHVISION_menuActions.put("REC. Solid Graph", () -> {
-    SOLARCHVISION_stopAllRecording();
+  menuActions.put("REC. Solid Graph", () -> {
+    stopAllRecording();
     WIN3D.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  SOLARCHVISION_menuActions.put("REC. Screenshot", () -> {
-    SOLARCHVISION_stopAllRecording();
+  menuActions.put("REC. Screenshot", () -> {
+    stopAllRecording();
     FRAME_record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  SOLARCHVISION_menuActions.put("PDF Time Graph", () -> {
+  menuActions.put("PDF Time Graph", () -> {
     STUDY.record_PDF = true;
     STUDY.revise();
   });
 
-  SOLARCHVISION_menuActions.put("JPG Time Graph", () -> {
+  menuActions.put("JPG Time Graph", () -> {
     STUDY.record_IMG = true;
     STUDY.revise();
   });
 
-  SOLARCHVISION_menuActions.put("JPG Location Graph", () -> {
+  menuActions.put("JPG Location Graph", () -> {
     WORLD.record_IMG = true;
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("PDF Location Graph", () -> {
+  menuActions.put("PDF Location Graph", () -> {
     WORLD.record_PDF = true;
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("JPG 3D Graph", () -> {
+  menuActions.put("JPG 3D Graph", () -> {
     WIN3D.record_IMG = true;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("JPG 3D Full-Period", () -> {
+  menuActions.put("JPG 3D Full-Period", () -> {
     WIN3D.fullPeriod_IMG = true;
     WIN3D.record_IMG = true;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Screenshot", () -> {
+  menuActions.put("Screenshot", () -> {
     FRAME_record_IMG = true;
   });
 
-  SOLARCHVISION_menuActions.put("Screenshot+Click", () -> {
+  menuActions.put("Screenshot+Click", () -> {
     FRAME_click_IMG = true;
   });
 
-  SOLARCHVISION_menuActions.put("Screenshot+Drag", () -> {
+  menuActions.put("Screenshot+Drag", () -> {
     FRAME_drag_IMG = true;
   });
 
-  SOLARCHVISION_menuActions.put("Update Station", () -> {
-    SOLARCHVISION_update_station(-1);
+  menuActions.put("Update Station", () -> {
+    update_station(-1);
   });
 
-  SOLARCHVISION_menuActions.put("Load Land Mesh", () -> {
+  menuActions.put("Load Land Mesh", () -> {
     Land3D.update_textures();
   });
 
-  SOLARCHVISION_menuActions.put("Load Land Texture", () -> {
+  menuActions.put("Load Land Texture", () -> {
     Land3D.update_textures();
   });
 
-  SOLARCHVISION_menuActions.put("Download Land Mesh", () -> {
+  menuActions.put("Download Land Mesh", () -> {
     Land3D.download_mesh();
   });
 
-  SOLARCHVISION_menuActions.put("Download Land Texture", () -> {
+  menuActions.put("Download Land Texture", () -> {
     Land3D.download_textures();
   });
 
-  SOLARCHVISION_menuActions.put("Load Toroposphere", () -> {
+  menuActions.put("Load Toroposphere", () -> {
     Tropo3D.download_images();
     Tropo3D.displaySurface = true;
     WORLD.revise();
     WIN3D.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Download SWOB", () -> {
+  menuActions.put("Download SWOB", () -> {
     download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);;
   });
 
-  SOLARCHVISION_menuActions.put("Download NAEFS", () -> {
+  menuActions.put("Download NAEFS", () -> {
     download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
-  SOLARCHVISION_menuActions.put("Download CLMREC", () -> {
+  menuActions.put("Download CLMREC", () -> {
     download_CLIMATE_CLMREC();
   });
 
-  SOLARCHVISION_menuActions.put("Download TMYEPW", () -> {
+  menuActions.put("Download TMYEPW", () -> {
     download_CLIMATE_TMYEPW();
   });
 
-  SOLARCHVISION_menuActions.put("Update TMYEPW", () -> {
+  menuActions.put("Update TMYEPW", () -> {
     CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
     CLIMATE_TMYEPW_load = true;
     update_CLIMATE_TMYEPW();
   });
 
-  SOLARCHVISION_menuActions.put("Update CWEEDS", () -> {
+  menuActions.put("Update CWEEDS", () -> {
     CurrentDataSource = dataID_CLIMATE_CWEEDS;
 
     CLIMATE_CWEEDS_load = true;
     update_CLIMATE_CWEEDS();
   });
 
-  SOLARCHVISION_menuActions.put("Update CLMREC", () -> {
+  menuActions.put("Update CLMREC", () -> {
     CurrentDataSource = dataID_CLIMATE_CLMREC;
 
     CLIMATE_CLMREC_load = true;
     update_CLIMATE_CLMREC();
   });
 
-  SOLARCHVISION_menuActions.put("Update SWOB", () -> {
+  menuActions.put("Update SWOB", () -> {
     CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
 
     ENSEMBLE_OBSERVED_load = true;
     update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
-  SOLARCHVISION_menuActions.put("Update NAEFS", () -> {
+  menuActions.put("Update NAEFS", () -> {
     CurrentDataSource = dataID_ENSEMBLE_FORECAST;
 
     ENSEMBLE_FORECAST_load = true;
@@ -2339,13 +2339,13 @@ void SOLARCHVISION_buildMenuActions() {
 
 
 
-  SOLARCHVISION_menuActions.put("Use typical year (TMY)", () -> {
+  menuActions.put("Use typical year (TMY)", () -> {
     CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
     CLIMATE_TMYEPW_load = true;
     update_CLIMATE_TMYEPW();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
     WORLD.revise();
     STUDY.revise();
     UI_rollout.revise();
@@ -2356,13 +2356,13 @@ void SOLARCHVISION_buildMenuActions() {
     WORLD.displayNear_TMYEPW = true;
   });
 
-  SOLARCHVISION_menuActions.put("Use long-term (CWEEDS)", () -> {
+  menuActions.put("Use long-term (CWEEDS)", () -> {
     CurrentDataSource = dataID_CLIMATE_CWEEDS;
 
     CLIMATE_CWEEDS_load = true;
     update_CLIMATE_CWEEDS();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
     WORLD.revise();
     STUDY.revise();
     UI_rollout.revise();
@@ -2373,13 +2373,13 @@ void SOLARCHVISION_buildMenuActions() {
     WORLD.displayNear_CWEEDS = true;
   });
 
-  SOLARCHVISION_menuActions.put("Use long-term (CLMREC)", () -> {
+  menuActions.put("Use long-term (CLMREC)", () -> {
     CurrentDataSource = dataID_CLIMATE_CLMREC;
 
     CLIMATE_CLMREC_load = true;
     update_CLIMATE_CLMREC();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
     WORLD.revise();
     STUDY.revise();
     UI_rollout.revise();
@@ -2390,14 +2390,14 @@ void SOLARCHVISION_buildMenuActions() {
     WORLD.displayNear_CLMREC = true;
   });
 
-  SOLARCHVISION_menuActions.put("Use real-time observed (SWOB)", () -> {
+  menuActions.put("Use real-time observed (SWOB)", () -> {
     CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
     STUDY.joinDays = 1;
 
     ENSEMBLE_OBSERVED_load = true;
     update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-    SOLARCHVISION_view_changed();
+    view_changed();
     WORLD.revise();
     STUDY.revise();
     UI_rollout.revise();
@@ -2408,14 +2408,14 @@ void SOLARCHVISION_buildMenuActions() {
     WORLD.displayNear_SWOB = true;
   });
 
-  SOLARCHVISION_menuActions.put("Use weather forecast (NAEFS)", () -> {
+  menuActions.put("Use weather forecast (NAEFS)", () -> {
     CurrentDataSource = dataID_ENSEMBLE_FORECAST;
     STUDY.joinDays = 1;
 
     ENSEMBLE_FORECAST_load = true;
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-    SOLARCHVISION_view_changed();
+    view_changed();
     WIN3D.revise();
     STUDY.revise();
     UI_rollout.revise();
@@ -2426,664 +2426,664 @@ void SOLARCHVISION_buildMenuActions() {
     WORLD.displayNear_NAEFS = true;
   });
 
-  SOLARCHVISION_menuActions.put("Active Shade", () -> {
+  menuActions.put("Active Shade", () -> {
     WIN3D.Impact_TYPE = Impact_ACTIVE;
 
     if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Passive Shade", () -> {
+  menuActions.put("Passive Shade", () -> {
     WIN3D.Impact_TYPE = Impact_PASSIVE;
 
     if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Surface Wire", () -> {
+  menuActions.put("Shade Surface Wire", () -> {
     WIN3D.FacesShade = SHADE.Surface_Wire;
     allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Surface Base", () -> {
+  menuActions.put("Shade Surface Base", () -> {
     WIN3D.FacesShade = SHADE.Surface_Base;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Surface White", () -> {
+  menuActions.put("Shade Surface White", () -> {
     WIN3D.FacesShade = SHADE.Surface_White;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Surface Materials", () -> {
+  menuActions.put("Shade Surface Materials", () -> {
     WIN3D.FacesShade = SHADE.Surface_Materials;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Global Solar", () -> {
+  menuActions.put("Shade Global Solar", () -> {
     WIN3D.FacesShade = SHADE.Global_Solar;
 
     GlobalSolar_rebuild_array = true;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Vertex Solar", () -> {
+  menuActions.put("Shade Vertex Solar", () -> {
     WIN3D.FacesShade = SHADE.Vertex_Solar;
 
     VertexSolar_rebuild_array = true;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Vertex Solid", () -> {
+  menuActions.put("Shade Vertex Solid", () -> {
     WIN3D.FacesShade = SHADE.Vertex_Solid;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Vertex Elevation", () -> {
+  menuActions.put("Shade Vertex Elevation", () -> {
     WIN3D.FacesShade = SHADE.Vertex_Elevation;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Shade Viewport", () -> {
-    SOLARCHVISION_ShadeViewport();
+  menuActions.put("Shade Viewport", () -> {
+    ShadeViewport();
   });
 
-  SOLARCHVISION_menuActions.put("Prebake Viewport", () -> {
-    SOLARCHVISION_preBakeViewport();
+  menuActions.put("Prebake Viewport", () -> {
+    preBakeViewport();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Land Mesh", () -> {
+  menuActions.put("Show/Hide Land Mesh", () -> {
     Land3D.displaySurface = !Land3D.displaySurface;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Land Texture", () -> {
+  menuActions.put("Show/Hide Land Texture", () -> {
     Land3D.displayTexture = !Land3D.displayTexture;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Land Points", () -> {
+  menuActions.put("Show/Hide Land Points", () -> {
     Land3D.displayPoints = !Land3D.displayPoints;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Land Depth", () -> {
+  menuActions.put("Show/Hide Land Depth", () -> {
     Land3D.displayDepth = !Land3D.displayDepth;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Vertices", () -> {
+  menuActions.put("Show/Hide Vertices", () -> {
     allPoints.displayAll = !allPoints.displayAll;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Edges", () -> {
+  menuActions.put("Show/Hide Edges", () -> {
     allFaces.displayEdges = !allFaces.displayEdges;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Normals", () -> {
+  menuActions.put("Show/Hide Normals", () -> {
     allFaces.displayNormals = !allFaces.displayNormals;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Leaves", () -> {
+  menuActions.put("Show/Hide Leaves", () -> {
     allModel1Ds.displayLeaves = !allModel1Ds.displayLeaves;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Model1Ds", () -> {
+  menuActions.put("Show/Hide Model1Ds", () -> {
     allModel1Ds.displayAll = !allModel1Ds.displayAll;
     allModel1Ds.displayLeaves = allModel1Ds.displayAll; // <<<<<<
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Model2Ds", () -> {
+  menuActions.put("Show/Hide Model2Ds", () -> {
     allModel2Ds.displayAll = !allModel2Ds.displayAll;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Polylines", () -> {
+  menuActions.put("Show/Hide Polylines", () -> {
     allPolylines.displayAll = !allPolylines.displayAll;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Faces", () -> {
+  menuActions.put("Show/Hide Faces", () -> {
     allFaces.displayAll = !allFaces.displayAll;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Solids", () -> {
+  menuActions.put("Show/Hide Solids", () -> {
     allSolids.displayAll = !allSolids.displayAll;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Sections", () -> {
+  menuActions.put("Show/Hide Sections", () -> {
     allSections.displayAll = !allSections.displayAll;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Cameras", () -> {
+  menuActions.put("Show/Hide Cameras", () -> {
     allCameras.displayAll = !allCameras.displayAll;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Sky", () -> {
+  menuActions.put("Show/Hide Sky", () -> {
     Sky3D.displaySurface = !Sky3D.displaySurface;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Sun Grid", () -> {
+  menuActions.put("Show/Hide Sun Grid", () -> {
     Sun3D.displayGrid = !Sun3D.displayGrid;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Sun Path", () -> {
+  menuActions.put("Show/Hide Sun Path", () -> {
     Sun3D.displayPath = !Sun3D.displayPath;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Sun Pattern", () -> {
+  menuActions.put("Show/Hide Sun Pattern", () -> {
     Sun3D.displayPattern = !Sun3D.displayPattern;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Sun Surface", () -> {
+  menuActions.put("Show/Hide Sun Surface", () -> {
     Sun3D.displaySurface = !Sun3D.displaySurface;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Moon Surface", () -> {
+  menuActions.put("Show/Hide Moon Surface", () -> {
     Moon3D.displaySurface = !Moon3D.displaySurface;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Earth Surface", () -> {
+  menuActions.put("Show/Hide Earth Surface", () -> {
     Earth3D.displaySurface = !Earth3D.displaySurface;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Troposphere", () -> {
+  menuActions.put("Show/Hide Troposphere", () -> {
     Tropo3D.displaySurface = !Tropo3D.displaySurface;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Solar Section", () -> {
+  menuActions.put("Show/Hide Solar Section", () -> {
     allSolarImpacts.displayImage = !allSolarImpacts.displayImage;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Solid Section", () -> {
+  menuActions.put("Show/Hide Solid Section", () -> {
     allSolidImpacts.displayImage = !allSolidImpacts.displayImage;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Solids", () -> {
+  menuActions.put("Show/Hide Selected Solids", () -> {
     Select3D.Solid_displayEdges = !Select3D.Solid_displayEdges;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Sections", () -> {
+  menuActions.put("Show/Hide Selected Sections", () -> {
     Select3D.Section_displayEdges = !Select3D.Section_displayEdges;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Cameras", () -> {
+  menuActions.put("Show/Hide Selected Cameras", () -> {
     Select3D.Camera_displayEdges = !Select3D.Camera_displayEdges;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected LandPoints", () -> {
+  menuActions.put("Show/Hide Selected LandPoints", () -> {
     Select3D.LandPoint_displayPoints = !Select3D.LandPoint_displayPoints;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Wind Flow", () -> {
+  menuActions.put("Show/Hide Wind Flow", () -> {
     allWindFlows.displayAll = !allWindFlows.displayAll;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Faces", () -> {
+  menuActions.put("Show/Hide Selected Faces", () -> {
     Select3D.Face_displayEdges = !Select3D.Face_displayEdges;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Faces Vertex Count", () -> {
+  menuActions.put("Show/Hide Selected Faces Vertex Count", () -> {
     Select3D.Face_displayVertexCount = !Select3D.Face_displayVertexCount;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Polylines Vertex Count", () -> {
+  menuActions.put("Show/Hide Selected Polylines Vertex Count", () -> {
     Select3D.Polyline_displayVertexCount = !Select3D.Polyline_displayVertexCount;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Vertices", () -> {
+  menuActions.put("Show/Hide Selected Vertices", () -> {
     Select3D.Vertex_displayVertices = !Select3D.Vertex_displayVertices;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Polylines", () -> {
+  menuActions.put("Show/Hide Selected Polylines", () -> {
     Select3D.Polyline_displayVertices = !Select3D.Polyline_displayVertices;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected REF Pivot", () -> {
+  menuActions.put("Show/Hide Selected REF Pivot", () -> {
     Select3D.displayReferencePivot = !Select3D.displayReferencePivot;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Group Pivot", () -> {
+  menuActions.put("Show/Hide Selected Group Pivot", () -> {
     Select3D.Group_displayPivot = !Select3D.Group_displayPivot;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Group Edges", () -> {
+  menuActions.put("Show/Hide Selected Group Edges", () -> {
     Select3D.Group_displayEdges = !Select3D.Group_displayEdges;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected Group Box", () -> {
+  menuActions.put("Show/Hide Selected Group Box", () -> {
     Select3D.Group_displayBox = !Select3D.Group_displayBox;
 
-    SOLARCHVISION_view_changed();;
+    view_changed();;
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected 2D Edges", () -> {
+  menuActions.put("Show/Hide Selected 2D Edges", () -> {
     Select3D.Model2D_displayEdges = !Select3D.Model2D_displayEdges;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide Selected 1D Edges", () -> {
+  menuActions.put("Show/Hide Selected 1D Edges", () -> {
     Select3D.Model1D_displayEdges = !Select3D.Model1D_displayEdges;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide SWOB stations", () -> {
+  menuActions.put("Show/Hide SWOB stations", () -> {
     WORLD.displayAll_SWOB = (WORLD.displayAll_SWOB + 1) % 2;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide SWOB nearest", () -> {
+  menuActions.put("Show/Hide SWOB nearest", () -> {
     WORLD.displayNear_SWOB = !WORLD.displayNear_SWOB;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide NAEFS stations", () -> {
+  menuActions.put("Show/Hide NAEFS stations", () -> {
     WORLD.displayAll_NAEFS = (WORLD.displayAll_NAEFS + 1) % 2;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide NAEFS nearest", () -> {
+  menuActions.put("Show/Hide NAEFS nearest", () -> {
     WORLD.displayNear_NAEFS = !WORLD.displayNear_NAEFS;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide CWEEDS stations", () -> {
+  menuActions.put("Show/Hide CWEEDS stations", () -> {
     WORLD.displayAll_CWEEDS = (WORLD.displayAll_CWEEDS + 1) % 2;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide CWEEDS nearest", () -> {
+  menuActions.put("Show/Hide CWEEDS nearest", () -> {
     WORLD.displayNear_CWEEDS = !WORLD.displayNear_CWEEDS;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide CLMREC stations", () -> {
+  menuActions.put("Show/Hide CLMREC stations", () -> {
     WORLD.displayAll_CLMREC = (WORLD.displayAll_CLMREC + 1) % 2;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide CLMREC nearest", () -> {
+  menuActions.put("Show/Hide CLMREC nearest", () -> {
     WORLD.displayNear_CLMREC = !WORLD.displayNear_CLMREC;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide TMYEPW stations", () -> {
+  menuActions.put("Show/Hide TMYEPW stations", () -> {
     WORLD.displayAll_TMYEPW = (WORLD.displayAll_TMYEPW + 1) % 2;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Show/Hide TMYEPW nearest", () -> {
+  menuActions.put("Show/Hide TMYEPW nearest", () -> {
     WORLD.displayNear_TMYEPW = !WORLD.displayNear_TMYEPW;
 
     WORLD.revise();
   });
 
-  SOLARCHVISION_menuActions.put("1D-Tree", () -> {
+  menuActions.put("1D-Tree", () -> {
     UI_setTo_Create_allModel1Ds();
   });
 
-  SOLARCHVISION_menuActions.put("2D-Tree", () -> {
+  menuActions.put("2D-Tree", () -> {
     UI_setTo_Create_Tree();
   });
 
-  SOLARCHVISION_menuActions.put("Person", () -> {
+  menuActions.put("Person", () -> {
     UI_setTo_Create_Person();
   });
 
-  SOLARCHVISION_menuActions.put("Point", () -> {
+  menuActions.put("Point", () -> {
     UI_setTo_Create_Vertex();
   });
 
-  SOLARCHVISION_menuActions.put("Polyline", () -> {
+  menuActions.put("Polyline", () -> {
     UI_setTo_Create_Polyline();
   });
 
-  SOLARCHVISION_menuActions.put("Surface", () -> {
+  menuActions.put("Surface", () -> {
     UI_setTo_Create_Face();
   });
 
-  SOLARCHVISION_menuActions.put("Parametric 1", () -> {
+  menuActions.put("Parametric 1", () -> {
     UI_setTo_Create_Parametric(1);
   });
 
-  SOLARCHVISION_menuActions.put("Parametric 2", () -> {
+  menuActions.put("Parametric 2", () -> {
     UI_setTo_Create_Parametric(2);
   });
 
-  SOLARCHVISION_menuActions.put("Parametric 3", () -> {
+  menuActions.put("Parametric 3", () -> {
     UI_setTo_Create_Parametric(3);
   });
 
-  SOLARCHVISION_menuActions.put("Parametric 4", () -> {
+  menuActions.put("Parametric 4", () -> {
     UI_setTo_Create_Parametric(4);
   });
 
-  SOLARCHVISION_menuActions.put("Parametric 5", () -> {
+  menuActions.put("Parametric 5", () -> {
     UI_setTo_Create_Parametric(5);
   });
 
-  SOLARCHVISION_menuActions.put("Parametric 6", () -> {
+  menuActions.put("Parametric 6", () -> {
     UI_setTo_Create_Parametric(6);
   });
 
-  SOLARCHVISION_menuActions.put("Pyramid", () -> {
+  menuActions.put("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });
 
-  SOLARCHVISION_menuActions.put("Plane", () -> {
+  menuActions.put("Plane", () -> {
     UI_setTo_Create_Plane();
   });
 
-  SOLARCHVISION_menuActions.put("Polygon", () -> {
+  menuActions.put("Polygon", () -> {
     UI_setTo_Create_Polygon();
   });
 
-  SOLARCHVISION_menuActions.put("Extrude", () -> {
+  menuActions.put("Extrude", () -> {
     UI_setTo_Create_Extrude();
   });
 
-  SOLARCHVISION_menuActions.put("Hyper", () -> {
+  menuActions.put("Hyper", () -> {
     UI_setTo_Create_Hyper();
   });
 
-  SOLARCHVISION_menuActions.put("House3", () -> {
+  menuActions.put("House3", () -> {
     UI_setTo_Create_House3();
   });
 
-  SOLARCHVISION_menuActions.put("House2", () -> {
+  menuActions.put("House2", () -> {
     UI_setTo_Create_House2();
   });
 
-  SOLARCHVISION_menuActions.put("House1", () -> {
+  menuActions.put("House1", () -> {
     UI_setTo_Create_House1();
   });
 
-  SOLARCHVISION_menuActions.put("Box", () -> {
+  menuActions.put("Box", () -> {
     UI_setTo_Create_Box();
   });
 
-  SOLARCHVISION_menuActions.put("Icosahedron", () -> {
+  menuActions.put("Icosahedron", () -> {
     UI_setTo_Create_Icosahedron();
   });
 
-  SOLARCHVISION_menuActions.put("Octahedron", () -> {
+  menuActions.put("Octahedron", () -> {
     UI_setTo_Create_Octahedron();
   });
 
-  SOLARCHVISION_menuActions.put("Sphere", () -> {
+  menuActions.put("Sphere", () -> {
     UI_setTo_Create_Sphere();
   });
 
-  SOLARCHVISION_menuActions.put("Cylinder", () -> {
+  menuActions.put("Cylinder", () -> {
     UI_setTo_Create_Cylinder();
   });
 
-  SOLARCHVISION_menuActions.put("Cushion", () -> {
+  menuActions.put("Cushion", () -> {
     UI_setTo_Create_Cushion();
   });
 
-  SOLARCHVISION_menuActions.put("Drop on LandSurface", () -> {
+  menuActions.put("Drop on LandSurface", () -> {
     UI_setTo_Modify_Drop(0);
 
     Drop3D.selection();
   });
 
-  SOLARCHVISION_menuActions.put("Drop on ModelSurface (Down)", () -> {
+  menuActions.put("Drop on ModelSurface (Down)", () -> {
     UI_setTo_Modify_Drop(1);
 
     Drop3D.selection();
   });
 
-  SOLARCHVISION_menuActions.put("Drop on ModelSurface (Up)", () -> {
+  menuActions.put("Drop on ModelSurface (Up)", () -> {
     UI_setTo_Modify_Drop(2);
 
     Drop3D.selection();
   });
 
-  SOLARCHVISION_menuActions.put("Get dX", () -> {
+  menuActions.put("Get dX", () -> {
     UI_setTo_Modify_GetLength(0);
   });
 
-  SOLARCHVISION_menuActions.put("Get dY", () -> {
+  menuActions.put("Get dY", () -> {
     UI_setTo_Modify_GetLength(1);
   });
 
-  SOLARCHVISION_menuActions.put("Get dZ", () -> {
+  menuActions.put("Get dZ", () -> {
     UI_setTo_Modify_GetLength(2);
   });
 
-  SOLARCHVISION_menuActions.put("Get dXYZ", () -> {
+  menuActions.put("Get dXYZ", () -> {
     UI_setTo_Modify_GetLength(3);
   });
 
-  SOLARCHVISION_menuActions.put("Get dXY", () -> {
+  menuActions.put("Get dXY", () -> {
     UI_setTo_Modify_GetLength(4);
   });
 
-  SOLARCHVISION_menuActions.put("MoveX", () -> {
+  menuActions.put("MoveX", () -> {
     UI_setTo_Modify_Move(0);
   });
 
-  SOLARCHVISION_menuActions.put("MoveY", () -> {
+  menuActions.put("MoveY", () -> {
     UI_setTo_Modify_Move(1);
   });
 
-  SOLARCHVISION_menuActions.put("MoveZ", () -> {
+  menuActions.put("MoveZ", () -> {
     UI_setTo_Modify_Move(2);
   });
 
-  SOLARCHVISION_menuActions.put("Move", () -> {
+  menuActions.put("Move", () -> {
     UI_setTo_Modify_Move(3);
   });
 
-  SOLARCHVISION_menuActions.put("ScaleX", () -> {
+  menuActions.put("ScaleX", () -> {
     UI_setTo_Modify_Scale(0);
   });
 
-  SOLARCHVISION_menuActions.put("ScaleY", () -> {
+  menuActions.put("ScaleY", () -> {
     UI_setTo_Modify_Scale(1);
   });
 
-  SOLARCHVISION_menuActions.put("ScaleZ", () -> {
+  menuActions.put("ScaleZ", () -> {
     UI_setTo_Modify_Scale(2);
   });
 
-  SOLARCHVISION_menuActions.put("Scale", () -> {
+  menuActions.put("Scale", () -> {
     UI_setTo_Modify_Scale(3);
   });
 
-  SOLARCHVISION_menuActions.put("PowerX", () -> {
+  menuActions.put("PowerX", () -> {
     UI_setTo_Modify_Power(0);
   });
 
-  SOLARCHVISION_menuActions.put("PowerY", () -> {
+  menuActions.put("PowerY", () -> {
     UI_setTo_Modify_Power(1);
   });
 
-  SOLARCHVISION_menuActions.put("PowerZ", () -> {
+  menuActions.put("PowerZ", () -> {
     UI_setTo_Modify_Power(2);
   });
 
-  SOLARCHVISION_menuActions.put("Power", () -> {
+  menuActions.put("Power", () -> {
     UI_setTo_Modify_Power(3);
   });
 
-  SOLARCHVISION_menuActions.put("RotateX", () -> {
+  menuActions.put("RotateX", () -> {
     UI_setTo_Modify_Rotate(0);
   });
 
-  SOLARCHVISION_menuActions.put("RotateY", () -> {
+  menuActions.put("RotateY", () -> {
     UI_setTo_Modify_Rotate(1);
   });
 
-  SOLARCHVISION_menuActions.put("RotateZ", () -> {
+  menuActions.put("RotateZ", () -> {
     UI_setTo_Modify_Rotate(2);
   });
 
-  SOLARCHVISION_menuActions.put("Rotate", () -> {
+  menuActions.put("Rotate", () -> {
     UI_setTo_Modify_Rotate(2);
   });
 
-  SOLARCHVISION_menuActions.put("Pivot", () -> {
+  menuActions.put("Pivot", () -> {
     UI_setTo_Modify_Pivot(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick Pivot", () -> {
+  menuActions.put("Pick Pivot", () -> {
     UI_setTo_Modify_Pivot(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign Pivot", () -> {
+  menuActions.put("Assign Pivot", () -> {
     UI_setTo_Modify_Pivot(2);
   });
 
-  SOLARCHVISION_menuActions.put("Save Current ReferenceBox", () -> {
+  menuActions.put("Save Current ReferenceBox", () -> {
     Select3D.save_current_BoundingBox();
   });
 
-  SOLARCHVISION_menuActions.put("Reset Saved ReferenceBox", () -> {
+  menuActions.put("Reset Saved ReferenceBox", () -> {
     Select3D.apply_saved_BoundingBox();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Use Selection ReferenceBox", () -> {
+  menuActions.put("Use Selection ReferenceBox", () -> {
     Select3D.calculate_BoundingBox();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Use Origin ReferenceBox", () -> {
+  menuActions.put("Use Origin ReferenceBox", () -> {
     Select3D.apply_origin_ReferenceBox();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Begin New Group at Origin", () -> {
+  menuActions.put("Begin New Group at Origin", () -> {
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
     Select3D.Group_ids = new int [1];
     Select3D.Group_ids[0] = allGroups.num - 1;
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Begin New Group at Pivot", () -> {
+  menuActions.put("Begin New Group at Pivot", () -> {
     allGroups.beginNewGroup(Select3D.BoundingBox[1 + Select3D.alignX][0], Select3D.BoundingBox[1 + Select3D.alignX][1], Select3D.BoundingBox[1 + Select3D.alignX][2], Select3D.BoundingBox[1 + Select3D.alignX][3], Select3D.BoundingBox[1 + Select3D.alignX][4], Select3D.BoundingBox[1 + Select3D.alignX][5], Select3D.BoundingBox[1 + Select3D.alignX][6], Select3D.BoundingBox[1 + Select3D.alignX][7], Select3D.BoundingBox[1 + Select3D.alignX][8]);
 
     Select3D.Group_ids = new int [1];
     Select3D.Group_ids[0] = allGroups.num - 1;
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Solid", () -> {
+  menuActions.put("Solid", () -> {
     UI_setTo_Create_Solid();
   });
 
-  SOLARCHVISION_menuActions.put("Section", () -> {
+  menuActions.put("Section", () -> {
     UI_setTo_Create_Section();
   });
 
-  SOLARCHVISION_menuActions.put("Camera", () -> {
+  menuActions.put("Camera", () -> {
     UI_setTo_Create_Camera();
   });
 
-  SOLARCHVISION_menuActions.put("Viewport >> Camera", () -> {
+  menuActions.put("Viewport >> Camera", () -> {
     float Camera_pX = WIN3D.position_X;
     float Camera_pY = WIN3D.position_Y;
     float Camera_pZ = WIN3D.position_Z;
@@ -3100,14 +3100,14 @@ void SOLARCHVISION_buildMenuActions() {
 
     WIN3D.currentCamera = allCameras.num - 1;
     WIN3D.apply_currentCamera();
-    SOLARCHVISION_modify_Viewport_Title();
+    modify_Viewport_Title();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
 
     UI_toolBar.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Camera >> Viewport", () -> {
+  menuActions.put("Camera >> Viewport", () -> {
     allCameras.set_posX(0, allCameras.get_posX(WIN3D.currentCamera));
     allCameras.set_posY(0, allCameras.get_posY(WIN3D.currentCamera));
     allCameras.set_posZ(0, allCameras.get_posZ(WIN3D.currentCamera));
@@ -3120,732 +3120,732 @@ void SOLARCHVISION_buildMenuActions() {
     allCameras.set_type(0, allCameras.get_type(WIN3D.currentCamera));
 
     WIN3D.currentCamera = 0;
-    SOLARCHVISION_modify_Viewport_Title();
+    modify_Viewport_Title();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
 
     UI_toolBar.revise();
   });
 
-  SOLARCHVISION_menuActions.put("Camera View", () -> {
+  menuActions.put("Camera View", () -> {
     if (Select3D.Camera_ids.length > 0) {
       WIN3D.currentCamera = Select3D.Camera_ids[Select3D.Camera_ids.length - 1];
       WIN3D.apply_currentCamera();
-      SOLARCHVISION_modify_Viewport_Title();
+      modify_Viewport_Title();
 
-      SOLARCHVISION_view_changed();
+      view_changed();
 
       UI_toolBar.revise();
     }
   });
 
-  SOLARCHVISION_menuActions.put("LandMesh >> Group", () -> {
+  menuActions.put("LandMesh >> Group", () -> {
     Land3D.draw(TypeWindow.LandMesh);
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   });
 
-  SOLARCHVISION_menuActions.put("LandGap >> Group", () -> {
+  menuActions.put("LandGap >> Group", () -> {
     Land3D.draw(TypeWindow.LandGap);
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   });
 
-  SOLARCHVISION_menuActions.put("Change Seed/Material", () -> {
+  menuActions.put("Change Seed/Material", () -> {
     UI_setTo_Modify_Seed(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick Seed/Material", () -> {
+  menuActions.put("Pick Seed/Material", () -> {
     UI_setTo_Modify_Seed(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign Seed/Material", () -> {
+  menuActions.put("Assign Seed/Material", () -> {
     UI_setTo_Modify_Seed(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change tessellation", () -> {
+  menuActions.put("Change tessellation", () -> {
     UI_setTo_Modify_Tessellation(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick tessellation", () -> {
+  menuActions.put("Pick tessellation", () -> {
     UI_setTo_Modify_Tessellation(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign tessellation", () -> {
+  menuActions.put("Assign tessellation", () -> {
     UI_setTo_Modify_Tessellation(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change Layer", () -> {
+  menuActions.put("Change Layer", () -> {
     UI_setTo_Modify_Layer(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick Layer", () -> {
+  menuActions.put("Pick Layer", () -> {
     UI_setTo_Modify_Layer(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign Layer", () -> {
+  menuActions.put("Assign Layer", () -> {
     UI_setTo_Modify_Layer(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change Visibility", () -> {
+  menuActions.put("Change Visibility", () -> {
     UI_setTo_Modify_Visibility(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick Visibility", () -> {
+  menuActions.put("Pick Visibility", () -> {
     UI_setTo_Modify_Visibility(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign Visibility", () -> {
+  menuActions.put("Assign Visibility", () -> {
     UI_setTo_Modify_Visibility(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change Weight", () -> {
+  menuActions.put("Change Weight", () -> {
     UI_setTo_Modify_Weight(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick Weight", () -> {
+  menuActions.put("Pick Weight", () -> {
     UI_setTo_Modify_Weight(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign Weight", () -> {
+  menuActions.put("Assign Weight", () -> {
     UI_setTo_Modify_Weight(2);
   });
 
-  SOLARCHVISION_menuActions.put("Flip Normal", () -> {
+  menuActions.put("Flip Normal", () -> {
     UI_setTo_Modify_Normal(1);
   });
 
-  SOLARCHVISION_menuActions.put("Set-Out Normal", () -> {
+  menuActions.put("Set-Out Normal", () -> {
     UI_setTo_Modify_Normal(2);
   });
 
-  SOLARCHVISION_menuActions.put("Set-In Normal", () -> {
+  menuActions.put("Set-In Normal", () -> {
     UI_setTo_Modify_Normal(3);
   });
 
-  SOLARCHVISION_menuActions.put("Get FirstVertex", () -> {
+  menuActions.put("Get FirstVertex", () -> {
     UI_setTo_Modify_FirstVertex(1);
   });
 
-  SOLARCHVISION_menuActions.put("Change DegreeMax", () -> {
+  menuActions.put("Change DegreeMax", () -> {
     UI_setTo_Modify_DegreeMax(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick DegreeMax", () -> {
+  menuActions.put("Pick DegreeMax", () -> {
     UI_setTo_Modify_DegreeMax(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign DegreeMax", () -> {
+  menuActions.put("Assign DegreeMax", () -> {
     UI_setTo_Modify_DegreeMax(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change BranchTilt", () -> {
+  menuActions.put("Change BranchTilt", () -> {
     UI_setTo_Modify_BranchTilt(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick BranchTilt", () -> {
+  menuActions.put("Pick BranchTilt", () -> {
     UI_setTo_Modify_BranchTilt(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign BranchTilt", () -> {
+  menuActions.put("Assign BranchTilt", () -> {
     UI_setTo_Modify_BranchTilt(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change BranchTwist", () -> {
+  menuActions.put("Change BranchTwist", () -> {
     UI_setTo_Modify_BranchTwist(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick BranchTwist", () -> {
+  menuActions.put("Pick BranchTwist", () -> {
     UI_setTo_Modify_BranchTwist(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign BranchTwist", () -> {
+  menuActions.put("Assign BranchTwist", () -> {
     UI_setTo_Modify_BranchTwist(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change BranchRatio", () -> {
+  menuActions.put("Change BranchRatio", () -> {
     UI_setTo_Modify_BranchRatio(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick BranchRatio", () -> {
+  menuActions.put("Pick BranchRatio", () -> {
     UI_setTo_Modify_BranchRatio(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign BranchRatio", () -> {
+  menuActions.put("Assign BranchRatio", () -> {
     UI_setTo_Modify_BranchRatio(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change TreeBase", () -> {
+  menuActions.put("Change TreeBase", () -> {
     UI_setTo_Modify_TreeBase(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick TreeBase", () -> {
+  menuActions.put("Pick TreeBase", () -> {
     UI_setTo_Modify_TreeBase(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign TreeBase", () -> {
+  menuActions.put("Assign TreeBase", () -> {
     UI_setTo_Modify_TreeBase(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change TrunkSize", () -> {
+  menuActions.put("Change TrunkSize", () -> {
     UI_setTo_Modify_TrunkSize(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick TrunkSize", () -> {
+  menuActions.put("Pick TrunkSize", () -> {
     UI_setTo_Modify_TrunkSize(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign TrunkSize", () -> {
+  menuActions.put("Assign TrunkSize", () -> {
     UI_setTo_Modify_TrunkSize(2);
   });
 
-  SOLARCHVISION_menuActions.put("Change LeafSize", () -> {
+  menuActions.put("Change LeafSize", () -> {
     UI_setTo_Modify_LeafSize(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick LeafSize", () -> {
+  menuActions.put("Pick LeafSize", () -> {
     UI_setTo_Modify_LeafSize(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign LeafSize", () -> {
+  menuActions.put("Assign LeafSize", () -> {
     UI_setTo_Modify_LeafSize(2);
   });
 
-  SOLARCHVISION_menuActions.put("Model1DsProps", () -> {
+  menuActions.put("Model1DsProps", () -> {
     UI_setTo_Modify_Model1DsProps(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick Model1DsProps", () -> {
+  menuActions.put("Pick Model1DsProps", () -> {
     UI_setTo_Modify_Model1DsProps(1);
   });
 
-  SOLARCHVISION_menuActions.put("Assign Model1DsProps", () -> {
+  menuActions.put("Assign Model1DsProps", () -> {
     UI_setTo_Modify_Model1DsProps(2);
   });
 
-  SOLARCHVISION_menuActions.put("Orthographic", () -> {
+  menuActions.put("Orthographic", () -> {
     UI_setTo_View_ProjectionType(0);
   });
 
-  SOLARCHVISION_menuActions.put("Perspective", () -> {
+  menuActions.put("Perspective", () -> {
     UI_setTo_View_ProjectionType(1);
   });
 
-  SOLARCHVISION_menuActions.put("Invert Selection", () -> {
+  menuActions.put("Invert Selection", () -> {
     Select3D.invertSelection();
   });
 
-  SOLARCHVISION_menuActions.put("Deselect All", () -> {
+  menuActions.put("Deselect All", () -> {
     Select3D.deselectAll();
   });
 
-  SOLARCHVISION_menuActions.put("Select All", () -> {
+  menuActions.put("Select All", () -> {
     Select3D.selectAll();
   });
 
-  SOLARCHVISION_menuActions.put("Select All Cameras", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.CAMERA));
+  menuActions.put("Select All Cameras", () -> selectAllOfCategory(ObjectCategory.CAMERA));
 
-  SOLARCHVISION_menuActions.put("Select All Sections", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.SECTION));
+  menuActions.put("Select All Sections", () -> selectAllOfCategory(ObjectCategory.SECTION));
 
-  SOLARCHVISION_menuActions.put("Select All Solids", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.SOLID));
+  menuActions.put("Select All Solids", () -> selectAllOfCategory(ObjectCategory.SOLID));
 
-  SOLARCHVISION_menuActions.put("Select All Faces", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.FACE));
+  menuActions.put("Select All Faces", () -> selectAllOfCategory(ObjectCategory.FACE));
 
-  SOLARCHVISION_menuActions.put("Select All Polylines", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.POLYLINE));
+  menuActions.put("Select All Polylines", () -> selectAllOfCategory(ObjectCategory.POLYLINE));
 
-  SOLARCHVISION_menuActions.put("Select All Verices", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.VERTEX));
+  menuActions.put("Select All Verices", () -> selectAllOfCategory(ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Select All Groups", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.GROUP));
+  menuActions.put("Select All Groups", () -> selectAllOfCategory(ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Select All Model1Ds", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.MODEL1D));
+  menuActions.put("Select All Model1Ds", () -> selectAllOfCategory(ObjectCategory.MODEL1D));
 
-  SOLARCHVISION_menuActions.put("Select All Model2Ds", () -> SOLARCHVISION_selectAllOfCategory(ObjectCategory.MODEL2D));
+  menuActions.put("Select All Model2Ds", () -> selectAllOfCategory(ObjectCategory.MODEL2D));
 
-  SOLARCHVISION_menuActions.put("Select Solid", () -> SOLARCHVISION_switch_category(ObjectCategory.SOLID));
+  menuActions.put("Select Solid", () -> switch_category(ObjectCategory.SOLID));
 
-  SOLARCHVISION_menuActions.put("Select Section", () -> SOLARCHVISION_switch_category(ObjectCategory.SECTION));
+  menuActions.put("Select Section", () -> switch_category(ObjectCategory.SECTION));
 
-  SOLARCHVISION_menuActions.put("Select Camera", () -> SOLARCHVISION_switch_category(ObjectCategory.CAMERA));
+  menuActions.put("Select Camera", () -> switch_category(ObjectCategory.CAMERA));
 
-  SOLARCHVISION_menuActions.put("Select LandPoint", () -> SOLARCHVISION_switch_category(ObjectCategory.LANDPOINT));
+  menuActions.put("Select LandPoint", () -> switch_category(ObjectCategory.LANDPOINT));
 
-  SOLARCHVISION_menuActions.put("Select Model1Ds", () -> SOLARCHVISION_switch_category(ObjectCategory.MODEL1D));
+  menuActions.put("Select Model1Ds", () -> switch_category(ObjectCategory.MODEL1D));
 
-  SOLARCHVISION_menuActions.put("Select Model2Ds", () -> SOLARCHVISION_switch_category(ObjectCategory.MODEL2D));
+  menuActions.put("Select Model2Ds", () -> switch_category(ObjectCategory.MODEL2D));
 
-  SOLARCHVISION_menuActions.put("Select Group", () -> SOLARCHVISION_switch_category(ObjectCategory.GROUP));
+  menuActions.put("Select Group", () -> switch_category(ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Select Face", () -> SOLARCHVISION_switch_category(ObjectCategory.FACE));
+  menuActions.put("Select Face", () -> switch_category(ObjectCategory.FACE));
 
-  SOLARCHVISION_menuActions.put("Select Polyline", () -> SOLARCHVISION_switch_category(ObjectCategory.POLYLINE));
+  menuActions.put("Select Polyline", () -> switch_category(ObjectCategory.POLYLINE));
 
-  SOLARCHVISION_menuActions.put("Select Vertex", () -> SOLARCHVISION_switch_category(ObjectCategory.VERTEX));
+  menuActions.put("Select Vertex", () -> switch_category(ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Soft Selection", () -> {
+  menuActions.put("Soft Selection", () -> {
     Select3D.convert_Vertex_to_softSelection();
 
-    SOLARCHVISION_switch_category(ObjectCategory.SOFTVERTEX);
+    switch_category(ObjectCategory.SOFTVERTEX);
   });
 
-  SOLARCHVISION_menuActions.put("Vertices >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Vertices_to_Groups(), ObjectCategory.GROUP));
+  menuActions.put("Vertices >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Faces >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Faces_to_Groups(), ObjectCategory.GROUP));
+  menuActions.put("Faces >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Faces_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Faces", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Faces(), ObjectCategory.FACE));
+  menuActions.put("Groups >> Faces", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Faces(), ObjectCategory.FACE));
 
-  SOLARCHVISION_menuActions.put("Polylines >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Polylines_to_Groups(), ObjectCategory.GROUP));
+  menuActions.put("Polylines >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Polylines_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Polylines", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Polylines(), ObjectCategory.POLYLINE));
+  menuActions.put("Groups >> Polylines", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Polylines(), ObjectCategory.POLYLINE));
 
-  SOLARCHVISION_menuActions.put("Polylines >> Vertices", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Polylines_to_Vertices(), ObjectCategory.VERTEX));
+  menuActions.put("Polylines >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Polylines_to_Vertices(), ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Vertices >> Polylines", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Vertices_to_Polylines(), ObjectCategory.POLYLINE));
+  menuActions.put("Vertices >> Polylines", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Polylines(), ObjectCategory.POLYLINE));
 
-  SOLARCHVISION_menuActions.put("Groups >> Vertices", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX));
+  menuActions.put("Groups >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Faces >> Vertices", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Faces_to_Vertices(), ObjectCategory.VERTEX));
+  menuActions.put("Faces >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Faces_to_Vertices(), ObjectCategory.VERTEX));
 
-  SOLARCHVISION_menuActions.put("Vertices >> Faces", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Vertices_to_Faces(), ObjectCategory.FACE));
+  menuActions.put("Vertices >> Faces", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Faces(), ObjectCategory.FACE));
 
-  SOLARCHVISION_menuActions.put("Solids >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Solids_to_Groups(), ObjectCategory.GROUP));
+  menuActions.put("Solids >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Solids_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Solids", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Solids(), ObjectCategory.SOLID));
+  menuActions.put("Groups >> Solids", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Solids(), ObjectCategory.SOLID));
 
-  SOLARCHVISION_menuActions.put("Model2Ds >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Model2Ds_to_Groups(), ObjectCategory.GROUP));
+  menuActions.put("Model2Ds >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Model2Ds_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Model2Ds", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Model2Ds(), ObjectCategory.MODEL2D));
+  menuActions.put("Groups >> Model2Ds", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Model2Ds(), ObjectCategory.MODEL2D));
 
-  SOLARCHVISION_menuActions.put("Model1Ds >> Groups", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Model1Ds_to_Groups(), ObjectCategory.GROUP));
+  menuActions.put("Model1Ds >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Model1Ds_to_Groups(), ObjectCategory.GROUP));
 
-  SOLARCHVISION_menuActions.put("Groups >> Model1Ds", () -> SOLARCHVISION_convertAndSwitch(() -> Select3D.convert_Groups_to_Model1Ds(), ObjectCategory.MODEL1D));
+  menuActions.put("Groups >> Model1Ds", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Model1Ds(), ObjectCategory.MODEL1D));
 
-  SOLARCHVISION_menuActions.put("Pick Select", () -> {
+  menuActions.put("Pick Select", () -> {
     UI_setTo_View_PickSelect(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pick Select+", () -> {
+  menuActions.put("Pick Select+", () -> {
     UI_setTo_View_PickSelect(1);
   });
 
-  SOLARCHVISION_menuActions.put("Pick Select-", () -> {
+  menuActions.put("Pick Select-", () -> {
     UI_setTo_View_PickSelect(2);
   });
 
-  SOLARCHVISION_menuActions.put("Window Select", () -> {
+  menuActions.put("Window Select", () -> {
     UI_setTo_View_WindowSelect(0);
   });
 
-  SOLARCHVISION_menuActions.put("Window Select+", () -> {
+  menuActions.put("Window Select+", () -> {
     UI_setTo_View_WindowSelect(1);
   });
 
-  SOLARCHVISION_menuActions.put("Window Select-", () -> {
+  menuActions.put("Window Select-", () -> {
     UI_setTo_View_WindowSelect(2);
   });
 
-  SOLARCHVISION_menuActions.put("Select Near Selected Vertices", () -> {
+  menuActions.put("Select Near Selected Vertices", () -> {
     Select3D.selectNearVertices();
   });
 
-  SOLARCHVISION_menuActions.put("Weld Objects Selected Vertices", () -> {
+  menuActions.put("Weld Objects Selected Vertices", () -> {
     Modify3D.weldObjectsVertices_Selection(User3D.modify_WeldTreshold);
   });
 
-  SOLARCHVISION_menuActions.put("Weld Scene Selected Vertices", () -> {
+  menuActions.put("Weld Scene Selected Vertices", () -> {
     Modify3D.weldSceneVertices_Selection(User3D.modify_WeldTreshold);
   });
 
-  SOLARCHVISION_menuActions.put("Reposition Selected Vertices", () -> {
+  menuActions.put("Reposition Selected Vertices", () -> {
     Modify3D.repositionVertices_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Separate Selected Vertices", () -> {
+  menuActions.put("Separate Selected Vertices", () -> {
     Modify3D.separateVertices_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Select Scene Isolated Vertices", () -> {
+  menuActions.put("Select Scene Isolated Vertices", () -> {
     Select3D.isolatedVertices_Scene();
   });
 
-  SOLARCHVISION_menuActions.put("Delete Scene Isolated Vertices", () -> {
+  menuActions.put("Delete Scene Isolated Vertices", () -> {
     Delete3D.isolatedVertices_Scene();
   });
 
-  SOLARCHVISION_menuActions.put("Delete Selection Isolated Vertices", () -> {
+  menuActions.put("Delete Selection Isolated Vertices", () -> {
     Delete3D.isolatedVertices_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Delete Scene Empty Groups", () -> {
+  menuActions.put("Delete Scene Empty Groups", () -> {
     allGroups.deleteEmptyGroups_Scene();
   });
 
-  SOLARCHVISION_menuActions.put("Delete Selection", () -> {
+  menuActions.put("Delete Selection", () -> {
     Delete3D.selection();
   });
 
-  SOLARCHVISION_menuActions.put("Dettach from Groups Selection", () -> {
+  menuActions.put("Dettach from Groups Selection", () -> {
     allGroups.dettachFromGroups_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Ungroup Selection", () -> {
+  menuActions.put("Ungroup Selection", () -> {
     allGroups.ungroup_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Group Selection", () -> {
+  menuActions.put("Group Selection", () -> {
     allGroups.group_Selection(1);
   });
 
-  SOLARCHVISION_menuActions.put("Attach to Last Group", () -> {
+  menuActions.put("Attach to Last Group", () -> {
     allGroups.group_Selection(0);
   });
 
-  SOLARCHVISION_menuActions.put("Clone Selection (Identical)", () -> {
+  menuActions.put("Clone Selection (Identical)", () -> {
     Clone3D.selection(true);
   });
 
-  SOLARCHVISION_menuActions.put("Clone Selection (Variation)", () -> {
+  menuActions.put("Clone Selection (Variation)", () -> {
     Clone3D.selection(false);
   });
 
-  SOLARCHVISION_menuActions.put("Auto-Normal Selected Faces", () -> {
+  menuActions.put("Auto-Normal Selected Faces", () -> {
     Modify3D.autoNormalFaces_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Force Triangulate Selected Faces", () -> {
+  menuActions.put("Force Triangulate Selected Faces", () -> {
     Modify3D.forceTriangulateFaces_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Insert Corner Opennings", () -> {
+  menuActions.put("Insert Corner Opennings", () -> {
     Modify3D.insertCornerOpennings_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Insert Parallel Opennings", () -> {
+  menuActions.put("Insert Parallel Opennings", () -> {
     Modify3D.insertParallelOpennings_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Insert Rotated Opennings", () -> {
+  menuActions.put("Insert Rotated Opennings", () -> {
     Modify3D.insertRotatedOpennings_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Insert Edge Opennings", () -> {
+  menuActions.put("Insert Edge Opennings", () -> {
     Modify3D.insertEdgeOpennings_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Optimize Faces", () -> {
+  menuActions.put("Optimize Faces", () -> {
     Modify3D.optimizeFace_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Tessellate Rows & Columns", () -> {
+  menuActions.put("Tessellate Rows & Columns", () -> {
     Modify3D.tessellateRowsColumns_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Tessellate Rectangular", () -> {
+  menuActions.put("Tessellate Rectangular", () -> {
     Modify3D.tessellateRectangular_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Tessellate Triangular", () -> {
+  menuActions.put("Tessellate Triangular", () -> {
     Modify3D.tessellateTriangular_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Extrude Face Edges", () -> {
+  menuActions.put("Extrude Face Edges", () -> {
     Modify3D.extrudeFaceEdges_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Offset(above) Vertices", () -> {
+  menuActions.put("Offset(above) Vertices", () -> {
     Modify3D.offsetVertices_Selection(0, abs(User3D.modify_OffsetAmount));
   });
 
-  SOLARCHVISION_menuActions.put("Offset(below) Vertices", () -> {
+  menuActions.put("Offset(below) Vertices", () -> {
     Modify3D.offsetVertices_Selection(0, -abs(User3D.modify_OffsetAmount));
   });
 
-  SOLARCHVISION_menuActions.put("Offset(expand) Vertices", () -> {
+  menuActions.put("Offset(expand) Vertices", () -> {
     Modify3D.offsetVertices_Selection(1, abs(User3D.modify_OffsetAmount));
   });
 
-  SOLARCHVISION_menuActions.put("Offset(shrink) Vertices", () -> {
+  menuActions.put("Offset(shrink) Vertices", () -> {
     Modify3D.offsetVertices_Selection(1, -abs(User3D.modify_OffsetAmount));
   });
 
-  SOLARCHVISION_menuActions.put("Reverse Visibility of All Faces", () -> {
+  menuActions.put("Reverse Visibility of All Faces", () -> {
     Modify3D.reverseVisibilityFaces_Scene();
   });
 
-  SOLARCHVISION_menuActions.put("Hide All Faces", () -> {
+  menuActions.put("Hide All Faces", () -> {
     Modify3D.changeVisibilityFaces_Scene(0);
   });
 
-  SOLARCHVISION_menuActions.put("Unhide All Faces", () -> {
+  menuActions.put("Unhide All Faces", () -> {
     Modify3D.changeVisibilityFaces_Scene(1);
   });
 
-  SOLARCHVISION_menuActions.put("Hide Selected Faces", () -> {
+  menuActions.put("Hide Selected Faces", () -> {
     Modify3D.changeVisibilityFaces_Selection(0);
   });
 
-  SOLARCHVISION_menuActions.put("Unhide Selected Faces", () -> {
+  menuActions.put("Unhide Selected Faces", () -> {
     Modify3D.changeVisibilityFaces_Selection(1);
   });
 
-  SOLARCHVISION_menuActions.put("Isolate Selection", () -> {
+  menuActions.put("Isolate Selection", () -> {
     Modify3D.isolate_Selection();
   });
 
-  SOLARCHVISION_menuActions.put("Flatten Selected LandPoints", () -> {
+  menuActions.put("Flatten Selected LandPoints", () -> {
     Modify3D.flatten_LandPoints();
   });
 
-  SOLARCHVISION_menuActions.put("Add People on Land", () -> {
+  menuActions.put("Add People on Land", () -> {
     Create3D.add_onLand(1); // 1 = people
   });
 
-  SOLARCHVISION_menuActions.put("Add 2D-Trees on Land", () -> {
+  menuActions.put("Add 2D-Trees on Land", () -> {
     Create3D.add_onLand(2); // 2 = 2D trees
   });
 
-  SOLARCHVISION_menuActions.put("Add 1D-Trees on Land", () -> {
+  menuActions.put("Add 1D-Trees on Land", () -> {
     Create3D.add_onLand(3); // 3 = 1D trees
   });
 
-  SOLARCHVISION_menuActions.put("Delete All Model1Ds", () -> {
+  menuActions.put("Delete All Model1Ds", () -> {
     allModel1Ds.makeEmpty(0);
   });
 
-  SOLARCHVISION_menuActions.put("Delete All Model2Ds", () -> {
+  menuActions.put("Delete All Model2Ds", () -> {
     allModel2Ds.makeEmpty(0);
   });
 
-  SOLARCHVISION_menuActions.put("Delete All Groups", () -> {
+  menuActions.put("Delete All Groups", () -> {
     allGroups.makeEmpty(0);
   });
 
-  SOLARCHVISION_menuActions.put("Delete All Solids", () -> {
+  menuActions.put("Delete All Solids", () -> {
     allSolids.makeEmpty(0);
   });
 
-  SOLARCHVISION_menuActions.put("Delete All Sections", () -> {
+  menuActions.put("Delete All Sections", () -> {
     allSections.makeEmpty(0);
   });
 
-  SOLARCHVISION_menuActions.put("Delete All Cameras", () -> {
+  menuActions.put("Delete All Cameras", () -> {
     allCameras.makeEmpty(0);
   });
 
-  SOLARCHVISION_menuActions.put("Delete All Faces", () -> {
+  menuActions.put("Delete All Faces", () -> {
     allFaces.makeEmpty(0);
   });
 
-  SOLARCHVISION_menuActions.put("Delete All Polylines", () -> {
+  menuActions.put("Delete All Polylines", () -> {
     allPolylines.makeEmpty(0);
   });
 
-  SOLARCHVISION_menuActions.put("Delete All", () -> {
-    SOLARCHVISION_deleteAll();
+  menuActions.put("Delete All", () -> {
+    deleteAll();
   });
 
-  SOLARCHVISION_menuActions.put("TargetRoll", () -> {
+  menuActions.put("TargetRoll", () -> {
     UI_setTo_View_TargetRoll(0);
   });
 
-  SOLARCHVISION_menuActions.put("TargetRollZ", () -> {
+  menuActions.put("TargetRollZ", () -> {
     UI_setTo_View_TargetRoll(1);
   });
 
-  SOLARCHVISION_menuActions.put("TargetRollXY", () -> {
+  menuActions.put("TargetRollXY", () -> {
     UI_setTo_View_TargetRoll(2);
   });
 
-  SOLARCHVISION_menuActions.put("CameraRoll", () -> {
+  menuActions.put("CameraRoll", () -> {
     UI_setTo_View_CameraRoll(0);
   });
 
-  SOLARCHVISION_menuActions.put("CameraRollZ", () -> {
+  menuActions.put("CameraRollZ", () -> {
     UI_setTo_View_CameraRoll(1);
   });
 
-  SOLARCHVISION_menuActions.put("CameraRollXY", () -> {
+  menuActions.put("CameraRollXY", () -> {
     UI_setTo_View_CameraRoll(2);
   });
 
-  SOLARCHVISION_menuActions.put("Orbit", () -> {
+  menuActions.put("Orbit", () -> {
     UI_setTo_View_Orbit(0);
   });
 
-  SOLARCHVISION_menuActions.put("OrbitZ", () -> {
+  menuActions.put("OrbitZ", () -> {
     UI_setTo_View_Orbit(1);
   });
 
-  SOLARCHVISION_menuActions.put("OrbitXY", () -> {
+  menuActions.put("OrbitXY", () -> {
     UI_setTo_View_Orbit(2);
   });
 
-  SOLARCHVISION_menuActions.put("LandOrbit", () -> {
+  menuActions.put("LandOrbit", () -> {
     UI_setTo_View_LandOrbit(0);
   });
 
-  SOLARCHVISION_menuActions.put("Pan", () -> {
+  menuActions.put("Pan", () -> {
     UI_setTo_View_Pan(0);
   });
 
-  SOLARCHVISION_menuActions.put("PanX", () -> {
+  menuActions.put("PanX", () -> {
     UI_setTo_View_Pan(1);
   });
 
-  SOLARCHVISION_menuActions.put("PanY", () -> {
+  menuActions.put("PanY", () -> {
     UI_setTo_View_Pan(2);
   });
 
-  SOLARCHVISION_menuActions.put("Zoom", () -> {
+  menuActions.put("Zoom", () -> {
     UI_setTo_View_ZOOM(0);
   });
 
-  SOLARCHVISION_menuActions.put("Zoom as default", () -> {
+  menuActions.put("Zoom as default", () -> {
     UI_setTo_View_ZOOM(1);
   });
 
-  SOLARCHVISION_menuActions.put("TruckX", () -> {
+  menuActions.put("TruckX", () -> {
     UI_setTo_View_Truck(1);
   });
 
-  SOLARCHVISION_menuActions.put("TruckY", () -> {
+  menuActions.put("TruckY", () -> {
     UI_setTo_View_Truck(2);
   });
 
-  SOLARCHVISION_menuActions.put("TruckZ", () -> {
+  menuActions.put("TruckZ", () -> {
     UI_setTo_View_Truck(0);
   });
 
-  SOLARCHVISION_menuActions.put("DistZ", () -> {
+  menuActions.put("DistZ", () -> {
     UI_setTo_View_Truck(0);
   });
 
-  SOLARCHVISION_menuActions.put("CameraDistance", () -> {
+  menuActions.put("CameraDistance", () -> {
     UI_setTo_View_CameraDistance(0);
   });
 
-  SOLARCHVISION_menuActions.put("DistMouseXY", () -> {
+  menuActions.put("DistMouseXY", () -> {
     UI_setTo_View_DistMouseXY(0);
   });
 
-  SOLARCHVISION_menuActions.put("Look at origin", () -> {
+  menuActions.put("Look at origin", () -> {
     UI_setTo_View_LookAtOrigin(0);
   });
 
-  SOLARCHVISION_menuActions.put("Look at direction", () -> {
+  menuActions.put("Look at direction", () -> {
     UI_setTo_View_LookAtDirection(0);
   });
 
-  SOLARCHVISION_menuActions.put("Look at selection", () -> {
+  menuActions.put("Look at selection", () -> {
     UI_setTo_View_LookAtSelection(0);
   });
 
-  SOLARCHVISION_menuActions.put("3DModelSize", () -> {
+  menuActions.put("3DModelSize", () -> {
     UI_setTo_View_3DModelSize();
   });
 
-  SOLARCHVISION_menuActions.put("SkydomeSize", () -> {
+  menuActions.put("SkydomeSize", () -> {
     UI_setTo_View_SkydomeSize();
   });
 
-  SOLARCHVISION_menuActions.put("AllModelSize", () -> {
+  menuActions.put("AllModelSize", () -> {
     UI_setTo_View_AllModelSize();
   });
 
-  SOLARCHVISION_menuActions.put("Display All Viewports", () -> {
+  menuActions.put("Display All Viewports", () -> {
     UI_setTo_Viewport(0);
   });
 
-  SOLARCHVISION_menuActions.put("Enlarge 3D Viewport", () -> {
+  menuActions.put("Enlarge 3D Viewport", () -> {
     UI_setTo_Viewport(1);
   });
 
-  SOLARCHVISION_menuActions.put("Enlarge Time Viewport", () -> {
+  menuActions.put("Enlarge Time Viewport", () -> {
     UI_setTo_Viewport(2);
   });
 
-  SOLARCHVISION_menuActions.put("Enlarge Map Viewport", () -> {
+  menuActions.put("Enlarge Map Viewport", () -> {
     UI_setTo_Viewport(3);
   });
 
-  SOLARCHVISION_menuActions.put("Top", () -> {
+  menuActions.put("Top", () -> {
     UI_setTo_View_3DViewPoint(0);
   });
 
-  SOLARCHVISION_menuActions.put("Front", () -> {
+  menuActions.put("Front", () -> {
     UI_setTo_View_3DViewPoint(1);
   });
 
-  SOLARCHVISION_menuActions.put("Left", () -> {
+  menuActions.put("Left", () -> {
     UI_setTo_View_3DViewPoint(2);
   });
 
-  SOLARCHVISION_menuActions.put("Back", () -> {
+  menuActions.put("Back", () -> {
     UI_setTo_View_3DViewPoint(3);
   });
 
-  SOLARCHVISION_menuActions.put("Right", () -> {
+  menuActions.put("Right", () -> {
     UI_setTo_View_3DViewPoint(4);
   });
 
-  SOLARCHVISION_menuActions.put("Bottom", () -> {
+  menuActions.put("Bottom", () -> {
     UI_setTo_View_3DViewPoint(5);
   });
 
-  SOLARCHVISION_menuActions.put("S.W.", () -> {
+  menuActions.put("S.W.", () -> {
     UI_setTo_View_3DViewPoint(6);
   });
 
-  SOLARCHVISION_menuActions.put("S.E.", () -> {
+  menuActions.put("S.E.", () -> {
     UI_setTo_View_3DViewPoint(7);
   });
 
-  SOLARCHVISION_menuActions.put("N.E.", () -> {
+  menuActions.put("N.E.", () -> {
     UI_setTo_View_3DViewPoint(8);
   });
 
-  SOLARCHVISION_menuActions.put("N.W.", () -> {
+  menuActions.put("N.W.", () -> {
     UI_setTo_View_3DViewPoint(9);
   });
 
-  SOLARCHVISION_menuActions.put("PivotX:Minimum", () -> {
+  menuActions.put("PivotX:Minimum", () -> {
     UI_setTo_View_PivotX(-1);
   });
 
-  SOLARCHVISION_menuActions.put("PivotX:Center", () -> {
+  menuActions.put("PivotX:Center", () -> {
     UI_setTo_View_PivotX(0);
   });
 
-  SOLARCHVISION_menuActions.put("PivotX:Maximum", () -> {
+  menuActions.put("PivotX:Maximum", () -> {
     UI_setTo_View_PivotX(1);
   });
 
-  SOLARCHVISION_menuActions.put("PivotY:Minimum", () -> {
+  menuActions.put("PivotY:Minimum", () -> {
     UI_setTo_View_PivotY(-1);
   });
 
-  SOLARCHVISION_menuActions.put("PivotY:Center", () -> {
+  menuActions.put("PivotY:Center", () -> {
     UI_setTo_View_PivotY(0);
   });
 
-  SOLARCHVISION_menuActions.put("PivotY:Maximum", () -> {
+  menuActions.put("PivotY:Maximum", () -> {
     UI_setTo_View_PivotY(1);
   });
 
-  SOLARCHVISION_menuActions.put("PivotZ:Minimum", () -> {
+  menuActions.put("PivotZ:Minimum", () -> {
     UI_setTo_View_PivotZ(-1);
   });
 
-  SOLARCHVISION_menuActions.put("PivotZ:Center", () -> {
+  menuActions.put("PivotZ:Center", () -> {
     UI_setTo_View_PivotZ(0);
   });
 
-  SOLARCHVISION_menuActions.put("PivotZ:Maximum", () -> {
+  menuActions.put("PivotZ:Maximum", () -> {
     UI_setTo_View_PivotZ(1);
   });
 
   for (int n = -2; n <= 8; n++) {
     final int layoutIndex = n;
-    SOLARCHVISION_menuActions.put("Layout " + nf(layoutIndex, 0), () -> {
+    menuActions.put("Layout " + nf(layoutIndex, 0), () -> {
       STUDY.plotSetup = layoutIndex;
       STUDY.revise();
     });
@@ -3853,8 +3853,8 @@ void SOLARCHVISION_buildMenuActions() {
 
   for (int n = 1; n <= 11; n++) {
     final int modelIndex = n;
-    SOLARCHVISION_menuActions.put("3D-model " + nf(modelIndex, 0), () -> {
-      SOLARCHVISION_deleteAll();
+    menuActions.put("3D-model " + nf(modelIndex, 0), () -> {
+      deleteAll();
       Create3D.add_DefaultModel(modelIndex);
       allSolidImpacts.calculate_Impact_selectedSections();
       UI_rollout.revise();

@@ -1,6 +1,6 @@
 PrintWriter htmlOutput;
 
-void SOLARCHVISION_exportHtml () {
+void exportHtml () {
 
   String fileBasename = ProjectName;
 

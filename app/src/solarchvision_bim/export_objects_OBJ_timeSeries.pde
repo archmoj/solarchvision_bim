@@ -1,4 +1,4 @@
-void SOLARCHVISION_exportObj_timeSeries () {
+void exportObj_timeSeries () {
 
   int keep_STUDY_i_Start = STUDY.i_Start;
 
@@ -6,11 +6,11 @@ void SOLARCHVISION_exportObj_timeSeries () {
 
     STUDY.i_Start = i;
 
-    SOLARCHVISION_find_which_bakings_to_regenerate();
-    SOLARCHVISION_regenerate_desired_bakings();
+    find_which_bakings_to_regenerate();
+    regenerate_desired_bakings();
 
 
-    SOLARCHVISION_exportObj("_" + nf(i, 2));
+    exportObj("_" + nf(i, 2));
 
   }
 

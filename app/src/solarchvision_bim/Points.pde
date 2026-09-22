@@ -19,7 +19,7 @@ class solarchvision_Points {
       Select3D.deselect_Vertices();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void setX (int n, float f) {

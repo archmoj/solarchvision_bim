@@ -16,7 +16,7 @@ class MouseClickedTest {
   @Test
   void selectNewlyCreated_isANoOpWhenNothingWasCreated () {
     boolean[] deselectCalled = {false};
-    app.SOLARCHVISION_selectNewlyCreated(3, 3, () -> deselectCalled[0] = true, (i) -> fail("should not select anything"));
+    app.selectNewlyCreated(3, 3, () -> deselectCalled[0] = true, (i) -> fail("should not select anything"));
     assertFalse(deselectCalled[0]);
   }
 
@@ -25,7 +25,7 @@ class MouseClickedTest {
     boolean[] deselectCalled = {false};
     java.util.List<Integer> selected = new java.util.ArrayList<>();
 
-    app.SOLARCHVISION_selectNewlyCreated(3, 5, () -> deselectCalled[0] = true, selected::add);
+    app.selectNewlyCreated(3, 5, () -> deselectCalled[0] = true, selected::add);
 
     assertTrue(deselectCalled[0]);
     assertEquals(java.util.Arrays.asList(3, 4), selected);
@@ -46,7 +46,7 @@ class MouseClickedTest {
     app.FRAME_click_IMG = true;
     app.FRAME_drag_IMG = true;
 
-    app.SOLARCHVISION_stopAllRecording();
+    app.stopAllRecording();
 
     assertFalse(app.STUDY.record_AUTO);
     assertFalse(app.STUDY.record_IMG);
@@ -68,7 +68,7 @@ class MouseClickedTest {
     app.STUDY.plotSetup = 9;
     app.allWindRoses.displayImage = false;
 
-    app.SOLARCHVISION_setPlotImpacts(3, true);
+    app.setPlotImpacts(3, true);
 
     assertEquals(3, app.STUDY.PlotImpacts);
     assertEquals(0, app.STUDY.plotSetup);
@@ -79,7 +79,7 @@ class MouseClickedTest {
   void selectAllOfCategory_switchesCategoryThenSelectsEverythingInIt () {
     app.allFaces.nodes = new int[][]{{0}, {0}, {0}};
 
-    app.SOLARCHVISION_selectAllOfCategory(app.ObjectCategory.FACE);
+    app.selectAllOfCategory(app.ObjectCategory.FACE);
 
     assertEquals(app.ObjectCategory.FACE, app.current_ObjectCategory);
     assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.Face_ids);
@@ -88,13 +88,13 @@ class MouseClickedTest {
   @Test
   void convertAndSwitch_runsTheConversionThenSwitchesCategory () {
     boolean[] ran = {false};
-    app.SOLARCHVISION_convertAndSwitch(() -> ran[0] = true, app.ObjectCategory.GROUP);
+    app.convertAndSwitch(() -> ran[0] = true, app.ObjectCategory.GROUP);
 
     assertTrue(ran[0]);
     assertEquals(app.ObjectCategory.GROUP, app.current_ObjectCategory);
   }
 
-  // ================= SOLARCHVISION_flipFaceOrientationIfNeeded (extracted)
+  // ================= flipFaceOrientationIfNeeded (extracted)
 
   @Test
   void flipFaceOrientation_reversesWhenTaskModifyParameterIsAlwaysFlip () {
@@ -102,7 +102,7 @@ class MouseClickedTest {
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.WIN3D.UI_TaskModifyParameter = 1; // always flip
 
-    app.SOLARCHVISION_flipFaceOrientationIfNeeded(0);
+    app.flipFaceOrientationIfNeeded(0);
 
     assertArrayEquals(new int[]{2, 1, 0}, app.allFaces.nodes[0]);
   }
@@ -113,7 +113,7 @@ class MouseClickedTest {
     app.allFaces.nodes = new int[][]{{0, 1}};
     app.WIN3D.UI_TaskModifyParameter = 1;
 
-    app.SOLARCHVISION_flipFaceOrientationIfNeeded(0);
+    app.flipFaceOrientationIfNeeded(0);
 
     assertArrayEquals(new int[]{0, 1}, app.allFaces.nodes[0]);
   }
@@ -131,16 +131,16 @@ class MouseClickedTest {
 
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.WIN3D.UI_TaskModifyParameter = 2;
-    app.SOLARCHVISION_flipFaceOrientationIfNeeded(0);
+    app.flipFaceOrientationIfNeeded(0);
     assertArrayEquals(new int[]{2, 1, 0}, app.allFaces.nodes[0]); // flipped
 
     app.allFaces.nodes = new int[][]{{0, 1, 2}}; // reset
     app.WIN3D.UI_TaskModifyParameter = 3;
-    app.SOLARCHVISION_flipFaceOrientationIfNeeded(0);
+    app.flipFaceOrientationIfNeeded(0);
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]); // unchanged
   }
 
-  // ========== SOLARCHVISION_rotateNodesToStartAtNearestVertex (extracted)
+  // ========== rotateNodesToStartAtNearestVertex (extracted)
 
   @Test
   void rotateNodesToStartAtNearestVertex_rotatesSoTheClosestNodeComesFirst () {
@@ -152,7 +152,7 @@ class MouseClickedTest {
     int[] nodeRow = {0, 1, 2, 3};
 
     // Closest to vertex index 1 (5,0,0).
-    app.SOLARCHVISION_rotateNodesToStartAtNearestVertex(nodeRow, new float[]{0, 4.9f, 0.1f, 0});
+    app.rotateNodesToStartAtNearestVertex(nodeRow, new float[]{0, 4.9f, 0.1f, 0});
 
     assertArrayEquals(new int[]{1, 2, 3, 0}, nodeRow);
   }
@@ -162,7 +162,7 @@ class MouseClickedTest {
     app.allVertices = new float[][]{{0, 0, 0}, {5, 0, 0}};
     int[] nodeRow = {10, 20};
 
-    app.SOLARCHVISION_rotateNodesToStartAtNearestVertex(nodeRow, new float[]{0, 5, 0, 0});
+    app.rotateNodesToStartAtNearestVertex(nodeRow, new float[]{0, 5, 0, 0});
 
     assertArrayEquals(new int[]{10, 20}, nodeRow);
   }
@@ -175,7 +175,7 @@ class MouseClickedTest {
     app.allVertices = new float[][]{{0, 0, 0}, {5, 0, 0}, {5, 5, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
 
-    app.SOLARCHVISION_rotateNodesToStartAtNearestVertex(app.allFaces.nodes[0], new float[]{0, 5.1f, -0.1f, 0});
+    app.rotateNodesToStartAtNearestVertex(app.allFaces.nodes[0], new float[]{0, 5.1f, -0.1f, 0});
 
     assertArrayEquals(new int[]{1, 2, 0}, app.allFaces.nodes[0]);
   }
@@ -254,8 +254,8 @@ class MouseClickedTest {
     app.TMYEPW_PICKER.mouseLat = 34;
 
     float[] row0 = app.TMYEPW_PICKER.rowRect(0);
-    app.SOLARCHVISION_X_clicked = (int) (row0[0] + 2);
-    app.SOLARCHVISION_Y_clicked = (int) (row0[1] + 2);
+    app.X_clicked = (int) (row0[0] + 2);
+    app.Y_clicked = (int) (row0[1] + 2);
 
     boolean consumed = app.TMYEPW_PICKER.handleClick();
 
@@ -293,8 +293,8 @@ class MouseClickedTest {
     app.WORLD.cY = 0;
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
-    app.SOLARCHVISION_X_clicked = 10;
-    app.SOLARCHVISION_Y_clicked = 10;
+    app.X_clicked = 10;
+    app.Y_clicked = 10;
 
     app.TMYEPW_PICKER.active = true;
     app.TMYEPW_PICKER.indices = new int[100]; // enough rows to actually need scrolling
@@ -324,12 +324,12 @@ class MouseClickedTest {
     app.TMYEPW_PICKER.scrollOffset = 20;
 
     float[] track = app.TMYEPW_PICKER.scrollTrackRect();
-    app.SOLARCHVISION_X_clicked = (int) (track[0] + 2);
+    app.X_clicked = (int) (track[0] + 2);
     // isInside() uses STRICT inequality, so clicking exactly at track[1]
     // (the top edge) fails the "is this click inside the track at all"
     // check entirely - nudge a couple pixels in, still comfortably above
     // the thumb given scrollOffset=20 out of 100 rows.
-    app.SOLARCHVISION_Y_clicked = (int) (track[1] + 2);
+    app.Y_clicked = (int) (track[1] + 2);
 
     boolean consumed = app.TMYEPW_PICKER.handleTrackClick();
 
@@ -374,7 +374,7 @@ class MouseClickedTest {
     assertArrayEquals(new int[]{0}, app.TMYEPW_PICKER.indices);
   }
 
-  // ================= SOLARCHVISION_selectTMYEPWStation (safe cases only) =
+  // ================= selectTMYEPWStation (safe cases only) =
 
   @Test
   void selectTMYEPWStation_isANoOpWhenTheSameStationIsAlreadySelected () {
@@ -384,7 +384,7 @@ class MouseClickedTest {
     app.STATION.setLatitude(1);
     app.STATION.setLongitude(2);
 
-    app.SOLARCHVISION_selectTMYEPWStation(0, 99, 99);
+    app.selectTMYEPWStation(0, 99, 99);
 
     // Early return means STATION's position is untouched.
     assertEquals(1f, app.STATION.getLatitude(), 0.0001f);
@@ -400,14 +400,14 @@ class MouseClickedTest {
     app.STATION.setFilename_TMYEPW("old_station.epw");
     app.CurrentDataSource = app.dataID_CLIMATE_CWEEDS; // NOT TMYEPW - the risky reload block is skipped
 
-    app.SOLARCHVISION_selectTMYEPWStation(0, 12.5f, 34.5f);
+    app.selectTMYEPWStation(0, 12.5f, 34.5f);
 
     assertEquals(12.5f, app.STATION.getLongitude(), 0.0001f);
     assertEquals(34.5f, app.STATION.getLatitude(), 0.0001f);
     assertEquals("new_station.epw", app.STATION.getFilename_TMYEPW());
   }
 
-  // ============ SOLARCHVISION_computeCreateParams (extracted) ===========
+  // ============ computeCreateParams (extracted) ===========
 
   @Test
   void computeCreateParams_derivesHalfExtentsAndRotationFromUserPreferences () {
@@ -425,7 +425,7 @@ class MouseClickedTest {
     app.Select3D.alignY = 0;
     app.Select3D.alignZ = 0;
 
-    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 10, 20, 30});
+    solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 10, 20, 30});
 
     assertEquals(10f, p.x, 0.0001f);
     assertEquals(20f, p.y, 0.0001f);
@@ -447,7 +447,7 @@ class MouseClickedTest {
     app.User3D.create_Width = 1;
     app.User3D.create_Height = 1;
 
-    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 0, 0, 0});
+    solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 0, 0, 0});
 
     assertEquals(47f, p.rot, 0.0001f);
   }
@@ -462,7 +462,7 @@ class MouseClickedTest {
     app.Select3D.alignY = -1;
     app.Select3D.alignZ = 0;
 
-    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 10, 20, 30});
+    solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 10, 20, 30});
 
     assertEquals(10 - 2 * 1, p.x, 0.0001f); // x -= rx * alignX
     assertEquals(20 - 3 * -1, p.y, 0.0001f); // y -= ry * alignY
@@ -479,7 +479,7 @@ class MouseClickedTest {
       app.ObjectCategory.CAMERA, app.ObjectCategory.SECTION
     }) {
       app.current_ObjectCategory = category;
-      solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 10, 20, 30});
+      solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 10, 20, 30});
       assertEquals(10f, p.x, 0.0001f, "category " + category + " should not be offset");
     }
   }
@@ -494,7 +494,7 @@ class MouseClickedTest {
     app.User3D.create_powZ = 2; // A=0.5 for pz==2
     app.User3D.create_Volume = 32; // rz = 32 / (8*2*2) = 1, then divided by A^(1/3)
 
-    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 0, 0, 0});
+    solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 0, 0, 0});
 
     float expectedRz = (1f) / (float) Math.pow(0.5, 1.0 / 3.0);
     assertEquals(expectedRz, p.rz, 0.001f);
@@ -504,12 +504,12 @@ class MouseClickedTest {
   void computeCreateParams_negativeLengthRandomizesWithinAQuarterToFullOfItsMagnitude () {
     app.User3D.create_Length = -8; // "randomize" sentinel: 0.5*(-8) = -4 -> rx becomes random(1, 4)
 
-    solarchvision_bim.SOLARCHVISION_CreateParams p = app.SOLARCHVISION_computeCreateParams(new float[]{0, 0, 0, 0});
+    solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 0, 0, 0});
 
     assertTrue(p.rx >= 1f && p.rx <= 4f);
   }
 
-  // ======== SOLARCHVISION_computeCameraParamsAtPoint (extracted) ========
+  // ======== computeCameraParamsAtPoint (extracted) ========
 
   @Test
   void computeCameraParamsAtPoint_derivesPositionFromCamSpaceUnderIdentityRotation () {
@@ -520,7 +520,7 @@ class MouseClickedTest {
     app.WIN3D.rotation_Z = 0;
     app.EyeLevel = 1.5f;
 
-    solarchvision_bim.SOLARCHVISION_CameraParams cp = app.SOLARCHVISION_computeCameraParamsAtPoint(10, 20, 30);
+    solarchvision_bim.CameraParams cp = app.computeCameraParamsAtPoint(10, 20, 30);
 
     assertEquals(-10f, cp.pX, 0.01f);
     assertEquals(20f, cp.pY, 0.01f);
@@ -533,7 +533,7 @@ class MouseClickedTest {
     app.WIN3D.rotation_Z = -45;
     app.EyeLevel = 1.5f;
 
-    solarchvision_bim.SOLARCHVISION_CameraParams cp = app.SOLARCHVISION_computeCameraParamsAtPoint(10, 20, 30);
+    solarchvision_bim.CameraParams cp = app.computeCameraParamsAtPoint(10, 20, 30);
 
     assertEquals(7.0711f, cp.pX, 0.01f);
     assertEquals(31.5f, cp.pY, 0.01f);
@@ -553,7 +553,7 @@ class MouseClickedTest {
     app.WIN3D.rotation_Z = 6;
     app.WIN3D.Zoom = 77;
 
-    app.SOLARCHVISION_computeCameraParamsAtPoint(10, 20, 30);
+    app.computeCameraParamsAtPoint(10, 20, 30);
 
     assertEquals(111f, app.WIN3D.CAM_x, 0.0001f);
     assertEquals(222f, app.WIN3D.CAM_y, 0.0001f);
@@ -572,13 +572,13 @@ class MouseClickedTest {
     app.WIN3D.ViewType = 1;
     app.WIN3D.Zoom = 55;
 
-    solarchvision_bim.SOLARCHVISION_CameraParams cp = app.SOLARCHVISION_computeCameraParamsAtPoint(0, 0, 0);
+    solarchvision_bim.CameraParams cp = app.computeCameraParamsAtPoint(0, 0, 0);
 
     assertEquals(1, cp.type);
     assertEquals(55f, cp.zoom, 0.0001f);
   }
 
-  // ======= SOLARCHVISION_computeSectionParams (extracted) ================
+  // ======= computeSectionParams (extracted) ================
 
   @Test
   void computeSectionParams_horizontalFaceProducesATypeOneSectionAtItsCentroid () {
@@ -591,7 +591,7 @@ class MouseClickedTest {
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.mouseButton = app.LEFT;
 
-    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 0, 0, 0});
+    solarchvision_bim.SectionParams sp = app.computeSectionParams(0, new float[]{0, 0, 0, 0});
 
     assertTrue(sp.createNew);
     assertEquals(1, sp.Type);
@@ -611,7 +611,7 @@ class MouseClickedTest {
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.mouseButton = app.LEFT;
 
-    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 0, 0, 0});
+    solarchvision_bim.SectionParams sp = app.computeSectionParams(0, new float[]{0, 0, 0, 0});
 
     assertTrue(sp.createNew);
     assertEquals(2, sp.Type);
@@ -634,7 +634,7 @@ class MouseClickedTest {
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.mouseButton = app.LEFT;
 
-    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 0, 0, 0});
+    solarchvision_bim.SectionParams sp = app.computeSectionParams(0, new float[]{0, 0, 0, 0});
 
     assertEquals(1, sp.Type);
     assertEquals(-1f, sp.X, 0.001f);
@@ -647,7 +647,7 @@ class MouseClickedTest {
   void computeSectionParams_rightClickAlwaysCreatesAHorizontalSectionAtTheClickPoint () {
     app.mouseButton = app.RIGHT;
 
-    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 11, 22, 33});
+    solarchvision_bim.SectionParams sp = app.computeSectionParams(0, new float[]{0, 11, 22, 33});
 
     assertTrue(sp.createNew);
     assertEquals(1, sp.Type);
@@ -665,13 +665,13 @@ class MouseClickedTest {
     app.allSolidImpacts.X[app.allSolidImpacts.sectionType] = 99;
     app.allSolidImpacts.sectionType = 0;
 
-    solarchvision_bim.SOLARCHVISION_SectionParams sp = app.SOLARCHVISION_computeSectionParams(0, new float[]{0, 0, 0, 0});
+    solarchvision_bim.SectionParams sp = app.computeSectionParams(0, new float[]{0, 0, 0, 0});
 
     assertFalse(sp.createNew);
     assertEquals(99f, sp.X, 0.0001f); // left at allSolidImpacts' current default, untouched
   }
 
-  // ======= SOLARCHVISION_pickOrAssignFaceProperty (extracted) ===========
+  // ======= pickOrAssignFaceProperty (extracted) ===========
 
   @Test
   void pickOrAssignFaceProperty_isANoOpWhenTheCurrentTaskIsntOneOfTheFiveProperties () {
@@ -680,7 +680,7 @@ class MouseClickedTest {
     app.allFaces.options = new int[][]{{9, 9, 9, 9, 9, 9}};
     app.User3D.default_Material = -1;
 
-    app.SOLARCHVISION_pickOrAssignFaceProperty(0);
+    app.pickOrAssignFaceProperty(0);
 
     assertEquals(-1, app.User3D.default_Material); // untouched
   }
@@ -691,7 +691,7 @@ class MouseClickedTest {
     app.WIN3D.UI_TaskModifyParameter = 1; // Pick
     app.allFaces.options = new int[][]{{42, 0, 0, 0, 0, 0}};
 
-    app.SOLARCHVISION_pickOrAssignFaceProperty(0);
+    app.pickOrAssignFaceProperty(0);
 
     assertEquals(42, app.User3D.default_Material);
   }
@@ -703,7 +703,7 @@ class MouseClickedTest {
     app.User3D.default_Weight = 7;
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
 
-    app.SOLARCHVISION_pickOrAssignFaceProperty(0);
+    app.pickOrAssignFaceProperty(0);
 
     assertEquals(7, app.allFaces.getWeight(0));
     assertEquals(0, app.allFaces.getWeight(1)); // the other face is untouched
@@ -722,7 +722,7 @@ class MouseClickedTest {
     app.allGroups.setStart_Face(0, 0);
     app.allGroups.setStop_Face(0, 2); // faces 0..2 belong to this one group
 
-    app.SOLARCHVISION_pickOrAssignFaceProperty(1); // click lands on the middle face of the group
+    app.pickOrAssignFaceProperty(1); // click lands on the middle face of the group
 
     assertEquals(5, app.allFaces.getLayer(0));
     assertEquals(5, app.allFaces.getLayer(1));
@@ -744,13 +744,13 @@ class MouseClickedTest {
     app.allGroups.setStart_Face(0, 0);
     app.allGroups.setStop_Face(0, 0);
 
-    app.SOLARCHVISION_pickOrAssignFaceProperty(0);
+    app.pickOrAssignFaceProperty(0);
 
     assertEquals(0, app.allFaces.getWeight(0)); // NOT written
     assertEquals(3, app.allFaces.getClose(0));   // written instead
   }
 
-  // === SOLARCHVISION_pickOrAssignModel2DSeedMaterial (extracted) ========
+  // === pickOrAssignModel2DSeedMaterial (extracted) ========
 
   @Test
   void pickOrAssignModel2DSeedMaterial_isANoOpWhenTheCurrentTaskIsntSeedMaterial () {
@@ -760,7 +760,7 @@ class MouseClickedTest {
     app.allModel2Ds.MAP = new int[]{5};
     app.User3D.create_Plant_Type = -1;
 
-    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+    app.pickOrAssignModel2DSeedMaterial(0);
 
     assertEquals(-1, app.User3D.create_Plant_Type); // untouched
   }
@@ -772,7 +772,7 @@ class MouseClickedTest {
     app.allModel2Ds.num_files_PEOPLE = 5;
     app.allModel2Ds.MAP = new int[]{3}; // 3 <= num_files_PEOPLE -> a person
 
-    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+    app.pickOrAssignModel2DSeedMaterial(0);
 
     assertEquals(3, app.User3D.create_Person_Type);
   }
@@ -784,7 +784,7 @@ class MouseClickedTest {
     app.allModel2Ds.num_files_PEOPLE = 5;
     app.allModel2Ds.MAP = new int[]{8}; // 8 > num_files_PEOPLE -> a tree, offset type = 8-5 = 3
 
-    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+    app.pickOrAssignModel2DSeedMaterial(0);
 
     assertEquals(3, app.User3D.create_Plant_Type);
   }
@@ -797,7 +797,7 @@ class MouseClickedTest {
     app.allModel2Ds.MAP = new int[]{-8}; // a tree instance, flipped (negative)
     app.User3D.create_Plant_Type = 1;
 
-    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+    app.pickOrAssignModel2DSeedMaterial(0);
 
     assertEquals(-6, app.allModel2Ds.MAP[0]); // -(1 + 5), sign kept negative
   }
@@ -810,12 +810,12 @@ class MouseClickedTest {
     app.allModel2Ds.MAP = new int[]{2}; // a person instance
     app.User3D.create_Person_Type = 4;
 
-    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+    app.pickOrAssignModel2DSeedMaterial(0);
 
     assertEquals(4, app.allModel2Ds.MAP[0]);
   }
 
-  // ==== SOLARCHVISION_pickOrAssignModel1DProperty (extracted) ===========
+  // ==== pickOrAssignModel1DProperty (extracted) ===========
 
   @Test
   void pickOrAssignModel1DProperty_pickOfASingleTaskReadsOnlyThatOneField () {
@@ -827,7 +827,7 @@ class MouseClickedTest {
     app.User3D.create_Model1D_BranchTilt = -1;
     app.User3D.create_Model1D_LeafSize = -1;
 
-    app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
+    app.pickOrAssignModel1DProperty(0);
 
     assertEquals(12.5f, app.User3D.create_Model1D_BranchTilt, 0.0001f);
     assertEquals(-1f, app.User3D.create_Model1D_LeafSize, 0.0001f); // untouched: a different task
@@ -841,7 +841,7 @@ class MouseClickedTest {
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     app.User3D.create_Model1D_TrunkSize = 6.25f;
 
-    app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
+    app.pickOrAssignModel1DProperty(0);
 
     assertEquals(6.25f, app.allModel1Ds.getTrunkSize(0), 0.0001f);
   }
@@ -856,7 +856,7 @@ class MouseClickedTest {
     app.allModel1Ds.setTrunkSize(0, 2.5f);
     app.allModel1Ds.setLeafSize(0, 1.5f);
 
-    app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
+    app.pickOrAssignModel1DProperty(0);
 
     assertEquals(4, app.User3D.create_Model1D_DegreeMax);
     assertEquals(2.5f, app.User3D.create_Model1D_TrunkSize, 0.0001f);
@@ -872,12 +872,12 @@ class MouseClickedTest {
     app.allModel1Ds.setBranchTwist(0, 9);
     app.User3D.create_Model1D_BranchTwist = -1;
 
-    app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
+    app.pickOrAssignModel1DProperty(0);
 
     assertEquals(-1f, app.User3D.create_Model1D_BranchTwist, 0.0001f); // untouched
   }
 
-  // ========= SOLARCHVISION_computeClickRay (extracted) ===================
+  // ========= computeClickRay (extracted) ===================
   // Also de-duplicates: WIN3D.rotateXY_3DViewport_around_LandIntersection()
   // used to have this exact ray setup inlined a second time (confirmed
   // character-for-character identical, modulo `this.` vs `WIN3D.`, before
@@ -898,7 +898,7 @@ class MouseClickedTest {
     app.WIN3D.CAM_z = 10;
     app.OBJECTS_scale = 1;
 
-    solarchvision_bim.SOLARCHVISION_ClickRay ray = app.SOLARCHVISION_computeClickRay(0, 0);
+    solarchvision_bim.ClickRay ray = app.computeClickRay(0, 0);
 
     assertArrayEquals(new float[]{0, 0, 10}, ray.start, 0.001f);
 
@@ -916,7 +916,7 @@ class MouseClickedTest {
     app.WIN3D.CAM_z = 0;
     app.OBJECTS_scale = 2;
 
-    solarchvision_bim.SOLARCHVISION_ClickRay ray = app.SOLARCHVISION_computeClickRay(0, 0);
+    solarchvision_bim.ClickRay ray = app.computeClickRay(0, 0);
 
     assertEquals(10f, ray.start[0], 0.001f); // 20 / 2
   }
@@ -933,8 +933,8 @@ class MouseClickedTest {
     app.WIN3D.CAM_z = 10;
     app.OBJECTS_scale = 1;
 
-    solarchvision_bim.SOLARCHVISION_ClickRay centerRay = app.SOLARCHVISION_computeClickRay(0, 0);
-    solarchvision_bim.SOLARCHVISION_ClickRay offCenterRay = app.SOLARCHVISION_computeClickRay(80, -40);
+    solarchvision_bim.ClickRay centerRay = app.computeClickRay(0, 0);
+    solarchvision_bim.ClickRay offCenterRay = app.computeClickRay(80, -40);
 
     assertArrayEquals(centerRay.start, offCenterRay.start, 0.0001f);
     assertNotEquals(centerRay.direction[0], offCenterRay.direction[0], 0.0001f);
@@ -959,7 +959,7 @@ class MouseClickedTest {
     app.WIN3D.Zoom = 90;
     app.OBJECTS_scale = 1;
 
-    solarchvision_bim.SOLARCHVISION_ClickRay ray = app.SOLARCHVISION_computeClickRay(0, 0);
+    solarchvision_bim.ClickRay ray = app.computeClickRay(0, 0);
 
     assertArrayEquals(new float[]{1, 2, 3}, ray.start, 0.001f);
   }
@@ -983,14 +983,14 @@ class MouseClickedTest {
     app.WIN3D.Zoom = 90;
     app.OBJECTS_scale = 1;
 
-    solarchvision_bim.SOLARCHVISION_ClickRay centerRay = app.SOLARCHVISION_computeClickRay(0, 0);
-    solarchvision_bim.SOLARCHVISION_ClickRay offCenterRay = app.SOLARCHVISION_computeClickRay(50, -30);
+    solarchvision_bim.ClickRay centerRay = app.computeClickRay(0, 0);
+    solarchvision_bim.ClickRay offCenterRay = app.computeClickRay(50, -30);
 
     assertArrayEquals(centerRay.direction, offCenterRay.direction, 0.0001f);
     assertNotEquals(centerRay.start[0], offCenterRay.start[0], 0.0001f); // but the start point does shift
   }
 
-  // ========== SOLARCHVISION_getMoveOriginPoint (extracted) ===============
+  // ========== getMoveOriginPoint (extracted) ===============
 
   @Test
   void getMoveOriginPoint_forAGroupReturnsTheSelectionsPivot () {
@@ -1007,7 +1007,7 @@ class MouseClickedTest {
     app.Select3D.alignY = 1;
     app.Select3D.alignZ = 1;
 
-    float[] origin = app.SOLARCHVISION_getMoveOriginPoint();
+    float[] origin = app.getMoveOriginPoint();
 
     assertArrayEquals(new float[]{10, 10, 10}, origin, 0.001f);
   }
@@ -1021,7 +1021,7 @@ class MouseClickedTest {
     };
     app.Select3D.Model2D_ids = new int[]{0, 2}; // last id is 2, not the last array entry
 
-    float[] origin = app.SOLARCHVISION_getMoveOriginPoint();
+    float[] origin = app.getMoveOriginPoint();
 
     assertArrayEquals(new float[]{99, 88, 77}, origin, 0.0001f);
   }
@@ -1032,7 +1032,7 @@ class MouseClickedTest {
     app.allVertices = new float[][]{{0, 0, 0}, {3, 4, 5}};
     app.Select3D.Vertex_ids = new int[]{1};
 
-    float[] origin = app.SOLARCHVISION_getMoveOriginPoint();
+    float[] origin = app.getMoveOriginPoint();
 
     assertArrayEquals(new float[]{3, 4, 5}, origin, 0.0001f);
   }
@@ -1041,20 +1041,20 @@ class MouseClickedTest {
   void getMoveOriginPoint_isUndefinedForACategoryMoveDoesntHandle () {
     app.current_ObjectCategory = app.ObjectCategory.CAMERA; // not one of the five handled
 
-    float[] origin = app.SOLARCHVISION_getMoveOriginPoint();
+    float[] origin = app.getMoveOriginPoint();
 
     assertFalse(app.is_defined(origin[0]));
     assertFalse(app.is_defined(origin[1]));
     assertFalse(app.is_defined(origin[2]));
   }
 
-  // ========== SOLARCHVISION_computeMoveDelta (extracted) ==================
+  // ========== computeMoveDelta (extracted) ==================
 
   @Test
   void computeMoveDelta_withPosVectorThreeMovesFreelyOnAllThreeAxes () {
     app.Select3D.posVector = 3; // "All"
 
-    float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
+    float[] d = app.computeMoveDelta(1, 2, 3, 4, 6, 8);
 
     assertArrayEquals(new float[]{3, 4, 5}, d, 0.0001f);
   }
@@ -1063,7 +1063,7 @@ class MouseClickedTest {
   void computeMoveDelta_withPosVectorZeroKeepsOnlyX () {
     app.Select3D.posVector = 0;
 
-    float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
+    float[] d = app.computeMoveDelta(1, 2, 3, 4, 6, 8);
 
     assertArrayEquals(new float[]{3, 0, 0}, d, 0.0001f);
   }
@@ -1072,7 +1072,7 @@ class MouseClickedTest {
   void computeMoveDelta_withPosVectorOneKeepsOnlyY () {
     app.Select3D.posVector = 1;
 
-    float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
+    float[] d = app.computeMoveDelta(1, 2, 3, 4, 6, 8);
 
     assertArrayEquals(new float[]{0, 4, 0}, d, 0.0001f);
   }
@@ -1081,41 +1081,41 @@ class MouseClickedTest {
   void computeMoveDelta_withPosVectorTwoKeepsOnlyZ () {
     app.Select3D.posVector = 2; // posVector's own default
 
-    float[] d = app.SOLARCHVISION_computeMoveDelta(1, 2, 3, 4, 6, 8);
+    float[] d = app.computeMoveDelta(1, 2, 3, 4, 6, 8);
 
     assertArrayEquals(new float[]{0, 0, 5}, d, 0.0001f);
   }
 
-  // ====== SOLARCHVISION_classifySuperOBJShape (extracted) ================
+  // ====== classifySuperOBJShape (extracted) ================
 
   @Test
   void classifySuperOBJShape_cubePowerCubePowerTwoIsParametric () {
     app.CubePower = 16;
-    assertEquals(app.SUPEROBJ_SHAPE_PARAMETRIC, app.SOLARCHVISION_classifySuperOBJShape(16, 16, 2));
+    assertEquals(app.SUPEROBJ_SHAPE_PARAMETRIC, app.classifySuperOBJShape(16, 16, 2));
   }
 
   @Test
   void classifySuperOBJShape_twoTwoCubePowerIsSuperCylinder () {
     app.CubePower = 16;
-    assertEquals(app.SUPEROBJ_SHAPE_SUPERCYLINDER, app.SOLARCHVISION_classifySuperOBJShape(2, 2, 16));
+    assertEquals(app.SUPEROBJ_SHAPE_SUPERCYLINDER, app.classifySuperOBJShape(2, 2, 16));
   }
 
   @Test
   void classifySuperOBJShape_cubePowerCubePowerCubePowerIsBox () {
     app.CubePower = 16;
-    assertEquals(app.SUPEROBJ_SHAPE_BOX, app.SOLARCHVISION_classifySuperOBJShape(16, 16, 16));
+    assertEquals(app.SUPEROBJ_SHAPE_BOX, app.classifySuperOBJShape(16, 16, 16));
   }
 
   @Test
   void classifySuperOBJShape_oneOneOneIsOctahedron () {
-    assertEquals(app.SUPEROBJ_SHAPE_OCTAHEDRON, app.SOLARCHVISION_classifySuperOBJShape(1, 1, 1));
+    assertEquals(app.SUPEROBJ_SHAPE_OCTAHEDRON, app.classifySuperOBJShape(1, 1, 1));
   }
 
   @Test
   void classifySuperOBJShape_anythingElseFallsBackToSuperSphere () {
     app.CubePower = 16;
-    assertEquals(app.SUPEROBJ_SHAPE_SUPERSPHERE, app.SOLARCHVISION_classifySuperOBJShape(4, 4, 4));
-    assertEquals(app.SUPEROBJ_SHAPE_SUPERSPHERE, app.SOLARCHVISION_classifySuperOBJShape(2, 2, 2));
+    assertEquals(app.SUPEROBJ_SHAPE_SUPERSPHERE, app.classifySuperOBJShape(4, 4, 4));
+    assertEquals(app.SUPEROBJ_SHAPE_SUPERSPHERE, app.classifySuperOBJShape(2, 2, 2));
   }
 
   @Test
@@ -1125,11 +1125,11 @@ class MouseClickedTest {
     // guards against a sloppy re-implementation collapsing the first
     // and third branches.
     app.CubePower = 16;
-    assertEquals(app.SUPEROBJ_SHAPE_BOX, app.SOLARCHVISION_classifySuperOBJShape(16, 16, 16));
+    assertEquals(app.SUPEROBJ_SHAPE_BOX, app.classifySuperOBJShape(16, 16, 16));
   }
 
   // ============ pick-list dispatcher functions (pre-existing) ============
-  // SOLARCHVISION_handlePickListTrackClick/handlePickListClick are the two
+  // handlePickListTrackClick/handlePickListClick are the two
   // reached from mouseClicked() itself; the other four (Wheel/ScrollDrag/
   // resetPickListDragState/cancelActivePickList) live in this same file
   // for mouseWheel()/mouseDragged()/mouseReleased()/the Esc handler
@@ -1155,16 +1155,16 @@ class MouseClickedTest {
     app.TMYEPW_PICKER.indices = new int[]{0};
 
     float[] row0 = app.TMYEPW_PICKER.rowRect(0);
-    app.SOLARCHVISION_X_clicked = (int) (row0[0] + 2);
-    app.SOLARCHVISION_Y_clicked = (int) (row0[1] + 2);
+    app.X_clicked = (int) (row0[0] + 2);
+    app.Y_clicked = (int) (row0[1] + 2);
 
-    assertTrue(app.SOLARCHVISION_handlePickListClick());
+    assertTrue(app.handlePickListClick());
     assertFalse(app.TMYEPW_PICKER.active); // confirms it was really TMYEPW_PICKER that handled it
   }
 
   @Test
   void handlePickListClick_returnsFalseWhenNoPickerIsActive () {
-    assertFalse(app.SOLARCHVISION_handlePickListClick());
+    assertFalse(app.handlePickListClick());
   }
 
   @Test
@@ -1179,16 +1179,16 @@ class MouseClickedTest {
     app.TMYEPW_PICKER.scrollOffset = 20;
 
     float[] track = app.TMYEPW_PICKER.scrollTrackRect();
-    app.SOLARCHVISION_X_clicked = (int) (track[0] + 2);
-    app.SOLARCHVISION_Y_clicked = (int) (track[1] + 2);
+    app.X_clicked = (int) (track[0] + 2);
+    app.Y_clicked = (int) (track[1] + 2);
 
-    assertTrue(app.SOLARCHVISION_handlePickListTrackClick());
+    assertTrue(app.handlePickListTrackClick());
     assertTrue(app.TMYEPW_PICKER.scrollOffset < 20); // confirms it was really TMYEPW_PICKER that paged
   }
 
   @Test
   void handlePickListTrackClick_returnsFalseWhenNoPickerIsActive () {
-    assertFalse(app.SOLARCHVISION_handlePickListTrackClick());
+    assertFalse(app.handlePickListTrackClick());
   }
 
   @Test
@@ -1197,20 +1197,20 @@ class MouseClickedTest {
     app.WORLD.cY = 0;
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
-    app.SOLARCHVISION_X_clicked = 10;
-    app.SOLARCHVISION_Y_clicked = 10;
+    app.X_clicked = 10;
+    app.Y_clicked = 10;
 
     app.TMYEPW_PICKER.active = true;
     app.TMYEPW_PICKER.indices = new int[100];
     app.TMYEPW_PICKER.scrollOffset = 0;
 
-    assertTrue(app.SOLARCHVISION_handlePickListWheel(1));
+    assertTrue(app.handlePickListWheel(1));
     assertEquals(1, app.TMYEPW_PICKER.scrollOffset);
   }
 
   @Test
   void handlePickListWheel_returnsFalseWhenNoPickerIsActive () {
-    assertFalse(app.SOLARCHVISION_handlePickListWheel(1));
+    assertFalse(app.handlePickListWheel(1));
   }
 
   @Test
@@ -1227,13 +1227,13 @@ class MouseClickedTest {
     app.TMYEPW_PICKER.scrollDrag_startOffset = 5;
     app.mouseY = 100; // no movement since the drag started
 
-    assertTrue(app.SOLARCHVISION_handlePickListScrollDrag());
+    assertTrue(app.handlePickListScrollDrag());
     assertEquals(5, app.TMYEPW_PICKER.scrollOffset); // unchanged: zero delta
   }
 
   @Test
   void handlePickListScrollDrag_returnsFalseWhenNoPickerIsActive () {
-    assertFalse(app.SOLARCHVISION_handlePickListScrollDrag());
+    assertFalse(app.handlePickListScrollDrag());
   }
 
   @Test
@@ -1241,7 +1241,7 @@ class MouseClickedTest {
     app.TMYEPW_PICKER.scrollThumbDragging = true;
     app.CLMREC_PICKER.scrollThumbDragging = true;
 
-    app.SOLARCHVISION_resetPickListDragState();
+    app.resetPickListDragState();
 
     assertFalse(app.TMYEPW_PICKER.scrollThumbDragging);
     assertFalse(app.CLMREC_PICKER.scrollThumbDragging);
@@ -1252,7 +1252,7 @@ class MouseClickedTest {
     app.TMYEPW_PICKER.active = true;
     app.TMYEPW_PICKER.indices = new int[]{0, 1, 2};
 
-    assertTrue(app.SOLARCHVISION_cancelActivePickList());
+    assertTrue(app.cancelActivePickList());
 
     assertFalse(app.TMYEPW_PICKER.active);
     assertEquals(0, app.TMYEPW_PICKER.indices.length);
@@ -1260,6 +1260,6 @@ class MouseClickedTest {
 
   @Test
   void cancelActivePickList_returnsFalseWhenNoPickerIsActive () {
-    assertFalse(app.SOLARCHVISION_cancelActivePickList());
+    assertFalse(app.cancelActivePickList());
   }
 }

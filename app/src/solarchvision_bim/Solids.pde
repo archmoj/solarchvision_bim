@@ -28,7 +28,7 @@ class solarchvision_Solids {
       Select3D.deselect_Solids();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void updatePosition (int n, float a, float b, float c) {

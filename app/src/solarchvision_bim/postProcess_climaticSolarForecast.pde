@@ -1,4 +1,4 @@
-void SOLARCHVISION_postProcess_climaticSolarForecast () {
+void postProcess_climaticSolarForecast () {
 
   int num_count = (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start);
 

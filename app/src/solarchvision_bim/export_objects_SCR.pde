@@ -1,4 +1,4 @@
-void SOLARCHVISION_exportAutocadScript () {
+void exportAutocadScript () {
 
   String fileBasename = ProjectName;
 

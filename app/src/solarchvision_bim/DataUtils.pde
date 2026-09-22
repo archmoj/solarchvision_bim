@@ -130,7 +130,7 @@ String getReference_CurrentDataSource () {
   return return_value;
 }
 
-void SOLARCHVISION_setDataFlags (int desired_DataSource) {
+void setDataFlags (int desired_DataSource) {
 
   int keep_CurrentDataSource = CurrentDataSource;
 

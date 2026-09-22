@@ -1,6 +1,6 @@
 PrintWriter radOutput;
 
-void SOLARCHVISION_exportRadiance () {
+void exportRadiance () {
 
   String fileBasename = ProjectName;
 

@@ -1,25 +1,25 @@
-void SOLARCHVISION_selectFile_New () {
+void selectFile_New () {
   selectInput("Specify project name:", "_fileSelected_New", new File(Folder_Project + "/_.xml"));
 }
 
-void SOLARCHVISION_selectFile_Open () {
+void selectFile_Open () {
   selectInput("Select a file to open:", "_fileSelected_Open", new File(Folder_Project + "/_.xml"));
 }
 
-void SOLARCHVISION_selectFile_SaveAs () {
+void selectFile_SaveAs () {
   selectOutput("Select a file to write to:", "_fileSelected_SaveAs", new File(Folder_Project + "/_.xml"));
 }
 
-void SOLARCHVISION_selectFile_ImportObj () {
+void selectFile_ImportObj () {
   selectInput("Select OBJ file to import:", "_fileSelected_ImportObj", new File(Folder_Import + "/_.obj"));
 }
 
-void SOLARCHVISION_selectFile_RunScript () {
+void selectFile_RunScript () {
   selectInput("Select TXT file to execute:", "_fileSelected_RunScript", new File(Folder_Command + "/_.txt"));
 }
 
 
-void SOLARCHVISION_update_project_info (File selectedFile) {
+void update_project_info (File selectedFile) {
 
   ProjectName = selectedFile.getName().replace(".xml", "").replace(".XML", ""); // should work most of the times!
   Folder_Project =  selectedFile.getAbsolutePath().replace(char(92), '/').replace("/" + selectedFile.getName(), "");
@@ -27,7 +27,7 @@ void SOLARCHVISION_update_project_info (File selectedFile) {
   println("New ProjectName:", ProjectName);
   println("New Folder_Project:", Folder_Project);
 
-  SOLARCHVISION_update_project_folders();
+  update_project_folders();
 }
 
 void _fileSelected_New (File selectedFile) {
@@ -40,7 +40,7 @@ void _fileSelected_New (File selectedFile) {
 
     println("New project:", Filename);
 
-    SOLARCHVISION_update_project_info(selectedFile);
+    update_project_info(selectedFile);
   }
 }
 
@@ -56,9 +56,9 @@ void _fileSelected_Open (File selectedFile) {
 
     noLoop();
 
-    SOLARCHVISION_load_project(Filename);
+    load_project(Filename);
 
-    SOLARCHVISION_update_project_info(selectedFile);
+    update_project_info(selectedFile);
 
     loop();
   }
@@ -74,9 +74,9 @@ void _fileSelected_SaveAs (File selectedFile) {
 
     println("Saving to:", Filename);
 
-    SOLARCHVISION_update_project_info(selectedFile);
+    update_project_info(selectedFile);
 
-    SOLARCHVISION_saveProject(Filename);
+    saveProject(Filename);
   }
 }
 
@@ -96,8 +96,8 @@ void _fileSelected_ImportObj (File selectedFile) {
 
     int number_of_allGroups_before = allGroups.num;
 
-    //SOLARCHVISION_import_objects_OBJ(Filename, -1,0,0,1,0,0, 0,0,0, 1,1,1); // different objects: different materials
-    SOLARCHVISION_import_objects_OBJ(Filename, User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, 0, 0, 0, 1, 1, 1); // apply default material
+    //import_objects_OBJ(Filename, -1,0,0,1,0,0, 0,0,0, 1,1,1); // different objects: different materials
+    import_objects_OBJ(Filename, User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, 0, 0, 0, 1, 1, 1); // apply default material
 
     int number_of_allGroups_after = allGroups.num;
 
@@ -107,7 +107,7 @@ void _fileSelected_ImportObj (File selectedFile) {
       //println(Select3D.Group_ids[i]);
     }
 
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+    switch_category(ObjectCategory.GROUP);
   }
 }
 
@@ -121,7 +121,7 @@ void _fileSelected_RunScript (File selectedFile) {
 
     println("Executing:", Filename);
 
-    SOLARCHVISION_runScriptFile(Filename);
+    runScriptFile(Filename);
   }
 }
 

@@ -1,4 +1,4 @@
-void SOLARCHVISION_castShadows_CurrentSection () {
+void castShadows_CurrentSection () {
 
   cursor(WAIT);
 

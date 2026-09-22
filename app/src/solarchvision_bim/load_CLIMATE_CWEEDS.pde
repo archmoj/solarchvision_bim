@@ -65,9 +65,9 @@ void load_CLIMATE_CWEEDS (String FileName) {
     else CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky.id][k] = 10 * CLIMATE_CWEEDS_values[i][j][LAYER_ceilingsky.id][k];
   }
 
-  SOLARCHVISION_setDataFlags(dataID_CLIMATE_CWEEDS);
-  SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CWEEDS);
-  SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_CWEEDS);
+  setDataFlags(dataID_CLIMATE_CWEEDS);
+  postProcess_solarEffects(dataID_CLIMATE_CWEEDS);
+  postProcess_developDATA(dataID_CLIMATE_CWEEDS);
 
   WORLD.displayAll_CWEEDS = 1;
   WORLD.displayNear_CWEEDS = true;

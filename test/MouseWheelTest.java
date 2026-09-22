@@ -157,8 +157,8 @@ class MouseWheelTest {
     app.WORLD.cY = 0;
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
-    app.SOLARCHVISION_X_clicked = 100;
-    app.SOLARCHVISION_Y_clicked = 100;
+    app.X_clicked = 100;
+    app.Y_clicked = 100;
     app.WORLD.Zoom = 5;
 
     app.handleWorldZoomWheel(1);
@@ -173,8 +173,8 @@ class MouseWheelTest {
     app.WORLD.cY = 0;
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
-    app.SOLARCHVISION_X_clicked = 100;
-    app.SOLARCHVISION_Y_clicked = 100;
+    app.X_clicked = 100;
+    app.Y_clicked = 100;
     app.WORLD.Zoom = 9;
 
     app.handleWorldZoomWheel(-1); // would push Zoom to 10
@@ -189,8 +189,8 @@ class MouseWheelTest {
     app.WORLD.cY = 0;
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
-    app.SOLARCHVISION_X_clicked = 9999; // outside
-    app.SOLARCHVISION_Y_clicked = 9999;
+    app.X_clicked = 9999; // outside
+    app.Y_clicked = 9999;
     app.WORLD.Zoom = 5;
 
     app.handleWorldZoomWheel(1);
@@ -409,7 +409,7 @@ class MouseWheelTest {
     assertEquals((float) (1 / Math.pow(2.0, 0.25)), app.OBJECTS_scale, 0.0001f);
   }
 
-  // ================= handleMoveWheel (now shares SOLARCHVISION_computeMoveDelta)
+  // ================= handleMoveWheel (now shares computeMoveDelta)
 
   @Test
   void handleMoveWheel_movesTheSelectedVertexAlongItsConstrainedAxis () {

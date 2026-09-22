@@ -60,7 +60,7 @@ class solarchvision_Land3D {
       }
     }
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   void addLandTextureIfElevationJpg (String filename) {
@@ -614,10 +614,10 @@ class solarchvision_Land3D {
     }
 
     if (target_window == TypeWindow.OBJ3D) {
-      if (_turn == 1) SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+      if (_turn == 1) OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
       if (_turn == 2) {
         v = 1 - v; // mirroring the image
-        SOLARCHVISION_OBJprintVtexture(u, v, 0);
+        OBJprintVtexture(u, v, 0);
       }
       if (_turn == 3) num_vertices_added += 1;
     }
@@ -626,7 +626,7 @@ class solarchvision_Land3D {
       if (s == 0) htmlOutput.print("\t\t\t\t\t\t<TextureCoordinate point='");
       if (s > 0) htmlOutput.print(",");
       v = 1 - v; // mirroring the image
-      SOLARCHVISION_HTMLprintVtexture(u, v);
+      HTMLprintVtexture(u, v);
       if (s == subFace.length - 1) htmlOutput.println("'></TextureCoordinate>");
     }
   }

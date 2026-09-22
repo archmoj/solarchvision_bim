@@ -22,22 +22,22 @@ class MouseDraggedTest {
     app.startFrameDragIfNeeded();
 
     assertEquals(1, app.dragging_started);
-    assertEquals(111, app.SOLARCHVISION_X_click1);
-    assertEquals(222, app.SOLARCHVISION_Y_click1);
+    assertEquals(111, app.X_click1);
+    assertEquals(222, app.Y_click1);
   }
 
   @Test
   void startFrameDragIfNeeded_isANoOpOnceADragIsAlreadyInProgress () {
     app.dragging_started = 1;
-    app.SOLARCHVISION_X_click1 = 5;
-    app.SOLARCHVISION_Y_click1 = 6;
+    app.X_click1 = 5;
+    app.Y_click1 = 6;
     app.pmouseX = 999;
     app.pmouseY = 999;
 
     app.startFrameDragIfNeeded();
 
-    assertEquals(5, app.SOLARCHVISION_X_click1); // untouched
-    assertEquals(6, app.SOLARCHVISION_Y_click1);
+    assertEquals(5, app.X_click1); // untouched
+    assertEquals(6, app.Y_click1);
   }
 
   // ================= handleWin3DDrag =======================================
@@ -79,8 +79,8 @@ class MouseDraggedTest {
     app.handleWin3DDrag();
 
     assertEquals(1, app.dragging_started);
-    assertEquals(100, app.SOLARCHVISION_X_click1);
-    assertEquals(100, app.SOLARCHVISION_Y_click1);
+    assertEquals(100, app.X_click1);
+    assertEquals(100, app.Y_click1);
     // dx = 40/400 = 0.1 -> position_X += 100 * 0.1 * 1 * OBJECTS_scale(1) = 10
     assertEquals(beforeX + 10f, app.WIN3D.position_X, 0.001f);
   }

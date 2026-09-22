@@ -1,4 +1,4 @@
-void SOLARCHVISION_update_station (int Step) {
+void update_station (int Step) {
 
   if ((Step == -1) || (Step == 0)) {
     allWindRoses.rebuild_Image_array = true;
@@ -8,7 +8,7 @@ void SOLARCHVISION_update_station (int Step) {
 
     WORLD.revise();
     STUDY.revise();
-    SOLARCHVISION_view_changed();
+    view_changed();
 
     LocationLAT = STATION.getLatitude();
     LocationLON = STATION.getLongitude();
@@ -32,14 +32,14 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == -1) || (Step == 0)) {
     if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
-      SOLARCHVISION_calculate_VertexSolar_array();
+      calculate_VertexSolar_array();
     }
 
     if (
       WIN3D.FacesShade == SHADE.Vertex_Solar || // to render sky
       WIN3D.FacesShade == SHADE.Global_Solar
     ) {
-      SOLARCHVISION_calculate_GlobalSolar_array();
+      calculate_GlobalSolar_array();
     }
   }
 }

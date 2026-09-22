@@ -12,7 +12,7 @@ void UI_setTo_Create_allModel1Ds () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Model1Ds;
-  SOLARCHVISION_switch_category(ObjectCategory.MODEL1D);
+  switch_category(ObjectCategory.MODEL1D);
 }
 
 
@@ -20,21 +20,21 @@ void UI_setTo_Create_Tree () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Plant;
-  SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
+  switch_category(ObjectCategory.MODEL2D);
 }
 
 void UI_setTo_Create_Person () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Person;
-  SOLARCHVISION_switch_category(ObjectCategory.MODEL2D);
+  switch_category(ObjectCategory.MODEL2D);
 }
 
 void UI_setTo_Create_Vertex () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Vertex;
-  SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
+  switch_category(ObjectCategory.VERTEX);
 }
 
 void UI_setTo_Create_Face () {
@@ -50,7 +50,7 @@ void UI_setTo_Create_Face () {
   allFaces.beginNewFace();
 
   CreateObject = CREATE.Face;
-  SOLARCHVISION_switch_category(ObjectCategory.FACE);
+  switch_category(ObjectCategory.FACE);
 }
 
 void UI_setTo_Create_Polyline () {
@@ -66,21 +66,21 @@ void UI_setTo_Create_Polyline () {
   allPolylines.beginNewPolyline();
 
   CreateObject = CREATE.Polyline;
-  SOLARCHVISION_switch_category(ObjectCategory.POLYLINE);
+  switch_category(ObjectCategory.POLYLINE);
 }
 
 void UI_setTo_Create_Solid () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Solid;
-  SOLARCHVISION_switch_category(ObjectCategory.SOLID);
+  switch_category(ObjectCategory.SOLID);
 }
 
 void UI_setTo_Create_Section () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Section;
-  SOLARCHVISION_switch_category(ObjectCategory.SECTION);
+  switch_category(ObjectCategory.SECTION);
 }
 
 
@@ -88,7 +88,7 @@ void UI_setTo_Create_Camera () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Camera;
-  SOLARCHVISION_switch_category(ObjectCategory.CAMERA);
+  switch_category(ObjectCategory.CAMERA);
 }
 
 
@@ -102,63 +102,63 @@ void UI_setTo_Create_Parametric (int n) {
   CreateObject = CREATE.Parametric;
   User3D.create_Parametric_Type = n;
 
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Pyramid () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Pyramid;
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Plane () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Plane;
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Polygon () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Polygon;
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Extrude () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Extrude;
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Hyper () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Hyper;
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_House3 () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.House3;
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_House2 () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.House2;
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_House1 () {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.House1;
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Box () {
@@ -170,7 +170,7 @@ void UI_setTo_Create_Box () {
   User3D.create_powY = CubePower;
   User3D.create_powZ = CubePower;
 
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 
@@ -183,7 +183,7 @@ void UI_setTo_Create_Icosahedron () {
   User3D.create_powY = 1;
   User3D.create_powZ = 1;
 
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Octahedron () {
@@ -195,7 +195,7 @@ void UI_setTo_Create_Octahedron () {
   User3D.create_powY = 1;
   User3D.create_powZ = 1;
 
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Sphere () {
@@ -207,7 +207,7 @@ void UI_setTo_Create_Sphere () {
   User3D.create_powY = 2;
   User3D.create_powZ = 2;
 
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Cylinder () {
@@ -219,7 +219,7 @@ void UI_setTo_Create_Cylinder () {
   User3D.create_powY = 2;
   User3D.create_powZ = CubePower;
 
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 void UI_setTo_Create_Cushion () {
@@ -231,7 +231,7 @@ void UI_setTo_Create_Cushion () {
   User3D.create_powY = CubePower;
   User3D.create_powZ = 2;
 
-  SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+  switch_category(ObjectCategory.GROUP);
 }
 
 
@@ -421,7 +421,7 @@ void UI_setTo_View_ProjectionType (int n) {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void UI_setTo_View_PickSelect (int n) {
@@ -463,7 +463,7 @@ void UI_setTo_View_PivotX (int n) {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void UI_setTo_View_PivotY (int n) {
@@ -472,7 +472,7 @@ void UI_setTo_View_PivotY (int n) {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void UI_setTo_View_PivotZ (int n) {
@@ -481,7 +481,7 @@ void UI_setTo_View_PivotZ (int n) {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 
@@ -617,7 +617,7 @@ void UI_setTo_View_LookAtSelection (int n) {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 
@@ -644,7 +644,7 @@ void UI_setTo_View_LookAtOrigin (int n) {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 
@@ -674,7 +674,7 @@ void UI_setTo_View_ZOOM (int n) {
   if (n == 1) {
     WIN3D.Zoom = 60;
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 }
 
@@ -684,7 +684,7 @@ void UI_setTo_View_3DModelSize () {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void UI_setTo_View_SkydomeSize () {
@@ -693,7 +693,7 @@ void UI_setTo_View_SkydomeSize () {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void UI_setTo_View_AllModelSize () {
@@ -702,7 +702,7 @@ void UI_setTo_View_AllModelSize () {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 boolean updateBars = false;
@@ -712,7 +712,7 @@ void UI_setTo_Viewport (int n) {
   updateBars = true;
 
   ViewLayout = n;
-  SOLARCHVISION_update_frame_layout();
+  update_frame_layout();
 
   UI_rollout.revise();
 }
@@ -778,5 +778,5 @@ void UI_setTo_View_3DViewPoint (int n) {
 
   UI_rollout.revise();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }

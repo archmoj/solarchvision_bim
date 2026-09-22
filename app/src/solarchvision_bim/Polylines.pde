@@ -28,7 +28,7 @@ class solarchvision_Polylines {
       Select3D.deselect_Polylines();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   int getMaterial (int n) {

@@ -127,7 +127,7 @@ class solarchvision_Create3D {
       }
 
 
-    SOLARCHVISION_model_added();
+    model_added();
     }
   }
 
@@ -252,7 +252,7 @@ class solarchvision_Create3D {
       }
 
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -377,7 +377,7 @@ class solarchvision_Create3D {
       }
 
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -531,7 +531,7 @@ class solarchvision_Create3D {
       }
 
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -608,7 +608,7 @@ class solarchvision_Create3D {
       }
 
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -682,7 +682,7 @@ class solarchvision_Create3D {
       }
 
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -733,7 +733,7 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -780,7 +780,7 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -829,7 +829,7 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -859,7 +859,7 @@ class solarchvision_Create3D {
           }
 
 
-          SOLARCHVISION_model_added();
+          model_added();
         }
       }
     }
@@ -906,7 +906,7 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -956,7 +956,7 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -1010,7 +1010,7 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -1037,7 +1037,7 @@ class solarchvision_Create3D {
 
       allFaces.create(newFace_nodes);
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -1063,7 +1063,7 @@ class solarchvision_Create3D {
 
       allFaces.create(newFace_nodes);
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -1118,7 +1118,7 @@ class solarchvision_Create3D {
         allFaces.create(newFace_nodes);
       }
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -1197,7 +1197,7 @@ class solarchvision_Create3D {
         }
       }
 
-      SOLARCHVISION_model_added();
+      model_added();
     }
   }
 
@@ -1327,7 +1327,7 @@ class solarchvision_Create3D {
       }
     }
 
-    SOLARCHVISION_model_added();
+    model_added();
   }
 
 
@@ -1455,7 +1455,7 @@ class solarchvision_Create3D {
       // Nothing. In this case we should add temp object outside this function. See SuperSphere
     }
 
-    SOLARCHVISION_model_added();
+    model_added();
   }
 
 
@@ -1503,7 +1503,7 @@ class solarchvision_Create3D {
 
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
 
-    SOLARCHVISION_model_added();
+    model_added();
   }
 
 
@@ -1577,7 +1577,7 @@ class solarchvision_Create3D {
 
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
 
-    SOLARCHVISION_model_added();
+    model_added();
   }
 
 
@@ -1727,7 +1727,7 @@ class solarchvision_Create3D {
     POINTER_TempObjectVertices = 0;
     POINTER_TempObjectFaces = 0;
 
-    SOLARCHVISION_model_added();
+    model_added();
   }
 
   void createLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int tessellation, int BuildFaces) {
@@ -1831,7 +1831,7 @@ class solarchvision_Create3D {
       }
     }
 
-    SOLARCHVISION_model_added();
+    model_added();
   }
 
 
@@ -2076,7 +2076,7 @@ class solarchvision_Create3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void add_onPolar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
@@ -2104,7 +2104,7 @@ class solarchvision_Create3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void add_onPlane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry, float rot) {
@@ -2140,7 +2140,7 @@ class solarchvision_Create3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void add_onMesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
@@ -2179,7 +2179,7 @@ class solarchvision_Create3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
 

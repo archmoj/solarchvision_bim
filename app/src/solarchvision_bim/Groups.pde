@@ -28,7 +28,7 @@ class solarchvision_Groups {
       Select3D.deselect_Groups();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
 
@@ -440,7 +440,7 @@ class solarchvision_Groups {
       Select3D.Group_ids = new int [1];
       Select3D.Group_ids[0] = this.num - 1;
 
-      SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+      switch_category(ObjectCategory.GROUP);
     }
   }
 
@@ -489,7 +489,7 @@ class solarchvision_Groups {
 
     int pre_current_ObjectCategory = current_ObjectCategory;
 
-    SOLARCHVISION_switch_category(ObjectCategory.GROUP);
+    switch_category(ObjectCategory.GROUP);
 
 
     Select3D.deselect_Groups();

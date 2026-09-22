@@ -29,7 +29,7 @@ void update_CLIMATE_CWEEDS () {
   STUDY.revise();
   UI_rollout.revise();
   UI_caseBar.revise();
-  SOLARCHVISION_view_changed();
+  view_changed();
 
   SampleYear_Start = CLIMATE_CWEEDS_start;
   SampleYear_End = CLIMATE_CWEEDS_end;

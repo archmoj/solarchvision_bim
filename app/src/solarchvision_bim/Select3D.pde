@@ -1002,7 +1002,7 @@ class solarchvision_Select3D {
     if (addNewSelectionToPreviousSelection == 0) this.deselectAll();
 
     if (RxP[0] < 0) { // hit nothing: leave the (just-cleared) selection as is
-      SOLARCHVISION_selection_changed();
+      selection_changed();
       return;
     }
 
@@ -1114,7 +1114,7 @@ class solarchvision_Select3D {
     }
 
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1549,7 +1549,7 @@ class solarchvision_Select3D {
       }
     }
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1559,7 +1559,7 @@ class solarchvision_Select3D {
   void deselect_LandPoints () {
     this.LandPoint_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_Vertices () {
@@ -1567,63 +1567,63 @@ class solarchvision_Select3D {
 
     this.deselect_softSelection();
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_softSelection () {
     this.softSelection_ids = new int [0];
     this.softSelection_values = new float [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_Faces () {
     this.Face_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_Polylines () {
     this.Polyline_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_Solids () {
     this.Solid_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_Cameras () {
     this.Camera_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_Sections () {
     this.Section_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_Model1Ds () {
     this.Model1D_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
   void deselect_Model2Ds () {
     this.Model2D_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void deselect_Groups () {
     this.Group_ids = new int [0];
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1640,7 +1640,7 @@ class solarchvision_Select3D {
     this.deselect_Vertices();
     this.deselect_Groups();
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void selectAll () {
@@ -1685,7 +1685,7 @@ class solarchvision_Select3D {
       this.Camera_ids = rangeIds(allCameras.num);
     }
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1732,7 +1732,7 @@ class solarchvision_Select3D {
       this.Camera_ids = invertedIds(this.Camera_ids, allCameras.num);
     }
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1782,7 +1782,7 @@ class solarchvision_Select3D {
       this.Polyline_ids = lastId(allPolylines.nodes.length);
     }
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1801,18 +1801,18 @@ class solarchvision_Select3D {
 
   void convert_Model1Ds_to_Groups () {
     this.Group_ids = groupsContaining(allGroups.Model1Ds, this.Model1D_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void convert_Model2Ds_to_Groups () {
     this.Group_ids = groupsContaining(allGroups.Model2Ds, this.Model2D_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
   void convert_Solids_to_Groups () {
     this.Group_ids = groupsContaining(allGroups.Solids, this.Solid_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void convert_Faces_to_Groups () {
@@ -1822,13 +1822,13 @@ class solarchvision_Select3D {
     // that inner loop was redundant. Removed as a behavior-preserving
     // simplification.
     this.Group_ids = groupsContaining(allGroups.Faces, this.Face_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void convert_Polylines_to_Groups () {
     // See the note in convert_Faces_to_Groups() above - same simplification.
     this.Group_ids = groupsContaining(allGroups.Polylines, this.Polyline_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1846,50 +1846,50 @@ class solarchvision_Select3D {
 
     this.Group_ids = Group_ids_buf.array();
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
   void convert_Vertices_to_Faces () {
     this.Face_ids = objectsContainingVertices(allFaces.nodes, this.Vertex_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
   void convert_Vertices_to_Polylines () {
     this.Polyline_ids = objectsContainingVertices(allPolylines.nodes, this.Vertex_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void convert_Groups_to_Model1Ds () {
     this.Model1D_ids = rangeUnion(allGroups.Model1Ds, this.Group_ids, allModel1Ds.num);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
   void convert_Groups_to_Model2Ds () {
     this.Model2D_ids = rangeUnion(allGroups.Model2Ds, this.Group_ids, allModel2Ds.num);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
 
   void convert_Groups_to_Solids () {
     this.Solid_ids = rangeUnion(allGroups.Solids, this.Group_ids, allSolids.DEF.length);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
 
   void convert_Groups_to_Faces () {
     this.Face_ids = rangeUnion(allGroups.Faces, this.Group_ids, allFaces.nodes.length);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
   void convert_Groups_to_Polylines () {
     this.Polyline_ids = rangeUnion(allGroups.Polylines, this.Group_ids, allPolylines.nodes.length);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1907,19 +1907,19 @@ class solarchvision_Select3D {
 
     this.Vertex_ids = Vertex_buf.array();
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
   void convert_Faces_to_Vertices () {
     this.Vertex_ids = nodesOf(allFaces.nodes, this.Face_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
   void convert_Polylines_to_Vertices () {
     this.Vertex_ids = nodesOf(allPolylines.nodes, this.Polyline_ids);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -1960,7 +1960,7 @@ class solarchvision_Select3D {
 
     this.Vertex_ids = keep_selection_Vertex_ids;
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
 
@@ -2029,7 +2029,7 @@ class solarchvision_Select3D {
 
       this.Vertex_ids = Vertex_buf.array();
 
-      SOLARCHVISION_selection_changed();
+      selection_changed();
     }
   }
 
@@ -2069,7 +2069,7 @@ class solarchvision_Select3D {
 
     this.Vertex_ids = Vertex_buf.array();
 
-    SOLARCHVISION_switch_category(ObjectCategory.VERTEX);
+    switch_category(ObjectCategory.VERTEX);
   }
 
 

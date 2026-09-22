@@ -1,6 +1,6 @@
 void mouseDragged() {
   if (frameCount <= Last_initializationStep) return;
-  if (SOLARCHVISION_control != USER_GUI) return;
+  if (control != USER_GUI) return;
 
   if (FRAME_drag_IMG) {
     startFrameDragIfNeeded();
@@ -10,7 +10,7 @@ void mouseDragged() {
   // Dragging the picker list's scrollbar thumb takes priority: if this
   // drag gesture is grabbing (or already grabbed) the thumb, don't also
   // let WORLD interpret the same drag as panning the map.
-  if (SOLARCHVISION_handlePickListScrollDrag()) return;
+  if (handlePickListScrollDrag()) return;
 
   // Not mutually exclusive: both handlers internally gate on whether the
   // mouse is actually within their own view's rectangle, so a drag over
@@ -29,8 +29,8 @@ void mouseDragged() {
 // Begins a 2D marquee drag the first time we see movement.
 void startFrameDragIfNeeded() {
   if (dragging_started != 0) return;
-  SOLARCHVISION_X_click1 = pmouseX;
-  SOLARCHVISION_Y_click1 = pmouseY;
+  X_click1 = pmouseX;
+  Y_click1 = pmouseY;
   dragging_started = 1;
 }
 
@@ -40,8 +40,8 @@ void handleWin3DDrag() {
   if (!wasInside || !isNowInside) return;
 
   if (dragging_started == 0) {
-    SOLARCHVISION_X_click1 = pmouseX;
-    SOLARCHVISION_Y_click1 = pmouseY;
+    X_click1 = pmouseX;
+    Y_click1 = pmouseY;
     dragging_started = 1;
   }
 
@@ -62,8 +62,8 @@ void handleWorldDrag() {
   if (!wasInside || !isNowInside) return;
 
   if (dragging_started == 0) {
-    SOLARCHVISION_X_click1 = pmouseX;
-    SOLARCHVISION_Y_click1 = pmouseY;
+    X_click1 = pmouseX;
+    Y_click1 = pmouseY;
     dragging_started = 1;
   }
 
@@ -158,73 +158,73 @@ void dispatchWin3DTaskDrag(float dx, float dy) {
 void panBothAxes(float dx, float dy) {
   WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
   WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void panXAxis(float dx) {
   WIN3D.position_X += 100 * dx * WIN3D.position_T * OBJECTS_scale;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void panYAxis(float dy) {
   WIN3D.position_Y += 100 * dy * WIN3D.position_T * OBJECTS_scale;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void rotateTargetXY(float dx, float dy) {
   WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T;
   WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
   WIN3D.reverseTransform_3DViewport();
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void rotateTargetZOnly(float dx) {
   WIN3D.rotation_Z += 10 * dx * WIN3D.rotation_T;
   WIN3D.reverseTransform_3DViewport();
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void rotateTargetXOnly(float dy) {
   WIN3D.rotation_X += 10 * dy * WIN3D.rotation_T;
   WIN3D.reverseTransform_3DViewport();
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void rotateCameraXY(float dx) {
   WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotation_T);
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void rotateCameraZ(float dy) {
   WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotation_T);
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void rotateCameraBoth(float dx, float dy) {
   WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotation_T);
   WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotation_T);
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void rotateCameraAroundLand(float dx) {
   WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.rotation_T);
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void orbitCamera(float dx, float dy) {
   WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
   WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void orbitXOnly(float dy) {
   WIN3D.rotation_X -= 10 * dy * WIN3D.rotation_T;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void orbitZOnly(float dx) {
   WIN3D.rotation_Z -= 10 * dx * WIN3D.rotation_T;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void handleTruckOrbitTask(float dx, float dy) {

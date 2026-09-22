@@ -138,14 +138,14 @@ class solarchvision_Sky3D {
       float u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
 
       if (_turn == 1) {
-        SOLARCHVISION_OBJprintVertex(x, y, z);
+        OBJprintVertex(x, y, z);
       }
       if (_turn == 2) {
         float u1 = 0.5 * (u + 0.5);
         boolean solarShade = (WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar);
         if (solarShade && (WIN3D.Impact_TYPE == Impact_ACTIVE)) u1 = u;
         u1 = constrain(u1, 0.001, 0.999);
-        SOLARCHVISION_OBJprintVtexture(u1, 0.5, 0);
+        OBJprintVtexture(u1, 0.5, 0);
       }
       if (_turn == 3) {
         num_vertices_added += 1;

@@ -1,4 +1,4 @@
-float[] SOLARCHVISION_snap_Faces (float[] RxP) {
+float[] snap_Faces (float[] RxP) {
 
   if (RxP[0] >= 0) {
 

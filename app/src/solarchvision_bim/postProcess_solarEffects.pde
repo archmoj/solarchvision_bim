@@ -1,4 +1,4 @@
-void SOLARCHVISION_postProcess_solarEffects (int desired_DataSource) {
+void postProcess_solarEffects (int desired_DataSource) {
 
   int keep_CurrentDataSource = CurrentDataSource;
 

@@ -15,43 +15,43 @@ class MouseReleasedTest {
 
   @Test
   void normalizeClickRegion_leavesAnAlreadyOrderedRegionUnchanged () {
-    app.SOLARCHVISION_X_click1 = 10;
-    app.SOLARCHVISION_Y_click1 = 20;
+    app.X_click1 = 10;
+    app.Y_click1 = 20;
     app.mouseX = 30;
     app.mouseY = 40;
 
     app.normalizeClickRegion();
 
-    assertEquals(10, app.SOLARCHVISION_X_click1);
-    assertEquals(20, app.SOLARCHVISION_Y_click1);
-    assertEquals(30, app.SOLARCHVISION_X_click2);
-    assertEquals(40, app.SOLARCHVISION_Y_click2);
+    assertEquals(10, app.X_click1);
+    assertEquals(20, app.Y_click1);
+    assertEquals(30, app.X_click2);
+    assertEquals(40, app.Y_click2);
   }
 
   @Test
   void normalizeClickRegion_swapsXWhenTheReleaseIsLeftOfTheStart () {
-    app.SOLARCHVISION_X_click1 = 100;
-    app.SOLARCHVISION_Y_click1 = 20;
+    app.X_click1 = 100;
+    app.Y_click1 = 20;
     app.mouseX = 30; // released to the left of where the drag started
     app.mouseY = 40;
 
     app.normalizeClickRegion();
 
-    assertEquals(30, app.SOLARCHVISION_X_click1);
-    assertEquals(100, app.SOLARCHVISION_X_click2);
+    assertEquals(30, app.X_click1);
+    assertEquals(100, app.X_click2);
   }
 
   @Test
   void normalizeClickRegion_swapsYWhenTheReleaseIsAboveTheStart () {
-    app.SOLARCHVISION_X_click1 = 10;
-    app.SOLARCHVISION_Y_click1 = 200;
+    app.X_click1 = 10;
+    app.Y_click1 = 200;
     app.mouseX = 30;
     app.mouseY = 40; // released above where the drag started
 
     app.normalizeClickRegion();
 
-    assertEquals(40, app.SOLARCHVISION_Y_click1);
-    assertEquals(200, app.SOLARCHVISION_Y_click2);
+    assertEquals(40, app.Y_click1);
+    assertEquals(200, app.Y_click2);
   }
 
   // ================= isRectSelectTask =======================================
@@ -80,7 +80,7 @@ class MouseReleasedTest {
     assertFalse(app.isRectSelectTask());
   }
 
-  // ================= castClickToWorld (now shares SOLARCHVISION_computeClickRay)
+  // ================= castClickToWorld (now shares computeClickRay)
 
   @Test
   void castClickToWorld_perspectiveStraightAheadHitsTheLandDirectlyBelowTheCamera () {
@@ -183,10 +183,10 @@ class MouseReleasedTest {
 
     // click1 at screen center -> world (1, 1, 0); click2 offset +3px
     // right, -2px up on screen -> world (1+3, 1+2, 0) = (4, 3, 0).
-    app.SOLARCHVISION_X_click1 = 100;
-    app.SOLARCHVISION_Y_click1 = 100;
-    app.SOLARCHVISION_X_click2 = 103;
-    app.SOLARCHVISION_Y_click2 = 98;
+    app.X_click1 = 100;
+    app.Y_click1 = 100;
+    app.X_click2 = 103;
+    app.Y_click2 = 98;
   }
 
   @Test

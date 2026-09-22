@@ -1,4 +1,4 @@
-void SOLARCHVISION_exportObj (String suffix) {
+void exportObj (String suffix) {
 
   String fileBasename = ProjectName + suffix;
 

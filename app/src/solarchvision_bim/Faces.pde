@@ -41,7 +41,7 @@ class solarchvision_Faces {
       Select3D.deselect_Faces();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
 
@@ -538,7 +538,7 @@ class solarchvision_Faces {
                       for (int s = 0; s < subFace.length; s++) {
 
                         if (_turn == 1) {
-                          SOLARCHVISION_OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
+                          OBJprintVertex(subFace[s][0], subFace[s][1], subFace[s][2]);
                         }
 
                         if (_turn == 2) {
@@ -548,7 +548,7 @@ class solarchvision_Faces {
                           float u = 0.5 * cos((2 * s + 1) * t) / cos(t) + 0.5;
                           float v = 0.5 * sin((2 * s + 1) * t) / cos(t) + 0.5;
 
-                          SOLARCHVISION_OBJprintVtexture(u, v, 0);
+                          OBJprintVtexture(u, v, 0);
                         }
                       }
 
@@ -763,10 +763,10 @@ class solarchvision_Faces {
 
                         }
 
-                        SOLARCHVISION_OBJprintVertex(x1, y1, z1);
-                        SOLARCHVISION_OBJprintVertex(x2, y2, z2);
-                        SOLARCHVISION_OBJprintVertex(x3, y3, z3);
-                        SOLARCHVISION_OBJprintVertex(x4, y4, z4);
+                        OBJprintVertex(x1, y1, z1);
+                        OBJprintVertex(x2, y2, z2);
+                        OBJprintVertex(x3, y3, z3);
+                        OBJprintVertex(x4, y4, z4);
                       }
 
                       if (_turn == 2) {
@@ -818,7 +818,7 @@ class solarchvision_Faces {
                           if (u0 > 1) u0 = 1;
                           if (u0 < 0) u0 = 0;
 
-                          SOLARCHVISION_OBJprintVtexture(u0, 0.5, 0);
+                          OBJprintVtexture(u0, 0.5, 0);
                         }
 
 
@@ -1094,7 +1094,7 @@ class solarchvision_Faces {
                         if (u0 > 1) u0 = 1;
                         if (u0 < 0) u0 = 0;
 
-                        SOLARCHVISION_HTMLprintVtexture(u0, 0.5);
+                        HTMLprintVtexture(u0, 0.5);
                       }
 
                       htmlOutput.println("'></TextureCoordinate>");

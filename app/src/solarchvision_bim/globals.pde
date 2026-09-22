@@ -93,7 +93,7 @@ int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for so
 static final int USER_GUI = 0;
 static final int USER_AUTO = 1;
 
-int SOLARCHVISION_control = USER_GUI;
+int control = USER_GUI;
 
 String[] skyScenario_Title = {
   "", "All", "Cloudy\nPattern", "Partly\nCloudy\nPattern", "Sunny\nPattern"
@@ -323,7 +323,7 @@ void printlnSaving(String path) {
 
 String ScreenShotType = ".jpg";
 
-void SOLARCHVISION_RecordFrame () {
+void RecordFrame () {
 
   String Filename = Folder_ScreenShots + "/" + createStamp(1, "Screen") + ScreenShotType;
 
@@ -332,7 +332,7 @@ void SOLARCHVISION_RecordFrame () {
   saveFrame(Filename);
 }
 
-void SOLARCHVISION_screenShot (String fileFormat) {
+void screenShot (String fileFormat) {
   ScreenShotType = fileFormat;
   FRAME_record_IMG = true;
 }
@@ -389,13 +389,13 @@ final String[] databaseString = {
 
 int DrawnFrame = 0;
 
-int SOLARCHVISION_X_clicked = -1;
-int SOLARCHVISION_Y_clicked = -1;
+int X_clicked = -1;
+int Y_clicked = -1;
 
-int SOLARCHVISION_X_click1 = -1;
-int SOLARCHVISION_Y_click1 = -1;
-int SOLARCHVISION_X_click2 = -1;
-int SOLARCHVISION_Y_click2 = -1;
+int X_click1 = -1;
+int Y_click1 = -1;
+int X_click2 = -1;
+int Y_click2 = -1;
 
 int Camera_Variation = 0; // 1;
 
@@ -445,7 +445,7 @@ boolean addNewSelectionToPreviousSelection_isOverridden = false;
 
 boolean addToLastGroup = false; // internal
 
-void SOLARCHVISION_find_which_bakings_to_regenerate () {
+void find_which_bakings_to_regenerate () {
 
   if (WIN3D.FacesShade == SHADE.Global_Solar) {
     GlobalSolar_rebuild_array = true;
@@ -461,14 +461,14 @@ void SOLARCHVISION_find_which_bakings_to_regenerate () {
   }
 }
 
-void SOLARCHVISION_regenerate_desired_bakings () {
+void regenerate_desired_bakings () {
 
   if (VertexSolar_rebuild_array) {
-    SOLARCHVISION_calculate_VertexSolar_array();
+    calculate_VertexSolar_array();
   }
 
   if (GlobalSolar_rebuild_array) {
-    SOLARCHVISION_calculate_GlobalSolar_array();
+    calculate_GlobalSolar_array();
   }
 
 }
@@ -511,7 +511,7 @@ int obj_lastGroupNumber;
 
 int num_vertices_added = 0;
 
-void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
+void OBJprintVertex (float x, float y, float z) {
 
   float a = x * User3D.export_Scale;
   float b = y * User3D.export_Scale;
@@ -526,19 +526,19 @@ void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
   }
 }
 
-void SOLARCHVISION_OBJprintVtexture (float u, float v, float w) {
+void OBJprintVtexture (float u, float v, float w) {
 
   objOutput.println("vt " + nf(u, 0, User3D.export_PrecisionVtexture) + " " + nf(v, 0, User3D.export_PrecisionVtexture) + " " + nf(w, 0, User3D.export_PrecisionVtexture));
 }
 
-void SOLARCHVISION_HTMLprintVtexture (float u, float v) {
+void HTMLprintVtexture (float u, float v) {
 
   htmlOutput.print(nf(u, 0, User3D.export_PrecisionVtexture) + " " + nf(v, 0, User3D.export_PrecisionVtexture));
 }
 
 String importedObjectName = "";
 
-void SOLARCHVISION_deleteAll () {
+void deleteAll () {
 
   allModel1Ds.makeEmpty(0);
   allModel2Ds.makeEmpty(0);
@@ -556,41 +556,41 @@ void SOLARCHVISION_deleteAll () {
 
 }
 
-void SOLARCHVISION_model_added () {
+void model_added () {
 
   Select3D.selectLast();
 
-  SOLARCHVISION_selection_changed();
+  selection_changed();
 }
 
 boolean should_rebuildFaceGrid = true;
 
-void SOLARCHVISION_model_changed () {
+void model_changed () {
   should_rebuildFaceGrid = true;
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
-void SOLARCHVISION_view_changed () {
+void view_changed () {
   WIN3D.revise();
 }
 
-void SOLARCHVISION_selection_changed () {
+void selection_changed () {
 
   Select3D.reset_selectedRefValues();
 
   Select3D.revise_BoundingBox();
 
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
-void SOLARCHVISION_switch_category (int a) {
+void switch_category (int a) {
 
   current_ObjectCategory = a;
 
   UI_toolBar.revise();
 
-  SOLARCHVISION_selection_changed();
+  selection_changed();
 }
 
 float OBJECTS_scale = 1.0;
@@ -721,7 +721,7 @@ String Viewport_Stamp () {
 int UI_X_moved = -1;
 int UI_Y_moved = -1;
 
-void SOLARCHVISION_modify_Viewport_Title () {
+void modify_Viewport_Title () {
 
   String s = "Cam" + nf(WIN3D.currentCamera, 2);
 
@@ -768,21 +768,21 @@ float[] SunR_Rotated;
 
 String save_folder = "";
 
-void SOLARCHVISION_holdProject () {
+void holdProject () {
 
   HoldStamp = nf(millis(), 0);
 
   String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
 
-  SOLARCHVISION_saveProject(myFile);
+  saveProject(myFile);
 }
 
-void SOLARCHVISION_fetchProject () {
+void fetchProject () {
 
   String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
 
   try {
-    SOLARCHVISION_load_project(myFile);
+    load_project(myFile);
   }
   catch (Exception e) {
     println("Cannot find the hold file:", myFile);
@@ -791,7 +791,7 @@ void SOLARCHVISION_fetchProject () {
 
 String TERRAINTAP_API_KEY = "";
 
-void SOLARCHVISION_load_env () {
+void load_env () {
   String[] lines = loadStrings(".env");
   if (lines != null) {
     int len = lines.length;

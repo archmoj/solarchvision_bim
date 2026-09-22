@@ -1,20 +1,20 @@
 String Default_Font = "Liberation Sans";
 
-PFont SOLARCHVISION_font;
+PFont font;
 
-void SOLARCHVISION_loadDefaultFontStyle () {
+void loadDefaultFontStyle () {
 
   println("Loading font:", Default_Font);
 
-  SOLARCHVISION_font = createFont(Default_Font, 36, true);
+  font = createFont(Default_Font, 36, true);
 
-  SOLARCHVISION_ResetFontStyle();
+  ResetFontStyle();
 }
 
-void SOLARCHVISION_ResetFontStyle () {
+void ResetFontStyle () {
 
-  textFont(SOLARCHVISION_font);
-  WORLD.graphics.textFont(SOLARCHVISION_font);
-  WIN3D.graphics.textFont(SOLARCHVISION_font);
-  STUDY.graphics.textFont(SOLARCHVISION_font);
+  textFont(font);
+  WORLD.graphics.textFont(font);
+  WIN3D.graphics.textFont(font);
+  STUDY.graphics.textFont(font);
 }

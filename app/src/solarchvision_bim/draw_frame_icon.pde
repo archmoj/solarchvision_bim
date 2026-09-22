@@ -1,4 +1,4 @@
-void SOLARCHVISION_draw_frame_icon () {
+void draw_frame_icon () {
   int frame_icon_size = 64;
 
   PGraphics frame_icon = createGraphics(frame_icon_size, frame_icon_size);
@@ -22,5 +22,5 @@ void SOLARCHVISION_draw_frame_icon () {
   frame_icon.endDraw();
   //frame.setIconImage(frame_icon.image);
 
-  //frame.setTitle("SOLARCHVISION-" + SOLARCHVISION_version);
+  //frame.setTitle("SOLARCHVISION-" + version);
 }

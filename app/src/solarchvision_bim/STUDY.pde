@@ -20,9 +20,9 @@ class solarchvision_STUDY {
 
 
   int cX = 0;
-  int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + SOLARCHVISION_pixel_H;
-  int dX = 2 * SOLARCHVISION_pixel_W;
-  int dY = 1 * SOLARCHVISION_pixel_H;
+  int cY = pixel_A + pixel_B + pixel_H;
+  int dX = 2 * pixel_W;
+  int dY = 1 * pixel_H;
   float view_R = float(dY) / float(dX);
   float view_S;
 
@@ -897,8 +897,8 @@ class solarchvision_STUDY {
 
 
   void drawNormals (int i, int j, float[] valuesA, float[] valuesB, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
-    float[] NormalsA = SOLARCHVISION_NORMAL(valuesA);
-    float[] NormalsB = SOLARCHVISION_NORMAL(valuesB);
+    float[] NormalsA = NORMAL(valuesA);
+    float[] NormalsB = NORMAL(valuesB);
 
     if (CurrentLayer_id == LAYER_winddir.id) {
       float[] XvaluesA;
@@ -916,8 +916,8 @@ class solarchvision_STUDY {
         }
       }
 
-      float[] X_NormalsA = SOLARCHVISION_NORMAL(XvaluesA);
-      float[] Y_NormalsA = SOLARCHVISION_NORMAL(YvaluesA);
+      float[] X_NormalsA = NORMAL(XvaluesA);
+      float[] Y_NormalsA = NORMAL(YvaluesA);
 
       for (int l = 0; l < NormalsA.length; l++) {
         if (is_defined(NormalsA[l])) {
@@ -945,8 +945,8 @@ class solarchvision_STUDY {
         }
       }
 
-      float[] X_NormalsB = SOLARCHVISION_NORMAL(XvaluesB);
-      float[] Y_NormalsB = SOLARCHVISION_NORMAL(YvaluesB);
+      float[] X_NormalsB = NORMAL(XvaluesB);
+      float[] Y_NormalsB = NORMAL(YvaluesB);
 
       for (int l = 0; l < NormalsB.length; l++) {
         if (is_defined(NormalsB[l])) {
@@ -1239,7 +1239,7 @@ class solarchvision_STUDY {
 
                 if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
               } else {
-                boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                 if (isMemberCounted) {
                   valuesA[idx] = Pa;
@@ -1725,7 +1725,7 @@ class solarchvision_STUDY {
 
     if (DevelopData_update) {
       if (CurrentLayer_id == LAYER_developed.id) {
-        SOLARCHVISION_postProcess_developDATA(CurrentDataSource);
+        postProcess_developDATA(CurrentDataSource);
       }
     }
 
@@ -1741,7 +1741,7 @@ class solarchvision_STUDY {
 
     this.graphics.strokeJoin(ROUND);
 
-    this.graphics.textFont(SOLARCHVISION_font);
+    this.graphics.textFont(font);
 
     this.graphics.strokeWeight(0);
 
@@ -1916,7 +1916,7 @@ class solarchvision_STUDY {
                   values_W_spd[k] = FLOAT_undefined;
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
-                  boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
 
@@ -2018,7 +2018,7 @@ class solarchvision_STUDY {
                   values_W_spd[k] = FLOAT_undefined;
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
-                  boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
 
@@ -2173,7 +2173,7 @@ class solarchvision_STUDY {
     }
 
     if (allWindRoses.displayImage) {
-      SOLARCHVISION_view_changed();
+      view_changed();
     }
   }
 
@@ -2370,7 +2370,7 @@ class solarchvision_STUDY {
     }
 
     if (allSolarImpacts.displayImage) {
-      SOLARCHVISION_view_changed();
+      view_changed();
     }
 
   }
@@ -2443,7 +2443,7 @@ class solarchvision_STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
+      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
       if (nk == -1) continue;
 
       int k = int(nk / this.joinDays);
@@ -2483,7 +2483,7 @@ class solarchvision_STUDY {
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
                     values_R_dir = 0.001 * Pa;
@@ -2499,12 +2499,12 @@ class solarchvision_STUDY {
                     } else {
 
                       if (values_E_dir < 0) {
-                        valuesSUM_EFF_N += -SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
+                        valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
                       } else {
-                        valuesSUM_EFF_P += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
+                        valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
                       }
 
-                      valuesSUM_RAD += SOLARCHVISION_SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, GlobalAlbedo);
+                      valuesSUM_RAD += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, GlobalAlbedo);
 
                       valuesNUM += 1;
                     }
@@ -2815,7 +2815,7 @@ class solarchvision_STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
+      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
       if (nk == -1) continue;
 
       int k = int(nk / this.joinDays);
@@ -2850,7 +2850,7 @@ class solarchvision_STUDY {
               values_E_dif = FLOAT_undefined;
             } else {
 
-              boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+              boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
               if (isMemberCounted) {
                 values_R_dir = 0.001 * Pa;

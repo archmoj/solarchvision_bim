@@ -1,9 +1,9 @@
 void mouseReleased() {
   if (frameCount <= Last_initializationStep) return;
-  if (SOLARCHVISION_control != USER_GUI) return;
+  if (control != USER_GUI) return;
   if (dragging_started == 0) return;
 
-  SOLARCHVISION_resetPickListDragState();
+  resetPickListDragState();
 
   normalizeClickRegion();
 
@@ -18,23 +18,23 @@ void mouseReleased() {
 }
 
 void normalizeClickRegion() {
-  SOLARCHVISION_X_click2 = mouseX;
-  SOLARCHVISION_Y_click2 = mouseY;
+  X_click2 = mouseX;
+  Y_click2 = mouseY;
 
-  if (SOLARCHVISION_X_click2 < SOLARCHVISION_X_click1) {
-    int tmpX = SOLARCHVISION_X_click2;
-    SOLARCHVISION_X_click2 = SOLARCHVISION_X_click1;
-    SOLARCHVISION_X_click1 = tmpX;
+  if (X_click2 < X_click1) {
+    int tmpX = X_click2;
+    X_click2 = X_click1;
+    X_click1 = tmpX;
   }
-  if (SOLARCHVISION_Y_click2 < SOLARCHVISION_Y_click1) {
-    int tmpY = SOLARCHVISION_Y_click2;
-    SOLARCHVISION_Y_click2 = SOLARCHVISION_Y_click1;
-    SOLARCHVISION_Y_click1 = tmpY;
+  if (Y_click2 < Y_click1) {
+    int tmpY = Y_click2;
+    Y_click2 = Y_click1;
+    Y_click1 = tmpY;
   }
 }
 
 void finishFrameDragSelection() {
-  SOLARCHVISION_RecordFrame();
+  RecordFrame();
 
   strokeWeight(2);
   if (mouseButton == RIGHT) {
@@ -44,13 +44,13 @@ void finishFrameDragSelection() {
     stroke(255, 0, 0);
     noFill();
   }
-  rect(SOLARCHVISION_X_click1, SOLARCHVISION_Y_click1,
-       SOLARCHVISION_X_click2 - SOLARCHVISION_X_click1,
-       SOLARCHVISION_Y_click2 - SOLARCHVISION_Y_click1);
+  rect(X_click1, Y_click1,
+       X_click2 - X_click1,
+       Y_click2 - Y_click1);
   strokeWeight(0);
 
-  SOLARCHVISION_RecordFrame();
-  SOLARCHVISION_view_changed();
+  RecordFrame();
+  view_changed();
 
   WORLD.revise();
   STUDY.revise();
@@ -78,10 +78,10 @@ boolean isRectSelectTask() {
 }
 
 void performRectSelect() {
-  float corner1x = SOLARCHVISION_X_click1 - 0.5 * WIN3D.dX - WIN3D.cX;
-  float corner1y = SOLARCHVISION_Y_click1 - 0.5 * WIN3D.dY - WIN3D.cY;
-  float corner2x = SOLARCHVISION_X_click2 - 0.5 * WIN3D.dX - WIN3D.cX;
-  float corner2y = SOLARCHVISION_Y_click2 - 0.5 * WIN3D.dY - WIN3D.cY;
+  float corner1x = X_click1 - 0.5 * WIN3D.dX - WIN3D.cX;
+  float corner1y = Y_click1 - 0.5 * WIN3D.dY - WIN3D.cY;
+  float corner2x = X_click2 - 0.5 * WIN3D.dX - WIN3D.cX;
+  float corner2y = Y_click2 - 0.5 * WIN3D.dY - WIN3D.cY;
 
   pushMatrix();
   translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
@@ -95,8 +95,8 @@ void performRectSelect() {
 }
 
 void performGetLengthMeasurement() {
-  float[] p1 = castClickToWorld(SOLARCHVISION_X_click1, SOLARCHVISION_Y_click1);
-  float[] p2 = castClickToWorld(SOLARCHVISION_X_click2, SOLARCHVISION_Y_click2);
+  float[] p1 = castClickToWorld(X_click1, Y_click1);
+  float[] p2 = castClickToWorld(X_click2, Y_click2);
 
   float x1 = p1[0], y1 = p1[1], z1 = p1[2];
   float x2 = p2[0], y2 = p2[1], z2 = p2[2];
@@ -141,7 +141,7 @@ float[] castClickToWorld(float clickX, float clickY) {
   float imageX = clickX - (WIN3D.cX + 0.5 * WIN3D.dX);
   float imageY = clickY - (WIN3D.cY + 0.5 * WIN3D.dY);
 
-  SOLARCHVISION_ClickRay ray = SOLARCHVISION_computeClickRay(imageX, imageY);
+  ClickRay ray = computeClickRay(imageX, imageY);
   float[] rayStart = ray.start;
   float[] rayDirection = ray.direction;
 
@@ -149,7 +149,7 @@ float[] castClickToWorld(float clickX, float clickY) {
   if (mouseButton == RIGHT) {
     hit = Land3D.intersect(rayStart, rayDirection);
   } else if (mouseButton == LEFT) {
-    hit = SOLARCHVISION_snap_Faces(allFaces.intersect(rayStart, rayDirection));
+    hit = snap_Faces(allFaces.intersect(rayStart, rayDirection));
   }
 
   if (hit[0] >= 0) {

@@ -9,12 +9,12 @@ final int SHADE_STEP_DAYS = 90;
 int SHADE_HOUR_ANGLE = 8;
 int SHADE_DATE_ANGLE = 0;
 
-void SOLARCHVISION_ShadeViewport () {
+void ShadeViewport () {
   int DATE_ANGLE = SHADE_DATE_ANGLE;
   int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
   cursor(WAIT);
-  SOLARCHVISION_buildFaceGrid();
+  buildFaceGrid();
 
 
   float quality = WIN3D.shadingQuality;
@@ -100,7 +100,7 @@ void SOLARCHVISION_ShadeViewport () {
         float SkyMask = 0.5 * (1.0 + (Alpha / 90.0));
 
         float valuesSUM_RAD = SkyMask; // diffuse radiation
-        if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) == 0) {
+        if (isIntersected_Faces(ray_start, ray_direction, 0) == 0) {
           float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
           if (SunMask <= 0) SunMask = 0; // removes backing faces
 
@@ -120,7 +120,7 @@ void SOLARCHVISION_ShadeViewport () {
   WIN3D.showShading = true;
 }
 
-void SOLARCHVISION_adjustShadeTime (int steps) {
+void adjustShadeTime (int steps) {
   if(steps > 0) {
     // step forward
     for(int i = 0; i < steps; i++) {

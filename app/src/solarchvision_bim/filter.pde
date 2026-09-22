@@ -1,4 +1,4 @@
-boolean SOLARCHVISION_filter (int dataID, int cloudCover_id, int type_of_filter, int scenario_of_sky, int now_i, int now_j, int now_k) {
+boolean filter (int dataID, int cloudCover_id, int type_of_filter, int scenario_of_sky, int now_i, int now_j, int now_k) {
 
   float total_sky = 0;
   int num_sky = 0;

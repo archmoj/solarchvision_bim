@@ -1,4 +1,4 @@
-float SOLARCHVISION_SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float SunR5, float Alpha, float Beta, float THE_ALBEDO) {
+float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float SunR5, float Alpha, float Beta, float THE_ALBEDO) {
 
   float return_value = FLOAT_undefined;
 

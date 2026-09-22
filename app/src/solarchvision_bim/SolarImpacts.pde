@@ -115,7 +115,7 @@ class solarchvision_SolarImpacts {
 
           //println(DATE_ANGLE, DATE_ANGLE_approximate);
 
-          int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+          int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
 
           if (nk == -1) continue;
           int k = int(nk / STUDY.joinDays);
@@ -175,7 +175,7 @@ class solarchvision_SolarImpacts {
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
                     values_R_dir = 0.001 * Pa;
@@ -455,7 +455,7 @@ class solarchvision_SolarImpacts {
 
       SceneName = "Section_" + Section_Stamp();
 
-      SOLARCHVISION_castShadows_CurrentSection();
+      castShadows_CurrentSection();
     }
 
     this.displayImage = true;

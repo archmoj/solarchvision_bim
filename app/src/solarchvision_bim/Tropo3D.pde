@@ -66,7 +66,7 @@ class solarchvision_Tropo3D {
       loadSlotIfMatch(i, allFilenames, targetHourLabel);
     }
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   DateTimeUTC currentUTC () {
@@ -555,7 +555,7 @@ class solarchvision_Tropo3D {
         if (s > 0) htmlOutput.print(",");
         float u = clamp01(subFace[s].u);
         float v = 1 - clamp01(subFace[s].v); // mirroring the image
-        SOLARCHVISION_HTMLprintVtexture(u, v);
+        HTMLprintVtexture(u, v);
       }
       htmlOutput.println("'></TextureCoordinate>");
     }
@@ -593,11 +593,11 @@ class solarchvision_Tropo3D {
       float v = clamp01(subFace[s].v);
 
       if (_turn == 1) {
-        SOLARCHVISION_OBJprintVertex(subFace[s].x, subFace[s].y, subFace[s].z);
+        OBJprintVertex(subFace[s].x, subFace[s].y, subFace[s].z);
       }
       if (_turn == 2) {
         v = 1 - v; // mirroring the image
-        SOLARCHVISION_OBJprintVtexture(u, v, 0);
+        OBJprintVtexture(u, v, 0);
       }
       if (_turn == 3) {
         obj_lastVertexNumber += 1;

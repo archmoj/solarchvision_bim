@@ -1,4 +1,4 @@
-float[] SOLARCHVISION_NORMAL (float[] _values) {
+float[] NORMAL (float[] _values) {
 
   float[] weight_array = {
     0, 0, 0, 0, 0, 0, 0, 0, 0

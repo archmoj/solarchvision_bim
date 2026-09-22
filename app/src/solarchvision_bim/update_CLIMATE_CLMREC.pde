@@ -54,10 +54,10 @@ void update_CLIMATE_CLMREC () {
       }
     }
 
-    SOLARCHVISION_setDataFlags(dataID_CLIMATE_CLMREC);
-    SOLARCHVISION_postProcess_fillGaps(dataID_CLIMATE_CLMREC);
-    SOLARCHVISION_postProcess_solarsUsingCloud(dataID_CLIMATE_CLMREC);
-    SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_CLMREC);
+    setDataFlags(dataID_CLIMATE_CLMREC);
+    postProcess_fillGaps(dataID_CLIMATE_CLMREC);
+    postProcess_solarsUsingCloud(dataID_CLIMATE_CLMREC);
+    postProcess_solarEffects(dataID_CLIMATE_CLMREC);
 
     WORLD.displayAll_CLMREC = 1;
     WORLD.displayNear_CLMREC = true;
@@ -68,7 +68,7 @@ void update_CLIMATE_CLMREC () {
   STUDY.revise();
   UI_rollout.revise();
   UI_caseBar.revise();
-  SOLARCHVISION_view_changed();
+  view_changed();
 
   SampleYear_Start = CLIMATE_CLMREC_start;
   SampleYear_End = CLIMATE_CLMREC_end;

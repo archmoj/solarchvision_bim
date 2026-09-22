@@ -1,8 +1,8 @@
-void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
+void parse_XML_variables (XML xml, boolean desired_diag) {
 
   diag_XML_input = desired_diag;
 
-  XML parent = xml.getChild("SOLARCHVISION_variables");
+  XML parent = xml.getChild("variables");
 
   current_ObjectCategory = XML_getInt(parent, "current_ObjectCategory");
 
@@ -67,7 +67,7 @@ void SOLARCHVISION_parse_XML_variables (XML xml, boolean desired_diag) {
   if (Default_Font.equals(new_Default_Font)) {
   } else {
     Default_Font = new_Default_Font;
-    SOLARCHVISION_loadDefaultFontStyle();
+    loadDefaultFontStyle();
   }
 
 

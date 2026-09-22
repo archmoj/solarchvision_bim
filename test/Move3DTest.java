@@ -110,7 +110,7 @@ class Move3DTest {
   @Test
   void faces_nowFlagsTheViewportForRedrawLikeEverySiblingFunction () {
     // Fixed bug: Faces() used to be the one move function here with no
-    // SOLARCHVISION_model_changed() call at the end, leaving the
+    // model_changed() call at the end, leaving the
     // viewport's "needs redraw" flag untouched after a move that could
     // move vertices - unlike every sibling function (Vertices() included
     // below for direct comparison). Fixed by adding the same call the

@@ -284,7 +284,7 @@ class solarchvision_Sun3D {
       int now_j = wrapDayIndex(j * int(STUDY.perDays) + TIME.beginDay);
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
+      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
         start_k, end_k, j, DATE_ANGLE,
         target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
 
@@ -462,7 +462,7 @@ class solarchvision_Sun3D {
 
           int keep_filter_type = STUDY.filter;
           STUDY.filter = filter_HOURLY;
-          int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
+          int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
             start_k, end_k, more_J + j, DATE_ANGLE,
             target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
           STUDY.filter = keep_filter_type;
@@ -509,7 +509,7 @@ class solarchvision_Sun3D {
               boolean anyUndefined = is_undefined(Pa1) || is_undefined(Pb1) || is_undefined(Pc1) || is_undefined(Pd1)
                                    || is_undefined(Pa2) || is_undefined(Pb2) || is_undefined(Pc2) || is_undefined(Pd2);
               if (!anyUndefined) {
-                boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i1, now_j2, now_k);
+                boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i1, now_j2, now_k);
                 if (isMemberCounted) {
                   valuesSUM_RAD = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
                   valuesSUM_EFF = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
@@ -583,13 +583,13 @@ class solarchvision_Sun3D {
                 float z = funcs.sin_ang(Alpha) * WIN3D.scale * s_Plot + z_Plot;
 
                 if (_turn == 1) {
-                  SOLARCHVISION_OBJprintVertex(x, y, z);
+                  OBJprintVertex(x, y, z);
                 } else if (_turn == 2) {
                   float u1 = 0.5 * (_u + 0.5);
                   boolean solarShade = (WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar);
                   if (solarShade && (WIN3D.Impact_TYPE == Impact_ACTIVE)) u1 = _u;
                   u1 = constrain(u1, 0.001, 0.999);
-                  SOLARCHVISION_OBJprintVtexture(u1, 0.5, 0);
+                  OBJprintVtexture(u1, 0.5, 0);
                 } else { // _turn == 3
                   num_vertices_added += 1;
                 }

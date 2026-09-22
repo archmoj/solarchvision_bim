@@ -4,7 +4,7 @@ class solarchvision_UI_toolBar {
 
   boolean update = true;
 
-  float tab = SOLARCHVISION_pixel_B;
+  float tab = pixel_B;
 
   String[][] Items = {
     {
@@ -214,21 +214,21 @@ class solarchvision_UI_toolBar {
 
     fill(0);
     noStroke();
-    rect(0, SOLARCHVISION_pixel_A, width, SOLARCHVISION_pixel_B);
+    rect(0, pixel_A, width, pixel_B);
 
     X_control = 0; //0.25 * MessageSize;
-    Y_control = SOLARCHVISION_pixel_A + 0.5 * SOLARCHVISION_pixel_B;
+    Y_control = pixel_A + 0.5 * pixel_B;
 
     float cx = X_control;
     float cy = Y_control;
-    float cr = 0.5 * SOLARCHVISION_pixel_B;
+    float cr = 0.5 * pixel_B;
 
     for (int i = 0; i < this.Items.length; i++) {
       cx += this.drawItem(i, cx, cy, cr);
     }
 
-    SOLARCHVISION_X_clicked = -1;
-    SOLARCHVISION_Y_clicked = -1;
+    X_clicked = -1;
+    Y_clicked = -1;
   }
 
   // Draws a single toolbar item (its box, optional click handling, icon/label),
@@ -247,16 +247,16 @@ class solarchvision_UI_toolBar {
     noFill();
     stroke(255);
     strokeWeight(1);
-    rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
+    rect(cx, cy - cr, Item_width, pixel_B);
     strokeWeight(0);
 
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + Item_width, cy + cr)) {
+    if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr)) {
       j = this.handleClick(i, j, Bar_Switch, cx, cy, cr, Item_width);
     }
 
     this.displayText = true;
 
-    this.drawIcon(Bar_Switch, j, cx + 0.5 * Item_width, cy, 0.5 * SOLARCHVISION_pixel_B);
+    this.drawIcon(Bar_Switch, j, cx + 0.5 * Item_width, cy, 0.5 * pixel_B);
 
     if (this.displayText) { // writing titles where the icon is not available
       textAlign(CENTER, CENTER);
@@ -289,7 +289,7 @@ class solarchvision_UI_toolBar {
 
     fill(255, 127, 0);
     noStroke();
-    rect(cx, cy - cr, Item_width, SOLARCHVISION_pixel_B);
+    rect(cx, cy - cr, Item_width, pixel_B);
 
     this.performAction(Bar_Switch, i, j);
 
@@ -318,11 +318,11 @@ class solarchvision_UI_toolBar {
     float estimatedWidth = HelperText.length() * MessageSize * 0.55;
 
     // draw over menu bar
-    float HelperY = cy - cr - SOLARCHVISION_pixel_A;
-    float HelperH = SOLARCHVISION_pixel_A;
+    float HelperY = cy - cr - pixel_A;
+    float HelperH = pixel_A;
     float HelperX = cx;
-    float HelperW = max(SOLARCHVISION_pixel_B * 2, estimatedWidth);
-    if (HelperX + HelperW > width) HelperX -= HelperW - SOLARCHVISION_pixel_B;
+    float HelperW = max(pixel_B * 2, estimatedWidth);
+    if (HelperX + HelperW > width) HelperX -= HelperW - pixel_B;
 
     fill(127, 255, 0);
     noStroke();
@@ -334,7 +334,7 @@ class solarchvision_UI_toolBar {
     noFill();
     stroke(127, 255, 0);
     strokeWeight(4);
-    rect(cx + 4, cy - cr + 4, Item_width - 8, SOLARCHVISION_pixel_B - 8);
+    rect(cx + 4, cy - cr + 4, Item_width - 8, pixel_B - 8);
     strokeWeight(0);
   }
 
@@ -377,7 +377,7 @@ class solarchvision_UI_toolBar {
           Select3D.convert_Vertex_to_softSelection();
         }
         UI_rollout.revise();
-        SOLARCHVISION_view_changed();
+        view_changed();
         break;
 
       case "Model Type":

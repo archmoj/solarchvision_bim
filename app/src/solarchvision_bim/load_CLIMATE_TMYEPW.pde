@@ -66,14 +66,14 @@ void load_CLIMATE_TMYEPW (String FileName) {
     if (CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky.id][k] == 99999) CLIMATE_TMYEPW_values[i][j][LAYER_ceilingsky.id][k] = FLOAT_undefined;
   }
 
-  SOLARCHVISION_setDataFlags(dataID_CLIMATE_TMYEPW);
-  SOLARCHVISION_postProcess_solarEffects(dataID_CLIMATE_TMYEPW);
-  SOLARCHVISION_postProcess_developDATA(dataID_CLIMATE_TMYEPW);
+  setDataFlags(dataID_CLIMATE_TMYEPW);
+  postProcess_solarEffects(dataID_CLIMATE_TMYEPW);
+  postProcess_developDATA(dataID_CLIMATE_TMYEPW);
 
   WORLD.revise();
   STUDY.revise();
   UI_rollout.revise();
   UI_caseBar.revise();
-  SOLARCHVISION_view_changed();
+  view_changed();
 
 }

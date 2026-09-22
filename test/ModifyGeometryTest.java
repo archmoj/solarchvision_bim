@@ -187,7 +187,7 @@ class ModifyGeometryTest {
   // all wired together - closer to the "genuine integration test" the
   // rest of Modify3D.pde would need than a unit test of one piece.
   //
-  // Before writing it, SOLARCHVISION_switch_category/_selection_changed/
+  // Before writing it, switch_category/_selection_changed/
   // _view_changed and UI_toolBar.revise()/WIN3D.revise() were checked:
   // every one of them just sets a boolean "needs update" flag or a plain
   // numeric field, with no rendering/graphics calls - so they're safe to

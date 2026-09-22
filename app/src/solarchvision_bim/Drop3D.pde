@@ -45,7 +45,7 @@ class solarchvision_Drop3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Model2Ds () {
@@ -60,6 +60,6 @@ class solarchvision_Drop3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 }

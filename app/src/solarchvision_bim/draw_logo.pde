@@ -1,4 +1,4 @@
-void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_view, int pass) {
+void draw_logo (float cx, float cy, float cz, float cr, int the_view, int pass) {
 
   float stp_u = 1.0 / 24.0;
   float stp_v = 1.0 / 24.0;

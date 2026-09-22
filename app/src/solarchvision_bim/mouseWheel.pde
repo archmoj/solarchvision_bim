@@ -9,13 +9,13 @@ void mouseWheel(MouseEvent event) {
   mouseWheelConsume = 0;
 
   float Wheel_Value = event.getCount();
-  if (SOLARCHVISION_control != USER_GUI) return;
+  if (control != USER_GUI) return;
 
-  SOLARCHVISION_X_clicked = mouseX;
-  SOLARCHVISION_Y_clicked = mouseY;
+  X_clicked = mouseX;
+  Y_clicked = mouseY;
 
   handleCaseBarWheel(Wheel_Value);
-  if (!SOLARCHVISION_handlePickListWheel(Wheel_Value)) {
+  if (!handlePickListWheel(Wheel_Value)) {
     handleWorldZoomWheel(Wheel_Value);
   }
   handleWin3DWheel(Wheel_Value);
@@ -24,10 +24,10 @@ void mouseWheel(MouseEvent event) {
 
 void handleCaseBarWheel(float wheelValue) {
   float displayBarHeight = MessageSize;
-  float displayBarWidth = 2 * SOLARCHVISION_pixel_W;
+  float displayBarWidth = 2 * pixel_W;
 
   X_control = 0.5 * displayBarWidth;
-  Y_control = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + 0.5 * UI_caseBar.tab;
+  Y_control = pixel_A + pixel_B + 2 * pixel_H + 0.5 * UI_caseBar.tab;
 
   for (int i = 0; i < UI_caseBar.Items.length; i++) {
     float x1 = X_control - 0.366 * displayBarWidth;
@@ -35,7 +35,7 @@ void handleCaseBarWheel(float wheelValue) {
     float y1 = Y_control - 0.45 * displayBarHeight;
     float y2 = Y_control + 0.45 * displayBarHeight;
 
-    if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x1, y1, x2, y2)) {
+    if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
       if (UI_caseBar.Items[i][0].equals("Hours")) {
         handleHoursCaseBarWheel(wheelValue);
       } else if (UI_caseBar.Items[i][0].equals("Days")) {
@@ -54,8 +54,8 @@ void reviseStudyAndRegenerate(boolean alsoWorld) {
   STUDY.revise();
   if (alsoWorld) WORLD.revise();
   UI_caseBar.revise();
-  SOLARCHVISION_view_changed();
-  SOLARCHVISION_find_which_bakings_to_regenerate();
+  view_changed();
+  find_which_bakings_to_regenerate();
 }
 
 void handleHoursCaseBarWheel(float wheelValue) {
@@ -157,7 +157,7 @@ void handleScenarioCaseBarWheel(float wheelValue) {
 
 void handleWorldZoomWheel(float wheelValue) {
   if (!WORLD.include) return;
-  if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return;
+  if (!isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return;
 
   int oldZoom = WORLD.Zoom;
 
@@ -176,7 +176,7 @@ void handleWorldZoomWheel(float wheelValue) {
 
 void handleWin3DWheel(float wheelValue) {
   if (!WIN3D.include) return;
-  if (!isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) return;
+  if (!isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) return;
 
   float[] pivot = Select3D.getPivot();
   float x0 = pivot[0];
@@ -209,7 +209,7 @@ void handleRotateWheel(float wheelValue, float x0, float y0, float z0) {
   float r = 5 * -wheelValue;
   int theVector = Select3D.rotVector;
   Rotate3D.selection(x0, y0, z0, r, theVector);
-  SOLARCHVISION_model_changed();
+  model_changed();
 }
 
 void handleScaleWheel(float wheelValue, float x0, float y0, float z0) {
@@ -225,28 +225,28 @@ void handleScaleWheel(float wheelValue, float x0, float y0, float z0) {
   if (theVector == 2) { sx = 1; sy = 1; }
 
   Scale3D.selection(x0, y0, z0, sx, sy, sz);
-  SOLARCHVISION_model_changed();
+  model_changed();
 }
 
 void handleMoveWheel(float wheelValue) {
   float d = -wheelValue;
 
   // Same axis-zeroing-by-Select3D.posVector logic as
-  // SOLARCHVISION_computeMoveDelta (mouseClicked.pde): moving the same
+  // computeMoveDelta (mouseClicked.pde): moving the same
   // distance d on all three axes from the origin, then letting that
   // function zero out whichever axes posVector excludes, is exactly
   // equivalent to the dx=dy=dz=d then zero-by-posVector this used to do
   // inline.
-  float[] delta = SOLARCHVISION_computeMoveDelta(0, 0, 0, d, d, d);
+  float[] delta = computeMoveDelta(0, 0, 0, d, d, d);
 
   Move3D.selection(delta[0], delta[1], delta[2]);
-  SOLARCHVISION_model_changed();
+  model_changed();
 }
 
 void handlePropertyEditWheel(float wheelValue) {
   int p = int(-wheelValue);
   Edit3D.selection(p);
-  SOLARCHVISION_model_changed();
+  model_changed();
 }
 
 
@@ -318,25 +318,25 @@ void zoomWin3DViewport(float wheelValue) {
   } else {
     WIN3D.Zoom *= pow(2.0, wheelValue);
   }
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void adjustWin3DElevationWheel(float wheelValue) {
   if (wheelValue > 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.Zoom));
   if (wheelValue < 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.Zoom));
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void scaleObjectsWheel(float wheelValue) {
   if (wheelValue > 0) OBJECTS_scale /= pow(2.0, 0.25);
   if (wheelValue < 0) OBJECTS_scale *= pow(2.0, 0.25);
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void scaleSkydomeWheel(float wheelValue) {
   if (wheelValue > 0)   Sky3D.radius *= pow(2.0, 0.25);
   if (wheelValue < 0)   Sky3D.radius /= pow(2.0, 0.25);
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void scaleAllModelWheel(float wheelValue) {
@@ -348,7 +348,7 @@ void scaleAllModelWheel(float wheelValue) {
     OBJECTS_scale *= pow(2.0, 0.25);
       Sky3D.radius *= pow(2.0, 0.25);
   }
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void handleTargetRollXYZWheel(float wheelValue) {
@@ -360,7 +360,7 @@ void handleTargetRollXYZWheel(float wheelValue) {
     WIN3D.rotation_Z += wheelValue * WIN3D.rotation_T;
     WIN3D.reverseTransform_3DViewport();
   }
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void handleCameraRollXYZWheel(float wheelValue) {
@@ -370,37 +370,37 @@ void handleCameraRollXYZWheel(float wheelValue) {
   if (WIN3D.UI_OptionXorY == 1) {
     WIN3D.rotateXY_3DViewport_around_Selection(wheelValue * WIN3D.rotation_T);
   }
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void moveWin3DTowardsSelection(float wheelValue) {
   WIN3D.move_3DViewport_towards_Selection(pow(2, 0.5 * wheelValue));
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void moveWin3DTowardsMouse(float wheelValue) {
   WIN3D.move_3DViewport_towards_Mouse(pow(2, 0.5 * wheelValue));
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void adjustPositionXWheel(float wheelValue) {
   WIN3D.position_X += wheelValue * WIN3D.position_T * OBJECTS_scale;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void adjustPositionYWheel(float wheelValue) {
   WIN3D.position_Y += wheelValue * WIN3D.position_T * OBJECTS_scale;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void adjustRotationXWheel(float wheelValue) {
   WIN3D.rotation_X += wheelValue * WIN3D.rotation_T;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void adjustRotationZWheel(float wheelValue) {
   WIN3D.rotation_Z += wheelValue * WIN3D.rotation_T;
-  SOLARCHVISION_view_changed();
+  view_changed();
 }
 
 void handleTruckOrbitWheel(float wheelValue) {

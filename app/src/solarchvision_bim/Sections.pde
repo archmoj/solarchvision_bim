@@ -22,7 +22,7 @@ class solarchvision_Sections {
     if (Select3D != null) {
       Select3D.deselect_Sections();
     }
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void create (float x, float y, float z, float r, float u, float v, int t, int RES1, int RES2) {
@@ -218,8 +218,8 @@ class solarchvision_Sections {
 
       if (target_window == TypeWindow.OBJ3D) {
         v = 1 - v; // mirroring the image
-        if (_turn == 1) SOLARCHVISION_OBJprintVertex(x, y, z);
-        if (_turn == 2) SOLARCHVISION_OBJprintVtexture(u, v, 0);
+        if (_turn == 1) OBJprintVertex(x, y, z);
+        if (_turn == 2) OBJprintVtexture(u, v, 0);
         if (_turn == 3) {
           obj_lastVertexNumber += 1;
           obj_lastVtextureNumber += 1;
@@ -275,7 +275,7 @@ class solarchvision_Sections {
       if (s > 1) htmlOutput.print(",");
       float u = subFace[s][3];
       float v = 1 - subFace[s][4]; // mirroring the image
-      SOLARCHVISION_HTMLprintVtexture(u, v);
+      HTMLprintVtexture(u, v);
     }
     htmlOutput.println("'></TextureCoordinate>");
 

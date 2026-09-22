@@ -1,5 +1,5 @@
 // ============================================================================
-// Spatial-grid acceleration for SOLARCHVISION_isIntersected_Faces
+// Spatial-grid acceleration for isIntersected_Faces
 //
 // Idea: instead of testing every face for every ray (O(numFaces) per ray),
 // bucket faces into a uniform 3D grid once when the geometry is built, then
@@ -9,7 +9,7 @@
 // *nearest* hit, which the original function did not guarantee.
 //
 // Usage:
-//   Call SOLARCHVISION_buildFaceGrid() once after geometry is loaded or
+//   Call buildFaceGrid() once after geometry is loaded or
 //   whenever it changes (NOT per ray / per frame).
 // ============================================================================
 
@@ -29,7 +29,7 @@ ArrayList<Float> entirePointsZ;
 ArrayList<int[]> entireFaces;
 
 // ---------------------------- build (call ONCE per geometry) ---------------
-void SOLARCHVISION_buildFaceGrid () {
+void buildFaceGrid () {
   if(should_rebuildFaceGrid == false) return;
   should_rebuildFaceGrid = false;
 
@@ -126,11 +126,11 @@ int cellFlatIndex(int ix, int iy, int iz) { return (ix * gridNy + iy) * gridNz +
 // grid traversal and (if you want) a plain fallback can share it.
 // Returns dist2intersect (t along the ray) if the ray hits this face's
 // polygon at t > FLOAT_tiny, otherwise FLOAT_huge. Fills P[0..2] on hit.
-float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P) {
-  return SOLARCHVISION_testFaceHit(f, ray_pnt, ray_dir, P, null);
+float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P) {
+  return testFaceHit(f, ray_pnt, ray_dir, P, null);
 }
 
-float SOLARCHVISION_testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N) {
+float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N) {
   int[] faceNodes = entireFaces.get(f);
   int n = faceNodes.length;
   if (n <= 2) return FLOAT_huge;
@@ -259,12 +259,12 @@ float[] intersectAll (float[] ray_pnt, float[] ray_dir, int firstGuess) {
     FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined
   };
 
-  int f = SOLARCHVISION_isIntersected_Faces(ray_pnt, ray_dir, firstGuess);
+  int f = isIntersected_Faces(ray_pnt, ray_dir, firstGuess);
   if (f <= 0) return return_point; // no hit
 
   float[] P = new float[3];
   float[] N = new float[3];
-  float dist2intersect = SOLARCHVISION_testFaceHit(f, ray_pnt, ray_dir, P, N);
+  float dist2intersect = testFaceHit(f, ray_pnt, ray_dir, P, N);
   if (dist2intersect >= FLOAT_huge) return return_point; // defensive, shouldn't happen
 
   return_point[0] = f;
@@ -312,7 +312,7 @@ boolean rayHitsGridBounds(float[] ray_pnt, float[] ray_dir, float[] tEnterOut) {
 // if you're casting many coherent rays that tend to hit the same face repeatedly
 // (e.g. a static sun angle scanning across a flat roof), testing it first can
 // shortcut the grid walk entirely.
-int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
+int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
   float[] P = new float[3];
 
   // fast-path candidate: test the previous hit first, but do NOT return
@@ -323,7 +323,7 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
   int bestFace = 0;
   float bestDist = FLOAT_huge;
   if (firstGuess > 0) {
-    float d = SOLARCHVISION_testFaceHit(firstGuess, ray_pnt, ray_dir, P);
+    float d = testFaceHit(firstGuess, ray_pnt, ray_dir, P);
     if (d < bestDist) { bestDist = d; bestFace = firstGuess; }
   }
 
@@ -377,7 +377,7 @@ int SOLARCHVISION_isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int fir
       if (faceTestStamp[f] == currentRayStamp) continue; // already tested this ray
       faceTestStamp[f] = currentRayStamp;
 
-      float dist = SOLARCHVISION_testFaceHit(f, ray_pnt, ray_dir, P);
+      float dist = testFaceHit(f, ray_pnt, ray_dir, P);
       if (dist < bestDist) { bestDist = dist; bestFace = f; }
     }
 

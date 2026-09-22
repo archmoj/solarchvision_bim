@@ -142,7 +142,7 @@ class solarchvision_Clone3D {
 
     Select3D.deselect_Model1Ds();
     Select3D.Model1D_ids = appendRange(Select3D.Model1D_ids, numberBefore, allModel1Ds.num);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void Model2Ds (boolean produce_same_variation) {
@@ -154,7 +154,7 @@ class solarchvision_Clone3D {
 
     Select3D.deselect_Model2Ds();
     Select3D.Model2D_ids = appendRange(Select3D.Model2D_ids, numberBefore, allModel2Ds.num);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void Faces (boolean produce_same_variation) {
@@ -167,7 +167,7 @@ class solarchvision_Clone3D {
     }
 
     Select3D.Face_ids = appendRange(new int[0], numberBefore, allFaces.nodes.length);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void Polylines (boolean produce_same_variation) {
@@ -179,7 +179,7 @@ class solarchvision_Clone3D {
     }
 
     Select3D.Polyline_ids = appendRange(new int[0], numberBefore, allPolylines.nodes.length);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void Solids (boolean produce_same_variation) {
@@ -191,7 +191,7 @@ class solarchvision_Clone3D {
 
     Select3D.deselect_Solids();
     Select3D.Solid_ids = appendRange(Select3D.Solid_ids, numberBefore, allSolids.DEF.length);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void Sections (boolean produce_same_variation) {
@@ -208,7 +208,7 @@ class solarchvision_Clone3D {
 
     Select3D.deselect_Sections();
     Select3D.Section_ids = appendRange(Select3D.Section_ids, numberBefore, allSections.num);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void Cameras (boolean produce_same_variation) {
@@ -225,7 +225,7 @@ class solarchvision_Clone3D {
 
     Select3D.deselect_Cameras();
     Select3D.Camera_ids = appendRange(Select3D.Camera_ids, numberBefore, allCameras.num);
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void Groups (boolean produce_same_variation) {
@@ -284,6 +284,6 @@ class solarchvision_Clone3D {
     Select3D.Group_ids = appendRange(Select3D.Group_ids, numberOfGroupsBefore, allGroups.num);
 
     if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 }

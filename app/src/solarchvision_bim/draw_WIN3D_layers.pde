@@ -3,7 +3,7 @@ void draw_WIN3D_layers () {
 
   if (WIN3D.update) {
 
-    SOLARCHVISION_regenerate_desired_bakings();
+    regenerate_desired_bakings();
 
     WIN3D.drawView();
   }

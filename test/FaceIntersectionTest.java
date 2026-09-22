@@ -116,10 +116,10 @@ class FaceIntersectionTest {
     assertFalse(hit);
   }
 
-  // --- SOLARCHVISION_testFaceHit (triangle branch) --------------------
+  // --- testFaceHit (triangle branch) --------------------
 
   // Builds a single triangle face (A=(0,0,0), B=(2,0,0), C=(0,2,0), in
-  // the z=0 plane) as face index 1, bypassing SOLARCHVISION_buildFaceGrid
+  // the z=0 plane) as face index 1, bypassing buildFaceGrid
   // entirely - just the raw point/face lists it would otherwise populate
   // from the real scene.
   private void buildSingleTriangleFace () {
@@ -127,7 +127,7 @@ class FaceIntersectionTest {
     app.entirePointsY = new java.util.ArrayList<Float>();
     app.entirePointsZ = new java.util.ArrayList<Float>();
     app.entireFaces = new java.util.ArrayList<int[]>();
-    app.entireFaces.add(new int[0]); // index 0 is reserved/empty, as SOLARCHVISION_buildFaceGrid does
+    app.entireFaces.add(new int[0]); // index 0 is reserved/empty, as buildFaceGrid does
 
     float[][] triangle = {{0, 0, 0}, {2, 0, 0}, {0, 2, 0}};
     for (float[] p : triangle) {
@@ -143,7 +143,7 @@ class FaceIntersectionTest {
     buildSingleTriangleFace();
     float[] P = new float[3];
     float[] N = new float[3];
-    float dist = app.SOLARCHVISION_testFaceHit(
+    float dist = app.testFaceHit(
       1, new float[]{0.5f, 0.5f, 10}, new float[]{0, 0, -1}, P, N);
 
     assertEquals(10f, dist, EPS);
@@ -155,7 +155,7 @@ class FaceIntersectionTest {
   void testFaceHit_missesWhenThePlaneHitLandsOutsideTheTriangle () {
     buildSingleTriangleFace();
     float[] P = new float[3];
-    float dist = app.SOLARCHVISION_testFaceHit(
+    float dist = app.testFaceHit(
       1, new float[]{5, 5, 10}, new float[]{0, 0, -1}, P);
     assertEquals(app.FLOAT_huge, dist, EPS);
   }
@@ -165,7 +165,7 @@ class FaceIntersectionTest {
     buildSingleTriangleFace();
     float[] P = new float[3];
     // Ray starts below the plane and points further away from it.
-    float dist = app.SOLARCHVISION_testFaceHit(
+    float dist = app.testFaceHit(
       1, new float[]{0.5f, 0.5f, -10}, new float[]{0, 0, -1}, P);
     assertEquals(app.FLOAT_huge, dist, EPS);
   }
@@ -182,7 +182,7 @@ class FaceIntersectionTest {
     app.entireFaces.add(new int[]{0, 1}); // only 2 nodes - not a polygon
 
     float[] P = new float[3];
-    float dist = app.SOLARCHVISION_testFaceHit(
+    float dist = app.testFaceHit(
       1, new float[]{0, 0, 10}, new float[]{0, 0, -1}, P);
     assertEquals(app.FLOAT_huge, dist, EPS);
   }

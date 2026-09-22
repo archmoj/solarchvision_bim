@@ -33,6 +33,6 @@ void update_CLIMATE_TMYEPW () {
   STUDY.revise();
   UI_rollout.revise();
   UI_caseBar.revise();
-  SOLARCHVISION_view_changed();
+  view_changed();
 
 }

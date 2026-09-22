@@ -18,7 +18,7 @@ class solarchvision_UI_consoleBar {
         fill(63);
       }
       noStroke();
-      rect(0, SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C, width, SOLARCHVISION_pixel_D);
+      rect(0, pixel_A + pixel_B + 2 * pixel_H + pixel_C, width, pixel_D);
 
       noStroke();
 
@@ -26,7 +26,7 @@ class solarchvision_UI_consoleBar {
 
 
       pushMatrix();
-      translate(0, 0.625 * MessageSize + SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 2 * SOLARCHVISION_pixel_H + SOLARCHVISION_pixel_C);
+      translate(0, 0.625 * MessageSize + pixel_A + pixel_B + 2 * pixel_H + pixel_C);
 
       for (int q = 0; q < maxDisplayLines; q++) {
 
@@ -47,8 +47,8 @@ class solarchvision_UI_consoleBar {
 
       popMatrix();
 
-      SOLARCHVISION_X_clicked = -1;
-      SOLARCHVISION_Y_clicked = -1;
+      X_clicked = -1;
+      Y_clicked = -1;
     }
   }
 
@@ -60,7 +60,7 @@ class solarchvision_UI_consoleBar {
   }
 
   String runLastCommand() {
-    return SOLARCHVISION_runScriptLine(allCommands[allCommands.length - 1]);
+    return runScriptLine(allCommands[allCommands.length - 1]);
   }
 
   void keyPressed (KeyEvent e) {

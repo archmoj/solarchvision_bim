@@ -53,7 +53,7 @@ class PaintTest {
     // COLOR_STYLE_Current == 15 maps straight through to DRYW's COL[1..3]
     // as c[1..3] (no reordering) - this is exactly the kind of dispatch
     // where an index mix-up (like the one found and fixed in
-    // SOLARCHVISION_SolarAtSurface) could hide, so it's checked directly
+    // SolarAtSurface) could hide, so it's checked directly
     // against calling DRYW itself rather than just trusting the wiring.
     float[] direct0 = app.PAINT.DRYW(0f);
     float[] dispatched0 = app.PAINT.getColorStyle(15, 0f);

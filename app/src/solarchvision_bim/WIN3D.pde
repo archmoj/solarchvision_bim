@@ -5,11 +5,11 @@ class solarchvision_WIN3D {
   // scales
   float scale;
   // (top-left) corner
-  int cX = SOLARCHVISION_pixel_W;
-  int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+  int cX = pixel_W;
+  int cY = pixel_A + pixel_B + 0;
   // width and height
-  int dX = SOLARCHVISION_pixel_W;
-  int dY = SOLARCHVISION_pixel_H;
+  int dX = pixel_W;
+  int dY = pixel_H;
   float view_R = float(dY) / float(dX);
 
   float position_X = 0;
@@ -22,7 +22,7 @@ class solarchvision_WIN3D {
   float rotation_Z = -45.0;
   float rotation_T = 5.0; // step
 
-  float Zoom = 90.0; //60.0; // / (SOLARCHVISION_pixel_H / 300.0);
+  float Zoom = 90.0; //60.0; // / (pixel_H / 300.0);
 
   int ViewType = 1; // 0: Ortho 1: Perspective
 
@@ -314,7 +314,7 @@ class solarchvision_WIN3D {
 
     this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
 
-    float pal_length = 1 * SOLARCHVISION_pixel_H * this.ImageScale / the_scale;
+    float pal_length = 1 * pixel_H * this.ImageScale / the_scale;
     float y1 = -0.2 * (pal_length / 11.0) + (0.4 * this.dY / the_scale);
     float y2 = y1 + 0.4 * (pal_length / 11.0);
     float txtSize = y2 - y1;
@@ -550,26 +550,26 @@ class solarchvision_WIN3D {
   void handleAltArrowKeys (int keyCode) {
     switch (keyCode) {
       case RIGHT:
-        SOLARCHVISION_adjustShadeTime(1);
-        SOLARCHVISION_ShadeViewport();
+        adjustShadeTime(1);
+        ShadeViewport();
         this.revise();
         break;
 
       case LEFT:
-        SOLARCHVISION_adjustShadeTime(-1);
-        SOLARCHVISION_ShadeViewport();
+        adjustShadeTime(-1);
+        ShadeViewport();
         this.revise();
         break;
 
       case UP:
-        SOLARCHVISION_adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
-        SOLARCHVISION_ShadeViewport();
+        adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
+        ShadeViewport();
         this.revise();
         break;
 
       case DOWN:
-        SOLARCHVISION_adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
-        SOLARCHVISION_ShadeViewport();
+        adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
+        ShadeViewport();
         this.revise();
         break;
     }
@@ -589,7 +589,7 @@ class solarchvision_WIN3D {
           float r = (keyCode == DOWN) ? -5 : 5;
           int the_Vector = Select3D.rotVector;
           Rotate3D.selection(x0, y0, z0, r, the_Vector);
-          SOLARCHVISION_model_changed();
+          model_changed();
         }
 
         if (WIN3D.UI_CurrentTask == UITASK.Scale) {
@@ -603,7 +603,7 @@ class solarchvision_WIN3D {
           if (the_Vector == 2) { sx = 1; sy = 1; }
 
           Scale3D.selection(x0, y0, z0, sx, sy, sz);
-          SOLARCHVISION_model_changed();
+          model_changed();
         }
 
         if (WIN3D.UI_CurrentTask == UITASK.Move) {
@@ -616,14 +616,14 @@ class solarchvision_WIN3D {
           if (the_Vector == 2) { dx = 0; dy = 0; }
 
           Move3D.selection(dx, dy, dz);
-          SOLARCHVISION_model_changed();
+          model_changed();
         }
 
         if (WIN3D.UI_TaskModifyParameter == 0) {
           if (WIN3D.UI_CurrentTask >= UITASK.Seed_Material) {
             int p = (keyCode == DOWN) ? -1 : 1;
             Edit3D.selection(p);
-            SOLARCHVISION_model_changed();
+            model_changed();
           }
         }
 
@@ -752,7 +752,7 @@ class solarchvision_WIN3D {
         this.currentCamera += 1;
         if (this.currentCamera > allCameras.num - 1) this.currentCamera = 0;
         WIN3D.apply_currentCamera();
-        SOLARCHVISION_modify_Viewport_Title();
+        modify_Viewport_Title();
         reviseViews();
         break;
 
@@ -760,7 +760,7 @@ class solarchvision_WIN3D {
         this.currentCamera -= 1;
         if (this.currentCamera < 0) this.currentCamera = allCameras.num - 1;
         WIN3D.apply_currentCamera();
-        SOLARCHVISION_modify_Viewport_Title();
+        modify_Viewport_Title();
         reviseViews();
         break;
 
@@ -795,13 +795,13 @@ class solarchvision_WIN3D {
         break;
 
       case ' ':
-        SOLARCHVISION_ShadeViewport();
-        SOLARCHVISION_adjustShadeTime(1);
+        ShadeViewport();
+        adjustShadeTime(1);
         break;
 
       case BACKSPACE:
-        SOLARCHVISION_ShadeViewport();
-        SOLARCHVISION_adjustShadeTime(-1);
+        ShadeViewport();
+        adjustShadeTime(-1);
         break;
     }
   }
@@ -929,10 +929,10 @@ class solarchvision_WIN3D {
   }
 
   void rotateXY_3DViewport_around_LandIntersection (float t) {
-    float Image_X = SOLARCHVISION_X_click1 - (this.cX + 0.5 * this.dX);
-    float Image_Y = SOLARCHVISION_Y_click1 - (this.cY + 0.5 * this.dY);
+    float Image_X = X_click1 - (this.cX + 0.5 * this.dX);
+    float Image_Y = Y_click1 - (this.cY + 0.5 * this.dY);
 
-    SOLARCHVISION_ClickRay ray = SOLARCHVISION_computeClickRay(Image_X, Image_Y);
+    ClickRay ray = computeClickRay(Image_X, Image_Y);
     float[] ray_start = ray.start;
     float[] ray_direction = ray.direction;
 

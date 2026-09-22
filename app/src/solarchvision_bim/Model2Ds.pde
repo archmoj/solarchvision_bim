@@ -29,7 +29,7 @@ class solarchvision_Model2Ds {
       Select3D.deselect_Model2Ds();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void create (String t, int m, float x, float y, float z, float s) {
@@ -407,20 +407,20 @@ class solarchvision_Model2Ds {
 
                   if (_turn == 1) {
 
-                    SOLARCHVISION_OBJprintVertex(x1, y1, z);
-                    SOLARCHVISION_OBJprintVertex(x2, y2, z);
-                    SOLARCHVISION_OBJprintVertex(x2, y2, (z + 2 * rh));
-                    SOLARCHVISION_OBJprintVertex(x1, y1, (z + 2 * rh));
+                    OBJprintVertex(x1, y1, z);
+                    OBJprintVertex(x2, y2, z);
+                    OBJprintVertex(x2, y2, (z + 2 * rh));
+                    OBJprintVertex(x1, y1, (z + 2 * rh));
 
                     num_vertices_added += 4;
 
                   }
 
                   if (_turn == 2) {
-                      SOLARCHVISION_OBJprintVtexture(1, 0, 0);
-                      SOLARCHVISION_OBJprintVtexture(0, 0, 0);
-                      SOLARCHVISION_OBJprintVtexture(0, 1, 0);
-                      SOLARCHVISION_OBJprintVtexture(1, 1, 0);
+                      OBJprintVtexture(1, 0, 0);
+                      OBJprintVtexture(0, 0, 0);
+                      OBJprintVtexture(0, 1, 0);
+                      OBJprintVtexture(1, 1, 0);
                   }
 
                   if (_turn == 3) {
@@ -554,20 +554,20 @@ class solarchvision_Model2Ds {
                   if (target_window == TypeWindow.OBJ3D) {
                     if (_turn == 1) {
 
-                      SOLARCHVISION_OBJprintVertex(x1, y1, (z + 2 * rh * ratio));
-                      SOLARCHVISION_OBJprintVertex(x2, y2, (z + 2 * rh * ratio));
-                      SOLARCHVISION_OBJprintVertex(x3, y3, (z + 2 * rh * ratio));
-                      SOLARCHVISION_OBJprintVertex(x4, y4, (z + 2 * rh * ratio));
+                      OBJprintVertex(x1, y1, (z + 2 * rh * ratio));
+                      OBJprintVertex(x2, y2, (z + 2 * rh * ratio));
+                      OBJprintVertex(x3, y3, (z + 2 * rh * ratio));
+                      OBJprintVertex(x4, y4, (z + 2 * rh * ratio));
 
                       num_vertices_added += 4;
                     }
 
                     if (_turn == 2) {
 
-                      SOLARCHVISION_OBJprintVtexture(1, 1 - ratio, 0);
-                      SOLARCHVISION_OBJprintVtexture(0, 1 - ratio, 0);
-                      SOLARCHVISION_OBJprintVtexture(0, 1, 0);
-                      SOLARCHVISION_OBJprintVtexture(1, 1, 0);
+                      OBJprintVtexture(1, 1 - ratio, 0);
+                      OBJprintVtexture(0, 1 - ratio, 0);
+                      OBJprintVtexture(0, 1, 0);
+                      OBJprintVtexture(1, 1, 0);
                     }
 
                     if (_turn == 3) {
@@ -615,13 +615,13 @@ class solarchvision_Model2Ds {
 
                     htmlOutput.print ("\t\t\t\t\t\t<TextureCoordinate point='");
 
-                    SOLARCHVISION_HTMLprintVtexture(1, 1 - ratio);
+                    HTMLprintVtexture(1, 1 - ratio);
                     htmlOutput.print (",");
-                    SOLARCHVISION_HTMLprintVtexture(0, 1 - ratio);
+                    HTMLprintVtexture(0, 1 - ratio);
                     htmlOutput.print (",");
-                    SOLARCHVISION_HTMLprintVtexture(0, 1);
+                    HTMLprintVtexture(0, 1);
                     htmlOutput.print (",");
-                    SOLARCHVISION_HTMLprintVtexture(1, 1);
+                    HTMLprintVtexture(1, 1);
                     htmlOutput.println("'></TextureCoordinate>");
 
                     htmlOutput.println("\t\t\t\t\t</IndexedFaceSet>");

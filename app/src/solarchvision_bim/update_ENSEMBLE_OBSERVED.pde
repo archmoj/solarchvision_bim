@@ -70,10 +70,10 @@ void update_ENSEMBLE_OBSERVED (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
       THE_HOUR = now_i;
     }
 
-    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_OBSERVED);
-    SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_OBSERVED); // <<<<<<<<<<<<
-    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_OBSERVED);
-    SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_OBSERVED);
+    setDataFlags(dataID_ENSEMBLE_OBSERVED);
+    postProcess_solarsUsingCloud(dataID_ENSEMBLE_OBSERVED); // <<<<<<<<<<<<
+    postProcess_solarEffects(dataID_ENSEMBLE_OBSERVED);
+    postProcess_developDATA(dataID_ENSEMBLE_OBSERVED);
 
     WORLD.displayAll_SWOB = 1;
     WORLD.displayNear_SWOB = true;
@@ -83,7 +83,7 @@ void update_ENSEMBLE_OBSERVED (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
   STUDY.revise();
   UI_rollout.revise();
   UI_caseBar.revise();
-  SOLARCHVISION_view_changed();
+  view_changed();
 
   SampleStation_Start = ENSEMBLE_OBSERVED_start;
   SampleStation_End = ENSEMBLE_OBSERVED_end;

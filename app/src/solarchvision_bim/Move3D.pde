@@ -36,7 +36,7 @@ class solarchvision_Move3D {
       Land3D.Mesh[i][j][2] += dz;
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void softSelection (float dx, float dy, float dz) {
@@ -47,7 +47,7 @@ class solarchvision_Move3D {
       allPoints.move(f, dx * v, dy * v, dz * v);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Vertices (float dx, float dy, float dz) {
@@ -56,7 +56,7 @@ class solarchvision_Move3D {
       allPoints.move(f, dx, dy, dz);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Polylines (float dx, float dy, float dz) {
@@ -67,7 +67,7 @@ class solarchvision_Move3D {
       allPoints.move(f, dx, dy, dz);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Faces (float dx, float dy, float dz) {
@@ -78,7 +78,7 @@ class solarchvision_Move3D {
       allPoints.move(f, dx, dy, dz);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Model1Ds (float dx, float dy, float dz) {
@@ -87,7 +87,7 @@ class solarchvision_Move3D {
       allModel1Ds.move(f, dx, dy, dz);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Model2Ds (float dx, float dy, float dz) {
@@ -96,7 +96,7 @@ class solarchvision_Move3D {
       allModel2Ds.move(f, dx, dy, dz);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void moveSolid (int f, float dx, float dy, float dz) {
@@ -118,7 +118,7 @@ class solarchvision_Move3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Sections (float dx, float dy, float dz) {
@@ -128,7 +128,7 @@ class solarchvision_Move3D {
     }
 
     allSolidImpacts.calculate_Impact_selectedSections();
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Cameras (float dx, float dy, float dz) {
@@ -144,7 +144,7 @@ class solarchvision_Move3D {
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Groups (float dx, float dy, float dz) {
@@ -185,6 +185,6 @@ class solarchvision_Move3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 }

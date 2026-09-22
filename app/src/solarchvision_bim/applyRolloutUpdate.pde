@@ -123,7 +123,7 @@ void applyRolloutUpdate() {
   if (pre_STUDY_PlotImpacts != STUDY.PlotImpacts) {
     STUDY.revise();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_SampleYear_Start != SampleYear_Start) {
@@ -220,36 +220,36 @@ void applyRolloutUpdate() {
 
   if (pre_Land3D_loadMesh != Land3D.loadMesh) {
     Land3D.update_mesh();
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   if (pre_Land3D_loadTextures != Land3D.loadTextures) {
     Land3D.update_textures();
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   if (pre_Selection_Camera_displayEdges != Select3D.Camera_displayEdges) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Section_displayEdges != Select3D.Section_displayEdges) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Solid_displayEdges != Select3D.Solid_displayEdges) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_LandPoint_displayPoints != Select3D.LandPoint_displayPoints) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Model1D_displayEdges != Select3D.Model1D_displayEdges) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Model2D_displayEdges != Select3D.Model2D_displayEdges) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_softPower != Select3D.softPower) {
@@ -261,15 +261,15 @@ void applyRolloutUpdate() {
   }
 
   if (pre_Selection_alignX != Select3D.alignX) {
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   if (pre_Selection_alignY != Select3D.alignY) {
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   if (pre_Selection_alignZ != Select3D.alignZ) {
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   if (pre_Selection_posValue != Select3D.posValue) {
@@ -297,7 +297,7 @@ void applyRolloutUpdate() {
 
     Move3D.selection(dx, dy, dz);
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
   if (pre_Selection_rotValue != Select3D.rotValue) {
 
@@ -313,7 +313,7 @@ void applyRolloutUpdate() {
 
     Rotate3D.selection(x0, y0, z0, r, the_Vector);
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
   if (pre_Selection_scaleValue != Select3D.scaleValue) {
 
@@ -346,59 +346,59 @@ void applyRolloutUpdate() {
 
     Scale3D.selection(x0, y0, z0, sx, sy, sz);
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   if (pre_Selection_displayReferencePivot != Select3D.displayReferencePivot) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Group_displayPivot != Select3D.Group_displayPivot) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Group_displayEdges != Select3D.Group_displayEdges) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Group_displayBox != Select3D.Group_displayBox) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Face_displayEdges != Select3D.Face_displayEdges) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Face_displayVertexCount != Select3D.Face_displayVertexCount) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Polyline_displayVertexCount != Select3D.Polyline_displayVertexCount) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Vertex_displayVertices != Select3D.Vertex_displayVertices) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Selection_Polyline_displayVertices != Select3D.Polyline_displayVertices) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_WIN3D_currentCamera != WIN3D.currentCamera) {
     WIN3D.apply_currentCamera();
 
-    SOLARCHVISION_modify_Viewport_Title();
+    modify_Viewport_Title();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_WIN3D_FacesShade != WIN3D.FacesShade) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_Create3D_Tessellation != allFaces.displayTessellation) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_USER_create_powAll != User3D.create_powAll) {
@@ -412,102 +412,102 @@ void applyRolloutUpdate() {
   if (pre_allSolids_palette_CLR != allSolids.palette_CLR) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
   if (pre_allSolids_palette_DIR != allSolids.palette_DIR) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
   if (pre_allSolids_palette_MLT != allSolids.palette_MLT) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allSolidImpacts_Grade != allSolidImpacts.Grade) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
   if (pre_allSolidImpacts_Power != allSolidImpacts.Power) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
   if (pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType] != allSolidImpacts.R[allSolidImpacts.sectionType]) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
   if (pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType] != allSolidImpacts.Z[allSolidImpacts.sectionType]) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allSolidImpacts_U_scale[allSolidImpacts.sectionType] != allSolidImpacts.U[allSolidImpacts.sectionType]) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allSolidImpacts_V_scale[allSolidImpacts.sectionType] != allSolidImpacts.V[allSolidImpacts.sectionType]) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allSolidImpacts_sU_offset[allSolidImpacts.sectionType] != allSolidImpacts.X[allSolidImpacts.sectionType]) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
   if (pre_allSolidImpacts_sV_offset[allSolidImpacts.sectionType] != allSolidImpacts.Y[allSolidImpacts.sectionType]) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allSolidImpacts_Wspd != allSolidImpacts.WindSpeed) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
   if (pre_allSolidImpacts_Wdir != allSolidImpacts.WindDirection) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allSolidImpacts_Process_subDivisions != allSolidImpacts.Process_subDivisions) {
     allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allSolidImpacts_displayPoints != allSolidImpacts.displayPoints) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allSolidImpacts_displayLines != allSolidImpacts.displayLines) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allPoints_displayAll != allPoints.displayAll) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allFaces_displayEdges != allFaces.displayEdges) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_allFaces_displayNormals != allFaces.displayNormals) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (pre_WindFlow_display != allWindFlows.displayAll) {
-    SOLARCHVISION_view_changed();
+    view_changed();
   }
 
   if (STUDY.plotSetup != pre_STUDY_Setup) {

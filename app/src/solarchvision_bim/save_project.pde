@@ -1,4 +1,4 @@
-void SOLARCHVISION_saveProject (String myFile) {
+void saveProject (String myFile) {
 
   myFile = myFile.replace(char(92), '/');
 
@@ -6,10 +6,10 @@ void SOLARCHVISION_saveProject (String myFile) {
 
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
-  xml.setName("SOLARCHVISION_" + SOLARCHVISION_version + "_project");
+  xml.setName("" + version + "_project");
 
   {
-    XML parent = xml.addChild("SOLARCHVISION_variables");
+    XML parent = xml.addChild("variables");
 
     XML_setInt(parent, "current_ObjectCategory", current_ObjectCategory);
 

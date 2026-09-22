@@ -715,15 +715,15 @@ class solarchvision_UI_menuBar {
 
     fill(127);
     noStroke();
-    rect(0, 0, width, SOLARCHVISION_pixel_A);
+    rect(0, 0, width, pixel_A);
 
     X_control = 0; //0.25 * MessageSize;
-    Y_control = 0.5 * SOLARCHVISION_pixel_A;
+    Y_control = 0.5 * pixel_A;
 
     for (int i = 0; i < this.Items.length; i++) {
       float cx = X_control + i * this.width_parent;
       float cy = Y_control;
-      float cr = 0.5 * SOLARCHVISION_pixel_A;
+      float cr = 0.5 * pixel_A;
 
       drawParentTab(i, cx, cy, cr);
 
@@ -732,8 +732,8 @@ class solarchvision_UI_menuBar {
       }
     }
 
-    SOLARCHVISION_X_clicked = -1;
-    SOLARCHVISION_Y_clicked = -1;
+    X_clicked = -1;
+    Y_clicked = -1;
   }
 
   // Draws a single top-level tab (e.g. "File", "Tools", ...) and updates
@@ -741,7 +741,7 @@ class solarchvision_UI_menuBar {
   void drawParentTab(int i, float cx, float cy, float cr) {
     if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr)) {
       if (this.selected_parent == -1) {
-        pre_screen = get(0, SOLARCHVISION_pixel_A, width, height - SOLARCHVISION_pixel_A);
+        pre_screen = get(0, pixel_A, width, height - pixel_A);
         //println("Screen GET!");
       }
       this.selected_parent = i;
@@ -764,7 +764,7 @@ class solarchvision_UI_menuBar {
 
   // Draws the dropdown for the currently open parent tab.
   void drawChildMenu(int i, float cx, float cy, float cr) {
-    image(pre_screen, 0, SOLARCHVISION_pixel_A);
+    image(pre_screen, 0, pixel_A);
     this.selected_child = 0;
 
     float widthChildren = computeChildMenuWidth(i);
@@ -788,16 +788,16 @@ class solarchvision_UI_menuBar {
   // Draws one row (item or divider) of an open dropdown, including hover
   // highlighting and the disabled/greyed-out state.
   void drawChildRow(int i, int j, float cx, float cy, float cr, float widthChildren) {
-    float rowTop = cy - cr + SOLARCHVISION_pixel_A + (j - 1) * SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR;
-    float rowHeight = SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR;
+    float rowTop = cy - cr + pixel_A + (j - 1) * pixel_A * CHILD_ROW_HEIGHT_FACTOR;
+    float rowHeight = pixel_A * CHILD_ROW_HEIGHT_FACTOR;
 
     String label = this.Items[i][j];
     boolean isSelectable = !isDivider(label);
 
     boolean isHovered = isSelectable && isInside(
       UI_X_moved, UI_Y_moved,
-      cx, ceil(cy - cr + j * SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR) + 1,
-      cx + widthChildren, floor(cy + cr + j * SOLARCHVISION_pixel_A * CHILD_ROW_HEIGHT_FACTOR) - 1
+      cx, ceil(cy - cr + j * pixel_A * CHILD_ROW_HEIGHT_FACTOR) + 1,
+      cx + widthChildren, floor(cy + cr + j * pixel_A * CHILD_ROW_HEIGHT_FACTOR) - 1
     );
 
     if (isHovered) {

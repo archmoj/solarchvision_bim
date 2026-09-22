@@ -44,7 +44,7 @@ class solarchvision_Scale3D {
       Land3D.Mesh[i][j][2] = P[2];
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void softSelection (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -61,7 +61,7 @@ class solarchvision_Scale3D {
       allPoints.setZ(f, (z0 + sz * z) * v + (z0 + z) * (1 - v));
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -74,7 +74,7 @@ class solarchvision_Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Polylines (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -89,7 +89,7 @@ class solarchvision_Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Faces (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -104,7 +104,7 @@ class solarchvision_Scale3D {
       allPoints.setZ(f, P[2]);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Solids (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -122,7 +122,7 @@ class solarchvision_Scale3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Sections (float sx, float sy) {
@@ -133,7 +133,7 @@ class solarchvision_Scale3D {
     }
 
     allSolidImpacts.calculate_Impact_selectedSections();
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Cameras (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -156,7 +156,7 @@ class solarchvision_Scale3D {
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -171,7 +171,7 @@ class solarchvision_Scale3D {
       allModel1Ds.magS(f, sz);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -189,7 +189,7 @@ class solarchvision_Scale3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Groups (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -260,6 +260,6 @@ class solarchvision_Scale3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 }

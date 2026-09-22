@@ -1,10 +1,10 @@
-void SOLARCHVISION_preBakeViewport () {
+void preBakeViewport () {
 
   cursor(WAIT);
 
   println("PreBaking for Direct and Diffuse models. Please wait...");
 
-  SOLARCHVISION_buildFaceGrid();
+  buildFaceGrid();
 
   Camera_Variation = 0;
 
@@ -175,7 +175,7 @@ void SOLARCHVISION_preBakeViewport () {
           // when SHD = 0;
           Diffuse_Matrix[0][np] += SkyMask / float(DiffuseVectors.length);
 
-          lastHitDiffuse[n_Ray] = SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse[n_Ray]);
+          lastHitDiffuse[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse[n_Ray]);
 
           // when SHD = 1;
           if (lastHitDiffuse[n_Ray] == 0) {
@@ -205,7 +205,7 @@ void SOLARCHVISION_preBakeViewport () {
 
         // when SHD = 1;
 
-        lastHitDirect[m] = SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, lastHitDirect[m]);
+        lastHitDirect[m] = isIntersected_Faces(ray_start, ray_direction, lastHitDirect[m]);
 
         if (lastHitDirect[m] == 0) {
           Direct_RGBA[m][1].pixels[np] = Map_SunBelowHorizon[m] ? color(0, 255) : color(255 * SunMask, 255);

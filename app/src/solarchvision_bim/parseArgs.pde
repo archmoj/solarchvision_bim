@@ -27,8 +27,8 @@ void _useArg(String arg) {
     _tokens = split(CAP_arg, '=');
     if (_tokens.length > 1) {
       input_str = _tokens[1];
-      if (input_str.equals("GUI")) SOLARCHVISION_control = USER_GUI;
-      else if (input_str.equals("AUTO")) SOLARCHVISION_control = USER_AUTO;
+      if (input_str.equals("GUI")) control = USER_GUI;
+      else if (input_str.equals("AUTO")) control = USER_AUTO;
     }
   }
 

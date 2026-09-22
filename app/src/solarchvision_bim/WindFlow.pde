@@ -130,8 +130,8 @@ class solarchvision_WindFlow {
 
             if (_turn == 1) {
 
-              SOLARCHVISION_OBJprintVertex(x1, y1, z1);
-              SOLARCHVISION_OBJprintVertex(x2, y2, z2);
+              OBJprintVertex(x1, y1, z1);
+              OBJprintVertex(x2, y2, z2);
 
               for (int i = 0; i < 4; i++) {
 
@@ -155,7 +155,7 @@ class solarchvision_WindFlow {
                 py = py_rot;
                 pz = pz_rot;
 
-                SOLARCHVISION_OBJprintVertex(x1 + px, y1 + py, z1 + pz);
+                OBJprintVertex(x1 + px, y1 + py, z1 + pz);
               }
             }
 
@@ -168,7 +168,7 @@ class solarchvision_WindFlow {
                 if (u1 > 0.999) u1 = 0.999;
                 if (u1 < 0.001) u1 = 0.001;
 
-                SOLARCHVISION_OBJprintVtexture(u1, 0.5, 0);
+                OBJprintVtexture(u1, 0.5, 0);
               }
             }
 

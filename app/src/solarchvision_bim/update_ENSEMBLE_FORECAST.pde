@@ -29,16 +29,16 @@ void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
       }
     }
 
-    SOLARCHVISION_setDataFlags(dataID_ENSEMBLE_FORECAST);
-    SOLARCHVISION_postProcess_fillGaps(dataID_ENSEMBLE_FORECAST);
+    setDataFlags(dataID_ENSEMBLE_FORECAST);
+    postProcess_fillGaps(dataID_ENSEMBLE_FORECAST);
     if (CLIMATIC_SolarForecast == 1) {
-      SOLARCHVISION_postProcess_climaticSolarForecast();
+      postProcess_climaticSolarForecast();
     }
     else {
-      SOLARCHVISION_postProcess_solarsUsingCloud(dataID_ENSEMBLE_FORECAST);
+      postProcess_solarsUsingCloud(dataID_ENSEMBLE_FORECAST);
     }
-    SOLARCHVISION_postProcess_solarEffects(dataID_ENSEMBLE_FORECAST);
-    SOLARCHVISION_postProcess_developDATA(dataID_ENSEMBLE_FORECAST);
+    postProcess_solarEffects(dataID_ENSEMBLE_FORECAST);
+    postProcess_developDATA(dataID_ENSEMBLE_FORECAST);
 
     WORLD.displayAll_NAEFS = 1;
     WORLD.displayNear_NAEFS = true;
@@ -48,7 +48,7 @@ void update_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE
   STUDY.revise();
   UI_rollout.revise();
   UI_caseBar.revise();
-  SOLARCHVISION_view_changed();
+  view_changed();
 
   SampleMember_Start = ENSEMBLE_FORECAST_start;
   SampleMember_End = ENSEMBLE_FORECAST_end;

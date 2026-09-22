@@ -240,7 +240,7 @@ class solarchvision_Modify3D {
       allPoints.move(vNo, Vertex_offsetValues[o][0], Vertex_offsetValues[o][1], Vertex_offsetValues[o][2]);
     }
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void separateVertices_Selection () {
@@ -401,7 +401,7 @@ class solarchvision_Modify3D {
       }
     }
 
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void insertParallelOpennings_Selection () {
@@ -481,7 +481,7 @@ class solarchvision_Modify3D {
       }
     }
 
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void insertRotatedOpennings_Selection () {
@@ -552,7 +552,7 @@ class solarchvision_Modify3D {
       }
     }
 
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void insertEdgeOpennings_Selection () {
@@ -615,7 +615,7 @@ class solarchvision_Modify3D {
       }
     }
 
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void tessellateRowsColumns_Selection () {
@@ -711,7 +711,7 @@ class solarchvision_Modify3D {
     }
 
     appendNewFaceSelection(newFaceIndices_L);
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void tessellateRectangular_Selection () {
@@ -779,7 +779,7 @@ class solarchvision_Modify3D {
     }
 
     appendNewFaceSelection(newFaceIndices_L);
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void tessellateTriangular_Selection () {
@@ -833,7 +833,7 @@ class solarchvision_Modify3D {
     }
 
     appendNewFaceSelection(newFaceIndices_L);
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void forceTriangulateFaces_Selection () {
@@ -885,7 +885,7 @@ class solarchvision_Modify3D {
     }
 
     appendNewFaceSelection(newFaceIndices_L);
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void optimizeFace_Selection () {
@@ -921,7 +921,7 @@ class solarchvision_Modify3D {
       }
     }
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void extrudeFaceEdges_Selection () {
@@ -1025,7 +1025,7 @@ class solarchvision_Modify3D {
       appendNewFaceSelection(newFaceIndices_L);
     }
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void autoNormalFaces_Selection () {
@@ -1063,7 +1063,7 @@ class solarchvision_Modify3D {
       }
     }
 
-    SOLARCHVISION_switch_category(ObjectCategory.FACE);
+    switch_category(ObjectCategory.FACE);
   }
 
   void flatten_LandPoints () {
@@ -1074,7 +1074,7 @@ class solarchvision_Modify3D {
       Land3D.Mesh[i][j][2] = 0;
     }
 
-    SOLARCHVISION_selection_changed();
+    selection_changed();
   }
 
   void changeVisibilityFaces_Selection (int new_vsb) {
@@ -1091,7 +1091,7 @@ class solarchvision_Modify3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void changeVisibilityFaces_Scene (int new_vsb) {
@@ -1099,7 +1099,7 @@ class solarchvision_Modify3D {
       allFaces.setVisibility(f, new_vsb);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void reverseVisibilityFaces_Scene () {
@@ -1113,7 +1113,7 @@ class solarchvision_Modify3D {
       allFaces.setVisibility(f, new_vsb);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void changeVisibilityPolylines_Selection (int new_vsb) {
@@ -1130,7 +1130,7 @@ class solarchvision_Modify3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void changeVisibilityPolylines_Scene (int new_vsb) {
@@ -1138,7 +1138,7 @@ class solarchvision_Modify3D {
       allPolylines.setVisibility(f, new_vsb);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void reverseVisibilityPolylines_Scene () {
@@ -1152,7 +1152,7 @@ class solarchvision_Modify3D {
       allPolylines.setVisibility(f, new_vsb);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void isolate_Selection () {

@@ -24,7 +24,7 @@ class solarchvision_Cameras {
       Select3D.deselect_Cameras();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
 

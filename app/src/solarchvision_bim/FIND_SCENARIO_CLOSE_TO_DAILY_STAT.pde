@@ -1,4 +1,4 @@
-int SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, float DATE_ANGLE, int Impact_TYPE) {
+int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, float DATE_ANGLE, int Impact_TYPE) {
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
@@ -50,7 +50,7 @@ int SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end
         float Pdif = getValue_CurrentDataSource(i, now_j, now_k, layerDifId);
         if (is_undefined(Pdif)) continue;
 
-        boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
+        boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
         if (!isMemberCounted) continue;
 
         if (is_undefined(valuesSUM[idx])) {
@@ -66,7 +66,7 @@ int SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end
 }
 
 int _FIND_SCENARIO_CLOSE_TO_STAT (float[] values, int l) {
-  float normal = SOLARCHVISION_NORMAL(values)[l];
+  float normal = NORMAL(values)[l];
   int n = values.length;
 
   int out = -1;

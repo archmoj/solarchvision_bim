@@ -1,10 +1,10 @@
-void SOLARCHVISION_calculate_VertexSolar_array () {
+void calculate_VertexSolar_array () {
 
   cursor(WAIT);
 
   println("Calculating direct and diffuse values at each vertex. Please wait...");
 
-  SOLARCHVISION_buildFaceGrid();
+  buildFaceGrid();
 
   VertexSolar_resize_array();
 
@@ -50,7 +50,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
     float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
     TS_DayTime[jIdx] = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1);
 
-    int nk = SOLARCHVISION_FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
     if (nk == -1) continue;
 
     TS_dayHasData[jIdx] = true;
@@ -77,7 +77,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
       if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) continue;
 
-      boolean isMemberCounted = SOLARCHVISION_filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
+      boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
       if (!isMemberCounted) continue;
 
       float[] SunDir = { SunR[1], SunR[2], SunR[3] };
@@ -212,7 +212,7 @@ void SOLARCHVISION_calculate_VertexSolar_array () {
 
                     if (funcs.vec_dot(W, ray_direction) > 0) { // removes backing faces
 
-                      if (SOLARCHVISION_isIntersected_Faces(ray_start, ray_direction, 0) != 0) {
+                      if (isIntersected_Faces(ray_start, ray_direction, 0) != 0) {
                         if (values_E_dir < 0) {
                           valuesSUM_EFF_P += -(values_E_dir * SunMask);
                           valuesSUM_EFF_N += -(values_E_dif * SkyMask);

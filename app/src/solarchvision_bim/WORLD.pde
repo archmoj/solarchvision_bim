@@ -38,10 +38,10 @@ class solarchvision_WORLD {
 
   // (top-left) corner
   int cX = 0;
-  int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+  int cY = pixel_A + pixel_B + 0;
   // width and height
-  int dX = SOLARCHVISION_pixel_W;
-  int dY = SOLARCHVISION_pixel_H;
+  int dX = pixel_W;
+  int dY = pixel_H;
 
   boolean update = true;
   boolean include = true;
@@ -196,7 +196,7 @@ class solarchvision_WORLD {
       this.loadImages(return_VIEWPORT);
 
       if (Earth3D.displaySurface) {
-        SOLARCHVISION_view_changed();
+        view_changed();
       }
     }
 
@@ -744,7 +744,7 @@ class solarchvision_WORLD {
 
         // Drawn directly on the main canvas (not inside this.graphics) so
         // it's redrawn/cleared in step with WORLD's own next repaint.
-        SOLARCHVISION_drawPickLists();
+        drawPickLists();
       }
 
 

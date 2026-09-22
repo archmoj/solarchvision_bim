@@ -1,4 +1,4 @@
-void SOLARCHVISION_load_project (String myFile) {
+void load_project (String myFile) {
 
   myFile = myFile.replace(char(92), '/');
 
@@ -18,20 +18,20 @@ void SOLARCHVISION_load_project (String myFile) {
   if (continue_process) {
 
     try {
-      SOLARCHVISION_parse_XML_variables(xml, false); // first try: loading without printing logs
+      parse_XML_variables(xml, false); // first try: loading without printing logs
     }
     catch (Exception e) {
       println("Problem loading variables:", myFile);
 
-      SOLARCHVISION_parse_XML_variables(xml, true); // second try with printing logs
+      parse_XML_variables(xml, true); // second try with printing logs
       System.exit(1);
     }
 
     // loading only weather data //
-    SOLARCHVISION_update_station(1);
-    SOLARCHVISION_update_station(2);
-    SOLARCHVISION_update_station(3);
-    SOLARCHVISION_update_station(4);
+    update_station(1);
+    update_station(2);
+    update_station(3);
+    update_station(4);
     ///////////////////////////////
 
     addNewSelectionToPreviousSelection = 0;
@@ -44,7 +44,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
 
-    SOLARCHVISION_update_frame_layout();
+    update_frame_layout();
 
     UI_rollout.revise();
     WORLD.revise();
@@ -52,7 +52,7 @@ void SOLARCHVISION_load_project (String myFile) {
     UI_menuBar.revise();
     UI_toolBar.revise();
     UI_caseBar.revise();
-    SOLARCHVISION_view_changed();
+    view_changed();
 
 
     allSolarImpacts.rebuild_Image_array = true;
@@ -65,7 +65,7 @@ void SOLARCHVISION_load_project (String myFile) {
     GlobalSolar_resize_array();
 
 
-    SOLARCHVISION_modify_Viewport_Title();
+    modify_Viewport_Title();
   }
 
 }

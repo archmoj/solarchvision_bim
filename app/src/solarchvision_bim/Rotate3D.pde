@@ -50,7 +50,7 @@ class solarchvision_Rotate3D {
       allPoints.setZ(f, z0 + R[2]);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
@@ -66,7 +66,7 @@ class solarchvision_Rotate3D {
       Land3D.Mesh[i][j][2] = z0 + R[2];
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Vertices (float x0, float y0, float z0, float r, int the_Vector) {
@@ -79,7 +79,7 @@ class solarchvision_Rotate3D {
       allPoints.setZ(f, z0 + R[2]);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Polylines (float x0, float y0, float z0, float r, int the_Vector) {
@@ -94,7 +94,7 @@ class solarchvision_Rotate3D {
       allPoints.setZ(f, z0 + R[2]);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Faces (float x0, float y0, float z0, float r, int the_Vector) {
@@ -109,7 +109,7 @@ class solarchvision_Rotate3D {
       allPoints.setZ(f, z0 + R[2]);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Solids (float x0, float y0, float z0, float r, int the_Vector) {
@@ -130,7 +130,7 @@ class solarchvision_Rotate3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Sections (float r) {
@@ -140,7 +140,7 @@ class solarchvision_Rotate3D {
     }
 
     allSolidImpacts.calculate_Impact_selectedSections();
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Cameras (float x0, float y0, float z0, float r, int the_Vector) {
@@ -159,7 +159,7 @@ class solarchvision_Rotate3D {
       if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
@@ -176,7 +176,7 @@ class solarchvision_Rotate3D {
       }
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
@@ -189,7 +189,7 @@ class solarchvision_Rotate3D {
       allModel2Ds.setZ(f, z0 + R[2]);
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
   void Groups (float r, int the_Vector) {
@@ -262,6 +262,6 @@ class solarchvision_Rotate3D {
 
     if (allSolids_updated) allSolidImpacts.calculate_Impact_selectedSections();
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 }

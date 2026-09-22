@@ -2,10 +2,10 @@ class solarchvision_UI_rollout {
 
   final static String CLASS_STAMP = "UI_rollout";
 
-  int cX = 2 * SOLARCHVISION_pixel_W;
-  int cY = SOLARCHVISION_pixel_A + SOLARCHVISION_pixel_B + 0;
+  int cX = 2 * pixel_W;
+  int cY = pixel_A + pixel_B + 0;
   int dX = int(27 * MessageSize);
-  int dY = 2 * SOLARCHVISION_pixel_H;
+  int dY = 2 * pixel_H;
   float view_R = float(dY) / float(dX);
   float view_S = MessageSize / 12;
 
@@ -176,7 +176,7 @@ class solarchvision_UI_rollout {
 
         textAlign(LEFT, CENTER);
 
-        if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
+        if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
           this.parent = i;
           this.child = selectedChildForParent[i];
 
@@ -218,7 +218,7 @@ class solarchvision_UI_rollout {
 
         textAlign(LEFT, CENTER);
 
-        if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr)) {
+        if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr)) {
           this.child = i;
           selectedChildForParent[this.parent] = i; // remember this choice for next time this category is opened
 
@@ -680,9 +680,9 @@ class solarchvision_UI_rollout {
     }
 
     if (this.include) {
-      if (isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, this.cX, this.cY, this.cX + this.dX, this.cY + this.dY)) {
-        SOLARCHVISION_X_clicked = -1;
-        SOLARCHVISION_Y_clicked = -1;
+      if (isInside(X_clicked, Y_clicked, this.cX, this.cY, this.cX + this.dX, this.cY + this.dY)) {
+        X_clicked = -1;
+        Y_clicked = -1;
       }
     }
 
@@ -846,8 +846,8 @@ class solarchvision_UI_rollout {
     }
 
     if ((!this.spinnerEditActive || editingThis) && (
-      isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o) || // gray area
-      isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1,          y - (h / 2), x,          y + (h / 2))        // bar area
+      isInside(X_clicked, Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o) || // gray area
+      isInside(X_clicked, Y_clicked, x - w1,          y - (h / 2), x,          y + (h / 2))        // bar area
     )) {
       if (mouseButton == LEFT) {
         if (!editingThis) {
@@ -855,8 +855,8 @@ class solarchvision_UI_rollout {
           editingThis = true;
         }
 
-        SOLARCHVISION_X_clicked = -1;
-        SOLARCHVISION_Y_clicked = -1;
+        X_clicked = -1;
+        Y_clicked = -1;
       }
     }
     // -------------------------------------------------------------------
@@ -873,7 +873,7 @@ class solarchvision_UI_rollout {
     cr = 0.25 * (h + 2 * o);
     triangle(cx + cr * funcs.cos_ang(270), cy + 0.75 * cr * funcs.sin_ang(270), cx + 0.75 * cr * funcs.cos_ang(30), cy + 0.75 * cr * funcs.sin_ang(30), cx + 0.75 * cr * funcs.cos_ang(150), cy + 0.75 * cr * funcs.sin_ang(150));
 
-    if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
+    if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
       if (mouseButton == LEFT) {
 
         if (stp_v < 0) {
@@ -890,7 +890,7 @@ class solarchvision_UI_rollout {
     cy += 2 * cr;
     triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
 
-    if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
+    if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
 
       if (mouseButton == LEFT) {
 
@@ -930,12 +930,12 @@ class solarchvision_UI_rollout {
       q = (new_value - min_v) / (max_v - min_v);
     }
 
-    if (!this.spinnerEditActive && isInside(SOLARCHVISION_X_clicked, SOLARCHVISION_Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
+    if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
       if (mouseButton == RIGHT) { // change value by right click over the bar
         q = 1;
 
         if (max_v - min_v > 0.001) {
-          q = (SOLARCHVISION_X_clicked - (x - w1)) / w1;
+          q = (X_clicked - (x - w1)) / w1;
         }
 
         new_value = min_v + q * (max_v - min_v);

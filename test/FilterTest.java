@@ -16,7 +16,7 @@ class FilterTest {
     app.CLIMATE_TMYEPW_values[0][0][0][0] = skyValue;
     // type_of_filter=0 (not filter_DAILY) keeps the internal scan to
     // just now_i=0, matching the array's single populated slot.
-    return app.SOLARCHVISION_filter(app.dataID_CLIMATE_TMYEPW, 0, 0, scenarioOfSky, 0, 0, 0);
+    return app.filter(app.dataID_CLIMATE_TMYEPW, 0, 0, scenarioOfSky, 0, 0, 0);
   }
 
   @Test
@@ -57,7 +57,7 @@ class FilterTest {
     app.CLIMATE_TMYEPW_values = new float[1][1][1][1];
     app.CLIMATE_TMYEPW_values[0][0][0][0] = app.FLOAT_undefined;
 
-    assertFalse(app.SOLARCHVISION_filter(app.dataID_CLIMATE_TMYEPW, 0, 0, 1, 0, 0, 0));
-    assertFalse(app.SOLARCHVISION_filter(app.dataID_CLIMATE_TMYEPW, 0, 0, 4, 0, 0, 0));
+    assertFalse(app.filter(app.dataID_CLIMATE_TMYEPW, 0, 0, 1, 0, 0, 0));
+    assertFalse(app.filter(app.dataID_CLIMATE_TMYEPW, 0, 0, 4, 0, 0, 0));
   }
 }

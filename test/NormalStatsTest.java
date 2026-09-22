@@ -14,7 +14,7 @@ class NormalStatsTest {
 
   @Test
   void oddCount_computesAllNineStatistics () {
-    float[] r = app.SOLARCHVISION_NORMAL(new float[]{10, 20, 30, 40, 50});
+    float[] r = app.NORMAL(new float[]{10, 20, 30, 40, 50});
 
     assertEquals(10f, r[app.STAT_N_Min], EPS);
     assertEquals(50f, r[app.STAT_N_Max], EPS);
@@ -29,13 +29,13 @@ class NormalStatsTest {
 
   @Test
   void evenCount_M50AveragesTheTwoMiddleElements () {
-    float[] r = app.SOLARCHVISION_NORMAL(new float[]{10, 20, 30, 40});
+    float[] r = app.NORMAL(new float[]{10, 20, 30, 40});
     assertEquals(25f, r[app.STAT_N_M50], EPS); // average of the 2nd and 3rd sorted values (20, 30)
   }
 
   @Test
   void inputIsSortedRegardlessOfOriginalOrder () {
-    float[] r = app.SOLARCHVISION_NORMAL(new float[]{30, 10, 20});
+    float[] r = app.NORMAL(new float[]{30, 10, 20});
     assertEquals(10f, r[app.STAT_N_Min], EPS);
     assertEquals(30f, r[app.STAT_N_Max], EPS);
     assertEquals(20f, r[app.STAT_N_M50], EPS);
@@ -47,16 +47,16 @@ class NormalStatsTest {
     // falls outside the first NV (defined-count) elements the function
     // actually uses - undefined entries anywhere in the input should
     // give the exact same result as if they were never there at all.
-    float[] withUndefined = app.SOLARCHVISION_NORMAL(
+    float[] withUndefined = app.NORMAL(
       new float[]{30, app.FLOAT_undefined, 10, app.FLOAT_undefined, 20});
-    float[] withoutUndefined = app.SOLARCHVISION_NORMAL(new float[]{10, 20, 30});
+    float[] withoutUndefined = app.NORMAL(new float[]{10, 20, 30});
 
     assertArrayEquals(withoutUndefined, withUndefined, EPS);
   }
 
   @Test
   void allUndefinedInputReturnsAllUndefinedOutput () {
-    float[] r = app.SOLARCHVISION_NORMAL(new float[]{app.FLOAT_undefined, app.FLOAT_undefined});
+    float[] r = app.NORMAL(new float[]{app.FLOAT_undefined, app.FLOAT_undefined});
     for (float v : r) {
       assertEquals(app.FLOAT_undefined, v, EPS);
     }

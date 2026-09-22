@@ -34,7 +34,7 @@ class solarchvision_Model1Ds {
       Select3D.deselect_Model1Ds();
     }
 
-    SOLARCHVISION_model_changed();
+    model_changed();
   }
 
 
@@ -543,7 +543,7 @@ class solarchvision_Model1Ds {
 
         if (_turn == 1) {
 
-          SOLARCHVISION_OBJprintVertex(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale),
+          OBJprintVertex(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale),
                                       -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale),
                                        WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale));
 
@@ -551,7 +551,7 @@ class solarchvision_Model1Ds {
 
         if (_turn == 2) {
 
-          SOLARCHVISION_OBJprintVtexture(u, v, 0);
+          OBJprintVtexture(u, v, 0);
         }
 
       }
