@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
+# Deliberately no `-e`: this script processes each command/test_*.txt
+# independently and must keep going past a single test's failure, which is
+# fundamentally incompatible with `-e` aborting on the first nonzero exit
+# anywhere in the loop - including plain command substitutions with no `||`
+# guard, which abort silently with no error message. That already bit two
+# different lines here (processing-java's exit code, and a find|sort|tail
+# pipeline racing with the JVM's own shutdown/cleanup in the same
+# directory). Every real success/failure check below uses its own explicit
+# if/exit, so nothing here relies on `-e`.
 
 # Runs every command/test_*.txt script through the solarchvision_bim sketch
 # in headless `USER=AUTO` mode (see app/src/solarchvision_bim/parseArgs.pde),
@@ -26,8 +35,8 @@ set -euo pipefail
 #     issue, not a config problem - see test/image/README.md); use
 #     ubuntu-22.04 instead. .github/workflows/image-tests.yml already does.
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$REPO_ROOT"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)" || { echo "could not resolve repo root" >&2; exit 1; }
+cd "$REPO_ROOT" || { echo "could not cd to $REPO_ROOT" >&2; exit 1; }
 
 PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.3.4}"
 PROCESSING_JAVA="$PROCESSING_HOME/processing-java"
@@ -45,7 +54,7 @@ STRICT="${STRICT:-0}"
 THRESHOLD="${IMAGE_DIFF_THRESHOLD:-0.5}" # max % of pixels allowed to differ
 PER_SCRIPT_TIMEOUT="${PER_SCRIPT_TIMEOUT:-300}" # seconds allowed per script
 
-mkdir -p "$ACTUAL_DIR" "$DIFF_DIR" "$BASELINE_DIR"
+mkdir -p "$ACTUAL_DIR" "$DIFF_DIR" "$BASELINE_DIR" || { echo "could not create test/image output dirs" >&2; exit 1; }
 
 if [ ! -x "$PROCESSING_JAVA" ]; then
   echo "processing-java not found at $PROCESSING_JAVA (set PROCESSING_HOME to your Processing 4 install)" >&2

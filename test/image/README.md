@@ -160,3 +160,18 @@ Two things address this:
   moves on, rather than silently consuming the whole job's time budget.
 - The workflow's `timeout_minutes` is set generously (45) to give all 7
   scripts real headroom to run one after another.
+
+## Note on `set -e`
+
+`run_image_tests.sh` deliberately does **not** use `set -e` (only
+`set -uo pipefail`). This script's whole job is to process every
+`command/test_*.txt` independently and keep going past a single test's
+failure, which is fundamentally incompatible with `-e` aborting the script
+on the first nonzero exit anywhere in the loop — including a plain command
+substitution with no `||` fallback, which aborts silently with no error
+message at all. That bit two different lines during development: the
+`processing-java` invocation (exit code semantics above), and a
+`find | sort | tail` pipeline that occasionally raced with the JVM's own
+shutdown/cleanup in the same screenshots directory. Every real
+success/failure check in the script uses its own explicit `if`/`exit`, so
+nothing relies on `-e`.
