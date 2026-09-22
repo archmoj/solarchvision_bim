@@ -1220,4 +1220,139 @@ class MouseClickedTest {
     app.CubePower = 16;
     assertEquals(app.SUPEROBJ_SHAPE_BOX, app.SOLARCHVISION_classifySuperOBJShape(16, 16, 16));
   }
+
+  // ============ pick-list dispatcher functions (pre-existing) ============
+  // SOLARCHVISION_handlePickListTrackClick/handlePickListClick are the two
+  // reached from mouseClicked() itself; the other four (Wheel/ScrollDrag/
+  // resetPickListDragState/cancelActivePickList) live in this same file
+  // for mouseWheel()/mouseDragged()/mouseReleased()/the Esc handler
+  // instead, but are simple enough one-line-per-picker loops to cover
+  // here alongside their siblings. Each individual StationPicker method
+  // they delegate to (handleClick, handleTrackClick, handleWheel, cancel)
+  // is already covered directly, above - these tests only confirm the
+  // dispatch itself: that the loop finds and defers to whichever picker
+  // (if any) is actually active.
+
+  @Test
+  void handlePickListClick_delegatesToWhicheverPickerIsActive () {
+    app.WORLD.cX = 0;
+    app.WORLD.cY = 0;
+    app.WORLD.dX = 400;
+    app.WORLD.dY = 300;
+
+    app.TMYEPW_Coordinates = new solarchvision_bim.solarchvision_STATION[]{app.new solarchvision_STATION()};
+    app.TMYEPW_Coordinates[0].setFilename_TMYEPW("station_0.epw");
+    app.STATION.setFilename_TMYEPW("station_0.epw");
+
+    app.TMYEPW_PICKER.active = true;
+    app.TMYEPW_PICKER.indices = new int[]{0};
+
+    float[] row0 = app.TMYEPW_PICKER.rowRect(0);
+    app.SOLARCHVISION_X_clicked = (int) (row0[0] + 2);
+    app.SOLARCHVISION_Y_clicked = (int) (row0[1] + 2);
+
+    assertTrue(app.SOLARCHVISION_handlePickListClick());
+    assertFalse(app.TMYEPW_PICKER.active); // confirms it was really TMYEPW_PICKER that handled it
+  }
+
+  @Test
+  void handlePickListClick_returnsFalseWhenNoPickerIsActive () {
+    assertFalse(app.SOLARCHVISION_handlePickListClick());
+  }
+
+  @Test
+  void handlePickListTrackClick_delegatesToWhicheverPickerIsActive () {
+    app.WORLD.cX = 0;
+    app.WORLD.cY = 0;
+    app.WORLD.dX = 400;
+    app.WORLD.dY = 300;
+
+    app.TMYEPW_PICKER.active = true;
+    app.TMYEPW_PICKER.indices = new int[100];
+    app.TMYEPW_PICKER.scrollOffset = 20;
+
+    float[] track = app.TMYEPW_PICKER.scrollTrackRect();
+    app.SOLARCHVISION_X_clicked = (int) (track[0] + 2);
+    app.SOLARCHVISION_Y_clicked = (int) (track[1] + 2);
+
+    assertTrue(app.SOLARCHVISION_handlePickListTrackClick());
+    assertTrue(app.TMYEPW_PICKER.scrollOffset < 20); // confirms it was really TMYEPW_PICKER that paged
+  }
+
+  @Test
+  void handlePickListTrackClick_returnsFalseWhenNoPickerIsActive () {
+    assertFalse(app.SOLARCHVISION_handlePickListTrackClick());
+  }
+
+  @Test
+  void handlePickListWheel_delegatesToWhicheverPickerIsActive () {
+    app.WORLD.cX = 0;
+    app.WORLD.cY = 0;
+    app.WORLD.dX = 400;
+    app.WORLD.dY = 300;
+    app.SOLARCHVISION_X_clicked = 10;
+    app.SOLARCHVISION_Y_clicked = 10;
+
+    app.TMYEPW_PICKER.active = true;
+    app.TMYEPW_PICKER.indices = new int[100];
+    app.TMYEPW_PICKER.scrollOffset = 0;
+
+    assertTrue(app.SOLARCHVISION_handlePickListWheel(1));
+    assertEquals(1, app.TMYEPW_PICKER.scrollOffset);
+  }
+
+  @Test
+  void handlePickListWheel_returnsFalseWhenNoPickerIsActive () {
+    assertFalse(app.SOLARCHVISION_handlePickListWheel(1));
+  }
+
+  @Test
+  void handlePickListScrollDrag_delegatesToWhicheverPickerIsDragging () {
+    app.WORLD.cX = 0;
+    app.WORLD.cY = 0;
+    app.WORLD.dX = 400;
+    app.WORLD.dY = 300;
+
+    app.TMYEPW_PICKER.active = true;
+    app.TMYEPW_PICKER.indices = new int[100]; // needsScrollbar() -> true
+    app.TMYEPW_PICKER.scrollThumbDragging = true; // already mid-drag, skips the "start a new drag" branch
+    app.TMYEPW_PICKER.scrollDrag_startMouseY = 100;
+    app.TMYEPW_PICKER.scrollDrag_startOffset = 5;
+    app.mouseY = 100; // no movement since the drag started
+
+    assertTrue(app.SOLARCHVISION_handlePickListScrollDrag());
+    assertEquals(5, app.TMYEPW_PICKER.scrollOffset); // unchanged: zero delta
+  }
+
+  @Test
+  void handlePickListScrollDrag_returnsFalseWhenNoPickerIsActive () {
+    assertFalse(app.SOLARCHVISION_handlePickListScrollDrag());
+  }
+
+  @Test
+  void resetPickListDragState_clearsTheDraggingFlagOnEveryPickerNotJustTheActiveOne () {
+    app.TMYEPW_PICKER.scrollThumbDragging = true;
+    app.CLMREC_PICKER.scrollThumbDragging = true;
+
+    app.SOLARCHVISION_resetPickListDragState();
+
+    assertFalse(app.TMYEPW_PICKER.scrollThumbDragging);
+    assertFalse(app.CLMREC_PICKER.scrollThumbDragging);
+  }
+
+  @Test
+  void cancelActivePickList_cancelsWhicheverPickerIsActive () {
+    app.TMYEPW_PICKER.active = true;
+    app.TMYEPW_PICKER.indices = new int[]{0, 1, 2};
+
+    assertTrue(app.SOLARCHVISION_cancelActivePickList());
+
+    assertFalse(app.TMYEPW_PICKER.active);
+    assertEquals(0, app.TMYEPW_PICKER.indices.length);
+  }
+
+  @Test
+  void cancelActivePickList_returnsFalseWhenNoPickerIsActive () {
+    assertFalse(app.SOLARCHVISION_cancelActivePickList());
+  }
 }
