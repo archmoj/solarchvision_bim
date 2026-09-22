@@ -304,7 +304,7 @@ final String OSC8_START = "\u001B]8;;";
 final String OSC8_END = "\u001B\\";
 final String OSC8_CLOSE = "\u001B]8;;\u001B\\";
 
-String terminalLink(String path) {
+String terminalLink (String path) {
   File file = new File(path);
   String linkText = path; // file.getName();
   String fileUri = "file://" + file.getAbsolutePath();
@@ -312,12 +312,12 @@ String terminalLink(String path) {
   return (OSC8_START + fileUri + OSC8_END + linkText + OSC8_CLOSE);
 }
 
-String terminalLinkColor(String path) {
+String terminalLinkColor (String path) {
  return (ANSI_BLACK + ANSI_YELLOW_BG + terminalLink(path) + ANSI_RESET);
 }
 
-void printlnSaving(String path) {
-  println("Saving:", terminalLinkColor(path));
+void printlnSaving (String path) {
+  println("Saving:", (control == USER_GUI) ? terminalLinkColor(path) : path);
 }
 
 
