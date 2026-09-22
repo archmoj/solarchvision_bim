@@ -5,12 +5,7 @@ on:
     branches: '**'
   pull_request:
     branches: '**'
-  workflow_dispatch:
-    inputs:
-      update_baselines:
-        description: 'Regenerate baseline images and upload them for review, instead of comparing against the current ones'
-        type: boolean
-        default: false
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -22,7 +17,6 @@ env:
 
 jobs:
   image-tests:
-    if: ${{ !inputs.update_baselines }}
     # Not ubuntu-latest (24.04): its GLVND-based Mesa build segfaults inside
     # libGLX_mesa.so when JOGL (bundled in Processing 4.3.4) sets up its
     # shared GL context, regardless of LIBGL_ALWAYS_SOFTWARE / vblank_mode /
@@ -88,65 +82,21 @@ jobs:
         if: always()
         run: python3 test/image/compare_pixels.py
 
-      - name: Upload actual/diff images
-        if: always()
+      # No separate "update baselines" workflow: a missing baseline (a new
+      # test) or a notable diff (a real regression, or a rendering change
+      # that's actually fine) both make compare_pixels.py fail above, which
+      # is exactly when there's something worth a human's attention.
+      # test/image/actual/ doubles as the set of candidate new baselines:
+      # download this artifact, look at the images (and their diffs against
+      # whatever baseline did exist), and commit the ones that are actually
+      # correct into test/image/baseline/.
+      - name: Upload new/changed baseline candidates
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: image-test-results
+          name: new-baselines
           path: |
             test/image/actual
             test/image/diff
           if-no-files-found: warn
-          retention-days: 14
-
-  update-baselines:
-    if: ${{ inputs.update_baselines }}
-    # Same reasoning as the image-tests job above.
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
-
-      - name: Set up JDK
-        uses: actions/setup-java@v5
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Cache Processing install
-        id: cache-processing
-        uses: actions/cache@v4
-        with:
-          path: ~/processing/${{ env.PROCESSING_VERSION }}
-          key: processing-${{ env.PROCESSING_VERSION }}-linux-x64
-
-      - name: Install Processing
-        if: steps.cache-processing.outputs.cache-hit != 'true'
-        run: |
-          curl -fL -o /tmp/processing.tgz \
-            "https://github.com/processing/processing4/releases/download/${PROCESSING_TAG}/processing-${PROCESSING_VERSION}-linux-x64.tgz"
-          mkdir -p ~/processing
-          tar -xf /tmp/processing.tgz -C /tmp
-          mv "/tmp/processing-${PROCESSING_VERSION}" "$HOME/processing/${PROCESSING_VERSION}"
-
-      - name: Regenerate baselines (make_baseline.py --baseline)
-        timeout-minutes: 30
-        env:
-          LIBGL_ALWAYS_SOFTWARE: '1'
-        run: xvfb-run --auto-servernum python3 test/image/make_baseline.py --baseline
-
-      # Uploaded, not committed: baselines should be eyeballed by a human
-      # before they're trusted as "correct". Download the artifact, check
-      # the images, then copy the ones you approve into test/image/baseline/
-      # in a normal commit.
-      - name: Upload regenerated baselines for review
-        uses: actions/upload-artifact@v4
-        with:
-          name: new-baselines
-          path: test/image/baseline
           retention-days: 14

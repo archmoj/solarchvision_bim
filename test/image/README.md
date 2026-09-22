@@ -5,7 +5,6 @@ and image-diffs the screenshot each one produces, to catch unintended visual
 regressions (a broken shading mode, a camera command that stops working, a
 geometry command that silently changes its output, etc).
 
-Split into two independent steps:
 - **`make_baseline.py`** — runs the sketch, one `processing-java` process
   per `command/test_*.txt`, and saves each screenshot to
   `test/image/actual/<name>.png` (or `test/image/baseline/<name>.png` with
@@ -31,10 +30,12 @@ Split into two independent steps:
    RUN=command/test.txt` — see `app/src/solarchvision_bim/parseArgs.pde` and
    `solarchvision_bim.pde`: `USER=AUTO` makes the sketch run the script
    ~1000 frames after startup and then call `exit()` on its own).
-3. Each script's single screenshot is found under
-   `app/src/solarchvision_bim/projects/model-01/export/screenshots/` (by
-   mtime, whatever appeared after that test's run started) and copied to
-   `test/image/actual/<name>.png` (or `baseline/` with `--baseline`).
+3. Each script's single screenshot is found under `projects/model-01/export/screenshots/`
+   at the repo root (by mtime, whatever appeared after that test's run
+   started — see the note in `make_baseline.py` on why it's there and not
+   under `app/src/solarchvision_bim/`, which is where `sketchPath()`/
+   `BaseFolder` would suggest) and copied to `test/image/actual/<name>.png`
+   (or `baseline/` with `--baseline`).
 4. `compare_pixels.py` diffs `actual/` against `baseline/`.
 
 ## Running locally
@@ -62,20 +63,32 @@ python3 test/image/compare_pixels.py test_houses test_primitives
 ## Baselines
 
 `test/image/baseline/` is empty (just `.gitkeep`) to start with — **nobody
-has generated real baseline images yet**. To seed or refresh them:
+has generated real baseline images yet**.
+
+There's no separate "update baselines" workflow or job. Instead a missing baseline
+(a brand new test) and a notable diff (a real regression, *or* a rendering change
+that's actually fine) both make `compare_pixels.py` fail, which is exactly
+when there's something worth a human looking at. So `.github/workflows/image-tests.yml`
+uploads `test/image/actual/` + `test/image/diff/` as the `new-baselines`
+artifact only `if: failure()`. `actual/` doubles as the set of candidate new
+baselines: download the artifact, look at the images (and their diffs
+against whatever baseline did exist, if any), and commit the ones that are
+actually correct into `test/image/baseline/` in a normal commit — a bug
+would otherwise get silently baked in as "correct" if this weren't reviewed
+by eye first.
+
+To do the same thing locally instead of via the artifact:
 
 ```sh
 xvfb-run --auto-servernum python3 test/image/make_baseline.py --baseline
 ```
 
-then **look at every image in `test/image/baseline/` before committing** —
-this step trusts whatever the sketch currently renders, so a bug would get
-baked in as "correct" otherwise. The CI workflow's `update-baselines` job
-(triggered manually) does the same thing but uploads the results as a build
-artifact for review rather than committing them directly.
+then look at every image in `test/image/baseline/` before committing.
 
 Without a baseline for a given test, `compare_pixels.py` reports it as a
-real failure by default. Pass `--allow-missing-baseline` for a warn-instead-of-fail local/dev run.
+real failure by default. Pass `--allow-missing-baseline` for a
+warn-instead-of-fail local/dev run.
+
 
 ## Thresholds
 
@@ -114,7 +127,7 @@ missing config flag — `actions/runner-images#11517` documents the same class
 of Mesa-on-24.04 regression for another project.
 
 **The fix that actually works here: run on `ubuntu-22.04`, not
-`ubuntu-latest`.** `.github/workflows/image-tests.yml` pins both jobs to
+`ubuntu-latest`.** `.github/workflows/image-tests.yml` pins its job to
 `ubuntu-22.04` for exactly this reason.
 
 `LIBGL_ALWAYS_SOFTWARE=1` is still set in the workflow as a normal, harmless
@@ -133,15 +146,23 @@ Display Connections: ...` warning at exit; that's normal noise from
 Because of this, `make_baseline.py` doesn't treat `processing-java`'s exit
 code as the success signal — it logs a note and moves on. The actual check
 is whether a new screenshot file showed up under
-`app/src/solarchvision_bim/projects/model-01/export/screenshots/`, which is
-what genuinely indicates the run produced something.
+`projects/model-01/export/screenshots/` at the repo root (see the note in
+`make_baseline.py` on why it's there and not under
+`app/src/solarchvision_bim/`), which is what genuinely indicates the run
+produced something.
 
 ## Note on per-run timing and per-test retry
 
+Each script takes a real chunk of wall-clock time on its own:
+`frameRate(24)` and `Last_initializationStep = 1000` in
+`solarchvision_bim.pde` mean the intro sequence alone takes at least
+`1000 / 24 ~= 42s` before `RUN=...` even starts, on top of JVM startup, GL
+context creation, and the render itself.
+
 `make_baseline.py` bounds each *attempt* with `PER_TEST_TIMEOUT` (default
 300s, override with the env var) and retries only that one test up to
-`MAX_RETRY` times (default 0) if it comes back empty — a flaky render of
-one test doesn't cost re-running the others. `timeout-minutes: 30` on the
+`MAX_RETRY` times (default 2) if it comes back empty — a flaky render of
+one test doesn't cost re-running the others. `timeout-minutes: 45` on the
 workflow step is a last-resort safety net for the whole batch (e.g. if
 `xvfb-run`/`Xvfb` itself wedges), not the normal path.
 
