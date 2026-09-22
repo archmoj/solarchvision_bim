@@ -1,4 +1,4 @@
-class solarchvision_PAINT {
+class PAINT {
 
   final static String CLASS_STAMP = "PAINT";
 

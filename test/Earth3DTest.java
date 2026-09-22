@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class Earth3DTest {
 
   private solarchvision_bim app;
-  private solarchvision_bim.solarchvision_Earth3D earth;
+  private solarchvision_bim.Earth3D earth;
 
   @BeforeEach
   void setUp () {
@@ -79,7 +79,7 @@ class Earth3DTest {
     processing.data.XML root = new processing.data.XML("root");
     app.Earth3D.to_XML(root);
 
-    solarchvision_bim.solarchvision_Earth3D fresh = app.new solarchvision_Earth3D();
+    solarchvision_bim.Earth3D fresh = app.new Earth3D();
     fresh.from_XML(root);
 
     assertFalse(fresh.displaySurface);

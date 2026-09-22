@@ -1,4 +1,4 @@
-class solarchvision_Tropo3D {
+class Tropo3D {
 
   final static String CLASS_STAMP = "Tropo3D";
 

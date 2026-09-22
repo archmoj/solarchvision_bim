@@ -1,8 +1,8 @@
-class solarchvision_Groups {
+class Groups {
 
   final static String CLASS_STAMP = "Groups";
 
-  solarchvision_Groups () { // constructor
+  Groups () { // constructor
     makeEmpty(0);
   }
 

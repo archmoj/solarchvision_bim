@@ -1,6 +1,6 @@
 int _numberOfLayers = 0;
 
-class solarchvision_LAYER {
+class LAYER {
 
   final static String CLASS_STAMP = "LAYER";
 
@@ -14,7 +14,7 @@ class solarchvision_LAYER {
   public float V_offset = 0;
   public float V_belowLine = 0;
 
-  solarchvision_LAYER (float V_scale, float V_offset, float V_belowLine, String unit, String description_EN, String description_FR, String name) {
+  LAYER (float V_scale, float V_offset, float V_belowLine, String unit, String description_EN, String description_FR, String name) {
 
     this.V_scale = V_scale;
     this.V_offset = V_offset;

@@ -1,8 +1,8 @@
-class solarchvision_Model2Ds {
+class Model2Ds {
 
   final static String CLASS_STAMP = "Model2Ds";
 
-  solarchvision_Model2Ds () { // constructor
+  Model2Ds () { // constructor
     makeEmpty(0);
   }
 

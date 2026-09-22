@@ -1,8 +1,8 @@
-class solarchvision_Cameras {
+class Cameras {
 
   final static String CLASS_STAMP = "Cameras";
 
-  solarchvision_Cameras () { // constructor
+  Cameras () { // constructor
     makeEmpty(0);
   }
 

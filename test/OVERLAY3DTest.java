@@ -20,7 +20,7 @@ class OVERLAY3DTest {
     app.allFaces.options = new int[][]{{0, 1, 0, 0, 0, 0}}; // material=0, stored tessellation=1
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
 
-    solarchvision_bim.solarchvision_OVERLAY3D.FaceTessellation ft = app.OVERLAY3D.computeFaceTessellation(0);
+    solarchvision_bim.OVERLAY3D.FaceTessellation ft = app.OVERLAY3D.computeFaceTessellation(0);
 
     assertEquals(3, ft.tessellation); // 1 + displayTessellation(2)
     // totalNumberOfSubs = nodes.length(3) * roundTo(4^(3-1), 1) = 3*16
@@ -34,7 +34,7 @@ class OVERLAY3DTest {
     app.allFaces.options = new int[][]{{5, 2, 0, 0, 0, 0}}; // material=5 (nonzero), stored tessellation=2
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
 
-    solarchvision_bim.solarchvision_OVERLAY3D.FaceTessellation ft = app.OVERLAY3D.computeFaceTessellation(0);
+    solarchvision_bim.OVERLAY3D.FaceTessellation ft = app.OVERLAY3D.computeFaceTessellation(0);
 
     assertEquals(2, ft.tessellation); // untouched: not bumped
     // totalNumberOfSubs = 3 * roundTo(4^(2-1), 1) = 3*4
@@ -48,7 +48,7 @@ class OVERLAY3DTest {
     app.allFaces.options = new int[][]{{5, 0, 0, 0, 0, 0}}; // material nonzero, stored tessellation=0
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
 
-    solarchvision_bim.solarchvision_OVERLAY3D.FaceTessellation ft = app.OVERLAY3D.computeFaceTessellation(0);
+    solarchvision_bim.OVERLAY3D.FaceTessellation ft = app.OVERLAY3D.computeFaceTessellation(0);
 
     assertEquals(0, ft.tessellation);
     assertEquals(1, ft.totalNumberOfSubs); // the ">0" guard is never satisfied
@@ -61,7 +61,7 @@ class OVERLAY3DTest {
     app.allFaces.options = new int[][]{{5, 0, 0, 0, 0, 0}};
     app.allVertices = new float[][]{{10, 11, 12}, {20, 21, 22}, {30, 31, 32}};
 
-    solarchvision_bim.solarchvision_OVERLAY3D.FaceTessellation ft = app.OVERLAY3D.computeFaceTessellation(0);
+    solarchvision_bim.OVERLAY3D.FaceTessellation ft = app.OVERLAY3D.computeFaceTessellation(0);
 
     assertArrayEquals(new float[]{30, 31, 32}, ft.base_Vertices[0], 0.0001f); // node 2
     assertArrayEquals(new float[]{10, 11, 12}, ft.base_Vertices[1], 0.0001f); // node 0
@@ -207,7 +207,7 @@ class OVERLAY3DTest {
       {10, 10, 10, 1, 1, 1, 0, 0, 0}  // max
     };
 
-    solarchvision_bim.solarchvision_OVERLAY3D.GroupBoxVertices gbv = app.OVERLAY3D.computeGroupBoxVertices();
+    solarchvision_bim.OVERLAY3D.GroupBoxVertices gbv = app.OVERLAY3D.computeGroupBoxVertices();
 
     assertFalse(gbv.isEmpty);
     assertArrayEquals(new float[]{0, 0, 0}, gbv.vertices[0], 0.0001f);
@@ -233,7 +233,7 @@ class OVERLAY3DTest {
       {10, 10, 10, 1, 1, 1, 0, 0, 0}   // max
     };
 
-    solarchvision_bim.solarchvision_OVERLAY3D.GroupBoxVertices gbv = app.OVERLAY3D.computeGroupBoxVertices();
+    solarchvision_bim.OVERLAY3D.GroupBoxVertices gbv = app.OVERLAY3D.computeGroupBoxVertices();
 
     // min corner: local (-5,-5,-5) -> rotated (5,-5,-5) -> +centre = (10,0,0)
     assertArrayEquals(new float[]{10, 0, 0}, gbv.vertices[0], 0.001f);
@@ -249,7 +249,7 @@ class OVERLAY3DTest {
       {0, 0, 0, 1, 1, 1, 0, 0, 0}
     };
 
-    solarchvision_bim.solarchvision_OVERLAY3D.GroupBoxVertices gbv = app.OVERLAY3D.computeGroupBoxVertices();
+    solarchvision_bim.OVERLAY3D.GroupBoxVertices gbv = app.OVERLAY3D.computeGroupBoxVertices();
 
     assertTrue(gbv.isEmpty);
   }
@@ -274,8 +274,8 @@ class OVERLAY3DTest {
 
   // ================= clipAndProject (pure; not extracted) ================
 
-  private solarchvision_bim.solarchvision_OVERLAY3D.DrawStyle hugeWindowStyle () {
-    solarchvision_bim.solarchvision_OVERLAY3D.DrawStyle style = app.OVERLAY3D.new DrawStyle(2, 0);
+  private solarchvision_bim.OVERLAY3D.DrawStyle hugeWindowStyle () {
+    solarchvision_bim.OVERLAY3D.DrawStyle style = app.OVERLAY3D.new DrawStyle(2, 0);
     style.innerWinX1 = -1000;
     style.innerWinY1 = -1000;
     style.innerWinX2 = 1000;
@@ -333,7 +333,7 @@ class OVERLAY3DTest {
     camVertices.add(new float[]{5, 0, 10});
     camVertices.add(new float[]{0, 5, 10});
 
-    solarchvision_bim.solarchvision_OVERLAY3D.DrawStyle tinyFarAwayWindow = app.OVERLAY3D.new DrawStyle(2, 0);
+    solarchvision_bim.OVERLAY3D.DrawStyle tinyFarAwayWindow = app.OVERLAY3D.new DrawStyle(2, 0);
     tinyFarAwayWindow.innerWinX1 = 100;
     tinyFarAwayWindow.innerWinY1 = 100;
     tinyFarAwayWindow.innerWinX2 = 200;

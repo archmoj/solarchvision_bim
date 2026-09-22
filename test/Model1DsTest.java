@@ -145,7 +145,7 @@ class Model1DsTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allModel1Ds.to_XML(root);
 
-    solarchvision_bim.solarchvision_Model1Ds fresh = app.new solarchvision_Model1Ds();
+    solarchvision_bim.Model1Ds fresh = app.new Model1Ds();
     fresh.from_XML(root);
 
     assertEquals(1, fresh.num);

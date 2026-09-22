@@ -58,7 +58,7 @@ class PointsTest {
 
   @Test
   void toXMLThenFromXML_roundTripsEveryPointAndDisplayAll () {
-    // Unlike Faces/Groups/Select3D, solarchvision_Points has no data
+    // Unlike Faces/Groups/Select3D, Points has no data
     // fields of its own - it operates directly on the shared global
     // `allVertices` - so a "fresh instance" wouldn't add any isolation
     // here; from_XML's own `allVertices = new float[ni][3]` already

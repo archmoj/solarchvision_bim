@@ -1,8 +1,8 @@
-class solarchvision_Sections {
+class Sections {
 
   final static String CLASS_STAMP = "Sections";
 
-  solarchvision_Sections () {
+  Sections () {
     makeEmpty(0);
   }
 

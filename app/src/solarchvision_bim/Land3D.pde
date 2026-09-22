@@ -1,4 +1,4 @@
-class solarchvision_Land3D {
+class Land3D {
 
   final static String CLASS_STAMP = "Land3D";
 

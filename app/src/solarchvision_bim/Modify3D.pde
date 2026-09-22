@@ -1,4 +1,4 @@
-class solarchvision_Modify3D {
+class Modify3D {
 
   final static String CLASS_STAMP = "Modify3D";
 

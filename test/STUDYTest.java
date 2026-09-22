@@ -294,7 +294,7 @@ class STUDYTest {
     processing.data.XML root = new processing.data.XML("root");
     app.STUDY.to_XML(root);
 
-    solarchvision_bim.solarchvision_STUDY fresh = app.new solarchvision_STUDY();
+    solarchvision_bim.STUDY fresh = app.new STUDY();
     fresh.from_XML(root);
 
     assertEquals(6, fresh.i_Start);

@@ -1,4 +1,4 @@
-class solarchvision_OperatingSystem {
+class OperatingSystem {
 
   final static String CLASS_STAMP = "OperatingSystem";
 

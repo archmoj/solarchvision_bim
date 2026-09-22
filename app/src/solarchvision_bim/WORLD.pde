@@ -1,4 +1,4 @@
-class solarchvision_WORLD {
+class WORLD {
 
   final static String CLASS_STAMP = "WORLD";
 
@@ -411,7 +411,7 @@ class solarchvision_WORLD {
   // when displayNear is true. This is the shared "draw all + highlight nearest" behavior used by the
   // NAEFS/CWEEDS/CLMREC/TMYEPW datasets, which differ only in marker style and label source (code vs city).
   // Returns the index of the nearest station within `coords`.
-  int drawStationDataset (solarchvision_STATION[] coords, int displayAllLevel, boolean displayNear, float R_station,
+  int drawStationDataset (STATION[] coords, int displayAllLevel, boolean displayNear, float R_station,
                            float strokeW, int r, int g, int b, int a, boolean filled, float diameterMult,
                            boolean useCode, float allLabelSizeMult, float nearLabelSizeMult) {
 

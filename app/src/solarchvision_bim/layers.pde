@@ -1,4 +1,4 @@
-solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
+LAYER LAYER_ceilingsky = new LAYER(
   0.1,
   0,
   0,
@@ -8,7 +8,7 @@ solarchvision_LAYER LAYER_ceilingsky = new solarchvision_LAYER(
   ""
 );
 
-solarchvision_LAYER LAYER_cloudcover = new solarchvision_LAYER(
+LAYER LAYER_cloudcover = new LAYER(
   10.0,
   0,
   0,
@@ -18,7 +18,7 @@ solarchvision_LAYER LAYER_cloudcover = new solarchvision_LAYER(
   "TCDC"
 );
 
-solarchvision_LAYER LAYER_winddir = new solarchvision_LAYER(
+LAYER LAYER_winddir = new LAYER(
   100.0 / 360.0,
   0,
   0,
@@ -28,7 +28,7 @@ solarchvision_LAYER LAYER_winddir = new solarchvision_LAYER(
   "WDIR-SFC"
 );
 
-solarchvision_LAYER LAYER_windspd = new solarchvision_LAYER(
+LAYER LAYER_windspd = new LAYER(
   2.5,
   0,
   0,
@@ -38,7 +38,7 @@ solarchvision_LAYER LAYER_windspd = new solarchvision_LAYER(
   "WIND-SFC"
 );
 
-solarchvision_LAYER LAYER_pressure = new solarchvision_LAYER(
+LAYER LAYER_pressure = new LAYER(
   2.0,
   -1000,
   1,
@@ -48,7 +48,7 @@ solarchvision_LAYER LAYER_pressure = new solarchvision_LAYER(
   "MSLP"
 );
 
-solarchvision_LAYER LAYER_drybulb = new solarchvision_LAYER(
+LAYER LAYER_drybulb = new LAYER(
   2.5,
   0,
   1,
@@ -58,7 +58,7 @@ solarchvision_LAYER LAYER_drybulb = new solarchvision_LAYER(
   "TMP-SFC"
 );
 
-solarchvision_LAYER LAYER_relhum = new solarchvision_LAYER(
+LAYER LAYER_relhum = new LAYER(
   1.0,
   0,
   0,
@@ -68,7 +68,7 @@ solarchvision_LAYER LAYER_relhum = new solarchvision_LAYER(
   "RELH-SFC"
 );
 
-solarchvision_LAYER LAYER_dirnorrad = new solarchvision_LAYER(
+LAYER LAYER_dirnorrad = new LAYER(
   0.1,
   0,
   0,
@@ -78,7 +78,7 @@ solarchvision_LAYER LAYER_dirnorrad = new solarchvision_LAYER(
   ""
 );
 
-solarchvision_LAYER LAYER_difhorrad = new solarchvision_LAYER(
+LAYER LAYER_difhorrad = new LAYER(
   0.1,
   0,
   0,
@@ -88,7 +88,7 @@ solarchvision_LAYER LAYER_difhorrad = new solarchvision_LAYER(
   ""
 );
 
-solarchvision_LAYER LAYER_glohorrad = new solarchvision_LAYER(
+LAYER LAYER_glohorrad = new LAYER(
   0.1,
   0,
   0,
@@ -98,7 +98,7 @@ solarchvision_LAYER LAYER_glohorrad = new solarchvision_LAYER(
   ""
 );
 
-solarchvision_LAYER LAYER_direffect = new solarchvision_LAYER(
+LAYER LAYER_direffect = new LAYER(
   0.0025,
   0,
   1,
@@ -108,7 +108,7 @@ solarchvision_LAYER LAYER_direffect = new solarchvision_LAYER(
   ""
 );
 
-solarchvision_LAYER LAYER_difeffect = new solarchvision_LAYER(
+LAYER LAYER_difeffect = new LAYER(
   0.0025,
   0,
   1,
@@ -118,7 +118,7 @@ solarchvision_LAYER LAYER_difeffect = new solarchvision_LAYER(
   ""
 );
 
-solarchvision_LAYER LAYER_precipitation = new solarchvision_LAYER(
+LAYER LAYER_precipitation = new LAYER(
   4.0,
   0,
   0,
@@ -128,7 +128,7 @@ solarchvision_LAYER LAYER_precipitation = new solarchvision_LAYER(
   "APCP-SFC"
 );
 
-solarchvision_LAYER LAYER_developed = new solarchvision_LAYER(
+LAYER LAYER_developed = new LAYER(
   1,
   0,
   0,
@@ -138,7 +138,7 @@ solarchvision_LAYER LAYER_developed = new solarchvision_LAYER(
   ""
 );
 
-solarchvision_LAYER[] allLayers = {
+LAYER[] allLayers = {
   LAYER_ceilingsky,
   LAYER_cloudcover,
   LAYER_winddir,

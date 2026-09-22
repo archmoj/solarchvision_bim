@@ -1,4 +1,4 @@
-class solarchvision_UI_consoleBar {
+class UI_consoleBar {
 
   final static String CLASS_STAMP = "UI_consoleBar";
 

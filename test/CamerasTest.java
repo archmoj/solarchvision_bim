@@ -125,7 +125,7 @@ class CamerasTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allCameras.to_XML(root);
 
-    solarchvision_bim.solarchvision_Cameras fresh = app.new solarchvision_Cameras();
+    solarchvision_bim.Cameras fresh = app.new Cameras();
     fresh.from_XML(root);
 
     assertEquals(1, fresh.num);

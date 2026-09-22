@@ -244,7 +244,7 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    app.TMYEPW_Coordinates = new solarchvision_bim.solarchvision_STATION[]{app.new solarchvision_STATION()};
+    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
     app.TMYEPW_Coordinates[0].setFilename_TMYEPW("station_0.epw");
     app.STATION.setFilename_TMYEPW("station_0.epw"); // already selected -> select() below is a safe no-op
 
@@ -341,7 +341,7 @@ class MouseClickedTest {
 
   @Test
   void handleMapClick_selectsTheSingleNearestStationWhenADifferentDataSourceIsActive () {
-    app.TMYEPW_Coordinates = new solarchvision_bim.solarchvision_STATION[]{app.new solarchvision_STATION()};
+    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
     app.TMYEPW_Coordinates[0].setLatitude(10);
     app.TMYEPW_Coordinates[0].setLongitude(20);
     app.TMYEPW_Coordinates[0].setFilename_TMYEPW("only_station.epw");
@@ -361,7 +361,7 @@ class MouseClickedTest {
 
   @Test
   void handleMapClick_opensTheListForACandidateWithinRangeOfTheActiveDataSource () {
-    app.TMYEPW_Coordinates = new solarchvision_bim.solarchvision_STATION[]{app.new solarchvision_STATION()};
+    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
     app.TMYEPW_Coordinates[0].setLatitude(10);
     app.TMYEPW_Coordinates[0].setLongitude(20);
     app.TMYEPW_Coordinates[0].setFilename_TMYEPW("only_station.epw");
@@ -378,7 +378,7 @@ class MouseClickedTest {
 
   @Test
   void selectTMYEPWStation_isANoOpWhenTheSameStationIsAlreadySelected () {
-    app.TMYEPW_Coordinates = new solarchvision_bim.solarchvision_STATION[]{app.new solarchvision_STATION()};
+    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
     app.TMYEPW_Coordinates[0].setFilename_TMYEPW("same.epw");
     app.STATION.setFilename_TMYEPW("same.epw");
     app.STATION.setLatitude(1);
@@ -393,7 +393,7 @@ class MouseClickedTest {
 
   @Test
   void selectTMYEPWStation_updatesPositionAndFilenameButSkipsReloadWhenNotTheActiveDataSource () {
-    app.TMYEPW_Coordinates = new solarchvision_bim.solarchvision_STATION[]{app.new solarchvision_STATION()};
+    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
     app.TMYEPW_Coordinates[0].setFilename_TMYEPW("new_station.epw");
     app.TMYEPW_Coordinates[0].setDownload_TMYEPW("http://example.com/new_station.epw");
 
@@ -1147,7 +1147,7 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    app.TMYEPW_Coordinates = new solarchvision_bim.solarchvision_STATION[]{app.new solarchvision_STATION()};
+    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
     app.TMYEPW_Coordinates[0].setFilename_TMYEPW("station_0.epw");
     app.STATION.setFilename_TMYEPW("station_0.epw");
 

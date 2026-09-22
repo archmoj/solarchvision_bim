@@ -1,4 +1,4 @@
-class solarchvision_CREATE {
+class CREATE {
 
   final static String CLASS_STAMP = "CREATE";
 

@@ -1,4 +1,4 @@
-class solarchvision_Sky3D {
+class Sky3D {
 
   final static String CLASS_STAMP = "Sky3D";
 

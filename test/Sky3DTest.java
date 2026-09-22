@@ -129,7 +129,7 @@ class Sky3DTest {
     processing.data.XML root = new processing.data.XML("root");
     app.Sky3D.to_XML(root);
 
-    solarchvision_bim.solarchvision_Sky3D fresh = app.new solarchvision_Sky3D();
+    solarchvision_bim.Sky3D fresh = app.new Sky3D();
     fresh.from_XML(root);
 
     assertFalse(fresh.displaySurface);

@@ -1,4 +1,4 @@
-class solarchvision_Rotate3D {
+class Rotate3D {
 
   final static String CLASS_STAMP = "Rotate3D";
 

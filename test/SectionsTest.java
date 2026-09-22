@@ -187,7 +187,7 @@ class SectionsTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allSections.to_XML(root);
 
-    solarchvision_bim.solarchvision_Sections fresh = app.new solarchvision_Sections();
+    solarchvision_bim.Sections fresh = app.new Sections();
     fresh.from_XML(root);
 
     assertEquals(1, fresh.num);

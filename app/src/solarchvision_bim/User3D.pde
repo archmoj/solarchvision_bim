@@ -1,4 +1,4 @@
-class solarchvision_User3D {
+class User3D {
 
   final static String CLASS_STAMP = "User3D";
 

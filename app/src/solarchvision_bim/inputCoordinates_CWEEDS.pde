@@ -1,4 +1,4 @@
-solarchvision_STATION[] CWEEDS_coordinates;
+STATION[] CWEEDS_coordinates;
 
 void inputCoordinates_CWEEDS () {
 
@@ -8,7 +8,7 @@ void inputCoordinates_CWEEDS () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  CWEEDS_coordinates = new solarchvision_STATION [num_stn];
+  CWEEDS_coordinates = new STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
@@ -18,7 +18,7 @@ void inputCoordinates_CWEEDS () {
     float latitude = float(parts[5]);
     float longitude = float(parts[6]);
 
-    CWEEDS_coordinates[f] = new solarchvision_STATION();
+    CWEEDS_coordinates[f] = new STATION();
 
     CWEEDS_coordinates[f].setCity(parts[1]);
     CWEEDS_coordinates[f].setProvince(parts[2]);

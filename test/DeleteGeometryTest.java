@@ -388,7 +388,7 @@ class DeleteGeometryTest {
 
   @Test
   void selectedSolids_shiftsOwningGroupsThenCompactsDEFWithNoSeparateNumField () {
-    // solarchvision_Solids has no `num` field at all - DEF.length IS the
+    // Solids has no `num` field at all - DEF.length IS the
     // count everywhere else in the codebase, which is exactly why
     // selected_Solids() (unlike every other selected_* function here)
     // has no "num -= ids.length" line at the end. Worth confirming

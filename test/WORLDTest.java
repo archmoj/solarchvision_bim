@@ -142,7 +142,7 @@ class WORLDTest {
     processing.data.XML root = new processing.data.XML("root");
     app.WORLD.to_XML(root);
 
-    solarchvision_bim.solarchvision_WORLD fresh = app.new solarchvision_WORLD();
+    solarchvision_bim.WORLD fresh = app.new WORLD();
     fresh.from_XML(root);
 
     assertEquals(3, fresh.Zoom);

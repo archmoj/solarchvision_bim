@@ -1,4 +1,4 @@
-class solarchvision_Moon3D {
+class Moon3D {
 
   final static String CLASS_STAMP = "Moon3D";
 

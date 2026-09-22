@@ -1,8 +1,8 @@
-class solarchvision_Faces {
+class Faces {
 
   final static String CLASS_STAMP = "Faces";
 
-  solarchvision_Faces () { // constructor
+  Faces () { // constructor
     makeEmpty(0);
   }
 

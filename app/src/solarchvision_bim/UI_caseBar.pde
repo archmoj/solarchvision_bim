@@ -1,4 +1,4 @@
-class solarchvision_UI_caseBar {
+class UI_caseBar {
 
   final static String CLASS_STAMP = "UI_caseBar";
 

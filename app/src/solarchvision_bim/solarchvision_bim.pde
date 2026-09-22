@@ -37,11 +37,11 @@ void setup () {
   pixel_H = (height - (pixel_A + pixel_B + pixel_C + pixel_D)) / 2;
 
   // resize windows
-  MESSAGE = new solarchvision_MESSAGE();
-  UI_rollout = new solarchvision_UI_rollout();
-  WIN3D = new solarchvision_WIN3D();
-  WORLD = new solarchvision_WORLD();
-  STUDY = new solarchvision_STUDY();
+  MESSAGE = new MESSAGE();
+  UI_rollout = new UI_rollout();
+  WIN3D = new WIN3D();
+  WORLD = new WORLD();
+  STUDY = new STUDY();
 
   draw_frame_icon();
 

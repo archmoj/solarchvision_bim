@@ -4,17 +4,17 @@ String HoldStamp = "";
 
 String Subfolder_exportMaps = "maps/";
 
-solarchvision_STATION STATION = new solarchvision_STATION(
+STATION STATION = new STATION(
   //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "", "CAN_PQ_Montreal.Intl.AP.716270_CWEC", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "MONTREAL_DORVAL_QC_CA", ""
   "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "", "CAN_ON_Toronto.716240_CWEC", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "TORONTO_PEARSON_INTL_ON_CA", "CYYZ-MAN"
   //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "", "CAN_BC_Vancouver.718920_CWEC", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "VANCOUVER_INTL_BC_CA", ""
 );
 
-solarchvision_OBJECTTYPE ObjectCategory = new solarchvision_OBJECTTYPE();
+OBJECTTYPE ObjectCategory = new OBJECTTYPE();
 
-solarchvision_WINDOWTYPE TypeWindow = new solarchvision_WINDOWTYPE();
+WINDOWTYPE TypeWindow = new WINDOWTYPE();
 
-solarchvision_CREATE CREATE = new solarchvision_CREATE();
+CREATE CREATE = new CREATE();
 
 int CreateObject = CREATE.Nothing;
 
@@ -29,7 +29,7 @@ int current_Closed = 0;
 
 final String[] STR_SHD = {"F", "T"};
 
-class solarchvision_DATATYPE {
+class DATATYPE {
 
   final static String CLASS_STAMP = "DATATYPE";
 
@@ -40,11 +40,11 @@ class solarchvision_DATATYPE {
 
 }
 
-solarchvision_DATATYPE DataType = new solarchvision_DATATYPE();
+DATATYPE DataType = new DATATYPE();
 
 int WMS_type = DataType.FORECAST_HRDPS; // <<<<<<<<<<<<<
 
-int TROPO_deltaTime = (WMS_type == solarchvision_DATATYPE.FORECAST_GDPS) ? 3 : 1;
+int TROPO_deltaTime = (WMS_type == DATATYPE.FORECAST_GDPS) ? 3 : 1;
 int TROPO_timeSteps = 24;
 
 float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
@@ -135,13 +135,13 @@ PrintWriter[] FILE_outputProbs;
 
 
 
-solarchvision_OperatingSystem OPESYS = new solarchvision_OperatingSystem();
+OperatingSystem OPESYS = new OperatingSystem();
 
-solarchvision_TIME TIME = new solarchvision_TIME();
+TIME TIME = new TIME();
 
-solarchvision_Functions funcs = new solarchvision_Functions();
+Functions funcs = new Functions();
 
-solarchvision_UITASK UITASK = new solarchvision_UITASK();
+UITASK UITASK = new UITASK();
 
 
 int ENSEMBLE_FORECAST_maxDays = 16; // Constant
@@ -221,10 +221,10 @@ boolean DevelopData_update = true;
 float Develop_AngleInclination = 45; // 90 = horizontal surface, 0 = Vertical surface
 float Develop_AngleOrientation = 0; // 0 = South, 90 = East
 
-solarchvision_SHADE SHADE = new solarchvision_SHADE();
+SHADE SHADE = new SHADE();
 
 
-class solarchvision_MESSAGE {
+class MESSAGE {
 
   String CLASS_STAMP = "MESSAGE";
 
@@ -234,17 +234,17 @@ class solarchvision_MESSAGE {
   int dY = int(2 * MessageSize);
 }
 
-solarchvision_MESSAGE MESSAGE = new solarchvision_MESSAGE();
+MESSAGE MESSAGE = new MESSAGE();
 
-solarchvision_STUDY STUDY = new solarchvision_STUDY();
+STUDY STUDY = new STUDY();
 
-solarchvision_WORLD WORLD = new solarchvision_WORLD();
+WORLD WORLD = new WORLD();
 
-solarchvision_WIN3D WIN3D = new solarchvision_WIN3D();
+WIN3D WIN3D = new WIN3D();
 
-solarchvision_OVERLAY3D OVERLAY3D = new solarchvision_OVERLAY3D();
+OVERLAY3D OVERLAY3D = new OVERLAY3D();
 
-solarchvision_UI_rollout UI_rollout = new solarchvision_UI_rollout();
+UI_rollout UI_rollout = new UI_rollout();
 
 float[][]   VertexSolar_XYZ;
 float[][][] VertexSolar_amounts;
@@ -399,33 +399,33 @@ int Y_click2 = -1;
 
 int Camera_Variation = 0; // 1;
 
-solarchvision_Materials allMaterials = new solarchvision_Materials();
+Materials allMaterials = new Materials();
 
-solarchvision_Faces allFaces = new solarchvision_Faces();
+Faces allFaces = new Faces();
 
-solarchvision_Polylines allPolylines = new solarchvision_Polylines();
+Polylines allPolylines = new Polylines();
 
-solarchvision_Groups allGroups = new solarchvision_Groups();
+Groups allGroups = new Groups();
 
-solarchvision_SolidImpacts allSolidImpacts = new solarchvision_SolidImpacts();
+SolidImpacts allSolidImpacts = new SolidImpacts();
 
-solarchvision_SolarImpacts allSolarImpacts = new solarchvision_SolarImpacts();
+SolarImpacts allSolarImpacts = new SolarImpacts();
 
-solarchvision_Edit3D Edit3D = new solarchvision_Edit3D();
+Edit3D Edit3D = new Edit3D();
 
-solarchvision_Scale3D Scale3D = new solarchvision_Scale3D();
+Scale3D Scale3D = new Scale3D();
 
-solarchvision_Rotate3D Rotate3D = new solarchvision_Rotate3D();
+Rotate3D Rotate3D = new Rotate3D();
 
-solarchvision_Move3D Move3D = new solarchvision_Move3D();
+Move3D Move3D = new Move3D();
 
-solarchvision_Drop3D Drop3D = new solarchvision_Drop3D();
+Drop3D Drop3D = new Drop3D();
 
-solarchvision_Clone3D Clone3D = new solarchvision_Clone3D();
+Clone3D Clone3D = new Clone3D();
 
-solarchvision_Delete3D Delete3D = new solarchvision_Delete3D();
+Delete3D Delete3D = new Delete3D();
 
-solarchvision_Select3D Select3D = new solarchvision_Select3D();
+Select3D Select3D = new Select3D();
 
 float[][] saved_BoundingBox = Select3D.BoundingBox;
 
@@ -473,7 +473,7 @@ void regenerate_desired_bakings () {
 
 }
 
-solarchvision_PAINT PAINT = new solarchvision_PAINT();
+PAINT PAINT = new PAINT();
 
 int STAT_N_MidLow = 0;
 int STAT_N_Middle = 1;
@@ -604,41 +604,41 @@ int getLocationTimeZone () {
   return int(funcs.roundTo(STATION.getLongitude() / 15, 15));
 }
 
-solarchvision_Tropo3D Tropo3D = new solarchvision_Tropo3D();
+Tropo3D Tropo3D = new Tropo3D();
 
-solarchvision_Sky3D Sky3D = new solarchvision_Sky3D();
+Sky3D Sky3D = new Sky3D();
 
-solarchvision_Sun3D Sun3D = new solarchvision_Sun3D();
+Sun3D Sun3D = new Sun3D();
 
-solarchvision_Moon3D Moon3D = new solarchvision_Moon3D();
+Moon3D Moon3D = new Moon3D();
 
-solarchvision_Earth3D Earth3D = new solarchvision_Earth3D();
+Earth3D Earth3D = new Earth3D();
 
-solarchvision_Land3D Land3D = new solarchvision_Land3D();
+Land3D Land3D = new Land3D();
 
-solarchvision_Model1Ds allModel1Ds = new solarchvision_Model1Ds();
+Model1Ds allModel1Ds = new Model1Ds();
 
-solarchvision_Model2Ds allModel2Ds = new solarchvision_Model2Ds();
+Model2Ds allModel2Ds = new Model2Ds();
 
-solarchvision_Solids allSolids = new solarchvision_Solids();
+Solids allSolids = new Solids();
 
 float[][] allVertices = new float[0][3];
 // to increase performance we defined vertices array outside Points class
-solarchvision_Points allPoints = new solarchvision_Points();
+Points allPoints = new Points();
 
-solarchvision_User3D User3D = new solarchvision_User3D();
+User3D User3D = new User3D();
 
-solarchvision_Modify3D Modify3D = new solarchvision_Modify3D();
+Modify3D Modify3D = new Modify3D();
 
-solarchvision_Create3D Create3D = new solarchvision_Create3D();
+Create3D Create3D = new Create3D();
 
-solarchvision_Cameras allCameras = new solarchvision_Cameras();
+Cameras allCameras = new Cameras();
 
-solarchvision_Sections allSections = new solarchvision_Sections();
+Sections allSections = new Sections();
 
-solarchvision_WindRose allWindRoses = new solarchvision_WindRose();
+WindRose allWindRoses = new WindRose();
 
-solarchvision_WindFlow allWindFlows = new solarchvision_WindFlow();
+WindFlow allWindFlows = new WindFlow();
 
 void VertexSolar_resize_array () { // called when STUDY.j_End changes
 
@@ -736,13 +736,13 @@ float[][] DiffuseVectors;
 float X_control;
 float Y_control;
 
-solarchvision_UI_menuBar UI_menuBar = new solarchvision_UI_menuBar();
+UI_menuBar UI_menuBar = new UI_menuBar();
 
-solarchvision_UI_toolBar UI_toolBar = new solarchvision_UI_toolBar();
+UI_toolBar UI_toolBar = new UI_toolBar();
 
-solarchvision_UI_consoleBar UI_consoleBar = new solarchvision_UI_consoleBar();
+UI_consoleBar UI_consoleBar = new UI_consoleBar();
 
-solarchvision_UI_caseBar UI_caseBar = new solarchvision_UI_caseBar();
+UI_caseBar UI_caseBar = new UI_caseBar();
 
 String[] allCommands = {"Command Input:", ""};
 String[] allMessages = {"Command Output:", ""};

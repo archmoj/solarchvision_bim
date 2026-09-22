@@ -176,7 +176,7 @@ class Land3DTest {
     processing.data.XML root = new processing.data.XML("root");
     app.Land3D.to_XML(root);
 
-    solarchvision_bim.solarchvision_Land3D fresh = app.new solarchvision_Land3D();
+    solarchvision_bim.Land3D fresh = app.new Land3D();
     fresh.Textures_U_scale = new float[0];
     fresh.Textures_V_scale = new float[0];
     fresh.from_XML(root);

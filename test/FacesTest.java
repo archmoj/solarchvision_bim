@@ -194,7 +194,7 @@ class FacesTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allFaces.to_XML(root);
 
-    solarchvision_bim.solarchvision_Faces fresh = app.new solarchvision_Faces();
+    solarchvision_bim.Faces fresh = app.new Faces();
     fresh.from_XML(root);
 
     assertEquals(1, fresh.nodes.length);

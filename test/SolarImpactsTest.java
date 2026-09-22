@@ -57,7 +57,7 @@ class SolarImpactsTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allSolarImpacts.to_XML(root);
 
-    solarchvision_bim.solarchvision_SolarImpacts fresh = app.new solarchvision_SolarImpacts();
+    solarchvision_bim.SolarImpacts fresh = app.new SolarImpacts();
     fresh.from_XML(root);
 
     assertTrue(fresh.displayImage);

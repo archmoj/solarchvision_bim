@@ -372,7 +372,7 @@ class WIN3DTest {
     processing.data.XML root = new processing.data.XML("root");
     app.WIN3D.to_XML(root);
 
-    solarchvision_bim.solarchvision_WIN3D fresh = app.new solarchvision_WIN3D();
+    solarchvision_bim.WIN3D fresh = app.new WIN3D();
     fresh.from_XML(root);
 
     assertEquals(1f, fresh.CAM_x, 0.0001f);

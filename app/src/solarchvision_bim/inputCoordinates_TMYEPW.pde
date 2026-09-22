@@ -1,4 +1,4 @@
-solarchvision_STATION[] TMYEPW_Coordinates;
+STATION[] TMYEPW_Coordinates;
 
 void inputCoordinates_TMYEPW () {
 
@@ -8,14 +8,14 @@ void inputCoordinates_TMYEPW () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  TMYEPW_Coordinates = new solarchvision_STATION [num_stn];
+  TMYEPW_Coordinates = new STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
 
     String[] parts = split(lineSTR, ",");
 
-    TMYEPW_Coordinates[f] = new solarchvision_STATION();
+    TMYEPW_Coordinates[f] = new STATION();
 
     TMYEPW_Coordinates[f].setCountry(parts[0]);
     TMYEPW_Coordinates[f].setProvince(parts[1]);

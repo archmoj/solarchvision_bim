@@ -1,4 +1,4 @@
-class solarchvision_UITASK {
+class UITASK {
 
   final static String CLASS_STAMP = "UITASK";
 

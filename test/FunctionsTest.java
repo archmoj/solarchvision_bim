@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FunctionsTest {
 
   private static solarchvision_bim app;
-  private static solarchvision_bim.solarchvision_Functions funcs;
+  private static solarchvision_bim.Functions funcs;
   private static final float EPS = 0.001f;
 
   @BeforeAll

@@ -1,4 +1,4 @@
-class solarchvision_Materials {
+class Materials {
 
   int Number = 11; //256;
   int Selection = 1;

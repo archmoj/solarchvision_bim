@@ -1,4 +1,4 @@
-class solarchvision_UI_rollout {
+class UI_rollout {
 
   final static String CLASS_STAMP = "UI_rollout";
 
@@ -112,7 +112,7 @@ class solarchvision_UI_rollout {
   int[] selectedChildForParent;
   final static int FIRST_CHILD = 1;
 
-  public solarchvision_UI_rollout () {
+  public UI_rollout () {
     buildAllRollouts();
     parent = PARENT_PERIOD_SCENARIOS; // default parent
     child = CHILD_PERIOD_TIME; // default child

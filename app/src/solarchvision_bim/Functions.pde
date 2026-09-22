@@ -1,4 +1,4 @@
-class solarchvision_Functions {
+class Functions {
 
   final static String CLASS_STAMP = "Functions";
 

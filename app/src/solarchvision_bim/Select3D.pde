@@ -1,4 +1,4 @@
-class solarchvision_Select3D {
+class Select3D {
 
   final static String CLASS_STAMP = "Select3D";
 

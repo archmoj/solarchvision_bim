@@ -1,4 +1,4 @@
-solarchvision_STATION[] NAEFS_Coordinates;
+STATION[] NAEFS_Coordinates;
 
 void inputCoordinates_NAEFS () {
 
@@ -8,7 +8,7 @@ void inputCoordinates_NAEFS () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  NAEFS_Coordinates = new solarchvision_STATION [num_stn];
+  NAEFS_Coordinates = new STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
@@ -48,7 +48,7 @@ void inputCoordinates_NAEFS () {
     l = parts[3].length();
     elevation = float(parts[3].substring(0, l - 1));
 
-    NAEFS_Coordinates[f] = new solarchvision_STATION();
+    NAEFS_Coordinates[f] = new STATION();
 
     NAEFS_Coordinates[f].setCity(city);
     NAEFS_Coordinates[f].setProvince(province);

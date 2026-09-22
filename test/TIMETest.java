@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TIMETest {
 
   private static solarchvision_bim app;
-  private static solarchvision_bim.solarchvision_TIME time;
+  private static solarchvision_bim.TIME time;
 
   @BeforeAll
   static void setUp () {

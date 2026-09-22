@@ -247,7 +247,7 @@ class GroupsTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allGroups.to_XML(root);
 
-    solarchvision_bim.solarchvision_Groups fresh = app.new solarchvision_Groups();
+    solarchvision_bim.Groups fresh = app.new Groups();
     fresh.from_XML(root);
 
     assertEquals(1, fresh.num);

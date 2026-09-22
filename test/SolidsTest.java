@@ -178,7 +178,7 @@ class SolidsTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allSolids.to_XML(root);
 
-    solarchvision_bim.solarchvision_Solids fresh = app.new solarchvision_Solids();
+    solarchvision_bim.Solids fresh = app.new Solids();
     fresh.from_XML(root);
 
     assertEquals(1, fresh.DEF.length);

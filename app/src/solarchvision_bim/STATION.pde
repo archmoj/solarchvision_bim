@@ -1,4 +1,4 @@
-class solarchvision_STATION {
+class STATION {
 
   final static String CLASS_STAMP = "STATION";
 
@@ -72,11 +72,11 @@ class solarchvision_STATION {
     this.Download_TMYEPW = Download_TMYEPW;
   }
 
-  public solarchvision_STATION () {
+  public STATION () {
 
   }
 
-  public solarchvision_STATION (String code, String city, String province, String country,
+  public STATION (String code, String city, String province, String country,
                          float latitude, float longitude, float timelong, float elevation,
                          String Download_TMYEPW, String filename_TMYEPW,
                          String filename_CWEEDS, String filename_NAEFS, String filename_SWOB) {

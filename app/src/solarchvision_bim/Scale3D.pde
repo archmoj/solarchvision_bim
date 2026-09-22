@@ -1,4 +1,4 @@
-class solarchvision_Scale3D {
+class Scale3D {
 
   final static String CLASS_STAMP = "Scale3D";
 

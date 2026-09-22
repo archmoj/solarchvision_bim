@@ -202,7 +202,7 @@ class Model2DsTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allModel2Ds.to_XML(root);
 
-    solarchvision_bim.solarchvision_Model2Ds fresh = app.new solarchvision_Model2Ds();
+    solarchvision_bim.Model2Ds fresh = app.new Model2Ds();
     fresh.ImagePath = new String[0];
     fresh.from_XML(root);
 

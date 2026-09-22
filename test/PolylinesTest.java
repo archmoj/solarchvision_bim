@@ -193,7 +193,7 @@ class PolylinesTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allPolylines.to_XML(root);
 
-    solarchvision_bim.solarchvision_Polylines fresh = app.new solarchvision_Polylines();
+    solarchvision_bim.Polylines fresh = app.new Polylines();
     fresh.from_XML(root);
 
     assertEquals(1, fresh.nodes.length);

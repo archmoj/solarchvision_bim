@@ -5,7 +5,7 @@ This exists to establish the pattern so more tests can be added the same way.
 ## Why this isn't a normal `javac`/JUnit setup
 
 Every `.pde` tab (e.g. `Earth3D.pde`) declares one top-level `class
-solarchvision_X { ... }`. Processing's own preprocessor merges all tabs
+X { ... }`. Processing's own preprocessor merges all tabs
 in `app/src/solarchvision_bim/` into a single generated Java file, where:
 
 - The main tab (`solarchvision_bim.pde`) becomes a class named
@@ -17,7 +17,7 @@ in `app/src/solarchvision_bim/` into a single generated Java file, where:
 That means the `.pde` files aren't valid, compilable Java on their own -
 you need Processing's own compiler to produce real `.class`/`.java`
 output first, and any inner class needs a live instance of the sketch to
-construct (`app.new solarchvision_Earth3D()`), even though that instance
+construct (`app.new Earth3D()`), even though that instance
 never needs to open a window.
 
 ## Running

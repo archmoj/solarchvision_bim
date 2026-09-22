@@ -1,4 +1,4 @@
-class solarchvision_UI_menuBar {
+class UI_menuBar {
 
   final static String CLASS_STAMP = "UI_menuBar";
 
@@ -44,7 +44,7 @@ class solarchvision_UI_menuBar {
   // inside a non-static inner class.
   HashMap<String, java.util.function.BooleanSupplier> disabledStateByItem;
 
-  solarchvision_UI_menuBar () { // constructor
+  UI_menuBar () { // constructor
     this.Items = buildMenuItems();
     this.disabledStateByItem = buildDisabledStateLookup();
   }

@@ -1,4 +1,4 @@
-solarchvision_STATION[] CLMREC_Coordinates;
+STATION[] CLMREC_Coordinates;
 
 void inputCoordinates_CLMREC () {
 
@@ -8,14 +8,14 @@ void inputCoordinates_CLMREC () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  CLMREC_Coordinates = new solarchvision_STATION [num_stn];
+  CLMREC_Coordinates = new STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
 
     String[] parts = split(lineSTR, ",");
 
-    CLMREC_Coordinates[f] = new solarchvision_STATION();
+    CLMREC_Coordinates[f] = new STATION();
 
     float latitude = float(parts[6]);
     float longitude = float(parts[7]);

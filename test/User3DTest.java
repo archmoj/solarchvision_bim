@@ -66,7 +66,7 @@ class User3DTest {
     processing.data.XML root = new processing.data.XML("root");
     app.User3D.to_XML(root);
 
-    solarchvision_bim.solarchvision_User3D fresh = app.new solarchvision_User3D();
+    solarchvision_bim.User3D fresh = app.new User3D();
     fresh.from_XML(root);
 
     assertEquals(3, fresh.default_Material);

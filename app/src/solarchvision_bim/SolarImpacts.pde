@@ -1,4 +1,4 @@
-class solarchvision_SolarImpacts {
+class SolarImpacts {
 
   final static String CLASS_STAMP = "SolarImpacts";
 

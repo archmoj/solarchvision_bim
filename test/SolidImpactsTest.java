@@ -127,7 +127,7 @@ class SolidImpactsTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allSolidImpacts.to_XML(root);
 
-    solarchvision_bim.solarchvision_SolidImpacts fresh = app.new solarchvision_SolidImpacts();
+    solarchvision_bim.SolidImpacts fresh = app.new SolidImpacts();
     fresh.from_XML(root);
 
     assertEquals(8f, fresh.WindSpeed, 0.0001f);

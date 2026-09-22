@@ -1,4 +1,4 @@
-class solarchvision_Delete3D {
+class Delete3D {
 
   final static String CLASS_STAMP = "Delete3D";
 

@@ -1,4 +1,4 @@
-solarchvision_STATION[] SWOB_Coordinates;
+STATION[] SWOB_Coordinates;
 
 void inputCoordinates_SWOB () {
 
@@ -8,7 +8,7 @@ void inputCoordinates_SWOB () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  SWOB_Coordinates = new solarchvision_STATION [num_stn];
+  SWOB_Coordinates = new STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
@@ -18,7 +18,7 @@ void inputCoordinates_SWOB () {
     float latitude = float(parts[5]);
     float longitude = float(parts[6]);
 
-    SWOB_Coordinates[f] = new solarchvision_STATION();
+    SWOB_Coordinates[f] = new STATION();
 
     String code = parts[8];
     if (parts[4].equals("Manned")) code += "-MAN";

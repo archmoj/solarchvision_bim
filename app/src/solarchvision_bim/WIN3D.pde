@@ -1,4 +1,4 @@
-class solarchvision_WIN3D {
+class WIN3D {
 
   final static String CLASS_STAMP = "WIN3D";
 

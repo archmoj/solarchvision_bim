@@ -39,7 +39,7 @@ class WindRoseTest {
     processing.data.XML root = new processing.data.XML("root");
     app.allWindRoses.to_XML(root);
 
-    solarchvision_bim.solarchvision_WindRose fresh = app.new solarchvision_WindRose();
+    solarchvision_bim.WindRose fresh = app.new WindRose();
     fresh.from_XML(root);
 
     assertTrue(fresh.displayImage);

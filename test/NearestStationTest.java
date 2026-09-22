@@ -11,8 +11,8 @@ class NearestStationTest {
     app = new solarchvision_bim();
   }
 
-  private solarchvision_bim.solarchvision_STATION stationAt (float lon, float lat) {
-    solarchvision_bim.solarchvision_STATION s = app.new solarchvision_STATION();
+  private solarchvision_bim.STATION stationAt (float lon, float lat) {
+    solarchvision_bim.STATION s = app.new STATION();
     s.setLongitude(lon);
     s.setLatitude(lat);
     return s;
@@ -25,7 +25,7 @@ class NearestStationTest {
     app.STATION.setLongitude(0);
     app.STATION.setLatitude(0);
 
-    solarchvision_bim.solarchvision_STATION[] coords = {
+    solarchvision_bim.STATION[] coords = {
       stationAt(10, 10),  // far
       stationAt(1, 1),    // closest
       stationAt(-5, -5)   // medium
@@ -47,7 +47,7 @@ class NearestStationTest {
     app.STATION.setLongitude(-170);
     app.STATION.setLatitude(0);
 
-    solarchvision_bim.solarchvision_STATION[] coords = { stationAt(190, 0) };
+    solarchvision_bim.STATION[] coords = { stationAt(190, 0) };
 
     solarchvision_bim.NearestStation nearest = app.findNearestStation(coords);
 
@@ -59,7 +59,7 @@ class NearestStationTest {
 
   @Test
   void findNearbyStations_returnsOnlyThoseWithinMaxDistSortedAscending () {
-    solarchvision_bim.solarchvision_STATION[] coords = {
+    solarchvision_bim.STATION[] coords = {
       stationAt(1.0f, 0),  // included, 3rd closest
       stationAt(0.1f, 0),  // included, closest
       stationAt(10.0f, 0), // excluded - too far
@@ -80,7 +80,7 @@ class NearestStationTest {
 
   @Test
   void findNearbyStations_truncatesToMaxCountAfterSorting () {
-    solarchvision_bim.solarchvision_STATION[] coords = {
+    solarchvision_bim.STATION[] coords = {
       stationAt(1.0f, 0),
       stationAt(0.1f, 0),
       stationAt(0.5f, 0)
@@ -95,7 +95,7 @@ class NearestStationTest {
 
   @Test
   void findNearbyStations_alsoWrapsLongitudesAbove180 () {
-    solarchvision_bim.solarchvision_STATION[] coords = { stationAt(190, 0) };
+    solarchvision_bim.STATION[] coords = { stationAt(190, 0) };
     // Reference point at -170: a raw-190 station is co-located with it
     // once wrapped, so it should be found well within a tight maxDist.
     int[] result = app.findNearbyStations(coords, -170, 0, 1000f, 10);

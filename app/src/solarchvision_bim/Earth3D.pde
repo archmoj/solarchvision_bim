@@ -1,4 +1,4 @@
-class solarchvision_Earth3D {
+class Earth3D {
 
   final static String CLASS_STAMP = "Earth3D";
 
@@ -17,7 +17,7 @@ class solarchvision_Earth3D {
   // are plain stored fields, not computed on the fly.
   float levelOfDetail = 4.0; // 0.25, 0.5, 1, 2, 4,
 
-  solarchvision_Earth3D () { // constructor
+  Earth3D () { // constructor
     recomputeLevelOfDetailDependents();
   }
 

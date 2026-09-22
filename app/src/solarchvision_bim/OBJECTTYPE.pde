@@ -1,4 +1,4 @@
-class solarchvision_OBJECTTYPE {
+class OBJECTTYPE {
 
   final static String CLASS_STAMP = "OBJECTTYPE";
 

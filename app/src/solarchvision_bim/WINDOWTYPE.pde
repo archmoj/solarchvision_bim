@@ -1,4 +1,4 @@
-class solarchvision_WINDOWTYPE {
+class WINDOWTYPE {
 
   final static String CLASS_STAMP = "WINDOWTYPE";
 

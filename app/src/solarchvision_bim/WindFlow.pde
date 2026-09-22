@@ -1,4 +1,4 @@
-class solarchvision_WindFlow {
+class WindFlow {
 
   final static String CLASS_STAMP = "WindFlow";
 

@@ -1,8 +1,8 @@
-class solarchvision_Polylines {
+class Polylines {
 
   final static String CLASS_STAMP = "Polylines";
 
-  solarchvision_Polylines () { // constructor
+  Polylines () { // constructor
     makeEmpty(0);
   }
 

@@ -1,8 +1,8 @@
-class solarchvision_Solids {
+class Solids {
 
   final static String CLASS_STAMP = "Solids";
 
-  solarchvision_Solids () { // constructor
+  Solids () { // constructor
     makeEmpty(0);
   }
 

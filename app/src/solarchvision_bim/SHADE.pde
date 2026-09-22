@@ -1,4 +1,4 @@
-class solarchvision_SHADE {
+class SHADE {
 
   final static String CLASS_STAMP = "SHADE";
 

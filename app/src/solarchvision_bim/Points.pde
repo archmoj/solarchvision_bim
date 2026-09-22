@@ -1,8 +1,8 @@
-class solarchvision_Points {
+class Points {
 
   final static String CLASS_STAMP = "Points";
 
-  solarchvision_Points () { // constructor
+  Points () { // constructor
     makeEmpty(0);
   }
 

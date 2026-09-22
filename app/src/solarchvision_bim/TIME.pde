@@ -1,4 +1,4 @@
-class solarchvision_TIME {
+class TIME {
 
   final static String CLASS_STAMP = "TIME";
 
@@ -126,7 +126,7 @@ class solarchvision_TIME {
     return this.MM[safeDate(date_IN)];
   }
 
-  solarchvision_TIME () { // constructor
+  TIME () { // constructor
     this.createCalendar();
   }
 

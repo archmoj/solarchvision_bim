@@ -799,7 +799,7 @@ class NearestStation {
 // Shared by the SWOB/NAEFS/CWEEDS/CLMREC/TMYEPW "which station did the user click nearest to"
 // lookups in mouseClicked(): scans `coords` and returns the index (and distance) of whichever
 // station is closest to STATION's current longitude/latitude.
-NearestStation findNearestStation (solarchvision_STATION[] coords) {
+NearestStation findNearestStation (STATION[] coords) {
 
   NearestStation nearest = new NearestStation();
 
@@ -825,7 +825,7 @@ NearestStation findNearestStation (solarchvision_STATION[] coords) {
 // given (lon, lat), sorted by ascending distance. Used to detect when
 // several TMYEPW stations sit close enough together that a click can't
 // unambiguously pick one, so they can be offered as a list instead.
-int[] findNearbyStations (solarchvision_STATION[] coords, float lon, float lat, float maxDist, int maxCount) {
+int[] findNearbyStations (STATION[] coords, float lon, float lat, float maxDist, int maxCount) {
 
   IntList indices = new IntList();
   FloatList dists = new FloatList();
@@ -917,7 +917,7 @@ abstract class StationPicker {
   // start out null and are only filled in later by e.g.
   // inputCoordinates_TMYEPW()), so capturing the array in the constructor
   // would have permanently captured null.
-  abstract solarchvision_STATION[] getCoords ();
+  abstract STATION[] getCoords ();
   abstract String getLabel (int f);
   abstract void select (int f, float lon, float lat);
 
@@ -1194,7 +1194,7 @@ abstract class StationPicker {
   // range, or a different dataset is active) just quietly selects the
   // single nearest one, same as every dataset did before pickers existed.
   void handleMapClick (float lon, float lat) {
-    solarchvision_STATION[] coords = this.getCoords();
+    STATION[] coords = this.getCoords();
     int[] nearby = findNearbyStations(coords, lon, lat, this.maxDist, this.maxCount);
 
     if ((nearby.length > 0) && (CurrentDataSource == this.dataSourceID)) {
@@ -1211,31 +1211,31 @@ abstract class StationPicker {
 }
 
 StationPicker TMYEPW_PICKER = new StationPicker("TMYEPW", 10000, 50, dataID_CLIMATE_TMYEPW) {
-  solarchvision_STATION[] getCoords () { return TMYEPW_Coordinates; }
+  STATION[] getCoords () { return TMYEPW_Coordinates; }
   String getLabel (int f) { return TMYEPW_Coordinates[f].getFilename_TMYEPW(); }
   void select (int f, float lon, float lat) { selectTMYEPWStation(f, lon, lat); }
 };
 
 StationPicker CLMREC_PICKER = new StationPicker("CLMREC", 25000, 50, dataID_CLIMATE_CLMREC) {
-  solarchvision_STATION[] getCoords () { return CLMREC_Coordinates; }
+  STATION[] getCoords () { return CLMREC_Coordinates; }
   String getLabel (int f) { return CLMREC_Coordinates[f].getCity() + ", " + CLMREC_Coordinates[f].getProvince(); }
   void select (int f, float lon, float lat) { selectCLMRECStation(f, lon, lat); }
 };
 
 StationPicker CWEEDS_PICKER = new StationPicker("CWEEDS", 50000, 50, dataID_CLIMATE_CWEEDS) {
-  solarchvision_STATION[] getCoords () { return CWEEDS_coordinates; }
+  STATION[] getCoords () { return CWEEDS_coordinates; }
   String getLabel (int f) { return CWEEDS_coordinates[f].getFilename_CWEEDS(); }
   void select (int f, float lon, float lat) { selectCWEEDSStation(f, lon, lat); }
 };
 
 StationPicker NAEFS_PICKER = new StationPicker("NAEFS", 50000, 50, dataID_ENSEMBLE_FORECAST) {
-  solarchvision_STATION[] getCoords () { return NAEFS_Coordinates; }
+  STATION[] getCoords () { return NAEFS_Coordinates; }
   String getLabel (int f) { return NAEFS_Coordinates[f].getFilename_NAEFS(); }
   void select (int f, float lon, float lat) { selectNAEFSStation(f, lon, lat); }
 };
 
 StationPicker SWOB_PICKER = new StationPicker("SWOB", 25000, 50, dataID_ENSEMBLE_OBSERVED) {
-  solarchvision_STATION[] getCoords () { return SWOB_Coordinates; }
+  STATION[] getCoords () { return SWOB_Coordinates; }
   String getLabel (int f) { return SWOB_Coordinates[f].getCode(); }
   void select (int f, float lon, float lat) { selectSWOBStation(f, lon, lat); }
 };
