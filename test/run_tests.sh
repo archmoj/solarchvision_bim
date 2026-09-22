@@ -148,7 +148,19 @@ fi
 CLASSPATH="$CORE_JAR:$JUNIT_JAR:$MAIN_CLASS_DIR"
 
 echo "==> Compiling tests"
-TEST_CLASSES="$BUILD_DIR/test-classes"
+# Deliberately NOT under $BUILD_DIR: jacococli's --classfiles (below)
+# recursively scans everything under whatever directory it's given, and
+# $MAIN_CLASS_DIR can end up being $BUILD_DIR itself (Processing
+# sometimes puts solarchvision_bim.class directly there, sometimes in a
+# subfolder - see the comment above MAIN_CLASS_PATH). If TEST_CLASSES
+# were a subdirectory of $BUILD_DIR in that case, the compiled test
+# classes would sit right inside $MAIN_CLASS_DIR's own tree and get
+# swept into the coverage report as 0%-covered "application" classes,
+# even though the java agent's includes=solarchvision_bim* never
+# instruments them. A sibling directory next to $BUILD_DIR sidesteps
+# that regardless of where exactly Processing puts the real classes.
+TEST_CLASSES="$(dirname "$BUILD_DIR")/test-classes"
+rm -rf "$TEST_CLASSES"
 mkdir -p "$TEST_CLASSES"
 "$JAVAC_BIN" -cp "$CLASSPATH" -d "$TEST_CLASSES" test/*.java
 
