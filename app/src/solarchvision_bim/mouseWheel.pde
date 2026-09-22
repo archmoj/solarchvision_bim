@@ -231,16 +231,15 @@ void handleScaleWheel(float wheelValue, float x0, float y0, float z0) {
 void handleMoveWheel(float wheelValue) {
   float d = -wheelValue;
 
-  float dx = d;
-  float dy = d;
-  float dz = d;
+  // Same axis-zeroing-by-Select3D.posVector logic as
+  // SOLARCHVISION_computeMoveDelta (mouseClicked.pde): moving the same
+  // distance d on all three axes from the origin, then letting that
+  // function zero out whichever axes posVector excludes, is exactly
+  // equivalent to the dx=dy=dz=d then zero-by-posVector this used to do
+  // inline.
+  float[] delta = SOLARCHVISION_computeMoveDelta(0, 0, 0, d, d, d);
 
-  int theVector = Select3D.posVector;
-  if (theVector == 0) { dy = 0; dz = 0; }
-  if (theVector == 1) { dz = 0; dx = 0; }
-  if (theVector == 2) { dx = 0; dy = 0; }
-
-  Move3D.selection(dx, dy, dz);
+  Move3D.selection(delta[0], delta[1], delta[2]);
   SOLARCHVISION_model_changed();
 }
 

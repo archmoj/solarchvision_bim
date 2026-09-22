@@ -141,34 +141,9 @@ float[] castClickToWorld(float clickX, float clickY) {
   float imageX = clickX - (WIN3D.cX + 0.5 * WIN3D.dX);
   float imageY = clickY - (WIN3D.cY + 0.5 * WIN3D.dY);
 
-  float[] rayStart = { WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z };
-  float[] rayEnd = WIN3D.calculate_Click3D(imageX, imageY);
-
-  rayStart[0] /= OBJECTS_scale;
-  rayStart[1] /= OBJECTS_scale;
-  rayStart[2] /= OBJECTS_scale;
-  rayEnd[0] /= OBJECTS_scale;
-  rayEnd[1] /= OBJECTS_scale;
-  rayEnd[2] /= OBJECTS_scale;
-
-  // In this view type the ray must originate from the screen point
-  // itself rather than the camera, so shift the start accordingly.
-  if (WIN3D.ViewType == 0) {
-    float[] rayCenter = WIN3D.calculate_Click3D(0, 0);
-    rayCenter[0] /= OBJECTS_scale;
-    rayCenter[1] /= OBJECTS_scale;
-    rayCenter[2] /= OBJECTS_scale;
-
-    rayStart[0] += rayEnd[0] - rayCenter[0];
-    rayStart[1] += rayEnd[1] - rayCenter[1];
-    rayStart[2] += rayEnd[2] - rayCenter[2];
-  }
-
-  float[] rayDirection = {
-    rayEnd[0] - rayStart[0],
-    rayEnd[1] - rayStart[1],
-    rayEnd[2] - rayStart[2]
-  };
+  SOLARCHVISION_ClickRay ray = SOLARCHVISION_computeClickRay(imageX, imageY);
+  float[] rayStart = ray.start;
+  float[] rayDirection = ray.direction;
 
   float[] hit = { -1, 0, 0, 0 };
   if (mouseButton == RIGHT) {

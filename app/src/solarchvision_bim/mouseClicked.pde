@@ -293,7 +293,9 @@ class SOLARCHVISION_ClickRay {
 // character-for-character identical (modulo `this.` vs `WIN3D.` on the
 // fields it reads, since one copy lived inside the WIN3D class itself)
 // to WIN3D.rotateXY_3DViewport_around_LandIntersection()'s own inline
-// ray setup before extracting - both replaced with a call to this.
+// ray setup before extracting - both replaced with a call to this. A
+// third, near-identical copy in mouseReleased.pde's castClickToWorld()
+// was later pointed at this too.
 // Turns a click point into a ray in WORLD (unscaled, i.e. /
 // OBJECTS_scale) space: starts at the current camera position, aimed
 // through WIN3D.calculate_Click3D(Image_X, Image_Y) (already covered
