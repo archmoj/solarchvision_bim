@@ -22,20 +22,38 @@ import static org.junit.jupiter.api.Assertions.*;
 // direct comparison before extracting. Each occurrence was replaced
 // with a call to the new function, not rewritten.
 //
+// Three more functions below (SOLARCHVISION_pickOrAssignFaceProperty,
+// SOLARCHVISION_pickOrAssignModel2DSeedMaterial,
+// SOLARCHVISION_pickOrAssignModel1DProperty) were extracted from
+// mouseClicked() in this session too: its UITASK.Seed_Material/
+// Tessellation/Layer/Visibility/Weight handling for a clicked FACE (or
+// GROUP/POLYLINE resolving to one), its Seed_Material handling for a
+// clicked MODEL2D instance, and its per-property handling for a clicked
+// MODEL1D instance were each a single self-contained "read
+// WIN3D.UI_CurrentTask/UI_TaskModifyParameter, either Pick into a
+// User3D.default_*/create_* field or Assign back onto the object(s)"
+// block, reachable from exactly one call site each and not touching
+// mouseX/mouseY/mouseButton or any Select3D/UI state - unlike the
+// dispatcher around them. Each was moved out verbatim (structure only,
+// no behavior change), including one existing quirk preserved
+// deliberately rather than fixed: SOLARCHVISION_pickOrAssignFaceProperty's
+// Assign(all) branch calls allFaces.setClose(...) for the Weight case
+// instead of setWeight(...), same as the original inline code did.
+//
 // NOT covered: mouseClicked() itself and SOLARCHVISION_buildMenuActions()
-// - together these make up the vast majority of this 3800+ line file,
-// but they're an enormous, deeply state-dependent dispatcher (menu bar
-// hit-testing, per-UITASK create/modify/pick/assign branches across
+// - together these still make up the vast majority of this 3800+ line
+// file, but they're an enormous, deeply state-dependent dispatcher (menu
+// bar hit-testing, per-UITASK create/modify/pick/assign branches across
 // every object category, drag-vs-click disambiguation) that reads
 // mouseX/mouseY/mouseButton and dozens of other UI globals directly.
 // Meaningfully testing more of it would need either a much larger
 // refactor than fits in one session, or synthetic setup so elaborate
 // (faking an entire toolbar/menu layout) that it would mostly just be
 // re-testing the setters/creators already covered directly in their own
-// files (Move3D, Create3D, Model1Ds/Model2Ds, etc.) - the two
-// extractions above were chosen because they were self-contained,
-// genuinely duplicated, and safe to pull out without touching that
-// surrounding dispatch logic at all.
+// files (Move3D, Create3D, Model1Ds/Model2Ds, etc.) - the extractions
+// above were chosen because they were self-contained, genuinely
+// duplicated or cleanly single-purpose, and safe to pull out without
+// touching that surrounding dispatch logic at all.
 // SOLARCHVISION_findNearestStation()/SOLARCHVISION_findNearbyStations()
 // are already covered directly in NearestStationTest.java from an
 // earlier session, not repeated here.
@@ -708,5 +726,211 @@ class MouseClickedTest {
 
     assertFalse(sp.createNew);
     assertEquals(99f, sp.X, 0.0001f); // left at allSolidImpacts' current default, untouched
+  }
+
+  // ======= SOLARCHVISION_pickOrAssignFaceProperty (extracted) ===========
+
+  @Test
+  void pickOrAssignFaceProperty_isANoOpWhenTheCurrentTaskIsntOneOfTheFiveProperties () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Move; // not one of the five
+    app.WIN3D.UI_TaskModifyParameter = 1;
+    app.allFaces.options = new int[][]{{9, 9, 9, 9, 9, 9}};
+    app.User3D.default_Material = -1;
+
+    app.SOLARCHVISION_pickOrAssignFaceProperty(0);
+
+    assertEquals(-1, app.User3D.default_Material); // untouched
+  }
+
+  @Test
+  void pickOrAssignFaceProperty_pickReadsTheClickedFacesValueIntoTheMatchingDefault () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
+    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
+    app.allFaces.options = new int[][]{{42, 0, 0, 0, 0, 0}};
+
+    app.SOLARCHVISION_pickOrAssignFaceProperty(0);
+
+    assertEquals(42, app.User3D.default_Material);
+  }
+
+  @Test
+  void pickOrAssignFaceProperty_assignSubWritesTheDefaultOntoJustTheClickedFace () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Weight;
+    app.WIN3D.UI_TaskModifyParameter = 2; // Assign(sub)
+    app.User3D.default_Weight = 7;
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+
+    app.SOLARCHVISION_pickOrAssignFaceProperty(0);
+
+    assertEquals(7, app.allFaces.getWeight(0));
+    assertEquals(0, app.allFaces.getWeight(1)); // the other face is untouched
+  }
+
+  @Test
+  void pickOrAssignFaceProperty_assignAllWritesTheDefaultOntoEveryFaceInTheClickedFacesGroup () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Layer;
+    app.WIN3D.UI_TaskModifyParameter = 3; // Assign(all)
+    app.User3D.default_Layer = 5;
+    app.allFaces.options = new int[][]{
+      {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}
+    };
+    app.allGroups.makeEmpty(0);
+    app.allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0); // group spanning faces [0,3) at creation time
+    app.allGroups.setStart_Face(0, 0);
+    app.allGroups.setStop_Face(0, 2); // faces 0..2 belong to this one group
+
+    app.SOLARCHVISION_pickOrAssignFaceProperty(1); // click lands on the middle face of the group
+
+    assertEquals(5, app.allFaces.getLayer(0));
+    assertEquals(5, app.allFaces.getLayer(1));
+    assertEquals(5, app.allFaces.getLayer(2));
+  }
+
+  @Test
+  void pickOrAssignFaceProperty_assignAllsWeightCaseUsesSetCloseNotSetWeight () {
+    // Documents the pre-existing quirk this extraction preserves
+    // verbatim rather than fixing: unlike Pick and Assign(sub) just
+    // above it, Assign(all)'s Weight case writes via allFaces.setClose,
+    // not setWeight.
+    app.WIN3D.UI_CurrentTask = app.UITASK.Weight;
+    app.WIN3D.UI_TaskModifyParameter = 3; // Assign(all)
+    app.User3D.default_Weight = 3;
+    app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
+    app.allGroups.makeEmpty(0);
+    app.allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    app.allGroups.setStart_Face(0, 0);
+    app.allGroups.setStop_Face(0, 0);
+
+    app.SOLARCHVISION_pickOrAssignFaceProperty(0);
+
+    assertEquals(0, app.allFaces.getWeight(0)); // NOT written
+    assertEquals(3, app.allFaces.getClose(0));   // written instead
+  }
+
+  // === SOLARCHVISION_pickOrAssignModel2DSeedMaterial (extracted) ========
+
+  @Test
+  void pickOrAssignModel2DSeedMaterial_isANoOpWhenTheCurrentTaskIsntSeedMaterial () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Move;
+    app.WIN3D.UI_TaskModifyParameter = 1;
+    app.allModel2Ds.num_files_PEOPLE = 2;
+    app.allModel2Ds.MAP = new int[]{5};
+    app.User3D.create_Plant_Type = -1;
+
+    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+
+    assertEquals(-1, app.User3D.create_Plant_Type); // untouched
+  }
+
+  @Test
+  void pickOrAssignModel2DSeedMaterial_pickOfAPersonReadsItsTypeIntoCreatePersonType () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
+    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
+    app.allModel2Ds.num_files_PEOPLE = 5;
+    app.allModel2Ds.MAP = new int[]{3}; // 3 <= num_files_PEOPLE -> a person
+
+    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+
+    assertEquals(3, app.User3D.create_Person_Type);
+  }
+
+  @Test
+  void pickOrAssignModel2DSeedMaterial_pickOfATreeReadsItsOffsetTypeIntoCreatePlantType () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
+    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
+    app.allModel2Ds.num_files_PEOPLE = 5;
+    app.allModel2Ds.MAP = new int[]{8}; // 8 > num_files_PEOPLE -> a tree, offset type = 8-5 = 3
+
+    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+
+    assertEquals(3, app.User3D.create_Plant_Type);
+  }
+
+  @Test
+  void pickOrAssignModel2DSeedMaterial_assignWritesTheCurrentTypePreservingTheInstancesOwnSign () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
+    app.WIN3D.UI_TaskModifyParameter = 2; // Assign
+    app.allModel2Ds.num_files_PEOPLE = 5;
+    app.allModel2Ds.MAP = new int[]{-8}; // a tree instance, flipped (negative)
+    app.User3D.create_Plant_Type = 1;
+
+    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+
+    assertEquals(-6, app.allModel2Ds.MAP[0]); // -(1 + 5), sign kept negative
+  }
+
+  @Test
+  void pickOrAssignModel2DSeedMaterial_assignAllIsTreatedTheSameAsAssignSub () {
+    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
+    app.WIN3D.UI_TaskModifyParameter = 3; // Assign(all) - no group distinction for MODEL2D
+    app.allModel2Ds.num_files_PEOPLE = 5;
+    app.allModel2Ds.MAP = new int[]{2}; // a person instance
+    app.User3D.create_Person_Type = 4;
+
+    app.SOLARCHVISION_pickOrAssignModel2DSeedMaterial(0);
+
+    assertEquals(4, app.allModel2Ds.MAP[0]);
+  }
+
+  // ==== SOLARCHVISION_pickOrAssignModel1DProperty (extracted) ===========
+
+  @Test
+  void pickOrAssignModel1DProperty_pickOfASingleTaskReadsOnlyThatOneField () {
+    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
+    app.WIN3D.UI_CurrentTask = app.UITASK.BranchTilt;
+    app.allModel1Ds.makeEmpty(0);
+    app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // create one instance to pick from
+    app.allModel1Ds.setBranchTilt(0, 12.5f);
+    app.User3D.create_Model1D_BranchTilt = -1;
+    app.User3D.create_Model1D_LeafSize = -1;
+
+    app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
+
+    assertEquals(12.5f, app.User3D.create_Model1D_BranchTilt, 0.0001f);
+    assertEquals(-1f, app.User3D.create_Model1D_LeafSize, 0.0001f); // untouched: a different task
+  }
+
+  @Test
+  void pickOrAssignModel1DProperty_assignOfASingleTaskWritesOnlyThatOneField () {
+    app.WIN3D.UI_TaskModifyParameter = 2; // Assign
+    app.WIN3D.UI_CurrentTask = app.UITASK.TrunkSize;
+    app.allModel1Ds.makeEmpty(0);
+    app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    app.User3D.create_Model1D_TrunkSize = 6.25f;
+
+    app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
+
+    assertEquals(6.25f, app.allModel1Ds.getTrunkSize(0), 0.0001f);
+  }
+
+  @Test
+  void pickOrAssignModel1DProperty_model1DsPropsPicksAllThreeCoveredFieldsAtOnce () {
+    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
+    app.WIN3D.UI_CurrentTask = app.UITASK.Model1DsProps;
+    app.allModel1Ds.makeEmpty(0);
+    app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    app.allModel1Ds.setDegreeMax(0, 4);
+    app.allModel1Ds.setTrunkSize(0, 2.5f);
+    app.allModel1Ds.setLeafSize(0, 1.5f);
+
+    app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
+
+    assertEquals(4, app.User3D.create_Model1D_DegreeMax);
+    assertEquals(2.5f, app.User3D.create_Model1D_TrunkSize, 0.0001f);
+    assertEquals(1.5f, app.User3D.create_Model1D_LeafSize, 0.0001f);
+  }
+
+  @Test
+  void pickOrAssignModel1DProperty_isANoOpWhenModifyParameterIsZero () {
+    app.WIN3D.UI_TaskModifyParameter = 0; // neither Pick nor Assign
+    app.WIN3D.UI_CurrentTask = app.UITASK.BranchTwist;
+    app.allModel1Ds.makeEmpty(0);
+    app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    app.allModel1Ds.setBranchTwist(0, 9);
+    app.User3D.create_Model1D_BranchTwist = -1;
+
+    app.SOLARCHVISION_pickOrAssignModel1DProperty(0);
+
+    assertEquals(-1f, app.User3D.create_Model1D_BranchTwist, 0.0001f); // untouched
   }
 }

@@ -45,6 +45,133 @@ void SOLARCHVISION_convertAndSwitch(Runnable convert, int newCategory) {
   SOLARCHVISION_switch_category(newCategory);
 }
 
+// Pulled out of mouseClicked()'s UITASK.Pick/Assign(sub)/Assign(all)
+// handling for a clicked FACE (also reached via GROUP/POLYLINE, which
+// resolve to a face index the same way): for whichever of the five
+// per-face properties (Seed_Material/Tessellation/Layer/Visibility/
+// Weight) WIN3D.UI_CurrentTask currently is, either reads face f's
+// current value into the matching User3D.default_* (Pick,
+// UI_TaskModifyParameter==1), writes User3D.default_* onto face f alone
+// (Assign(sub), ==2), or writes it onto every face in f's group
+// (Assign(all), ==3, via allGroups.findGroupContainingFace/
+// getStart_Face/getStop_Face - already covered directly in
+// GroupsTest.java). Preserved exactly as found, including one existing
+// quirk: Assign(all)'s Weight case calls allFaces.setClose(...) rather
+// than setWeight(...), unlike the identical-looking Pick and
+// Assign(sub) cases just above it - kept as-is since this refactor
+// changes structure, not behavior.
+void SOLARCHVISION_pickOrAssignFaceProperty (int f) {
+  if ((WIN3D.UI_CurrentTask != UITASK.Seed_Material) &&
+      (WIN3D.UI_CurrentTask != UITASK.Tessellation) &&
+      (WIN3D.UI_CurrentTask != UITASK.Layer) &&
+      (WIN3D.UI_CurrentTask != UITASK.Visibility) &&
+      (WIN3D.UI_CurrentTask != UITASK.Weight)) return;
+
+  if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
+    if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) User3D.default_Material     = allFaces.getMaterial(f);
+    else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  User3D.default_Tessellation = allFaces.getTessellation(f);
+    else if (WIN3D.UI_CurrentTask == UITASK.Layer)         User3D.default_Layer        = allFaces.getLayer(f);
+    else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    User3D.default_Visibility   = allFaces.getVisibility(f);
+    else if (WIN3D.UI_CurrentTask == UITASK.Weight)        User3D.default_Weight       = allFaces.getWeight(f);
+  }
+  if (WIN3D.UI_TaskModifyParameter == 2) { // Assign(sub)
+    if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (f, User3D.default_Material);
+    else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(f, User3D.default_Tessellation);
+    else if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (f, User3D.default_Layer);
+    else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    allFaces.setVisibility  (f, User3D.default_Visibility);
+    else if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setWeight      (f, User3D.default_Weight);
+  }
+  if (WIN3D.UI_TaskModifyParameter == 3) { // Assign(all)
+    int OBJ_ID = allGroups.findGroupContainingFace(f);
+
+    for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
+      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.default_Material);
+      else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.default_Tessellation);
+      else if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (q, User3D.default_Layer);
+      else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    allFaces.setVisibility  (q, User3D.default_Visibility);
+      else if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setClose       (q, User3D.default_Weight);
+    }
+  }
+}
+
+// Pulled out of mouseClicked()'s UITASK.Seed_Material handling for a
+// clicked MODEL2D instance: MODEL2D's own MAP[] encodes both which
+// PEOPLE/TREES filename an instance uses (abs(MAP[OBJ_ID])) and a
+// left/right-facing flip (its sign) in one int. Pick
+// (UI_TaskModifyParameter==1) reads the clicked instance's own type
+// into User3D.create_Plant_Type or create_Person_Type depending on
+// allModel2Ds.isTree(); Assign (==2 or ==3 - both treated identically
+// here, unlike the FACE property case above) writes the current
+// create_Plant_Type/create_Person_Type back onto MAP[OBJ_ID], carrying
+// that instance's own sign (its flip) forward unchanged.
+void SOLARCHVISION_pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
+  if (WIN3D.UI_CurrentTask != UITASK.Seed_Material) return;
+
+  int n = allModel2Ds.MAP[OBJ_ID];
+  int sign_n = 1;
+  if (n < 0) sign_n = -1;
+  n = abs(n);
+  int n1 = allModel2Ds.num_files_PEOPLE;
+
+  if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
+    if (allModel2Ds.isTree(n)) { // case: trees
+      User3D.create_Plant_Type = n - n1;
+    }
+    else { // case: people
+      User3D.create_Person_Type = n;
+    }
+  }
+  if ((WIN3D.UI_TaskModifyParameter == 2) || (WIN3D.UI_TaskModifyParameter == 3)) { // Assign
+    if (allModel2Ds.isTree(n)) { // case: trees
+      allModel2Ds.MAP[OBJ_ID] = sign_n * (User3D.create_Plant_Type + n1);
+    }
+    else { // case: people
+      allModel2Ds.MAP[OBJ_ID] = sign_n * User3D.create_Person_Type;
+    }
+  }
+}
+
+// Pulled out of mouseClicked()'s handling for a clicked MODEL1D
+// instance: for whichever of the seven per-tree properties
+// (DegreeMax/BranchTilt/BranchTwist/BranchRatio/TreeBase/TrunkSize/
+// LeafSize) WIN3D.UI_CurrentTask currently is - or all of them at once,
+// for UITASK.Model1DsProps - either reads OBJ_ID's current value(s)
+// into the matching User3D.create_Model1D_* (Pick,
+// UI_TaskModifyParameter==1) or writes the matching User3D.create_
+// Model1D_* value(s) back onto OBJ_ID (Assign, ==2).
+void SOLARCHVISION_pickOrAssignModel1DProperty (int OBJ_ID) {
+  if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
+    if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
+    else if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
+    else if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) User3D.create_Model1D_BranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
+    else if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) User3D.create_Model1D_BranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
+    else if (WIN3D.UI_CurrentTask == UITASK.TreeBase) User3D.create_Model1D_TreeBase = allModel1Ds.getTreeBase(OBJ_ID);
+
+    else if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
+    else if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+    else if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
+      User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
+      User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
+      User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+    }
+  }
+  if (WIN3D.UI_TaskModifyParameter == 2) { // Assign
+    if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
+    else if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.create_Model1D_BranchTilt);
+    else if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.create_Model1D_BranchTwist);
+    else if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.create_Model1D_BranchRatio);
+    else if (WIN3D.UI_CurrentTask == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.create_Model1D_TreeBase);
+
+    else if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);
+    else if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
+    else if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
+      allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
+      allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);
+      allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
+    }
+  }
+}
+
 // Result of SOLARCHVISION_computeCreateParams below: the concrete
 // position/rotation/half-extents/power-exponents a click should create
 // an object with, derived from the click point (RxP) and the user's
@@ -1507,38 +1634,7 @@ void mouseClicked () {
 
                       int f = int(RxP[0]);
 
-                      if ((WIN3D.UI_CurrentTask == UITASK.Seed_Material) ||
-                          (WIN3D.UI_CurrentTask == UITASK.Tessellation) ||
-                          (WIN3D.UI_CurrentTask == UITASK.Layer) ||
-                          (WIN3D.UI_CurrentTask == UITASK.Visibility) ||
-                          (WIN3D.UI_CurrentTask == UITASK.Weight)) {
-
-                        if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
-                          if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) User3D.default_Material     = allFaces.getMaterial(f);
-                          else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  User3D.default_Tessellation = allFaces.getTessellation(f);
-                          else if (WIN3D.UI_CurrentTask == UITASK.Layer)         User3D.default_Layer        = allFaces.getLayer(f);
-                          else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    User3D.default_Visibility   = allFaces.getVisibility(f);
-                          else if (WIN3D.UI_CurrentTask == UITASK.Weight)        User3D.default_Weight       = allFaces.getWeight(f);
-                        }
-                        if (WIN3D.UI_TaskModifyParameter == 2) { // Assign(sub)
-                          if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (f, User3D.default_Material);
-                          else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(f, User3D.default_Tessellation);
-                          else if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (f, User3D.default_Layer);
-                          else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    allFaces.setVisibility  (f, User3D.default_Visibility);
-                          else if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setWeight      (f, User3D.default_Weight);
-                        }
-                        if (WIN3D.UI_TaskModifyParameter == 3) { // Assign(all)
-                          int OBJ_ID = allGroups.findGroupContainingFace(f);
-
-                          for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
-                            if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.default_Material);
-                            else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.default_Tessellation);
-                            else if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (q, User3D.default_Layer);
-                            else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    allFaces.setVisibility  (q, User3D.default_Visibility);
-                            else if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setClose       (q, User3D.default_Weight);
-                          }
-                        }
-                      }
+                      SOLARCHVISION_pickOrAssignFaceProperty(f);
 
                       if (WIN3D.UI_CurrentTask == UITASK.Pivot) {
                         if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
@@ -1615,68 +1711,11 @@ void mouseClicked () {
 
                     if (current_ObjectCategory == ObjectCategory.MODEL2D) {
 
-                      int OBJ_ID = int(RxP[0]);
+                      SOLARCHVISION_pickOrAssignModel2DSeedMaterial(int(RxP[0]));
 
-                      int n = allModel2Ds.MAP[OBJ_ID];
-                      int sign_n = 1;
-                      if (n < 0) sign_n = -1;
-                      n = abs(n);
-                      int n1 = allModel2Ds.num_files_PEOPLE;
-                      int n2 = allModel2Ds.num_files_PEOPLE + allModel2Ds.num_files_TREES;
-
-                      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) {
-
-                        if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
-                          if (allModel2Ds.isTree(n)) { // case: trees
-                            User3D.create_Plant_Type = n - n1;
-                          }
-                          else { // case: people
-                            User3D.create_Person_Type = n;
-                          }
-                        }
-                        if ((WIN3D.UI_TaskModifyParameter == 2) || (WIN3D.UI_TaskModifyParameter == 3)) { // Assign
-                          if (allModel2Ds.isTree(n)) { // case: trees
-                            allModel2Ds.MAP[OBJ_ID] = sign_n * (User3D.create_Plant_Type + n1);
-                          }
-                          else { // case: people
-                            allModel2Ds.MAP[OBJ_ID] = sign_n * User3D.create_Person_Type;
-                          }
-                        }
-                      }
                     } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
 
-                      int OBJ_ID = int(RxP[0]);
-
-                      if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-                        else if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
-                        else if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) User3D.create_Model1D_BranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
-                        else if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) User3D.create_Model1D_BranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
-                        else if (WIN3D.UI_CurrentTask == UITASK.TreeBase) User3D.create_Model1D_TreeBase = allModel1Ds.getTreeBase(OBJ_ID);
-
-                        else if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-                        else if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
-                        else if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
-                          User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-                          User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-                          User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
-                        }
-                      }
-                      if (WIN3D.UI_TaskModifyParameter == 2) { // Assign
-                        if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
-                        else if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.create_Model1D_BranchTilt);
-                        else if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.create_Model1D_BranchTwist);
-                        else if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.create_Model1D_BranchRatio);
-                        else if (WIN3D.UI_CurrentTask == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.create_Model1D_TreeBase);
-
-                        else if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);
-                        else if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
-                        else if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
-                          allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
-                          allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);
-                          allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
-                        }
-                      }
+                      SOLARCHVISION_pickOrAssignModel1DProperty(int(RxP[0]));
                     }
 
                     SOLARCHVISION_model_changed();
