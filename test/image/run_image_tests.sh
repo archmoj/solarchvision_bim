@@ -81,7 +81,17 @@ for script in "${SCRIPTS[@]}"; do
   # files behind in the same RunStamp folder (see globals.pde/RunStamp).
   marker="$(mktemp)"
 
-  "$PROCESSING_JAVA" --sketch="$SKETCH_DIR" --run --args "USER=AUTO" "RUN=command/$script"
+  # processing-java's exit code isn't a reliable success/failure signal
+  # here: Processing's runner returns 1 whenever the sketch calls exit()
+  # itself (exactly what USER=AUTO does, on every run, success or not) -
+  # see test/image/README.md#note-on-processing-javas-exit-code. Capture it
+  # for the log without letting `set -e` abort the loop over it; the real
+  # check is "did a screenshot actually appear", right below.
+  processing_exit=0
+  "$PROCESSING_JAVA" --sketch="$SKETCH_DIR" --run --args "USER=AUTO" "RUN=command/$script" || processing_exit=$?
+  if [ "$processing_exit" -ne 0 ]; then
+    echo "  note: processing-java exited $processing_exit (expected under USER=AUTO; checking for the screenshot instead)"
+  fi
 
   new_png="$(find "$SCREENSHOTS_ROOT" -name '*.png' -newer "$marker" -print 2>/dev/null | sort | tail -n 1)"
   rm -f "$marker"

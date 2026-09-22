@@ -122,3 +122,19 @@ without patching Processing's bundled JOGL jars, which is out of scope here.
 `LIBGL_ALWAYS_SOFTWARE=1` is still set in the workflow as a normal, harmless
 "use the software rasterizer, there's no real GPU here" hint for Xvfb — it
 just isn't what fixes the crash above.
+
+## Note on processing-java's exit code
+
+`processing-java` returns exit code `1` whenever the sketch calls `exit()`
+itself — which is exactly what `USER=AUTO` does once it's finished running
+the script (see `solarchvision_bim.pde`) — regardless of whether the run
+actually succeeded. JOGL's shutdown also prints an `X11Util: Open X11
+Display Connections: ...` warning at exit; that's normal noise from
+`Xvfb`/JOGL cleanup, not an error.
+
+Because of this, `run_image_tests.sh` doesn't treat `processing-java`'s
+exit code as the success signal — it explicitly catches it (so `set -e`
+doesn't abort the loop after the very first test) and logs a note instead.
+The actual check is whether a new screenshot file showed up under
+`app/src/solarchvision_bim/projects/model-01/export/screenshots/`, which is
+what genuinely indicates the script ran.
