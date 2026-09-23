@@ -80,18 +80,27 @@ jobs:
       # the images come out 1280x1024 instead.
       #
       # CI generation used to be ~10-15x slower than a local run (247s vs
-      # 16s for the same test) - root-caused to endDraw()'s multisample
-      # (MSAA) resolve, catastrophically slow under Mesa's llvmpipe software
-      # rasterizer, and fixed with noSmooth() in solarchvision_bim.pde/
-      # WIN3D.pde (USER_AUTO only, so interactive use keeps antialiasing).
-      # See test/image/README.md's "Note on CI render speed" for the full
-      # investigation. An LP_NUM_THREADS experiment tried here earlier
-      # turned out not to be it; removed once the real cause was found.
+      # 16s for the same test). A noSmooth()-based fix in
+      # solarchvision_bim.pde/WIN3D.pde, based on a leading hypothesis
+      # (endDraw()'s multisample resolve), turned out NOT to fix it -
+      # confirmed by this step's own TIMING: output on a later run. See
+      # test/image/README.md's "Note on CI render speed" for the full
+      # investigation.
+      #
+      # THREAD_DUMP_DELAY_SECONDS below is the current diagnostic: it makes
+      # make_baseline.py send SIGQUIT to the stuck JVM partway through a
+      # test, which prints a full thread dump (every thread's stack,
+      # including native frames) to this step's log instead of killing the
+      # process - showing what the slow call is actually blocked on. TEMPORARY:
+      # remove this env var (or comment it out) once a dump has been
+      # captured and read - it's diagnostic-only, not something to leave
+      # firing on every run.
       - name: Generate this shard's test images (make_baseline.py)
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
           SHARD_INDEX: ${{ matrix.shard }}
+          THREAD_DUMP_DELAY_SECONDS: '10'
         run: >
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24"
           python3 test/image/make_baseline.py

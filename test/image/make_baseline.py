@@ -36,6 +36,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import threading
 import time
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -109,6 +110,31 @@ def run_once(exe, name):
         cwd=REPO_ROOT,
         start_new_session=True,
     )
+
+    # Diagnostic only, off by default: if set, send SIGQUIT to the whole
+    # process group this many seconds after starting, which makes the JVM
+    # print a full thread dump (every thread's stack, including native
+    # frames) to stdout and then keep running - unlike SIGTERM/SIGKILL,
+    # SIGQUIT does not stop it. Used to see exactly what a slow call (e.g.
+    # PGraphics.endDraw() - see test/image/README.md's "Note on CI render
+    # speed") is actually blocked on, instead of guessing from source
+    # reading alone. Pick a delay past setup/intro (a few seconds) and
+    # comfortably before PER_TEST_TIMEOUT.
+    dump_timer = None
+    dump_delay = os.environ.get("THREAD_DUMP_DELAY_SECONDS")
+    if dump_delay:
+        delay = float(dump_delay)
+
+        def _send_thread_dump():
+            print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: sending SIGQUIT for a thread dump")
+            try:
+                os.killpg(os.getpgid(proc.pid), signal.SIGQUIT)
+            except ProcessLookupError:
+                pass
+
+        dump_timer = threading.Timer(delay, _send_thread_dump)
+        dump_timer.start()
+
     try:
         returncode = proc.wait(timeout=PER_TEST_TIMEOUT)
         elapsed = time.time() - start
@@ -128,6 +154,9 @@ def run_once(exe, name):
             pass
         proc.wait()
         return None
+    finally:
+        if dump_timer:
+            dump_timer.cancel()
 
     return newest_screenshot_since(marker_time)
 

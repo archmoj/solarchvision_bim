@@ -249,37 +249,49 @@ like it again.
   `Earth3D` loading a 5400x2700px texture for the globe, none of this was
   the bottleneck.
 
-**Root cause**: `renderFrame()`'s `this.graphics.endDraw()` call - 163007ms
-out of a 170419ms total for the whole `draw_WIN3D_layers()` call, 96% of
-it, isolated by timing every remaining piece of `renderFrame()`/
-`drawView()` once `drawSceneContents()` was ruled out. `endDraw()` on an
-offscreen `P3D`/`P2D` surface performs a multisample (MSAA) resolve if
-antialiasing is enabled, which it is by default (`smooth(4)`) unless
-turned off explicitly. That resolve is a full-framebuffer, per-sample
-averaging pass - cheap on real GPU hardware, catastrophically slow under
-Mesa's `llvmpipe` software rasterizer (no dedicated hardware for it),
-which is what CI falls back to with no real GPU present. Same underlying
-Mesa/MSAA trouble spot as `actions/runner-images#11517` (a different,
-crash-shaped symptom, found earlier in this investigation), different
-failure mode here.
+**Leading hypothesis (disproven)**: `renderFrame()`'s `this.graphics.endDraw()`
+call - 163007ms out of a 170419ms total for the whole `draw_WIN3D_layers()`
+call, 96% of it, isolated by timing every remaining piece of
+`renderFrame()`/`drawView()` once `drawSceneContents()` was ruled out.
+`endDraw()` on an offscreen `P3D`/`P2D` surface performs a multisample
+(MSAA) resolve if antialiasing is enabled, which it is by default
+(`smooth(4)`) unless turned off explicitly - a full-framebuffer,
+per-sample averaging pass, cheap on real GPU hardware but plausibly very
+slow under Mesa's `llvmpipe` software rasterizer.
 
-**Fix**: `.noSmooth()` on `WIN3D.graphics` and `SKY2D_graphics` (both
-`P3D`) and `WORLD.graphics`/`STUDY.graphics` (both `P2D`, same `endDraw()`
-risk, both default to `include = true` so they likely render too) right
-after `createGraphics(...)` in `setup()`, plus the same on `WIN3D`'s
-high-res image-scale re-creation path in `beginImageScale()`/
-`endImageScale()` for consistency. Gated on `control == USER_AUTO`, so
-interactive `USER_GUI` usage keeps its default antialiasing quality -
-only headless/CI script runs get `noSmooth()`.
+**Attempted fix, confirmed ineffective**: `.noSmooth()` added on
+`WIN3D.graphics`/`SKY2D_graphics` (`P3D`) and `WORLD.graphics`/
+`STUDY.graphics` (`P2D`), gated on `control == USER_AUTO` so interactive
+`USER_GUI` usage keeps its antialiasing. Confirmed *not* the fix by the
+next CI run's own `TIMING:` output: `endDraw()` was still 229727ms of a
+238361ms total - if anything slightly worse, well within normal CI
+variance, but certainly not the order-of-magnitude drop a working fix
+would show. Left in place (harmless, and a reasonable thing to have
+regardless) but the MSAA-resolve theory above is not what's actually
+happening here.
 
-This changes rendered pixels (no more antialiased edges) for `USER_AUTO`
-runs specifically, so any baselines generated before this fix need
-regenerating - not an issue here since none were committed yet (see
-Baselines above).
+**Current approach**: guessing further from source reading alone hasn't
+worked twice now (the `Earth3D` texture theory, then this one), so rather
+than a third guess, `make_baseline.py` can now trigger an actual JVM
+thread dump *while* a test is stuck in the slow call, which shows the
+literal native/Java stack it's blocked on instead of inferring it:
 
-The `TIMING:` instrumentation added while chasing this (in
-`solarchvision_bim.pde` and `WIN3D.pde`) is left in place for now, to
-confirm the fix on the next real CI run - `endDraw()` should drop to
-roughly in line with everything else it was timed against (single-digit
-to low hundreds of ms), and the whole `draw_WIN3D_layers()` call should
-land close to the ~16s local baseline. Safe to strip out once confirmed.
+```sh
+THREAD_DUMP_DELAY_SECONDS=10 xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py test_primitives
+```
+
+This sends `SIGQUIT` to the whole process group `THREAD_DUMP_DELAY_SECONDS`
+after starting (pick a delay past setup/intro - a few seconds - and
+comfortably before the slow call would finish or `PER_TEST_TIMEOUT` would
+kill it). Unlike `SIGTERM`/`SIGKILL`, a JVM's default `SIGQUIT` handling is
+to print every thread's full stack trace (including native frames) to
+stdout and then keep running - `make_baseline.py` doesn't capture
+`processing-java`'s stdout, so the dump lands directly in the CI log,
+right where the `TIMING:` lines already do. Tested the delivery mechanism
+itself (timer firing, `SIGQUIT` not killing a process that handles it,
+normal completion afterward) against a stub in place of `processing-java`;
+the actual dump content can only come from a real run.
+
+The `TIMING:` instrumentation stays in place alongside this - both are
+diagnostic-only and safe to strip out once the real cause is found and
+fixed.
