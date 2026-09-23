@@ -1492,11 +1492,6 @@ void mouseClicked () {
         String menu_option = UI_menuBar.Items[UI_menuBar.selected_parent][UI_menuBar.selected_child];
         if (mouseButton == LEFT) {
           if (UI_menuBar.selected_child != 0) {
-
-            if (allActions == null) {
-              buildAllActions();
-            }
-
             menu_option = menu_option.toLowerCase();
             Runnable action = allActions.get(menu_option);
             if (action != null) {

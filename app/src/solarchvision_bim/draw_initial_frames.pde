@@ -180,10 +180,15 @@ boolean draw_initial_frames () {
 
     stroke(255); fill(255); text("build_SkySphere", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
   } else if (frameCount == 21) {
-
     build_SkySphere(1); //1 - 3
     GlobalSolar_resize_array();
     VertexSolar_resize_array();
+
+    stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
+
+    stroke(255); fill(255); text("build_allActions", MESSAGE.cX + 0.5 * MESSAGE.dX, MESSAGE.cY + 0.5 * MESSAGE.dY);
+  } else if (frameCount == 22) {
+    build_allActions();
 
     stroke(0); fill(0); rect(MESSAGE.cX, MESSAGE.cY, MESSAGE.dX, MESSAGE.dY);
 

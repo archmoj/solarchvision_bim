@@ -1601,10 +1601,14 @@ String runScriptLine (String lineSTR) {
     }
   }
 
-  String key = lineSTR.stripTrailing().toLowerCase();
-  Runnable action = allActions.get(key);
-  if (action != null) {
-    action.run();
+  String key = lineSTR.toLowerCase().stripTrailing();
+  if(!key.equals("")) {
+    Runnable action = allActions.get(key);
+    if (action != null) {
+      action.run();
+    } else {
+      hint = "Unrecognized command!";
+    }
   }
 
   return hint;
