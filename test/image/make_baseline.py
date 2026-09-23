@@ -96,28 +96,48 @@ def newest_screenshot_since(marker_time):
     return newest_path
 
 
-def find_descendant_pids(pid):
-    """Every descendant of pid (children, grandchildren, ...), via /proc
-    (Linux only, which is all CI runs here). Needed because processing-java's
-    "Commander" doesn't run the sketch in the JVM that compiles it - it
-    compiles in one JVM, then launches a *second*, separate JVM process to
-    actually run the sketch (processing.mode.java.runner.Runner.launchJava,
-    monitored over JDI), and the first JVM's main thread just sits in
-    Runner.generateTrace()'s Thread.join() waiting for it. Confirmed from a
-    real thread dump: sending SIGQUIT to only the first-level child dumped
-    that launcher/monitor JVM (generic JDI/MessageSiphon threads, nothing
-    resembling our code) instead of the JVM actually running the sketch."""
+def find_descendant_pids(root_pid):
+    """Every descendant of root_pid (children, grandchildren, ...), by
+    scanning /proc/*/stat for every process's ppid and building the whole
+    tree at once (Linux only, which is all CI runs here).
+
+    Needed because processing-java's "Commander" doesn't run the sketch in
+    the JVM that compiles it - it compiles in one JVM, then launches a
+    *second*, separate JVM process to actually run the sketch
+    (processing.mode.java.runner.Runner.launchJava, monitored over JDI),
+    and the first JVM's main thread just sits in Runner.generateTrace()'s
+    Thread.join() waiting for it.
+
+    Originally tried reading /proc/<pid>/task/<pid>/children directly
+    (simpler, one lookup per level) instead of this full-tree scan, but a
+    real CI dump showed that file returning no children for a process a
+    thread dump proved had launched one (a thread blocked in
+    ProcessImpl.waitFor()) - unreliable here for reasons not fully
+    understood, possibly a timing race against a multi-threaded parent.
+    Scanning /proc/*/stat directly (ppid is a plain, always-populated field
+    - see `man proc`) doesn't depend on that file at all.
+    """
+    children_of = {}
+    for entry in os.listdir("/proc"):
+        if not entry.isdigit():
+            continue
+        try:
+            with open(f"/proc/{entry}/stat") as f:
+                stat = f.read()
+            # Format: "pid (comm) state ppid ...". comm can itself contain
+            # spaces/parens, so split off everything after the LAST ')'.
+            fields_after_comm = stat.rsplit(")", 1)[1].split()
+            ppid = int(fields_after_comm[1])  # [0] is state, [1] is ppid
+            children_of.setdefault(ppid, []).append(int(entry))
+        except (FileNotFoundError, ProcessLookupError, IndexError, ValueError):
+            continue
+
     all_descendants = []
-    frontier = [pid]
+    frontier = [root_pid]
     while frontier:
         next_frontier = []
         for p in frontier:
-            try:
-                with open(f"/proc/{p}/task/{p}/children") as f:
-                    children = [int(c) for c in f.read().split()]
-            except (FileNotFoundError, PermissionError, ProcessLookupError):
-                children = []
-            next_frontier.extend(children)
+            next_frontier.extend(children_of.get(p, []))
         all_descendants.extend(next_frontier)
         frontier = next_frontier
     return all_descendants

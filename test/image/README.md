@@ -342,16 +342,28 @@ threads in the same dump show `JDI Internal Event Handler`,
 thread just sits in `Thread.join()` waiting for it. The first fix's
 `find_child_pids` found the right *first-level* child, but that's this
 launcher/monitor JVM - a level too shallow. **Second fix**: walk the whole
-descendant tree (`find_descendant_pids`, repeated `/proc/.../children`
-lookups) and send `SIGQUIT` to every process found, not just the first
-level - a dump of the wrong process is nearly free to get and easy to tell
-apart from the real one by its stack, so getting both beats guessing which
-pid matters. Verified against a stub with the same two-level structure:
-finds every process across multiple generations, not just the direct
-child.
+descendant tree and send `SIGQUIT` to every process found, not just the
+first level - a dump of the wrong process is nearly free to get and easy
+to tell apart from the real one by its stack, so getting both beats
+guessing which pid matters.
 
-Both fixes are cumulative in the current `make_baseline.py` - the next CI
-run's dump should finally land in whatever `endDraw()` is actually calling
-into. The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS` stay
-in place until then - both are diagnostic-only and safe to strip out once
-the real cause is confirmed and fixed.
+**Third bug**: the second fix's first implementation walked the tree by
+repeatedly reading `/proc/<pid>/task/<pid>/children` one level at a time.
+On the very next real CI run, it *still* found only the one Commander pid,
+even though that run's own dump proved a child process existed (a thread
+blocked in `ProcessImpl.waitFor()`) - that specific `/proc` file wasn't
+reliably reporting children here, for reasons not fully pinned down
+(possibly a race against a multi-threaded parent). **Fixed** by scanning
+all of `/proc/*/stat` once and building the whole ppid → children mapping
+directly (`ppid` is a plain, always-populated field there - see `man
+proc`), instead of depending on that one file. This one was verified
+against a *real* 3-level process tree in the sandbox (actual nested shell
+scripts under this Linux `/proc`, not a stub simulation) and correctly
+found every descendant across all three levels, where the previous
+approach had failed to find even the first on real CI.
+
+All three fixes are cumulative in the current `make_baseline.py` - the
+next CI run's dump should finally land in whatever `endDraw()` is actually
+calling into. The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS`
+stay in place until then - both are diagnostic-only and safe to strip out
+once the real cause is confirmed and fixed.
