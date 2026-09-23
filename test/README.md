@@ -24,8 +24,13 @@ never needs to open a window.
 
 One-time setup:
 
-1. Install Processing (matching what `run.sh` expects), e.g. under
-   `~/processing/4.3.4`, or set `PROCESSING_HOME` to point at yours.
+1. Install Processing - either generation works, auto-detected by
+   `run_tests.sh`:
+   - `<=4.4.x` (matching `run.sh`), e.g. under `~/processing/4.3.4`
+   - `4.5.x+` (matching `run-latest.sh`), e.g. under `~/processing/4.5.2`
+
+   Point `PROCESSING_HOME` at wherever it's installed if it's not under
+   `~/processing/4.3.4` (the default, for backwards compatibility).
 2. Download a `junit-platform-console-standalone` jar (any recent 1.x
    release) from
    https://search.maven.org/artifact/org.junit.platform/junit-platform-console-standalone
@@ -39,6 +44,9 @@ Then:
 ```sh
 ./test/run_tests.sh
 ```
+
+CI (`.github/workflows/ci.yml`) runs this against both Processing
+generations, as two separate jobs (a matrix over `processing_version`).
 
 ## Coverage
 

@@ -1,11 +1,23 @@
 #!/bin/bash
 # Builds app/src/solarchvision_bim with Processing's own compiler (so all
-# .pde tabs get preprocessed/merged the same way `run.sh` runs them), then
-# compiles and runs the JUnit tests in this folder against the result.
+# .pde tabs get preprocessed/merged the same way run.sh/run-latest.sh run
+# them), then compiles and runs the JUnit tests in this folder against the
+# result.
+#
+# Works with either Processing generation - see test/image/README.md's
+# "Setup: Processing 4.5.x" for the two CLIs' differences:
+#   - <=4.4.x: a processing-java script at the install root
+#     (e.g. ~/processing/4.3.4/processing-java, matching run.sh)
+#   - 4.5.x+:  a Processing binary at bin/Processing, invoked as
+#     `Processing cli ...` (e.g. ~/processing/4.5.2/bin/Processing,
+#     matching run-latest.sh)
+# Auto-detected from whichever exists under PROCESSING_HOME - no need to
+# tell this script which one you have.
 #
 # One-time setup:
-#   1. Install Processing (matching run.sh's expectation), e.g. under
-#      ~/processing/4.3.4, or point PROCESSING_HOME at your install.
+#   1. Install Processing (either generation above), and point
+#      PROCESSING_HOME at it if it's not under ~/processing/4.3.4 (the
+#      default, for backwards compatibility with existing setups).
 #   2. Download junit-platform-console-standalone (any recent 1.x release)
 #      from https://search.maven.org/artifact/org.junit.platform/junit-platform-console-standalone
 #      and drop the jar anywhere under test/lib/ - its filename normally
@@ -26,10 +38,23 @@ cd "$(dirname "$0")/.."   # repo root
 PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.3.4}"
 SKETCH_DIR="app/src/solarchvision_bim"
 BUILD_DIR="build/test"
-CORE_JAR="$PROCESSING_HOME/core/library/core.jar"
 
-if [ ! -f "$CORE_JAR" ]; then
-  echo "error: core.jar not found at $CORE_JAR" >&2
+if [ -x "$PROCESSING_HOME/processing-java" ]; then
+  PROCESSING_STYLE="legacy"
+  CORE_JAR="$PROCESSING_HOME/core/library/core.jar"
+elif [ -x "$PROCESSING_HOME/bin/Processing" ]; then
+  PROCESSING_STYLE="new"
+  # Filename includes the version (core-4.5.2.jar, ...) - match on the
+  # unversioned prefix rather than hardcoding one.
+  CORE_JAR="$(find "$PROCESSING_HOME/lib/app/resources/core/library" -maxdepth 1 -name 'core-*.jar' -print -quit 2>/dev/null || true)"
+else
+  echo "error: neither processing-java nor bin/Processing found under $PROCESSING_HOME" >&2
+  echo "       set PROCESSING_HOME to your Processing install." >&2
+  exit 1
+fi
+
+if [ -z "${CORE_JAR:-}" ] || [ ! -f "$CORE_JAR" ]; then
+  echo "error: core.jar not found under $PROCESSING_HOME" >&2
   echo "       set PROCESSING_HOME to your Processing install." >&2
   exit 1
 fi
@@ -75,7 +100,8 @@ find_bundled_jdk_bin () {
     "${JAVA_HOME:-}/bin/$name" \
     "$PROCESSING_HOME/java/bin/$name" \
     "$PROCESSING_HOME/Contents/Java/bin/$name" \
-    "$PROCESSING_HOME/jdk/bin/$name"
+    "$PROCESSING_HOME/jdk/bin/$name" \
+    "$PROCESSING_HOME/lib/app/resources/jdk/bin/$name"
   do
     if [ -n "$candidate" ] && [ -x "$candidate" ]; then
       echo "$candidate"
@@ -102,14 +128,18 @@ if ! command -v javac >/dev/null 2>&1; then
   fi
 fi
 
-echo "==> Preprocessing/compiling the sketch (all .pde tabs) with Processing"
+echo "==> Preprocessing/compiling the sketch (all .pde tabs) with Processing ($PROCESSING_STYLE style)"
 rm -rf "$BUILD_DIR"
-mkdir -p "$(dirname "$BUILD_DIR")" # only the parent - processing-java creates $BUILD_DIR itself
-# --force: without it, processing-java refuses to build at all if the
-# output folder already exists (it's meant to create it fresh) - and
-# since --build/--run/etc. must be the last argument, --force has to
-# come before it.
-"$PROCESSING_HOME/processing-java" --sketch="$SKETCH_DIR" --output="$BUILD_DIR" --force --build
+mkdir -p "$(dirname "$BUILD_DIR")" # only the parent - the build step creates $BUILD_DIR itself
+# --force: without it, the build refuses to run at all if the output
+# folder already exists (it's meant to create it fresh) - and since
+# --build/--run/etc. must be the last argument, --force has to come
+# before it.
+if [ "$PROCESSING_STYLE" = "legacy" ]; then
+  "$PROCESSING_HOME/processing-java" --sketch="$SKETCH_DIR" --output="$BUILD_DIR" --force --build
+else
+  "$PROCESSING_HOME/bin/Processing" cli --sketch="$SKETCH_DIR" --output="$BUILD_DIR" --force --build
+fi
 
 # Find wherever --build actually put solarchvision_bim.class, rather than
 # assuming a fixed layout (it doesn't reliably land directly in
