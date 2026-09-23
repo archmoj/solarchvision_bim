@@ -164,6 +164,7 @@ class WIN3D {
     if (this.ImageScale != 1) {
       println("IMG:high-res");
       this.graphics = createGraphics(this.dX, this.dY, P3D);
+      if (control == USER_AUTO) this.graphics.noSmooth();
     }
   }
 
@@ -173,6 +174,7 @@ class WIN3D {
 
     if (this.ImageScale != 1) {
       this.graphics = createGraphics(this.dX, this.dY, P3D);
+      if (control == USER_AUTO) this.graphics.noSmooth();
       this.updated();
     } else {
       this.updated();

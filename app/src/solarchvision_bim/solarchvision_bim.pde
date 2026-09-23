@@ -60,15 +60,25 @@ void setup () {
 
   println("TIMING: setup() start", millis());
 
+  // endDraw()'s multisample (MSAA) resolve - on by default (smooth(4)) for
+  // P3D/P2D - is what's actually slow under CI's software-rendered Mesa
+  // (llvmpipe): a single WIN3D endDraw() measured ~163s of a ~170s frame,
+  // 96% of the total (see test/image/README.md's "Note on CI render
+  // speed"). noSmooth() only for USER_AUTO (headless/CI script runs), so
+  // interactive USER_GUI usage keeps its default antialiasing quality.
   WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
+  if (control == USER_AUTO) WIN3D.graphics.noSmooth();
 
   println("TIMING: WIN3D P3D context created", millis());
 
   WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
+  if (control == USER_AUTO) WORLD.graphics.noSmooth();
 
   STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
+  if (control == USER_AUTO) STUDY.graphics.noSmooth();
 
   SKY2D_graphics = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);
+  if (control == USER_AUTO) SKY2D_graphics.noSmooth();
 
   println("TIMING: SKY2D P3D context created", millis());
 

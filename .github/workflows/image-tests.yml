@@ -79,19 +79,18 @@ jobs:
       # whatever Xvfb's screen is - left at xvfb-run's default (1280x1024)
       # the images come out 1280x1024 instead.
       #
-      # LP_NUM_THREADS is an experiment for the "generation is much slower
-      # on CI than locally" investigation (see test/image/README.md's "Note
-      # on CI render speed"): llvmpipe (Mesa's software OpenGL rasterizer,
-      # doing all the real work here since there's no GPU) auto-detects
-      # thread count, which can misdetect or oversubscribe under a
-      # container's CPU quota. Pinned to 4 to match GitHub-hosted public
-      # runners' 4 vCPUs; remove this line (or try other values) once the
-      # TIMING log lines show whether it actually helped.
+      # CI generation used to be ~10-15x slower than a local run (247s vs
+      # 16s for the same test) - root-caused to endDraw()'s multisample
+      # (MSAA) resolve, catastrophically slow under Mesa's llvmpipe software
+      # rasterizer, and fixed with noSmooth() in solarchvision_bim.pde/
+      # WIN3D.pde (USER_AUTO only, so interactive use keeps antialiasing).
+      # See test/image/README.md's "Note on CI render speed" for the full
+      # investigation. An LP_NUM_THREADS experiment tried here earlier
+      # turned out not to be it; removed once the real cause was found.
       - name: Generate this shard's test images (make_baseline.py)
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
-          LP_NUM_THREADS: '4'
           SHARD_INDEX: ${{ matrix.shard }}
         run: >
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24"
