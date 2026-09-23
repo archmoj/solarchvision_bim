@@ -297,17 +297,13 @@ while `make_baseline.py` sees its (now-dead) direct child, wrongly
 concludes the test failed, and starts a retry *while the orphaned JVM from
 the first attempt is still running in the background*. This was directly
 visible in the log: `processing-java exited -3` (killed *by* signal 3,
-`SIGQUIT`) and two tests' `TIMING:`/thread-dump output interleaved -
-two orphaned JVMs concurrently writing to the same stdout. **Fixed** by
-finding the actual `java` child pid (via `/proc/<pid>/task/<pid>/children`)
-and sending `SIGQUIT` to it specifically, never the wrapper. Verified
-against a stub matching the real wrapper/child structure (the wrapper
-doesn't trap `SIGQUIT`, the child does): the child now dumps and keeps
-running, the wrapper is untouched, and the test completes normally
-afterward.
+`SIGQUIT`) and two tests' `TIMING:`/thread-dump output interleaved - two
+orphaned JVMs concurrently writing to the same stdout, and very likely
+competing for CPU with whatever ran next. **First fix**: find the actual
+`java` child pid (via `/proc/<pid>/task/<pid>/children`) and send `SIGQUIT`
+there specifically, never the wrapper.
 
-**What the (buggy but still informative) first dump actually showed**: not
-graphics code at all -
+**What that first (buggy) dump actually showed**: not graphics code -
 
 ```
 at processing.mode.java.preproc.ProcessingParser.expression(...)
@@ -316,26 +312,46 @@ at processing.mode.java.JavaBuild.build(...)
 at processing.mode.java.Commander.main(...)
 ```
 
-- Processing's own ANTLR-based source parser (`.pde` → Java), still deep in
-`ParserATNSimulator.closure_`/`adaptivePredict` a full 10 seconds into the
-run, with the JIT log showing `closure_` still being actively compiled
-(i.e. not yet warmed up). This is the one-time sketch-compilation step,
-paid fresh by a brand-new JVM on *every* `processing-java` invocation -
-entirely unrelated to `P3D`/`endDraw`/anything graphics. With dozens of
-`.pde` files in this project, this cold-start parse could plausibly
-account for a large share of the per-test time on a slower/shared CI CPU,
-independent of whatever the render itself costs. Worth confirming with a
-corrected (post-fix) dump - or several, at different delays - before
-concluding this is the dominant cost rather than just a component of it.
+Processing's own ANTLR-based source parser (`.pde` → Java), still parsing
+10 seconds in. Initially read as "compilation might be the real
+bottleneck" - **revised after the corrected run below**: a second CI run,
+using the first fix, shows `TIMING: setup() start` at `1936` (already past
+compilation, JVM launched, sketch running - under 2 seconds in). That's
+consistent with the *first* dump's slow compilation being an artifact of
+the orphaning bug itself - competing for CPU against whatever leaked JVMs
+were still running from earlier tests - rather than a genuine standalone
+cost. `endDraw()` was `229748ms` in this same corrected run, consistent
+with every properly-measured run so far - still the real, reproducible
+bottleneck.
 
-If compilation does turn out to dominate, the real fix looks different
-from anything tried so far: it's an unavoidable per-process cost as long
-as each test spawns its own fresh `processing-java`/JVM. The next
-direction worth considering would be running multiple `command/test_*.txt`
-scripts through *one* `processing-java` process instead of one each,
-amortizing the compile cost across all of them - a bigger change to how
-`RUN.SCRIPT`/`USER=AUTO` sequences tests, not attempted here.
+**Second bug, found from that same corrected run's dump**: the stack it
+showed wasn't in our code either -
 
-The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS` stay in
-place - both are diagnostic-only and safe to strip out once the real cause
-is confirmed and fixed.
+```
+at processing.mode.java.runner.Runner.generateTrace(Runner.java:654)
+at processing.mode.java.runner.Runner.launch(Runner.java:146)
+at processing.mode.java.Commander.<init>(Commander.java:242)
+```
+
+- `Thread.join()`, waiting. `processing-java`'s "Commander" doesn't run the
+sketch in the JVM that compiles it: it compiles in one JVM, then launches
+a *second*, separate JVM process to actually run the sketch
+(`Runner.launchJava`, monitored over the Java Debug Interface - other
+threads in the same dump show `JDI Internal Event Handler`,
+`MessageSiphon`, `ProcessImpl.waitFor()`), while the first JVM's main
+thread just sits in `Thread.join()` waiting for it. The first fix's
+`find_child_pids` found the right *first-level* child, but that's this
+launcher/monitor JVM - a level too shallow. **Second fix**: walk the whole
+descendant tree (`find_descendant_pids`, repeated `/proc/.../children`
+lookups) and send `SIGQUIT` to every process found, not just the first
+level - a dump of the wrong process is nearly free to get and easy to tell
+apart from the real one by its stack, so getting both beats guessing which
+pid matters. Verified against a stub with the same two-level structure:
+finds every process across multiple generations, not just the direct
+child.
+
+Both fixes are cumulative in the current `make_baseline.py` - the next CI
+run's dump should finally land in whatever `endDraw()` is actually calling
+into. The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS` stay
+in place until then - both are diagnostic-only and safe to strip out once
+the real cause is confirmed and fixed.

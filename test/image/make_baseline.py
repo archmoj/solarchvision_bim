@@ -96,15 +96,31 @@ def newest_screenshot_since(marker_time):
     return newest_path
 
 
-def find_child_pids(pid):
-    """Direct children of pid, via /proc (Linux only, which is all CI runs
-    here). Used so the SIGQUIT diagnostic below can target the actual java
-    process specifically, not the whole process group."""
-    try:
-        with open(f"/proc/{pid}/task/{pid}/children") as f:
-            return [int(p) for p in f.read().split()]
-    except (FileNotFoundError, PermissionError, ProcessLookupError):
-        return []
+def find_descendant_pids(pid):
+    """Every descendant of pid (children, grandchildren, ...), via /proc
+    (Linux only, which is all CI runs here). Needed because processing-java's
+    "Commander" doesn't run the sketch in the JVM that compiles it - it
+    compiles in one JVM, then launches a *second*, separate JVM process to
+    actually run the sketch (processing.mode.java.runner.Runner.launchJava,
+    monitored over JDI), and the first JVM's main thread just sits in
+    Runner.generateTrace()'s Thread.join() waiting for it. Confirmed from a
+    real thread dump: sending SIGQUIT to only the first-level child dumped
+    that launcher/monitor JVM (generic JDI/MessageSiphon threads, nothing
+    resembling our code) instead of the JVM actually running the sketch."""
+    all_descendants = []
+    frontier = [pid]
+    while frontier:
+        next_frontier = []
+        for p in frontier:
+            try:
+                with open(f"/proc/{p}/task/{p}/children") as f:
+                    children = [int(c) for c in f.read().split()]
+            except (FileNotFoundError, PermissionError, ProcessLookupError):
+                children = []
+            next_frontier.extend(children)
+        all_descendants.extend(next_frontier)
+        frontier = next_frontier
+    return all_descendants
 
 
 def run_once(exe, name):
@@ -122,26 +138,32 @@ def run_once(exe, name):
         start_new_session=True,
     )
 
-    # Diagnostic only, off by default: if set, send SIGQUIT to the java
-    # child specifically (found via find_child_pids - NOT the whole process
-    # group, see below) this many seconds after starting, which makes the
-    # JVM print a full thread dump (every thread's stack, including native
-    # frames) to stdout and then keep running - unlike SIGTERM/SIGKILL,
-    # SIGQUIT does not stop it. Used to see exactly what a slow call is
-    # actually blocked on, instead of guessing from source reading alone.
+    # Diagnostic only, off by default: if set, send SIGQUIT to every
+    # descendant process (found via find_descendant_pids - NOT the whole
+    # process group, see below) this many seconds after starting, which
+    # makes each JVM among them print a full thread dump (every thread's
+    # stack, including native frames) to stdout and then keep running -
+    # unlike SIGTERM/SIGKILL, SIGQUIT does not stop it. Used to see exactly
+    # what a slow call is actually blocked on, instead of guessing from
+    # source reading alone. Sent to every descendant, not just the deepest
+    # one, since which JVM is actually running the sketch isn't assumed -
+    # a dump of the wrong process (e.g. the Commander JVM sitting in
+    # Runner.generateTrace()'s Thread.join(), waiting on the real one) is
+    # nearly free to get and easy to tell apart from the real one by its
+    # stack, so getting both is safer than guessing which pid matters.
     # Pick a delay past setup/intro (a few seconds) and comfortably before
     # PER_TEST_TIMEOUT.
     #
     # Deliberately NOT os.killpg(...): that broadcasts to the whole process
     # group, which includes the processing-java bash wrapper as well as the
-    # java process it runs in the foreground. java handles SIGQUIT specially
-    # (dump + keep running) but the wrapper does not trap it, so the
-    # wrapper dies immediately from its default disposition - orphaning
-    # java, which keeps running unmonitored while this script sees its
-    # (now-dead) direct child and wrongly concludes the test failed. Seen
-    # for real: a CI run with the group-wide version showed
-    # "processing-java exited -3" (killed BY SIGQUIT, signal 3) and two
-    # tests' TIMING/thread-dump output interleaved - two orphaned JVMs
+    # java process(es) it runs in the foreground. Those java processes
+    # handle SIGQUIT specially (dump + keep running) but the wrapper does
+    # not trap it, so the wrapper dies immediately from its default
+    # disposition - orphaning java, which keeps running unmonitored while
+    # this script sees its (now-dead) direct child and wrongly concludes
+    # the test failed. Seen for real: a CI run with the group-wide version
+    # showed "processing-java exited -3" (killed BY SIGQUIT, signal 3) and
+    # two tests' TIMING/thread-dump output interleaved - two orphaned JVMs
     # running concurrently, each still writing to the same stdout.
     dump_timer = None
     dump_delay = os.environ.get("THREAD_DUMP_DELAY_SECONDS")
@@ -149,9 +171,9 @@ def run_once(exe, name):
         delay = float(dump_delay)
 
         def _send_thread_dump():
-            targets = find_child_pids(proc.pid)
+            targets = find_descendant_pids(proc.pid)
             if not targets:
-                print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: could not find processing-java's child pid, skipping (not sending SIGQUIT to the wrapper itself - see comment above)")
+                print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: could not find any descendant pid, skipping (not sending SIGQUIT to the wrapper itself - see comment above)")
                 return
             print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: sending SIGQUIT to pid(s) {targets} for a thread dump")
             for pid in targets:
@@ -162,6 +184,7 @@ def run_once(exe, name):
 
         dump_timer = threading.Timer(delay, _send_thread_dump)
         dump_timer.start()
+
 
     try:
         returncode = proc.wait(timeout=PER_TEST_TIMEOUT)
