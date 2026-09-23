@@ -5,7 +5,7 @@ void draw_WIN3D_layers () {
 
     regenerate_desired_bakings();
 
-    WIN3D.drawView();
+    WIN3D.draw();
   }
 
   if (WIN3D.showShading) {

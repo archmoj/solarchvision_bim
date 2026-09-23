@@ -103,11 +103,11 @@ void draw () {
       //if (UI_caseBar.update) FRAME_record_IMG = true;
     }
 
-    if (STUDY.include && STUDY.update) STUDY.drawView();
+    if (STUDY.include && STUDY.update) STUDY.draw();
     if (STUDY.record_PDF == true) {
       STUDY.record_PDF = false;
     } else {
-      if (WORLD.include && WORLD.update) WORLD.drawView();
+      if (WORLD.include && WORLD.update) WORLD.draw();
       if (WORLD.record_PDF == true) {
         WORLD.record_PDF = false;
       } else {

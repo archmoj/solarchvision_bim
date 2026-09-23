@@ -118,7 +118,7 @@ void applyRolloutUpdate() {
 
   pre_STUDY_PlotImpacts = STUDY.PlotImpacts;
 
-  UI_rollout.drawView();
+  UI_rollout.draw();
 
   if (pre_STUDY_PlotImpacts != STUDY.PlotImpacts) {
     STUDY.revise();
@@ -180,7 +180,7 @@ void applyRolloutUpdate() {
     UI_caseBar.revise();
 
     TIME.updateDate();
-    UI_rollout.drawView();
+    UI_rollout.draw();
   }
 
   if ((pre_TIME_Year != TIME.year) ||
@@ -198,7 +198,7 @@ void applyRolloutUpdate() {
     println("DATE:", TIME.date, "\tHOUR:", TIME.hour);
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-    UI_rollout.drawView();
+    UI_rollout.draw();
   }
 
   if (pre_CLIMATE_TMYEPW_load != CLIMATE_TMYEPW_load) update_CLIMATE_TMYEPW();

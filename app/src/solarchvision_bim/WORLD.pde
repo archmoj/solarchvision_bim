@@ -509,7 +509,7 @@ class WORLD {
   }
 
 
-  void drawView () {
+  void draw () {
 
     if (this.update) {
 

@@ -1652,7 +1652,7 @@ class STUDY {
 
   float prev_ImageScale = 1;
 
-  void drawView () {
+  void draw () {
 
     cursor(WAIT);
 

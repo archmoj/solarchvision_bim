@@ -107,7 +107,7 @@ class WIN3D {
     return ZOOM;
   }
 
-  void drawView () {
+  void draw () {
     if (!this.update) return;
 
     if (Select3D.update_BoundingBox) {

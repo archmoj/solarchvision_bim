@@ -139,7 +139,7 @@ class UI_rollout {
     return category.size() - 1;
   }
 
-  void drawView () {
+  void draw () {
 
     this.spinnerEditStateChanged = false;
     this.spinnerOrderThisPass.clear();
@@ -687,7 +687,7 @@ class UI_rollout {
     }
 
     if (this.spinnerEditStateChanged) {
-      this.drawView();
+      this.draw();
     }
   }
 
