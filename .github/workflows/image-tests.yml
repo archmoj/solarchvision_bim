@@ -14,9 +14,23 @@ env:
   # Keep in sync with .github/workflows/ci.yml and run.sh.
   PROCESSING_VERSION: 4.3.4
   PROCESSING_TAG: processing-1297-4.3.4
+  # How many parallel containers generate images. Kept as one number here
+  # (rather than repeated in the matrix list below) since SHARD_TOTAL must
+  # match the matrix length - see the "shard" section of
+  # test/image/README.md if this ever needs to change.
+  SHARD_TOTAL: 3
 
 jobs:
-  image-tests:
+  # Generation is the flaky, slow half of this pipeline (one JVM/GL/Xvfb
+  # startup per test), so it's split across SHARD_TOTAL parallel containers
+  # - each runs only every SHARD_TOTAL-th test (make_baseline.py's own
+  # SHARD_INDEX/SHARD_TOTAL striping. Comparison happens once, in a separate
+  # job below, against all shards' images merged together.
+  generate-images:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
     # Not ubuntu-latest (24.04): its GLVND-based Mesa build segfaults inside
     # libGLX_mesa.so when JOGL (bundled in Processing 4.3.4) sets up its
     # shared GL context, regardless of LIBGL_ALWAYS_SOFTWARE / vblank_mode /
@@ -35,11 +49,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
       # Same cache key/path as ci.yml, so both workflows share the download.
       - name: Cache Processing install
         id: cache-processing
@@ -57,37 +66,73 @@ jobs:
           tar -xf /tmp/processing.tgz -C /tmp
           mv "/tmp/processing-${PROCESSING_VERSION}" "$HOME/processing/${PROCESSING_VERSION}"
 
-      # xvfb-run ships preinstalled on ubuntu-22.04 too, so there's nothing
-      # to apt-get for the display itself - just the Python side of the
-      # image diff.
-      - name: Install image-diff dependencies
-        run: pip install pillow numpy
-
       # One process per test, retried on its own if it fails - see
       # make_baseline.py's docstring. No wrapping retry action here: a
-      # whole-batch retry would re-run every test that already succeeded
-      # just because one flaked, which is exactly what per-test retry
-      # inside the script avoids. timeout-minutes is a last-resort safety
-      # net in case xvfb-run/Xvfb itself hangs, not the normal path -
+      # whole-batch retry would re-run every test in this shard that already
+      # succeeded just because one flaked, which is exactly what per-test
+      # retry inside the script avoids. timeout-minutes is a last-resort
+      # safety net in case xvfb-run/Xvfb itself hangs, not the normal path -
       # PER_TEST_TIMEOUT (default 300s) bounds each test's own attempts.
-      - name: Generate test images (make_baseline.py)
+      #
+      # --server-args sets the virtual display to 1920x1080: the sketch
+      # runs fullScreen(P3D), so the screenshot dimensions match whatever
+      # Xvfb's screen is - left at xvfb-run's default (1280x1024) the
+      # images come out 1280x1024 instead.
+      - name: Generate this shard's test images (make_baseline.py)
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
+          SHARD_INDEX: ${{ matrix.shard }}
         run: >
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24"
           python3 test/image/make_baseline.py
 
-      # Always runs, even if generation above had failures, so whatever did
-      # get produced is still compared and its diff is visible.
+      # Short retention: this is an intermediate artifact consumed by
+      # compare-pixels below within the same workflow run, not something
+      # anyone needs to keep around or download directly.
+      - name: Upload this shard's images
+        uses: actions/upload-artifact@v4
+        with:
+          name: actual-images-${{ matrix.shard }}
+          path: test/image/actual
+          if-no-files-found: error
+          retention-days: 1
+
+  compare-pixels:
+    needs: generate-images
+    # No Processing/GL/Xvfb here at all - pure Python image diffing - so,
+    # unlike generate-images above, this doesn't need the ubuntu-22.04 Mesa
+    # workaround.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install image-diff dependencies
+        run: pip install pillow numpy
+
+      # Collects every shard's actual-images-N artifact into one
+      # test/image/actual/ before comparing, so this step sees the full set
+      # of tests regardless of how many containers generated them.
+      - name: Download and merge all shards' images
+        uses: actions/download-artifact@v5
+        with:
+          pattern: actual-images-*
+          path: test/image/actual
+          merge-multiple: true
+
       - name: Compare pixels (compare_pixels.py)
-        if: always()
         run: python3 test/image/compare_pixels.py
 
-      # No separate "update baselines" workflow: a missing baseline (a new
-      # test) or a notable diff (a real regression, or a rendering change
-      # that's actually fine) both make compare_pixels.py fail above, which
-      # is exactly when there's something worth a human's attention.
+      # A missing baseline (a brand new test) or a notable diff (a real
+      # regression, or a rendering change that's actually fine) both make
+      # compare_pixels.py fail above, which is exactly when there's
+      # something worth a human's attention - so only upload then.
       # test/image/actual/ doubles as the set of candidate new baselines:
       # download this artifact, look at the images (and their diffs against
       # whatever baseline did exist), and commit the ones that are actually

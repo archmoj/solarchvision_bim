@@ -2,10 +2,6 @@
 """Generate screenshots for command/test_*.txt by running the
 solarchvision_bim sketch headlessly (USER=AUTO), one subprocess per test.
 
-Each test is retried on its own (crash, timeout, or no screenshot produced)
-up to MAX_RETRY times, instead of retrying the whole batch - a flaky render
-of one test shouldn't cost re-running every other test that already succeeded.
-
 Usage:
   python3 test/image/make_baseline.py                 # generate test/image/actual/*.png for every command/test_*.txt
   python3 test/image/make_baseline.py test_houses ...  # generate specific ones only (name without .txt)

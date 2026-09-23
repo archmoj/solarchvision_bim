@@ -8,19 +8,25 @@ geometry command that silently changes its output, etc).
 - **`make_baseline.py`** — runs the sketch, one `processing-java` process
   per `command/test_*.txt`, and saves each screenshot to
   `test/image/actual/<name>.png` (or `test/image/baseline/<name>.png` with
-  `--baseline`). Rendering is the flaky half of this pipeline (JVM/GL
-  startup, Xvfb), so **retries are per test, not per batch**: if
-  `test_houses` fails, only `test_houses` is retried — the 6 tests that
-  already succeeded aren't re-run.
+  `--baseline`). Rendering is the flaky, slow half of this pipeline (JVM/GL
+  startup, Xvfb), so it's both retried and parallelized at the level of
+  individual tests rather than the whole batch:
+  - **retries are per test**: if `test_houses` fails, only `test_houses` is
+    retried — the tests that already succeeded aren't re-run.
+  - **generation can be sharded across parallel containers** via
+    `SHARD_INDEX`/`SHARD_TOTAL`, so e.g. 3 containers each render a third
+    of the tests instead of one container rendering all of them in
+    sequence. See "Running in parallel" below.
 - **`compare_pixels.py`** — pixel-diffs `test/image/actual/<name>.png`
   against `test/image/baseline/<name>.png` and writes a red-highlighted
-  diff to `test/image/diff/<name>.png`. Purely deterministic, no retries:
-  a pixel comparison is either right or it isn't.
+  diff to `test/image/diff/<name>.png`. Purely deterministic, no retries
+  and no sharding needed: a pixel comparison is either right or it isn't,
+  and it's fast enough to just run once over every test's image.
 
 ## How it works
 
 1. `command/test_*.txt` each build a small, non-intersecting scene, set a
-   camera/view, and end in exactly one `REC.png` (see `command/TESTS.md`).
+   camera/view, and end in exactly one `REC.png`.
 2. `make_baseline.py` runs each script through the sketch in headless mode:
    ```
    processing-java --sketch=app/src/solarchvision_bim --run \
@@ -36,7 +42,11 @@ geometry command that silently changes its output, etc).
    under `app/src/solarchvision_bim/`, which is where `sketchPath()`/
    `BaseFolder` would suggest) and copied to `test/image/actual/<name>.png`
    (or `baseline/` with `--baseline`).
-4. `compare_pixels.py` diffs `actual/` against `baseline/`.
+4. In CI, each shard's `test/image/actual/` is uploaded as its own
+   short-lived artifact, then a separate job downloads and merges every
+   shard's artifact back into one `test/image/actual/` before running
+   `compare_pixels.py` once over the full set. Locally, there's only ever
+   one `actual/` directory, so this merge step doesn't come up.
 
 ## Running locally
 
@@ -53,6 +63,13 @@ python3 test/image/compare_pixels.py
 (`xvfb-run` only wraps `make_baseline.py` — `compare_pixels.py` doesn't
 touch the sketch at all, no display needed.)
 
+`--server-args="-screen 0 1920x1080x24"` matters: the sketch runs
+`fullScreen(P3D)`, so every screenshot comes out the same size as Xvfb's
+virtual screen. Leave it off and you get `xvfb-run`'s default 1280x1024
+instead - if you ever change this, baselines need regenerating at the new
+size (a resolution change alone makes `compare_pixels.py` report every test
+as a dimension mismatch).
+
 Run a subset by naming tests (without `.txt`):
 
 ```sh
@@ -60,22 +77,64 @@ python3 test/image/make_baseline.py test_houses test_primitives
 python3 test/image/compare_pixels.py test_houses test_primitives
 ```
 
+## Running in parallel (sharding)
+
+`make_baseline.py` reads `SHARD_INDEX`/`SHARD_TOTAL` and only runs the
+tests where `index % SHARD_TOTAL == SHARD_INDEX`. Both must be set together;
+leave them unset (the default) to run every test in one process.
+
+`.github/workflows/image-tests.yml` uses this to spread generation across
+`SHARD_TOTAL` (currently 3) parallel containers.
+
+- **`generate-images`** — a matrix job, one run per `shard` in
+  `[0, 1, ..., SHARD_TOTAL - 1]`. Each sets `SHARD_INDEX` to its own shard
+  number and runs `make_baseline.py`, which only renders its slice of the
+  tests. Each shard uploads its own `test/image/actual/` as
+  `actual-images-<shard>` (short retention - it's only consumed by the next
+  job in the same run, not meant to be downloaded directly).
+- **`compare-pixels`** — needs `generate-images`, downloads every
+  `actual-images-*` artifact merged into one `test/image/actual/`
+  (`actions/download-artifact` with `pattern: actual-images-*` and
+  `merge-multiple: true`), then runs `compare_pixels.py` once over the
+  complete set. No Processing/GL involved here, so it runs on a plain
+  `ubuntu-latest` runner rather than the `ubuntu-22.04` `generate-images`
+  needs (see Troubleshooting below).
+
+To try this locally instead of via CI, run each shard into its own
+directory and merge them by hand:
+
+```sh
+for shard in 0 1 2; do
+  rm -rf test/image/actual
+  SHARD_INDEX=$shard SHARD_TOTAL=3 \
+    xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+    python3 test/image/make_baseline.py
+  mkdir -p /tmp/shard-$shard && cp test/image/actual/*.png /tmp/shard-$shard/
+done
+rm -rf test/image/actual && mkdir test/image/actual
+cp /tmp/shard-*/*.png test/image/actual/
+python3 test/image/compare_pixels.py
+```
+
+`SHARD_TOTAL` in the workflow's `env:` block must match the matrix's
+`shard` list length - if you change one, change the other.
+
 ## Baselines
 
 `test/image/baseline/` is empty (just `.gitkeep`) to start with — **nobody
 has generated real baseline images yet**.
 
-There's no separate "update baselines" workflow or job. Instead a missing baseline
-(a brand new test) and a notable diff (a real regression, *or* a rendering change
-that's actually fine) both make `compare_pixels.py` fail, which is exactly
-when there's something worth a human looking at. So `.github/workflows/image-tests.yml`
-uploads `test/image/actual/` + `test/image/diff/` as the `new-baselines`
-artifact only `if: failure()`. `actual/` doubles as the set of candidate new
-baselines: download the artifact, look at the images (and their diffs
-against whatever baseline did exist, if any), and commit the ones that are
-actually correct into `test/image/baseline/` in a normal commit — a bug
-would otherwise get silently baked in as "correct" if this weren't reviewed
-by eye first.
+There's no separate "update baselines" workflow or job. Instead a missing
+baseline (a brand new test) and a notable diff (a real regression, *or* a
+rendering change that's actually fine) both make `compare_pixels.py` fail,
+which is exactly when there's something worth a human looking at. So the
+`compare-pixels` job uploads `test/image/actual/` + `test/image/diff/` as
+the `new-baselines` artifact only `if: failure()`. `actual/` doubles as the
+set of candidate new baselines: download the artifact, look at the images
+(and their diffs against whatever baseline did exist, if any), and commit
+the ones that are actually correct into `test/image/baseline/` in a normal
+commit — a bug would otherwise get silently baked in as "correct" if this
+weren't reviewed by eye first.
 
 To do the same thing locally instead of via the artifact:
 
@@ -88,7 +147,6 @@ then look at every image in `test/image/baseline/` before committing.
 Without a baseline for a given test, `compare_pixels.py` reports it as a
 real failure by default. Pass `--allow-missing-baseline` for a
 warn-instead-of-fail local/dev run.
-
 
 ## Thresholds
 
@@ -110,7 +168,7 @@ tests have proven stable.
 ## Troubleshooting: headless rendering
 
 The sketch opens a real `P3D` (OpenGL) window even in `USER=AUTO` mode, so
-it needs a display:
+`make_baseline.py` needs a display:
 
 ```sh
 xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py
@@ -127,8 +185,9 @@ missing config flag — `actions/runner-images#11517` documents the same class
 of Mesa-on-24.04 regression for another project.
 
 **The fix that actually works here: run on `ubuntu-22.04`, not
-`ubuntu-latest`.** `.github/workflows/image-tests.yml` pins its job to
-`ubuntu-22.04` for exactly this reason.
+`ubuntu-latest`.** `.github/workflows/image-tests.yml` pins `generate-images`
+to `ubuntu-22.04` for exactly this reason (`compare-pixels` doesn't touch
+Processing/GL at all, so it's on plain `ubuntu-latest`).
 
 `LIBGL_ALWAYS_SOFTWARE=1` is still set in the workflow as a normal, harmless
 "use the software rasterizer, there's no real GPU here" hint for Xvfb — it
@@ -157,14 +216,17 @@ Each script takes a real chunk of wall-clock time on its own:
 `frameRate(24)` and `Last_initializationStep = 1000` in
 `solarchvision_bim.pde` mean the intro sequence alone takes at least
 `1000 / 24 ~= 42s` before `RUN=...` even starts, on top of JVM startup, GL
-context creation, and the render itself.
+context creation, and the render itself. Sharding (above) is what keeps the
+whole pipeline's wall-clock time down despite this, by running several
+tests' `~42s`-plus renders at once instead of back to back.
 
 `make_baseline.py` bounds each *attempt* with `PER_TEST_TIMEOUT` (default
 300s, override with the env var) and retries only that one test up to
 `MAX_RETRY` times (default 2) if it comes back empty — a flaky render of
-one test doesn't cost re-running the others. `timeout-minutes: 45` on the
-workflow step is a last-resort safety net for the whole batch (e.g. if
-`xvfb-run`/`Xvfb` itself wedges), not the normal path.
+one test doesn't cost re-running the others in its shard.
+`timeout-minutes: 30` on the `generate-images` step is a last-resort safety
+net for that whole shard (e.g. if `xvfb-run`/`Xvfb` itself wedges), not the
+normal path.
 
 `processing-java` is a plain shell script that runs `java` as a **foreground
 child process**, not via `exec` — so killing just its own PID on a timeout
