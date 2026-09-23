@@ -88,19 +88,29 @@ jobs:
       # investigation.
       #
       # THREAD_DUMP_DELAY_SECONDS below is the current diagnostic: it makes
-      # make_baseline.py send SIGQUIT to the stuck JVM partway through a
+      # make_baseline.py send SIGQUIT to the stuck JVM(s) partway through a
       # test, which prints a full thread dump (every thread's stack,
       # including native frames) to this step's log instead of killing the
-      # process - showing what the slow call is actually blocked on. TEMPORARY:
-      # remove this env var (or comment it out) once a dump has been
-      # captured and read - it's diagnostic-only, not something to leave
-      # firing on every run.
+      # process - showing what the slow call is actually blocked on.
+      #
+      # 60s, not 10s: this delay is measured from when the OUTER wrapper
+      # process starts, but processing-java's "Commander" JVM spends several
+      # seconds compiling before it launches the INNER JVM that actually
+      # runs the sketch (see test/image/README.md's "Note on CI render
+      # speed") - a 10s delay only reached ~1-2s into the inner JVM's own
+      # life, catching it still in setup() (loading a font from disk), nowhere
+      # near endDraw() - which per this project's TIMING: output doesn't
+      # start until several seconds in and can run for 140-230+ seconds.
+      # 60s gives comfortable margin to land inside that window across every
+      # run length seen so far. TEMPORARY: remove this env var (or comment
+      # it out) once a dump has been captured and read - it's
+      # diagnostic-only, not something to leave firing on every run.
       - name: Generate this shard's test images (make_baseline.py)
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
           SHARD_INDEX: ${{ matrix.shard }}
-          THREAD_DUMP_DELAY_SECONDS: '10'
+          THREAD_DUMP_DELAY_SECONDS: '60'
         run: >
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24"
           python3 test/image/make_baseline.py

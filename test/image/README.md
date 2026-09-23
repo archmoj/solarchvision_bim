@@ -277,7 +277,7 @@ dump *while* a test is stuck, showing the literal native/Java stack it's
 blocked on instead of inferring it:
 
 ```sh
-THREAD_DUMP_DELAY_SECONDS=10 xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py test_primitives
+THREAD_DUMP_DELAY_SECONDS=60 xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py test_primitives
 ```
 
 Unlike `SIGTERM`/`SIGKILL`, a JVM's default `SIGQUIT` handling is to print
@@ -362,8 +362,34 @@ scripts under this Linux `/proc`, not a stub simulation) and correctly
 found every descendant across all three levels, where the previous
 approach had failed to find even the first on real CI.
 
-All three fixes are cumulative in the current `make_baseline.py` - the
-next CI run's dump should finally land in whatever `endDraw()` is actually
-calling into. The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS`
-stay in place until then - both are diagnostic-only and safe to strip out
-once the real cause is confirmed and fixed.
+All three fixes are cumulative in the current `make_baseline.py`, and they
+worked: the next real CI run found **two** descendant pids and dumped
+both. The second one was finally the actual sketch-running JVM, not the
+Commander/launcher - progress. But it landed at the wrong *moment*: its
+stack showed the animator thread still inside `setup()`, loading a font
+from disk -
+
+```
+at sun.font.TrueTypeFont.init(...)
+at processing.core.PApplet.createFont(...)
+at solarchvision_bim.loadDefaultFontStyle(solarchvision_bim.java:38418)
+at solarchvision_bim.setup(solarchvision_bim.java:170)
+```
+
+**Fourth thing found and fixed**: `THREAD_DUMP_DELAY_SECONDS` is measured
+from when the *outer* wrapper process starts - but the Commander JVM
+spends several seconds compiling before it launches the *inner* JVM that
+actually runs the sketch (that same run's Commander-side dump showed its
+launcher thread only `elapsed=2.41s` old, meaning the launch happened
+~7.6s into Commander's own life). So a 10s delay only reached ~1-2 seconds
+into the inner JVM's own life - nowhere near `endDraw()`, which per this
+project's own `TIMING:` output doesn't start until several seconds into
+the inner JVM's life and can run for 140-230+ seconds. **Fixed** by
+raising the delay to 60s in `.github/workflows/image-tests.yml`, which
+should land comfortably inside that window across every run length seen
+so far (142s-249s total).
+
+The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS` stay in
+place until a dump finally lands inside `endDraw()` itself - both are
+diagnostic-only and safe to strip out once the real cause is confirmed and
+fixed.
