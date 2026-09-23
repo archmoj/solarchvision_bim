@@ -1938,4 +1938,6 @@ void build_allActions() {
       WIN3D.revise();
     });
   }
+
+  //allActions.keySet().stream().sorted().forEach(System.out::println);
 }
