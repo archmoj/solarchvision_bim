@@ -212,14 +212,6 @@ produced something.
 
 ## Note on per-run timing and per-test retry
 
-Each script takes a real chunk of wall-clock time on its own:
-`frameRate(24)` and `Last_initializationStep = 1000` in
-`solarchvision_bim.pde` mean the intro sequence alone takes at least
-`1000 / 24 ~= 42s` before `RUN=...` even starts, on top of JVM startup, GL
-context creation, and the render itself. Sharding (above) is what keeps the
-whole pipeline's wall-clock time down despite this, by running several
-tests' `~42s`-plus renders at once instead of back to back.
-
 `make_baseline.py` bounds each *attempt* with `PER_TEST_TIMEOUT` (default
 300s, override with the env var) and retries only that one test up to
 `MAX_RETRY` times (default 2) if it comes back empty — a flaky render of

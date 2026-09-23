@@ -75,7 +75,7 @@ void setup () {
   loop();
 }
 
-int Last_initializationStep = 1000;
+int Last_initializationStep = 25; // <<< adjust me if draw_initial_frames changed
 int InitializationStep = 0;
 
 void draw () {
