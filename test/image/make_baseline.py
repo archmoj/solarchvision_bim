@@ -96,6 +96,17 @@ def newest_screenshot_since(marker_time):
     return newest_path
 
 
+def find_child_pids(pid):
+    """Direct children of pid, via /proc (Linux only, which is all CI runs
+    here). Used so the SIGQUIT diagnostic below can target the actual java
+    process specifically, not the whole process group."""
+    try:
+        with open(f"/proc/{pid}/task/{pid}/children") as f:
+            return [int(p) for p in f.read().split()]
+    except (FileNotFoundError, PermissionError, ProcessLookupError):
+        return []
+
+
 def run_once(exe, name):
     """One attempt at one test. Returns the screenshot path produced, or None."""
     marker_time = time.time()
@@ -111,26 +122,43 @@ def run_once(exe, name):
         start_new_session=True,
     )
 
-    # Diagnostic only, off by default: if set, send SIGQUIT to the whole
-    # process group this many seconds after starting, which makes the JVM
-    # print a full thread dump (every thread's stack, including native
+    # Diagnostic only, off by default: if set, send SIGQUIT to the java
+    # child specifically (found via find_child_pids - NOT the whole process
+    # group, see below) this many seconds after starting, which makes the
+    # JVM print a full thread dump (every thread's stack, including native
     # frames) to stdout and then keep running - unlike SIGTERM/SIGKILL,
-    # SIGQUIT does not stop it. Used to see exactly what a slow call (e.g.
-    # PGraphics.endDraw() - see test/image/README.md's "Note on CI render
-    # speed") is actually blocked on, instead of guessing from source
-    # reading alone. Pick a delay past setup/intro (a few seconds) and
-    # comfortably before PER_TEST_TIMEOUT.
+    # SIGQUIT does not stop it. Used to see exactly what a slow call is
+    # actually blocked on, instead of guessing from source reading alone.
+    # Pick a delay past setup/intro (a few seconds) and comfortably before
+    # PER_TEST_TIMEOUT.
+    #
+    # Deliberately NOT os.killpg(...): that broadcasts to the whole process
+    # group, which includes the processing-java bash wrapper as well as the
+    # java process it runs in the foreground. java handles SIGQUIT specially
+    # (dump + keep running) but the wrapper does not trap it, so the
+    # wrapper dies immediately from its default disposition - orphaning
+    # java, which keeps running unmonitored while this script sees its
+    # (now-dead) direct child and wrongly concludes the test failed. Seen
+    # for real: a CI run with the group-wide version showed
+    # "processing-java exited -3" (killed BY SIGQUIT, signal 3) and two
+    # tests' TIMING/thread-dump output interleaved - two orphaned JVMs
+    # running concurrently, each still writing to the same stdout.
     dump_timer = None
     dump_delay = os.environ.get("THREAD_DUMP_DELAY_SECONDS")
     if dump_delay:
         delay = float(dump_delay)
 
         def _send_thread_dump():
-            print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: sending SIGQUIT for a thread dump")
-            try:
-                os.killpg(os.getpgid(proc.pid), signal.SIGQUIT)
-            except ProcessLookupError:
-                pass
+            targets = find_child_pids(proc.pid)
+            if not targets:
+                print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: could not find processing-java's child pid, skipping (not sending SIGQUIT to the wrapper itself - see comment above)")
+                return
+            print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: sending SIGQUIT to pid(s) {targets} for a thread dump")
+            for pid in targets:
+                try:
+                    os.kill(pid, signal.SIGQUIT)
+                except ProcessLookupError:
+                    pass
 
         dump_timer = threading.Timer(delay, _send_thread_dump)
         dump_timer.start()

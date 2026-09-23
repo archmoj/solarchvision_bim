@@ -272,26 +272,70 @@ happening here.
 
 **Current approach**: guessing further from source reading alone hasn't
 worked twice now (the `Earth3D` texture theory, then this one), so rather
-than a third guess, `make_baseline.py` can now trigger an actual JVM
-thread dump *while* a test is stuck in the slow call, which shows the
-literal native/Java stack it's blocked on instead of inferring it:
+than a third guess, `make_baseline.py` can trigger an actual JVM thread
+dump *while* a test is stuck, showing the literal native/Java stack it's
+blocked on instead of inferring it:
 
 ```sh
 THREAD_DUMP_DELAY_SECONDS=10 xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py test_primitives
 ```
 
-This sends `SIGQUIT` to the whole process group `THREAD_DUMP_DELAY_SECONDS`
-after starting (pick a delay past setup/intro - a few seconds - and
-comfortably before the slow call would finish or `PER_TEST_TIMEOUT` would
-kill it). Unlike `SIGTERM`/`SIGKILL`, a JVM's default `SIGQUIT` handling is
-to print every thread's full stack trace (including native frames) to
-stdout and then keep running - `make_baseline.py` doesn't capture
-`processing-java`'s stdout, so the dump lands directly in the CI log,
-right where the `TIMING:` lines already do. Tested the delivery mechanism
-itself (timer firing, `SIGQUIT` not killing a process that handles it,
-normal completion afterward) against a stub in place of `processing-java`;
-the actual dump content can only come from a real run.
+Unlike `SIGTERM`/`SIGKILL`, a JVM's default `SIGQUIT` handling is to print
+every thread's full stack trace (including native frames) to stdout and
+then keep running - `make_baseline.py` doesn't capture `processing-java`'s
+stdout, so the dump lands directly in the CI log, right where the
+`TIMING:` lines already do.
 
-The `TIMING:` instrumentation stays in place alongside this - both are
-diagnostic-only and safe to strip out once the real cause is found and
-fixed.
+**Bug found and fixed in the diagnostic itself, from a real CI run's log**:
+the first version sent `SIGQUIT` to the whole process group
+(`os.killpg`). That broadcasts to both `java` and the `processing-java`
+bash wrapper it runs inside (as a foreground child, not `exec`'d - see the
+process-group note above). `java` handles `SIGQUIT` specially (dump, keep
+running); the wrapper does not trap it, so it dies immediately from its
+default disposition - orphaning `java`, which keeps running unmonitored
+while `make_baseline.py` sees its (now-dead) direct child, wrongly
+concludes the test failed, and starts a retry *while the orphaned JVM from
+the first attempt is still running in the background*. This was directly
+visible in the log: `processing-java exited -3` (killed *by* signal 3,
+`SIGQUIT`) and two tests' `TIMING:`/thread-dump output interleaved -
+two orphaned JVMs concurrently writing to the same stdout. **Fixed** by
+finding the actual `java` child pid (via `/proc/<pid>/task/<pid>/children`)
+and sending `SIGQUIT` to it specifically, never the wrapper. Verified
+against a stub matching the real wrapper/child structure (the wrapper
+doesn't trap `SIGQUIT`, the child does): the child now dumps and keeps
+running, the wrapper is untouched, and the test completes normally
+afterward.
+
+**What the (buggy but still informative) first dump actually showed**: not
+graphics code at all -
+
+```
+at processing.mode.java.preproc.ProcessingParser.expression(...)
+at processing.mode.java.preproc.PdePreprocessor.write(...)
+at processing.mode.java.JavaBuild.build(...)
+at processing.mode.java.Commander.main(...)
+```
+
+- Processing's own ANTLR-based source parser (`.pde` → Java), still deep in
+`ParserATNSimulator.closure_`/`adaptivePredict` a full 10 seconds into the
+run, with the JIT log showing `closure_` still being actively compiled
+(i.e. not yet warmed up). This is the one-time sketch-compilation step,
+paid fresh by a brand-new JVM on *every* `processing-java` invocation -
+entirely unrelated to `P3D`/`endDraw`/anything graphics. With dozens of
+`.pde` files in this project, this cold-start parse could plausibly
+account for a large share of the per-test time on a slower/shared CI CPU,
+independent of whatever the render itself costs. Worth confirming with a
+corrected (post-fix) dump - or several, at different delays - before
+concluding this is the dominant cost rather than just a component of it.
+
+If compilation does turn out to dominate, the real fix looks different
+from anything tried so far: it's an unavoidable per-process cost as long
+as each test spawns its own fresh `processing-java`/JVM. The next
+direction worth considering would be running multiple `command/test_*.txt`
+scripts through *one* `processing-java` process instead of one each,
+amortizing the compile cost across all of them - a bigger change to how
+`RUN.SCRIPT`/`USER=AUTO` sequences tests, not attempted here.
+
+The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS` stay in
+place - both are diagnostic-only and safe to strip out once the real cause
+is confirmed and fixed.
