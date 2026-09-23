@@ -58,7 +58,11 @@ void setup () {
   Sun3D.load_images();
   Moon3D.load_images();
 
+  println("TIMING: setup() start", millis());
+
   WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
+
+  println("TIMING: WIN3D P3D context created", millis());
 
   WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
 
@@ -66,11 +70,15 @@ void setup () {
 
   SKY2D_graphics = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);
 
+  println("TIMING: SKY2D P3D context created", millis());
+
   loadDefaultFontStyle();
 
   changeCurrentLayerTo(5); // pointing to air temperature variable i.e. on the list of allLayers
 
   frameRate(24);
+
+  println("TIMING: setup() done", millis());
 
   loop();
 }
@@ -87,7 +95,9 @@ void draw () {
   if (!draw_initial_frames()) {
     if(!runAfterInitialization.equals("")) {
       if(frameCount == 1 + Last_initializationStep) {
+        println("TIMING: RUN.SCRIPT start", millis());
         _fileSelected_RunScript(new File(runAfterInitialization));
+        println("TIMING: RUN.SCRIPT done", millis());
         runAfterInitialization = "";
       }
     }
@@ -111,11 +121,15 @@ void draw () {
       if (WORLD.record_PDF == true) {
         WORLD.record_PDF = false;
       } else {
+        println("TIMING: draw_WIN3D_layers() start", millis());
         draw_WIN3D_layers();
+        println("TIMING: draw_WIN3D_layers() done", millis());
         draw_UI_layers();
 
         if (FRAME_record_IMG) {
+          println("TIMING: RecordFrame() start", millis());
           RecordFrame();
+          println("TIMING: RecordFrame() done", millis());
           FRAME_record_IMG = false;
         }
       }

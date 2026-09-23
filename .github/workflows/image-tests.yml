@@ -74,14 +74,24 @@ jobs:
       # safety net in case xvfb-run/Xvfb itself hangs, not the normal path -
       # PER_TEST_TIMEOUT (default 300s) bounds each test's own attempts.
       #
-      # --server-args sets the virtual display to 1920x1080: the sketch
-      # runs fullScreen(P3D), so the screenshot dimensions match whatever
-      # Xvfb's screen is - left at xvfb-run's default (1280x1024) the
-      # images come out 1280x1024 instead.
+      # --server-args sets the virtual display to 1920x1080: the sketch's
+      # main window is fullScreen(P2D), so the screenshot dimensions match
+      # whatever Xvfb's screen is - left at xvfb-run's default (1280x1024)
+      # the images come out 1280x1024 instead.
+      #
+      # LP_NUM_THREADS is an experiment for the "generation is much slower
+      # on CI than locally" investigation (see test/image/README.md's "Note
+      # on CI render speed"): llvmpipe (Mesa's software OpenGL rasterizer,
+      # doing all the real work here since there's no GPU) auto-detects
+      # thread count, which can misdetect or oversubscribe under a
+      # container's CPU quota. Pinned to 4 to match GitHub-hosted public
+      # runners' 4 vCPUs; remove this line (or try other values) once the
+      # TIMING log lines show whether it actually helped.
       - name: Generate this shard's test images (make_baseline.py)
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
+          LP_NUM_THREADS: '4'
           SHARD_INDEX: ${{ matrix.shard }}
         run: >
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24"

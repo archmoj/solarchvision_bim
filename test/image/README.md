@@ -64,7 +64,7 @@ python3 test/image/compare_pixels.py
 touch the sketch at all, no display needed.)
 
 `--server-args="-screen 0 1920x1080x24"` matters: the sketch runs
-`fullScreen(P3D)`, so every screenshot comes out the same size as Xvfb's
+`fullScreen(P2D)`, so every screenshot comes out the same size as Xvfb's
 virtual screen. Leave it off and you get `xvfb-run`'s default 1280x1024
 instead - if you ever change this, baselines need regenerating at the new
 size (a resolution change alone makes `compare_pixels.py` report every test
@@ -229,3 +229,50 @@ been fine in isolation. `make_baseline.py` avoids this by starting
 `processing-java` in its own process group (`start_new_session=True`) and
 killing the *whole group* on timeout (`os.killpg(...)`), not just the
 top-level process.
+
+## Note on CI render speed
+
+Generation is measurably slower on CI than on a real machine (e.g.
+`processing-java finished after 16s` locally vs. `247s` in CI for the same
+test) — investigated, not yet fully resolved. Two things ruled out first:
+
+- Not the long-intro-wait explanation from an earlier version of this file
+  (removed): `Last_initializationStep` is `25`, not `1000`, so the intro
+  sequence is only ~1s now. The gap is in the actual render/context setup,
+  not idle waiting.
+- Not `fullScreen()` itself. `solarchvision_bim.pde`'s main window is
+  `fullScreen(P2D)`, same as it would be on any machine.
+
+The leading suspect: `WIN3D` (the 3D viewport every `command/test_*.txt`
+actually exercises) and `SKY2D_graphics` are separate offscreen **`P3D`**
+`PGraphics` (`createGraphics(..., P3D)` in `setup()`). Both `P2D` and `P3D`
+are OpenGL-backed (via JOGL) - `P2D` isn't a plain CPU/Java2D fallback -
+but `P3D` does real 3D work per pixel (transforms, lighting, z-buffering)
+that `P2D` doesn't. CI runners have no real GPU, so all of this - `P2D` and
+`P3D` alike - falls back to Mesa's `llvmpipe`, a full software OpenGL
+rasterizer running entirely on CPU; a real machine's actual GPU driver
+handles the same work in hardware. `P3D`'s heavier per-pixel cost under
+that software fallback is the current best explanation for why this
+project's CI is slow while a comparable project
+([archmoj/grib2_solarchvision](https://github.com/archmoj/grib2_solarchvision)),
+which uses no `P3D` anywhere, stays fast on CI.
+
+Two things added to actually pin this down on the next real CI run, rather
+than resting on the reasoning above:
+
+- **Timing instrumentation** in `solarchvision_bim.pde`: `println("TIMING:
+  ...", millis())` around the `P3D` context creation in `setup()`, around
+  `_fileSelected_RunScript(...)` (the command file's geometry creation),
+  around `draw_WIN3D_layers()` (the actual render), and around
+  `RecordFrame()` (the screenshot save). `make_baseline.py` doesn't capture
+  `processing-java`'s stdout, so these lines show up directly in the
+  `generate-images` step's log - read the gaps between consecutive
+  `TIMING:` lines to see which phase the 231s (locally 16s, CI 247s) is
+  actually in: one-time context setup, the geometry/command execution, or
+  the render itself.
+- **`LP_NUM_THREADS=4`** on the `generate-images` step: `llvmpipe`
+  auto-detects how many threads to rasterize with, which can misdetect or
+  oversubscribe under a CI container's CPU quota. Pinned to 4 to match
+  GitHub-hosted public runners' 4 vCPUs, as a cheap thing to try alongside
+  the instrumentation above. Remove it (or try other values) once the
+  `TIMING` lines show whether it moved anything.
