@@ -276,3 +276,39 @@ than resting on the reasoning above:
   GitHub-hosted public runners' 4 vCPUs, as a cheap thing to try alongside
   the instrumentation above. Remove it (or try other values) once the
   `TIMING` lines show whether it moved anything.
+
+**First real result**: `draw_WIN3D_layers() start` to `draw_WIN3D_layers()
+done` was ~99.8s (`6874` to `106704`) on CI for one test - essentially the
+whole gap versus the 16s local run is inside that single call, not context
+setup or `RUN.SCRIPT`.
+
+`drawSceneContents()` (called from `renderFrame()`, called from
+`WIN3D.drawView()`, called from `draw_WIN3D_layers()`) renders a fixed
+environment backdrop - `Sky3D`, `Sun3D`, `Moon3D`, `Earth3D`, `Land3D`,
+`Tropo3D` - on *every* frame, in addition to whatever a test's own geometry
+adds. `Earth3D` in particular loads a 5400x2700px (~14.6 megapixel) JPEG
+(`input/images/earth/...`) texture-mapped onto the globe, and its
+`computeElevationBump()` does per-vertex pixel lookups into that texture
+via `PImage.get()` - a bounds-checked, non-vectorized accessor, i.e. a
+plain CPU cost independent of GPU/rasterization. `Land3D` and `Tropo3D`
+also load their own textures. Any of these - texture-sampling cost under
+software rasterization, or the CPU-side elevation lookups, or a slower CI
+CPU making an already-CPU-bound loop slower - could plausibly be the ~100s,
+and they're not mutually exclusive.
+
+`drawSceneContents()` in `WIN3D.pde` now times each piece separately and
+prints one line:
+
+```
+TIMING: drawSceneContents breakdown - Sky3D:<ms> Sun3D+Moon3D:<ms> Earth3D:<ms> Land3D:<ms> Tropo3D:<ms> user-geometry+rest:<ms>
+```
+
+The next CI run's log will show which of these actually accounts for the
+~100s - almost certainly `Earth3D`, `Land3D`, or `Tropo3D` given they're
+the texture-heavy ones and the only ones a minimal test scene (a few boxes)
+doesn't explain on its own. Once identified, an actual fix is a separate
+step from here - options include disabling `displaySurface` for the
+unused backdrop elements specifically for headless test runs (changes what
+gets rendered, so baselines would need regenerating), or reducing the
+texture resolution used in CI, but which of those makes sense depends on
+which piece the breakdown actually points to.

@@ -200,15 +200,21 @@ class WIN3D {
   }
 
   void drawSceneContents () {
+    long t0 = millis();
     Sky3D.draw(TypeWindow.WIN3D);
+    long t1 = millis();
     Sun3D.drawPattern(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius);
     Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius);
     Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius, 0, 360);
     Sun3D.draw();
     Moon3D.draw();
+    long t2 = millis();
     Earth3D.draw(TypeWindow.WIN3D);
+    long t3 = millis();
     Land3D.draw(TypeWindow.WIN3D);
+    long t4 = millis();
     Tropo3D.draw(TypeWindow.WIN3D);
+    long t5 = millis();
     allFaces.draw(TypeWindow.WIN3D);
     allPolylines.draw(TypeWindow.WIN3D);
     allPoints.draw();
@@ -221,6 +227,11 @@ class WIN3D {
     allSolidImpacts.draw_points();
     allModel2Ds.draw(TypeWindow.WIN3D);
     allWindFlows.draw(TypeWindow.WIN3D);
+    long t6 = millis();
+    println("TIMING: drawSceneContents breakdown - Sky3D:" + (t1 - t0)
+      + "ms Sun3D+Moon3D:" + (t2 - t1) + "ms Earth3D:" + (t3 - t2)
+      + "ms Land3D:" + (t4 - t3) + "ms Tropo3D:" + (t5 - t4)
+      + "ms user-geometry+rest:" + (t6 - t5) + "ms");
   }
 
   void saveRecordedFrame () {
