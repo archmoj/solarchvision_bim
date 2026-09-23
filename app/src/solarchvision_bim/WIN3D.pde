@@ -110,11 +110,17 @@ class WIN3D {
   void drawView () {
     if (!this.update) return;
 
+    long dv_t0 = millis();
+
     if (Select3D.update_BoundingBox) {
       Select3D.calculate_BoundingBox();
     }
 
+    long dv_t1 = millis();
+
     beginImageScale();
+
+    long dv_t2 = millis();
 
     int firstDay = IMPACTS_displayDay;
     int lastDay = IMPACTS_displayDay;
@@ -130,12 +136,22 @@ class WIN3D {
     }
     IMPACTS_displayDay = keep_IMPACTS_displayDay;
 
+    long dv_t3 = millis();
+
     imageMode(CORNER);
     image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
+
+    long dv_t4 = millis();
 
     if (this.record_IMG || !this.record_AUTO) this.record_IMG = false;
 
     endImageScale();
+
+    long dv_t5 = millis();
+
+    println("TIMING: drawView breakdown - boundingBox:" + (dv_t1 - dv_t0)
+      + "ms beginImageScale:" + (dv_t2 - dv_t1) + "ms renderFrame-loop:" + (dv_t3 - dv_t2)
+      + "ms image():" + (dv_t4 - dv_t3) + "ms endImageScale:" + (dv_t5 - dv_t4) + "ms");
   }
 
   void beginImageScale () {
@@ -165,7 +181,9 @@ class WIN3D {
   }
 
   void renderFrame () {
+    long rf_t0 = millis();
     this.graphics.beginDraw();
+    long rf_t1 = millis();
 
     this.scale = this.dY / this.refScale; // fits field of view to window's height
 
@@ -180,7 +198,11 @@ class WIN3D {
     WIN3D.transform_3DViewport();
     WIN3D.put_3DViewport();
 
+    long rf_t2 = millis();
+
     drawSceneContents();
+
+    long rf_t3 = millis();
 
     this.graphics.hint(DISABLE_DEPTH_TEST);
 
@@ -190,13 +212,26 @@ class WIN3D {
 
     this.graphics.popMatrix();
 
+    long rf_t4 = millis();
+
     this.drawPalette();
 
+    long rf_t5 = millis();
+
     this.graphics.endDraw();
+
+    long rf_t6 = millis();
 
     if (this.record_IMG || this.record_AUTO) {
       saveRecordedFrame();
     }
+
+    long rf_t7 = millis();
+
+    println("TIMING: renderFrame breakdown - beginDraw:" + (rf_t1 - rf_t0)
+      + "ms viewportTransform:" + (rf_t2 - rf_t1) + "ms drawSceneContents:" + (rf_t3 - rf_t2)
+      + "ms referencePivot:" + (rf_t4 - rf_t3) + "ms drawPalette:" + (rf_t5 - rf_t4)
+      + "ms endDraw:" + (rf_t6 - rf_t5) + "ms saveRecordedFrame:" + (rf_t7 - rf_t6) + "ms");
   }
 
   void drawSceneContents () {
