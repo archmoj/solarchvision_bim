@@ -1,5 +1,5 @@
 void applyRolloutUpdate() {
-  if (!UI_rollout.include && !UI_rollout.update) return;
+  if (!UI_rollout.include || !UI_rollout.update) return;
 
   UI_rollout.updated();
 
