@@ -46,7 +46,7 @@ with Pillow + numpy:
 ```sh
 pip install pillow numpy
 export PROCESSING_HOME=~/processing/4.3.4   # wherever it's installed
-xvfb-run --auto-servernum python3 test/image/make_baseline.py
+xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py
 python3 test/image/compare_pixels.py
 ```
 
@@ -80,7 +80,7 @@ by eye first.
 To do the same thing locally instead of via the artifact:
 
 ```sh
-xvfb-run --auto-servernum python3 test/image/make_baseline.py --baseline
+xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py --baseline
 ```
 
 then look at every image in `test/image/baseline/` before committing.
@@ -113,7 +113,7 @@ The sketch opens a real `P3D` (OpenGL) window even in `USER=AUTO` mode, so
 it needs a display:
 
 ```sh
-xvfb-run --auto-servernum python3 test/image/make_baseline.py
+xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py
 ```
 
 **On `ubuntu-24.04`/`ubuntu-latest` runners this crashes the JVM** with a

@@ -74,7 +74,9 @@ jobs:
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
-        run: xvfb-run --auto-servernum python3 test/image/make_baseline.py
+        run: >
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24"
+          python3 test/image/make_baseline.py
 
       # Always runs, even if generation above had failures, so whatever did
       # get produced is still compared and its diff is visible.
