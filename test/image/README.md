@@ -389,7 +389,144 @@ raising the delay to 60s in `.github/workflows/image-tests.yml`, which
 should land comfortably inside that window across every run length seen
 so far (142s-249s total).
 
-The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS` stay in
-place until a dump finally lands inside `endDraw()` itself - both are
-diagnostic-only and safe to strip out once the real cause is confirmed and
-fixed.
+**The dump this finally produced - the actual root cause**:
+
+```
+at jogamp.opengl.gl4.GL4bcImpl.dispatch_glBlitFramebuffer1(Native Method)
+at jogamp.opengl.gl4.GL4bcImpl.glBlitFramebuffer(...)
+at processing.opengl.PJOGL.blitFramebuffer(...)
+at processing.opengl.FrameBuffer.copy(...)
+at processing.opengl.FrameBuffer.copyColor(...)
+at processing.opengl.PGraphicsOpenGL.endOffscreenDraw(...)
+at processing.opengl.PGraphicsOpenGL.endDraw(...)
+at solarchvision_bim$WIN3D.renderFrame(solarchvision_bim.java:33277)
+```
+
+Thread state `RUNNABLE`, not blocked - genuinely executing `glBlitFramebuffer`
+(a native OpenGL call), not waiting on anything. Processing's own source
+(`FrameBuffer.java`) confirms every offscreen `P3D`/`P2D` surface's
+`endDraw()` does this: it always renders into an internal FBO, then blits
+its color buffer into a separate, texture-backed FBO via
+`pgl.blitFramebuffer(0, 0, w, h, 0, 0, w, h, COLOR_BUFFER_BIT, NEAREST)` -
+same size, `NEAREST` filtering, no scaling. This is architectural, not
+MSAA-specific, which is exactly why `noSmooth()` never had any effect: it
+was never in that code path to begin with.
+
+A same-size, no-filtering blit taking 226 seconds isn't explained by
+"software rendering is slower than hardware" alone - that's roughly
+20,000x slower than a reasonable software blit, not the 10-100x llvmpipe
+is normally slower by. That smells like a genuine Mesa/llvmpipe
+performance bug or pathological code path for this specific FBO
+configuration (format mismatch, packed depth-stencil interacting badly
+with the blit, or similar) rather than expected software-rasterizer
+overhead - but nothing found via search matches this exact symptom and
+magnitude closely enough to call it confirmed.
+
+**Resolved**: upgrading to Processing 4.5.2 (bundled JOGL 2.6.0, up from
+whatever 4.3.4 shipped) fixes this completely - `endDraw()` dropped from
+226,000+ms to 0-94ms across all 7 tests, with no code change to
+`FrameBuffer.copy()`/`blitFramebuffer()` itself. Whatever was pathological
+about the old JOGL/Mesa combination for this specific blit, the newer
+bundle doesn't hit it. See "Note on upgrading Processing" below for the
+full migration - a new CLI, a new install format, and a couple of real
+behavior differences that needed fixing along the way.
+
+The three options below were the plan before that upgrade was tried; kept
+for the record and in case a future Processing/Mesa/JOGL combination
+regresses the same way:
+
+- **Isolate whether it's per-pixel cost or a fixed stall**: temporarily
+  shrink `WIN3D`'s framebuffer resolution way down and see whether
+  `endDraw()` time drops proportionally. If it does, it's a genuine
+  (if bizarrely slow) per-pixel cost, and a real fix means finding *why*
+  that blit is so slow per pixel. If it doesn't change much, it's a fixed
+  stall (e.g. a sync/fence wait) unrelated to pixel count, and needs a
+  completely different kind of investigation.
+- **Cheap environment experiments**, never tried: `MESA_NO_ERROR=1`
+  (skips GL error-checking overhead), or forcing a different Gallium
+  software path (`GALLIUM_DRIVER=llvmpipe` explicitly, or trying
+  `softpipe` instead of `llvmpipe` as a sanity check that it isn't an
+  `llvmpipe`-specific regression).
+- **Sidestep instead of fix**: raise `SHARD_TOTAL` close to the actual
+  test count (one shard per test) so the pipeline's wall-clock time is
+  bounded by the slowest single test rather than their sum.
+
+The `TIMING:` instrumentation and `THREAD_DUMP_DELAY_SECONDS` stay in the
+code - both are diagnostic-only, off by default, and harmless to leave in
+case something like this comes up again; neither is needed for normal use
+now.
+
+## Note on upgrading Processing
+
+Prompted by the `endDraw()` investigation above: does a newer Processing
+(newer bundled JOGL) avoid both that slowness and the earlier Mesa ABI
+crash on `ubuntu-24.04`? Tried Processing 4.5.2 (bundled JOGL 2.6.0, vs.
+whatever 4.3.4 shipped) - **yes to both**, confirmed by actually running
+it, repeatedly, not just checking version numbers:
+
+- **The `ubuntu-24.04` Mesa ABI crash is gone.** 4.3.4 crashed every single
+  time on this exact combination (`libGLX_mesa.so` SIGSEGV in JOGL's
+  `SharedResourceRunner`, see "Troubleshooting: headless rendering" above).
+  4.5.2 ran cleanly, repeatedly, no crash - meaning `generate-images` no
+  longer needs pinning to `ubuntu-22.04` and is back on `ubuntu-latest`.
+- **The `endDraw()` slowness is gone.** Same `glBlitFramebuffer` call
+  (confirmed from Processing's source, unchanged), same test scenes, same
+  sandbox: `endDraw()` went from 226,000+ms to 0-94ms. All 7
+  `command/test_*.txt` scripts run sequentially, from cold, in ~224s total
+  (previously a *single* test could take up to 249s on its own).
+
+Getting to that clean result took fixing two real behavior differences in
+the new tooling, not just swapping a version number:
+
+**1. No more `processing-java`, and a new argument-passing convention.**
+Processing 4.5.x replaced the old `processing-java` shell script entirely
+with a Kotlin/Compose-based rewrite; headless use is now `Processing cli
+--sketch=<path> --run <args...>` (a `cli` subcommand on the same binary
+used for the GUI). The old CLI packaged trailing sketch arguments behind a
+literal `--args` sentinel (`processing-java ... --run --args USER=AUTO
+RUN=...`) before passing them to `PApplet.main()`; the new CLI's own docs
+say it forwards trailing arguments to the sketch directly, with no such
+marker. `solarchvision_bim.pde`'s `parseArgs()` required that literal
+`"--args"` as `passedArgs[0]` before parsing anything, so with the new CLI
+it silently parsed nothing at all - `USER=AUTO` never took effect, so the
+sketch just looped in normal GUI mode forever instead of running
+`RUN.SCRIPT` and exiting. Fixed to accept both forms: `--args`-prefixed
+(old) or bare (new).
+
+**2. `sketchPath()`/`BaseFolder` resolves to a different place.** With the
+old `processing-java`, `sketchPath()` resolved to the process's current
+working directory (confirmed earlier in this file, from an actual CI
+run's own log path). With the new `Processing cli`, it resolves instead
+to Processing's *own install directory*
+(`$PROCESSING_HOME/lib/app/resources/core`) - a real behavior difference,
+not a path assumption bug on our end this time. Since `BaseFolder` is
+used throughout the sketch to find `input/images/...`, run
+`command/....txt`, and write `projects/model-01/export/screenshots/...`,
+none of that could be found without a fix. Rather than rewrite every
+`BaseFolder`-relative path in the sketch, `input/`, `command/`, and
+`projects/` are symlinked from the checkout into that resolved location
+as a CI setup step (`ln -sfn "$GITHUB_WORKSPACE/<dir>" "$CORE/<dir>"`,
+`projects/` pre-created first since it doesn't exist yet on a fresh
+checkout - `mkdir -p` before `ln`, not after, learned from a real failed
+run in local testing where skipping that step made `RecordFrame()` fail
+to create its output directory through the not-yet-real symlink target).
+This makes `make_baseline.py`'s own `SCREENSHOTS_ROOTS` search work
+unchanged: since it's a symlink, not a copy, a screenshot written through
+`$CORE/projects/...` is the same file as one under
+`$GITHUB_WORKSPACE/projects/...`, found by the existing repo-root-relative
+search without any code change there.
+
+**3. The new package format.** 4.5.x ships as a "portable" `.zip`
+(`processing-<version>-linux-x64-portable.zip`, extracting to a
+`Processing/` folder with a native `jpackage`-built launcher at
+`Processing/bin/Processing`) rather than the old
+`processing-<version>-linux-x64.tgz` with a `processing-java` script
+inside. `.github/workflows/image-tests.yml`'s install step and
+`make_baseline.py`'s `find_processing_java()` both updated to match.
+
+One thing this migration does *not* change: `processing-java`'s old exit
+code always being `1` under `USER=AUTO` (see "Note on
+processing-java's exit code" above) - the new CLI actually returned `0` on
+every successful run in local testing, a genuine improvement, though
+`make_baseline.py` still doesn't treat a nonzero code as fatal on its own,
+just informational, in case that's not universally true.

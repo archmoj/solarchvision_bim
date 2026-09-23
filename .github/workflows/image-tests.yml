@@ -11,9 +11,8 @@ permissions:
   contents: read
 
 env:
-  # Keep in sync with .github/workflows/ci.yml and run.sh.
-  PROCESSING_VERSION: 4.3.4
-  PROCESSING_TAG: processing-1297-4.3.4
+  PROCESSING_VERSION: 4.5.2
+  PROCESSING_TAG: processing-1313-4.5.2
   # How many parallel containers generate images. Kept as one number here
   # (rather than repeated in the matrix list below) since SHARD_TOTAL must
   # match the matrix length - see the "shard" section of
@@ -21,24 +20,24 @@ env:
   SHARD_TOTAL: 3
 
 jobs:
-  # Generation is the flaky, slow half of this pipeline (one JVM/GL/Xvfb
-  # startup per test), so it's split across SHARD_TOTAL parallel containers
-  # - each runs only every SHARD_TOTAL-th test (make_baseline.py's own
-  # SHARD_INDEX/SHARD_TOTAL striping. Comparison happens once, in a separate
-  # job below, against all shards' images merged together.
+  # Generation is the flaky half of this pipeline (one JVM/GL/Xvfb startup
+  # per test), so it's split across SHARD_TOTAL parallel containers - each
+  # runs only every SHARD_TOTAL-th test (make_baseline.py's own
+  # SHARD_INDEX/SHARD_TOTAL striping). Comparison happens once, in a
+  # separate job below, against all shards' images merged together.
   generate-images:
     strategy:
       fail-fast: false
       matrix:
         shard: [0, 1, 2]
-    # Not ubuntu-latest (24.04): its GLVND-based Mesa build segfaults inside
-    # libGLX_mesa.so when JOGL (bundled in Processing 4.3.4) sets up its
-    # shared GL context, regardless of LIBGL_ALWAYS_SOFTWARE / vblank_mode /
-    # __GLX_VENDOR_LIBRARY_NAME - the crash address never moves, which
-    # points to an ABI mismatch rather than a config problem. Ubuntu 22.04's
-    # older Mesa doesn't hit this; see actions/runner-images#11517 for the
-    # same class of Mesa-on-24.04 regression in other projects.
-    runs-on: ubuntu-22.04
+    # ubuntu-latest, not pinned to an older image: Processing 4.3.4's
+    # bundled JOGL used to segfault on ubuntu-24.04's newer GLVND-based
+    # Mesa when setting up its shared GL context (an ABI mismatch, not a
+    # config problem - actions/runner-images#11517 has the same class of
+    # regression for another project). Confirmed resolved by the Processing
+    # 4.5.2 upgrade below (bundled JOGL 2.6.0) - see test/image/README.md's
+    # "Note on upgrading Processing".
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -49,7 +48,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      # Same cache key/path as ci.yml, so both workflows share the download.
       - name: Cache Processing install
         id: cache-processing
         uses: actions/cache@v4
@@ -57,60 +55,58 @@ jobs:
           path: ~/processing/${{ env.PROCESSING_VERSION }}
           key: processing-${{ env.PROCESSING_VERSION }}-linux-x64
 
+      # 4.5.x ships as a "portable" zip (Processing/ folder with a native
+      # jpackage launcher at Processing/bin/Processing), not the old
+      # processing-<version>-linux-x64.tgz with a processing-java script -
+      # that script no longer exists in this version. See
+      # test/image/README.md's "Note on upgrading Processing".
       - name: Install Processing
         if: steps.cache-processing.outputs.cache-hit != 'true'
         run: |
-          curl -fL -o /tmp/processing.tgz \
-            "https://github.com/processing/processing4/releases/download/${PROCESSING_TAG}/processing-${PROCESSING_VERSION}-linux-x64.tgz"
+          curl -fL -o /tmp/processing.zip \
+            "https://github.com/processing/processing4/releases/download/${PROCESSING_TAG}/processing-${PROCESSING_VERSION}-linux-x64-portable.zip"
           mkdir -p ~/processing
-          tar -xf /tmp/processing.tgz -C /tmp
-          mv "/tmp/processing-${PROCESSING_VERSION}" "$HOME/processing/${PROCESSING_VERSION}"
+          unzip -q /tmp/processing.zip -d /tmp/processing-extracted
+          mv /tmp/processing-extracted/Processing "$HOME/processing/${PROCESSING_VERSION}"
+
+      # The new Processing cli resolves sketchPath()/BaseFolder to its own
+      # install directory (lib/app/resources/core) instead of the sketch's
+      # actual working directory - a real behavior change from 4.3.4, not
+      # a path bug on our end. Without this, the sketch can't find its own
+      # asset files (input/, command/, and where it writes projects/...
+      # screenshots). See test/image/README.md's "Note on upgrading
+      # Processing" for how this was diagnosed. Re-run every job (not
+      # cached like the install above) since $GITHUB_WORKSPACE is a fresh
+      # checkout path each time.
+      - name: Link repo directories into Processing's resolved base folder
+        run: |
+          CORE="$HOME/processing/${PROCESSING_VERSION}/lib/app/resources/core"
+          mkdir -p "$GITHUB_WORKSPACE/projects"
+          ln -sfn "$GITHUB_WORKSPACE/input" "$CORE/input"
+          ln -sfn "$GITHUB_WORKSPACE/command" "$CORE/command"
+          ln -sfn "$GITHUB_WORKSPACE/projects" "$CORE/projects"
 
       # One process per test, retried on its own if it fails - see
       # make_baseline.py's docstring. No wrapping retry action here: a
       # whole-batch retry would re-run every test in this shard that already
       # succeeded just because one flaked, which is exactly what per-test
-      # retry inside the script avoids. timeout-minutes is a last-resort
-      # safety net in case xvfb-run/Xvfb itself hangs, not the normal path -
-      # PER_TEST_TIMEOUT (default 300s) bounds each test's own attempts.
+      # retry inside the script avoids.
       #
       # --server-args sets the virtual display to 1920x1080: the sketch's
       # main window is fullScreen(P2D), so the screenshot dimensions match
       # whatever Xvfb's screen is - left at xvfb-run's default (1280x1024)
       # the images come out 1280x1024 instead.
       #
-      # CI generation used to be ~10-15x slower than a local run (247s vs
-      # 16s for the same test). A noSmooth()-based fix in
-      # solarchvision_bim.pde/WIN3D.pde, based on a leading hypothesis
-      # (endDraw()'s multisample resolve), turned out NOT to fix it -
-      # confirmed by this step's own TIMING: output on a later run. See
-      # test/image/README.md's "Note on CI render speed" for the full
-      # investigation.
-      #
-      # THREAD_DUMP_DELAY_SECONDS below is the current diagnostic: it makes
-      # make_baseline.py send SIGQUIT to the stuck JVM(s) partway through a
-      # test, which prints a full thread dump (every thread's stack,
-      # including native frames) to this step's log instead of killing the
-      # process - showing what the slow call is actually blocked on.
-      #
-      # 60s, not 10s: this delay is measured from when the OUTER wrapper
-      # process starts, but processing-java's "Commander" JVM spends several
-      # seconds compiling before it launches the INNER JVM that actually
-      # runs the sketch (see test/image/README.md's "Note on CI render
-      # speed") - a 10s delay only reached ~1-2s into the inner JVM's own
-      # life, catching it still in setup() (loading a font from disk), nowhere
-      # near endDraw() - which per this project's TIMING: output doesn't
-      # start until several seconds in and can run for 140-230+ seconds.
-      # 60s gives comfortable margin to land inside that window across every
-      # run length seen so far. TEMPORARY: remove this env var (or comment
-      # it out) once a dump has been captured and read - it's
-      # diagnostic-only, not something to leave firing on every run.
+      # timeout-minutes is a last-resort safety net (e.g. if xvfb-run/Xvfb
+      # itself hangs), not the normal path: each test now takes roughly
+      # 30s end to end (mostly JVM startup/compilation, not the render -
+      # see test/image/README.md), so 10 minutes covers all 7 tests with
+      # real headroom even unsharded.
       - name: Generate this shard's test images (make_baseline.py)
-        timeout-minutes: 30
+        timeout-minutes: 10
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
           SHARD_INDEX: ${{ matrix.shard }}
-          THREAD_DUMP_DELAY_SECONDS: '60'
         run: >
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24"
           python3 test/image/make_baseline.py
@@ -128,9 +124,7 @@ jobs:
 
   compare-pixels:
     needs: generate-images
-    # No Processing/GL/Xvfb here at all - pure Python image diffing - so,
-    # unlike generate-images above, this doesn't need the ubuntu-22.04 Mesa
-    # workaround.
+    # No Processing/GL/Xvfb here at all - pure Python image diffing.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

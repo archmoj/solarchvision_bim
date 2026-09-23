@@ -1,13 +1,12 @@
 void parseArgs(String[] passedArgs) {
-  // Check if any custom arguments were passed via --args
-  if (
-    passedArgs != null &&
-    passedArgs.length > 0 &&
-    passedArgs[0].equals("--args")
-  ) {
-    for (int i = 1; i < passedArgs.length; i++) {
-      _useArg(passedArgs[i]);
-    }
+  if (passedArgs == null || passedArgs.length == 0) return;
+
+  // Old processing-java packages sketch args behind a literal "--args"
+  // sentinel; the new (4.5.x) CLI's docs say it forwards trailing args to
+  // the sketch directly, with no such marker. Accept both.
+  int start = passedArgs[0].equals("--args") ? 1 : 0;
+  for (int i = start; i < passedArgs.length; i++) {
+    _useArg(passedArgs[i]);
   }
 }
 

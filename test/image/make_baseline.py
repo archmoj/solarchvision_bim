@@ -9,25 +9,22 @@ Usage:
                                                         # (review the images before committing them!)
 
 Env vars:
-  PROCESSING_HOME     Processing 4 install (default: ~/processing/4.3.4,
-                      matching .github/workflows/ci.yml's cache path)
-  PER_TEST_TIMEOUT    seconds allowed per attempt (default: 300). Each of
-                      the 7 command/test_*.txt scripts needs at least
-                      ~1000/24 = ~42s on its own just for the sketch's
-                      intro sequence (frameRate(24), Last_initializationStep
-                      = 1000 in solarchvision_bim.pde) before RUN=... even
-                      starts, on top of JVM/GL startup and the render.
+  PROCESSING_HOME     Processing 4 install (default: ~/processing/4.5.2,
+                      matching .github/workflows/ci.yml's cache path). Runs
+                      `$PROCESSING_HOME/bin/Processing cli --sketch=... --run
+                      USER=AUTO RUN=...` - the 4.5.x CLI, a full rewrite of
+                      the old `processing-java` shell script (removed in
+                      this version). See test/image/README.md's "Note on
+                      upgrading Processing" for what changed and why.
+  PER_TEST_TIMEOUT    seconds allowed per attempt (default: 300)
   MAX_RETRY           retries per test after the first attempt (default: 2,
                       i.e. up to 3 attempts total for one test)
 
 Requires a display - wrap with `xvfb-run --auto-servernum` on headless
-machines/CI. See test/image/README.md, including why timeouts here kill the
-whole process group: processing-java is a plain shell script that runs
-`java` as a foreground child (no `exec`), so killing just its own PID on a
-timeout leaves the JVM running in the background - across several timed-out
-tests that adds up to real resource exhaustion (X11 connections, memory)
-that can plausibly explain later tests failing even when they'd have been
-fine on their own.
+machines/CI. Also requires test/image/README.md's "Note on upgrading
+Processing" symlink workaround to already be set up (input/, command/, and
+projects/ linked into Processing's own install directory) - without it the
+sketch can't find its own asset files.
 """
 import argparse
 import glob
@@ -41,16 +38,17 @@ import time
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SKETCH_DIR = os.path.join(REPO_ROOT, "app", "src", "solarchvision_bim")
-# sketchPath() (used as BaseFolder in update_folders.pde) resolves to the
-# process's current working directory in this `processing-java --sketch=...`
-# CLI mode - i.e. REPO_ROOT, since run.sh/the workflow invoke it from there -
-# not to the sketch's own folder under app/src/solarchvision_bim. Confirmed
-# from an actual CI run's own "Saving: .../solarchvision_bim/projects/
-# model-01/export/screenshots/..." log line, with no app/src/solarchvision_bim
-# segment in it. Search both that confirmed-correct root and the originally
-# (wrongly) assumed sketch-relative one, so a future difference in how
-# sketchPath() resolves - e.g. if this is ever run a different way - doesn't
-# silently break this again.
+# sketchPath() (used as BaseFolder in update_folders.pde) resolves to
+# REPO_ROOT with the old processing-java CLI (confirmed from an actual CI
+# run's "Saving: .../solarchvision_bim/projects/model-01/export/..." log
+# line), but to Processing's own install directory
+# ($PROCESSING_HOME/lib/app/resources/core) with the new 4.5.x `Processing
+# cli` tool - a real behavior difference between the two, not just a path
+# assumption bug on our end this time. See test/image/README.md's "Note on
+# upgrading Processing": input/, command/, and projects/ are symlinked into
+# that install-relative location so the sketch's own asset loading (and our
+# screenshot search below) both keep working. Search both roots regardless,
+# so a future change in either direction doesn't silently break this again.
 SCREENSHOTS_ROOTS = [
     os.path.join(REPO_ROOT, "projects", "model-01", "export", "screenshots"),
     os.path.join(SKETCH_DIR, "projects", "model-01", "export", "screenshots"),
@@ -70,10 +68,10 @@ def discover_tests():
 
 
 def find_processing_java():
-    home = os.environ.get("PROCESSING_HOME", os.path.expanduser("~/processing/4.3.4"))
-    exe = os.path.join(home, "processing-java")
+    home = os.environ.get("PROCESSING_HOME", os.path.expanduser("~/processing/4.5.2"))
+    exe = os.path.join(home, "bin", "Processing")
     if not os.path.isfile(exe) or not os.access(exe, os.X_OK):
-        print(f"processing-java not found at {exe} (set PROCESSING_HOME to your Processing 4 install)", file=sys.stderr)
+        print(f"Processing CLI launcher not found at {exe} (set PROCESSING_HOME to your Processing 4.5.x install)", file=sys.stderr)
         sys.exit(1)
     return exe
 
@@ -101,12 +99,15 @@ def find_descendant_pids(root_pid):
     scanning /proc/*/stat for every process's ppid and building the whole
     tree at once (Linux only, which is all CI runs here).
 
-    Needed because processing-java's "Commander" doesn't run the sketch in
-    the JVM that compiles it - it compiles in one JVM, then launches a
-    *second*, separate JVM process to actually run the sketch
-    (processing.mode.java.runner.Runner.launchJava, monitored over JDI),
-    and the first JVM's main thread just sits in Runner.generateTrace()'s
-    Thread.join() waiting for it.
+    Built while diagnosing a severe slowdown in Processing 4.3.4's
+    "Commander" tool, which didn't run the sketch in the JVM that compiled
+    it - it compiled in one JVM, then launched a *second*, separate JVM
+    process to actually run the sketch, monitored over JDI, with the first
+    JVM's main thread just sitting in a Thread.join() waiting for it. That
+    slowdown is resolved by upgrading to Processing 4.5.x (see
+    test/image/README.md's "Note on upgrading Processing"), so this and
+    THREAD_DUMP_DELAY_SECONDS below aren't needed for normal use anymore -
+    kept as a general diagnostic if something like it ever comes up again.
 
     Originally tried reading /proc/<pid>/task/<pid>/children directly
     (simpler, one lookup per level) instead of this full-tree scan, but a
@@ -148,12 +149,17 @@ def run_once(exe, name):
     marker_time = time.time()
     start = time.time()
 
-    # start_new_session=True puts processing-java (and, crucially, the
-    # `java` it runs as a foreground child - see module docstring) in its
-    # own process group, so a timeout can kill the whole thing rather than
-    # just the shell wrapper and leaving java running.
+    # start_new_session=True puts this process (and any JVM(s) it launches)
+    # in its own process group, so a timeout/SIGQUIT can target the right
+    # thing rather than orphaning something. The old processing-java shell
+    # script definitely ran java as a non-exec'd foreground child, which is
+    # exactly how that orphaning happened for real (see find_descendant_pids
+    # above); the new 4.5.x `Processing` binary is a jpackage-built native
+    # launcher, a different enough process model that this may not apply the
+    # same way - not specifically confirmed either way, so the same
+    # defensive handling is kept regardless.
     proc = subprocess.Popen(
-        [exe, f"--sketch={SKETCH_DIR}", "--run", "--args", "USER=AUTO", f"RUN=command/{name}.txt"],
+        [exe, "cli", f"--sketch={SKETCH_DIR}", "--run", "USER=AUTO", f"RUN=command/{name}.txt"],
         cwd=REPO_ROOT,
         start_new_session=True,
     )
@@ -205,17 +211,19 @@ def run_once(exe, name):
         dump_timer = threading.Timer(delay, _send_thread_dump)
         dump_timer.start()
 
-
     try:
         returncode = proc.wait(timeout=PER_TEST_TIMEOUT)
         elapsed = time.time() - start
-        # processing-java returns 1 whenever the sketch calls exit() itself
-        # (exactly what USER=AUTO does), success or not - not a reliable
-        # signal here. The real check is below: did a screenshot appear.
+        # The old processing-java always returned 1 whenever the sketch
+        # called exit() itself (exactly what USER=AUTO does), success or
+        # not. The new 4.5.x `Processing cli` returns 0 on a normal run in
+        # local testing - genuinely more reliable - but this still doesn't
+        # treat a nonzero code as fatal on its own, just informational; the
+        # real check stays "did a screenshot appear", below.
         if returncode != 0:
-            print(f"  note: processing-java exited {returncode} after {elapsed:.0f}s (expected under USER=AUTO)")
+            print(f"  note: Processing exited {returncode} after {elapsed:.0f}s")
         else:
-            print(f"  processing-java finished after {elapsed:.0f}s")
+            print(f"  Processing finished after {elapsed:.0f}s")
     except subprocess.TimeoutExpired:
         elapsed = time.time() - start
         print(f"  timed out after {elapsed:.0f}s (PER_TEST_TIMEOUT={PER_TEST_TIMEOUT}), killing process group")
