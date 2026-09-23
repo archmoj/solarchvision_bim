@@ -110,17 +110,11 @@ class WIN3D {
   void drawView () {
     if (!this.update) return;
 
-    long dv_t0 = millis();
-
     if (Select3D.update_BoundingBox) {
       Select3D.calculate_BoundingBox();
     }
 
-    long dv_t1 = millis();
-
     beginImageScale();
-
-    long dv_t2 = millis();
 
     int firstDay = IMPACTS_displayDay;
     int lastDay = IMPACTS_displayDay;
@@ -136,22 +130,12 @@ class WIN3D {
     }
     IMPACTS_displayDay = keep_IMPACTS_displayDay;
 
-    long dv_t3 = millis();
-
     imageMode(CORNER);
     image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
-
-    long dv_t4 = millis();
 
     if (this.record_IMG || !this.record_AUTO) this.record_IMG = false;
 
     endImageScale();
-
-    long dv_t5 = millis();
-
-    println("TIMING: drawView breakdown - boundingBox:" + (dv_t1 - dv_t0)
-      + "ms beginImageScale:" + (dv_t2 - dv_t1) + "ms renderFrame-loop:" + (dv_t3 - dv_t2)
-      + "ms image():" + (dv_t4 - dv_t3) + "ms endImageScale:" + (dv_t5 - dv_t4) + "ms");
   }
 
   void beginImageScale () {
@@ -164,7 +148,6 @@ class WIN3D {
     if (this.ImageScale != 1) {
       println("IMG:high-res");
       this.graphics = createGraphics(this.dX, this.dY, P3D);
-      if (control == USER_AUTO) this.graphics.noSmooth();
     }
   }
 
@@ -174,7 +157,6 @@ class WIN3D {
 
     if (this.ImageScale != 1) {
       this.graphics = createGraphics(this.dX, this.dY, P3D);
-      if (control == USER_AUTO) this.graphics.noSmooth();
       this.updated();
     } else {
       this.updated();
@@ -183,9 +165,7 @@ class WIN3D {
   }
 
   void renderFrame () {
-    long rf_t0 = millis();
     this.graphics.beginDraw();
-    long rf_t1 = millis();
 
     this.scale = this.dY / this.refScale; // fits field of view to window's height
 
@@ -200,11 +180,7 @@ class WIN3D {
     WIN3D.transform_3DViewport();
     WIN3D.put_3DViewport();
 
-    long rf_t2 = millis();
-
     drawSceneContents();
-
-    long rf_t3 = millis();
 
     this.graphics.hint(DISABLE_DEPTH_TEST);
 
@@ -214,44 +190,25 @@ class WIN3D {
 
     this.graphics.popMatrix();
 
-    long rf_t4 = millis();
-
     this.drawPalette();
 
-    long rf_t5 = millis();
-
     this.graphics.endDraw();
-
-    long rf_t6 = millis();
 
     if (this.record_IMG || this.record_AUTO) {
       saveRecordedFrame();
     }
-
-    long rf_t7 = millis();
-
-    println("TIMING: renderFrame breakdown - beginDraw:" + (rf_t1 - rf_t0)
-      + "ms viewportTransform:" + (rf_t2 - rf_t1) + "ms drawSceneContents:" + (rf_t3 - rf_t2)
-      + "ms referencePivot:" + (rf_t4 - rf_t3) + "ms drawPalette:" + (rf_t5 - rf_t4)
-      + "ms endDraw:" + (rf_t6 - rf_t5) + "ms saveRecordedFrame:" + (rf_t7 - rf_t6) + "ms");
   }
 
   void drawSceneContents () {
-    long t0 = millis();
     Sky3D.draw(TypeWindow.WIN3D);
-    long t1 = millis();
     Sun3D.drawPattern(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius);
     Sun3D.drawPath(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius);
     Sun3D.drawGrid(TypeWindow.WIN3D, 0, 0, 0, 0.975 *   Sky3D.radius, 0, 360);
     Sun3D.draw();
     Moon3D.draw();
-    long t2 = millis();
     Earth3D.draw(TypeWindow.WIN3D);
-    long t3 = millis();
     Land3D.draw(TypeWindow.WIN3D);
-    long t4 = millis();
     Tropo3D.draw(TypeWindow.WIN3D);
-    long t5 = millis();
     allFaces.draw(TypeWindow.WIN3D);
     allPolylines.draw(TypeWindow.WIN3D);
     allPoints.draw();
@@ -264,11 +221,6 @@ class WIN3D {
     allSolidImpacts.draw_points();
     allModel2Ds.draw(TypeWindow.WIN3D);
     allWindFlows.draw(TypeWindow.WIN3D);
-    long t6 = millis();
-    println("TIMING: drawSceneContents breakdown - Sky3D:" + (t1 - t0)
-      + "ms Sun3D+Moon3D:" + (t2 - t1) + "ms Earth3D:" + (t3 - t2)
-      + "ms Land3D:" + (t4 - t3) + "ms Tropo3D:" + (t5 - t4)
-      + "ms user-geometry+rest:" + (t6 - t5) + "ms");
   }
 
   void saveRecordedFrame () {

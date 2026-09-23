@@ -10,21 +10,25 @@ Usage:
 
 Env vars:
   PROCESSING_HOME     Processing 4 install (default: ~/processing/4.5.2,
-                      matching .github/workflows/ci.yml's cache path). Runs
-                      `$PROCESSING_HOME/bin/Processing cli --sketch=... --run
-                      USER=AUTO RUN=...` - the 4.5.x CLI, a full rewrite of
-                      the old `processing-java` shell script (removed in
-                      this version). See test/image/README.md's "Note on
-                      upgrading Processing" for what changed and why.
+                      matching .github/workflows/image-tests.yml's cache
+                      path). Runs `$PROCESSING_HOME/bin/Processing cli
+                      --sketch=... --run USER=AUTO RUN=...`.
   PER_TEST_TIMEOUT    seconds allowed per attempt (default: 300)
   MAX_RETRY           retries per test after the first attempt (default: 2,
                       i.e. up to 3 attempts total for one test)
+  SHARD_INDEX,        run only every SHARD_TOTAL-th test (0-based, i.e. the
+  SHARD_TOTAL         tests where index % SHARD_TOTAL == SHARD_INDEX), for
+                      running generation across several parallel CI jobs/
+                      containers - same striping plotly.js's
+                      .github/scripts/split_files.mjs uses. Both must be
+                      set together; unset (the default) runs everything in
+                      one process. Applied after any explicit test names on
+                      the command line, so `make_baseline.py test_a test_b`
+                      with SHARD_TOTAL=2 still splits just those two.
 
 Requires a display - wrap with `xvfb-run --auto-servernum` on headless
-machines/CI. Also requires test/image/README.md's "Note on upgrading
-Processing" symlink workaround to already be set up (input/, command/, and
-projects/ linked into Processing's own install directory) - without it the
-sketch can't find its own asset files.
+machines/CI. Also requires input/, command/, and projects/ to be symlinked
+into Processing's own install directory first - see test/image/README.md.
 """
 import argparse
 import glob
@@ -33,22 +37,15 @@ import shutil
 import signal
 import subprocess
 import sys
-import threading
 import time
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SKETCH_DIR = os.path.join(REPO_ROOT, "app", "src", "solarchvision_bim")
 # sketchPath() (used as BaseFolder in update_folders.pde) resolves to
-# REPO_ROOT with the old processing-java CLI (confirmed from an actual CI
-# run's "Saving: .../solarchvision_bim/projects/model-01/export/..." log
-# line), but to Processing's own install directory
-# ($PROCESSING_HOME/lib/app/resources/core) with the new 4.5.x `Processing
-# cli` tool - a real behavior difference between the two, not just a path
-# assumption bug on our end this time. See test/image/README.md's "Note on
-# upgrading Processing": input/, command/, and projects/ are symlinked into
-# that install-relative location so the sketch's own asset loading (and our
-# screenshot search below) both keep working. Search both roots regardless,
-# so a future change in either direction doesn't silently break this again.
+# Processing's own install directory ($PROCESSING_HOME/lib/app/resources/
+# core), not REPO_ROOT - see test/image/README.md for why and the symlink
+# workaround this relies on. Search both that location and REPO_ROOT so a
+# future change in either direction doesn't silently break this again.
 SCREENSHOTS_ROOTS = [
     os.path.join(REPO_ROOT, "projects", "model-01", "export", "screenshots"),
     os.path.join(SKETCH_DIR, "projects", "model-01", "export", "screenshots"),
@@ -65,6 +62,26 @@ MAX_RETRY = int(os.environ.get("MAX_RETRY", "2"))
 def discover_tests():
     paths = sorted(glob.glob(os.path.join(COMMAND_DIR, "test_*.txt")))
     return [os.path.splitext(os.path.basename(p))[0] for p in paths]
+
+
+def shard_slice(names):
+    """Same striping as plotly.js's .github/scripts/split_files.mjs:
+    element i goes to shard (i % SHARD_TOTAL). Both env vars must be set
+    together; if neither is, every name passes through unchanged."""
+    index_raw = os.environ.get("SHARD_INDEX")
+    total_raw = os.environ.get("SHARD_TOTAL")
+    if index_raw is None and total_raw is None:
+        return names
+    try:
+        index = int(index_raw)
+        total = int(total_raw)
+    except (TypeError, ValueError):
+        print("error: SHARD_INDEX and SHARD_TOTAL must both be set to valid integers", file=sys.stderr)
+        sys.exit(1)
+    if total <= 0 or not (0 <= index < total):
+        print(f"error: invalid SHARD_INDEX={index_raw} / SHARD_TOTAL={total_raw} (need 0 <= SHARD_INDEX < SHARD_TOTAL)", file=sys.stderr)
+        sys.exit(1)
+    return [name for i, name in enumerate(names) if i % total == index]
 
 
 def find_processing_java():
@@ -94,132 +111,27 @@ def newest_screenshot_since(marker_time):
     return newest_path
 
 
-def find_descendant_pids(root_pid):
-    """Every descendant of root_pid (children, grandchildren, ...), by
-    scanning /proc/*/stat for every process's ppid and building the whole
-    tree at once (Linux only, which is all CI runs here).
-
-    Built while diagnosing a severe slowdown in Processing 4.3.4's
-    "Commander" tool, which didn't run the sketch in the JVM that compiled
-    it - it compiled in one JVM, then launched a *second*, separate JVM
-    process to actually run the sketch, monitored over JDI, with the first
-    JVM's main thread just sitting in a Thread.join() waiting for it. That
-    slowdown is resolved by upgrading to Processing 4.5.x (see
-    test/image/README.md's "Note on upgrading Processing"), so this and
-    THREAD_DUMP_DELAY_SECONDS below aren't needed for normal use anymore -
-    kept as a general diagnostic if something like it ever comes up again.
-
-    Originally tried reading /proc/<pid>/task/<pid>/children directly
-    (simpler, one lookup per level) instead of this full-tree scan, but a
-    real CI dump showed that file returning no children for a process a
-    thread dump proved had launched one (a thread blocked in
-    ProcessImpl.waitFor()) - unreliable here for reasons not fully
-    understood, possibly a timing race against a multi-threaded parent.
-    Scanning /proc/*/stat directly (ppid is a plain, always-populated field
-    - see `man proc`) doesn't depend on that file at all.
-    """
-    children_of = {}
-    for entry in os.listdir("/proc"):
-        if not entry.isdigit():
-            continue
-        try:
-            with open(f"/proc/{entry}/stat") as f:
-                stat = f.read()
-            # Format: "pid (comm) state ppid ...". comm can itself contain
-            # spaces/parens, so split off everything after the LAST ')'.
-            fields_after_comm = stat.rsplit(")", 1)[1].split()
-            ppid = int(fields_after_comm[1])  # [0] is state, [1] is ppid
-            children_of.setdefault(ppid, []).append(int(entry))
-        except (FileNotFoundError, ProcessLookupError, IndexError, ValueError):
-            continue
-
-    all_descendants = []
-    frontier = [root_pid]
-    while frontier:
-        next_frontier = []
-        for p in frontier:
-            next_frontier.extend(children_of.get(p, []))
-        all_descendants.extend(next_frontier)
-        frontier = next_frontier
-    return all_descendants
-
-
 def run_once(exe, name):
     """One attempt at one test. Returns the screenshot path produced, or None."""
     marker_time = time.time()
     start = time.time()
 
-    # start_new_session=True puts this process (and any JVM(s) it launches)
-    # in its own process group, so a timeout/SIGQUIT can target the right
-    # thing rather than orphaning something. The old processing-java shell
-    # script definitely ran java as a non-exec'd foreground child, which is
-    # exactly how that orphaning happened for real (see find_descendant_pids
-    # above); the new 4.5.x `Processing` binary is a jpackage-built native
-    # launcher, a different enough process model that this may not apply the
-    # same way - not specifically confirmed either way, so the same
-    # defensive handling is kept regardless.
+    # start_new_session=True puts this process (and anything it launches)
+    # in its own process group, so a timeout can kill the whole thing
+    # rather than leaving something running in the background.
     proc = subprocess.Popen(
         [exe, "cli", f"--sketch={SKETCH_DIR}", "--run", "USER=AUTO", f"RUN=command/{name}.txt"],
         cwd=REPO_ROOT,
         start_new_session=True,
     )
 
-    # Diagnostic only, off by default: if set, send SIGQUIT to every
-    # descendant process (found via find_descendant_pids - NOT the whole
-    # process group, see below) this many seconds after starting, which
-    # makes each JVM among them print a full thread dump (every thread's
-    # stack, including native frames) to stdout and then keep running -
-    # unlike SIGTERM/SIGKILL, SIGQUIT does not stop it. Used to see exactly
-    # what a slow call is actually blocked on, instead of guessing from
-    # source reading alone. Sent to every descendant, not just the deepest
-    # one, since which JVM is actually running the sketch isn't assumed -
-    # a dump of the wrong process (e.g. the Commander JVM sitting in
-    # Runner.generateTrace()'s Thread.join(), waiting on the real one) is
-    # nearly free to get and easy to tell apart from the real one by its
-    # stack, so getting both is safer than guessing which pid matters.
-    # Pick a delay past setup/intro (a few seconds) and comfortably before
-    # PER_TEST_TIMEOUT.
-    #
-    # Deliberately NOT os.killpg(...): that broadcasts to the whole process
-    # group, which includes the processing-java bash wrapper as well as the
-    # java process(es) it runs in the foreground. Those java processes
-    # handle SIGQUIT specially (dump + keep running) but the wrapper does
-    # not trap it, so the wrapper dies immediately from its default
-    # disposition - orphaning java, which keeps running unmonitored while
-    # this script sees its (now-dead) direct child and wrongly concludes
-    # the test failed. Seen for real: a CI run with the group-wide version
-    # showed "processing-java exited -3" (killed BY SIGQUIT, signal 3) and
-    # two tests' TIMING/thread-dump output interleaved - two orphaned JVMs
-    # running concurrently, each still writing to the same stdout.
-    dump_timer = None
-    dump_delay = os.environ.get("THREAD_DUMP_DELAY_SECONDS")
-    if dump_delay:
-        delay = float(dump_delay)
-
-        def _send_thread_dump():
-            targets = find_descendant_pids(proc.pid)
-            if not targets:
-                print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: could not find any descendant pid, skipping (not sending SIGQUIT to the wrapper itself - see comment above)")
-                return
-            print(f"  THREAD_DUMP_DELAY_SECONDS={delay:.0f}: sending SIGQUIT to pid(s) {targets} for a thread dump")
-            for pid in targets:
-                try:
-                    os.kill(pid, signal.SIGQUIT)
-                except ProcessLookupError:
-                    pass
-
-        dump_timer = threading.Timer(delay, _send_thread_dump)
-        dump_timer.start()
-
     try:
         returncode = proc.wait(timeout=PER_TEST_TIMEOUT)
         elapsed = time.time() - start
-        # The old processing-java always returned 1 whenever the sketch
-        # called exit() itself (exactly what USER=AUTO does), success or
-        # not. The new 4.5.x `Processing cli` returns 0 on a normal run in
-        # local testing - genuinely more reliable - but this still doesn't
-        # treat a nonzero code as fatal on its own, just informational; the
-        # real check stays "did a screenshot appear", below.
+        # A nonzero exit isn't necessarily a failure here (e.g. how the
+        # sketch calls exit() itself under USER=AUTO can vary by Processing
+        # version) - it's logged, but the real check is "did a screenshot
+        # appear", below.
         if returncode != 0:
             print(f"  note: Processing exited {returncode} after {elapsed:.0f}s")
         else:
@@ -233,9 +145,6 @@ def run_once(exe, name):
             pass
         proc.wait()
         return None
-    finally:
-        if dump_timer:
-            dump_timer.cancel()
 
     return newest_screenshot_since(marker_time)
 
@@ -261,14 +170,23 @@ def main():
     args = parser.parse_args()
 
     all_tests = discover_tests()
+    if not all_tests:
+        print("error: no command/test_*.txt scripts found", file=sys.stderr)
+        sys.exit(1)
+
     names = args.names if args.names else all_tests
     unknown = [n for n in names if n not in all_tests]
     if unknown:
         print(f"error: no such test(s): {', '.join(unknown)} (known: {', '.join(all_tests)})", file=sys.stderr)
         sys.exit(1)
-    if not names:
-        print("error: no command/test_*.txt scripts found", file=sys.stderr)
-        sys.exit(1)
+
+    names = shard_slice(names)
+    if os.environ.get("SHARD_TOTAL") is not None:
+        print(f"shard {os.environ.get('SHARD_INDEX')}/{os.environ.get('SHARD_TOTAL')}: {len(names)} test(s): {', '.join(names) or '(none)'}")
+        if not names:
+            # A legitimately empty shard (SHARD_TOTAL > test count) isn't a
+            # failure - nothing to do here, exit cleanly.
+            return
 
     out_dir = BASELINE_DIR if args.baseline else ACTUAL_DIR
     os.makedirs(out_dir, exist_ok=True)

@@ -58,37 +58,19 @@ void setup () {
   Sun3D.load_images();
   Moon3D.load_images();
 
-  println("TIMING: setup() start", millis());
-
-  // endDraw()'s multisample (MSAA) resolve - on by default (smooth(4)) for
-  // P3D/P2D - is what's actually slow under CI's software-rendered Mesa
-  // (llvmpipe): a single WIN3D endDraw() measured ~163s of a ~170s frame,
-  // 96% of the total (see test/image/README.md's "Note on CI render
-  // speed"). noSmooth() only for USER_AUTO (headless/CI script runs), so
-  // interactive USER_GUI usage keeps its default antialiasing quality.
   WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
-  if (control == USER_AUTO) WIN3D.graphics.noSmooth();
-
-  println("TIMING: WIN3D P3D context created", millis());
 
   WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
-  if (control == USER_AUTO) WORLD.graphics.noSmooth();
 
   STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
-  if (control == USER_AUTO) STUDY.graphics.noSmooth();
 
   SKY2D_graphics = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);
-  if (control == USER_AUTO) SKY2D_graphics.noSmooth();
-
-  println("TIMING: SKY2D P3D context created", millis());
 
   loadDefaultFontStyle();
 
   changeCurrentLayerTo(5); // pointing to air temperature variable i.e. on the list of allLayers
 
   frameRate(24);
-
-  println("TIMING: setup() done", millis());
 
   loop();
 }
@@ -105,9 +87,7 @@ void draw () {
   if (!draw_initial_frames()) {
     if(!runAfterInitialization.equals("")) {
       if(frameCount == 1 + Last_initializationStep) {
-        println("TIMING: RUN.SCRIPT start", millis());
         _fileSelected_RunScript(new File(runAfterInitialization));
-        println("TIMING: RUN.SCRIPT done", millis());
         runAfterInitialization = "";
       }
     }
@@ -131,15 +111,11 @@ void draw () {
       if (WORLD.record_PDF == true) {
         WORLD.record_PDF = false;
       } else {
-        println("TIMING: draw_WIN3D_layers() start", millis());
         draw_WIN3D_layers();
-        println("TIMING: draw_WIN3D_layers() done", millis());
         draw_UI_layers();
 
         if (FRAME_record_IMG) {
-          println("TIMING: RecordFrame() start", millis());
           RecordFrame();
-          println("TIMING: RecordFrame() done", millis());
           FRAME_record_IMG = false;
         }
       }

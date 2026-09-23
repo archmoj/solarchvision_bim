@@ -31,12 +31,10 @@ jobs:
       matrix:
         shard: [0, 1, 2]
     # ubuntu-latest, not pinned to an older image: Processing 4.3.4's
-    # bundled JOGL used to segfault on ubuntu-24.04's newer GLVND-based
-    # Mesa when setting up its shared GL context (an ABI mismatch, not a
-    # config problem - actions/runner-images#11517 has the same class of
-    # regression for another project). Confirmed resolved by the Processing
-    # 4.5.2 upgrade below (bundled JOGL 2.6.0) - see test/image/README.md's
-    # "Note on upgrading Processing".
+    # bundled JOGL used to segfault on ubuntu-24.04's Mesa (an ABI
+    # mismatch - actions/runner-images#11517 has the same class of
+    # regression elsewhere). Resolved by the Processing 4.5.2 upgrade
+    # below; see test/image/README.md's "Note on upgrading Processing".
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
