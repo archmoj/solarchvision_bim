@@ -47,7 +47,7 @@ developed by [Mojtaba Samimi
         -   [Camera control](#camera-control)
         -   [Views](#views)
         -   [Shading and rendering](#shading-and-rendering)
--   [Additional resources](#additional-resources)
+        -   [Additional commands](#additional-commands)
 -   [SOLARCHVISION-BIM — Technical Overview](#solarchvision-bim--technical-overview)
     -   [Overview](#overview)
     -   [Major Technical Subsystems](#major-technical-subsystems)
