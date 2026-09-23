@@ -23,14 +23,14 @@ void runScriptLines (String[] FileALL) {
 String runScriptLine (String lineSTR) {
   String hint = "";
 
-  lineSTR = lineSTR
+  String transformedLine = lineSTR
     .replace("\"", "")
     .replace(",", " ")      // replace commas with spaces
     .replaceAll(" +", " ")  // replace multiple spaces with a single space
     .replace("=", ":")      // replace equal with colon
     .replaceAll(":+", ":"); // replace multiple colons with a single colon
 
-  String[] parts = split(lineSTR, ' ');
+  String[] parts = split(transformedLine, ' ');
   String Command_CAPITAL = parts[0].toUpperCase();
 
   switch (Command_CAPITAL) {
@@ -40,104 +40,104 @@ String runScriptLine (String lineSTR) {
 
       allCommands[0] = "";
       allMessages[0] = "";
-      break;
+      return hint;
     }
 
     case "QUIT":
     case "EXIT": {
       exit();
-      break;
+      return hint;
     }
 
     case "HOLD": {
       holdProject();
-      break;
+      return hint;
     }
 
     case "FETCH": {
       fetchProject();
-      break;
+      return hint;
     }
 
     case "NEW": {
       if (parts.length > 1) _fileSelected_New(new File(parts[1]));
       else selectFile_New();
-      break;
+      return hint;
     }
 
     case "OPEN": {
       if (parts.length > 1) _fileSelected_Open(new File(parts[1]));
       else selectFile_Open();
-      break;
+      return hint;
     }
 
     case "SAVE.AS": {
       if (parts.length > 1) _fileSelected_SaveAs(new File(parts[1]));
       else selectFile_SaveAs();
-      break;
+      return hint;
     }
 
     case "SAVE": {
       if (parts.length > 1) saveProject(parts[1]);
       else saveProject(Folder_Project + "/" + ProjectName + ".xml");
-      break;
+      return hint;
     }
 
     case "IMPORT.OBJ": {
       if (parts.length > 1) _fileSelected_ImportObj(new File(parts[1]));
       else selectFile_ImportObj();
-      break;
+      return hint;
     }
 
     case "RUN.SCRIPT": {
       if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Command + "/" + parts[1]));
       else selectFile_RunScript();
-      break;
+      return hint;
     }
 
     case "EXPORT.OBJ.TIMESERIES": {
       exportObj_timeSeries();
-      break;
+      return hint;
     }
 
     case "EXPORT.OBJ.DATESERIES": {
       exportObj_dateSeries();
-      break;
+      return hint;
     }
 
     case "EXPORT.OBJ": {
       exportObj("");
-      break;
+      return hint;
     }
 
     case "EXPORT.RAD": {
       exportRadiance();
-      break;
+      return hint;
     }
 
     case "EXPORT.SCR": {
       exportAutocadScript();
-      break;
+      return hint;
     }
 
     case "REC.PNG": {
       screenShot(".png");
-      break;
+      return hint;
     }
 
     case "REC.JPG": {
       screenShot(".jpg");
-      break;
+      return hint;
     }
 
     case "REC.TIF": {
       screenShot(".tif");
-      break;
+      return hint;
     }
 
     case "REC.BMP": {
       screenShot(".bmp");
-      break;
+      return hint;
     }
 
     case "MOVE": {
@@ -165,7 +165,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Move dx=? dy=? dz=?";
       }
-      break;
+      return hint;
     }
 
     case "ROTATE":
@@ -202,7 +202,7 @@ String runScriptLine (String lineSTR) {
         UI_setTo_Modify_Rotate(2);
         UI_toolBar.revise();
       }
-      break;
+      return hint;
     }
 
     case "SCALE": {
@@ -238,7 +238,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
       }
-      break;
+      return hint;
     }
 
     case "DELETE": {
@@ -262,7 +262,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras";
       }
-      break;
+      return hint;
     }
 
     case "COPY": {
@@ -290,7 +290,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
       }
-      break;
+      return hint;
     }
 
     case "SELECT": {
@@ -322,7 +322,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint";
       }
-      break;
+      return hint;
     }
 
     case "PERSON": {
@@ -340,7 +340,7 @@ String runScriptLine (String lineSTR) {
         hint = "Person m=? x=? y=? z=?";
         UI_setTo_Create_Person();
       }
-      break;
+      return hint;
     }
 
     case "TREE2": {
@@ -361,7 +361,7 @@ String runScriptLine (String lineSTR) {
         hint = "Tree2 m=? x=? y=? z=? h=?";
         UI_setTo_Create_Tree();
       }
-      break;
+      return hint;
     }
 
     case "TREE1": {
@@ -411,7 +411,7 @@ String runScriptLine (String lineSTR) {
         hint = "Tree1 m=? seed=? degree=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? trunk=? leaf=?";
         UI_setTo_Create_allModel1Ds();
       }
-      break;
+      return hint;
     }
 
     case "BOX2P": {
@@ -438,7 +438,7 @@ String runScriptLine (String lineSTR) {
         hint = "Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
         UI_setTo_Create_Box();
       }
-      break;
+      return hint;
     }
 
     case "BOX": {
@@ -466,7 +466,7 @@ String runScriptLine (String lineSTR) {
         hint = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
         UI_setTo_Create_Box();
       }
-      break;
+      return hint;
     }
 
     case "HOUSE3": {
@@ -495,7 +495,7 @@ String runScriptLine (String lineSTR) {
         hint = "House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
         UI_setTo_Create_House3();
       }
-      break;
+      return hint;
     }
 
     case "HOUSE2": {
@@ -524,7 +524,7 @@ String runScriptLine (String lineSTR) {
         hint = "House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
         UI_setTo_Create_House2();
       }
-      break;
+      return hint;
     }
 
     case "HOUSE1": {
@@ -553,7 +553,7 @@ String runScriptLine (String lineSTR) {
         hint = "House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?";
         UI_setTo_Create_House1();
       }
-      break;
+      return hint;
     }
 
     case "CYLINDER": {
@@ -581,7 +581,7 @@ String runScriptLine (String lineSTR) {
         hint = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
         UI_setTo_Create_Cylinder();
       }
-      break;
+      return hint;
     }
 
     case "SPHERE": {
@@ -608,7 +608,7 @@ String runScriptLine (String lineSTR) {
         hint = "Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
         UI_setTo_Create_Sphere();
       }
-      break;
+      return hint;
     }
 
     case "SUPERSPHERE": {
@@ -640,7 +640,7 @@ String runScriptLine (String lineSTR) {
         hint = "SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?";
         UI_setTo_Create_Sphere();
       }
-      break;
+      return hint;
     }
 
     case "CUSHION": {
@@ -669,7 +669,7 @@ String runScriptLine (String lineSTR) {
         hint = "Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
         UI_setTo_Create_Cushion();
       }
-      break;
+      return hint;
     }
 
     case "OCTAHEDRON": {
@@ -697,7 +697,7 @@ String runScriptLine (String lineSTR) {
         hint = "Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
         UI_setTo_Create_Octahedron();
       }
-      break;
+      return hint;
     }
 
     case "ICOSAHEDRON": {
@@ -723,7 +723,7 @@ String runScriptLine (String lineSTR) {
         hint = "Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?";
         UI_setTo_Create_Icosahedron();
       }
-      break;
+      return hint;
     }
 
     case "POLYGONEXTRUDE": {
@@ -751,7 +751,7 @@ String runScriptLine (String lineSTR) {
         hint = "PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
         UI_setTo_Create_Extrude();
       }
-      break;
+      return hint;
     }
 
     case "POLYGONHYPER": {
@@ -779,7 +779,7 @@ String runScriptLine (String lineSTR) {
         hint = "PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?";
         UI_setTo_Create_Hyper();
       }
-      break;
+      return hint;
     }
 
     case "POLYGONMESH": {
@@ -806,7 +806,7 @@ String runScriptLine (String lineSTR) {
         hint = "PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?";
         UI_setTo_Create_Plane();
       }
-      break;
+      return hint;
     }
 
     case "MESH2": {
@@ -832,7 +832,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?";
       }
-      break;
+      return hint;
     }
 
     case "MESH3": {
@@ -861,7 +861,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Mesh3 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=?";
       }
-      break;
+      return hint;
     }
 
     case "MESH4": {
@@ -893,7 +893,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Mesh4 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=?";
       }
-      break;
+      return hint;
     }
 
     case "MESH5": {
@@ -928,7 +928,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Mesh5 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=? x5=? y5=? z5=?";
       }
-      break;
+      return hint;
     }
 
     case "MESH6": {
@@ -966,7 +966,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Mesh6 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=? x5=? y5=? z5=? x6=? y6=? z6=?";
       }
-      break;
+      return hint;
     }
 
     case "H_SHADE": {
@@ -993,7 +993,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "H_Shade m=? tes=? lyr=? x=? y=? z=? d=? w=? a=? b=?";
       }
-      break;
+      return hint;
     }
 
     case "V_SHADE": {
@@ -1020,7 +1020,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "V_Shade m=? tes=? lyr=? x=? y=? z=? d=? h=? a=? b=?";
       }
-      break;
+      return hint;
     }
 
     case "SOLID": {
@@ -1048,7 +1048,7 @@ String runScriptLine (String lineSTR) {
         hint = "Solid x=? y=? z=? px=? py=? pz=? sx=? sy=? sz=? rx=? ry=? rz=? v=?";
         UI_setTo_Create_Solid();
       }
-      break;
+      return hint;
     }
 
     case "SECTION": {
@@ -1072,7 +1072,7 @@ String runScriptLine (String lineSTR) {
         hint = "Section x=? y=? z=? r=? u=? v=? t=? i=? j=?";
         UI_setTo_Create_Section();
       }
-      break;
+      return hint;
     }
 
     case "CAMERA": {
@@ -1097,7 +1097,7 @@ String runScriptLine (String lineSTR) {
         hint = "Camera px=? py=? pz=? pt=? rx=? ry=? rz=? rt=? a=? t=?";
         UI_setTo_Create_Camera();
       }
-      break;
+      return hint;
     }
 
     case "PLOYLINE": {
@@ -1136,7 +1136,7 @@ String runScriptLine (String lineSTR) {
         hint = "Polyline m=? tes=? lyr=? xtr=? wgt=? clz=? x1,y1,z1 x2,y2,z2 etc.";
         UI_setTo_Create_Polyline();
       }
-      break;
+      return hint;
     }
 
     case "ARC": {
@@ -1181,7 +1181,7 @@ String runScriptLine (String lineSTR) {
         hint = "Arc m=? tes=? lyr=? xtr=? wgt=? clz=? x=? y=? z=? r=? deg=? rot=? ang=?";
         UI_setTo_Create_Polyline();
       }
-      break;
+      return hint;
     }
 
     case "PIVOT": {
@@ -1203,367 +1203,367 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "PIVOT minX midY maxZ or other variations";
       }
-      break;
+      return hint;
     }
 
     case "VERTEX>GROUP": {
       Select3D.convert_Vertices_to_Groups();
       view_changed();
-      break;
+      return hint;
     }
 
     case "FACE>GROUP": {
       Select3D.convert_Faces_to_Groups();
       view_changed();
-      break;
+      return hint;
     }
 
     case "GROUP>FACE": {
       Select3D.convert_Groups_to_Faces();
       view_changed();
-      break;
+      return hint;
     }
 
     case "POLYLINE>GROUP": {
       Select3D.convert_Polylines_to_Groups();
       view_changed();
-      break;
+      return hint;
     }
 
     case "GROUP>POLYLINE": {
       Select3D.convert_Groups_to_Polylines();
       view_changed();
-      break;
+      return hint;
     }
 
     case "POLYLINE>VERTEX": {
       Select3D.convert_Polylines_to_Vertices();
       view_changed();
-      break;
+      return hint;
     }
 
     case "VERTEX>POLYLINE": {
       Select3D.convert_Vertices_to_Polylines();
       view_changed();
-      break;
+      return hint;
     }
 
     case "GROUP>VERTEX": {
       Select3D.convert_Groups_to_Vertices();
       view_changed();
-      break;
+      return hint;
     }
 
     case "FACE>VERTEX": {
       Select3D.convert_Faces_to_Vertices();
       view_changed();
-      break;
+      return hint;
     }
 
     case "VERTEX>FACE": {
       Select3D.convert_Vertices_to_Faces();
       view_changed();
-      break;
+      return hint;
     }
 
     case "SOLID>GROUP": {
       Select3D.convert_Solids_to_Groups();
       view_changed();
-      break;
+      return hint;
     }
 
     case "GROUP>SOLID": {
       Select3D.convert_Groups_to_Solids();
       view_changed();
-      break;
+      return hint;
     }
 
     case "2D>GROUP": {
       Select3D.convert_Model2Ds_to_Groups();
       view_changed();
-      break;
+      return hint;
     }
 
     case "GROUP>2D": {
       Select3D.convert_Groups_to_Model2Ds();
       view_changed();
-      break;
+      return hint;
     }
 
     case "1D>GROUP": {
       Select3D.convert_Model1Ds_to_Groups();
       view_changed();
-      break;
+      return hint;
     }
 
     case "GROUP>1D": {
       Select3D.convert_Groups_to_Model1Ds();
       view_changed();
-      break;
+      return hint;
     }
 
     case "DISTZ": {
       UI_setTo_View_Truck(0);
-      break;
+      return hint;
     }
 
     case "DISTC": {
       UI_setTo_View_CameraDistance(0);
-      break;
+      return hint;
     }
 
     case "DISTP": {
       UI_setTo_View_DistMouseXY(0);
-      break;
+      return hint;
     }
 
     case "SIZEALL": {
       UI_setTo_View_AllModelSize();
-      break;
+      return hint;
     }
 
     case "SIZESKY": {
       UI_setTo_View_SkydomeSize();
-      break;
+      return hint;
     }
 
     case "SIZE3D": {
       UI_setTo_View_3DModelSize();
-      break;
+      return hint;
     }
 
     case "ALLVIEWPORTS": {
       UI_setTo_Viewport(0);
-      break;
+      return hint;
     }
 
     case "ENLARGE3D": {
       UI_setTo_Viewport(1);
-      break;
+      return hint;
     }
 
     case "LOOKORG": {
       UI_setTo_View_LookAtOrigin(0);
-      break;
+      return hint;
     }
 
     case "LOOKDIR": {
       UI_setTo_View_LookAtDirection(0);
-      break;
+      return hint;
     }
 
     case "LOOKSEL": {
       UI_setTo_View_LookAtSelection(0);
-      break;
+      return hint;
     }
 
     case "TRUCKZ": {
       UI_setTo_View_Truck(0);
-      break;
+      return hint;
     }
 
     case "TRUCKX": {
       UI_setTo_View_Truck(1);
-      break;
+      return hint;
     }
 
     case "TRUCKY": {
       UI_setTo_View_Truck(2);
-      break;
+      return hint;
     }
 
     case "TARGETROLL": {
       UI_setTo_View_TargetRoll(0);
-      break;
+      return hint;
     }
 
     case "TARGETROLLZ": {
       UI_setTo_View_TargetRoll(1);
-      break;
+      return hint;
     }
 
     case "TARGETROLLXY": {
       UI_setTo_View_TargetRoll(2);
-      break;
+      return hint;
     }
 
     case "CAMERAROLL": {
       UI_setTo_View_CameraRoll(0);
-      break;
+      return hint;
     }
 
     case "CAMERAROLLZ": {
       UI_setTo_View_CameraRoll(1);
-      break;
+      return hint;
     }
 
     case "CAMERAROLLXY": {
       UI_setTo_View_CameraRoll(2);
-      break;
+      return hint;
     }
 
     case "ORBIT": {
       UI_setTo_View_Orbit(0);
-      break;
+      return hint;
     }
 
     case "ORBITZ": {
       UI_setTo_View_Orbit(1);
-      break;
+      return hint;
     }
 
     case "ORBITXY": {
       UI_setTo_View_Orbit(2);
-      break;
+      return hint;
     }
 
     case "LANDORBIT": {
       UI_setTo_View_LandOrbit(0);
-      break;
+      return hint;
     }
 
     case "PAN": {
       UI_setTo_View_Pan(0);
-      break;
+      return hint;
     }
 
     case "PANX": {
       UI_setTo_View_Pan(1);
-      break;
+      return hint;
     }
 
     case "PANY": {
       UI_setTo_View_Pan(2);
-      break;
+      return hint;
     }
 
     case "ZOOM": {
       UI_setTo_View_ZOOM(0);
-      break;
+      return hint;
     }
 
     case "NORMALZOOM": {
       UI_setTo_View_ZOOM(1);
-      break;
+      return hint;
     }
 
     case "ORTHOGRAPHIC": {
       UI_setTo_View_ProjectionType(0);
-      break;
+      return hint;
     }
 
     case "PERSPECTIVE": {
       UI_setTo_View_ProjectionType(1);
-      break;
+      return hint;
     }
 
     case "TOP": {
       UI_setTo_View_3DViewPoint(0);
-      break;
+      return hint;
     }
 
     case "FRONT": {
       UI_setTo_View_3DViewPoint(1);
-      break;
+      return hint;
     }
 
     case "LEFT": {
       UI_setTo_View_3DViewPoint(2);
-      break;
+      return hint;
     }
 
     case "BACK": {
       UI_setTo_View_3DViewPoint(3);
-      break;
+      return hint;
     }
 
     case "RIGHT": {
       UI_setTo_View_3DViewPoint(4);
-      break;
+      return hint;
     }
 
     case "BOTTOM": {
       UI_setTo_View_3DViewPoint(5);
-      break;
+      return hint;
     }
 
     case "S.W.": {
       UI_setTo_View_3DViewPoint(6);
-      break;
+      return hint;
     }
 
     case "S.E.": {
       UI_setTo_View_3DViewPoint(7);
-      break;
+      return hint;
     }
 
     case "N.E.": {
       UI_setTo_View_3DViewPoint(8);
-      break;
+      return hint;
     }
 
     case "N.W.": {
       UI_setTo_View_3DViewPoint(9);
-      break;
+      return hint;
     }
 
     case "SHADE.WIRE": {
       WIN3D.FacesShade = SHADE.Surface_Wire;
       allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
       view_changed();
-      break;
+      return hint;
     }
 
     case "SHADE.BASE": {
       WIN3D.FacesShade = SHADE.Surface_Base;
       view_changed();
-      break;
+      return hint;
     }
 
     case "SHADE.WHITE": {
       WIN3D.FacesShade = SHADE.Surface_White;
       view_changed();
-      break;
+      return hint;
     }
 
     case "SHADE.MATERIALS": {
       WIN3D.FacesShade = SHADE.Surface_Materials;
       view_changed();
-      break;
+      return hint;
     }
 
     case "SHADE.GLOBAL": {
       WIN3D.FacesShade = SHADE.Global_Solar;
       view_changed();
-      break;
+      return hint;
     }
 
     case "SHADE.REAL": {
       WIN3D.FacesShade = SHADE.Vertex_Solar;
       view_changed();
-      break;
+      return hint;
     }
 
     case "SHADE.SOLID": {
       WIN3D.FacesShade = SHADE.Vertex_Solid;
       view_changed();
-      break;
+      return hint;
     }
 
     case "SHADE.ELEVATION": {
       WIN3D.FacesShade = SHADE.Vertex_Elevation;
       view_changed();
-      break;
+      return hint;
     }
 
     case "SHADE.VIEWPORT": {
       ShadeViewport();
-      break;
+      return hint;
     }
 
     case "PREBAKE.VIEWPORT": {
       preBakeViewport();
-      break;
+      return hint;
     }
 
     case "SETLONLAT": {
@@ -1575,7 +1575,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "SetLonLat ? ?";
       }
-      break;
+      return hint;
     }
 
     case "SETLON": {
@@ -1586,7 +1586,7 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "SetLon ?";
       }
-      break;
+      return hint;
     }
 
     case "SETLAT": {
@@ -1597,12 +1597,14 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "SetLat ?";
       }
-      break;
+      return hint;
     }
+  }
 
-    default:
-      // Unknown command: silently ignored
-      break;
+  String key = lineSTR.stripTrailing().toLowerCase();
+  Runnable action = allActions.get(key);
+  if (action != null) {
+    action.run();
   }
 
   return hint;

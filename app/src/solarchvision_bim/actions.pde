@@ -1,25 +1,30 @@
 HashMap<String, Runnable> allActions;
 
+private void putAction(String s, Runnable fn) {
+    String lower = s.toLowerCase();
+    allActions.put(lower, fn); // put lowercase
+}
+
 void buildAllActions() {
   allActions = new HashMap<String, Runnable>();
 
-  allActions.put("SOLARCHVISION-BIM6D", () -> {
+  putAction("SOLARCHVISION-BIM6D", () -> {
     link("https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1");
   });
 
-  allActions.put("Designed & developed by", () -> {
+  putAction("Designed & developed by", () -> {
     link("https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8");
   });
 
-  allActions.put("Mojtaba Samimi", () -> {
+  putAction("Mojtaba Samimi", () -> {
     link("https://www.linkedin.com/in/mojtaba-samimi-06178840/");
   });
 
-  allActions.put("www.solarchvision.com", () -> {
+  putAction("www.solarchvision.com", () -> {
     link("https://solarchvision.com/");
   });
 
-  allActions.put("New", () -> {
+  putAction("New", () -> {
     /////////////////////////////
     holdProject();
     /////////////////////////////
@@ -31,109 +36,109 @@ void buildAllActions() {
     //update_station(-1);
   });
 
-  allActions.put("Save", () -> {
+  putAction("Save", () -> {
     saveProject(Folder_Project + "/" + ProjectName + ".xml");
   });
 
-  allActions.put("Hold", () -> {
+  putAction("Hold", () -> {
     holdProject();
   });
 
-  allActions.put("Fetch", () -> {
+  putAction("Fetch", () -> {
     fetchProject();
   });
 
-  allActions.put("Open...", () -> {
+  putAction("Open...", () -> {
     selectFile_Open();
   });
 
-  allActions.put("Save As...", () -> {
+  putAction("Save As...", () -> {
     selectFile_SaveAs();
   });
 
-  allActions.put("Import 3D-model...", () -> {
+  putAction("Import 3D-model...", () -> {
     selectFile_ImportObj();
   });
 
-  allActions.put("Import Command File...", () -> {
+  putAction("Import Command File...", () -> {
     selectFile_RunScript();
   });
 
-  allActions.put("Export 3D-model > OBJ (time-series)", () -> {
+  putAction("Export 3D-model > OBJ (time-series)", () -> {
     exportObj_timeSeries();
   });
 
-  allActions.put("Export 3D-model > OBJ (date-series)", () -> {
+  putAction("Export 3D-model > OBJ (date-series)", () -> {
     exportObj_dateSeries();
   });
 
-  allActions.put("Export 3D-model > OBJ", () -> {
+  putAction("Export 3D-model > OBJ", () -> {
     exportObj("");
   });
 
-  allActions.put("Export 3D-model > HTML", () -> {
+  putAction("Export 3D-model > HTML", () -> {
     exportHtml();
   });
 
-  allActions.put("Export 3D-model > RAD", () -> {
+  putAction("Export 3D-model > RAD", () -> {
     exportRadiance();
   });
 
-  allActions.put("Export 3D-model > SCR", () -> {
+  putAction("Export 3D-model > SCR", () -> {
     exportAutocadScript();
   });
 
-  allActions.put("Quit", () -> {
+  putAction("Quit", () -> {
     exit();
   });
 
-  allActions.put("Wind pattern (active)", () -> setPlotImpacts(PlotImpacts_WIND_ACTIVE, true));
+  putAction("Wind pattern (active)", () -> setPlotImpacts(PlotImpacts_WIND_ACTIVE, true));
 
-  allActions.put("Wind pattern (passive)", () -> setPlotImpacts(PlotImpacts_WIND_PASSIVE, true));
+  putAction("Wind pattern (passive)", () -> setPlotImpacts(PlotImpacts_WIND_PASSIVE, true));
 
-  allActions.put("Urban solar potential (active)", () -> setPlotImpacts(PlotImpacts_URBAN_ACTIVE, false));
+  putAction("Urban solar potential (active)", () -> setPlotImpacts(PlotImpacts_URBAN_ACTIVE, false));
 
-  allActions.put("Urban solar potential (passive)", () -> setPlotImpacts(PlotImpacts_URBAN_PASSIVE, false));
+  putAction("Urban solar potential (passive)", () -> setPlotImpacts(PlotImpacts_URBAN_PASSIVE, false));
 
-  allActions.put("Orientation potential (active)", () -> setPlotImpacts(PlotImpacts_GLOBAL_ACTIVE, false));
+  putAction("Orientation potential (active)", () -> setPlotImpacts(PlotImpacts_GLOBAL_ACTIVE, false));
 
-  allActions.put("Orientation potential (passive)", () -> setPlotImpacts(PlotImpacts_GLOBAL_PASSIVE, false));
+  putAction("Orientation potential (passive)", () -> setPlotImpacts(PlotImpacts_GLOBAL_PASSIVE, false));
 
-  allActions.put("Hourly sun position (active)", () -> setPlotImpacts(PlotImpacts_SUNPATH_ACTIVE, false));
+  putAction("Hourly sun position (active)", () -> setPlotImpacts(PlotImpacts_SUNPATH_ACTIVE, false));
 
-  allActions.put("Hourly sun position (passive)", () -> setPlotImpacts(PlotImpacts_SUNPATH_PASSIVE, false));
+  putAction("Hourly sun position (passive)", () -> setPlotImpacts(PlotImpacts_SUNPATH_PASSIVE, false));
 
-  allActions.put("Annual cycle sun path (active)", () -> setPlotImpacts(PlotImpacts_CYCLES_ACTIVE, false));
+  putAction("Annual cycle sun path (active)", () -> setPlotImpacts(PlotImpacts_CYCLES_ACTIVE, false));
 
-  allActions.put("Annual cycle sun path (passive)", () -> setPlotImpacts(PlotImpacts_CYCLES_PASSIVE, false));
+  putAction("Annual cycle sun path (passive)", () -> setPlotImpacts(PlotImpacts_CYCLES_PASSIVE, false));
 
-  allActions.put("Prebake Selected Sections", () -> {
+  putAction("Prebake Selected Sections", () -> {
     allSolarImpacts.render_Shadows_selectedSections();
 
     view_changed();
   });
 
-  allActions.put("Process Active Impact", () -> {
+  putAction("Process Active Impact", () -> {
     STUDY.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
     allSolarImpacts.calculate_Impact_selectedSections();
 
     view_changed();
   });
 
-  allActions.put("Process Passive Impact", () -> {
+  putAction("Process Passive Impact", () -> {
     STUDY.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
     allSolarImpacts.calculate_Impact_selectedSections();
 
     view_changed();
   });
 
-  allActions.put("Process Solid Impact", () -> {
+  putAction("Process Solid Impact", () -> {
     allSolidImpacts.calculate_Impact_selectedSections();
 
     view_changed();
   });
 
-  allActions.put("Run wind 3D-model", () -> {
+  putAction("Run wind 3D-model", () -> {
     allSolidImpacts.calculate_WindFlow();
 
     view_changed();
@@ -143,157 +148,157 @@ void buildAllActions() {
   // flags to false and then flip exactly one of them true. Pulling the
   // reset into stopAllRecording() means each action states
   // only what's actually different: which flag turns on.
-  allActions.put("Stop REC.", () -> {
+  putAction("Stop REC.", () -> {
     stopAllRecording();
 
     UI_rollout.revise();
   });
 
-  allActions.put("REC. Time Graph", () -> {
+  putAction("REC. Time Graph", () -> {
     stopAllRecording();
     STUDY.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  allActions.put("REC. Location Graph", () -> {
+  putAction("REC. Location Graph", () -> {
     stopAllRecording();
     WORLD.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  allActions.put("REC. Solid Graph", () -> {
+  putAction("REC. Solid Graph", () -> {
     stopAllRecording();
     WIN3D.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  allActions.put("REC. Screenshot", () -> {
+  putAction("REC. Screenshot", () -> {
     stopAllRecording();
     FRAME_record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  allActions.put("PDF Time Graph", () -> {
+  putAction("PDF Time Graph", () -> {
     STUDY.record_PDF = true;
     STUDY.revise();
   });
 
-  allActions.put("JPG Time Graph", () -> {
+  putAction("JPG Time Graph", () -> {
     STUDY.record_IMG = true;
     STUDY.revise();
   });
 
-  allActions.put("JPG Location Graph", () -> {
+  putAction("JPG Location Graph", () -> {
     WORLD.record_IMG = true;
     WORLD.revise();
   });
 
-  allActions.put("PDF Location Graph", () -> {
+  putAction("PDF Location Graph", () -> {
     WORLD.record_PDF = true;
     WORLD.revise();
   });
 
-  allActions.put("JPG 3D Graph", () -> {
+  putAction("JPG 3D Graph", () -> {
     WIN3D.record_IMG = true;
 
     view_changed();
   });
 
-  allActions.put("JPG 3D Full-Period", () -> {
+  putAction("JPG 3D Full-Period", () -> {
     WIN3D.fullPeriod_IMG = true;
     WIN3D.record_IMG = true;
 
     view_changed();
   });
 
-  allActions.put("Screenshot", () -> {
+  putAction("Screenshot", () -> {
     FRAME_record_IMG = true;
   });
 
-  allActions.put("Screenshot+Click", () -> {
+  putAction("Screenshot+Click", () -> {
     FRAME_click_IMG = true;
   });
 
-  allActions.put("Screenshot+Drag", () -> {
+  putAction("Screenshot+Drag", () -> {
     FRAME_drag_IMG = true;
   });
 
-  allActions.put("Update Station", () -> {
+  putAction("Update Station", () -> {
     update_station(-1);
   });
 
-  allActions.put("Load Land Mesh", () -> {
+  putAction("Load Land Mesh", () -> {
     Land3D.update_textures();
   });
 
-  allActions.put("Load Land Texture", () -> {
+  putAction("Load Land Texture", () -> {
     Land3D.update_textures();
   });
 
-  allActions.put("Download Land Mesh", () -> {
+  putAction("Download Land Mesh", () -> {
     Land3D.download_mesh();
   });
 
-  allActions.put("Download Land Texture", () -> {
+  putAction("Download Land Texture", () -> {
     Land3D.download_textures();
   });
 
-  allActions.put("Load Toroposphere", () -> {
+  putAction("Load Toroposphere", () -> {
     Tropo3D.download_images();
     Tropo3D.displaySurface = true;
     WORLD.revise();
     WIN3D.revise();
   });
 
-  allActions.put("Download SWOB", () -> {
+  putAction("Download SWOB", () -> {
     download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);;
   });
 
-  allActions.put("Download NAEFS", () -> {
+  putAction("Download NAEFS", () -> {
     download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
-  allActions.put("Download CLMREC", () -> {
+  putAction("Download CLMREC", () -> {
     download_CLIMATE_CLMREC();
   });
 
-  allActions.put("Download TMYEPW", () -> {
+  putAction("Download TMYEPW", () -> {
     download_CLIMATE_TMYEPW();
   });
 
-  allActions.put("Update TMYEPW", () -> {
+  putAction("Update TMYEPW", () -> {
     CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
     CLIMATE_TMYEPW_load = true;
     update_CLIMATE_TMYEPW();
   });
 
-  allActions.put("Update CWEEDS", () -> {
+  putAction("Update CWEEDS", () -> {
     CurrentDataSource = dataID_CLIMATE_CWEEDS;
 
     CLIMATE_CWEEDS_load = true;
     update_CLIMATE_CWEEDS();
   });
 
-  allActions.put("Update CLMREC", () -> {
+  putAction("Update CLMREC", () -> {
     CurrentDataSource = dataID_CLIMATE_CLMREC;
 
     CLIMATE_CLMREC_load = true;
     update_CLIMATE_CLMREC();
   });
 
-  allActions.put("Update SWOB", () -> {
+  putAction("Update SWOB", () -> {
     CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
 
     ENSEMBLE_OBSERVED_load = true;
     update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
-  allActions.put("Update NAEFS", () -> {
+  putAction("Update NAEFS", () -> {
     CurrentDataSource = dataID_ENSEMBLE_FORECAST;
 
     ENSEMBLE_FORECAST_load = true;
@@ -302,7 +307,7 @@ void buildAllActions() {
 
 
 
-  allActions.put("Use typical year (TMY)", () -> {
+  putAction("Use typical year (TMY)", () -> {
     CurrentDataSource = dataID_CLIMATE_TMYEPW;
 
     CLIMATE_TMYEPW_load = true;
@@ -319,7 +324,7 @@ void buildAllActions() {
     WORLD.displayNear_TMYEPW = true;
   });
 
-  allActions.put("Use long-term (CWEEDS)", () -> {
+  putAction("Use long-term (CWEEDS)", () -> {
     CurrentDataSource = dataID_CLIMATE_CWEEDS;
 
     CLIMATE_CWEEDS_load = true;
@@ -336,7 +341,7 @@ void buildAllActions() {
     WORLD.displayNear_CWEEDS = true;
   });
 
-  allActions.put("Use long-term (CLMREC)", () -> {
+  putAction("Use long-term (CLMREC)", () -> {
     CurrentDataSource = dataID_CLIMATE_CLMREC;
 
     CLIMATE_CLMREC_load = true;
@@ -353,7 +358,7 @@ void buildAllActions() {
     WORLD.displayNear_CLMREC = true;
   });
 
-  allActions.put("Use real-time observed (SWOB)", () -> {
+  putAction("Use real-time observed (SWOB)", () -> {
     CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
     STUDY.joinDays = 1;
 
@@ -371,7 +376,7 @@ void buildAllActions() {
     WORLD.displayNear_SWOB = true;
   });
 
-  allActions.put("Use weather forecast (NAEFS)", () -> {
+  putAction("Use weather forecast (NAEFS)", () -> {
     CurrentDataSource = dataID_ENSEMBLE_FORECAST;
     STUDY.joinDays = 1;
 
@@ -389,7 +394,7 @@ void buildAllActions() {
     WORLD.displayNear_NAEFS = true;
   });
 
-  allActions.put("Active Shade", () -> {
+  putAction("Active Shade", () -> {
     WIN3D.Impact_TYPE = Impact_ACTIVE;
 
     if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
@@ -398,7 +403,7 @@ void buildAllActions() {
     view_changed();
   });
 
-  allActions.put("Passive Shade", () -> {
+  putAction("Passive Shade", () -> {
     WIN3D.Impact_TYPE = Impact_PASSIVE;
 
     if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
@@ -407,32 +412,32 @@ void buildAllActions() {
     view_changed();
   });
 
-  allActions.put("Shade Surface Wire", () -> {
+  putAction("Shade Surface Wire", () -> {
     WIN3D.FacesShade = SHADE.Surface_Wire;
     allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
 
     view_changed();
   });
 
-  allActions.put("Shade Surface Base", () -> {
+  putAction("Shade Surface Base", () -> {
     WIN3D.FacesShade = SHADE.Surface_Base;
 
     view_changed();
   });
 
-  allActions.put("Shade Surface White", () -> {
+  putAction("Shade Surface White", () -> {
     WIN3D.FacesShade = SHADE.Surface_White;
 
     view_changed();
   });
 
-  allActions.put("Shade Surface Materials", () -> {
+  putAction("Shade Surface Materials", () -> {
     WIN3D.FacesShade = SHADE.Surface_Materials;
 
     view_changed();
   });
 
-  allActions.put("Shade Global Solar", () -> {
+  putAction("Shade Global Solar", () -> {
     WIN3D.FacesShade = SHADE.Global_Solar;
 
     GlobalSolar_rebuild_array = true;
@@ -440,7 +445,7 @@ void buildAllActions() {
     view_changed();
   });
 
-  allActions.put("Shade Vertex Solar", () -> {
+  putAction("Shade Vertex Solar", () -> {
     WIN3D.FacesShade = SHADE.Vertex_Solar;
 
     VertexSolar_rebuild_array = true;
@@ -448,575 +453,575 @@ void buildAllActions() {
     view_changed();
   });
 
-  allActions.put("Shade Vertex Solid", () -> {
+  putAction("Shade Vertex Solid", () -> {
     WIN3D.FacesShade = SHADE.Vertex_Solid;
 
     view_changed();
   });
 
-  allActions.put("Shade Vertex Elevation", () -> {
+  putAction("Shade Vertex Elevation", () -> {
     WIN3D.FacesShade = SHADE.Vertex_Elevation;
 
     view_changed();
   });
 
-  allActions.put("Shade Viewport", () -> {
+  putAction("Shade Viewport", () -> {
     ShadeViewport();
   });
 
-  allActions.put("Prebake Viewport", () -> {
+  putAction("Prebake Viewport", () -> {
     preBakeViewport();
   });
 
-  allActions.put("Show/Hide Land Mesh", () -> {
+  putAction("Show/Hide Land Mesh", () -> {
     Land3D.displaySurface = !Land3D.displaySurface;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Land Texture", () -> {
+  putAction("Show/Hide Land Texture", () -> {
     Land3D.displayTexture = !Land3D.displayTexture;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Land Points", () -> {
+  putAction("Show/Hide Land Points", () -> {
     Land3D.displayPoints = !Land3D.displayPoints;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Land Depth", () -> {
+  putAction("Show/Hide Land Depth", () -> {
     Land3D.displayDepth = !Land3D.displayDepth;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Vertices", () -> {
+  putAction("Show/Hide Vertices", () -> {
     allPoints.displayAll = !allPoints.displayAll;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Edges", () -> {
+  putAction("Show/Hide Edges", () -> {
     allFaces.displayEdges = !allFaces.displayEdges;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Normals", () -> {
+  putAction("Show/Hide Normals", () -> {
     allFaces.displayNormals = !allFaces.displayNormals;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Leaves", () -> {
+  putAction("Show/Hide Leaves", () -> {
     allModel1Ds.displayLeaves = !allModel1Ds.displayLeaves;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Model1Ds", () -> {
+  putAction("Show/Hide Model1Ds", () -> {
     allModel1Ds.displayAll = !allModel1Ds.displayAll;
     allModel1Ds.displayLeaves = allModel1Ds.displayAll; // <<<<<<
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Model2Ds", () -> {
+  putAction("Show/Hide Model2Ds", () -> {
     allModel2Ds.displayAll = !allModel2Ds.displayAll;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Polylines", () -> {
+  putAction("Show/Hide Polylines", () -> {
     allPolylines.displayAll = !allPolylines.displayAll;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Faces", () -> {
+  putAction("Show/Hide Faces", () -> {
     allFaces.displayAll = !allFaces.displayAll;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Solids", () -> {
+  putAction("Show/Hide Solids", () -> {
     allSolids.displayAll = !allSolids.displayAll;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Sections", () -> {
+  putAction("Show/Hide Sections", () -> {
     allSections.displayAll = !allSections.displayAll;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Cameras", () -> {
+  putAction("Show/Hide Cameras", () -> {
     allCameras.displayAll = !allCameras.displayAll;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Sky", () -> {
+  putAction("Show/Hide Sky", () -> {
     Sky3D.displaySurface = !Sky3D.displaySurface;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Sun Grid", () -> {
+  putAction("Show/Hide Sun Grid", () -> {
     Sun3D.displayGrid = !Sun3D.displayGrid;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Sun Path", () -> {
+  putAction("Show/Hide Sun Path", () -> {
     Sun3D.displayPath = !Sun3D.displayPath;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Sun Pattern", () -> {
+  putAction("Show/Hide Sun Pattern", () -> {
     Sun3D.displayPattern = !Sun3D.displayPattern;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Sun Surface", () -> {
+  putAction("Show/Hide Sun Surface", () -> {
     Sun3D.displaySurface = !Sun3D.displaySurface;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Moon Surface", () -> {
+  putAction("Show/Hide Moon Surface", () -> {
     Moon3D.displaySurface = !Moon3D.displaySurface;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Earth Surface", () -> {
+  putAction("Show/Hide Earth Surface", () -> {
     Earth3D.displaySurface = !Earth3D.displaySurface;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Troposphere", () -> {
+  putAction("Show/Hide Troposphere", () -> {
     Tropo3D.displaySurface = !Tropo3D.displaySurface;
 
     view_changed();
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide Solar Section", () -> {
+  putAction("Show/Hide Solar Section", () -> {
     allSolarImpacts.displayImage = !allSolarImpacts.displayImage;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Solid Section", () -> {
+  putAction("Show/Hide Solid Section", () -> {
     allSolidImpacts.displayImage = !allSolidImpacts.displayImage;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Solids", () -> {
+  putAction("Show/Hide Selected Solids", () -> {
     Select3D.Solid_displayEdges = !Select3D.Solid_displayEdges;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Sections", () -> {
+  putAction("Show/Hide Selected Sections", () -> {
     Select3D.Section_displayEdges = !Select3D.Section_displayEdges;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Cameras", () -> {
+  putAction("Show/Hide Selected Cameras", () -> {
     Select3D.Camera_displayEdges = !Select3D.Camera_displayEdges;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected LandPoints", () -> {
+  putAction("Show/Hide Selected LandPoints", () -> {
     Select3D.LandPoint_displayPoints = !Select3D.LandPoint_displayPoints;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Wind Flow", () -> {
+  putAction("Show/Hide Wind Flow", () -> {
     allWindFlows.displayAll = !allWindFlows.displayAll;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Faces", () -> {
+  putAction("Show/Hide Selected Faces", () -> {
     Select3D.Face_displayEdges = !Select3D.Face_displayEdges;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Faces Vertex Count", () -> {
+  putAction("Show/Hide Selected Faces Vertex Count", () -> {
     Select3D.Face_displayVertexCount = !Select3D.Face_displayVertexCount;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Polylines Vertex Count", () -> {
+  putAction("Show/Hide Selected Polylines Vertex Count", () -> {
     Select3D.Polyline_displayVertexCount = !Select3D.Polyline_displayVertexCount;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Vertices", () -> {
+  putAction("Show/Hide Selected Vertices", () -> {
     Select3D.Vertex_displayVertices = !Select3D.Vertex_displayVertices;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Polylines", () -> {
+  putAction("Show/Hide Selected Polylines", () -> {
     Select3D.Polyline_displayVertices = !Select3D.Polyline_displayVertices;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected REF Pivot", () -> {
+  putAction("Show/Hide Selected REF Pivot", () -> {
     Select3D.displayReferencePivot = !Select3D.displayReferencePivot;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Group Pivot", () -> {
+  putAction("Show/Hide Selected Group Pivot", () -> {
     Select3D.Group_displayPivot = !Select3D.Group_displayPivot;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Group Edges", () -> {
+  putAction("Show/Hide Selected Group Edges", () -> {
     Select3D.Group_displayEdges = !Select3D.Group_displayEdges;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected Group Box", () -> {
+  putAction("Show/Hide Selected Group Box", () -> {
     Select3D.Group_displayBox = !Select3D.Group_displayBox;
 
     view_changed();;
   });
 
-  allActions.put("Show/Hide Selected 2D Edges", () -> {
+  putAction("Show/Hide Selected 2D Edges", () -> {
     Select3D.Model2D_displayEdges = !Select3D.Model2D_displayEdges;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide Selected 1D Edges", () -> {
+  putAction("Show/Hide Selected 1D Edges", () -> {
     Select3D.Model1D_displayEdges = !Select3D.Model1D_displayEdges;
 
     view_changed();
   });
 
-  allActions.put("Show/Hide SWOB stations", () -> {
+  putAction("Show/Hide SWOB stations", () -> {
     WORLD.displayAll_SWOB = (WORLD.displayAll_SWOB + 1) % 2;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide SWOB nearest", () -> {
+  putAction("Show/Hide SWOB nearest", () -> {
     WORLD.displayNear_SWOB = !WORLD.displayNear_SWOB;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide NAEFS stations", () -> {
+  putAction("Show/Hide NAEFS stations", () -> {
     WORLD.displayAll_NAEFS = (WORLD.displayAll_NAEFS + 1) % 2;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide NAEFS nearest", () -> {
+  putAction("Show/Hide NAEFS nearest", () -> {
     WORLD.displayNear_NAEFS = !WORLD.displayNear_NAEFS;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide CWEEDS stations", () -> {
+  putAction("Show/Hide CWEEDS stations", () -> {
     WORLD.displayAll_CWEEDS = (WORLD.displayAll_CWEEDS + 1) % 2;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide CWEEDS nearest", () -> {
+  putAction("Show/Hide CWEEDS nearest", () -> {
     WORLD.displayNear_CWEEDS = !WORLD.displayNear_CWEEDS;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide CLMREC stations", () -> {
+  putAction("Show/Hide CLMREC stations", () -> {
     WORLD.displayAll_CLMREC = (WORLD.displayAll_CLMREC + 1) % 2;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide CLMREC nearest", () -> {
+  putAction("Show/Hide CLMREC nearest", () -> {
     WORLD.displayNear_CLMREC = !WORLD.displayNear_CLMREC;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide TMYEPW stations", () -> {
+  putAction("Show/Hide TMYEPW stations", () -> {
     WORLD.displayAll_TMYEPW = (WORLD.displayAll_TMYEPW + 1) % 2;
 
     WORLD.revise();
   });
 
-  allActions.put("Show/Hide TMYEPW nearest", () -> {
+  putAction("Show/Hide TMYEPW nearest", () -> {
     WORLD.displayNear_TMYEPW = !WORLD.displayNear_TMYEPW;
 
     WORLD.revise();
   });
 
-  allActions.put("1D-Tree", () -> {
+  putAction("1D-Tree", () -> {
     UI_setTo_Create_allModel1Ds();
   });
 
-  allActions.put("2D-Tree", () -> {
+  putAction("2D-Tree", () -> {
     UI_setTo_Create_Tree();
   });
 
-  allActions.put("Person", () -> {
+  putAction("Person", () -> {
     UI_setTo_Create_Person();
   });
 
-  allActions.put("Point", () -> {
+  putAction("Point", () -> {
     UI_setTo_Create_Vertex();
   });
 
-  allActions.put("Polyline", () -> {
+  putAction("Polyline", () -> {
     UI_setTo_Create_Polyline();
   });
 
-  allActions.put("Surface", () -> {
+  putAction("Surface", () -> {
     UI_setTo_Create_Face();
   });
 
-  allActions.put("Parametric 1", () -> {
+  putAction("Parametric 1", () -> {
     UI_setTo_Create_Parametric(1);
   });
 
-  allActions.put("Parametric 2", () -> {
+  putAction("Parametric 2", () -> {
     UI_setTo_Create_Parametric(2);
   });
 
-  allActions.put("Parametric 3", () -> {
+  putAction("Parametric 3", () -> {
     UI_setTo_Create_Parametric(3);
   });
 
-  allActions.put("Parametric 4", () -> {
+  putAction("Parametric 4", () -> {
     UI_setTo_Create_Parametric(4);
   });
 
-  allActions.put("Parametric 5", () -> {
+  putAction("Parametric 5", () -> {
     UI_setTo_Create_Parametric(5);
   });
 
-  allActions.put("Parametric 6", () -> {
+  putAction("Parametric 6", () -> {
     UI_setTo_Create_Parametric(6);
   });
 
-  allActions.put("Pyramid", () -> {
+  putAction("Pyramid", () -> {
     UI_setTo_Create_Pyramid();
   });
 
-  allActions.put("Plane", () -> {
+  putAction("Plane", () -> {
     UI_setTo_Create_Plane();
   });
 
-  allActions.put("Polygon", () -> {
+  putAction("Polygon", () -> {
     UI_setTo_Create_Polygon();
   });
 
-  allActions.put("Extrude", () -> {
+  putAction("Extrude", () -> {
     UI_setTo_Create_Extrude();
   });
 
-  allActions.put("Hyper", () -> {
+  putAction("Hyper", () -> {
     UI_setTo_Create_Hyper();
   });
 
-  allActions.put("House3", () -> {
+  putAction("House3", () -> {
     UI_setTo_Create_House3();
   });
 
-  allActions.put("House2", () -> {
+  putAction("House2", () -> {
     UI_setTo_Create_House2();
   });
 
-  allActions.put("House1", () -> {
+  putAction("House1", () -> {
     UI_setTo_Create_House1();
   });
 
-  allActions.put("Box", () -> {
+  putAction("Box", () -> {
     UI_setTo_Create_Box();
   });
 
-  allActions.put("Icosahedron", () -> {
+  putAction("Icosahedron", () -> {
     UI_setTo_Create_Icosahedron();
   });
 
-  allActions.put("Octahedron", () -> {
+  putAction("Octahedron", () -> {
     UI_setTo_Create_Octahedron();
   });
 
-  allActions.put("Sphere", () -> {
+  putAction("Sphere", () -> {
     UI_setTo_Create_Sphere();
   });
 
-  allActions.put("Cylinder", () -> {
+  putAction("Cylinder", () -> {
     UI_setTo_Create_Cylinder();
   });
 
-  allActions.put("Cushion", () -> {
+  putAction("Cushion", () -> {
     UI_setTo_Create_Cushion();
   });
 
-  allActions.put("Drop on LandSurface", () -> {
+  putAction("Drop on LandSurface", () -> {
     UI_setTo_Modify_Drop(0);
 
     Drop3D.selection();
   });
 
-  allActions.put("Drop on ModelSurface (Down)", () -> {
+  putAction("Drop on ModelSurface (Down)", () -> {
     UI_setTo_Modify_Drop(1);
 
     Drop3D.selection();
   });
 
-  allActions.put("Drop on ModelSurface (Up)", () -> {
+  putAction("Drop on ModelSurface (Up)", () -> {
     UI_setTo_Modify_Drop(2);
 
     Drop3D.selection();
   });
 
-  allActions.put("Get dX", () -> {
+  putAction("Get dX", () -> {
     UI_setTo_Modify_GetLength(0);
   });
 
-  allActions.put("Get dY", () -> {
+  putAction("Get dY", () -> {
     UI_setTo_Modify_GetLength(1);
   });
 
-  allActions.put("Get dZ", () -> {
+  putAction("Get dZ", () -> {
     UI_setTo_Modify_GetLength(2);
   });
 
-  allActions.put("Get dXYZ", () -> {
+  putAction("Get dXYZ", () -> {
     UI_setTo_Modify_GetLength(3);
   });
 
-  allActions.put("Get dXY", () -> {
+  putAction("Get dXY", () -> {
     UI_setTo_Modify_GetLength(4);
   });
 
-  allActions.put("MoveX", () -> {
+  putAction("MoveX", () -> {
     UI_setTo_Modify_Move(0);
   });
 
-  allActions.put("MoveY", () -> {
+  putAction("MoveY", () -> {
     UI_setTo_Modify_Move(1);
   });
 
-  allActions.put("MoveZ", () -> {
+  putAction("MoveZ", () -> {
     UI_setTo_Modify_Move(2);
   });
 
-  allActions.put("Move", () -> {
+  putAction("Move", () -> {
     UI_setTo_Modify_Move(3);
   });
 
-  allActions.put("ScaleX", () -> {
+  putAction("ScaleX", () -> {
     UI_setTo_Modify_Scale(0);
   });
 
-  allActions.put("ScaleY", () -> {
+  putAction("ScaleY", () -> {
     UI_setTo_Modify_Scale(1);
   });
 
-  allActions.put("ScaleZ", () -> {
+  putAction("ScaleZ", () -> {
     UI_setTo_Modify_Scale(2);
   });
 
-  allActions.put("Scale", () -> {
+  putAction("Scale", () -> {
     UI_setTo_Modify_Scale(3);
   });
 
-  allActions.put("PowerX", () -> {
+  putAction("PowerX", () -> {
     UI_setTo_Modify_Power(0);
   });
 
-  allActions.put("PowerY", () -> {
+  putAction("PowerY", () -> {
     UI_setTo_Modify_Power(1);
   });
 
-  allActions.put("PowerZ", () -> {
+  putAction("PowerZ", () -> {
     UI_setTo_Modify_Power(2);
   });
 
-  allActions.put("Power", () -> {
+  putAction("Power", () -> {
     UI_setTo_Modify_Power(3);
   });
 
-  allActions.put("RotateX", () -> {
+  putAction("RotateX", () -> {
     UI_setTo_Modify_Rotate(0);
   });
 
-  allActions.put("RotateY", () -> {
+  putAction("RotateY", () -> {
     UI_setTo_Modify_Rotate(1);
   });
 
-  allActions.put("RotateZ", () -> {
+  putAction("RotateZ", () -> {
     UI_setTo_Modify_Rotate(2);
   });
 
-  allActions.put("Rotate", () -> {
+  putAction("Rotate", () -> {
     UI_setTo_Modify_Rotate(2);
   });
 
-  allActions.put("Pivot", () -> {
+  putAction("Pivot", () -> {
     UI_setTo_Modify_Pivot(0);
   });
 
-  allActions.put("Pick Pivot", () -> {
+  putAction("Pick Pivot", () -> {
     UI_setTo_Modify_Pivot(1);
   });
 
-  allActions.put("Assign Pivot", () -> {
+  putAction("Assign Pivot", () -> {
     UI_setTo_Modify_Pivot(2);
   });
 
-  allActions.put("Save Current ReferenceBox", () -> {
+  putAction("Save Current ReferenceBox", () -> {
     Select3D.save_current_BoundingBox();
   });
 
-  allActions.put("Reset Saved ReferenceBox", () -> {
+  putAction("Reset Saved ReferenceBox", () -> {
     Select3D.apply_saved_BoundingBox();
 
     view_changed();
   });
 
-  allActions.put("Use Selection ReferenceBox", () -> {
+  putAction("Use Selection ReferenceBox", () -> {
     Select3D.calculate_BoundingBox();
 
     view_changed();
   });
 
-  allActions.put("Use Origin ReferenceBox", () -> {
+  putAction("Use Origin ReferenceBox", () -> {
     Select3D.apply_origin_ReferenceBox();
 
     view_changed();
   });
 
-  allActions.put("Begin New Group at Origin", () -> {
+  putAction("Begin New Group at Origin", () -> {
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
     Select3D.Group_ids = new int [1];
@@ -1025,7 +1030,7 @@ void buildAllActions() {
     model_changed();
   });
 
-  allActions.put("Begin New Group at Pivot", () -> {
+  putAction("Begin New Group at Pivot", () -> {
     allGroups.beginNewGroup(Select3D.BoundingBox[1 + Select3D.alignX][0], Select3D.BoundingBox[1 + Select3D.alignX][1], Select3D.BoundingBox[1 + Select3D.alignX][2], Select3D.BoundingBox[1 + Select3D.alignX][3], Select3D.BoundingBox[1 + Select3D.alignX][4], Select3D.BoundingBox[1 + Select3D.alignX][5], Select3D.BoundingBox[1 + Select3D.alignX][6], Select3D.BoundingBox[1 + Select3D.alignX][7], Select3D.BoundingBox[1 + Select3D.alignX][8]);
 
     Select3D.Group_ids = new int [1];
@@ -1034,19 +1039,19 @@ void buildAllActions() {
     model_changed();
   });
 
-  allActions.put("Solid", () -> {
+  putAction("Solid", () -> {
     UI_setTo_Create_Solid();
   });
 
-  allActions.put("Section", () -> {
+  putAction("Section", () -> {
     UI_setTo_Create_Section();
   });
 
-  allActions.put("Camera", () -> {
+  putAction("Camera", () -> {
     UI_setTo_Create_Camera();
   });
 
-  allActions.put("Viewport >> Camera", () -> {
+  putAction("Viewport >> Camera", () -> {
     float Camera_pX = WIN3D.position_X;
     float Camera_pY = WIN3D.position_Y;
     float Camera_pZ = WIN3D.position_Z;
@@ -1070,7 +1075,7 @@ void buildAllActions() {
     UI_toolBar.revise();
   });
 
-  allActions.put("Camera >> Viewport", () -> {
+  putAction("Camera >> Viewport", () -> {
     allCameras.set_posX(0, allCameras.get_posX(WIN3D.currentCamera));
     allCameras.set_posY(0, allCameras.get_posY(WIN3D.currentCamera));
     allCameras.set_posZ(0, allCameras.get_posZ(WIN3D.currentCamera));
@@ -1090,7 +1095,7 @@ void buildAllActions() {
     UI_toolBar.revise();
   });
 
-  allActions.put("Camera View", () -> {
+  putAction("Camera View", () -> {
     if (Select3D.Camera_ids.length > 0) {
       WIN3D.currentCamera = Select3D.Camera_ids[Select3D.Camera_ids.length - 1];
       WIN3D.apply_currentCamera();
@@ -1102,821 +1107,821 @@ void buildAllActions() {
     }
   });
 
-  allActions.put("LandMesh >> Group", () -> {
+  putAction("LandMesh >> Group", () -> {
     Land3D.draw(TypeWindow.LandMesh);
 
     model_changed();
   });
 
-  allActions.put("LandGap >> Group", () -> {
+  putAction("LandGap >> Group", () -> {
     Land3D.draw(TypeWindow.LandGap);
 
     model_changed();
   });
 
-  allActions.put("Change Seed/Material", () -> {
+  putAction("Change Seed/Material", () -> {
     UI_setTo_Modify_Seed(0);
   });
 
-  allActions.put("Pick Seed/Material", () -> {
+  putAction("Pick Seed/Material", () -> {
     UI_setTo_Modify_Seed(1);
   });
 
-  allActions.put("Assign Seed/Material", () -> {
+  putAction("Assign Seed/Material", () -> {
     UI_setTo_Modify_Seed(2);
   });
 
-  allActions.put("Change tessellation", () -> {
+  putAction("Change tessellation", () -> {
     UI_setTo_Modify_Tessellation(0);
   });
 
-  allActions.put("Pick tessellation", () -> {
+  putAction("Pick tessellation", () -> {
     UI_setTo_Modify_Tessellation(1);
   });
 
-  allActions.put("Assign tessellation", () -> {
+  putAction("Assign tessellation", () -> {
     UI_setTo_Modify_Tessellation(2);
   });
 
-  allActions.put("Change Layer", () -> {
+  putAction("Change Layer", () -> {
     UI_setTo_Modify_Layer(0);
   });
 
-  allActions.put("Pick Layer", () -> {
+  putAction("Pick Layer", () -> {
     UI_setTo_Modify_Layer(1);
   });
 
-  allActions.put("Assign Layer", () -> {
+  putAction("Assign Layer", () -> {
     UI_setTo_Modify_Layer(2);
   });
 
-  allActions.put("Change Visibility", () -> {
+  putAction("Change Visibility", () -> {
     UI_setTo_Modify_Visibility(0);
   });
 
-  allActions.put("Pick Visibility", () -> {
+  putAction("Pick Visibility", () -> {
     UI_setTo_Modify_Visibility(1);
   });
 
-  allActions.put("Assign Visibility", () -> {
+  putAction("Assign Visibility", () -> {
     UI_setTo_Modify_Visibility(2);
   });
 
-  allActions.put("Change Weight", () -> {
+  putAction("Change Weight", () -> {
     UI_setTo_Modify_Weight(0);
   });
 
-  allActions.put("Pick Weight", () -> {
+  putAction("Pick Weight", () -> {
     UI_setTo_Modify_Weight(1);
   });
 
-  allActions.put("Assign Weight", () -> {
+  putAction("Assign Weight", () -> {
     UI_setTo_Modify_Weight(2);
   });
 
-  allActions.put("Flip Normal", () -> {
+  putAction("Flip Normal", () -> {
     UI_setTo_Modify_Normal(1);
   });
 
-  allActions.put("Set-Out Normal", () -> {
+  putAction("Set-Out Normal", () -> {
     UI_setTo_Modify_Normal(2);
   });
 
-  allActions.put("Set-In Normal", () -> {
+  putAction("Set-In Normal", () -> {
     UI_setTo_Modify_Normal(3);
   });
 
-  allActions.put("Get FirstVertex", () -> {
+  putAction("Get FirstVertex", () -> {
     UI_setTo_Modify_FirstVertex(1);
   });
 
-  allActions.put("Change DegreeMax", () -> {
+  putAction("Change DegreeMax", () -> {
     UI_setTo_Modify_DegreeMax(0);
   });
 
-  allActions.put("Pick DegreeMax", () -> {
+  putAction("Pick DegreeMax", () -> {
     UI_setTo_Modify_DegreeMax(1);
   });
 
-  allActions.put("Assign DegreeMax", () -> {
+  putAction("Assign DegreeMax", () -> {
     UI_setTo_Modify_DegreeMax(2);
   });
 
-  allActions.put("Change BranchTilt", () -> {
+  putAction("Change BranchTilt", () -> {
     UI_setTo_Modify_BranchTilt(0);
   });
 
-  allActions.put("Pick BranchTilt", () -> {
+  putAction("Pick BranchTilt", () -> {
     UI_setTo_Modify_BranchTilt(1);
   });
 
-  allActions.put("Assign BranchTilt", () -> {
+  putAction("Assign BranchTilt", () -> {
     UI_setTo_Modify_BranchTilt(2);
   });
 
-  allActions.put("Change BranchTwist", () -> {
+  putAction("Change BranchTwist", () -> {
     UI_setTo_Modify_BranchTwist(0);
   });
 
-  allActions.put("Pick BranchTwist", () -> {
+  putAction("Pick BranchTwist", () -> {
     UI_setTo_Modify_BranchTwist(1);
   });
 
-  allActions.put("Assign BranchTwist", () -> {
+  putAction("Assign BranchTwist", () -> {
     UI_setTo_Modify_BranchTwist(2);
   });
 
-  allActions.put("Change BranchRatio", () -> {
+  putAction("Change BranchRatio", () -> {
     UI_setTo_Modify_BranchRatio(0);
   });
 
-  allActions.put("Pick BranchRatio", () -> {
+  putAction("Pick BranchRatio", () -> {
     UI_setTo_Modify_BranchRatio(1);
   });
 
-  allActions.put("Assign BranchRatio", () -> {
+  putAction("Assign BranchRatio", () -> {
     UI_setTo_Modify_BranchRatio(2);
   });
 
-  allActions.put("Change TreeBase", () -> {
+  putAction("Change TreeBase", () -> {
     UI_setTo_Modify_TreeBase(0);
   });
 
-  allActions.put("Pick TreeBase", () -> {
+  putAction("Pick TreeBase", () -> {
     UI_setTo_Modify_TreeBase(1);
   });
 
-  allActions.put("Assign TreeBase", () -> {
+  putAction("Assign TreeBase", () -> {
     UI_setTo_Modify_TreeBase(2);
   });
 
-  allActions.put("Change TrunkSize", () -> {
+  putAction("Change TrunkSize", () -> {
     UI_setTo_Modify_TrunkSize(0);
   });
 
-  allActions.put("Pick TrunkSize", () -> {
+  putAction("Pick TrunkSize", () -> {
     UI_setTo_Modify_TrunkSize(1);
   });
 
-  allActions.put("Assign TrunkSize", () -> {
+  putAction("Assign TrunkSize", () -> {
     UI_setTo_Modify_TrunkSize(2);
   });
 
-  allActions.put("Change LeafSize", () -> {
+  putAction("Change LeafSize", () -> {
     UI_setTo_Modify_LeafSize(0);
   });
 
-  allActions.put("Pick LeafSize", () -> {
+  putAction("Pick LeafSize", () -> {
     UI_setTo_Modify_LeafSize(1);
   });
 
-  allActions.put("Assign LeafSize", () -> {
+  putAction("Assign LeafSize", () -> {
     UI_setTo_Modify_LeafSize(2);
   });
 
-  allActions.put("Model1DsProps", () -> {
+  putAction("Model1DsProps", () -> {
     UI_setTo_Modify_Model1DsProps(0);
   });
 
-  allActions.put("Pick Model1DsProps", () -> {
+  putAction("Pick Model1DsProps", () -> {
     UI_setTo_Modify_Model1DsProps(1);
   });
 
-  allActions.put("Assign Model1DsProps", () -> {
+  putAction("Assign Model1DsProps", () -> {
     UI_setTo_Modify_Model1DsProps(2);
   });
 
-  allActions.put("Orthographic", () -> {
+  putAction("Orthographic", () -> {
     UI_setTo_View_ProjectionType(0);
   });
 
-  allActions.put("Perspective", () -> {
+  putAction("Perspective", () -> {
     UI_setTo_View_ProjectionType(1);
   });
 
-  allActions.put("Invert Selection", () -> {
+  putAction("Invert Selection", () -> {
     Select3D.invertSelection();
   });
 
-  allActions.put("Deselect All", () -> {
+  putAction("Deselect All", () -> {
     Select3D.deselectAll();
   });
 
-  allActions.put("Select All", () -> {
+  putAction("Select All", () -> {
     Select3D.selectAll();
   });
 
-  allActions.put("Select All Cameras", () -> selectAllOfCategory(ObjectCategory.CAMERA));
+  putAction("Select All Cameras", () -> selectAllOfCategory(ObjectCategory.CAMERA));
 
-  allActions.put("Select All Sections", () -> selectAllOfCategory(ObjectCategory.SECTION));
+  putAction("Select All Sections", () -> selectAllOfCategory(ObjectCategory.SECTION));
 
-  allActions.put("Select All Solids", () -> selectAllOfCategory(ObjectCategory.SOLID));
+  putAction("Select All Solids", () -> selectAllOfCategory(ObjectCategory.SOLID));
 
-  allActions.put("Select All Faces", () -> selectAllOfCategory(ObjectCategory.FACE));
+  putAction("Select All Faces", () -> selectAllOfCategory(ObjectCategory.FACE));
 
-  allActions.put("Select All Polylines", () -> selectAllOfCategory(ObjectCategory.POLYLINE));
+  putAction("Select All Polylines", () -> selectAllOfCategory(ObjectCategory.POLYLINE));
 
-  allActions.put("Select All Verices", () -> selectAllOfCategory(ObjectCategory.VERTEX));
+  putAction("Select All Verices", () -> selectAllOfCategory(ObjectCategory.VERTEX));
 
-  allActions.put("Select All Groups", () -> selectAllOfCategory(ObjectCategory.GROUP));
+  putAction("Select All Groups", () -> selectAllOfCategory(ObjectCategory.GROUP));
 
-  allActions.put("Select All Model1Ds", () -> selectAllOfCategory(ObjectCategory.MODEL1D));
+  putAction("Select All Model1Ds", () -> selectAllOfCategory(ObjectCategory.MODEL1D));
 
-  allActions.put("Select All Model2Ds", () -> selectAllOfCategory(ObjectCategory.MODEL2D));
+  putAction("Select All Model2Ds", () -> selectAllOfCategory(ObjectCategory.MODEL2D));
 
-  allActions.put("Select Solid", () -> switch_category(ObjectCategory.SOLID));
+  putAction("Select Solid", () -> switch_category(ObjectCategory.SOLID));
 
-  allActions.put("Select Section", () -> switch_category(ObjectCategory.SECTION));
+  putAction("Select Section", () -> switch_category(ObjectCategory.SECTION));
 
-  allActions.put("Select Camera", () -> switch_category(ObjectCategory.CAMERA));
+  putAction("Select Camera", () -> switch_category(ObjectCategory.CAMERA));
 
-  allActions.put("Select LandPoint", () -> switch_category(ObjectCategory.LANDPOINT));
+  putAction("Select LandPoint", () -> switch_category(ObjectCategory.LANDPOINT));
 
-  allActions.put("Select Model1Ds", () -> switch_category(ObjectCategory.MODEL1D));
+  putAction("Select Model1Ds", () -> switch_category(ObjectCategory.MODEL1D));
 
-  allActions.put("Select Model2Ds", () -> switch_category(ObjectCategory.MODEL2D));
+  putAction("Select Model2Ds", () -> switch_category(ObjectCategory.MODEL2D));
 
-  allActions.put("Select Group", () -> switch_category(ObjectCategory.GROUP));
+  putAction("Select Group", () -> switch_category(ObjectCategory.GROUP));
 
-  allActions.put("Select Face", () -> switch_category(ObjectCategory.FACE));
+  putAction("Select Face", () -> switch_category(ObjectCategory.FACE));
 
-  allActions.put("Select Polyline", () -> switch_category(ObjectCategory.POLYLINE));
+  putAction("Select Polyline", () -> switch_category(ObjectCategory.POLYLINE));
 
-  allActions.put("Select Vertex", () -> switch_category(ObjectCategory.VERTEX));
+  putAction("Select Vertex", () -> switch_category(ObjectCategory.VERTEX));
 
-  allActions.put("Soft Selection", () -> {
+  putAction("Soft Selection", () -> {
     Select3D.convert_Vertex_to_softSelection();
 
     switch_category(ObjectCategory.SOFTVERTEX);
   });
 
-  allActions.put("Vertices >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Groups(), ObjectCategory.GROUP));
+  putAction("Vertices >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Groups(), ObjectCategory.GROUP));
 
-  allActions.put("Faces >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Faces_to_Groups(), ObjectCategory.GROUP));
+  putAction("Faces >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Faces_to_Groups(), ObjectCategory.GROUP));
 
-  allActions.put("Groups >> Faces", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Faces(), ObjectCategory.FACE));
+  putAction("Groups >> Faces", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Faces(), ObjectCategory.FACE));
 
-  allActions.put("Polylines >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Polylines_to_Groups(), ObjectCategory.GROUP));
+  putAction("Polylines >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Polylines_to_Groups(), ObjectCategory.GROUP));
 
-  allActions.put("Groups >> Polylines", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Polylines(), ObjectCategory.POLYLINE));
+  putAction("Groups >> Polylines", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Polylines(), ObjectCategory.POLYLINE));
 
-  allActions.put("Polylines >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Polylines_to_Vertices(), ObjectCategory.VERTEX));
+  putAction("Polylines >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Polylines_to_Vertices(), ObjectCategory.VERTEX));
 
-  allActions.put("Vertices >> Polylines", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Polylines(), ObjectCategory.POLYLINE));
+  putAction("Vertices >> Polylines", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Polylines(), ObjectCategory.POLYLINE));
 
-  allActions.put("Groups >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX));
+  putAction("Groups >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Vertices(), ObjectCategory.VERTEX));
 
-  allActions.put("Faces >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Faces_to_Vertices(), ObjectCategory.VERTEX));
+  putAction("Faces >> Vertices", () -> convertAndSwitch(() -> Select3D.convert_Faces_to_Vertices(), ObjectCategory.VERTEX));
 
-  allActions.put("Vertices >> Faces", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Faces(), ObjectCategory.FACE));
+  putAction("Vertices >> Faces", () -> convertAndSwitch(() -> Select3D.convert_Vertices_to_Faces(), ObjectCategory.FACE));
 
-  allActions.put("Solids >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Solids_to_Groups(), ObjectCategory.GROUP));
+  putAction("Solids >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Solids_to_Groups(), ObjectCategory.GROUP));
 
-  allActions.put("Groups >> Solids", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Solids(), ObjectCategory.SOLID));
+  putAction("Groups >> Solids", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Solids(), ObjectCategory.SOLID));
 
-  allActions.put("Model2Ds >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Model2Ds_to_Groups(), ObjectCategory.GROUP));
+  putAction("Model2Ds >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Model2Ds_to_Groups(), ObjectCategory.GROUP));
 
-  allActions.put("Groups >> Model2Ds", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Model2Ds(), ObjectCategory.MODEL2D));
+  putAction("Groups >> Model2Ds", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Model2Ds(), ObjectCategory.MODEL2D));
 
-  allActions.put("Model1Ds >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Model1Ds_to_Groups(), ObjectCategory.GROUP));
+  putAction("Model1Ds >> Groups", () -> convertAndSwitch(() -> Select3D.convert_Model1Ds_to_Groups(), ObjectCategory.GROUP));
 
-  allActions.put("Groups >> Model1Ds", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Model1Ds(), ObjectCategory.MODEL1D));
+  putAction("Groups >> Model1Ds", () -> convertAndSwitch(() -> Select3D.convert_Groups_to_Model1Ds(), ObjectCategory.MODEL1D));
 
-  allActions.put("Pick Select", () -> {
+  putAction("Pick Select", () -> {
     UI_setTo_View_PickSelect(0);
   });
 
-  allActions.put("Pick Select+", () -> {
+  putAction("Pick Select+", () -> {
     UI_setTo_View_PickSelect(1);
   });
 
-  allActions.put("Pick Select-", () -> {
+  putAction("Pick Select-", () -> {
     UI_setTo_View_PickSelect(2);
   });
 
-  allActions.put("Window Select", () -> {
+  putAction("Window Select", () -> {
     UI_setTo_View_WindowSelect(0);
   });
 
-  allActions.put("Window Select+", () -> {
+  putAction("Window Select+", () -> {
     UI_setTo_View_WindowSelect(1);
   });
 
-  allActions.put("Window Select-", () -> {
+  putAction("Window Select-", () -> {
     UI_setTo_View_WindowSelect(2);
   });
 
-  allActions.put("Select Near Selected Vertices", () -> {
+  putAction("Select Near Selected Vertices", () -> {
     Select3D.selectNearVertices();
   });
 
-  allActions.put("Weld Objects Selected Vertices", () -> {
+  putAction("Weld Objects Selected Vertices", () -> {
     Modify3D.weldObjectsVertices_Selection(User3D.modify_WeldTreshold);
   });
 
-  allActions.put("Weld Scene Selected Vertices", () -> {
+  putAction("Weld Scene Selected Vertices", () -> {
     Modify3D.weldSceneVertices_Selection(User3D.modify_WeldTreshold);
   });
 
-  allActions.put("Reposition Selected Vertices", () -> {
+  putAction("Reposition Selected Vertices", () -> {
     Modify3D.repositionVertices_Selection();
   });
 
-  allActions.put("Separate Selected Vertices", () -> {
+  putAction("Separate Selected Vertices", () -> {
     Modify3D.separateVertices_Selection();
   });
 
-  allActions.put("Select Scene Isolated Vertices", () -> {
+  putAction("Select Scene Isolated Vertices", () -> {
     Select3D.isolatedVertices_Scene();
   });
 
-  allActions.put("Delete Scene Isolated Vertices", () -> {
+  putAction("Delete Scene Isolated Vertices", () -> {
     Delete3D.isolatedVertices_Scene();
   });
 
-  allActions.put("Delete Selection Isolated Vertices", () -> {
+  putAction("Delete Selection Isolated Vertices", () -> {
     Delete3D.isolatedVertices_Selection();
   });
 
-  allActions.put("Delete Scene Empty Groups", () -> {
+  putAction("Delete Scene Empty Groups", () -> {
     allGroups.deleteEmptyGroups_Scene();
   });
 
-  allActions.put("Delete Selection", () -> {
+  putAction("Delete Selection", () -> {
     Delete3D.selection();
   });
 
-  allActions.put("Dettach from Groups Selection", () -> {
+  putAction("Dettach from Groups Selection", () -> {
     allGroups.dettachFromGroups_Selection();
   });
 
-  allActions.put("Ungroup Selection", () -> {
+  putAction("Ungroup Selection", () -> {
     allGroups.ungroup_Selection();
   });
 
-  allActions.put("Group Selection", () -> {
+  putAction("Group Selection", () -> {
     allGroups.group_Selection(1);
   });
 
-  allActions.put("Attach to Last Group", () -> {
+  putAction("Attach to Last Group", () -> {
     allGroups.group_Selection(0);
   });
 
-  allActions.put("Clone Selection (Identical)", () -> {
+  putAction("Clone Selection (Identical)", () -> {
     Clone3D.selection(true);
   });
 
-  allActions.put("Clone Selection (Variation)", () -> {
+  putAction("Clone Selection (Variation)", () -> {
     Clone3D.selection(false);
   });
 
-  allActions.put("Auto-Normal Selected Faces", () -> {
+  putAction("Auto-Normal Selected Faces", () -> {
     Modify3D.autoNormalFaces_Selection();
   });
 
-  allActions.put("Force Triangulate Selected Faces", () -> {
+  putAction("Force Triangulate Selected Faces", () -> {
     Modify3D.forceTriangulateFaces_Selection();
   });
 
-  allActions.put("Insert Corner Opennings", () -> {
+  putAction("Insert Corner Opennings", () -> {
     Modify3D.insertCornerOpennings_Selection();
   });
 
-  allActions.put("Insert Parallel Opennings", () -> {
+  putAction("Insert Parallel Opennings", () -> {
     Modify3D.insertParallelOpennings_Selection();
   });
 
-  allActions.put("Insert Rotated Opennings", () -> {
+  putAction("Insert Rotated Opennings", () -> {
     Modify3D.insertRotatedOpennings_Selection();
   });
 
-  allActions.put("Insert Edge Opennings", () -> {
+  putAction("Insert Edge Opennings", () -> {
     Modify3D.insertEdgeOpennings_Selection();
   });
 
-  allActions.put("Optimize Faces", () -> {
+  putAction("Optimize Faces", () -> {
     Modify3D.optimizeFace_Selection();
   });
 
-  allActions.put("Tessellate Rows & Columns", () -> {
+  putAction("Tessellate Rows & Columns", () -> {
     Modify3D.tessellateRowsColumns_Selection();
   });
 
-  allActions.put("Tessellate Rectangular", () -> {
+  putAction("Tessellate Rectangular", () -> {
     Modify3D.tessellateRectangular_Selection();
   });
 
-  allActions.put("Tessellate Triangular", () -> {
+  putAction("Tessellate Triangular", () -> {
     Modify3D.tessellateTriangular_Selection();
   });
 
-  allActions.put("Extrude Face Edges", () -> {
+  putAction("Extrude Face Edges", () -> {
     Modify3D.extrudeFaceEdges_Selection();
   });
 
-  allActions.put("Offset(above) Vertices", () -> {
+  putAction("Offset(above) Vertices", () -> {
     Modify3D.offsetVertices_Selection(0, abs(User3D.modify_OffsetAmount));
   });
 
-  allActions.put("Offset(below) Vertices", () -> {
+  putAction("Offset(below) Vertices", () -> {
     Modify3D.offsetVertices_Selection(0, -abs(User3D.modify_OffsetAmount));
   });
 
-  allActions.put("Offset(expand) Vertices", () -> {
+  putAction("Offset(expand) Vertices", () -> {
     Modify3D.offsetVertices_Selection(1, abs(User3D.modify_OffsetAmount));
   });
 
-  allActions.put("Offset(shrink) Vertices", () -> {
+  putAction("Offset(shrink) Vertices", () -> {
     Modify3D.offsetVertices_Selection(1, -abs(User3D.modify_OffsetAmount));
   });
 
-  allActions.put("Reverse Visibility of All Faces", () -> {
+  putAction("Reverse Visibility of All Faces", () -> {
     Modify3D.reverseVisibilityFaces_Scene();
   });
 
-  allActions.put("Hide All Faces", () -> {
+  putAction("Hide All Faces", () -> {
     Modify3D.changeVisibilityFaces_Scene(0);
   });
 
-  allActions.put("Unhide All Faces", () -> {
+  putAction("Unhide All Faces", () -> {
     Modify3D.changeVisibilityFaces_Scene(1);
   });
 
-  allActions.put("Hide Selected Faces", () -> {
+  putAction("Hide Selected Faces", () -> {
     Modify3D.changeVisibilityFaces_Selection(0);
   });
 
-  allActions.put("Unhide Selected Faces", () -> {
+  putAction("Unhide Selected Faces", () -> {
     Modify3D.changeVisibilityFaces_Selection(1);
   });
 
-  allActions.put("Isolate Selection", () -> {
+  putAction("Isolate Selection", () -> {
     Modify3D.isolate_Selection();
   });
 
-  allActions.put("Flatten Selected LandPoints", () -> {
+  putAction("Flatten Selected LandPoints", () -> {
     Modify3D.flatten_LandPoints();
   });
 
-  allActions.put("Add People on Land", () -> {
+  putAction("Add People on Land", () -> {
     Create3D.add_onLand(1); // 1 = people
   });
 
-  allActions.put("Add 2D-Trees on Land", () -> {
+  putAction("Add 2D-Trees on Land", () -> {
     Create3D.add_onLand(2); // 2 = 2D trees
   });
 
-  allActions.put("Add 1D-Trees on Land", () -> {
+  putAction("Add 1D-Trees on Land", () -> {
     Create3D.add_onLand(3); // 3 = 1D trees
   });
 
-  allActions.put("Delete All Model1Ds", () -> {
+  putAction("Delete All Model1Ds", () -> {
     allModel1Ds.makeEmpty(0);
   });
 
-  allActions.put("Delete All Model2Ds", () -> {
+  putAction("Delete All Model2Ds", () -> {
     allModel2Ds.makeEmpty(0);
   });
 
-  allActions.put("Delete All Groups", () -> {
+  putAction("Delete All Groups", () -> {
     allGroups.makeEmpty(0);
   });
 
-  allActions.put("Delete All Solids", () -> {
+  putAction("Delete All Solids", () -> {
     allSolids.makeEmpty(0);
   });
 
-  allActions.put("Delete All Sections", () -> {
+  putAction("Delete All Sections", () -> {
     allSections.makeEmpty(0);
   });
 
-  allActions.put("Delete All Cameras", () -> {
+  putAction("Delete All Cameras", () -> {
     allCameras.makeEmpty(0);
   });
 
-  allActions.put("Delete All Faces", () -> {
+  putAction("Delete All Faces", () -> {
     allFaces.makeEmpty(0);
   });
 
-  allActions.put("Delete All Polylines", () -> {
+  putAction("Delete All Polylines", () -> {
     allPolylines.makeEmpty(0);
   });
 
-  allActions.put("Delete All", () -> {
+  putAction("Delete All", () -> {
     deleteAll();
   });
 
-  allActions.put("TargetRoll", () -> {
+  putAction("TargetRoll", () -> {
     UI_setTo_View_TargetRoll(0);
   });
 
-  allActions.put("TargetRollZ", () -> {
+  putAction("TargetRollZ", () -> {
     UI_setTo_View_TargetRoll(1);
   });
 
-  allActions.put("TargetRollXY", () -> {
+  putAction("TargetRollXY", () -> {
     UI_setTo_View_TargetRoll(2);
   });
 
-  allActions.put("CameraRoll", () -> {
+  putAction("CameraRoll", () -> {
     UI_setTo_View_CameraRoll(0);
   });
 
-  allActions.put("CameraRollZ", () -> {
+  putAction("CameraRollZ", () -> {
     UI_setTo_View_CameraRoll(1);
   });
 
-  allActions.put("CameraRollXY", () -> {
+  putAction("CameraRollXY", () -> {
     UI_setTo_View_CameraRoll(2);
   });
 
-  allActions.put("Orbit", () -> {
+  putAction("Orbit", () -> {
     UI_setTo_View_Orbit(0);
   });
 
-  allActions.put("OrbitZ", () -> {
+  putAction("OrbitZ", () -> {
     UI_setTo_View_Orbit(1);
   });
 
-  allActions.put("OrbitXY", () -> {
+  putAction("OrbitXY", () -> {
     UI_setTo_View_Orbit(2);
   });
 
-  allActions.put("LandOrbit", () -> {
+  putAction("LandOrbit", () -> {
     UI_setTo_View_LandOrbit(0);
   });
 
-  allActions.put("Pan", () -> {
+  putAction("Pan", () -> {
     UI_setTo_View_Pan(0);
   });
 
-  allActions.put("PanX", () -> {
+  putAction("PanX", () -> {
     UI_setTo_View_Pan(1);
   });
 
-  allActions.put("PanY", () -> {
+  putAction("PanY", () -> {
     UI_setTo_View_Pan(2);
   });
 
-  allActions.put("Zoom", () -> {
+  putAction("Zoom", () -> {
     UI_setTo_View_ZOOM(0);
   });
 
-  allActions.put("Zoom as default", () -> {
+  putAction("Zoom as default", () -> {
     UI_setTo_View_ZOOM(1);
   });
 
-  allActions.put("TruckX", () -> {
+  putAction("TruckX", () -> {
     UI_setTo_View_Truck(1);
   });
 
-  allActions.put("TruckY", () -> {
+  putAction("TruckY", () -> {
     UI_setTo_View_Truck(2);
   });
 
-  allActions.put("TruckZ", () -> {
+  putAction("TruckZ", () -> {
     UI_setTo_View_Truck(0);
   });
 
-  allActions.put("DistZ", () -> {
+  putAction("DistZ", () -> {
     UI_setTo_View_Truck(0);
   });
 
-  allActions.put("CameraDistance", () -> {
+  putAction("CameraDistance", () -> {
     UI_setTo_View_CameraDistance(0);
   });
 
-  allActions.put("DistMouseXY", () -> {
+  putAction("DistMouseXY", () -> {
     UI_setTo_View_DistMouseXY(0);
   });
 
-  allActions.put("Look at origin", () -> {
+  putAction("Look at origin", () -> {
     UI_setTo_View_LookAtOrigin(0);
   });
 
-  allActions.put("Look at direction", () -> {
+  putAction("Look at direction", () -> {
     UI_setTo_View_LookAtDirection(0);
   });
 
-  allActions.put("Look at selection", () -> {
+  putAction("Look at selection", () -> {
     UI_setTo_View_LookAtSelection(0);
   });
 
-  allActions.put("3DModelSize", () -> {
+  putAction("3DModelSize", () -> {
     UI_setTo_View_3DModelSize();
   });
 
-  allActions.put("SkydomeSize", () -> {
+  putAction("SkydomeSize", () -> {
     UI_setTo_View_SkydomeSize();
   });
 
-  allActions.put("AllModelSize", () -> {
+  putAction("AllModelSize", () -> {
     UI_setTo_View_AllModelSize();
   });
 
-  allActions.put("Display All Viewports", () -> {
+  putAction("Display All Viewports", () -> {
     UI_setTo_Viewport(0);
   });
 
-  allActions.put("Enlarge 3D Viewport", () -> {
+  putAction("Enlarge 3D Viewport", () -> {
     UI_setTo_Viewport(1);
   });
 
-  allActions.put("Enlarge Time Viewport", () -> {
+  putAction("Enlarge Time Viewport", () -> {
     UI_setTo_Viewport(2);
   });
 
-  allActions.put("Enlarge Map Viewport", () -> {
+  putAction("Enlarge Map Viewport", () -> {
     UI_setTo_Viewport(3);
   });
 
-  allActions.put("Top", () -> {
+  putAction("Top", () -> {
     UI_setTo_View_3DViewPoint(0);
   });
 
-  allActions.put("Front", () -> {
+  putAction("Front", () -> {
     UI_setTo_View_3DViewPoint(1);
   });
 
-  allActions.put("Left", () -> {
+  putAction("Left", () -> {
     UI_setTo_View_3DViewPoint(2);
   });
 
-  allActions.put("Back", () -> {
+  putAction("Back", () -> {
     UI_setTo_View_3DViewPoint(3);
   });
 
-  allActions.put("Right", () -> {
+  putAction("Right", () -> {
     UI_setTo_View_3DViewPoint(4);
   });
 
-  allActions.put("Bottom", () -> {
+  putAction("Bottom", () -> {
     UI_setTo_View_3DViewPoint(5);
   });
 
-  allActions.put("S.W.", () -> {
+  putAction("S.W.", () -> {
     UI_setTo_View_3DViewPoint(6);
   });
 
-  allActions.put("S.E.", () -> {
+  putAction("S.E.", () -> {
     UI_setTo_View_3DViewPoint(7);
   });
 
-  allActions.put("N.E.", () -> {
+  putAction("N.E.", () -> {
     UI_setTo_View_3DViewPoint(8);
   });
 
-  allActions.put("N.W.", () -> {
+  putAction("N.W.", () -> {
     UI_setTo_View_3DViewPoint(9);
   });
 
-  allActions.put("PivotX:Minimum", () -> {
+  putAction("PivotX:Minimum", () -> {
     UI_setTo_View_PivotX(-1);
   });
 
-  allActions.put("PivotX:Center", () -> {
+  putAction("PivotX:Center", () -> {
     UI_setTo_View_PivotX(0);
   });
 
-  allActions.put("PivotX:Maximum", () -> {
+  putAction("PivotX:Maximum", () -> {
     UI_setTo_View_PivotX(1);
   });
 
-  allActions.put("PivotY:Minimum", () -> {
+  putAction("PivotY:Minimum", () -> {
     UI_setTo_View_PivotY(-1);
   });
 
-  allActions.put("PivotY:Center", () -> {
+  putAction("PivotY:Center", () -> {
     UI_setTo_View_PivotY(0);
   });
 
-  allActions.put("PivotY:Maximum", () -> {
+  putAction("PivotY:Maximum", () -> {
     UI_setTo_View_PivotY(1);
   });
 
-  allActions.put("PivotZ:Minimum", () -> {
+  putAction("PivotZ:Minimum", () -> {
     UI_setTo_View_PivotZ(-1);
   });
 
-  allActions.put("PivotZ:Center", () -> {
+  putAction("PivotZ:Center", () -> {
     UI_setTo_View_PivotZ(0);
   });
 
-  allActions.put("PivotZ:Maximum", () -> {
+  putAction("PivotZ:Maximum", () -> {
     UI_setTo_View_PivotZ(1);
   });
 
-  allActions.put("Show SWOB stations",   () -> {WORLD.displayAll_SWOB = 1;});
-  allActions.put("Show SWOB nearest",    () -> {WORLD.displayNear_SWOB = true;});
-  allActions.put("Show NAEFS stations",  () -> {WORLD.displayAll_NAEFS = 1;});
-  allActions.put("Show NAEFS nearest",   () -> {WORLD.displayNear_NAEFS = true;});
-  allActions.put("Show CWEEDS stations", () -> {WORLD.displayAll_CWEEDS = 1;});
-  allActions.put("Show CWEEDS nearest",  () -> {WORLD.displayNear_CWEEDS = true;});
-  allActions.put("Show CLMREC stations", () -> {WORLD.displayAll_CLMREC = 1;});
-  allActions.put("Show CLMREC nearest",  () -> {WORLD.displayNear_CLMREC = true;});
-  allActions.put("Show TMYEPW stations", () -> {WORLD.displayAll_TMYEPW = 1;});
-  allActions.put("Show TMYEPW nearest",  () -> {WORLD.displayNear_TMYEPW = true;});
+  putAction("Show SWOB stations",   () -> {WORLD.displayAll_SWOB = 1;});
+  putAction("Show SWOB nearest",    () -> {WORLD.displayNear_SWOB = true;});
+  putAction("Show NAEFS stations",  () -> {WORLD.displayAll_NAEFS = 1;});
+  putAction("Show NAEFS nearest",   () -> {WORLD.displayNear_NAEFS = true;});
+  putAction("Show CWEEDS stations", () -> {WORLD.displayAll_CWEEDS = 1;});
+  putAction("Show CWEEDS nearest",  () -> {WORLD.displayNear_CWEEDS = true;});
+  putAction("Show CLMREC stations", () -> {WORLD.displayAll_CLMREC = 1;});
+  putAction("Show CLMREC nearest",  () -> {WORLD.displayNear_CLMREC = true;});
+  putAction("Show TMYEPW stations", () -> {WORLD.displayAll_TMYEPW = 1;});
+  putAction("Show TMYEPW nearest",  () -> {WORLD.displayNear_TMYEPW = true;});
 
-  allActions.put("Show Land Mesh",     () -> {Land3D.displaySurface = true;});
-  allActions.put("Show Land Texture",  () -> {Land3D.displayTexture = true;});
-  allActions.put("Show Land Points",   () -> {Land3D.displayPoints = true;});
-  allActions.put("Show Land Depth",    () -> {Land3D.displayDepth = true;});
-  allActions.put("Show Vertices",      () -> {allPoints.displayAll = true;});
-  allActions.put("Show Edges",         () -> {allFaces.displayEdges = true;});
-  allActions.put("Show Normals",       () -> {allFaces.displayNormals = true;});
-  allActions.put("Show Leaves",        () -> {allModel1Ds.displayLeaves = true;});
-  allActions.put("Show Model1Ds",      () -> {allModel1Ds.displayAll = true;});
-  allActions.put("Show Model2Ds",      () -> {allModel2Ds.displayAll = true;});
-  allActions.put("Show Polylines",     () -> {allPolylines.displayAll = true;});
-  allActions.put("Show Faces",         () -> {allFaces.displayAll = true;});
-  allActions.put("Show Solids",        () -> {allSolids.displayAll = true;});
-  allActions.put("Show Sections",      () -> {allSections.displayAll = true;});
-  allActions.put("Show Cameras",       () -> {allCameras.displayAll = true;});
-  allActions.put("Show Sky",           () -> {Sky3D.displaySurface = true;});
-  allActions.put("Show Sun Grid",      () -> {Sun3D.displayGrid = true;});
-  allActions.put("Show Sun Path",      () -> {Sun3D.displayPath = true;});
-  allActions.put("Show Sun Pattern",   () -> {Sun3D.displayPattern = true;});
-  allActions.put("Show Sun Surface",   () -> {Sun3D.displaySurface = true;});
-  allActions.put("Show Moon Surface",  () -> {Moon3D.displaySurface = true;});
-  allActions.put("Show Earth Surface", () -> {Earth3D.displaySurface = true;});
-  allActions.put("Show Troposphere",   () -> {Tropo3D.displaySurface = true;});
-  allActions.put("Show Solar Section", () -> {allSolarImpacts.displayImage = true;});
-  allActions.put("Show Solid Section", () -> {allSolidImpacts.displayImage = true;});
-  allActions.put("Show Wind Flow",     () -> {allWindFlows.displayAll = true;});
+  putAction("Show Land Mesh",     () -> {Land3D.displaySurface = true;});
+  putAction("Show Land Texture",  () -> {Land3D.displayTexture = true;});
+  putAction("Show Land Points",   () -> {Land3D.displayPoints = true;});
+  putAction("Show Land Depth",    () -> {Land3D.displayDepth = true;});
+  putAction("Show Vertices",      () -> {allPoints.displayAll = true;});
+  putAction("Show Edges",         () -> {allFaces.displayEdges = true;});
+  putAction("Show Normals",       () -> {allFaces.displayNormals = true;});
+  putAction("Show Leaves",        () -> {allModel1Ds.displayLeaves = true;});
+  putAction("Show Model1Ds",      () -> {allModel1Ds.displayAll = true;});
+  putAction("Show Model2Ds",      () -> {allModel2Ds.displayAll = true;});
+  putAction("Show Polylines",     () -> {allPolylines.displayAll = true;});
+  putAction("Show Faces",         () -> {allFaces.displayAll = true;});
+  putAction("Show Solids",        () -> {allSolids.displayAll = true;});
+  putAction("Show Sections",      () -> {allSections.displayAll = true;});
+  putAction("Show Cameras",       () -> {allCameras.displayAll = true;});
+  putAction("Show Sky",           () -> {Sky3D.displaySurface = true;});
+  putAction("Show Sun Grid",      () -> {Sun3D.displayGrid = true;});
+  putAction("Show Sun Path",      () -> {Sun3D.displayPath = true;});
+  putAction("Show Sun Pattern",   () -> {Sun3D.displayPattern = true;});
+  putAction("Show Sun Surface",   () -> {Sun3D.displaySurface = true;});
+  putAction("Show Moon Surface",  () -> {Moon3D.displaySurface = true;});
+  putAction("Show Earth Surface", () -> {Earth3D.displaySurface = true;});
+  putAction("Show Troposphere",   () -> {Tropo3D.displaySurface = true;});
+  putAction("Show Solar Section", () -> {allSolarImpacts.displayImage = true;});
+  putAction("Show Solid Section", () -> {allSolidImpacts.displayImage = true;});
+  putAction("Show Wind Flow",     () -> {allWindFlows.displayAll = true;});
 
-  allActions.put("Show Selected Solids",                 () -> {Select3D.Solid_displayEdges = true;});
-  allActions.put("Show Selected Sections",               () -> {Select3D.Section_displayEdges = true;});
-  allActions.put("Show Selected Cameras",                () -> {Select3D.Camera_displayEdges = true;});
-  allActions.put("Show Selected LandPoints",             () -> {Select3D.LandPoint_displayPoints = true;});
-  allActions.put("Show Selected Faces",                  () -> {Select3D.Face_displayEdges = true;});
-  allActions.put("Show Selected Polylines",              () -> {Select3D.Polyline_displayVertices = true;});
-  allActions.put("Show Selected Faces Vertex Count",     () -> {Select3D.Face_displayVertexCount = true;});
-  allActions.put("Show Selected Polylines Vertex Count", () -> {Select3D.Polyline_displayVertexCount = true;});
-  allActions.put("Show Selected Vertices",               () -> {Select3D.Vertex_displayVertices = true;});
-  allActions.put("Show Selected REF Pivot",              () -> {Select3D.displayReferencePivot = true;});
-  allActions.put("Show Selected Group Pivot",            () -> {Select3D.Group_displayPivot = true;});
-  allActions.put("Show Selected Group Edges",            () -> {Select3D.Group_displayEdges = true;});
-  allActions.put("Show Selected Group Box",              () -> {Select3D.Group_displayBox = true;});
-  allActions.put("Show Selected 2D Edges",               () -> {Select3D.Model2D_displayEdges = true;});
-  allActions.put("Show Selected 1D Edges",               () -> {Select3D.Model1D_displayEdges = true;});
+  putAction("Show Selected Solids",                 () -> {Select3D.Solid_displayEdges = true;});
+  putAction("Show Selected Sections",               () -> {Select3D.Section_displayEdges = true;});
+  putAction("Show Selected Cameras",                () -> {Select3D.Camera_displayEdges = true;});
+  putAction("Show Selected LandPoints",             () -> {Select3D.LandPoint_displayPoints = true;});
+  putAction("Show Selected Faces",                  () -> {Select3D.Face_displayEdges = true;});
+  putAction("Show Selected Polylines",              () -> {Select3D.Polyline_displayVertices = true;});
+  putAction("Show Selected Faces Vertex Count",     () -> {Select3D.Face_displayVertexCount = true;});
+  putAction("Show Selected Polylines Vertex Count", () -> {Select3D.Polyline_displayVertexCount = true;});
+  putAction("Show Selected Vertices",               () -> {Select3D.Vertex_displayVertices = true;});
+  putAction("Show Selected REF Pivot",              () -> {Select3D.displayReferencePivot = true;});
+  putAction("Show Selected Group Pivot",            () -> {Select3D.Group_displayPivot = true;});
+  putAction("Show Selected Group Edges",            () -> {Select3D.Group_displayEdges = true;});
+  putAction("Show Selected Group Box",              () -> {Select3D.Group_displayBox = true;});
+  putAction("Show Selected 2D Edges",               () -> {Select3D.Model2D_displayEdges = true;});
+  putAction("Show Selected 1D Edges",               () -> {Select3D.Model1D_displayEdges = true;});
 
-  allActions.put("Hide SWOB stations",   () -> {WORLD.displayAll_SWOB = 0;});
-  allActions.put("Hide SWOB nearest",    () -> {WORLD.displayNear_SWOB = false;});
-  allActions.put("Hide NAEFS stations",  () -> {WORLD.displayAll_NAEFS = 0;});
-  allActions.put("Hide NAEFS nearest",   () -> {WORLD.displayNear_NAEFS = false;});
-  allActions.put("Hide CWEEDS stations", () -> {WORLD.displayAll_CWEEDS = 0;});
-  allActions.put("Hide CWEEDS nearest",  () -> {WORLD.displayNear_CWEEDS = false;});
-  allActions.put("Hide CLMREC stations", () -> {WORLD.displayAll_CLMREC = 0;});
-  allActions.put("Hide CLMREC nearest",  () -> {WORLD.displayNear_CLMREC = false;});
-  allActions.put("Hide TMYEPW stations", () -> {WORLD.displayAll_TMYEPW = 0;});
-  allActions.put("Hide TMYEPW nearest",  () -> {WORLD.displayNear_TMYEPW = false;});
+  putAction("Hide SWOB stations",   () -> {WORLD.displayAll_SWOB = 0;});
+  putAction("Hide SWOB nearest",    () -> {WORLD.displayNear_SWOB = false;});
+  putAction("Hide NAEFS stations",  () -> {WORLD.displayAll_NAEFS = 0;});
+  putAction("Hide NAEFS nearest",   () -> {WORLD.displayNear_NAEFS = false;});
+  putAction("Hide CWEEDS stations", () -> {WORLD.displayAll_CWEEDS = 0;});
+  putAction("Hide CWEEDS nearest",  () -> {WORLD.displayNear_CWEEDS = false;});
+  putAction("Hide CLMREC stations", () -> {WORLD.displayAll_CLMREC = 0;});
+  putAction("Hide CLMREC nearest",  () -> {WORLD.displayNear_CLMREC = false;});
+  putAction("Hide TMYEPW stations", () -> {WORLD.displayAll_TMYEPW = 0;});
+  putAction("Hide TMYEPW nearest",  () -> {WORLD.displayNear_TMYEPW = false;});
 
-  allActions.put("Hide Land Mesh",     () -> {Land3D.displaySurface = false;});
-  allActions.put("Hide Land Texture",  () -> {Land3D.displayTexture = false;});
-  allActions.put("Hide Land Points",   () -> {Land3D.displayPoints = false;});
-  allActions.put("Hide Land Depth",    () -> {Land3D.displayDepth = false;});
-  allActions.put("Hide Vertices",      () -> {allPoints.displayAll = false;});
-  allActions.put("Hide Edges",         () -> {allFaces.displayEdges = false;});
-  allActions.put("Hide Normals",       () -> {allFaces.displayNormals = false;});
-  allActions.put("Hide Leaves",        () -> {allModel1Ds.displayLeaves = false;});
-  allActions.put("Hide Model1Ds",      () -> {allModel1Ds.displayAll = false;});
-  allActions.put("Hide Model2Ds",      () -> {allModel2Ds.displayAll = false;});
-  allActions.put("Hide Polylines",     () -> {allPolylines.displayAll = false;});
-  allActions.put("Hide Faces",         () -> {allFaces.displayAll = false;});
-  allActions.put("Hide Solids",        () -> {allSolids.displayAll = false;});
-  allActions.put("Hide Sections",      () -> {allSections.displayAll = false;});
-  allActions.put("Hide Cameras",       () -> {allCameras.displayAll = false;});
-  allActions.put("Hide Sky",           () -> {Sky3D.displaySurface = false;});
-  allActions.put("Hide Sun Grid",      () -> {Sun3D.displayGrid = false;});
-  allActions.put("Hide Sun Path",      () -> {Sun3D.displayPath = false;});
-  allActions.put("Hide Sun Pattern",   () -> {Sun3D.displayPattern = false;});
-  allActions.put("Hide Sun Surface",   () -> {Sun3D.displaySurface = false;});
-  allActions.put("Hide Moon Surface",  () -> {Moon3D.displaySurface = false;});
-  allActions.put("Hide Earth Surface", () -> {Earth3D.displaySurface = false;});
-  allActions.put("Hide Troposphere",   () -> {Tropo3D.displaySurface = false;});
-  allActions.put("Hide Solar Section", () -> {allSolarImpacts.displayImage = false;});
-  allActions.put("Hide Solid Section", () -> {allSolidImpacts.displayImage = false;});
-  allActions.put("Hide Wind Flow",     () -> {allWindFlows.displayAll = false;});
+  putAction("Hide Land Mesh",     () -> {Land3D.displaySurface = false;});
+  putAction("Hide Land Texture",  () -> {Land3D.displayTexture = false;});
+  putAction("Hide Land Points",   () -> {Land3D.displayPoints = false;});
+  putAction("Hide Land Depth",    () -> {Land3D.displayDepth = false;});
+  putAction("Hide Vertices",      () -> {allPoints.displayAll = false;});
+  putAction("Hide Edges",         () -> {allFaces.displayEdges = false;});
+  putAction("Hide Normals",       () -> {allFaces.displayNormals = false;});
+  putAction("Hide Leaves",        () -> {allModel1Ds.displayLeaves = false;});
+  putAction("Hide Model1Ds",      () -> {allModel1Ds.displayAll = false;});
+  putAction("Hide Model2Ds",      () -> {allModel2Ds.displayAll = false;});
+  putAction("Hide Polylines",     () -> {allPolylines.displayAll = false;});
+  putAction("Hide Faces",         () -> {allFaces.displayAll = false;});
+  putAction("Hide Solids",        () -> {allSolids.displayAll = false;});
+  putAction("Hide Sections",      () -> {allSections.displayAll = false;});
+  putAction("Hide Cameras",       () -> {allCameras.displayAll = false;});
+  putAction("Hide Sky",           () -> {Sky3D.displaySurface = false;});
+  putAction("Hide Sun Grid",      () -> {Sun3D.displayGrid = false;});
+  putAction("Hide Sun Path",      () -> {Sun3D.displayPath = false;});
+  putAction("Hide Sun Pattern",   () -> {Sun3D.displayPattern = false;});
+  putAction("Hide Sun Surface",   () -> {Sun3D.displaySurface = false;});
+  putAction("Hide Moon Surface",  () -> {Moon3D.displaySurface = false;});
+  putAction("Hide Earth Surface", () -> {Earth3D.displaySurface = false;});
+  putAction("Hide Troposphere",   () -> {Tropo3D.displaySurface = false;});
+  putAction("Hide Solar Section", () -> {allSolarImpacts.displayImage = false;});
+  putAction("Hide Solid Section", () -> {allSolidImpacts.displayImage = false;});
+  putAction("Hide Wind Flow",     () -> {allWindFlows.displayAll = false;});
 
-  allActions.put("Hide Selected Solids",                 () -> {Select3D.Solid_displayEdges = false;});
-  allActions.put("Hide Selected Sections",               () -> {Select3D.Section_displayEdges = false;});
-  allActions.put("Hide Selected Cameras",                () -> {Select3D.Camera_displayEdges = false;});
-  allActions.put("Hide Selected LandPoints",             () -> {Select3D.LandPoint_displayPoints = false;});
-  allActions.put("Hide Selected Faces",                  () -> {Select3D.Face_displayEdges = false;});
-  allActions.put("Hide Selected Polylines",              () -> {Select3D.Polyline_displayVertices = false;});
-  allActions.put("Hide Selected Faces Vertex Count",     () -> {Select3D.Face_displayVertexCount = false;});
-  allActions.put("Hide Selected Polylines Vertex Count", () -> {Select3D.Polyline_displayVertexCount = false;});
-  allActions.put("Hide Selected Vertices",               () -> {Select3D.Vertex_displayVertices = false;});
-  allActions.put("Hide Selected REF Pivot",              () -> {Select3D.displayReferencePivot = false;});
-  allActions.put("Hide Selected Group Pivot",            () -> {Select3D.Group_displayPivot = false;});
-  allActions.put("Hide Selected Group Edges",            () -> {Select3D.Group_displayEdges = false;});
-  allActions.put("Hide Selected Group Box",              () -> {Select3D.Group_displayBox = false;});
-  allActions.put("Hide Selected 2D Edges",               () -> {Select3D.Model2D_displayEdges = false;});
-  allActions.put("Hide Selected 1D Edges",               () -> {Select3D.Model1D_displayEdges = false;});
+  putAction("Hide Selected Solids",                 () -> {Select3D.Solid_displayEdges = false;});
+  putAction("Hide Selected Sections",               () -> {Select3D.Section_displayEdges = false;});
+  putAction("Hide Selected Cameras",                () -> {Select3D.Camera_displayEdges = false;});
+  putAction("Hide Selected LandPoints",             () -> {Select3D.LandPoint_displayPoints = false;});
+  putAction("Hide Selected Faces",                  () -> {Select3D.Face_displayEdges = false;});
+  putAction("Hide Selected Polylines",              () -> {Select3D.Polyline_displayVertices = false;});
+  putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.Face_displayVertexCount = false;});
+  putAction("Hide Selected Polylines Vertex Count", () -> {Select3D.Polyline_displayVertexCount = false;});
+  putAction("Hide Selected Vertices",               () -> {Select3D.Vertex_displayVertices = false;});
+  putAction("Hide Selected REF Pivot",              () -> {Select3D.displayReferencePivot = false;});
+  putAction("Hide Selected Group Pivot",            () -> {Select3D.Group_displayPivot = false;});
+  putAction("Hide Selected Group Edges",            () -> {Select3D.Group_displayEdges = false;});
+  putAction("Hide Selected Group Box",              () -> {Select3D.Group_displayBox = false;});
+  putAction("Hide Selected 2D Edges",               () -> {Select3D.Model2D_displayEdges = false;});
+  putAction("Hide Selected 1D Edges",               () -> {Select3D.Model1D_displayEdges = false;});
 
   for (int n = -2; n <= 8; n++) {
     final int layoutIndex = n;
-    allActions.put("Layout " + nf(layoutIndex, 0), () -> {
+    putAction("Layout " + nf(layoutIndex, 0), () -> {
       STUDY.plotSetup = layoutIndex;
       STUDY.revise();
     });
@@ -1924,7 +1929,7 @@ void buildAllActions() {
 
   for (int n = 1; n <= 11; n++) {
     final int modelIndex = n;
-    allActions.put("3D-model " + nf(modelIndex, 0), () -> {
+    putAction("3D-model " + nf(modelIndex, 0), () -> {
       deleteAll();
       Create3D.add_DefaultModel(modelIndex);
       allSolidImpacts.calculate_Impact_selectedSections();

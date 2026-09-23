@@ -1497,6 +1497,7 @@ void mouseClicked () {
               buildAllActions();
             }
 
+            menu_option = menu_option.toLowerCase();
             Runnable action = allActions.get(menu_option);
             if (action != null) {
               action.run();
