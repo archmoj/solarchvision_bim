@@ -1493,9 +1493,9 @@ void mouseClicked () {
         if (mouseButton == LEFT) {
           if (UI_menuBar.selected_child != 0) {
             menu_option = menu_option.toLowerCase();
-            Runnable action = allActions.get(menu_option);
+            Action action = allActions.get(menu_option);
             if (action != null) {
-              action.run();
+              action.run(new String[0]);
             }
 
             if (UI_menuBar.Items[UI_menuBar.selected_parent][0].equals("Layer")) {

@@ -1,12 +1,130 @@
-HashMap<String, Runnable> allActions;
+// Menu items only ever need a plain, argument-less trigger (Runnable).
+// Commands typed on the command line (runScript.pde) may also come with
+// one or more arguments (e.g. "start_day 15"), so allActions is keyed by
+// lowercase command/caption and stores an Action: a Runnable that also
+// accepts the full, space-split command line (args[0] is the command
+// itself, args[1..] are its parameters).
+interface Action {
+  void run(String[] args);
+}
+
+// Getter/setter pair used to plug an existing numeric field (e.g.
+// TIME.day) into a generic, reusable spinner-style command action.
+interface FloatGetter {
+  float get();
+}
+
+interface FloatSetter {
+  void set(float v);
+}
+
+// Follow-up work to run right after a spinner-style command actually
+// changes a field's value. Receives the value before and after the
+// change, since a few fields (e.g. Select3D.posValue) apply a delta
+// between the two rather than the new value on its own.
+interface SpinnerApplied {
+  void run(float oldValue, float newValue);
+}
+
+HashMap<String, Action> allActions;
 
 private void putAction(String s, Runnable fn) {
+    String lower = s.toLowerCase();
+    allActions.put(lower, (args) -> fn.run()); // put lowercase, ignore any args
+}
+
+private void putAction(String s, Action fn) {
     String lower = s.toLowerCase();
     allActions.put(lower, fn); // put lowercase
 }
 
+// Registers a command-line-callable action that mirrors what a UI spinner
+// does when its value changes: validate the new value is within range,
+// round it the same way the spinner does (funcs.roundTo), apply it only
+// if it actually changed, and then revise the same views the spinner's
+// update1/update2/update3 flags would have revised (STUDY, WIN3D, WORLD).
+//
+// This is the core (min/max evaluated fresh on every call, via getters):
+// some spinners' min/max come from other fields that can change during a
+// session (e.g. a loaded project's climate-year range, camera count, or
+// palette size), so baking them in once at registration time would go
+// stale. The plain-float overloads below are for the (much more common)
+// case of fixed bounds and just wrap a fixed value in a getter.
+//
+// name       : command-line keyword (e.g. "start_day"), also used in messages.
+// getter     : reads the current value of the backing field.
+// setter     : writes the new (rounded) value to the backing field.
+// minGetter/maxGetter/step : same meaning as the Spinner's min_v/max_v/stp_v,
+//                            but min/max are read fresh on every invocation.
+// update1/update2/update3 : same meaning as the Spinner's update1/update2/update3
+//                            (non-zero revises STUDY, WIN3D, WORLD respectively).
+// onApplied  : optional (may be null). Some fields (e.g. TIME.day/month/year)
+//              need extra derived-state work beyond a simple revise() when
+//              changed interactively - see applyRolloutUpdate.pde, which
+//              normally does this work once per frame by diffing the field's
+//              value before/after UI_rollout.draw(). A command-line change
+//              happens outside that per-frame diff window, so it would never
+//              be picked up there; onApplied lets us run that same
+//              field-specific follow-up work immediately instead.
+void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3, SpinnerApplied onApplied) {
+  putAction(name, (args) -> {
+    float min_v = minGetter.get();
+    float max_v = maxGetter.get();
+
+    if (args.length < 2) {
+      println("out:", name + " " + nf(min_v, 0, 0) + ".." + nf(max_v, 0, 0));
+      return;
+    }
+
+    float requested;
+    try {
+      requested = Float.parseFloat(args[1]);
+    }
+    catch (Exception ex) {
+      println("out:", "Invalid value for " + name + ": " + args[1]);
+      return;
+    }
+
+    if ((requested < min_v) || (requested > max_v)) {
+      println("out:", name + " must be between " + nf(min_v, 0, 0) + " and " + nf(max_v, 0, 0));
+      return;
+    }
+
+    float newValue = funcs.roundTo(requested, step);
+    float oldValue = getter.get();
+
+    if (newValue != oldValue) {
+      setter.set(newValue);
+
+      if (onApplied != null) onApplied.run(oldValue, newValue);
+
+      if (update1 != 0) {
+        UI_caseBar.revise();
+        STUDY.revise();
+      }
+      if (update2 != 0) WIN3D.revise();
+      if (update3 != 0) WORLD.revise();
+    }
+  });
+}
+
+// Convenience overload for dynamic-bound spinners that don't need any
+// extra follow-up work beyond the update1/update2/update3 revise() calls.
+void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3) {
+  putSpinnerAction(name, getter, setter, minGetter, maxGetter, step, update1, update2, update3, null);
+}
+
+// Convenience overloads for the common case of fixed, constant bounds.
+void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3, SpinnerApplied onApplied) {
+  putSpinnerAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, onApplied);
+}
+
+void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3) {
+  putSpinnerAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, null);
+}
+
 void build_allActions() {
-  allActions = new HashMap<String, Runnable>();
+  allActions = new HashMap<String, Action>();
 
   putAction("SOLARCHVISION-BIM6D", () -> {
     link("https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1");
@@ -1938,6 +2056,8 @@ void build_allActions() {
       WIN3D.revise();
     });
   }
+
+  UI_rollout.registerSpinnerActions();
 
   //allActions.keySet().stream().sorted().forEach(System.out::println);
 }

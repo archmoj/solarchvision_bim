@@ -1603,9 +1603,18 @@ String runScriptLine (String lineSTR) {
 
   String key = lineSTR.toLowerCase().stripTrailing();
   if(!key.equals("")) {
-    Runnable action = allActions.get(key);
+    // Full-line match first (menu captions such as "Save As..." that may
+    // contain spaces and take no arguments).
+    Action action = allActions.get(key);
+
+    // Otherwise fall back to a first-token match, so commands registered
+    // with parameters (e.g. "start_day 15") can be reused here.
+    if ((action == null) && (parts.length > 0)) {
+      action = allActions.get(parts[0].toLowerCase());
+    }
+
     if (action != null) {
-      action.run();
+      action.run(parts);
     } else {
       hint = "Unrecognized command!";
     }
