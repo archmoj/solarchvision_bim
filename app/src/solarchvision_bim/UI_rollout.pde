@@ -57,11 +57,11 @@ class UI_rollout {
     WORLD.revise();
   };
 
-  SpinnerApplied viewChangedOnly = (o, n) -> view_changed();
-  SpinnerApplied caseBarOnly = (o, n) -> UI_caseBar.revise();
+  SpinnerApplied viewChangedOnly = (o, n) -> { if (o == n) return; view_changed(); };
+  SpinnerApplied caseBarOnly = (o, n) -> { if (o == n) return; UI_caseBar.revise(); };
   SpinnerApplied recalcImpact = (o, n) -> { if (o == n) return; allSolidImpacts.calculate_Impact_selectedSections(); view_changed(); };
-  SpinnerApplied selectionChangedOnly = (o, n) -> selection_changed();
-  SpinnerApplied softSelectionChanged = (o, n) -> Select3D.convert_Vertex_to_softSelection();
+  SpinnerApplied selectionChangedOnly = (o, n) -> { if (o == n) return; selection_changed(); };
+  SpinnerApplied softSelectionChanged = (o, n) -> { if (o == n) return; Select3D.convert_Vertex_to_softSelection(); };
   SpinnerApplied impactsUpdateFlag = (o, n) -> { if (o == n) return; STUDY.Impacts_update = true; UI_caseBar.updated(); };
 
   // Move/Rotate/Scale-by-delta spinners: applyRolloutUpdate.pde applies the
