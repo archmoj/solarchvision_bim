@@ -127,38 +127,38 @@ void applyRolloutUpdate() {
   }
 
   if (pre_SampleYear_Start != SampleYear_Start) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
   if (pre_SampleYear_End != SampleYear_End) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_SampleMember_Start != SampleMember_Start) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_SampleMember_End != SampleMember_End) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_SampleStation_Start != SampleStation_Start) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_SampleStation_End != SampleStation_End) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_STUDY_joinDays != STUDY.joinDays) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_STUDY_i_Start != STUDY.i_Start) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_STUDY_i_End != STUDY.i_End) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_STUDY_j_End != STUDY.j_End) {
@@ -168,7 +168,7 @@ void applyRolloutUpdate() {
   }
 
   if (pre_IMPACTS_displayDay != IMPACTS_displayDay) {
-    UI_rollout.caseBarOnly.run(0, 1);
+    UI_caseBar.revise();
   }
 
   if (pre_TIME_Date != TIME.date) {
@@ -216,47 +216,47 @@ void applyRolloutUpdate() {
   }
 
   if (pre_Selection_Camera_displayEdges != Select3D.Camera_displayEdges) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Section_displayEdges != Select3D.Section_displayEdges) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Solid_displayEdges != Select3D.Solid_displayEdges) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_LandPoint_displayPoints != Select3D.LandPoint_displayPoints) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Model1D_displayEdges != Select3D.Model1D_displayEdges) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Model2D_displayEdges != Select3D.Model2D_displayEdges) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_softPower != Select3D.softPower) {
-    UI_rollout.softSelectionChanged.run(0, 1);
+    Select3D.convert_Vertex_to_softSelection();
   }
 
   if (pre_Selection_softRadius != Select3D.softRadius) {
-    UI_rollout.softSelectionChanged.run(0, 1);
+    Select3D.convert_Vertex_to_softSelection();
   }
 
   if (pre_Selection_alignX != Select3D.alignX) {
-    UI_rollout.selectionChangedOnly.run(0, 1);
+    selection_changed();
   }
 
   if (pre_Selection_alignY != Select3D.alignY) {
-    UI_rollout.selectionChangedOnly.run(0, 1);
+    selection_changed();
   }
 
   if (pre_Selection_alignZ != Select3D.alignZ) {
-    UI_rollout.selectionChangedOnly.run(0, 1);
+    selection_changed();
   }
 
   if (pre_Selection_posValue != Select3D.posValue) {
@@ -270,39 +270,39 @@ void applyRolloutUpdate() {
   }
 
   if (pre_Selection_displayReferencePivot != Select3D.displayReferencePivot) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Group_displayPivot != Select3D.Group_displayPivot) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Group_displayEdges != Select3D.Group_displayEdges) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Group_displayBox != Select3D.Group_displayBox) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Face_displayEdges != Select3D.Face_displayEdges) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Face_displayVertexCount != Select3D.Face_displayVertexCount) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Polyline_displayVertexCount != Select3D.Polyline_displayVertexCount) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Vertex_displayVertices != Select3D.Vertex_displayVertices) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_Selection_Polyline_displayVertices != Select3D.Polyline_displayVertices) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_WIN3D_currentCamera != WIN3D.currentCamera) {
@@ -314,7 +314,7 @@ void applyRolloutUpdate() {
   }
 
   if (pre_Create3D_Tessellation != allFaces.displayTessellation) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_USER_create_powAll != User3D.create_powAll) {
@@ -371,27 +371,27 @@ void applyRolloutUpdate() {
   }
 
   if (pre_allSolidImpacts_displayPoints != allSolidImpacts.displayPoints) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_allSolidImpacts_displayLines != allSolidImpacts.displayLines) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_allPoints_displayAll != allPoints.displayAll) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_allFaces_displayEdges != allFaces.displayEdges) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_allFaces_displayNormals != allFaces.displayNormals) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (pre_WindFlow_display != allWindFlows.displayAll) {
-    UI_rollout.viewChangedOnly.run(0, 1);
+    view_changed();
   }
 
   if (STUDY.plotSetup != pre_STUDY_Setup) {
