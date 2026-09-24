@@ -741,7 +741,7 @@ Includes commands such as:
 -   `PREBAKE.VIEWPORT`: Pre-bakes the viewport
 
 ### Additional commands
-See the [`command/README.md`](command/README.md) file for a long list of additional commands.
+Also see [`command/README.md`](command/README.md#additional-commands) for a long list of additional commands!
 
 # SOLARCHVISION-BIM — Technical Overview
 
