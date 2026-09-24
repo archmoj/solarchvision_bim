@@ -161,11 +161,7 @@ void applyRolloutUpdate() {
     UI_caseBar.revise();
   }
 
-  if (pre_STUDY_j_End != STUDY.j_End) {
-    UI_caseBar.revise();
-
-    UI_rollout.applyStudyJEnd.run(0, 1);
-  }
+  UI_rollout.applyStudyJEnd.run(pre_STUDY_j_End, STUDY.j_End);
 
   if (pre_IMPACTS_displayDay != IMPACTS_displayDay) {
     UI_caseBar.revise();
@@ -207,13 +203,9 @@ void applyRolloutUpdate() {
     UI_rollout.applyLocationChange.run(pre_LocationLAT, LocationLAT);
   }
 
-  if (pre_Land3D_loadMesh != Land3D.loadMesh) {
-    UI_rollout.applyLandLoadMesh.run(pre_Land3D_loadMesh ? 1 : 0, Land3D.loadMesh ? 1 : 0);
-  }
+  UI_rollout.applyLandLoadMesh.run(pre_Land3D_loadMesh ? 1 : 0, Land3D.loadMesh ? 1 : 0);
 
-  if (pre_Land3D_loadTextures != Land3D.loadTextures) {
-    UI_rollout.applyLandLoadTextures.run(pre_Land3D_loadTextures ? 1 : 0, Land3D.loadTextures ? 1 : 0);
-  }
+  UI_rollout.applyLandLoadTextures.run(pre_Land3D_loadTextures ? 1 : 0, Land3D.loadTextures ? 1 : 0);
 
   if (pre_Selection_Camera_displayEdges != Select3D.Camera_displayEdges) {
     view_changed();
@@ -259,15 +251,9 @@ void applyRolloutUpdate() {
     selection_changed();
   }
 
-  if (pre_Selection_posValue != Select3D.posValue) {
-    UI_rollout.applyPosValue.run(pre_Selection_posValue, Select3D.posValue);
-  }
-  if (pre_Selection_rotValue != Select3D.rotValue) {
-    UI_rollout.applyRotValue.run(pre_Selection_rotValue, Select3D.rotValue);
-  }
-  if (pre_Selection_scaleValue != Select3D.scaleValue) {
-    UI_rollout.applyScaleValue.run(pre_Selection_scaleValue, Select3D.scaleValue);
-  }
+  UI_rollout.applyPosValue.run(pre_Selection_posValue, Select3D.posValue);
+  UI_rollout.applyRotValue.run(pre_Selection_rotValue, Select3D.rotValue);
+  UI_rollout.applyScaleValue.run(pre_Selection_scaleValue, Select3D.scaleValue);
 
   if (pre_Selection_displayReferencePivot != Select3D.displayReferencePivot) {
     view_changed();
@@ -305,9 +291,7 @@ void applyRolloutUpdate() {
     view_changed();
   }
 
-  if (pre_WIN3D_currentCamera != WIN3D.currentCamera) {
-    UI_rollout.applyCurrentCamera.run(0, 1);
-  }
+  UI_rollout.applyCurrentCamera.run(pre_WIN3D_currentCamera, WIN3D.currentCamera);
 
   if (pre_WIN3D_FacesShade != WIN3D.FacesShade) {
     view_changed();
@@ -317,58 +301,26 @@ void applyRolloutUpdate() {
     view_changed();
   }
 
-  if (pre_USER_create_powAll != User3D.create_powAll) {
-    UI_rollout.applyCreatePowAll.run(0, 1);
-  }
+  UI_rollout.applyCreatePowAll.run(pre_USER_create_powAll, User3D.create_powAll);
 
-  if (pre_allSolids_palette_CLR != allSolids.palette_CLR) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-  if (pre_allSolids_palette_DIR != allSolids.palette_DIR) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-  if (pre_allSolids_palette_MLT != allSolids.palette_MLT) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
+  UI_rollout.recalcImpact.run(pre_allSolids_palette_CLR, allSolids.palette_CLR);
+  UI_rollout.recalcImpact.run(pre_allSolids_palette_DIR, allSolids.palette_DIR);
+  UI_rollout.recalcImpact.run(pre_allSolids_palette_MLT, allSolids.palette_MLT);
 
-  if (pre_allSolidImpacts_Grade != allSolidImpacts.Grade) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-  if (pre_allSolidImpacts_Power != allSolidImpacts.Power) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-  if (pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType] != allSolidImpacts.R[allSolidImpacts.sectionType]) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-  if (pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType] != allSolidImpacts.Z[allSolidImpacts.sectionType]) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType], allSolidImpacts.R[allSolidImpacts.sectionType]);
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType], allSolidImpacts.Z[allSolidImpacts.sectionType]);
 
-  if (pre_allSolidImpacts_U_scale[allSolidImpacts.sectionType] != allSolidImpacts.U[allSolidImpacts.sectionType]) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_U_scale[allSolidImpacts.sectionType], allSolidImpacts.U[allSolidImpacts.sectionType]);
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_V_scale[allSolidImpacts.sectionType], allSolidImpacts.V[allSolidImpacts.sectionType]);
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_sU_offset[allSolidImpacts.sectionType], allSolidImpacts.X[allSolidImpacts.sectionType]);
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_sV_offset[allSolidImpacts.sectionType], allSolidImpacts.Y[allSolidImpacts.sectionType]);
 
-  if (pre_allSolidImpacts_V_scale[allSolidImpacts.sectionType] != allSolidImpacts.V[allSolidImpacts.sectionType]) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Wspd, allSolidImpacts.WindSpeed);
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Wdir, allSolidImpacts.WindDirection);
 
-  if (pre_allSolidImpacts_sU_offset[allSolidImpacts.sectionType] != allSolidImpacts.X[allSolidImpacts.sectionType]) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-  if (pre_allSolidImpacts_sV_offset[allSolidImpacts.sectionType] != allSolidImpacts.Y[allSolidImpacts.sectionType]) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-
-  if (pre_allSolidImpacts_Wspd != allSolidImpacts.WindSpeed) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-  if (pre_allSolidImpacts_Wdir != allSolidImpacts.WindDirection) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
-
-  if (pre_allSolidImpacts_Process_subDivisions != allSolidImpacts.Process_subDivisions) {
-    UI_rollout.recalcImpact.run(0, 1);
-  }
+  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Process_subDivisions, allSolidImpacts.Process_subDivisions);
 
   if (pre_allSolidImpacts_displayPoints != allSolidImpacts.displayPoints) {
     view_changed();
@@ -394,13 +346,9 @@ void applyRolloutUpdate() {
     view_changed();
   }
 
-  if (STUDY.plotSetup != pre_STUDY_Setup) {
-    UI_rollout.impactsUpdateFlag.run(0, 1);
-  }
+  UI_rollout.impactsUpdateFlag.run(pre_STUDY_Setup, STUDY.plotSetup);
 
-  if (CurrentDataSource != pre_CurrentDataSource) {
-    UI_rollout.impactsUpdateFlag.run(0, 1);
-  }
+  UI_rollout.impactsUpdateFlag.run(pre_CurrentDataSource, CurrentDataSource);
 }
 
 float pre_TIME_Date;

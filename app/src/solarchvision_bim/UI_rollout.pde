@@ -59,16 +59,21 @@ class UI_rollout {
 
   SpinnerApplied viewChangedOnly = (o, n) -> view_changed();
   SpinnerApplied caseBarOnly = (o, n) -> UI_caseBar.revise();
-  SpinnerApplied recalcImpact = (o, n) -> { allSolidImpacts.calculate_Impact_selectedSections(); view_changed(); };
+  SpinnerApplied recalcImpact = (o, n) -> { if (o == n) return; allSolidImpacts.calculate_Impact_selectedSections(); view_changed(); };
   SpinnerApplied selectionChangedOnly = (o, n) -> selection_changed();
   SpinnerApplied softSelectionChanged = (o, n) -> Select3D.convert_Vertex_to_softSelection();
-  SpinnerApplied impactsUpdateFlag = (o, n) -> { STUDY.Impacts_update = true; UI_caseBar.updated(); };
+  SpinnerApplied impactsUpdateFlag = (o, n) -> { if (o == n) return; STUDY.Impacts_update = true; UI_caseBar.updated(); };
 
   // Move/Rotate/Scale-by-delta spinners: applyRolloutUpdate.pde applies the
   // *difference* between the old and new spinner reading as a transform on
   // the current selection, rather than treating the field as a plain
   // setting - replicated here using the old/new values SpinnerApplied gets.
+  // The o == n guard matters here beyond just skipping redundant work: with
+  // no change, d/r/s below would be 0/0/1 (a genuine no-op), but calling
+  // model_changed() unconditionally every frame would still force a
+  // constant, needless redraw.
   SpinnerApplied applyPosValue = (o, n) -> {
+    if (o == n) return;
     float d = n - o;
     float dx = d, dy = d, dz = d;
     int the_Vector = Select3D.posVector;
@@ -79,12 +84,14 @@ class UI_rollout {
     model_changed();
   };
   SpinnerApplied applyRotValue = (o, n) -> {
+    if (o == n) return;
     float[] P = Select3D.getPivot();
     float r = n - o;
     Rotate3D.selection(P[0], P[1], P[2], r, Select3D.rotVector);
     model_changed();
   };
   SpinnerApplied applyScaleValue = (o, n) -> {
+    if (o == n) return;
     float[] P = Select3D.getPivot();
     float s = pow(2.0, n - o);
     float sx = s, sy = s, sz = s;
@@ -98,6 +105,8 @@ class UI_rollout {
 
   // One-off follow-up callbacks (each used by exactly one spinner).
   SpinnerApplied applyStudyJEnd = (o, n) -> {
+    if (o == n) return;
+    UI_caseBar.revise();
     if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
     if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     allSolarImpacts.rebuild_Image_array = true;
@@ -109,19 +118,25 @@ class UI_rollout {
   // applyRolloutUpDate.pde relied on this cascading into month/day/hour
   // changing and being picked up by a second, separate diff check later in
   // the same frame to reload the ensemble forecast; made explicit here
-  // instead of relying on that ordering.
+  // instead of relying on that ordering. Its call site in
+  // applyRolloutUpdate.pde keeps its own if-wrapper (rather than an o == n
+  // guard here) because it also needs an immediate UI_rollout.draw() -
+  // unsafe to fold into a callback that may itself run from inside
+  // Spinner(), which draw() is already in the middle of calling.
   SpinnerApplied applyTimeDate = (o, n) -> {
     TIME.updateDate();
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
-  SpinnerApplied applyLandLoadTextures = (o, n) -> { Land3D.update_textures(); model_changed(); };
-  SpinnerApplied applyLandLoadMesh = (o, n) -> { Land3D.update_mesh(); model_changed(); };
+  SpinnerApplied applyLandLoadTextures = (o, n) -> { if (o == n) return; Land3D.update_textures(); model_changed(); };
+  SpinnerApplied applyLandLoadMesh = (o, n) -> { if (o == n) return; Land3D.update_mesh(); model_changed(); };
   SpinnerApplied applyCurrentCamera = (o, n) -> {
+    if (o == n) return;
     WIN3D.apply_currentCamera();
     modify_Viewport_Title();
     view_changed();
   };
   SpinnerApplied applyCreatePowAll = (o, n) -> {
+    if (o == n) return;
     User3D.create_powX = User3D.create_powAll;
     User3D.create_powY = User3D.create_powAll;
     User3D.create_powZ = User3D.create_powAll;
