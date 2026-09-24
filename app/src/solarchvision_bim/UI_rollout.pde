@@ -151,7 +151,7 @@ class UI_rollout {
   // WORLD get revised when the value actually changes).
   void registerSpinnerActions () {
 
-    // The SpinnerApplied callbacks below (react.applyTimeChange, react.caseBarOnly,
+    // The OnChange callbacks below (react.applyTimeChange, react.caseBarOnly,
     // react.recalcImpact, etc.) are declared once as fields near the top of this
     // class - shared with the interactive this.Spinner(...) calls in
     // draw(), which now pass them in directly so the same follow-up logic
@@ -2425,7 +2425,7 @@ class UI_rollout {
     ) > 0.5;
   }
 
-  boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v, SpinnerApplied onApplied) {
+  boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v, OnChange onApplied) {
     int min_v = 0;
     int max_v = 1;
     int stp_v = 1;
@@ -2451,7 +2451,7 @@ class UI_rollout {
     );
   }
 
-  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, SpinnerApplied onApplied) {
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, OnChange onApplied) {
     int min_v = 0;
     int max_v = 1;
     int stp_v = 1;
@@ -2474,7 +2474,7 @@ class UI_rollout {
     );
   }
 
-  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, SpinnerApplied onApplied) {
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, OnChange onApplied) {
     int roundStep = Math.abs(stp_v);
     return int(
       funcs.roundTo(
@@ -2493,7 +2493,7 @@ class UI_rollout {
     );
   }
 
-  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, int roundStep, SpinnerApplied onApplied) {
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, int roundStep, OnChange onApplied) {
     return int(
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v, onApplied),
@@ -2511,7 +2511,7 @@ class UI_rollout {
     );
   }
 
-  int Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, int min_v, int max_v, int stp_v, int roundStep, SpinnerApplied onApplied) {
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, int min_v, int max_v, int stp_v, int roundStep, OnChange onApplied) {
     return int(
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, v, (float) min_v, (float) max_v, (float) stp_v, onApplied),
@@ -2529,7 +2529,7 @@ class UI_rollout {
     );
   }
 
-  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, float roundStep, SpinnerApplied onApplied) {
+  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, float roundStep, OnChange onApplied) {
     return (
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v, onApplied),
@@ -2548,7 +2548,7 @@ class UI_rollout {
     );
   }
 
-  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, SpinnerApplied onApplied) {
+  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, OnChange onApplied) {
     float roundStep = Math.abs(stp_v);
     return (
       funcs.roundTo(
@@ -2571,7 +2571,7 @@ class UI_rollout {
     this.spinnerEditStateChanged = true;
   }
 
-  float _Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, SpinnerApplied onApplied) {
+  float _Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, OnChange onApplied) {
 
     float new_value = v;
 

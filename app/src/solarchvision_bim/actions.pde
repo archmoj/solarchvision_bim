@@ -22,7 +22,7 @@ interface FloatSetter {
 // changes a field's value. Receives the value before and after the
 // change, since a few fields (e.g. Select3D.posValue) apply a delta
 // between the two rather than the new value on its own.
-interface SpinnerApplied {
+interface OnChange {
   void run(float oldValue, float newValue);
 }
 
@@ -77,7 +77,7 @@ private void putAction(String s, Action fn) {
 //              happens outside that per-frame diff window, so it would never
 //              be picked up there; onApplied lets us run that same
 //              field-specific follow-up work immediately instead.
-void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3, SpinnerApplied onApplied) {
+void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3, OnChange onApplied) {
   putAction(name, (args) -> {
     float min_v = minGetter.get();
     float max_v = maxGetter.get();
@@ -126,7 +126,7 @@ void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, Float
 }
 
 // Convenience overloads for the common case of fixed, constant bounds.
-void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3, SpinnerApplied onApplied) {
+void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3, OnChange onApplied) {
   putSpinnerAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, onApplied);
 }
 

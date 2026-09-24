@@ -1,4 +1,4 @@
-// Shared SpinnerApplied follow-up callbacks: the work a field needs done
+// Shared OnChange follow-up callbacks: the work a field needs done
 // beyond a plain revise() when its value actually changes (see
 // applyRolloutUpdate.pde for the equivalent logic this used to run once
 // per frame via a before/after diff). Declared as fields, once, here -
@@ -14,7 +14,7 @@
 // set up yet at the point this react instance itself is constructed.
 class react {
 
-  SpinnerApplied applyTimeChange = (o, n) -> {
+  OnChange applyTimeChange = (o, n) -> {
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
     TIME.hour = int(24 * (TIME.date - int(TIME.date)));
     TIME.date = (TIME.hour / 24.0) + (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365;
@@ -22,27 +22,27 @@ class react {
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
 
-  SpinnerApplied applyLocationChange = (o, n) -> {
+  OnChange applyLocationChange = (o, n) -> {
     WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
     WORLD.revise();
   };
 
-  SpinnerApplied viewChangedOnly = (o, n) -> { if (o == n) return; view_changed(); };
-  SpinnerApplied caseBarOnly = (o, n) -> { if (o == n) return; UI_caseBar.revise(); };
-  SpinnerApplied recalcImpact = (o, n) -> { if (o == n) return; allSolidImpacts.calculate_Impact_selectedSections(); view_changed(); };
-  SpinnerApplied selectionChangedOnly = (o, n) -> { if (o == n) return; selection_changed(); };
-  SpinnerApplied softSelectionChanged = (o, n) -> { if (o == n) return; Select3D.convert_Vertex_to_softSelection(); };
-  SpinnerApplied impactsUpdateFlag = (o, n) -> { if (o == n) return; STUDY.Impacts_update = true; UI_caseBar.updated(); };
+  OnChange viewChangedOnly = (o, n) -> { if (o == n) return; view_changed(); };
+  OnChange caseBarOnly = (o, n) -> { if (o == n) return; UI_caseBar.revise(); };
+  OnChange recalcImpact = (o, n) -> { if (o == n) return; allSolidImpacts.calculate_Impact_selectedSections(); view_changed(); };
+  OnChange selectionChangedOnly = (o, n) -> { if (o == n) return; selection_changed(); };
+  OnChange softSelectionChanged = (o, n) -> { if (o == n) return; Select3D.convert_Vertex_to_softSelection(); };
+  OnChange impactsUpdateFlag = (o, n) -> { if (o == n) return; STUDY.Impacts_update = true; UI_caseBar.updated(); };
 
   // Move/Rotate/Scale-by-delta spinners: applyRolloutUpdate.pde applies the
   // *difference* between the old and new spinner reading as a transform on
   // the current selection, rather than treating the field as a plain
-  // setting - replicated here using the old/new values SpinnerApplied gets.
+  // setting - replicated here using the old/new values OnChange gets.
   // The o == n guard matters here beyond just skipping redundant work: with
   // no change, d/r/s below would be 0/0/1 (a genuine no-op), but calling
   // model_changed() unconditionally every frame would still force a
   // constant, needless redraw.
-  SpinnerApplied applyPosValue = (o, n) -> {
+  OnChange applyPosValue = (o, n) -> {
     if (o == n) return;
     float d = n - o;
     float dx = d, dy = d, dz = d;
@@ -53,14 +53,14 @@ class react {
     Move3D.selection(dx, dy, dz);
     model_changed();
   };
-  SpinnerApplied applyRotValue = (o, n) -> {
+  OnChange applyRotValue = (o, n) -> {
     if (o == n) return;
     float[] P = Select3D.getPivot();
     float r = n - o;
     Rotate3D.selection(P[0], P[1], P[2], r, Select3D.rotVector);
     model_changed();
   };
-  SpinnerApplied applyScaleValue = (o, n) -> {
+  OnChange applyScaleValue = (o, n) -> {
     if (o == n) return;
     float[] P = Select3D.getPivot();
     float s = pow(2.0, n - o);
@@ -74,7 +74,7 @@ class react {
   };
 
   // One-off follow-up callbacks (each used by exactly one spinner).
-  SpinnerApplied applyStudyJEnd = (o, n) -> {
+  OnChange applyStudyJEnd = (o, n) -> {
     if (o == n) return;
     UI_caseBar.revise();
     if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
@@ -93,19 +93,19 @@ class react {
   // guard here) because it also needs an immediate UI_rollout.draw() -
   // unsafe to fold into a callback that may itself run from inside
   // Spinner(), which draw() is already in the middle of calling.
-  SpinnerApplied applyTimeDate = (o, n) -> {
+  OnChange applyTimeDate = (o, n) -> {
     TIME.updateDate();
     update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
-  SpinnerApplied applyLandLoadTextures = (o, n) -> { if (o == n) return; Land3D.update_textures(); model_changed(); };
-  SpinnerApplied applyLandLoadMesh = (o, n) -> { if (o == n) return; Land3D.update_mesh(); model_changed(); };
-  SpinnerApplied applyCurrentCamera = (o, n) -> {
+  OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; Land3D.update_textures(); model_changed(); };
+  OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; Land3D.update_mesh(); model_changed(); };
+  OnChange applyCurrentCamera = (o, n) -> {
     if (o == n) return;
     WIN3D.apply_currentCamera();
     modify_Viewport_Title();
     view_changed();
   };
-  SpinnerApplied applyCreatePowAll = (o, n) -> {
+  OnChange applyCreatePowAll = (o, n) -> {
     if (o == n) return;
     User3D.create_powX = User3D.create_powAll;
     User3D.create_powY = User3D.create_powAll;
