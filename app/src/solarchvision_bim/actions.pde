@@ -49,14 +49,16 @@ private void putAction(String s, Action fn) {
     allActions.put(key, fn);
 }
 
-// Registers a command-line-callable action that mirrors what a UI spinner
-// does when its value changes: validate the new value is within range,
-// round it the same way the spinner does (funcs.roundTo), apply it only
-// if it actually changed, and then revise the same views the spinner's
+// Registers a command-line-callable action that sets a bounded numeric
+// field's value: validate the new value is within range, round it the
+// same way this.Spinner(...) does (funcs.roundTo), apply it only if it
+// actually changed, and then revise the same views a spinner's
 // update1/update2/update3 flags would have revised (STUDY, WIN3D, WORLD).
+// This is the same validate/round/apply/revise logic UI_rollout.draw()'s
+// this.Spinner(...) calls use, just reachable outside the draw() loop too.
 //
 // This is the core (min/max evaluated fresh on every call, via getters):
-// some spinners' min/max come from other fields that can change during a
+// some fields' min/max come from other fields that can change during a
 // session (e.g. a loaded project's climate-year range, camera count, or
 // palette size), so baking them in once at registration time would go
 // stale. The plain-float overloads below are for the (much more common)
@@ -77,7 +79,7 @@ private void putAction(String s, Action fn) {
 //              happens outside that per-frame diff window, so it would never
 //              be picked up there; onChanged lets us run that same
 //              field-specific follow-up work immediately instead.
-void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3, OnChange onChanged) {
+void putValueAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3, OnChange onChanged) {
   putAction(name, (args) -> {
     float min_v = minGetter.get();
     float max_v = maxGetter.get();
@@ -119,19 +121,19 @@ void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, Float
   });
 }
 
-// Convenience overload for dynamic-bound spinners that don't need any
+// Convenience overload for dynamic-bound fields that don't need any
 // extra follow-up work beyond the update1/update2/update3 revise() calls.
-void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3) {
-  putSpinnerAction(name, getter, setter, minGetter, maxGetter, step, update1, update2, update3, null);
+void putValueAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3) {
+  putValueAction(name, getter, setter, minGetter, maxGetter, step, update1, update2, update3, null);
 }
 
 // Convenience overloads for the common case of fixed, constant bounds.
-void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3, OnChange onChanged) {
-  putSpinnerAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, onChanged);
+void putValueAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3, OnChange onChanged) {
+  putValueAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, onChanged);
 }
 
-void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3) {
-  putSpinnerAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, null);
+void putValueAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3) {
+  putValueAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, null);
 }
 
 void build_allActions() {
