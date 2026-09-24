@@ -55,10 +55,19 @@ private void putAction(String s, Action fn) {
 void reviseByUpdateFlags(int update1, int update2, int update3) {
   if (update1 != 0) {
     UI_caseBar.revise();
+    UI_rollout.revise();
     STUDY.revise();
   }
-  if (update2 != 0) WIN3D.revise();
-  if (update3 != 0) WORLD.revise();
+
+  if (update2 != 0) {
+    UI_rollout.revise();
+    WIN3D.revise();
+  }
+
+  if (update3 != 0) {
+    UI_rollout.revise();
+    WORLD.revise();
+  }
 }
 
 // Registers a command-line-callable action that sets a bounded numeric
