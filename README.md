@@ -741,8 +741,48 @@ Includes commands such as:
 -   `PREBAKE.VIEWPORT`: Pre-bakes the viewport
 
 ### Additional commands
--   `1d-tree`,
+-   `21d-tree`,
 -   `2d-tree`,
+-   `3d-create.branchratio`,
+-   `3d-create.branchtilt`,
+-   `3d-create.branchtwist`,
+-   `3d-create.closed`,
+-   `3d-create.cylinderdegree`,
+-   `3d-create.degreemax`,
+-   `3d-create.displaytessellation`,
+-   `3d-create.height_(rand_negative)`,
+-   `3d-create.layer`,
+-   `3d-create.leafsize`,
+-   `3d-create.length_(rand_negative)`,
+-   `3d-create.material`,
+-   `3d-create.orientation`,
+-   `3d-create.parametric_type`,
+-   `3d-create.person_type`,
+-   `3d-create.plant_type`,
+-   `3d-create.polydegree`,
+-   `3d-create.powall`,
+-   `3d-create.powx`,
+-   `3d-create.powy`,
+-   `3d-create.powz`,
+-   `3d-create.seed`,
+-   `3d-create.snap`,
+-   `3d-create.spheredegree`,
+-   `3d-create.tessellation`,
+-   `3d-create.treebase`,
+-   `3d-create.trunksize`,
+-   `3d-create.type`,
+-   `3d-create.visibility`,
+-   `3d-create.volume`,
+-   `3d-create.weight`,
+-   `3d-create.width_(rand_negative)`,
+-   `3d-export.backsides`,
+-   `3d-export.flipzyaxis`,
+-   `3d-export.materiallibrary`,
+-   `3d-export.paletteresolution`,
+-   `3d-export.polytopoly`,
+-   `3d-export.precisionvertex`,
+-   `3d-export.precisionvtexture`,
+-   `3d-export.scale`,
 -   `3d-model 1`,
 -   `3d-model 10`,
 -   `3d-model 11`,
@@ -754,11 +794,45 @@ Includes commands such as:
 -   `3d-model 7`,
 -   `3d-model 8`,
 -   `3d-model 9`,
+-   `3d-modify.offsetamount`,
+-   `3d-modify.openningarea`,
+-   `3d-modify.openningdepth`,
+-   `3d-modify.openningdeviation`,
+-   `3d-modify.tessellatecolumns`,
+-   `3d-modify.tessellaterows`,
+-   `3d-modify.weldtreshold`,
+-   `3d-select.alignx`,
+-   `3d-select.aligny`,
+-   `3d-select.alignz`,
+-   `3d-select.camera_displayedges`,
+-   `3d-select.displayreferencepivot`,
+-   `3d-select.face_displayedges`,
+-   `3d-select.face_displayvertexcount`,
+-   `3d-select.group_displaybox`,
+-   `3d-select.group_displayedges`,
+-   `3d-select.group_displaypivot`,
+-   `3d-select.landpoint_displaypoints`,
+-   `3d-select.model1d_displayedges`,
+-   `3d-select.model2d_displayedges`,
+-   `3d-select.polyline_displayvertexcount`,
+-   `3d-select.polyline_displayvertices`,
+-   `3d-select.posvalue`,
+-   `3d-select.posvector`,
+-   `3d-select.rotvalue`,
+-   `3d-select.rotvector`,
+-   `3d-select.scalevalue`,
+-   `3d-select.scalevector`,
+-   `3d-select.section_displayedges`,
+-   `3d-select.softpower`,
+-   `3d-select.softradius`,
+-   `3d-select.solid_displayedges`,
+-   `3d-select.vertex_displayvertices`,
 -   `3dmodelsize`,
 -   `active shade`,
 -   `add 1d-trees on land`,
 -   `add 2d-trees on land`,
 -   `add people on land`,
+-   `addtolastgroup`,
 -   `allmodelsize`,
 -   `annual cycle sun path (active)`,
 -   `annual cycle sun path (passive)`,
@@ -781,15 +855,21 @@ Includes commands such as:
 -   `back`,
 -   `begin new group at origin`,
 -   `begin new group at pivot`,
+-   `begin_day`,
+-   `begin_month`,
+-   `begin_year`,
 -   `bottom`,
 -   `box`,
 -   `camera`,
 -   `camera >> viewport`,
 -   `camera view`,
+-   `camera_clipfar`,
+-   `camera_clipnear`,
 -   `cameradistance`,
 -   `cameraroll`,
 -   `camerarollxy`,
 -   `camerarollz`,
+-   `cameras.displayall`,
 -   `change branchratio`,
 -   `change branchtilt`,
 -   `change branchtwist`,
@@ -802,10 +882,18 @@ Includes commands such as:
 -   `change trunksize`,
 -   `change visibility`,
 -   `change weight`,
+-   `climate-based_solar_forecast`,
+-   `climate-based_temperature_forecast`,
 -   `clone selection (identical)`,
 -   `clone selection (variation)`,
+-   `create3d.displayedges`,
+-   `create3d.displaynormals`,
+-   `create3d.displayvertices`,
+-   `currentcamera`,
 -   `cushion`,
 -   `cylinder`,
+-   `day_step`,
+-   `days_past_march_equinox`,
 -   `delete all`,
 -   `delete all cameras`,
 -   `delete all faces`,
@@ -820,9 +908,21 @@ Includes commands such as:
 -   `delete selection`,
 -   `delete selection isolated vertices`,
 -   `deselect all`,
--   `designed & developed by`,
 -   `dettach from groups selection`,
+-   `develop_dayhour`,
+-   `develop_option`,
+-   `diagram_setup`,
 -   `display all viewports`,
+-   `displayall_clmrec`,
+-   `displayall_cweeds`,
+-   `displayall_naefs`,
+-   `displayall_swob`,
+-   `displayall_tmyepw`,
+-   `displaynear_clmrec`,
+-   `displaynear_cweeds`,
+-   `displaynear_naefs`,
+-   `displaynear_swob`,
+-   `displaynear_tmyepw`,
 -   `distmousexy`,
 -   `distz`,
 -   `download clmrec`,
@@ -831,9 +931,20 @@ Includes commands such as:
 -   `download naefs`,
 -   `download swob`,
 -   `download tmyepw`,
+-   `draw_data`,
+-   `draw_probabilities`,
+-   `draw_sorted`,
+-   `draw_statistics`,
 -   `drop on landsurface`,
 -   `drop on modelsurface (down)`,
 -   `drop on modelsurface (up)`,
+-   `earth3d.displaysurface`,
+-   `earth3d.displaytexture`,
+-   `earth3d.levelofdetail`,
+-   `end_hour`,
+-   `end_member`,
+-   `end_station`,
+-   `end_year`,
 -   `enlarge 3d viewport`,
 -   `enlarge map viewport`,
 -   `enlarge time viewport`,
@@ -843,14 +954,25 @@ Includes commands such as:
 -   `export 3d-model > obj (time-series)`,
 -   `export 3d-model > rad`,
 -   `export 3d-model > scr`,
+-   `export_ascii_data`,
+-   `export_ascii_probabilities`,
+-   `export_ascii_statistics`,
 -   `extrude`,
 -   `extrude face edges`,
 -   `faces >> groups`,
 -   `faces >> vertices`,
+-   `faces.active_palette_clr`,
+-   `faces.active_palette_dir`,
+-   `faces.active_palette_mlt`,
+-   `faces.displayall`,
+-   `faces.passive_palette_clr`,
+-   `faces.passive_palette_dir`,
+-   `faces.passive_palette_mlt`,
 -   `fetch`,
 -   `flatten selected landpoints`,
 -   `flip normal`,
 -   `force triangulate selected faces`,
+-   `forecast/obs_maxdays`,
 -   `front`,
 -   `get dx`,
 -   `get dxy`,
@@ -920,26 +1042,46 @@ Includes commands such as:
 -   `hold`,
 -   `hourly sun position (active)`,
 -   `hourly sun position (passive)`,
+-   `hourly/daily_filter`,
 -   `house1`,
 -   `house2`,
 -   `house3`,
 -   `hyper`,
 -   `icosahedron`,
+-   `impact_min/50%/max`,
+-   `impact_source`,
+-   `impacts_displayday`,
 -   `import 3d-model...`,
 -   `import command file...`,
+-   `inclination_angle`,
 -   `insert corner opennings`,
 -   `insert edge opennings`,
 -   `insert parallel opennings`,
 -   `insert rotated opennings`,
+-   `interpolation_weight`,
 -   `invert selection`,
 -   `isolate selection`,
+-   `join_days`,
 -   `jpg 3d full-period`,
 -   `jpg 3d graph`,
 -   `jpg location graph`,
 -   `jpg time graph`,
+-   `land.displaytessellation`,
+-   `land3d.displaydepth`,
+-   `land3d.displaypoints`,
+-   `land3d.displaysurface`,
+-   `land3d.displaytexture`,
+-   `land3d.loadmesh`,
+-   `land3d.loadtextures`,
+-   `land3d.palette_clr`,
+-   `land3d.palette_dir`,
+-   `land3d.palette_mlt`,
+-   `land3d.skipend`,
+-   `land3d.skipstart`,
 -   `landgap >> group`,
 -   `landmesh >> group`,
 -   `landorbit`,
+-   `latitude`,
 -   `layout -1`,
 -   `layout -2`,
 -   `layout 0`,
@@ -955,13 +1097,20 @@ Includes commands such as:
 -   `load land mesh`,
 -   `load land texture`,
 -   `load toroposphere`,
+-   `longitude`,
 -   `look at direction`,
 -   `look at origin`,
 -   `look at selection`,
 -   `model1ds >> groups`,
+-   `model1ds.displayall`,
+-   `model1ds.displayleaves`,
 -   `model1dsprops`,
 -   `model2ds >> groups`,
+-   `model2ds.displayall`,
 -   `mojtaba samimi`,
+-   `moon3d.displaysurface`,
+-   `moon3d.displaytexture`,
+-   `moon3d.fitinskydome`,
 -   `move`,
 -   `movex`,
 -   `movey`,
@@ -969,6 +1118,8 @@ Includes commands such as:
 -   `n.e.`,
 -   `n.w.`,
 -   `new`,
+-   `number_of_days_to_plot`,
+-   `objects_scale`,
 -   `octahedron`,
 -   `offset(above) vertices`,
 -   `offset(below) vertices`,
@@ -981,6 +1132,7 @@ Includes commands such as:
 -   `orbitz`,
 -   `orientation potential (active)`,
 -   `orientation potential (passive)`,
+-   `orientation_angle`,
 -   `orthographic`,
 -   `pan`,
 -   `panx`,
@@ -1006,8 +1158,8 @@ Includes commands such as:
 -   `pick pivot`,
 -   `pick seed/material`,
 -   `pick select`,
--   `pick select+`,
 -   `pick select-`,
+-   `pick select+`,
 -   `pick tessellation`,
 -   `pick treebase`,
 -   `pick trunksize`,
@@ -1024,17 +1176,21 @@ Includes commands such as:
 -   `pivotz:maximum`,
 -   `pivotz:minimum`,
 -   `plane`,
+-   `planetary_magnification`,
 -   `point`,
 -   `polygon`,
 -   `polyline`,
 -   `polylines >> groups`,
 -   `polylines >> vertices`,
+-   `polylines.displayall`,
 -   `power`,
 -   `powerx`,
 -   `powery`,
 -   `powerz`,
 -   `prebake selected sections`,
 -   `prebake viewport`,
+-   `probabilities_interval`,
+-   `probabilities_range`,
 -   `process active impact`,
 -   `process passive impact`,
 -   `process solid impact`,
@@ -1044,6 +1200,9 @@ Includes commands such as:
 -   `rec. screenshot`,
 -   `rec. solid graph`,
 -   `rec. time graph`,
+-   `record_solar_analysis_in_jpg`,
+-   `record_solidimpact_in_jpg`,
+-   `record_solidimpact_in_pdf`,
 -   `reposition selected vertices`,
 -   `reset saved referencebox`,
 -   `reverse visibility of all faces`,
@@ -1059,6 +1218,7 @@ Includes commands such as:
 -   `save as...`,
 -   `save current referencebox`,
 -   `scale`,
+-   `scale`,
 -   `scalex`,
 -   `scaley`,
 -   `scalez`,
@@ -1066,6 +1226,7 @@ Includes commands such as:
 -   `screenshot+click`,
 -   `screenshot+drag`,
 -   `section`,
+-   `sections.displayall`,
 -   `select all`,
 -   `select all cameras`,
 -   `select all faces`,
@@ -1202,13 +1363,72 @@ Includes commands such as:
 -   `show/hide troposphere`,
 -   `show/hide vertices`,
 -   `show/hide wind flow`,
+-   `sky_status`,
+-   `sky.displaytessellation`,
+-   `sky.scale`,
+-   `sky3d.active_palette_clr`,
+-   `sky3d.active_palette_dir`,
+-   `sky3d.active_palette_mlt`,
+-   `sky3d.displaysurface`,
+-   `sky3d.passive_palette_clr`,
+-   `sky3d.passive_palette_dir`,
+-   `sky3d.passive_palette_mlt`,
 -   `skydomesize`,
 -   `soft selection`,
 -   `solarchvision-bim6d`,
+-   `solarimpacts.displayimage`,
+-   `solarimpacts.sectiontype`,
 -   `solid`,
+-   `solidimpacts.displayimage`,
+-   `solidimpacts.displaylines`,
+-   `solidimpacts.displaypoints`,
+-   `solidimpacts.grade`,
+-   `solidimpacts.positionstep`,
+-   `solidimpacts.power`,
+-   `solidimpacts.process_subdivisions`,
+-   `solidimpacts.r`,
+-   `solidimpacts.sectiontype`,
+-   `solidimpacts.u`,
+-   `solidimpacts.v`,
+-   `solidimpacts.winddirection`,
+-   `solidimpacts.windspeed_(m/s)`,
+-   `solidimpacts.x`,
+-   `solidimpacts.y`,
+-   `solidimpacts.z`,
 -   `solids >> groups`,
+-   `solids.displayall`,
+-   `solids.palette_clr`,
+-   `solids.palette_dir`,
+-   `solids.palette_mlt`,
 -   `sphere`,
+-   `start_hour`,
+-   `start_member`,
+-   `start_station`,
+-   `start_year`,
 -   `stop rec.`,
+-   `study.active_palette_clr`,
+-   `study.active_palette_dir`,
+-   `study.active_palette_mlt`,
+-   `study.passive_palette_clr`,
+-   `study.passive_palette_dir`,
+-   `study.passive_palette_mlt`,
+-   `study.prob_palette_clr`,
+-   `study.prob_palette_dir`,
+-   `study.prob_palette_mlt`,
+-   `study.sort_palette_clr`,
+-   `study.sort_palette_dir`,
+-   `study.sort_palette_mlt`,
+-   `sun3d.active_palette_clr`,
+-   `sun3d.active_palette_dir`,
+-   `sun3d.active_palette_mlt`,
+-   `sun3d.displaypath`,
+-   `sun3d.displaypattern`,
+-   `sun3d.displaysurface`,
+-   `sun3d.displaytexture`,
+-   `sun3d.fitinskydome`,
+-   `sun3d.passive_palette_clr`,
+-   `sun3d.passive_palette_dir`,
+-   `sun3d.passive_palette_mlt`,
 -   `surface`,
 -   `targetroll`,
 -   `targetrollxy`,
@@ -1217,6 +1437,9 @@ Includes commands such as:
 -   `tessellate rows & columns`,
 -   `tessellate triangular`,
 -   `top`,
+-   `trend_period_hours`,
+-   `tropo3d.displaysurface`,
+-   `tropo3d.displaytexture`,
 -   `truckx`,
 -   `trucky`,
 -   `truckz`,
@@ -1242,252 +1465,24 @@ Includes commands such as:
 -   `vertices >> groups`,
 -   `vertices >> polylines`,
 -   `viewport >> camera`,
+-   `weighted/equal_trend`,
 -   `weld objects selected vertices`,
 -   `weld scene selected vertices`,
 -   `wind pattern (active)`,
 -   `wind pattern (passive)`,
+-   `windflows.displayall`,
+-   `windflows.palette_clr`,
+-   `windflows.palette_dir`,
+-   `windflows.palette_mlt`,
+-   `windose_opacity_scale`,
 -   `window select`,
--   `window select+`,
 -   `window select-`,
+-   `window select+`,
+-   `windroses.displayimage`,
+-   `windroses.scale`,
 -   `www.solarchvision.com`,
 -   `zoom`,
 -   `zoom as default`
-
-command (type this)                      field                                         original caption
-----------------------------------------------------------------------------------------------------------------------------------
-3d-create.branchratio                    User3D.create_Model1D_BranchRatio             3D-create.BranchRatio
-3d-create.branchtilt                     User3D.create_Model1D_BranchTilt              3D-create.BranchTilt
-3d-create.branchtwist                    User3D.create_Model1D_BranchTwist             3D-create.BranchTwist
-3d-create.closed                         User3D.default_Closed                         3D-create.Closed
-3d-create.cylinderdegree                 User3D.create_CylinderDegree                  3D-create.CylinderDegree
-3d-create.degreemax                      User3D.create_Model1D_DegreeMax               3D-create.DegreeMax
-3d-create.displaytessellation            allFaces.displayTessellation                  3D-create.displayTessellation
-3d-create.height_(rand_negative)         User3D.create_Height                          3D-create.Height (rand negative)
-3d-create.layer                          User3D.default_Layer                          3D-create.Layer
-3d-create.leafsize                       User3D.create_Model1D_LeafSize                3D-create.LeafSize
-3d-create.length_(rand_negative)         User3D.create_Length                          3D-create.Length (rand negative)
-3d-create.material                       User3D.default_Material                       3D-create.Material
-3d-create.orientation                    User3D.create_Orientation                     3D-create.Orientation
-3d-create.parametric_type                User3D.create_Parametric_Type                 3D-create.Parametric_Type
-3d-create.person_type                    User3D.create_Person_Type                     3D-create.Person_Type
-3d-create.plant_type                     User3D.create_Plant_Type                      3D-create.Plant_Type
-3d-create.polydegree                     User3D.create_PolyDegree                      3D-create.PolyDegree
-3d-create.powall                         User3D.create_powAll                          3D-create.powAll
-3d-create.powx                           User3D.create_powX                            3D-create.powX
-3d-create.powy                           User3D.create_powY                            3D-create.powY
-3d-create.powz                           User3D.create_powZ                            3D-create.powZ
-3d-create.seed                           User3D.create_Model1D_Seed                    3D-create.Seed
-3d-create.snap                           User3D.create_Snap                            3D-create.Snap
-3d-create.spheredegree                   User3D.create_SphereDegree                    3D-create.SphereDegree
-3d-create.tessellation                   User3D.default_Tessellation                   3D-create.Tessellation
-3d-create.treebase                       User3D.create_Model1D_TreeBase                3D-create.TreeBase
-3d-create.trunksize                      User3D.create_Model1D_TrunkSize               3D-create.TrunkSize
-3d-create.type                           User3D.create_Model1D_Type                    3D-create.Type
-3d-create.visibility                     User3D.default_Visibility                     3D-create.Visibility
-3d-create.volume                         User3D.create_Volume                          3D-create.Volume
-3d-create.weight                         User3D.default_Weight                         3D-create.Weight
-3d-create.width_(rand_negative)          User3D.create_Width                           3D-create.Width (rand negative)
-3d-export.backsides                      User3D.export_BackSides                       3D-export.BackSides
-3d-export.flipzyaxis                     User3D.export_FlipZYaxis                      3D-export.FlipZYaxis
-3d-export.materiallibrary                User3D.export_MaterialLibrary                 3D-export.MaterialLibrary
-3d-export.paletteresolution              User3D.export_PaletteResolution               3D-export.PaletteResolution
-3d-export.polytopoly                     User3D.export_PolyToPoly                      3D-export.PolyToPoly
-3d-export.precisionvertex                User3D.export_PrecisionVertex                 3D-export.PrecisionVertex
-3d-export.precisionvtexture              User3D.export_PrecisionVtexture               3D-export.PrecisionVtexture
-3d-export.scale                          User3D.export_Scale                           3D-export.Scale
-3d-modify.offsetamount                   User3D.modify_OffsetAmount                    3D-modify.OffsetAmount
-3d-modify.openningarea                   User3D.modify_OpenningArea                    3D-modify.OpenningArea
-3d-modify.openningdepth                  User3D.modify_OpenningDepth                   3D-modify.OpenningDepth
-3d-modify.openningdeviation              User3D.modify_OpenningDeviation               3D-modify.OpenningDeviation
-3d-modify.tessellatecolumns              User3D.modify_TessellateColumns               3D-modify.TessellateColumns
-3d-modify.tessellaterows                 User3D.modify_TessellateRows                  3D-modify.TessellateRows
-3d-modify.weldtreshold                   User3D.modify_WeldTreshold                    3D-modify.WeldTreshold
-3d-select.alignx                         Select3D.alignX                               3D-select.alignX
-3d-select.aligny                         Select3D.alignY                               3D-select.alignY
-3d-select.alignz                         Select3D.alignZ                               3D-select.alignZ
-3d-select.camera_displayedges            Select3D.Camera_displayEdges                  3D-select.Camera_displayEdges
-3d-select.displayreferencepivot          Select3D.displayReferencePivot                3D-select.displayReferencePivot
-3d-select.face_displayedges              Select3D.Face_displayEdges                    3D-select.Face_displayEdges
-3d-select.face_displayvertexcount        Select3D.Face_displayVertexCount              3D-select.Face_displayVertexCount
-3d-select.group_displaybox               Select3D.Group_displayBox                     3D-select.Group_displayBox
-3d-select.group_displayedges             Select3D.Group_displayEdges                   3D-select.Group_displayEdges
-3d-select.group_displaypivot             Select3D.Group_displayPivot                   3D-select.Group_displayPivot
-3d-select.landpoint_displaypoints        Select3D.LandPoint_displayPoints              3D-select.LandPoint_displayPoints
-3d-select.model1d_displayedges           Select3D.Model1D_displayEdges                 3D-select.Model1D_displayEdges
-3d-select.model2d_displayedges           Select3D.Model2D_displayEdges                 3D-select.Model2D_displayEdges
-3d-select.polyline_displayvertexcount    Select3D.Polyline_displayVertexCount          3D-select.Polyline_displayVertexCount
-3d-select.polyline_displayvertices       Select3D.Polyline_displayVertices             3D-select.Polyline_displayVertices
-3d-select.posvalue                       Select3D.posValue                             3D-select.posValue
-3d-select.posvector                      Select3D.posVector                            3D-select.posVector
-3d-select.rotvalue                       Select3D.rotValue                             3D-select.rotValue
-3d-select.rotvector                      Select3D.rotVector                            3D-select.rotVector
-3d-select.scalevalue                     Select3D.scaleValue                           3D-select.scaleValue
-3d-select.scalevector                    Select3D.scaleVector                          3D-select.scaleVector
-3d-select.section_displayedges           Select3D.Section_displayEdges                 3D-select.Section_displayEdges
-3d-select.softpower                      Select3D.softPower                            3D-select.softPower
-3d-select.softradius                     Select3D.softRadius                           3D-select.softRadius
-3d-select.solid_displayedges             Select3D.Solid_displayEdges                   3D-select.Solid_displayEdges
-3d-select.vertex_displayvertices         Select3D.Vertex_displayVertices               3D-select.Vertex_displayVertices
-addtolastgroup                           addToLastGroup                                addToLastGroup
-camera_clipfar                           WIN3D.CAM_clipFar                             Camera_clipFar
-camera_clipnear                          WIN3D.CAM_clipNear                            Camera_clipNear
-cameras.displayall                       allCameras.displayAll                         cameras.displayAll
-climate-based_solar_forecast             CLIMATIC_SolarForecast                        Climate-based solar forecast
-climate-based_temperature_forecast       CLIMATIC_WeatherForecast                      Climate-based temperature forecast
-create3d.displayedges                    allFaces.displayEdges                         Create3D.displayEdges
-create3d.displaynormals                  allFaces.displayNormals                       Create3D.displayNormals
-create3d.displayvertices                 allPoints.displayAll                          Create3D.displayVertices
-currentcamera                            WIN3D.currentCamera                           currentCamera
-day_step                                 STUDY.perDays                                 Day step
-days_past_march_equinox                  TIME.date                                     Days past March equinox
-develop_dayhour                          Develop_DayHour                               Develop_DayHour
-develop_option                           Develop_Option                                Develop_Option
-diagram_setup                            STUDY.plotSetup                               Diagram setup
-displayall_clmrec                        WORLD.displayAll_CLMREC                       displayAll_CLMREC
-displayall_cweeds                        WORLD.displayAll_CWEEDS                       displayAll_CWEEDS
-displayall_naefs                         WORLD.displayAll_NAEFS                        displayAll_NAEFS
-displayall_swob                          WORLD.displayAll_SWOB                         displayAll_SWOB
-displayall_tmyepw                        WORLD.displayAll_TMYEPW                       displayAll_TMYEPW
-displaynear_clmrec                       WORLD.displayNear_CLMREC                      displayNear_CLMREC
-displaynear_cweeds                       WORLD.displayNear_CWEEDS                      displayNear_CWEEDS
-displaynear_naefs                        WORLD.displayNear_NAEFS                       displayNear_NAEFS
-displaynear_swob                         WORLD.displayNear_SWOB                        displayNear_SWOB
-displaynear_tmyepw                       WORLD.displayNear_TMYEPW                      displayNear_TMYEPW
-draw_data                                STUDY.displayRaws                             Draw data
-draw_probabilities                       STUDY.displayProbs                            Draw probabilities
-draw_sorted                              STUDY.displaySorted                           Draw sorted
-draw_statistics                          STUDY.displayNormals                          Draw statistics
-earth3d.displaysurface                   Earth3D.displaySurface                        Earth3D.displaySurface
-earth3d.displaytexture                   Earth3D.displayTexture                        Earth3D.displayTexture
-earth3d.levelofdetail                    Earth3D.levelOfDetail                         Earth3D.levelOfDetail
-end_hour                                 STUDY.i_End                                   End hour
-end_member                               SampleMember_End                              End member
-end_station                              SampleStation_End                             End station
-end_year                                 SampleYear_End                                End year
-export_ascii_data                        STUDY.export_info_node                        Export ASCII data
-export_ascii_probabilities               STUDY.export_info_prob                        Export ASCII probabilities
-export_ascii_statistics                  STUDY.export_info_norm                        Export ASCII statistics
-faces.active_palette_clr                 allFaces.ACTIVE_palette_CLR                   faces.ACTIVE_palette_CLR
-faces.active_palette_dir                 allFaces.ACTIVE_palette_DIR                   faces.ACTIVE_palette_DIR
-faces.active_palette_mlt                 allFaces.ACTIVE_palette_MLT                   faces.ACTIVE_palette_MLT
-faces.displayall                         allFaces.displayAll                           faces.displayAll
-faces.passive_palette_clr                allFaces.PASSIVE_palette_CLR                  faces.PASSIVE_palette_CLR
-faces.passive_palette_dir                allFaces.PASSIVE_palette_DIR                  faces.PASSIVE_palette_DIR
-faces.passive_palette_mlt                allFaces.PASSIVE_palette_MLT                  faces.PASSIVE_palette_MLT
-forecast/obs_maxdays                     ENSEMBLE_OBSERVED_maxDays                     Forecast/Obs_maxDays
-hourly/daily_filter                      STUDY.filter                                  Hourly/daily filter
-impact_min/50%/max                       STUDY.ImpactLayer                             Impact Min/50%/Max
-impact_source                            CurrentDataSource                             Impact Source
-impacts_displayday                       IMPACTS_displayDay                            IMPACTS_displayDay
-inclination_angle                        Develop_AngleInclination                      Inclination angle
-interpolation_weight                     Interpolation_Weight                          Interpolation_Weight
-join_days                                STUDY.joinDays                                Join days
-land.displaytessellation                 Land3D.displayTessellation                    Land.displayTessellation
-land3d.displaydepth                      Land3D.displayDepth                           Land3D.displayDepth
-land3d.displaypoints                     Land3D.displayPoints                          Land3D.displayPoints
-land3d.displaysurface                    Land3D.displaySurface                         Land3D.displaySurface
-land3d.displaytexture                    Land3D.displayTexture                         Land3D.displayTexture
-land3d.loadmesh                          Land3D.loadMesh                               Land3D.loadMesh
-land3d.loadtextures                      Land3D.loadTextures                           Land3D.loadTextures
-land3d.palette_clr                       Land3D.palette_CLR                            Land3D.palette_CLR
-land3d.palette_dir                       Land3D.palette_DIR                            Land3D.palette_DIR
-land3d.palette_mlt                       Land3D.palette_MLT                            Land3D.palette_MLT
-land3d.skipend                           Land3D.skipEnd                                Land3D.skipEnd
-land3d.skipstart                         Land3D.skipStart                              Land3D.skipStart
-latitude                                 LocationLAT                                   Latitude
-longitude                                LocationLON                                   Longitude
-model1ds.displayall                      allModel1Ds.displayAll                        model1Ds.displayAll
-model1ds.displayleaves                   allModel1Ds.displayLeaves                     model1Ds.displayLeaves
-model2ds.displayall                      allModel2Ds.displayAll                        model2Ds.displayAll
-moon3d.displaysurface                    Moon3D.displaySurface                         Moon3D.displaySurface
-moon3d.displaytexture                    Moon3D.displayTexture                         Moon3D.displayTexture
-moon3d.fitinskydome                      Moon3D.fitInSkyDome                           Moon3D.fitInSkyDome
-number_of_days_to_plot                   STUDY.j_End                                   Number of days to plot
-objects_scale                            OBJECTS_scale                                 Objects_scale
-orientation_angle                        Develop_AngleOrientation                      Orientation angle
-planetary_magnification                  Planetary_Magnification                       Planetary_Magnification
-polylines.displayall                     allPolylines.displayAll                       polylines.displayAll
-probabilities_interval                   STUDY.sumInterval                             Probabilities interval
-probabilities_range                      STUDY.LevelPix                                Probabilities range
-record_solar_analysis_in_jpg             allSolarImpacts.record_IMG                    Record Solar Analysis in JPG
-record_solidimpact_in_jpg                allSolidImpacts.record_IMG                    Record SolidImpact in JPG
-record_solidimpact_in_pdf                allSolidImpacts.record_PDF                    Record SolidImpact in PDF
-sampleyear_start                         SampleYear_Start                              Start year
-scale                                    STUDY.V_scale                                 Scale (
-sections.displayall                      allSections.displayAll                        sections.displayAll
-sky.displaytessellation                  Sky3D.displayTessellation                     Sky.displayTessellation
-sky.scale                                Sky3D.radius                                  Sky.scale
-sky3d.active_palette_clr                 Sky3D.ACTIVE_palette_CLR                      Sky3D.ACTIVE_palette_CLR
-sky3d.active_palette_dir                 Sky3D.ACTIVE_palette_DIR                      Sky3D.ACTIVE_palette_DIR
-sky3d.active_palette_mlt                 Sky3D.ACTIVE_palette_MLT                      Sky3D.ACTIVE_palette_MLT
-sky3d.displaysurface                     Sky3D.displaySurface                          Sky3D.displaySurface
-sky3d.passive_palette_clr                Sky3D.PASSIVE_palette_CLR                     Sky3D.PASSIVE_palette_CLR
-sky3d.passive_palette_dir                Sky3D.PASSIVE_palette_DIR                     Sky3D.PASSIVE_palette_DIR
-sky3d.passive_palette_mlt                Sky3D.PASSIVE_palette_MLT                     Sky3D.PASSIVE_palette_MLT
-sky_status                               STUDY.skyScenario                             Sky status
-solarimpacts.displayimage                allSolarImpacts.displayImage                  solarImpacts.displayImage
-solarimpacts.sectiontype                 allSolarImpacts.sectionType                   solarImpacts.sectionType
-solidimpacts.displayimage                allSolidImpacts.displayImage                  solidImpacts.displayImage
-solidimpacts.displaylines                allSolidImpacts.displayLines                  solidImpacts.displayLines
-solidimpacts.displaypoints               allSolidImpacts.displayPoints                 solidImpacts.displayPoints
-solidimpacts.grade                       allSolidImpacts.Grade                         solidImpacts.Grade
-solidimpacts.positionstep                allSolidImpacts.positionStep                  solidImpacts.positionStep
-solidimpacts.power                       allSolidImpacts.Power                         solidImpacts.Power
-solidimpacts.process_subdivisions        allSolidImpacts.Process_subDivisions          solidImpacts.Process_subDivisions
-solidimpacts.r                           allSolidImpacts.R[allSolidImpacts.sectionType] solidImpacts.R[
-solidimpacts.sectiontype                 allSolidImpacts.sectionType                   solidImpacts.sectionType
-solidimpacts.u                           allSolidImpacts.U[allSolidImpacts.sectionType] solidImpacts.U[
-solidimpacts.v                           allSolidImpacts.V[allSolidImpacts.sectionType] solidImpacts.V[
-solidimpacts.winddirection               allSolidImpacts.WindDirection                 solidImpacts.WindDirection
-solidimpacts.windspeed_(m/s)             allSolidImpacts.WindSpeed                     solidImpacts.WindSpeed (m/s)
-solidimpacts.x                           allSolidImpacts.X[allSolidImpacts.sectionType] solidImpacts.X[
-solidimpacts.y                           allSolidImpacts.Y[allSolidImpacts.sectionType] solidImpacts.Y[
-solidimpacts.z                           allSolidImpacts.Z[allSolidImpacts.sectionType] solidImpacts.Z[
-solids.displayall                        allSolids.displayAll                          solids.displayAll
-solids.palette_clr                       allSolids.palette_CLR                         solids.palette_CLR
-solids.palette_dir                       allSolids.palette_DIR                         solids.palette_DIR
-solids.palette_mlt                       allSolids.palette_MLT                         solids.palette_MLT
-start_day                                TIME.day                                      Start day
-start_hour                               STUDY.i_Start                                 Start hour
-start_member                             SampleMember_Start                            Start member
-start_month                              TIME.month                                    Start month
-start_station                            SampleStation_Start                           Start station
-start_year                               TIME.year                                     Start year
-study.active_palette_clr                 STUDY.ACTIVE_palette_CLR                      STUDY.ACTIVE_palette_CLR
-study.active_palette_dir                 STUDY.ACTIVE_palette_DIR                      STUDY.ACTIVE_palette_DIR
-study.active_palette_mlt                 STUDY.ACTIVE_palette_MLT                      STUDY.ACTIVE_palette_MLT
-study.passive_palette_clr                STUDY.PASSIVE_palette_CLR                     STUDY.PASSIVE_palette_CLR
-study.passive_palette_dir                STUDY.PASSIVE_palette_DIR                     STUDY.PASSIVE_palette_DIR
-study.passive_palette_mlt                STUDY.PASSIVE_palette_MLT                     STUDY.PASSIVE_palette_MLT
-study.prob_palette_clr                   STUDY.PROB_palette_CLR                        STUDY.PROB_palette_CLR
-study.prob_palette_dir                   STUDY.PROB_palette_DIR                        STUDY.PROB_palette_DIR
-study.prob_palette_mlt                   STUDY.PROB_palette_MLT                        STUDY.PROB_palette_MLT
-study.sort_palette_clr                   STUDY.SORT_palette_CLR                        STUDY.SORT_palette_CLR
-study.sort_palette_dir                   STUDY.SORT_palette_DIR                        STUDY.SORT_palette_DIR
-study.sort_palette_mlt                   STUDY.SORT_palette_MLT                        STUDY.SORT_palette_MLT
-sun3d.active_palette_clr                 Sun3D.ACTIVE_palette_CLR                      Sun3D.ACTIVE_palette_CLR
-sun3d.active_palette_dir                 Sun3D.ACTIVE_palette_DIR                      Sun3D.ACTIVE_palette_DIR
-sun3d.active_palette_mlt                 Sun3D.ACTIVE_palette_MLT                      Sun3D.ACTIVE_palette_MLT
-sun3d.displaypath                        Sun3D.displayPath                             Sun3D.displayPath
-sun3d.displaypattern                     Sun3D.displayPattern                          Sun3D.displayPattern
-sun3d.displaysurface                     Sun3D.displaySurface                          Sun3D.displaySurface
-sun3d.displaytexture                     Sun3D.displayTexture                          Sun3D.displayTexture
-sun3d.fitinskydome                       Sun3D.fitInSkyDome                            Sun3D.fitInSkyDome
-sun3d.passive_palette_clr                Sun3D.PASSIVE_palette_CLR                     Sun3D.PASSIVE_palette_CLR
-sun3d.passive_palette_dir                Sun3D.PASSIVE_palette_DIR                     Sun3D.PASSIVE_palette_DIR
-sun3d.passive_palette_mlt                Sun3D.PASSIVE_palette_MLT                     Sun3D.PASSIVE_palette_MLT
-trend_period_hours                       STUDY.TrendJoinHours                          Trend period hours
-tropo3d.displaysurface                   Tropo3D.displaySurface                        Tropo3D.displaySurface
-tropo3d.displaytexture                   Tropo3D.displayTexture                        Tropo3D.displayTexture
-weighted/equal_trend                     STUDY.TrendJoinType                           Weighted/equal trend
-windflows.displayall                     allWindFlows.displayAll                       windFlows.displayAll
-windflows.palette_clr                    allWindFlows.palette_CLR                      windFlows.palette_CLR
-windflows.palette_dir                    allWindFlows.palette_DIR                      windFlows.palette_DIR
-windflows.palette_mlt                    allWindFlows.palette_MLT                      windFlows.palette_MLT
-windose_opacity_scale                    STUDY.O_scale                                 Windose opacity scale
-windroses.displayimage                   allWindRoses.displayImage                     windRoses.displayImage
-windroses.scale                          allWindRoses.scale                            windRoses.scale
-
 
 # SOLARCHVISION-BIM — Technical Overview
 
