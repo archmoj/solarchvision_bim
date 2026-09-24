@@ -142,4 +142,41 @@ class ValueModifierTest {
 
     assertEquals(app.funcs.roundTo(5, roundingStep), app.STUDY.V_scale, 0.001f);
   }
+
+  // ================= array-indexed field (allSolidImpacts.R[sectionType]) ===
+
+  @Test
+  void solidImpactsR_commandLineAction_writesTheCurrentSectionTypeSlot () {
+    app.vm.solidImpacts_R(0);
+    int slot = app.allSolidImpacts.sectionType;
+    app.allSolidImpacts.R[slot] = 0;
+
+    app.allActions.get("solidimpacts.r").run(new String[]{"solidimpacts.r", "45"});
+
+    assertEquals(45, app.allSolidImpacts.R[slot], 0.001f);
+  }
+
+  @Test
+  void solidImpactsR_commandLineAction_triggersRecalcImpact () {
+    app.vm.solidImpacts_R(0);
+    app.WIN3D.update = false;
+
+    app.allActions.get("solidimpacts.r").run(new String[]{"solidimpacts.r", "45"});
+
+    assertTrue(app.WIN3D.update); // via react.recalcImpact -> view_changed()
+  }
+
+  // ================= a different one-off OnChange, via its real command ====
+
+  @Test
+  void numberOfDaysToPlot_commandLineAction_triggersApplyStudyJEnd () {
+    app.vm.Number_of_days_to_plot(0);
+    app.STUDY.j_End = 100;
+    app.UI_caseBar.update = false;
+
+    app.allActions.get("number_of_days_to_plot").run(new String[]{"number_of_days_to_plot", "200"});
+
+    assertEquals(200, app.STUDY.j_End);
+    assertTrue(app.UI_caseBar.update);
+  }
 }

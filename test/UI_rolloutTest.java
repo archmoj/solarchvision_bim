@@ -77,6 +77,24 @@ class UI_rolloutTest {
     assertEquals("-10", app.UI_rollout.formatSpinnerValue(-10));
   }
 
+  // ================= spinner text-edit state =================================
+
+  @Test
+  void beginSpinnerEdit_activatesEditingWithTheGivenCaptionAndFormattedValue () {
+    app.UI_rollout.beginSpinnerEdit("Begin day", 15);
+
+    assertTrue(app.UI_rollout.isEditingSpinner());
+    assertEquals("Begin day", app.UI_rollout.spinnerEditCaption);
+    assertEquals("15", app.UI_rollout.spinnerEditText);
+    assertEquals(2, app.UI_rollout.spinnerEditCursor); // cursor starts after the last digit
+    assertFalse(app.UI_rollout.spinnerEditCommit);
+  }
+
+  @Test
+  void isEditingSpinner_falseBeforeAnyEditBegins () {
+    assertFalse(app.UI_rollout.isEditingSpinner());
+  }
+
   // ================= registerSpinnerActions ==================================
 
   @Test

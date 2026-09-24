@@ -261,4 +261,38 @@ class ActionsTest {
     app.allActions.get("test_field").run(new String[]{"test_field", "20"}); // now in range
     assertEquals(20, value[0], 0.001f);
   }
+
+  // ================= normalizeActionKey (indirectly, via the registered key) =
+
+  @Test
+  void putValueAction_keyNormalization_onlyLowercasesAndReplacesSpaces () {
+    // Dots and dashes - unlike spaces - are left exactly as they are (see
+    // normalizeActionKey's own comment in actions.pde), so a field name like
+    // "3D-select.rotVector" is already a valid, usable command as-is.
+    float[] value = {0};
+    app.putValueAction("3D-select.rotVector",
+      () -> value[0],
+      (v) -> { value[0] = v; },
+      0, 10, 1,
+      0, 0, 0);
+
+    assertTrue(app.allActions.containsKey("3d-select.rotvector"));
+  }
+
+  // ================= build_allActions ========================================
+  // Only checks that registration itself completes and produces the
+  // expected keys - deliberately never *invokes* any of the registered
+  // menu actions here, since several of them (Exit, New, Save, ...) have
+  // real side effects (file I/O, closing the JVM) that have nothing to do
+  // with what's being tested.
+
+  @Test
+  void buildAllActions_registersMenuItemsAndEveryValueModifier_withoutInvokingAnything () {
+    assertDoesNotThrow(() -> app.build_allActions());
+
+    assertTrue(app.allActions.size() > 400);
+    assertTrue(app.allActions.containsKey("new"));
+    assertTrue(app.allActions.containsKey("begin_day"));
+    assertTrue(app.allActions.containsKey("latitude"));
+  }
 }

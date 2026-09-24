@@ -3,11 +3,9 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // The delta-based callbacks (applyPosValue/applyRotValue/applyScaleValue)
-// and a few of the one-offs (applyStudyJEnd, applyLandLoadMesh/Textures,
-// applyCurrentCamera, applyCreatePowAll) touch WIN3D.graphics/PImage/model
-// state beyond what's practical to assert on here - only their o == n
-// guard is covered; Move3D/Rotate3D/Scale3D's own test files already cover
-// the transforms applyPosValue/applyRotValue/applyScaleValue delegate to.
+// only get their o == n guard covered here - Move3D/Rotate3D/Scale3D's own
+// test files already cover the transforms they delegate to for a real
+// selection, and building one here would just duplicate that setup.
 class ReactTest {
 
   private solarchvision_bim app;
@@ -184,5 +182,107 @@ class ReactTest {
     app.should_rebuildFaceGrid = false;
     app.react.applyScaleValue.run(2, 2);
     assertFalse(app.should_rebuildFaceGrid);
+  }
+
+  // ================= one-off callbacks =======================================
+
+  @Test
+  void applyStudyJEnd_noOp_whenOldEqualsNew () {
+    app.UI_caseBar.update = false;
+    app.react.applyStudyJEnd.run(100, 100);
+    assertFalse(app.UI_caseBar.update);
+  }
+
+  @Test
+  void applyStudyJEnd_flagsImpactAndWindRoseImagesForRebuild_whenChanged () {
+    app.UI_caseBar.update = false;
+    app.allSolarImpacts.rebuild_Image_array = false;
+    app.allWindRoses.rebuild_Image_array = false;
+
+    // allSections.resize_solarImpact_array() sizes its array off STUDY.j_End,
+    // so this must actually be the field's new value for the call to be safe
+    app.STUDY.j_End = 100;
+
+    app.react.applyStudyJEnd.run(90, 100);
+
+    assertTrue(app.UI_caseBar.update);
+    assertTrue(app.allSolarImpacts.rebuild_Image_array);
+    assertTrue(app.allWindRoses.rebuild_Image_array);
+  }
+
+  @Test
+  void applyLandLoadMesh_noOp_whenOldEqualsNew () {
+    app.should_rebuildFaceGrid = false;
+    app.react.applyLandLoadMesh.run(1, 1);
+    assertFalse(app.should_rebuildFaceGrid);
+  }
+
+  @Test
+  void applyLandLoadMesh_rebuildsTheMeshAndFlagsTheModelChanged_whenChanged () {
+    // Land3D.update_mesh() falls back to a flat mesh if it can't load real
+    // topography files (there are none in a test environment), so this is
+    // safe to run for real rather than mocking it.
+    app.should_rebuildFaceGrid = false;
+    app.react.applyLandLoadMesh.run(0, 1);
+    assertTrue(app.should_rebuildFaceGrid);
+    assertEquals(app.Land3D.num_rows, app.Land3D.Mesh.length);
+  }
+
+  @Test
+  void applyLandLoadTextures_noOp_whenOldEqualsNew () {
+    app.should_rebuildFaceGrid = false;
+    app.react.applyLandLoadTextures.run(1, 1);
+    assertFalse(app.should_rebuildFaceGrid);
+  }
+
+  @Test
+  void applyLandLoadTextures_flagsTheModelChanged_whenChanged () {
+    app.should_rebuildFaceGrid = false;
+    app.react.applyLandLoadTextures.run(0, 1);
+    assertTrue(app.should_rebuildFaceGrid);
+  }
+
+  @Test
+  void applyCurrentCamera_noOp_whenOldEqualsNew () {
+    app.WIN3D.update = false;
+    app.react.applyCurrentCamera.run(0, 0);
+    assertFalse(app.WIN3D.update);
+  }
+
+  @Test
+  void applyCurrentCamera_appliesTheCameraAndRevisesTheView_whenChanged () {
+    // Cameras() seeds one camera (index 0) via add_first(), so currentCamera
+    // == 0 is always valid on a fresh app - safe to call for real.
+    app.WIN3D.currentCamera = 0;
+    app.WIN3D.position_X = -999;
+    app.WIN3D.update = false;
+
+    app.react.applyCurrentCamera.run(-1, 0);
+
+    assertEquals(app.allCameras.get_posX(0), app.WIN3D.position_X, 0.001f);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void applyCreatePowAll_noOp_whenOldEqualsNew () {
+    app.UI_rollout.update = false;
+    app.react.applyCreatePowAll.run(2, 2);
+    assertFalse(app.UI_rollout.update);
+  }
+
+  @Test
+  void applyCreatePowAll_copiesCreatePowAllIntoXYZ_whenChanged () {
+    app.User3D.create_powAll = 3;
+    app.User3D.create_powX = 0;
+    app.User3D.create_powY = 0;
+    app.User3D.create_powZ = 0;
+    app.UI_rollout.update = false;
+
+    app.react.applyCreatePowAll.run(1, 3);
+
+    assertEquals(3, app.User3D.create_powX, 0.001f);
+    assertEquals(3, app.User3D.create_powY, 0.001f);
+    assertEquals(3, app.User3D.create_powZ, 0.001f);
+    assertTrue(app.UI_rollout.update);
   }
 }
