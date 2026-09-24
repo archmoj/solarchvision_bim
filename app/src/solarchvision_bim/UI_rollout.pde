@@ -509,7 +509,6 @@ class UI_rollout {
         STUDY.perDays = vm.Day_step(1);
         STUDY.joinDays = vm.Join_days(1);
         TIME.date = vm.Days_past_March_equinox(1);
-        //TIME.beginDay = this.Spinner(X_control, Y_control, 1, 1, 0, "Day of year (0-364)", TIME.beginDay, 0, 364, 1);
 
         TIME.day = vm.Begin_day(1);
         TIME.month = vm.Begin_month(1);
@@ -539,7 +538,6 @@ class UI_rollout {
       if (this.child == CHILD_LOCATION_POINT) {
         LocationLAT = vm.Latitude(1);
         LocationLON = vm.Longitude(1);
-        //LocationELE = this.Spinner(X_control, Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, 1);
       }
 
       if (this.child == CHILD_LOCATION_STATIONS) {
@@ -1149,12 +1147,7 @@ class UI_rollout {
     text(caption + ":", x - w1 - w2 + t_oW, y - t_oH);
 
     if (new_value != v) {
-      if (update1 != 0) {
-        UI_caseBar.revise();
-        STUDY.revise();
-      }
-      if (update2 != 0) WIN3D.revise();
-      if (update3 != 0) WORLD.revise();
+      reviseByUpdateFlags(update1, update2, update3);
     }
 
     return new_value;

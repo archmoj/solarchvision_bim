@@ -49,6 +49,18 @@ private void putAction(String s, Action fn) {
     allActions.put(key, fn);
 }
 
+// Shared by putValueAction (below) and _Spinner (UI_rollout.pde): revise
+// the views a spinner-style field's update1/update2/update3 flags say
+// should refresh when its value actually changes.
+void reviseByUpdateFlags(int update1, int update2, int update3) {
+  if (update1 != 0) {
+    UI_caseBar.revise();
+    STUDY.revise();
+  }
+  if (update2 != 0) WIN3D.revise();
+  if (update3 != 0) WORLD.revise();
+}
+
 // Registers a command-line-callable action that sets a bounded numeric
 // field's value: validate the new value is within range, round it the
 // same way this.Spinner(...) does (funcs.roundTo), apply it only if it
@@ -111,12 +123,7 @@ void putValueAction(String name, FloatGetter getter, FloatSetter setter, FloatGe
 
       if (onChanged != null) onChanged.run(oldValue, newValue);
 
-      if (update1 != 0) {
-        UI_caseBar.revise();
-        STUDY.revise();
-      }
-      if (update2 != 0) WIN3D.revise();
-      if (update3 != 0) WORLD.revise();
+      reviseByUpdateFlags(update1, update2, update3);
     }
   });
 }
