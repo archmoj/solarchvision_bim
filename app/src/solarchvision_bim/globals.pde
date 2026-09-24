@@ -246,6 +246,7 @@ Overlay3D Overlay3D = new Overlay3D();
 
 UI_rollout UI_rollout = new UI_rollout();
 react react = new react();
+ValueModifier vm = new ValueModifier();
 
 float[][]   VertexSolar_XYZ;
 float[][][] VertexSolar_amounts;
