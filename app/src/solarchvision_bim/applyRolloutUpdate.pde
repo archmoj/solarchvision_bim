@@ -126,31 +126,31 @@ void applyRolloutUpdate() {
     view_changed();
   }
 
-  UI_rollout.caseBarOnly.run(pre_SampleYear_Start, SampleYear_Start);
-  UI_rollout.caseBarOnly.run(pre_SampleYear_End, SampleYear_End);
+  react.caseBarOnly.run(pre_SampleYear_Start, SampleYear_Start);
+  react.caseBarOnly.run(pre_SampleYear_End, SampleYear_End);
 
-  UI_rollout.caseBarOnly.run(pre_SampleMember_Start, SampleMember_Start);
+  react.caseBarOnly.run(pre_SampleMember_Start, SampleMember_Start);
 
-  UI_rollout.caseBarOnly.run(pre_SampleMember_End, SampleMember_End);
+  react.caseBarOnly.run(pre_SampleMember_End, SampleMember_End);
 
-  UI_rollout.caseBarOnly.run(pre_SampleStation_Start, SampleStation_Start);
+  react.caseBarOnly.run(pre_SampleStation_Start, SampleStation_Start);
 
-  UI_rollout.caseBarOnly.run(pre_SampleStation_End, SampleStation_End);
+  react.caseBarOnly.run(pre_SampleStation_End, SampleStation_End);
 
-  UI_rollout.caseBarOnly.run(pre_STUDY_joinDays, STUDY.joinDays);
+  react.caseBarOnly.run(pre_STUDY_joinDays, STUDY.joinDays);
 
-  UI_rollout.caseBarOnly.run(pre_STUDY_i_Start, STUDY.i_Start);
+  react.caseBarOnly.run(pre_STUDY_i_Start, STUDY.i_Start);
 
-  UI_rollout.caseBarOnly.run(pre_STUDY_i_End, STUDY.i_End);
+  react.caseBarOnly.run(pre_STUDY_i_End, STUDY.i_End);
 
-  UI_rollout.applyStudyJEnd.run(pre_STUDY_j_End, STUDY.j_End);
+  react.applyStudyJEnd.run(pre_STUDY_j_End, STUDY.j_End);
 
-  UI_rollout.caseBarOnly.run(pre_IMPACTS_displayDay, IMPACTS_displayDay);
+  react.caseBarOnly.run(pre_IMPACTS_displayDay, IMPACTS_displayDay);
 
   if (pre_TIME_Date != TIME.date) {
     UI_caseBar.revise();
 
-    UI_rollout.applyTimeDate.run(pre_TIME_Date, TIME.date);
+    react.applyTimeDate.run(pre_TIME_Date, TIME.date);
     UI_rollout.draw();
   }
 
@@ -163,7 +163,7 @@ void applyRolloutUpdate() {
 
     UI_caseBar.revise();
 
-    UI_rollout.applyTimeChange.run(pre_TIME_Year, TIME.year);
+    react.applyTimeChange.run(pre_TIME_Year, TIME.year);
     UI_rollout.draw();
   }
 
@@ -180,101 +180,101 @@ void applyRolloutUpdate() {
   if ((pre_LocationLAT != LocationLAT) ||
       (pre_LocationLON != LocationLON)) {
 
-    UI_rollout.applyLocationChange.run(pre_LocationLAT, LocationLAT);
+    react.applyLocationChange.run(pre_LocationLAT, LocationLAT);
   }
 
-  UI_rollout.applyLandLoadMesh.run(pre_Land3D_loadMesh ? 1 : 0, Land3D.loadMesh ? 1 : 0);
+  react.applyLandLoadMesh.run(pre_Land3D_loadMesh ? 1 : 0, Land3D.loadMesh ? 1 : 0);
 
-  UI_rollout.applyLandLoadTextures.run(pre_Land3D_loadTextures ? 1 : 0, Land3D.loadTextures ? 1 : 0);
+  react.applyLandLoadTextures.run(pre_Land3D_loadTextures ? 1 : 0, Land3D.loadTextures ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Camera_displayEdges, Select3D.Camera_displayEdges);
+  react.viewChangedOnly.run(pre_Selection_Camera_displayEdges ? 1 : 0, Select3D.Camera_displayEdges ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Section_displayEdges, Select3D.Section_displayEdges);
+  react.viewChangedOnly.run(pre_Selection_Section_displayEdges ? 1 : 0, Select3D.Section_displayEdges ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Solid_displayEdges, Select3D.Solid_displayEdges);
+  react.viewChangedOnly.run(pre_Selection_Solid_displayEdges ? 1 : 0, Select3D.Solid_displayEdges ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_LandPoint_displayPoints, Select3D.LandPoint_displayPoints);
+  react.viewChangedOnly.run(pre_Selection_LandPoint_displayPoints ? 1 : 0, Select3D.LandPoint_displayPoints ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Model1D_displayEdges, Select3D.Model1D_displayEdges);
+  react.viewChangedOnly.run(pre_Selection_Model1D_displayEdges ? 1 : 0, Select3D.Model1D_displayEdges ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Model2D_displayEdges, Select3D.Model2D_displayEdges);
+  react.viewChangedOnly.run(pre_Selection_Model2D_displayEdges ? 1 : 0, Select3D.Model2D_displayEdges ? 1 : 0);
 
-  UI_rollout.softSelectionChanged.run(pre_Selection_softPower, Select3D.softPower);
+  react.softSelectionChanged.run(pre_Selection_softPower, Select3D.softPower);
 
-  UI_rollout.softSelectionChanged.run(pre_Selection_softRadius, Select3D.softRadius);
+  react.softSelectionChanged.run(pre_Selection_softRadius, Select3D.softRadius);
 
-  UI_rollout.selectionChangedOnly.run(pre_Selection_alignX, Select3D.alignX);
+  react.selectionChangedOnly.run(pre_Selection_alignX, Select3D.alignX);
 
-  UI_rollout.selectionChangedOnly.run(pre_Selection_alignY, Select3D.alignY);
+  react.selectionChangedOnly.run(pre_Selection_alignY, Select3D.alignY);
 
-  UI_rollout.selectionChangedOnly.run(pre_Selection_alignZ, Select3D.alignZ);
+  react.selectionChangedOnly.run(pre_Selection_alignZ, Select3D.alignZ);
 
-  UI_rollout.applyPosValue.run(pre_Selection_posValue, Select3D.posValue);
-  UI_rollout.applyRotValue.run(pre_Selection_rotValue, Select3D.rotValue);
-  UI_rollout.applyScaleValue.run(pre_Selection_scaleValue, Select3D.scaleValue);
+  react.applyPosValue.run(pre_Selection_posValue, Select3D.posValue);
+  react.applyRotValue.run(pre_Selection_rotValue, Select3D.rotValue);
+  react.applyScaleValue.run(pre_Selection_scaleValue, Select3D.scaleValue);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_displayReferencePivot, Select3D.displayReferencePivot);
+  react.viewChangedOnly.run(pre_Selection_displayReferencePivot ? 1 : 0, Select3D.displayReferencePivot ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Group_displayPivot, Select3D.Group_displayPivot);
+  react.viewChangedOnly.run(pre_Selection_Group_displayPivot ? 1 : 0, Select3D.Group_displayPivot ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Group_displayEdges, Select3D.Group_displayEdges);
+  react.viewChangedOnly.run(pre_Selection_Group_displayEdges ? 1 : 0, Select3D.Group_displayEdges ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Group_displayBox, Select3D.Group_displayBox);
+  react.viewChangedOnly.run(pre_Selection_Group_displayBox ? 1 : 0, Select3D.Group_displayBox ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Face_displayEdges, Select3D.Face_displayEdges);
+  react.viewChangedOnly.run(pre_Selection_Face_displayEdges ? 1 : 0, Select3D.Face_displayEdges ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Face_displayVertexCount, Select3D.Face_displayVertexCount);
+  react.viewChangedOnly.run(pre_Selection_Face_displayVertexCount ? 1 : 0, Select3D.Face_displayVertexCount ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Polyline_displayVertexCount, Select3D.Polyline_displayVertexCount);
+  react.viewChangedOnly.run(pre_Selection_Polyline_displayVertexCount ? 1 : 0, Select3D.Polyline_displayVertexCount ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Vertex_displayVertices, Select3D.Vertex_displayVertices);
+  react.viewChangedOnly.run(pre_Selection_Vertex_displayVertices ? 1 : 0, Select3D.Vertex_displayVertices ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_Selection_Polyline_displayVertices, Select3D.Polyline_displayVertices);
+  react.viewChangedOnly.run(pre_Selection_Polyline_displayVertices ? 1 : 0, Select3D.Polyline_displayVertices ? 1 : 0);
 
-  UI_rollout.applyCurrentCamera.run(pre_WIN3D_currentCamera, WIN3D.currentCamera);
+  react.applyCurrentCamera.run(pre_WIN3D_currentCamera, WIN3D.currentCamera);
 
   if (pre_WIN3D_FacesShade != WIN3D.FacesShade) {
     view_changed();
   }
 
-  UI_rollout.viewChangedOnly.run(pre_Create3D_Tessellation, allFaces.displayTessellation);
+  react.viewChangedOnly.run(pre_Create3D_Tessellation, allFaces.displayTessellation);
 
-  UI_rollout.applyCreatePowAll.run(pre_USER_create_powAll, User3D.create_powAll);
+  react.applyCreatePowAll.run(pre_USER_create_powAll, User3D.create_powAll);
 
-  UI_rollout.recalcImpact.run(pre_allSolids_palette_CLR, allSolids.palette_CLR);
-  UI_rollout.recalcImpact.run(pre_allSolids_palette_DIR, allSolids.palette_DIR);
-  UI_rollout.recalcImpact.run(pre_allSolids_palette_MLT, allSolids.palette_MLT);
+  react.recalcImpact.run(pre_allSolids_palette_CLR, allSolids.palette_CLR);
+  react.recalcImpact.run(pre_allSolids_palette_DIR, allSolids.palette_DIR);
+  react.recalcImpact.run(pre_allSolids_palette_MLT, allSolids.palette_MLT);
 
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType], allSolidImpacts.R[allSolidImpacts.sectionType]);
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType], allSolidImpacts.Z[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
+  react.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
+  react.recalcImpact.run(pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType], allSolidImpacts.R[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType], allSolidImpacts.Z[allSolidImpacts.sectionType]);
 
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_U_scale[allSolidImpacts.sectionType], allSolidImpacts.U[allSolidImpacts.sectionType]);
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_V_scale[allSolidImpacts.sectionType], allSolidImpacts.V[allSolidImpacts.sectionType]);
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_sU_offset[allSolidImpacts.sectionType], allSolidImpacts.X[allSolidImpacts.sectionType]);
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_sV_offset[allSolidImpacts.sectionType], allSolidImpacts.Y[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_U_scale[allSolidImpacts.sectionType], allSolidImpacts.U[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_V_scale[allSolidImpacts.sectionType], allSolidImpacts.V[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_sU_offset[allSolidImpacts.sectionType], allSolidImpacts.X[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_sV_offset[allSolidImpacts.sectionType], allSolidImpacts.Y[allSolidImpacts.sectionType]);
 
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Wspd, allSolidImpacts.WindSpeed);
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Wdir, allSolidImpacts.WindDirection);
+  react.recalcImpact.run(pre_allSolidImpacts_Wspd, allSolidImpacts.WindSpeed);
+  react.recalcImpact.run(pre_allSolidImpacts_Wdir, allSolidImpacts.WindDirection);
 
-  UI_rollout.recalcImpact.run(pre_allSolidImpacts_Process_subDivisions, allSolidImpacts.Process_subDivisions);
+  react.recalcImpact.run(pre_allSolidImpacts_Process_subDivisions, allSolidImpacts.Process_subDivisions);
 
-  UI_rollout.viewChangedOnly.run(pre_allSolidImpacts_displayPoints, allSolidImpacts.displayPoints);
+  react.viewChangedOnly.run(pre_allSolidImpacts_displayPoints ? 1 : 0, allSolidImpacts.displayPoints ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_allSolidImpacts_displayLines, allSolidImpacts.displayLines);
+  react.viewChangedOnly.run(pre_allSolidImpacts_displayLines ? 1 : 0, allSolidImpacts.displayLines ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_allPoints_displayAll, allPoints.displayAll);
+  react.viewChangedOnly.run(pre_allPoints_displayAll ? 1 : 0, allPoints.displayAll ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_allFaces_displayEdges, allFaces.displayEdges);
+  react.viewChangedOnly.run(pre_allFaces_displayEdges ? 1 : 0, allFaces.displayEdges ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_allFaces_displayNormals, allFaces.displayNormals);
+  react.viewChangedOnly.run(pre_allFaces_displayNormals ? 1 : 0, allFaces.displayNormals ? 1 : 0);
 
-  UI_rollout.viewChangedOnly.run(pre_WindFlow_display, allWindFlows.displayAll);
+  react.viewChangedOnly.run(pre_WindFlow_display ? 1 : 0, allWindFlows.displayAll ? 1 : 0);
 
-  UI_rollout.impactsUpdateFlag.run(pre_STUDY_Setup, STUDY.plotSetup);
+  react.impactsUpdateFlag.run(pre_STUDY_Setup, STUDY.plotSetup);
 
-  UI_rollout.impactsUpdateFlag.run(pre_CurrentDataSource, CurrentDataSource);
+  react.impactsUpdateFlag.run(pre_CurrentDataSource, CurrentDataSource);
 }
 
 float pre_TIME_Date;

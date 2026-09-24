@@ -245,6 +245,7 @@ WIN3D WIN3D = new WIN3D();
 Overlay3D Overlay3D = new Overlay3D();
 
 UI_rollout UI_rollout = new UI_rollout();
+react react = new react();
 
 float[][]   VertexSolar_XYZ;
 float[][][] VertexSolar_amounts;

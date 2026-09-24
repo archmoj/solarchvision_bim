@@ -32,117 +32,6 @@ class UI_rollout {
   // live value known (needed to seed the typed text).
   String spinnerEditPendingCaption = null;
 
-  // ---- Shared SpinnerApplied callbacks -------------------------------
-  // Follow-up work a spinner needs beyond a plain revise() when its value
-  // actually changes (see applyRolloutUpdate.pde for the equivalent logic
-  // this used to run once per frame via a before/after diff). Declared as
-  // fields, once, so the exact same callback object is used both here -
-  // passed straight into the interactive this.Spinner(...) call so it
-  // fires immediately on a GUI-driven change - and in
-  // registerSpinnerActions() for a command-line-driven change. Assigning
-  // a lambda here only builds the callback object; the body itself only
-  // runs later, once something actually invokes it, so it's safe even
-  // though other globals (TIME, WORLD, etc.) aren't fully set up yet at
-  // the point this UI_rollout instance itself is constructed.
-  SpinnerApplied applyTimeChange = (o, n) -> {
-    TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
-    TIME.hour = int(24 * (TIME.date - int(TIME.date)));
-    TIME.date = (TIME.hour / 24.0) + (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365;
-    println("DATE:", TIME.date, "\tHOUR:", TIME.hour);
-    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-  };
-
-  SpinnerApplied applyLocationChange = (o, n) -> {
-    WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
-    WORLD.revise();
-  };
-
-  SpinnerApplied viewChangedOnly = (o, n) -> { if (o == n) return; view_changed(); };
-  SpinnerApplied caseBarOnly = (o, n) -> { if (o == n) return; UI_caseBar.revise(); };
-  SpinnerApplied recalcImpact = (o, n) -> { if (o == n) return; allSolidImpacts.calculate_Impact_selectedSections(); view_changed(); };
-  SpinnerApplied selectionChangedOnly = (o, n) -> { if (o == n) return; selection_changed(); };
-  SpinnerApplied softSelectionChanged = (o, n) -> { if (o == n) return; Select3D.convert_Vertex_to_softSelection(); };
-  SpinnerApplied impactsUpdateFlag = (o, n) -> { if (o == n) return; STUDY.Impacts_update = true; UI_caseBar.updated(); };
-
-  // Move/Rotate/Scale-by-delta spinners: applyRolloutUpdate.pde applies the
-  // *difference* between the old and new spinner reading as a transform on
-  // the current selection, rather than treating the field as a plain
-  // setting - replicated here using the old/new values SpinnerApplied gets.
-  // The o == n guard matters here beyond just skipping redundant work: with
-  // no change, d/r/s below would be 0/0/1 (a genuine no-op), but calling
-  // model_changed() unconditionally every frame would still force a
-  // constant, needless redraw.
-  SpinnerApplied applyPosValue = (o, n) -> {
-    if (o == n) return;
-    float d = n - o;
-    float dx = d, dy = d, dz = d;
-    int the_Vector = Select3D.posVector;
-    if (the_Vector == 0) { dy = 0; dz = 0; }
-    if (the_Vector == 1) { dz = 0; dx = 0; }
-    if (the_Vector == 2) { dx = 0; dy = 0; }
-    Move3D.selection(dx, dy, dz);
-    model_changed();
-  };
-  SpinnerApplied applyRotValue = (o, n) -> {
-    if (o == n) return;
-    float[] P = Select3D.getPivot();
-    float r = n - o;
-    Rotate3D.selection(P[0], P[1], P[2], r, Select3D.rotVector);
-    model_changed();
-  };
-  SpinnerApplied applyScaleValue = (o, n) -> {
-    if (o == n) return;
-    float[] P = Select3D.getPivot();
-    float s = pow(2.0, n - o);
-    float sx = s, sy = s, sz = s;
-    int the_Vector = Select3D.scaleVector;
-    if (the_Vector == 0) { sy = 1; sz = 1; }
-    if (the_Vector == 1) { sz = 1; sx = 1; }
-    if (the_Vector == 2) { sx = 1; sy = 1; }
-    Scale3D.selection(P[0], P[1], P[2], sx, sy, sz);
-    model_changed();
-  };
-
-  // One-off follow-up callbacks (each used by exactly one spinner).
-  SpinnerApplied applyStudyJEnd = (o, n) -> {
-    if (o == n) return;
-    UI_caseBar.revise();
-    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
-    if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-    allSolarImpacts.rebuild_Image_array = true;
-    allWindRoses.rebuild_Image_array = true;
-    allSections.resize_solarImpact_array();
-  };
-  // TIME.updateDate() derives month/day/hour from date (the inverse of
-  // applyTimeChange, which derives date from month/day). The original
-  // applyRolloutUpDate.pde relied on this cascading into month/day/hour
-  // changing and being picked up by a second, separate diff check later in
-  // the same frame to reload the ensemble forecast; made explicit here
-  // instead of relying on that ordering. Its call site in
-  // applyRolloutUpdate.pde keeps its own if-wrapper (rather than an o == n
-  // guard here) because it also needs an immediate UI_rollout.draw() -
-  // unsafe to fold into a callback that may itself run from inside
-  // Spinner(), which draw() is already in the middle of calling.
-  SpinnerApplied applyTimeDate = (o, n) -> {
-    TIME.updateDate();
-    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-  };
-  SpinnerApplied applyLandLoadTextures = (o, n) -> { if (o == n) return; Land3D.update_textures(); model_changed(); };
-  SpinnerApplied applyLandLoadMesh = (o, n) -> { if (o == n) return; Land3D.update_mesh(); model_changed(); };
-  SpinnerApplied applyCurrentCamera = (o, n) -> {
-    if (o == n) return;
-    WIN3D.apply_currentCamera();
-    modify_Viewport_Title();
-    view_changed();
-  };
-  SpinnerApplied applyCreatePowAll = (o, n) -> {
-    if (o == n) return;
-    User3D.create_powX = User3D.create_powAll;
-    User3D.create_powY = User3D.create_powAll;
-    User3D.create_powZ = User3D.create_powAll;
-    UI_rollout.revise();
-  };
-
   void buildAllRollouts () {
 
     PARENT_PERIOD_SCENARIOS = pushParent("Period & Scenarios");
@@ -262,8 +151,8 @@ class UI_rollout {
   // WORLD get revised when the value actually changes).
   void registerSpinnerActions () {
 
-    // The SpinnerApplied callbacks below (applyTimeChange, caseBarOnly,
-    // recalcImpact, etc.) are declared once as fields near the top of this
+    // The SpinnerApplied callbacks below (react.applyTimeChange, react.caseBarOnly,
+    // react.recalcImpact, etc.) are declared once as fields near the top of this
     // class - shared with the interactive this.Spinner(...) calls in
     // draw(), which now pass them in directly so the same follow-up logic
     // fires immediately on a GUI-driven change too. See those field
@@ -282,7 +171,7 @@ class UI_rollout {
       (v) -> { STUDY.j_End = int(v); },
       1, 365, 1,
       1, 1, 0,
-      applyStudyJEnd);
+      react.applyStudyJEnd);
 
     // STUDY.perDays = this.Spinner(..., "Day step", 1.0, 182.5, 0.5);  [line 350]
     putSpinnerAction("Day step",
@@ -297,7 +186,7 @@ class UI_rollout {
       (v) -> { STUDY.joinDays = int(v); },
       1, 182, 1,
       1, 1, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // TIME.date = this.Spinner(..., "Days past March equinox", 0, 364, 1);  [line 354]
     putSpinnerAction("Days past March equinox",
@@ -305,7 +194,7 @@ class UI_rollout {
       (v) -> { TIME.date = v; },
       0, 364, 1,
       1, 1, 0,
-      applyTimeDate);
+      react.applyTimeDate);
 
     // TIME.day = this.Spinner(..., "Begin day", 1, 31, 1);  [line 358]
     putSpinnerAction("Begin day",
@@ -313,7 +202,7 @@ class UI_rollout {
       (v) -> { TIME.day = int(v); },
       1, 31, 1,
       1, 1, 0,
-      applyTimeChange);
+      react.applyTimeChange);
 
     // TIME.month = this.Spinner(..., "Begin month", 1, 12, 1);  [line 359]
     putSpinnerAction("Begin month",
@@ -321,7 +210,7 @@ class UI_rollout {
       (v) -> { TIME.month = int(v); },
       1, 12, 1,
       1, 1, 0,
-      applyTimeChange);
+      react.applyTimeChange);
 
     // TIME.year = this.Spinner(..., "Begin year", 1953, 2100, 1);  [line 360]
     putSpinnerAction("Begin year",
@@ -329,7 +218,7 @@ class UI_rollout {
       (v) -> { TIME.year = int(v); },
       1953, 2100, 1,
       1, 1, 0,
-      applyTimeChange);
+      react.applyTimeChange);
 
     // STUDY.i_Start = this.Spinner(..., "Start hour", 0, 23, 1);  [line 364]
     putSpinnerAction("Start hour",
@@ -337,7 +226,7 @@ class UI_rollout {
       (v) -> { STUDY.i_Start = int(v); },
       0, 23, 1,
       1, 0, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // STUDY.i_End = this.Spinner(..., "End hour", 0, 23, 1);  [line 365]
     putSpinnerAction("End hour",
@@ -345,7 +234,7 @@ class UI_rollout {
       (v) -> { STUDY.i_End = int(v); },
       0, 23, 1,
       1, 0, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // SampleYear_Start = this.Spinner(..., "Start year", CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1);  [line 367]
     putSpinnerAction("Start year",
@@ -353,7 +242,7 @@ class UI_rollout {
       (v) -> { SampleYear_Start = int(v); },
       () -> (float) (CLIMATE_CWEEDS_start), () -> (float) (CLIMATE_CLMREC_end), 1,
       1, 0, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // SampleYear_End = this.Spinner(..., "End year", CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1);  [line 368]
     putSpinnerAction("End year",
@@ -361,7 +250,7 @@ class UI_rollout {
       (v) -> { SampleYear_End = int(v); },
       () -> (float) (CLIMATE_CWEEDS_start), () -> (float) (CLIMATE_CLMREC_end), 1,
       1, 0, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // SampleMember_Start = this.Spinner(..., "Start member", ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1);  [line 370]
     putSpinnerAction("Start member",
@@ -369,7 +258,7 @@ class UI_rollout {
       (v) -> { SampleMember_Start = int(v); },
       () -> (float) (ENSEMBLE_FORECAST_start), () -> (float) (ENSEMBLE_FORECAST_end), 1,
       1, 0, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // SampleMember_End = this.Spinner(..., "End member", ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1);  [line 371]
     putSpinnerAction("End member",
@@ -377,7 +266,7 @@ class UI_rollout {
       (v) -> { SampleMember_End = int(v); },
       () -> (float) (ENSEMBLE_FORECAST_start), () -> (float) (ENSEMBLE_FORECAST_end), 1,
       1, 0, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // SampleStation_Start = this.Spinner(..., "Start station", ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1);  [line 373]
     putSpinnerAction("Start station",
@@ -385,7 +274,7 @@ class UI_rollout {
       (v) -> { SampleStation_Start = int(v); },
       () -> (float) (ENSEMBLE_OBSERVED_start), () -> (float) (ENSEMBLE_OBSERVED_end), 1,
       1, 0, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // SampleStation_End = this.Spinner(..., "End station", ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1);  [line 374]
     putSpinnerAction("End station",
@@ -393,7 +282,7 @@ class UI_rollout {
       (v) -> { SampleStation_End = int(v); },
       () -> (float) (ENSEMBLE_OBSERVED_start), () -> (float) (ENSEMBLE_OBSERVED_end), 1,
       1, 0, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // ENSEMBLE_OBSERVED_maxDays = this.Spinner(..., "Forecast/Obs_maxDays", 0, 31, 1);  [line 376]
     putSpinnerAction("Forecast/Obs_maxDays",
@@ -422,7 +311,7 @@ class UI_rollout {
       (v) -> { LocationLAT = v; },
       -85, 85, 0.01,
       0, 0, 1,
-      applyLocationChange);
+      react.applyLocationChange);
 
     // LocationLON = this.Spinner(..., "Longitude", -180, 180, 0.01);  [line 389]
     putSpinnerAction("Longitude",
@@ -430,7 +319,7 @@ class UI_rollout {
       (v) -> { LocationLON = v; },
       -180, 180, 0.01,
       0, 0, 1,
-      applyLocationChange);
+      react.applyLocationChange);
 
     // WORLD.displayAll_TMYEPW = this.Spinner(..., "displayAll_TMYEPW", 0, 2, 1);  [line 395]
     putSpinnerAction("displayAll_TMYEPW",
@@ -690,7 +579,7 @@ class UI_rollout {
       (v) -> { Select3D.softPower = v; },
       0.125, 8.0, 0.001,
       0, 0, 0,
-      softSelectionChanged);
+      react.softSelectionChanged);
 
     // Select3D.softRadius = this.Spinner(..., "3D-select.softRadius", 0.01, 100, -2);  [line 458]
     putSpinnerAction("3D-select.softRadius",
@@ -698,7 +587,7 @@ class UI_rollout {
       (v) -> { Select3D.softRadius = v; },
       0.01, 100, 0.001,
       0, 0, 0,
-      softSelectionChanged);
+      react.softSelectionChanged);
 
     // Select3D.posVector = this.Spinner(..., "3D-select.posVector", 0, 3, 1);  [line 460]
     putSpinnerAction("3D-select.posVector",
@@ -727,7 +616,7 @@ class UI_rollout {
       (v) -> { Select3D.posValue = v; },
       -50.0, 50.0, 0.001,
       0, 0, 0,
-      applyPosValue);
+      react.applyPosValue);
 
     // Select3D.rotValue = this.Spinner(..., "3D-select.rotValue", -180.0, 180.0, 1.0);  [line 465]
     putSpinnerAction("3D-select.rotValue",
@@ -735,7 +624,7 @@ class UI_rollout {
       (v) -> { Select3D.rotValue = v; },
       -180.0, 180.0, 0.001,
       0, 0, 0,
-      applyRotValue);
+      react.applyRotValue);
 
     // Select3D.scaleValue = this.Spinner(..., "3D-select.scaleValue", -8.0, 8.0, 1.0);  [line 466]
     putSpinnerAction("3D-select.scaleValue",
@@ -743,7 +632,7 @@ class UI_rollout {
       (v) -> { Select3D.scaleValue = v; },
       -8.0, 8.0, 0.001,
       0, 0, 0,
-      applyScaleValue);
+      react.applyScaleValue);
 
     // Select3D.alignX = this.Spinner(..., "3D-select.alignX", -1, 1, 1);  [line 468]
     putSpinnerAction("3D-select.alignX",
@@ -751,7 +640,7 @@ class UI_rollout {
       (v) -> { Select3D.alignX = int(v); },
       -1, 1, 1,
       0, 0, 0,
-      selectionChangedOnly);
+      react.selectionChangedOnly);
 
     // Select3D.alignY = this.Spinner(..., "3D-select.alignY", -1, 1, 1);  [line 469]
     putSpinnerAction("3D-select.alignY",
@@ -759,7 +648,7 @@ class UI_rollout {
       (v) -> { Select3D.alignY = int(v); },
       -1, 1, 1,
       0, 0, 0,
-      selectionChangedOnly);
+      react.selectionChangedOnly);
 
     // Select3D.alignZ = this.Spinner(..., "3D-select.alignZ", -1, 1, 1);  [line 470]
     putSpinnerAction("3D-select.alignZ",
@@ -767,7 +656,7 @@ class UI_rollout {
       (v) -> { Select3D.alignZ = int(v); },
       -1, 1, 1,
       0, 0, 0,
-      selectionChangedOnly);
+      react.selectionChangedOnly);
 
     // User3D.create_powAll = this.Spinner(..., "3D-create.powAll", 0.5, CubePower, -2);  [line 474]
     putSpinnerAction("3D-create.powAll",
@@ -775,7 +664,7 @@ class UI_rollout {
       (v) -> { User3D.create_powAll = v; },
       () -> (float) (0.5), () -> (float) (CubePower), 0.001,
       0, 0, 0,
-      applyCreatePowAll);
+      react.applyCreatePowAll);
 
     // User3D.create_powX = this.Spinner(..., "3D-create.powX", 0.5, CubePower, -2);  [line 475]
     putSpinnerAction("3D-create.powX",
@@ -867,7 +756,7 @@ class UI_rollout {
       (v) -> { Land3D.loadTextures = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0,
-      applyLandLoadTextures);
+      react.applyLandLoadTextures);
 
     // Land3D.loadMesh = this.Spinner(..., "Land3D.loadMesh");  [line 498]
     putSpinnerAction("Land3D.loadMesh",
@@ -875,7 +764,7 @@ class UI_rollout {
       (v) -> { Land3D.loadMesh = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0,
-      applyLandLoadMesh);
+      react.applyLandLoadMesh);
 
     // Land3D.skipStart = this.Spinner(..., "Land3D.skipStart", 0, Land3D.num_rows - 1, 1);  [line 499]
     putSpinnerAction("Land3D.skipStart",
@@ -1009,7 +898,7 @@ class UI_rollout {
       (v) -> { WIN3D.currentCamera = int(v); },
       () -> (float) (0), () -> (float) (allCameras.num), 1,
       0, 1, 0,
-      applyCurrentCamera);
+      react.applyCurrentCamera);
 
     // WIN3D.CAM_clipNear = this.Spinner(..., "Camera_clipNear", 0.01, 100, -2);  [line 537]
     putSpinnerAction("Camera_clipNear",
@@ -1031,7 +920,7 @@ class UI_rollout {
       (v) -> { allPoints.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // allFaces.displayEdges = this.Spinner(..., "Create3D.displayEdges");  [line 542]
     putSpinnerAction("Create3D.displayEdges",
@@ -1039,7 +928,7 @@ class UI_rollout {
       (v) -> { allFaces.displayEdges = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // allFaces.displayNormals = this.Spinner(..., "Create3D.displayNormals");  [line 543]
     putSpinnerAction("Create3D.displayNormals",
@@ -1047,7 +936,7 @@ class UI_rollout {
       (v) -> { allFaces.displayNormals = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // allCameras.displayAll = this.Spinner(..., "cameras.displayAll");  [line 545]
     putSpinnerAction("cameras.displayAll",
@@ -1062,7 +951,7 @@ class UI_rollout {
       (v) -> { IMPACTS_displayDay = int(v); },
       () -> (float) (0), () -> (float) (STUDY.j_End - STUDY.j_Start), 1,
       0, 1, 0,
-      caseBarOnly);
+      react.caseBarOnly);
 
     // allSolarImpacts.displayImage = this.Spinner(..., "solarImpacts.displayImage");  [line 553]
     putSpinnerAction("solarImpacts.displayImage",
@@ -1098,7 +987,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.Grade = v; },
       0.0001, 64.0, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.Power = this.Spinner(..., "solidImpacts.Power", 0.0001, 64.0, -2);  [line 561]
     putSpinnerAction("solidImpacts.Power",
@@ -1106,7 +995,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.Power = v; },
       0.0001, 64.0, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.R[", -360, 360, -2);  [line 562]  (renamed - dynamic caption)
     putSpinnerAction("solidImpacts.R",
@@ -1114,7 +1003,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.R[allSolidImpacts.sectionType] = v; },
       -360, 360, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.Z[", -1000, 1000, -2);  [line 563]  (renamed - dynamic caption)
     putSpinnerAction("solidImpacts.Z",
@@ -1122,7 +1011,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.Z[allSolidImpacts.sectionType] = v; },
       -1000, 1000, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.positionStep = this.Spinner(..., "solidImpacts.positionStep", 5, 80, -2);  [line 564]
     putSpinnerAction("solidImpacts.positionStep",
@@ -1137,7 +1026,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.U[allSolidImpacts.sectionType] = v; },
       0.125, 3200, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.V[", 0.125, 3200, -2);  [line 567]  (renamed - dynamic caption)
     putSpinnerAction("solidImpacts.V",
@@ -1145,7 +1034,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.V[allSolidImpacts.sectionType] = v; },
       0.125, 3200, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.X[", -10000, 10000, -2);  [line 568]  (renamed - dynamic caption)
     putSpinnerAction("solidImpacts.X",
@@ -1153,7 +1042,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.X[allSolidImpacts.sectionType] = v; },
       -10000, 10000, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.Y[", -10000, 10000, -2);  [line 569]  (renamed - dynamic caption)
     putSpinnerAction("solidImpacts.Y",
@@ -1161,7 +1050,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.Y[allSolidImpacts.sectionType] = v; },
       -10000, 10000, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.WindSpeed = this.Spinner(..., "solidImpacts.WindSpeed (m/s)", 1, 16, -2);  [line 572]
     putSpinnerAction("solidImpacts.WindSpeed (m/s)",
@@ -1169,7 +1058,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.WindSpeed = v; },
       1, 16, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.WindDirection = this.Spinner(..., "solidImpacts.WindDirection", 0, 360, 15);  [line 573]
     putSpinnerAction("solidImpacts.WindDirection",
@@ -1177,7 +1066,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.WindDirection = v; },
       0, 360, 15,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.Process_subDivisions = this.Spinner(..., "solidImpacts.Process_subDivisions", 0, 3, 1);  [line 576]
     putSpinnerAction("solidImpacts.Process_subDivisions",
@@ -1185,7 +1074,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.Process_subDivisions = int(v); },
       0, 3, 1,
       0, 0, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolidImpacts.displayPoints = this.Spinner(..., "solidImpacts.displayPoints");  [line 578]
     putSpinnerAction("solidImpacts.displayPoints",
@@ -1193,7 +1082,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.displayPoints = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // allSolidImpacts.displayLines = this.Spinner(..., "solidImpacts.displayLines");  [line 579]
     putSpinnerAction("solidImpacts.displayLines",
@@ -1201,7 +1090,7 @@ class UI_rollout {
       (v) -> { allSolidImpacts.displayLines = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // allWindFlows.displayAll = this.Spinner(..., "windFlows.displayAll");  [line 581]
     putSpinnerAction("windFlows.displayAll",
@@ -1209,7 +1098,7 @@ class UI_rollout {
       (v) -> { allWindFlows.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // allFaces.displayTessellation = this.Spinner(..., "3D-create.displayTessellation", 0, 4, 1);  [line 586]
     putSpinnerAction("3D-create.displayTessellation",
@@ -1217,7 +1106,7 @@ class UI_rollout {
       (v) -> { allFaces.displayTessellation = int(v); },
       0, 4, 1,
       0, 1, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Land3D.displayTessellation = this.Spinner(..., "Land.displayTessellation", 0, 4, 1);  [line 588]
     putSpinnerAction("Land.displayTessellation",
@@ -1337,7 +1226,7 @@ class UI_rollout {
       (v) -> { STUDY.plotSetup = int(v); },
       -2, 8, 1,
       1, 0, 0,
-      impactsUpdateFlag);
+      react.impactsUpdateFlag);
 
     // STUDY.V_scale = this.Spinner(..., "Scale (", 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));  [line 619]  (renamed - dynamic caption)
     putSpinnerAction("Scale",
@@ -1611,7 +1500,7 @@ class UI_rollout {
       (v) -> { allSolids.palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolids.palette_DIR = this.Spinner(..., "solids.palette_DIR", -2, 2, 2);  [line 683]
     putSpinnerAction("solids.palette_DIR",
@@ -1619,7 +1508,7 @@ class UI_rollout {
       (v) -> { allSolids.palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // allSolids.palette_MLT = this.Spinner(..., "solids.palette_MLT", 0.0001, 64, -2);  [line 684]
     putSpinnerAction("solids.palette_MLT",
@@ -1627,7 +1516,7 @@ class UI_rollout {
       (v) -> { allSolids.palette_MLT = v; },
       0.0001, 64, 0.001,
       0, 1, 0,
-      recalcImpact);
+      react.recalcImpact);
 
     // Land3D.palette_CLR = this.Spinner(..., "Land3D.palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 686]
     putSpinnerAction("Land3D.palette_CLR",
@@ -1677,7 +1566,7 @@ class UI_rollout {
       (v) -> { Select3D.Group_displayPivot = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.displayReferencePivot = this.Spinner(..., "3D-select.displayReferencePivot");  [line 699]
     putSpinnerAction("3D-select.displayReferencePivot",
@@ -1685,7 +1574,7 @@ class UI_rollout {
       (v) -> { Select3D.displayReferencePivot = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Group_displayBox = this.Spinner(..., "3D-select.Group_displayBox");  [line 700]
     putSpinnerAction("3D-select.Group_displayBox",
@@ -1693,7 +1582,7 @@ class UI_rollout {
       (v) -> { Select3D.Group_displayBox = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Group_displayEdges = this.Spinner(..., "3D-select.Group_displayEdges");  [line 701]
     putSpinnerAction("3D-select.Group_displayEdges",
@@ -1701,7 +1590,7 @@ class UI_rollout {
       (v) -> { Select3D.Group_displayEdges = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Face_displayEdges = this.Spinner(..., "3D-select.Face_displayEdges");  [line 703]
     putSpinnerAction("3D-select.Face_displayEdges",
@@ -1709,7 +1598,7 @@ class UI_rollout {
       (v) -> { Select3D.Face_displayEdges = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Face_displayVertexCount = this.Spinner(..., "3D-select.Face_displayVertexCount");  [line 704]
     putSpinnerAction("3D-select.Face_displayVertexCount",
@@ -1717,7 +1606,7 @@ class UI_rollout {
       (v) -> { Select3D.Face_displayVertexCount = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Polyline_displayVertexCount = this.Spinner(..., "3D-select.Polyline_displayVertexCount");  [line 705]
     putSpinnerAction("3D-select.Polyline_displayVertexCount",
@@ -1725,7 +1614,7 @@ class UI_rollout {
       (v) -> { Select3D.Polyline_displayVertexCount = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Vertex_displayVertices = this.Spinner(..., "3D-select.Vertex_displayVertices");  [line 706]
     putSpinnerAction("3D-select.Vertex_displayVertices",
@@ -1733,7 +1622,7 @@ class UI_rollout {
       (v) -> { Select3D.Vertex_displayVertices = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Polyline_displayVertices = this.Spinner(..., "3D-select.Polyline_displayVertices");  [line 707]
     putSpinnerAction("3D-select.Polyline_displayVertices",
@@ -1741,7 +1630,7 @@ class UI_rollout {
       (v) -> { Select3D.Polyline_displayVertices = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Model2D_displayEdges = this.Spinner(..., "3D-select.Model2D_displayEdges");  [line 709]
     putSpinnerAction("3D-select.Model2D_displayEdges",
@@ -1749,7 +1638,7 @@ class UI_rollout {
       (v) -> { Select3D.Model2D_displayEdges = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Model1D_displayEdges = this.Spinner(..., "3D-select.Model1D_displayEdges");  [line 710]
     putSpinnerAction("3D-select.Model1D_displayEdges",
@@ -1757,7 +1646,7 @@ class UI_rollout {
       (v) -> { Select3D.Model1D_displayEdges = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Solid_displayEdges = this.Spinner(..., "3D-select.Solid_displayEdges");  [line 712]
     putSpinnerAction("3D-select.Solid_displayEdges",
@@ -1765,7 +1654,7 @@ class UI_rollout {
       (v) -> { Select3D.Solid_displayEdges = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Section_displayEdges = this.Spinner(..., "3D-select.Section_displayEdges");  [line 714]
     putSpinnerAction("3D-select.Section_displayEdges",
@@ -1773,7 +1662,7 @@ class UI_rollout {
       (v) -> { Select3D.Section_displayEdges = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.Camera_displayEdges = this.Spinner(..., "3D-select.Camera_displayEdges");  [line 716]
     putSpinnerAction("3D-select.Camera_displayEdges",
@@ -1781,7 +1670,7 @@ class UI_rollout {
       (v) -> { Select3D.Camera_displayEdges = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Select3D.LandPoint_displayPoints = this.Spinner(..., "3D-select.LandPoint_displayPoints");  [line 718]
     putSpinnerAction("3D-select.LandPoint_displayPoints",
@@ -1789,7 +1678,7 @@ class UI_rollout {
       (v) -> { Select3D.LandPoint_displayPoints = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0,
-      viewChangedOnly);
+      react.viewChangedOnly);
 
     // Interpolation_Weight = this.Spinner(..., "Interpolation_Weight", 0, 5, 0.5);  [line 724]
     putSpinnerAction("Interpolation_Weight",
@@ -1804,7 +1693,7 @@ class UI_rollout {
       (v) -> { CLIMATIC_SolarForecast = int(v); },
       0, 1, 1,
       1, 0, 0,
-      applyTimeChange);
+      react.applyTimeChange);
 
     // CLIMATIC_WeatherForecast = this.Spinner(..., "Climate-based temperature forecast", 0, 2, 1);  [line 726]
     putSpinnerAction("Climate-based temperature forecast",
@@ -1812,7 +1701,7 @@ class UI_rollout {
       (v) -> { CLIMATIC_WeatherForecast = int(v); },
       0, 2, 1,
       1, 0, 0,
-      applyTimeChange);
+      react.applyTimeChange);
 
     // Develop_Option = this.Spinner(..., "Develop_Option", 0, 11, 1);  [line 729]
     putSpinnerAction("Develop_Option",
@@ -1862,7 +1751,7 @@ class UI_rollout {
       (v) -> { CurrentDataSource = int(v); },
       () -> (float) (0), () -> (float) (MAXIMUM_dataID), 1,
       1, 0, 0,
-      impactsUpdateFlag);
+      react.impactsUpdateFlag);
 
     // STUDY.ImpactLayer = this.Spinner(..., "Impact Min/50%/Max", 0, 8, 1);  [line 740]
     putSpinnerAction("Impact Min/50%/Max",
@@ -2086,33 +1975,33 @@ class UI_rollout {
     if (this.parent == PARENT_PERIOD_SCENARIOS) {
 
       if (this.child == CHILD_PERIOD_TIME) {
-        STUDY.j_End = this.Spinner(X_control, Y_control, 1, 1, 0, "Number of days to plot", STUDY.j_End, 1, 365, 1, applyStudyJEnd);
+        STUDY.j_End = this.Spinner(X_control, Y_control, 1, 1, 0, "Number of days to plot", STUDY.j_End, 1, 365, 1, react.applyStudyJEnd);
 
         STUDY.perDays = this.Spinner(X_control, Y_control, 1, 1, 0, "Day step", STUDY.perDays, 1.0, 182.5, 0.5);
 
-        STUDY.joinDays = this.Spinner(X_control, Y_control, 1, 1, 0, "Join days", STUDY.joinDays, 1, 182, 1, caseBarOnly);
+        STUDY.joinDays = this.Spinner(X_control, Y_control, 1, 1, 0, "Join days", STUDY.joinDays, 1, 182, 1, react.caseBarOnly);
 
-        TIME.date = this.Spinner(X_control, Y_control, 1, 1, 0, "Days past March equinox", TIME.date, 0, 364, 1, applyTimeDate);
+        TIME.date = this.Spinner(X_control, Y_control, 1, 1, 0, "Days past March equinox", TIME.date, 0, 364, 1, react.applyTimeDate);
 
         //TIME.beginDay = this.Spinner(X_control, Y_control, 1, 1, 0, "Day of year (0-364)", TIME.beginDay, 0, 364, 1);
 
-        TIME.day = this.Spinner(X_control, Y_control, 1, 1, 0, "Begin day", TIME.day, 1, 31, 1, applyTimeChange);
-        TIME.month = this.Spinner(X_control, Y_control, 1, 1, 0, "Begin month", TIME.month, 1, 12, 1, applyTimeChange);
-        TIME.year = this.Spinner(X_control, Y_control, 1, 1, 0, "Begin year", TIME.year, 1953, 2100, 1, applyTimeChange);
+        TIME.day = this.Spinner(X_control, Y_control, 1, 1, 0, "Begin day", TIME.day, 1, 31, 1, react.applyTimeChange);
+        TIME.month = this.Spinner(X_control, Y_control, 1, 1, 0, "Begin month", TIME.month, 1, 12, 1, react.applyTimeChange);
+        TIME.year = this.Spinner(X_control, Y_control, 1, 1, 0, "Begin year", TIME.year, 1953, 2100, 1, react.applyTimeChange);
       }
 
       if (this.child == CHILD_PERIOD_RANGES) {
-        STUDY.i_Start = this.Spinner(X_control, Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1, caseBarOnly);
-        STUDY.i_End = this.Spinner(X_control, Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1, caseBarOnly);
+        STUDY.i_Start = this.Spinner(X_control, Y_control, 1, 0, 0, "Start hour", STUDY.i_Start, 0, 23, 1, react.caseBarOnly);
+        STUDY.i_End = this.Spinner(X_control, Y_control, 1, 0, 0, "End hour", STUDY.i_End, 0, 23, 1, react.caseBarOnly);
 
-        SampleYear_Start = this.Spinner(X_control, Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1, caseBarOnly);
-        SampleYear_End = this.Spinner(X_control, Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1, caseBarOnly);
+        SampleYear_Start = this.Spinner(X_control, Y_control, 1, 0, 0, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1, react.caseBarOnly);
+        SampleYear_End = this.Spinner(X_control, Y_control, 1, 0, 0, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1, react.caseBarOnly);
 
-        SampleMember_Start = this.Spinner(X_control, Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1, caseBarOnly);
-        SampleMember_End = this.Spinner(X_control, Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1, caseBarOnly);
+        SampleMember_Start = this.Spinner(X_control, Y_control, 1, 0, 0, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1, react.caseBarOnly);
+        SampleMember_End = this.Spinner(X_control, Y_control, 1, 0, 0, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1, react.caseBarOnly);
 
-        SampleStation_Start = this.Spinner(X_control, Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1, caseBarOnly);
-        SampleStation_End = this.Spinner(X_control, Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1, caseBarOnly);
+        SampleStation_Start = this.Spinner(X_control, Y_control, 1, 0, 0, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1, react.caseBarOnly);
+        SampleStation_End = this.Spinner(X_control, Y_control, 1, 0, 0, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1, react.caseBarOnly);
 
         ENSEMBLE_OBSERVED_maxDays = this.Spinner(X_control, Y_control, 0, 0, 1, "Forecast/Obs_maxDays", ENSEMBLE_OBSERVED_maxDays, 0, 31, 1);
       }
@@ -2126,8 +2015,8 @@ class UI_rollout {
 
 
       if (this.child == CHILD_LOCATION_POINT) {
-        LocationLAT = this.Spinner(X_control, Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, 0.01, applyLocationChange);
-        LocationLON = this.Spinner(X_control, Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, 0.01, applyLocationChange);
+        LocationLAT = this.Spinner(X_control, Y_control, 0, 0, 1, "Latitude", LocationLAT, -85, 85, 0.01, react.applyLocationChange);
+        LocationLON = this.Spinner(X_control, Y_control, 0, 0, 1, "Longitude", LocationLON, -180, 180, 0.01, react.applyLocationChange);
         //LocationELE = this.Spinner(X_control, Y_control, 0, 0, 1, "Elevation", LocationELE, -100, 8000, 1);
       }
 
@@ -2195,24 +2084,24 @@ class UI_rollout {
 
         User3D.modify_WeldTreshold = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-modify.WeldTreshold", User3D.modify_WeldTreshold, 0, 10, 0.001);
 
-        Select3D.softPower = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softPower", Select3D.softPower, 0.125, 8.0, -2, 0.001, softSelectionChanged);
-        Select3D.softRadius = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softRadius", Select3D.softRadius, 0.01, 100, -2, 0.001, softSelectionChanged);
+        Select3D.softPower = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softPower", Select3D.softPower, 0.125, 8.0, -2, 0.001, react.softSelectionChanged);
+        Select3D.softRadius = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.softRadius", Select3D.softRadius, 0.01, 100, -2, 0.001, react.softSelectionChanged);
 
         Select3D.posVector = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posVector", Select3D.posVector, 0, 3, 1);
         Select3D.rotVector =  this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotVector", Select3D.rotVector, 0, 2, 1);
         Select3D.scaleVector =  this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleVector", Select3D.scaleVector, 0, 3, 1);
 
-        Select3D.posValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posValue", Select3D.posValue, -50.0, 50.0, 1.0, 0.001, applyPosValue);
-        Select3D.rotValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotValue", Select3D.rotValue, -180.0, 180.0, 1.0, 0.001, applyRotValue);
-        Select3D.scaleValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleValue", Select3D.scaleValue, -8.0, 8.0, 1.0, 0.001, applyScaleValue);
+        Select3D.posValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.posValue", Select3D.posValue, -50.0, 50.0, 1.0, 0.001, react.applyPosValue);
+        Select3D.rotValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.rotValue", Select3D.rotValue, -180.0, 180.0, 1.0, 0.001, react.applyRotValue);
+        Select3D.scaleValue = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.scaleValue", Select3D.scaleValue, -8.0, 8.0, 1.0, 0.001, react.applyScaleValue);
 
-        Select3D.alignX = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignX", Select3D.alignX, -1, 1, 1, selectionChangedOnly);
-        Select3D.alignY = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignY", Select3D.alignY, -1, 1, 1, selectionChangedOnly);
-        Select3D.alignZ = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignZ", Select3D.alignZ, -1, 1, 1, selectionChangedOnly);
+        Select3D.alignX = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignX", Select3D.alignX, -1, 1, 1, react.selectionChangedOnly);
+        Select3D.alignY = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignY", Select3D.alignY, -1, 1, 1, react.selectionChangedOnly);
+        Select3D.alignZ = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.alignZ", Select3D.alignZ, -1, 1, 1, react.selectionChangedOnly);
       }
 
       if (this.child == CHILD_GEOMETRY_SOLID) {
-        User3D.create_powAll = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powAll", User3D.create_powAll, 0.5, CubePower, -2, 0.001, applyCreatePowAll);
+        User3D.create_powAll = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powAll", User3D.create_powAll, 0.5, CubePower, -2, 0.001, react.applyCreatePowAll);
         User3D.create_powX = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powX", User3D.create_powX, 0.5, CubePower, -2, 0.001);
         User3D.create_powY = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powY", User3D.create_powY, 0.5, CubePower, -2, 0.001);
         User3D.create_powZ = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-create.powZ", User3D.create_powZ, 0.5, CubePower, -2, 0.001);
@@ -2235,8 +2124,8 @@ class UI_rollout {
 
       if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
 
-        Land3D.loadTextures = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, applyLandLoadTextures);
-        Land3D.loadMesh = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, applyLandLoadMesh);
+        Land3D.loadTextures = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadTextures", Land3D.loadTextures, react.applyLandLoadTextures);
+        Land3D.loadMesh = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.loadMesh", Land3D.loadMesh, react.applyLandLoadMesh);
         Land3D.skipStart = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1);
         Land3D.skipEnd = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1);
         Land3D.displaySurface = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.displaySurface", Land3D.displaySurface);
@@ -2273,15 +2162,15 @@ class UI_rollout {
 
       if (this.child == CHILD_GEOMETRY_VIEWPORT) {
 
-        WIN3D.currentCamera = this.Spinner(X_control, Y_control, 0, 1, 0, "currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1, applyCurrentCamera);
+        WIN3D.currentCamera = this.Spinner(X_control, Y_control, 0, 1, 0, "currentCamera", WIN3D.currentCamera, 0, allCameras.num, 1, react.applyCurrentCamera);
 
         WIN3D.CAM_clipNear = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipNear", WIN3D.CAM_clipNear, 0.01, 100, -2, 0.001);
         WIN3D.CAM_clipFar = this.Spinner(X_control, Y_control, 0, 1, 0, "Camera_clipFar", WIN3D.CAM_clipFar, 1000, 2000000000, -2, 0.001);
 
 
-        allPoints.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayVertices", allPoints.displayAll, viewChangedOnly);
-        allFaces.displayEdges = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayEdges", allFaces.displayEdges, viewChangedOnly);
-        allFaces.displayNormals = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayNormals", allFaces.displayNormals, viewChangedOnly);
+        allPoints.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayVertices", allPoints.displayAll, react.viewChangedOnly);
+        allFaces.displayEdges = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayEdges", allFaces.displayEdges, react.viewChangedOnly);
+        allFaces.displayNormals = this.Spinner(X_control, Y_control, 0, 1, 0, "Create3D.displayNormals", allFaces.displayNormals, react.viewChangedOnly);
 
         allCameras.displayAll = this.Spinner(X_control, Y_control, 0, 1, 0, "cameras.displayAll", allCameras.displayAll);
       }
@@ -2289,7 +2178,7 @@ class UI_rollout {
 
       if (this.child == CHILD_GEOMETRY_SIMULATION) {
 
-        IMPACTS_displayDay = this.Spinner(X_control, Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1, caseBarOnly);
+        IMPACTS_displayDay = this.Spinner(X_control, Y_control, 0, 1, 0, "IMPACTS_displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1, react.caseBarOnly);
 
         allSolarImpacts.displayImage = this.Spinner(X_control, Y_control, 0, 1, 0, "solarImpacts.displayImage", allSolarImpacts.displayImage);
         allSolidImpacts.displayImage = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.displayImage", allSolidImpacts.displayImage);
@@ -2298,33 +2187,33 @@ class UI_rollout {
         allSolidImpacts.sectionType = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.sectionType", allSolidImpacts.sectionType, 0, 3, 1);
 
 
-        allSolidImpacts.Grade = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2, 0.001, recalcImpact);
-        allSolidImpacts.Power = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Power", allSolidImpacts.Power, 0.0001, 64.0, -2, 0.001, recalcImpact);
-        allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.R[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], -360, 360, -2, 0.001, recalcImpact);
-        allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], -1000, 1000, -2, 0.001, recalcImpact);
+        allSolidImpacts.Grade = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Grade", allSolidImpacts.Grade, 0.0001, 64.0, -2, 0.001, react.recalcImpact);
+        allSolidImpacts.Power = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Power", allSolidImpacts.Power, 0.0001, 64.0, -2, 0.001, react.recalcImpact);
+        allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.R[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.R[allSolidImpacts.sectionType], -360, 360, -2, 0.001, react.recalcImpact);
+        allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Z[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Z[allSolidImpacts.sectionType], -1000, 1000, -2, 0.001, react.recalcImpact);
         allSolidImpacts.positionStep = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.positionStep", allSolidImpacts.positionStep, 5, 80, -2, 0.001);
 
-        allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.U[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], 0.125, 3200, -2, 0.001, recalcImpact);
-        allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.V[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], 0.125, 3200, -2, 0.001, recalcImpact);
-        allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.X[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], -10000, 10000, -2, 0.001, recalcImpact);
-        allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], -10000, 10000, -2, 0.001, recalcImpact);
+        allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.U[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.U[allSolidImpacts.sectionType], 0.125, 3200, -2, 0.001, react.recalcImpact);
+        allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.V[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.V[allSolidImpacts.sectionType], 0.125, 3200, -2, 0.001, react.recalcImpact);
+        allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.X[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.X[allSolidImpacts.sectionType], -10000, 10000, -2, 0.001, react.recalcImpact);
+        allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.Y[" + nf(allSolidImpacts.sectionType, 0) + "]", allSolidImpacts.Y[allSolidImpacts.sectionType], -10000, 10000, -2, 0.001, react.recalcImpact);
 
 
-        allSolidImpacts.WindSpeed = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindSpeed (m/s)", allSolidImpacts.WindSpeed, 1, 16, -2, 0.001, recalcImpact);
-        allSolidImpacts.WindDirection = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15, recalcImpact);
+        allSolidImpacts.WindSpeed = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindSpeed (m/s)", allSolidImpacts.WindSpeed, 1, 16, -2, 0.001, react.recalcImpact);
+        allSolidImpacts.WindDirection = this.Spinner(X_control, Y_control, 0, 1, 0, "solidImpacts.WindDirection", allSolidImpacts.WindDirection, 0, 360, 15, react.recalcImpact);
 
 
-        allSolidImpacts.Process_subDivisions = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1, recalcImpact);
+        allSolidImpacts.Process_subDivisions = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.Process_subDivisions", allSolidImpacts.Process_subDivisions, 0, 3, 1, react.recalcImpact);
 
-        allSolidImpacts.displayPoints = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.displayPoints", allSolidImpacts.displayPoints, viewChangedOnly);
-        allSolidImpacts.displayLines = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.displayLines", allSolidImpacts.displayLines, viewChangedOnly);
+        allSolidImpacts.displayPoints = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.displayPoints", allSolidImpacts.displayPoints, react.viewChangedOnly);
+        allSolidImpacts.displayLines = this.Spinner(X_control, Y_control, 0, 0, 0, "solidImpacts.displayLines", allSolidImpacts.displayLines, react.viewChangedOnly);
 
-        allWindFlows.displayAll = this.Spinner(X_control, Y_control, 0, 0, 0, "windFlows.displayAll", allWindFlows.displayAll, viewChangedOnly);
+        allWindFlows.displayAll = this.Spinner(X_control, Y_control, 0, 0, 0, "windFlows.displayAll", allWindFlows.displayAll, react.viewChangedOnly);
       }
 
       if (this.child == CHILD_GEOMETRY_OTHER) {
 
-        allFaces.displayTessellation = this.Spinner(X_control, Y_control, 0, 1, 0, "3D-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1, viewChangedOnly);
+        allFaces.displayTessellation = this.Spinner(X_control, Y_control, 0, 1, 0, "3D-create.displayTessellation", allFaces.displayTessellation, 0, 4, 1, react.viewChangedOnly);
 
         Land3D.displayTessellation = this.Spinner(X_control, Y_control, 0, 1, 0, "Land.displayTessellation", Land3D.displayTessellation, 0, 4, 1);
 
@@ -2355,7 +2244,7 @@ class UI_rollout {
     } else if (this.parent == PARENT_ILLUSTRATION) {
 
       if (this.child == CHILD_ILLUSTRATION_2D_LAYERS) {
-        STUDY.plotSetup = this.Spinner(X_control, Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 8, 1, impactsUpdateFlag);
+        STUDY.plotSetup = this.Spinner(X_control, Y_control, 1, 0, 0, "Diagram setup", STUDY.plotSetup, -2, 8, 1, react.impactsUpdateFlag);
 
         STUDY.V_scale = this.Spinner(X_control, Y_control, 1, 0, 0, "Scale (" + allLayers[CurrentLayer_id].descriptions[Language_EN] + ")", STUDY.V_scale, 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
 
@@ -2420,9 +2309,9 @@ class UI_rollout {
 
       if (this.child == CHILD_ILLUSTRATION_3D_SPATIAL) {
 
-        allSolids.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, recalcImpact);
-        allSolids.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_DIR", allSolids.palette_DIR, -2, 2, 2, 1, recalcImpact);
-        allSolids.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_MLT", allSolids.palette_MLT, 0.0001, 64, -2, 0.001, recalcImpact);
+        allSolids.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_CLR", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1, react.recalcImpact);
+        allSolids.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_DIR", allSolids.palette_DIR, -2, 2, 2, 1, react.recalcImpact);
+        allSolids.palette_MLT = this.Spinner(X_control, Y_control, 0, 1, 0, "solids.palette_MLT", allSolids.palette_MLT, 0.0001, 64, -2, 0.001, react.recalcImpact);
 
         Land3D.palette_CLR = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_CLR", Land3D.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
         Land3D.palette_DIR = this.Spinner(X_control, Y_control, 0, 1, 0, "Land3D.palette_DIR", Land3D.palette_DIR, -2, 2, 2, 1);
@@ -2436,35 +2325,35 @@ class UI_rollout {
 
       if (this.child == CHILD_ILLUSTRATION_SELECTION) {
 
-        Select3D.Group_displayPivot = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayPivot", Select3D.Group_displayPivot, viewChangedOnly);
-        Select3D.displayReferencePivot = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.displayReferencePivot", Select3D.displayReferencePivot, viewChangedOnly);
-        Select3D.Group_displayBox = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayBox", Select3D.Group_displayBox, viewChangedOnly);
-        Select3D.Group_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayEdges", Select3D.Group_displayEdges, viewChangedOnly);
+        Select3D.Group_displayPivot = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayPivot", Select3D.Group_displayPivot, react.viewChangedOnly);
+        Select3D.displayReferencePivot = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.displayReferencePivot", Select3D.displayReferencePivot, react.viewChangedOnly);
+        Select3D.Group_displayBox = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayBox", Select3D.Group_displayBox, react.viewChangedOnly);
+        Select3D.Group_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Group_displayEdges", Select3D.Group_displayEdges, react.viewChangedOnly);
 
-        Select3D.Face_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Face_displayEdges", Select3D.Face_displayEdges, viewChangedOnly);
-        Select3D.Face_displayVertexCount = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Face_displayVertexCount", Select3D.Face_displayVertexCount, viewChangedOnly);
-        Select3D.Polyline_displayVertexCount = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Polyline_displayVertexCount", Select3D.Polyline_displayVertexCount, viewChangedOnly);
-        Select3D.Vertex_displayVertices = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Vertex_displayVertices", Select3D.Vertex_displayVertices, viewChangedOnly);
-        Select3D.Polyline_displayVertices = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Polyline_displayVertices", Select3D.Polyline_displayVertices, viewChangedOnly);
+        Select3D.Face_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Face_displayEdges", Select3D.Face_displayEdges, react.viewChangedOnly);
+        Select3D.Face_displayVertexCount = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Face_displayVertexCount", Select3D.Face_displayVertexCount, react.viewChangedOnly);
+        Select3D.Polyline_displayVertexCount = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Polyline_displayVertexCount", Select3D.Polyline_displayVertexCount, react.viewChangedOnly);
+        Select3D.Vertex_displayVertices = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Vertex_displayVertices", Select3D.Vertex_displayVertices, react.viewChangedOnly);
+        Select3D.Polyline_displayVertices = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Polyline_displayVertices", Select3D.Polyline_displayVertices, react.viewChangedOnly);
 
-        Select3D.Model2D_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Model2D_displayEdges", Select3D.Model2D_displayEdges, viewChangedOnly);
-        Select3D.Model1D_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Model1D_displayEdges", Select3D.Model1D_displayEdges, viewChangedOnly);
+        Select3D.Model2D_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Model2D_displayEdges", Select3D.Model2D_displayEdges, react.viewChangedOnly);
+        Select3D.Model1D_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Model1D_displayEdges", Select3D.Model1D_displayEdges, react.viewChangedOnly);
 
-        Select3D.Solid_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Solid_displayEdges", Select3D.Solid_displayEdges, viewChangedOnly);
+        Select3D.Solid_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Solid_displayEdges", Select3D.Solid_displayEdges, react.viewChangedOnly);
 
-        Select3D.Section_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Section_displayEdges", Select3D.Section_displayEdges, viewChangedOnly);
+        Select3D.Section_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Section_displayEdges", Select3D.Section_displayEdges, react.viewChangedOnly);
 
-        Select3D.Camera_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Camera_displayEdges", Select3D.Camera_displayEdges, viewChangedOnly);
+        Select3D.Camera_displayEdges = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.Camera_displayEdges", Select3D.Camera_displayEdges, react.viewChangedOnly);
 
-        Select3D.LandPoint_displayPoints = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.LandPoint_displayPoints", Select3D.LandPoint_displayPoints, viewChangedOnly);
+        Select3D.LandPoint_displayPoints = this.Spinner(X_control, Y_control, 0, 0, 0, "3D-select.LandPoint_displayPoints", Select3D.LandPoint_displayPoints, react.viewChangedOnly);
       }
     } else if (this.parent == PARENT_POSTPROCESS) {
 
       if (this.child == CHILD_POSTPROCESS_INTERPOLATION) {
 
         Interpolation_Weight = this.Spinner(X_control, Y_control, 1, 0, 0, "Interpolation_Weight", Interpolation_Weight, 0, 5, 0.5);
-        CLIMATIC_SolarForecast = this.Spinner(X_control, Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1, applyTimeChange);
-        CLIMATIC_WeatherForecast = this.Spinner(X_control, Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1, applyTimeChange);
+        CLIMATIC_SolarForecast = this.Spinner(X_control, Y_control, 1, 0, 0, "Climate-based solar forecast", CLIMATIC_SolarForecast, 0, 1, 1, react.applyTimeChange);
+        CLIMATIC_WeatherForecast = this.Spinner(X_control, Y_control, 1, 0, 0, "Climate-based temperature forecast", CLIMATIC_WeatherForecast, 0, 2, 1, react.applyTimeChange);
       }
       if (this.child == CHILD_POSTPROCESS_DEVELOPED) {
         Develop_Option = this.Spinner(X_control, Y_control, 1, 0, 0, "Develop_Option", Develop_Option, 0, 11, 1);
@@ -2477,7 +2366,7 @@ class UI_rollout {
         Develop_AngleOrientation = this.Spinner(X_control, Y_control, 1, 0, 0, "Orientation angle", Develop_AngleOrientation, 0, 360, 15, 1);
       }
       if (this.child == CHILD_POSTPROCESS_IMPACTS) {
-        CurrentDataSource = this.Spinner(X_control, Y_control, 1, 0, 0, "Impact Source", CurrentDataSource, 0, MAXIMUM_dataID, 1, impactsUpdateFlag);
+        CurrentDataSource = this.Spinner(X_control, Y_control, 1, 0, 0, "Impact Source", CurrentDataSource, 0, MAXIMUM_dataID, 1, react.impactsUpdateFlag);
         STUDY.ImpactLayer = this.Spinner(X_control, Y_control, 1, 0, 0, "Impact Min/50%/Max", STUDY.ImpactLayer, 0, 8, 1);
       }
     } else if (this.parent == PARENT_EXPORT) {
