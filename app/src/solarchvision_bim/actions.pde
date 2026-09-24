@@ -69,15 +69,15 @@ private void putAction(String s, Action fn) {
 //                            but min/max are read fresh on every invocation.
 // update1/update2/update3 : same meaning as the Spinner's update1/update2/update3
 //                            (non-zero revises STUDY, WIN3D, WORLD respectively).
-// onApplied  : optional (may be null). Some fields (e.g. TIME.day/month/year)
+// onChanged  : optional (may be null). Some fields (e.g. TIME.day/month/year)
 //              need extra derived-state work beyond a simple revise() when
 //              changed interactively - see applyRolloutUpdate.pde, which
 //              normally does this work once per frame by diffing the field's
 //              value before/after UI_rollout.draw(). A command-line change
 //              happens outside that per-frame diff window, so it would never
-//              be picked up there; onApplied lets us run that same
+//              be picked up there; onChanged lets us run that same
 //              field-specific follow-up work immediately instead.
-void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3, OnChange onApplied) {
+void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, FloatGetter minGetter, FloatGetter maxGetter, float step, int update1, int update2, int update3, OnChange onChanged) {
   putAction(name, (args) -> {
     float min_v = minGetter.get();
     float max_v = maxGetter.get();
@@ -107,7 +107,7 @@ void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, Float
     if (newValue != oldValue) {
       setter.set(newValue);
 
-      if (onApplied != null) onApplied.run(oldValue, newValue);
+      if (onChanged != null) onChanged.run(oldValue, newValue);
 
       if (update1 != 0) {
         UI_caseBar.revise();
@@ -126,8 +126,8 @@ void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, Float
 }
 
 // Convenience overloads for the common case of fixed, constant bounds.
-void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3, OnChange onApplied) {
-  putSpinnerAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, onApplied);
+void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3, OnChange onChanged) {
+  putSpinnerAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, onChanged);
 }
 
 void putSpinnerAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3) {

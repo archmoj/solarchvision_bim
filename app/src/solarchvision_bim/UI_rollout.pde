@@ -2425,14 +2425,14 @@ class UI_rollout {
     ) > 0.5;
   }
 
-  boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v, OnChange onApplied) {
+  boolean Spinner (float x, float y, int update1, int update2, int update3, String caption, boolean v, OnChange onChanged) {
     int min_v = 0;
     int max_v = 1;
     int stp_v = 1;
     int roundStep = Math.abs(stp_v);
     return (
       funcs.roundTo(
-        this._Spinner(x, y, update1, update2, update3, caption, v ? 1.0 : 0.0, (float) min_v, (float) max_v, (float) stp_v, onApplied),
+        this._Spinner(x, y, update1, update2, update3, caption, v ? 1.0 : 0.0, (float) min_v, (float) max_v, (float) stp_v, onChanged),
         roundStep
       )
     ) > 0.5;
@@ -2451,14 +2451,14 @@ class UI_rollout {
     );
   }
 
-  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, OnChange onApplied) {
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, OnChange onChanged) {
     int min_v = 0;
     int max_v = 1;
     int stp_v = 1;
     int roundStep = Math.abs(stp_v);
     return int(
       funcs.roundTo(
-        this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v, onApplied),
+        this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v, onChanged),
         roundStep
       )
     );
@@ -2474,11 +2474,11 @@ class UI_rollout {
     );
   }
 
-  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, OnChange onApplied) {
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, OnChange onChanged) {
     int roundStep = Math.abs(stp_v);
     return int(
       funcs.roundTo(
-        this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v, onApplied),
+        this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v, onChanged),
         roundStep
       )
     );
@@ -2493,10 +2493,10 @@ class UI_rollout {
     );
   }
 
-  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, int roundStep, OnChange onApplied) {
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, int roundStep, OnChange onChanged) {
     return int(
       funcs.roundTo(
-        this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v, onApplied),
+        this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v, onChanged),
         roundStep
       )
     );
@@ -2511,10 +2511,10 @@ class UI_rollout {
     );
   }
 
-  int Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, int min_v, int max_v, int stp_v, int roundStep, OnChange onApplied) {
+  int Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, int min_v, int max_v, int stp_v, int roundStep, OnChange onChanged) {
     return int(
       funcs.roundTo(
-        this._Spinner(x, y, update1, update2, update3, caption, v, (float) min_v, (float) max_v, (float) stp_v, onApplied),
+        this._Spinner(x, y, update1, update2, update3, caption, v, (float) min_v, (float) max_v, (float) stp_v, onChanged),
         roundStep
       )
     );
@@ -2529,10 +2529,10 @@ class UI_rollout {
     );
   }
 
-  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, float roundStep, OnChange onApplied) {
+  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, float roundStep, OnChange onChanged) {
     return (
       funcs.roundTo(
-        this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v, onApplied),
+        this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v, onChanged),
         roundStep
       )
     );
@@ -2548,11 +2548,11 @@ class UI_rollout {
     );
   }
 
-  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, OnChange onApplied) {
+  float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, OnChange onChanged) {
     float roundStep = Math.abs(stp_v);
     return (
       funcs.roundTo(
-        this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v, onApplied),
+        this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v, onChanged),
         roundStep
       )
     );
@@ -2571,7 +2571,7 @@ class UI_rollout {
     this.spinnerEditStateChanged = true;
   }
 
-  float _Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, OnChange onApplied) {
+  float _Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, OnChange onChanged) {
 
     float new_value = v;
 
@@ -2779,7 +2779,7 @@ class UI_rollout {
     text(caption + ":", x - w1 - w2 + t_oW, y - t_oH);
 
     if (new_value != v) {
-      if (onApplied != null) onApplied.run(v, new_value);
+      if (onChanged != null) onChanged.run(v, new_value);
 
       if (update1 != 0) {
         UI_caseBar.revise();
