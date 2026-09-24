@@ -210,11 +210,15 @@ class UI_rollout {
       model_changed();
     };
 
-    // ---- One command per this.Spinner(...) call in draw(), same
-    // min/max/step and update1/update2/update3 as that call. ----
+    // ---- One command per this.Spinner(...) call in draw(). The command
+    // name is just that call's caption as-is (putAction lowercases it and
+    // turns spaces into underscores) - same min/max/step and
+    // update1/update2/update3 as that call. A few captions are built by
+    // string concatenation in draw() (e.g. they embed a live index or a
+    // layer name); those get a fixed, static override name below instead.
 
     // STUDY.j_End = this.Spinner(..., "Number of days to plot", 1, 365, 1);  [line 348]
-    putSpinnerAction("number_of_days_to_plot",
+    putSpinnerAction("Number of days to plot",
       () -> (float) STUDY.j_End,
       (v) -> { STUDY.j_End = int(v); },
       1, 365, 1,
@@ -228,14 +232,14 @@ class UI_rollout {
       });
 
     // STUDY.perDays = this.Spinner(..., "Day step", 1.0, 182.5, 0.5);  [line 350]
-    putSpinnerAction("day_step",
+    putSpinnerAction("Day step",
       () -> STUDY.perDays,
       (v) -> { STUDY.perDays = v; },
       1.0, 182.5, 0.5,
       1, 1, 0);
 
     // STUDY.joinDays = this.Spinner(..., "Join days", 1, 182, 1);  [line 352]
-    putSpinnerAction("join_days",
+    putSpinnerAction("Join days",
       () -> (float) STUDY.joinDays,
       (v) -> { STUDY.joinDays = int(v); },
       1, 182, 1,
@@ -243,7 +247,7 @@ class UI_rollout {
       caseBarOnly);
 
     // TIME.date = this.Spinner(..., "Days past March equinox", 0, 364, 1);  [line 354]
-    putSpinnerAction("days_past_march_equinox",
+    putSpinnerAction("Days past March equinox",
       () -> TIME.date,
       (v) -> { TIME.date = v; },
       0, 364, 1,
@@ -253,7 +257,7 @@ class UI_rollout {
       });
 
     // TIME.day = this.Spinner(..., "Start day", 1, 31, 1);  [line 358]
-    putSpinnerAction("start_day",
+    putSpinnerAction("Start day",
       () -> (float) TIME.day,
       (v) -> { TIME.day = int(v); },
       1, 31, 1,
@@ -261,7 +265,7 @@ class UI_rollout {
       applyTimeChange);
 
     // TIME.month = this.Spinner(..., "Start month", 1, 12, 1);  [line 359]
-    putSpinnerAction("start_month",
+    putSpinnerAction("Start month",
       () -> (float) TIME.month,
       (v) -> { TIME.month = int(v); },
       1, 12, 1,
@@ -269,7 +273,7 @@ class UI_rollout {
       applyTimeChange);
 
     // TIME.year = this.Spinner(..., "Start year", 1953, 2100, 1);  [line 360]
-    putSpinnerAction("start_year",
+    putSpinnerAction("Start year",
       () -> (float) TIME.year,
       (v) -> { TIME.year = int(v); },
       1953, 2100, 1,
@@ -277,7 +281,7 @@ class UI_rollout {
       applyTimeChange);
 
     // STUDY.i_Start = this.Spinner(..., "Start hour", 0, 23, 1);  [line 364]
-    putSpinnerAction("start_hour",
+    putSpinnerAction("Start hour",
       () -> (float) STUDY.i_Start,
       (v) -> { STUDY.i_Start = int(v); },
       0, 23, 1,
@@ -285,15 +289,15 @@ class UI_rollout {
       caseBarOnly);
 
     // STUDY.i_End = this.Spinner(..., "End hour", 0, 23, 1);  [line 365]
-    putSpinnerAction("end_hour",
+    putSpinnerAction("End hour",
       () -> (float) STUDY.i_End,
       (v) -> { STUDY.i_End = int(v); },
       0, 23, 1,
       1, 0, 0,
       caseBarOnly);
 
-    // SampleYear_Start = this.Spinner(..., "Start year", CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1);  [line 367]
-    putSpinnerAction("sample_year_start",
+    // SampleYear_Start = this.Spinner(..., "Start year", CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1);  [line 367]  (renamed - dynamic caption)
+    putSpinnerAction("SampleYear_Start",
       () -> (float) SampleYear_Start,
       (v) -> { SampleYear_Start = int(v); },
       () -> (float) (CLIMATE_CWEEDS_start), () -> (float) (CLIMATE_CLMREC_end), 1,
@@ -301,7 +305,7 @@ class UI_rollout {
       caseBarOnly);
 
     // SampleYear_End = this.Spinner(..., "End year", CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1);  [line 368]
-    putSpinnerAction("end_year",
+    putSpinnerAction("End year",
       () -> (float) SampleYear_End,
       (v) -> { SampleYear_End = int(v); },
       () -> (float) (CLIMATE_CWEEDS_start), () -> (float) (CLIMATE_CLMREC_end), 1,
@@ -309,7 +313,7 @@ class UI_rollout {
       caseBarOnly);
 
     // SampleMember_Start = this.Spinner(..., "Start member", ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1);  [line 370]
-    putSpinnerAction("start_member",
+    putSpinnerAction("Start member",
       () -> (float) SampleMember_Start,
       (v) -> { SampleMember_Start = int(v); },
       () -> (float) (ENSEMBLE_FORECAST_start), () -> (float) (ENSEMBLE_FORECAST_end), 1,
@@ -317,7 +321,7 @@ class UI_rollout {
       caseBarOnly);
 
     // SampleMember_End = this.Spinner(..., "End member", ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1);  [line 371]
-    putSpinnerAction("end_member",
+    putSpinnerAction("End member",
       () -> (float) SampleMember_End,
       (v) -> { SampleMember_End = int(v); },
       () -> (float) (ENSEMBLE_FORECAST_start), () -> (float) (ENSEMBLE_FORECAST_end), 1,
@@ -325,7 +329,7 @@ class UI_rollout {
       caseBarOnly);
 
     // SampleStation_Start = this.Spinner(..., "Start station", ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1);  [line 373]
-    putSpinnerAction("start_station",
+    putSpinnerAction("Start station",
       () -> (float) SampleStation_Start,
       (v) -> { SampleStation_Start = int(v); },
       () -> (float) (ENSEMBLE_OBSERVED_start), () -> (float) (ENSEMBLE_OBSERVED_end), 1,
@@ -333,7 +337,7 @@ class UI_rollout {
       caseBarOnly);
 
     // SampleStation_End = this.Spinner(..., "End station", ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1);  [line 374]
-    putSpinnerAction("end_station",
+    putSpinnerAction("End station",
       () -> (float) SampleStation_End,
       (v) -> { SampleStation_End = int(v); },
       () -> (float) (ENSEMBLE_OBSERVED_start), () -> (float) (ENSEMBLE_OBSERVED_end), 1,
@@ -341,28 +345,28 @@ class UI_rollout {
       caseBarOnly);
 
     // ENSEMBLE_OBSERVED_maxDays = this.Spinner(..., "Forecast/Obs_maxDays", 0, 31, 1);  [line 376]
-    putSpinnerAction("forecast_obs_max_days",
+    putSpinnerAction("Forecast/Obs_maxDays",
       () -> (float) ENSEMBLE_OBSERVED_maxDays,
       (v) -> { ENSEMBLE_OBSERVED_maxDays = int(v); },
       0, 31, 1,
       0, 0, 1);
 
     // STUDY.skyScenario = this.Spinner(..., "Sky status", 1, 4, 1);  [line 381]
-    putSpinnerAction("sky_status",
+    putSpinnerAction("Sky status",
       () -> (float) STUDY.skyScenario,
       (v) -> { STUDY.skyScenario = int(v); },
       1, 4, 1,
       1, 0, 0);
 
     // STUDY.filter = this.Spinner(..., "Hourly/daily filter", 0, 1, 1);  [line 382]
-    putSpinnerAction("hourly_daily_filter",
+    putSpinnerAction("Hourly/daily filter",
       () -> (float) STUDY.filter,
       (v) -> { STUDY.filter = int(v); },
       0, 1, 1,
       1, 0, 0);
 
     // LocationLAT = this.Spinner(..., "Latitude", -85, 85, 0.01);  [line 388]
-    putSpinnerAction("latitude",
+    putSpinnerAction("Latitude",
       () -> LocationLAT,
       (v) -> { LocationLAT = v; },
       -85, 85, 0.01,
@@ -370,7 +374,7 @@ class UI_rollout {
       applyLocationChange);
 
     // LocationLON = this.Spinner(..., "Longitude", -180, 180, 0.01);  [line 389]
-    putSpinnerAction("longitude",
+    putSpinnerAction("Longitude",
       () -> LocationLON,
       (v) -> { LocationLON = v; },
       -180, 180, 0.01,
@@ -378,259 +382,259 @@ class UI_rollout {
       applyLocationChange);
 
     // WORLD.displayAll_TMYEPW = this.Spinner(..., "displayAll_TMYEPW", 0, 2, 1);  [line 395]
-    putSpinnerAction("display_all_tmyepw",
+    putSpinnerAction("displayAll_TMYEPW",
       () -> (float) WORLD.displayAll_TMYEPW,
       (v) -> { WORLD.displayAll_TMYEPW = int(v); },
       0, 2, 1,
       0, 0, 1);
 
     // WORLD.displayNear_TMYEPW = this.Spinner(..., "displayNear_TMYEPW");  [line 396]
-    putSpinnerAction("display_near_tmyepw",
+    putSpinnerAction("displayNear_TMYEPW",
       () -> (WORLD.displayNear_TMYEPW ? 1f : 0f),
       (v) -> { WORLD.displayNear_TMYEPW = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 1);
 
     // WORLD.displayAll_CWEEDS = this.Spinner(..., "displayAll_CWEEDS", 0, 2, 1);  [line 398]
-    putSpinnerAction("display_all_cweeds",
+    putSpinnerAction("displayAll_CWEEDS",
       () -> (float) WORLD.displayAll_CWEEDS,
       (v) -> { WORLD.displayAll_CWEEDS = int(v); },
       0, 2, 1,
       0, 0, 1);
 
     // WORLD.displayNear_CWEEDS = this.Spinner(..., "displayNear_CWEEDS");  [line 399]
-    putSpinnerAction("display_near_cweeds",
+    putSpinnerAction("displayNear_CWEEDS",
       () -> (WORLD.displayNear_CWEEDS ? 1f : 0f),
       (v) -> { WORLD.displayNear_CWEEDS = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 1);
 
     // WORLD.displayAll_CLMREC = this.Spinner(..., "displayAll_CLMREC", 0, 2, 1);  [line 401]
-    putSpinnerAction("display_all_clmrec",
+    putSpinnerAction("displayAll_CLMREC",
       () -> (float) WORLD.displayAll_CLMREC,
       (v) -> { WORLD.displayAll_CLMREC = int(v); },
       0, 2, 1,
       0, 0, 1);
 
     // WORLD.displayNear_CLMREC = this.Spinner(..., "displayNear_CLMREC");  [line 402]
-    putSpinnerAction("display_near_clmrec",
+    putSpinnerAction("displayNear_CLMREC",
       () -> (WORLD.displayNear_CLMREC ? 1f : 0f),
       (v) -> { WORLD.displayNear_CLMREC = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 1);
 
     // WORLD.displayAll_SWOB = this.Spinner(..., "displayAll_SWOB", 0, 2, 1);  [line 404]
-    putSpinnerAction("display_all_swob",
+    putSpinnerAction("displayAll_SWOB",
       () -> (float) WORLD.displayAll_SWOB,
       (v) -> { WORLD.displayAll_SWOB = int(v); },
       0, 2, 1,
       0, 0, 1);
 
     // WORLD.displayNear_SWOB = this.Spinner(..., "displayNear_SWOB");  [line 405]
-    putSpinnerAction("display_near_swob",
+    putSpinnerAction("displayNear_SWOB",
       () -> (WORLD.displayNear_SWOB ? 1f : 0f),
       (v) -> { WORLD.displayNear_SWOB = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 1);
 
     // WORLD.displayAll_NAEFS = this.Spinner(..., "displayAll_NAEFS", 0, 2, 1);  [line 407]
-    putSpinnerAction("display_all_naefs",
+    putSpinnerAction("displayAll_NAEFS",
       () -> (float) WORLD.displayAll_NAEFS,
       (v) -> { WORLD.displayAll_NAEFS = int(v); },
       0, 2, 1,
       0, 0, 1);
 
     // WORLD.displayNear_NAEFS = this.Spinner(..., "displayNear_NAEFS");  [line 408]
-    putSpinnerAction("display_near_naefs",
+    putSpinnerAction("displayNear_NAEFS",
       () -> (WORLD.displayNear_NAEFS ? 1f : 0f),
       (v) -> { WORLD.displayNear_NAEFS = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 1);
 
     // addToLastGroup = this.Spinner(..., "addToLastGroup");  [line 413]
-    putSpinnerAction("add_to_last_group",
+    putSpinnerAction("addToLastGroup",
       () -> (addToLastGroup ? 1f : 0f),
       (v) -> { addToLastGroup = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // User3D.default_Material = this.Spinner(..., "3D-create.Material", -1, 8, 1);  [line 415]
-    putSpinnerAction("3_d_create_material",
+    putSpinnerAction("3D-create.Material",
       () -> (float) User3D.default_Material,
       (v) -> { User3D.default_Material = int(v); },
       -1, 8, 1,
       0, 0, 0);
 
     // User3D.default_Tessellation = this.Spinner(..., "3D-create.Tessellation", 0, 6, 1);  [line 416]
-    putSpinnerAction("3_d_create_tessellation",
+    putSpinnerAction("3D-create.Tessellation",
       () -> (float) User3D.default_Tessellation,
       (v) -> { User3D.default_Tessellation = int(v); },
       0, 6, 1,
       0, 0, 0);
 
     // User3D.default_Layer = this.Spinner(..., "3D-create.Layer", 0, 16, 1);  [line 417]
-    putSpinnerAction("3_d_create_layer",
+    putSpinnerAction("3D-create.Layer",
       () -> (float) User3D.default_Layer,
       (v) -> { User3D.default_Layer = int(v); },
       0, 16, 1,
       0, 0, 0);
 
     // User3D.default_Visibility = this.Spinner(..., "3D-create.Visibility", -1, 1, 1);  [line 418]
-    putSpinnerAction("3_d_create_visibility",
+    putSpinnerAction("3D-create.Visibility",
       () -> (float) User3D.default_Visibility,
       (v) -> { User3D.default_Visibility = int(v); },
       -1, 1, 1,
       0, 0, 0);
 
     // User3D.default_Weight = this.Spinner(..., "3D-create.Weight", -20, 20, 1);  [line 419]
-    putSpinnerAction("3_d_create_weight",
+    putSpinnerAction("3D-create.Weight",
       () -> (float) User3D.default_Weight,
       (v) -> { User3D.default_Weight = int(v); },
       -20, 20, 1,
       0, 0, 0);
 
     // User3D.default_Closed = this.Spinner(..., "3D-create.Closed", 0, 1, 1);  [line 420]
-    putSpinnerAction("3_d_create_closed",
+    putSpinnerAction("3D-create.Closed",
       () -> (float) User3D.default_Closed,
       (v) -> { User3D.default_Closed = int(v); },
       0, 1, 1,
       0, 0, 0);
 
     // User3D.create_Orientation = this.Spinner(..., "3D-create.Orientation", 0, 360, 1);  [line 422]
-    putSpinnerAction("3_d_create_orientation",
+    putSpinnerAction("3D-create.Orientation",
       () -> User3D.create_Orientation,
       (v) -> { User3D.create_Orientation = v; },
       0, 360, 0.001,
       0, 0, 0);
 
     // User3D.create_Length = this.Spinner(..., "3D-create.Length (rand negative)", -100.0, 1000.0, 1.0);  [line 424]
-    putSpinnerAction("3_d_create_length_rand_negative",
+    putSpinnerAction("3D-create.Length (rand negative)",
       () -> User3D.create_Length,
       (v) -> { User3D.create_Length = v; },
       -100.0, 1000.0, 0.001,
       0, 0, 0);
 
     // User3D.create_Width = this.Spinner(..., "3D-create.Width (rand negative)", -100.0, 1000.0, 1.0);  [line 425]
-    putSpinnerAction("3_d_create_width_rand_negative",
+    putSpinnerAction("3D-create.Width (rand negative)",
       () -> User3D.create_Width,
       (v) -> { User3D.create_Width = v; },
       -100.0, 1000.0, 0.001,
       0, 0, 0);
 
     // User3D.create_Height = this.Spinner(..., "3D-create.Height (rand negative)", -100.0, 1000.0, 1.0);  [line 426]
-    putSpinnerAction("3_d_create_height_rand_negative",
+    putSpinnerAction("3D-create.Height (rand negative)",
       () -> User3D.create_Height,
       (v) -> { User3D.create_Height = v; },
       -100.0, 1000.0, 0.001,
       0, 0, 0);
 
     // User3D.create_Volume = this.Spinner(..., "3D-create.Volume", 0, 1000000000, 1);  [line 428]
-    putSpinnerAction("3_d_create_volume",
+    putSpinnerAction("3D-create.Volume",
       () -> User3D.create_Volume,
       (v) -> { User3D.create_Volume = v; },
       0, 1000000000, 0.001,
       0, 0, 0);
 
     // User3D.create_Snap = this.Spinner(..., "3D-create.Snap", 0, 1, 1);  [line 430]
-    putSpinnerAction("3_d_create_snap",
+    putSpinnerAction("3D-create.Snap",
       () -> (float) User3D.create_Snap,
       (v) -> { User3D.create_Snap = int(v); },
       0, 1, 1,
       0, 0, 0);
 
     // User3D.create_SphereDegree = this.Spinner(..., "3D-create.SphereDegree", 0, 5, 1);  [line 432]
-    putSpinnerAction("3_d_create_sphere_degree",
+    putSpinnerAction("3D-create.SphereDegree",
       () -> (float) User3D.create_SphereDegree,
       (v) -> { User3D.create_SphereDegree = int(v); },
       0, 5, 1,
       0, 0, 0);
 
     // User3D.create_CylinderDegree = this.Spinner(..., "3D-create.CylinderDegree", 3, 36, 1);  [line 434]
-    putSpinnerAction("3_d_create_cylinder_degree",
+    putSpinnerAction("3D-create.CylinderDegree",
       () -> (float) User3D.create_CylinderDegree,
       (v) -> { User3D.create_CylinderDegree = int(v); },
       3, 36, 1,
       0, 0, 0);
 
     // User3D.create_PolyDegree = this.Spinner(..., "3D-create.PolyDegree", 3, 36, 1);  [line 436]
-    putSpinnerAction("3_d_create_poly_degree",
+    putSpinnerAction("3D-create.PolyDegree",
       () -> (float) User3D.create_PolyDegree,
       (v) -> { User3D.create_PolyDegree = int(v); },
       3, 36, 1,
       0, 0, 0);
 
     // User3D.create_Parametric_Type = this.Spinner(..., "3D-create.Parametric_Type", 1, 6, 1);  [line 438]
-    putSpinnerAction("3_d_create_parametric_type",
+    putSpinnerAction("3D-create.Parametric_Type",
       () -> (float) User3D.create_Parametric_Type,
       (v) -> { User3D.create_Parametric_Type = int(v); },
       1, 6, 1,
       0, 0, 0);
 
     // User3D.create_Person_Type = this.Spinner(..., "3D-create.Person_Type", 0, allModel2Ds.num_files_PEOPLE, 1);  [line 439]
-    putSpinnerAction("3_d_create_person_type",
+    putSpinnerAction("3D-create.Person_Type",
       () -> (float) User3D.create_Person_Type,
       (v) -> { User3D.create_Person_Type = int(v); },
       () -> (float) (0), () -> (float) (allModel2Ds.num_files_PEOPLE), 1,
       0, 0, 0);
 
     // User3D.create_Plant_Type = this.Spinner(..., "3D-create.Plant_Type", 0, allModel2Ds.num_files_TREES, 1);  [line 440]
-    putSpinnerAction("3_d_create_plant_type",
+    putSpinnerAction("3D-create.Plant_Type",
       () -> (float) User3D.create_Plant_Type,
       (v) -> { User3D.create_Plant_Type = int(v); },
       () -> (float) (0), () -> (float) (allModel2Ds.num_files_TREES), 1,
       0, 0, 0);
 
     // User3D.modify_OpenningDepth = this.Spinner(..., "3D-modify.OpenningDepth", -10, 10, 0.1);  [line 446]
-    putSpinnerAction("3_d_modify_openning_depth",
+    putSpinnerAction("3D-modify.OpenningDepth",
       () -> User3D.modify_OpenningDepth,
       (v) -> { User3D.modify_OpenningDepth = v; },
       -10, 10, 0.1,
       0, 0, 0);
 
     // User3D.modify_OpenningArea = this.Spinner(..., "3D-modify.OpenningArea", 0, 1, 0.05);  [line 447]
-    putSpinnerAction("3_d_modify_openning_area",
+    putSpinnerAction("3D-modify.OpenningArea",
       () -> User3D.modify_OpenningArea,
       (v) -> { User3D.modify_OpenningArea = v; },
       0, 1, 0.05,
       0, 0, 0);
 
     // User3D.modify_OpenningDeviation = this.Spinner(..., "3D-modify.OpenningDeviation", 0, 1, 0.05);  [line 448]
-    putSpinnerAction("3_d_modify_openning_deviation",
+    putSpinnerAction("3D-modify.OpenningDeviation",
       () -> User3D.modify_OpenningDeviation,
       (v) -> { User3D.modify_OpenningDeviation = v; },
       0, 1, 0.05,
       0, 0, 0);
 
     // User3D.modify_TessellateRows = this.Spinner(..., "3D-modify.TessellateRows", 1, 100, 1);  [line 450]
-    putSpinnerAction("3_d_modify_tessellate_rows",
+    putSpinnerAction("3D-modify.TessellateRows",
       () -> (float) User3D.modify_TessellateRows,
       (v) -> { User3D.modify_TessellateRows = int(v); },
       1, 100, 1,
       0, 0, 0);
 
     // User3D.modify_TessellateColumns = this.Spinner(..., "3D-modify.TessellateColumns", 1, 100, 1);  [line 451]
-    putSpinnerAction("3_d_modify_tessellate_columns",
+    putSpinnerAction("3D-modify.TessellateColumns",
       () -> (float) User3D.modify_TessellateColumns,
       (v) -> { User3D.modify_TessellateColumns = int(v); },
       1, 100, 1,
       0, 0, 0);
 
     // User3D.modify_OffsetAmount = this.Spinner(..., "3D-modify.OffsetAmount", 0, 25, 0.001);  [line 453]
-    putSpinnerAction("3_d_modify_offset_amount",
+    putSpinnerAction("3D-modify.OffsetAmount",
       () -> User3D.modify_OffsetAmount,
       (v) -> { User3D.modify_OffsetAmount = v; },
       0, 25, 0.001,
       0, 0, 0);
 
     // User3D.modify_WeldTreshold = this.Spinner(..., "3D-modify.WeldTreshold", 0, 10, 0.001);  [line 455]
-    putSpinnerAction("3_d_modify_weld_treshold",
+    putSpinnerAction("3D-modify.WeldTreshold",
       () -> User3D.modify_WeldTreshold,
       (v) -> { User3D.modify_WeldTreshold = v; },
       0, 10, 0.001,
       0, 0, 0);
 
     // Select3D.softPower = this.Spinner(..., "3D-select.softPower", 0.125, 8.0, -2);  [line 457]
-    putSpinnerAction("3_d_select_soft_power",
+    putSpinnerAction("3D-select.softPower",
       () -> Select3D.softPower,
       (v) -> { Select3D.softPower = v; },
       0.125, 8.0, 0.001,
@@ -638,7 +642,7 @@ class UI_rollout {
       softSelectionChanged);
 
     // Select3D.softRadius = this.Spinner(..., "3D-select.softRadius", 0.01, 100, -2);  [line 458]
-    putSpinnerAction("3_d_select_soft_radius",
+    putSpinnerAction("3D-select.softRadius",
       () -> Select3D.softRadius,
       (v) -> { Select3D.softRadius = v; },
       0.01, 100, 0.001,
@@ -646,28 +650,28 @@ class UI_rollout {
       softSelectionChanged);
 
     // Select3D.posVector = this.Spinner(..., "3D-select.posVector", 0, 3, 1);  [line 460]
-    putSpinnerAction("3_d_select_pos_vector",
+    putSpinnerAction("3D-select.posVector",
       () -> (float) Select3D.posVector,
       (v) -> { Select3D.posVector = int(v); },
       0, 3, 1,
       0, 0, 0);
 
     // Select3D.rotVector = this.Spinner(..., "3D-select.rotVector", 0, 2, 1);  [line 461]
-    putSpinnerAction("3_d_select_rot_vector",
+    putSpinnerAction("3D-select.rotVector",
       () -> (float) Select3D.rotVector,
       (v) -> { Select3D.rotVector = int(v); },
       0, 2, 1,
       0, 0, 0);
 
     // Select3D.scaleVector = this.Spinner(..., "3D-select.scaleVector", 0, 3, 1);  [line 462]
-    putSpinnerAction("3_d_select_scale_vector",
+    putSpinnerAction("3D-select.scaleVector",
       () -> (float) Select3D.scaleVector,
       (v) -> { Select3D.scaleVector = int(v); },
       0, 3, 1,
       0, 0, 0);
 
     // Select3D.posValue = this.Spinner(..., "3D-select.posValue", -50.0, 50.0, 1.0);  [line 464]
-    putSpinnerAction("3_d_select_pos_value",
+    putSpinnerAction("3D-select.posValue",
       () -> Select3D.posValue,
       (v) -> { Select3D.posValue = v; },
       -50.0, 50.0, 0.001,
@@ -675,7 +679,7 @@ class UI_rollout {
       applyPosValue);
 
     // Select3D.rotValue = this.Spinner(..., "3D-select.rotValue", -180.0, 180.0, 1.0);  [line 465]
-    putSpinnerAction("3_d_select_rot_value",
+    putSpinnerAction("3D-select.rotValue",
       () -> Select3D.rotValue,
       (v) -> { Select3D.rotValue = v; },
       -180.0, 180.0, 0.001,
@@ -683,7 +687,7 @@ class UI_rollout {
       applyRotValue);
 
     // Select3D.scaleValue = this.Spinner(..., "3D-select.scaleValue", -8.0, 8.0, 1.0);  [line 466]
-    putSpinnerAction("3_d_select_scale_value",
+    putSpinnerAction("3D-select.scaleValue",
       () -> Select3D.scaleValue,
       (v) -> { Select3D.scaleValue = v; },
       -8.0, 8.0, 0.001,
@@ -691,7 +695,7 @@ class UI_rollout {
       applyScaleValue);
 
     // Select3D.alignX = this.Spinner(..., "3D-select.alignX", -1, 1, 1);  [line 468]
-    putSpinnerAction("3_d_select_align_x",
+    putSpinnerAction("3D-select.alignX",
       () -> (float) Select3D.alignX,
       (v) -> { Select3D.alignX = int(v); },
       -1, 1, 1,
@@ -699,7 +703,7 @@ class UI_rollout {
       selectionChangedOnly);
 
     // Select3D.alignY = this.Spinner(..., "3D-select.alignY", -1, 1, 1);  [line 469]
-    putSpinnerAction("3_d_select_align_y",
+    putSpinnerAction("3D-select.alignY",
       () -> (float) Select3D.alignY,
       (v) -> { Select3D.alignY = int(v); },
       -1, 1, 1,
@@ -707,7 +711,7 @@ class UI_rollout {
       selectionChangedOnly);
 
     // Select3D.alignZ = this.Spinner(..., "3D-select.alignZ", -1, 1, 1);  [line 470]
-    putSpinnerAction("3_d_select_align_z",
+    putSpinnerAction("3D-select.alignZ",
       () -> (float) Select3D.alignZ,
       (v) -> { Select3D.alignZ = int(v); },
       -1, 1, 1,
@@ -715,7 +719,7 @@ class UI_rollout {
       selectionChangedOnly);
 
     // User3D.create_powAll = this.Spinner(..., "3D-create.powAll", 0.5, CubePower, -2);  [line 474]
-    putSpinnerAction("3_d_create_pow_all",
+    putSpinnerAction("3D-create.powAll",
       () -> User3D.create_powAll,
       (v) -> { User3D.create_powAll = v; },
       () -> (float) (0.5), () -> (float) (CubePower), 0.001,
@@ -728,91 +732,91 @@ class UI_rollout {
       });
 
     // User3D.create_powX = this.Spinner(..., "3D-create.powX", 0.5, CubePower, -2);  [line 475]
-    putSpinnerAction("3_d_create_pow_x",
+    putSpinnerAction("3D-create.powX",
       () -> User3D.create_powX,
       (v) -> { User3D.create_powX = v; },
       () -> (float) (0.5), () -> (float) (CubePower), 0.001,
       0, 0, 0);
 
     // User3D.create_powY = this.Spinner(..., "3D-create.powY", 0.5, CubePower, -2);  [line 476]
-    putSpinnerAction("3_d_create_pow_y",
+    putSpinnerAction("3D-create.powY",
       () -> User3D.create_powY,
       (v) -> { User3D.create_powY = v; },
       () -> (float) (0.5), () -> (float) (CubePower), 0.001,
       0, 0, 0);
 
     // User3D.create_powZ = this.Spinner(..., "3D-create.powZ", 0.5, CubePower, -2);  [line 477]
-    putSpinnerAction("3_d_create_pow_z",
+    putSpinnerAction("3D-create.powZ",
       () -> User3D.create_powZ,
       (v) -> { User3D.create_powZ = v; },
       () -> (float) (0.5), () -> (float) (CubePower), 0.001,
       0, 0, 0);
 
     // User3D.create_Model1D_Type = this.Spinner(..., "3D-create.Type", 0, 0, 1);  [line 483]
-    putSpinnerAction("3_d_create_type",
+    putSpinnerAction("3D-create.Type",
       () -> (float) User3D.create_Model1D_Type,
       (v) -> { User3D.create_Model1D_Type = int(v); },
       0, 0, 1,
       0, 0, 0);
 
     // User3D.create_Model1D_DegreeMax = this.Spinner(..., "3D-create.DegreeMax", 0, 12, 1);  [line 484]
-    putSpinnerAction("3_d_create_degree_max",
+    putSpinnerAction("3D-create.DegreeMax",
       () -> (float) User3D.create_Model1D_DegreeMax,
       (v) -> { User3D.create_Model1D_DegreeMax = int(v); },
       0, 12, 1,
       0, 0, 0);
 
     // User3D.create_Model1D_Seed = this.Spinner(..., "3D-create.Seed", -1, 32767, 1);  [line 485]
-    putSpinnerAction("3_d_create_seed",
+    putSpinnerAction("3D-create.Seed",
       () -> (float) User3D.create_Model1D_Seed,
       (v) -> { User3D.create_Model1D_Seed = int(v); },
       -1, 32767, 1,
       0, 0, 0);
 
     // User3D.create_Model1D_TrunkSize = this.Spinner(..., "3D-create.TrunkSize", 0, 10, 0.1);  [line 486]
-    putSpinnerAction("3_d_create_trunk_size",
+    putSpinnerAction("3D-create.TrunkSize",
       () -> User3D.create_Model1D_TrunkSize,
       (v) -> { User3D.create_Model1D_TrunkSize = v; },
       0, 10, 0.1,
       0, 0, 0);
 
     // User3D.create_Model1D_LeafSize = this.Spinner(..., "3D-create.LeafSize", 0, 1, 0.01);  [line 487]
-    putSpinnerAction("3_d_create_leaf_size",
+    putSpinnerAction("3D-create.LeafSize",
       () -> User3D.create_Model1D_LeafSize,
       (v) -> { User3D.create_Model1D_LeafSize = v; },
       0, 1, 0.1,
       0, 0, 0);
 
     // User3D.create_Model1D_BranchTilt = this.Spinner(..., "3D-create.BranchTilt", 0, 360, 5);  [line 489]
-    putSpinnerAction("3_d_create_branch_tilt",
+    putSpinnerAction("3D-create.BranchTilt",
       () -> User3D.create_Model1D_BranchTilt,
       (v) -> { User3D.create_Model1D_BranchTilt = v; },
       0, 360, 0.1,
       0, 0, 0);
 
     // User3D.create_Model1D_BranchTwist = this.Spinner(..., "3D-create.BranchTwist", 0, 360, 5);  [line 490]
-    putSpinnerAction("3_d_create_branch_twist",
+    putSpinnerAction("3D-create.BranchTwist",
       () -> User3D.create_Model1D_BranchTwist,
       (v) -> { User3D.create_Model1D_BranchTwist = v; },
       0, 360, 0.1,
       0, 0, 0);
 
     // User3D.create_Model1D_BranchRatio = this.Spinner(..., "3D-create.BranchRatio", 0.05, 1, 0.05);  [line 491]
-    putSpinnerAction("3_d_create_branch_ratio",
+    putSpinnerAction("3D-create.BranchRatio",
       () -> User3D.create_Model1D_BranchRatio,
       (v) -> { User3D.create_Model1D_BranchRatio = v; },
       0.05, 1, 0.01,
       0, 0, 0);
 
     // User3D.create_Model1D_TreeBase = this.Spinner(..., "3D-create.TreeBase", 0, 4, 0.1);  [line 492]
-    putSpinnerAction("3_d_create_tree_base",
+    putSpinnerAction("3D-create.TreeBase",
       () -> User3D.create_Model1D_TreeBase,
       (v) -> { User3D.create_Model1D_TreeBase = v; },
       0, 4, 0.01,
       0, 0, 0);
 
     // Land3D.loadTextures = this.Spinner(..., "Land3D.loadTextures");  [line 497]
-    putSpinnerAction("land3_d_load_textures",
+    putSpinnerAction("Land3D.loadTextures",
       () -> (Land3D.loadTextures ? 1f : 0f),
       (v) -> { Land3D.loadTextures = (v >= 0.5f); },
       0, 1, 1,
@@ -823,7 +827,7 @@ class UI_rollout {
       });
 
     // Land3D.loadMesh = this.Spinner(..., "Land3D.loadMesh");  [line 498]
-    putSpinnerAction("land3_d_load_mesh",
+    putSpinnerAction("Land3D.loadMesh",
       () -> (Land3D.loadMesh ? 1f : 0f),
       (v) -> { Land3D.loadMesh = (v >= 0.5f); },
       0, 1, 1,
@@ -834,133 +838,133 @@ class UI_rollout {
       });
 
     // Land3D.skipStart = this.Spinner(..., "Land3D.skipStart", 0, Land3D.num_rows - 1, 1);  [line 499]
-    putSpinnerAction("land3_d_skip_start",
+    putSpinnerAction("Land3D.skipStart",
       () -> (float) Land3D.skipStart,
       (v) -> { Land3D.skipStart = int(v); },
       () -> (float) (0), () -> (float) (Land3D.num_rows - 1), 1,
       0, 1, 0);
 
     // Land3D.skipEnd = this.Spinner(..., "Land3D.skipEnd", 0, Land3D.num_rows - 1, 1);  [line 500]
-    putSpinnerAction("land3_d_skip_end",
+    putSpinnerAction("Land3D.skipEnd",
       () -> (float) Land3D.skipEnd,
       (v) -> { Land3D.skipEnd = int(v); },
       () -> (float) (0), () -> (float) (Land3D.num_rows - 1), 1,
       0, 1, 0);
 
     // Land3D.displaySurface = this.Spinner(..., "Land3D.displaySurface");  [line 501]
-    putSpinnerAction("land3_d_display_surface",
+    putSpinnerAction("Land3D.displaySurface",
       () -> (Land3D.displaySurface ? 1f : 0f),
       (v) -> { Land3D.displaySurface = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Land3D.displayTexture = this.Spinner(..., "Land3D.displayTexture");  [line 502]
-    putSpinnerAction("land3_d_display_texture",
+    putSpinnerAction("Land3D.displayTexture",
       () -> (Land3D.displayTexture ? 1f : 0f),
       (v) -> { Land3D.displayTexture = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Land3D.displayPoints = this.Spinner(..., "Land3D.displayPoints");  [line 503]
-    putSpinnerAction("land3_d_display_points",
+    putSpinnerAction("Land3D.displayPoints",
       () -> (Land3D.displayPoints ? 1f : 0f),
       (v) -> { Land3D.displayPoints = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Land3D.displayDepth = this.Spinner(..., "Land3D.displayDepth");  [line 504]
-    putSpinnerAction("land3_d_display_depth",
+    putSpinnerAction("Land3D.displayDepth",
       () -> (Land3D.displayDepth ? 1f : 0f),
       (v) -> { Land3D.displayDepth = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allModel2Ds.displayAll = this.Spinner(..., "model2Ds.displayAll");  [line 506]
-    putSpinnerAction("model2_ds_display_all",
+    putSpinnerAction("model2Ds.displayAll",
       () -> (allModel2Ds.displayAll ? 1f : 0f),
       (v) -> { allModel2Ds.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allModel1Ds.displayAll = this.Spinner(..., "model1Ds.displayAll");  [line 507]
-    putSpinnerAction("model1_ds_display_all",
+    putSpinnerAction("model1Ds.displayAll",
       () -> (allModel1Ds.displayAll ? 1f : 0f),
       (v) -> { allModel1Ds.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allModel1Ds.displayLeaves = this.Spinner(..., "model1Ds.displayLeaves");  [line 508]
-    putSpinnerAction("model1_ds_display_leaves",
+    putSpinnerAction("model1Ds.displayLeaves",
       () -> (allModel1Ds.displayLeaves ? 1f : 0f),
       (v) -> { allModel1Ds.displayLeaves = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allPolylines.displayAll = this.Spinner(..., "polylines.displayAll");  [line 509]
-    putSpinnerAction("polylines_display_all",
+    putSpinnerAction("polylines.displayAll",
       () -> (allPolylines.displayAll ? 1f : 0f),
       (v) -> { allPolylines.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allFaces.displayAll = this.Spinner(..., "faces.displayAll");  [line 510]
-    putSpinnerAction("faces_display_all",
+    putSpinnerAction("faces.displayAll",
       () -> (allFaces.displayAll ? 1f : 0f),
       (v) -> { allFaces.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allSolids.displayAll = this.Spinner(..., "solids.displayAll");  [line 512]
-    putSpinnerAction("solids_display_all",
+    putSpinnerAction("solids.displayAll",
       () -> (allSolids.displayAll ? 1f : 0f),
       (v) -> { allSolids.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allSections.displayAll = this.Spinner(..., "sections.displayAll");  [line 514]
-    putSpinnerAction("sections_display_all",
+    putSpinnerAction("sections.displayAll",
       () -> (allSections.displayAll ? 1f : 0f),
       (v) -> { allSections.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allWindRoses.displayImage = this.Spinner(..., "windRoses.displayImage");  [line 519]
-    putSpinnerAction("wind_roses_display_image",
+    putSpinnerAction("windRoses.displayImage",
       () -> (allWindRoses.displayImage ? 1f : 0f),
       (v) -> { allWindRoses.displayImage = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allWindRoses.scale = this.Spinner(..., "windRoses.scale", 50, 3200, -2);  [line 521]
-    putSpinnerAction("wind_roses_scale",
+    putSpinnerAction("windRoses.scale",
       () -> allWindRoses.scale,
       (v) -> { allWindRoses.scale = v; },
       50, 3200, 0.001,
       0, 1, 0);
 
     // Sky3D.displaySurface = this.Spinner(..., "Sky3D.displaySurface");  [line 526]
-    putSpinnerAction("sky3_d_display_surface",
+    putSpinnerAction("Sky3D.displaySurface",
       () -> (Sky3D.displaySurface ? 1f : 0f),
       (v) -> { Sky3D.displaySurface = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Sun3D.displayPath = this.Spinner(..., "Sun3D.displayPath");  [line 528]
-    putSpinnerAction("sun3_d_display_path",
+    putSpinnerAction("Sun3D.displayPath",
       () -> (Sun3D.displayPath ? 1f : 0f),
       (v) -> { Sun3D.displayPath = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Sun3D.displayPattern = this.Spinner(..., "Sun3D.displayPattern");  [line 529]
-    putSpinnerAction("sun3_d_display_pattern",
+    putSpinnerAction("Sun3D.displayPattern",
       () -> (Sun3D.displayPattern ? 1f : 0f),
       (v) -> { Sun3D.displayPattern = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // WIN3D.currentCamera = this.Spinner(..., "currentCamera", 0, allCameras.num, 1);  [line 535]
-    putSpinnerAction("current_camera",
+    putSpinnerAction("currentCamera",
       () -> (float) WIN3D.currentCamera,
       (v) -> { WIN3D.currentCamera = int(v); },
       () -> (float) (0), () -> (float) (allCameras.num), 1,
@@ -972,21 +976,21 @@ class UI_rollout {
       });
 
     // WIN3D.CAM_clipNear = this.Spinner(..., "Camera_clipNear", 0.01, 100, -2);  [line 537]
-    putSpinnerAction("camera_clip_near",
+    putSpinnerAction("Camera_clipNear",
       () -> WIN3D.CAM_clipNear,
       (v) -> { WIN3D.CAM_clipNear = v; },
       0.01, 100, 0.001,
       0, 1, 0);
 
     // WIN3D.CAM_clipFar = this.Spinner(..., "Camera_clipFar", 1000, 2000000000, -2);  [line 538]
-    putSpinnerAction("camera_clip_far",
+    putSpinnerAction("Camera_clipFar",
       () -> WIN3D.CAM_clipFar,
       (v) -> { WIN3D.CAM_clipFar = v; },
       1000, 2000000000, 0.001,
       0, 1, 0);
 
     // allPoints.displayAll = this.Spinner(..., "Create3D.displayVertices");  [line 541]
-    putSpinnerAction("create3_d_display_vertices",
+    putSpinnerAction("Create3D.displayVertices",
       () -> (allPoints.displayAll ? 1f : 0f),
       (v) -> { allPoints.displayAll = (v >= 0.5f); },
       0, 1, 1,
@@ -994,7 +998,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // allFaces.displayEdges = this.Spinner(..., "Create3D.displayEdges");  [line 542]
-    putSpinnerAction("create3_d_display_edges",
+    putSpinnerAction("Create3D.displayEdges",
       () -> (allFaces.displayEdges ? 1f : 0f),
       (v) -> { allFaces.displayEdges = (v >= 0.5f); },
       0, 1, 1,
@@ -1002,7 +1006,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // allFaces.displayNormals = this.Spinner(..., "Create3D.displayNormals");  [line 543]
-    putSpinnerAction("create3_d_display_normals",
+    putSpinnerAction("Create3D.displayNormals",
       () -> (allFaces.displayNormals ? 1f : 0f),
       (v) -> { allFaces.displayNormals = (v >= 0.5f); },
       0, 1, 1,
@@ -1010,14 +1014,14 @@ class UI_rollout {
       viewChangedOnly);
 
     // allCameras.displayAll = this.Spinner(..., "cameras.displayAll");  [line 545]
-    putSpinnerAction("cameras_display_all",
+    putSpinnerAction("cameras.displayAll",
       () -> (allCameras.displayAll ? 1f : 0f),
       (v) -> { allCameras.displayAll = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // IMPACTS_displayDay = this.Spinner(..., "IMPACTS_displayDay", 0, STUDY.j_End - STUDY.j_Start, 1);  [line 551]
-    putSpinnerAction("impacts_display_day",
+    putSpinnerAction("IMPACTS_displayDay",
       () -> (float) IMPACTS_displayDay,
       (v) -> { IMPACTS_displayDay = int(v); },
       () -> (float) (0), () -> (float) (STUDY.j_End - STUDY.j_Start), 1,
@@ -1025,35 +1029,35 @@ class UI_rollout {
       caseBarOnly);
 
     // allSolarImpacts.displayImage = this.Spinner(..., "solarImpacts.displayImage");  [line 553]
-    putSpinnerAction("solar_impacts_display_image",
+    putSpinnerAction("solarImpacts.displayImage",
       () -> (allSolarImpacts.displayImage ? 1f : 0f),
       (v) -> { allSolarImpacts.displayImage = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allSolidImpacts.displayImage = this.Spinner(..., "solidImpacts.displayImage");  [line 554]
-    putSpinnerAction("solid_impacts_display_image",
+    putSpinnerAction("solidImpacts.displayImage",
       () -> (allSolidImpacts.displayImage ? 1f : 0f),
       (v) -> { allSolidImpacts.displayImage = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // allSolarImpacts.sectionType = this.Spinner(..., "solarImpacts.sectionType", 0, 3, 1);  [line 556]
-    putSpinnerAction("solar_impacts_section_type",
+    putSpinnerAction("solarImpacts.sectionType",
       () -> (float) allSolarImpacts.sectionType,
       (v) -> { allSolarImpacts.sectionType = int(v); },
       0, 3, 1,
       0, 1, 0);
 
     // allSolidImpacts.sectionType = this.Spinner(..., "solidImpacts.sectionType", 0, 3, 1);  [line 557]
-    putSpinnerAction("solid_impacts_section_type",
+    putSpinnerAction("solidImpacts.sectionType",
       () -> (float) allSolidImpacts.sectionType,
       (v) -> { allSolidImpacts.sectionType = int(v); },
       0, 3, 1,
       0, 1, 0);
 
     // allSolidImpacts.Grade = this.Spinner(..., "solidImpacts.Grade", 0.0001, 64.0, -2);  [line 560]
-    putSpinnerAction("solid_impacts_grade",
+    putSpinnerAction("solidImpacts.Grade",
       () -> allSolidImpacts.Grade,
       (v) -> { allSolidImpacts.Grade = v; },
       0.0001, 64.0, 0.001,
@@ -1061,23 +1065,23 @@ class UI_rollout {
       recalcImpact);
 
     // allSolidImpacts.Power = this.Spinner(..., "solidImpacts.Power", 0.0001, 64.0, -2);  [line 561]
-    putSpinnerAction("solid_impacts_power",
+    putSpinnerAction("solidImpacts.Power",
       () -> allSolidImpacts.Power,
       (v) -> { allSolidImpacts.Power = v; },
       0.0001, 64.0, 0.001,
       0, 1, 0,
       recalcImpact);
 
-    // allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.R[" + sectionType + "]", -360, 360, -2);  [line 562]
-    putSpinnerAction("solid_impacts_r",
+    // allSolidImpacts.R[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.R[", -360, 360, -2);  [line 562]  (renamed - dynamic caption)
+    putSpinnerAction("solidImpacts.R",
       () -> allSolidImpacts.R[allSolidImpacts.sectionType],
       (v) -> { allSolidImpacts.R[allSolidImpacts.sectionType] = v; },
       -360, 360, 0.001,
       0, 1, 0,
       recalcImpact);
 
-    // allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.Z[" + sectionType + "]", -1000, 1000, -2);  [line 563]
-    putSpinnerAction("solid_impacts_z",
+    // allSolidImpacts.Z[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.Z[", -1000, 1000, -2);  [line 563]  (renamed - dynamic caption)
+    putSpinnerAction("solidImpacts.Z",
       () -> allSolidImpacts.Z[allSolidImpacts.sectionType],
       (v) -> { allSolidImpacts.Z[allSolidImpacts.sectionType] = v; },
       -1000, 1000, 0.001,
@@ -1085,42 +1089,42 @@ class UI_rollout {
       recalcImpact);
 
     // allSolidImpacts.positionStep = this.Spinner(..., "solidImpacts.positionStep", 5, 80, -2);  [line 564]
-    putSpinnerAction("solid_impacts_position_step",
+    putSpinnerAction("solidImpacts.positionStep",
       () -> allSolidImpacts.positionStep,
       (v) -> { allSolidImpacts.positionStep = v; },
       5, 80, 0.001,
       0, 1, 0);
 
-    // allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.U[" + sectionType + "]", 0.125, 3200, -2);  [line 566]
-    putSpinnerAction("solid_impacts_u",
+    // allSolidImpacts.U[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.U[", 0.125, 3200, -2);  [line 566]  (renamed - dynamic caption)
+    putSpinnerAction("solidImpacts.U",
       () -> allSolidImpacts.U[allSolidImpacts.sectionType],
       (v) -> { allSolidImpacts.U[allSolidImpacts.sectionType] = v; },
       0.125, 3200, 0.001,
       0, 1, 0);
 
-    // allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.V[" + sectionType + "]", 0.125, 3200, -2);  [line 567]
-    putSpinnerAction("solid_impacts_v",
+    // allSolidImpacts.V[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.V[", 0.125, 3200, -2);  [line 567]  (renamed - dynamic caption)
+    putSpinnerAction("solidImpacts.V",
       () -> allSolidImpacts.V[allSolidImpacts.sectionType],
       (v) -> { allSolidImpacts.V[allSolidImpacts.sectionType] = v; },
       0.125, 3200, 0.001,
       0, 1, 0);
 
-    // allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.X[" + sectionType + "]", -10000, 10000, -2);  [line 568]
-    putSpinnerAction("solid_impacts_x",
+    // allSolidImpacts.X[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.X[", -10000, 10000, -2);  [line 568]  (renamed - dynamic caption)
+    putSpinnerAction("solidImpacts.X",
       () -> allSolidImpacts.X[allSolidImpacts.sectionType],
       (v) -> { allSolidImpacts.X[allSolidImpacts.sectionType] = v; },
       -10000, 10000, 0.001,
       0, 1, 0);
 
-    // allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.Y[" + sectionType + "]", -10000, 10000, -2);  [line 569]
-    putSpinnerAction("solid_impacts_y",
+    // allSolidImpacts.Y[allSolidImpacts.sectionType] = this.Spinner(..., "solidImpacts.Y[", -10000, 10000, -2);  [line 569]  (renamed - dynamic caption)
+    putSpinnerAction("solidImpacts.Y",
       () -> allSolidImpacts.Y[allSolidImpacts.sectionType],
       (v) -> { allSolidImpacts.Y[allSolidImpacts.sectionType] = v; },
       -10000, 10000, 0.001,
       0, 1, 0);
 
     // allSolidImpacts.WindSpeed = this.Spinner(..., "solidImpacts.WindSpeed (m/s)", 1, 16, -2);  [line 572]
-    putSpinnerAction("solid_impacts_wind_speed_m_s",
+    putSpinnerAction("solidImpacts.WindSpeed (m/s)",
       () -> allSolidImpacts.WindSpeed,
       (v) -> { allSolidImpacts.WindSpeed = v; },
       1, 16, 0.001,
@@ -1128,7 +1132,7 @@ class UI_rollout {
       recalcImpact);
 
     // allSolidImpacts.WindDirection = this.Spinner(..., "solidImpacts.WindDirection", 0, 360, 15);  [line 573]
-    putSpinnerAction("solid_impacts_wind_direction",
+    putSpinnerAction("solidImpacts.WindDirection",
       () -> allSolidImpacts.WindDirection,
       (v) -> { allSolidImpacts.WindDirection = v; },
       0, 360, 15,
@@ -1136,7 +1140,7 @@ class UI_rollout {
       recalcImpact);
 
     // allSolidImpacts.Process_subDivisions = this.Spinner(..., "solidImpacts.Process_subDivisions", 0, 3, 1);  [line 576]
-    putSpinnerAction("solid_impacts_process_sub_divisions",
+    putSpinnerAction("solidImpacts.Process_subDivisions",
       () -> (float) allSolidImpacts.Process_subDivisions,
       (v) -> { allSolidImpacts.Process_subDivisions = int(v); },
       0, 3, 1,
@@ -1144,7 +1148,7 @@ class UI_rollout {
       recalcImpact);
 
     // allSolidImpacts.displayPoints = this.Spinner(..., "solidImpacts.displayPoints");  [line 578]
-    putSpinnerAction("solid_impacts_display_points",
+    putSpinnerAction("solidImpacts.displayPoints",
       () -> (allSolidImpacts.displayPoints ? 1f : 0f),
       (v) -> { allSolidImpacts.displayPoints = (v >= 0.5f); },
       0, 1, 1,
@@ -1152,7 +1156,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // allSolidImpacts.displayLines = this.Spinner(..., "solidImpacts.displayLines");  [line 579]
-    putSpinnerAction("solid_impacts_display_lines",
+    putSpinnerAction("solidImpacts.displayLines",
       () -> (allSolidImpacts.displayLines ? 1f : 0f),
       (v) -> { allSolidImpacts.displayLines = (v >= 0.5f); },
       0, 1, 1,
@@ -1160,7 +1164,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // allWindFlows.displayAll = this.Spinner(..., "windFlows.displayAll");  [line 581]
-    putSpinnerAction("wind_flows_display_all",
+    putSpinnerAction("windFlows.displayAll",
       () -> (allWindFlows.displayAll ? 1f : 0f),
       (v) -> { allWindFlows.displayAll = (v >= 0.5f); },
       0, 1, 1,
@@ -1168,7 +1172,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // allFaces.displayTessellation = this.Spinner(..., "3D-create.displayTessellation", 0, 4, 1);  [line 586]
-    putSpinnerAction("3_d_create_display_tessellation",
+    putSpinnerAction("3D-create.displayTessellation",
       () -> (float) allFaces.displayTessellation,
       (v) -> { allFaces.displayTessellation = int(v); },
       0, 4, 1,
@@ -1176,393 +1180,393 @@ class UI_rollout {
       viewChangedOnly);
 
     // Land3D.displayTessellation = this.Spinner(..., "Land.displayTessellation", 0, 4, 1);  [line 588]
-    putSpinnerAction("land_display_tessellation",
+    putSpinnerAction("Land.displayTessellation",
       () -> (float) Land3D.displayTessellation,
       (v) -> { Land3D.displayTessellation = int(v); },
       0, 4, 1,
       0, 1, 0);
 
     // Sky3D.displayTessellation = this.Spinner(..., "Sky.displayTessellation", 0, 4, 1);  [line 590]
-    putSpinnerAction("sky_display_tessellation",
+    putSpinnerAction("Sky.displayTessellation",
       () -> (float) Sky3D.displayTessellation,
       (v) -> { Sky3D.displayTessellation = int(v); },
       0, 4, 1,
       0, 1, 0);
 
     // Sky3D.radius = this.Spinner(..., "Sky.scale", 1, 4000000, -2);  [line 591]
-    putSpinnerAction("sky_scale",
+    putSpinnerAction("Sky.scale",
       () -> Sky3D.radius,
       (v) -> { Sky3D.radius = v; },
       1, 4000000, 0.001,
       0, 1, 0);
 
     // Tropo3D.displaySurface = this.Spinner(..., "Tropo3D.displaySurface");  [line 593]
-    putSpinnerAction("tropo3_d_display_surface",
+    putSpinnerAction("Tropo3D.displaySurface",
       () -> (Tropo3D.displaySurface ? 1f : 0f),
       (v) -> { Tropo3D.displaySurface = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Tropo3D.displayTexture = this.Spinner(..., "Tropo3D.displayTexture");  [line 594]
-    putSpinnerAction("tropo3_d_display_texture",
+    putSpinnerAction("Tropo3D.displayTexture",
       () -> (Tropo3D.displayTexture ? 1f : 0f),
       (v) -> { Tropo3D.displayTexture = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Earth3D.displaySurface = this.Spinner(..., "Earth3D.displaySurface");  [line 596]
-    putSpinnerAction("earth3_d_display_surface",
+    putSpinnerAction("Earth3D.displaySurface",
       () -> (Earth3D.displaySurface ? 1f : 0f),
       (v) -> { Earth3D.displaySurface = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Earth3D.displayTexture = this.Spinner(..., "Earth3D.displayTexture");  [line 597]
-    putSpinnerAction("earth3_d_display_texture",
+    putSpinnerAction("Earth3D.displayTexture",
       () -> (Earth3D.displayTexture ? 1f : 0f),
       (v) -> { Earth3D.displayTexture = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Earth3D.levelOfDetail = this.Spinner(..., "Earth3D.levelOfDetail", 1.0 / 16.0, 16.0, -2);  [line 598]
-    putSpinnerAction("earth3_d_level_of_detail",
+    putSpinnerAction("Earth3D.levelOfDetail",
       () -> Earth3D.levelOfDetail,
       (v) -> { Earth3D.levelOfDetail = v; },
       1.0 / 16.0, 16.0, 0.001,
       0, 1, 0);
 
     // Moon3D.displaySurface = this.Spinner(..., "Moon3D.displaySurface");  [line 601]
-    putSpinnerAction("moon3_d_display_surface",
+    putSpinnerAction("Moon3D.displaySurface",
       () -> (Moon3D.displaySurface ? 1f : 0f),
       (v) -> { Moon3D.displaySurface = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Moon3D.displayTexture = this.Spinner(..., "Moon3D.displayTexture");  [line 602]
-    putSpinnerAction("moon3_d_display_texture",
+    putSpinnerAction("Moon3D.displayTexture",
       () -> (Moon3D.displayTexture ? 1f : 0f),
       (v) -> { Moon3D.displayTexture = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Moon3D.fitInSkyDome = this.Spinner(..., "Moon3D.fitInSkyDome");  [line 603]
-    putSpinnerAction("moon3_d_fit_in_sky_dome",
+    putSpinnerAction("Moon3D.fitInSkyDome",
       () -> (Moon3D.fitInSkyDome ? 1f : 0f),
       (v) -> { Moon3D.fitInSkyDome = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Sun3D.displaySurface = this.Spinner(..., "Sun3D.displaySurface");  [line 605]
-    putSpinnerAction("sun3_d_display_surface",
+    putSpinnerAction("Sun3D.displaySurface",
       () -> (Sun3D.displaySurface ? 1f : 0f),
       (v) -> { Sun3D.displaySurface = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Sun3D.displayTexture = this.Spinner(..., "Sun3D.displayTexture");  [line 606]
-    putSpinnerAction("sun3_d_display_texture",
+    putSpinnerAction("Sun3D.displayTexture",
       () -> (Sun3D.displayTexture ? 1f : 0f),
       (v) -> { Sun3D.displayTexture = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Sun3D.fitInSkyDome = this.Spinner(..., "Sun3D.fitInSkyDome");  [line 607]
-    putSpinnerAction("sun3_d_fit_in_sky_dome",
+    putSpinnerAction("Sun3D.fitInSkyDome",
       () -> (Sun3D.fitInSkyDome ? 1f : 0f),
       (v) -> { Sun3D.fitInSkyDome = (v >= 0.5f); },
       0, 1, 1,
       0, 1, 0);
 
     // Planetary_Magnification = this.Spinner(..., "Planetary_Magnification", 1, 64, -2);  [line 609]
-    putSpinnerAction("planetary_magnification",
+    putSpinnerAction("Planetary_Magnification",
       () -> Planetary_Magnification,
       (v) -> { Planetary_Magnification = v; },
       1, 64, 2,
       0, 1, 0);
 
     // OBJECTS_scale = this.Spinner(..., "Objects_scale", 0.0000001, 1000000, -2);  [line 611]
-    putSpinnerAction("objects_scale",
+    putSpinnerAction("Objects_scale",
       () -> OBJECTS_scale,
       (v) -> { OBJECTS_scale = v; },
       0.0000001, 1000000, 0.000001,
       0, 1, 0);
 
     // STUDY.plotSetup = this.Spinner(..., "Diagram setup", -2, 8, 1);  [line 617]
-    putSpinnerAction("diagram_setup",
+    putSpinnerAction("Diagram setup",
       () -> (float) STUDY.plotSetup,
       (v) -> { STUDY.plotSetup = int(v); },
       -2, 8, 1,
       1, 0, 0,
       impactsUpdateFlag);
 
-    // STUDY.V_scale = this.Spinner(..., "Scale (x)", 0.0001, 10000, -pow(2.0, 1.0 / 2.0));  [line 619]
-    putSpinnerAction("scale",
+    // STUDY.V_scale = this.Spinner(..., "Scale (", 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));  [line 619]  (renamed - dynamic caption)
+    putSpinnerAction("Scale",
       () -> STUDY.V_scale,
       (v) -> { STUDY.V_scale = v; },
       0.0001, 10000, Math.abs(-pow(2.0, (1.0 / 2.0))),
       1, 0, 0);
 
     // STUDY.displayRaws = this.Spinner(..., "Draw data");  [line 621]
-    putSpinnerAction("draw_data",
+    putSpinnerAction("Draw data",
       () -> (STUDY.displayRaws ? 1f : 0f),
       (v) -> { STUDY.displayRaws = (v >= 0.5f); },
       0, 1, 1,
       1, 0, 0);
 
     // STUDY.displaySorted = this.Spinner(..., "Draw sorted");  [line 622]
-    putSpinnerAction("draw_sorted",
+    putSpinnerAction("Draw sorted",
       () -> (STUDY.displaySorted ? 1f : 0f),
       (v) -> { STUDY.displaySorted = (v >= 0.5f); },
       0, 1, 1,
       1, 0, 0);
 
     // STUDY.displayNormals = this.Spinner(..., "Draw statistics");  [line 623]
-    putSpinnerAction("draw_statistics",
+    putSpinnerAction("Draw statistics",
       () -> (STUDY.displayNormals ? 1f : 0f),
       (v) -> { STUDY.displayNormals = (v >= 0.5f); },
       0, 1, 1,
       1, 0, 0);
 
     // STUDY.displayProbs = this.Spinner(..., "Draw probabilities");  [line 624]
-    putSpinnerAction("draw_probabilities",
+    putSpinnerAction("Draw probabilities",
       () -> (STUDY.displayProbs ? 1f : 0f),
       (v) -> { STUDY.displayProbs = (v >= 0.5f); },
       0, 1, 1,
       1, 0, 0);
 
     // STUDY.sumInterval = this.Spinner(..., "Probabilities interval", 1, 24, 1);  [line 625]
-    putSpinnerAction("probabilities_interval",
+    putSpinnerAction("Probabilities interval",
       () -> (float) STUDY.sumInterval,
       (v) -> { STUDY.sumInterval = int(v); },
       1, 24, 1,
       1, 0, 0);
 
     // STUDY.LevelPix = this.Spinner(..., "Probabilities range", 2, 32, -2);  [line 626]
-    putSpinnerAction("probabilities_range",
+    putSpinnerAction("Probabilities range",
       () -> STUDY.LevelPix,
       (v) -> { STUDY.LevelPix = v; },
       2, 32, 1,
       1, 0, 0);
 
     // STUDY.ACTIVE_palette_CLR = this.Spinner(..., "STUDY.ACTIVE_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 631]
-    putSpinnerAction("study_active_palette_clr",
+    putSpinnerAction("STUDY.ACTIVE_palette_CLR",
       () -> (float) STUDY.ACTIVE_palette_CLR,
       (v) -> { STUDY.ACTIVE_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       1, 0, 0);
 
     // STUDY.ACTIVE_palette_DIR = this.Spinner(..., "STUDY.ACTIVE_palette_DIR", -2, 2, 1);  [line 632]
-    putSpinnerAction("study_active_palette_dir",
+    putSpinnerAction("STUDY.ACTIVE_palette_DIR",
       () -> (float) STUDY.ACTIVE_palette_DIR,
       (v) -> { STUDY.ACTIVE_palette_DIR = int(v); },
       -2, 2, 1,
       1, 0, 0);
 
     // STUDY.ACTIVE_palette_MLT = this.Spinner(..., "STUDY.ACTIVE_palette_MLT", 0.125, 8, -2);  [line 633]
-    putSpinnerAction("study_active_palette_mlt",
+    putSpinnerAction("STUDY.ACTIVE_palette_MLT",
       () -> STUDY.ACTIVE_palette_MLT,
       (v) -> { STUDY.ACTIVE_palette_MLT = v; },
       0.125, 8, 0.001,
       1, 0, 0);
 
     // STUDY.PASSIVE_palette_CLR = this.Spinner(..., "STUDY.PASSIVE_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 635]
-    putSpinnerAction("study_passive_palette_clr",
+    putSpinnerAction("STUDY.PASSIVE_palette_CLR",
       () -> (float) STUDY.PASSIVE_palette_CLR,
       (v) -> { STUDY.PASSIVE_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       1, 0, 0);
 
     // STUDY.PASSIVE_palette_DIR = this.Spinner(..., "STUDY.PASSIVE_palette_DIR", -2, 2, 2);  [line 636]
-    putSpinnerAction("study_passive_palette_dir",
+    putSpinnerAction("STUDY.PASSIVE_palette_DIR",
       () -> (float) STUDY.PASSIVE_palette_DIR,
       (v) -> { STUDY.PASSIVE_palette_DIR = int(v); },
       -2, 2, 1,
       1, 0, 0);
 
     // STUDY.PASSIVE_palette_MLT = this.Spinner(..., "STUDY.PASSIVE_palette_MLT", 0.125, 8, -2);  [line 637]
-    putSpinnerAction("study_passive_palette_mlt",
+    putSpinnerAction("STUDY.PASSIVE_palette_MLT",
       () -> STUDY.PASSIVE_palette_MLT,
       (v) -> { STUDY.PASSIVE_palette_MLT = v; },
       0.125, 8, 0.001,
       1, 0, 0);
 
     // STUDY.SORT_palette_CLR = this.Spinner(..., "STUDY.SORT_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 639]
-    putSpinnerAction("study_sort_palette_clr",
+    putSpinnerAction("STUDY.SORT_palette_CLR",
       () -> (float) STUDY.SORT_palette_CLR,
       (v) -> { STUDY.SORT_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       1, 0, 0);
 
     // STUDY.SORT_palette_DIR = this.Spinner(..., "STUDY.SORT_palette_DIR", -2, 2, 2);  [line 640]
-    putSpinnerAction("study_sort_palette_dir",
+    putSpinnerAction("STUDY.SORT_palette_DIR",
       () -> (float) STUDY.SORT_palette_DIR,
       (v) -> { STUDY.SORT_palette_DIR = int(v); },
       -2, 2, 1,
       1, 0, 0);
 
     // STUDY.SORT_palette_MLT = this.Spinner(..., "STUDY.SORT_palette_MLT", 0.125, 8, -2);  [line 641]
-    putSpinnerAction("study_sort_palette_mlt",
+    putSpinnerAction("STUDY.SORT_palette_MLT",
       () -> STUDY.SORT_palette_MLT,
       (v) -> { STUDY.SORT_palette_MLT = v; },
       0.125, 8, 0.001,
       1, 0, 0);
 
     // STUDY.PROB_palette_CLR = this.Spinner(..., "STUDY.PROB_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 643]
-    putSpinnerAction("study_prob_palette_clr",
+    putSpinnerAction("STUDY.PROB_palette_CLR",
       () -> (float) STUDY.PROB_palette_CLR,
       (v) -> { STUDY.PROB_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       1, 0, 0);
 
     // STUDY.PROB_palette_DIR = this.Spinner(..., "STUDY.PROB_palette_DIR", -2, 2, 2);  [line 644]
-    putSpinnerAction("study_prob_palette_dir",
+    putSpinnerAction("STUDY.PROB_palette_DIR",
       () -> (float) STUDY.PROB_palette_DIR,
       (v) -> { STUDY.PROB_palette_DIR = int(v); },
       -2, 2, 1,
       1, 0, 0);
 
     // STUDY.PROB_palette_MLT = this.Spinner(..., "STUDY.PROB_palette_MLT", 0.125, 8, -2);  [line 645]
-    putSpinnerAction("study_prob_palette_mlt",
+    putSpinnerAction("STUDY.PROB_palette_MLT",
       () -> STUDY.PROB_palette_MLT,
       (v) -> { STUDY.PROB_palette_MLT = v; },
       0.125, 8, 0.001,
       1, 0, 0);
 
     // STUDY.O_scale = this.Spinner(..., "Windose opacity scale", 1, 100, -pow(2.0, (1.0 / 4.0)));  [line 647]
-    putSpinnerAction("windose_opacity_scale",
+    putSpinnerAction("Windose opacity scale",
       () -> STUDY.O_scale,
       (v) -> { STUDY.O_scale = v; },
       1, 100, Math.abs(-pow(2.0, (1.0 / 4.0))),
       1, 0, 0);
 
     // allFaces.ACTIVE_palette_CLR = this.Spinner(..., "faces.ACTIVE_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 652]
-    putSpinnerAction("faces_active_palette_clr",
+    putSpinnerAction("faces.ACTIVE_palette_CLR",
       () -> (float) allFaces.ACTIVE_palette_CLR,
       (v) -> { allFaces.ACTIVE_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0);
 
     // allFaces.ACTIVE_palette_DIR = this.Spinner(..., "faces.ACTIVE_palette_DIR", -2, 2, 1);  [line 653]
-    putSpinnerAction("faces_active_palette_dir",
+    putSpinnerAction("faces.ACTIVE_palette_DIR",
       () -> (float) allFaces.ACTIVE_palette_DIR,
       (v) -> { allFaces.ACTIVE_palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0);
 
     // allFaces.ACTIVE_palette_MLT = this.Spinner(..., "faces.ACTIVE_palette_MLT", 0.125, 8, -2);  [line 654]
-    putSpinnerAction("faces_active_palette_mlt",
+    putSpinnerAction("faces.ACTIVE_palette_MLT",
       () -> allFaces.ACTIVE_palette_MLT,
       (v) -> { allFaces.ACTIVE_palette_MLT = v; },
       0.125, 8, 0.001,
       0, 1, 0);
 
     // allFaces.PASSIVE_palette_CLR = this.Spinner(..., "faces.PASSIVE_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 656]
-    putSpinnerAction("faces_passive_palette_clr",
+    putSpinnerAction("faces.PASSIVE_palette_CLR",
       () -> (float) allFaces.PASSIVE_palette_CLR,
       (v) -> { allFaces.PASSIVE_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0);
 
     // allFaces.PASSIVE_palette_DIR = this.Spinner(..., "faces.PASSIVE_palette_DIR", -2, 2, 2);  [line 657]
-    putSpinnerAction("faces_passive_palette_dir",
+    putSpinnerAction("faces.PASSIVE_palette_DIR",
       () -> (float) allFaces.PASSIVE_palette_DIR,
       (v) -> { allFaces.PASSIVE_palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0);
 
     // allFaces.PASSIVE_palette_MLT = this.Spinner(..., "faces.PASSIVE_palette_MLT", 0.125, 8, -2);  [line 658]
-    putSpinnerAction("faces_passive_palette_mlt",
+    putSpinnerAction("faces.PASSIVE_palette_MLT",
       () -> allFaces.PASSIVE_palette_MLT,
       (v) -> { allFaces.PASSIVE_palette_MLT = v; },
       0.125, 8, 0.001,
       0, 1, 0);
 
     // Sky3D.ACTIVE_palette_CLR = this.Spinner(..., "Sky3D.ACTIVE_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 660]
-    putSpinnerAction("sky3_d_active_palette_clr",
+    putSpinnerAction("Sky3D.ACTIVE_palette_CLR",
       () -> (float) Sky3D.ACTIVE_palette_CLR,
       (v) -> { Sky3D.ACTIVE_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0);
 
     // Sky3D.ACTIVE_palette_DIR = this.Spinner(..., "Sky3D.ACTIVE_palette_DIR", -2, 2, 1);  [line 661]
-    putSpinnerAction("sky3_d_active_palette_dir",
+    putSpinnerAction("Sky3D.ACTIVE_palette_DIR",
       () -> (float) Sky3D.ACTIVE_palette_DIR,
       (v) -> { Sky3D.ACTIVE_palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0);
 
     // Sky3D.ACTIVE_palette_MLT = this.Spinner(..., "Sky3D.ACTIVE_palette_MLT", 0.125, 8, -2);  [line 662]
-    putSpinnerAction("sky3_d_active_palette_mlt",
+    putSpinnerAction("Sky3D.ACTIVE_palette_MLT",
       () -> Sky3D.ACTIVE_palette_MLT,
       (v) -> { Sky3D.ACTIVE_palette_MLT = v; },
       0.125, 8, 0.001,
       0, 1, 0);
 
     // Sky3D.PASSIVE_palette_CLR = this.Spinner(..., "Sky3D.PASSIVE_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 664]
-    putSpinnerAction("sky3_d_passive_palette_clr",
+    putSpinnerAction("Sky3D.PASSIVE_palette_CLR",
       () -> (float) Sky3D.PASSIVE_palette_CLR,
       (v) -> { Sky3D.PASSIVE_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0);
 
     // Sky3D.PASSIVE_palette_DIR = this.Spinner(..., "Sky3D.PASSIVE_palette_DIR", -2, 2, 2);  [line 665]
-    putSpinnerAction("sky3_d_passive_palette_dir",
+    putSpinnerAction("Sky3D.PASSIVE_palette_DIR",
       () -> (float) Sky3D.PASSIVE_palette_DIR,
       (v) -> { Sky3D.PASSIVE_palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0);
 
     // Sky3D.PASSIVE_palette_MLT = this.Spinner(..., "Sky3D.PASSIVE_palette_MLT", 0.125, 8, -2);  [line 666]
-    putSpinnerAction("sky3_d_passive_palette_mlt",
+    putSpinnerAction("Sky3D.PASSIVE_palette_MLT",
       () -> Sky3D.PASSIVE_palette_MLT,
       (v) -> { Sky3D.PASSIVE_palette_MLT = v; },
       0.125, 8, 0.001,
       0, 1, 0);
 
     // Sun3D.ACTIVE_palette_CLR = this.Spinner(..., "Sun3D.ACTIVE_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 668]
-    putSpinnerAction("sun3_d_active_palette_clr",
+    putSpinnerAction("Sun3D.ACTIVE_palette_CLR",
       () -> (float) Sun3D.ACTIVE_palette_CLR,
       (v) -> { Sun3D.ACTIVE_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0);
 
     // Sun3D.ACTIVE_palette_DIR = this.Spinner(..., "Sun3D.ACTIVE_palette_DIR", -2, 2, 1);  [line 669]
-    putSpinnerAction("sun3_d_active_palette_dir",
+    putSpinnerAction("Sun3D.ACTIVE_palette_DIR",
       () -> (float) Sun3D.ACTIVE_palette_DIR,
       (v) -> { Sun3D.ACTIVE_palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0);
 
     // Sun3D.ACTIVE_palette_MLT = this.Spinner(..., "Sun3D.ACTIVE_palette_MLT", 0.125, 8, -2);  [line 670]
-    putSpinnerAction("sun3_d_active_palette_mlt",
+    putSpinnerAction("Sun3D.ACTIVE_palette_MLT",
       () -> Sun3D.ACTIVE_palette_MLT,
       (v) -> { Sun3D.ACTIVE_palette_MLT = v; },
       0.125, 8, 0.001,
       0, 1, 0);
 
     // Sun3D.PASSIVE_palette_CLR = this.Spinner(..., "Sun3D.PASSIVE_palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 672]
-    putSpinnerAction("sun3_d_passive_palette_clr",
+    putSpinnerAction("Sun3D.PASSIVE_palette_CLR",
       () -> (float) Sun3D.PASSIVE_palette_CLR,
       (v) -> { Sun3D.PASSIVE_palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0);
 
     // Sun3D.PASSIVE_palette_DIR = this.Spinner(..., "Sun3D.PASSIVE_palette_DIR", -2, 2, 2);  [line 673]
-    putSpinnerAction("sun3_d_passive_palette_dir",
+    putSpinnerAction("Sun3D.PASSIVE_palette_DIR",
       () -> (float) Sun3D.PASSIVE_palette_DIR,
       (v) -> { Sun3D.PASSIVE_palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0);
 
     // Sun3D.PASSIVE_palette_MLT = this.Spinner(..., "Sun3D.PASSIVE_palette_MLT", 0.125, 8, -2);  [line 674]
-    putSpinnerAction("sun3_d_passive_palette_mlt",
+    putSpinnerAction("Sun3D.PASSIVE_palette_MLT",
       () -> Sun3D.PASSIVE_palette_MLT,
       (v) -> { Sun3D.PASSIVE_palette_MLT = v; },
       0.125, 8, 0.001,
       0, 1, 0);
 
     // allSolids.palette_CLR = this.Spinner(..., "solids.palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 682]
-    putSpinnerAction("solids_palette_clr",
+    putSpinnerAction("solids.palette_CLR",
       () -> (float) allSolids.palette_CLR,
       (v) -> { allSolids.palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
@@ -1570,7 +1574,7 @@ class UI_rollout {
       recalcImpact);
 
     // allSolids.palette_DIR = this.Spinner(..., "solids.palette_DIR", -2, 2, 2);  [line 683]
-    putSpinnerAction("solids_palette_dir",
+    putSpinnerAction("solids.palette_DIR",
       () -> (float) allSolids.palette_DIR,
       (v) -> { allSolids.palette_DIR = int(v); },
       -2, 2, 1,
@@ -1578,7 +1582,7 @@ class UI_rollout {
       recalcImpact);
 
     // allSolids.palette_MLT = this.Spinner(..., "solids.palette_MLT", 0.0001, 64, -2);  [line 684]
-    putSpinnerAction("solids_palette_mlt",
+    putSpinnerAction("solids.palette_MLT",
       () -> allSolids.palette_MLT,
       (v) -> { allSolids.palette_MLT = v; },
       0.0001, 64, 0.001,
@@ -1586,49 +1590,49 @@ class UI_rollout {
       recalcImpact);
 
     // Land3D.palette_CLR = this.Spinner(..., "Land3D.palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 686]
-    putSpinnerAction("land3_d_palette_clr",
+    putSpinnerAction("Land3D.palette_CLR",
       () -> (float) Land3D.palette_CLR,
       (v) -> { Land3D.palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0);
 
     // Land3D.palette_DIR = this.Spinner(..., "Land3D.palette_DIR", -2, 2, 2);  [line 687]
-    putSpinnerAction("land3_d_palette_dir",
+    putSpinnerAction("Land3D.palette_DIR",
       () -> (float) Land3D.palette_DIR,
       (v) -> { Land3D.palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0);
 
     // Land3D.palette_MLT = this.Spinner(..., "Land3D.palette_MLT", 0.001, 0.5, -2);  [line 688]
-    putSpinnerAction("land3_d_palette_mlt",
+    putSpinnerAction("Land3D.palette_MLT",
       () -> Land3D.palette_MLT,
       (v) -> { Land3D.palette_MLT = v; },
       0.001, 0.5, 0.001,
       0, 1, 0);
 
     // allWindFlows.palette_CLR = this.Spinner(..., "windFlows.palette_CLR", -1, (COLOR_STYLE_Number - 1), 1);  [line 690]
-    putSpinnerAction("wind_flows_palette_clr",
+    putSpinnerAction("windFlows.palette_CLR",
       () -> (float) allWindFlows.palette_CLR,
       (v) -> { allWindFlows.palette_CLR = int(v); },
       () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
       0, 1, 0);
 
     // allWindFlows.palette_DIR = this.Spinner(..., "windFlows.palette_DIR", -2, 2, 2);  [line 691]
-    putSpinnerAction("wind_flows_palette_dir",
+    putSpinnerAction("windFlows.palette_DIR",
       () -> (float) allWindFlows.palette_DIR,
       (v) -> { allWindFlows.palette_DIR = int(v); },
       -2, 2, 1,
       0, 1, 0);
 
     // allWindFlows.palette_MLT = this.Spinner(..., "windFlows.palette_MLT", 0.01, 1.0, -2);  [line 692]
-    putSpinnerAction("wind_flows_palette_mlt",
+    putSpinnerAction("windFlows.palette_MLT",
       () -> allWindFlows.palette_MLT,
       (v) -> { allWindFlows.palette_MLT = v; },
       0.01, 1.0, 0.001,
       0, 1, 0);
 
     // Select3D.Group_displayPivot = this.Spinner(..., "3D-select.Group_displayPivot");  [line 698]
-    putSpinnerAction("3_d_select_group_display_pivot",
+    putSpinnerAction("3D-select.Group_displayPivot",
       () -> (Select3D.Group_displayPivot ? 1f : 0f),
       (v) -> { Select3D.Group_displayPivot = (v >= 0.5f); },
       0, 1, 1,
@@ -1636,7 +1640,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.displayReferencePivot = this.Spinner(..., "3D-select.displayReferencePivot");  [line 699]
-    putSpinnerAction("3_d_select_display_reference_pivot",
+    putSpinnerAction("3D-select.displayReferencePivot",
       () -> (Select3D.displayReferencePivot ? 1f : 0f),
       (v) -> { Select3D.displayReferencePivot = (v >= 0.5f); },
       0, 1, 1,
@@ -1644,7 +1648,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Group_displayBox = this.Spinner(..., "3D-select.Group_displayBox");  [line 700]
-    putSpinnerAction("3_d_select_group_display_box",
+    putSpinnerAction("3D-select.Group_displayBox",
       () -> (Select3D.Group_displayBox ? 1f : 0f),
       (v) -> { Select3D.Group_displayBox = (v >= 0.5f); },
       0, 1, 1,
@@ -1652,7 +1656,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Group_displayEdges = this.Spinner(..., "3D-select.Group_displayEdges");  [line 701]
-    putSpinnerAction("3_d_select_group_display_edges",
+    putSpinnerAction("3D-select.Group_displayEdges",
       () -> (Select3D.Group_displayEdges ? 1f : 0f),
       (v) -> { Select3D.Group_displayEdges = (v >= 0.5f); },
       0, 1, 1,
@@ -1660,7 +1664,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Face_displayEdges = this.Spinner(..., "3D-select.Face_displayEdges");  [line 703]
-    putSpinnerAction("3_d_select_face_display_edges",
+    putSpinnerAction("3D-select.Face_displayEdges",
       () -> (Select3D.Face_displayEdges ? 1f : 0f),
       (v) -> { Select3D.Face_displayEdges = (v >= 0.5f); },
       0, 1, 1,
@@ -1668,7 +1672,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Face_displayVertexCount = this.Spinner(..., "3D-select.Face_displayVertexCount");  [line 704]
-    putSpinnerAction("3_d_select_face_display_vertex_count",
+    putSpinnerAction("3D-select.Face_displayVertexCount",
       () -> (Select3D.Face_displayVertexCount ? 1f : 0f),
       (v) -> { Select3D.Face_displayVertexCount = (v >= 0.5f); },
       0, 1, 1,
@@ -1676,7 +1680,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Polyline_displayVertexCount = this.Spinner(..., "3D-select.Polyline_displayVertexCount");  [line 705]
-    putSpinnerAction("3_d_select_polyline_display_vertex_count",
+    putSpinnerAction("3D-select.Polyline_displayVertexCount",
       () -> (Select3D.Polyline_displayVertexCount ? 1f : 0f),
       (v) -> { Select3D.Polyline_displayVertexCount = (v >= 0.5f); },
       0, 1, 1,
@@ -1684,7 +1688,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Vertex_displayVertices = this.Spinner(..., "3D-select.Vertex_displayVertices");  [line 706]
-    putSpinnerAction("3_d_select_vertex_display_vertices",
+    putSpinnerAction("3D-select.Vertex_displayVertices",
       () -> (Select3D.Vertex_displayVertices ? 1f : 0f),
       (v) -> { Select3D.Vertex_displayVertices = (v >= 0.5f); },
       0, 1, 1,
@@ -1692,7 +1696,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Polyline_displayVertices = this.Spinner(..., "3D-select.Polyline_displayVertices");  [line 707]
-    putSpinnerAction("3_d_select_polyline_display_vertices",
+    putSpinnerAction("3D-select.Polyline_displayVertices",
       () -> (Select3D.Polyline_displayVertices ? 1f : 0f),
       (v) -> { Select3D.Polyline_displayVertices = (v >= 0.5f); },
       0, 1, 1,
@@ -1700,7 +1704,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Model2D_displayEdges = this.Spinner(..., "3D-select.Model2D_displayEdges");  [line 709]
-    putSpinnerAction("3_d_select_model2_d_display_edges",
+    putSpinnerAction("3D-select.Model2D_displayEdges",
       () -> (Select3D.Model2D_displayEdges ? 1f : 0f),
       (v) -> { Select3D.Model2D_displayEdges = (v >= 0.5f); },
       0, 1, 1,
@@ -1708,7 +1712,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Model1D_displayEdges = this.Spinner(..., "3D-select.Model1D_displayEdges");  [line 710]
-    putSpinnerAction("3_d_select_model1_d_display_edges",
+    putSpinnerAction("3D-select.Model1D_displayEdges",
       () -> (Select3D.Model1D_displayEdges ? 1f : 0f),
       (v) -> { Select3D.Model1D_displayEdges = (v >= 0.5f); },
       0, 1, 1,
@@ -1716,7 +1720,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Solid_displayEdges = this.Spinner(..., "3D-select.Solid_displayEdges");  [line 712]
-    putSpinnerAction("3_d_select_solid_display_edges",
+    putSpinnerAction("3D-select.Solid_displayEdges",
       () -> (Select3D.Solid_displayEdges ? 1f : 0f),
       (v) -> { Select3D.Solid_displayEdges = (v >= 0.5f); },
       0, 1, 1,
@@ -1724,7 +1728,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Section_displayEdges = this.Spinner(..., "3D-select.Section_displayEdges");  [line 714]
-    putSpinnerAction("3_d_select_section_display_edges",
+    putSpinnerAction("3D-select.Section_displayEdges",
       () -> (Select3D.Section_displayEdges ? 1f : 0f),
       (v) -> { Select3D.Section_displayEdges = (v >= 0.5f); },
       0, 1, 1,
@@ -1732,7 +1736,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.Camera_displayEdges = this.Spinner(..., "3D-select.Camera_displayEdges");  [line 716]
-    putSpinnerAction("3_d_select_camera_display_edges",
+    putSpinnerAction("3D-select.Camera_displayEdges",
       () -> (Select3D.Camera_displayEdges ? 1f : 0f),
       (v) -> { Select3D.Camera_displayEdges = (v >= 0.5f); },
       0, 1, 1,
@@ -1740,7 +1744,7 @@ class UI_rollout {
       viewChangedOnly);
 
     // Select3D.LandPoint_displayPoints = this.Spinner(..., "3D-select.LandPoint_displayPoints");  [line 718]
-    putSpinnerAction("3_d_select_land_point_display_points",
+    putSpinnerAction("3D-select.LandPoint_displayPoints",
       () -> (Select3D.LandPoint_displayPoints ? 1f : 0f),
       (v) -> { Select3D.LandPoint_displayPoints = (v >= 0.5f); },
       0, 1, 1,
@@ -1748,14 +1752,14 @@ class UI_rollout {
       viewChangedOnly);
 
     // Interpolation_Weight = this.Spinner(..., "Interpolation_Weight", 0, 5, 0.5);  [line 724]
-    putSpinnerAction("interpolation_weight",
+    putSpinnerAction("Interpolation_Weight",
       () -> Interpolation_Weight,
       (v) -> { Interpolation_Weight = v; },
       0, 5, 0.5,
       1, 0, 0);
 
     // CLIMATIC_SolarForecast = this.Spinner(..., "Climate-based solar forecast", 0, 1, 1);  [line 725]
-    putSpinnerAction("climate_based_solar_forecast",
+    putSpinnerAction("Climate-based solar forecast",
       () -> (float) CLIMATIC_SolarForecast,
       (v) -> { CLIMATIC_SolarForecast = int(v); },
       0, 1, 1,
@@ -1763,7 +1767,7 @@ class UI_rollout {
       applyTimeChange);
 
     // CLIMATIC_WeatherForecast = this.Spinner(..., "Climate-based temperature forecast", 0, 2, 1);  [line 726]
-    putSpinnerAction("climate_based_temperature_forecast",
+    putSpinnerAction("Climate-based temperature forecast",
       () -> (float) CLIMATIC_WeatherForecast,
       (v) -> { CLIMATIC_WeatherForecast = int(v); },
       0, 2, 1,
@@ -1771,49 +1775,49 @@ class UI_rollout {
       applyTimeChange);
 
     // Develop_Option = this.Spinner(..., "Develop_Option", 0, 11, 1);  [line 729]
-    putSpinnerAction("develop_option",
+    putSpinnerAction("Develop_Option",
       () -> (float) Develop_Option,
       (v) -> { Develop_Option = int(v); },
       0, 11, 1,
       1, 0, 0);
 
     // Develop_DayHour = this.Spinner(..., "Develop_DayHour", 0, 3, 1);  [line 730]
-    putSpinnerAction("develop_day_hour",
+    putSpinnerAction("Develop_DayHour",
       () -> (float) Develop_DayHour,
       (v) -> { Develop_DayHour = int(v); },
       0, 3, 1,
       1, 0, 0);
 
     // STUDY.TrendJoinHours = this.Spinner(..., "Trend period hours", 1, 24 * 16, 1);  [line 732]
-    putSpinnerAction("trend_period_hours",
+    putSpinnerAction("Trend period hours",
       () -> (float) STUDY.TrendJoinHours,
       (v) -> { STUDY.TrendJoinHours = int(v); },
       1, 24 * 16, 1,
       1, 0, 0);
 
     // STUDY.TrendJoinType = this.Spinner(..., "Weighted/equal trend", -1, 1, 2);  [line 733]
-    putSpinnerAction("weighted_equal_trend",
+    putSpinnerAction("Weighted/equal trend",
       () -> (float) STUDY.TrendJoinType,
       (v) -> { STUDY.TrendJoinType = int(v); },
       -1, 1, 1,
       1, 0, 0);
 
     // Develop_AngleInclination = this.Spinner(..., "Inclination angle", 0, 90, 5);  [line 735]
-    putSpinnerAction("inclination_angle",
+    putSpinnerAction("Inclination angle",
       () -> Develop_AngleInclination,
       (v) -> { Develop_AngleInclination = v; },
       0, 90, 1,
       1, 0, 0);
 
     // Develop_AngleOrientation = this.Spinner(..., "Orientation angle", 0, 360, 15);  [line 736]
-    putSpinnerAction("orientation_angle",
+    putSpinnerAction("Orientation angle",
       () -> Develop_AngleOrientation,
       (v) -> { Develop_AngleOrientation = v; },
       0, 360, 1,
       1, 0, 0);
 
     // CurrentDataSource = this.Spinner(..., "Impact Source", 0, MAXIMUM_dataID, 1);  [line 739]
-    putSpinnerAction("impact_source",
+    putSpinnerAction("Impact Source",
       () -> (float) CurrentDataSource,
       (v) -> { CurrentDataSource = int(v); },
       () -> (float) (0), () -> (float) (MAXIMUM_dataID), 1,
@@ -1821,105 +1825,105 @@ class UI_rollout {
       impactsUpdateFlag);
 
     // STUDY.ImpactLayer = this.Spinner(..., "Impact Min/50%/Max", 0, 8, 1);  [line 740]
-    putSpinnerAction("impact_min_50_max",
+    putSpinnerAction("Impact Min/50%/Max",
       () -> (float) STUDY.ImpactLayer,
       (v) -> { STUDY.ImpactLayer = int(v); },
       0, 8, 1,
       1, 0, 0);
 
     // STUDY.export_info_node = this.Spinner(..., "Export ASCII data");  [line 746]
-    putSpinnerAction("export_ascii_data",
+    putSpinnerAction("Export ASCII data",
       () -> (STUDY.export_info_node ? 1f : 0f),
       (v) -> { STUDY.export_info_node = (v >= 0.5f); },
       0, 1, 1,
       1, 0, 0);
 
     // STUDY.export_info_norm = this.Spinner(..., "Export ASCII statistics");  [line 747]
-    putSpinnerAction("export_ascii_statistics",
+    putSpinnerAction("Export ASCII statistics",
       () -> (STUDY.export_info_norm ? 1f : 0f),
       (v) -> { STUDY.export_info_norm = (v >= 0.5f); },
       0, 1, 1,
       1, 0, 0);
 
     // STUDY.export_info_prob = this.Spinner(..., "Export ASCII probabilities");  [line 748]
-    putSpinnerAction("export_ascii_probabilities",
+    putSpinnerAction("Export ASCII probabilities",
       () -> (STUDY.export_info_prob ? 1f : 0f),
       (v) -> { STUDY.export_info_prob = (v >= 0.5f); },
       0, 1, 1,
       1, 0, 0);
 
     // User3D.export_Scale = this.Spinner(..., "3D-export.Scale", .001, 1000, -0.1);  [line 751]
-    putSpinnerAction("3_d_export_scale",
+    putSpinnerAction("3D-export.Scale",
       () -> User3D.export_Scale,
       (v) -> { User3D.export_Scale = v; },
       .001, 1000, 0.1,
       0, 0, 0);
 
     // User3D.export_FlipZYaxis = this.Spinner(..., "3D-export.FlipZYaxis", 0, 1, 1);  [line 752]
-    putSpinnerAction("3_d_export_flip_zyaxis",
+    putSpinnerAction("3D-export.FlipZYaxis",
       () -> (float) User3D.export_FlipZYaxis,
       (v) -> { User3D.export_FlipZYaxis = int(v); },
       0, 1, 1,
       0, 0, 0);
 
     // User3D.export_PrecisionVertex = this.Spinner(..., "3D-export.PrecisionVertex", 0, 6, 1);  [line 754]
-    putSpinnerAction("3_d_export_precision_vertex",
+    putSpinnerAction("3D-export.PrecisionVertex",
       () -> (float) User3D.export_PrecisionVertex,
       (v) -> { User3D.export_PrecisionVertex = int(v); },
       0, 6, 1,
       0, 0, 0);
 
     // User3D.export_PrecisionVtexture = this.Spinner(..., "3D-export.PrecisionVtexture", 0, 6, 1);  [line 755]
-    putSpinnerAction("3_d_export_precision_vtexture",
+    putSpinnerAction("3D-export.PrecisionVtexture",
       () -> (float) User3D.export_PrecisionVtexture,
       (v) -> { User3D.export_PrecisionVtexture = int(v); },
       0, 6, 1,
       0, 0, 0);
 
     // User3D.export_PolyToPoly = this.Spinner(..., "3D-export.PolyToPoly", 0, 1, 1);  [line 756]
-    putSpinnerAction("3_d_export_poly_to_poly",
+    putSpinnerAction("3D-export.PolyToPoly",
       () -> (float) User3D.export_PolyToPoly,
       (v) -> { User3D.export_PolyToPoly = int(v); },
       0, 1, 1,
       0, 0, 0);
 
     // User3D.export_MaterialLibrary = this.Spinner(..., "3D-export.MaterialLibrary");  [line 758]
-    putSpinnerAction("3_d_export_material_library",
+    putSpinnerAction("3D-export.MaterialLibrary",
       () -> (User3D.export_MaterialLibrary ? 1f : 0f),
       (v) -> { User3D.export_MaterialLibrary = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0);
 
     // User3D.export_BackSides = this.Spinner(..., "3D-export.BackSides");  [line 759]
-    putSpinnerAction("3_d_export_back_sides",
+    putSpinnerAction("3D-export.BackSides",
       () -> (User3D.export_BackSides ? 1f : 0f),
       (v) -> { User3D.export_BackSides = (v >= 0.5f); },
       0, 1, 1,
       0, 0, 0);
 
     // User3D.export_PaletteResolution = this.Spinner(..., "3D-export.PaletteResolution", 32, 2048, -2);  [line 760]
-    putSpinnerAction("3_d_export_palette_resolution",
+    putSpinnerAction("3D-export.PaletteResolution",
       () -> (float) User3D.export_PaletteResolution,
       (v) -> { User3D.export_PaletteResolution = int(v); },
       32, 2048, 1,
       0, 0, 0);
 
     // allSolidImpacts.record_IMG = this.Spinner(..., "Record SolidImpact in JPG", 0, 1, 1);  [line 765]
-    putSpinnerAction("record_solid_impact_in_jpg",
+    putSpinnerAction("Record SolidImpact in JPG",
       () -> (float) allSolidImpacts.record_IMG,
       (v) -> { allSolidImpacts.record_IMG = int(v); },
       0, 1, 1,
       0, 0, 0);
 
     // allSolidImpacts.record_PDF = this.Spinner(..., "Record SolidImpact in PDF", 0, 1, 1);  [line 766]
-    putSpinnerAction("record_solid_impact_in_pdf",
+    putSpinnerAction("Record SolidImpact in PDF",
       () -> (float) allSolidImpacts.record_PDF,
       (v) -> { allSolidImpacts.record_PDF = int(v); },
       0, 1, 1,
       0, 0, 0);
 
     // allSolarImpacts.record_IMG = this.Spinner(..., "Record Solar Analysis in JPG", 0, 1, 1);  [line 768]
-    putSpinnerAction("record_solar_analysis_in_jpg",
+    putSpinnerAction("Record Solar Analysis in JPG",
       () -> (float) allSolarImpacts.record_IMG,
       (v) -> { allSolarImpacts.record_IMG = int(v); },
       0, 1, 1,

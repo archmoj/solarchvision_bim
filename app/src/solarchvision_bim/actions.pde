@@ -28,14 +28,25 @@ interface SpinnerApplied {
 
 HashMap<String, Action> allActions;
 
+// Normalizes a name/caption into a command key: lowercase, and spaces
+// become underscores (so a multi-word caption becomes one command-line
+// token, e.g. "Start day" -> "start_day", "3D-select.rotVector" ->
+// "3d-select.rotvector"). Nothing else about the text is changed - dots,
+// dashes, digits are all left as they are - so any existing field name or
+// caption can be passed to putAction as-is and used the same way on the
+// command line.
+private String normalizeActionKey(String s) {
+  return s.toLowerCase().replace(' ', '_');
+}
+
 private void putAction(String s, Runnable fn) {
-    String lower = s.toLowerCase();
-    allActions.put(lower, (args) -> fn.run()); // put lowercase, ignore any args
+    String key = normalizeActionKey(s);
+    allActions.put(key, (args) -> fn.run()); // ignore any args
 }
 
 private void putAction(String s, Action fn) {
-    String lower = s.toLowerCase();
-    allActions.put(lower, fn); // put lowercase
+    String key = normalizeActionKey(s);
+    allActions.put(key, fn);
 }
 
 // Registers a command-line-callable action that mirrors what a UI spinner
