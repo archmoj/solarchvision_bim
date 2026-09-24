@@ -47,6 +47,12 @@ private void putAction(String s, Runnable fn) {
 private void putAction(String s, Action fn) {
     String key = normalizeActionKey(s);
     allActions.put(key, fn);
+
+    // Also support menu commands with space in their names e.g. "Select Group"
+    String withSpace = s.toLowerCase();
+    if(!withSpace.equals(key)) {
+        allActions.put(withSpace, fn);
+    }
 }
 
 // Shared by putValueAction (below) and _Spinner (UI_rollout.pde): revise
