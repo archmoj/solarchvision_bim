@@ -396,10 +396,9 @@ class ValueModifier {
     if (created == 0) {
       putValueAction("Latitude",
         () -> LocationLAT,
-        (v) -> { LocationLAT = v; },
+        (v) -> { STATION.setLatitude(v); update_station(0); },
         s1, s2, s3,
-        u1, u2, u3,
-        react.applyLocationChange);
+        u1, u2, u3);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Latitude", LocationLAT, s1, s2, s3);
     }
@@ -418,10 +417,9 @@ class ValueModifier {
     if (created == 0) {
       putValueAction("Longitude",
         () -> LocationLON,
-        (v) -> { LocationLON = v; },
+        (v) -> { STATION.setLongitude(v); update_station(0); },
         s1, s2, s3,
-        u1, u2, u3,
-        react.applyLocationChange);
+        u1, u2, u3);
     } else {
       out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Longitude", LocationLON, s1, s2, s3);
     }
