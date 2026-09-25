@@ -1606,6 +1606,7 @@ String runScriptLine (String lineSTR) {
     // Full-line match first (menu captions such as "Save As..." that may
     // contain spaces and take no arguments).
     Action action = allActions.get(key);
+    String[] actionArgs = parts;
 
     // Otherwise fall back to a first-token match, so commands registered
     // with parameters (e.g. "start_day 15") can be reused here.
@@ -1613,8 +1614,24 @@ String runScriptLine (String lineSTR) {
       action = allActions.get(parts[0].toLowerCase());
     }
 
+    // Otherwise, try the line with its last word removed - a multi-word
+    // command name (e.g. "begin day", also registered under its literal
+    // caption by putAction's "withSpace" fallback) can then also be typed
+    // with a value appended (e.g. "begin day 15"), the trailing word
+    // being that value.
+    if (action == null) {
+      int lastSpace = key.lastIndexOf(' ');
+      if (lastSpace > 0) {
+        String prefix = key.substring(0, lastSpace);
+        action = allActions.get(prefix);
+        if (action != null) {
+          actionArgs = new String[]{prefix, parts[parts.length - 1]};
+        }
+      }
+    }
+
     if (action != null) {
-      action.run(parts);
+      action.run(actionArgs);
     } else {
       hint = "Unrecognized command!";
     }

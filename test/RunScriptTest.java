@@ -145,6 +145,34 @@ class RunScriptTest {
   }
 
   @Test
+  void fallsBackToALastSpaceMatch_forAMultiWordCaptionTypedWithItsValue () {
+    // "Begin day" registers both "begin_day" and, via putAction's
+    // "withSpace" fallback, the literal "begin day" too - but typing
+    // "Begin day 15" doesn't match either of those directly: the full
+    // line is "begin day 15" (three words) and the first token alone is
+    // just "begin". Stripping the trailing value word off the line
+    // ("begin day") is what finds it.
+    app.vm.Begin_day(0);
+    app.TIME.day = 1;
+
+    String hint = app.runScriptLine("Begin day 15");
+
+    assertEquals("", hint);
+    assertEquals(15, app.TIME.day);
+  }
+
+  @Test
+  void fallsBackToALastSpaceMatch_forALongerMultiWordCaption () {
+    app.vm.Number_of_days_to_plot(0);
+    app.STUDY.j_End = 1;
+
+    String hint = app.runScriptLine("Number of days to plot 200");
+
+    assertEquals("", hint);
+    assertEquals(200, app.STUDY.j_End);
+  }
+
+  @Test
   void fallsBackToAFullLineMatch_forACaptionTypedAloneWithNoValue () {
     // putValueAction reaches putAction's Action-taking overload, which -
     // like the Runnable-taking one used for plain menu items (see the
