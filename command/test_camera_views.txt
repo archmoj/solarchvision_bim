@@ -49,28 +49,31 @@ REC.png bottom-wire
 =======
 Shade.Real
 
-S.W.
-REC.png south-west-real
-=======
 N.E.
 REC.png north-east-real
 =======
-Shade.White
-Shade.Viewport
 
 S.W.
+REC.png south-west-real
+=======
+
+Shade.Viewport
 REC.png south-west-shade
 =======
 Shade.Materials
 N.W.
 REC.png north-west-materials
 =======
-Camera px:40 py:-30 pz:20 pt:1 rx:0 ry:0 rz:0 rt:5 a:60 t:1
+#Camera px:20 py:-10 pz:2 pt:1 rx:0 ry:0 rz:0 rt:5 a:60 t:1
+#Camera View
 
-Perspective
-REC.png perspective-materials
+#REC.png camera-materials
 =======
 
-Orthographic
-REC.png orthographic-materials
+#Orthographic
+#REC.png orthographic-materials
+=======
+
+#Perspective
+#REC.png perspective-materials
 =======
