@@ -1,28 +1,89 @@
 Delete all
 
-Box m:0 tes:0 lyr:0 x:-15 y:-15 z:0 dx:8 dy:8 dz:8 r:0
-Box m:1 tes:0 lyr:0 x:15 y:-15 z:0 dx:8 dy:8 dz:8 r:0
-Box m:2 tes:0 lyr:0 x:0 y:15 z:0 dx:8 dy:8 dz:12 r:0
+3d-model 3
 
-Camera px:40 py:-40 pz:30 pt:1 rx:0 ry:0 rz:0 rt:5 a:60 t:1
+Delete_All_Model2Ds
+
+Person m:0 x:-20 y:0   z:0
+Person m:0 x:20  y:0   z:0
+Person m:0 x:0   y:-20 z:0
+Person m:0 x:0   y:20  z:0
+
+Tree1 m:0 x:-20 y:-10 z:0 h:10 degree:8 seed:0 r:0 tilt:60 twist:137.5 ratio:0.8 base:2 trunk:1 leaf:0.2
+Tree1 m:0 x:20  y:-10 z:0 h:10 degree:8 seed:0 r:0 tilt:60 twist:137.5 ratio:0.8 base:2 trunk:1 leaf:0.2
+Tree1 m:0 x:20  y:10  z:0 h:10 degree:8 seed:0 r:0 tilt:60 twist:137.5 ratio:0.8 base:2 trunk:1 leaf:0.2
+Tree1 m:0 x:-20 y:10  z:0 h:10 degree:8 seed:0 r:0 tilt:60 twist:137.5 ratio:0.8 base:2 trunk:1 leaf:0.2
+
+Tree2 m:0 x:-10 y:-20 z:0 h:10
+Tree2 m:0 x:10  y:-20 z:0 h:10
+Tree2 m:0 x:10  y:20  z:0 h:10
+Tree2 m:0 x:-10 y:20  z:0 h:10
+
 
 Select nothing
 
-Shade.Materials
-ALLVIEWPORTS
+Show Sky
+Hide Earth Surface
 
-Top
-Front
-Right
-Back
-Left
-Bottom
-S.W.
-N.E.
-N.W.
-Perspective
-Orthographic
-S.E.
-SIZEALL
+Days past March equinox 80
+
+Shade.Global
 
 REC.png
+=======
+
+Top
+REC.png
+=======
+Front
+REC.png
+=======
+Right
+REC.png
+=======
+Left
+REC.png
+=======
+Shade.White
+
+Back
+REC.png
+=======
+
+Shade.Wire
+
+Bottom
+REC.png
+=======
+
+Shade.Real
+
+S.W.
+REC.png
+=======
+N.E.
+REC.png
+=======
+
+Shade.White
+Shade.Viewport
+
+S.W.
+REC.png
+=======
+
+Shade.Materials
+N.W.
+REC.png
+=======
+
+
+#Camera px:40 py:-30 pz:20 pt:1 rx:0 ry:0 rz:0 rt:5 a:60 t:1
+
+#Perspective
+#REC.png
+=======
+
+#Orthographic
+#REC.png
+=======
