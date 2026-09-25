@@ -106,14 +106,15 @@ void calculate_VertexSolar_array () {
   float printed_Progress = 0;
   progressBarHeader();
   for (int f = 0; f < allFaces.nodes.length; f++) {
-
-    Progress = 100 * f / float(allFaces.nodes.length);
-    float delta = floor(Progress - printed_Progress);
-    if(delta >= 1) {
-      for(int c = 0; c < delta; c++) {
-        print("█");
+    if (control != USER_AUTO) {
+      Progress = 100 * f / float(allFaces.nodes.length);
+      float delta = floor(Progress - printed_Progress);
+      if(delta >= 1) {
+        for(int c = 0; c < delta; c++) {
+          print("█");
+        }
+        printed_Progress = floor(Progress);
       }
-      printed_Progress = floor(Progress);
     }
 
     int vsb = allFaces.getVisibility(f);

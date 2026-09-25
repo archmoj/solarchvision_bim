@@ -20,15 +20,17 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   progressBarHeader();
 
   for (int f = 0; f < FileALL.length; f++) {
-    Progress = 100 * f / totalLines;
-    int delta = (int) floor(Progress - printed_Progress);
-    if (delta >= 1) {
-      barBuffer.setLength(0);
-      for (int c = 0; c < delta; c++) {
-        barBuffer.append('█');
+    if (control != USER_AUTO) {
+      Progress = 100 * f / totalLines;
+      int delta = (int) floor(Progress - printed_Progress);
+      if (delta >= 1) {
+        barBuffer.setLength(0);
+        for (int c = 0; c < delta; c++) {
+          barBuffer.append('█');
+        }
+        print(barBuffer.toString()); // one print() call instead of `delta` calls
+        printed_Progress = floor(Progress);
       }
-      print(barBuffer.toString()); // one print() call instead of `delta` calls
-      printed_Progress = floor(Progress);
     }
 
     String lineSTR = FileALL[f];

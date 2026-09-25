@@ -97,13 +97,15 @@ void preBakeViewport () {
     int Image_X = np % RES1;
     int Image_Y = np / RES1;
 
-    Progress = 100 * np / float(RES1 * RES2);
-    float delta = floor(Progress - printed_Progress);
-    if(delta >= 1) {
-      for(int c = 0; c < delta; c++) {
-        print("█");
+    if (control != USER_AUTO) {
+      Progress = 100 * np / float(RES1 * RES2);
+      float delta = floor(Progress - printed_Progress);
+      if(delta >= 1) {
+        for(int c = 0; c < delta; c++) {
+          print("█");
+        }
+        printed_Progress = floor(Progress);
       }
-      printed_Progress = floor(Progress);
     }
 
     Image_X -= 0.5 * WIN3D.dX;
