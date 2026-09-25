@@ -20,6 +20,22 @@ void runScriptLines (String[] FileALL) {
   }
 }
 
+// Lowercase command names that must always reach the switch-case in
+// runScriptLine below, even though each also has a bare, zero-argument
+// menu action of the same name (e.g. "Move" switches the active move
+// tool - see UI_setTo_Modify_Move). Without this, the allActions lookup
+// there would match that bare action by first token before the
+// switch-case ever runs, silently ignoring any parameters typed after
+// the command name - or the usage hint it would otherwise print without
+// them.
+HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
+  "move",
+  "box", "sphere", "cylinder", "person", "house1", "house2", "house3",
+  "octahedron", "icosahedron", "cushion",
+  "rotate", "rotatex", "rotatey", "rotatez",
+  "scale"
+));
+
 String runScriptLine (String lineSTR) {
   String hint = "";
 
@@ -45,37 +61,50 @@ String runScriptLine (String lineSTR) {
   String[] parts = split(transformedLine, ' ');
 
   String key = lineSTR.toLowerCase();
-  if(!key.equals("")) {
-    // Full-line match first (menu captions such as "Save As..." that may
-    // contain spaces and take no arguments).
-    Action action = allActions.get(key);
-    String[] actionArgs = parts;
 
-    // Otherwise fall back to a first-token match, so commands registered
-    // with parameters (e.g. "start_day 15") can be reused here.
-    if ((action == null) && (parts.length > 0)) {
-      action = allActions.get(parts[0].toLowerCase());
-    }
+  // A handful of switch-case commands below take real parameters (e.g.
+  // MOVE dx:.. dy:.. dz:..) but also happen to share a name with a bare,
+  // zero-argument menu action that just switches a tool (e.g. "Move"
+  // switches the active move tool - see UI_setTo_Modify_Move). Checking
+  // allActions by first token would otherwise match that bare action
+  // before ever reaching the switch-case that actually reads the
+  // parameters - or prints a usage hint when there are none. Skipping the
+  // allActions lookup entirely for these specific names routes them to
+  // the switch-case unconditionally, exactly as before allActions was
+  // checked first.
+  if (!bypassAllActionsFor.contains(parts[0].toLowerCase())) {
+    if(!key.equals("")) {
+      // Full-line match first (menu captions such as "Save As..." that may
+      // contain spaces and take no arguments).
+      Action action = allActions.get(key);
+      String[] actionArgs = parts;
 
-    // Otherwise, try the line with its last word removed - a multi-word
-    // command name (e.g. "begin day", also registered under its literal
-    // caption by putAction's "withSpace" fallback) can then also be typed
-    // with a value appended (e.g. "begin day 15"), the trailing word
-    // being that value.
-    if (action == null) {
-      int lastSpace = key.lastIndexOf(' ');
-      if (lastSpace > 0) {
-        String prefix = key.substring(0, lastSpace);
-        action = allActions.get(prefix);
-        if (action != null) {
-          actionArgs = new String[]{prefix, parts[parts.length - 1]};
+      // Otherwise fall back to a first-token match, so commands registered
+      // with parameters (e.g. "start_day 15") can be reused here.
+      if ((action == null) && (parts.length > 0)) {
+        action = allActions.get(parts[0].toLowerCase());
+      }
+
+      // Otherwise, try the line with its last word removed - a multi-word
+      // command name (e.g. "begin day", also registered under its literal
+      // caption by putAction's "withSpace" fallback) can then also be typed
+      // with a value appended (e.g. "begin day 15"), the trailing word
+      // being that value.
+      if (action == null) {
+        int lastSpace = key.lastIndexOf(' ');
+        if (lastSpace > 0) {
+          String prefix = key.substring(0, lastSpace);
+          action = allActions.get(prefix);
+          if (action != null) {
+            actionArgs = new String[]{prefix, parts[parts.length - 1]};
+          }
         }
       }
-    }
 
-    if (action != null) {
-      action.run(actionArgs);
-      return "";
+      if (action != null) {
+        action.run(actionArgs);
+        return "";
+      }
     }
   }
 

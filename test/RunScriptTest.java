@@ -268,44 +268,223 @@ class RunScriptTest {
     assertNotEquals("Unrecognized command!", app.runScriptLine("Reverse Visibility of All-Faces"));
   }
 
-  // ================= MOVE ====================================================
-  // NOTE - regression found while writing these tests, not something these
-  // tests were asked to fix: once build_allActions() has run (as it always
-  // has by the time a person can type into the console - see
-  // draw_initial_frames.pde), "Move" is *also* registered there as a bare,
-  // zero-argument menu action (it switches the active move tool - see
-  // UI_setTo_Modify_Move in UI_setTo.pde). Now that allActions is checked
-  // before the switch-case (the same reordering that fixes Delete/Select
-  // above), "MOVE dx:5 dy:3 dz:1" matches that bare action by its first
-  // token ("move") before ever reaching the MOVE case that would actually
-  // read dx/dy/dz and move the selection - the arguments are now silently
-  // ignored. The tests below document this actual current behavior rather
-  // than the intended one; see this session's reply for a suggested fix.
+  // ================= MOVE / ROTATE / SCALE / creation commands ===============
+  // Fixed regression: these switch-case commands take real parameters, but
+  // each also has a bare, zero-argument menu action of the same name (e.g.
+  // "Move" switches the active move tool - see UI_setTo_Modify_Move). Once
+  // build_allActions() has run (as it always has by the time a person can
+  // type into the console - see draw_initial_frames.pde), the allActions
+  // lookup would otherwise match that bare action by first token before
+  // ever reaching the switch-case that reads the parameters or prints a
+  // usage hint without them. bypassAllActionsFor (top of runScript.pde)
+  // routes these specific names straight to the switch-case, restoring
+  // both behaviors.
 
   @Test
-  void move_keyedArguments_currentlyOnlySwitchesTheMoveTool_argumentsIgnored () {
+  void move_withArguments_actuallyMovesRatherThanJustSwitchingTheTool () {
     app.build_allActions();
     app.WIN3D.UI_CurrentTask = -1;
+    app.WIN3D.update = false;
 
     String hint = app.runScriptLine("MOVE dx:5 dy:3 dz:1");
 
     assertEquals("", hint);
-    assertEquals(app.UITASK.Move, app.WIN3D.UI_CurrentTask);
+    assertEquals(-1, app.WIN3D.UI_CurrentTask, "must not just switch the move tool");
+    assertTrue(app.WIN3D.update, "view_changed() should fire for a real move");
   }
 
   @Test
-  void move_positionalArguments_areReadAsDxDyDzInOrder_whenNotShadowedByAMenuAction () {
-    // Without build_allActions() having registered "Move", this line
-    // correctly reaches the switch-case (see the note above).
-    assertDoesNotThrow(() -> app.runScriptLine("MOVE 5 3 1"));
-  }
-
-  @Test
-  void move_withNoArguments_currentlyAlsoJustSwitchesTheMoveTool () {
-    // Previously returned the "Move dx=? dy=? dz=?" hint from the
-    // switch-case's own argument check; now short-circuited the same way.
+  void move_withNoArguments_returnsTheUsageHint_notTheBareToolSwitch () {
     app.build_allActions();
-    assertEquals("", app.runScriptLine("MOVE"));
+    assertEquals("Move dx=? dy=? dz=?", app.runScriptLine("MOVE"));
+  }
+
+  @Test
+  void rotate_withArguments_actuallyRotatesTheSelection () {
+    app.build_allActions();
+    app.WIN3D.update = false;
+
+    String hint = app.runScriptLine("ROTATE r:45");
+
+    assertEquals("", hint);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void rotate_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Rotate[X|Y|Z] r=? x=? y=? z=?", app.runScriptLine("ROTATE"));
+  }
+
+  @Test
+  void rotateX_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Rotate[X|Y|Z] r=? x=? y=? z=?", app.runScriptLine("ROTATEX"));
+  }
+
+  @Test
+  void scale_withArguments_actuallyScalesTheSelection () {
+    app.build_allActions();
+    app.WIN3D.update = false;
+
+    String hint = app.runScriptLine("SCALE s:2");
+
+    assertEquals("", hint);
+    assertTrue(app.WIN3D.update);
+  }
+
+  @Test
+  void scale_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Scale s=? sx=? sy=? sz=? x=? y=? z=?", app.runScriptLine("SCALE"));
+  }
+
+  // ---- object creation ------------------------------------------------------
+  // Each creates real geometry (as faces) when given arguments - even the
+  // minimal "x=0 y=0 z=0" below is enough, since every other dimension
+  // defaults to a non-zero size - and otherwise returns its usage hint.
+
+  @Test
+  void box_withArguments_actuallyCreatesAFace_notJustTheCreateTool () {
+    app.build_allActions();
+    assertEquals(0, app.allFaces.nodes.length);
+
+    String hint = app.runScriptLine("BOX x=0 y=0 z=0");
+
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0, "a box should actually be created");
+  }
+
+  @Test
+  void box_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?", app.runScriptLine("BOX"));
+  }
+
+  @Test
+  void sphere_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("SPHERE x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void sphere_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?", app.runScriptLine("SPHERE"));
+  }
+
+  @Test
+  void cylinder_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("CYLINDER x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void cylinder_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?", app.runScriptLine("CYLINDER"));
+  }
+
+  @Test
+  void person_withArguments_actuallyCreatesAModel2D_notJustTheCreateTool () {
+    app.build_allActions();
+    assertEquals(0, app.allModel2Ds.num);
+
+    String hint = app.runScriptLine("PERSON x=0 y=0 z=0");
+
+    assertEquals("", hint);
+    assertEquals(1, app.allModel2Ds.num, "a person should actually be created");
+  }
+
+  @Test
+  void person_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Person m=? x=? y=? z=?", app.runScriptLine("PERSON"));
+  }
+
+  @Test
+  void house1_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("HOUSE1 x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void house1_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?", app.runScriptLine("HOUSE1"));
+  }
+
+  @Test
+  void house2_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?", app.runScriptLine("HOUSE2"));
+  }
+
+  @Test
+  void house3_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?", app.runScriptLine("HOUSE3"));
+  }
+
+  @Test
+  void octahedron_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("OCTAHEDRON x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void octahedron_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?", app.runScriptLine("OCTAHEDRON"));
+  }
+
+  @Test
+  void icosahedron_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("ICOSAHEDRON x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void icosahedron_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?", app.runScriptLine("ICOSAHEDRON"));
+  }
+
+  @Test
+  void cushion_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("CUSHION x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void cushion_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?", app.runScriptLine("CUSHION"));
+  }
+
+  // ---- confirms unrelated commands are unaffected by the bypass list --------
+
+  @Test
+  void unrelatedCommand_stillDispatchesThroughAllActionsNormally () {
+    app.vm.Begin_day(0);
+    app.TIME.day = 1;
+
+    String hint = app.runScriptLine("begin_day 15");
+
+    assertEquals("", hint);
+    assertEquals(15, app.TIME.day);
   }
 
   // ================= unrecognized commands ===================================
