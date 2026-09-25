@@ -684,10 +684,10 @@ subtract modes.
 
 ### Selection
 
--   `Select All`, `Select All Cameras`, `Select All Faces`,
-    `Select All Groups`, `Select All Model1Ds`, `Select All Model2Ds`,
-    `Select All Polylines`, `Select All Sections`, `Select All Solids`,
-    `Select All Verices`
+-   `Select All`, `Select All-Cameras`, `Select All-Faces`,
+    `Select All-Groups`, `Select All-Model1Ds`, `Select All-Model2Ds`,
+    `Select All-Polylines`, `Select All-Sections`, `Select All-Solids`,
+    `Select All-Verices`
 -   `Select Camera`, `Select Face`, `Select Group`, `Select LandPoint`,
     `Select Model1Ds`, `Select Model2Ds`, `Select Polyline`,
     `Select Section`, `Select Solid`, `Select Vertex`
@@ -712,9 +712,9 @@ subtract modes.
 
 ### Deleting
 
--   `Delete All`, `Delete All Cameras`, `Delete All Faces`,
-    `Delete All Groups`, `Delete All Model1Ds`, `Delete All Model2Ds`,
-    `Delete All Polylines`, `Delete All Sections`, `Delete All Solids`
+-   `Delete All`, `Delete All-Cameras`, `Delete All-Faces`,
+    `Delete All-Groups`, `Delete All-Model1Ds`, `Delete All-Model2Ds`,
+    `Delete All-Polylines`, `Delete All-Sections`, `Delete All-Solids`
 -   `Delete Selection`, `Delete Selection Isolated Vertices`
 -   `Delete Scene Empty Groups`, `Delete Scene Isolated Vertices`
 
@@ -739,8 +739,8 @@ Most viewable elements have up to three related commands: `Show <X>`
 `TMYEPW nearest`, `TMYEPW stations`, `Troposphere`, `Vertices`,
 `Wind Flow`
 
-`Unhide All Faces` and `Unhide Selected Faces` also exist as one-way
-opposites of `Hide All Faces`/`Hide Selected Faces`.
+`Unhide All-Faces` and `Unhide Selected Faces` also exist as one-way
+opposites of `Hide All-Faces`/`Hide Selected Faces`.
 
 ### Camera and view navigation
 
@@ -837,7 +837,7 @@ commands, each switching to a mouse-drag tool for that one axis:
 -   `Flip Normal`, `Set-In Normal`, `Set-Out Normal`,
     `Auto-Normal Selected Faces`
 -   `Force Triangulate Selected Faces`, `Optimize Faces`,
-    `Reverse Visibility of All Faces`
+    `Reverse Visibility of All-Faces`
 -   `Tessellate Rectangular`, `Tessellate Triangular`,
     `Tessellate Rows & Columns`
 -   `Faces >> Vertices`, `Vertices >> Faces`, `Polylines >> Vertices`,

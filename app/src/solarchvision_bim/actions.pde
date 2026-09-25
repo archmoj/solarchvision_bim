@@ -1470,23 +1470,23 @@ void build_allActions() {
     Select3D.selectAll();
   });
 
-  putAction("Select All Cameras", () -> selectAllOfCategory(ObjectCategory.CAMERA));
+  putAction("Select All-Cameras", () -> selectAllOfCategory(ObjectCategory.CAMERA));
 
-  putAction("Select All Sections", () -> selectAllOfCategory(ObjectCategory.SECTION));
+  putAction("Select All-Sections", () -> selectAllOfCategory(ObjectCategory.SECTION));
 
-  putAction("Select All Solids", () -> selectAllOfCategory(ObjectCategory.SOLID));
+  putAction("Select All-Solids", () -> selectAllOfCategory(ObjectCategory.SOLID));
 
-  putAction("Select All Faces", () -> selectAllOfCategory(ObjectCategory.FACE));
+  putAction("Select All-Faces", () -> selectAllOfCategory(ObjectCategory.FACE));
 
-  putAction("Select All Polylines", () -> selectAllOfCategory(ObjectCategory.POLYLINE));
+  putAction("Select All-Polylines", () -> selectAllOfCategory(ObjectCategory.POLYLINE));
 
-  putAction("Select All Verices", () -> selectAllOfCategory(ObjectCategory.VERTEX));
+  putAction("Select All-Verices", () -> selectAllOfCategory(ObjectCategory.VERTEX));
 
-  putAction("Select All Groups", () -> selectAllOfCategory(ObjectCategory.GROUP));
+  putAction("Select All-Groups", () -> selectAllOfCategory(ObjectCategory.GROUP));
 
-  putAction("Select All Model1Ds", () -> selectAllOfCategory(ObjectCategory.MODEL1D));
+  putAction("Select All-Model1Ds", () -> selectAllOfCategory(ObjectCategory.MODEL1D));
 
-  putAction("Select All Model2Ds", () -> selectAllOfCategory(ObjectCategory.MODEL2D));
+  putAction("Select All-Model2Ds", () -> selectAllOfCategory(ObjectCategory.MODEL2D));
 
   putAction("Select Solid", () -> switch_category(ObjectCategory.SOLID));
 
@@ -1694,15 +1694,15 @@ void build_allActions() {
     Modify3D.offsetVertices_Selection(1, -abs(User3D.modify_OffsetAmount));
   });
 
-  putAction("Reverse Visibility of All Faces", () -> {
+  putAction("Reverse Visibility of All-Faces", () -> {
     Modify3D.reverseVisibilityFaces_Scene();
   });
 
-  putAction("Hide All Faces", () -> {
+  putAction("Hide All-Faces", () -> {
     Modify3D.changeVisibilityFaces_Scene(0);
   });
 
-  putAction("Unhide All Faces", () -> {
+  putAction("Unhide All-Faces", () -> {
     Modify3D.changeVisibilityFaces_Scene(1);
   });
 
@@ -1734,35 +1734,35 @@ void build_allActions() {
     Create3D.add_onLand(3); // 3 = 1D trees
   });
 
-  putAction("Delete All Model1Ds", () -> {
+  putAction("Delete All-Model1Ds", () -> {
     allModel1Ds.makeEmpty(0);
   });
 
-  putAction("Delete All Model2Ds", () -> {
+  putAction("Delete All-Model2Ds", () -> {
     allModel2Ds.makeEmpty(0);
   });
 
-  putAction("Delete All Groups", () -> {
+  putAction("Delete All-Groups", () -> {
     allGroups.makeEmpty(0);
   });
 
-  putAction("Delete All Solids", () -> {
+  putAction("Delete All-Solids", () -> {
     allSolids.makeEmpty(0);
   });
 
-  putAction("Delete All Sections", () -> {
+  putAction("Delete All-Sections", () -> {
     allSections.makeEmpty(0);
   });
 
-  putAction("Delete All Cameras", () -> {
+  putAction("Delete All-Cameras", () -> {
     allCameras.makeEmpty(0);
   });
 
-  putAction("Delete All Faces", () -> {
+  putAction("Delete All-Faces", () -> {
     allFaces.makeEmpty(0);
   });
 
-  putAction("Delete All Polylines", () -> {
+  putAction("Delete All-Polylines", () -> {
     allPolylines.makeEmpty(0);
   });
 
