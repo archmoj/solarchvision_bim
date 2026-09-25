@@ -94,26 +94,218 @@ class RunScriptTest {
     assertEquals("", app.allMessages[0]);
   }
 
-  // ================= MOVE ====================================================
+  // ================= Delete All-<Category> regression =======================
+  // Previously "Delete All Model2Ds" (now "Delete All-Model2Ds") reached the
+  // DELETE switch-case, whose per-token loop treated "all" and "model2ds" as
+  // two *independent* instructions - "all" alone triggers deleteAll(), which
+  // wipes every category, not just the one named. Registering the full
+  // caption as its own action, and checking allActions *before* the switch
+  // (see the top of runScriptLine), means the line now matches that one
+  // dedicated action directly and never reaches the switch-case's loop at
+  // all. Each case below seeds the named category's own count field
+  // directly (verified safe: every makeEmpty(0) below only ever *sets*
+  // count/array fields, never reads their old value first) and an
+  // unrelated category, then checks only the named one actually got
+  // cleared.
 
   @Test
-  void move_keyedArguments_translatesTheSelectionByDxDyDz () {
-    String hint = app.runScriptLine("MOVE dx:5 dy:3 dz:1");
+  void deleteAllDashModel2Ds_onlyClearsModel2Ds () {
+    app.build_allActions(); // registers "Delete All-Model2Ds" itself - needed to reach it at all
+    app.allModel2Ds.num = 1;
+    app.allFaces.nodes = new int[1][4]; // unrelated category, seeded independently
 
-    assertEquals("", hint);
-    // no selection by default, so Move3D.selection(...) is a safe no-op;
-    // view_changed() still fires regardless.
-    assertTrue(app.WIN3D.update);
+    String hint = app.runScriptLine("Delete All-Model2Ds");
+
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(0, app.allModel2Ds.num, "the named category should actually be cleared");
+    assertEquals(1, app.allFaces.nodes.length, "an unrelated category must not be touched");
   }
 
   @Test
-  void move_positionalArguments_areReadAsDxDyDzInOrder () {
+  void deleteAllDashModel1Ds_onlyClearsModel1Ds () {
+    app.build_allActions();
+    app.allModel1Ds.num = 1;
+    app.allFaces.nodes = new int[1][4];
+
+    String hint = app.runScriptLine("Delete All-Model1Ds");
+
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(0, app.allModel1Ds.num);
+    assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  @Test
+  void deleteAllDashGroups_onlyClearsGroups () {
+    app.build_allActions();
+    app.allGroups.num = 1;
+    app.allFaces.nodes = new int[1][4];
+
+    String hint = app.runScriptLine("Delete All-Groups");
+
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(0, app.allGroups.num);
+    assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  @Test
+  void deleteAllDashSections_onlyClearsSections () {
+    app.build_allActions();
+    app.allSections.num = 1;
+    app.allFaces.nodes = new int[1][4];
+
+    String hint = app.runScriptLine("Delete All-Sections");
+
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(0, app.allSections.num);
+    assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  @Test
+  void deleteAllDashFaces_onlyClearsFaces () {
+    app.build_allActions();
+    app.allFaces.nodes = new int[1][4];
+    app.allPolylines.nodes = new int[1][2]; // unrelated category this time
+
+    String hint = app.runScriptLine("Delete All-Faces");
+
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(0, app.allFaces.nodes.length, "the named category should actually be cleared");
+    assertEquals(1, app.allPolylines.nodes.length, "an unrelated category must not be touched");
+  }
+
+  @Test
+  void deleteAllDashPolylines_onlyClearsPolylines () {
+    app.build_allActions();
+    app.allPolylines.nodes = new int[1][2];
+    app.allFaces.nodes = new int[1][4];
+
+    String hint = app.runScriptLine("Delete All-Polylines");
+
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(0, app.allPolylines.nodes.length);
+    assertEquals(1, app.allFaces.nodes.length);
+  }
+
+  @Test
+  void deleteAllDashSolids_onlyClearsSolids () {
+    app.build_allActions();
+    app.allSolids.DEF = new float[1][13];
+    app.allFaces.nodes = new int[1][4];
+
+    String hint = app.runScriptLine("Delete All-Solids");
+
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(0, app.allSolids.DEF.length, "the named category should actually be cleared");
+    assertEquals(1, app.allFaces.nodes.length, "an unrelated category must not be touched");
+  }
+
+  @Test
+  void deleteAllDashCameras_onlyClearsTheAddedCamera () {
+    // Cameras.makeEmpty(0) always ends by re-adding the default "Free
+    // Viewport" camera (add_first()), so the count can never reach 0 - a
+    // fresh app already starts at 1 for that reason. To make this a
+    // meaningful check, add one extra camera first and confirm the count
+    // goes back down to exactly that unavoidable 1, not stays at 2.
+    app.build_allActions();
+    app.allCameras.add_first();
+    assertEquals(2, app.allCameras.num, "sanity check: the extra camera was actually added");
+    app.allFaces.nodes = new int[1][4];
+
+    String hint = app.runScriptLine("Delete All-Cameras");
+
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(1, app.allCameras.num, "back to just the one camera every Cameras instance always keeps");
+    assertEquals(1, app.allFaces.nodes.length, "an unrelated category must not be touched");
+  }
+
+  // ================= Select All-<Category> =====================================
+  // Less severe than Delete's bug (Select3D.selectAll() only ever acts on
+  // whichever category is current, so the old dispatch order happened to
+  // still switch to the right category first), but still worth locking in
+  // now that these go through their own dedicated action.
+
+  @Test
+  void selectAllDashModel2Ds_switchesToTheModel2DCategory () {
+    app.build_allActions();
+    String hint = app.runScriptLine("Select All-Model2Ds");
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(app.ObjectCategory.MODEL2D, app.current_ObjectCategory);
+  }
+
+  @Test
+  void selectAllDashSolids_switchesToTheSolidCategory () {
+    app.build_allActions();
+    String hint = app.runScriptLine("Select All-Solids");
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(app.ObjectCategory.SOLID, app.current_ObjectCategory);
+  }
+
+  @Test
+  void selectAllDashCameras_switchesToTheCameraCategory () {
+    app.build_allActions();
+    String hint = app.runScriptLine("Select All-Cameras");
+    assertNotEquals("Unrecognized command!", hint);
+    assertEquals(app.ObjectCategory.CAMERA, app.current_ObjectCategory);
+  }
+
+  // ================= other renamed "All-*" actions ===========================
+
+  @Test
+  void hideAllDashFaces_isRecognized () {
+    app.build_allActions();
+    assertNotEquals("Unrecognized command!", app.runScriptLine("Hide All-Faces"));
+  }
+
+  @Test
+  void unhideAllDashFaces_isRecognized () {
+    app.build_allActions();
+    assertNotEquals("Unrecognized command!", app.runScriptLine("Unhide All-Faces"));
+  }
+
+  @Test
+  void reverseVisibilityOfAllDashFaces_isRecognized () {
+    app.build_allActions();
+    assertNotEquals("Unrecognized command!", app.runScriptLine("Reverse Visibility of All-Faces"));
+  }
+
+  // ================= MOVE ====================================================
+  // NOTE - regression found while writing these tests, not something these
+  // tests were asked to fix: once build_allActions() has run (as it always
+  // has by the time a person can type into the console - see
+  // draw_initial_frames.pde), "Move" is *also* registered there as a bare,
+  // zero-argument menu action (it switches the active move tool - see
+  // UI_setTo_Modify_Move in UI_setTo.pde). Now that allActions is checked
+  // before the switch-case (the same reordering that fixes Delete/Select
+  // above), "MOVE dx:5 dy:3 dz:1" matches that bare action by its first
+  // token ("move") before ever reaching the MOVE case that would actually
+  // read dx/dy/dz and move the selection - the arguments are now silently
+  // ignored. The tests below document this actual current behavior rather
+  // than the intended one; see this session's reply for a suggested fix.
+
+  @Test
+  void move_keyedArguments_currentlyOnlySwitchesTheMoveTool_argumentsIgnored () {
+    app.build_allActions();
+    app.WIN3D.UI_CurrentTask = -1;
+
+    String hint = app.runScriptLine("MOVE dx:5 dy:3 dz:1");
+
+    assertEquals("", hint);
+    assertEquals(app.UITASK.Move, app.WIN3D.UI_CurrentTask);
+  }
+
+  @Test
+  void move_positionalArguments_areReadAsDxDyDzInOrder_whenNotShadowedByAMenuAction () {
+    // Without build_allActions() having registered "Move", this line
+    // correctly reaches the switch-case (see the note above).
     assertDoesNotThrow(() -> app.runScriptLine("MOVE 5 3 1"));
   }
 
   @Test
-  void move_missingArguments_returnsAUsageHint () {
-    assertEquals("Move dx=? dy=? dz=?", app.runScriptLine("MOVE"));
+  void move_withNoArguments_currentlyAlsoJustSwitchesTheMoveTool () {
+    // Previously returned the "Move dx=? dy=? dz=?" hint from the
+    // switch-case's own argument check; now short-circuited the same way.
+    app.build_allActions();
+    assertEquals("", app.runScriptLine("MOVE"));
   }
 
   // ================= unrecognized commands ===================================
