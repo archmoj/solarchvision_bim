@@ -48,7 +48,7 @@ class Earth3D {
   boolean displaySurface = true;
   boolean displayTexture = true;
 
-  int fillStationGridCell = -1; // -1: fill station cell with triangles point to the station, 0: skip fill, 1: normal fill
+  int fillStationGridCell = -2; // -2: fill station cell with quads subdivided midway to the station (center quad leveled to z=0), -1: fill station cell with triangles pointing to the station, 0: skip fill, 1: normal fill
 
   PImage[] Map;
   float[][] BoundariesX;
@@ -466,10 +466,11 @@ class Earth3D {
     int PAL_direction = SHADE.get_PAL_direction();
     float PAL_multiplier = SHADE.get_PAL_multiplier();
 
-    // Only needed when actually fan-filling the station's grid cell, but
-    // it's a single vertex (not per-cell), so build it once up front
-    // rather than re-deriving it on every matching iteration below.
-    FaceVertex stationVertex = (isWin3D && (this.fillStationGridCell == -1))
+    // Only needed when actually filling the station's grid cell (either
+    // the -1 triangle fan or the -2 quad subdivision), but it's a single
+    // vertex (not per-cell), so build it once up front rather than
+    // re-deriving it on every matching iteration below.
+    FaceVertex stationVertex = (isWin3D && (this.fillStationGridCell == -1 || this.fillStationGridCell == -2))
       ? buildStationVertex(CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump)
       : null;
 
@@ -488,12 +489,13 @@ class Earth3D {
           FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
 
           boolean skipFill = (this.fillStationGridCell != 1) && isStationGridCell(Alpha, unwrappedBeta, stationLat, stationLon);
-          boolean fillGap = skipFill && (this.fillStationGridCell == -1);
+          boolean fillGapTriangles = skipFill && (this.fillStationGridCell == -1);
+          boolean fillGapQuads = skipFill && (this.fillStationGridCell == -2);
 
           if (isWin3D) {
             if (!skipFill) {
               addFaceWIN3D(subFace, textureImage, PAL_type, PAL_direction, PAL_multiplier);
-            } else if (fillGap) {
+            } else if (fillGapTriangles) {
               // Fan-fill the skipped cell with 4 triangles running from
               // each of its edges to the station itself (subFace's 4
               // corners, taken consecutively, are exactly that cell's 4
@@ -502,6 +504,26 @@ class Earth3D {
               addTriangleWIN3D(stationVertex, subFace[1], subFace[2], textureImage, PAL_type, PAL_direction, PAL_multiplier);
               addTriangleWIN3D(stationVertex, subFace[2], subFace[3], textureImage, PAL_type, PAL_direction, PAL_multiplier);
               addTriangleWIN3D(stationVertex, subFace[3], subFace[0], textureImage, PAL_type, PAL_direction, PAL_multiplier);
+            } else if (fillGapQuads) {
+              // Subdivide the skipped cell midway to the station instead
+              // of fanning all the way in: each of the cell's 4 corners
+              // (A, B, C, D = subFace[0..3]) gets a midpoint toward the
+              // station (a, b, c, d respectively), z-leveled to 0 (see
+              // buildMidpointTowardStationWIN3D()) so the resulting center
+              // quad (abcd) is always flat and ready for building
+              // structures. The 4 outer quads (ABba, BCcb, CDdc, DAad)
+              // pick up the fill's usual texture/shading right up to the
+              // station's own cell.
+              FaceVertex a = buildMidpointTowardStationWIN3D(subFace[0], stationVertex);
+              FaceVertex b = buildMidpointTowardStationWIN3D(subFace[1], stationVertex);
+              FaceVertex c = buildMidpointTowardStationWIN3D(subFace[2], stationVertex);
+              FaceVertex d = buildMidpointTowardStationWIN3D(subFace[3], stationVertex);
+
+              addFaceWIN3D(new FaceVertex[] { subFace[0], subFace[1], b, a }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              addFaceWIN3D(new FaceVertex[] { subFace[1], subFace[2], c, b }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              addFaceWIN3D(new FaceVertex[] { subFace[2], subFace[3], d, c }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              addFaceWIN3D(new FaceVertex[] { subFace[3], subFace[0], a, d }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              addFaceWIN3D(new FaceVertex[] { a, b, c, d }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
             }
             collectGridEdges(subFace, Alpha, unwrappedBeta, majorGridEdgeBatch, minorGridEdgeBatch);
           } else if (!skipFill) {
@@ -590,6 +612,25 @@ class Earth3D {
   void addTriangleWIN3D (FaceVertex a, FaceVertex b, FaceVertex c, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
     FaceVertex[] triangleAsQuad = { a, b, c, c };
     addFaceWIN3D(triangleAsQuad, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+  }
+
+  // Midpoint between a station grid cell's corner vertex and the station
+  // vertex itself, used by draw()'s fillStationGridCell == -2 quad
+  // subdivision. x/y/u/v/elevationBump are plain averages of the two
+  // endpoints, but z is forced to 0 - rather than the midpoint's own
+  // averaged z - so the 4 midpoints (a, b, c, d) always form a level
+  // center quad (abcd), regardless of the corner's or station's actual
+  // elevation, making that quad a stable, flat spot for placing building
+  // structures.
+  FaceVertex buildMidpointTowardStationWIN3D (FaceVertex corner, FaceVertex station) {
+    FaceVertex vtx = new FaceVertex();
+    vtx.x = (corner.x + station.x) / 2.0;
+    vtx.y = (corner.y + station.y) / 2.0;
+    vtx.z = 0;
+    vtx.u = (corner.u + station.u) / 2.0;
+    vtx.v = (corner.v + station.v) / 2.0;
+    vtx.elevationBump = (corner.elevationBump + station.elevationBump) / 2.0;
+    return vtx;
   }
 
   void endWIN3DSphere () {
