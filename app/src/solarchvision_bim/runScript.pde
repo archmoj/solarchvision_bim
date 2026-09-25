@@ -23,6 +23,16 @@ void runScriptLines (String[] FileALL) {
 String runScriptLine (String lineSTR) {
   String hint = "";
 
+  lineSTR = lineSTR.stripLeading();
+
+  // Skip section line
+  if (lineSTR.startsWith("=")) return hint;
+
+  // Skip comment line
+  if (lineSTR.startsWith("#")) return hint;
+
+  lineSTR = lineSTR.stripTrailing();
+
   String transformedLine = lineSTR
     .replace("\"", "")
     .replace(",", " ")      // replace commas with spaces
@@ -1534,12 +1544,16 @@ String runScriptLine (String lineSTR) {
 
     case "SHADE.GLOBAL": {
       WIN3D.FacesShade = SHADE.Global_Solar;
+      GlobalSolar_rebuild_array = true;
+      regenerate_desired_bakings();
       view_changed();
       return hint;
     }
 
     case "SHADE.REAL": {
       WIN3D.FacesShade = SHADE.Vertex_Solar;
+      VertexSolar_rebuild_array = true;
+      regenerate_desired_bakings();
       view_changed();
       return hint;
     }
@@ -1601,7 +1615,7 @@ String runScriptLine (String lineSTR) {
     }
   }
 
-  String key = lineSTR.toLowerCase().stripTrailing();
+  String key = lineSTR.toLowerCase();
   if(!key.equals("")) {
     // Full-line match first (menu captions such as "Save As..." that may
     // contain spaces and take no arguments).

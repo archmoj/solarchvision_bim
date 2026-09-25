@@ -8,6 +8,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.Calendar;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
@@ -78,6 +79,8 @@ void setup () {
 int Last_initializationStep = 25; // <<< adjust me if draw_initial_frames changed
 int InitializationStep = 0;
 
+int stepAfterInitialization = 0;
+
 void draw () {
 
   //println("frameCount:", frameCount);
@@ -85,12 +88,10 @@ void draw () {
   WIN3D.processHeldKey();
 
   if (!draw_initial_frames()) {
-    if(!runAfterInitialization.equals("")) {
-      if(frameCount == 1 + Last_initializationStep) {
-        _fileSelected_RunScript(new File(runAfterInitialization));
-        runAfterInitialization = "";
-      }
+    if(stepAfterInitialization < runAfterInitialization.length) {
+      runScriptLines(runAfterInitialization[stepAfterInitialization]);
     }
+    stepAfterInitialization++;
 
     applyRolloutUpdate();
 
@@ -122,7 +123,7 @@ void draw () {
     }
 
     if (control == USER_AUTO) {
-      if(frameCount == 2 + Last_initializationStep) {
+      if(stepAfterInitialization > runAfterInitialization.length) {
         exit();
       }
     }
