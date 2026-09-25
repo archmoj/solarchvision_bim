@@ -267,8 +267,9 @@ class ActionsTest {
   @Test
   void putValueAction_keyNormalization_onlyLowercasesAndReplacesSpaces () {
     // Dots and dashes - unlike spaces - are left exactly as they are (see
-    // normalizeActionKey's own comment in actions.pde), so a field name like
-    // "3D-select.rotVector" is already a valid, usable command as-is.
+    // normalizeActionKey's own comment in actions.pde); illustrated here
+    // with a made-up name rather than a real field's caption, since none
+    // of the current ones happen to contain a dot or dash.
     float[] value = {0};
     app.putValueAction("3D-select.rotVector",
       () -> value[0],

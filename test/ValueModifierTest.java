@@ -105,13 +105,13 @@ class ValueModifierTest {
 
   @Test
   void booleanField_commandLineAction_setsTheUnderlyingBoolean () {
-    app.vm.displayNear_TMYEPW(0);
+    app.vm.TMYEPW_displayNear(0);
     app.WORLD.displayNear_TMYEPW = false;
 
-    app.allActions.get("displaynear_tmyepw").run(new String[]{"displaynear_tmyepw", "1"});
+    app.allActions.get("tmyepw_displaynear").run(new String[]{"tmyepw_displaynear", "1"});
     assertTrue(app.WORLD.displayNear_TMYEPW);
 
-    app.allActions.get("displaynear_tmyepw").run(new String[]{"displaynear_tmyepw", "0"});
+    app.allActions.get("tmyepw_displaynear").run(new String[]{"tmyepw_displaynear", "0"});
     assertFalse(app.WORLD.displayNear_TMYEPW);
   }
 
@@ -147,21 +147,21 @@ class ValueModifierTest {
 
   @Test
   void solidImpactsR_commandLineAction_writesTheCurrentSectionTypeSlot () {
-    app.vm.solidImpacts_R(0);
+    app.vm.SolidImpacts_r(0);
     int slot = app.allSolidImpacts.sectionType;
     app.allSolidImpacts.R[slot] = 0;
 
-    app.allActions.get("solidimpacts.r").run(new String[]{"solidimpacts.r", "45"});
+    app.allActions.get("solidimpacts_r").run(new String[]{"solidimpacts_r", "45"});
 
     assertEquals(45, app.allSolidImpacts.R[slot], 0.001f);
   }
 
   @Test
   void solidImpactsR_commandLineAction_triggersRecalcImpact () {
-    app.vm.solidImpacts_R(0);
+    app.vm.SolidImpacts_r(0);
     app.WIN3D.update = false;
 
-    app.allActions.get("solidimpacts.r").run(new String[]{"solidimpacts.r", "45"});
+    app.allActions.get("solidimpacts_r").run(new String[]{"solidimpacts_r", "45"});
 
     assertTrue(app.WIN3D.update); // via react.recalcImpact -> view_changed()
   }
