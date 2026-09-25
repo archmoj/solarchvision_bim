@@ -39,15 +39,6 @@ developed by [Mojtaba Samimi
         -   [Graph scaling and display options](#graph-scaling-and-display-options)
         -   [Graph visualization modes](#graph-visualization-modes)
     -   [Command line](#command-line)
-        -   [Location](#location)
-        -   [Selection and editing](#selection-and-editing)
-        -   [Object creation](#object-creation)
-        -   [Mesh creation](#mesh-creation)
-        -   [Viewports](#viewports)
-        -   [Camera control](#camera-control)
-        -   [Views](#views)
-        -   [Shading and rendering](#shading-and-rendering)
-        -   [Additional commands](#additional-commands)
 -   [SOLARCHVISION-BIM — Technical Overview](#solarchvision-bim--technical-overview)
     -   [Overview](#overview)
     -   [Major Technical Subsystems](#major-technical-subsystems)
@@ -108,6 +99,12 @@ A high-level summary of what's changed:
     now be edited directly by clicking and typing, with familiar text-entry
     controls (cursor movement, selection-free editing, Escape to cancel),
     in addition to the existing drag/click adjustment.
+-   **Command-line access to spinner values** — Nearly every numeric and
+    toggle spinner in the UI (dates, camera and palette settings,
+    latitude/longitude, and many more — 233 in total) now has a matching
+    command-line equivalent (e.g. `begin_day 15`, `latitude 45.5`), so the
+    same values can be set from a script or the command console, not just
+    by clicking a spinner.
 -   **Selection overlays** — A dedicated overlay system now draws
     selection highlights (bounding boxes, edges, pivots) separately from
     the model geometry, with camera clipping and styling fixes.
@@ -484,264 +481,17 @@ The shortcuts in this section, as well as in "Graph scaling and display options"
 
 ## Command line
 
-Use `TAB` to enable or disable the command line, or click inside/outside
-the command line area (the dark region at the bottom).
-
-Below is a list of available commands. Both lowercase and uppercase
-variants are accepted.
-
-------------------------------------------------------------------------
-
--   `CLS`: Clears the command line screen
--   `NEW`: New project
--   `OPEN`: Opens a saved project
--   `SAVE.AS`: Saves the project with a new name
--   `SAVE`: Saves the project
--   `HOLD`: Holds the scene
--   `FETCH`: Fetches the scene
--   `IMPORT.OBJ`: Imports a `.obj` file
--   `EXPORT.OBJ.TIMESERIES`: Exports the scene in `.obj` format at
-    different hours (multiple files)
--   `EXPORT.OBJ.DATESERIES`: Exports the scene in `.obj` format at
-    different days (multiple files)
--   `EXPORT.OBJ`: Exports the scene in `.obj` format
--   `EXPORT.RAD`: Exports the scene in Radiance `.rad` format
--   `EXPORT.SCR`: Exports the scene in AutoCAD `.scr` format
--   `RUN.SCRIPT`: Executes a `.txt` script file containing multiple SOLARCHVISION
-    commands
--   `REC.PNG`: Records the frame (screenshot) in `.png` format
--   `REC.JPG`: Records the frame (screenshot) in `.jpg` format
--   `REC.TIF`: Records the frame (screenshot) in `.tif` format
--   `REC.BMP`: Records the frame (screenshot) in `.bmp` format
--   `QUIT` or `EXIT`: Exits the software
-
-------------------------------------------------------------------------
-
-### Location
-
--   `SETLONLAT`: Sets the longitude and latitude of the location
-
-```
-SetLonLat ? ?
-```
-
--   `SETLON`: Sets the longitude of the location
-
-```
-SetLon ?
-```
-
--   `SETLAT`: Sets the latitude of the location
-
-```
-SetLat ?
-```
-
-------------------------------------------------------------------------
-
-### Selection and editing
-
--   `SELECT`: Selects various categories
-```
-Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint
-```
-
--   `DELETE`: Deletes the selection or various categories
-```
-Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras
-```
-
--   `COPY`: Copies the selection
-
-```
-Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?
-```
-
--   `MOVE`: Moves the selection
-
-```
-Move dx=? dy=? dz=?
-```
-
--   `ROTATE`, `ROTATEX`, `ROTATEY`, `ROTATEZ`: Rotates the selection
-
-```
-Rotate[X|Y|Z] r=? x=? y=? z=?
-```
-
--   `SCALE`: Scales the selection
-
-```
-Scale s=? sx=? sy=? sz=? x=? y=? z=?
-```
-
-------------------------------------------------------------------------
-
-### Object creation
-
--   `PERSON`: Creates a person
-
-```
-Person m=? x=? y=? z=?
-```
-
--   `TREE2`: Creates a 2D tree using vertical and horizontal sections
-
-```
-Tree2 m=? x=? y=? z=? h=?
-```
-
--   `TREE1`: Creates a parametric fractal tree in 3D
-```
-Tree1 m=? seed=? degree=? x=? y=? z=? h=? r=? tilt=? twist=? ratio=? base=? trunk=? leaf=?
-```
-
--   `BOX2P`: Creates a box using two corner points
-
-```
-Box2P m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?
-```
-
--   `BOX`: Creates a box using center point, width, length, and height
-
-```
-Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?
-```
-
--   `HOUSE1`: Creates a house-like structure with roof folded in all
-    directions
-
-```
-House1 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
-```
-
--   `HOUSE2`: Creates a house-like structure with roof folded in one
-    direction
-
-```
-House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
-```
-
--   `HOUSE3`: Creates a house-like structure with roof folded in the
-    second direction
-
-```
-House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
-```
-
--   `CYLINDER`: Creates a cylinder
-
-```
-Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?
-```
-
--   `SPHERE`: Creates a sphere
-
-```
-Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?
-```
-
--   `SUPERSPHERE`: Creates a supersphere (deforms from cube to star-like
-    object)
-
-```
-SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
-```
-
--   `CUSHION`: Creates a cushion-like object
-
-```
-Cushion m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?
-```
-
--   `OCTAHEDRON`: Creates an octahedron
-
-```
-Octahedron m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?
-```
-
--   `ICOSAHEDRON`: Creates an icosahedron
-
-```
-Icosahedron m=? tes=? lyr=? x=? y=? z=? d=? r=?
-```
-
--   `POLYGONMESH`: Creates an equilateral polygon mesh
-
-```
-PolygonMesh m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?
-```
-
--   `POLYGONHYPER`: Creates a hyperbolic surface based on an equilateral
-    polygon
-
-```
-PolygonHyper m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?
-```
-
--   `POLYGONEXTRUDE`: Creates an extrusion from an equilateral polygon
-
-```
-PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?
-```
-
-------------------------------------------------------------------------
-
-### Mesh creation
-
--   `MESH2` to `MESH6`: Creates meshes using 2 to 6 points
-
-```
-Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?
-```
-
-------------------------------------------------------------------------
-
-### Viewports
-
--   `ALLVIEWPORTS`: Displays all viewports
--   `ENLARGE3D`: Enlarges the 3D viewport
-
-------------------------------------------------------------------------
-
-### Camera control
-
-Includes commands such as:
-
--   `PAN`, `PANX`, `PANY`
--   `LOOKORG`, `LOOKDIR`, `LOOKSEL`
--   `TRUCKX`, `TRUCKY`, `TRUCKZ`
--   `ORBIT`, `ORBITZ`, `ORBITXY`
--   `CAMERAROLL`, `CAMERAROLLZ`, `CAMERAROLLXY`
--   `TARGETROLL`, `TARGETROLLZ`, `TARGETROLLXY`
--   `DISTC`, `DISTZ`, `DISTXY`, `DISTP`
--   `ZOOM`, `NORMALZOOM`
--   `PERSPECTIVE`, `ORTHOGRAPHIC`
-
-------------------------------------------------------------------------
-
-### Views
-
--   `TOP`, `FRONT`, `LEFT`, `RIGHT`, `BACK`, `BOTTOM`
--   `S.W.`, `S.E.`, `N.E.`, `N.W.`
-
-------------------------------------------------------------------------
-
-### Shading and rendering
-
--   `SHADE.WIRE`: Wireframe view
--   `SHADE.BASE`: Base shading
--   `SHADE.WHITE`: White shading
--   `SHADE.MATERIALS`: Material shading
--   `SHADE.GLOBAL`: Global solar values shading
--   `SHADE.REAL`: Per-vertex solar values shading
--   `SHADE.SOLID`: Solid parameter shading
--   `SHADE.ELEVATION`: Elevation shading
--   `SHADE.VIEWPORT`: Shades the viewport
--   `PREBAKE.VIEWPORT`: Pre-bakes the viewport
-
-### Additional commands
-Also see [`command/README.md`](command/README.md#additional-commands) for a long list of additional commands!
+The command line lets you run text commands instead of (or alongside)
+clicking around the interface - useful for scripting a sequence of
+actions, or for setting a value precisely rather than by dragging a
+spinner. Use `TAB` to show or hide it, or click inside/outside the
+command line area (the dark region at the bottom).
+
+See [`command/README.md`](command/README.md) for the full list: file and
+project commands, object creation and editing, camera and viewport
+control, and one command per numeric or on/off control in the user
+interface (dates, camera settings, palettes, latitude/longitude, and 233
+more), e.g. `begin_day 15` or `latitude 45.5`.
 
 # SOLARCHVISION-BIM — Technical Overview
 
