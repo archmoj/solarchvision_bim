@@ -33,6 +33,8 @@ String runScriptLine (String lineSTR) {
 
   lineSTR = lineSTR.stripTrailing();
 
+  if (lineSTR.equals("")) return hint;
+
   String transformedLine = lineSTR
     .replace("\"", "")
     .replace(",", " ")      // replace commas with spaces
@@ -41,8 +43,43 @@ String runScriptLine (String lineSTR) {
     .replaceAll(":+", ":"); // replace multiple colons with a single colon
 
   String[] parts = split(transformedLine, ' ');
-  String Command_CAPITAL = parts[0].toUpperCase();
 
+  String key = lineSTR.toLowerCase();
+  if(!key.equals("")) {
+    // Full-line match first (menu captions such as "Save As..." that may
+    // contain spaces and take no arguments).
+    Action action = allActions.get(key);
+    String[] actionArgs = parts;
+
+    // Otherwise fall back to a first-token match, so commands registered
+    // with parameters (e.g. "start_day 15") can be reused here.
+    if ((action == null) && (parts.length > 0)) {
+      action = allActions.get(parts[0].toLowerCase());
+    }
+
+    // Otherwise, try the line with its last word removed - a multi-word
+    // command name (e.g. "begin day", also registered under its literal
+    // caption by putAction's "withSpace" fallback) can then also be typed
+    // with a value appended (e.g. "begin day 15"), the trailing word
+    // being that value.
+    if (action == null) {
+      int lastSpace = key.lastIndexOf(' ');
+      if (lastSpace > 0) {
+        String prefix = key.substring(0, lastSpace);
+        action = allActions.get(prefix);
+        if (action != null) {
+          actionArgs = new String[]{prefix, parts[parts.length - 1]};
+        }
+      }
+    }
+
+    if (action != null) {
+      action.run(actionArgs);
+      return "";
+    }
+  }
+
+  String Command_CAPITAL = parts[0].toUpperCase();
   switch (Command_CAPITAL) {
     case "CLS": {
       allCommands = new String[1];
@@ -1613,42 +1650,9 @@ String runScriptLine (String lineSTR) {
       }
       return hint;
     }
-  }
 
-  String key = lineSTR.toLowerCase();
-  if(!key.equals("")) {
-    // Full-line match first (menu captions such as "Save As..." that may
-    // contain spaces and take no arguments).
-    Action action = allActions.get(key);
-    String[] actionArgs = parts;
-
-    // Otherwise fall back to a first-token match, so commands registered
-    // with parameters (e.g. "start_day 15") can be reused here.
-    if ((action == null) && (parts.length > 0)) {
-      action = allActions.get(parts[0].toLowerCase());
-    }
-
-    // Otherwise, try the line with its last word removed - a multi-word
-    // command name (e.g. "begin day", also registered under its literal
-    // caption by putAction's "withSpace" fallback) can then also be typed
-    // with a value appended (e.g. "begin day 15"), the trailing word
-    // being that value.
-    if (action == null) {
-      int lastSpace = key.lastIndexOf(' ');
-      if (lastSpace > 0) {
-        String prefix = key.substring(0, lastSpace);
-        action = allActions.get(prefix);
-        if (action != null) {
-          actionArgs = new String[]{prefix, parts[parts.length - 1]};
-        }
-      }
-    }
-
-    if (action != null) {
-      action.run(actionArgs);
-    } else {
+    default:
       hint = "Unrecognized command!";
-    }
   }
 
   return hint;
