@@ -197,22 +197,38 @@ String runScriptLine (String lineSTR) {
     }
 
     case "REC.PNG": {
-      screenShot(".png");
+      if (parts.length > 1) {
+        screenShot(".png", parts[1]);
+      } else {
+        screenShot(".png");
+      }
       return hint;
     }
 
     case "REC.JPG": {
-      screenShot(".jpg");
+      if (parts.length > 1) {
+        screenShot(".jpg", parts[1]);
+      } else {
+        screenShot(".jpg");
+      }
       return hint;
     }
 
     case "REC.TIF": {
-      screenShot(".tif");
+      if (parts.length > 1) {
+        screenShot(".tif", parts[1]);
+      } else {
+        screenShot(".tif");
+      }
       return hint;
     }
 
     case "REC.BMP": {
-      screenShot(".bmp");
+      if (parts.length > 1) {
+        screenShot(".bmp", parts[1]);
+      } else {
+        screenShot(".bmp");
+      }
       return hint;
     }
 

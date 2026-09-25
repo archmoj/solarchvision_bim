@@ -323,11 +323,19 @@ void printlnSaving (String path) {
 }
 
 
+String ScreenShotName = "";
 String ScreenShotType = ".jpg";
 
 void RecordFrame () {
 
-  String Filename = Folder_ScreenShots + "/" + createStamp(1, "Screen") + ScreenShotType;
+  String Filename = Folder_ScreenShots + "/";
+  if(ScreenShotName.equals("")) {
+    Filename += createStamp(1, "Screen");
+  } else {
+    Filename += ScreenShotName;
+    ScreenShotName = ""; // reset here to avoid overwrite
+  }
+  Filename += ScreenShotType;
 
   printlnSaving(Filename);
 
@@ -335,6 +343,12 @@ void RecordFrame () {
 }
 
 void screenShot (String fileFormat) {
+  ScreenShotType = fileFormat;
+  FRAME_record_IMG = true;
+}
+
+void screenShot (String fileFormat, String fileName) {
+  ScreenShotName = fileName;
   ScreenShotType = fileFormat;
   FRAME_record_IMG = true;
 }

@@ -14,12 +14,6 @@ Tree1 m:0 x:20  y:-10 z:0 h:10 degree:8 seed:0 r:0 tilt:60 twist:137.5 ratio:0.8
 Tree1 m:0 x:20  y:10  z:0 h:10 degree:8 seed:0 r:0 tilt:60 twist:137.5 ratio:0.8 base:2 trunk:1 leaf:0.2
 Tree1 m:0 x:-20 y:10  z:0 h:10 degree:8 seed:0 r:0 tilt:60 twist:137.5 ratio:0.8 base:2 trunk:1 leaf:0.2
 
-Tree2 m:0 x:-10 y:-20 z:0 h:10
-Tree2 m:0 x:10  y:-20 z:0 h:10
-Tree2 m:0 x:10  y:20  z:0 h:10
-Tree2 m:0 x:-10 y:20  z:0 h:10
-
-
 Select nothing
 
 Show Sky
@@ -29,61 +23,54 @@ Days past March equinox 80
 
 Shade.Global
 
-REC.png
 =======
 
 Top
-REC.png
+REC.png top-global
 =======
 Front
-REC.png
+REC.png front-global
 =======
 Right
-REC.png
+REC.png right-global
 =======
 Left
-REC.png
+REC.png left-global
 =======
 Shade.White
 
 Back
-REC.png
+REC.png back-white
 =======
-
 Shade.Wire
 
 Bottom
-REC.png
+REC.png bottom-wire
 =======
-
 Shade.Real
 
 S.W.
-REC.png
+REC.png south-west-real
 =======
 N.E.
-REC.png
+REC.png north-east-real
 =======
-
 Shade.White
 Shade.Viewport
 
 S.W.
-REC.png
+REC.png south-west-shade
 =======
-
 Shade.Materials
 N.W.
-REC.png
+REC.png north-west-materials
+=======
+Camera px:40 py:-30 pz:20 pt:1 rx:0 ry:0 rz:0 rt:5 a:60 t:1
+
+Perspective
+REC.png perspective-materials
 =======
 
-
-#Camera px:40 py:-30 pz:20 pt:1 rx:0 ry:0 rz:0 rt:5 a:60 t:1
-
-#Perspective
-#REC.png
-=======
-
-#Orthographic
-#REC.png
+Orthographic
+REC.png orthographic-materials
 =======
