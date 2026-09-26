@@ -1,3 +1,5 @@
+final String UnrecognizedCommand = "Unrecognized command!";
+
 void runScriptFile (String FileName) {
   String[] FileALL = loadStrings(FileName);
 
@@ -1697,7 +1699,7 @@ String runScriptLine (String lineSTR) {
     }
 
     default:
-      hint = "Unrecognized command!";
+      hint = UnrecognizedCommand;
   }
 
   return hint;

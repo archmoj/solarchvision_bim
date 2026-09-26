@@ -116,7 +116,7 @@ class RunScriptTest {
 
     String hint = app.runScriptLine("Delete All-Model2Ds");
 
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allModel2Ds.num, "the named category should actually be cleared");
     assertEquals(1, app.allFaces.nodes.length, "an unrelated category must not be touched");
   }
@@ -129,7 +129,7 @@ class RunScriptTest {
 
     String hint = app.runScriptLine("Delete All-Model1Ds");
 
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allModel1Ds.num);
     assertEquals(1, app.allFaces.nodes.length);
   }
@@ -142,7 +142,7 @@ class RunScriptTest {
 
     String hint = app.runScriptLine("Delete All-Groups");
 
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allGroups.num);
     assertEquals(1, app.allFaces.nodes.length);
   }
@@ -155,7 +155,7 @@ class RunScriptTest {
 
     String hint = app.runScriptLine("Delete All-Sections");
 
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allSections.num);
     assertEquals(1, app.allFaces.nodes.length);
   }
@@ -168,7 +168,7 @@ class RunScriptTest {
 
     String hint = app.runScriptLine("Delete All-Faces");
 
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allFaces.nodes.length, "the named category should actually be cleared");
     assertEquals(1, app.allPolylines.nodes.length, "an unrelated category must not be touched");
   }
@@ -181,7 +181,7 @@ class RunScriptTest {
 
     String hint = app.runScriptLine("Delete All-Polylines");
 
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allPolylines.nodes.length);
     assertEquals(1, app.allFaces.nodes.length);
   }
@@ -194,7 +194,7 @@ class RunScriptTest {
 
     String hint = app.runScriptLine("Delete All-Solids");
 
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allSolids.DEF.length, "the named category should actually be cleared");
     assertEquals(1, app.allFaces.nodes.length, "an unrelated category must not be touched");
   }
@@ -213,7 +213,7 @@ class RunScriptTest {
 
     String hint = app.runScriptLine("Delete All-Cameras");
 
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(1, app.allCameras.num, "back to just the one camera every Cameras instance always keeps");
     assertEquals(1, app.allFaces.nodes.length, "an unrelated category must not be touched");
   }
@@ -228,7 +228,7 @@ class RunScriptTest {
   void selectAllDashModel2Ds_switchesToTheModel2DCategory () {
     app.build_allActions();
     String hint = app.runScriptLine("Select All-Model2Ds");
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.ObjectCategory.MODEL2D, app.current_ObjectCategory);
   }
 
@@ -236,7 +236,7 @@ class RunScriptTest {
   void selectAllDashSolids_switchesToTheSolidCategory () {
     app.build_allActions();
     String hint = app.runScriptLine("Select All-Solids");
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.ObjectCategory.SOLID, app.current_ObjectCategory);
   }
 
@@ -244,7 +244,7 @@ class RunScriptTest {
   void selectAllDashCameras_switchesToTheCameraCategory () {
     app.build_allActions();
     String hint = app.runScriptLine("Select All-Cameras");
-    assertNotEquals("Unrecognized command!", hint);
+    assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.ObjectCategory.CAMERA, app.current_ObjectCategory);
   }
 
@@ -253,19 +253,19 @@ class RunScriptTest {
   @Test
   void hideAllDashFaces_isRecognized () {
     app.build_allActions();
-    assertNotEquals("Unrecognized command!", app.runScriptLine("Hide All-Faces"));
+    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Hide All-Faces"));
   }
 
   @Test
   void unhideAllDashFaces_isRecognized () {
     app.build_allActions();
-    assertNotEquals("Unrecognized command!", app.runScriptLine("Unhide All-Faces"));
+    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Unhide All-Faces"));
   }
 
   @Test
   void reverseVisibilityOfAllDashFaces_isRecognized () {
     app.build_allActions();
-    assertNotEquals("Unrecognized command!", app.runScriptLine("Reverse Visibility of All-Faces"));
+    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Reverse Visibility of All-Faces"));
   }
 
   // ================= MOVE / ROTATE / SCALE / creation commands ===============
@@ -491,7 +491,7 @@ class RunScriptTest {
 
   @Test
   void unrecognizedCommand_returnsAHint () {
-    assertEquals("Unrecognized command!", app.runScriptLine("this_is_not_a_real_command"));
+    assertEquals(app.UnrecognizedCommand, app.runScriptLine("this_is_not_a_real_command"));
   }
 
   @Test
