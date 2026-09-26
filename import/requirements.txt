@@ -1,0 +1,5 @@
+osmnx>=2.1,<3
+shapely>=2.1,<3
+mapbox_earcut>=2.1,<3
+pyproj>=3.8,<4
+numpy>=2.4,<3

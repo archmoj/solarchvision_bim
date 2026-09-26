@@ -37,10 +37,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+          cache: 'pip'
+          cache-dependency-path: import/requirements.txt
 
-      # Matches import/README.md's "Setup" section.
+      # Matches import/README.md's "Setup" section. osmnx pulls in a heavy
+      # transitive stack (geopandas, shapely, pyproj, pandas, numpy, ...)
+      # with compiled wheels; the cache above avoids re-downloading all of
+      # that on every run - this step is a no-op on a cache hit.
       - name: Install dependencies
-        run: pip install osmnx shapely mapbox_earcut pyproj numpy
+        run: pip install -r import/requirements.txt
 
       - name: Run SOLARCHVISION_OSM_3D_in_obj.py
         run: |
