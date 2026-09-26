@@ -490,6 +490,16 @@ class RunScriptTest {
   // ================= unrecognized commands ===================================
 
   @Test
+  void unrecognizedCommandInSequence_interruptAndReturnsAHint () {
+    app.vm.Begin_day(0);
+    app.TIME.day = 1;
+
+    String hint = app.runScriptLines(new String[] {"nonesense!", "begin_day 15"});
+    assertEquals(app.UnrecognizedCommand, hint);
+    assertNotEquals(15, app.TIME.day);
+  }
+
+  @Test
   void unrecognizedCommand_returnsAHint () {
     assertEquals(app.UnrecognizedCommand, app.runScriptLine("this_is_not_a_real_command"));
   }
@@ -497,6 +507,18 @@ class RunScriptTest {
   @Test
   void blankLine_returnsNoHint () {
     assertEquals("", app.runScriptLine(""));
+  }
+
+  @Test
+  void dividerLine_returnsNoHint () {
+    assertEquals("", app.runScriptLine("="));
+    assertEquals("", app.runScriptLine("=== section ==="));
+  }
+
+  @Test
+  void commentLine_returnsNoHint () {
+    assertEquals("", app.runScriptLine("#"));
+    assertEquals("", app.runScriptLine("# comment"));
   }
 
   // ================= allActions fallback dispatch ============================
