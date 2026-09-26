@@ -1,2 +1,4 @@
 *
 !.gitignore
+!README.md
+!SOLARCHVISION_OSM_3D_in_obj.py
