@@ -390,7 +390,8 @@ class ValueModifier {
 
     float s1 = -85; //start
     float s2 = 85; //stop
-    float s3 = 0.01; //step
+    float s3 = 0.0001; //step
+    float s4 = 0.00001; //round
 
     float out = 0;
     if (created == 0) {
@@ -400,7 +401,7 @@ class ValueModifier {
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Latitude", LocationLAT, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Latitude", LocationLAT, s1, s2, s3, s4);
     }
     return out;
   }
@@ -411,7 +412,8 @@ class ValueModifier {
 
     float s1 = -180; //start
     float s2 = 180; //stop
-    float s3 = 0.01; //step
+    float s3 = 0.0001; //step
+    float s4 = 0.00001; //round
 
     float out = 0;
     if (created == 0) {
@@ -421,7 +423,7 @@ class ValueModifier {
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Longitude", LocationLON, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Longitude", LocationLON, s1, s2, s3, s4);
     }
     return out;
   }

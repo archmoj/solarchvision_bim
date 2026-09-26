@@ -926,8 +926,10 @@ class UI_rollout {
     );
   }
 
+  DecimalFormat df = new DecimalFormat("0.#####");
+
   String formatSpinnerValue (float value) {
-    return nf(value, 0, 0);
+    return df.format(value);
   }
 
   void beginSpinnerEdit (String caption, float value) {

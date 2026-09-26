@@ -317,7 +317,7 @@ A few things worth knowing:
     error, no value is applied).
 -   **Values are rounded**: each field rounds to its own step size, the
     same way dragging the spinner does (e.g. hours round to whole
-    numbers, latitude rounds to 0.01°).
+    numbers, latitude rounds to 0.00001°).
 -   Toggle ("on/off") fields accept `0` or `1`.
 
 The tables below are grouped by what they affect, matching the panels in
