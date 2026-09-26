@@ -24,7 +24,7 @@
  * more_info.txt looks like:
  *
  *   # --lat 40.7484 --lon -73.9857 --radius 250
- *   Mesh2 m:8 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
+ *   Mesh2 m:3 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
  *   Tree x:-20.0000 y:-10.0000 z:0.0000 h:10.0000
  *   Tree x:20.0000 y:10.0000 z:0.0000 h:20.0000
  *
@@ -323,16 +323,16 @@ function formatNumber(v) {
 
 /** Build the Mesh2 line describing a flat square ground rectangle at
  * z=0, spanning [-radius, radius] on both x and y:
- *   Mesh2 m:8 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0 */
+ *   Mesh2 m:3 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0 */
 function formatMesh2Line(radius) {
   const r = formatNumber(radius);
   const nr = formatNumber(-radius);
-  return `Mesh2 m:8 tes:6 x1:${nr} y1:${nr} z1:0 x2:${r} y2:${r} z2:0`;
+  return `Mesh2 m:3 tes:6 x1:${nr} y1:${nr} z1:0 x2:${r} y2:${r} z2:0`;
 }
 
 /** trees: array of [x, y, z, h]. Writes more_info.txt:
  *   # --lat ... --lon ... --radius ...
- *   Mesh2 m:8 tes:6 x1:... y1:... z1:0 x2:... y2:... z2:0   (if includeGround)
+ *   Mesh2 m:3 tes:6 x1:... y1:... z1:0 x2:... y2:... z2:0   (if includeGround)
  *   Tree x:... y:... z:... h:...
  *   ... */
 function writeMoreInfoTxt(filePath, lat, lon, radius, groundRadius, trees, includeGround) {

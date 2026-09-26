@@ -21,7 +21,7 @@ falling back to --tree-default-height (default 10.0 m).
 more_info.txt looks like:
 
     # --lat 40.7484 --lon -73.9857 --radius 250
-    Mesh2 m:8 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
+    Mesh2 m:3 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
     Tree x:-20.0000 y:-10.0000 z:0.0000 h:10.0000
     Tree x:20.0000 y:10.0000 z:0.0000 h:20.0000
 
@@ -277,11 +277,11 @@ def format_number(v: float) -> str:
 def format_mesh2_line(radius: float) -> str:
     """Build the Mesh2 line describing a flat square ground rectangle at
     z=0, spanning [-radius, radius] on both x and y:
-        Mesh2 m:8 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
+        Mesh2 m:3 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
     """
     r = format_number(radius)
     nr = format_number(-radius)
-    return f"Mesh2 m:8 tes:6 x1:{nr} y1:{nr} z1:0 x2:{r} y2:{r} z2:0"
+    return f"Mesh2 m:3 tes:6 x1:{nr} y1:{nr} z1:0 x2:{r} y2:{r} z2:0"
 
 
 def iter_polygons(geom):
@@ -360,7 +360,7 @@ def project_and_recenter_gdf(gdf, crs, origin):
 def write_more_info_txt(path, lat, lon, radius, ground_radius, trees, include_ground=True):
     """trees: iterable of (x, y, z, h). Writes more_info.txt:
         # --lat ... --lon ... --radius ...
-        Mesh2 m:8 tes:6 x1:... y1:... z1:0 x2:... y2:... z2:0   (if include_ground)
+        Mesh2 m:3 tes:6 x1:... y1:... z1:0 x2:... y2:... z2:0   (if include_ground)
         Tree x:... y:... z:... h:...
         ...
     """
