@@ -2,3 +2,6 @@
 !.gitignore
 !README.md
 !SOLARCHVISION_OSM_3D_in_obj.py
+!SOLARCHVISION_OSM_3D_in_obj.js
+!package.json
+!package-lock.json

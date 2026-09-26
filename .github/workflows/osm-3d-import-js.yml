@@ -1,4 +1,4 @@
-name: OSM 3D import (single location)
+name: OSM 3D import - Node.js (single location)
 
 # Manual only - this hits the public Overpass API for one location, so it
 # should not run on every push/PR. Trigger it from the Actions tab (or the
@@ -33,18 +33,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
         with:
-          python-version: '3.x'
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: import/package-lock.json
 
-      # Matches import/README.md's "Setup" section.
+      # import/package.json pins earcut, osmtogeojson, proj4 (and an
+      # @xmldom/xmldom override - see import/README.md) - npm ci installs
+      # exactly what's in import/package-lock.json.
       - name: Install dependencies
-        run: pip install osmnx shapely mapbox_earcut pyproj numpy
+        working-directory: import
+        run: npm ci
 
-      - name: Run SOLARCHVISION_OSM_3D_in_obj.py
+      - name: Run SOLARCHVISION_OSM_3D_in_obj.js
         run: |
-          python import/SOLARCHVISION_OSM_3D_in_obj.py \
+          node import/SOLARCHVISION_OSM_3D_in_obj.js \
             --lat "${{ inputs.lat }}" \
             --lon "${{ inputs.lon }}" \
             --radius "${{ inputs.radius }}" \

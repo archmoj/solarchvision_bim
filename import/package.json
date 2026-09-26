@@ -1,0 +1,22 @@
+{
+  "name": "solarchvision-osm-3d-in-obj",
+  "version": "1.0.0",
+  "description": "Node.js implementation of the OSM-to-OBJ 3D city-massing tool (buildings.obj + more_info.txt). See README.md.",
+  "main": "SOLARCHVISION_OSM_3D_in_obj.js",
+  "bin": {
+    "solarchvision-osm-3d-in-obj": "./SOLARCHVISION_OSM_3D_in_obj.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "SEE LICENSE IN ../LICENSE.md",
+  "private": true,
+  "dependencies": {
+    "earcut": "^3.2.3",
+    "osmtogeojson": "^3.0.0-beta.5",
+    "proj4": "^2.22.0"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "0.9.12"
+  }
+}

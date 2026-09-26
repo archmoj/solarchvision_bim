@@ -1,0 +1,62 @@
+name: OSM 3D import - Python (single location)
+
+# Manual only - this hits the public Overpass API for one location, so it
+# should not run on every push/PR. Trigger it from the Actions tab (or the
+# gh CLI/API) when you actually want a fresh export.
+on:
+  workflow_dispatch:
+    inputs:
+      lat:
+        description: 'Latitude (WGS84)'
+        required: true
+        default: '40.7484'
+      lon:
+        description: 'Longitude (WGS84)'
+        required: true
+        default: '-73.9857'
+      radius:
+        description: 'Radius in meters'
+        required: true
+        default: '250'
+      outdir:
+        description: 'Output folder name (holds buildings.obj + more_info.txt)'
+        required: true
+        default: 'empire_state_area'
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # Matches import/README.md's "Setup" section.
+      - name: Install dependencies
+        run: pip install osmnx shapely mapbox_earcut pyproj numpy
+
+      - name: Run SOLARCHVISION_OSM_3D_in_obj.py
+        run: |
+          python import/SOLARCHVISION_OSM_3D_in_obj.py \
+            --lat "${{ inputs.lat }}" \
+            --lon "${{ inputs.lon }}" \
+            --radius "${{ inputs.radius }}" \
+            --outdir "${{ inputs.outdir }}"
+
+      # The step above always writes buildings.obj + more_info.txt into
+      # ${{ inputs.outdir }} (see the script's docstring) - upload that
+      # whole folder so it shows up as one downloadable zip on the run page.
+      - name: Upload output folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.outdir }}
+          path: ${{ inputs.outdir }}
+          if-no-files-found: error
+          retention-days: 14
