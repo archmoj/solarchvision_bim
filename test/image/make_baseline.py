@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Generate screenshots for command/test_*.txt by running the
 solarchvision_bim sketch headlessly (USER=AUTO), one subprocess per test.
+A single test script can call REC.png more than once, each with its own
+name given right in the script (see command/test_views.txt), so one test
+can produce several screenshots - each is kept under its own original
+filename rather than the test's.
 
 Usage:
   python3 test/image/make_baseline.py                 # generate test/image/actual/*.png for every command/test_*.txt
@@ -93,26 +97,31 @@ def find_processing_java():
     return exe
 
 
-def newest_screenshot_since(marker_time):
-    """The screenshot this run produced, if any: the newest *.png under any
+def screenshots_since(marker_time):
+    """Every screenshot this run produced, oldest first: all *.png under any
     of SCREENSHOTS_ROOTS with an mtime after marker_time. Recursive because
-    screenshots land under a RunStamp=YYYYMMDD_HH subfolder (globals.pde)."""
-    newest_path = None
-    newest_mtime = marker_time
+    screenshots land under a RunStamp=YYYYMMDD_HH subfolder (globals.pde).
+    A single command/test_*.txt can call REC.png several times, each with
+    its own name given right in the script (see command/test_views.txt),
+    so one test run can produce many screenshots - not just one - and
+    every one of them is returned here."""
+    found = []
     for root in SCREENSHOTS_ROOTS:
         for path in glob.glob(os.path.join(root, "**", "*.png"), recursive=True):
             try:
                 mtime = os.path.getmtime(path)
             except OSError:
                 continue
-            if mtime > newest_mtime:
-                newest_mtime = mtime
-                newest_path = path
-    return newest_path
+            if mtime > marker_time:
+                found.append((mtime, path))
+    found.sort(key=lambda item: item[0])
+    return [path for _, path in found]
 
 
 def run_once(exe, name):
-    """One attempt at one test. Returns the screenshot path produced, or None."""
+    """One attempt at one test. Returns the list of screenshot paths
+    produced (possibly more than one - see screenshots_since()), or an
+    empty list if none were."""
     marker_time = time.time()
     start = time.time()
 
@@ -144,20 +153,25 @@ def run_once(exe, name):
         except ProcessLookupError:
             pass
         proc.wait()
-        return None
+        return []
 
-    return newest_screenshot_since(marker_time)
+    return screenshots_since(marker_time)
 
 
 def make_one(exe, name, out_dir):
     for attempt in range(0, MAX_RETRY + 1):
-        screenshot = run_once(exe, name)
-        if screenshot:
-            dest = os.path.join(out_dir, name + ".png")
-            shutil.copyfile(screenshot, dest)
-            print(f"  captured: {dest} (from {screenshot})")
+        screenshots = run_once(exe, name)
+        if screenshots:
+            # Keep each screenshot's own filename - the one given right in
+            # command/test_*.txt's REC.png lines (see command/test_views.txt) -
+            # rather than renaming it after the test file, since one test
+            # can produce several distinctly-named screenshots.
+            for screenshot in screenshots:
+                dest = os.path.join(out_dir, os.path.basename(screenshot))
+                shutil.copyfile(screenshot, dest)
+                print(f"  captured: {dest} (from {screenshot})")
             return True
-        print(f"  no screenshot produced for command/{name}.txt")
+        print(f"  no screenshots produced for command/{name}.txt")
         if attempt < MAX_RETRY:
             print(f"  retry {attempt + 1}/{MAX_RETRY}")
     return False
