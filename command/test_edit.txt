@@ -20,8 +20,6 @@ Delete selection
 
 Select nothing
 
-S.E.
-SIZEALL
 Shade.Materials
 
-REC.png
+REC.png edit

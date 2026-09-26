@@ -11,8 +11,6 @@ SuperSphere m:6 tes:0 lyr:0 x:10 y:10 z:0 dx:8 dy:8 dz:8 px:4 py:4 pz:2 deg:3 r:
 
 Select nothing
 
-S.E.
-SIZEALL
 Shade.Materials
 
-REC.png
+REC.png primitives

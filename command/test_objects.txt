@@ -11,17 +11,13 @@ Mesh4 m:5 tes:0 lyr:0 x1:32 y1:-24 z1:0 x2:40 y2:-24 z2:0 x3:40 y3:-16 z3:6 x4:3
 Mesh5 m:6 tes:0 lyr:0 x1:-64 y1:-2 z1:4 x2:-60 y2:-4 z2:6 x3:-56 y3:-2 z3:4 x4:-57 y4:2 z4:2 x5:-63 y5:2 z5:2
 Mesh6 m:0 tes:0 lyr:0 x1:-44 y1:-2 z1:2 x2:-40 y2:-4 z2:4 x3:-36 y3:-2 z3:2 x4:-36 y4:2 z4:2 x5:-40 y5:4 z5:4 x6:-44 y6:2 z6:2
 
-Section x:-20 y:0 z:0 u:8 v:8
+House1 m:0 tes:0 lyr:0 x:-20 y:20 z:0 dx:8 dy:8 dz:6 h:3 r:0
+House2 m:0 tes:0 lyr:0 x:0 y:20 z:0 dx:8 dy:8 dz:6 h:3 r:0
+House3 m:0 tes:0 lyr:0 x:20 y:20 z:0 dx:8 dy:8 dz:6 h:3 r:0
 
-Arc m:1 tes:0 lyr:0 x:0 y:0 z:0 r:6 deg:24 rot:0 ang:270
-
-Ployline m:2 tes:0 lyr:0 wgt:0 clz:0 16,-4,0 16,4,0 24,4,4 24,-4,4
+Arc m:1 tes:0 lyr:0 x:0 y:0 z:0 r:6 deg:24 rot:0 ang:270 clz:0
 
 Select nothing
 
-Top
-S.E.
-SIZEALL
-Shade.Materials
 
-REC.png
+REC.png objects

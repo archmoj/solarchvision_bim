@@ -64,16 +64,11 @@ Shade.Materials
 N.W.
 REC.png north-west-materials
 =======
-#Camera px:20 py:-10 pz:2 pt:1 rx:0 ry:0 rz:0 rt:5 a:60 t:1
-#Camera View
-
-#REC.png camera-materials
-=======
+Shade.Global
 
 #Orthographic
-#REC.png orthographic-materials
+#REC.png orthographic-global
 =======
-
 #Perspective
-#REC.png perspective-materials
+#REC.png perspective-global
 =======
