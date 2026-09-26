@@ -367,6 +367,37 @@ function buildTreeQuery(lat, lon, radius) {
   return `[out:json][timeout:60];\n(\n  node["natural"="tree"](${around});\n);\nout body;`;
 }
 
+// osmnx (used by the Python implementation) retries 429/504 responses
+// automatically with a 55s pause before giving up - Overpass's public
+// instances return these when they're transiently overloaded, and they
+// usually recover. Our own client needs the same resilience explicitly.
+const RETRYABLE_HTTP_STATUS = new Set([429, 504]);
+const OVERLOAD_RETRY_PAUSE_MS = 55000;
+const MAX_OVERLOAD_RETRIES = 5;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Fetch from one Overpass URL, retrying in place (same URL) on a 429 or
+ * 504 - a transient "server busy" response, not a real error - up to
+ * MAX_OVERLOAD_RETRIES times with a pause between attempts. */
+async function fetchWithOverloadRetry(url, query, userAgent) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fetchOverpassJson(url, query, userAgent);
+    } catch (e) {
+      const retryable = e && RETRYABLE_HTTP_STATUS.has(e.httpStatus);
+      if (!retryable || attempt >= MAX_OVERLOAD_RETRIES) throw e;
+      console.error(
+        `  ${url} responded HTTP ${e.httpStatus} (server busy); ` +
+          `retrying in ${OVERLOAD_RETRY_PAUSE_MS / 1000}s (attempt ${attempt + 1}/${MAX_OVERLOAD_RETRIES}) ...`
+      );
+      await sleep(OVERLOAD_RETRY_PAUSE_MS);
+    }
+  }
+}
+
 function isConnectionIssue(err) {
   if (err && err.name === "AbortError") return true; // treat a timeout like unreachable -> try next mirror
   const code = err && err.cause && err.cause.code;
@@ -392,7 +423,9 @@ async function fetchOverpassJson(url, query, userAgent, timeoutMs = 90000) {
     });
     if (!res.ok) {
       const text = await res.text().catch(() => "");
-      throw new Error(`Overpass returned HTTP ${res.status}: ${text.slice(0, 300)}`);
+      const err = new Error(`Overpass returned HTTP ${res.status}: ${text.slice(0, 300)}`);
+      err.httpStatus = res.status;
+      throw err;
     }
     return await res.json();
   } finally {
@@ -412,28 +445,29 @@ async function fetchOverpass(query, overpassUrls, userAgent = DEFAULT_USER_AGENT
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i];
     try {
-      return await fetchOverpassJson(url, query, userAgent);
+      return await fetchWithOverloadRetry(url, query, userAgent);
     } catch (e) {
-      if (!isConnectionIssue(e)) throw e;
+      const retryableElsewhere = isConnectionIssue(e) || RETRYABLE_HTTP_STATUS.has(e && e.httpStatus);
+      if (!retryableElsewhere) throw e;
       lastErr = e;
       if (i < urls.length - 1) {
-        console.error(`  could not reach ${url} (${e.name || e.constructor.name}); trying another mirror ...`);
+        console.error(`  giving up on ${url} (${e.message.split("\n")[0]}); trying another mirror ...`);
       }
     }
   }
   throw new OverpassUnreachableError(
-    "Could not reach any Overpass API endpoint " +
-      `(${urls.join(", ")}).\n` +
-      "This is a network reachability problem on this machine, not a bug in the " +
-      "script. Things to check:\n" +
-      "  1. General internet access: `curl -v https://overpass-api.de/api/interpreter`\n" +
-      "     from this same machine/shell.\n" +
-      "  2. A corporate firewall or proxy blocking outbound HTTPS to overpass-api.de\n" +
-      "     and the mirrors above -- if you're behind a proxy, set HTTPS_PROXY/HTTP_PROXY\n" +
-      "     env vars (or the equivalent for your org's proxy) before running this script.\n" +
-      "  3. DNS or /etc/hosts overrides pointing these hostnames somewhere unexpected.\n" +
-      "  4. If your organization runs a private/self-hosted Overpass instance, or you\n" +
-      "     know of a reachable mirror, pass it explicitly: --overpass-url <url>\n",
+    "Could not get a successful response from any Overpass API endpoint " +
+      `(${urls.join(", ")}) after retries.\n` +
+      "This is usually one of two things, not a bug in the script:\n" +
+      "  1. Network reachability from this machine (firewall, proxy, DNS, or no internet).\n" +
+      "     Test with: `curl -v https://overpass-api.de/api/interpreter`\n" +
+      "     If you're behind a proxy, set HTTPS_PROXY/HTTP_PROXY env vars.\n" +
+      "  2. The public Overpass service(s) being temporarily overloaded (HTTP 429/504) -\n" +
+      "     this was already retried automatically; if it still failed, the service is\n" +
+      "     likely under heavy load right now. Waiting a bit and re-running the workflow\n" +
+      "     usually resolves it.\n" +
+      "  3. If your organization runs a private/self-hosted Overpass instance, or you\n" +
+      "     know of a reachable/less-loaded mirror, pass it explicitly: --overpass-url <url>\n",
     { cause: lastErr }
   );
 }
@@ -629,20 +663,26 @@ async function main(argv = process.argv.slice(2)) {
   );
 
   // ---- Trees -> more_info.txt ----
+  // Trees are a best-effort supplementary layer: if this fetch fails, we
+  // still want to keep the buildings.obj already written above and finish
+  // writing more_info.txt (with zero trees) rather than aborting the run.
   const treeRows = [];
   if (!args.noTrees) {
     console.log(`Fetching OSM trees within ${args.radius} m ...`);
     const treeQuery = buildTreeQuery(args.lat, args.lon, args.radius);
-    let treesGeoJSON;
+    let treesGeoJSON = null;
     try {
       treesGeoJSON = await fetchFeaturesGeoJSON(treeQuery, overpassUrls, args.overpassUserAgent);
     } catch (e) {
       if (e instanceof OverpassUnreachableError) {
-        console.error(`\nERROR: ${e.message}`);
-        process.exitCode = 1;
-        return;
+        console.error(
+          `\nWARNING: could not fetch trees (${e.message.split("\n")[0]}); ` +
+            "continuing with 0 trees. buildings.obj above is unaffected."
+        );
+        process.exitCode = 1; // still flag the run as partially incomplete
+      } else {
+        throw e;
       }
-      throw e;
     }
     const treeFeatures = (treesGeoJSON && treesGeoJSON.features) || [];
     for (const feature of treeFeatures) {

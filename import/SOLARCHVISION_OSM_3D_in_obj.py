@@ -444,17 +444,23 @@ def main():
           f"{len(writer.faces)} faces) to {buildings_path}")
 
     # ---- Trees -> more_info.txt ----
+    # Trees are a best-effort supplementary layer: if this fetch fails, we
+    # still want to keep the buildings.obj already written above and finish
+    # writing more_info.txt (with zero trees) rather than aborting the run.
     tree_rows = []
+    trees_failed = False
     if not args.no_trees:
         print(f"Fetching OSM trees within {args.radius} m ...")
         try:
             trees_raw = fetch_features(args.lat, args.lon, args.radius, {"natural": "tree"}, overpass_urls)
         except OverpassUnreachableError as e:
-            print(f"\nERROR: {e}", file=sys.stderr)
-            sys.exit(1)
-        trees = project_and_recenter_gdf(trees_raw, crs, origin)
+            print(f"\nWARNING: could not fetch trees ({str(e).splitlines()[0]}); "
+                  "continuing with 0 trees. buildings.obj above is unaffected.", file=sys.stderr)
+            trees_failed = True
+            trees_raw = None
 
-        if not trees.empty:
+        trees = project_and_recenter_gdf(trees_raw, crs, origin) if trees_raw is not None else None
+        if trees is not None and not trees.empty:
             for _, row in trees.iterrows():
                 geom = row.geometry
                 if geom is None or geom.is_empty or geom.geom_type != "Point":
@@ -471,6 +477,9 @@ def main():
     print(f"Wrote {len(tree_rows)} trees"
           + ("" if args.no_ground else f" and a Mesh2 ground rectangle (radius {ground_radius:.1f} m)")
           + f" to {info_path}")
+
+    if trees_failed:
+        sys.exit(1)  # flag the run as partially incomplete, after writing everything we could
 
 
 if __name__ == "__main__":

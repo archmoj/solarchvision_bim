@@ -131,6 +131,25 @@ the override in place).
   running your own Overpass instance / using a regional `.pbf` extract
   instead.
 
+## Resilience: transient Overpass overload (429/504) and partial failures
+
+The public Overpass instances occasionally respond `429 Too Many Requests`
+or `504 Gateway Timeout` when busy — this is normal and usually clears up
+within a minute. Both implementations retry automatically: up to 5
+attempts per endpoint with a 55-second pause between them (matching
+`osmnx`'s own built-in behavior, which the Python implementation gets for
+free and the Node one replicates explicitly), then fall through to the
+next mirror if the endpoint stays unavailable.
+
+Trees are treated as a best-effort supplementary layer: if buildings
+fetch successfully but the tree fetch then fails (even after retries),
+the run does **not** discard the already-written `buildings.obj` — it
+logs a warning, writes `more_info.txt` with 0 trees, and exits with a
+non-zero code to flag the run as partial. The GitHub Actions workflows
+upload the output folder regardless (`if: always()`), so a partial run
+still gives you the buildings; just check the job status/logs to see if
+trees were skipped.
+
 ## If the fetch fails with a connection error, or a 406 from Overpass
 
 `Connection refused`, `fetch failed`, or similar when reaching

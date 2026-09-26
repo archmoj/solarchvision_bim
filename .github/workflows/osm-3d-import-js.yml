@@ -69,6 +69,10 @@ jobs:
       # ${{ inputs.outdir }} (see the script's docstring) - upload that
       # whole folder so it shows up as one downloadable zip on the run page.
       - name: Upload output folder
+        # The script exits non-zero if buildings succeeded but trees
+        # couldn't be fetched (a best-effort layer) - still upload
+        # whatever was written rather than silently dropping it.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.outdir }}
