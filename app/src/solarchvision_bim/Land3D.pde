@@ -2,12 +2,12 @@ class Land3D {
 
   final static String CLASS_STAMP = "Land3D";
 
-  boolean loadMesh = true;
-  boolean loadTextures = true;
+  boolean loadMesh = false;
+  boolean loadTextures = false;
 
-  boolean displaySurface = true;
+  boolean displaySurface = false;
   boolean displayPoints = false;
-  boolean displayTexture = true;
+  boolean displayTexture = false;
   boolean displayDepth = false;
 
   int displayTessellation = 0; //0; //2;

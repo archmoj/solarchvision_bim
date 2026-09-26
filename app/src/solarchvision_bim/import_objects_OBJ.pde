@@ -47,7 +47,8 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
       float x = cx + sx * float(parts[1]);
       float y = cy + sy * float(parts[2]);
       float z = cz + sz * float(parts[3]);
-      importVerticeNumber.append(allPoints.create(x, -z, y));
+      //importVerticeNumber.append(allPoints.create(x, -z, y));
+      importVerticeNumber.append(allPoints.create(x, y, z));
     } else if (tag.equalsIgnoreCase("f")) {
       int FaceDegree = parts.length - 1;
       int[] newFace = new int[FaceDegree];

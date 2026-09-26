@@ -5,6 +5,9 @@ String HoldStamp = "";
 String Subfolder_exportMaps = "maps/";
 
 STATION STATION = new STATION(
+  //"", "EPFL", "", "", 46.51835, 6.56825, 0, 0, "", "", "", "", ""
+  //"", "Ramsar", "", "IR", 36.9268, 50.6431, 52.5, 0, "", "", "", "", ""
+  //"", "National University of Iran", "", "IR", 35.7968, 51.3945, 52.5, 1530, "", "", "", "", ""
   //"", "Montreal", "QC", "CA", 45.47, -73.75, -75, 36, "", "CAN_PQ_Montreal.Intl.AP.716270_CWEC", "CAN_QC_MONTREAL-INTL-A_7025251_CWEEDS2011_1998-2017", "MONTREAL_DORVAL_QC_CA", ""
   "", "Toronto", "ON", "CA", 43.67, -79.63, -75, 173, "", "CAN_ON_Toronto.716240_CWEC", "CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017", "TORONTO_PEARSON_INTL_ON_CA", "CYYZ-MAN"
   //"", "Vancouver", "BC", "CA", 49.18, -123.17, -120, 2, "", "CAN_BC_Vancouver.718920_CWEC", "CAN_BC_VANCOUVER-INTL-A_1108395_CWEEDS2011_1998-2017", "VANCOUVER_INTL_BC_CA", ""

@@ -463,6 +463,7 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
+    case "TREE":
     case "TREE1": {
       if (parts.length > 1) {
 
