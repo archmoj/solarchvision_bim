@@ -22,6 +22,11 @@ on:
         description: 'Output folder name (holds buildings.obj + more_info.txt)'
         required: true
         default: 'empire_state_area'
+      include_parts:
+        description: 'Also fetch building:part features (needed for complex/modern buildings modeled as separate parts, e.g. towers/domes with no plain "building" outline of their own)'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -49,11 +54,16 @@ jobs:
 
       - name: Run SOLARCHVISION_OSM_3D_in_obj.js
         run: |
+          EXTRA_ARGS=""
+          if [ "${{ inputs.include_parts }}" = "true" ]; then
+            EXTRA_ARGS="--include-parts"
+          fi
           node import/SOLARCHVISION_OSM_3D_in_obj.js \
             --lat "${{ inputs.lat }}" \
             --lon "${{ inputs.lon }}" \
             --radius "${{ inputs.radius }}" \
-            --outdir "${{ inputs.outdir }}"
+            --outdir "${{ inputs.outdir }}" \
+            $EXTRA_ARGS
 
       # The step above always writes buildings.obj + more_info.txt into
       # ${{ inputs.outdir }} (see the script's docstring) - upload that
