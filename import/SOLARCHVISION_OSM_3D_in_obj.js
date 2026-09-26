@@ -63,6 +63,8 @@ const DEFAULT_OVERPASS_MIRRORS = [
   "https://overpass.private.coffee/api/interpreter",
 ];
 
+const DEFAULT_USER_AGENT = "SOLARCHVISION_OSM_3D_in_obj (https://github.com/archmoj/solarchvision_bim)";
+
 const HEIGHT_RE = /[-+]?\d*\.?\d+/;
 
 // ---------------------------------------------------------------------
@@ -373,13 +375,18 @@ function isConnectionIssue(err) {
   return /ECONNREFUSED|ENOTFOUND|ETIMEDOUT|fetch failed|network/i.test(msg);
 }
 
-async function fetchOverpassJson(url, query, timeoutMs = 90000) {
+async function fetchOverpassJson(url, query, userAgent, timeoutMs = 90000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": userAgent,
+        Referer: userAgent,
+        Accept: "application/json, text/plain, */*",
+      },
       body: "data=" + encodeURIComponent(query),
       signal: controller.signal,
     });
@@ -396,15 +403,16 @@ async function fetchOverpassJson(url, query, timeoutMs = 90000) {
 /** Fetch raw Overpass JSON for `query`, trying each URL in `overpassUrls`
  * in turn (default: DEFAULT_OVERPASS_MIRRORS) and throwing
  * OverpassUnreachableError with an actionable message if all fail to
- * connect. A non-connection error (e.g. a malformed query) is thrown
- * immediately without wasting retries on other mirrors. */
-async function fetchOverpass(query, overpassUrls) {
+ * connect. A non-connection error (e.g. a malformed query, or a 406 from
+ * a server that still doesn't like our headers) is thrown immediately
+ * without wasting retries on other mirrors. */
+async function fetchOverpass(query, overpassUrls, userAgent = DEFAULT_USER_AGENT) {
   const urls = overpassUrls || DEFAULT_OVERPASS_MIRRORS;
   let lastErr = null;
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i];
     try {
-      return await fetchOverpassJson(url, query);
+      return await fetchOverpassJson(url, query, userAgent);
     } catch (e) {
       if (!isConnectionIssue(e)) throw e;
       lastErr = e;
@@ -432,8 +440,8 @@ async function fetchOverpass(query, overpassUrls) {
 
 /** Fetch buildings (or trees) as a GeoJSON FeatureCollection, with
  * relations/multipolygons already assembled by osmtogeojson. */
-async function fetchFeaturesGeoJSON(query, overpassUrls) {
-  const overpassJson = await fetchOverpass(query, overpassUrls);
+async function fetchFeaturesGeoJSON(query, overpassUrls, userAgent) {
+  const overpassJson = await fetchOverpass(query, overpassUrls, userAgent);
   return osmtogeojson(overpassJson);
 }
 
@@ -454,6 +462,9 @@ Options:
                                (default: derived from lat/lon, e.g. 'site_40.7484_-73.9857')
   --overpass-url <url>        Overpass endpoint to use (default: try overpass-api.de,
                                then a couple of public mirrors)
+  --overpass-user-agent <ua>  User-Agent/Referer sent with Overpass requests (default:
+                               identifies this tool; overpass-api.de rejects requests
+                               with no descriptive User-Agent at all)
 
   Buildings:
     --level-height <m>        Meters per building level when only building:levels
@@ -485,6 +496,7 @@ function parseArgs(argv) {
     noGround: false,
     outdir: null,
     overpassUrl: null,
+    overpassUserAgent: DEFAULT_USER_AGENT,
   };
   for (let i = 0; i < argv.length; i++) {
     const tok = argv[i];
@@ -529,6 +541,9 @@ function parseArgs(argv) {
       case "overpass-url":
         args.overpassUrl = value;
         break;
+      case "overpass-user-agent":
+        args.overpassUserAgent = value;
+        break;
       default:
         throw new Error(`Unknown option: --${name}`);
     }
@@ -565,7 +580,7 @@ async function main(argv = process.argv.slice(2)) {
   const buildingQuery = buildBuildingQuery(args.lat, args.lon, args.radius, args.includeParts);
   let buildingsGeoJSON;
   try {
-    buildingsGeoJSON = await fetchFeaturesGeoJSON(buildingQuery, overpassUrls);
+    buildingsGeoJSON = await fetchFeaturesGeoJSON(buildingQuery, overpassUrls, args.overpassUserAgent);
   } catch (e) {
     if (e instanceof OverpassUnreachableError) {
       console.error(`\nERROR: ${e.message}`);
@@ -620,7 +635,7 @@ async function main(argv = process.argv.slice(2)) {
     const treeQuery = buildTreeQuery(args.lat, args.lon, args.radius);
     let treesGeoJSON;
     try {
-      treesGeoJSON = await fetchFeaturesGeoJSON(treeQuery, overpassUrls);
+      treesGeoJSON = await fetchFeaturesGeoJSON(treeQuery, overpassUrls, args.overpassUserAgent);
     } catch (e) {
       if (e instanceof OverpassUnreachableError) {
         console.error(`\nERROR: ${e.message}`);
@@ -668,6 +683,7 @@ module.exports = {
   formatMesh2Line,
   writeMoreInfoTxt,
   OverpassUnreachableError,
+  DEFAULT_USER_AGENT,
   buildBuildingQuery,
   buildTreeQuery,
   fetchOverpass,

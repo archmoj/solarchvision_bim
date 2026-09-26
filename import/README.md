@@ -102,6 +102,7 @@ the override in place).
 | `--radius` | 250 | Search radius in meters |
 | `--outdir` | `site_<lat>_<lon>` | Output folder (created if missing) — holds `buildings.obj`, `more_info.txt` |
 | `--overpass-url` | (auto) | Overpass endpoint to use (self-hosted instance, or one reachable through your proxy). By default, tries overpass-api.de then a couple of public mirrors. |
+| `--overpass-user-agent` | identifies this tool | `User-Agent`/`Referer` sent with Overpass requests. Node only — Python's `osmnx` sets its own automatically. overpass-api.de rejects requests with no descriptive User-Agent at all (`406 Not Acceptable`). |
 | **Buildings** | | |
 | `--level-height` | 3.0 | Meters per floor, used when only `building:levels` is tagged |
 | `--default-height` | 6.0 | Fallback building height when no height/level tags exist |
@@ -130,7 +131,7 @@ the override in place).
   running your own Overpass instance / using a regional `.pbf` extract
   instead.
 
-## If the fetch fails with a connection error
+## If the fetch fails with a connection error, or a 406 from Overpass
 
 `Connection refused`, `fetch failed`, or similar when reaching
 `overpass-api.de` (or any Overpass mirror) is a network reachability
@@ -154,3 +155,16 @@ If it still fails:
    python SOLARCHVISION_OSM_3D_in_obj.py --lat ... --lon ... --overpass-url https://your-overpass-host/api/interpreter
    node SOLARCHVISION_OSM_3D_in_obj.js --lat ... --lon ... --overpass-url https://your-overpass-host/api/interpreter
    ```
+
+**A `406 Not Acceptable` from `overpass-api.de` specifically** means the
+request reached the server but was rejected for not identifying itself:
+Overpass's Apache front-end now enforces its usage policy by rejecting
+requests with no descriptive `User-Agent`. Python's `osmnx` sets one
+automatically (`OSMnx Python package (...)`), so the Python
+implementation isn't affected; the Node implementation now sends its own
+default (`SOLARCHVISION_OSM_3D_in_obj (https://github.com/archmoj/solarchvision_bim)`)
+for the same reason. If you fork this tool or run it as a different
+project, consider identifying yourself instead via:
+```bash
+node SOLARCHVISION_OSM_3D_in_obj.js --lat ... --lon ... --overpass-user-agent "YourProject (https://github.com/you/yourproject)"
+```
