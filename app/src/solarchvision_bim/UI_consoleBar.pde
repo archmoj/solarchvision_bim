@@ -73,9 +73,13 @@ class UI_consoleBar {
           allCommands[allCommands.length - 1] += line;
         } else {
           // run previous command before adding new line
-          allMessages[allMessages.length - 1] = runLastCommand();
+          String hint = runLastCommand();
+          allMessages[allMessages.length - 1] = hint;
           allCommands = concat(allCommands, new String[] {""});
           allMessages = concat(allMessages, new String[] {""});
+
+          // interrupt in case of error
+          if(hint.equals(UnrecognizedCommand)) break;
 
           // add new line
           allCommands[allCommands.length - 1] = line;

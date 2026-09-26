@@ -1,25 +1,30 @@
 final String UnrecognizedCommand = "Unrecognized command!";
 
-void runScriptFile (String FileName) {
+String runScriptFile (String FileName) {
   String[] FileALL = loadStrings(FileName);
 
-  runScriptLines(FileALL);
+  return runScriptLines(FileALL);
 }
 
-void runScriptLines (String[] FileALL) {
+String runScriptLines (String[] FileALL) {
+  String hint = "";
   for (int f = 0; f < FileALL.length; f++) {
     String lineSTR = FileALL[f];
 
     if(!lineSTR.equals("")) {
       println("cmd:", lineSTR);
 
-      String hint = runScriptLine(lineSTR);
+      hint = runScriptLine(lineSTR);
 
       if(!hint.equals("")) {
         println("out:", hint);
+
+        // interrupt in case of error
+        if(hint.equals(UnrecognizedCommand)) return UnrecognizedCommand;
       }
     }
   }
+  return hint;
 }
 
 // Lowercase command names that must always reach the switch-case in
