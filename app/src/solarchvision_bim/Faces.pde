@@ -377,6 +377,16 @@ class Faces {
 
             for (int s = 0; s < n; s++) {
               int s_next = (s + 1) % n;
+
+              // obj inputs break rectangles to triangles
+              // and we don't want to see the diagonal lines
+              // so skip non orthogonal edges of triangles here
+              if(n == 3 &&
+                poly[s][0] != poly[s_next][0] &&
+                poly[s][1] != poly[s_next][1] &&
+                poly[s][2] != poly[s_next][2]
+              ) break;
+
               WIN3D.graphics.vertex(poly[s][0], poly[s][1], poly[s][2]);
               WIN3D.graphics.vertex(poly[s_next][0], poly[s_next][1], poly[s_next][2]);
             }
