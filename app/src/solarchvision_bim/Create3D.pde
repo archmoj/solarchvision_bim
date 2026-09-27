@@ -2387,33 +2387,6 @@ class Create3D {
 
   int maximum_default_models = 6;
 
-
-  void add_Model_2DsFromFile () {
-
-    allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-
-
-    String[] FileALL = loadStrings(BaseFolder + "/Import/Hamedan_PEOPLE.txt");
-
-    String lineSTR;
-
-    for (int f = 1; f < FileALL.length; f++) { // skip the first line.
-
-      lineSTR = FileALL[f];
-      //println(lineSTR);
-
-      String[] parts = split(lineSTR, ",");
-
-      float x = float(parts[0]);
-      float y = float(parts[1]);
-      float z = float(parts[2]);
-
-      allModel2Ds.create("PEOPLE", 0, x, y, z, 2.5);
-    }
-  }
-
-
-
   void add_Model_Main () {
 
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
