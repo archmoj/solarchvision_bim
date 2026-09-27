@@ -8,9 +8,9 @@ around a given latitude/longitude within a radius, into the same output
 folder contract:
 
     <outdir>/buildings.obj    - buildings, extruded from Overture footprints
-    <outdir>/more_info.txt    - a header comment and a ground-rectangle
-                                (Mesh2) line (no trees - Overture has no
-                                tree layer; see "Trees" below)
+    <outdir>/more_info.txt    - a header comment, a ground-rectangle
+                                (Mesh2) line, and trees (if --trees-source
+                                osm is used - see "Trees" below)
 
 Why Overture instead of OSM/GlobalBuildingAtlas
 ------------------------------------------------
@@ -51,27 +51,31 @@ real massing) - instead their `building_part` features are extruded
 individually, avoiding doubled/overlapping volume. Buildings with
 has_parts=false are always extruded normally, part fetching or not.
 
-Trees
------
-Overture has no equivalent of OSM's `natural=tree` layer, so
-more_info.txt from this script always has 0 Tree lines. It still gets
-the header comment and Mesh2 ground-rectangle line, for the same
-downstream import contract as the OSM version.
+Trees (--trees-source osm)
+---------------------------
+Overture has no equivalent of OSM's `natural=tree` layer, so by default
+(--trees-source none) more_info.txt from this script has 0 Tree lines.
+Pass --trees-source osm to fetch trees from OpenStreetMap instead (via
+the same Overpass machinery the OSM script uses, in
+solarch_3d_common.py) while still sourcing buildings from Overture -
+this needs osmnx installed additionally (`pip install osmnx`), only
+when this flag is used.
 
 Requires: overturemaps, geopandas, shapely, mapbox_earcut, pyproj, numpy
     pip install overturemaps geopandas shapely mapbox_earcut pyproj numpy
+(add `osmnx` too if using --trees-source osm.
+solarch_3d_common.py must sit alongside this script - it holds code
+shared with SOLARCHVISION_OSM_3D_in_obj.py.)
 
 Example:
     python SOLARCHVISION_Overture_3D_in_obj.py --lat 40.7484 --lon -73.9857 \\
-        --radius 250 --outdir empire_state_area_overture
+        --radius 250 --outdir empire_state_area_overture --trees-source osm
 """
 
 import argparse
 import math
 import os
 import sys
-
-import numpy as np
 
 try:
     import overturemaps.core as overture_core
@@ -80,15 +84,9 @@ except ImportError:
     raise
 
 try:
-    from shapely.geometry import Polygon, MultiPolygon
+    from shapely.geometry import Polygon
 except ImportError:
     print("Missing dependency: shapely. Install with `pip install shapely`.", file=sys.stderr)
-    raise
-
-try:
-    import mapbox_earcut as earcut
-except ImportError:
-    print("Missing dependency: mapbox_earcut. Install with `pip install mapbox_earcut`.", file=sys.stderr)
     raise
 
 try:
@@ -97,39 +95,34 @@ except ImportError:
     print("Missing dependency: pyproj. Install with `pip install pyproj`.", file=sys.stderr)
     raise
 
+try:
+    import solarch_3d_common as common
+except ImportError:
+    print("Missing file: solarch_3d_common.py must sit alongside this script.", file=sys.stderr)
+    raise
+
 
 # ---------------------------------------------------------------------
-# Height/base-z derivation (mirrors the finite/positive guarantees in
-# SOLARCHVISION_OSM_3D_in_obj.py: a GeoDataFrame column value that's
-# missing comes through as float NaN, not None/NaN must never leak into
-# a written vertex coordinate).
+# Overture-specific height/base-z derivation (uses `height`/`num_floors`/
+# `min_height`; different schema from OSM's building:levels, so this
+# stays here rather than in the shared module).
 # ---------------------------------------------------------------------
-
-def _finite_positive(x):
-    return x is not None and isinstance(x, (int, float)) and math.isfinite(x) and x > 0
-
-
-def _finite(x, default=0.0):
-    if x is not None and isinstance(x, (int, float)) and math.isfinite(x):
-        return float(x)
-    return default
-
 
 def building_height_and_base(props, level_height, default_height):
     """Work out a building/part's (base_z, height) in meters from its
     Overture properties. Always returns finite numbers, with height > 0."""
     height = props.get("height")
-    if not _finite_positive(height):
+    if not common._finite_positive(height):
         num_floors = props.get("num_floors")
-        if _finite_positive(num_floors):
+        if common._finite_positive(num_floors):
             height = num_floors * level_height
         else:
             height = None
 
-    if not _finite_positive(height):
-        height = default_height if _finite_positive(default_height) else 6.0
+    if not common._finite_positive(height):
+        height = default_height if common._finite_positive(default_height) else 6.0
 
-    base_z = _finite(props.get("min_height"), default=0.0)
+    base_z = common._finite(props.get("min_height"), default=0.0)
     if base_z < 0:
         base_z = 0.0
     return base_z, height
@@ -137,7 +130,10 @@ def building_height_and_base(props, level_height, default_height):
 
 # ---------------------------------------------------------------------
 # Projection: one local UTM CRS for the whole run, auto-selected from
-# the query point (same convention as SOLARCHVISION_OSM_3D_in_obj.py).
+# the query point (same convention as SOLARCHVISION_OSM_3D_in_obj.py,
+# but via a raw pyproj Transformer applied per-ring/per-point rather
+# than a whole-GeoDataFrame osmnx projection - different data shape, so
+# this stays here rather than in the shared module).
 # ---------------------------------------------------------------------
 
 def utm_proj_string(lon, lat):
@@ -153,6 +149,11 @@ def get_projection_and_origin(lat, lon):
     return transformer, (ox, oy)
 
 
+def project_and_recenter_point(lon, lat, transformer, origin):
+    x, y = transformer.transform(lon, lat)
+    return x - origin[0], y - origin[1]
+
+
 def project_and_recenter_ring(ring_coords, transformer, origin):
     """ring_coords: iterable of (lon, lat). Returns [(x, y), ...] recentered
     on origin, with the closing duplicate point removed."""
@@ -163,12 +164,6 @@ def project_and_recenter_ring(ring_coords, transformer, origin):
     return pts
 
 
-# ---------------------------------------------------------------------
-# Polygon triangulation + extrusion (same approach as
-# SOLARCHVISION_OSM_3D_in_obj.py, generalized with a base_z offset to
-# support Overture's min_height for "floating" building parts).
-# ---------------------------------------------------------------------
-
 def polygon_rings(poly: Polygon, transformer, origin):
     ext = project_and_recenter_ring(list(poly.exterior.coords), transformer, origin)
     holes = []
@@ -177,119 +172,6 @@ def polygon_rings(poly: Polygon, transformer, origin):
         if len(ring) >= 3:
             holes.append(ring)
     return ext, holes
-
-
-def triangulate_footprint(ext, holes):
-    rings = [ext] + holes
-    points = np.array([pt for ring in rings for pt in ring], dtype=np.float64)
-    ring_end_counts = np.cumsum([len(r) for r in rings]).astype(np.uint32)
-    tri_flat = earcut.triangulate_float64(points, ring_end_counts)
-    tris = np.asarray(tri_flat, dtype=np.uint32).reshape(-1, 3)
-    return points, tris
-
-
-class ObjWriter:
-    def __init__(self):
-        self.vertices = []
-        self.faces = []
-        self.groups = []
-
-    def add_vertex(self, x, y, z):
-        if not (math.isfinite(x) and math.isfinite(y) and math.isfinite(z)):
-            raise ValueError(f"Refusing to write non-finite vertex ({x}, {y}, {z})")
-        self.vertices.append((x, y, z))
-        return len(self.vertices)
-
-    def add_face(self, idxs):
-        self.faces.append(tuple(idxs))
-
-    def start_group(self, name):
-        self.groups.append((len(self.faces), name))
-
-    def write(self, path):
-        group_at = {start: name for start, name in self.groups}
-        with open(path, "w") as f:
-            f.write("# Generated by SOLARCHVISION_Overture_3D_in_obj.py\n")
-            f.write(f"# {len(self.vertices)} vertices, {len(self.faces)} faces\n")
-            for x, y, z in self.vertices:
-                f.write(f"v {x:.4f} {y:.4f} {z:.4f}\n")
-            for i, face in enumerate(self.faces):
-                if i in group_at:
-                    f.write(f"g {group_at[i]}\n")
-                f.write("f " + " ".join(str(v) for v in face) + "\n")
-
-
-def add_extruded_polygon(writer: ObjWriter, ext, holes, height, base_z=0.0):
-    """Extrude a footprint (already projected/recentered [x,y] rings) into
-    a closed 3D solid from z=base_z to z=base_z+height, and append it to
-    the ObjWriter."""
-    if len(ext) < 3:
-        return
-    try:
-        points2d, tris = triangulate_footprint(ext, holes)
-    except Exception:
-        return
-    if len(tris) == 0:
-        return
-
-    n = len(points2d)
-    top_z = base_z + height
-
-    bottom_start = writer.add_vertex(points2d[0][0], points2d[0][1], base_z)
-    for x, y in points2d[1:]:
-        writer.add_vertex(x, y, base_z)
-    top_start = writer.add_vertex(points2d[0][0], points2d[0][1], top_z)
-    for x, y in points2d[1:]:
-        writer.add_vertex(x, y, top_z)
-
-    for a, b, c in tris:
-        writer.add_face((bottom_start + a, bottom_start + c, bottom_start + b))
-    for a, b, c in tris:
-        writer.add_face((top_start + a, top_start + b, top_start + c))
-
-    offset = 0
-    for ring in [ext] + holes:
-        m = len(ring)
-        for i in range(m):
-            j = (i + 1) % m
-            b0, b1 = bottom_start + offset + i, bottom_start + offset + j
-            t0, t1 = top_start + offset + i, top_start + offset + j
-            writer.add_face((b0, b1, t1))
-            writer.add_face((b0, t1, t0))
-        offset += m
-
-
-def iter_polygons(geom):
-    if isinstance(geom, Polygon):
-        yield geom
-    elif isinstance(geom, MultiPolygon):
-        for p in geom.geoms:
-            yield p
-
-
-# ---------------------------------------------------------------------
-# Ground rectangle (Mesh2 line) + more_info.txt writer - identical format
-# to SOLARCHVISION_OSM_3D_in_obj.py, minus the tree lines.
-# ---------------------------------------------------------------------
-
-def format_number(v):
-    if math.isfinite(v) and float(v).is_integer():
-        return str(int(v))
-    return f"{v:.4f}"
-
-
-def format_mesh2_line(radius):
-    r = format_number(radius)
-    nr = format_number(-radius)
-    return f"Mesh2 m:3 tes:6 x1:{nr} y1:{nr} z1:0 x2:{r} y2:{r} z2:0"
-
-
-def write_more_info_txt(path, lat, lon, radius, ground_radius, include_ground=True):
-    with open(path, "w") as f:
-        f.write(f"# --lat {lat} --lon {lon} --radius {radius}\n")
-        if include_ground:
-            f.write(format_mesh2_line(ground_radius) + "\n")
-        # No Tree lines: Overture has no tree/vegetation layer.
 
 
 # ---------------------------------------------------------------------
@@ -394,6 +276,10 @@ def main():
     ap.add_argument("--default-height", type=float, default=6.0, help="Fallback height in meters when no height/num_floors is present (default: 6.0)")
     ap.add_argument("--include-parts", action="store_true", help="Also fetch building_part features for finer massing on complex buildings (towers, domes, etc.)")
 
+    ap.add_argument("--trees-source", choices=["none", "osm"], default="none", help="Where to get trees from for more_info.txt. 'osm' fetches OpenStreetMap natural=tree nodes (requires `pip install osmnx` additionally). Default: none (Overture has no tree layer of its own).")
+    ap.add_argument("--tree-default-height", type=float, default=10.0, help="Fallback tree height in meters when no height tag exists (only used with --trees-source osm; default: 10.0)")
+    ap.add_argument("--overpass-url", default=None, help="Overpass API endpoint to use for --trees-source osm (default: try overpass-api.de, then a couple of public mirrors)")
+
     ap.add_argument("--ground-padding", type=float, default=0.0, help="Extra meters added to --radius for the Mesh2 ground-rectangle extents (default: 0)")
     ap.add_argument("--no-ground", action="store_true", help="Skip writing the Mesh2 ground-rectangle line in more_info.txt")
 
@@ -409,6 +295,7 @@ def main():
 
     transformer, origin = get_projection_and_origin(args.lat, args.lon)
 
+    # ---- Buildings (Overture) ----
     print(f"Fetching Overture buildings within {args.radius} m of ({args.lat}, {args.lon}) ...")
     try:
         buildings_gdf = fetch_overture("building", args.lat, args.lon, args.radius, args.release, use_stac=not args.no_stac)
@@ -431,7 +318,7 @@ def main():
         else:
             parts_gdf = keep_within_radius(parts_gdf, transformer, origin, args.radius)
 
-    writer = ObjWriter()
+    writer = common.ObjWriter()
     n_written = 0
 
     if buildings_gdf is None or buildings_gdf.empty:
@@ -450,12 +337,12 @@ def main():
                 continue
 
             base_z, height = building_height_and_base(row, args.level_height, args.default_height)
-            for poly in iter_polygons(geom):
+            for poly in common.iter_polygons(geom):
                 ext, holes = polygon_rings(poly, transformer, origin)
                 vcount, fcount = len(writer.vertices), len(writer.faces)
                 writer.start_group(f"building_{n_written}")
                 try:
-                    add_extruded_polygon(writer, ext, holes, height, base_z)
+                    common.add_extruded_polygon(writer, ext, holes, height, base_z)
                     n_written += 1
                 except ValueError as e:
                     print(f"  skipping one building: {e}", file=sys.stderr)
@@ -470,12 +357,12 @@ def main():
             if geom is None or geom.is_empty:
                 continue
             base_z, height = building_height_and_base(row, args.level_height, args.default_height)
-            for poly in iter_polygons(geom):
+            for poly in common.iter_polygons(geom):
                 ext, holes = polygon_rings(poly, transformer, origin)
                 vcount, fcount = len(writer.vertices), len(writer.faces)
                 writer.start_group(f"building_part_{n_written}")
                 try:
-                    add_extruded_polygon(writer, ext, holes, height, base_z)
+                    common.add_extruded_polygon(writer, ext, holes, height, base_z)
                     n_written += 1
                 except ValueError as e:
                     print(f"  skipping one building part: {e}", file=sys.stderr)
@@ -483,18 +370,50 @@ def main():
                     del writer.faces[fcount:]
                     writer.groups.pop()
 
-    writer.write(buildings_path)
+    writer.write(buildings_path, generator="SOLARCHVISION_Overture_3D_in_obj.py")
     print(f"Wrote {n_written} building solids ({len(writer.vertices)} vertices, "
           f"{len(writer.faces)} faces) to {buildings_path}")
 
-    ground_radius = args.radius + max(args.ground_padding, 0.0)
-    write_more_info_txt(info_path, args.lat, args.lon, args.radius, ground_radius,
-                         include_ground=not args.no_ground)
-    print(f"Wrote more_info.txt (0 trees - Overture has no tree layer"
-          + ("" if args.no_ground else f"; Mesh2 ground rectangle radius {ground_radius:.1f} m")
-          + f") to {info_path}")
+    # ---- Trees (optional, from OSM) -> more_info.txt ----
+    # Best-effort, like the parts fetch above: a failure here must not
+    # discard the buildings.obj already written.
+    tree_rows = []
+    trees_failed = False
+    if args.trees_source == "osm":
+        print(f"Fetching OSM trees within {args.radius} m ...")
+        overpass_urls = [args.overpass_url] if args.overpass_url else None
+        try:
+            trees_raw = common.fetch_features(args.lat, args.lon, args.radius, {"natural": "tree"}, overpass_urls)
+        except common.OverpassUnreachableError as e:
+            print(f"\nWARNING: could not fetch trees ({str(e).splitlines()[0]}); "
+                  "continuing with 0 trees. buildings.obj above is unaffected.", file=sys.stderr)
+            trees_failed = True
+            trees_raw = None
+        except ImportError as e:
+            print(f"\nWARNING: {e} continuing with 0 trees.", file=sys.stderr)
+            trees_failed = True
+            trees_raw = None
 
-    if parts_failed:
+        if trees_raw is not None and not trees_raw.empty:
+            for _, row in trees_raw.iterrows():
+                geom = row.geometry
+                if geom is None or geom.is_empty or geom.geom_type != "Point":
+                    continue
+                x, y = project_and_recenter_point(geom.x, geom.y, transformer, origin)
+                h = common.feature_height(row.get("height"), args.tree_default_height)
+                if not (math.isfinite(x) and math.isfinite(y) and math.isfinite(h)):
+                    continue
+                tree_rows.append((x, y, 0.0, h))
+
+    ground_radius = args.radius + max(args.ground_padding, 0.0)
+    common.write_more_info_txt(info_path, args.lat, args.lon, args.radius, ground_radius,
+                                tree_rows, include_ground=not args.no_ground)
+    tree_note = f"{len(tree_rows)} trees" if args.trees_source == "osm" else "0 trees (--trees-source none)"
+    print(f"Wrote {tree_note}"
+          + ("" if args.no_ground else f" and a Mesh2 ground rectangle (radius {ground_radius:.1f} m)")
+          + f" to {info_path}")
+
+    if parts_failed or trees_failed:
         sys.exit(1)  # flag the run as partially incomplete, after writing everything we could
 
 

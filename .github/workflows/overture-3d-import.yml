@@ -36,6 +36,14 @@ on:
         required: false
         type: boolean
         default: false
+      trees_source:
+        description: 'Where to get trees from for more_info.txt (Overture has no tree layer of its own)'
+        required: false
+        type: choice
+        options:
+          - none
+          - osm
+        default: none
 
 permissions:
   contents: read
@@ -58,6 +66,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r import/requirements-overture.txt
 
+      # Only needed for --trees-source osm; kept out of requirements-overture.txt
+      # so the default (buildings-only) install stays lean, per import/README.md.
+      - name: Install osmnx (for --trees-source osm)
+        if: inputs.trees_source == 'osm'
+        run: pip install osmnx
+
       - name: Run SOLARCHVISION_Overture_3D_in_obj.py
         run: |
           EXTRA_ARGS=""
@@ -70,6 +84,9 @@ jobs:
           if [ "${{ inputs.no_stac }}" = "true" ]; then
             EXTRA_ARGS="$EXTRA_ARGS --no-stac"
           fi
+          if [ "${{ inputs.trees_source }}" = "osm" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --trees-source osm"
+          fi
           python import/SOLARCHVISION_Overture_3D_in_obj.py \
             --lat "${{ inputs.lat }}" \
             --lon "${{ inputs.lon }}" \
@@ -79,9 +96,9 @@ jobs:
 
       - name: Upload output folder
         # The script exits non-zero if buildings succeeded but
-        # building_part fetch didn't (a best-effort layer when
-        # include_parts is set) - still upload whatever was written
-        # rather than silently dropping it.
+        # building_part or tree fetch didn't (both best-effort when
+        # include_parts / trees_source=osm are set) - still upload
+        # whatever was written rather than silently dropping it.
         if: always()
         uses: actions/upload-artifact@v4
         with:

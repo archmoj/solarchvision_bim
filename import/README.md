@@ -19,8 +19,16 @@ Three scripts, same output contract, different building data:
 
 | Script | Data source | Trees? | License | Best for |
 |---|---|---|---|---|
-| `SOLARCHVISION_OSM_3D_in_obj.py` / `.js` | OpenStreetMap (via Overpass) | Yes | ODbL | Areas with good OSM coverage/tagging; the only source with a tree layer |
-| `SOLARCHVISION_Overture_3D_in_obj.py` | [Overture Maps](https://overturemaps.org) | No | ODbL | Often better height coverage than OSM alone (merges OSM + Microsoft + Esri + USGS lidar); genuinely fast point/radius queries (cloud-native GeoParquet, no bulk downloads) |
+| `SOLARCHVISION_OSM_3D_in_obj.py` / `.js` | OpenStreetMap (via Overpass) | Yes | ODbL | Areas with good OSM coverage/tagging |
+| `SOLARCHVISION_Overture_3D_in_obj.py` | [Overture Maps](https://overturemaps.org) | Optional, from OSM (`--trees-source osm`) | ODbL | Often better height coverage than OSM alone (merges OSM + Microsoft + Esri + USGS lidar); genuinely fast point/radius queries (cloud-native GeoParquet, no bulk downloads) |
+
+`SOLARCHVISION_OSM_3D_in_obj.py` and `SOLARCHVISION_Overture_3D_in_obj.py`
+share a `solarch_3d_common.py` module (OBJ writing, triangulation/
+extrusion, `Mesh2`/`more_info.txt` formatting, OSM height-tag parsing,
+and the Overpass fetch machinery with mirror fallback) — it must sit in
+the same folder as both scripts. Each script keeps its own
+data-source-specific logic (height-derivation schema, projection
+plumbing) rather than forcing those into a false unification.
 
 Two implementations of the OSM script are provided, with an identical CLI:
 
@@ -158,16 +166,24 @@ query touches only the relevant few megabytes, not the whole planet.
    extruding both would double up volume. If part-fetching fails, the
    affected buildings fall back to their coarse outline rather than
    disappearing (see "Partial failures" below).
-6. **Trees**: Overture has no equivalent of OSM's tree layer, so
-   `more_info.txt` from this script always has 0 `Tree` lines — it still
-   gets the header comment and `Mesh2` ground-rectangle line, for the
-   same downstream import contract as the OSM scripts.
+6. **Trees**: Overture has no tree layer of its own. By default
+   (`--trees-source none`) `more_info.txt` has 0 `Tree` lines. Pass
+   `--trees-source osm` to fetch trees from OpenStreetMap instead, via
+   the same shared Overpass machinery (mirror fallback, etc.) the OSM
+   scripts use — this mixes an Overture building layer with an OSM tree
+   layer in one `more_info.txt`, needs `osmnx` installed additionally
+   (only for this flag), and treats the tree fetch as best-effort, same
+   as `--include-parts` (see "Partial failures" below).
 
 ## Setup & usage — Overture Maps
 
 ```bash
 pip install -r requirements-overture.txt   # overturemaps, geopandas, shapely, pyproj, mapbox_earcut, numpy
 python SOLARCHVISION_Overture_3D_in_obj.py --lat 40.7484 --lon -73.9857 --radius 250 --outdir empire_state_area_overture
+
+# Optionally, to also pull trees from OSM:
+pip install osmnx
+python SOLARCHVISION_Overture_3D_in_obj.py --lat 40.7484 --lon -73.9857 --radius 250 --outdir empire_state_area_overture --trees-source osm
 ```
 
 ## Options — Overture script
@@ -181,18 +197,22 @@ python SOLARCHVISION_Overture_3D_in_obj.py --lat 40.7484 --lon -73.9857 --radius
 | `--level-height` | 3.0 | Meters per floor, used when only `num_floors` is present |
 | `--default-height` | 6.0 | Fallback height when neither `height` nor `num_floors` is present |
 | `--include-parts` | off | Also fetch `building_part` features for finer massing on complex buildings |
+| `--trees-source` | none | `none` or `osm`. `osm` fetches OpenStreetMap `natural=tree` nodes for `more_info.txt` (needs `pip install osmnx` additionally) |
+| `--tree-default-height` | 10.0 | Fallback tree height when no `height` tag exists (only with `--trees-source osm`) |
+| `--overpass-url` | (auto) | Overpass endpoint for `--trees-source osm` (default: try overpass-api.de, then a couple of public mirrors) |
 | `--ground-padding` | 0 | Extra meters added to `--radius` for the Mesh2 extents |
 | `--no-ground` | off | Skip writing the Mesh2 line |
 | `--no-stac` | off | Skip the STAC-accelerated query and go straight to a direct dataset scan (see "STAC-catalog gaps" below) |
 
 ### Partial failures (Overture script)
 
-If buildings fetch successfully but `--include-parts` was set and the
-`building_part` fetch then fails, the run does **not** drop the
-already-fetched buildings: any building that would have deferred to its
-parts falls back to its coarse outline instead, `buildings.obj` and
+If buildings fetch successfully but either `--include-parts` (the
+`building_part` fetch) or `--trees-source osm` (the tree fetch) then
+fails, the run does **not** drop the already-fetched buildings: any
+building that would have deferred to its parts falls back to its coarse
+outline instead, trees are simply omitted, `buildings.obj` and
 `more_info.txt` are both written normally, and the run exits with a
-non-zero code to flag it as partial — matching the same pattern the OSM
+non-zero code to flag it as partial — matching the pattern the OSM
 scripts use for a failed tree fetch. `overture-3d-import.yml` uploads the
 output folder regardless (`if: always()`).
 
