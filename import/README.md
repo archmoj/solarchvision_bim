@@ -112,6 +112,26 @@ patched version via `overrides`, since the version `osmtogeojson` would
 otherwise pull in has known vulnerabilities (`npm audit` is clean with
 the override in place).
 
+`SOLARCHVISION_OSM_3D_in_obj.js` is CLI orchestration only; the actual
+logic lives in `lib/` (must sit alongside the script):
+
+| Module | Contents |
+|---|---|
+| `lib/height.js` | OSM height-tag parsing |
+| `lib/projection.js` | UTM auto-projection, ring recentering |
+| `lib/geometry.js` | Triangulation, extrusion, `ObjWriter` |
+| `lib/format.js` | `Mesh2` line, `more_info.txt` writer |
+| `lib/overpass.js` | Mirror fallback, User-Agent, 429/504 retry, query builders |
+| `lib/cli.js` | Usage text, argument parsing |
+
+This mirrors the height/geometry/format/Overpass split already factored
+out on the Python side into `solarch_3d_common.py` (shared by both
+Python scripts) — `lib/geometry.js`, `lib/format.js`, and especially
+`lib/overpass.js` are written to be directly reusable as-is by a future
+Node script sourcing buildings from somewhere other than OSM, the same
+way `solarch_3d_common.py`'s equivalents already serve
+`SOLARCHVISION_Overture_3D_in_obj.py`.
+
 ## Options — OSM scripts (identical in both implementations)
 
 | Flag | Default | Description |
