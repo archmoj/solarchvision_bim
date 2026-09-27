@@ -37,7 +37,7 @@ String runScriptLines (String[] FileALL) {
 // them.
 HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "move",
-  "polyline",
+  "mesh", "polyline",
   "box", "sphere", "cylinder", "person", "house1", "house2", "house3",
   "octahedron", "icosahedron", "cushion",
   "rotate", "rotatex", "rotatey", "rotatez",
@@ -1065,6 +1065,43 @@ String runScriptLine (String lineSTR) {
       }
       else {
         hint = "Mesh6 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=? x3=? y3=? z3=? x4=? y4=? z4=? x5=? y5=? z5=? x6=? y6=? z6=?";
+      }
+      return hint;
+    }
+
+    case "MESH": {
+      if (parts.length > 1) {
+        int m = 7;
+        int tes = 0;
+        int lyr = 0;
+        int vsb = 1;
+        int wgt = 0;
+        int clz = 0;
+        float[][] points = new float [0][3];
+        for (int q = 1; q < parts.length; q++) {
+          String[] parameters = split(parts[q], ':');
+          if (parameters.length > 1) {
+            String low_case = parameters[0].toLowerCase();
+                 if (low_case.equals("m")) m = int(parameters[1]);
+            else if (low_case.equals("tes")) tes = int(parameters[1]);
+            else if (low_case.equals("lyr")) lyr = int(parameters[1]);
+          }
+          else {
+            String[] xyz = split(parts[q], ",");
+            if (xyz.length > 2) {
+              float[][] newPoint = {{float(xyz[0]), float(xyz[1]), float(xyz[2])}};
+              points = (float[][]) concat(points, newPoint);
+            }
+          }
+        }
+        if (points.length > 1) {
+          Create3D.add_Mesh(m, tes, lyr, vsb, wgt, clz, points);
+          view_changed();
+        }
+      }
+      else {
+        hint = "Mesh m=? tes=? lyr=? xtr=? x1,y1,z1 x2,y2,z2 etc.";
+        UI_setTo_Create_Face();
       }
       return hint;
     }

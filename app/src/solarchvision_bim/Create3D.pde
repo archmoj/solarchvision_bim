@@ -1015,6 +1015,18 @@ class Create3D {
   }
 
 
+  void add_Mesh (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
+
+    int[] newFace_nodes = new int[points.length];
+
+    for (int i = 0; i < points.length; i++) {
+      newFace_nodes[i] = allPoints.create(points[i][0], points[i][1], points[i][2]);
+    }
+
+    allFaces.create(newFace_nodes);
+
+    model_added();
+  }
 
 
   void add_PolygonHyper (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float r, float h, int n, float rot) {
