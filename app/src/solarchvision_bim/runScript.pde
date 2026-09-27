@@ -259,7 +259,7 @@ String runScriptLine (String lineSTR) {
           }
         }
         Move3D.selection(dx, dy, dz);
-        view_changed();
+        model_changed();
       }
       else {
         hint = "Move dx=? dy=? dz=?";
@@ -294,7 +294,7 @@ String runScriptLine (String lineSTR) {
           }
         }
         Rotate3D.selection(x, y, z, r, v);
-        view_changed();
+        model_changed();
       }
       else {
         hint = "Rotate[X|Y|Z] r=? x=? y=? z=?";
@@ -332,7 +332,7 @@ String runScriptLine (String lineSTR) {
           }
         }
         Scale3D.selection(x, y, z, sx, sy, sz);
-        view_changed();
+        model_changed();
       }
       else {
         hint = "Scale s=? sx=? sy=? sz=? x=? y=? z=?";
@@ -356,7 +356,7 @@ String runScriptLine (String lineSTR) {
           else if (low_case.equals("vertices")) Delete3D.isolatedVertices_Selection();
           else if (low_case.equals("selection")) Delete3D.selection();
         }
-        view_changed();
+        model_changed();
       }
       else {
         hint = "Delete all/selection/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras";
@@ -384,7 +384,7 @@ String runScriptLine (String lineSTR) {
           if (rz != 0) Rotate3D.selection(0, 0, 0, rz, 2);
         }
 
-        view_changed();
+        model_changed();
       }
       else {
         hint = "Copy n=? dx=? dy=? dz=? rx=? ry=? rz=?";
@@ -453,7 +453,7 @@ String runScriptLine (String lineSTR) {
         float h = getF(p, "h", 10.0);
         if (h != 0) {
           allModel2Ds.create(t, m, x, y, z, h);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -504,7 +504,7 @@ String runScriptLine (String lineSTR) {
         }
         if (h != 0) {
           allModel1Ds.create(m, seed, degree, x, y, z, h, r, tilt, twist, ratio, base, trunk, leaf);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -531,7 +531,7 @@ String runScriptLine (String lineSTR) {
         float z2 = getF(p, "z2", 0);
         if ((x2 - x1 != 0) && (y2 - y1 != 0) && (z2 - z1 != 0)) {
           Create3D.add_Box_Corners(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -559,7 +559,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_Box_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -588,7 +588,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_House3_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -617,7 +617,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_House2_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -646,7 +646,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_House1_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, h, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -674,7 +674,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((d != 0) && (h != 0)) {
           Create3D.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -701,7 +701,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if (d != 0) {
           Create3D.add_CrystalSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, 0, 90 + r); // passing with isSky:0
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -733,7 +733,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0) && (px > 0) && (py > 0) && (pz > 0)) {
           Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, px, py, pz, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -762,7 +762,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_SuperSphere(m, tes, lyr, vsb, wgt, clz, x, y, z, CubePower, CubePower, 2, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -790,7 +790,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((dx != 0) && (dy != 0) && (dz != 0)) {
           Create3D.add_Octahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -816,7 +816,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if (d != 0) {
           Create3D.add_Icosahedron(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -844,7 +844,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((d != 0) && (h != 0)) {
           Create3D.add_PolygonExtrude(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -872,7 +872,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if ((d != 0) && (h != 0)) {
           Create3D.add_PolygonHyper(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, h, deg, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -899,7 +899,7 @@ String runScriptLine (String lineSTR) {
         float r = getF(p, "r", 0);
         if (d != 0) {
           Create3D.add_PolygonMesh(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, deg, r);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -926,7 +926,7 @@ String runScriptLine (String lineSTR) {
         float z2 = getF(p, "z2", 0);
         if ((x1 == x2) || (y1 == y2) || (z1 == z2)) {
           Create3D.add_Mesh2(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -955,7 +955,7 @@ String runScriptLine (String lineSTR) {
         float z3 = getF(p, "z3", 0);
         {
           Create3D.add_Mesh3(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -987,7 +987,7 @@ String runScriptLine (String lineSTR) {
         float z4 = getF(p, "z4", 0);
         {
           Create3D.add_Mesh4(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -1022,7 +1022,7 @@ String runScriptLine (String lineSTR) {
         float z5 = getF(p, "z5", 0);
         {
           Create3D.add_Mesh5(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -1060,7 +1060,7 @@ String runScriptLine (String lineSTR) {
         float z6 = getF(p, "z6", 0);
         {
           Create3D.add_Mesh6(m, tes, lyr, vsb, wgt, clz, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x5, y5, z5, x6, y6, z6);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -1087,7 +1087,7 @@ String runScriptLine (String lineSTR) {
         float b = getF(p, "b", 0);
         if ((d != 0) && (w != 0)) {
           Create3D.add_H_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, d, w, a, b);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -1114,7 +1114,7 @@ String runScriptLine (String lineSTR) {
         float b = getF(p, "b", 0);
         if ((d != 0) && (h != 0)) {
           Create3D.add_V_shade(m, tes, lyr, vsb, wgt, clz, x, y, z, h, d, a, b);
-          view_changed();
+          model_changed();
         }
       }
       else {
@@ -1141,7 +1141,7 @@ String runScriptLine (String lineSTR) {
         float rz = getF(p, "rz", 0);
         if ((px != 0) && (py != 0) && (pz != 0) && (sx != 0) && (sy != 0) && (sz != 0) && (v != 0)) {
           allSolids.create(x, y, z, px, py, pz, sx, sy, sz, rx, ry, rz, v);
-          view_changed();
+          model_changed();
         }
       }
       else {
