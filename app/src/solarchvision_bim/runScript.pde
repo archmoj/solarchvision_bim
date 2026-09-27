@@ -173,7 +173,7 @@ String runScriptLine (String lineSTR) {
     }
 
     case "RUN.SCRIPT": {
-      if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Command + "/" + parts[1]));
+      if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Import + "/" + parts[1]));
       else selectFile_RunScript();
       return hint;
     }
