@@ -2,7 +2,7 @@ class Land3D {
 
   final static String CLASS_STAMP = "Land3D";
 
-  boolean loadMesh = false;
+  boolean loadMesh = true;
   boolean loadTextures = false;
 
   boolean displaySurface = false;
