@@ -183,6 +183,7 @@ python SOLARCHVISION_Overture_3D_in_obj.py --lat 40.7484 --lon -73.9857 --radius
 | `--include-parts` | off | Also fetch `building_part` features for finer massing on complex buildings |
 | `--ground-padding` | 0 | Extra meters added to `--radius` for the Mesh2 extents |
 | `--no-ground` | off | Skip writing the Mesh2 line |
+| `--no-stac` | off | Skip the STAC-accelerated query and go straight to a direct dataset scan (see "STAC-catalog gaps" below) |
 
 ### Partial failures (Overture script)
 
@@ -195,16 +196,36 @@ non-zero code to flag it as partial — matching the same pattern the OSM
 scripts use for a failed tree fetch. `overture-3d-import.yml` uploads the
 output folder regardless (`if: always()`).
 
+### STAC-catalog gaps (`Expected pandas DataFrame, ...`)
+
+Every Overture fetch tries the STAC-accelerated query first (fast — it
+narrows down which Parquet files to open before scanning), then
+automatically falls back to a direct dataset scan if that fails. This
+works around a known bug in `overturemaps<=1.0.2`: when the STAC catalog
+reports **zero** intersecting files for a bbox+release — which can
+happen for a release the catalog hasn't fully indexed yet, especially a
+very recently published one — `geodataframe(..., stac=True)` crashes
+with a confusing `TypeError: Expected pandas DataFrame, python
+dictionary or list of arrays` instead of returning an empty result. The
+direct-scan fallback (`stac=False`) doesn't have this bug: it applies
+the same bbox filter directly at the Parquet row-group level without
+depending on the STAC catalog, so it reliably finds real data even when
+the accelerated path can't. You'll see a one-line warning on stderr when
+this fallback kicks in; it's expected and not itself an error. Pass
+`--no-stac` to skip straight to the reliable path every time (slightly
+slower, since it can't skip as many files up front).
+
 ### If the Overture fetch fails
 
 This reads directly from Overture's public S3 bucket over plain HTTPS —
-no credentials involved. A failure here is almost always network
-reachability (general internet access, or a corporate firewall/proxy
-blocking outbound HTTPS to `amazonaws.com`) rather than a bug in the
-script; set `HTTPS_PROXY`/`HTTP_PROXY` env vars if your network needs an
-explicit proxy. If it's a transient S3/STAC-catalog hiccup, simply
-re-running usually resolves it; `--release` lets you pin a specific,
-known-good release if the auto-detected latest one has an issue.
+no credentials involved. A failure here (after both the STAC-accelerated
+and direct-scan attempts above) is almost always network reachability
+(general internet access, or a corporate firewall/proxy blocking
+outbound HTTPS to `amazonaws.com`) rather than a bug in the script; set
+`HTTPS_PROXY`/`HTTP_PROXY` env vars if your network needs an explicit
+proxy. If it's a transient S3 hiccup, simply re-running usually resolves
+it; `--release` lets you pin a specific, known-good release if the
+auto-detected latest one has a genuine data issue.
 
 ## Notes (OSM scripts)
 - Coverage depends entirely on OSM data quality in your area — some

@@ -310,25 +310,46 @@ def compute_bbox(lat, lon, radius, padding_factor=1.15):
     return (lon - lon_pad, lat - lat_pad, lon + lon_pad, lat + lat_pad)
 
 
-def fetch_overture(overture_type, lat, lon, radius, release=None):
+def fetch_overture(overture_type, lat, lon, radius, release=None, use_stac=True):
     """Fetch a GeoDataFrame of the given Overture type within a bounding
     box around (lat, lon). Raises OvertureUnreachableError with an
-    actionable message on network/S3 failures."""
+    actionable message on network/S3 failures.
+
+    Tries the STAC-accelerated path first (faster - it narrows down which
+    Parquet files to open before scanning), then falls back to a direct
+    dataset scan (stac=False) if that fails. This works around a known
+    overturemaps<=1.0.2 bug: when the STAC catalog reports zero
+    intersecting files for a bbox+release (which can happen for a very
+    recently published release the catalog hasn't fully indexed yet, or
+    a genuine catalog gap), `geodataframe(..., stac=True)` crashes with a
+    confusing `TypeError: Expected pandas DataFrame, ...` instead of
+    returning an empty result - see geodataframe()/record_batch_reader()/
+    _prepare_query() in overturemaps/core.py. The stac=False path doesn't
+    have this bug: it scans the dataset directly and applies the same
+    bbox filter at the Parquet row-group level without depending on the
+    STAC catalog at all, so it reliably finds real data even when the
+    STAC-accelerated path can't."""
     bbox = compute_bbox(lat, lon, radius)
-    try:
-        gdf = overture_core.geodataframe(overture_type, bbox=bbox, release=release, stac=True)
-    except Exception as e:
-        raise OvertureUnreachableError(
-            f"Could not fetch Overture '{overture_type}' data: {e}\n"
-            "This reads directly from Overture's public Amazon S3 bucket over HTTPS.\n"
-            "Things to check:\n"
-            "  1. General internet access / outbound HTTPS to amazonaws.com from this machine.\n"
-            "  2. A corporate firewall or proxy blocking S3 access - set HTTPS_PROXY/HTTP_PROXY\n"
-            "     env vars if your network requires an explicit proxy.\n"
-            "  3. If this is a transient S3/STAC catalog hiccup, simply re-running often helps.\n"
-            "  4. Pin a specific --release if the auto-detected latest release has an issue.\n"
-        ) from e
-    return gdf
+    attempts = [True, False] if use_stac else [False]
+    last_exc = None
+    for i, stac_flag in enumerate(attempts):
+        try:
+            return overture_core.geodataframe(overture_type, bbox=bbox, release=release, stac=stac_flag)
+        except Exception as e:
+            last_exc = e
+            if i < len(attempts) - 1:
+                print(f"  STAC-accelerated query for '{overture_type}' failed ({e}); "
+                      "retrying with a direct dataset scan (--no-stac) ...", file=sys.stderr)
+    raise OvertureUnreachableError(
+        f"Could not fetch Overture '{overture_type}' data: {last_exc}\n"
+        "This reads directly from Overture's public Amazon S3 bucket over HTTPS.\n"
+        "Things to check:\n"
+        "  1. General internet access / outbound HTTPS to amazonaws.com from this machine.\n"
+        "  2. A corporate firewall or proxy blocking S3 access - set HTTPS_PROXY/HTTP_PROXY\n"
+        "     env vars if your network requires an explicit proxy.\n"
+        "  3. If this is a transient S3/STAC catalog hiccup, simply re-running often helps.\n"
+        "  4. Pin a specific --release if the auto-detected latest release has an issue.\n"
+    ) from last_exc
 
 
 def keep_within_radius(gdf, transformer, origin, radius):
@@ -377,6 +398,7 @@ def main():
     ap.add_argument("--no-ground", action="store_true", help="Skip writing the Mesh2 ground-rectangle line in more_info.txt")
 
     ap.add_argument("--release", default=None, help="Overture release version to use (default: latest, auto-resolved via Overture's STAC catalog)")
+    ap.add_argument("--no-stac", action="store_true", help="Skip the STAC-accelerated query and go straight to a direct dataset scan (slower, but immune to a known overturemaps bug where a STAC catalog gap causes a crash instead of an empty result)")
     ap.add_argument("--outdir", default=None, help="Output folder for buildings.obj and more_info.txt (default: derived from lat/lon, e.g. 'site_40.7484_-73.9857')")
     args = ap.parse_args()
 
@@ -389,7 +411,7 @@ def main():
 
     print(f"Fetching Overture buildings within {args.radius} m of ({args.lat}, {args.lon}) ...")
     try:
-        buildings_gdf = fetch_overture("building", args.lat, args.lon, args.radius, args.release)
+        buildings_gdf = fetch_overture("building", args.lat, args.lon, args.radius, args.release, use_stac=not args.no_stac)
     except OvertureUnreachableError as e:
         print(f"\nERROR: {e}", file=sys.stderr)
         sys.exit(1)
@@ -400,7 +422,7 @@ def main():
     if args.include_parts:
         print(f"Fetching Overture building_part features within {args.radius} m ...")
         try:
-            parts_gdf = fetch_overture("building_part", args.lat, args.lon, args.radius, args.release)
+            parts_gdf = fetch_overture("building_part", args.lat, args.lon, args.radius, args.release, use_stac=not args.no_stac)
         except OvertureUnreachableError as e:
             print(f"\nWARNING: could not fetch building_part features ({e}); "
                   "continuing with buildings only.", file=sys.stderr)

@@ -31,6 +31,11 @@ on:
         description: 'Overture release version to pin (leave blank for latest, auto-resolved via their STAC catalog)'
         required: false
         default: ''
+      no_stac:
+        description: 'Skip the STAC-accelerated query and go straight to a direct dataset scan (slower, but immune to a known overturemaps bug where a STAC catalog gap causes a crash)'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -61,6 +66,9 @@ jobs:
           fi
           if [ -n "${{ inputs.release }}" ]; then
             EXTRA_ARGS="$EXTRA_ARGS --release ${{ inputs.release }}"
+          fi
+          if [ "${{ inputs.no_stac }}" = "true" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --no-stac"
           fi
           python import/SOLARCHVISION_Overture_3D_in_obj.py \
             --lat "${{ inputs.lat }}" \
