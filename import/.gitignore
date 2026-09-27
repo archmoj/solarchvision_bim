@@ -1,8 +1,10 @@
 *
 !.gitignore
 !README.md
-!SOLARCHVISION_OSM_3D_in_obj.py
-!requirements.txt
 !SOLARCHVISION_OSM_3D_in_obj.js
 !package.json
 !package-lock.json
+!SOLARCHVISION_OSM_3D_in_obj.py
+!requirements-osm.txt
+!SOLARCHVISION_Overture_3D_in_obj.py
+!requirements-overture.txt

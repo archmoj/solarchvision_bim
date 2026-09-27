@@ -1,8 +1,8 @@
-name: OSM 3D import - Python (single location)
+name: Overture 3D import (single location)
 
-# Manual only - this hits the public Overpass API for one location, so it
-# should not run on every push/PR. Trigger it from the Actions tab (or the
-# gh CLI/API) when you actually want a fresh export.
+# Manual only - this reads from Overture's public S3 bucket for one
+# location, so it should not run on every push/PR. Trigger it from the
+# Actions tab (or the gh CLI/API) when you actually want a fresh export.
 on:
   workflow_dispatch:
     inputs:
@@ -21,12 +21,16 @@ on:
       outdir:
         description: 'Output folder name (holds buildings.obj + more_info.txt)'
         required: true
-        default: 'empire_state_area'
+        default: 'empire_state_area_overture'
       include_parts:
-        description: 'Also fetch building:part features (needed for complex/modern buildings modeled as separate parts, e.g. towers/domes with no plain "building" outline of their own)'
+        description: 'Also fetch building_part features (needed for complex buildings modeled as separate parts, e.g. towers with a coarse has_parts=true outline of their own)'
         required: false
         type: boolean
         default: false
+      release:
+        description: 'Overture release version to pin (leave blank for latest, auto-resolved via their STAC catalog)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -43,35 +47,33 @@ jobs:
         with:
           python-version: '3.x'
           cache: 'pip'
-          cache-dependency-path: import/requirements-osm.txt
+          cache-dependency-path: import/requirements-overture.txt
 
-      # Matches import/README.md's "Setup" section. osmnx pulls in a heavy
-      # transitive stack (geopandas, shapely, pyproj, pandas, numpy, ...)
-      # with compiled wheels; the cache above avoids re-downloading all of
-      # that on every run - this step is a no-op on a cache hit.
+      # Matches import/README.md's "Setup & usage - Overture Maps" section.
       - name: Install dependencies
-        run: pip install -r import/requirements-osm.txt
+        run: pip install -r import/requirements-overture.txt
 
-      - name: Run SOLARCHVISION_OSM_3D_in_obj.py
+      - name: Run SOLARCHVISION_Overture_3D_in_obj.py
         run: |
           EXTRA_ARGS=""
           if [ "${{ inputs.include_parts }}" = "true" ]; then
             EXTRA_ARGS="--include-parts"
           fi
-          python import/SOLARCHVISION_OSM_3D_in_obj.py \
+          if [ -n "${{ inputs.release }}" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --release ${{ inputs.release }}"
+          fi
+          python import/SOLARCHVISION_Overture_3D_in_obj.py \
             --lat "${{ inputs.lat }}" \
             --lon "${{ inputs.lon }}" \
             --radius "${{ inputs.radius }}" \
             --outdir "${{ inputs.outdir }}" \
             $EXTRA_ARGS
 
-      # The step above always writes buildings.obj + more_info.txt into
-      # ${{ inputs.outdir }} (see the script's docstring) - upload that
-      # whole folder so it shows up as one downloadable zip on the run page.
       - name: Upload output folder
-        # The script exits non-zero if buildings succeeded but trees
-        # couldn't be fetched (a best-effort layer) - still upload
-        # whatever was written rather than silently dropping it.
+        # The script exits non-zero if buildings succeeded but
+        # building_part fetch didn't (a best-effort layer when
+        # include_parts is set) - still upload whatever was written
+        # rather than silently dropping it.
         if: always()
         uses: actions/upload-artifact@v4
         with:
