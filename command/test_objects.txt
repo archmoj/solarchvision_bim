@@ -16,6 +16,13 @@ House2 m:0 tes:0 lyr:0 x:0 y:20 z:0 dx:8 dy:8 dz:6 h:3 r:0
 House3 m:0 tes:0 lyr:0 x:20 y:20 z:0 dx:8 dy:8 dz:6 h:3 r:0
 
 Arc m:1 tes:0 lyr:0 x:0 y:0 z:0 r:6 deg:24 rot:0 ang:270 clz:0
+Arc m:2 tes:0 lyr:0 x:0 y:0 z:0 r:8 deg:24 rot:0 ang:360 clz:1
+
+Polyline m:1 tes:4 lyr:0 wgt:0 clz:1 16,-4,0 16,4,0 24,4,4 24,-4,4
+Polyline m:2 tes:4 lyr:0 wgt:1 clz:1 16,-4,0 16,4,0 24,4,4 24,-4,4
+Polyline m:3 tes:4 lyr:0 wgt:2 clz:1 16,-4,0 16,4,0 24,4,4 24,-4,4
+Polyline m:4 tes:4 lyr:0 wgt:-1 clz:1 16,-4,0 16,4,0 24,4,4 24,-4,4
+Polyline m:5 tes:4 lyr:0 wgt:-2 clz:1 16,-4,0 16,4,0 24,4,4 24,-4,4
 
 Select nothing
 

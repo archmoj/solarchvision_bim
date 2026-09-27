@@ -37,6 +37,7 @@ String runScriptLines (String[] FileALL) {
 // them.
 HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "move",
+  "polyline",
   "box", "sphere", "cylinder", "person", "house1", "house2", "house3",
   "octahedron", "icosahedron", "cushion",
   "rotate", "rotatex", "rotatey", "rotatez",
@@ -60,7 +61,6 @@ String runScriptLine (String lineSTR) {
 
   String transformedLine = lineSTR
     .replace("\"", "")
-    .replace(",", " ")      // replace commas with spaces
     .replaceAll(" +", " ")  // replace multiple spaces with a single space
     .replace("=", ":")      // replace equal with colon
     .replaceAll(":+", ":"); // replace multiple colons with a single colon
@@ -1200,7 +1200,7 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "PLOYLINE": {
+    case "POLYLINE": {
       if (parts.length > 1) {
         int m = 7;
         int tes = 0;

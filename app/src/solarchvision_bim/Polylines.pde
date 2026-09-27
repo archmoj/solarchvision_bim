@@ -202,7 +202,7 @@ class Polylines {
               allMaterials.Color[mt][0], allMaterials.Color[mt][1], allMaterials.Color[mt][2], allMaterials.Color[mt][3]
             };
 
-            float weight = 0.1 * this.getWeight(f);
+            float weight = 0.25 * this.getWeight(f);
 
             WIN3D.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
 
