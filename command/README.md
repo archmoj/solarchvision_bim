@@ -52,7 +52,8 @@ This page has two parts:
 -   `REC.JPG`: Records the frame (screenshot) in `.jpg` format (filename is optional)
 -   `REC.TIF`: Records the frame (screenshot) in `.tif` format (filename is optional)
 -   `REC.BMP`: Records the frame (screenshot) in `.bmp` format (filename is optional)
--   `QUIT` or `EXIT`: Exits the software
+-   `EXIT`: Exits command console
+-   `QUIT`: Exits the software
 
 Several of these are also reachable by their on-screen menu caption, if
 you prefer that form: `Open...`, `Save As...`, `Import 3D-model...`,

@@ -126,9 +126,14 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "QUIT":
-    case "EXIT": {
+    case "QUIT": {
       exit();
+      return hint;
+    }
+
+    case "EXIT": {
+      typeUserCommand = 0;
+      UI_consoleBar.revise();
       return hint;
     }
 

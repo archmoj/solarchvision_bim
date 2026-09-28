@@ -200,12 +200,13 @@ void keyPressed (KeyEvent e) {
           if(key == ESC) {
             key = 0; // Overrides the default ESC key behavior that exits a Processing sketch
 
-            if (cancelActivePickList()) {
-              WORLD.revise();
-            }
-
             if (UI_menuBar.selected_parent != -1) {
               UI_menuBar.deselect();
+            } /* else if (typeUserCommand == 1) {
+              typeUserCommand = 0;
+              UI_consoleBar.revise();
+            } else */ if (cancelActivePickList()) {
+              WORLD.revise();
             }
           }
 
