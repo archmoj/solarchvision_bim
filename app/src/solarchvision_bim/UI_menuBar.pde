@@ -8,8 +8,6 @@ class UI_menuBar {
 
   boolean update = true;
 
-  float width_parent = 7 * MessageSize;
-
   int selected_parent = -1;
   int selected_child = 0;
 
@@ -702,6 +700,7 @@ class UI_menuBar {
   // ---------------------------------------------------------------------
 
   private boolean isMenuLayerPopulated = false;
+  private float currentParentWidth = 0;
 
   void draw () {
     if (!this.update) return;
@@ -719,8 +718,13 @@ class UI_menuBar {
     X_control = 0; //0.25 * MessageSize;
     Y_control = 0.5 * pixel_A;
 
+    float cx = X_control;
+    currentParentWidth = 0;
     for (int i = 0; i < this.Items.length; i++) {
-      float cx = X_control + i * this.width_parent;
+      textSize(PARENT_TEXT_SIZE_FACTOR * MessageSize);
+      cx += currentParentWidth;
+      currentParentWidth = textWidth(this.Items[i][0]) + 2 * padParentWidth;
+
       float cy = Y_control;
       float cr = 0.5 * pixel_A;
 
@@ -738,7 +742,7 @@ class UI_menuBar {
   // Draws a single top-level tab (e.g. "File", "Tools", ...) and updates
   // selection state when the mouse is hovering over it.
   void drawParentTab(int i, float cx, float cy, float cr) {
-    if (isInside(mouseX, mouseY, cx, cy - cr, cx + this.width_parent, cy + cr)) {
+    if (isInside(mouseX, mouseY, cx, cy - cr, cx + currentParentWidth, cy + cr)) {
       if (this.selected_parent == -1) {
         pre_screen = get(0, pixel_A, width, height - pixel_A);
         //println("Screen GET!");
@@ -748,20 +752,20 @@ class UI_menuBar {
     }
 
     textAlign(LEFT, CENTER);
-    textSize(PARENT_TEXT_SIZE_FACTOR * MessageSize);
 
     if (this.selected_parent == i) {
-      stroke(0);
-      fill(0);
-    } else {
-      stroke(255);
-      fill(255);
+      noStroke();
+      fill(0, 0, 255);
+      rect(cx, cy - cr, currentParentWidth, 2 * cr);
     }
+    stroke(255);
+    fill(255);
 
-    text(this.Items[i][0], cx + 0.5 * MessageSize, cy - 0.125 * MessageSize);
+    text(this.Items[i][0], cx + padParentWidth, cy - 0.125 * MessageSize);
   }
 
-  final float padWidth = 0.5 * MessageSize;
+  final float padParentWidth = 0.75 * MessageSize;
+  final float padChildrenWidth = 0.5 * MessageSize;
 
   // Draws the dropdown for the currently open parent tab.
   void drawChildMenu(int i, float cx, float cy, float cr) {
@@ -784,7 +788,7 @@ class UI_menuBar {
       if (widthChildren < estimatedWidth) widthChildren = estimatedWidth;
     }
     // add padding to both sides
-    widthChildren += 2 * padWidth;
+    widthChildren += 2 * padChildrenWidth;
 
     return widthChildren;
   }
@@ -826,13 +830,13 @@ class UI_menuBar {
     }
 
     if(isSelectable) {
-      text(label, cx + padWidth, rowTop + cr - 0.1 * MessageSize);
+      text(label, cx + padChildrenWidth, rowTop + cr - 0.1 * MessageSize);
     } else {
       stroke(0, 127, 255);
       strokeWeight(2);
       line(
-        cx + padWidth,                                rowTop + cr,
-        cx + padWidth + widthChildren - 2 * padWidth, rowTop + cr
+        cx + padChildrenWidth,                                rowTop + cr,
+        cx + padChildrenWidth + widthChildren - 2 * padChildrenWidth, rowTop + cr
       );
       strokeWeight(0);
       noStroke();
