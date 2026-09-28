@@ -145,10 +145,6 @@ void keyPressed (KeyEvent e) {
       X_clicked = -1;
       Y_clicked = -1;
 
-      if ((UI_menuBar.selected_parent != -1) || (UI_menuBar.selected_child != 0)) {
-        UI_menuBar.deselect();
-      }
-
       if (e.isControlDown()) {
         if (!addNewSelectionToPreviousSelection_isOverridden) {
           addNewSelectionToPreviousSelection_beforeModifierKey = addNewSelectionToPreviousSelection;
@@ -202,10 +198,10 @@ void keyPressed (KeyEvent e) {
 
             if (UI_menuBar.selected_parent != -1) {
               UI_menuBar.deselect();
-            } /* else if (typeUserCommand == 1) {
+            } else if (typeUserCommand == 1) {
               typeUserCommand = 0;
               UI_consoleBar.revise();
-            } else */ if (cancelActivePickList()) {
+            } else if (cancelActivePickList()) {
               WORLD.revise();
             }
           }
