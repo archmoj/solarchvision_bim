@@ -315,6 +315,30 @@ class Create3DTest {
       new float[][]{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}});
 
     assertEquals(3, app.allVertices.length);
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(3, app.allFaces.nodes[0].length);
+    // Regression: add_Mesh previously never applied these to the created
+    // face at all, silently reusing whatever current_* happened to be set
+    // from an earlier call instead.
+    assertArrayEquals(new int[]{3, 1, 2, 1, 4, 0}, app.allFaces.options[0]);
+  }
+
+  @Test
+  void addMesh_buildsAnOctagonFromEightDistinctPoints () {
+    app.Create3D.add_Mesh(0, 0, 0, 1, 0, 0, new float[][]{
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0},
+      {0, 2, 0}, {-1, 2, 0}, {-2, 1, 0}, {-1, 0, 0}
+    });
+    assertEquals(8, app.allVertices.length);
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(8, app.allFaces.nodes[0].length);
+  }
+
+  @Test
+  void addMesh_isANoOpForFewerThanThreePoints () {
+    app.Create3D.add_Mesh(0, 0, 0, 1, 0, 0, new float[][]{{0, 0, 0}, {1, 0, 0}});
+    assertEquals(0, app.allVertices.length);
+    assertEquals(0, app.allFaces.nodes.length);
   }
 
   // ================= add_PolygonHyper / add_PolygonExtrude ==============

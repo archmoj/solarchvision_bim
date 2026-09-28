@@ -1099,7 +1099,7 @@ String runScriptLine (String lineSTR) {
             }
           }
         }
-        if (points.length > 1) {
+        if (points.length > 2) {
           Create3D.add_Mesh(m, tes, lyr, vsb, wgt, clz, points);
           view_changed();
         }

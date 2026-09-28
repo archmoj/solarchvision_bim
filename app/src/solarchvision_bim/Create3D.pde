@@ -1017,6 +1017,15 @@ class Create3D {
 
   void add_Mesh (int m, int tes, int lyr, int vsb, int wgt, int clz, float[][] points) {
 
+    if (points.length < 3) return;
+
+    current_Material = m;
+    current_Tessellation = tes;
+    current_Layer = lyr;
+    current_Visibility = vsb;
+    current_Weight = wgt;
+    current_Closed = clz;
+
     int[] newFace_nodes = new int[points.length];
 
     for (int i = 0; i < points.length; i++) {
