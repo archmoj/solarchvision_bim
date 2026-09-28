@@ -45,19 +45,37 @@ class UI_consoleBar {
           textAlign(LEFT, CENTER);
           fill(255);
 
+          float x = 0.5 * MessageSize;
+          float y = q * 1.5 * MessageSize;
+
           String txt = n < allCommands.length - 1 ? allCommands[n] : this.editText;
-          if(n == allCommands.length - 1) {
-            // text with cursor
-            if(this.editCursor < this.editText.length()) {
-              txt =
-                txt.substring(0, this.editCursor) + "|" +
-                txt.substring(this.editCursor);
-            } else {
-              txt += "|";
+          if(typeUserCommand == 0) {
+            text(txt, x, y);
+          } else {
+            String txt_1 = txt;
+            String txt_2 = "";
+            String txt_3 = "";
+            if(n == allCommands.length - 1) {
+              // text with cursor
+              if(this.editCursor < this.editText.length()) {
+                txt_1 = txt.substring(0, this.editCursor);
+                txt_3 = txt.substring(this.editCursor);
+              }
+              txt_2 = "|";
+            }
+            text(txt_1, x, y);
+            if(!txt_2.equals("")) {
+              float offset = textWidth(txt_1); // measure previous text
+              fill(255, 0, 0);
+              text(txt_2, offset + x, y);
+
+              if(!txt_3.equals("")) {
+                offset += textWidth(txt_2); // measure previous text
+                fill(255);
+                text(txt_3, offset + x, y);
+              }
             }
           }
-          text(txt, 0.5 * MessageSize, q * 1.5 * MessageSize);
-
         }
       }
 
