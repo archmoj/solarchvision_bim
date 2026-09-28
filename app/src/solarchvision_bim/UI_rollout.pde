@@ -34,14 +34,14 @@ class UI_rollout {
 
   void buildAllRollouts () {
 
+    PARENT_LOCATION = pushParent("Location & Data");
+    CHILD_LOCATION_POINT = pushChild("Point");
+    CHILD_LOCATION_STATIONS = pushChild("Stations");
+
     PARENT_PERIOD_SCENARIOS = pushParent("Period & Scenarios");
     CHILD_PERIOD_TIME = pushChild("Time");
     CHILD_PERIOD_RANGES = pushChild("Ranges");
     CHILD_PERIOD_FILTERS = pushChild("Filters");
-
-    PARENT_LOCATION = pushParent("Location & Data");
-    CHILD_LOCATION_POINT = pushChild("Point");
-    CHILD_LOCATION_STATIONS = pushChild("Stations");
 
     PARENT_GEOMETRY = pushParent("Geometry & Space");
     CHILD_GEOMETRY_CREATE = pushChild("Create");
@@ -60,14 +60,14 @@ class UI_rollout {
     CHILD_ILLUSTRATION_3D_SPATIAL = pushChild("3D-Spatial");
     CHILD_ILLUSTRATION_SELECTION = pushChild("Selection");
 
+    PARENT_EXPORT = pushParent("Export Products");
+    CHILD_EXPORT_DATA = pushChild("Data");
+    CHILD_EXPORT_MEDIA = pushChild("Media");
+
     PARENT_POSTPROCESS = pushParent("Post-Processing");
     CHILD_POSTPROCESS_INTERPOLATION = pushChild("Interpolation");
     CHILD_POSTPROCESS_DEVELOPED = pushChild("Developed");
     CHILD_POSTPROCESS_IMPACTS = pushChild("Impacts");
-
-    PARENT_EXPORT = pushParent("Export Products");
-    CHILD_EXPORT_DATA = pushChild("Data");
-    CHILD_EXPORT_MEDIA = pushChild("Media");
   }
 
   int PARENT_PERIOD_SCENARIOS;
@@ -114,8 +114,8 @@ class UI_rollout {
 
   public UI_rollout () {
     buildAllRollouts();
-    parent = PARENT_PERIOD_SCENARIOS; // default parent
-    child = CHILD_PERIOD_TIME; // default child
+    parent = PARENT_LOCATION; // default parent
+    child = CHILD_LOCATION_POINT; // default child
 
     selectedChildForParent = new int[allRollouts.size()];
     for (int i = 0; i < selectedChildForParent.length; i++) {
