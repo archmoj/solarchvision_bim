@@ -20,8 +20,8 @@ class UI_menuBar {
 
   static final float PARENT_TEXT_SIZE_FACTOR = 1.25;
   static final float CHILD_ROW_HEIGHT_FACTOR = 0.85;
-  static final float CHILD_WIDTH_PER_CHAR = 0.55;
   static final char DIVIDER_MARK = '—';
+  final String ___divider___ = String.valueOf(DIVIDER_MARK);
 
   static final int HOVER_COLOR_R = 255;
   static final int HOVER_COLOR_G = 127;
@@ -67,23 +67,23 @@ class UI_menuBar {
       "File",
       "New",
       "Open...",
-      "——————————————————",
+      ___divider___,
       "Import 3D-model...",
       "Import Command File...",
-      "——————————————————",
+      ___divider___,
       "Hold",
       "Fetch",
-      "——————————————————",
+      ___divider___,
       "Save",
       "Save As...",
-      "——————————————————",
+      ___divider___,
       "Export 3D-model > SCR",
       "Export 3D-model > RAD",
       "Export 3D-model > HTML",
       "Export 3D-model > OBJ",
       "Export 3D-model > OBJ (date-series)",
       "Export 3D-model > OBJ (time-series)",
-      "——————————————————",
+      ___divider___,
       "Quit"
     }
     ,
@@ -95,24 +95,24 @@ class UI_menuBar {
       "PDF Location Graph",
       "JPG 3D Graph",
       "JPG 3D Full-Period",
-      "——————————————————",
+      ___divider___,
       "Screenshot",
       "Screenshot+Click",
       "Screenshot+Drag",
-      "——————————————————",
+      ___divider___,
       "REC. Time Graph",
       "REC. Location Graph",
       "REC. Solid Graph",
       "REC. Screenshot",
       "Stop REC.",
-      "——————————————————",
+      ___divider___,
       "Add People on Land",
       "Add 2D-Trees on Land",
       "Add 1D-Trees on Land",
-      "——————————————————",
+      ___divider___,
       "Clone Selection (Identical)",
       "Clone Selection (Variation)",
-      "——————————————————",
+      ___divider___,
       "Delete Selection",
       "Delete Scene Empty Groups",
       "Delete Scene Isolated Vertices",
@@ -131,30 +131,30 @@ class UI_menuBar {
     {
       "Location",
       "Update Station",
-      "———————————————",
+      ___divider___,
       "Use typical year (TMY)",
       "Use long-term (CWEEDS)",
       "Use long-term (CLMREC)",
       "Use real-time observed (SWOB)",
       "Use weather forecast (NAEFS)",
-      "———————————————",
+      ___divider___,
       "Update TMYEPW",
       "Update CWEEDS",
       "Update CLMREC",
       "Update SWOB",
       "Update NAEFS",
-      "———————————————",
+      ___divider___,
       "Load Toroposphere",
       "Load Land Mesh",
       "Load Land Texture",
       "Download Land Mesh",
       "Download Land Texture",
-      "———————————————",
+      ___divider___,
       "Download TMYEPW",
       "Download CLMREC",
       "Download NAEFS",
       "Download SWOB",
-      "———————————————",
+      ___divider___,
       "Show/Hide TMYEPW stations",
       "Show/Hide TMYEPW nearest",
       "Show/Hide CWEEDS stations",
@@ -173,7 +173,7 @@ class UI_menuBar {
       "Enlarge 3D Viewport",
       "Enlarge Map Viewport",
       "Enlarge Time Viewport",
-      "——————————",
+      ___divider___,
       "Layout -2",
       "Layout -1",
       "Layout 0",
@@ -185,7 +185,7 @@ class UI_menuBar {
       "Layout 6",
       "Layout 7",
       "Layout 8",
-      "——————————",
+      ___divider___,
       "3D-model 1",
       "3D-model 2",
       "3D-model 3",
@@ -208,27 +208,27 @@ class UI_menuBar {
       "Analysis",
       "Wind pattern (active)",
       "Wind pattern (passive)",
-      "————————————————",
+      ___divider___,
       "Orientation potential (active)",
       "Orientation potential (passive)",
-      "————————————————",
+      ___divider___,
       "Hourly sun position (active)",
       "Hourly sun position (passive)",
-      "————————————————",
+      ___divider___,
       "Annual cycle sun path (active)",
       "Annual cycle sun path (passive)",
-      "————————————————",
+      ___divider___,
       "Urban solar potential (active)",
       "Urban solar potential (passive)",
-      "————————————————",
+      ___divider___,
       "Shade Viewport",
-      "————————————————",
+      ___divider___,
       "Prebake Viewport",
       "Prebake Selected Sections",
-      "————————————————",
+      ___divider___,
       "Process Active Impact",
       "Process Passive Impact",
-      "————————————————",
+      ___divider___,
       "Process Solid Impact",
       "Run wind 3D-model"
     }
@@ -237,15 +237,15 @@ class UI_menuBar {
       "3D-shade",
       "Active Shade",
       "Passive Shade",
-      "————————————",
+      ___divider___,
       "Shade Surface Wire",
       "Shade Surface Base",
       "Shade Surface White",
       "Shade Surface Materials",
-      "————————————",
+      ___divider___,
       "Shade Global Solar",
       "Shade Vertex Solar",
-      "————————————",
+      ___divider___,
       "Shade Vertex Solid",
       "Shade Vertex Elevation"
     }
@@ -254,9 +254,9 @@ class UI_menuBar {
       "3D-view",
       "Viewport >> Camera",
       "Camera >> Viewport",
-      "—————————",
+      ___divider___,
       "Camera View",
-      "—————————",
+      ___divider___,
       "Top",
       "Front",
       "Left",
@@ -267,10 +267,10 @@ class UI_menuBar {
       "S.E.",
       "N.E.",
       "N.W.",
-      "—————————",
+      ___divider___,
       "Perspective",
       "Orthographic",
-      "—————————",
+      ___divider___,
       "Zoom",
       "Zoom as default",
       "Look at origin",
@@ -347,14 +347,14 @@ class UI_menuBar {
       "3D-create",
       "Begin New Group at Origin",
       "Begin New Group at Pivot",
-      "—————————————",
+      ___divider___,
       "Section",
       "Camera",
-      "—————————————",
+      ___divider___,
       "1D-Tree",
       "2D-Tree",
       "Person",
-      "—————————————",
+      ___divider___,
       "Box",
       "Cushion",
       "Cylinder",
@@ -367,22 +367,22 @@ class UI_menuBar {
       "Surface",
       "Polygon",
       "Extrude",
-      "—————————————",
+      ___divider___,
       "House1",
       "House2",
       "House3",
-      "—————————————",
+      ___divider___,
       "Parametric 1",
       "Parametric 2",
       "Parametric 3",
       "Parametric 4",
       "Parametric 5",
       "Parametric 6",
-      "—————————————",
+      ___divider___,
       "Solid",
       "Point",
       "Polyline",
-      "—————————————",
+      ___divider___,
       "LandMesh >> Group",
       "LandGap >> Group"
     }
@@ -392,11 +392,11 @@ class UI_menuBar {
       "Pick Select",
       "Pick Select+",
       "Pick Select-",
-      "———————————————",
+      ___divider___,
       "Window Select",
       "Window Select+",
       "Window Select-",
-      "———————————————",
+      ___divider___,
       "Select Section",
       "Select Camera",
       "Select Group",
@@ -407,11 +407,11 @@ class UI_menuBar {
       "Select Face",
       "Select Vertex",
       "Select LandPoint",
-      "———————————————",
+      ___divider___,
       "Soft Selection",
       "Invert Selection",
       "Deselect All",
-      "———————————————",
+      ___divider___,
       "Select All",
       "Select All-Sections",
       "Select All-Cameras",
@@ -423,7 +423,7 @@ class UI_menuBar {
       "Select All-Faces",
       "Select All Vertices",
       "Select All LandPoints",
-      "———————————————",
+      ___divider___,
       "Select Near Selected Vertices",
       "Select Scene Isolated Vertices"
     }
@@ -436,13 +436,13 @@ class UI_menuBar {
       "Groups >> Model2Ds",
       "Groups >> Solids",
       "Groups >> Polylines",
-      "——————————",
+      ___divider___,
       "Faces >> Vertices",
       "Vertices >> Faces",
-      "——————————",
+      ___divider___,
       "Polylines >> Vertices",
       "Vertices >> Polylines",
-      "——————————",
+      ___divider___,
       "Faces >> Groups",
       "Vertices >> Groups",
       "Model1Ds >> Groups",
@@ -455,42 +455,42 @@ class UI_menuBar {
       "3D-modify",
       "Attach to Last Group",
       "Dettach from Groups Selection",
-      "——————————————————",
+      ___divider___,
       "Group Selection",
       "Ungroup Selection",
-      "——————————————————",
+      ___divider___,
       "Tessellate Triangular",
       "Tessellate Rectangular",
       "Tessellate Rows & Columns",
-      "——————————————————",
+      ___divider___,
       "Insert Corner Opennings",
       "Insert Parallel Opennings",
       "Insert Rotated Opennings",
       "Insert Edge Opennings",
-      "——————————————————",
+      ___divider___,
       "Offset(above) Vertices",
       "Offset(below) Vertices",
       "Offset(expand) Vertices",
       "Offset(shrink) Vertices",
-      "——————————————————",
+      ___divider___,
       "Extrude Face Edges",
       "Optimize Faces",
       "Auto-Normal Selected Faces",
       "Force Triangulate Selected Faces",
-      "——————————————————",
+      ___divider___,
       "Separate Selected Vertices",
       "Reposition Selected Vertices",
       "Weld Objects Selected Vertices",
       "Weld Scene Selected Vertices",
       "Flatten Selected LandPoints",
-      "——————————————————",
+      ___divider___,
       "Reverse Visibility of All-Faces",
       "Hide All-Faces",
       "Hide Selected Faces",
       "Unhide Selected Faces",
       "Unhide All-Faces",
       "Isolate Selection",
-      "——————————————————",
+      ___divider___,
       "Reverse Visibility of All-Polylines",
       "Hide All-Polylines",
       "Hide Selected Polylines",
@@ -504,7 +504,7 @@ class UI_menuBar {
       "Reset Saved ReferenceBox",
       "Use Selection ReferenceBox",
       "Use Origin ReferenceBox",
-      "—————————————",
+      ___divider___,
       "PivotX:Minimum",
       "PivotX:Center",
       "PivotX:Maximum",
@@ -514,7 +514,7 @@ class UI_menuBar {
       "PivotZ:Minimum",
       "PivotZ:Center",
       "PivotZ:Maximum",
-      "—————————————",
+      ___divider___,
       "Pick Seed/Material",
       "Pick tessellation",
       "Pick Layer",
@@ -523,7 +523,7 @@ class UI_menuBar {
       "Pick TrunkSize",
       "Pick LeafSize",
       "Pick Model1DsProps",
-      "—————————————",
+      ___divider___,
       "Assign Seed/Material",
       "Assign tessellation",
       "Assign Layer",
@@ -533,11 +533,11 @@ class UI_menuBar {
       "Assign LeafSize",
       "Assign Model1DsProps",
       "Assign Pivot",
-      "—————————————",
+      ___divider___,
       "Drop on LandSurface",
       "Drop on ModelSurface (Up)",
       "Drop on ModelSurface (Down)",
-      "—————————————",
+      ___divider___,
       "Get dX",
       "Get dY",
       "Get dZ",
@@ -551,27 +551,27 @@ class UI_menuBar {
       "MoveX",
       "MoveY",
       "MoveZ",
-      "——————————",
+      ___divider___,
       "Rotate",
       "RotateX",
       "RotateY",
       "RotateZ",
-      "——————————",
+      ___divider___,
       "Scale",
       "ScaleX",
       "ScaleY",
       "ScaleZ",
-      "——————————",
+      ___divider___,
       "Power",
       "PowerX",
       "PowerY",
       "PowerZ",
-      "——————————",
+      ___divider___,
       "Flip Normal",
       "Set-Out Normal",
       "Set-In Normal",
       "Get FirstVertex",
-      "——————————",
+      ___divider___,
       "Change Seed/Material",
       "Change tessellation",
       "Change Layer",
@@ -607,7 +607,7 @@ class UI_menuBar {
     }
 
     int base = allLayers.length;
-    this.Items[LayersID_in_Bar][base + 0] = "———————————————————";
+    this.Items[LayersID_in_Bar][base + 0] = ___divider___;
     this.Items[LayersID_in_Bar][base + 1] = "Wind power";
     this.Items[LayersID_in_Bar][base + 2] = "Radiation on solar tracker";
     this.Items[LayersID_in_Bar][base + 3] = "Radiation on surface with inclination";
@@ -762,12 +762,16 @@ class UI_menuBar {
     text(this.Items[i][0], cx + 0.5 * MessageSize, cy - 0.125 * MessageSize);
   }
 
+  final float padWidth = 0.5 * MessageSize;
+
   // Draws the dropdown for the currently open parent tab.
   void drawChildMenu(int i, float cx, float cy, float cr) {
     image(pre_screen, 0, pixel_A);
     this.selected_child = 0;
 
-    float widthChildren = computeChildMenuWidth(i);
+    // set textSize here so that textWidth use that
+    textSize(MessageSize);
+    float widthChildren = computeChildMenuWidth(i) + 2 * padWidth;
 
     for (int j = 1; j < this.Items[i].length; j++) {
       drawChildRow(i, j, cx, cy, cr, widthChildren);
@@ -779,7 +783,7 @@ class UI_menuBar {
   float computeChildMenuWidth(int parentIndex) {
     float widthChildren = this.width_child;
     for (int j = 1; j < this.Items[parentIndex].length; j++) {
-      float estimatedWidth = this.Items[parentIndex][j].length() * MessageSize * CHILD_WIDTH_PER_CHAR;
+      float estimatedWidth = textWidth(this.Items[parentIndex][j]);
       if (widthChildren < estimatedWidth) widthChildren = estimatedWidth;
     }
     return widthChildren;
@@ -821,8 +825,18 @@ class UI_menuBar {
       fill(255);
     }
 
-    textSize(MessageSize);
-    text(label, cx + 0.5 * MessageSize, rowTop + cr - 0.1 * MessageSize);
+    if(isSelectable) {
+      text(label, cx + padWidth, rowTop + cr - 0.1 * MessageSize);
+    } else {
+      stroke(0, 127, 255);
+      strokeWeight(2);
+      line(
+        cx + padWidth,                                rowTop + cr,
+        cx + padWidth + widthChildren - 2 * padWidth, rowTop + cr
+      );
+      strokeWeight(0);
+      noStroke();
+    }
   }
 
   void revise () {
