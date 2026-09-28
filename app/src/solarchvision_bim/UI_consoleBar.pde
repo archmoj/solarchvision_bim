@@ -4,6 +4,7 @@ class UI_consoleBar {
 
   boolean update = true;
 
+  int cycleCursor = 0;
   int editCursor = 0;
   String editText = "";
 
@@ -80,6 +81,7 @@ class UI_consoleBar {
     // reset editText
     this.editText = "";
     this.editCursor = 0;
+    this.cycleCursor = allCommands.length;
     // run last command
     return runScriptLine(allCommands[allCommands.length - 1]);
   }
@@ -113,6 +115,27 @@ class UI_consoleBar {
 
       if (key == CODED) {
         switch (keyCode) {
+
+          case UP:
+            if (this.cycleCursor > 0) {
+              if(this.cycleCursor == allCommands.length - 1) {
+                // keep edit text inside last allCommands
+                allCommands[this.cycleCursor] = this.editText;
+              }
+
+              this.cycleCursor--;
+              this.editText = allCommands[this.cycleCursor];
+              this.editCursor = this.editText.length();
+            }
+            break;
+
+          case DOWN:
+            if (this.cycleCursor < allCommands.length - 1) {
+              this.cycleCursor++;
+              this.editText = allCommands[this.cycleCursor];
+              this.editCursor = this.editText.length();
+            }
+            break;
 
           case LEFT:
             if (this.editCursor > 0) this.editCursor--;
