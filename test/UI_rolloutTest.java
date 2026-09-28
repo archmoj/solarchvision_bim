@@ -84,10 +84,10 @@ class UI_rolloutTest {
     app.UI_rollout.beginSpinnerEdit("Begin day", 15);
 
     assertTrue(app.UI_rollout.isEditingSpinner());
-    assertEquals("Begin day", app.UI_rollout.spinnerEditCaption);
-    assertEquals("15", app.UI_rollout.spinnerEditText);
-    assertEquals(2, app.UI_rollout.spinnerEditCursor); // cursor starts after the last digit
-    assertFalse(app.UI_rollout.spinnerEditCommit);
+    assertEquals("Begin day", app.UI_rollout.editCaption);
+    assertEquals("15", app.UI_rollout.editText);
+    assertEquals(2, app.UI_rollout.editCursor); // cursor starts after the last digit
+    assertFalse(app.UI_rollout.editCommit);
   }
 
   @Test

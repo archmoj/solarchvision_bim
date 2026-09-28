@@ -14,12 +14,12 @@ class UI_rollout {
 
   // Spinner text-edit state: which spinner (identified by its caption) is
   // currently accepting keyboard input, and the value being typed so far.
-  boolean spinnerEditActive = false;
-  String spinnerEditCaption = "";
-  String spinnerEditText = "";
-  int spinnerEditCursor = 0;
-  boolean spinnerEditCommit = false;
-  boolean spinnerEditStateChanged = false;
+  boolean editActive = false;
+  String editCaption = "";
+  String editText = "";
+  int editCursor = 0;
+  boolean editCommit = false;
+  boolean editStateChanged = false;
 
   // Captions of every spinner drawn on the current page, in on-screen
   // order, rebuilt each drawView() pass. Used by Tab / Shift+Tab to know
@@ -30,7 +30,7 @@ class UI_rollout {
   // by caption) become the new edit target. The actual switch happens once
   // that spinner's own _Spinner() call is reached, since only there is its
   // live value known (needed to seed the typed text).
-  String spinnerEditPendingCaption = null;
+  String editPendingCaption = null;
 
   void buildAllRollouts () {
 
@@ -392,7 +392,7 @@ class UI_rollout {
 
   void draw () {
 
-    this.spinnerEditStateChanged = false;
+    this.editStateChanged = false;
     this.spinnerOrderThisPass.clear();
 
     stroke(255);
@@ -427,7 +427,7 @@ class UI_rollout {
 
         textAlign(LEFT, CENTER);
 
-        if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
+        if (!this.editActive && isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 150 * this.view_S, cy + cr)) {
           this.parent = i;
           this.child = selectedChildForParent[i];
 
@@ -469,7 +469,7 @@ class UI_rollout {
 
         textAlign(LEFT, CENTER);
 
-        if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr)) {
+        if (!this.editActive && isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 100 * this.view_S, cy + cr)) {
           this.child = i;
           selectedChildForParent[this.parent] = i; // remember this choice for next time this category is opened
 
@@ -848,7 +848,7 @@ class UI_rollout {
       }
     }
 
-    if (this.spinnerEditStateChanged) {
+    if (this.editStateChanged) {
       this.draw();
     }
   }
@@ -933,12 +933,12 @@ class UI_rollout {
   }
 
   void beginSpinnerEdit (String caption, float value) {
-    this.spinnerEditActive = true;
-    this.spinnerEditCaption = caption;
-    this.spinnerEditText = this.formatSpinnerValue(value);
-    this.spinnerEditCursor = this.spinnerEditText.length();
-    this.spinnerEditCommit = false;
-    this.spinnerEditStateChanged = true;
+    this.editActive = true;
+    this.editCaption = caption;
+    this.editText = this.formatSpinnerValue(value);
+    this.editCursor = this.editText.length();
+    this.editCommit = false;
+    this.editStateChanged = true;
   }
 
   float _Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
@@ -971,13 +971,13 @@ class UI_rollout {
     // the control not covered by the white value box) enables direct
     // keyboard entry of this spinner's value. Only one spinner can be in
     // edit mode at a time; it is tracked by its caption string.
-    boolean editingThis = this.spinnerEditActive && this.spinnerEditCaption.equals(caption);
+    boolean editingThis = this.editActive && this.editCaption.equals(caption);
 
-    if (editingThis && this.spinnerEditCommit) {
+    if (editingThis && this.editCommit) {
 
       float typed_value = v;
       try {
-        typed_value = Float.parseFloat(this.spinnerEditText);
+        typed_value = Float.parseFloat(this.editText);
       }
       catch (Exception ex) {
         typed_value = v;
@@ -987,29 +987,29 @@ class UI_rollout {
       if (new_value < min_v) new_value = min_v;
       if (new_value > max_v) new_value = max_v;
 
-      this.spinnerEditActive = false;
-      this.spinnerEditCaption = "";
-      this.spinnerEditText = "";
-      this.spinnerEditCursor = 0;
-      this.spinnerEditCommit = false;
+      this.editActive = false;
+      this.editCaption = "";
+      this.editText = "";
+      this.editCursor = 0;
+      this.editCommit = false;
 
       editingThis = false;
 
-      this.spinnerEditStateChanged = true;
+      this.editStateChanged = true;
 
       UI_rollout.revise();
     }
 
     // Tab / Shift+Tab requested this spinner become the new edit target.
-    if ((this.spinnerEditPendingCaption != null) && this.spinnerEditPendingCaption.equals(caption) && !editingThis) {
+    if ((this.editPendingCaption != null) && this.editPendingCaption.equals(caption) && !editingThis) {
 
       this.beginSpinnerEdit(caption, new_value);
-      this.spinnerEditPendingCaption = null;
+      this.editPendingCaption = null;
 
       editingThis = true;
     }
 
-    if ((!this.spinnerEditActive || editingThis) && (
+    if ((!this.editActive || editingThis) && (
       isInside(X_clicked, Y_clicked, x - w1 - w2 - o, y - (h / 2) - o, x - w1, y + (h / 2) + o) || // gray area
       isInside(X_clicked, Y_clicked, x - w1,          y - (h / 2), x,          y + (h / 2))        // bar area
     )) {
@@ -1037,7 +1037,7 @@ class UI_rollout {
     cr = 0.25 * (h + 2 * o);
     triangle(cx + cr * funcs.cos_ang(270), cy + 0.75 * cr * funcs.sin_ang(270), cx + 0.75 * cr * funcs.cos_ang(30), cy + 0.75 * cr * funcs.sin_ang(30), cx + 0.75 * cr * funcs.cos_ang(150), cy + 0.75 * cr * funcs.sin_ang(150));
 
-    if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
+    if (!this.editActive && isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
       if (mouseButton == LEFT) {
 
         if (stp_v < 0) {
@@ -1054,7 +1054,7 @@ class UI_rollout {
     cy += 2 * cr;
     triangle(cx + cr * funcs.cos_ang(90), cy + 0.75 * cr * funcs.sin_ang(90), cx + 0.75 * cr * funcs.cos_ang(210), cy + 0.75 * cr * funcs.sin_ang(210), cx + 0.75 * cr * funcs.cos_ang(330), cy + 0.75 * cr * funcs.sin_ang(330));
 
-    if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
+    if (!this.editActive && isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr)) {
 
       if (mouseButton == LEFT) {
 
@@ -1094,7 +1094,7 @@ class UI_rollout {
       q = (new_value - min_v) / (max_v - min_v);
     }
 
-    if (!this.spinnerEditActive && isInside(X_clicked, Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
+    if (!this.editActive && isInside(X_clicked, Y_clicked, x - w1, y - (h / 2), x, y + (h / 2))) {
       if (mouseButton == RIGHT) { // change value by right click over the bar
         q = 1;
 
@@ -1130,7 +1130,7 @@ class UI_rollout {
     if (editingThis) {
 
       textAlign(LEFT, CENTER);
-      String textWithCursor = this.spinnerEditText.substring(0, this.spinnerEditCursor) + "|" + this.spinnerEditText.substring(this.spinnerEditCursor);
+      String textWithCursor = this.editText.substring(0, this.editCursor) + "|" + this.editText.substring(this.editCursor);
       text(textWithCursor, x - w1 + t_oW, y - t_oH);
     } else {
 
@@ -1164,23 +1164,23 @@ class UI_rollout {
   }
 
   boolean isEditingSpinner () {
-    return this.spinnerEditActive;
+    return this.editActive;
   }
 
   void keyPressed (KeyEvent e) {
 
-    if (!this.spinnerEditActive) return;
+    if (!this.editActive) return;
     if (e.isAltDown() || e.isControlDown()) return;
 
     if (key == CODED) {
       switch (keyCode) {
 
         case LEFT:
-          if (this.spinnerEditCursor > 0) this.spinnerEditCursor--;
+          if (this.editCursor > 0) this.editCursor--;
           break;
 
         case RIGHT:
-          if (this.spinnerEditCursor < this.spinnerEditText.length()) this.spinnerEditCursor++;
+          if (this.editCursor < this.editText.length()) this.editCursor++;
           break;
       }
 
@@ -1191,18 +1191,18 @@ class UI_rollout {
     switch (key) {
 
       case ENTER:
-        this.spinnerEditCommit = true;
+        this.editCommit = true;
         break;
 
       case ESC:
         // Cancel editing: drop the typed text and leave the spinner's
         // actual value untouched (it was never applied during editing).
-        this.spinnerEditActive = false;
-        this.spinnerEditCaption = "";
-        this.spinnerEditText = "";
-        this.spinnerEditCursor = 0;
-        this.spinnerEditCommit = false;
-        this.spinnerEditPendingCaption = null;
+        this.editActive = false;
+        this.editCaption = "";
+        this.editText = "";
+        this.editCursor = 0;
+        this.editCommit = false;
+        this.editPendingCaption = null;
         break;
 
       case TAB:
@@ -1215,44 +1215,44 @@ class UI_rollout {
           int n = this.spinnerOrderThisPass.size();
 
           if (n > 1) {
-            int idx = this.spinnerOrderThisPass.indexOf(this.spinnerEditCaption);
+            int idx = this.spinnerOrderThisPass.indexOf(this.editCaption);
             if (idx == -1) idx = 0;
 
             int nextIdx = e.isShiftDown() ? ((idx - 1 + n) % n) : ((idx + 1) % n);
 
-            this.spinnerEditPendingCaption = this.spinnerOrderThisPass.get(nextIdx);
+            this.editPendingCaption = this.spinnerOrderThisPass.get(nextIdx);
           }
         }
         break;
 
       case BACKSPACE:
-        if (this.spinnerEditCursor > 0) {
-          this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor - 1) + this.spinnerEditText.substring(this.spinnerEditCursor);
-          this.spinnerEditCursor--;
+        if (this.editCursor > 0) {
+          this.editText = this.editText.substring(0, this.editCursor - 1) + this.editText.substring(this.editCursor);
+          this.editCursor--;
         }
         break;
 
       case DELETE:
-        if (this.spinnerEditCursor < this.spinnerEditText.length()) {
-          this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor) + this.spinnerEditText.substring(this.spinnerEditCursor + 1);
+        if (this.editCursor < this.editText.length()) {
+          this.editText = this.editText.substring(0, this.editCursor) + this.editText.substring(this.editCursor + 1);
         }
         break;
 
       case '-':
         // A minus sign is only meaningful as the very first character.
-        if ((this.spinnerEditCursor == 0) && ((this.spinnerEditText.length() == 0) || (this.spinnerEditText.charAt(0) != '-'))) {
-          this.spinnerEditText = "-" + this.spinnerEditText;
-          this.spinnerEditCursor++;
+        if ((this.editCursor == 0) && ((this.editText.length() == 0) || (this.editText.charAt(0) != '-'))) {
+          this.editText = "-" + this.editText;
+          this.editCursor++;
         }
         break;
 
       default:
         if ((key >= '0') && (key <= '9')) {
-          this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor) + key + this.spinnerEditText.substring(this.spinnerEditCursor);
-          this.spinnerEditCursor++;
-        } else if ((key == '.') && (this.spinnerEditText.indexOf('.') == -1)) {
-          this.spinnerEditText = this.spinnerEditText.substring(0, this.spinnerEditCursor) + key + this.spinnerEditText.substring(this.spinnerEditCursor);
-          this.spinnerEditCursor++;
+          this.editText = this.editText.substring(0, this.editCursor) + key + this.editText.substring(this.editCursor);
+          this.editCursor++;
+        } else if ((key == '.') && (this.editText.indexOf('.') == -1)) {
+          this.editText = this.editText.substring(0, this.editCursor) + key + this.editText.substring(this.editCursor);
+          this.editCursor++;
         }
         break;
     }
