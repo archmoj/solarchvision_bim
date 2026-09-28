@@ -73,7 +73,7 @@ class Earth3D {
   class FaceVertex {
     float x, y, z;
     float u, v;
-    float elevationBump; // the raw bump from computeElevationBump(), isolated from z's curvature term - see buildSubFace() and addFaceWIN3D()'s Vertex_Elevation handling
+    float w; // the raw bump from computeElevationBump(), isolated from z's curvature term - see buildSubFace() and addFaceWIN3D()'s Vertex_Elevation handling
   }
 
   void resize_images () {
@@ -585,7 +585,7 @@ class Earth3D {
           COL = SHADE.vertexRender_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_type, PAL_direction, PAL_multiplier);
         }
         if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-          float[] VERTEX_elevation = { subFace[s].x, subFace[s].y, subFace[s].elevationBump };
+          float[] VERTEX_elevation = { subFace[s].x, subFace[s].y, subFace[s].w };
           COL = SHADE.vertexRender_Vertex_Elevation(VERTEX_elevation, PAL_type, PAL_direction, PAL_multiplier);
         }
 
@@ -627,7 +627,7 @@ class Earth3D {
 
   // Midpoint between a station grid cell's corner vertex and the station
   // vertex itself, used by draw()'s fillStationGridCell == -2 quad
-  // subdivision. x/y/u/v/elevationBump are plain averages of the two
+  // subdivision. x/y/u/v/w are plain averages of the two
   // endpoints, but z is forced to 0 - rather than the midpoint's own
   // averaged z - so the 4 midpoints (a, b, c, d) always form a level
   // center quad (abcd), regardless of the corner's or station's actual
@@ -640,7 +640,7 @@ class Earth3D {
     vtx.z = -0.01; // i.e. to avoid Z-fighting with objects ground plane
     vtx.u = (corner.u + station.u) / 2.0;
     vtx.v = (corner.v + station.v) / 2.0;
-    vtx.elevationBump = (corner.elevationBump + station.elevationBump) / 2.0;
+    vtx.w = (corner.w + station.w) / 2.0;
     return vtx;
   }
 
@@ -821,7 +821,7 @@ class Earth3D {
     // multiplier (Land3D.palette_MLT) is calibrated for that kind of
     // range; feeding it z directly would saturate almost everywhere
     // except right next to the station.
-    vtx.elevationBump = rawBump - this.stationElevationBump;
+    vtx.w = rawBump - this.stationElevationBump;
 
     return vtx;
   }
