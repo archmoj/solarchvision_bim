@@ -1176,15 +1176,20 @@ class UI_rollout {
       switch (keyCode) {
 
         case LEFT:
-          if (this.editCursor > 0) this.editCursor--;
+          if (this.editCursor > 0) {
+            this.editCursor--;
+            this.revise();
+          }
           break;
 
         case RIGHT:
-          if (this.editCursor < this.editText.length()) this.editCursor++;
+          if (this.editCursor < this.editText.length()) {
+            this.editCursor++;
+            this.revise();
+          }
           break;
       }
 
-      this.revise();
       return;
     }
 
@@ -1192,6 +1197,7 @@ class UI_rollout {
 
       case ENTER:
         this.editCommit = true;
+        this.revise();
         break;
 
       case ESC:
@@ -1203,6 +1209,7 @@ class UI_rollout {
         this.editCursor = 0;
         this.editCommit = false;
         this.editPendingCaption = null;
+        this.revise();
         break;
 
       case TAB:
@@ -1221,6 +1228,7 @@ class UI_rollout {
             int nextIdx = e.isShiftDown() ? ((idx - 1 + n) % n) : ((idx + 1) % n);
 
             this.editPendingCaption = this.spinnerOrderThisPass.get(nextIdx);
+            this.revise();
           }
         }
         break;
@@ -1229,12 +1237,14 @@ class UI_rollout {
         if (this.editCursor > 0) {
           this.editText = this.editText.substring(0, this.editCursor - 1) + this.editText.substring(this.editCursor);
           this.editCursor--;
+          this.revise();
         }
         break;
 
       case DELETE:
         if (this.editCursor < this.editText.length()) {
           this.editText = this.editText.substring(0, this.editCursor) + this.editText.substring(this.editCursor + 1);
+          this.revise();
         }
         break;
 
@@ -1243,6 +1253,7 @@ class UI_rollout {
         if ((this.editCursor == 0) && ((this.editText.length() == 0) || (this.editText.charAt(0) != '-'))) {
           this.editText = "-" + this.editText;
           this.editCursor++;
+          this.revise();
         }
         break;
 
@@ -1250,13 +1261,14 @@ class UI_rollout {
         if ((key >= '0') && (key <= '9')) {
           this.editText = this.editText.substring(0, this.editCursor) + key + this.editText.substring(this.editCursor);
           this.editCursor++;
+          this.revise();
         } else if ((key == '.') && (this.editText.indexOf('.') == -1)) {
           this.editText = this.editText.substring(0, this.editCursor) + key + this.editText.substring(this.editCursor);
           this.editCursor++;
+          this.revise();
         }
         break;
     }
 
-    this.revise();
   }
 }
