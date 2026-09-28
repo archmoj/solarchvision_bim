@@ -1540,7 +1540,7 @@ void mouseClicked () {
         if (isInside(X_clicked, Y_clicked, 0, pixel_A + pixel_B + 2 * pixel_H + pixel_C, width, pixel_A + pixel_B + 2 * pixel_H + pixel_C + pixel_D)) {
           typeUserCommand = 1;
           UI_consoleBar.revise();
-        } else {
+        } else if (typeUserCommand == 1){
           typeUserCommand = 0;
           UI_consoleBar.revise();
         }
