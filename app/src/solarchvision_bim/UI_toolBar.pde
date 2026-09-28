@@ -315,7 +315,7 @@ class UI_toolBar {
       HelperText += ": " + this.Items[i][j];
     }
 
-    float estimatedWidth = HelperText.length() * MessageSize * 0.55;
+    float estimatedWidth = textWidth(HelperText) + MessageSize;
 
     // draw over menu bar
     float HelperY = cy - cr - pixel_A;
