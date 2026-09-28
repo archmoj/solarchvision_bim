@@ -5,6 +5,7 @@ class UI_consoleBar {
   boolean update = true;
 
   int editCursor = 0;
+  String editText = "";
 
   void draw () {
     if (this.update) {
@@ -43,10 +44,10 @@ class UI_consoleBar {
           textAlign(LEFT, CENTER);
           fill(255);
 
-          String txt = allCommands[n];
+          String txt = n < allCommands.length - 1 ? allCommands[n] : this.editText;
           if(n == allCommands.length - 1) {
             // text with cursor
-            if(this.editCursor < allCommands[allCommands.length - 1].length()) {
+            if(this.editCursor < this.editText.length()) {
               txt =
                 txt.substring(0, this.editCursor) + "|" +
                 txt.substring(this.editCursor);
@@ -74,6 +75,12 @@ class UI_consoleBar {
   }
 
   String runLastCommand() {
+    // record command
+    allCommands[allCommands.length - 1] = this.editText;
+    // reset editText
+    this.editText = "";
+    this.editCursor = 0;
+    // run last command
     return runScriptLine(allCommands[allCommands.length - 1]);
   }
 
@@ -84,9 +91,9 @@ class UI_consoleBar {
       for (int i = 0; i < allLines.length; i++) {
         String line = allLines[i];
         if(i == 0) {
-          allCommands[allCommands.length - 1] =
-          allCommands[allCommands.length - 1].substring(0, this.editCursor) + line +
-          allCommands[allCommands.length - 1].substring(this.editCursor);
+          this.editText =
+          this.editText.substring(0, this.editCursor) + line +
+          this.editText.substring(this.editCursor);
           this.editCursor += line.length();
         } else {
           // run previous command before adding new line
@@ -99,7 +106,7 @@ class UI_consoleBar {
           if(hint.equals(UnrecognizedCommand)) break;
 
           // add new line
-          allCommands[allCommands.length - 1] = line;
+          this.editText = line;
         }
       }
     } else if ((!e.isAltDown()) && (!e.isControlDown())) {
@@ -112,7 +119,7 @@ class UI_consoleBar {
             break;
 
           case RIGHT:
-            if (this.editCursor < allCommands[allCommands.length - 1].length()) this.editCursor++;
+            if (this.editCursor < this.editText.length()) this.editCursor++;
             break;
         }
 
@@ -129,27 +136,27 @@ class UI_consoleBar {
 
           case BACKSPACE:
             if (this.editCursor > 0) {
-              allCommands[allCommands.length - 1] =
-              allCommands[allCommands.length - 1].substring(0, this.editCursor - 1) +
-              allCommands[allCommands.length - 1].substring(this.editCursor);
+              this.editText =
+              this.editText.substring(0, this.editCursor - 1) +
+              this.editText.substring(this.editCursor);
 
               this.editCursor--;
             }
             break;
 
           case DELETE:
-            if (this.editCursor < allCommands[allCommands.length - 1].length()) {
-              allCommands[allCommands.length - 1] =
-              allCommands[allCommands.length - 1].substring(0, this.editCursor) +
-              allCommands[allCommands.length - 1].substring(this.editCursor + 1);
+            if (this.editCursor < this.editText.length()) {
+              this.editText =
+              this.editText.substring(0, this.editCursor) +
+              this.editText.substring(this.editCursor + 1);
             }
             break;
 
           default:
             if ((31 < key) && (key < 127)) {
-              allCommands[allCommands.length - 1] =
-              allCommands[allCommands.length - 1].substring(0, this.editCursor) + key +
-              allCommands[allCommands.length - 1].substring(this.editCursor);
+              this.editText =
+              this.editText.substring(0, this.editCursor) + key +
+              this.editText.substring(this.editCursor);
 
               this.editCursor++;
             }
