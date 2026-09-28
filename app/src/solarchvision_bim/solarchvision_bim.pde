@@ -203,6 +203,10 @@ void keyPressed (KeyEvent e) {
             if (cancelActivePickList()) {
               WORLD.revise();
             }
+
+            if (UI_menuBar.selected_parent != -1) {
+              UI_menuBar.deselect();
+            }
           }
 
         }

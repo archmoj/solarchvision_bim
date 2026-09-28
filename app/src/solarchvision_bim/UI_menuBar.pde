@@ -742,7 +742,7 @@ class UI_menuBar {
   // Draws a single top-level tab (e.g. "File", "Tools", ...) and updates
   // selection state when the mouse is hovering over it.
   void drawParentTab(int i, float cx, float cy, float cr) {
-    if (isInside(mouseX, mouseY, cx, cy - cr, cx + currentParentWidth, cy + cr)) {
+    if (!this.deselecting && isInside(mouseX, mouseY, cx, cy - cr, cx + currentParentWidth, cy + cr)) {
       if (this.selected_parent == -1) {
         pre_screen = get(0, pixel_A, width, height - pixel_A);
         //println("Screen GET!");
@@ -843,13 +843,18 @@ class UI_menuBar {
     }
   }
 
+  private boolean deselecting = false;
+
   void deselect () {
     image(pre_screen, 0, pixel_A);
 
     this.selected_parent = -1;
     this.selected_child = 0;
     this.revise();
+
+    deselecting = true;
     this.draw();
+    deselecting = false;
   }
 
   void revise () {
