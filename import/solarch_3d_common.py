@@ -215,6 +215,85 @@ def add_extruded_polygon(writer: ObjWriter, ext, holes, height, base_z=0.0):
         offset += m
 
 
+# ---------------------------------------------------------------------
+# buildings.txt: SOLARCHVISION_BIM's own "Mesh" script command
+# (app/src/solarchvision_bim/runScript.pde's `case "MESH":`, calling
+# Create3D.pde's add_Mesh) natively supports a face with any number of
+# vertices - unlike buildings.obj, a hole-free cap here does NOT need
+# triangulating: the whole ring becomes one Mesh line. A footprint WITH
+# holes (a courtyard) still has to be triangulated for its caps, same as
+# the OBJ path - a single n-gon face can't represent an annulus. Walls
+# are always a plain quad either way, hole or not.
+#
+#   Mesh m:7 tes:0 lyr:0 x1,y1,z1 x2,y2,z2 x3,y3,z3 ...
+# ---------------------------------------------------------------------
+
+class MeshWriter:
+    """Accumulates 'Mesh ...' command lines for buildings.txt."""
+
+    def __init__(self):
+        self.lines = []
+
+    def add_face(self, points, m, tes, lyr):
+        """points: iterable of (x, y, z), at least 3, in order around the
+        face (no closing repeat of the first point)."""
+        pts = list(points)
+        if len(pts) < 3:
+            return
+        for x, y, z in pts:
+            if not (math.isfinite(x) and math.isfinite(y) and math.isfinite(z)):
+                raise ValueError(f"Refusing to write non-finite vertex ({x}, {y}, {z})")
+        pts_str = " ".join(f"{x:.4f},{y:.4f},{z:.4f}" for x, y, z in pts)
+        self.lines.append(f"Mesh m:{m} tes:{tes} lyr:{lyr} {pts_str}")
+
+    def write(self, path):
+        with open(path, "w") as f:
+            for line in self.lines:
+                f.write(line + "\n")
+
+
+def add_extruded_mesh(writer: MeshWriter, ext, holes, height, base_z=0.0, m=7, tes=0, lyr=0):
+    """Same extruded solid as add_extruded_polygon, but as buildings.txt
+    Mesh lines: hole-free caps are one n-gon face each (no triangulation);
+    caps with holes are triangulated (see module docstring above)."""
+    if len(ext) < 3:
+        return
+    top_z = base_z + height
+
+    if not holes:
+        # Bottom cap: reversed winding, one n-gon face, faces down/outward.
+        writer.add_face(((x, y, base_z) for x, y in reversed(ext)), m, tes, lyr)
+        # Top cap: natural winding, one n-gon face, faces up.
+        writer.add_face(((x, y, top_z) for x, y in ext), m, tes, lyr)
+    else:
+        try:
+            points2d, tris = triangulate_footprint(ext, holes)
+        except Exception:
+            points2d, tris = None, None
+        if points2d is not None and len(tris) > 0:
+            for a, b, c in tris:
+                xa, ya = points2d[a]
+                xb, yb = points2d[b]
+                xc, yc = points2d[c]
+                # Bottom: reversed winding. Top: natural winding.
+                writer.add_face([(xa, ya, base_z), (xc, yc, base_z), (xb, yb, base_z)], m, tes, lyr)
+                writer.add_face([(xa, ya, top_z), (xb, yb, top_z), (xc, yc, top_z)], m, tes, lyr)
+
+    # Walls: one quad per edge, for every ring (exterior + holes) - same
+    # (b0, b1, t1, t0) corner order as add_extruded_polygon's two wall
+    # triangles combined, just kept as one 4-vertex face here.
+    for ring in [ext] + list(holes):
+        n = len(ring)
+        for i in range(n):
+            j = (i + 1) % n
+            x0, y0 = ring[i]
+            x1, y1 = ring[j]
+            writer.add_face(
+                [(x0, y0, base_z), (x1, y1, base_z), (x1, y1, top_z), (x0, y0, top_z)],
+                m, tes, lyr,
+            )
+
+
 def iter_polygons(geom):
     if isinstance(geom, Polygon):
         yield geom

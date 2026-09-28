@@ -5,13 +5,16 @@ and writes it into one output folder:
 
 ```
 empire_state_area/
-  buildings.obj    # extruded building footprints
+  buildings.obj    # extruded building footprints, triangulated
+  buildings.txt    # the same buildings as SOLARCHVISION_BIM's own Mesh
+                    # script command - n-gon faces, not triangulated
+                    # where a footprint has no holes
   more_info.txt    # header comment + ground rectangle (Mesh2) + trees (if any)
 ```
 
-Both files share one coordinate frame: meters, local/projected, origin
-`(0, 0)` at your query lat/lon, `z=0` at ground level — regardless of
-which data source or implementation produced them.
+All three files share one coordinate frame: meters, local/projected,
+origin `(0, 0)` at your query lat/lon, `z=0` at ground level —
+regardless of which data source or implementation produced them.
 
 ## Data sources
 
@@ -68,10 +71,14 @@ comment on line 1.
    watertight solid per building — Python uses `mapbox_earcut` (C++
    bindings), Node uses `earcut` (the original Mapbox JS library that
    `mapbox_earcut` itself is a port of).
-4. **`more_info.txt`**:
+4. **`buildings.txt`**: the same solids, written as
+   [SOLARCHVISION_BIM](https://github.com/archmoj/solarchvision_bim)'s
+   own `Mesh` script command instead of OBJ — see "buildings.txt format"
+   below for why and exactly what gets triangulated vs. not.
+5. **`more_info.txt`**:
    ```
    # --lat 40.7484 --lon -73.9857 --radius 250
-   Mesh2 m:8 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
+   Mesh2 m:3 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
    Tree x:-20.0000 y:-10.0000 z:0.0000 h:10.0000
    Tree x:20.0000 y:10.0000 z:0.0000 h:20.0000
    ```
@@ -87,6 +94,36 @@ comment on line 1.
 
 Roof shapes, textures, and colors are not modeled — this gives clean
 extruded "block massing," which is what OSM's tags support well.
+
+## `buildings.txt` format
+
+[SOLARCHVISION_BIM](https://github.com/archmoj/solarchvision_bim) (the
+desktop app this data feeds into) has its own script command for adding
+geometry, `Mesh` — see `app/src/solarchvision_bim/runScript.pde`'s
+`case "MESH":`, which calls `Create3D.pde`'s `add_Mesh`. Unlike
+`buildings.obj`, SOLARCHVISION_BIM's own face model natively supports a
+face with any number of vertices, not just 3 — so a hole-free footprint's
+cap doesn't need triangulating at all here, just written as one line
+with its full vertex list:
+
+```
+Mesh m:7 tes:0 lyr:0 -20.0000,-10.0000,0.0000 20.0000,-10.0000,0.0000 20.0000,10.0000,0.0000 -20.0000,10.0000,0.0000
+```
+
+One `Mesh` line per flat face — bottom cap, top cap, and one per wall
+(always a plain 4-vertex quad, hole or not). A footprint *with* holes (a
+courtyard) still gets its caps triangulated, exactly like `buildings.obj`
+does: a single n-gon face can't represent an annulus, topologically —
+that part still goes through `mapbox_earcut`/`earcut`. `m:`/`tes:`/`lyr:`
+come from `--material`/`--tessellation`/`--layer` (defaults `7`/`0`/`0`,
+matching `Mesh`'s own defaults when those keys are omitted).
+
+Verified directly against the real app: fed real `buildings.txt` output
+through Processing's actual compiled `runScriptLine()` (not a mock) for
+both a plain box and a courtyard case, and confirmed the right face
+count, vertex count, and `m`/`tes`/`lyr` options landed correctly. Also
+confirmed byte-for-byte identical output between the Python and Node
+implementations for the same input, same as `more_info.txt`.
 
 ## Setup & usage — Python
 
@@ -119,7 +156,7 @@ logic lives in `lib/` (must sit alongside the script):
 |---|---|
 | `lib/height.js` | OSM height-tag parsing |
 | `lib/projection.js` | UTM auto-projection, ring recentering |
-| `lib/geometry.js` | Triangulation, extrusion, `ObjWriter` |
+| `lib/geometry.js` | Triangulation, extrusion, `ObjWriter`, `MeshWriter` (`buildings.txt`) |
 | `lib/format.js` | `Mesh2` line, `more_info.txt` writer |
 | `lib/overpass.js` | Mirror fallback, User-Agent, 429/504 retry, query builders |
 | `lib/cli.js` | Usage text, argument parsing |
@@ -145,6 +182,11 @@ way `solarch_3d_common.py`'s equivalents already serve
 | `--level-height` | 3.0 | Meters per floor, used when only `building:levels` is tagged |
 | `--default-height` | 6.0 | Fallback building height when no height/level tags exist |
 | `--include-parts` | off | Also fetch `building:part` features for finer massing on complex buildings |
+| **`buildings.txt` (SOLARCHVISION_BIM `Mesh` command)** | | |
+| `--material` | 7 | Material index (`m:`) for `buildings.txt` `Mesh` lines |
+| `--tessellation` | 0 | Tessellation index (`tes:`) for `buildings.txt` `Mesh` lines |
+| `--layer` | 0 | Layer index (`lyr:`) for `buildings.txt` `Mesh` lines |
+| `--no-buildings-txt` | off | Skip writing `buildings.txt` |
 | **Trees (`more_info.txt`)** | | |
 | `--tree-default-height` | 10.0 | Fallback tree height when no `height` tag exists |
 | `--no-trees` | off | Skip fetching trees (file still gets the header + Mesh2 line) |
@@ -217,6 +259,10 @@ python SOLARCHVISION_Overture_3D_in_obj.py --lat 40.7484 --lon -73.9857 --radius
 | `--level-height` | 3.0 | Meters per floor, used when only `num_floors` is present |
 | `--default-height` | 6.0 | Fallback height when neither `height` nor `num_floors` is present |
 | `--include-parts` | off | Also fetch `building_part` features for finer massing on complex buildings |
+| `--material` | 7 | Material index (`m:`) for `buildings.txt` `Mesh` lines |
+| `--tessellation` | 0 | Tessellation index (`tes:`) for `buildings.txt` `Mesh` lines |
+| `--layer` | 0 | Layer index (`lyr:`) for `buildings.txt` `Mesh` lines |
+| `--no-buildings-txt` | off | Skip writing `buildings.txt` |
 | `--trees-source` | none | `none` or `osm`. `osm` fetches OpenStreetMap `natural=tree` nodes for `more_info.txt` (needs `pip install osmnx` additionally) |
 | `--tree-default-height` | 10.0 | Fallback tree height when no `height` tag exists (only with `--trees-source osm`) |
 | `--overpass-url` | (auto) | Overpass endpoint for `--trees-source osm` (default: try overpass-api.de, then a couple of public mirrors) |
@@ -230,11 +276,12 @@ If buildings fetch successfully but either `--include-parts` (the
 `building_part` fetch) or `--trees-source osm` (the tree fetch) then
 fails, the run does **not** drop the already-fetched buildings: any
 building that would have deferred to its parts falls back to its coarse
-outline instead, trees are simply omitted, `buildings.obj` and
-`more_info.txt` are both written normally, and the run exits with a
-non-zero code to flag it as partial — matching the pattern the OSM
-scripts use for a failed tree fetch. `overture-3d-import.yml` uploads the
-output folder regardless (`if: always()`).
+outline instead, trees are simply omitted, `buildings.obj`,
+`buildings.txt`, and `more_info.txt` are all written normally, and the
+run exits with a non-zero code to flag it as partial — matching the
+pattern the OSM scripts use for a failed tree fetch.
+`overture-3d-import.yml` uploads the output folder regardless
+(`if: always()`).
 
 ### STAC-catalog gaps (`Expected pandas DataFrame, ...`)
 
@@ -296,12 +343,12 @@ next mirror if the endpoint stays unavailable.
 
 Trees are treated as a best-effort supplementary layer: if buildings
 fetch successfully but the tree fetch then fails (even after retries),
-the run does **not** discard the already-written `buildings.obj` — it
-logs a warning, writes `more_info.txt` with 0 trees, and exits with a
-non-zero code to flag the run as partial. The GitHub Actions workflows
-upload the output folder regardless (`if: always()`), so a partial run
-still gives you the buildings; just check the job status/logs to see if
-trees were skipped.
+the run does **not** discard the already-written `buildings.obj`/
+`buildings.txt` — it logs a warning, writes `more_info.txt` with 0 trees,
+and exits with a non-zero code to flag the run as partial. The GitHub
+Actions workflows upload the output folder regardless (`if: always()`),
+so a partial run still gives you the buildings; just check the job
+status/logs to see if trees were skipped.
 
 ## If the fetch fails with a connection error, or a 406 from Overpass
 

@@ -19,11 +19,28 @@ on:
         required: true
         default: '250'
       outdir:
-        description: 'Output folder name (holds buildings.obj + more_info.txt)'
+        description: 'Output folder name (holds buildings.obj + buildings.txt + more_info.txt)'
         required: true
         default: 'empire_state_area_overture'
       include_parts:
         description: 'Also fetch building_part features (needed for complex buildings modeled as separate parts, e.g. towers with a coarse has_parts=true outline of their own)'
+        required: false
+        type: boolean
+        default: false
+      material:
+        description: 'Material index (m:) for buildings.txt Mesh lines'
+        required: false
+        default: '7'
+      tessellation:
+        description: 'Tessellation index (tes:) for buildings.txt Mesh lines'
+        required: false
+        default: '0'
+      layer:
+        description: 'Layer index (lyr:) for buildings.txt Mesh lines'
+        required: false
+        default: '0'
+      no_buildings_txt:
+        description: 'Skip writing buildings.txt (the SOLARCHVISION_BIM Mesh-command form)'
         required: false
         type: boolean
         default: false
@@ -87,11 +104,17 @@ jobs:
           if [ "${{ inputs.trees_source }}" = "osm" ]; then
             EXTRA_ARGS="$EXTRA_ARGS --trees-source osm"
           fi
+          if [ "${{ inputs.no_buildings_txt }}" = "true" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --no-buildings-txt"
+          fi
           python import/SOLARCHVISION_Overture_3D_in_obj.py \
             --lat "${{ inputs.lat }}" \
             --lon "${{ inputs.lon }}" \
             --radius "${{ inputs.radius }}" \
             --outdir "${{ inputs.outdir }}" \
+            --material "${{ inputs.material }}" \
+            --tessellation "${{ inputs.tessellation }}" \
+            --layer "${{ inputs.layer }}" \
             $EXTRA_ARGS
 
       - name: Upload output folder

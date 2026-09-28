@@ -7,7 +7,14 @@ from Overture Maps (https://overturemaps.org) instead of OpenStreetMap,
 around a given latitude/longitude within a radius, into the same output
 folder contract:
 
-    <outdir>/buildings.obj    - buildings, extruded from Overture footprints
+    <outdir>/buildings.obj    - buildings, extruded from Overture footprints,
+                                triangulated (for tools that need triangles)
+    <outdir>/buildings.txt    - the same buildings as SOLARCHVISION_BIM's
+                                own "Mesh" script command - hole-free caps
+                                are a single n-gon face each, not
+                                triangulated (see
+                                SOLARCHVISION_OSM_3D_in_obj.py's docstring
+                                for the exact format; identical here)
     <outdir>/more_info.txt    - a header comment, a ground-rectangle
                                 (Mesh2) line, and trees (if --trees-source
                                 osm is used - see "Trees" below)
@@ -276,6 +283,11 @@ def main():
     ap.add_argument("--default-height", type=float, default=6.0, help="Fallback height in meters when no height/num_floors is present (default: 6.0)")
     ap.add_argument("--include-parts", action="store_true", help="Also fetch building_part features for finer massing on complex buildings (towers, domes, etc.)")
 
+    ap.add_argument("--material", type=int, default=7, help="Material index (m:) for buildings.txt Mesh lines (default: 7)")
+    ap.add_argument("--tessellation", type=int, default=0, help="Tessellation index (tes:) for buildings.txt Mesh lines (default: 0)")
+    ap.add_argument("--layer", type=int, default=0, help="Layer index (lyr:) for buildings.txt Mesh lines (default: 0)")
+    ap.add_argument("--no-buildings-txt", action="store_true", help="Skip writing buildings.txt (the SOLARCHVISION_BIM Mesh-command form)")
+
     ap.add_argument("--trees-source", choices=["none", "osm"], default="none", help="Where to get trees from for more_info.txt. 'osm' fetches OpenStreetMap natural=tree nodes (requires `pip install osmnx` additionally). Default: none (Overture has no tree layer of its own).")
     ap.add_argument("--tree-default-height", type=float, default=10.0, help="Fallback tree height in meters when no height tag exists (only used with --trees-source osm; default: 10.0)")
     ap.add_argument("--overpass-url", default=None, help="Overpass API endpoint to use for --trees-source osm (default: try overpass-api.de, then a couple of public mirrors)")
@@ -291,6 +303,7 @@ def main():
     outdir = args.outdir or f"site_{args.lat}_{args.lon}"
     os.makedirs(outdir, exist_ok=True)
     buildings_path = os.path.join(outdir, "buildings.obj")
+    buildings_txt_path = os.path.join(outdir, "buildings.txt")
     info_path = os.path.join(outdir, "more_info.txt")
 
     transformer, origin = get_projection_and_origin(args.lat, args.lon)
@@ -319,6 +332,7 @@ def main():
             parts_gdf = keep_within_radius(parts_gdf, transformer, origin, args.radius)
 
     writer = common.ObjWriter()
+    mesh_writer = common.MeshWriter()
     n_written = 0
 
     if buildings_gdf is None or buildings_gdf.empty:
@@ -340,14 +354,19 @@ def main():
             for poly in common.iter_polygons(geom):
                 ext, holes = polygon_rings(poly, transformer, origin)
                 vcount, fcount = len(writer.vertices), len(writer.faces)
+                mcount = len(mesh_writer.lines)
                 writer.start_group(f"building_{n_written}")
                 try:
                     common.add_extruded_polygon(writer, ext, holes, height, base_z)
+                    if not args.no_buildings_txt:
+                        common.add_extruded_mesh(mesh_writer, ext, holes, height, base_z,
+                                                  m=args.material, tes=args.tessellation, lyr=args.layer)
                     n_written += 1
                 except ValueError as e:
                     print(f"  skipping one building: {e}", file=sys.stderr)
                     del writer.vertices[vcount:]
                     del writer.faces[fcount:]
+                    del mesh_writer.lines[mcount:]
                     writer.groups.pop()
 
     if parts_gdf is not None and not parts_gdf.empty:
@@ -360,19 +379,28 @@ def main():
             for poly in common.iter_polygons(geom):
                 ext, holes = polygon_rings(poly, transformer, origin)
                 vcount, fcount = len(writer.vertices), len(writer.faces)
+                mcount = len(mesh_writer.lines)
                 writer.start_group(f"building_part_{n_written}")
                 try:
                     common.add_extruded_polygon(writer, ext, holes, height, base_z)
+                    if not args.no_buildings_txt:
+                        common.add_extruded_mesh(mesh_writer, ext, holes, height, base_z,
+                                                  m=args.material, tes=args.tessellation, lyr=args.layer)
                     n_written += 1
                 except ValueError as e:
                     print(f"  skipping one building part: {e}", file=sys.stderr)
                     del writer.vertices[vcount:]
                     del writer.faces[fcount:]
+                    del mesh_writer.lines[mcount:]
                     writer.groups.pop()
 
     writer.write(buildings_path, generator="SOLARCHVISION_Overture_3D_in_obj.py")
     print(f"Wrote {n_written} building solids ({len(writer.vertices)} vertices, "
           f"{len(writer.faces)} faces) to {buildings_path}")
+
+    if not args.no_buildings_txt:
+        mesh_writer.write(buildings_txt_path)
+        print(f"Wrote {len(mesh_writer.lines)} Mesh faces to {buildings_txt_path}")
 
     # ---- Trees (optional, from OSM) -> more_info.txt ----
     # Best-effort, like the parts fetch above: a failure here must not

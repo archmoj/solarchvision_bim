@@ -19,11 +19,28 @@ on:
         required: true
         default: '250'
       outdir:
-        description: 'Output folder name (holds buildings.obj + more_info.txt)'
+        description: 'Output folder name (holds buildings.obj + buildings.txt + more_info.txt)'
         required: true
         default: 'empire_state_area'
       include_parts:
         description: 'Also fetch building:part features (needed for complex/modern buildings modeled as separate parts, e.g. towers/domes with no plain "building" outline of their own)'
+        required: false
+        type: boolean
+        default: false
+      material:
+        description: 'Material index (m:) for buildings.txt Mesh lines'
+        required: false
+        default: '7'
+      tessellation:
+        description: 'Tessellation index (tes:) for buildings.txt Mesh lines'
+        required: false
+        default: '0'
+      layer:
+        description: 'Layer index (lyr:) for buildings.txt Mesh lines'
+        required: false
+        default: '0'
+      no_buildings_txt:
+        description: 'Skip writing buildings.txt (the SOLARCHVISION_BIM Mesh-command form)'
         required: false
         type: boolean
         default: false
@@ -58,16 +75,23 @@ jobs:
           if [ "${{ inputs.include_parts }}" = "true" ]; then
             EXTRA_ARGS="--include-parts"
           fi
+          if [ "${{ inputs.no_buildings_txt }}" = "true" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --no-buildings-txt"
+          fi
           node import/SOLARCHVISION_OSM_3D_in_obj.js \
             --lat "${{ inputs.lat }}" \
             --lon "${{ inputs.lon }}" \
             --radius "${{ inputs.radius }}" \
             --outdir "${{ inputs.outdir }}" \
+            --material "${{ inputs.material }}" \
+            --tessellation "${{ inputs.tessellation }}" \
+            --layer "${{ inputs.layer }}" \
             $EXTRA_ARGS
 
-      # The step above always writes buildings.obj + more_info.txt into
-      # ${{ inputs.outdir }} (see the script's docstring) - upload that
-      # whole folder so it shows up as one downloadable zip on the run page.
+      # The step above always writes buildings.obj + buildings.txt +
+      # more_info.txt into ${{ inputs.outdir }} (see the script's
+      # docstring) - upload that whole folder so it shows up as one
+      # downloadable zip on the run page.
       - name: Upload output folder
         # The script exits non-zero if buildings succeeded but trees
         # couldn't be fetched (a best-effort layer) - still upload

@@ -30,6 +30,12 @@ Options:
     --default-height <m>      Fallback building height (default: 6.0)
     --include-parts           Also fetch building:part features
 
+  buildings.txt (SOLARCHVISION_BIM's Mesh script command):
+    --material <n>             Material index (m:) for Mesh lines (default: 7)
+    --tessellation <n>         Tessellation index (tes:) for Mesh lines (default: 0)
+    --layer <n>                Layer index (lyr:) for Mesh lines (default: 0)
+    --no-buildings-txt          Skip writing buildings.txt
+
   Trees (more_info.txt):
     --tree-default-height <m> Fallback tree height (default: 10.0)
     --no-trees                Skip fetching trees
@@ -40,7 +46,7 @@ Options:
 `);
 }
 
-const BOOLEAN_FLAGS = new Set(["include-parts", "no-trees", "no-ground", "help"]);
+const BOOLEAN_FLAGS = new Set(["include-parts", "no-trees", "no-ground", "no-buildings-txt", "help"]);
 
 function parseArgs(argv) {
   const args = {
@@ -48,6 +54,10 @@ function parseArgs(argv) {
     levelHeight: 3.0,
     defaultHeight: 6.0,
     includeParts: false,
+    material: 7,
+    tessellation: 0,
+    layer: 0,
+    noBuildingsTxt: false,
     treeDefaultHeight: 10.0,
     noTrees: false,
     groundPadding: 0.0,
@@ -64,6 +74,7 @@ function parseArgs(argv) {
       if (name === "include-parts") args.includeParts = true;
       else if (name === "no-trees") args.noTrees = true;
       else if (name === "no-ground") args.noGround = true;
+      else if (name === "no-buildings-txt") args.noBuildingsTxt = true;
       else if (name === "help") args.help = true;
       continue;
     }
@@ -86,6 +97,15 @@ function parseArgs(argv) {
         break;
       case "default-height":
         args.defaultHeight = parseFloat(value);
+        break;
+      case "material":
+        args.material = parseInt(value, 10);
+        break;
+      case "tessellation":
+        args.tessellation = parseInt(value, 10);
+        break;
+      case "layer":
+        args.layer = parseInt(value, 10);
         break;
       case "tree-default-height":
         args.treeDefaultHeight = parseFloat(value);

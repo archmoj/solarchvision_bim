@@ -8,7 +8,17 @@
  * a given latitude/longitude within a radius, written into one output
  * folder:
  *
- *   <outdir>/buildings.obj    - buildings, extruded from OSM footprints
+ *   <outdir>/buildings.obj    - buildings, extruded from OSM footprints,
+ *                               triangulated (for tools that need triangles)
+ *   <outdir>/buildings.txt    - the same buildings as SOLARCHVISION_BIM's
+ *                               own "Mesh" script command
+ *                               (app/src/solarchvision_bim/runScript.pde's
+ *                               `case "MESH":`, calling Create3D.pde's
+ *                               add_Mesh) - hole-free caps are a single
+ *                               n-gon face each, not triangulated; a
+ *                               footprint with holes (a courtyard) still
+ *                               gets its caps triangulated, same as the
+ *                               OBJ path
  *   <outdir>/more_info.txt    - a header comment, a ground-rectangle
  *                               (Mesh2) line, then trees as plain-text
  *                               point+height entries
@@ -59,7 +69,7 @@ const path = require("path");
 
 const { isFinitePositive, parseHeightMeters, featureHeight, buildingHeight } = require("./lib/height");
 const { utmProjString, getProjectionAndOrigin, projectAndRecenterPoint, polygonRingsFromGeoJSON } = require("./lib/projection");
-const { triangulateFootprint, ObjWriter, addExtrudedPolygon, iterPolygons } = require("./lib/geometry");
+const { triangulateFootprint, ObjWriter, addExtrudedPolygon, iterPolygons, MeshWriter, addExtrudedMesh } = require("./lib/geometry");
 const { formatPyFloatLike, formatNumber, formatMesh2Line, writeMoreInfoTxt } = require("./lib/format");
 const {
   DEFAULT_USER_AGENT,
@@ -91,6 +101,7 @@ async function main(argv = process.argv.slice(2)) {
   const outdir = args.outdir || `site_${args.lat}_${args.lon}`;
   fs.mkdirSync(outdir, { recursive: true });
   const buildingsPath = path.join(outdir, "buildings.obj");
+  const buildingsTxtPath = path.join(outdir, "buildings.txt");
   const infoPath = path.join(outdir, "more_info.txt");
 
   const { projDef, origin } = getProjectionAndOrigin(args.lat, args.lon);
@@ -111,6 +122,7 @@ async function main(argv = process.argv.slice(2)) {
   }
 
   const writer = new ObjWriter();
+  const meshWriter = new MeshWriter();
   let nWritten = 0;
   const buildingFeatures = (buildingsGeoJSON && buildingsGeoJSON.features) || [];
   if (buildingFeatures.length === 0) {
@@ -126,9 +138,13 @@ async function main(argv = process.argv.slice(2)) {
         const { ext, holes } = polygonRingsFromGeoJSON(polygonCoords, projDef, origin);
         const vcount = writer.vertices.length;
         const fcount = writer.faces.length;
+        const mcount = meshWriter.lines.length;
         writer.startGroup(`building_${nWritten}`);
         try {
           addExtrudedPolygon(writer, ext, holes, height);
+          if (!args.noBuildingsTxt) {
+            addExtrudedMesh(meshWriter, ext, holes, height, 0.0, args.material, args.tessellation, args.layer);
+          }
           nWritten++;
         } catch (e) {
           // Non-finite vertex (should not happen after the height
@@ -136,6 +152,7 @@ async function main(argv = process.argv.slice(2)) {
           console.error(`  skipping one building: ${e.message}`);
           writer.vertices.length = vcount;
           writer.faces.length = fcount;
+          meshWriter.lines.length = mcount;
           writer.groups.pop();
         }
       }
@@ -147,6 +164,11 @@ async function main(argv = process.argv.slice(2)) {
     `Wrote ${nWritten} building solids (${writer.vertices.length} vertices, ` +
       `${writer.faces.length} faces) to ${buildingsPath}`
   );
+
+  if (!args.noBuildingsTxt) {
+    meshWriter.write(buildingsTxtPath);
+    console.log(`Wrote ${meshWriter.lines.length} Mesh faces to ${buildingsTxtPath}`);
+  }
 
   // ---- Trees -> more_info.txt ----
   // Trees are a best-effort supplementary layer: if this fetch fails, we
@@ -207,6 +229,8 @@ module.exports = {
   ObjWriter,
   addExtrudedPolygon,
   iterPolygons,
+  MeshWriter,
+  addExtrudedMesh,
   formatPyFloatLike,
   formatNumber,
   formatMesh2Line,

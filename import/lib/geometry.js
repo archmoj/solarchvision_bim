@@ -137,4 +137,97 @@ function iterPolygons(geometry) {
   return [];
 }
 
-module.exports = { triangulateFootprint, ObjWriter, addExtrudedPolygon, iterPolygons };
+// -----------------------------------------------------------------------
+// buildings.txt: SOLARCHVISION_BIM's own "Mesh" script command
+// (app/src/solarchvision_bim/runScript.pde's `case "MESH":`, calling
+// Create3D.pde's add_Mesh) natively supports a face with any number of
+// vertices - unlike buildings.obj, a hole-free cap here does NOT need
+// triangulating: the whole ring becomes one Mesh line. A footprint WITH
+// holes (a courtyard) still has to be triangulated for its caps, same as
+// the OBJ path - a single n-gon face can't represent an annulus. Walls
+// are always a plain quad either way, hole or not. Mirrors
+// solarch_3d_common.py's MeshWriter/add_extruded_mesh exactly (same
+// line format, same winding conventions).
+//
+//   Mesh m:7 tes:0 lyr:0 x1,y1,z1 x2,y2,z2 x3,y3,z3 ...
+// -----------------------------------------------------------------------
+
+/** Accumulates 'Mesh ...' command lines for buildings.txt. */
+class MeshWriter {
+  constructor() {
+    this.lines = [];
+  }
+
+  /** points: array of [x, y, z], at least 3, in order around the face
+   * (no closing repeat of the first point). */
+  addFace(points, m, tes, lyr) {
+    if (points.length < 3) return;
+    for (const [x, y, z] of points) {
+      if (!(Number.isFinite(x) && Number.isFinite(y) && Number.isFinite(z))) {
+        throw new Error(`Refusing to write non-finite vertex (${x}, ${y}, ${z})`);
+      }
+    }
+    const ptsStr = points.map(([x, y, z]) => `${x.toFixed(4)},${y.toFixed(4)},${z.toFixed(4)}`).join(" ");
+    this.lines.push(`Mesh m:${m} tes:${tes} lyr:${lyr} ${ptsStr}`);
+  }
+
+  write(filePath) {
+    fs.writeFileSync(filePath, this.lines.join("\n") + (this.lines.length ? "\n" : ""));
+  }
+}
+
+/** Same extruded solid as addExtrudedPolygon, but as buildings.txt Mesh
+ * lines: hole-free caps are one n-gon face each (no triangulation); caps
+ * with holes are triangulated (see module comment above). */
+function addExtrudedMesh(writer, ext, holes, height, baseZ = 0.0, m = 7, tes = 0, lyr = 0) {
+  if (ext.length < 3) return;
+  const topZ = baseZ + height;
+
+  if (holes.length === 0) {
+    // Bottom cap: reversed winding, one n-gon face, faces down/outward.
+    writer.addFace([...ext].reverse().map(([x, y]) => [x, y, baseZ]), m, tes, lyr);
+    // Top cap: natural winding, one n-gon face, faces up.
+    writer.addFace(ext.map(([x, y]) => [x, y, topZ]), m, tes, lyr);
+  } else {
+    let points2d, tris;
+    try {
+      ({ points2d, tris } = triangulateFootprint(ext, holes));
+    } catch (e) {
+      points2d = null;
+      tris = [];
+    }
+    if (points2d && tris.length > 0) {
+      for (const [a, b, c] of tris) {
+        const [xa, ya] = points2d[a];
+        const [xb, yb] = points2d[b];
+        const [xc, yc] = points2d[c];
+        // Bottom: reversed winding. Top: natural winding.
+        writer.addFace([[xa, ya, baseZ], [xc, yc, baseZ], [xb, yb, baseZ]], m, tes, lyr);
+        writer.addFace([[xa, ya, topZ], [xb, yb, topZ], [xc, yc, topZ]], m, tes, lyr);
+      }
+    }
+  }
+
+  // Walls: one quad per edge, for every ring (exterior + holes) - same
+  // (b0, b1, t1, t0) corner order as addExtrudedPolygon's two wall
+  // triangles combined, just kept as one 4-vertex face here.
+  for (const ring of [ext, ...holes]) {
+    const n = ring.length;
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      const [x0, y0] = ring[i];
+      const [x1, y1] = ring[j];
+      writer.addFace(
+        [
+          [x0, y0, baseZ],
+          [x1, y1, baseZ],
+          [x1, y1, topZ],
+          [x0, y0, topZ],
+        ],
+        m, tes, lyr
+      );
+    }
+  }
+}
+
+module.exports = { triangulateFootprint, ObjWriter, addExtrudedPolygon, iterPolygons, MeshWriter, addExtrudedMesh };

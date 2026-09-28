@@ -5,7 +5,12 @@ SOLARCHVISION_OSM_3D_in_obj.py
 Fetch a small 3D city-massing kit from OpenStreetMap around a given
 latitude/longitude within a radius, written into one output folder:
 
-    <outdir>/buildings.obj    - buildings, extruded from OSM footprints
+    <outdir>/buildings.obj    - buildings, extruded from OSM footprints,
+                                triangulated (for tools that need triangles)
+    <outdir>/buildings.txt    - the same buildings as SOLARCHVISION_BIM's
+                                own "Mesh" script command (see below) -
+                                hole-free caps are a single n-gon face
+                                each, not triangulated
     <outdir>/more_info.txt    - a header comment, a ground-rectangle
                                 (Mesh2) line, then trees as plain-text
                                 point+height entries
@@ -17,6 +22,21 @@ Buildings are extruded up to a height derived from (in priority order):
 
 Trees (OSM `natural=tree` nodes) get a height from their own `height` tag,
 falling back to --tree-default-height (default 10.0 m).
+
+buildings.txt (SOLARCHVISION_BIM's `Mesh` script command; see
+app/src/solarchvision_bim/runScript.pde's `case "MESH":`, which calls
+Create3D.pde's add_Mesh) looks like:
+
+    Mesh m:7 tes:0 lyr:0 -20.0000,-10.0000,0.0000 20.0000,-10.0000,0.0000 20.0000,10.0000,0.0000 -20.0000,10.0000,0.0000
+    ...
+
+One line per flat face (bottom cap, top cap, and one per wall). Unlike
+buildings.obj, SOLARCHVISION_BIM's own face model natively supports more
+than 3 vertices per face, so a hole-free footprint's cap is written as a
+single face with its full vertex list - no triangulation needed. A
+footprint with holes (a courtyard) still gets its caps triangulated
+(the same way buildings.obj does): a single n-gon face can't represent
+an annulus. Walls are always a plain 4-vertex quad either way.
 
 more_info.txt looks like:
 
@@ -138,6 +158,11 @@ def main():
     ap.add_argument("--default-height", type=float, default=6.0, help="Fallback building height in meters when no height/levels tags exist (default: 6.0)")
     ap.add_argument("--include-parts", action="store_true", help="Also include building:part features (finer massing for complex buildings)")
 
+    ap.add_argument("--material", type=int, default=7, help="Material index (m:) for buildings.txt Mesh lines (default: 7)")
+    ap.add_argument("--tessellation", type=int, default=0, help="Tessellation index (tes:) for buildings.txt Mesh lines (default: 0)")
+    ap.add_argument("--layer", type=int, default=0, help="Layer index (lyr:) for buildings.txt Mesh lines (default: 0)")
+    ap.add_argument("--no-buildings-txt", action="store_true", help="Skip writing buildings.txt (the SOLARCHVISION_BIM Mesh-command form)")
+
     ap.add_argument("--tree-default-height", type=float, default=10.0, help="Fallback tree height in meters when no height tag exists (default: 10.0)")
     ap.add_argument("--no-trees", action="store_true", help="Skip fetching/writing the tree layer in more_info.txt")
 
@@ -153,6 +178,7 @@ def main():
     outdir = args.outdir or f"site_{args.lat}_{args.lon}"
     os.makedirs(outdir, exist_ok=True)
     buildings_path = os.path.join(outdir, "buildings.obj")
+    buildings_txt_path = os.path.join(outdir, "buildings.txt")
     info_path = os.path.join(outdir, "more_info.txt")
 
     crs, origin = get_projection_crs_and_origin(args.lat, args.lon)
@@ -170,6 +196,7 @@ def main():
     buildings = project_and_recenter_gdf(buildings_raw, crs, origin)
 
     writer = common.ObjWriter()
+    mesh_writer = common.MeshWriter()
     n_written = 0
     if buildings.empty:
         print("No buildings found in that area.", file=sys.stderr)
@@ -184,9 +211,13 @@ def main():
             for poly in common.iter_polygons(geom):
                 ext, holes = common.polygon_rings_from_shapely_local(poly)
                 vcount, fcount = len(writer.vertices), len(writer.faces)
+                mcount = len(mesh_writer.lines)
                 writer.start_group(f"building_{n_written}")
                 try:
                     common.add_extruded_polygon(writer, ext, holes, height)
+                    if not args.no_buildings_txt:
+                        common.add_extruded_mesh(mesh_writer, ext, holes, height,
+                                                  m=args.material, tes=args.tessellation, lyr=args.layer)
                     n_written += 1
                 except ValueError as e:
                     # Non-finite vertex (should not happen after the height
@@ -194,11 +225,16 @@ def main():
                     print(f"  skipping one building: {e}", file=sys.stderr)
                     del writer.vertices[vcount:]
                     del writer.faces[fcount:]
+                    del mesh_writer.lines[mcount:]
                     writer.groups.pop()
 
     writer.write(buildings_path, generator="SOLARCHVISION_OSM_3D_in_obj.py")
     print(f"Wrote {n_written} building solids ({len(writer.vertices)} vertices, "
           f"{len(writer.faces)} faces) to {buildings_path}")
+
+    if not args.no_buildings_txt:
+        mesh_writer.write(buildings_txt_path)
+        print(f"Wrote {len(mesh_writer.lines)} Mesh faces to {buildings_txt_path}")
 
     # ---- Trees -> more_info.txt ----
     # Trees are a best-effort supplementary layer: if this fetch fails, we
