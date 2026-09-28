@@ -1105,7 +1105,7 @@ String runScriptLine (String lineSTR) {
         }
       }
       else {
-        hint = "Mesh m=? tes=? lyr=? xtr=? x1,y1,z1 x2,y2,z2 etc.";
+        hint = "Mesh m=? tes=? lyr=? x1,y1,z1 x2,y2,z2 etc.";
         UI_setTo_Create_Face();
       }
       return hint;
