@@ -76,13 +76,18 @@ SetLon ?
 ```
 
 -   `SETLONLAT`: Sets both at once - **longitude first, then latitude**
-    (note the reversed order from typing them separately)
 
 ```
 SetLonLat <longitude> <latitude>
 ```
 
-All three also move the currently selected weather station to the new
+-   `SETLATLON`: Sets both at once - **latitude first, then longitude**
+
+```
+SetLatLon <latitude> <longitude>
+```
+
+All four also move the currently selected weather station to the new
 location, the same as dragging the Latitude/Longitude spinners in the
 Location panel.
 

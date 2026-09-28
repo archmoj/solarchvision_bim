@@ -1719,6 +1719,18 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
+    case "SETLATLON": {
+      if (parts.length > 2) {
+        STATION.setLatitude(float(parts[1]));
+        STATION.setLongitude(float(parts[2]));
+        update_station(0);
+      }
+      else {
+        hint = "SetLatLon ? ?";
+      }
+      return hint;
+    }
+
     case "SETLON": {
       if (parts.length > 1) {
         STATION.setLongitude(float(parts[1]));

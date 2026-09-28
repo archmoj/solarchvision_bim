@@ -66,8 +66,16 @@ class RunScriptTest {
 
   @Test
   void setLonLat_setsBothInOneCommand_LonThenLatByPosition () {
-    // SETLONLAT LON LAT, deliberately the opposite order from SETLON/SETLAT
     String hint = app.runScriptLine("SETLONLAT -73.6 45.5");
+
+    assertEquals("", hint);
+    assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
+    assertEquals(-73.6f, app.STATION.getLongitude(), 0.001f);
+  }
+
+  @Test
+  void setLatLon_setsBothInOneCommand_LatThenLonByPosition () {
+    String hint = app.runScriptLine("SETLATLON 45.5 -73.6");
 
     assertEquals("", hint);
     assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
@@ -77,6 +85,11 @@ class RunScriptTest {
   @Test
   void setLonLat_missingSecondArgument_returnsAUsageHint () {
     assertEquals("SetLonLat ? ?", app.runScriptLine("SETLONLAT -73.6"));
+  }
+
+  @Test
+  void setLatLon_missingSecondArgument_returnsAUsageHint () {
+    assertEquals("SetLatLon ? ?", app.runScriptLine("SETLATLON 45.5"));
   }
 
   // ================= CLS =====================================================
