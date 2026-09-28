@@ -585,7 +585,12 @@ class Earth3D {
           COL = SHADE.vertexRender_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_type, PAL_direction, PAL_multiplier);
         }
         if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
-          float[] VERTEX_elevation = { subFace[s].x, subFace[s].y, subFace[s].w };
+          // display diff with station
+          // float[] VERTEX_elevation = { subFace[s].x, subFace[s].y, subFace[s].w };
+
+          // display actual elevation
+          float[] VERTEX_elevation = { subFace[s].x, subFace[s].y, subFace[s].w + this.stationElevationBump};
+
           COL = SHADE.vertexRender_Vertex_Elevation(VERTEX_elevation, PAL_type, PAL_direction, PAL_multiplier);
         }
 
