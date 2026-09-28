@@ -1526,6 +1526,7 @@ void mouseClicked () {
 
         if (isInside(X_clicked, Y_clicked, 0, 0, width, pixel_A)) {
           UI_menuBar.revise();
+          return; // we must return here so that typeUserCommand is not set to 0
         }
 
         if (isInside(X_clicked, Y_clicked, 0, pixel_A, width, pixel_A + pixel_B)) {
