@@ -4,6 +4,8 @@ class UI_consoleBar {
 
   boolean update = true;
 
+  int editCursor = 0;
+
   void draw () {
     if (this.update) {
 
@@ -40,7 +42,19 @@ class UI_consoleBar {
 
           textAlign(LEFT, CENTER);
           fill(255);
-          text(allCommands[n], 0.5 * MessageSize, q * 1.5 * MessageSize);
+
+          String txt = allCommands[n];
+          if(n == allCommands.length - 1) {
+            // text with cursor
+            if(this.editCursor < allCommands[allCommands.length - 1].length()) {
+              txt =
+                txt.substring(0, this.editCursor) + "|" +
+                txt.substring(this.editCursor);
+            } else {
+              txt += "|";
+            }
+          }
+          text(txt, 0.5 * MessageSize, q * 1.5 * MessageSize);
 
         }
       }
@@ -70,7 +84,10 @@ class UI_consoleBar {
       for (int i = 0; i < allLines.length; i++) {
         String line = allLines[i];
         if(i == 0) {
-          allCommands[allCommands.length - 1] += line;
+          allCommands[allCommands.length - 1] =
+          allCommands[allCommands.length - 1].substring(0, this.editCursor) + line +
+          allCommands[allCommands.length - 1].substring(this.editCursor);
+          this.editCursor += line.length();
         } else {
           // run previous command before adding new line
           String hint = runLastCommand();
@@ -87,24 +104,54 @@ class UI_consoleBar {
       }
     } else if ((!e.isAltDown()) && (!e.isControlDown())) {
 
-      if (key != CODED) {
+      if (key == CODED) {
+        switch (keyCode) {
+
+          case LEFT:
+            if (this.editCursor > 0) this.editCursor--;
+            break;
+
+          case RIGHT:
+            if (this.editCursor < allCommands[allCommands.length - 1].length()) this.editCursor++;
+            break;
+        }
+
+        return;
+      } else {
         switch(key) {
 
           case ENTER:
             allMessages[allMessages.length - 1] = runLastCommand();
             allCommands = concat(allCommands, new String[] {""});
             allMessages = concat(allMessages, new String[] {""});
+            this.editCursor = 0;
             break;
 
           case BACKSPACE:
-              if (allCommands[allCommands.length - 1].length() > 0) {
-                allCommands[allCommands.length - 1] = allCommands[allCommands.length - 1].substring(0, allCommands[allCommands.length - 1].length() - 1);
-              }
-              break;
+            if (this.editCursor > 0) {
+              allCommands[allCommands.length - 1] =
+              allCommands[allCommands.length - 1].substring(0, this.editCursor - 1) +
+              allCommands[allCommands.length - 1].substring(this.editCursor);
+
+              this.editCursor--;
+            }
+            break;
+
+          case DELETE:
+            if (this.editCursor < allCommands[allCommands.length - 1].length()) {
+              allCommands[allCommands.length - 1] =
+              allCommands[allCommands.length - 1].substring(0, this.editCursor) +
+              allCommands[allCommands.length - 1].substring(this.editCursor + 1);
+            }
+            break;
 
           default:
             if ((31 < key) && (key < 127)) {
-              allCommands[allCommands.length - 1] += key;
+              allCommands[allCommands.length - 1] =
+              allCommands[allCommands.length - 1].substring(0, this.editCursor) + key +
+              allCommands[allCommands.length - 1].substring(this.editCursor);
+
+              this.editCursor++;
             }
             break;
         }
