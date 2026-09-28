@@ -9,7 +9,6 @@ class UI_menuBar {
   boolean update = true;
 
   float width_parent = 7 * MessageSize;
-  float width_child = width_parent; // i.e. minimum size
 
   int selected_parent = -1;
   int selected_child = 0;
@@ -771,21 +770,22 @@ class UI_menuBar {
 
     // set textSize here so that textWidth use that
     textSize(MessageSize);
-    float widthChildren = computeChildMenuWidth(i) + 2 * padWidth;
+    float widthChildren = computeChildMenuWidth(i);
 
     for (int j = 1; j < this.Items[i].length; j++) {
       drawChildRow(i, j, cx, cy, cr, widthChildren);
     }
   }
 
-  // The dropdown is at least as wide as width_child, but grows to fit
-  // its longest label.
   float computeChildMenuWidth(int parentIndex) {
-    float widthChildren = this.width_child;
+    float widthChildren = 0;
     for (int j = 1; j < this.Items[parentIndex].length; j++) {
       float estimatedWidth = textWidth(this.Items[parentIndex][j]);
       if (widthChildren < estimatedWidth) widthChildren = estimatedWidth;
     }
+    // add padding to both sides
+    widthChildren += 2 * padWidth;
+
     return widthChildren;
   }
 
