@@ -146,11 +146,7 @@ void keyPressed (KeyEvent e) {
       Y_clicked = -1;
 
       if ((UI_menuBar.selected_parent != -1) || (UI_menuBar.selected_child != 0)) {
-
-        UI_menuBar.selected_parent = -1;
-        UI_menuBar.selected_child = 0;
-
-        image(pre_screen, 0, pixel_A);
+        UI_menuBar.deselect();
       }
 
       if (e.isControlDown()) {

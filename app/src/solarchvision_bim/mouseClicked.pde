@@ -1515,10 +1515,7 @@ void mouseClicked () {
           }
         }
 
-        UI_menuBar.selected_parent = -1;
-        UI_menuBar.selected_child = 0;
-
-        image(pre_screen, 0, pixel_A);
+        UI_menuBar.deselect();
 
         X_clicked = -1;
         Y_clicked = -1;

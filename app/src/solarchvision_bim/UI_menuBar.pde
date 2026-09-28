@@ -843,6 +843,15 @@ class UI_menuBar {
     }
   }
 
+  void deselect () {
+    image(pre_screen, 0, pixel_A);
+
+    this.selected_parent = -1;
+    this.selected_child = 0;
+    this.revise();
+    this.draw();
+  }
+
   void revise () {
     this.update = true;
   }
