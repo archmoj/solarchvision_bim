@@ -1489,30 +1489,8 @@ void mouseClicked () {
 
       if ((UI_menuBar.selected_parent != -1)) {
 
-        String menu_option = UI_menuBar.Items[UI_menuBar.selected_parent][UI_menuBar.selected_child];
         if (mouseButton == LEFT) {
-          if (UI_menuBar.selected_child != 0) {
-            menu_option = menu_option.toLowerCase();
-            Action action = allActions.get(menu_option);
-            if (action != null) {
-              action.run(new String[0]);
-            }
-
-            if (UI_menuBar.Items[UI_menuBar.selected_parent][0].equals("Layer")) {
-              if (UI_menuBar.selected_child > 0) {
-                if (UI_menuBar.selected_child < allLayers.length) {
-                  changeCurrentLayerTo(UI_menuBar.selected_child - 1);
-                  DevelopLayer_id = CurrentLayer_id;
-                  STUDY.revise();
-                } else if (menu_option.charAt(0) != '—') {
-                  Develop_Option = UI_menuBar.selected_child - allLayers.length - 1; // -1 for the divider
-                  postProcess_developDATA(CurrentDataSource);
-                  changeCurrentLayerTo(LAYER_developed.id);
-                  STUDY.revise();
-                }
-              }
-            }
-          }
+          UI_menuBar.runSelectedItem();
         }
 
         UI_menuBar.deselect();

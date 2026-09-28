@@ -742,7 +742,7 @@ class UI_menuBar {
   // Draws a single top-level tab (e.g. "File", "Tools", ...) and updates
   // selection state when the mouse is hovering over it.
   void drawParentTab(int i, float cx, float cy, float cr) {
-    if (!this.deselecting && isInside(mouseX, mouseY, cx, cy - cr, cx + currentParentWidth, cy + cr)) {
+    if (!this.deselecting && !isHoverSuppressed() && isInside(mouseX, mouseY, cx, cy - cr, cx + currentParentWidth, cy + cr)) {
       if (this.selected_parent == -1) {
         pre_screen = get(0, pixel_A, width, height - pixel_A);
         //println("Screen GET!");
@@ -770,7 +770,9 @@ class UI_menuBar {
   // Draws the dropdown for the currently open parent tab.
   void drawChildMenu(int i, float cx, float cy, float cr) {
     image(pre_screen, 0, pixel_A);
-    this.selected_child = 0;
+    if (!isHoverSuppressed()) {
+      this.selected_child = 0;
+    }
 
     // set textSize here so that textWidth use that
     textSize(MessageSize);
@@ -802,7 +804,7 @@ class UI_menuBar {
     String label = this.Items[i][j];
     boolean isSelectable = !isDivider(label);
 
-    boolean isHovered = isSelectable && isInside(
+    boolean isHovered = isSelectable && !isHoverSuppressed() && isInside(
       UI_X_moved, UI_Y_moved,
       cx, ceil(cy - cr + j * pixel_A * CHILD_ROW_HEIGHT_FACTOR) + 1,
       cx + widthChildren, floor(cy + cr + j * pixel_A * CHILD_ROW_HEIGHT_FACTOR) - 1
@@ -810,6 +812,10 @@ class UI_menuBar {
 
     if (isHovered) {
       this.selected_child = j;
+    }
+
+    // highlight the selected row whether it was selected by mouse or keyboard
+    if (isSelectable && (this.selected_child == j)) {
       fill(HOVER_COLOR_R, HOVER_COLOR_G, HOVER_COLOR_B);
     } else {
       fill(0, 223);
@@ -843,6 +849,126 @@ class UI_menuBar {
     }
   }
 
+  // ---------------------------------------------------------------------
+  // Keyboard navigation
+  // ---------------------------------------------------------------------
+
+  // Once the keyboard moves the selection, mouse hover is ignored until
+  // the mouse actually moves again; otherwise a resting mouse pointer
+  // would override the keyboard selection on every redraw.
+  private boolean keyboardNavigated = false;
+  private int keyboardNavigated_X_moved = -1;
+  private int keyboardNavigated_Y_moved = -1;
+
+  boolean isHoverSuppressed () {
+    return this.keyboardNavigated &&
+      (UI_X_moved == this.keyboardNavigated_X_moved) &&
+      (UI_Y_moved == this.keyboardNavigated_Y_moved);
+  }
+
+  // Returns the next selectable child of parent p starting from `from`
+  // and moving in direction `dir` (+1 / -1). Dividers are skipped. Index 0
+  // (the parent tab itself, i.e. "no child") is always a valid stop.
+  // Returns `from` if there is nowhere to go.
+  int stepChild (int p, int from, int dir) {
+    for (int j = from + dir; (j >= 0) && (j < this.Items[p].length); j += dir) {
+      if ((j == 0) || !isDivider(this.Items[p][j])) return j;
+    }
+    return from;
+  }
+
+  // Clamp child j into parent p's range and make sure it is not a divider.
+  int clampChild (int p, int j) {
+    j = max(0, min(j, this.Items[p].length - 1));
+    if ((j > 0) && isDivider(this.Items[p][j])) {
+      int k = stepChild(p, j, -1);
+      if ((k == 0) && (j < this.Items[p].length - 1)) {
+        int m = stepChild(p, j, 1);
+        if (m != j) k = m;
+      }
+      j = k;
+    }
+    return j;
+  }
+
+  // Handles Up/Down/Left/Right/Enter while a menu is open.
+  // Returns true if the key was consumed so that other elements must not
+  // process it.
+  boolean keyPressed (KeyEvent e) {
+    if (this.selected_parent == -1) return false;
+    if (e.isControlDown() || e.isAltDown()) return false;
+
+    boolean isCoded = (e.getKey() == CODED);
+    int code = e.getKeyCode();
+
+    boolean isEnter = !isCoded && ((e.getKey() == ENTER) || (e.getKey() == RETURN));
+    boolean isArrow = isCoded && ((code == UP) || (code == DOWN) || (code == LEFT) || (code == RIGHT));
+
+    if (!isEnter && !isArrow) return false;
+
+    if (isEnter) {
+      this.runSelectedItem();
+      this.deselect();
+      X_clicked = -1;
+      Y_clicked = -1;
+      return true;
+    }
+
+    int p = this.selected_parent;
+    int c = this.selected_child;
+
+    if (code == DOWN) {
+      c = stepChild(p, c, 1);
+    } else if (code == UP) {
+      c = stepChild(p, c, -1);
+    } else if (code == RIGHT) {
+      p = min(p + 1, this.Items.length - 1);
+      c = clampChild(p, c);
+    } else if (code == LEFT) {
+      p = max(p - 1, 0);
+      c = clampChild(p, c);
+    }
+
+    this.selected_parent = p;
+    this.selected_child = c;
+
+    this.keyboardNavigated = true;
+    this.keyboardNavigated_X_moved = UI_X_moved;
+    this.keyboardNavigated_Y_moved = UI_Y_moved;
+
+    this.revise();
+    return true;
+  }
+
+  // Runs the action of the currently selected menu item.
+  // Shared by mouse click (mouseClicked.pde) and the Enter key.
+  void runSelectedItem () {
+    if (this.selected_parent == -1) return;
+    if (this.selected_child == 0) return;
+
+    String menu_option = this.Items[this.selected_parent][this.selected_child];
+    menu_option = menu_option.toLowerCase();
+    Action action = allActions.get(menu_option);
+    if (action != null) {
+      action.run(new String[0]);
+    }
+
+    if (this.Items[this.selected_parent][0].equals("Layer")) {
+      if (this.selected_child > 0) {
+        if (this.selected_child < allLayers.length) {
+          changeCurrentLayerTo(this.selected_child - 1);
+          DevelopLayer_id = CurrentLayer_id;
+          STUDY.revise();
+        } else if (menu_option.charAt(0) != '—') {
+          Develop_Option = this.selected_child - allLayers.length - 1; // -1 for the divider
+          postProcess_developDATA(CurrentDataSource);
+          changeCurrentLayerTo(LAYER_developed.id);
+          STUDY.revise();
+        }
+      }
+    }
+  }
+
   private boolean deselecting = false;
 
   void deselect () {
@@ -850,6 +976,7 @@ class UI_menuBar {
 
     this.selected_parent = -1;
     this.selected_child = 0;
+    this.keyboardNavigated = false;
     this.revise();
 
     deselecting = true;

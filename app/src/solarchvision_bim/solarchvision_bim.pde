@@ -145,6 +145,12 @@ void keyPressed (KeyEvent e) {
       X_clicked = -1;
       Y_clicked = -1;
 
+      // Arrow keys and Enter drive the open menu and must not reach other elements
+      if (UI_menuBar.keyPressed(e)) {
+        redraw();
+        return;
+      }
+
       if (e.isControlDown()) {
         if (!addNewSelectionToPreviousSelection_isOverridden) {
           addNewSelectionToPreviousSelection_beforeModifierKey = addNewSelectionToPreviousSelection;
