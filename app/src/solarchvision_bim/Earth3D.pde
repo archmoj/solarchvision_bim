@@ -68,6 +68,8 @@ class Earth3D {
     "Z_180000_-090000_-180000_090000_EN_FR_.jpg"
   };
 
+  float stationElevationBump = 0;
+
   class FaceVertex {
     float x, y, z;
     float u, v;
@@ -469,7 +471,7 @@ class Earth3D {
     // getting bilinear's smoothing to damp single-sample's discontinuity.
     float singleSampleBump = computeElevationBump(stationLat, stationLon);
     float bilinearBump = computeElevationBumpBilinear(stationLat, stationLon);
-    float stationElevationBump = (singleSampleBump > bilinearBump) ? singleSampleBump : (singleSampleBump * 2 + bilinearBump) / 3.0;
+    this.stationElevationBump = (singleSampleBump > bilinearBump) ? singleSampleBump : (singleSampleBump * 2 + bilinearBump) / 3.0;
 
     int PAL_type = SHADE.get_PAL_type();
     int PAL_direction = SHADE.get_PAL_direction();
@@ -480,7 +482,7 @@ class Earth3D {
     // vertex (not per-cell), so build it once up front rather than
     // re-deriving it on every matching iteration below.
     FaceVertex stationVertex = (isWin3D && (this.fillStationGridCell == -1 || this.fillStationGridCell == -2))
-      ? buildStationVertex(CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump)
+      ? buildStationVertex(CEN_lon, CEN_lat, ScaleX, ScaleY)
       : null;
 
     for (int _turn = 1; _turn <= end_turn; _turn++) {
@@ -495,7 +497,7 @@ class Earth3D {
           if (unwrappedBeta < stationLon - this.clipRadiusDegrees_Lon) continue;
 
           f += 1;
-          FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
+          FaceVertex[] subFace = buildSubFace(Alpha, unwrappedBeta, CEN_lon, CEN_lat, ScaleX, ScaleY);
 
           boolean skipFill = (this.fillStationGridCell != 1) && isStationGridCell(Alpha, unwrappedBeta, stationLat, stationLon);
           boolean fillGapTriangles = skipFill && (this.fillStationGridCell == -1);
@@ -775,7 +777,7 @@ class Earth3D {
   // in that same space, e.g. for the triangle fan fillStationGridCell ==
   // -1 draws (see draw()).
   FaceVertex buildVertex (float a, float b,
-                                   float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
+                                   float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
     FaceVertex vtx = new FaceVertex();
 
     float tb = -STATION.getLongitude();
@@ -807,7 +809,7 @@ class Earth3D {
     double y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
     double z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
 
-    z2 -= DOUBLE_r_Earth + stationElevationBump; // drop the globe below the station
+    z2 -= DOUBLE_r_Earth + this.stationElevationBump; // drop the globe below the station
 
     vtx.x = (float) x2;
     vtx.y = (float) y2;
@@ -819,13 +821,13 @@ class Earth3D {
     // multiplier (Land3D.palette_MLT) is calibrated for that kind of
     // range; feeding it z directly would saturate almost everywhere
     // except right next to the station.
-    vtx.elevationBump = rawBump - stationElevationBump;
+    vtx.elevationBump = rawBump - this.stationElevationBump;
 
     return vtx;
   }
 
   FaceVertex[] buildSubFace (float Alpha, float Beta,
-                                      float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
+                                      float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
     FaceVertex[] subFace = new FaceVertex[4];
 
     for (int s = 0; s < 4; s++) {
@@ -834,7 +836,7 @@ class Earth3D {
       if (s == 2 || s == 3) a -= this.lat_step;
       if (s == 1 || s == 2) b -= this.lon_step;
 
-      subFace[s] = buildVertex(a, b, CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
+      subFace[s] = buildVertex(a, b, CEN_lon, CEN_lat, ScaleX, ScaleY);
     }
 
     return subFace;
@@ -846,8 +848,8 @@ class Earth3D {
   // location sits at the model origin/orientation, then drops the globe
   // by DOUBLE_r_Earth + stationElevationBump, and stationElevationBump is
   // itself derived from the station's own coordinate (see draw()).
-  FaceVertex buildStationVertex (float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, float stationElevationBump) {
-    return buildVertex(STATION.getLatitude(), STATION.getLongitude(), CEN_lon, CEN_lat, ScaleX, ScaleY, stationElevationBump);
+  FaceVertex buildStationVertex (float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
+    return buildVertex(STATION.getLatitude(), STATION.getLongitude(), CEN_lon, CEN_lat, ScaleX, ScaleY);
   }
 
 
