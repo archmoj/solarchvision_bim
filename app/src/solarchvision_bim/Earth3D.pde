@@ -48,13 +48,22 @@ class Earth3D {
   boolean displaySurface = true;
   boolean displayTexture = true;
 
+  boolean showTexture () {
+    return this.displayTexture &&
+      (WIN3D.FacesShade != SHADE.Global_Solar) &&
+      (WIN3D.FacesShade != SHADE.Vertex_Elevation);
+  }
+
   int fillStationGridCell = -2; // -2: fill station cell with quads subdivided midway to the station (center quad leveled to z=0), -1: fill station cell with triangles pointing to the station, 0: skip fill, 1: normal fill
 
   PImage[] Map;
   float[][] BoundariesX;
   float[][] BoundariesY;
 
-  String Path = BaseFolder + "/input/images/earth";
+  String Path = BaseFolder +
+    "/input/images/earth";
+  //"/input/images/earth_high_res";
+
   String[] Filenames = new String[] {
     "Z_180000_-090000_-180000_090000_EN_FR_.jpg"
   };
@@ -384,7 +393,7 @@ class Earth3D {
     // bail out here when a texture is actually required: textured WIN3D
     // rendering, or HTML/OBJ export (which doesn't support shaded
     // rendering in this implementation).
-    boolean needsTexture = this.displayTexture || (target_window != TypeWindow.WIN3D);
+    boolean needsTexture = this.showTexture() || (target_window != TypeWindow.WIN3D);
     if (needsTexture && (this.cachedTextureImage == null)) return; // no local "E" tile covers this location
 
     PImage textureImage    = this.cachedTextureImage;
@@ -411,7 +420,7 @@ class Earth3D {
     float CEN_lon = 0.5 * (bx1 + bx2);
     float CEN_lat = 0.5 * (by1 + by2);
 
-    if (this.displayTexture && (target_window == TypeWindow.HTML || target_window == TypeWindow.OBJ3D)) {
+    if (this.showTexture() && (target_window == TypeWindow.HTML || target_window == TypeWindow.OBJ3D)) {
       writeMaterial(target_window, textureLabel, texturePath, textureFilename);
     }
 
@@ -544,12 +553,12 @@ class Earth3D {
     WIN3D.graphics.strokeWeight(1);
     WIN3D.graphics.noStroke();
     WIN3D.graphics.beginShape(QUADS);
-    if (this.displayTexture) {
+    if (this.showTexture()) {
       WIN3D.graphics.texture(textureImage);
     }
   }
 
-  // Textured mode (this.displayTexture true) samples the elevation image as
+  // Textured mode (this.showTexture() true) samples the elevation image as
   // before. Shaded mode (false) instead colors each vertex per
   // WIN3D.FacesShade - currently SHADE.Global_Solar (sky-bucket solar
   // exposure, needs this vertex's neighbors within the same subface, same
@@ -560,7 +569,7 @@ class Earth3D {
   // beginWIN3DSphere(): a texture binds once for the whole shape, and
   // per-vertex fill() works the same way within one shape too.
   void addFaceWIN3D (FaceVertex[] subFace, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
-    if (!this.displayTexture) {
+    if (!this.showTexture()) {
       for (int s = 0; s < subFace.length; s++) {
         int s_prev = (s + subFace.length - 1) % subFace.length;
         int s_next = (s + 1) % subFace.length;
@@ -702,7 +711,7 @@ class Earth3D {
       if (target_window == TypeWindow.OBJ3D) {
         writeMTLHeader();
       }
-      if (this.displayTexture) {
+      if (this.showTexture()) {
         writeTextureMap(target_window, texturePath, textureFilename);
       }
     }
@@ -772,7 +781,7 @@ class Earth3D {
     float tb = -STATION.getLongitude();
     float ta = 90 - STATION.getLatitude();
 
-    if (this.displayTexture) {
+    if (this.showTexture()) {
       float lon = b - CEN_lon;
       float lat = a - CEN_lat;
       vtx.u = (lon / ScaleX / LONGITUDE_SPAN + 0.5);

@@ -14,7 +14,7 @@ class Land3D {
 
   int palette_CLR = 1;
   int palette_DIR = -1;
-  float palette_MLT = 0.05;
+  float palette_MLT = 0.001;
 
   float[][][] Mesh;
 
