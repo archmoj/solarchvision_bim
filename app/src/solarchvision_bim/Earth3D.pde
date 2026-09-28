@@ -626,7 +626,7 @@ class Earth3D {
     FaceVertex vtx = new FaceVertex();
     vtx.x = (corner.x + station.x) / 2.0;
     vtx.y = (corner.y + station.y) / 2.0;
-    vtx.z = 0;
+    vtx.z = -0.01; // i.e. to avoid Z-fighting with objects ground plane
     vtx.u = (corner.u + station.u) / 2.0;
     vtx.v = (corner.v + station.v) / 2.0;
     vtx.elevationBump = (corner.elevationBump + station.elevationBump) / 2.0;
