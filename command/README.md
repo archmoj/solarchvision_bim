@@ -238,10 +238,16 @@ PolygonExtrude m=? tes=? lyr=? x=? y=? z=? d=? h=? deg=? r=?
 
 ### Mesh creation
 
--   `MESH2` to `MESH6`: Creates meshes using 2 to 6 points
+-   `MESH2` to `MESH6`: Creates meshes using 2 to 6 points (corners)
 
 ```
 Mesh2 m=? tes=? lyr=? x1=? y1=? z1=? x2=? y2=? z2=?
+```
+
+-   `MESH`: Creates a mesh with an unspecified number of points.
+
+```
+Mesh m=? tes=? lyr=? xtr=? x1,y1,z1 x2,y2,z2 etc.
 ```
 
 ------------------------------------------------------------------------
@@ -863,5 +869,5 @@ commands, each switching to a mouse-drag tool for that one axis:
 
 ### About
 
--   `SOLARCHVISION-BIM6D`, `Designed & developed by`, `Mojtaba Samimi`,
+-   `SOLARCHVISION-BIM6D`, `Mojtaba Samimi`,
     `www.solarchvision.com`: open the corresponding link
