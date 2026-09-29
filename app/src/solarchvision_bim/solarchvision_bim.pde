@@ -88,6 +88,9 @@ void draw () {
   //println("frameCount:", frameCount);
 
   WIN3D.processHeldKey();
+  UI_menuBar.processHeldKey();
+  UI_consoleBar.processHeldKey();
+  UI_rollout.processHeldKey();
 
   if (!draw_initial_frames()) {
     if(stepAfterInitialization < runAfterInitialization.length) {
@@ -223,6 +226,9 @@ void keyPressed (KeyEvent e) {
 void keyReleased () {
 
   WIN3D.keyReleased();
+  UI_menuBar.keyReleased();
+  UI_consoleBar.keyReleased();
+  UI_rollout.keyReleased();
 
   if ((key == CODED) && ((keyCode == CONTROL) || (keyCode == ALT))) {
     addNewSelectionToPreviousSelection = addNewSelectionToPreviousSelection_beforeModifierKey;

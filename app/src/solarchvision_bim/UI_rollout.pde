@@ -1167,31 +1167,46 @@ class UI_rollout {
     return this.editActive;
   }
 
+  // --- Continuous key-hold repeat (see WIN3D.pde) -----------------------
+  // Processing does not forward OS key-repeat events while a key stays
+  // held, so Left/Right/Backspace/Delete are re-run from draw(), via
+  // processHeldKey(), for as long as they remain held. Delay-then-repeat,
+  // like an OS key-repeat setting, at frameRate(24): ~0.25s before the
+  // first repeat, then one step every frame (~24/s).
+  static final int NAV_KEY_INITIAL_DELAY_FRAMES = 6;
+  static final int NAV_KEY_REPEAT_FRAMES = 1;
+  boolean navKeyHeld = false;
+  boolean navKeyCoded = false;
+  char navKeyChar = 0;
+  int navKeyCode = 0;
+  int navKeyFrameCounter = 0;
+  boolean navKeyRepeating = false;
+
   void keyPressed (KeyEvent e) {
 
     if (!this.editActive) return;
     if (e.isAltDown() || e.isControlDown()) return;
 
-    if (key == CODED) {
-      switch (keyCode) {
+    boolean isCoded = (key == CODED);
+    char keyChar = key;
+    int code = keyCode;
 
-        case LEFT:
-          if (this.editCursor > 0) {
-            this.editCursor--;
-            this.revise();
-          }
-          break;
+    boolean isRepeatableArrow = isCoded && ((code == LEFT) || (code == RIGHT));
+    boolean isRepeatableEdit = !isCoded && ((keyChar == BACKSPACE) || (keyChar == DELETE));
 
-        case RIGHT:
-          if (this.editCursor < this.editText.length()) {
-            this.editCursor++;
-            this.revise();
-          }
-          break;
-      }
+    if (isRepeatableArrow || isRepeatableEdit) {
+      this.navKeyHeld = true;
+      this.navKeyCoded = isCoded;
+      this.navKeyChar = keyChar;
+      this.navKeyCode = code;
+      this.navKeyFrameCounter = 0;
+      this.navKeyRepeating = false;
 
+      this.dispatchEditKey(isCoded, code, keyChar);
       return;
     }
+
+    if (isCoded) return;
 
     switch (key) {
 
@@ -1233,21 +1248,6 @@ class UI_rollout {
         }
         break;
 
-      case BACKSPACE:
-        if (this.editCursor > 0) {
-          this.editText = this.editText.substring(0, this.editCursor - 1) + this.editText.substring(this.editCursor);
-          this.editCursor--;
-          this.revise();
-        }
-        break;
-
-      case DELETE:
-        if (this.editCursor < this.editText.length()) {
-          this.editText = this.editText.substring(0, this.editCursor) + this.editText.substring(this.editCursor + 1);
-          this.revise();
-        }
-        break;
-
       case '-':
         // A minus sign is only meaningful as the very first character.
         if ((this.editCursor == 0) && ((this.editText.length() == 0) || (this.editText.charAt(0) != '-'))) {
@@ -1270,5 +1270,76 @@ class UI_rollout {
         break;
     }
 
+  }
+
+  // Applies one Left/Right cursor move or Backspace/Delete edit.
+  // Shared by keyPressed() (first press) and processHeldKey() (repeat).
+  void dispatchEditKey (boolean isCoded, int code, char keyChar) {
+    if (isCoded) {
+      switch (code) {
+
+        case LEFT:
+          if (this.editCursor > 0) {
+            this.editCursor--;
+            this.revise();
+          }
+          break;
+
+        case RIGHT:
+          if (this.editCursor < this.editText.length()) {
+            this.editCursor++;
+            this.revise();
+          }
+          break;
+      }
+    } else {
+      switch (keyChar) {
+
+        case BACKSPACE:
+          if (this.editCursor > 0) {
+            this.editText = this.editText.substring(0, this.editCursor - 1) + this.editText.substring(this.editCursor);
+            this.editCursor--;
+            this.revise();
+          }
+          break;
+
+        case DELETE:
+          if (this.editCursor < this.editText.length()) {
+            this.editText = this.editText.substring(0, this.editCursor) + this.editText.substring(this.editCursor + 1);
+            this.revise();
+          }
+          break;
+      }
+    }
+  }
+
+  // Called once per frame from the sketch's draw(); re-fires the held
+  // key's action for as long as it remains held and the spinner is still
+  // being edited.
+  void processHeldKey () {
+    if (this.navKeyHeld && this.editActive) {
+      this.navKeyFrameCounter++;
+      int threshold = this.navKeyRepeating ? NAV_KEY_REPEAT_FRAMES : NAV_KEY_INITIAL_DELAY_FRAMES;
+      if (this.navKeyFrameCounter >= threshold) {
+        this.navKeyFrameCounter = 0;
+        this.navKeyRepeating = true;
+        this.dispatchEditKey(this.navKeyCoded, this.navKeyCode, this.navKeyChar);
+      }
+    }
+  }
+
+  // Matches the global keyReleased() convention (no KeyEvent overload
+  // needed): uses the sketch's global key/keyCode.
+  void keyReleased () {
+    if (!this.navKeyHeld) return;
+
+    boolean releasedCoded = (key == CODED);
+    if (releasedCoded != this.navKeyCoded) return;
+
+    if (releasedCoded) {
+      if (keyCode == this.navKeyCode) this.navKeyHeld = false;
+    } else {
+      if (key == this.navKeyChar) this.navKeyHeld = false;
+    }
   }
 }

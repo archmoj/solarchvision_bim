@@ -894,6 +894,20 @@ class UI_menuBar {
   // Handles Up/Down/Left/Right/Enter while a menu is open.
   // Returns true if the key was consumed so that other elements must not
   // process it.
+  // --- Continuous key-hold navigation (see WIN3D.pde) ------------------
+  // Processing does not forward OS key-repeat events while a key stays
+  // held, so Up/Down/Left/Right are re-run once per frame (from draw(),
+  // via processHeldKey()) for as long as they remain held. Enter is a
+  // discrete/destructive action and must stay single-press only.
+  boolean navKeyHeld = false;
+  int navKeyCode = 0;
+  // Delay-then-repeat, like an OS key-repeat setting, at frameRate(24):
+  // ~0.25s before the first repeat, then one step every frame (~24/s).
+  static final int NAV_KEY_INITIAL_DELAY_FRAMES = 6;
+  static final int NAV_KEY_REPEAT_FRAMES = 1;
+  int navKeyFrameCounter = 0;
+  boolean navKeyRepeating = false;
+
   boolean keyPressed (KeyEvent e) {
     if (this.selected_parent == -1) return false;
     if (e.isControlDown() || e.isAltDown()) return false;
@@ -914,6 +928,18 @@ class UI_menuBar {
       return true;
     }
 
+    this.navKeyHeld = true;
+    this.navKeyCode = code;
+    this.navKeyFrameCounter = 0;
+    this.navKeyRepeating = false;
+
+    this.moveSelection(code);
+    return true;
+  }
+
+  // Moves selected_parent / selected_child for one arrow key press.
+  // Shared by keyPressed() (first press) and processHeldKey() (repeat).
+  void moveSelection (int code) {
     int p = this.selected_parent;
     int c = this.selected_child;
 
@@ -937,7 +963,30 @@ class UI_menuBar {
     this.keyboardNavigated_Y_moved = UI_Y_moved;
 
     this.revise();
-    return true;
+  }
+
+  // Called once per frame from the sketch's draw(); re-fires the held
+  // arrow key's action for as long as it remains held and the menu is
+  // still open.
+  void processHeldKey () {
+    if (this.navKeyHeld && (this.selected_parent != -1)) {
+      this.navKeyFrameCounter++;
+      int threshold = this.navKeyRepeating ? NAV_KEY_REPEAT_FRAMES : NAV_KEY_INITIAL_DELAY_FRAMES;
+      if (this.navKeyFrameCounter >= threshold) {
+        this.navKeyFrameCounter = 0;
+        this.navKeyRepeating = true;
+        this.moveSelection(this.navKeyCode);
+      }
+    }
+  }
+
+  // Matches the global keyReleased() convention (no KeyEvent overload
+  // needed): uses the sketch's global key/keyCode.
+  void keyReleased () {
+    if (!this.navKeyHeld) return;
+    if ((key == CODED) && (keyCode == this.navKeyCode)) {
+      this.navKeyHeld = false;
+    }
   }
 
   // Runs the action of the currently selected menu item.
