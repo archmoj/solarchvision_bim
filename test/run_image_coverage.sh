@@ -4,39 +4,36 @@
 # the unit tests' jacoco.exec into one combined report.
 #
 # This does NOT modify run.sh/run-latest.sh - JAVA_TOOL_OPTIONS is picked
-# up by any JVM started while it's set, including the one processing-java/
-# Processing cli spawns internally to run the sketch, so nothing about
-# Processing's own launch command needs to change.
+# up by any JVM started while it's set, including the one Processing cli
+# spawns internally to run the sketch, so nothing about Processing's own
+# launch command needs to change.
 #
-# Requires test/lib/jacoco/jacocoagent.jar (the same one test/install_jacoco.sh
-# would normally fetch - or the hand-built one described in the chat this
-# script came out of, if repo1.maven.org isn't reachable in your environment).
-# Also requires the "Report" tool (Report.java/.class) from that same
-# conversation if you don't have a real jacococli.jar - it exercises the
-# same org.jacoco.core/org.jacoco.report APIs jacococli itself does.
+# Requires test/lib/jacoco/jacocoagent.jar and jacococli.jar - the same
+# pair test/install_jacoco.sh fetches for test/run_tests.sh's own coverage
+# report, from the official JaCoCo distribution zip (see test/README.md).
 #
 # This exercises the sketch's real GL rendering pipeline, so it needs a
 # display - wrap the whole invocation in xvfb-run if there isn't a real one:
 #   xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-#     ./test/run_image_coverage.sh command/test_primitives.txt
+#     ./test/run_image_coverage.sh
 #
 # Usage:
+#   ./test/run_image_coverage.sh                          # every command/test_*.txt
 #   ./test/run_image_coverage.sh command/test_primitives.txt [more scripts...]
 #
 # Environment:
-#   PROCESSING_HOME       - defaults to ~/processing/4.3.4 (run.sh) or
-#                            ~/processing/4.5.2 (run-latest.sh, if the
-#                            legacy processing-java isn't found there)
+#   PROCESSING_HOME       - defaults to ~/processing/4.5.2 (run-latest.sh);
+#                            point it at a 4.3.4 install instead only if
+#                            you specifically want run.sh - see the "Use
+#                            Processing 4.5.x if at all possible" comment
+#                            below for why that's not the default.
 #   JACOCO_AGENT_JAR       - defaults to test/lib/jacoco/jacocoagent.jar
 #   UNIT_TEST_EXEC         - defaults to build/test/jacoco.exec (the file
 #                             test/run_tests.sh's own coverage run writes) -
 #                             merged in automatically if it exists, so the
 #                             final report reflects both unit tests AND
 #                             every image script given on the command line.
-#   REPORT_CLASSPATH       - classpath for the Report tool (org.jacoco.core +
-#                             org.jacoco.report [+ asm, if using unshaded
-#                             jars]); only needed if not using a real
-#                             jacococli.jar.
+#   JACOCO_CLI_JAR         - defaults to test/lib/jacoco/jacococli.jar
 set -euo pipefail
 cd "$(dirname "$0")/.."   # repo root
 
@@ -51,9 +48,21 @@ if [ ! -f "$JACOCO_AGENT_JAR" ]; then
   exit 1
 fi
 
-if [ "$#" -lt 1 ]; then
-  echo "usage: $0 command/test_foo.txt [command/test_bar.txt ...]" >&2
+JACOCO_CLI_JAR="${JACOCO_CLI_JAR:-test/lib/jacoco/jacococli.jar}"
+if [ ! -f "$JACOCO_CLI_JAR" ]; then
+  echo "error: $JACOCO_CLI_JAR not found - run test/install_jacoco.sh first" >&2
   exit 1
+fi
+
+if [ "$#" -lt 1 ]; then
+  shopt -s nullglob
+  set -- command/test_*.txt
+  shopt -u nullglob
+  if [ "$#" -lt 1 ]; then
+    echo "error: no scripts given and no command/test_*.txt files found" >&2
+    exit 1
+  fi
+  echo "==> No scripts given - defaulting to every command/test_*.txt: $*"
 fi
 
 # Pick the same launcher run.sh/run-latest.sh would use, based on what's
@@ -129,25 +138,13 @@ MAIN_CLASS_DIR="$(dirname "$MAIN_CLASS_PATH")"
 SOURCE_FILE_PATH="$(find build/test -name 'solarchvision_bim.java' -print -quit)"
 SOURCE_DIR="$(dirname "$SOURCE_FILE_PATH")"
 
-JACOCO_CLI_JAR="${JACOCO_CLI_JAR:-test/lib/jacoco/jacococli.jar}"
-if [ -f "$JACOCO_CLI_JAR" ]; then
-  echo "==> Using real jacococli.jar"
-  java -jar "$JACOCO_CLI_JAR" merge "${EXEC_FILES[@]}" --destfile "$OUT_DIR/merged.exec"
-  java -jar "$JACOCO_CLI_JAR" report "$OUT_DIR/merged.exec" \
-    --classfiles "$MAIN_CLASS_DIR" \
-    --sourcefiles "$SOURCE_DIR" \
-    --name solarchvision_bim \
-    --html "$OUT_DIR/html" \
-    --xml "$OUT_DIR/coverage.xml" \
-    --csv "$OUT_DIR/coverage.csv"
-else
-  # Fall back to the Report tool from the conversation this script came
-  # from - it loads every .exec file straight into one
-  # ExecutionDataStore, which does the same job as jacococli's separate
-  # "merge" step, so no merged.exec file is needed either way.
-  echo "==> jacococli.jar not found - using the Report tool (set REPORT_CLASSPATH if this fails)"
-  : "${REPORT_CLASSPATH:?set REPORT_CLASSPATH to org.jacoco.core.jar:org.jacoco.report.jar[:asm-all.jar], and put Report.class on it too}"
-  java -cp "$REPORT_CLASSPATH" Report "$MAIN_CLASS_DIR" "$OUT_DIR" solarchvision_bim "$SOURCE_DIR" "${EXEC_FILES[@]}"
-fi
+java -jar "$JACOCO_CLI_JAR" merge "${EXEC_FILES[@]}" --destfile "$OUT_DIR/merged.exec"
+java -jar "$JACOCO_CLI_JAR" report "$OUT_DIR/merged.exec" \
+  --classfiles "$MAIN_CLASS_DIR" \
+  --sourcefiles "$SOURCE_DIR" \
+  --name solarchvision_bim \
+  --html "$OUT_DIR/html" \
+  --xml "$OUT_DIR/coverage.xml" \
+  --csv "$OUT_DIR/coverage.csv"
 
 echo "==> Coverage report: $OUT_DIR/html/index.html (also: coverage.xml, coverage.csv)"
