@@ -57,7 +57,7 @@ class STATION {
     this.country = country;
   }
   public void setFilename_SWOB (String filename_SWOB) {
-    this.filename_SWOB = filename_NAEFS;
+    this.filename_SWOB = filename_SWOB;
   }
   public void setFilename_NAEFS (String filename_NAEFS) {
     this.filename_NAEFS = filename_NAEFS;
@@ -90,6 +90,7 @@ class STATION {
     this.filename_NAEFS = filename_NAEFS;
     this.filename_CWEEDS = filename_CWEEDS;
     this.filename_TMYEPW = filename_TMYEPW;
+    this.Download_TMYEPW = Download_TMYEPW;
 
     this.elevation = elevation;
     this.latitude = latitude;
