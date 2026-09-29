@@ -120,18 +120,19 @@ jobs:
           ./test/run_tests.sh
 
       # Only on 4.5.2: run.sh (4.3.4) segfaults rendering under Xvfb (see
-      # test/run_image_coverage.sh's own comment on this), so there's no
-      # working image-coverage leg to run there. This reuses
+      # test/run_integration.sh's own comment on this), so there's no
+      # working merged-coverage leg to run there. This reuses
       # build/test/jacoco.exec, which the "Run tests" step above just
       # wrote, so the resulting report reflects unit tests AND every
-      # command/test_*.txt image script together, not image tests alone.
-      - name: Run image-test coverage (Processing 4.5.2 only)
+      # command/test_*.txt integration script together, not integration
+      # tests alone.
+      - name: Run integration tests with merged coverage (Processing 4.5.2 only)
         if: matrix.processing_version == '4.5.2'
         run: |
           export PROCESSING_HOME="$HOME/processing/${{ matrix.processing_version }}"
-          chmod +x test/run_image_coverage.sh
+          chmod +x test/run_integration.sh
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-            ./test/run_image_coverage.sh
+            ./test/run_integration.sh
 
       # run_tests.sh always writes here when coverage is enabled,
       # win or lose - upload it even if the tests failed above, so a
@@ -179,16 +180,17 @@ jobs:
           if-no-files-found: warn
           retention-days: 2
 
-      # test/run_image_coverage.sh always writes here, win or lose - same
+      # test/run_integration.sh always writes here, win or lose - same
       # reasoning as "Publish coverage summary" above. Only runs on 4.5.2
-      # (see "Run image-test coverage" above), so there's exactly one of
-      # these per workflow run, not one per matrix leg.
-      - name: Publish image-test coverage summary (Processing 4.5.2 only)
+      # (see "Run integration tests with merged coverage" above), so
+      # there's exactly one of these per workflow run, not one per matrix
+      # leg.
+      - name: Publish merged coverage summary (Processing 4.5.2 only)
         if: always() && matrix.processing_version == '4.5.2'
         run: |
-          if [ -f build/image-coverage/coverage.csv ]; then
+          if [ -f build/merged-coverage/coverage.csv ]; then
             {
-              echo "### Coverage incl. image tests (Processing ${{ matrix.processing_version }})"
+              echo "### Coverage: unit tests + integration tests merged (Processing ${{ matrix.processing_version }})"
               echo
               echo "| Metric | Coverage |"
               echo "| --- | --- |"
@@ -204,22 +206,22 @@ jobs:
                   printf "| Branches | %.1f%% (%d/%d) |\n", 100*branch_covered/(branch_covered+branch_missed), branch_covered, branch_covered+branch_missed;
                   printf "| Lines | %.1f%% (%d/%d) |\n", 100*line_covered/(line_covered+line_missed), line_covered, line_covered+line_missed;
                 }
-              ' build/image-coverage/coverage.csv
+              ' build/merged-coverage/coverage.csv
               echo
-              echo "Full HTML/XML report: see the \`image-coverage-report\` artifact on this run."
+              echo "Full HTML/XML report: see the \`merged-coverage-report\` artifact on this run."
             } >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "No build/image-coverage/coverage.csv found - image-test coverage generation may have failed; see the \`Run image-test coverage\` step above." >> "$GITHUB_STEP_SUMMARY"
+            echo "No build/merged-coverage/coverage.csv found - merged coverage generation may have failed; see the \`Run integration tests with merged coverage\` step above." >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Upload image-test coverage report (Processing 4.5.2 only)
+      - name: Upload merged coverage report (Processing 4.5.2 only)
         if: always() && matrix.processing_version == '4.5.2'
         uses: actions/upload-artifact@v4
         with:
-          name: image-coverage-report
+          name: merged-coverage-report
           path: |
-            build/image-coverage/html
-            build/image-coverage/coverage.xml
-            build/image-coverage/coverage.csv
+            build/merged-coverage/html
+            build/merged-coverage/coverage.xml
+            build/merged-coverage/coverage.csv
           if-no-files-found: warn
           retention-days: 2

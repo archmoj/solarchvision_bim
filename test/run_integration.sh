@@ -15,11 +15,11 @@
 # This exercises the sketch's real GL rendering pipeline, so it needs a
 # display - wrap the whole invocation in xvfb-run if there isn't a real one:
 #   xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-#     ./test/run_image_coverage.sh
+#     ./test/run_integration.sh
 #
 # Usage:
-#   ./test/run_image_coverage.sh                          # every command/test_*.txt
-#   ./test/run_image_coverage.sh command/test_primitives.txt [more scripts...]
+#   ./test/run_integration.sh                          # every command/test_*.txt
+#   ./test/run_integration.sh command/test_primitives.txt [more scripts...]
 #
 # Environment:
 #   PROCESSING_HOME       - defaults to ~/processing/4.5.2 (run-latest.sh);
@@ -40,7 +40,7 @@ cd "$(dirname "$0")/.."   # repo root
 PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 JACOCO_AGENT_JAR="${JACOCO_AGENT_JAR:-test/lib/jacoco/jacocoagent.jar}"
 UNIT_TEST_EXEC="${UNIT_TEST_EXEC:-build/test/jacoco.exec}"
-OUT_DIR="build/image-coverage"
+OUT_DIR="build/merged-coverage"
 export LIBGL_ALWAYS_SOFTWARE=1
 
 if [ ! -f "$JACOCO_AGENT_JAR" ]; then
