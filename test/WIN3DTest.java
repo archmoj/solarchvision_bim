@@ -279,6 +279,28 @@ class WIN3DTest {
   }
 
   @Test
+  void processHeldKey_doesNotFireBeforeTheInitialDelayElapses () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.navKeyCoded = false;
+    app.WIN3D.navKeyChar = '1';
+    app.WIN3D.navKeyFrameCounter = 0;
+    app.WIN3D.navKeyRepeating = false;
+    app.WIN3D.position_X = 0;
+    app.WIN3D.position_T = 2;
+    app.OBJECTS_scale = 1;
+
+    // one call short of the initial delay - still no-op
+    for (int i = 0; i < app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1; i++) {
+      app.WIN3D.processHeldKey();
+    }
+    assertEquals(0f, app.WIN3D.position_X, 0.0001f);
+
+    app.WIN3D.processHeldKey(); // the delay-th call - now it fires
+    assertEquals(2f, app.WIN3D.position_X, 0.0001f);
+  }
+
+  @Test
   void processHeldKey_reFiresOnlyWhileHeldAndRepeatable () {
     app.WIN3D.navKeyHeld = false;
     app.WIN3D.navKeyRepeatable = true;
@@ -292,8 +314,31 @@ class WIN3DTest {
     assertEquals(0f, app.WIN3D.position_X, 0.0001f);
 
     app.WIN3D.navKeyHeld = true;
+    // past the initial delay, so the next call actually fires
+    app.WIN3D.navKeyFrameCounter = app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1;
+    app.WIN3D.navKeyRepeating = false;
     app.WIN3D.processHeldKey(); // held and repeatable - fires
     assertEquals(2f, app.WIN3D.position_X, 0.0001f);
+  }
+
+  @Test
+  void processHeldKey_repeatsEveryFrameAfterTheInitialDelay () {
+    app.WIN3D.navKeyHeld = true;
+    app.WIN3D.navKeyRepeatable = true;
+    app.WIN3D.navKeyCoded = false;
+    app.WIN3D.navKeyChar = '1';
+    app.WIN3D.navKeyFrameCounter = app.WIN3D.NAV_KEY_INITIAL_DELAY_FRAMES - 1;
+    app.WIN3D.navKeyRepeating = false; // not yet in the repeat phase
+    app.WIN3D.position_X = 0;
+    app.WIN3D.position_T = 2;
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.processHeldKey(); // crosses the initial delay - fires, enters repeat phase
+    assertEquals(2f, app.WIN3D.position_X, 0.0001f);
+    assertTrue(app.WIN3D.navKeyRepeating);
+
+    app.WIN3D.processHeldKey(); // NAV_KEY_REPEAT_FRAMES == 1 - fires again immediately
+    assertEquals(4f, app.WIN3D.position_X, 0.0001f);
   }
 
   // ================= camera-navigation math ==============================
