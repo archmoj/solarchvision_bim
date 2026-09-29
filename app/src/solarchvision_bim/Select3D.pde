@@ -580,7 +580,7 @@ class Select3D {
 
       if (this.Group_ids.length > 0) {
 
-        for (int o = 0; o < this.Group_ids.length - 1; o++) {
+        for (int o = 0; o < this.Group_ids.length; o++) {
 
           int OBJ_ID = this.Group_ids[o];
 

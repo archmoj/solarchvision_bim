@@ -800,4 +800,38 @@ class Select3DTest {
     assertNotNull(fresh.softSelection_values);
     assertEquals(0, fresh.softSelection_values.length);
   }
+
+  @Test
+  void calculateBoundingBox_groupPivot_worksForASingleSelectedGroup () {
+    app.allVertices = new float[0][3];
+    app.allGroups.Faces = new int[][]{{0, -1}}; // empty range - no vertices found
+    app.allGroups.Pivots = new float[][]{
+      {2, 3, 0, 1, 1, 1, 0, 0, 0}
+    };
+    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.Select3D.Group_ids = new int[]{0};
+
+    app.Select3D.calculate_BoundingBox();
+
+    assertEquals(2f, app.Select3D.BoundingBox[1][0], 0.0001f);
+    assertEquals(3f, app.Select3D.BoundingBox[1][1], 0.0001f);
+  }
+
+  @Test
+  void calculateBoundingBox_groupPivot_averagesAcrossEverySelectedGroupIncludingTheLast () {
+    app.allVertices = new float[0][3];
+    app.allGroups.Faces = new int[][]{{0, -1}, {0, -1}}; // both empty
+    app.allGroups.Pivots = new float[][]{
+      {0, 0, 0, 1, 1, 1, 0, 0, 0},
+      {4, 0, 0, 1, 1, 1, 0, 0, 0}
+    };
+    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.Select3D.Group_ids = new int[]{0, 1};
+
+    app.Select3D.calculate_BoundingBox();
+
+    // (0 + 4) / 2 = 2 - the buggy version only averaged in group 0
+    // (pivot X 0), since the loop dropped the last id (group 1) entirely.
+    assertEquals(2f, app.Select3D.BoundingBox[1][0], 0.0001f);
+  }
 }
