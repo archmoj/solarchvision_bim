@@ -430,4 +430,366 @@ class WIN3DTest {
     assertEquals(1, fresh.UI_CurrentTask);
     assertEquals(app.Impact_PASSIVE, fresh.Impact_TYPE);
   }
+
+  // ================= handleArrowKeys (plain, all four directions) ========
+  // Despite the function names, rotateZ_3DViewport_around_Selection()
+  // actually updates rotation_X, and rotateXY_3DViewport_around_Selection()
+  // updates rotation_Z - confirmed by reading their bodies, not assumed
+  // from the names.
+
+  @Test
+  void handleArrowKeys_downIncreasesRotationX () {
+    app.WIN3D.rotation_T = 5;
+    float before = app.WIN3D.rotation_X;
+    app.WIN3D.handleArrowKeys(app.DOWN); // rotateZ_..._around_Selection(+rotation_T)
+    assertEquals(before + 5, app.WIN3D.rotation_X, 0.0001f);
+  }
+
+  @Test
+  void handleArrowKeys_upDecreasesRotationX () {
+    app.WIN3D.rotation_T = 5;
+    float before = app.WIN3D.rotation_X;
+    app.WIN3D.handleArrowKeys(app.UP); // rotateZ_..._around_Selection(-rotation_T)
+    assertEquals(before - 5, app.WIN3D.rotation_X, 0.0001f);
+  }
+
+  @Test
+  void handleArrowKeys_rightIncreasesRotationZ () {
+    app.WIN3D.rotation_T = 5;
+    float before = app.WIN3D.rotation_Z;
+    app.WIN3D.handleArrowKeys(app.RIGHT); // rotateXY_..._around_Selection(+rotation_T)
+    assertEquals(before + 5, app.WIN3D.rotation_Z, 0.0001f);
+  }
+
+  @Test
+  void handleArrowKeys_leftDecreasesRotationZ () {
+    app.WIN3D.rotation_T = 5;
+    float before = app.WIN3D.rotation_Z;
+    app.WIN3D.handleArrowKeys(app.LEFT); // rotateXY_..._around_Selection(-rotation_T)
+    assertEquals(before - 5, app.WIN3D.rotation_Z, 0.0001f);
+  }
+
+  @Test
+  void handleArrowKeys_leftThenRightRoundTripsRotationZ () {
+    app.WIN3D.rotation_T = 5;
+    float before = app.WIN3D.rotation_Z;
+
+    app.WIN3D.handleArrowKeys(app.RIGHT);
+    app.WIN3D.handleArrowKeys(app.LEFT);
+
+    assertEquals(before, app.WIN3D.rotation_Z, 0.0001f); // opposite nudges cancel out
+  }
+
+  // ================= dispatchNavKey routing (remaining branches) =========
+
+  @Test
+  void dispatchNavKey_routesShiftedArrowKeysToHandleShiftedArrowKeys () {
+    app.allVertices = new float[][]{{0, 0, 0}};
+    app.Select3D.Vertex_ids = new int[]{0};
+    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.posVector = 2; // Z only
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.navKeyCoded = true;
+    app.WIN3D.navKeyAlt = false;
+    app.WIN3D.navKeyShift = true;
+    app.WIN3D.navKeyCode = app.UP;
+    app.WIN3D.UI_CurrentTask = app.UITASK.Move;
+
+    app.WIN3D.dispatchNavKey(); // -> handleShiftedArrowKeys -> Move3D.selection
+
+    assertEquals(0.5f, app.allVertices[0][2], 0.0001f);
+  }
+
+  // Alt+arrow (day-cycle shading) itself also calls ShadeViewport(), which
+  // creates a real PImage and touches the cursor - it isn't unit-testable
+  // headless (see test/README.md), so the day-cycle math it drives is
+  // exercised directly on adjustShadeTime() instead, below.
+
+  // ================= handleCtrlCommandKey =================================
+
+  @Test
+  void handleCtrlCommandKey_periodMovesTheCameraAwayFromThePivot () {
+    app.allVertices = new float[0][3]; // nothing selected - getPivot() falls back to the origin
+    app.WIN3D.CAM_x = 10;
+    app.WIN3D.CAM_y = 0;
+    app.WIN3D.CAM_z = 0;
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.handleCtrlCommandKey('.'); // moveWin3DTowardsSelection(0.5) -> away from the pivot
+
+    assertTrue(app.WIN3D.CAM_x > 10); // moved further from the origin, not closer
+  }
+
+  @Test
+  void handleCtrlCommandKey_ignoresAnyOtherCharacter () {
+    app.WIN3D.CAM_x = 10;
+    app.WIN3D.CAM_y = 0;
+    app.WIN3D.CAM_z = 0;
+
+    app.WIN3D.handleCtrlCommandKey('x'); // not ',' or '.' - no case matches
+
+    assertEquals(10f, app.WIN3D.CAM_x, 0.0001f);
+  }
+
+  // ================= handleCommandKey (additional branches) ===============
+
+  @Test
+  void handleCommandKey_period_movesTheCameraBackwardInPerspectiveMode () {
+    app.WIN3D.ViewType = 1; // Perspective
+    app.WIN3D.position_Z = 0;
+    app.WIN3D.position_T = 2;
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.handleCommandKey('.', false);
+
+    assertEquals(-2f, app.WIN3D.position_Z, 0.0001f);
+  }
+
+  @Test
+  void handleCommandKey_comma_movesTheCameraForwardInPerspectiveMode () {
+    app.WIN3D.ViewType = 1; // Perspective
+    app.WIN3D.position_Z = 0;
+    app.WIN3D.position_T = 2;
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.handleCommandKey(',', false);
+
+    assertEquals(2f, app.WIN3D.position_Z, 0.0001f);
+  }
+
+  @Test
+  void handleCommandKey_comma_zoomsInsteadOfMovingInOrthographicMode () {
+    app.WIN3D.ViewType = 0; // Orthographic
+    app.WIN3D.position_Z = 0;
+    app.WIN3D.Zoom = 90;
+
+    app.WIN3D.handleCommandKey(',', false);
+
+    assertEquals(0f, app.WIN3D.position_Z, 0.0001f); // unchanged - Zoom is adjusted instead
+    assertNotEquals(90f, app.WIN3D.Zoom, 0.0001f);
+  }
+
+  @Test
+  void handleCommandKey_zero_behavesLikeCommaInPerspectiveMode () {
+    app.WIN3D.ViewType = 1;
+    app.WIN3D.position_Z = 0;
+    app.WIN3D.position_T = 2;
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.handleCommandKey('0', false);
+
+    assertEquals(2f, app.WIN3D.position_Z, 0.0001f);
+  }
+
+  @Test
+  void handleCommandKey_1and3_movePositionXInOppositeDirections () {
+    app.WIN3D.position_X = 0;
+    app.WIN3D.position_T = 2;
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.handleCommandKey('1', false);
+    assertEquals(2f, app.WIN3D.position_X, 0.0001f);
+
+    app.WIN3D.handleCommandKey('3', false);
+    assertEquals(0f, app.WIN3D.position_X, 0.0001f); // '3' undoes '1'
+  }
+
+  @Test
+  void handleCommandKey_7and9_movePositionYInOppositeDirections () {
+    app.WIN3D.position_Y = 0;
+    app.WIN3D.position_T = 2;
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.handleCommandKey('7', false);
+    assertEquals(2f, app.WIN3D.position_Y, 0.0001f);
+
+    app.WIN3D.handleCommandKey('9', false);
+    assertEquals(0f, app.WIN3D.position_Y, 0.0001f); // '9' undoes '7'
+  }
+
+  @Test
+  void handleCommandKey_4and6_rotateZInOppositeDirections () {
+    app.WIN3D.rotation_Z = 0;
+    app.WIN3D.rotation_T = 5;
+
+    app.WIN3D.handleCommandKey('4', false);
+    assertEquals(5f, app.WIN3D.rotation_Z, 0.0001f);
+
+    app.WIN3D.handleCommandKey('6', false);
+    assertEquals(0f, app.WIN3D.rotation_Z, 0.0001f); // '6' undoes '4'
+  }
+
+  @Test
+  void handleCommandKey_8and2_rotateXInOppositeDirections () {
+    app.WIN3D.rotation_X = 0;
+    app.WIN3D.rotation_T = 5;
+
+    app.WIN3D.handleCommandKey('8', false);
+    assertEquals(-5f, app.WIN3D.rotation_X, 0.0001f);
+
+    app.WIN3D.handleCommandKey('2', false);
+    assertEquals(0f, app.WIN3D.rotation_X, 0.0001f); // '2' undoes '8'
+  }
+
+  @Test
+  void handleCommandKey_five_snapsTheViewTowardsTheSelectionPivot () {
+    app.allVertices = new float[][]{{5, 5, 5}};
+    app.Select3D.Vertex_ids = new int[]{0};
+    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.OBJECTS_scale = 1;
+    float before = app.WIN3D.rotation_Z;
+
+    app.WIN3D.handleCommandKey('5', false); // look_3DViewport_towards_Selection()
+
+    assertNotEquals(before, app.WIN3D.rotation_Z, 0.0001f);
+  }
+
+  @Test
+  void handleCommandKey_starAndSlash_moveTheCameraInOppositeDirections () {
+    app.allVertices = new float[0][3]; // nothing selected - getPivot() falls back to the origin
+    app.WIN3D.CAM_x = 10;
+    app.WIN3D.CAM_y = 0;
+    app.WIN3D.CAM_z = 0;
+    app.OBJECTS_scale = 1;
+
+    app.WIN3D.handleCommandKey('*', false); // move_3DViewport_towards_Selection(2.0) - away
+    assertTrue(app.WIN3D.CAM_x > 10);
+
+    float afterStar = app.WIN3D.CAM_x;
+    app.WIN3D.handleCommandKey('/', false); // move_3DViewport_towards_Selection(0.5) - back towards
+    assertTrue(app.WIN3D.CAM_x < afterStar);
+  }
+
+  @Test
+  void handleCommandKey_plusAndMinus_zoomTheViewInOppositeDirections () {
+    app.WIN3D.Zoom = 90;
+    app.WIN3D.handleCommandKey('+', false); // narrows the field of view
+    assertTrue(app.WIN3D.Zoom < 90f);
+
+    float afterPlus = app.WIN3D.Zoom;
+    app.WIN3D.handleCommandKey('-', false); // widens it back
+    assertTrue(app.WIN3D.Zoom > afterPlus);
+  }
+
+  @Test
+  void handleCommandKey_tab_withShiftDown_cyclesImpactTypeAndWrapsAround () {
+    app.WIN3D.Impact_TYPE = app.Impact_ACTIVE;
+    app.WIN3D.handleCommandKey(app.TAB, true);
+    assertEquals(app.Impact_PASSIVE, app.WIN3D.Impact_TYPE);
+
+    app.WIN3D.handleCommandKey(app.TAB, true); // wraps back to Active
+    assertEquals(app.Impact_ACTIVE, app.WIN3D.Impact_TYPE);
+  }
+
+  @Test
+  void handleCommandKey_tab_withoutShiftDown_doesNotChangeImpactType () {
+    app.WIN3D.Impact_TYPE = app.Impact_ACTIVE;
+    app.WIN3D.handleCommandKey(app.TAB, false);
+    assertEquals(app.Impact_ACTIVE, app.WIN3D.Impact_TYPE);
+  }
+
+  @Test
+  void handleCommandKey_enter_flagsGlobalSolarForRebuildWhenThatShadeModeIsActive () {
+    app.WIN3D.FacesShade = app.SHADE.Global_Solar;
+    app.GlobalSolar_rebuild_array = false;
+    app.VertexSolar_rebuild_array = false;
+
+    app.WIN3D.handleCommandKey(app.ENTER, false);
+
+    assertTrue(app.GlobalSolar_rebuild_array);
+    assertFalse(app.VertexSolar_rebuild_array);
+  }
+
+  @Test
+  void handleCommandKey_enter_doesNothingWhenNeitherSolarShadeModeIsActive () {
+    app.WIN3D.FacesShade = app.SHADE.Surface_Materials;
+    app.GlobalSolar_rebuild_array = false;
+    app.VertexSolar_rebuild_array = false;
+
+    app.WIN3D.handleCommandKey(app.ENTER, false);
+
+    assertFalse(app.GlobalSolar_rebuild_array);
+    assertFalse(app.VertexSolar_rebuild_array);
+  }
+
+  @Test
+  void handleCommandKey_delete_deselectsWithoutThrowingWhenNothingIsSelected () {
+    app.current_ObjectCategory = app.ObjectCategory.LANDPOINT; // Delete3D.selection()'s explicit no-op case
+    assertDoesNotThrow(() -> app.WIN3D.handleCommandKey(app.DELETE, false));
+  }
+
+  @Test
+  void handleCommandKey_ignoresAnUnmappedCharacter () {
+    app.WIN3D.position_X = 0;
+    app.WIN3D.rotation_Z = 0;
+    app.WIN3D.Zoom = 90;
+
+    app.WIN3D.handleCommandKey('z', false); // not in the switch at all
+
+    assertEquals(0f, app.WIN3D.position_X, 0.0001f);
+    assertEquals(0f, app.WIN3D.rotation_Z, 0.0001f);
+    assertEquals(90f, app.WIN3D.Zoom, 0.0001f);
+  }
+
+  // ================= adjustShadeTime (pure day-cycle math behind Alt+arrows) ==
+
+  @Test
+  void adjustShadeTime_stepsForwardWithinTheDay () {
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 0;
+    app.adjustShadeTime(1);
+    assertEquals(13, app.SHADE_HOUR_ANGLE);
+    assertEquals(0, app.SHADE_DATE_ANGLE);
+  }
+
+  @Test
+  void adjustShadeTime_stepsBackwardWithinTheDay () {
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 0;
+    app.adjustShadeTime(-1);
+    assertEquals(11, app.SHADE_HOUR_ANGLE);
+    assertEquals(0, app.SHADE_DATE_ANGLE);
+  }
+
+  @Test
+  void adjustShadeTime_rollsOverToTheNextDayPastTheLastHour () {
+    app.SHADE_HOUR_ANGLE = app.SHADE_LAST_HOUR;
+    app.SHADE_DATE_ANGLE = 0;
+
+    app.adjustShadeTime(1); // one step past the last hour of the day
+
+    assertEquals(app.SHADE_FIRST_HOUR, app.SHADE_HOUR_ANGLE);
+    assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
+  }
+
+  @Test
+  void adjustShadeTime_rollsBackToThePreviousDayBeforeTheFirstHour () {
+    app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
+    app.SHADE_DATE_ANGLE = 0;
+
+    app.adjustShadeTime(-1); // one step before the first hour of the day
+
+    assertEquals(app.SHADE_LAST_HOUR, app.SHADE_HOUR_ANGLE);
+    // SHADE_DATE_ANGLE -= SHADE_STEP_DAYS lands exactly on the
+    // "<= -SHADE_STEP_DAYS" threshold, so the same step also triggers the
+    // 360-wrap-around guard, landing on (360 - SHADE_STEP_DAYS), not on
+    // -SHADE_STEP_DAYS itself.
+    assertEquals(360 - app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
+  }
+
+  @Test
+  void adjustShadeTime_matchesWhatAltArrowKeysWouldRequestForACompleteDayCycle () {
+    // handleAltArrowKeys(UP) calls adjustShadeTime(SHADE_HOURS_PER_DAY + 1) -
+    // exactly one full day's worth of hours plus one, i.e. it always lands
+    // on the same hour it started from, one day (SHADE_STEP_DAYS) later.
+    app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR + 2;
+    app.SHADE_DATE_ANGLE = 0;
+    int startHour = app.SHADE_HOUR_ANGLE;
+
+    app.adjustShadeTime(app.SHADE_HOURS_PER_DAY + 1);
+
+    assertEquals(startHour, app.SHADE_HOUR_ANGLE);
+    assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
+  }
 }

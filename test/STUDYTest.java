@@ -329,4 +329,151 @@ class STUDYTest {
     app.STUDY.updated();
     assertFalse(app.STUDY.update);
   }
+
+  // ================= keyPressed (top-level guard only) ===================
+  // keyPressed(KeyEvent e) touches e.isAltDown()/e.isControlDown() right
+  // after the include guard, so it isn't callable with a real event here
+  // without constructing one (see test/README.md's testing approach - no
+  // other test in this suite constructs a KeyEvent either). The one branch
+  // that's still safely testable is the include guard itself, since it
+  // returns before e is ever touched.
+
+  @Test
+  void keyPressed_doesNothingAndDoesNotTouchTheEventWhenIncludeIsFalse () {
+    app.STUDY.include = false;
+    assertDoesNotThrow(() -> app.STUDY.keyPressed(null));
+  }
+
+  // ================= handlePlainCharKey (remaining branches) =============
+
+  @Test
+  void handlePlainCharKey_narrowsTheJoinWindowOnLessThan () {
+    app.STUDY.joinDays = 10;
+    app.key = '<';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(8, app.STUDY.joinDays);
+  }
+
+  @Test
+  void handlePlainCharKey_growsAndShrinksJEndOnParens () {
+    app.STUDY.j_Start = 0;
+    app.STUDY.j_End = 12;
+
+    app.key = ')';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(13, app.STUDY.j_End);
+
+    app.key = '(';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(12, app.STUDY.j_End);
+  }
+
+  @Test
+  void handlePlainCharKey_cyclesSkyScenarioForwardAndBackward () {
+    app.STUDY.skyScenario = 1;
+
+    app.key = 'S';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(2, app.STUDY.skyScenario);
+
+    app.key = 's';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(1, app.STUDY.skyScenario);
+  }
+
+  @Test
+  void handlePlainCharKey_upperV_alsoTogglesDisplayRaws () {
+    app.STUDY.displayRaws = false;
+    app.key = 'V';
+    app.STUDY.handlePlainCharKey();
+    assertTrue(app.STUDY.displayRaws);
+  }
+
+  @Test
+  void handlePlainCharKey_mAndM_toggleDisplaySorted () {
+    app.STUDY.displaySorted = false;
+    app.key = 'm';
+    app.STUDY.handlePlainCharKey();
+    assertTrue(app.STUDY.displaySorted);
+
+    app.key = 'M';
+    app.STUDY.handlePlainCharKey();
+    assertFalse(app.STUDY.displaySorted);
+  }
+
+  @Test
+  void handlePlainCharKey_nAndN_toggleDisplayNormals () {
+    app.STUDY.displayNormals = false;
+    app.key = 'n';
+    app.STUDY.handlePlainCharKey();
+    assertTrue(app.STUDY.displayNormals);
+
+    app.key = 'N';
+    app.STUDY.handlePlainCharKey();
+    assertFalse(app.STUDY.displayNormals);
+  }
+
+  @Test
+  void handlePlainCharKey_bAndB_toggleDisplayProbs () {
+    app.STUDY.displayProbs = false;
+    app.key = 'b';
+    app.STUDY.handlePlainCharKey();
+    assertTrue(app.STUDY.displayProbs);
+
+    app.key = 'B';
+    app.STUDY.handlePlainCharKey();
+    assertFalse(app.STUDY.displayProbs);
+  }
+
+  @Test
+  void handlePlainCharKey_curlyBraces_growAndShrinkLevelPix () {
+    app.STUDY.LevelPix = 8;
+
+    app.key = '{';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(16f, app.STUDY.LevelPix, 0.0001f);
+
+    app.key = '}';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(8f, app.STUDY.LevelPix, 0.0001f);
+  }
+
+  @Test
+  void handlePlainCharKey_curlyBraceGrowth_isClampedAt32 () {
+    app.STUDY.LevelPix = 32;
+    app.key = '{';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(32f, app.STUDY.LevelPix, 0.0001f); // not < 32, so the guard blocks it
+  }
+
+  @Test
+  void handlePlainCharKey_curlyBraceShrink_isClampedAt2 () {
+    app.STUDY.LevelPix = 2;
+    app.key = '}';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(2f, app.STUDY.LevelPix, 0.0001f); // not > 2, so the guard blocks it
+  }
+
+  @Test
+  void handlePlainCharKey_squareBrackets_decreaseAndIncreaseSumInterval () {
+    app.STUDY.sumInterval = 24;
+
+    app.key = '[';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(18, app.STUDY.sumInterval); // >24 doesn't apply at exactly 24; >6 does
+
+    app.key = ']';
+    app.STUDY.handlePlainCharKey();
+    assertEquals(24, app.STUDY.sumInterval);
+  }
+
+  // ================= handleCtrlCharKey (remaining branch) ================
+
+  @Test
+  void handleCtrlCharKey_singleQuote_scalesVScaleDown () {
+    app.STUDY.V_scale = 100;
+    app.key = '\'';
+    app.STUDY.handleCtrlCharKey();
+    assertEquals((float) (100 * Math.sqrt(0.5)), app.STUDY.V_scale, 0.01f);
+  }
 }

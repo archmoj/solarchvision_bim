@@ -157,4 +157,18 @@ class WORLDTest {
     assertFalse(fresh.displayNear_CLMREC);
     assertTrue(fresh.displayNear_TMYEPW);
   }
+
+  // ================= keyPressed (top-level guard only) ===================
+  // The rest of keyPressed(KeyEvent e) - the '`'/'~' zoom-cycle switch -
+  // touches e.isAltDown()/e.isControlDown() unconditionally right after
+  // this guard, so it isn't callable with a real event here without
+  // constructing one (see test/README.md - no test in this suite
+  // constructs a KeyEvent). The include guard itself is still safely
+  // testable, since it returns before e is ever touched.
+
+  @Test
+  void keyPressed_doesNothingAndDoesNotTouchTheEventWhenIncludeIsFalse () {
+    app.WORLD.include = false;
+    assertDoesNotThrow(() -> app.WORLD.keyPressed(null));
+  }
 }
