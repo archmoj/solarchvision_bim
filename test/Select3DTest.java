@@ -486,6 +486,83 @@ class Select3DTest {
     assertEquals(10f, app.Select3D.BoundingBox[2][0], 0.0001f); // max
   }
 
+  @Test
+  void calculateBoundingBox_worksForModel1DsToo () {
+    app.allModel1Ds.f_data = new float[][]{{0, 0, 0, 1, 0, 0}, {4, 6, 0, 1, 0, 0}};
+    app.current_ObjectCategory = app.ObjectCategory.MODEL1D;
+    app.Select3D.Model1D_ids = new int[]{0, 1};
+
+    app.Select3D.calculate_BoundingBox();
+
+    assertEquals(0f, app.Select3D.BoundingBox[0][0], 0.0001f); // min X
+    assertEquals(4f, app.Select3D.BoundingBox[2][0], 0.0001f); // max X
+    assertEquals(0f, app.Select3D.BoundingBox[0][1], 0.0001f); // min Y
+    assertEquals(6f, app.Select3D.BoundingBox[2][1], 0.0001f); // max Y
+  }
+
+  @Test
+  void calculateBoundingBox_worksForModel2DsToo () {
+    app.allModel2Ds.XYZS = new float[][]{{2, 0, 0, 0}, {8, 0, 0, 0}};
+    app.current_ObjectCategory = app.ObjectCategory.MODEL2D;
+    app.Select3D.Model2D_ids = new int[]{0, 1};
+
+    app.Select3D.calculate_BoundingBox();
+
+    assertEquals(2f, app.Select3D.BoundingBox[0][0], 0.0001f); // min X
+    assertEquals(5f, app.Select3D.BoundingBox[1][0], 0.0001f); // mid X
+    assertEquals(8f, app.Select3D.BoundingBox[2][0], 0.0001f); // max X
+  }
+
+  @Test
+  void calculateBoundingBox_worksForFacesTooViaGetFaceVertices () {
+    // get_Face_Vertices() collects the distinct node indices of the
+    // selected faces, then those indices are looked up through allPoints.
+    app.allVertices = new float[][]{{0, 0, 0}, {6, 0, 0}, {6, 6, 0}};
+    app.allFaces.nodes = new int[][]{{0, 1, 2}};
+    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.Select3D.Face_ids = new int[]{0};
+
+    app.Select3D.calculate_BoundingBox();
+
+    assertEquals(0f, app.Select3D.BoundingBox[0][0], 0.0001f); // min X
+    assertEquals(6f, app.Select3D.BoundingBox[2][0], 0.0001f); // max X
+    assertEquals(0f, app.Select3D.BoundingBox[0][1], 0.0001f); // min Y
+    assertEquals(6f, app.Select3D.BoundingBox[2][1], 0.0001f); // max Y
+  }
+
+  @Test
+  void calculateBoundingBox_withNothingSelectedLeavesTheIdentityBoxInPlace () {
+    // With an empty id list, the min/max accumulator loop never runs, so
+    // posX_min/etc. never become defined and the is_defined() guard skips
+    // the whole "shrink to the real min/max" block below it - the identity
+    // box computed earlier (pos 0, scale 1, rotation 0) is what's left.
+    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.Vertex_ids = new int[0];
+    app.allVertices = new float[0][3];
+
+    app.Select3D.calculate_BoundingBox();
+
+    for (float[] row : app.Select3D.BoundingBox) {
+      assertArrayEquals(new float[]{0, 0, 0, 1, 1, 1, 0, 0, 0}, row, 0.0001f);
+    }
+  }
+
+  @Test
+  void calculateBoundingBox_restoresAlignmentFlagsAfterward () {
+    app.Select3D.alignX = 1;
+    app.Select3D.alignY = 2;
+    app.Select3D.alignZ = 1;
+    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.Vertex_ids = new int[0];
+    app.allVertices = new float[0][3];
+
+    app.Select3D.calculate_BoundingBox();
+
+    assertEquals(1, app.Select3D.alignX);
+    assertEquals(2, app.Select3D.alignY);
+    assertEquals(1, app.Select3D.alignZ);
+  }
+
   // ============ saved-bounding-box / origin-reference-box ==============
 
   @Test
@@ -607,5 +684,120 @@ class Select3DTest {
     java.util.Arrays.sort(result);
 
     assertArrayEquals(new int[]{0, 1}, result);
+  }
+
+  // ================= to_XML / from_XML round trip =========================
+
+  @Test
+  void toXMLThenFromXML_roundTripsEveryField () {
+    solarchvision_bim.Select3D original = app.Select3D;
+
+    original.posVector = 1;
+    original.rotVector = 2;
+    original.scaleVector = 0;
+    original.posValue = 1.5f;
+    original.rotValue = 12.5f;
+    original.scaleValue = 0.5f;
+    original.alignX = 1;
+    original.alignY = -1;
+    original.alignZ = 0;
+
+    original.Face_displayEdges = true;
+    original.Face_displayVertexCount = true;
+    original.Polyline_displayVertexCount = false;
+    original.Vertex_displayVertices = true;
+    original.Polyline_displayVertices = false;
+    original.Group_displayPivot = true;
+    original.displayReferencePivot = true;
+    original.Group_displayEdges = false;
+    original.Group_displayBox = true;
+    original.Model2D_displayEdges = false;
+    original.Model1D_displayEdges = true;
+    original.Solid_displayEdges = false;
+    original.Section_displayEdges = true;
+    original.Camera_displayEdges = false;
+    original.LandPoint_displayPoints = true;
+
+    original.softPower = 2.5f;
+    original.softRadius = 3.5f;
+
+    original.LandPoint_ids = new int[]{1};
+    original.Model1D_ids = new int[]{2, 3};
+    original.Model2D_ids = new int[]{4};
+    original.Group_ids = new int[]{5, 6};
+    original.Face_ids = new int[]{7};
+    original.Polyline_ids = new int[]{8, 9};
+    original.Solid_ids = new int[]{10};
+    original.Section_ids = new int[]{11};
+    original.Camera_ids = new int[]{12};
+    original.Vertex_ids = new int[]{13, 14, 15};
+    original.softSelection_ids = new int[]{16};
+    original.softSelection_values = new float[]{0.25f};
+
+    processing.data.XML root = new processing.data.XML("root");
+    original.to_XML(root);
+
+    solarchvision_bim.Select3D fresh = app.new Select3D();
+    fresh.from_XML(root);
+
+    assertEquals(1, fresh.posVector);
+    assertEquals(2, fresh.rotVector);
+    assertEquals(0, fresh.scaleVector);
+    assertEquals(1.5f, fresh.posValue, 0.0001f);
+    assertEquals(12.5f, fresh.rotValue, 0.0001f);
+    assertEquals(0.5f, fresh.scaleValue, 0.0001f);
+    assertEquals(1, fresh.alignX);
+    assertEquals(-1, fresh.alignY);
+    assertEquals(0, fresh.alignZ);
+
+    assertTrue(fresh.Face_displayEdges);
+    assertTrue(fresh.Face_displayVertexCount);
+    assertFalse(fresh.Polyline_displayVertexCount);
+    assertTrue(fresh.Vertex_displayVertices);
+    assertFalse(fresh.Polyline_displayVertices);
+    assertTrue(fresh.Group_displayPivot);
+    assertTrue(fresh.displayReferencePivot);
+    assertFalse(fresh.Group_displayEdges);
+    assertTrue(fresh.Group_displayBox);
+    assertFalse(fresh.Model2D_displayEdges);
+    assertTrue(fresh.Model1D_displayEdges);
+    assertFalse(fresh.Solid_displayEdges);
+    assertTrue(fresh.Section_displayEdges);
+    assertFalse(fresh.Camera_displayEdges);
+    assertTrue(fresh.LandPoint_displayPoints);
+
+    assertEquals(2.5f, fresh.softPower, 0.0001f);
+    assertEquals(3.5f, fresh.softRadius, 0.0001f);
+
+    assertArrayEquals(new int[]{1}, fresh.LandPoint_ids);
+    assertArrayEquals(new int[]{2, 3}, fresh.Model1D_ids);
+    assertArrayEquals(new int[]{4}, fresh.Model2D_ids);
+    assertArrayEquals(new int[]{5, 6}, fresh.Group_ids);
+    assertArrayEquals(new int[]{7}, fresh.Face_ids);
+    assertArrayEquals(new int[]{8, 9}, fresh.Polyline_ids);
+    assertArrayEquals(new int[]{10}, fresh.Solid_ids);
+    assertArrayEquals(new int[]{11}, fresh.Section_ids);
+    assertArrayEquals(new int[]{12}, fresh.Camera_ids);
+    assertArrayEquals(new int[]{13, 14, 15}, fresh.Vertex_ids);
+    assertArrayEquals(new int[]{16}, fresh.softSelection_ids);
+    assertArrayEquals(new float[]{0.25f}, fresh.softSelection_values, 0.0001f);
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsEmptyIdListsAsEmptyArraysNotNull () {
+    solarchvision_bim.Select3D original = app.Select3D;
+    original.Vertex_ids = new int[0];
+    original.softSelection_values = new float[0];
+
+    processing.data.XML root = new processing.data.XML("root");
+    original.to_XML(root);
+
+    solarchvision_bim.Select3D fresh = app.new Select3D();
+    fresh.from_XML(root);
+
+    assertNotNull(fresh.Vertex_ids);
+    assertEquals(0, fresh.Vertex_ids.length);
+    assertNotNull(fresh.softSelection_values);
+    assertEquals(0, fresh.softSelection_values.length);
   }
 }

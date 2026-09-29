@@ -259,4 +259,187 @@ class FunctionsTest {
     float dayTime = funcs.DayTime(45.47f, 200f);
     assertTrue(dayTime >= 0f && dayTime <= 24f);
   }
+
+  // --- generic vec_* helpers (N-dimensional, vs. the vec3_* fixed-size ones) --
+
+  @Test
+  void vecScale_multipliesEveryComponent () {
+    assertArrayEquals(new float[]{2, 4, 6, 8}, funcs.vec_scale(new float[]{1, 2, 3, 4}, 2), EPS);
+  }
+
+  @Test
+  void vecSum_addsComponentwise () {
+    assertArrayEquals(new float[]{4, 6}, funcs.vec_sum(new float[]{1, 2}, new float[]{3, 4}), EPS);
+  }
+
+  @Test
+  void vecDiff_subtractsTheFirstArgumentFromTheSecond () {
+    // matches vec3_diff's own convention: diff(a, b) == b - a
+    assertArrayEquals(new float[]{2, 2}, funcs.vec_diff(new float[]{1, 1}, new float[]{3, 3}), EPS);
+  }
+
+  @Test
+  void vecMag_matchesPythagorasInAnyDimension () {
+    assertEquals(5f, funcs.vec_mag(new float[]{3, 4}), EPS);
+    assertEquals(5f, funcs.vec_mag(new float[]{0, 3, 4, 0}), EPS);
+  }
+
+  @Test
+  void vecDist_isTheMagnitudeOfTheDifference () {
+    assertEquals(5f, funcs.vec_dist(new float[]{0, 0}, new float[]{3, 4}), EPS);
+  }
+
+  @Test
+  void vecUnit_preservesDirectionAtUnitLength () {
+    float[] u = funcs.vec_unit(new float[]{3, 4});
+    assertEquals(1f, funcs.vec_mag(u), EPS);
+    assertEquals(0.6f, u[0], EPS);
+    assertEquals(0.8f, u[1], EPS);
+  }
+
+  @Test
+  void vecUnit_returnsAllZerosForAZeroVectorInsteadOfDividingByZero () {
+    assertArrayEquals(new float[]{0, 0, 0}, funcs.vec_unit(new float[]{0, 0, 0}), EPS);
+  }
+
+  @Test
+  void vec2Dot_matchesTheDotProductFormula () {
+    assertEquals(11f, funcs.vec2_dot(1, 2, 3, 4), EPS); // 1*3 + 2*4
+  }
+
+  // --- isInside_Rectangle / uvInside_Rectangle ---------------------------
+
+  @Test
+  void isInsideRectangle_acceptsAPointWellInsideTheUnitSquare () {
+    float[] O = {0, 0, 0}, A = {1, 0, 0}, B = {0, 1, 0};
+    assertTrue(funcs.isInside_Rectangle(new float[]{0.5f, 0.5f, 0}, A, O, B));
+  }
+
+  @Test
+  void isInsideRectangle_rejectsAPointOutsideTheUnitSquare () {
+    float[] O = {0, 0, 0}, A = {1, 0, 0}, B = {0, 1, 0};
+    assertFalse(funcs.isInside_Rectangle(new float[]{1.5f, 0.5f, 0}, A, O, B));
+  }
+
+  @Test
+  void uvInsideRectangle_returnsTheFractionalCoordinatesWithinTheRectangle () {
+    float[] O = {0, 0, 0}, A = {2, 0, 0}, B = {0, 4, 0};
+    float[] uv = funcs.uvInside_Rectangle(new float[]{1, 1, 0}, A, O, B);
+    assertEquals(0.5f, uv[0], EPS); // halfway along the O->A edge (length 2)
+    assertEquals(0.25f, uv[1], EPS); // a quarter along the O->B edge (length 4)
+  }
+
+  // --- triangle / polygon normals and area -------------------------------
+
+  @Test
+  void calculateTriangleNormal_pointsAlongZForACounterclockwiseXYTriangle () {
+    float[] n = funcs.calculateTriangleNormal(
+      new float[]{0, 0, 0}, new float[]{1, 0, 0}, new float[]{1, 1, 0}
+    );
+    assertEquals(1f, funcs.vec_mag(n), EPS); // calculateTriangleNormal always returns a unit vector
+    assertEquals(1f, Math.abs(n[2]), EPS);   // purely along Z for a flat XY triangle
+  }
+
+  @Test
+  void calculatePolygonNormal_skipsCollinearCornersAndUsesTheFirstRealTriangle () {
+    // The first three points are collinear along X, so the function must
+    // step past them and use points [1],[2],[3] instead.
+    float[][] square = {
+      {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {2, 2, 0}
+    };
+    float[] n = funcs.calculatePolygonNormal(square);
+    assertEquals(1f, Math.abs(n[2]), EPS);
+  }
+
+  @Test
+  void calculatePolygonArea_matchesTheKnownAreaOfAUnitSquare () {
+    float[][] square = {
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}
+    };
+    assertEquals(1f, funcs.calculatePolygonArea(square), EPS);
+  }
+
+  @Test
+  void calculatePolygonArea_scalesWithSize () {
+    float[][] square = {
+      {0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}
+    };
+    assertEquals(4f, funcs.calculatePolygonArea(square), EPS);
+  }
+
+  // --- cleanShape_* / optimizeVertices ------------------------------------
+
+  @Test
+  void cleanShapeRemoveDuplicateVertices_dropsAPointThatCoincidesWithThePrevious () {
+    float[][] shape = {
+      {0, 0, 0}, {0, 0, 0.0001f}, {1, 0, 0}, {1, 1, 0}
+    };
+    float[][] result = funcs.cleanShape_removeDuplicateVertices(shape);
+    assertEquals(3, result.length); // the near-duplicate second point is dropped
+  }
+
+  @Test
+  void cleanShapeRemoveDuplicateVertices_keepsDistinctPoints () {
+    float[][] shape = {
+      {0, 0, 0}, {1, 0, 0}, {1, 1, 0}
+    };
+    float[][] result = funcs.cleanShape_removeDuplicateVertices(shape);
+    assertEquals(3, result.length);
+  }
+
+  @Test
+  void cleanShapeJoinParallelSegments_dropsACornerThatLiesOnAStraightLine () {
+    // (1,0,0) sits exactly on the segment from (0,0,0) to (2,0,0), so it
+    // isn't a real corner and should be removed.
+    float[][] shape = {
+      {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {2, 2, 0}
+    };
+    float[][] result = funcs.cleanShape_joinParallelSegments(shape);
+    assertEquals(3, result.length);
+  }
+
+  @Test
+  void optimizeVertices_appliesBothCleanupStepsInSequence () {
+    float[][] shape = {
+      {0, 0, 0}, {0, 0, 0.0001f}, {1, 0, 0}, {2, 0, 0}, {2, 2, 0}
+    };
+    float[][] result = funcs.optimizeVertices(shape);
+    // the near-duplicate is removed, then (1,0,0) collapses into the
+    // straight run from (0,0,0) to (2,0,0), leaving a clean triangle-ish shape
+    assertEquals(3, result.length);
+  }
+
+  // --- Sunrise / Sunset / sunriseHourAngle_Raw ----------------------------
+
+  @Test
+  void sunriseHourAngleRaw_isSixHoursAtTheEquinoxRegardlessOfLatitude () {
+    // DateAngle 180 gives zero solar declination, so tan(Declination) is 0
+    // and q is 0 for any latitude: acos_ang(0) / 15 = 90 / 15 = 6.
+    assertEquals(6f, funcs.sunriseHourAngle_Raw(0, 180), EPS);
+    assertEquals(6f, funcs.sunriseHourAngle_Raw(45, 180), EPS);
+    assertEquals(6f, funcs.sunriseHourAngle_Raw(-30, 180), EPS);
+  }
+
+  @Test
+  void sunriseHourAngleRaw_isTwentyFourForPolarDay () {
+    // High latitude, high declination, same sign: q < -1 -> polar day (sun never sets)
+    assertEquals(24f, funcs.sunriseHourAngle_Raw(80, 270), EPS);
+  }
+
+  @Test
+  void sunriseHourAngleRaw_isZeroForPolarNight () {
+    // Same declination, opposite-sign latitude: q > 1 -> polar night (sun never rises)
+    assertEquals(0f, funcs.sunriseHourAngle_Raw(-80, 270), EPS);
+  }
+
+  @Test
+  void sunsetMinusSunrise_matchesDayTimeForTheSameInputs () {
+    float latitude = 45.47f;
+    float dateAngle = 200f;
+    assertEquals(
+      funcs.DayTime(latitude, dateAngle),
+      funcs.Sunset(latitude, dateAngle) - funcs.Sunrise(latitude, dateAngle),
+      EPS
+    );
+  }
 }

@@ -134,4 +134,107 @@ class CamerasTest {
     assertEquals(2, fresh.get_type(0));
     assertFalse(fresh.displayAll);
   }
+
+  // ================= add_first =============================================
+
+  @Test
+  void addFirst_appendsACameraMatchingWIN3DsCurrentState () {
+    app.allCameras.makeEmpty(0); // start from the single default camera makeEmpty() creates
+    int before = app.allCameras.num;
+
+    app.WIN3D.position_X = 11;
+    app.WIN3D.position_Y = 22;
+    app.WIN3D.position_Z = 33;
+    app.WIN3D.position_T = 1.5f;
+    app.WIN3D.rotation_X = 44;
+    app.WIN3D.rotation_Y = 55;
+    app.WIN3D.rotation_Z = 66;
+    app.WIN3D.rotation_T = 2.5f;
+    app.WIN3D.Zoom = 77;
+    app.WIN3D.ViewType = 1;
+
+    app.allCameras.add_first();
+
+    int newIndex = app.allCameras.num - 1;
+    assertEquals(before + 1, app.allCameras.num);
+    assertEquals(11f, app.allCameras.get_posX(newIndex), 0.0001f);
+    assertEquals(22f, app.allCameras.get_posY(newIndex), 0.0001f);
+    assertEquals(33f, app.allCameras.get_posZ(newIndex), 0.0001f);
+    assertEquals(1.5f, app.allCameras.get_posT(newIndex), 0.0001f);
+    assertEquals(44f, app.allCameras.get_rotX(newIndex), 0.0001f);
+    assertEquals(55f, app.allCameras.get_rotY(newIndex), 0.0001f);
+    assertEquals(66f, app.allCameras.get_rotZ(newIndex), 0.0001f);
+    assertEquals(2.5f, app.allCameras.get_rotT(newIndex), 0.0001f);
+    assertEquals(77f, app.allCameras.get_zoom(newIndex), 0.0001f);
+    assertEquals(1, app.allCameras.get_type(newIndex));
+  }
+
+  // ================= getCorners ============================================
+
+  @Test
+  void getCorners_returnsFiveThreeComponentVertices () {
+    float[][] corners = app.allCameras.getCorners(1, 0, 0, 0, 1, 0, 0, 0, 5, 60);
+    assertEquals(5, corners.length);
+    for (float[] v : corners) assertEquals(3, v.length);
+  }
+
+  @Test
+  void getCorners_restoresWIN3DsStateAfterward () {
+    app.WIN3D.position_X = 111;
+    app.WIN3D.position_Y = 222;
+    app.WIN3D.position_Z = 333;
+    app.WIN3D.position_T = 4;
+    app.WIN3D.rotation_X = 10;
+    app.WIN3D.rotation_Y = 20;
+    app.WIN3D.rotation_Z = 30;
+    app.WIN3D.rotation_T = 5;
+    app.WIN3D.Zoom = 90;
+    app.WIN3D.CAM_x = 1;
+    app.WIN3D.CAM_y = 2;
+    app.WIN3D.CAM_z = 3;
+
+    app.allCameras.getCorners(1, 5, 6, 7, 1, 15, 25, 35, 3, 45);
+
+    assertEquals(111f, app.WIN3D.position_X, 0.0001f);
+    assertEquals(222f, app.WIN3D.position_Y, 0.0001f);
+    assertEquals(333f, app.WIN3D.position_Z, 0.0001f);
+    assertEquals(4f, app.WIN3D.position_T, 0.0001f);
+    assertEquals(10f, app.WIN3D.rotation_X, 0.0001f);
+    assertEquals(20f, app.WIN3D.rotation_Y, 0.0001f);
+    assertEquals(30f, app.WIN3D.rotation_Z, 0.0001f);
+    assertEquals(5f, app.WIN3D.rotation_T, 0.0001f);
+    assertEquals(90f, app.WIN3D.Zoom, 0.0001f);
+    assertEquals(1f, app.WIN3D.CAM_x, 0.0001f);
+    assertEquals(2f, app.WIN3D.CAM_y, 0.0001f);
+    assertEquals(3f, app.WIN3D.CAM_z, 0.0001f);
+  }
+
+  @Test
+  void getCorners_apexMatchesDirectlyTransformingTheGivenCameraParams () {
+    // Index 0 is the apex (qx=qy=qz=0), so it lands exactly where
+    // transform_3DViewport() would place the camera for these exact
+    // parameters - checked against calling that directly, rather than
+    // re-deriving the rotation math by hand.
+    float pX = 5, pY = 6, pZ = 7, pT = 2, rX = 15, rY = 0, rZ = 35, rT = 3, zoom = 45;
+
+    app.WIN3D.position_X = pX;
+    app.WIN3D.position_Y = pY;
+    app.WIN3D.position_Z = pZ;
+    app.WIN3D.position_T = pT;
+    app.WIN3D.rotation_X = rX;
+    app.WIN3D.rotation_Y = rY;
+    app.WIN3D.rotation_Z = rZ;
+    app.WIN3D.rotation_T = rT;
+    app.WIN3D.Zoom = zoom;
+    app.WIN3D.transform_3DViewport();
+    float expectedX = app.WIN3D.CAM_x;
+    float expectedY = app.WIN3D.CAM_y;
+    float expectedZ = app.WIN3D.CAM_z;
+
+    float[][] corners = app.allCameras.getCorners(1, pX, pY, pZ, pT, rX, rY, rZ, rT, zoom);
+
+    assertEquals(expectedX, corners[0][0], 0.001f);
+    assertEquals(expectedY, corners[0][1], 0.001f);
+    assertEquals(expectedZ, corners[0][2], 0.001f);
+  }
 }

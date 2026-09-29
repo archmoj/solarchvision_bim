@@ -87,4 +87,60 @@ class TIMETest {
     assertEquals(time.getDay_fromDate(0), time.getDay_fromDate(365));
     assertEquals(time.getMonth_fromDate(364), time.getMonth_fromDate(-1));
   }
+
+  @Test
+  void getMM_returnsJustTheTwoDigitMonth () {
+    assertEquals("03", time.getMM(0));   // March 21
+    assertEquals("01", time.getMM(286)); // January 1
+  }
+
+  // --- updateDate -----------------------------------------------------
+
+  @Test
+  void updateDate_derivesMonthDayAndHourFromTheCurrentDate () {
+    time.date = 286.5f; // January 1, half a day in
+
+    time.updateDate();
+
+    assertEquals(1, time.month);
+    assertEquals(1, time.day);
+    assertEquals(12, time.hour);
+  }
+
+  @Test
+  void updateDate_truncatesTheHourRatherThanRounding () {
+    time.date = 286.99f; // just under a full day past January 1's start
+
+    time.updateDate();
+
+    assertEquals(23, time.hour); // int(24 * 0.99) = 23, not 24
+  }
+
+  // --- to_XML / from_XML round trip -----------------------------------
+
+  @Test
+  void toXMLThenFromXML_roundTripsEveryField () {
+    solarchvision_bim.TIME original = app.TIME;
+    original.modelRun = 6;
+    original.year = 2024;
+    original.month = 7;
+    original.day = 15;
+    original.hour = 14;
+    original.beginDay = 200;
+    original.date = 123.5f;
+
+    processing.data.XML root = new processing.data.XML("root");
+    original.to_XML(root);
+
+    solarchvision_bim.TIME fresh = app.new TIME();
+    fresh.from_XML(root);
+
+    assertEquals(6, fresh.modelRun);
+    assertEquals(2024, fresh.year);
+    assertEquals(7, fresh.month);
+    assertEquals(15, fresh.day);
+    assertEquals(14, fresh.hour);
+    assertEquals(200, fresh.beginDay);
+    assertEquals(123.5f, fresh.date, 0.0001f);
+  }
 }

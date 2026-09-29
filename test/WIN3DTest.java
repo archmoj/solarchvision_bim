@@ -792,4 +792,95 @@ class WIN3DTest {
     assertEquals(startHour, app.SHADE_HOUR_ANGLE);
     assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
   }
+
+  // ================= handleCommandKey (remaining safe branches) ============
+
+  @Test
+  void handleCommandKey_period_zoomsInsteadOfMovingInOrthographicMode () {
+    app.WIN3D.ViewType = 0; // Orthographic
+    app.WIN3D.position_Z = 0;
+    app.WIN3D.Zoom = 90;
+
+    app.WIN3D.handleCommandKey('.', false);
+
+    assertEquals(0f, app.WIN3D.position_Z, 0.0001f); // unchanged - Zoom is adjusted instead
+    assertNotEquals(90f, app.WIN3D.Zoom, 0.0001f);
+  }
+
+  @Test
+  void handleCommandKey_zero_zoomsInsteadOfMovingInOrthographicMode () {
+    app.WIN3D.ViewType = 0;
+    app.WIN3D.position_Z = 0;
+    app.WIN3D.Zoom = 90;
+
+    app.WIN3D.handleCommandKey('0', false);
+
+    assertEquals(0f, app.WIN3D.position_Z, 0.0001f);
+    assertNotEquals(90f, app.WIN3D.Zoom, 0.0001f);
+  }
+
+  @Test
+  void handleCommandKey_tab_withShiftDown_flagsVertexSolarForRebuildWhenThatShadeModeIsActive () {
+    app.WIN3D.FacesShade = app.SHADE.Vertex_Solar;
+    app.GlobalSolar_rebuild_array = false;
+    app.VertexSolar_rebuild_array = false;
+
+    app.WIN3D.handleCommandKey(app.TAB, true);
+
+    assertFalse(app.GlobalSolar_rebuild_array);
+    assertTrue(app.VertexSolar_rebuild_array);
+  }
+
+  @Test
+  void handleCommandKey_tAndCapitalT_moveTropoTimeInOppositeDirectionsAndClampAtStudyBounds () {
+    app.STUDY.i_Start = 0;
+    app.STUDY.i_End = 23;
+    app.TROPO_deltaTime = 1;
+
+    app.Tropo3D.i_Map = 23; // already at i_End
+    app.WIN3D.handleCommandKey('t', false); // steps forward, then clamps back since it exceeded i_End
+    assertEquals(23, app.Tropo3D.i_Map);
+
+    app.Tropo3D.i_Map = 0; // already at i_Start
+    app.WIN3D.handleCommandKey('T', false); // steps backward, then clamps back since it went below i_Start
+    assertEquals(0, app.Tropo3D.i_Map);
+  }
+
+  @Test
+  void handleCommandKey_dAndCapitalD_moveImpactsDisplayDayAndWrapAtStudyBounds () {
+    app.STUDY.j_Start = 0;
+    app.STUDY.j_End = 12;
+
+    app.IMPACTS_displayDay = app.STUDY.j_End; // one past the last valid day
+    app.WIN3D.handleCommandKey('d', false); // wraps back to 0
+    assertEquals(0, app.IMPACTS_displayDay);
+
+    app.IMPACTS_displayDay = 0;
+    app.WIN3D.handleCommandKey('D', false); // wraps to the last day
+    assertEquals(app.STUDY.j_End, app.IMPACTS_displayDay);
+  }
+
+  @Test
+  void handleCommandKey_cAndCapitalC_cycleTheCurrentCameraForwardAndWrap () {
+    app.allCameras.makeEmpty(0); // 1 camera
+    app.allCameras.create(0, 0, 0, 1, 0, 0, 0, 5, 60, 1); // 2nd camera
+    app.allCameras.create(0, 0, 0, 1, 0, 0, 0, 5, 60, 1); // 3rd camera
+    app.WIN3D.currentCamera = 2; // at the last camera
+
+    app.WIN3D.handleCommandKey('c', false); // wraps back to 0
+
+    assertEquals(0, app.WIN3D.currentCamera);
+  }
+
+  @Test
+  void handleCommandKey_capitalC_cyclesTheCurrentCameraBackwardAndWraps () {
+    app.allCameras.makeEmpty(0); // 1 camera
+    app.allCameras.create(0, 0, 0, 1, 0, 0, 0, 5, 60, 1); // 2nd camera
+    app.allCameras.create(0, 0, 0, 1, 0, 0, 0, 5, 60, 1); // 3rd camera
+    app.WIN3D.currentCamera = 0; // at the first camera
+
+    app.WIN3D.handleCommandKey('C', false); // wraps to the last camera
+
+    assertEquals(2, app.WIN3D.currentCamera);
+  }
 }

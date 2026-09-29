@@ -190,4 +190,166 @@ class PaintTest {
     assertArrayEquals(new float[]{255, 255, 0, 0}, direct, EPS);     // red
     assertArrayEquals(new float[]{255, 0, 0, 255}, dispatched, EPS); // reversed: blue
   }
+
+  @Test
+  void getColorStyle_style0_isOpacityOnlyWithNoColor () {
+    app.STUDY.O_scale = 40;
+    float[] c = app.PAINT.getColorStyle(0, 0.5f);
+    assertEquals((float) app.PAINT.getOpacity(40), c[0], EPS);
+    assertArrayEquals(new float[]{0, 0, 0}, new float[]{c[1], c[2], c[3]}, EPS);
+  }
+
+  @Test
+  void getColorStyle_style5_isAFixedOpaqueColorRegardlessOfJ () {
+    assertArrayEquals(new float[]{255, 0, 0, 0}, app.PAINT.getColorStyle(5, 0.9f), EPS);
+    assertArrayEquals(new float[]{255, 0, 0, 0}, app.PAINT.getColorStyle(5, 0.1f), EPS);
+  }
+
+  @Test
+  void getColorStyle_style1_passesDRYWCBDThroughUnchangedWithFullOpacity () {
+    float j = 0.75f;
+    float[] expected = app.PAINT.DRYWCBD(2f * (j - 0.5f));
+    float[] c = app.PAINT.getColorStyle(1, j);
+    assertEquals(255f, c[0], EPS);
+    assertEquals(expected[1], c[1], EPS);
+    assertEquals(expected[2], c[2], EPS);
+    assertEquals(expected[3], c[3], EPS);
+  }
+
+  @Test
+  void getColorStyle_style2_usesSTUDYOScaleAsAlphaInsteadOfFullOpacity () {
+    app.STUDY.O_scale = 128;
+    float j = 0.75f;
+    float[] expected = app.PAINT.DRYWCBD(2f * (j - 0.5f));
+    float[] c = app.PAINT.getColorStyle(2, j);
+    assertEquals(128f, c[0], EPS); // the only difference from style 1
+    assertEquals(expected[1], c[1], EPS);
+  }
+
+  @Test
+  void getColorStyle_style3And4_passVDWBGRThroughWithDifferentAlphaSources () {
+    app.STUDY.O_scale = 64;
+    float j = 0.3f;
+    float[] expected = app.PAINT.VDWBGR(j);
+
+    float[] c3 = app.PAINT.getColorStyle(3, j);
+    assertEquals(255f, c3[0], EPS);
+    assertEquals(expected[1], c3[1], EPS);
+
+    float[] c4 = app.PAINT.getColorStyle(4, j);
+    assertEquals(64f, c4[0], EPS); // uses STUDY.O_scale instead of full opacity
+    assertEquals(expected[1], c4[1], EPS);
+  }
+
+  @Test
+  void getColorStyle_style7_isWBGRWWithEveryChannelInverted () {
+    float j = 0.4f;
+    float[] w = app.PAINT.WBGRW(j);
+    float[] c = app.PAINT.getColorStyle(7, j);
+    assertEquals(255f, c[0], EPS);
+    assertEquals(255f - w[1], c[1], EPS);
+    assertEquals(255f - w[2], c[2], EPS);
+    assertEquals(255f - w[3], c[3], EPS);
+  }
+
+  @Test
+  void getColorStyle_style9_passesWBGRWThroughUnchanged () {
+    float j = 0.4f;
+    float[] w = app.PAINT.WBGRW(j);
+    float[] c = app.PAINT.getColorStyle(9, j);
+    assertEquals(w[1], c[1], EPS);
+    assertEquals(w[2], c[2], EPS);
+    assertEquals(w[3], c[3], EPS);
+  }
+
+  @Test
+  void getColorStyle_style8And10_bothInvertBGRIdentically () {
+    // Styles 8 and 10 are literal duplicates of each other in the source.
+    float j = 0.6f;
+    float[] bgr = app.PAINT.BGR(j);
+    float[] c8 = app.PAINT.getColorStyle(8, j);
+    float[] c10 = app.PAINT.getColorStyle(10, j);
+    assertArrayEquals(c8, c10, EPS);
+    assertEquals(255f - bgr[1], c8[1], EPS);
+  }
+
+  @Test
+  void getColorStyle_style11_blendsBGRTowardsGrayAtHalfIntensityWithHalfAlpha () {
+    float j = 0.6f;
+    float[] bgr = app.PAINT.BGR(j);
+    float[] c = app.PAINT.getColorStyle(11, j);
+    assertEquals(127f, c[0], EPS);
+    assertEquals(255f - 0.5f * bgr[1], c[1], EPS);
+  }
+
+  @Test
+  void getColorStyle_style12_passesBGRThroughUnchanged () {
+    float j = 0.6f;
+    float[] bgr = app.PAINT.BGR(j);
+    float[] c = app.PAINT.getColorStyle(12, j);
+    assertEquals(bgr[1], c[1], EPS);
+    assertEquals(bgr[2], c[2], EPS);
+    assertEquals(bgr[3], c[3], EPS);
+  }
+
+  @Test
+  void getColorStyle_style17_invertsAndSwapsDRYWCBDChannels () {
+    float j = 0.8f;
+    float[] col = app.PAINT.DRYWCBD(2f * (j - 0.5f));
+    float[] c = app.PAINT.getColorStyle(17, j);
+    assertEquals(255f - col[3], c[1], EPS);
+    assertEquals(255f - col[2], c[2], EPS);
+    assertEquals(255f - col[1], c[3], EPS);
+  }
+
+  @Test
+  void getColorStyle_styleMinus1_matchesStyle17Exactly () {
+    // -1 duplicates style 17's exact formula in the source.
+    float j = 0.8f;
+    assertArrayEquals(app.PAINT.getColorStyle(17, j), app.PAINT.getColorStyle(-1, j), EPS);
+  }
+
+  @Test
+  void getColorStyle_style19_passesDWYRThroughUnchanged () {
+    float j = 0.5f;
+    float[] dwyr = app.PAINT.DWYR(j);
+    float[] c = app.PAINT.getColorStyle(19, j);
+    assertEquals(dwyr[1], c[1], EPS);
+    assertEquals(dwyr[2], c[2], EPS);
+    assertEquals(dwyr[3], c[3], EPS);
+  }
+
+  // ================= WYRD (White -> Yellow -> Red -> Dark) ==================
+  // WYRD(j) internally works with v = -3*j, walking White(j=0) -> Yellow(j=1/3)
+  // -> Red(j=2/3) -> Dark(j=1), then clamps: white for j<=0, black for j>=1.
+
+  @Test
+  void wyrd_isWhiteAtZero () {
+    assertArrayEquals(new float[]{255, 255, 255, 255}, app.PAINT.WYRD(0f), EPS);
+  }
+
+  @Test
+  void wyrd_isYellowAtOneThird () {
+    assertArrayEquals(new float[]{255, 255, 255, 0}, app.PAINT.WYRD(1f / 3f), EPS);
+  }
+
+  @Test
+  void wyrd_isRedAtTwoThirds () {
+    assertArrayEquals(new float[]{255, 255, 0, 0}, app.PAINT.WYRD(2f / 3f), EPS);
+  }
+
+  @Test
+  void wyrd_isBlackAtOne () {
+    assertArrayEquals(new float[]{255, 0, 0, 0}, app.PAINT.WYRD(1f), EPS);
+  }
+
+  @Test
+  void wyrd_clampsToBlackPastOne () {
+    assertArrayEquals(new float[]{255, 0, 0, 0}, app.PAINT.WYRD(2f), EPS);
+  }
+
+  @Test
+  void wyrd_clampsToWhiteBelowZero () {
+    assertArrayEquals(new float[]{255, 255, 255, 255}, app.PAINT.WYRD(-0.5f), EPS);
+  }
 }

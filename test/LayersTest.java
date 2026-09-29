@@ -110,4 +110,28 @@ class LayersTest {
     assertEquals(first.unit, app.CurrentLayer_unit);
     assertEquals(first.name, app.CurrentLayer_name);
   }
+
+  // ================= LAYER.to_XML / from_XML round trip =====================
+
+  @Test
+  void layerToXMLThenFromXML_roundTripsEveryField () {
+    solarchvision_bim.LAYER original = app.new LAYER(2.5f, -10, 1, "°C", "Air Temperature", "Température de l'air", "TMP");
+    original.id = 4;
+
+    processing.data.XML root = new processing.data.XML("root");
+    original.to_XML(root);
+
+    solarchvision_bim.LAYER loaded = app.new LAYER(0, 0, 0, "", "", "", "");
+    loaded.id = 4; // from_XML looks the child up by "LAYER_<id>", so id must match first
+    loaded.from_XML(root);
+
+    assertEquals(4, loaded.id);
+    assertEquals("°C", loaded.unit);
+    assertEquals("TMP", loaded.name);
+    assertEquals("Air Temperature", loaded.descriptions[app.Language_EN]);
+    assertEquals("Température de l'air", loaded.descriptions[app.Language_FR]);
+    assertEquals(2.5f, loaded.V_scale, 0.0001f);
+    assertEquals(-10f, loaded.V_offset, 0.0001f);
+    assertEquals(1f, loaded.V_belowLine, 0.0001f);
+  }
 }
