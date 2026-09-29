@@ -182,4 +182,154 @@ class UI_menuBarTest {
     app.UI_menuBar.keyReleased();
     assertTrue(app.UI_menuBar.navKeyHeld);
   }
+
+  @Test
+  void processHeldKey_doesNothingWhenNotHeld () {
+    app.UI_menuBar.selected_parent = 0;
+    app.UI_menuBar.selected_child = 0;
+    app.UI_menuBar.navKeyHeld = false;
+    app.UI_menuBar.navKeyCode = app.DOWN;
+    app.UI_menuBar.navKeyFrameCounter = app.UI_menuBar.NAV_KEY_INITIAL_DELAY_FRAMES;
+
+    app.UI_menuBar.processHeldKey();
+
+    assertEquals(0, app.UI_menuBar.selected_child); // unchanged - key isn't held
+  }
+
+  @Test
+  void processHeldKey_repeatingPastTheLastChildStaysClampedAndDoesNotThrow () {
+    app.UI_menuBar.selected_parent = 0; // "File" has 4 rows (index 0..3)
+    app.UI_menuBar.selected_child = 3;  // already at the last row
+    app.UI_menuBar.navKeyHeld = true;
+    app.UI_menuBar.navKeyCode = app.DOWN;
+    app.UI_menuBar.navKeyFrameCounter = 0;
+    app.UI_menuBar.navKeyRepeating = false;
+
+    assertDoesNotThrow(() -> {
+      for (int i = 0; i < 50; i++) app.UI_menuBar.processHeldKey();
+    });
+    assertEquals(3, app.UI_menuBar.selected_child); // clamped, never runs off the end
+  }
+
+  // ================= stepChild / clampChild (direct) ============================
+
+  @Test
+  void stepChild_skipsDividersAndFindsTheNextRealItem () {
+    // "View": Zoom In(1), divider(2), Zoom Out(3)
+    assertEquals(3, app.UI_menuBar.stepChild(2, 1, 1));
+  }
+
+  @Test
+  void stepChild_returnsFromUnchangedWhenThereIsNowhereFurtherToGo () {
+    assertEquals(3, app.UI_menuBar.stepChild(0, 3, 1)); // "File", already at the last row
+  }
+
+  @Test
+  void clampChild_leavesAValidIndexUnchanged () {
+    assertEquals(2, app.UI_menuBar.clampChild(1, 2)); // "Edit" index 2 is "Paste", not a divider
+  }
+
+  @Test
+  void clampChild_clampsAnOutOfRangeIndexDownToTheLastRow () {
+    assertEquals(2, app.UI_menuBar.clampChild(1, 10)); // "Edit" only has index 0..2
+  }
+
+  @Test
+  void clampChild_skipsBackToTheNearestRealItemWhenLandingOnADivider () {
+    assertEquals(1, app.UI_menuBar.clampChild(2, 2)); // "View" index 2 is the divider
+  }
+
+  @Test
+  void clampChild_searchesForwardWhenBackwardOnlyReachesTheParentTab () {
+    // "Tools": divider(1), divider(2), Cut(3) - stepping back from index 2 only
+    // reaches the tab itself (0), so clampChild must search forward instead.
+    app.UI_menuBar.Items = new String[][] { {"Tools", "—", "—", "Cut"} };
+    assertEquals(3, app.UI_menuBar.clampChild(0, 2));
+  }
+
+  @Test
+  void clampChild_fallsBackToTheParentTabWhenEveryChildIsADivider () {
+    app.UI_menuBar.Items = new String[][] { {"Empty", "—", "—", "—"} };
+    assertEquals(0, app.UI_menuBar.clampChild(0, 2));
+  }
+
+  // ================= isHoverSuppressed ===========================================
+
+  @Test
+  void isHoverSuppressed_falseBeforeAnyKeyboardNavigation () {
+    assertFalse(app.UI_menuBar.isHoverSuppressed());
+  }
+
+  @Test
+  void isHoverSuppressed_trueRightAfterMoveSelectionWithoutTheMouseMoving () {
+    app.UI_X_moved = 50;
+    app.UI_Y_moved = 60;
+    app.UI_menuBar.selected_parent = 0;
+    app.UI_menuBar.moveSelection(app.DOWN);
+
+    assertTrue(app.UI_menuBar.isHoverSuppressed());
+  }
+
+  @Test
+  void isHoverSuppressed_falseOnceTheMouseActuallyMoves () {
+    app.UI_X_moved = 50;
+    app.UI_Y_moved = 60;
+    app.UI_menuBar.selected_parent = 0;
+    app.UI_menuBar.moveSelection(app.DOWN);
+
+    app.UI_X_moved = 999; // the mouse moved since the key press
+
+    assertFalse(app.UI_menuBar.isHoverSuppressed());
+  }
+
+  // ================= runSelectedItem =============================================
+
+  @Test
+  void runSelectedItem_doesNothingWhenTheMenuIsClosed () {
+    boolean[] ran = {false};
+    app.allActions = new java.util.HashMap<>();
+    app.allActions.put("copy", (args) -> ran[0] = true);
+
+    app.UI_menuBar.selected_parent = -1;
+    app.UI_menuBar.selected_child = 1;
+    app.UI_menuBar.runSelectedItem();
+
+    assertFalse(ran[0]);
+  }
+
+  @Test
+  void runSelectedItem_doesNothingWhenOnlyTheParentTabIsSelected () {
+    boolean[] ran = {false};
+    app.allActions = new java.util.HashMap<>();
+    app.allActions.put("copy", (args) -> ran[0] = true);
+
+    app.UI_menuBar.selected_parent = 1; // "Edit"
+    app.UI_menuBar.selected_child = 0;  // the tab itself, not a real item
+    app.UI_menuBar.runSelectedItem();
+
+    assertFalse(ran[0]);
+  }
+
+  @Test
+  void runSelectedItem_runsTheRegisteredActionForTheSelectedChild () {
+    boolean[] ran = {false};
+    app.allActions = new java.util.HashMap<>();
+    app.allActions.put("copy", (args) -> ran[0] = true);
+
+    app.UI_menuBar.selected_parent = 1; // "Edit"
+    app.UI_menuBar.selected_child = 1;  // "Copy"
+    app.UI_menuBar.runSelectedItem();
+
+    assertTrue(ran[0]);
+  }
+
+  @Test
+  void runSelectedItem_doesNotThrowWhenNoActionIsRegisteredForTheItem () {
+    app.allActions = new java.util.HashMap<>(); // "paste" intentionally not registered
+
+    app.UI_menuBar.selected_parent = 1; // "Edit"
+    app.UI_menuBar.selected_child = 2;  // "Paste"
+
+    assertDoesNotThrow(() -> app.UI_menuBar.runSelectedItem());
+  }
 }

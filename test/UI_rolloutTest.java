@@ -264,4 +264,82 @@ class UI_rolloutTest {
     app.UI_rollout.keyReleased();
     assertFalse(app.UI_rollout.navKeyHeld);
   }
+
+  @Test
+  void keyReleased_ignoresAnUncodedKeyReleaseWhileACodedKeyIsHeld () {
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = true;
+    app.UI_rollout.navKeyCode = app.LEFT;
+
+    app.key = 'a'; // an uncoded key, while a coded arrow key is held
+    app.UI_rollout.keyReleased();
+    assertTrue(app.UI_rollout.navKeyHeld);
+  }
+
+  @Test
+  void keyReleased_ignoresACodedKeyReleaseWhileAnUncodedKeyIsHeld () {
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = false;
+    app.UI_rollout.navKeyChar = app.BACKSPACE;
+
+    app.key = (char) app.CODED;
+    app.keyCode = app.LEFT; // a coded key, while an uncoded Backspace is held
+    app.UI_rollout.keyReleased();
+    assertTrue(app.UI_rollout.navKeyHeld);
+  }
+
+  // ================= dispatchEditKey ignores keys it doesn't own ================
+
+  @Test
+  void dispatchEditKey_ignoresOtherCodedKeysLikeUp () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 1;
+    app.UI_rollout.dispatchEditKey(true, app.UP, (char) 0); // only Left/Right are handled
+    assertEquals(1, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_ignoresNonRepeatableUncodedKeysLikeEnter () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 1;
+    app.UI_rollout.dispatchEditKey(false, 0, app.ENTER); // Enter is handled in keyPressed(), not here
+    assertEquals("abc", app.UI_rollout.editText);
+    assertEquals(1, app.UI_rollout.editCursor);
+  }
+
+  // ================= boundary repeat regression ==================================
+
+  @Test
+  void processHeldKey_repeatingRightPastTheEndStaysClampedAndDoesNotThrow () {
+    app.UI_rollout.editActive = true;
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 3; // already at the end
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = true;
+    app.UI_rollout.navKeyCode = app.RIGHT;
+    app.UI_rollout.navKeyFrameCounter = 0;
+    app.UI_rollout.navKeyRepeating = false;
+
+    assertDoesNotThrow(() -> {
+      for (int i = 0; i < 50; i++) app.UI_rollout.processHeldKey();
+    });
+    assertEquals(3, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void processHeldKey_repeatingDeletePastTheEndStaysClampedAndDoesNotThrow () {
+    app.UI_rollout.editActive = true;
+    app.UI_rollout.editText = "a";
+    app.UI_rollout.editCursor = 1; // nothing after the cursor to delete
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = false;
+    app.UI_rollout.navKeyChar = app.DELETE;
+    app.UI_rollout.navKeyFrameCounter = 0;
+    app.UI_rollout.navKeyRepeating = false;
+
+    assertDoesNotThrow(() -> {
+      for (int i = 0; i < 50; i++) app.UI_rollout.processHeldKey();
+    });
+    assertEquals("a", app.UI_rollout.editText); // untouched, never read past the end
+  }
 }

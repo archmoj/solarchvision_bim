@@ -220,4 +220,77 @@ class UI_consoleBarTest {
     app.UI_consoleBar.keyReleased();
     assertFalse(app.UI_consoleBar.navKeyHeld);
   }
+
+  @Test
+  void keyReleased_ignoresAnUncodedKeyReleaseWhileACodedKeyIsHeld () {
+    app.UI_consoleBar.navKeyHeld = true;
+    app.UI_consoleBar.navKeyCoded = true;
+    app.UI_consoleBar.navKeyCode = app.LEFT;
+
+    app.key = 'a'; // an uncoded key, while a coded arrow key is held
+    app.UI_consoleBar.keyReleased();
+    assertTrue(app.UI_consoleBar.navKeyHeld);
+  }
+
+  @Test
+  void keyReleased_ignoresACodedKeyReleaseWhileAnUncodedKeyIsHeld () {
+    app.UI_consoleBar.navKeyHeld = true;
+    app.UI_consoleBar.navKeyCoded = false;
+    app.UI_consoleBar.navKeyChar = app.BACKSPACE;
+
+    app.key = (char) app.CODED;
+    app.keyCode = app.LEFT; // a coded key, while an uncoded Backspace is held
+    app.UI_consoleBar.keyReleased();
+    assertTrue(app.UI_consoleBar.navKeyHeld);
+  }
+
+  // ================= dispatchEditKey - command history, extra cases ============
+
+  @Test
+  void dispatchEditKey_upPreservesInProgressTextWhenLeavingTheLiveSlot () {
+    app.allCommands = new String[] {"Command Input:", "first", ""};
+    app.UI_consoleBar.cycleCursor = 2; // the live, not-yet-run slot
+    app.UI_consoleBar.editText = "draft";
+
+    app.UI_consoleBar.dispatchEditKey(true, app.UP, (char) 0);
+
+    assertEquals("draft", app.allCommands[2]); // the in-progress text was saved first
+    assertEquals("first", app.UI_consoleBar.editText);
+  }
+
+  // ================= boundary repeat regression =================================
+
+  @Test
+  void processHeldKey_repeatingLeftPastTheStartStaysClampedAndDoesNotThrow () {
+    app.UI_consoleBar.editText = "abc";
+    app.UI_consoleBar.editCursor = 0;
+    app.UI_consoleBar.navKeyHeld = true;
+    app.UI_consoleBar.navKeyCoded = true;
+    app.UI_consoleBar.navKeyCode = app.LEFT;
+    app.UI_consoleBar.navKeyFrameCounter = 0;
+    app.UI_consoleBar.navKeyRepeating = false;
+
+    assertDoesNotThrow(() -> {
+      for (int i = 0; i < 50; i++) app.UI_consoleBar.processHeldKey();
+    });
+    assertEquals(0, app.UI_consoleBar.editCursor);
+    assertEquals("abc", app.UI_consoleBar.editText);
+  }
+
+  @Test
+  void processHeldKey_repeatingBackspacePastTheStartStaysClampedAndDoesNotThrow () {
+    app.UI_consoleBar.editText = "a";
+    app.UI_consoleBar.editCursor = 0; // nothing before the cursor to delete
+    app.UI_consoleBar.navKeyHeld = true;
+    app.UI_consoleBar.navKeyCoded = false;
+    app.UI_consoleBar.navKeyChar = app.BACKSPACE;
+    app.UI_consoleBar.navKeyFrameCounter = 0;
+    app.UI_consoleBar.navKeyRepeating = false;
+
+    assertDoesNotThrow(() -> {
+      for (int i = 0; i < 50; i++) app.UI_consoleBar.processHeldKey();
+    });
+    assertEquals("a", app.UI_consoleBar.editText); // untouched, never went negative
+    assertEquals(0, app.UI_consoleBar.editCursor);
+  }
 }
