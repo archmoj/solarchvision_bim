@@ -418,9 +418,13 @@ class WIN3D {
   // not forward the OS's key-repeat events while a key is held down: a
   // held key only ever produces a single keyPressed(). To get the old
   // "keep navigating until key up" behavior back, we instead track which
-  // navigation key is currently held and re-run its action once per frame
-  // (from draw(), via processHeldKey()) for as long as it stays held,
-  // rather than relying on repeat events that Processing no longer sends.
+  // navigation key is currently held and re-run its action from draw(),
+  // via processHeldKey(), for as long as it stays held, rather than
+  // relying on repeat events that Processing no longer sends.
+  // Delay-then-repeat, like an OS key-repeat setting, at frameRate(24):
+  // ~0.25s before the first repeat, then one step every frame (~24/s).
+  static final int NAV_KEY_INITIAL_DELAY_FRAMES = 6;
+  static final int NAV_KEY_REPEAT_FRAMES = 1;
   boolean navKeyHeld = false;
   boolean navKeyRepeatable = false;
   boolean navKeyCoded = false;
@@ -429,6 +433,8 @@ class WIN3D {
   boolean navKeyShift = false;
   boolean navKeyCtrl = false;
   boolean navKeyAlt = false;
+  int navKeyFrameCounter = 0;
+  boolean navKeyRepeating = false;
 
   void keyPressed (KeyEvent e) {
     if (!this.include) return;
@@ -468,6 +474,8 @@ class WIN3D {
 
 
     this.navKeyHeld = true;
+    this.navKeyFrameCounter = 0;
+    this.navKeyRepeating = false;
 
     this.dispatchNavKey();
   }
@@ -499,7 +507,13 @@ class WIN3D {
   // key's action for as long as it remains held and is repeatable.
   void processHeldKey () {
     if (this.include && this.navKeyHeld && this.navKeyRepeatable) {
-      this.dispatchNavKey();
+      this.navKeyFrameCounter++;
+      int threshold = this.navKeyRepeating ? NAV_KEY_REPEAT_FRAMES : NAV_KEY_INITIAL_DELAY_FRAMES;
+      if (this.navKeyFrameCounter >= threshold) {
+        this.navKeyFrameCounter = 0;
+        this.navKeyRepeating = true;
+        this.dispatchNavKey();
+      }
     }
   }
 
