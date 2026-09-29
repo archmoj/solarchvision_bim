@@ -285,10 +285,10 @@ class Overlay3DTest {
 
   @Test
   void clipAndProject_projectsCameraSpacePointsMatchingCalculatePerspectiveFromCameraSpace () {
-    app.WIN3D.ViewType = 1; // perspective
+    app.WIN3D.projectionTypeIndex = 1; // perspective
     app.WIN3D.scale = 1;
-    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
-    app.WIN3D.refScale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.referenceScale = 1;
 
     java.util.ArrayList<float[]> camVertices = new java.util.ArrayList<float[]>();
     camVertices.add(new float[]{0, 0, 10});
@@ -306,10 +306,10 @@ class Overlay3DTest {
 
   @Test
   void clipAndProject_returnsEmptyWhenEveryPointIsBehindTheCamera () {
-    app.WIN3D.ViewType = 1;
+    app.WIN3D.projectionTypeIndex = 1;
     app.WIN3D.scale = 1;
-    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
-    app.WIN3D.refScale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.referenceScale = 1;
 
     java.util.ArrayList<float[]> camVertices = new java.util.ArrayList<float[]>();
     camVertices.add(new float[]{0, 0, -10});
@@ -323,10 +323,10 @@ class Overlay3DTest {
 
   @Test
   void clipAndProject_returnsEmptyWhenTheProjectedShapeFallsEntirelyOutsideTheStylesWindow () {
-    app.WIN3D.ViewType = 1;
+    app.WIN3D.projectionTypeIndex = 1;
     app.WIN3D.scale = 1;
-    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
-    app.WIN3D.refScale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.referenceScale = 1;
 
     java.util.ArrayList<float[]> camVertices = new java.util.ArrayList<float[]>();
     camVertices.add(new float[]{0, 0, 10});

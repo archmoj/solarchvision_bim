@@ -21,7 +21,7 @@ CREATE CREATE = new CREATE();
 
 int CreateObject = CREATE.Nothing;
 
-int current_ObjectCategory = ObjectCategory.GROUP;
+int currentObjectCategory = ObjectCategory.GROUP;
 
 int current_Material = 7;
 int current_Tessellation = 0;
@@ -50,7 +50,7 @@ int WMS_type = DataType.FORECAST_HRDPS; // <<<<<<<<<<<<<
 int TROPO_deltaTime = (WMS_type == DATATYPE.FORECAST_GDPS) ? 3 : 1;
 int TROPO_timeSteps = 24;
 
-float Interpolation_Weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
+float interpolationWeight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
 
 final int Impact_ACTIVE = 0; // internal
 final int Impact_PASSIVE = 1; // internal
@@ -79,9 +79,9 @@ float CrustDepth = 1000; // 1000m .The actual crust ranges from 5–70 km
 
 float EyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intrenal!
 
-float GlobalAlbedo = 0; // 0-100
+float globalAlbedo = 0; // 0-100
 
-float Planetary_Magnification = 16.0; // <<<<<<<<<<
+float celestialMagnification = 16.0; // <<<<<<<<<<
 
 boolean FRAME_record_AUTO = false;
 boolean FRAME_record_IMG = false;
@@ -90,8 +90,8 @@ boolean FRAME_drag_IMG = false;
 
 //-------------------------------
 
-int CLIMATIC_SolarForecast = 0; //                                   Used for solar radiation only
-int CLIMATIC_WeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
+int climateBasedSolarForecast = 0; //                                   Used for solar radiation only
+int climateBasedWeatherForecast = 0; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
 
 static final int USER_GUI = 0;
 static final int USER_AUTO = 1;
@@ -108,12 +108,12 @@ String[] skyScenario_FileTXT = {
 final int filter_HOURLY = 0;
 final int filter_DAILY = 1;
 
-int IMPACTS_displayDay = 0; // 0:total 1:day-1 2:day-2 etc.
+int impactDisplayDay = 0; // 0:total 1:day-1 2:day-2 etc.
 
 final int numberOfLanguages = 2;
 final int Language_EN = 0;
 final int Language_FR = 1;
-int Language_Active = Language_EN;
+int activeLanguage = Language_EN;
 
 final float FLOAT_huge = 1000000000;
 final float FLOAT_tiny = 0.001; // don't use very tiny values that could result is shading problems
@@ -147,61 +147,61 @@ Functions funcs = new Functions();
 UITASK UITASK = new UITASK();
 
 
-int ENSEMBLE_FORECAST_maxDays = 16; // Constant
-int ENSEMBLE_OBSERVED_maxDays = 3; // Variable
+int ensembleForecastMaxDays = 16; // Constant
+int ensembleObservationMaxDays = 3; // Variable
 
-int CLIMATE_TMYEPW_start = 1;
-int CLIMATE_TMYEPW_end = 1;
+int climateTypicalYearStart = 1;
+int climateTypicalYearEnd = 1;
 
-int CLIMATE_CWEEDS_start = 1970;
-int CLIMATE_CWEEDS_end = 2017;
+int climateEngineeringStart = 1970;
+int climateEngineeringEnd = 2017;
 
-int CLIMATE_CLMREC_start = 2000;
-int CLIMATE_CLMREC_end = year();
+int climateArchiveStart = 2000;
+int climateArchiveEnd = year();
 
-int ENSEMBLE_FORECAST_start = 1;
-int ENSEMBLE_FORECAST_end = 43; // NAEFS:1-43,
+int ensembleForecastStart = 1;
+int ensembleForecastEnd = 43; // NAEFS:1-43,
 
-int ENSEMBLE_OBSERVED_numNearest = 1; //3;
+int nearestWeatherStationCount = 1; //3;
 
-int ENSEMBLE_OBSERVED_start = 1;
-int ENSEMBLE_OBSERVED_end = ENSEMBLE_OBSERVED_numNearest;
+int ensembleObservationStart = 1;
+int ensembleObservationEnd = nearestWeatherStationCount;
 
-int[] nearest_Station_ENSEMBLE_OBSERVED_id = new int [ENSEMBLE_OBSERVED_numNearest];
-float[] nearest_Station_ENSEMBLE_OBSERVED_dist = new float [ENSEMBLE_OBSERVED_numNearest];
+int[] ensembleObservationNearestStationIndex = new int [nearestWeatherStationCount];
+float[] ensembleObservationNearestStationDist = new float [nearestWeatherStationCount];
 
-int nearest_Station_CLMREC_id = -1;
-float nearest_Station_CLMREC_dist = FLOAT_undefined;
+int climateArchiveNearestStationIndex = -1;
+float climateArchiveNearestStationDist = FLOAT_undefined;
 
-int SampleYear_Start = 1980;
-int SampleYear_End = year();
+int sampleYearStart = 1980;
+int sampleYearEnd = year();
 
-int SampleMember_Start = 1;
-int SampleMember_End = 43;
+int sampleMemberStart = 1;
+int sampleMemberEnd = 43;
 
-int SampleStation_Start = 1;
-int SampleStation_End = ENSEMBLE_OBSERVED_numNearest;
+int sampleStationStart = 1;
+int sampleStationEnd = nearestWeatherStationCount;
 
-float[][][][] CLIMATE_TMYEPW_values;
-boolean[][][][] CLIMATE_TMYEPW_flags;
+float[][][][] climateTmyEpw_values;
+boolean[][][][] climateTmyEpw_flags;
 
-float[][][][] CLIMATE_CWEEDS_values;
-boolean[][][][] CLIMATE_CWEEDS_flags;
+float[][][][] climateEngineering_values;
+boolean[][][][] climateEngineering_flags;
 
-float[][][][] CLIMATE_CLMREC_values;
-boolean[][][][] CLIMATE_CLMREC_flags;
+float[][][][] climateArchiveValues;
+boolean[][][][] climateArchiveFlags;
 
-float[][][][] ENSEMBLE_FORECAST_values;
-boolean[][][][] ENSEMBLE_FORECAST_flags;
+float[][][][] ensembleForecast_values;
+boolean[][][][] ensembleForecast_flags;
 
-float[][][][] ENSEMBLE_OBSERVED_values;
-boolean[][][][] ENSEMBLE_OBSERVED_flags;
+float[][][][] ensembleObservation_values;
+boolean[][][][] ensembleObservation_flags;
 
-boolean CLIMATE_TMYEPW_load = true;
-boolean CLIMATE_CWEEDS_load = false;
-boolean CLIMATE_CLMREC_load = false;
-boolean ENSEMBLE_FORECAST_load = false;
-boolean ENSEMBLE_OBSERVED_load = false;
+boolean climateTypicalYearShouldLoad = true;
+boolean climateEngineeringShouldLoad = false;
+boolean climateArchiveShouldLoad = false;
+boolean ensembleForecastShouldLoad = false;
+boolean ensembleObservationShouldLoad = false;
 
 final int DEV_WindPower = 0;
 final int DEV_RadiationOnTracker = 1;
@@ -216,13 +216,13 @@ final int DEV_RadiationOnNW = 9;
 final int DEV_RadiationOnSW = 10;
 int numberOfDevelopedLayers = 11;
 
-int Develop_Option = DEV_WindPower;
-int Develop_DayHour = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
+int developLayerOption = DEV_WindPower;
+int developLayerInterval = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues>
 
-boolean DevelopData_update = true;
+boolean developDataUpdate = true;
 
-float Develop_AngleInclination = 45; // 90 = horizontal surface, 0 = Vertical surface
-float Develop_AngleOrientation = 0; // 0 = South, 90 = East
+float developLayerAngleInclination = 45; // 90 = horizontal surface, 0 = Vertical surface
+float developLayerAngleOrientation = 0; // 0 = South, 90 = East
 
 SHADE SHADE = new SHADE();
 
@@ -268,7 +268,7 @@ String createStamp (int increment, String CLASS_STAMP) {
   String txt = "";
 
   if (CLASS_STAMP == "WIN3D") {
-    txt += "CAM" + nf(WIN3D.currentCamera, 2) + "_";
+    txt += "CAM" + nf(WIN3D.currentCameraIndex, 2) + "_";
   }
   else {
     txt += "IMG" + nf(SavedScreenShots, 4) + "_";
@@ -276,8 +276,8 @@ String createStamp (int increment, String CLASS_STAMP) {
 
   txt += STATION.getCity() + "_";
 
-  if (IMPACTS_displayDay != 0) {
-    txt += TIME.getMM((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
+  if (impactDisplayDay != 0) {
+    txt += TIME.getMM((impactDisplayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
   }
   else {
     txt += TIME.getMM( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + "-" +
@@ -367,19 +367,19 @@ String MAKE_MainName () {
 
   String s = "";
 
-  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) s = nf(TIME.year, 2) + nf(TIME.month, 2) + nf(TIME.day, 2) + "_" + nf(STUDY.j_End, 0) + "dayFORECAST_";
+  if (currentDataSource == dataID_ensembleForecast) s = nf(TIME.year, 2) + nf(TIME.month, 2) + nf(TIME.day, 2) + "_" + nf(STUDY.j_End, 0) + "dayFORECAST_";
 
   return s;
 }
 
 String getFilename_SolidImpact () {
 
-  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/Solid" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.Z[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.R[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
+  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[currentDataSource] + "/Impacts/Solid" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.Z[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.R[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
 }
 
 String getFilename_SolarImpact () {
 
-  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[CurrentDataSource] + "/Impacts/Solar" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.Z, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.R, 1)), 3);
+  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[currentDataSource] + "/Impacts/Solar" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.Z, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.R, 1)), 3);
 }
 
 float HeightAboveGround = 0; //2.5; // <<<<<<<<<
@@ -390,23 +390,23 @@ float LocationELE = 0.0;
 
 int save_frame_number = 0;
 
-int COLOR_STYLE_Current = 0;
-int COLOR_STYLE_Number = 20; //6;
+int currentColorStyle = 0;
+int colorStyleCount = 20; //6;
 
-final int dataID_ENSEMBLE_OBSERVED = 0;
-final int dataID_ENSEMBLE_FORECAST = 1;
-final int dataID_CLIMATE_CWEEDS = 2;
-final int dataID_CLIMATE_CLMREC = 3;
-final int dataID_CLIMATE_TMYEPW = 4;
-final int MAXIMUM_dataID = dataID_CLIMATE_TMYEPW;
+final int dataID_ensembleObservation = 0;
+final int dataID_ensembleForecast = 1;
+final int dataID_climateEngineering = 2;
+final int dataID_climateArchive = 3;
+final int dataID_climateTmyEpw = 4;
+final int MAXIMUM_dataID = dataID_climateTmyEpw;
 
-int CurrentDataSource = dataID_CLIMATE_TMYEPW;
+int currentDataSource = dataID_climateTmyEpw;
 
 final String[] databaseString = {
-  "SWOB", "NAEFS", "CWEEDS", "CLMREC", "TMY"
+  "Ensemble Observation", "Ensemble Forecast", "Climate Engineering", "Climate Archive", "Climate Typical Year"
 };
 
-int DrawnFrame = 0;
+int drawnFrame = 0;
 
 int X_clicked = -1;
 int Y_clicked = -1;
@@ -416,7 +416,7 @@ int Y_click1 = -1;
 int X_click2 = -1;
 int Y_click2 = -1;
 
-int Camera_Variation = 0; // 1;
+int cameraIndex = 0; // 1;
 
 Materials allMaterials = new Materials();
 
@@ -466,10 +466,10 @@ boolean addToLastGroup = false; // internal
 
 void find_which_bakings_to_regenerate () {
 
-  if (WIN3D.FacesShade == SHADE.Global_Solar) {
+  if (WIN3D.shadingMode == SHADE.Global_Solar) {
     GlobalSolar_rebuild_array = true;
   }
-  if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+  if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
     VertexSolar_rebuild_array = true;
   }
   if (allSolarImpacts.displayImage) {
@@ -532,27 +532,27 @@ int num_vertices_added = 0;
 
 void OBJprintVertex (float x, float y, float z) {
 
-  float a = x * User3D.export_Scale;
-  float b = y * User3D.export_Scale;
-  float c = z * User3D.export_Scale;
+  float a = x * User3D.exporterScale;
+  float b = y * User3D.exporterScale;
+  float c = z * User3D.exporterScale;
 
-  if (User3D.export_FlipZYaxis == 0) {
+  if (User3D.exporterYaxisUp == 0) {
 
-    objOutput.println("v " + nf(a, 0, User3D.export_PrecisionVertex) + " " +  nf(b, 0, User3D.export_PrecisionVertex) + " " +  nf(c, 0, User3D.export_PrecisionVertex));
+    objOutput.println("v " + nf(a, 0, User3D.exporterPrecisionVertex) + " " +  nf(b, 0, User3D.exporterPrecisionVertex) + " " +  nf(c, 0, User3D.exporterPrecisionVertex));
   } else {
 
-    objOutput.println("v " + nf(-a, 0, User3D.export_PrecisionVertex) + " " +  nf(c, 0, User3D.export_PrecisionVertex) + " " +  nf(b, 0, User3D.export_PrecisionVertex));
+    objOutput.println("v " + nf(-a, 0, User3D.exporterPrecisionVertex) + " " +  nf(c, 0, User3D.exporterPrecisionVertex) + " " +  nf(b, 0, User3D.exporterPrecisionVertex));
   }
 }
 
 void OBJprintVtexture (float u, float v, float w) {
 
-  objOutput.println("vt " + nf(u, 0, User3D.export_PrecisionVtexture) + " " + nf(v, 0, User3D.export_PrecisionVtexture) + " " + nf(w, 0, User3D.export_PrecisionVtexture));
+  objOutput.println("vt " + nf(u, 0, User3D.exporterPrecisionVertexTexture) + " " + nf(v, 0, User3D.exporterPrecisionVertexTexture) + " " + nf(w, 0, User3D.exporterPrecisionVertexTexture));
 }
 
 void HTMLprintVtexture (float u, float v) {
 
-  htmlOutput.print(nf(u, 0, User3D.export_PrecisionVtexture) + " " + nf(v, 0, User3D.export_PrecisionVtexture));
+  htmlOutput.print(nf(u, 0, User3D.exporterPrecisionVertexTexture) + " " + nf(v, 0, User3D.exporterPrecisionVertexTexture));
 }
 
 String importedObjectName = "";
@@ -605,14 +605,14 @@ void selection_changed () {
 
 void switch_category (int a) {
 
-  current_ObjectCategory = a;
+  currentObjectCategory = a;
 
   UI_toolBar.revise();
 
   selection_changed();
 }
 
-float OBJECTS_scale = 1.0;
+float overallScale = 1.0;
 
 int SKY2D_X_View = 50;
 int SKY2D_Y_View = 50;
@@ -721,13 +721,13 @@ String Viewport_Stamp () {
 
   /*
 
-  s += "x" + nf(WIN3D.position_X, 0, 3);
-  s += "y" + nf(WIN3D.position_Y, 0, 3);
-  s += "z" + nf(WIN3D.position_Z, 0, 3);
+  s += "x" + nf(WIN3D.positionX, 0, 3);
+  s += "y" + nf(WIN3D.positionY, 0, 3);
+  s += "z" + nf(WIN3D.positionZ, 0, 3);
 
-  s += "rx" + nf(WIN3D.rotation_X, 0, 3);
-  s += "ry" + nf(WIN3D.rotation_Y, 0, 3);
-  s += "rz" + nf(WIN3D.rotation_Z, 0, 3);
+  s += "rx" + nf(WIN3D.rotationX, 0, 3);
+  s += "ry" + nf(WIN3D.rotationY, 0, 3);
+  s += "rz" + nf(WIN3D.rotationZ, 0, 3);
 
   s = s.replace('.', 'p');
   s = s.replace('-', 'n');
@@ -742,7 +742,7 @@ int UI_Y_moved = -1;
 
 void modify_Viewport_Title () {
 
-  String s = "Cam" + nf(WIN3D.currentCamera, 2);
+  String s = "Cam" + nf(WIN3D.currentCameraIndex, 2);
 
   UI_toolBar.Items[0][11] = s; // <<<<< Note: 3DViewPoint is the first index on BAR_b
   UI_toolBar.highlight(s);

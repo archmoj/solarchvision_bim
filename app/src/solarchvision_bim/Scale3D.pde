@@ -8,17 +8,17 @@ class Scale3D {
     y0 = O[1];
     z0 = O[2];
 
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT)       this.LandPoints(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) this.softSelection(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.VERTEX)     this.Vertices(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.POLYLINE)   this.Polylines(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.FACE)       this.Faces(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.GROUP)      this.Groups(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.MODEL2D)    this.Model2Ds(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.MODEL1D)    this.Model1Ds(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.SOLID)      this.Solids(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.CAMERA)     this.Cameras(x0, y0, z0, sx, sy, sz);
-    else if (current_ObjectCategory == ObjectCategory.SECTION)    this.Sections(sx, sy);
+    if (currentObjectCategory == ObjectCategory.LANDPOINT)       this.LandPoints(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.SOFTVERTEX) this.softSelection(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.VERTEX)     this.Vertices(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.POLYLINE)   this.Polylines(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.FACE)       this.Faces(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.GROUP)      this.Groups(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.MODEL2D)    this.Model2Ds(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.MODEL1D)    this.Model1Ds(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.SOLID)      this.Solids(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.CAMERA)     this.Cameras(x0, y0, z0, sx, sy, sz);
+    else if (currentObjectCategory == ObjectCategory.SECTION)    this.Sections(sx, sy);
   }
 
   float[] scalePointAroundPivot (float x, float y, float z, float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -34,8 +34,8 @@ class Scale3D {
   void LandPoints (float x0, float y0, float z0, float sx, float sy, float sz) {
     for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
       int f = Select3D.LandPoint_ids[q];
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
+      int i = f / Land3D.columnCount;
+      int j = f % Land3D.columnCount;
 
       float[] P = scalePointAroundPivot(Land3D.Mesh[i][j][0], Land3D.Mesh[i][j][1], Land3D.Mesh[i][j][2], x0, y0, z0, sx, sy, sz);
 
@@ -153,7 +153,7 @@ class Scale3D {
       allCameras.set_posY(f, y0 + sy * y);
       allCameras.set_posZ(f, z0 + sz * z);
 
-      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
+      if (f == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
     }
 
     model_changed();

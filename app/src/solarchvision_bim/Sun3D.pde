@@ -10,12 +10,12 @@ class Sun3D {
   float lat_step = 5; //in degrees
   float lon_step  = 10; //in degrees
 
-  int ACTIVE_palette_CLR = 15;
-  int ACTIVE_palette_DIR = 1;
-  float ACTIVE_palette_MLT = 1;
-  int PASSIVE_palette_CLR = 18;
-  int PASSIVE_palette_DIR = -1;
-  float PASSIVE_palette_MLT = 0.25;
+  int activeColorScaleIndex = 15;
+  int activeColorScaleDirection = 1;
+  float activeColorScaleFactor = 1;
+  int passiveColorScaleIndex = 18;
+  int passiveColorScaleDirection = -1;
+  float passiveColorScaleFactor = 0.25;
 
   boolean displayGrid = true;
   boolean displayPath = true;
@@ -48,23 +48,23 @@ class Sun3D {
     int type = 0;
     int direction = 1;
     float multiplier = 1;
-    if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
-      type = useStudySettings ? STUDY.ACTIVE_palette_CLR : this.ACTIVE_palette_CLR;
-      direction = useStudySettings ? STUDY.ACTIVE_palette_DIR : this.ACTIVE_palette_DIR;
-      multiplier = useStudySettings ? STUDY.ACTIVE_palette_MLT : this.ACTIVE_palette_MLT;
+    if (WIN3D.impactType == Impact_ACTIVE) {
+      type = useStudySettings ? STUDY.activeColorScaleIndex : this.activeColorScaleIndex;
+      direction = useStudySettings ? STUDY.activeColorScaleDirection : this.activeColorScaleDirection;
+      multiplier = useStudySettings ? STUDY.activeColorScaleFactor : this.activeColorScaleFactor;
     }
-    if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
-      type = useStudySettings ? STUDY.PASSIVE_palette_CLR : this.PASSIVE_palette_CLR;
-      direction = useStudySettings ? STUDY.PASSIVE_palette_DIR : this.PASSIVE_palette_DIR;
-      multiplier = useStudySettings ? STUDY.PASSIVE_palette_MLT : this.PASSIVE_palette_MLT;
+    if (WIN3D.impactType == Impact_PASSIVE) {
+      type = useStudySettings ? STUDY.passiveColorScaleIndex : this.passiveColorScaleIndex;
+      direction = useStudySettings ? STUDY.passiveColorScaleDirection : this.passiveColorScaleDirection;
+      multiplier = useStudySettings ? STUDY.passiveColorScaleFactor : this.passiveColorScaleFactor;
     }
     return new float[] { type, direction, multiplier };
   }
 
   float[] paletteValueToColor (float rawValue, int palType, int palDirection) {
     float u = 0;
-    if (WIN3D.Impact_TYPE == Impact_ACTIVE) u = rawValue;
-    if (WIN3D.Impact_TYPE == Impact_PASSIVE) u = 0.5 + 0.5 * rawValue;
+    if (WIN3D.impactType == Impact_ACTIVE) u = rawValue;
+    if (WIN3D.impactType == Impact_PASSIVE) u = 0.5 + 0.5 * rawValue;
     u = applyPalDirection(u, palDirection);
     return PAINT.getColorStyle(palType, u);
   }
@@ -79,7 +79,7 @@ class Sun3D {
     float CEN_lon = 0;
     float CEN_lat = 0;
 
-    float r = SUN_RADIUS * Planetary_Magnification;
+    float r = SUN_RADIUS * celestialMagnification;
     float d = SUN_DISTANCE;
 
     if(this.fitInSkyDome) {
@@ -163,9 +163,9 @@ class Sun3D {
 
     for (int s = 0; s < subFace.length; s++) {
       WIN3D.graphics.vertex(
-        subFace[s].x * OBJECTS_scale * WIN3D.scale,
-        -subFace[s].y * OBJECTS_scale * WIN3D.scale,
-        subFace[s].z * OBJECTS_scale * WIN3D.scale,
+        subFace[s].x * overallScale * WIN3D.scale,
+        -subFace[s].y * overallScale * WIN3D.scale,
+        subFace[s].z * overallScale * WIN3D.scale,
         subFace[s].u * this.Map.width,
         subFace[s].v * this.Map.height
       );
@@ -246,8 +246,8 @@ class Sun3D {
 
     float keep_STUDY_perDays = STUDY.perDays;
     int keep_STUDY_joinDays = STUDY.joinDays;
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    if ((currentDataSource == dataID_ensembleForecast) ||
+        (currentDataSource == dataID_ensembleObservation)) {
       STUDY.perDays = 1;
       STUDY.joinDays = 1;
     }
@@ -275,9 +275,9 @@ class Sun3D {
     int l = STUDY.ImpactLayer;
     int J_START = STUDY.j_Start;
     int J_END = STUDY.j_End;
-    if (IMPACTS_displayDay > 0) {
-      J_START = IMPACTS_displayDay - 1;
-      J_END = IMPACTS_displayDay;
+    if (impactDisplayDay > 0) {
+      J_START = impactDisplayDay - 1;
+      J_END = impactDisplayDay;
     }
 
     for (int j = J_START; j < J_END; j += 1) {
@@ -286,7 +286,7 @@ class Sun3D {
 
       int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
         start_k, end_k, j, DATE_ANGLE,
-        target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
+        target_window == TypeWindow.STUDY ? STUDY.impactType : WIN3D.impactType);
 
       if (nk == -1) continue;
 
@@ -305,11 +305,11 @@ class Sun3D {
 
         float Pa1 = FLOAT_undefined;
         float Pa2 = FLOAT_undefined;
-        int layerId = (WIN3D.Impact_TYPE == Impact_ACTIVE) ? LAYER_dirnorrad.id
-                    : (WIN3D.Impact_TYPE == Impact_PASSIVE) ? LAYER_direffect.id : -1;
+        int layerId = (WIN3D.impactType == Impact_ACTIVE) ? LAYER_dirnorrad.id
+                    : (WIN3D.impactType == Impact_PASSIVE) ? LAYER_direffect.id : -1;
         if (layerId != -1) {
-          Pa1 = getValue_CurrentDataSource(now_i1, now_j, now_k, layerId);
-          Pa2 = getValue_CurrentDataSource(now_i2, now_j, now_k, layerId);
+          Pa1 = getValue_currentDataSource(now_i1, now_j, now_k, layerId);
+          Pa2 = getValue_currentDataSource(now_i2, now_j, now_k, layerId);
         }
 
         if (is_undefined(Pa1) && is_undefined(Pa2)) continue; // no data for this hour
@@ -347,8 +347,8 @@ class Sun3D {
 
     float keep_STUDY_perDays = STUDY.perDays;
     int keep_STUDY_joinDays = STUDY.joinDays;
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    if ((currentDataSource == dataID_ensembleForecast) ||
+        (currentDataSource == dataID_ensembleObservation)) {
       STUDY.perDays = 1;
       STUDY.joinDays = 1;
     }
@@ -365,15 +365,15 @@ class Sun3D {
   void writeSunPatternMaterial (int PAL_type, String filename, String texturePath) {
     println("Saving texture:", texturePath);
 
-    int RES1 = User3D.export_PaletteResolution;
-    int RES2 = User3D.export_PaletteResolution / 16;
+    int RES1 = User3D.exporterColorScaleResolution;
+    int RES2 = User3D.exporterColorScaleResolution / 16;
     PImage palette_Texture = createImage(RES1, RES2, ARGB);
     palette_Texture.loadPixels();
     for (int np = 0; np < (RES1 * RES2); np++) {
       int Image_X = np % RES1;
       float val = (Image_X / (0.5 * RES1)) - 1;
       float u = 0.5 + val;
-      if (WIN3D.Impact_TYPE == Impact_ACTIVE) u = 0.5 + 0.5 * val;
+      if (WIN3D.impactType == Impact_ACTIVE) u = 0.5 + 0.5 * val;
       float[] COL = PAINT.getColorStyle(PAL_type, u);
       palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
     }
@@ -416,9 +416,9 @@ class Sun3D {
     int start_k = startK_endK[0];
     int end_k = startK_endK[1];
 
-    int keep_Impact_TYPE = WIN3D.Impact_TYPE;
+    int keep_impactType = WIN3D.impactType;
     if (target_window == TypeWindow.STUDY) {
-      WIN3D.Impact_TYPE = (STUDY.PlotImpacts % 2 == 0) ? Impact_ACTIVE : Impact_PASSIVE;
+      WIN3D.impactType = (STUDY.PlotImpacts % 2 == 0) ? Impact_ACTIVE : Impact_PASSIVE;
     }
 
     float[] palette = activePalette(target_window == TypeWindow.STUDY);
@@ -430,7 +430,7 @@ class Sun3D {
     String the_filename = "";
     if (target_window == TypeWindow.OBJ3D) {
       num_vertices_added = 0;
-      if (User3D.export_MaterialLibrary) {
+      if (User3D.exporterMaterialLibrary) {
         the_filename = "sunPatternPalette.bmp";
         String texturePath = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
         writeSunPatternMaterial(PAL_type, the_filename, texturePath);
@@ -444,7 +444,7 @@ class Sun3D {
       if ((target_window == TypeWindow.OBJ3D) && (_turn == 3)) {
         obj_lastGroupNumber += 1;
         objOutput.println("g sunPattern");
-        if (User3D.export_MaterialLibrary) {
+        if (User3D.exporterMaterialLibrary) {
           objOutput.println("usemtl " + the_filename.replace('.', '_'));
         }
       }
@@ -464,7 +464,7 @@ class Sun3D {
           STUDY.filter = filter_HOURLY;
           int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
             start_k, end_k, more_J + j, DATE_ANGLE,
-            target_window == TypeWindow.STUDY ? STUDY.Impact_TYPE : WIN3D.Impact_TYPE);
+            target_window == TypeWindow.STUDY ? STUDY.impactType : WIN3D.impactType);
           STUDY.filter = keep_filter_type;
 
           int row_J = more_J / STUDY.joinDays;
@@ -497,19 +497,19 @@ class Sun3D {
               float i_ratio = i - now_i1;
               int now_j2 = wrapDayIndex(more_J + j * STUDY_perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay);
 
-              float Pa1 = getValue_CurrentDataSource(now_i1, now_j2, now_k, LAYER_dirnorrad.id);
-              float Pb1 = getValue_CurrentDataSource(now_i1, now_j2, now_k, LAYER_difhorrad.id);
-              float Pc1 = getValue_CurrentDataSource(now_i1, now_j2, now_k, LAYER_direffect.id);
-              float Pd1 = getValue_CurrentDataSource(now_i1, now_j2, now_k, LAYER_difeffect.id);
-              float Pa2 = getValue_CurrentDataSource(now_i2, now_j2, now_k, LAYER_dirnorrad.id);
-              float Pb2 = getValue_CurrentDataSource(now_i2, now_j2, now_k, LAYER_difhorrad.id);
-              float Pc2 = getValue_CurrentDataSource(now_i2, now_j2, now_k, LAYER_direffect.id);
-              float Pd2 = getValue_CurrentDataSource(now_i2, now_j2, now_k, LAYER_difeffect.id);
+              float Pa1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_dirnorrad.id);
+              float Pb1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difhorrad.id);
+              float Pc1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_direffect.id);
+              float Pd1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difeffect.id);
+              float Pa2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_dirnorrad.id);
+              float Pb2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_difhorrad.id);
+              float Pc2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_direffect.id);
+              float Pd2 = getValue_currentDataSource(now_i2, now_j2, now_k, LAYER_difeffect.id);
 
               boolean anyUndefined = is_undefined(Pa1) || is_undefined(Pb1) || is_undefined(Pc1) || is_undefined(Pd1)
                                    || is_undefined(Pa2) || is_undefined(Pb2) || is_undefined(Pc2) || is_undefined(Pd2);
               if (!anyUndefined) {
-                boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i1, now_j2, now_k);
+                boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i1, now_j2, now_k);
                 if (isMemberCounted) {
                   valuesSUM_RAD = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
                   valuesSUM_EFF = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
@@ -517,8 +517,8 @@ class Sun3D {
               }
 
               float valuesSUM = FLOAT_undefined;
-              if (WIN3D.Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
-              if (WIN3D.Impact_TYPE == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
+              if (WIN3D.impactType == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
+              if (WIN3D.impactType == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
 
               SunPathMesh[floor(i * TES_hour)][row_J][0] = Alpha;
               SunPathMesh[floor(i * TES_hour)][row_J][1] = Beta;
@@ -572,8 +572,8 @@ class Sun3D {
               if ((Alpha < 0) || !is_defined(valuesSUM)) continue;
 
               float _u = 0;
-              if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
-              if (WIN3D.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
+              if (WIN3D.impactType == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
+              if (WIN3D.impactType == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
               _u = applyPalDirection(_u, PAL_direction);
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
@@ -586,8 +586,8 @@ class Sun3D {
                   OBJprintVertex(x, y, z);
                 } else if (_turn == 2) {
                   float u1 = 0.5 * (_u + 0.5);
-                  boolean solarShade = (WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar);
-                  if (solarShade && (WIN3D.Impact_TYPE == Impact_ACTIVE)) u1 = _u;
+                  boolean solarShade = (WIN3D.shadingMode == SHADE.Global_Solar) || (WIN3D.shadingMode == SHADE.Vertex_Solar);
+                  if (solarShade && (WIN3D.impactType == Impact_ACTIVE)) u1 = _u;
                   u1 = constrain(u1, 0.001, 0.999);
                   OBJprintVtexture(u1, 0.5, 0);
                 } else { // _turn == 3
@@ -629,19 +629,19 @@ class Sun3D {
       }
     }
 
-    WIN3D.Impact_TYPE = keep_Impact_TYPE;
+    WIN3D.impactType = keep_impactType;
   }
 
 
   public void to_XML (XML xml) {
     //printlnSaving(this.CLASS_STAMP);
     XML parent = xml.addChild(this.CLASS_STAMP);
-    XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
-    XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
-    XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
-    XML_setInt(parent, "PASSIVE_palette_CLR", this.PASSIVE_palette_CLR);
-    XML_setInt(parent, "PASSIVE_palette_DIR", this.PASSIVE_palette_DIR);
-    XML_setFloat(parent, "PASSIVE_palette_MLT", this.PASSIVE_palette_MLT);
+    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
+    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
+    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
+    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
+    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
+    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
     XML_setBoolean(parent, "displayGrid", this.displayGrid);
     XML_setBoolean(parent, "displayPath", this.displayPath);
     XML_setBoolean(parent, "displayPattern", this.displayPattern);
@@ -653,12 +653,12 @@ class Sun3D {
   public void from_XML (XML xml) {
     //println("Loading:" + this.CLASS_STAMP);
     XML parent = xml.getChild(this.CLASS_STAMP);
-    this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
-    this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
-    this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");
-    this.PASSIVE_palette_CLR = XML_getInt(parent, "PASSIVE_palette_CLR");
-    this.PASSIVE_palette_DIR = XML_getInt(parent, "PASSIVE_palette_DIR");
-    this.PASSIVE_palette_MLT = XML_getFloat(parent, "PASSIVE_palette_MLT");
+    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
+    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
+    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
+    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
+    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
+    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
     this.displayGrid = XML_getBoolean(parent, "displayGrid");
     this.displayPath = XML_getBoolean(parent, "displayPath");
     this.displayPattern = XML_getBoolean(parent, "displayPattern");

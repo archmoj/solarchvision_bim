@@ -10,8 +10,8 @@ void calculate_VertexSolar_array () {
 
   float keep_STUDY_perDays = STUDY.perDays;
   int keep_STUDY_joinDays = STUDY.joinDays;
-  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-      (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+  if ((currentDataSource == dataID_ensembleForecast) ||
+      (currentDataSource == dataID_ensembleObservation)) {
     STUDY.perDays = 1;
     STUDY.joinDays = 1;
   }
@@ -50,7 +50,7 @@ void calculate_VertexSolar_array () {
     float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
     TS_DayTime[jIdx] = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1);
 
-    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactType);
     if (nk == -1) continue;
 
     TS_dayHasData[jIdx] = true;
@@ -70,14 +70,14 @@ void calculate_VertexSolar_array () {
       float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
       if (SunR[3] <= 0) continue;
 
-      float Pa = getValue_CurrentDataSource(i, now_j, now_k, LAYER_dirnorrad.id);
-      float Pb = getValue_CurrentDataSource(i, now_j, now_k, LAYER_difhorrad.id);
-      float Pc = getValue_CurrentDataSource(i, now_j, now_k, LAYER_direffect.id);
-      float Pd = getValue_CurrentDataSource(i, now_j, now_k, LAYER_difeffect.id);
+      float Pa = getValue_currentDataSource(i, now_j, now_k, LAYER_dirnorrad.id);
+      float Pb = getValue_currentDataSource(i, now_j, now_k, LAYER_difhorrad.id);
+      float Pc = getValue_currentDataSource(i, now_j, now_k, LAYER_direffect.id);
+      float Pd = getValue_currentDataSource(i, now_j, now_k, LAYER_difeffect.id);
 
       if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) continue;
 
-      boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
+      boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
       if (!isMemberCounted) continue;
 
       float[] SunDir = { SunR[1], SunR[2], SunR[3] };
@@ -295,8 +295,8 @@ void calculate_VertexSolar_array () {
             TOTAL_COMPARISON = ((abs(TOTAL_PERCENTAGE)) * TOTAL_AVERAGE);
 
             float valuesSUM = FLOAT_undefined;
-            if (WIN3D.Impact_TYPE == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD;
-            if (WIN3D.Impact_TYPE == Impact_PASSIVE) valuesSUM = TOTAL_COMPARISON;
+            if (WIN3D.impactType == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD;
+            if (WIN3D.impactType == Impact_PASSIVE) valuesSUM = TOTAL_COMPARISON;
 
             activeDayValues[0].append(TOTALvaluesSUM_RAD);
             passiveDayValues[0].append(TOTAL_COMPARISON);

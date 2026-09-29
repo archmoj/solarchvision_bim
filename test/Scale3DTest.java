@@ -16,7 +16,7 @@ class Scale3DTest {
   @Test
   void selection_vertexCategoryDispatchesToVertices () {
     app.allVertices = new float[][]{{3, 0, 0}};
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0};
 
     app.Scale3D.selection(1, 0, 0, 2, 1, 1);
@@ -36,7 +36,7 @@ class Scale3DTest {
 
   @Test
   void landPoints_scalesOnlyTheSelectedGridCells () {
-    app.Land3D.num_columns = 3;
+    app.Land3D.columnCount = 3;
     app.Land3D.Mesh = new float[1][3][3];
     app.Land3D.Mesh[0][1] = new float[]{3, 0, 0};
 
@@ -148,7 +148,7 @@ class Scale3DTest {
     app.allCameras.num = 1;
     app.allCameras.options[0][0] = 3; // posX
 
-    app.WIN3D.currentCamera = 0;
+    app.WIN3D.currentCameraIndex = 0;
     app.Select3D.Camera_ids = new int[]{0};
 
     // sy and sz get swapped internally -> effectively applies (sx=2, sy=4, sz=3)
@@ -158,8 +158,8 @@ class Scale3DTest {
     assertEquals(0f, app.allCameras.options[0][1], 0.0001f); // posY: 4*(0-0)+0
     assertEquals(0f, app.allCameras.options[0][2], 0.0001f); // posZ: 3*(0-0)+0
 
-    // apply_currentCamera() ran, so WIN3D mirrors the camera's new position.
-    assertEquals(5f, app.WIN3D.position_X, 0.0001f);
+    // apply_currentCameraIndex() ran, so WIN3D mirrors the camera's new position.
+    assertEquals(5f, app.WIN3D.positionX, 0.0001f);
   }
 
   // ================= Model1Ds ==========================================
@@ -187,7 +187,7 @@ class Scale3DTest {
     app.allModel2Ds.XYZS[0][3] = 1; // tree's magnitude
     app.allModel2Ds.XYZS[1][0] = 3; // person's X
     app.allModel2Ds.XYZS[1][3] = 1; // person's magnitude
-    // isTree(n) is `abs(n) > num_files_PEOPLE` and num_files_PEOPLE
+    // isTree(n) is `abs(n) > peopleFileCount` and peopleFileCount
     // defaults to 0, so MAP value 0 reads as "not a tree" (a person)
     // and any nonzero MAP value reads as "a tree".
     app.allModel2Ds.MAP = new int[]{1, 0};

@@ -115,7 +115,7 @@ class TIME {
   }
 
   String getDayText(float date_IN) {
-    return this.dayOfYear[safeDate(date_IN)][Language_Active];
+    return this.dayOfYear[safeDate(date_IN)][activeLanguage];
   }
 
   String getMMDD(float date_IN) {

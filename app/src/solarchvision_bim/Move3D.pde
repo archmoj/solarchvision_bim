@@ -12,24 +12,24 @@ class Move3D {
     dz = B[2] - A[2];
     */
 
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT)  this.LandPoints(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) this.softSelection(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.VERTEX)     this.Vertices(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.POLYLINE)   this.Polylines(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.FACE)       this.Faces(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.MODEL1D)    this.Model1Ds(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.MODEL2D)    this.Model2Ds(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.SOLID)      this.Solids(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.SECTION)    this.Sections(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.CAMERA)     this.Cameras(dx, dy, dz);
-    else if (current_ObjectCategory == ObjectCategory.GROUP)      this.Groups(dx, dy, dz);
+    if (currentObjectCategory == ObjectCategory.LANDPOINT)  this.LandPoints(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.SOFTVERTEX) this.softSelection(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.VERTEX)     this.Vertices(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.POLYLINE)   this.Polylines(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.FACE)       this.Faces(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.MODEL1D)    this.Model1Ds(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.MODEL2D)    this.Model2Ds(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.SOLID)      this.Solids(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.SECTION)    this.Sections(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.CAMERA)     this.Cameras(dx, dy, dz);
+    else if (currentObjectCategory == ObjectCategory.GROUP)      this.Groups(dx, dy, dz);
   }
 
   void LandPoints (float dx, float dy, float dz) {
     for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
       int f = Select3D.LandPoint_ids[q];
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
+      int i = f / Land3D.columnCount;
+      int j = f % Land3D.columnCount;
 
       Land3D.Mesh[i][j][0] += dx;
       Land3D.Mesh[i][j][1] += dy;
@@ -141,7 +141,7 @@ class Move3D {
       int f = Select3D.Camera_ids[q];
       allCameras.move(f, dx, dy, dz);
 
-      if (f == WIN3D.currentCamera) WIN3D.apply_currentCamera();
+      if (f == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
     }
 
     model_changed();

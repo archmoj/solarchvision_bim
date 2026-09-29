@@ -239,7 +239,7 @@ class Overlay3D {
 
     translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
 
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
 
       if (Select3D.LandPoint_displayPoints) {
 
@@ -254,12 +254,12 @@ class Overlay3D {
           int OBJ_ID = Select3D.LandPoint_ids[o];
 
 
-          int i = OBJ_ID / Land3D.num_columns;
-          int j = OBJ_ID % Land3D.num_columns;
+          int i = OBJ_ID / Land3D.columnCount;
+          int j = OBJ_ID % Land3D.columnCount;
 
-          float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
-          float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
-          float z = Land3D.Mesh[i][j][2] * OBJECTS_scale;
+          float x = Land3D.Mesh[i][j][0] * overallScale;
+          float y = Land3D.Mesh[i][j][1] * overallScale;
+          float z = Land3D.Mesh[i][j][2] * overallScale;
 
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -272,7 +272,7 @@ class Overlay3D {
       }
     }
 
-    else if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    else if (currentObjectCategory == ObjectCategory.CAMERA) {
 
       if (Select3D.Camera_displayEdges) {
 
@@ -291,9 +291,9 @@ class Overlay3D {
 
               int vNo = allCameras.Faces[f][j];
 
-              float x = allCameras.Vertices[vNo][0] * OBJECTS_scale;
-              float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
-              float z = allCameras.Vertices[vNo][2] * OBJECTS_scale;
+              float x = allCameras.Vertices[vNo][0] * overallScale;
+              float y = allCameras.Vertices[vNo][1] * overallScale;
+              float z = allCameras.Vertices[vNo][2] * overallScale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -306,7 +306,7 @@ class Overlay3D {
       }
     }
 
-    else if (current_ObjectCategory == ObjectCategory.SECTION) {
+    else if (currentObjectCategory == ObjectCategory.SECTION) {
 
       if (Select3D.Section_displayEdges) {
 
@@ -324,9 +324,9 @@ class Overlay3D {
 
             int vNo = allSections.Faces[f][j];
 
-            float x = allSections.Vertices[vNo][0] * OBJECTS_scale;
-            float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
-            float z = allSections.Vertices[vNo][2] * OBJECTS_scale;
+            float x = allSections.Vertices[vNo][0] * overallScale;
+            float y = allSections.Vertices[vNo][1] * overallScale;
+            float z = allSections.Vertices[vNo][2] * overallScale;
 
             camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
           }
@@ -338,7 +338,7 @@ class Overlay3D {
       }
     }
 
-    else if (current_ObjectCategory == ObjectCategory.SOLID) {
+    else if (currentObjectCategory == ObjectCategory.SOLID) {
 
       if (Select3D.Solid_displayEdges) {
 
@@ -360,9 +360,9 @@ class Overlay3D {
 
               int vNo = allSolids.Faces[f][j];
 
-              float x = allSolids.Vertices[vNo][0] * OBJECTS_scale;
-              float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
-              float z = allSolids.Vertices[vNo][2] * OBJECTS_scale;
+              float x = allSolids.Vertices[vNo][0] * overallScale;
+              float y = allSolids.Vertices[vNo][1] * overallScale;
+              float z = allSolids.Vertices[vNo][2] * overallScale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -375,7 +375,7 @@ class Overlay3D {
       }
     }
 
-    else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    else if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
       if (Select3D.Model2D_displayEdges) {
 
@@ -397,9 +397,9 @@ class Overlay3D {
 
               int vNo = allModel2Ds.Faces[f][j];
 
-              float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
-              float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-              float z = allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+              float x = allModel2Ds.Vertices[vNo][0] * overallScale;
+              float y = allModel2Ds.Vertices[vNo][1] * overallScale;
+              float z = allModel2Ds.Vertices[vNo][2] * overallScale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -412,7 +412,7 @@ class Overlay3D {
       }
     }
 
-    else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    else if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
       if (Select3D.Model1D_displayEdges) {
 
@@ -430,9 +430,9 @@ class Overlay3D {
 
             int vNo = allModel1Ds.Faces[f][j];
 
-            float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-            float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-            float z = allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+            float x = allModel1Ds.Vertices[vNo][0] * overallScale;
+            float y = allModel1Ds.Vertices[vNo][1] * overallScale;
+            float z = allModel1Ds.Vertices[vNo][2] * overallScale;
 
             camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
           }
@@ -445,7 +445,7 @@ class Overlay3D {
       }
     }
 
-    else if (current_ObjectCategory == ObjectCategory.FACE) {
+    else if (currentObjectCategory == ObjectCategory.FACE) {
 
       if (Select3D.Face_displayEdges) {
 
@@ -470,9 +470,9 @@ class Overlay3D {
 
             for (int s = 0; s < subFace.length; s++) {
 
-              float x = subFace[s][0] * OBJECTS_scale;
-              float y = subFace[s][1] * OBJECTS_scale;
-              float z = subFace[s][2] * OBJECTS_scale;
+              float x = subFace[s][0] * overallScale;
+              float y = subFace[s][1] * overallScale;
+              float z = subFace[s][2] * overallScale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -499,9 +499,9 @@ class Overlay3D {
           for (int j = 0; j < allFaces.nodes[f].length; j++) {
             int vNo = allFaces.nodes[f][j];
 
-            float x = allPoints.getX(vNo) * OBJECTS_scale;
-            float y = allPoints.getY(vNo) * OBJECTS_scale;
-            float z = allPoints.getZ(vNo) * OBJECTS_scale;
+            float x = allPoints.getX(vNo) * overallScale;
+            float y = allPoints.getY(vNo) * overallScale;
+            float z = allPoints.getZ(vNo) * overallScale;
 
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -517,7 +517,7 @@ class Overlay3D {
     }
 
 
-    else if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    else if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
       if (Select3D.Polyline_displayVertexCount) {
 
@@ -533,9 +533,9 @@ class Overlay3D {
           for (int j = 0; j < allPolylines.nodes[f].length; j++) {
             int vNo = allPolylines.nodes[f][j];
 
-            float x = allPoints.getX(vNo) * OBJECTS_scale;
-            float y = allPoints.getY(vNo) * OBJECTS_scale;
-            float z = allPoints.getZ(vNo) * OBJECTS_scale;
+            float x = allPoints.getX(vNo) * overallScale;
+            float y = allPoints.getY(vNo) * overallScale;
+            float z = allPoints.getZ(vNo) * overallScale;
 
             float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -551,7 +551,7 @@ class Overlay3D {
     }
 
 
-    else if (current_ObjectCategory == ObjectCategory.VERTEX) {
+    else if (currentObjectCategory == ObjectCategory.VERTEX) {
 
       if (Select3D.Vertex_displayVertices) {
 
@@ -565,9 +565,9 @@ class Overlay3D {
 
           int vNo = Select3D.Vertex_ids[o];
 
-          float x = allPoints.getX(vNo) * OBJECTS_scale;
-          float y = allPoints.getY(vNo) * OBJECTS_scale;
-          float z = allPoints.getZ(vNo) * OBJECTS_scale;
+          float x = allPoints.getX(vNo) * overallScale;
+          float y = allPoints.getY(vNo) * overallScale;
+          float z = allPoints.getZ(vNo) * overallScale;
 
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -581,7 +581,7 @@ class Overlay3D {
 
 
 
-    else if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+    else if (currentObjectCategory == ObjectCategory.SOFTVERTEX) {
 
       if (Select3D.Vertex_displayVertices) {
 
@@ -597,9 +597,9 @@ class Overlay3D {
 
           float _u = Select3D.softSelection_values[q];
 
-          float x = allPoints.getX(vNo) * OBJECTS_scale;
-          float y = allPoints.getY(vNo) * OBJECTS_scale;
-          float z = allPoints.getZ(vNo) * OBJECTS_scale;
+          float x = allPoints.getX(vNo) * overallScale;
+          float y = allPoints.getY(vNo) * overallScale;
+          float z = allPoints.getZ(vNo) * overallScale;
 
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
@@ -621,7 +621,7 @@ class Overlay3D {
 
 
 
-    else if (current_ObjectCategory == ObjectCategory.GROUP) {
+    else if (currentObjectCategory == ObjectCategory.GROUP) {
 
       if (Select3D.Group_displayEdges) {
 
@@ -650,9 +650,9 @@ class Overlay3D {
 
                 for (int s = 0; s < subFace.length; s++) {
 
-                  float x = subFace[s][0] * OBJECTS_scale;
-                  float y = subFace[s][1] * OBJECTS_scale;
-                  float z = subFace[s][2] * OBJECTS_scale;
+                  float x = subFace[s][0] * overallScale;
+                  float y = subFace[s][1] * overallScale;
+                  float z = subFace[s][2] * overallScale;
 
                   camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
                 }
@@ -670,9 +670,9 @@ class Overlay3D {
 
               for (int vNo = 0; vNo < allPolylines.nodes[f].length; vNo++) {
 
-                float x = allPoints.getX(vNo) * OBJECTS_scale;
-                float y = allPoints.getY(vNo) * OBJECTS_scale;
-                float z = allPoints.getZ(vNo) * OBJECTS_scale;
+                float x = allPoints.getX(vNo) * overallScale;
+                float y = allPoints.getY(vNo) * overallScale;
+                float z = allPoints.getZ(vNo) * overallScale;
 
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
@@ -692,9 +692,9 @@ class Overlay3D {
 
                 int vNo = allModel1Ds.Faces[f][j];
 
-                float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-                float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-                float z = allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+                float x = allModel1Ds.Vertices[vNo][0] * overallScale;
+                float y = allModel1Ds.Vertices[vNo][1] * overallScale;
+                float z = allModel1Ds.Vertices[vNo][2] * overallScale;
 
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
@@ -714,9 +714,9 @@ class Overlay3D {
 
                 int vNo = allModel2Ds.Faces[f][j];
 
-                float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
-                float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-                float z = allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+                float x = allModel2Ds.Vertices[vNo][0] * overallScale;
+                float y = allModel2Ds.Vertices[vNo][1] * overallScale;
+                float z = allModel2Ds.Vertices[vNo][2] * overallScale;
 
                 camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
               }
@@ -741,9 +741,9 @@ class Overlay3D {
 
                     int vNo = allSolids.Faces[f][j];
 
-                    float x = allSolids.Vertices[vNo][0] * OBJECTS_scale;
-                    float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
-                    float z = allSolids.Vertices[vNo][2] * OBJECTS_scale;
+                    float x = allSolids.Vertices[vNo][0] * overallScale;
+                    float y = allSolids.Vertices[vNo][1] * overallScale;
+                    float z = allSolids.Vertices[vNo][2] * overallScale;
 
                     camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
                   }
@@ -798,9 +798,9 @@ class Overlay3D {
 
               int vNo = BoundingBox_Faces[f][g];
 
-              float x = BoundingBox_Vertices[vNo][0] * OBJECTS_scale;
-              float y = BoundingBox_Vertices[vNo][1] * OBJECTS_scale;
-              float z = BoundingBox_Vertices[vNo][2] * OBJECTS_scale;
+              float x = BoundingBox_Vertices[vNo][0] * overallScale;
+              float y = BoundingBox_Vertices[vNo][1] * overallScale;
+              float z = BoundingBox_Vertices[vNo][2] * overallScale;
 
               camVertices.add(WIN3D.calculate_CameraSpace_Internally(x, y, z));
             }
@@ -851,13 +851,13 @@ class Overlay3D {
               int a = Pivot_Lines[f][0];
               int b = Pivot_Lines[f][1];
 
-              float x1 = Pivot_Vertices[a][0] * OBJECTS_scale;
-              float y1 = Pivot_Vertices[a][1] * OBJECTS_scale;
-              float z1 = Pivot_Vertices[a][2] * OBJECTS_scale;
+              float x1 = Pivot_Vertices[a][0] * overallScale;
+              float y1 = Pivot_Vertices[a][1] * overallScale;
+              float z1 = Pivot_Vertices[a][2] * overallScale;
 
-              float x2 = Pivot_Vertices[b][0] * OBJECTS_scale;
-              float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;
-              float z2 = Pivot_Vertices[b][2] * OBJECTS_scale;
+              float x2 = Pivot_Vertices[b][0] * overallScale;
+              float y2 = Pivot_Vertices[b][1] * overallScale;
+              float z2 = Pivot_Vertices[b][2] * overallScale;
 
               float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);
               float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);
@@ -914,13 +914,13 @@ class Overlay3D {
         int a = Pivot_Lines[f][0];
         int b = Pivot_Lines[f][1];
 
-        float x1 = Pivot_Vertices[a][0] * OBJECTS_scale;
-        float y1 = Pivot_Vertices[a][1] * OBJECTS_scale;
-        float z1 = Pivot_Vertices[a][2] * OBJECTS_scale;
+        float x1 = Pivot_Vertices[a][0] * overallScale;
+        float y1 = Pivot_Vertices[a][1] * overallScale;
+        float z1 = Pivot_Vertices[a][2] * overallScale;
 
-        float x2 = Pivot_Vertices[b][0] * OBJECTS_scale;
-        float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;
-        float z2 = Pivot_Vertices[b][2] * OBJECTS_scale;
+        float x2 = Pivot_Vertices[b][0] * overallScale;
+        float y2 = Pivot_Vertices[b][1] * overallScale;
+        float z2 = Pivot_Vertices[b][2] * overallScale;
 
         float[] Image_XYZa = WIN3D.calculate_Perspective_Internally(x1, y1, z1);
         float[] Image_XYZb = WIN3D.calculate_Perspective_Internally(x2, y2, z2);

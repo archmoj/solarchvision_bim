@@ -1,4 +1,4 @@
-void load_CLIMATE_CLMREC (String FileName) {
+void load_climateArchive (String FileName) {
 
   String[] FileALL = loadStrings(FileName);
 
@@ -28,7 +28,7 @@ void load_CLIMATE_CLMREC (String FileName) {
 
     int i = int(CLIMATE_HOUR);
     int j = TIME.convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
-    int k = (CLIMATE_YEAR - CLIMATE_CLMREC_start);
+    int k = (CLIMATE_YEAR - climateArchiveStart);
 
     //println(i);
 
@@ -40,29 +40,29 @@ void load_CLIMATE_CLMREC (String FileName) {
 
       //println(str);
 
-      if (str.equals("NA")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover.id][k] = FLOAT_undefined;
-      else if (str.equals("Clear")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover.id][k] = 0;
-      else if (str.equals("Mainly Clear")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover.id][k] = 2.5;
-      else if (str.equals("Mostly Cloudy")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover.id][k] = 5;
-      else if (str.equals("Cloudy")) CLIMATE_CLMREC_values[i][j][LAYER_cloudcover.id][k] = 7.5;
-      else CLIMATE_CLMREC_values[i][j][LAYER_cloudcover.id][k] = 10;
+      if (str.equals("NA")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = FLOAT_undefined;
+      else if (str.equals("Clear")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 0;
+      else if (str.equals("Mainly Clear")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 2.5;
+      else if (str.equals("Mostly Cloudy")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 5;
+      else if (str.equals("Cloudy")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 7.5;
+      else climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 10;
 
-      //println(CLIMATE_CLMREC_values[i][j][LAYER_cloudcover.id][k]);
+      //println(climateArchiveValues[i][j][LAYER_cloudcover.id][k]);
 
       str = parts[6];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_drybulb.id][k] = float(str); // °C
+      if (!str.equals("")) climateArchiveValues[i][j][LAYER_drybulb.id][k] = float(str); // °C
 
       str = parts[10];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_relhum.id][k] = float(str); // %
+      if (!str.equals("")) climateArchiveValues[i][j][LAYER_relhum.id][k] = float(str); // %
 
       str = parts[12];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_winddir.id][k] = float(str) * 10; // °
+      if (!str.equals("")) climateArchiveValues[i][j][LAYER_winddir.id][k] = float(str) * 10; // °
 
       str = parts[14];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_windspd.id][k] = float(str); // km/h
+      if (!str.equals("")) climateArchiveValues[i][j][LAYER_windspd.id][k] = float(str); // km/h
 
       str = parts[18];
-      if (!str.equals("")) CLIMATE_CLMREC_values[i][j][LAYER_pressure.id][k] = float(str) * 10; // hPa
+      if (!str.equals("")) climateArchiveValues[i][j][LAYER_pressure.id][k] = float(str) * 10; // hPa
 
 
     }

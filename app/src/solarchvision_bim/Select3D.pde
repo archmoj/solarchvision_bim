@@ -528,39 +528,39 @@ class Select3D {
 
     int[] theVertices = new int [0];
 
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    if (currentObjectCategory == ObjectCategory.CAMERA) {
       theVertices = this.Camera_ids;
     }
 
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
+    if (currentObjectCategory == ObjectCategory.SECTION) {
       theVertices = this.Section_ids;
     }
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
+    if (currentObjectCategory == ObjectCategory.SOLID) {
       theVertices = this.Solid_ids;
     }
 
-    if ((current_ObjectCategory == ObjectCategory.VERTEX) ||
-        (current_ObjectCategory == ObjectCategory.SOFTVERTEX)) {
+    if ((currentObjectCategory == ObjectCategory.VERTEX) ||
+        (currentObjectCategory == ObjectCategory.SOFTVERTEX)) {
 
       theVertices = this.Vertex_ids;
     }
-    if (current_ObjectCategory == ObjectCategory.FACE) {
+    if (currentObjectCategory == ObjectCategory.FACE) {
       theVertices = this.get_Face_Vertices();
     }
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    if (currentObjectCategory == ObjectCategory.POLYLINE) {
       theVertices = this.get_Polyline_Vertices();
     }
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
       theVertices = this.get_Group_Vertices();
     }
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (currentObjectCategory == ObjectCategory.MODEL2D) {
       theVertices = this.Model2D_ids;
     }
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (currentObjectCategory == ObjectCategory.MODEL1D) {
       theVertices = this.Model1D_ids;
     }
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
       theVertices = this.LandPoint_ids;
     }
 
@@ -576,7 +576,7 @@ class Select3D {
     float rotY = 0;
     float rotZ = 0;
 
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
 
       if (this.Group_ids.length > 0) {
 
@@ -625,7 +625,7 @@ class Select3D {
       float y = 0;
       float z = 0;
 
-      if (current_ObjectCategory == ObjectCategory.CAMERA) {
+      if (currentObjectCategory == ObjectCategory.CAMERA) {
         int n = theVertices[q];
 
         if (n < allCameras.num) {
@@ -650,7 +650,7 @@ class Select3D {
         }
       }
 
-      if (current_ObjectCategory == ObjectCategory.SECTION) {
+      if (currentObjectCategory == ObjectCategory.SECTION) {
         int n = theVertices[q];
 
         if (n < allSections.num) {
@@ -675,7 +675,7 @@ class Select3D {
         }
       }
 
-      if (current_ObjectCategory == ObjectCategory.SOLID) {
+      if (currentObjectCategory == ObjectCategory.SOLID) {
         int n = theVertices[q];
 
         if (n < allSolids.DEF.length) {
@@ -704,11 +704,11 @@ class Select3D {
       }
 
 
-      if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-          (current_ObjectCategory == ObjectCategory.FACE) ||
-          (current_ObjectCategory == ObjectCategory.POLYLINE) ||
-          (current_ObjectCategory == ObjectCategory.VERTEX) ||
-          (current_ObjectCategory == ObjectCategory.SOFTVERTEX)) {
+      if ((currentObjectCategory == ObjectCategory.GROUP) ||
+          (currentObjectCategory == ObjectCategory.FACE) ||
+          (currentObjectCategory == ObjectCategory.POLYLINE) ||
+          (currentObjectCategory == ObjectCategory.VERTEX) ||
+          (currentObjectCategory == ObjectCategory.SOFTVERTEX)) {
 
         int n = theVertices[q];
 
@@ -716,27 +716,27 @@ class Select3D {
         y = allPoints.getY(n);
         z = allPoints.getZ(n);
       }
-      if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      if (currentObjectCategory == ObjectCategory.MODEL2D) {
         int n = theVertices[q];
 
         x = allModel2Ds.getX(n);
         y = allModel2Ds.getY(n);
         z = allModel2Ds.getZ(n);
       }
-      if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      if (currentObjectCategory == ObjectCategory.MODEL1D) {
         int n = theVertices[q];
 
         x = allModel1Ds.getX(n);
         y = allModel1Ds.getY(n);
         z = allModel1Ds.getZ(n);
       }
-      if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+      if (currentObjectCategory == ObjectCategory.LANDPOINT) {
         int n = theVertices[q];
 
         int OBJ_ID = n;
 
-        int the_i = OBJ_ID / Land3D.num_columns;
-        int the_j = OBJ_ID % Land3D.num_columns;
+        int the_i = OBJ_ID / Land3D.columnCount;
+        int the_j = OBJ_ID % Land3D.columnCount;
 
         x = Land3D.Mesh[the_i][the_j][0];
         y = Land3D.Mesh[the_i][the_j][1];
@@ -1006,7 +1006,7 @@ class Select3D {
       return;
     }
 
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
 
       int OBJ_ID = int(RxP[0]);
 
@@ -1014,7 +1014,7 @@ class Select3D {
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
       int OBJ_ID = int(RxP[0]);
 
@@ -1022,7 +1022,7 @@ class Select3D {
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
       int OBJ_ID = int(RxP[0]);
 
@@ -1030,7 +1030,7 @@ class Select3D {
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
 
       int f = int(RxP[0]);
 
@@ -1046,14 +1046,14 @@ class Select3D {
       this.Group_ids = toggleSelection(this.Group_ids, OBJ_ID);
     }
 
-    if (current_ObjectCategory == ObjectCategory.FACE) {
+    if (currentObjectCategory == ObjectCategory.FACE) {
 
       int OBJ_ID = int(RxP[0]);
 
       this.Face_ids = toggleSelection(this.Face_ids, OBJ_ID);
     }
 
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
       int OBJ_ID = int(RxP[0]);
 
@@ -1061,7 +1061,7 @@ class Select3D {
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+    if (currentObjectCategory == ObjectCategory.VERTEX) {
 
       int f = int(RxP[0]);
 
@@ -1089,7 +1089,7 @@ class Select3D {
 
 
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
+    if (currentObjectCategory == ObjectCategory.SOLID) {
 
       int OBJ_ID = int(RxP[0]);
 
@@ -1098,14 +1098,14 @@ class Select3D {
 
 
 
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
+    if (currentObjectCategory == ObjectCategory.SECTION) {
 
       int OBJ_ID = int(RxP[0]);
 
       this.Section_ids = toggleSelection(this.Section_ids, OBJ_ID);
     }
 
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    if (currentObjectCategory == ObjectCategory.CAMERA) {
 
       int OBJ_ID = int(RxP[0]);
 
@@ -1123,12 +1123,12 @@ class Select3D {
     if (addNewSelectionToPreviousSelection == 0) this.deselectAll();
 
 
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
 
-      for (int OBJ_ID = 0; OBJ_ID < Land3D.num_rows * Land3D.num_columns; OBJ_ID++) {
+      for (int OBJ_ID = 0; OBJ_ID < Land3D.rowCount * Land3D.columnCount; OBJ_ID++) {
 
-        int i = OBJ_ID / Land3D.num_columns;
-        int j = OBJ_ID % Land3D.num_columns;
+        int i = OBJ_ID / Land3D.columnCount;
+        int j = OBJ_ID % Land3D.columnCount;
 
         int break_loops = 0;
 
@@ -1139,9 +1139,9 @@ class Select3D {
 
         for (int k = 0; k < 1; k++) { // just a loop to make those break commands relevant!
 
-          float x = Land3D.Mesh[i][j][0] * OBJECTS_scale;
-          float y = Land3D.Mesh[i][j][1] * OBJECTS_scale;
-          float z = Land3D.Mesh[i][j][2] * OBJECTS_scale;
+          float x = Land3D.Mesh[i][j][0] * overallScale;
+          float y = Land3D.Mesh[i][j][1] * overallScale;
+          float z = Land3D.Mesh[i][j][2] * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1162,7 +1162,7 @@ class Select3D {
 
 
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
       for (int OBJ_ID = 0; OBJ_ID < allModel1Ds.Faces.length; OBJ_ID++) {
 
@@ -1179,9 +1179,9 @@ class Select3D {
 
           int vNo = allModel1Ds.Faces[f][j];
 
-          float x = allModel1Ds.Vertices[vNo][0] * OBJECTS_scale;
-          float y = allModel1Ds.Vertices[vNo][1] * OBJECTS_scale;
-          float z = allModel1Ds.Vertices[vNo][2] * OBJECTS_scale;
+          float x = allModel1Ds.Vertices[vNo][0] * overallScale;
+          float y = allModel1Ds.Vertices[vNo][1] * overallScale;
+          float z = allModel1Ds.Vertices[vNo][2] * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1203,7 +1203,7 @@ class Select3D {
 
 
 
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
 
       for (int OBJ_ID = 0; OBJ_ID < allGroups.num; OBJ_ID++) {
 
@@ -1222,9 +1222,9 @@ class Select3D {
               for (int j = 0; j < allFaces.nodes[f].length; j++) {
                 int vNo = allFaces.nodes[f][j];
 
-                float x = allPoints.getX(vNo) * OBJECTS_scale;
-                float y = allPoints.getY(vNo) * OBJECTS_scale;
-                float z = allPoints.getZ(vNo) * OBJECTS_scale;
+                float x = allPoints.getX(vNo) * overallScale;
+                float y = allPoints.getY(vNo) * overallScale;
+                float z = allPoints.getZ(vNo) * overallScale;
 
                 int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
                 if (decision != -1) {
@@ -1251,9 +1251,9 @@ class Select3D {
               for (int j = 0; j < allPolylines.nodes[f].length; j++) {
                 int vNo = allPolylines.nodes[f][j];
 
-                float x = allPoints.getX(vNo) * OBJECTS_scale;
-                float y = allPoints.getY(vNo) * OBJECTS_scale;
-                float z = allPoints.getZ(vNo) * OBJECTS_scale;
+                float x = allPoints.getX(vNo) * overallScale;
+                float y = allPoints.getY(vNo) * overallScale;
+                float z = allPoints.getZ(vNo) * overallScale;
 
                 int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
                 if (decision != -1) {
@@ -1277,7 +1277,7 @@ class Select3D {
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.FACE) {
+    if (currentObjectCategory == ObjectCategory.FACE) {
 
       for (int OBJ_ID = 0; OBJ_ID < allFaces.nodes.length; OBJ_ID++) {
 
@@ -1291,9 +1291,9 @@ class Select3D {
         for (int j = 0; j < allFaces.nodes[OBJ_ID].length; j++) {
           int vNo = allFaces.nodes[OBJ_ID][j];
 
-          float x = allPoints.getX(vNo) * OBJECTS_scale;
-          float y = allPoints.getY(vNo) * OBJECTS_scale;
-          float z = allPoints.getZ(vNo) * OBJECTS_scale;
+          float x = allPoints.getX(vNo) * overallScale;
+          float y = allPoints.getY(vNo) * overallScale;
+          float z = allPoints.getZ(vNo) * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1313,7 +1313,7 @@ class Select3D {
       }
     }
 
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
       for (int OBJ_ID = 0; OBJ_ID < allPolylines.nodes.length; OBJ_ID++) {
 
@@ -1327,9 +1327,9 @@ class Select3D {
         for (int j = 0; j < allPolylines.nodes[OBJ_ID].length; j++) {
           int vNo = allPolylines.nodes[OBJ_ID][j];
 
-          float x = allPoints.getX(vNo) * OBJECTS_scale;
-          float y = allPoints.getY(vNo) * OBJECTS_scale;
-          float z = allPoints.getZ(vNo) * OBJECTS_scale;
+          float x = allPoints.getX(vNo) * overallScale;
+          float y = allPoints.getY(vNo) * overallScale;
+          float z = allPoints.getZ(vNo) * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1350,7 +1350,7 @@ class Select3D {
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+    if (currentObjectCategory == ObjectCategory.VERTEX) {
 
       for (int OBJ_ID = 0; OBJ_ID < allPoints.getLength(); OBJ_ID++) {
 
@@ -1359,9 +1359,9 @@ class Select3D {
         if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
         if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-        float x = allPoints.getX(OBJ_ID) * OBJECTS_scale;
-        float y = allPoints.getY(OBJ_ID) * OBJECTS_scale;
-        float z = allPoints.getZ(OBJ_ID) * OBJECTS_scale;
+        float x = allPoints.getX(OBJ_ID) * overallScale;
+        float y = allPoints.getY(OBJ_ID) * overallScale;
+        float z = allPoints.getZ(OBJ_ID) * overallScale;
 
         int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
         if (decision != -1) {
@@ -1376,7 +1376,7 @@ class Select3D {
       }
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
       for (int f = 0; f < allModel2Ds.Faces.length; f++) {
 
@@ -1395,9 +1395,9 @@ class Select3D {
 
           int vNo = allModel2Ds.Faces[f][j];
 
-          float x = allModel2Ds.Vertices[vNo][0] * OBJECTS_scale;
-          float y = allModel2Ds.Vertices[vNo][1] * OBJECTS_scale;
-          float z = allModel2Ds.Vertices[vNo][2] * OBJECTS_scale;
+          float x = allModel2Ds.Vertices[vNo][0] * overallScale;
+          float y = allModel2Ds.Vertices[vNo][1] * overallScale;
+          float z = allModel2Ds.Vertices[vNo][2] * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1423,7 +1423,7 @@ class Select3D {
       }
     }
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
+    if (currentObjectCategory == ObjectCategory.SOLID) {
 
       for (int f = 0; f < allSolids.Faces.length; f++) {
 
@@ -1442,9 +1442,9 @@ class Select3D {
 
           int vNo = allSolids.Faces[f][j];
 
-          float x = allSolids.Vertices[vNo][0] * OBJECTS_scale;
-          float y = allSolids.Vertices[vNo][1] * OBJECTS_scale;
-          float z = allSolids.Vertices[vNo][2] * OBJECTS_scale;
+          float x = allSolids.Vertices[vNo][0] * overallScale;
+          float y = allSolids.Vertices[vNo][1] * overallScale;
+          float z = allSolids.Vertices[vNo][2] * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1470,7 +1470,7 @@ class Select3D {
       }
     }
 
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
+    if (currentObjectCategory == ObjectCategory.SECTION) {
 
       for (int OBJ_ID = 0; OBJ_ID < allSections.Faces.length; OBJ_ID++) {
 
@@ -1487,9 +1487,9 @@ class Select3D {
 
           int vNo = allSections.Faces[f][j];
 
-          float x = allSections.Vertices[vNo][0] * OBJECTS_scale;
-          float y = allSections.Vertices[vNo][1] * OBJECTS_scale;
-          float z = allSections.Vertices[vNo][2] * OBJECTS_scale;
+          float x = allSections.Vertices[vNo][0] * overallScale;
+          float y = allSections.Vertices[vNo][1] * overallScale;
+          float z = allSections.Vertices[vNo][2] * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1510,7 +1510,7 @@ class Select3D {
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    if (currentObjectCategory == ObjectCategory.CAMERA) {
 
       for (int OBJ_ID = 0; OBJ_ID < allCameras.Faces.length; OBJ_ID++) {
 
@@ -1527,9 +1527,9 @@ class Select3D {
 
           int vNo = allCameras.Faces[f][j];
 
-          float x = allCameras.Vertices[vNo][0] * OBJECTS_scale;
-          float y = allCameras.Vertices[vNo][1] * OBJECTS_scale;
-          float z = allCameras.Vertices[vNo][2] * OBJECTS_scale;
+          float x = allCameras.Vertices[vNo][0] * overallScale;
+          float y = allCameras.Vertices[vNo][1] * overallScale;
+          float z = allCameras.Vertices[vNo][2] * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1645,43 +1645,43 @@ class Select3D {
 
   void selectAll () {
 
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      this.LandPoint_ids = rangeIds(Land3D.num_rows * Land3D.num_columns);
+    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
+      this.LandPoint_ids = rangeIds(Land3D.rowCount * Land3D.columnCount);
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (currentObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1D_ids = rangeIds(allModel1Ds.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (currentObjectCategory == ObjectCategory.MODEL2D) {
       this.Model2D_ids = rangeIds(allModel2Ds.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
       this.Group_ids = rangeIds(allGroups.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.FACE) {
+    if (currentObjectCategory == ObjectCategory.FACE) {
       this.Face_ids = rangeIds(allFaces.nodes.length);
     }
 
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+    if (currentObjectCategory == ObjectCategory.VERTEX) {
       this.Vertex_ids = rangeIds(allPoints.getLength());
     }
 
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    if (currentObjectCategory == ObjectCategory.POLYLINE) {
       this.Polyline_ids = rangeIds(allPolylines.nodes.length);
     }
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
+    if (currentObjectCategory == ObjectCategory.SOLID) {
       this.Solid_ids = rangeIds(allSolids.DEF.length);
     }
 
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
+    if (currentObjectCategory == ObjectCategory.SECTION) {
       this.Section_ids = rangeIds(allSections.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    if (currentObjectCategory == ObjectCategory.CAMERA) {
       this.Camera_ids = rangeIds(allCameras.num);
     }
 
@@ -1691,44 +1691,44 @@ class Select3D {
 
   void invertSelection () {
 
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
-      this.LandPoint_ids = invertedIds(this.LandPoint_ids, Land3D.num_rows * Land3D.num_columns);
+    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
+      this.LandPoint_ids = invertedIds(this.LandPoint_ids, Land3D.rowCount * Land3D.columnCount);
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (currentObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1D_ids = invertedIds(this.Model1D_ids, allModel1Ds.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (currentObjectCategory == ObjectCategory.MODEL2D) {
       this.Model2D_ids = invertedIds(this.Model2D_ids, allModel2Ds.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
       this.Group_ids = invertedIds(this.Group_ids, allGroups.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.FACE) {
+    if (currentObjectCategory == ObjectCategory.FACE) {
       this.Face_ids = invertedIds(this.Face_ids, allFaces.nodes.length);
     }
 
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    if (currentObjectCategory == ObjectCategory.POLYLINE) {
       this.Polyline_ids = invertedIds(this.Polyline_ids, allPolylines.nodes.length);
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+    if (currentObjectCategory == ObjectCategory.VERTEX) {
       this.Vertex_ids = invertedIds(this.Vertex_ids, allPoints.getLength());
     }
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
+    if (currentObjectCategory == ObjectCategory.SOLID) {
       this.Solid_ids = invertedIds(this.Solid_ids, allSolids.DEF.length);
     }
 
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
+    if (currentObjectCategory == ObjectCategory.SECTION) {
       this.Section_ids = invertedIds(this.Section_ids, allSections.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    if (currentObjectCategory == ObjectCategory.CAMERA) {
       this.Camera_ids = invertedIds(this.Camera_ids, allCameras.num);
     }
 
@@ -1745,40 +1745,40 @@ class Select3D {
 
   void selectLast () {
 
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
+    if (currentObjectCategory == ObjectCategory.SECTION) {
       this.Section_ids = lastId(allSections.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    if (currentObjectCategory == ObjectCategory.CAMERA) {
       this.Camera_ids = lastId(allCameras.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
+    if (currentObjectCategory == ObjectCategory.SOLID) {
       this.Solid_ids = lastId(allSolids.DEF.length);
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (currentObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1D_ids = lastId(allModel1Ds.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (currentObjectCategory == ObjectCategory.MODEL2D) {
       this.Model2D_ids = lastId(allModel2Ds.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
       this.Group_ids = lastId(allGroups.num);
     }
 
-    if (current_ObjectCategory == ObjectCategory.FACE) {
+    if (currentObjectCategory == ObjectCategory.FACE) {
       this.Face_ids = lastId(allFaces.nodes.length);
     }
 
-    if (current_ObjectCategory == ObjectCategory.VERTEX) {
+    if (currentObjectCategory == ObjectCategory.VERTEX) {
       this.Vertex_ids = lastId(allPoints.getLength());
     }
 
 
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    if (currentObjectCategory == ObjectCategory.POLYLINE) {
       this.Polyline_ids = lastId(allPolylines.nodes.length);
     }
 
@@ -1967,21 +1967,21 @@ class Select3D {
 
   void selectNearVertices () {
 
-    if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-        (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.VERTEX)) {
+    if ((currentObjectCategory == ObjectCategory.GROUP) ||
+        (currentObjectCategory == ObjectCategory.FACE) ||
+        (currentObjectCategory == ObjectCategory.VERTEX)) {
 
-      if (current_ObjectCategory == ObjectCategory.GROUP) {
+      if (currentObjectCategory == ObjectCategory.GROUP) {
 
         this.convert_Groups_to_Vertices();
       }
 
-      if (current_ObjectCategory == ObjectCategory.FACE) {
+      if (currentObjectCategory == ObjectCategory.FACE) {
 
         this.convert_Faces_to_Vertices();
       }
 
-      if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
         this.convert_Polylines_to_Vertices();
       }
@@ -2011,7 +2011,7 @@ class Select3D {
 
             float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
 
-            if (d <= User3D.modify_WeldTreshold) {
+            if (d <= User3D.modifierWeldThreshold) {
 
               isNearEnough = 1;
 

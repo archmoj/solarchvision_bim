@@ -19,7 +19,7 @@ class Clone3DTest {
     app.allVertices = new float[][]{{1, 2, 3}};
     app.allFaces.nodes = new int[][]{{0}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.Face_ids = new int[]{0};
 
     app.Clone3D.selection(true);
@@ -32,7 +32,7 @@ class Clone3DTest {
   void selection_landPointCategoryIsANoOp () {
     // "nothing to clone" per the source comment - LandPoints have no
     // clone branch in the dispatcher at all.
-    app.current_ObjectCategory = app.ObjectCategory.LANDPOINT;
+    app.currentObjectCategory = app.ObjectCategory.LANDPOINT;
     app.Select3D.LandPoint_ids = new int[]{3};
     app.Clone3D.selection(true);
     assertArrayEquals(new int[]{3}, app.Select3D.LandPoint_ids); // untouched
@@ -167,7 +167,7 @@ class Clone3DTest {
   @Test
   void cloneModel2D_produceSameVariationClonesPositionAndPreservesFamily () {
     app.allModel2Ds.XYZS = new float[][]{{10, 20, 30, 2}};
-    app.allModel2Ds.MAP = new int[]{5}; // abs(5) > num_files_PEOPLE(0) -> a tree
+    app.allModel2Ds.MAP = new int[]{5}; // abs(5) > peopleFileCount(0) -> a tree
     app.allModel2Ds.num = 1;
 
     app.Clone3D.cloneModel2D(0, true);
@@ -186,9 +186,9 @@ class Clone3DTest {
     // Widen the People/Trees ranges so "a fresh random variant" and "the
     // exact original" are distinguishable ranges rather than both
     // degenerately collapsing to 1 (which is what happens with the
-    // default num_files_PEOPLE=num_files_TREES=0).
-    app.allModel2Ds.num_files_PEOPLE = 5;  // variant ids 1-5
-    app.allModel2Ds.num_files_TREES = 5;   // variant ids 6-10
+    // default peopleFileCount=treesFileCount=0).
+    app.allModel2Ds.peopleFileCount = 5;  // variant ids 1-5
+    app.allModel2Ds.treesFileCount = 5;   // variant ids 6-10
     app.allModel2Ds.XYZS = new float[][]{{10, 20, 30, 2}};
     app.allModel2Ds.MAP = new int[]{7}; // a tree (abs(7) > 5)
     app.allModel2Ds.num = 1;

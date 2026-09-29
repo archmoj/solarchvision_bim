@@ -48,7 +48,7 @@ class WORLD {
 
 
   int numMaps;
-  int Zoom = 8; //1:A 2:B 3:C 4:D 5:E 6:E(2x) 7:E(4x) 8:E(8x) 9:E(16x) and 0:L <<<
+  int zoom = 8; //1:A 2:B 3:C 4:D 5:E 6:E(2x) 7:E(4x) 8:E(8x) 9:E(16x) and 0:L <<<
 
   boolean autoView = true;
 
@@ -81,29 +81,29 @@ class WORLD {
   // disk on every redraw, which is what was causing the lag while panning.
   PImage[] VIEW_ImageCache;
 
-  int displayAll_SWOB = 0; // 0-2
-  int displayAll_NAEFS = 0; // 0-2
-  int displayAll_CWEEDS = 0; // 0-2
-  int displayAll_CLMREC = 0; // 0-2
-  int displayAll_TMYEPW = 1; // 0-2
+  int ensembleObservationDisplayAll = 0; // 0-2
+  int ensembleForecastDisplayAll = 0; // 0-2
+  int climateEngineeringDisplayAll = 0; // 0-2
+  int climateArchiveDisplayAll = 0; // 0-2
+  int climateTypicalYearDisplayAll = 1; // 0-2
 
-  boolean displayNear_SWOB = false;
-  boolean displayNear_NAEFS = false;
-  boolean displayNear_CWEEDS = false;
-  boolean displayNear_CLMREC = false;
-  boolean displayNear_TMYEPW = false;
+  boolean ensembleObservationDisplayNear = false;
+  boolean ensembleForecastDisplayNear = false;
+  boolean climateEngineeringDisplayNear = false;
+  boolean climateArchiveDisplayNear = false;
+  boolean climateTypicalYearDisplayNear = false;
 
   void hideAllMarkersAndLabels () {
-    this.displayAll_TMYEPW = 0;
-    this.displayNear_TMYEPW =  false;
-    this.displayAll_CWEEDS = 0;
-    this.displayNear_CWEEDS = false;
-    this.displayAll_CLMREC = 0;
-    this.displayNear_CLMREC = false;
-    this.displayAll_SWOB = 0;
-    this.displayNear_SWOB = false;
-    this.displayAll_NAEFS = 0;
-    this.displayNear_NAEFS = false;
+    this.climateTypicalYearDisplayAll = 0;
+    this.climateTypicalYearDisplayNear =  false;
+    this.climateEngineeringDisplayAll = 0;
+    this.climateEngineeringDisplayNear = false;
+    this.climateArchiveDisplayAll = 0;
+    this.climateArchiveDisplayNear = false;
+    this.ensembleObservationDisplayAll = 0;
+    this.ensembleObservationDisplayNear = false;
+    this.ensembleForecastDisplayAll = 0;
+    this.ensembleForecastDisplayNear = false;
   }
 
   void listAllImages () {
@@ -156,15 +156,15 @@ class WORLD {
 
         String started_with = this.VIEW_Filenames[i].substring(0, 1);
 
-        if (this.Zoom == 1) {
+        if (this.zoom == 1) {
           if (started_with.equals("A")) check_it = true;
-        } else if (this.Zoom == 2) {
+        } else if (this.zoom == 2) {
           if (started_with.equals("B")) check_it = true;
-        } else if (this.Zoom == 3) {
+        } else if (this.zoom == 3) {
           if (started_with.equals("C")) check_it = true;
-        } else if (this.Zoom == 4) {
+        } else if (this.zoom == 4) {
           if (started_with.equals("D")) check_it = true;
-        } else if ((this.Zoom == 5) || (this.Zoom == 6) || (this.Zoom == 7) || (this.Zoom == 8) || (this.Zoom == 9)) {
+        } else if ((this.zoom == 5) || (this.zoom == 6) || (this.zoom == 7) || (this.zoom == 8) || (this.zoom == 9)) {
           // 6, 7, 8, and 9 reuse the same "E" bitmaps as 5 - drawView()
           // crops and scales them further in rather than loading dedicated
           // images.
@@ -536,18 +536,18 @@ class WORLD {
 
       this.graphics.background(0, 0, 0);
 
-      if (this.Zoom == 3) {
+      if (this.zoom == 3) {
         this.drawZoomedTiles("C", 1.0);
-      } else if (this.Zoom == 4) {
+      } else if (this.zoom == 4) {
         this.drawZoomedTiles("D", 1.0);
-      } else if ((this.Zoom == 5) || (this.Zoom == 6) || (this.Zoom == 7) || (this.Zoom == 8) || (this.Zoom == 9)) {
+      } else if ((this.zoom == 5) || (this.zoom == 6) || (this.zoom == 7) || (this.zoom == 8) || (this.zoom == 9)) {
         // 6, 7, 8, and 9 have no bitmaps of their own - they reuse the
         // same "E" images as 5, at progressively closer zoom fractions.
         float zoomFactor = 1.0;
-        if (this.Zoom == 6) zoomFactor = 0.5;
-        else if (this.Zoom == 7) zoomFactor = 0.25;
-        else if (this.Zoom == 8) zoomFactor = 0.125;
-        else if (this.Zoom == 9) zoomFactor = 0.0625;
+        if (this.zoom == 6) zoomFactor = 0.5;
+        else if (this.zoom == 7) zoomFactor = 0.25;
+        else if (this.zoom == 8) zoomFactor = 0.125;
+        else if (this.zoom == 9) zoomFactor = 0.0625;
 
         this.drawZoomedTiles("E", zoomFactor);
       } else {
@@ -602,14 +602,14 @@ class WORLD {
         }
       }
 
-      // Draws every SWOB station once - this doesn't depend on q, so it's
-      // its own pass instead of being redrawn ENSEMBLE_OBSERVED_numNearest
+      // Draws every Ensemble Observation station once - this doesn't depend on q, so it's
+      // its own pass instead of being redrawn nearestWeatherStationCount
       // times inside the nearest-station bookkeeping loop below.
-      if (this.displayAll_SWOB != 0) {
+      if (this.ensembleObservationDisplayAll != 0) {
 
         this.beginMarkerBatch(0, 191, 0, 0, 191, true);
 
-        boolean drawingSwobLabels = this.displayAll_SWOB > 1;
+        boolean drawingSwobLabels = this.ensembleObservationDisplayAll > 1;
 
         // Collected here and drawn only after endMarkerBatch() below -
         // see the matching note in drawStationDataset() for why calling
@@ -618,10 +618,10 @@ class WORLD {
         ArrayList<float[]> labelPositions = new ArrayList<float[]>();
         ArrayList<String> labelTexts = new ArrayList<String>();
 
-        for (int f = 0; f < SWOB_Coordinates.length; f++) {
+        for (int f = 0; f < ensembleObservationCoordinates.length; f++) {
 
-          float _lat = SWOB_Coordinates[f].getLatitude();
-          float _lon = SWOB_Coordinates[f].getLongitude();
+          float _lat = ensembleObservationCoordinates[f].getLatitude();
+          float _lon = ensembleObservationCoordinates[f].getLongitude();
           if (_lon > 180) _lon -= 360; // << important!
 
           if (this.isWithinView(_lon, _lat)) {
@@ -635,7 +635,7 @@ class WORLD {
 
               if (drawingSwobLabels) {
                 labelPositions.add(new float[]{ x_point, y_point });
-                labelTexts.add(SWOB_Coordinates[f].getCode());
+                labelTexts.add(ensembleObservationCoordinates[f].getCode());
               }
             }
           }
@@ -657,68 +657,68 @@ class WORLD {
         }
       }
 
-      java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_id, -1);
-      java.util.Arrays.fill(nearest_Station_ENSEMBLE_OBSERVED_dist, FLOAT_undefined);
+      java.util.Arrays.fill(ensembleObservationNearestStationIndex, -1);
+      java.util.Arrays.fill(ensembleObservationNearestStationDist, FLOAT_undefined);
 
-      for (int q = 0; q < ENSEMBLE_OBSERVED_numNearest; q++) {
-        for (int f = 0; f < SWOB_Coordinates.length; f++) {
+      for (int q = 0; q < nearestWeatherStationCount; q++) {
+        for (int f = 0; f < ensembleObservationCoordinates.length; f++) {
 
-          float _lat = SWOB_Coordinates[f].getLatitude();
-          float _lon = SWOB_Coordinates[f].getLongitude();
+          float _lat = ensembleObservationCoordinates[f].getLatitude();
+          float _lon = ensembleObservationCoordinates[f].getLongitude();
           if (_lon > 180) _lon -= 360; // << important!
 
           float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-          if (nearest_Station_ENSEMBLE_OBSERVED_dist[q] > d) {
+          if (ensembleObservationNearestStationDist[q] > d) {
 
             int added_before = 0;
 
             for (int p = 0; p < q; p++) {
-              if (nearest_Station_ENSEMBLE_OBSERVED_id[p] == f) added_before = 1;
+              if (ensembleObservationNearestStationIndex[p] == f) added_before = 1;
             }
 
             if (added_before == 0) {
-              nearest_Station_ENSEMBLE_OBSERVED_dist[q] = d;
-              nearest_Station_ENSEMBLE_OBSERVED_id[q] = f;
+              ensembleObservationNearestStationDist[q] = d;
+              ensembleObservationNearestStationIndex[q] = f;
             }
           }
 
         }
 
-        if (this.displayNear_SWOB) {
-          int f = nearest_Station_ENSEMBLE_OBSERVED_id[q];
+        if (this.ensembleObservationDisplayNear) {
+          int f = ensembleObservationNearestStationIndex[q];
 
-          float _lat = SWOB_Coordinates[f].getLatitude();
-          float _lon = SWOB_Coordinates[f].getLongitude();
+          float _lat = ensembleObservationCoordinates[f].getLatitude();
+          float _lon = ensembleObservationCoordinates[f].getLongitude();
           if (_lon > 180) _lon -= 360; // << important!
 
           float x_point = this.projX(_lon);
           float y_point = this.projY(_lat);
 
           if (isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
-            this.drawLabel(x_point, y_point, SWOB_Coordinates[f].getCode(), 1.0);
+            this.drawLabel(x_point, y_point, ensembleObservationCoordinates[f].getCode(), 1.0);
           }
-          //println(SWOB_Coordinates[f].getCode());
+          //println(ensembleObservationCoordinates[f].getCode());
         }
 
       }
 
 
 
-      this.drawStationDataset(NAEFS_Coordinates, this.displayAll_NAEFS, this.displayNear_NAEFS, R_station,
+      this.drawStationDataset(ensembleForecastCoordinates, this.ensembleForecastDisplayAll, this.ensembleForecastDisplayNear, R_station,
                                0, 0, 63, 0, 127, true, 5, false, 1.0, 1.0);
 
 
-      this.drawStationDataset(CWEEDS_coordinates, this.displayAll_CWEEDS, this.displayNear_CWEEDS, R_station,
+      this.drawStationDataset(climateEngineeringCoordinates, this.climateEngineeringDisplayAll, this.climateEngineeringDisplayNear, R_station,
                                2 * this.ImageScale, 0, 0, 0, 191, false, 3, false, 1.0, 1.0);
 
 
       // Note: CLMREC's "show all" labels render at half the usual text size (0.5 mult below),
       // while its "show nearest" label uses the normal size — preserved as-is from the original.
-      this.drawStationDataset(CLMREC_Coordinates, this.displayAll_CLMREC, this.displayNear_CLMREC, R_station,
+      this.drawStationDataset(climateArchiveCoordinates, this.climateArchiveDisplayAll, this.climateArchiveDisplayNear, R_station,
                                1 * this.ImageScale, 0, 0, 0, 191, false, 0.5, false, 0.5, 1.0);
 
-      this.drawStationDataset(TMYEPW_Coordinates, this.displayAll_TMYEPW, this.displayNear_TMYEPW, R_station,
+      this.drawStationDataset(climateTypicalYearCoordinates, this.climateTypicalYearDisplayAll, this.climateTypicalYearDisplayNear, R_station,
                                2 * this.ImageScale, 255, 0, 0, 127, false, 3, false, 1.0, 1.0);
 
 
@@ -780,13 +780,13 @@ class WORLD {
   void handlePlainCharKey () {
     switch(key) {
       case '`' :
-        this.Zoom = (this.Zoom - 1 + 10) % 10;
+        this.zoom = (this.zoom - 1 + 10) % 10;
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
 
       case '~' :
-        this.Zoom = (this.Zoom + 1) % 10;
+        this.zoom = (this.zoom + 1) % 10;
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
         this.revise();
         break;
@@ -800,19 +800,19 @@ class WORLD {
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 
-    XML_setInt(parent, "Zoom", this.Zoom);
+    XML_setInt(parent, "zoom", this.zoom);
 
-    XML_setInt(parent, "displayAll_SWOB", this.displayAll_SWOB);
-    XML_setInt(parent, "displayAll_NAEFS", this.displayAll_NAEFS);
-    XML_setInt(parent, "displayAll_CWEEDS", this.displayAll_CWEEDS);
-    XML_setInt(parent, "displayAll_CLMREC", this.displayAll_CLMREC);
-    XML_setInt(parent, "displayAll_TMYEPW", this.displayAll_TMYEPW);
+    XML_setInt(parent, "ensembleObservationDisplayAll", this.ensembleObservationDisplayAll);
+    XML_setInt(parent, "ensembleForecastDisplayAll", this.ensembleForecastDisplayAll);
+    XML_setInt(parent, "climateEngineeringDisplayAll", this.climateEngineeringDisplayAll);
+    XML_setInt(parent, "climateArchiveDisplayAll", this.climateArchiveDisplayAll);
+    XML_setInt(parent, "climateTypicalYearDisplayAll", this.climateTypicalYearDisplayAll);
 
-    XML_setBoolean(parent, "displayNear_SWOB", this.displayNear_SWOB);
-    XML_setBoolean(parent, "displayNear_NAEFS", this.displayNear_NAEFS);
-    XML_setBoolean(parent, "displayNear_CWEEDS", this.displayNear_CWEEDS);
-    XML_setBoolean(parent, "displayNear_CLMREC", this.displayNear_CLMREC);
-    XML_setBoolean(parent, "displayNear_TMYEPW", this.displayNear_TMYEPW);
+    XML_setBoolean(parent, "ensembleObservationDisplayNear", this.ensembleObservationDisplayNear);
+    XML_setBoolean(parent, "ensembleForecastDisplayNear", this.ensembleForecastDisplayNear);
+    XML_setBoolean(parent, "climateEngineeringDisplayNear", this.climateEngineeringDisplayNear);
+    XML_setBoolean(parent, "climateArchiveDisplayNear", this.climateArchiveDisplayNear);
+    XML_setBoolean(parent, "climateTypicalYearDisplayNear", this.climateTypicalYearDisplayNear);
   }
 
 
@@ -822,19 +822,19 @@ class WORLD {
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.Zoom = XML_getInt(parent, "Zoom");
+    this.zoom = XML_getInt(parent, "zoom");
 
-    this.displayAll_SWOB = XML_getInt(parent, "displayAll_SWOB");
-    this.displayAll_NAEFS = XML_getInt(parent, "displayAll_NAEFS");
-    this.displayAll_CWEEDS = XML_getInt(parent, "displayAll_CWEEDS");
-    this.displayAll_CLMREC = XML_getInt(parent, "displayAll_CLMREC");
-    this.displayAll_TMYEPW = XML_getInt(parent, "displayAll_TMYEPW");
+    this.ensembleObservationDisplayAll = XML_getInt(parent, "ensembleObservationDisplayAll");
+    this.ensembleForecastDisplayAll = XML_getInt(parent, "ensembleForecastDisplayAll");
+    this.climateEngineeringDisplayAll = XML_getInt(parent, "climateEngineeringDisplayAll");
+    this.climateArchiveDisplayAll = XML_getInt(parent, "climateArchiveDisplayAll");
+    this.climateTypicalYearDisplayAll = XML_getInt(parent, "climateTypicalYearDisplayAll");
 
-    this.displayNear_SWOB = XML_getBoolean(parent, "displayNear_SWOB");
-    this.displayNear_NAEFS = XML_getBoolean(parent, "displayNear_NAEFS");
-    this.displayNear_CWEEDS = XML_getBoolean(parent, "displayNear_CWEEDS");
-    this.displayNear_CLMREC = XML_getBoolean(parent, "displayNear_CLMREC");
-    this.displayNear_TMYEPW = XML_getBoolean(parent, "displayNear_TMYEPW");
+    this.ensembleObservationDisplayNear = XML_getBoolean(parent, "ensembleObservationDisplayNear");
+    this.ensembleForecastDisplayNear = XML_getBoolean(parent, "ensembleForecastDisplayNear");
+    this.climateEngineeringDisplayNear = XML_getBoolean(parent, "climateEngineeringDisplayNear");
+    this.climateArchiveDisplayNear = XML_getBoolean(parent, "climateArchiveDisplayNear");
+    this.climateTypicalYearDisplayNear = XML_getBoolean(parent, "climateTypicalYearDisplayNear");
   }
 
   void revise () {

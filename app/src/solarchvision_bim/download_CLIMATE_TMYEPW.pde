@@ -1,15 +1,15 @@
-void download_CLIMATE_TMYEPW () {
+void download_climateTmyEpw () {
 
   boolean new_files_downloaded = false;
 
-  String FN = STATION.getFilename_TMYEPW();
+  String FN = STATION.getClimateTypicalYearFilename();
 
-  String the_target = Folder_CLIMATE_TMYEPW + "/" + FN;
+  String the_target = Folder_climateTmyEpw + "/" + FN;
 
   File dir = new File(the_target + ".epw");
   if (!dir.isFile()) {
 
-    String the_link = STATION.getDownload_TMYEPW();
+    String the_link = STATION.getClimateTypicalYearDownload();
 
     println("Try downloading: " + the_link);
 
@@ -59,7 +59,7 @@ void download_CLIMATE_TMYEPW () {
       // println("Failed to extract " + f.getName() + ": " + e);
     }
 
-    CLIMATE_TMYEPW_load = true;
-    update_CLIMATE_TMYEPW();
+    climateTypicalYearShouldLoad = true;
+    update_climateTmyEpw();
   }
 }

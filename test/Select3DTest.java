@@ -163,7 +163,7 @@ class Select3DTest {
 
   // ============ selectAll / invertSelection / selectLast ===============
   //
-  // All three dispatch identically on current_ObjectCategory; FACE and
+  // All three dispatch identically on currentObjectCategory; FACE and
   // VERTEX are checked directly as representative samples of the
   // pattern (every other category just swaps in a different backing
   // count), plus GROUP for selectLast to vary which field gets touched.
@@ -171,7 +171,7 @@ class Select3DTest {
   @Test
   void selectAll_populatesTheCurrentCategorysFullRange () {
     app.allFaces.nodes = new int[][]{{0}, {0}, {0}};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.selectAll();
     assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.Face_ids);
   }
@@ -179,7 +179,7 @@ class Select3DTest {
   @Test
   void invertSelection_flipsTheCurrentCategorysSelection () {
     app.allFaces.nodes = new int[][]{{0}, {0}, {0}};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.Face_ids = new int[]{1};
     app.Select3D.invertSelection();
     assertArrayEquals(new int[]{0, 2}, app.Select3D.Face_ids);
@@ -188,7 +188,7 @@ class Select3DTest {
   @Test
   void selectLast_picksTheHighestIndexOfTheCurrentCategory () {
     app.allGroups.makeEmpty(3);
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.selectLast();
     assertArrayEquals(new int[]{2}, app.Select3D.Group_ids);
   }
@@ -414,8 +414,8 @@ class Select3DTest {
   @Test
   void selectNearVertices_growsTheSelectionToIncludeNearbyUnselectedVertices () {
     app.allVertices = new float[][]{{0, 0, 0}, {0.05f, 0, 0}, {5, 0, 0}};
-    app.User3D.modify_WeldTreshold = 0.1f;
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.User3D.modifierWeldThreshold = 0.1f;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0}; // only point 0 selected initially
 
     app.Select3D.selectNearVertices();
@@ -440,7 +440,7 @@ class Select3DTest {
   @Test
   void selectPick_landPointCategoryTogglesTheHitIndexDirectly () {
     app.addNewSelectionToPreviousSelection = 1;
-    app.current_ObjectCategory = app.ObjectCategory.LANDPOINT;
+    app.currentObjectCategory = app.ObjectCategory.LANDPOINT;
     app.Select3D.selectPick(new float[]{7, 0, 0, 0});
     assertArrayEquals(new int[]{7}, app.Select3D.LandPoint_ids);
   }
@@ -452,7 +452,7 @@ class Select3DTest {
     app.allGroups.Faces[1] = new int[]{2, 3};
 
     app.addNewSelectionToPreviousSelection = 1;
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.selectPick(new float[]{2, 0, 0, 0}); // hit face 2, owned by group 1
 
     assertArrayEquals(new int[]{1}, app.Select3D.Group_ids);
@@ -464,7 +464,7 @@ class Select3DTest {
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
 
     app.addNewSelectionToPreviousSelection = 1;
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     // Hit face 0 at a point close to vertex 1 (5,0,0).
     app.Select3D.selectPick(new float[]{0, 4.5f, 0, 0});
 
@@ -476,7 +476,7 @@ class Select3DTest {
   @Test
   void calculateBoundingBox_computesMinMidMaxForTheSelectedVertices () {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {10, 0, 0}};
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0, 1, 2};
 
     app.Select3D.calculate_BoundingBox();
@@ -489,7 +489,7 @@ class Select3DTest {
   @Test
   void calculateBoundingBox_worksForModel1DsToo () {
     app.allModel1Ds.f_data = new float[][]{{0, 0, 0, 1, 0, 0}, {4, 6, 0, 1, 0, 0}};
-    app.current_ObjectCategory = app.ObjectCategory.MODEL1D;
+    app.currentObjectCategory = app.ObjectCategory.MODEL1D;
     app.Select3D.Model1D_ids = new int[]{0, 1};
 
     app.Select3D.calculate_BoundingBox();
@@ -503,7 +503,7 @@ class Select3DTest {
   @Test
   void calculateBoundingBox_worksForModel2DsToo () {
     app.allModel2Ds.XYZS = new float[][]{{2, 0, 0, 0}, {8, 0, 0, 0}};
-    app.current_ObjectCategory = app.ObjectCategory.MODEL2D;
+    app.currentObjectCategory = app.ObjectCategory.MODEL2D;
     app.Select3D.Model2D_ids = new int[]{0, 1};
 
     app.Select3D.calculate_BoundingBox();
@@ -519,7 +519,7 @@ class Select3DTest {
     // selected faces, then those indices are looked up through allPoints.
     app.allVertices = new float[][]{{0, 0, 0}, {6, 0, 0}, {6, 6, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.Face_ids = new int[]{0};
 
     app.Select3D.calculate_BoundingBox();
@@ -536,7 +536,7 @@ class Select3DTest {
     // posX_min/etc. never become defined and the is_defined() guard skips
     // the whole "shrink to the real min/max" block below it - the identity
     // box computed earlier (pos 0, scale 1, rotation 0) is what's left.
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[0];
     app.allVertices = new float[0][3];
 
@@ -552,7 +552,7 @@ class Select3DTest {
     app.Select3D.alignX = 1;
     app.Select3D.alignY = 2;
     app.Select3D.alignZ = 1;
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[0];
     app.allVertices = new float[0][3];
 
@@ -808,7 +808,7 @@ class Select3DTest {
     app.allGroups.Pivots = new float[][]{
       {2, 3, 0, 1, 1, 1, 0, 0, 0}
     };
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.Group_ids = new int[]{0};
 
     app.Select3D.calculate_BoundingBox();
@@ -825,7 +825,7 @@ class Select3DTest {
       {0, 0, 0, 1, 1, 1, 0, 0, 0},
       {4, 0, 0, 1, 1, 1, 0, 0, 0}
     };
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.Group_ids = new int[]{0, 1};
 
     app.Select3D.calculate_BoundingBox();

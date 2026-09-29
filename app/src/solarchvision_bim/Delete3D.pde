@@ -99,36 +99,36 @@ class Delete3D {
 
   void selection () {
 
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
     }
-    if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    if (currentObjectCategory == ObjectCategory.CAMERA) {
       Delete3D.selected_Cameras();
     }
-    if (current_ObjectCategory == ObjectCategory.SECTION) {
+    if (currentObjectCategory == ObjectCategory.SECTION) {
       Delete3D.selected_Sections();
     }
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    if (currentObjectCategory == ObjectCategory.MODEL1D) {
       Delete3D.selected_Model1Ds();
     }
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    if (currentObjectCategory == ObjectCategory.MODEL2D) {
       Delete3D.selected_Model2Ds();
     }
-    if (current_ObjectCategory == ObjectCategory.SOLID) {
+    if (currentObjectCategory == ObjectCategory.SOLID) {
       Delete3D.selected_Solids();
     }
-    if (current_ObjectCategory == ObjectCategory.FACE) {
+    if (currentObjectCategory == ObjectCategory.FACE) {
       Delete3D.selected_Faces();
     }
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    if (currentObjectCategory == ObjectCategory.POLYLINE) {
       Delete3D.selected_Polylines();
     }
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
       Delete3D.selected_Groups();
     }
-    if ((current_ObjectCategory == ObjectCategory.VERTEX) ||
-        (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
-        (current_ObjectCategory == ObjectCategory.GROUP)) {
+    if ((currentObjectCategory == ObjectCategory.VERTEX) ||
+        (currentObjectCategory == ObjectCategory.FACE) ||
+        (currentObjectCategory == ObjectCategory.POLYLINE) ||
+        (currentObjectCategory == ObjectCategory.GROUP)) {
       Delete3D.isolatedVertices_Selection();
     }
 
@@ -139,18 +139,18 @@ class Delete3D {
     int[] ids = sort(Select3D.Camera_ids);
     if (ids.length == 0) return;
 
-    boolean currentCameraDeleted = false;
+    boolean currentCameraIndexDeleted = false;
     int shiftBefore = 0;
     for (int o = 0; o < ids.length; o++) {
-      if (ids[o] == WIN3D.currentCamera) currentCameraDeleted = true;
-      if (ids[o] < WIN3D.currentCamera) shiftBefore++;
+      if (ids[o] == WIN3D.currentCameraIndex) currentCameraIndexDeleted = true;
+      if (ids[o] < WIN3D.currentCameraIndex) shiftBefore++;
     }
 
-    if (currentCameraDeleted) {
-      WIN3D.currentCamera = 0;
+    if (currentCameraIndexDeleted) {
+      WIN3D.currentCameraIndex = 0;
       modify_Viewport_Title();
     } else if (shiftBefore > 0) {
-      WIN3D.currentCamera -= shiftBefore;
+      WIN3D.currentCameraIndex -= shiftBefore;
     }
 
     allCameras.options = removeIndices(allCameras.options, ids);

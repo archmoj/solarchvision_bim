@@ -283,7 +283,7 @@ class Polylines {
 
 
 
-                  WIN3D.graphics.vertex(P[0] * OBJECTS_scale * WIN3D.scale, -(P[1] * OBJECTS_scale * WIN3D.scale), P[2] * OBJECTS_scale * WIN3D.scale);
+                  WIN3D.graphics.vertex(P[0] * overallScale * WIN3D.scale, -(P[1] * overallScale * WIN3D.scale), P[2] * overallScale * WIN3D.scale);
 
                 }
               }

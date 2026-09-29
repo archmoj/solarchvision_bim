@@ -6,14 +6,14 @@ void exportObj (String suffix) {
   String mtlFilename = Folder_Export3D + "/" + fileBasename + ".mtl";
 
 
-  if (User3D.export_MaterialLibrary) {
+  if (User3D.exporterMaterialLibrary) {
     mtlOutput = createWriter(mtlFilename);
     mtlOutput.println("#SOLARCHVISION");
   }
 
   objOutput = createWriter(objFilename);
   objOutput.println("#SOLARCHVISION");
-  if (User3D.export_MaterialLibrary) {
+  if (User3D.exporterMaterialLibrary) {
     objOutput.println("mtllib " + fileBasename + ".mtl");
   }
 
@@ -49,8 +49,8 @@ void exportObj (String suffix) {
 
     float keep_STUDY_perDays = STUDY.perDays;
     int keep_STUDY_joinDays = STUDY.joinDays;
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    if ((currentDataSource == dataID_ensembleForecast) ||
+        (currentDataSource == dataID_ensembleObservation)) {
       STUDY.perDays = 1;
       STUDY.joinDays = 1;
     }
@@ -65,7 +65,7 @@ void exportObj (String suffix) {
     TIME.updateDate();
   }
 
-  if (User3D.export_MaterialLibrary) {
+  if (User3D.exporterMaterialLibrary) {
     mtlOutput.flush();
     mtlOutput.close();
   }

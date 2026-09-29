@@ -4,64 +4,63 @@ void parse_XML_variables (XML xml, boolean desired_diag) {
 
   XML parent = xml.getChild("variables");
 
-  current_ObjectCategory = XML_getInt(parent, "current_ObjectCategory");
+  currentObjectCategory = XML_getInt(parent, "currentObjectCategory"); // see note above - confirm separately
 
-  GlobalAlbedo = XML_getFloat(parent, "GlobalAlbedo");
-  Interpolation_Weight = XML_getFloat(parent, "Interpolation_Weight");
+  globalAlbedo = XML_getFloat(parent, "globalAlbedo");
+  interpolationWeight = XML_getFloat(parent, "interpolationWeight");
 
-  CLIMATIC_SolarForecast = XML_getInt(parent, "CLIMATIC_SolarForecast");
-  CLIMATIC_WeatherForecast = XML_getInt(parent, "CLIMATIC_WeatherForecast");
+  climateBasedSolarForecast = XML_getInt(parent, "climateBasedSolarForecast");
+  climateBasedWeatherForecast = XML_getInt(parent, "climateBasedWeatherForecast");
 
-  CLIMATE_TMYEPW_start = XML_getInt(parent, "CLIMATE_TMYEPW_start");
-  CLIMATE_TMYEPW_end = XML_getInt(parent, "CLIMATE_TMYEPW_end");
-  CLIMATE_CWEEDS_start = XML_getInt(parent, "CLIMATE_CWEEDS_start");
-  CLIMATE_CWEEDS_end = XML_getInt(parent, "CLIMATE_CWEEDS_end");
-  CLIMATE_CLMREC_start = XML_getInt(parent, "CLIMATE_CLMREC_start");
-  CLIMATE_CLMREC_end = XML_getInt(parent, "CLIMATE_CLMREC_end");
-  ENSEMBLE_FORECAST_start = XML_getInt(parent, "ENSEMBLE_FORECAST_start");
-  ENSEMBLE_FORECAST_end = XML_getInt(parent, "ENSEMBLE_FORECAST_end");
-  ENSEMBLE_FORECAST_maxDays = XML_getInt(parent, "ENSEMBLE_FORECAST_maxDays");
-  ENSEMBLE_OBSERVED_maxDays = XML_getInt(parent, "ENSEMBLE_OBSERVED_maxDays");
-  ENSEMBLE_OBSERVED_numNearest = XML_getInt(parent, "ENSEMBLE_OBSERVED_numNearest");
-  ENSEMBLE_OBSERVED_start = XML_getInt(parent, "ENSEMBLE_OBSERVED_start");
-  ENSEMBLE_OBSERVED_end = XML_getInt(parent, "ENSEMBLE_OBSERVED_end");
-  SampleYear_Start = XML_getInt(parent, "SampleYear_Start");
-  SampleYear_End = XML_getInt(parent, "SampleYear_End");
-  SampleMember_Start = XML_getInt(parent, "SampleMember_Start");
-  SampleMember_End = XML_getInt(parent, "SampleMember_End");
-  SampleStation_Start = XML_getInt(parent, "SampleStation_Start");
-  SampleStation_End = XML_getInt(parent, "SampleStation_End");
-  CLIMATE_TMYEPW_load = XML_getBoolean(parent, "CLIMATE_TMYEPW_load");
-  CLIMATE_CWEEDS_load = XML_getBoolean(parent, "CLIMATE_CWEEDS_load");
-  CLIMATE_CLMREC_load = XML_getBoolean(parent, "CLIMATE_CLMREC_load");
-  ENSEMBLE_FORECAST_load = XML_getBoolean(parent, "ENSEMBLE_FORECAST_load");
-  ENSEMBLE_OBSERVED_load = XML_getBoolean(parent, "ENSEMBLE_OBSERVED_load");
-  Develop_Option = XML_getInt(parent, "Develop_Option");
-  Develop_DayHour = XML_getInt(parent, "Develop_DayHour");
-  //DevelopData_update = XML_getBoolean(parent, "DevelopData_update");
-  Develop_AngleInclination = XML_getFloat(parent, "Develop_AngleInclination");
-  Develop_AngleOrientation = XML_getFloat(parent, "Develop_AngleOrientation");
-  DevelopLayer_id = XML_getInt(parent, "DevelopLayer_id");
+  climateTypicalYearStart = XML_getInt(parent, "climateTypicalYearStart");
+  climateTypicalYearEnd = XML_getInt(parent, "climateTypicalYearEnd");
+  climateEngineeringStart = XML_getInt(parent, "climateEngineeringStart");
+  climateEngineeringEnd = XML_getInt(parent, "climateEngineeringEnd");
+  climateArchiveStart = XML_getInt(parent, "climateArchiveStart");
+  climateArchiveEnd = XML_getInt(parent, "climateArchiveEnd");
+  ensembleForecastStart = XML_getInt(parent, "ensembleForecastStart");
+  ensembleForecastEnd = XML_getInt(parent, "ensembleForecastEnd");
+  ensembleForecastMaxDays = XML_getInt(parent, "ensembleForecastMaxDays");
+  ensembleObservationMaxDays = XML_getInt(parent, "ensembleObservationMaxDays");
+  nearestWeatherStationCount = XML_getInt(parent, "nearestWeatherStationCount");
+  ensembleObservationStart = XML_getInt(parent, "ensembleObservationStart");
+  ensembleObservationEnd = XML_getInt(parent, "ensembleObservationEnd");
+  sampleYearStart = XML_getInt(parent, "sampleYearStart");
+  sampleYearEnd = XML_getInt(parent, "sampleYearEnd");
+  sampleMemberStart = XML_getInt(parent, "sampleMemberStart");
+  sampleMemberEnd = XML_getInt(parent, "sampleMemberEnd");
+  sampleStationStart = XML_getInt(parent, "sampleStationStart");
+  sampleStationEnd = XML_getInt(parent, "sampleStationEnd");
+  climateTypicalYearShouldLoad = XML_getBoolean(parent, "climateTypicalYearShouldLoad");
+  climateEngineeringShouldLoad = XML_getBoolean(parent, "climateEngineeringShouldLoad");
+  climateArchiveShouldLoad = XML_getBoolean(parent, "climateArchiveShouldLoad");
+  ensembleForecastShouldLoad = XML_getBoolean(parent, "ensembleForecastShouldLoad");
+  ensembleObservationShouldLoad = XML_getBoolean(parent, "ensembleObservationShouldLoad");
+  developLayerOption = XML_getInt(parent, "developLayerOption");
+  developLayerInterval = XML_getInt(parent, "developLayerInterval");
+  //developDataUpdate = XML_getBoolean(parent, "developDataUpdate");
+  developLayerAngleInclination = XML_getFloat(parent, "developLayerAngleInclination");
+  developLayerAngleOrientation = XML_getFloat(parent, "developLayerAngleOrientation");
+  developLayerId = XML_getInt(parent, "developLayerId"); // see note above - confirm separately
 
-  changeCurrentLayerTo(XML_getInt(parent, "CurrentLayer_id"));
+  changeCurrentLayerTo(XML_getInt(parent, "currentLayerId"));
 
-  COLOR_STYLE_Current = XML_getInt(parent, "COLOR_STYLE_Current");
-  COLOR_STYLE_Number = XML_getInt(parent, "COLOR_STYLE_Number");
+  currentColorStyle = XML_getInt(parent, "currentColorStyle");
+  colorStyleCount = XML_getInt(parent, "colorStyleCount");
 
-  CurrentDataSource = XML_getInt(parent, "CurrentDataSource");
-  DrawnFrame = XML_getInt(parent, "DrawnFrame");
+  currentDataSource = XML_getInt(parent, "currentDataSource");
 
-  Planetary_Magnification = XML_getFloat(parent, "Planetary_Magnification");
+  celestialMagnification = XML_getFloat(parent, "celestialMagnification");
 
-  Camera_Variation = XML_getInt(parent, "Camera_Variation");
+  cameraIndex = XML_getInt(parent, "cameraIndex");
 
   allMaterials.Selection = XML_getInt(parent, "allMaterials.Selection");
-  OBJECTS_scale = XML_getFloat(parent, "OBJECTS_scale");
+  overallScale = XML_getFloat(parent, "overallScale");
 
-  ViewLayout = XML_getInt(parent, "ViewLayout");
-  Language_Active = XML_getInt(parent, "Language_Active");
+  viewLayout = XML_getInt(parent, "viewLayout");
+  activeLanguage = XML_getInt(parent, "activeLanguage");
 
-  IMPACTS_displayDay = XML_getInt(parent, "IMPACTS_displayDay");
+  impactDisplayDay = XML_getInt(parent, "impactDisplayDay");
 
   String new_Default_Font = XML_getString(parent, "Default_Font");
   if (Default_Font.equals(new_Default_Font)) {

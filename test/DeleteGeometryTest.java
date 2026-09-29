@@ -221,13 +221,13 @@ class DeleteGeometryTest {
     app.allCameras.options = new float[][]{new float[9], new float[9], new float[9]};
     app.allCameras.Type = new int[]{0, 0, 0};
     app.allCameras.num = 3;
-    app.WIN3D.currentCamera = 2;
+    app.WIN3D.currentCameraIndex = 2;
 
     app.Select3D.Camera_ids = new int[]{0}; // delete camera 0, before the current one
 
     app.Delete3D.selected_Cameras();
 
-    assertEquals(1, app.WIN3D.currentCamera); // shifted down by 1, not reset
+    assertEquals(1, app.WIN3D.currentCameraIndex); // shifted down by 1, not reset
     assertEquals(2, app.allCameras.num);
   }
 
@@ -236,7 +236,7 @@ class DeleteGeometryTest {
     app.allCameras.options = new float[][]{new float[9], new float[9], new float[9]};
     app.allCameras.Type = new int[]{0, 0, 0};
     app.allCameras.num = 3;
-    app.WIN3D.currentCamera = 1;
+    app.WIN3D.currentCameraIndex = 1;
 
     // Deletes camera 0 (before current) and camera 1 (the current one
     // itself) in the same call - the "current camera was deleted"
@@ -246,7 +246,7 @@ class DeleteGeometryTest {
 
     app.Delete3D.selected_Cameras();
 
-    assertEquals(0, app.WIN3D.currentCamera);
+    assertEquals(0, app.WIN3D.currentCameraIndex);
     assertEquals(1, app.allCameras.num);
   }
 
@@ -255,7 +255,7 @@ class DeleteGeometryTest {
     app.allCameras.options = new float[][]{new float[9]};
     app.allCameras.Type = new int[]{0};
     app.allCameras.num = 1;
-    app.WIN3D.currentCamera = 0;
+    app.WIN3D.currentCameraIndex = 0;
 
     app.Select3D.Camera_ids = new int[]{0};
 
@@ -278,12 +278,12 @@ class DeleteGeometryTest {
     app.allCameras.options = new float[][]{new float[9], new float[9]};
     app.allCameras.Type = new int[]{0, 0};
     app.allCameras.num = 2;
-    app.WIN3D.currentCamera = 0;
+    app.WIN3D.currentCameraIndex = 0;
 
     app.allVertices = new float[][]{{0, 0, 0}};
     app.Select3D.Vertex_ids = new int[]{0}; // would be examined by isolatedVertices_Selection if it ran
 
-    app.current_ObjectCategory = app.ObjectCategory.CAMERA;
+    app.currentObjectCategory = app.ObjectCategory.CAMERA;
     app.Select3D.Camera_ids = new int[]{0};
 
     app.Delete3D.selection();

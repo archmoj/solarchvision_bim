@@ -19,7 +19,7 @@ class react {
     TIME.hour = int(24 * (TIME.date - int(TIME.date)));
     TIME.date = (TIME.hour / 24.0) + (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365;
     println("DATE:", TIME.date, "\tHOUR:", TIME.hour);
-    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+    update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
 
   // GUI-driven change: LocationLAT/LocationLON already hold the new
@@ -84,8 +84,8 @@ class react {
   OnChange applyStudyJEnd = (o, n) -> {
     if (o == n) return;
     UI_caseBar.revise();
-    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
-    if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     allSolarImpacts.rebuild_Image_array = true;
     allWindRoses.rebuild_Image_array = true;
     allSections.resize_solarImpact_array();
@@ -94,7 +94,7 @@ class react {
   // applyTimeChange, which derives date from month/day). The original
   // applyRolloutUpDate.pde relied on this cascading into month/day/hour
   // changing and being picked up by a second, separate diff check later in
-  // the same frame to reload the ensemble forecast; made explicit here
+  // the same frame to reload the Ensemble Forecast; made explicit here
   // instead of relying on that ordering. Its call site in
   // applyRolloutUpdate.pde keeps its own if-wrapper (rather than an o == n
   // guard here) because it also needs an immediate UI_rollout.draw() -
@@ -102,21 +102,21 @@ class react {
   // Spinner(), which draw() is already in the middle of calling.
   OnChange applyTimeDate = (o, n) -> {
     TIME.updateDate();
-    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+    update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
   OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; Land3D.update_textures(); model_changed(); };
   OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; Land3D.update_mesh(); model_changed(); };
   OnChange applyCurrentCamera = (o, n) -> {
     if (o == n) return;
-    WIN3D.apply_currentCamera();
+    WIN3D.apply_currentCameraIndex();
     modify_Viewport_Title();
     view_changed();
   };
   OnChange applyCreatePowAll = (o, n) -> {
     if (o == n) return;
-    User3D.create_powX = User3D.create_powAll;
-    User3D.create_powY = User3D.create_powAll;
-    User3D.create_powZ = User3D.create_powAll;
+    User3D.creatorSuperellipsoidPowerX = User3D.creatorUniformSuperellipsoidPower;
+    User3D.creatorSuperellipsoidPowerY = User3D.creatorUniformSuperellipsoidPower;
+    User3D.creatorSuperellipsoidPowerZ = User3D.creatorUniformSuperellipsoidPower;
     UI_rollout.revise();
   };
 }

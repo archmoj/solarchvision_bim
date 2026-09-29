@@ -413,64 +413,64 @@ void build_allActions() {
     WIN3D.revise();
   });
 
-  putAction("Download SWOB", () -> {
-    download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);;
+  putAction("Download Ensemble Observation", () -> {
+    download_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);;
   });
 
-  putAction("Download NAEFS", () -> {
-    download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+  putAction("Download Ensemble Forecast", () -> {
+    download_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
-  putAction("Download CLMREC", () -> {
-    download_CLIMATE_CLMREC();
+  putAction("Download Climate Archive", () -> {
+    downloadClimateArchive();
   });
 
-  putAction("Download TMYEPW", () -> {
-    download_CLIMATE_TMYEPW();
+  putAction("Download Climate Typical Year", () -> {
+    download_climateTmyEpw();
   });
 
-  putAction("Update TMYEPW", () -> {
-    CurrentDataSource = dataID_CLIMATE_TMYEPW;
+  putAction("Update Climate Typical Year", () -> {
+    currentDataSource = dataID_climateTmyEpw;
 
-    CLIMATE_TMYEPW_load = true;
-    update_CLIMATE_TMYEPW();
+    climateTypicalYearShouldLoad = true;
+    update_climateTmyEpw();
   });
 
-  putAction("Update CWEEDS", () -> {
-    CurrentDataSource = dataID_CLIMATE_CWEEDS;
+  putAction("Update Climate Engineering", () -> {
+    currentDataSource = dataID_climateEngineering;
 
-    CLIMATE_CWEEDS_load = true;
-    update_CLIMATE_CWEEDS();
+    climateEngineeringShouldLoad = true;
+    update_climateEngineering();
   });
 
-  putAction("Update CLMREC", () -> {
-    CurrentDataSource = dataID_CLIMATE_CLMREC;
+  putAction("Update Climate Archive", () -> {
+    currentDataSource = dataID_climateArchive;
 
-    CLIMATE_CLMREC_load = true;
-    update_CLIMATE_CLMREC();
+    climateArchiveShouldLoad = true;
+    updateClimateArchive();
   });
 
-  putAction("Update SWOB", () -> {
-    CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
+  putAction("Update Ensemble Observation", () -> {
+    currentDataSource = dataID_ensembleObservation;
 
-    ENSEMBLE_OBSERVED_load = true;
-    update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ensembleObservationShouldLoad = true;
+    update_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
-  putAction("Update NAEFS", () -> {
-    CurrentDataSource = dataID_ENSEMBLE_FORECAST;
+  putAction("Update Ensemble Forecast", () -> {
+    currentDataSource = dataID_ensembleForecast;
 
-    ENSEMBLE_FORECAST_load = true;
-    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ensembleForecastShouldLoad = true;
+    update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   });
 
 
 
-  putAction("Use typical year (TMY)", () -> {
-    CurrentDataSource = dataID_CLIMATE_TMYEPW;
+  putAction("Use Climate Typical Year", () -> {
+    currentDataSource = dataID_climateTmyEpw;
 
-    CLIMATE_TMYEPW_load = true;
-    update_CLIMATE_TMYEPW();
+    climateTypicalYearShouldLoad = true;
+    update_climateTmyEpw();
 
     view_changed();
     WORLD.revise();
@@ -479,15 +479,15 @@ void build_allActions() {
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
-    WORLD.displayAll_TMYEPW = 1;
-    WORLD.displayNear_TMYEPW = true;
+    WORLD.climateTypicalYearDisplayAll = 1;
+    WORLD.climateTypicalYearDisplayNear = true;
   });
 
-  putAction("Use long-term (CWEEDS)", () -> {
-    CurrentDataSource = dataID_CLIMATE_CWEEDS;
+  putAction("Use Climate Engineering", () -> {
+    currentDataSource = dataID_climateEngineering;
 
-    CLIMATE_CWEEDS_load = true;
-    update_CLIMATE_CWEEDS();
+    climateEngineeringShouldLoad = true;
+    update_climateEngineering();
 
     view_changed();
     WORLD.revise();
@@ -496,15 +496,15 @@ void build_allActions() {
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
-    WORLD.displayAll_CWEEDS = 1;
-    WORLD.displayNear_CWEEDS = true;
+    WORLD.climateEngineeringDisplayAll = 1;
+    WORLD.climateEngineeringDisplayNear = true;
   });
 
-  putAction("Use long-term (CLMREC)", () -> {
-    CurrentDataSource = dataID_CLIMATE_CLMREC;
+  putAction("Use Climate Archive", () -> {
+    currentDataSource = dataID_climateArchive;
 
-    CLIMATE_CLMREC_load = true;
-    update_CLIMATE_CLMREC();
+    climateArchiveShouldLoad = true;
+    updateClimateArchive();
 
     view_changed();
     WORLD.revise();
@@ -513,16 +513,16 @@ void build_allActions() {
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
-    WORLD.displayAll_CLMREC = 1;
-    WORLD.displayNear_CLMREC = true;
+    WORLD.climateArchiveDisplayAll = 1;
+    WORLD.climateArchiveDisplayNear = true;
   });
 
-  putAction("Use real-time observed (SWOB)", () -> {
-    CurrentDataSource = dataID_ENSEMBLE_OBSERVED;
+  putAction("Use Ensemble Observation", () -> {
+    currentDataSource = dataID_ensembleObservation;
     STUDY.joinDays = 1;
 
-    ENSEMBLE_OBSERVED_load = true;
-    update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ensembleObservationShouldLoad = true;
+    update_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);
 
     view_changed();
     WORLD.revise();
@@ -531,16 +531,16 @@ void build_allActions() {
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
-    WORLD.displayAll_SWOB = 1;
-    WORLD.displayNear_SWOB = true;
+    WORLD.ensembleObservationDisplayAll = 1;
+    WORLD.ensembleObservationDisplayNear = true;
   });
 
-  putAction("Use weather forecast (NAEFS)", () -> {
-    CurrentDataSource = dataID_ENSEMBLE_FORECAST;
+  putAction("Use Ensemble Forecast", () -> {
+    currentDataSource = dataID_ensembleForecast;
     STUDY.joinDays = 1;
 
-    ENSEMBLE_FORECAST_load = true;
-    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ensembleForecastShouldLoad = true;
+    update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
     view_changed();
     WIN3D.revise();
@@ -549,55 +549,55 @@ void build_allActions() {
     UI_caseBar.revise();
 
     WORLD.hideAllMarkersAndLabels();
-    WORLD.displayAll_NAEFS = 1;
-    WORLD.displayNear_NAEFS = true;
+    WORLD.ensembleForecastDisplayAll = 1;
+    WORLD.ensembleForecastDisplayNear = true;
   });
 
   putAction("Active Shade", () -> {
-    WIN3D.Impact_TYPE = Impact_ACTIVE;
+    WIN3D.impactType = Impact_ACTIVE;
 
-    if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
     view_changed();
   });
 
   putAction("Passive Shade", () -> {
-    WIN3D.Impact_TYPE = Impact_PASSIVE;
+    WIN3D.impactType = Impact_PASSIVE;
 
-    if (WIN3D.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
     view_changed();
   });
 
   putAction("Shade Surface Wire", () -> {
-    WIN3D.FacesShade = SHADE.Surface_Wire;
+    WIN3D.shadingMode = SHADE.Surface_Wire;
     allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
 
     view_changed();
   });
 
   putAction("Shade Surface Base", () -> {
-    WIN3D.FacesShade = SHADE.Surface_Base;
+    WIN3D.shadingMode = SHADE.Surface_Base;
 
     view_changed();
   });
 
   putAction("Shade Surface White", () -> {
-    WIN3D.FacesShade = SHADE.Surface_White;
+    WIN3D.shadingMode = SHADE.Surface_White;
 
     view_changed();
   });
 
   putAction("Shade Surface Materials", () -> {
-    WIN3D.FacesShade = SHADE.Surface_Materials;
+    WIN3D.shadingMode = SHADE.Surface_Materials;
 
     view_changed();
   });
 
   putAction("Shade Global Solar", () -> {
-    WIN3D.FacesShade = SHADE.Global_Solar;
+    WIN3D.shadingMode = SHADE.Global_Solar;
 
     GlobalSolar_rebuild_array = true;
 
@@ -605,7 +605,7 @@ void build_allActions() {
   });
 
   putAction("Shade Vertex Solar", () -> {
-    WIN3D.FacesShade = SHADE.Vertex_Solar;
+    WIN3D.shadingMode = SHADE.Vertex_Solar;
 
     VertexSolar_rebuild_array = true;
 
@@ -613,13 +613,13 @@ void build_allActions() {
   });
 
   putAction("Shade Vertex Solid", () -> {
-    WIN3D.FacesShade = SHADE.Vertex_Solid;
+    WIN3D.shadingMode = SHADE.Vertex_Solid;
 
     view_changed();
   });
 
   putAction("Shade Vertex Elevation", () -> {
-    WIN3D.FacesShade = SHADE.Vertex_Elevation;
+    WIN3D.shadingMode = SHADE.Vertex_Elevation;
 
     view_changed();
   });
@@ -880,62 +880,62 @@ void build_allActions() {
     view_changed();
   });
 
-  putAction("Show/Hide SWOB stations", () -> {
-    WORLD.displayAll_SWOB = (WORLD.displayAll_SWOB + 1) % 2;
+  putAction("Show/Hide Ensemble Observation stations", () -> {
+    WORLD.ensembleObservationDisplayAll = (WORLD.ensembleObservationDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide SWOB nearest", () -> {
-    WORLD.displayNear_SWOB = !WORLD.displayNear_SWOB;
+  putAction("Show/Hide Ensemble Observation nearest", () -> {
+    WORLD.ensembleObservationDisplayNear = !WORLD.ensembleObservationDisplayNear;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide NAEFS stations", () -> {
-    WORLD.displayAll_NAEFS = (WORLD.displayAll_NAEFS + 1) % 2;
+  putAction("Show/Hide Ensemble Forecast stations", () -> {
+    WORLD.ensembleForecastDisplayAll = (WORLD.ensembleForecastDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide NAEFS nearest", () -> {
-    WORLD.displayNear_NAEFS = !WORLD.displayNear_NAEFS;
+  putAction("Show/Hide Ensemble Forecast nearest", () -> {
+    WORLD.ensembleForecastDisplayNear = !WORLD.ensembleForecastDisplayNear;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide CWEEDS stations", () -> {
-    WORLD.displayAll_CWEEDS = (WORLD.displayAll_CWEEDS + 1) % 2;
+  putAction("Show/Hide Climate Engineering stations", () -> {
+    WORLD.climateEngineeringDisplayAll = (WORLD.climateEngineeringDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide CWEEDS nearest", () -> {
-    WORLD.displayNear_CWEEDS = !WORLD.displayNear_CWEEDS;
+  putAction("Show/Hide Climate Engineering nearest", () -> {
+    WORLD.climateEngineeringDisplayNear = !WORLD.climateEngineeringDisplayNear;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide CLMREC stations", () -> {
-    WORLD.displayAll_CLMREC = (WORLD.displayAll_CLMREC + 1) % 2;
+  putAction("Show/Hide Climate Archive stations", () -> {
+    WORLD.climateArchiveDisplayAll = (WORLD.climateArchiveDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide CLMREC nearest", () -> {
-    WORLD.displayNear_CLMREC = !WORLD.displayNear_CLMREC;
+  putAction("Show/Hide Climate Archive nearest", () -> {
+    WORLD.climateArchiveDisplayNear = !WORLD.climateArchiveDisplayNear;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide TMYEPW stations", () -> {
-    WORLD.displayAll_TMYEPW = (WORLD.displayAll_TMYEPW + 1) % 2;
+  putAction("Show/Hide Climate Typical Year stations", () -> {
+    WORLD.climateTypicalYearDisplayAll = (WORLD.climateTypicalYearDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide TMYEPW nearest", () -> {
-    WORLD.displayNear_TMYEPW = !WORLD.displayNear_TMYEPW;
+  putAction("Show/Hide Climate Typical Year nearest", () -> {
+    WORLD.climateTypicalYearDisplayNear = !WORLD.climateTypicalYearDisplayNear;
 
     WORLD.revise();
   });
@@ -1211,22 +1211,22 @@ void build_allActions() {
   });
 
   putAction("Viewport >> Camera", () -> {
-    float Camera_pX = WIN3D.position_X;
-    float Camera_pY = WIN3D.position_Y;
-    float Camera_pZ = WIN3D.position_Z;
-    float Camera_pT = WIN3D.position_T;
-    float Camera_rX = WIN3D.rotation_X;
-    float Camera_rY = WIN3D.rotation_Y;
-    float Camera_rZ = WIN3D.rotation_Z;
-    float Camera_rT = WIN3D.rotation_T;
-    float Camera_zoom = WIN3D.Zoom;
+    float Camera_pX = WIN3D.positionX;
+    float Camera_pY = WIN3D.positionY;
+    float Camera_pZ = WIN3D.positionZ;
+    float Camera_pT = WIN3D.positionStep;
+    float Camera_rX = WIN3D.rotationX;
+    float Camera_rY = WIN3D.rotationY;
+    float Camera_rZ = WIN3D.rotationZ;
+    float Camera_rT = WIN3D.rotationStep;
+    float Camera_zoom = WIN3D.zoom;
 
-    int Camera_type = WIN3D.ViewType;
+    int Camera_type = WIN3D.projectionTypeIndex;
 
     allCameras.create(Camera_pX, Camera_pY, Camera_pZ, Camera_pT, Camera_rX, Camera_rY, Camera_rZ, Camera_rT, Camera_zoom, Camera_type);
 
-    WIN3D.currentCamera = allCameras.num - 1;
-    WIN3D.apply_currentCamera();
+    WIN3D.currentCameraIndex = allCameras.num - 1;
+    WIN3D.apply_currentCameraIndex();
     modify_Viewport_Title();
 
     view_changed();
@@ -1235,18 +1235,18 @@ void build_allActions() {
   });
 
   putAction("Camera >> Viewport", () -> {
-    allCameras.set_posX(0, allCameras.get_posX(WIN3D.currentCamera));
-    allCameras.set_posY(0, allCameras.get_posY(WIN3D.currentCamera));
-    allCameras.set_posZ(0, allCameras.get_posZ(WIN3D.currentCamera));
-    allCameras.set_posT(0, allCameras.get_posT(WIN3D.currentCamera));
-    allCameras.set_rotX(0, allCameras.get_rotX(WIN3D.currentCamera));
-    allCameras.set_rotY(0, allCameras.get_rotY(WIN3D.currentCamera));
-    allCameras.set_rotZ(0, allCameras.get_rotZ(WIN3D.currentCamera));
-    allCameras.set_rotT(0, allCameras.get_rotT(WIN3D.currentCamera));
-    allCameras.set_zoom(0, allCameras.get_zoom(WIN3D.currentCamera));
-    allCameras.set_type(0, allCameras.get_type(WIN3D.currentCamera));
+    allCameras.set_posX(0, allCameras.get_posX(WIN3D.currentCameraIndex));
+    allCameras.set_posY(0, allCameras.get_posY(WIN3D.currentCameraIndex));
+    allCameras.set_posZ(0, allCameras.get_posZ(WIN3D.currentCameraIndex));
+    allCameras.set_posT(0, allCameras.get_posT(WIN3D.currentCameraIndex));
+    allCameras.set_rotX(0, allCameras.get_rotX(WIN3D.currentCameraIndex));
+    allCameras.set_rotY(0, allCameras.get_rotY(WIN3D.currentCameraIndex));
+    allCameras.set_rotZ(0, allCameras.get_rotZ(WIN3D.currentCameraIndex));
+    allCameras.set_rotT(0, allCameras.get_rotT(WIN3D.currentCameraIndex));
+    allCameras.set_zoom(0, allCameras.get_zoom(WIN3D.currentCameraIndex));
+    allCameras.set_type(0, allCameras.get_type(WIN3D.currentCameraIndex));
 
-    WIN3D.currentCamera = 0;
+    WIN3D.currentCameraIndex = 0;
     modify_Viewport_Title();
 
     view_changed();
@@ -1256,8 +1256,8 @@ void build_allActions() {
 
   putAction("Camera View", () -> {
     if (Select3D.Camera_ids.length > 0) {
-      WIN3D.currentCamera = Select3D.Camera_ids[Select3D.Camera_ids.length - 1];
-      WIN3D.apply_currentCamera();
+      WIN3D.currentCameraIndex = Select3D.Camera_ids[Select3D.Camera_ids.length - 1];
+      WIN3D.apply_currentCameraIndex();
       modify_Viewport_Title();
 
       view_changed();
@@ -1575,11 +1575,11 @@ void build_allActions() {
   });
 
   putAction("Weld Objects Selected Vertices", () -> {
-    Modify3D.weldObjectsVertices_Selection(User3D.modify_WeldTreshold);
+    Modify3D.weldObjectsVertices_Selection(User3D.modifierWeldThreshold);
   });
 
   putAction("Weld Scene Selected Vertices", () -> {
-    Modify3D.weldSceneVertices_Selection(User3D.modify_WeldTreshold);
+    Modify3D.weldSceneVertices_Selection(User3D.modifierWeldThreshold);
   });
 
   putAction("Reposition Selected Vertices", () -> {
@@ -1642,20 +1642,20 @@ void build_allActions() {
     Modify3D.forceTriangulateFaces_Selection();
   });
 
-  putAction("Insert Corner Opennings", () -> {
-    Modify3D.insertCornerOpennings_Selection();
+  putAction("Insert Corner Openings", () -> {
+    Modify3D.insertCornerOpenings_Selection();
   });
 
-  putAction("Insert Parallel Opennings", () -> {
-    Modify3D.insertParallelOpennings_Selection();
+  putAction("Insert Parallel Openings", () -> {
+    Modify3D.insertParallelOpenings_Selection();
   });
 
-  putAction("Insert Rotated Opennings", () -> {
-    Modify3D.insertRotatedOpennings_Selection();
+  putAction("Insert Rotated Openings", () -> {
+    Modify3D.insertRotatedOpenings_Selection();
   });
 
-  putAction("Insert Edge Opennings", () -> {
-    Modify3D.insertEdgeOpennings_Selection();
+  putAction("Insert Edge Openings", () -> {
+    Modify3D.insertEdgeOpenings_Selection();
   });
 
   putAction("Optimize Faces", () -> {
@@ -1679,19 +1679,19 @@ void build_allActions() {
   });
 
   putAction("Offset(above) Vertices", () -> {
-    Modify3D.offsetVertices_Selection(0, abs(User3D.modify_OffsetAmount));
+    Modify3D.offsetVertices_Selection(0, abs(User3D.modifierOffsetAmount));
   });
 
   putAction("Offset(below) Vertices", () -> {
-    Modify3D.offsetVertices_Selection(0, -abs(User3D.modify_OffsetAmount));
+    Modify3D.offsetVertices_Selection(0, -abs(User3D.modifierOffsetAmount));
   });
 
   putAction("Offset(expand) Vertices", () -> {
-    Modify3D.offsetVertices_Selection(1, abs(User3D.modify_OffsetAmount));
+    Modify3D.offsetVertices_Selection(1, abs(User3D.modifierOffsetAmount));
   });
 
   putAction("Offset(shrink) Vertices", () -> {
-    Modify3D.offsetVertices_Selection(1, -abs(User3D.modify_OffsetAmount));
+    Modify3D.offsetVertices_Selection(1, -abs(User3D.modifierOffsetAmount));
   });
 
   putAction("Reverse Visibility of All-Faces", () -> {
@@ -1970,27 +1970,27 @@ void build_allActions() {
     UI_setTo_View_PivotZ(1);
   });
 
-  putAction("Show SWOB stations",   () -> {WORLD.displayAll_SWOB = 1; WORLD.revise();});
-  putAction("Show SWOB nearest",    () -> {WORLD.displayNear_SWOB = true; WORLD.revise();});
-  putAction("Show NAEFS stations",  () -> {WORLD.displayAll_NAEFS = 1; WORLD.revise();});
-  putAction("Show NAEFS nearest",   () -> {WORLD.displayNear_NAEFS = true; WORLD.revise();});
-  putAction("Show CWEEDS stations", () -> {WORLD.displayAll_CWEEDS = 1; WORLD.revise();});
-  putAction("Show CWEEDS nearest",  () -> {WORLD.displayNear_CWEEDS = true; WORLD.revise();});
-  putAction("Show CLMREC stations", () -> {WORLD.displayAll_CLMREC = 1; WORLD.revise();});
-  putAction("Show CLMREC nearest",  () -> {WORLD.displayNear_CLMREC = true; WORLD.revise();});
-  putAction("Show TMYEPW stations", () -> {WORLD.displayAll_TMYEPW = 1; WORLD.revise();});
-  putAction("Show TMYEPW nearest",  () -> {WORLD.displayNear_TMYEPW = true; WORLD.revise();});
+  putAction("Show Ensemble Observation stations",   () -> {WORLD.ensembleObservationDisplayAll = 1; WORLD.revise();});
+  putAction("Show Ensemble Observation nearest",    () -> {WORLD.ensembleObservationDisplayNear = true; WORLD.revise();});
+  putAction("Show Ensemble Forecast stations",  () -> {WORLD.ensembleForecastDisplayAll = 1; WORLD.revise();});
+  putAction("Show Ensemble Forecast nearest",   () -> {WORLD.ensembleForecastDisplayNear = true; WORLD.revise();});
+  putAction("Show Climate Engineering stations", () -> {WORLD.climateEngineeringDisplayAll = 1; WORLD.revise();});
+  putAction("Show Climate Engineering nearest",  () -> {WORLD.climateEngineeringDisplayNear = true; WORLD.revise();});
+  putAction("Show Climate Archive stations", () -> {WORLD.climateArchiveDisplayAll = 1; WORLD.revise();});
+  putAction("Show Climate Archive nearest",  () -> {WORLD.climateArchiveDisplayNear = true; WORLD.revise();});
+  putAction("Show Climate Typical Year stations", () -> {WORLD.climateTypicalYearDisplayAll = 1; WORLD.revise();});
+  putAction("Show Climate Typical Year nearest",  () -> {WORLD.climateTypicalYearDisplayNear = true; WORLD.revise();});
 
-  putAction("Hide SWOB stations",   () -> {WORLD.displayAll_SWOB = 0; WORLD.revise();});
-  putAction("Hide SWOB nearest",    () -> {WORLD.displayNear_SWOB = false; WORLD.revise();});
-  putAction("Hide NAEFS stations",  () -> {WORLD.displayAll_NAEFS = 0; WORLD.revise();});
-  putAction("Hide NAEFS nearest",   () -> {WORLD.displayNear_NAEFS = false; WORLD.revise();});
-  putAction("Hide CWEEDS stations", () -> {WORLD.displayAll_CWEEDS = 0; WORLD.revise();});
-  putAction("Hide CWEEDS nearest",  () -> {WORLD.displayNear_CWEEDS = false; WORLD.revise();});
-  putAction("Hide CLMREC stations", () -> {WORLD.displayAll_CLMREC = 0; WORLD.revise();});
-  putAction("Hide CLMREC nearest",  () -> {WORLD.displayNear_CLMREC = false; WORLD.revise();});
-  putAction("Hide TMYEPW stations", () -> {WORLD.displayAll_TMYEPW = 0; WORLD.revise();});
-  putAction("Hide TMYEPW nearest",  () -> {WORLD.displayNear_TMYEPW = false; WORLD.revise();});
+  putAction("Hide Ensemble Observation stations",   () -> {WORLD.ensembleObservationDisplayAll = 0; WORLD.revise();});
+  putAction("Hide Ensemble Observation nearest",    () -> {WORLD.ensembleObservationDisplayNear = false; WORLD.revise();});
+  putAction("Hide Ensemble Forecast stations",  () -> {WORLD.ensembleForecastDisplayAll = 0; WORLD.revise();});
+  putAction("Hide Ensemble Forecast nearest",   () -> {WORLD.ensembleForecastDisplayNear = false; WORLD.revise();});
+  putAction("Hide Climate Engineering stations", () -> {WORLD.climateEngineeringDisplayAll = 0; WORLD.revise();});
+  putAction("Hide Climate Engineering nearest",  () -> {WORLD.climateEngineeringDisplayNear = false; WORLD.revise();});
+  putAction("Hide Climate Archive stations", () -> {WORLD.climateArchiveDisplayAll = 0; WORLD.revise();});
+  putAction("Hide Climate Archive nearest",  () -> {WORLD.climateArchiveDisplayNear = false; WORLD.revise();});
+  putAction("Hide Climate Typical Year stations", () -> {WORLD.climateTypicalYearDisplayAll = 0; WORLD.revise();});
+  putAction("Hide Climate Typical Year nearest",  () -> {WORLD.climateTypicalYearDisplayNear = false; WORLD.revise();});
 
   putAction("Show Land Mesh",     () -> {Land3D.displaySurface = true; view_changed();});
   putAction("Show Land Texture",  () -> {Land3D.displayTexture = true; view_changed();});

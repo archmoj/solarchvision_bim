@@ -4,8 +4,8 @@ void update_project_folders () {
 
   Folder_GEOMET = Folder_Project + "/data/GEOMET" + "/" + RunStamp;
 
-  Folder_ENSEMBLE_FORECAST = Folder_Project + "/data/NAEFS";
-  Folder_ENSEMBLE_OBSERVED = Folder_Project + "/data/SWOB";
+  Folder_ensembleForecast = Folder_Project + "/data/NAEFS";
+  Folder_ensembleObservation = Folder_Project + "/data/SWOB";
 
   Folder_Shadings = Folder_Project + "/shadings";
 
@@ -20,11 +20,11 @@ void update_project_folders () {
   if (filenames != null) SavedScreenShots = filenames.length;
 }
 
-String Folder_CLIMATE_TMYEPW = BaseFolder + "/input/climate/TMYEPW";
-String Folder_CLIMATE_CWEEDS = BaseFolder + "/input/climate/CWEEDS";
-String Folder_CLIMATE_CLMREC = BaseFolder + "/input/climate/CLMREC";
-String Folder_ENSEMBLE_OBSERVED;
-String Folder_ENSEMBLE_FORECAST;
+String Folder_climateTmyEpw = BaseFolder + "/input/climate/TMYEPW";
+String Folder_climateEngineering = BaseFolder + "/input/climate/CWEEDS";
+String Folder_climateArchive = BaseFolder + "/input/climate/CLMREC";
+String Folder_ensembleObservation;
+String Folder_ensembleForecast;
 String Folder_GEOMET;
 
 String Folder_Coordinates = BaseFolder + "/input/coordinates";

@@ -316,7 +316,7 @@ command_name value
 ```
 
 For example, `begin_day 15` sets the calendar day to 15, and
-`tmyepw_displaynear 1` turns that display option on (`0` turns it off).
+`climate_typical_year_display_near 1` turns that display option on (`0` turns it off).
 
 A few things worth knowing:
 
@@ -382,16 +382,16 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `TMYEPW displayNear` | Toggle: highlight the nearest EPW/TMY station on the map | 0 or 1 |
-| `CWEEDS displayNear` | Toggle: highlight the nearest CWEEDS station on the map | 0 or 1 |
-| `CLMREC displayNear` | Toggle: highlight the nearest CLMREC station on the map | 0 or 1 |
-| `NAEFS displayNear` | Toggle: highlight the nearest NAEFS forecast point on the map | 0 or 1 |
-| `SWOB displayNear` | Toggle: highlight the nearest SWOB station on the map | 0 or 1 |
-| `TMYEPW displayAll` | 0 = hide, 1 = show, 2 = show with labels - all EPW/TMY stations | 0 to 2 |
-| `CWEEDS displayAll` | 0 = hide, 1 = show, 2 = show with labels - all CWEEDS stations | 0 to 2 |
-| `CLMREC displayAll` | 0 = hide, 1 = show, 2 = show with labels - all CLMREC stations | 0 to 2 |
-| `NAEFS displayAll` | 0 = hide, 1 = show, 2 = show with labels - all NAEFS points | 0 to 2 |
-| `SWOB displayAll` | 0 = hide, 1 = show, 2 = show with labels - all SWOB stations | 0 to 2 |
+| `Climate Typical Year Display Near` | Toggle: highlight the nearest EPW/TMY station on the map | 0 or 1 |
+| `Climate Engineering displayNear` | Toggle: highlight the nearest Climate Engineering station on the map | 0 or 1 |
+| `CLMREC displayNear` | Toggle: highlight the nearest Climate Archive station on the map | 0 or 1 |
+| `NAEFS displayNear` | Toggle: highlight the nearest Ensemble Forecast forecast point on the map | 0 or 1 |
+| `SWOB displayNear` | Toggle: highlight the nearest Ensemble Observation station on the map | 0 or 1 |
+| `Climate Typical Year Display All` | 0 = hide, 1 = show, 2 = show with labels - all EPW/TMY stations | 0 to 2 |
+| `Climate Engineering displayAll` | 0 = hide, 1 = show, 2 = show with labels - all Climate Engineering stations | 0 to 2 |
+| `CLMREC displayAll` | 0 = hide, 1 = show, 2 = show with labels - all Climate Archive stations | 0 to 2 |
+| `NAEFS displayAll` | 0 = hide, 1 = show, 2 = show with labels - all Ensemble Forecast points | 0 to 2 |
+| `SWOB displayAll` | 0 = hide, 1 = show, 2 = show with labels - all Ensemble Observation stations | 0 to 2 |
 
 ### Camera
 
@@ -482,7 +482,7 @@ the user interface.
 | `Modify3D openningDeviation` | Allowed random deviation applied to inserted openings | 0 to 1 |
 | `Modify3D tessellateRows` | Number of rows used by the row/column tessellation tool | 1 to 100 |
 | `Modify3D tessellateColumns` | Number of columns used by the row/column tessellation tool | 1 to 100 |
-| `Modify3D weldTreshold` | Maximum distance between vertices for the weld tools to merge them | 0 to 10 |
+| `Modify3D weldThreshold` | Maximum distance between vertices for the weld tools to merge them | 0 to 10 |
 
 ### Export defaults (3D-export)
 
@@ -535,7 +535,7 @@ the user interface.
 | `Earth3D displaySurface` | Toggle: show the Earth globe surface | 0 or 1 |
 | `Earth3D displayTexture` | Toggle: show the Earth globe texture | 0 or 1 |
 | `Earth3D levelOfDetail` | Level of detail (tile resolution) used for the Earth globe texture | 0.0625 to 16 |
-| `Planetary magnification` | Visual size multiplier for the sun/moon/planets | 1 to 64 |
+| `Celestial magnification` | Visual size multiplier for the sun/moon/planets | 1 to 64 |
 
 ### Shading colour palettes
 
@@ -656,7 +656,7 @@ the user interface.
 | Command | What it sets | Range |
 |---|---|---|
 | `Develop option` | (developer/debug option) | 0 to 11 |
-| `Develop dayHour` | (developer/debug option) | 0 to 3 |
+| `Develop interval` | (developer/debug option) | 0 to 3 |
 
 ------------------------------------------------------------------------
 
@@ -736,8 +736,8 @@ Most viewable elements have up to three related commands: `Show <X>`
 (make it visible), `Hide <X>` (make it invisible), and `Show/Hide <X>`
 (toggle it). `<X>` is one of:
 
-`Cameras`, `CLMREC nearest`, `CLMREC stations`, `CWEEDS nearest`,
-`CWEEDS stations`, `Earth Surface`, `Edges`, `Faces`, `Land Depth`,
+`Cameras`, `CLMREC nearest`, `CLMREC stations`, `Climate Engineering nearest`,
+`Climate Engineering stations`, `Earth Surface`, `Edges`, `Faces`, `Land Depth`,
 `Land Mesh`, `Land Points`, `Land Texture`, `Leaves`, `Model1Ds`,
 `Model2Ds`, `Moon Surface`, `NAEFS nearest`, `NAEFS stations`, `Normals`,
 `Polylines`, `Sections`, `Selected 1D Edges`, `Selected 2D Edges`,
@@ -801,15 +801,15 @@ commands, each switching to a mouse-drag tool for that one axis:
 
 ### Weather and climate data
 
--   `Download TMYEPW`, `Download CWEEDS`, `Download NAEFS`,
-    `Download SWOB`, `Download CLMREC`, `Download Land Mesh`,
+-   `Download Climate Typical Year`, `Download Climate Engineering`, `Download Ensemble Forecast`,
+    `Download Ensemble Observation`, `Download Climate Archive`, `Download Land Mesh`,
     `Download Land Texture`
--   `Update TMYEPW`, `Update CWEEDS`, `Update NAEFS`, `Update SWOB`,
-    `Update CLMREC`, `Update Station`
+-   `Update Climate Typical Year`, `Update Climate Engineering`, `Update Ensemble Forecast`, `Update Ensemble Observation`,
+    `Update Climate Archive`, `Update Station`
 -   `Load Land Mesh`, `Load Land Texture`, `Load Toroposphere`
--   `Use typical year (TMY)`, `Use long-term (CWEEDS)`,
-    `Use long-term (CLMREC)`, `Use real-time observed (SWOB)`,
-    `Use weather forecast (NAEFS)`: choose which data source feeds the
+-   `Use Climate Typical Year`, `Use Climate Engineering`,
+    `Use Climate Archive`, `Use Ensemble Observation`,
+    `Use Ensemble Forecast`: choose which data source feeds the
     current study
 
 ### Impact analysis
@@ -840,8 +840,8 @@ commands, each switching to a mouse-drag tool for that one axis:
 
 -   `Offset(above) Vertices`, `Offset(below) Vertices`,
     `Offset(expand) Vertices`, `Offset(shrink) Vertices`
--   `Insert Corner Opennings`, `Insert Edge Opennings`,
-    `Insert Parallel Opennings`, `Insert Rotated Opennings`
+-   `Insert Corner Openings`, `Insert Edge Openings`,
+    `Insert Parallel Openings`, `Insert Rotated Openings`
 -   `Extrude Face Edges`
 -   `Weld Objects Selected Vertices`, `Weld Scene Selected Vertices`,
     `Separate Selected Vertices`

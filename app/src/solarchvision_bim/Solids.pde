@@ -7,9 +7,9 @@ class Solids {
   }
 
   boolean displayAll = true;
-  int palette_CLR = 17; //1;
-  int palette_DIR = -1;
-  float palette_MLT = 0.5; //1;
+  int colorScaleIndex = 17; //1;
+  int colorScaleDirection = -1;
+  float colorScaleFactor = 0.5; //1;
 
   float[][] DEF;
 
@@ -339,7 +339,7 @@ class Solids {
             float y = ImageVertex[q][1];
             float z = ImageVertex[q][2];
 
-            WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+            WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale);
 
             if (q != 0) {
 
@@ -579,9 +579,9 @@ class Solids {
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
-    XML_setInt(parent, "palette_CLR", this.palette_CLR);
-    XML_setInt(parent, "palette_DIR", this.palette_DIR);
-    XML_setFloat(parent, "palette_MLT", this.palette_MLT);
+    XML_setInt(parent, "colorScaleIndex", this.colorScaleIndex);
+    XML_setInt(parent, "colorScaleDirection", this.colorScaleDirection);
+    XML_setFloat(parent, "colorScaleFactor", this.colorScaleFactor);
   }
 
 
@@ -616,9 +616,9 @@ class Solids {
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
-    this.palette_CLR = XML_getInt(parent, "palette_CLR");
-    this.palette_DIR = XML_getInt(parent, "palette_DIR");
-    this.palette_MLT = XML_getFloat(parent, "palette_MLT");
+    this.colorScaleIndex = XML_getInt(parent, "colorScaleIndex");
+    this.colorScaleDirection = XML_getInt(parent, "colorScaleDirection");
+    this.colorScaleFactor = XML_getFloat(parent, "colorScaleFactor");
   }
 
 }

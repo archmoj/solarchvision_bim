@@ -11,67 +11,66 @@ void saveProject (String myFile) {
   {
     XML parent = xml.addChild("variables");
 
-    XML_setInt(parent, "current_ObjectCategory", current_ObjectCategory);
+    XML_setInt(parent, "currentObjectCategory", currentObjectCategory);
 
-    XML_setFloat(parent, "GlobalAlbedo", GlobalAlbedo);
-    XML_setFloat(parent, "Interpolation_Weight", Interpolation_Weight);
+    XML_setFloat(parent, "globalAlbedo", globalAlbedo);
+    XML_setFloat(parent, "interpolationWeight", interpolationWeight);
 
-    XML_setInt(parent, "CLIMATIC_SolarForecast", CLIMATIC_SolarForecast);
-    XML_setInt(parent, "CLIMATIC_WeatherForecast", CLIMATIC_WeatherForecast);
+    XML_setInt(parent, "climateBasedSolarForecast", climateBasedSolarForecast);
+    XML_setInt(parent, "climateBasedWeatherForecast", climateBasedWeatherForecast);
 
-    XML_setInt(parent, "CLIMATE_TMYEPW_start", CLIMATE_TMYEPW_start);
-    XML_setInt(parent, "CLIMATE_TMYEPW_end", CLIMATE_TMYEPW_end);
-    XML_setInt(parent, "CLIMATE_CWEEDS_start", CLIMATE_CWEEDS_start);
-    XML_setInt(parent, "CLIMATE_CWEEDS_end", CLIMATE_CWEEDS_end);
-    XML_setInt(parent, "CLIMATE_CLMREC_start", CLIMATE_CLMREC_start);
-    XML_setInt(parent, "CLIMATE_CLMREC_end", CLIMATE_CLMREC_end);
-    XML_setInt(parent, "ENSEMBLE_FORECAST_start", ENSEMBLE_FORECAST_start);
-    XML_setInt(parent, "ENSEMBLE_FORECAST_end", ENSEMBLE_FORECAST_end);
-    XML_setInt(parent, "ENSEMBLE_FORECAST_maxDays", ENSEMBLE_FORECAST_maxDays);
-    XML_setInt(parent, "ENSEMBLE_OBSERVED_maxDays", ENSEMBLE_OBSERVED_maxDays);
-    XML_setInt(parent, "ENSEMBLE_OBSERVED_numNearest", ENSEMBLE_OBSERVED_numNearest);
-    XML_setInt(parent, "ENSEMBLE_OBSERVED_start", ENSEMBLE_OBSERVED_start);
-    XML_setInt(parent, "ENSEMBLE_OBSERVED_end", ENSEMBLE_OBSERVED_end);
-    XML_setInt(parent, "SampleYear_Start", SampleYear_Start);
-    XML_setInt(parent, "SampleYear_End", SampleYear_End);
-    XML_setInt(parent, "SampleMember_Start", SampleMember_Start);
-    XML_setInt(parent, "SampleMember_End", SampleMember_End);
-    XML_setInt(parent, "SampleStation_Start", SampleStation_Start);
-    XML_setInt(parent, "SampleStation_End", SampleStation_End);
-    XML_setBoolean(parent, "CLIMATE_TMYEPW_load", CLIMATE_TMYEPW_load);
-    XML_setBoolean(parent, "CLIMATE_CWEEDS_load", CLIMATE_CWEEDS_load);
-    XML_setBoolean(parent, "CLIMATE_CLMREC_load", CLIMATE_CLMREC_load);
-    XML_setBoolean(parent, "ENSEMBLE_FORECAST_load", ENSEMBLE_FORECAST_load);
-    XML_setBoolean(parent, "ENSEMBLE_OBSERVED_load", ENSEMBLE_OBSERVED_load);
-    XML_setInt(parent, "Develop_Option", Develop_Option);
-    XML_setInt(parent, "Develop_DayHour", Develop_DayHour);
-    XML_setBoolean(parent, "DevelopData_update", DevelopData_update);
+    XML_setInt(parent, "climateTypicalYearStart", climateTypicalYearStart);
+    XML_setInt(parent, "climateTypicalYearEnd", climateTypicalYearEnd);
+    XML_setInt(parent, "climateEngineeringStart", climateEngineeringStart);
+    XML_setInt(parent, "climateEngineeringEnd", climateEngineeringEnd);
+    XML_setInt(parent, "climateArchiveStart", climateArchiveStart);
+    XML_setInt(parent, "climateArchiveEnd", climateArchiveEnd);
+    XML_setInt(parent, "ensembleForecastStart", ensembleForecastStart);
+    XML_setInt(parent, "ensembleForecastEnd", ensembleForecastEnd);
+    XML_setInt(parent, "ensembleForecastMaxDays", ensembleForecastMaxDays);
+    XML_setInt(parent, "ensembleObservationMaxDays", ensembleObservationMaxDays);
+    XML_setInt(parent, "nearestWeatherStationCount", nearestWeatherStationCount);
+    XML_setInt(parent, "ensembleObservationStart", ensembleObservationStart);
+    XML_setInt(parent, "ensembleObservationEnd", ensembleObservationEnd);
+    XML_setInt(parent, "sampleYearStart", sampleYearStart);
+    XML_setInt(parent, "sampleYearEnd", sampleYearEnd);
+    XML_setInt(parent, "sampleMemberStart", sampleMemberStart);
+    XML_setInt(parent, "sampleMemberEnd", sampleMemberEnd);
+    XML_setInt(parent, "sampleStationStart", sampleStationStart);
+    XML_setInt(parent, "sampleStationEnd", sampleStationEnd);
+    XML_setBoolean(parent, "climateTypicalYearShouldLoad", climateTypicalYearShouldLoad);
+    XML_setBoolean(parent, "climateEngineeringShouldLoad", climateEngineeringShouldLoad);
+    XML_setBoolean(parent, "climateArchiveShouldLoad", climateArchiveShouldLoad);
+    XML_setBoolean(parent, "ensembleForecastShouldLoad", ensembleForecastShouldLoad);
+    XML_setBoolean(parent, "ensembleObservationShouldLoad", ensembleObservationShouldLoad);
+    XML_setInt(parent, "developLayerOption", developLayerOption);
+    XML_setInt(parent, "developLayerInterval", developLayerInterval);
+    XML_setBoolean(parent, "developDataUpdate", developDataUpdate);
 
-    XML_setFloat(parent, "Develop_AngleInclination", Develop_AngleInclination);
-    XML_setFloat(parent, "Develop_AngleOrientation", Develop_AngleOrientation);
-    XML_setInt(parent, "DevelopLayer_id", DevelopLayer_id);
-    XML_setInt(parent, "CurrentLayer_id", CurrentLayer_id);
+    XML_setFloat(parent, "developLayerAngleInclination", developLayerAngleInclination);
+    XML_setFloat(parent, "developLayerAngleOrientation", developLayerAngleOrientation);
+    XML_setInt(parent, "developLayerId", developLayerId);
+    XML_setInt(parent, "currentLayerId", currentLayerId);
 
-    XML_setInt(parent, "COLOR_STYLE_Current", COLOR_STYLE_Current);
-    XML_setInt(parent, "COLOR_STYLE_Number", COLOR_STYLE_Number);
+    XML_setInt(parent, "currentColorStyle", currentColorStyle);
+    XML_setInt(parent, "colorStyleCount", colorStyleCount);
 
-    XML_setInt(parent, "CurrentDataSource", CurrentDataSource);
-    XML_setInt(parent, "DrawnFrame", DrawnFrame);
-
+    XML_setInt(parent, "currentDataSource", currentDataSource);
 
 
-    XML_setFloat(parent, "Planetary_Magnification", Planetary_Magnification);
+
+    XML_setFloat(parent, "celestialMagnification", celestialMagnification);
 
 
-    //XML_setInt(parent, "Camera_Variation", Camera_Variation);
+    //XML_setInt(parent, "cameraIndex", cameraIndex);
 
     XML_setInt(parent, "allMaterials.Selection", allMaterials.Selection);
-    XML_setFloat(parent, "OBJECTS_scale", OBJECTS_scale);
+    XML_setFloat(parent, "overallScale", overallScale);
 
-    XML_setInt(parent, "ViewLayout", ViewLayout);
-    XML_setInt(parent, "Language_Active", Language_Active);
+    XML_setInt(parent, "viewLayout", viewLayout);
+    XML_setInt(parent, "activeLanguage", activeLanguage);
 
-    XML_setInt(parent, "IMPACTS_displayDay", IMPACTS_displayDay);
+    XML_setInt(parent, "impactDisplayDay", impactDisplayDay);
 
     XML_setString(parent, "Default_Font", Default_Font);
   }

@@ -12,13 +12,13 @@ class Faces {
 
   int displayTessellation = 2;
 
-  int ACTIVE_palette_CLR = 19; //15; //14;
-  int ACTIVE_palette_DIR = 1;
-  float ACTIVE_palette_MLT = 1;
+  int activeColorScaleIndex = 19; //15; //14;
+  int activeColorScaleDirection = 1;
+  float activeColorScaleFactor = 1;
 
-  int PASSIVE_palette_CLR = 1;
-  int PASSIVE_palette_DIR = 1;
-  float PASSIVE_palette_MLT = 0.25;
+  int passiveColorScaleIndex = 1;
+  int passiveColorScaleDirection = 1;
+  float passiveColorScaleFactor = 0.25;
 
 
   int[][] nodes;
@@ -193,13 +193,13 @@ class Faces {
                 };
                 W = funcs.vec3_unit(W);
 
-                float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
-                float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
-                float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
+                float x0 = base_Vertices[s][0] * overallScale * WIN3D.scale;
+                float y0 = base_Vertices[s][1] * overallScale * WIN3D.scale;
+                float z0 = base_Vertices[s][2] * overallScale * WIN3D.scale;
 
-                float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D.scale;
-                float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D.scale;
-                float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D.scale;
+                float x1 = (base_Vertices[s][0] + W[0]) * overallScale * WIN3D.scale;
+                float y1 = (base_Vertices[s][1] + W[1]) * overallScale * WIN3D.scale;
+                float z1 = (base_Vertices[s][2] + W[2]) * overallScale * WIN3D.scale;
 
                 G_x0 += x0 / n;
                 G_y0 += y0 / n;
@@ -219,9 +219,9 @@ class Faces {
 
               for (int s = 0; s < base_Vertices.length; s++) {
 
-                float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D.scale;
-                float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D.scale;
-                float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D.scale;
+                float x0 = base_Vertices[s][0] * overallScale * WIN3D.scale;
+                float y0 = base_Vertices[s][1] * overallScale * WIN3D.scale;
+                float z0 = base_Vertices[s][2] * overallScale * WIN3D.scale;
 
                 WIN3D.graphics.line(x0, -y0, z0, G_x1, -G_y1, G_z1);
               }
@@ -244,7 +244,7 @@ class Faces {
 
           if (vsb > 0) {
 
-            if (WIN3D.FacesShade == SHADE.Surface_Base) {
+            if (WIN3D.shadingMode == SHADE.Surface_Base) {
 
               WIN3D.graphics.fill(255, 255, 255);
 
@@ -255,9 +255,9 @@ class Faces {
               for (int j = 0; j < this.nodes[f].length; j++) {
                 int vNo = this.nodes[f][j];
 
-                float px =  allPoints.getX(vNo) * OBJECTS_scale * WIN3D.scale;
-                float py = -allPoints.getY(vNo) * OBJECTS_scale * WIN3D.scale;
-                float pz =  allPoints.getZ(vNo) * OBJECTS_scale * WIN3D.scale;
+                float px =  allPoints.getX(vNo) * overallScale * WIN3D.scale;
+                float py = -allPoints.getY(vNo) * overallScale * WIN3D.scale;
+                float pz =  allPoints.getZ(vNo) * overallScale * WIN3D.scale;
 
                 WIN3D.graphics.vertex(px, py, pz);
 
@@ -301,7 +301,7 @@ class Faces {
 
                 for (int s = 0; s < subFace.length; s++) {
 
-                  if (WIN3D.FacesShade != SHADE.Surface_Wire) {
+                  if (WIN3D.shadingMode != SHADE.Surface_Wire) {
 
                     float[] COL = {
                       255, 255, 255, 255
@@ -310,31 +310,31 @@ class Faces {
                     int s_next = (s + 1) % subFace.length;
                     int s_prev = (s + subFace.length - 1) % subFace.length;
 
-                    if (WIN3D.FacesShade == SHADE.Global_Solar) {
+                    if (WIN3D.shadingMode == SHADE.Global_Solar) {
 
                       COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                     }
 
-                    if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+                    if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
 
                       COL = SHADE.vertexRender_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                     }
 
-                    if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
+                    if (WIN3D.shadingMode == SHADE.Vertex_Solid) {
 
                       COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                     }
 
-                    if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+                    if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
 
                       COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                     }
 
-                    if (WIN3D.FacesShade == SHADE.Surface_Materials) {
+                    if (WIN3D.shadingMode == SHADE.Surface_Materials) {
                       COL = SHADE.vertexRender_Surface_Materials(mt);
                     }
 
-                    if (WIN3D.FacesShade == SHADE.Surface_White) {
+                    if (WIN3D.shadingMode == SHADE.Surface_White) {
                       COL = SHADE.vertexRender_Surface_White(255);
                     }
 
@@ -343,9 +343,9 @@ class Faces {
                     WIN3D.graphics.noFill();
                   }
 
-                  float px =  subFace[s][0] * OBJECTS_scale * WIN3D.scale;
-                  float py = -subFace[s][1] * OBJECTS_scale * WIN3D.scale;
-                  float pz =  subFace[s][2] * OBJECTS_scale * WIN3D.scale;
+                  float px =  subFace[s][0] * overallScale * WIN3D.scale;
+                  float py = -subFace[s][1] * overallScale * WIN3D.scale;
+                  float pz =  subFace[s][2] * overallScale * WIN3D.scale;
 
                   WIN3D.graphics.vertex(px, py, pz);
 
@@ -444,16 +444,16 @@ class Faces {
 
         int Create_Face_Texture = 0;
 
-        if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
-            (WIN3D.FacesShade == SHADE.Vertex_Solar) ||
-            (WIN3D.FacesShade == SHADE.Vertex_Solid) ||
-            (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
+        if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
+            (WIN3D.shadingMode == SHADE.Vertex_Solar) ||
+            (WIN3D.shadingMode == SHADE.Vertex_Solid) ||
+            (WIN3D.shadingMode == SHADE.Vertex_Elevation)) {
           Create_Face_Texture = 1;
         }
 
         if (Create_Face_Texture == 0) {
 
-          if (User3D.export_MaterialLibrary) {
+          if (User3D.exporterMaterialLibrary) {
 
             int[] used_Materials = new int [allMaterials.Number];
 
@@ -497,14 +497,14 @@ class Faces {
 
             if (allGroups.getStart_Face(OBJ_ID) <= allGroups.getStop_Face(OBJ_ID)) {
 
-              for (int back_or_front = 1 - int(User3D.export_BackSides); back_or_front <= 1; back_or_front++) {
+              for (int back_or_front = 1 - int(User3D.exporterDoubleSided); back_or_front <= 1; back_or_front++) {
 
                 num_vertices_added = 0;
 
                 for (int _turn = 1; _turn < 4; _turn++) {
 
                   if (_turn == 3) {
-                    if (User3D.export_PolyToPoly == 1) {
+                    if (User3D.exporterMaintainPolygons == 1) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_ID, 0) + "_side" + nf(back_or_front, 0));
                     }
@@ -515,7 +515,7 @@ class Faces {
                   for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
 
                     if (_turn == 3) {
-                      if (User3D.export_MaterialLibrary) {
+                      if (User3D.exporterMaterialLibrary) {
                         int mt = this.getMaterial(f);
                         if (prev_mt != mt) {
                           objOutput.println("usemtl SurfaceMaterial" + nf(mt, 0));
@@ -567,7 +567,7 @@ class Faces {
 
                         num_vertices_added += subFace.length;
 
-                        if (User3D.export_PolyToPoly == 0) {
+                        if (User3D.exporterMaintainPolygons == 0) {
                           obj_lastGroupNumber += 1;
                           objOutput.println("g Object3D_" + nf(OBJ_ID, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                         }
@@ -614,7 +614,7 @@ class Faces {
           String the_filename = "";
           String TEXTURE_path = "";
 
-          if (User3D.export_MaterialLibrary) {
+          if (User3D.exporterMaterialLibrary) {
 
             the_filename = "shadePalette.bmp";
 
@@ -622,8 +622,8 @@ class Faces {
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.export_PaletteResolution;
-            int RES2 = User3D.export_PaletteResolution / 16;
+            int RES1 = User3D.exporterColorScaleResolution;
+            int RES2 = User3D.exporterColorScaleResolution / 16;
 
             PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
@@ -638,9 +638,9 @@ class Faces {
 
               float _u = 0.5 + _val;
 
-              if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
-                  (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
-                if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+              if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
+                  (WIN3D.shadingMode == SHADE.Vertex_Solar)) {
+                if (WIN3D.impactType == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
@@ -676,7 +676,7 @@ class Faces {
 
             if (allGroups.getStart_Face(OBJ_ID) <= allGroups.getStop_Face(OBJ_ID)) {
 
-              for (int back_or_front = 1 - int(User3D.export_BackSides); back_or_front <= 1; back_or_front++) {
+              for (int back_or_front = 1 - int(User3D.exporterDoubleSided); back_or_front <= 1; back_or_front++) {
 
                 num_vertices_added = 0;
 
@@ -686,12 +686,12 @@ class Faces {
 
                   if (_turn == 3) {
 
-                    if (User3D.export_PolyToPoly == 1) {
+                    if (User3D.exporterMaintainPolygons == 1) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_ID, 0) + "_side" + nf(back_or_front, 0));
                     }
 
-                    if (User3D.export_MaterialLibrary) {
+                    if (User3D.exporterMaterialLibrary) {
 
                       objOutput.println("usemtl " +  the_filename.replace('.', '_'));
 
@@ -741,7 +741,7 @@ class Faces {
 
                       if (_turn == 1) {
 
-                        if (User3D.export_MaterialLibrary) {
+                        if (User3D.exporterMaterialLibrary) {
 
                           for (int s = 0; s < subFace.length; s++) {
 
@@ -788,7 +788,7 @@ class Faces {
                           int s_next = (s + 1) % subFace.length;
                           int s_prev = (s + subFace.length - 1) % subFace.length;
 
-                          if (WIN3D.FacesShade == SHADE.Global_Solar) {
+                          if (WIN3D.shadingMode == SHADE.Global_Solar) {
 
                             if (back_or_front == 0) {
                               int s_temp = s_next;
@@ -799,17 +799,17 @@ class Faces {
                             _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                           }
 
-                          if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+                          if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
 
                             _u = SHADE.vertexU_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                           }
 
-                          if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
+                          if (WIN3D.shadingMode == SHADE.Vertex_Solid) {
 
                             _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                           }
 
-                          if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+                          if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
 
                             _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                           }
@@ -817,10 +817,10 @@ class Faces {
 
                           float u0 = 0.5 * (_u + 0.5);
 
-                          if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
-                              (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                          if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
+                              (WIN3D.shadingMode == SHADE.Vertex_Solar)) {
 
-                            if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
+                            if (WIN3D.impactType == Impact_ACTIVE) {
                               u0 = _u;
                             }
                           }
@@ -838,7 +838,7 @@ class Faces {
 
                         num_vertices_added += 4;
 
-                        if (User3D.export_PolyToPoly == 0) {
+                        if (User3D.exporterMaintainPolygons == 0) {
                           obj_lastGroupNumber += 1;
                           objOutput.println("g Object3D_" + nf(OBJ_ID, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                         }
@@ -876,10 +876,10 @@ class Faces {
 
         int Create_Face_Texture = 0;
 
-        if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
-            (WIN3D.FacesShade == SHADE.Vertex_Solar) ||
-            (WIN3D.FacesShade == SHADE.Vertex_Solid) ||
-            (WIN3D.FacesShade == SHADE.Vertex_Elevation)) {
+        if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
+            (WIN3D.shadingMode == SHADE.Vertex_Solar) ||
+            (WIN3D.shadingMode == SHADE.Vertex_Solid) ||
+            (WIN3D.shadingMode == SHADE.Vertex_Elevation)) {
 
           Create_Face_Texture = 1;
         }
@@ -891,7 +891,7 @@ class Faces {
         String the_filename = "";
         String TEXTURE_path = "";
 
-        if (User3D.export_MaterialLibrary) {
+        if (User3D.exporterMaterialLibrary) {
 
           if (Create_Face_Texture == 0) {
 
@@ -936,8 +936,8 @@ class Faces {
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.export_PaletteResolution;
-            int RES2 = User3D.export_PaletteResolution / 16;
+            int RES1 = User3D.exporterColorScaleResolution;
+            int RES2 = User3D.exporterColorScaleResolution / 16;
 
             PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
@@ -951,10 +951,10 @@ class Faces {
 
               float _u = 0.5 + _val;
 
-              if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
-                  (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+              if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
+                  (WIN3D.shadingMode == SHADE.Vertex_Solar)) {
 
-                if (WIN3D.Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+                if (WIN3D.impactType == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
@@ -1003,7 +1003,7 @@ class Faces {
 
                   float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-                  for (int back_or_front = 1 - int(User3D.export_BackSides); back_or_front <= 1; back_or_front++) {
+                  for (int back_or_front = 1 - int(User3D.exporterDoubleSided); back_or_front <= 1; back_or_front++) {
 
                     htmlOutput.println("\t\t\t\t\t<shape>");
 
@@ -1036,9 +1036,9 @@ class Faces {
                         s = subFace.length - 1 - q;
                       }
 
-                      htmlOutput.print(nf(subFace[s][0], 0, User3D.export_PrecisionVertex) + " " +
-                                       nf(subFace[s][1], 0, User3D.export_PrecisionVertex) + " " +
-                                       nf(subFace[s][2], 0, User3D.export_PrecisionVertex));
+                      htmlOutput.print(nf(subFace[s][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                       nf(subFace[s][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                       nf(subFace[s][2], 0, User3D.exporterPrecisionVertex));
                     }
                     htmlOutput.println("'></Coordinate>");
 
@@ -1064,7 +1064,7 @@ class Faces {
                         int s_next = (s + 1) % subFace.length;
                         int s_prev = (s + subFace.length - 1) % subFace.length;
 
-                        if (WIN3D.FacesShade == SHADE.Global_Solar) {
+                        if (WIN3D.shadingMode == SHADE.Global_Solar) {
 
                           if (back_or_front == 0) {
                             int s_temp = s_next;
@@ -1075,17 +1075,17 @@ class Faces {
                           _u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                         }
 
-                        if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+                        if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
 
                           _u = SHADE.vertexU_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
                         }
 
-                        if (WIN3D.FacesShade == SHADE.Vertex_Solid) {
+                        if (WIN3D.shadingMode == SHADE.Vertex_Solid) {
 
                           _u = SHADE.vertexU_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                         }
 
-                        if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+                        if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
 
                           _u = SHADE.vertexU_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
                         }
@@ -1093,10 +1093,10 @@ class Faces {
 
                         float u0 = 0.5 * (_u + 0.5);
 
-                        if ((WIN3D.FacesShade == SHADE.Global_Solar) ||
-                            (WIN3D.FacesShade == SHADE.Vertex_Solar)) {
+                        if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
+                            (WIN3D.shadingMode == SHADE.Vertex_Solar)) {
 
-                          if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
+                          if (WIN3D.impactType == Impact_ACTIVE) {
                             u0 = _u;
                           }
                         }
@@ -1152,9 +1152,9 @@ class Faces {
             radOutput.println("void plastic " + "SurfaceMaterial" + nf(mt, 0));
             radOutput.println("0");
             radOutput.println("0");
-            radOutput.println("5 " + nf(r, 0, User3D.export_PrecisionVtexture) + " " +
-                                     nf(g, 0, User3D.export_PrecisionVtexture) + " " +
-                                     nf(b, 0, User3D.export_PrecisionVtexture) + " 0 0");
+            radOutput.println("5 " + nf(r, 0, User3D.exporterPrecisionVertexTexture) + " " +
+                                     nf(g, 0, User3D.exporterPrecisionVertexTexture) + " " +
+                                     nf(b, 0, User3D.exporterPrecisionVertexTexture) + " 0 0");
 
           }
         }
@@ -1190,7 +1190,7 @@ class Faces {
 
               float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-              for (int back_or_front = 1 - int(User3D.export_BackSides); back_or_front <= 1; back_or_front++) {
+              for (int back_or_front = 1 - int(User3D.exporterDoubleSided); back_or_front <= 1; back_or_front++) {
 
                 if (back_or_front == 1) {
 
@@ -1199,15 +1199,15 @@ class Faces {
                   radOutput.println("0");
                   radOutput.println("9");
 
-                  radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[0][2], 0, User3D.export_PrecisionVertex));
-                  radOutput.println(" " + nf(subFace[1][0], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[1][1], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[1][2], 0, User3D.export_PrecisionVertex));
-                  radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[2][2], 0, User3D.export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[0][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[0][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[0][2], 0, User3D.exporterPrecisionVertex));
+                  radOutput.println(" " + nf(subFace[1][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[1][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[1][2], 0, User3D.exporterPrecisionVertex));
+                  radOutput.println(" " + nf(subFace[2][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[2][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[2][2], 0, User3D.exporterPrecisionVertex));
 
                   if (subFace.length == 4) {
 
@@ -1216,15 +1216,15 @@ class Faces {
                     radOutput.println("0");
                     radOutput.println("9");
 
-                    radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[2][2], 0, User3D.export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[3][0], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[3][1], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[3][2], 0, User3D.export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[0][2], 0, User3D.export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[2][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[2][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[2][2], 0, User3D.exporterPrecisionVertex));
+                    radOutput.println(" " + nf(subFace[3][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[3][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[3][2], 0, User3D.exporterPrecisionVertex));
+                    radOutput.println(" " + nf(subFace[0][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[0][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[0][2], 0, User3D.exporterPrecisionVertex));
                   }
 
 
@@ -1235,15 +1235,15 @@ class Faces {
                   radOutput.println("0");
                   radOutput.println("9");
 
-                  radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[0][2], 0, User3D.export_PrecisionVertex));
-                  radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[2][2], 0, User3D.export_PrecisionVertex));
-                  radOutput.println(" " + nf(subFace[1][0], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[1][1], 0, User3D.export_PrecisionVertex) + " " +
-                                          nf(subFace[1][2], 0, User3D.export_PrecisionVertex));
+                  radOutput.println(" " + nf(subFace[0][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[0][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[0][2], 0, User3D.exporterPrecisionVertex));
+                  radOutput.println(" " + nf(subFace[2][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[2][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[2][2], 0, User3D.exporterPrecisionVertex));
+                  radOutput.println(" " + nf(subFace[1][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[1][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                          nf(subFace[1][2], 0, User3D.exporterPrecisionVertex));
 
                   if (subFace.length == 4) {
 
@@ -1252,15 +1252,15 @@ class Faces {
                     radOutput.println("0");
                     radOutput.println("9");
 
-                    radOutput.println(" " + nf(subFace[2][0], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[2][1], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[2][2], 0, User3D.export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[0][0], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[0][1], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[0][2], 0, User3D.export_PrecisionVertex));
-                    radOutput.println(" " + nf(subFace[3][0], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[3][1], 0, User3D.export_PrecisionVertex) + " " +
-                                            nf(subFace[3][2], 0, User3D.export_PrecisionVertex));
+                    radOutput.println(" " + nf(subFace[2][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[2][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[2][2], 0, User3D.exporterPrecisionVertex));
+                    radOutput.println(" " + nf(subFace[0][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[0][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[0][2], 0, User3D.exporterPrecisionVertex));
+                    radOutput.println(" " + nf(subFace[3][0], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[3][1], 0, User3D.exporterPrecisionVertex) + " " +
+                                            nf(subFace[3][2], 0, User3D.exporterPrecisionVertex));
                   }
                 }
               }
@@ -1607,12 +1607,12 @@ class Faces {
     XML_setBoolean(parent, "displayEdges", this.displayEdges);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
 
-    XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
-    XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
-    XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
-    XML_setInt(parent, "PASSIVE_palette_CLR", this.PASSIVE_palette_CLR);
-    XML_setInt(parent, "PASSIVE_palette_DIR", this.PASSIVE_palette_DIR);
-    XML_setFloat(parent, "PASSIVE_palette_MLT", this.PASSIVE_palette_MLT);
+    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
+    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
+    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
+    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
+    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
+    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
   }
 
   public void from_XML (XML xml) {
@@ -1650,12 +1650,12 @@ class Faces {
     this.displayEdges = XML_getBoolean(parent, "displayEdges");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
 
-    this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
-    this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
-    this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");
-    this.PASSIVE_palette_CLR = XML_getInt(parent, "PASSIVE_palette_CLR");
-    this.PASSIVE_palette_DIR = XML_getInt(parent, "PASSIVE_palette_DIR");
-    this.PASSIVE_palette_MLT = XML_getFloat(parent, "PASSIVE_palette_MLT");
+    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
+    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
+    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
+    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
+    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
+    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
   }
 
 }

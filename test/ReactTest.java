@@ -42,14 +42,14 @@ class ReactTest {
   @Test
   void applyTimeChange_revisesTheRolloutAndSetsTheEnsembleSampleRangeFromTheForecastRange () {
     app.UI_rollout.update = false;
-    app.SampleMember_Start = -1;
-    app.SampleMember_End = -1;
+    app.sampleMemberStart = -1;
+    app.sampleMemberEnd = -1;
 
     app.react.applyTimeChange.run(0, 0);
 
     assertTrue(app.UI_rollout.update);
-    assertEquals(app.ENSEMBLE_FORECAST_start, app.SampleMember_Start);
-    assertEquals(app.ENSEMBLE_FORECAST_end, app.SampleMember_End);
+    assertEquals(app.ensembleForecastStart, app.sampleMemberStart);
+    assertEquals(app.ensembleForecastEnd, app.sampleMemberEnd);
   }
 
   // ================= applyLocationChange ====================================
@@ -225,7 +225,7 @@ class ReactTest {
     app.should_rebuildFaceGrid = false;
     app.react.applyLandLoadMesh.run(0, 1);
     assertTrue(app.should_rebuildFaceGrid);
-    assertEquals(app.Land3D.num_rows, app.Land3D.Mesh.length);
+    assertEquals(app.Land3D.rowCount, app.Land3D.Mesh.length);
   }
 
   @Test
@@ -251,15 +251,15 @@ class ReactTest {
 
   @Test
   void applyCurrentCamera_appliesTheCameraAndRevisesTheView_whenChanged () {
-    // Cameras() seeds one camera (index 0) via add_first(), so currentCamera
+    // Cameras() seeds one camera (index 0) via add_first(), so currentCameraIndex
     // == 0 is always valid on a fresh app - safe to call for real.
-    app.WIN3D.currentCamera = 0;
-    app.WIN3D.position_X = -999;
+    app.WIN3D.currentCameraIndex = 0;
+    app.WIN3D.positionX = -999;
     app.WIN3D.update = false;
 
     app.react.applyCurrentCamera.run(-1, 0);
 
-    assertEquals(app.allCameras.get_posX(0), app.WIN3D.position_X, 0.001f);
+    assertEquals(app.allCameras.get_posX(0), app.WIN3D.positionX, 0.001f);
     assertTrue(app.WIN3D.update);
   }
 
@@ -272,17 +272,17 @@ class ReactTest {
 
   @Test
   void applyCreatePowAll_copiesCreatePowAllIntoXYZ_whenChanged () {
-    app.User3D.create_powAll = 3;
-    app.User3D.create_powX = 0;
-    app.User3D.create_powY = 0;
-    app.User3D.create_powZ = 0;
+    app.User3D.creatorUniformSuperellipsoidPower = 3;
+    app.User3D.creatorSuperellipsoidPowerX = 0;
+    app.User3D.creatorSuperellipsoidPowerY = 0;
+    app.User3D.creatorSuperellipsoidPowerZ = 0;
     app.UI_rollout.update = false;
 
     app.react.applyCreatePowAll.run(1, 3);
 
-    assertEquals(3, app.User3D.create_powX, 0.001f);
-    assertEquals(3, app.User3D.create_powY, 0.001f);
-    assertEquals(3, app.User3D.create_powZ, 0.001f);
+    assertEquals(3, app.User3D.creatorSuperellipsoidPowerX, 0.001f);
+    assertEquals(3, app.User3D.creatorSuperellipsoidPowerY, 0.001f);
+    assertEquals(3, app.User3D.creatorSuperellipsoidPowerZ, 0.001f);
     assertTrue(app.UI_rollout.update);
   }
 }

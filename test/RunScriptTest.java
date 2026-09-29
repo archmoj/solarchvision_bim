@@ -242,7 +242,7 @@ class RunScriptTest {
     app.build_allActions();
     String hint = app.runScriptLine("Select All-Model2Ds");
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertEquals(app.ObjectCategory.MODEL2D, app.current_ObjectCategory);
+    assertEquals(app.ObjectCategory.MODEL2D, app.currentObjectCategory);
   }
 
   @Test
@@ -250,7 +250,7 @@ class RunScriptTest {
     app.build_allActions();
     String hint = app.runScriptLine("Select All-Solids");
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertEquals(app.ObjectCategory.SOLID, app.current_ObjectCategory);
+    assertEquals(app.ObjectCategory.SOLID, app.currentObjectCategory);
   }
 
   @Test
@@ -258,7 +258,7 @@ class RunScriptTest {
     app.build_allActions();
     String hint = app.runScriptLine("Select All-Cameras");
     assertNotEquals(app.UnrecognizedCommand, hint);
-    assertEquals(app.ObjectCategory.CAMERA, app.current_ObjectCategory);
+    assertEquals(app.ObjectCategory.CAMERA, app.currentObjectCategory);
   }
 
   // ================= other renamed "All-*" actions ===========================
@@ -296,13 +296,13 @@ class RunScriptTest {
   @Test
   void move_withArguments_actuallyMovesRatherThanJustSwitchingTheTool () {
     app.build_allActions();
-    app.WIN3D.UI_CurrentTask = -1;
+    app.WIN3D.currentTool = -1;
     app.WIN3D.update = false;
 
     String hint = app.runScriptLine("MOVE dx:5 dy:3 dz:1");
 
     assertEquals("", hint);
-    assertEquals(-1, app.WIN3D.UI_CurrentTask, "must not just switch the move tool");
+    assertEquals(-1, app.WIN3D.currentTool, "must not just switch the move tool");
     assertTrue(app.WIN3D.update, "view_changed() should fire for a real move");
   }
 

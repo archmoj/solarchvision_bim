@@ -15,7 +15,7 @@ developed by [Mojtaba Samimi
     -   [Requirements](#requirements)
     -   [Run using Processing IDE](#run-using-processing-ide)
     -   [Run using command line](#run-using-command-line)
-    -   [Download CWEEDS files](#download-cweeds-files)
+    -   [Download Climate Engineering files](#download-cweeds-files)
 -   [Graphical User Interface](#graphical-user-interface)
     -   [Adding an object to the scene](#adding-an-object-to-the-scene)
     -   [Selecting objects](#selecting-objects)
@@ -167,7 +167,7 @@ containing the `solarchvision_bim` folder.
 ```
 
 
-## Download CWEEDS files
+## Download Climate Engineering files
 
 For locations in `Canada`, there is a database called `CWEEDS`,
 which includes multi-year climate data under the Engineering Climate
@@ -687,9 +687,9 @@ Visualization
 
 ### 11. Ensemble and Scenario Analysis
 
-The project includes dedicated modules for ensemble forecast and observed data.
+The project includes dedicated modules for Ensemble Forecast and observed data.
 
-The analysis engine recognizes ensemble forecast and observation datasets and incorporates them into temporal and statistical study workflows.
+The analysis engine recognizes Ensemble Forecast and observation datasets and incorporates them into temporal and statistical study workflows.
 
 The study system supports scenario-oriented analysis, allowing environmental results to be examined across multiple possible weather or climate conditions.
 
@@ -856,7 +856,7 @@ The OBJ time/date-series export is useful for transferring time-dependent model 
         │                     │                     │
    ┌────┼────┐          ┌─────┼─────┐          ┌────┼────┐
    │    │    │          │     │     │          │    │    │
- Points Faces Solids   EPW  CWEEDS Ensemble   Earth Maps Stations
+ Points Faces Solids   EPW  Climate Engineering Ensemble   Earth Maps Stations
    │    │    │          │     │     │          │    │    │
    └────┼────┘          └─────┼─────┘          └────┼────┘
         │                     │                     │

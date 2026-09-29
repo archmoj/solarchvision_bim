@@ -19,8 +19,8 @@ class LayersTest {
 
     solarchvision_bim.LAYER expected = app.allLayers[3];
 
-    assertEquals(3, app.CurrentLayer_id);
-    assertEquals(3, app.DevelopLayer_id);
+    assertEquals(3, app.currentLayerId);
+    assertEquals(3, app.developLayerId);
     assertEquals(expected.unit, app.CurrentLayer_unit);
     assertEquals(expected.name, app.CurrentLayer_name);
     assertEquals(expected.descriptions[app.Language_EN], app.CurrentLayer_descriptions[app.Language_EN]);
@@ -40,13 +40,13 @@ class LayersTest {
 
   @Test
   void changeCurrentLayerTo_setsBothDevelopAndCurrentLayerIdToTheSameNewId () {
-    app.DevelopLayer_id = 0;
-    app.CurrentLayer_id = 0;
+    app.developLayerId = 0;
+    app.currentLayerId = 0;
 
     app.changeCurrentLayerTo(9);
 
-    assertEquals(9, app.DevelopLayer_id);
-    assertEquals(9, app.CurrentLayer_id);
+    assertEquals(9, app.developLayerId);
+    assertEquals(9, app.currentLayerId);
   }
 
   @Test
@@ -56,7 +56,7 @@ class LayersTest {
 
     solarchvision_bim.LAYER expected = app.allLayers[7];
 
-    assertEquals(7, app.CurrentLayer_id);
+    assertEquals(7, app.currentLayerId);
     assertEquals(expected.name, app.CurrentLayer_name);
     assertEquals(expected.unit, app.CurrentLayer_unit);
   }
@@ -66,7 +66,7 @@ class LayersTest {
     int lastIndex = app.allLayers.length - 1; // LAYER_developed
     app.changeCurrentLayerTo(lastIndex);
 
-    assertEquals(lastIndex, app.CurrentLayer_id);
+    assertEquals(lastIndex, app.currentLayerId);
     assertEquals("", app.CurrentLayer_name);
     assertEquals("", app.CurrentLayer_unit);
   }
@@ -106,7 +106,7 @@ class LayersTest {
   void initialCurrentLayer_matchesTheFirstEntryInAllLayers () {
     solarchvision_bim.LAYER first = app.allLayers[0];
 
-    assertEquals(0, app.CurrentLayer_id);
+    assertEquals(0, app.currentLayerId);
     assertEquals(first.unit, app.CurrentLayer_unit);
     assertEquals(first.name, app.CurrentLayer_name);
   }

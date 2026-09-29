@@ -4,9 +4,9 @@ class WindFlow {
 
   boolean displayAll = false;
 
-  int palette_CLR = 18;
-  int palette_DIR = -1;
-  float palette_MLT = 1;
+  int colorScaleIndex = 18;
+  int colorScaleDirection = -1;
+  float colorScaleFactor = 1;
 
 
 
@@ -25,9 +25,9 @@ class WindFlow {
 
     if (proceed) {
 
-      int PAL_type = allWindFlows.palette_CLR;
-      int PAL_direction = allWindFlows.palette_DIR;
-      float PAL_multiplier = allWindFlows.palette_MLT;
+      int PAL_type = allWindFlows.colorScaleIndex;
+      int PAL_direction = allWindFlows.colorScaleDirection;
+      float PAL_multiplier = allWindFlows.colorScaleFactor;
 
 
 
@@ -35,7 +35,7 @@ class WindFlow {
 
         String the_filename = "";
 
-        if (User3D.export_MaterialLibrary) {
+        if (User3D.exporterMaterialLibrary) {
 
           the_filename = "WindFlowPalette.bmp";
 
@@ -43,8 +43,8 @@ class WindFlow {
 
           println("Saving texture:", TEXTURE_path);
 
-          int RES1 = User3D.export_PaletteResolution;
-          int RES2 = User3D.export_PaletteResolution / 16;
+          int RES1 = User3D.exporterColorScaleResolution;
+          int RES2 = User3D.exporterColorScaleResolution / 16;
 
           PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
@@ -93,7 +93,7 @@ class WindFlow {
             obj_lastGroupNumber += 1;
             objOutput.println("g WindFlow");
 
-            if (User3D.export_MaterialLibrary) {
+            if (User3D.exporterMaterialLibrary) {
               objOutput.println("usemtl WindFlow");
             }
           }
@@ -112,7 +112,7 @@ class WindFlow {
             float z2 = allSolidImpacts.Wind_Vertices[n2][2];
 
 
-            float _val = allWindFlows.palette_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+            float _val = allWindFlows.colorScaleFactor * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
             float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
             _u = applyPalDirection(_u, PAL_direction);
@@ -223,7 +223,7 @@ class WindFlow {
           float z2 = allSolidImpacts.Wind_Vertices[n2][2];
 
 
-          float _val = this.palette_MLT * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+          float _val = this.colorScaleFactor * allSolidImpacts.Wind_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
           float _u = 0.5 + 0.5 * (PAL_multiplier * _val);
           _u = applyPalDirection(_u, PAL_direction);
@@ -235,10 +235,10 @@ class WindFlow {
            WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
 
            WIN3D.graphics.strokeWeight(1);
-           WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);
+           WIN3D.graphics.line(x1 * overallScale * WIN3D.scale, -y1 * overallScale * WIN3D.scale, z1 * overallScale * WIN3D.scale, x2 * overallScale * WIN3D.scale, -y2 * overallScale * WIN3D.scale, z2 * overallScale * WIN3D.scale);
 
            WIN3D.graphics.strokeWeight(4);
-           WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, 0.5 * (x2 + x1) * OBJECTS_scale * WIN3D.scale, -0.5 * (y2 + y1) * OBJECTS_scale * WIN3D.scale, 0.5 * (z2 + z1) * OBJECTS_scale * WIN3D.scale);
+           WIN3D.graphics.line(x1 * overallScale * WIN3D.scale, -y1 * overallScale * WIN3D.scale, z1 * overallScale * WIN3D.scale, 0.5 * (x2 + x1) * overallScale * WIN3D.scale, -0.5 * (y2 + y1) * overallScale * WIN3D.scale, 0.5 * (z2 + z1) * overallScale * WIN3D.scale);
            */
 
 
@@ -259,7 +259,7 @@ class WindFlow {
 
             WIN3D.graphics.beginShape();
 
-            WIN3D.graphics.vertex(x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);
+            WIN3D.graphics.vertex(x2 * overallScale * WIN3D.scale, -y2 * overallScale * WIN3D.scale, z2 * overallScale * WIN3D.scale);
 
             for (int j = 0; j < 2; j++) {
 
@@ -283,7 +283,7 @@ class WindFlow {
               py = py_rot;
               pz = pz_rot;
 
-              WIN3D.graphics.vertex((x1 + px) * OBJECTS_scale * WIN3D.scale, -(y1 + py) * OBJECTS_scale * WIN3D.scale, (z1 + pz) * OBJECTS_scale * WIN3D.scale);
+              WIN3D.graphics.vertex((x1 + px) * overallScale * WIN3D.scale, -(y1 + py) * overallScale * WIN3D.scale, (z1 + pz) * overallScale * WIN3D.scale);
             }
 
             WIN3D.graphics.endShape(CLOSE);
@@ -307,9 +307,9 @@ class WindFlow {
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
 
-    XML_setInt(parent, "palette_CLR", this.palette_CLR);
-    XML_setInt(parent, "palette_DIR", this.palette_DIR);
-    XML_setFloat(parent, "palette_MLT", this.palette_MLT);
+    XML_setInt(parent, "colorScaleIndex", this.colorScaleIndex);
+    XML_setInt(parent, "colorScaleDirection", this.colorScaleDirection);
+    XML_setFloat(parent, "colorScaleFactor", this.colorScaleFactor);
 
   }
 
@@ -322,9 +322,9 @@ class WindFlow {
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
 
-    this.palette_CLR = XML_getInt(parent, "palette_CLR");
-    this.palette_DIR = XML_getInt(parent, "palette_DIR");
-    this.palette_MLT = XML_getFloat(parent, "palette_MLT");
+    this.colorScaleIndex = XML_getInt(parent, "colorScaleIndex");
+    this.colorScaleDirection = XML_getInt(parent, "colorScaleDirection");
+    this.colorScaleFactor = XML_getFloat(parent, "colorScaleFactor");
 
   }
 }

@@ -58,25 +58,25 @@ class MouseReleasedTest {
 
   @Test
   void isRectSelectTask_trueForRectSelectItself () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.RectSelect;
+    app.WIN3D.currentTool = app.UITASK.RectSelect;
     assertTrue(app.isRectSelectTask());
   }
 
   @Test
   void isRectSelectTask_trueForAnyModifyTaskAfterMove () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Scale; // comes right after Move
+    app.WIN3D.currentTool = app.UITASK.Scale; // comes right after Move
     assertTrue(app.isRectSelectTask());
   }
 
   @Test
   void isRectSelectTask_falseForMoveItself () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Move;
+    app.WIN3D.currentTool = app.UITASK.Move;
     assertFalse(app.isRectSelectTask());
   }
 
   @Test
   void isRectSelectTask_falseForPickSelect () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.PickSelect; // before Move, not RectSelect
+    app.WIN3D.currentTool = app.UITASK.PickSelect; // before Move, not RectSelect
     assertFalse(app.isRectSelectTask());
   }
 
@@ -84,23 +84,23 @@ class MouseReleasedTest {
 
   @Test
   void castClickToWorld_perspectiveStraightAheadHitsTheLandDirectlyBelowTheCamera () {
-    app.WIN3D.ViewType = 1; // perspective
+    app.WIN3D.projectionTypeIndex = 1; // perspective
     app.WIN3D.scale = 1;
-    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_Z = 0;
-    app.WIN3D.CAM_x = 1;
-    app.WIN3D.CAM_y = 1;
-    app.WIN3D.CAM_z = 10;
-    app.OBJECTS_scale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
+    app.WIN3D.cameraX = 1;
+    app.WIN3D.cameraY = 1;
+    app.WIN3D.cameraZ = 10;
+    app.overallScale = 1;
 
     app.WIN3D.cX = 0;
     app.WIN3D.cY = 0;
     app.WIN3D.dX = 200;
     app.WIN3D.dY = 200; // click center = (100, 100)
 
-    app.Land3D.num_rows = 2;
-    app.Land3D.num_columns = 2;
+    app.Land3D.rowCount = 2;
+    app.Land3D.columnCount = 2;
     app.Land3D.Mesh = new float[][][]{
       {{0, 0, 0}, {0, 10, 0}},
       {{10, 0, 0}, {10, 10, 0}}
@@ -115,20 +115,20 @@ class MouseReleasedTest {
 
   @Test
   void castClickToWorld_returnsTheOriginOnAMiss () {
-    app.WIN3D.ViewType = 1;
+    app.WIN3D.projectionTypeIndex = 1;
     app.WIN3D.scale = 1;
-    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
-    app.WIN3D.CAM_x = 1000; // nowhere near the land mesh below
-    app.WIN3D.CAM_y = 1000;
-    app.WIN3D.CAM_z = 10;
-    app.OBJECTS_scale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.cameraX = 1000; // nowhere near the land mesh below
+    app.WIN3D.cameraY = 1000;
+    app.WIN3D.cameraZ = 10;
+    app.overallScale = 1;
     app.WIN3D.cX = 0;
     app.WIN3D.cY = 0;
     app.WIN3D.dX = 200;
     app.WIN3D.dY = 200;
 
-    app.Land3D.num_rows = 2;
-    app.Land3D.num_columns = 2;
+    app.Land3D.rowCount = 2;
+    app.Land3D.columnCount = 2;
     app.Land3D.Mesh = new float[][][]{
       {{0, 0, 0}, {0, 10, 0}},
       {{10, 0, 0}, {10, 10, 0}}
@@ -145,7 +145,7 @@ class MouseReleasedTest {
   // Orthographic view chosen so the click -> world-point mapping is a
   // simple closed form, rather than needing to hand-solve a perspective
   // ray/plane intersection: with scale=2 and Orthographic_ZOOM()==1
-  // (from refScale == the camera's distance from the origin, and Zoom
+  // (from referenceScale == the camera's distance from the origin, and Zoom
   // picked so 0.5*Zoom*(PI/180)==1), a click `Image_X/Image_Y` pixels
   // off-center lands exactly `Image_X` world-units right and
   // `Image_Y` world-units up of wherever the camera looks - at
@@ -153,27 +153,27 @@ class MouseReleasedTest {
   // straight-down-from-the-camera case already checked directly above.
 
   private void setUpOrthographicClickMapping () {
-    app.WIN3D.ViewType = 0; // orthographic
+    app.WIN3D.projectionTypeIndex = 0; // orthographic
     app.WIN3D.scale = 2;
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_Z = 0;
-    app.WIN3D.CAM_x = 1;
-    app.WIN3D.CAM_y = 1;
-    app.WIN3D.CAM_z = 10;
-    app.WIN3D.position_X = 100; // dist(position) == refScale below -> ratio 1
-    app.WIN3D.position_Y = 0;
-    app.WIN3D.position_Z = 0;
-    app.WIN3D.refScale = 100;
-    app.WIN3D.Zoom = (float) Math.toDegrees(2); // 0.5*Zoom*(PI/180) == 1
-    app.OBJECTS_scale = 1;
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
+    app.WIN3D.cameraX = 1;
+    app.WIN3D.cameraY = 1;
+    app.WIN3D.cameraZ = 10;
+    app.WIN3D.positionX = 100; // dist(position) == referenceScale below -> ratio 1
+    app.WIN3D.positionY = 0;
+    app.WIN3D.positionZ = 0;
+    app.WIN3D.referenceScale = 100;
+    app.WIN3D.zoom = (float) Math.toDegrees(2); // 0.5*Zoom*(PI/180) == 1
+    app.overallScale = 1;
 
     app.WIN3D.cX = 0;
     app.WIN3D.cY = 0;
     app.WIN3D.dX = 200;
     app.WIN3D.dY = 200; // click center = (100, 100)
 
-    app.Land3D.num_rows = 2;
-    app.Land3D.num_columns = 2;
+    app.Land3D.rowCount = 2;
+    app.Land3D.columnCount = 2;
     app.Land3D.Mesh = new float[][][]{
       {{0, 0, 0}, {0, 10, 0}},
       {{10, 0, 0}, {10, 10, 0}}
@@ -192,65 +192,65 @@ class MouseReleasedTest {
   @Test
   void performGetLengthMeasurement_modifyParameterZeroSetsCreateLengthToTheStraightDistance () {
     setUpOrthographicClickMapping();
-    app.WIN3D.UI_TaskModifyParameter = 0;
-    app.User3D.create_Length = -1;
+    app.WIN3D.toolParameterModifier = 0;
+    app.User3D.creatorLength = -1;
 
     app.performGetLengthMeasurement();
 
     // dx=3, dy=2, dz=0 -> dist = sqrt(13)
-    assertEquals(Math.sqrt(13), app.User3D.create_Length, 0.05f);
+    assertEquals(Math.sqrt(13), app.User3D.creatorLength, 0.05f);
   }
 
   @Test
   void performGetLengthMeasurement_modifyParameterOneSetsCreateWidthToTheStraightDistance () {
     setUpOrthographicClickMapping();
-    app.WIN3D.UI_TaskModifyParameter = 1;
-    app.User3D.create_Width = -1;
+    app.WIN3D.toolParameterModifier = 1;
+    app.User3D.creatorWidth = -1;
 
     app.performGetLengthMeasurement();
 
-    assertEquals(Math.sqrt(13), app.User3D.create_Width, 0.05f);
+    assertEquals(Math.sqrt(13), app.User3D.creatorWidth, 0.05f);
   }
 
   @Test
   void performGetLengthMeasurement_modifyParameterTwoSetsCreateHeightToTheStraightDistance () {
     setUpOrthographicClickMapping();
-    app.WIN3D.UI_TaskModifyParameter = 2;
-    app.User3D.create_Height = -1;
+    app.WIN3D.toolParameterModifier = 2;
+    app.User3D.creatorHeight = -1;
 
     app.performGetLengthMeasurement();
 
-    assertEquals(Math.sqrt(13), app.User3D.create_Height, 0.05f);
+    assertEquals(Math.sqrt(13), app.User3D.creatorHeight, 0.05f);
   }
 
   @Test
   void performGetLengthMeasurement_modifyParameterThreeSetsAllThreeAxisAlignedComponents () {
     setUpOrthographicClickMapping();
-    app.WIN3D.UI_TaskModifyParameter = 3;
-    app.User3D.create_Length = -1;
-    app.User3D.create_Width = -1;
-    app.User3D.create_Height = -1;
+    app.WIN3D.toolParameterModifier = 3;
+    app.User3D.creatorLength = -1;
+    app.User3D.creatorWidth = -1;
+    app.User3D.creatorHeight = -1;
 
     app.performGetLengthMeasurement();
 
-    // rotation_Z == 0, so dxRot/dyRot/dzRot == dx/dy/dz == 3, 2, 0
-    assertEquals(3f, app.User3D.create_Length, 0.05f);
-    assertEquals(2f, app.User3D.create_Width, 0.05f);
-    assertEquals(0f, app.User3D.create_Height, 0.05f);
+    // rotationZ == 0, so dxRot/dyRot/dzRot == dx/dy/dz == 3, 2, 0
+    assertEquals(3f, app.User3D.creatorLength, 0.05f);
+    assertEquals(2f, app.User3D.creatorWidth, 0.05f);
+    assertEquals(0f, app.User3D.creatorHeight, 0.05f);
   }
 
   @Test
   void performGetLengthMeasurement_modifyParameterFourSetsOnlyLengthAndWidthLeavingHeightAlone () {
     setUpOrthographicClickMapping();
-    app.WIN3D.UI_TaskModifyParameter = 4;
-    app.User3D.create_Length = -1;
-    app.User3D.create_Width = -1;
-    app.User3D.create_Height = 999;
+    app.WIN3D.toolParameterModifier = 4;
+    app.User3D.creatorLength = -1;
+    app.User3D.creatorWidth = -1;
+    app.User3D.creatorHeight = 999;
 
     app.performGetLengthMeasurement();
 
-    assertEquals(3f, app.User3D.create_Length, 0.05f);
-    assertEquals(2f, app.User3D.create_Width, 0.05f);
-    assertEquals(999f, app.User3D.create_Height, 0.0001f); // untouched
+    assertEquals(3f, app.User3D.creatorLength, 0.05f);
+    assertEquals(2f, app.User3D.creatorWidth, 0.05f);
+    assertEquals(999f, app.User3D.creatorHeight, 0.0001f); // untouched
   }
 }

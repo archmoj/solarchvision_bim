@@ -47,9 +47,9 @@ void convertAndSwitch(Runnable convert, int newCategory) {
 // handling for a clicked FACE (also reached via GROUP/POLYLINE, which
 // resolve to a face index the same way): for whichever of the five
 // per-face properties (Seed_Material/Tessellation/Layer/Visibility/
-// Weight) WIN3D.UI_CurrentTask currently is, either reads face f's
+// Weight) WIN3D.currentTool currently is, either reads face f's
 // current value into the matching User3D.default_* (Pick,
-// UI_TaskModifyParameter==1), writes User3D.default_* onto face f alone
+// toolParameterModifier==1), writes User3D.default_* onto face f alone
 // (Assign(sub), ==2), or writes it onto every face in f's group
 // (Assign(all), ==3, via allGroups.findGroupContainingFace/
 // getStart_Face/getStop_Face - already covered directly in
@@ -59,35 +59,35 @@ void convertAndSwitch(Runnable convert, int newCategory) {
 // Assign(sub) cases just above it - kept as-is since this refactor
 // changes structure, not behavior.
 void pickOrAssignFaceProperty (int f) {
-  if ((WIN3D.UI_CurrentTask != UITASK.Seed_Material) &&
-      (WIN3D.UI_CurrentTask != UITASK.Tessellation) &&
-      (WIN3D.UI_CurrentTask != UITASK.Layer) &&
-      (WIN3D.UI_CurrentTask != UITASK.Visibility) &&
-      (WIN3D.UI_CurrentTask != UITASK.Weight)) return;
+  if ((WIN3D.currentTool != UITASK.Seed_Material) &&
+      (WIN3D.currentTool != UITASK.Tessellation) &&
+      (WIN3D.currentTool != UITASK.Layer) &&
+      (WIN3D.currentTool != UITASK.Visibility) &&
+      (WIN3D.currentTool != UITASK.Weight)) return;
 
-  if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
-    if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) User3D.default_Material     = allFaces.getMaterial(f);
-    else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  User3D.default_Tessellation = allFaces.getTessellation(f);
-    else if (WIN3D.UI_CurrentTask == UITASK.Layer)         User3D.default_Layer        = allFaces.getLayer(f);
-    else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    User3D.default_Visibility   = allFaces.getVisibility(f);
-    else if (WIN3D.UI_CurrentTask == UITASK.Weight)        User3D.default_Weight       = allFaces.getWeight(f);
+  if (WIN3D.toolParameterModifier == 1) { // Pick
+    if (WIN3D.currentTool == UITASK.Seed_Material) User3D.defaultMaterial     = allFaces.getMaterial(f);
+    else if (WIN3D.currentTool == UITASK.Tessellation)  User3D.defaultTessellation = allFaces.getTessellation(f);
+    else if (WIN3D.currentTool == UITASK.Layer)         User3D.defaultLayer        = allFaces.getLayer(f);
+    else if (WIN3D.currentTool == UITASK.Visibility)    User3D.defaultVisibility   = allFaces.getVisibility(f);
+    else if (WIN3D.currentTool == UITASK.Weight)        User3D.defaultWeight       = allFaces.getWeight(f);
   }
-  if (WIN3D.UI_TaskModifyParameter == 2) { // Assign(sub)
-    if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (f, User3D.default_Material);
-    else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(f, User3D.default_Tessellation);
-    else if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (f, User3D.default_Layer);
-    else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    allFaces.setVisibility  (f, User3D.default_Visibility);
-    else if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setWeight      (f, User3D.default_Weight);
+  if (WIN3D.toolParameterModifier == 2) { // Assign(sub)
+    if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (f, User3D.defaultMaterial);
+    else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(f, User3D.defaultTessellation);
+    else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (f, User3D.defaultLayer);
+    else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (f, User3D.defaultVisibility);
+    else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setWeight      (f, User3D.defaultWeight);
   }
-  if (WIN3D.UI_TaskModifyParameter == 3) { // Assign(all)
+  if (WIN3D.toolParameterModifier == 3) { // Assign(all)
     int OBJ_ID = allGroups.findGroupContainingFace(f);
 
     for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
-      if (WIN3D.UI_CurrentTask == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.default_Material);
-      else if (WIN3D.UI_CurrentTask == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.default_Tessellation);
-      else if (WIN3D.UI_CurrentTask == UITASK.Layer)         allFaces.setLayer       (q, User3D.default_Layer);
-      else if (WIN3D.UI_CurrentTask == UITASK.Visibility)    allFaces.setVisibility  (q, User3D.default_Visibility);
-      else if (WIN3D.UI_CurrentTask == UITASK.Weight)        allFaces.setClose       (q, User3D.default_Weight);
+      if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.defaultMaterial);
+      else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.defaultTessellation);
+      else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (q, User3D.defaultLayer);
+      else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (q, User3D.defaultVisibility);
+      else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setClose       (q, User3D.defaultWeight);
     }
   }
 }
@@ -96,35 +96,35 @@ void pickOrAssignFaceProperty (int f) {
 // clicked MODEL2D instance: MODEL2D's own MAP[] encodes both which
 // PEOPLE/TREES filename an instance uses (abs(MAP[OBJ_ID])) and a
 // left/right-facing flip (its sign) in one int. Pick
-// (UI_TaskModifyParameter==1) reads the clicked instance's own type
-// into User3D.create_Plant_Type or create_Person_Type depending on
+// (toolParameterModifier==1) reads the clicked instance's own type
+// into User3D.creatorPlantTypeIndex or createPersonTypeIndex depending on
 // allModel2Ds.isTree(); Assign (==2 or ==3 - both treated identically
 // here, unlike the FACE property case above) writes the current
-// create_Plant_Type/create_Person_Type back onto MAP[OBJ_ID], carrying
+// createPlantTypeIndex/createPersonTypeIndex back onto MAP[OBJ_ID], carrying
 // that instance's own sign (its flip) forward unchanged.
 void pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
-  if (WIN3D.UI_CurrentTask != UITASK.Seed_Material) return;
+  if (WIN3D.currentTool != UITASK.Seed_Material) return;
 
   int n = allModel2Ds.MAP[OBJ_ID];
   int sign_n = 1;
   if (n < 0) sign_n = -1;
   n = abs(n);
-  int n1 = allModel2Ds.num_files_PEOPLE;
+  int n1 = allModel2Ds.peopleFileCount;
 
-  if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
+  if (WIN3D.toolParameterModifier == 1) { // Pick
     if (allModel2Ds.isTree(n)) { // case: trees
-      User3D.create_Plant_Type = n - n1;
+      User3D.creatorPlantTypeIndex = n - n1;
     }
     else { // case: people
-      User3D.create_Person_Type = n;
+      User3D.creatorPersonTypeIndex = n;
     }
   }
-  if ((WIN3D.UI_TaskModifyParameter == 2) || (WIN3D.UI_TaskModifyParameter == 3)) { // Assign
+  if ((WIN3D.toolParameterModifier == 2) || (WIN3D.toolParameterModifier == 3)) { // Assign
     if (allModel2Ds.isTree(n)) { // case: trees
-      allModel2Ds.MAP[OBJ_ID] = sign_n * (User3D.create_Plant_Type + n1);
+      allModel2Ds.MAP[OBJ_ID] = sign_n * (User3D.creatorPlantTypeIndex + n1);
     }
     else { // case: people
-      allModel2Ds.MAP[OBJ_ID] = sign_n * User3D.create_Person_Type;
+      allModel2Ds.MAP[OBJ_ID] = sign_n * User3D.creatorPersonTypeIndex;
     }
   }
 }
@@ -132,40 +132,40 @@ void pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
 // Pulled out of mouseClicked()'s handling for a clicked MODEL1D
 // instance: for whichever of the seven per-tree properties
 // (DegreeMax/BranchTilt/BranchTwist/BranchRatio/TreeBase/TrunkSize/
-// LeafSize) WIN3D.UI_CurrentTask currently is - or all of them at once,
+// LeafSize) WIN3D.currentTool currently is - or all of them at once,
 // for UITASK.Model1DsProps - either reads OBJ_ID's current value(s)
-// into the matching User3D.create_Model1D_* (Pick,
-// UI_TaskModifyParameter==1) or writes the matching User3D.create_
+// into the matching User3D.creator_Model1D_* (Pick,
+// toolParameterModifier==1) or writes the matching User3D.creator_
 // Model1D_* value(s) back onto OBJ_ID (Assign, ==2).
 void pickOrAssignModel1DProperty (int OBJ_ID) {
-  if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
-    if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-    else if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) User3D.create_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
-    else if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) User3D.create_Model1D_BranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
-    else if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) User3D.create_Model1D_BranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
-    else if (WIN3D.UI_CurrentTask == UITASK.TreeBase) User3D.create_Model1D_TreeBase = allModel1Ds.getTreeBase(OBJ_ID);
+  if (WIN3D.toolParameterModifier == 1) { // Pick
+    if (WIN3D.currentTool == UITASK.DegreeMax) User3D.creatorModel1DDegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.BranchTilt) User3D.creator_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.BranchTwist) User3D.creator_Model1D_BranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.BranchRatio) User3D.creator_Model1D_BranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.TreeBase) User3D.creator_Model1D_TreeBase = allModel1Ds.getTreeBase(OBJ_ID);
 
-    else if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-    else if (WIN3D.UI_CurrentTask == UITASK.LeafSize) User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
-    else if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
-      User3D.create_Model1D_DegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-      User3D.create_Model1D_TrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
-      User3D.create_Model1D_LeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.TrunkSize) User3D.creatorModel1DTrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.LeafSize) User3D.creatorModel1DLeafSize = allModel1Ds.getLeafSize(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.Model1DsProps) { // all properties
+      User3D.creatorModel1DDegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
+      User3D.creatorModel1DTrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
+      User3D.creatorModel1DLeafSize = allModel1Ds.getLeafSize(OBJ_ID);
     }
   }
-  if (WIN3D.UI_TaskModifyParameter == 2) { // Assign
-    if (WIN3D.UI_CurrentTask == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
-    else if (WIN3D.UI_CurrentTask == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.create_Model1D_BranchTilt);
-    else if (WIN3D.UI_CurrentTask == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.create_Model1D_BranchTwist);
-    else if (WIN3D.UI_CurrentTask == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.create_Model1D_BranchRatio);
-    else if (WIN3D.UI_CurrentTask == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.create_Model1D_TreeBase);
+  if (WIN3D.toolParameterModifier == 2) { // Assign
+    if (WIN3D.currentTool == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.creatorModel1DDegreeMax);
+    else if (WIN3D.currentTool == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.creator_Model1D_BranchTilt);
+    else if (WIN3D.currentTool == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.creator_Model1D_BranchTwist);
+    else if (WIN3D.currentTool == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.creator_Model1D_BranchRatio);
+    else if (WIN3D.currentTool == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.creator_Model1D_TreeBase);
 
-    else if (WIN3D.UI_CurrentTask == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);
-    else if (WIN3D.UI_CurrentTask == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
-    else if (WIN3D.UI_CurrentTask == UITASK.Model1DsProps) { // all properties
-      allModel1Ds.setDegreeMax(OBJ_ID, User3D.create_Model1D_DegreeMax);
-      allModel1Ds.setTrunkSize(OBJ_ID, User3D.create_Model1D_TrunkSize);
-      allModel1Ds.setLeafSize(OBJ_ID, User3D.create_Model1D_LeafSize);
+    else if (WIN3D.currentTool == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.creatorModel1DTrunkSize);
+    else if (WIN3D.currentTool == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.creatorModel1DLeafSize);
+    else if (WIN3D.currentTool == UITASK.Model1DsProps) { // all properties
+      allModel1Ds.setDegreeMax(OBJ_ID, User3D.creatorModel1DDegreeMax);
+      allModel1Ds.setTrunkSize(OBJ_ID, User3D.creatorModel1DTrunkSize);
+      allModel1Ds.setLeafSize(OBJ_ID, User3D.creatorModel1DLeafSize);
     }
   }
 }
@@ -186,29 +186,29 @@ float[] getMoveOriginPoint () {
   float y1 = FLOAT_undefined;
   float z1 = FLOAT_undefined;
 
-  if (current_ObjectCategory == ObjectCategory.GROUP) {
+  if (currentObjectCategory == ObjectCategory.GROUP) {
 
     float[] P = Select3D.getPivot();
 
     x1 = P[0];
     y1 = P[1];
     z1 = P[2];
-  } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+  } else if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
     x1 = allModel2Ds.getX(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
     y1 = allModel2Ds.getY(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
     z1 = allModel2Ds.getZ(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
-  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+  } else if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
     x1 = allModel1Ds.getX(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
     y1 = allModel1Ds.getY(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
     z1 = allModel1Ds.getZ(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
-  } else if (current_ObjectCategory == ObjectCategory.SOLID) {
+  } else if (currentObjectCategory == ObjectCategory.SOLID) {
 
     x1 = allSolids.get_posX(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
     y1 = allSolids.get_posY(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
     z1 = allSolids.get_posZ(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
-  } else if (current_ObjectCategory == ObjectCategory.VERTEX) {
+  } else if (currentObjectCategory == ObjectCategory.VERTEX) {
 
     x1 = allPoints.getX(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
     y1 = allPoints.getY(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
@@ -295,9 +295,9 @@ class ClickRay {
 // third, near-identical copy in mouseReleased.pde's castClickToWorld()
 // was later pointed at this too.
 // Turns a click point into a ray in WORLD (unscaled, i.e. /
-// OBJECTS_scale) space: starts at the current camera position, aimed
+// overallScale) space: starts at the current camera position, aimed
 // through WIN3D.calculate_Click3D(Image_X, Image_Y) (already covered
-// directly in WIN3DTest.java) - except in orthographic view (ViewType
+// directly in WIN3DTest.java) - except in orthographic view (projectionTypeIndex
 // == 0), where there's no real camera point to start from, so the
 // start point is instead offset from the camera position by however far
 // calculate_Click3D(Image_X, Image_Y) itself differs from
@@ -306,25 +306,25 @@ ClickRay computeClickRay (float Image_X, float Image_Y) {
   ClickRay ray = new ClickRay();
 
   float[] ray_start = {
-    WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
+    WIN3D.cameraX, WIN3D.cameraY, WIN3D.cameraZ
   };
 
   float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
 
-  ray_start[0] /= OBJECTS_scale;
-  ray_start[1] /= OBJECTS_scale;
-  ray_start[2] /= OBJECTS_scale;
+  ray_start[0] /= overallScale;
+  ray_start[1] /= overallScale;
+  ray_start[2] /= overallScale;
 
-  ray_end[0] /= OBJECTS_scale;
-  ray_end[1] /= OBJECTS_scale;
-  ray_end[2] /= OBJECTS_scale;
+  ray_end[0] /= overallScale;
+  ray_end[1] /= overallScale;
+  ray_end[2] /= overallScale;
 
-  if (WIN3D.ViewType == 0) {
+  if (WIN3D.projectionTypeIndex == 0) {
     float[] ray_center = WIN3D.calculate_Click3D(0, 0);
 
-    ray_center[0] /= OBJECTS_scale;
-    ray_center[1] /= OBJECTS_scale;
-    ray_center[2] /= OBJECTS_scale;
+    ray_center[0] /= overallScale;
+    ray_center[1] /= overallScale;
+    ray_center[2] /= overallScale;
 
     ray_start[0] += ray_end[0] - ray_center[0];
     ray_start[1] += ray_end[1] - ray_center[1];
@@ -355,10 +355,10 @@ class CreateParams {
 // calls are already covered directly in Create3DTest.java, so this
 // extraction focuses purely on the parameter derivation that used to sit
 // in front of them, previously untested on its own. Note this can call
-// random() in two places (when create_Length/Width/Height is negative,
-// meaning "randomize within this range", and when create_powRnd is on) -
+// random() in two places (when createLength/Width/Height is negative,
+// meaning "randomize within this range", and when createRandomSuperellipsoidPower is on) -
 // callers that want a fully deterministic result should use non-negative
-// lengths and turn create_powRnd off.
+// lengths and turn createRandomSuperellipsoidPower off.
 CreateParams computeCreateParams (float[] RxP) {
   CreateParams p = new CreateParams();
 
@@ -366,32 +366,32 @@ CreateParams computeCreateParams (float[] RxP) {
   p.y = RxP[2];
   p.z = RxP[3];
 
-  p.rot = User3D.create_Orientation;
-  if (p.rot == 360) p.rot = WIN3D.rotation_Z;
+  p.rot = User3D.creatorOrientation;
+  if (p.rot == 360) p.rot = WIN3D.rotationZ;
 
-  p.rx = 0.5 * User3D.create_Length;
+  p.rx = 0.5 * User3D.creatorLength;
   if (p.rx < 0) p.rx = random(0.25 * abs(p.rx), abs(p.rx));
 
-  p.ry = 0.5 * User3D.create_Width;
+  p.ry = 0.5 * User3D.creatorWidth;
   if (p.ry < 0) p.ry = random(0.25 * abs(p.ry), abs(p.ry));
 
-  p.rz = 0.5 * User3D.create_Height;
+  p.rz = 0.5 * User3D.creatorHeight;
   if (p.rz < 0) p.rz = random(0.25 * abs(p.rz), abs(p.rz));
 
-  p.px = User3D.create_powX;
-  p.py = User3D.create_powY;
-  p.pz = User3D.create_powZ;
+  p.px = User3D.creatorSuperellipsoidPowerX;
+  p.py = User3D.creatorSuperellipsoidPowerY;
+  p.pz = User3D.creatorSuperellipsoidPowerZ;
 
-  if (User3D.create_powRnd == 1) {
+  if (User3D.creatorRandomSuperellipsoidPower == 1) {
     p.px = pow(2, int(random(5)) - 1);
     p.py = p.px;
     p.pz = p.px;
   }
 
-  if (User3D.create_Volume != 0) {
+  if (User3D.creatorVolume != 0) {
 
     if ((p.rx != 0) && (p.ry != 0)) {
-      p.rz = User3D.create_Volume / (8 * p.rx * p.ry);
+      p.rz = User3D.creatorVolume / (8 * p.rx * p.ry);
     }
 
     //---------------------------------------------------
@@ -410,11 +410,11 @@ CreateParams computeCreateParams (float[] RxP) {
     //---------------------------------------------------
   }
 
-  if ((current_ObjectCategory != ObjectCategory.MODEL1D) &&
-      (current_ObjectCategory != ObjectCategory.MODEL2D) &&
-      (current_ObjectCategory != ObjectCategory.LANDPOINT) &&
-      (current_ObjectCategory != ObjectCategory.CAMERA) &&
-      (current_ObjectCategory != ObjectCategory.SECTION)) {
+  if ((currentObjectCategory != ObjectCategory.MODEL1D) &&
+      (currentObjectCategory != ObjectCategory.MODEL2D) &&
+      (currentObjectCategory != ObjectCategory.LANDPOINT) &&
+      (currentObjectCategory != ObjectCategory.CAMERA) &&
+      (currentObjectCategory != ObjectCategory.SECTION)) {
 
     p.x -= p.rx * Select3D.alignX;
     p.y -= p.ry * Select3D.alignY;
@@ -434,58 +434,58 @@ class CameraParams {
 }
 
 // Pulled out of mouseClicked()'s "create a camera" handling: computes
-// what a new camera's own position_X/Y/Z/T and rotation_X/Y/Z/T would be
+// what a new camera's own positionX/Y/Z/T and rotationX/Y/Z/T would be
 // if its eye sat at (x, y, z + EyeLevel), by temporarily overwriting
-// WIN3D's own CAM_x/y/z and calling its (already directly tested in
+// WIN3D's own cameraX/y/z and calling its (already directly tested in
 // WIN3DTest.java) reverseTransform_3DViewport(), then restoring every
 // WIN3D field it touched back to what it was - this function's caller
 // used to do that save/compute/restore dance inline, right before
 // allCameras.create(); now it just calls this and passes the result
 // straight through.
 CameraParams computeCameraParamsAtPoint (float x, float y, float z) {
-  float keep_CAM_x = WIN3D.CAM_x;
-  float keep_CAM_y = WIN3D.CAM_y;
-  float keep_CAM_z = WIN3D.CAM_z;
-  float keep_position_X = WIN3D.position_X;
-  float keep_position_Y = WIN3D.position_Y;
-  float keep_position_Z = WIN3D.position_Z;
-  float keep_position_T = WIN3D.position_T;
-  float keep_rotation_X = WIN3D.rotation_X;
-  float keep_rotation_Y = WIN3D.rotation_Y;
-  float keep_rotation_Z = WIN3D.rotation_Z;
-  float keep_rotation_T = WIN3D.rotation_T;
-  float keep_Zoom = WIN3D.Zoom;
+  float keep_cameraX = WIN3D.cameraX;
+  float keep_cameraY = WIN3D.cameraY;
+  float keep_cameraZ = WIN3D.cameraZ;
+  float keep_positionX = WIN3D.positionX;
+  float keep_positionY = WIN3D.positionY;
+  float keep_positionZ = WIN3D.positionZ;
+  float keep_positionStep = WIN3D.positionStep;
+  float keep_rotationX = WIN3D.rotationX;
+  float keep_rotationY = WIN3D.rotationY;
+  float keep_rotationZ = WIN3D.rotationZ;
+  float keep_rotationStep = WIN3D.rotationStep;
+  float keep_Zoom = WIN3D.zoom;
 
-  WIN3D.CAM_x = x;
-  WIN3D.CAM_y = y;
-  WIN3D.CAM_z = z + EyeLevel;
+  WIN3D.cameraX = x;
+  WIN3D.cameraY = y;
+  WIN3D.cameraZ = z + EyeLevel;
 
   WIN3D.reverseTransform_3DViewport();
 
   CameraParams cp = new CameraParams();
-  cp.pX = WIN3D.position_X;
-  cp.pY = WIN3D.position_Y;
-  cp.pZ = WIN3D.position_Z;
-  cp.pT = WIN3D.position_T;
-  cp.rX = WIN3D.rotation_X;
-  cp.rY = WIN3D.rotation_Y;
-  cp.rZ = WIN3D.rotation_Z;
-  cp.rT = WIN3D.rotation_T;
-  cp.zoom = WIN3D.Zoom;
-  cp.type = WIN3D.ViewType;
+  cp.pX = WIN3D.positionX;
+  cp.pY = WIN3D.positionY;
+  cp.pZ = WIN3D.positionZ;
+  cp.pT = WIN3D.positionStep;
+  cp.rX = WIN3D.rotationX;
+  cp.rY = WIN3D.rotationY;
+  cp.rZ = WIN3D.rotationZ;
+  cp.rT = WIN3D.rotationStep;
+  cp.zoom = WIN3D.zoom;
+  cp.type = WIN3D.projectionTypeIndex;
 
-  WIN3D.CAM_x = keep_CAM_x;
-  WIN3D.CAM_y = keep_CAM_y;
-  WIN3D.CAM_z = keep_CAM_z;
-  WIN3D.position_X = keep_position_X;
-  WIN3D.position_Y = keep_position_Y;
-  WIN3D.position_Z = keep_position_Z;
-  WIN3D.position_T = keep_position_T;
-  WIN3D.rotation_X = keep_rotation_X;
-  WIN3D.rotation_Y = keep_rotation_Y;
-  WIN3D.rotation_Z = keep_rotation_Z;
-  WIN3D.rotation_T = keep_rotation_T;
-  WIN3D.Zoom = keep_Zoom;
+  WIN3D.cameraX = keep_cameraX;
+  WIN3D.cameraY = keep_cameraY;
+  WIN3D.cameraZ = keep_cameraZ;
+  WIN3D.positionX = keep_positionX;
+  WIN3D.positionY = keep_positionY;
+  WIN3D.positionZ = keep_positionZ;
+  WIN3D.positionStep = keep_positionStep;
+  WIN3D.rotationX = keep_rotationX;
+  WIN3D.rotationY = keep_rotationY;
+  WIN3D.rotationZ = keep_rotationZ;
+  WIN3D.rotationStep = keep_rotationStep;
+  WIN3D.zoom = keep_Zoom;
 
   return cp;
 }
@@ -698,7 +698,7 @@ SectionParams computeSectionParams (int f, float[] RxP) {
 // block twice in a row: once for a single clicked face (using `f`
 // directly) and once in a loop over every face `q` owned by the clicked
 // face's group (confirmed identical modulo the face-index variable name
-// before extracting). UI_TaskModifyParameter selects the mode: 1 always
+// before extracting). toolParameterModifier selects the mode: 1 always
 // flips; 2 flips only if the pivot sits on the positive side of the
 // face's own (first-corner, second-corner, centroid) winding plane; 3
 // flips only if it sits on the negative side.
@@ -718,7 +718,7 @@ void flipFaceOrientationIfNeeded (int f) {
   }
 
   int flip_face = 0;
-  if (WIN3D.UI_TaskModifyParameter == 1) flip_face = 1;
+  if (WIN3D.toolParameterModifier == 1) flip_face = 1;
   else {
     PVector AG = new PVector(allPoints.getX(tmpFace[0]) - G[0], allPoints.getY(tmpFace[0]) - G[1], allPoints.getZ(tmpFace[0]) - G[2]);
     PVector BG = new PVector(allPoints.getX(tmpFace[1]) - G[0], allPoints.getY(tmpFace[1]) - G[1], allPoints.getZ(tmpFace[1]) - G[2]);
@@ -735,10 +735,10 @@ void flipFaceOrientationIfNeeded (int f) {
 
     float V = PG.dot(GAxGB);
 
-    if (WIN3D.UI_TaskModifyParameter == 2) {
+    if (WIN3D.toolParameterModifier == 2) {
       if (V > 0) flip_face = 1;
     }
-    if (WIN3D.UI_TaskModifyParameter == 3) {
+    if (WIN3D.toolParameterModifier == 3) {
       if (V < 0) flip_face = 1;
     }
   }
@@ -821,7 +821,7 @@ NearestStation findNearestStation (STATION[] coords) {
 // Like findNearestStation, but returns up to `maxCount` indices
 // of stations within `maxDist` (same units as funcs.lon_lat_dist) of the
 // given (lon, lat), sorted by ascending distance. Used to detect when
-// several TMYEPW stations sit close enough together that a click can't
+// several Climate Typical Year stations sit close enough together that a click can't
 // unambiguously pick one, so they can be offered as a list instead.
 int[] findNearbyStations (STATION[] coords, float lon, float lat, float maxDist, int maxCount) {
 
@@ -876,7 +876,7 @@ int[] findNearbyStations (STATION[] coords, float lon, float lat, float maxDist,
 // just for TMYEPW; each dataset gets its own instance below, configured
 // with its own distance threshold, row-label text, and selection
 // behavior - at most one can ever be showing at a time, since a picker
-// only opens while its own dataset is the active CurrentDataSource.
+// only opens while its own dataset is the active currentDataSource.
 
 final float PICKLIST_SCROLLBAR_WIDTH = 14;
 final float pad = 1.6 * MessageSize;
@@ -885,10 +885,10 @@ final float headerHeight = 1.6 * MessageSize;
 
 abstract class StationPicker {
 
-  String name;      // shown in the title bar, e.g. "Pick TMYEPW Station"
+  String name;      // shown in the title bar, e.g. "Pick Climate Typical Year Station"
   float maxDist;    // metres
   int maxCount;
-  int dataSourceID; // only offer the list while CurrentDataSource == this
+  int dataSourceID; // only offer the list while currentDataSource == this
 
   boolean active = false;
   int[] indices = new int[0];
@@ -908,12 +908,12 @@ abstract class StationPicker {
   }
 
   // Supplied per dataset below. getCoords() reads the dataset's global
-  // coordinates array live (e.g. `return TMYEPW_Coordinates;`) rather
+  // coordinates array live (e.g. `return climateTypicalYearCoordinates;`) rather
   // than this class capturing it once at construction time - these
   // pickers are themselves top-level field initializers, which Processing
   // runs before setup() has populated the actual coordinate arrays (they
   // start out null and are only filled in later by e.g.
-  // inputCoordinates_TMYEPW()), so capturing the array in the constructor
+  // loadClimateTypicalYearCoordinates()), so capturing the array in the constructor
   // would have permanently captured null.
   abstract STATION[] getCoords ();
   abstract String getLabel (int f);
@@ -1195,7 +1195,7 @@ abstract class StationPicker {
     STATION[] coords = this.getCoords();
     int[] nearby = findNearbyStations(coords, lon, lat, this.maxDist, this.maxCount);
 
-    if ((nearby.length > 0) && (CurrentDataSource == this.dataSourceID)) {
+    if ((nearby.length > 0) && (currentDataSource == this.dataSourceID)) {
       this.active = true;
       this.indices = nearby;
       this.mouseLon = lon;
@@ -1208,40 +1208,40 @@ abstract class StationPicker {
   }
 }
 
-StationPicker TMYEPW_PICKER = new StationPicker("TMYEPW", 10000, 50, dataID_CLIMATE_TMYEPW) {
-  STATION[] getCoords () { return TMYEPW_Coordinates; }
-  String getLabel (int f) { return TMYEPW_Coordinates[f].getFilename_TMYEPW(); }
-  void select (int f, float lon, float lat) { selectTMYEPWStation(f, lon, lat); }
+StationPicker climateTypicalYearPicker = new StationPicker("Climate Typical Year (EPW)", 10000, 50, dataID_climateTmyEpw) {
+  STATION[] getCoords () { return climateTypicalYearCoordinates; }
+  String getLabel (int f) { return climateTypicalYearCoordinates[f].getClimateTypicalYearFilename(); }
+  void select (int f, float lon, float lat) { selectClimateTypicalYearStation(f, lon, lat); }
 };
 
-StationPicker CLMREC_PICKER = new StationPicker("CLMREC", 25000, 50, dataID_CLIMATE_CLMREC) {
-  STATION[] getCoords () { return CLMREC_Coordinates; }
-  String getLabel (int f) { return CLMREC_Coordinates[f].getCity() + ", " + CLMREC_Coordinates[f].getProvince(); }
-  void select (int f, float lon, float lat) { selectCLMRECStation(f, lon, lat); }
+StationPicker climateArchivePicker = new StationPicker("Climate Archive (NCA)", 25000, 50, dataID_climateArchive) {
+  STATION[] getCoords () { return climateArchiveCoordinates; }
+  String getLabel (int f) { return climateArchiveCoordinates[f].getCity() + ", " + climateArchiveCoordinates[f].getProvince(); }
+  void select (int f, float lon, float lat) { selectClimateArchiveStation(f, lon, lat); }
 };
 
-StationPicker CWEEDS_PICKER = new StationPicker("CWEEDS", 50000, 50, dataID_CLIMATE_CWEEDS) {
-  STATION[] getCoords () { return CWEEDS_coordinates; }
-  String getLabel (int f) { return CWEEDS_coordinates[f].getFilename_CWEEDS(); }
-  void select (int f, float lon, float lat) { selectCWEEDSStation(f, lon, lat); }
+StationPicker climateEngineeringPicker = new StationPicker("Climate Engineering (CWEEDS)", 50000, 50, dataID_climateEngineering) {
+  STATION[] getCoords () { return climateEngineeringCoordinates; }
+  String getLabel (int f) { return climateEngineeringCoordinates[f].getClimateEngineeringFilename(); }
+  void select (int f, float lon, float lat) { selectClimateEngineeringStation(f, lon, lat); }
 };
 
-StationPicker NAEFS_PICKER = new StationPicker("NAEFS", 50000, 50, dataID_ENSEMBLE_FORECAST) {
-  STATION[] getCoords () { return NAEFS_Coordinates; }
-  String getLabel (int f) { return NAEFS_Coordinates[f].getFilename_NAEFS(); }
-  void select (int f, float lon, float lat) { selectNAEFSStation(f, lon, lat); }
+StationPicker ensembleForecastPicker = new StationPicker("Ensemble Forecast (NAEFS)", 50000, 50, dataID_ensembleForecast) {
+  STATION[] getCoords () { return ensembleForecastCoordinates; }
+  String getLabel (int f) { return ensembleForecastCoordinates[f].getEnsembleForecastFilename(); }
+  void select (int f, float lon, float lat) { selectEnsembleForecastStation(f, lon, lat); }
 };
 
-StationPicker SWOB_PICKER = new StationPicker("SWOB", 25000, 50, dataID_ENSEMBLE_OBSERVED) {
-  STATION[] getCoords () { return SWOB_Coordinates; }
-  String getLabel (int f) { return SWOB_Coordinates[f].getCode(); }
-  void select (int f, float lon, float lat) { selectSWOBStation(f, lon, lat); }
+StationPicker ensembleObservationPicker = new StationPicker("Ensemble Observation (SWOB)", 25000, 50, dataID_ensembleObservation) {
+  STATION[] getCoords () { return ensembleObservationCoordinates; }
+  String getLabel (int f) { return ensembleObservationCoordinates[f].getCode(); }
+  void select (int f, float lon, float lat) { selectEnsembleObservationStation(f, lon, lat); }
 };
 
 // At most one of these is ever active at once, since a picker only opens
-// while its own dataset is CurrentDataSource - but each dispatcher below
+// while its own dataset is currentDataSource - but each dispatcher below
 // still has to check all of them to find out which (if any) that is.
-StationPicker[] ALL_PICKERS = { TMYEPW_PICKER, CLMREC_PICKER, CWEEDS_PICKER, NAEFS_PICKER, SWOB_PICKER };
+StationPicker[] ALL_PICKERS = { climateTypicalYearPicker, climateArchivePicker, climateEngineeringPicker, ensembleForecastPicker, ensembleObservationPicker };
 
 void drawPickLists () {
   for (StationPicker picker : ALL_PICKERS) picker.draw();
@@ -1279,196 +1279,196 @@ boolean cancelActivePickList () {
   return false;
 }
 
-// Assigns TMYEPW station `f` to STATION and (if TMYEPW is the active data
+// Assigns Climate Typical Year station `f` to STATION and (if Climate Typical Year is the active data
 // source) reloads its data - shared by both the direct single-nearest-hit
 // path and the "user picked a row from the list" path.
-void selectTMYEPWStation (int f, float mouse_lon, float mouse_lat) {
+void selectClimateTypicalYearStation (int f, float mouse_lon, float mouse_lat) {
 
-  if (STATION.getFilename_TMYEPW().equals(TMYEPW_Coordinates[f].getFilename_TMYEPW())) return;
+  if (STATION.getClimateTypicalYearFilename().equals(climateTypicalYearCoordinates[f].getClimateTypicalYearFilename())) return;
 
   STATION.setLatitude(mouse_lat);
   STATION.setLongitude(mouse_lon);
 
-  STATION.setFilename_TMYEPW(TMYEPW_Coordinates[f].getFilename_TMYEPW()); // epw filename
-  STATION.setDownload_TMYEPW(TMYEPW_Coordinates[f].getDownload_TMYEPW()); // epw filename
+  STATION.setClimateTypicalYearFilename(climateTypicalYearCoordinates[f].getClimateTypicalYearFilename()); // epw filename
+  STATION.setClimateTypicalYearDownload(climateTypicalYearCoordinates[f].getClimateTypicalYearDownload()); // epw filename
 
-  println("nearest epw filename:", TMYEPW_Coordinates[f].getFilename_TMYEPW());
+  println("nearest epw filename:", climateTypicalYearCoordinates[f].getClimateTypicalYearFilename());
 
-  if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
-    STATION.setCity(TMYEPW_Coordinates[f].getCity());
-    STATION.setProvince(TMYEPW_Coordinates[f].getProvince());
-    STATION.setCountry(TMYEPW_Coordinates[f].getCountry());
+  if (currentDataSource == dataID_climateTmyEpw) {
+    STATION.setCity(climateTypicalYearCoordinates[f].getCity());
+    STATION.setProvince(climateTypicalYearCoordinates[f].getProvince());
+    STATION.setCountry(climateTypicalYearCoordinates[f].getCountry());
 
-    //STATION.setLatitude(TMYEPW_Coordinates[f].getLatitude());
-    //STATION.setLongitude(TMYEPW_Coordinates[f].getLongitude());
-    STATION.setElevation(TMYEPW_Coordinates[f].getElevation());
-    STATION.setTimelong(TMYEPW_Coordinates[f].getTimelong());
+    //STATION.setLatitude(climateTypicalYearCoordinates[f].getLatitude());
+    //STATION.setLongitude(climateTypicalYearCoordinates[f].getLongitude());
+    STATION.setElevation(climateTypicalYearCoordinates[f].getElevation());
+    STATION.setTimezoneLongitude(climateTypicalYearCoordinates[f].getTimezoneLongitude());
 
     UI_rollout.revise();
 
     update_station(0);
 
-    download_CLIMATE_TMYEPW();
+    download_climateTmyEpw();
 
-    boolean keep_CLIMATE_TMYEPW_load = CLIMATE_TMYEPW_load;
-    update_CLIMATE_TMYEPW();
-    CLIMATE_TMYEPW_load = keep_CLIMATE_TMYEPW_load;
+    boolean keep_climateTypicalYearShouldLoad = climateTypicalYearShouldLoad;
+    update_climateTmyEpw();
+    climateTypicalYearShouldLoad = keep_climateTypicalYearShouldLoad;
   }
 }
 
-// Same shape as selectTMYEPWStation above, for CLMREC.
-void selectCLMRECStation (int f, float mouse_lon, float mouse_lat) {
+// Same shape as selectClimateTypicalYearStation above, for CLMREC.
+void selectClimateArchiveStation (int f, float mouse_lon, float mouse_lat) {
 
-  if (STATION.getFilename_CWEEDS().equals(CLMREC_Coordinates[f].getFilename_CWEEDS())) return;
+  if (STATION.getClimateEngineeringFilename().equals(climateArchiveCoordinates[f].getClimateEngineeringFilename())) return;
 
   STATION.setLatitude(mouse_lat);
   STATION.setLongitude(mouse_lon);
 
-  STATION.setFilename_CWEEDS(CLMREC_Coordinates[f].getFilename_CWEEDS()); // CLMREC filename
+  STATION.setClimateEngineeringFilename(climateArchiveCoordinates[f].getClimateEngineeringFilename()); // Climate Archive filename
 
-  println("nearest CLMREC filename:", CLMREC_Coordinates[f].getFilename_CWEEDS());
+  println("nearest Climate Archive filename:", climateArchiveCoordinates[f].getClimateEngineeringFilename());
 
-  if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
+  if (currentDataSource == dataID_climateArchive) {
 
-    STATION.setCity(CLMREC_Coordinates[f].getCity());
-    STATION.setProvince(CLMREC_Coordinates[f].getProvince());
-    STATION.setCountry(CLMREC_Coordinates[f].getCountry());
+    STATION.setCity(climateArchiveCoordinates[f].getCity());
+    STATION.setProvince(climateArchiveCoordinates[f].getProvince());
+    STATION.setCountry(climateArchiveCoordinates[f].getCountry());
 
-    //STATION.setLatitude(CLMREC_Coordinates[f].getLatitude());
-    //STATION.setLongitude(CLMREC_Coordinates[f].getLongitude());
-    STATION.setElevation(CLMREC_Coordinates[f].getElevation());
-    STATION.setTimelong(CLMREC_Coordinates[f].getTimelong());
+    //STATION.setLatitude(climateArchiveCoordinates[f].getLatitude());
+    //STATION.setLongitude(climateArchiveCoordinates[f].getLongitude());
+    STATION.setElevation(climateArchiveCoordinates[f].getElevation());
+    STATION.setTimezoneLongitude(climateArchiveCoordinates[f].getTimezoneLongitude());
 
     UI_rollout.revise();
 
     update_station(0);
-    update_CLIMATE_CLMREC();
+    updateClimateArchive();
   }
 }
 
-// Same shape as selectTMYEPWStation above, for CWEEDS.
-void selectCWEEDSStation (int f, float mouse_lon, float mouse_lat) {
+// Same shape as selectClimateTypicalYearStation above, for CWEEDS.
+void selectClimateEngineeringStation (int f, float mouse_lon, float mouse_lat) {
 
-  if (STATION.getFilename_CWEEDS().equals(CWEEDS_coordinates[f].getFilename_CWEEDS())) return;
+  if (STATION.getClimateEngineeringFilename().equals(climateEngineeringCoordinates[f].getClimateEngineeringFilename())) return;
 
   STATION.setLatitude(mouse_lat);
   STATION.setLongitude(mouse_lon);
 
-  STATION.setFilename_CWEEDS(CWEEDS_coordinates[f].getFilename_CWEEDS()); // CWEEDS filename
+  STATION.setClimateEngineeringFilename(climateEngineeringCoordinates[f].getClimateEngineeringFilename()); // Climate Engineering filename
 
-  println("nearest CWEEDS filename:", CWEEDS_coordinates[f].getFilename_CWEEDS());
+  println("nearest Climate Engineering filename:", climateEngineeringCoordinates[f].getClimateEngineeringFilename());
 
-  if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
+  if (currentDataSource == dataID_climateEngineering) {
 
-    STATION.setCity(CWEEDS_coordinates[f].getCity());
-    STATION.setProvince(CWEEDS_coordinates[f].getProvince());
-    STATION.setCountry(CWEEDS_coordinates[f].getCountry());
+    STATION.setCity(climateEngineeringCoordinates[f].getCity());
+    STATION.setProvince(climateEngineeringCoordinates[f].getProvince());
+    STATION.setCountry(climateEngineeringCoordinates[f].getCountry());
 
-    //STATION.setLatitude(CWEEDS_coordinates[f].getLatitude());
-    //STATION.setLongitude(CWEEDS_coordinates[f].getLongitude());
-    STATION.setElevation(CWEEDS_coordinates[f].getElevation());
-    STATION.setTimelong(funcs.roundTo(STATION.getLongitude(), 15));
+    //STATION.setLatitude(climateEngineeringCoordinates[f].getLatitude());
+    //STATION.setLongitude(climateEngineeringCoordinates[f].getLongitude());
+    STATION.setElevation(climateEngineeringCoordinates[f].getElevation());
+    STATION.setTimezoneLongitude(funcs.roundTo(STATION.getLongitude(), 15));
 
     UI_rollout.revise();
 
     update_station(0);
-    update_CLIMATE_CWEEDS();
+    update_climateEngineering();
   }
 }
 
-// Same shape as selectTMYEPWStation above, for NAEFS. Also
+// Same shape as selectClimateTypicalYearStation above, for NAEFS. Also
 // preserves the original ">100km => don't load" behavior, using the
 // distance from the clicked location to the selected station (matching
 // what the original inline code computed via STATION's just-updated
 // position before this function existed).
-void selectNAEFSStation (int f, float mouse_lon, float mouse_lat) {
+void selectEnsembleForecastStation (int f, float mouse_lon, float mouse_lat) {
 
-  if (STATION.getFilename_NAEFS().equals(NAEFS_Coordinates[f].getFilename_NAEFS())) return;
+  if (STATION.getEnsembleForecastFilename().equals(ensembleForecastCoordinates[f].getEnsembleForecastFilename())) return;
 
   STATION.setLatitude(mouse_lat);
   STATION.setLongitude(mouse_lon);
 
-  STATION.setFilename_NAEFS(NAEFS_Coordinates[f].getFilename_NAEFS());
+  STATION.setEnsembleForecastFilename(ensembleForecastCoordinates[f].getEnsembleForecastFilename());
 
-  println("nearest naefs filename:", NAEFS_Coordinates[f].getFilename_NAEFS());
+  println("nearest naefs filename:", ensembleForecastCoordinates[f].getEnsembleForecastFilename());
 
-  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-    STATION.setCity(NAEFS_Coordinates[f].getCity());
-    STATION.setProvince(NAEFS_Coordinates[f].getProvince());
-    STATION.setCountry(NAEFS_Coordinates[f].getCountry());
+  if (currentDataSource == dataID_ensembleForecast) {
+    STATION.setCity(ensembleForecastCoordinates[f].getCity());
+    STATION.setProvince(ensembleForecastCoordinates[f].getProvince());
+    STATION.setCountry(ensembleForecastCoordinates[f].getCountry());
 
-    //STATION.setLatitude(NAEFS_Coordinates[f].getLatitude());
-    //STATION.setLongitude(NAEFS_Coordinates[f].getLongitude());
-    STATION.setElevation(NAEFS_Coordinates[f].getElevation());
-    STATION.setTimelong(NAEFS_Coordinates[f].getTimelong());
+    //STATION.setLatitude(ensembleForecastCoordinates[f].getLatitude());
+    //STATION.setLongitude(ensembleForecastCoordinates[f].getLongitude());
+    STATION.setElevation(ensembleForecastCoordinates[f].getElevation());
+    STATION.setTimezoneLongitude(ensembleForecastCoordinates[f].getTimezoneLongitude());
 
     UI_rollout.revise();
 
     update_station(0);
 
-    download_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+    download_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-    boolean keep_ENSEMBLE_FORECAST_load = ENSEMBLE_FORECAST_load;
+    boolean keep_ensembleForecastShouldLoad = ensembleForecastShouldLoad;
 
-    float _lat = NAEFS_Coordinates[f].getLatitude();
-    float _lon = NAEFS_Coordinates[f].getLongitude();
+    float _lat = ensembleForecastCoordinates[f].getLatitude();
+    float _lon = ensembleForecastCoordinates[f].getLongitude();
     if (_lon > 180) _lon -= 360; // << important!
     float dist = funcs.lon_lat_dist(_lon, _lat, mouse_lon, mouse_lat);
 
     // do not load data if it is outside 100Km distance
     if (dist > 100000) {
-      ENSEMBLE_FORECAST_load = false;
-      STATION.setFilename_NAEFS("?");
+      ensembleForecastShouldLoad = false;
+      STATION.setEnsembleForecastFilename("?");
     }
-    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
-    ENSEMBLE_FORECAST_load = keep_ENSEMBLE_FORECAST_load;
+    update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ensembleForecastShouldLoad = keep_ensembleForecastShouldLoad;
   }
 }
 
-// Same shape as selectTMYEPWStation above, for SWOB. Also
+// Same shape as selectClimateTypicalYearStation above, for SWOB. Also
 // preserves the original ">100km => don't load" behavior - see the note
-// on selectNAEFSStation above.
-void selectSWOBStation (int f, float mouse_lon, float mouse_lat) {
+// on selectEnsembleForecastStation above.
+void selectEnsembleObservationStation (int f, float mouse_lon, float mouse_lat) {
 
-  if (STATION.getFilename_SWOB().equals(SWOB_Coordinates[f].getFilename_SWOB())) return;
+  if (STATION.getEnsembleObservationFilename().equals(ensembleObservationCoordinates[f].getEnsembleObservationFilename())) return;
 
   STATION.setLatitude(mouse_lat);
   STATION.setLongitude(mouse_lon);
 
-  STATION.setFilename_SWOB(SWOB_Coordinates[f].getFilename_SWOB());
+  STATION.setEnsembleObservationFilename(ensembleObservationCoordinates[f].getEnsembleObservationFilename());
 
-  println("nearest swob filename:", SWOB_Coordinates[f].getFilename_SWOB());
+  println("nearest swob filename:", ensembleObservationCoordinates[f].getEnsembleObservationFilename());
 
-  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
-    STATION.setCity(SWOB_Coordinates[f].getCity());
-    STATION.setProvince(SWOB_Coordinates[f].getProvince());
-    STATION.setCountry(SWOB_Coordinates[f].getCountry());
+  if (currentDataSource == dataID_ensembleObservation) {
+    STATION.setCity(ensembleObservationCoordinates[f].getCity());
+    STATION.setProvince(ensembleObservationCoordinates[f].getProvince());
+    STATION.setCountry(ensembleObservationCoordinates[f].getCountry());
 
-    //STATION.setLatitude(SWOB_Coordinates[f].getLatitude());
-    //STATION.setLongitude(SWOB_Coordinates[f].getLongitude());
-    STATION.setElevation(SWOB_Coordinates[f].getElevation());
-    STATION.setTimelong(SWOB_Coordinates[f].getTimelong());
+    //STATION.setLatitude(ensembleObservationCoordinates[f].getLatitude());
+    //STATION.setLongitude(ensembleObservationCoordinates[f].getLongitude());
+    STATION.setElevation(ensembleObservationCoordinates[f].getElevation());
+    STATION.setTimezoneLongitude(ensembleObservationCoordinates[f].getTimezoneLongitude());
 
     UI_rollout.revise();
 
     update_station(0);
 
-    download_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+    download_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-    boolean keep_ENSEMBLE_OBSERVED_load = ENSEMBLE_OBSERVED_load;
+    boolean keep_ensembleObservationShouldLoad = ensembleObservationShouldLoad;
 
-    float _lat = SWOB_Coordinates[f].getLatitude();
-    float _lon = SWOB_Coordinates[f].getLongitude();
+    float _lat = ensembleObservationCoordinates[f].getLatitude();
+    float _lon = ensembleObservationCoordinates[f].getLongitude();
     if (_lon > 180) _lon -= 360; // << important!
     float dist = funcs.lon_lat_dist(_lon, _lat, mouse_lon, mouse_lat);
 
     // do not load data if it is outside 100Km distance
     if (dist > 100000) {
-      ENSEMBLE_OBSERVED_load = false;
-      STATION.setFilename_SWOB("?");
+      ensembleObservationShouldLoad = false;
+      STATION.setEnsembleObservationFilename("?");
     }
-    update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
-    ENSEMBLE_OBSERVED_load = keep_ENSEMBLE_OBSERVED_load;
+    update_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ensembleObservationShouldLoad = keep_ensembleObservationShouldLoad;
   }
 }
 
@@ -1558,7 +1558,7 @@ void mouseClicked () {
             }
 
             if (mouseButton == LEFT) {
-              WORLD.Zoom = max(WORLD.Zoom, 5); // zoom in to confirm exactly where the click landed
+              WORLD.zoom = max(WORLD.zoom, 5); // zoom in to confirm exactly where the click landed
             }
             // Right click keeps the current zoom level instead, for
             // comparing several rough locations across a wider area
@@ -1566,7 +1566,7 @@ void mouseClicked () {
 
             // Each picker's handleMapClick() finds nearby candidates of its
             // own dataset around (mouse_lon, mouse_lat); if there's more
-            // than one AND that dataset is the active CurrentDataSource, it
+            // than one AND that dataset is the active currentDataSource, it
             // shows its own pick list instead of guessing - otherwise it
             // quietly selects the single nearest one, same as every
             // dataset did before pickers existed. A click while any
@@ -1574,11 +1574,11 @@ void mouseClicked () {
             // is already fully handled upfront by
             // handlePickListClick() above, so no picker can
             // still be active here.
-            SWOB_PICKER.handleMapClick(mouse_lon, mouse_lat);
-            NAEFS_PICKER.handleMapClick(mouse_lon, mouse_lat);
-            CWEEDS_PICKER.handleMapClick(mouse_lon, mouse_lat);
-            CLMREC_PICKER.handleMapClick(mouse_lon, mouse_lat);
-            TMYEPW_PICKER.handleMapClick(mouse_lon, mouse_lat);
+            ensembleObservationPicker.handleMapClick(mouse_lon, mouse_lat);
+            ensembleForecastPicker.handleMapClick(mouse_lon, mouse_lat);
+            climateEngineeringPicker.handleMapClick(mouse_lon, mouse_lat);
+            climateArchivePicker.handleMapClick(mouse_lon, mouse_lat);
+            climateTypicalYearPicker.handleMapClick(mouse_lon, mouse_lat);
 
 
 
@@ -1599,7 +1599,7 @@ void mouseClicked () {
             Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
             Image_Y = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
 
-            if (WIN3D.UI_CurrentTask == UITASK.LookAtDirection) { // viewport:LookAtDirection
+            if (WIN3D.currentTool == UITASK.LookAtDirection) { // viewport:LookAtDirection
 
               WIN3D.look_3DViewport_towards_Direction(Image_X, Image_Y);
 
@@ -1617,24 +1617,24 @@ void mouseClicked () {
                 RxP = Land3D.intersect(ray_start, ray_direction);
               } else if (mouseButton == LEFT) {
 
-                if ((WIN3D.UI_CurrentTask == UITASK.Create) ||
-                    (WIN3D.UI_CurrentTask == UITASK.Move)) {
+                if ((WIN3D.currentTool == UITASK.Create) ||
+                    (WIN3D.currentTool == UITASK.Move)) {
 
                    RxP = snap_Faces(allFaces.intersect(ray_start, ray_direction));
 
                 } else {
 
-                  if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+                  if (currentObjectCategory == ObjectCategory.POLYLINE) {
                     RxP = allPolylines.intersect(ray_start, ray_direction);
-                  } else if (current_ObjectCategory == ObjectCategory.CAMERA) {
+                  } else if (currentObjectCategory == ObjectCategory.CAMERA) {
                     RxP = allCameras.intersect(ray_start, ray_direction);
-                  } else if (current_ObjectCategory == ObjectCategory.SECTION) {
+                  } else if (currentObjectCategory == ObjectCategory.SECTION) {
                     RxP = allSections.intersect(ray_start, ray_direction);
-                  } else if (current_ObjectCategory == ObjectCategory.SOLID) {
+                  } else if (currentObjectCategory == ObjectCategory.SOLID) {
                     RxP = allSolids.intersect(ray_start, ray_direction);
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                  } else if (currentObjectCategory == ObjectCategory.MODEL1D) {
                     RxP = allModel1Ds.intersect(ray_start, ray_direction);
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+                  } else if (currentObjectCategory == ObjectCategory.MODEL2D) {
                     RxP = allModel2Ds.intersect(ray_start, ray_direction);
                   } else {
                     RxP = snap_Faces(allFaces.intersect(ray_start, ray_direction));
@@ -1648,14 +1648,14 @@ void mouseClicked () {
 
               //println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[1], RxP[2], RxP[3], RxP[4], RxP[0]);
 
-              if ((WIN3D.UI_CurrentTask != UITASK.Create) && (WIN3D.UI_CurrentTask != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
+              if ((WIN3D.currentTool != UITASK.Create) && (WIN3D.currentTool != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
 
                 Select3D.selectPick(RxP);
               }
 
               else if (RxP[0] >= 0) {
 
-                if (WIN3D.UI_CurrentTask == UITASK.Move) { // move
+                if (WIN3D.currentTool == UITASK.Move) { // move
 
                   float[] origin = getMoveOriginPoint();
                   float x1 = origin[0];
@@ -1683,20 +1683,20 @@ void mouseClicked () {
 
                 if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
 
-                  if ((WIN3D.UI_TaskModifyParameter != 0) && (WIN3D.UI_CurrentTask >= UITASK.Seed_Material)) { // Pick/Assign properties
+                  if ((WIN3D.toolParameterModifier != 0) && (WIN3D.currentTool >= UITASK.Seed_Material)) { // Pick/Assign properties
 
-                    if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-                        (current_ObjectCategory == ObjectCategory.FACE) || (current_ObjectCategory == ObjectCategory.POLYLINE)) {
+                    if ((currentObjectCategory == ObjectCategory.GROUP) ||
+                        (currentObjectCategory == ObjectCategory.FACE) || (currentObjectCategory == ObjectCategory.POLYLINE)) {
 
                       int f = int(RxP[0]);
 
                       pickOrAssignFaceProperty(f);
 
-                      if (WIN3D.UI_CurrentTask == UITASK.Pivot) {
-                        if (WIN3D.UI_TaskModifyParameter == 1) { // Pick
+                      if (WIN3D.currentTool == UITASK.Pivot) {
+                        if (WIN3D.toolParameterModifier == 1) { // Pick
                           //?????????????????????????????????????????????????
                         }
-                        if (WIN3D.UI_TaskModifyParameter == 2) { // Assign
+                        if (WIN3D.toolParameterModifier == 2) { // Assign
                           int OBJ_ID = allGroups.findGroupContainingFace(f);
 
 
@@ -1711,9 +1711,9 @@ void mouseClicked () {
                         }
                       }
 
-                      if (WIN3D.UI_CurrentTask == UITASK.Normal) { //Normal
+                      if (WIN3D.currentTool == UITASK.Normal) { //Normal
 
-                        if (current_ObjectCategory == ObjectCategory.FACE) {
+                        if (currentObjectCategory == ObjectCategory.FACE) {
 
                           Select3D.Face_ids = new int [1];
                           Select3D.Face_ids[0] = f;
@@ -1721,7 +1721,7 @@ void mouseClicked () {
                           Select3D.Face_displayVertexCount = true;
 
                           flipFaceOrientationIfNeeded(f);
-                        } else if (current_ObjectCategory == ObjectCategory.GROUP) {
+                        } else if (currentObjectCategory == ObjectCategory.GROUP) {
                           int OBJ_ID = allGroups.findGroupContainingFace(f);
 
                           for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
@@ -1733,9 +1733,9 @@ void mouseClicked () {
 
 
 
-                      if (WIN3D.UI_CurrentTask == UITASK.FirstVertex) { //FirstVertex
+                      if (WIN3D.currentTool == UITASK.FirstVertex) { //FirstVertex
 
-                        if (current_ObjectCategory == ObjectCategory.FACE) {
+                        if (currentObjectCategory == ObjectCategory.FACE) {
 
                           Select3D.Face_ids = new int [1];
                           Select3D.Face_ids[0] = f;
@@ -1743,7 +1743,7 @@ void mouseClicked () {
                           Select3D.Face_displayVertexCount = true;
 
                           rotateNodesToStartAtNearestVertex(allFaces.nodes[f], RxP);
-                        } else if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+                        } else if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
                           Select3D.Polyline_ids = new int [1];
                           Select3D.Polyline_ids[0] = f;
@@ -1765,11 +1765,11 @@ void mouseClicked () {
 
 
 
-                    if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+                    if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
                       pickOrAssignModel2DSeedMaterial(int(RxP[0]));
 
-                    } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+                    } else if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
                       pickOrAssignModel1DProperty(int(RxP[0]));
                     }
@@ -1779,7 +1779,7 @@ void mouseClicked () {
                   }
                 }
 
-                if (WIN3D.UI_CurrentTask == UITASK.Create) { // create
+                if (WIN3D.currentTool == UITASK.Create) { // create
 
                   int keep_number_of_allGroups = allGroups.num;
                   int keep_number_of_allModel2Ds = allModel2Ds.num;
@@ -1795,8 +1795,8 @@ void mouseClicked () {
 
 
 
-                  //if ((current_ObjectCategory == ObjectCategory.GROUP) || (current_ObjectCategory == ObjectCategory.SOLID) || (current_ObjectCategory == ObjectCategory.MODEL1D) || (current_ObjectCategory == ObjectCategory.MODEL2D)) {
-                  if (current_ObjectCategory == ObjectCategory.GROUP) { // begin the group, then create its first mesh/solid
+                  //if ((currentObjectCategory == ObjectCategory.GROUP) || (currentObjectCategory == ObjectCategory.SOLID) || (currentObjectCategory == ObjectCategory.MODEL1D) || (currentObjectCategory == ObjectCategory.MODEL2D)) {
+                  if (currentObjectCategory == ObjectCategory.GROUP) { // begin the group, then create its first mesh/solid
 
                     if (addToLastGroup == false) {
 
@@ -1811,95 +1811,95 @@ void mouseClicked () {
 
                       if (shape == SUPEROBJ_SHAPE_PARAMETRIC) {
 
-                        Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, 0, rot);
+                        Create3D.add_ParametricSurface(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, 0, rot);
                       } else if (shape == SUPEROBJ_SHAPE_SUPERCYLINDER) {
 
-                        Create3D.add_SuperCylinder(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_CylinderDegree, rot);
+                        Create3D.add_SuperCylinder(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, User3D.creatorCylinderDegree, rot);
                       } else if (shape == SUPEROBJ_SHAPE_BOX) {
 
-                        Create3D.add_Box_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, rot);
+                        Create3D.add_Box_Core(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, rot);
                       } else if (shape == SUPEROBJ_SHAPE_OCTAHEDRON) {
 
-                        Create3D.add_Octahedron(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, rot);
+                        Create3D.add_Octahedron(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, rot);
                       } else {
 
-                        Create3D.add_SuperSphere(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, pz, py, pz, rx, ry, rz, User3D.create_SphereDegree, rot);
+                        Create3D.add_SuperSphere(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, pz, py, pz, rx, ry, rz, User3D.creatorSphereDegree, rot);
                       }
 
-                      if (User3D.create_MeshOrSolid != 0) {
+                      if (User3D.creatorMeshOrSolidMode != 0) {
 
                         allSolids.create(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                       }
                     } else if (CreateObject == CREATE.Pyramid) {
 
-                      Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
                     } else if (CreateObject == CREATE.Plane) {
 
-                      Create3D.add_Mesh4(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
+                      Create3D.add_Mesh4(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
                     } else if (CreateObject == CREATE.Polygon) {
 
-                      Create3D.add_PolygonMesh(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, User3D.create_PolyDegree, rot);
+                      Create3D.add_PolygonMesh(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, User3D.creatorPolygonDegree, rot);
                     } else if (CreateObject == CREATE.Hyper) {
 
-                      Create3D.add_PolygonHyper(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
+                      Create3D.add_PolygonHyper(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, 2 * rz, User3D.creatorPolygonDegree, rot);
                     } else if (CreateObject == CREATE.Extrude) {
 
-                      Create3D.add_PolygonExtrude(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, 2 * rz, User3D.create_PolyDegree, rot);
+                      Create3D.add_PolygonExtrude(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, 2 * rz, User3D.creatorPolygonDegree, rot);
                     } else if (CreateObject == CREATE.House3) {
 
                       float h = ry;
 
-                      Create3D.add_House3_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
+                      Create3D.add_House3_Core(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, h, rot);
                     } else if (CreateObject == CREATE.House2) {
 
                       float h = ry;
 
-                      Create3D.add_House2_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
+                      Create3D.add_House2_Core(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, h, rot);
                     } else if (CreateObject == CREATE.House1) {
 
                       float h = ry;
 
                       if (ry > rx) h = rx;
 
-                      Create3D.add_House1_Core(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, h, rot);
+                      Create3D.add_House1_Core(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, h, rot);
                     } else if (CreateObject == CREATE.Parametric) {
 
-                      Create3D.add_ParametricSurface(User3D.default_Material, User3D.default_Tessellation, User3D.default_Layer, User3D.default_Visibility, User3D.default_Weight, User3D.default_Closed, x, y, z, rx, ry, rz, User3D.create_Parametric_Type, rot);
+                      Create3D.add_ParametricSurface(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, User3D.creatorParametricTypeIndex, rot);
                     }
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
+                  } else if (currentObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
                     if (CreateObject == CREATE.Person) {
 
                       randomSeed(millis());
-                      allModel2Ds.create("PEOPLE", User3D.create_Person_Type, x, y, z, 2.5);
+                      allModel2Ds.create("PEOPLE", User3D.creatorPersonTypeIndex, x, y, z, 2.5);
                     }
 
                     if (CreateObject == CREATE.Plant) {
                       int n = 0;
-                      if (User3D.create_Plant_Type > 0) n = User3D.create_Plant_Type + allModel2Ds.num_files_PEOPLE;
+                      if (User3D.creatorPlantTypeIndex > 0) n = User3D.creatorPlantTypeIndex + allModel2Ds.peopleFileCount;
 
                       randomSeed(millis());
                       allModel2Ds.create("TREES", n, x, y, z, 2 * rz);
                     }
-                  } else if (current_ObjectCategory == ObjectCategory.MODEL1D) { // working with model1Ds
+                  } else if (currentObjectCategory == ObjectCategory.MODEL1D) { // working with model1Ds
                     if (CreateObject == CREATE.Model1Ds) {
 
                       randomSeed(millis());
-                      allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed,
-                                         User3D.create_Model1D_DegreeMax,
+                      allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
+                                         User3D.creatorModel1DDegreeMax,
                                          x, y, z, 2 * rz, floor(random(360)),
-                                         User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist,
-                                         User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
-                                         User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                                         User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
+                                         User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                                         User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
                     }
-                  } else if (current_ObjectCategory == ObjectCategory.VERTEX) { // working with vertices
+                  } else if (currentObjectCategory == ObjectCategory.VERTEX) { // working with vertices
                     if (CreateObject == CREATE.Vertex) {
                       allPoints.create(x, y, z);
 
                     }
-                  } else if (current_ObjectCategory == ObjectCategory.FACE) { // working with faces
+                  } else if (currentObjectCategory == ObjectCategory.FACE) { // working with faces
                     if (CreateObject == CREATE.Face) {
                       allFaces.add_VertexToLastFace(x, y, z);
 
@@ -1908,7 +1908,7 @@ void mouseClicked () {
 
                       Select3D.calculate_BoundingBox();
                     }
-                  } else if (current_ObjectCategory == ObjectCategory.POLYLINE) { // working with polylines
+                  } else if (currentObjectCategory == ObjectCategory.POLYLINE) { // working with polylines
                     if (CreateObject == CREATE.Polyline) {
                       allPolylines.add_VertexToLastPolyline(x, y, z);
 
@@ -1917,18 +1917,18 @@ void mouseClicked () {
 
                       Select3D.calculate_BoundingBox();
                     }
-                  } else if (current_ObjectCategory == ObjectCategory.SOLID) { // working with solids
+                  } else if (currentObjectCategory == ObjectCategory.SOLID) { // working with solids
                     if (CreateObject == CREATE.Solid) {
                       allSolids.create(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
                     }
-                  } else if (current_ObjectCategory == ObjectCategory.CAMERA) { // working with cameras
+                  } else if (currentObjectCategory == ObjectCategory.CAMERA) { // working with cameras
                     if (CreateObject == CREATE.Camera) {
 
                       CameraParams camParams = computeCameraParamsAtPoint(RxP[1], RxP[2], RxP[3]);
 
                       allCameras.create(camParams.pX, camParams.pY, camParams.pZ, camParams.pT, camParams.rX, camParams.rY, camParams.rZ, camParams.rT, camParams.zoom, camParams.type);
                     }
-                  } else if (current_ObjectCategory == ObjectCategory.SECTION) { // working with sections
+                  } else if (currentObjectCategory == ObjectCategory.SECTION) { // working with sections
                     if (CreateObject == CREATE.Section) {
 
                       SectionParams sp = computeSectionParams(int(RxP[0]), RxP);

@@ -50,8 +50,8 @@ class Earth3D {
 
   boolean showTexture () {
     return this.displayTexture &&
-      (WIN3D.FacesShade != SHADE.Global_Solar) &&
-      (WIN3D.FacesShade != SHADE.Vertex_Elevation);
+      (WIN3D.shadingMode != SHADE.Global_Solar) &&
+      (WIN3D.shadingMode != SHADE.Vertex_Elevation);
   }
 
   int fillStationGridCell = -2; // -2: fill station cell with quads subdivided midway to the station (center quad leveled to z=0), -1: fill station cell with triangles pointing to the station, 0: skip fill, 1: normal fill
@@ -562,11 +562,11 @@ class Earth3D {
 
   // Textured mode (this.showTexture() true) samples the elevation image as
   // before. Shaded mode (false) instead colors each vertex per
-  // WIN3D.FacesShade - currently SHADE.Global_Solar (sky-bucket solar
+  // WIN3D.shadingMode - currently SHADE.Global_Solar (sky-bucket solar
   // exposure, needs this vertex's neighbors within the same subface, same
   // as Faces.pde/Land3D.pde) and SHADE.Vertex_Elevation (colored by the
   // vertex's own bumped height) - falling back to plain white for any
-  // other FacesShade value, matching Land3D's own default. Both modes
+  // other shadingMode value, matching Land3D's own default. Both modes
   // stay inside the single batched beginShape(QUADS) from
   // beginWIN3DSphere(): a texture binds once for the whole shape, and
   // per-vertex fill() works the same way within one shape too.
@@ -581,10 +581,10 @@ class Earth3D {
         float[] VERTEX_next = { subFace[s_next].x,  subFace[s_next].y,  subFace[s_next].z };
 
         float[] COL = { 255, 255, 255, 255 };
-        if (WIN3D.FacesShade == SHADE.Global_Solar) {
+        if (WIN3D.shadingMode == SHADE.Global_Solar) {
           COL = SHADE.vertexRender_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_type, PAL_direction, PAL_multiplier);
         }
-        if (WIN3D.FacesShade == SHADE.Vertex_Elevation) {
+        if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
           // display diff with station
           float[] VERTEX_elevation = { subFace[s].x, subFace[s].y, subFace[s].w };
 
@@ -596,9 +596,9 @@ class Earth3D {
 
         WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
         WIN3D.graphics.vertex(
-          subFace[s].x * OBJECTS_scale * WIN3D.scale,
-          -subFace[s].y * OBJECTS_scale * WIN3D.scale,
-          subFace[s].z * OBJECTS_scale * WIN3D.scale
+          subFace[s].x * overallScale * WIN3D.scale,
+          -subFace[s].y * overallScale * WIN3D.scale,
+          subFace[s].z * overallScale * WIN3D.scale
         );
       }
       return;
@@ -608,9 +608,9 @@ class Earth3D {
       float u = clamp01(subFace[s].u);
       float v = clamp01(subFace[s].v);
       WIN3D.graphics.vertex(
-        subFace[s].x * OBJECTS_scale * WIN3D.scale,
-        -subFace[s].y * OBJECTS_scale * WIN3D.scale,
-        subFace[s].z * OBJECTS_scale * WIN3D.scale,
+        subFace[s].x * overallScale * WIN3D.scale,
+        -subFace[s].y * overallScale * WIN3D.scale,
+        subFace[s].z * overallScale * WIN3D.scale,
         u * textureImage.width,
         v * textureImage.height
       );
@@ -655,9 +655,9 @@ class Earth3D {
 
   float[] projectEarthVertexForWIN3D (FaceVertex v) {
     return new float[] {
-       v.x * OBJECTS_scale * WIN3D.scale,
-      -v.y * OBJECTS_scale * WIN3D.scale,
-       v.z * OBJECTS_scale * WIN3D.scale
+       v.x * overallScale * WIN3D.scale,
+      -v.y * overallScale * WIN3D.scale,
+       v.z * overallScale * WIN3D.scale
     };
   }
 
@@ -711,7 +711,7 @@ class Earth3D {
   }
 
   void writeMaterial (int target_window, String textureLabel, String texturePath, String textureFilename) {
-    if (User3D.export_MaterialLibrary) {
+    if (User3D.exporterMaterialLibrary) {
       if (target_window == TypeWindow.HTML) {
         htmlOutput.println("\t\t\t\t<Appearance DEF='" + textureLabel + "'>");
       }
@@ -728,11 +728,11 @@ class Earth3D {
     }
 
     if (target_window == TypeWindow.OBJ3D) {
-      if (User3D.export_PolyToPoly == 1) {
+      if (User3D.exporterMaintainPolygons == 1) {
         obj_lastGroupNumber += 1;
         objOutput.println("g EarthSphere");
       }
-      if (User3D.export_MaterialLibrary) {
+      if (User3D.exporterMaterialLibrary) {
         objOutput.println("usemtl EarthSphere");
       }
     }
@@ -823,7 +823,7 @@ class Earth3D {
     // just a fraction of a degree from the station, kilometers by a few
     // degrees out), this is real terrain elevation only, relative to the
     // station's own baseline. SHADE.vertexU_Vertex_Elevation()'s palette
-    // multiplier (Land3D.palette_MLT) is calibrated for that kind of
+    // multiplier (Land3D.colorScaleFactor) is calibrated for that kind of
     // range; feeding it z directly would saturate almost everywhere
     // except right next to the station.
     vtx.w = rawBump - this.stationElevationBump;
@@ -883,9 +883,9 @@ class Earth3D {
     htmlOutput.print("\t\t\t\t\t\t<Coordinate point='");
     for (int s = 0; s < subFace.length; s++) {
       if (s > 0) htmlOutput.print(",");
-      htmlOutput.print(nf(subFace[s].x, 0, User3D.export_PrecisionVertex) + " " +
-                        nf(subFace[s].y, 0, User3D.export_PrecisionVertex) + " " +
-                        nf(subFace[s].z, 0, User3D.export_PrecisionVertex));
+      htmlOutput.print(nf(subFace[s].x, 0, User3D.exporterPrecisionVertex) + " " +
+                        nf(subFace[s].y, 0, User3D.exporterPrecisionVertex) + " " +
+                        nf(subFace[s].z, 0, User3D.exporterPrecisionVertex));
     }
     htmlOutput.println("'></Coordinate>");
 
@@ -936,7 +936,7 @@ class Earth3D {
     String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
     String m4_txt = nf(obj_lastVtextureNumber - 0, 0);
 
-    if (User3D.export_PolyToPoly == 0) {
+    if (User3D.exporterMaintainPolygons == 0) {
       obj_lastGroupNumber += 1;
       objOutput.println("g EarthSphere_" + nf(f, 0));
     }
@@ -944,7 +944,7 @@ class Earth3D {
     obj_lastFaceNumber += 1;
     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
 
-    if (User3D.export_BackSides) {
+    if (User3D.exporterDoubleSided) {
       obj_lastFaceNumber += 1;
       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
     }

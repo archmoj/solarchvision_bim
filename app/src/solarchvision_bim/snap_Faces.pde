@@ -7,7 +7,7 @@ float[] snap_Faces (float[] RxP) {
     float y = RxP[2];
     float z = RxP[3];
 
-    if (User3D.create_Snap == 1) { // nearest endpoint
+    if (User3D.creatorSnapModeIndex == 1) { // nearest endpoint
 
       float nearest_D = FLOAT_undefined;
       float nearest_X = FLOAT_undefined;

@@ -18,26 +18,26 @@ void update_station (int Step) {
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
   }
 
-  if ((Step == -1) || (Step == 1)) update_CLIMATE_TMYEPW();
+  if ((Step == -1) || (Step == 1)) update_climateTmyEpw();
 
-  if ((Step == -1) || (Step == 2)) update_CLIMATE_CWEEDS();
+  if ((Step == -1) || (Step == 2)) update_climateEngineering();
 
-  if ((Step == -1) || (Step == 3)) update_CLIMATE_CLMREC();
+  if ((Step == -1) || (Step == 3)) updateClimateArchive();
 
-  if ((Step == -1) || (Step == 4)) update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
+  if ((Step == -1) || (Step == 4)) update_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-  if ((Step == -1) || (Step == 5)) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+  if ((Step == -1) || (Step == 5)) update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
   if ((Step == -1) || (Step == 6)) Land3D.update_mesh();
 
   if ((Step == -1) || (Step == 0)) {
-    if (WIN3D.FacesShade == SHADE.Vertex_Solar) {
+    if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
       calculate_VertexSolar_array();
     }
 
     if (
-      WIN3D.FacesShade == SHADE.Vertex_Solar || // to render sky
-      WIN3D.FacesShade == SHADE.Global_Solar
+      WIN3D.shadingMode == SHADE.Vertex_Solar || // to render sky
+      WIN3D.shadingMode == SHADE.Global_Solar
     ) {
       calculate_GlobalSolar_array();
     }

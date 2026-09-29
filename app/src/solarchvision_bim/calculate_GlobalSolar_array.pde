@@ -8,8 +8,8 @@ void calculate_GlobalSolar_array () {
 
   float keep_STUDY_perDays = STUDY.perDays;
   int keep_STUDY_joinDays = STUDY.joinDays;
-  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-      (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+  if ((currentDataSource == dataID_ensembleForecast) ||
+      (currentDataSource == dataID_ensembleObservation)) {
     STUDY.perDays = 1;
     STUDY.joinDays = 1;
   }
@@ -36,8 +36,8 @@ void calculate_GlobalSolar_array () {
 
   int l = STUDY.ImpactLayer;
 
-  int a_max = int(180 / Sky3D.stp_slp);
-  int b_max = int(360 / Sky3D.stp_dir);
+  int a_max = int(180 / Sky3D.inclinationStep);
+  int b_max = int(360 / Sky3D.orientationStep);
 
   float[][] TOTALvaluesSUM_RAD = new float [1 + a_max][1 + b_max];
   float[][] TOTALvaluesSUM_EFF_P = new float [1 + a_max][1 + b_max];
@@ -73,7 +73,7 @@ void calculate_GlobalSolar_array () {
 
     float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactType);
     if (nk == -1) continue;
 
     int k = int(nk / STUDY.joinDays);
@@ -102,10 +102,10 @@ void calculate_GlobalSolar_array () {
 
           now_i = i;
 
-          Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-          Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-          Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-          Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+          Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+          Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+          Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
+          Pd = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
 
           if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
             values_R_dir = FLOAT_undefined;
@@ -114,7 +114,7 @@ void calculate_GlobalSolar_array () {
             values_E_dif = FLOAT_undefined;
           } else {
 
-            boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
+            boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
 
             if (isMemberCounted) {
               values_R_dir = 0.001 * Pa;
@@ -137,9 +137,9 @@ void calculate_GlobalSolar_array () {
     }
 
     for (int a = 0; a <= a_max; a++) {
-      float Alpha = a * Sky3D.stp_slp - 90;
+      float Alpha = a * Sky3D.inclinationStep - 90;
       for (int b = 0; b < b_max; b++) {
-        float Beta = b * Sky3D.stp_dir;
+        float Beta = b * Sky3D.orientationStep;
 
         float valuesSUM_RAD = 0;
         float valuesSUM_EFF_P = 0;
@@ -157,12 +157,12 @@ void calculate_GlobalSolar_array () {
             } else {
 
               if (cache_E_dir[i] < 0) {
-                valuesSUM_EFF_N += -SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, GlobalAlbedo);
+                valuesSUM_EFF_N += -SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, globalAlbedo);
               } else {
-                valuesSUM_EFF_P += SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, GlobalAlbedo);
+                valuesSUM_EFF_P += SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_E_dir[i], cache_E_dif[i], Alpha, Beta, globalAlbedo);
               }
 
-              valuesSUM_RAD += SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_R_dir[i], cache_R_dif[i], Alpha, Beta, GlobalAlbedo);
+              valuesSUM_RAD += SolarAtSurface(cache_SunR1[i], cache_SunR2[i], cache_SunR3[i], cache_R_dir[i], cache_R_dif[i], Alpha, Beta, globalAlbedo);
 
               valuesNUM += 1;
             }
@@ -216,9 +216,9 @@ void calculate_GlobalSolar_array () {
 
 
   for (int a = 0; a <= a_max; a++) {
-    float Alpha = a * Sky3D.stp_slp - 90;
+    float Alpha = a * Sky3D.inclinationStep - 90;
     for (int b = 0; b < b_max; b++) {
-      float Beta = b * Sky3D.stp_dir;
+      float Beta = b * Sky3D.orientationStep;
 
       if (TOTALvaluesNUM[a][b] != 0) {
         TOTALvaluesSUM_RAD[a][b] /= 1.0 * TOTALvaluesNUM[a][b];

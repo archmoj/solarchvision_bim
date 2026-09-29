@@ -123,7 +123,7 @@ class Sections {
     String the_filename = "Impact_" + nf(f, 0) + ".bmp";
 
     boolean materialTarget = (target_window == TypeWindow.HTML) || (target_window == TypeWindow.OBJ3D);
-    if (User3D.export_MaterialLibrary && materialTarget) {
+    if (User3D.exporterMaterialLibrary && materialTarget) {
       writeSectionMaterial(f, target_window, the_filename);
     }
     if (target_window == TypeWindow.OBJ3D) {
@@ -156,7 +156,7 @@ class Sections {
 
     if (allSolarImpacts.displayImage) {
       println("Saving texture:", TEXTURE_path);
-      this.SolarImpact[f][IMPACTS_displayDay][WIN3D.Impact_TYPE].save(TEXTURE_path);
+      this.SolarImpact[f][impactDisplayDay][WIN3D.impactType].save(TEXTURE_path);
     } else if (allSolidImpacts.displayImage) {
       println("Saving texture:", TEXTURE_path);
       this.SolidImpact[f].save(TEXTURE_path);
@@ -184,11 +184,11 @@ class Sections {
   }
 
   void writeSectionGroupHeader (int f, String the_filename) {
-    if (User3D.export_PolyToPoly == 1) {
+    if (User3D.exporterMaintainPolygons == 1) {
       obj_lastGroupNumber += 1;
       objOutput.println("g Impact_" + nf(f, 0));
     }
-    if (User3D.export_MaterialLibrary) {
+    if (User3D.exporterMaterialLibrary) {
       objOutput.println("usemtl " + the_filename.replace('.', '_'));
     }
   }
@@ -199,7 +199,7 @@ class Sections {
       WIN3D.graphics.noStroke();
       WIN3D.graphics.noFill();
       if (allSolarImpacts.displayImage) {
-        WIN3D.graphics.texture(this.SolarImpact[f][IMPACTS_displayDay][WIN3D.Impact_TYPE]);
+        WIN3D.graphics.texture(this.SolarImpact[f][impactDisplayDay][WIN3D.impactType]);
       } else if (allSolidImpacts.displayImage) {
         WIN3D.graphics.texture(this.SolidImpact[f]);
       }
@@ -213,7 +213,7 @@ class Sections {
       float v = subFace[q][4];
 
       if (target_window == TypeWindow.WIN3D) {
-        WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale, u * Section_RES1, v * Section_RES2);
+        WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale, u * Section_RES1, v * Section_RES2);
       }
 
       if (target_window == TypeWindow.OBJ3D) {
@@ -250,7 +250,7 @@ class Sections {
     obj_lastFaceNumber += 1;
     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
 
-    if (User3D.export_BackSides) {
+    if (User3D.exporterDoubleSided) {
       obj_lastFaceNumber += 1;
       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
     }
@@ -264,9 +264,9 @@ class Sections {
     htmlOutput.print("\t\t\t\t\t\t<Coordinate point='");
     for (int s = 1; s < subFace.length; s++) {
       if (s > 1) htmlOutput.print(",");
-      htmlOutput.print(nf(subFace[s][0], 0, User3D.export_PrecisionVertex) + " " +
-                        nf(subFace[s][1], 0, User3D.export_PrecisionVertex) + " " +
-                        nf(subFace[s][2], 0, User3D.export_PrecisionVertex));
+      htmlOutput.print(nf(subFace[s][0], 0, User3D.exporterPrecisionVertex) + " " +
+                        nf(subFace[s][1], 0, User3D.exporterPrecisionVertex) + " " +
+                        nf(subFace[s][2], 0, User3D.exporterPrecisionVertex));
     }
     htmlOutput.println("'></Coordinate>");
 

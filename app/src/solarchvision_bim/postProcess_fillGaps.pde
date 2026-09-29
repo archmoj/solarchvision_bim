@@ -1,11 +1,11 @@
 void postProcess_fillGaps (int desired_DataSource) {
 
-  int keep_CurrentDataSource = CurrentDataSource;
+  int keep_currentDataSource = currentDataSource;
 
-  CurrentDataSource = desired_DataSource;
+  currentDataSource = desired_DataSource;
 
-  int DATA_start = getStart_CurrentDataSource();
-  int DATA_end = getEnd_CurrentDataSource();
+  int DATA_start = getStart_currentDataSource();
+  int DATA_end = getEnd_currentDataSource();
 
   int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.
 
@@ -19,7 +19,7 @@ void postProcess_fillGaps (int desired_DataSource) {
 
         for (int i = 0; i < 24; i++) {
 
-          if (is_undefined(getValue_CurrentDataSource(i, j, k, l))) {
+          if (is_undefined(getValue_currentDataSource(i, j, k, l))) {
             if (is_defined(pre_v)) {
               pre_num += 1;
 
@@ -37,8 +37,8 @@ void postProcess_fillGaps (int desired_DataSource) {
                 if (next_j == 365) {
                   next_j = 0;
                 }
-                if (is_defined(getValue_CurrentDataSource(next_i, next_j, k, l))) {
-                  next_v = getValue_CurrentDataSource(next_i, next_j, k, l);
+                if (is_defined(getValue_currentDataSource(next_i, next_j, k, l))) {
+                  next_v = getValue_currentDataSource(next_i, next_j, k, l);
 
                   if (l == LAYER_winddir.id) {
                     if ((next_v - pre_v) > 180) next_v -= 360;
@@ -47,17 +47,17 @@ void postProcess_fillGaps (int desired_DataSource) {
                 }
               }
               if (next_num < MAX_SEARCH) {
-                if (l == LAYER_winddir.id) setValue_CurrentDataSource(i, j, k, l, ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360);
-                else setValue_CurrentDataSource(i, j, k, l, (next_num * pre_v + pre_num * next_v) / (pre_num + next_num));
+                if (l == LAYER_winddir.id) setValue_currentDataSource(i, j, k, l, ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360);
+                else setValue_currentDataSource(i, j, k, l, (next_num * pre_v + pre_num * next_v) / (pre_num + next_num));
 
-                float interpolation_pow = pow(2.0, Interpolation_Weight);
+                float interpolation_pow = pow(2.0, interpolationWeight);
 
-                setValue_CurrentDataSource(i, j, k, l, (pow(next_num, interpolation_pow) * pre_v + pow(pre_num, interpolation_pow) * next_v) / (pow(next_num, interpolation_pow) + pow(pre_num, interpolation_pow)));
-                if (l == LAYER_winddir.id) setValue_CurrentDataSource(i, j, k, l, (getValue_CurrentDataSource(i, j, k, l) + 360) % 360);
+                setValue_currentDataSource(i, j, k, l, (pow(next_num, interpolation_pow) * pre_v + pow(pre_num, interpolation_pow) * next_v) / (pow(next_num, interpolation_pow) + pow(pre_num, interpolation_pow)));
+                if (l == LAYER_winddir.id) setValue_currentDataSource(i, j, k, l, (getValue_currentDataSource(i, j, k, l) + 360) % 360);
               }
             }
           } else {
-            pre_v = getValue_CurrentDataSource(i, j, k, l);
+            pre_v = getValue_currentDataSource(i, j, k, l);
             pre_num = 0;
           }
 
@@ -67,5 +67,5 @@ void postProcess_fillGaps (int desired_DataSource) {
     }
   }
 
-  CurrentDataSource = keep_CurrentDataSource;
+  currentDataSource = keep_currentDataSource;
 }

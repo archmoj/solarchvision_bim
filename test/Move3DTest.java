@@ -16,7 +16,7 @@ class Move3DTest {
   @Test
   void selection_vertexCategoryDispatchesToVertices () {
     app.allVertices = new float[][]{{1, 2, 3}};
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0};
 
     app.Move3D.selection(1, 1, 1);
@@ -28,7 +28,7 @@ class Move3DTest {
   void selection_faceCategoryDispatchesToFaces () {
     app.allVertices = new float[][]{{1, 2, 3}};
     app.allFaces.nodes = new int[][]{{0}};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.Face_ids = new int[]{0};
 
     app.Move3D.selection(1, 1, 1);
@@ -40,7 +40,7 @@ class Move3DTest {
 
   @Test
   void landPoints_movesOnlyTheSelectedGridCells () {
-    app.Land3D.num_columns = 3;
+    app.Land3D.columnCount = 3;
     app.Land3D.Mesh = new float[2][3][3]; // 2 rows x 3 columns, all zero
 
     app.Select3D.LandPoint_ids = new int[]{4}; // flat index 4 -> row 1, col 1
@@ -181,12 +181,12 @@ class Move3DTest {
     // add_first(), so overwriting `options` alone to a length-2 array
     // leaves `Type`/`num` stale at their original length-1 state -
     // keeping all three in sync is what get_type() (called inside
-    // apply_currentCamera()) actually needs to not throw.
+    // apply_currentCameraIndex()) actually needs to not throw.
     app.allCameras.options = new float[][]{new float[9], new float[9]};
     app.allCameras.Type = new int[]{0, 0};
     app.allCameras.num = 2;
 
-    app.WIN3D.currentCamera = 1;
+    app.WIN3D.currentCameraIndex = 1;
     app.Select3D.Camera_ids = new int[]{1}; // moving the CURRENT camera
 
     app.Move3D.Cameras(1, 2, 3); // dy and dz get swapped internally -> actually applies (1, 3, 2)
@@ -195,11 +195,11 @@ class Move3DTest {
     assertEquals(3f, app.allCameras.options[1][1], 0.0001f);
     assertEquals(2f, app.allCameras.options[1][2], 0.0001f);
 
-    // apply_currentCamera() ran, so WIN3D's own position now mirrors the
+    // apply_currentCameraIndex() ran, so WIN3D's own position now mirrors the
     // moved (and swapped) camera values.
-    assertEquals(1f, app.WIN3D.position_X, 0.0001f);
-    assertEquals(3f, app.WIN3D.position_Y, 0.0001f);
-    assertEquals(2f, app.WIN3D.position_Z, 0.0001f);
+    assertEquals(1f, app.WIN3D.positionX, 0.0001f);
+    assertEquals(3f, app.WIN3D.positionY, 0.0001f);
+    assertEquals(2f, app.WIN3D.positionZ, 0.0001f);
   }
 
   @Test
@@ -208,24 +208,24 @@ class Move3DTest {
     app.allCameras.Type = new int[]{0, 0};
     app.allCameras.num = 2;
 
-    app.WIN3D.currentCamera = 1;
+    app.WIN3D.currentCameraIndex = 1;
     app.Select3D.Camera_ids = new int[]{0}; // moving a DIFFERENT camera
 
-    // Captured rather than assumed: WIN3D.position_Y/Z don't actually
+    // Captured rather than assumed: WIN3D.positionY/Z don't actually
     // default to 0 (they're 5 and 55, a preset starting viewpoint), so
     // asserting "unchanged" needs the real before-value, not a guess.
-    float beforeX = app.WIN3D.position_X;
-    float beforeY = app.WIN3D.position_Y;
-    float beforeZ = app.WIN3D.position_Z;
+    float beforeX = app.WIN3D.positionX;
+    float beforeY = app.WIN3D.positionY;
+    float beforeZ = app.WIN3D.positionZ;
 
     app.Move3D.Cameras(1, 2, 3);
 
     // Camera 0 moved...
     assertEquals(1f, app.allCameras.options[0][0], 0.0001f);
     // ...but WIN3D's own position is untouched, since camera 0 isn't current.
-    assertEquals(beforeX, app.WIN3D.position_X, 0.0001f);
-    assertEquals(beforeY, app.WIN3D.position_Y, 0.0001f);
-    assertEquals(beforeZ, app.WIN3D.position_Z, 0.0001f);
+    assertEquals(beforeX, app.WIN3D.positionX, 0.0001f);
+    assertEquals(beforeY, app.WIN3D.positionY, 0.0001f);
+    assertEquals(beforeZ, app.WIN3D.positionZ, 0.0001f);
   }
 
   // ================= Groups (full integration tests) ====================

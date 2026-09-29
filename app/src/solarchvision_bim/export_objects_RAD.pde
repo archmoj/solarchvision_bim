@@ -48,14 +48,14 @@ void exportRadiance () {
   //Command2 += " -vta"; //angular
   //Command2 += " -vts"; //stereographic
 
-  Command2 += " -vv " + nf(WIN3D.Zoom, 0, 0);
-  Command2 += " -vh " + nf(2 * funcs.atan_ang((WIN3D.dX / float(WIN3D.dY)) * funcs.tan_ang(0.5 * WIN3D.Zoom)), 0, 0);
+  Command2 += " -vv " + nf(WIN3D.zoom, 0, 0);
+  Command2 += " -vh " + nf(2 * funcs.atan_ang((WIN3D.dX / float(WIN3D.dY)) * funcs.tan_ang(0.5 * WIN3D.zoom)), 0, 0);
 
-  Command2 += " -vp " + nf(WIN3D.CAM_x / OBJECTS_scale, 0, 0) + " " + nf(WIN3D.CAM_y / OBJECTS_scale, 0, 0) + " " + nf(WIN3D.CAM_z / OBJECTS_scale, 0, 0);
+  Command2 += " -vp " + nf(WIN3D.cameraX / overallScale, 0, 0) + " " + nf(WIN3D.cameraY / overallScale, 0, 0) + " " + nf(WIN3D.cameraZ / overallScale, 0, 0);
 
-  float dx = funcs.cos_ang(90 - WIN3D.rotation_X) * funcs.cos_ang(90 - WIN3D.rotation_Z);
-  float dy = funcs.cos_ang(90 - WIN3D.rotation_X) * funcs.sin_ang(90 - WIN3D.rotation_Z);
-  float dz = funcs.sin_ang(90 - WIN3D.rotation_X);
+  float dx = funcs.cos_ang(90 - WIN3D.rotationX) * funcs.cos_ang(90 - WIN3D.rotationZ);
+  float dy = funcs.cos_ang(90 - WIN3D.rotationX) * funcs.sin_ang(90 - WIN3D.rotationZ);
+  float dz = funcs.sin_ang(90 - WIN3D.rotationX);
 
   Command2 += " -vd " + nf(-dx , 0, 0) + " " + nf(dy, 0, 0) + " " + nf(-dz, 0, 0);
 
@@ -63,8 +63,8 @@ void exportRadiance () {
   float uy = 0;
   float uz = 1;
   if (abs(dz) > 0.99) {
-    ux = funcs.cos_ang(90 + WIN3D.rotation_Z);
-    uy = funcs.sin_ang(90 + WIN3D.rotation_Z);
+    ux = funcs.cos_ang(90 + WIN3D.rotationZ);
+    uy = funcs.sin_ang(90 + WIN3D.rotationZ);
     uz = 0;
   }
   Command2 += " -vu " + nf(ux, 0, 0) + " " + nf(uy, 0, 0) + " " + nf(uz, 0, 0);

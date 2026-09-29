@@ -2,21 +2,21 @@ class STUDY {
 
   final static String CLASS_STAMP = "STUDY";
 
-  int SORT_palette_CLR = -1;
-  int SORT_palette_DIR = -1;
-  float SORT_palette_MLT = 2;
+  int SORT_ColorScaleIndex = -1;
+  int SORT_ColorScaleDirection = -1;
+  float SORT_ColorScaleFactor = 2;
 
-  int PROB_palette_CLR = -1;
-  int PROB_palette_DIR = 1;
-  float PROB_palette_MLT = 0.5;
+  int PROB_ColorScaleIndex = -1;
+  int PROB_ColorScaleDirection = 1;
+  float PROB_ColorScaleFactor = 0.5;
 
-  int ACTIVE_palette_CLR = 19; //15; //14;
-  int ACTIVE_palette_DIR = 1;
-  float ACTIVE_palette_MLT = 1; //2;
+  int activeColorScaleIndex = 19; //15; //14;
+  int activeColorScaleDirection = 1;
+  float activeColorScaleFactor = 1; //2;
 
-  int PASSIVE_palette_CLR = 1;
-  int PASSIVE_palette_DIR = 1;
-  float PASSIVE_palette_MLT = 0.25;
+  int passiveColorScaleIndex = 1;
+  int passiveColorScaleDirection = 1;
+  float passiveColorScaleFactor = 0.25;
 
 
   int cX = 0;
@@ -62,8 +62,8 @@ class STUDY {
   boolean export_info_norm = false;
   boolean export_info_prob = false;
 
-  float position_X = 0;
-  float position_Y = 0;
+  float positionX = 0;
+  float positionY = 0;
 
   float O_scale = 50.0;
   float W_scale = 3.0;
@@ -93,7 +93,7 @@ class STUDY {
 
   float ImageScale = 1.0;
 
-  int Impact_TYPE = 1;
+  int impactType = 1;
 
   PGraphics graphics;
 
@@ -167,7 +167,7 @@ class STUDY {
   }
 
   void requestDataRefresh () {
-    DevelopData_update = true;
+    developDataUpdate = true;
     UI_caseBar.revise();
     this.revise();
     WIN3D.revise();
@@ -198,12 +198,12 @@ class STUDY {
   void handleCtrlCodedKey (KeyEvent e) {
     switch (keyCode) {
       case UP :
-        changeCurrentLayerTo((CurrentLayer_id + 1) % allLayers.length);
+        changeCurrentLayerTo((currentLayerId + 1) % allLayers.length);
         requestRedraw();
         break;
 
       case DOWN :
-        changeCurrentLayerTo((CurrentLayer_id + allLayers.length - 1) % allLayers.length);
+        changeCurrentLayerTo((currentLayerId + allLayers.length - 1) % allLayers.length);
         requestRedraw();
         break;
 
@@ -338,7 +338,7 @@ class STUDY {
     if (delta < 0 && this.j_End <= this.j_Start) this.j_End -= delta;
     this.U_scale = 18.0 / float(this.j_End - this.j_Start);
 
-    DevelopData_update = true;
+    developDataUpdate = true;
 
     VertexSolar_rebuild_array = true;
     GlobalSolar_rebuild_array = true;
@@ -355,7 +355,7 @@ class STUDY {
   // states (1..4).
   void changeSkyScenario (int delta) {
     this.skyScenario = 1 + (((this.skyScenario - 1) + delta) % 4 + 4) % 4;
-    DevelopData_update = true;
+    developDataUpdate = true;
     this.revise();
     WIN3D.revise();
     UI_rollout.revise();
@@ -606,7 +606,7 @@ class STUDY {
         this.graphics.textSize(h);
         this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h);
         if (this.joinDays > 1) {
-          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y);
+          this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][activeLanguage] + "s"), x, y);
         }
       }
     }
@@ -623,7 +623,7 @@ class STUDY {
 
     String txt = STATION.getCity();
 
-    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+    if (currentDataSource == dataID_ensembleForecast) {
       txt += "\n(" + nf(TIME.year, 4) + "_" + nf(TIME.month, 2) + "_" + nf(TIME.day, 2) + "_" + nf(TIME.hour, 2) + ")";
     }
 
@@ -681,9 +681,9 @@ class STUDY {
     //println("_pix=", _pix);
 
 
-    int PAL_type = this.PROB_palette_CLR;
-    int PAL_direction = this.PROB_palette_DIR;
-    float PAL_multiplier = this.PROB_palette_MLT;
+    int PAL_type = this.PROB_ColorScaleIndex;
+    int PAL_direction = this.PROB_ColorScaleDirection;
+    float PAL_multiplier = this.PROB_ColorScaleFactor;
 
     float txt_max_width = (this.sumInterval * this.view_S * 100 / 24.0) * this.U_scale;
     float txt_max_height = _pix;
@@ -714,7 +714,7 @@ class STUDY {
       int min_b = int(funcs.roundTo((min_V * abs(sy_Plot)), _pix) / _pix);
       int max_b = int(funcs.roundTo((max_V * abs(sy_Plot)), _pix) / _pix);
 
-      if (CurrentLayer_id == LAYER_winddir.id) min_b = 0;
+      if (currentLayerId == LAYER_winddir.id) min_b = 0;
 
       int[] probs;
       int totalProbs = 0;
@@ -725,7 +725,7 @@ class STUDY {
         if (is_defined(valuesSUM[k])) {
           float the_value = valuesSUM[k];
 
-          if (CurrentLayer_id == LAYER_winddir.id) {
+          if (currentLayerId == LAYER_winddir.id) {
             if (funcs.roundTo((the_value * abs(sy_Plot)), _pix) >= (360 * abs(sy_Plot))) the_value -= 360;
           }
 
@@ -819,9 +819,9 @@ class STUDY {
 
   void drawSorted (int i, int j, float[] valuesA, float[] valuesB, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-    int PAL_type = this.SORT_palette_CLR;
-    int PAL_direction = this.SORT_palette_DIR;
-    float PAL_multiplier = this.SORT_palette_MLT;
+    int PAL_type = this.SORT_ColorScaleIndex;
+    int PAL_direction = this.SORT_ColorScaleDirection;
+    float PAL_multiplier = this.SORT_ColorScaleFactor;
 
     float[] sortedvaluesA = sort(valuesA);
     int num_sortedvaluesA = countDefinedPrefix(sortedvaluesA);
@@ -900,7 +900,7 @@ class STUDY {
     float[] NormalsA = NORMAL(valuesA);
     float[] NormalsB = NORMAL(valuesB);
 
-    if (CurrentLayer_id == LAYER_winddir.id) {
+    if (currentLayerId == LAYER_winddir.id) {
       float[] XvaluesA;
       float[] YvaluesA;
       XvaluesA = new float [valuesA.length];
@@ -1050,13 +1050,13 @@ class STUDY {
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
     this.graphics.textAlign(RIGHT, CENTER);
 
-    if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
-    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
+    if (currentDataSource == dataID_climateEngineering) this.graphics.text(("[" + String.valueOf(start_k + climateEngineeringStart) + "-" + String.valueOf(end_k + climateEngineeringStart) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
+    if (currentDataSource == dataID_climateArchive) this.graphics.text(("[" + String.valueOf(start_k + climateArchiveStart) + "-" + String.valueOf(end_k + climateArchiveStart) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
+    if (currentDataSource == dataID_ensembleForecast) this.graphics.text(("[" + String.valueOf(start_k + ensembleForecastStart) + "-" + String.valueOf(end_k + ensembleForecastStart) + "] "), 0, 1.0 * sx_Plot / this.U_scale);
 
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
     this.graphics.textAlign(LEFT, CENTER);
-    this.graphics.text((CurrentLayer_descriptions[Language_Active]), 0, 1.0 * sx_Plot / this.U_scale);
+    this.graphics.text((CurrentLayer_descriptions[activeLanguage]), 0, 1.0 * sx_Plot / this.U_scale);
   }
 
   // Draws the date label (and the "±N days" join-window label, if joining
@@ -1076,7 +1076,7 @@ class STUDY {
       this.graphics.textSize(h);
       this.graphics.text(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay), x, y + h);
       if (this.joinDays > 1) {
-        this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s"), x, y);
+        this.graphics.text(("±" + int(this.joinDays / 2) + TIME.WORDS[2][activeLanguage] + "s"), x, y);
       }
     }
   }
@@ -1088,10 +1088,10 @@ class STUDY {
   void openPerDayOutputFiles (int j, int count_k, int start_k, int end_k, int DATA_start, String Main_name) {
     String _FilenamesAdd = "";
     if (this.joinDays > 1) {
-      _FilenamesAdd = ("±" + int(this.joinDays / 2) + TIME.WORDS[2][Language_Active] + "s");
+      _FilenamesAdd = ("±" + int(this.joinDays / 2) + TIME.WORDS[2][activeLanguage] + "s");
     }
     if ((this.export_info_node) && (this.displayRaws)) {
-      FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputRaw[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
       FILE_outputRaw[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
 
       FILE_outputRaw[(j - this.j_Start)].print("Hour\t");
@@ -1101,7 +1101,7 @@ class STUDY {
       FILE_outputRaw[(j - this.j_Start)].println("");
     }
     if ((this.export_info_norm) && (this.displayNormals)) {
-      FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputNorms[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
       FILE_outputNorms[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
       FILE_outputNorms[(j - this.j_Start)].print("Hour\t");
       for (int l = 0; l < 9; l++) {
@@ -1110,7 +1110,7 @@ class STUDY {
       FILE_outputNorms[(j - this.j_Start)].println("");
     }
     if ((this.export_info_prob) && (this.displayProbs)) {
-      FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[CurrentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputProbs[(j - this.j_Start)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenario_FileTXT[this.skyScenario] + "_" + TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
       FILE_outputProbs[(j - this.j_Start)].println(TIME.getDayText(j * this.perDays + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenario_FileTXT[this.skyScenario] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
 
       FILE_outputProbs[(j - this.j_Start)].print("Hour:\t");
@@ -1139,9 +1139,9 @@ class STUDY {
 
   void plotHourly (float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-    int DATA_start = getStart_CurrentDataSource();
-    int DATA_end = getEnd_CurrentDataSource();
-    String DATA_reference = getReference_CurrentDataSource();
+    int DATA_start = getStart_currentDataSource();
+    int DATA_end = getEnd_currentDataSource();
+    String DATA_reference = getReference_currentDataSource();
 
     this.graphics.pushMatrix();
     this.graphics.translate(x_Plot, y_Plot);
@@ -1211,7 +1211,7 @@ class STUDY {
               valuesSUM[idx] = 0;
               valuesNUM[idx] = 1;
 
-              float[] COL = PAINT.getColorStyle(COLOR_STYLE_Current, (1.0 * k / (1 + DATA_end - DATA_start)));
+              float[] COL = PAINT.getColorStyle(currentColorStyle, (1.0 * k / (1 + DATA_end - DATA_start)));
               this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
               this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
 
@@ -1232,14 +1232,14 @@ class STUDY {
                 }
               }
 
-              Pa = getValue_CurrentDataSource(now_i, now_j, now_k, CurrentLayer_id);
+              Pa = getValue_currentDataSource(now_i, now_j, now_k, currentLayerId);
 
               if (is_undefined(Pa)) {
                 valuesA[idx] = FLOAT_undefined;
 
                 if ((this.export_info_node) && (this.displayRaws)) FILE_outputRaw[(j - this.j_Start)].print("[undefined]\t");
               } else {
-                boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                 if (isMemberCounted) {
                   valuesA[idx] = Pa;
@@ -1259,7 +1259,7 @@ class STUDY {
 
                   if (next_k < (1 + DATA_end - DATA_start)) {
 
-                    Pb = getValue_CurrentDataSource(next_i, next_j, next_k, CurrentLayer_id);
+                    Pb = getValue_currentDataSource(next_i, next_j, next_k, currentLayerId);
 
                     if (is_undefined(Pb)) {
                       valuesB[idx] = FLOAT_undefined;
@@ -1268,7 +1268,7 @@ class STUDY {
                       valuesB[idx] += this.V_offset;
 
                       if (this.displayRaws) {
-                        if ((CurrentLayer_id == LAYER_winddir.id) && (abs(valuesB[idx] - valuesA[idx]) > 180)) {
+                        if ((currentLayerId == LAYER_winddir.id) && (abs(valuesB[idx] - valuesA[idx]) > 180)) {
                         } else {
                           Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
                           Ay_LINES = append(Ay_LINES, valuesA[idx] * sy_Plot);
@@ -1387,7 +1387,7 @@ class STUDY {
     int keep_STUDY_j_End = this.j_End;
     float keep_STUDY_U_scale = this.U_scale;
     int keep_STUDY_PlotImpacts = this.PlotImpacts;
-    int keep_STUDY_Impact_TYPE = this.Impact_TYPE;
+    int keep_STUDY_impactType = this.impactType;
 
     TIME.beginDay = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
     this.perDays = 183;
@@ -1396,9 +1396,9 @@ class STUDY {
     this.j_End = 2;
     this.U_scale = 18.0 / float(this.j_End - this.j_Start);
     this.PlotImpacts = (this.plotSetup == -1) ? PlotImpacts_CYCLES_PASSIVE : PlotImpacts_CYCLES_ACTIVE;
-    this.Impact_TYPE = (this.plotSetup == -1) ? Impact_PASSIVE : Impact_ACTIVE;
+    this.impactType = (this.plotSetup == -1) ? Impact_PASSIVE : Impact_ACTIVE;
 
-    float scale = (ViewLayout == 2) ? 1 : 0.65;
+    float scale = (viewLayout == 2) ? 1 : 0.65;
     this.plotImpact(0, 0 * this.view_S, scale * (100.0 * this.U_scale * this.view_S), scale * (-1.0 * this.V_scale * this.view_S));
 
     TIME.beginDay = keep_TIME_BeginDay;
@@ -1408,7 +1408,7 @@ class STUDY {
     this.j_End = keep_STUDY_j_End;
     this.U_scale = keep_STUDY_U_scale;
     this.PlotImpacts = keep_STUDY_PlotImpacts;
-    this.Impact_TYPE = keep_STUDY_Impact_TYPE;
+    this.impactType = keep_STUDY_impactType;
   }
 
   // plotSetup == 0 : the default layout - one impact diagram (or three, split
@@ -1417,7 +1417,7 @@ class STUDY {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
     float sy_Plot = -1.0 * this.V_scale * this.view_S;
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       for (int p = 0; p < 3; p++) {
         this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3) + p;
         this.plotImpact(0, (150 - p * 300) * this.view_S, sx_Plot, sy_Plot);
@@ -1427,7 +1427,7 @@ class STUDY {
       this.plotImpact(0, -150 * this.view_S, sx_Plot, sy_Plot);
     }
 
-    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, sy_Plot);
+    this.plotHourly(0, ((viewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, sy_Plot);
   }
 
   // plotSetup == 1 : direct-normal-radiation focus - urban/global impact
@@ -1437,9 +1437,9 @@ class STUDY {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_PlotImpacts = this.PlotImpacts;
-    int keep_CurrentLayer_id = CurrentLayer_id;
+    int keep_currentLayerId = currentLayerId;
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       this.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
       this.plotImpact(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
@@ -1448,13 +1448,13 @@ class STUDY {
     }
 
     changeCurrentLayerTo(LAYER_dirnorrad.id);
-    this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     changeCurrentLayerTo(LAYER_cloudcover.id);
-    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     this.PlotImpacts = keep_PlotImpacts;
-    changeCurrentLayerTo(keep_CurrentLayer_id);
+    changeCurrentLayerTo(keep_currentLayerId);
   }
 
   // plotSetup == 2 : direct-solar-effect focus - urban/global passive-impact
@@ -1464,9 +1464,9 @@ class STUDY {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_PlotImpacts = this.PlotImpacts;
-    int keep_CurrentLayer_id = CurrentLayer_id;
+    int keep_currentLayerId = currentLayerId;
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       this.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
       this.plotImpact(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
@@ -1475,13 +1475,13 @@ class STUDY {
     }
 
     changeCurrentLayerTo(LAYER_direffect.id);
-    this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     changeCurrentLayerTo(LAYER_drybulb.id);
-    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     this.PlotImpacts = keep_PlotImpacts;
-    changeCurrentLayerTo(keep_CurrentLayer_id);
+    changeCurrentLayerTo(keep_currentLayerId);
   }
 
   // plotSetup == 3 : wind focus - wind-impact diagrams plus hourly plots of
@@ -1490,9 +1490,9 @@ class STUDY {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_PlotImpacts = this.PlotImpacts;
-    int keep_CurrentLayer_id = CurrentLayer_id;
+    int keep_currentLayerId = currentLayerId;
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       this.PlotImpacts = PlotImpacts_WIND_PASSIVE;
       this.plotImpact(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
@@ -1501,13 +1501,13 @@ class STUDY {
     }
 
     this.PlotImpacts = PlotImpacts_WIND_ACTIVE;
-    this.plotImpact(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotImpact(0, ((viewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     changeCurrentLayerTo(LAYER_windspd.id);
-    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     this.PlotImpacts = keep_PlotImpacts;
-    changeCurrentLayerTo(keep_CurrentLayer_id);
+    changeCurrentLayerTo(keep_currentLayerId);
   }
 
   // plotSetup == 4 : dry-bulb temperature focus - global passive-impact
@@ -1518,13 +1518,13 @@ class STUDY {
 
     int keep_ImpactLayer = this.ImpactLayer;
     int keep_PlotImpacts = this.PlotImpacts;
-    int keep_CurrentLayer_id = CurrentLayer_id;
+    int keep_currentLayerId = currentLayerId;
     boolean keep_displaySorted = this.displaySorted;
     boolean keep_displayNormals = this.displayNormals;
     boolean keep_displayRaws = this.displayRaws;
     boolean keep_displayProbs = this.displayProbs;
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
 
       this.ImpactLayer = 3 * int(pre_STUDY_ImpactLayer / 3);
@@ -1540,17 +1540,17 @@ class STUDY {
     this.displayNormals = true;
     this.displayRaws = false;
     this.displayProbs = false;
-    this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     this.displaySorted = false;
     this.displayNormals = false;
     this.displayRaws = true;
     this.displayProbs = true;
-    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     this.ImpactLayer = keep_ImpactLayer;
     this.PlotImpacts = keep_PlotImpacts;
-    changeCurrentLayerTo(keep_CurrentLayer_id);
+    changeCurrentLayerTo(keep_currentLayerId);
     this.displaySorted = keep_displaySorted;
     this.displayNormals = keep_displayNormals;
     this.displayRaws = keep_displayRaws;
@@ -1576,28 +1576,28 @@ class STUDY {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
     int keep_skyScenario = this.skyScenario;
-    int keep_CurrentLayer_id = CurrentLayer_id;
+    int keep_currentLayerId = currentLayerId;
 
     changeCurrentLayerTo(layerId);
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       this.skyScenario = 1;
       this.plotHourly(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
     }
 
     this.skyScenario = 4;
-    this.plotHourly(0, ((ViewLayout == 2) ? -150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? -150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       this.skyScenario = 3;
       this.plotHourly(0, 150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
     }
 
     this.skyScenario = 2;
-    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     this.skyScenario = keep_skyScenario;
-    changeCurrentLayerTo(keep_CurrentLayer_id);
+    changeCurrentLayerTo(keep_currentLayerId);
   }
 
   // plotSetup == 7 : atmospheric layers - pressure and wind speed (2-viewport
@@ -1605,9 +1605,9 @@ class STUDY {
   void setupPlot_7 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
-    int keep_CurrentLayer_id = CurrentLayer_id;
+    int keep_currentLayerId = currentLayerId;
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       changeCurrentLayerTo(LAYER_pressure.id);
       this.plotHourly(0, -450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
@@ -1616,12 +1616,12 @@ class STUDY {
     }
 
     changeCurrentLayerTo(LAYER_relhum.id);
-    this.plotHourly(0, ((ViewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 150 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     changeCurrentLayerTo(LAYER_drybulb.id);
-    this.plotHourly(0, ((ViewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotHourly(0, ((viewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
-    changeCurrentLayerTo(keep_CurrentLayer_id);
+    changeCurrentLayerTo(keep_currentLayerId);
   }
 
   // plotSetup == 8 : solar overview - global passive impact and sun-path
@@ -1630,15 +1630,15 @@ class STUDY {
   void setupPlot_8 () {
     float sx_Plot = 100.0 * this.U_scale * this.view_S;
 
-    int keep_CurrentLayer_id = CurrentLayer_id;
+    int keep_currentLayerId = currentLayerId;
 
     this.PlotImpacts = PlotImpacts_GLOBAL_PASSIVE;
-    this.plotImpact(0, ((ViewLayout == 2) ? -450 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotImpact(0, ((viewLayout == 2) ? -450 : -150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
     this.PlotImpacts = PlotImpacts_SUNPATH_PASSIVE;
-    this.plotImpact(0, ((ViewLayout == 2) ? -150 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
+    this.plotImpact(0, ((viewLayout == 2) ? -150 : 150) * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
-    if (ViewLayout == 2) {
+    if (viewLayout == 2) {
       changeCurrentLayerTo(LAYER_dirnorrad.id);
       this.plotHourly(0, 150 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
 
@@ -1646,7 +1646,7 @@ class STUDY {
       this.plotHourly(0, 450 * this.view_S, sx_Plot, (-1.0 * this.V_scale * this.view_S));
     }
 
-    changeCurrentLayerTo(keep_CurrentLayer_id);
+    changeCurrentLayerTo(keep_currentLayerId);
   }
 
 
@@ -1720,20 +1720,20 @@ class STUDY {
   // canvas (background, blend mode, font), then delegates the plot itself to
   // setupPlot().
   void renderFrame () {
-    DrawnFrame += 1;
-    //println("frame:", DrawnFrame);
+    drawnFrame += 1;
+    //println("frame:", drawnFrame);
 
-    if (DevelopData_update) {
-      if (CurrentLayer_id == LAYER_developed.id) {
-        postProcess_developDATA(CurrentDataSource);
+    if (developDataUpdate) {
+      if (currentLayerId == LAYER_developed.id) {
+        postProcess_developDATA(currentDataSource);
       }
     }
 
     this.view_S = (this.dX / 2100.0);
     this.U_scale = 18.0 / float(this.j_End - this.j_Start);
 
-    this.position_X = -0.333 * this.dX;
-    this.position_Y = 1.0 * this.dY;
+    this.positionX = -0.333 * this.dX;
+    this.positionY = 1.0 * this.dY;
 
     this.graphics.background(255);
 
@@ -1745,13 +1745,13 @@ class STUDY {
 
     this.graphics.strokeWeight(0);
 
-    //this.graphics.translate(this.position_X * -0.25, this.position_Y * 0.5);
-    this.graphics.translate(this.position_X * -0.425, this.position_Y * 0.5);
+    //this.graphics.translate(this.positionX * -0.25, this.positionY * 0.5);
+    this.graphics.translate(this.positionX * -0.425, this.positionY * 0.5);
 
     this.setupPlot();
 
-    //this.graphics.translate(this.position_X * 0.25, this.position_Y * 0.5);
-    this.graphics.translate(this.position_X * 0.425, this.position_Y * 0.5);
+    //this.graphics.translate(this.positionX * 0.25, this.positionY * 0.5);
+    this.graphics.translate(this.positionX * 0.425, this.positionY * 0.5);
 
     this.graphics.strokeWeight(this.T_scale * 1);
 
@@ -1764,11 +1764,11 @@ class STUDY {
     // functional) rather than removed, in case it's meant to be re-enabled later.
     String txt = "SOLARCHVISION post-processing";
 
-    if (CurrentDataSource == dataID_CLIMATE_TMYEPW) txt += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
-    if (CurrentDataSource == dataID_CLIMATE_CWEEDS) txt += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment and Climate Change Canada)";
-    if (CurrentDataSource == dataID_CLIMATE_CLMREC) txt += " based on Environment and Climate Change Canada's Climate website";
-    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) txt += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
-    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) txt += " based on real-time Surface Weather Observation (SWOB - Environment and Climate Change Canada)";
+    if (currentDataSource == dataID_climateTmyEpw) txt += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
+    if (currentDataSource == dataID_climateEngineering) txt += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment and Climate Change Canada)";
+    if (currentDataSource == dataID_climateArchive) txt += " based on Environment and Climate Change Canada's Climate website";
+    if (currentDataSource == dataID_ensembleForecast) txt += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
+    if (currentDataSource == dataID_ensembleObservation) txt += " based on real-time Surface Weather Observation (SWOB - Environment and Climate Change Canada)";
 
     //txt += ", www.solarchvision.com";
 
@@ -1815,9 +1815,9 @@ class STUDY {
 
 
   void refreshDateTabs () {
-    if ((CurrentDataSource == dataID_CLIMATE_CWEEDS) ||
-        (CurrentDataSource == dataID_CLIMATE_CLMREC) ||
-        (CurrentDataSource == dataID_CLIMATE_TMYEPW)) {
+    if ((currentDataSource == dataID_climateEngineering) ||
+        (currentDataSource == dataID_climateArchive) ||
+        (currentDataSource == dataID_climateTmyEpw)) {
 
       if (this.perDays == 1) {
         this.perDays = int(365 / float(this.j_End - this.j_Start));
@@ -1825,12 +1825,12 @@ class STUDY {
         this.perDays = 1;
       }
     }
-    if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+    if (currentDataSource == dataID_ensembleForecast) {
       this.perDays = 1;
     }
-    if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+    if (currentDataSource == dataID_ensembleObservation) {
       if (this.perDays == 1) {
-        this.perDays = int(ENSEMBLE_OBSERVED_maxDays / float(this.j_End - this.j_Start));
+        this.perDays = int(ensembleObservationMaxDays / float(this.j_End - this.j_Start));
       } else {
         this.perDays = 1;
       }
@@ -1847,8 +1847,8 @@ class STUDY {
 
     allWindRoses.renderedRES = RES;
 
-    if (this.PlotImpacts == PlotImpacts_WIND_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-    if (this.PlotImpacts == PlotImpacts_WIND_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
+    if (this.PlotImpacts == PlotImpacts_WIND_ACTIVE) this.impactType = Impact_ACTIVE;
+    if (this.PlotImpacts == PlotImpacts_WIND_PASSIVE) this.impactType = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -1868,19 +1868,19 @@ class STUDY {
     int PAL_type = 0;
     int PAL_direction = 1;
 
-    if (this.Impact_TYPE == Impact_ACTIVE) {
-      PAL_type = this.ACTIVE_palette_CLR;
-      PAL_direction = this.ACTIVE_palette_DIR;
+    if (this.impactType == Impact_ACTIVE) {
+      PAL_type = this.activeColorScaleIndex;
+      PAL_direction = this.activeColorScaleDirection;
     }
-    if (this.Impact_TYPE == Impact_PASSIVE) {
-      //PAL_type = this.ACTIVE_palette_CLR; PAL_direction = this.ACTIVE_palette_DIR;
+    if (this.impactType == Impact_PASSIVE) {
+      //PAL_type = this.activeColorScaleIndex; PAL_direction = this.activeColorScaleDirection;
       PAL_type = 12;
       PAL_direction = -1;
     }
 
     float PAL_multiplier = 1;
-    if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = 1.0;
-    if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = 1.0 / 30.0;
+    if (this.impactType == Impact_ACTIVE) PAL_multiplier = 1.0;
+    if (this.impactType == Impact_PASSIVE) PAL_multiplier = 1.0 / 30.0;
 
     for (int j = this.j_Start; j < this.j_End; j++) {
 
@@ -1907,16 +1907,16 @@ class STUDY {
                 int now_i = i;
                 int now_j = computeWrappedDayIndex(j, j_ADD);
 
-                Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
-                Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
-                Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
+                Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
+                Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
+                Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
 
                 if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc)) {
                   values_W_dir[k] = FLOAT_undefined;
                   values_W_spd[k] = FLOAT_undefined;
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
-                  boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
 
@@ -1942,7 +1942,7 @@ class STUDY {
 
                     float _u = 0;
 
-                    if (this.Impact_TYPE == Impact_ACTIVE) {
+                    if (this.impactType == Impact_ACTIVE) {
 
                       float _s = (this.O_scale / 100) * 255 / (0.333 * count_k);
 
@@ -1957,7 +1957,7 @@ class STUDY {
 
                       WIND_graphics.strokeWeight(this.T_scale * 0);
                     }
-                    if (this.Impact_TYPE == Impact_PASSIVE) {
+                    if (this.impactType == Impact_PASSIVE) {
                       _u = 0.5 + 0.5 * (PAL_multiplier * T);
 
                       _u = applyPalDirection(_u, PAL_direction);
@@ -2009,16 +2009,16 @@ class STUDY {
                 int now_i = i;
                 int now_j = computeWrappedDayIndex(j, j_ADD);
 
-                Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
-                Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
-                Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
+                Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_winddir.id);
+                Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
+                Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
 
                 if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc)) {
                   values_W_dir[k] = FLOAT_undefined;
                   values_W_spd[k] = FLOAT_undefined;
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
-                  boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
 
@@ -2044,7 +2044,7 @@ class STUDY {
 
                     float _u = 0;
 
-                    if (this.Impact_TYPE == Impact_ACTIVE) {
+                    if (this.impactType == Impact_ACTIVE) {
 
                       float _s = (this.O_scale / 100) * 255 / (0.333 * count_k) / (this.j_End - this.j_Start);
 
@@ -2059,7 +2059,7 @@ class STUDY {
 
                       total_WIND_graphics.strokeWeight(this.T_scale * 0);
                     }
-                    if (this.Impact_TYPE == Impact_PASSIVE) {
+                    if (this.impactType == Impact_PASSIVE) {
                       _u = 0.5 + 0.5 * (PAL_multiplier * T);
 
                       _u = applyPalDirection(_u, PAL_direction);
@@ -2119,7 +2119,7 @@ class STUDY {
       this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
     }
 
-    if (this.Impact_TYPE != Impact_ACTIVE) {
+    if (this.impactType != Impact_ACTIVE) {
 
       float pal_length = 400;
       float pal_ox = 700;
@@ -2127,7 +2127,7 @@ class STUDY {
       for (int q = 0; q < 11; q++) {
         float _u = 0;
 
-        if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.1 * q;
+        if (this.impactType == Impact_PASSIVE) _u = 0.1 * q;
 
         _u = applyPalDirection(_u, PAL_direction);
 
@@ -2143,7 +2143,7 @@ class STUDY {
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
 
-        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (this.impactType == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       }
     }
 
@@ -2156,17 +2156,17 @@ class STUDY {
 
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(RIGHT, TOP);
-      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_climateEngineering) this.graphics.text(("[" + String.valueOf(start_k + climateEngineeringStart) + "-" + String.valueOf(end_k + climateEngineeringStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_climateArchive) this.graphics.text(("[" + String.valueOf(start_k + climateArchiveStart) + "-" + String.valueOf(end_k + climateArchiveStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_ensembleForecast) this.graphics.text(("[" + String.valueOf(start_k + ensembleForecastStart) + "-" + String.valueOf(end_k + ensembleForecastStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
 
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(LEFT, TOP);
-      if (this.Impact_TYPE == Impact_ACTIVE) {
+      if (this.impactType == Impact_ACTIVE) {
         this.graphics.text(("Wind direction and speed"), 0, 1.1 * sx_Plot / this.U_scale);
         //?? French
       }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
+      if (this.impactType == Impact_PASSIVE) {
         this.graphics.text(("Wind direction and speed with air temperature"), 0, 1.1 * sx_Plot / this.U_scale);
         //?? French
       }
@@ -2196,8 +2196,8 @@ class STUDY {
         sizeX *= aspect;
       }
 
-      if (this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-      if (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
+      if (this.PlotImpacts == PlotImpacts_URBAN_ACTIVE) this.impactType = Impact_ACTIVE;
+      if (this.PlotImpacts == PlotImpacts_URBAN_PASSIVE) this.impactType = Impact_PASSIVE;
 
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
@@ -2218,15 +2218,15 @@ class STUDY {
       int PAL_direction = 1;
       float PAL_multiplier = 1;
 
-      if (this.Impact_TYPE == Impact_ACTIVE) {
-        PAL_type = allFaces.ACTIVE_palette_CLR;
-        PAL_direction = allFaces.ACTIVE_palette_DIR;
-        PAL_multiplier = allFaces.ACTIVE_palette_MLT;
+      if (this.impactType == Impact_ACTIVE) {
+        PAL_type = allFaces.activeColorScaleIndex;
+        PAL_direction = allFaces.activeColorScaleDirection;
+        PAL_multiplier = allFaces.activeColorScaleFactor;
       }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
-        PAL_type = allFaces.PASSIVE_palette_CLR;
-        PAL_direction = allFaces.PASSIVE_palette_DIR;
-        PAL_multiplier = allFaces.PASSIVE_palette_MLT;
+      if (this.impactType == Impact_PASSIVE) {
+        PAL_type = allFaces.passiveColorScaleIndex;
+        PAL_direction = allFaces.passiveColorScaleDirection;
+        PAL_multiplier = allFaces.passiveColorScaleFactor;
       }
 
       int l = this.ImpactLayer;
@@ -2254,7 +2254,7 @@ class STUDY {
         this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
         this.graphics.imageMode(CENTER);
-        this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][j + 1], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
+        this.graphics.image(allSolarImpacts.Image[this.impactType][j + 1], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
 
         this.graphics.stroke(0);
         this.graphics.fill(0);
@@ -2262,9 +2262,9 @@ class STUDY {
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
         String scenario_text = "";
-        //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
-        //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
-        //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
+        //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
+        //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
+        //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
         this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
       }
 
@@ -2284,7 +2284,7 @@ class STUDY {
         this.graphics.rect((j + this.rect_offset_x - 100 * this.rect_scale) * sx_Plot, (-100 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot, (200 * this.rect_scale) * sx_Plot);
 
         this.graphics.imageMode(CENTER);
-        this.graphics.image(allSolarImpacts.Image[this.Impact_TYPE][0], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
+        this.graphics.image(allSolarImpacts.Image[this.impactType][0], (j + 100 * this.rect_scale) * sx_Plot, 0, int(sizeX), int(sizeY));
 
         this.graphics.stroke(0);
         this.graphics.fill(0);
@@ -2293,9 +2293,9 @@ class STUDY {
       }
 
       String scenario_text = "";
-      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
-      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
+      //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
+      //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
+      //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
       this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
@@ -2320,8 +2320,8 @@ class STUDY {
       for (int q = 0; q < 11; q++) {
         float _u = 0;
 
-        if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-        if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+        if (this.impactType == Impact_ACTIVE) _u = 0.1 * q;
+        if (this.impactType == Impact_PASSIVE) _u = 0.2 * q - 0.5;
 
         _u = applyPalDirection(_u, PAL_direction);
 
@@ -2336,8 +2336,8 @@ class STUDY {
 
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
-        if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-        if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (this.impactType == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (this.impactType == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       }
 
       if (this.PrintTtitle) {
@@ -2348,9 +2348,9 @@ class STUDY {
 
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(RIGHT, TOP);
-        if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-        if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+        if (currentDataSource == dataID_climateEngineering) this.graphics.text(("[" + String.valueOf(start_k + climateEngineeringStart) + "-" + String.valueOf(end_k + climateEngineeringStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+        if (currentDataSource == dataID_climateArchive) this.graphics.text(("[" + String.valueOf(start_k + climateArchiveStart) + "-" + String.valueOf(end_k + climateArchiveStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+        if (currentDataSource == dataID_ensembleForecast) this.graphics.text(("[" + String.valueOf(start_k + ensembleForecastStart) + "-" + String.valueOf(end_k + ensembleForecastStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
 
 
         String Model_Description = "";
@@ -2358,11 +2358,11 @@ class STUDY {
 
         this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
         this.graphics.textAlign(LEFT, TOP);
-        if (this.Impact_TYPE == Impact_ACTIVE) {
+        if (this.impactType == Impact_ACTIVE) {
           this.graphics.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
-        if (this.Impact_TYPE == Impact_PASSIVE) {
+        if (this.impactType == Impact_PASSIVE) {
           this.graphics.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
           //?? French
         }
@@ -2382,8 +2382,8 @@ class STUDY {
       GlobalSolar_resize_array();
     }
 
-    if (this.PlotImpacts == PlotImpacts_GLOBAL_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-    if (this.PlotImpacts == PlotImpacts_GLOBAL_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
+    if (this.PlotImpacts == PlotImpacts_GLOBAL_ACTIVE) this.impactType = Impact_ACTIVE;
+    if (this.PlotImpacts == PlotImpacts_GLOBAL_PASSIVE) this.impactType = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -2402,28 +2402,28 @@ class STUDY {
     int PAL_type = 0;
     int PAL_direction = 1;
 
-    if (this.Impact_TYPE == Impact_ACTIVE) {
-      PAL_type = this.ACTIVE_palette_CLR;
-      PAL_direction = this.ACTIVE_palette_DIR;
+    if (this.impactType == Impact_ACTIVE) {
+      PAL_type = this.activeColorScaleIndex;
+      PAL_direction = this.activeColorScaleDirection;
     }
-    if (this.Impact_TYPE == Impact_PASSIVE) {
-      PAL_type = this.PASSIVE_palette_CLR;
-      PAL_direction = this.PASSIVE_palette_DIR;
+    if (this.impactType == Impact_PASSIVE) {
+      PAL_type = this.passiveColorScaleIndex;
+      PAL_direction = this.passiveColorScaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
-    if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
+    if (this.impactType == Impact_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
+    if (this.impactType == Impact_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
 
 
     int l = this.ImpactLayer;
 
-    float[][] TOTALvaluesSUM_RAD = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-    float[][] TOTALvaluesSUM_EFF_P = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-    float[][] TOTALvaluesSUM_EFF_N = new float [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
-    int[][] TOTALvaluesNUM = new int [1 + int(90 / Sky3D.stp_slp)][1 + int(360 / Sky3D.stp_dir)];
+    float[][] TOTALvaluesSUM_RAD = new float [1 + int(90 / Sky3D.inclinationStep)][1 + int(360 / Sky3D.orientationStep)];
+    float[][] TOTALvaluesSUM_EFF_P = new float [1 + int(90 / Sky3D.inclinationStep)][1 + int(360 / Sky3D.orientationStep)];
+    float[][] TOTALvaluesSUM_EFF_N = new float [1 + int(90 / Sky3D.inclinationStep)][1 + int(360 / Sky3D.orientationStep)];
+    int[][] TOTALvaluesNUM = new int [1 + int(90 / Sky3D.inclinationStep)][1 + int(360 / Sky3D.orientationStep)];
 
-    for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
+    for (int a = 0; a <= int (90 / Sky3D.inclinationStep); a++) {
       java.util.Arrays.fill(TOTALvaluesSUM_RAD[a], FLOAT_undefined);
       java.util.Arrays.fill(TOTALvaluesSUM_EFF_P[a], FLOAT_undefined);
       java.util.Arrays.fill(TOTALvaluesSUM_EFF_N[a], FLOAT_undefined);
@@ -2443,16 +2443,16 @@ class STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
+      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.impactType);
       if (nk == -1) continue;
 
       int k = int(nk / this.joinDays);
       int j_ADD = nk % this.joinDays;
 
-      for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
-        float Alpha = a * Sky3D.stp_slp;
-        for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
-          float Beta = b * Sky3D.stp_dir;
+      for (int a = 0; a <= int (90 / Sky3D.inclinationStep); a++) {
+        float Alpha = a * Sky3D.inclinationStep;
+        for (int b = 0; b < int (360 / Sky3D.orientationStep); b++) {
+          float Beta = b * Sky3D.orientationStep;
 
           float valuesSUM_RAD = 0;
           float valuesSUM_EFF_P = 0;
@@ -2471,10 +2471,10 @@ class STUDY {
                 now_i = i;
                 now_j = computeWrappedDayIndex(j, j_ADD);
 
-                Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+                Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+                Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+                Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
+                Pd = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
 
                 if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
                   values_R_dir = FLOAT_undefined;
@@ -2483,7 +2483,7 @@ class STUDY {
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
                     values_R_dir = 0.001 * Pa;
@@ -2499,12 +2499,12 @@ class STUDY {
                     } else {
 
                       if (values_E_dir < 0) {
-                        valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
+                        valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, globalAlbedo);
                       } else {
-                        valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, GlobalAlbedo);
+                        valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_E_dir, values_E_dif, Alpha, Beta, globalAlbedo);
                       }
 
-                      valuesSUM_RAD += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, GlobalAlbedo);
+                      valuesSUM_RAD += SolarAtSurface(SunR[1], SunR[2], SunR[3], values_R_dir, values_R_dif, Alpha, Beta, globalAlbedo);
 
                       valuesNUM += 1;
                     }
@@ -2550,8 +2550,8 @@ class STUDY {
 
 
           float valuesSUM = FLOAT_undefined;
-          if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
-          if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
+          if (this.impactType == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
+          if (this.impactType == Impact_PASSIVE) valuesSUM = COMPARISON;
 
           //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> valuesSUM_RAD:", valuesSUM_RAD, "COMPARISON:", COMPARISON);
 
@@ -2559,8 +2559,8 @@ class STUDY {
 
             float _u = 0;
 
-            if (this.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
-            if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+            if (this.impactType == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
+            if (this.impactType == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
 
             _u = applyPalDirection(_u, PAL_direction);
 
@@ -2572,15 +2572,15 @@ class STUDY {
 
             this.graphics.strokeWeight(0);
 
-            float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
-            float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
             this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
           }
@@ -2593,9 +2593,9 @@ class STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
       String scenario_text = "";
-      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
-      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
+      //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
+      //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
+      //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
       this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / this.U_scale);
     }
 
@@ -2605,10 +2605,10 @@ class STUDY {
 
       int j = -1; // << to put the summary graph before the daily graphs
 
-      for (int a = 0; a <= int (90 / Sky3D.stp_slp); a++) {
-        float Alpha = a * Sky3D.stp_slp;
-        for (int b = 0; b < int (360 / Sky3D.stp_dir); b++) {
-          float Beta = b * Sky3D.stp_dir;
+      for (int a = 0; a <= int (90 / Sky3D.inclinationStep); a++) {
+        float Alpha = a * Sky3D.inclinationStep;
+        for (int b = 0; b < int (360 / Sky3D.orientationStep); b++) {
+          float Beta = b * Sky3D.orientationStep;
 
           if (TOTALvaluesNUM[a][b] != 0) {
             TOTALvaluesSUM_RAD[a][b] /= 1.0 * TOTALvaluesNUM[a][b];
@@ -2630,8 +2630,8 @@ class STUDY {
 
 
           float valuesSUM = FLOAT_undefined;
-          if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD[a][b];
-          if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = COMPARISON;
+          if (this.impactType == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD[a][b];
+          if (this.impactType == Impact_PASSIVE) valuesSUM = COMPARISON;
 
           //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> (TOTAL) valuesSUM_RAD:", TOTALvaluesSUM_RAD[a][b], "COMPARISON:", COMPARISON);
 
@@ -2639,8 +2639,8 @@ class STUDY {
 
             float _u = 0;
 
-            if (this.Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
-            if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+            if (this.impactType == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
+            if (this.impactType == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
 
             _u = applyPalDirection(_u, PAL_direction);
 
@@ -2651,15 +2651,15 @@ class STUDY {
 
             this.graphics.strokeWeight(0);
 
-            float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
-            float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
-            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.stp_slp) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.stp_dir))) * sx_Plot;
+            float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * this.rect_scale * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
             this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
           }
@@ -2678,9 +2678,9 @@ class STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
       String scenario_text = "";
-      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
-      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
+      //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
+      //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
+      //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
       this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / this.U_scale);
 
       int keep_STUDY_j_Start = this.j_Start;
@@ -2694,9 +2694,9 @@ class STUDY {
 
 
     String scenario_text = "";
-    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
-    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
-    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
+    //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
+    //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
+    //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
     this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
@@ -2713,8 +2713,8 @@ class STUDY {
     for (int q = 0; q < 11; q++) {
       float _u = 0;
 
-      if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+      if (this.impactType == Impact_ACTIVE) _u = 0.1 * q;
+      if (this.impactType == Impact_PASSIVE) _u = 0.2 * q - 0.5;
 
       _u = applyPalDirection(_u, PAL_direction);
 
@@ -2729,8 +2729,8 @@ class STUDY {
 
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
-      if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-      if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      if (this.impactType == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      if (this.impactType == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
     }
 
 
@@ -2743,18 +2743,18 @@ class STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(RIGHT, TOP);
 
-      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_climateEngineering) this.graphics.text(("[" + String.valueOf(start_k + climateEngineeringStart) + "-" + String.valueOf(end_k + climateEngineeringStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_climateArchive) this.graphics.text(("[" + String.valueOf(start_k + climateArchiveStart) + "-" + String.valueOf(end_k + climateArchiveStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_ensembleForecast) this.graphics.text(("[" + String.valueOf(start_k + ensembleForecastStart) + "-" + String.valueOf(end_k + ensembleForecastStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
 
 
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(LEFT, TOP);
-      if (this.Impact_TYPE == Impact_ACTIVE) {
+      if (this.impactType == Impact_ACTIVE) {
         this.graphics.text(("Solar radiation on hemisphere (kW/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
         //?? French
       }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
+      if (this.impactType == Impact_PASSIVE) {
         this.graphics.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
         //?? French
       }
@@ -2765,8 +2765,8 @@ class STUDY {
 
 
   void plotImpact_sunpath (int start_k, int end_k, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
-    if (this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) this.Impact_TYPE = Impact_ACTIVE;
-    if (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE) this.Impact_TYPE = Impact_PASSIVE;
+    if (this.PlotImpacts == PlotImpacts_SUNPATH_ACTIVE) this.impactType = Impact_ACTIVE;
+    if (this.PlotImpacts == PlotImpacts_SUNPATH_PASSIVE) this.impactType = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -2785,18 +2785,18 @@ class STUDY {
     int PAL_type = 0;
     int PAL_direction = 1;
 
-    if (this.Impact_TYPE == Impact_ACTIVE) {
-      PAL_type = this.ACTIVE_palette_CLR;
-      PAL_direction = this.ACTIVE_palette_DIR;
+    if (this.impactType == Impact_ACTIVE) {
+      PAL_type = this.activeColorScaleIndex;
+      PAL_direction = this.activeColorScaleDirection;
     }
-    if (this.Impact_TYPE == Impact_PASSIVE) {
-      PAL_type = this.PASSIVE_palette_CLR;
-      PAL_direction = this.PASSIVE_palette_DIR;
+    if (this.impactType == Impact_PASSIVE) {
+      PAL_type = this.passiveColorScaleIndex;
+      PAL_direction = this.passiveColorScaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.Impact_TYPE == Impact_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
-    if (this.Impact_TYPE == Impact_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
+    if (this.impactType == Impact_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
+    if (this.impactType == Impact_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
 
     this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
@@ -2815,7 +2815,7 @@ class STUDY {
 
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.Impact_TYPE);
+      int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, this.impactType);
       if (nk == -1) continue;
 
       int k = int(nk / this.joinDays);
@@ -2838,10 +2838,10 @@ class STUDY {
             now_i = i;
             now_j = computeWrappedDayIndex(j, j_ADD);
 
-            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-            Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-            Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-            Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+            Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+            Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+            Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
+            Pd = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
 
             if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
               values_R_dir = FLOAT_undefined;
@@ -2850,7 +2850,7 @@ class STUDY {
               values_E_dif = FLOAT_undefined;
             } else {
 
-              boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
+              boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filter, this.skyScenario, now_i, now_j, now_k);
 
               if (isMemberCounted) {
                 values_R_dir = 0.001 * Pa;
@@ -2871,15 +2871,15 @@ class STUDY {
             }
 
             float valuesSUM = FLOAT_undefined;
-            if (this.Impact_TYPE == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
-            if (this.Impact_TYPE == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
+            if (this.impactType == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
+            if (this.impactType == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
 
             if (is_defined(valuesSUM)) {
 
               float _u = 0;
 
-              if (this.Impact_TYPE == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
-              if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
+              if (this.impactType == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
+              if (this.impactType == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
 
               _u = applyPalDirection(_u, PAL_direction);
 
@@ -2896,8 +2896,8 @@ class STUDY {
               this.graphics.textSize(this.view_S * 4.0 * this.U_scale);
 
               this.graphics.textAlign(CENTER, CENTER);
-              if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
-              if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+              if (this.impactType == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+              if (this.impactType == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * this.rect_scale * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * this.rect_scale * (funcs.sin_ang(Beta - 90))) * sx_Plot);
             }
           }
         }
@@ -2909,16 +2909,16 @@ class STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
 
       String scenario_text = "";
-      //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
-      //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
-      //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
+      //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
+      //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
+      //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
       this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / this.U_scale);
     }
 
     String scenario_text = "";
-    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
-    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
-    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
+    //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
+    //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
+    //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
     this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
@@ -2936,8 +2936,8 @@ class STUDY {
     for (int q = 0; q < 11; q++) {
       float _u = 0;
 
-      if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+      if (this.impactType == Impact_ACTIVE) _u = 0.1 * q;
+      if (this.impactType == Impact_PASSIVE) _u = 0.2 * q - 0.5;
 
       _u = applyPalDirection(_u, PAL_direction);
 
@@ -2953,8 +2953,8 @@ class STUDY {
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
 
-      if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-      if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      if (this.impactType == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      if (this.impactType == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
     }
 
 
@@ -2967,18 +2967,18 @@ class STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(RIGHT, TOP);
 
-      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_climateEngineering) this.graphics.text(("[" + String.valueOf(start_k + climateEngineeringStart) + "-" + String.valueOf(end_k + climateEngineeringStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_climateArchive) this.graphics.text(("[" + String.valueOf(start_k + climateArchiveStart) + "-" + String.valueOf(end_k + climateArchiveStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_ensembleForecast) this.graphics.text(("[" + String.valueOf(start_k + ensembleForecastStart) + "-" + String.valueOf(end_k + ensembleForecastStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
 
 
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(LEFT, TOP);
-      if (this.Impact_TYPE == Impact_ACTIVE) {
+      if (this.impactType == Impact_ACTIVE) {
         this.graphics.text(("Direct solar radiation (kWh/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
         //?? French
       }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
+      if (this.impactType == Impact_PASSIVE) {
         this.graphics.text(("Direct solar effects (kWh°C/m²)"), 0, 1.1 * sx_Plot / this.U_scale);
         //?? French
       }
@@ -3008,9 +3008,9 @@ class STUDY {
     this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
     String scenario_text = "";
-    //if (CurrentDataSource == dataID_CLIMATE_CWEEDS) scenario_text += "Year: " + nf(nk + CLIMATE_CWEEDS_start - 1, 0);
-    //if (CurrentDataSource == dataID_CLIMATE_CLMREC) scenario_text += "Year: " + nf(nk + CLIMATE_CLMREC_start - 1, 0);
-    //if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) scenario_text += "Member: " + nf(nk, 0);
+    //if (currentDataSource == dataID_climateEngineering) scenario_text += "Year: " + nf(nk + climateEngineeringStart - 1, 0);
+    //if (currentDataSource == dataID_climateArchive) scenario_text += "Year: " + nf(nk + climateArchiveStart - 1, 0);
+    //if (currentDataSource == dataID_ensembleForecast) scenario_text += "Member: " + nf(nk, 0);
     this.graphics.text(scenario_text, ((this.j_Start - 1) - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.U_scale);
 
     this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
@@ -3025,25 +3025,25 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) {
-      PAL_type = this.ACTIVE_palette_CLR;
-      PAL_direction = this.ACTIVE_palette_DIR;
+      PAL_type = this.activeColorScaleIndex;
+      PAL_direction = this.activeColorScaleDirection;
     }
     if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) {
-      PAL_type = this.PASSIVE_palette_CLR;
-      PAL_direction = this.PASSIVE_palette_DIR;
+      PAL_type = this.passiveColorScaleIndex;
+      PAL_direction = this.passiveColorScaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) PAL_multiplier = this.ACTIVE_palette_MLT;
-    if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) PAL_multiplier = this.PASSIVE_palette_MLT;
+    if (this.PlotImpacts == PlotImpacts_CYCLES_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
+    if (this.PlotImpacts == PlotImpacts_CYCLES_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
 
     float pal_length = 400;
     float pal_ox = 700;
     float pal_oy = 110;
 
     if (this.j_End == 2) {
-      pal_ox = (ViewLayout == 2) ? 700 : 380;
-      pal_oy = (ViewLayout == 2) ? -375 : 275;
+      pal_ox = (viewLayout == 2) ? 700 : 380;
+      pal_oy = (viewLayout == 2) ? -375 : 275;
     }
 
     for (int q = 0; q < 11; q++) {
@@ -3079,9 +3079,9 @@ class STUDY {
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(RIGHT, TOP);
 
-      if (CurrentDataSource == dataID_CLIMATE_CWEEDS) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CWEEDS_start) + "-" + String.valueOf(end_k + CLIMATE_CWEEDS_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_CLIMATE_CLMREC) this.graphics.text(("[" + String.valueOf(start_k + CLIMATE_CLMREC_start) + "-" + String.valueOf(end_k + CLIMATE_CLMREC_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
-      if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) this.graphics.text(("[" + String.valueOf(start_k + ENSEMBLE_FORECAST_start) + "-" + String.valueOf(end_k + ENSEMBLE_FORECAST_start) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_climateEngineering) this.graphics.text(("[" + String.valueOf(start_k + climateEngineeringStart) + "-" + String.valueOf(end_k + climateEngineeringStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_climateArchive) this.graphics.text(("[" + String.valueOf(start_k + climateArchiveStart) + "-" + String.valueOf(end_k + climateArchiveStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
+      if (currentDataSource == dataID_ensembleForecast) this.graphics.text(("[" + String.valueOf(start_k + ensembleForecastStart) + "-" + String.valueOf(end_k + ensembleForecastStart) + "] "), 0, -1.2 * sx_Plot / this.U_scale);
 
       this.graphics.textSize(sx_Plot * 0.250 / this.U_scale);
       this.graphics.textAlign(CENTER, TOP);
@@ -3106,8 +3106,8 @@ class STUDY {
     float keep_STUDY_perDays = this.perDays;
     int keep_STUDY_joinDays = this.joinDays;
 
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    if ((currentDataSource == dataID_ensembleForecast) ||
+        (currentDataSource == dataID_ensembleObservation)) {
 
       this.perDays = 1;
       this.joinDays = 1;
@@ -3156,8 +3156,8 @@ class STUDY {
       this.drawDailyGrid(x_Plot, y_Plot, sx_Plot, sy_Plot);
     }
 
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    if ((currentDataSource == dataID_ensembleForecast) ||
+        (currentDataSource == dataID_ensembleObservation)) {
     } else {
       this.perDays = keep_STUDY_perDays;
       this.joinDays = keep_STUDY_joinDays;
@@ -3193,18 +3193,18 @@ class STUDY {
     XML_setBoolean(parent, "export_info_node", this.export_info_node);
     XML_setBoolean(parent, "export_info_norm", this.export_info_norm);
     XML_setBoolean(parent, "export_info_prob", this.export_info_prob);
-    XML_setInt(parent, "SORT_palette_CLR", this.SORT_palette_CLR);
-    XML_setInt(parent, "SORT_palette_DIR", this.SORT_palette_DIR);
-    XML_setFloat(parent, "SORT_palette_MLT", this.SORT_palette_MLT);
-    XML_setInt(parent, "PROB_palette_CLR", this.PROB_palette_CLR);
-    XML_setInt(parent, "PROB_palette_DIR", this.PROB_palette_DIR);
-    XML_setFloat(parent, "PROB_palette_MLT", this.PROB_palette_MLT);
-    XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
-    XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
-    XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
-    XML_setInt(parent, "PASSIVE_palette_CLR", this.PASSIVE_palette_CLR);
-    XML_setInt(parent, "PASSIVE_palette_DIR", this.PASSIVE_palette_DIR);
-    XML_setFloat(parent, "PASSIVE_palette_MLT", this.PASSIVE_palette_MLT);
+    XML_setInt(parent, "SORT_ColorScaleIndex", this.SORT_ColorScaleIndex);
+    XML_setInt(parent, "SORT_ColorScaleDirection", this.SORT_ColorScaleDirection);
+    XML_setFloat(parent, "SORT_ColorScaleFactor", this.SORT_ColorScaleFactor);
+    XML_setInt(parent, "PROB_ColorScaleIndex", this.PROB_ColorScaleIndex);
+    XML_setInt(parent, "PROB_ColorScaleDirection", this.PROB_ColorScaleDirection);
+    XML_setFloat(parent, "PROB_ColorScaleFactor", this.PROB_ColorScaleFactor);
+    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
+    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
+    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
+    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
+    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
+    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
 
     XML_setFloat(parent, "O_scale", this.O_scale);
     XML_setFloat(parent, "W_scale", this.W_scale);
@@ -3223,7 +3223,7 @@ class STUDY {
     XML_setInt(parent, "sumInterval", this.sumInterval);
     XML_setFloat(parent, "LevelPix", this.LevelPix);
     XML_setInt(parent, "plotSetup", this.plotSetup);
-    XML_setInt(parent, "Impact_TYPE", this.Impact_TYPE);
+    XML_setInt(parent, "impactType", this.impactType);
   }
 
 
@@ -3249,18 +3249,18 @@ class STUDY {
     this.export_info_node = XML_getBoolean(parent, "export_info_node");
     this.export_info_norm = XML_getBoolean(parent, "export_info_norm");
     this.export_info_prob = XML_getBoolean(parent, "export_info_prob");
-    this.SORT_palette_CLR = XML_getInt(parent, "SORT_palette_CLR");
-    this.SORT_palette_DIR = XML_getInt(parent, "SORT_palette_DIR");
-    this.SORT_palette_MLT = XML_getFloat(parent, "SORT_palette_MLT");
-    this.PROB_palette_CLR = XML_getInt(parent, "PROB_palette_CLR");
-    this.PROB_palette_DIR = XML_getInt(parent, "PROB_palette_DIR");
-    this.PROB_palette_MLT = XML_getFloat(parent, "PROB_palette_MLT");
-    this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
-    this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
-    this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");
-    this.PASSIVE_palette_CLR = XML_getInt(parent, "PASSIVE_palette_CLR");
-    this.PASSIVE_palette_DIR = XML_getInt(parent, "PASSIVE_palette_DIR");
-    this.PASSIVE_palette_MLT = XML_getFloat(parent, "PASSIVE_palette_MLT");
+    this.SORT_ColorScaleIndex = XML_getInt(parent, "SORT_ColorScaleIndex");
+    this.SORT_ColorScaleDirection = XML_getInt(parent, "SORT_ColorScaleDirection");
+    this.SORT_ColorScaleFactor = XML_getFloat(parent, "SORT_ColorScaleFactor");
+    this.PROB_ColorScaleIndex = XML_getInt(parent, "PROB_ColorScaleIndex");
+    this.PROB_ColorScaleDirection = XML_getInt(parent, "PROB_ColorScaleDirection");
+    this.PROB_ColorScaleFactor = XML_getFloat(parent, "PROB_ColorScaleFactor");
+    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
+    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
+    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
+    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
+    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
+    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
 
 
     this.O_scale = XML_getFloat(parent, "O_scale");
@@ -3280,7 +3280,7 @@ class STUDY {
     this.sumInterval = XML_getInt(parent, "sumInterval");
     this.LevelPix = XML_getFloat(parent, "LevelPix");
     this.plotSetup = XML_getInt(parent, "plotSetup");
-    this.Impact_TYPE = XML_getInt(parent, "Impact_TYPE");
+    this.impactType = XML_getInt(parent, "impactType");
   }
 
 

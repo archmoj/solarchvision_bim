@@ -1,4 +1,4 @@
-void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
+void load_ensembleObservation (String FileName, int Load_Layer) {
   String lineSTR;
   String[] input;
 
@@ -24,7 +24,7 @@ void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
 
   //println(now_i, now_j);
 
-  now_i -= int(-STATION.getTimelong() / 15);
+  now_i -= int(-STATION.getTimezoneLongitude() / 15);
 
   if (now_i < 0) {
     now_i += 24;
@@ -54,38 +54,38 @@ void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
     }
 
     if (_a1.equals("stn_pres")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_pressure.id][Load_Layer] = Float.valueOf(_a2);
+      ensembleObservation_values[now_i][now_j][LAYER_pressure.id][Load_Layer] = Float.valueOf(_a2);
     }
 
     if (_a1.equals("air_temp")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_drybulb.id][Load_Layer] = Float.valueOf(_a2);
+      ensembleObservation_values[now_i][now_j][LAYER_drybulb.id][Load_Layer] = Float.valueOf(_a2);
     }
 
     if (_a1.equals("rel_hum")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_relhum.id][Load_Layer] = Float.valueOf(_a2);
+      ensembleObservation_values[now_i][now_j][LAYER_relhum.id][Load_Layer] = Float.valueOf(_a2);
     }
 
     if (_a1.equals("tot_cld_amt")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_cloudcover.id][Load_Layer] = 0.1 * Float.valueOf(_a2);
+      ensembleObservation_values[now_i][now_j][LAYER_cloudcover.id][Load_Layer] = 0.1 * Float.valueOf(_a2);
     }
 
     if (_a1.equals("avg_wnd_dir_10m_mt50-60")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_winddir.id][Load_Layer] = Float.valueOf(_a2);
+      ensembleObservation_values[now_i][now_j][LAYER_winddir.id][Load_Layer] = Float.valueOf(_a2);
     }
 
     if (_a1.equals("avg_wnd_spd_10m_mt50-60")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_windspd.id][Load_Layer] = Float.valueOf(_a2);
+      ensembleObservation_values[now_i][now_j][LAYER_windspd.id][Load_Layer] = Float.valueOf(_a2);
     }
 
     if (_a1.equals("pcpn_amt_pst6hrs")) {
-      ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_precipitation.id][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
+      ensembleObservation_values[now_i][now_j][LAYER_precipitation.id][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
     }
 
     if (_a1.equals("avg_globl_solr_radn_pst1hr")) {
       if (_a2.equals(STRING_undefined)) {
       } else {
         //if (_a3.equals("W/m²")) {
-        ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_glohorrad.id][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
+        ensembleObservation_values[now_i][now_j][LAYER_glohorrad.id][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
         //}
       }
     }
@@ -94,7 +94,7 @@ void load_ENSEMBLE_OBSERVED (String FileName, int Load_Layer) {
       if (_a2.equals(STRING_undefined)) {
       } else {
         //if (_a3.equals("kJ/m²")) {
-        ENSEMBLE_OBSERVED_values[now_i][now_j][LAYER_glohorrad.id][Load_Layer] = Float.valueOf(_a2) / 3.6; // we should check the units!
+        ensembleObservation_values[now_i][now_j][LAYER_glohorrad.id][Load_Layer] = Float.valueOf(_a2) / 3.6; // we should check the units!
         //}
       }
     }

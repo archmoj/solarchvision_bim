@@ -1,21 +1,21 @@
-void download_CLIMATE_CLMREC () {
+void downloadClimateArchive () {
 
-  if (nearest_Station_CLMREC_id != -1) {
+  if (climateArchiveNearestStationIndex != -1) {
 
-    for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k++) {
+    for (int k = 0; k < (1 + climateArchiveEnd - climateArchiveStart); k++) {
       for (int m = 0; m < 12; m++) {
 
-        int THE_YEAR = k + CLIMATE_CLMREC_start;
+        int THE_YEAR = k + climateArchiveStart;
         int THE_MONTH = m + 1;
 
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + climateArchiveCoordinates[climateArchiveNearestStationIndex].getCity() + ".csv";
 
-        String the_target = Folder_CLIMATE_CLMREC + "/" + FN;
+        String the_target = Folder_climateArchive + "/" + FN;
 
         File dir = new File(the_target);
         if (!dir.isFile()) {
 
-          String the_link = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
+          String the_link = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + climateArchiveCoordinates[climateArchiveNearestStationIndex].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
 
           println("Try downloading: " + the_link);
 
@@ -29,7 +29,7 @@ void download_CLIMATE_CLMREC () {
       }
     }
 
-    CLIMATE_CLMREC_load = true;
-    update_CLIMATE_CLMREC();
+    climateArchiveShouldLoad = true;
+    updateClimateArchive();
   }
 }

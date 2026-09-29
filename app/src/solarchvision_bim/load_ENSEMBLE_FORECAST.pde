@@ -1,4 +1,4 @@
-void load_ENSEMBLE_FORECAST (String FileName, int Load_Layer) {
+void load_ensembleForecast (String FileName, int Load_Layer) {
   String lineSTR;
   String[] input;
 
@@ -41,7 +41,7 @@ void load_ENSEMBLE_FORECAST (String FileName, int Load_Layer) {
 
         //println(now_i, now_j);
 
-        now_i -= int(-STATION.getTimelong() / 15);
+        now_i -= int(-STATION.getTimezoneLongitude() / 15);
         if (now_i < 0) {
           now_i += 24;
           now_j -= 1;
@@ -59,9 +59,9 @@ void load_ENSEMBLE_FORECAST (String FileName, int Load_Layer) {
         for (int Lk = 0; Lk < _c.length; Lk++) {
           int k = _c[Lk].getInt("id") - 1;
 
-          if (k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start)) {
+          if (k < (1 + ensembleForecastEnd - ensembleForecastStart)) {
 
-            ENSEMBLE_FORECAST_values[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
+            ensembleForecast_values[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
           }
         }
       }

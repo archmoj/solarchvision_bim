@@ -220,13 +220,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Start year",
-        () -> (float) SampleYear_Start,
-        (v) -> { SampleYear_Start = int(v); },
-        () -> (float) (CLIMATE_CWEEDS_start), () -> (float) (CLIMATE_CLMREC_end), 1,
+        () -> (float) sampleYearStart,
+        (v) -> { sampleYearStart = int(v); },
+        () -> (float) (climateEngineeringStart), () -> (float) (climateArchiveEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start year", SampleYear_Start, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start year", sampleYearStart, climateEngineeringStart, climateArchiveEnd, 1);
     }
     return out;
   }
@@ -238,13 +238,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("End year",
-        () -> (float) SampleYear_End,
-        (v) -> { SampleYear_End = int(v); },
-        () -> (float) (CLIMATE_CWEEDS_start), () -> (float) (CLIMATE_CLMREC_end), 1,
+        () -> (float) sampleYearEnd,
+        (v) -> { sampleYearEnd = int(v); },
+        () -> (float) (climateEngineeringStart), () -> (float) (climateArchiveEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End year", SampleYear_End, CLIMATE_CWEEDS_start, CLIMATE_CLMREC_end, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End year", sampleYearEnd, climateEngineeringStart, climateArchiveEnd, 1);
     }
     return out;
   }
@@ -256,13 +256,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Start member",
-        () -> (float) SampleMember_Start,
-        (v) -> { SampleMember_Start = int(v); },
-        () -> (float) (ENSEMBLE_FORECAST_start), () -> (float) (ENSEMBLE_FORECAST_end), 1,
+        () -> (float) sampleMemberStart,
+        (v) -> { sampleMemberStart = int(v); },
+        () -> (float) (ensembleForecastStart), () -> (float) (ensembleForecastEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start member", SampleMember_Start, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start member", sampleMemberStart, ensembleForecastStart, ensembleForecastEnd, 1);
     }
     return out;
   }
@@ -274,13 +274,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("End member",
-        () -> (float) SampleMember_End,
-        (v) -> { SampleMember_End = int(v); },
-        () -> (float) (ENSEMBLE_FORECAST_start), () -> (float) (ENSEMBLE_FORECAST_end), 1,
+        () -> (float) sampleMemberEnd,
+        (v) -> { sampleMemberEnd = int(v); },
+        () -> (float) (ensembleForecastStart), () -> (float) (ensembleForecastEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End member", SampleMember_End, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End member", sampleMemberEnd, ensembleForecastStart, ensembleForecastEnd, 1);
     }
     return out;
   }
@@ -292,13 +292,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Start station",
-        () -> (float) SampleStation_Start,
-        (v) -> { SampleStation_Start = int(v); },
-        () -> (float) (ENSEMBLE_OBSERVED_start), () -> (float) (ENSEMBLE_OBSERVED_end), 1,
+        () -> (float) sampleStationStart,
+        (v) -> { sampleStationStart = int(v); },
+        () -> (float) (ensembleObservationStart), () -> (float) (ensembleObservationEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start station", SampleStation_Start, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start station", sampleStationStart, ensembleObservationStart, ensembleObservationEnd, 1);
     }
     return out;
   }
@@ -310,13 +310,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("End station",
-        () -> (float) SampleStation_End,
-        (v) -> { SampleStation_End = int(v); },
-        () -> (float) (ENSEMBLE_OBSERVED_start), () -> (float) (ENSEMBLE_OBSERVED_end), 1,
+        () -> (float) sampleStationEnd,
+        (v) -> { sampleStationEnd = int(v); },
+        () -> (float) (ensembleObservationStart), () -> (float) (ensembleObservationEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End station", SampleStation_End, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End station", sampleStationEnd, ensembleObservationStart, ensembleObservationEnd, 1);
     }
     return out;
   }
@@ -332,12 +332,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Forecast/Obs maxDays",
-        () -> (float) ENSEMBLE_OBSERVED_maxDays,
-        (v) -> { ENSEMBLE_OBSERVED_maxDays = int(v); },
+        () -> (float) ensembleObservationMaxDays,
+        (v) -> { ensembleObservationMaxDays = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Forecast/Obs maxDays", ENSEMBLE_OBSERVED_maxDays, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Forecast/Obs maxDays", ensembleObservationMaxDays, s1, s2, s3);
     }
     return out;
   }
@@ -427,7 +427,7 @@ class ValueModifier {
     }
     return out;
   }
-  int TMYEPW_displayAll (int created) {
+  int climateTypicalYearDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -438,34 +438,34 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("TMYEPW displayAll",
-        () -> (float) WORLD.displayAll_TMYEPW,
-        (v) -> { WORLD.displayAll_TMYEPW = int(v); },
+      putValueAction("Climate Typical Year Display All",
+        () -> (float) WORLD.climateTypicalYearDisplayAll,
+        (v) -> { WORLD.climateTypicalYearDisplayAll = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "TMYEPW displayAll", WORLD.displayAll_TMYEPW, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate Typical Year Display All", WORLD.climateTypicalYearDisplayAll, s1, s2, s3);
     }
     return out;
   }
-  boolean TMYEPW_displayNear (int created) {
+  boolean climateTypicalYearDisplayNear (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("TMYEPW displayNear",
-        () -> (WORLD.displayNear_TMYEPW ? 1f : 0f),
-        (v) -> { WORLD.displayNear_TMYEPW = (v >= 0.5f); },
+      putValueAction("Climate Typical Year Display Near",
+        () -> (WORLD.climateTypicalYearDisplayNear ? 1f : 0f),
+        (v) -> { WORLD.climateTypicalYearDisplayNear = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "TMYEPW displayNear", WORLD.displayNear_TMYEPW);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate Typical Year Display Near", WORLD.climateTypicalYearDisplayNear);
     }
     return out;
   }
-  int CWEEDS_displayAll (int created) {
+  int climateEngineeringDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -476,34 +476,34 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("CWEEDS displayAll",
-        () -> (float) WORLD.displayAll_CWEEDS,
-        (v) -> { WORLD.displayAll_CWEEDS = int(v); },
+      putValueAction("Climate Engineering Display All",
+        () -> (float) WORLD.climateEngineeringDisplayAll,
+        (v) -> { WORLD.climateEngineeringDisplayAll = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "CWEEDS displayAll", WORLD.displayAll_CWEEDS, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate Engineering Display All", WORLD.climateEngineeringDisplayAll, s1, s2, s3);
     }
     return out;
   }
-  boolean CWEEDS_displayNear (int created) {
+  boolean climateEngineeringDisplayNear (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("CWEEDS displayNear",
-        () -> (WORLD.displayNear_CWEEDS ? 1f : 0f),
-        (v) -> { WORLD.displayNear_CWEEDS = (v >= 0.5f); },
+      putValueAction("Climate Engineering Display Near",
+        () -> (WORLD.climateEngineeringDisplayNear ? 1f : 0f),
+        (v) -> { WORLD.climateEngineeringDisplayNear = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "CWEEDS displayNear", WORLD.displayNear_CWEEDS);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate Engineering Display Near", WORLD.climateEngineeringDisplayNear);
     }
     return out;
   }
-  int CLMREC_displayAll (int created) {
+  int climateArchiveDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -514,34 +514,34 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("CLMREC displayAll",
-        () -> (float) WORLD.displayAll_CLMREC,
-        (v) -> { WORLD.displayAll_CLMREC = int(v); },
+      putValueAction("Climate Archive Display All",
+        () -> (float) WORLD.climateArchiveDisplayAll,
+        (v) -> { WORLD.climateArchiveDisplayAll = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "CLMREC displayAll", WORLD.displayAll_CLMREC, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate Archive Display All", WORLD.climateArchiveDisplayAll, s1, s2, s3);
     }
     return out;
   }
-  boolean CLMREC_displayNear (int created) {
+  boolean climateArchiveDisplayNear (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("CLMREC displayNear",
-        () -> (WORLD.displayNear_CLMREC ? 1f : 0f),
-        (v) -> { WORLD.displayNear_CLMREC = (v >= 0.5f); },
+      putValueAction("Climate Archive Display Near",
+        () -> (WORLD.climateArchiveDisplayNear ? 1f : 0f),
+        (v) -> { WORLD.climateArchiveDisplayNear = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "CLMREC displayNear", WORLD.displayNear_CLMREC);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate Archive Display Near", WORLD.climateArchiveDisplayNear);
     }
     return out;
   }
-  int SWOB_displayAll (int created) {
+  int ensembleObservationDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -552,34 +552,34 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("SWOB displayAll",
-        () -> (float) WORLD.displayAll_SWOB,
-        (v) -> { WORLD.displayAll_SWOB = int(v); },
+      putValueAction("Ensemble Observation Display All",
+        () -> (float) WORLD.ensembleObservationDisplayAll,
+        (v) -> { WORLD.ensembleObservationDisplayAll = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SWOB displayAll", WORLD.displayAll_SWOB, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Ensemble Observation Display All", WORLD.ensembleObservationDisplayAll, s1, s2, s3);
     }
     return out;
   }
-  boolean SWOB_displayNear (int created) {
+  boolean ensembleObservationDisplayNear (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("SWOB displayNear",
-        () -> (WORLD.displayNear_SWOB ? 1f : 0f),
-        (v) -> { WORLD.displayNear_SWOB = (v >= 0.5f); },
+      putValueAction("Ensemble Observation Display Near",
+        () -> (WORLD.ensembleObservationDisplayNear ? 1f : 0f),
+        (v) -> { WORLD.ensembleObservationDisplayNear = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SWOB displayNear", WORLD.displayNear_SWOB);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Ensemble Observation Display Near", WORLD.ensembleObservationDisplayNear);
     }
     return out;
   }
-  int NAEFS_displayAll (int created) {
+  int ensembleForecastDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -590,30 +590,30 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("NAEFS displayAll",
-        () -> (float) WORLD.displayAll_NAEFS,
-        (v) -> { WORLD.displayAll_NAEFS = int(v); },
+      putValueAction("Ensemble Forecast Display All",
+        () -> (float) WORLD.ensembleForecastDisplayAll,
+        (v) -> { WORLD.ensembleForecastDisplayAll = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "NAEFS displayAll", WORLD.displayAll_NAEFS, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Ensemble Forecast Display All", WORLD.ensembleForecastDisplayAll, s1, s2, s3);
     }
     return out;
   }
-  boolean NAEFS_displayNear (int created) {
+  boolean ensembleForecastDisplayNear (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("NAEFS displayNear",
-        () -> (WORLD.displayNear_NAEFS ? 1f : 0f),
-        (v) -> { WORLD.displayNear_NAEFS = (v >= 0.5f); },
+      putValueAction("Ensemble Forecast Display Near",
+        () -> (WORLD.ensembleForecastDisplayNear ? 1f : 0f),
+        (v) -> { WORLD.ensembleForecastDisplayNear = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "NAEFS displayNear", WORLD.displayNear_NAEFS);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Ensemble Forecast Display Near", WORLD.ensembleForecastDisplayNear);
     }
     return out;
   }
@@ -646,12 +646,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D material",
-        () -> (float) User3D.default_Material,
-        (v) -> { User3D.default_Material = int(v); },
+        () -> (float) User3D.defaultMaterial,
+        (v) -> { User3D.defaultMaterial = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D material", User3D.default_Material, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D material", User3D.defaultMaterial, s1, s2, s3);
     }
     return out;
   }
@@ -667,12 +667,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D tessellation",
-        () -> (float) User3D.default_Tessellation,
-        (v) -> { User3D.default_Tessellation = int(v); },
+        () -> (float) User3D.defaultTessellation,
+        (v) -> { User3D.defaultTessellation = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D tessellation", User3D.default_Tessellation, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D tessellation", User3D.defaultTessellation, s1, s2, s3);
     }
     return out;
   }
@@ -688,12 +688,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D layer",
-        () -> (float) User3D.default_Layer,
-        (v) -> { User3D.default_Layer = int(v); },
+        () -> (float) User3D.defaultLayer,
+        (v) -> { User3D.defaultLayer = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D layer", User3D.default_Layer, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D layer", User3D.defaultLayer, s1, s2, s3);
     }
     return out;
   }
@@ -709,12 +709,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D visibility",
-        () -> (float) User3D.default_Visibility,
-        (v) -> { User3D.default_Visibility = int(v); },
+        () -> (float) User3D.defaultVisibility,
+        (v) -> { User3D.defaultVisibility = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D visibility", User3D.default_Visibility, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D visibility", User3D.defaultVisibility, s1, s2, s3);
     }
     return out;
   }
@@ -730,12 +730,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D weight",
-        () -> (float) User3D.default_Weight,
-        (v) -> { User3D.default_Weight = int(v); },
+        () -> (float) User3D.defaultWeight,
+        (v) -> { User3D.defaultWeight = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D weight", User3D.default_Weight, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D weight", User3D.defaultWeight, s1, s2, s3);
     }
     return out;
   }
@@ -751,12 +751,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D closed",
-        () -> (float) User3D.default_Closed,
-        (v) -> { User3D.default_Closed = int(v); },
+        () -> (float) User3D.defaultClosed,
+        (v) -> { User3D.defaultClosed = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D closed", User3D.default_Closed, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D closed", User3D.defaultClosed, s1, s2, s3);
     }
     return out;
   }
@@ -773,12 +773,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D orientation",
-        () -> User3D.create_Orientation,
-        (v) -> { User3D.create_Orientation = v; },
+        () -> User3D.creatorOrientation,
+        (v) -> { User3D.creatorOrientation = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D orientation", User3D.create_Orientation, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D orientation", User3D.creatorOrientation, s1, s2, s3, s4);
     }
     return out;
   }
@@ -795,12 +795,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D length",
-        () -> User3D.create_Length,
-        (v) -> { User3D.create_Length = v; },
+        () -> User3D.creatorLength,
+        (v) -> { User3D.creatorLength = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D length", User3D.create_Length, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D length", User3D.creatorLength, s1, s2, s3, s4);
     }
     return out;
   }
@@ -817,12 +817,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D width",
-        () -> User3D.create_Width,
-        (v) -> { User3D.create_Width = v; },
+        () -> User3D.creatorWidth,
+        (v) -> { User3D.creatorWidth = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D width", User3D.create_Width, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D width", User3D.creatorWidth, s1, s2, s3, s4);
     }
     return out;
   }
@@ -839,12 +839,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D height",
-        () -> User3D.create_Height,
-        (v) -> { User3D.create_Height = v; },
+        () -> User3D.creatorHeight,
+        (v) -> { User3D.creatorHeight = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D height", User3D.create_Height, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D height", User3D.creatorHeight, s1, s2, s3, s4);
     }
     return out;
   }
@@ -861,12 +861,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D volume",
-        () -> User3D.create_Volume,
-        (v) -> { User3D.create_Volume = v; },
+        () -> User3D.creatorVolume,
+        (v) -> { User3D.creatorVolume = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D volume", User3D.create_Volume, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D volume", User3D.creatorVolume, s1, s2, s3, s4);
     }
     return out;
   }
@@ -882,12 +882,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D snap",
-        () -> (float) User3D.create_Snap,
-        (v) -> { User3D.create_Snap = int(v); },
+        () -> (float) User3D.creatorSnapModeIndex,
+        (v) -> { User3D.creatorSnapModeIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D snap", User3D.create_Snap, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D snap", User3D.creatorSnapModeIndex, s1, s2, s3);
     }
     return out;
   }
@@ -903,12 +903,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D sphereDegree",
-        () -> (float) User3D.create_SphereDegree,
-        (v) -> { User3D.create_SphereDegree = int(v); },
+        () -> (float) User3D.creatorSphereDegree,
+        (v) -> { User3D.creatorSphereDegree = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D sphereDegree", User3D.create_SphereDegree, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D sphereDegree", User3D.creatorSphereDegree, s1, s2, s3);
     }
     return out;
   }
@@ -924,12 +924,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D cylinderDegree",
-        () -> (float) User3D.create_CylinderDegree,
-        (v) -> { User3D.create_CylinderDegree = int(v); },
+        () -> (float) User3D.creatorCylinderDegree,
+        (v) -> { User3D.creatorCylinderDegree = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D cylinderDegree", User3D.create_CylinderDegree, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D cylinderDegree", User3D.creatorCylinderDegree, s1, s2, s3);
     }
     return out;
   }
@@ -945,12 +945,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D polyDegree",
-        () -> (float) User3D.create_PolyDegree,
-        (v) -> { User3D.create_PolyDegree = int(v); },
+        () -> (float) User3D.creatorPolygonDegree,
+        (v) -> { User3D.creatorPolygonDegree = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D polyDegree", User3D.create_PolyDegree, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D polyDegree", User3D.creatorPolygonDegree, s1, s2, s3);
     }
     return out;
   }
@@ -966,12 +966,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D parametricType",
-        () -> (float) User3D.create_Parametric_Type,
-        (v) -> { User3D.create_Parametric_Type = int(v); },
+        () -> (float) User3D.creatorParametricTypeIndex,
+        (v) -> { User3D.creatorParametricTypeIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D parametricType", User3D.create_Parametric_Type, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D parametricType", User3D.creatorParametricTypeIndex, s1, s2, s3);
     }
     return out;
   }
@@ -983,12 +983,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D personType",
-        () -> (float) User3D.create_Person_Type,
-        (v) -> { User3D.create_Person_Type = int(v); },
-        () -> (float) (0), () -> (float) (allModel2Ds.num_files_PEOPLE), 1,
+        () -> (float) User3D.creatorPersonTypeIndex,
+        (v) -> { User3D.creatorPersonTypeIndex = int(v); },
+        () -> (float) (0), () -> (float) (allModel2Ds.peopleFileCount), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D personType", User3D.create_Person_Type, 0, allModel2Ds.num_files_PEOPLE, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D personType", User3D.creatorPersonTypeIndex, 0, allModel2Ds.peopleFileCount, 1);
     }
     return out;
   }
@@ -1000,12 +1000,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D plantType",
-        () -> (float) User3D.create_Plant_Type,
-        (v) -> { User3D.create_Plant_Type = int(v); },
-        () -> (float) (0), () -> (float) (allModel2Ds.num_files_TREES), 1,
+        () -> (float) User3D.creatorPlantTypeIndex,
+        (v) -> { User3D.creatorPlantTypeIndex = int(v); },
+        () -> (float) (0), () -> (float) (allModel2Ds.treesFileCount), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D plantType", User3D.create_Plant_Type, 0, allModel2Ds.num_files_TREES, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D plantType", User3D.creatorPlantTypeIndex, 0, allModel2Ds.treesFileCount, 1);
     }
     return out;
   }
@@ -1021,12 +1021,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Modify3D openningDepth",
-        () -> User3D.modify_OpenningDepth,
-        (v) -> { User3D.modify_OpenningDepth = v; },
+        () -> User3D.modifierOpeningDepth,
+        (v) -> { User3D.modifierOpeningDepth = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningDepth", User3D.modify_OpenningDepth, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningDepth", User3D.modifierOpeningDepth, s1, s2, s3);
     }
     return out;
   }
@@ -1042,12 +1042,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Modify3D openningArea",
-        () -> User3D.modify_OpenningArea,
-        (v) -> { User3D.modify_OpenningArea = v; },
+        () -> User3D.modifierOpeningArea,
+        (v) -> { User3D.modifierOpeningArea = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningArea", User3D.modify_OpenningArea, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningArea", User3D.modifierOpeningArea, s1, s2, s3);
     }
     return out;
   }
@@ -1063,12 +1063,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Modify3D openningDeviation",
-        () -> User3D.modify_OpenningDeviation,
-        (v) -> { User3D.modify_OpenningDeviation = v; },
+        () -> User3D.modifierOpeningDeviation,
+        (v) -> { User3D.modifierOpeningDeviation = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningDeviation", User3D.modify_OpenningDeviation, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningDeviation", User3D.modifierOpeningDeviation, s1, s2, s3);
     }
     return out;
   }
@@ -1084,12 +1084,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Modify3D tessellateRows",
-        () -> (float) User3D.modify_TessellateRows,
-        (v) -> { User3D.modify_TessellateRows = int(v); },
+        () -> (float) User3D.modifierTessellateRows,
+        (v) -> { User3D.modifierTessellateRows = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D tessellateRows", User3D.modify_TessellateRows, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D tessellateRows", User3D.modifierTessellateRows, s1, s2, s3);
     }
     return out;
   }
@@ -1105,12 +1105,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Modify3D tessellateColumns",
-        () -> (float) User3D.modify_TessellateColumns,
-        (v) -> { User3D.modify_TessellateColumns = int(v); },
+        () -> (float) User3D.modifierTessellateColumns,
+        (v) -> { User3D.modifierTessellateColumns = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D tessellateColumns", User3D.modify_TessellateColumns, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D tessellateColumns", User3D.modifierTessellateColumns, s1, s2, s3);
     }
     return out;
   }
@@ -1126,16 +1126,16 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Modify3D offsetAmount",
-        () -> User3D.modify_OffsetAmount,
-        (v) -> { User3D.modify_OffsetAmount = v; },
+        () -> User3D.modifierOffsetAmount,
+        (v) -> { User3D.modifierOffsetAmount = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D offsetAmount", User3D.modify_OffsetAmount, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D offsetAmount", User3D.modifierOffsetAmount, s1, s2, s3);
     }
     return out;
   }
-  float Modify3D_weldTreshold (int created) {
+  float Modify3D_weldThreshold (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1146,13 +1146,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Modify3D weldTreshold",
-        () -> User3D.modify_WeldTreshold,
-        (v) -> { User3D.modify_WeldTreshold = v; },
+      putValueAction("Modify3D weldThreshold",
+        () -> User3D.modifierWeldThreshold,
+        (v) -> { User3D.modifierWeldThreshold = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D weldTreshold", User3D.modify_WeldTreshold, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D weldThreshold", User3D.modifierWeldThreshold, s1, s2, s3);
     }
     return out;
   }
@@ -1408,13 +1408,13 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D powAll",
-        () -> User3D.create_powAll,
-        (v) -> { User3D.create_powAll = v; },
+        () -> User3D.creatorUniformSuperellipsoidPower,
+        (v) -> { User3D.creatorUniformSuperellipsoidPower = v; },
         () -> (float) (0.5), () -> (float) (CubePower), 0.001,
         u1, u2, u3,
         react.applyCreatePowAll);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powAll", User3D.create_powAll, 0.5, CubePower, -2, 0.001);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powAll", User3D.creatorUniformSuperellipsoidPower, 0.5, CubePower, -2, 0.001);
     }
     return out;
   }
@@ -1426,12 +1426,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D powX",
-        () -> User3D.create_powX,
-        (v) -> { User3D.create_powX = v; },
+        () -> User3D.creatorSuperellipsoidPowerX,
+        (v) -> { User3D.creatorSuperellipsoidPowerX = v; },
         () -> (float) (0.5), () -> (float) (CubePower), 0.001,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powX", User3D.create_powX, 0.5, CubePower, -2, 0.001);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powX", User3D.creatorSuperellipsoidPowerX, 0.5, CubePower, -2, 0.001);
     }
     return out;
   }
@@ -1443,12 +1443,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D powY",
-        () -> User3D.create_powY,
-        (v) -> { User3D.create_powY = v; },
+        () -> User3D.creatorSuperellipsoidPowerY,
+        (v) -> { User3D.creatorSuperellipsoidPowerY = v; },
         () -> (float) (0.5), () -> (float) (CubePower), 0.001,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powY", User3D.create_powY, 0.5, CubePower, -2, 0.001);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powY", User3D.creatorSuperellipsoidPowerY, 0.5, CubePower, -2, 0.001);
     }
     return out;
   }
@@ -1460,12 +1460,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D powZ",
-        () -> User3D.create_powZ,
-        (v) -> { User3D.create_powZ = v; },
+        () -> User3D.creatorSuperellipsoidPowerZ,
+        (v) -> { User3D.creatorSuperellipsoidPowerZ = v; },
         () -> (float) (0.5), () -> (float) (CubePower), 0.001,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powZ", User3D.create_powZ, 0.5, CubePower, -2, 0.001);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powZ", User3D.creatorSuperellipsoidPowerZ, 0.5, CubePower, -2, 0.001);
     }
     return out;
   }
@@ -1481,12 +1481,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D type",
-        () -> (float) User3D.create_Model1D_Type,
-        (v) -> { User3D.create_Model1D_Type = int(v); },
+        () -> (float) User3D.creatorModel1DTypeIndex,
+        (v) -> { User3D.creatorModel1DTypeIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D type", User3D.create_Model1D_Type, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D type", User3D.creatorModel1DTypeIndex, s1, s2, s3);
     }
     return out;
   }
@@ -1502,12 +1502,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D degreeMax",
-        () -> (float) User3D.create_Model1D_DegreeMax,
-        (v) -> { User3D.create_Model1D_DegreeMax = int(v); },
+        () -> (float) User3D.creatorModel1DDegreeMax,
+        (v) -> { User3D.creatorModel1DDegreeMax = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D degreeMax", User3D.create_Model1D_DegreeMax, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D degreeMax", User3D.creatorModel1DDegreeMax, s1, s2, s3);
     }
     return out;
   }
@@ -1523,12 +1523,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Create3D seed",
-        () -> (float) User3D.create_Model1D_Seed,
-        (v) -> { User3D.create_Model1D_Seed = int(v); },
+        () -> (float) User3D.creatorModel1DSeed,
+        (v) -> { User3D.creatorModel1DSeed = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D seed", User3D.create_Model1D_Seed, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D seed", User3D.creatorModel1DSeed, s1, s2, s3);
     }
     return out;
   }
@@ -1545,12 +1545,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D trunkSize",
-        () -> User3D.create_Model1D_TrunkSize,
-        (v) -> { User3D.create_Model1D_TrunkSize = v; },
+        () -> User3D.creatorModel1DTrunkSize,
+        (v) -> { User3D.creatorModel1DTrunkSize = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D trunkSize", User3D.create_Model1D_TrunkSize, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D trunkSize", User3D.creatorModel1DTrunkSize, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1567,12 +1567,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D leafSize",
-        () -> User3D.create_Model1D_LeafSize,
-        (v) -> { User3D.create_Model1D_LeafSize = v; },
+        () -> User3D.creatorModel1DLeafSize,
+        (v) -> { User3D.creatorModel1DLeafSize = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D leafSize", User3D.create_Model1D_LeafSize, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D leafSize", User3D.creatorModel1DLeafSize, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1589,12 +1589,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D branchTilt",
-        () -> User3D.create_Model1D_BranchTilt,
-        (v) -> { User3D.create_Model1D_BranchTilt = v; },
+        () -> User3D.creator_Model1D_BranchTilt,
+        (v) -> { User3D.creator_Model1D_BranchTilt = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchTilt", User3D.create_Model1D_BranchTilt, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchTilt", User3D.creator_Model1D_BranchTilt, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1611,12 +1611,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D branchTwist",
-        () -> User3D.create_Model1D_BranchTwist,
-        (v) -> { User3D.create_Model1D_BranchTwist = v; },
+        () -> User3D.creator_Model1D_BranchTwist,
+        (v) -> { User3D.creator_Model1D_BranchTwist = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchTwist", User3D.create_Model1D_BranchTwist, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchTwist", User3D.creator_Model1D_BranchTwist, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1633,12 +1633,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D branchRatio",
-        () -> User3D.create_Model1D_BranchRatio,
-        (v) -> { User3D.create_Model1D_BranchRatio = v; },
+        () -> User3D.creator_Model1D_BranchRatio,
+        (v) -> { User3D.creator_Model1D_BranchRatio = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchRatio", User3D.create_Model1D_BranchRatio, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchRatio", User3D.creator_Model1D_BranchRatio, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1655,12 +1655,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Create3D treeBase",
-        () -> User3D.create_Model1D_TreeBase,
-        (v) -> { User3D.create_Model1D_TreeBase = v; },
+        () -> User3D.creator_Model1D_TreeBase,
+        (v) -> { User3D.creator_Model1D_TreeBase = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D treeBase", User3D.create_Model1D_TreeBase, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D treeBase", User3D.creator_Model1D_TreeBase, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1710,10 +1710,10 @@ class ValueModifier {
       putValueAction("Land3D skipStart",
         () -> (float) Land3D.skipStart,
         (v) -> { Land3D.skipStart = int(v); },
-        () -> (float) (0), () -> (float) (Land3D.num_rows - 1), 1,
+        () -> (float) (0), () -> (float) (Land3D.rowCount - 1), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D skipStart", Land3D.skipStart, 0, Land3D.num_rows - 1, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D skipStart", Land3D.skipStart, 0, Land3D.rowCount - 1, 1);
     }
     return out;
   }
@@ -1727,10 +1727,10 @@ class ValueModifier {
       putValueAction("Land3D skipEnd",
         () -> (float) Land3D.skipEnd,
         (v) -> { Land3D.skipEnd = int(v); },
-        () -> (float) (0), () -> (float) (Land3D.num_rows - 1), 1,
+        () -> (float) (0), () -> (float) (Land3D.rowCount - 1), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D skipEnd", Land3D.skipEnd, 0, Land3D.num_rows - 1, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D skipEnd", Land3D.skipEnd, 0, Land3D.rowCount - 1, 1);
     }
     return out;
   }
@@ -1809,13 +1809,13 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Model2Ds displayAll",
+      putValueAction("Model2Ds Display All",
         () -> (allModel2Ds.displayAll ? 1f : 0f),
         (v) -> { allModel2Ds.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Model2Ds displayAll", allModel2Ds.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Model2Ds Display All", allModel2Ds.displayAll);
     }
     return out;
   }
@@ -1826,13 +1826,13 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Model1Ds displayAll",
+      putValueAction("Model1Ds Display All",
         () -> (allModel1Ds.displayAll ? 1f : 0f),
         (v) -> { allModel1Ds.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Model1Ds displayAll", allModel1Ds.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Model1Ds Display All", allModel1Ds.displayAll);
     }
     return out;
   }
@@ -1860,13 +1860,13 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Polylines displayAll",
+      putValueAction("Polylines Display All",
         () -> (allPolylines.displayAll ? 1f : 0f),
         (v) -> { allPolylines.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Polylines displayAll", allPolylines.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Polylines Display All", allPolylines.displayAll);
     }
     return out;
   }
@@ -1877,13 +1877,13 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Faces displayAll",
+      putValueAction("Faces Display All",
         () -> (allFaces.displayAll ? 1f : 0f),
         (v) -> { allFaces.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces displayAll", allFaces.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces Display All", allFaces.displayAll);
     }
     return out;
   }
@@ -1894,13 +1894,13 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Solids displayAll",
+      putValueAction("Solids Display All",
         () -> (allSolids.displayAll ? 1f : 0f),
         (v) -> { allSolids.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids displayAll", allSolids.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids Display All", allSolids.displayAll);
     }
     return out;
   }
@@ -1911,13 +1911,13 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Sections displayAll",
+      putValueAction("Sections Display All",
         () -> (allSections.displayAll ? 1f : 0f),
         (v) -> { allSections.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sections displayAll", allSections.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sections Display All", allSections.displayAll);
     }
     return out;
   }
@@ -2019,13 +2019,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Camera current",
-        () -> (float) WIN3D.currentCamera,
-        (v) -> { WIN3D.currentCamera = int(v); },
+        () -> (float) WIN3D.currentCameraIndex,
+        (v) -> { WIN3D.currentCameraIndex = int(v); },
         () -> (float) (0), () -> (float) (allCameras.num), 1,
         u1, u2, u3,
         react.applyCurrentCamera);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera current", WIN3D.currentCamera, 0, allCameras.num, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera current", WIN3D.currentCameraIndex, 0, allCameras.num, 1);
     }
     return out;
   }
@@ -2042,12 +2042,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Camera clipNear",
-        () -> WIN3D.CAM_clipNear,
-        (v) -> { WIN3D.CAM_clipNear = v; },
+        () -> WIN3D.cameraClipNear,
+        (v) -> { WIN3D.cameraClipNear = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera clipNear", WIN3D.CAM_clipNear, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera clipNear", WIN3D.cameraClipNear, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2064,12 +2064,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Camera clipFar",
-        () -> WIN3D.CAM_clipFar,
-        (v) -> { WIN3D.CAM_clipFar = v; },
+        () -> WIN3D.cameraClipFar,
+        (v) -> { WIN3D.cameraClipFar = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera clipFar", WIN3D.CAM_clipFar, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera clipFar", WIN3D.cameraClipFar, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2134,17 +2134,17 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Cameras displayAll",
+      putValueAction("Cameras Display All",
         () -> (allCameras.displayAll ? 1f : 0f),
         (v) -> { allCameras.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Cameras displayAll", allCameras.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Cameras Display All", allCameras.displayAll);
     }
     return out;
   }
-  int Impacts_displayDay (int created) {
+  int impactDisplayDay (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2152,13 +2152,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Impacts displayDay",
-        () -> (float) IMPACTS_displayDay,
-        (v) -> { IMPACTS_displayDay = int(v); },
+        () -> (float) impactDisplayDay,
+        (v) -> { impactDisplayDay = int(v); },
         () -> (float) (0), () -> (float) (STUDY.j_End - STUDY.j_Start), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impacts displayDay", IMPACTS_displayDay, 0, STUDY.j_End - STUDY.j_Start, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impacts displayDay", impactDisplayDay, 0, STUDY.j_End - STUDY.j_Start, 1);
     }
     return out;
   }
@@ -2554,14 +2554,14 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("WindFlows displayAll",
+      putValueAction("WindFlows Display All",
         () -> (allWindFlows.displayAll ? 1f : 0f),
         (v) -> { allWindFlows.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows displayAll", allWindFlows.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows Display All", allWindFlows.displayAll);
     }
     return out;
   }
@@ -2843,7 +2843,7 @@ class ValueModifier {
     }
     return out;
   }
-  float Planetary_magnification (int created) {
+  float celestialMagnification (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2854,17 +2854,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Planetary magnification",
-        () -> Planetary_Magnification,
-        (v) -> { Planetary_Magnification = v; },
+      putValueAction("Celestial magnification",
+        () -> celestialMagnification,
+        (v) -> { celestialMagnification = v; },
         s1, s2, Math.abs(s3),
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Planetary magnification", Planetary_Magnification, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Celestial magnification", celestialMagnification, s1, s2, s3);
     }
     return out;
   }
-  float Objects_scale (int created) {
+  float overallScale (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2877,12 +2877,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Objects scale",
-        () -> OBJECTS_scale,
-        (v) -> { OBJECTS_scale = v; },
+        () -> overallScale,
+        (v) -> { overallScale = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Objects scale", OBJECTS_scale, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Objects scale", overallScale, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2925,7 +2925,7 @@ class ValueModifier {
         s1, s2, Math.abs(s3),
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Scale (" + allLayers[CurrentLayer_id].descriptions[Language_EN] + ")", STUDY.V_scale, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Scale (" + allLayers[currentLayerId].descriptions[Language_EN] + ")", STUDY.V_scale, s1, s2, s3);
     }
     return out;
   }
@@ -3048,12 +3048,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study activePaletteClr",
-        () -> (float) STUDY.ACTIVE_palette_CLR,
-        (v) -> { STUDY.ACTIVE_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) STUDY.activeColorScaleIndex,
+        (v) -> { STUDY.activeColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteClr", STUDY.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteClr", STUDY.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3069,12 +3069,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study activePaletteDir",
-        () -> (float) STUDY.ACTIVE_palette_DIR,
-        (v) -> { STUDY.ACTIVE_palette_DIR = int(v); },
+        () -> (float) STUDY.activeColorScaleDirection,
+        (v) -> { STUDY.activeColorScaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteDir", STUDY.ACTIVE_palette_DIR, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteDir", STUDY.activeColorScaleDirection, s1, s2, s3);
     }
     return out;
   }
@@ -3091,12 +3091,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Study activePaletteMlt",
-        () -> STUDY.ACTIVE_palette_MLT,
-        (v) -> { STUDY.ACTIVE_palette_MLT = v; },
+        () -> STUDY.activeColorScaleFactor,
+        (v) -> { STUDY.activeColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteMlt", STUDY.ACTIVE_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteMlt", STUDY.activeColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3108,12 +3108,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study passivePaletteClr",
-        () -> (float) STUDY.PASSIVE_palette_CLR,
-        (v) -> { STUDY.PASSIVE_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) STUDY.passiveColorScaleIndex,
+        (v) -> { STUDY.passiveColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteClr", STUDY.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteClr", STUDY.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3130,12 +3130,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study passivePaletteDir",
-        () -> (float) STUDY.PASSIVE_palette_DIR,
-        (v) -> { STUDY.PASSIVE_palette_DIR = int(v); },
+        () -> (float) STUDY.passiveColorScaleDirection,
+        (v) -> { STUDY.passiveColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteDir", STUDY.PASSIVE_palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteDir", STUDY.passiveColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3152,12 +3152,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Study passivePaletteMlt",
-        () -> STUDY.PASSIVE_palette_MLT,
-        (v) -> { STUDY.PASSIVE_palette_MLT = v; },
+        () -> STUDY.passiveColorScaleFactor,
+        (v) -> { STUDY.passiveColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteMlt", STUDY.PASSIVE_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteMlt", STUDY.passiveColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3169,12 +3169,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study sortPaletteClr",
-        () -> (float) STUDY.SORT_palette_CLR,
-        (v) -> { STUDY.SORT_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) STUDY.SORT_ColorScaleIndex,
+        (v) -> { STUDY.SORT_ColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteClr", STUDY.SORT_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteClr", STUDY.SORT_ColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3191,12 +3191,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study sortPaletteDir",
-        () -> (float) STUDY.SORT_palette_DIR,
-        (v) -> { STUDY.SORT_palette_DIR = int(v); },
+        () -> (float) STUDY.SORT_ColorScaleDirection,
+        (v) -> { STUDY.SORT_ColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteDir", STUDY.SORT_palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteDir", STUDY.SORT_ColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3213,12 +3213,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Study sortPaletteMlt",
-        () -> STUDY.SORT_palette_MLT,
-        (v) -> { STUDY.SORT_palette_MLT = v; },
+        () -> STUDY.SORT_ColorScaleFactor,
+        (v) -> { STUDY.SORT_ColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteMlt", STUDY.SORT_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteMlt", STUDY.SORT_ColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3230,12 +3230,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study probPaletteClr",
-        () -> (float) STUDY.PROB_palette_CLR,
-        (v) -> { STUDY.PROB_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) STUDY.PROB_ColorScaleIndex,
+        (v) -> { STUDY.PROB_ColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteClr", STUDY.PROB_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteClr", STUDY.PROB_ColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3252,12 +3252,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study probPaletteDir",
-        () -> (float) STUDY.PROB_palette_DIR,
-        (v) -> { STUDY.PROB_palette_DIR = int(v); },
+        () -> (float) STUDY.PROB_ColorScaleDirection,
+        (v) -> { STUDY.PROB_ColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteDir", STUDY.PROB_palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteDir", STUDY.PROB_ColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3274,12 +3274,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Study probPaletteMlt",
-        () -> STUDY.PROB_palette_MLT,
-        (v) -> { STUDY.PROB_palette_MLT = v; },
+        () -> STUDY.PROB_ColorScaleFactor,
+        (v) -> { STUDY.PROB_ColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteMlt", STUDY.PROB_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteMlt", STUDY.PROB_ColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3312,12 +3312,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Faces activePaletteClr",
-        () -> (float) allFaces.ACTIVE_palette_CLR,
-        (v) -> { allFaces.ACTIVE_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) allFaces.activeColorScaleIndex,
+        (v) -> { allFaces.activeColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteClr", allFaces.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteClr", allFaces.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3333,12 +3333,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Faces activePaletteDir",
-        () -> (float) allFaces.ACTIVE_palette_DIR,
-        (v) -> { allFaces.ACTIVE_palette_DIR = int(v); },
+        () -> (float) allFaces.activeColorScaleDirection,
+        (v) -> { allFaces.activeColorScaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteDir", allFaces.ACTIVE_palette_DIR, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteDir", allFaces.activeColorScaleDirection, s1, s2, s3);
     }
     return out;
   }
@@ -3355,12 +3355,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Faces activePaletteMlt",
-        () -> allFaces.ACTIVE_palette_MLT,
-        (v) -> { allFaces.ACTIVE_palette_MLT = v; },
+        () -> allFaces.activeColorScaleFactor,
+        (v) -> { allFaces.activeColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteMlt", allFaces.ACTIVE_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteMlt", allFaces.activeColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3372,12 +3372,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Faces passivePaletteClr",
-        () -> (float) allFaces.PASSIVE_palette_CLR,
-        (v) -> { allFaces.PASSIVE_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) allFaces.passiveColorScaleIndex,
+        (v) -> { allFaces.passiveColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteClr", allFaces.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteClr", allFaces.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3394,12 +3394,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Faces passivePaletteDir",
-        () -> (float) allFaces.PASSIVE_palette_DIR,
-        (v) -> { allFaces.PASSIVE_palette_DIR = int(v); },
+        () -> (float) allFaces.passiveColorScaleDirection,
+        (v) -> { allFaces.passiveColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteDir", allFaces.PASSIVE_palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteDir", allFaces.passiveColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3416,12 +3416,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Faces passivePaletteMlt",
-        () -> allFaces.PASSIVE_palette_MLT,
-        (v) -> { allFaces.PASSIVE_palette_MLT = v; },
+        () -> allFaces.passiveColorScaleFactor,
+        (v) -> { allFaces.passiveColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteMlt", allFaces.PASSIVE_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteMlt", allFaces.passiveColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3433,12 +3433,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sky3D activePaletteClr",
-        () -> (float) Sky3D.ACTIVE_palette_CLR,
-        (v) -> { Sky3D.ACTIVE_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) Sky3D.activeColorScaleIndex,
+        (v) -> { Sky3D.activeColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteClr", Sky3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteClr", Sky3D.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3454,12 +3454,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sky3D activePaletteDir",
-        () -> (float) Sky3D.ACTIVE_palette_DIR,
-        (v) -> { Sky3D.ACTIVE_palette_DIR = int(v); },
+        () -> (float) Sky3D.activeColorScaleDirection,
+        (v) -> { Sky3D.activeColorScaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteDir", Sky3D.ACTIVE_palette_DIR, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteDir", Sky3D.activeColorScaleDirection, s1, s2, s3);
     }
     return out;
   }
@@ -3476,12 +3476,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Sky3D activePaletteMlt",
-        () -> Sky3D.ACTIVE_palette_MLT,
-        (v) -> { Sky3D.ACTIVE_palette_MLT = v; },
+        () -> Sky3D.activeColorScaleFactor,
+        (v) -> { Sky3D.activeColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteMlt", Sky3D.ACTIVE_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteMlt", Sky3D.activeColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3493,12 +3493,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sky3D passivePaletteClr",
-        () -> (float) Sky3D.PASSIVE_palette_CLR,
-        (v) -> { Sky3D.PASSIVE_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) Sky3D.passiveColorScaleIndex,
+        (v) -> { Sky3D.passiveColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteClr", Sky3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteClr", Sky3D.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3515,12 +3515,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sky3D passivePaletteDir",
-        () -> (float) Sky3D.PASSIVE_palette_DIR,
-        (v) -> { Sky3D.PASSIVE_palette_DIR = int(v); },
+        () -> (float) Sky3D.passiveColorScaleDirection,
+        (v) -> { Sky3D.passiveColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteDir", Sky3D.PASSIVE_palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteDir", Sky3D.passiveColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3537,12 +3537,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Sky3D passivePaletteMlt",
-        () -> Sky3D.PASSIVE_palette_MLT,
-        (v) -> { Sky3D.PASSIVE_palette_MLT = v; },
+        () -> Sky3D.passiveColorScaleFactor,
+        (v) -> { Sky3D.passiveColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteMlt", Sky3D.PASSIVE_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteMlt", Sky3D.passiveColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3554,12 +3554,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sun3D activePaletteClr",
-        () -> (float) Sun3D.ACTIVE_palette_CLR,
-        (v) -> { Sun3D.ACTIVE_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) Sun3D.activeColorScaleIndex,
+        (v) -> { Sun3D.activeColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteClr", Sun3D.ACTIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteClr", Sun3D.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3575,12 +3575,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sun3D activePaletteDir",
-        () -> (float) Sun3D.ACTIVE_palette_DIR,
-        (v) -> { Sun3D.ACTIVE_palette_DIR = int(v); },
+        () -> (float) Sun3D.activeColorScaleDirection,
+        (v) -> { Sun3D.activeColorScaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteDir", Sun3D.ACTIVE_palette_DIR, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteDir", Sun3D.activeColorScaleDirection, s1, s2, s3);
     }
     return out;
   }
@@ -3597,12 +3597,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Sun3D activePaletteMlt",
-        () -> Sun3D.ACTIVE_palette_MLT,
-        (v) -> { Sun3D.ACTIVE_palette_MLT = v; },
+        () -> Sun3D.activeColorScaleFactor,
+        (v) -> { Sun3D.activeColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteMlt", Sun3D.ACTIVE_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteMlt", Sun3D.activeColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3614,12 +3614,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sun3D passivePaletteClr",
-        () -> (float) Sun3D.PASSIVE_palette_CLR,
-        (v) -> { Sun3D.PASSIVE_palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) Sun3D.passiveColorScaleIndex,
+        (v) -> { Sun3D.passiveColorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteClr", Sun3D.PASSIVE_palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteClr", Sun3D.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3636,12 +3636,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sun3D passivePaletteDir",
-        () -> (float) Sun3D.PASSIVE_palette_DIR,
-        (v) -> { Sun3D.PASSIVE_palette_DIR = int(v); },
+        () -> (float) Sun3D.passiveColorScaleDirection,
+        (v) -> { Sun3D.passiveColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteDir", Sun3D.PASSIVE_palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteDir", Sun3D.passiveColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3658,12 +3658,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Sun3D passivePaletteMlt",
-        () -> Sun3D.PASSIVE_palette_MLT,
-        (v) -> { Sun3D.PASSIVE_palette_MLT = v; },
+        () -> Sun3D.passiveColorScaleFactor,
+        (v) -> { Sun3D.passiveColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteMlt", Sun3D.PASSIVE_palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteMlt", Sun3D.passiveColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3675,13 +3675,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Solids paletteClr",
-        () -> (float) allSolids.palette_CLR,
-        (v) -> { allSolids.palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) allSolids.colorScaleIndex,
+        (v) -> { allSolids.colorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteClr", allSolids.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteClr", allSolids.colorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3698,13 +3698,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Solids paletteDir",
-        () -> (float) allSolids.palette_DIR,
-        (v) -> { allSolids.palette_DIR = int(v); },
+        () -> (float) allSolids.colorScaleDirection,
+        (v) -> { allSolids.colorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteDir", allSolids.palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteDir", allSolids.colorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3721,13 +3721,13 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Solids paletteMlt",
-        () -> allSolids.palette_MLT,
-        (v) -> { allSolids.palette_MLT = v; },
+        () -> allSolids.colorScaleFactor,
+        (v) -> { allSolids.colorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteMlt", allSolids.palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteMlt", allSolids.colorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3739,12 +3739,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Land3D paletteClr",
-        () -> (float) Land3D.palette_CLR,
-        (v) -> { Land3D.palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) Land3D.colorScaleIndex,
+        (v) -> { Land3D.colorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteClr", Land3D.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteClr", Land3D.colorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3761,12 +3761,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Land3D paletteDir",
-        () -> (float) Land3D.palette_DIR,
-        (v) -> { Land3D.palette_DIR = int(v); },
+        () -> (float) Land3D.colorScaleDirection,
+        (v) -> { Land3D.colorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteDir", Land3D.palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteDir", Land3D.colorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3783,12 +3783,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Land3D paletteMlt",
-        () -> Land3D.palette_MLT,
-        (v) -> { Land3D.palette_MLT = v; },
+        () -> Land3D.colorScaleFactor,
+        (v) -> { Land3D.colorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteMlt", Land3D.palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteMlt", Land3D.colorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3800,12 +3800,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("WindFlows paletteClr",
-        () -> (float) allWindFlows.palette_CLR,
-        (v) -> { allWindFlows.palette_CLR = int(v); },
-        () -> (float) (-1), () -> (float) ((COLOR_STYLE_Number - 1)), 1,
+        () -> (float) allWindFlows.colorScaleIndex,
+        (v) -> { allWindFlows.colorScaleIndex = int(v); },
+        () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteClr", allWindFlows.palette_CLR, -1, (COLOR_STYLE_Number - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteClr", allWindFlows.colorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3822,12 +3822,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("WindFlows paletteDir",
-        () -> (float) allWindFlows.palette_DIR,
-        (v) -> { allWindFlows.palette_DIR = int(v); },
+        () -> (float) allWindFlows.colorScaleDirection,
+        (v) -> { allWindFlows.colorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteDir", allWindFlows.palette_DIR, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteDir", allWindFlows.colorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3844,12 +3844,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("WindFlows paletteMlt",
-        () -> allWindFlows.palette_MLT,
-        (v) -> { allWindFlows.palette_MLT = v; },
+        () -> allWindFlows.colorScaleFactor,
+        (v) -> { allWindFlows.colorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteMlt", allWindFlows.palette_MLT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteMlt", allWindFlows.colorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4123,7 +4123,7 @@ class ValueModifier {
     }
     return out;
   }
-  float Interpolation_weight (int created) {
+  float interpolationWeight (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4135,12 +4135,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Interpolation weight",
-        () -> Interpolation_Weight,
-        (v) -> { Interpolation_Weight = v; },
+        () -> interpolationWeight,
+        (v) -> { interpolationWeight = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Interpolation weight", Interpolation_Weight, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Interpolation weight", interpolationWeight, s1, s2, s3);
     }
     return out;
   }
@@ -4156,13 +4156,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Climate based solar forecast",
-        () -> (float) CLIMATIC_SolarForecast,
-        (v) -> { CLIMATIC_SolarForecast = int(v); },
+        () -> (float) climateBasedSolarForecast,
+        (v) -> { climateBasedSolarForecast = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate based solar forecast", CLIMATIC_SolarForecast, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate based solar forecast", climateBasedSolarForecast, s1, s2, s3);
     }
     return out;
   }
@@ -4178,17 +4178,17 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Climate based temperature forecast",
-        () -> (float) CLIMATIC_WeatherForecast,
-        (v) -> { CLIMATIC_WeatherForecast = int(v); },
+        () -> (float) climateBasedWeatherForecast,
+        (v) -> { climateBasedWeatherForecast = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate based temperature forecast", CLIMATIC_WeatherForecast, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate based temperature forecast", climateBasedWeatherForecast, s1, s2, s3);
     }
     return out;
   }
-  int Develop_option (int created) {
+  int developLayerOption (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4200,16 +4200,16 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Develop option",
-        () -> (float) Develop_Option,
-        (v) -> { Develop_Option = int(v); },
+        () -> (float) developLayerOption,
+        (v) -> { developLayerOption = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop option", Develop_Option, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop option", developLayerOption, s1, s2, s3);
     }
     return out;
   }
-  int Develop_dayHour (int created) {
+  int developLayerInterval (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4220,13 +4220,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Develop dayHour",
-        () -> (float) Develop_DayHour,
-        (v) -> { Develop_DayHour = int(v); },
+      putValueAction("Develop interval",
+        () -> (float) developLayerInterval,
+        (v) -> { developLayerInterval = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop dayHour", Develop_DayHour, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop interval", developLayerInterval, s1, s2, s3);
     }
     return out;
   }
@@ -4286,12 +4286,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Inclination angle",
-        () -> Develop_AngleInclination,
-        (v) -> { Develop_AngleInclination = v; },
+        () -> developLayerAngleInclination,
+        (v) -> { developLayerAngleInclination = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Inclination angle", Develop_AngleInclination, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Inclination angle", developLayerAngleInclination, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4308,12 +4308,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Orientation angle",
-        () -> Develop_AngleOrientation,
-        (v) -> { Develop_AngleOrientation = v; },
+        () -> developLayerAngleOrientation,
+        (v) -> { developLayerAngleOrientation = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Orientation angle", Develop_AngleOrientation, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Orientation angle", developLayerAngleOrientation, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4325,13 +4325,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Impact source",
-        () -> (float) CurrentDataSource,
-        (v) -> { CurrentDataSource = int(v); },
+        () -> (float) currentDataSource,
+        (v) -> { currentDataSource = int(v); },
         () -> (float) (0), () -> (float) (MAXIMUM_dataID), 1,
         u1, u2, u3,
         react.impactsUpdateFlag);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impact source", CurrentDataSource, 0, MAXIMUM_dataID, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impact source", currentDataSource, 0, MAXIMUM_dataID, 1);
     }
     return out;
   }
@@ -4419,12 +4419,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Export3D scale",
-        () -> User3D.export_Scale,
-        (v) -> { User3D.export_Scale = v; },
+        () -> User3D.exporterScale,
+        (v) -> { User3D.exporterScale = v; },
         s1, s2, Math.abs(s3),
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D scale", User3D.export_Scale, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D scale", User3D.exporterScale, s1, s2, s3);
     }
     return out;
   }
@@ -4440,12 +4440,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Export3D flipZYaxis",
-        () -> (float) User3D.export_FlipZYaxis,
-        (v) -> { User3D.export_FlipZYaxis = int(v); },
+        () -> (float) User3D.exporterYaxisUp,
+        (v) -> { User3D.exporterYaxisUp = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D flipZYaxis", User3D.export_FlipZYaxis, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D flipZYaxis", User3D.exporterYaxisUp, s1, s2, s3);
     }
     return out;
   }
@@ -4461,12 +4461,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Export3D precisionVertex",
-        () -> (float) User3D.export_PrecisionVertex,
-        (v) -> { User3D.export_PrecisionVertex = int(v); },
+        () -> (float) User3D.exporterPrecisionVertex,
+        (v) -> { User3D.exporterPrecisionVertex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D precisionVertex", User3D.export_PrecisionVertex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D precisionVertex", User3D.exporterPrecisionVertex, s1, s2, s3);
     }
     return out;
   }
@@ -4482,12 +4482,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Export3D precisionVtexture",
-        () -> (float) User3D.export_PrecisionVtexture,
-        (v) -> { User3D.export_PrecisionVtexture = int(v); },
+        () -> (float) User3D.exporterPrecisionVertexTexture,
+        (v) -> { User3D.exporterPrecisionVertexTexture = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D precisionVtexture", User3D.export_PrecisionVtexture, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D precisionVtexture", User3D.exporterPrecisionVertexTexture, s1, s2, s3);
     }
     return out;
   }
@@ -4503,12 +4503,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Export3D polyToPoly",
-        () -> (float) User3D.export_PolyToPoly,
-        (v) -> { User3D.export_PolyToPoly = int(v); },
+        () -> (float) User3D.exporterMaintainPolygons,
+        (v) -> { User3D.exporterMaintainPolygons = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D polyToPoly", User3D.export_PolyToPoly, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D polyToPoly", User3D.exporterMaintainPolygons, s1, s2, s3);
     }
     return out;
   }
@@ -4520,12 +4520,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Export3D materialLibrary",
-        () -> (User3D.export_MaterialLibrary ? 1f : 0f),
-        (v) -> { User3D.export_MaterialLibrary = (v >= 0.5f); },
+        () -> (User3D.exporterMaterialLibrary ? 1f : 0f),
+        (v) -> { User3D.exporterMaterialLibrary = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D materialLibrary", User3D.export_MaterialLibrary);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D materialLibrary", User3D.exporterMaterialLibrary);
     }
     return out;
   }
@@ -4537,12 +4537,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Export3D backSides",
-        () -> (User3D.export_BackSides ? 1f : 0f),
-        (v) -> { User3D.export_BackSides = (v >= 0.5f); },
+        () -> (User3D.exporterDoubleSided ? 1f : 0f),
+        (v) -> { User3D.exporterDoubleSided = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D backSides", User3D.export_BackSides);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D backSides", User3D.exporterDoubleSided);
     }
     return out;
   }
@@ -4559,12 +4559,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Export3D paletteResolution",
-        () -> (float) User3D.export_PaletteResolution,
-        (v) -> { User3D.export_PaletteResolution = int(v); },
+        () -> (float) User3D.exporterColorScaleResolution,
+        (v) -> { User3D.exporterColorScaleResolution = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D paletteResolution", User3D.export_PaletteResolution, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D paletteResolution", User3D.exporterColorScaleResolution, s1, s2, s3, s4);
     }
     return out;
   }

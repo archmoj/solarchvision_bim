@@ -52,10 +52,10 @@ class Model2DsTest {
 
   @Test
   void create_alsoCreatesAMatchingSolidWhenBuildingATreeAndExportModeIsSolid () {
-    app.User3D.create_MeshOrSolid = 1; // 0=Mesh (default, skips this branch), 1=Solid
+    app.User3D.creatorMeshOrSolidMode = 1; // 0=Mesh (default, skips this branch), 1=Solid
     app.allSolids.DEF = new float[0][13];
 
-    app.allModel2Ds.create("TREES", 3, 10, 20, 30, 2); // MAP=3 -> a tree (num_files_PEOPLE defaults to 0)
+    app.allModel2Ds.create("TREES", 3, 10, 20, 30, 2); // MAP=3 -> a tree (peopleFileCount defaults to 0)
 
     assertEquals(1, app.allSolids.DEF.length); // the cascade fired
     assertEquals(10f, app.allSolids.DEF[0][0], 0.0001f); // posX
@@ -65,13 +65,13 @@ class Model2DsTest {
 
   @Test
   void create_doesNotCreateASolidForAPerson () {
-    app.User3D.create_MeshOrSolid = 1;
+    app.User3D.creatorMeshOrSolidMode = 1;
     app.allSolids.DEF = new float[0][13];
-    // num_files_PEOPLE must be set above 0 for a nonzero MAP value to
+    // peopleFileCount must be set above 0 for a nonzero MAP value to
     // actually classify as a person rather than a tree - isTree() is
-    // `abs(n) > num_files_PEOPLE`, so with the default num_files_PEOPLE
+    // `abs(n) > peopleFileCount`, so with the default peopleFileCount
     // of 0, even MAP=1 would read as a tree.
-    app.allModel2Ds.num_files_PEOPLE = 5;
+    app.allModel2Ds.peopleFileCount = 5;
 
     app.allModel2Ds.create("PEOPLE", 1, 10, 20, 30, 2); // MAP=1, within the people range
 
@@ -114,7 +114,7 @@ class Model2DsTest {
 
   @Test
   void isTree_isDeterminedByMagnitudeAgainstNumFilesPeople () {
-    app.allModel2Ds.num_files_PEOPLE = 5;
+    app.allModel2Ds.peopleFileCount = 5;
     assertFalse(app.allModel2Ds.isTree(3));  // within the people range
     assertFalse(app.allModel2Ds.isTree(-3)); // sign doesn't matter
     assertTrue(app.allModel2Ds.isTree(7));   // past the people range -> a tree
@@ -194,8 +194,8 @@ class Model2DsTest {
     app.allModel2Ds.XYZS = new float[][]{{10, 20, 30, 2}};
     app.allModel2Ds.MAP = new int[]{-5};
     app.allModel2Ds.num = 1;
-    app.allModel2Ds.num_files_PEOPLE = 3;
-    app.allModel2Ds.num_files_TREES = 4;
+    app.allModel2Ds.peopleFileCount = 3;
+    app.allModel2Ds.treesFileCount = 4;
     app.allModel2Ds.displayAll = false;
     app.allModel2Ds.ImagePath = new String[0];
 
@@ -212,8 +212,8 @@ class Model2DsTest {
     assertEquals(30f, fresh.getZ(0), 0.0001f);
     assertEquals(2f, fresh.getS(0), 0.0001f);
     assertEquals(-5, fresh.MAP[0]);
-    assertEquals(3, fresh.num_files_PEOPLE);
-    assertEquals(4, fresh.num_files_TREES);
+    assertEquals(3, fresh.peopleFileCount);
+    assertEquals(4, fresh.treesFileCount);
     assertFalse(fresh.displayAll);
   }
 }

@@ -203,11 +203,11 @@ class Groups {
 
     boolean run_process = false;
 
-    if (current_ObjectCategory == ObjectCategory.SOLID) run_process = true;
-    if (current_ObjectCategory == ObjectCategory.FACE) run_process = true;
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) run_process = true;
-    if (current_ObjectCategory == ObjectCategory.MODEL2D) run_process = true;
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) run_process = true;
+    if (currentObjectCategory == ObjectCategory.SOLID) run_process = true;
+    if (currentObjectCategory == ObjectCategory.FACE) run_process = true;
+    if (currentObjectCategory == ObjectCategory.POLYLINE) run_process = true;
+    if (currentObjectCategory == ObjectCategory.MODEL2D) run_process = true;
+    if (currentObjectCategory == ObjectCategory.MODEL1D) run_process = true;
 
     if (run_process) {
 
@@ -216,8 +216,8 @@ class Groups {
         float y = Select3D.BoundingBox[1 + Select3D.alignX][1];
         float z = Select3D.BoundingBox[1 + Select3D.alignX][2];
 
-        float rot = User3D.create_Orientation;
-        if (rot == 360) rot = WIN3D.rotation_Z;
+        float rot = User3D.creatorOrientation;
+        if (rot == 360) rot = WIN3D.rotationZ;
 
         this.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
       }
@@ -226,7 +226,7 @@ class Groups {
       boolean pre_addToLastGroup = addToLastGroup;
       addToLastGroup = true;
 
-      if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+      if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
         for (int o = 0; o < Select3D.Model1D_ids.length; o++) {
 
@@ -252,7 +252,7 @@ class Groups {
         }
       }
 
-      if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+      if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
         for (int o = 0; o < Select3D.Model2D_ids.length; o++) {
 
@@ -273,7 +273,7 @@ class Groups {
       }
 
 
-      if (current_ObjectCategory == ObjectCategory.SOLID) {
+      if (currentObjectCategory == ObjectCategory.SOLID) {
 
         for (int o = 0; o < Select3D.Solid_ids.length; o++) {
 
@@ -300,7 +300,7 @@ class Groups {
 
 
 
-      if (current_ObjectCategory == ObjectCategory.FACE) {
+      if (currentObjectCategory == ObjectCategory.FACE) {
 
         for (int o = 0; o < Select3D.Face_ids.length; o++) {
 
@@ -364,7 +364,7 @@ class Groups {
       }
 
 
-      if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+      if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
         for (int o = 0; o < Select3D.Polyline_ids.length; o++) {
 
@@ -448,7 +448,7 @@ class Groups {
 
   void ungroup_Selection () {
 
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
 
       Select3D.Group_ids = sort(Select3D.Group_ids);
 
@@ -487,7 +487,7 @@ class Groups {
 
   void deleteEmptyGroups_Scene () {
 
-    int pre_current_ObjectCategory = current_ObjectCategory;
+    int pre_currentObjectCategory = currentObjectCategory;
 
     switch_category(ObjectCategory.GROUP);
 
@@ -511,7 +511,7 @@ class Groups {
 
     Delete3D.selection();
 
-    current_ObjectCategory = pre_current_ObjectCategory;
+    currentObjectCategory = pre_currentObjectCategory;
   }
 
 

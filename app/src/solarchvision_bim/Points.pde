@@ -107,11 +107,11 @@ class Points {
         float y = allPoints.getY(f);
         float z = allPoints.getZ(f);
 
-        WIN3D.graphics.line((x - d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, (x + d) * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.line((x - d) * overallScale * WIN3D.scale, -(y * overallScale * WIN3D.scale), z * overallScale * WIN3D.scale, (x + d) * overallScale * WIN3D.scale, -(y * overallScale * WIN3D.scale), z * overallScale * WIN3D.scale);
 
-        WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -((y - d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -((y + d) * OBJECTS_scale * WIN3D.scale), z * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.line(x * overallScale * WIN3D.scale, -((y - d) * overallScale * WIN3D.scale), z * overallScale * WIN3D.scale, x * overallScale * WIN3D.scale, -((y + d) * overallScale * WIN3D.scale), z * overallScale * WIN3D.scale);
 
-        WIN3D.graphics.line(x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z - d) * OBJECTS_scale * WIN3D.scale, x * OBJECTS_scale * WIN3D.scale, -(y * OBJECTS_scale * WIN3D.scale), (z + d) * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.line(x * overallScale * WIN3D.scale, -(y * overallScale * WIN3D.scale), (z - d) * overallScale * WIN3D.scale, x * overallScale * WIN3D.scale, -(y * overallScale * WIN3D.scale), (z + d) * overallScale * WIN3D.scale);
 
       }
 

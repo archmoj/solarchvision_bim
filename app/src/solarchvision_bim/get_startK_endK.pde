@@ -4,48 +4,48 @@ int[] get_startK_endK () {
   int start_k = -1;
   int end_k = -1;
 
-  if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
+  if (currentDataSource == dataID_climateEngineering) {
 
-    start_k = SampleYear_Start;
-    end_k = SampleYear_End;
+    start_k = sampleYearStart;
+    end_k = sampleYearEnd;
 
-    if (start_k < CLIMATE_CWEEDS_start) start_k = CLIMATE_CWEEDS_start;
-    if (end_k > CLIMATE_CWEEDS_end) end_k = CLIMATE_CWEEDS_end;
+    if (start_k < climateEngineeringStart) start_k = climateEngineeringStart;
+    if (end_k > climateEngineeringEnd) end_k = climateEngineeringEnd;
 
-    start_k -= CLIMATE_CWEEDS_start;
-    end_k -= CLIMATE_CWEEDS_start;
+    start_k -= climateEngineeringStart;
+    end_k -= climateEngineeringStart;
   }
-  if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
+  if (currentDataSource == dataID_climateArchive) {
 
-    start_k = SampleYear_Start;
-    end_k = SampleYear_End;
+    start_k = sampleYearStart;
+    end_k = sampleYearEnd;
 
-    if (start_k < CLIMATE_CLMREC_start) start_k = CLIMATE_CLMREC_start;
-    if (end_k > CLIMATE_CLMREC_end) end_k = CLIMATE_CLMREC_end;
+    if (start_k < climateArchiveStart) start_k = climateArchiveStart;
+    if (end_k > climateArchiveEnd) end_k = climateArchiveEnd;
 
-    start_k -= CLIMATE_CLMREC_start;
-    end_k -= CLIMATE_CLMREC_start;
+    start_k -= climateArchiveStart;
+    end_k -= climateArchiveStart;
   }
-  if (CurrentDataSource == dataID_CLIMATE_TMYEPW) {
+  if (currentDataSource == dataID_climateTmyEpw) {
 
     start_k = 0;
     end_k = 0;
   }
-  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
+  if (currentDataSource == dataID_ensembleForecast) {
 
-    start_k = SampleMember_Start;
-    end_k = SampleMember_End;
+    start_k = sampleMemberStart;
+    end_k = sampleMemberEnd;
 
-    start_k -= ENSEMBLE_FORECAST_start;
-    end_k -= ENSEMBLE_FORECAST_start;
+    start_k -= ensembleForecastStart;
+    end_k -= ensembleForecastStart;
   }
-  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
+  if (currentDataSource == dataID_ensembleObservation) {
 
-    start_k =  SampleStation_Start;
-    end_k =  SampleStation_End;
+    start_k =  sampleStationStart;
+    end_k =  sampleStationEnd;
 
-    start_k -= ENSEMBLE_OBSERVED_start;
-    end_k -= ENSEMBLE_OBSERVED_start;
+    start_k -= ensembleObservationStart;
+    end_k -= ensembleObservationStart;
   }
 
   //println("start_k=", start_k);

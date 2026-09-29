@@ -12,19 +12,19 @@ class WIN3D {
   int dY = pixel_H;
   float view_R = float(dY) / float(dX);
 
-  float position_X = 0;
-  float position_Y = 5;
-  float position_Z = 55;
-  float position_T = 1.0; // step
+  float positionX = 0;
+  float positionY = 5;
+  float positionZ = 55;
+  float positionStep = 1.0; // step
 
-  float rotation_X = 90;
-  float rotation_Y = 0;
-  float rotation_Z = -45.0;
-  float rotation_T = 5.0; // step
+  float rotationX = 90;
+  float rotationY = 0;
+  float rotationZ = -45.0;
+  float rotationStep = 5.0; // step
 
-  float Zoom = 90.0; //60.0; // / (pixel_H / 300.0);
+  float zoom = 90.0; //60.0; // / (pixel_H / 300.0);
 
-  int ViewType = 1; // 0: Ortho 1: Perspective
+  int projectionTypeIndex = 1; // 0: Ortho 1: Perspective
 
   boolean update = true;
   boolean include = true;
@@ -35,26 +35,26 @@ class WIN3D {
 
   float ImageScale = 1.0;
 
-  float CAM_x;
-  float CAM_y;
-  float CAM_z;
-  float CAM_fov;
-  float CAM_dist;
+  float cameraX;
+  float cameraY;
+  float cameraZ;
+  float cameraFieldOfView;
+  float cameraDistance;
 
-  float CAM_clipNear = 0.01;
-  float CAM_clipFar = 2000000000.0;
+  float cameraClipNear = 0.01;
+  float cameraClipFar = 2000000000.0;
 
-  float refScale = 100; // it improves displaying the shaded scene!
+  float referenceScale = 100; // it improves displaying the shaded scene!
 
-  int currentCamera = 0; // 0 = Free Viewport | etc.= Saved Viewport
+  int currentCameraIndex = 0; // 0 = Free Viewport | etc.= Saved Viewport
 
-  int UI_CurrentTask = UITASK.Zoom_Orbit_Pan;
-  int UI_OptionXorY = 0; // 0-1
-  int UI_TaskModifyParameter = 0; //to modify objects with several parameters e.g. allModel1Ds
+  int currentTool = UITASK.zoom_Orbit_Pan;
+  int targetAxisIndex = 0; // 0-1
+  int toolParameterModifier = 0; //to modify objects with several parameters e.g. allModel1Ds
 
-  int FacesShade = SHADE.Surface_Materials; //Shade_Surface_White; // <<<<<
+  int shadingMode = SHADE.Surface_Materials; //Shade_Surface_White; // <<<<<
 
-  int Impact_TYPE = Impact_ACTIVE;
+  int impactType = Impact_ACTIVE;
 
   PGraphics graphics;
 
@@ -73,37 +73,37 @@ class WIN3D {
   }
 
   float[] cameraPositionScaled () {
-    return new float[] { this.CAM_x / OBJECTS_scale, this.CAM_y / OBJECTS_scale, this.CAM_z / OBJECTS_scale };
+    return new float[] { this.cameraX / overallScale, this.cameraY / overallScale, this.cameraZ / overallScale };
   }
 
   float[] imageCenterRayScaled () {
     float[] ray_end = WIN3D.calculate_Click3D(0, 0);
-    return new float[] { ray_end[0] / OBJECTS_scale, ray_end[1] / OBJECTS_scale, ray_end[2] / OBJECTS_scale };
+    return new float[] { ray_end[0] / overallScale, ray_end[1] / overallScale, ray_end[2] / overallScale };
   }
 
   void put_3DViewport () {
-    if (this.ViewType == 1) {
+    if (this.projectionTypeIndex == 1) {
       float aspect = 1.0 / this.view_R;
-      float zFar = this.CAM_dist * this.CAM_clipFar;
-      float zNear = this.CAM_dist * this.CAM_clipNear;
+      float zFar = this.cameraDistance * this.cameraClipFar;
+      float zNear = this.cameraDistance * this.cameraClipNear;
 
-      this.graphics.perspective(this.CAM_fov, aspect, zNear, zFar);
+      this.graphics.perspective(this.cameraFieldOfView, aspect, zNear, zFar);
     } else {
       float ZOOM = WIN3D.Orthographic_ZOOM();
       this.graphics.ortho(ZOOM * this.dX * -1, ZOOM * this.dX * 1, ZOOM * this.dY * -1, ZOOM * this.dY * 1, 0.00001, 100000);
     }
 
     this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
-    this.graphics.translate(this.position_X * this.scale, this.position_Y * this.scale, this.position_Z * this.scale);
+    this.graphics.translate(this.positionX * this.scale, this.positionY * this.scale, this.positionZ * this.scale);
 
-    this.graphics.rotateX(this.rotation_X * PI / 180);
-    this.graphics.rotateZ(this.rotation_Z * PI / 180);
+    this.graphics.rotateX(this.rotationX * PI / 180);
+    this.graphics.rotateZ(this.rotationZ * PI / 180);
   }
 
   float Orthographic_ZOOM () {
-    float ZOOM = 0.5 * this.Zoom * PI / 180;
-    ZOOM *= pow(pow(this.position_X, 2) + pow(this.position_Y, 2) + pow(this.position_Z, 2), 0.5);
-    ZOOM /= this.refScale;
+    float ZOOM = 0.5 * this.zoom * PI / 180;
+    ZOOM *= pow(pow(this.positionX, 2) + pow(this.positionY, 2) + pow(this.positionZ, 2), 0.5);
+    ZOOM /= this.referenceScale;
     return ZOOM;
   }
 
@@ -116,19 +116,19 @@ class WIN3D {
 
     beginImageScale();
 
-    int firstDay = IMPACTS_displayDay;
-    int lastDay = IMPACTS_displayDay;
+    int firstDay = impactDisplayDay;
+    int lastDay = impactDisplayDay;
     if (this.fullPeriod_IMG) {
       this.fullPeriod_IMG = false;
       firstDay = 0;
       lastDay = STUDY.j_End;
     }
 
-    int keep_IMPACTS_displayDay = IMPACTS_displayDay;
-    for (IMPACTS_displayDay = lastDay; IMPACTS_displayDay >= firstDay; IMPACTS_displayDay--) {
+    int keep_impactDisplayDay = impactDisplayDay;
+    for (impactDisplayDay = lastDay; impactDisplayDay >= firstDay; impactDisplayDay--) {
       renderFrame();
     }
-    IMPACTS_displayDay = keep_IMPACTS_displayDay;
+    impactDisplayDay = keep_impactDisplayDay;
 
     imageMode(CORNER);
     image(this.graphics, this.cX, this.cY, this.dX / this.ImageScale, this.dY / this.ImageScale);
@@ -167,7 +167,7 @@ class WIN3D {
   void renderFrame () {
     this.graphics.beginDraw();
 
-    this.scale = this.dY / this.refScale; // fits field of view to window's height
+    this.scale = this.dY / this.referenceScale; // fits field of view to window's height
 
     this.graphics.background(233);
     this.graphics.fill(127);
@@ -226,8 +226,8 @@ class WIN3D {
   void saveRecordedFrame () {
     String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP));
 
-    if (this.Impact_TYPE == Impact_ACTIVE) myFile += "_RAD";
-    if (this.Impact_TYPE == Impact_PASSIVE) myFile += "_EFF";
+    if (this.impactType == Impact_ACTIVE) myFile += "_RAD";
+    if (this.impactType == Impact_PASSIVE) myFile += "_EFF";
     myFile += "_" + importedObjectName;
     myFile += ".jpg";
 
@@ -256,8 +256,8 @@ class WIN3D {
   // --- palette overlay -----------------------------------------------------------------
 
   boolean isSolarPaletteMode () {
-    return (this.FacesShade == SHADE.Global_Solar) ||
-           (this.FacesShade == SHADE.Vertex_Solar) ||
+    return (this.shadingMode == SHADE.Global_Solar) ||
+           (this.shadingMode == SHADE.Vertex_Solar) ||
            (allSolarImpacts.displayImage && (allSections.SolarImpact.length > 0));
   }
 
@@ -268,30 +268,30 @@ class WIN3D {
     boolean draw_pal = false;
 
     if (isSolarPaletteMode()) {
-      if (this.Impact_TYPE == Impact_ACTIVE) {
-        type = allFaces.ACTIVE_palette_CLR;
-        direction = allFaces.ACTIVE_palette_DIR;
-        multiplier = allFaces.ACTIVE_palette_MLT;
+      if (this.impactType == Impact_ACTIVE) {
+        type = allFaces.activeColorScaleIndex;
+        direction = allFaces.activeColorScaleDirection;
+        multiplier = allFaces.activeColorScaleFactor;
       }
-      if (this.Impact_TYPE == Impact_PASSIVE) {
-        type = allFaces.PASSIVE_palette_CLR;
-        direction = allFaces.PASSIVE_palette_DIR;
-        multiplier = allFaces.PASSIVE_palette_MLT;
+      if (this.impactType == Impact_PASSIVE) {
+        type = allFaces.passiveColorScaleIndex;
+        direction = allFaces.passiveColorScaleDirection;
+        multiplier = allFaces.passiveColorScaleFactor;
       }
       draw_pal = true;
     }
 
-    if (this.FacesShade == SHADE.Vertex_Elevation) {
-      type = Land3D.palette_CLR;
-      direction = Land3D.palette_DIR;
-      multiplier = Land3D.palette_MLT;
+    if (this.shadingMode == SHADE.Vertex_Elevation) {
+      type = Land3D.colorScaleIndex;
+      direction = Land3D.colorScaleDirection;
+      multiplier = Land3D.colorScaleFactor;
       draw_pal = true;
     }
 
-    if (this.FacesShade == SHADE.Vertex_Solid) {
-      type = allSolids.palette_CLR;
-      direction = allSolids.palette_DIR;
-      multiplier = allSolids.palette_MLT;
+    if (this.shadingMode == SHADE.Vertex_Solid) {
+      type = allSolids.colorScaleIndex;
+      direction = allSolids.colorScaleDirection;
+      multiplier = allSolids.colorScaleFactor;
       draw_pal = true;
     }
 
@@ -305,12 +305,12 @@ class WIN3D {
     float PAL_multiplier = palette[2];
     if (palette[3] != 1) return;
 
-    float the_scale = (this.ViewType == 1) ? (0.5 / tan(0.5 * this.CAM_fov)) : (0.5 / WIN3D.Orthographic_ZOOM());
+    float the_scale = (this.projectionTypeIndex == 1) ? (0.5 / tan(0.5 * this.cameraFieldOfView)) : (0.5 / WIN3D.Orthographic_ZOOM());
 
     this.graphics.pushMatrix();
 
-    this.CAM_fov = this.Zoom * PI / 180;
-    this.CAM_dist = (0.5 * this.refScale) / tan(0.5 * this.CAM_fov);
+    this.cameraFieldOfView = this.zoom * PI / 180;
+    this.cameraDistance = (0.5 * this.referenceScale) / tan(0.5 * this.cameraFieldOfView);
 
     this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
 
@@ -336,8 +336,8 @@ class WIN3D {
 
     float _u = 0.2 * q - 0.5;
     if (isSolarPaletteMode()) {
-      if (this.Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (this.Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+      if (this.impactType == Impact_ACTIVE) _u = 0.1 * q;
+      if (this.impactType == Impact_PASSIVE) _u = 0.2 * q - 0.5;
     }
     _u = applyPalDirection(_u, PAL_direction);
 
@@ -368,15 +368,15 @@ class WIN3D {
     this.graphics.textAlign(CENTER, CENTER);
 
     if (isSolarPaletteMode()) {
-      if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
-      if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y, 0);
+      if (this.impactType == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
+      if (this.impactType == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y, 0);
     }
 
-    if (this.FacesShade == SHADE.Vertex_Elevation) {
+    if (this.shadingMode == SHADE.Vertex_Elevation) {
       this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y, 0);
     }
 
-    if (this.FacesShade == SHADE.Vertex_Solid) {
+    if (this.shadingMode == SHADE.Vertex_Solid) {
       this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y, 0);
     }
   }
@@ -388,16 +388,16 @@ class WIN3D {
     String txt = "";
     this.graphics.textAlign(LEFT, CENTER);
 
-    if ((this.FacesShade != SHADE.Vertex_Elevation) && (this.FacesShade != SHADE.Vertex_Solid)) {
-      if (this.Impact_TYPE == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
-      if (this.Impact_TYPE == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
+    if ((this.shadingMode != SHADE.Vertex_Elevation) && (this.shadingMode != SHADE.Vertex_Solid)) {
+      if (this.impactType == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
+      if (this.impactType == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
 
       txt += "SOLARCHVISION ";
-      if (this.Impact_TYPE == Impact_ACTIVE) txt += "active model ";
-      if (this.Impact_TYPE == Impact_PASSIVE) txt += "passive model ";
+      if (this.impactType == Impact_ACTIVE) txt += "active model ";
+      if (this.impactType == Impact_PASSIVE) txt += "passive model ";
 
-      if (IMPACTS_displayDay != 0) {
-        txt += TIME.getDayText((IMPACTS_displayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
+      if (impactDisplayDay != 0) {
+        txt += TIME.getDayText((impactDisplayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
       } else {
         txt += TIME.getDayText(STUDY.j_Start * STUDY.perDays + 286 + TIME.beginDay) + " - ";
         txt += TIME.getDayText((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
@@ -599,14 +599,14 @@ class WIN3D {
         float y0 = P[1];
         float z0 = P[2];
 
-        if (WIN3D.UI_CurrentTask == UITASK.Rotate) {
+        if (WIN3D.currentTool == UITASK.Rotate) {
           float r = (keyCode == DOWN) ? -5 : 5;
           int the_Vector = Select3D.rotVector;
           Rotate3D.selection(x0, y0, z0, r, the_Vector);
           model_changed();
         }
 
-        if (WIN3D.UI_CurrentTask == UITASK.Scale) {
+        if (WIN3D.currentTool == UITASK.Scale) {
           float s = pow(2.0, 0.25);
           if (keyCode == DOWN) s = 1.0 / s;
 
@@ -620,7 +620,7 @@ class WIN3D {
           model_changed();
         }
 
-        if (WIN3D.UI_CurrentTask == UITASK.Move) {
+        if (WIN3D.currentTool == UITASK.Move) {
           float d = (keyCode == DOWN) ? -0.5 : 0.5;
           float dx = d, dy = d, dz = d;
 
@@ -633,8 +633,8 @@ class WIN3D {
           model_changed();
         }
 
-        if (WIN3D.UI_TaskModifyParameter == 0) {
-          if (WIN3D.UI_CurrentTask >= UITASK.Seed_Material) {
+        if (WIN3D.toolParameterModifier == 0) {
+          if (WIN3D.currentTool >= UITASK.Seed_Material) {
             int p = (keyCode == DOWN) ? -1 : 1;
             Edit3D.selection(p);
             model_changed();
@@ -648,19 +648,19 @@ class WIN3D {
   void handleArrowKeys (int keyCode) {
     switch (keyCode) {
       case DOWN:
-        WIN3D.rotateZ_3DViewport_around_Selection(this.rotation_T);
+        WIN3D.rotateZ_3DViewport_around_Selection(this.rotationStep);
         reviseViews();
         break;
       case LEFT:
-        WIN3D.rotateXY_3DViewport_around_Selection(-this.rotation_T);
+        WIN3D.rotateXY_3DViewport_around_Selection(-this.rotationStep);
         reviseViews();
         break;
       case RIGHT:
-        WIN3D.rotateXY_3DViewport_around_Selection(this.rotation_T);
+        WIN3D.rotateXY_3DViewport_around_Selection(this.rotationStep);
         reviseViews();
         break;
       case UP:
-        WIN3D.rotateZ_3DViewport_around_Selection(-this.rotation_T);
+        WIN3D.rotateZ_3DViewport_around_Selection(-this.rotationStep);
         reviseViews();
         break;
     }
@@ -671,9 +671,9 @@ class WIN3D {
 
       case TAB:
         if (shiftDown) {
-          this.Impact_TYPE = (this.Impact_TYPE + 1) % numberOfImpactVariations;
-          if (this.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-          if (this.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+          this.impactType = (this.impactType + 1) % numberOfImpactVariations;
+          if (this.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+          if (this.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
           reviseViews();
         }
         break;
@@ -684,20 +684,20 @@ class WIN3D {
         break;
 
       case ',':
-        if (this.ViewType == 1) this.position_Z += this.position_T * OBJECTS_scale;
-        else this.Zoom /= pow(2.0, 0.25);
+        if (this.projectionTypeIndex == 1) this.positionZ += this.positionStep * overallScale;
+        else this.zoom /= pow(2.0, 0.25);
         reviseViews();
         break;
 
       case '.':
-        if (this.ViewType == 1) this.position_Z -= this.position_T * OBJECTS_scale;
-        else this.Zoom *= pow(2.0, 0.25);
+        if (this.projectionTypeIndex == 1) this.positionZ -= this.positionStep * overallScale;
+        else this.zoom *= pow(2.0, 0.25);
         reviseViews();
         break;
 
       case '0':
-        if (this.ViewType == 1) this.position_Z += this.position_T * OBJECTS_scale;
-        else this.Zoom /= pow(2.0, 0.25);
+        if (this.projectionTypeIndex == 1) this.positionZ += this.positionStep * overallScale;
+        else this.zoom /= pow(2.0, 0.25);
         reviseViews();
         break;
 
@@ -707,40 +707,40 @@ class WIN3D {
         break;
 
       case '4':
-        this.rotation_Z += this.rotation_T;
+        this.rotationZ += this.rotationStep;
         WIN3D.reverseTransform_3DViewport();
         reviseViews();
         break;
       case '6':
-        this.rotation_Z -= this.rotation_T;
+        this.rotationZ -= this.rotationStep;
         WIN3D.reverseTransform_3DViewport();
         reviseViews();
         break;
       case '8':
-        this.rotation_X -= this.rotation_T;
+        this.rotationX -= this.rotationStep;
         WIN3D.reverseTransform_3DViewport();
         reviseViews();
         break;
       case '2':
-        this.rotation_X += this.rotation_T;
+        this.rotationX += this.rotationStep;
         WIN3D.reverseTransform_3DViewport();
         reviseViews();
         break;
 
       case '1':
-        this.position_X += this.position_T * OBJECTS_scale;
+        this.positionX += this.positionStep * overallScale;
         reviseViews();
         break;
       case '3':
-        this.position_X -= this.position_T * OBJECTS_scale;
+        this.positionX -= this.positionStep * overallScale;
         reviseViews();
         break;
       case '7':
-        this.position_Y += this.position_T * OBJECTS_scale;
+        this.positionY += this.positionStep * overallScale;
         reviseViews();
         break;
       case '9':
-        this.position_Y -= this.position_T * OBJECTS_scale;
+        this.positionY -= this.positionStep * overallScale;
         reviseViews();
         break;
 
@@ -754,26 +754,26 @@ class WIN3D {
         break;
 
       case '+':
-        this.Zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * this.Zoom));
+        this.zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * this.zoom));
         reviseViews();
         break;
       case '-':
-        this.Zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * this.Zoom));
+        this.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * this.zoom));
         reviseViews();
         break;
 
       case 'c':
-        this.currentCamera += 1;
-        if (this.currentCamera > allCameras.num - 1) this.currentCamera = 0;
-        WIN3D.apply_currentCamera();
+        this.currentCameraIndex += 1;
+        if (this.currentCameraIndex > allCameras.num - 1) this.currentCameraIndex = 0;
+        WIN3D.apply_currentCameraIndex();
         modify_Viewport_Title();
         reviseViews();
         break;
 
       case 'C':
-        this.currentCamera -= 1;
-        if (this.currentCamera < 0) this.currentCamera = allCameras.num - 1;
-        WIN3D.apply_currentCamera();
+        this.currentCameraIndex -= 1;
+        if (this.currentCameraIndex < 0) this.currentCameraIndex = allCameras.num - 1;
+        WIN3D.apply_currentCameraIndex();
         modify_Viewport_Title();
         reviseViews();
         break;
@@ -792,19 +792,19 @@ class WIN3D {
         break;
 
       case 'd':
-        IMPACTS_displayDay += 1;
-        if (IMPACTS_displayDay > STUDY.j_End) IMPACTS_displayDay = 0;
+        impactDisplayDay += 1;
+        if (impactDisplayDay > STUDY.j_End) impactDisplayDay = 0;
         reviseViews();
         break;
       case 'D':
-        IMPACTS_displayDay -= 1;
-        if (IMPACTS_displayDay < 0) IMPACTS_displayDay = STUDY.j_End;
+        impactDisplayDay -= 1;
+        if (impactDisplayDay < 0) impactDisplayDay = STUDY.j_End;
         reviseViews();
         break;
 
       case ENTER:
-        if (this.FacesShade == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-        if (this.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+        if (this.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+        if (this.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
         reviseViews();
         break;
 
@@ -828,26 +828,26 @@ class WIN3D {
   void rotateZTowards (float xB, float yB) {
     float[] O = cameraPositionScaled();
     float[] A = imageCenterRayScaled();
-    this.rotation_Z += funcs.atan2_ang((yB - O[1]), (xB - O[0])) - funcs.atan2_ang((A[1] - O[1]), (A[0] - O[0]));
+    this.rotationZ += funcs.atan2_ang((yB - O[1]), (xB - O[0])) - funcs.atan2_ang((A[1] - O[1]), (A[0] - O[0]));
     WIN3D.reverseTransform_3DViewport();
   }
 
   void rotateXTowards (float xB, float yB, float zB) {
     float[] O = cameraPositionScaled();
     float[] A = imageCenterRayScaled();
-    this.rotation_X += funcs.atan2_ang((zB - O[2]), pow(pow(yB - O[1], 2) + pow(xB - O[0], 2), 0.5))
+    this.rotationX += funcs.atan2_ang((zB - O[2]), pow(pow(yB - O[1], 2) + pow(xB - O[0], 2), 0.5))
                       - funcs.atan2_ang((A[2] - O[2]), pow(pow(A[1] - O[1], 2) + pow(A[0] - O[0], 2), 0.5));
     WIN3D.reverseTransform_3DViewport();
   }
 
   void lookXY_3DViewport_towards_Direction (float Image_X, float Image_Y) {
     float[] P = WIN3D.calculate_Click3D(Image_X, Image_Y);
-    rotateZTowards(P[0] / OBJECTS_scale, P[1] / OBJECTS_scale);
+    rotateZTowards(P[0] / overallScale, P[1] / overallScale);
   }
 
   void lookZ_3DViewport_towards_Direction (float Image_X, float Image_Y) {
     float[] P = WIN3D.calculate_Click3D(Image_X, Image_Y);
-    rotateXTowards(P[0] / OBJECTS_scale, P[1] / OBJECTS_scale, P[2] / OBJECTS_scale);
+    rotateXTowards(P[0] / overallScale, P[1] / overallScale, P[2] / overallScale);
   }
 
   void look_3DViewport_towards_Selection () {
@@ -872,19 +872,19 @@ class WIN3D {
     float dy = A[1] - yO;
     float dz = A[2] - zO;
 
-    this.CAM_x = (xO + t * dx) * OBJECTS_scale;
-    this.CAM_y = (yO + t * dy) * OBJECTS_scale;
-    this.CAM_z = (zO + t * dz) * OBJECTS_scale;
+    this.cameraX = (xO + t * dx) * overallScale;
+    this.cameraY = (yO + t * dy) * overallScale;
+    this.cameraZ = (zO + t * dz) * overallScale;
 
     WIN3D.reverseTransform_3DViewport();
-    //this.position_T *= t; // just to adjust panning better
+    //this.positionStep *= t; // just to adjust panning better
   }
 
   void move_3DViewport_towards_Mouse (float t) {
     float Image_X = mouseX - (this.cX + 0.5 * this.dX);
     float Image_Y = mouseY - (this.cY + 0.5 * this.dY);
     float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
-    moveCameraTowards(ray_end[0] / OBJECTS_scale, ray_end[1] / OBJECTS_scale, ray_end[2] / OBJECTS_scale, t);
+    moveCameraTowards(ray_end[0] / overallScale, ray_end[1] / overallScale, ray_end[2] / overallScale, t);
   }
 
   void move_3DViewport_towards_Selection (float t) {
@@ -893,7 +893,7 @@ class WIN3D {
   }
 
   void rotateZ_3DViewport_around_Selection (float t) {
-    this.rotation_X += t;
+    this.rotationX += t;
 
     float[] A = cameraPositionScaled();
     float[] P = Select3D.getPivot();
@@ -903,27 +903,27 @@ class WIN3D {
     float zB = A[2] - P[2];
 
     // rotate into the yz plane, rotate there by t, then rotate back
-    float xC = xB * funcs.cos_ang(-this.rotation_Z) - yB * funcs.sin_ang(-this.rotation_Z);
-    float yC = xB * funcs.sin_ang(-this.rotation_Z) + yB * funcs.cos_ang(-this.rotation_Z);
+    float xC = xB * funcs.cos_ang(-this.rotationZ) - yB * funcs.sin_ang(-this.rotationZ);
+    float yC = xB * funcs.sin_ang(-this.rotationZ) + yB * funcs.cos_ang(-this.rotationZ);
     float zC = zB;
 
     float xD = xC;
     float yD = yC * funcs.cos_ang(t) - zC * funcs.sin_ang(t);
     float zD = yC * funcs.sin_ang(t) + zC * funcs.cos_ang(t);
 
-    float xE = xD * funcs.cos_ang(this.rotation_Z) - yD * funcs.sin_ang(this.rotation_Z);
-    float yE = xD * funcs.sin_ang(this.rotation_Z) + yD * funcs.cos_ang(this.rotation_Z);
+    float xE = xD * funcs.cos_ang(this.rotationZ) - yD * funcs.sin_ang(this.rotationZ);
+    float yE = xD * funcs.sin_ang(this.rotationZ) + yD * funcs.cos_ang(this.rotationZ);
     float zE = zD;
 
-    this.CAM_x = (xE + P[0]) * OBJECTS_scale;
-    this.CAM_y = (yE + P[1]) * OBJECTS_scale;
-    this.CAM_z = (zE + P[2]) * OBJECTS_scale;
+    this.cameraX = (xE + P[0]) * overallScale;
+    this.cameraY = (yE + P[1]) * overallScale;
+    this.cameraZ = (zE + P[2]) * overallScale;
 
     WIN3D.reverseTransform_3DViewport();
   }
 
   void rotateXY_3DViewport_around_Selection (float t) {
-    this.rotation_Z += t;
+    this.rotationZ += t;
 
     float[] A = cameraPositionScaled();
     float[] P = Select3D.getPivot();
@@ -935,9 +935,9 @@ class WIN3D {
     float yB = P[1] + dx * funcs.sin_ang(t) + dy * funcs.cos_ang(t);
     float zB = A[2];
 
-    this.CAM_x = xB * OBJECTS_scale;
-    this.CAM_y = yB * OBJECTS_scale;
-    this.CAM_z = zB * OBJECTS_scale;
+    this.cameraX = xB * overallScale;
+    this.cameraY = yB * overallScale;
+    this.cameraZ = zB * overallScale;
 
     WIN3D.reverseTransform_3DViewport();
   }
@@ -953,8 +953,8 @@ class WIN3D {
     float[] RxP = Land3D.intersect(ray_start, ray_direction);
     if (RxP[0] < 0) return;
 
-    float xO = RxP[1] / OBJECTS_scale;
-    float yO = RxP[2] / OBJECTS_scale;
+    float xO = RxP[1] / overallScale;
+    float yO = RxP[2] / overallScale;
 
     float xA = ray_start[0];
     float yA = ray_start[1];
@@ -963,103 +963,103 @@ class WIN3D {
     float dx = xA - xO;
     float dy = yA - yO;
 
-    this.rotation_Z += t;
+    this.rotationZ += t;
 
     float xB = xO + dx * funcs.cos_ang(t) - dy * funcs.sin_ang(t);
     float yB = yO + dx * funcs.sin_ang(t) + dy * funcs.cos_ang(t);
     float zB = zA;
 
-    this.CAM_x = xB * OBJECTS_scale;
-    this.CAM_y = yB * OBJECTS_scale;
-    this.CAM_z = zB * OBJECTS_scale;
+    this.cameraX = xB * overallScale;
+    this.cameraY = yB * overallScale;
+    this.cameraZ = zB * overallScale;
 
     WIN3D.reverseTransform_3DViewport();
   }
 
 
-  void reverseTransform_3DViewport () { // computes position_X/Y/Z from the current camera point
-    float[] r1 = rotateAroundZ(this.CAM_x, this.CAM_y, this.CAM_z, -this.rotation_Z);
-    float[] CAM1 = rotateAroundX(r1[0], r1[1], r1[2], -this.rotation_X);
+  void reverseTransform_3DViewport () { // computes positionX/Y/Z from the current camera point
+    float[] r1 = rotateAroundZ(this.cameraX, this.cameraY, this.cameraZ, -this.rotationZ);
+    float[] CAM1 = rotateAroundX(r1[0], r1[1], r1[2], -this.rotationX);
 
-    this.CAM_fov = this.Zoom * PI / 180;
-    this.CAM_dist = (0.5 * this.refScale) / tan(0.5 * this.CAM_fov);
-    float scaleFactor = tan(0.5 * this.CAM_fov) / tan(0.5 * PI / 3.0);
-    float CAM2_z = this.CAM_dist * scaleFactor; // CAM2_x, CAM2_y are 0 before scaling
+    this.cameraFieldOfView = this.zoom * PI / 180;
+    this.cameraDistance = (0.5 * this.referenceScale) / tan(0.5 * this.cameraFieldOfView);
+    float scaleFactor = tan(0.5 * this.cameraFieldOfView) / tan(0.5 * PI / 3.0);
+    float CAM2_z = this.cameraDistance * scaleFactor; // CAM2_x, CAM2_y are 0 before scaling
 
-    this.position_X = 0 - CAM1[0];
-    this.position_Y = -(0 - CAM1[1]);
-    this.position_Z = CAM2_z - CAM1[2];
+    this.positionX = 0 - CAM1[0];
+    this.positionY = -(0 - CAM1[1]);
+    this.positionZ = CAM2_z - CAM1[2];
   }
 
   void record_last3DViewport () {
-    allCameras.set_posX(this.currentCamera, this.position_X);
-    allCameras.set_posY(this.currentCamera, this.position_Y);
-    allCameras.set_posZ(this.currentCamera, this.position_Z);
-    allCameras.set_posT(this.currentCamera, this.position_T);
-    allCameras.set_rotX(this.currentCamera, this.rotation_X);
-    allCameras.set_rotY(this.currentCamera, this.rotation_Y);
-    allCameras.set_rotZ(this.currentCamera, this.rotation_Z);
-    allCameras.set_rotT(this.currentCamera, this.rotation_T);
-    allCameras.set_zoom(this.currentCamera, this.Zoom);
-    allCameras.set_type(this.currentCamera, this.ViewType);
+    allCameras.set_posX(this.currentCameraIndex, this.positionX);
+    allCameras.set_posY(this.currentCameraIndex, this.positionY);
+    allCameras.set_posZ(this.currentCameraIndex, this.positionZ);
+    allCameras.set_posT(this.currentCameraIndex, this.positionStep);
+    allCameras.set_rotX(this.currentCameraIndex, this.rotationX);
+    allCameras.set_rotY(this.currentCameraIndex, this.rotationY);
+    allCameras.set_rotZ(this.currentCameraIndex, this.rotationZ);
+    allCameras.set_rotT(this.currentCameraIndex, this.rotationStep);
+    allCameras.set_zoom(this.currentCameraIndex, this.zoom);
+    allCameras.set_type(this.currentCameraIndex, this.projectionTypeIndex);
   }
 
-  void apply_currentCamera () {
-    this.position_X = allCameras.get_posX(this.currentCamera);
-    this.position_Y = allCameras.get_posY(this.currentCamera);
-    this.position_Z = allCameras.get_posZ(this.currentCamera);
-    this.position_T = allCameras.get_posT(this.currentCamera);
-    this.rotation_X = allCameras.get_rotX(this.currentCamera);
-    this.rotation_Y = allCameras.get_rotY(this.currentCamera);
-    this.rotation_Z = allCameras.get_rotZ(this.currentCamera);
-    this.rotation_T = allCameras.get_rotT(this.currentCamera);
-    this.Zoom       = allCameras.get_zoom(this.currentCamera);
-    this.ViewType   = allCameras.get_type(this.currentCamera);
+  void apply_currentCameraIndex () {
+    this.positionX = allCameras.get_posX(this.currentCameraIndex);
+    this.positionY = allCameras.get_posY(this.currentCameraIndex);
+    this.positionZ = allCameras.get_posZ(this.currentCameraIndex);
+    this.positionStep = allCameras.get_posT(this.currentCameraIndex);
+    this.rotationX = allCameras.get_rotX(this.currentCameraIndex);
+    this.rotationY = allCameras.get_rotY(this.currentCameraIndex);
+    this.rotationZ = allCameras.get_rotZ(this.currentCameraIndex);
+    this.rotationStep = allCameras.get_rotT(this.currentCameraIndex);
+    this.zoom       = allCameras.get_zoom(this.currentCameraIndex);
+    this.projectionTypeIndex   = allCameras.get_type(this.currentCameraIndex);
   }
 
   void transform_3DViewport () {
-    this.CAM_fov = this.Zoom * PI / 180;
-    this.CAM_dist = (0.5 * this.refScale) / tan(0.5 * this.CAM_fov);
+    this.cameraFieldOfView = this.zoom * PI / 180;
+    this.cameraDistance = (0.5 * this.referenceScale) / tan(0.5 * this.cameraFieldOfView);
 
-    float scaleFactor = tan(0.5 * this.CAM_fov) / tan(0.5 * PI / 3.0);
-    this.CAM_x = 0;
-    this.CAM_y = 0;
-    this.CAM_z = this.CAM_dist * scaleFactor;
+    float scaleFactor = tan(0.5 * this.cameraFieldOfView) / tan(0.5 * PI / 3.0);
+    this.cameraX = 0;
+    this.cameraY = 0;
+    this.cameraZ = this.cameraDistance * scaleFactor;
 
-    this.CAM_x -= this.position_X;
-    this.CAM_y += this.position_Y;
-    this.CAM_z -= this.position_Z;
+    this.cameraX -= this.positionX;
+    this.cameraY += this.positionY;
+    this.cameraZ -= this.positionZ;
 
-    float[] r1 = rotateAroundX(this.CAM_x, this.CAM_y, this.CAM_z, this.rotation_X);
-    float[] r2 = rotateAroundZ(r1[0], r1[1], r1[2], this.rotation_Z);
+    float[] r1 = rotateAroundX(this.cameraX, this.cameraY, this.cameraZ, this.rotationX);
+    float[] r2 = rotateAroundZ(r1[0], r1[1], r1[2], this.rotationZ);
 
-    this.CAM_x = r2[0];
-    this.CAM_y = r2[1];
-    this.CAM_z = r2[2];
+    this.cameraX = r2[0];
+    this.cameraY = r2[1];
+    this.cameraZ = r2[2];
 
-    //println("Camera:", nf(this.CAM_x,0,4), nf(this.CAM_y,0,4), nf(this.CAM_z,0,4));
+    //println("Camera:", nf(this.cameraX,0,4), nf(this.cameraY,0,4), nf(this.cameraZ,0,4));
   }
 
   float[] calculate_Click3D (float Image_X, float Image_Y) {
     float PNT_x, PNT_y, PNT_z;
 
-    if (this.ViewType == 1) {
+    if (this.projectionTypeIndex == 1) {
       PNT_z = 0.5 / tan(0.5 * PI / 3.0); // for perspective: any value the plane we need the results on!
-      PNT_x = PNT_z * Image_X / ((0.5 * this.scale / tan(0.5 * this.CAM_fov)) * this.refScale);
-      PNT_y = PNT_z * -Image_Y / ((0.5 * this.scale / tan(0.5 * this.CAM_fov)) * this.refScale);
+      PNT_x = PNT_z * Image_X / ((0.5 * this.scale / tan(0.5 * this.cameraFieldOfView)) * this.referenceScale);
+      PNT_y = PNT_z * -Image_Y / ((0.5 * this.scale / tan(0.5 * this.cameraFieldOfView)) * this.referenceScale);
     } else {
       float ZOOM = this.Orthographic_ZOOM();
-      PNT_z = (0.5 * this.refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
+      PNT_z = (0.5 * this.referenceScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
       PNT_x = ZOOM * Image_X / (0.5 * this.scale);
       PNT_y = ZOOM * -Image_Y / (0.5 * this.scale);
     }
 
-    float[] r1 = rotateAroundX(PNT_x, PNT_y, PNT_z, -this.rotation_X);
-    float[] r2 = rotateAroundZ(r1[0], r1[1], r1[2], this.rotation_Z);
+    float[] r1 = rotateAroundX(PNT_x, PNT_y, PNT_z, -this.rotationX);
+    float[] r2 = rotateAroundZ(r1[0], r1[1], r1[2], this.rotationZ);
 
-    PNT_x = r2[0] + this.CAM_x;
-    PNT_y = r2[1] + this.CAM_y;
-    PNT_z = r2[2] - this.CAM_z;
+    PNT_x = r2[0] + this.cameraX;
+    PNT_y = r2[1] + this.cameraY;
+    PNT_z = r2[2] - this.cameraZ;
 
     return new float[] { PNT_x, PNT_y, -PNT_z };
   }
@@ -1071,12 +1071,12 @@ class WIN3D {
   // projecting - e.g. when a line segment has one end in front of the
   // camera and one end behind it.
   float[] calculate_CameraSpace_Internally (float x, float y, float z) {
-    x -= this.CAM_x;
-    y -= this.CAM_y;
-    z -= this.CAM_z;
+    x -= this.cameraX;
+    y -= this.cameraY;
+    z -= this.cameraZ;
 
-    float[] r1 = rotateAroundZ(x, y, -z, -this.rotation_Z);
-    float[] r2 = rotateAroundX(r1[0], r1[1], r1[2], this.rotation_X);
+    float[] r1 = rotateAroundZ(x, y, -z, -this.rotationZ);
+    float[] r2 = rotateAroundX(r1[0], r1[1], r1[2], this.rotationX);
 
     return new float[] { r2[0], r2[1], r2[2] };
   }
@@ -1091,9 +1091,9 @@ class WIN3D {
     float Image_Z = -FLOAT_undefined; // negative so that it's automatically illuminated by draw()
 
     if (z > 0) {
-      if (this.ViewType == 1) {
-        Image_X = (x / z) * (0.5 * this.scale / tan(0.5 * this.CAM_fov)) * this.refScale;
-        Image_Y = -(y / z) * (0.5 * this.scale / tan(0.5 * this.CAM_fov)) * this.refScale;
+      if (this.projectionTypeIndex == 1) {
+        Image_X = (x / z) * (0.5 * this.scale / tan(0.5 * this.cameraFieldOfView)) * this.referenceScale;
+        Image_Y = -(y / z) * (0.5 * this.scale / tan(0.5 * this.cameraFieldOfView)) * this.referenceScale;
         Image_Z = z;
       } else {
         float ZOOM = this.Orthographic_ZOOM();
@@ -1117,33 +1117,33 @@ class WIN3D {
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 
-    XML_setFloat(parent, "CAM_x", this.CAM_x);
-    XML_setFloat(parent, "CAM_y", this.CAM_y);
-    XML_setFloat(parent, "CAM_z", this.CAM_z);
-    XML_setFloat(parent, "CAM_fov", this.CAM_fov);
-    XML_setFloat(parent, "CAM_dist", this.CAM_dist);
-    XML_setFloat(parent, "CAM_clipNear", this.CAM_clipNear);
-    XML_setFloat(parent, "CAM_clipFar", this.CAM_clipFar);
-    XML_setInt(parent, "currentCamera", this.currentCamera);
+    XML_setFloat(parent, "cameraX", this.cameraX);
+    XML_setFloat(parent, "cameraY", this.cameraY);
+    XML_setFloat(parent, "cameraZ", this.cameraZ);
+    XML_setFloat(parent, "cameraFieldOfView", this.cameraFieldOfView);
+    XML_setFloat(parent, "cameraDistance", this.cameraDistance);
+    XML_setFloat(parent, "cameraClipNear", this.cameraClipNear);
+    XML_setFloat(parent, "cameraClipFar", this.cameraClipFar);
+    XML_setInt(parent, "currentCameraIndex", this.currentCameraIndex);
 
-    XML_setFloat(parent, "refScale", this.refScale);
-    XML_setFloat(parent, "position_X", this.position_X);
-    XML_setFloat(parent, "position_Y", this.position_Y);
-    XML_setFloat(parent, "position_Z", this.position_Z);
-    XML_setFloat(parent, "position_T", this.position_T);
-    XML_setFloat(parent, "rotation_X", this.rotation_X);
-    XML_setFloat(parent, "rotation_Y", this.rotation_Y);
-    XML_setFloat(parent, "rotation_Z", this.rotation_Z);
-    XML_setFloat(parent, "rotation_T", this.rotation_T);
-    XML_setFloat(parent, "Zoom", this.Zoom);
-    XML_setInt(parent, "ViewType", this.ViewType);
-    XML_setInt(parent, "FacesShade", this.FacesShade);
+    XML_setFloat(parent, "referenceScale", this.referenceScale);
+    XML_setFloat(parent, "positionX", this.positionX);
+    XML_setFloat(parent, "positionY", this.positionY);
+    XML_setFloat(parent, "positionZ", this.positionZ);
+    XML_setFloat(parent, "positionStep", this.positionStep);
+    XML_setFloat(parent, "rotationX", this.rotationX);
+    XML_setFloat(parent, "rotationY", this.rotationY);
+    XML_setFloat(parent, "rotationZ", this.rotationZ);
+    XML_setFloat(parent, "rotationStep", this.rotationStep);
+    XML_setFloat(parent, "zoom", this.zoom);
+    XML_setInt(parent, "projectionTypeIndex", this.projectionTypeIndex);
+    XML_setInt(parent, "shadingMode", this.shadingMode);
 
-    XML_setInt(parent, "UI_CurrentTask", this.UI_CurrentTask);
-    XML_setInt(parent, "UI_OptionXorY", this.UI_OptionXorY);
-    XML_setInt(parent, "UI_TaskModifyParameter", this.UI_TaskModifyParameter);
+    XML_setInt(parent, "currentTool", this.currentTool);
+    XML_setInt(parent, "targetAxisIndex", this.targetAxisIndex);
+    XML_setInt(parent, "toolParameterModifier", this.toolParameterModifier);
 
-    XML_setInt(parent, "Impact_TYPE", this.Impact_TYPE);
+    XML_setInt(parent, "impactType", this.impactType);
   }
 
   public void from_XML (XML xml) {
@@ -1151,33 +1151,34 @@ class WIN3D {
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.CAM_x = XML_getFloat(parent, "CAM_x");
-    this.CAM_y = XML_getFloat(parent, "CAM_y");
-    this.CAM_z = XML_getFloat(parent, "CAM_z");
-    this.CAM_fov = XML_getFloat(parent, "CAM_fov");
-    this.CAM_dist = XML_getFloat(parent, "CAM_dist");
-    this.CAM_clipNear = XML_getFloat(parent, "CAM_clipNear");
-    this.CAM_clipFar = XML_getFloat(parent, "CAM_clipFar");
-    this.currentCamera = XML_getInt(parent, "currentCamera");
+    this.cameraX = XML_getFloat(parent, "cameraX");
+    this.cameraY = XML_getFloat(parent, "cameraY");
+    this.cameraZ = XML_getFloat(parent, "cameraZ");
+    this.cameraFieldOfView = XML_getFloat(parent, "cameraFieldOfView");
+    this.cameraDistance = XML_getFloat(parent, "cameraDistance");
+    this.cameraClipNear = XML_getFloat(parent, "cameraClipNear");
+    this.cameraClipFar = XML_getFloat(parent, "cameraClipFar");
+    this.currentCameraIndex = XML_getInt(parent, "currentCameraIndex");
 
-    this.refScale = XML_getFloat(parent, "refScale");
-    this.position_X = XML_getFloat(parent, "position_X");
-    this.position_Y = XML_getFloat(parent, "position_Y");
-    this.position_Z = XML_getFloat(parent, "position_Z");
-    this.position_T = XML_getFloat(parent, "position_T");
-    this.rotation_X = XML_getFloat(parent, "rotation_X");
-    this.rotation_Y = XML_getFloat(parent, "rotation_Y");
-    this.rotation_Z = XML_getFloat(parent, "rotation_Z");
-    this.rotation_T = XML_getFloat(parent, "rotation_T");
-    this.Zoom = XML_getFloat(parent, "Zoom");
-    this.ViewType = XML_getInt(parent, "ViewType");
-    this.FacesShade = XML_getInt(parent, "FacesShade");
+    this.referenceScale = XML_getFloat(parent, "referenceScale");
+    this.positionX = XML_getFloat(parent, "positionX");
+    this.positionY = XML_getFloat(parent, "positionY");
+    this.positionZ = XML_getFloat(parent, "positionZ");
+    this.positionStep = XML_getFloat(parent, "positionStep");
+    this.rotationX = XML_getFloat(parent, "rotationX");
+    this.rotationY = XML_getFloat(parent, "rotationY");
+    this.rotationZ = XML_getFloat(parent, "rotationZ");
+    this.rotationStep = XML_getFloat(parent, "rotationStep");
 
-    this.UI_CurrentTask = XML_getInt(parent, "UI_CurrentTask");
-    this.UI_OptionXorY = XML_getInt(parent, "UI_OptionXorY");
-    this.UI_TaskModifyParameter = XML_getInt(parent, "UI_TaskModifyParameter");
+    this.zoom = XML_getFloat(parent, "zoom");
+    this.projectionTypeIndex = XML_getInt(parent, "projectionTypeIndex");
+    this.shadingMode = XML_getInt(parent, "shadingMode");
 
-    this.Impact_TYPE = XML_getInt(parent, "Impact_TYPE");
+    this.currentTool = XML_getInt(parent, "currentTool");
+    this.targetAxisIndex = XML_getInt(parent, "targetAxisIndex");
+    this.toolParameterModifier = XML_getInt(parent, "toolParameterModifier");
+
+    this.impactType = XML_getInt(parent, "impactType");
   }
 
   void revise () {

@@ -3,17 +3,17 @@ class Drop3D {
   final static String CLASS_STAMP = "Drop3D";
 
   void selection () {
-    if (current_ObjectCategory == ObjectCategory.MODEL1D) this.Model1Ds();
-    else if (current_ObjectCategory == ObjectCategory.MODEL2D) this.Model2Ds();
+    if (currentObjectCategory == ObjectCategory.MODEL1D) this.Model1Ds();
+    else if (currentObjectCategory == ObjectCategory.MODEL2D) this.Model2Ds();
   }
 
-  // Casts one ray from ray_start in ray_direction. WIN3D.UI_TaskModifyParameter selects
+  // Casts one ray from ray_start in ray_direction. WIN3D.toolParameterModifier selects
   // the target: 0 = Land3D, faceParam = allFaces, anything else = no hit.
   float[] castRay (float[] ray_start, float[] ray_direction, int faceParam) {
-    if (WIN3D.UI_TaskModifyParameter == 0) {
+    if (WIN3D.toolParameterModifier == 0) {
       return Land3D.intersect(ray_start, ray_direction);
     }
-    if (WIN3D.UI_TaskModifyParameter == faceParam) {
+    if (WIN3D.toolParameterModifier == faceParam) {
       return allFaces.intersect(ray_start, ray_direction);
     }
 

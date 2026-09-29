@@ -1,14 +1,14 @@
 void exportObj_dateSeries () {
 
-  int keep_IMPACTS_displayDay = IMPACTS_displayDay;
+  int keep_impactDisplayDay = impactDisplayDay;
 
   for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) {
 
-    IMPACTS_displayDay = j;
+    impactDisplayDay = j;
 
     exportObj("_" + nf(j, 3));
 
   }
 
-  IMPACTS_displayDay = keep_IMPACTS_displayDay;
+  impactDisplayDay = keep_impactDisplayDay;
 }

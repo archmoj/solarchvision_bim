@@ -474,9 +474,9 @@ class SolidImpacts {
       this.Contours_V2Lines[0][1] = 0;
 
 
-      int PAL_type = allSolids.palette_CLR;
-      int PAL_direction = allSolids.palette_DIR;
-      float PAL_multiplier = allSolids.palette_MLT;
+      int PAL_type = allSolids.colorScaleIndex;
+      int PAL_direction = allSolids.colorScaleDirection;
+      float PAL_multiplier = allSolids.colorScaleFactor;
 
       this.Image.loadPixels();
 
@@ -792,7 +792,7 @@ class SolidImpacts {
         float y2 = this.Contours_U1Vertices[n2][1];
         float z2 = this.Contours_U1Vertices[n2][2];
 
-        WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.line(x1 * overallScale * WIN3D.scale, -y1 * overallScale * WIN3D.scale, z1 * overallScale * WIN3D.scale, x2 * overallScale * WIN3D.scale, -y2 * overallScale * WIN3D.scale, z2 * overallScale * WIN3D.scale);
       }
 
       WIN3D.graphics.strokeWeight(1);
@@ -812,7 +812,7 @@ class SolidImpacts {
         float y2 = this.Contours_V1Vertices[n2][1];
         float z2 = this.Contours_V1Vertices[n2][2];
 
-        WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.line(x1 * overallScale * WIN3D.scale, -y1 * overallScale * WIN3D.scale, z1 * overallScale * WIN3D.scale, x2 * overallScale * WIN3D.scale, -y2 * overallScale * WIN3D.scale, z2 * overallScale * WIN3D.scale);
       }
 
       WIN3D.graphics.strokeWeight(1);
@@ -832,7 +832,7 @@ class SolidImpacts {
         float y2 = this.Contours_V2Vertices[n2][1];
         float z2 = this.Contours_V2Vertices[n2][2];
 
-        WIN3D.graphics.line(x1 * OBJECTS_scale * WIN3D.scale, -y1 * OBJECTS_scale * WIN3D.scale, z1 * OBJECTS_scale * WIN3D.scale, x2 * OBJECTS_scale * WIN3D.scale, -y2 * OBJECTS_scale * WIN3D.scale, z2 * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.line(x1 * overallScale * WIN3D.scale, -y1 * overallScale * WIN3D.scale, z1 * overallScale * WIN3D.scale, x2 * overallScale * WIN3D.scale, -y2 * overallScale * WIN3D.scale, z2 * overallScale * WIN3D.scale);
       }
 
       WIN3D.graphics.strokeWeight(0);
@@ -855,7 +855,7 @@ class SolidImpacts {
         float z = this.Contours_U1Vertices[n][2];
 
         WIN3D.graphics.pushMatrix();
-        WIN3D.graphics.translate(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.translate(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale);
         WIN3D.graphics.sphere(R);
         WIN3D.graphics.popMatrix();
       }

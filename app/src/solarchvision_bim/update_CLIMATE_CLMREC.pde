@@ -1,66 +1,66 @@
-void update_CLIMATE_CLMREC () {
+void updateClimateArchive () {
 
-  CLIMATE_CLMREC_values = new float [24][365][allLayers.length][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)];
-  CLIMATE_CLMREC_flags = new boolean [24][365][allLayers.length][(1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start)]; // true: direct input , false: no-input, interpolated or post-processed
+  climateArchiveValues = new float [24][365][allLayers.length][(1 + climateArchiveEnd - climateArchiveStart)];
+  climateArchiveFlags = new boolean [24][365][allLayers.length][(1 + climateArchiveEnd - climateArchiveStart)]; // true: direct input , false: no-input, interpolated or post-processed
 
   for (int i = 0; i < 24; i++) {
     for (int j = 0; j < 365; j++) {
       for (int l = 0; l < allLayers.length; l++) {
-        java.util.Arrays.fill(CLIMATE_CLMREC_values[i][j][l], FLOAT_undefined);
-        java.util.Arrays.fill(CLIMATE_CLMREC_flags[i][j][l], false);
+        java.util.Arrays.fill(climateArchiveValues[i][j][l], FLOAT_undefined);
+        java.util.Arrays.fill(climateArchiveFlags[i][j][l], false);
       }
     }
   }
 
-  if (CLIMATE_CLMREC_load) {
+  if (climateArchiveShouldLoad) {
 
-    nearest_Station_CLMREC_id = -1;
-    nearest_Station_CLMREC_dist = FLOAT_undefined;
+    climateArchiveNearestStationIndex = -1;
+    climateArchiveNearestStationDist = FLOAT_undefined;
 
-    for (int f = 0; f < CLMREC_Coordinates.length; f++) {
+    for (int f = 0; f < climateArchiveCoordinates.length; f++) {
 
-      //if (int(CLMREC_Coordinates[f].getEndyear()) == 2016)
+      //if (int(climateArchiveCoordinates[f].getEndyear()) == 2016)
       { // only use stations with this condition
 
-        float _lat = CLMREC_Coordinates[f].getLatitude();
-        float _lon = CLMREC_Coordinates[f].getLongitude();
+        float _lat = climateArchiveCoordinates[f].getLatitude();
+        float _lon = climateArchiveCoordinates[f].getLongitude();
         if (_lon > 180) _lon -= 360; // << important!
 
         float d = funcs.lon_lat_dist(_lon, _lat, STATION.getLongitude(), STATION.getLatitude());
 
-        if (nearest_Station_CLMREC_dist > d) {
+        if (climateArchiveNearestStationDist > d) {
 
-          nearest_Station_CLMREC_dist = d;
-          nearest_Station_CLMREC_id = f;
+          climateArchiveNearestStationDist = d;
+          climateArchiveNearestStationIndex = f;
         }
       }
     }
 
 
-    for (int k = 0; k < (1 + CLIMATE_CLMREC_end - CLIMATE_CLMREC_start); k++) {
+    for (int k = 0; k < (1 + climateArchiveEnd - climateArchiveStart); k++) {
       for (int m = 0; m < 12; m++) {
 
-        int THE_YEAR = k + CLIMATE_CLMREC_start;
+        int THE_YEAR = k + climateArchiveStart;
         int THE_MONTH = m + 1;
 
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + CLMREC_Coordinates[nearest_Station_CLMREC_id].getCity() + ".csv";
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + "_" + climateArchiveCoordinates[climateArchiveNearestStationIndex].getCity() + ".csv";
 
-        String the_source = Folder_CLIMATE_CLMREC + "/" + FN;
+        String the_source = Folder_climateArchive + "/" + FN;
 
         File dir = new File(the_source);
-        if (dir.isFile()) load_CLIMATE_CLMREC(the_source);
+        if (dir.isFile()) load_climateArchive(the_source);
         else println("FILE NOT FOUND:", the_source);
 
       }
     }
 
-    setDataFlags(dataID_CLIMATE_CLMREC);
-    postProcess_fillGaps(dataID_CLIMATE_CLMREC);
-    postProcess_solarsUsingCloud(dataID_CLIMATE_CLMREC);
-    postProcess_solarEffects(dataID_CLIMATE_CLMREC);
+    setDataFlags(dataID_climateArchive);
+    postProcess_fillGaps(dataID_climateArchive);
+    postProcess_solarsUsingCloud(dataID_climateArchive);
+    postProcess_solarEffects(dataID_climateArchive);
 
-    WORLD.displayAll_CLMREC = 1;
-    WORLD.displayNear_CLMREC = true;
+    WORLD.climateArchiveDisplayAll = 1;
+    WORLD.climateArchiveDisplayNear = true;
 
   }
 
@@ -70,6 +70,6 @@ void update_CLIMATE_CLMREC () {
   UI_caseBar.revise();
   view_changed();
 
-  SampleYear_Start = CLIMATE_CLMREC_start;
-  SampleYear_End = CLIMATE_CLMREC_end;
+  sampleYearStart = climateArchiveStart;
+  sampleYearEnd = climateArchiveEnd;
 }

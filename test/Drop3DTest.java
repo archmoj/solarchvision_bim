@@ -3,12 +3,12 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Model1Ds()/Model2Ds() ultimately call castDrop() -> castRay(), which for
-// WIN3D.UI_TaskModifyParameter == 0 hits Land3D.intersect() against real
+// WIN3D.toolParameterModifier == 0 hits Land3D.intersect() against real
 // (if empty-by-default) grid geometry - too easy to get subtly wrong
 // without deeper knowledge of that data shape, so this sticks to the one
 // selection ID list being empty (0 iterations, no intersect call at all)
 // and to castRay/castDrop's own fallback branch (no Land3D/Faces call
-// either, since UI_TaskModifyParameter matches neither special value).
+// either, since toolParameterModifier matches neither special value).
 class Drop3DTest {
 
   private solarchvision_bim app;
@@ -22,7 +22,7 @@ class Drop3DTest {
 
   @Test
   void castRay_returnsUndefinedWhenTaskModifyParameterMatchesNeitherSpecialValue () {
-    app.WIN3D.UI_TaskModifyParameter = 99; // neither 0 (Land3D) nor faceParam
+    app.WIN3D.toolParameterModifier = 99; // neither 0 (Land3D) nor faceParam
 
     float[] result = app.Drop3D.castRay(new float[]{0, 0, 10}, new float[]{0, 0, -1}, 1);
 
@@ -31,7 +31,7 @@ class Drop3DTest {
 
   @Test
   void castRay_returnsAnEightElementUndefinedArrayOnTheFallbackBranch () {
-    app.WIN3D.UI_TaskModifyParameter = 99;
+    app.WIN3D.toolParameterModifier = 99;
 
     float[] result = app.Drop3D.castRay(new float[]{0, 0, 10}, new float[]{0, 0, -1}, 1);
 
@@ -44,7 +44,7 @@ class Drop3DTest {
   void castDrop_returnsUndefinedWhenNeitherDirectionHitsAnything () {
     // Neither 1 nor 2 matches, and 0 doesn't either, so both the downward
     // and the upward castRay() calls take the fallback branch above.
-    app.WIN3D.UI_TaskModifyParameter = 99;
+    app.WIN3D.toolParameterModifier = 99;
 
     float[] result = app.Drop3D.castDrop(1, 2, 3);
 
@@ -55,7 +55,7 @@ class Drop3DTest {
 
   @Test
   void selection_doesNothingForAnUnrelatedObjectCategory () {
-    app.current_ObjectCategory = app.ObjectCategory.GROUP; // neither MODEL1D nor MODEL2D
+    app.currentObjectCategory = app.ObjectCategory.GROUP; // neither MODEL1D nor MODEL2D
     app.WIN3D.update = false;
 
     app.Drop3D.selection();
@@ -65,7 +65,7 @@ class Drop3DTest {
 
   @Test
   void selection_routesToModel1DsAndFlagsTheViewportWhenNothingIsSelected () {
-    app.current_ObjectCategory = app.ObjectCategory.MODEL1D;
+    app.currentObjectCategory = app.ObjectCategory.MODEL1D;
     app.Select3D.Model1D_ids = new int[0]; // 0 iterations - castDrop() is never called
     app.WIN3D.update = false;
 
@@ -76,7 +76,7 @@ class Drop3DTest {
 
   @Test
   void selection_routesToModel2DsAndFlagsTheViewportWhenNothingIsSelected () {
-    app.current_ObjectCategory = app.ObjectCategory.MODEL2D;
+    app.currentObjectCategory = app.ObjectCategory.MODEL2D;
     app.Select3D.Model2D_ids = new int[0];
     app.WIN3D.update = false;
 

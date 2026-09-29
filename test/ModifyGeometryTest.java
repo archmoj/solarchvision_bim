@@ -43,29 +43,29 @@ class ModifyGeometryTest {
       app.ObjectCategory.GROUP, app.ObjectCategory.FACE,
       app.ObjectCategory.POLYLINE, app.ObjectCategory.VERTEX
     }) {
-      app.current_ObjectCategory = category;
+      app.currentObjectCategory = category;
       assertTrue(app.Modify3D.isPolymeshCategorySelected(), "category=" + category);
     }
   }
 
   @Test
   void isPolymeshCategorySelected_isFalseForOtherCategories () {
-    app.current_ObjectCategory = app.ObjectCategory.SOLID;
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
     assertFalse(app.Modify3D.isPolymeshCategorySelected());
   }
 
   @Test
   void isGroupOrFaceCategorySelected_isTrueOnlyForGroupAndFace () {
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
     assertTrue(app.Modify3D.isGroupOrFaceCategorySelected());
 
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
     assertTrue(app.Modify3D.isGroupOrFaceCategorySelected());
 
-    app.current_ObjectCategory = app.ObjectCategory.POLYLINE;
+    app.currentObjectCategory = app.ObjectCategory.POLYLINE;
     assertFalse(app.Modify3D.isGroupOrFaceCategorySelected());
 
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     assertFalse(app.Modify3D.isGroupOrFaceCategorySelected());
   }
 
@@ -204,7 +204,7 @@ class ModifyGeometryTest {
     app.allGroups.Faces[0] = new int[]{0, 0}; // group 0 spans face 0 only
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.tessellateTriangular_Selection();
 
@@ -246,7 +246,7 @@ class ModifyGeometryTest {
     app.allGroups.Faces[0] = new int[]{0, 0};
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.tessellateRectangular_Selection();
 
@@ -278,7 +278,7 @@ class ModifyGeometryTest {
   //
   // Unlike the *_Selection operations above, these two act on every
   // face in the scene unconditionally - no Select3D or
-  // current_ObjectCategory setup needed at all.
+  // currentObjectCategory setup needed at all.
 
   @Test
   void changeVisibilityFacesScene_setsEveryFaceToTheGivenVisibilityRegardlessOfItsCurrentValue () {
@@ -316,7 +316,7 @@ class ModifyGeometryTest {
     app.allFaces.nodes = new int[][]{{0}, {1}}; // face 0 touches vertex 0, face 1 touches vertex 1
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
 
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0};
 
     app.Modify3D.changeVisibilityFaces_Selection(1);
@@ -364,7 +364,7 @@ class ModifyGeometryTest {
     app.allPolylines.nodes = new int[][]{{0}};
     app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0}};
     app.Select3D.Polyline_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.changeVisibilityPolylines_Selection(1);
 
@@ -396,7 +396,7 @@ class ModifyGeometryTest {
     app.allGroups.Polylines[0] = new int[]{0, 0}; // and only polyline 0
 
     app.Select3D.Group_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
 
     app.Modify3D.isolate_Selection();
 
@@ -415,7 +415,7 @@ class ModifyGeometryTest {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 1, 1}, {2, 2, 2}};
     app.allFaces.nodes = new int[][]{{2, 0, 1}}; // deliberately unsorted node order
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.selectVertices_fromCurrentSelection();
 
@@ -442,7 +442,7 @@ class ModifyGeometryTest {
     app.allFaces.nodes = new int[7][0]; // faces 0-6 need to exist
 
     app.Select3D.Group_ids = new int[]{1, 0}; // deliberately unsorted input
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
 
     app.Modify3D.selectFacesAndGroups_fromCurrentSelection();
 
@@ -459,7 +459,7 @@ class ModifyGeometryTest {
     // "average position" (which would give a different answer here):
     // min=0, max=10 -> center=5, but the average of {0,1,10} is 3.667.
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {10, 0, 0}};
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0, 1, 2};
 
     app.Modify3D.repositionVertices_Selection();
@@ -482,7 +482,7 @@ class ModifyGeometryTest {
   void offsetVertices_movesEachVertexByTheAverageOfItsRingNormals () {
     app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0};
 
     app.Modify3D.offsetVertices_Selection(0, 5f);
@@ -500,7 +500,7 @@ class ModifyGeometryTest {
     // not sharing any vertex at all afterward.
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {2, 0, 0}};
     app.allFaces.nodes = new int[][]{{0, 1}, {0, 2}};
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0};
 
     app.Modify3D.separateVertices_Selection();
@@ -539,7 +539,7 @@ class ModifyGeometryTest {
     app.allFaces.nodes = new int[][]{{1}}; // one face referencing the higher-indexed point of the close pair
     app.allPolylines.nodes = new int[0][];
 
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0, 1, 2};
 
     app.Modify3D.weldSceneVertices_Selection(0.01f);
@@ -570,7 +570,7 @@ class ModifyGeometryTest {
     app.allFaces.nodes = new int[][]{{0}, {1}}; // face 0 references point 0, face 1 references point 1
     app.allPolylines.nodes = new int[0][];
 
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0, 1, 2};
 
     app.Modify3D.weldObjectsVertices_Selection(0.01f);
@@ -587,7 +587,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{0}, app.allFaces.nodes[1]);
   }
 
-  // --- insertEdgeOpennings_Selection (a full integration test) --------
+  // --- insertEdgeOpenings_Selection (a full integration test) --------
   //
   // Unlike the tessellate*_Selection functions, this one does NOT call
   // appendNewFaceSelection - the newly-created triangular faces are
@@ -596,7 +596,7 @@ class ModifyGeometryTest {
   // face-splitting operation updates the selection the same way.
 
   @Test
-  void insertEdgeOpennings_insetsTheBaseFaceAndRingsItWithNewTriangles () {
+  void insertEdgeOpenings_insetsTheBaseFaceAndRingsItWithNewTriangles () {
     app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
@@ -605,9 +605,9 @@ class ModifyGeometryTest {
     app.allGroups.Faces[0] = new int[]{0, 0};
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.insertEdgeOpennings_Selection(); // User3D.modify_OpenningDeviation defaults to 0.5 (edge midpoints)
+    app.Modify3D.insertEdgeOpenings_Selection(); // User3D.modifierOpeningDeviation defaults to 0.5 (edge midpoints)
 
     assertEquals(5, app.allFaces.nodes.length); // the inset base face + 4 new triangles
     assertEquals(8, app.allVertices.length);    // 4 original + 4 new edge points (no center point here)
@@ -654,7 +654,7 @@ class ModifyGeometryTest {
     app.allGroups.Faces[0] = new int[]{0, 1}; // group 0 spans both faces
 
     app.Select3D.Face_ids = new int[]{0, 1};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.forceTriangulateFaces_Selection();
 
@@ -691,7 +691,7 @@ class ModifyGeometryTest {
     app.allGroups.Faces[0] = new int[]{0, 0};
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.optimizeFace_Selection();
 
@@ -715,32 +715,32 @@ class ModifyGeometryTest {
     app.allFaces.options = new int[][]{{0, 0, 0, 1, 0, 0}}; // visible
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.autoNormalFaces_Selection();
 
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]);
   }
 
-  // --- insertCornerOpennings_Selection (a full integration test) ------
+  // --- insertCornerOpenings_Selection (a full integration test) ------
   //
   // Inset a single new corner point per side, forming n new quads
   // between each original edge and the shrunk (inset) base face.
 
   @Test
-  void insertCornerOpennings_insetsTheBaseFaceAndRingsItWithQuadsFromTheOriginalEdges () {
+  void insertCornerOpenings_insetsTheBaseFaceAndRingsItWithQuadsFromTheOriginalEdges () {
     app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.User3D.modify_OpenningArea = 0.25f; // sqrt(0.25) = 0.5
+    app.User3D.modifierOpeningArea = 0.25f; // sqrt(0.25) = 0.5
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.insertCornerOpennings_Selection();
+    app.Modify3D.insertCornerOpenings_Selection();
 
     assertEquals(5, app.allFaces.nodes.length); // the inset base face + 4 new quads
     assertEquals(8, app.allVertices.length);    // 4 original + 4 new inset corners
@@ -758,14 +758,14 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{6, 2, 3, 7}, app.allFaces.nodes[3]);
     assertArrayEquals(new int[]{7, 3, 0, 4}, app.allFaces.nodes[4]);
 
-    // Same as insertEdgeOpennings: the group grows by n=4 (base kept +
+    // Same as insertEdgeOpenings: the group grows by n=4 (base kept +
     // 4 new = 5 faces total), and the selection is left untouched (no
     // appendNewFaceSelection call in this function either).
     assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]);
     assertArrayEquals(new int[]{0}, app.Select3D.Face_ids);
   }
 
-  // --- insertParallelOpennings_Selection (a full integration test) ----
+  // --- insertParallelOpenings_Selection (a full integration test) ----
   //
   // Two new "edge" points per side (deviation-weighted toward the
   // corner from each neighboring midpoint) plus one "center" point per
@@ -773,20 +773,20 @@ class ModifyGeometryTest {
   // quads total, considerably more than the other two openings variants.
 
   @Test
-  void insertParallelOpennings_ringsTheBaseFaceWithPairedQuadsPerSide () {
+  void insertParallelOpenings_ringsTheBaseFaceWithPairedQuadsPerSide () {
     app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.User3D.modify_OpenningDeviation = 0.5f;
-    app.User3D.modify_OpenningArea = 0.25f; // sqrt(0.25) = 0.5
+    app.User3D.modifierOpeningDeviation = 0.5f;
+    app.User3D.modifierOpeningArea = 0.25f; // sqrt(0.25) = 0.5
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.insertParallelOpennings_Selection();
+    app.Modify3D.insertParallelOpenings_Selection();
 
     assertEquals(9, app.allFaces.nodes.length); // the (re-shaped) base face + 4 sides x 2 quads
     assertEquals(16, app.allVertices.length);   // 4 original + 4 sides x 3 new points (A, B, center)
@@ -811,35 +811,35 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{0}, app.Select3D.Face_ids);
   }
 
-  // --- insertRotatedOpennings_Selection (a full integration test) -----
+  // --- insertRotatedOpenings_Selection (a full integration test) -----
   //
-  // One edge point per side (same as insertEdgeOpennings_Selection),
+  // One edge point per side (same as insertEdgeOpenings_Selection),
   // then one center point derived from THAT edge point (not directly
   // from the original corner) - each side becomes a single 5-sided
   // face touching the original corner, both its neighboring edge
   // points, and both their derived center points.
 
   @Test
-  void insertRotatedOpennings_buildsAPentagonPerSideFromEdgeThenCenterPoints () {
+  void insertRotatedOpenings_buildsAPentagonPerSideFromEdgeThenCenterPoints () {
     app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.User3D.modify_OpenningDeviation = 0.5f;
-    app.User3D.modify_OpenningArea = 0.25f; // sqrt(0.25) = 0.5
+    app.User3D.modifierOpeningDeviation = 0.5f;
+    app.User3D.modifierOpeningArea = 0.25f; // sqrt(0.25) = 0.5
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
-    app.Modify3D.insertRotatedOpennings_Selection();
+    app.Modify3D.insertRotatedOpenings_Selection();
 
     assertEquals(5, app.allFaces.nodes.length); // the reshaped base face + 4 pentagons
     assertEquals(12, app.allVertices.length);   // 4 original + 4 sides x 2 new points (edge, center)
 
     // Per side s, points are created in the order edge[s], center[s].
-    assertArrayEquals(new float[]{0, 1, 0}, app.allVertices[4], 0.0001f);   // edge0 (same as insertEdgeOpennings')
+    assertArrayEquals(new float[]{0, 1, 0}, app.allVertices[4], 0.0001f);   // edge0 (same as insertEdgeOpenings')
     assertArrayEquals(new float[]{0.5f, 1, 0}, app.allVertices[5], 0.0001f); // center0, derived from edge0
     assertArrayEquals(new float[]{1, 0, 0}, app.allVertices[6], 0.0001f);   // edge1
     assertArrayEquals(new float[]{1, 0.5f, 0}, app.allVertices[7], 0.0001f); // center1
@@ -867,14 +867,14 @@ class ModifyGeometryTest {
     app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.User3D.modify_TessellateColumns = 2;
-    app.User3D.modify_TessellateRows = 2;
+    app.User3D.modifierTessellateColumns = 2;
+    app.User3D.modifierTessellateRows = 2;
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.tessellateRowsColumns_Selection();
 
@@ -914,13 +914,13 @@ class ModifyGeometryTest {
     app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {0, 2, 0}}; // a flat triangle, facing +Z
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.User3D.modify_OpenningDepth = 1f;
+    app.User3D.modifierOpeningDepth = 1f;
 
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
     app.Select3D.Face_ids = new int[]{0};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.extrudeFaceEdges_Selection();
 
@@ -954,7 +954,7 @@ class ModifyGeometryTest {
 
   @Test
   void flattenLandPoints_zerosOutElevationOnlyAtTheSelectedGridCells () {
-    app.Land3D.num_columns = 3;
+    app.Land3D.columnCount = 3;
     app.Land3D.Mesh = new float[2][3][3];
     for (float[][] row : app.Land3D.Mesh) {
       for (float[] cell : row) cell[2] = 99f; // give every cell a distinctive, nonzero elevation
@@ -999,7 +999,7 @@ class ModifyGeometryTest {
     };
 
     app.Select3D.Face_ids = new int[]{1, 2};
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.autoNormalFaces_Selection();
 

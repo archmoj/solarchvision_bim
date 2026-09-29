@@ -20,7 +20,7 @@ class UITASK {
   int Truck_Orbit = num++;
   int ModelSize_Pan_TargetRoll = num++;
   int Pan_Height = num++;
-  int Zoom_Orbit_Pan = num++;
+  int zoom_Orbit_Pan = num++;
   int RectSelect = num++;
   int PickSelect = num++;
   int Create = num++;

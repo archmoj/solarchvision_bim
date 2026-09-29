@@ -17,7 +17,7 @@ class Rotate3DTest {
   @Test
   void selection_vertexCategoryDispatchesToVerticesAndConvertsDegreesToRadians () {
     app.allVertices = new float[][]{{1, 0, 0}};
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0};
 
     app.Rotate3D.selection(0, 0, 0, 90, 2); // 90 DEGREES around Z
@@ -70,7 +70,7 @@ class Rotate3DTest {
 
   @Test
   void landPoints_rotatesOnlyTheSelectedGridCells () {
-    app.Land3D.num_columns = 3;
+    app.Land3D.columnCount = 3;
     app.Land3D.Mesh = new float[1][3][3];
     app.Land3D.Mesh[0][1] = new float[]{1, 0, 0};
 
@@ -179,15 +179,15 @@ class Rotate3DTest {
     app.allCameras.num = 1;
     app.allCameras.options[0][0] = 1;
 
-    app.WIN3D.currentCamera = 0;
+    app.WIN3D.currentCameraIndex = 0;
     app.Select3D.Camera_ids = new int[]{0};
 
     app.Rotate3D.Cameras(0, 0, 0, HALF_PI, 0); // the_Vector=0 needs no remap, simplest case to verify against
 
-    // apply_currentCamera() ran, mirroring the camera's new (rotated) position into WIN3D.
-    assertEquals(app.allCameras.options[0][0], app.WIN3D.position_X, 0.0001f);
-    assertEquals(app.allCameras.options[0][1], app.WIN3D.position_Y, 0.0001f);
-    assertEquals(app.allCameras.options[0][2], app.WIN3D.position_Z, 0.0001f);
+    // apply_currentCameraIndex() ran, mirroring the camera's new (rotated) position into WIN3D.
+    assertEquals(app.allCameras.options[0][0], app.WIN3D.positionX, 0.0001f);
+    assertEquals(app.allCameras.options[0][1], app.WIN3D.positionY, 0.0001f);
+    assertEquals(app.allCameras.options[0][2], app.WIN3D.positionZ, 0.0001f);
   }
 
   // ================= Model1Ds ==========================================

@@ -1,4 +1,4 @@
-void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
   boolean new_files_downloaded = false;
 
@@ -8,9 +8,9 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       String dayStr = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2);
 
       String FN = dayStr + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" +
-        STATION.getFilename_NAEFS() + "_" + allLayers[f].name + "_000-384.xml";
+        STATION.getEnsembleForecastFilename() + "_" + allLayers[f].name + "_000-384.xml";
 
-      String the_target = Folder_ENSEMBLE_FORECAST + "/" + FN;
+      String the_target = Folder_ensembleForecast + "/" + FN;
 
       File dir = new File(the_target);
       if (!dir.isFile()) {
@@ -38,7 +38,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
 
   if (new_files_downloaded) {
 
-    String folder_inout = Folder_ENSEMBLE_FORECAST;
+    String folder_inout = Folder_ensembleForecast;
 
     File dir = new File(folder_inout);
     File[] bz2Files = dir.listFiles((d, name) -> name.endsWith(".bz2"));
@@ -70,7 +70,7 @@ void download_ENSEMBLE_FORECAST (int THE_YEAR, int THE_MONTH, int THE_DAY, int T
       }
     }
 
-    ENSEMBLE_FORECAST_load = true;
-    update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+    ensembleForecastShouldLoad = true;
+    update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   }
 }

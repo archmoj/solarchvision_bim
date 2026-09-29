@@ -50,7 +50,7 @@ class PaintTest {
 
   @Test
   void getColorStyle_dispatchesToDRYWWithoutSwappingChannels () {
-    // COLOR_STYLE_Current == 15 maps straight through to DRYW's COL[1..3]
+    // currentColorStyle == 15 maps straight through to DRYW's COL[1..3]
     // as c[1..3] (no reordering) - this is exactly the kind of dispatch
     // where an index mix-up (like the one found and fixed in
     // SolarAtSurface) could hide, so it's checked directly
@@ -170,7 +170,7 @@ class PaintTest {
 
   @Test
   void getColorStyle_style6_swapsRedAndBlueOfBGR () {
-    // COLOR_STYLE_Current == 6 maps c[1]=COL[3], c[3]=COL[1] - BGR(0) is
+    // currentColorStyle == 6 maps c[1]=COL[3], c[3]=COL[1] - BGR(0) is
     // blue (0,0,255); swapped, it should come out red.
     float[] result = app.PAINT.getColorStyle(6, 0f);
     assertArrayEquals(new float[]{255, 255, 0, 0}, result, EPS);
@@ -178,7 +178,7 @@ class PaintTest {
 
   @Test
   void getColorStyle_style18_reversesDRYWCBDsChannelsWithARemappedInput () {
-    // COLOR_STYLE_Current == 18 calls DRYWCBD(2*(j-0.5)) and reverses
+    // currentColorStyle == 18 calls DRYWCBD(2*(j-0.5)) and reverses
     // its channels (c[1]=COL[3], c[3]=COL[1]) - checked against calling
     // DRYWCBD directly with the same remapped input, so both the input
     // transform and the channel reversal are verified at once.

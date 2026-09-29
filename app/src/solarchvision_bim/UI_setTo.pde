@@ -2,7 +2,7 @@ void UI_setTo_Create_Nothing () {
 
   CreateObject = CREATE.Nothing;
 
-  WIN3D.UI_CurrentTask = UITASK.Create;
+  WIN3D.currentTool = UITASK.Create;
 
   UI_rollout.revise();
 }
@@ -40,12 +40,12 @@ void UI_setTo_Create_Vertex () {
 void UI_setTo_Create_Face () {
   UI_setTo_Create_Nothing();
 
-  current_Material = User3D.default_Material;
-  current_Tessellation = User3D.default_Tessellation;
-  current_Layer = User3D.default_Layer;
-  current_Visibility = User3D.default_Visibility;
-  current_Weight = User3D.default_Weight;
-  current_Closed = User3D.default_Closed;
+  current_Material = User3D.defaultMaterial;
+  current_Tessellation = User3D.defaultTessellation;
+  current_Layer = User3D.defaultLayer;
+  current_Visibility = User3D.defaultVisibility;
+  current_Weight = User3D.defaultWeight;
+  current_Closed = User3D.defaultClosed;
 
   allFaces.beginNewFace();
 
@@ -56,12 +56,12 @@ void UI_setTo_Create_Face () {
 void UI_setTo_Create_Polyline () {
   UI_setTo_Create_Nothing();
 
-  current_Material = User3D.default_Material;
-  current_Tessellation = User3D.default_Tessellation;
-  current_Layer = User3D.default_Layer;
-  current_Visibility = User3D.default_Visibility;
-  current_Weight = User3D.default_Weight;
-  current_Closed = User3D.default_Closed;
+  current_Material = User3D.defaultMaterial;
+  current_Tessellation = User3D.defaultTessellation;
+  current_Layer = User3D.defaultLayer;
+  current_Visibility = User3D.defaultVisibility;
+  current_Weight = User3D.defaultWeight;
+  current_Closed = User3D.defaultClosed;
 
   allPolylines.beginNewPolyline();
 
@@ -100,7 +100,7 @@ void UI_setTo_Create_Parametric (int n) {
   UI_setTo_Create_Nothing();
 
   CreateObject = CREATE.Parametric;
-  User3D.create_Parametric_Type = n;
+  User3D.creatorParametricTypeIndex = n;
 
   switch_category(ObjectCategory.GROUP);
 }
@@ -166,9 +166,9 @@ void UI_setTo_Create_Box () {
 
   CreateObject = CREATE.SuperOBJ;
 
-  User3D.create_powX = CubePower;
-  User3D.create_powY = CubePower;
-  User3D.create_powZ = CubePower;
+  User3D.creatorSuperellipsoidPowerX = CubePower;
+  User3D.creatorSuperellipsoidPowerY = CubePower;
+  User3D.creatorSuperellipsoidPowerZ = CubePower;
 
   switch_category(ObjectCategory.GROUP);
 }
@@ -179,9 +179,9 @@ void UI_setTo_Create_Icosahedron () {
 
   CreateObject = CREATE.SuperOBJ;
 
-  User3D.create_powX = 1;
-  User3D.create_powY = 1;
-  User3D.create_powZ = 1;
+  User3D.creatorSuperellipsoidPowerX = 1;
+  User3D.creatorSuperellipsoidPowerY = 1;
+  User3D.creatorSuperellipsoidPowerZ = 1;
 
   switch_category(ObjectCategory.GROUP);
 }
@@ -191,9 +191,9 @@ void UI_setTo_Create_Octahedron () {
 
   CreateObject = CREATE.SuperOBJ;
 
-  User3D.create_powX = 1;
-  User3D.create_powY = 1;
-  User3D.create_powZ = 1;
+  User3D.creatorSuperellipsoidPowerX = 1;
+  User3D.creatorSuperellipsoidPowerY = 1;
+  User3D.creatorSuperellipsoidPowerZ = 1;
 
   switch_category(ObjectCategory.GROUP);
 }
@@ -203,9 +203,9 @@ void UI_setTo_Create_Sphere () {
 
   CreateObject = CREATE.SuperOBJ;
 
-  User3D.create_powX = 2;
-  User3D.create_powY = 2;
-  User3D.create_powZ = 2;
+  User3D.creatorSuperellipsoidPowerX = 2;
+  User3D.creatorSuperellipsoidPowerY = 2;
+  User3D.creatorSuperellipsoidPowerZ = 2;
 
   switch_category(ObjectCategory.GROUP);
 }
@@ -215,9 +215,9 @@ void UI_setTo_Create_Cylinder () {
 
   CreateObject = CREATE.SuperOBJ;
 
-  User3D.create_powX = 2;
-  User3D.create_powY = 2;
-  User3D.create_powZ = CubePower;
+  User3D.creatorSuperellipsoidPowerX = 2;
+  User3D.creatorSuperellipsoidPowerY = 2;
+  User3D.creatorSuperellipsoidPowerZ = CubePower;
 
   switch_category(ObjectCategory.GROUP);
 }
@@ -227,9 +227,9 @@ void UI_setTo_Create_Cushion () {
 
   CreateObject = CREATE.SuperOBJ;
 
-  User3D.create_powX = CubePower;
-  User3D.create_powY = CubePower;
-  User3D.create_powZ = 2;
+  User3D.creatorSuperellipsoidPowerX = CubePower;
+  User3D.creatorSuperellipsoidPowerY = CubePower;
+  User3D.creatorSuperellipsoidPowerZ = 2;
 
   switch_category(ObjectCategory.GROUP);
 }
@@ -238,7 +238,7 @@ void UI_setTo_Create_Cushion () {
 
 
 void UI_setTo_Modify_Move (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Move;
+  WIN3D.currentTool = UITASK.Move;
 
   Select3D.posVector = n;
 
@@ -246,7 +246,7 @@ void UI_setTo_Modify_Move (int n) {
 }
 
 void UI_setTo_Modify_Scale (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Scale;
+  WIN3D.currentTool = UITASK.Scale;
 
   Select3D.scaleVector = n;
 
@@ -255,7 +255,7 @@ void UI_setTo_Modify_Scale (int n) {
 
 
 void UI_setTo_Modify_Rotate (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Rotate;
+  WIN3D.currentTool = UITASK.Rotate;
 
   Select3D.rotVector = n;
 
@@ -263,114 +263,114 @@ void UI_setTo_Modify_Rotate (int n) {
 }
 
 void UI_setTo_Modify_Seed (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Seed_Material;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.Seed_Material;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Tessellation (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Tessellation;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.Tessellation;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Layer (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Layer;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.Layer;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Visibility (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Visibility;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.Visibility;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Weight (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Weight;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.Weight;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_DegreeMax (int n) {
-  WIN3D.UI_CurrentTask = UITASK.DegreeMax;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.DegreeMax;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_BranchTilt (int n) {
-  WIN3D.UI_CurrentTask = UITASK.BranchTilt;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.BranchTilt;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_BranchTwist (int n) {
-  WIN3D.UI_CurrentTask = UITASK.BranchTwist;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.BranchTwist;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_BranchRatio (int n) {
-  WIN3D.UI_CurrentTask = UITASK.BranchRatio;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.BranchRatio;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_TreeBase (int n) {
-  WIN3D.UI_CurrentTask = UITASK.TreeBase;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.TreeBase;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 
 void UI_setTo_Modify_TrunkSize (int n) {
-  WIN3D.UI_CurrentTask = UITASK.TrunkSize;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.TrunkSize;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_LeafSize (int n) {
-  WIN3D.UI_CurrentTask = UITASK.LeafSize;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.LeafSize;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Model1DsProps (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Model1DsProps;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.Model1DsProps;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Pivot (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Pivot;
-  WIN3D.UI_TaskModifyParameter = n; // 0:change selection 1:pick from 2:assign to
+  WIN3D.currentTool = UITASK.Pivot;
+  WIN3D.toolParameterModifier = n; // 0:change selection 1:pick from 2:assign to
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Normal (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Normal;
-  WIN3D.UI_TaskModifyParameter = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot
+  WIN3D.currentTool = UITASK.Normal;
+  WIN3D.toolParameterModifier = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_FirstVertex (int n) {
-  WIN3D.UI_CurrentTask = UITASK.FirstVertex;
-  WIN3D.UI_TaskModifyParameter = n; // 1:default
+  WIN3D.currentTool = UITASK.FirstVertex;
+  WIN3D.toolParameterModifier = n; // 1:default
 
   UI_rollout.revise();
 }
@@ -379,30 +379,30 @@ void UI_setTo_Modify_FirstVertex (int n) {
 
 
 void UI_setTo_Modify_Drop (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Drop;
+  WIN3D.currentTool = UITASK.Drop;
 
-  WIN3D.UI_TaskModifyParameter = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
+  WIN3D.toolParameterModifier = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
 
   UI_rollout.revise();
 }
 
 
 void UI_setTo_Modify_GetLength (int n) {
-  WIN3D.UI_CurrentTask = UITASK.GetLength;
+  WIN3D.currentTool = UITASK.GetLength;
 
-  WIN3D.UI_TaskModifyParameter = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane)
+  WIN3D.toolParameterModifier = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane)
 
   UI_rollout.revise();
 }
 
 void UI_setTo_Modify_Power (int n) {
 
-  if (n == 0) WIN3D.UI_CurrentTask = UITASK.PowerX; // x
-  if (n == 1) WIN3D.UI_CurrentTask = UITASK.PowerY; // y
-  if (n == 2) WIN3D.UI_CurrentTask = UITASK.PowerZ; // z
-  if (n == 3) WIN3D.UI_CurrentTask = UITASK.PowerAll; // xyz
+  if (n == 0) WIN3D.currentTool = UITASK.PowerX; // x
+  if (n == 1) WIN3D.currentTool = UITASK.PowerY; // y
+  if (n == 2) WIN3D.currentTool = UITASK.PowerZ; // z
+  if (n == 3) WIN3D.currentTool = UITASK.PowerAll; // xyz
 
-  WIN3D.UI_TaskModifyParameter = 0; // 0:change
+  WIN3D.toolParameterModifier = 0; // 0:change
 
   UI_rollout.revise();
 }
@@ -417,7 +417,7 @@ void UI_setTo_Modify_Power (int n) {
 
 
 void UI_setTo_View_ProjectionType (int n) {
-  WIN3D.ViewType = n;
+  WIN3D.projectionTypeIndex = n;
 
   UI_rollout.revise();
 
@@ -426,7 +426,7 @@ void UI_setTo_View_ProjectionType (int n) {
 
 void UI_setTo_View_PickSelect (int n) {
 
-  WIN3D.UI_CurrentTask = UITASK.PickSelect;
+  WIN3D.currentTool = UITASK.PickSelect;
 
   addNewSelectionToPreviousSelection = 0;
 
@@ -442,7 +442,7 @@ void UI_setTo_View_PickSelect (int n) {
 }
 
 void UI_setTo_View_WindowSelect (int n) {
-  WIN3D.UI_CurrentTask = UITASK.RectSelect;
+  WIN3D.currentTool = UITASK.RectSelect;
 
   addNewSelectionToPreviousSelection = 0;
 
@@ -488,19 +488,19 @@ void UI_setTo_View_PivotZ (int n) {
 void UI_setTo_View_Truck (int n) {
 
   if (n == 0) {
-    WIN3D.UI_CurrentTask = UITASK.Zoom_Orbit_Pan;
+    WIN3D.currentTool = UITASK.zoom_Orbit_Pan;
   }
 
   if (n == 1) {
-    WIN3D.UI_CurrentTask = UITASK.Truck_Orbit;
-    WIN3D.UI_TaskModifyParameter = 0;
-    WIN3D.UI_OptionXorY = 0;
+    WIN3D.currentTool = UITASK.Truck_Orbit;
+    WIN3D.toolParameterModifier = 0;
+    WIN3D.targetAxisIndex = 0;
   }
 
   if (n == 2) {
-    WIN3D.UI_CurrentTask = UITASK.Truck_Orbit;
-    WIN3D.UI_TaskModifyParameter = 0;
-    WIN3D.UI_OptionXorY = 1;
+    WIN3D.currentTool = UITASK.Truck_Orbit;
+    WIN3D.toolParameterModifier = 0;
+    WIN3D.targetAxisIndex = 1;
   }
 
   UI_rollout.revise();
@@ -510,7 +510,7 @@ void UI_setTo_View_Truck (int n) {
 void UI_setTo_View_DistMouseXY (int n) {
 
   if (n == 0) {
-    WIN3D.UI_CurrentTask = UITASK.DistMouseXY_TargetRollXY_TargetRollZ;
+    WIN3D.currentTool = UITASK.DistMouseXY_TargetRollXY_TargetRollZ;
   }
 
   UI_rollout.revise();
@@ -521,7 +521,7 @@ void UI_setTo_View_DistMouseXY (int n) {
 void UI_setTo_View_CameraDistance (int n) {
 
   if (n == 0) {
-    WIN3D.UI_CurrentTask = UITASK.CameraDistance_TargetRollXY_TargetRollZ;
+    WIN3D.currentTool = UITASK.CameraDistance_TargetRollXY_TargetRollZ;
   }
 
   UI_rollout.revise();
@@ -532,19 +532,19 @@ void UI_setTo_View_CameraDistance (int n) {
 void UI_setTo_View_CameraRoll (int n) {
 
   if (n == 0) {
-    WIN3D.UI_CurrentTask = UITASK.CameraRoll_Pan;
+    WIN3D.currentTool = UITASK.CameraRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D.UI_CurrentTask = UITASK.CameraRollXY_CameraRollZ;
-    WIN3D.UI_TaskModifyParameter = 0;
-    WIN3D.UI_OptionXorY = 0;
+    WIN3D.currentTool = UITASK.CameraRollXY_CameraRollZ;
+    WIN3D.toolParameterModifier = 0;
+    WIN3D.targetAxisIndex = 0;
   }
 
   if (n == 2) {
-    WIN3D.UI_CurrentTask = UITASK.CameraRollXY_CameraRollZ;
-    WIN3D.UI_TaskModifyParameter = 0;
-    WIN3D.UI_OptionXorY = 1;
+    WIN3D.currentTool = UITASK.CameraRollXY_CameraRollZ;
+    WIN3D.toolParameterModifier = 0;
+    WIN3D.targetAxisIndex = 1;
   }
 
   UI_rollout.revise();
@@ -555,19 +555,19 @@ void UI_setTo_View_CameraRoll (int n) {
 void UI_setTo_View_TargetRoll (int n) {
 
   if (n == 0) {
-    WIN3D.UI_CurrentTask = UITASK.TargetRoll_Pan;
+    WIN3D.currentTool = UITASK.TargetRoll_Pan;
   }
 
   if (n == 1) {
-    WIN3D.UI_CurrentTask = UITASK.TargetRollXY_TargetRollZ;
-    WIN3D.UI_TaskModifyParameter = 0;
-    WIN3D.UI_OptionXorY = 0;
+    WIN3D.currentTool = UITASK.TargetRollXY_TargetRollZ;
+    WIN3D.toolParameterModifier = 0;
+    WIN3D.targetAxisIndex = 0;
   }
 
   if (n == 2) {
-    WIN3D.UI_CurrentTask = UITASK.TargetRollXY_TargetRollZ;
-    WIN3D.UI_TaskModifyParameter = 0;
-    WIN3D.UI_OptionXorY = 1;
+    WIN3D.currentTool = UITASK.TargetRollXY_TargetRollZ;
+    WIN3D.toolParameterModifier = 0;
+    WIN3D.targetAxisIndex = 1;
   }
 
   UI_rollout.revise();
@@ -577,19 +577,19 @@ void UI_setTo_View_TargetRoll (int n) {
 void UI_setTo_View_Orbit (int n) {
 
   if (n == 0) {
-    WIN3D.UI_CurrentTask = UITASK.Zoom_Orbit_Pan;
+    WIN3D.currentTool = UITASK.zoom_Orbit_Pan;
   }
 
   if (n == 1) {
-    WIN3D.UI_CurrentTask = UITASK.Truck_Orbit;
-    WIN3D.UI_TaskModifyParameter = 1;
-    WIN3D.UI_OptionXorY = 0;
+    WIN3D.currentTool = UITASK.Truck_Orbit;
+    WIN3D.toolParameterModifier = 1;
+    WIN3D.targetAxisIndex = 0;
   }
 
   if (n == 2) {
-    WIN3D.UI_CurrentTask = UITASK.Truck_Orbit;
-    WIN3D.UI_TaskModifyParameter = 1;
-    WIN3D.UI_OptionXorY = 1;
+    WIN3D.currentTool = UITASK.Truck_Orbit;
+    WIN3D.toolParameterModifier = 1;
+    WIN3D.targetAxisIndex = 1;
   }
 
   UI_rollout.revise();
@@ -599,7 +599,7 @@ void UI_setTo_View_Orbit (int n) {
 
 void UI_setTo_View_LandOrbit (int n) {
 
-  WIN3D.UI_CurrentTask = UITASK.LandOrbit_Pan_TargetRollZ;
+  WIN3D.currentTool = UITASK.LandOrbit_Pan_TargetRollZ;
 
   UI_rollout.revise();
 }
@@ -623,7 +623,7 @@ void UI_setTo_View_LookAtSelection (int n) {
 
 void UI_setTo_View_LookAtDirection (int n) {
 
-  WIN3D.UI_CurrentTask = UITASK.LookAtDirection;
+  WIN3D.currentTool = UITASK.LookAtDirection;
 
   UI_rollout.revise();
 }
@@ -631,9 +631,9 @@ void UI_setTo_View_LookAtDirection (int n) {
 
 void UI_setTo_View_LookAtOrigin (int n) {
 
-  WIN3D.position_X = 0;
-  WIN3D.position_Y = 0;
-  WIN3D.position_Z = 0;
+  WIN3D.positionX = 0;
+  WIN3D.positionY = 0;
+  WIN3D.positionZ = 0;
 
   {
     // automatically set another choice of ineterest
@@ -651,15 +651,15 @@ void UI_setTo_View_LookAtOrigin (int n) {
 void UI_setTo_View_Pan (int n) {
 
   if (n == 0) {
-    WIN3D.UI_CurrentTask = UITASK.Pan_TargetRoll;
+    WIN3D.currentTool = UITASK.Pan_TargetRoll;
   }
 
   if (n == 1) {
-    WIN3D.UI_CurrentTask = UITASK.PanX_TargetRoll;
+    WIN3D.currentTool = UITASK.PanX_TargetRoll;
   }
 
   if (n == 2) {
-    WIN3D.UI_CurrentTask = UITASK.PanY_TargetRoll;
+    WIN3D.currentTool = UITASK.PanY_TargetRoll;
   }
 
 
@@ -667,12 +667,12 @@ void UI_setTo_View_Pan (int n) {
 }
 
 void UI_setTo_View_ZOOM (int n) {
-  WIN3D.UI_CurrentTask = UITASK.Pan_Height;
+  WIN3D.currentTool = UITASK.Pan_Height;
 
   UI_rollout.revise();
 
   if (n == 1) {
-    WIN3D.Zoom = 60;
+    WIN3D.zoom = 60;
 
     view_changed();
   }
@@ -680,7 +680,7 @@ void UI_setTo_View_ZOOM (int n) {
 
 void UI_setTo_View_3DModelSize () {
 
-  WIN3D.UI_CurrentTask = UITASK.ModelSize_Pan_TargetRoll;
+  WIN3D.currentTool = UITASK.ModelSize_Pan_TargetRoll;
 
   UI_rollout.revise();
 
@@ -689,7 +689,7 @@ void UI_setTo_View_3DModelSize () {
 
 void UI_setTo_View_SkydomeSize () {
 
-  WIN3D.UI_CurrentTask = UITASK.SkydomeSize;
+  WIN3D.currentTool = UITASK.SkydomeSize;
 
   UI_rollout.revise();
 
@@ -698,7 +698,7 @@ void UI_setTo_View_SkydomeSize () {
 
 void UI_setTo_View_AllModelSize () {
 
-  WIN3D.UI_CurrentTask = UITASK.AllModelSize;
+  WIN3D.currentTool = UITASK.AllModelSize;
 
   UI_rollout.revise();
 
@@ -711,7 +711,7 @@ void UI_setTo_Viewport (int n) {
 
   updateBars = true;
 
-  ViewLayout = n;
+  viewLayout = n;
   update_frame_layout();
 
   UI_rollout.revise();
@@ -719,58 +719,58 @@ void UI_setTo_Viewport (int n) {
 
 void UI_setTo_View_3DViewPoint (int n) {
 
-  WIN3D.currentCamera = 0;
+  WIN3D.currentCameraIndex = 0;
 
-  WIN3D.apply_currentCamera();
+  WIN3D.apply_currentCameraIndex();
 
   if (n == 0) {
-    WIN3D.rotateZ_3DViewport_around_Selection(0 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(0 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.rotationZ);
   }
 
   if (n == 1) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.rotationZ);
   }
 
   if (n == 2) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(-90 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(-90 - WIN3D.rotationZ);
   }
 
   if (n == 3) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(180 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(180 - WIN3D.rotationZ);
   }
 
   if (n == 4) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(90 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(90 - WIN3D.rotationZ);
   }
 
   if (n == 5) {
-    WIN3D.rotateZ_3DViewport_around_Selection(180 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(180 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(0 - WIN3D.rotationZ);
   }
 
   if (n == 6) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(-45 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(-45 - WIN3D.rotationZ);
   }
 
   if (n == 7) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(45 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(45 - WIN3D.rotationZ);
   }
 
   if (n == 8) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(135 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(135 - WIN3D.rotationZ);
   }
 
   if (n == 9) {
-    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotation_X);
-    WIN3D.rotateXY_3DViewport_around_Selection(-135 - WIN3D.rotation_Z);
+    WIN3D.rotateZ_3DViewport_around_Selection(90 - WIN3D.rotationX);
+    WIN3D.rotateXY_3DViewport_around_Selection(-135 - WIN3D.rotationZ);
   }
 
 

@@ -20,7 +20,7 @@ void exportAutocadScript () {
         float y = allPoints.getY(allFaces.nodes[f][j]);
         float z = allPoints.getZ(allFaces.nodes[f][j]);
 
-        scrOutput.println(nf(x, 0, User3D.export_PrecisionVertex) + "," + nf(y, 0, User3D.export_PrecisionVertex) + "," + nf(z, 0, User3D.export_PrecisionVertex));
+        scrOutput.println(nf(x, 0, User3D.exporterPrecisionVertex) + "," + nf(y, 0, User3D.exporterPrecisionVertex) + "," + nf(z, 0, User3D.exporterPrecisionVertex));
       }
       scrOutput.println();
       scrOutput.println();
@@ -37,7 +37,7 @@ void exportAutocadScript () {
       float y = allPoints.getY(allPolylines.nodes[f][j]);
       float z = allPoints.getZ(allPolylines.nodes[f][j]);
 
-      scrOutput.println(nf(x, 0, User3D.export_PrecisionVertex) + "," + nf(y, 0, User3D.export_PrecisionVertex) + "," + nf(z, 0, User3D.export_PrecisionVertex));
+      scrOutput.println(nf(x, 0, User3D.exporterPrecisionVertex) + "," + nf(y, 0, User3D.exporterPrecisionVertex) + "," + nf(z, 0, User3D.exporterPrecisionVertex));
     }
 
     if (allPolylines.getMaterial(f) == 1) {

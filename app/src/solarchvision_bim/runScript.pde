@@ -1650,32 +1650,32 @@ String runScriptLine (String lineSTR) {
     }
 
     case "SHADE.WIRE": {
-      WIN3D.FacesShade = SHADE.Surface_Wire;
+      WIN3D.shadingMode = SHADE.Surface_Wire;
       allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
       view_changed();
       return hint;
     }
 
     case "SHADE.BASE": {
-      WIN3D.FacesShade = SHADE.Surface_Base;
+      WIN3D.shadingMode = SHADE.Surface_Base;
       view_changed();
       return hint;
     }
 
     case "SHADE.WHITE": {
-      WIN3D.FacesShade = SHADE.Surface_White;
+      WIN3D.shadingMode = SHADE.Surface_White;
       view_changed();
       return hint;
     }
 
     case "SHADE.MATERIALS": {
-      WIN3D.FacesShade = SHADE.Surface_Materials;
+      WIN3D.shadingMode = SHADE.Surface_Materials;
       view_changed();
       return hint;
     }
 
     case "SHADE.GLOBAL": {
-      WIN3D.FacesShade = SHADE.Global_Solar;
+      WIN3D.shadingMode = SHADE.Global_Solar;
       GlobalSolar_rebuild_array = true;
       regenerate_desired_bakings();
       view_changed();
@@ -1683,7 +1683,7 @@ String runScriptLine (String lineSTR) {
     }
 
     case "SHADE.REAL": {
-      WIN3D.FacesShade = SHADE.Vertex_Solar;
+      WIN3D.shadingMode = SHADE.Vertex_Solar;
       VertexSolar_rebuild_array = true;
       regenerate_desired_bakings();
       view_changed();
@@ -1691,13 +1691,13 @@ String runScriptLine (String lineSTR) {
     }
 
     case "SHADE.SOLID": {
-      WIN3D.FacesShade = SHADE.Vertex_Solid;
+      WIN3D.shadingMode = SHADE.Vertex_Solid;
       view_changed();
       return hint;
     }
 
     case "SHADE.ELEVATION": {
-      WIN3D.FacesShade = SHADE.Vertex_Elevation;
+      WIN3D.shadingMode = SHADE.Vertex_Elevation;
       view_changed();
       return hint;
     }

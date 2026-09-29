@@ -12,9 +12,9 @@ class Land3D {
 
   int displayTessellation = 0; //0; //2;
 
-  int palette_CLR = 1;
-  int palette_DIR = -1;
-  float palette_MLT = 0.001;
+  int colorScaleIndex = 1;
+  int colorScaleDirection = -1;
+  float colorScaleFactor = 0.001;
 
   float[][][] Mesh;
 
@@ -25,8 +25,8 @@ class Land3D {
   int Textures_num = 0;
 
   // Polar grid
-  int num_rows = 12; // 24;
-  int num_columns = 24 + 1; // 48 + 1;
+  int rowCount = 12; // 24;
+  int columnCount = 24 + 1; // 48 + 1;
 
   int skipStart = 1;
   int skipEnd = 0;
@@ -96,9 +96,9 @@ class Land3D {
   }
 
   void update_mesh () {
-    this.Mesh = new float[this.num_rows][this.num_columns][3];
-    for (int i = 0; i < this.num_rows; i++) {
-      for (int j = 0; j < this.num_columns; j++) {
+    this.Mesh = new float[this.rowCount][this.columnCount][3];
+    for (int i = 0; i < this.rowCount; i++) {
+      for (int j = 0; j < this.columnCount; j++) {
         java.util.Arrays.fill(this.Mesh[i][j], FLOAT_undefined);
       }
     }
@@ -124,11 +124,11 @@ class Land3D {
   }
 
   void loadMeshFromFiles () {
-    for (int i = 0; i < this.num_rows; i++) {
+    for (int i = 0; i < this.rowCount; i++) {
       XML FileALL = loadXML(Folder_Land + "/" + nf(i, 0) + ".xml");
       XML[] children0 = FileALL.getChildren("result");
 
-      for (int j = 0; j < this.num_columns; j++) {
+      for (int j = 0; j < this.columnCount; j++) {
         String txt_elevation = children0[j].getChild("elevation").getContent();
         XML[] children1 = children0[j].getChildren("location");
         String txt_latitude = children1[0].getChild("lat").getContent();
@@ -147,17 +147,17 @@ class Land3D {
 
   void normalizeMeshElevation () {
     float h = this.Mesh[0][0][2] + HeightAboveGround;
-    for (int i = 0; i < this.num_rows; i++) {
-      for (int j = 0; j < this.num_columns; j++) {
+    for (int i = 0; i < this.rowCount; i++) {
+      for (int j = 0; j < this.columnCount; j++) {
         this.Mesh[i][j][2] -= h;
       }
     }
   }
 
   void flat_mesh () {
-    this.Mesh = new float[this.num_rows][this.num_columns][3];
-    for (int i = 0; i < this.num_rows; i++) {
-      for (int j = 0; j < this.num_columns; j++) {
+    this.Mesh = new float[this.rowCount][this.columnCount][3];
+    for (int i = 0; i < this.rowCount; i++) {
+      for (int j = 0; j < this.columnCount; j++) {
         double[] LON_LAT = getLandGrid(i, j);
         float[] XY = funcs.convert_lonlat2XY(STATION.getLongitude(), STATION.getLatitude(), LON_LAT[0], LON_LAT[1]);
         this.Mesh[i][j][0] = XY[0];
@@ -173,7 +173,7 @@ class Land3D {
     double stp_lon = stp_lat / funcs.cos_ang(STATION.getLatitude());
 
     float q = pow(2, 0.5);
-    float t = j * 360.0 / (this.num_columns - 1);
+    float t = j * 360.0 / (this.columnCount - 1);
     float r = (i > 0) ? pow(q, i - 1) : 0;
 
     double _lon = STATION.getLongitude() + stp_lon * r * funcs.cos_ang(t);
@@ -183,15 +183,15 @@ class Land3D {
   }
 
   void download_mesh () {
-    this.Mesh = new float[this.num_rows][this.num_columns][3];
+    this.Mesh = new float[this.rowCount][this.columnCount][3];
 
-    for (int i = 0; i < this.num_rows; i++) {
+    for (int i = 0; i < this.rowCount; i++) {
       String the_target = Folder_Land + "/" + nf(i, 0) + ".xml";
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
       String the_link = "";
-      for (int j = 0; j < this.num_columns; j++) {
+      for (int j = 0; j < this.columnCount; j++) {
         the_link += the_link.equals("") ? "https://api.terraintap.com/elevation/xml?locations=" : "%7C"; // "|"
 
         double[] LON_LAT = getLandGrid(i, j);
@@ -265,7 +265,7 @@ class Land3D {
     int PAL_direction = SHADE.get_PAL_direction();
     float PAL_multiplier = SHADE.get_PAL_multiplier();
 
-    if (User3D.export_MaterialLibrary) {
+    if (User3D.exporterMaterialLibrary) {
       writeLandMaterials(target_window);
     }
 
@@ -274,7 +274,7 @@ class Land3D {
     }
 
     int i_start = this.skipStart;
-    int i_end = this.num_rows - 1 - this.skipEnd;
+    int i_end = this.rowCount - 1 - this.skipEnd;
     if (target_window == TypeWindow.LandGap) {
       i_start = 0;
       i_end = this.skipStart;
@@ -291,7 +291,7 @@ class Land3D {
       }
 
       int tessellation = this.displayTessellation;
-      if (WIN3D.FacesShade == SHADE.Surface_Base) tessellation = 0;
+      if (WIN3D.shadingMode == SHADE.Surface_Base) tessellation = 0;
       if (target_window == TypeWindow.LandMesh) tessellation = 0;
 
       int totalNumberOfSubs = 1;
@@ -363,18 +363,18 @@ class Land3D {
   }
 
   void beginLandGroup () {
-    current_Material = User3D.default_Material;
-    current_Tessellation = User3D.default_Tessellation;
-    current_Layer = User3D.default_Layer;
-    current_Visibility = User3D.default_Visibility;
-    current_Weight = User3D.default_Weight;
-    current_Closed = User3D.default_Closed;
+    current_Material = User3D.defaultMaterial;
+    current_Tessellation = User3D.defaultTessellation;
+    current_Layer = User3D.defaultLayer;
+    current_Visibility = User3D.defaultVisibility;
+    current_Weight = User3D.defaultWeight;
+    current_Closed = User3D.defaultClosed;
 
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
   }
 
   void drawLandRow (int target_window, int i, int tessellation, int totalNumberOfSubs, int _turn, int PAL_type, int PAL_direction, float PAL_multiplier) {
-    for (int j = 0; j < this.num_columns - 1; j++) {
+    for (int j = 0; j < this.columnCount - 1; j++) {
       drawLandCell(target_window, i, j, tessellation, totalNumberOfSubs, _turn, PAL_type, PAL_direction, PAL_multiplier);
     }
 
@@ -385,7 +385,7 @@ class Land3D {
 
   // Creates a polygon around the center to close the gap left by skipStart.
   void closeLandCenterGap (int i) {
-    int[] _face = new int[this.num_columns - 1];
+    int[] _face = new int[this.columnCount - 1];
     for (int j = 0; j < _face.length; j++) {
       _face[j] = allPoints.create(this.Mesh[i + 1][j][0], this.Mesh[i + 1][j][1], this.Mesh[i + 1][j][2]);
     }
@@ -438,9 +438,9 @@ class Land3D {
   float[][] projectLandSubFaceForWIN3D (float[][] subFace) {
     float[][] poly = new float[subFace.length][3];
     for (int s = 0; s < subFace.length; s++) {
-      poly[s][0] =  subFace[s][0] * OBJECTS_scale * WIN3D.scale;
-      poly[s][1] = -subFace[s][1] * OBJECTS_scale * WIN3D.scale;
-      poly[s][2] =  subFace[s][2] * OBJECTS_scale * WIN3D.scale;
+      poly[s][0] =  subFace[s][0] * overallScale * WIN3D.scale;
+      poly[s][1] = -subFace[s][1] * overallScale * WIN3D.scale;
+      poly[s][2] =  subFace[s][2] * overallScale * WIN3D.scale;
     }
     return poly;
   }
@@ -513,7 +513,7 @@ class Land3D {
       }
     }
 
-    if ((target_window == TypeWindow.OBJ3D) && (_turn == 3) && this.displayTexture && User3D.export_MaterialLibrary && (n_Map != -1)) {
+    if ((target_window == TypeWindow.OBJ3D) && (_turn == 3) && this.displayTexture && User3D.exporterMaterialLibrary && (n_Map != -1)) {
       objOutput.println("usemtl LandMap" + nf(n_Map, 0));
     }
 
@@ -534,9 +534,9 @@ class Land3D {
       htmlOutput.print("\t\t\t\t\t\t<Coordinate point='");
       for (int s = 0; s < subFace.length; s++) {
         if (s > 0) htmlOutput.print(",");
-        htmlOutput.print(nf(subFace[s][0], 0, User3D.export_PrecisionVertex) + " " +
-                          nf(subFace[s][1], 0, User3D.export_PrecisionVertex) + " " +
-                          nf(subFace[s][2], 0, User3D.export_PrecisionVertex));
+        htmlOutput.print(nf(subFace[s][0], 0, User3D.exporterPrecisionVertex) + " " +
+                          nf(subFace[s][1], 0, User3D.exporterPrecisionVertex) + " " +
+                          nf(subFace[s][2], 0, User3D.exporterPrecisionVertex));
       }
       htmlOutput.println("'></Coordinate>");
     }
@@ -567,17 +567,17 @@ class Land3D {
   }
 
   void renderLandVertexShaded (int target_window, float[][] subFace, int s, int PAL_type, int PAL_direction, float PAL_multiplier) {
-    if (WIN3D.FacesShade != SHADE.Surface_Wire) {
+    if (WIN3D.shadingMode != SHADE.Surface_Wire) {
       float[] COL = { 255, 255, 255, 255 };
       int s_next = (s + 1) % subFace.length;
       int s_prev = (s + subFace.length - 1) % subFace.length;
 
-      if (WIN3D.FacesShade == SHADE.Global_Solar) COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
-      if (WIN3D.FacesShade == SHADE.Vertex_Solar) COL = SHADE.vertexRender_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
-      if (WIN3D.FacesShade == SHADE.Vertex_Solid) COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
-      if (WIN3D.FacesShade == SHADE.Vertex_Elevation) COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
-      if (WIN3D.FacesShade == SHADE.Surface_White) COL = SHADE.vertexRender_Surface_White(255);
-      if (WIN3D.FacesShade == SHADE.Surface_Materials) COL = SHADE.vertexRender_Surface_White(223);
+      if (WIN3D.shadingMode == SHADE.Global_Solar) COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
+      if (WIN3D.shadingMode == SHADE.Vertex_Solar) COL = SHADE.vertexRender_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
+      if (WIN3D.shadingMode == SHADE.Vertex_Solid) COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+      if (WIN3D.shadingMode == SHADE.Vertex_Elevation) COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+      if (WIN3D.shadingMode == SHADE.Surface_White) COL = SHADE.vertexRender_Surface_White(255);
+      if (WIN3D.shadingMode == SHADE.Surface_Materials) COL = SHADE.vertexRender_Surface_White(223);
 
       if (target_window == TypeWindow.WIN3D) {
         WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -587,7 +587,7 @@ class Land3D {
     }
 
     if (target_window == TypeWindow.WIN3D) {
-      WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
+      WIN3D.graphics.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, subFace[s][2] * overallScale * WIN3D.scale);
     }
   }
 
@@ -602,14 +602,14 @@ class Land3D {
     if (target_window == TypeWindow.WIN3D) {
       if (n_Map != -1) {
         WIN3D.graphics.vertex(
-          subFace[s][0] * OBJECTS_scale * WIN3D.scale,
-          -subFace[s][1] * OBJECTS_scale * WIN3D.scale,
-          subFace[s][2] * OBJECTS_scale * WIN3D.scale,
+          subFace[s][0] * overallScale * WIN3D.scale,
+          -subFace[s][1] * overallScale * WIN3D.scale,
+          subFace[s][2] * overallScale * WIN3D.scale,
           u * this.Textures_map[n_Map].width,
           v * this.Textures_map[n_Map].height
         );
       } else {
-        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, subFace[s][2] * overallScale * WIN3D.scale);
       }
     }
 
@@ -669,7 +669,7 @@ class Land3D {
     obj_lastFaceNumber += 1;
     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
 
-    if (User3D.export_BackSides) {
+    if (User3D.exporterDoubleSided) {
       obj_lastFaceNumber += 1;
       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
     }
@@ -698,15 +698,15 @@ class Land3D {
       WIN3D.graphics.beginShape();
       if (n_Map != -1) {
         WIN3D.graphics.texture(this.Textures_map[n_Map]);
-        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale, u * this.Textures_map[n_Map].width, v * this.Textures_map[n_Map].height);
-        WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, subFace[s_next][2] * OBJECTS_scale * WIN3D.scale, u_next * this.Textures_map[n_Map].width, v_next * this.Textures_map[n_Map].height);
-        WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale, u_next * this.Textures_map[n_Map].width, v_next * this.Textures_map[n_Map].height);
-        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale, u * this.Textures_map[n_Map].width, v * this.Textures_map[n_Map].height);
+        WIN3D.graphics.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, subFace[s][2] * overallScale * WIN3D.scale, u * this.Textures_map[n_Map].width, v * this.Textures_map[n_Map].height);
+        WIN3D.graphics.vertex(subFace[s_next][0] * overallScale * WIN3D.scale, -subFace[s_next][1] * overallScale * WIN3D.scale, subFace[s_next][2] * overallScale * WIN3D.scale, u_next * this.Textures_map[n_Map].width, v_next * this.Textures_map[n_Map].height);
+        WIN3D.graphics.vertex(subFace[s_next][0] * overallScale * WIN3D.scale, -subFace[s_next][1] * overallScale * WIN3D.scale, (subFace[s_next][2] - CrustDepth) * overallScale * WIN3D.scale, u_next * this.Textures_map[n_Map].width, v_next * this.Textures_map[n_Map].height);
+        WIN3D.graphics.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, (subFace[s][2] - CrustDepth) * overallScale * WIN3D.scale, u * this.Textures_map[n_Map].width, v * this.Textures_map[n_Map].height);
       } else {
-        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, subFace[s][2] * OBJECTS_scale * WIN3D.scale);
-        WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, subFace[s_next][2] * OBJECTS_scale * WIN3D.scale);
-        WIN3D.graphics.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D.scale, -subFace[s_next][1] * OBJECTS_scale * WIN3D.scale, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale);
-        WIN3D.graphics.vertex(subFace[s][0] * OBJECTS_scale * WIN3D.scale, -subFace[s][1] * OBJECTS_scale * WIN3D.scale, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, subFace[s][2] * overallScale * WIN3D.scale);
+        WIN3D.graphics.vertex(subFace[s_next][0] * overallScale * WIN3D.scale, -subFace[s_next][1] * overallScale * WIN3D.scale, subFace[s_next][2] * overallScale * WIN3D.scale);
+        WIN3D.graphics.vertex(subFace[s_next][0] * overallScale * WIN3D.scale, -subFace[s_next][1] * overallScale * WIN3D.scale, (subFace[s_next][2] - CrustDepth) * overallScale * WIN3D.scale);
+        WIN3D.graphics.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, (subFace[s][2] - CrustDepth) * overallScale * WIN3D.scale);
       }
       WIN3D.graphics.endShape(CLOSE);
     }
@@ -719,15 +719,15 @@ class Land3D {
     WIN3D.graphics.noStroke();
     WIN3D.graphics.sphereDetail(6, 4);
 
-    for (int i = 0; i < this.num_rows; i++) {
-      for (int j = 0; j < this.num_columns; j++) {
+    for (int i = 0; i < this.rowCount; i++) {
+      for (int j = 0; j < this.columnCount; j++) {
         float x = this.Mesh[i][j][0];
         float y = this.Mesh[i][j][1];
         float z = this.Mesh[i][j][2];
-        float R = 2.0 * OBJECTS_scale;
+        float R = 2.0 * overallScale;
 
         WIN3D.graphics.pushMatrix();
-        WIN3D.graphics.translate(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+        WIN3D.graphics.translate(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale);
         WIN3D.graphics.sphere(R);
         WIN3D.graphics.popMatrix();
       }
@@ -738,13 +738,13 @@ class Land3D {
     if (!this.displaySurface) return;
 
     int tessellation = this.displayTessellation;
-    if (WIN3D.FacesShade == SHADE.Surface_Base) tessellation = 0;
+    if (WIN3D.shadingMode == SHADE.Surface_Base) tessellation = 0;
 
     int totalNumberOfSubs = 1;
     if (tessellation > 0) totalNumberOfSubs = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // x4: a LAND cell has 4 points
 
-    for (int Li = this.skipStart; Li < this.num_rows - 1 - this.skipEnd; Li++) {
-      for (int Lj = 0; Lj < this.num_columns - 1; Lj++) {
+    for (int Li = this.skipStart; Li < this.rowCount - 1 - this.skipEnd; Li++) {
+      for (int Lj = 0; Lj < this.columnCount - 1; Lj++) {
         float[][] base_Vertices = landCellBaseVertices(Li, Lj);
 
         for (int n = 0; n < totalNumberOfSubs; n++) {
@@ -816,7 +816,7 @@ class Land3D {
 
 
   float[] intersect (float[] ray_pnt, float[] ray_dir) {
-    int numCells = (this.num_rows - 1) * (this.num_columns - 1);
+    int numCells = (this.rowCount - 1) * (this.columnCount - 1);
     float[] best = { -1, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined };
     float pre_dist = FLOAT_undefined;
 
@@ -839,8 +839,8 @@ class Land3D {
   float[] intersectLandCell (int f, float[] ray_pnt, float[] ray_dir) {
     float[] miss = { FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined };
 
-    int LAND_i = f / (this.num_columns - 1);
-    int LAND_j = f % (this.num_columns - 1);
+    int LAND_i = f / (this.columnCount - 1);
+    int LAND_j = f % (this.columnCount - 1);
 
     float[] A = this.Mesh[LAND_i][LAND_j];
     float[] B = this.Mesh[LAND_i][LAND_j + 1];
@@ -894,13 +894,13 @@ class Land3D {
       XML_setBoolean(parent, "displayPoints", this.displayPoints);
       XML_setBoolean(parent, "displayTexture", this.displayTexture);
       XML_setBoolean(parent, "displayDepth", this.displayDepth);
-      XML_setInt(parent, "palette_CLR", this.palette_CLR);
-      XML_setInt(parent, "palette_DIR", this.palette_DIR);
-      XML_setFloat(parent, "palette_MLT", this.palette_MLT);
+      XML_setInt(parent, "colorScaleIndex", this.colorScaleIndex);
+      XML_setInt(parent, "colorScaleDirection", this.colorScaleDirection);
+      XML_setFloat(parent, "colorScaleFactor", this.colorScaleFactor);
       XML_setInt(parent, "skipStart", this.skipStart);
       XML_setInt(parent, "skipEnd", this.skipEnd);
-      XML_setInt(parent, "num_rows", this.num_rows);
-      XML_setInt(parent, "num_columns", this.num_columns);
+      XML_setInt(parent, "rowCount", this.rowCount);
+      XML_setInt(parent, "columnCount", this.columnCount);
 
       int vNo = 0;
       for (int i = 0; i < this.Mesh.length; i++) {
@@ -958,22 +958,22 @@ class Land3D {
       this.displayPoints = XML_getBoolean(parent, "displayPoints");
       this.displayTexture = XML_getBoolean(parent, "displayTexture");
       this.displayDepth = XML_getBoolean(parent, "displayDepth");
-      this.palette_CLR = XML_getInt(parent, "palette_CLR");
-      this.palette_DIR = XML_getInt(parent, "palette_DIR");
-      this.palette_MLT = XML_getFloat(parent, "palette_MLT");
+      this.colorScaleIndex = XML_getInt(parent, "colorScaleIndex");
+      this.colorScaleDirection = XML_getInt(parent, "colorScaleDirection");
+      this.colorScaleFactor = XML_getFloat(parent, "colorScaleFactor");
       this.skipStart = XML_getInt(parent, "skipStart");
       this.skipEnd = XML_getInt(parent, "skipEnd");
-      this.num_rows = XML_getInt(parent, "num_rows");
-      this.num_columns = XML_getInt(parent, "num_columns");
+      this.rowCount = XML_getInt(parent, "rowCount");
+      this.columnCount = XML_getInt(parent, "columnCount");
 
-      this.Mesh = new float[this.num_rows][this.num_columns][3];
+      this.Mesh = new float[this.rowCount][this.columnCount][3];
 
       XML[] children = parent.getChildren("item");
-      for (int i = 0; i < this.num_rows * this.num_columns; i++) {
+      for (int i = 0; i < this.rowCount * this.columnCount; i++) {
         String txt = XML_getContent(children[i]);
         String[] parts = split(txt, ",");
         for (int j = 0; j < parts.length; j++) {
-          this.Mesh[(i / this.num_columns)][(i % this.num_columns)][j] = float(parts[j]);
+          this.Mesh[(i / this.columnCount)][(i % this.columnCount)][j] = float(parts[j]);
         }
       }
     }

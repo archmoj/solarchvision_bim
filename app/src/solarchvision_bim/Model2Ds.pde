@@ -34,8 +34,8 @@ class Model2Ds {
 
   void create (String t, int m, float x, float y, float z, float s) {
 
-    int n1 = this.num_files_PEOPLE;
-    int n2 = this.num_files_PEOPLE + this.num_files_TREES;
+    int n1 = this.peopleFileCount;
+    int n2 = this.peopleFileCount + this.treesFileCount;
 
     int n = m;
 
@@ -64,14 +64,14 @@ class Model2Ds {
 
     if (this.isTree(n)) {
 
-      if (User3D.create_MeshOrSolid != 0) {
+      if (User3D.creatorMeshOrSolidMode != 0) {
 
         float x0 = x;
         float y0 = y;
         float z0 = 0.5 * s + z;
         float r0 = 0.4 * s; // <<<<<<< approximate
 
-        allSolids.create(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, User3D.create_MeshOrSolid);
+        allSolids.create(x0, y0, z0, 2, 2, 2, r0, r0, r0, 0, 0, 0, User3D.creatorMeshOrSolidMode);
       }
     }
 
@@ -124,8 +124,8 @@ class Model2Ds {
   int[] MAP = new int[0];
 
   String[] ImagePath;
-  int num_files_PEOPLE = 0;
-  int num_files_TREES = 0;
+  int peopleFileCount = 0;
+  int treesFileCount = 0;
 
   int num_visualFaces = 3; // internal - number of faces: Vertical, Horizontal Front, Horizontal Back
 
@@ -139,7 +139,7 @@ class Model2Ds {
   int[][] Faces;
 
   boolean isTree (int n) {
-    if (abs(n) > this.num_files_PEOPLE) {
+    if (abs(n) > this.peopleFileCount) {
       return true;
     }
     return false;
@@ -156,8 +156,8 @@ class Model2Ds {
     this.ImagePath = concat(this.ImagePath, this.Filenames_PEOPLE);
     this.ImagePath = concat(this.ImagePath, this.Filenames_TREES);
 
-    this.num_files_PEOPLE = this.Filenames_PEOPLE.length;
-    this.num_files_TREES = this.Filenames_TREES.length;
+    this.peopleFileCount = this.Filenames_PEOPLE.length;
+    this.treesFileCount = this.Filenames_TREES.length;
 
 
     int n = this.ImagePath.length;
@@ -167,7 +167,7 @@ class Model2Ds {
 
     for (int i = 1; i < n; i++) { // leaving [0] null
 
-      if (i <= this.num_files_PEOPLE) {
+      if (i <= this.peopleFileCount) {
         this.ImagePath[i] = Folder_People + "/" + this.ImagePath[i];
       } else {
         this.ImagePath[i] = Folder_Trees + "/" + this.ImagePath[i];
@@ -206,7 +206,7 @@ class Model2Ds {
 
     if (proceed) {
 
-      if (User3D.export_MaterialLibrary) {
+      if (User3D.exporterMaterialLibrary) {
 
         if ((target_window == TypeWindow.HTML) ||
             (target_window == TypeWindow.OBJ3D)) {
@@ -309,11 +309,11 @@ class Model2Ds {
       float[] DistZ = new float [this.num];
 
       for (int f = 0; f < this.num; f++) {
-        float x = this.getX(f) * OBJECTS_scale;
-        float y = this.getY(f) * OBJECTS_scale;
-        float z = this.getZ(f) * OBJECTS_scale;
+        float x = this.getX(f) * overallScale;
+        float y = this.getY(f) * overallScale;
+        float z = this.getZ(f) * overallScale;
 
-        DistZ[f] = dist(x, y, z, WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z);
+        DistZ[f] = dist(x, y, z, WIN3D.cameraX, WIN3D.cameraY, WIN3D.cameraZ);
       }
 
       for (int g = 0; g < this.num; g++) {
@@ -339,15 +339,15 @@ class Model2Ds {
           int w = this.Images[n].width;
           int h = this.Images[n].height;
 
-          float x = this.getX(f) * OBJECTS_scale;
-          float y = this.getY(f) * OBJECTS_scale;
-          float z = this.getZ(f) * OBJECTS_scale;
+          float x = this.getX(f) * overallScale;
+          float y = this.getY(f) * overallScale;
+          float z = this.getZ(f) * overallScale;
 
-          float rh = this.getS(f) * 0.5 * OBJECTS_scale;
+          float rh = this.getS(f) * 0.5 * overallScale;
           float rw = rh * this.ImageRatios[n];
 
-          float t = PI + WIN3D.rotation_Z * PI / 180.0;
-          if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI;
+          float t = PI + WIN3D.rotationZ * PI / 180.0;
+          if (WIN3D.projectionTypeIndex == 1) t = atan2(y - WIN3D.cameraY, x - WIN3D.cameraX) + 0.5 * PI;
 
           if ((target_window == TypeWindow.HTML) ||
               (target_window == TypeWindow.OBJ3D)) {
@@ -369,12 +369,12 @@ class Model2Ds {
 
           if (target_window == TypeWindow.OBJ3D) {
 
-            if (User3D.export_PolyToPoly == 1) {
+            if (User3D.exporterMaintainPolygons == 1) {
               obj_lastGroupNumber += 1;
               objOutput.println("g this." + nf(f, 0) + "_type" + nf(n, 0));
             }
 
-            if (User3D.export_MaterialLibrary) {
+            if (User3D.exporterMaterialLibrary) {
               objOutput.println("usemtl this." + this.ImagePath[n].substring(this.ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
             }
           }
@@ -437,14 +437,14 @@ class Model2Ds {
                     String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
                     String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);
 
-                    if (User3D.export_PolyToPoly == 0) {
+                    if (User3D.exporterMaintainPolygons == 0) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g this." + nf(f, 0) + "_ver");
                     }
 
                     obj_lastFaceNumber += 1;
                     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                    if (User3D.export_BackSides) {
+                    if (User3D.exporterDoubleSided) {
                       obj_lastFaceNumber += 1;
                       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                     }
@@ -461,10 +461,10 @@ class Model2Ds {
                   htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
 
                   htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-                  htmlOutput.print  (      nf(x1, 0, User3D.export_PrecisionVertex) + " " + nf(y1, 0, User3D.export_PrecisionVertex) + " " + nf(z, 0, User3D.export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x2, 0, User3D.export_PrecisionVertex) + " " + nf(y2, 0, User3D.export_PrecisionVertex) + " " + nf(z, 0, User3D.export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x2, 0, User3D.export_PrecisionVertex) + " " + nf(y2, 0, User3D.export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, User3D.export_PrecisionVertex));
-                  htmlOutput.print  ("," + nf(x1, 0, User3D.export_PrecisionVertex) + " " + nf(y1, 0, User3D.export_PrecisionVertex) + " " + nf((z + 2 * rh), 0, User3D.export_PrecisionVertex));
+                  htmlOutput.print  (      nf(x1, 0, User3D.exporterPrecisionVertex) + " " + nf(y1, 0, User3D.exporterPrecisionVertex) + " " + nf(z, 0, User3D.exporterPrecisionVertex));
+                  htmlOutput.print  ("," + nf(x2, 0, User3D.exporterPrecisionVertex) + " " + nf(y2, 0, User3D.exporterPrecisionVertex) + " " + nf(z, 0, User3D.exporterPrecisionVertex));
+                  htmlOutput.print  ("," + nf(x2, 0, User3D.exporterPrecisionVertex) + " " + nf(y2, 0, User3D.exporterPrecisionVertex) + " " + nf((z + 2 * rh), 0, User3D.exporterPrecisionVertex));
+                  htmlOutput.print  ("," + nf(x1, 0, User3D.exporterPrecisionVertex) + " " + nf(y1, 0, User3D.exporterPrecisionVertex) + " " + nf((z + 2 * rh), 0, User3D.exporterPrecisionVertex));
                   htmlOutput.println("'></Coordinate>");
 
                   htmlOutput.println("\t\t\t\t\t\t<TextureCoordinate point='1 0,0 0,0 1,1 1'></TextureCoordinate>");
@@ -477,27 +477,27 @@ class Model2Ds {
                 int nv = f * this.num_visualFaces * 4;
                 int nf = f * this.num_visualFaces;
 
-                this.Vertices[nv + 0][0] = x1 / OBJECTS_scale;
-                this.Vertices[nv + 0][1] = y1 / OBJECTS_scale;
-                this.Vertices[nv + 0][2] = (z) / OBJECTS_scale;
+                this.Vertices[nv + 0][0] = x1 / overallScale;
+                this.Vertices[nv + 0][1] = y1 / overallScale;
+                this.Vertices[nv + 0][2] = (z) / overallScale;
                 this.Vertices[nv + 0][3] = 0;
                 this.Vertices[nv + 0][4] = 1;
 
-                this.Vertices[nv + 1][0] = x2 / OBJECTS_scale;
-                this.Vertices[nv + 1][1] = y2 / OBJECTS_scale;
-                this.Vertices[nv + 1][2] = (z) / OBJECTS_scale;
+                this.Vertices[nv + 1][0] = x2 / overallScale;
+                this.Vertices[nv + 1][1] = y2 / overallScale;
+                this.Vertices[nv + 1][2] = (z) / overallScale;
                 this.Vertices[nv + 1][3] = 1;
                 this.Vertices[nv + 1][4] = 1;
 
-                this.Vertices[nv + 2][0] = x2 / OBJECTS_scale;
-                this.Vertices[nv + 2][1] = y2 / OBJECTS_scale;
-                this.Vertices[nv + 2][2] = (z + 2 * rh) / OBJECTS_scale;
+                this.Vertices[nv + 2][0] = x2 / overallScale;
+                this.Vertices[nv + 2][1] = y2 / overallScale;
+                this.Vertices[nv + 2][2] = (z + 2 * rh) / overallScale;
                 this.Vertices[nv + 2][3] = 1;
                 this.Vertices[nv + 2][4] = 0;
 
-                this.Vertices[nv + 3][0] = x1 / OBJECTS_scale;
-                this.Vertices[nv + 3][1] = y1 / OBJECTS_scale;
-                this.Vertices[nv + 3][2] = (z + 2 * rh) / OBJECTS_scale;
+                this.Vertices[nv + 3][0] = x1 / overallScale;
+                this.Vertices[nv + 3][1] = y1 / overallScale;
+                this.Vertices[nv + 3][2] = (z + 2 * rh) / overallScale;
                 this.Vertices[nv + 3][3] = 0;
                 this.Vertices[nv + 3][4] = 0;
 
@@ -584,14 +584,14 @@ class Model2Ds {
                       String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
                       String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 4, 0);
 
-                      if (User3D.export_PolyToPoly == 0) {
+                      if (User3D.exporterMaintainPolygons == 0) {
                         obj_lastGroupNumber += 1;
                         objOutput.println("g this." + nf(f, 0) + "_hor" + nf(q, 0));
                       }
 
                       obj_lastFaceNumber += 1;
                       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                      if (User3D.export_BackSides) {
+                      if (User3D.exporterDoubleSided) {
                         obj_lastFaceNumber += 1;
                         objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
                       }
@@ -607,10 +607,10 @@ class Model2Ds {
                     htmlOutput.println("\t\t\t\t\t<IndexedFaceSet solid='false' coordIndex='0 1 2 3 -1'>"); // force two-sided
 
                     htmlOutput.print  ("\t\t\t\t\t\t<Coordinate point='");
-                    htmlOutput.print  (      nf(x1, 0, User3D.export_PrecisionVertex) + " " + nf(y1, 0, User3D.export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, User3D.export_PrecisionVertex));
-                    htmlOutput.print  ("," + nf(x2, 0, User3D.export_PrecisionVertex) + " " + nf(y2, 0, User3D.export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, User3D.export_PrecisionVertex));
-                    htmlOutput.print  ("," + nf(x3, 0, User3D.export_PrecisionVertex) + " " + nf(y3, 0, User3D.export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, User3D.export_PrecisionVertex));
-                    htmlOutput.print  ("," + nf(x4, 0, User3D.export_PrecisionVertex) + " " + nf(y4, 0, User3D.export_PrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, User3D.export_PrecisionVertex));
+                    htmlOutput.print  (      nf(x1, 0, User3D.exporterPrecisionVertex) + " " + nf(y1, 0, User3D.exporterPrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, User3D.exporterPrecisionVertex));
+                    htmlOutput.print  ("," + nf(x2, 0, User3D.exporterPrecisionVertex) + " " + nf(y2, 0, User3D.exporterPrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, User3D.exporterPrecisionVertex));
+                    htmlOutput.print  ("," + nf(x3, 0, User3D.exporterPrecisionVertex) + " " + nf(y3, 0, User3D.exporterPrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, User3D.exporterPrecisionVertex));
+                    htmlOutput.print  ("," + nf(x4, 0, User3D.exporterPrecisionVertex) + " " + nf(y4, 0, User3D.exporterPrecisionVertex) + " " + nf((z + 2 * rh * ratio), 0, User3D.exporterPrecisionVertex));
                     htmlOutput.println("'></Coordinate>");
 
                     htmlOutput.print ("\t\t\t\t\t\t<TextureCoordinate point='");
@@ -629,27 +629,27 @@ class Model2Ds {
                     htmlOutput.println("\t\t\t\t</shape>");
                   }
 
-                  this.Vertices[nv + 0][0] = x1 / OBJECTS_scale;
-                  this.Vertices[nv + 0][1] = y1 / OBJECTS_scale;
-                  this.Vertices[nv + 0][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+                  this.Vertices[nv + 0][0] = x1 / overallScale;
+                  this.Vertices[nv + 0][1] = y1 / overallScale;
+                  this.Vertices[nv + 0][2] = (z + 2 * rh * ratio) / overallScale;
                   this.Vertices[nv + 0][3] = 0;
                   this.Vertices[nv + 0][4] = ratio;
 
-                  this.Vertices[nv + 1][0] = x2 / OBJECTS_scale;
-                  this.Vertices[nv + 1][1] = y2 / OBJECTS_scale;
-                  this.Vertices[nv + 1][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+                  this.Vertices[nv + 1][0] = x2 / overallScale;
+                  this.Vertices[nv + 1][1] = y2 / overallScale;
+                  this.Vertices[nv + 1][2] = (z + 2 * rh * ratio) / overallScale;
                   this.Vertices[nv + 1][3] = 1;
                   this.Vertices[nv + 1][4] = ratio;
 
-                  this.Vertices[nv + 2][0] = x3 / OBJECTS_scale;
-                  this.Vertices[nv + 2][1] = y3 / OBJECTS_scale;
-                  this.Vertices[nv + 2][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+                  this.Vertices[nv + 2][0] = x3 / overallScale;
+                  this.Vertices[nv + 2][1] = y3 / overallScale;
+                  this.Vertices[nv + 2][2] = (z + 2 * rh * ratio) / overallScale;
                   this.Vertices[nv + 2][3] = 1;
                   this.Vertices[nv + 2][4] = 0;
 
-                  this.Vertices[nv + 3][0] = x4 / OBJECTS_scale;
-                  this.Vertices[nv + 3][1] = y4 / OBJECTS_scale;
-                  this.Vertices[nv + 3][2] = (z + 2 * rh * ratio) / OBJECTS_scale;
+                  this.Vertices[nv + 3][0] = x4 / overallScale;
+                  this.Vertices[nv + 3][1] = y4 / overallScale;
+                  this.Vertices[nv + 3][2] = (z + 2 * rh * ratio) / overallScale;
                   this.Vertices[nv + 3][3] = 0;
                   this.Vertices[nv + 3][4] = 0;
 
@@ -659,27 +659,27 @@ class Model2Ds {
                   this.Faces[nf][3] = nv + 3;
                 }
                 else { // case: people
-                  this.Vertices[nv + 0][0] = x1 / OBJECTS_scale;
-                  this.Vertices[nv + 0][1] = y1 / OBJECTS_scale;
-                  this.Vertices[nv + 0][2] = (z) / OBJECTS_scale;
+                  this.Vertices[nv + 0][0] = x1 / overallScale;
+                  this.Vertices[nv + 0][1] = y1 / overallScale;
+                  this.Vertices[nv + 0][2] = (z) / overallScale;
                   this.Vertices[nv + 0][3] = 0;
                   this.Vertices[nv + 0][4] = 1;
 
-                  this.Vertices[nv + 1][0] = x2 / OBJECTS_scale;
-                  this.Vertices[nv + 1][1] = y2 / OBJECTS_scale;
-                  this.Vertices[nv + 1][2] = (z) / OBJECTS_scale;
+                  this.Vertices[nv + 1][0] = x2 / overallScale;
+                  this.Vertices[nv + 1][1] = y2 / overallScale;
+                  this.Vertices[nv + 1][2] = (z) / overallScale;
                   this.Vertices[nv + 1][3] = 1;
                   this.Vertices[nv + 1][4] = 1;
 
-                  this.Vertices[nv + 2][0] = x2 / OBJECTS_scale;
-                  this.Vertices[nv + 2][1] = y2 / OBJECTS_scale;
-                  this.Vertices[nv + 2][2] = (z + 2 * rh) / OBJECTS_scale;
+                  this.Vertices[nv + 2][0] = x2 / overallScale;
+                  this.Vertices[nv + 2][1] = y2 / overallScale;
+                  this.Vertices[nv + 2][2] = (z + 2 * rh) / overallScale;
                   this.Vertices[nv + 2][3] = 1;
                   this.Vertices[nv + 2][4] = 0;
 
-                  this.Vertices[nv + 3][0] = x1 / OBJECTS_scale;
-                  this.Vertices[nv + 3][1] = y1 / OBJECTS_scale;
-                  this.Vertices[nv + 3][2] = (z + 2 * rh) / OBJECTS_scale;
+                  this.Vertices[nv + 3][0] = x1 / overallScale;
+                  this.Vertices[nv + 3][1] = y1 / overallScale;
+                  this.Vertices[nv + 3][2] = (z + 2 * rh) / overallScale;
                   this.Vertices[nv + 3][3] = 0;
                   this.Vertices[nv + 3][4] = 0;
 
@@ -1068,8 +1068,8 @@ class Model2Ds {
       }
 
       XML_setBoolean(parent, "displayAll", this.displayAll);
-      XML_setInt(parent, "num_files_PEOPLE", this.num_files_PEOPLE);
-      XML_setInt(parent, "num_files_TREES", this.num_files_TREES);
+      XML_setInt(parent, "peopleFileCount", this.peopleFileCount);
+      XML_setInt(parent, "treesFileCount", this.treesFileCount);
     }
 
     {
@@ -1140,8 +1140,8 @@ class Model2Ds {
       }
 
       this.displayAll = XML_getBoolean(parent, "displayAll");
-      this.num_files_PEOPLE = XML_getInt(parent, "num_files_PEOPLE");
-      this.num_files_TREES = XML_getInt(parent, "num_files_TREES");
+      this.peopleFileCount = XML_getInt(parent, "peopleFileCount");
+      this.treesFileCount = XML_getInt(parent, "treesFileCount");
     }
 
     {

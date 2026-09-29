@@ -155,8 +155,8 @@ LAYER[] allLayers = {
   LAYER_developed
 };
 
-int DevelopLayer_id = 0;
-int CurrentLayer_id = 0;
+int developLayerId = 0;
+int currentLayerId = 0;
 String CurrentLayer_unit = allLayers[0].unit;
 String CurrentLayer_name = allLayers[0].name;
 String[] CurrentLayer_descriptions = {
@@ -170,8 +170,8 @@ void changeCurrentLayerTo (int new_id) {
   STUDY.V_offset = allLayers[new_id].V_offset;
   STUDY.V_belowLine = allLayers[new_id].V_belowLine;
 
-  DevelopLayer_id = new_id;
-  CurrentLayer_id = new_id;
+  developLayerId = new_id;
+  currentLayerId = new_id;
 
   CurrentLayer_unit = allLayers[new_id].unit;
   CurrentLayer_name = allLayers[new_id].name;

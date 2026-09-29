@@ -22,14 +22,14 @@ class SHADETest {
 
   @Test
   void impactValueToU_activeImpact_usesASimpleLinearFormula () {
-    app.WIN3D.Impact_TYPE = app.Impact_ACTIVE;
+    app.WIN3D.impactType = app.Impact_ACTIVE;
     float u = app.SHADE.impactValueToU(2, 3); // 0.1 * 3 * 2
     assertEquals(0.6f, u, 0.0001f);
   }
 
   @Test
   void impactValueToU_passiveImpact_usesAnOffsetFormula () {
-    app.WIN3D.Impact_TYPE = app.Impact_PASSIVE;
+    app.WIN3D.impactType = app.Impact_PASSIVE;
     float u = app.SHADE.impactValueToU(2, 3); // 0.5 + 0.5 * (0.1 * 3 * 2)
     assertEquals(0.8f, u, 0.0001f);
   }
@@ -74,9 +74,9 @@ class SHADETest {
   @Test
   void getSolarImpactAtXYZ_returnsTheStoredAmountForAMatchingVertex () {
     app.VertexSolar_XYZ = new float[][] { {1, 2, 3, 4, 5, 6, 7, 8, 9} };
-    app.WIN3D.Impact_TYPE = app.Impact_ACTIVE;
-    app.IMPACTS_displayDay = 0;
-    app.VertexSolar_amounts = new float[][][] { { {42} }, { {0} } }; // [Impact_TYPE][displayDay][q]
+    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.impactDisplayDay = 0;
+    app.VertexSolar_amounts = new float[][][] { { {42} }, { {0} } }; // [impactType][displayDay][q]
 
     float v = app.SHADE.get_SolarImpact_atXYZ(1, 2, 3, 4, 5, 6, 7, 8, 9);
 
@@ -114,19 +114,19 @@ class SHADETest {
 
   @Test
   void isSolarImpactShade_trueForGlobalSolar () {
-    app.WIN3D.FacesShade = app.SHADE.Global_Solar;
+    app.WIN3D.shadingMode = app.SHADE.Global_Solar;
     assertTrue(app.SHADE.isSolarImpactShade());
   }
 
   @Test
   void isSolarImpactShade_trueForVertexSolar () {
-    app.WIN3D.FacesShade = app.SHADE.Vertex_Solar;
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solar;
     assertTrue(app.SHADE.isSolarImpactShade());
   }
 
   @Test
   void isSolarImpactShade_falseForAnyOtherShadeMode () {
-    app.WIN3D.FacesShade = app.SHADE.Surface_Materials;
+    app.WIN3D.shadingMode = app.SHADE.Surface_Materials;
     assertFalse(app.SHADE.isSolarImpactShade());
   }
 
@@ -134,87 +134,87 @@ class SHADETest {
 
   @Test
   void getPALType_usesTheActivePaletteForSolarShadeAndActiveImpact () {
-    app.WIN3D.FacesShade = app.SHADE.Global_Solar;
-    app.WIN3D.Impact_TYPE = app.Impact_ACTIVE;
-    app.allFaces.ACTIVE_palette_CLR = 19;
+    app.WIN3D.shadingMode = app.SHADE.Global_Solar;
+    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.allFaces.activeColorScaleIndex = 19;
 
     assertEquals(19, app.SHADE.get_PAL_type());
   }
 
   @Test
   void getPALType_usesThePassivePaletteForSolarShadeAndPassiveImpact () {
-    app.WIN3D.FacesShade = app.SHADE.Vertex_Solar;
-    app.WIN3D.Impact_TYPE = app.Impact_PASSIVE;
-    app.allFaces.PASSIVE_palette_CLR = 1;
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solar;
+    app.WIN3D.impactType = app.Impact_PASSIVE;
+    app.allFaces.passiveColorScaleIndex = 1;
 
     assertEquals(1, app.SHADE.get_PAL_type());
   }
 
   @Test
   void getPALType_usesTheSolidsPaletteForVertexSolidShade () {
-    app.WIN3D.FacesShade = app.SHADE.Vertex_Solid;
-    app.allSolids.palette_CLR = 17;
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solid;
+    app.allSolids.colorScaleIndex = 17;
 
     assertEquals(17, app.SHADE.get_PAL_type());
   }
 
   @Test
   void getPALType_usesTheLand3DPaletteForVertexElevationShade () {
-    app.WIN3D.FacesShade = app.SHADE.Vertex_Elevation;
-    app.Land3D.palette_CLR = 3;
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Elevation;
+    app.Land3D.colorScaleIndex = 3;
 
     assertEquals(3, app.SHADE.get_PAL_type());
   }
 
   @Test
   void getPALType_isZeroForAPlainSurfaceShadeMode () {
-    app.WIN3D.FacesShade = app.SHADE.Surface_White;
+    app.WIN3D.shadingMode = app.SHADE.Surface_White;
     assertEquals(0, app.SHADE.get_PAL_type());
   }
 
   @Test
   void getPALDirection_usesTheActivePaletteForSolarShadeAndActiveImpact () {
-    app.WIN3D.FacesShade = app.SHADE.Global_Solar;
-    app.WIN3D.Impact_TYPE = app.Impact_ACTIVE;
-    app.allFaces.ACTIVE_palette_DIR = 1;
+    app.WIN3D.shadingMode = app.SHADE.Global_Solar;
+    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.allFaces.activeColorScaleDirection = 1;
 
     assertEquals(1, app.SHADE.get_PAL_direction());
   }
 
   @Test
   void getPALDirection_usesTheSolidsPaletteForVertexSolidShade () {
-    app.WIN3D.FacesShade = app.SHADE.Vertex_Solid;
-    app.allSolids.palette_DIR = -1;
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solid;
+    app.allSolids.colorScaleDirection = -1;
 
     assertEquals(-1, app.SHADE.get_PAL_direction());
   }
 
   @Test
   void getPALDirection_defaultsToOneForAPlainSurfaceShadeMode () {
-    app.WIN3D.FacesShade = app.SHADE.Surface_White;
+    app.WIN3D.shadingMode = app.SHADE.Surface_White;
     assertEquals(1, app.SHADE.get_PAL_direction());
   }
 
   @Test
   void getPALMultiplier_usesTheActivePaletteForSolarShadeAndActiveImpact () {
-    app.WIN3D.FacesShade = app.SHADE.Global_Solar;
-    app.WIN3D.Impact_TYPE = app.Impact_ACTIVE;
-    app.allFaces.ACTIVE_palette_MLT = 1;
+    app.WIN3D.shadingMode = app.SHADE.Global_Solar;
+    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.allFaces.activeColorScaleFactor = 1;
 
     assertEquals(1f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }
 
   @Test
   void getPALMultiplier_usesTheSolidsPaletteForVertexSolidShade () {
-    app.WIN3D.FacesShade = app.SHADE.Vertex_Solid;
-    app.allSolids.palette_MLT = 0.5f;
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solid;
+    app.allSolids.colorScaleFactor = 0.5f;
 
     assertEquals(0.5f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }
 
   @Test
   void getPALMultiplier_defaultsToOneForAPlainSurfaceShadeMode () {
-    app.WIN3D.FacesShade = app.SHADE.Surface_White;
+    app.WIN3D.shadingMode = app.SHADE.Surface_White;
     assertEquals(1f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }
 }

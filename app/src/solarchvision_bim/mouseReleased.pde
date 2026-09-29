@@ -67,14 +67,14 @@ void finishWin3DSelection() {
   if (isRectSelectTask()) {
     performRectSelect();
   }
-  if (WIN3D.UI_CurrentTask == UITASK.GetLength) {
+  if (WIN3D.currentTool == UITASK.GetLength) {
     performGetLengthMeasurement();
   }
 }
 
 boolean isRectSelectTask() {
-  return (WIN3D.UI_CurrentTask == UITASK.RectSelect) ||
-         (WIN3D.UI_CurrentTask > UITASK.Move);
+  return (WIN3D.currentTool == UITASK.RectSelect) ||
+         (WIN3D.currentTool > UITASK.Move);
 }
 
 void performRectSelect() {
@@ -107,30 +107,30 @@ void performGetLengthMeasurement() {
 
   // Undo the viewport's Z rotation so length/width line up with the
   // object's local axes rather than screen axes.
-  float dxRot = dx * funcs.cos_ang(-WIN3D.rotation_Z) - dy * funcs.sin_ang(-WIN3D.rotation_Z);
-  float dyRot = dx * funcs.sin_ang(-WIN3D.rotation_Z) + dy * funcs.cos_ang(-WIN3D.rotation_Z);
+  float dxRot = dx * funcs.cos_ang(-WIN3D.rotationZ) - dy * funcs.sin_ang(-WIN3D.rotationZ);
+  float dyRot = dx * funcs.sin_ang(-WIN3D.rotationZ) + dy * funcs.cos_ang(-WIN3D.rotationZ);
   float dzRot = dz;
 
   float straightDist = dist(x1, y1, z1, x2, y2, z2);
 
-  switch (WIN3D.UI_TaskModifyParameter) {
+  switch (WIN3D.toolParameterModifier) {
     case 0:
-      User3D.create_Length = straightDist;
+      User3D.creatorLength = straightDist;
       break;
     case 1:
-      User3D.create_Width = straightDist;
+      User3D.creatorWidth = straightDist;
       break;
     case 2:
-      User3D.create_Height = straightDist;
+      User3D.creatorHeight = straightDist;
       break;
     case 3:
-      User3D.create_Length = abs(dxRot);
-      User3D.create_Width = abs(dyRot);
-      User3D.create_Height = abs(dzRot);
+      User3D.creatorLength = abs(dxRot);
+      User3D.creatorWidth = abs(dyRot);
+      User3D.creatorHeight = abs(dzRot);
       break;
     case 4:
-      User3D.create_Length = abs(dxRot);
-      User3D.create_Width = abs(dyRot);
+      User3D.creatorLength = abs(dxRot);
+      User3D.creatorWidth = abs(dyRot);
       break;
   }
 

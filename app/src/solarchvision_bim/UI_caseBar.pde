@@ -176,8 +176,8 @@ class UI_caseBar {
 
     float keep_STUDY_perDays = STUDY.perDays;
     int keep_STUDY_joinDays = STUDY.joinDays;
-    if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-        (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+    if ((currentDataSource == dataID_ensembleForecast) ||
+        (currentDataSource == dataID_ensembleObservation)) {
       STUDY.perDays = 1;
       STUDY.joinDays = 1;
     }
@@ -202,7 +202,7 @@ class UI_caseBar {
       TIME.date = dayOfYearFromClick(X_clicked, x1, x2);
       TIME.updateDate();
       TIME.beginDay = int(TIME.beginDay + (TIME.date - keep_TIME_Date) + 365) % 365;
-      update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+      update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
       notifyChanged();
     }
 
@@ -252,7 +252,7 @@ class UI_caseBar {
     fill(0);
     textSize(0.95 * MessageSize);
     for (int j = 0; j < 12; j++) {
-      String txt = TIME.namesOfMonths[j][Language_Active];
+      String txt = TIME.namesOfMonths[j][activeLanguage];
       text(letterSpaced(txt), x1 + (x2 - x1) * (j + 0.5) / 12.0, Y_control);
     }
     strokeWeight(0);
@@ -263,23 +263,23 @@ class UI_caseBar {
   // ---------------------------------------------------------------------
 
   void drawScenarioTab (float x1, float y1, float x2, float y2) {
-    int[] range = scenarioRange(CurrentDataSource);
+    int[] range = scenarioRange(currentDataSource);
     int n1 = range[0];
     int n2 = range[1];
 
     if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
       int V_selection = n1 + scaledIndexFromClick(X_clicked, x1, x2, n2 - n1 + 1, -0.5);
       if (mouseButton == LEFT) {
-        setScenarioStart(CurrentDataSource, V_selection);
+        setScenarioStart(currentDataSource, V_selection);
         notifyChanged();
       }
       if (mouseButton == RIGHT) {
-        setScenarioEnd(CurrentDataSource, V_selection);
+        setScenarioEnd(currentDataSource, V_selection);
         notifyChanged();
       }
     }
 
-    int[] current = scenarioCurrentValues(CurrentDataSource);
+    int[] current = scenarioCurrentValues(currentDataSource);
     float V_start = current[0];
     float V_end = current[1];
 
@@ -297,85 +297,85 @@ class UI_caseBar {
     fill(0);
     textSize(MessageSize);
     for (int j = 0; j < n2 - n1 + 1; j++) {
-      String txt = scenarioTickLabel(CurrentDataSource, j, n1);
+      String txt = scenarioTickLabel(currentDataSource, j, n1);
       text(txt, x1 + (x2 - x1) * (j + 0.5) / float(n2 - n1 + 1), Y_control - 0.1 * MessageSize);
     }
   }
 
   int[] scenarioRange (int dataSource) {
-    if (dataSource == dataID_CLIMATE_CWEEDS ||
-        dataSource == dataID_CLIMATE_CLMREC ||
-        dataSource == dataID_CLIMATE_TMYEPW) {
+    if (dataSource == dataID_climateEngineering ||
+        dataSource == dataID_climateArchive ||
+        dataSource == dataID_climateTmyEpw) {
       return new int[]{1950, 2050};
     }
-    if (dataSource == dataID_ENSEMBLE_FORECAST) {
-      return new int[]{ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end};
+    if (dataSource == dataID_ensembleForecast) {
+      return new int[]{ensembleForecastStart, ensembleForecastEnd};
     }
-    if (dataSource == dataID_ENSEMBLE_OBSERVED) {
-      return new int[]{ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end};
+    if (dataSource == dataID_ensembleObservation) {
+      return new int[]{ensembleObservationStart, ensembleObservationEnd};
     }
     return new int[]{0, 1};
   }
 
   int[] scenarioCurrentValues (int dataSource) {
-    if (dataSource == dataID_CLIMATE_CWEEDS || dataSource == dataID_CLIMATE_CLMREC) {
-      return new int[]{SampleYear_Start, SampleYear_End};
+    if (dataSource == dataID_climateEngineering || dataSource == dataID_climateArchive) {
+      return new int[]{sampleYearStart, sampleYearEnd};
     }
-    if (dataSource == dataID_ENSEMBLE_FORECAST) {
-      return new int[]{SampleMember_Start, SampleMember_End};
+    if (dataSource == dataID_ensembleForecast) {
+      return new int[]{sampleMemberStart, sampleMemberEnd};
     }
-    if (dataSource == dataID_ENSEMBLE_OBSERVED) {
-      return new int[]{SampleStation_Start, SampleStation_End};
+    if (dataSource == dataID_ensembleObservation) {
+      return new int[]{sampleStationStart, sampleStationEnd};
     }
     return new int[]{0, 0};
   }
 
   void setScenarioStart (int dataSource, int value) {
-    if (dataSource == dataID_CLIMATE_CWEEDS || dataSource == dataID_CLIMATE_CLMREC) {
-      SampleYear_Start = value;
-      int[] ord = orderPair(SampleYear_Start, SampleYear_End);
-      SampleYear_Start = ord[0];
-      SampleYear_End = ord[1];
-    } else if (dataSource == dataID_ENSEMBLE_FORECAST) {
-      SampleMember_Start = value;
-      int[] ord = orderPair(SampleMember_Start, SampleMember_End);
-      SampleMember_Start = ord[0];
-      SampleMember_End = ord[1];
-    } else if (dataSource == dataID_ENSEMBLE_OBSERVED) {
-      SampleStation_Start = value;
-      int[] ord = orderPair(SampleStation_Start, SampleStation_End);
-      SampleStation_Start = ord[0];
-      SampleStation_End = ord[1];
+    if (dataSource == dataID_climateEngineering || dataSource == dataID_climateArchive) {
+      sampleYearStart = value;
+      int[] ord = orderPair(sampleYearStart, sampleYearEnd);
+      sampleYearStart = ord[0];
+      sampleYearEnd = ord[1];
+    } else if (dataSource == dataID_ensembleForecast) {
+      sampleMemberStart = value;
+      int[] ord = orderPair(sampleMemberStart, sampleMemberEnd);
+      sampleMemberStart = ord[0];
+      sampleMemberEnd = ord[1];
+    } else if (dataSource == dataID_ensembleObservation) {
+      sampleStationStart = value;
+      int[] ord = orderPair(sampleStationStart, sampleStationEnd);
+      sampleStationStart = ord[0];
+      sampleStationEnd = ord[1];
     }
   }
 
   void setScenarioEnd (int dataSource, int value) {
-    if (dataSource == dataID_CLIMATE_CWEEDS || dataSource == dataID_CLIMATE_CLMREC) {
-      SampleYear_End = value;
-      int[] ord = orderPair(SampleYear_Start, SampleYear_End);
-      SampleYear_Start = ord[0];
-      SampleYear_End = ord[1];
-    } else if (dataSource == dataID_ENSEMBLE_FORECAST) {
-      SampleMember_End = value;
-      int[] ord = orderPair(SampleMember_Start, SampleMember_End);
-      SampleMember_Start = ord[0];
-      SampleMember_End = ord[1];
-    } else if (dataSource == dataID_ENSEMBLE_OBSERVED) {
-      SampleStation_End = value;
-      int[] ord = orderPair(SampleStation_Start, SampleStation_End);
-      SampleStation_Start = ord[0];
-      SampleStation_End = ord[1];
+    if (dataSource == dataID_climateEngineering || dataSource == dataID_climateArchive) {
+      sampleYearEnd = value;
+      int[] ord = orderPair(sampleYearStart, sampleYearEnd);
+      sampleYearStart = ord[0];
+      sampleYearEnd = ord[1];
+    } else if (dataSource == dataID_ensembleForecast) {
+      sampleMemberEnd = value;
+      int[] ord = orderPair(sampleMemberStart, sampleMemberEnd);
+      sampleMemberStart = ord[0];
+      sampleMemberEnd = ord[1];
+    } else if (dataSource == dataID_ensembleObservation) {
+      sampleStationEnd = value;
+      int[] ord = orderPair(sampleStationStart, sampleStationEnd);
+      sampleStationStart = ord[0];
+      sampleStationEnd = ord[1];
     }
   }
 
   String scenarioTickLabel (int dataSource, int j, int n1) {
     String txt = (j % 5 == 0) ? "|" : ".";
-    if ((dataSource == dataID_CLIMATE_CWEEDS || dataSource == dataID_CLIMATE_CLMREC) && (j % 10 == 5)) {
+    if ((dataSource == dataID_climateEngineering || dataSource == dataID_climateArchive) && (j % 10 == 5)) {
       txt = nf(j - 5 + n1, 0) + "s";
-    } else if (dataSource == dataID_ENSEMBLE_FORECAST) {
+    } else if (dataSource == dataID_ensembleForecast) {
       txt = nf(j + n1, 0);
-    } else if (dataSource == dataID_ENSEMBLE_OBSERVED) {
-      txt = SWOB_Coordinates[nearest_Station_ENSEMBLE_OBSERVED_id[j]].getCode();
+    } else if (dataSource == dataID_ensembleObservation) {
+      txt = ensembleObservationCoordinates[ensembleObservationNearestStationIndex[j]].getCode();
     }
     return txt;
   }

@@ -81,7 +81,7 @@ class MouseClickedTest {
 
     app.selectAllOfCategory(app.ObjectCategory.FACE);
 
-    assertEquals(app.ObjectCategory.FACE, app.current_ObjectCategory);
+    assertEquals(app.ObjectCategory.FACE, app.currentObjectCategory);
     assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.Face_ids);
   }
 
@@ -91,7 +91,7 @@ class MouseClickedTest {
     app.convertAndSwitch(() -> ran[0] = true, app.ObjectCategory.GROUP);
 
     assertTrue(ran[0]);
-    assertEquals(app.ObjectCategory.GROUP, app.current_ObjectCategory);
+    assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory);
   }
 
   // ================= flipFaceOrientationIfNeeded (extracted)
@@ -100,7 +100,7 @@ class MouseClickedTest {
   void flipFaceOrientation_reversesWhenTaskModifyParameterIsAlwaysFlip () {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
-    app.WIN3D.UI_TaskModifyParameter = 1; // always flip
+    app.WIN3D.toolParameterModifier = 1; // always flip
 
     app.flipFaceOrientationIfNeeded(0);
 
@@ -111,7 +111,7 @@ class MouseClickedTest {
   void flipFaceOrientation_isANoOpForATriangleWithTwoOrFewerNodes () {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}};
     app.allFaces.nodes = new int[][]{{0, 1}};
-    app.WIN3D.UI_TaskModifyParameter = 1;
+    app.WIN3D.toolParameterModifier = 1;
 
     app.flipFaceOrientationIfNeeded(0);
 
@@ -122,7 +122,7 @@ class MouseClickedTest {
   void flipFaceOrientation_directionDependsOnWhichSideOfTheWindingPlaneThePivotIsOn () {
     // Triangle in the XY plane; centroid at (1/3, 1/3, 0). With pivot
     // ABOVE it (+Z), V comes out positive - verified independently in
-    // Python before writing this - so taskModifyParameter=2 (flip when
+    // Python before writing this - so toolParameterModifier=2 (flip when
     // V>0) flips, and =3 (flip when V<0) doesn't.
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {0, 1, 0}};
     app.Select3D.BoundingBox = new float[][]{
@@ -130,12 +130,12 @@ class MouseClickedTest {
     }; // pivot at (0,0,1), directly above the triangle
 
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
-    app.WIN3D.UI_TaskModifyParameter = 2;
+    app.WIN3D.toolParameterModifier = 2;
     app.flipFaceOrientationIfNeeded(0);
     assertArrayEquals(new int[]{2, 1, 0}, app.allFaces.nodes[0]); // flipped
 
     app.allFaces.nodes = new int[][]{{0, 1, 2}}; // reset
-    app.WIN3D.UI_TaskModifyParameter = 3;
+    app.WIN3D.toolParameterModifier = 3;
     app.flipFaceOrientationIfNeeded(0);
     assertArrayEquals(new int[]{0, 1, 2}, app.allFaces.nodes[0]); // unchanged
   }
@@ -189,7 +189,7 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    float[] r = app.TMYEPW_PICKER.headerRect();
+    float[] r = app.climateTypicalYearPicker.headerRect();
 
     float pad = 1.6f * app.MessageSize;
     assertEquals(100 + pad, r[0], 0.01f);
@@ -201,11 +201,11 @@ class MouseClickedTest {
   void needsScrollbar_isTrueOnlyWhenThereAreMoreRowsThanFit () {
     app.WORLD.dY = 300; // enough room for several rows
 
-    app.TMYEPW_PICKER.indices = new int[]{1, 2};
-    assertFalse(app.TMYEPW_PICKER.needsScrollbar());
+    app.climateTypicalYearPicker.indices = new int[]{1, 2};
+    assertFalse(app.climateTypicalYearPicker.needsScrollbar());
 
-    app.TMYEPW_PICKER.indices = new int[100];
-    assertTrue(app.TMYEPW_PICKER.needsScrollbar());
+    app.climateTypicalYearPicker.indices = new int[100];
+    assertTrue(app.climateTypicalYearPicker.needsScrollbar());
   }
 
   @Test
@@ -215,11 +215,11 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    app.TMYEPW_PICKER.indices = new int[]{100, 101, 102, 103, 104};
-    app.TMYEPW_PICKER.scrollOffset = 1; // row 0 on screen shows indices[1]
+    app.climateTypicalYearPicker.indices = new int[]{100, 101, 102, 103, 104};
+    app.climateTypicalYearPicker.scrollOffset = 1; // row 0 on screen shows indices[1]
 
-    float[] row0 = app.TMYEPW_PICKER.rowRect(0);
-    int hit = app.TMYEPW_PICKER.rowAt(row0[0] + 2, row0[1] + 2);
+    float[] row0 = app.climateTypicalYearPicker.rowRect(0);
+    int hit = app.climateTypicalYearPicker.rowAt(row0[0] + 2, row0[1] + 2);
 
     assertEquals(1, hit); // absolute index into `indices`, not the visible row number
   }
@@ -230,9 +230,9 @@ class MouseClickedTest {
     app.WORLD.cY = 0;
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
-    app.TMYEPW_PICKER.indices = new int[]{100};
+    app.climateTypicalYearPicker.indices = new int[]{100};
 
-    assertEquals(-1, app.TMYEPW_PICKER.rowAt(-500, -500));
+    assertEquals(-1, app.climateTypicalYearPicker.rowAt(-500, -500));
   }
 
   // ================= StationPicker: click/wheel/drag handling ============
@@ -244,47 +244,47 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
-    app.TMYEPW_Coordinates[0].setFilename_TMYEPW("station_0.epw");
-    app.STATION.setFilename_TMYEPW("station_0.epw"); // already selected -> select() below is a safe no-op
+    app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("station_0.epw");
+    app.STATION.setClimateTypicalYearFilename("station_0.epw"); // already selected -> select() below is a safe no-op
 
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[]{0};
-    app.TMYEPW_PICKER.mouseLon = 12;
-    app.TMYEPW_PICKER.mouseLat = 34;
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[]{0};
+    app.climateTypicalYearPicker.mouseLon = 12;
+    app.climateTypicalYearPicker.mouseLat = 34;
 
-    float[] row0 = app.TMYEPW_PICKER.rowRect(0);
+    float[] row0 = app.climateTypicalYearPicker.rowRect(0);
     app.X_clicked = (int) (row0[0] + 2);
     app.Y_clicked = (int) (row0[1] + 2);
 
-    boolean consumed = app.TMYEPW_PICKER.handleClick();
+    boolean consumed = app.climateTypicalYearPicker.handleClick();
 
     assertTrue(consumed);
-    assertFalse(app.TMYEPW_PICKER.active); // list closes either way
-    assertEquals(0, app.TMYEPW_PICKER.indices.length);
+    assertFalse(app.climateTypicalYearPicker.active); // list closes either way
+    assertEquals(0, app.climateTypicalYearPicker.indices.length);
   }
 
   @Test
   void handleClick_isANoOpWhenThePickerIsNotActive () {
-    app.TMYEPW_PICKER.active = false;
-    assertFalse(app.TMYEPW_PICKER.handleClick());
+    app.climateTypicalYearPicker.active = false;
+    assertFalse(app.climateTypicalYearPicker.handleClick());
   }
 
   @Test
   void cancel_closesTheListWithoutSelectingAnything () {
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[]{0, 1, 2};
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[]{0, 1, 2};
 
-    assertTrue(app.TMYEPW_PICKER.cancel());
+    assertTrue(app.climateTypicalYearPicker.cancel());
 
-    assertFalse(app.TMYEPW_PICKER.active);
-    assertEquals(0, app.TMYEPW_PICKER.indices.length);
+    assertFalse(app.climateTypicalYearPicker.active);
+    assertEquals(0, app.climateTypicalYearPicker.indices.length);
   }
 
   @Test
   void cancel_isANoOpWhenNotActive () {
-    app.TMYEPW_PICKER.active = false;
-    assertFalse(app.TMYEPW_PICKER.cancel());
+    app.climateTypicalYearPicker.active = false;
+    assertFalse(app.climateTypicalYearPicker.cancel());
   }
 
   @Test
@@ -296,20 +296,20 @@ class MouseClickedTest {
     app.X_clicked = 10;
     app.Y_clicked = 10;
 
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[100]; // enough rows to actually need scrolling
-    app.TMYEPW_PICKER.scrollOffset = 0;
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[100]; // enough rows to actually need scrolling
+    app.climateTypicalYearPicker.scrollOffset = 0;
 
-    boolean consumed = app.TMYEPW_PICKER.handleWheel(1);
+    boolean consumed = app.climateTypicalYearPicker.handleWheel(1);
 
     assertTrue(consumed);
-    assertEquals(1, app.TMYEPW_PICKER.scrollOffset);
+    assertEquals(1, app.climateTypicalYearPicker.scrollOffset);
   }
 
   @Test
   void handleWheel_doesNotConsumeTheEventWhenNotActive () {
-    app.TMYEPW_PICKER.active = false;
-    assertFalse(app.TMYEPW_PICKER.handleWheel(1));
+    app.climateTypicalYearPicker.active = false;
+    assertFalse(app.climateTypicalYearPicker.handleWheel(1));
   }
 
   @Test
@@ -319,11 +319,11 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[100];
-    app.TMYEPW_PICKER.scrollOffset = 20;
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[100];
+    app.climateTypicalYearPicker.scrollOffset = 20;
 
-    float[] track = app.TMYEPW_PICKER.scrollTrackRect();
+    float[] track = app.climateTypicalYearPicker.scrollTrackRect();
     app.X_clicked = (int) (track[0] + 2);
     // isInside() uses STRICT inequality, so clicking exactly at track[1]
     // (the top edge) fails the "is this click inside the track at all"
@@ -331,60 +331,60 @@ class MouseClickedTest {
     // the thumb given scrollOffset=20 out of 100 rows.
     app.Y_clicked = (int) (track[1] + 2);
 
-    boolean consumed = app.TMYEPW_PICKER.handleTrackClick();
+    boolean consumed = app.climateTypicalYearPicker.handleTrackClick();
 
     assertTrue(consumed);
-    assertTrue(app.TMYEPW_PICKER.scrollOffset < 20); // paged up
+    assertTrue(app.climateTypicalYearPicker.scrollOffset < 20); // paged up
   }
 
   // ================= StationPicker: handleMapClick =========================
 
   @Test
   void handleMapClick_selectsTheSingleNearestStationWhenADifferentDataSourceIsActive () {
-    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
-    app.TMYEPW_Coordinates[0].setLatitude(10);
-    app.TMYEPW_Coordinates[0].setLongitude(20);
-    app.TMYEPW_Coordinates[0].setFilename_TMYEPW("only_station.epw");
+    app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateTypicalYearCoordinates[0].setLatitude(10);
+    app.climateTypicalYearCoordinates[0].setLongitude(20);
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("only_station.epw");
 
     // A DIFFERENT dataset is active, so even a within-range candidate is
-    // selected directly rather than opening TMYEPW_PICKER's own list -
-    // that only happens when TMYEPW itself is CurrentDataSource (see the
+    // selected directly rather than opening climateTypicalYearPicker's own list -
+    // that only happens when Climate Typical Year itself is currentDataSource (see the
     // next test).
-    app.CurrentDataSource = app.dataID_CLIMATE_CWEEDS;
-    app.STATION.setFilename_TMYEPW("something_else.epw"); // different, so selection actually applies
+    app.currentDataSource = app.dataID_climateEngineering;
+    app.STATION.setClimateTypicalYearFilename("something_else.epw"); // different, so selection actually applies
 
-    app.TMYEPW_PICKER.handleMapClick(20, 10);
+    app.climateTypicalYearPicker.handleMapClick(20, 10);
 
-    assertFalse(app.TMYEPW_PICKER.active);
-    assertEquals("only_station.epw", app.STATION.getFilename_TMYEPW());
+    assertFalse(app.climateTypicalYearPicker.active);
+    assertEquals("only_station.epw", app.STATION.getClimateTypicalYearFilename());
   }
 
   @Test
   void handleMapClick_opensTheListForACandidateWithinRangeOfTheActiveDataSource () {
-    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
-    app.TMYEPW_Coordinates[0].setLatitude(10);
-    app.TMYEPW_Coordinates[0].setLongitude(20);
-    app.TMYEPW_Coordinates[0].setFilename_TMYEPW("only_station.epw");
+    app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateTypicalYearCoordinates[0].setLatitude(10);
+    app.climateTypicalYearCoordinates[0].setLongitude(20);
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("only_station.epw");
 
-    app.CurrentDataSource = app.dataID_CLIMATE_TMYEPW; // TMYEPW is the active dataset
+    app.currentDataSource = app.dataID_climateTmyEpw; // Climate Typical Year is the active dataset
 
-    app.TMYEPW_PICKER.handleMapClick(20, 10); // well within the picker's own maxDist
+    app.climateTypicalYearPicker.handleMapClick(20, 10); // well within the picker's own maxDist
 
-    assertTrue(app.TMYEPW_PICKER.active);
-    assertArrayEquals(new int[]{0}, app.TMYEPW_PICKER.indices);
+    assertTrue(app.climateTypicalYearPicker.active);
+    assertArrayEquals(new int[]{0}, app.climateTypicalYearPicker.indices);
   }
 
-  // ================= selectTMYEPWStation (safe cases only) =
+  // ================= selectClimateTypicalYearStation (safe cases only) =
 
   @Test
-  void selectTMYEPWStation_isANoOpWhenTheSameStationIsAlreadySelected () {
-    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
-    app.TMYEPW_Coordinates[0].setFilename_TMYEPW("same.epw");
-    app.STATION.setFilename_TMYEPW("same.epw");
+  void selectClimateTypicalYearStation_isANoOpWhenTheSameStationIsAlreadySelected () {
+    app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("same.epw");
+    app.STATION.setClimateTypicalYearFilename("same.epw");
     app.STATION.setLatitude(1);
     app.STATION.setLongitude(2);
 
-    app.selectTMYEPWStation(0, 99, 99);
+    app.selectClimateTypicalYearStation(0, 99, 99);
 
     // Early return means STATION's position is untouched.
     assertEquals(1f, app.STATION.getLatitude(), 0.0001f);
@@ -392,35 +392,35 @@ class MouseClickedTest {
   }
 
   @Test
-  void selectTMYEPWStation_updatesPositionAndFilenameButSkipsReloadWhenNotTheActiveDataSource () {
-    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
-    app.TMYEPW_Coordinates[0].setFilename_TMYEPW("new_station.epw");
-    app.TMYEPW_Coordinates[0].setDownload_TMYEPW("http://example.com/new_station.epw");
+  void selectClimateTypicalYearStation_updatesPositionAndFilenameButSkipsReloadWhenNotTheActiveDataSource () {
+    app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("new_station.epw");
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearDownload("http://example.com/new_station.epw");
 
-    app.STATION.setFilename_TMYEPW("old_station.epw");
-    app.CurrentDataSource = app.dataID_CLIMATE_CWEEDS; // NOT TMYEPW - the risky reload block is skipped
+    app.STATION.setClimateTypicalYearFilename("old_station.epw");
+    app.currentDataSource = app.dataID_climateEngineering; // NOT Climate Typical Year - the risky reload block is skipped
 
-    app.selectTMYEPWStation(0, 12.5f, 34.5f);
+    app.selectClimateTypicalYearStation(0, 12.5f, 34.5f);
 
     assertEquals(12.5f, app.STATION.getLongitude(), 0.0001f);
     assertEquals(34.5f, app.STATION.getLatitude(), 0.0001f);
-    assertEquals("new_station.epw", app.STATION.getFilename_TMYEPW());
+    assertEquals("new_station.epw", app.STATION.getClimateTypicalYearFilename());
   }
 
   // ============ computeCreateParams (extracted) ===========
 
   @Test
   void computeCreateParams_derivesHalfExtentsAndRotationFromUserPreferences () {
-    app.User3D.create_Orientation = 0; // not 360, so this is used directly rather than falling back to WIN3D.rotation_Z
-    app.User3D.create_Length = 4;  // positive -> deterministic, no randomize
-    app.User3D.create_Width = 6;
-    app.User3D.create_Height = 2;
-    app.User3D.create_powX = 2;
-    app.User3D.create_powY = 2;
-    app.User3D.create_powZ = 2;
-    app.User3D.create_powRnd = 0;
-    app.User3D.create_Volume = 0;
-    app.current_ObjectCategory = app.ObjectCategory.SOLID; // not excluded from the alignment offset
+    app.User3D.creatorOrientation = 0; // not 360, so this is used directly rather than falling back to WIN3D.rotationZ
+    app.User3D.creatorLength = 4;  // positive -> deterministic, no randomize
+    app.User3D.creatorWidth = 6;
+    app.User3D.creatorHeight = 2;
+    app.User3D.creatorSuperellipsoidPowerX = 2;
+    app.User3D.creatorSuperellipsoidPowerY = 2;
+    app.User3D.creatorSuperellipsoidPowerZ = 2;
+    app.User3D.creatorRandomSuperellipsoidPower = 0;
+    app.User3D.creatorVolume = 0;
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // not excluded from the alignment offset
     app.Select3D.alignX = 0;
     app.Select3D.alignY = 0;
     app.Select3D.alignZ = 0;
@@ -431,9 +431,9 @@ class MouseClickedTest {
     assertEquals(20f, p.y, 0.0001f);
     assertEquals(30f, p.z, 0.0001f);
     assertEquals(0f, p.rot, 0.0001f);
-    assertEquals(2f, p.rx, 0.0001f); // half of create_Length
-    assertEquals(3f, p.ry, 0.0001f); // half of create_Width
-    assertEquals(1f, p.rz, 0.0001f); // half of create_Height
+    assertEquals(2f, p.rx, 0.0001f); // half of createLength
+    assertEquals(3f, p.ry, 0.0001f); // half of createWidth
+    assertEquals(1f, p.rz, 0.0001f); // half of createHeight
     assertEquals(2f, p.px, 0.0001f);
     assertEquals(2f, p.py, 0.0001f);
     assertEquals(2f, p.pz, 0.0001f);
@@ -441,11 +441,11 @@ class MouseClickedTest {
 
   @Test
   void computeCreateParams_orientation360FallsBackToTheCurrentViewportRotation () {
-    app.User3D.create_Orientation = 360;
-    app.WIN3D.rotation_Z = 47;
-    app.User3D.create_Length = 1;
-    app.User3D.create_Width = 1;
-    app.User3D.create_Height = 1;
+    app.User3D.creatorOrientation = 360;
+    app.WIN3D.rotationZ = 47;
+    app.User3D.creatorLength = 1;
+    app.User3D.creatorWidth = 1;
+    app.User3D.creatorHeight = 1;
 
     solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 0, 0, 0});
 
@@ -454,10 +454,10 @@ class MouseClickedTest {
 
   @Test
   void computeCreateParams_offsetsPositionByHalfExtentsScaledByAlignment () {
-    app.User3D.create_Length = 4; // rx=2
-    app.User3D.create_Width = 6;  // ry=3
-    app.User3D.create_Height = 2; // rz=1
-    app.current_ObjectCategory = app.ObjectCategory.SOLID; // not excluded from this offset
+    app.User3D.creatorLength = 4; // rx=2
+    app.User3D.creatorWidth = 6;  // ry=3
+    app.User3D.creatorHeight = 2; // rz=1
+    app.currentObjectCategory = app.ObjectCategory.SOLID; // not excluded from this offset
     app.Select3D.alignX = 1;
     app.Select3D.alignY = -1;
     app.Select3D.alignZ = 0;
@@ -471,14 +471,14 @@ class MouseClickedTest {
 
   @Test
   void computeCreateParams_skipsTheAlignmentOffsetForModel1DModel2DLandPointCameraAndSection () {
-    app.User3D.create_Length = 4;
+    app.User3D.creatorLength = 4;
     app.Select3D.alignX = 1; // would shift x if this category weren't excluded
 
     for (int category : new int[]{
       app.ObjectCategory.MODEL1D, app.ObjectCategory.MODEL2D, app.ObjectCategory.LANDPOINT,
       app.ObjectCategory.CAMERA, app.ObjectCategory.SECTION
     }) {
-      app.current_ObjectCategory = category;
+      app.currentObjectCategory = category;
       solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 10, 20, 30});
       assertEquals(10f, p.x, 0.0001f, "category " + category + " should not be offset");
     }
@@ -486,13 +486,13 @@ class MouseClickedTest {
 
   @Test
   void computeCreateParams_derivesHeightFromVolumeWhenVolumeIsSet () {
-    app.User3D.create_Length = 4; // rx=2
-    app.User3D.create_Width = 4;  // ry=2
-    app.User3D.create_Height = 999; // overridden by the volume calculation below
-    app.User3D.create_powX = 2;
-    app.User3D.create_powY = 2;
-    app.User3D.create_powZ = 2; // A=0.5 for pz==2
-    app.User3D.create_Volume = 32; // rz = 32 / (8*2*2) = 1, then divided by A^(1/3)
+    app.User3D.creatorLength = 4; // rx=2
+    app.User3D.creatorWidth = 4;  // ry=2
+    app.User3D.creatorHeight = 999; // overridden by the volume calculation below
+    app.User3D.creatorSuperellipsoidPowerX = 2;
+    app.User3D.creatorSuperellipsoidPowerY = 2;
+    app.User3D.creatorSuperellipsoidPowerZ = 2; // A=0.5 for pz==2
+    app.User3D.creatorVolume = 32; // rz = 32 / (8*2*2) = 1, then divided by A^(1/3)
 
     solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 0, 0, 0});
 
@@ -502,7 +502,7 @@ class MouseClickedTest {
 
   @Test
   void computeCreateParams_negativeLengthRandomizesWithinAQuarterToFullOfItsMagnitude () {
-    app.User3D.create_Length = -8; // "randomize" sentinel: 0.5*(-8) = -4 -> rx becomes random(1, 4)
+    app.User3D.creatorLength = -8; // "randomize" sentinel: 0.5*(-8) = -4 -> rx becomes random(1, 4)
 
     solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 0, 0, 0});
 
@@ -516,8 +516,8 @@ class MouseClickedTest {
     // Verified independently in Python beforehand, reusing the same
     // reverseTransform_3DViewport formula already confirmed in
     // WIN3DTest.java's round-trip test.
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_Z = 0;
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
     app.EyeLevel = 1.5f;
 
     solarchvision_bim.CameraParams cp = app.computeCameraParamsAtPoint(10, 20, 30);
@@ -529,8 +529,8 @@ class MouseClickedTest {
 
   @Test
   void computeCameraParamsAtPoint_accountsForTheCurrentViewportRotation () {
-    app.WIN3D.rotation_X = 90;
-    app.WIN3D.rotation_Z = -45;
+    app.WIN3D.rotationX = 90;
+    app.WIN3D.rotationZ = -45;
     app.EyeLevel = 1.5f;
 
     solarchvision_bim.CameraParams cp = app.computeCameraParamsAtPoint(10, 20, 30);
@@ -542,35 +542,35 @@ class MouseClickedTest {
 
   @Test
   void computeCameraParamsAtPoint_leavesWIN3DsOwnStateExactlyAsItWasBeforeTheCall () {
-    app.WIN3D.CAM_x = 111;
-    app.WIN3D.CAM_y = 222;
-    app.WIN3D.CAM_z = 333;
-    app.WIN3D.position_X = 1;
-    app.WIN3D.position_Y = 2;
-    app.WIN3D.position_Z = 3;
-    app.WIN3D.rotation_X = 4;
-    app.WIN3D.rotation_Y = 5;
-    app.WIN3D.rotation_Z = 6;
-    app.WIN3D.Zoom = 77;
+    app.WIN3D.cameraX = 111;
+    app.WIN3D.cameraY = 222;
+    app.WIN3D.cameraZ = 333;
+    app.WIN3D.positionX = 1;
+    app.WIN3D.positionY = 2;
+    app.WIN3D.positionZ = 3;
+    app.WIN3D.rotationX = 4;
+    app.WIN3D.rotationY = 5;
+    app.WIN3D.rotationZ = 6;
+    app.WIN3D.zoom = 77;
 
     app.computeCameraParamsAtPoint(10, 20, 30);
 
-    assertEquals(111f, app.WIN3D.CAM_x, 0.0001f);
-    assertEquals(222f, app.WIN3D.CAM_y, 0.0001f);
-    assertEquals(333f, app.WIN3D.CAM_z, 0.0001f);
-    assertEquals(1f, app.WIN3D.position_X, 0.0001f);
-    assertEquals(2f, app.WIN3D.position_Y, 0.0001f);
-    assertEquals(3f, app.WIN3D.position_Z, 0.0001f);
-    assertEquals(4f, app.WIN3D.rotation_X, 0.0001f);
-    assertEquals(5f, app.WIN3D.rotation_Y, 0.0001f);
-    assertEquals(6f, app.WIN3D.rotation_Z, 0.0001f);
-    assertEquals(77f, app.WIN3D.Zoom, 0.0001f);
+    assertEquals(111f, app.WIN3D.cameraX, 0.0001f);
+    assertEquals(222f, app.WIN3D.cameraY, 0.0001f);
+    assertEquals(333f, app.WIN3D.cameraZ, 0.0001f);
+    assertEquals(1f, app.WIN3D.positionX, 0.0001f);
+    assertEquals(2f, app.WIN3D.positionY, 0.0001f);
+    assertEquals(3f, app.WIN3D.positionZ, 0.0001f);
+    assertEquals(4f, app.WIN3D.rotationX, 0.0001f);
+    assertEquals(5f, app.WIN3D.rotationY, 0.0001f);
+    assertEquals(6f, app.WIN3D.rotationZ, 0.0001f);
+    assertEquals(77f, app.WIN3D.zoom, 0.0001f);
   }
 
   @Test
   void computeCameraParamsAtPoint_returnsTheCurrentViewportTypeAndZoom () {
-    app.WIN3D.ViewType = 1;
-    app.WIN3D.Zoom = 55;
+    app.WIN3D.projectionTypeIndex = 1;
+    app.WIN3D.zoom = 55;
 
     solarchvision_bim.CameraParams cp = app.computeCameraParamsAtPoint(0, 0, 0);
 
@@ -675,32 +675,32 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignFaceProperty_isANoOpWhenTheCurrentTaskIsntOneOfTheFiveProperties () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Move; // not one of the five
-    app.WIN3D.UI_TaskModifyParameter = 1;
+    app.WIN3D.currentTool = app.UITASK.Move; // not one of the five
+    app.WIN3D.toolParameterModifier = 1;
     app.allFaces.options = new int[][]{{9, 9, 9, 9, 9, 9}};
-    app.User3D.default_Material = -1;
+    app.User3D.defaultMaterial = -1;
 
     app.pickOrAssignFaceProperty(0);
 
-    assertEquals(-1, app.User3D.default_Material); // untouched
+    assertEquals(-1, app.User3D.defaultMaterial); // untouched
   }
 
   @Test
   void pickOrAssignFaceProperty_pickReadsTheClickedFacesValueIntoTheMatchingDefault () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
-    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
+    app.WIN3D.currentTool = app.UITASK.Seed_Material;
+    app.WIN3D.toolParameterModifier = 1; // Pick
     app.allFaces.options = new int[][]{{42, 0, 0, 0, 0, 0}};
 
     app.pickOrAssignFaceProperty(0);
 
-    assertEquals(42, app.User3D.default_Material);
+    assertEquals(42, app.User3D.defaultMaterial);
   }
 
   @Test
   void pickOrAssignFaceProperty_assignSubWritesTheDefaultOntoJustTheClickedFace () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Weight;
-    app.WIN3D.UI_TaskModifyParameter = 2; // Assign(sub)
-    app.User3D.default_Weight = 7;
+    app.WIN3D.currentTool = app.UITASK.Weight;
+    app.WIN3D.toolParameterModifier = 2; // Assign(sub)
+    app.User3D.defaultWeight = 7;
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
 
     app.pickOrAssignFaceProperty(0);
@@ -711,9 +711,9 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignFaceProperty_assignAllWritesTheDefaultOntoEveryFaceInTheClickedFacesGroup () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Layer;
-    app.WIN3D.UI_TaskModifyParameter = 3; // Assign(all)
-    app.User3D.default_Layer = 5;
+    app.WIN3D.currentTool = app.UITASK.Layer;
+    app.WIN3D.toolParameterModifier = 3; // Assign(all)
+    app.User3D.defaultLayer = 5;
     app.allFaces.options = new int[][]{
       {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}
     };
@@ -735,9 +735,9 @@ class MouseClickedTest {
     // verbatim rather than fixing: unlike Pick and Assign(sub) just
     // above it, Assign(all)'s Weight case writes via allFaces.setClose,
     // not setWeight.
-    app.WIN3D.UI_CurrentTask = app.UITASK.Weight;
-    app.WIN3D.UI_TaskModifyParameter = 3; // Assign(all)
-    app.User3D.default_Weight = 3;
+    app.WIN3D.currentTool = app.UITASK.Weight;
+    app.WIN3D.toolParameterModifier = 3; // Assign(all)
+    app.User3D.defaultWeight = 3;
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
     app.allGroups.makeEmpty(0);
     app.allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
@@ -754,48 +754,48 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel2DSeedMaterial_isANoOpWhenTheCurrentTaskIsntSeedMaterial () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Move;
-    app.WIN3D.UI_TaskModifyParameter = 1;
-    app.allModel2Ds.num_files_PEOPLE = 2;
+    app.WIN3D.currentTool = app.UITASK.Move;
+    app.WIN3D.toolParameterModifier = 1;
+    app.allModel2Ds.peopleFileCount = 2;
     app.allModel2Ds.MAP = new int[]{5};
-    app.User3D.create_Plant_Type = -1;
+    app.User3D.creatorPlantTypeIndex = -1;
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
-    assertEquals(-1, app.User3D.create_Plant_Type); // untouched
+    assertEquals(-1, app.User3D.creatorPlantTypeIndex); // untouched
   }
 
   @Test
   void pickOrAssignModel2DSeedMaterial_pickOfAPersonReadsItsTypeIntoCreatePersonType () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
-    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
-    app.allModel2Ds.num_files_PEOPLE = 5;
-    app.allModel2Ds.MAP = new int[]{3}; // 3 <= num_files_PEOPLE -> a person
+    app.WIN3D.currentTool = app.UITASK.Seed_Material;
+    app.WIN3D.toolParameterModifier = 1; // Pick
+    app.allModel2Ds.peopleFileCount = 5;
+    app.allModel2Ds.MAP = new int[]{3}; // 3 <= peopleFileCount -> a person
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
-    assertEquals(3, app.User3D.create_Person_Type);
+    assertEquals(3, app.User3D.creatorPersonTypeIndex);
   }
 
   @Test
   void pickOrAssignModel2DSeedMaterial_pickOfATreeReadsItsOffsetTypeIntoCreatePlantType () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
-    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
-    app.allModel2Ds.num_files_PEOPLE = 5;
-    app.allModel2Ds.MAP = new int[]{8}; // 8 > num_files_PEOPLE -> a tree, offset type = 8-5 = 3
+    app.WIN3D.currentTool = app.UITASK.Seed_Material;
+    app.WIN3D.toolParameterModifier = 1; // Pick
+    app.allModel2Ds.peopleFileCount = 5;
+    app.allModel2Ds.MAP = new int[]{8}; // 8 > peopleFileCount -> a tree, offset type = 8-5 = 3
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
-    assertEquals(3, app.User3D.create_Plant_Type);
+    assertEquals(3, app.User3D.creatorPlantTypeIndex);
   }
 
   @Test
   void pickOrAssignModel2DSeedMaterial_assignWritesTheCurrentTypePreservingTheInstancesOwnSign () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
-    app.WIN3D.UI_TaskModifyParameter = 2; // Assign
-    app.allModel2Ds.num_files_PEOPLE = 5;
+    app.WIN3D.currentTool = app.UITASK.Seed_Material;
+    app.WIN3D.toolParameterModifier = 2; // Assign
+    app.allModel2Ds.peopleFileCount = 5;
     app.allModel2Ds.MAP = new int[]{-8}; // a tree instance, flipped (negative)
-    app.User3D.create_Plant_Type = 1;
+    app.User3D.creatorPlantTypeIndex = 1;
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
@@ -804,11 +804,11 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel2DSeedMaterial_assignAllIsTreatedTheSameAsAssignSub () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Seed_Material;
-    app.WIN3D.UI_TaskModifyParameter = 3; // Assign(all) - no group distinction for MODEL2D
-    app.allModel2Ds.num_files_PEOPLE = 5;
+    app.WIN3D.currentTool = app.UITASK.Seed_Material;
+    app.WIN3D.toolParameterModifier = 3; // Assign(all) - no group distinction for MODEL2D
+    app.allModel2Ds.peopleFileCount = 5;
     app.allModel2Ds.MAP = new int[]{2}; // a person instance
-    app.User3D.create_Person_Type = 4;
+    app.User3D.creatorPersonTypeIndex = 4;
 
     app.pickOrAssignModel2DSeedMaterial(0);
 
@@ -819,27 +819,27 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel1DProperty_pickOfASingleTaskReadsOnlyThatOneField () {
-    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
-    app.WIN3D.UI_CurrentTask = app.UITASK.BranchTilt;
+    app.WIN3D.toolParameterModifier = 1; // Pick
+    app.WIN3D.currentTool = app.UITASK.BranchTilt;
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // create one instance to pick from
     app.allModel1Ds.setBranchTilt(0, 12.5f);
-    app.User3D.create_Model1D_BranchTilt = -1;
-    app.User3D.create_Model1D_LeafSize = -1;
+    app.User3D.creator_Model1D_BranchTilt = -1;
+    app.User3D.creatorModel1DLeafSize = -1;
 
     app.pickOrAssignModel1DProperty(0);
 
-    assertEquals(12.5f, app.User3D.create_Model1D_BranchTilt, 0.0001f);
-    assertEquals(-1f, app.User3D.create_Model1D_LeafSize, 0.0001f); // untouched: a different task
+    assertEquals(12.5f, app.User3D.creator_Model1D_BranchTilt, 0.0001f);
+    assertEquals(-1f, app.User3D.creatorModel1DLeafSize, 0.0001f); // untouched: a different task
   }
 
   @Test
   void pickOrAssignModel1DProperty_assignOfASingleTaskWritesOnlyThatOneField () {
-    app.WIN3D.UI_TaskModifyParameter = 2; // Assign
-    app.WIN3D.UI_CurrentTask = app.UITASK.TrunkSize;
+    app.WIN3D.toolParameterModifier = 2; // Assign
+    app.WIN3D.currentTool = app.UITASK.TrunkSize;
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    app.User3D.create_Model1D_TrunkSize = 6.25f;
+    app.User3D.creatorModel1DTrunkSize = 6.25f;
 
     app.pickOrAssignModel1DProperty(0);
 
@@ -848,8 +848,8 @@ class MouseClickedTest {
 
   @Test
   void pickOrAssignModel1DProperty_model1DsPropsPicksAllThreeCoveredFieldsAtOnce () {
-    app.WIN3D.UI_TaskModifyParameter = 1; // Pick
-    app.WIN3D.UI_CurrentTask = app.UITASK.Model1DsProps;
+    app.WIN3D.toolParameterModifier = 1; // Pick
+    app.WIN3D.currentTool = app.UITASK.Model1DsProps;
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     app.allModel1Ds.setDegreeMax(0, 4);
@@ -858,23 +858,23 @@ class MouseClickedTest {
 
     app.pickOrAssignModel1DProperty(0);
 
-    assertEquals(4, app.User3D.create_Model1D_DegreeMax);
-    assertEquals(2.5f, app.User3D.create_Model1D_TrunkSize, 0.0001f);
-    assertEquals(1.5f, app.User3D.create_Model1D_LeafSize, 0.0001f);
+    assertEquals(4, app.User3D.creatorModel1DDegreeMax);
+    assertEquals(2.5f, app.User3D.creatorModel1DTrunkSize, 0.0001f);
+    assertEquals(1.5f, app.User3D.creatorModel1DLeafSize, 0.0001f);
   }
 
   @Test
   void pickOrAssignModel1DProperty_isANoOpWhenModifyParameterIsZero () {
-    app.WIN3D.UI_TaskModifyParameter = 0; // neither Pick nor Assign
-    app.WIN3D.UI_CurrentTask = app.UITASK.BranchTwist;
+    app.WIN3D.toolParameterModifier = 0; // neither Pick nor Assign
+    app.WIN3D.currentTool = app.UITASK.BranchTwist;
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     app.allModel1Ds.setBranchTwist(0, 9);
-    app.User3D.create_Model1D_BranchTwist = -1;
+    app.User3D.creator_Model1D_BranchTwist = -1;
 
     app.pickOrAssignModel1DProperty(0);
 
-    assertEquals(-1f, app.User3D.create_Model1D_BranchTwist, 0.0001f); // untouched
+    assertEquals(-1f, app.User3D.creator_Model1D_BranchTwist, 0.0001f); // untouched
   }
 
   // ========= computeClickRay (extracted) ===================
@@ -888,15 +888,15 @@ class MouseClickedTest {
     // Same setup as WIN3DTest's calculateClick3D_atImageCenterWithNoRotation...
     // test, so ray_end is already confirmed there; this only checks the
     // extra ray_start/direction arithmetic layered on top of it.
-    app.WIN3D.ViewType = 1; // perspective
+    app.WIN3D.projectionTypeIndex = 1; // perspective
     app.WIN3D.scale = 1;
-    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_Z = 0;
-    app.WIN3D.CAM_x = 0;
-    app.WIN3D.CAM_y = 0;
-    app.WIN3D.CAM_z = 10;
-    app.OBJECTS_scale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = 10;
+    app.overallScale = 1;
 
     solarchvision_bim.ClickRay ray = app.computeClickRay(0, 0);
 
@@ -908,13 +908,13 @@ class MouseClickedTest {
 
   @Test
   void computeClickRay_dividesTheCameraPositionByObjectsScale () {
-    app.WIN3D.ViewType = 1;
+    app.WIN3D.projectionTypeIndex = 1;
     app.WIN3D.scale = 1;
-    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
-    app.WIN3D.CAM_x = 20;
-    app.WIN3D.CAM_y = 0;
-    app.WIN3D.CAM_z = 0;
-    app.OBJECTS_scale = 2;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.cameraX = 20;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = 0;
+    app.overallScale = 2;
 
     solarchvision_bim.ClickRay ray = app.computeClickRay(0, 0);
 
@@ -925,13 +925,13 @@ class MouseClickedTest {
   void computeClickRay_perspectiveAlwaysStartsAtTheCameraRegardlessOfClickPosition () {
     // In perspective, every ray shares the same origin (the camera) -
     // only the direction changes with where on screen you clicked.
-    app.WIN3D.ViewType = 1;
+    app.WIN3D.projectionTypeIndex = 1;
     app.WIN3D.scale = 1;
-    app.WIN3D.CAM_fov = (float) Math.toRadians(60);
-    app.WIN3D.CAM_x = 5;
-    app.WIN3D.CAM_y = -3;
-    app.WIN3D.CAM_z = 10;
-    app.OBJECTS_scale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.cameraX = 5;
+    app.WIN3D.cameraY = -3;
+    app.WIN3D.cameraZ = 10;
+    app.overallScale = 1;
 
     solarchvision_bim.ClickRay centerRay = app.computeClickRay(0, 0);
     solarchvision_bim.ClickRay offCenterRay = app.computeClickRay(80, -40);
@@ -945,19 +945,19 @@ class MouseClickedTest {
     // At the image center, ray_end (0,0) equals ray_center (0,0), so
     // the orthographic offset is exactly zero and the start point
     // matches the plain camera position, same as the perspective case.
-    app.WIN3D.ViewType = 0; // orthographic
+    app.WIN3D.projectionTypeIndex = 0; // orthographic
     app.WIN3D.scale = 1;
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_Z = 0;
-    app.WIN3D.CAM_x = 1;
-    app.WIN3D.CAM_y = 2;
-    app.WIN3D.CAM_z = 3;
-    app.WIN3D.position_X = 7;
-    app.WIN3D.position_Y = 8;
-    app.WIN3D.position_Z = 9;
-    app.WIN3D.refScale = 100;
-    app.WIN3D.Zoom = 90;
-    app.OBJECTS_scale = 1;
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
+    app.WIN3D.cameraX = 1;
+    app.WIN3D.cameraY = 2;
+    app.WIN3D.cameraZ = 3;
+    app.WIN3D.positionX = 7;
+    app.WIN3D.positionY = 8;
+    app.WIN3D.positionZ = 9;
+    app.WIN3D.referenceScale = 100;
+    app.WIN3D.zoom = 90;
+    app.overallScale = 1;
 
     solarchvision_bim.ClickRay ray = app.computeClickRay(0, 0);
 
@@ -969,19 +969,19 @@ class MouseClickedTest {
     // The defining property of orthographic projection: unlike
     // perspective, the ray's DIRECTION is the same no matter where on
     // screen you clicked - only its start point shifts.
-    app.WIN3D.ViewType = 0; // orthographic
+    app.WIN3D.projectionTypeIndex = 0; // orthographic
     app.WIN3D.scale = 1;
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_Z = 0;
-    app.WIN3D.CAM_x = 0;
-    app.WIN3D.CAM_y = 0;
-    app.WIN3D.CAM_z = 10;
-    app.WIN3D.position_X = 3;
-    app.WIN3D.position_Y = 4;
-    app.WIN3D.position_Z = 0;
-    app.WIN3D.refScale = 100;
-    app.WIN3D.Zoom = 90;
-    app.OBJECTS_scale = 1;
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = 10;
+    app.WIN3D.positionX = 3;
+    app.WIN3D.positionY = 4;
+    app.WIN3D.positionZ = 0;
+    app.WIN3D.referenceScale = 100;
+    app.WIN3D.zoom = 90;
+    app.overallScale = 1;
 
     solarchvision_bim.ClickRay centerRay = app.computeClickRay(0, 0);
     solarchvision_bim.ClickRay offCenterRay = app.computeClickRay(50, -30);
@@ -997,7 +997,7 @@ class MouseClickedTest {
     // Same BoundingBox/align setup already confirmed directly in
     // Select3DTest's getPivot test - this only checks that the Move
     // handling routes GROUP through getPivot() at all.
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.BoundingBox = new float[][]{
       {0, 0, 0, 1, 1, 1, 0, 0, 0},
       {5, 5, 5, 1, 1, 1, 0, 0, 0},
@@ -1014,7 +1014,7 @@ class MouseClickedTest {
 
   @Test
   void getMoveOriginPoint_forAModel2DReturnsTheLastSelectedInstancesPosition () {
-    app.current_ObjectCategory = app.ObjectCategory.MODEL2D;
+    app.currentObjectCategory = app.ObjectCategory.MODEL2D;
     app.allModel2Ds.MAP = new int[]{0, 0, 0}; // 3 instances, values unused by getX/Y/Z
     app.allModel2Ds.XYZS = new float[][]{
       {1, 1, 1, 1}, {2, 2, 2, 1}, {99, 88, 77, 1} // last one should win
@@ -1028,7 +1028,7 @@ class MouseClickedTest {
 
   @Test
   void getMoveOriginPoint_forAVertexReturnsThatPointsCoordinates () {
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.allVertices = new float[][]{{0, 0, 0}, {3, 4, 5}};
     app.Select3D.Vertex_ids = new int[]{1};
 
@@ -1039,7 +1039,7 @@ class MouseClickedTest {
 
   @Test
   void getMoveOriginPoint_isUndefinedForACategoryMoveDoesntHandle () {
-    app.current_ObjectCategory = app.ObjectCategory.CAMERA; // not one of the five handled
+    app.currentObjectCategory = app.ObjectCategory.CAMERA; // not one of the five handled
 
     float[] origin = app.getMoveOriginPoint();
 
@@ -1147,19 +1147,19 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    app.TMYEPW_Coordinates = new solarchvision_bim.STATION[]{app.new STATION()};
-    app.TMYEPW_Coordinates[0].setFilename_TMYEPW("station_0.epw");
-    app.STATION.setFilename_TMYEPW("station_0.epw");
+    app.climateTypicalYearCoordinates = new solarchvision_bim.STATION[]{app.new STATION()};
+    app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("station_0.epw");
+    app.STATION.setClimateTypicalYearFilename("station_0.epw");
 
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[]{0};
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[]{0};
 
-    float[] row0 = app.TMYEPW_PICKER.rowRect(0);
+    float[] row0 = app.climateTypicalYearPicker.rowRect(0);
     app.X_clicked = (int) (row0[0] + 2);
     app.Y_clicked = (int) (row0[1] + 2);
 
     assertTrue(app.handlePickListClick());
-    assertFalse(app.TMYEPW_PICKER.active); // confirms it was really TMYEPW_PICKER that handled it
+    assertFalse(app.climateTypicalYearPicker.active); // confirms it was really climateTypicalYearPicker that handled it
   }
 
   @Test
@@ -1174,16 +1174,16 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[100];
-    app.TMYEPW_PICKER.scrollOffset = 20;
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[100];
+    app.climateTypicalYearPicker.scrollOffset = 20;
 
-    float[] track = app.TMYEPW_PICKER.scrollTrackRect();
+    float[] track = app.climateTypicalYearPicker.scrollTrackRect();
     app.X_clicked = (int) (track[0] + 2);
     app.Y_clicked = (int) (track[1] + 2);
 
     assertTrue(app.handlePickListTrackClick());
-    assertTrue(app.TMYEPW_PICKER.scrollOffset < 20); // confirms it was really TMYEPW_PICKER that paged
+    assertTrue(app.climateTypicalYearPicker.scrollOffset < 20); // confirms it was really climateTypicalYearPicker that paged
   }
 
   @Test
@@ -1200,12 +1200,12 @@ class MouseClickedTest {
     app.X_clicked = 10;
     app.Y_clicked = 10;
 
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[100];
-    app.TMYEPW_PICKER.scrollOffset = 0;
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[100];
+    app.climateTypicalYearPicker.scrollOffset = 0;
 
     assertTrue(app.handlePickListWheel(1));
-    assertEquals(1, app.TMYEPW_PICKER.scrollOffset);
+    assertEquals(1, app.climateTypicalYearPicker.scrollOffset);
   }
 
   @Test
@@ -1220,15 +1220,15 @@ class MouseClickedTest {
     app.WORLD.dX = 400;
     app.WORLD.dY = 300;
 
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[100]; // needsScrollbar() -> true
-    app.TMYEPW_PICKER.scrollThumbDragging = true; // already mid-drag, skips the "start a new drag" branch
-    app.TMYEPW_PICKER.scrollDrag_startMouseY = 100;
-    app.TMYEPW_PICKER.scrollDrag_startOffset = 5;
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[100]; // needsScrollbar() -> true
+    app.climateTypicalYearPicker.scrollThumbDragging = true; // already mid-drag, skips the "start a new drag" branch
+    app.climateTypicalYearPicker.scrollDrag_startMouseY = 100;
+    app.climateTypicalYearPicker.scrollDrag_startOffset = 5;
     app.mouseY = 100; // no movement since the drag started
 
     assertTrue(app.handlePickListScrollDrag());
-    assertEquals(5, app.TMYEPW_PICKER.scrollOffset); // unchanged: zero delta
+    assertEquals(5, app.climateTypicalYearPicker.scrollOffset); // unchanged: zero delta
   }
 
   @Test
@@ -1238,24 +1238,24 @@ class MouseClickedTest {
 
   @Test
   void resetPickListDragState_clearsTheDraggingFlagOnEveryPickerNotJustTheActiveOne () {
-    app.TMYEPW_PICKER.scrollThumbDragging = true;
-    app.CLMREC_PICKER.scrollThumbDragging = true;
+    app.climateTypicalYearPicker.scrollThumbDragging = true;
+    app.climateArchivePicker.scrollThumbDragging = true;
 
     app.resetPickListDragState();
 
-    assertFalse(app.TMYEPW_PICKER.scrollThumbDragging);
-    assertFalse(app.CLMREC_PICKER.scrollThumbDragging);
+    assertFalse(app.climateTypicalYearPicker.scrollThumbDragging);
+    assertFalse(app.climateArchivePicker.scrollThumbDragging);
   }
 
   @Test
   void cancelActivePickList_cancelsWhicheverPickerIsActive () {
-    app.TMYEPW_PICKER.active = true;
-    app.TMYEPW_PICKER.indices = new int[]{0, 1, 2};
+    app.climateTypicalYearPicker.active = true;
+    app.climateTypicalYearPicker.indices = new int[]{0, 1, 2};
 
     assertTrue(app.cancelActivePickList());
 
-    assertFalse(app.TMYEPW_PICKER.active);
-    assertEquals(0, app.TMYEPW_PICKER.indices.length);
+    assertFalse(app.climateTypicalYearPicker.active);
+    assertEquals(0, app.climateTypicalYearPicker.indices.length);
   }
 
   @Test

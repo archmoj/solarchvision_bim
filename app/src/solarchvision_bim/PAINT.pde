@@ -462,130 +462,130 @@ class PAINT {
   }
 
 
-  float[] getColorStyle (int COLOR_STYLE_Current, float j) {
+  float[] getColorStyle (int currentColorStyle, float j) {
     float[] c = {
       255, 0, 0, 0
     };
 
-    if (COLOR_STYLE_Current == 0) {
+    if (currentColorStyle == 0) {
       c[0] = PAINT.getOpacity(STUDY.O_scale);
       c[1] = 0;
       c[2] = 0;
       c[3] = 0;
-    } else if (COLOR_STYLE_Current == 19) {
+    } else if (currentColorStyle == 19) {
       float[] COL = this.DWYR(j);
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 18) {
+    } else if (currentColorStyle == 18) {
       float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
       c[0] = 255;
       c[1] = COL[3];
       c[2] = COL[2];
       c[3] = COL[1];
-    } else if (COLOR_STYLE_Current == 17) {
+    } else if (currentColorStyle == 17) {
       float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
       c[0] = 255;
       c[1] = 255 - COL[3];
       c[2] = 255 - COL[2];
       c[3] = 255 - COL[1];
-    } else if (COLOR_STYLE_Current == 16) {
+    } else if (currentColorStyle == 16) {
       float[] COL = this.DBCW(j);
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 15) {
+    } else if (currentColorStyle == 15) {
       float[] COL = this.DRYW(j);
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 14) {
+    } else if (currentColorStyle == 14) {
       float[] COL = this.DBGR(j);
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 13) {
+    } else if (currentColorStyle == 13) {
       float[] COL = this.DWBGR(j);
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 12) {
+    } else if (currentColorStyle == 12) {
       float[] COL = this.BGR(j);
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 11) {
+    } else if (currentColorStyle == 11) {
       float[] COL = this.BGR(j);
       c[0] = 127;
       c[1] = 255 - 0.5 * COL[1];
       c[2] = 255 - 0.5 * COL[2];
       c[3] = 255 - 0.5 * COL[3];
-    } else if (COLOR_STYLE_Current == 10) {
+    } else if (currentColorStyle == 10) {
       float[] COL = this.BGR(j);
       c[0] = 255;
       c[1] = 255 - COL[1];
       c[2] = 255 - COL[2];
       c[3] = 255 - COL[3];
-    } else if (COLOR_STYLE_Current == 9) {
+    } else if (currentColorStyle == 9) {
       float[] COL = this.WBGRW(j);
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 8) {
+    } else if (currentColorStyle == 8) {
       float[] COL = this.BGR(j);
       c[0] = 255;
       c[1] = 255 - COL[1];
       c[2] = 255 - COL[2];
       c[3] = 255 - COL[3];
-    } else if (COLOR_STYLE_Current == 7) {
+    } else if (currentColorStyle == 7) {
       float[] COL = this.WBGRW(j);
       c[0] = 255;
       c[1] = 255 - COL[1];
       c[2] = 255 - COL[2];
       c[3] = 255 - COL[3];
-    } else if (COLOR_STYLE_Current == 6) {
+    } else if (currentColorStyle == 6) {
       float[] COL = this.BGR(j);
       c[0] = 255;
       c[1] = COL[3];
       c[2] = COL[2];
       c[3] = COL[1];
-    } else if (COLOR_STYLE_Current == 4) {
+    } else if (currentColorStyle == 4) {
       float[] COL = this.VDWBGR(j);
       c[0] = STUDY.O_scale;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 3) {
+    } else if (currentColorStyle == 3) {
       float[] COL = this.VDWBGR(j);
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 2) {
+    } else if (currentColorStyle == 2) {
       float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
       c[0] = STUDY.O_scale;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 1) {
+    } else if (currentColorStyle == 1) {
       float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
       c[0] = 255;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
-    } else if (COLOR_STYLE_Current == 5) {
+    } else if (currentColorStyle == 5) {
       c[0] = 255;
       c[1] = 0;
       c[2] = 0;
       c[3] = 0;
-    } else if (COLOR_STYLE_Current == -1) {
+    } else if (currentColorStyle == -1) {
       float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
       c[0] = 255;
       c[1] = 255 - COL[3];

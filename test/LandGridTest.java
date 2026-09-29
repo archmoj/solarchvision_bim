@@ -24,7 +24,7 @@ class LandGridTest {
 
     double[] atColumn0 = app.Land3D.getLandGrid(0, 0);
     double[] atColumn5 = app.Land3D.getLandGrid(0, 5);
-    double[] atLastColumn = app.Land3D.getLandGrid(0, app.Land3D.num_columns - 1);
+    double[] atLastColumn = app.Land3D.getLandGrid(0, app.Land3D.columnCount - 1);
 
     for (double[] p : new double[][]{atColumn0, atColumn5, atLastColumn}) {
       assertEquals(stationLon, p[0], EPS);
@@ -36,7 +36,7 @@ class LandGridTest {
   void row1_offsetsByOneStepAtTheColumnAnglesCosAndSin () {
     // i=1 gives r = q^0 = 1 (a single 50m-equivalent step), so column 0
     // (angle 0deg: cos=1, sin=0) should offset purely in longitude, and
-    // the column at 90deg (angle t=90 happens at column num_columns/4
+    // the column at 90deg (angle t=90 happens at column columnCount/4
     // for the default 25-column, 15deg-per-column grid, i.e. column 6)
     // should offset purely in latitude.
     double stationLon = app.STATION.getLongitude();

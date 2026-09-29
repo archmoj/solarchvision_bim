@@ -129,17 +129,17 @@ class UI_menuBar {
       "Location",
       "Update Station",
       ___divider___,
-      "Use typical year (TMY)",
-      "Use long-term (CWEEDS)",
-      "Use long-term (CLMREC)",
-      "Use real-time observed (SWOB)",
-      "Use weather forecast (NAEFS)",
+      "Use Climate Typical Year",
+      "Use Climate Engineering",
+      "Use Climate Archive",
+      "Use Ensemble Observation",
+      "Use Ensemble Forecast",
       ___divider___,
-      "Update TMYEPW",
-      "Update CWEEDS",
-      "Update CLMREC",
-      "Update SWOB",
-      "Update NAEFS",
+      "Update Climate Typical Year",
+      "Update Climate Engineering",
+      "Update Climate Archive",
+      "Update Ensemble Observation",
+      "Update Ensemble Forecast",
       ___divider___,
       "Load Toroposphere",
       "Load Land Mesh",
@@ -147,21 +147,21 @@ class UI_menuBar {
       "Download Land Mesh",
       "Download Land Texture",
       ___divider___,
-      "Download TMYEPW",
-      "Download CLMREC",
-      "Download NAEFS",
-      "Download SWOB",
+      "Download Climate Typical Year",
+      "Download Climate Archive",
+      "Download Ensemble Forecast",
+      "Download Ensemble Observation",
       ___divider___,
-      "Show/Hide TMYEPW stations",
-      "Show/Hide TMYEPW nearest",
-      "Show/Hide CWEEDS stations",
-      "Show/Hide CWEEDS nearest",
-      "Show/Hide CLMREC stations",
-      "Show/Hide CLMREC nearest",
-      "Show/Hide SWOB stations",
-      "Show/Hide SWOB nearest",
-      "Show/Hide NAEFS stations",
-      "Show/Hide NAEFS nearest"
+      "Show/Hide Climate Typical Year stations",
+      "Show/Hide Climate Typical Year nearest",
+      "Show/Hide Climate Engineering stations",
+      "Show/Hide Climate Engineering nearest",
+      "Show/Hide Climate Archive stations",
+      "Show/Hide Climate Archive nearest",
+      "Show/Hide Ensemble Observation stations",
+      "Show/Hide Ensemble Observation nearest",
+      "Show/Hide Ensemble Forecast stations",
+      "Show/Hide Ensemble Forecast nearest"
     }
     ,
     {
@@ -460,10 +460,10 @@ class UI_menuBar {
       "Tessellate Rectangular",
       "Tessellate Rows & Columns",
       ___divider___,
-      "Insert Corner Opennings",
-      "Insert Parallel Opennings",
-      "Insert Rotated Opennings",
-      "Insert Edge Opennings",
+      "Insert Corner Openings",
+      "Insert Parallel Openings",
+      "Insert Rotated Openings",
+      "Insert Edge Openings",
       ___divider___,
       "Offset(above) Vertices",
       "Offset(below) Vertices",
@@ -624,16 +624,16 @@ class UI_menuBar {
     HashMap<String, java.util.function.BooleanSupplier> map = new HashMap<String, java.util.function.BooleanSupplier>();
 
     // "Location" menu
-    map.put(toggleKey("Location", "Show/Hide SWOB stations"),   () -> WORLD.displayAll_SWOB == 0);
-    map.put(toggleKey("Location", "Show/Hide SWOB nearest"),    () -> !WORLD.displayNear_SWOB);
-    map.put(toggleKey("Location", "Show/Hide NAEFS stations"),  () -> WORLD.displayAll_NAEFS == 0);
-    map.put(toggleKey("Location", "Show/Hide NAEFS nearest"),   () -> !WORLD.displayNear_NAEFS);
-    map.put(toggleKey("Location", "Show/Hide CWEEDS stations"), () -> WORLD.displayAll_CWEEDS == 0);
-    map.put(toggleKey("Location", "Show/Hide CWEEDS nearest"),  () -> !WORLD.displayNear_CWEEDS);
-    map.put(toggleKey("Location", "Show/Hide CLMREC stations"), () -> WORLD.displayAll_CLMREC == 0);
-    map.put(toggleKey("Location", "Show/Hide CLMREC nearest"),  () -> !WORLD.displayNear_CLMREC);
-    map.put(toggleKey("Location", "Show/Hide TMYEPW stations"), () -> WORLD.displayAll_TMYEPW == 0);
-    map.put(toggleKey("Location", "Show/Hide TMYEPW nearest"),  () -> !WORLD.displayNear_TMYEPW);
+    map.put(toggleKey("Location", "Show/Hide Ensemble Observation stations"),   () -> WORLD.ensembleObservationDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Ensemble Observation nearest"),    () -> !WORLD.ensembleObservationDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Ensemble Forecast stations"),  () -> WORLD.ensembleForecastDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Ensemble Forecast nearest"),   () -> !WORLD.ensembleForecastDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Climate Engineering stations"), () -> WORLD.climateEngineeringDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Climate Engineering nearest"),  () -> !WORLD.climateEngineeringDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Climate Archive stations"), () -> WORLD.climateArchiveDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Climate Archive nearest"),  () -> !WORLD.climateArchiveDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Climate Typical Year stations"), () -> WORLD.climateTypicalYearDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Climate Typical Year nearest"),  () -> !WORLD.climateTypicalYearDisplayNear);
 
     // "3D-display" menu
     map.put(toggleKey("3D-display", "Show/Hide Land Mesh"),     () -> !Land3D.displaySurface);
@@ -1027,11 +1027,11 @@ class UI_menuBar {
       if (this.selected_child > 0) {
         if (this.selected_child < allLayers.length) {
           changeCurrentLayerTo(this.selected_child - 1);
-          DevelopLayer_id = CurrentLayer_id;
+          developLayerId = currentLayerId;
           STUDY.revise();
         } else if (menu_option.charAt(0) != '—') {
-          Develop_Option = this.selected_child - allLayers.length - 1; // -1 for the divider
-          postProcess_developDATA(CurrentDataSource);
+          developLayerOption = this.selected_child - allLayers.length - 1; // -1 for the divider
+          postProcess_developDATA(currentDataSource);
           changeCurrentLayerTo(LAYER_developed.id);
           STUDY.revise();
         }

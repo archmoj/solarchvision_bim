@@ -115,7 +115,7 @@ class SolarImpacts {
 
           //println(DATE_ANGLE, DATE_ANGLE_approximate);
 
-          int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.Impact_TYPE);
+          int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactType);
 
           if (nk == -1) continue;
           int k = int(nk / STUDY.joinDays);
@@ -163,10 +163,10 @@ class SolarImpacts {
                   now_j = (now_j + 365) % 365;
                 }
 
-                Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
-                Pb = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
-                Pc = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
-                Pd = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
+                Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+                Pb = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+                Pc = getValue_currentDataSource(now_i, now_j, now_k, LAYER_direffect.id);
+                Pd = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difeffect.id);
 
                 if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) {
                   values_R_dir = FLOAT_undefined;
@@ -175,7 +175,7 @@ class SolarImpacts {
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = filter(CurrentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
                     values_R_dir = 0.001 * Pa;
@@ -198,7 +198,7 @@ class SolarImpacts {
                           File_Name += "DIF_" + STR_SHD[SHD];
                         }
 
-                        File_Name += "_Camera" + nf(Camera_Variation, 2) + ".png";
+                        File_Name += "_Camera" + nf(cameraIndex, 2) + ".png";
 
 
                         // println(File_Name);
@@ -290,9 +290,9 @@ class SolarImpacts {
               if (q == Impact_ACTIVE) {
                 valuesSUM = Image_G;
 
-                PAL_type = allFaces.ACTIVE_palette_CLR;
-                PAL_direction = allFaces.ACTIVE_palette_DIR;
-                PAL_multiplier = allFaces.ACTIVE_palette_MLT;
+                PAL_type = allFaces.activeColorScaleIndex;
+                PAL_direction = allFaces.activeColorScaleDirection;
+                PAL_multiplier = allFaces.activeColorScaleFactor;
 
                 //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -309,9 +309,9 @@ class SolarImpacts {
 
                 valuesSUM = COMPARISON;
 
-                PAL_type = allFaces.PASSIVE_palette_CLR;
-                PAL_direction = allFaces.PASSIVE_palette_DIR;
-                PAL_multiplier = allFaces.PASSIVE_palette_MLT;
+                PAL_type = allFaces.passiveColorScaleIndex;
+                PAL_direction = allFaces.passiveColorScaleDirection;
+                PAL_multiplier = allFaces.passiveColorScaleFactor;
 
                 //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
@@ -334,7 +334,7 @@ class SolarImpacts {
             Image_RGBA[q].updatePixels();
 
 
-            //if (Camera_Variation == 0) {
+            //if (cameraIndex == 0) {
             this.Image[q][j + 1] = Image_RGBA[q];
             if (this.record_IMG == 1) {
               String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(j + 1, 0) + ".jpg";
@@ -378,9 +378,9 @@ class SolarImpacts {
               if (q == Impact_ACTIVE) {
                 valuesSUM = Image_G;
 
-                PAL_type = allFaces.ACTIVE_palette_CLR;
-                PAL_direction = allFaces.ACTIVE_palette_DIR;
-                PAL_multiplier = allFaces.ACTIVE_palette_MLT;
+                PAL_type = allFaces.activeColorScaleIndex;
+                PAL_direction = allFaces.activeColorScaleDirection;
+                PAL_multiplier = allFaces.activeColorScaleFactor;
 
                 //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -397,9 +397,9 @@ class SolarImpacts {
 
                 valuesSUM = COMPARISON;
 
-                PAL_type = allFaces.PASSIVE_palette_CLR;
-                PAL_direction = allFaces.PASSIVE_palette_DIR;
-                PAL_multiplier = allFaces.PASSIVE_palette_MLT;
+                PAL_type = allFaces.passiveColorScaleIndex;
+                PAL_direction = allFaces.passiveColorScaleDirection;
+                PAL_multiplier = allFaces.passiveColorScaleFactor;
 
                 //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
@@ -418,7 +418,7 @@ class SolarImpacts {
 
             total_Image_RGBA[q].updatePixels();
 
-            //if (Camera_Variation == 0) {
+            //if (cameraIndex == 0) {
             this.Image[q][0] = total_Image_RGBA[q];
             if (this.record_IMG == 1) {
               String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(0, 0) + ".jpg";

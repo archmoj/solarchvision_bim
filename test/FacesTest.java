@@ -184,12 +184,12 @@ class FacesTest {
     app.allFaces.displayNormals = true;
     app.allFaces.displayEdges = false;
     app.allFaces.displayTessellation = 3;
-    app.allFaces.ACTIVE_palette_CLR = 9;
-    app.allFaces.ACTIVE_palette_DIR = -1;
-    app.allFaces.ACTIVE_palette_MLT = 0.5f;
-    app.allFaces.PASSIVE_palette_CLR = 2;
-    app.allFaces.PASSIVE_palette_DIR = 2;
-    app.allFaces.PASSIVE_palette_MLT = 0.75f;
+    app.allFaces.activeColorScaleIndex = 9;
+    app.allFaces.activeColorScaleDirection = -1;
+    app.allFaces.activeColorScaleFactor = 0.5f;
+    app.allFaces.passiveColorScaleIndex = 2;
+    app.allFaces.passiveColorScaleDirection = 2;
+    app.allFaces.passiveColorScaleFactor = 0.75f;
 
     processing.data.XML root = new processing.data.XML("root");
     app.allFaces.to_XML(root);
@@ -205,11 +205,11 @@ class FacesTest {
     assertTrue(fresh.displayNormals);
     assertFalse(fresh.displayEdges);
     assertEquals(3, fresh.displayTessellation);
-    assertEquals(9, fresh.ACTIVE_palette_CLR);
-    assertEquals(-1, fresh.ACTIVE_palette_DIR);
-    assertEquals(0.5f, fresh.ACTIVE_palette_MLT, 0.0001f);
-    assertEquals(2, fresh.PASSIVE_palette_CLR);
-    assertEquals(2, fresh.PASSIVE_palette_DIR);
-    assertEquals(0.75f, fresh.PASSIVE_palette_MLT, 0.0001f);
+    assertEquals(9, fresh.activeColorScaleIndex);
+    assertEquals(-1, fresh.activeColorScaleDirection);
+    assertEquals(0.5f, fresh.activeColorScaleFactor, 0.0001f);
+    assertEquals(2, fresh.passiveColorScaleIndex);
+    assertEquals(2, fresh.passiveColorScaleDirection);
+    assertEquals(0.75f, fresh.passiveColorScaleFactor, 0.0001f);
   }
 }

@@ -1,8 +1,8 @@
 
-int ViewLayout = 0;
+int viewLayout = 0;
 
 void update_frame_layout () {
-  if (ViewLayout == 0) {
+  if (viewLayout == 0) {
 
     STUDY.include = true;
     WIN3D.include = true;
@@ -27,7 +27,7 @@ void update_frame_layout () {
     STUDY.dY = 1 * pixel_H;
     STUDY.view_R = float(STUDY.dY) / float(STUDY.dX);
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
-  } else if (ViewLayout == 1) {
+  } else if (viewLayout == 1) {
 
     STUDY.include = false;
     WIN3D.include = true;
@@ -39,7 +39,7 @@ void update_frame_layout () {
     WIN3D.dY = 2 * pixel_H;
     WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
     WIN3D.graphics = createGraphics(WIN3D.dX, WIN3D.dY, P3D);
-  } else if (ViewLayout == 2) {
+  } else if (viewLayout == 2) {
 
     STUDY.include = true;
     WIN3D.include = false;
@@ -51,7 +51,7 @@ void update_frame_layout () {
     STUDY.dY = 2 * pixel_H;
     STUDY.view_R = float(STUDY.dY) / float(STUDY.dX);
     STUDY.graphics = createGraphics(STUDY.dX, STUDY.dY, P2D);
-  } else if (ViewLayout == 3) {
+  } else if (viewLayout == 3) {
 
     STUDY.include = false;
     WIN3D.include = false;

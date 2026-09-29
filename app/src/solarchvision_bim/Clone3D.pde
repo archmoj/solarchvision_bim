@@ -3,23 +3,23 @@ class Clone3D {
   final static String CLASS_STAMP = "Clone3D";
 
   void selection (boolean produce_same_variation) {
-    if (current_ObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
       // nothing to clone
-    } else if (current_ObjectCategory == ObjectCategory.MODEL1D) {
+    } else if (currentObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1Ds(produce_same_variation);
-    } else if (current_ObjectCategory == ObjectCategory.MODEL2D) {
+    } else if (currentObjectCategory == ObjectCategory.MODEL2D) {
       this.Model2Ds(produce_same_variation);
-    } else if (current_ObjectCategory == ObjectCategory.FACE) {
+    } else if (currentObjectCategory == ObjectCategory.FACE) {
       this.Faces(produce_same_variation);
-    } else if (current_ObjectCategory == ObjectCategory.POLYLINE) {
+    } else if (currentObjectCategory == ObjectCategory.POLYLINE) {
       this.Polylines(produce_same_variation);
-    } else if (current_ObjectCategory == ObjectCategory.SOLID) {
+    } else if (currentObjectCategory == ObjectCategory.SOLID) {
       this.Solids(produce_same_variation);
-    } else if (current_ObjectCategory == ObjectCategory.SECTION) {
+    } else if (currentObjectCategory == ObjectCategory.SECTION) {
       this.Sections(produce_same_variation);
-    } else if (current_ObjectCategory == ObjectCategory.CAMERA) {
+    } else if (currentObjectCategory == ObjectCategory.CAMERA) {
       this.Cameras(produce_same_variation);
-    } else if (current_ObjectCategory == ObjectCategory.GROUP) {
+    } else if (currentObjectCategory == ObjectCategory.GROUP) {
       this.Groups(produce_same_variation);
     }
   }

@@ -5,31 +5,31 @@ class STATION {
   float elevation = 0;
   float latitude = 0;
   float longitude = 0;
-  float timelong = 0;
+  float timezoneLongitude = 0;
   String code = "";
   String city = "";
   String province = "";
   String country = "";
-  String filename_SWOB = "";
-  String filename_NAEFS = "";
-  String filename_CWEEDS = "";
-  String filename_TMYEPW = "";
-  String Download_TMYEPW = "";
+  String ensembleObservationFilename = "";
+  String ensembleForecastFilename = "";
+  String climateEngineeringFilename = "";
+  String climateTypicalYearFilename = "";
+  String climateTypicalYearDownload = "";
 
 
   public float getElevation () { return this.elevation; }
   public float getLatitude () { return this.latitude; }
   public float getLongitude () { return this.longitude; }
-  public float getTimelong () { return this.timelong; }
+  public float getTimezoneLongitude () { return this.timezoneLongitude; }
   public String getCode () { return this.code; }
   public String getCity () { return this.city; }
   public String getProvince () { return this.province; }
   public String getCountry () { return this.country; }
-  public String getFilename_SWOB () { return this.filename_SWOB; }
-  public String getFilename_NAEFS () { return this.filename_NAEFS; }
-  public String getFilename_CWEEDS () { return this.filename_CWEEDS; }
-  public String getFilename_TMYEPW () { return this.filename_TMYEPW; }
-  public String getDownload_TMYEPW () { return this.Download_TMYEPW; }
+  public String getEnsembleObservationFilename () { return this.ensembleObservationFilename; }
+  public String getEnsembleForecastFilename () { return this.ensembleForecastFilename; }
+  public String getClimateEngineeringFilename () { return this.climateEngineeringFilename; }
+  public String getClimateTypicalYearFilename () { return this.climateTypicalYearFilename; }
+  public String getClimateTypicalYearDownload () { return this.climateTypicalYearDownload; }
 
 
   public void setElevation (float elevation) {
@@ -41,8 +41,8 @@ class STATION {
   public void setLongitude (float longitude) {
     this.longitude = longitude;
   }
-  public void setTimelong (float timelong) {
-    this.timelong = timelong;
+  public void setTimezoneLongitude (float timezoneLongitude) {
+    this.timezoneLongitude = timezoneLongitude;
   }
   public void setCode (String code) {
     this.code = code;
@@ -56,20 +56,20 @@ class STATION {
   public void setCountry (String country) {
     this.country = country;
   }
-  public void setFilename_SWOB (String filename_SWOB) {
-    this.filename_SWOB = filename_SWOB;
+  public void setEnsembleObservationFilename (String ensembleObservationFilename) {
+    this.ensembleObservationFilename = ensembleObservationFilename;
   }
-  public void setFilename_NAEFS (String filename_NAEFS) {
-    this.filename_NAEFS = filename_NAEFS;
+  public void setEnsembleForecastFilename (String ensembleForecastFilename) {
+    this.ensembleForecastFilename = ensembleForecastFilename;
   }
-  public void setFilename_CWEEDS (String filename_CWEEDS) {
-    this.filename_CWEEDS = filename_CWEEDS;
+  public void setClimateEngineeringFilename (String climateEngineeringFilename) {
+    this.climateEngineeringFilename = climateEngineeringFilename;
   }
-  public void setFilename_TMYEPW (String filename_TMYEPW) {
-    this.filename_TMYEPW = filename_TMYEPW;
+  public void setClimateTypicalYearFilename (String climateTypicalYearFilename) {
+    this.climateTypicalYearFilename = climateTypicalYearFilename;
   }
-  public void setDownload_TMYEPW (String Download_TMYEPW) {
-    this.Download_TMYEPW = Download_TMYEPW;
+  public void setClimateTypicalYearDownload (String climateTypicalYearDownload) {
+    this.climateTypicalYearDownload = climateTypicalYearDownload;
   }
 
   public STATION () {
@@ -77,25 +77,25 @@ class STATION {
   }
 
   public STATION (String code, String city, String province, String country,
-                         float latitude, float longitude, float timelong, float elevation,
-                         String Download_TMYEPW, String filename_TMYEPW,
-                         String filename_CWEEDS, String filename_NAEFS, String filename_SWOB) {
+                         float latitude, float longitude, float timezoneLongitude, float elevation,
+                         String climateTypicalYearDownload, String climateTypicalYearFilename,
+                         String climateEngineeringFilename, String ensembleForecastFilename, String ensembleObservationFilename) {
 
     this.code = code;
     this.city = city;
     this.province = province;
     this.country = country;
 
-    this.filename_SWOB = filename_SWOB;
-    this.filename_NAEFS = filename_NAEFS;
-    this.filename_CWEEDS = filename_CWEEDS;
-    this.filename_TMYEPW = filename_TMYEPW;
-    this.Download_TMYEPW = Download_TMYEPW;
+    this.ensembleObservationFilename = ensembleObservationFilename;
+    this.ensembleForecastFilename = ensembleForecastFilename;
+    this.climateEngineeringFilename = climateEngineeringFilename;
+    this.climateTypicalYearFilename = climateTypicalYearFilename;
+    this.climateTypicalYearDownload = climateTypicalYearDownload;
 
     this.elevation = elevation;
     this.latitude = latitude;
     this.longitude = longitude;
-    this.timelong = timelong;
+    this.timezoneLongitude = timezoneLongitude;
   }
 
 
@@ -111,11 +111,11 @@ class STATION {
     XML_setFloat(child, "elevation", this.getElevation());
     XML_setFloat(child, "latitude", this.getLatitude());
     XML_setFloat(child, "longitude", this.getLongitude());
-    XML_setFloat(child, "timelong", this.getTimelong());
+    XML_setFloat(child, "timezoneLongitude", this.getTimezoneLongitude());
 
-    XML_setString(child, "filename_NAEFS", this.getFilename_NAEFS());
-    XML_setString(child, "filename_CWEEDS", this.getFilename_CWEEDS());
-    XML_setString(child, "filename_TMYEPW", this.getFilename_TMYEPW());
+    XML_setString(child, "ensembleForecastFilename", this.getEnsembleForecastFilename());
+    XML_setString(child, "climateEngineeringFilename", this.getClimateEngineeringFilename());
+    XML_setString(child, "climateTypicalYearFilename", this.getClimateTypicalYearFilename());
   }
 
 
@@ -131,10 +131,10 @@ class STATION {
     this.setElevation(XML_getFloat(child, "elevation"));
     this.setLatitude(XML_getFloat(child, "latitude"));
     this.setLongitude(XML_getFloat(child, "longitude"));
-    this.setTimelong(XML_getFloat(child, "timelong"));
+    this.setTimezoneLongitude(XML_getFloat(child, "timezoneLongitude"));
 
-    this.setFilename_NAEFS(XML_getString(child, "filename_NAEFS"));
-    this.setFilename_CWEEDS(XML_getString(child, "filename_CWEEDS"));
-    this.setFilename_TMYEPW(XML_getString(child, "filename_TMYEPW"));
+    this.setEnsembleForecastFilename(XML_getString(child, "ensembleForecastFilename"));
+    this.setClimateEngineeringFilename(XML_getString(child, "climateEngineeringFilename"));
+    this.setClimateTypicalYearFilename(XML_getString(child, "climateTypicalYearFilename"));
   }
 }

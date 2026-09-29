@@ -138,16 +138,16 @@ class Cameras {
 
   void add_first () {
 
-    this.create(WIN3D.position_X,
-                    WIN3D.position_Y,
-                    WIN3D.position_Z,
-                    WIN3D.position_T,
-                    WIN3D.rotation_X,
-                    WIN3D.rotation_Y,
-                    WIN3D.rotation_Z,
-                    WIN3D.rotation_T,
-                    WIN3D.Zoom,
-                    WIN3D.ViewType);
+    this.create(WIN3D.positionX,
+                    WIN3D.positionY,
+                    WIN3D.positionZ,
+                    WIN3D.positionStep,
+                    WIN3D.rotationX,
+                    WIN3D.rotationY,
+                    WIN3D.rotationZ,
+                    WIN3D.rotationStep,
+                    WIN3D.zoom,
+                    WIN3D.projectionTypeIndex);
   }
 
 
@@ -190,7 +190,7 @@ class Cameras {
           float y = ImageVertex[q][1];
           float z = ImageVertex[q][2];
 
-          WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+          WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale);
 
           this.Vertices[f * 4 + q - 1][0] = x;
           this.Vertices[f * 4 + q - 1][1] = y;
@@ -218,7 +218,7 @@ class Cameras {
             float y = ImageVertex[q][1];
             float z = ImageVertex[q][2];
 
-            WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+            WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale);
           }
 
           {
@@ -228,7 +228,7 @@ class Cameras {
             float y = ImageVertex[next_q][1];
             float z = ImageVertex[next_q][2];
 
-            WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+            WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale);
           }
 
           {
@@ -238,7 +238,7 @@ class Cameras {
             float y = ImageVertex[o][1];
             float z = ImageVertex[o][2];
 
-            WIN3D.graphics.vertex(x * OBJECTS_scale * WIN3D.scale, -y * OBJECTS_scale * WIN3D.scale, z * OBJECTS_scale * WIN3D.scale);
+            WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale);
           }
         }
 
@@ -288,30 +288,30 @@ class Cameras {
 
       float x = 0, y = 0, z = 0;
 
-      float keep_WIN3D_CAM_x = WIN3D.CAM_x;
-      float keep_WIN3D_CAM_y = WIN3D.CAM_y;
-      float keep_WIN3D_CAM_z = WIN3D.CAM_z;
-      float keep_WIN3D_position_X = WIN3D.position_X;
-      float keep_WIN3D_position_Y = WIN3D.position_Y;
-      float keep_WIN3D_position_Z = WIN3D.position_Z;
-      float keep_WIN3D_position_T = WIN3D.position_T;
-      float keep_WIN3D_rotation_X = WIN3D.rotation_X;
-      float keep_WIN3D_rotation_Y = WIN3D.rotation_Y;
-      float keep_WIN3D_rotation_Z = WIN3D.rotation_Z;
-      float keep_WIN3D_rotation_T = WIN3D.rotation_T;
-      float keep_WIN3D_Zoom = WIN3D.Zoom;
+      float keep_WIN3D_cameraX = WIN3D.cameraX;
+      float keep_WIN3D_cameraY = WIN3D.cameraY;
+      float keep_WIN3D_cameraZ = WIN3D.cameraZ;
+      float keep_WIN3D_positionX = WIN3D.positionX;
+      float keep_WIN3D_positionY = WIN3D.positionY;
+      float keep_WIN3D_positionZ = WIN3D.positionZ;
+      float keep_WIN3D_positionStep = WIN3D.positionStep;
+      float keep_WIN3D_rotationX = WIN3D.rotationX;
+      float keep_WIN3D_rotationY = WIN3D.rotationY;
+      float keep_WIN3D_rotationZ = WIN3D.rotationZ;
+      float keep_WIN3D_rotationStep = WIN3D.rotationStep;
+      float keep_WIN3D_Zoom = WIN3D.zoom;
 
       {
 
-        WIN3D.position_X = Camera_pX;
-        WIN3D.position_Y = Camera_pY;
-        WIN3D.position_Z = Camera_pZ;
-        WIN3D.position_T = Camera_pT;
-        WIN3D.rotation_X = Camera_rX;
-        WIN3D.rotation_Y = Camera_rY;
-        WIN3D.rotation_Z = Camera_rZ;
-        WIN3D.rotation_T = Camera_rT;
-        WIN3D.Zoom = Camera_zoom;
+        WIN3D.positionX = Camera_pX;
+        WIN3D.positionY = Camera_pY;
+        WIN3D.positionZ = Camera_pZ;
+        WIN3D.positionStep = Camera_pT;
+        WIN3D.rotationX = Camera_rX;
+        WIN3D.rotationY = Camera_rY;
+        WIN3D.rotationZ = Camera_rZ;
+        WIN3D.rotationStep = Camera_rT;
+        WIN3D.zoom = Camera_zoom;
 
         WIN3D.transform_3DViewport();
 
@@ -327,23 +327,23 @@ class Cameras {
         float y3 = x2 * funcs.sin_ang(Camera_rZ) + y2 * funcs.cos_ang(Camera_rZ);
         float z3 = z2;
 
-        x = WIN3D.CAM_x + x3;
-        y = WIN3D.CAM_y + y3;
-        z = WIN3D.CAM_z + z3;
+        x = WIN3D.cameraX + x3;
+        y = WIN3D.cameraY + y3;
+        z = WIN3D.cameraZ + z3;
       }
 
-      WIN3D.CAM_x = keep_WIN3D_CAM_x;
-      WIN3D.CAM_y = keep_WIN3D_CAM_y;
-      WIN3D.CAM_z = keep_WIN3D_CAM_z;
-      WIN3D.position_X = keep_WIN3D_position_X;
-      WIN3D.position_Y = keep_WIN3D_position_Y;
-      WIN3D.position_Z = keep_WIN3D_position_Z;
-      WIN3D.position_T = keep_WIN3D_position_T;
-      WIN3D.rotation_X = keep_WIN3D_rotation_X;
-      WIN3D.rotation_Y = keep_WIN3D_rotation_Y;
-      WIN3D.rotation_Z = keep_WIN3D_rotation_Z;
-      WIN3D.rotation_T = keep_WIN3D_rotation_T;
-      WIN3D.Zoom = keep_WIN3D_Zoom;
+      WIN3D.cameraX = keep_WIN3D_cameraX;
+      WIN3D.cameraY = keep_WIN3D_cameraY;
+      WIN3D.cameraZ = keep_WIN3D_cameraZ;
+      WIN3D.positionX = keep_WIN3D_positionX;
+      WIN3D.positionY = keep_WIN3D_positionY;
+      WIN3D.positionZ = keep_WIN3D_positionZ;
+      WIN3D.positionStep = keep_WIN3D_positionStep;
+      WIN3D.rotationX = keep_WIN3D_rotationX;
+      WIN3D.rotationY = keep_WIN3D_rotationY;
+      WIN3D.rotationZ = keep_WIN3D_rotationZ;
+      WIN3D.rotationStep = keep_WIN3D_rotationStep;
+      WIN3D.zoom = keep_WIN3D_Zoom;
 
       ImageVertex[q][0] = x;
       ImageVertex[q][1] = y;

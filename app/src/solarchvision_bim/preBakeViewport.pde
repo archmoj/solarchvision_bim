@@ -6,7 +6,7 @@ void preBakeViewport () {
 
   buildFaceGrid();
 
-  Camera_Variation = 0;
+  cameraIndex = 0;
 
   allSolarImpacts.sectionType = 1; // <<<<< so that it analyzed later!
 
@@ -119,25 +119,25 @@ void preBakeViewport () {
     float[] ray_direction = new float [3];
 
     float[] ray_start = {
-      WIN3D.CAM_x, WIN3D.CAM_y, WIN3D.CAM_z
+      WIN3D.cameraX, WIN3D.cameraY, WIN3D.cameraZ
     };
 
     float[] ray_end = WIN3D.calculate_Click3D(Image_X * ScaleToFit, Image_Y * ScaleToFit);
 
-    ray_start[0] /= OBJECTS_scale;
-    ray_start[1] /= OBJECTS_scale;
-    ray_start[2] /= OBJECTS_scale;
+    ray_start[0] /= overallScale;
+    ray_start[1] /= overallScale;
+    ray_start[2] /= overallScale;
 
-    ray_end[0] /= OBJECTS_scale;
-    ray_end[1] /= OBJECTS_scale;
-    ray_end[2] /= OBJECTS_scale;
+    ray_end[0] /= overallScale;
+    ray_end[1] /= overallScale;
+    ray_end[2] /= overallScale;
 
-    if (WIN3D.ViewType == 0) {
+    if (WIN3D.projectionTypeIndex == 0) {
       float[] ray_center = WIN3D.calculate_Click3D(0, 0);
 
-      ray_center[0] /= OBJECTS_scale;
-      ray_center[1] /= OBJECTS_scale;
-      ray_center[2] /= OBJECTS_scale;
+      ray_center[0] /= overallScale;
+      ray_center[1] /= overallScale;
+      ray_center[2] /= overallScale;
 
       ray_start[0] += ray_end[0] - ray_center[0];
       ray_start[1] += ray_end[1] - ray_center[1];
@@ -248,7 +248,7 @@ void preBakeViewport () {
 
       File_Name += nf(Map_DATE_ANGLE[m], 3) + "_" + STR_SHD[SHD] + "_" + nf(int(funcs.roundTo(Map_HOUR_ANGLE[m] * 100, 1.0)), 4);
 
-      File_Name += "_Camera" + nf(Camera_Variation, 2);
+      File_Name += "_Camera" + nf(cameraIndex, 2);
 
       Direct_RGBA[m][SHD].updatePixels();
 
@@ -266,7 +266,7 @@ void preBakeViewport () {
 
     File_Name += "DIF_" + STR_SHD[SHD];
 
-    File_Name += "_Camera" + nf(Camera_Variation, 2);
+    File_Name += "_Camera" + nf(cameraIndex, 2);
 
     Diffuse_RGBA[SHD] = createImage(RES1, RES2, ARGB);
 

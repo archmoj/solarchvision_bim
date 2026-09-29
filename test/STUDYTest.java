@@ -91,13 +91,13 @@ class STUDYTest {
 
   @Test
   void requestDataRefresh_flagsBothDataAndTheView () {
-    app.DevelopData_update = false;
+    app.developDataUpdate = false;
     app.STUDY.update = false;
     app.WIN3D.update = false;
 
     app.STUDY.requestDataRefresh();
 
-    assertTrue(app.DevelopData_update);
+    assertTrue(app.developDataUpdate);
     assertTrue(app.STUDY.update);
     assertTrue(app.WIN3D.update);
   }
@@ -232,15 +232,15 @@ class STUDYTest {
 
   @Test
   void handleCtrlCodedKey_cyclesTheCurrentLayerForwardAndBackward () {
-    app.CurrentLayer_id = 0;
+    app.currentLayerId = 0;
 
     app.keyCode = app.UP;
     app.STUDY.handleCtrlCodedKey(null); // isShiftDown() isn't reached for UP/DOWN/LEFT/RIGHT
-    assertEquals(1, app.CurrentLayer_id);
+    assertEquals(1, app.currentLayerId);
 
     app.keyCode = app.DOWN;
     app.STUDY.handleCtrlCodedKey(null);
-    assertEquals(0, app.CurrentLayer_id);
+    assertEquals(0, app.currentLayerId);
   }
 
   @Test
@@ -272,8 +272,8 @@ class STUDYTest {
     app.STUDY.export_info_node = true;
     app.STUDY.export_info_norm = true;
     app.STUDY.export_info_prob = false;
-    app.STUDY.SORT_palette_CLR = 2;
-    app.STUDY.ACTIVE_palette_MLT = 0.5f;
+    app.STUDY.SORT_ColorScaleIndex = 2;
+    app.STUDY.activeColorScaleFactor = 0.5f;
     app.STUDY.O_scale = 60;
     app.STUDY.W_scale = 4;
     app.STUDY.rect_scale = 0.01f;
@@ -289,7 +289,7 @@ class STUDYTest {
     app.STUDY.sumInterval = 6;
     app.STUDY.LevelPix = 16;
     app.STUDY.plotSetup = 4;
-    app.STUDY.Impact_TYPE = app.Impact_PASSIVE;
+    app.STUDY.impactType = app.Impact_PASSIVE;
 
     processing.data.XML root = new processing.data.XML("root");
     app.STUDY.to_XML(root);
@@ -306,8 +306,8 @@ class STUDYTest {
     assertEquals(3, fresh.skyScenario);
     assertTrue(fresh.export_info_node);
     assertFalse(fresh.export_info_prob);
-    assertEquals(2, fresh.SORT_palette_CLR);
-    assertEquals(0.5f, fresh.ACTIVE_palette_MLT, 0.0001f);
+    assertEquals(2, fresh.SORT_ColorScaleIndex);
+    assertEquals(0.5f, fresh.activeColorScaleFactor, 0.0001f);
     assertFalse(fresh.impact_summary);
     assertEquals(2, fresh.ImpactLayer);
     assertEquals(3, fresh.PlotImpacts);
@@ -316,7 +316,7 @@ class STUDYTest {
     assertEquals(6, fresh.sumInterval);
     assertEquals(16f, fresh.LevelPix, 0.0001f);
     assertEquals(4, fresh.plotSetup);
-    assertEquals(app.Impact_PASSIVE, fresh.Impact_TYPE);
+    assertEquals(app.Impact_PASSIVE, fresh.impactType);
   }
 
   // ================= revise / updated ====================================

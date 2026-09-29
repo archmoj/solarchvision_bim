@@ -25,14 +25,14 @@ void ShadeViewport () {
   Shade_RGBA.loadPixels();
 
   float invQuality = 1.0 / quality;
-  float invScale    = 1.0 / OBJECTS_scale;
+  float invScale    = 1.0 / overallScale;
   float halfRES1 = 0.5 * RES1;
   float halfRES2 = 0.5 * RES2;
-  boolean isOrtho = (WIN3D.ViewType == 0);
+  boolean isOrtho = (WIN3D.projectionTypeIndex == 0);
 
-  float baseX = WIN3D.CAM_x * invScale;
-  float baseY = WIN3D.CAM_y * invScale;
-  float baseZ = WIN3D.CAM_z * invScale;
+  float baseX = WIN3D.cameraX * invScale;
+  float baseY = WIN3D.cameraY * invScale;
+  float baseZ = WIN3D.cameraZ * invScale;
 
   // For orthographic views, the ray-center offset only depends on the
   // camera/view, not on the pixel -- compute it once per frame.

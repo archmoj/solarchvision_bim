@@ -37,7 +37,7 @@ class Moon3D {
     float CEN_lon = 0;
     float CEN_lat = 0;
 
-    float r = MOON_RADIUS * Planetary_Magnification;
+    float r = MOON_RADIUS * celestialMagnification;
     float d = EARTH_MOON_DISTANCE - FLOAT_r_Earth;
 
     if(this.fitInSkyDome) {
@@ -116,9 +116,9 @@ class Moon3D {
 
     for (int s = 0; s < subFace.length; s++) {
       WIN3D.graphics.vertex(
-        subFace[s].x * OBJECTS_scale * WIN3D.scale,
-        -subFace[s].y * OBJECTS_scale * WIN3D.scale,
-        subFace[s].z * OBJECTS_scale * WIN3D.scale,
+        subFace[s].x * overallScale * WIN3D.scale,
+        -subFace[s].y * overallScale * WIN3D.scale,
+        subFace[s].z * overallScale * WIN3D.scale,
         subFace[s].u * this.Map.width,
         subFace[s].v * this.Map.height
       );

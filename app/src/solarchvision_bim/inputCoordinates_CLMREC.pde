@@ -1,6 +1,6 @@
-STATION[] CLMREC_Coordinates;
+STATION[] climateArchiveCoordinates;
 
-void inputCoordinates_CLMREC () {
+void loadClimateArchiveCoordinates () {
 
   String[] FileALL = loadStrings(Folder_Coordinates + "/CLMREC.txt");
 
@@ -8,25 +8,25 @@ void inputCoordinates_CLMREC () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  CLMREC_Coordinates = new STATION [num_stn];
+  climateArchiveCoordinates = new STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
 
     String[] parts = split(lineSTR, ",");
 
-    CLMREC_Coordinates[f] = new STATION();
+    climateArchiveCoordinates[f] = new STATION();
 
     float latitude = float(parts[6]);
     float longitude = float(parts[7]);
 
-    CLMREC_Coordinates[f].setCity(parts[0].replace('/', '_'));
-    CLMREC_Coordinates[f].setProvince(parts[1]);
-    CLMREC_Coordinates[f].setCountry("CA");
-    CLMREC_Coordinates[f].setLatitude(latitude);
-    CLMREC_Coordinates[f].setLongitude(longitude);
-    CLMREC_Coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
-    CLMREC_Coordinates[f].setElevation(float(parts[10]));
-    //CLMREC_Coordinates[f].setFilename_CLMREC(?);
+    climateArchiveCoordinates[f].setCity(parts[0].replace('/', '_'));
+    climateArchiveCoordinates[f].setProvince(parts[1]);
+    climateArchiveCoordinates[f].setCountry("CA");
+    climateArchiveCoordinates[f].setLatitude(latitude);
+    climateArchiveCoordinates[f].setLongitude(longitude);
+    climateArchiveCoordinates[f].setTimezoneLongitude(funcs.roundTo(longitude, 15));
+    climateArchiveCoordinates[f].setElevation(float(parts[10]));
+    //climateArchiveCoordinates[f].setFilename_CLMREC(?);
   }
 }

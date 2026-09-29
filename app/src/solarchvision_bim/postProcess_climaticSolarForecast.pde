@@ -1,28 +1,28 @@
 void postProcess_climaticSolarForecast () {
 
-  int num_count = (1 + CLIMATE_CWEEDS_end - CLIMATE_CWEEDS_start);
+  int num_count = (1 + climateEngineeringEnd - climateEngineeringStart);
 
-  for (int k = 0; k < (1 + ENSEMBLE_FORECAST_end - ENSEMBLE_FORECAST_start); k++) {
-    for (int j_for = 0; j_for < ENSEMBLE_FORECAST_maxDays; j_for++) {
+  for (int k = 0; k < (1 + ensembleForecastEnd - ensembleForecastStart); k++) {
+    for (int j_for = 0; j_for < ensembleForecastMaxDays; j_for++) {
       int j = ((j_for + TIME.beginDay) % 365);
       for (int i = 0; i < 24; i++) {
-        if (is_undefined(ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k])) {
+        if (is_undefined(ensembleForecast_values[i][j][LAYER_cloudcover.id][k])) {
         } else {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
           float HOUR_ANGLE = i;
 
-          float[] SunR = funcs.SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k]);
+          float[] SunR = funcs.SunPositionRadiation(DATE_ANGLE, HOUR_ANGLE, ensembleForecast_values[i][j][LAYER_cloudcover.id][k]);
 
-          ENSEMBLE_FORECAST_values[i][j][LAYER_dirnorrad.id][k] = SunR[4];
+          ensembleForecast_values[i][j][LAYER_dirnorrad.id][k] = SunR[4];
 
-          ENSEMBLE_FORECAST_values[i][j][LAYER_difhorrad.id][k] = SunR[5];
+          ensembleForecast_values[i][j][LAYER_difhorrad.id][k] = SunR[5];
 
-          ENSEMBLE_FORECAST_values[i][j][LAYER_glohorrad.id][k] = SunR[4] * SunR[3] + SunR[5];
+          ensembleForecast_values[i][j][LAYER_glohorrad.id][k] = SunR[4] * SunR[3] + SunR[5];
 
           //---------------------------------------------------------------------
 
-          float Forecast_CC = ENSEMBLE_FORECAST_values[i][j][LAYER_cloudcover.id][k];
-          float Forecast_AP = ENSEMBLE_FORECAST_values[i][j][LAYER_pressure.id][k];
+          float Forecast_CC = ensembleForecast_values[i][j][LAYER_cloudcover.id][k];
+          float Forecast_AP = ensembleForecast_values[i][j][LAYER_pressure.id][k];
 
           float CC_epsilon = 1.0; // defines a range for finding near previous results: 1.0 results in e.g. 2 < CC < 4 for CC at 3
           float AP_epsilon = 50.0;
@@ -49,11 +49,11 @@ void postProcess_climaticSolarForecast () {
               }
 
 
-              if ((is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover.id][q])) ||
-                 (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure.id][q]))) {
+              if ((is_undefined(climateEngineering_values[now_i][now_j][LAYER_cloudcover.id][q])) ||
+                 (is_undefined(climateEngineering_values[now_i][now_j][LAYER_pressure.id][q]))) {
               } else {
-                float CC_dist = abs(Forecast_CC - CLIMATE_CWEEDS_values[now_i][now_j][LAYER_cloudcover.id][q]);
-                float AP_dist = abs(Forecast_AP - CLIMATE_CWEEDS_values[now_i][now_j][LAYER_pressure.id][q]);
+                float CC_dist = abs(Forecast_CC - climateEngineering_values[now_i][now_j][LAYER_cloudcover.id][q]);
+                float AP_dist = abs(Forecast_AP - climateEngineering_values[now_i][now_j][LAYER_pressure.id][q]);
                 if ((CC_dist < CC_epsilon) && (AP_dist < AP_epsilon)) {
 
                   float _weight;
@@ -64,12 +64,12 @@ void postProcess_climaticSolarForecast () {
 
                   sum_count += _weight;
 
-                  if (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_dirnorrad.id][q])) {
-                  } else valuesSUM_DIR += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_dirnorrad.id][q];
-                  if (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_difhorrad.id][q])) {
-                  } else valuesSUM_DIF += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_difhorrad.id][q];
-                  if (is_undefined(CLIMATE_CWEEDS_values[now_i][now_j][LAYER_glohorrad.id][q])) {
-                  } else valuesSUM_GLO += _weight * CLIMATE_CWEEDS_values[now_i][now_j][LAYER_glohorrad.id][q];
+                  if (is_undefined(climateEngineering_values[now_i][now_j][LAYER_dirnorrad.id][q])) {
+                  } else valuesSUM_DIR += _weight * climateEngineering_values[now_i][now_j][LAYER_dirnorrad.id][q];
+                  if (is_undefined(climateEngineering_values[now_i][now_j][LAYER_difhorrad.id][q])) {
+                  } else valuesSUM_DIF += _weight * climateEngineering_values[now_i][now_j][LAYER_difhorrad.id][q];
+                  if (is_undefined(climateEngineering_values[now_i][now_j][LAYER_glohorrad.id][q])) {
+                  } else valuesSUM_GLO += _weight * climateEngineering_values[now_i][now_j][LAYER_glohorrad.id][q];
                 }
               }
             }
@@ -80,9 +80,9 @@ void postProcess_climaticSolarForecast () {
             valuesSUM_DIF /= sum_count;
             valuesSUM_GLO /= sum_count;
 
-            ENSEMBLE_FORECAST_values[i][j][LAYER_dirnorrad.id][k] = valuesSUM_DIR;
-            ENSEMBLE_FORECAST_values[i][j][LAYER_difhorrad.id][k] = valuesSUM_DIF;
-            ENSEMBLE_FORECAST_values[i][j][LAYER_glohorrad.id][k] = valuesSUM_GLO;
+            ensembleForecast_values[i][j][LAYER_dirnorrad.id][k] = valuesSUM_DIR;
+            ensembleForecast_values[i][j][LAYER_difhorrad.id][k] = valuesSUM_DIF;
+            ensembleForecast_values[i][j][LAYER_glohorrad.id][k] = valuesSUM_GLO;
           } else {
             println("Cannot find simillar conditions in climate file at i:", i, ", j:", j, ", k:", k);
           }

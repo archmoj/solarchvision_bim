@@ -56,7 +56,7 @@ class Model1Ds {
 
     this.num += 1;
 
-    if (User3D.create_MeshOrSolid != 0) {
+    if (User3D.creatorMeshOrSolidMode != 0) {
 
       randomSeed(seed); // ??
 
@@ -243,7 +243,7 @@ class Model1Ds {
     if (proceed) {
 
       if (target_window == TypeWindow.OBJ3D) {
-        if (User3D.export_MaterialLibrary) {
+        if (User3D.exporterMaterialLibrary) {
 
           if (this.num != 0) {
 
@@ -310,7 +310,7 @@ class Model1Ds {
 
             num_vertices_added = 0;
 
-            if (User3D.export_PolyToPoly == 1) {
+            if (User3D.exporterMaintainPolygons == 1) {
               obj_lastGroupNumber += 1;
               objOutput.println("g Model1Ds_" + nf(f, 0));
             }
@@ -324,7 +324,7 @@ class Model1Ds {
 
             WIN3D.graphics.pushMatrix();
 
-            WIN3D.graphics.scale(OBJECTS_scale * WIN3D.scale);
+            WIN3D.graphics.scale(overallScale * WIN3D.scale);
             WIN3D.graphics.translate(x, -y, z);
             WIN3D.graphics.rotateZ(rot);
 
@@ -343,31 +343,31 @@ class Model1Ds {
 
 
             // ----------------
-            x *= OBJECTS_scale;
-            y *= OBJECTS_scale;
-            z *= OBJECTS_scale;
-            rad *= OBJECTS_scale;
+            x *= overallScale;
+            y *= overallScale;
+            z *= overallScale;
+            rad *= overallScale;
             // ----------------
 
-            float t = PI + WIN3D.rotation_Z * PI / 180.0;
-            if (WIN3D.ViewType == 1) t = atan2(y - WIN3D.CAM_y, x - WIN3D.CAM_x) + 0.5 * PI;
+            float t = PI + WIN3D.rotationZ * PI / 180.0;
+            if (WIN3D.projectionTypeIndex == 1) t = atan2(y - WIN3D.cameraY, x - WIN3D.cameraX) + 0.5 * PI;
 
 
-            this.Vertices[f * 4 + 0][0] = (x - rad * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 0][1] = (y - rad * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 0][2] = (z) / OBJECTS_scale;
+            this.Vertices[f * 4 + 0][0] = (x - rad * cos(t)) / overallScale;
+            this.Vertices[f * 4 + 0][1] = (y - rad * sin(t)) / overallScale;
+            this.Vertices[f * 4 + 0][2] = (z) / overallScale;
 
-            this.Vertices[f * 4 + 1][0] = (x + rad * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 1][1] = (y + rad * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 1][2] = (z) / OBJECTS_scale;
+            this.Vertices[f * 4 + 1][0] = (x + rad * cos(t)) / overallScale;
+            this.Vertices[f * 4 + 1][1] = (y + rad * sin(t)) / overallScale;
+            this.Vertices[f * 4 + 1][2] = (z) / overallScale;
 
-            this.Vertices[f * 4 + 2][0] = (x + rad * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 2][1] = (y + rad * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 2][2] = (z + 2 * rad) / OBJECTS_scale;
+            this.Vertices[f * 4 + 2][0] = (x + rad * cos(t)) / overallScale;
+            this.Vertices[f * 4 + 2][1] = (y + rad * sin(t)) / overallScale;
+            this.Vertices[f * 4 + 2][2] = (z + 2 * rad) / overallScale;
 
-            this.Vertices[f * 4 + 3][0] = (x - rad * cos(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 3][1] = (y - rad * sin(t)) / OBJECTS_scale;
-            this.Vertices[f * 4 + 3][2] = (z + 2 * rad) / OBJECTS_scale;
+            this.Vertices[f * 4 + 3][0] = (x - rad * cos(t)) / overallScale;
+            this.Vertices[f * 4 + 3][1] = (y - rad * sin(t)) / overallScale;
+            this.Vertices[f * 4 + 3][2] = (z + 2 * rad) / overallScale;
 
             this.Faces[f][0] = f * 4 + 0;
             this.Faces[f][1] = f * 4 + 1;
@@ -534,18 +534,18 @@ class Model1Ds {
 
 
       if (target_window == TypeWindow.SHADOW) {
-        subFace[j][0] =  WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale);
-        subFace[j][1] = -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale);
-        subFace[j][2] =  WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale);
+        subFace[j][0] =  WIN3D.graphics.modelX(x,y,z) / (overallScale * WIN3D.scale);
+        subFace[j][1] = -WIN3D.graphics.modelY(x,y,z) / (overallScale * WIN3D.scale);
+        subFace[j][2] =  WIN3D.graphics.modelZ(x,y,z) / (overallScale * WIN3D.scale);
       }
 
       if (target_window == TypeWindow.OBJ3D) {
 
         if (_turn == 1) {
 
-          OBJprintVertex(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale),
-                                      -WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale),
-                                       WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale));
+          OBJprintVertex(WIN3D.graphics.modelX(x,y,z) / (overallScale * WIN3D.scale),
+                                      -WIN3D.graphics.modelY(x,y,z) / (overallScale * WIN3D.scale),
+                                       WIN3D.graphics.modelZ(x,y,z) / (overallScale * WIN3D.scale));
 
         }
 
@@ -572,12 +572,12 @@ class Model1Ds {
         String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
         String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);
 
-        if (User3D.export_PolyToPoly == 0) {
+        if (User3D.exporterMaintainPolygons == 0) {
           obj_lastGroupNumber += 1;
           objOutput.println("g Tree3D_" + whichPart + "_" + nf(tree_id, 0));
         }
 
-        if (User3D.export_MaterialLibrary) {
+        if (User3D.exporterMaterialLibrary) {
           objOutput.println("usemtl Tree3D_" + whichPart);
         }
 
@@ -690,9 +690,9 @@ class Model1Ds {
         float y = this.local_vertices[j][1];
         float z = this.local_vertices[j][2];
 
-        entirePointsX.add(WIN3D.graphics.modelX(x,y,z) / (OBJECTS_scale * WIN3D.scale));
-        entirePointsY.add(-WIN3D.graphics.modelY(x,y,z) / (OBJECTS_scale * WIN3D.scale));
-        entirePointsZ.add(WIN3D.graphics.modelZ(x,y,z) / (OBJECTS_scale * WIN3D.scale));
+        entirePointsX.add(WIN3D.graphics.modelX(x,y,z) / (overallScale * WIN3D.scale));
+        entirePointsY.add(-WIN3D.graphics.modelY(x,y,z) / (overallScale * WIN3D.scale));
+        entirePointsZ.add(WIN3D.graphics.modelZ(x,y,z) / (overallScale * WIN3D.scale));
 
         if(j == len - 1) {
           entireFaces.add(newFace);

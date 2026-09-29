@@ -377,7 +377,7 @@ class Tropo3D {
   }
 
   void writeMaterial (int target_window, int n_Map) {
-    if (User3D.export_MaterialLibrary) {
+    if (User3D.exporterMaterialLibrary) {
       if (target_window == TypeWindow.HTML) {
         htmlOutput.println("\t\t\t\t<Appearance DEF='TropoSphere" + nf(n_Map, 0) + "'>");
       }
@@ -394,11 +394,11 @@ class Tropo3D {
     }
 
     if (target_window == TypeWindow.OBJ3D) {
-      if (User3D.export_PolyToPoly == 1) {
+      if (User3D.exporterMaintainPolygons == 1) {
         obj_lastGroupNumber += 1;
         objOutput.println("g TropoSphere" + nf(n_Map, 0));
       }
-      if (User3D.export_MaterialLibrary) {
+      if (User3D.exporterMaterialLibrary) {
         objOutput.println("usemtl TropoSphere" + nf(n_Map, 0));
       }
     }
@@ -543,9 +543,9 @@ class Tropo3D {
     htmlOutput.print("\t\t\t\t\t\t<Coordinate point='");
     for (int s = 0; s < subFace.length; s++) {
       if (s > 0) htmlOutput.print(",");
-      htmlOutput.print(nf(subFace[s].x, 0, User3D.export_PrecisionVertex) + " " +
-                        nf(subFace[s].y, 0, User3D.export_PrecisionVertex) + " " +
-                        nf(subFace[s].z, 0, User3D.export_PrecisionVertex));
+      htmlOutput.print(nf(subFace[s].x, 0, User3D.exporterPrecisionVertex) + " " +
+                        nf(subFace[s].y, 0, User3D.exporterPrecisionVertex) + " " +
+                        nf(subFace[s].z, 0, User3D.exporterPrecisionVertex));
     }
     htmlOutput.println("'></Coordinate>");
 
@@ -576,9 +576,9 @@ class Tropo3D {
       float u = clamp01(subFace[s].u);
       float v = clamp01(subFace[s].v);
       WIN3D.graphics.vertex(
-        subFace[s].x * OBJECTS_scale * WIN3D.scale,
-        -subFace[s].y * OBJECTS_scale * WIN3D.scale,
-        subFace[s].z * OBJECTS_scale * WIN3D.scale,
+        subFace[s].x * overallScale * WIN3D.scale,
+        -subFace[s].y * overallScale * WIN3D.scale,
+        subFace[s].z * overallScale * WIN3D.scale,
         u * this.Map[n_Map].width,
         v * this.Map[n_Map].height
       );
@@ -621,7 +621,7 @@ class Tropo3D {
     String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
     String m4_txt = nf(obj_lastVtextureNumber - 0, 0);
 
-    if (User3D.export_PolyToPoly == 0) {
+    if (User3D.exporterMaintainPolygons == 0) {
       obj_lastGroupNumber += 1;
       objOutput.println("g TropoSphere" + nf(n_Map, 0) + "_" + nf(f, 0));
     }
@@ -629,7 +629,7 @@ class Tropo3D {
     obj_lastFaceNumber += 1;
     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
 
-    if (User3D.export_BackSides) {
+    if (User3D.exporterDoubleSided) {
       obj_lastFaceNumber += 1;
       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
     }

@@ -1869,7 +1869,7 @@ class Create3D {
     int treesCount = 1; // index 0 is a sentinel row; real trees start at 1
 
     int tessellation = Land3D.displayTessellation;
-    if (WIN3D.FacesShade == SHADE.Surface_Base) {
+    if (WIN3D.shadingMode == SHADE.Surface_Base) {
       tessellation = 0;
     }
 
@@ -1880,8 +1880,8 @@ class Create3D {
 
     if ((Land3D.displayTexture) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
 
-      for (int i = Land3D.skipStart; i < Land3D.num_rows - 1 - Land3D.skipEnd; i++) {
-        for (int j = 0; j < Land3D.num_columns - 1; j++) {
+      for (int i = Land3D.skipStart; i < Land3D.rowCount - 1 - Land3D.skipEnd; i++) {
+        for (int j = 0; j < Land3D.columnCount - 1; j++) {
 
           float[][] base_Vertices = new float [4][3];
 
@@ -2003,12 +2003,12 @@ class Create3D {
                       if (people_or_trees == 2) {
                         allModel2Ds.create("TREES", 0, x, y, z, s);
                       } else {
-                        allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed,
-                                           User3D.create_Model1D_DegreeMax,
+                        allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
+                                           User3D.creatorModel1DDegreeMax,
                                            x, y, z, s, floor(random(360)),
-                                           User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist,
-                                           User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
-                                           User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                                           User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
+                                           User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                                           User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
                       }
 
 
@@ -2034,8 +2034,8 @@ class Create3D {
       }
     } else {
 
-      for (int i = Land3D.skipStart; i < Land3D.num_rows - 1 - Land3D.skipEnd; i++) {
-        for (int j = 0; j < Land3D.num_columns - 1; j++) {
+      for (int i = Land3D.skipStart; i < Land3D.rowCount - 1 - Land3D.skipEnd; i++) {
+        for (int j = 0; j < Land3D.columnCount - 1; j++) {
 
           float[][] base_Vertices = new float [4][3];
 
@@ -2082,12 +2082,12 @@ class Create3D {
                   } else if (people_or_trees == 2) {
                     allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
                   } else {
-                    allModel1Ds.create(User3D.create_Model1D_Type,  User3D.create_Model1D_Seed,
-                                       User3D.create_Model1D_DegreeMax,
+                    allModel1Ds.create(User3D.creatorModel1DTypeIndex,  User3D.creatorModel1DSeed,
+                                       User3D.creatorModel1DDegreeMax,
                                        x, y, z, 5 + random(10), floor(random(360)),
-                                       User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist,
-                                       User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
-                                       User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                                       User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
+                                       User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                                       User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
                   }
                 }
               }
@@ -2116,12 +2116,12 @@ class Create3D {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed,
-                           User3D.create_Model1D_DegreeMax,
+        allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
+                           User3D.creatorModel1DDegreeMax,
                            x, y, z, 5 + random(10), floor(random(360)),
-                           User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist,
-                           User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
-                           User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                           User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
+                           User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                           User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
       }
     }
 
@@ -2152,12 +2152,12 @@ class Create3D {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed,
-                           User3D.create_Model1D_DegreeMax,
+        allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
+                           User3D.creatorModel1DDegreeMax,
                            x, y, z, 5 + random(10), floor(random(360)),
-                           User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist,
-                           User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
-                           User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                           User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
+                           User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                           User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
       }
     }
 
@@ -2191,12 +2191,12 @@ class Create3D {
       } else if (people_or_trees == 2) {
         allModel2Ds.create("TREES", 0, x, y, z, 5 + random(10));
       } else {
-        allModel1Ds.create(User3D.create_Model1D_Type, User3D.create_Model1D_Seed,
-                           User3D.create_Model1D_DegreeMax,
+        allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
+                           User3D.creatorModel1DDegreeMax,
                            x, y, z, 5 + random(10), floor(random(360)),
-                           User3D.create_Model1D_BranchTilt, User3D.create_Model1D_BranchTwist,
-                           User3D.create_Model1D_BranchRatio, User3D.create_Model1D_TreeBase,
-                           User3D.create_Model1D_TrunkSize, User3D.create_Model1D_LeafSize);
+                           User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
+                           User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                           User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
       }
     }
 
@@ -2212,7 +2212,7 @@ class Create3D {
 
   void add_DefaultModel (int n) {
 
-    if (WIN3D.FacesShade == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
 
     if (Land3D.loadMesh) {

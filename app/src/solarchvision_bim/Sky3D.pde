@@ -8,17 +8,17 @@ class Sky3D {
 
   float radius = 4000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
-  int ACTIVE_palette_CLR = 18; //-1; //7; //8;
-  int ACTIVE_palette_DIR = 1; //-1;
-  float ACTIVE_palette_MLT = 0.5; //1; //0.25;
-  int PASSIVE_palette_CLR = 18;
-  int PASSIVE_palette_DIR = -1;
-  float PASSIVE_palette_MLT = 0.25;
+  int activeColorScaleIndex = 18; //-1; //7; //8;
+  int activeColorScaleDirection = 1; //-1;
+  float activeColorScaleFactor = 0.5; //1; //0.25;
+  int passiveColorScaleIndex = 18;
+  int passiveColorScaleDirection = -1;
+  float passiveColorScaleFactor = 0.25;
 
-  float stp_slp;
-  float stp_dir;
-  int num_slp;
-  int num_dir;
+  float inclinationStep;
+  float orientationStep;
+  int inclinationCount;
+  int orientationCount;
 
   float calculatedResolution = 2.5; //1, 2.5, 5
 
@@ -33,15 +33,15 @@ class Sky3D {
     int type = 0;
     int direction = 1;
     float multiplier = 1;
-    if (WIN3D.Impact_TYPE == Impact_ACTIVE) {
-      type = this.ACTIVE_palette_CLR;
-      direction = this.ACTIVE_palette_DIR;
-      multiplier = this.ACTIVE_palette_MLT;
+    if (WIN3D.impactType == Impact_ACTIVE) {
+      type = this.activeColorScaleIndex;
+      direction = this.activeColorScaleDirection;
+      multiplier = this.activeColorScaleFactor;
     }
-    if (WIN3D.Impact_TYPE == Impact_PASSIVE) {
-      type = this.PASSIVE_palette_CLR;
-      direction = this.PASSIVE_palette_DIR;
-      multiplier = this.PASSIVE_palette_MLT;
+    if (WIN3D.impactType == Impact_PASSIVE) {
+      type = this.passiveColorScaleIndex;
+      direction = this.passiveColorScaleDirection;
+      multiplier = this.passiveColorScaleFactor;
     }
     return new float[] { type, direction, multiplier };
   }
@@ -63,11 +63,11 @@ class Sky3D {
   }
 
   void drawOBJ (int PAL_type, int PAL_direction, float PAL_multiplier) {
-    boolean shaded = (WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar);
+    boolean shaded = (WIN3D.shadingMode == SHADE.Global_Solar) || (WIN3D.shadingMode == SHADE.Vertex_Solar);
     if (!shaded) return; // sky isn't exported to OBJ except under solar shading
 
     String the_filename = "";
-    if (User3D.export_MaterialLibrary) {
+    if (User3D.exporterMaterialLibrary) {
       the_filename = "skyPatternPalette.bmp";
       String texturePath = Folder_Export3D + "/" + Subfolder_exportMaps + the_filename;
       writeSkyPatternMaterial(PAL_type, the_filename, texturePath);
@@ -75,7 +75,7 @@ class Sky3D {
 
     obj_lastGroupNumber += 1;
     objOutput.println("g skyPattern");
-    if (User3D.export_MaterialLibrary) {
+    if (User3D.exporterMaterialLibrary) {
       objOutput.println("usemtl " + the_filename.replace('.', '_'));
     }
 
@@ -97,15 +97,15 @@ class Sky3D {
   void writeSkyPatternMaterial (int PAL_type, String filename, String texturePath) {
     println("Saving texture:", texturePath);
 
-    int RES1 = User3D.export_PaletteResolution;
-    int RES2 = User3D.export_PaletteResolution / 16;
+    int RES1 = User3D.exporterColorScaleResolution;
+    int RES2 = User3D.exporterColorScaleResolution / 16;
     PImage palette_Texture = createImage(RES1, RES2, ARGB);
     palette_Texture.loadPixels();
     for (int np = 0; np < (RES1 * RES2); np++) {
       int Image_X = np % RES1;
       float val = (Image_X / (0.5 * RES1)) - 1;
       float u = 0.5 + val;
-      if (WIN3D.Impact_TYPE == Impact_ACTIVE) u = 0.5 + 0.5 * val;
+      if (WIN3D.impactType == Impact_ACTIVE) u = 0.5 + 0.5 * val;
       float[] COL = PAINT.getColorStyle(PAL_type, u);
       palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
     }
@@ -142,8 +142,8 @@ class Sky3D {
       }
       if (_turn == 2) {
         float u1 = 0.5 * (u + 0.5);
-        boolean solarShade = (WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar);
-        if (solarShade && (WIN3D.Impact_TYPE == Impact_ACTIVE)) u1 = u;
+        boolean solarShade = (WIN3D.shadingMode == SHADE.Global_Solar) || (WIN3D.shadingMode == SHADE.Vertex_Solar);
+        if (solarShade && (WIN3D.impactType == Impact_ACTIVE)) u1 = u;
         u1 = constrain(u1, 0.001, 0.999);
         OBJprintVtexture(u1, 0.5, 0);
       }
@@ -170,14 +170,14 @@ class Sky3D {
 
     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
 
-    if (User3D.export_BackSides) {
+    if (User3D.exporterDoubleSided) {
       obj_lastFaceNumber += 1;
       objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
     }
   }
 
   void drawWIN3D (int PAL_type, int PAL_direction, float PAL_multiplier) {
-    boolean shaded = (WIN3D.FacesShade == SHADE.Global_Solar) || (WIN3D.FacesShade == SHADE.Vertex_Solar);
+    boolean shaded = (WIN3D.shadingMode == SHADE.Global_Solar) || (WIN3D.shadingMode == SHADE.Vertex_Solar);
 
     if (shaded) {
       for (int f = 0; f < skyFaces.length; f++) {
@@ -291,16 +291,16 @@ class Sky3D {
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
     XML_setFloat(parent, "scale", this.radius);
-    XML_setInt(parent, "ACTIVE_palette_CLR", this.ACTIVE_palette_CLR);
-    XML_setInt(parent, "ACTIVE_palette_DIR", this.ACTIVE_palette_DIR);
-    XML_setFloat(parent, "ACTIVE_palette_MLT", this.ACTIVE_palette_MLT);
-    XML_setInt(parent, "PASSIVE_palette_CLR", this.PASSIVE_palette_CLR);
-    XML_setInt(parent, "PASSIVE_palette_DIR", this.PASSIVE_palette_DIR);
-    XML_setFloat(parent, "PASSIVE_palette_MLT", this.PASSIVE_palette_MLT);
-    XML_setFloat(parent, "stp_slp", this.stp_slp);
-    XML_setFloat(parent, "stp_dir", this.stp_dir);
-    XML_setInt(parent, "num_slp", this.num_slp);
-    XML_setInt(parent, "num_dir", this.num_dir);
+    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
+    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
+    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
+    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
+    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
+    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
+    XML_setFloat(parent, "inclinationStep", this.inclinationStep);
+    XML_setFloat(parent, "orientationStep", this.orientationStep);
+    XML_setInt(parent, "inclinationCount", this.inclinationCount);
+    XML_setInt(parent, "orientationCount", this.orientationCount);
     XML_setFloat(parent, "calculatedResolution", this.calculatedResolution);
   }
 
@@ -310,16 +310,16 @@ class Sky3D {
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
     this.radius = XML_getFloat(parent, "scale");
-    this.ACTIVE_palette_CLR = XML_getInt(parent, "ACTIVE_palette_CLR");
-    this.ACTIVE_palette_DIR = XML_getInt(parent, "ACTIVE_palette_DIR");
-    this.ACTIVE_palette_MLT = XML_getFloat(parent, "ACTIVE_palette_MLT");
-    this.PASSIVE_palette_CLR = XML_getInt(parent, "PASSIVE_palette_CLR");
-    this.PASSIVE_palette_DIR = XML_getInt(parent, "PASSIVE_palette_DIR");
-    this.PASSIVE_palette_MLT = XML_getFloat(parent, "PASSIVE_palette_MLT");
-    this.stp_slp = XML_getFloat(parent, "stp_slp");
-    this.stp_dir = XML_getFloat(parent, "stp_dir");
-    this.num_slp = XML_getInt(parent, "num_slp");
-    this.num_dir = XML_getInt(parent, "num_dir");
+    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
+    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
+    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
+    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
+    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
+    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
+    this.inclinationStep = XML_getFloat(parent, "inclinationStep");
+    this.orientationStep = XML_getFloat(parent, "orientationStep");
+    this.inclinationCount = XML_getInt(parent, "inclinationCount");
+    this.orientationCount = XML_getInt(parent, "orientationCount");
     this.calculatedResolution = XML_getFloat(parent, "calculatedResolution");
   }
 }

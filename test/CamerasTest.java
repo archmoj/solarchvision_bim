@@ -18,7 +18,7 @@ class CamerasTest {
     // makeEmpty(n) unconditionally calls add_first() regardless of n, so
     // even makeEmpty(0) leaves exactly 1 camera behind, not 0 - already
     // learned the hard way in Move3DTest/Rotate3DTest's Cameras() tests.
-    app.WIN3D.position_X = 7;
+    app.WIN3D.positionX = 7;
     app.allCameras.makeEmpty(0);
 
     assertEquals(1, app.allCameras.num);
@@ -142,16 +142,16 @@ class CamerasTest {
     app.allCameras.makeEmpty(0); // start from the single default camera makeEmpty() creates
     int before = app.allCameras.num;
 
-    app.WIN3D.position_X = 11;
-    app.WIN3D.position_Y = 22;
-    app.WIN3D.position_Z = 33;
-    app.WIN3D.position_T = 1.5f;
-    app.WIN3D.rotation_X = 44;
-    app.WIN3D.rotation_Y = 55;
-    app.WIN3D.rotation_Z = 66;
-    app.WIN3D.rotation_T = 2.5f;
-    app.WIN3D.Zoom = 77;
-    app.WIN3D.ViewType = 1;
+    app.WIN3D.positionX = 11;
+    app.WIN3D.positionY = 22;
+    app.WIN3D.positionZ = 33;
+    app.WIN3D.positionStep = 1.5f;
+    app.WIN3D.rotationX = 44;
+    app.WIN3D.rotationY = 55;
+    app.WIN3D.rotationZ = 66;
+    app.WIN3D.rotationStep = 2.5f;
+    app.WIN3D.zoom = 77;
+    app.WIN3D.projectionTypeIndex = 1;
 
     app.allCameras.add_first();
 
@@ -180,33 +180,33 @@ class CamerasTest {
 
   @Test
   void getCorners_restoresWIN3DsStateAfterward () {
-    app.WIN3D.position_X = 111;
-    app.WIN3D.position_Y = 222;
-    app.WIN3D.position_Z = 333;
-    app.WIN3D.position_T = 4;
-    app.WIN3D.rotation_X = 10;
-    app.WIN3D.rotation_Y = 20;
-    app.WIN3D.rotation_Z = 30;
-    app.WIN3D.rotation_T = 5;
-    app.WIN3D.Zoom = 90;
-    app.WIN3D.CAM_x = 1;
-    app.WIN3D.CAM_y = 2;
-    app.WIN3D.CAM_z = 3;
+    app.WIN3D.positionX = 111;
+    app.WIN3D.positionY = 222;
+    app.WIN3D.positionZ = 333;
+    app.WIN3D.positionStep = 4;
+    app.WIN3D.rotationX = 10;
+    app.WIN3D.rotationY = 20;
+    app.WIN3D.rotationZ = 30;
+    app.WIN3D.rotationStep = 5;
+    app.WIN3D.zoom = 90;
+    app.WIN3D.cameraX = 1;
+    app.WIN3D.cameraY = 2;
+    app.WIN3D.cameraZ = 3;
 
     app.allCameras.getCorners(1, 5, 6, 7, 1, 15, 25, 35, 3, 45);
 
-    assertEquals(111f, app.WIN3D.position_X, 0.0001f);
-    assertEquals(222f, app.WIN3D.position_Y, 0.0001f);
-    assertEquals(333f, app.WIN3D.position_Z, 0.0001f);
-    assertEquals(4f, app.WIN3D.position_T, 0.0001f);
-    assertEquals(10f, app.WIN3D.rotation_X, 0.0001f);
-    assertEquals(20f, app.WIN3D.rotation_Y, 0.0001f);
-    assertEquals(30f, app.WIN3D.rotation_Z, 0.0001f);
-    assertEquals(5f, app.WIN3D.rotation_T, 0.0001f);
-    assertEquals(90f, app.WIN3D.Zoom, 0.0001f);
-    assertEquals(1f, app.WIN3D.CAM_x, 0.0001f);
-    assertEquals(2f, app.WIN3D.CAM_y, 0.0001f);
-    assertEquals(3f, app.WIN3D.CAM_z, 0.0001f);
+    assertEquals(111f, app.WIN3D.positionX, 0.0001f);
+    assertEquals(222f, app.WIN3D.positionY, 0.0001f);
+    assertEquals(333f, app.WIN3D.positionZ, 0.0001f);
+    assertEquals(4f, app.WIN3D.positionStep, 0.0001f);
+    assertEquals(10f, app.WIN3D.rotationX, 0.0001f);
+    assertEquals(20f, app.WIN3D.rotationY, 0.0001f);
+    assertEquals(30f, app.WIN3D.rotationZ, 0.0001f);
+    assertEquals(5f, app.WIN3D.rotationStep, 0.0001f);
+    assertEquals(90f, app.WIN3D.zoom, 0.0001f);
+    assertEquals(1f, app.WIN3D.cameraX, 0.0001f);
+    assertEquals(2f, app.WIN3D.cameraY, 0.0001f);
+    assertEquals(3f, app.WIN3D.cameraZ, 0.0001f);
   }
 
   @Test
@@ -217,19 +217,19 @@ class CamerasTest {
     // re-deriving the rotation math by hand.
     float pX = 5, pY = 6, pZ = 7, pT = 2, rX = 15, rY = 0, rZ = 35, rT = 3, zoom = 45;
 
-    app.WIN3D.position_X = pX;
-    app.WIN3D.position_Y = pY;
-    app.WIN3D.position_Z = pZ;
-    app.WIN3D.position_T = pT;
-    app.WIN3D.rotation_X = rX;
-    app.WIN3D.rotation_Y = rY;
-    app.WIN3D.rotation_Z = rZ;
-    app.WIN3D.rotation_T = rT;
-    app.WIN3D.Zoom = zoom;
+    app.WIN3D.positionX = pX;
+    app.WIN3D.positionY = pY;
+    app.WIN3D.positionZ = pZ;
+    app.WIN3D.positionStep = pT;
+    app.WIN3D.rotationX = rX;
+    app.WIN3D.rotationY = rY;
+    app.WIN3D.rotationZ = rZ;
+    app.WIN3D.rotationStep = rT;
+    app.WIN3D.zoom = zoom;
     app.WIN3D.transform_3DViewport();
-    float expectedX = app.WIN3D.CAM_x;
-    float expectedY = app.WIN3D.CAM_y;
-    float expectedZ = app.WIN3D.CAM_z;
+    float expectedX = app.WIN3D.cameraX;
+    float expectedY = app.WIN3D.cameraY;
+    float expectedZ = app.WIN3D.cameraZ;
 
     float[][] corners = app.allCameras.getCorners(1, pX, pY, pZ, pT, rX, rY, rZ, rT, zoom);
 

@@ -13,11 +13,11 @@ boolean filter (int dataID, int cloudCover_id, int type_of_filter, int scenario_
 
   for (int q = start_q; q <= end_q; q++) {
     float _sky = FLOAT_undefined;
-    if (dataID == dataID_ENSEMBLE_OBSERVED)      _sky = ENSEMBLE_OBSERVED_values[q][now_j][cloudCover_id][now_k];
-    else if (dataID == dataID_ENSEMBLE_FORECAST) _sky = ENSEMBLE_FORECAST_values[q][now_j][cloudCover_id][now_k];
-    else if (dataID == dataID_CLIMATE_CWEEDS)    _sky = CLIMATE_CWEEDS_values   [q][now_j][cloudCover_id][now_k];
-    else if (dataID == dataID_CLIMATE_CLMREC)    _sky = CLIMATE_CLMREC_values   [q][now_j][cloudCover_id][now_k];
-    else if (dataID == dataID_CLIMATE_TMYEPW)    _sky = CLIMATE_TMYEPW_values   [q][now_j][cloudCover_id][now_k];
+    if (dataID == dataID_ensembleObservation)      _sky = ensembleObservation_values[q][now_j][cloudCover_id][now_k];
+    else if (dataID == dataID_ensembleForecast) _sky = ensembleForecast_values[q][now_j][cloudCover_id][now_k];
+    else if (dataID == dataID_climateEngineering)    _sky = climateEngineering_values   [q][now_j][cloudCover_id][now_k];
+    else if (dataID == dataID_climateArchive)    _sky = climateArchiveValues   [q][now_j][cloudCover_id][now_k];
+    else if (dataID == dataID_climateTmyEpw)    _sky = climateTmyEpw_values   [q][now_j][cloudCover_id][now_k];
     else {
       println("ERROR: This dataID is not declared:", dataID);
     }

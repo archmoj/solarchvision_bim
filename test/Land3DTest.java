@@ -60,8 +60,8 @@ class Land3DTest {
 
   @Test
   void flatMesh_buildsAMeshWithZeroElevationEverywhereAndSetsLoadMesh () {
-    app.Land3D.num_rows = 2;
-    app.Land3D.num_columns = 3;
+    app.Land3D.rowCount = 2;
+    app.Land3D.columnCount = 3;
     app.Land3D.loadMesh = false;
 
     app.Land3D.flat_mesh();
@@ -80,8 +80,8 @@ class Land3DTest {
       {{0, 0, 100}, {0, 0, 150}},
       {{0, 0, 120}, {0, 0, 130}}
     };
-    app.Land3D.num_rows = 2;
-    app.Land3D.num_columns = 2;
+    app.Land3D.rowCount = 2;
+    app.Land3D.columnCount = 2;
 
     app.Land3D.normalizeMeshElevation();
 
@@ -108,7 +108,7 @@ class Land3DTest {
 
   @Test
   void projectLandSubFaceForWIN3D_scalesAndFlipsY () {
-    app.OBJECTS_scale = 2;
+    app.overallScale = 2;
     app.WIN3D.scale = 3;
 
     float[][] result = app.Land3D.projectLandSubFaceForWIN3D(new float[][]{{1, 2, 3}});
@@ -122,8 +122,8 @@ class Land3DTest {
 
   @Test
   void intersect_hitsALandCellThroughItsCentroid () {
-    app.Land3D.num_rows = 2;
-    app.Land3D.num_columns = 2;
+    app.Land3D.rowCount = 2;
+    app.Land3D.columnCount = 2;
     app.Land3D.Mesh = new float[][][]{
       {{0, 0, 0}, {0, 2, 0}},
       {{2, 0, 0}, {2, 2, 0}}
@@ -140,8 +140,8 @@ class Land3DTest {
 
   @Test
   void intersect_returnsMinusOneWhenNothingIsHit () {
-    app.Land3D.num_rows = 2;
-    app.Land3D.num_columns = 2;
+    app.Land3D.rowCount = 2;
+    app.Land3D.columnCount = 2;
     app.Land3D.Mesh = new float[][][]{
       {{0, 0, 0}, {0, 2, 0}},
       {{2, 0, 0}, {2, 2, 0}}
@@ -156,8 +156,8 @@ class Land3DTest {
 
   @Test
   void toXMLThenFromXML_roundTripsTheMeshAndDisplaySettings () {
-    app.Land3D.num_rows = 1;
-    app.Land3D.num_columns = 2;
+    app.Land3D.rowCount = 1;
+    app.Land3D.columnCount = 2;
     app.Land3D.Mesh = new float[][][]{{{1, 2, 3}, {4, 5, 6}}};
     app.Land3D.displayTessellation = 2;
     app.Land3D.loadTextures = false;
@@ -166,9 +166,9 @@ class Land3DTest {
     app.Land3D.displayPoints = true;
     app.Land3D.displayTexture = false;
     app.Land3D.displayDepth = true;
-    app.Land3D.palette_CLR = 3;
-    app.Land3D.palette_DIR = -1;
-    app.Land3D.palette_MLT = 0.2f;
+    app.Land3D.colorScaleIndex = 3;
+    app.Land3D.colorScaleDirection = -1;
+    app.Land3D.colorScaleFactor = 0.2f;
     app.Land3D.skipStart = 2;
     app.Land3D.skipEnd = 1;
     app.Land3D.Textures_num = 0; // keep the Textures block a no-op - see the dedicated test below for it populated
@@ -181,8 +181,8 @@ class Land3DTest {
     fresh.Textures_V_scale = new float[0];
     fresh.from_XML(root);
 
-    assertEquals(1, fresh.num_rows);
-    assertEquals(2, fresh.num_columns);
+    assertEquals(1, fresh.rowCount);
+    assertEquals(2, fresh.columnCount);
     assertArrayEquals(new float[]{1, 2, 3}, fresh.Mesh[0][0], 0.001f);
     assertArrayEquals(new float[]{4, 5, 6}, fresh.Mesh[0][1], 0.001f);
     assertEquals(2, fresh.displayTessellation);
@@ -192,7 +192,7 @@ class Land3DTest {
     assertTrue(fresh.displayPoints);
     assertFalse(fresh.displayTexture);
     assertTrue(fresh.displayDepth);
-    assertEquals(3, fresh.palette_CLR);
+    assertEquals(3, fresh.colorScaleIndex);
     assertEquals(2, fresh.skipStart);
     assertEquals(1, fresh.skipEnd);
   }

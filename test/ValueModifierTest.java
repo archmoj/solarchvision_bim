@@ -105,14 +105,14 @@ class ValueModifierTest {
 
   @Test
   void booleanField_commandLineAction_setsTheUnderlyingBoolean () {
-    app.vm.TMYEPW_displayNear(0);
-    app.WORLD.displayNear_TMYEPW = false;
+    app.vm.climateTypicalYearDisplayNear(0);
+    app.WORLD.climateTypicalYearDisplayNear = false;
 
-    app.allActions.get("tmyepw_displaynear").run(new String[]{"tmyepw_displaynear", "1"});
-    assertTrue(app.WORLD.displayNear_TMYEPW);
+    app.allActions.get("climate_typical_year_display_near").run(new String[]{"climate_typical_year_display_near", "1"});
+    assertTrue(app.WORLD.climateTypicalYearDisplayNear);
 
-    app.allActions.get("tmyepw_displaynear").run(new String[]{"tmyepw_displaynear", "0"});
-    assertFalse(app.WORLD.displayNear_TMYEPW);
+    app.allActions.get("climate_typical_year_display_near").run(new String[]{"climate_typical_year_display_near", "0"});
+    assertFalse(app.WORLD.climateTypicalYearDisplayNear);
   }
 
   // ================= dynamic bounds =========================================
@@ -120,13 +120,13 @@ class ValueModifierTest {
   @Test
   void startYear_dynamicBounds_rejectsAValueOutsideTheCurrentClimateRange () {
     app.vm.Start_year(0);
-    app.SampleYear_Start = 1980;
+    app.sampleYearStart = 1980;
 
-    app.allActions.get("start_year").run(new String[]{"start_year", "1900"}); // below CLIMATE_CWEEDS_start
-    assertEquals(1980, app.SampleYear_Start);
+    app.allActions.get("start_year").run(new String[]{"start_year", "1900"}); // below climateEngineeringStart
+    assertEquals(1980, app.sampleYearStart);
 
     app.allActions.get("start_year").run(new String[]{"start_year", "1975"}); // within range
-    assertEquals(1975, app.SampleYear_Start);
+    assertEquals(1975, app.sampleYearStart);
   }
 
   // ================= negative click-step (Math.abs for the command line) ===

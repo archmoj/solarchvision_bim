@@ -1,21 +1,21 @@
 void postProcess_developDATA (int desired_DataSource) {
 
-  int keep_CurrentDataSource = CurrentDataSource;
+  int keep_currentDataSource = currentDataSource;
 
-  CurrentDataSource = desired_DataSource;
+  currentDataSource = desired_DataSource;
 
   float keep_STUDY_perDays = STUDY.perDays;
   int keep_STUDY_joinDays = STUDY.joinDays;
 
-  if ((CurrentDataSource == dataID_ENSEMBLE_FORECAST) ||
-      (CurrentDataSource == dataID_ENSEMBLE_OBSERVED)) {
+  if ((currentDataSource == dataID_ensembleForecast) ||
+      (currentDataSource == dataID_ensembleObservation)) {
 
     STUDY.perDays = 1;
     STUDY.joinDays = 1;
   }
 
-  int DATA_start = getStart_CurrentDataSource();
-  int DATA_end = getEnd_CurrentDataSource();
+  int DATA_start = getStart_currentDataSource();
+  int DATA_end = getEnd_currentDataSource();
 
   int count_k = 1 + DATA_end - DATA_start;
   if (count_k > 0) {
@@ -69,7 +69,7 @@ void postProcess_developDATA (int desired_DataSource) {
             }
 
 
-            setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, FLOAT_undefined);
+            setValue_currentDataSource(now_i, now_j, now_k, LAYER_developed.id, FLOAT_undefined);
 
             T = FLOAT_undefined;
             R_dir = FLOAT_undefined;
@@ -79,7 +79,7 @@ void postProcess_developDATA (int desired_DataSource) {
 
 
 
-            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
+            Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_dirnorrad.id);
 
             if (is_undefined(Pa)) {
               R_dir = FLOAT_undefined;
@@ -87,7 +87,7 @@ void postProcess_developDATA (int desired_DataSource) {
               R_dir = Pa;
             }
 
-            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
+            Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_difhorrad.id);
 
             if (is_undefined(Pa)) {
               R_dif = FLOAT_undefined;
@@ -95,7 +95,7 @@ void postProcess_developDATA (int desired_DataSource) {
               R_dif = Pa;
             }
 
-            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
+            Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_drybulb.id);
 
             if (is_undefined(Pa)) {
               T = FLOAT_undefined;
@@ -103,7 +103,7 @@ void postProcess_developDATA (int desired_DataSource) {
               T = Pa;
             }
 
-            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
+            Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_windspd.id);
 
             if (is_undefined(Pa)) {
               WS = FLOAT_undefined;
@@ -111,8 +111,8 @@ void postProcess_developDATA (int desired_DataSource) {
               WS = Pa;
             }
 
-            Pa = getValue_CurrentDataSource(now_i, now_j, now_k, LAYER_precipitation.id);
-            Pb = getValue_CurrentDataSource(next_i, next_j, now_k, LAYER_precipitation.id);
+            Pa = getValue_currentDataSource(now_i, now_j, now_k, LAYER_precipitation.id);
+            Pb = getValue_currentDataSource(next_i, next_j, now_k, LAYER_precipitation.id);
 
             if (is_undefined(Pa) || is_undefined(Pb)) {
               RAIN = FLOAT_undefined;
@@ -130,13 +130,13 @@ void postProcess_developDATA (int desired_DataSource) {
 
             float[] SunR = funcs.SunPosition(STATION.getLatitude(), DATE_ANGLE, HOUR_ANGLE);
 
-            if (Develop_Option == DEV_WindPower) {
+            if (developLayerOption == DEV_WindPower) {
 
               if (is_defined(WS)) {
 
                 valuesSUM[now_k] = 0.5 * 1.23 * 1 * pow(WS / 3.6, 3);
 
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
+                setValue_currentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
 
               LAYER_developed.V_scale = 0.05;
@@ -147,15 +147,15 @@ void postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
             }
 
-            if (Develop_Option == DEV_RadiationOnTracker) {
+            if (developLayerOption == DEV_RadiationOnTracker) {
               float Alpha = funcs.asin_ang(SunR[3]);
               float Beta = funcs.atan2_ang(SunR[2], SunR[1]) + 90;
 
               if (is_defined(R_dir) && is_defined(R_dif)) {
 
-                valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
+                valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, globalAlbedo);
 
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
+                setValue_currentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
 
               LAYER_developed.V_scale = 0.1;
@@ -168,52 +168,52 @@ void postProcess_developDATA (int desired_DataSource) {
 
 
             if (
-              (Develop_Option == DEV_RadiationOnSouth) ||
-              (Develop_Option == DEV_RadiationOnEast) ||
-              (Develop_Option == DEV_RadiationOnWest) ||
-              (Develop_Option == DEV_RadiationOnNorth) ||
-              (Develop_Option == DEV_RadiationOnSE) ||
-              (Develop_Option == DEV_RadiationOnNE) ||
-              (Develop_Option == DEV_RadiationOnNW) ||
-              (Develop_Option == DEV_RadiationOnSW) ||
-              (Develop_Option == DEV_RadiationOnSurface)
+              (developLayerOption == DEV_RadiationOnSouth) ||
+              (developLayerOption == DEV_RadiationOnEast) ||
+              (developLayerOption == DEV_RadiationOnWest) ||
+              (developLayerOption == DEV_RadiationOnNorth) ||
+              (developLayerOption == DEV_RadiationOnSE) ||
+              (developLayerOption == DEV_RadiationOnNE) ||
+              (developLayerOption == DEV_RadiationOnNW) ||
+              (developLayerOption == DEV_RadiationOnSW) ||
+              (developLayerOption == DEV_RadiationOnSurface)
             ) {
               float Alpha = 0;
               float Beta = 0;
-              if (Develop_Option == DEV_RadiationOnSurface) {
-                Alpha = Develop_AngleInclination;
-                Beta = Develop_AngleOrientation;
-              } else if (Develop_Option == DEV_RadiationOnSouth) {
+              if (developLayerOption == DEV_RadiationOnSurface) {
+                Alpha = developLayerAngleInclination;
+                Beta = developLayerAngleOrientation;
+              } else if (developLayerOption == DEV_RadiationOnSouth) {
                 Alpha = 0;
                 Beta = 0;
-              } else if (Develop_Option == DEV_RadiationOnEast) {
+              } else if (developLayerOption == DEV_RadiationOnEast) {
                 Alpha = 0;
                 Beta = 90;
-              } else if (Develop_Option == DEV_RadiationOnNorth) {
+              } else if (developLayerOption == DEV_RadiationOnNorth) {
                 Alpha = 0;
                 Beta = 180;
-              } else if (Develop_Option == DEV_RadiationOnWest) {
+              } else if (developLayerOption == DEV_RadiationOnWest) {
                 Alpha = 0;
                 Beta = -90;
-              } else if (Develop_Option == DEV_RadiationOnSE) {
+              } else if (developLayerOption == DEV_RadiationOnSE) {
                 Alpha = 0;
                 Beta = 45;
-              } else if (Develop_Option == DEV_RadiationOnNE) {
+              } else if (developLayerOption == DEV_RadiationOnNE) {
                 Alpha = 0;
                 Beta = 135;
-              } else if (Develop_Option == DEV_RadiationOnNW) {
+              } else if (developLayerOption == DEV_RadiationOnNW) {
                 Alpha = 0;
                 Beta = -135;
-              } else if (Develop_Option == DEV_RadiationOnSW) {
+              } else if (developLayerOption == DEV_RadiationOnSW) {
                 Alpha = 0;
                 Beta = -45;
               }
 
               if (is_defined(R_dir) && is_defined(R_dif)) {
 
-                valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
+                valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, globalAlbedo);
 
-                setValue_CurrentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
+                setValue_currentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
 
               LAYER_developed.V_scale = 0.1;
@@ -221,31 +221,31 @@ void postProcess_developDATA (int desired_DataSource) {
               LAYER_developed.V_belowLine = 0;
               LAYER_developed.unit = "W/m²";
 
-              if (Develop_Option == DEV_RadiationOnSurface) {
+              if (developLayerOption == DEV_RadiationOnSurface) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on inclination_" + String.valueOf(Alpha) + "_South-Deviation_" + String.valueOf(Beta);
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
-              } else if (Develop_Option == DEV_RadiationOnSouth) {
+              } else if (developLayerOption == DEV_RadiationOnSouth) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on South surface";
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
-              } else if (Develop_Option == DEV_RadiationOnEast) {
+              } else if (developLayerOption == DEV_RadiationOnEast) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on East surface";
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
-              } else if (Develop_Option == DEV_RadiationOnNorth) {
+              } else if (developLayerOption == DEV_RadiationOnNorth) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on North surface";
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
-              } else if (Develop_Option == DEV_RadiationOnWest) {
+              } else if (developLayerOption == DEV_RadiationOnWest) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on West surface";
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
-              } else if (Develop_Option == DEV_RadiationOnSE) {
+              } else if (developLayerOption == DEV_RadiationOnSE) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on S.E. surface";
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
-              } else if (Develop_Option == DEV_RadiationOnNE) {
+              } else if (developLayerOption == DEV_RadiationOnNE) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on N.E. surface";
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
-              } else if (Develop_Option == DEV_RadiationOnNW) {
+              } else if (developLayerOption == DEV_RadiationOnNW) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on N.W. surface";
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
-              } else if (Develop_Option == DEV_RadiationOnSW) {
+              } else if (developLayerOption == DEV_RadiationOnSW) {
                 LAYER_developed.descriptions[Language_EN] = "Radiation on S.W. surface";
                 LAYER_developed.descriptions[Language_FR] = "?"; // ??
               }
@@ -259,10 +259,10 @@ void postProcess_developDATA (int desired_DataSource) {
 
   // println("developDATA updated!");
 
-  DevelopData_update = false;
+  developDataUpdate = false;
 
   STUDY.perDays = keep_STUDY_perDays;
   STUDY.joinDays = keep_STUDY_joinDays;
 
-  CurrentDataSource = keep_CurrentDataSource;
+  currentDataSource = keep_currentDataSource;
 }

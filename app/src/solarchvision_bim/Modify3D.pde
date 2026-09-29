@@ -3,21 +3,21 @@ class Modify3D {
   final static String CLASS_STAMP = "Modify3D";
 
   void selectVertices_fromCurrentSelection () {
-    if (current_ObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Vertices();
-    if (current_ObjectCategory == ObjectCategory.FACE) Select3D.convert_Faces_to_Vertices();
-    if (current_ObjectCategory == ObjectCategory.POLYLINE) Select3D.convert_Polylines_to_Vertices();
+    if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Vertices();
+    if (currentObjectCategory == ObjectCategory.FACE) Select3D.convert_Faces_to_Vertices();
+    if (currentObjectCategory == ObjectCategory.POLYLINE) Select3D.convert_Polylines_to_Vertices();
 
     Select3D.Vertex_ids = sort(Select3D.Vertex_ids);
   }
 
   void selectFacesAndGroups_fromCurrentSelection () {
-    if (current_ObjectCategory == ObjectCategory.GROUP) {
+    if (currentObjectCategory == ObjectCategory.GROUP) {
       Select3D.Group_ids = sort(Select3D.Group_ids);
       Select3D.convert_Groups_to_Faces();
       Select3D.Face_ids = sort(Select3D.Face_ids);
     }
 
-    if (current_ObjectCategory == ObjectCategory.FACE) {
+    if (currentObjectCategory == ObjectCategory.FACE) {
       Select3D.Face_ids = sort(Select3D.Face_ids);
       Select3D.convert_Faces_to_Groups();
       Select3D.Group_ids = sort(Select3D.Group_ids);
@@ -25,19 +25,19 @@ class Modify3D {
   }
 
   boolean isPolymeshCategorySelected () {
-    return (current_ObjectCategory == ObjectCategory.GROUP) ||
-           (current_ObjectCategory == ObjectCategory.FACE) ||
-           (current_ObjectCategory == ObjectCategory.POLYLINE) ||
-           (current_ObjectCategory == ObjectCategory.VERTEX);
+    return (currentObjectCategory == ObjectCategory.GROUP) ||
+           (currentObjectCategory == ObjectCategory.FACE) ||
+           (currentObjectCategory == ObjectCategory.POLYLINE) ||
+           (currentObjectCategory == ObjectCategory.VERTEX);
   }
 
   boolean isGroupOrFaceCategorySelected () {
-    return (current_ObjectCategory == ObjectCategory.GROUP) ||
-           (current_ObjectCategory == ObjectCategory.FACE);
+    return (currentObjectCategory == ObjectCategory.GROUP) ||
+           (currentObjectCategory == ObjectCategory.FACE);
   }
 
   void repositionVertices_Selection () {
-    if (current_ObjectCategory != ObjectCategory.VERTEX) return;
+    if (currentObjectCategory != ObjectCategory.VERTEX) return;
 
     Select3D.calculate_BoundingBox();
 
@@ -341,7 +341,7 @@ class Modify3D {
     Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFaceIndices);
   }
 
-  void insertCornerOpennings_Selection () {
+  void insertCornerOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
@@ -367,7 +367,7 @@ class Modify3D {
         float[][] new_Vertices = new float[allFaces.nodes[f].length][3];
         for (int i = 0; i < allFaces.nodes[f].length; i++) {
           for (int j = 0; j < 3; j++) {
-            new_Vertices[i][j] = pow(User3D.modify_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(User3D.modify_OpenningArea, 0.5)) * G_face[j];
+            new_Vertices[i][j] = pow(User3D.modifierOpeningArea, 0.5) * base_Vertices[i][j] + (1 - pow(User3D.modifierOpeningArea, 0.5)) * G_face[j];
           }
         }
 
@@ -404,7 +404,7 @@ class Modify3D {
     switch_category(ObjectCategory.FACE);
   }
 
-  void insertParallelOpennings_Selection () {
+  void insertParallelOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
@@ -436,9 +436,9 @@ class Modify3D {
           int s_next = (s + 1) % allFaces.nodes[f].length;
 
           for (int j = 0; j < 3; j++) {
-            new_A_EdgeVertices[s][j] = User3D.modify_OpenningDeviation * base_Vertices[s][j] + (1 - User3D.modify_OpenningDeviation) * 0.5 * (base_Vertices[s_prev][j] + base_Vertices[s][j]);
-            new_B_EdgeVertices[s][j] = User3D.modify_OpenningDeviation * base_Vertices[s][j] + (1 - User3D.modify_OpenningDeviation) * 0.5 * (base_Vertices[s_next][j] + base_Vertices[s][j]);
-            new_CenterVertices[s][j] = pow(User3D.modify_OpenningArea, 0.5) * base_Vertices[s][j] + (1 - pow(User3D.modify_OpenningArea, 0.5)) * G_face[j];
+            new_A_EdgeVertices[s][j] = User3D.modifierOpeningDeviation * base_Vertices[s][j] + (1 - User3D.modifierOpeningDeviation) * 0.5 * (base_Vertices[s_prev][j] + base_Vertices[s][j]);
+            new_B_EdgeVertices[s][j] = User3D.modifierOpeningDeviation * base_Vertices[s][j] + (1 - User3D.modifierOpeningDeviation) * 0.5 * (base_Vertices[s_next][j] + base_Vertices[s][j]);
+            new_CenterVertices[s][j] = pow(User3D.modifierOpeningArea, 0.5) * base_Vertices[s][j] + (1 - pow(User3D.modifierOpeningArea, 0.5)) * G_face[j];
           }
         }
 
@@ -484,7 +484,7 @@ class Modify3D {
     switch_category(ObjectCategory.FACE);
   }
 
-  void insertRotatedOpennings_Selection () {
+  void insertRotatedOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
@@ -514,8 +514,8 @@ class Modify3D {
           int s_prev = (s + allFaces.nodes[f].length - 1) % allFaces.nodes[f].length;
 
           for (int j = 0; j < 3; j++) {
-            new_EdgeVertices[s][j] = User3D.modify_OpenningDeviation * base_Vertices[s][j] + (1 - User3D.modify_OpenningDeviation) * base_Vertices[s_prev][j];
-            new_CenterVertices[s][j] = pow(User3D.modify_OpenningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(User3D.modify_OpenningArea, 0.5)) * G_face[j];
+            new_EdgeVertices[s][j] = User3D.modifierOpeningDeviation * base_Vertices[s][j] + (1 - User3D.modifierOpeningDeviation) * base_Vertices[s_prev][j];
+            new_CenterVertices[s][j] = pow(User3D.modifierOpeningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(User3D.modifierOpeningArea, 0.5)) * G_face[j];
           }
         }
 
@@ -555,7 +555,7 @@ class Modify3D {
     switch_category(ObjectCategory.FACE);
   }
 
-  void insertEdgeOpennings_Selection () {
+  void insertEdgeOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
@@ -581,7 +581,7 @@ class Modify3D {
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
           int s_prev = (s + allFaces.nodes[f].length - 1) % allFaces.nodes[f].length;
           for (int j = 0; j < 3; j++) {
-            new_EdgeVertices[s][j] = User3D.modify_OpenningDeviation * base_Vertices[s][j] + (1 - User3D.modify_OpenningDeviation) * base_Vertices[s_prev][j];
+            new_EdgeVertices[s][j] = User3D.modifierOpeningDeviation * base_Vertices[s][j] + (1 - User3D.modifierOpeningDeviation) * base_Vertices[s_prev][j];
           }
         }
 
@@ -635,7 +635,7 @@ class Modify3D {
       int OBJ_ID = this.findOwningGroupId(f);
       if (OBJ_ID == -1) continue;
 
-      int nNewFaces = User3D.modify_TessellateColumns * User3D.modify_TessellateRows;
+      int nNewFaces = User3D.modifierTessellateColumns * User3D.modifierTessellateRows;
       int netShift = nNewFaces - 1;
 
       allGroups.inserted_nFaces(OBJ_ID, f, netShift); // because adding the faces also changes the end pointer of the same object
@@ -645,30 +645,30 @@ class Modify3D {
 
         float[][] base_Vertices = faceBaseVertices(f);
 
-        float[][] new_EdgeVertices = new float[(User3D.modify_TessellateColumns + 1) * (User3D.modify_TessellateRows + 1)][3];
-        for (int i = 0; i <= User3D.modify_TessellateColumns; i++) {
-          for (int j = 0; j <= User3D.modify_TessellateRows; j++) {
-            int s = i * (User3D.modify_TessellateRows + 1) + j;
+        float[][] new_EdgeVertices = new float[(User3D.modifierTessellateColumns + 1) * (User3D.modifierTessellateRows + 1)][3];
+        for (int i = 0; i <= User3D.modifierTessellateColumns; i++) {
+          for (int j = 0; j <= User3D.modifierTessellateRows; j++) {
+            int s = i * (User3D.modifierTessellateRows + 1) + j;
             for (int k = 0; k < 3; k++) {
-              float u = i / float(User3D.modify_TessellateColumns);
-              float v = j / float(User3D.modify_TessellateRows);
+              float u = i / float(User3D.modifierTessellateColumns);
+              float v = j / float(User3D.modifierTessellateRows);
               new_EdgeVertices[s][k] = funcs.bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
             }
           }
         }
 
-        int[] new_EdgeVertex_ids = new int[(User3D.modify_TessellateColumns + 1) * (User3D.modify_TessellateRows + 1)]; // on the edge
-        for (int i = 0; i <= User3D.modify_TessellateColumns; i++) {
-          for (int j = 0; j <= User3D.modify_TessellateRows; j++) {
-            int s = i * (User3D.modify_TessellateRows + 1) + j;
+        int[] new_EdgeVertex_ids = new int[(User3D.modifierTessellateColumns + 1) * (User3D.modifierTessellateRows + 1)]; // on the edge
+        for (int i = 0; i <= User3D.modifierTessellateColumns; i++) {
+          for (int j = 0; j <= User3D.modifierTessellateRows; j++) {
+            int s = i * (User3D.modifierTessellateRows + 1) + j;
 
             if ((i == 0) && (j == 0)) {
               new_EdgeVertex_ids[s] = allFaces.nodes[f][0];
-            } else if ((i == User3D.modify_TessellateColumns) && (j == 0)) {
+            } else if ((i == User3D.modifierTessellateColumns) && (j == 0)) {
               new_EdgeVertex_ids[s] = allFaces.nodes[f][1];
-            } else if ((i == User3D.modify_TessellateColumns) && (j == User3D.modify_TessellateRows)) {
+            } else if ((i == User3D.modifierTessellateColumns) && (j == User3D.modifierTessellateRows)) {
               new_EdgeVertex_ids[s] = allFaces.nodes[f][2];
-            } else if ((i == 0) && (j == User3D.modify_TessellateRows)) {
+            } else if ((i == 0) && (j == User3D.modifierTessellateRows)) {
               new_EdgeVertex_ids[s] = allFaces.nodes[f][3];
             } else {
               new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
@@ -681,14 +681,14 @@ class Modify3D {
         current_Layer = allFaces.getLayer(f);
         current_Visibility = allFaces.getVisibility(f);
 
-        for (int i = 0; i < User3D.modify_TessellateColumns; i++) {
-          for (int j = 0; j < User3D.modify_TessellateRows; j++) {
-            int s = i * User3D.modify_TessellateRows + j; // number of face
+        for (int i = 0; i < User3D.modifierTessellateColumns; i++) {
+          for (int j = 0; j < User3D.modifierTessellateRows; j++) {
+            int s = i * User3D.modifierTessellateRows + j; // number of face
 
-            int s00 = i * (User3D.modify_TessellateRows + 1) + j;
+            int s00 = i * (User3D.modifierTessellateRows + 1) + j;
             int s01 = s00 + 1;
-            int s10 = s00 + (User3D.modify_TessellateRows + 1);
-            int s11 = s00 + (User3D.modify_TessellateRows + 1) + 1;
+            int s10 = s00 + (User3D.modifierTessellateRows + 1);
+            int s11 = s00 + (User3D.modifierTessellateRows + 1) + 1;
 
             int[] newFace_nodes = { new_EdgeVertex_ids[s00], new_EdgeVertex_ids[s10], new_EdgeVertex_ids[s11], new_EdgeVertex_ids[s01] };
             int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
@@ -964,9 +964,9 @@ class Modify3D {
           float[] W = { UV.x, UV.y, UV.z };
           W = funcs.vec3_unit(W);
 
-          top_Vertices[s][0] += W[0] * User3D.modify_OpenningDepth;
-          top_Vertices[s][1] += W[1] * User3D.modify_OpenningDepth;
-          top_Vertices[s][2] += W[2] * User3D.modify_OpenningDepth;
+          top_Vertices[s][0] += W[0] * User3D.modifierOpeningDepth;
+          top_Vertices[s][1] += W[1] * User3D.modifierOpeningDepth;
+          top_Vertices[s][2] += W[2] * User3D.modifierOpeningDepth;
         }
 
         int[] base_Vertex_ids = new int[allFaces.nodes[f].length];
@@ -991,7 +991,7 @@ class Modify3D {
         for (int s = 0; s < nSides; s++) {
           int s_next = (s + 1) % nSides;
 
-          if (User3D.modify_OpenningDepth < 0) { // reverse direction for negative extrude heights
+          if (User3D.modifierOpeningDepth < 0) { // reverse direction for negative extrude heights
             newFace_nodes_batch[s] = new int[] { base_Vertex_ids[s], top_Vertex_ids[s], top_Vertex_ids[s_next], base_Vertex_ids[s_next] };
           } else {
             newFace_nodes_batch[s] = new int[] { base_Vertex_ids[s], base_Vertex_ids[s_next], top_Vertex_ids[s_next], top_Vertex_ids[s] };
@@ -1069,8 +1069,8 @@ class Modify3D {
   void flatten_LandPoints () {
     for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
       int f = Select3D.LandPoint_ids[q];
-      int i = f / Land3D.num_columns;
-      int j = f % Land3D.num_columns;
+      int i = f / Land3D.columnCount;
+      int j = f % Land3D.columnCount;
       Land3D.Mesh[i][j][2] = 0;
     }
 
@@ -1078,12 +1078,12 @@ class Modify3D {
   }
 
   void changeVisibilityFaces_Selection (int new_vsb) {
-    if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-        (current_ObjectCategory == ObjectCategory.FACE) ||
-        (current_ObjectCategory == ObjectCategory.VERTEX)) {
+    if ((currentObjectCategory == ObjectCategory.GROUP) ||
+        (currentObjectCategory == ObjectCategory.FACE) ||
+        (currentObjectCategory == ObjectCategory.VERTEX)) {
 
-      if (current_ObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Faces();
-      if (current_ObjectCategory == ObjectCategory.VERTEX) Select3D.convert_Vertices_to_Faces();
+      if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Faces();
+      if (currentObjectCategory == ObjectCategory.VERTEX) Select3D.convert_Vertices_to_Faces();
 
       for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
         int f = Select3D.Face_ids[o];
@@ -1117,12 +1117,12 @@ class Modify3D {
   }
 
   void changeVisibilityPolylines_Selection (int new_vsb) {
-    if ((current_ObjectCategory == ObjectCategory.GROUP) ||
-        (current_ObjectCategory == ObjectCategory.POLYLINE) ||
-        (current_ObjectCategory == ObjectCategory.VERTEX)) {
+    if ((currentObjectCategory == ObjectCategory.GROUP) ||
+        (currentObjectCategory == ObjectCategory.POLYLINE) ||
+        (currentObjectCategory == ObjectCategory.VERTEX)) {
 
-      if (current_ObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Polylines();
-      if (current_ObjectCategory == ObjectCategory.VERTEX) Select3D.convert_Vertices_to_Polylines();
+      if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Polylines();
+      if (currentObjectCategory == ObjectCategory.VERTEX) Select3D.convert_Vertices_to_Polylines();
 
       for (int o = Select3D.Polyline_ids.length - 1; o >= 0; o--) {
         int f = Select3D.Polyline_ids[o];

@@ -175,16 +175,16 @@ class UI_rollout {
     vm.Hourly_daily_filter(0);
     vm.Latitude(0);
     vm.Longitude(0);
-    vm.TMYEPW_displayAll(0);
-    vm.TMYEPW_displayNear(0);
-    vm.CWEEDS_displayAll(0);
-    vm.CWEEDS_displayNear(0);
-    vm.CLMREC_displayAll(0);
-    vm.CLMREC_displayNear(0);
-    vm.SWOB_displayAll(0);
-    vm.SWOB_displayNear(0);
-    vm.NAEFS_displayAll(0);
-    vm.NAEFS_displayNear(0);
+    vm.climateTypicalYearDisplayAll(0);
+    vm.climateTypicalYearDisplayNear(0);
+    vm.climateEngineeringDisplayAll(0);
+    vm.climateEngineeringDisplayNear(0);
+    vm.climateArchiveDisplayAll(0);
+    vm.climateArchiveDisplayNear(0);
+    vm.ensembleObservationDisplayAll(0);
+    vm.ensembleObservationDisplayNear(0);
+    vm.ensembleForecastDisplayAll(0);
+    vm.ensembleForecastDisplayNear(0);
     vm.AddToLastGroup(0);
     vm.Create3D_material(0);
     vm.Create3D_tessellation(0);
@@ -210,7 +210,7 @@ class UI_rollout {
     vm.Modify3D_tessellateRows(0);
     vm.Modify3D_tessellateColumns(0);
     vm.Modify3D_offsetAmount(0);
-    vm.Modify3D_weldTreshold(0);
+    vm.Modify3D_weldThreshold(0);
     vm.Select3D_softPower(0);
     vm.Select3D_softRadius(0);
     vm.Select3D_posVector(0);
@@ -262,7 +262,7 @@ class UI_rollout {
     vm.Create3D_displayEdges(0);
     vm.Create3D_displayNormals(0);
     vm.Cameras_displayAll(0);
-    vm.Impacts_displayDay(0);
+    vm.impactDisplayDay(0);
     vm.SolarImpacts_displayImage(0);
     vm.SolidImpacts_displayImage(0);
     vm.SolarImpacts_sectionType(0);
@@ -297,8 +297,8 @@ class UI_rollout {
     vm.Sun3D_displaySurface(0);
     vm.Sun3D_displayTexture(0);
     vm.Sun3D_fitInSkyDome(0);
-    vm.Planetary_magnification(0);
-    vm.Objects_scale(0);
+    vm.celestialMagnification(0);
+    vm.overallScale(0);
     vm.Diagram_setup(0);
     vm.Scale(0);
     vm.Draw_data(0);
@@ -362,11 +362,11 @@ class UI_rollout {
     vm.Select3D_sectionDisplayEdges(0);
     vm.Select3D_cameraDisplayEdges(0);
     vm.Select3D_landPointDisplayPoints(0);
-    vm.Interpolation_weight(0);
+    vm.interpolationWeight(0);
     vm.Climate_based_solar_forecast(0);
     vm.Climate_based_temperature_forecast(0);
-    vm.Develop_option(0);
-    vm.Develop_dayHour(0);
+    vm.developLayerOption(0);
+    vm.developLayerInterval(0);
     vm.Trend_periodHours(0);
     vm.Weighted_equal_trend(0);
     vm.Inclination_angle(0);
@@ -518,13 +518,13 @@ class UI_rollout {
       if (this.child == CHILD_PERIOD_RANGES) {
         STUDY.i_Start = vm.Start_hour(1);
         STUDY.i_End = vm.End_hour(1);
-        SampleYear_Start = vm.Start_year(1);
-        SampleYear_End = vm.End_year(1);
-        SampleMember_Start = vm.Start_member(1);
-        SampleMember_End = vm.End_member(1);
-        SampleStation_Start = vm.Start_station(1);
-        SampleStation_End = vm.End_station(1);
-        ENSEMBLE_OBSERVED_maxDays = vm.Forecast_Obs_maxDays(1);
+        sampleYearStart = vm.Start_year(1);
+        sampleYearEnd = vm.End_year(1);
+        sampleMemberStart = vm.Start_member(1);
+        sampleMemberEnd = vm.End_member(1);
+        sampleStationStart = vm.Start_station(1);
+        sampleStationEnd = vm.End_station(1);
+        ensembleObservationMaxDays = vm.Forecast_Obs_maxDays(1);
       }
 
       if (this.child == CHILD_PERIOD_FILTERS) {
@@ -542,50 +542,50 @@ class UI_rollout {
 
       if (this.child == CHILD_LOCATION_STATIONS) {
 
-        WORLD.displayAll_TMYEPW = vm.TMYEPW_displayAll(1);
-        WORLD.displayNear_TMYEPW = vm.TMYEPW_displayNear(1);
-        WORLD.displayAll_CWEEDS = vm.CWEEDS_displayAll(1);
-        WORLD.displayNear_CWEEDS = vm.CWEEDS_displayNear(1);
-        WORLD.displayAll_CLMREC = vm.CLMREC_displayAll(1);
-        WORLD.displayNear_CLMREC = vm.CLMREC_displayNear(1);
-        WORLD.displayAll_SWOB = vm.SWOB_displayAll(1);
-        WORLD.displayNear_SWOB = vm.SWOB_displayNear(1);
-        WORLD.displayAll_NAEFS = vm.NAEFS_displayAll(1);
-        WORLD.displayNear_NAEFS = vm.NAEFS_displayNear(1);
+        WORLD.climateTypicalYearDisplayAll = vm.climateTypicalYearDisplayAll(1);
+        WORLD.climateTypicalYearDisplayNear = vm.climateTypicalYearDisplayNear(1);
+        WORLD.climateEngineeringDisplayAll = vm.climateEngineeringDisplayAll(1);
+        WORLD.climateEngineeringDisplayNear = vm.climateEngineeringDisplayNear(1);
+        WORLD.climateArchiveDisplayAll = vm.climateArchiveDisplayAll(1);
+        WORLD.climateArchiveDisplayNear = vm.climateArchiveDisplayNear(1);
+        WORLD.ensembleObservationDisplayAll = vm.ensembleObservationDisplayAll(1);
+        WORLD.ensembleObservationDisplayNear = vm.ensembleObservationDisplayNear(1);
+        WORLD.ensembleForecastDisplayAll = vm.ensembleForecastDisplayAll(1);
+        WORLD.ensembleForecastDisplayNear = vm.ensembleForecastDisplayNear(1);
       }
     } else if (this.parent == PARENT_GEOMETRY) {
       if (this.child == CHILD_GEOMETRY_CREATE) {
 
         addToLastGroup = vm.AddToLastGroup(1);
-        User3D.default_Material = vm.Create3D_material(1);
-        User3D.default_Tessellation = vm.Create3D_tessellation(1);
-        User3D.default_Layer = vm.Create3D_layer(1);
-        User3D.default_Visibility = vm.Create3D_visibility(1);
-        User3D.default_Weight = vm.Create3D_weight(1);
-        User3D.default_Closed = vm.Create3D_closed(1);
-        User3D.create_Orientation = vm.Create3D_orientation(1);
-        User3D.create_Length = vm.Create3D_length(1);
-        User3D.create_Width = vm.Create3D_width(1);
-        User3D.create_Height = vm.Create3D_height(1);
-        User3D.create_Volume = vm.Create3D_volume(1);
-        User3D.create_Snap = vm.Create3D_snap(1);
-        User3D.create_SphereDegree = vm.Create3D_sphereDegree(1);
-        User3D.create_CylinderDegree = vm.Create3D_cylinderDegree(1);
-        User3D.create_PolyDegree = vm.Create3D_polyDegree(1);
-        User3D.create_Parametric_Type = vm.Create3D_parametricType(1);
-        User3D.create_Person_Type = vm.Create3D_personType(1);
-        User3D.create_Plant_Type = vm.Create3D_plantType(1);
+        User3D.defaultMaterial = vm.Create3D_material(1);
+        User3D.defaultTessellation = vm.Create3D_tessellation(1);
+        User3D.defaultLayer = vm.Create3D_layer(1);
+        User3D.defaultVisibility = vm.Create3D_visibility(1);
+        User3D.defaultWeight = vm.Create3D_weight(1);
+        User3D.defaultClosed = vm.Create3D_closed(1);
+        User3D.creatorOrientation = vm.Create3D_orientation(1);
+        User3D.creatorLength = vm.Create3D_length(1);
+        User3D.creatorWidth = vm.Create3D_width(1);
+        User3D.creatorHeight = vm.Create3D_height(1);
+        User3D.creatorVolume = vm.Create3D_volume(1);
+        User3D.creatorSnapModeIndex = vm.Create3D_snap(1);
+        User3D.creatorSphereDegree = vm.Create3D_sphereDegree(1);
+        User3D.creatorCylinderDegree = vm.Create3D_cylinderDegree(1);
+        User3D.creatorPolygonDegree = vm.Create3D_polyDegree(1);
+        User3D.creatorParametricTypeIndex = vm.Create3D_parametricType(1);
+        User3D.creatorPersonTypeIndex = vm.Create3D_personType(1);
+        User3D.creatorPlantTypeIndex = vm.Create3D_plantType(1);
       }
 
       if (this.child == CHILD_GEOMETRY_MODIFY) {
 
-        User3D.modify_OpenningDepth = vm.Modify3D_openningDepth(1);
-        User3D.modify_OpenningArea = vm.Modify3D_openningArea(1);
-        User3D.modify_OpenningDeviation = vm.Modify3D_openningDeviation(1);
-        User3D.modify_TessellateRows = vm.Modify3D_tessellateRows(1);
-        User3D.modify_TessellateColumns = vm.Modify3D_tessellateColumns(1);
-        User3D.modify_OffsetAmount = vm.Modify3D_offsetAmount(1);
-        User3D.modify_WeldTreshold = vm.Modify3D_weldTreshold(1);
+        User3D.modifierOpeningDepth = vm.Modify3D_openningDepth(1);
+        User3D.modifierOpeningArea = vm.Modify3D_openningArea(1);
+        User3D.modifierOpeningDeviation = vm.Modify3D_openningDeviation(1);
+        User3D.modifierTessellateRows = vm.Modify3D_tessellateRows(1);
+        User3D.modifierTessellateColumns = vm.Modify3D_tessellateColumns(1);
+        User3D.modifierOffsetAmount = vm.Modify3D_offsetAmount(1);
+        User3D.modifierWeldThreshold = vm.Modify3D_weldThreshold(1);
         Select3D.softPower = vm.Select3D_softPower(1);
         Select3D.softRadius = vm.Select3D_softRadius(1);
         Select3D.posVector = vm.Select3D_posVector(1);
@@ -600,24 +600,24 @@ class UI_rollout {
       }
 
       if (this.child == CHILD_GEOMETRY_SOLID) {
-        User3D.create_powAll = vm.Create3D_powAll(1);
-        User3D.create_powX = vm.Create3D_powX(1);
-        User3D.create_powY = vm.Create3D_powY(1);
-        User3D.create_powZ = vm.Create3D_powZ(1);
+        User3D.creatorUniformSuperellipsoidPower = vm.Create3D_powAll(1);
+        User3D.creatorSuperellipsoidPowerX = vm.Create3D_powX(1);
+        User3D.creatorSuperellipsoidPowerY = vm.Create3D_powY(1);
+        User3D.creatorSuperellipsoidPowerZ = vm.Create3D_powZ(1);
       }
 
 
       if (this.child == CHILD_GEOMETRY_FRACTAL_TREE) {
 
-        User3D.create_Model1D_Type = vm.Create3D_type(1);
-        User3D.create_Model1D_DegreeMax = vm.Create3D_degreeMax(1);
-        User3D.create_Model1D_Seed = vm.Create3D_seed(1);
-        User3D.create_Model1D_TrunkSize = vm.Create3D_trunkSize(1);
-        User3D.create_Model1D_LeafSize = vm.Create3D_leafSize(1);
-        User3D.create_Model1D_BranchTilt = vm.Create3D_branchTilt(1);
-        User3D.create_Model1D_BranchTwist = vm.Create3D_branchTwist(1);
-        User3D.create_Model1D_BranchRatio = vm.Create3D_branchRatio(1);
-        User3D.create_Model1D_TreeBase = vm.Create3D_treeBase(1);
+        User3D.creatorModel1DTypeIndex = vm.Create3D_type(1);
+        User3D.creatorModel1DDegreeMax = vm.Create3D_degreeMax(1);
+        User3D.creatorModel1DSeed = vm.Create3D_seed(1);
+        User3D.creatorModel1DTrunkSize = vm.Create3D_trunkSize(1);
+        User3D.creatorModel1DLeafSize = vm.Create3D_leafSize(1);
+        User3D.creator_Model1D_BranchTilt = vm.Create3D_branchTilt(1);
+        User3D.creator_Model1D_BranchTwist = vm.Create3D_branchTwist(1);
+        User3D.creator_Model1D_BranchRatio = vm.Create3D_branchRatio(1);
+        User3D.creator_Model1D_TreeBase = vm.Create3D_treeBase(1);
       }
 
       if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
@@ -651,9 +651,9 @@ class UI_rollout {
 
       if (this.child == CHILD_GEOMETRY_VIEWPORT) {
 
-        WIN3D.currentCamera = vm.Camera_current(1);
-        WIN3D.CAM_clipNear = vm.Camera_clipNear(1);
-        WIN3D.CAM_clipFar = vm.Camera_clipFar(1);
+        WIN3D.currentCameraIndex = vm.Camera_current(1);
+        WIN3D.cameraClipNear = vm.Camera_clipNear(1);
+        WIN3D.cameraClipFar = vm.Camera_clipFar(1);
         allPoints.displayAll = vm.Create3D_displayVertices(1);
         allFaces.displayEdges = vm.Create3D_displayEdges(1);
         allFaces.displayNormals = vm.Create3D_displayNormals(1);
@@ -663,7 +663,7 @@ class UI_rollout {
 
       if (this.child == CHILD_GEOMETRY_SIMULATION) {
 
-        IMPACTS_displayDay = vm.Impacts_displayDay(1);
+        impactDisplayDay = vm.impactDisplayDay(1);
         allSolarImpacts.displayImage = vm.SolarImpacts_displayImage(1);
         allSolidImpacts.displayImage = vm.SolidImpacts_displayImage(1);
         allSolarImpacts.sectionType = vm.SolarImpacts_sectionType(1);
@@ -704,8 +704,8 @@ class UI_rollout {
         Sun3D.displaySurface = vm.Sun3D_displaySurface(1);
         Sun3D.displayTexture = vm.Sun3D_displayTexture(1);
         Sun3D.fitInSkyDome = vm.Sun3D_fitInSkyDome(1);
-        Planetary_Magnification = vm.Planetary_magnification(1);
-        OBJECTS_scale = vm.Objects_scale(1);
+        celestialMagnification = vm.celestialMagnification(1);
+        overallScale = vm.overallScale(1);
       }
 
     } else if (this.parent == PARENT_ILLUSTRATION) {
@@ -723,41 +723,41 @@ class UI_rollout {
 
       if (this.child == CHILD_ILLUSTRATION_2D_COLORS) {
 
-        STUDY.ACTIVE_palette_CLR = vm.Study_activePaletteClr(1);
-        STUDY.ACTIVE_palette_DIR = vm.Study_activePaletteDir(1);
-        STUDY.ACTIVE_palette_MLT = vm.Study_activePaletteMlt(1);
-        STUDY.PASSIVE_palette_CLR = vm.Study_passivePaletteClr(1);
-        STUDY.PASSIVE_palette_DIR = vm.Study_passivePaletteDir(1);
-        STUDY.PASSIVE_palette_MLT = vm.Study_passivePaletteMlt(1);
-        STUDY.SORT_palette_CLR = vm.Study_sortPaletteClr(1);
-        STUDY.SORT_palette_DIR = vm.Study_sortPaletteDir(1);
-        STUDY.SORT_palette_MLT = vm.Study_sortPaletteMlt(1);
-        STUDY.PROB_palette_CLR = vm.Study_probPaletteClr(1);
-        STUDY.PROB_palette_DIR = vm.Study_probPaletteDir(1);
-        STUDY.PROB_palette_MLT = vm.Study_probPaletteMlt(1);
+        STUDY.activeColorScaleIndex = vm.Study_activePaletteClr(1);
+        STUDY.activeColorScaleDirection = vm.Study_activePaletteDir(1);
+        STUDY.activeColorScaleFactor = vm.Study_activePaletteMlt(1);
+        STUDY.passiveColorScaleIndex = vm.Study_passivePaletteClr(1);
+        STUDY.passiveColorScaleDirection = vm.Study_passivePaletteDir(1);
+        STUDY.passiveColorScaleFactor = vm.Study_passivePaletteMlt(1);
+        STUDY.SORT_ColorScaleIndex = vm.Study_sortPaletteClr(1);
+        STUDY.SORT_ColorScaleDirection = vm.Study_sortPaletteDir(1);
+        STUDY.SORT_ColorScaleFactor = vm.Study_sortPaletteMlt(1);
+        STUDY.PROB_ColorScaleIndex = vm.Study_probPaletteClr(1);
+        STUDY.PROB_ColorScaleDirection = vm.Study_probPaletteDir(1);
+        STUDY.PROB_ColorScaleFactor = vm.Study_probPaletteMlt(1);
         STUDY.O_scale = vm.WindRose_opacityScale(1);
       }
 
       if (this.child == CHILD_ILLUSTRATION_3D_SOLAR) {
 
-        allFaces.ACTIVE_palette_CLR = vm.Faces_activePaletteClr(1);
-        allFaces.ACTIVE_palette_DIR = vm.Faces_activePaletteDir(1);
-        allFaces.ACTIVE_palette_MLT = vm.Faces_activePaletteMlt(1);
-        allFaces.PASSIVE_palette_CLR = vm.Faces_passivePaletteClr(1);
-        allFaces.PASSIVE_palette_DIR = vm.Faces_passivePaletteDir(1);
-        allFaces.PASSIVE_palette_MLT = vm.Faces_passivePaletteMlt(1);
-        Sky3D.ACTIVE_palette_CLR = vm.Sky3D_activePaletteClr(1);
-        Sky3D.ACTIVE_palette_DIR = vm.Sky3D_activePaletteDir(1);
-        Sky3D.ACTIVE_palette_MLT = vm.Sky3D_activePaletteMlt(1);
-        Sky3D.PASSIVE_palette_CLR = vm.Sky3D_passivePaletteClr(1);
-        Sky3D.PASSIVE_palette_DIR = vm.Sky3D_passivePaletteDir(1);
-        Sky3D.PASSIVE_palette_MLT = vm.Sky3D_passivePaletteMlt(1);
-        Sun3D.ACTIVE_palette_CLR = vm.Sun3D_activePaletteClr(1);
-        Sun3D.ACTIVE_palette_DIR = vm.Sun3D_activePaletteDir(1);
-        Sun3D.ACTIVE_palette_MLT = vm.Sun3D_activePaletteMlt(1);
-        Sun3D.PASSIVE_palette_CLR = vm.Sun3D_passivePaletteClr(1);
-        Sun3D.PASSIVE_palette_DIR = vm.Sun3D_passivePaletteDir(1);
-        Sun3D.PASSIVE_palette_MLT = vm.Sun3D_passivePaletteMlt(1);
+        allFaces.activeColorScaleIndex = vm.Faces_activePaletteClr(1);
+        allFaces.activeColorScaleDirection = vm.Faces_activePaletteDir(1);
+        allFaces.activeColorScaleFactor = vm.Faces_activePaletteMlt(1);
+        allFaces.passiveColorScaleIndex = vm.Faces_passivePaletteClr(1);
+        allFaces.passiveColorScaleDirection = vm.Faces_passivePaletteDir(1);
+        allFaces.passiveColorScaleFactor = vm.Faces_passivePaletteMlt(1);
+        Sky3D.activeColorScaleIndex = vm.Sky3D_activePaletteClr(1);
+        Sky3D.activeColorScaleDirection = vm.Sky3D_activePaletteDir(1);
+        Sky3D.activeColorScaleFactor = vm.Sky3D_activePaletteMlt(1);
+        Sky3D.passiveColorScaleIndex = vm.Sky3D_passivePaletteClr(1);
+        Sky3D.passiveColorScaleDirection = vm.Sky3D_passivePaletteDir(1);
+        Sky3D.passiveColorScaleFactor = vm.Sky3D_passivePaletteMlt(1);
+        Sun3D.activeColorScaleIndex = vm.Sun3D_activePaletteClr(1);
+        Sun3D.activeColorScaleDirection = vm.Sun3D_activePaletteDir(1);
+        Sun3D.activeColorScaleFactor = vm.Sun3D_activePaletteMlt(1);
+        Sun3D.passiveColorScaleIndex = vm.Sun3D_passivePaletteClr(1);
+        Sun3D.passiveColorScaleDirection = vm.Sun3D_passivePaletteDir(1);
+        Sun3D.passiveColorScaleFactor = vm.Sun3D_passivePaletteMlt(1);
       }
 
 
@@ -765,15 +765,15 @@ class UI_rollout {
 
       if (this.child == CHILD_ILLUSTRATION_3D_SPATIAL) {
 
-        allSolids.palette_CLR = vm.Solids_paletteClr(1);
-        allSolids.palette_DIR = vm.Solids_paletteDir(1);
-        allSolids.palette_MLT = vm.Solids_paletteMlt(1);
-        Land3D.palette_CLR = vm.Land3D_paletteClr(1);
-        Land3D.palette_DIR = vm.Land3D_paletteDir(1);
-        Land3D.palette_MLT = vm.Land3D_paletteMlt(1);
-        allWindFlows.palette_CLR = vm.WindFlows_paletteClr(1);
-        allWindFlows.palette_DIR = vm.WindFlows_paletteDir(1);
-        allWindFlows.palette_MLT = vm.WindFlows_paletteMlt(1);
+        allSolids.colorScaleIndex = vm.Solids_paletteClr(1);
+        allSolids.colorScaleDirection = vm.Solids_paletteDir(1);
+        allSolids.colorScaleFactor = vm.Solids_paletteMlt(1);
+        Land3D.colorScaleIndex = vm.Land3D_paletteClr(1);
+        Land3D.colorScaleDirection = vm.Land3D_paletteDir(1);
+        Land3D.colorScaleFactor = vm.Land3D_paletteMlt(1);
+        allWindFlows.colorScaleIndex = vm.WindFlows_paletteClr(1);
+        allWindFlows.colorScaleDirection = vm.WindFlows_paletteDir(1);
+        allWindFlows.colorScaleFactor = vm.WindFlows_paletteMlt(1);
       }
 
 
@@ -799,20 +799,20 @@ class UI_rollout {
 
       if (this.child == CHILD_POSTPROCESS_INTERPOLATION) {
 
-        Interpolation_Weight = vm.Interpolation_weight(1);
-        CLIMATIC_SolarForecast = vm.Climate_based_solar_forecast(1);
-        CLIMATIC_WeatherForecast = vm.Climate_based_temperature_forecast(1);
+        interpolationWeight = vm.interpolationWeight(1);
+        climateBasedSolarForecast = vm.Climate_based_solar_forecast(1);
+        climateBasedWeatherForecast = vm.Climate_based_temperature_forecast(1);
       }
       if (this.child == CHILD_POSTPROCESS_DEVELOPED) {
-        Develop_Option = vm.Develop_option(1);
-        Develop_DayHour = vm.Develop_dayHour(1);
+        developLayerOption = vm.developLayerOption(1);
+        developLayerInterval = vm.developLayerInterval(1);
         STUDY.TrendJoinHours = vm.Trend_periodHours(1);
         STUDY.TrendJoinType = vm.Weighted_equal_trend(1);
-        Develop_AngleInclination = vm.Inclination_angle(1);
-        Develop_AngleOrientation = vm.Orientation_angle(1);
+        developLayerAngleInclination = vm.Inclination_angle(1);
+        developLayerAngleOrientation = vm.Orientation_angle(1);
       }
       if (this.child == CHILD_POSTPROCESS_IMPACTS) {
-        CurrentDataSource = vm.Impact_source(1);
+        currentDataSource = vm.Impact_source(1);
         STUDY.ImpactLayer = vm.Impact_min_50_max(1);
       }
     } else if (this.parent == PARENT_EXPORT) {
@@ -822,14 +822,14 @@ class UI_rollout {
         STUDY.export_info_node = vm.Export_ASCII_data(1);
         STUDY.export_info_norm = vm.Export_ASCII_statistics(1);
         STUDY.export_info_prob = vm.Export_ASCII_probabilities(1);
-        User3D.export_Scale = vm.Export3D_scale(1);
-        User3D.export_FlipZYaxis = vm.Export3D_flipZYaxis(1);
-        User3D.export_PrecisionVertex = vm.Export3D_precisionVertex(1);
-        User3D.export_PrecisionVtexture = vm.Export3D_precisionVtexture(1);
-        User3D.export_PolyToPoly = vm.Export3D_polyToPoly(1);
-        User3D.export_MaterialLibrary = vm.Export3D_materialLibrary(1);
-        User3D.export_BackSides = vm.Export3D_backSides(1);
-        User3D.export_PaletteResolution = vm.Export3D_paletteResolution(1);
+        User3D.exporterScale = vm.Export3D_scale(1);
+        User3D.exporterYaxisUp = vm.Export3D_flipZYaxis(1);
+        User3D.exporterPrecisionVertex = vm.Export3D_precisionVertex(1);
+        User3D.exporterPrecisionVertexTexture = vm.Export3D_precisionVtexture(1);
+        User3D.exporterMaintainPolygons = vm.Export3D_polyToPoly(1);
+        User3D.exporterMaterialLibrary = vm.Export3D_materialLibrary(1);
+        User3D.exporterDoubleSided = vm.Export3D_backSides(1);
+        User3D.exporterColorScaleResolution = vm.Export3D_paletteResolution(1);
       }
 
       if (this.child == CHILD_EXPORT_MEDIA) {

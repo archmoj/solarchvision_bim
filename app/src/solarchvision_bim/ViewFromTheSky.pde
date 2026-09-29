@@ -1,4 +1,4 @@
-void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D_position_Z, float SKY2D_rotation_X, float SKY2D_rotation_Y, float SKY2D_rotation_Z) {
+void ViewFromTheSky (float SKY2D_positionX, float SKY2D_positionY, float SKY2D_positionZ, float SKY2D_rotationX, float SKY2D_rotationY, float SKY2D_rotationZ) {
 
   SKY2D_graphics.beginDraw();
 
@@ -8,10 +8,10 @@ void ViewFromTheSky (float SKY2D_position_X, float SKY2D_position_Y, float SKY2D
 
   SKY2D_graphics.translate(0.5 * SKY2D_X_View, 0.5 * SKY2D_Y_View, 0); // << IMPORTANT!
 
-  SKY2D_graphics.translate(SKY2D_position_X, SKY2D_position_Y, SKY2D_position_Z);
-  SKY2D_graphics.rotateX(SKY2D_rotation_X * PI / 180);
-  SKY2D_graphics.rotateY(SKY2D_rotation_Y * PI / 180);
-  SKY2D_graphics.rotateZ(SKY2D_rotation_Z * PI / 180);
+  SKY2D_graphics.translate(SKY2D_positionX, SKY2D_positionY, SKY2D_positionZ);
+  SKY2D_graphics.rotateX(SKY2D_rotationX * PI / 180);
+  SKY2D_graphics.rotateY(SKY2D_rotationY * PI / 180);
+  SKY2D_graphics.rotateZ(SKY2D_rotationZ * PI / 180);
 
   SKY2D_graphics.hint(ENABLE_DEPTH_TEST);
 

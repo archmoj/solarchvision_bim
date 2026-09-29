@@ -3,32 +3,32 @@ void applyRolloutUpdate() {
 
   UI_rollout.updated();
 
-  pre_SampleYear_Start = SampleYear_Start;
-  pre_SampleYear_End = SampleYear_End;
-  pre_SampleMember_Start = SampleMember_Start;
-  pre_SampleMember_End = SampleMember_End;
-  pre_SampleStation_Start = SampleStation_Start;
-  pre_SampleStation_End = SampleStation_End;
+  pre_sampleYearStart = sampleYearStart;
+  pre_sampleYearEnd = sampleYearEnd;
+  pre_sampleMemberStart = sampleMemberStart;
+  pre_sampleMemberEnd = sampleMemberEnd;
+  pre_sampleStationStart = sampleStationStart;
+  pre_sampleStationEnd = sampleStationEnd;
   pre_STUDY_joinDays = STUDY.joinDays;
   pre_STUDY_i_Start = STUDY.i_Start;
   pre_STUDY_i_End = STUDY.i_End;
   pre_STUDY_j_End = STUDY.j_End;
-  pre_IMPACTS_displayDay = IMPACTS_displayDay;
+  pre_impactDisplayDay = impactDisplayDay;
   pre_STUDY_Setup = STUDY.plotSetup;
-  pre_CurrentDataSource = CurrentDataSource;
+  pre_currentDataSource = currentDataSource;
   pre_TIME_Year = TIME.year;
   pre_TIME_Month = TIME.month;
   pre_TIME_Day = TIME.day;
   pre_TIME_Date = TIME.date;
   pre_TIME_Hour = TIME.hour;
-  pre_CLIMATIC_SolarForecast = CLIMATIC_SolarForecast;
-  pre_CLIMATIC_WeatherForecast = CLIMATIC_WeatherForecast;
+  pre_climateBasedSolarForecast = climateBasedSolarForecast;
+  pre_climateBasedWeatherForecast = climateBasedWeatherForecast;
 
-  pre_CLIMATE_TMYEPW_load = CLIMATE_TMYEPW_load;
-  pre_CLIMATE_CWEEDS_load = CLIMATE_CWEEDS_load;
-  pre_CLIMATE_CLMREC_load = CLIMATE_CLMREC_load;
-  pre_ENSEMBLE_FORECAST_load = ENSEMBLE_FORECAST_load;
-  pre_ENSEMBLE_OBSERVED_load = ENSEMBLE_OBSERVED_load;
+  pre_climateTypicalYearShouldLoad = climateTypicalYearShouldLoad;
+  pre_climateEngineeringShouldLoad = climateEngineeringShouldLoad;
+  pre_climateArchiveShouldLoad = climateArchiveShouldLoad;
+  pre_ensembleForecastShouldLoad = ensembleForecastShouldLoad;
+  pre_ensembleObservationShouldLoad = ensembleObservationShouldLoad;
 
   pre_LocationLAT = LocationLAT;
   pre_LocationLON = LocationLON;
@@ -38,11 +38,11 @@ void applyRolloutUpdate() {
   pre_Land3D_loadMesh = Land3D.loadMesh;
   pre_Land3D_loadTextures = Land3D.loadTextures;
 
-  pre_allSolids_palette_CLR = allSolids.palette_CLR;
-  pre_allSolids_palette_DIR = allSolids.palette_DIR;
-  pre_allSolids_palette_MLT = allSolids.palette_MLT;
+  pre_allSolids_ColorScaleIndex = allSolids.colorScaleIndex;
+  pre_allSolids_ColorScaleDirection = allSolids.colorScaleDirection;
+  pre_allSolids_ColorScaleFactor = allSolids.colorScaleFactor;
 
-  pre_USER_create_powAll = User3D.create_powAll;
+  pre_USER_createUniformSuperellipsoidPower = User3D.creatorUniformSuperellipsoidPower;
 
   pre_allSolidImpacts_U_scale = allSolidImpacts.U;
   pre_allSolidImpacts_V_scale = allSolidImpacts.V;
@@ -102,17 +102,17 @@ void applyRolloutUpdate() {
   pre_Selection_Vertex_displayVertices = Select3D.Vertex_displayVertices;
   pre_Selection_Polyline_displayVertices = Select3D.Polyline_displayVertices;
 
-  pre_WIN3D_currentCamera = WIN3D.currentCamera;
+  pre_WIN3D_currentCameraIndex = WIN3D.currentCameraIndex;
 
-  pre_WIN3D_FacesShade = WIN3D.FacesShade;
+  pre_WIN3D_shadingMode = WIN3D.shadingMode;
 
   pre_Create3D_Tessellation = allFaces.displayTessellation;
 
   pre_STUDY_ImpactLayer = STUDY.ImpactLayer;
 
-  pre_Develop_Option = Develop_Option;
+  pre_developLayerOption = developLayerOption;
 
-  pre_STUDY_CurrentLayer_id = CurrentLayer_id;
+  pre_STUDY_currentLayerId = currentLayerId;
 
   pre_STUDY_SkyScenario = STUDY.skyScenario;
 
@@ -126,16 +126,16 @@ void applyRolloutUpdate() {
     view_changed();
   }
 
-  react.caseBarOnly.run(pre_SampleYear_Start, SampleYear_Start);
-  react.caseBarOnly.run(pre_SampleYear_End, SampleYear_End);
+  react.caseBarOnly.run(pre_sampleYearStart, sampleYearStart);
+  react.caseBarOnly.run(pre_sampleYearEnd, sampleYearEnd);
 
-  react.caseBarOnly.run(pre_SampleMember_Start, SampleMember_Start);
+  react.caseBarOnly.run(pre_sampleMemberStart, sampleMemberStart);
 
-  react.caseBarOnly.run(pre_SampleMember_End, SampleMember_End);
+  react.caseBarOnly.run(pre_sampleMemberEnd, sampleMemberEnd);
 
-  react.caseBarOnly.run(pre_SampleStation_Start, SampleStation_Start);
+  react.caseBarOnly.run(pre_sampleStationStart, sampleStationStart);
 
-  react.caseBarOnly.run(pre_SampleStation_End, SampleStation_End);
+  react.caseBarOnly.run(pre_sampleStationEnd, sampleStationEnd);
 
   react.caseBarOnly.run(pre_STUDY_joinDays, STUDY.joinDays);
 
@@ -145,7 +145,7 @@ void applyRolloutUpdate() {
 
   react.applyStudyJEnd.run(pre_STUDY_j_End, STUDY.j_End);
 
-  react.caseBarOnly.run(pre_IMPACTS_displayDay, IMPACTS_displayDay);
+  react.caseBarOnly.run(pre_impactDisplayDay, impactDisplayDay);
 
   if (pre_TIME_Date != TIME.date) {
     UI_caseBar.revise();
@@ -158,8 +158,8 @@ void applyRolloutUpdate() {
       (pre_TIME_Month != TIME.month) ||
       (pre_TIME_Day != TIME.day) ||
       (pre_TIME_Hour != TIME.hour) ||
-      (pre_CLIMATIC_SolarForecast != CLIMATIC_SolarForecast) ||
-      (pre_CLIMATIC_WeatherForecast != CLIMATIC_WeatherForecast)) {
+      (pre_climateBasedSolarForecast != climateBasedSolarForecast) ||
+      (pre_climateBasedWeatherForecast != climateBasedWeatherForecast)) {
 
     UI_caseBar.revise();
 
@@ -167,11 +167,11 @@ void applyRolloutUpdate() {
     UI_rollout.draw();
   }
 
-  if (pre_CLIMATE_TMYEPW_load != CLIMATE_TMYEPW_load) update_CLIMATE_TMYEPW();
-  if (pre_CLIMATE_CWEEDS_load != CLIMATE_CWEEDS_load) update_CLIMATE_CWEEDS();
-  if (pre_CLIMATE_CLMREC_load != CLIMATE_CLMREC_load) update_CLIMATE_CLMREC();
-  if (pre_ENSEMBLE_OBSERVED_load != ENSEMBLE_OBSERVED_load) update_ENSEMBLE_OBSERVED(TIME.year, TIME.month, TIME.day, TIME.hour);
-  if (pre_ENSEMBLE_FORECAST_load != ENSEMBLE_FORECAST_load) update_ENSEMBLE_FORECAST(TIME.year, TIME.month, TIME.day, TIME.hour);
+  if (pre_climateTypicalYearShouldLoad != climateTypicalYearShouldLoad) update_climateTmyEpw();
+  if (pre_climateEngineeringShouldLoad != climateEngineeringShouldLoad) update_climateEngineering();
+  if (pre_climateArchiveShouldLoad != climateArchiveShouldLoad) updateClimateArchive();
+  if (pre_ensembleObservationShouldLoad != ensembleObservationShouldLoad) update_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);
+  if (pre_ensembleForecastShouldLoad != ensembleForecastShouldLoad) update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
   if (pre_WORLD_autoView != WORLD.autoView) {
     WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
@@ -231,19 +231,19 @@ void applyRolloutUpdate() {
 
   react.viewChangedOnly.run(pre_Selection_Polyline_displayVertices ? 1 : 0, Select3D.Polyline_displayVertices ? 1 : 0);
 
-  react.applyCurrentCamera.run(pre_WIN3D_currentCamera, WIN3D.currentCamera);
+  react.applyCurrentCamera.run(pre_WIN3D_currentCameraIndex, WIN3D.currentCameraIndex);
 
-  if (pre_WIN3D_FacesShade != WIN3D.FacesShade) {
+  if (pre_WIN3D_shadingMode != WIN3D.shadingMode) {
     view_changed();
   }
 
   react.viewChangedOnly.run(pre_Create3D_Tessellation, allFaces.displayTessellation);
 
-  react.applyCreatePowAll.run(pre_USER_create_powAll, User3D.create_powAll);
+  react.applyCreatePowAll.run(pre_USER_createUniformSuperellipsoidPower, User3D.creatorUniformSuperellipsoidPower);
 
-  react.recalcImpact.run(pre_allSolids_palette_CLR, allSolids.palette_CLR);
-  react.recalcImpact.run(pre_allSolids_palette_DIR, allSolids.palette_DIR);
-  react.recalcImpact.run(pre_allSolids_palette_MLT, allSolids.palette_MLT);
+  react.recalcImpact.run(pre_allSolids_ColorScaleIndex, allSolids.colorScaleIndex);
+  react.recalcImpact.run(pre_allSolids_ColorScaleDirection, allSolids.colorScaleDirection);
+  react.recalcImpact.run(pre_allSolids_ColorScaleFactor, allSolids.colorScaleFactor);
 
   react.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
   react.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
@@ -274,7 +274,7 @@ void applyRolloutUpdate() {
 
   react.impactsUpdateFlag.run(pre_STUDY_Setup, STUDY.plotSetup);
 
-  react.impactsUpdateFlag.run(pre_CurrentDataSource, CurrentDataSource);
+  react.impactsUpdateFlag.run(pre_currentDataSource, currentDataSource);
 }
 
 float pre_TIME_Date;
@@ -283,12 +283,12 @@ int pre_TIME_Day;
 int pre_TIME_Month;
 int pre_TIME_Year;
 
-int pre_SampleYear_Start;
-int pre_SampleYear_End;
-int pre_SampleMember_Start;
-int pre_SampleMember_End;
-int pre_SampleStation_Start;
-int pre_SampleStation_End;
+int pre_sampleYearStart;
+int pre_sampleYearEnd;
+int pre_sampleMemberStart;
+int pre_sampleMemberEnd;
+int pre_sampleStationStart;
+int pre_sampleStationEnd;
 
 int pre_STUDY_joinDays;
 int pre_STUDY_i_Start;
@@ -296,17 +296,17 @@ int pre_STUDY_i_End;
 int pre_STUDY_j_End;
 int pre_STUDY_Setup;
 
-int pre_IMPACTS_displayDay;
-int pre_CurrentDataSource;
+int pre_impactDisplayDay;
+int pre_currentDataSource;
 
-int pre_CLIMATIC_SolarForecast;
-int pre_CLIMATIC_WeatherForecast;
+int pre_climateBasedSolarForecast;
+int pre_climateBasedWeatherForecast;
 
-boolean pre_CLIMATE_TMYEPW_load;
-boolean pre_CLIMATE_CWEEDS_load;
-boolean pre_CLIMATE_CLMREC_load;
-boolean pre_ENSEMBLE_FORECAST_load;
-boolean pre_ENSEMBLE_OBSERVED_load;
+boolean pre_climateTypicalYearShouldLoad;
+boolean pre_climateEngineeringShouldLoad;
+boolean pre_climateArchiveShouldLoad;
+boolean pre_ensembleForecastShouldLoad;
+boolean pre_ensembleObservationShouldLoad;
 
 boolean pre_Land3D_loadMesh;
 boolean pre_Land3D_loadTextures;
@@ -348,9 +348,9 @@ boolean pre_Selection_Polyline_displayVertexCount;
 boolean pre_Selection_Vertex_displayVertices;
 boolean pre_Selection_Polyline_displayVertices;
 
-int pre_WIN3D_currentCamera;
+int pre_WIN3D_currentCameraIndex;
 
-int pre_WIN3D_FacesShade;
+int pre_WIN3D_shadingMode;
 
 int pre_Create3D_Tessellation;
 
@@ -358,17 +358,17 @@ boolean pre_allPoints_displayAll;
 boolean pre_allFaces_displayEdges;
 boolean pre_allFaces_displayNormals;
 
-int pre_Develop_Option;
+int pre_developLayerOption;
 
 int pre_STUDY_ImpactLayer;
-int pre_STUDY_CurrentLayer_id;
+int pre_STUDY_currentLayerId;
 
 int pre_STUDY_SkyScenario;
 int pre_STUDY_PlotImpacts;
 
-int pre_allSolids_palette_CLR;
-int pre_allSolids_palette_DIR;
-float pre_allSolids_palette_MLT;
+int pre_allSolids_ColorScaleIndex;
+int pre_allSolids_ColorScaleDirection;
+float pre_allSolids_ColorScaleFactor;
 
 float pre_allSolidImpacts_Grade;
 float pre_allSolidImpacts_Power;
@@ -401,6 +401,6 @@ int pre_allSolidImpacts_Process_subDivisions;
 
 boolean pre_WindFlow_display;
 
-float pre_USER_create_powAll;
+float pre_USER_createUniformSuperellipsoidPower;
 
 PImage pre_screen;

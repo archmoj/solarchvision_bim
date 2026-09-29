@@ -22,14 +22,14 @@ void exportHtml () {
 /*
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM00'");
-  htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
+  htmlOutput.print  (" position='" + nf(WIN3D.cameraX, 0, 0) + " " + nf(WIN3D.cameraY, 0, 0) + " " + nf(WIN3D.cameraZ, 0, 0) + "'");
 
-  float c1 = funcs.cos_ang(WIN3D.rotation_X * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.rotation_X * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.rotation_Y * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.rotation_Y * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.rotation_Z * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.rotation_Z * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.rotationX * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.rotationX * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.rotationY * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.rotationY * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.rotationZ * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.rotationZ * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -43,14 +43,14 @@ void exportHtml () {
 
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM01'");
-  htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
+  htmlOutput.print  (" position='" + nf(WIN3D.cameraX, 0, 0) + " " + nf(WIN3D.cameraY, 0, 0) + " " + nf(WIN3D.cameraZ, 0, 0) + "'");
 
-  float c1 = funcs.cos_ang(WIN3D.rotation_Y * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.rotation_Y * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.rotation_Z * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.rotation_Z * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.rotation_X * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.rotation_X * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.rotationY * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.rotationY * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.rotationZ * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.rotationZ * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.rotationX * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.rotationX * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -63,14 +63,14 @@ void exportHtml () {
 
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM02'");
-  htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
+  htmlOutput.print  (" position='" + nf(WIN3D.cameraX, 0, 0) + " " + nf(WIN3D.cameraY, 0, 0) + " " + nf(WIN3D.cameraZ, 0, 0) + "'");
 
-  float c1 = funcs.cos_ang(WIN3D.rotation_Z * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.rotation_Z * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.rotation_X * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.rotation_X * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.rotation_Y * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.rotation_Y * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.rotationZ * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.rotationZ * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.rotationX * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.rotationX * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.rotationY * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.rotationY * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -84,14 +84,14 @@ void exportHtml () {
 
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM03'");
-  htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
+  htmlOutput.print  (" position='" + nf(WIN3D.cameraX, 0, 0) + " " + nf(WIN3D.cameraY, 0, 0) + " " + nf(WIN3D.cameraZ, 0, 0) + "'");
 
-  float c1 = funcs.cos_ang(WIN3D.rotation_Z * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.rotation_Z * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.rotation_Y * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.rotation_Y * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.rotation_X * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.rotation_X * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.rotationZ * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.rotationZ * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.rotationY * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.rotationY * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.rotationX * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.rotationX * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -105,14 +105,14 @@ void exportHtml () {
 
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM04'");
-  htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
+  htmlOutput.print  (" position='" + nf(WIN3D.cameraX, 0, 0) + " " + nf(WIN3D.cameraY, 0, 0) + " " + nf(WIN3D.cameraZ, 0, 0) + "'");
 
-  float c1 = funcs.cos_ang(WIN3D.rotation_X * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.rotation_X * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.rotation_Z * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.rotation_Z * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.rotation_Y * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.rotation_Y * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.rotationX * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.rotationX * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.rotationZ * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.rotationZ * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.rotationY * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.rotationY * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;
@@ -125,14 +125,14 @@ void exportHtml () {
 
 {
   htmlOutput.print  ("\t\t\t\t<viewpoint id='CAM05'");
-  htmlOutput.print  (" position='" + nf(WIN3D.CAM_x, 0, 0) + " " + nf(WIN3D.CAM_y, 0, 0) + " " + nf(WIN3D.CAM_z, 0, 0) + "'");
+  htmlOutput.print  (" position='" + nf(WIN3D.cameraX, 0, 0) + " " + nf(WIN3D.cameraY, 0, 0) + " " + nf(WIN3D.cameraZ, 0, 0) + "'");
 
-  float c1 = funcs.cos_ang(WIN3D.rotation_Y * 0.5);
-  float s1 = funcs.sin_ang(WIN3D.rotation_Y * 0.5);
-  float c2 = funcs.cos_ang(WIN3D.rotation_X * 0.5);
-  float s2 = funcs.sin_ang(WIN3D.rotation_X * 0.5);
-  float c3 = funcs.cos_ang(WIN3D.rotation_Z * 0.5);
-  float s3 = funcs.sin_ang(WIN3D.rotation_Z * 0.5);
+  float c1 = funcs.cos_ang(WIN3D.rotationY * 0.5);
+  float s1 = funcs.sin_ang(WIN3D.rotationY * 0.5);
+  float c2 = funcs.cos_ang(WIN3D.rotationX * 0.5);
+  float s2 = funcs.sin_ang(WIN3D.rotationX * 0.5);
+  float c3 = funcs.cos_ang(WIN3D.rotationZ * 0.5);
+  float s3 = funcs.sin_ang(WIN3D.rotationZ * 0.5);
 
   float qw = c1*c2*c3 + s1*s2*s3;
   float qx = s1*s2*c3 - c1*c2*s3;

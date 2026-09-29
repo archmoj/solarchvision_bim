@@ -117,38 +117,38 @@ int[] shiftAndClampRange(int start, int end, float wheelValue, int lo, int hi) {
 }
 
 void handleScenarioCaseBarWheel(float wheelValue) {
-  if (CurrentDataSource == dataID_CLIMATE_CWEEDS) {
-    int[] r = shiftAndClampRange(SampleYear_Start, SampleYear_End, wheelValue, CLIMATE_CWEEDS_start, CLIMATE_CWEEDS_end);
-    if (r[0] != SampleYear_Start || r[1] != SampleYear_End) {
-      SampleYear_Start = r[0];
-      SampleYear_End = r[1];
+  if (currentDataSource == dataID_climateEngineering) {
+    int[] r = shiftAndClampRange(sampleYearStart, sampleYearEnd, wheelValue, climateEngineeringStart, climateEngineeringEnd);
+    if (r[0] != sampleYearStart || r[1] != sampleYearEnd) {
+      sampleYearStart = r[0];
+      sampleYearEnd = r[1];
       reviseStudyAndRegenerate(false);
     }
   }
 
-  if (CurrentDataSource == dataID_CLIMATE_CLMREC) {
-    int[] r = shiftAndClampRange(SampleYear_Start, SampleYear_End, wheelValue, CLIMATE_CLMREC_start, CLIMATE_CLMREC_end);
-    if (r[0] != SampleYear_Start || r[1] != SampleYear_End) {
-      SampleYear_Start = r[0];
-      SampleYear_End = r[1];
+  if (currentDataSource == dataID_climateArchive) {
+    int[] r = shiftAndClampRange(sampleYearStart, sampleYearEnd, wheelValue, climateArchiveStart, climateArchiveEnd);
+    if (r[0] != sampleYearStart || r[1] != sampleYearEnd) {
+      sampleYearStart = r[0];
+      sampleYearEnd = r[1];
       reviseStudyAndRegenerate(false);
     }
   }
 
-  if (CurrentDataSource == dataID_ENSEMBLE_FORECAST) {
-    int[] r = shiftAndClampRange(SampleMember_Start, SampleMember_End, wheelValue, ENSEMBLE_FORECAST_start, ENSEMBLE_FORECAST_end);
-    if (r[0] != SampleMember_Start || r[1] != SampleMember_End) {
-      SampleMember_Start = r[0];
-      SampleMember_End = r[1];
+  if (currentDataSource == dataID_ensembleForecast) {
+    int[] r = shiftAndClampRange(sampleMemberStart, sampleMemberEnd, wheelValue, ensembleForecastStart, ensembleForecastEnd);
+    if (r[0] != sampleMemberStart || r[1] != sampleMemberEnd) {
+      sampleMemberStart = r[0];
+      sampleMemberEnd = r[1];
       reviseStudyAndRegenerate(false);
     }
   }
 
-  if (CurrentDataSource == dataID_ENSEMBLE_OBSERVED) {
-    int[] r = shiftAndClampRange(SampleStation_Start, SampleStation_End, wheelValue, ENSEMBLE_OBSERVED_start, ENSEMBLE_OBSERVED_end);
-    if (r[0] != SampleStation_Start || r[1] != SampleStation_End) {
-      SampleStation_Start = r[0];
-      SampleStation_End = r[1];
+  if (currentDataSource == dataID_ensembleObservation) {
+    int[] r = shiftAndClampRange(sampleStationStart, sampleStationEnd, wheelValue, ensembleObservationStart, ensembleObservationEnd);
+    if (r[0] != sampleStationStart || r[1] != sampleStationEnd) {
+      sampleStationStart = r[0];
+      sampleStationEnd = r[1];
       reviseStudyAndRegenerate(false);
     }
   }
@@ -159,15 +159,15 @@ void handleWorldZoomWheel(float wheelValue) {
   if (!WORLD.include) return;
   if (!isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return;
 
-  int oldZoom = WORLD.Zoom;
+  int oldZoom = WORLD.zoom;
 
-  if (wheelValue < 0) WORLD.Zoom += 1;
-  if (wheelValue > 0) WORLD.Zoom -= 1;
+  if (wheelValue < 0) WORLD.zoom += 1;
+  if (wheelValue > 0) WORLD.zoom -= 1;
 
-  if (WORLD.Zoom < 1) WORLD.Zoom = 1;
-  if (WORLD.Zoom > 9) WORLD.Zoom = 9;
+  if (WORLD.zoom < 1) WORLD.zoom = 1;
+  if (WORLD.zoom > 9) WORLD.zoom = 9;
 
-  if (oldZoom != WORLD.Zoom) {
+  if (oldZoom != WORLD.zoom) {
     WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
     WORLD.revise();
   }
@@ -189,17 +189,17 @@ void handleWin3DWheel(float wheelValue) {
 
 
 void handleObjectEditWheel(float wheelValue, float x0, float y0, float z0) {
-  if (WIN3D.UI_CurrentTask == UITASK.Rotate) {
+  if (WIN3D.currentTool == UITASK.Rotate) {
     handleRotateWheel(wheelValue, x0, y0, z0);
   }
-  if (WIN3D.UI_CurrentTask == UITASK.Scale) {
+  if (WIN3D.currentTool == UITASK.Scale) {
     handleScaleWheel(wheelValue, x0, y0, z0);
   }
-  if (WIN3D.UI_CurrentTask == UITASK.Move) {
+  if (WIN3D.currentTool == UITASK.Move) {
     handleMoveWheel(wheelValue);
   }
-  if (WIN3D.UI_TaskModifyParameter == 0) {
-    if (WIN3D.UI_CurrentTask >= UITASK.Seed_Material) { // other properties
+  if (WIN3D.toolParameterModifier == 0) {
+    if (WIN3D.currentTool >= UITASK.Seed_Material) { // other properties
       handlePropertyEditWheel(wheelValue);
     }
   }
@@ -251,85 +251,85 @@ void handlePropertyEditWheel(float wheelValue) {
 
 
 void handleViewportWheel(float wheelValue) {
-  if ((WIN3D.UI_CurrentTask == UITASK.Zoom_Orbit_Pan) ||
-      (WIN3D.UI_CurrentTask == UITASK.CameraRoll_Pan) ||
-      (WIN3D.UI_CurrentTask == UITASK.TargetRoll_Pan) ||
-      (WIN3D.UI_CurrentTask == UITASK.Pan_TargetRoll)) { // viewport:zoom
+  if ((WIN3D.currentTool == UITASK.zoom_Orbit_Pan) ||
+      (WIN3D.currentTool == UITASK.CameraRoll_Pan) ||
+      (WIN3D.currentTool == UITASK.TargetRoll_Pan) ||
+      (WIN3D.currentTool == UITASK.Pan_TargetRoll)) { // viewport:zoom
     zoomWin3DViewport(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.Pan_Height) { // viewport:elevation
+  if (WIN3D.currentTool == UITASK.Pan_Height) { // viewport:elevation
     adjustWin3DElevationWheel(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.ModelSize_Pan_TargetRoll) { // viewport:3DModelSize
+  if (WIN3D.currentTool == UITASK.ModelSize_Pan_TargetRoll) { // viewport:3DModelSize
     scaleObjectsWheel(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.Truck_Orbit) { // viewport:different functions with wheel
+  if (WIN3D.currentTool == UITASK.Truck_Orbit) { // viewport:different functions with wheel
     handleTruckOrbitWheel(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.SkydomeSize) { // viewport:different functions with wheel
-    if (WIN3D.UI_TaskModifyParameter == 0) { // SkydomeSize
+  if (WIN3D.currentTool == UITASK.SkydomeSize) { // viewport:different functions with wheel
+    if (WIN3D.toolParameterModifier == 0) { // SkydomeSize
       scaleSkydomeWheel(wheelValue);
     }
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.AllModelSize) { // viewport:different functions with wheel
-    if (WIN3D.UI_TaskModifyParameter == 0) { // AllModelSize
+  if (WIN3D.currentTool == UITASK.AllModelSize) { // viewport:different functions with wheel
+    if (WIN3D.toolParameterModifier == 0) { // AllModelSize
       scaleAllModelWheel(wheelValue);
     }
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRollZ
+  if (WIN3D.currentTool == UITASK.TargetRollXY_TargetRollZ) { // viewport:TargetRollXY/TargetRollZ
     handleTargetRollXYZWheel(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.CameraRollXY_CameraRollZ) { // viewport:CameraRollXY/CameraRollZ
+  if (WIN3D.currentTool == UITASK.CameraRollXY_CameraRollZ) { // viewport:CameraRollXY/CameraRollZ
     handleCameraRollXYZWheel(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
+  if (WIN3D.currentTool == UITASK.CameraDistance_TargetRollXY_TargetRollZ) { // viewport:CameraDistance
     moveWin3DTowardsSelection(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.PanX_TargetRoll) { // viewport:PanX
+  if (WIN3D.currentTool == UITASK.PanX_TargetRoll) { // viewport:PanX
     adjustPositionXWheel(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.PanY_TargetRoll) { // viewport:PanY
+  if (WIN3D.currentTool == UITASK.PanY_TargetRoll) { // viewport:PanY
     adjustPositionYWheel(wheelValue);
   }
 
-  if ((WIN3D.UI_CurrentTask == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) ||
-      (WIN3D.UI_CurrentTask == UITASK.PickSelect)) { // viewport:DistMouseXY
+  if ((WIN3D.currentTool == UITASK.DistMouseXY_TargetRollXY_TargetRollZ) ||
+      (WIN3D.currentTool == UITASK.PickSelect)) { // viewport:DistMouseXY
     moveWin3DTowardsMouse(wheelValue);
   }
 
-  if (WIN3D.UI_CurrentTask == UITASK.LandOrbit_Pan_TargetRollZ) { // viewport:LandOrbit
+  if (WIN3D.currentTool == UITASK.LandOrbit_Pan_TargetRollZ) { // viewport:LandOrbit
     moveWin3DTowardsMouse(wheelValue);
   }
 }
 
 void zoomWin3DViewport(float wheelValue) {
-  if (WIN3D.ViewType == 1) {
-    WIN3D.position_Z -= wheelValue * WIN3D.position_T * OBJECTS_scale;
+  if (WIN3D.projectionTypeIndex == 1) {
+    WIN3D.positionZ -= wheelValue * WIN3D.positionStep * overallScale;
   } else {
-    WIN3D.Zoom *= pow(2.0, wheelValue);
+    WIN3D.zoom *= pow(2.0, wheelValue);
   }
   view_changed();
 }
 
 void adjustWin3DElevationWheel(float wheelValue) {
-  if (wheelValue > 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.Zoom));
-  if (wheelValue < 0) WIN3D.Zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.Zoom));
+  if (wheelValue > 0) WIN3D.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.zoom));
+  if (wheelValue < 0) WIN3D.zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.zoom));
   view_changed();
 }
 
 void scaleObjectsWheel(float wheelValue) {
-  if (wheelValue > 0) OBJECTS_scale /= pow(2.0, 0.25);
-  if (wheelValue < 0) OBJECTS_scale *= pow(2.0, 0.25);
+  if (wheelValue > 0) overallScale /= pow(2.0, 0.25);
+  if (wheelValue < 0) overallScale *= pow(2.0, 0.25);
   view_changed();
 }
 
@@ -341,34 +341,34 @@ void scaleSkydomeWheel(float wheelValue) {
 
 void scaleAllModelWheel(float wheelValue) {
   if (wheelValue > 0) {
-    OBJECTS_scale /= pow(2.0, 0.25);
+    overallScale /= pow(2.0, 0.25);
       Sky3D.radius /= pow(2.0, 0.25);
   }
   if (wheelValue < 0) {
-    OBJECTS_scale *= pow(2.0, 0.25);
+    overallScale *= pow(2.0, 0.25);
       Sky3D.radius *= pow(2.0, 0.25);
   }
   view_changed();
 }
 
 void handleTargetRollXYZWheel(float wheelValue) {
-  if (WIN3D.UI_OptionXorY == 0) {
-    WIN3D.rotation_X += wheelValue * WIN3D.rotation_T;
+  if (WIN3D.targetAxisIndex == 0) {
+    WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
   }
-  if (WIN3D.UI_OptionXorY == 1) {
-    WIN3D.rotation_Z += wheelValue * WIN3D.rotation_T;
+  if (WIN3D.targetAxisIndex == 1) {
+    WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
   }
   view_changed();
 }
 
 void handleCameraRollXYZWheel(float wheelValue) {
-  if (WIN3D.UI_OptionXorY == 0) {
-    WIN3D.rotateZ_3DViewport_around_Selection(wheelValue * WIN3D.rotation_T);
+  if (WIN3D.targetAxisIndex == 0) {
+    WIN3D.rotateZ_3DViewport_around_Selection(wheelValue * WIN3D.rotationStep);
   }
-  if (WIN3D.UI_OptionXorY == 1) {
-    WIN3D.rotateXY_3DViewport_around_Selection(wheelValue * WIN3D.rotation_T);
+  if (WIN3D.targetAxisIndex == 1) {
+    WIN3D.rotateXY_3DViewport_around_Selection(wheelValue * WIN3D.rotationStep);
   }
   view_changed();
 }
@@ -384,33 +384,33 @@ void moveWin3DTowardsMouse(float wheelValue) {
 }
 
 void adjustPositionXWheel(float wheelValue) {
-  WIN3D.position_X += wheelValue * WIN3D.position_T * OBJECTS_scale;
+  WIN3D.positionX += wheelValue * WIN3D.positionStep * overallScale;
   view_changed();
 }
 
 void adjustPositionYWheel(float wheelValue) {
-  WIN3D.position_Y += wheelValue * WIN3D.position_T * OBJECTS_scale;
+  WIN3D.positionY += wheelValue * WIN3D.positionStep * overallScale;
   view_changed();
 }
 
 void adjustRotationXWheel(float wheelValue) {
-  WIN3D.rotation_X += wheelValue * WIN3D.rotation_T;
+  WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
   view_changed();
 }
 
 void adjustRotationZWheel(float wheelValue) {
-  WIN3D.rotation_Z += wheelValue * WIN3D.rotation_T;
+  WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
   view_changed();
 }
 
 void handleTruckOrbitWheel(float wheelValue) {
-  if (WIN3D.UI_TaskModifyParameter == 0) { // Truck
-    if (WIN3D.UI_OptionXorY == 0) adjustPositionXWheel(wheelValue);
-    if (WIN3D.UI_OptionXorY == 1) adjustPositionYWheel(wheelValue);
+  if (WIN3D.toolParameterModifier == 0) { // Truck
+    if (WIN3D.targetAxisIndex == 0) adjustPositionXWheel(wheelValue);
+    if (WIN3D.targetAxisIndex == 1) adjustPositionYWheel(wheelValue);
   }
 
-  if (WIN3D.UI_TaskModifyParameter == 1) { // Orbit
-    if (WIN3D.UI_OptionXorY == 0) adjustRotationXWheel(wheelValue);
-    if (WIN3D.UI_OptionXorY == 1) adjustRotationZWheel(wheelValue);
+  if (WIN3D.toolParameterModifier == 1) { // Orbit
+    if (WIN3D.targetAxisIndex == 0) adjustRotationXWheel(wheelValue);
+    if (WIN3D.targetAxisIndex == 1) adjustRotationZWheel(wheelValue);
   }
 }

@@ -1,6 +1,6 @@
-STATION[] CWEEDS_coordinates;
+STATION[] climateEngineeringCoordinates;
 
-void inputCoordinates_CWEEDS () {
+void loadClimateEngineeringCoordinates () {
 
   String[] FileALL = loadStrings(Folder_Coordinates + "/CWEEDS.txt");
 
@@ -8,7 +8,7 @@ void inputCoordinates_CWEEDS () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  CWEEDS_coordinates = new STATION [num_stn];
+  climateEngineeringCoordinates = new STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
@@ -18,15 +18,15 @@ void inputCoordinates_CWEEDS () {
     float latitude = float(parts[5]);
     float longitude = float(parts[6]);
 
-    CWEEDS_coordinates[f] = new STATION();
+    climateEngineeringCoordinates[f] = new STATION();
 
-    CWEEDS_coordinates[f].setCity(parts[1]);
-    CWEEDS_coordinates[f].setProvince(parts[2]);
-    CWEEDS_coordinates[f].setCountry(parts[3]);
-    CWEEDS_coordinates[f].setLatitude(latitude);
-    CWEEDS_coordinates[f].setLongitude(longitude);
-    CWEEDS_coordinates[f].setTimelong(float(parts[7]));
-    CWEEDS_coordinates[f].setElevation(float(parts[8]));
-    CWEEDS_coordinates[f].setFilename_CWEEDS(parts[9]);
+    climateEngineeringCoordinates[f].setCity(parts[1]);
+    climateEngineeringCoordinates[f].setProvince(parts[2]);
+    climateEngineeringCoordinates[f].setCountry(parts[3]);
+    climateEngineeringCoordinates[f].setLatitude(latitude);
+    climateEngineeringCoordinates[f].setLongitude(longitude);
+    climateEngineeringCoordinates[f].setTimezoneLongitude(float(parts[7]));
+    climateEngineeringCoordinates[f].setElevation(float(parts[8]));
+    climateEngineeringCoordinates[f].setClimateEngineeringFilename(parts[9]);
   }
 }

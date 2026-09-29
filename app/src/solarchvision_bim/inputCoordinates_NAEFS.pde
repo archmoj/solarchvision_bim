@@ -1,6 +1,6 @@
-STATION[] NAEFS_Coordinates;
+STATION[] ensembleForecastCoordinates;
 
-void inputCoordinates_NAEFS () {
+void loadEnsembleForecastCoordinates () {
 
   String[] FileALL = loadStrings(Folder_Coordinates + "/NAEFS.txt");
 
@@ -8,7 +8,7 @@ void inputCoordinates_NAEFS () {
 
   int num_stn = FileALL.length - 1; // to skip the first description line
 
-  NAEFS_Coordinates = new STATION [num_stn];
+  ensembleForecastCoordinates = new STATION [num_stn];
 
   for (int f = 0; f < num_stn; f++) {
     lineSTR = FileALL[f + 1]; // to skip the first description line
@@ -48,15 +48,15 @@ void inputCoordinates_NAEFS () {
     l = parts[3].length();
     elevation = float(parts[3].substring(0, l - 1));
 
-    NAEFS_Coordinates[f] = new STATION();
+    ensembleForecastCoordinates[f] = new STATION();
 
-    NAEFS_Coordinates[f].setCity(city);
-    NAEFS_Coordinates[f].setProvince(province);
-    NAEFS_Coordinates[f].setCountry(country);
-    NAEFS_Coordinates[f].setLatitude(latitude);
-    NAEFS_Coordinates[f].setLongitude(longitude);
-    NAEFS_Coordinates[f].setTimelong(funcs.roundTo(longitude, 15));
-    NAEFS_Coordinates[f].setElevation(elevation);
-    NAEFS_Coordinates[f].setFilename_NAEFS(filename);
+    ensembleForecastCoordinates[f].setCity(city);
+    ensembleForecastCoordinates[f].setProvince(province);
+    ensembleForecastCoordinates[f].setCountry(country);
+    ensembleForecastCoordinates[f].setLatitude(latitude);
+    ensembleForecastCoordinates[f].setLongitude(longitude);
+    ensembleForecastCoordinates[f].setTimezoneLongitude(funcs.roundTo(longitude, 15));
+    ensembleForecastCoordinates[f].setElevation(elevation);
+    ensembleForecastCoordinates[f].setEnsembleForecastFilename(filename);
   }
 }

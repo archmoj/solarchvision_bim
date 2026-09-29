@@ -171,9 +171,9 @@ class SolidsTest {
   void toXMLThenFromXML_roundTripsEveryFieldIncludingValue () {
     app.allSolids.DEF = new float[][]{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 99}};
     app.allSolids.displayAll = false;
-    app.allSolids.palette_CLR = 5;
-    app.allSolids.palette_DIR = -1;
-    app.allSolids.palette_MLT = 0.75f;
+    app.allSolids.colorScaleIndex = 5;
+    app.allSolids.colorScaleDirection = -1;
+    app.allSolids.colorScaleFactor = 0.75f;
 
     processing.data.XML root = new processing.data.XML("root");
     app.allSolids.to_XML(root);
@@ -187,8 +187,8 @@ class SolidsTest {
     assertEquals(99f, fresh.get_value(0), 0.0001f); // now correctly restored
 
     assertFalse(fresh.displayAll);
-    assertEquals(5, fresh.palette_CLR);
-    assertEquals(-1, fresh.palette_DIR);
-    assertEquals(0.75f, fresh.palette_MLT, 0.0001f);
+    assertEquals(5, fresh.colorScaleIndex);
+    assertEquals(-1, fresh.colorScaleDirection);
+    assertEquals(0.75f, fresh.colorScaleFactor, 0.0001f);
   }
 }

@@ -114,38 +114,38 @@ class MouseWheelTest {
 
   @Test
   void handleScenarioCaseBarWheel_shiftsTheCweedsSampleRangeWhenCweedsIsActive () {
-    app.CurrentDataSource = app.dataID_CLIMATE_CWEEDS;
-    app.SampleYear_Start = 1980;
-    app.SampleYear_End = 1985;
+    app.currentDataSource = app.dataID_climateEngineering;
+    app.sampleYearStart = 1980;
+    app.sampleYearEnd = 1985;
 
     app.handleScenarioCaseBarWheel(1);
 
-    assertEquals(1981, app.SampleYear_Start);
-    assertEquals(1986, app.SampleYear_End);
+    assertEquals(1981, app.sampleYearStart);
+    assertEquals(1986, app.sampleYearEnd);
   }
 
   @Test
   void handleScenarioCaseBarWheel_leavesCweedsRangeAloneWhenADifferentSourceIsActive () {
-    app.CurrentDataSource = app.dataID_ENSEMBLE_FORECAST;
-    app.SampleYear_Start = 1980;
-    app.SampleYear_End = 1985;
+    app.currentDataSource = app.dataID_ensembleForecast;
+    app.sampleYearStart = 1980;
+    app.sampleYearEnd = 1985;
 
     app.handleScenarioCaseBarWheel(1);
 
-    assertEquals(1980, app.SampleYear_Start); // untouched
-    assertEquals(1985, app.SampleYear_End);
+    assertEquals(1980, app.sampleYearStart); // untouched
+    assertEquals(1985, app.sampleYearEnd);
   }
 
   @Test
   void handleScenarioCaseBarWheel_shiftsTheEnsembleForecastMemberRangeWhenActive () {
-    app.CurrentDataSource = app.dataID_ENSEMBLE_FORECAST;
-    app.SampleMember_Start = 5;
-    app.SampleMember_End = 10;
+    app.currentDataSource = app.dataID_ensembleForecast;
+    app.sampleMemberStart = 5;
+    app.sampleMemberEnd = 10;
 
     app.handleScenarioCaseBarWheel(1);
 
-    assertEquals(6, app.SampleMember_Start);
-    assertEquals(11, app.SampleMember_End);
+    assertEquals(6, app.sampleMemberStart);
+    assertEquals(11, app.sampleMemberEnd);
   }
 
   // ================= handleWorldZoomWheel ====================================
@@ -159,11 +159,11 @@ class MouseWheelTest {
     app.WORLD.dY = 300;
     app.X_clicked = 100;
     app.Y_clicked = 100;
-    app.WORLD.Zoom = 5;
+    app.WORLD.zoom = 5;
 
     app.handleWorldZoomWheel(1);
 
-    assertEquals(4, app.WORLD.Zoom); // positive wheel -> Zoom -= 1
+    assertEquals(4, app.WORLD.zoom); // positive wheel -> Zoom -= 1
   }
 
   @Test
@@ -175,11 +175,11 @@ class MouseWheelTest {
     app.WORLD.dY = 300;
     app.X_clicked = 100;
     app.Y_clicked = 100;
-    app.WORLD.Zoom = 9;
+    app.WORLD.zoom = 9;
 
     app.handleWorldZoomWheel(-1); // would push Zoom to 10
 
-    assertEquals(9, app.WORLD.Zoom);
+    assertEquals(9, app.WORLD.zoom);
   }
 
   @Test
@@ -191,67 +191,67 @@ class MouseWheelTest {
     app.WORLD.dY = 300;
     app.X_clicked = 9999; // outside
     app.Y_clicked = 9999;
-    app.WORLD.Zoom = 5;
+    app.WORLD.zoom = 5;
 
     app.handleWorldZoomWheel(1);
 
-    assertEquals(5, app.WORLD.Zoom);
+    assertEquals(5, app.WORLD.zoom);
   }
 
   // ================= zoomWin3DViewport ========================================
 
   @Test
   void zoomWin3DViewport_movesPositionZInPerspectiveView () {
-    app.WIN3D.ViewType = 1; // perspective
-    app.WIN3D.position_Z = 0;
-    app.WIN3D.position_T = 2;
-    app.OBJECTS_scale = 1;
+    app.WIN3D.projectionTypeIndex = 1; // perspective
+    app.WIN3D.positionZ = 0;
+    app.WIN3D.positionStep = 2;
+    app.overallScale = 1;
 
     app.zoomWin3DViewport(3);
 
-    assertEquals(-6f, app.WIN3D.position_Z, 0.0001f); // -wheelValue*position_T*scale
+    assertEquals(-6f, app.WIN3D.positionZ, 0.0001f); // -wheelValue*positionStep*scale
   }
 
   @Test
   void zoomWin3DViewport_scalesZoomMultiplicativelyInOrthographicView () {
-    app.WIN3D.ViewType = 0; // orthographic
-    app.WIN3D.Zoom = 10;
+    app.WIN3D.projectionTypeIndex = 0; // orthographic
+    app.WIN3D.zoom = 10;
 
     app.zoomWin3DViewport(1);
 
-    assertEquals(20f, app.WIN3D.Zoom, 0.0001f); // *2^1
+    assertEquals(20f, app.WIN3D.zoom, 0.0001f); // *2^1
   }
 
   // ================= adjustWin3DElevationWheel ================================
 
   @Test
   void adjustWin3DElevationWheel_increasesZoomAngleOnPositiveWheel () {
-    app.WIN3D.Zoom = 60;
+    app.WIN3D.zoom = 60;
     app.adjustWin3DElevationWheel(1);
-    assertTrue(app.WIN3D.Zoom > 60);
+    assertTrue(app.WIN3D.zoom > 60);
   }
 
   @Test
   void adjustWin3DElevationWheel_decreasesZoomAngleOnNegativeWheel () {
-    app.WIN3D.Zoom = 60;
+    app.WIN3D.zoom = 60;
     app.adjustWin3DElevationWheel(-1);
-    assertTrue(app.WIN3D.Zoom < 60);
+    assertTrue(app.WIN3D.zoom < 60);
   }
 
   // ================= scaleObjectsWheel / scaleSkydomeWheel / scaleAllModelWheel
 
   @Test
   void scaleObjectsWheel_shrinksObjectsScaleOnPositiveWheel () {
-    app.OBJECTS_scale = 1;
+    app.overallScale = 1;
     app.scaleObjectsWheel(1);
-    assertEquals((float) (1 / Math.pow(2.0, 0.25)), app.OBJECTS_scale, 0.0001f);
+    assertEquals((float) (1 / Math.pow(2.0, 0.25)), app.overallScale, 0.0001f);
   }
 
   @Test
   void scaleObjectsWheel_growsObjectsScaleOnNegativeWheel () {
-    app.OBJECTS_scale = 1;
+    app.overallScale = 1;
     app.scaleObjectsWheel(-1);
-    assertEquals((float) Math.pow(2.0, 0.25), app.OBJECTS_scale, 0.0001f);
+    assertEquals((float) Math.pow(2.0, 0.25), app.overallScale, 0.0001f);
   }
 
   @Test
@@ -263,12 +263,12 @@ class MouseWheelTest {
 
   @Test
   void scaleAllModelWheel_shrinksBothObjectsScaleAndSkydomeRadiusOnPositiveWheel () {
-    app.OBJECTS_scale = 1;
+    app.overallScale = 1;
     app.Sky3D.radius = 100;
 
     app.scaleAllModelWheel(1);
 
-    assertEquals((float) (1 / Math.pow(2.0, 0.25)), app.OBJECTS_scale, 0.0001f);
+    assertEquals((float) (1 / Math.pow(2.0, 0.25)), app.overallScale, 0.0001f);
     assertEquals((float) (100 / Math.pow(2.0, 0.25)), app.Sky3D.radius, 0.01f);
   }
 
@@ -276,144 +276,144 @@ class MouseWheelTest {
 
   @Test
   void handleTargetRollXYZWheel_rotatesXWhenOptionXorYIsZero () {
-    app.WIN3D.UI_OptionXorY = 0;
-    app.WIN3D.rotation_T = 2;
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_Z = 5;
+    app.WIN3D.targetAxisIndex = 0;
+    app.WIN3D.rotationStep = 2;
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 5;
 
     app.handleTargetRollXYZWheel(3);
 
-    assertEquals(6f, app.WIN3D.rotation_X, 0.0001f); // 3*2
-    assertEquals(5f, app.WIN3D.rotation_Z, 0.0001f); // untouched
+    assertEquals(6f, app.WIN3D.rotationX, 0.0001f); // 3*2
+    assertEquals(5f, app.WIN3D.rotationZ, 0.0001f); // untouched
   }
 
   @Test
   void handleTargetRollXYZWheel_rotatesZWhenOptionXorYIsOne () {
-    app.WIN3D.UI_OptionXorY = 1;
-    app.WIN3D.rotation_T = 2;
-    app.WIN3D.rotation_X = 5;
-    app.WIN3D.rotation_Z = 0;
+    app.WIN3D.targetAxisIndex = 1;
+    app.WIN3D.rotationStep = 2;
+    app.WIN3D.rotationX = 5;
+    app.WIN3D.rotationZ = 0;
 
     app.handleTargetRollXYZWheel(3);
 
-    assertEquals(6f, app.WIN3D.rotation_Z, 0.0001f);
-    assertEquals(5f, app.WIN3D.rotation_X, 0.0001f); // untouched
+    assertEquals(6f, app.WIN3D.rotationZ, 0.0001f);
+    assertEquals(5f, app.WIN3D.rotationX, 0.0001f); // untouched
   }
 
   // ================= adjustPositionXWheel / YWheel / RotationXWheel / ZWheel =
 
   @Test
   void adjustPositionXWheel_movesPositionXScaledByPositionTAndObjectsScale () {
-    app.WIN3D.position_X = 0;
-    app.WIN3D.position_T = 2;
-    app.OBJECTS_scale = 3;
+    app.WIN3D.positionX = 0;
+    app.WIN3D.positionStep = 2;
+    app.overallScale = 3;
 
     app.adjustPositionXWheel(1);
 
-    assertEquals(6f, app.WIN3D.position_X, 0.0001f);
+    assertEquals(6f, app.WIN3D.positionX, 0.0001f);
   }
 
   @Test
   void adjustPositionYWheel_movesPositionYScaledByPositionTAndObjectsScale () {
-    app.WIN3D.position_Y = 0;
-    app.WIN3D.position_T = 2;
-    app.OBJECTS_scale = 3;
+    app.WIN3D.positionY = 0;
+    app.WIN3D.positionStep = 2;
+    app.overallScale = 3;
 
     app.adjustPositionYWheel(1);
 
-    assertEquals(6f, app.WIN3D.position_Y, 0.0001f);
+    assertEquals(6f, app.WIN3D.positionY, 0.0001f);
   }
 
   @Test
   void adjustRotationXWheel_rotatesXScaledByRotationT () {
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_T = 4;
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationStep = 4;
 
     app.adjustRotationXWheel(2);
 
-    assertEquals(8f, app.WIN3D.rotation_X, 0.0001f);
+    assertEquals(8f, app.WIN3D.rotationX, 0.0001f);
   }
 
   @Test
   void adjustRotationZWheel_rotatesZScaledByRotationT () {
-    app.WIN3D.rotation_Z = 0;
-    app.WIN3D.rotation_T = 4;
+    app.WIN3D.rotationZ = 0;
+    app.WIN3D.rotationStep = 4;
 
     app.adjustRotationZWheel(2);
 
-    assertEquals(8f, app.WIN3D.rotation_Z, 0.0001f);
+    assertEquals(8f, app.WIN3D.rotationZ, 0.0001f);
   }
 
   // ================= handleTruckOrbitWheel ====================================
 
   @Test
   void handleTruckOrbitWheel_truckModeOptionXorYZeroAdjustsPositionXOnly () {
-    app.WIN3D.UI_TaskModifyParameter = 0; // Truck
-    app.WIN3D.UI_OptionXorY = 0;
-    app.WIN3D.position_T = 1;
-    app.OBJECTS_scale = 1;
-    app.WIN3D.position_X = 0;
-    app.WIN3D.position_Y = 0;
+    app.WIN3D.toolParameterModifier = 0; // Truck
+    app.WIN3D.targetAxisIndex = 0;
+    app.WIN3D.positionStep = 1;
+    app.overallScale = 1;
+    app.WIN3D.positionX = 0;
+    app.WIN3D.positionY = 0;
 
     app.handleTruckOrbitWheel(2);
 
-    assertEquals(2f, app.WIN3D.position_X, 0.0001f);
-    assertEquals(0f, app.WIN3D.position_Y, 0.0001f);
+    assertEquals(2f, app.WIN3D.positionX, 0.0001f);
+    assertEquals(0f, app.WIN3D.positionY, 0.0001f);
   }
 
   @Test
   void handleTruckOrbitWheel_orbitModeOptionXorYOneAdjustsRotationZOnly () {
-    app.WIN3D.UI_TaskModifyParameter = 1; // Orbit
-    app.WIN3D.UI_OptionXorY = 1;
-    app.WIN3D.rotation_T = 1;
-    app.WIN3D.rotation_X = 0;
-    app.WIN3D.rotation_Z = 0;
+    app.WIN3D.toolParameterModifier = 1; // Orbit
+    app.WIN3D.targetAxisIndex = 1;
+    app.WIN3D.rotationStep = 1;
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
 
     app.handleTruckOrbitWheel(2);
 
-    assertEquals(2f, app.WIN3D.rotation_Z, 0.0001f);
-    assertEquals(0f, app.WIN3D.rotation_X, 0.0001f);
+    assertEquals(2f, app.WIN3D.rotationZ, 0.0001f);
+    assertEquals(0f, app.WIN3D.rotationX, 0.0001f);
   }
 
   // ================= handleViewportWheel (dispatcher spot checks) ===========
 
   @Test
   void handleViewportWheel_zoomOrbitPanZoomsTheViewport () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Zoom_Orbit_Pan;
-    app.WIN3D.ViewType = 0;
-    app.WIN3D.Zoom = 10;
+    app.WIN3D.currentTool = app.UITASK.zoom_Orbit_Pan;
+    app.WIN3D.projectionTypeIndex = 0;
+    app.WIN3D.zoom = 10;
 
     app.handleViewportWheel(1);
 
-    assertEquals(20f, app.WIN3D.Zoom, 0.0001f); // zoomWin3DViewport ran
+    assertEquals(20f, app.WIN3D.zoom, 0.0001f); // zoomWin3DViewport ran
   }
 
   @Test
   void handleViewportWheel_panHeightAdjustsElevationNotZoomMultiplicatively () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.Pan_Height;
-    app.WIN3D.Zoom = 60;
+    app.WIN3D.currentTool = app.UITASK.Pan_Height;
+    app.WIN3D.zoom = 60;
 
     app.handleViewportWheel(1);
 
-    assertTrue(app.WIN3D.Zoom > 60); // adjustWin3DElevationWheel ran, not zoomWin3DViewport
-    assertNotEquals(120f, app.WIN3D.Zoom, 0.0001f); // *2 would be the (wrong) multiplicative path
+    assertTrue(app.WIN3D.zoom > 60); // adjustWin3DElevationWheel ran, not zoomWin3DViewport
+    assertNotEquals(120f, app.WIN3D.zoom, 0.0001f); // *2 would be the (wrong) multiplicative path
   }
 
   @Test
   void handleViewportWheel_modelSizeScalesObjects () {
-    app.WIN3D.UI_CurrentTask = app.UITASK.ModelSize_Pan_TargetRoll;
-    app.OBJECTS_scale = 1;
+    app.WIN3D.currentTool = app.UITASK.ModelSize_Pan_TargetRoll;
+    app.overallScale = 1;
 
     app.handleViewportWheel(1);
 
-    assertEquals((float) (1 / Math.pow(2.0, 0.25)), app.OBJECTS_scale, 0.0001f);
+    assertEquals((float) (1 / Math.pow(2.0, 0.25)), app.overallScale, 0.0001f);
   }
 
   // ================= handleMoveWheel (now shares computeMoveDelta)
 
   @Test
   void handleMoveWheel_movesTheSelectedVertexAlongItsConstrainedAxis () {
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.allVertices = new float[][]{{1, 2, 3}};
     app.Select3D.Vertex_ids = new int[]{0};
     app.Select3D.posVector = 2; // Z-only
@@ -427,7 +427,7 @@ class MouseWheelTest {
 
   @Test
   void handleMoveWheel_movesFreelyOnAllAxesWhenPosVectorIsAll () {
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.allVertices = new float[][]{{0, 0, 0}};
     app.Select3D.Vertex_ids = new int[]{0};
     app.Select3D.posVector = 3; // All

@@ -132,7 +132,7 @@ class GroupsTest {
     app.allFaces.nodes = new int[][]{{0, 1}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
 
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.Face_ids = new int[]{0};
 
     app.allGroups.group_Selection(1); // 1 = create a new group
@@ -147,7 +147,7 @@ class GroupsTest {
 
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Faces[0]); // shrunk back down after the delete
 
-    assertEquals(app.ObjectCategory.GROUP, app.current_ObjectCategory); // switched category
+    assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory); // switched category
     assertArrayEquals(new int[]{0}, app.Select3D.Group_ids); // the new group is now selected
   }
 
@@ -156,7 +156,7 @@ class GroupsTest {
     app.allSolids.DEF = new float[][]{new float[13]};
     app.allSolids.DEF[0][0] = 5; // posX
 
-    app.current_ObjectCategory = app.ObjectCategory.SOLID;
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
     app.Select3D.Solid_ids = new int[]{0};
 
     app.allGroups.group_Selection(1);
@@ -165,7 +165,7 @@ class GroupsTest {
     assertEquals(1, app.allSolids.DEF.length); // original deleted, clone remains
     assertEquals(5f, app.allSolids.DEF[0][0], 0.0001f); // clone carries the same position
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Solids[0]);
-    assertEquals(app.ObjectCategory.GROUP, app.current_ObjectCategory);
+    assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory);
   }
 
   // ================= ungroup_Selection ================================
@@ -177,7 +177,7 @@ class GroupsTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 2}; // owns all 3 faces
 
-    app.current_ObjectCategory = app.ObjectCategory.GROUP;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.Group_ids = new int[]{0};
 
     app.allGroups.ungroup_Selection();
@@ -196,7 +196,7 @@ class GroupsTest {
     app.allSolids.DEF = new float[][]{new float[13]};
     app.allSolids.DEF[0][0] = 5;
 
-    app.current_ObjectCategory = app.ObjectCategory.SOLID;
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
     app.Select3D.Solid_ids = new int[]{0};
 
     app.allGroups.dettachFromGroups_Selection();
@@ -224,12 +224,12 @@ class GroupsTest {
     app.allGroups.Model2Ds[1] = new int[]{0, -1};
     app.allGroups.Solids[1] = new int[]{0, -1};
 
-    app.current_ObjectCategory = app.ObjectCategory.FACE; // deliberately not GROUP
+    app.currentObjectCategory = app.ObjectCategory.FACE; // deliberately not GROUP
 
     app.allGroups.deleteEmptyGroups_Scene();
 
     assertEquals(1, app.allGroups.num); // only group 0 survives
-    assertEquals(app.ObjectCategory.FACE, app.current_ObjectCategory); // restored, not left at GROUP
+    assertEquals(app.ObjectCategory.FACE, app.currentObjectCategory); // restored, not left at GROUP
   }
 
   // ================= to_XML / from_XML round trip ======================
@@ -283,7 +283,7 @@ class GroupsTest {
     app.allPolylines.nodes = new int[][]{{0, 1}};
     app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0}};
 
-    app.current_ObjectCategory = app.ObjectCategory.POLYLINE;
+    app.currentObjectCategory = app.ObjectCategory.POLYLINE;
     app.Select3D.Polyline_ids = new int[]{0};
 
     app.allGroups.group_Selection(1);
@@ -301,7 +301,7 @@ class GroupsTest {
     app.allModel1Ds.i_data = new int[][]{{1, 2, 3}};
     app.allModel1Ds.num = 1;
 
-    app.current_ObjectCategory = app.ObjectCategory.MODEL1D;
+    app.currentObjectCategory = app.ObjectCategory.MODEL1D;
     app.Select3D.Model1D_ids = new int[]{0};
 
     app.allGroups.group_Selection(1);
@@ -316,10 +316,10 @@ class GroupsTest {
   @Test
   void groupSelection_model2DCategoryClonesPositionAndPreservesTreeFamily () {
     app.allModel2Ds.XYZS = new float[][]{{5, 0, 0, 2}};
-    app.allModel2Ds.MAP = new int[]{3}; // abs(3) > num_files_PEOPLE(0) -> a tree
+    app.allModel2Ds.MAP = new int[]{3}; // abs(3) > peopleFileCount(0) -> a tree
     app.allModel2Ds.num = 1;
 
-    app.current_ObjectCategory = app.ObjectCategory.MODEL2D;
+    app.currentObjectCategory = app.ObjectCategory.MODEL2D;
     app.Select3D.Model2D_ids = new int[]{0};
 
     app.allGroups.group_Selection(1);
@@ -346,7 +346,7 @@ class GroupsTest {
     app.allGroups.makeEmpty(1); // a pre-existing group, with nothing owned yet
     app.allGroups.Solids[0] = new int[]{0, -1};
 
-    app.current_ObjectCategory = app.ObjectCategory.SOLID;
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
     app.Select3D.Solid_ids = new int[]{0};
 
     app.allGroups.group_Selection(0); // 0 = add to the last group, don't create a new one
@@ -362,13 +362,13 @@ class GroupsTest {
     // VERTEX (and LANDPOINT/GROUP/POLYLINE... only SOLID/FACE/POLYLINE/
     // MODEL1D/MODEL2D actually run_process) - VERTEX specifically has no
     // clone-into-group branch at all.
-    app.current_ObjectCategory = app.ObjectCategory.VERTEX;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[]{0};
 
     app.allGroups.group_Selection(1);
 
     assertEquals(0, app.allGroups.num); // nothing created
-    assertEquals(app.ObjectCategory.VERTEX, app.current_ObjectCategory); // never switched to GROUP
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory); // never switched to GROUP
   }
 
   // ================= ungroup_Selection: no-op case =====================
@@ -379,7 +379,7 @@ class GroupsTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 2};
 
-    app.current_ObjectCategory = app.ObjectCategory.FACE; // not GROUP
+    app.currentObjectCategory = app.ObjectCategory.FACE; // not GROUP
     app.Select3D.Group_ids = new int[]{0};
 
     app.allGroups.ungroup_Selection();
@@ -478,7 +478,7 @@ class GroupsTest {
     app.allFaces.nodes = new int[][]{{0, 1}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
 
-    app.current_ObjectCategory = app.ObjectCategory.FACE;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.Face_ids = new int[]{0};
 
     app.allGroups.dettachFromGroups_Selection();

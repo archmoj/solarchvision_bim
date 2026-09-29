@@ -238,7 +238,7 @@ class UI_toolBar {
     String Bar_Switch = this.Items[i][this.Items[i].length - 2];
 
     if (Bar_Switch.equals("Layer Type")) {
-      this.Items[i][0] = nf(current_ObjectCategory + 1, 0);
+      this.Items[i][0] = nf(currentObjectCategory + 1, 0);
     }
 
     int j = int(this.Items[i][0]);
@@ -372,8 +372,8 @@ class UI_toolBar {
     switch (Bar_Switch) {
 
       case "Layer Type":
-        current_ObjectCategory = j - 1;
-        if (current_ObjectCategory == ObjectCategory.SOFTVERTEX) {
+        currentObjectCategory = j - 1;
+        if (currentObjectCategory == ObjectCategory.SOFTVERTEX) {
           Select3D.convert_Vertex_to_softSelection();
         }
         UI_rollout.revise();
@@ -381,7 +381,7 @@ class UI_toolBar {
         break;
 
       case "Model Type":
-        User3D.create_MeshOrSolid = j - 1;
+        User3D.creatorMeshOrSolidMode = j - 1;
         UI_rollout.revise();
         break;
 
@@ -408,7 +408,7 @@ class UI_toolBar {
           case "Sphere": UI_setTo_Create_Sphere(); break;
           case "Cylinder": UI_setTo_Create_Cylinder(); break;
           case "Cushion": UI_setTo_Create_Cushion(); break;
-          case "Parametric": UI_setTo_Create_Parametric(User3D.create_Parametric_Type); break;
+          case "Parametric": UI_setTo_Create_Parametric(User3D.creatorParametricTypeIndex); break;
         }
         break;
 

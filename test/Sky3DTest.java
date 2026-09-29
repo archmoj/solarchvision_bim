@@ -36,10 +36,10 @@ class Sky3DTest {
 
   @Test
   void activePalette_returnsTheActiveSetWhenImpactTypeIsActive () {
-    app.WIN3D.Impact_TYPE = app.Impact_ACTIVE;
-    app.Sky3D.ACTIVE_palette_CLR = 5;
-    app.Sky3D.ACTIVE_palette_DIR = 1;
-    app.Sky3D.ACTIVE_palette_MLT = 0.5f;
+    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.Sky3D.activeColorScaleIndex = 5;
+    app.Sky3D.activeColorScaleDirection = 1;
+    app.Sky3D.activeColorScaleFactor = 0.5f;
 
     float[] result = app.Sky3D.activePalette();
 
@@ -50,10 +50,10 @@ class Sky3DTest {
 
   @Test
   void activePalette_returnsThePassiveSetWhenImpactTypeIsPassive () {
-    app.WIN3D.Impact_TYPE = app.Impact_PASSIVE;
-    app.Sky3D.PASSIVE_palette_CLR = 8;
-    app.Sky3D.PASSIVE_palette_DIR = -1;
-    app.Sky3D.PASSIVE_palette_MLT = 0.25f;
+    app.WIN3D.impactType = app.Impact_PASSIVE;
+    app.Sky3D.passiveColorScaleIndex = 8;
+    app.Sky3D.passiveColorScaleDirection = -1;
+    app.Sky3D.passiveColorScaleFactor = 0.25f;
 
     float[] result = app.Sky3D.activePalette();
 
@@ -114,16 +114,16 @@ class Sky3DTest {
     app.Sky3D.displaySurface = false;
     app.Sky3D.displayTessellation = 2;
     app.Sky3D.radius = 12345;
-    app.Sky3D.ACTIVE_palette_CLR = 5;
-    app.Sky3D.ACTIVE_palette_DIR = 1;
-    app.Sky3D.ACTIVE_palette_MLT = 0.5f;
-    app.Sky3D.PASSIVE_palette_CLR = 8;
-    app.Sky3D.PASSIVE_palette_DIR = -1;
-    app.Sky3D.PASSIVE_palette_MLT = 0.25f;
-    app.Sky3D.stp_slp = 1.5f;
-    app.Sky3D.stp_dir = 2.5f;
-    app.Sky3D.num_slp = 4;
-    app.Sky3D.num_dir = 8;
+    app.Sky3D.activeColorScaleIndex = 5;
+    app.Sky3D.activeColorScaleDirection = 1;
+    app.Sky3D.activeColorScaleFactor = 0.5f;
+    app.Sky3D.passiveColorScaleIndex = 8;
+    app.Sky3D.passiveColorScaleDirection = -1;
+    app.Sky3D.passiveColorScaleFactor = 0.25f;
+    app.Sky3D.inclinationStep = 1.5f;
+    app.Sky3D.orientationStep = 2.5f;
+    app.Sky3D.inclinationCount = 4;
+    app.Sky3D.orientationCount = 8;
     app.Sky3D.calculatedResolution = 5;
 
     processing.data.XML root = new processing.data.XML("root");
@@ -135,16 +135,16 @@ class Sky3DTest {
     assertFalse(fresh.displaySurface);
     assertEquals(2, fresh.displayTessellation);
     assertEquals(12345f, fresh.radius, 0.0001f);
-    assertEquals(5, fresh.ACTIVE_palette_CLR);
-    assertEquals(1, fresh.ACTIVE_palette_DIR);
-    assertEquals(0.5f, fresh.ACTIVE_palette_MLT, 0.0001f);
-    assertEquals(8, fresh.PASSIVE_palette_CLR);
-    assertEquals(-1, fresh.PASSIVE_palette_DIR);
-    assertEquals(0.25f, fresh.PASSIVE_palette_MLT, 0.0001f);
-    assertEquals(1.5f, fresh.stp_slp, 0.0001f);
-    assertEquals(2.5f, fresh.stp_dir, 0.0001f);
-    assertEquals(4, fresh.num_slp);
-    assertEquals(8, fresh.num_dir);
+    assertEquals(5, fresh.activeColorScaleIndex);
+    assertEquals(1, fresh.activeColorScaleDirection);
+    assertEquals(0.5f, fresh.activeColorScaleFactor, 0.0001f);
+    assertEquals(8, fresh.passiveColorScaleIndex);
+    assertEquals(-1, fresh.passiveColorScaleDirection);
+    assertEquals(0.25f, fresh.passiveColorScaleFactor, 0.0001f);
+    assertEquals(1.5f, fresh.inclinationStep, 0.0001f);
+    assertEquals(2.5f, fresh.orientationStep, 0.0001f);
+    assertEquals(4, fresh.inclinationCount);
+    assertEquals(8, fresh.orientationCount);
     assertEquals(5f, fresh.calculatedResolution, 0.0001f);
   }
 }
