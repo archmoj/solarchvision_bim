@@ -171,4 +171,88 @@ class WORLDTest {
     app.WORLD.include = false;
     assertDoesNotThrow(() -> app.WORLD.keyPressed(null));
   }
+
+  // ================= handlePlainCharKey ===================================
+  // Extracted out of keyPressed(KeyEvent) so the actual zoom-cycling logic
+  // (previously only reachable through e.isAltDown()/isControlDown()) can
+  // be exercised directly, the same way STUDY.pde's handlePlainCharKey() is.
+
+  @Test
+  void handlePlainCharKey_backtick_decrementsZoom () {
+    app.WORLD.autoView = false; // keep FindGoodViewport() a no-op passthrough
+    app.WORLD.Zoom = 5;
+    app.key = '`';
+
+    app.WORLD.handlePlainCharKey();
+
+    assertEquals(4, app.WORLD.Zoom);
+  }
+
+  @Test
+  void handlePlainCharKey_backtick_wrapsFrom0To9 () {
+    app.WORLD.autoView = false;
+    app.WORLD.Zoom = 0;
+    app.key = '`';
+
+    app.WORLD.handlePlainCharKey();
+
+    assertEquals(9, app.WORLD.Zoom);
+  }
+
+  @Test
+  void handlePlainCharKey_tilde_incrementsZoom () {
+    app.WORLD.autoView = false;
+    app.WORLD.Zoom = 5;
+    app.key = '~';
+
+    app.WORLD.handlePlainCharKey();
+
+    assertEquals(6, app.WORLD.Zoom);
+  }
+
+  @Test
+  void handlePlainCharKey_tilde_wrapsFrom9To0 () {
+    app.WORLD.autoView = false;
+    app.WORLD.Zoom = 9;
+    app.key = '~';
+
+    app.WORLD.handlePlainCharKey();
+
+    assertEquals(0, app.WORLD.Zoom);
+  }
+
+  @Test
+  void handlePlainCharKey_backtickThenTilde_roundTripsZoom () {
+    app.WORLD.autoView = false;
+    app.WORLD.Zoom = 5;
+
+    app.key = '`';
+    app.WORLD.handlePlainCharKey();
+    app.key = '~';
+    app.WORLD.handlePlainCharKey();
+
+    assertEquals(5, app.WORLD.Zoom);
+  }
+
+  @Test
+  void handlePlainCharKey_flagsWorldForRedraw () {
+    app.WORLD.autoView = false;
+    app.WORLD.update = false;
+    app.key = '`';
+
+    app.WORLD.handlePlainCharKey();
+
+    assertTrue(app.WORLD.update);
+  }
+
+  @Test
+  void handlePlainCharKey_ignoresAnyOtherCharacter () {
+    app.WORLD.autoView = false;
+    app.WORLD.Zoom = 5;
+    app.key = 'a'; // not '`' or '~'
+
+    app.WORLD.handlePlainCharKey();
+
+    assertEquals(5, app.WORLD.Zoom);
+  }
 }

@@ -770,7 +770,15 @@ class WORLD {
     if(this.include == false) return;
 
     if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
-      switch(key) {
+      handlePlainCharKey();
+    }
+  }
+
+  // '`' / '~' : step the map's zoom level backward/forward, wrapping around
+  // the 0..9 range, then re-pick a good viewport tile for the current
+  // location at the new zoom.
+  void handlePlainCharKey () {
+    switch(key) {
       case '`' :
         this.Zoom = (this.Zoom - 1 + 10) % 10;
         this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
@@ -783,7 +791,6 @@ class WORLD {
         this.revise();
         break;
 
-      }
     }
   }
 
