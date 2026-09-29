@@ -755,12 +755,20 @@ class UI_menuBar {
 
     if (this.selected_parent == i) {
       noStroke();
-      fill(0, 0, 255);
-      rect(cx, cy - cr, currentParentWidth, 2 * cr);
+      fill(0, 127, 255);
+      float r = 2 * padParentWidth;
+      rect(
+          cx, cy - cr, currentParentWidth, 2 * cr, // corners
+          r, r, r, r // round corners
+      );
     }
     stroke(255);
     fill(255);
 
+    if (this.selected_parent == i) {
+      stroke(0);
+      fill(0);
+    }
     text(this.Items[i][0], cx + padParentWidth, cy - 0.125 * MessageSize);
   }
 
@@ -818,10 +826,23 @@ class UI_menuBar {
     if (isSelectable && (this.selected_child == j)) {
       fill(HOVER_COLOR_R, HOVER_COLOR_G, HOVER_COLOR_B);
     } else {
-      fill(0, 223);
+      fill(0, 0, 63, 223);
     }
     noStroke();
-    rect(cx, rowTop, widthChildren, rowHeight);
+    float r = 2 * padParentWidth;
+    if(j == 1) {
+      rect(
+        cx, rowTop, widthChildren, rowHeight,
+        r, r, 0, 0 // round corners
+      );
+    } else if(j < this.Items[i].length - 1) {
+      rect(cx, rowTop, widthChildren, rowHeight);
+    } else {
+      rect(
+        cx, rowTop, widthChildren, rowHeight,
+        0, 0, r, r // round corners
+      );
+    }
 
     textAlign(LEFT, CENTER);
     if (this.selected_child == j) {

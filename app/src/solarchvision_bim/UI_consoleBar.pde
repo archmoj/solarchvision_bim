@@ -16,10 +16,10 @@ class UI_consoleBar {
       int maxDisplayLines = 3;
 
       if (typeUserCommand == 1) {
-        fill(0);
+        fill(0, 0, 63);
       }
       else {
-        fill(63);
+        fill(127);
       }
       noStroke();
       rect(0, pixel_A + pixel_B + 2 * pixel_H + pixel_C, width, pixel_D);
