@@ -109,4 +109,159 @@ class UI_rolloutTest {
     assertTrue(app.allActions.containsKey("latitude"));
     assertTrue(app.allActions.containsKey("longitude"));
   }
+
+  // ================= dispatchEditKey ==========================================
+
+  @Test
+  void dispatchEditKey_leftMovesCursorLeftWhenNotAtStart () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 2;
+    app.UI_rollout.dispatchEditKey(true, app.LEFT, (char) 0);
+    assertEquals(1, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_leftDoesNothingAtStart () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 0;
+    app.UI_rollout.dispatchEditKey(true, app.LEFT, (char) 0);
+    assertEquals(0, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_rightMovesCursorRightWhenNotAtEnd () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 1;
+    app.UI_rollout.dispatchEditKey(true, app.RIGHT, (char) 0);
+    assertEquals(2, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_rightDoesNothingAtEnd () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 3;
+    app.UI_rollout.dispatchEditKey(true, app.RIGHT, (char) 0);
+    assertEquals(3, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_backspaceRemovesCharacterBeforeCursor () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 2;
+    app.UI_rollout.dispatchEditKey(false, 0, app.BACKSPACE);
+    assertEquals("ac", app.UI_rollout.editText);
+    assertEquals(1, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_backspaceDoesNothingAtStart () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 0;
+    app.UI_rollout.dispatchEditKey(false, 0, app.BACKSPACE);
+    assertEquals("abc", app.UI_rollout.editText);
+  }
+
+  @Test
+  void dispatchEditKey_deleteRemovesCharacterAfterCursor () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 1;
+    app.UI_rollout.dispatchEditKey(false, 0, app.DELETE);
+    assertEquals("ac", app.UI_rollout.editText);
+    assertEquals(1, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void dispatchEditKey_deleteDoesNothingAtEnd () {
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 3;
+    app.UI_rollout.dispatchEditKey(false, 0, app.DELETE);
+    assertEquals("abc", app.UI_rollout.editText);
+  }
+
+  // ================= keyReleased / processHeldKey =============================
+
+  @Test
+  void processHeldKey_doesNothingWhenNotEditing () {
+    app.UI_rollout.editActive = false;
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = true;
+    app.UI_rollout.navKeyCode = app.LEFT;
+    app.UI_rollout.navKeyFrameCounter = app.UI_rollout.NAV_KEY_INITIAL_DELAY_FRAMES; // already past threshold
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 2;
+
+    app.UI_rollout.processHeldKey();
+
+    assertEquals(2, app.UI_rollout.editCursor); // unchanged - not editing
+  }
+
+  @Test
+  void processHeldKey_doesNotFireBeforeTheInitialDelayElapses () {
+    app.UI_rollout.editActive = true;
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = true;
+    app.UI_rollout.navKeyCode = app.LEFT;
+    app.UI_rollout.navKeyFrameCounter = 0;
+    app.UI_rollout.navKeyRepeating = false;
+    app.UI_rollout.editText = "abc";
+    app.UI_rollout.editCursor = 2;
+
+    for (int i = 0; i < app.UI_rollout.NAV_KEY_INITIAL_DELAY_FRAMES - 1; i++) {
+      app.UI_rollout.processHeldKey();
+    }
+    assertEquals(2, app.UI_rollout.editCursor);
+
+    app.UI_rollout.processHeldKey(); // the delay-th call - now it fires
+    assertEquals(1, app.UI_rollout.editCursor);
+    assertTrue(app.UI_rollout.navKeyRepeating);
+  }
+
+  @Test
+  void processHeldKey_repeatsEveryFrameAfterTheInitialDelay () {
+    app.UI_rollout.editActive = true;
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = true;
+    app.UI_rollout.navKeyCode = app.LEFT;
+    app.UI_rollout.navKeyFrameCounter = app.UI_rollout.NAV_KEY_INITIAL_DELAY_FRAMES - 1;
+    app.UI_rollout.navKeyRepeating = false;
+    app.UI_rollout.editText = "abcde";
+    app.UI_rollout.editCursor = 4;
+
+    app.UI_rollout.processHeldKey(); // crosses the initial delay - fires
+    assertEquals(3, app.UI_rollout.editCursor);
+
+    app.UI_rollout.processHeldKey(); // NAV_KEY_REPEAT_FRAMES == 1 - fires again immediately
+    assertEquals(2, app.UI_rollout.editCursor);
+  }
+
+  @Test
+  void keyReleased_clearsNavKeyHeldOnlyWhenTheSameCodedKeyComesBackUp () {
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = true;
+    app.UI_rollout.navKeyCode = app.LEFT;
+
+    app.key = (char) app.CODED;
+    app.keyCode = app.RIGHT; // a DIFFERENT key releasing
+    app.UI_rollout.keyReleased();
+    assertTrue(app.UI_rollout.navKeyHeld);
+
+    app.keyCode = app.LEFT; // the actual held key releasing
+    app.UI_rollout.keyReleased();
+    assertFalse(app.UI_rollout.navKeyHeld);
+  }
+
+  @Test
+  void keyReleased_clearsNavKeyHeldOnlyWhenTheSameUncodedKeyComesBackUp () {
+    app.UI_rollout.navKeyHeld = true;
+    app.UI_rollout.navKeyCoded = false;
+    app.UI_rollout.navKeyChar = app.BACKSPACE;
+
+    app.key = app.DELETE; // a DIFFERENT key releasing
+    app.UI_rollout.keyReleased();
+    assertTrue(app.UI_rollout.navKeyHeld);
+
+    app.key = app.BACKSPACE; // the actual held key releasing
+    app.UI_rollout.keyReleased();
+    assertFalse(app.UI_rollout.navKeyHeld);
+  }
 }
