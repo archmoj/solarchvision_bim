@@ -207,7 +207,7 @@ void handleObjectEditWheel(float wheelValue, float x0, float y0, float z0) {
 
 void handleRotateWheel(float wheelValue, float x0, float y0, float z0) {
   float r = 5 * -wheelValue;
-  int theVector = Select3D.rotVector;
+  int theVector = Select3D.rotationVectorIndex;
   Rotate3D.selection(x0, y0, z0, r, theVector);
   model_changed();
 }
@@ -219,7 +219,7 @@ void handleScaleWheel(float wheelValue, float x0, float y0, float z0) {
   float sy = s;
   float sz = s;
 
-  int theVector = Select3D.scaleVector;
+  int theVector = Select3D.scaleVectorIndex;
   if (theVector == 0) { sy = 1; sz = 1; }
   if (theVector == 1) { sz = 1; sx = 1; }
   if (theVector == 2) { sx = 1; sy = 1; }
@@ -231,11 +231,11 @@ void handleScaleWheel(float wheelValue, float x0, float y0, float z0) {
 void handleMoveWheel(float wheelValue) {
   float d = -wheelValue;
 
-  // Same axis-zeroing-by-Select3D.posVector logic as
+  // Same axis-zeroing-by-Select3D.positionVectorIndex logic as
   // computeMoveDelta (mouseClicked.pde): moving the same
   // distance d on all three axes from the origin, then letting that
-  // function zero out whichever axes posVector excludes, is exactly
-  // equivalent to the dx=dy=dz=d then zero-by-posVector this used to do
+  // function zero out whichever axes positionVectorIndex excludes, is exactly
+  // equivalent to the dx=dy=dz=d then zero-by-positionVectorIndex this used to do
   // inline.
   float[] delta = computeMoveDelta(0, 0, 0, d, d, d);
 

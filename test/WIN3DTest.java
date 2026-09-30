@@ -207,7 +207,7 @@ class WIN3DTest {
     app.allVertices = new float[][]{{1, 0, 0}};
     app.Select3D.Vertex_ids = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.rotVector = 2; // Z axis
+    app.Select3D.rotationVectorIndex = 2; // Z axis
 
     app.WIN3D.currentTool = app.UITASK.Rotate;
     app.WIN3D.handleShiftedArrowKeys(app.UP); // +5 degrees around Z, per the source
@@ -221,7 +221,7 @@ class WIN3DTest {
     app.allVertices = new float[][]{{0, 0, 0}};
     app.Select3D.Vertex_ids = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.posVector = 2; // Z only
+    app.Select3D.positionVectorIndex = 2; // Z only
     app.overallScale = 1;
 
     app.WIN3D.currentTool = app.UITASK.Move;
@@ -487,7 +487,7 @@ class WIN3DTest {
     app.allVertices = new float[][]{{0, 0, 0}};
     app.Select3D.Vertex_ids = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.posVector = 2; // Z only
+    app.Select3D.positionVectorIndex = 2; // Z only
     app.overallScale = 1;
 
     app.WIN3D.navKeyCoded = true;

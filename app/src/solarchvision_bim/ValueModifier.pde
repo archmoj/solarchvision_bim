@@ -1202,7 +1202,7 @@ class ValueModifier {
     }
     return out;
   }
-  int Select3D_posVector (int created) {
+  int Select3D_positionVectorIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1213,17 +1213,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D posVector",
-        () -> (float) Select3D.posVector,
-        (v) -> { Select3D.posVector = int(v); },
+      putValueAction("Select3D positionVectorIndex",
+        () -> (float) Select3D.positionVectorIndex,
+        (v) -> { Select3D.positionVectorIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D posVector", Select3D.posVector, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D positionVectorIndex", Select3D.positionVectorIndex, s1, s2, s3);
     }
     return out;
   }
-  int Select3D_rotVector (int created) {
+  int Select3D_rotationVectorIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1234,17 +1234,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D rotVector",
-        () -> (float) Select3D.rotVector,
-        (v) -> { Select3D.rotVector = int(v); },
+      putValueAction("Select3D rotationVectorIndex",
+        () -> (float) Select3D.rotationVectorIndex,
+        (v) -> { Select3D.rotationVectorIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D rotVector", Select3D.rotVector, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D rotationVectorIndex", Select3D.rotationVectorIndex, s1, s2, s3);
     }
     return out;
   }
-  int Select3D_scaleVector (int created) {
+  int Select3D_scaleVectorIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1255,17 +1255,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D scaleVector",
-        () -> (float) Select3D.scaleVector,
-        (v) -> { Select3D.scaleVector = int(v); },
+      putValueAction("Select3D scaleVectorIndex",
+        () -> (float) Select3D.scaleVectorIndex,
+        (v) -> { Select3D.scaleVectorIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D scaleVector", Select3D.scaleVector, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D scaleVectorIndex", Select3D.scaleVectorIndex, s1, s2, s3);
     }
     return out;
   }
-  float Select3D_posValue (int created) {
+  float Select3D_position (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1277,18 +1277,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D posValue",
-        () -> Select3D.posValue,
-        (v) -> { Select3D.posValue = v; },
+      putValueAction("Select3D position",
+        () -> Select3D.position,
+        (v) -> { Select3D.position = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.applyPosValue);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D posValue", Select3D.posValue, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D position", Select3D.position, s1, s2, s3, s4);
     }
     return out;
   }
-  float Select3D_rotValue (int created) {
+  float Select3D_rotation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1300,18 +1300,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D rotValue",
-        () -> Select3D.rotValue,
-        (v) -> { Select3D.rotValue = v; },
+      putValueAction("Select3D rotation",
+        () -> Select3D.rotation,
+        (v) -> { Select3D.rotation = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.applyRotValue);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D rotValue", Select3D.rotValue, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D rotation", Select3D.rotation, s1, s2, s3, s4);
     }
     return out;
   }
-  float Select3D_scaleValue (int created) {
+  float Select3D_scale (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1323,14 +1323,14 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D scaleValue",
-        () -> Select3D.scaleValue,
-        (v) -> { Select3D.scaleValue = v; },
+      putValueAction("Select3D scale",
+        () -> Select3D.scale,
+        (v) -> { Select3D.scale = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.applyScaleValue);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D scaleValue", Select3D.scaleValue, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D scale", Select3D.scale, s1, s2, s3, s4);
     }
     return out;
   }

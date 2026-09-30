@@ -2,13 +2,13 @@ class Select3D {
 
   final static String CLASS_STAMP = "Select3D";
 
-  int posVector = 2; // 0:X, 1:Y, 2:Z, 3: All
-  int rotVector = 2; // 0:X, 1:Y, 2:Z
-  int scaleVector = 2; // 0:X, 1:Y, 2:Z, 3:All
+  int positionVectorIndex = 2; // 0:X, 1:Y, 2:Z, 3: All
+  int rotationVectorIndex = 2; // 0:X, 1:Y, 2:Z
+  int scaleVectorIndex = 2; // 0:X, 1:Y, 2:Z, 3:All
 
-  float posValue = 0;
-  float rotValue = 0;
-  float scaleValue = 0;
+  float position = 0;
+  float rotation = 0;
+  float scale = 0;
 
   int alignX = 0;
   int alignY = 0;
@@ -859,9 +859,9 @@ class Select3D {
 
   void reset_selectedRefValues () {
 
-    this.posValue = 0;
-    this.rotValue = 0;
-    this.scaleValue = 0;
+    this.position = 0;
+    this.rotation = 0;
+    this.scale = 0;
   }
 
 
@@ -2184,12 +2184,12 @@ class Select3D {
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 
-    XML_setInt(parent, "posVector", this.posVector);
-    XML_setInt(parent, "rotVector", this.rotVector);
-    XML_setInt(parent, "scaleVector", this.scaleVector);
-    XML_setFloat(parent, "posValue", this.posValue);
-    XML_setFloat(parent, "rotValue", this.rotValue);
-    XML_setFloat(parent, "scaleValue", this.scaleValue);
+    XML_setInt(parent, "positionVectorIndex", this.positionVectorIndex);
+    XML_setInt(parent, "rotationVectorIndex", this.rotationVectorIndex);
+    XML_setInt(parent, "scaleVectorIndex", this.scaleVectorIndex);
+    XML_setFloat(parent, "position", this.position);
+    XML_setFloat(parent, "rotation", this.rotation);
+    XML_setFloat(parent, "scale", this.scale);
     XML_setInt(parent, "alignX", this.alignX);
     XML_setInt(parent, "alignY", this.alignY);
     XML_setInt(parent, "alignZ", this.alignZ);
@@ -2236,12 +2236,12 @@ class Select3D {
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.posVector = XML_getInt(parent, "posVector");
-    this.rotVector = XML_getInt(parent, "rotVector");
-    this.scaleVector = XML_getInt(parent, "scaleVector");
-    this.posValue = XML_getFloat(parent, "posValue");
-    this.rotValue = XML_getFloat(parent, "rotValue");
-    this.scaleValue = XML_getFloat(parent, "scaleValue");
+    this.positionVectorIndex = XML_getInt(parent, "positionVectorIndex");
+    this.rotationVectorIndex = XML_getInt(parent, "rotationVectorIndex");
+    this.scaleVectorIndex = XML_getInt(parent, "scaleVectorIndex");
+    this.position = XML_getFloat(parent, "position");
+    this.rotation = XML_getFloat(parent, "rotation");
+    this.scale = XML_getFloat(parent, "scale");
     this.alignX = XML_getInt(parent, "alignX");
     this.alignY = XML_getInt(parent, "alignY");
     this.alignZ = XML_getInt(parent, "alignZ");

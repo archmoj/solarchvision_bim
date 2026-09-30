@@ -408,12 +408,12 @@ the user interface.
 | `Select3D alignX` | Selection's X alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
 | `Select3D alignY` | Selection's Y alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
 | `Select3D alignZ` | Selection's Z alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
-| `Select3D posValue` | Move the selection along the current move axis by this offset (relative to its previous value, like dragging the spinner) | -50.0 to 50.0 |
-| `Select3D posVector` | Move axis used by 3D-select.posValue: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
-| `Select3D rotValue` | Rotate the selection about the current rotate axis by this angle in degrees (relative to its previous value) | -180.0 to 180.0 |
-| `Select3D rotVector` | Rotate axis used by 3D-select.rotValue: 0 = X, 1 = Y, 2 = Z | 0 to 2 |
-| `Select3D scaleValue` | Scale the selection about the current scale axis (relative to its previous value; each unit change doubles/halves the size) | -8.0 to 8.0 |
-| `Select3D scaleVector` | Scale axis used by 3D-select.scaleValue: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
+| `Select3D position` | Move the selection along the current move axis by this offset (relative to its previous value, like dragging the spinner) | -50.0 to 50.0 |
+| `Select3D positionVectorIndex` | Move axis used by 3D-select.position: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
+| `Select3D rotation` | Rotate the selection about the current rotate axis by this angle in degrees (relative to its previous value) | -180.0 to 180.0 |
+| `Select3D rotationVectorIndex` | Rotate axis used by 3D-select.rotation: 0 = X, 1 = Y, 2 = Z | 0 to 2 |
+| `Select3D scale` | Scale the selection about the current scale axis (relative to its previous value; each unit change doubles/halves the size) | -8.0 to 8.0 |
+| `Select3D scaleVectorIndex` | Scale axis used by 3D-select.scale: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
 | `Select3D softPower` | Falloff power of soft (proportional) selection | 0.125 to 8.0 |
 | `Select3D softRadius` | Radius of influence of soft (proportional) selection | 0.01 to 100 |
 | `Select3D displayReferencePivot` | Toggle: show the reference pivot point | 0 or 1 |

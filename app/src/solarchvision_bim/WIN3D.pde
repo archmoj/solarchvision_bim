@@ -601,7 +601,7 @@ class WIN3D {
 
         if (WIN3D.currentTool == UITASK.Rotate) {
           float r = (keyCode == DOWN) ? -5 : 5;
-          int the_Vector = Select3D.rotVector;
+          int the_Vector = Select3D.rotationVectorIndex;
           Rotate3D.selection(x0, y0, z0, r, the_Vector);
           model_changed();
         }
@@ -611,7 +611,7 @@ class WIN3D {
           if (keyCode == DOWN) s = 1.0 / s;
 
           float sx = s, sy = s, sz = s;
-          int the_Vector = Select3D.scaleVector;
+          int the_Vector = Select3D.scaleVectorIndex;
           if (the_Vector == 0) { sy = 1; sz = 1; }
           if (the_Vector == 1) { sz = 1; sx = 1; }
           if (the_Vector == 2) { sx = 1; sy = 1; }
@@ -624,7 +624,7 @@ class WIN3D {
           float d = (keyCode == DOWN) ? -0.5 : 0.5;
           float dx = d, dy = d, dz = d;
 
-          int the_Vector = Select3D.posVector;
+          int the_Vector = Select3D.positionVectorIndex;
           if (the_Vector == 0) { dy = 0; dz = 0; }
           if (the_Vector == 1) { dz = 0; dx = 0; }
           if (the_Vector == 2) { dx = 0; dy = 0; }

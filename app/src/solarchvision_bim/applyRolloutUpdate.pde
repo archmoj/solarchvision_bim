@@ -82,9 +82,9 @@ void applyRolloutUpdate() {
   pre_Selection_softPower = Select3D.softPower;
   pre_Selection_softRadius = Select3D.softRadius;
 
-  pre_Selection_posValue = Select3D.posValue;
-  pre_Selection_rotValue = Select3D.rotValue;
-  pre_Selection_scaleValue = Select3D.scaleValue;
+  pre_Selection_position = Select3D.position;
+  pre_Selection_rotation = Select3D.rotation;
+  pre_Selection_scale = Select3D.scale;
 
   pre_Selection_alignX = Select3D.alignX;
   pre_Selection_alignY = Select3D.alignY;
@@ -209,9 +209,9 @@ void applyRolloutUpdate() {
 
   react.selectionChangedOnly.run(pre_Selection_alignZ, Select3D.alignZ);
 
-  react.applyPosValue.run(pre_Selection_posValue, Select3D.posValue);
-  react.applyRotValue.run(pre_Selection_rotValue, Select3D.rotValue);
-  react.applyScaleValue.run(pre_Selection_scaleValue, Select3D.scaleValue);
+  react.applyPosValue.run(pre_Selection_position, Select3D.position);
+  react.applyRotValue.run(pre_Selection_rotation, Select3D.rotation);
+  react.applyScaleValue.run(pre_Selection_scale, Select3D.scale);
 
   react.viewChangedOnly.run(pre_Selection_displayReferencePivot ? 1 : 0, Select3D.displayReferencePivot ? 1 : 0);
 
@@ -328,9 +328,9 @@ boolean pre_Selection_LandPoint_displayPoints;
 float pre_Selection_softPower;
 float pre_Selection_softRadius;
 
-float pre_Selection_posValue;
-float pre_Selection_rotValue;
-float pre_Selection_scaleValue;
+float pre_Selection_position;
+float pre_Selection_rotation;
+float pre_Selection_scale;
 
 int pre_Selection_alignX;
 int pre_Selection_alignY;

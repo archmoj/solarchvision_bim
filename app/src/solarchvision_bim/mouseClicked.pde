@@ -220,15 +220,15 @@ float[] getMoveOriginPoint () {
 
 // Pulled out of mouseClicked()'s UITASK.Move handling: the move vector
 // from (x1,y1,z1) to (x2,y2,z2), then zeroed down to a single axis
-// according to Select3D.posVector - 0 keeps only X, 1 keeps only Y, 2
-// keeps only Z (posVector's own default), and any other value
+// according to Select3D.positionVectorIndex - 0 keeps only X, 1 keeps only Y, 2
+// keeps only Z (positionVectorIndex's own default), and any other value
 // (typically 3, meaning "All") leaves all three components as-is.
 float[] computeMoveDelta (float x1, float y1, float z1, float x2, float y2, float z2) {
   float dx = x2 - x1;
   float dy = y2 - y1;
   float dz = z2 - z1;
 
-  int the_Vector = Select3D.posVector;
+  int the_Vector = Select3D.positionVectorIndex;
 
   if (the_Vector == 0) {
     dy = 0;

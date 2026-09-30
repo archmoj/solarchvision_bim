@@ -53,7 +53,7 @@ class react {
     if (o == n) return;
     float d = n - o;
     float dx = d, dy = d, dz = d;
-    int the_Vector = Select3D.posVector;
+    int the_Vector = Select3D.positionVectorIndex;
     if (the_Vector == 0) { dy = 0; dz = 0; }
     if (the_Vector == 1) { dz = 0; dx = 0; }
     if (the_Vector == 2) { dx = 0; dy = 0; }
@@ -64,7 +64,7 @@ class react {
     if (o == n) return;
     float[] P = Select3D.getPivot();
     float r = n - o;
-    Rotate3D.selection(P[0], P[1], P[2], r, Select3D.rotVector);
+    Rotate3D.selection(P[0], P[1], P[2], r, Select3D.rotationVectorIndex);
     model_changed();
   };
   OnChange applyScaleValue = (o, n) -> {
@@ -72,7 +72,7 @@ class react {
     float[] P = Select3D.getPivot();
     float s = pow(2.0, n - o);
     float sx = s, sy = s, sz = s;
-    int the_Vector = Select3D.scaleVector;
+    int the_Vector = Select3D.scaleVectorIndex;
     if (the_Vector == 0) { sy = 1; sz = 1; }
     if (the_Vector == 1) { sz = 1; sx = 1; }
     if (the_Vector == 2) { sx = 1; sy = 1; }

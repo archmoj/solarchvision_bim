@@ -240,7 +240,7 @@ void UI_setTo_Create_Cushion () {
 void UI_setTo_Modify_Move (int n) {
   WIN3D.currentTool = UITASK.Move;
 
-  Select3D.posVector = n;
+  Select3D.positionVectorIndex = n;
 
   UI_rollout.revise();
 }
@@ -248,7 +248,7 @@ void UI_setTo_Modify_Move (int n) {
 void UI_setTo_Modify_Scale (int n) {
   WIN3D.currentTool = UITASK.Scale;
 
-  Select3D.scaleVector = n;
+  Select3D.scaleVectorIndex = n;
 
   UI_rollout.revise();
 }
@@ -257,7 +257,7 @@ void UI_setTo_Modify_Scale (int n) {
 void UI_setTo_Modify_Rotate (int n) {
   WIN3D.currentTool = UITASK.Rotate;
 
-  Select3D.rotVector = n;
+  Select3D.rotationVectorIndex = n;
 
   UI_rollout.revise();
 }

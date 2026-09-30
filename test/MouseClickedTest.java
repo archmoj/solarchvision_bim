@@ -1052,7 +1052,7 @@ class MouseClickedTest {
 
   @Test
   void computeMoveDelta_withPosVectorThreeMovesFreelyOnAllThreeAxes () {
-    app.Select3D.posVector = 3; // "All"
+    app.Select3D.positionVectorIndex = 3; // "All"
 
     float[] d = app.computeMoveDelta(1, 2, 3, 4, 6, 8);
 
@@ -1061,7 +1061,7 @@ class MouseClickedTest {
 
   @Test
   void computeMoveDelta_withPosVectorZeroKeepsOnlyX () {
-    app.Select3D.posVector = 0;
+    app.Select3D.positionVectorIndex = 0;
 
     float[] d = app.computeMoveDelta(1, 2, 3, 4, 6, 8);
 
@@ -1070,7 +1070,7 @@ class MouseClickedTest {
 
   @Test
   void computeMoveDelta_withPosVectorOneKeepsOnlyY () {
-    app.Select3D.posVector = 1;
+    app.Select3D.positionVectorIndex = 1;
 
     float[] d = app.computeMoveDelta(1, 2, 3, 4, 6, 8);
 
@@ -1079,7 +1079,7 @@ class MouseClickedTest {
 
   @Test
   void computeMoveDelta_withPosVectorTwoKeepsOnlyZ () {
-    app.Select3D.posVector = 2; // posVector's own default
+    app.Select3D.positionVectorIndex = 2; // positionVectorIndex's own default
 
     float[] d = app.computeMoveDelta(1, 2, 3, 4, 6, 8);
 

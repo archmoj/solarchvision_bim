@@ -20,7 +20,7 @@ interface FloatSetter {
 
 // Follow-up work to run right after a spinner-style command actually
 // changes a field's value. Receives the value before and after the
-// change, since a few fields (e.g. Select3D.posValue) apply a delta
+// change, since a few fields (e.g. Select3D.position) apply a delta
 // between the two rather than the new value on its own.
 interface OnChange {
   void run(float oldValue, float newValue);
@@ -30,7 +30,7 @@ HashMap<String, Action> allActions;
 
 // Normalizes a name/caption into a command key: lowercase, and spaces
 // become underscores (so a multi-word caption becomes one command-line
-// token, e.g. "Start day" -> "start_day", "3D-select.rotVector" ->
+// token, e.g. "Start day" -> "start_day", "3D-select.rotationVectorIndex" ->
 // "3d-select.rotvector"). Nothing else about the text is changed - dots,
 // dashes, digits are all left as they are - so any existing field name or
 // caption can be passed to putAction as-is and used the same way on the
@@ -1190,7 +1190,17 @@ void build_allActions() {
   });
 
   putAction("Begin New Group at Pivot", () -> {
-    allGroups.beginNewGroup(Select3D.BoundingBox[1 + Select3D.alignX][0], Select3D.BoundingBox[1 + Select3D.alignX][1], Select3D.BoundingBox[1 + Select3D.alignX][2], Select3D.BoundingBox[1 + Select3D.alignX][3], Select3D.BoundingBox[1 + Select3D.alignX][4], Select3D.BoundingBox[1 + Select3D.alignX][5], Select3D.BoundingBox[1 + Select3D.alignX][6], Select3D.BoundingBox[1 + Select3D.alignX][7], Select3D.BoundingBox[1 + Select3D.alignX][8]);
+    allGroups.beginNewGroup(
+      Select3D.BoundingBox[1 + Select3D.alignX][0],
+      Select3D.BoundingBox[1 + Select3D.alignX][1],
+      Select3D.BoundingBox[1 + Select3D.alignX][2],
+      Select3D.BoundingBox[1 + Select3D.alignX][3],
+      Select3D.BoundingBox[1 + Select3D.alignX][4],
+      Select3D.BoundingBox[1 + Select3D.alignX][5],
+      Select3D.BoundingBox[1 + Select3D.alignX][6],
+      Select3D.BoundingBox[1 + Select3D.alignX][7],
+      Select3D.BoundingBox[1 + Select3D.alignX][8]
+    );
 
     Select3D.Group_ids = new int [1];
     Select3D.Group_ids[0] = allGroups.num - 1;

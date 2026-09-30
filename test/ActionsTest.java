@@ -271,13 +271,13 @@ class ActionsTest {
     // with a made-up name rather than a real field's caption, since none
     // of the current ones happen to contain a dot or dash.
     float[] value = {0};
-    app.putValueAction("3D-select.rotVector",
+    app.putValueAction("3D-select.rotationVectorIndex",
       () -> value[0],
       (v) -> { value[0] = v; },
       0, 10, 1,
       0, 0, 0);
 
-    assertTrue(app.allActions.containsKey("3d-select.rotvector"));
+    assertTrue(app.allActions.containsKey("3d-select.rotationvectorindex"));
   }
 
   // ================= build_allActions ========================================

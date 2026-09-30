@@ -607,13 +607,13 @@ class Select3DTest {
 
   @Test
   void resetSelectedRefValues_zeroesThePosRotScaleValues () {
-    app.Select3D.posValue = 5;
-    app.Select3D.rotValue = 10;
-    app.Select3D.scaleValue = 2;
+    app.Select3D.position = 5;
+    app.Select3D.rotation = 10;
+    app.Select3D.scale = 2;
     app.Select3D.reset_selectedRefValues();
-    assertEquals(0f, app.Select3D.posValue, 0.0001f);
-    assertEquals(0f, app.Select3D.rotValue, 0.0001f);
-    assertEquals(0f, app.Select3D.scaleValue, 0.0001f);
+    assertEquals(0f, app.Select3D.position, 0.0001f);
+    assertEquals(0f, app.Select3D.rotation, 0.0001f);
+    assertEquals(0f, app.Select3D.scale, 0.0001f);
   }
 
   // ============ translateInside / translateOutside ReferencePivot =====
@@ -692,12 +692,12 @@ class Select3DTest {
   void toXMLThenFromXML_roundTripsEveryField () {
     solarchvision_bim.Select3D original = app.Select3D;
 
-    original.posVector = 1;
-    original.rotVector = 2;
-    original.scaleVector = 0;
-    original.posValue = 1.5f;
-    original.rotValue = 12.5f;
-    original.scaleValue = 0.5f;
+    original.positionVectorIndex = 1;
+    original.rotationVectorIndex = 2;
+    original.scaleVectorIndex = 0;
+    original.position = 1.5f;
+    original.rotation = 12.5f;
+    original.scale = 0.5f;
     original.alignX = 1;
     original.alignY = -1;
     original.alignZ = 0;
@@ -740,12 +740,12 @@ class Select3DTest {
     solarchvision_bim.Select3D fresh = app.new Select3D();
     fresh.from_XML(root);
 
-    assertEquals(1, fresh.posVector);
-    assertEquals(2, fresh.rotVector);
-    assertEquals(0, fresh.scaleVector);
-    assertEquals(1.5f, fresh.posValue, 0.0001f);
-    assertEquals(12.5f, fresh.rotValue, 0.0001f);
-    assertEquals(0.5f, fresh.scaleValue, 0.0001f);
+    assertEquals(1, fresh.positionVectorIndex);
+    assertEquals(2, fresh.rotationVectorIndex);
+    assertEquals(0, fresh.scaleVectorIndex);
+    assertEquals(1.5f, fresh.position, 0.0001f);
+    assertEquals(12.5f, fresh.rotation, 0.0001f);
+    assertEquals(0.5f, fresh.scale, 0.0001f);
     assertEquals(1, fresh.alignX);
     assertEquals(-1, fresh.alignY);
     assertEquals(0, fresh.alignZ);
