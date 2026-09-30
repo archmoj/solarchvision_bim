@@ -40,8 +40,8 @@ class Move3D {
   }
 
   void softSelection (float dx, float dy, float dz) {
-    for (int q = 0; q < Select3D.softSelection_ids.length; q++) {
-      int f = Select3D.softSelection_ids[q];
+    for (int q = 0; q < Select3D.softSelectionIndices.length; q++) {
+      int f = Select3D.softSelectionIndices[q];
       float v = Select3D.softSelection_values[q];
 
       allPoints.move(f, dx * v, dy * v, dz * v);
@@ -51,8 +51,8 @@ class Move3D {
   }
 
   void Vertices (float dx, float dy, float dz) {
-    for (int q = 0; q < Select3D.Vertex_ids.length; q++) {
-      int f = Select3D.Vertex_ids[q];
+    for (int q = 0; q < Select3D.VertexIndices.length; q++) {
+      int f = Select3D.VertexIndices[q];
       allPoints.move(f, dx, dy, dz);
     }
 
@@ -82,8 +82,8 @@ class Move3D {
   }
 
   void Model1Ds (float dx, float dy, float dz) {
-    for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
-      int f = Select3D.Model1D_ids[o];
+    for (int o = Select3D.Model1DIndices.length - 1; o >= 0; o--) {
+      int f = Select3D.Model1DIndices[o];
       allModel1Ds.move(f, dx, dy, dz);
     }
 
@@ -91,8 +91,8 @@ class Move3D {
   }
 
   void Model2Ds (float dx, float dy, float dz) {
-    for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
-      int f = Select3D.Model2D_ids[o];
+    for (int o = Select3D.Model2DIndices.length - 1; o >= 0; o--) {
+      int f = Select3D.Model2DIndices[o];
       allModel2Ds.move(f, dx, dy, dz);
     }
 
@@ -110,8 +110,8 @@ class Move3D {
   void Solids (float dx, float dy, float dz) {
     boolean allSolids_updated = false;
 
-    for (int q = 0; q < Select3D.Solid_ids.length; q++) {
-      int f = Select3D.Solid_ids[q];
+    for (int q = 0; q < Select3D.SolidIndices.length; q++) {
+      int f = Select3D.SolidIndices[q];
       moveSolid(f, dx, dy, dz);
       allSolids_updated = true;
     }
@@ -122,8 +122,8 @@ class Move3D {
   }
 
   void Sections (float dx, float dy, float dz) {
-    for (int q = 0; q < Select3D.Section_ids.length; q++) {
-      int f = Select3D.Section_ids[q];
+    for (int q = 0; q < Select3D.SectionIndices.length; q++) {
+      int f = Select3D.SectionIndices[q];
       allSections.move(f, dx, dy, dz);
     }
 
@@ -137,8 +137,8 @@ class Move3D {
     dz = dy;
     dy = tmp;
 
-    for (int q = 0; q < Select3D.Camera_ids.length; q++) {
-      int f = Select3D.Camera_ids[q];
+    for (int q = 0; q < Select3D.CameraIndices.length; q++) {
+      int f = Select3D.CameraIndices[q];
       allCameras.move(f, dx, dy, dz);
 
       if (f == WIN3D.currentCameraIndex) WIN3D.apply_currentCameraIndex();
@@ -156,8 +156,8 @@ class Move3D {
 
     boolean allSolids_updated = false;
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       allGroups.Pivots[OBJ_ID][0] += dx;
       allGroups.Pivots[OBJ_ID][1] += dy;

@@ -101,10 +101,10 @@ void _fileSelected_ImportObj (File selectedFile) {
 
     int number_of_allGroups_after = allGroups.num;
 
-    Select3D.Group_ids = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
-    for (int i = 0; i < Select3D.Group_ids.length - 1; i++) {
-      Select3D.Group_ids[i] = i + number_of_allGroups_before;
-      //println(Select3D.Group_ids[i]);
+    Select3D.GroupIndices = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.GroupIndices.length - 1; i++) {
+      Select3D.GroupIndices[i] = i + number_of_allGroups_before;
+      //println(Select3D.GroupIndices[i]);
     }
 
     switch_category(ObjectCategory.GROUP);

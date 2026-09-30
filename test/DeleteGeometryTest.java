@@ -93,12 +93,12 @@ class DeleteGeometryTest {
   @Test
   void isolatedVerticesSelection_onlyConsidersVerticesWithinTheGivenSelection () {
     // Points 1, 2, and 3 are all genuinely unused - but only 1 and 2 are
-    // in Vertex_ids, so point 3 must survive untouched despite also
+    // in VertexIndices, so point 3 must survive untouched despite also
     // being unreferenced.
     app.allVertices = new float[][]{{0, 0, 0}, {1, 1, 1}, {2, 2, 2}, {3, 3, 3}};
     app.allFaces.nodes = new int[][]{{0}};
     app.allPolylines.nodes = new int[0][];
-    app.Select3D.Vertex_ids = new int[]{1, 2};
+    app.Select3D.VertexIndices = new int[]{1, 2};
 
     app.Delete3D.isolatedVertices_Selection();
 
@@ -106,7 +106,7 @@ class DeleteGeometryTest {
     assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
     assertArrayEquals(new float[]{3, 3, 3}, app.allVertices[1], 0.0001f); // point 3, shifted down
     assertArrayEquals(new int[]{0}, app.allFaces.nodes[0]);
-    assertEquals(0, app.Select3D.Vertex_ids.length); // deselected afterward
+    assertEquals(0, app.Select3D.VertexIndices.length); // deselected afterward
   }
 
   @Test
@@ -114,7 +114,7 @@ class DeleteGeometryTest {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 1, 1}};
     app.allFaces.nodes = new int[0][];
     app.allPolylines.nodes = new int[0][];
-    app.Select3D.Vertex_ids = new int[]{};
+    app.Select3D.VertexIndices = new int[]{};
 
     app.Delete3D.isolatedVertices_Selection();
 
@@ -133,7 +133,7 @@ class DeleteGeometryTest {
     app.allGroups.Faces[0] = new int[]{0, 1}; // group 0 owns faces 0-1
     app.allGroups.Faces[1] = new int[]{2, 3}; // group 1 owns faces 2-3, entirely after the deleted face
 
-    app.Select3D.Face_ids = new int[]{1}; // delete face 1 (inside group 0's range)
+    app.Select3D.FaceIndices = new int[]{1}; // delete face 1 (inside group 0's range)
 
     app.Delete3D.selected_Faces();
 
@@ -164,7 +164,7 @@ class DeleteGeometryTest {
     app.allGroups.Polylines[0] = new int[]{0, 1};
     app.allGroups.Polylines[1] = new int[]{2, 3};
 
-    app.Select3D.Polyline_ids = new int[]{1};
+    app.Select3D.PolylineIndices = new int[]{1};
 
     app.Delete3D.selected_Polylines();
 
@@ -199,7 +199,7 @@ class DeleteGeometryTest {
       ranges[1] = new int[]{0, -1};
     }
 
-    app.Select3D.Group_ids = new int[]{0}; // delete group 0
+    app.Select3D.GroupIndices = new int[]{0}; // delete group 0
 
     app.Delete3D.selected_Groups();
 
@@ -223,7 +223,7 @@ class DeleteGeometryTest {
     app.allCameras.num = 3;
     app.WIN3D.currentCameraIndex = 2;
 
-    app.Select3D.Camera_ids = new int[]{0}; // delete camera 0, before the current one
+    app.Select3D.CameraIndices = new int[]{0}; // delete camera 0, before the current one
 
     app.Delete3D.selected_Cameras();
 
@@ -242,7 +242,7 @@ class DeleteGeometryTest {
     // itself) in the same call - the "current camera was deleted"
     // outcome takes priority over the plain shift-down outcome
     // regardless of how much shiftBefore had already accumulated.
-    app.Select3D.Camera_ids = new int[]{0, 1};
+    app.Select3D.CameraIndices = new int[]{0, 1};
 
     app.Delete3D.selected_Cameras();
 
@@ -257,7 +257,7 @@ class DeleteGeometryTest {
     app.allCameras.num = 1;
     app.WIN3D.currentCameraIndex = 0;
 
-    app.Select3D.Camera_ids = new int[]{0};
+    app.Select3D.CameraIndices = new int[]{0};
 
     app.Delete3D.selected_Cameras();
 
@@ -273,7 +273,7 @@ class DeleteGeometryTest {
     // CAMERA category should run selected_Cameras() and nothing else -
     // in particular, NOT isolatedVertices_Selection() (that only runs
     // for VERTEX/FACE/POLYLINE/GROUP categories), so a populated
-    // Vertex_ids should survive untouched right up until the final,
+    // VertexIndices should survive untouched right up until the final,
     // unconditional Select3D.deselectAll() at the end.
     app.allCameras.options = new float[][]{new float[9], new float[9]};
     app.allCameras.Type = new int[]{0, 0};
@@ -281,16 +281,16 @@ class DeleteGeometryTest {
     app.WIN3D.currentCameraIndex = 0;
 
     app.allVertices = new float[][]{{0, 0, 0}};
-    app.Select3D.Vertex_ids = new int[]{0}; // would be examined by isolatedVertices_Selection if it ran
+    app.Select3D.VertexIndices = new int[]{0}; // would be examined by isolatedVertices_Selection if it ran
 
     app.currentObjectCategory = app.ObjectCategory.CAMERA;
-    app.Select3D.Camera_ids = new int[]{0};
+    app.Select3D.CameraIndices = new int[]{0};
 
     app.Delete3D.selection();
 
     assertEquals(1, app.allCameras.num); // the CAMERA branch did run
     assertEquals(1, app.allVertices.length); // isolatedVertices_Selection did NOT run - vertex left alone
-    assertEquals(0, app.Select3D.Vertex_ids.length); // but deselectAll() at the end clears the selection anyway
+    assertEquals(0, app.Select3D.VertexIndices.length); // but deselectAll() at the end clears the selection anyway
   }
 
   // --- selected_Sections (a full integration test) ---------------------
@@ -309,7 +309,7 @@ class DeleteGeometryTest {
     app.allSections.SolarImpact = new PImage[3][1][1];
     app.allSections.num = 3;
 
-    app.Select3D.Section_ids = new int[]{1};
+    app.Select3D.SectionIndices = new int[]{1};
 
     app.Delete3D.selected_Sections();
 
@@ -340,7 +340,7 @@ class DeleteGeometryTest {
     app.allGroups.Model1Ds[0] = new int[]{0, 1};
     app.allGroups.Model1Ds[1] = new int[]{2, 3};
 
-    app.Select3D.Model1D_ids = new int[]{1};
+    app.Select3D.Model1DIndices = new int[]{1};
 
     app.Delete3D.selected_Model1Ds();
 
@@ -369,7 +369,7 @@ class DeleteGeometryTest {
     app.allGroups.Model2Ds[0] = new int[]{0, 1};
     app.allGroups.Model2Ds[1] = new int[]{2, 3};
 
-    app.Select3D.Model2D_ids = new int[]{1};
+    app.Select3D.Model2DIndices = new int[]{1};
 
     app.Delete3D.selected_Model2Ds();
 
@@ -401,7 +401,7 @@ class DeleteGeometryTest {
     app.allGroups.Solids[0] = new int[]{0, 1};
     app.allGroups.Solids[1] = new int[]{2, 3};
 
-    app.Select3D.Solid_ids = new int[]{1};
+    app.Select3D.SolidIndices = new int[]{1};
 
     app.Delete3D.selected_Solids();
 

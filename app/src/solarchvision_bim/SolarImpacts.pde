@@ -438,9 +438,9 @@ class SolarImpacts {
 
   void render_Shadows_selectedSections () {
 
-    for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.SectionIndices.length - 1; o >= 0; o--) {
 
-      int f = Select3D.Section_ids[o];
+      int f = Select3D.SectionIndices[o];
 
       this.sectionType = allSections.get_type(f);
       this.RES1 = allSections.get_res1(f);
@@ -468,9 +468,9 @@ class SolarImpacts {
 
   void calculate_Impact_selectedSections () {
 
-    for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
+    for (int o = Select3D.SectionIndices.length - 1; o >= 0; o--) {
 
-      int f = Select3D.Section_ids[o];
+      int f = Select3D.SectionIndices[o];
 
       this.sectionType = allSections.get_type(f);
       this.RES1        = allSections.get_res1(f);

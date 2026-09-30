@@ -1183,8 +1183,8 @@ void build_allActions() {
   putAction("Begin New Group at Origin", () -> {
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
-    Select3D.Group_ids = new int [1];
-    Select3D.Group_ids[0] = allGroups.num - 1;
+    Select3D.GroupIndices = new int [1];
+    Select3D.GroupIndices[0] = allGroups.num - 1;
 
     model_changed();
   });
@@ -1202,8 +1202,8 @@ void build_allActions() {
       Select3D.BoundingBox[1 + Select3D.pivotAlignmentZ][8]
     );
 
-    Select3D.Group_ids = new int [1];
-    Select3D.Group_ids[0] = allGroups.num - 1;
+    Select3D.GroupIndices = new int [1];
+    Select3D.GroupIndices[0] = allGroups.num - 1;
 
     model_changed();
   });
@@ -1265,8 +1265,8 @@ void build_allActions() {
   });
 
   putAction("Camera View", () -> {
-    if (Select3D.Camera_ids.length > 0) {
-      WIN3D.currentCameraIndex = Select3D.Camera_ids[Select3D.Camera_ids.length - 1];
+    if (Select3D.CameraIndices.length > 0) {
+      WIN3D.currentCameraIndex = Select3D.CameraIndices[Select3D.CameraIndices.length - 1];
       WIN3D.apply_currentCameraIndex();
       modify_Viewport_Title();
 

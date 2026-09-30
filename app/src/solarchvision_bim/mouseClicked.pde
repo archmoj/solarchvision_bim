@@ -195,24 +195,24 @@ float[] getMoveOriginPoint () {
     z1 = P[2];
   } else if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
-    x1 = allModel2Ds.getX(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
-    y1 = allModel2Ds.getY(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
-    z1 = allModel2Ds.getZ(Select3D.Model2D_ids[Select3D.Model2D_ids.length - 1]);
+    x1 = allModel2Ds.getX(Select3D.Model2DIndices[Select3D.Model2DIndices.length - 1]);
+    y1 = allModel2Ds.getY(Select3D.Model2DIndices[Select3D.Model2DIndices.length - 1]);
+    z1 = allModel2Ds.getZ(Select3D.Model2DIndices[Select3D.Model2DIndices.length - 1]);
   } else if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
-    x1 = allModel1Ds.getX(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
-    y1 = allModel1Ds.getY(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
-    z1 = allModel1Ds.getZ(Select3D.Model1D_ids[Select3D.Model1D_ids.length - 1]);
+    x1 = allModel1Ds.getX(Select3D.Model1DIndices[Select3D.Model1DIndices.length - 1]);
+    y1 = allModel1Ds.getY(Select3D.Model1DIndices[Select3D.Model1DIndices.length - 1]);
+    z1 = allModel1Ds.getZ(Select3D.Model1DIndices[Select3D.Model1DIndices.length - 1]);
   } else if (currentObjectCategory == ObjectCategory.SOLID) {
 
-    x1 = allSolids.get_posX(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
-    y1 = allSolids.get_posY(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
-    z1 = allSolids.get_posZ(Select3D.Solid_ids[Select3D.Solid_ids.length - 1]);
+    x1 = allSolids.get_posX(Select3D.SolidIndices[Select3D.SolidIndices.length - 1]);
+    y1 = allSolids.get_posY(Select3D.SolidIndices[Select3D.SolidIndices.length - 1]);
+    z1 = allSolids.get_posZ(Select3D.SolidIndices[Select3D.SolidIndices.length - 1]);
   } else if (currentObjectCategory == ObjectCategory.VERTEX) {
 
-    x1 = allPoints.getX(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
-    y1 = allPoints.getY(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
-    z1 = allPoints.getZ(Select3D.Vertex_ids[Select3D.Vertex_ids.length - 1]);
+    x1 = allPoints.getX(Select3D.VertexIndices[Select3D.VertexIndices.length - 1]);
+    y1 = allPoints.getY(Select3D.VertexIndices[Select3D.VertexIndices.length - 1]);
+    z1 = allPoints.getZ(Select3D.VertexIndices[Select3D.VertexIndices.length - 1]);
   }
 
   return new float[]{x1, y1, z1};
@@ -755,8 +755,8 @@ void flipFaceOrientationIfNeeded (int f) {
 // the hit's x,y,z) becomes node 0, preserving winding order otherwise -
 // pulled out of mouseClicked()'s UITASK.FirstVertex handling, which ran
 // this exact block twice in a row: once against allFaces.nodes[f] (with
-// Select3D.Face_ids/faceDisplayVertexIndices) and once against
-// allPolylines.nodes[f] (with Select3D.Polyline_ids/
+// Select3D.FaceIndices/faceDisplayVertexIndices) and once against
+// allPolylines.nodes[f] (with Select3D.PolylineIndices/
 // polylineDisplayVertexIndices), confirmed identical modulo which array
 // before extracting. `nodeRow` is mutated directly (Java arrays are
 // passed by reference), so the caller doesn't need to reassign anything.
@@ -1715,8 +1715,8 @@ void mouseClicked () {
 
                         if (currentObjectCategory == ObjectCategory.FACE) {
 
-                          Select3D.Face_ids = new int [1];
-                          Select3D.Face_ids[0] = f;
+                          Select3D.FaceIndices = new int [1];
+                          Select3D.FaceIndices[0] = f;
 
                           Select3D.faceDisplayVertexIndices = true;
 
@@ -1737,16 +1737,16 @@ void mouseClicked () {
 
                         if (currentObjectCategory == ObjectCategory.FACE) {
 
-                          Select3D.Face_ids = new int [1];
-                          Select3D.Face_ids[0] = f;
+                          Select3D.FaceIndices = new int [1];
+                          Select3D.FaceIndices[0] = f;
 
                           Select3D.faceDisplayVertexIndices = true;
 
                           rotateNodesToStartAtNearestVertex(allFaces.nodes[f], RxP);
                         } else if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
-                          Select3D.Polyline_ids = new int [1];
-                          Select3D.Polyline_ids[0] = f;
+                          Select3D.PolylineIndices = new int [1];
+                          Select3D.PolylineIndices[0] = f;
 
                           Select3D.polylineDisplayVertexIndices = true;
 
@@ -1903,8 +1903,8 @@ void mouseClicked () {
                     if (CreateObject == CREATE.Face) {
                       allFaces.add_VertexToLastFace(x, y, z);
 
-                      Select3D.Face_ids = new int [1];
-                      Select3D.Face_ids[0] = allFaces.nodes.length - 1;
+                      Select3D.FaceIndices = new int [1];
+                      Select3D.FaceIndices[0] = allFaces.nodes.length - 1;
 
                       Select3D.calculate_BoundingBox();
                     }
@@ -1912,8 +1912,8 @@ void mouseClicked () {
                     if (CreateObject == CREATE.Polyline) {
                       allPolylines.add_VertexToLastPolyline(x, y, z);
 
-                      Select3D.Polyline_ids = new int [1];
-                      Select3D.Polyline_ids[0] = allPolylines.nodes.length - 1;
+                      Select3D.PolylineIndices = new int [1];
+                      Select3D.PolylineIndices[0] = allPolylines.nodes.length - 1;
 
                       Select3D.calculate_BoundingBox();
                     }
@@ -1939,7 +1939,7 @@ void mouseClicked () {
 
                         selectNewlyCreated(keep_number_of_allSections, allSections.num,
                           () -> Select3D.deselect_Sections(),
-                          (o) -> { Select3D.Section_ids = concat(Select3D.Section_ids, new int[] {o}); }
+                          (o) -> { Select3D.SectionIndices = concat(Select3D.SectionIndices, new int[] {o}); }
                           );
 
                         allSolidImpacts.X[allSolidImpacts.sectionType] = sp.X;
@@ -1967,27 +1967,27 @@ void mouseClicked () {
 
                   selectNewlyCreated(keep_number_of_allSolids, allSolids.DEF.length,
                     () -> Select3D.deselect_Solids(),
-                    (o) -> { Select3D.Solid_ids = concat(Select3D.Solid_ids, new int[] {o}); }
+                    (o) -> { Select3D.SolidIndices = concat(Select3D.SolidIndices, new int[] {o}); }
                     );
 
                   selectNewlyCreated(keep_number_of_allCameras, allCameras.num,
                     () -> Select3D.deselect_Cameras(),
-                    (o) -> { Select3D.Camera_ids = concat(Select3D.Camera_ids, new int[] {o}); }
+                    (o) -> { Select3D.CameraIndices = concat(Select3D.CameraIndices, new int[] {o}); }
                     );
 
                   selectNewlyCreated(keep_number_of_allGroups, allGroups.num,
                     () -> Select3D.deselect_Groups(),
-                    (o) -> { Select3D.Group_ids = concat(Select3D.Group_ids, new int[] {o}); }
+                    (o) -> { Select3D.GroupIndices = concat(Select3D.GroupIndices, new int[] {o}); }
                     );
 
                   selectNewlyCreated(keep_number_of_allModel2Ds, allModel2Ds.num,
                     () -> Select3D.deselect_Model2Ds(),
-                    (o) -> { Select3D.Model2D_ids = concat(Select3D.Model2D_ids, new int[] {o}); }
+                    (o) -> { Select3D.Model2DIndices = concat(Select3D.Model2DIndices, new int[] {o}); }
                     );
 
                   selectNewlyCreated(keep_number_of_allModel1Ds, allModel1Ds.num,
                     () -> Select3D.deselect_Model1Ds(),
-                    (o) -> { Select3D.Model1D_ids = concat(Select3D.Model1D_ids, new int[] {o}); }
+                    (o) -> { Select3D.Model1DIndices = concat(Select3D.Model1DIndices, new int[] {o}); }
                     );
 
 

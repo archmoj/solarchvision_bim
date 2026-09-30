@@ -523,7 +523,7 @@ class Create3DTest {
 
     assertEquals(2, app.allGroups.num);
     assertTrue(app.allFaces.nodes.length > 0);
-    assertEquals(0, app.Select3D.Group_ids.length); // deselectAll() runs at the end
+    assertEquals(0, app.Select3D.GroupIndices.length); // deselectAll() runs at the end
   }
 
   @Test

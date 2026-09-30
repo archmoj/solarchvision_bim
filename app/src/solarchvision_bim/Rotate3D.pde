@@ -39,8 +39,8 @@ class Rotate3D {
   }
 
   void softSelection (float x0, float y0, float z0, float r, int the_Vector) {
-    for (int q = 0; q < Select3D.softSelection_ids.length; q++) {
-      int f = Select3D.softSelection_ids[q];
+    for (int q = 0; q < Select3D.softSelectionIndices.length; q++) {
+      int f = Select3D.softSelectionIndices[q];
       float v = Select3D.softSelection_values[q];
 
       float[] R = rotateAroundVector(allPoints.getX(f) - x0, allPoints.getY(f) - y0, allPoints.getZ(f) - z0, r * v, the_Vector);
@@ -70,8 +70,8 @@ class Rotate3D {
   }
 
   void Vertices (float x0, float y0, float z0, float r, int the_Vector) {
-    for (int q = 0; q < Select3D.Vertex_ids.length; q++) {
-      int f = Select3D.Vertex_ids[q];
+    for (int q = 0; q < Select3D.VertexIndices.length; q++) {
+      int f = Select3D.VertexIndices[q];
       float[] R = rotateAroundVector(allPoints.getX(f) - x0, allPoints.getY(f) - y0, allPoints.getZ(f) - z0, r, the_Vector);
 
       allPoints.setX(f, x0 + R[0]);
@@ -115,8 +115,8 @@ class Rotate3D {
   void Solids (float x0, float y0, float z0, float r, int the_Vector) {
     boolean allSolids_updated = false;
 
-    for (int q = 0; q < Select3D.Solid_ids.length; q++) {
-      int f = Select3D.Solid_ids[q];
+    for (int q = 0; q < Select3D.SolidIndices.length; q++) {
+      int f = Select3D.SolidIndices[q];
       float[] R = rotateAroundVector(allSolids.get_posX(f) - x0, allSolids.get_posY(f) - y0, allSolids.get_posZ(f) - z0, r, the_Vector);
 
       allSolids.updatePosition(f, x0 + R[0], y0 + R[1], z0 + R[2]);
@@ -134,8 +134,8 @@ class Rotate3D {
   }
 
   void Sections (float r) {
-    for (int q = 0; q < Select3D.Section_ids.length; q++) {
-      int f = Select3D.Section_ids[q];
+    for (int q = 0; q < Select3D.SectionIndices.length; q++) {
+      int f = Select3D.SectionIndices[q];
       allSections.setR(f, allSections.getR(f) + r * 180.0 / PI);
     }
 
@@ -148,8 +148,8 @@ class Rotate3D {
     if (the_Vector == 2) the_Vector = 1;
     else if (the_Vector == 1) the_Vector = 2;
 
-    for (int q = 0; q < Select3D.Camera_ids.length; q++) {
-      int f = Select3D.Camera_ids[q];
+    for (int q = 0; q < Select3D.CameraIndices.length; q++) {
+      int f = Select3D.CameraIndices[q];
       float[] R = rotateAroundVector(allCameras.get_posX(f) - x0, allCameras.get_posY(f) - y0, allCameras.get_posZ(f) - z0, r, the_Vector);
 
       allCameras.set_posX(f, x0 + R[0]);
@@ -163,8 +163,8 @@ class Rotate3D {
   }
 
   void Model1Ds (float x0, float y0, float z0, float r, int the_Vector) {
-    for (int q = 0; q < Select3D.Model1D_ids.length; q++) {
-      int f = Select3D.Model1D_ids[q];
+    for (int q = 0; q < Select3D.Model1DIndices.length; q++) {
+      int f = Select3D.Model1DIndices[q];
       float[] R = rotateAroundVector(allModel1Ds.getX(f) - x0, allModel1Ds.getY(f) - y0, allModel1Ds.getZ(f) - z0, r, the_Vector);
 
       allModel1Ds.setX(f, x0 + R[0]);
@@ -180,8 +180,8 @@ class Rotate3D {
   }
 
   void Model2Ds (float x0, float y0, float z0, float r, int the_Vector) {
-    for (int q = 0; q < Select3D.Model2D_ids.length; q++) {
-      int f = Select3D.Model2D_ids[q];
+    for (int q = 0; q < Select3D.Model2DIndices.length; q++) {
+      int f = Select3D.Model2DIndices[q];
       float[] R = rotateAroundVector(allModel2Ds.getX(f) - x0, allModel2Ds.getY(f) - y0, allModel2Ds.getZ(f) - z0, r, the_Vector);
 
       allModel2Ds.setX(f, x0 + R[0]);
@@ -206,8 +206,8 @@ class Rotate3D {
 
     boolean allSolids_updated = false;
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       float[] Ppivot = rotatePointAroundReferencePivot(allGroups.Pivots[OBJ_ID][0], allGroups.Pivots[OBJ_ID][1], allGroups.Pivots[OBJ_ID][2], r, the_Vector);
       allGroups.Pivots[OBJ_ID][0] = Ppivot[0];

@@ -132,10 +132,10 @@ class Groups {
 
     this.setStop_Face(n, this.getStop_Face(n) + howMany); // because adding the faces also changes the end pointer of the same object
 
-    for (int k = 0; k < Select3D.Face_ids.length; k++) {
-      if (Select3D.Face_ids[k] != 0) {
-        if (Select3D.Face_ids[k] > fromFace) {
-          Select3D.Face_ids[k] += howMany;
+    for (int k = 0; k < Select3D.FaceIndices.length; k++) {
+      if (Select3D.FaceIndices[k] != 0) {
+        if (Select3D.FaceIndices[k] > fromFace) {
+          Select3D.FaceIndices[k] += howMany;
         }
       }
     }
@@ -228,9 +228,9 @@ class Groups {
 
       if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
-        for (int o = 0; o < Select3D.Model1D_ids.length; o++) {
+        for (int o = 0; o < Select3D.Model1DIndices.length; o++) {
 
-          int OBJ_ID = Select3D.Model1D_ids[o];
+          int OBJ_ID = Select3D.Model1DIndices[o];
 
           float x = allModel1Ds.getX(OBJ_ID);
           float y = allModel1Ds.getY(OBJ_ID);
@@ -254,9 +254,9 @@ class Groups {
 
       if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
-        for (int o = 0; o < Select3D.Model2D_ids.length; o++) {
+        for (int o = 0; o < Select3D.Model2DIndices.length; o++) {
 
-          int OBJ_ID = Select3D.Model2D_ids[o];
+          int OBJ_ID = Select3D.Model2DIndices[o];
 
           float x = allModel2Ds.getX(OBJ_ID);
           float y = allModel2Ds.getY(OBJ_ID);
@@ -275,9 +275,9 @@ class Groups {
 
       if (currentObjectCategory == ObjectCategory.SOLID) {
 
-        for (int o = 0; o < Select3D.Solid_ids.length; o++) {
+        for (int o = 0; o < Select3D.SolidIndices.length; o++) {
 
-          int OBJ_ID = Select3D.Solid_ids[o];
+          int OBJ_ID = Select3D.SolidIndices[o];
 
           float Solid_posX = allSolids.get_posX(OBJ_ID);
           float Solid_posY = allSolids.get_posY(OBJ_ID);
@@ -302,9 +302,9 @@ class Groups {
 
       if (currentObjectCategory == ObjectCategory.FACE) {
 
-        for (int o = 0; o < Select3D.Face_ids.length; o++) {
+        for (int o = 0; o < Select3D.FaceIndices.length; o++) {
 
-          int f = Select3D.Face_ids[o];
+          int f = Select3D.FaceIndices[o];
 
           int number_of_Vertices_before = allPoints.getLength();
 
@@ -366,9 +366,9 @@ class Groups {
 
       if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
-        for (int o = 0; o < Select3D.Polyline_ids.length; o++) {
+        for (int o = 0; o < Select3D.PolylineIndices.length; o++) {
 
-          int f = Select3D.Polyline_ids[o];
+          int f = Select3D.PolylineIndices[o];
 
           int number_of_Vertices_before = allPoints.getLength();
 
@@ -437,8 +437,8 @@ class Groups {
       Delete3D.selection();
 
 
-      Select3D.Group_ids = new int [1];
-      Select3D.Group_ids[0] = this.num - 1;
+      Select3D.GroupIndices = new int [1];
+      Select3D.GroupIndices[0] = this.num - 1;
 
       switch_category(ObjectCategory.GROUP);
     }
@@ -450,12 +450,12 @@ class Groups {
 
     if (currentObjectCategory == ObjectCategory.GROUP) {
 
-      Select3D.Group_ids = sort(Select3D.Group_ids);
+      Select3D.GroupIndices = sort(Select3D.GroupIndices);
 
 
-      for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
+      for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
 
-        int OBJ_ID = Select3D.Group_ids[o];
+        int OBJ_ID = Select3D.GroupIndices[o];
 
         this.Faces[OBJ_ID][0] = 0;
         this.Faces[OBJ_ID][1] = -1;
@@ -506,7 +506,7 @@ class Groups {
         OBJ_ID
       };
 
-      Select3D.Group_ids = concat(Select3D.Group_ids, emptyGroup);
+      Select3D.GroupIndices = concat(Select3D.GroupIndices, emptyGroup);
     }
 
     Delete3D.selection();

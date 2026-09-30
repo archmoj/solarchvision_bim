@@ -82,7 +82,7 @@ class MouseClickedTest {
     app.selectAllOfCategory(app.ObjectCategory.FACE);
 
     assertEquals(app.ObjectCategory.FACE, app.currentObjectCategory);
-    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.Face_ids);
+    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.FaceIndices);
   }
 
   @Test
@@ -1019,7 +1019,7 @@ class MouseClickedTest {
     app.allModel2Ds.XYZS = new float[][]{
       {1, 1, 1, 1}, {2, 2, 2, 1}, {99, 88, 77, 1} // last one should win
     };
-    app.Select3D.Model2D_ids = new int[]{0, 2}; // last id is 2, not the last array entry
+    app.Select3D.Model2DIndices = new int[]{0, 2}; // last id is 2, not the last array entry
 
     float[] origin = app.getMoveOriginPoint();
 
@@ -1030,7 +1030,7 @@ class MouseClickedTest {
   void getMoveOriginPoint_forAVertexReturnsThatPointsCoordinates () {
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.allVertices = new float[][]{{0, 0, 0}, {3, 4, 5}};
-    app.Select3D.Vertex_ids = new int[]{1};
+    app.Select3D.VertexIndices = new int[]{1};
 
     float[] origin = app.getMoveOriginPoint();
 

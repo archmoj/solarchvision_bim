@@ -133,31 +133,31 @@ class Select3DTest {
   @Test
   void deselectAll_clearsEveryCategorysSelection () {
     app.Select3D.terrainVertexIndices = new int[]{1};
-    app.Select3D.Camera_ids = new int[]{1};
-    app.Select3D.Section_ids = new int[]{1};
-    app.Select3D.Solid_ids = new int[]{1};
-    app.Select3D.Model1D_ids = new int[]{1};
-    app.Select3D.Model2D_ids = new int[]{1};
-    app.Select3D.Face_ids = new int[]{1};
-    app.Select3D.Polyline_ids = new int[]{1};
-    app.Select3D.Vertex_ids = new int[]{1};
-    app.Select3D.Group_ids = new int[]{1};
-    app.Select3D.softSelection_ids = new int[]{1};
+    app.Select3D.CameraIndices = new int[]{1};
+    app.Select3D.SectionIndices = new int[]{1};
+    app.Select3D.SolidIndices = new int[]{1};
+    app.Select3D.Model1DIndices = new int[]{1};
+    app.Select3D.Model2DIndices = new int[]{1};
+    app.Select3D.FaceIndices = new int[]{1};
+    app.Select3D.PolylineIndices = new int[]{1};
+    app.Select3D.VertexIndices = new int[]{1};
+    app.Select3D.GroupIndices = new int[]{1};
+    app.Select3D.softSelectionIndices = new int[]{1};
     app.Select3D.softSelection_values = new float[]{1};
 
     app.Select3D.deselectAll();
 
     assertEquals(0, app.Select3D.terrainVertexIndices.length);
-    assertEquals(0, app.Select3D.Camera_ids.length);
-    assertEquals(0, app.Select3D.Section_ids.length);
-    assertEquals(0, app.Select3D.Solid_ids.length);
-    assertEquals(0, app.Select3D.Model1D_ids.length);
-    assertEquals(0, app.Select3D.Model2D_ids.length);
-    assertEquals(0, app.Select3D.Face_ids.length);
-    assertEquals(0, app.Select3D.Polyline_ids.length);
-    assertEquals(0, app.Select3D.Vertex_ids.length);
-    assertEquals(0, app.Select3D.Group_ids.length);
-    assertEquals(0, app.Select3D.softSelection_ids.length); // deselect_Vertices cascades into this too
+    assertEquals(0, app.Select3D.CameraIndices.length);
+    assertEquals(0, app.Select3D.SectionIndices.length);
+    assertEquals(0, app.Select3D.SolidIndices.length);
+    assertEquals(0, app.Select3D.Model1DIndices.length);
+    assertEquals(0, app.Select3D.Model2DIndices.length);
+    assertEquals(0, app.Select3D.FaceIndices.length);
+    assertEquals(0, app.Select3D.PolylineIndices.length);
+    assertEquals(0, app.Select3D.VertexIndices.length);
+    assertEquals(0, app.Select3D.GroupIndices.length);
+    assertEquals(0, app.Select3D.softSelectionIndices.length); // deselect_Vertices cascades into this too
     assertEquals(0, app.Select3D.softSelection_values.length);
   }
 
@@ -173,16 +173,16 @@ class Select3DTest {
     app.allFaces.nodes = new int[][]{{0}, {0}, {0}};
     app.currentObjectCategory = app.ObjectCategory.FACE;
     app.Select3D.selectAll();
-    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.Face_ids);
+    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.FaceIndices);
   }
 
   @Test
   void invertSelection_flipsTheCurrentCategorysSelection () {
     app.allFaces.nodes = new int[][]{{0}, {0}, {0}};
     app.currentObjectCategory = app.ObjectCategory.FACE;
-    app.Select3D.Face_ids = new int[]{1};
+    app.Select3D.FaceIndices = new int[]{1};
     app.Select3D.invertSelection();
-    assertArrayEquals(new int[]{0, 2}, app.Select3D.Face_ids);
+    assertArrayEquals(new int[]{0, 2}, app.Select3D.FaceIndices);
   }
 
   @Test
@@ -190,7 +190,7 @@ class Select3DTest {
     app.allGroups.makeEmpty(3);
     app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.selectLast();
-    assertArrayEquals(new int[]{2}, app.Select3D.Group_ids);
+    assertArrayEquals(new int[]{2}, app.Select3D.GroupIndices);
   }
 
   // ============ convert_* family =====================================
@@ -200,9 +200,9 @@ class Select3DTest {
     app.allGroups.makeEmpty(2);
     app.allGroups.Model1Ds[0] = new int[]{0, 1};
     app.allGroups.Model1Ds[1] = new int[]{2, 3};
-    app.Select3D.Model1D_ids = new int[]{3};
+    app.Select3D.Model1DIndices = new int[]{3};
     app.Select3D.convert_Model1Ds_to_Groups();
-    assertArrayEquals(new int[]{1}, app.Select3D.Group_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.GroupIndices);
   }
 
   @Test
@@ -210,9 +210,9 @@ class Select3DTest {
     app.allGroups.makeEmpty(2);
     app.allGroups.Model2Ds[0] = new int[]{0, 1};
     app.allGroups.Model2Ds[1] = new int[]{2, 3};
-    app.Select3D.Model2D_ids = new int[]{3};
+    app.Select3D.Model2DIndices = new int[]{3};
     app.Select3D.convert_Model2Ds_to_Groups();
-    assertArrayEquals(new int[]{1}, app.Select3D.Group_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.GroupIndices);
   }
 
   @Test
@@ -220,9 +220,9 @@ class Select3DTest {
     app.allGroups.makeEmpty(2);
     app.allGroups.Solids[0] = new int[]{0, 1};
     app.allGroups.Solids[1] = new int[]{2, 3};
-    app.Select3D.Solid_ids = new int[]{3};
+    app.Select3D.SolidIndices = new int[]{3};
     app.Select3D.convert_Solids_to_Groups();
-    assertArrayEquals(new int[]{1}, app.Select3D.Group_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.GroupIndices);
   }
 
   @Test
@@ -230,9 +230,9 @@ class Select3DTest {
     app.allGroups.makeEmpty(2);
     app.allGroups.Faces[0] = new int[]{0, 1};
     app.allGroups.Faces[1] = new int[]{2, 3};
-    app.Select3D.Face_ids = new int[]{3};
+    app.Select3D.FaceIndices = new int[]{3};
     app.Select3D.convert_Faces_to_Groups();
-    assertArrayEquals(new int[]{1}, app.Select3D.Group_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.GroupIndices);
   }
 
   @Test
@@ -240,9 +240,9 @@ class Select3DTest {
     app.allGroups.makeEmpty(2);
     app.allGroups.Polylines[0] = new int[]{0, 1};
     app.allGroups.Polylines[1] = new int[]{2, 3};
-    app.Select3D.Polyline_ids = new int[]{3};
+    app.Select3D.PolylineIndices = new int[]{3};
     app.Select3D.convert_Polylines_to_Groups();
-    assertArrayEquals(new int[]{1}, app.Select3D.Group_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.GroupIndices);
   }
 
   @Test
@@ -254,26 +254,26 @@ class Select3DTest {
     app.allGroups.Faces[0] = new int[]{0, 0};
     app.allGroups.Polylines[0] = new int[]{0, -1}; // empty range - avoids indexing an empty allPolylines.nodes
 
-    app.Select3D.Vertex_ids = new int[]{5};
+    app.Select3D.VertexIndices = new int[]{5};
     app.Select3D.convert_Vertices_to_Groups();
 
-    assertArrayEquals(new int[]{0}, app.Select3D.Group_ids);
+    assertArrayEquals(new int[]{0}, app.Select3D.GroupIndices);
   }
 
   @Test
   void convertVerticesToFaces_findsFacesTouchingTheVertex () {
     app.allFaces.nodes = new int[][]{{0, 1}, {2}};
-    app.Select3D.Vertex_ids = new int[]{2};
+    app.Select3D.VertexIndices = new int[]{2};
     app.Select3D.convert_Vertices_to_Faces();
-    assertArrayEquals(new int[]{1}, app.Select3D.Face_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.FaceIndices);
   }
 
   @Test
   void convertVerticesToPolylines_findsPolylinesTouchingTheVertex () {
     app.allPolylines.nodes = new int[][]{{0, 1}, {2}};
-    app.Select3D.Vertex_ids = new int[]{2};
+    app.Select3D.VertexIndices = new int[]{2};
     app.Select3D.convert_Vertices_to_Polylines();
-    assertArrayEquals(new int[]{1}, app.Select3D.Polyline_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.PolylineIndices);
   }
 
   @Test
@@ -282,9 +282,9 @@ class Select3DTest {
     app.allModel1Ds.num = 2;
     app.allGroups.makeEmpty(1);
     app.allGroups.Model1Ds[0] = new int[]{0, 1};
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
     app.Select3D.convert_Groups_to_Model1Ds();
-    assertArrayEquals(new int[]{0, 1}, app.Select3D.Model1D_ids);
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.Model1DIndices);
   }
 
   @Test
@@ -293,9 +293,9 @@ class Select3DTest {
     app.allModel2Ds.num = 2;
     app.allGroups.makeEmpty(1);
     app.allGroups.Model2Ds[0] = new int[]{0, 1};
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
     app.Select3D.convert_Groups_to_Model2Ds();
-    assertArrayEquals(new int[]{0, 1}, app.Select3D.Model2D_ids);
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.Model2DIndices);
   }
 
   @Test
@@ -303,9 +303,9 @@ class Select3DTest {
     app.allSolids.DEF = new float[2][13]; // rangeUnion sizes its `seen` array by allSolids.DEF.length (no num field)
     app.allGroups.makeEmpty(1);
     app.allGroups.Solids[0] = new int[]{0, 1};
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
     app.Select3D.convert_Groups_to_Solids();
-    assertArrayEquals(new int[]{0, 1}, app.Select3D.Solid_ids);
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.SolidIndices);
   }
 
   @Test
@@ -313,9 +313,9 @@ class Select3DTest {
     app.allFaces.nodes = new int[2][0]; // rangeUnion sizes its `seen` array by allFaces.nodes.length
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 1};
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
     app.Select3D.convert_Groups_to_Faces();
-    assertArrayEquals(new int[]{0, 1}, app.Select3D.Face_ids);
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.FaceIndices);
   }
 
   @Test
@@ -323,9 +323,9 @@ class Select3DTest {
     app.allPolylines.nodes = new int[2][0]; // rangeUnion sizes its `seen` array by allPolylines.nodes.length
     app.allGroups.makeEmpty(1);
     app.allGroups.Polylines[0] = new int[]{0, 1};
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
     app.Select3D.convert_Groups_to_Polylines();
-    assertArrayEquals(new int[]{0, 1}, app.Select3D.Polyline_ids);
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.PolylineIndices);
   }
 
   @Test
@@ -337,10 +337,10 @@ class Select3DTest {
     app.allGroups.Faces[0] = new int[]{0, 0};
     app.allGroups.Polylines[0] = new int[]{0, -1}; // empty
 
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
     app.Select3D.convert_Groups_to_Vertices();
 
-    assertArrayEquals(new int[]{7}, app.Select3D.Vertex_ids);
+    assertArrayEquals(new int[]{7}, app.Select3D.VertexIndices);
   }
 
   // convert_Faces_to_Vertices and convert_Polylines_to_Vertices are also
@@ -351,18 +351,18 @@ class Select3DTest {
   void convertFacesToVertices_collectsTheFacesOwnNodes () {
     app.allVertices = new float[3][3]; // nodesOf sizes its `seen` array by allPoints.getLength()
     app.allFaces.nodes = new int[][]{{2, 0, 1}};
-    app.Select3D.Face_ids = new int[]{0};
+    app.Select3D.FaceIndices = new int[]{0};
     app.Select3D.convert_Faces_to_Vertices();
-    assertArrayEquals(new int[]{2, 0, 1}, app.Select3D.Vertex_ids);
+    assertArrayEquals(new int[]{2, 0, 1}, app.Select3D.VertexIndices);
   }
 
   @Test
   void convertPolylinesToVertices_collectsThePolylinesOwnNodes () {
     app.allVertices = new float[3][3];
     app.allPolylines.nodes = new int[][]{{2, 0, 1}};
-    app.Select3D.Polyline_ids = new int[]{0};
+    app.Select3D.PolylineIndices = new int[]{0};
     app.Select3D.convert_Polylines_to_Vertices();
-    assertArrayEquals(new int[]{2, 0, 1}, app.Select3D.Vertex_ids);
+    assertArrayEquals(new int[]{2, 0, 1}, app.Select3D.VertexIndices);
   }
 
   @Test
@@ -375,17 +375,17 @@ class Select3DTest {
     app.allGroups.Faces[0] = new int[]{0, 0};
     app.allGroups.Polylines[0] = new int[]{0, -1};
 
-    app.Select3D.Vertex_ids = new int[]{0}; // only point 0 is hard-selected
+    app.Select3D.VertexIndices = new int[]{0}; // only point 0 is hard-selected
 
     app.Select3D.convert_Vertex_to_softSelection();
 
     // The hard selection is restored to exactly what it was...
-    assertArrayEquals(new int[]{0}, app.Select3D.Vertex_ids);
+    assertArrayEquals(new int[]{0}, app.Select3D.VertexIndices);
 
     // ...but the soft selection expanded to the whole owning group (all
     // 3 points), each weighted by softSelectionFunction of its distance
     // to the nearest ORIGINALLY-selected point.
-    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.softSelection_ids);
+    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.softSelectionIndices);
     assertEquals(1f, app.Select3D.softSelection_values[0], 0.0001f);                          // distance 0
     assertEquals((float) Math.cos(Math.toRadians(45)), app.Select3D.softSelection_values[1], 0.0001f); // distance 1
     assertEquals(0f, app.Select3D.softSelection_values[2], 0.0001f);                           // distance 3, past softSelectionFalloffRadius=2
@@ -405,7 +405,7 @@ class Select3DTest {
 
     app.Select3D.isolatedVertices_Scene();
 
-    assertArrayEquals(new int[]{2, 1}, app.Select3D.Vertex_ids); // descending scan order
+    assertArrayEquals(new int[]{2, 1}, app.Select3D.VertexIndices); // descending scan order
     assertEquals(3, app.allVertices.length); // nothing was actually removed
   }
 
@@ -416,13 +416,13 @@ class Select3DTest {
     app.allVertices = new float[][]{{0, 0, 0}, {0.05f, 0, 0}, {5, 0, 0}};
     app.User3D.modifierWeldThreshold = 0.1f;
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.Vertex_ids = new int[]{0}; // only point 0 selected initially
+    app.Select3D.VertexIndices = new int[]{0}; // only point 0 selected initially
 
     app.Select3D.selectNearVertices();
 
     // Point 1 is within the weld threshold of point 0 and gets pulled
     // in; point 2 is far away and is left out.
-    int[] result = app.Select3D.Vertex_ids;
+    int[] result = app.Select3D.VertexIndices;
     java.util.Arrays.sort(result);
     assertArrayEquals(new int[]{0, 1}, result);
   }
@@ -432,9 +432,9 @@ class Select3DTest {
   @Test
   void selectPick_missReturnsEarlyAfterClearingTheSelectionInReplaceMode () {
     app.addNewSelectionToPreviousSelection = 0; // replace mode: clears first
-    app.Select3D.Face_ids = new int[]{5};
+    app.Select3D.FaceIndices = new int[]{5};
     app.Select3D.selectPick(new float[]{-1, 0, 0, 0});
-    assertEquals(0, app.Select3D.Face_ids.length);
+    assertEquals(0, app.Select3D.FaceIndices.length);
   }
 
   @Test
@@ -455,7 +455,7 @@ class Select3DTest {
     app.currentObjectCategory = app.ObjectCategory.GROUP;
     app.Select3D.selectPick(new float[]{2, 0, 0, 0}); // hit face 2, owned by group 1
 
-    assertArrayEquals(new int[]{1}, app.Select3D.Group_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.GroupIndices);
   }
 
   @Test
@@ -468,7 +468,7 @@ class Select3DTest {
     // Hit face 0 at a point close to vertex 1 (5,0,0).
     app.Select3D.selectPick(new float[]{0, 4.5f, 0, 0});
 
-    assertArrayEquals(new int[]{1}, app.Select3D.Vertex_ids);
+    assertArrayEquals(new int[]{1}, app.Select3D.VertexIndices);
   }
 
   // ============ calculate_BoundingBox ================================
@@ -477,7 +477,7 @@ class Select3DTest {
   void calculateBoundingBox_computesMinMidMaxForTheSelectedVertices () {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {10, 0, 0}};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.Vertex_ids = new int[]{0, 1, 2};
+    app.Select3D.VertexIndices = new int[]{0, 1, 2};
 
     app.Select3D.calculate_BoundingBox();
 
@@ -490,7 +490,7 @@ class Select3DTest {
   void calculateBoundingBox_worksForModel1DsToo () {
     app.allModel1Ds.f_data = new float[][]{{0, 0, 0, 1, 0, 0}, {4, 6, 0, 1, 0, 0}};
     app.currentObjectCategory = app.ObjectCategory.MODEL1D;
-    app.Select3D.Model1D_ids = new int[]{0, 1};
+    app.Select3D.Model1DIndices = new int[]{0, 1};
 
     app.Select3D.calculate_BoundingBox();
 
@@ -504,7 +504,7 @@ class Select3DTest {
   void calculateBoundingBox_worksForModel2DsToo () {
     app.allModel2Ds.XYZS = new float[][]{{2, 0, 0, 0}, {8, 0, 0, 0}};
     app.currentObjectCategory = app.ObjectCategory.MODEL2D;
-    app.Select3D.Model2D_ids = new int[]{0, 1};
+    app.Select3D.Model2DIndices = new int[]{0, 1};
 
     app.Select3D.calculate_BoundingBox();
 
@@ -520,7 +520,7 @@ class Select3DTest {
     app.allVertices = new float[][]{{0, 0, 0}, {6, 0, 0}, {6, 6, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.currentObjectCategory = app.ObjectCategory.FACE;
-    app.Select3D.Face_ids = new int[]{0};
+    app.Select3D.FaceIndices = new int[]{0};
 
     app.Select3D.calculate_BoundingBox();
 
@@ -537,7 +537,7 @@ class Select3DTest {
     // the whole "shrink to the real min/max" block below it - the identity
     // box computed earlier (pos 0, scale 1, rotation 0) is what's left.
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.Vertex_ids = new int[0];
+    app.Select3D.VertexIndices = new int[0];
     app.allVertices = new float[0][3];
 
     app.Select3D.calculate_BoundingBox();
@@ -553,7 +553,7 @@ class Select3DTest {
     app.Select3D.pivotAlignmentY = 2;
     app.Select3D.pivotAlignmentZ = 1;
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.Vertex_ids = new int[0];
+    app.Select3D.VertexIndices = new int[0];
     app.allVertices = new float[0][3];
 
     app.Select3D.calculate_BoundingBox();
@@ -654,7 +654,7 @@ class Select3DTest {
   void getFaceVertices_collectsAndDedupesFromEverySelectedFace () {
     app.allVertices = new float[3][3]; // this function sizes `seen` by allPoints.getLength()
     app.allFaces.nodes = new int[][]{{0, 1}, {1, 2}};
-    app.Select3D.Face_ids = new int[]{0, 1};
+    app.Select3D.FaceIndices = new int[]{0, 1};
     int[] result = app.Select3D.get_Face_Vertices();
     java.util.Arrays.sort(result);
     assertArrayEquals(new int[]{0, 1, 2}, result);
@@ -664,7 +664,7 @@ class Select3DTest {
   void getPolylineVertices_collectsAndDedupesFromEverySelectedPolyline () {
     app.allVertices = new float[3][3];
     app.allPolylines.nodes = new int[][]{{0, 1}, {1, 2}};
-    app.Select3D.Polyline_ids = new int[]{0, 1};
+    app.Select3D.PolylineIndices = new int[]{0, 1};
     int[] result = app.Select3D.get_Polyline_Vertices();
     java.util.Arrays.sort(result);
     assertArrayEquals(new int[]{0, 1, 2}, result);
@@ -679,7 +679,7 @@ class Select3DTest {
     app.allGroups.Faces[0] = new int[]{0, 0};
     app.allGroups.Polylines[0] = new int[]{0, 0};
 
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
     int[] result = app.Select3D.get_Group_Vertices();
     java.util.Arrays.sort(result);
 
@@ -722,16 +722,16 @@ class Select3DTest {
     original.softSelectionFalloffRadius = 3.5f;
 
     original.terrainVertexIndices = new int[]{1};
-    original.Model1D_ids = new int[]{2, 3};
-    original.Model2D_ids = new int[]{4};
-    original.Group_ids = new int[]{5, 6};
-    original.Face_ids = new int[]{7};
-    original.Polyline_ids = new int[]{8, 9};
-    original.Solid_ids = new int[]{10};
-    original.Section_ids = new int[]{11};
-    original.Camera_ids = new int[]{12};
-    original.Vertex_ids = new int[]{13, 14, 15};
-    original.softSelection_ids = new int[]{16};
+    original.Model1DIndices = new int[]{2, 3};
+    original.Model2DIndices = new int[]{4};
+    original.GroupIndices = new int[]{5, 6};
+    original.FaceIndices = new int[]{7};
+    original.PolylineIndices = new int[]{8, 9};
+    original.SolidIndices = new int[]{10};
+    original.SectionIndices = new int[]{11};
+    original.CameraIndices = new int[]{12};
+    original.VertexIndices = new int[]{13, 14, 15};
+    original.softSelectionIndices = new int[]{16};
     original.softSelection_values = new float[]{0.25f};
 
     processing.data.XML root = new processing.data.XML("root");
@@ -770,23 +770,23 @@ class Select3DTest {
     assertEquals(3.5f, fresh.softSelectionFalloffRadius, 0.0001f);
 
     assertArrayEquals(new int[]{1}, fresh.terrainVertexIndices);
-    assertArrayEquals(new int[]{2, 3}, fresh.Model1D_ids);
-    assertArrayEquals(new int[]{4}, fresh.Model2D_ids);
-    assertArrayEquals(new int[]{5, 6}, fresh.Group_ids);
-    assertArrayEquals(new int[]{7}, fresh.Face_ids);
-    assertArrayEquals(new int[]{8, 9}, fresh.Polyline_ids);
-    assertArrayEquals(new int[]{10}, fresh.Solid_ids);
-    assertArrayEquals(new int[]{11}, fresh.Section_ids);
-    assertArrayEquals(new int[]{12}, fresh.Camera_ids);
-    assertArrayEquals(new int[]{13, 14, 15}, fresh.Vertex_ids);
-    assertArrayEquals(new int[]{16}, fresh.softSelection_ids);
+    assertArrayEquals(new int[]{2, 3}, fresh.Model1DIndices);
+    assertArrayEquals(new int[]{4}, fresh.Model2DIndices);
+    assertArrayEquals(new int[]{5, 6}, fresh.GroupIndices);
+    assertArrayEquals(new int[]{7}, fresh.FaceIndices);
+    assertArrayEquals(new int[]{8, 9}, fresh.PolylineIndices);
+    assertArrayEquals(new int[]{10}, fresh.SolidIndices);
+    assertArrayEquals(new int[]{11}, fresh.SectionIndices);
+    assertArrayEquals(new int[]{12}, fresh.CameraIndices);
+    assertArrayEquals(new int[]{13, 14, 15}, fresh.VertexIndices);
+    assertArrayEquals(new int[]{16}, fresh.softSelectionIndices);
     assertArrayEquals(new float[]{0.25f}, fresh.softSelection_values, 0.0001f);
   }
 
   @Test
   void toXMLThenFromXML_roundTripsEmptyIdListsAsEmptyArraysNotNull () {
     solarchvision_bim.Select3D original = app.Select3D;
-    original.Vertex_ids = new int[0];
+    original.VertexIndices = new int[0];
     original.softSelection_values = new float[0];
 
     processing.data.XML root = new processing.data.XML("root");
@@ -795,8 +795,8 @@ class Select3DTest {
     solarchvision_bim.Select3D fresh = app.new Select3D();
     fresh.from_XML(root);
 
-    assertNotNull(fresh.Vertex_ids);
-    assertEquals(0, fresh.Vertex_ids.length);
+    assertNotNull(fresh.VertexIndices);
+    assertEquals(0, fresh.VertexIndices.length);
     assertNotNull(fresh.softSelection_values);
     assertEquals(0, fresh.softSelection_values.length);
   }
@@ -809,7 +809,7 @@ class Select3DTest {
       {2, 3, 0, 1, 1, 1, 0, 0, 0}
     };
     app.currentObjectCategory = app.ObjectCategory.GROUP;
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
 
     app.Select3D.calculate_BoundingBox();
 
@@ -826,7 +826,7 @@ class Select3DTest {
       {4, 0, 0, 1, 1, 1, 0, 0, 0}
     };
     app.currentObjectCategory = app.ObjectCategory.GROUP;
-    app.Select3D.Group_ids = new int[]{0, 1};
+    app.Select3D.GroupIndices = new int[]{0, 1};
 
     app.Select3D.calculate_BoundingBox();
 

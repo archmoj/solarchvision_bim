@@ -136,69 +136,69 @@ class Clone3D {
   void Model1Ds (boolean produce_same_variation) {
     int numberBefore = allModel1Ds.num;
 
-    for (int o = 0; o < Select3D.Model1D_ids.length; o++) {
-      cloneModel1D(Select3D.Model1D_ids[o], produce_same_variation, false);
+    for (int o = 0; o < Select3D.Model1DIndices.length; o++) {
+      cloneModel1D(Select3D.Model1DIndices[o], produce_same_variation, false);
     }
 
     Select3D.deselect_Model1Ds();
-    Select3D.Model1D_ids = appendRange(Select3D.Model1D_ids, numberBefore, allModel1Ds.num);
+    Select3D.Model1DIndices = appendRange(Select3D.Model1DIndices, numberBefore, allModel1Ds.num);
     selection_changed();
   }
 
   void Model2Ds (boolean produce_same_variation) {
     int numberBefore = allModel2Ds.num;
 
-    for (int o = 0; o < Select3D.Model2D_ids.length; o++) {
-      cloneModel2D(Select3D.Model2D_ids[o], produce_same_variation);
+    for (int o = 0; o < Select3D.Model2DIndices.length; o++) {
+      cloneModel2D(Select3D.Model2DIndices[o], produce_same_variation);
     }
 
     Select3D.deselect_Model2Ds();
-    Select3D.Model2D_ids = appendRange(Select3D.Model2D_ids, numberBefore, allModel2Ds.num);
+    Select3D.Model2DIndices = appendRange(Select3D.Model2DIndices, numberBefore, allModel2Ds.num);
     selection_changed();
   }
 
   void Faces (boolean produce_same_variation) {
     int numberBefore = allFaces.nodes.length;
 
-    for (int o = 0; o < Select3D.Face_ids.length; o++) {
+    for (int o = 0; o < Select3D.FaceIndices.length; o++) {
       // Fresh map per source face, matching the original per-face dedupe scope.
       HashMap<Integer, Integer> vertexMap = new HashMap<Integer, Integer>();
-      cloneFace(Select3D.Face_ids[o], vertexMap);
+      cloneFace(Select3D.FaceIndices[o], vertexMap);
     }
 
-    Select3D.Face_ids = appendRange(new int[0], numberBefore, allFaces.nodes.length);
+    Select3D.FaceIndices = appendRange(new int[0], numberBefore, allFaces.nodes.length);
     selection_changed();
   }
 
   void Polylines (boolean produce_same_variation) {
     int numberBefore = allPolylines.nodes.length;
 
-    for (int o = 0; o < Select3D.Polyline_ids.length; o++) {
+    for (int o = 0; o < Select3D.PolylineIndices.length; o++) {
       HashMap<Integer, Integer> vertexMap = new HashMap<Integer, Integer>();
-      clonePolyline(Select3D.Polyline_ids[o], vertexMap);
+      clonePolyline(Select3D.PolylineIndices[o], vertexMap);
     }
 
-    Select3D.Polyline_ids = appendRange(new int[0], numberBefore, allPolylines.nodes.length);
+    Select3D.PolylineIndices = appendRange(new int[0], numberBefore, allPolylines.nodes.length);
     selection_changed();
   }
 
   void Solids (boolean produce_same_variation) {
     int numberBefore = allSolids.DEF.length;
 
-    for (int o = 0; o < Select3D.Solid_ids.length; o++) {
-      cloneSolid(Select3D.Solid_ids[o]);
+    for (int o = 0; o < Select3D.SolidIndices.length; o++) {
+      cloneSolid(Select3D.SolidIndices[o]);
     }
 
     Select3D.deselect_Solids();
-    Select3D.Solid_ids = appendRange(Select3D.Solid_ids, numberBefore, allSolids.DEF.length);
+    Select3D.SolidIndices = appendRange(Select3D.SolidIndices, numberBefore, allSolids.DEF.length);
     selection_changed();
   }
 
   void Sections (boolean produce_same_variation) {
     int numberBefore = allSections.num;
 
-    for (int o = 0; o < Select3D.Section_ids.length; o++) {
-      int OBJ_ID = Select3D.Section_ids[o];
+    for (int o = 0; o < Select3D.SectionIndices.length; o++) {
+      int OBJ_ID = Select3D.SectionIndices[o];
       allSections.create(
         allSections.getX(OBJ_ID), allSections.getY(OBJ_ID), allSections.getZ(OBJ_ID),
         allSections.getR(OBJ_ID), allSections.getU(OBJ_ID), allSections.getV(OBJ_ID),
@@ -207,15 +207,15 @@ class Clone3D {
     }
 
     Select3D.deselect_Sections();
-    Select3D.Section_ids = appendRange(Select3D.Section_ids, numberBefore, allSections.num);
+    Select3D.SectionIndices = appendRange(Select3D.SectionIndices, numberBefore, allSections.num);
     selection_changed();
   }
 
   void Cameras (boolean produce_same_variation) {
     int numberBefore = allCameras.num;
 
-    for (int o = 0; o < Select3D.Camera_ids.length; o++) {
-      int OBJ_ID = Select3D.Camera_ids[o];
+    for (int o = 0; o < Select3D.CameraIndices.length; o++) {
+      int OBJ_ID = Select3D.CameraIndices[o];
       allCameras.create(
         allCameras.get_posX(OBJ_ID), allCameras.get_posY(OBJ_ID), allCameras.get_posZ(OBJ_ID), allCameras.get_posT(OBJ_ID),
         allCameras.get_rotX(OBJ_ID), allCameras.get_rotY(OBJ_ID), allCameras.get_rotZ(OBJ_ID), allCameras.get_rotT(OBJ_ID),
@@ -224,7 +224,7 @@ class Clone3D {
     }
 
     Select3D.deselect_Cameras();
-    Select3D.Camera_ids = appendRange(Select3D.Camera_ids, numberBefore, allCameras.num);
+    Select3D.CameraIndices = appendRange(Select3D.CameraIndices, numberBefore, allCameras.num);
     selection_changed();
   }
 
@@ -232,8 +232,8 @@ class Clone3D {
     int SOLID_added = 0;
     int numberOfGroupsBefore = allGroups.num;
 
-    for (int o = 0; o < Select3D.Group_ids.length; o++) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = 0; o < Select3D.GroupIndices.length; o++) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       boolean hasFaces = (0 <= allGroups.getStart_Face(OBJ_ID)) && (allGroups.getStart_Face(OBJ_ID) <= allGroups.getStop_Face(OBJ_ID));
       boolean hasPolylines = (0 <= allGroups.getStart_Polyline(OBJ_ID)) && (allGroups.getStart_Polyline(OBJ_ID) <= allGroups.getStop_Polyline(OBJ_ID));
@@ -281,7 +281,7 @@ class Clone3D {
     }
 
     Select3D.deselect_Groups();
-    Select3D.Group_ids = appendRange(Select3D.Group_ids, numberOfGroupsBefore, allGroups.num);
+    Select3D.GroupIndices = appendRange(Select3D.GroupIndices, numberOfGroupsBefore, allGroups.num);
 
     if (SOLID_added != 0) allSolidImpacts.calculate_Impact_selectedSections();
     selection_changed();

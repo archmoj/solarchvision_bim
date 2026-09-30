@@ -18,7 +18,7 @@ class Rotate3DTest {
   void selection_vertexCategoryDispatchesToVerticesAndConvertsDegreesToRadians () {
     app.allVertices = new float[][]{{1, 0, 0}};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.Vertex_ids = new int[]{0};
+    app.Select3D.VertexIndices = new int[]{0};
 
     app.Rotate3D.selection(0, 0, 0, 90, 2); // 90 DEGREES around Z
 
@@ -55,7 +55,7 @@ class Rotate3DTest {
     // between the unrotated and fully-rotated positions - a genuinely
     // different blend than Scale3D.softSelection's linear value lerp.
     app.allVertices = new float[][]{{1, 0, 0}};
-    app.Select3D.softSelection_ids = new int[]{0};
+    app.Select3D.softSelectionIndices = new int[]{0};
     app.Select3D.softSelection_values = new float[]{0.5f};
 
     app.Rotate3D.softSelection(0, 0, 0, HALF_PI, 2);
@@ -85,7 +85,7 @@ class Rotate3DTest {
   @Test
   void vertices_rotatesOnlyTheSelectedPoints () {
     app.allVertices = new float[][]{{1, 0, 0}, {100, 100, 100}};
-    app.Select3D.Vertex_ids = new int[]{0};
+    app.Select3D.VertexIndices = new int[]{0};
 
     app.Rotate3D.Vertices(0, 0, 0, HALF_PI, 2);
 
@@ -97,7 +97,7 @@ class Rotate3DTest {
   void polylines_rotatesEveryVertexTouchedBySelectedPolylines () {
     app.allVertices = new float[][]{{1, 0, 0}, {0, 0, 0}};
     app.allPolylines.nodes = new int[][]{{0}};
-    app.Select3D.Polyline_ids = new int[]{0};
+    app.Select3D.PolylineIndices = new int[]{0};
 
     app.Rotate3D.Polylines(0, 0, 0, HALF_PI, 2);
 
@@ -108,7 +108,7 @@ class Rotate3DTest {
   void faces_rotatesEveryVertexTouchedBySelectedFaces () {
     app.allVertices = new float[][]{{1, 0, 0}, {0, 0, 0}};
     app.allFaces.nodes = new int[][]{{0}};
-    app.Select3D.Face_ids = new int[]{0};
+    app.Select3D.FaceIndices = new int[]{0};
 
     app.Rotate3D.Faces(0, 0, 0, HALF_PI, 2);
 
@@ -123,7 +123,7 @@ class Rotate3DTest {
     app.allSolids.DEF[0][0] = 1; // posX
     // DEF[11] is the solid's own Z rotation, per Solids.RotateZ.
 
-    app.Select3D.Solid_ids = new int[]{0};
+    app.Select3D.SolidIndices = new int[]{0};
 
     app.Rotate3D.Solids(0, 0, 0, HALF_PI, 2);
 
@@ -147,7 +147,7 @@ class Rotate3DTest {
     app.allCameras.num = 1;
     app.allCameras.options[0][0] = 1; // posX=1
 
-    app.Select3D.Camera_ids = new int[]{0};
+    app.Select3D.CameraIndices = new int[]{0};
 
     app.Rotate3D.Cameras(0, 0, 0, HALF_PI, 2); // request Z...
 
@@ -164,7 +164,7 @@ class Rotate3DTest {
     app.allCameras.num = 1;
     app.allCameras.options[0][1] = 1; // posY=1
 
-    app.Select3D.Camera_ids = new int[]{0};
+    app.Select3D.CameraIndices = new int[]{0};
 
     app.Rotate3D.Cameras(0, 0, 0, HALF_PI, 0); // request X - no remap
 
@@ -180,7 +180,7 @@ class Rotate3DTest {
     app.allCameras.options[0][0] = 1;
 
     app.WIN3D.currentCameraIndex = 0;
-    app.Select3D.Camera_ids = new int[]{0};
+    app.Select3D.CameraIndices = new int[]{0};
 
     app.Rotate3D.Cameras(0, 0, 0, HALF_PI, 0); // the_Vector=0 needs no remap, simplest case to verify against
 
@@ -202,12 +202,12 @@ class Rotate3DTest {
 
     // Rotate index 0 around Z only - index 1 is never included in this
     // call, so it can't be affected by it.
-    app.Select3D.Model1D_ids = new int[]{0};
+    app.Select3D.Model1DIndices = new int[]{0};
     app.Rotate3D.Model1Ds(0, 0, 0, HALF_PI, 2);
     assertEquals(5f - HALF_PI, app.allModel1Ds.f_data[0][4], 0.0001f); // Z: own rotation updated
 
     // Rotate index 1 around X only, in a completely separate call.
-    app.Select3D.Model1D_ids = new int[]{1};
+    app.Select3D.Model1DIndices = new int[]{1};
     app.Rotate3D.Model1Ds(0, 0, 0, HALF_PI, 0);
     assertEquals(5f, app.allModel1Ds.f_data[1][4], 0.0001f); // X: own rotation untouched
   }
@@ -219,7 +219,7 @@ class Rotate3DTest {
     app.allModel2Ds.XYZS = new float[][]{new float[4]};
     app.allModel2Ds.XYZS[0][0] = 1;
 
-    app.Select3D.Model2D_ids = new int[]{0};
+    app.Select3D.Model2DIndices = new int[]{0};
 
     app.Rotate3D.Model2Ds(0, 0, 0, HALF_PI, 2);
 
@@ -242,7 +242,7 @@ class Rotate3DTest {
     app.allGroups.Solids[0] = new int[]{0, -1};
     app.allGroups.Pivots[0] = new float[]{1, 0, 0, 1, 1, 1, 0, 0, 0};
 
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
 
     app.Rotate3D.Groups(HALF_PI, 2);
 
@@ -282,7 +282,7 @@ class Rotate3DTest {
     app.allGroups.Solids[0] = new int[]{0, -1};
     app.allGroups.Pivots[0] = new float[9];
 
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
 
     app.Rotate3D.Groups(HALF_PI, 2);
 
@@ -307,8 +307,8 @@ class Rotate3DTest {
     app.allGroups.Solids[0] = new int[]{0, 0};
     app.allGroups.Pivots[0] = new float[9];
 
-    app.Select3D.Group_ids = new int[]{0};
-    // Section_ids left empty, same reasoning as the Solids() test's
+    app.Select3D.GroupIndices = new int[]{0};
+    // SectionIndices left empty, same reasoning as the Solids() test's
     // sibling in Move3DTest/Scale3DTest.
 
     app.Rotate3D.Groups(HALF_PI, 2);

@@ -281,9 +281,9 @@ class Overlay3D {
         ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
         {
-          for (int o = Select3D.Camera_ids.length - 1; o >= 0; o--) {
+          for (int o = Select3D.CameraIndices.length - 1; o >= 0; o--) {
 
-            int f = Select3D.Camera_ids[o];
+            int f = Select3D.CameraIndices[o];
 
             ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
@@ -314,9 +314,9 @@ class Overlay3D {
 
         ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
-        for (int o = Select3D.Section_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.SectionIndices.length - 1; o >= 0; o--) {
 
-          int f = Select3D.Section_ids[o];
+          int f = Select3D.SectionIndices[o];
 
           ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
@@ -346,9 +346,9 @@ class Overlay3D {
 
         ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
-        for (int o = Select3D.Solid_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.SolidIndices.length - 1; o >= 0; o--) {
 
-          int OBJ_ID = Select3D.Solid_ids[o];
+          int OBJ_ID = Select3D.SolidIndices[o];
 
           for (int plane_type = 0; plane_type < allSolids.num_visualFaces; plane_type++) {
 
@@ -383,9 +383,9 @@ class Overlay3D {
 
         ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
-        for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.Model2DIndices.length - 1; o >= 0; o--) {
 
-          int OBJ_ID = Select3D.Model2D_ids[o];
+          int OBJ_ID = Select3D.Model2DIndices[o];
 
           for (int plane_type = 0; plane_type < allModel2Ds.num_visualFaces; plane_type++) {
 
@@ -420,9 +420,9 @@ class Overlay3D {
 
         ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
-        for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.Model1DIndices.length - 1; o >= 0; o--) {
 
-          int f = Select3D.Model1D_ids[o];
+          int f = Select3D.Model1DIndices[o];
 
           ArrayList<float[]> camVertices = new ArrayList<float[]>();
 
@@ -453,9 +453,9 @@ class Overlay3D {
 
         ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
-        for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.FaceIndices.length - 1; o >= 0; o--) {
 
-          int f = Select3D.Face_ids[o];
+          int f = Select3D.FaceIndices[o];
 
           FaceTessellation ft = computeFaceTessellation(f);
           int tessellation = ft.tessellation;
@@ -492,9 +492,9 @@ class Overlay3D {
         textSize(1.5 * MessageSize);
         textAlign(CENTER, BOTTOM);
 
-        for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.FaceIndices.length - 1; o >= 0; o--) {
 
-          int f = Select3D.Face_ids[o];
+          int f = Select3D.FaceIndices[o];
 
           for (int j = 0; j < allFaces.nodes[f].length; j++) {
             int vNo = allFaces.nodes[f][j];
@@ -526,9 +526,9 @@ class Overlay3D {
         textSize(1.5 * MessageSize);
         textAlign(CENTER, BOTTOM);
 
-        for (int o = Select3D.Polyline_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.PolylineIndices.length - 1; o >= 0; o--) {
 
-          int f = Select3D.Polyline_ids[o];
+          int f = Select3D.PolylineIndices[o];
 
           for (int j = 0; j < allPolylines.nodes[f].length; j++) {
             int vNo = allPolylines.nodes[f][j];
@@ -561,9 +561,9 @@ class Overlay3D {
 
         float R = 10;
 
-        for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.VertexIndices.length - 1; o >= 0; o--) {
 
-          int vNo = Select3D.Vertex_ids[o];
+          int vNo = Select3D.VertexIndices[o];
 
           float x = allPoints.getX(vNo) * overallScale;
           float y = allPoints.getY(vNo) * overallScale;
@@ -591,9 +591,9 @@ class Overlay3D {
 
         float R = 5;
 
-        for (int q = 0; q < Select3D.softSelection_ids.length; q++) {
+        for (int q = 0; q < Select3D.softSelectionIndices.length; q++) {
 
-          int vNo = Select3D.softSelection_ids[q];
+          int vNo = Select3D.softSelectionIndices[q];
 
           float _u = Select3D.softSelection_values[q];
 
@@ -629,9 +629,9 @@ class Overlay3D {
 
         ArrayList<float[][]> edgeBatch = new ArrayList<float[][]>();
 
-        for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
 
-          int OBJ_ID = Select3D.Group_ids[o];
+          int OBJ_ID = Select3D.GroupIndices[o];
 
 
           for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
@@ -820,9 +820,9 @@ class Overlay3D {
         GROUP_PIVOT_STYLE.applyStyle();
 
         if(allGroups.Pivots.length > 0) {
-          for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
+          for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
 
-            int OBJ_ID = Select3D.Group_ids[o];
+            int OBJ_ID = Select3D.GroupIndices[o];
 
             float x0 = allGroups.Pivots[OBJ_ID][0];
             float y0 = allGroups.Pivots[OBJ_ID][1];

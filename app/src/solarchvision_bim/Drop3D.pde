@@ -34,8 +34,8 @@ class Drop3D {
   }
 
   void Model1Ds () {
-    for (int o = Select3D.Model1D_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Model1D_ids[o];
+    for (int o = Select3D.Model1DIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.Model1DIndices[o];
 
       float[] RxP = castDrop(allModel1Ds.getX(OBJ_ID), allModel1Ds.getY(OBJ_ID), allModel1Ds.getZ(OBJ_ID));
       if (RxP[0] >= 0) {
@@ -49,8 +49,8 @@ class Drop3D {
   }
 
   void Model2Ds () {
-    for (int o = Select3D.Model2D_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Model2D_ids[o];
+    for (int o = Select3D.Model2DIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.Model2DIndices[o];
 
       float[] RxP = castDrop(allModel2Ds.getX(OBJ_ID), allModel2Ds.getY(OBJ_ID), allModel2Ds.getZ(OBJ_ID));
       if (RxP[0] >= 0) {

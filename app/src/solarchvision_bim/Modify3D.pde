@@ -7,20 +7,20 @@ class Modify3D {
     if (currentObjectCategory == ObjectCategory.FACE) Select3D.convert_Faces_to_Vertices();
     if (currentObjectCategory == ObjectCategory.POLYLINE) Select3D.convert_Polylines_to_Vertices();
 
-    Select3D.Vertex_ids = sort(Select3D.Vertex_ids);
+    Select3D.VertexIndices = sort(Select3D.VertexIndices);
   }
 
   void selectFacesAndGroups_fromCurrentSelection () {
     if (currentObjectCategory == ObjectCategory.GROUP) {
-      Select3D.Group_ids = sort(Select3D.Group_ids);
+      Select3D.GroupIndices = sort(Select3D.GroupIndices);
       Select3D.convert_Groups_to_Faces();
-      Select3D.Face_ids = sort(Select3D.Face_ids);
+      Select3D.FaceIndices = sort(Select3D.FaceIndices);
     }
 
     if (currentObjectCategory == ObjectCategory.FACE) {
-      Select3D.Face_ids = sort(Select3D.Face_ids);
+      Select3D.FaceIndices = sort(Select3D.FaceIndices);
       Select3D.convert_Faces_to_Groups();
-      Select3D.Group_ids = sort(Select3D.Group_ids);
+      Select3D.GroupIndices = sort(Select3D.GroupIndices);
     }
   }
 
@@ -41,8 +41,8 @@ class Modify3D {
 
     Select3D.calculate_BoundingBox();
 
-    for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
-      int vNo = Select3D.Vertex_ids[o];
+    for (int o = Select3D.VertexIndices.length - 1; o >= 0; o--) {
+      int vNo = Select3D.VertexIndices[o];
       allPoints.setX(vNo, Select3D.BoundingBox[1][0]); // center
       allPoints.setY(vNo, Select3D.BoundingBox[1][1]); // center
       allPoints.setZ(vNo, Select3D.BoundingBox[1][2]); // center
@@ -89,8 +89,8 @@ class Modify3D {
 
     boolean[] toRemove = new boolean[allVertices.length]; // deferred deletions, compacted once at the end
 
-    for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
-      int vNo = Select3D.Vertex_ids[o];
+    for (int o = Select3D.VertexIndices.length - 1; o >= 0; o--) {
+      int vNo = Select3D.VertexIndices[o];
       int found = -1;
 
       for (int i = 0; i < allFaces.nodes.length; i++) {
@@ -138,17 +138,17 @@ class Modify3D {
 
     boolean[] toRemove = new boolean[allVertices.length]; // deferred deletions, compacted once at the end
 
-    for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
-      int vNo = Select3D.Vertex_ids[o];
+    for (int o = Select3D.VertexIndices.length - 1; o >= 0; o--) {
+      int vNo = Select3D.VertexIndices[o];
       int found = -1;
 
       for (int m = o - 1; m >= 0; m--) {
-        int q = Select3D.Vertex_ids[m];
+        int q = Select3D.VertexIndices[m];
         float d = dist(allPoints.getX(q), allPoints.getY(q), allPoints.getZ(q), allPoints.getX(vNo), allPoints.getY(vNo), allPoints.getZ(vNo));
 
         if (d <= max_distance) {
-          for (int i = 0; i < Select3D.Face_ids.length; i++) {
-            int f = Select3D.Face_ids[i];
+          for (int i = 0; i < Select3D.FaceIndices.length; i++) {
+            int f = Select3D.FaceIndices[i];
             for (int j = 0; j < allFaces.nodes[f].length; j++) {
               if (allFaces.nodes[f][j] == q) {
                 allFaces.nodes[f][j] = vNo;
@@ -157,8 +157,8 @@ class Modify3D {
             }
           }
 
-          for (int i = 0; i < Select3D.Polyline_ids.length; i++) {
-            int f = Select3D.Polyline_ids[i];
+          for (int i = 0; i < Select3D.PolylineIndices.length; i++) {
+            int f = Select3D.PolylineIndices[i];
             for (int j = 0; j < allPolylines.nodes[f].length; j++) {
               if (allPolylines.nodes[f][j] == q) {
                 allPolylines.nodes[f][j] = vNo;
@@ -219,11 +219,11 @@ class Modify3D {
 
     this.selectVertices_fromCurrentSelection();
 
-    float[][] Vertex_offsetValues = new float[Select3D.Vertex_ids.length][3];
-    int[] Vertex_offsetNum = new int[Select3D.Vertex_ids.length];
+    float[][] Vertex_offsetValues = new float[Select3D.VertexIndices.length][3];
+    int[] Vertex_offsetNum = new int[Select3D.VertexIndices.length];
 
-    for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
-      int vNo = Select3D.Vertex_ids[o];
+    for (int o = Select3D.VertexIndices.length - 1; o >= 0; o--) {
+      int vNo = Select3D.VertexIndices[o];
 
       accumulateOffsetFromRing(allFaces.nodes, vNo, o, _type, _amount, Vertex_offsetValues, Vertex_offsetNum);
       accumulateOffsetFromRing(allPolylines.nodes, vNo, o, _type, _amount, Vertex_offsetValues, Vertex_offsetNum);
@@ -235,8 +235,8 @@ class Modify3D {
       }
     }
 
-    for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
-      int vNo = Select3D.Vertex_ids[o];
+    for (int o = Select3D.VertexIndices.length - 1; o >= 0; o--) {
+      int vNo = Select3D.VertexIndices[o];
       allPoints.move(vNo, Vertex_offsetValues[o][0], Vertex_offsetValues[o][1], Vertex_offsetValues[o][2]);
     }
 
@@ -248,8 +248,8 @@ class Modify3D {
 
     this.selectVertices_fromCurrentSelection();
 
-    for (int o = Select3D.Vertex_ids.length - 1; o >= 0; o--) {
-      int vNo = Select3D.Vertex_ids[o];
+    for (int o = Select3D.VertexIndices.length - 1; o >= 0; o--) {
+      int vNo = Select3D.VertexIndices[o];
 
       for (int i = 0; i < allFaces.nodes.length; i++) {
         for (int j = 0; j < allFaces.nodes[i].length; j++) {
@@ -289,8 +289,8 @@ class Modify3D {
   }
 
   int findOwningGroupId (int f) {
-    for (int i = 0; i < Select3D.Group_ids.length; i++) {
-      int OBJ_ID = Select3D.Group_ids[i];
+    for (int i = 0; i < Select3D.GroupIndices.length; i++) {
+      int OBJ_ID = Select3D.GroupIndices[i];
       if (isFaceInGroupRange(f, OBJ_ID)) return OBJ_ID;
     }
     return -1;
@@ -338,17 +338,17 @@ class Modify3D {
     if (newFaceIndices_L.size() == 0) return;
     int[] newFaceIndices = new int[newFaceIndices_L.size()];
     for (int i = 0; i < newFaceIndices.length; i++) newFaceIndices[i] = newFaceIndices_L.get(i);
-    Select3D.Face_ids = (int[]) concat(Select3D.Face_ids, newFaceIndices);
+    Select3D.FaceIndices = (int[]) concat(Select3D.FaceIndices, newFaceIndices);
   }
 
   void insertCornerOpenings_Selection () {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
+    int[] primary_list = Select3D.FaceIndices;
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       for (int q = primary_list.length - 1; q >= 0; q--) {
         int f = primary_list[q];
@@ -371,9 +371,9 @@ class Modify3D {
           }
         }
 
-        int[] new_Vertex_ids = new int[allFaces.nodes[f].length];
+        int[] new_VertexIndices = new int[allFaces.nodes[f].length];
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          new_Vertex_ids[s] = allPoints.create(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]);
+          new_VertexIndices[s] = allPoints.create(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]);
         }
 
         current_Material = allFaces.getMaterial(f);
@@ -384,7 +384,7 @@ class Modify3D {
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
           int s_next = (s + 1) % allFaces.nodes[f].length;
 
-          int[] newFace_nodes = { new_Vertex_ids[s], allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_Vertex_ids[s_next] };
+          int[] newFace_nodes = { new_VertexIndices[s], allFaces.nodes[f][s], allFaces.nodes[f][s_next], new_VertexIndices[s_next] };
           int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
 
           midList_Faces_nodes_L.add(newFace_nodes);
@@ -393,7 +393,7 @@ class Modify3D {
 
         // modifying the base face to shape the openning
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          allFaces.nodes[f][s] = new_Vertex_ids[s];
+          allFaces.nodes[f][s] = new_VertexIndices[s];
         }
 
         spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
@@ -408,10 +408,10 @@ class Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
+    int[] primary_list = Select3D.FaceIndices;
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       for (int q = primary_list.length - 1; q >= 0; q--) {
         int f = primary_list[q];
@@ -442,14 +442,14 @@ class Modify3D {
           }
         }
 
-        int[] new_A_EdgeVertex_ids = new int[allFaces.nodes[f].length]; // on the edge (1/3)
-        int[] new_B_EdgeVertex_ids = new int[allFaces.nodes[f].length]; // on the other edge (2/3)
-        int[] new_CenterVertex_ids = new int[allFaces.nodes[f].length]; // in the center
+        int[] new_A_EdgeVertexIndices = new int[allFaces.nodes[f].length]; // on the edge (1/3)
+        int[] new_B_EdgeVertexIndices = new int[allFaces.nodes[f].length]; // on the other edge (2/3)
+        int[] new_CenterVertexIndices = new int[allFaces.nodes[f].length]; // in the center
 
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          new_A_EdgeVertex_ids[s] = allPoints.create(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]);
-          new_B_EdgeVertex_ids[s] = allPoints.create(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
-          new_CenterVertex_ids[s] = allPoints.create(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
+          new_A_EdgeVertexIndices[s] = allPoints.create(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]);
+          new_B_EdgeVertexIndices[s] = allPoints.create(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
+          new_CenterVertexIndices[s] = allPoints.create(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
         }
 
         current_Material = allFaces.getMaterial(f);
@@ -460,12 +460,12 @@ class Modify3D {
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
           int s_next = (s + 1) % allFaces.nodes[f].length;
 
-          int[] newFace1_nodes = { allFaces.nodes[f][s], new_B_EdgeVertex_ids[s], new_CenterVertex_ids[s], new_A_EdgeVertex_ids[s] };
+          int[] newFace1_nodes = { allFaces.nodes[f][s], new_B_EdgeVertexIndices[s], new_CenterVertexIndices[s], new_A_EdgeVertexIndices[s] };
           int[] newFace1_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
           midList_Faces_nodes_L.add(newFace1_nodes);
           midList_Faces_options_L.add(newFace1_options);
 
-          int[] newFace2_nodes = { new_B_EdgeVertex_ids[s], new_A_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s] };
+          int[] newFace2_nodes = { new_B_EdgeVertexIndices[s], new_A_EdgeVertexIndices[s_next], new_CenterVertexIndices[s_next], new_CenterVertexIndices[s] };
           int[] newFace2_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
           midList_Faces_nodes_L.add(newFace2_nodes);
           midList_Faces_options_L.add(newFace2_options);
@@ -473,7 +473,7 @@ class Modify3D {
 
         // modifying the base face to shape the openning
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          allFaces.nodes[f][s] = new_CenterVertex_ids[s];
+          allFaces.nodes[f][s] = new_CenterVertexIndices[s];
         }
 
         spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
@@ -488,10 +488,10 @@ class Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
+    int[] primary_list = Select3D.FaceIndices;
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       for (int q = primary_list.length - 1; q >= 0; q--) {
         int f = primary_list[q];
@@ -519,12 +519,12 @@ class Modify3D {
           }
         }
 
-        int[] new_EdgeVertex_ids = new int[allFaces.nodes[f].length]; // on the edge
-        int[] new_CenterVertex_ids = new int[allFaces.nodes[f].length]; // in the center
+        int[] new_EdgeVertexIndices = new int[allFaces.nodes[f].length]; // on the edge
+        int[] new_CenterVertexIndices = new int[allFaces.nodes[f].length]; // in the center
 
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
-          new_CenterVertex_ids[s] = allPoints.create(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
+          new_EdgeVertexIndices[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+          new_CenterVertexIndices[s] = allPoints.create(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
         }
 
         current_Material = allFaces.getMaterial(f);
@@ -535,7 +535,7 @@ class Modify3D {
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
           int s_next = (s + 1) % allFaces.nodes[f].length;
 
-          int[] newFace_nodes = { new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_ids[s_next], new_CenterVertex_ids[s] };
+          int[] newFace_nodes = { new_EdgeVertexIndices[s], allFaces.nodes[f][s], new_EdgeVertexIndices[s_next], new_CenterVertexIndices[s_next], new_CenterVertexIndices[s] };
           int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
 
           midList_Faces_nodes_L.add(newFace_nodes);
@@ -544,7 +544,7 @@ class Modify3D {
 
         // modifying the base face to match new center face
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          allFaces.nodes[f][s] = new_CenterVertex_ids[s];
+          allFaces.nodes[f][s] = new_CenterVertexIndices[s];
         }
 
         spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
@@ -559,10 +559,10 @@ class Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
+    int[] primary_list = Select3D.FaceIndices;
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       for (int q = primary_list.length - 1; q >= 0; q--) {
         int f = primary_list[q];
@@ -585,9 +585,9 @@ class Modify3D {
           }
         }
 
-        int[] new_EdgeVertex_ids = new int[allFaces.nodes[f].length]; // on the edge
+        int[] new_EdgeVertexIndices = new int[allFaces.nodes[f].length]; // on the edge
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+          new_EdgeVertexIndices[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
         }
 
         current_Material = allFaces.getMaterial(f);
@@ -598,7 +598,7 @@ class Modify3D {
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
           int s_next = (s + 1) % allFaces.nodes[f].length;
 
-          int[] newFace_nodes = { new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next] };
+          int[] newFace_nodes = { new_EdgeVertexIndices[s], allFaces.nodes[f][s], new_EdgeVertexIndices[s_next] };
           int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
 
           midList_Faces_nodes_L.add(newFace_nodes);
@@ -607,7 +607,7 @@ class Modify3D {
 
         // modifying the base face to match new center face
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          allFaces.nodes[f][s] = new_EdgeVertex_ids[s];
+          allFaces.nodes[f][s] = new_EdgeVertexIndices[s];
         }
 
         spliceFaceWithNewFaces(f, midList_Faces_nodes_L, midList_Faces_options_L);
@@ -624,12 +624,12 @@ class Modify3D {
     this.selectFacesAndGroups_fromCurrentSelection();
     ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
-    // Walk Select3D.Face_ids itself, largest index first. allGroups.inserted_nFaces() shifts
-    // Select3D.Face_ids in place with the correct amount as we go, so (unlike the old detached
+    // Walk Select3D.FaceIndices itself, largest index first. allGroups.inserted_nFaces() shifts
+    // Select3D.FaceIndices in place with the correct amount as we go, so (unlike the old detached
     // "primary_list" copy with its hard-coded -1 shift) the indices read here are always
     // up to date. newFaceIndices_L is a separate list, so we shift it ourselves below.
-    for (int q = Select3D.Face_ids.length - 1; q >= 0; q--) {
-      int f = Select3D.Face_ids[q];
+    for (int q = Select3D.FaceIndices.length - 1; q >= 0; q--) {
+      int f = Select3D.FaceIndices[q];
       if (allFaces.nodes[f].length != 4) continue;
 
       int OBJ_ID = this.findOwningGroupId(f);
@@ -657,21 +657,21 @@ class Modify3D {
           }
         }
 
-        int[] new_EdgeVertex_ids = new int[(User3D.modifierTessellateColumns + 1) * (User3D.modifierTessellateRows + 1)]; // on the edge
+        int[] new_EdgeVertexIndices = new int[(User3D.modifierTessellateColumns + 1) * (User3D.modifierTessellateRows + 1)]; // on the edge
         for (int i = 0; i <= User3D.modifierTessellateColumns; i++) {
           for (int j = 0; j <= User3D.modifierTessellateRows; j++) {
             int s = i * (User3D.modifierTessellateRows + 1) + j;
 
             if ((i == 0) && (j == 0)) {
-              new_EdgeVertex_ids[s] = allFaces.nodes[f][0];
+              new_EdgeVertexIndices[s] = allFaces.nodes[f][0];
             } else if ((i == User3D.modifierTessellateColumns) && (j == 0)) {
-              new_EdgeVertex_ids[s] = allFaces.nodes[f][1];
+              new_EdgeVertexIndices[s] = allFaces.nodes[f][1];
             } else if ((i == User3D.modifierTessellateColumns) && (j == User3D.modifierTessellateRows)) {
-              new_EdgeVertex_ids[s] = allFaces.nodes[f][2];
+              new_EdgeVertexIndices[s] = allFaces.nodes[f][2];
             } else if ((i == 0) && (j == User3D.modifierTessellateRows)) {
-              new_EdgeVertex_ids[s] = allFaces.nodes[f][3];
+              new_EdgeVertexIndices[s] = allFaces.nodes[f][3];
             } else {
-              new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+              new_EdgeVertexIndices[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
             }
           }
         }
@@ -690,7 +690,7 @@ class Modify3D {
             int s10 = s00 + (User3D.modifierTessellateRows + 1);
             int s11 = s00 + (User3D.modifierTessellateRows + 1) + 1;
 
-            int[] newFace_nodes = { new_EdgeVertex_ids[s00], new_EdgeVertex_ids[s10], new_EdgeVertex_ids[s11], new_EdgeVertex_ids[s01] };
+            int[] newFace_nodes = { new_EdgeVertexIndices[s00], new_EdgeVertexIndices[s10], new_EdgeVertexIndices[s11], new_EdgeVertexIndices[s01] };
             int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
 
             midList_Faces_nodes_L.add(newFace_nodes);
@@ -720,8 +720,8 @@ class Modify3D {
     this.selectFacesAndGroups_fromCurrentSelection();
     ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
-    for (int q = Select3D.Face_ids.length - 1; q >= 0; q--) {
-      int f = Select3D.Face_ids[q];
+    for (int q = Select3D.FaceIndices.length - 1; q >= 0; q--) {
+      int f = Select3D.FaceIndices[q];
       int OBJ_ID = this.findOwningGroupId(f);
       if (OBJ_ID == -1) continue;
 
@@ -744,9 +744,9 @@ class Modify3D {
         }
       }
 
-      int[] new_EdgeVertex_ids = new int[n]; // on the edge
+      int[] new_EdgeVertexIndices = new int[n]; // on the edge
       for (int s = 0; s < n; s++) {
-        new_EdgeVertex_ids[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+        new_EdgeVertexIndices[s] = allPoints.create(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
       }
 
       int new_CenterVertex_number = allPoints.create(G_face[0], G_face[1], G_face[2]); // at the center
@@ -759,7 +759,7 @@ class Modify3D {
       for (int s = 0; s < n; s++) {
         int s_next = (s + 1) % n;
 
-        int[] newFace_nodes = { new_EdgeVertex_ids[s], allFaces.nodes[f][s], new_EdgeVertex_ids[s_next], new_CenterVertex_number };
+        int[] newFace_nodes = { new_EdgeVertexIndices[s], allFaces.nodes[f][s], new_EdgeVertexIndices[s_next], new_CenterVertex_number };
         int[] newFace_options = { current_Material, current_Tessellation, current_Layer, current_Visibility, current_Weight, current_Closed };
 
         midList_Faces_nodes_L.add(newFace_nodes);
@@ -788,8 +788,8 @@ class Modify3D {
     this.selectFacesAndGroups_fromCurrentSelection();
     ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
-    for (int q = Select3D.Face_ids.length - 1; q >= 0; q--) {
-      int f = Select3D.Face_ids[q];
+    for (int q = Select3D.FaceIndices.length - 1; q >= 0; q--) {
+      int f = Select3D.FaceIndices[q];
       int OBJ_ID = this.findOwningGroupId(f);
       if (OBJ_ID == -1) continue;
 
@@ -840,11 +840,11 @@ class Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
+    int[] primary_list = Select3D.FaceIndices;
     ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       for (int q = primary_list.length - 1; q >= 0; q--) {
         int f = primary_list[q];
@@ -892,10 +892,10 @@ class Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
+    int[] primary_list = Select3D.FaceIndices;
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
 
       for (int q = primary_list.length - 1; q >= 0; q--) {
         int f = primary_list[q];
@@ -928,7 +928,7 @@ class Modify3D {
     if (!isGroupOrFaceCategorySelected()) return;
 
     this.selectFacesAndGroups_fromCurrentSelection();
-    int[] primary_list = Select3D.Face_ids;
+    int[] primary_list = Select3D.FaceIndices;
 
     Select3D.deselect_Faces();
 
@@ -938,8 +938,8 @@ class Modify3D {
     ArrayList<int[]> newFace_options_all = new ArrayList<int[]>();
     ArrayList<Integer> newFaceIndices_L = new ArrayList<Integer>();
 
-    for (int o = Select3D.Group_ids.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Group_ids[o];
+    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.GroupIndices[o];
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
       for (int q = primary_list.length - 1; q >= 0; q--) {
@@ -969,12 +969,12 @@ class Modify3D {
           top_Vertices[s][2] += W[2] * User3D.modifierOpeningDepth;
         }
 
-        int[] base_Vertex_ids = new int[allFaces.nodes[f].length];
-        int[] top_Vertex_ids = new int[allFaces.nodes[f].length];
+        int[] base_VertexIndices = new int[allFaces.nodes[f].length];
+        int[] top_VertexIndices = new int[allFaces.nodes[f].length];
 
         for (int s = 0; s < allFaces.nodes[f].length; s++) {
-          base_Vertex_ids[s] = allPoints.create(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]);
-          top_Vertex_ids[s] = allPoints.create(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
+          base_VertexIndices[s] = allPoints.create(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]);
+          top_VertexIndices[s] = allPoints.create(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
         }
 
         int nSides = allFaces.nodes[f].length;
@@ -992,15 +992,15 @@ class Modify3D {
           int s_next = (s + 1) % nSides;
 
           if (User3D.modifierOpeningDepth < 0) { // reverse direction for negative extrude heights
-            newFace_nodes_batch[s] = new int[] { base_Vertex_ids[s], top_Vertex_ids[s], top_Vertex_ids[s_next], base_Vertex_ids[s_next] };
+            newFace_nodes_batch[s] = new int[] { base_VertexIndices[s], top_VertexIndices[s], top_VertexIndices[s_next], base_VertexIndices[s_next] };
           } else {
-            newFace_nodes_batch[s] = new int[] { base_Vertex_ids[s], base_Vertex_ids[s_next], top_Vertex_ids[s_next], top_Vertex_ids[s] };
+            newFace_nodes_batch[s] = new int[] { base_VertexIndices[s], base_VertexIndices[s_next], top_VertexIndices[s_next], top_VertexIndices[s] };
           }
 
           newFace_options_batch[s] = new int[] { face_Material, face_Tessellation, face_Layer, face_Visibility, face_Weight, face_Close };
         }
 
-        newFace_nodes_batch[nSides] = top_Vertex_ids; // the cap
+        newFace_nodes_batch[nSides] = top_VertexIndices; // the cap
         newFace_options_batch[nSides] = new int[] { face_Material, face_Tessellation, face_Layer, face_Visibility, face_Weight, face_Close };
 
         for (int s = 0; s < newFace_nodes_batch.length; s++) {
@@ -1033,8 +1033,8 @@ class Modify3D {
 
     this.selectFacesAndGroups_fromCurrentSelection();
 
-    for (int o = 0; o < Select3D.Face_ids.length; o++) {
-      int f = Select3D.Face_ids[o];
+    for (int o = 0; o < Select3D.FaceIndices.length; o++) {
+      int f = Select3D.FaceIndices[o];
       int n = allFaces.nodes[f].length;
       if (n <= 2) continue;
 
@@ -1085,8 +1085,8 @@ class Modify3D {
       if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Faces();
       if (currentObjectCategory == ObjectCategory.VERTEX) Select3D.convert_Vertices_to_Faces();
 
-      for (int o = Select3D.Face_ids.length - 1; o >= 0; o--) {
-        int f = Select3D.Face_ids[o];
+      for (int o = Select3D.FaceIndices.length - 1; o >= 0; o--) {
+        int f = Select3D.FaceIndices[o];
         allFaces.setVisibility(f, new_vsb);
       }
     }
@@ -1124,8 +1124,8 @@ class Modify3D {
       if (currentObjectCategory == ObjectCategory.GROUP) Select3D.convert_Groups_to_Polylines();
       if (currentObjectCategory == ObjectCategory.VERTEX) Select3D.convert_Vertices_to_Polylines();
 
-      for (int o = Select3D.Polyline_ids.length - 1; o >= 0; o--) {
-        int f = Select3D.Polyline_ids[o];
+      for (int o = Select3D.PolylineIndices.length - 1; o >= 0; o--) {
+        int f = Select3D.PolylineIndices[o];
         allPolylines.setVisibility(f, new_vsb);
       }
     }

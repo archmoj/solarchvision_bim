@@ -55,15 +55,15 @@ class GroupsTest {
     app.allGroups.makeEmpty(2);
     app.allGroups.Faces[0] = new int[]{0, 1};
     app.allGroups.Faces[1] = new int[]{2, 3};
-    app.Select3D.Face_ids = new int[]{0, 5};
+    app.Select3D.FaceIndices = new int[]{0, 5};
 
     app.allGroups.inserted_nFaces(0, 0, 3); // group 0 grew by 3 new faces at/after face 0
 
     assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]); // its own stop grows by 3
     assertArrayEquals(new int[]{5, 6}, app.allGroups.Faces[1]); // entirely after: both shift by 3
 
-    // Face_ids: 0 is not > fromFace(0), so it's untouched; 5 is, so it shifts.
-    assertArrayEquals(new int[]{0, 8}, app.Select3D.Face_ids);
+    // FaceIndices: 0 is not > fromFace(0), so it's untouched; 5 is, so it shifts.
+    assertArrayEquals(new int[]{0, 8}, app.Select3D.FaceIndices);
   }
 
   // ================= beginNewGroup ====================================
@@ -133,7 +133,7 @@ class GroupsTest {
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
 
     app.currentObjectCategory = app.ObjectCategory.FACE;
-    app.Select3D.Face_ids = new int[]{0};
+    app.Select3D.FaceIndices = new int[]{0};
 
     app.allGroups.group_Selection(1); // 1 = create a new group
 
@@ -148,7 +148,7 @@ class GroupsTest {
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Faces[0]); // shrunk back down after the delete
 
     assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory); // switched category
-    assertArrayEquals(new int[]{0}, app.Select3D.Group_ids); // the new group is now selected
+    assertArrayEquals(new int[]{0}, app.Select3D.GroupIndices); // the new group is now selected
   }
 
   @Test
@@ -157,7 +157,7 @@ class GroupsTest {
     app.allSolids.DEF[0][0] = 5; // posX
 
     app.currentObjectCategory = app.ObjectCategory.SOLID;
-    app.Select3D.Solid_ids = new int[]{0};
+    app.Select3D.SolidIndices = new int[]{0};
 
     app.allGroups.group_Selection(1);
 
@@ -178,7 +178,7 @@ class GroupsTest {
     app.allGroups.Faces[0] = new int[]{0, 2}; // owns all 3 faces
 
     app.currentObjectCategory = app.ObjectCategory.GROUP;
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
 
     app.allGroups.ungroup_Selection();
 
@@ -197,7 +197,7 @@ class GroupsTest {
     app.allSolids.DEF[0][0] = 5;
 
     app.currentObjectCategory = app.ObjectCategory.SOLID;
-    app.Select3D.Solid_ids = new int[]{0};
+    app.Select3D.SolidIndices = new int[]{0};
 
     app.allGroups.dettachFromGroups_Selection();
 
@@ -284,7 +284,7 @@ class GroupsTest {
     app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0}};
 
     app.currentObjectCategory = app.ObjectCategory.POLYLINE;
-    app.Select3D.Polyline_ids = new int[]{0};
+    app.Select3D.PolylineIndices = new int[]{0};
 
     app.allGroups.group_Selection(1);
 
@@ -302,7 +302,7 @@ class GroupsTest {
     app.allModel1Ds.num = 1;
 
     app.currentObjectCategory = app.ObjectCategory.MODEL1D;
-    app.Select3D.Model1D_ids = new int[]{0};
+    app.Select3D.Model1DIndices = new int[]{0};
 
     app.allGroups.group_Selection(1);
 
@@ -320,7 +320,7 @@ class GroupsTest {
     app.allModel2Ds.num = 1;
 
     app.currentObjectCategory = app.ObjectCategory.MODEL2D;
-    app.Select3D.Model2D_ids = new int[]{0};
+    app.Select3D.Model2DIndices = new int[]{0};
 
     app.allGroups.group_Selection(1);
 
@@ -347,7 +347,7 @@ class GroupsTest {
     app.allGroups.Solids[0] = new int[]{0, -1};
 
     app.currentObjectCategory = app.ObjectCategory.SOLID;
-    app.Select3D.Solid_ids = new int[]{0};
+    app.Select3D.SolidIndices = new int[]{0};
 
     app.allGroups.group_Selection(0); // 0 = add to the last group, don't create a new one
 
@@ -363,7 +363,7 @@ class GroupsTest {
     // MODEL1D/MODEL2D actually run_process) - VERTEX specifically has no
     // clone-into-group branch at all.
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.Vertex_ids = new int[]{0};
+    app.Select3D.VertexIndices = new int[]{0};
 
     app.allGroups.group_Selection(1);
 
@@ -380,7 +380,7 @@ class GroupsTest {
     app.allGroups.Faces[0] = new int[]{0, 2};
 
     app.currentObjectCategory = app.ObjectCategory.FACE; // not GROUP
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
 
     app.allGroups.ungroup_Selection();
 
@@ -479,7 +479,7 @@ class GroupsTest {
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
 
     app.currentObjectCategory = app.ObjectCategory.FACE;
-    app.Select3D.Face_ids = new int[]{0};
+    app.Select3D.FaceIndices = new int[]{0};
 
     app.allGroups.dettachFromGroups_Selection();
 

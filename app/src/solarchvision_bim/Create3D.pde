@@ -1722,7 +1722,7 @@ class Create3D {
 
     for (int i = 0; i < POINTER_TempObjectFaces; i++) {
 
-      int[] new_Vertex_ids = new int [TempObjectFaces[i].length];
+      int[] new_VertexIndices = new int [TempObjectFaces[i].length];
 
       for (int j = 0; j < TempObjectFaces[i].length; j++) {
 
@@ -1734,11 +1734,11 @@ class Create3D {
         float y = x0 * funcs.sin_ang(t) + y0 * funcs.cos_ang(t);
         float z = z0;
 
-        new_Vertex_ids[j] = allPoints.create(x + cx, y + cy, z + cz);
+        new_VertexIndices[j] = allPoints.create(x + cx, y + cy, z + cz);
       }
 
       if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
-      allFaces.create(new_Vertex_ids);
+      allFaces.create(new_VertexIndices);
     }
 
     TempObjectVertices = new float [0][3];

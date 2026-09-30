@@ -136,7 +136,7 @@ class Delete3D {
   }
 
   void selected_Cameras () {
-    int[] ids = sort(Select3D.Camera_ids);
+    int[] ids = sort(Select3D.CameraIndices);
     if (ids.length == 0) return;
 
     boolean currentCameraIndexDeleted = false;
@@ -164,7 +164,7 @@ class Delete3D {
   }
 
   void selected_Sections () {
-    int[] ids = sort(Select3D.Section_ids);
+    int[] ids = sort(Select3D.SectionIndices);
     if (ids.length == 0) return;
 
     allSections.f_data = removeIndices(allSections.f_data, ids);
@@ -177,7 +177,7 @@ class Delete3D {
   }
 
   void selected_Model1Ds () {
-    int[] ids = sort(Select3D.Model1D_ids);
+    int[] ids = sort(Select3D.Model1DIndices);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -200,7 +200,7 @@ class Delete3D {
   }
 
   void selected_Model2Ds () {
-    int[] ids = sort(Select3D.Model2D_ids);
+    int[] ids = sort(Select3D.Model2DIndices);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -223,7 +223,7 @@ class Delete3D {
   }
 
   void selected_Solids () {
-    int[] ids = sort(Select3D.Solid_ids);
+    int[] ids = sort(Select3D.SolidIndices);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -246,7 +246,7 @@ class Delete3D {
   void selected_Faces () {
     Select3D.convert_Faces_to_Vertices();
 
-    int[] ids = sort(Select3D.Face_ids);
+    int[] ids = sort(Select3D.FaceIndices);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -270,7 +270,7 @@ class Delete3D {
   void selected_Polylines () {
     Select3D.convert_Polylines_to_Vertices();
 
-    int[] ids = sort(Select3D.Polyline_ids);
+    int[] ids = sort(Select3D.PolylineIndices);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -297,7 +297,7 @@ class Delete3D {
     /////////////////////////////
     Select3D.convert_Groups_to_Vertices();
 
-    int[] ids = sort(Select3D.Group_ids);
+    int[] ids = sort(Select3D.GroupIndices);
     if (ids.length == 0) {
       model_changed();
       return;
@@ -409,7 +409,7 @@ class Delete3D {
   }
 
   void isolatedVertices_Selection () {
-    int[] ids = sort(Select3D.Vertex_ids);
+    int[] ids = sort(Select3D.VertexIndices);
     int n = ids.length;
 
     if (n == 0) {

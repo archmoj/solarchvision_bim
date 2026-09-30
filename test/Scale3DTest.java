@@ -17,7 +17,7 @@ class Scale3DTest {
   void selection_vertexCategoryDispatchesToVertices () {
     app.allVertices = new float[][]{{3, 0, 0}};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.Vertex_ids = new int[]{0};
+    app.Select3D.VertexIndices = new int[]{0};
 
     app.Scale3D.selection(1, 0, 0, 2, 1, 1);
 
@@ -58,7 +58,7 @@ class Scale3DTest {
     // translateOutside/Inside involved at all), so it's checked on its
     // own rather than assumed to match the pattern above.
     app.allVertices = new float[][]{{3, 0, 0}};
-    app.Select3D.softSelection_ids = new int[]{0};
+    app.Select3D.softSelectionIndices = new int[]{0};
     app.Select3D.softSelection_values = new float[]{0.5f};
 
     app.Scale3D.softSelection(1, 0, 0, 3, 1, 1);
@@ -69,7 +69,7 @@ class Scale3DTest {
   @Test
   void softSelection_fullWeightMatchesAFullScale () {
     app.allVertices = new float[][]{{3, 0, 0}};
-    app.Select3D.softSelection_ids = new int[]{0};
+    app.Select3D.softSelectionIndices = new int[]{0};
     app.Select3D.softSelection_values = new float[]{1f};
 
     app.Scale3D.softSelection(1, 0, 0, 3, 1, 1);
@@ -82,7 +82,7 @@ class Scale3DTest {
   @Test
   void vertices_scalesOnlyTheSelectedPoints () {
     app.allVertices = new float[][]{{3, 0, 0}, {100, 100, 100}};
-    app.Select3D.Vertex_ids = new int[]{0};
+    app.Select3D.VertexIndices = new int[]{0};
 
     app.Scale3D.Vertices(1, 0, 0, 2, 1, 1);
 
@@ -96,7 +96,7 @@ class Scale3DTest {
   void polylines_scalesEveryVertexTouchedBySelectedPolylines () {
     app.allVertices = new float[][]{{3, 0, 0}, {0, 0, 0}};
     app.allPolylines.nodes = new int[][]{{0}};
-    app.Select3D.Polyline_ids = new int[]{0};
+    app.Select3D.PolylineIndices = new int[]{0};
 
     app.Scale3D.Polylines(1, 0, 0, 2, 1, 1);
 
@@ -108,7 +108,7 @@ class Scale3DTest {
   void faces_scalesEveryVertexTouchedBySelectedFaces () {
     app.allVertices = new float[][]{{3, 0, 0}, {0, 0, 0}};
     app.allFaces.nodes = new int[][]{{0}};
-    app.Select3D.Face_ids = new int[]{0};
+    app.Select3D.FaceIndices = new int[]{0};
 
     app.Scale3D.Faces(1, 0, 0, 2, 1, 1);
 
@@ -126,8 +126,8 @@ class Scale3DTest {
     app.allSolids.DEF[0][7] = 1;
     app.allSolids.DEF[0][8] = 1;
 
-    app.Select3D.Solid_ids = new int[]{0};
-    // Section_ids left empty - same reasoning as Move3DTest's Solids
+    app.Select3D.SolidIndices = new int[]{0};
+    // SectionIndices left empty - same reasoning as Move3DTest's Solids
     // test: it makes the mandatory calculate_Impact_selectedSections()
     // call a safe no-op regardless of what was actually scaled here.
 
@@ -149,7 +149,7 @@ class Scale3DTest {
     app.allCameras.options[0][0] = 3; // posX
 
     app.WIN3D.currentCameraIndex = 0;
-    app.Select3D.Camera_ids = new int[]{0};
+    app.Select3D.CameraIndices = new int[]{0};
 
     // sy and sz get swapped internally -> effectively applies (sx=2, sy=4, sz=3)
     app.Scale3D.Cameras(1, 0, 0, 2, 3, 4);
@@ -170,7 +170,7 @@ class Scale3DTest {
     app.allModel1Ds.f_data[0][0] = 3; // X
     app.allModel1Ds.f_data[0][3] = 1; // magnitude (per Model1Ds.magS)
 
-    app.Select3D.Model1D_ids = new int[]{0};
+    app.Select3D.Model1DIndices = new int[]{0};
 
     app.Scale3D.Model1Ds(1, 0, 0, 2, 1, 4);
 
@@ -192,7 +192,7 @@ class Scale3DTest {
     // and any nonzero MAP value reads as "a tree".
     app.allModel2Ds.MAP = new int[]{1, 0};
 
-    app.Select3D.Model2D_ids = new int[]{0, 1};
+    app.Select3D.Model2DIndices = new int[]{0, 1};
 
     app.Scale3D.Model2Ds(1, 0, 0, 2, 1, 4);
 
@@ -218,7 +218,7 @@ class Scale3DTest {
     app.allGroups.Solids[0] = new int[]{0, -1};
     app.allGroups.Pivots[0] = new float[]{3, 0, 0, 1, 1, 1, 0, 0, 0};
 
-    app.Select3D.Group_ids = new int[]{0};
+    app.Select3D.GroupIndices = new int[]{0};
 
     app.Scale3D.Groups(1, 0, 0, 2, 1, 1);
 
@@ -255,8 +255,8 @@ class Scale3DTest {
     app.allGroups.Solids[0] = new int[]{0, 0};
     app.allGroups.Pivots[0] = new float[9];
 
-    app.Select3D.Group_ids = new int[]{0};
-    // Section_ids stays empty, same reasoning as the Solids() test above.
+    app.Select3D.GroupIndices = new int[]{0};
+    // SectionIndices stays empty, same reasoning as the Solids() test above.
 
     app.Scale3D.Groups(1, 0, 0, 2, 1, 4);
 

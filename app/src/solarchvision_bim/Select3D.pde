@@ -36,17 +36,17 @@ class Select3D {
   boolean terrainDisplayVertices = true;
 
   int[] terrainVertexIndices = new int[0];
-  int[] Camera_ids = new int[0];
-  int[] Section_ids = new int[0];
-  int[] Solid_ids = new int[0];
-  int[] Model1D_ids = new int[0];
-  int[] Model2D_ids = new int[0];
-  int[] Group_ids = new int[0];
-  int[] Face_ids = new int[0];
-  int[] Vertex_ids = new int[0];
-  int[] Polyline_ids = new int[0];
+  int[] CameraIndices = new int[0];
+  int[] SectionIndices = new int[0];
+  int[] SolidIndices = new int[0];
+  int[] Model1DIndices = new int[0];
+  int[] Model2DIndices = new int[0];
+  int[] GroupIndices = new int[0];
+  int[] FaceIndices = new int[0];
+  int[] VertexIndices = new int[0];
+  int[] PolylineIndices = new int[0];
 
-  int[] softSelection_ids = new int[0];
+  int[] softSelectionIndices = new int[0];
   float[] softSelection_values = new float[0];
 
   float softSelectionFalloffPower = 1;
@@ -333,16 +333,16 @@ class Select3D {
 
     float[] ray_normal = funcs.vec3_unit(ray_dir);
 
-    float[][] hitPoint = new float [this.Face_ids.length][8];
+    float[][] hitPoint = new float [this.FaceIndices.length][8];
 
-    for (int o = 0; o < this.Face_ids.length; o++) {
+    for (int o = 0; o < this.FaceIndices.length; o++) {
       java.util.Arrays.fill(hitPoint[o], FLOAT_undefined);
     }
 
 
-    for (int o = 0; o < this.Face_ids.length; o++) {
+    for (int o = 0; o < this.FaceIndices.length; o++) {
 
-      int f = this.Face_ids[o];
+      int f = this.FaceIndices[o];
 
       if (f > 0) {
 
@@ -485,7 +485,7 @@ class Select3D {
 
     float pre_dist = FLOAT_undefined;
 
-    for (int o = 0; o < this.Face_ids.length; o++) {
+    for (int o = 0; o < this.FaceIndices.length; o++) {
 
       if (pre_dist > hitPoint[o][3]) {
 
@@ -529,21 +529,21 @@ class Select3D {
     int[] theVertices = new int [0];
 
     if (currentObjectCategory == ObjectCategory.CAMERA) {
-      theVertices = this.Camera_ids;
+      theVertices = this.CameraIndices;
     }
 
     if (currentObjectCategory == ObjectCategory.SECTION) {
-      theVertices = this.Section_ids;
+      theVertices = this.SectionIndices;
     }
 
     if (currentObjectCategory == ObjectCategory.SOLID) {
-      theVertices = this.Solid_ids;
+      theVertices = this.SolidIndices;
     }
 
     if ((currentObjectCategory == ObjectCategory.VERTEX) ||
         (currentObjectCategory == ObjectCategory.SOFTVERTEX)) {
 
-      theVertices = this.Vertex_ids;
+      theVertices = this.VertexIndices;
     }
     if (currentObjectCategory == ObjectCategory.FACE) {
       theVertices = this.get_Face_Vertices();
@@ -555,10 +555,10 @@ class Select3D {
       theVertices = this.get_Group_Vertices();
     }
     if (currentObjectCategory == ObjectCategory.MODEL2D) {
-      theVertices = this.Model2D_ids;
+      theVertices = this.Model2DIndices;
     }
     if (currentObjectCategory == ObjectCategory.MODEL1D) {
-      theVertices = this.Model1D_ids;
+      theVertices = this.Model1DIndices;
     }
     if (currentObjectCategory == ObjectCategory.TERRAIN) {
       theVertices = this.terrainVertexIndices;
@@ -578,15 +578,15 @@ class Select3D {
 
     if (currentObjectCategory == ObjectCategory.GROUP) {
 
-      if (this.Group_ids.length > 0) {
+      if (this.GroupIndices.length > 0) {
 
-        for (int o = 0; o < this.Group_ids.length; o++) {
+        for (int o = 0; o < this.GroupIndices.length; o++) {
 
-          int OBJ_ID = this.Group_ids[o];
+          int OBJ_ID = this.GroupIndices[o];
 
-          posX += allGroups.Pivots[OBJ_ID][0] / this.Group_ids.length;
-          posY += allGroups.Pivots[OBJ_ID][1] / this.Group_ids.length;
-          posZ += allGroups.Pivots[OBJ_ID][2] / this.Group_ids.length;
+          posX += allGroups.Pivots[OBJ_ID][0] / this.GroupIndices.length;
+          posY += allGroups.Pivots[OBJ_ID][1] / this.GroupIndices.length;
+          posZ += allGroups.Pivots[OBJ_ID][2] / this.GroupIndices.length;
 
         }
       }
@@ -1018,7 +1018,7 @@ class Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.Model1D_ids = toggleSelection(this.Model1D_ids, OBJ_ID);
+      this.Model1DIndices = toggleSelection(this.Model1DIndices, OBJ_ID);
     }
 
 
@@ -1026,7 +1026,7 @@ class Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.Model2D_ids = toggleSelection(this.Model2D_ids, OBJ_ID);
+      this.Model2DIndices = toggleSelection(this.Model2DIndices, OBJ_ID);
     }
 
 
@@ -1043,21 +1043,21 @@ class Select3D {
         }
       }
 
-      this.Group_ids = toggleSelection(this.Group_ids, OBJ_ID);
+      this.GroupIndices = toggleSelection(this.GroupIndices, OBJ_ID);
     }
 
     if (currentObjectCategory == ObjectCategory.FACE) {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.Face_ids = toggleSelection(this.Face_ids, OBJ_ID);
+      this.FaceIndices = toggleSelection(this.FaceIndices, OBJ_ID);
     }
 
     if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.Polyline_ids = toggleSelection(this.Polyline_ids, OBJ_ID);
+      this.PolylineIndices = toggleSelection(this.PolylineIndices, OBJ_ID);
     }
 
 
@@ -1084,7 +1084,7 @@ class Select3D {
       }
 
 
-      this.Vertex_ids = toggleSelection(this.Vertex_ids, OBJ_ID);
+      this.VertexIndices = toggleSelection(this.VertexIndices, OBJ_ID);
     }
 
 
@@ -1093,7 +1093,7 @@ class Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.Solid_ids = toggleSelection(this.Solid_ids, OBJ_ID);
+      this.SolidIndices = toggleSelection(this.SolidIndices, OBJ_ID);
     }
 
 
@@ -1102,14 +1102,14 @@ class Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.Section_ids = toggleSelection(this.Section_ids, OBJ_ID);
+      this.SectionIndices = toggleSelection(this.SectionIndices, OBJ_ID);
     }
 
     if (currentObjectCategory == ObjectCategory.CAMERA) {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.Camera_ids = toggleSelection(this.Camera_ids, OBJ_ID);
+      this.CameraIndices = toggleSelection(this.CameraIndices, OBJ_ID);
 
     }
 
@@ -1196,7 +1196,7 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          this.Model1D_ids = toggleSelection(this.Model1D_ids, OBJ_ID);
+          this.Model1DIndices = toggleSelection(this.Model1DIndices, OBJ_ID);
         }
       }
     }
@@ -1271,7 +1271,7 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          this.Group_ids = toggleSelection(this.Group_ids, OBJ_ID);
+          this.GroupIndices = toggleSelection(this.GroupIndices, OBJ_ID);
         }
       }
     }
@@ -1308,7 +1308,7 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          this.Face_ids = toggleSelection(this.Face_ids, OBJ_ID);
+          this.FaceIndices = toggleSelection(this.FaceIndices, OBJ_ID);
         }
       }
     }
@@ -1344,7 +1344,7 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          this.Polyline_ids = toggleSelection(this.Polyline_ids, OBJ_ID);
+          this.PolylineIndices = toggleSelection(this.PolylineIndices, OBJ_ID);
         }
       }
     }
@@ -1371,7 +1371,7 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          this.Vertex_ids = toggleSelection(this.Vertex_ids, OBJ_ID);
+          this.VertexIndices = toggleSelection(this.VertexIndices, OBJ_ID);
         }
       }
     }
@@ -1412,10 +1412,10 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int previousCount = this.Model2D_ids.length;
-          this.Model2D_ids = toggleSelection(this.Model2D_ids, OBJ_ID);
+          int previousCount = this.Model2DIndices.length;
+          this.Model2DIndices = toggleSelection(this.Model2DIndices, OBJ_ID);
 
-          if (this.Model2D_ids.length > previousCount) {
+          if (this.Model2DIndices.length > previousCount) {
             // skip the same object's drawn faces
             f += allModel2Ds.num_visualFaces - (f % allModel2Ds.num_visualFaces) - 1;
           }
@@ -1459,10 +1459,10 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          int previousCount = this.Solid_ids.length;
-          this.Solid_ids = toggleSelection(this.Solid_ids, OBJ_ID);
+          int previousCount = this.SolidIndices.length;
+          this.SolidIndices = toggleSelection(this.SolidIndices, OBJ_ID);
 
-          if (this.Solid_ids.length > previousCount) {
+          if (this.SolidIndices.length > previousCount) {
             // skip the same object's drawn faces
             f += allSolids.num_visualFaces - (f % allSolids.num_visualFaces) - 1;
           }
@@ -1504,7 +1504,7 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          this.Section_ids = toggleSelection(this.Section_ids, OBJ_ID);
+          this.SectionIndices = toggleSelection(this.SectionIndices, OBJ_ID);
         }
       }
     }
@@ -1544,7 +1544,7 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          this.Camera_ids = toggleSelection(this.Camera_ids, OBJ_ID);
+          this.CameraIndices = toggleSelection(this.CameraIndices, OBJ_ID);
         }
       }
     }
@@ -1563,7 +1563,7 @@ class Select3D {
   }
 
   void deselect_Vertices () {
-    this.Vertex_ids = new int [0];
+    this.VertexIndices = new int [0];
 
     this.deselect_softSelection();
 
@@ -1571,57 +1571,57 @@ class Select3D {
   }
 
   void deselect_softSelection () {
-    this.softSelection_ids = new int [0];
+    this.softSelectionIndices = new int [0];
     this.softSelection_values = new float [0];
 
     selection_changed();
   }
 
   void deselect_Faces () {
-    this.Face_ids = new int [0];
+    this.FaceIndices = new int [0];
 
     selection_changed();
   }
 
   void deselect_Polylines () {
-    this.Polyline_ids = new int [0];
+    this.PolylineIndices = new int [0];
 
     selection_changed();
   }
 
   void deselect_Solids () {
-    this.Solid_ids = new int [0];
+    this.SolidIndices = new int [0];
 
     selection_changed();
   }
 
   void deselect_Cameras () {
-    this.Camera_ids = new int [0];
+    this.CameraIndices = new int [0];
 
     selection_changed();
   }
 
   void deselect_Sections () {
-    this.Section_ids = new int [0];
+    this.SectionIndices = new int [0];
 
     selection_changed();
   }
 
   void deselect_Model1Ds () {
-    this.Model1D_ids = new int [0];
+    this.Model1DIndices = new int [0];
 
     selection_changed();
   }
 
 
   void deselect_Model2Ds () {
-    this.Model2D_ids = new int [0];
+    this.Model2DIndices = new int [0];
 
     selection_changed();
   }
 
   void deselect_Groups () {
-    this.Group_ids = new int [0];
+    this.GroupIndices = new int [0];
 
     selection_changed();
   }
@@ -1650,39 +1650,39 @@ class Select3D {
     }
 
     if (currentObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1D_ids = rangeIds(allModel1Ds.num);
+      this.Model1DIndices = rangeIds(allModel1Ds.num);
     }
 
     if (currentObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2D_ids = rangeIds(allModel2Ds.num);
+      this.Model2DIndices = rangeIds(allModel2Ds.num);
     }
 
     if (currentObjectCategory == ObjectCategory.GROUP) {
-      this.Group_ids = rangeIds(allGroups.num);
+      this.GroupIndices = rangeIds(allGroups.num);
     }
 
     if (currentObjectCategory == ObjectCategory.FACE) {
-      this.Face_ids = rangeIds(allFaces.nodes.length);
+      this.FaceIndices = rangeIds(allFaces.nodes.length);
     }
 
     if (currentObjectCategory == ObjectCategory.VERTEX) {
-      this.Vertex_ids = rangeIds(allPoints.getLength());
+      this.VertexIndices = rangeIds(allPoints.getLength());
     }
 
     if (currentObjectCategory == ObjectCategory.POLYLINE) {
-      this.Polyline_ids = rangeIds(allPolylines.nodes.length);
+      this.PolylineIndices = rangeIds(allPolylines.nodes.length);
     }
 
     if (currentObjectCategory == ObjectCategory.SOLID) {
-      this.Solid_ids = rangeIds(allSolids.DEF.length);
+      this.SolidIndices = rangeIds(allSolids.DEF.length);
     }
 
     if (currentObjectCategory == ObjectCategory.SECTION) {
-      this.Section_ids = rangeIds(allSections.num);
+      this.SectionIndices = rangeIds(allSections.num);
     }
 
     if (currentObjectCategory == ObjectCategory.CAMERA) {
-      this.Camera_ids = rangeIds(allCameras.num);
+      this.CameraIndices = rangeIds(allCameras.num);
     }
 
     selection_changed();
@@ -1696,40 +1696,40 @@ class Select3D {
     }
 
     if (currentObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1D_ids = invertedIds(this.Model1D_ids, allModel1Ds.num);
+      this.Model1DIndices = invertedIds(this.Model1DIndices, allModel1Ds.num);
     }
 
     if (currentObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2D_ids = invertedIds(this.Model2D_ids, allModel2Ds.num);
+      this.Model2DIndices = invertedIds(this.Model2DIndices, allModel2Ds.num);
     }
 
     if (currentObjectCategory == ObjectCategory.GROUP) {
-      this.Group_ids = invertedIds(this.Group_ids, allGroups.num);
+      this.GroupIndices = invertedIds(this.GroupIndices, allGroups.num);
     }
 
     if (currentObjectCategory == ObjectCategory.FACE) {
-      this.Face_ids = invertedIds(this.Face_ids, allFaces.nodes.length);
+      this.FaceIndices = invertedIds(this.FaceIndices, allFaces.nodes.length);
     }
 
     if (currentObjectCategory == ObjectCategory.POLYLINE) {
-      this.Polyline_ids = invertedIds(this.Polyline_ids, allPolylines.nodes.length);
+      this.PolylineIndices = invertedIds(this.PolylineIndices, allPolylines.nodes.length);
     }
 
 
     if (currentObjectCategory == ObjectCategory.VERTEX) {
-      this.Vertex_ids = invertedIds(this.Vertex_ids, allPoints.getLength());
+      this.VertexIndices = invertedIds(this.VertexIndices, allPoints.getLength());
     }
 
     if (currentObjectCategory == ObjectCategory.SOLID) {
-      this.Solid_ids = invertedIds(this.Solid_ids, allSolids.DEF.length);
+      this.SolidIndices = invertedIds(this.SolidIndices, allSolids.DEF.length);
     }
 
     if (currentObjectCategory == ObjectCategory.SECTION) {
-      this.Section_ids = invertedIds(this.Section_ids, allSections.num);
+      this.SectionIndices = invertedIds(this.SectionIndices, allSections.num);
     }
 
     if (currentObjectCategory == ObjectCategory.CAMERA) {
-      this.Camera_ids = invertedIds(this.Camera_ids, allCameras.num);
+      this.CameraIndices = invertedIds(this.CameraIndices, allCameras.num);
     }
 
     selection_changed();
@@ -1746,40 +1746,40 @@ class Select3D {
   void selectLast () {
 
     if (currentObjectCategory == ObjectCategory.SECTION) {
-      this.Section_ids = lastId(allSections.num);
+      this.SectionIndices = lastId(allSections.num);
     }
 
     if (currentObjectCategory == ObjectCategory.CAMERA) {
-      this.Camera_ids = lastId(allCameras.num);
+      this.CameraIndices = lastId(allCameras.num);
     }
 
     if (currentObjectCategory == ObjectCategory.SOLID) {
-      this.Solid_ids = lastId(allSolids.DEF.length);
+      this.SolidIndices = lastId(allSolids.DEF.length);
     }
 
     if (currentObjectCategory == ObjectCategory.MODEL1D) {
-      this.Model1D_ids = lastId(allModel1Ds.num);
+      this.Model1DIndices = lastId(allModel1Ds.num);
     }
 
     if (currentObjectCategory == ObjectCategory.MODEL2D) {
-      this.Model2D_ids = lastId(allModel2Ds.num);
+      this.Model2DIndices = lastId(allModel2Ds.num);
     }
 
     if (currentObjectCategory == ObjectCategory.GROUP) {
-      this.Group_ids = lastId(allGroups.num);
+      this.GroupIndices = lastId(allGroups.num);
     }
 
     if (currentObjectCategory == ObjectCategory.FACE) {
-      this.Face_ids = lastId(allFaces.nodes.length);
+      this.FaceIndices = lastId(allFaces.nodes.length);
     }
 
     if (currentObjectCategory == ObjectCategory.VERTEX) {
-      this.Vertex_ids = lastId(allPoints.getLength());
+      this.VertexIndices = lastId(allPoints.getLength());
     }
 
 
     if (currentObjectCategory == ObjectCategory.POLYLINE) {
-      this.Polyline_ids = lastId(allPolylines.nodes.length);
+      this.PolylineIndices = lastId(allPolylines.nodes.length);
     }
 
     selection_changed();
@@ -1800,18 +1800,18 @@ class Select3D {
 
 
   void convert_Model1Ds_to_Groups () {
-    this.Group_ids = groupsContaining(allGroups.Model1Ds, this.Model1D_ids);
+    this.GroupIndices = groupsContaining(allGroups.Model1Ds, this.Model1DIndices);
     selection_changed();
   }
 
   void convert_Model2Ds_to_Groups () {
-    this.Group_ids = groupsContaining(allGroups.Model2Ds, this.Model2D_ids);
+    this.GroupIndices = groupsContaining(allGroups.Model2Ds, this.Model2DIndices);
     selection_changed();
   }
 
 
   void convert_Solids_to_Groups () {
-    this.Group_ids = groupsContaining(allGroups.Solids, this.Solid_ids);
+    this.GroupIndices = groupsContaining(allGroups.Solids, this.SolidIndices);
     selection_changed();
   }
 
@@ -1821,13 +1821,13 @@ class Select3D {
     // which node triggered it) and dedup already prevents double-adding,
     // that inner loop was redundant. Removed as a behavior-preserving
     // simplification.
-    this.Group_ids = groupsContaining(allGroups.Faces, this.Face_ids);
+    this.GroupIndices = groupsContaining(allGroups.Faces, this.FaceIndices);
     selection_changed();
   }
 
   void convert_Polylines_to_Groups () {
     // See the note in convert_Faces_to_Groups() above - same simplification.
-    this.Group_ids = groupsContaining(allGroups.Polylines, this.Polyline_ids);
+    this.GroupIndices = groupsContaining(allGroups.Polylines, this.PolylineIndices);
     selection_changed();
   }
 
@@ -1836,59 +1836,59 @@ class Select3D {
   void convert_Vertices_to_Groups () {
 
     boolean[] Group_seen = new boolean[allGroups.num];
-    IntList Group_ids_buf = new IntList();
+    IntList GroupIndices_buf = new IntList();
 
-    for (int i = 0; i < this.Vertex_ids.length; i++) {
-      int vNo = this.Vertex_ids[i];
-      appendGroupsContainingVertex(allFaces.nodes, allGroups.Faces, vNo, Group_seen, Group_ids_buf);
-      appendGroupsContainingVertex(allPolylines.nodes, allGroups.Polylines, vNo, Group_seen, Group_ids_buf);
+    for (int i = 0; i < this.VertexIndices.length; i++) {
+      int vNo = this.VertexIndices[i];
+      appendGroupsContainingVertex(allFaces.nodes, allGroups.Faces, vNo, Group_seen, GroupIndices_buf);
+      appendGroupsContainingVertex(allPolylines.nodes, allGroups.Polylines, vNo, Group_seen, GroupIndices_buf);
     }
 
-    this.Group_ids = Group_ids_buf.array();
+    this.GroupIndices = GroupIndices_buf.array();
 
     selection_changed();
   }
 
 
   void convert_Vertices_to_Faces () {
-    this.Face_ids = objectsContainingVertices(allFaces.nodes, this.Vertex_ids);
+    this.FaceIndices = objectsContainingVertices(allFaces.nodes, this.VertexIndices);
     selection_changed();
   }
 
 
   void convert_Vertices_to_Polylines () {
-    this.Polyline_ids = objectsContainingVertices(allPolylines.nodes, this.Vertex_ids);
+    this.PolylineIndices = objectsContainingVertices(allPolylines.nodes, this.VertexIndices);
     selection_changed();
   }
 
   void convert_Groups_to_Model1Ds () {
-    this.Model1D_ids = rangeUnion(allGroups.Model1Ds, this.Group_ids, allModel1Ds.num);
+    this.Model1DIndices = rangeUnion(allGroups.Model1Ds, this.GroupIndices, allModel1Ds.num);
     selection_changed();
   }
 
 
   void convert_Groups_to_Model2Ds () {
-    this.Model2D_ids = rangeUnion(allGroups.Model2Ds, this.Group_ids, allModel2Ds.num);
+    this.Model2DIndices = rangeUnion(allGroups.Model2Ds, this.GroupIndices, allModel2Ds.num);
     selection_changed();
   }
 
 
 
   void convert_Groups_to_Solids () {
-    this.Solid_ids = rangeUnion(allGroups.Solids, this.Group_ids, allSolids.DEF.length);
+    this.SolidIndices = rangeUnion(allGroups.Solids, this.GroupIndices, allSolids.DEF.length);
     selection_changed();
   }
 
 
 
   void convert_Groups_to_Faces () {
-    this.Face_ids = rangeUnion(allGroups.Faces, this.Group_ids, allFaces.nodes.length);
+    this.FaceIndices = rangeUnion(allGroups.Faces, this.GroupIndices, allFaces.nodes.length);
     selection_changed();
   }
 
 
   void convert_Groups_to_Polylines () {
-    this.Polyline_ids = rangeUnion(allGroups.Polylines, this.Group_ids, allPolylines.nodes.length);
+    this.PolylineIndices = rangeUnion(allGroups.Polylines, this.GroupIndices, allPolylines.nodes.length);
     selection_changed();
   }
 
@@ -1899,26 +1899,26 @@ class Select3D {
     boolean[] Vertex_seen = new boolean[allPoints.getLength()];
     IntList Vertex_buf = new IntList();
 
-    for (int i = 0; i < this.Group_ids.length; i++) {
-      int OBJ_ID = this.Group_ids[i];
+    for (int i = 0; i < this.GroupIndices.length; i++) {
+      int OBJ_ID = this.GroupIndices[i];
       appendNodesOfRange(allFaces.nodes, allGroups.getStart_Face(OBJ_ID), allGroups.getStop_Face(OBJ_ID), Vertex_seen, Vertex_buf);
       appendNodesOfRange(allPolylines.nodes, allGroups.getStart_Polyline(OBJ_ID), allGroups.getStop_Polyline(OBJ_ID), Vertex_seen, Vertex_buf);
     }
 
-    this.Vertex_ids = Vertex_buf.array();
+    this.VertexIndices = Vertex_buf.array();
 
     selection_changed();
   }
 
 
   void convert_Faces_to_Vertices () {
-    this.Vertex_ids = nodesOf(allFaces.nodes, this.Face_ids);
+    this.VertexIndices = nodesOf(allFaces.nodes, this.FaceIndices);
     selection_changed();
   }
 
 
   void convert_Polylines_to_Vertices () {
-    this.Vertex_ids = nodesOf(allPolylines.nodes, this.Polyline_ids);
+    this.VertexIndices = nodesOf(allPolylines.nodes, this.PolylineIndices);
     selection_changed();
   }
 
@@ -1927,24 +1927,24 @@ class Select3D {
 
   void convert_Vertex_to_softSelection () {
 
-    int[] keep_selection_Vertex_ids = this.Vertex_ids;
+    int[] keep_selection_VertexIndices = this.VertexIndices;
 
     this.convert_Vertices_to_Groups();
 
     this.convert_Groups_to_Vertices();
 
-    this.softSelection_ids = new int[this.Vertex_ids.length];
-    this.softSelection_values = new float[this.Vertex_ids.length];
+    this.softSelectionIndices = new int[this.VertexIndices.length];
+    this.softSelection_values = new float[this.VertexIndices.length];
 
-    for (int q = 0; q < this.Vertex_ids.length; q++) {
+    for (int q = 0; q < this.VertexIndices.length; q++) {
 
-      int n = this.Vertex_ids[q];
+      int n = this.VertexIndices[q];
 
       float d_min = FLOAT_undefined;
 
-      for (int p = 0; p < keep_selection_Vertex_ids.length; p++) {
+      for (int p = 0; p < keep_selection_VertexIndices.length; p++) {
 
-        int m = keep_selection_Vertex_ids[p];
+        int m = keep_selection_VertexIndices[p];
 
         float d = dist(allPoints.getX(m), allPoints.getY(m), allPoints.getZ(m), allPoints.getX(n), allPoints.getY(n), allPoints.getZ(n));
 
@@ -1956,9 +1956,9 @@ class Select3D {
       this.softSelection_values[q] = this.softSelectionFunction(d_min);
     }
 
-    this.softSelection_ids = this.Vertex_ids;
+    this.softSelectionIndices = this.VertexIndices;
 
-    this.Vertex_ids = keep_selection_Vertex_ids;
+    this.VertexIndices = keep_selection_VertexIndices;
 
     selection_changed();
   }
@@ -1986,26 +1986,26 @@ class Select3D {
         this.convert_Polylines_to_Vertices();
       }
 
-      this.Vertex_ids = sort(this.Vertex_ids);
+      this.VertexIndices = sort(this.VertexIndices);
 
-      int[] pre_Selection_Vertex_ids = this.Vertex_ids;
+      int[] pre_Selection_VertexIndices = this.VertexIndices;
 
       boolean[] Vertex_seen = new boolean[allPoints.getLength()];
-      for (int i = 0; i < this.Vertex_ids.length; i++) {
-        Vertex_seen[this.Vertex_ids[i]] = true;
+      for (int i = 0; i < this.VertexIndices.length; i++) {
+        Vertex_seen[this.VertexIndices[i]] = true;
       }
       IntList Vertex_buf = new IntList();
-      for (int i = 0; i < this.Vertex_ids.length; i++) {
-        Vertex_buf.append(this.Vertex_ids[i]);
+      for (int i = 0; i < this.VertexIndices.length; i++) {
+        Vertex_buf.append(this.VertexIndices[i]);
       }
 
       for (int vNo = allPoints.getLength() - 1; vNo >= 0; vNo--) {
 
         int isNearEnough = -1;
 
-        for (int i = 0; i < pre_Selection_Vertex_ids.length; i++) {
+        for (int i = 0; i < pre_Selection_VertexIndices.length; i++) {
 
-          int q = pre_Selection_Vertex_ids[i];
+          int q = pre_Selection_VertexIndices[i];
 
           if (!Vertex_seen[vNo]) {
 
@@ -2027,7 +2027,7 @@ class Select3D {
         }
       }
 
-      this.Vertex_ids = Vertex_buf.array();
+      this.VertexIndices = Vertex_buf.array();
 
       selection_changed();
     }
@@ -2067,7 +2067,7 @@ class Select3D {
       }
     }
 
-    this.Vertex_ids = Vertex_buf.array();
+    this.VertexIndices = Vertex_buf.array();
 
     switch_category(ObjectCategory.VERTEX);
   }
@@ -2085,9 +2085,9 @@ class Select3D {
     IntList FaceVertices = new IntList();
     boolean[] seen = new boolean[allPoints.getLength()];
 
-    for (int o = this.Face_ids.length - 1; o >= 0; o--) {
+    for (int o = this.FaceIndices.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = this.Face_ids[o];
+      int OBJ_ID = this.FaceIndices[o];
 
       int f = OBJ_ID;
 
@@ -2110,9 +2110,9 @@ class Select3D {
     IntList PolylineVertices = new IntList();
     boolean[] seen = new boolean[allPoints.getLength()];
 
-    for (int o = this.Polyline_ids.length - 1; o >= 0; o--) {
+    for (int o = this.PolylineIndices.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = this.Polyline_ids[o];
+      int OBJ_ID = this.PolylineIndices[o];
 
       int f = OBJ_ID;
 
@@ -2136,9 +2136,9 @@ class Select3D {
     IntList PolymeshVertices = new IntList();
     boolean[] seen = new boolean[allPoints.getLength()];
 
-    for (int o = this.Group_ids.length - 1; o >= 0; o--) {
+    for (int o = this.GroupIndices.length - 1; o >= 0; o--) {
 
-      int OBJ_ID = this.Group_ids[o];
+      int OBJ_ID = this.GroupIndices[o];
 
       for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
 
@@ -2214,16 +2214,16 @@ class Select3D {
     XML_setFloat(parent, "softSelectionFalloffRadius", this.softSelectionFalloffRadius);
 
     XML_setString(parent, "selectedTerrainVertices", idsToXML(this.terrainVertexIndices));
-    XML_setString(parent, "selected_Model1Ds", idsToXML(this.Model1D_ids));
-    XML_setString(parent, "selected_Model2Ds", idsToXML(this.Model2D_ids));
-    XML_setString(parent, "selected_Groups", idsToXML(this.Group_ids));
-    XML_setString(parent, "selected_Faces", idsToXML(this.Face_ids));
-    XML_setString(parent, "selected_Polylines", idsToXML(this.Polyline_ids));
-    XML_setString(parent, "selected_Solids", idsToXML(this.Solid_ids));
-    XML_setString(parent, "selected_Sections", idsToXML(this.Section_ids));
-    XML_setString(parent, "selected_Cameras", idsToXML(this.Camera_ids));
-    XML_setString(parent, "selected_Points", idsToXML(this.Vertex_ids));
-    XML_setString(parent, "softSelection_ids", idsToXML(this.softSelection_ids));
+    XML_setString(parent, "selected_Model1Ds", idsToXML(this.Model1DIndices));
+    XML_setString(parent, "selected_Model2Ds", idsToXML(this.Model2DIndices));
+    XML_setString(parent, "selected_Groups", idsToXML(this.GroupIndices));
+    XML_setString(parent, "selected_Faces", idsToXML(this.FaceIndices));
+    XML_setString(parent, "selected_Polylines", idsToXML(this.PolylineIndices));
+    XML_setString(parent, "selected_Solids", idsToXML(this.SolidIndices));
+    XML_setString(parent, "selected_Sections", idsToXML(this.SectionIndices));
+    XML_setString(parent, "selected_Cameras", idsToXML(this.CameraIndices));
+    XML_setString(parent, "selected_Points", idsToXML(this.VertexIndices));
+    XML_setString(parent, "softSelectionIndices", idsToXML(this.softSelectionIndices));
     XML_setString(parent, "softSelection_values", floatsToXML(this.softSelection_values));
   }
 
@@ -2266,16 +2266,16 @@ class Select3D {
     this.softSelectionFalloffRadius = XML_getFloat(parent, "softSelectionFalloffRadius");
 
     this.terrainVertexIndices = idsFromXML(XML_getString(parent, "selectedTerrainVertices"));
-    this.Model1D_ids = idsFromXML(XML_getString(parent, "selected_Model1Ds"));
-    this.Model2D_ids = idsFromXML(XML_getString(parent, "selected_Model2Ds"));
-    this.Group_ids = idsFromXML(XML_getString(parent, "selected_Groups"));
-    this.Face_ids = idsFromXML(XML_getString(parent, "selected_Faces"));
-    this.Polyline_ids = idsFromXML(XML_getString(parent, "selected_Polylines"));
-    this.Solid_ids = idsFromXML(XML_getString(parent, "selected_Solids"));
-    this.Section_ids = idsFromXML(XML_getString(parent, "selected_Sections"));
-    this.Camera_ids = idsFromXML(XML_getString(parent, "selected_Cameras"));
-    this.Vertex_ids = idsFromXML(XML_getString(parent, "selected_Points"));
-    this.softSelection_ids = idsFromXML(XML_getString(parent, "softSelection_ids"));
+    this.Model1DIndices = idsFromXML(XML_getString(parent, "selected_Model1Ds"));
+    this.Model2DIndices = idsFromXML(XML_getString(parent, "selected_Model2Ds"));
+    this.GroupIndices = idsFromXML(XML_getString(parent, "selected_Groups"));
+    this.FaceIndices = idsFromXML(XML_getString(parent, "selected_Faces"));
+    this.PolylineIndices = idsFromXML(XML_getString(parent, "selected_Polylines"));
+    this.SolidIndices = idsFromXML(XML_getString(parent, "selected_Solids"));
+    this.SectionIndices = idsFromXML(XML_getString(parent, "selected_Sections"));
+    this.CameraIndices = idsFromXML(XML_getString(parent, "selected_Cameras"));
+    this.VertexIndices = idsFromXML(XML_getString(parent, "selected_Points"));
+    this.softSelectionIndices = idsFromXML(XML_getString(parent, "softSelectionIndices"));
     this.softSelection_values = floatsFromXML(XML_getString(parent, "softSelection_values"));
   }
 
