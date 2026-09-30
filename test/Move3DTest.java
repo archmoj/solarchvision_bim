@@ -56,8 +56,8 @@ class Move3DTest {
   @Test
   void softSelection_scalesTheOffsetByEachVerticesWeight () {
     app.allVertices = new float[][]{{0, 0, 0}, {0, 0, 0}};
-    app.Select3D.softSelectionIndices = new int[]{0, 1};
-    app.Select3D.softSelectionValues = new float[]{1f, 0.5f};
+    app.Select3D.softSelection = new int[]{0, 1};
+    app.Select3D.softSelectionFalloff = new float[]{1f, 0.5f};
 
     app.Move3D.softSelection(2, 4, 6);
 

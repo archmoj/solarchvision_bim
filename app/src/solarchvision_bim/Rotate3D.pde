@@ -39,9 +39,9 @@ class Rotate3D {
   }
 
   void softSelection (float x0, float y0, float z0, float r, int the_Vector) {
-    for (int q = 0; q < Select3D.softSelectionIndices.length; q++) {
-      int f = Select3D.softSelectionIndices[q];
-      float v = Select3D.softSelectionValues[q];
+    for (int q = 0; q < Select3D.softSelection.length; q++) {
+      int f = Select3D.softSelection[q];
+      float v = Select3D.softSelectionFalloff[q];
 
       float[] R = rotateAroundVector(allPoints.getX(f) - x0, allPoints.getY(f) - y0, allPoints.getZ(f) - z0, r * v, the_Vector);
 

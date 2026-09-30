@@ -46,8 +46,8 @@ class Select3D {
   int[] vertexSelection = new int[0];
   int[] polylineSelection = new int[0];
 
-  int[] softSelectionIndices = new int[0];
-  float[] softSelectionValues = new float[0];
+  int[] softSelection = new int[0];
+  float[] softSelectionFalloff = new float[0];
 
   float softSelectionFalloffPower = 1;
   float softSelectionFalloffRadius = 2; // 2 = 2m
@@ -1571,8 +1571,8 @@ class Select3D {
   }
 
   void deselect_softSelection () {
-    this.softSelectionIndices = new int [0];
-    this.softSelectionValues = new float [0];
+    this.softSelection = new int [0];
+    this.softSelectionFalloff = new float [0];
 
     selection_changed();
   }
@@ -1933,8 +1933,8 @@ class Select3D {
 
     this.convert_Groups_to_Vertices();
 
-    this.softSelectionIndices = new int[this.vertexSelection.length];
-    this.softSelectionValues = new float[this.vertexSelection.length];
+    this.softSelection = new int[this.vertexSelection.length];
+    this.softSelectionFalloff = new float[this.vertexSelection.length];
 
     for (int q = 0; q < this.vertexSelection.length; q++) {
 
@@ -1953,10 +1953,10 @@ class Select3D {
         }
       }
 
-      this.softSelectionValues[q] = this.softSelectionFunction(d_min);
+      this.softSelectionFalloff[q] = this.softSelectionFunction(d_min);
     }
 
-    this.softSelectionIndices = this.vertexSelection;
+    this.softSelection = this.vertexSelection;
 
     this.vertexSelection = keep_selection_vertexSelection;
 
@@ -2220,9 +2220,9 @@ class Select3D {
     XML_setString(parent, "sectionSelection", idsToXML(this.sectionSelection));
     XML_setString(parent, "cameraSelection", idsToXML(this.cameraSelection));
     XML_setString(parent, "vertexSelection", idsToXML(this.vertexSelection));
-    XML_setString(parent, "softSelectionIndices", idsToXML(this.softSelectionIndices));
-    XML_setString(parent, "softSelectionValues", floatsToXML(this.softSelectionValues));
 
+    XML_setString(parent, "softSelection", idsToXML(this.softSelection));
+    XML_setString(parent, "softSelectionFalloff", floatsToXML(this.softSelectionFalloff));
     XML_setFloat(parent, "softSelectionFalloffPower", this.softSelectionFalloffPower);
     XML_setFloat(parent, "softSelectionFalloffRadius", this.softSelectionFalloffRadius);
   }
@@ -2272,9 +2272,9 @@ class Select3D {
     this.sectionSelection = idsFromXML(XML_getString(parent, "sectionSelection"));
     this.cameraSelection = idsFromXML(XML_getString(parent, "cameraSelection"));
     this.vertexSelection = idsFromXML(XML_getString(parent, "vertexSelection"));
-    this.softSelectionIndices = idsFromXML(XML_getString(parent, "softSelectionIndices"));
-    this.softSelectionValues = floatsFromXML(XML_getString(parent, "softSelectionValues"));
 
+    this.softSelection = idsFromXML(XML_getString(parent, "softSelection"));
+    this.softSelectionFalloff = floatsFromXML(XML_getString(parent, "softSelectionFalloff"));
     this.softSelectionFalloffPower = XML_getFloat(parent, "softSelectionFalloffPower");
     this.softSelectionFalloffRadius = XML_getFloat(parent, "softSelectionFalloffRadius");
   }
