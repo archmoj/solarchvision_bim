@@ -8,11 +8,9 @@ class WindRose {
 
   boolean displayImage = false;
 
-  int renderedRES = 1;
-  int RES = 400;
-
-  float scale = 400;
-
+  int renderedResolution = 1;
+  int imageResolution = 400;
+  float textureSize = 400;
 
   void resize_Image_array () {
 
@@ -41,13 +39,13 @@ class WindRose {
       WIN3D.graphics.beginShape();
 
       float elevation = 0.0 + allSolidImpacts.Z[1];
-      float horizontalUnitScale = this.scale;
-      float verticalUnitScale = this.scale;
+      float horizontalUnitSize = this.textureSize;
+      float verticalUnitSize = this.textureSize;
 
       float minU = 0;
-      float maxU = this.renderedRES;
+      float maxU = this.renderedResolution;
       float minV = 0;
-      float maxV = this.renderedRES;
+      float maxV = this.renderedResolution;
 
       //float c = HeightAboveGround * overallScale; // <<< or zero i.e. height of the plane in 3D  // ?????????
       float c = elevation * overallScale;
@@ -95,7 +93,7 @@ class WindRose {
         y = b;
         z = c;
 
-        WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale, u * horizontalUnitScale, v * verticalUnitScale);
+        WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale, u * horizontalUnitSize, v * verticalUnitSize);
       }
 
       WIN3D.graphics.endShape(CLOSE);
@@ -112,9 +110,9 @@ class WindRose {
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     XML_setBoolean(parent, "displayImage", this.displayImage);
-    XML_setInt(parent, "RES", this.RES);
-    XML_setInt(parent, "renderedRES", this.renderedRES);
-    XML_setFloat(parent, "scale", this.scale);
+    XML_setInt(parent, "imageResolution", this.imageResolution);
+    XML_setInt(parent, "renderedResolution", this.renderedResolution);
+    XML_setFloat(parent, "textureSize", this.textureSize);
   }
 
 
@@ -125,8 +123,8 @@ class WindRose {
     XML parent = xml.getChild(this.CLASS_STAMP);
 
     this.displayImage = XML_getBoolean(parent, "displayImage");
-    this.RES = XML_getInt(parent, "RES");
-    this.renderedRES = XML_getInt(parent, "renderedRES");
-    this.scale = XML_getFloat(parent, "scale");
+    this.imageResolution = XML_getInt(parent, "imageResolution");
+    this.renderedResolution = XML_getInt(parent, "renderedResolution");
+    this.textureSize = XML_getFloat(parent, "textureSize");
   }
 }

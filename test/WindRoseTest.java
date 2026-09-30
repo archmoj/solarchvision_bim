@@ -32,9 +32,9 @@ class WindRoseTest {
   @Test
   void toXMLThenFromXML_roundTripsEveryField () {
     app.allWindRoses.displayImage = true;
-    app.allWindRoses.RES = 200;
-    app.allWindRoses.renderedRES = 3;
-    app.allWindRoses.scale = 55f;
+    app.allWindRoses.imageResolution = 200;
+    app.allWindRoses.renderedResolution = 3;
+    app.allWindRoses.textureSize = 55f;
 
     processing.data.XML root = new processing.data.XML("root");
     app.allWindRoses.to_XML(root);
@@ -43,8 +43,8 @@ class WindRoseTest {
     fresh.from_XML(root);
 
     assertTrue(fresh.displayImage);
-    assertEquals(200, fresh.RES);
-    assertEquals(3, fresh.renderedRES);
-    assertEquals(55f, fresh.scale, 0.0001f);
+    assertEquals(200, fresh.imageResolution);
+    assertEquals(3, fresh.renderedResolution);
+    assertEquals(55f, fresh.textureSize, 0.0001f);
   }
 }

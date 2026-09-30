@@ -1839,9 +1839,9 @@ class STUDY {
 
     allWindRoses.resize_Image_array();
 
-    int RES = allWindRoses.RES;
+    int RES = allWindRoses.imageResolution;
 
-    allWindRoses.renderedRES = RES;
+    allWindRoses.renderedResolution = RES;
 
     if (this.impactGraphIndex == impactGraphIndex_WIND_ACTIVE) this.impactTypeIndex = Impact_ACTIVE;
     if (this.impactGraphIndex == impactGraphIndex_WIND_PASSIVE) this.impactTypeIndex = Impact_PASSIVE;
