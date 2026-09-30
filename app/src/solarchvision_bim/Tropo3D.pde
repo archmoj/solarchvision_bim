@@ -606,11 +606,11 @@ class Tropo3D {
     }
 
     if (_turn == 3) {
-      writeOBJFaceIndices(f, n_Map);
+      writeOBJfaceSelection(f, n_Map);
     }
   }
 
-  void writeOBJFaceIndices (int f, int n_Map) {
+  void writeOBJfaceSelection (int f, int n_Map) {
     String n1_txt = nf(obj_lastVertexNumber - 3, 0);
     String n2_txt = nf(obj_lastVertexNumber - 2, 0);
     String n3_txt = nf(obj_lastVertexNumber - 1, 0);

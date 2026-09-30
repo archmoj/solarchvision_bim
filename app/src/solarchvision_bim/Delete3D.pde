@@ -102,28 +102,28 @@ class Delete3D {
     if (currentObjectCategory == ObjectCategory.TERRAIN) {
     }
     if (currentObjectCategory == ObjectCategory.CAMERA) {
-      Delete3D.selected_Cameras();
+      Delete3D.cameraSelection();
     }
     if (currentObjectCategory == ObjectCategory.SECTION) {
-      Delete3D.selected_Sections();
+      Delete3D.sectionSelection();
     }
     if (currentObjectCategory == ObjectCategory.MODEL1D) {
-      Delete3D.selected_Model1Ds();
+      Delete3D.model1DSelection();
     }
     if (currentObjectCategory == ObjectCategory.MODEL2D) {
-      Delete3D.selected_Model2Ds();
+      Delete3D.model2DSelection();
     }
     if (currentObjectCategory == ObjectCategory.SOLID) {
-      Delete3D.selected_Solids();
+      Delete3D.solidSelection();
     }
     if (currentObjectCategory == ObjectCategory.FACE) {
-      Delete3D.selected_Faces();
+      Delete3D.faceSelection();
     }
     if (currentObjectCategory == ObjectCategory.POLYLINE) {
-      Delete3D.selected_Polylines();
+      Delete3D.polylineSelection();
     }
     if (currentObjectCategory == ObjectCategory.GROUP) {
-      Delete3D.selected_Groups();
+      Delete3D.groupSelection();
     }
     if ((currentObjectCategory == ObjectCategory.VERTEX) ||
         (currentObjectCategory == ObjectCategory.FACE) ||
@@ -135,8 +135,8 @@ class Delete3D {
     Select3D.deselectAll(); // important to deselect
   }
 
-  void selected_Cameras () {
-    int[] ids = sort(Select3D.CameraIndices);
+  void cameraSelection () {
+    int[] ids = sort(Select3D.cameraSelection);
     if (ids.length == 0) return;
 
     boolean currentCameraIndexDeleted = false;
@@ -163,8 +163,8 @@ class Delete3D {
     model_changed();
   }
 
-  void selected_Sections () {
-    int[] ids = sort(Select3D.SectionIndices);
+  void sectionSelection () {
+    int[] ids = sort(Select3D.sectionSelection);
     if (ids.length == 0) return;
 
     allSections.f_data = removeIndices(allSections.f_data, ids);
@@ -176,8 +176,8 @@ class Delete3D {
     model_changed();
   }
 
-  void selected_Model1Ds () {
-    int[] ids = sort(Select3D.Model1DIndices);
+  void model1DSelection () {
+    int[] ids = sort(Select3D.model1DSelection);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -199,8 +199,8 @@ class Delete3D {
     model_changed();
   }
 
-  void selected_Model2Ds () {
-    int[] ids = sort(Select3D.Model2DIndices);
+  void model2DSelection () {
+    int[] ids = sort(Select3D.model2DSelection);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -222,8 +222,8 @@ class Delete3D {
     model_changed();
   }
 
-  void selected_Solids () {
-    int[] ids = sort(Select3D.SolidIndices);
+  void solidSelection () {
+    int[] ids = sort(Select3D.solidSelection);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -243,10 +243,10 @@ class Delete3D {
     model_changed();
   }
 
-  void selected_Faces () {
+  void faceSelection () {
     Select3D.convert_Faces_to_Vertices();
 
-    int[] ids = sort(Select3D.FaceIndices);
+    int[] ids = sort(Select3D.faceSelection);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -267,10 +267,10 @@ class Delete3D {
     model_changed();
   }
 
-  void selected_Polylines () {
+  void polylineSelection () {
     Select3D.convert_Polylines_to_Vertices();
 
-    int[] ids = sort(Select3D.PolylineIndices);
+    int[] ids = sort(Select3D.polylineSelection);
     if (ids.length == 0) return;
 
     for (int o = ids.length - 1; o >= 0; o--) {
@@ -291,13 +291,13 @@ class Delete3D {
     model_changed();
   }
 
-  void selected_Groups () {
+  void groupSelection () {
     /////////////////////////////
     //holdProject();
     /////////////////////////////
     Select3D.convert_Groups_to_Vertices();
 
-    int[] ids = sort(Select3D.GroupIndices);
+    int[] ids = sort(Select3D.groupSelection);
     if (ids.length == 0) {
       model_changed();
       return;
@@ -409,7 +409,7 @@ class Delete3D {
   }
 
   void isolatedVertices_Selection () {
-    int[] ids = sort(Select3D.VertexIndices);
+    int[] ids = sort(Select3D.vertexSelection);
     int n = ids.length;
 
     if (n == 0) {

@@ -32,8 +32,8 @@ class Scale3D {
   }
 
   void TerrainVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
-    for (int q = 0; q < Select3D.terrainVertexIndices.length; q++) {
-      int f = Select3D.terrainVertexIndices[q];
+    for (int q = 0; q < Select3D.terrainVertexSelection.length; q++) {
+      int f = Select3D.terrainVertexSelection[q];
       int i = f / Terrain.columnCount;
       int j = f % Terrain.columnCount;
 
@@ -65,8 +65,8 @@ class Scale3D {
   }
 
   void Vertices (float x0, float y0, float z0, float sx, float sy, float sz) {
-    for (int q = 0; q < Select3D.VertexIndices.length; q++) {
-      int f = Select3D.VertexIndices[q];
+    for (int q = 0; q < Select3D.vertexSelection.length; q++) {
+      int f = Select3D.vertexSelection[q];
       float[] P = scalePointAroundPivot(allPoints.getX(f), allPoints.getY(f), allPoints.getZ(f), x0, y0, z0, sx, sy, sz);
 
       allPoints.setX(f, P[0]);
@@ -110,8 +110,8 @@ class Scale3D {
   void Solids (float x0, float y0, float z0, float sx, float sy, float sz) {
     boolean allSolids_updated = false;
 
-    for (int q = 0; q < Select3D.SolidIndices.length; q++) {
-      int f = Select3D.SolidIndices[q];
+    for (int q = 0; q < Select3D.solidSelection.length; q++) {
+      int f = Select3D.solidSelection[q];
       float[] P = scalePointAroundPivot(allSolids.get_posX(f), allSolids.get_posY(f), allSolids.get_posZ(f), x0, y0, z0, sx, sy, sz);
 
       allSolids.updatePosition(f, P[0], P[1], P[2]);
@@ -126,8 +126,8 @@ class Scale3D {
   }
 
   void Sections (float sx, float sy) {
-    for (int q = 0; q < Select3D.SectionIndices.length; q++) {
-      int f = Select3D.SectionIndices[q];
+    for (int q = 0; q < Select3D.sectionSelection.length; q++) {
+      int f = Select3D.sectionSelection[q];
       allSections.setU(f, allSections.getU(f) * sx);
       allSections.setV(f, allSections.getV(f) * sy);
     }
@@ -142,8 +142,8 @@ class Scale3D {
     sz = sy;
     sy = tmp;
 
-    for (int q = 0; q < Select3D.CameraIndices.length; q++) {
-      int f = Select3D.CameraIndices[q];
+    for (int q = 0; q < Select3D.cameraSelection.length; q++) {
+      int f = Select3D.cameraSelection[q];
 
       float x = allCameras.get_posX(f) - x0;
       float y = allCameras.get_posY(f) - y0;
@@ -160,8 +160,8 @@ class Scale3D {
   }
 
   void Model1Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
-    for (int o = Select3D.Model1DIndices.length - 1; o >= 0; o--) {
-      int f = Select3D.Model1DIndices[o];
+    for (int o = Select3D.model1DSelection.length - 1; o >= 0; o--) {
+      int f = Select3D.model1DSelection[o];
       float[] P = scalePointAroundPivot(allModel1Ds.getX(f), allModel1Ds.getY(f), allModel1Ds.getZ(f), x0, y0, z0, sx, sy, sz);
 
       allModel1Ds.setX(f, P[0]);
@@ -175,8 +175,8 @@ class Scale3D {
   }
 
   void Model2Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
-    for (int o = Select3D.Model2DIndices.length - 1; o >= 0; o--) {
-      int f = Select3D.Model2DIndices[o];
+    for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
+      int f = Select3D.model2DSelection[o];
       float[] P = scalePointAroundPivot(allModel2Ds.getX(f), allModel2Ds.getY(f), allModel2Ds.getZ(f), x0, y0, z0, sx, sy, sz);
 
       allModel2Ds.setX(f, P[0]);
@@ -206,8 +206,8 @@ class Scale3D {
 
     boolean allSolids_updated = false;
 
-    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.GroupIndices[o];
+    for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.groupSelection[o];
 
       float[] Ppivot = scalePointAroundPivot(allGroups.Pivots[OBJ_ID][0], allGroups.Pivots[OBJ_ID][1], allGroups.Pivots[OBJ_ID][2], x0, y0, z0, sx, sy, sz);
       allGroups.Pivots[OBJ_ID][0] = Ppivot[0];

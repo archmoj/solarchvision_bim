@@ -93,12 +93,12 @@ class DeleteGeometryTest {
   @Test
   void isolatedVerticesSelection_onlyConsidersVerticesWithinTheGivenSelection () {
     // Points 1, 2, and 3 are all genuinely unused - but only 1 and 2 are
-    // in VertexIndices, so point 3 must survive untouched despite also
+    // in vertexSelection, so point 3 must survive untouched despite also
     // being unreferenced.
     app.allVertices = new float[][]{{0, 0, 0}, {1, 1, 1}, {2, 2, 2}, {3, 3, 3}};
     app.allFaces.nodes = new int[][]{{0}};
     app.allPolylines.nodes = new int[0][];
-    app.Select3D.VertexIndices = new int[]{1, 2};
+    app.Select3D.vertexSelection = new int[]{1, 2};
 
     app.Delete3D.isolatedVertices_Selection();
 
@@ -106,7 +106,7 @@ class DeleteGeometryTest {
     assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[0], 0.0001f);
     assertArrayEquals(new float[]{3, 3, 3}, app.allVertices[1], 0.0001f); // point 3, shifted down
     assertArrayEquals(new int[]{0}, app.allFaces.nodes[0]);
-    assertEquals(0, app.Select3D.VertexIndices.length); // deselected afterward
+    assertEquals(0, app.Select3D.vertexSelection.length); // deselected afterward
   }
 
   @Test
@@ -114,14 +114,14 @@ class DeleteGeometryTest {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 1, 1}};
     app.allFaces.nodes = new int[0][];
     app.allPolylines.nodes = new int[0][];
-    app.Select3D.VertexIndices = new int[]{};
+    app.Select3D.vertexSelection = new int[]{};
 
     app.Delete3D.isolatedVertices_Selection();
 
     assertEquals(2, app.allVertices.length); // untouched
   }
 
-  // --- selected_Faces (a full integration test) -----------------------
+  // --- faceSelection (a full integration test) -----------------------
 
   @Test
   void selectedFaces_shrinksAndShiftsOwningGroupsThenCompactsTheFaceArrays () {
@@ -133,9 +133,9 @@ class DeleteGeometryTest {
     app.allGroups.Faces[0] = new int[]{0, 1}; // group 0 owns faces 0-1
     app.allGroups.Faces[1] = new int[]{2, 3}; // group 1 owns faces 2-3, entirely after the deleted face
 
-    app.Select3D.FaceIndices = new int[]{1}; // delete face 1 (inside group 0's range)
+    app.Select3D.faceSelection = new int[]{1}; // delete face 1 (inside group 0's range)
 
-    app.Delete3D.selected_Faces();
+    app.Delete3D.faceSelection();
 
     // group 0 shrinks by 1 (the deleted face was inside its range);
     // group 1 shifts down by 1 entirely (it came after the deleted face).
@@ -148,9 +148,9 @@ class DeleteGeometryTest {
     assertArrayEquals(new int[]{3}, app.allFaces.nodes[2]);
   }
 
-  // --- selected_Polylines ---------------------------------------------
+  // --- polylineSelection ---------------------------------------------
   //
-  // Structurally identical to selected_Faces above, just against
+  // Structurally identical to faceSelection above, just against
   // allPolylines/allGroups.Polylines - confirms it's wired to the right
   // arrays and not accidentally sharing logic with the Faces path.
 
@@ -164,9 +164,9 @@ class DeleteGeometryTest {
     app.allGroups.Polylines[0] = new int[]{0, 1};
     app.allGroups.Polylines[1] = new int[]{2, 3};
 
-    app.Select3D.PolylineIndices = new int[]{1};
+    app.Select3D.polylineSelection = new int[]{1};
 
-    app.Delete3D.selected_Polylines();
+    app.Delete3D.polylineSelection();
 
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Polylines[0]);
     assertArrayEquals(new int[]{1, 2}, app.allGroups.Polylines[1]);
@@ -177,7 +177,7 @@ class DeleteGeometryTest {
     assertArrayEquals(new int[]{3}, app.allPolylines.nodes[2]);
   }
 
-  // --- selected_Groups (a full integration test) -----------------------
+  // --- groupSelection (a full integration test) -----------------------
 
   @Test
   void selectedGroups_cascadesIntoTheGroupsOwnFacesThenRemovesTheGroupItself () {
@@ -199,9 +199,9 @@ class DeleteGeometryTest {
       ranges[1] = new int[]{0, -1};
     }
 
-    app.Select3D.GroupIndices = new int[]{0}; // delete group 0
+    app.Select3D.groupSelection = new int[]{0}; // delete group 0
 
-    app.Delete3D.selected_Groups();
+    app.Delete3D.groupSelection();
 
     // Group 0's own faces (0-1) are spliced out of allFaces entirely.
     assertEquals(2, app.allFaces.nodes.length);
@@ -214,7 +214,7 @@ class DeleteGeometryTest {
     assertArrayEquals(new int[]{0, 1}, app.allGroups.Faces[0]); // this is (former) group 1's row
   }
 
-  // --- selected_Cameras (a full integration test) ----------------------
+  // --- cameraSelection (a full integration test) ----------------------
 
   @Test
   void selectedCameras_shiftsCurrentCameraDownWhenAnEarlierOneIsDeleted () {
@@ -223,9 +223,9 @@ class DeleteGeometryTest {
     app.allCameras.num = 3;
     app.WIN3D.currentCameraIndex = 2;
 
-    app.Select3D.CameraIndices = new int[]{0}; // delete camera 0, before the current one
+    app.Select3D.cameraSelection = new int[]{0}; // delete camera 0, before the current one
 
-    app.Delete3D.selected_Cameras();
+    app.Delete3D.cameraSelection();
 
     assertEquals(1, app.WIN3D.currentCameraIndex); // shifted down by 1, not reset
     assertEquals(2, app.allCameras.num);
@@ -242,9 +242,9 @@ class DeleteGeometryTest {
     // itself) in the same call - the "current camera was deleted"
     // outcome takes priority over the plain shift-down outcome
     // regardless of how much shiftBefore had already accumulated.
-    app.Select3D.CameraIndices = new int[]{0, 1};
+    app.Select3D.cameraSelection = new int[]{0, 1};
 
-    app.Delete3D.selected_Cameras();
+    app.Delete3D.cameraSelection();
 
     assertEquals(0, app.WIN3D.currentCameraIndex);
     assertEquals(1, app.allCameras.num);
@@ -257,9 +257,9 @@ class DeleteGeometryTest {
     app.allCameras.num = 1;
     app.WIN3D.currentCameraIndex = 0;
 
-    app.Select3D.CameraIndices = new int[]{0};
+    app.Select3D.cameraSelection = new int[]{0};
 
-    app.Delete3D.selected_Cameras();
+    app.Delete3D.cameraSelection();
 
     // num dropped to 0, which triggers add_first() to put one back.
     assertEquals(1, app.allCameras.num);
@@ -270,10 +270,10 @@ class DeleteGeometryTest {
 
   @Test
   void selectionDispatcher_onlyRunsTheBranchMatchingTheCurrentCategoryThenDeselectsAll () {
-    // CAMERA category should run selected_Cameras() and nothing else -
+    // CAMERA category should run cameraSelection() and nothing else -
     // in particular, NOT isolatedVertices_Selection() (that only runs
     // for VERTEX/FACE/POLYLINE/GROUP categories), so a populated
-    // VertexIndices should survive untouched right up until the final,
+    // vertexSelection should survive untouched right up until the final,
     // unconditional Select3D.deselectAll() at the end.
     app.allCameras.options = new float[][]{new float[9], new float[9]};
     app.allCameras.Type = new int[]{0, 0};
@@ -281,19 +281,19 @@ class DeleteGeometryTest {
     app.WIN3D.currentCameraIndex = 0;
 
     app.allVertices = new float[][]{{0, 0, 0}};
-    app.Select3D.VertexIndices = new int[]{0}; // would be examined by isolatedVertices_Selection if it ran
+    app.Select3D.vertexSelection = new int[]{0}; // would be examined by isolatedVertices_Selection if it ran
 
     app.currentObjectCategory = app.ObjectCategory.CAMERA;
-    app.Select3D.CameraIndices = new int[]{0};
+    app.Select3D.cameraSelection = new int[]{0};
 
     app.Delete3D.selection();
 
     assertEquals(1, app.allCameras.num); // the CAMERA branch did run
     assertEquals(1, app.allVertices.length); // isolatedVertices_Selection did NOT run - vertex left alone
-    assertEquals(0, app.Select3D.VertexIndices.length); // but deselectAll() at the end clears the selection anyway
+    assertEquals(0, app.Select3D.vertexSelection.length); // but deselectAll() at the end clears the selection anyway
   }
 
-  // --- selected_Sections (a full integration test) ---------------------
+  // --- sectionSelection (a full integration test) ---------------------
   //
   // The one selected_* function with NO owning-group cascade at all -
   // sections aren't grouped, so this is just sort-ids-then-removeIndices
@@ -309,9 +309,9 @@ class DeleteGeometryTest {
     app.allSections.SolarImpact = new PImage[3][1][1];
     app.allSections.num = 3;
 
-    app.Select3D.SectionIndices = new int[]{1};
+    app.Select3D.sectionSelection = new int[]{1};
 
-    app.Delete3D.selected_Sections();
+    app.Delete3D.sectionSelection();
 
     assertEquals(2, app.allSections.num);
     assertEquals(2, app.allSections.f_data.length);
@@ -322,9 +322,9 @@ class DeleteGeometryTest {
     assertEquals(2, app.allSections.SolarImpact.length);
   }
 
-  // --- selected_Model1Ds (a full integration test) ----------------------
+  // --- model1DSelection (a full integration test) ----------------------
   //
-  // Same owning-group cascade shape as selected_Faces, but against
+  // Same owning-group cascade shape as faceSelection, but against
   // allGroups.Model1Ds/allModel1Ds - confirmed independently rather than
   // assumed identical.
 
@@ -340,9 +340,9 @@ class DeleteGeometryTest {
     app.allGroups.Model1Ds[0] = new int[]{0, 1};
     app.allGroups.Model1Ds[1] = new int[]{2, 3};
 
-    app.Select3D.Model1DIndices = new int[]{1};
+    app.Select3D.model1DSelection = new int[]{1};
 
-    app.Delete3D.selected_Model1Ds();
+    app.Delete3D.model1DSelection();
 
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Model1Ds[0]);
     assertArrayEquals(new int[]{1, 2}, app.allGroups.Model1Ds[1]);
@@ -355,7 +355,7 @@ class DeleteGeometryTest {
     assertEquals(3, app.allModel1Ds.i_data.length);
   }
 
-  // --- selected_Model2Ds (a full integration test) ----------------------
+  // --- model2DSelection (a full integration test) ----------------------
 
   @Test
   void selectedModel2Ds_shiftsOwningGroupsThenCompactsItsOwnArrays () {
@@ -369,9 +369,9 @@ class DeleteGeometryTest {
     app.allGroups.Model2Ds[0] = new int[]{0, 1};
     app.allGroups.Model2Ds[1] = new int[]{2, 3};
 
-    app.Select3D.Model2DIndices = new int[]{1};
+    app.Select3D.model2DSelection = new int[]{1};
 
-    app.Delete3D.selected_Model2Ds();
+    app.Delete3D.model2DSelection();
 
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Model2Ds[0]);
     assertArrayEquals(new int[]{1, 2}, app.allGroups.Model2Ds[1]);
@@ -384,13 +384,13 @@ class DeleteGeometryTest {
     assertArrayEquals(new int[]{0, 0, 0}, app.allModel2Ds.MAP);
   }
 
-  // --- selected_Solids (a full integration test) ------------------------
+  // --- solidSelection (a full integration test) ------------------------
 
   @Test
   void selectedSolids_shiftsOwningGroupsThenCompactsDEFWithNoSeparateNumField () {
     // Solids has no `num` field at all - DEF.length IS the
     // count everywhere else in the codebase, which is exactly why
-    // selected_Solids() (unlike every other selected_* function here)
+    // solidSelection() (unlike every other selected_* function here)
     // has no "num -= ids.length" line at the end. Worth confirming
     // explicitly rather than assuming it's an oversight.
     app.allSolids.DEF = new float[][]{
@@ -401,9 +401,9 @@ class DeleteGeometryTest {
     app.allGroups.Solids[0] = new int[]{0, 1};
     app.allGroups.Solids[1] = new int[]{2, 3};
 
-    app.Select3D.SolidIndices = new int[]{1};
+    app.Select3D.solidSelection = new int[]{1};
 
-    app.Delete3D.selected_Solids();
+    app.Delete3D.solidSelection();
 
     assertArrayEquals(new int[]{0, 0}, app.allGroups.Solids[0]);
     assertArrayEquals(new int[]{1, 2}, app.allGroups.Solids[1]);

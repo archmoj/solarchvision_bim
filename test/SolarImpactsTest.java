@@ -32,7 +32,7 @@ class SolarImpactsTest {
 
   @Test
   void calculateImpactSelectedSections_isANoOpWhenNothingIsSelected () {
-    app.Select3D.SectionIndices = new int[]{};
+    app.Select3D.sectionSelection = new int[]{};
     // If this reached calculate_Impact_CurrentPreBaked() it would throw
     // on cursor()/loadImage() - reaching the end of this call without an
     // exception IS the assertion here.

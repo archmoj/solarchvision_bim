@@ -17,7 +17,7 @@ class Move3DTest {
   void selection_vertexCategoryDispatchesToVertices () {
     app.allVertices = new float[][]{{1, 2, 3}};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
 
     app.Move3D.selection(1, 1, 1);
 
@@ -29,7 +29,7 @@ class Move3DTest {
     app.allVertices = new float[][]{{1, 2, 3}};
     app.allFaces.nodes = new int[][]{{0}};
     app.currentObjectCategory = app.ObjectCategory.FACE;
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
 
     app.Move3D.selection(1, 1, 1);
 
@@ -43,7 +43,7 @@ class Move3DTest {
     app.Terrain.columnCount = 3;
     app.Terrain.Mesh = new float[2][3][3]; // 2 rows x 3 columns, all zero
 
-    app.Select3D.terrainVertexIndices = new int[]{4}; // flat index 4 -> row 1, col 1
+    app.Select3D.terrainVertexSelection = new int[]{4}; // flat index 4 -> row 1, col 1
 
     app.Move3D.TerrainVertices(1, 2, 3);
 
@@ -70,7 +70,7 @@ class Move3DTest {
   @Test
   void vertices_movesOnlyTheSelectedPoints () {
     app.allVertices = new float[][]{{1, 1, 1}, {5, 5, 5}};
-    app.Select3D.VertexIndices = new int[]{1};
+    app.Select3D.vertexSelection = new int[]{1};
 
     app.Move3D.Vertices(1, 1, 1);
 
@@ -84,7 +84,7 @@ class Move3DTest {
   void polylines_movesEveryVertexTouchedBySelectedPolylines () {
     app.allVertices = new float[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
     app.allPolylines.nodes = new int[][]{{0, 1}};
-    app.Select3D.PolylineIndices = new int[]{0};
+    app.Select3D.polylineSelection = new int[]{0};
 
     app.Move3D.Polylines(1, 1, 1);
 
@@ -99,7 +99,7 @@ class Move3DTest {
   void faces_movesEveryVertexTouchedBySelectedFaces () {
     app.allVertices = new float[][]{{0, 0, 0}, {0, 0, 0}};
     app.allFaces.nodes = new int[][]{{0, 1}};
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
 
     app.Move3D.Faces(1, 1, 1);
 
@@ -117,14 +117,14 @@ class Move3DTest {
     // others already end with.
     app.allVertices = new float[][]{{0, 0, 0}};
     app.allFaces.nodes = new int[][]{{0}};
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
 
     app.WIN3D.update = false;
     app.Move3D.Faces(1, 1, 1);
     assertTrue(app.WIN3D.update);
 
     app.WIN3D.update = false;
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
     app.Move3D.Vertices(1, 1, 1);
     assertTrue(app.WIN3D.update); // unchanged: still true, exactly like Faces() now
   }
@@ -135,7 +135,7 @@ class Move3DTest {
   void model1Ds_movesOnlyTheSelectedRow () {
     app.allModel1Ds.f_data = new float[][]{new float[11], new float[11]};
     app.allModel1Ds.f_data[1][0] = 5;
-    app.Select3D.Model1DIndices = new int[]{1};
+    app.Select3D.model1DSelection = new int[]{1};
 
     app.Move3D.Model1Ds(1, 2, 3);
 
@@ -147,7 +147,7 @@ class Move3DTest {
   void model2Ds_movesOnlyTheSelectedRow () {
     app.allModel2Ds.XYZS = new float[][]{new float[4], new float[4]};
     app.allModel2Ds.XYZS[1][0] = 5;
-    app.Select3D.Model2DIndices = new int[]{1};
+    app.Select3D.model2DSelection = new int[]{1};
 
     app.Move3D.Model2Ds(1, 2, 3);
 
@@ -161,8 +161,8 @@ class Move3DTest {
   void solids_movesOnlyTheSelectedSolidAndLeavesSectionRecalculationAsANoOp () {
     app.allSolids.DEF = new float[][]{new float[13], new float[13]};
     app.allSolids.DEF[1][0] = 5;
-    app.Select3D.SolidIndices = new int[]{1};
-    // Select3D.SectionIndices is left empty - allSolidImpacts.
+    app.Select3D.solidSelection = new int[]{1};
+    // Select3D.sectionSelection is left empty - allSolidImpacts.
     // calculate_Impact_selectedSections()'s own loop is keyed off that
     // array, so leaving it empty makes the mandatory call a safe no-op
     // regardless of what was actually moved here.
@@ -187,7 +187,7 @@ class Move3DTest {
     app.allCameras.num = 2;
 
     app.WIN3D.currentCameraIndex = 1;
-    app.Select3D.CameraIndices = new int[]{1}; // moving the CURRENT camera
+    app.Select3D.cameraSelection = new int[]{1}; // moving the CURRENT camera
 
     app.Move3D.Cameras(1, 2, 3); // dy and dz get swapped internally -> actually applies (1, 3, 2)
 
@@ -209,7 +209,7 @@ class Move3DTest {
     app.allCameras.num = 2;
 
     app.WIN3D.currentCameraIndex = 1;
-    app.Select3D.CameraIndices = new int[]{0}; // moving a DIFFERENT camera
+    app.Select3D.cameraSelection = new int[]{0}; // moving a DIFFERENT camera
 
     // Captured rather than assumed: WIN3D.positionY/Z don't actually
     // default to 0 (they're 5 and 55, a preset starting viewpoint), so
@@ -244,7 +244,7 @@ class Move3DTest {
     app.allGroups.Solids[0] = new int[]{0, -1};
     app.allGroups.Pivots[0] = new float[9]; // all zero
 
-    app.Select3D.GroupIndices = new int[]{0};
+    app.Select3D.groupSelection = new int[]{0};
 
     app.Move3D.Groups(1, 2, 3);
 
@@ -279,8 +279,8 @@ class Move3DTest {
     app.allGroups.Solids[0] = new int[]{0, 0};
     app.allGroups.Pivots[0] = new float[9];
 
-    app.Select3D.GroupIndices = new int[]{0};
-    // SectionIndices stays empty, same reasoning as the Solids() test above.
+    app.Select3D.groupSelection = new int[]{0};
+    // sectionSelection stays empty, same reasoning as the Solids() test above.
 
     app.Move3D.Groups(1, 2, 3);
 

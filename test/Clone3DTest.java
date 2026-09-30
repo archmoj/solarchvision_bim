@@ -20,12 +20,12 @@ class Clone3DTest {
     app.allFaces.nodes = new int[][]{{0}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
     app.currentObjectCategory = app.ObjectCategory.FACE;
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
 
     app.Clone3D.selection(true);
 
     assertEquals(2, app.allFaces.nodes.length);
-    assertArrayEquals(new int[]{1}, app.Select3D.FaceIndices); // only the new clone stays selected
+    assertArrayEquals(new int[]{1}, app.Select3D.faceSelection); // only the new clone stays selected
   }
 
   @Test
@@ -33,9 +33,9 @@ class Clone3DTest {
     // "nothing to clone" per the source comment - Terrain Vertices have no
     // clone branch in the dispatcher at all.
     app.currentObjectCategory = app.ObjectCategory.TERRAIN;
-    app.Select3D.terrainVertexIndices = new int[]{3};
+    app.Select3D.terrainVertexSelection = new int[]{3};
     app.Clone3D.selection(true);
-    assertArrayEquals(new int[]{3}, app.Select3D.terrainVertexIndices); // untouched
+    assertArrayEquals(new int[]{3}, app.Select3D.terrainVertexSelection); // untouched
   }
 
   // ================= appendRange ======================================
@@ -221,12 +221,12 @@ class Clone3DTest {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 1, 1}};
     app.allFaces.nodes = new int[][]{{0}, {1}};
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
-    app.Select3D.FaceIndices = new int[]{0, 1};
+    app.Select3D.faceSelection = new int[]{0, 1};
 
     app.Clone3D.Faces(true);
 
     assertEquals(4, app.allFaces.nodes.length);
-    assertArrayEquals(new int[]{2, 3}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{2, 3}, app.Select3D.faceSelection);
   }
 
   @Test
@@ -234,12 +234,12 @@ class Clone3DTest {
     app.allVertices = new float[][]{{0, 0, 0}};
     app.allPolylines.nodes = new int[][]{{0}};
     app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.Select3D.PolylineIndices = new int[]{0};
+    app.Select3D.polylineSelection = new int[]{0};
 
     app.Clone3D.Polylines(true);
 
     assertEquals(2, app.allPolylines.nodes.length);
-    assertArrayEquals(new int[]{1}, app.Select3D.PolylineIndices);
+    assertArrayEquals(new int[]{1}, app.Select3D.polylineSelection);
   }
 
   // ================= Model1Ds / Model2Ds / Solids (batch) ==============
@@ -249,12 +249,12 @@ class Clone3DTest {
     app.allModel1Ds.f_data = new float[][]{new float[11], new float[11]};
     app.allModel1Ds.i_data = new int[][]{new int[3], new int[3]};
     app.allModel1Ds.num = 2;
-    app.Select3D.Model1DIndices = new int[]{0, 1};
+    app.Select3D.model1DSelection = new int[]{0, 1};
 
     app.Clone3D.Model1Ds(true);
 
     assertEquals(4, app.allModel1Ds.num);
-    assertArrayEquals(new int[]{2, 3}, app.Select3D.Model1DIndices);
+    assertArrayEquals(new int[]{2, 3}, app.Select3D.model1DSelection);
   }
 
   @Test
@@ -262,23 +262,23 @@ class Clone3DTest {
     app.allModel2Ds.XYZS = new float[][]{new float[4]};
     app.allModel2Ds.MAP = new int[]{1};
     app.allModel2Ds.num = 1;
-    app.Select3D.Model2DIndices = new int[]{0};
+    app.Select3D.model2DSelection = new int[]{0};
 
     app.Clone3D.Model2Ds(true);
 
     assertEquals(2, app.allModel2Ds.num);
-    assertArrayEquals(new int[]{1}, app.Select3D.Model2DIndices);
+    assertArrayEquals(new int[]{1}, app.Select3D.model2DSelection);
   }
 
   @Test
   void solidsBatch_clonesEverySelectedSolidAndSelectsOnlyTheClones () {
     app.allSolids.DEF = new float[][]{new float[13]};
-    app.Select3D.SolidIndices = new int[]{0};
+    app.Select3D.solidSelection = new int[]{0};
 
     app.Clone3D.Solids(true);
 
     assertEquals(2, app.allSolids.DEF.length);
-    assertArrayEquals(new int[]{1}, app.Select3D.SolidIndices);
+    assertArrayEquals(new int[]{1}, app.Select3D.solidSelection);
   }
 
   // ================= Sections (batch) =================================
@@ -296,12 +296,12 @@ class Clone3DTest {
     app.allSections.SolarImpact = new processing.core.PImage[1][1][1];
     app.allSections.num = 1;
 
-    app.Select3D.SectionIndices = new int[]{0};
+    app.Select3D.sectionSelection = new int[]{0};
 
     app.Clone3D.Sections(true);
 
     assertEquals(2, app.allSections.num);
-    assertArrayEquals(new int[]{1}, app.Select3D.SectionIndices);
+    assertArrayEquals(new int[]{1}, app.Select3D.sectionSelection);
     assertEquals(1f, app.allSections.f_data[1][0], 0.0001f); // position carried over
   }
 
@@ -314,12 +314,12 @@ class Clone3DTest {
     app.allCameras.num = 1;
     app.allCameras.options[0][0] = 5; // posX
 
-    app.Select3D.CameraIndices = new int[]{0};
+    app.Select3D.cameraSelection = new int[]{0};
 
     app.Clone3D.Cameras(true);
 
     assertEquals(2, app.allCameras.num);
-    assertArrayEquals(new int[]{1}, app.Select3D.CameraIndices);
+    assertArrayEquals(new int[]{1}, app.Select3D.cameraSelection);
     assertEquals(5f, app.allCameras.options[1][0], 0.0001f);
   }
 
@@ -350,7 +350,7 @@ class Clone3DTest {
     app.allGroups.Solids[0] = new int[]{0, 0};
     app.allGroups.Pivots[0] = new float[]{1, 2, 3, 1, 1, 1, 0, 0, 0};
 
-    app.Select3D.GroupIndices = new int[]{0};
+    app.Select3D.groupSelection = new int[]{0};
 
     app.Clone3D.Groups(true);
 
@@ -373,7 +373,7 @@ class Clone3DTest {
     assertArrayEquals(new int[]{1, 1}, app.allGroups.Solids[1]);
 
     // Only the new group ends up selected.
-    assertArrayEquals(new int[]{1}, app.Select3D.GroupIndices);
+    assertArrayEquals(new int[]{1}, app.Select3D.groupSelection);
   }
 
   @Test
@@ -382,11 +382,11 @@ class Clone3DTest {
     app.allGroups.Faces[0] = new int[]{0, -1};     // empty
     app.allGroups.Polylines[0] = new int[]{0, -1}; // empty
 
-    app.Select3D.GroupIndices = new int[]{0};
+    app.Select3D.groupSelection = new int[]{0};
 
     app.Clone3D.Groups(true);
 
     assertEquals(1, app.allGroups.num); // no new group created
-    assertEquals(0, app.Select3D.GroupIndices.length); // nothing new to select
+    assertEquals(0, app.Select3D.groupSelection.length); // nothing new to select
   }
 }

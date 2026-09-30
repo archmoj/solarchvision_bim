@@ -921,11 +921,11 @@ class Earth3D {
     }
 
     if (_turn == 3) {
-      writeOBJFaceIndices(f);
+      writeOBJfaceSelection(f);
     }
   }
 
-  void writeOBJFaceIndices (int f) {
+  void writeOBJfaceSelection (int f) {
     String n1_txt = nf(obj_lastVertexNumber - 3, 0);
     String n2_txt = nf(obj_lastVertexNumber - 2, 0);
     String n3_txt = nf(obj_lastVertexNumber - 1, 0);

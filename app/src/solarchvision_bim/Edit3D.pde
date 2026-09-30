@@ -44,22 +44,22 @@ class Edit3D {
   }
 
   void Faces (int p) {
-    for (int o = Select3D.FaceIndices.length - 1; o >= 0; o--) {
-      int f = Select3D.FaceIndices[o];
+    for (int o = Select3D.faceSelection.length - 1; o >= 0; o--) {
+      int f = Select3D.faceSelection[o];
       adjustFaceProperties(f, p);
     }
   }
 
   void Polylines (int p) {
-    for (int o = Select3D.PolylineIndices.length - 1; o >= 0; o--) {
-      int f = Select3D.PolylineIndices[o];
+    for (int o = Select3D.polylineSelection.length - 1; o >= 0; o--) {
+      int f = Select3D.polylineSelection[o];
       adjustPolylineProperties(f, p);
     }
   }
 
   void Groups (int p) {
-    for (int o = Select3D.GroupIndices.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.GroupIndices[o];
+    for (int o = Select3D.groupSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.groupSelection[o];
 
       for (int f = allGroups.getStart_Face(OBJ_ID); f <= allGroups.getStop_Face(OBJ_ID); f++) {
         if ((0 <= f) && (f < allFaces.nodes.length)) {
@@ -76,8 +76,8 @@ class Edit3D {
   }
 
   void Model1Ds (int p) {
-    for (int o = Select3D.Model1DIndices.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Model1DIndices[o];
+    for (int o = Select3D.model1DSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.model1DSelection[o];
 
       if (WIN3D.currentTool == UITASK.Seed_Material) {
         allModel1Ds.setSeed(OBJ_ID, allModel1Ds.getSeed(OBJ_ID) + p);
@@ -142,8 +142,8 @@ class Edit3D {
   }
 
   void Model2Ds (int p) {
-    for (int o = Select3D.Model2DIndices.length - 1; o >= 0; o--) {
-      int OBJ_ID = Select3D.Model2DIndices[o];
+    for (int o = Select3D.model2DSelection.length - 1; o >= 0; o--) {
+      int OBJ_ID = Select3D.model2DSelection[o];
 
       if (WIN3D.currentTool != UITASK.Seed_Material) continue;
 
@@ -169,8 +169,8 @@ class Edit3D {
   }
 
   void Cameras (int p) {
-    for (int o = Select3D.CameraIndices.length - 1; o >= 0; o--) {
-      int f = Select3D.CameraIndices[o];
+    for (int o = Select3D.cameraSelection.length - 1; o >= 0; o--) {
+      int f = Select3D.cameraSelection[o];
 
       if (WIN3D.currentTool == UITASK.Seed_Material) {
         int n = clamp(allCameras.get_type(f) + p, 0, 1);
@@ -184,8 +184,8 @@ class Edit3D {
   void Sections (int p) {
     boolean allSolids_updated = false;
 
-    for (int o = Select3D.SectionIndices.length - 1; o >= 0; o--) {
-      int f = Select3D.SectionIndices[o];
+    for (int o = Select3D.sectionSelection.length - 1; o >= 0; o--) {
+      int f = Select3D.sectionSelection[o];
 
       if (WIN3D.currentTool == UITASK.Seed_Material) {
         allSections.set_type(f, clamp(allSections.get_type(f) + p, 0, 3));
@@ -212,8 +212,8 @@ class Edit3D {
   void Solids (int p) {
     boolean allSolids_updated = false;
 
-    for (int o = Select3D.SolidIndices.length - 1; o >= 0; o--) {
-      int f = Select3D.SolidIndices[o];
+    for (int o = Select3D.solidSelection.length - 1; o >= 0; o--) {
+      int f = Select3D.solidSelection[o];
 
       boolean isPowerTask = (WIN3D.currentTool == UITASK.PowerX) || (WIN3D.currentTool == UITASK.PowerY) ||
                             (WIN3D.currentTool == UITASK.PowerZ) || (WIN3D.currentTool == UITASK.PowerAll);

@@ -784,8 +784,8 @@ class UI_rollout {
         Select3D.groupDisplayBox = vm.Select3D_groupDisplayBox(1);
         Select3D.groupDisplayEdges = vm.Select3D_groupDisplayEdges(1);
         Select3D.faceDisplayEdges = vm.Select3D_faceDisplayEdges(1);
-        Select3D.faceDisplayVertexIndices = vm.Select3D_faceDisplayVertexCount(1);
-        Select3D.polylineDisplayVertexIndices = vm.Select3D_polylineDisplayVertexCount(1);
+        Select3D.faceDisplayvertexSelection = vm.Select3D_faceDisplayVertexCount(1);
+        Select3D.polylineDisplayvertexSelection = vm.Select3D_polylineDisplayVertexCount(1);
         Select3D.vertexDisplayMarkers = vm.Select3D_vertexDisplayVertices(1);
         Select3D.polylineDisplayVertices = vm.Select3D_polylineDisplayVertices(1);
         Select3D.model2DDisplayBounds = vm.Select3D_model2DDisplayEdges(1);

@@ -669,8 +669,8 @@ class UI_menuBar {
     map.put(toggleKey("3D-display", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
     map.put(toggleKey("3D-display", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
     map.put(toggleKey("3D-display", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexIndices);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexIndices);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayvertexSelection);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayvertexSelection);
     map.put(toggleKey("3D-display", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
     map.put(toggleKey("3D-display", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
     map.put(toggleKey("3D-display", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);

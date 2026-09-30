@@ -821,13 +821,13 @@ void build_allActions() {
   });
 
   putAction("Show/Hide Selected Faces Vertex Count", () -> {
-    Select3D.faceDisplayVertexIndices = !Select3D.faceDisplayVertexIndices;
+    Select3D.faceDisplayvertexSelection = !Select3D.faceDisplayvertexSelection;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Polylines Vertex Count", () -> {
-    Select3D.polylineDisplayVertexIndices = !Select3D.polylineDisplayVertexIndices;
+    Select3D.polylineDisplayvertexSelection = !Select3D.polylineDisplayvertexSelection;
 
     view_changed();
   });
@@ -1183,8 +1183,8 @@ void build_allActions() {
   putAction("Begin New Group at Origin", () -> {
     allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
 
-    Select3D.GroupIndices = new int [1];
-    Select3D.GroupIndices[0] = allGroups.num - 1;
+    Select3D.groupSelection = new int [1];
+    Select3D.groupSelection[0] = allGroups.num - 1;
 
     model_changed();
   });
@@ -1202,8 +1202,8 @@ void build_allActions() {
       Select3D.BoundingBox[1 + Select3D.pivotAlignmentZ][8]
     );
 
-    Select3D.GroupIndices = new int [1];
-    Select3D.GroupIndices[0] = allGroups.num - 1;
+    Select3D.groupSelection = new int [1];
+    Select3D.groupSelection[0] = allGroups.num - 1;
 
     model_changed();
   });
@@ -1265,8 +1265,8 @@ void build_allActions() {
   });
 
   putAction("Camera View", () -> {
-    if (Select3D.CameraIndices.length > 0) {
-      WIN3D.currentCameraIndex = Select3D.CameraIndices[Select3D.CameraIndices.length - 1];
+    if (Select3D.cameraSelection.length > 0) {
+      WIN3D.currentCameraIndex = Select3D.cameraSelection[Select3D.cameraSelection.length - 1];
       WIN3D.apply_currentCameraIndex();
       modify_Viewport_Title();
 
@@ -2063,8 +2063,8 @@ void build_allActions() {
   putAction("Show Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = true; view_changed();});
   putAction("Show Selected Faces",                  () -> {Select3D.faceDisplayEdges = true; view_changed();});
   putAction("Show Selected Polylines",              () -> {Select3D.polylineDisplayVertices = true; view_changed();});
-  putAction("Show Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexIndices = true; view_changed();});
-  putAction("Show Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayVertexIndices = true; view_changed();});
+  putAction("Show Selected Faces Vertex Count",     () -> {Select3D.faceDisplayvertexSelection = true; view_changed();});
+  putAction("Show Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayvertexSelection = true; view_changed();});
   putAction("Show Selected Vertices",               () -> {Select3D.vertexDisplayMarkers = true; view_changed();});
   putAction("Show Selected REF Pivot",              () -> {Select3D.pivotDisplayReference = true; view_changed();});
   putAction("Show Selected Group Pivot",            () -> {Select3D.groupDisplayPivot = true; view_changed();});
@@ -2079,8 +2079,8 @@ void build_allActions() {
   putAction("Hide Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = false; view_changed();});
   putAction("Hide Selected Faces",                  () -> {Select3D.faceDisplayEdges = false; view_changed();});
   putAction("Hide Selected Polylines",              () -> {Select3D.polylineDisplayVertices = false; view_changed();});
-  putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexIndices = false; view_changed();});
-  putAction("Hide Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayVertexIndices = false; view_changed();});
+  putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.faceDisplayvertexSelection = false; view_changed();});
+  putAction("Hide Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayvertexSelection = false; view_changed();});
   putAction("Hide Selected Vertices",               () -> {Select3D.vertexDisplayMarkers = false; view_changed();});
   putAction("Hide Selected REF Pivot",              () -> {Select3D.pivotDisplayReference = false; view_changed();});
   putAction("Hide Selected Group Pivot",            () -> {Select3D.groupDisplayPivot = false; view_changed();});

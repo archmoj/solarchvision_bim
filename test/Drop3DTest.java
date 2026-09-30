@@ -66,7 +66,7 @@ class Drop3DTest {
   @Test
   void selection_routesToModel1DsAndFlagsTheViewportWhenNothingIsSelected () {
     app.currentObjectCategory = app.ObjectCategory.MODEL1D;
-    app.Select3D.Model1DIndices = new int[0]; // 0 iterations - castDrop() is never called
+    app.Select3D.model1DSelection = new int[0]; // 0 iterations - castDrop() is never called
     app.WIN3D.update = false;
 
     assertDoesNotThrow(() -> app.Drop3D.selection());
@@ -77,7 +77,7 @@ class Drop3DTest {
   @Test
   void selection_routesToModel2DsAndFlagsTheViewportWhenNothingIsSelected () {
     app.currentObjectCategory = app.ObjectCategory.MODEL2D;
-    app.Select3D.Model2DIndices = new int[0];
+    app.Select3D.model2DSelection = new int[0];
     app.WIN3D.update = false;
 
     assertDoesNotThrow(() -> app.Drop3D.selection());

@@ -313,8 +313,8 @@ class Terrain {
     }
 
     if (target_window == TypeWindow.TerrainMesh) {
-      Select3D.GroupIndices = new int[1];
-      Select3D.GroupIndices[0] = allGroups.num - 1;
+      Select3D.groupSelection = new int[1];
+      Select3D.groupSelection[0] = allGroups.num - 1;
       Modify3D.weldObjectsVertices_Selection(0);
     }
   }

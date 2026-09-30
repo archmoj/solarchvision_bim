@@ -90,7 +90,7 @@ class SolidImpactsTest {
 
   @Test
   void calculateImpactSelectedSections_isANoOpWhenNothingIsSelected () {
-    app.Select3D.SectionIndices = new int[]{};
+    app.Select3D.sectionSelection = new int[]{};
     // If this reached calculate_Impact_CurrentSection() it would throw
     // on cursor() - reaching the end of this call without an exception
     // IS the assertion here.

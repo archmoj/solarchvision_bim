@@ -203,7 +203,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0}; // group 0 spans face 0 only
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.tessellateTriangular_Selection();
@@ -225,7 +225,7 @@ class ModifyGeometryTest {
 
     // The original face's own selection, plus the 3 new faces it split
     // into (appendNewFaceSelection), in that order.
-    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.faceSelection);
   }
 
   // --- tessellateRectangular_Selection (a full integration test) -----
@@ -245,7 +245,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.tessellateRectangular_Selection();
@@ -271,7 +271,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{7, 3, 4, 8}, app.allFaces.nodes[3]);
 
     assertArrayEquals(new int[]{0, 3}, app.allGroups.Faces[0]);
-    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.faceSelection);
   }
 
   // --- changeVisibilityFaces_Scene / reverseVisibilityFaces_Scene -----
@@ -317,7 +317,7 @@ class ModifyGeometryTest {
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
 
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
 
     app.Modify3D.changeVisibilityFaces_Selection(1);
 
@@ -360,10 +360,10 @@ class ModifyGeometryTest {
     // The whole conditional body (including the visibility-setting loop
     // itself) lives inside the GROUP/POLYLINE/VERTEX category check -
     // with a non-matching category (FACE here), nothing happens at all,
-    // even if PolylineIndices was already populated.
+    // even if polylineSelection was already populated.
     app.allPolylines.nodes = new int[][]{{0}};
     app.allPolylines.options = new int[][]{{0, 0, 0, 0, 0, 0}};
-    app.Select3D.PolylineIndices = new int[]{0};
+    app.Select3D.polylineSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.changeVisibilityPolylines_Selection(1);
@@ -395,7 +395,7 @@ class ModifyGeometryTest {
     app.allGroups.Faces[0] = new int[]{1, 1};     // group 0 reaches only face 1
     app.allGroups.Polylines[0] = new int[]{0, 0}; // and only polyline 0
 
-    app.Select3D.GroupIndices = new int[]{0};
+    app.Select3D.groupSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.GROUP;
 
     app.Modify3D.isolate_Selection();
@@ -414,15 +414,15 @@ class ModifyGeometryTest {
   void selectVerticesFromCurrentSelection_convertsFaceSelectionThenSorts () {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 1, 1}, {2, 2, 2}};
     app.allFaces.nodes = new int[][]{{2, 0, 1}}; // deliberately unsorted node order
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.selectVertices_fromCurrentSelection();
 
-    // VertexIndices is deduped/collected in the face's own node order by
+    // vertexSelection is deduped/collected in the face's own node order by
     // convert_Faces_to_Vertices, but this function always sorts
     // afterward regardless of that order.
-    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.VertexIndices);
+    assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.vertexSelection);
   }
 
   // --- selectFacesAndGroups_fromCurrentSelection ----------------------
@@ -431,8 +431,8 @@ class ModifyGeometryTest {
   void selectFacesAndGroupsFromCurrentSelection_sortsBothBeforeAndAfterConversion () {
     // Two groups whose face ranges are deliberately out of numeric order
     // relative to their group ids (group 0 -> faces 5-6, group 1 ->
-    // faces 0-1): rangeUnion() walks GroupIndices in whatever order it's
-    // given, so if GroupIndices weren't sorted first, or FaceIndices weren't
+    // faces 0-1): rangeUnion() walks groupSelection in whatever order it's
+    // given, so if groupSelection weren't sorted first, or faceSelection weren't
     // sorted after, the result would come out as [5,6,0,1] instead of
     // ascending - this test is specifically shaped to make both sort
     // calls matter, not just one.
@@ -441,13 +441,13 @@ class ModifyGeometryTest {
     app.allGroups.Faces[1] = new int[]{0, 1};
     app.allFaces.nodes = new int[7][0]; // faces 0-6 need to exist
 
-    app.Select3D.GroupIndices = new int[]{1, 0}; // deliberately unsorted input
+    app.Select3D.groupSelection = new int[]{1, 0}; // deliberately unsorted input
     app.currentObjectCategory = app.ObjectCategory.GROUP;
 
     app.Modify3D.selectFacesAndGroups_fromCurrentSelection();
 
-    assertArrayEquals(new int[]{0, 1}, app.Select3D.GroupIndices);
-    assertArrayEquals(new int[]{0, 1, 5, 6}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0, 1}, app.Select3D.groupSelection);
+    assertArrayEquals(new int[]{0, 1, 5, 6}, app.Select3D.faceSelection);
   }
 
   // --- repositionVertices_Selection -------------------------------
@@ -460,7 +460,7 @@ class ModifyGeometryTest {
     // min=0, max=10 -> center=5, but the average of {0,1,10} is 3.667.
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {10, 0, 0}};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.VertexIndices = new int[]{0, 1, 2};
+    app.Select3D.vertexSelection = new int[]{0, 1, 2};
 
     app.Modify3D.repositionVertices_Selection();
 
@@ -483,7 +483,7 @@ class ModifyGeometryTest {
     app.allVertices = new float[][]{{0, 0, 0}, {2, 0, 0}, {2, 2, 0}, {0, 2, 0}};
     app.allFaces.nodes = new int[][]{{0, 1, 2, 3}};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
 
     app.Modify3D.offsetVertices_Selection(0, 5f);
 
@@ -501,7 +501,7 @@ class ModifyGeometryTest {
     app.allVertices = new float[][]{{0, 0, 0}, {1, 0, 0}, {2, 0, 0}};
     app.allFaces.nodes = new int[][]{{0, 1}, {0, 2}};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
 
     app.Modify3D.separateVertices_Selection();
 
@@ -510,7 +510,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{4, 2}, app.allFaces.nodes[1]);
     assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[3], 0.0001f);
     assertArrayEquals(new float[]{0, 0, 0}, app.allVertices[4], 0.0001f);
-    assertEquals(0, app.Select3D.VertexIndices.length); // deselected afterward
+    assertEquals(0, app.Select3D.vertexSelection.length); // deselected afterward
   }
 
   // --- weldSceneVertices_Selection (a full integration test) ----------
@@ -527,7 +527,7 @@ class ModifyGeometryTest {
   // matching the pattern weldObjectsVertices_Selection already used
   // correctly.
   //
-  // Note the weld direction here: iterating VertexIndices from largest to
+  // Note the weld direction here: iterating vertexSelection from largest to
   // smallest and only matching `q > vNo` means a higher-indexed vertex
   // gets welded INTO a lower-indexed one - the lower index always
   // survives.
@@ -540,7 +540,7 @@ class ModifyGeometryTest {
     app.allPolylines.nodes = new int[0][];
 
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.VertexIndices = new int[]{0, 1, 2};
+    app.Select3D.vertexSelection = new int[]{0, 1, 2};
 
     app.Modify3D.weldSceneVertices_Selection(0.01f);
 
@@ -553,7 +553,7 @@ class ModifyGeometryTest {
 
     assertArrayEquals(new int[]{0}, app.allFaces.nodes[0]); // redirected from 1 to the surviving 0
 
-    assertEquals(0, app.Select3D.VertexIndices.length); // deselected afterward
+    assertEquals(0, app.Select3D.vertexSelection.length); // deselected afterward
   }
 
   // --- weldObjectsVertices_Selection (a full integration test) --------
@@ -571,7 +571,7 @@ class ModifyGeometryTest {
     app.allPolylines.nodes = new int[0][];
 
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
-    app.Select3D.VertexIndices = new int[]{0, 1, 2};
+    app.Select3D.vertexSelection = new int[]{0, 1, 2};
 
     app.Modify3D.weldObjectsVertices_Selection(0.01f);
 
@@ -591,7 +591,7 @@ class ModifyGeometryTest {
   //
   // Unlike the tessellate*_Selection functions, this one does NOT call
   // appendNewFaceSelection - the newly-created triangular faces are
-  // never added to Select3D.FaceIndices, even though they now exist in the
+  // never added to Select3D.faceSelection, even though they now exist in the
   // scene. Worth confirming explicitly since it's easy to assume every
   // face-splitting operation updates the selection the same way.
 
@@ -604,7 +604,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.insertEdgeOpenings_Selection(); // User3D.modifierOpeningDeviation defaults to 0.5 (edge midpoints)
@@ -632,7 +632,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]);
 
     // Selection is untouched - see the class-level note above.
-    assertArrayEquals(new int[]{0}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0}, app.Select3D.faceSelection);
   }
 
   // --- forceTriangulateFaces_Selection (a full integration test) ------
@@ -653,7 +653,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 1}; // group 0 spans both faces
 
-    app.Select3D.FaceIndices = new int[]{0, 1};
+    app.Select3D.faceSelection = new int[]{0, 1};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.forceTriangulateFaces_Selection();
@@ -672,7 +672,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{3, 0, 4}, app.allFaces.nodes[4]);
 
     assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]); // grew by netShift=3 (n-1 of the quad)
-    assertArrayEquals(new int[]{0, 1, 2, 3, 4}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0, 1, 2, 3, 4}, app.Select3D.faceSelection);
   }
 
   // --- optimizeFace_Selection (a full integration test) ----------------
@@ -690,7 +690,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.optimizeFace_Selection();
@@ -714,7 +714,7 @@ class ModifyGeometryTest {
     app.allFaces.nodes = new int[][]{{0, 1, 2}};
     app.allFaces.options = new int[][]{{0, 0, 0, 1, 0, 0}}; // visible
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.autoNormalFaces_Selection();
@@ -737,7 +737,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.insertCornerOpenings_Selection();
@@ -762,7 +762,7 @@ class ModifyGeometryTest {
     // 4 new = 5 faces total), and the selection is left untouched (no
     // appendNewFaceSelection call in this function either).
     assertArrayEquals(new int[]{0, 4}, app.allGroups.Faces[0]);
-    assertArrayEquals(new int[]{0}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0}, app.Select3D.faceSelection);
   }
 
   // --- insertParallelOpenings_Selection (a full integration test) ----
@@ -783,7 +783,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.insertParallelOpenings_Selection();
@@ -808,7 +808,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{5, 7, 9, 6}, app.allFaces.nodes[2]);
 
     // Like the corner/edge variants, no appendNewFaceSelection call.
-    assertArrayEquals(new int[]{0}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0}, app.Select3D.faceSelection);
   }
 
   // --- insertRotatedOpenings_Selection (a full integration test) -----
@@ -830,7 +830,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.insertRotatedOpenings_Selection();
@@ -850,7 +850,7 @@ class ModifyGeometryTest {
     // the next side's edge point, then back through both center points.
     assertArrayEquals(new int[]{4, 0, 6, 7, 5}, app.allFaces.nodes[1]);
 
-    assertArrayEquals(new int[]{0}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0}, app.Select3D.faceSelection);
   }
 
   // --- tessellateRowsColumns_Selection (a full integration test) ------
@@ -873,7 +873,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.tessellateRowsColumns_Selection();
@@ -895,7 +895,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{6, 8, 2, 7}, app.allFaces.nodes[3]); // top-right, reusing corner 2
 
     assertArrayEquals(new int[]{0, 3}, app.allGroups.Faces[0]); // grew by netShift = nNewFaces-1 = 3
-    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.Select3D.faceSelection);
   }
 
   // --- extrudeFaceEdges_Selection (a full integration test) -----------
@@ -907,7 +907,7 @@ class ModifyGeometryTest {
   // creates a brand-new group per processed group (allGroups.
   // beginNewGroup) rather than growing the existing one, and - worth
   // calling out specifically - only the CAP face's index ends up in
-  // Select3D.FaceIndices afterward, not the side walls.
+  // Select3D.faceSelection afterward, not the side walls.
 
   @Test
   void extrudeFaceEdges_appendsWallsAndACapWithoutTouchingTheOriginalFace () {
@@ -919,7 +919,7 @@ class ModifyGeometryTest {
     app.allGroups.makeEmpty(1);
     app.allGroups.Faces[0] = new int[]{0, 0};
 
-    app.Select3D.FaceIndices = new int[]{0};
+    app.Select3D.faceSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.extrudeFaceEdges_Selection();
@@ -947,7 +947,7 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{1, 4}, app.allGroups.Faces[1]);
 
     // Only the cap's index ends up selected - not the 3 side walls.
-    assertArrayEquals(new int[]{4}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{4}, app.Select3D.faceSelection);
   }
 
   // --- flattenTerrainVertices ------------------------------------------
@@ -961,7 +961,7 @@ class ModifyGeometryTest {
     }
 
     // Flat index 1 -> row 0, col 1. Flat index 4 -> row 1, col 1.
-    app.Select3D.terrainVertexIndices = new int[]{1, 4};
+    app.Select3D.terrainVertexSelection = new int[]{1, 4};
 
     app.Modify3D.flattenTerrainVertices();
 
@@ -998,7 +998,7 @@ class ModifyGeometryTest {
       {0, 0, 0, 1, 0, 0}, {0, 0, 0, 1, 0, 0}, {0, 0, 0, 1, 0, 0}
     };
 
-    app.Select3D.FaceIndices = new int[]{1, 2};
+    app.Select3D.faceSelection = new int[]{1, 2};
     app.currentObjectCategory = app.ObjectCategory.FACE;
 
     app.Modify3D.autoNormalFaces_Selection();
@@ -1017,14 +1017,14 @@ class ModifyGeometryTest {
   void findOwningGroupId_onlySearchesWithinGroupIdsNotEveryGroup () {
     app.allGroups.makeEmpty(3);
     app.allGroups.Faces[0] = new int[]{0, 1};
-    app.allGroups.Faces[1] = new int[]{2, 3}; // deliberately excluded from GroupIndices below
+    app.allGroups.Faces[1] = new int[]{2, 3}; // deliberately excluded from groupSelection below
     app.allGroups.Faces[2] = new int[]{4, 5};
 
-    app.Select3D.GroupIndices = new int[]{0, 2}; // group 1 is not searchable, even though it exists
+    app.Select3D.groupSelection = new int[]{0, 2}; // group 1 is not searchable, even though it exists
 
     assertEquals(0, app.Modify3D.findOwningGroupId(0));
     assertEquals(2, app.Modify3D.findOwningGroupId(5));
-    assertEquals(-1, app.Modify3D.findOwningGroupId(3)); // owned by group 1, which isn't in GroupIndices
+    assertEquals(-1, app.Modify3D.findOwningGroupId(3)); // owned by group 1, which isn't in groupSelection
   }
 
   @Test
@@ -1053,20 +1053,20 @@ class ModifyGeometryTest {
 
   @Test
   void appendNewFaceSelection_concatenatesOntoTheExistingSelection () {
-    app.Select3D.FaceIndices = new int[]{5};
+    app.Select3D.faceSelection = new int[]{5};
 
     ArrayList<Integer> newIndices = new ArrayList<Integer>();
     newIndices.add(7);
     newIndices.add(8);
     app.Modify3D.appendNewFaceSelection(newIndices);
 
-    assertArrayEquals(new int[]{5, 7, 8}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{5, 7, 8}, app.Select3D.faceSelection);
   }
 
   @Test
   void appendNewFaceSelection_isANoOpForAnEmptyList () {
-    app.Select3D.FaceIndices = new int[]{5};
+    app.Select3D.faceSelection = new int[]{5};
     app.Modify3D.appendNewFaceSelection(new ArrayList<Integer>());
-    assertArrayEquals(new int[]{5}, app.Select3D.FaceIndices);
+    assertArrayEquals(new int[]{5}, app.Select3D.faceSelection);
   }
 }

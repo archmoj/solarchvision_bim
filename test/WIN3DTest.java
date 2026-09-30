@@ -205,7 +205,7 @@ class WIN3DTest {
   @Test
   void handleShiftedArrowKeys_rotateTaskNudgesSelectionAroundItsPivot () {
     app.allVertices = new float[][]{{1, 0, 0}};
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.rotationVectorIndex = 2; // Z axis
 
@@ -219,7 +219,7 @@ class WIN3DTest {
   @Test
   void handleShiftedArrowKeys_moveTaskNudgesSelectionAlongThePosVectorOnly () {
     app.allVertices = new float[][]{{0, 0, 0}};
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.positionVectorIndex = 2; // Z only
     app.overallScale = 1;
@@ -485,7 +485,7 @@ class WIN3DTest {
   @Test
   void dispatchNavKey_routesShiftedArrowKeysToHandleShiftedArrowKeys () {
     app.allVertices = new float[][]{{0, 0, 0}};
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.positionVectorIndex = 2; // Z only
     app.overallScale = 1;
@@ -635,7 +635,7 @@ class WIN3DTest {
   @Test
   void handleCommandKey_five_snapsTheViewTowardsTheSelectionPivot () {
     app.allVertices = new float[][]{{5, 5, 5}};
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.overallScale = 1;
     float before = app.WIN3D.rotationZ;

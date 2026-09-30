@@ -3951,13 +3951,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D faceDisplayVertexCount",
-        () -> (Select3D.faceDisplayVertexIndices ? 1f : 0f),
-        (v) -> { Select3D.faceDisplayVertexIndices = (v >= 0.5f); },
+        () -> (Select3D.faceDisplayvertexSelection ? 1f : 0f),
+        (v) -> { Select3D.faceDisplayvertexSelection = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D faceDisplayVertexCount", Select3D.faceDisplayVertexIndices);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D faceDisplayVertexCount", Select3D.faceDisplayvertexSelection);
     }
     return out;
   }
@@ -3969,13 +3969,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D polylineDisplayVertexCount",
-        () -> (Select3D.polylineDisplayVertexIndices ? 1f : 0f),
-        (v) -> { Select3D.polylineDisplayVertexIndices = (v >= 0.5f); },
+        () -> (Select3D.polylineDisplayvertexSelection ? 1f : 0f),
+        (v) -> { Select3D.polylineDisplayvertexSelection = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D polylineDisplayVertexCount", Select3D.polylineDisplayVertexIndices);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D polylineDisplayVertexCount", Select3D.polylineDisplayvertexSelection);
     }
     return out;
   }

@@ -415,7 +415,7 @@ class MouseWheelTest {
   void handleMoveWheel_movesTheSelectedVertexAlongItsConstrainedAxis () {
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.allVertices = new float[][]{{1, 2, 3}};
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
     app.Select3D.positionVectorIndex = 2; // Z-only
 
     app.handleMoveWheel(-4); // d = -wheelValue = 4
@@ -429,7 +429,7 @@ class MouseWheelTest {
   void handleMoveWheel_movesFreelyOnAllAxesWhenPosVectorIsAll () {
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.allVertices = new float[][]{{0, 0, 0}};
-    app.Select3D.VertexIndices = new int[]{0};
+    app.Select3D.vertexSelection = new int[]{0};
     app.Select3D.positionVectorIndex = 3; // All
 
     app.handleMoveWheel(-2); // d = 2
