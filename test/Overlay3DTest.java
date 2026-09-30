@@ -181,7 +181,7 @@ class Overlay3DTest {
 
   @Test
   void computePivotAxisVertices_scalesEachAxisEndpointByRUnderIdentityAlignment () {
-    // Default Select3D state (alignX/Y/Z=0) with the default identity
+    // Default Select3D state (pivotAlignmentX/Y/Z=0) with the default identity
     // BoundingBox (zero rotation, unit scale) makes
     // translateInside_ReferencePivot a pass-through, so each endpoint is
     // simply the center plus r along its own axis.
@@ -223,7 +223,7 @@ class Overlay3DTest {
   @Test
   void computeGroupBoxVertices_rotatesCornersAroundZWhenTheBoxHasItsOwnRotation () {
     // Verified independently by hand: with rotZ=90 on the mid row (the
-    // row used once alignX/Y/Z are forced to 0), each corner's local
+    // row used once pivotAlignmentX/Y/Z are forced to 0), each corner's local
     // offset from the centre (5,5,5) - e.g. (-5,-5,-5) for the min
     // corner - gets rotated 90 degrees around Z ((x,y) -> (-y,x)) before
     // the centre is re-added.
@@ -261,15 +261,15 @@ class Overlay3DTest {
       {5, 5, 5, 1, 1, 1, 0, 0, 0},
       {10, 10, 10, 1, 1, 1, 0, 0, 0}
     };
-    app.Select3D.alignX = 1;
-    app.Select3D.alignY = -1;
-    app.Select3D.alignZ = 1;
+    app.Select3D.pivotAlignmentX = 1;
+    app.Select3D.pivotAlignmentY = -1;
+    app.Select3D.pivotAlignmentZ = 1;
 
     app.Overlay3D.computeGroupBoxVertices();
 
-    assertEquals(1, app.Select3D.alignX);
-    assertEquals(-1, app.Select3D.alignY);
-    assertEquals(1, app.Select3D.alignZ);
+    assertEquals(1, app.Select3D.pivotAlignmentX);
+    assertEquals(-1, app.Select3D.pivotAlignmentY);
+    assertEquals(1, app.Select3D.pivotAlignmentZ);
   }
 
   // ================= clipAndProject (pure; not extracted) ================

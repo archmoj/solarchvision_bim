@@ -405,9 +405,9 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Select3D alignX` | Selection's X alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
-| `Select3D alignY` | Selection's Y alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
-| `Select3D alignZ` | Selection's Z alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
+| `Select3D pivotAlignmentX` | Selection's X alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
+| `Select3D pivotAlignmentY` | Selection's Y alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
+| `Select3D pivotAlignmentZ` | Selection's Z alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
 | `Select3D position` | Move the selection along the current move axis by this offset (relative to its previous value, like dragging the spinner) | -50.0 to 50.0 |
 | `Select3D positionVectorIndex` | Move axis used by 3D-select.position: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
 | `Select3D rotation` | Rotate the selection about the current rotate axis by this angle in degrees (relative to its previous value) | -180.0 to 180.0 |
@@ -416,7 +416,7 @@ the user interface.
 | `Select3D scaleVectorIndex` | Scale axis used by 3D-select.scale: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
 | `Select3D softPower` | Falloff power of soft (proportional) selection | 0.125 to 8.0 |
 | `Select3D softRadius` | Radius of influence of soft (proportional) selection | 0.01 to 100 |
-| `Select3D displayReferencePivot` | Toggle: show the reference pivot point | 0 or 1 |
+| `Select3D pivotDisplayReference` | Toggle: show the reference pivot point | 0 or 1 |
 | `Select3D groupDisplayPivot` | Toggle: show the selected group's pivot point | 0 or 1 |
 | `Select3D groupDisplayBox` | Toggle: draw the selected group's bounding box | 0 or 1 |
 | `Select3D groupDisplayEdges` | Toggle: draw the selected group's edges | 0 or 1 |

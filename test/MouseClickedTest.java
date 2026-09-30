@@ -421,9 +421,9 @@ class MouseClickedTest {
     app.User3D.creatorRandomSuperellipsoidPower = 0;
     app.User3D.creatorVolume = 0;
     app.currentObjectCategory = app.ObjectCategory.SOLID; // not excluded from the alignment offset
-    app.Select3D.alignX = 0;
-    app.Select3D.alignY = 0;
-    app.Select3D.alignZ = 0;
+    app.Select3D.pivotAlignmentX = 0;
+    app.Select3D.pivotAlignmentY = 0;
+    app.Select3D.pivotAlignmentZ = 0;
 
     solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 10, 20, 30});
 
@@ -458,21 +458,21 @@ class MouseClickedTest {
     app.User3D.creatorWidth = 6;  // ry=3
     app.User3D.creatorHeight = 2; // rz=1
     app.currentObjectCategory = app.ObjectCategory.SOLID; // not excluded from this offset
-    app.Select3D.alignX = 1;
-    app.Select3D.alignY = -1;
-    app.Select3D.alignZ = 0;
+    app.Select3D.pivotAlignmentX = 1;
+    app.Select3D.pivotAlignmentY = -1;
+    app.Select3D.pivotAlignmentZ = 0;
 
     solarchvision_bim.CreateParams p = app.computeCreateParams(new float[]{0, 10, 20, 30});
 
-    assertEquals(10 - 2 * 1, p.x, 0.0001f); // x -= rx * alignX
-    assertEquals(20 - 3 * -1, p.y, 0.0001f); // y -= ry * alignY
-    assertEquals(30f, p.z, 0.0001f); // alignZ=0 -> unchanged
+    assertEquals(10 - 2 * 1, p.x, 0.0001f); // x -= rx * pivotAlignmentX
+    assertEquals(20 - 3 * -1, p.y, 0.0001f); // y -= ry * pivotAlignmentY
+    assertEquals(30f, p.z, 0.0001f); // pivotAlignmentZ=0 -> unchanged
   }
 
   @Test
   void computeCreateParams_skipsTheAlignmentOffsetForModel1DModel2DLandPointCameraAndSection () {
     app.User3D.creatorLength = 4;
-    app.Select3D.alignX = 1; // would shift x if this category weren't excluded
+    app.Select3D.pivotAlignmentX = 1; // would shift x if this category weren't excluded
 
     for (int category : new int[]{
       app.ObjectCategory.MODEL1D, app.ObjectCategory.MODEL2D, app.ObjectCategory.LANDPOINT,
@@ -1003,9 +1003,9 @@ class MouseClickedTest {
       {5, 5, 5, 1, 1, 1, 0, 0, 0},
       {10, 10, 10, 1, 1, 1, 0, 0, 0}
     };
-    app.Select3D.alignX = 1;
-    app.Select3D.alignY = 1;
-    app.Select3D.alignZ = 1;
+    app.Select3D.pivotAlignmentX = 1;
+    app.Select3D.pivotAlignmentY = 1;
+    app.Select3D.pivotAlignmentZ = 1;
 
     float[] origin = app.getMoveOriginPoint();
 

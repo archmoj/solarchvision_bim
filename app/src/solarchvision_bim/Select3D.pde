@@ -10,29 +10,29 @@ class Select3D {
   float rotation = 0;
   float scale = 0;
 
-  int alignX = 0;
-  int alignY = 0;
-  int alignZ = 0;
+  int pivotAlignmentX = 0;
+  int pivotAlignmentY = 0;
+  int pivotAlignmentZ = 0;
 
 
-  boolean displayReferencePivot = true;
+  boolean pivotDisplayReference = true;
 
-  boolean Group_displayPivot = true;
-  boolean Group_displayEdges = false;
-  boolean Group_displayBox = true;
+  boolean groupDisplayPivot = true;
+  boolean groupDisplayEdges = false;
+  boolean groupDisplayBox = true;
 
-  boolean Face_displayEdges = true;
-  boolean Face_displayVertexCount = false;
-  boolean Polyline_displayVertexCount = false;
-  boolean Vertex_displayVertices = true;
-  boolean Polyline_displayVertices = true;
+  boolean faceDisplayEdges = true;
+  boolean faceDisplayVertexIndices = false;
+  boolean polylineDisplayVertexIndices = false;
+  boolean vertexDisplayMarkers = true;
+  boolean polylineDisplayVertices = true;
 
 
-  boolean Model2D_displayEdges = true;
-  boolean Model1D_displayEdges = true;
-  boolean Solid_displayEdges = true;
-  boolean Section_displayEdges = true;
-  boolean Camera_displayEdges = true;
+  boolean model2DDisplayBounds = true;
+  boolean model1DDisplayBounds = true;
+  boolean solidDisplayEdges = true;
+  boolean sectionDisplayEdges = true;
+  boolean cameraDisplayFrustum = true;
   boolean LandPoint_displayPoints = true;
 
   int[] LandPoint_ids = new int[0];
@@ -518,13 +518,13 @@ class Select3D {
 
     this.update_BoundingBox = false;
 
-    int keep_selection_alignX = this.alignX;
-    int keep_selection_alignY = this.alignY;
-    int keep_selection_alignZ = this.alignZ;
+    int keep_selection_pivotAlignmentX = this.pivotAlignmentX;
+    int keep_selection_pivotAlignmentY = this.pivotAlignmentY;
+    int keep_selection_pivotAlignmentZ = this.pivotAlignmentZ;
 
-    this.alignX = 0; // apply the centre
-    this.alignY = 0; // apply the centre
-    this.alignZ = 0; // apply the centre
+    this.pivotAlignmentX = 0; // apply the centre
+    this.pivotAlignmentY = 0; // apply the centre
+    this.pivotAlignmentZ = 0; // apply the centre
 
     int[] theVertices = new int [0];
 
@@ -800,9 +800,9 @@ class Select3D {
 
 
 
-    this.alignX = keep_selection_alignX;
-    this.alignY = keep_selection_alignY;
-    this.alignZ = keep_selection_alignZ;
+    this.pivotAlignmentX = keep_selection_pivotAlignmentX;
+    this.pivotAlignmentY = keep_selection_pivotAlignmentY;
+    this.pivotAlignmentZ = keep_selection_pivotAlignmentZ;
   }
 
 
@@ -815,9 +815,9 @@ class Select3D {
       }
     }
 
-    saved_alignX = this.alignX;
-    saved_alignY = this.alignY;
-    saved_alignZ = this.alignZ;
+    saved_pivotAlignmentX = this.pivotAlignmentX;
+    saved_pivotAlignmentY = this.pivotAlignmentY;
+    saved_pivotAlignmentZ = this.pivotAlignmentZ;
   }
 
 
@@ -829,9 +829,9 @@ class Select3D {
       }
     }
 
-    this.alignX = saved_alignX;
-    this.alignY = saved_alignY;
-    this.alignZ = saved_alignZ;
+    this.pivotAlignmentX = saved_pivotAlignmentX;
+    this.pivotAlignmentY = saved_pivotAlignmentY;
+    this.pivotAlignmentZ = saved_pivotAlignmentZ;
   }
 
 
@@ -849,9 +849,9 @@ class Select3D {
       this.BoundingBox[i][8] = 0;
     }
 
-    //this.alignX = 0;
-    //this.alignY = 0;
-    //this.alignZ = 0;
+    //this.pivotAlignmentX = 0;
+    //this.pivotAlignmentY = 0;
+    //this.pivotAlignmentZ = 0;
   }
 
 
@@ -870,9 +870,9 @@ class Select3D {
   float[] translateInside_ReferencePivot (float a, float b, float c) {
 
 
-    float rotX = this.BoundingBox[1 + this.alignX][6];
-    float rotY = this.BoundingBox[1 + this.alignY][7];
-    float rotZ = this.BoundingBox[1 + this.alignZ][8];
+    float rotX = this.BoundingBox[1 + this.pivotAlignmentX][6];
+    float rotY = this.BoundingBox[1 + this.pivotAlignmentY][7];
+    float rotZ = this.BoundingBox[1 + this.pivotAlignmentZ][8];
 
     float y1 = b * funcs.cos_ang(rotX) - c * funcs.sin_ang(rotX);
     float z1 = b * funcs.sin_ang(rotX) + c * funcs.cos_ang(rotX);
@@ -894,13 +894,13 @@ class Select3D {
     float y = a * funcs.sin_ang(rotZ) + b * funcs.cos_ang(rotZ);
     float z = c;
 
-    x *= this.BoundingBox[1 + this.alignX][3];
-    y *= this.BoundingBox[1 + this.alignY][4];
-    z *= this.BoundingBox[1 + this.alignZ][5];
+    x *= this.BoundingBox[1 + this.pivotAlignmentX][3];
+    y *= this.BoundingBox[1 + this.pivotAlignmentY][4];
+    z *= this.BoundingBox[1 + this.pivotAlignmentZ][5];
 
-    x += this.BoundingBox[1 + this.alignX][0];
-    y += this.BoundingBox[1 + this.alignY][1];
-    z += this.BoundingBox[1 + this.alignZ][2];
+    x += this.BoundingBox[1 + this.pivotAlignmentX][0];
+    y += this.BoundingBox[1 + this.pivotAlignmentY][1];
+    z += this.BoundingBox[1 + this.pivotAlignmentZ][2];
 
     float[] return_array = {
       x, y, z
@@ -913,19 +913,19 @@ class Select3D {
 
   float[] translateOutside_ReferencePivot (float a, float b, float c) {
 
-    a -= this.BoundingBox[1 + this.alignX][0];
-    b -= this.BoundingBox[1 + this.alignY][1];
-    c -= this.BoundingBox[1 + this.alignZ][2];
+    a -= this.BoundingBox[1 + this.pivotAlignmentX][0];
+    b -= this.BoundingBox[1 + this.pivotAlignmentY][1];
+    c -= this.BoundingBox[1 + this.pivotAlignmentZ][2];
 
-    a /= this.BoundingBox[1 + this.alignX][3];
-    b /= this.BoundingBox[1 + this.alignY][4];
-    c /= this.BoundingBox[1 + this.alignZ][5];
+    a /= this.BoundingBox[1 + this.pivotAlignmentX][3];
+    b /= this.BoundingBox[1 + this.pivotAlignmentY][4];
+    c /= this.BoundingBox[1 + this.pivotAlignmentZ][5];
 
 
 
-    float rotX = this.BoundingBox[1 + this.alignX][6];
-    float rotY = this.BoundingBox[1 + this.alignY][7];
-    float rotZ = this.BoundingBox[1 + this.alignZ][8];
+    float rotX = this.BoundingBox[1 + this.pivotAlignmentX][6];
+    float rotY = this.BoundingBox[1 + this.pivotAlignmentY][7];
+    float rotZ = this.BoundingBox[1 + this.pivotAlignmentZ][8];
 
     float x1 = a * funcs.cos_ang(-rotZ) - b * funcs.sin_ang(-rotZ);
     float y1 = a * funcs.sin_ang(-rotZ) + b * funcs.cos_ang(-rotZ);
@@ -964,18 +964,18 @@ class Select3D {
     float posY = this.BoundingBox[1][1];
     float posZ = this.BoundingBox[1][2];
 
-    float x = this.BoundingBox[1 + this.alignX][0];
-    float y = this.BoundingBox[1 + this.alignY][1];
-    float z = this.BoundingBox[1 + this.alignZ][2];
+    float x = this.BoundingBox[1 + this.pivotAlignmentX][0];
+    float y = this.BoundingBox[1 + this.pivotAlignmentY][1];
+    float z = this.BoundingBox[1 + this.pivotAlignmentZ][2];
 
     {
-      int keep_selection_alignX = this.alignX;
-      int keep_selection_alignY = this.alignY;
-      int keep_selection_alignZ = this.alignZ;
+      int keep_selection_pivotAlignmentX = this.pivotAlignmentX;
+      int keep_selection_pivotAlignmentY = this.pivotAlignmentY;
+      int keep_selection_pivotAlignmentZ = this.pivotAlignmentZ;
 
-      this.alignX = 0; // apply the centre
-      this.alignY = 0; // apply the centre
-      this.alignZ = 0; // apply the centre
+      this.pivotAlignmentX = 0; // apply the centre
+      this.pivotAlignmentY = 0; // apply the centre
+      this.pivotAlignmentZ = 0; // apply the centre
 
       float[] A = this.translateInside_ReferencePivot(x - posX, y - posY, z - posZ);
 
@@ -983,9 +983,9 @@ class Select3D {
       y = A[1];
       z = A[2];
 
-      this.alignX = keep_selection_alignX;
-      this.alignY = keep_selection_alignY;
-      this.alignZ = keep_selection_alignZ;
+      this.pivotAlignmentX = keep_selection_pivotAlignmentX;
+      this.pivotAlignmentY = keep_selection_pivotAlignmentY;
+      this.pivotAlignmentZ = keep_selection_pivotAlignmentZ;
     }
 
     float[] return_array = {
@@ -2190,24 +2190,24 @@ class Select3D {
     XML_setFloat(parent, "position", this.position);
     XML_setFloat(parent, "rotation", this.rotation);
     XML_setFloat(parent, "scale", this.scale);
-    XML_setInt(parent, "alignX", this.alignX);
-    XML_setInt(parent, "alignY", this.alignY);
-    XML_setInt(parent, "alignZ", this.alignZ);
+    XML_setInt(parent, "pivotAlignmentX", this.pivotAlignmentX);
+    XML_setInt(parent, "pivotAlignmentY", this.pivotAlignmentY);
+    XML_setInt(parent, "pivotAlignmentZ", this.pivotAlignmentZ);
 
-    XML_setBoolean(parent, "Face_displayEdges", this.Face_displayEdges);
-    XML_setBoolean(parent, "Face_displayVertexCount", this.Face_displayVertexCount);
-    XML_setBoolean(parent, "Polyline_displayVertexCount", this.Polyline_displayVertexCount);
-    XML_setBoolean(parent, "Vertex_displayVertices", this.Vertex_displayVertices);
-    XML_setBoolean(parent, "Polyline_displayVertices", this.Polyline_displayVertices);
-    XML_setBoolean(parent, "Group_displayPivot", this.Group_displayPivot);
-    XML_setBoolean(parent, "displayReferencePivot", this.displayReferencePivot);
-    XML_setBoolean(parent, "Group_displayEdges", this.Group_displayEdges);
-    XML_setBoolean(parent, "Group_displayBox", this.Group_displayBox);
-    XML_setBoolean(parent, "Model2D_displayEdges", this.Model2D_displayEdges);
-    XML_setBoolean(parent, "Model1D_displayEdges", this.Model1D_displayEdges);
-    XML_setBoolean(parent, "Solid_displayEdges", this.Solid_displayEdges);
-    XML_setBoolean(parent, "Section_displayEdges", this.Section_displayEdges);
-    XML_setBoolean(parent, "Camera_displayEdges", this.Camera_displayEdges);
+    XML_setBoolean(parent, "faceDisplayEdges", this.faceDisplayEdges);
+    XML_setBoolean(parent, "faceDisplayVertexIndices", this.faceDisplayVertexIndices);
+    XML_setBoolean(parent, "polylineDisplayVertexIndices", this.polylineDisplayVertexIndices);
+    XML_setBoolean(parent, "vertexDisplayMarkers", this.vertexDisplayMarkers);
+    XML_setBoolean(parent, "polylineDisplayVertices", this.polylineDisplayVertices);
+    XML_setBoolean(parent, "groupDisplayPivot", this.groupDisplayPivot);
+    XML_setBoolean(parent, "pivotDisplayReference", this.pivotDisplayReference);
+    XML_setBoolean(parent, "groupDisplayEdges", this.groupDisplayEdges);
+    XML_setBoolean(parent, "groupDisplayBox", this.groupDisplayBox);
+    XML_setBoolean(parent, "model2DDisplayBounds", this.model2DDisplayBounds);
+    XML_setBoolean(parent, "model1DDisplayBounds", this.model1DDisplayBounds);
+    XML_setBoolean(parent, "solidDisplayEdges", this.solidDisplayEdges);
+    XML_setBoolean(parent, "sectionDisplayEdges", this.sectionDisplayEdges);
+    XML_setBoolean(parent, "cameraDisplayFrustum", this.cameraDisplayFrustum);
     XML_setBoolean(parent, "LandPoint_displayPoints", this.LandPoint_displayPoints);
 
     XML_setFloat(parent, "softPower", this.softPower);
@@ -2242,24 +2242,24 @@ class Select3D {
     this.position = XML_getFloat(parent, "position");
     this.rotation = XML_getFloat(parent, "rotation");
     this.scale = XML_getFloat(parent, "scale");
-    this.alignX = XML_getInt(parent, "alignX");
-    this.alignY = XML_getInt(parent, "alignY");
-    this.alignZ = XML_getInt(parent, "alignZ");
+    this.pivotAlignmentX = XML_getInt(parent, "pivotAlignmentX");
+    this.pivotAlignmentY = XML_getInt(parent, "pivotAlignmentY");
+    this.pivotAlignmentZ = XML_getInt(parent, "pivotAlignmentZ");
 
-    this.displayReferencePivot = XML_getBoolean(parent, "displayReferencePivot");
-    this.Group_displayPivot = XML_getBoolean(parent, "Group_displayPivot");
-    this.Group_displayEdges = XML_getBoolean(parent, "Group_displayEdges");
-    this.Group_displayBox = XML_getBoolean(parent, "Group_displayBox");
-    this.Face_displayEdges = XML_getBoolean(parent, "Face_displayEdges");
-    this.Face_displayVertexCount = XML_getBoolean(parent, "Face_displayVertexCount");
-    this.Polyline_displayVertexCount = XML_getBoolean(parent, "Polyline_displayVertexCount");
-    this.Vertex_displayVertices = XML_getBoolean(parent, "Vertex_displayVertices");
-    this.Polyline_displayVertices = XML_getBoolean(parent, "Polyline_displayVertices");
-    this.Model2D_displayEdges = XML_getBoolean(parent, "Model2D_displayEdges");
-    this.Model1D_displayEdges = XML_getBoolean(parent, "Model1D_displayEdges");
-    this.Solid_displayEdges = XML_getBoolean(parent, "Solid_displayEdges");
-    this.Section_displayEdges = XML_getBoolean(parent, "Section_displayEdges");
-    this.Camera_displayEdges = XML_getBoolean(parent, "Camera_displayEdges");
+    this.pivotDisplayReference = XML_getBoolean(parent, "pivotDisplayReference");
+    this.groupDisplayPivot = XML_getBoolean(parent, "groupDisplayPivot");
+    this.groupDisplayEdges = XML_getBoolean(parent, "groupDisplayEdges");
+    this.groupDisplayBox = XML_getBoolean(parent, "groupDisplayBox");
+    this.faceDisplayEdges = XML_getBoolean(parent, "faceDisplayEdges");
+    this.faceDisplayVertexIndices = XML_getBoolean(parent, "faceDisplayVertexIndices");
+    this.polylineDisplayVertexIndices = XML_getBoolean(parent, "polylineDisplayVertexIndices");
+    this.vertexDisplayMarkers = XML_getBoolean(parent, "vertexDisplayMarkers");
+    this.polylineDisplayVertices = XML_getBoolean(parent, "polylineDisplayVertices");
+    this.model2DDisplayBounds = XML_getBoolean(parent, "model2DDisplayBounds");
+    this.model1DDisplayBounds = XML_getBoolean(parent, "model1DDisplayBounds");
+    this.solidDisplayEdges = XML_getBoolean(parent, "solidDisplayEdges");
+    this.sectionDisplayEdges = XML_getBoolean(parent, "sectionDisplayEdges");
+    this.cameraDisplayFrustum = XML_getBoolean(parent, "cameraDisplayFrustum");
     this.LandPoint_displayPoints = XML_getBoolean(parent, "LandPoint_displayPoints");
 
     this.softPower = XML_getFloat(parent, "softPower");

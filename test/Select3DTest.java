@@ -549,18 +549,18 @@ class Select3DTest {
 
   @Test
   void calculateBoundingBox_restoresAlignmentFlagsAfterward () {
-    app.Select3D.alignX = 1;
-    app.Select3D.alignY = 2;
-    app.Select3D.alignZ = 1;
+    app.Select3D.pivotAlignmentX = 1;
+    app.Select3D.pivotAlignmentY = 2;
+    app.Select3D.pivotAlignmentZ = 1;
     app.currentObjectCategory = app.ObjectCategory.VERTEX;
     app.Select3D.Vertex_ids = new int[0];
     app.allVertices = new float[0][3];
 
     app.Select3D.calculate_BoundingBox();
 
-    assertEquals(1, app.Select3D.alignX);
-    assertEquals(2, app.Select3D.alignY);
-    assertEquals(1, app.Select3D.alignZ);
+    assertEquals(1, app.Select3D.pivotAlignmentX);
+    assertEquals(2, app.Select3D.pivotAlignmentY);
+    assertEquals(1, app.Select3D.pivotAlignmentZ);
   }
 
   // ============ saved-bounding-box / origin-reference-box ==============
@@ -577,17 +577,17 @@ class Select3DTest {
       {5, 5, 5, 1, 1, 1, 0, 0, 0},
       {10, 10, 10, 1, 1, 1, 0, 0, 0}
     };
-    app.Select3D.alignX = 1;
+    app.Select3D.pivotAlignmentX = 1;
 
     app.Select3D.save_current_BoundingBox();
 
     app.Select3D.BoundingBox[1][0] = 999; // mutate after saving
-    app.Select3D.alignX = 0;
+    app.Select3D.pivotAlignmentX = 0;
 
     app.Select3D.apply_saved_BoundingBox();
 
     assertEquals(5f, app.Select3D.BoundingBox[1][0], 0.0001f); // restored, not 999
-    assertEquals(1, app.Select3D.alignX); // alignment restored too
+    assertEquals(1, app.Select3D.pivotAlignmentX); // alignment restored too
   }
 
   @Test
@@ -639,9 +639,9 @@ class Select3DTest {
       {5, 5, 5, 1, 1, 1, 0, 0, 0},   // mid
       {10, 10, 10, 1, 1, 1, 0, 0, 0} // max
     };
-    app.Select3D.alignX = 1;
-    app.Select3D.alignY = 1;
-    app.Select3D.alignZ = 1;
+    app.Select3D.pivotAlignmentX = 1;
+    app.Select3D.pivotAlignmentY = 1;
+    app.Select3D.pivotAlignmentZ = 1;
 
     float[] pivot = app.Select3D.getPivot();
 
@@ -698,24 +698,24 @@ class Select3DTest {
     original.position = 1.5f;
     original.rotation = 12.5f;
     original.scale = 0.5f;
-    original.alignX = 1;
-    original.alignY = -1;
-    original.alignZ = 0;
+    original.pivotAlignmentX = 1;
+    original.pivotAlignmentY = -1;
+    original.pivotAlignmentZ = 0;
 
-    original.Face_displayEdges = true;
-    original.Face_displayVertexCount = true;
-    original.Polyline_displayVertexCount = false;
-    original.Vertex_displayVertices = true;
-    original.Polyline_displayVertices = false;
-    original.Group_displayPivot = true;
-    original.displayReferencePivot = true;
-    original.Group_displayEdges = false;
-    original.Group_displayBox = true;
-    original.Model2D_displayEdges = false;
-    original.Model1D_displayEdges = true;
-    original.Solid_displayEdges = false;
-    original.Section_displayEdges = true;
-    original.Camera_displayEdges = false;
+    original.faceDisplayEdges = true;
+    original.faceDisplayVertexIndices = true;
+    original.polylineDisplayVertexIndices = false;
+    original.vertexDisplayMarkers = true;
+    original.polylineDisplayVertices = false;
+    original.groupDisplayPivot = true;
+    original.pivotDisplayReference = true;
+    original.groupDisplayEdges = false;
+    original.groupDisplayBox = true;
+    original.model2DDisplayBounds = false;
+    original.model1DDisplayBounds = true;
+    original.solidDisplayEdges = false;
+    original.sectionDisplayEdges = true;
+    original.cameraDisplayFrustum = false;
     original.LandPoint_displayPoints = true;
 
     original.softPower = 2.5f;
@@ -746,24 +746,24 @@ class Select3DTest {
     assertEquals(1.5f, fresh.position, 0.0001f);
     assertEquals(12.5f, fresh.rotation, 0.0001f);
     assertEquals(0.5f, fresh.scale, 0.0001f);
-    assertEquals(1, fresh.alignX);
-    assertEquals(-1, fresh.alignY);
-    assertEquals(0, fresh.alignZ);
+    assertEquals(1, fresh.pivotAlignmentX);
+    assertEquals(-1, fresh.pivotAlignmentY);
+    assertEquals(0, fresh.pivotAlignmentZ);
 
-    assertTrue(fresh.Face_displayEdges);
-    assertTrue(fresh.Face_displayVertexCount);
-    assertFalse(fresh.Polyline_displayVertexCount);
-    assertTrue(fresh.Vertex_displayVertices);
-    assertFalse(fresh.Polyline_displayVertices);
-    assertTrue(fresh.Group_displayPivot);
-    assertTrue(fresh.displayReferencePivot);
-    assertFalse(fresh.Group_displayEdges);
-    assertTrue(fresh.Group_displayBox);
-    assertFalse(fresh.Model2D_displayEdges);
-    assertTrue(fresh.Model1D_displayEdges);
-    assertFalse(fresh.Solid_displayEdges);
-    assertTrue(fresh.Section_displayEdges);
-    assertFalse(fresh.Camera_displayEdges);
+    assertTrue(fresh.faceDisplayEdges);
+    assertTrue(fresh.faceDisplayVertexIndices);
+    assertFalse(fresh.polylineDisplayVertexIndices);
+    assertTrue(fresh.vertexDisplayMarkers);
+    assertFalse(fresh.polylineDisplayVertices);
+    assertTrue(fresh.groupDisplayPivot);
+    assertTrue(fresh.pivotDisplayReference);
+    assertFalse(fresh.groupDisplayEdges);
+    assertTrue(fresh.groupDisplayBox);
+    assertFalse(fresh.model2DDisplayBounds);
+    assertTrue(fresh.model1DDisplayBounds);
+    assertFalse(fresh.solidDisplayEdges);
+    assertTrue(fresh.sectionDisplayEdges);
+    assertFalse(fresh.cameraDisplayFrustum);
     assertTrue(fresh.LandPoint_displayPoints);
 
     assertEquals(2.5f, fresh.softPower, 0.0001f);

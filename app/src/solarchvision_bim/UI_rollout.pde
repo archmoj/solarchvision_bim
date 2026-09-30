@@ -219,9 +219,9 @@ class UI_rollout {
     vm.Select3D_position(0);
     vm.Select3D_rotation(0);
     vm.Select3D_scale(0);
-    vm.Select3D_alignX(0);
-    vm.Select3D_alignY(0);
-    vm.Select3D_alignZ(0);
+    vm.Select3D_pivotAlignmentX(0);
+    vm.Select3D_pivotAlignmentY(0);
+    vm.Select3D_pivotAlignmentZ(0);
     vm.Create3D_powAll(0);
     vm.Create3D_powX(0);
     vm.Create3D_powY(0);
@@ -348,7 +348,7 @@ class UI_rollout {
     vm.WindFlows_paletteDir(0);
     vm.WindFlows_paletteMlt(0);
     vm.Select3D_groupDisplayPivot(0);
-    vm.Select3D_displayReferencePivot(0);
+    vm.Select3D_pivotDisplayReference(0);
     vm.Select3D_groupDisplayBox(0);
     vm.Select3D_groupDisplayEdges(0);
     vm.Select3D_faceDisplayEdges(0);
@@ -594,9 +594,9 @@ class UI_rollout {
         Select3D.position = vm.Select3D_position(1);
         Select3D.rotation = vm.Select3D_rotation(1);
         Select3D.scale = vm.Select3D_scale(1);
-        Select3D.alignX = vm.Select3D_alignX(1);
-        Select3D.alignY = vm.Select3D_alignY(1);
-        Select3D.alignZ = vm.Select3D_alignZ(1);
+        Select3D.pivotAlignmentX = vm.Select3D_pivotAlignmentX(1);
+        Select3D.pivotAlignmentY = vm.Select3D_pivotAlignmentY(1);
+        Select3D.pivotAlignmentZ = vm.Select3D_pivotAlignmentZ(1);
       }
 
       if (this.child == CHILD_GEOMETRY_SOLID) {
@@ -779,20 +779,20 @@ class UI_rollout {
 
       if (this.child == CHILD_ILLUSTRATION_SELECTION) {
 
-        Select3D.Group_displayPivot = vm.Select3D_groupDisplayPivot(1);
-        Select3D.displayReferencePivot = vm.Select3D_displayReferencePivot(1);
-        Select3D.Group_displayBox = vm.Select3D_groupDisplayBox(1);
-        Select3D.Group_displayEdges = vm.Select3D_groupDisplayEdges(1);
-        Select3D.Face_displayEdges = vm.Select3D_faceDisplayEdges(1);
-        Select3D.Face_displayVertexCount = vm.Select3D_faceDisplayVertexCount(1);
-        Select3D.Polyline_displayVertexCount = vm.Select3D_polylineDisplayVertexCount(1);
-        Select3D.Vertex_displayVertices = vm.Select3D_vertexDisplayVertices(1);
-        Select3D.Polyline_displayVertices = vm.Select3D_polylineDisplayVertices(1);
-        Select3D.Model2D_displayEdges = vm.Select3D_model2DDisplayEdges(1);
-        Select3D.Model1D_displayEdges = vm.Select3D_model1DDisplayEdges(1);
-        Select3D.Solid_displayEdges = vm.Select3D_solidDisplayEdges(1);
-        Select3D.Section_displayEdges = vm.Select3D_sectionDisplayEdges(1);
-        Select3D.Camera_displayEdges = vm.Select3D_cameraDisplayEdges(1);
+        Select3D.groupDisplayPivot = vm.Select3D_groupDisplayPivot(1);
+        Select3D.pivotDisplayReference = vm.Select3D_pivotDisplayReference(1);
+        Select3D.groupDisplayBox = vm.Select3D_groupDisplayBox(1);
+        Select3D.groupDisplayEdges = vm.Select3D_groupDisplayEdges(1);
+        Select3D.faceDisplayEdges = vm.Select3D_faceDisplayEdges(1);
+        Select3D.faceDisplayVertexIndices = vm.Select3D_faceDisplayVertexCount(1);
+        Select3D.polylineDisplayVertexIndices = vm.Select3D_polylineDisplayVertexCount(1);
+        Select3D.vertexDisplayMarkers = vm.Select3D_vertexDisplayVertices(1);
+        Select3D.polylineDisplayVertices = vm.Select3D_polylineDisplayVertices(1);
+        Select3D.model2DDisplayBounds = vm.Select3D_model2DDisplayEdges(1);
+        Select3D.model1DDisplayBounds = vm.Select3D_model1DDisplayEdges(1);
+        Select3D.solidDisplayEdges = vm.Select3D_solidDisplayEdges(1);
+        Select3D.sectionDisplayEdges = vm.Select3D_sectionDisplayEdges(1);
+        Select3D.cameraDisplayFrustum = vm.Select3D_cameraDisplayEdges(1);
         Select3D.LandPoint_displayPoints = vm.Select3D_landPointDisplayPoints(1);
       }
     } else if (this.parent == PARENT_POSTPROCESS) {

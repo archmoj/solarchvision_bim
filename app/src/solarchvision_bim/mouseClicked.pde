@@ -416,9 +416,9 @@ CreateParams computeCreateParams (float[] RxP) {
       (currentObjectCategory != ObjectCategory.CAMERA) &&
       (currentObjectCategory != ObjectCategory.SECTION)) {
 
-    p.x -= p.rx * Select3D.alignX;
-    p.y -= p.ry * Select3D.alignY;
-    p.z -= p.rz * Select3D.alignZ;
+    p.x -= p.rx * Select3D.pivotAlignmentX;
+    p.y -= p.ry * Select3D.pivotAlignmentY;
+    p.z -= p.rz * Select3D.pivotAlignmentZ;
   }
 
   return p;
@@ -755,9 +755,9 @@ void flipFaceOrientationIfNeeded (int f) {
 // the hit's x,y,z) becomes node 0, preserving winding order otherwise -
 // pulled out of mouseClicked()'s UITASK.FirstVertex handling, which ran
 // this exact block twice in a row: once against allFaces.nodes[f] (with
-// Select3D.Face_ids/Face_displayVertexCount) and once against
+// Select3D.Face_ids/faceDisplayVertexIndices) and once against
 // allPolylines.nodes[f] (with Select3D.Polyline_ids/
-// Polyline_displayVertexCount), confirmed identical modulo which array
+// polylineDisplayVertexIndices), confirmed identical modulo which array
 // before extracting. `nodeRow` is mutated directly (Java arrays are
 // passed by reference), so the caller doesn't need to reassign anything.
 void rotateNodesToStartAtNearestVertex (int[] nodeRow, float[] RxP) {
@@ -1718,7 +1718,7 @@ void mouseClicked () {
                           Select3D.Face_ids = new int [1];
                           Select3D.Face_ids[0] = f;
 
-                          Select3D.Face_displayVertexCount = true;
+                          Select3D.faceDisplayVertexIndices = true;
 
                           flipFaceOrientationIfNeeded(f);
                         } else if (currentObjectCategory == ObjectCategory.GROUP) {
@@ -1740,7 +1740,7 @@ void mouseClicked () {
                           Select3D.Face_ids = new int [1];
                           Select3D.Face_ids[0] = f;
 
-                          Select3D.Face_displayVertexCount = true;
+                          Select3D.faceDisplayVertexIndices = true;
 
                           rotateNodesToStartAtNearestVertex(allFaces.nodes[f], RxP);
                         } else if (currentObjectCategory == ObjectCategory.POLYLINE) {
@@ -1748,7 +1748,7 @@ void mouseClicked () {
                           Select3D.Polyline_ids = new int [1];
                           Select3D.Polyline_ids[0] = f;
 
-                          Select3D.Polyline_displayVertexCount = true;
+                          Select3D.polylineDisplayVertexIndices = true;
 
                           rotateNodesToStartAtNearestVertex(allPolylines.nodes[f], RxP);
                         }

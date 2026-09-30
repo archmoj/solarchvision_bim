@@ -459,7 +459,7 @@ void UI_setTo_View_WindowSelect (int n) {
 
 void UI_setTo_View_PivotX (int n) {
 
-  Select3D.alignX = n;
+  Select3D.pivotAlignmentX = n;
 
   UI_rollout.revise();
 
@@ -468,7 +468,7 @@ void UI_setTo_View_PivotX (int n) {
 
 void UI_setTo_View_PivotY (int n) {
 
-  Select3D.alignY = n;
+  Select3D.pivotAlignmentY = n;
 
   UI_rollout.revise();
 
@@ -477,7 +477,7 @@ void UI_setTo_View_PivotY (int n) {
 
 void UI_setTo_View_PivotZ (int n) {
 
-  Select3D.alignZ = n;
+  Select3D.pivotAlignmentZ = n;
 
   UI_rollout.revise();
 

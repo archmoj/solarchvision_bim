@@ -65,16 +65,16 @@ void applyRolloutUpdate() {
 
   pre_WindFlow_display = allWindFlows.displayAll;
 
-  pre_Selection_Solid_displayEdges = Select3D.Solid_displayEdges;
+  pre_Selection_solidDisplayEdges = Select3D.solidDisplayEdges;
 
-  pre_Selection_Section_displayEdges = Select3D.Section_displayEdges;
+  pre_Selection_sectionDisplayEdges = Select3D.sectionDisplayEdges;
 
-  pre_Selection_Camera_displayEdges = Select3D.Camera_displayEdges;
+  pre_Selection_cameraDisplayFrustum = Select3D.cameraDisplayFrustum;
 
   pre_Selection_LandPoint_displayPoints = Select3D.LandPoint_displayPoints;
 
-  pre_Selection_Model1D_displayEdges = Select3D.Model1D_displayEdges;
-  pre_Selection_Model2D_displayEdges = Select3D.Model2D_displayEdges;
+  pre_Selection_model1DDisplayBounds = Select3D.model1DDisplayBounds;
+  pre_Selection_model2DDisplayBounds = Select3D.model2DDisplayBounds;
   pre_allPoints_displayAll = allPoints.displayAll;
   pre_allFaces_displayEdges = allFaces.displayEdges;
   pre_allFaces_displayNormals = allFaces.displayNormals;
@@ -86,21 +86,21 @@ void applyRolloutUpdate() {
   pre_Selection_rotation = Select3D.rotation;
   pre_Selection_scale = Select3D.scale;
 
-  pre_Selection_alignX = Select3D.alignX;
-  pre_Selection_alignY = Select3D.alignY;
-  pre_Selection_alignZ = Select3D.alignZ;
+  pre_Selection_pivotAlignmentX = Select3D.pivotAlignmentX;
+  pre_Selection_pivotAlignmentY = Select3D.pivotAlignmentY;
+  pre_Selection_pivotAlignmentZ = Select3D.pivotAlignmentZ;
 
-  pre_Selection_displayReferencePivot = Select3D.displayReferencePivot;
+  pre_Selection_pivotDisplayReference = Select3D.pivotDisplayReference;
 
-  pre_Selection_Group_displayPivot = Select3D.Group_displayPivot;
-  pre_Selection_Group_displayEdges = Select3D.Group_displayEdges;
-  pre_Selection_Group_displayBox = Select3D.Group_displayBox;
+  pre_Selection_groupDisplayPivot = Select3D.groupDisplayPivot;
+  pre_Selection_groupDisplayEdges = Select3D.groupDisplayEdges;
+  pre_Selection_groupDisplayBox = Select3D.groupDisplayBox;
 
-  pre_Selection_Face_displayEdges = Select3D.Face_displayEdges;
-  pre_Selection_Face_displayVertexCount = Select3D.Face_displayVertexCount;
-  pre_Selection_Polyline_displayVertexCount = Select3D.Polyline_displayVertexCount;
-  pre_Selection_Vertex_displayVertices = Select3D.Vertex_displayVertices;
-  pre_Selection_Polyline_displayVertices = Select3D.Polyline_displayVertices;
+  pre_Selection_faceDisplayEdges = Select3D.faceDisplayEdges;
+  pre_Selection_faceDisplayVertexIndices = Select3D.faceDisplayVertexIndices;
+  pre_Selection_polylineDisplayVertexIndices = Select3D.polylineDisplayVertexIndices;
+  pre_Selection_vertexDisplayMarkers = Select3D.vertexDisplayMarkers;
+  pre_Selection_polylineDisplayVertices = Select3D.polylineDisplayVertices;
 
   pre_WIN3D_currentCameraIndex = WIN3D.currentCameraIndex;
 
@@ -187,49 +187,49 @@ void applyRolloutUpdate() {
 
   react.applyLandLoadTextures.run(pre_Land3D_loadTextures ? 1 : 0, Land3D.loadTextures ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Camera_displayEdges ? 1 : 0, Select3D.Camera_displayEdges ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_cameraDisplayFrustum ? 1 : 0, Select3D.cameraDisplayFrustum ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Section_displayEdges ? 1 : 0, Select3D.Section_displayEdges ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_sectionDisplayEdges ? 1 : 0, Select3D.sectionDisplayEdges ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Solid_displayEdges ? 1 : 0, Select3D.Solid_displayEdges ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_solidDisplayEdges ? 1 : 0, Select3D.solidDisplayEdges ? 1 : 0);
 
   react.viewChangedOnly.run(pre_Selection_LandPoint_displayPoints ? 1 : 0, Select3D.LandPoint_displayPoints ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Model1D_displayEdges ? 1 : 0, Select3D.Model1D_displayEdges ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_model1DDisplayBounds ? 1 : 0, Select3D.model1DDisplayBounds ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Model2D_displayEdges ? 1 : 0, Select3D.Model2D_displayEdges ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_model2DDisplayBounds ? 1 : 0, Select3D.model2DDisplayBounds ? 1 : 0);
 
   react.softSelectionChanged.run(pre_Selection_softPower, Select3D.softPower);
 
   react.softSelectionChanged.run(pre_Selection_softRadius, Select3D.softRadius);
 
-  react.selectionChangedOnly.run(pre_Selection_alignX, Select3D.alignX);
+  react.selectionChangedOnly.run(pre_Selection_pivotAlignmentX, Select3D.pivotAlignmentX);
 
-  react.selectionChangedOnly.run(pre_Selection_alignY, Select3D.alignY);
+  react.selectionChangedOnly.run(pre_Selection_pivotAlignmentY, Select3D.pivotAlignmentY);
 
-  react.selectionChangedOnly.run(pre_Selection_alignZ, Select3D.alignZ);
+  react.selectionChangedOnly.run(pre_Selection_pivotAlignmentZ, Select3D.pivotAlignmentZ);
 
   react.applyPosValue.run(pre_Selection_position, Select3D.position);
   react.applyRotValue.run(pre_Selection_rotation, Select3D.rotation);
   react.applyScaleValue.run(pre_Selection_scale, Select3D.scale);
 
-  react.viewChangedOnly.run(pre_Selection_displayReferencePivot ? 1 : 0, Select3D.displayReferencePivot ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_pivotDisplayReference ? 1 : 0, Select3D.pivotDisplayReference ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Group_displayPivot ? 1 : 0, Select3D.Group_displayPivot ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_groupDisplayPivot ? 1 : 0, Select3D.groupDisplayPivot ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Group_displayEdges ? 1 : 0, Select3D.Group_displayEdges ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_groupDisplayEdges ? 1 : 0, Select3D.groupDisplayEdges ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Group_displayBox ? 1 : 0, Select3D.Group_displayBox ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_groupDisplayBox ? 1 : 0, Select3D.groupDisplayBox ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Face_displayEdges ? 1 : 0, Select3D.Face_displayEdges ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_faceDisplayEdges ? 1 : 0, Select3D.faceDisplayEdges ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Face_displayVertexCount ? 1 : 0, Select3D.Face_displayVertexCount ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_faceDisplayVertexIndices ? 1 : 0, Select3D.faceDisplayVertexIndices ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Polyline_displayVertexCount ? 1 : 0, Select3D.Polyline_displayVertexCount ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_polylineDisplayVertexIndices ? 1 : 0, Select3D.polylineDisplayVertexIndices ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Vertex_displayVertices ? 1 : 0, Select3D.Vertex_displayVertices ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_vertexDisplayMarkers ? 1 : 0, Select3D.vertexDisplayMarkers ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_Polyline_displayVertices ? 1 : 0, Select3D.Polyline_displayVertices ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_polylineDisplayVertices ? 1 : 0, Select3D.polylineDisplayVertices ? 1 : 0);
 
   react.applyCurrentCamera.run(pre_WIN3D_currentCameraIndex, WIN3D.currentCameraIndex);
 
@@ -316,12 +316,12 @@ float pre_LocationLON;
 
 boolean pre_WORLD_autoView;
 
-boolean pre_Selection_Model1D_displayEdges;
-boolean pre_Selection_Model2D_displayEdges;
+boolean pre_Selection_model1DDisplayBounds;
+boolean pre_Selection_model2DDisplayBounds;
 
-boolean pre_Selection_Solid_displayEdges;
-boolean pre_Selection_Section_displayEdges;
-boolean pre_Selection_Camera_displayEdges;
+boolean pre_Selection_solidDisplayEdges;
+boolean pre_Selection_sectionDisplayEdges;
+boolean pre_Selection_cameraDisplayFrustum;
 
 boolean pre_Selection_LandPoint_displayPoints;
 
@@ -332,21 +332,21 @@ float pre_Selection_position;
 float pre_Selection_rotation;
 float pre_Selection_scale;
 
-int pre_Selection_alignX;
-int pre_Selection_alignY;
-int pre_Selection_alignZ;
+int pre_Selection_pivotAlignmentX;
+int pre_Selection_pivotAlignmentY;
+int pre_Selection_pivotAlignmentZ;
 
-boolean pre_Selection_displayReferencePivot;
+boolean pre_Selection_pivotDisplayReference;
 
-boolean pre_Selection_Group_displayPivot;
-boolean pre_Selection_Group_displayEdges;
-boolean pre_Selection_Group_displayBox;
+boolean pre_Selection_groupDisplayPivot;
+boolean pre_Selection_groupDisplayEdges;
+boolean pre_Selection_groupDisplayBox;
 
-boolean pre_Selection_Face_displayEdges;
-boolean pre_Selection_Face_displayVertexCount;
-boolean pre_Selection_Polyline_displayVertexCount;
-boolean pre_Selection_Vertex_displayVertices;
-boolean pre_Selection_Polyline_displayVertices;
+boolean pre_Selection_faceDisplayEdges;
+boolean pre_Selection_faceDisplayVertexIndices;
+boolean pre_Selection_polylineDisplayVertexIndices;
+boolean pre_Selection_vertexDisplayMarkers;
+boolean pre_Selection_polylineDisplayVertices;
 
 int pre_WIN3D_currentCameraIndex;
 

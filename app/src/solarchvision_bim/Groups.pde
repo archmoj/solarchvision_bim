@@ -212,9 +212,9 @@ class Groups {
     if (run_process) {
 
       if (createNewGroup == 1) {
-        float x = Select3D.BoundingBox[1 + Select3D.alignX][0];
-        float y = Select3D.BoundingBox[1 + Select3D.alignY][1];
-        float z = Select3D.BoundingBox[1 + Select3D.alignZ][2];
+        float x = Select3D.BoundingBox[1 + Select3D.pivotAlignmentX][0];
+        float y = Select3D.BoundingBox[1 + Select3D.pivotAlignmentY][1];
+        float z = Select3D.BoundingBox[1 + Select3D.pivotAlignmentZ][2];
 
         float rot = User3D.creatorOrientation;
         if (rot == 360) rot = WIN3D.rotationZ;

@@ -1334,7 +1334,7 @@ class ValueModifier {
     }
     return out;
   }
-  int Select3D_alignX (int created) {
+  int Select3D_pivotAlignmentX (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1345,18 +1345,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D alignX",
-        () -> (float) Select3D.alignX,
-        (v) -> { Select3D.alignX = int(v); },
+      putValueAction("Select3D pivotAlignmentX",
+        () -> (float) Select3D.pivotAlignmentX,
+        (v) -> { Select3D.pivotAlignmentX = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.selectionChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D alignX", Select3D.alignX, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D pivotAlignmentX", Select3D.pivotAlignmentX, s1, s2, s3);
     }
     return out;
   }
-  int Select3D_alignY (int created) {
+  int Select3D_pivotAlignmentY (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1367,18 +1367,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D alignY",
-        () -> (float) Select3D.alignY,
-        (v) -> { Select3D.alignY = int(v); },
+      putValueAction("Select3D pivotAlignmentY",
+        () -> (float) Select3D.pivotAlignmentY,
+        (v) -> { Select3D.pivotAlignmentY = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.selectionChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D alignY", Select3D.alignY, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D pivotAlignmentY", Select3D.pivotAlignmentY, s1, s2, s3);
     }
     return out;
   }
-  int Select3D_alignZ (int created) {
+  int Select3D_pivotAlignmentZ (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1389,14 +1389,14 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D alignZ",
-        () -> (float) Select3D.alignZ,
-        (v) -> { Select3D.alignZ = int(v); },
+      putValueAction("Select3D pivotAlignmentZ",
+        () -> (float) Select3D.pivotAlignmentZ,
+        (v) -> { Select3D.pivotAlignmentZ = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.selectionChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D alignZ", Select3D.alignZ, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D pivotAlignmentZ", Select3D.pivotAlignmentZ, s1, s2, s3);
     }
     return out;
   }
@@ -3861,31 +3861,31 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D groupDisplayPivot",
-        () -> (Select3D.Group_displayPivot ? 1f : 0f),
-        (v) -> { Select3D.Group_displayPivot = (v >= 0.5f); },
+        () -> (Select3D.groupDisplayPivot ? 1f : 0f),
+        (v) -> { Select3D.groupDisplayPivot = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayPivot", Select3D.Group_displayPivot);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayPivot", Select3D.groupDisplayPivot);
     }
     return out;
   }
-  boolean Select3D_displayReferencePivot (int created) {
+  boolean Select3D_pivotDisplayReference (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D displayReferencePivot",
-        () -> (Select3D.displayReferencePivot ? 1f : 0f),
-        (v) -> { Select3D.displayReferencePivot = (v >= 0.5f); },
+      putValueAction("Select3D pivotDisplayReference",
+        () -> (Select3D.pivotDisplayReference ? 1f : 0f),
+        (v) -> { Select3D.pivotDisplayReference = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D displayReferencePivot", Select3D.displayReferencePivot);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D pivotDisplayReference", Select3D.pivotDisplayReference);
     }
     return out;
   }
@@ -3897,13 +3897,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D groupDisplayBox",
-        () -> (Select3D.Group_displayBox ? 1f : 0f),
-        (v) -> { Select3D.Group_displayBox = (v >= 0.5f); },
+        () -> (Select3D.groupDisplayBox ? 1f : 0f),
+        (v) -> { Select3D.groupDisplayBox = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayBox", Select3D.Group_displayBox);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayBox", Select3D.groupDisplayBox);
     }
     return out;
   }
@@ -3915,13 +3915,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D groupDisplayEdges",
-        () -> (Select3D.Group_displayEdges ? 1f : 0f),
-        (v) -> { Select3D.Group_displayEdges = (v >= 0.5f); },
+        () -> (Select3D.groupDisplayEdges ? 1f : 0f),
+        (v) -> { Select3D.groupDisplayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayEdges", Select3D.Group_displayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayEdges", Select3D.groupDisplayEdges);
     }
     return out;
   }
@@ -3933,13 +3933,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D faceDisplayEdges",
-        () -> (Select3D.Face_displayEdges ? 1f : 0f),
-        (v) -> { Select3D.Face_displayEdges = (v >= 0.5f); },
+        () -> (Select3D.faceDisplayEdges ? 1f : 0f),
+        (v) -> { Select3D.faceDisplayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D faceDisplayEdges", Select3D.Face_displayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D faceDisplayEdges", Select3D.faceDisplayEdges);
     }
     return out;
   }
@@ -3951,13 +3951,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D faceDisplayVertexCount",
-        () -> (Select3D.Face_displayVertexCount ? 1f : 0f),
-        (v) -> { Select3D.Face_displayVertexCount = (v >= 0.5f); },
+        () -> (Select3D.faceDisplayVertexIndices ? 1f : 0f),
+        (v) -> { Select3D.faceDisplayVertexIndices = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D faceDisplayVertexCount", Select3D.Face_displayVertexCount);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D faceDisplayVertexCount", Select3D.faceDisplayVertexIndices);
     }
     return out;
   }
@@ -3969,13 +3969,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D polylineDisplayVertexCount",
-        () -> (Select3D.Polyline_displayVertexCount ? 1f : 0f),
-        (v) -> { Select3D.Polyline_displayVertexCount = (v >= 0.5f); },
+        () -> (Select3D.polylineDisplayVertexIndices ? 1f : 0f),
+        (v) -> { Select3D.polylineDisplayVertexIndices = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D polylineDisplayVertexCount", Select3D.Polyline_displayVertexCount);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D polylineDisplayVertexCount", Select3D.polylineDisplayVertexIndices);
     }
     return out;
   }
@@ -3987,13 +3987,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D vertexDisplayVertices",
-        () -> (Select3D.Vertex_displayVertices ? 1f : 0f),
-        (v) -> { Select3D.Vertex_displayVertices = (v >= 0.5f); },
+        () -> (Select3D.vertexDisplayMarkers ? 1f : 0f),
+        (v) -> { Select3D.vertexDisplayMarkers = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D vertexDisplayVertices", Select3D.Vertex_displayVertices);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D vertexDisplayVertices", Select3D.vertexDisplayMarkers);
     }
     return out;
   }
@@ -4005,13 +4005,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D polylineDisplayVertices",
-        () -> (Select3D.Polyline_displayVertices ? 1f : 0f),
-        (v) -> { Select3D.Polyline_displayVertices = (v >= 0.5f); },
+        () -> (Select3D.polylineDisplayVertices ? 1f : 0f),
+        (v) -> { Select3D.polylineDisplayVertices = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D polylineDisplayVertices", Select3D.Polyline_displayVertices);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D polylineDisplayVertices", Select3D.polylineDisplayVertices);
     }
     return out;
   }
@@ -4023,13 +4023,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D model2DDisplayEdges",
-        () -> (Select3D.Model2D_displayEdges ? 1f : 0f),
-        (v) -> { Select3D.Model2D_displayEdges = (v >= 0.5f); },
+        () -> (Select3D.model2DDisplayBounds ? 1f : 0f),
+        (v) -> { Select3D.model2DDisplayBounds = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D model2DDisplayEdges", Select3D.Model2D_displayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D model2DDisplayEdges", Select3D.model2DDisplayBounds);
     }
     return out;
   }
@@ -4041,13 +4041,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D model1DDisplayEdges",
-        () -> (Select3D.Model1D_displayEdges ? 1f : 0f),
-        (v) -> { Select3D.Model1D_displayEdges = (v >= 0.5f); },
+        () -> (Select3D.model1DDisplayBounds ? 1f : 0f),
+        (v) -> { Select3D.model1DDisplayBounds = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D model1DDisplayEdges", Select3D.Model1D_displayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D model1DDisplayEdges", Select3D.model1DDisplayBounds);
     }
     return out;
   }
@@ -4059,13 +4059,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D solidDisplayEdges",
-        () -> (Select3D.Solid_displayEdges ? 1f : 0f),
-        (v) -> { Select3D.Solid_displayEdges = (v >= 0.5f); },
+        () -> (Select3D.solidDisplayEdges ? 1f : 0f),
+        (v) -> { Select3D.solidDisplayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D solidDisplayEdges", Select3D.Solid_displayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D solidDisplayEdges", Select3D.solidDisplayEdges);
     }
     return out;
   }
@@ -4077,13 +4077,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D sectionDisplayEdges",
-        () -> (Select3D.Section_displayEdges ? 1f : 0f),
-        (v) -> { Select3D.Section_displayEdges = (v >= 0.5f); },
+        () -> (Select3D.sectionDisplayEdges ? 1f : 0f),
+        (v) -> { Select3D.sectionDisplayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D sectionDisplayEdges", Select3D.Section_displayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D sectionDisplayEdges", Select3D.sectionDisplayEdges);
     }
     return out;
   }
@@ -4095,13 +4095,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D cameraDisplayEdges",
-        () -> (Select3D.Camera_displayEdges ? 1f : 0f),
-        (v) -> { Select3D.Camera_displayEdges = (v >= 0.5f); },
+        () -> (Select3D.cameraDisplayFrustum ? 1f : 0f),
+        (v) -> { Select3D.cameraDisplayFrustum = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D cameraDisplayEdges", Select3D.Camera_displayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D cameraDisplayEdges", Select3D.cameraDisplayFrustum);
     }
     return out;
   }

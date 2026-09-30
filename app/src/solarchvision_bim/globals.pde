@@ -448,9 +448,9 @@ Select3D Select3D = new Select3D();
 
 float[][] saved_BoundingBox = Select3D.BoundingBox;
 
-int saved_alignX = Select3D.alignX;
-int saved_alignY = Select3D.alignY;
-int saved_alignZ = Select3D.alignZ;
+int saved_pivotAlignmentX = Select3D.pivotAlignmentX;
+int saved_pivotAlignmentY = Select3D.pivotAlignmentY;
+int saved_pivotAlignmentZ = Select3D.pivotAlignmentZ;
 
 int addNewSelectionToPreviousSelection = 0; // internal
 

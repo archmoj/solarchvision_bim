@@ -663,21 +663,21 @@ class UI_menuBar {
     map.put(toggleKey("3D-display", "Show/Hide Solid Section"), () -> !allSolidImpacts.displayImage);
     map.put(toggleKey("3D-display", "Show/Hide Wind Flow"),     () -> !allWindFlows.displayAll);
 
-    map.put(toggleKey("3D-display", "Show/Hide Selected Solids"),                 () -> !Select3D.Solid_displayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Sections"),               () -> !Select3D.Section_displayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Cameras"),                () -> !Select3D.Camera_displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
     map.put(toggleKey("3D-display", "Show/Hide Selected LandPoints"),             () -> !Select3D.LandPoint_displayPoints);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Faces"),                  () -> !Select3D.Face_displayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines"),              () -> !Select3D.Polyline_displayVertices);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.Face_displayVertexCount);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.Polyline_displayVertexCount);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Vertices"),               () -> !Select3D.Vertex_displayVertices);
-    map.put(toggleKey("3D-display", "Show/Hide Selected REF Pivot"),              () -> !Select3D.displayReferencePivot);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Group Pivot"),            () -> !Select3D.Group_displayPivot);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Group Edges"),            () -> !Select3D.Group_displayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected Group Box"),              () -> !Select3D.Group_displayBox);
-    map.put(toggleKey("3D-display", "Show/Hide Selected 2D Edges"),               () -> !Select3D.Model2D_displayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Selected 1D Edges"),               () -> !Select3D.Model1D_displayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexIndices);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Polylines Vertex Count"), () -> !Select3D.polylineDisplayVertexIndices);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Vertices"),               () -> !Select3D.vertexDisplayMarkers);
+    map.put(toggleKey("3D-display", "Show/Hide Selected REF Pivot"),              () -> !Select3D.pivotDisplayReference);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Group Pivot"),            () -> !Select3D.groupDisplayPivot);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Group Edges"),            () -> !Select3D.groupDisplayEdges);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Group Box"),              () -> !Select3D.groupDisplayBox);
+    map.put(toggleKey("3D-display", "Show/Hide Selected 2D Edges"),               () -> !Select3D.model2DDisplayBounds);
+    map.put(toggleKey("3D-display", "Show/Hide Selected 1D Edges"),               () -> !Select3D.model1DDisplayBounds);
 
     return map;
   }

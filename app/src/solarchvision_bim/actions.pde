@@ -785,19 +785,19 @@ void build_allActions() {
   });
 
   putAction("Show/Hide Selected Solids", () -> {
-    Select3D.Solid_displayEdges = !Select3D.Solid_displayEdges;
+    Select3D.solidDisplayEdges = !Select3D.solidDisplayEdges;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Sections", () -> {
-    Select3D.Section_displayEdges = !Select3D.Section_displayEdges;
+    Select3D.sectionDisplayEdges = !Select3D.sectionDisplayEdges;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Cameras", () -> {
-    Select3D.Camera_displayEdges = !Select3D.Camera_displayEdges;
+    Select3D.cameraDisplayFrustum = !Select3D.cameraDisplayFrustum;
 
     view_changed();
   });
@@ -815,67 +815,67 @@ void build_allActions() {
   });
 
   putAction("Show/Hide Selected Faces", () -> {
-    Select3D.Face_displayEdges = !Select3D.Face_displayEdges;
+    Select3D.faceDisplayEdges = !Select3D.faceDisplayEdges;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Faces Vertex Count", () -> {
-    Select3D.Face_displayVertexCount = !Select3D.Face_displayVertexCount;
+    Select3D.faceDisplayVertexIndices = !Select3D.faceDisplayVertexIndices;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Polylines Vertex Count", () -> {
-    Select3D.Polyline_displayVertexCount = !Select3D.Polyline_displayVertexCount;
+    Select3D.polylineDisplayVertexIndices = !Select3D.polylineDisplayVertexIndices;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Vertices", () -> {
-    Select3D.Vertex_displayVertices = !Select3D.Vertex_displayVertices;
+    Select3D.vertexDisplayMarkers = !Select3D.vertexDisplayMarkers;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Polylines", () -> {
-    Select3D.Polyline_displayVertices = !Select3D.Polyline_displayVertices;
+    Select3D.polylineDisplayVertices = !Select3D.polylineDisplayVertices;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected REF Pivot", () -> {
-    Select3D.displayReferencePivot = !Select3D.displayReferencePivot;
+    Select3D.pivotDisplayReference = !Select3D.pivotDisplayReference;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Group Pivot", () -> {
-    Select3D.Group_displayPivot = !Select3D.Group_displayPivot;
+    Select3D.groupDisplayPivot = !Select3D.groupDisplayPivot;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Group Edges", () -> {
-    Select3D.Group_displayEdges = !Select3D.Group_displayEdges;
+    Select3D.groupDisplayEdges = !Select3D.groupDisplayEdges;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected Group Box", () -> {
-    Select3D.Group_displayBox = !Select3D.Group_displayBox;
+    Select3D.groupDisplayBox = !Select3D.groupDisplayBox;
 
     view_changed();;
   });
 
   putAction("Show/Hide Selected 2D Edges", () -> {
-    Select3D.Model2D_displayEdges = !Select3D.Model2D_displayEdges;
+    Select3D.model2DDisplayBounds = !Select3D.model2DDisplayBounds;
 
     view_changed();
   });
 
   putAction("Show/Hide Selected 1D Edges", () -> {
-    Select3D.Model1D_displayEdges = !Select3D.Model1D_displayEdges;
+    Select3D.model1DDisplayBounds = !Select3D.model1DDisplayBounds;
 
     view_changed();
   });
@@ -1191,15 +1191,15 @@ void build_allActions() {
 
   putAction("Begin New Group at Pivot", () -> {
     allGroups.beginNewGroup(
-      Select3D.BoundingBox[1 + Select3D.alignX][0],
-      Select3D.BoundingBox[1 + Select3D.alignY][1],
-      Select3D.BoundingBox[1 + Select3D.alignZ][2],
-      Select3D.BoundingBox[1 + Select3D.alignX][3],
-      Select3D.BoundingBox[1 + Select3D.alignY][4],
-      Select3D.BoundingBox[1 + Select3D.alignZ][5],
-      Select3D.BoundingBox[1 + Select3D.alignX][6],
-      Select3D.BoundingBox[1 + Select3D.alignY][7],
-      Select3D.BoundingBox[1 + Select3D.alignZ][8]
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentX][0],
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentY][1],
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentZ][2],
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentX][3],
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentY][4],
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentZ][5],
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentX][6],
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentY][7],
+      Select3D.BoundingBox[1 + Select3D.pivotAlignmentZ][8]
     );
 
     Select3D.Group_ids = new int [1];
@@ -2057,37 +2057,37 @@ void build_allActions() {
   putAction("Hide Wind Flow",     () -> {allWindFlows.displayAll = false; view_changed();});
 
 
-  putAction("Show Selected Solids",                 () -> {Select3D.Solid_displayEdges = true; view_changed();});
-  putAction("Show Selected Sections",               () -> {Select3D.Section_displayEdges = true; view_changed();});
-  putAction("Show Selected Cameras",                () -> {Select3D.Camera_displayEdges = true; view_changed();});
+  putAction("Show Selected Solids",                 () -> {Select3D.solidDisplayEdges = true; view_changed();});
+  putAction("Show Selected Sections",               () -> {Select3D.sectionDisplayEdges = true; view_changed();});
+  putAction("Show Selected Cameras",                () -> {Select3D.cameraDisplayFrustum = true; view_changed();});
   putAction("Show Selected LandPoints",             () -> {Select3D.LandPoint_displayPoints = true; view_changed();});
-  putAction("Show Selected Faces",                  () -> {Select3D.Face_displayEdges = true; view_changed();});
-  putAction("Show Selected Polylines",              () -> {Select3D.Polyline_displayVertices = true; view_changed();});
-  putAction("Show Selected Faces Vertex Count",     () -> {Select3D.Face_displayVertexCount = true; view_changed();});
-  putAction("Show Selected Polylines Vertex Count", () -> {Select3D.Polyline_displayVertexCount = true; view_changed();});
-  putAction("Show Selected Vertices",               () -> {Select3D.Vertex_displayVertices = true; view_changed();});
-  putAction("Show Selected REF Pivot",              () -> {Select3D.displayReferencePivot = true; view_changed();});
-  putAction("Show Selected Group Pivot",            () -> {Select3D.Group_displayPivot = true; view_changed();});
-  putAction("Show Selected Group Edges",            () -> {Select3D.Group_displayEdges = true; view_changed();});
-  putAction("Show Selected Group Box",              () -> {Select3D.Group_displayBox = true; view_changed();});
-  putAction("Show Selected 2D Edges",               () -> {Select3D.Model2D_displayEdges = true; view_changed();});
-  putAction("Show Selected 1D Edges",               () -> {Select3D.Model1D_displayEdges = true; view_changed();});
+  putAction("Show Selected Faces",                  () -> {Select3D.faceDisplayEdges = true; view_changed();});
+  putAction("Show Selected Polylines",              () -> {Select3D.polylineDisplayVertices = true; view_changed();});
+  putAction("Show Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexIndices = true; view_changed();});
+  putAction("Show Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayVertexIndices = true; view_changed();});
+  putAction("Show Selected Vertices",               () -> {Select3D.vertexDisplayMarkers = true; view_changed();});
+  putAction("Show Selected REF Pivot",              () -> {Select3D.pivotDisplayReference = true; view_changed();});
+  putAction("Show Selected Group Pivot",            () -> {Select3D.groupDisplayPivot = true; view_changed();});
+  putAction("Show Selected Group Edges",            () -> {Select3D.groupDisplayEdges = true; view_changed();});
+  putAction("Show Selected Group Box",              () -> {Select3D.groupDisplayBox = true; view_changed();});
+  putAction("Show Selected 2D Edges",               () -> {Select3D.model2DDisplayBounds = true; view_changed();});
+  putAction("Show Selected 1D Edges",               () -> {Select3D.model1DDisplayBounds = true; view_changed();});
 
-  putAction("Hide Selected Solids",                 () -> {Select3D.Solid_displayEdges = false; view_changed();});
-  putAction("Hide Selected Sections",               () -> {Select3D.Section_displayEdges = false; view_changed();});
-  putAction("Hide Selected Cameras",                () -> {Select3D.Camera_displayEdges = false; view_changed();});
+  putAction("Hide Selected Solids",                 () -> {Select3D.solidDisplayEdges = false; view_changed();});
+  putAction("Hide Selected Sections",               () -> {Select3D.sectionDisplayEdges = false; view_changed();});
+  putAction("Hide Selected Cameras",                () -> {Select3D.cameraDisplayFrustum = false; view_changed();});
   putAction("Hide Selected LandPoints",             () -> {Select3D.LandPoint_displayPoints = false; view_changed();});
-  putAction("Hide Selected Faces",                  () -> {Select3D.Face_displayEdges = false; view_changed();});
-  putAction("Hide Selected Polylines",              () -> {Select3D.Polyline_displayVertices = false; view_changed();});
-  putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.Face_displayVertexCount = false; view_changed();});
-  putAction("Hide Selected Polylines Vertex Count", () -> {Select3D.Polyline_displayVertexCount = false; view_changed();});
-  putAction("Hide Selected Vertices",               () -> {Select3D.Vertex_displayVertices = false; view_changed();});
-  putAction("Hide Selected REF Pivot",              () -> {Select3D.displayReferencePivot = false; view_changed();});
-  putAction("Hide Selected Group Pivot",            () -> {Select3D.Group_displayPivot = false; view_changed();});
-  putAction("Hide Selected Group Edges",            () -> {Select3D.Group_displayEdges = false; view_changed();});
-  putAction("Hide Selected Group Box",              () -> {Select3D.Group_displayBox = false; view_changed();});
-  putAction("Hide Selected 2D Edges",               () -> {Select3D.Model2D_displayEdges = false; view_changed();});
-  putAction("Hide Selected 1D Edges",               () -> {Select3D.Model1D_displayEdges = false; view_changed();});
+  putAction("Hide Selected Faces",                  () -> {Select3D.faceDisplayEdges = false; view_changed();});
+  putAction("Hide Selected Polylines",              () -> {Select3D.polylineDisplayVertices = false; view_changed();});
+  putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexIndices = false; view_changed();});
+  putAction("Hide Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayVertexIndices = false; view_changed();});
+  putAction("Hide Selected Vertices",               () -> {Select3D.vertexDisplayMarkers = false; view_changed();});
+  putAction("Hide Selected REF Pivot",              () -> {Select3D.pivotDisplayReference = false; view_changed();});
+  putAction("Hide Selected Group Pivot",            () -> {Select3D.groupDisplayPivot = false; view_changed();});
+  putAction("Hide Selected Group Edges",            () -> {Select3D.groupDisplayEdges = false; view_changed();});
+  putAction("Hide Selected Group Box",              () -> {Select3D.groupDisplayBox = false; view_changed();});
+  putAction("Hide Selected 2D Edges",               () -> {Select3D.model2DDisplayBounds = false; view_changed();});
+  putAction("Hide Selected 1D Edges",               () -> {Select3D.model1DDisplayBounds = false; view_changed();});
 
   for (int n = -2; n <= 8; n++) {
     final int layoutIndex = n;

@@ -152,13 +152,13 @@ class Overlay3D {
   // single-point selection) - in which case draw() skips drawing it
   // entirely.
   //
-  // Pulled out of draw()'s Group_displayBox handling: this was the
+  // Pulled out of draw()'s groupDisplayBox handling: this was the
   // purely computational front half of that block (temporarily forcing
-  // Select3D's alignX/Y/Z to 0 so the box is measured from its own
+  // Select3D's pivotAlignmentX/Y/Z to 0 so the box is measured from its own
   // centre, deriving the 8 corners from Select3D.BoundingBox's min/max
   // rows, transforming each through translateInside_ReferencePivot,
   // then checking whether they're all still coincident) - the drawing
-  // loop that follows it, and the alignX/Y/Z save/restore around the
+  // loop that follows it, and the pivotAlignmentX/Y/Z save/restore around the
   // whole thing, are preserved here too since restoring Select3D's
   // align fields is this function's responsibility, not the caller's.
   class GroupBoxVertices {
@@ -167,13 +167,13 @@ class Overlay3D {
   }
 
   GroupBoxVertices computeGroupBoxVertices () {
-    int keep_selection_alignX = Select3D.alignX;
-    int keep_selection_alignY = Select3D.alignY;
-    int keep_selection_alignZ = Select3D.alignZ;
+    int keep_selection_pivotAlignmentX = Select3D.pivotAlignmentX;
+    int keep_selection_pivotAlignmentY = Select3D.pivotAlignmentY;
+    int keep_selection_pivotAlignmentZ = Select3D.pivotAlignmentZ;
 
-    Select3D.alignX = 0; // apply the centre
-    Select3D.alignY = 0; // apply the centre
-    Select3D.alignZ = 0; // apply the centre
+    Select3D.pivotAlignmentX = 0; // apply the centre
+    Select3D.pivotAlignmentY = 0; // apply the centre
+    Select3D.pivotAlignmentZ = 0; // apply the centre
 
     float[] P = Select3D.getPivot();
 
@@ -224,9 +224,9 @@ class Overlay3D {
       }
     }
 
-    Select3D.alignX = keep_selection_alignX;
-    Select3D.alignY = keep_selection_alignY;
-    Select3D.alignZ = keep_selection_alignZ;
+    Select3D.pivotAlignmentX = keep_selection_pivotAlignmentX;
+    Select3D.pivotAlignmentY = keep_selection_pivotAlignmentY;
+    Select3D.pivotAlignmentZ = keep_selection_pivotAlignmentZ;
 
     GroupBoxVertices r = new GroupBoxVertices();
     r.vertices = BoundingBox_Vertices;
@@ -274,7 +274,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.CAMERA) {
 
-      if (Select3D.Camera_displayEdges) {
+      if (Select3D.cameraDisplayFrustum) {
 
         CAMERA_STYLE.applyStyle();
 
@@ -308,7 +308,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.SECTION) {
 
-      if (Select3D.Section_displayEdges) {
+      if (Select3D.sectionDisplayEdges) {
 
         SECTION_STYLE.applyStyle();
 
@@ -340,7 +340,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.SOLID) {
 
-      if (Select3D.Solid_displayEdges) {
+      if (Select3D.solidDisplayEdges) {
 
         SOLID_STYLE.applyStyle();
 
@@ -377,7 +377,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.MODEL2D) {
 
-      if (Select3D.Model2D_displayEdges) {
+      if (Select3D.model2DDisplayBounds) {
 
         MODEL2D_STYLE.applyStyle();
 
@@ -414,7 +414,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.MODEL1D) {
 
-      if (Select3D.Model1D_displayEdges) {
+      if (Select3D.model1DDisplayBounds) {
 
         MODEL1D_STYLE.applyStyle();
 
@@ -447,7 +447,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.FACE) {
 
-      if (Select3D.Face_displayEdges) {
+      if (Select3D.faceDisplayEdges) {
 
         FACE_EDGE_STYLE.applyStyle();
 
@@ -485,7 +485,7 @@ class Overlay3D {
       }
 
 
-      if (Select3D.Face_displayVertexCount) {
+      if (Select3D.faceDisplayVertexIndices) {
 
         FACE_LABEL_STYLE.applyStyle();
 
@@ -519,7 +519,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
-      if (Select3D.Polyline_displayVertexCount) {
+      if (Select3D.polylineDisplayVertexIndices) {
 
         POLYLINE_LABEL_STYLE.applyStyle();
 
@@ -553,7 +553,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.VERTEX) {
 
-      if (Select3D.Vertex_displayVertices) {
+      if (Select3D.vertexDisplayMarkers) {
 
         VERTEX_STYLE.applyStyle();
 
@@ -583,7 +583,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.SOFTVERTEX) {
 
-      if (Select3D.Vertex_displayVertices) {
+      if (Select3D.vertexDisplayMarkers) {
 
         SOFTVERTEX_STYLE.applyStyle();
 
@@ -623,7 +623,7 @@ class Overlay3D {
 
     else if (currentObjectCategory == ObjectCategory.GROUP) {
 
-      if (Select3D.Group_displayEdges) {
+      if (Select3D.groupDisplayEdges) {
 
         GROUP_EDGE_STYLE.applyStyle();
 
@@ -759,7 +759,7 @@ class Overlay3D {
       }
 
 
-      if (Select3D.Group_displayBox) {
+      if (Select3D.groupDisplayBox) {
 
         GROUP_BOX_STYLE.applyStyle();
 
@@ -815,7 +815,7 @@ class Overlay3D {
 
 
 
-      if (Select3D.Group_displayPivot) {
+      if (Select3D.groupDisplayPivot) {
 
         GROUP_PIVOT_STYLE.applyStyle();
 
@@ -879,7 +879,7 @@ class Overlay3D {
 
 
 
-    if (Select3D.displayReferencePivot) {
+    if (Select3D.pivotDisplayReference) {
 
       float[] P = Select3D.getPivot();
 
