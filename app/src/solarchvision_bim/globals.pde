@@ -182,20 +182,20 @@ int sampleMemberEnd = 43;
 int sampleStationStart = 1;
 int sampleStationEnd = nearestWeatherStationCount;
 
-float[][][][] climateTmyEpw_values;
-boolean[][][][] climateTmyEpw_flags;
+float[][][][] climateTypicalYearValues;
+boolean[][][][] climateTypicalYearFlags;
 
-float[][][][] climateEngineering_values;
-boolean[][][][] climateEngineering_flags;
+float[][][][] climateEngineeringValues;
+boolean[][][][] climateEngineeringFlags;
 
 float[][][][] climateArchiveValues;
 boolean[][][][] climateArchiveFlags;
 
-float[][][][] ensembleForecast_values;
-boolean[][][][] ensembleForecast_flags;
+float[][][][] ensembleForecastValues;
+boolean[][][][] ensembleForecastFlags;
 
-float[][][][] ensembleObservation_values;
-boolean[][][][] ensembleObservation_flags;
+float[][][][] ensembleObservationValues;
+boolean[][][][] ensembleObservationFlags;
 
 boolean climateTypicalYearShouldLoad = true;
 boolean climateEngineeringShouldLoad = false;
@@ -397,10 +397,10 @@ final int dataID_ensembleObservation = 0;
 final int dataID_ensembleForecast = 1;
 final int dataID_climateEngineering = 2;
 final int dataID_climateArchive = 3;
-final int dataID_climateTmyEpw = 4;
-final int MAXIMUM_dataID = dataID_climateTmyEpw;
+final int dataID_climateTypicalYear = 4;
+final int MAXIMUM_dataID = dataID_climateTypicalYear;
 
-int currentDataSource = dataID_climateTmyEpw;
+int currentDataSource = dataID_climateTypicalYear;
 
 final String[] databaseString = {
   "Ensemble Observation", "Ensemble Forecast", "Climate Engineering", "Climate Archive", "Climate Typical Year"

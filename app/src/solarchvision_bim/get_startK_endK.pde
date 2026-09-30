@@ -26,7 +26,7 @@ int[] get_startK_endK () {
     start_k -= climateArchiveStart;
     end_k -= climateArchiveStart;
   }
-  if (currentDataSource == dataID_climateTmyEpw) {
+  if (currentDataSource == dataID_climateTypicalYear) {
 
     start_k = 0;
     end_k = 0;

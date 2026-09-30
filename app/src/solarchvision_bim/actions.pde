@@ -426,14 +426,14 @@ void build_allActions() {
   });
 
   putAction("Download Climate Typical Year", () -> {
-    download_climateTmyEpw();
+    download_climateTypicalYear();
   });
 
   putAction("Update Climate Typical Year", () -> {
-    currentDataSource = dataID_climateTmyEpw;
+    currentDataSource = dataID_climateTypicalYear;
 
     climateTypicalYearShouldLoad = true;
-    update_climateTmyEpw();
+    update_climateTypicalYear();
   });
 
   putAction("Update Climate Engineering", () -> {
@@ -467,10 +467,10 @@ void build_allActions() {
 
 
   putAction("Use Climate Typical Year", () -> {
-    currentDataSource = dataID_climateTmyEpw;
+    currentDataSource = dataID_climateTypicalYear;
 
     climateTypicalYearShouldLoad = true;
-    update_climateTmyEpw();
+    update_climateTypicalYear();
 
     view_changed();
     WORLD.revise();

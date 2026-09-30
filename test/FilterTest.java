@@ -12,11 +12,11 @@ class FilterTest {
   }
 
   private boolean filterWithSkyValue (float skyValue, int scenarioOfSky) {
-    app.climateTmyEpw_values = new float[1][1][1][1];
-    app.climateTmyEpw_values[0][0][0][0] = skyValue;
+    app.climateTypicalYearValues = new float[1][1][1][1];
+    app.climateTypicalYearValues[0][0][0][0] = skyValue;
     // type_of_filter=0 (not filter_DAILY) keeps the internal scan to
     // just now_i=0, matching the array's single populated slot.
-    return app.filter(app.dataID_climateTmyEpw, 0, 0, scenarioOfSky, 0, 0, 0);
+    return app.filter(app.dataID_climateTypicalYear, 0, 0, scenarioOfSky, 0, 0, 0);
   }
 
   @Test
@@ -54,10 +54,10 @@ class FilterTest {
     // The "num_sky != 0" guard wraps every scenario check, including
     // scenario 1's otherwise-unconditional "return true" - so even
     // scenario 1 comes back false when nothing in range is defined.
-    app.climateTmyEpw_values = new float[1][1][1][1];
-    app.climateTmyEpw_values[0][0][0][0] = app.FLOAT_undefined;
+    app.climateTypicalYearValues = new float[1][1][1][1];
+    app.climateTypicalYearValues[0][0][0][0] = app.FLOAT_undefined;
 
-    assertFalse(app.filter(app.dataID_climateTmyEpw, 0, 0, 1, 0, 0, 0));
-    assertFalse(app.filter(app.dataID_climateTmyEpw, 0, 0, 4, 0, 0, 0));
+    assertFalse(app.filter(app.dataID_climateTypicalYear, 0, 0, 1, 0, 0, 0));
+    assertFalse(app.filter(app.dataID_climateTypicalYear, 0, 0, 4, 0, 0, 0));
   }
 }

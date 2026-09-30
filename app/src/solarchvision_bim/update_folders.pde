@@ -20,7 +20,7 @@ void update_project_folders () {
   if (filenames != null) SavedScreenShots = filenames.length;
 }
 
-String Folder_climateTmyEpw = BaseFolder + "/input/climate/TMYEPW";
+String Folder_climateTypicalYear = BaseFolder + "/input/climate/TMYEPW";
 String Folder_climateEngineering = BaseFolder + "/input/climate/CWEEDS";
 String Folder_climateArchive = BaseFolder + "/input/climate/CLMREC";
 String Folder_ensembleObservation;

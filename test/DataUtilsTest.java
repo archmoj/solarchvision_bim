@@ -26,7 +26,7 @@ class DataUtilsTest {
     // stale.
     assertEquals(app.climateArchiveEnd, app.getEnd_currentDataSource());
 
-    app.currentDataSource = app.dataID_climateTmyEpw;
+    app.currentDataSource = app.dataID_climateTypicalYear;
     assertEquals(app.climateTypicalYearStart, app.getStart_currentDataSource());
     assertEquals(app.climateTypicalYearEnd, app.getEnd_currentDataSource());
 
@@ -66,7 +66,7 @@ class DataUtilsTest {
 
   @Test
   void getReference_buildsTheTMYEPWCitationFromTheStationFilename () {
-    app.currentDataSource = app.dataID_climateTmyEpw;
+    app.currentDataSource = app.dataID_climateTypicalYear;
     String expected = app.STATION.getClimateTypicalYearFilename() + ".epw";
     assertEquals(expected, app.getReference_currentDataSource());
   }
@@ -89,8 +89,8 @@ class DataUtilsTest {
 
   @Test
   void setValueThenGetValue_roundTripsThroughTheRightArraySlot () {
-    app.currentDataSource = app.dataID_climateTmyEpw;
-    app.climateTmyEpw_values = new float[2][2][2][2]; // [i][j][Parameter_ID][k]
+    app.currentDataSource = app.dataID_climateTypicalYear;
+    app.climateTypicalYearValues = new float[2][2][2][2]; // [i][j][Parameter_ID][k]
 
     app.setValue_currentDataSource(0, 0, 0, 0, 111f);
     app.setValue_currentDataSource(1, 0, 0, 0, 222f); // different i
@@ -115,15 +115,15 @@ class DataUtilsTest {
 
   @Test
   void setFlag_writesIntoTheRightArraySlot () {
-    app.currentDataSource = app.dataID_climateTmyEpw;
-    app.climateTmyEpw_flags = new boolean[2][2][2][2]; // [i][j][Parameter_ID][k]
+    app.currentDataSource = app.dataID_climateTypicalYear;
+    app.climateTypicalYearFlags = new boolean[2][2][2][2]; // [i][j][Parameter_ID][k]
 
     app.setFlag_currentDataSource(1, 0, 0, 1, true);
 
     // setFlag_currentDataSource has no matching getter in this file, so
     // verify by reading the backing array directly - it's package-
     // private, same as every other field this test suite touches.
-    assertTrue(app.climateTmyEpw_flags[1][0][1][0]);   // (i=1, j=0, Parameter_ID=1, k=0)
-    assertFalse(app.climateTmyEpw_flags[0][0][0][0]);  // untouched slot stays false
+    assertTrue(app.climateTypicalYearFlags[1][0][1][0]);   // (i=1, j=0, Parameter_ID=1, k=0)
+    assertFalse(app.climateTypicalYearFlags[0][0][0][0]);  // untouched slot stays false
   }
 }

@@ -18,7 +18,7 @@ void update_station (int Step) {
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
   }
 
-  if ((Step == -1) || (Step == 1)) update_climateTmyEpw();
+  if ((Step == -1) || (Step == 1)) update_climateTypicalYear();
 
   if ((Step == -1) || (Step == 2)) update_climateEngineering();
 

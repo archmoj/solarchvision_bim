@@ -1208,7 +1208,7 @@ abstract class StationPicker {
   }
 }
 
-StationPicker climateTypicalYearPicker = new StationPicker("Climate Typical Year (EPW)", 10000, 50, dataID_climateTmyEpw) {
+StationPicker climateTypicalYearPicker = new StationPicker("Climate Typical Year (EPW)", 10000, 50, dataID_climateTypicalYear) {
   STATION[] getCoords () { return climateTypicalYearCoordinates; }
   String getLabel (int f) { return climateTypicalYearCoordinates[f].getClimateTypicalYearFilename(); }
   void select (int f, float lon, float lat) { selectClimateTypicalYearStation(f, lon, lat); }
@@ -1294,7 +1294,7 @@ void selectClimateTypicalYearStation (int f, float mouse_lon, float mouse_lat) {
 
   println("nearest epw filename:", climateTypicalYearCoordinates[f].getClimateTypicalYearFilename());
 
-  if (currentDataSource == dataID_climateTmyEpw) {
+  if (currentDataSource == dataID_climateTypicalYear) {
     STATION.setCity(climateTypicalYearCoordinates[f].getCity());
     STATION.setProvince(climateTypicalYearCoordinates[f].getProvince());
     STATION.setCountry(climateTypicalYearCoordinates[f].getCountry());
@@ -1308,10 +1308,10 @@ void selectClimateTypicalYearStation (int f, float mouse_lon, float mouse_lat) {
 
     update_station(0);
 
-    download_climateTmyEpw();
+    download_climateTypicalYear();
 
     boolean keep_climateTypicalYearShouldLoad = climateTypicalYearShouldLoad;
-    update_climateTmyEpw();
+    update_climateTypicalYear();
     climateTypicalYearShouldLoad = keep_climateTypicalYearShouldLoad;
   }
 }

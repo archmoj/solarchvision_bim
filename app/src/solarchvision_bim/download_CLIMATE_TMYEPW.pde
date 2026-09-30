@@ -1,10 +1,10 @@
-void download_climateTmyEpw () {
+void download_climateTypicalYear () {
 
   boolean new_files_downloaded = false;
 
   String FN = STATION.getClimateTypicalYearFilename();
 
-  String the_target = Folder_climateTmyEpw + "/" + FN;
+  String the_target = Folder_climateTypicalYear + "/" + FN;
 
   File dir = new File(the_target + ".epw");
   if (!dir.isFile()) {
@@ -60,6 +60,6 @@ void download_climateTmyEpw () {
     }
 
     climateTypicalYearShouldLoad = true;
-    update_climateTmyEpw();
+    update_climateTypicalYear();
   }
 }

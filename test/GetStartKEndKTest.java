@@ -49,7 +49,7 @@ class GetStartKEndKTest {
 
   @Test
   void climate_typical_year_alwaysReturnsZeroZeroRegardlessOfSampleYearFields () {
-    app.currentDataSource = app.dataID_climateTmyEpw;
+    app.currentDataSource = app.dataID_climateTypicalYear;
     app.sampleYearStart = 1980;
     app.sampleYearEnd = 2000;
 

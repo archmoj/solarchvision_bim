@@ -61,7 +61,7 @@ void load_ensembleForecast (String FileName, int Load_Layer) {
 
           if (k < (1 + ensembleForecastEnd - ensembleForecastStart)) {
 
-            ensembleForecast_values[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
+            ensembleForecastValues[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
           }
         }
       }

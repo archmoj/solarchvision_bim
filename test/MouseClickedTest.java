@@ -366,7 +366,7 @@ class MouseClickedTest {
     app.climateTypicalYearCoordinates[0].setLongitude(20);
     app.climateTypicalYearCoordinates[0].setClimateTypicalYearFilename("only_station.epw");
 
-    app.currentDataSource = app.dataID_climateTmyEpw; // Climate Typical Year is the active dataset
+    app.currentDataSource = app.dataID_climateTypicalYear; // Climate Typical Year is the active dataset
 
     app.climateTypicalYearPicker.handleMapClick(20, 10); // well within the picker's own maxDist
 

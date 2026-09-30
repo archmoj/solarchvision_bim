@@ -13,11 +13,11 @@ boolean filter (int dataID, int cloudCover_id, int type_of_filter, int scenario_
 
   for (int q = start_q; q <= end_q; q++) {
     float _sky = FLOAT_undefined;
-    if (dataID == dataID_ensembleObservation)      _sky = ensembleObservation_values[q][now_j][cloudCover_id][now_k];
-    else if (dataID == dataID_ensembleForecast) _sky = ensembleForecast_values[q][now_j][cloudCover_id][now_k];
-    else if (dataID == dataID_climateEngineering)    _sky = climateEngineering_values   [q][now_j][cloudCover_id][now_k];
+    if (dataID == dataID_ensembleObservation)      _sky = ensembleObservationValues[q][now_j][cloudCover_id][now_k];
+    else if (dataID == dataID_ensembleForecast) _sky = ensembleForecastValues[q][now_j][cloudCover_id][now_k];
+    else if (dataID == dataID_climateEngineering)    _sky = climateEngineeringValues   [q][now_j][cloudCover_id][now_k];
     else if (dataID == dataID_climateArchive)    _sky = climateArchiveValues   [q][now_j][cloudCover_id][now_k];
-    else if (dataID == dataID_climateTmyEpw)    _sky = climateTmyEpw_values   [q][now_j][cloudCover_id][now_k];
+    else if (dataID == dataID_climateTypicalYear)    _sky = climateTypicalYearValues   [q][now_j][cloudCover_id][now_k];
     else {
       println("ERROR: This dataID is not declared:", dataID);
     }

@@ -1764,7 +1764,7 @@ class STUDY {
     // functional) rather than removed, in case it's meant to be re-enabled later.
     String txt = "SOLARCHVISION post-processing";
 
-    if (currentDataSource == dataID_climateTmyEpw) txt += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
+    if (currentDataSource == dataID_climateTypicalYear) txt += " based on typical-year data for Building Energy Simulation";  //"(TMYEPW - U.S. Department of Energy)";
     if (currentDataSource == dataID_climateEngineering) txt += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment and Climate Change Canada)";
     if (currentDataSource == dataID_climateArchive) txt += " based on Environment and Climate Change Canada's Climate website";
     if (currentDataSource == dataID_ensembleForecast) txt += " based on the North American Ensemble Forecast System (NAEFS - Environment and Climate Change Canada)";
@@ -1817,7 +1817,7 @@ class STUDY {
   void refreshDateTabs () {
     if ((currentDataSource == dataID_climateEngineering) ||
         (currentDataSource == dataID_climateArchive) ||
-        (currentDataSource == dataID_climateTmyEpw)) {
+        (currentDataSource == dataID_climateTypicalYear)) {
 
       if (this.perDays == 1) {
         this.perDays = int(365 / float(this.j_End - this.j_Start));

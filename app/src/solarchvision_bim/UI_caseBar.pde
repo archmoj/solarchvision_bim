@@ -305,7 +305,7 @@ class UI_caseBar {
   int[] scenarioRange (int dataSource) {
     if (dataSource == dataID_climateEngineering ||
         dataSource == dataID_climateArchive ||
-        dataSource == dataID_climateTmyEpw) {
+        dataSource == dataID_climateTypicalYear) {
       return new int[]{1950, 2050};
     }
     if (dataSource == dataID_ensembleForecast) {

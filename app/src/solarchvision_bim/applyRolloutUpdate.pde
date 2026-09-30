@@ -167,7 +167,7 @@ void applyRolloutUpdate() {
     UI_rollout.draw();
   }
 
-  if (pre_climateTypicalYearShouldLoad != climateTypicalYearShouldLoad) update_climateTmyEpw();
+  if (pre_climateTypicalYearShouldLoad != climateTypicalYearShouldLoad) update_climateTypicalYear();
   if (pre_climateEngineeringShouldLoad != climateEngineeringShouldLoad) update_climateEngineering();
   if (pre_climateArchiveShouldLoad != climateArchiveShouldLoad) updateClimateArchive();
   if (pre_ensembleObservationShouldLoad != ensembleObservationShouldLoad) update_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);

@@ -1,19 +1,19 @@
 void setFlag_currentDataSource (int i, int j, int k, int Parameter_ID, boolean flag) {
 
   if (currentDataSource == dataID_climateEngineering) {
-    climateEngineering_flags[i][j][Parameter_ID][k] = flag;
+    climateEngineeringFlags[i][j][Parameter_ID][k] = flag;
   }
   else if (currentDataSource == dataID_climateArchive) {
     climateArchiveFlags[i][j][Parameter_ID][k] = flag;
   }
-  else if (currentDataSource == dataID_climateTmyEpw) {
-    climateTmyEpw_flags[i][j][Parameter_ID][k] = flag;
+  else if (currentDataSource == dataID_climateTypicalYear) {
+    climateTypicalYearFlags[i][j][Parameter_ID][k] = flag;
   }
   else if (currentDataSource == dataID_ensembleForecast) {
-    ensembleForecast_flags[i][j][Parameter_ID][k] = flag;
+    ensembleForecastFlags[i][j][Parameter_ID][k] = flag;
   }
   else if (currentDataSource == dataID_ensembleObservation) {
-    ensembleObservation_flags[i][j][Parameter_ID][k] = flag;
+    ensembleObservationFlags[i][j][Parameter_ID][k] = flag;
   }
 
 }
@@ -21,19 +21,19 @@ void setFlag_currentDataSource (int i, int j, int k, int Parameter_ID, boolean f
 void setValue_currentDataSource (int i, int j, int k, int Parameter_ID, float value) {
 
   if (currentDataSource == dataID_climateEngineering) {
-    climateEngineering_values[i][j][Parameter_ID][k] = value;
+    climateEngineeringValues[i][j][Parameter_ID][k] = value;
   }
   else if (currentDataSource == dataID_climateArchive) {
     climateArchiveValues[i][j][Parameter_ID][k] = value;
   }
-  else if (currentDataSource == dataID_climateTmyEpw) {
-    climateTmyEpw_values[i][j][Parameter_ID][k] = value;
+  else if (currentDataSource == dataID_climateTypicalYear) {
+    climateTypicalYearValues[i][j][Parameter_ID][k] = value;
   }
   else if (currentDataSource == dataID_ensembleForecast) {
-    ensembleForecast_values[i][j][Parameter_ID][k] = value;
+    ensembleForecastValues[i][j][Parameter_ID][k] = value;
   }
   else if (currentDataSource == dataID_ensembleObservation) {
-    ensembleObservation_values[i][j][Parameter_ID][k] = value;
+    ensembleObservationValues[i][j][Parameter_ID][k] = value;
   }
 
 }
@@ -43,19 +43,19 @@ float getValue_currentDataSource (int i, int j, int k, int Parameter_ID) {
   float return_value = FLOAT_undefined;
 
   if (currentDataSource == dataID_climateEngineering) {
-    return_value = climateEngineering_values[i][j][Parameter_ID][k];
+    return_value = climateEngineeringValues[i][j][Parameter_ID][k];
   }
   else if (currentDataSource == dataID_climateArchive) {
     return_value = climateArchiveValues[i][j][Parameter_ID][k];
   }
-  else if (currentDataSource == dataID_climateTmyEpw) {
-    return_value = climateTmyEpw_values[i][j][Parameter_ID][k];
+  else if (currentDataSource == dataID_climateTypicalYear) {
+    return_value = climateTypicalYearValues[i][j][Parameter_ID][k];
   }
   else if (currentDataSource == dataID_ensembleForecast) {
-    return_value = ensembleForecast_values[i][j][Parameter_ID][k];
+    return_value = ensembleForecastValues[i][j][Parameter_ID][k];
   }
   else if (currentDataSource == dataID_ensembleObservation) {
-    return_value = ensembleObservation_values[i][j][Parameter_ID][k];
+    return_value = ensembleObservationValues[i][j][Parameter_ID][k];
   }
 
   return return_value;
@@ -71,7 +71,7 @@ int getStart_currentDataSource () {
   else if (currentDataSource == dataID_climateArchive) {
     return_value = climateArchiveStart;
   }
-  else if (currentDataSource == dataID_climateTmyEpw) {
+  else if (currentDataSource == dataID_climateTypicalYear) {
     return_value = climateTypicalYearStart;
   }
   else if (currentDataSource == dataID_ensembleForecast) {
@@ -94,7 +94,7 @@ int getEnd_currentDataSource () {
   else if (currentDataSource == dataID_climateArchive) {
     return_value = climateArchiveEnd;
   }
-  else if (currentDataSource == dataID_climateTmyEpw) {
+  else if (currentDataSource == dataID_climateTypicalYear) {
     return_value = climateTypicalYearEnd;
   }
   else if (currentDataSource == dataID_ensembleForecast) {
@@ -117,7 +117,7 @@ String getReference_currentDataSource () {
   else if (currentDataSource == dataID_climateArchive) {
     return_value  = "Environment and Climate Change Canada website at https://climate.weather.gc.ca/climate_data";
   }
-  else if (currentDataSource == dataID_climateTmyEpw) {
+  else if (currentDataSource == dataID_climateTypicalYear) {
     return_value = STATION.getClimateTypicalYearFilename() + ".epw";
   }
   else if (currentDataSource == dataID_ensembleForecast) {

@@ -25,44 +25,44 @@ void load_climateEngineering (String FileName) {
 
     //println(i);
 
-    climateEngineering_values[i][j][LAYER_pressure.id][k] = float(lineSTR.substring(87, 92)); // 10 times in Pa
-    climateEngineering_values[i][j][LAYER_drybulb.id][k] = float(lineSTR.substring(93, 97)); // 10 times in °C
-    //climateEngineering_values[i][j][LAYER_relhum.id][k] = 50; // Relative Humidity is not presented in DCLIMATE files!
-    climateEngineering_values[i][j][LAYER_glohorrad.id][k] = float(lineSTR.substring(22, 26)); // Wh/m²
-    climateEngineering_values[i][j][LAYER_dirnorrad.id][k] = float(lineSTR.substring(28, 32)); // Wh/m²
-    climateEngineering_values[i][j][LAYER_difhorrad.id][k] = float(lineSTR.substring(34, 38)); // Wh/m²
-    climateEngineering_values[i][j][LAYER_windspd.id][k] = float(lineSTR.substring(107, 111)); // 10 times in m/s
-    climateEngineering_values[i][j][LAYER_winddir.id][k] = float(lineSTR.substring(103, 106)); // °
-    climateEngineering_values[i][j][LAYER_cloudcover.id][k] = float(lineSTR.substring(115, 117)); // 0.1 times in %
-    climateEngineering_values[i][j][LAYER_ceilingsky.id][k] = float(lineSTR.substring(63, 67)); // 0.1 times in m
+    climateEngineeringValues[i][j][LAYER_pressure.id][k] = float(lineSTR.substring(87, 92)); // 10 times in Pa
+    climateEngineeringValues[i][j][LAYER_drybulb.id][k] = float(lineSTR.substring(93, 97)); // 10 times in °C
+    //climateEngineeringValues[i][j][LAYER_relhum.id][k] = 50; // Relative Humidity is not presented in DCLIMATE files!
+    climateEngineeringValues[i][j][LAYER_glohorrad.id][k] = float(lineSTR.substring(22, 26)); // Wh/m²
+    climateEngineeringValues[i][j][LAYER_dirnorrad.id][k] = float(lineSTR.substring(28, 32)); // Wh/m²
+    climateEngineeringValues[i][j][LAYER_difhorrad.id][k] = float(lineSTR.substring(34, 38)); // Wh/m²
+    climateEngineeringValues[i][j][LAYER_windspd.id][k] = float(lineSTR.substring(107, 111)); // 10 times in m/s
+    climateEngineeringValues[i][j][LAYER_winddir.id][k] = float(lineSTR.substring(103, 106)); // °
+    climateEngineeringValues[i][j][LAYER_cloudcover.id][k] = float(lineSTR.substring(115, 117)); // 0.1 times in %
+    climateEngineeringValues[i][j][LAYER_ceilingsky.id][k] = float(lineSTR.substring(63, 67)); // 0.1 times in m
 
-    if (climateEngineering_values[i][j][LAYER_pressure.id][k] == 99999) climateEngineering_values[i][j][LAYER_pressure.id][k] = FLOAT_undefined;
-    else climateEngineering_values[i][j][LAYER_pressure.id][k] = 0.1 * climateEngineering_values[i][j][LAYER_pressure.id][k];
+    if (climateEngineeringValues[i][j][LAYER_pressure.id][k] == 99999) climateEngineeringValues[i][j][LAYER_pressure.id][k] = FLOAT_undefined;
+    else climateEngineeringValues[i][j][LAYER_pressure.id][k] = 0.1 * climateEngineeringValues[i][j][LAYER_pressure.id][k];
 
-    if (climateEngineering_values[i][j][LAYER_drybulb.id][k] == 9999) climateEngineering_values[i][j][LAYER_drybulb.id][k] = FLOAT_undefined;
-    else climateEngineering_values[i][j][LAYER_drybulb.id][k] = 0.1 * climateEngineering_values[i][j][LAYER_drybulb.id][k];
+    if (climateEngineeringValues[i][j][LAYER_drybulb.id][k] == 9999) climateEngineeringValues[i][j][LAYER_drybulb.id][k] = FLOAT_undefined;
+    else climateEngineeringValues[i][j][LAYER_drybulb.id][k] = 0.1 * climateEngineeringValues[i][j][LAYER_drybulb.id][k];
 
-    if (climateEngineering_values[i][j][LAYER_glohorrad.id][k] == 9999) climateEngineering_values[i][j][LAYER_glohorrad.id][k] = FLOAT_undefined;
-    else climateEngineering_values[i][j][LAYER_glohorrad.id][k] = climateEngineering_values[i][j][LAYER_glohorrad.id][k] / 3.6; // Wh/m²
+    if (climateEngineeringValues[i][j][LAYER_glohorrad.id][k] == 9999) climateEngineeringValues[i][j][LAYER_glohorrad.id][k] = FLOAT_undefined;
+    else climateEngineeringValues[i][j][LAYER_glohorrad.id][k] = climateEngineeringValues[i][j][LAYER_glohorrad.id][k] / 3.6; // Wh/m²
 
-    if (climateEngineering_values[i][j][LAYER_dirnorrad.id][k] == 9999) climateEngineering_values[i][j][LAYER_dirnorrad.id][k] = FLOAT_undefined;
-    else climateEngineering_values[i][j][LAYER_dirnorrad.id][k] = climateEngineering_values[i][j][LAYER_dirnorrad.id][k] / 3.6; // Wh/m²
+    if (climateEngineeringValues[i][j][LAYER_dirnorrad.id][k] == 9999) climateEngineeringValues[i][j][LAYER_dirnorrad.id][k] = FLOAT_undefined;
+    else climateEngineeringValues[i][j][LAYER_dirnorrad.id][k] = climateEngineeringValues[i][j][LAYER_dirnorrad.id][k] / 3.6; // Wh/m²
 
-    if (climateEngineering_values[i][j][LAYER_difhorrad.id][k] == 9999) climateEngineering_values[i][j][LAYER_difhorrad.id][k] = FLOAT_undefined;
-    else climateEngineering_values[i][j][LAYER_difhorrad.id][k] = climateEngineering_values[i][j][LAYER_difhorrad.id][k] / 3.6; // Wh/m²
+    if (climateEngineeringValues[i][j][LAYER_difhorrad.id][k] == 9999) climateEngineeringValues[i][j][LAYER_difhorrad.id][k] = FLOAT_undefined;
+    else climateEngineeringValues[i][j][LAYER_difhorrad.id][k] = climateEngineeringValues[i][j][LAYER_difhorrad.id][k] / 3.6; // Wh/m²
 
-    if (climateEngineering_values[i][j][LAYER_windspd.id][k] == 9999) climateEngineering_values[i][j][LAYER_windspd.id][k] = FLOAT_undefined;
-    else climateEngineering_values[i][j][LAYER_windspd.id][k] = 0.1 * 3.6 * climateEngineering_values[i][j][LAYER_windspd.id][k];
+    if (climateEngineeringValues[i][j][LAYER_windspd.id][k] == 9999) climateEngineeringValues[i][j][LAYER_windspd.id][k] = FLOAT_undefined;
+    else climateEngineeringValues[i][j][LAYER_windspd.id][k] = 0.1 * 3.6 * climateEngineeringValues[i][j][LAYER_windspd.id][k];
 
-    if (climateEngineering_values[i][j][LAYER_winddir.id][k] == 999) climateEngineering_values[i][j][LAYER_winddir.id][k] = FLOAT_undefined;
+    if (climateEngineeringValues[i][j][LAYER_winddir.id][k] == 999) climateEngineeringValues[i][j][LAYER_winddir.id][k] = FLOAT_undefined;
 
-    if (climateEngineering_values[i][j][LAYER_cloudcover.id][k] == 99) climateEngineering_values[i][j][LAYER_cloudcover.id][k] = FLOAT_undefined;
+    if (climateEngineeringValues[i][j][LAYER_cloudcover.id][k] == 99) climateEngineeringValues[i][j][LAYER_cloudcover.id][k] = FLOAT_undefined;
 
-    if (climateEngineering_values[i][j][LAYER_ceilingsky.id][k] == 7777) climateEngineering_values[i][j][LAYER_ceilingsky.id][k] = 1000;
-    if (climateEngineering_values[i][j][LAYER_ceilingsky.id][k] >= 1000) climateEngineering_values[i][j][LAYER_ceilingsky.id][k] = 1000; // <<<<<<<<<
+    if (climateEngineeringValues[i][j][LAYER_ceilingsky.id][k] == 7777) climateEngineeringValues[i][j][LAYER_ceilingsky.id][k] = 1000;
+    if (climateEngineeringValues[i][j][LAYER_ceilingsky.id][k] >= 1000) climateEngineeringValues[i][j][LAYER_ceilingsky.id][k] = 1000; // <<<<<<<<<
 
-    if (climateEngineering_values[i][j][LAYER_ceilingsky.id][k] == 9999) climateEngineering_values[i][j][LAYER_ceilingsky.id][k] = FLOAT_undefined;
-    else climateEngineering_values[i][j][LAYER_ceilingsky.id][k] = 10 * climateEngineering_values[i][j][LAYER_ceilingsky.id][k];
+    if (climateEngineeringValues[i][j][LAYER_ceilingsky.id][k] == 9999) climateEngineeringValues[i][j][LAYER_ceilingsky.id][k] = FLOAT_undefined;
+    else climateEngineeringValues[i][j][LAYER_ceilingsky.id][k] = 10 * climateEngineeringValues[i][j][LAYER_ceilingsky.id][k];
   }
 
   setDataFlags(dataID_climateEngineering);
