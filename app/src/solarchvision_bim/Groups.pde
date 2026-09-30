@@ -213,8 +213,8 @@ class Groups {
 
       if (createNewGroup == 1) {
         float x = Select3D.BoundingBox[1 + Select3D.alignX][0];
-        float y = Select3D.BoundingBox[1 + Select3D.alignX][1];
-        float z = Select3D.BoundingBox[1 + Select3D.alignX][2];
+        float y = Select3D.BoundingBox[1 + Select3D.alignY][1];
+        float z = Select3D.BoundingBox[1 + Select3D.alignZ][2];
 
         float rot = User3D.creatorOrientation;
         if (rot == 360) rot = WIN3D.rotationZ;

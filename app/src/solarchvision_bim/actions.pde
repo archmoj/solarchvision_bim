@@ -1192,14 +1192,14 @@ void build_allActions() {
   putAction("Begin New Group at Pivot", () -> {
     allGroups.beginNewGroup(
       Select3D.BoundingBox[1 + Select3D.alignX][0],
-      Select3D.BoundingBox[1 + Select3D.alignX][1],
-      Select3D.BoundingBox[1 + Select3D.alignX][2],
+      Select3D.BoundingBox[1 + Select3D.alignY][1],
+      Select3D.BoundingBox[1 + Select3D.alignZ][2],
       Select3D.BoundingBox[1 + Select3D.alignX][3],
-      Select3D.BoundingBox[1 + Select3D.alignX][4],
-      Select3D.BoundingBox[1 + Select3D.alignX][5],
+      Select3D.BoundingBox[1 + Select3D.alignY][4],
+      Select3D.BoundingBox[1 + Select3D.alignZ][5],
       Select3D.BoundingBox[1 + Select3D.alignX][6],
-      Select3D.BoundingBox[1 + Select3D.alignX][7],
-      Select3D.BoundingBox[1 + Select3D.alignX][8]
+      Select3D.BoundingBox[1 + Select3D.alignY][7],
+      Select3D.BoundingBox[1 + Select3D.alignZ][8]
     );
 
     Select3D.Group_ids = new int [1];
