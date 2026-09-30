@@ -77,7 +77,7 @@ class WIN3D {
   }
 
   float[] imageCenterRayScaled () {
-    float[] ray_end = WIN3D.calculate_Click3D(0, 0);
+    float[] ray_end = this.calculate_Click3D(0, 0);
     return new float[] { ray_end[0] / overallScale, ray_end[1] / overallScale, ray_end[2] / overallScale };
   }
 
@@ -89,7 +89,7 @@ class WIN3D {
 
       this.graphics.perspective(this.cameraFieldOfView, aspect, zNear, zFar);
     } else {
-      float ZOOM = WIN3D.Orthographic_ZOOM();
+      float ZOOM = this.Orthographic_ZOOM();
       this.graphics.ortho(ZOOM * this.dX * -1, ZOOM * this.dX * 1, ZOOM * this.dY * -1, ZOOM * this.dY * 1, 0.00001, 100000);
     }
 
@@ -176,16 +176,16 @@ class WIN3D {
     this.graphics.pushMatrix();
     this.graphics.hint(ENABLE_DEPTH_TEST);
 
-    WIN3D.record_last3DViewport();
-    WIN3D.transform_3DViewport();
-    WIN3D.put_3DViewport();
+    this.record_last3DViewport();
+    this.transform_3DViewport();
+    this.put_3DViewport();
 
     drawSceneContents();
 
     this.graphics.hint(DISABLE_DEPTH_TEST);
 
     if (!(this.record_IMG || this.record_AUTO)) {
-      WIN3D.draw_referencePivot();
+      this.draw_referencePivot();
     }
 
     this.graphics.popMatrix();
@@ -305,7 +305,7 @@ class WIN3D {
     float PAL_multiplier = palette[2];
     if (palette[3] != 1) return;
 
-    float the_scale = (this.projectionTypeIndex == 1) ? (0.5 / tan(0.5 * this.cameraFieldOfView)) : (0.5 / WIN3D.Orthographic_ZOOM());
+    float the_scale = (this.projectionTypeIndex == 1) ? (0.5 / tan(0.5 * this.cameraFieldOfView)) : (0.5 / this.Orthographic_ZOOM());
 
     this.graphics.pushMatrix();
 
@@ -599,14 +599,14 @@ class WIN3D {
         float y0 = P[1];
         float z0 = P[2];
 
-        if (WIN3D.currentTool == UITASK.Rotate) {
+        if (this.currentTool == UITASK.Rotate) {
           float r = (keyCode == DOWN) ? -5 : 5;
           int the_Vector = Select3D.rotationVectorIndex;
           Rotate3D.selection(x0, y0, z0, r, the_Vector);
           model_changed();
         }
 
-        if (WIN3D.currentTool == UITASK.Scale) {
+        if (this.currentTool == UITASK.Scale) {
           float s = pow(2.0, 0.25);
           if (keyCode == DOWN) s = 1.0 / s;
 
@@ -620,7 +620,7 @@ class WIN3D {
           model_changed();
         }
 
-        if (WIN3D.currentTool == UITASK.Move) {
+        if (this.currentTool == UITASK.Move) {
           float d = (keyCode == DOWN) ? -0.5 : 0.5;
           float dx = d, dy = d, dz = d;
 
@@ -633,8 +633,8 @@ class WIN3D {
           model_changed();
         }
 
-        if (WIN3D.toolParameterModifier == 0) {
-          if (WIN3D.currentTool >= UITASK.Seed_Material) {
+        if (this.toolParameterModifier == 0) {
+          if (this.currentTool >= UITASK.Seed_Material) {
             int p = (keyCode == DOWN) ? -1 : 1;
             Edit3D.selection(p);
             model_changed();
@@ -648,19 +648,19 @@ class WIN3D {
   void handleArrowKeys (int keyCode) {
     switch (keyCode) {
       case DOWN:
-        WIN3D.rotateZ_3DViewport_around_Selection(this.rotationStep);
+        this.rotateZ_3DViewport_around_Selection(this.rotationStep);
         reviseViews();
         break;
       case LEFT:
-        WIN3D.rotateXY_3DViewport_around_Selection(-this.rotationStep);
+        this.rotateXY_3DViewport_around_Selection(-this.rotationStep);
         reviseViews();
         break;
       case RIGHT:
-        WIN3D.rotateXY_3DViewport_around_Selection(this.rotationStep);
+        this.rotateXY_3DViewport_around_Selection(this.rotationStep);
         reviseViews();
         break;
       case UP:
-        WIN3D.rotateZ_3DViewport_around_Selection(-this.rotationStep);
+        this.rotateZ_3DViewport_around_Selection(-this.rotationStep);
         reviseViews();
         break;
     }
@@ -702,28 +702,28 @@ class WIN3D {
         break;
 
       case '5':
-        WIN3D.look_3DViewport_towards_Selection();
+        this.look_3DViewport_towards_Selection();
         reviseViews();
         break;
 
       case '4':
         this.rotationZ += this.rotationStep;
-        WIN3D.reverseTransform_3DViewport();
+        this.reverseTransform_3DViewport();
         reviseViews();
         break;
       case '6':
         this.rotationZ -= this.rotationStep;
-        WIN3D.reverseTransform_3DViewport();
+        this.reverseTransform_3DViewport();
         reviseViews();
         break;
       case '8':
         this.rotationX -= this.rotationStep;
-        WIN3D.reverseTransform_3DViewport();
+        this.reverseTransform_3DViewport();
         reviseViews();
         break;
       case '2':
         this.rotationX += this.rotationStep;
-        WIN3D.reverseTransform_3DViewport();
+        this.reverseTransform_3DViewport();
         reviseViews();
         break;
 
@@ -745,11 +745,11 @@ class WIN3D {
         break;
 
       case '*':
-        WIN3D.move_3DViewport_towards_Selection(2.0);
+        this.move_3DViewport_towards_Selection(2.0);
         reviseViews();
         break;
       case '/':
-        WIN3D.move_3DViewport_towards_Selection(0.5);
+        this.move_3DViewport_towards_Selection(0.5);
         reviseViews();
         break;
 
@@ -765,7 +765,7 @@ class WIN3D {
       case 'c':
         this.currentCameraIndex += 1;
         if (this.currentCameraIndex > allCameras.num - 1) this.currentCameraIndex = 0;
-        WIN3D.apply_currentCameraIndex();
+        this.apply_currentCameraIndex();
         modify_Viewport_Title();
         reviseViews();
         break;
@@ -773,7 +773,7 @@ class WIN3D {
       case 'C':
         this.currentCameraIndex -= 1;
         if (this.currentCameraIndex < 0) this.currentCameraIndex = allCameras.num - 1;
-        WIN3D.apply_currentCameraIndex();
+        this.apply_currentCameraIndex();
         modify_Viewport_Title();
         reviseViews();
         break;
@@ -782,13 +782,13 @@ class WIN3D {
         Tropo3D.i_Map += TROPO_deltaTime;
         if (Tropo3D.i_Map > STUDY.endHour) Tropo3D.i_Map -= TROPO_deltaTime;
         WORLD.revise();
-        WIN3D.revise();
+        this.revise();
         break;
       case 'T':
         Tropo3D.i_Map -= TROPO_deltaTime;
         if (Tropo3D.i_Map < STUDY.startHour) Tropo3D.i_Map += TROPO_deltaTime;
         WORLD.revise();
-        WIN3D.revise();
+        this.revise();
         break;
 
       case 'd':
@@ -821,15 +821,15 @@ class WIN3D {
   }
 
   void look_3DViewport_towards_Direction (float Image_X, float Image_Y) {
-    WIN3D.lookXY_3DViewport_towards_Direction(Image_X, Image_Y);
-    WIN3D.lookZ_3DViewport_towards_Direction(Image_X, Image_Y);
+    this.lookXY_3DViewport_towards_Direction(Image_X, Image_Y);
+    this.lookZ_3DViewport_towards_Direction(Image_X, Image_Y);
   }
 
   void rotateZTowards (float xB, float yB) {
     float[] O = cameraPositionScaled();
     float[] A = imageCenterRayScaled();
     this.rotationZ += funcs.atan2_ang((yB - O[1]), (xB - O[0])) - funcs.atan2_ang((A[1] - O[1]), (A[0] - O[0]));
-    WIN3D.reverseTransform_3DViewport();
+    this.reverseTransform_3DViewport();
   }
 
   void rotateXTowards (float xB, float yB, float zB) {
@@ -837,22 +837,22 @@ class WIN3D {
     float[] A = imageCenterRayScaled();
     this.rotationX += funcs.atan2_ang((zB - O[2]), pow(pow(yB - O[1], 2) + pow(xB - O[0], 2), 0.5))
                       - funcs.atan2_ang((A[2] - O[2]), pow(pow(A[1] - O[1], 2) + pow(A[0] - O[0], 2), 0.5));
-    WIN3D.reverseTransform_3DViewport();
+    this.reverseTransform_3DViewport();
   }
 
   void lookXY_3DViewport_towards_Direction (float Image_X, float Image_Y) {
-    float[] P = WIN3D.calculate_Click3D(Image_X, Image_Y);
+    float[] P = this.calculate_Click3D(Image_X, Image_Y);
     rotateZTowards(P[0] / overallScale, P[1] / overallScale);
   }
 
   void lookZ_3DViewport_towards_Direction (float Image_X, float Image_Y) {
-    float[] P = WIN3D.calculate_Click3D(Image_X, Image_Y);
+    float[] P = this.calculate_Click3D(Image_X, Image_Y);
     rotateXTowards(P[0] / overallScale, P[1] / overallScale, P[2] / overallScale);
   }
 
   void look_3DViewport_towards_Selection () {
-    WIN3D.lookXY_3DViewport_towards_Selection();
-    WIN3D.lookZ_3DViewport_towards_Selection();
+    this.lookXY_3DViewport_towards_Selection();
+    this.lookZ_3DViewport_towards_Selection();
   }
 
   void lookXY_3DViewport_towards_Selection () {
@@ -876,14 +876,14 @@ class WIN3D {
     this.cameraY = (yO + t * dy) * overallScale;
     this.cameraZ = (zO + t * dz) * overallScale;
 
-    WIN3D.reverseTransform_3DViewport();
+    this.reverseTransform_3DViewport();
     //this.positionStep *= t; // just to adjust panning better
   }
 
   void move_3DViewport_towards_Mouse (float t) {
     float Image_X = mouseX - (this.cX + 0.5 * this.dX);
     float Image_Y = mouseY - (this.cY + 0.5 * this.dY);
-    float[] ray_end = WIN3D.calculate_Click3D(Image_X, Image_Y);
+    float[] ray_end = this.calculate_Click3D(Image_X, Image_Y);
     moveCameraTowards(ray_end[0] / overallScale, ray_end[1] / overallScale, ray_end[2] / overallScale, t);
   }
 
@@ -919,7 +919,7 @@ class WIN3D {
     this.cameraY = (yE + P[1]) * overallScale;
     this.cameraZ = (zE + P[2]) * overallScale;
 
-    WIN3D.reverseTransform_3DViewport();
+    this.reverseTransform_3DViewport();
   }
 
   void rotateXY_3DViewport_around_Selection (float t) {
@@ -939,7 +939,7 @@ class WIN3D {
     this.cameraY = yB * overallScale;
     this.cameraZ = zB * overallScale;
 
-    WIN3D.reverseTransform_3DViewport();
+    this.reverseTransform_3DViewport();
   }
 
   void rotateXY_3DViewport_around_LandIntersection (float t) {
@@ -973,7 +973,7 @@ class WIN3D {
     this.cameraY = yB * overallScale;
     this.cameraZ = zB * overallScale;
 
-    WIN3D.reverseTransform_3DViewport();
+    this.reverseTransform_3DViewport();
   }
 
 

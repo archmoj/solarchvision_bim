@@ -171,7 +171,7 @@ class STUDY {
   }
 
   void keyPressed (KeyEvent e) {
-    if (STUDY.include == false) return;
+    if (this.include == false) return;
 
     if (e.isAltDown()) {
       return;
@@ -215,14 +215,14 @@ class STUDY {
 
       case PAGE_UP_KEYCODE :
         if (!e.isShiftDown()) {
-          STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex + 1) % PLOT_SETUP_MODE_COUNT;
+          this.plotLayoutIndex = -2 + (2 + this.plotLayoutIndex + 1) % PLOT_SETUP_MODE_COUNT;
           requestRedraw();
         }
         break;
 
       case PAGE_DOWN_KEYCODE :
         if (!e.isShiftDown()) {
-          STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex - 1 + PLOT_SETUP_MODE_COUNT) % PLOT_SETUP_MODE_COUNT;
+          this.plotLayoutIndex = -2 + (2 + this.plotLayoutIndex - 1 + PLOT_SETUP_MODE_COUNT) % PLOT_SETUP_MODE_COUNT;
           requestRedraw();
         }
         break;
@@ -1680,7 +1680,7 @@ class STUDY {
       // we need to redraw these due to gl context lost
       WORLD.revise();
       WIN3D.revise();
-      STUDY.revise();
+      this.revise();
       UI_rollout.revise();
       UI_menuBar.revise();
       UI_toolBar.revise();
@@ -2992,9 +2992,9 @@ class STUDY {
     Sun3D.drawPattern(TypeWindow.STUDY, x_Plot, y_Plot, 0, sx_Plot);
 
     if (this.endDay == 2) {
-      for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
+      for (int j = this.startDay; j < this.endDay; j++) {
 
-        float ox = (j + (STUDY.rect_offset_x + 0.5)) * sx_Plot;
+        float ox = (j + (this.rect_offset_x + 0.5)) * sx_Plot;
 
         Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot, 0, sx_Plot, j * 180 - 90, j * 180 + 90);
 
