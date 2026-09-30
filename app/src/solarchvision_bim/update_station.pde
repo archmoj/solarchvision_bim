@@ -28,7 +28,7 @@ void update_station (int Step) {
 
   if ((Step == -1) || (Step == 5)) update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
-  if ((Step == -1) || (Step == 6)) Land3D.update_mesh();
+  if ((Step == -1) || (Step == 6)) Terrain.update_mesh();
 
   if ((Step == -1) || (Step == 0)) {
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) {

@@ -390,20 +390,20 @@ void build_allActions() {
     update_station(-1);
   });
 
-  putAction("Load Land Mesh", () -> {
-    Land3D.update_textures();
+  putAction("Load Terrain Mesh", () -> {
+    Terrain.update_textures();
   });
 
-  putAction("Load Land Texture", () -> {
-    Land3D.update_textures();
+  putAction("Load Terrain Texture", () -> {
+    Terrain.update_textures();
   });
 
-  putAction("Download Land Mesh", () -> {
-    Land3D.download_mesh();
+  putAction("Download Terrain Mesh", () -> {
+    Terrain.download_mesh();
   });
 
-  putAction("Download Land Texture", () -> {
-    Land3D.download_textures();
+  putAction("Download Terrain Texture", () -> {
+    Terrain.download_textures();
   });
 
   putAction("Load Toroposphere", () -> {
@@ -632,26 +632,26 @@ void build_allActions() {
     preBakeViewport();
   });
 
-  putAction("Show/Hide Land Mesh", () -> {
-    Land3D.displaySurface = !Land3D.displaySurface;
+  putAction("Show/Hide Terrain Mesh", () -> {
+    Terrain.displaySurface = !Terrain.displaySurface;
 
     view_changed();
   });
 
-  putAction("Show/Hide Land Texture", () -> {
-    Land3D.displayTexture = !Land3D.displayTexture;
+  putAction("Show/Hide Terrain Texture", () -> {
+    Terrain.displayTexture = !Terrain.displayTexture;
 
     view_changed();
   });
 
-  putAction("Show/Hide Land Points", () -> {
-    Land3D.displayPoints = !Land3D.displayPoints;
+  putAction("Show/Hide Terrain Vertices", () -> {
+    Terrain.displayPoints = !Terrain.displayPoints;
 
     view_changed();
   });
 
-  putAction("Show/Hide Land Depth", () -> {
-    Land3D.displayDepth = !Land3D.displayDepth;
+  putAction("Show/Hide Terrain Depth", () -> {
+    Terrain.displayDepth = !Terrain.displayDepth;
 
     view_changed();
   });
@@ -802,8 +802,8 @@ void build_allActions() {
     view_changed();
   });
 
-  putAction("Show/Hide Selected LandPoints", () -> {
-    Select3D.LandPoint_displayPoints = !Select3D.LandPoint_displayPoints;
+  putAction("Show/Hide Selected Terrain Vertices", () -> {
+    Select3D.terrainDisplayVertices = !Select3D.terrainDisplayVertices;
 
     view_changed();
   });
@@ -1276,14 +1276,14 @@ void build_allActions() {
     }
   });
 
-  putAction("LandMesh >> Group", () -> {
-    Land3D.draw(TypeWindow.LandMesh);
+  putAction("TerrainMesh >> Group", () -> {
+    Terrain.draw(TypeWindow.TerrainMesh);
 
     model_changed();
   });
 
-  putAction("LandGap >> Group", () -> {
-    Land3D.draw(TypeWindow.LandGap);
+  putAction("TerrainGap >> Group", () -> {
+    Terrain.draw(TypeWindow.LandGap);
 
     model_changed();
   });
@@ -1504,7 +1504,7 @@ void build_allActions() {
 
   putAction("Select Camera", () -> switch_category(ObjectCategory.CAMERA));
 
-  putAction("Select LandPoint", () -> switch_category(ObjectCategory.LANDPOINT));
+  putAction("Select TerrainVertex", () -> switch_category(ObjectCategory.TERRAIN));
 
   putAction("Select Model1Ds", () -> switch_category(ObjectCategory.MODEL1D));
 
@@ -1728,20 +1728,20 @@ void build_allActions() {
     Modify3D.isolate_Selection();
   });
 
-  putAction("Flatten Selected LandPoints", () -> {
-    Modify3D.flatten_LandPoints();
+  putAction("Flatten Selected Terrain Vertices", () -> {
+    Modify3D.flattenTerrainVertices();
   });
 
   putAction("Add People on Land", () -> {
-    Create3D.add_onLand(1); // 1 = people
+    Create3D.add_onTerrain(1); // 1 = people
   });
 
   putAction("Add 2D-Trees on Land", () -> {
-    Create3D.add_onLand(2); // 2 = 2D trees
+    Create3D.add_onTerrain(2); // 2 = 2D trees
   });
 
   putAction("Add 1D-Trees on Land", () -> {
-    Create3D.add_onLand(3); // 3 = 1D trees
+    Create3D.add_onTerrain(3); // 3 = 1D trees
   });
 
   putAction("Delete All-Model1Ds", () -> {
@@ -1816,8 +1816,8 @@ void build_allActions() {
     UI_setTo_View_Orbit(2);
   });
 
-  putAction("LandOrbit", () -> {
-    UI_setTo_View_LandOrbit(0);
+  putAction("TerrainOrbit", () -> {
+    UI_setTo_View_TerrainOrbit(0);
   });
 
   putAction("Pan", () -> {
@@ -2002,10 +2002,10 @@ void build_allActions() {
   putAction("Hide Climate Typical Year stations", () -> {WORLD.climateTypicalYearDisplayAll = 0; WORLD.revise();});
   putAction("Hide Climate Typical Year nearest",  () -> {WORLD.climateTypicalYearDisplayNear = false; WORLD.revise();});
 
-  putAction("Show Land Mesh",     () -> {Land3D.displaySurface = true; view_changed();});
-  putAction("Show Land Texture",  () -> {Land3D.displayTexture = true; view_changed();});
-  putAction("Show Land Points",   () -> {Land3D.displayPoints = true; view_changed();});
-  putAction("Show Land Depth",    () -> {Land3D.displayDepth = true; view_changed();});
+  putAction("Show Terrain Mesh",     () -> {Terrain.displaySurface = true; view_changed();});
+  putAction("Show Terrain Texture",  () -> {Terrain.displayTexture = true; view_changed();});
+  putAction("Show Terrain Vertices",   () -> {Terrain.displayPoints = true; view_changed();});
+  putAction("Show Terrain Depth",    () -> {Terrain.displayDepth = true; view_changed();});
   putAction("Show Vertices",      () -> {allPoints.displayAll = true; view_changed();});
   putAction("Show Edges",         () -> {allFaces.displayEdges = true; view_changed();});
   putAction("Show Normals",       () -> {allFaces.displayNormals = true; view_changed();});
@@ -2029,10 +2029,10 @@ void build_allActions() {
   putAction("Show Solid Section", () -> {allSolidImpacts.displayImage = true; view_changed();});
   putAction("Show Wind Flow",     () -> {allWindFlows.displayAll = true; view_changed();});
 
-  putAction("Hide Land Mesh",     () -> {Land3D.displaySurface = false; view_changed();});
-  putAction("Hide Land Texture",  () -> {Land3D.displayTexture = false; view_changed();});
-  putAction("Hide Land Points",   () -> {Land3D.displayPoints = false; view_changed();});
-  putAction("Hide Land Depth",    () -> {Land3D.displayDepth = false; view_changed();});
+  putAction("Hide Terrain Mesh",     () -> {Terrain.displaySurface = false; view_changed();});
+  putAction("Hide Terrain Texture",  () -> {Terrain.displayTexture = false; view_changed();});
+  putAction("Hide Terrain Vertices",   () -> {Terrain.displayPoints = false; view_changed();});
+  putAction("Hide Terrain Depth",    () -> {Terrain.displayDepth = false; view_changed();});
   putAction("Hide Vertices",      () -> {allPoints.displayAll = false; view_changed();});
   putAction("Hide Edges",         () -> {allFaces.displayEdges = false; view_changed();});
   putAction("Hide Normals",       () -> {allFaces.displayNormals = false; view_changed();});
@@ -2060,7 +2060,7 @@ void build_allActions() {
   putAction("Show Selected Solids",                 () -> {Select3D.solidDisplayEdges = true; view_changed();});
   putAction("Show Selected Sections",               () -> {Select3D.sectionDisplayEdges = true; view_changed();});
   putAction("Show Selected Cameras",                () -> {Select3D.cameraDisplayFrustum = true; view_changed();});
-  putAction("Show Selected LandPoints",             () -> {Select3D.LandPoint_displayPoints = true; view_changed();});
+  putAction("Show Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = true; view_changed();});
   putAction("Show Selected Faces",                  () -> {Select3D.faceDisplayEdges = true; view_changed();});
   putAction("Show Selected Polylines",              () -> {Select3D.polylineDisplayVertices = true; view_changed();});
   putAction("Show Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexIndices = true; view_changed();});
@@ -2076,7 +2076,7 @@ void build_allActions() {
   putAction("Hide Selected Solids",                 () -> {Select3D.solidDisplayEdges = false; view_changed();});
   putAction("Hide Selected Sections",               () -> {Select3D.sectionDisplayEdges = false; view_changed();});
   putAction("Hide Selected Cameras",                () -> {Select3D.cameraDisplayFrustum = false; view_changed();});
-  putAction("Hide Selected LandPoints",             () -> {Select3D.LandPoint_displayPoints = false; view_changed();});
+  putAction("Hide Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = false; view_changed();});
   putAction("Hide Selected Faces",                  () -> {Select3D.faceDisplayEdges = false; view_changed();});
   putAction("Hide Selected Polylines",              () -> {Select3D.polylineDisplayVertices = false; view_changed();});
   putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.faceDisplayVertexIndices = false; view_changed();});

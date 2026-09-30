@@ -147,7 +147,7 @@ void exportHtml () {
 
   // Earth3D.draw(TypeWindow.HTML);
 
-  // Land3D.draw(TypeWindow.HTML);
+  // Terrain.draw(TypeWindow.HTML);
 
   // Tropo3D.draw(TypeWindow.HTML);
 

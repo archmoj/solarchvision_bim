@@ -307,7 +307,7 @@ void handleViewportWheel(float wheelValue) {
     moveWin3DTowardsMouse(wheelValue);
   }
 
-  if (WIN3D.currentTool == UITASK.LandOrbit_Pan_TargetRollZ) { // viewport:LandOrbit
+  if (WIN3D.currentTool == UITASK.TerrainOrbit_Pan_TargetRollZ) { // viewport:TerrainOrbit
     moveWin3DTowardsMouse(wheelValue);
   }
 }

@@ -33,9 +33,9 @@ class Select3D {
   boolean solidDisplayEdges = true;
   boolean sectionDisplayEdges = true;
   boolean cameraDisplayFrustum = true;
-  boolean LandPoint_displayPoints = true;
+  boolean terrainDisplayVertices = true;
 
-  int[] LandPoint_ids = new int[0];
+  int[] terrainVertexIndices = new int[0];
   int[] Camera_ids = new int[0];
   int[] Section_ids = new int[0];
   int[] Solid_ids = new int[0];
@@ -49,8 +49,8 @@ class Select3D {
   int[] softSelection_ids = new int[0];
   float[] softSelection_values = new float[0];
 
-  float softPower = 1;
-  float softRadius = 2; // 2 = 2m
+  float softSelectionFalloffPower = 1;
+  float softSelectionFalloffRadius = 2; // 2 = 2m
 
 
   float[][] BoundingBox = {
@@ -560,8 +560,8 @@ class Select3D {
     if (currentObjectCategory == ObjectCategory.MODEL1D) {
       theVertices = this.Model1D_ids;
     }
-    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
-      theVertices = this.LandPoint_ids;
+    if (currentObjectCategory == ObjectCategory.TERRAIN) {
+      theVertices = this.terrainVertexIndices;
     }
 
     float posX = 0;
@@ -730,17 +730,17 @@ class Select3D {
         y = allModel1Ds.getY(n);
         z = allModel1Ds.getZ(n);
       }
-      if (currentObjectCategory == ObjectCategory.LANDPOINT) {
+      if (currentObjectCategory == ObjectCategory.TERRAIN) {
         int n = theVertices[q];
 
         int OBJ_ID = n;
 
-        int the_i = OBJ_ID / Land3D.columnCount;
-        int the_j = OBJ_ID % Land3D.columnCount;
+        int the_i = OBJ_ID / Terrain.columnCount;
+        int the_j = OBJ_ID % Terrain.columnCount;
 
-        x = Land3D.Mesh[the_i][the_j][0];
-        y = Land3D.Mesh[the_i][the_j][1];
-        z = Land3D.Mesh[the_i][the_j][2];
+        x = Terrain.Mesh[the_i][the_j][0];
+        y = Terrain.Mesh[the_i][the_j][1];
+        z = Terrain.Mesh[the_i][the_j][2];
 
       }
 
@@ -1006,11 +1006,11 @@ class Select3D {
       return;
     }
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.TERRAIN) {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.LandPoint_ids = toggleSelection(this.LandPoint_ids, OBJ_ID);
+      this.terrainVertexIndices = toggleSelection(this.terrainVertexIndices, OBJ_ID);
     }
 
 
@@ -1123,12 +1123,12 @@ class Select3D {
     if (addNewSelectionToPreviousSelection == 0) this.deselectAll();
 
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.TERRAIN) {
 
-      for (int OBJ_ID = 0; OBJ_ID < Land3D.rowCount * Land3D.columnCount; OBJ_ID++) {
+      for (int OBJ_ID = 0; OBJ_ID < Terrain.rowCount * Terrain.columnCount; OBJ_ID++) {
 
-        int i = OBJ_ID / Land3D.columnCount;
-        int j = OBJ_ID % Land3D.columnCount;
+        int i = OBJ_ID / Terrain.columnCount;
+        int j = OBJ_ID % Terrain.columnCount;
 
         int break_loops = 0;
 
@@ -1139,9 +1139,9 @@ class Select3D {
 
         for (int k = 0; k < 1; k++) { // just a loop to make those break commands relevant!
 
-          float x = Land3D.Mesh[i][j][0] * overallScale;
-          float y = Land3D.Mesh[i][j][1] * overallScale;
-          float z = Land3D.Mesh[i][j][2] * overallScale;
+          float x = Terrain.Mesh[i][j][0] * overallScale;
+          float y = Terrain.Mesh[i][j][1] * overallScale;
+          float z = Terrain.Mesh[i][j][2] * overallScale;
 
           int decision = rectTest_vertex(x, y, z, corner1x, corner1y, corner2x, corner2y);
           if (decision != -1) {
@@ -1155,7 +1155,7 @@ class Select3D {
 
         if (include_OBJ_in_newSelection == 1) {
 
-          this.LandPoint_ids = toggleSelection(this.LandPoint_ids, OBJ_ID);
+          this.terrainVertexIndices = toggleSelection(this.terrainVertexIndices, OBJ_ID);
         }
       }
     }
@@ -1556,8 +1556,8 @@ class Select3D {
 
 
 
-  void deselect_LandPoints () {
-    this.LandPoint_ids = new int [0];
+  void deselectTerrainVertices () {
+    this.terrainVertexIndices = new int [0];
 
     selection_changed();
   }
@@ -1629,7 +1629,7 @@ class Select3D {
 
   void deselectAll () {
 
-    this.deselect_LandPoints();
+    this.deselectTerrainVertices();
     this.deselect_Cameras();
     this.deselect_Sections();
     this.deselect_Solids();
@@ -1645,8 +1645,8 @@ class Select3D {
 
   void selectAll () {
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
-      this.LandPoint_ids = rangeIds(Land3D.rowCount * Land3D.columnCount);
+    if (currentObjectCategory == ObjectCategory.TERRAIN) {
+      this.terrainVertexIndices = rangeIds(Terrain.rowCount * Terrain.columnCount);
     }
 
     if (currentObjectCategory == ObjectCategory.MODEL1D) {
@@ -1691,8 +1691,8 @@ class Select3D {
 
   void invertSelection () {
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
-      this.LandPoint_ids = invertedIds(this.LandPoint_ids, Land3D.rowCount * Land3D.columnCount);
+    if (currentObjectCategory == ObjectCategory.TERRAIN) {
+      this.terrainVertexIndices = invertedIds(this.terrainVertexIndices, Terrain.rowCount * Terrain.columnCount);
     }
 
     if (currentObjectCategory == ObjectCategory.MODEL1D) {
@@ -1791,8 +1791,8 @@ class Select3D {
 
     float v = 0;
 
-    if (d_min < this.softRadius) {
-      v = pow(funcs.cos_ang(90 * d_min / this.softRadius), this.softPower);
+    if (d_min < this.softSelectionFalloffRadius) {
+      v = pow(funcs.cos_ang(90 * d_min / this.softSelectionFalloffRadius), this.softSelectionFalloffPower);
     }
 
     return v;
@@ -2208,12 +2208,12 @@ class Select3D {
     XML_setBoolean(parent, "solidDisplayEdges", this.solidDisplayEdges);
     XML_setBoolean(parent, "sectionDisplayEdges", this.sectionDisplayEdges);
     XML_setBoolean(parent, "cameraDisplayFrustum", this.cameraDisplayFrustum);
-    XML_setBoolean(parent, "LandPoint_displayPoints", this.LandPoint_displayPoints);
+    XML_setBoolean(parent, "terrainDisplayVertices", this.terrainDisplayVertices);
 
-    XML_setFloat(parent, "softPower", this.softPower);
-    XML_setFloat(parent, "softRadius", this.softRadius);
+    XML_setFloat(parent, "softSelectionFalloffPower", this.softSelectionFalloffPower);
+    XML_setFloat(parent, "softSelectionFalloffRadius", this.softSelectionFalloffRadius);
 
-    XML_setString(parent, "selected_LandPoints", idsToXML(this.LandPoint_ids));
+    XML_setString(parent, "selectedTerrainVertices", idsToXML(this.terrainVertexIndices));
     XML_setString(parent, "selected_Model1Ds", idsToXML(this.Model1D_ids));
     XML_setString(parent, "selected_Model2Ds", idsToXML(this.Model2D_ids));
     XML_setString(parent, "selected_Groups", idsToXML(this.Group_ids));
@@ -2260,12 +2260,12 @@ class Select3D {
     this.solidDisplayEdges = XML_getBoolean(parent, "solidDisplayEdges");
     this.sectionDisplayEdges = XML_getBoolean(parent, "sectionDisplayEdges");
     this.cameraDisplayFrustum = XML_getBoolean(parent, "cameraDisplayFrustum");
-    this.LandPoint_displayPoints = XML_getBoolean(parent, "LandPoint_displayPoints");
+    this.terrainDisplayVertices = XML_getBoolean(parent, "terrainDisplayVertices");
 
-    this.softPower = XML_getFloat(parent, "softPower");
-    this.softRadius = XML_getFloat(parent, "softRadius");
+    this.softSelectionFalloffPower = XML_getFloat(parent, "softSelectionFalloffPower");
+    this.softSelectionFalloffRadius = XML_getFloat(parent, "softSelectionFalloffRadius");
 
-    this.LandPoint_ids = idsFromXML(XML_getString(parent, "selected_LandPoints"));
+    this.terrainVertexIndices = idsFromXML(XML_getString(parent, "selectedTerrainVertices"));
     this.Model1D_ids = idsFromXML(XML_getString(parent, "selected_Model1Ds"));
     this.Model2D_ids = idsFromXML(XML_getString(parent, "selected_Model2Ds"));
     this.Group_ids = idsFromXML(XML_getString(parent, "selected_Groups"));

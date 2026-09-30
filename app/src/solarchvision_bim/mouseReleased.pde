@@ -147,7 +147,7 @@ float[] castClickToWorld(float clickX, float clickY) {
 
   float[] hit = { -1, 0, 0, 0 };
   if (mouseButton == RIGHT) {
-    hit = Land3D.intersect(rayStart, rayDirection);
+    hit = Terrain.intersect(rayStart, rayDirection);
   } else if (mouseButton == LEFT) {
     hit = snap_Faces(allFaces.intersect(rayStart, rayDirection));
   }

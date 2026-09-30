@@ -515,9 +515,9 @@ class Create3DTest {
   @Test
   void addDefaultModel_n1BuildsAMeshAndACrystalSphereInTwoGroups () {
     // loadMesh is set false so this routes through the (no-op)
-    // else-branch for the land-scatter portion, instead of add_onLand -
+    // else-branch for the land-scatter portion, instead of add_onTerrain -
     // which is not exercised directly, per this file's header.
-    app.Land3D.loadMesh = false;
+    app.Terrain.loadMesh = false;
 
     app.Create3D.add_DefaultModel(1);
 
@@ -528,7 +528,7 @@ class Create3DTest {
 
   @Test
   void addDefaultModel_n4BuildsAMeshAndAHouseInTwoGroups () {
-    app.Land3D.loadMesh = false;
+    app.Terrain.loadMesh = false;
 
     app.Create3D.add_DefaultModel(4);
 

@@ -211,8 +211,8 @@ class UI_rollout {
     vm.Modify3D_tessellateColumns(0);
     vm.Modify3D_offsetAmount(0);
     vm.Modify3D_weldThreshold(0);
-    vm.Select3D_softPower(0);
-    vm.Select3D_softRadius(0);
+    vm.Select3D_softSelectionFalloffPower(0);
+    vm.Select3D_softSelectionFalloffRadius(0);
     vm.Select3D_positionVectorIndex(0);
     vm.Select3D_rotationVectorIndex(0);
     vm.Select3D_scaleVectorIndex(0);
@@ -235,14 +235,14 @@ class UI_rollout {
     vm.Create3D_branchTwist(0);
     vm.Create3D_branchRatio(0);
     vm.Create3D_treeBase(0);
-    vm.Land3D_loadTextures(0);
-    vm.Land3D_loadMesh(0);
-    vm.Land3D_skipStart(0);
-    vm.Land3D_skipEnd(0);
-    vm.Land3D_displaySurface(0);
-    vm.Land3D_displayTexture(0);
-    vm.Land3D_displayPoints(0);
-    vm.Land3D_displayDepth(0);
+    vm.Terrain_loadTextures(0);
+    vm.Terrain_loadMesh(0);
+    vm.Terrain_skipStart(0);
+    vm.Terrain_skipEnd(0);
+    vm.Terrain_displaySurface(0);
+    vm.Terrain_displayTexture(0);
+    vm.Terrain_displayPoints(0);
+    vm.Terrain_displayDepth(0);
     vm.Model2Ds_displayAll(0);
     vm.Model1Ds_displayAll(0);
     vm.Model1Ds_displayLeaves(0);
@@ -283,7 +283,7 @@ class UI_rollout {
     vm.SolidImpacts_displayLines(0);
     vm.WindFlows_displayAll(0);
     vm.Create3D_displayTessellation(0);
-    vm.Land3D_displayTessellation(0);
+    vm.Terrain_displayTessellation(0);
     vm.Sky3D_displayTessellation(0);
     vm.Sky3D_scale(0);
     vm.Tropo3D_displaySurface(0);
@@ -341,9 +341,9 @@ class UI_rollout {
     vm.Solids_paletteClr(0);
     vm.Solids_paletteDir(0);
     vm.Solids_paletteMlt(0);
-    vm.Land3D_paletteClr(0);
-    vm.Land3D_paletteDir(0);
-    vm.Land3D_paletteMlt(0);
+    vm.Terrain_paletteClr(0);
+    vm.Terrain_paletteDir(0);
+    vm.Terrain_paletteMlt(0);
     vm.WindFlows_paletteClr(0);
     vm.WindFlows_paletteDir(0);
     vm.WindFlows_paletteMlt(0);
@@ -586,8 +586,8 @@ class UI_rollout {
         User3D.modifierTessellateColumns = vm.Modify3D_tessellateColumns(1);
         User3D.modifierOffsetAmount = vm.Modify3D_offsetAmount(1);
         User3D.modifierWeldThreshold = vm.Modify3D_weldThreshold(1);
-        Select3D.softPower = vm.Select3D_softPower(1);
-        Select3D.softRadius = vm.Select3D_softRadius(1);
+        Select3D.softSelectionFalloffPower = vm.Select3D_softSelectionFalloffPower(1);
+        Select3D.softSelectionFalloffRadius = vm.Select3D_softSelectionFalloffRadius(1);
         Select3D.positionVectorIndex = vm.Select3D_positionVectorIndex(1);
         Select3D.rotationVectorIndex = vm.Select3D_rotationVectorIndex(1);
         Select3D.scaleVectorIndex = vm.Select3D_scaleVectorIndex(1);
@@ -622,14 +622,14 @@ class UI_rollout {
 
       if (this.child == CHILD_GEOMETRY_ENVIRONMENT) {
 
-        Land3D.loadTextures = vm.Land3D_loadTextures(1);
-        Land3D.loadMesh = vm.Land3D_loadMesh(1);
-        Land3D.skipStart = vm.Land3D_skipStart(1);
-        Land3D.skipEnd = vm.Land3D_skipEnd(1);
-        Land3D.displaySurface = vm.Land3D_displaySurface(1);
-        Land3D.displayTexture = vm.Land3D_displayTexture(1);
-        Land3D.displayPoints = vm.Land3D_displayPoints(1);
-        Land3D.displayDepth = vm.Land3D_displayDepth(1);
+        Terrain.loadTextures = vm.Terrain_loadTextures(1);
+        Terrain.loadMesh = vm.Terrain_loadMesh(1);
+        Terrain.skipStart = vm.Terrain_skipStart(1);
+        Terrain.skipEnd = vm.Terrain_skipEnd(1);
+        Terrain.displaySurface = vm.Terrain_displaySurface(1);
+        Terrain.displayTexture = vm.Terrain_displayTexture(1);
+        Terrain.displayPoints = vm.Terrain_displayPoints(1);
+        Terrain.displayDepth = vm.Terrain_displayDepth(1);
         allModel2Ds.displayAll = vm.Model2Ds_displayAll(1);
         allModel1Ds.displayAll = vm.Model1Ds_displayAll(1);
         allModel1Ds.displayLeaves = vm.Model1Ds_displayLeaves(1);
@@ -688,7 +688,7 @@ class UI_rollout {
       if (this.child == CHILD_GEOMETRY_OTHER) {
 
         allFaces.displayTessellation = vm.Create3D_displayTessellation(1);
-        Land3D.displayTessellation = vm.Land3D_displayTessellation(1);
+        Terrain.displayTessellation = vm.Terrain_displayTessellation(1);
         Sky3D.displayTessellation = vm.Sky3D_displayTessellation(1);
           Sky3D.radius = vm.Sky3D_scale(1);
         Tropo3D.displaySurface = vm.Tropo3D_displaySurface(1);
@@ -768,9 +768,9 @@ class UI_rollout {
         allSolids.colorScaleIndex = vm.Solids_paletteClr(1);
         allSolids.colorScaleDirection = vm.Solids_paletteDir(1);
         allSolids.colorScaleFactor = vm.Solids_paletteMlt(1);
-        Land3D.colorScaleIndex = vm.Land3D_paletteClr(1);
-        Land3D.colorScaleDirection = vm.Land3D_paletteDir(1);
-        Land3D.colorScaleFactor = vm.Land3D_paletteMlt(1);
+        Terrain.colorScaleIndex = vm.Terrain_paletteClr(1);
+        Terrain.colorScaleDirection = vm.Terrain_paletteDir(1);
+        Terrain.colorScaleFactor = vm.Terrain_paletteMlt(1);
         allWindFlows.colorScaleIndex = vm.WindFlows_paletteClr(1);
         allWindFlows.colorScaleDirection = vm.WindFlows_paletteDir(1);
         allWindFlows.colorScaleFactor = vm.WindFlows_paletteMlt(1);
@@ -793,7 +793,7 @@ class UI_rollout {
         Select3D.solidDisplayEdges = vm.Select3D_solidDisplayEdges(1);
         Select3D.sectionDisplayEdges = vm.Select3D_sectionDisplayEdges(1);
         Select3D.cameraDisplayFrustum = vm.Select3D_cameraDisplayEdges(1);
-        Select3D.LandPoint_displayPoints = vm.Select3D_landPointDisplayPoints(1);
+        Select3D.terrainDisplayVertices = vm.Select3D_landPointDisplayPoints(1);
       }
     } else if (this.parent == PARENT_POSTPROCESS) {
 

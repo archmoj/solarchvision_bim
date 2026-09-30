@@ -159,9 +159,9 @@ class SHADETest {
   }
 
   @Test
-  void getPALType_usesTheLand3DPaletteForVertexElevationShade () {
+  void getPALType_usesTheTerrainPaletteForVertexElevationShade () {
     app.WIN3D.shadingMode = app.SHADE.Vertex_Elevation;
-    app.Land3D.colorScaleIndex = 3;
+    app.Terrain.colorScaleIndex = 3;
 
     assertEquals(3, app.SHADE.get_PAL_type());
   }

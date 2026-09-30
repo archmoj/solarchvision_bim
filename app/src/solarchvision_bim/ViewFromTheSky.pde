@@ -15,7 +15,7 @@ void ViewFromTheSky (float SKY2D_positionX, float SKY2D_positionY, float SKY2D_p
 
   SKY2D_graphics.hint(ENABLE_DEPTH_TEST);
 
-  Land3D.draw(TypeWindow.SKY2D);
+  Terrain.draw(TypeWindow.SKY2D);
 
   for (int f = 0; f < allFaces.nodes.length; f++) {
 

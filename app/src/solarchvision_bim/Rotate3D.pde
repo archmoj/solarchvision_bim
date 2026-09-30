@@ -12,7 +12,7 @@ class Rotate3D {
     y0 = B[1] - A[1];
     z0 = B[2] - A[2];
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT)       this.LandPoints(x0, y0, z0, r, the_Vector);
+    if (currentObjectCategory == ObjectCategory.TERRAIN)       this.TerrainVertices(x0, y0, z0, r, the_Vector);
     else if (currentObjectCategory == ObjectCategory.SOFTVERTEX) this.softSelection(x0, y0, z0, r, the_Vector);
     else if (currentObjectCategory == ObjectCategory.VERTEX)     this.Vertices(x0, y0, z0, r, the_Vector);
     else if (currentObjectCategory == ObjectCategory.POLYLINE)   this.Polylines(x0, y0, z0, r, the_Vector);
@@ -53,17 +53,17 @@ class Rotate3D {
     model_changed();
   }
 
-  void LandPoints (float x0, float y0, float z0, float r, int the_Vector) {
-    for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
-      int f = Select3D.LandPoint_ids[q];
-      int i = f / Land3D.columnCount;
-      int j = f % Land3D.columnCount;
+  void TerrainVertices (float x0, float y0, float z0, float r, int the_Vector) {
+    for (int q = 0; q < Select3D.terrainVertexIndices.length; q++) {
+      int f = Select3D.terrainVertexIndices[q];
+      int i = f / Terrain.columnCount;
+      int j = f % Terrain.columnCount;
 
-      float[] R = rotateAroundVector(Land3D.Mesh[i][j][0] - x0, Land3D.Mesh[i][j][1] - y0, Land3D.Mesh[i][j][2] - z0, r, the_Vector);
+      float[] R = rotateAroundVector(Terrain.Mesh[i][j][0] - x0, Terrain.Mesh[i][j][1] - y0, Terrain.Mesh[i][j][2] - z0, r, the_Vector);
 
-      Land3D.Mesh[i][j][0] = x0 + R[0];
-      Land3D.Mesh[i][j][1] = y0 + R[1];
-      Land3D.Mesh[i][j][2] = z0 + R[2];
+      Terrain.Mesh[i][j][0] = x0 + R[0];
+      Terrain.Mesh[i][j][1] = y0 + R[1];
+      Terrain.Mesh[i][j][2] = z0 + R[2];
     }
 
     model_changed();

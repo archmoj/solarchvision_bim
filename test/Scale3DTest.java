@@ -32,20 +32,20 @@ class Scale3DTest {
     assertArrayEquals(new float[]{5, 4, 13}, result, 0.0001f); // 2*(3-1)+1, 1*(4-0)+0, 3*(5-1)+1
   }
 
-  // ================= LandPoints =======================================
+  // ================= Terrain Vertices =======================================
 
   @Test
   void landPoints_scalesOnlyTheSelectedGridCells () {
-    app.Land3D.columnCount = 3;
-    app.Land3D.Mesh = new float[1][3][3];
-    app.Land3D.Mesh[0][1] = new float[]{3, 0, 0};
+    app.Terrain.columnCount = 3;
+    app.Terrain.Mesh = new float[1][3][3];
+    app.Terrain.Mesh[0][1] = new float[]{3, 0, 0};
 
-    app.Select3D.LandPoint_ids = new int[]{1}; // row 0, col 1
+    app.Select3D.terrainVertexIndices = new int[]{1}; // row 0, col 1
 
-    app.Scale3D.LandPoints(1, 0, 0, 2, 1, 1);
+    app.Scale3D.TerrainVertices(1, 0, 0, 2, 1, 1);
 
-    assertArrayEquals(new float[]{5, 0, 0}, app.Land3D.Mesh[0][1], 0.0001f);
-    assertArrayEquals(new float[]{0, 0, 0}, app.Land3D.Mesh[0][0], 0.0001f); // untouched
+    assertArrayEquals(new float[]{5, 0, 0}, app.Terrain.Mesh[0][1], 0.0001f);
+    assertArrayEquals(new float[]{0, 0, 0}, app.Terrain.Mesh[0][0], 0.0001f); // untouched
   }
 
   // ================= softSelection ====================================

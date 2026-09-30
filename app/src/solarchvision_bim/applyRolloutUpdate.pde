@@ -35,8 +35,8 @@ void applyRolloutUpdate() {
 
   pre_WORLD_autoView = WORLD.autoView;
 
-  pre_Land3D_loadMesh = Land3D.loadMesh;
-  pre_Land3D_loadTextures = Land3D.loadTextures;
+  pre_Terrain_loadMesh = Terrain.loadMesh;
+  pre_Terrain_loadTextures = Terrain.loadTextures;
 
   pre_allSolids_ColorScaleIndex = allSolids.colorScaleIndex;
   pre_allSolids_ColorScaleDirection = allSolids.colorScaleDirection;
@@ -71,7 +71,7 @@ void applyRolloutUpdate() {
 
   pre_Selection_cameraDisplayFrustum = Select3D.cameraDisplayFrustum;
 
-  pre_Selection_LandPoint_displayPoints = Select3D.LandPoint_displayPoints;
+  pre_Selection_terrainDisplayVertices = Select3D.terrainDisplayVertices;
 
   pre_Selection_model1DDisplayBounds = Select3D.model1DDisplayBounds;
   pre_Selection_model2DDisplayBounds = Select3D.model2DDisplayBounds;
@@ -79,8 +79,8 @@ void applyRolloutUpdate() {
   pre_allFaces_displayEdges = allFaces.displayEdges;
   pre_allFaces_displayNormals = allFaces.displayNormals;
 
-  pre_Selection_softPower = Select3D.softPower;
-  pre_Selection_softRadius = Select3D.softRadius;
+  pre_Selection_softSelectionFalloffPower = Select3D.softSelectionFalloffPower;
+  pre_Selection_softSelectionFalloffRadius = Select3D.softSelectionFalloffRadius;
 
   pre_Selection_position = Select3D.position;
   pre_Selection_rotation = Select3D.rotation;
@@ -183,9 +183,9 @@ void applyRolloutUpdate() {
     react.applyLocationChange.run(pre_LocationLAT, LocationLAT);
   }
 
-  react.applyLandLoadMesh.run(pre_Land3D_loadMesh ? 1 : 0, Land3D.loadMesh ? 1 : 0);
+  react.applyLandLoadMesh.run(pre_Terrain_loadMesh ? 1 : 0, Terrain.loadMesh ? 1 : 0);
 
-  react.applyLandLoadTextures.run(pre_Land3D_loadTextures ? 1 : 0, Land3D.loadTextures ? 1 : 0);
+  react.applyLandLoadTextures.run(pre_Terrain_loadTextures ? 1 : 0, Terrain.loadTextures ? 1 : 0);
 
   react.viewChangedOnly.run(pre_Selection_cameraDisplayFrustum ? 1 : 0, Select3D.cameraDisplayFrustum ? 1 : 0);
 
@@ -193,15 +193,15 @@ void applyRolloutUpdate() {
 
   react.viewChangedOnly.run(pre_Selection_solidDisplayEdges ? 1 : 0, Select3D.solidDisplayEdges ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_Selection_LandPoint_displayPoints ? 1 : 0, Select3D.LandPoint_displayPoints ? 1 : 0);
+  react.viewChangedOnly.run(pre_Selection_terrainDisplayVertices ? 1 : 0, Select3D.terrainDisplayVertices ? 1 : 0);
 
   react.viewChangedOnly.run(pre_Selection_model1DDisplayBounds ? 1 : 0, Select3D.model1DDisplayBounds ? 1 : 0);
 
   react.viewChangedOnly.run(pre_Selection_model2DDisplayBounds ? 1 : 0, Select3D.model2DDisplayBounds ? 1 : 0);
 
-  react.softSelectionChanged.run(pre_Selection_softPower, Select3D.softPower);
+  react.softSelectionChanged.run(pre_Selection_softSelectionFalloffPower, Select3D.softSelectionFalloffPower);
 
-  react.softSelectionChanged.run(pre_Selection_softRadius, Select3D.softRadius);
+  react.softSelectionChanged.run(pre_Selection_softSelectionFalloffRadius, Select3D.softSelectionFalloffRadius);
 
   react.selectionChangedOnly.run(pre_Selection_pivotAlignmentX, Select3D.pivotAlignmentX);
 
@@ -308,8 +308,8 @@ boolean pre_climateArchiveShouldLoad;
 boolean pre_ensembleForecastShouldLoad;
 boolean pre_ensembleObservationShouldLoad;
 
-boolean pre_Land3D_loadMesh;
-boolean pre_Land3D_loadTextures;
+boolean pre_Terrain_loadMesh;
+boolean pre_Terrain_loadTextures;
 
 float pre_LocationLAT;
 float pre_LocationLON;
@@ -323,10 +323,10 @@ boolean pre_Selection_solidDisplayEdges;
 boolean pre_Selection_sectionDisplayEdges;
 boolean pre_Selection_cameraDisplayFrustum;
 
-boolean pre_Selection_LandPoint_displayPoints;
+boolean pre_Selection_terrainDisplayVertices;
 
-float pre_Selection_softPower;
-float pre_Selection_softRadius;
+float pre_Selection_softSelectionFalloffPower;
+float pre_Selection_softSelectionFalloffRadius;
 
 float pre_Selection_position;
 float pre_Selection_rotation;

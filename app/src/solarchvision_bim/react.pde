@@ -104,8 +104,8 @@ class react {
     TIME.updateDate();
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
-  OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; Land3D.update_textures(); model_changed(); };
-  OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; Land3D.update_mesh(); model_changed(); };
+  OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; Terrain.update_textures(); model_changed(); };
+  OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; Terrain.update_mesh(); model_changed(); };
   OnChange applyCurrentCamera = (o, n) -> {
     if (o == n) return;
     WIN3D.apply_currentCameraIndex();

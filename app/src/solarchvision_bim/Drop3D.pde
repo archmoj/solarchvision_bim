@@ -8,10 +8,10 @@ class Drop3D {
   }
 
   // Casts one ray from ray_start in ray_direction. WIN3D.toolParameterModifier selects
-  // the target: 0 = Land3D, faceParam = allFaces, anything else = no hit.
+  // the target: 0 = Terrain, faceParam = allFaces, anything else = no hit.
   float[] castRay (float[] ray_start, float[] ray_direction, int faceParam) {
     if (WIN3D.toolParameterModifier == 0) {
-      return Land3D.intersect(ray_start, ray_direction);
+      return Terrain.intersect(ray_start, ray_direction);
     }
     if (WIN3D.toolParameterModifier == faceParam) {
       return allFaces.intersect(ray_start, ray_direction);

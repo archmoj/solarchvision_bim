@@ -1156,7 +1156,7 @@ class ValueModifier {
     }
     return out;
   }
-  float Select3D_softPower (int created) {
+  float Select3D_softSelectionFalloffPower (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1168,18 +1168,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D softPower",
-        () -> Select3D.softPower,
-        (v) -> { Select3D.softPower = v; },
+      putValueAction("Select3D softSelectionFalloffPower",
+        () -> Select3D.softSelectionFalloffPower,
+        (v) -> { Select3D.softSelectionFalloffPower = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.softSelectionChanged);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D softPower", Select3D.softPower, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D softSelectionFalloffPower", Select3D.softSelectionFalloffPower, s1, s2, s3, s4);
     }
     return out;
   }
-  float Select3D_softRadius (int created) {
+  float Select3D_softSelectionFalloffRadius (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1191,14 +1191,14 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D softRadius",
-        () -> Select3D.softRadius,
-        (v) -> { Select3D.softRadius = v; },
+      putValueAction("Select3D softSelectionFalloffRadius",
+        () -> Select3D.softSelectionFalloffRadius,
+        (v) -> { Select3D.softSelectionFalloffRadius = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.softSelectionChanged);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D softRadius", Select3D.softRadius, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D softSelectionFalloffRadius", Select3D.softSelectionFalloffRadius, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1664,141 +1664,141 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Land3D_loadTextures (int created) {
+  boolean Terrain_loadTextures (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Land3D loadTextures",
-        () -> (Land3D.loadTextures ? 1f : 0f),
-        (v) -> { Land3D.loadTextures = (v >= 0.5f); },
+      putValueAction("Terrain loadTextures",
+        () -> (Terrain.loadTextures ? 1f : 0f),
+        (v) -> { Terrain.loadTextures = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.applyLandLoadTextures);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D loadTextures", Land3D.loadTextures);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain loadTextures", Terrain.loadTextures);
     }
     return out;
   }
-  boolean Land3D_loadMesh (int created) {
+  boolean Terrain_loadMesh (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Land3D loadMesh",
-        () -> (Land3D.loadMesh ? 1f : 0f),
-        (v) -> { Land3D.loadMesh = (v >= 0.5f); },
+      putValueAction("Terrain loadMesh",
+        () -> (Terrain.loadMesh ? 1f : 0f),
+        (v) -> { Terrain.loadMesh = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.applyLandLoadMesh);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D loadMesh", Land3D.loadMesh);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain loadMesh", Terrain.loadMesh);
     }
     return out;
   }
-  int Land3D_skipStart (int created) {
+  int Terrain_skipStart (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Land3D skipStart",
-        () -> (float) Land3D.skipStart,
-        (v) -> { Land3D.skipStart = int(v); },
-        () -> (float) (0), () -> (float) (Land3D.rowCount - 1), 1,
+      putValueAction("Terrain skipStart",
+        () -> (float) Terrain.skipStart,
+        (v) -> { Terrain.skipStart = int(v); },
+        () -> (float) (0), () -> (float) (Terrain.rowCount - 1), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D skipStart", Land3D.skipStart, 0, Land3D.rowCount - 1, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain skipStart", Terrain.skipStart, 0, Terrain.rowCount - 1, 1);
     }
     return out;
   }
-  int Land3D_skipEnd (int created) {
+  int Terrain_skipEnd (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Land3D skipEnd",
-        () -> (float) Land3D.skipEnd,
-        (v) -> { Land3D.skipEnd = int(v); },
-        () -> (float) (0), () -> (float) (Land3D.rowCount - 1), 1,
+      putValueAction("Terrain skipEnd",
+        () -> (float) Terrain.skipEnd,
+        (v) -> { Terrain.skipEnd = int(v); },
+        () -> (float) (0), () -> (float) (Terrain.rowCount - 1), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D skipEnd", Land3D.skipEnd, 0, Land3D.rowCount - 1, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain skipEnd", Terrain.skipEnd, 0, Terrain.rowCount - 1, 1);
     }
     return out;
   }
-  boolean Land3D_displaySurface (int created) {
+  boolean Terrain_displaySurface (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Land3D displaySurface",
-        () -> (Land3D.displaySurface ? 1f : 0f),
-        (v) -> { Land3D.displaySurface = (v >= 0.5f); },
+      putValueAction("Terrain displaySurface",
+        () -> (Terrain.displaySurface ? 1f : 0f),
+        (v) -> { Terrain.displaySurface = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D displaySurface", Land3D.displaySurface);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displaySurface", Terrain.displaySurface);
     }
     return out;
   }
-  boolean Land3D_displayTexture (int created) {
+  boolean Terrain_displayTexture (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Land3D displayTexture",
-        () -> (Land3D.displayTexture ? 1f : 0f),
-        (v) -> { Land3D.displayTexture = (v >= 0.5f); },
+      putValueAction("Terrain displayTexture",
+        () -> (Terrain.displayTexture ? 1f : 0f),
+        (v) -> { Terrain.displayTexture = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D displayTexture", Land3D.displayTexture);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displayTexture", Terrain.displayTexture);
     }
     return out;
   }
-  boolean Land3D_displayPoints (int created) {
+  boolean Terrain_displayPoints (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Land3D displayPoints",
-        () -> (Land3D.displayPoints ? 1f : 0f),
-        (v) -> { Land3D.displayPoints = (v >= 0.5f); },
+      putValueAction("Terrain displayPoints",
+        () -> (Terrain.displayPoints ? 1f : 0f),
+        (v) -> { Terrain.displayPoints = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D displayPoints", Land3D.displayPoints);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displayPoints", Terrain.displayPoints);
     }
     return out;
   }
-  boolean Land3D_displayDepth (int created) {
+  boolean Terrain_displayDepth (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Land3D displayDepth",
-        () -> (Land3D.displayDepth ? 1f : 0f),
-        (v) -> { Land3D.displayDepth = (v >= 0.5f); },
+      putValueAction("Terrain displayDepth",
+        () -> (Terrain.displayDepth ? 1f : 0f),
+        (v) -> { Terrain.displayDepth = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D displayDepth", Land3D.displayDepth);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displayDepth", Terrain.displayDepth);
     }
     return out;
   }
@@ -2587,7 +2587,7 @@ class ValueModifier {
     }
     return out;
   }
-  int Land3D_displayTessellation (int created) {
+  int Terrain_displayTessellation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2598,13 +2598,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Land3D displayTessellation",
-        () -> (float) Land3D.displayTessellation,
-        (v) -> { Land3D.displayTessellation = int(v); },
+      putValueAction("Terrain displayTessellation",
+        () -> (float) Terrain.displayTessellation,
+        (v) -> { Terrain.displayTessellation = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D displayTessellation", Land3D.displayTessellation, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displayTessellation", Terrain.displayTessellation, s1, s2, s3);
     }
     return out;
   }
@@ -3731,24 +3731,24 @@ class ValueModifier {
     }
     return out;
   }
-  int Land3D_paletteClr (int created) {
+  int Terrain_paletteClr (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Land3D paletteClr",
-        () -> (float) Land3D.colorScaleIndex,
-        (v) -> { Land3D.colorScaleIndex = int(v); },
+      putValueAction("Terrain paletteClr",
+        () -> (float) Terrain.colorScaleIndex,
+        (v) -> { Terrain.colorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteClr", Land3D.colorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain paletteClr", Terrain.colorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Land3D_paletteDir (int created) {
+  int Terrain_paletteDir (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3760,17 +3760,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Land3D paletteDir",
-        () -> (float) Land3D.colorScaleDirection,
-        (v) -> { Land3D.colorScaleDirection = int(v); },
+      putValueAction("Terrain paletteDir",
+        () -> (float) Terrain.colorScaleDirection,
+        (v) -> { Terrain.colorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteDir", Land3D.colorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain paletteDir", Terrain.colorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Land3D_paletteMlt (int created) {
+  float Terrain_paletteMlt (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3782,13 +3782,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Land3D paletteMlt",
-        () -> Land3D.colorScaleFactor,
-        (v) -> { Land3D.colorScaleFactor = v; },
+      putValueAction("Terrain paletteMlt",
+        () -> Terrain.colorScaleFactor,
+        (v) -> { Terrain.colorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Land3D paletteMlt", Land3D.colorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain paletteMlt", Terrain.colorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4113,13 +4113,13 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Select3D landPointDisplayPoints",
-        () -> (Select3D.LandPoint_displayPoints ? 1f : 0f),
-        (v) -> { Select3D.LandPoint_displayPoints = (v >= 0.5f); },
+        () -> (Select3D.terrainDisplayVertices ? 1f : 0f),
+        (v) -> { Select3D.terrainDisplayVertices = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D landPointDisplayPoints", Select3D.LandPoint_displayPoints);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D landPointDisplayPoints", Select3D.terrainDisplayVertices);
     }
     return out;
   }

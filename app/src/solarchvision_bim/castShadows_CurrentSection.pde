@@ -216,7 +216,7 @@ void renderShadowFrame(float[] SunR, int SunR_Rotated_check, int SHD,
 
     allFaces.castShadows();
 
-    Land3D.castShadows();
+    Terrain.castShadows();
 
     allModel1Ds.draw(TypeWindow.SHADOW);
 

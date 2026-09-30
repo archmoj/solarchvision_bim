@@ -30,12 +30,12 @@ class Clone3DTest {
 
   @Test
   void selection_landPointCategoryIsANoOp () {
-    // "nothing to clone" per the source comment - LandPoints have no
+    // "nothing to clone" per the source comment - Terrain Vertices have no
     // clone branch in the dispatcher at all.
-    app.currentObjectCategory = app.ObjectCategory.LANDPOINT;
-    app.Select3D.LandPoint_ids = new int[]{3};
+    app.currentObjectCategory = app.ObjectCategory.TERRAIN;
+    app.Select3D.terrainVertexIndices = new int[]{3};
     app.Clone3D.selection(true);
-    assertArrayEquals(new int[]{3}, app.Select3D.LandPoint_ids); // untouched
+    assertArrayEquals(new int[]{3}, app.Select3D.terrainVertexIndices); // untouched
   }
 
   // ================= appendRange ======================================

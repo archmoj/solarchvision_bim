@@ -564,9 +564,9 @@ class Earth3D {
   // before. Shaded mode (false) instead colors each vertex per
   // WIN3D.shadingMode - currently SHADE.Global_Solar (sky-bucket solar
   // exposure, needs this vertex's neighbors within the same subface, same
-  // as Faces.pde/Land3D.pde) and SHADE.Vertex_Elevation (colored by the
+  // as Faces.pde/Terrain.pde) and SHADE.Vertex_Elevation (colored by the
   // vertex's own bumped height) - falling back to plain white for any
-  // other shadingMode value, matching Land3D's own default. Both modes
+  // other shadingMode value, matching Terrain's own default. Both modes
   // stay inside the single batched beginShape(QUADS) from
   // beginWIN3DSphere(): a texture binds once for the whole shape, and
   // per-vertex fill() works the same way within one shape too.
@@ -823,7 +823,7 @@ class Earth3D {
     // just a fraction of a degree from the station, kilometers by a few
     // degrees out), this is real terrain elevation only, relative to the
     // station's own baseline. SHADE.vertexU_Vertex_Elevation()'s palette
-    // multiplier (Land3D.colorScaleFactor) is calibrated for that kind of
+    // multiplier (Terrain.colorScaleFactor) is calibrated for that kind of
     // range; feeding it z directly would saturate almost everywhere
     // except right next to the station.
     vtx.w = rawBump - this.stationElevationBump;

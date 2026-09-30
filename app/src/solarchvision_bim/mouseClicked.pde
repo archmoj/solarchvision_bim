@@ -178,7 +178,7 @@ void pickOrAssignModel1DProperty (int OBJ_ID) {
 // MODEL2D/MODEL1D/SOLID/VERTEX (matching the original: only ever the
 // last one, even for a multi-object selection). Returns
 // {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined} for any other
-// category (POLYLINE, FACE, CAMERA, SECTION, LANDPOINT), same as the
+// category (POLYLINE, FACE, CAMERA, SECTION, TERRAIN), same as the
 // original inline code left x1/y1/z1 unset (and therefore "undefined")
 // for those.
 float[] getMoveOriginPoint () {
@@ -412,7 +412,7 @@ CreateParams computeCreateParams (float[] RxP) {
 
   if ((currentObjectCategory != ObjectCategory.MODEL1D) &&
       (currentObjectCategory != ObjectCategory.MODEL2D) &&
-      (currentObjectCategory != ObjectCategory.LANDPOINT) &&
+      (currentObjectCategory != ObjectCategory.TERRAIN) &&
       (currentObjectCategory != ObjectCategory.CAMERA) &&
       (currentObjectCategory != ObjectCategory.SECTION)) {
 
@@ -1614,7 +1614,7 @@ void mouseClicked () {
               float[] RxP = new float [8];
 
               if (mouseButton == RIGHT) {
-                RxP = Land3D.intersect(ray_start, ray_direction);
+                RxP = Terrain.intersect(ray_start, ray_direction);
               } else if (mouseButton == LEFT) {
 
                 if ((WIN3D.currentTool == UITASK.Create) ||

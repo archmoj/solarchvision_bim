@@ -1857,7 +1857,7 @@ class Create3D {
 
 
 
-  void add_onLand (int people_or_trees) {
+  void add_onTerrain (int people_or_trees) {
 
     //randomSeed(0);
 
@@ -1868,7 +1868,7 @@ class Create3D {
     };
     int treesCount = 1; // index 0 is a sentinel row; real trees start at 1
 
-    int tessellation = Land3D.displayTessellation;
+    int tessellation = Terrain.displayTessellation;
     if (WIN3D.shadingMode == SHADE.Surface_Base) {
       tessellation = 0;
     }
@@ -1878,42 +1878,42 @@ class Create3D {
 
 
 
-    if ((Land3D.displayTexture) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
+    if ((Terrain.displayTexture) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
 
-      for (int i = Land3D.skipStart; i < Land3D.rowCount - 1 - Land3D.skipEnd; i++) {
-        for (int j = 0; j < Land3D.columnCount - 1; j++) {
+      for (int i = Terrain.skipStart; i < Terrain.rowCount - 1 - Terrain.skipEnd; i++) {
+        for (int j = 0; j < Terrain.columnCount - 1; j++) {
 
           float[][] base_Vertices = new float [4][3];
 
-          base_Vertices[0][0] = Land3D.Mesh[i][j][0];
-          base_Vertices[0][1] = Land3D.Mesh[i][j][1];
-          base_Vertices[0][2] = Land3D.Mesh[i][j][2];
+          base_Vertices[0][0] = Terrain.Mesh[i][j][0];
+          base_Vertices[0][1] = Terrain.Mesh[i][j][1];
+          base_Vertices[0][2] = Terrain.Mesh[i][j][2];
 
-          base_Vertices[1][0] = Land3D.Mesh[i+1][j][0];
-          base_Vertices[1][1] = Land3D.Mesh[i+1][j][1];
-          base_Vertices[1][2] = Land3D.Mesh[i+1][j][2];
+          base_Vertices[1][0] = Terrain.Mesh[i+1][j][0];
+          base_Vertices[1][1] = Terrain.Mesh[i+1][j][1];
+          base_Vertices[1][2] = Terrain.Mesh[i+1][j][2];
 
-          base_Vertices[2][0] = Land3D.Mesh[i+1][j+1][0];
-          base_Vertices[2][1] = Land3D.Mesh[i+1][j+1][1];
-          base_Vertices[2][2] = Land3D.Mesh[i+1][j+1][2];
+          base_Vertices[2][0] = Terrain.Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = Terrain.Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = Terrain.Mesh[i+1][j+1][2];
 
-          base_Vertices[3][0] = Land3D.Mesh[i][j+1][0];
-          base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
-          base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];
+          base_Vertices[3][0] = Terrain.Mesh[i][j+1][0];
+          base_Vertices[3][1] = Terrain.Mesh[i][j+1][1];
+          base_Vertices[3][2] = Terrain.Mesh[i][j+1][2];
 
           for (int n = 0; n < totalNumberOfSubs; n++) {
 
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
             int n_Map = -1;
-            for (int q = 0; q < Land3D.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+            for (int q = 0; q < Terrain.Textures_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
 
               n_Map = q;
 
               for (int s = 0; s < subFace.length; s++) {
 
-                float u = (subFace[s][0] / Land3D.Textures_U_scale[q] + 0.5);
-                float v = (-subFace[s][1] / Land3D.Textures_V_scale[q] + 0.5);
+                float u = (subFace[s][0] / Terrain.Textures_U_scale[q] + 0.5);
+                float v = (-subFace[s][1] / Terrain.Textures_V_scale[q] + 0.5);
 
                 if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
 
@@ -1928,7 +1928,7 @@ class Create3D {
 
             if (n_Map != -1) {
 
-              int max_o = int(10000 / pow(2, Land3D.displayTessellation)); // number of tries to find green points!
+              int max_o = int(10000 / pow(2, Terrain.displayTessellation)); // number of tries to find green points!
 
               //if (max_o > 100) max_o = 100;
 
@@ -1957,13 +1957,13 @@ class Create3D {
                 }
 */
 
-                float u = (x / Land3D.Textures_U_scale[n_Map] + 0.5);
-                float v = (-y / Land3D.Textures_V_scale[n_Map] + 0.5);
+                float u = (x / Terrain.Textures_U_scale[n_Map] + 0.5);
+                float v = (-y / Terrain.Textures_V_scale[n_Map] + 0.5);
 
-                int uPixel = int(u * Land3D.Textures_map[n_Map].width);
-                int vPixel = int(v * Land3D.Textures_map[n_Map].height);
+                int uPixel = int(u * Terrain.Textures_map[n_Map].width);
+                int vPixel = int(v * Terrain.Textures_map[n_Map].height);
 
-                color COL = Land3D.Textures_map[n_Map].get(uPixel, vPixel);
+                color COL = Terrain.Textures_map[n_Map].get(uPixel, vPixel);
                 //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
                 float r = COL >> 16 & 0xFF;
                 float g = COL >> 8 & 0xFF;
@@ -2034,32 +2034,32 @@ class Create3D {
       }
     } else {
 
-      for (int i = Land3D.skipStart; i < Land3D.rowCount - 1 - Land3D.skipEnd; i++) {
-        for (int j = 0; j < Land3D.columnCount - 1; j++) {
+      for (int i = Terrain.skipStart; i < Terrain.rowCount - 1 - Terrain.skipEnd; i++) {
+        for (int j = 0; j < Terrain.columnCount - 1; j++) {
 
           float[][] base_Vertices = new float [4][3];
 
-          base_Vertices[0][0] = Land3D.Mesh[i][j][0];
-          base_Vertices[0][1] = Land3D.Mesh[i][j][1];
-          base_Vertices[0][2] = Land3D.Mesh[i][j][2];
+          base_Vertices[0][0] = Terrain.Mesh[i][j][0];
+          base_Vertices[0][1] = Terrain.Mesh[i][j][1];
+          base_Vertices[0][2] = Terrain.Mesh[i][j][2];
 
-          base_Vertices[1][0] = Land3D.Mesh[i+1][j][0];
-          base_Vertices[1][1] = Land3D.Mesh[i+1][j][1];
-          base_Vertices[1][2] = Land3D.Mesh[i+1][j][2];
+          base_Vertices[1][0] = Terrain.Mesh[i+1][j][0];
+          base_Vertices[1][1] = Terrain.Mesh[i+1][j][1];
+          base_Vertices[1][2] = Terrain.Mesh[i+1][j][2];
 
-          base_Vertices[2][0] = Land3D.Mesh[i+1][j+1][0];
-          base_Vertices[2][1] = Land3D.Mesh[i+1][j+1][1];
-          base_Vertices[2][2] = Land3D.Mesh[i+1][j+1][2];
+          base_Vertices[2][0] = Terrain.Mesh[i+1][j+1][0];
+          base_Vertices[2][1] = Terrain.Mesh[i+1][j+1][1];
+          base_Vertices[2][2] = Terrain.Mesh[i+1][j+1][2];
 
-          base_Vertices[3][0] = Land3D.Mesh[i][j+1][0];
-          base_Vertices[3][1] = Land3D.Mesh[i][j+1][1];
-          base_Vertices[3][2] = Land3D.Mesh[i][j+1][2];
+          base_Vertices[3][0] = Terrain.Mesh[i][j+1][0];
+          base_Vertices[3][1] = Terrain.Mesh[i][j+1][1];
+          base_Vertices[3][2] = Terrain.Mesh[i][j+1][2];
 
           for (int n = 0; n < totalNumberOfSubs; n++) {
 
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-            //int max_o = int((16.0 / pow(2, Land3D.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
+            //int max_o = int((16.0 / pow(2, Terrain.displayTessellation)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
             int max_o = int(random(10)) == 0 ? 1 : 0;
 
             if (i > 2) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
@@ -2215,11 +2215,11 @@ class Create3D {
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
 
-    if (Land3D.loadMesh) {
+    if (Terrain.loadMesh) {
 
-      Create3D.add_onLand(1); // 1 = people
+      Create3D.add_onTerrain(1); // 1 = people
 
-      Create3D.add_onLand(2); // 2 = 2D trees
+      Create3D.add_onTerrain(2); // 2 = 2D trees
     } else {
       //allModel2Ds.add_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
       //allModel2Ds.add_polar(2, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees

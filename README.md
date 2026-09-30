@@ -333,7 +333,7 @@ Additional supported datasets include:
 
 Additional features include:
 
--   `Land Mesh` and `Land Texture` require an API key
+-   `Terrain Mesh` and `Terrain Texture` require an API key
 -   `Troposphere` allows loading WMS forecast data to visualize hourly
     cloud formations using datasets such as HRDPS (High Resolution Deterministic Prediction System) or
     GDPS (Global Deterministic Prediction System)
@@ -733,7 +733,7 @@ Capabilities include:
 - Geographic boundaries
 - Station locations
 - Zoom levels
-- Terrain/land visualization
+- Terrain visualization
 - Project-location-based map rendering
 
 Map imagery can be cached and geographically limited to the relevant project/view region to reduce unnecessary processing and improve performance.

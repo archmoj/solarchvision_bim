@@ -3,7 +3,7 @@ class Clone3D {
   final static String CLASS_STAMP = "Clone3D";
 
   void selection (boolean produce_same_variation) {
-    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.TERRAIN) {
       // nothing to clone
     } else if (currentObjectCategory == ObjectCategory.MODEL1D) {
       this.Model1Ds(produce_same_variation);

@@ -359,7 +359,7 @@ class GroupsTest {
 
   @Test
   void groupSelection_isANoOpForACategoryWithNoGroupingBehaviorAtAll () {
-    // VERTEX (and LANDPOINT/GROUP/POLYLINE... only SOLID/FACE/POLYLINE/
+    // VERTEX (and TERRAIN/GROUP/POLYLINE... only SOLID/FACE/POLYLINE/
     // MODEL1D/MODEL2D actually run_process) - VERTEX specifically has no
     // clone-into-group branch at all.
     app.currentObjectCategory = app.ObjectCategory.VERTEX;

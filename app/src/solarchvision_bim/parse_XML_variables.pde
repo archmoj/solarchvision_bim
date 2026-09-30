@@ -90,7 +90,7 @@ void parse_XML_variables (XML xml, boolean desired_diag) {
 
   allGroups.from_XML(xml); // Note: Groups should be inputted after Faces, Polylines, Model1Ds, Model2Ds, etc.
 
-  Land3D.from_XML(xml);
+  Terrain.from_XML(xml);
 
   Earth3D.from_XML(xml);
 

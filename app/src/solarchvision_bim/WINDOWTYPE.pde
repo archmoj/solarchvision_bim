@@ -4,7 +4,7 @@ class WINDOWTYPE {
 
   final static int SKY2D    = -2;
   final static int LandGap  = -1;
-  final static int LandMesh = 0;
+  final static int TerrainMesh = 0;
   final static int STUDY    = 1;
   final static int WORLD    = 2;
   final static int WIN3D    = 3;

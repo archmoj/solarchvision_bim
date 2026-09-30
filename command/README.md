@@ -98,7 +98,7 @@ Location panel.
 
 -   `SELECT`: Selects various categories
 ```
-Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint
+Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/terrainpoint
 ```
 
 -   `DELETE`: Deletes the selection or various categories
@@ -414,8 +414,8 @@ the user interface.
 | `Select3D rotationVectorIndex` | Rotate axis used by 3D-select.rotation: 0 = X, 1 = Y, 2 = Z | 0 to 2 |
 | `Select3D scale` | Scale the selection about the current scale axis (relative to its previous value; each unit change doubles/halves the size) | -8.0 to 8.0 |
 | `Select3D scaleVectorIndex` | Scale axis used by 3D-select.scale: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
-| `Select3D softPower` | Falloff power of soft (proportional) selection | 0.125 to 8.0 |
-| `Select3D softRadius` | Radius of influence of soft (proportional) selection | 0.01 to 100 |
+| `Select3D softSelectionFalloffPower` | Falloff power of soft (proportional) selection | 0.125 to 8.0 |
+| `Select3D softSelectionFalloffRadius` | Radius of influence of soft (proportional) selection | 0.01 to 100 |
 | `Select3D pivotDisplayReference` | Toggle: show the reference pivot point | 0 or 1 |
 | `Select3D groupDisplayPivot` | Toggle: show the selected group's pivot point | 0 or 1 |
 | `Select3D groupDisplayBox` | Toggle: draw the selected group's bounding box | 0 or 1 |
@@ -501,18 +501,18 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Land3D displaySurface` | Toggle: show the land surface | 0 or 1 |
-| `Land3D displayTexture` | Toggle: show the land texture (aerial imagery) | 0 or 1 |
-| `Land3D displayPoints` | Toggle: show land survey points | 0 or 1 |
-| `Land3D displayDepth` | Toggle: shade the land by elevation/depth | 0 or 1 |
-| `Land3D displayTessellation` | Tessellation-display mode for the land surface | 0 to 4 |
-| `Land3D loadMesh` | Toggle: (re)load the land mesh from its topography source | 0 or 1 |
-| `Land3D loadTextures` | Toggle: (re)load the land texture images | 0 or 1 |
-| `Land3D skipStart` | First row/column of the land grid to skip (for coarser previews) | _(depends on loaded data)_ |
-| `Land3D skipEnd` | Last row/column of the land grid to skip | _(depends on loaded data)_ |
-| `Land3D paletteClr` | Colour-scale index used for land elevation shading | _(depends on loaded data)_ |
-| `Land3D paletteDir` | Colour-scale direction (-2..2) for land elevation shading | -2 to 2 |
-| `Land3D paletteMlt` | Colour-scale multiplier for land elevation shading | 0.001 to 0.5 |
+| `Terrain displaySurface` | Toggle: show the land surface | 0 or 1 |
+| `Terrain displayTexture` | Toggle: show the land texture (aerial imagery) | 0 or 1 |
+| `Terrain displayPoints` | Toggle: show land survey points | 0 or 1 |
+| `Terrain displayDepth` | Toggle: shade the land by elevation/depth | 0 or 1 |
+| `Terrain displayTessellation` | Tessellation-display mode for the land surface | 0 to 4 |
+| `Terrain loadMesh` | Toggle: (re)load the land mesh from its topography source | 0 or 1 |
+| `Terrain loadTextures` | Toggle: (re)load the land texture images | 0 or 1 |
+| `Terrain skipStart` | First row/column of the land grid to skip (for coarser previews) | _(depends on loaded data)_ |
+| `Terrain skipEnd` | Last row/column of the land grid to skip | _(depends on loaded data)_ |
+| `Terrain paletteClr` | Colour-scale index used for land elevation shading | _(depends on loaded data)_ |
+| `Terrain paletteDir` | Colour-scale direction (-2..2) for land elevation shading | -2 to 2 |
+| `Terrain paletteMlt` | Colour-scale multiplier for land elevation shading | 0.001 to 0.5 |
 
 ### Sky, sun, moon and atmosphere
 
@@ -700,7 +700,7 @@ subtract modes.
     `Select All-Groups`, `Select All-Model1Ds`, `Select All-Model2Ds`,
     `Select All-Polylines`, `Select All-Sections`, `Select All-Solids`,
     `Select All-Verices`
--   `Select Camera`, `Select Face`, `Select Group`, `Select LandPoint`,
+-   `Select Camera`, `Select Face`, `Select Group`, `Select TerrainVertex`,
     `Select Model1Ds`, `Select Model2Ds`, `Select Polyline`,
     `Select Section`, `Select Solid`, `Select Vertex`
 -   `Deselect All`, `Invert Selection`, `Isolate Selection`
@@ -708,7 +708,7 @@ subtract modes.
 -   `Window Select`, `Window Select+`, `Window Select-`: draw a
     rectangle to replace, add to, or subtract from the selection
 -   `Soft Selection`: enables falloff-based (proportional) selection -
-    see `Select3D softPower`/`Select3D softRadius` above
+    see `Select3D softSelectionFalloffPower`/`Select3D softSelectionFalloffRadius` above
 
 ### Groups
 
@@ -719,7 +719,7 @@ subtract modes.
     `Groups >> Model2Ds`, `Groups >> Polylines`, `Groups >> Solids`,
     `Groups >> Vertices`, `Model1Ds >> Groups`, `Model2Ds >> Groups`,
     `Polylines >> Groups`, `Solids >> Groups`, `Vertices >> Groups`,
-    `LandGap >> Group`, `LandMesh >> Group`: move objects of one
+    `LandGap >> Group`, `TerrainMesh >> Group`: move objects of one
     category into/out of the current group
 
 ### Deleting
@@ -737,13 +737,13 @@ Most viewable elements have up to three related commands: `Show <X>`
 (toggle it). `<X>` is one of:
 
 `Cameras`, `CLMREC nearest`, `CLMREC stations`, `Climate Engineering nearest`,
-`Climate Engineering stations`, `Earth Surface`, `Edges`, `Faces`, `Land Depth`,
-`Land Mesh`, `Land Points`, `Land Texture`, `Leaves`, `Model1Ds`,
+`Climate Engineering stations`, `Earth Surface`, `Edges`, `Faces`, `Terrain Depth`,
+`Terrain Mesh`, `Terrain Vertices`, `Terrain Texture`, `Leaves`, `Model1Ds`,
 `Model2Ds`, `Moon Surface`, `NAEFS nearest`, `NAEFS stations`, `Normals`,
 `Polylines`, `Sections`, `Selected 1D Edges`, `Selected 2D Edges`,
 `Selected Cameras`, `Selected Faces`, `Selected Faces Vertex Count`,
 `Selected Group Box`, `Selected Group Edges`, `Selected Group Pivot`,
-`Selected LandPoints`, `Selected Polylines`,
+`Selected Terrain Vertices`, `Selected Polylines`,
 `Selected Polylines Vertex Count`, `Selected Ref Pivot`,
 `Selected Sections`, `Selected Solids`, `Selected Vertices`, `Sky`,
 `Solar Section`, `Solid Section`, `Solids`, `Sun Grid`, `Sun Path`,
@@ -761,7 +761,7 @@ and [views](#views) commands above - each switches to a mouse-drag tool
 for that action:
 
 -   `Pan`, `PanX`, `PanY`
--   `Orbit`, `OrbitXY`, `OrbitZ`, `LandOrbit`
+-   `Orbit`, `OrbitXY`, `OrbitZ`, `TerrainOrbit`
 -   `TruckX`, `TruckY`, `TruckZ`
 -   `CameraRoll`, `CameraRollXY`, `CameraRollZ`
 -   `TargetRoll`, `TargetRollXY`, `TargetRollZ`
@@ -802,11 +802,11 @@ commands, each switching to a mouse-drag tool for that one axis:
 ### Weather and climate data
 
 -   `Download Climate Typical Year`, `Download Climate Engineering`, `Download Ensemble Forecast`,
-    `Download Ensemble Observation`, `Download Climate Archive`, `Download Land Mesh`,
-    `Download Land Texture`
+    `Download Ensemble Observation`, `Download Climate Archive`, `Download Terrain Mesh`,
+    `Download Terrain Texture`
 -   `Update Climate Typical Year`, `Update Climate Engineering`, `Update Ensemble Forecast`, `Update Ensemble Observation`,
     `Update Climate Archive`, `Update Station`
--   `Load Land Mesh`, `Load Land Texture`, `Load Toroposphere`
+-   `Load Terrain Mesh`, `Load Terrain Texture`, `Load Toroposphere`
 -   `Use Climate Typical Year`, `Use Climate Engineering`,
     `Use Climate Archive`, `Use Ensemble Observation`,
     `Use Ensemble Forecast`: choose which data source feeds the
@@ -845,7 +845,7 @@ commands, each switching to a mouse-drag tool for that one axis:
 -   `Extrude Face Edges`
 -   `Weld Objects Selected Vertices`, `Weld Scene Selected Vertices`,
     `Separate Selected Vertices`
--   `Reposition Selected Vertices`, `Flatten Selected LandPoints`
+-   `Reposition Selected Vertices`, `Flatten Selected Terrain Vertices`
 -   `Flip Normal`, `Set-In Normal`, `Set-Out Normal`,
     `Auto-Normal Selected Faces`
 -   `Force Triangulate Selected Faces`, `Optimize Faces`,

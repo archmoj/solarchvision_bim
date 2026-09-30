@@ -142,10 +142,10 @@ class UI_menuBar {
       "Update Ensemble Forecast",
       ___divider___,
       "Load Toroposphere",
-      "Load Land Mesh",
-      "Load Land Texture",
-      "Download Land Mesh",
-      "Download Land Texture",
+      "Load Terrain Mesh",
+      "Load Terrain Texture",
+      "Download Terrain Mesh",
+      "Download Terrain Texture",
       ___divider___,
       "Download Climate Typical Year",
       "Download Climate Archive",
@@ -276,7 +276,7 @@ class UI_menuBar {
       "Pan",
       "PanX",
       "PanY",
-      "LandOrbit",
+      "TerrainOrbit",
       "Orbit",
       "OrbitXY",
       "OrbitZ",
@@ -298,10 +298,10 @@ class UI_menuBar {
     ,
     {
       "3D-display",
-      "Show/Hide Land Mesh",
-      "Show/Hide Land Texture",
-      "Show/Hide Land Points",
-      "Show/Hide Land Depth",
+      "Show/Hide Terrain Mesh",
+      "Show/Hide Terrain Texture",
+      "Show/Hide Terrain Vertices",
+      "Show/Hide Terrain Depth",
       "Show/Hide Vertices",
       "Show/Hide Edges",
       "Show/Hide Normals",
@@ -327,7 +327,7 @@ class UI_menuBar {
       "Show/Hide Selected Solids",
       "Show/Hide Selected Sections",
       "Show/Hide Selected Cameras",
-      "Show/Hide Selected LandPoints",
+      "Show/Hide Selected Terrain Vertices",
       "Show/Hide Selected Faces",
       "Show/Hide Selected Faces Vertex Count",
       "Show/Hide Selected Polylines Vertex Count",
@@ -380,8 +380,8 @@ class UI_menuBar {
       "Point",
       "Polyline",
       ___divider___,
-      "LandMesh >> Group",
-      "LandGap >> Group"
+      "TerrainMesh >> Group",
+      "TerrainGap >> Group"
     }
     ,
     {
@@ -403,7 +403,7 @@ class UI_menuBar {
       "Select Polyline",
       "Select Face",
       "Select Vertex",
-      "Select LandPoint",
+      "Select TerrainVertex",
       ___divider___,
       "Soft Selection",
       "Invert Selection",
@@ -419,7 +419,7 @@ class UI_menuBar {
       "Select All-Polylines",
       "Select All-Faces",
       "Select All Vertices",
-      "Select All LandPoints",
+      "Select All Terrain Vertices",
       ___divider___,
       "Select Near Selected Vertices",
       "Select Scene Isolated Vertices"
@@ -479,7 +479,7 @@ class UI_menuBar {
       "Reposition Selected Vertices",
       "Weld Objects Selected Vertices",
       "Weld Scene Selected Vertices",
-      "Flatten Selected LandPoints",
+      "Flatten Selected Terrain Vertices",
       ___divider___,
       "Reverse Visibility of All-Faces",
       "Hide All-Faces",
@@ -636,10 +636,10 @@ class UI_menuBar {
     map.put(toggleKey("Location", "Show/Hide Climate Typical Year nearest"),  () -> !WORLD.climateTypicalYearDisplayNear);
 
     // "3D-display" menu
-    map.put(toggleKey("3D-display", "Show/Hide Land Mesh"),     () -> !Land3D.displaySurface);
-    map.put(toggleKey("3D-display", "Show/Hide Land Texture"),  () -> !Land3D.displayTexture);
-    map.put(toggleKey("3D-display", "Show/Hide Land Points"),   () -> !Land3D.displayPoints);
-    map.put(toggleKey("3D-display", "Show/Hide Land Depth"),    () -> !Land3D.displayDepth);
+    map.put(toggleKey("3D-display", "Show/Hide Terrain Mesh"),     () -> !Terrain.displaySurface);
+    map.put(toggleKey("3D-display", "Show/Hide Terrain Texture"),  () -> !Terrain.displayTexture);
+    map.put(toggleKey("3D-display", "Show/Hide Terrain Vertices"),   () -> !Terrain.displayPoints);
+    map.put(toggleKey("3D-display", "Show/Hide Terrain Depth"),    () -> !Terrain.displayDepth);
     map.put(toggleKey("3D-display", "Show/Hide Vertices"),      () -> !allPoints.displayAll);
     map.put(toggleKey("3D-display", "Show/Hide Edges"),         () -> !allFaces.displayEdges);
     map.put(toggleKey("3D-display", "Show/Hide Normals"),       () -> !allFaces.displayNormals);
@@ -666,7 +666,7 @@ class UI_menuBar {
     map.put(toggleKey("3D-display", "Show/Hide Selected Solids"),                 () -> !Select3D.solidDisplayEdges);
     map.put(toggleKey("3D-display", "Show/Hide Selected Sections"),               () -> !Select3D.sectionDisplayEdges);
     map.put(toggleKey("3D-display", "Show/Hide Selected Cameras"),                () -> !Select3D.cameraDisplayFrustum);
-    map.put(toggleKey("3D-display", "Show/Hide Selected LandPoints"),             () -> !Select3D.LandPoint_displayPoints);
+    map.put(toggleKey("3D-display", "Show/Hide Selected Terrain Vertices"),             () -> !Select3D.terrainDisplayVertices);
     map.put(toggleKey("3D-display", "Show/Hide Selected Faces"),                  () -> !Select3D.faceDisplayEdges);
     map.put(toggleKey("3D-display", "Show/Hide Selected Polylines"),              () -> !Select3D.polylineDisplayVertices);
     map.put(toggleKey("3D-display", "Show/Hide Selected Faces Vertex Count"),     () -> !Select3D.faceDisplayVertexIndices);

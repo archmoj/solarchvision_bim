@@ -207,7 +207,7 @@ class WIN3D {
     Sun3D.draw();
     Moon3D.draw();
     Earth3D.draw(TypeWindow.WIN3D);
-    Land3D.draw(TypeWindow.WIN3D);
+    Terrain.draw(TypeWindow.WIN3D);
     Tropo3D.draw(TypeWindow.WIN3D);
     allFaces.draw(TypeWindow.WIN3D);
     allPolylines.draw(TypeWindow.WIN3D);
@@ -282,9 +282,9 @@ class WIN3D {
     }
 
     if (this.shadingMode == SHADE.Vertex_Elevation) {
-      type = Land3D.colorScaleIndex;
-      direction = Land3D.colorScaleDirection;
-      multiplier = Land3D.colorScaleFactor;
+      type = Terrain.colorScaleIndex;
+      direction = Terrain.colorScaleDirection;
+      multiplier = Terrain.colorScaleFactor;
       draw_pal = true;
     }
 
@@ -950,7 +950,7 @@ class WIN3D {
     float[] ray_start = ray.start;
     float[] ray_direction = ray.direction;
 
-    float[] RxP = Land3D.intersect(ray_start, ray_direction);
+    float[] RxP = Terrain.intersect(ray_start, ray_direction);
     if (RxP[0] < 0) return;
 
     float xO = RxP[1] / overallScale;

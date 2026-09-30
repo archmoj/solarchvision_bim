@@ -633,7 +633,7 @@ Moon3D Moon3D = new Moon3D();
 
 Earth3D Earth3D = new Earth3D();
 
-Land3D Land3D = new Land3D();
+Terrain Terrain = new Terrain();
 
 Model1Ds allModel1Ds = new Model1Ds();
 

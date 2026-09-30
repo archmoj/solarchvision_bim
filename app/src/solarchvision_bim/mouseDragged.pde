@@ -83,8 +83,8 @@ void handleWorldDrag() {
 }
 
 void dispatchWin3DTaskDrag(float dx, float dy) {
-  if (WIN3D.currentTool == UITASK.LandOrbit_Pan_TargetRollZ) {
-    if (mouseButton == LEFT) rotateCameraAroundLand(dx);   // CameraLandOrbit
+  if (WIN3D.currentTool == UITASK.TerrainOrbit_Pan_TargetRollZ) {
+    if (mouseButton == LEFT) rotateCameraAroundLand(dx);   // CameraTerrainOrbit
     if (mouseButton == RIGHT) panBothAxes(dx, dy);          // Pan
   }
 

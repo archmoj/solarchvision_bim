@@ -410,7 +410,7 @@ String runScriptLine (String lineSTR) {
           else if (low_case.equals("solids")) switch_category(ObjectCategory.SOLID);
           else if (low_case.equals("sections")) switch_category(ObjectCategory.SECTION);
           else if (low_case.equals("cameras")) switch_category(ObjectCategory.CAMERA);
-          else if (low_case.equals("landpoints")) switch_category(ObjectCategory.LANDPOINT);
+          else if (low_case.equals("landpoints")) switch_category(ObjectCategory.TERRAIN);
         }
 
         for (int q = 1; q < parts.length; q++) {
@@ -424,7 +424,7 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/landpoint";
+        hint = "Select all/last/nothing/invert/groups/model2ds/model1ds/vertices/faces/solids/sections/cameras/terrainpoint";
       }
       return hint;
     }
@@ -1560,7 +1560,7 @@ String runScriptLine (String lineSTR) {
     }
 
     case "LANDORBIT": {
-      UI_setTo_View_LandOrbit(0);
+      UI_setTo_View_TerrainOrbit(0);
       return hint;
     }
 

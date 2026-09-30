@@ -9,7 +9,7 @@ void update_project_folders () {
 
   Folder_Shadings = Folder_Project + "/shadings";
 
-  Folder_Land = Folder_Project + "/land";
+  Folder_Terrain = Folder_Project + "/terrain";
 
   Folder_Export      = Folder_Project + "/export";
   Folder_Export3D    = Folder_Export + "/3D" + "/" + RunStamp;
@@ -29,7 +29,7 @@ String Folder_GEOMET;
 
 String Folder_Coordinates = BaseFolder + "/input/coordinates";
 
-String Folder_Land;
+String Folder_Terrain;
 String Folder_People = BaseFolder + "/input/images/people";
 String Folder_Trees = BaseFolder + "/input/images/trees";
 

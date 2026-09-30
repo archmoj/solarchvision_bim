@@ -41,7 +41,7 @@ void buildFaceGrid () {
 
   allFaces.draw(TypeWindow.RENDER);
   allModel1Ds.draw(TypeWindow.RENDER);
-  //Land3D.draw(TypeWindow.RENDER); // It is expensive because it expands the bounding box!
+  //Terrain.draw(TypeWindow.RENDER); // It is expensive because it expands the bounding box!
 
   int numFaces = entireFaces.size();
   int numPoints = entirePointsX.size();

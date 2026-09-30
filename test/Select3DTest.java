@@ -121,7 +121,7 @@ class Select3DTest {
 
   @Test
   void softSelectionFunction_fallsOffFromOneAtZeroToZeroAtTheRadius () {
-    // Defaults: softRadius=2, softPower=1.
+    // Defaults: softSelectionFalloffRadius=2, softSelectionFalloffPower=1.
     assertEquals(1f, app.Select3D.softSelectionFunction(0), 0.0001f);
     assertEquals((float) Math.cos(Math.toRadians(45)), app.Select3D.softSelectionFunction(1), 0.0001f);
     assertEquals(0f, app.Select3D.softSelectionFunction(2), 0.0001f);   // exactly at the radius
@@ -132,7 +132,7 @@ class Select3DTest {
 
   @Test
   void deselectAll_clearsEveryCategorysSelection () {
-    app.Select3D.LandPoint_ids = new int[]{1};
+    app.Select3D.terrainVertexIndices = new int[]{1};
     app.Select3D.Camera_ids = new int[]{1};
     app.Select3D.Section_ids = new int[]{1};
     app.Select3D.Solid_ids = new int[]{1};
@@ -147,7 +147,7 @@ class Select3DTest {
 
     app.Select3D.deselectAll();
 
-    assertEquals(0, app.Select3D.LandPoint_ids.length);
+    assertEquals(0, app.Select3D.terrainVertexIndices.length);
     assertEquals(0, app.Select3D.Camera_ids.length);
     assertEquals(0, app.Select3D.Section_ids.length);
     assertEquals(0, app.Select3D.Solid_ids.length);
@@ -388,7 +388,7 @@ class Select3DTest {
     assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.softSelection_ids);
     assertEquals(1f, app.Select3D.softSelection_values[0], 0.0001f);                          // distance 0
     assertEquals((float) Math.cos(Math.toRadians(45)), app.Select3D.softSelection_values[1], 0.0001f); // distance 1
-    assertEquals(0f, app.Select3D.softSelection_values[2], 0.0001f);                           // distance 3, past softRadius=2
+    assertEquals(0f, app.Select3D.softSelection_values[2], 0.0001f);                           // distance 3, past softSelectionFalloffRadius=2
   }
 
   // ============ isolatedVertices_Scene (Select3D's own version) ========
@@ -440,9 +440,9 @@ class Select3DTest {
   @Test
   void selectPick_landPointCategoryTogglesTheHitIndexDirectly () {
     app.addNewSelectionToPreviousSelection = 1;
-    app.currentObjectCategory = app.ObjectCategory.LANDPOINT;
+    app.currentObjectCategory = app.ObjectCategory.TERRAIN;
     app.Select3D.selectPick(new float[]{7, 0, 0, 0});
-    assertArrayEquals(new int[]{7}, app.Select3D.LandPoint_ids);
+    assertArrayEquals(new int[]{7}, app.Select3D.terrainVertexIndices);
   }
 
   @Test
@@ -716,12 +716,12 @@ class Select3DTest {
     original.solidDisplayEdges = false;
     original.sectionDisplayEdges = true;
     original.cameraDisplayFrustum = false;
-    original.LandPoint_displayPoints = true;
+    original.terrainDisplayVertices = true;
 
-    original.softPower = 2.5f;
-    original.softRadius = 3.5f;
+    original.softSelectionFalloffPower = 2.5f;
+    original.softSelectionFalloffRadius = 3.5f;
 
-    original.LandPoint_ids = new int[]{1};
+    original.terrainVertexIndices = new int[]{1};
     original.Model1D_ids = new int[]{2, 3};
     original.Model2D_ids = new int[]{4};
     original.Group_ids = new int[]{5, 6};
@@ -764,12 +764,12 @@ class Select3DTest {
     assertFalse(fresh.solidDisplayEdges);
     assertTrue(fresh.sectionDisplayEdges);
     assertFalse(fresh.cameraDisplayFrustum);
-    assertTrue(fresh.LandPoint_displayPoints);
+    assertTrue(fresh.terrainDisplayVertices);
 
-    assertEquals(2.5f, fresh.softPower, 0.0001f);
-    assertEquals(3.5f, fresh.softRadius, 0.0001f);
+    assertEquals(2.5f, fresh.softSelectionFalloffPower, 0.0001f);
+    assertEquals(3.5f, fresh.softSelectionFalloffRadius, 0.0001f);
 
-    assertArrayEquals(new int[]{1}, fresh.LandPoint_ids);
+    assertArrayEquals(new int[]{1}, fresh.terrainVertexIndices);
     assertArrayEquals(new int[]{2, 3}, fresh.Model1D_ids);
     assertArrayEquals(new int[]{4}, fresh.Model2D_ids);
     assertArrayEquals(new int[]{5, 6}, fresh.Group_ids);

@@ -36,19 +36,19 @@ class Move3DTest {
     assertArrayEquals(new float[]{2, 3, 4}, app.allVertices[0], 0.0001f);
   }
 
-  // ================= LandPoints =====================================
+  // ================= Terrain Vertices =====================================
 
   @Test
   void landPoints_movesOnlyTheSelectedGridCells () {
-    app.Land3D.columnCount = 3;
-    app.Land3D.Mesh = new float[2][3][3]; // 2 rows x 3 columns, all zero
+    app.Terrain.columnCount = 3;
+    app.Terrain.Mesh = new float[2][3][3]; // 2 rows x 3 columns, all zero
 
-    app.Select3D.LandPoint_ids = new int[]{4}; // flat index 4 -> row 1, col 1
+    app.Select3D.terrainVertexIndices = new int[]{4}; // flat index 4 -> row 1, col 1
 
-    app.Move3D.LandPoints(1, 2, 3);
+    app.Move3D.TerrainVertices(1, 2, 3);
 
-    assertArrayEquals(new float[]{1, 2, 3}, app.Land3D.Mesh[1][1], 0.0001f);
-    assertArrayEquals(new float[]{0, 0, 0}, app.Land3D.Mesh[0][0], 0.0001f); // untouched
+    assertArrayEquals(new float[]{1, 2, 3}, app.Terrain.Mesh[1][1], 0.0001f);
+    assertArrayEquals(new float[]{0, 0, 0}, app.Terrain.Mesh[0][0], 0.0001f); // untouched
   }
 
   // ================= softSelection ===================================

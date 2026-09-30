@@ -1,6 +1,6 @@
 class Overlay3D {
 
-  final DrawStyle LANDPOINT_STYLE      = new DrawStyle(4, color(255, 0, 255, 127));
+  final DrawStyle TERRAIN_STYLE      = new DrawStyle(4, color(255, 0, 255, 127));
   final DrawStyle CAMERA_STYLE         = new DrawStyle(2, color(255, 127, 0), color(0, 31));
   final DrawStyle SECTION_STYLE        = new DrawStyle(2, color(255, 127, 0), color(0, 31));
   final DrawStyle SOLID_STYLE          = new DrawStyle(4, color(255, 127, 0), color(0, 31));
@@ -239,32 +239,32 @@ class Overlay3D {
 
     translate(WIN3D.cX + 0.5 * WIN3D.dX, WIN3D.cY + 0.5 * WIN3D.dY);
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.TERRAIN) {
 
-      if (Select3D.LandPoint_displayPoints) {
+      if (Select3D.terrainDisplayVertices) {
 
-        LANDPOINT_STYLE.applyStyle();
+        TERRAIN_STYLE.applyStyle();
 
         ellipseMode(CENTER);
 
         float R = 10;
 
-        for (int o = Select3D.LandPoint_ids.length - 1; o >= 0; o--) {
+        for (int o = Select3D.terrainVertexIndices.length - 1; o >= 0; o--) {
 
-          int OBJ_ID = Select3D.LandPoint_ids[o];
+          int OBJ_ID = Select3D.terrainVertexIndices[o];
 
 
-          int i = OBJ_ID / Land3D.columnCount;
-          int j = OBJ_ID % Land3D.columnCount;
+          int i = OBJ_ID / Terrain.columnCount;
+          int j = OBJ_ID % Terrain.columnCount;
 
-          float x = Land3D.Mesh[i][j][0] * overallScale;
-          float y = Land3D.Mesh[i][j][1] * overallScale;
-          float z = Land3D.Mesh[i][j][2] * overallScale;
+          float x = Terrain.Mesh[i][j][0] * overallScale;
+          float y = Terrain.Mesh[i][j][1] * overallScale;
+          float z = Terrain.Mesh[i][j][2] * overallScale;
 
           float[] Image_XYZ = WIN3D.calculate_Perspective_Internally(x, y, z);
 
           if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], LANDPOINT_STYLE.innerWinX1 + R, LANDPOINT_STYLE.innerWinY1 + R, LANDPOINT_STYLE.innerWinX2 - R, LANDPOINT_STYLE.innerWinY2 - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+            if (isInside(Image_XYZ[0], Image_XYZ[1], TERRAIN_STYLE.innerWinX1 + R, TERRAIN_STYLE.innerWinY1 + R, TERRAIN_STYLE.innerWinX2 - R, TERRAIN_STYLE.innerWinY2 - R)) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
           }
 
         }

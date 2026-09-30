@@ -22,9 +22,9 @@ class LandGridTest {
     double stationLon = app.STATION.getLongitude();
     double stationLat = app.STATION.getLatitude();
 
-    double[] atColumn0 = app.Land3D.getLandGrid(0, 0);
-    double[] atColumn5 = app.Land3D.getLandGrid(0, 5);
-    double[] atLastColumn = app.Land3D.getLandGrid(0, app.Land3D.columnCount - 1);
+    double[] atColumn0 = app.Terrain.getLandGrid(0, 0);
+    double[] atColumn5 = app.Terrain.getLandGrid(0, 5);
+    double[] atLastColumn = app.Terrain.getLandGrid(0, app.Terrain.columnCount - 1);
 
     for (double[] p : new double[][]{atColumn0, atColumn5, atLastColumn}) {
       assertEquals(stationLon, p[0], EPS);
@@ -43,11 +43,11 @@ class LandGridTest {
     double stationLat = app.STATION.getLatitude();
     double stpLon = STP_LAT / app.funcs.cos_ang(app.STATION.getLatitude());
 
-    double[] atAngle0 = app.Land3D.getLandGrid(1, 0);
+    double[] atAngle0 = app.Terrain.getLandGrid(1, 0);
     assertEquals(stationLon + stpLon, atAngle0[0], EPS);
     assertEquals(stationLat, atAngle0[1], EPS);
 
-    double[] atAngle90 = app.Land3D.getLandGrid(1, 6); // 6 * 15deg = 90deg
+    double[] atAngle90 = app.Terrain.getLandGrid(1, 6); // 6 * 15deg = 90deg
     assertEquals(stationLon, atAngle90[0], EPS);
     assertEquals(stationLat + STP_LAT, atAngle90[1], EPS);
   }
@@ -58,8 +58,8 @@ class LandGridTest {
     // angle) should be sqrt(2) times row 1's offset.
     double stationLon = app.STATION.getLongitude();
 
-    double[] row1 = app.Land3D.getLandGrid(1, 0);
-    double[] row2 = app.Land3D.getLandGrid(2, 0);
+    double[] row1 = app.Terrain.getLandGrid(1, 0);
+    double[] row2 = app.Terrain.getLandGrid(2, 0);
 
     double row1Offset = row1[0] - stationLon;
     double row2Offset = row2[0] - stationLon;

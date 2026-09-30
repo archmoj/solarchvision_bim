@@ -76,7 +76,7 @@ class WIN3DTest {
   // ================= calculate_Click3D / camera-space / perspective =====
 
   @Test
-  void calculateClick3D_atImageCenterWithNoRotationLandsStraightAheadOfTheCamera () {
+  void calculateClick3D_atImageCenterWithNoRotationTerrainsStraightAheadOfTheCamera () {
     app.WIN3D.projectionTypeIndex = 1; // perspective
     app.WIN3D.scale = 1;
     app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
@@ -715,7 +715,7 @@ class WIN3DTest {
 
   @Test
   void handleCommandKey_delete_deselectsWithoutThrowingWhenNothingIsSelected () {
-    app.currentObjectCategory = app.ObjectCategory.LANDPOINT; // Delete3D.selection()'s explicit no-op case
+    app.currentObjectCategory = app.ObjectCategory.TERRAIN; // Delete3D.selection()'s explicit no-op case
     assertDoesNotThrow(() -> app.WIN3D.handleCommandKey(app.DELETE, false));
   }
 

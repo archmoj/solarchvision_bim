@@ -96,7 +96,7 @@ void saveProject (String myFile) {
 
   allGroups.to_XML(xml);
 
-  Land3D.to_XML(xml);
+  Terrain.to_XML(xml);
 
   Earth3D.to_XML(xml);
 

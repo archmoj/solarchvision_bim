@@ -597,9 +597,9 @@ void UI_setTo_View_Orbit (int n) {
 
 
 
-void UI_setTo_View_LandOrbit (int n) {
+void UI_setTo_View_TerrainOrbit (int n) {
 
-  WIN3D.currentTool = UITASK.LandOrbit_Pan_TargetRollZ;
+  WIN3D.currentTool = UITASK.TerrainOrbit_Pan_TargetRollZ;
 
   UI_rollout.revise();
 }

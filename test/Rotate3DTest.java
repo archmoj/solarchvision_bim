@@ -66,20 +66,20 @@ class Rotate3DTest {
       app.allVertices[0], 0.0001f);
   }
 
-  // ================= LandPoints / Vertices / Polylines / Faces =========
+  // ================= Terrain Vertices / Vertices / Polylines / Faces =========
 
   @Test
   void landPoints_rotatesOnlyTheSelectedGridCells () {
-    app.Land3D.columnCount = 3;
-    app.Land3D.Mesh = new float[1][3][3];
-    app.Land3D.Mesh[0][1] = new float[]{1, 0, 0};
+    app.Terrain.columnCount = 3;
+    app.Terrain.Mesh = new float[1][3][3];
+    app.Terrain.Mesh[0][1] = new float[]{1, 0, 0};
 
-    app.Select3D.LandPoint_ids = new int[]{1};
+    app.Select3D.terrainVertexIndices = new int[]{1};
 
-    app.Rotate3D.LandPoints(0, 0, 0, HALF_PI, 2);
+    app.Rotate3D.TerrainVertices(0, 0, 0, HALF_PI, 2);
 
-    assertArrayEquals(new float[]{0, 1, 0}, app.Land3D.Mesh[0][1], 0.0001f);
-    assertArrayEquals(new float[]{0, 0, 0}, app.Land3D.Mesh[0][0], 0.0001f); // untouched
+    assertArrayEquals(new float[]{0, 1, 0}, app.Terrain.Mesh[0][1], 0.0001f);
+    assertArrayEquals(new float[]{0, 0, 0}, app.Terrain.Mesh[0][0], 0.0001f); // untouched
   }
 
   @Test

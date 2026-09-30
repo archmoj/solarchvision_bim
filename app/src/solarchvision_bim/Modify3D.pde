@@ -1066,12 +1066,12 @@ class Modify3D {
     switch_category(ObjectCategory.FACE);
   }
 
-  void flatten_LandPoints () {
-    for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
-      int f = Select3D.LandPoint_ids[q];
-      int i = f / Land3D.columnCount;
-      int j = f % Land3D.columnCount;
-      Land3D.Mesh[i][j][2] = 0;
+  void flattenTerrainVertices () {
+    for (int q = 0; q < Select3D.terrainVertexIndices.length; q++) {
+      int f = Select3D.terrainVertexIndices[q];
+      int i = f / Terrain.columnCount;
+      int j = f % Terrain.columnCount;
+      Terrain.Mesh[i][j][2] = 0;
     }
 
     selection_changed();

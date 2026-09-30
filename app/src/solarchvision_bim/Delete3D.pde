@@ -99,7 +99,7 @@ class Delete3D {
 
   void selection () {
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT) {
+    if (currentObjectCategory == ObjectCategory.TERRAIN) {
     }
     if (currentObjectCategory == ObjectCategory.CAMERA) {
       Delete3D.selected_Cameras();

@@ -12,7 +12,7 @@ class Move3D {
     dz = B[2] - A[2];
     */
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT)  this.LandPoints(dx, dy, dz);
+    if (currentObjectCategory == ObjectCategory.TERRAIN)  this.TerrainVertices(dx, dy, dz);
     else if (currentObjectCategory == ObjectCategory.SOFTVERTEX) this.softSelection(dx, dy, dz);
     else if (currentObjectCategory == ObjectCategory.VERTEX)     this.Vertices(dx, dy, dz);
     else if (currentObjectCategory == ObjectCategory.POLYLINE)   this.Polylines(dx, dy, dz);
@@ -25,15 +25,15 @@ class Move3D {
     else if (currentObjectCategory == ObjectCategory.GROUP)      this.Groups(dx, dy, dz);
   }
 
-  void LandPoints (float dx, float dy, float dz) {
-    for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
-      int f = Select3D.LandPoint_ids[q];
-      int i = f / Land3D.columnCount;
-      int j = f % Land3D.columnCount;
+  void TerrainVertices (float dx, float dy, float dz) {
+    for (int q = 0; q < Select3D.terrainVertexIndices.length; q++) {
+      int f = Select3D.terrainVertexIndices[q];
+      int i = f / Terrain.columnCount;
+      int j = f % Terrain.columnCount;
 
-      Land3D.Mesh[i][j][0] += dx;
-      Land3D.Mesh[i][j][1] += dy;
-      Land3D.Mesh[i][j][2] += dz;
+      Terrain.Mesh[i][j][0] += dx;
+      Terrain.Mesh[i][j][1] += dy;
+      Terrain.Mesh[i][j][2] += dz;
     }
 
     model_changed();

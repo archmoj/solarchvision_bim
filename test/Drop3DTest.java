@@ -3,11 +3,11 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Model1Ds()/Model2Ds() ultimately call castDrop() -> castRay(), which for
-// WIN3D.toolParameterModifier == 0 hits Land3D.intersect() against real
+// WIN3D.toolParameterModifier == 0 hits Terrain.intersect() against real
 // (if empty-by-default) grid geometry - too easy to get subtly wrong
 // without deeper knowledge of that data shape, so this sticks to the one
 // selection ID list being empty (0 iterations, no intersect call at all)
-// and to castRay/castDrop's own fallback branch (no Land3D/Faces call
+// and to castRay/castDrop's own fallback branch (no Terrain/Faces call
 // either, since toolParameterModifier matches neither special value).
 class Drop3DTest {
 
@@ -22,7 +22,7 @@ class Drop3DTest {
 
   @Test
   void castRay_returnsUndefinedWhenTaskModifyParameterMatchesNeitherSpecialValue () {
-    app.WIN3D.toolParameterModifier = 99; // neither 0 (Land3D) nor faceParam
+    app.WIN3D.toolParameterModifier = 99; // neither 0 (Terrain) nor faceParam
 
     float[] result = app.Drop3D.castRay(new float[]{0, 0, 10}, new float[]{0, 0, -1}, 1);
 

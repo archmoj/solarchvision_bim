@@ -99,9 +99,9 @@ class MouseReleasedTest {
     app.WIN3D.dX = 200;
     app.WIN3D.dY = 200; // click center = (100, 100)
 
-    app.Land3D.rowCount = 2;
-    app.Land3D.columnCount = 2;
-    app.Land3D.Mesh = new float[][][]{
+    app.Terrain.rowCount = 2;
+    app.Terrain.columnCount = 2;
+    app.Terrain.Mesh = new float[][][]{
       {{0, 0, 0}, {0, 10, 0}},
       {{10, 0, 0}, {10, 10, 0}}
     };
@@ -127,9 +127,9 @@ class MouseReleasedTest {
     app.WIN3D.dX = 200;
     app.WIN3D.dY = 200;
 
-    app.Land3D.rowCount = 2;
-    app.Land3D.columnCount = 2;
-    app.Land3D.Mesh = new float[][][]{
+    app.Terrain.rowCount = 2;
+    app.Terrain.columnCount = 2;
+    app.Terrain.Mesh = new float[][][]{
       {{0, 0, 0}, {0, 10, 0}},
       {{10, 0, 0}, {10, 10, 0}}
     };
@@ -172,9 +172,9 @@ class MouseReleasedTest {
     app.WIN3D.dX = 200;
     app.WIN3D.dY = 200; // click center = (100, 100)
 
-    app.Land3D.rowCount = 2;
-    app.Land3D.columnCount = 2;
-    app.Land3D.Mesh = new float[][][]{
+    app.Terrain.rowCount = 2;
+    app.Terrain.columnCount = 2;
+    app.Terrain.Mesh = new float[][][]{
       {{0, 0, 0}, {0, 10, 0}},
       {{10, 0, 0}, {10, 10, 0}}
     };

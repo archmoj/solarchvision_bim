@@ -470,12 +470,12 @@ class MouseClickedTest {
   }
 
   @Test
-  void computeCreateParams_skipsTheAlignmentOffsetForModel1DModel2DLandPointCameraAndSection () {
+  void computeCreateParams_skipsTheAlignmentOffsetForModel1DModel2DTerrainVertexCameraAndSection () {
     app.User3D.creatorLength = 4;
     app.Select3D.pivotAlignmentX = 1; // would shift x if this category weren't excluded
 
     for (int category : new int[]{
-      app.ObjectCategory.MODEL1D, app.ObjectCategory.MODEL2D, app.ObjectCategory.LANDPOINT,
+      app.ObjectCategory.MODEL1D, app.ObjectCategory.MODEL2D, app.ObjectCategory.TERRAIN,
       app.ObjectCategory.CAMERA, app.ObjectCategory.SECTION
     }) {
       app.currentObjectCategory = category;

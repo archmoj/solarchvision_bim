@@ -13,7 +13,7 @@ void exportRadiance () {
 
 
 
-  Land3D.draw(TypeWindow.RAD3D);
+  Terrain.draw(TypeWindow.RAD3D);
 
   allFaces.draw(TypeWindow.RAD3D);
 

@@ -151,7 +151,7 @@ class SHADE {
       if (WIN3D.impactType == Impact_PASSIVE) PAL_type = allFaces.passiveColorScaleIndex;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_type = allSolids.colorScaleIndex;
-    if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_type = Land3D.colorScaleIndex;
+    if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_type = Terrain.colorScaleIndex;
     return PAL_type;
   }
 
@@ -162,7 +162,7 @@ class SHADE {
       if (WIN3D.impactType == Impact_PASSIVE) PAL_direction = allFaces.passiveColorScaleDirection;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_direction = allSolids.colorScaleDirection;
-    if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_direction = Land3D.colorScaleDirection;
+    if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_direction = Terrain.colorScaleDirection;
     return PAL_direction;
   }
 
@@ -173,7 +173,7 @@ class SHADE {
       if (WIN3D.impactType == Impact_PASSIVE) PAL_multiplier = allFaces.passiveColorScaleFactor;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_multiplier = allSolids.colorScaleFactor;
-    if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_multiplier = Land3D.colorScaleFactor;
+    if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_multiplier = Terrain.colorScaleFactor;
     return PAL_multiplier;
   }
 

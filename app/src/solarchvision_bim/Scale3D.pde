@@ -8,7 +8,7 @@ class Scale3D {
     y0 = O[1];
     z0 = O[2];
 
-    if (currentObjectCategory == ObjectCategory.LANDPOINT)       this.LandPoints(x0, y0, z0, sx, sy, sz);
+    if (currentObjectCategory == ObjectCategory.TERRAIN)       this.TerrainVertices(x0, y0, z0, sx, sy, sz);
     else if (currentObjectCategory == ObjectCategory.SOFTVERTEX) this.softSelection(x0, y0, z0, sx, sy, sz);
     else if (currentObjectCategory == ObjectCategory.VERTEX)     this.Vertices(x0, y0, z0, sx, sy, sz);
     else if (currentObjectCategory == ObjectCategory.POLYLINE)   this.Polylines(x0, y0, z0, sx, sy, sz);
@@ -31,17 +31,17 @@ class Scale3D {
     return Select3D.translateInside_ReferencePivot(x, y, z);
   }
 
-  void LandPoints (float x0, float y0, float z0, float sx, float sy, float sz) {
-    for (int q = 0; q < Select3D.LandPoint_ids.length; q++) {
-      int f = Select3D.LandPoint_ids[q];
-      int i = f / Land3D.columnCount;
-      int j = f % Land3D.columnCount;
+  void TerrainVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
+    for (int q = 0; q < Select3D.terrainVertexIndices.length; q++) {
+      int f = Select3D.terrainVertexIndices[q];
+      int i = f / Terrain.columnCount;
+      int j = f % Terrain.columnCount;
 
-      float[] P = scalePointAroundPivot(Land3D.Mesh[i][j][0], Land3D.Mesh[i][j][1], Land3D.Mesh[i][j][2], x0, y0, z0, sx, sy, sz);
+      float[] P = scalePointAroundPivot(Terrain.Mesh[i][j][0], Terrain.Mesh[i][j][1], Terrain.Mesh[i][j][2], x0, y0, z0, sx, sy, sz);
 
-      Land3D.Mesh[i][j][0] = P[0];
-      Land3D.Mesh[i][j][1] = P[1];
-      Land3D.Mesh[i][j][2] = P[2];
+      Terrain.Mesh[i][j][0] = P[0];
+      Terrain.Mesh[i][j][1] = P[1];
+      Terrain.Mesh[i][j][2] = P[2];
     }
 
     model_changed();

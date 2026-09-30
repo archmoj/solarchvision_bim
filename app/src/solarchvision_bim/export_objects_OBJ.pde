@@ -29,7 +29,7 @@ void exportObj (String suffix) {
 
   Earth3D.draw(TypeWindow.OBJ3D);
 
-  Land3D.draw(TypeWindow.OBJ3D);
+  Terrain.draw(TypeWindow.OBJ3D);
 
   Tropo3D.draw(TypeWindow.OBJ3D);
 

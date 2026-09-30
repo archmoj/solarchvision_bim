@@ -2,7 +2,7 @@ class OBJECTTYPE {
 
   final static String CLASS_STAMP = "OBJECTTYPE";
 
-  final static int LANDPOINT = 0;
+  final static int TERRAIN = 0;
   final static int MODEL1D = 1;
   final static int MODEL2D = 2;
   final static int GROUP = 3;

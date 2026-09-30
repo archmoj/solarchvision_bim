@@ -950,26 +950,26 @@ class ModifyGeometryTest {
     assertArrayEquals(new int[]{4}, app.Select3D.Face_ids);
   }
 
-  // --- flatten_LandPoints ------------------------------------------
+  // --- flattenTerrainVertices ------------------------------------------
 
   @Test
-  void flattenLandPoints_zerosOutElevationOnlyAtTheSelectedGridCells () {
-    app.Land3D.columnCount = 3;
-    app.Land3D.Mesh = new float[2][3][3];
-    for (float[][] row : app.Land3D.Mesh) {
+  void flattenTerrainVertices_zerosOutElevationOnlyAtTheSelectedGridCells () {
+    app.Terrain.columnCount = 3;
+    app.Terrain.Mesh = new float[2][3][3];
+    for (float[][] row : app.Terrain.Mesh) {
       for (float[] cell : row) cell[2] = 99f; // give every cell a distinctive, nonzero elevation
     }
 
     // Flat index 1 -> row 0, col 1. Flat index 4 -> row 1, col 1.
-    app.Select3D.LandPoint_ids = new int[]{1, 4};
+    app.Select3D.terrainVertexIndices = new int[]{1, 4};
 
-    app.Modify3D.flatten_LandPoints();
+    app.Modify3D.flattenTerrainVertices();
 
-    assertEquals(0f, app.Land3D.Mesh[0][1][2], 0.0001f);
-    assertEquals(0f, app.Land3D.Mesh[1][1][2], 0.0001f);
+    assertEquals(0f, app.Terrain.Mesh[0][1][2], 0.0001f);
+    assertEquals(0f, app.Terrain.Mesh[1][1][2], 0.0001f);
     // Untouched cells keep their original elevation.
-    assertEquals(99f, app.Land3D.Mesh[0][0][2], 0.0001f);
-    assertEquals(99f, app.Land3D.Mesh[1][2][2], 0.0001f);
+    assertEquals(99f, app.Terrain.Mesh[0][0][2], 0.0001f);
+    assertEquals(99f, app.Terrain.Mesh[1][2][2], 0.0001f);
   }
 
   // --- autoNormalFaces_Selection: the flip-on-hit case ----------------

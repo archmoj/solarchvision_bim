@@ -1,6 +1,6 @@
-class Land3D {
+class Terrain {
 
-  final static String CLASS_STAMP = "Land3D";
+  final static String CLASS_STAMP = "Terrain";
 
   boolean loadMesh = true;
   boolean loadTextures = false;
@@ -48,7 +48,7 @@ class Land3D {
 
     if (this.loadTextures) {
       try {
-        String[] filenames = sort(OPESYS.getFiles(Folder_Land)); // important to sort
+        String[] filenames = sort(OPESYS.getFiles(Folder_Terrain)); // important to sort
         if (filenames != null) {
           for (int i = 0; i < filenames.length; i++) {
             addLandTextureIfElevationJpg(filenames[i]);
@@ -74,7 +74,7 @@ class Land3D {
     if (!Parts[0].toUpperCase().equals("ELEV")) return;
     if (Parts.length <= 1) return;
 
-    String dir = Folder_Land + "/" + filename;
+    String dir = Folder_Terrain + "/" + filename;
     this.Textures_path = (String[]) concat(this.Textures_path, new String[] { dir });
 
     float u = float(Parts[1]);
@@ -125,7 +125,7 @@ class Land3D {
 
   void loadMeshFromFiles () {
     for (int i = 0; i < this.rowCount; i++) {
-      XML FileALL = loadXML(Folder_Land + "/" + nf(i, 0) + ".xml");
+      XML FileALL = loadXML(Folder_Terrain + "/" + nf(i, 0) + ".xml");
       XML[] children0 = FileALL.getChildren("result");
 
       for (int j = 0; j < this.columnCount; j++) {
@@ -186,7 +186,7 @@ class Land3D {
     this.Mesh = new float[this.rowCount][this.columnCount][3];
 
     for (int i = 0; i < this.rowCount; i++) {
-      String the_target = Folder_Land + "/" + nf(i, 0) + ".xml";
+      String the_target = Folder_Terrain + "/" + nf(i, 0) + ".xml";
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
@@ -222,7 +222,7 @@ class Land3D {
     };
 
     for (int i = 0; i <= 15; i++) {
-      String the_target = Folder_Land + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
+      String the_target = Folder_Terrain + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
@@ -266,10 +266,10 @@ class Land3D {
     float PAL_multiplier = SHADE.get_PAL_multiplier();
 
     if (User3D.exporterMaterialLibrary) {
-      writeLandMaterials(target_window);
+      writeTerrainMaterials(target_window);
     }
 
-    if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.LandMesh)) {
+    if ((target_window == TypeWindow.LandGap) || (target_window == TypeWindow.TerrainMesh)) {
       beginLandGroup();
     }
 
@@ -278,7 +278,7 @@ class Land3D {
     if (target_window == TypeWindow.LandGap) {
       i_start = 0;
       i_end = this.skipStart;
-      target_window = TypeWindow.LandMesh; // the rest of the logic is the same as LandMesh
+      target_window = TypeWindow.TerrainMesh; // the rest of the logic is the same as TerrainMesh
     }
 
     num_vertices_added = 0;
@@ -287,12 +287,12 @@ class Land3D {
     for (int _turn = 1; _turn <= end_turn; _turn++) {
       if ((target_window == TypeWindow.OBJ3D) && (_turn == 3) && this.displayTexture) {
         obj_lastGroupNumber += 1;
-        objOutput.println("g LandMap");
+        objOutput.println("g TerrainMap");
       }
 
       int tessellation = this.displayTessellation;
       if (WIN3D.shadingMode == SHADE.Surface_Base) tessellation = 0;
-      if (target_window == TypeWindow.LandMesh) tessellation = 0;
+      if (target_window == TypeWindow.TerrainMesh) tessellation = 0;
 
       int totalNumberOfSubs = 1;
       if (tessellation > 0) totalNumberOfSubs = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // x4: a LAND cell has 4 points
@@ -308,25 +308,25 @@ class Land3D {
     }
 
     if (target_window == TypeWindow.WIN3D) {
-      drawLandPoints();
+      drawTerrainVertices();
       flushLandEdgeBatch();
     }
 
-    if (target_window == TypeWindow.LandMesh) {
+    if (target_window == TypeWindow.TerrainMesh) {
       Select3D.Group_ids = new int[1];
       Select3D.Group_ids[0] = allGroups.num - 1;
       Modify3D.weldObjectsVertices_Selection(0);
     }
   }
 
-  void writeLandMaterials (int target_window) {
+  void writeTerrainMaterials (int target_window) {
     for (int n_Map = 0; n_Map < this.Textures_num; n_Map++) {
       if (target_window == TypeWindow.HTML) {
-        htmlOutput.println("\t\t\t\t<Appearance DEF='LandMap" + nf(n_Map, 0) + "'>");
+        htmlOutput.println("\t\t\t\t<Appearance DEF='TerrainMap" + nf(n_Map, 0) + "'>");
       }
 
       if (target_window == TypeWindow.OBJ3D) {
-        mtlOutput.println("newmtl LandMap" + nf(n_Map, 0));
+        mtlOutput.println("newmtl TerrainMap" + nf(n_Map, 0));
         mtlOutput.println("\tilum 2");
         mtlOutput.println("\tKa 1.000 1.000 1.000");
         mtlOutput.println("\tKd 1.000 1.000 1.000");
@@ -378,7 +378,7 @@ class Land3D {
       drawLandCell(target_window, i, j, tessellation, totalNumberOfSubs, _turn, PAL_type, PAL_direction, PAL_multiplier);
     }
 
-    if ((target_window == TypeWindow.LandMesh) && (i == 0)) {
+    if ((target_window == TypeWindow.TerrainMesh) && (i == 0)) {
       closeLandCenterGap(i);
     }
   }
@@ -514,13 +514,13 @@ class Land3D {
     }
 
     if ((target_window == TypeWindow.OBJ3D) && (_turn == 3) && this.displayTexture && User3D.exporterMaterialLibrary && (n_Map != -1)) {
-      objOutput.println("usemtl LandMap" + nf(n_Map, 0));
+      objOutput.println("usemtl TerrainMap" + nf(n_Map, 0));
     }
 
     if (target_window == TypeWindow.HTML) {
       htmlOutput.println("\t\t\t\t<shape>");
       if (n_Map != -1) {
-        htmlOutput.println("\t\t\t\t\t<Appearance USE='LandMap" + nf(n_Map, 0) + "'></Appearance>");
+        htmlOutput.println("\t\t\t\t\t<Appearance USE='TerrainMap" + nf(n_Map, 0) + "'></Appearance>");
       }
 
       htmlOutput.print("\t\t\t\t\t<IndexedFaceSet solid='false'"); // force two-sided
@@ -555,7 +555,7 @@ class Land3D {
       SKY2D_graphics.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
     }
 
-    if ((target_window == TypeWindow.LandMesh) && (i != 0)) { // avoid duplicate points at the center
+    if ((target_window == TypeWindow.TerrainMesh) && (i != 0)) { // avoid duplicate points at the center
       allPoints.create(subFace[s][0], subFace[s][1], subFace[s][2]);
     }
 
@@ -646,16 +646,16 @@ class Land3D {
     }
 
     if ((target_window == TypeWindow.OBJ3D) && (_turn == 3) && this.displayTexture) {
-      writeLandObjFace();
+      writeTerrainObjFace();
     }
 
-    if ((target_window == TypeWindow.LandMesh) && (i != 0)) { // avoid duplicate points at the center
+    if ((target_window == TypeWindow.TerrainMesh) && (i != 0)) { // avoid duplicate points at the center
       int len = allPoints.getLength();
       allFaces.create(new int[] { len - 4, len - 3, len - 2, len - 1 });
     }
   }
 
-  void writeLandObjFace () {
+  void writeTerrainObjFace () {
     String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
     String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
     String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
@@ -712,7 +712,7 @@ class Land3D {
     }
   }
 
-  void drawLandPoints () {
+  void drawTerrainVertices () {
     if (!this.displayPoints) return;
 
     WIN3D.graphics.fill(191, 191, 0);
@@ -981,10 +981,10 @@ class Land3D {
     {
       XML parent = xml.getChild(this.CLASS_STAMP + ".Textures");
 
-      int pre_Land3D_Textures_num = this.Textures_num;
+      int pre_Terrain_Textures_num = this.Textures_num;
       this.Textures_num = XML_getInt(parent, "ni");
 
-      if (pre_Land3D_Textures_num != this.Textures_num) {
+      if (pre_Terrain_Textures_num != this.Textures_num) {
         int ni = this.Textures_num;
         this.Textures_path = new String[ni];
         this.Textures_map = new PImage[ni];

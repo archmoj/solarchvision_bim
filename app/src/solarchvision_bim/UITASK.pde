@@ -4,7 +4,7 @@ class UITASK {
 
   int num = 0;
 
-  int LandOrbit_Pan_TargetRollZ = num++;
+  int TerrainOrbit_Pan_TargetRollZ = num++;
   int LookAtDirection = num++;
   int DistMouseXY_TargetRollXY_TargetRollZ = num++;
   int PanY_TargetRoll = num++;

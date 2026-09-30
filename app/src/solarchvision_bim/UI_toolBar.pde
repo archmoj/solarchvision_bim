@@ -53,7 +53,7 @@ class UI_toolBar {
     }
     ,
     {
-      "1", "", "Land Orbit", "1.0"
+      "1", "", "Terrain Orbit", "1.0"
     }
     ,
     {
@@ -99,7 +99,7 @@ class UI_toolBar {
     ,
 
     {
-      "4", "Land", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Polyline", "Layer Type", "2.0"
+      "4", "Terrain", "1D", "2D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "Polyline", "Layer Type", "2.0"
     }
     ,
     {
@@ -485,7 +485,7 @@ class UI_toolBar {
       case "PivotY": UI_setTo_View_PivotY(j - 2); break;
       case "PivotZ": UI_setTo_View_PivotZ(j - 2); break;
 
-      case "Land Orbit": UI_setTo_View_LandOrbit(0); break;
+      case "Terrain Orbit": UI_setTo_View_TerrainOrbit(0); break;
 
       case "Orbit": UI_setTo_View_Orbit(j - 1); break;
       case "Camera Roll": UI_setTo_View_CameraRoll(j - 1); break;
@@ -544,7 +544,7 @@ class UI_toolBar {
       case "Window Select": this.drawWindowSelect(j, cx, cy, r); break;
       case "Projection Type": this.drawProjectionType(j, cx, cy, r); break;
       case "Zoom": this.drawZOOM(j, cx, cy, r); break;
-      case "Land Orbit": this.drawLandOrbit(j, cx, cy, r); break;
+      case "Terrain Orbit": this.drawTerrainOrbit(j, cx, cy, r); break;
       case "Orbit": this.drawOrbit(j, cx, cy, r); break;
       case "Camera Roll": this.drawCameraRoll(j, cx, cy, r); break;
       case "Target Roll": this.drawTargetRoll(j, cx, cy, r); break;
@@ -1690,7 +1690,7 @@ class UI_toolBar {
   }
 
 
-  void drawLandOrbit (int _type, float x, float y, float r) {
+  void drawTerrainOrbit (int _type, float x, float y, float r) {
 
     {
       pushMatrix();
