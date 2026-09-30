@@ -38,7 +38,6 @@ class WindRose {
 
       WIN3D.graphics.beginShape();
 
-      float elevation = 0.0 + allSolidImpacts.Z[1];
       float horizontalUnitSize = this.textureSize;
       float verticalUnitSize = this.textureSize;
 
@@ -47,10 +46,9 @@ class WindRose {
       float minV = 0;
       float maxV = this.renderedResolution;
 
-      //float c = HeightAboveGround * overallScale; // <<< or zero i.e. height of the plane in 3D  // ?????????
-      float c = elevation * overallScale;
-
+      float c = 0;
       c += 1; // put this.Image it at level 1m. // <<<<<<<<<<<
+      c *= overallScale;
 
       WIN3D.graphics.beginShape();
 
@@ -92,8 +90,13 @@ class WindRose {
         x = a;
         y = b;
         z = c;
-
-        WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale, u * horizontalUnitSize, v * verticalUnitSize);
+        WIN3D.graphics.vertex(
+          x * overallScale * WIN3D.scale * horizontalUnitSize,
+          -y * overallScale * WIN3D.scale * horizontalUnitSize,
+          z * overallScale * WIN3D.scale,
+          u,
+          v
+        );
       }
 
       WIN3D.graphics.endShape(CLOSE);
