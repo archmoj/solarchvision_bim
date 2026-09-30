@@ -47,7 +47,7 @@ class Select3D {
   int[] PolylineIndices = new int[0];
 
   int[] softSelectionIndices = new int[0];
-  float[] softSelection_values = new float[0];
+  float[] softSelectionValues = new float[0];
 
   float softSelectionFalloffPower = 1;
   float softSelectionFalloffRadius = 2; // 2 = 2m
@@ -1572,7 +1572,7 @@ class Select3D {
 
   void deselect_softSelection () {
     this.softSelectionIndices = new int [0];
-    this.softSelection_values = new float [0];
+    this.softSelectionValues = new float [0];
 
     selection_changed();
   }
@@ -1934,7 +1934,7 @@ class Select3D {
     this.convert_Groups_to_Vertices();
 
     this.softSelectionIndices = new int[this.VertexIndices.length];
-    this.softSelection_values = new float[this.VertexIndices.length];
+    this.softSelectionValues = new float[this.VertexIndices.length];
 
     for (int q = 0; q < this.VertexIndices.length; q++) {
 
@@ -1953,7 +1953,7 @@ class Select3D {
         }
       }
 
-      this.softSelection_values[q] = this.softSelectionFunction(d_min);
+      this.softSelectionValues[q] = this.softSelectionFunction(d_min);
     }
 
     this.softSelectionIndices = this.VertexIndices;
@@ -2224,7 +2224,7 @@ class Select3D {
     XML_setString(parent, "selected_Cameras", idsToXML(this.CameraIndices));
     XML_setString(parent, "selected_Points", idsToXML(this.VertexIndices));
     XML_setString(parent, "softSelectionIndices", idsToXML(this.softSelectionIndices));
-    XML_setString(parent, "softSelection_values", floatsToXML(this.softSelection_values));
+    XML_setString(parent, "softSelectionValues", floatsToXML(this.softSelectionValues));
   }
 
 
@@ -2276,7 +2276,7 @@ class Select3D {
     this.CameraIndices = idsFromXML(XML_getString(parent, "selected_Cameras"));
     this.VertexIndices = idsFromXML(XML_getString(parent, "selected_Points"));
     this.softSelectionIndices = idsFromXML(XML_getString(parent, "softSelectionIndices"));
-    this.softSelection_values = floatsFromXML(XML_getString(parent, "softSelection_values"));
+    this.softSelectionValues = floatsFromXML(XML_getString(parent, "softSelectionValues"));
   }
 
 }

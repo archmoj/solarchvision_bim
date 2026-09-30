@@ -56,7 +56,7 @@ class Rotate3DTest {
     // different blend than Scale3D.softSelection's linear value lerp.
     app.allVertices = new float[][]{{1, 0, 0}};
     app.Select3D.softSelectionIndices = new int[]{0};
-    app.Select3D.softSelection_values = new float[]{0.5f};
+    app.Select3D.softSelectionValues = new float[]{0.5f};
 
     app.Rotate3D.softSelection(0, 0, 0, HALF_PI, 2);
 

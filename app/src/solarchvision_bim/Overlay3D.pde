@@ -595,7 +595,7 @@ class Overlay3D {
 
           int vNo = Select3D.softSelectionIndices[q];
 
-          float _u = Select3D.softSelection_values[q];
+          float _u = Select3D.softSelectionValues[q];
 
           float x = allPoints.getX(vNo) * overallScale;
           float y = allPoints.getY(vNo) * overallScale;

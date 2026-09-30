@@ -42,7 +42,7 @@ class Move3D {
   void softSelection (float dx, float dy, float dz) {
     for (int q = 0; q < Select3D.softSelectionIndices.length; q++) {
       int f = Select3D.softSelectionIndices[q];
-      float v = Select3D.softSelection_values[q];
+      float v = Select3D.softSelectionValues[q];
 
       allPoints.move(f, dx * v, dy * v, dz * v);
     }

@@ -143,7 +143,7 @@ class Select3DTest {
     app.Select3D.VertexIndices = new int[]{1};
     app.Select3D.GroupIndices = new int[]{1};
     app.Select3D.softSelectionIndices = new int[]{1};
-    app.Select3D.softSelection_values = new float[]{1};
+    app.Select3D.softSelectionValues = new float[]{1};
 
     app.Select3D.deselectAll();
 
@@ -158,7 +158,7 @@ class Select3DTest {
     assertEquals(0, app.Select3D.VertexIndices.length);
     assertEquals(0, app.Select3D.GroupIndices.length);
     assertEquals(0, app.Select3D.softSelectionIndices.length); // deselect_Vertices cascades into this too
-    assertEquals(0, app.Select3D.softSelection_values.length);
+    assertEquals(0, app.Select3D.softSelectionValues.length);
   }
 
   // ============ selectAll / invertSelection / selectLast ===============
@@ -386,9 +386,9 @@ class Select3DTest {
     // 3 points), each weighted by softSelectionFunction of its distance
     // to the nearest ORIGINALLY-selected point.
     assertArrayEquals(new int[]{0, 1, 2}, app.Select3D.softSelectionIndices);
-    assertEquals(1f, app.Select3D.softSelection_values[0], 0.0001f);                          // distance 0
-    assertEquals((float) Math.cos(Math.toRadians(45)), app.Select3D.softSelection_values[1], 0.0001f); // distance 1
-    assertEquals(0f, app.Select3D.softSelection_values[2], 0.0001f);                           // distance 3, past softSelectionFalloffRadius=2
+    assertEquals(1f, app.Select3D.softSelectionValues[0], 0.0001f);                          // distance 0
+    assertEquals((float) Math.cos(Math.toRadians(45)), app.Select3D.softSelectionValues[1], 0.0001f); // distance 1
+    assertEquals(0f, app.Select3D.softSelectionValues[2], 0.0001f);                           // distance 3, past softSelectionFalloffRadius=2
   }
 
   // ============ isolatedVertices_Scene (Select3D's own version) ========
@@ -732,7 +732,7 @@ class Select3DTest {
     original.CameraIndices = new int[]{12};
     original.VertexIndices = new int[]{13, 14, 15};
     original.softSelectionIndices = new int[]{16};
-    original.softSelection_values = new float[]{0.25f};
+    original.softSelectionValues = new float[]{0.25f};
 
     processing.data.XML root = new processing.data.XML("root");
     original.to_XML(root);
@@ -780,14 +780,14 @@ class Select3DTest {
     assertArrayEquals(new int[]{12}, fresh.CameraIndices);
     assertArrayEquals(new int[]{13, 14, 15}, fresh.VertexIndices);
     assertArrayEquals(new int[]{16}, fresh.softSelectionIndices);
-    assertArrayEquals(new float[]{0.25f}, fresh.softSelection_values, 0.0001f);
+    assertArrayEquals(new float[]{0.25f}, fresh.softSelectionValues, 0.0001f);
   }
 
   @Test
   void toXMLThenFromXML_roundTripsEmptyIdListsAsEmptyArraysNotNull () {
     solarchvision_bim.Select3D original = app.Select3D;
     original.VertexIndices = new int[0];
-    original.softSelection_values = new float[0];
+    original.softSelectionValues = new float[0];
 
     processing.data.XML root = new processing.data.XML("root");
     original.to_XML(root);
@@ -797,8 +797,8 @@ class Select3DTest {
 
     assertNotNull(fresh.VertexIndices);
     assertEquals(0, fresh.VertexIndices.length);
-    assertNotNull(fresh.softSelection_values);
-    assertEquals(0, fresh.softSelection_values.length);
+    assertNotNull(fresh.softSelectionValues);
+    assertEquals(0, fresh.softSelectionValues.length);
   }
 
   @Test

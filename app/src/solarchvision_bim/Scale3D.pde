@@ -50,7 +50,7 @@ class Scale3D {
   void softSelection (float x0, float y0, float z0, float sx, float sy, float sz) {
     for (int q = 0; q < Select3D.softSelectionIndices.length; q++) {
       int f = Select3D.softSelectionIndices[q];
-      float v = Select3D.softSelection_values[q];
+      float v = Select3D.softSelectionValues[q];
 
       float x = allPoints.getX(f) - x0;
       float y = allPoints.getY(f) - y0;

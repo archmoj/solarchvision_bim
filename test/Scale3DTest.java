@@ -59,7 +59,7 @@ class Scale3DTest {
     // own rather than assumed to match the pattern above.
     app.allVertices = new float[][]{{3, 0, 0}};
     app.Select3D.softSelectionIndices = new int[]{0};
-    app.Select3D.softSelection_values = new float[]{0.5f};
+    app.Select3D.softSelectionValues = new float[]{0.5f};
 
     app.Scale3D.softSelection(1, 0, 0, 3, 1, 1);
 
@@ -70,7 +70,7 @@ class Scale3DTest {
   void softSelection_fullWeightMatchesAFullScale () {
     app.allVertices = new float[][]{{3, 0, 0}};
     app.Select3D.softSelectionIndices = new int[]{0};
-    app.Select3D.softSelection_values = new float[]{1f};
+    app.Select3D.softSelectionValues = new float[]{1f};
 
     app.Scale3D.softSelection(1, 0, 0, 3, 1, 1);
 
