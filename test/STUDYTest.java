@@ -274,7 +274,7 @@ class STUDYTest {
     app.STUDY.activeColorScaleFactor = 0.5f;
     app.STUDY.opacityPercentage = 60;
     app.STUDY.rect_scale = 1.25f;
-    app.STUDY.rect_offset_x = 0.6f;
+    app.STUDY.rect_offset_x = 0.0f;
     app.STUDY.showImpactSummary = false;
     app.STUDY.impactLayerIndex = 2;
     app.STUDY.impactGraphIndex = 3;

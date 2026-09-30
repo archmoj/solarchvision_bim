@@ -65,7 +65,7 @@ class STUDY {
   float opacityPercentage = 50.0;
 
   float rect_scale = 1.0;
-  float rect_offset_x = 0.5;
+  float rect_offset_x = 0.0;
 
   boolean showImpactSummary = true;
 
@@ -463,7 +463,7 @@ class STUDY {
     if (fill_back != 0) {
       for (int i = this.startDay; i < this.endDay; i++) {
 
-        float x1 = (i + this.rect_offset_x) * sx_Plot;
+        float x1 = (i + (this.rect_offset_x + 0.5)) * sx_Plot;
         float y1 = 0;
         float h = 2 * 90 * (this.rect_scale / 200) * sx_Plot;
 
@@ -487,8 +487,8 @@ class STUDY {
         int r = 0;
         if ((t % 45) != 0) r = 15;
 
-        float x1 = (i + this.rect_offset_x + r * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
-        float x2 = (i + this.rect_offset_x + 90 * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
+        float x1 = (i + (this.rect_offset_x + 0.5) + r * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
+        float x2 = (i + (this.rect_offset_x + 0.5) + 90 * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
         float y1 = -(r * (this.rect_scale / 200) * funcs.sin_ang(t)) * sx_Plot;
         float y2 = -(90 * (this.rect_scale / 200) * funcs.sin_ang(t)) * sx_Plot;
 
@@ -540,7 +540,7 @@ class STUDY {
             break;
           }
 
-          float x = (i + this.rect_offset_x + textR * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
+          float x = (i + (this.rect_offset_x + 0.5) + textR * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
           float y = -(textR * (this.rect_scale / 200) * funcs.sin_ang(t)) * sx_Plot;
 
           this.graphics.text(txt, x, y);
@@ -559,7 +559,7 @@ class STUDY {
           this.graphics.noFill();
         }
 
-        float x1 = (i + this.rect_offset_x) * sx_Plot;
+        float x1 = (i + (this.rect_offset_x + 0.5)) * sx_Plot;
         float y1 = 0;
         float h = 2 * r * (this.rect_scale / 200) * sx_Plot;
 
@@ -572,7 +572,7 @@ class STUDY {
             textSize *= 1.5;
           }
 
-          float x = (i + this.rect_offset_x + r * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
+          float x = (i + (this.rect_offset_x + 0.5) + r * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
           float y = -(r * (this.rect_scale / 200) * funcs.sin_ang(t)) * sx_Plot;
 
           this.graphics.stroke(0, 127);
@@ -2084,12 +2084,12 @@ class STUDY {
         this.graphics.strokeWeight(this.strokeScale * 0);
         this.graphics.stroke(223);
         this.graphics.fill(223);
-        this.graphics.rect((j + this.rect_offset_x - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
 
         this.graphics.strokeWeight(this.strokeScale * 2);
         this.graphics.stroke(255);
         this.graphics.noFill();
-        this.graphics.rect((j + this.rect_offset_x - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
 
         this.graphics.imageMode(CENTER);
         this.graphics.image(allWindRoses.Image[j + 1], (j + 100 * (this.rect_scale / 200)) * sx_Plot, 0, int((180 * (this.rect_scale / 200)) * sx_Plot), int((180 * (this.rect_scale / 200)) * sx_Plot));
@@ -2112,7 +2112,7 @@ class STUDY {
       this.graphics.strokeWeight(this.strokeScale * 2);
       this.graphics.stroke(0);
       this.graphics.noFill();
-      this.graphics.rect((j + this.rect_offset_x - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+      this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
     }
 
     if (this.impactTypeIndex != Impact_ACTIVE) {
@@ -2242,12 +2242,12 @@ class STUDY {
         this.graphics.strokeWeight(this.strokeScale * 0);
         this.graphics.stroke(223);
         this.graphics.fill(223);
-        this.graphics.rect((j + this.rect_offset_x - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
 
         this.graphics.strokeWeight(this.strokeScale * 2);
         this.graphics.stroke(255);
         this.graphics.noFill();
-        this.graphics.rect((j + this.rect_offset_x - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
 
         this.graphics.imageMode(CENTER);
         this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][j + 1], (j + 100 * (this.rect_scale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
@@ -2272,12 +2272,12 @@ class STUDY {
         this.graphics.strokeWeight(this.strokeScale * 0);
         this.graphics.stroke(223);
         this.graphics.fill(223);
-        this.graphics.rect((j + this.rect_offset_x - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
 
         this.graphics.strokeWeight(this.strokeScale * 2);
         this.graphics.stroke(0);
         this.graphics.noFill();
-        this.graphics.rect((j + this.rect_offset_x - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
 
         this.graphics.imageMode(CENTER);
         this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][0], (j + 100 * (this.rect_scale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
@@ -2568,14 +2568,14 @@ class STUDY {
 
             this.graphics.strokeWeight(0);
 
-            float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x1 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
             float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x2 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
             float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
-            float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x3 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
             float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x4 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
             float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
             this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -2647,14 +2647,14 @@ class STUDY {
 
             this.graphics.strokeWeight(0);
 
-            float x1 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x1 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
             float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float x2 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x2 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
             float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
-            float x3 = (j + this.rect_offset_x + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x3 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
             float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float x4 = (j + this.rect_offset_x + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x4 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
             float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
             this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -2665,7 +2665,7 @@ class STUDY {
       this.graphics.strokeWeight(this.strokeScale * 2);
       this.graphics.stroke(0);
       this.graphics.noFill();
-      this.graphics.rect((j + this.rect_offset_x - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+      this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
 
 
       this.graphics.stroke(0);
@@ -2885,15 +2885,15 @@ class STUDY {
 
               this.graphics.strokeWeight(0);
 
-              this.graphics.ellipse((j + this.rect_offset_x + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
+              this.graphics.ellipse((j + (this.rect_offset_x + 0.5) + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
 
               applyLegendTextStyle(COL);
 
               this.graphics.textSize(this.view_S * 4.0 * this.horizontalUnitScale);
 
               this.graphics.textAlign(CENTER, CENTER);
-              if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
-              if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + this.rect_offset_x + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+              if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + (this.rect_offset_x + 0.5) + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+              if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + (this.rect_offset_x + 0.5) + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
             }
           }
         }
@@ -2994,7 +2994,7 @@ class STUDY {
     if (this.endDay == 2) {
       for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
-        float ox = (j + STUDY.rect_offset_x) * sx_Plot;
+        float ox = (j + (STUDY.rect_offset_x + 0.5)) * sx_Plot;
 
         Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot, 0, sx_Plot, j * 180 - 90, j * 180 + 90);
 

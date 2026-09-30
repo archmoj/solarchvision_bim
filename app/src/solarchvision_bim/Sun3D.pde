@@ -605,7 +605,7 @@ class Sun3D {
                 STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
                 float x = (90 - Alpha) * (funcs.cos_ang(Beta - 90)) * (STUDY.rect_scale / 200) * s_Plot + x_Plot * (STUDY.rect_scale / 200);
                 float y = (90 - Alpha) * (funcs.sin_ang(Beta - 90)) * (STUDY.rect_scale / 200) * s_Plot + y_Plot * (STUDY.rect_scale / 200);
-                float ox = (j + STUDY.rect_offset_x) * s_Plot;
+                float ox = (j + (STUDY.rect_offset_x + 0.5)) * s_Plot;
                 STUDY.graphics.vertex(ox + x, -y);
               }
             }
