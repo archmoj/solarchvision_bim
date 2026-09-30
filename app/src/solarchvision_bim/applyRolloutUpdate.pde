@@ -114,7 +114,7 @@ void applyRolloutUpdate() {
 
   pre_STUDY_currentLayerId = currentLayerId;
 
-  pre_STUDY_SkyScenario = STUDY.skyScenarioIndex;
+  pre_STUDY_SkyScenario = STUDY.skyScenarioSetting;
 
   pre_STUDY_impactGraphIndex = STUDY.impactGraphIndex;
 

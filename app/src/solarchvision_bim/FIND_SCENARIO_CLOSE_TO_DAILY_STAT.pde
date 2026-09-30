@@ -50,7 +50,7 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
         float Pdif = getValue_currentDataSource(i, now_j, now_k, layerDifId);
         if (is_undefined(Pdif)) continue;
 
-        boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, i, now_j, now_k);
+        boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, i, now_j, now_k);
         if (!isMemberCounted) continue;
 
         if (is_undefined(valuesSUM[idx])) {

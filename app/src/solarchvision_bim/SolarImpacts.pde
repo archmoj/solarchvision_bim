@@ -175,7 +175,7 @@ class SolarImpacts {
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
                     values_R_dir = 0.001 * Pa;

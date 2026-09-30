@@ -77,7 +77,7 @@ void calculate_VertexSolar_array () {
 
       if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) continue;
 
-      boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, i, now_j, now_k);
+      boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, i, now_j, now_k);
       if (!isMemberCounted) continue;
 
       float[] SunDir = { SunR[1], SunR[2], SunR[3] };

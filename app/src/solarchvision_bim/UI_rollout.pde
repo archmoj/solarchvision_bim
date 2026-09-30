@@ -527,8 +527,8 @@ class UI_rollout {
 
       if (this.child == CHILD_PERIOD_FILTERS) {
 
-        STUDY.skyScenarioIndex = vm.Sky_status(1);
-        STUDY.filterTypeIndex = vm.Hourly_daily_filter(1);
+        STUDY.skyScenarioSetting = vm.Sky_status(1);
+        STUDY.temporalFilterSetting = vm.Hourly_daily_filter(1);
       }
     } else if (this.parent == PARENT_LOCATION) {
 
@@ -727,12 +727,12 @@ class UI_rollout {
         STUDY.passiveColorScaleIndex = vm.Study_passivePaletteClr(1);
         STUDY.passiveColorScaleDirection = vm.Study_passivePaletteDir(1);
         STUDY.passiveColorScaleFactor = vm.Study_passivePaletteMlt(1);
-        STUDY.SORT_ColorScaleIndex = vm.Study_sortPaletteClr(1);
-        STUDY.SORT_ColorScaleDirection = vm.Study_sortPaletteDir(1);
-        STUDY.SORT_ColorScaleFactor = vm.Study_sortPaletteMlt(1);
-        STUDY.PROB_ColorScaleIndex = vm.Study_probPaletteClr(1);
-        STUDY.PROB_ColorScaleDirection = vm.Study_probPaletteDir(1);
-        STUDY.PROB_ColorScaleFactor = vm.Study_probPaletteMlt(1);
+        STUDY.statisticalRangesColorScaleIndex = vm.Study_sortPaletteClr(1);
+        STUDY.statisticalRangesColorScaleDirection = vm.Study_sortPaletteDir(1);
+        STUDY.statisticalRangesColorScaleFactor = vm.Study_sortPaletteMlt(1);
+        STUDY.probabilitiesColorScaleIndex = vm.Study_probPaletteClr(1);
+        STUDY.probabilitiesColorScaleDirection = vm.Study_probPaletteDir(1);
+        STUDY.probabilitiesColorScaleFactor = vm.Study_probPaletteMlt(1);
         STUDY.opacityPercentage = vm.WindRose_opacityScale(1);
       }
 
@@ -815,9 +815,9 @@ class UI_rollout {
 
       if (this.child == CHILD_EXPORT_DATA) {
 
-        STUDY.export_info_node = vm.Export_ASCII_data(1);
-        STUDY.export_info_norm = vm.Export_ASCII_statistics(1);
-        STUDY.export_info_prob = vm.Export_ASCII_probabilities(1);
+        STUDY.rawLinesExporter = vm.Export_ASCII_data(1);
+        STUDY.normalLinesExporter = vm.Export_ASCII_statistics(1);
+        STUDY.probabilitiesExporter = vm.Export_ASCII_probabilities(1);
         User3D.exporterScale = vm.Export3D_scale(1);
         User3D.exporterYaxisUp = vm.Export3D_flipZYaxis(1);
         User3D.exporterPrecisionVertex = vm.Export3D_precisionVertex(1);

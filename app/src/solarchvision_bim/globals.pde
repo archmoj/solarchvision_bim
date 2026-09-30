@@ -98,10 +98,10 @@ static final int USER_AUTO = 1;
 
 int control = USER_GUI;
 
-String[] skyScenarioIndex_Title = {
+String[] skyScenarioSetting_Title = {
   "", "All", "Cloudy\nPattern", "Partly\nCloudy\nPattern", "Sunny\nPattern"
 };
-String[] skyScenarioIndex_FileTXT = {
+String[] skyScenarioSetting_FileTXT = {
   "", "", "Overcast sky", "Scattered sky", "Clear sky"
 };
 

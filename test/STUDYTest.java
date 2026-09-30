@@ -148,16 +148,16 @@ class STUDYTest {
 
   @Test
   void changeSkyScenario_cyclesForwardAndWrapsFrom4To1 () {
-    app.STUDY.skyScenarioIndex = 4;
+    app.STUDY.skyScenarioSetting = 4;
     app.STUDY.changeSkyScenario(1);
-    assertEquals(1, app.STUDY.skyScenarioIndex);
+    assertEquals(1, app.STUDY.skyScenarioSetting);
   }
 
   @Test
   void changeSkyScenario_cyclesBackwardAndWrapsFrom1To4 () {
-    app.STUDY.skyScenarioIndex = 1;
+    app.STUDY.skyScenarioSetting = 1;
     app.STUDY.changeSkyScenario(-1);
-    assertEquals(4, app.STUDY.skyScenarioIndex);
+    assertEquals(4, app.STUDY.skyScenarioSetting);
   }
 
   // ================= decreaseSumInterval / increaseSumInterval ==========
@@ -265,16 +265,16 @@ class STUDYTest {
     app.STUDY.daysMergedCount = 5;
     app.STUDY.strokeScale = 0.75f;
     app.STUDY.horizontalUnitScale = 2f;
-    app.STUDY.skyScenarioIndex = 3;
-    app.STUDY.filterTypeIndex = 2;
-    app.STUDY.export_info_node = true;
-    app.STUDY.export_info_norm = true;
-    app.STUDY.export_info_prob = false;
-    app.STUDY.SORT_ColorScaleIndex = 2;
+    app.STUDY.skyScenarioSetting = 3;
+    app.STUDY.temporalFilterSetting = 2;
+    app.STUDY.rawLinesExporter = true;
+    app.STUDY.normalLinesExporter = true;
+    app.STUDY.probabilitiesExporter = false;
+    app.STUDY.statisticalRangesColorScaleIndex = 2;
     app.STUDY.activeColorScaleFactor = 0.5f;
     app.STUDY.opacityPercentage = 60;
-    app.STUDY.rect_scale = 1.25f;
-    app.STUDY.rect_offset_x = 0.0f;
+    app.STUDY.centralGraphScale = 1.25f;
+    app.STUDY.centralGraphOffsetX = 0.0f;
     app.STUDY.showImpactSummary = false;
     app.STUDY.impactLayerIndex = 2;
     app.STUDY.impactGraphIndex = 3;
@@ -300,10 +300,10 @@ class STUDYTest {
     assertEquals(10, fresh.endDay);
     assertEquals(15f, fresh.dayIncrement, 0.0001f);
     assertEquals(5, fresh.daysMergedCount);
-    assertEquals(3, fresh.skyScenarioIndex);
-    assertTrue(fresh.export_info_node);
-    assertFalse(fresh.export_info_prob);
-    assertEquals(2, fresh.SORT_ColorScaleIndex);
+    assertEquals(3, fresh.skyScenarioSetting);
+    assertTrue(fresh.rawLinesExporter);
+    assertFalse(fresh.probabilitiesExporter);
+    assertEquals(2, fresh.statisticalRangesColorScaleIndex);
     assertEquals(0.5f, fresh.activeColorScaleFactor, 0.0001f);
     assertFalse(fresh.showImpactSummary);
     assertEquals(2, fresh.impactLayerIndex);
@@ -367,15 +367,15 @@ class STUDYTest {
 
   @Test
   void handlePlainCharKey_cyclesSkyScenarioForwardAndBackward () {
-    app.STUDY.skyScenarioIndex = 1;
+    app.STUDY.skyScenarioSetting = 1;
 
     app.key = 'S';
     app.STUDY.handlePlainCharKey();
-    assertEquals(2, app.STUDY.skyScenarioIndex);
+    assertEquals(2, app.STUDY.skyScenarioSetting);
 
     app.key = 's';
     app.STUDY.handlePlainCharKey();
-    assertEquals(1, app.STUDY.skyScenarioIndex);
+    assertEquals(1, app.STUDY.skyScenarioSetting);
   }
 
   @Test

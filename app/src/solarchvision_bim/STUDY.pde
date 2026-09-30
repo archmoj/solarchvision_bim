@@ -2,13 +2,13 @@ class STUDY {
 
   final static String CLASS_STAMP = "STUDY";
 
-  int SORT_ColorScaleIndex = -1;
-  int SORT_ColorScaleDirection = -1;
-  float SORT_ColorScaleFactor = 2;
+  int statisticalRangesColorScaleIndex = -1;
+  int statisticalRangesColorScaleDirection = -1;
+  float statisticalRangesColorScaleFactor = 2;
 
-  int PROB_ColorScaleIndex = -1;
-  int PROB_ColorScaleDirection = 1;
-  float PROB_ColorScaleFactor = 0.5;
+  int probabilitiesColorScaleIndex = -1;
+  int probabilitiesColorScaleDirection = 1;
+  float probabilitiesColorScaleFactor = 0.5;
 
   int activeColorScaleIndex = 19; //15; //14;
   int activeColorScaleDirection = 1;
@@ -52,20 +52,20 @@ class STUDY {
   float verticalUnitOffset;
   float verticalNegativePadding;
 
-  int skyScenarioIndex = 1; // 1: all scenarios, 2: Total Cloud Cover < 0.33, 3: middle range, 4: Total Cloud Cover > 0.66
-  int filterTypeIndex = filter_DAILY;
+  int skyScenarioSetting = 1; // 1: all scenarios, 2: Total Cloud Cover < 0.33, 3: middle range, 4: Total Cloud Cover > 0.66
+  int temporalFilterSetting = filter_DAILY;
 
-  boolean export_info_node = false;
-  boolean export_info_norm = false;
-  boolean export_info_prob = false;
+  boolean rawLinesExporter = false;
+  boolean normalLinesExporter = false;
+  boolean probabilitiesExporter = false;
 
   float positionX = 0;
   float positionY = 0;
 
   float opacityPercentage = 50.0;
 
-  float rect_scale = 1.0;
-  float rect_offset_x = 0.0;
+  float centralGraphScale = 1.0;
+  float centralGraphOffsetX = 0.0;
 
   boolean showImpactSummary = true;
 
@@ -350,7 +350,7 @@ class STUDY {
   // 'S' / 's' : cycle the sky scenario filter forward/backward through its 4
   // states (1..4).
   void changeSkyScenario (int delta) {
-    this.skyScenarioIndex = 1 + (((this.skyScenarioIndex - 1) + delta) % 4 + 4) % 4;
+    this.skyScenarioSetting = 1 + (((this.skyScenarioSetting - 1) + delta) % 4 + 4) % 4;
     developDataUpdate = true;
     this.revise();
     WIN3D.revise();
@@ -463,9 +463,9 @@ class STUDY {
     if (fill_back != 0) {
       for (int i = this.startDay; i < this.endDay; i++) {
 
-        float x1 = (i + (this.rect_offset_x + 0.5)) * sx_Plot;
+        float x1 = (i + (this.centralGraphOffsetX + 0.5)) * sx_Plot;
         float y1 = 0;
-        float h = 2 * 90 * (this.rect_scale / 200) * sx_Plot;
+        float h = 2 * 90 * (this.centralGraphScale / 200) * sx_Plot;
 
         this.graphics.stroke(223);
         this.graphics.fill(223);
@@ -487,10 +487,10 @@ class STUDY {
         int r = 0;
         if ((t % 45) != 0) r = 15;
 
-        float x1 = (i + (this.rect_offset_x + 0.5) + r * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
-        float x2 = (i + (this.rect_offset_x + 0.5) + 90 * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
-        float y1 = -(r * (this.rect_scale / 200) * funcs.sin_ang(t)) * sx_Plot;
-        float y2 = -(90 * (this.rect_scale / 200) * funcs.sin_ang(t)) * sx_Plot;
+        float x1 = (i + (this.centralGraphOffsetX + 0.5) + r * (this.centralGraphScale / 200) * funcs.cos_ang(t)) * sx_Plot;
+        float x2 = (i + (this.centralGraphOffsetX + 0.5) + 90 * (this.centralGraphScale / 200) * funcs.cos_ang(t)) * sx_Plot;
+        float y1 = -(r * (this.centralGraphScale / 200) * funcs.sin_ang(t)) * sx_Plot;
+        float y2 = -(90 * (this.centralGraphScale / 200) * funcs.sin_ang(t)) * sx_Plot;
 
         this.graphics.line(x1, y1, x2, y2);
 
@@ -540,8 +540,8 @@ class STUDY {
             break;
           }
 
-          float x = (i + (this.rect_offset_x + 0.5) + textR * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
-          float y = -(textR * (this.rect_scale / 200) * funcs.sin_ang(t)) * sx_Plot;
+          float x = (i + (this.centralGraphOffsetX + 0.5) + textR * (this.centralGraphScale / 200) * funcs.cos_ang(t)) * sx_Plot;
+          float y = -(textR * (this.centralGraphScale / 200) * funcs.sin_ang(t)) * sx_Plot;
 
           this.graphics.text(txt, x, y);
         }
@@ -559,9 +559,9 @@ class STUDY {
           this.graphics.noFill();
         }
 
-        float x1 = (i + (this.rect_offset_x + 0.5)) * sx_Plot;
+        float x1 = (i + (this.centralGraphOffsetX + 0.5)) * sx_Plot;
         float y1 = 0;
-        float h = 2 * r * (this.rect_scale / 200) * sx_Plot;
+        float h = 2 * r * (this.centralGraphScale / 200) * sx_Plot;
 
         this.graphics.ellipse(x1, y1, h, h);
 
@@ -572,8 +572,8 @@ class STUDY {
             textSize *= 1.5;
           }
 
-          float x = (i + (this.rect_offset_x + 0.5) + r * (this.rect_scale / 200) * funcs.cos_ang(t)) * sx_Plot;
-          float y = -(r * (this.rect_scale / 200) * funcs.sin_ang(t)) * sx_Plot;
+          float x = (i + (this.centralGraphOffsetX + 0.5) + r * (this.centralGraphScale / 200) * funcs.cos_ang(t)) * sx_Plot;
+          float y = -(r * (this.centralGraphScale / 200) * funcs.sin_ang(t)) * sx_Plot;
 
           this.graphics.stroke(0, 127);
           this.graphics.fill(0, 127);
@@ -625,7 +625,7 @@ class STUDY {
 
     //this.graphics.text(txt, -1.0 * sx_Plot / this.horizontalUnitScale, -1.25 * sx_Plot / this.horizontalUnitScale);
 
-    switch(this.skyScenarioIndex) {
+    switch(this.skyScenarioSetting) {
     case 1 :
       this.graphics.stroke(0, 0, 0);
       this.graphics.fill(0, 0, 0);
@@ -646,7 +646,7 @@ class STUDY {
 
     this.graphics.textAlign(RIGHT, TOP);
 
-    this.graphics.text(skyScenarioIndex_Title[this.skyScenarioIndex], -1.75 * sx_Plot / this.horizontalUnitScale, -0.25 * sx_Plot / this.horizontalUnitScale);
+    this.graphics.text(skyScenarioSetting_Title[this.skyScenarioSetting], -1.75 * sx_Plot / this.horizontalUnitScale, -0.25 * sx_Plot / this.horizontalUnitScale);
   }
 
 
@@ -677,9 +677,9 @@ class STUDY {
     //println("_pix=", _pix);
 
 
-    int PAL_type = this.PROB_ColorScaleIndex;
-    int PAL_direction = this.PROB_ColorScaleDirection;
-    float PAL_multiplier = this.PROB_ColorScaleFactor;
+    int PAL_type = this.probabilitiesColorScaleIndex;
+    int PAL_direction = this.probabilitiesColorScaleDirection;
+    float PAL_multiplier = this.probabilitiesColorScaleFactor;
 
     float txt_max_width = (this.probabilityWidthInterval * this.view_S * 100 / 24.0) * this.horizontalUnitScale;
     float txt_max_height = _pix;
@@ -768,14 +768,14 @@ class STUDY {
 
             this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x1 - 0.5 * w, y1 + 0.5 * h - 0.25 * txt_size);
 
-            if ((this.export_info_prob) && (this.showProbabilities)) {
+            if ((this.probabilitiesExporter) && (this.showProbabilities)) {
               FILE_outputProbs[(j - this.startDay)].print(nfs((min_b + n) * _pix / abs(sy_Plot) - this.verticalUnitOffset, 5, 5) + ":\t" + nf(100 * prob_V, 3, 3) + "\t");
             }
 
           }
         }
 
-        if ((this.export_info_prob) && (this.showProbabilities)) {
+        if ((this.probabilitiesExporter) && (this.showProbabilities)) {
           FILE_outputProbs[(j - this.startDay)].println("");
         }
       }
@@ -815,9 +815,9 @@ class STUDY {
 
   void drawSorted (int i, int j, float[] valuesA, float[] valuesB, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-    int PAL_type = this.SORT_ColorScaleIndex;
-    int PAL_direction = this.SORT_ColorScaleDirection;
-    float PAL_multiplier = this.SORT_ColorScaleFactor;
+    int PAL_type = this.statisticalRangesColorScaleIndex;
+    int PAL_direction = this.statisticalRangesColorScaleDirection;
+    float PAL_multiplier = this.statisticalRangesColorScaleFactor;
 
     float[] sortedvaluesA = sort(valuesA);
     int num_sortedvaluesA = countDefinedPrefix(sortedvaluesA);
@@ -1025,12 +1025,12 @@ class STUDY {
         this.graphics.line(x1, y1, x2, y2);
       }
 
-      if ((this.export_info_norm) && (this.showNormalLines)) {
+      if ((this.normalLinesExporter) && (this.showNormalLines)) {
         if (is_defined(NormalsA[l])) FILE_outputNorms[(j - this.startDay)].print(nfs(NormalsA[l] - this.verticalUnitOffset, 5, 5) + "\t");
         else FILE_outputNorms[(j - this.startDay)].print("[undefined]\t");
       }
     }
-    if ((this.export_info_norm) && (this.showNormalLines)) FILE_outputNorms[(j - this.startDay)].println();
+    if ((this.normalLinesExporter) && (this.showNormalLines)) FILE_outputNorms[(j - this.startDay)].println();
   }
 
 
@@ -1086,9 +1086,9 @@ class STUDY {
     if (this.daysMergedCount > 1) {
       _FilenamesAdd = ("±" + int(this.daysMergedCount / 2) + TIME.WORDS[2][activeLanguage] + "s");
     }
-    if ((this.export_info_node) && (this.showRawLines)) {
-      FILE_outputRaw[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioIndex_FileTXT[this.skyScenarioIndex] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-      FILE_outputRaw[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioIndex_FileTXT[this.skyScenarioIndex] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
+    if ((this.rawLinesExporter) && (this.showRawLines)) {
+      FILE_outputRaw[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputRaw[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
 
       FILE_outputRaw[(j - this.startDay)].print("Hour\t");
       for (int k = 0; k < count_k; k++) {
@@ -1096,18 +1096,18 @@ class STUDY {
       }
       FILE_outputRaw[(j - this.startDay)].println("");
     }
-    if ((this.export_info_norm) && (this.showNormalLines)) {
-      FILE_outputNorms[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioIndex_FileTXT[this.skyScenarioIndex] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-      FILE_outputNorms[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioIndex_FileTXT[this.skyScenarioIndex] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
+    if ((this.normalLinesExporter) && (this.showNormalLines)) {
+      FILE_outputNorms[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputNorms[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
       FILE_outputNorms[(j - this.startDay)].print("Hour\t");
       for (int l = 0; l < 9; l++) {
         FILE_outputNorms[(j - this.startDay)].print(STAT_N_Title[l] + "\t");
       }
       FILE_outputNorms[(j - this.startDay)].println("");
     }
-    if ((this.export_info_prob) && (this.showProbabilities)) {
-      FILE_outputProbs[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioIndex_FileTXT[this.skyScenarioIndex] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-      FILE_outputProbs[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioIndex_FileTXT[this.skyScenarioIndex] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
+    if ((this.probabilitiesExporter) && (this.showProbabilities)) {
+      FILE_outputProbs[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputProbs[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
 
       FILE_outputProbs[(j - this.startDay)].print("Hour:\t");
       FILE_outputProbs[(j - this.startDay)].println("");
@@ -1117,17 +1117,17 @@ class STUDY {
   // Flushes and closes whichever of the raw/normal/probability export files
   // for column j were opened by openPerDayOutputFiles().
   void closePerDayOutputFiles (int j) {
-    if ((this.export_info_node) && (this.showRawLines)) {
+    if ((this.rawLinesExporter) && (this.showRawLines)) {
       FILE_outputRaw[(j - this.startDay)].flush();
       FILE_outputRaw[(j - this.startDay)].close();
     }
 
-    if ((this.export_info_norm) && (this.showNormalLines)) {
+    if ((this.normalLinesExporter) && (this.showNormalLines)) {
       FILE_outputNorms[(j - this.startDay)].flush();
       FILE_outputNorms[(j - this.startDay)].close();
     }
 
-    if ((this.export_info_prob) && (this.showProbabilities)) {
+    if ((this.probabilitiesExporter) && (this.showProbabilities)) {
       FILE_outputProbs[(j - this.startDay)].flush();
       FILE_outputProbs[(j - this.startDay)].close();
     }
@@ -1194,9 +1194,9 @@ class STUDY {
 
       for (int i = 0; i < 24; i++) {
         if (this.isInHourlyRange(i)) {
-          if ((this.export_info_node) && (this.showRawLines)) FILE_outputRaw[(j - this.startDay)].print(nf(i, 2) + "\t");
-          if ((this.export_info_norm) && (this.showNormalLines)) FILE_outputNorms[(j - this.startDay)].print(nf(i, 2) + "\t");
-          if ((this.export_info_prob) && (this.showProbabilities)) FILE_outputProbs[(j - this.startDay)].print(nf(i, 2) + "\t");
+          if ((this.rawLinesExporter) && (this.showRawLines)) FILE_outputRaw[(j - this.startDay)].print(nf(i, 2) + "\t");
+          if ((this.normalLinesExporter) && (this.showNormalLines)) FILE_outputNorms[(j - this.startDay)].print(nf(i, 2) + "\t");
+          if ((this.probabilitiesExporter) && (this.showProbabilities)) FILE_outputProbs[(j - this.startDay)].print(nf(i, 2) + "\t");
 
           for (int k = 0; k < count_k; k++) {
             for (int j_ADD = 0; j_ADD < this.daysMergedCount; j_ADD++) {
@@ -1233,9 +1233,9 @@ class STUDY {
               if (is_undefined(Pa)) {
                 valuesA[idx] = FLOAT_undefined;
 
-                if ((this.export_info_node) && (this.showRawLines)) FILE_outputRaw[(j - this.startDay)].print("[undefined]\t");
+                if ((this.rawLinesExporter) && (this.showRawLines)) FILE_outputRaw[(j - this.startDay)].print("[undefined]\t");
               } else {
-                boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filterTypeIndex, this.skyScenarioIndex, now_i, now_j, now_k);
+                boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.temporalFilterSetting, this.skyScenarioSetting, now_i, now_j, now_k);
 
                 if (isMemberCounted) {
                   valuesA[idx] = Pa;
@@ -1244,7 +1244,7 @@ class STUDY {
                   valuesSUM[idx] += valuesA[idx];
                   valuesNUM[idx] += 1;
 
-                  if ((this.export_info_node) && (this.showRawLines)) {
+                  if ((this.rawLinesExporter) && (this.showRawLines)) {
                     if (is_defined(valuesA[idx])) {
                       FILE_outputRaw[(j - this.startDay)].print(nfs(valuesA[idx] - this.verticalUnitOffset, 5, 5) + "\t");
                     }
@@ -1276,14 +1276,14 @@ class STUDY {
                     }
                   }
                 } else {
-                  if ((this.export_info_node) && (this.showRawLines)) FILE_outputRaw[(j - this.startDay)].print("not_the_case\t");
+                  if ((this.rawLinesExporter) && (this.showRawLines)) FILE_outputRaw[(j - this.startDay)].print("not_the_case\t");
                 }
               }
             }
           }
 
 
-          if ((this.export_info_node) && (this.showRawLines)) FILE_outputRaw[(j - this.startDay)].println();
+          if ((this.rawLinesExporter) && (this.showRawLines)) FILE_outputRaw[(j - this.startDay)].println();
 
           if (this.showProbabilities) {
             _interval += 1;
@@ -1571,28 +1571,28 @@ class STUDY {
   void setupPlot_acrossSkyScenarios (int layerId) {
     float sx_Plot = 100.0 * this.horizontalUnitScale * this.view_S;
 
-    int keep_skyScenarioIndex = this.skyScenarioIndex;
+    int keep_skyScenarioSetting = this.skyScenarioSetting;
     int keep_currentLayerId = currentLayerId;
 
     changeCurrentLayerTo(layerId);
 
     if (viewLayout == 2) {
-      this.skyScenarioIndex = 1;
+      this.skyScenarioSetting = 1;
       this.plotHourly(0, -450 * this.view_S, sx_Plot, (-1.0 * this.verticalUnitScale * this.view_S));
     }
 
-    this.skyScenarioIndex = 4;
+    this.skyScenarioSetting = 4;
     this.plotHourly(0, ((viewLayout == 2) ? -150 : -150) * this.view_S, sx_Plot, (-1.0 * this.verticalUnitScale * this.view_S));
 
     if (viewLayout == 2) {
-      this.skyScenarioIndex = 3;
+      this.skyScenarioSetting = 3;
       this.plotHourly(0, 150 * this.view_S, sx_Plot, (-1.0 * this.verticalUnitScale * this.view_S));
     }
 
-    this.skyScenarioIndex = 2;
+    this.skyScenarioSetting = 2;
     this.plotHourly(0, ((viewLayout == 2) ? 450 : 150) * this.view_S, sx_Plot, (-1.0 * this.verticalUnitScale * this.view_S));
 
-    this.skyScenarioIndex = keep_skyScenarioIndex;
+    this.skyScenarioSetting = keep_skyScenarioSetting;
     changeCurrentLayerTo(keep_currentLayerId);
   }
 
@@ -1659,9 +1659,9 @@ class STUDY {
       endFrame();
     }
 
-    this.export_info_node = false;
-    this.export_info_norm = false;
-    this.export_info_prob = false;
+    this.rawLinesExporter = false;
+    this.normalLinesExporter = false;
+    this.probabilitiesExporter = false;
 
     cursor(ARROW);
   }
@@ -1912,7 +1912,7 @@ class STUDY {
                   values_W_spd[k] = FLOAT_undefined;
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
-                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filterTypeIndex, this.skyScenarioIndex, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.temporalFilterSetting, this.skyScenarioSetting, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
 
@@ -1942,7 +1942,7 @@ class STUDY {
 
                       float _s = (this.opacityPercentage / 100) * 255 / (0.333 * count_k);
 
-                      if (this.skyScenarioIndex > 1) _s *= 3; // to improve visibility of those cases.
+                      if (this.skyScenarioSetting > 1) _s *= 3; // to improve visibility of those cases.
 
                       _s /= float(this.daysMergedCount);
 
@@ -2014,7 +2014,7 @@ class STUDY {
                   values_W_spd[k] = FLOAT_undefined;
                   values_W_tmp[k] = FLOAT_undefined;
                 } else {
-                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filterTypeIndex, this.skyScenarioIndex, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.temporalFilterSetting, this.skyScenarioSetting, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
 
@@ -2044,7 +2044,7 @@ class STUDY {
 
                       float _s = (this.opacityPercentage / 100) * 255 / (0.333 * count_k) / (this.endDay - this.startDay);
 
-                      if (this.skyScenarioIndex > 1) _s *= 3; // to improve visibility of those cases.
+                      if (this.skyScenarioSetting > 1) _s *= 3; // to improve visibility of those cases.
 
                       _s /= float(this.daysMergedCount);
 
@@ -2084,15 +2084,15 @@ class STUDY {
         this.graphics.strokeWeight(this.strokeScale * 0);
         this.graphics.stroke(223);
         this.graphics.fill(223);
-        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) * sx_Plot, (-100 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot);
 
         this.graphics.strokeWeight(this.strokeScale * 2);
         this.graphics.stroke(255);
         this.graphics.noFill();
-        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) * sx_Plot, (-100 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot);
 
         this.graphics.imageMode(CENTER);
-        this.graphics.image(allWindRoses.Image[j + 1], (j + 100 * (this.rect_scale / 200)) * sx_Plot, 0, int((180 * (this.rect_scale / 200)) * sx_Plot), int((180 * (this.rect_scale / 200)) * sx_Plot));
+        this.graphics.image(allWindRoses.Image[j + 1], (j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0, int((180 * (this.centralGraphScale / 200)) * sx_Plot), int((180 * (this.centralGraphScale / 200)) * sx_Plot));
       }
     }
 
@@ -2112,7 +2112,7 @@ class STUDY {
       this.graphics.strokeWeight(this.strokeScale * 2);
       this.graphics.stroke(0);
       this.graphics.noFill();
-      this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+      this.graphics.rect((j + (this.centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) * sx_Plot, (-100 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot);
     }
 
     if (this.impactTypeIndex != Impact_ACTIVE) {
@@ -2183,7 +2183,7 @@ class STUDY {
       int RES1 = allSolarImpacts.RES1;
       int RES2 = allSolarImpacts.RES2;
 
-      float sizeX = (180 * (this.rect_scale / 200)) * sx_Plot;
+      float sizeX = (180 * (this.centralGraphScale / 200)) * sx_Plot;
       float sizeY = sizeX;
       float aspect = 1.0 * RES1 / RES2;
       if (aspect > 1) {
@@ -2242,15 +2242,15 @@ class STUDY {
         this.graphics.strokeWeight(this.strokeScale * 0);
         this.graphics.stroke(223);
         this.graphics.fill(223);
-        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) * sx_Plot, (-100 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot);
 
         this.graphics.strokeWeight(this.strokeScale * 2);
         this.graphics.stroke(255);
         this.graphics.noFill();
-        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) * sx_Plot, (-100 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot);
 
         this.graphics.imageMode(CENTER);
-        this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][j + 1], (j + 100 * (this.rect_scale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
+        this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][j + 1], (j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
 
         this.graphics.stroke(0);
         this.graphics.fill(0);
@@ -2272,15 +2272,15 @@ class STUDY {
         this.graphics.strokeWeight(this.strokeScale * 0);
         this.graphics.stroke(223);
         this.graphics.fill(223);
-        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) * sx_Plot, (-100 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot);
 
         this.graphics.strokeWeight(this.strokeScale * 2);
         this.graphics.stroke(0);
         this.graphics.noFill();
-        this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+        this.graphics.rect((j + (this.centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) * sx_Plot, (-100 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot);
 
         this.graphics.imageMode(CENTER);
-        this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][0], (j + 100 * (this.rect_scale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
+        this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][0], (j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
 
         this.graphics.stroke(0);
         this.graphics.fill(0);
@@ -2479,7 +2479,7 @@ class STUDY {
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filterTypeIndex, this.skyScenarioIndex, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.temporalFilterSetting, this.skyScenarioSetting, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
                     values_R_dir = 0.001 * Pa;
@@ -2568,15 +2568,15 @@ class STUDY {
 
             this.graphics.strokeWeight(0);
 
-            float x1 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float x2 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x1 = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x2 = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
-            float x3 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float x4 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x3 = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x4 = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
             this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
           }
@@ -2647,15 +2647,15 @@ class STUDY {
 
             this.graphics.strokeWeight(0);
 
-            float x1 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float x2 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x1 = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y1 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x2 = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y2 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90 - 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
-            float x3 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float x4 = (j + (this.rect_offset_x + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
-            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x3 = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y3 = (                         -(90 - Alpha + 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float x4 = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
+            float y4 = (                         -(90 - Alpha - 0.5 * Sky3D.inclinationStep) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90 + 0.5 * Sky3D.orientationStep))) * sx_Plot;
 
             this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
           }
@@ -2665,7 +2665,7 @@ class STUDY {
       this.graphics.strokeWeight(this.strokeScale * 2);
       this.graphics.stroke(0);
       this.graphics.noFill();
-      this.graphics.rect((j + (this.rect_offset_x + 0.5) - 100 * (this.rect_scale / 200)) * sx_Plot, (-100 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot, (200 * (this.rect_scale / 200)) * sx_Plot);
+      this.graphics.rect((j + (this.centralGraphOffsetX + 0.5) - 100 * (this.centralGraphScale / 200)) * sx_Plot, (-100 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot, (200 * (this.centralGraphScale / 200)) * sx_Plot);
 
 
       this.graphics.stroke(0);
@@ -2846,7 +2846,7 @@ class STUDY {
               values_E_dif = FLOAT_undefined;
             } else {
 
-              boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.filterTypeIndex, this.skyScenarioIndex, now_i, now_j, now_k);
+              boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, this.temporalFilterSetting, this.skyScenarioSetting, now_i, now_j, now_k);
 
               if (isMemberCounted) {
                 values_R_dir = 0.001 * Pa;
@@ -2885,15 +2885,15 @@ class STUDY {
 
               this.graphics.strokeWeight(0);
 
-              this.graphics.ellipse((j + (this.rect_offset_x + 0.5) + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
+              this.graphics.ellipse((j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
 
               applyLegendTextStyle(COL);
 
               this.graphics.textSize(this.view_S * 4.0 * this.horizontalUnitScale);
 
               this.graphics.textAlign(CENTER, CENTER);
-              if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + (this.rect_offset_x + 0.5) + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
-              if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + (this.rect_offset_x + 0.5) + (90 - Alpha) * (this.rect_scale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.rect_scale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+              if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+              if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
             }
           }
         }
@@ -2994,7 +2994,7 @@ class STUDY {
     if (this.endDay == 2) {
       for (int j = this.startDay; j < this.endDay; j++) {
 
-        float ox = (j + (this.rect_offset_x + 0.5)) * sx_Plot;
+        float ox = (j + (this.centralGraphOffsetX + 0.5)) * sx_Plot;
 
         Sun3D.drawGrid(TypeWindow.STUDY, ox + x_Plot, y_Plot, 0, sx_Plot, j * 180 - 90, j * 180 + 90);
 
@@ -3182,27 +3182,32 @@ class STUDY {
     XML_setFloat(parent, "strokeScale", this.strokeScale);
     XML_setFloat(parent, "horizontalUnitScale", this.horizontalUnitScale);
 
-    XML_setInt(parent, "skyScenarioIndex", this.skyScenarioIndex);
-    XML_setInt(parent, "filter", this.filterTypeIndex);
-    XML_setBoolean(parent, "export_info_node", this.export_info_node);
-    XML_setBoolean(parent, "export_info_norm", this.export_info_norm);
-    XML_setBoolean(parent, "export_info_prob", this.export_info_prob);
-    XML_setInt(parent, "SORT_ColorScaleIndex", this.SORT_ColorScaleIndex);
-    XML_setInt(parent, "SORT_ColorScaleDirection", this.SORT_ColorScaleDirection);
-    XML_setFloat(parent, "SORT_ColorScaleFactor", this.SORT_ColorScaleFactor);
-    XML_setInt(parent, "PROB_ColorScaleIndex", this.PROB_ColorScaleIndex);
-    XML_setInt(parent, "PROB_ColorScaleDirection", this.PROB_ColorScaleDirection);
-    XML_setFloat(parent, "PROB_ColorScaleFactor", this.PROB_ColorScaleFactor);
+    XML_setInt(parent, "skyScenarioSetting", this.skyScenarioSetting);
+    XML_setInt(parent, "temporalFilterSetting", this.temporalFilterSetting);
+
+    XML_setBoolean(parent, "rawLinesExporter", this.rawLinesExporter);
+    XML_setBoolean(parent, "normalLinesExporter", this.normalLinesExporter);
+    XML_setBoolean(parent, "probabilitiesExporter", this.probabilitiesExporter);
+
+    XML_setInt(parent, "statisticalRangesColorScaleIndex", this.statisticalRangesColorScaleIndex);
+    XML_setInt(parent, "statisticalRangesColorScaleDirection", this.statisticalRangesColorScaleDirection);
+    XML_setFloat(parent, "statisticalRangesColorScaleFactor", this.statisticalRangesColorScaleFactor);
+
+    XML_setInt(parent, "probabilitiesColorScaleIndex", this.probabilitiesColorScaleIndex);
+    XML_setInt(parent, "probabilitiesColorScaleDirection", this.probabilitiesColorScaleDirection);
+    XML_setFloat(parent, "probabilitiesColorScaleFactor", this.probabilitiesColorScaleFactor);
+
     XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
     XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
     XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
+
     XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
     XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
     XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
 
     XML_setFloat(parent, "opacityPercentage", this.opacityPercentage);
-    XML_setFloat(parent, "rect_scale", rect_scale);
-    XML_setFloat(parent, "rect_offset_x", this.rect_offset_x);
+    XML_setFloat(parent, "centralGraphScale", centralGraphScale);
+    XML_setFloat(parent, "centralGraphOffsetX", this.centralGraphOffsetX);
 
     XML_setInt(parent, "plotLayoutIndex", this.plotLayoutIndex);
     XML_setInt(parent, "impactTypeIndex", this.impactTypeIndex);
@@ -3235,28 +3240,34 @@ class STUDY {
 
     this.strokeScale = XML_getFloat(parent, "strokeScale");
     this.horizontalUnitScale = XML_getFloat(parent, "horizontalUnitScale");
-    this.skyScenarioIndex = XML_getInt(parent, "skyScenarioIndex");
-    this.filterTypeIndex = XML_getInt(parent, "filter");
-    this.export_info_node = XML_getBoolean(parent, "export_info_node");
-    this.export_info_norm = XML_getBoolean(parent, "export_info_norm");
-    this.export_info_prob = XML_getBoolean(parent, "export_info_prob");
-    this.SORT_ColorScaleIndex = XML_getInt(parent, "SORT_ColorScaleIndex");
-    this.SORT_ColorScaleDirection = XML_getInt(parent, "SORT_ColorScaleDirection");
-    this.SORT_ColorScaleFactor = XML_getFloat(parent, "SORT_ColorScaleFactor");
-    this.PROB_ColorScaleIndex = XML_getInt(parent, "PROB_ColorScaleIndex");
-    this.PROB_ColorScaleDirection = XML_getInt(parent, "PROB_ColorScaleDirection");
-    this.PROB_ColorScaleFactor = XML_getFloat(parent, "PROB_ColorScaleFactor");
+
+    this.skyScenarioSetting = XML_getInt(parent, "skyScenarioSetting");
+    this.temporalFilterSetting = XML_getInt(parent, "temporalFilterSetting");
+
+    this.rawLinesExporter = XML_getBoolean(parent, "rawLinesExporter");
+    this.normalLinesExporter = XML_getBoolean(parent, "normalLinesExporter");
+    this.probabilitiesExporter = XML_getBoolean(parent, "probabilitiesExporter");
+
+    this.statisticalRangesColorScaleIndex = XML_getInt(parent, "statisticalRangesColorScaleIndex");
+    this.statisticalRangesColorScaleDirection = XML_getInt(parent, "statisticalRangesColorScaleDirection");
+    this.statisticalRangesColorScaleFactor = XML_getFloat(parent, "statisticalRangesColorScaleFactor");
+
+    this.probabilitiesColorScaleIndex = XML_getInt(parent, "probabilitiesColorScaleIndex");
+    this.probabilitiesColorScaleDirection = XML_getInt(parent, "probabilitiesColorScaleDirection");
+    this.probabilitiesColorScaleFactor = XML_getFloat(parent, "probabilitiesColorScaleFactor");
+
     this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
     this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
     this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
+
     this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
     this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
     this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
 
 
     this.opacityPercentage = XML_getFloat(parent, "opacityPercentage");
-    this.rect_scale = XML_getFloat(parent, "rect_scale");
-    this.rect_offset_x = XML_getFloat(parent, "rect_offset_x");
+    this.centralGraphScale = XML_getFloat(parent, "centralGraphScale");
+    this.centralGraphOffsetX = XML_getFloat(parent, "centralGraphOffsetX");
 
     this.plotLayoutIndex = XML_getInt(parent, "plotLayoutIndex");
     this.impactTypeIndex = XML_getInt(parent, "impactTypeIndex");

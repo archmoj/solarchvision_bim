@@ -353,12 +353,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sky status",
-        () -> (float) STUDY.skyScenarioIndex,
-        (v) -> { STUDY.skyScenarioIndex = int(v); },
+        () -> (float) STUDY.skyScenarioSetting,
+        (v) -> { STUDY.skyScenarioSetting = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky status", STUDY.skyScenarioIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky status", STUDY.skyScenarioSetting, s1, s2, s3);
     }
     return out;
   }
@@ -374,12 +374,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Hourly/daily filter",
-        () -> (float) STUDY.filterTypeIndex,
-        (v) -> { STUDY.filterTypeIndex = int(v); },
+        () -> (float) STUDY.temporalFilterSetting,
+        (v) -> { STUDY.temporalFilterSetting = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Hourly/daily filter", STUDY.filterTypeIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Hourly/daily filter", STUDY.temporalFilterSetting, s1, s2, s3);
     }
     return out;
   }
@@ -3169,12 +3169,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study sortPaletteClr",
-        () -> (float) STUDY.SORT_ColorScaleIndex,
-        (v) -> { STUDY.SORT_ColorScaleIndex = int(v); },
+        () -> (float) STUDY.statisticalRangesColorScaleIndex,
+        (v) -> { STUDY.statisticalRangesColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteClr", STUDY.SORT_ColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteClr", STUDY.statisticalRangesColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3191,12 +3191,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study sortPaletteDir",
-        () -> (float) STUDY.SORT_ColorScaleDirection,
-        (v) -> { STUDY.SORT_ColorScaleDirection = int(v); },
+        () -> (float) STUDY.statisticalRangesColorScaleDirection,
+        (v) -> { STUDY.statisticalRangesColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteDir", STUDY.SORT_ColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteDir", STUDY.statisticalRangesColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3213,12 +3213,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Study sortPaletteMlt",
-        () -> STUDY.SORT_ColorScaleFactor,
-        (v) -> { STUDY.SORT_ColorScaleFactor = v; },
+        () -> STUDY.statisticalRangesColorScaleFactor,
+        (v) -> { STUDY.statisticalRangesColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteMlt", STUDY.SORT_ColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteMlt", STUDY.statisticalRangesColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3230,12 +3230,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study probPaletteClr",
-        () -> (float) STUDY.PROB_ColorScaleIndex,
-        (v) -> { STUDY.PROB_ColorScaleIndex = int(v); },
+        () -> (float) STUDY.probabilitiesColorScaleIndex,
+        (v) -> { STUDY.probabilitiesColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteClr", STUDY.PROB_ColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteClr", STUDY.probabilitiesColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
@@ -3252,12 +3252,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Study probPaletteDir",
-        () -> (float) STUDY.PROB_ColorScaleDirection,
-        (v) -> { STUDY.PROB_ColorScaleDirection = int(v); },
+        () -> (float) STUDY.probabilitiesColorScaleDirection,
+        (v) -> { STUDY.probabilitiesColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteDir", STUDY.PROB_ColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteDir", STUDY.probabilitiesColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3274,12 +3274,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Study probPaletteMlt",
-        () -> STUDY.PROB_ColorScaleFactor,
-        (v) -> { STUDY.PROB_ColorScaleFactor = v; },
+        () -> STUDY.probabilitiesColorScaleFactor,
+        (v) -> { STUDY.probabilitiesColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteMlt", STUDY.PROB_ColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteMlt", STUDY.probabilitiesColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4321,12 +4321,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Export ASCII data",
-        () -> (STUDY.export_info_node ? 1f : 0f),
-        (v) -> { STUDY.export_info_node = (v >= 0.5f); },
+        () -> (STUDY.rawLinesExporter ? 1f : 0f),
+        (v) -> { STUDY.rawLinesExporter = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII data", STUDY.export_info_node);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII data", STUDY.rawLinesExporter);
     }
     return out;
   }
@@ -4338,12 +4338,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Export ASCII statistics",
-        () -> (STUDY.export_info_norm ? 1f : 0f),
-        (v) -> { STUDY.export_info_norm = (v >= 0.5f); },
+        () -> (STUDY.normalLinesExporter ? 1f : 0f),
+        (v) -> { STUDY.normalLinesExporter = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII statistics", STUDY.export_info_norm);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII statistics", STUDY.normalLinesExporter);
     }
     return out;
   }
@@ -4355,12 +4355,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Export ASCII probabilities",
-        () -> (STUDY.export_info_prob ? 1f : 0f),
-        (v) -> { STUDY.export_info_prob = (v >= 0.5f); },
+        () -> (STUDY.probabilitiesExporter ? 1f : 0f),
+        (v) -> { STUDY.probabilitiesExporter = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII probabilities", STUDY.export_info_prob);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII probabilities", STUDY.probabilitiesExporter);
     }
     return out;
   }

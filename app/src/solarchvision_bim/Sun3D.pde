@@ -460,12 +460,12 @@ class Sun3D {
 
           int l = STUDY.impactLayerIndex;
 
-          int keep_filter_type = STUDY.filterTypeIndex;
-          STUDY.filterTypeIndex = filter_HOURLY;
+          int keep_filter_type = STUDY.temporalFilterSetting;
+          STUDY.temporalFilterSetting = filter_HOURLY;
           int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
             start_k, end_k, more_J + j, DATE_ANGLE,
             target_window == TypeWindow.STUDY ? STUDY.impactTypeIndex : WIN3D.impactTypeIndex);
-          STUDY.filterTypeIndex = keep_filter_type;
+          STUDY.temporalFilterSetting = keep_filter_type;
 
           int row_J = more_J / STUDY.daysMergedCount;
 
@@ -509,7 +509,7 @@ class Sun3D {
               boolean anyUndefined = is_undefined(Pa1) || is_undefined(Pb1) || is_undefined(Pc1) || is_undefined(Pd1)
                                    || is_undefined(Pa2) || is_undefined(Pb2) || is_undefined(Pc2) || is_undefined(Pd2);
               if (!anyUndefined) {
-                boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, now_i1, now_j2, now_k);
+                boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.temporalFilterSetting, STUDY.skyScenarioSetting, now_i1, now_j2, now_k);
                 if (isMemberCounted) {
                   valuesSUM_RAD = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
                   valuesSUM_EFF = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
@@ -603,9 +603,9 @@ class Sun3D {
                 // not yet implemented for the WORLD window
               } else if (target_window == TypeWindow.STUDY) {
                 STUDY.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-                float x = (90 - Alpha) * (funcs.cos_ang(Beta - 90)) * (STUDY.rect_scale / 200) * s_Plot + x_Plot * (STUDY.rect_scale / 200);
-                float y = (90 - Alpha) * (funcs.sin_ang(Beta - 90)) * (STUDY.rect_scale / 200) * s_Plot + y_Plot * (STUDY.rect_scale / 200);
-                float ox = (j + (STUDY.rect_offset_x + 0.5)) * s_Plot;
+                float x = (90 - Alpha) * (funcs.cos_ang(Beta - 90)) * (STUDY.centralGraphScale / 200) * s_Plot + x_Plot * (STUDY.centralGraphScale / 200);
+                float y = (90 - Alpha) * (funcs.sin_ang(Beta - 90)) * (STUDY.centralGraphScale / 200) * s_Plot + y_Plot * (STUDY.centralGraphScale / 200);
+                float ox = (j + (STUDY.centralGraphOffsetX + 0.5)) * s_Plot;
                 STUDY.graphics.vertex(ox + x, -y);
               }
             }
