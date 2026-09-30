@@ -10,7 +10,7 @@ class WindRose {
 
   int renderedResolution = 1;
   int imageResolution = 400;
-  float textureSize = 400;
+  float planeSize = 400; // horizontal world-space footprint of the quad drawn in draw() (X/Y only - height is fixed separately below); renamed from textureSize, which no longer described what this does once the fix below stopped using it as a texture-coordinate multiplier
 
   void resize_Image_array () {
 
@@ -37,9 +37,6 @@ class WindRose {
       WIN3D.graphics.fill(127, 127, 127);
 
       WIN3D.graphics.beginShape();
-
-      float horizontalUnitSize = this.textureSize;
-      float verticalUnitSize = this.textureSize;
 
       float minU = 0;
       float maxU = this.renderedResolution;
@@ -91,8 +88,8 @@ class WindRose {
         y = b;
         z = c;
         WIN3D.graphics.vertex(
-          x * overallScale * WIN3D.scale * horizontalUnitSize,
-          -y * overallScale * WIN3D.scale * horizontalUnitSize,
+          x * overallScale * WIN3D.scale * this.planeSize,
+          -y * overallScale * WIN3D.scale * this.planeSize,
           z * overallScale * WIN3D.scale,
           u,
           v
@@ -115,7 +112,7 @@ class WindRose {
     XML_setBoolean(parent, "displayImage", this.displayImage);
     XML_setInt(parent, "imageResolution", this.imageResolution);
     XML_setInt(parent, "renderedResolution", this.renderedResolution);
-    XML_setFloat(parent, "textureSize", this.textureSize);
+    XML_setFloat(parent, "planeSize", this.planeSize);
   }
 
 
@@ -128,6 +125,6 @@ class WindRose {
     this.displayImage = XML_getBoolean(parent, "displayImage");
     this.imageResolution = XML_getInt(parent, "imageResolution");
     this.renderedResolution = XML_getInt(parent, "renderedResolution");
-    this.textureSize = XML_getFloat(parent, "textureSize");
+    this.planeSize = XML_getFloat(parent, "planeSize");
   }
 }

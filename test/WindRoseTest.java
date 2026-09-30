@@ -34,7 +34,7 @@ class WindRoseTest {
     app.allWindRoses.displayImage = true;
     app.allWindRoses.imageResolution = 200;
     app.allWindRoses.renderedResolution = 3;
-    app.allWindRoses.textureSize = 55f;
+    app.allWindRoses.planeSize = 55f;
 
     processing.data.XML root = new processing.data.XML("root");
     app.allWindRoses.to_XML(root);
@@ -45,6 +45,6 @@ class WindRoseTest {
     assertTrue(fresh.displayImage);
     assertEquals(200, fresh.imageResolution);
     assertEquals(3, fresh.renderedResolution);
-    assertEquals(55f, fresh.textureSize, 0.0001f);
+    assertEquals(55f, fresh.planeSize, 0.0001f);
   }
 }

@@ -636,7 +636,7 @@ class UI_rollout {
         allSolids.displayAll = vm.Solids_displayAll(1);
         allSections.displayAll = vm.Sections_displayAll(1);
         allWindRoses.displayImage = vm.WindRoses_displayImage(1);
-        allWindRoses.textureSize = vm.WindRoses_scale(1);
+        allWindRoses.planeSize = vm.WindRoses_scale(1);
         allWindRoses.imageResolution = vm.WindRoses_resolution(1);
 
 

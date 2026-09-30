@@ -1951,12 +1951,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("WindRoses scale",
-        () -> allWindRoses.textureSize,
-        (v) -> { allWindRoses.textureSize = v; },
+        () -> allWindRoses.planeSize,
+        (v) -> { allWindRoses.planeSize = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindRoses scale", allWindRoses.textureSize, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindRoses scale", allWindRoses.planeSize, s1, s2, s3, s4);
     }
     return out;
   }
