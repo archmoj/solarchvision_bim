@@ -1,12 +1,12 @@
-int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactType) {
+int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, float DATE_ANGLE, int impactTypeIndex) {
 
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
 
-  final int joinDays = STUDY.joinDays;
-  final int total = count_k * joinDays;
+  final int daysMergedCount = STUDY.daysMergedCount;
+  final int total = count_k * daysMergedCount;
 
-  boolean needEFF = (impactType == Impact_PASSIVE);
+  boolean needEFF = (impactTypeIndex == Impact_PASSIVE);
 
   int layerDirId = needEFF ? LAYER_direffect.id : LAYER_dirnorrad.id;
   int layerDifId = needEFF ? LAYER_difeffect.id : LAYER_difhorrad.id;
@@ -22,17 +22,17 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
     allSunZ[i] = SunR[3];
   }
 
-  float baseJ = j * STUDY.perDays + TIME.beginDay + 365 - int(funcs.roundTo(0.5 * joinDays, 1));
+  float baseJ = j * STUDY.dayIncrement + TIME.beginDay + 365 - int(funcs.roundTo(0.5 * daysMergedCount, 1));
 
-  int[] nowJ = new int[joinDays];
-  for (int j_ADD = 0; j_ADD < joinDays; j_ADD++) {
+  int[] nowJ = new int[daysMergedCount];
+  for (int j_ADD = 0; j_ADD < daysMergedCount; j_ADD++) {
     int now_j = int(baseJ + j_ADD) % 365;
     if (now_j >= 365) now_j %= 365;
     if (now_j < 0) now_j = (now_j + 365) % 365;
     nowJ[j_ADD] = now_j;
   }
 
-  for (int j_ADD = 0; j_ADD < joinDays; j_ADD++) {
+  for (int j_ADD = 0; j_ADD < daysMergedCount; j_ADD++) {
     int now_j = nowJ[j_ADD];
 
     for (int i = 0; i < 24; i++) {
@@ -42,7 +42,7 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
 
       for (int k = 0; k < count_k; k++) {
         int now_k = k + start_k;
-        int idx = k * joinDays + j_ADD;
+        int idx = k * daysMergedCount + j_ADD;
 
         float Pdir = getValue_currentDataSource(i, now_j, now_k, layerDirId);
         if (is_undefined(Pdir)) continue;
@@ -50,7 +50,7 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
         float Pdif = getValue_currentDataSource(i, now_j, now_k, layerDifId);
         if (is_undefined(Pdif)) continue;
 
-        boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
+        boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, i, now_j, now_k);
         if (!isMemberCounted) continue;
 
         if (is_undefined(valuesSUM[idx])) {

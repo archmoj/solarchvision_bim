@@ -260,7 +260,7 @@ class UI_rollout {
     vm.Camera_clipFar(0);
     vm.Create3D_displayVertices(0);
     vm.Create3D_displayEdges(0);
-    vm.Create3D_displayNormals(0);
+    vm.Create3D_showNormalLines(0);
     vm.Cameras_displayAll(0);
     vm.impactDisplayDay(0);
     vm.SolarImpacts_displayImage(0);
@@ -367,8 +367,6 @@ class UI_rollout {
     vm.Climate_based_temperature_forecast(0);
     vm.developLayerOption(0);
     vm.developLayerInterval(0);
-    vm.Trend_periodHours(0);
-    vm.Weighted_equal_trend(0);
     vm.Inclination_angle(0);
     vm.Orientation_angle(0);
     vm.Impact_source(0);
@@ -505,9 +503,9 @@ class UI_rollout {
     if (this.parent == PARENT_PERIOD_SCENARIOS) {
 
       if (this.child == CHILD_PERIOD_TIME) {
-        STUDY.j_End = vm.Number_of_days_to_plot(1);
-        STUDY.perDays = vm.Day_step(1);
-        STUDY.joinDays = vm.Join_days(1);
+        STUDY.endDay = vm.Number_of_days_to_plot(1);
+        STUDY.dayIncrement = vm.Day_step(1);
+        STUDY.daysMergedCount = vm.Join_days(1);
         TIME.date = vm.Days_past_March_equinox(1);
 
         TIME.day = vm.Begin_day(1);
@@ -516,8 +514,8 @@ class UI_rollout {
       }
 
       if (this.child == CHILD_PERIOD_RANGES) {
-        STUDY.i_Start = vm.Start_hour(1);
-        STUDY.i_End = vm.End_hour(1);
+        STUDY.startHour = vm.Start_hour(1);
+        STUDY.endHour = vm.End_hour(1);
         sampleYearStart = vm.Start_year(1);
         sampleYearEnd = vm.End_year(1);
         sampleMemberStart = vm.Start_member(1);
@@ -529,8 +527,8 @@ class UI_rollout {
 
       if (this.child == CHILD_PERIOD_FILTERS) {
 
-        STUDY.skyScenario = vm.Sky_status(1);
-        STUDY.filter = vm.Hourly_daily_filter(1);
+        STUDY.skyScenarioIndex = vm.Sky_status(1);
+        STUDY.filterTypeIndex = vm.Hourly_daily_filter(1);
       }
     } else if (this.parent == PARENT_LOCATION) {
 
@@ -656,7 +654,7 @@ class UI_rollout {
         WIN3D.cameraClipFar = vm.Camera_clipFar(1);
         allPoints.displayAll = vm.Create3D_displayVertices(1);
         allFaces.displayEdges = vm.Create3D_displayEdges(1);
-        allFaces.displayNormals = vm.Create3D_displayNormals(1);
+        allFaces.showNormalLines = vm.Create3D_showNormalLines(1);
         allCameras.displayAll = vm.Cameras_displayAll(1);
       }
 
@@ -711,14 +709,14 @@ class UI_rollout {
     } else if (this.parent == PARENT_ILLUSTRATION) {
 
       if (this.child == CHILD_ILLUSTRATION_2D_LAYERS) {
-        STUDY.plotSetup = vm.Diagram_setup(1);
-        STUDY.V_scale = vm.Scale(1);
-        STUDY.displayRaws = vm.Draw_data(1);
-        STUDY.displaySorted = vm.Draw_sorted(1);
-        STUDY.displayNormals = vm.Draw_statistics(1);
-        STUDY.displayProbs = vm.Draw_probabilities(1);
-        STUDY.sumInterval = vm.Probabilities_interval(1);
-        STUDY.LevelPix = vm.Probabilities_range(1);
+        STUDY.plotLayoutIndex = vm.Diagram_setup(1);
+        STUDY.verticalUnitScale = vm.Scale(1);
+        STUDY.showRawLines = vm.Draw_data(1);
+        STUDY.showStatisticalRanges = vm.Draw_sorted(1);
+        STUDY.showNormalLines = vm.Draw_statistics(1);
+        STUDY.showProbabilities = vm.Draw_probabilities(1);
+        STUDY.probabilityWidthInterval = vm.Probabilities_interval(1);
+        STUDY.probabilityHeightInterval = vm.Probabilities_range(1);
       }
 
       if (this.child == CHILD_ILLUSTRATION_2D_COLORS) {
@@ -735,7 +733,7 @@ class UI_rollout {
         STUDY.PROB_ColorScaleIndex = vm.Study_probPaletteClr(1);
         STUDY.PROB_ColorScaleDirection = vm.Study_probPaletteDir(1);
         STUDY.PROB_ColorScaleFactor = vm.Study_probPaletteMlt(1);
-        STUDY.O_scale = vm.WindRose_opacityScale(1);
+        STUDY.opacityPercentage = vm.WindRose_opacityScale(1);
       }
 
       if (this.child == CHILD_ILLUSTRATION_3D_SOLAR) {
@@ -806,14 +804,12 @@ class UI_rollout {
       if (this.child == CHILD_POSTPROCESS_DEVELOPED) {
         developLayerOption = vm.developLayerOption(1);
         developLayerInterval = vm.developLayerInterval(1);
-        STUDY.TrendJoinHours = vm.Trend_periodHours(1);
-        STUDY.TrendJoinType = vm.Weighted_equal_trend(1);
         developLayerAngleInclination = vm.Inclination_angle(1);
         developLayerAngleOrientation = vm.Orientation_angle(1);
       }
       if (this.child == CHILD_POSTPROCESS_IMPACTS) {
         currentDataSource = vm.Impact_source(1);
-        STUDY.ImpactLayer = vm.Impact_min_50_max(1);
+        STUDY.impactLayerIndex = vm.Impact_min_50_max(1);
       }
     } else if (this.parent == PARENT_EXPORT) {
 

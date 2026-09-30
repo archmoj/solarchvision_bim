@@ -1912,8 +1912,8 @@ class Create3D {
 
               for (int s = 0; s < subFace.length; s++) {
 
-                float u = (subFace[s][0] / Terrain.Textures_U_scale[q] + 0.5);
-                float v = (-subFace[s][1] / Terrain.Textures_V_scale[q] + 0.5);
+                float u = (subFace[s][0] / Terrain.Textures_horizontalUnitScale[q] + 0.5);
+                float v = (-subFace[s][1] / Terrain.Textures_verticalUnitScale[q] + 0.5);
 
                 if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
 
@@ -1957,8 +1957,8 @@ class Create3D {
                 }
 */
 
-                float u = (x / Terrain.Textures_U_scale[n_Map] + 0.5);
-                float v = (-y / Terrain.Textures_V_scale[n_Map] + 0.5);
+                float u = (x / Terrain.Textures_horizontalUnitScale[n_Map] + 0.5);
+                float v = (-y / Terrain.Textures_verticalUnitScale[n_Map] + 0.5);
 
                 int uPixel = int(u * Terrain.Textures_map[n_Map].width);
                 int vPixel = int(v * Terrain.Textures_map[n_Map].height);

@@ -26,10 +26,10 @@ class SolarImpacts {
 
   void resize_Image_array () {
 
-    this.Image = new PImage [2][(1 + STUDY.j_End - STUDY.j_Start)];
+    this.Image = new PImage [2][(1 + STUDY.endDay - STUDY.startDay)];
 
     for (int i = 0; i < this.Image.length; i++) {
-      for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) { // total image at j = -1
+      for (int j = STUDY.startDay - 1; j < STUDY.endDay; j++) { // total image at j = -1
 
         this.Image[i][j + 1] = createImage(2, 2, RGB); // empty and small
       }
@@ -75,7 +75,7 @@ class SolarImpacts {
       int now_j = 0;
 
       for (int p = 0; p < 1; p++) {
-        int l = STUDY.ImpactLayer;
+        int l = STUDY.impactLayerIndex;
 
         PImage[] total_Image_RGBA = new PImage[2];
         for (int q = 0; q < numberOfImpactVariations; q++) {
@@ -97,9 +97,9 @@ class SolarImpacts {
           }
         }
 
-        for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
+        for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
-          now_j = (j * int(STUDY.perDays) + TIME.beginDay + 365) % 365;
+          now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
 
           if (now_j >= 365) {
             now_j = now_j % 365;
@@ -115,11 +115,11 @@ class SolarImpacts {
 
           //println(DATE_ANGLE, DATE_ANGLE_approximate);
 
-          int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactType);
+          int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
 
           if (nk == -1) continue;
-          int k = int(nk / STUDY.joinDays);
-          int j_ADD = nk % STUDY.joinDays;
+          int k = int(nk / STUDY.daysMergedCount);
+          int j_ADD = nk % STUDY.daysMergedCount;
 
           float[][][][] Matrix_ARGB;
 
@@ -154,7 +154,7 @@ class SolarImpacts {
 
                 now_k = k + start_k;
                 now_i = i;
-                now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+                now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
 
                 if (now_j >= 365) {
                   now_j = now_j % 365;
@@ -175,7 +175,7 @@ class SolarImpacts {
                   values_E_dif = FLOAT_undefined;
                 } else {
 
-                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
+                  boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, now_i, now_j, now_k);
 
                   if (isMemberCounted) {
                     values_R_dir = 0.001 * Pa;
@@ -358,10 +358,10 @@ class SolarImpacts {
 
             for (int q = 0; q < numberOfImpactVariations; q++) {
 
-              float Image_A = total_Matrix_ARGB[q][0][Image_X][Image_Y] / (1.0 * (STUDY.j_End - STUDY.j_Start));
-              float Image_R = total_Matrix_ARGB[q][1][Image_X][Image_Y] / (1.0 * (STUDY.j_End - STUDY.j_Start));
-              float Image_G = total_Matrix_ARGB[q][2][Image_X][Image_Y] / (1.0 * (STUDY.j_End - STUDY.j_Start));
-              float Image_B = total_Matrix_ARGB[q][3][Image_X][Image_Y] / (1.0 * (STUDY.j_End - STUDY.j_Start));
+              float Image_A = total_Matrix_ARGB[q][0][Image_X][Image_Y] / (1.0 * (STUDY.endDay - STUDY.startDay));
+              float Image_R = total_Matrix_ARGB[q][1][Image_X][Image_Y] / (1.0 * (STUDY.endDay - STUDY.startDay));
+              float Image_G = total_Matrix_ARGB[q][2][Image_X][Image_Y] / (1.0 * (STUDY.endDay - STUDY.startDay));
+              float Image_B = total_Matrix_ARGB[q][3][Image_X][Image_Y] / (1.0 * (STUDY.endDay - STUDY.startDay));
 
               float[] _c = {
                 0, 0, 0, 0
@@ -488,7 +488,7 @@ class SolarImpacts {
       this.calculate_Impact_CurrentPreBaked();
 
 
-      for (int j = STUDY.j_Start - 1; j < STUDY.j_End; j++) {
+      for (int j = STUDY.startDay - 1; j < STUDY.endDay; j++) {
         for (int q = 0; q < numberOfImpactVariations; q++) {
           allSections.SolarImpact[f][j + 1][q] = createImage(this.RES1, this.RES2, RGB);
 

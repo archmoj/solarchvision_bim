@@ -10,15 +10,15 @@ class LAYER {
   public String name = "";
   public String[] descriptions = new String [numberOfLanguages];
 
-  public float V_scale = 1;
-  public float V_offset = 0;
-  public float V_belowLine = 0;
+  public float verticalUnitScale = 1;
+  public float verticalUnitOffset = 0;
+  public float verticalNegativePadding = 0;
 
-  LAYER (float V_scale, float V_offset, float V_belowLine, String unit, String description_EN, String description_FR, String name) {
+  LAYER (float verticalUnitScale, float verticalUnitOffset, float verticalNegativePadding, String unit, String description_EN, String description_FR, String name) {
 
-    this.V_scale = V_scale;
-    this.V_offset = V_offset;
-    this.V_belowLine = V_belowLine;
+    this.verticalUnitScale = verticalUnitScale;
+    this.verticalUnitOffset = verticalUnitOffset;
+    this.verticalNegativePadding = verticalNegativePadding;
     this.unit = unit;
     this.name = name;
     this.descriptions[Language_EN] = description_EN;
@@ -41,9 +41,9 @@ class LAYER {
     XML_setString(parent, "description_EN", this.descriptions[Language_EN]);
     XML_setString(parent, "description_FR", this.descriptions[Language_FR]);
 
-    XML_setFloat(parent, "V_scale", this.V_scale);
-    XML_setFloat(parent, "V_offset", this.V_offset);
-    XML_setFloat(parent, "V_belowLine", this.V_belowLine);
+    XML_setFloat(parent, "verticalUnitScale", this.verticalUnitScale);
+    XML_setFloat(parent, "verticalUnitOffset", this.verticalUnitOffset);
+    XML_setFloat(parent, "verticalNegativePadding", this.verticalNegativePadding);
   }
 
 
@@ -60,9 +60,9 @@ class LAYER {
     this.descriptions[Language_EN] = XML_getString(parent, "description_EN");
     this.descriptions[Language_FR] = XML_getString(parent, "description_FR");
 
-    this.V_scale = XML_getFloat(parent, "V_scale");
-    this.V_offset = XML_getFloat(parent, "V_offset");
-    this.V_belowLine = XML_getFloat(parent, "V_belowLine");
+    this.verticalUnitScale = XML_getFloat(parent, "verticalUnitScale");
+    this.verticalUnitOffset = XML_getFloat(parent, "verticalUnitOffset");
+    this.verticalNegativePadding = XML_getFloat(parent, "verticalNegativePadding");
   }
 
 

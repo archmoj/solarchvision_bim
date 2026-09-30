@@ -15,14 +15,14 @@ class SolarImpactsTest {
 
   @Test
   void resizeImageArray_buildsTwoRowsOnePlaceholderPerDayColumn () {
-    app.STUDY.j_Start = 0;
-    app.STUDY.j_End = 3;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 3;
     app.allSolarImpacts.rebuild_Image_array = true;
 
     app.allSolarImpacts.resize_Image_array();
 
     assertEquals(2, app.allSolarImpacts.Image.length);
-    assertEquals(4, app.allSolarImpacts.Image[0].length); // 1 + j_End - j_Start
+    assertEquals(4, app.allSolarImpacts.Image[0].length); // 1 + endDay - startDay
     assertNotNull(app.allSolarImpacts.Image[0][1]);
     assertEquals(2, app.allSolarImpacts.Image[0][1].width); // small placeholder
     assertFalse(app.allSolarImpacts.rebuild_Image_array);

@@ -7,7 +7,7 @@ class Faces {
   }
 
   boolean displayAll = true;
-  boolean displayNormals = false;
+  boolean showNormalLines = false;
   boolean displayEdges = true;
 
   int displayTessellation = 2;
@@ -154,7 +154,7 @@ class Faces {
 
       if (target_window == TypeWindow.WIN3D) {
 
-        if (this.displayNormals) {
+        if (this.showNormalLines) {
 
           for (int f = 0; f < this.nodes.length; f++) {
 
@@ -640,7 +640,7 @@ class Faces {
 
               if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
                   (WIN3D.shadingMode == SHADE.Vertex_Solar)) {
-                if (WIN3D.impactType == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+                if (WIN3D.impactTypeIndex == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
@@ -820,7 +820,7 @@ class Faces {
                           if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
                               (WIN3D.shadingMode == SHADE.Vertex_Solar)) {
 
-                            if (WIN3D.impactType == Impact_ACTIVE) {
+                            if (WIN3D.impactTypeIndex == Impact_ACTIVE) {
                               u0 = _u;
                             }
                           }
@@ -954,7 +954,7 @@ class Faces {
               if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
                   (WIN3D.shadingMode == SHADE.Vertex_Solar)) {
 
-                if (WIN3D.impactType == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+                if (WIN3D.impactTypeIndex == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
               }
 
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
@@ -1096,7 +1096,7 @@ class Faces {
                         if ((WIN3D.shadingMode == SHADE.Global_Solar) ||
                             (WIN3D.shadingMode == SHADE.Vertex_Solar)) {
 
-                          if (WIN3D.impactType == Impact_ACTIVE) {
+                          if (WIN3D.impactTypeIndex == Impact_ACTIVE) {
                             u0 = _u;
                           }
                         }
@@ -1603,7 +1603,7 @@ class Faces {
     }
 
     XML_setBoolean(parent, "displayAll", this.displayAll);
-    XML_setBoolean(parent, "displayNormals", this.displayNormals);
+    XML_setBoolean(parent, "showNormalLines", this.showNormalLines);
     XML_setBoolean(parent, "displayEdges", this.displayEdges);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
 
@@ -1646,7 +1646,7 @@ class Faces {
     }
 
     this.displayAll = XML_getBoolean(parent, "displayAll");
-    this.displayNormals = XML_getBoolean(parent, "displayNormals");
+    this.showNormalLines = XML_getBoolean(parent, "showNormalLines");
     this.displayEdges = XML_getBoolean(parent, "displayEdges");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
 

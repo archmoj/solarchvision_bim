@@ -63,15 +63,15 @@ class MouseClickedTest {
   }
 
   @Test
-  void setPlotImpacts_setsTheModeResetsSetupAndTogglesWindRoses () {
-    app.STUDY.PlotImpacts = 0;
-    app.STUDY.plotSetup = 9;
+  void setimpactGraphIndex_setsTheModeResetsSetupAndTogglesWindRoses () {
+    app.STUDY.impactGraphIndex = 0;
+    app.STUDY.plotLayoutIndex = 9;
     app.allWindRoses.displayImage = false;
 
-    app.setPlotImpacts(3, true);
+    app.setimpactGraphIndex(3, true);
 
-    assertEquals(3, app.STUDY.PlotImpacts);
-    assertEquals(0, app.STUDY.plotSetup);
+    assertEquals(3, app.STUDY.impactGraphIndex);
+    assertEquals(0, app.STUDY.plotLayoutIndex);
     assertTrue(app.allWindRoses.displayImage);
   }
 

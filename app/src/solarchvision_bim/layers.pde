@@ -166,9 +166,9 @@ String[] CurrentLayer_descriptions = {
 
 void changeCurrentLayerTo (int new_id) {
 
-  STUDY.V_scale = allLayers[new_id].V_scale;
-  STUDY.V_offset = allLayers[new_id].V_offset;
-  STUDY.V_belowLine = allLayers[new_id].V_belowLine;
+  STUDY.verticalUnitScale = allLayers[new_id].verticalUnitScale;
+  STUDY.verticalUnitOffset = allLayers[new_id].verticalUnitOffset;
+  STUDY.verticalNegativePadding = allLayers[new_id].verticalNegativePadding;
 
   developLayerId = new_id;
   currentLayerId = new_id;

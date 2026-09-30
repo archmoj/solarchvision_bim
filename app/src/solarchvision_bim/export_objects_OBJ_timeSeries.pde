@@ -1,10 +1,10 @@
 void exportObj_timeSeries () {
 
-  int keep_STUDY_i_Start = STUDY.i_Start;
+  int keep_STUDY_startHour = STUDY.startHour;
 
   for (int i = 0; i < 24; i++) {
 
-    STUDY.i_Start = i;
+    STUDY.startHour = i;
 
     find_which_bakings_to_regenerate();
     regenerate_desired_bakings();
@@ -14,5 +14,5 @@ void exportObj_timeSeries () {
 
   }
 
-  STUDY.i_Start = keep_STUDY_i_Start;
+  STUDY.startHour = keep_STUDY_startHour;
 }

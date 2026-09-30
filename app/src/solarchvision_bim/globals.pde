@@ -56,16 +56,16 @@ final int Impact_ACTIVE = 0; // internal
 final int Impact_PASSIVE = 1; // internal
 final int numberOfImpactVariations = 2; // internal
 
-final int PlotImpacts_CYCLES_ACTIVE = 0;
-final int PlotImpacts_CYCLES_PASSIVE = 1;
-final int PlotImpacts_SUNPATH_ACTIVE = 2;
-final int PlotImpacts_SUNPATH_PASSIVE = 3;
-final int PlotImpacts_GLOBAL_ACTIVE = 4;
-final int PlotImpacts_GLOBAL_PASSIVE = 5;
-final int PlotImpacts_WIND_ACTIVE = 6;
-final int PlotImpacts_WIND_PASSIVE = 7;
-final int PlotImpacts_URBAN_ACTIVE = 8;
-final int PlotImpacts_URBAN_PASSIVE = 9;
+final int impactGraphIndex_CYCLES_ACTIVE = 0;
+final int impactGraphIndex_CYCLES_PASSIVE = 1;
+final int impactGraphIndex_SUNPATH_ACTIVE = 2;
+final int impactGraphIndex_SUNPATH_PASSIVE = 3;
+final int impactGraphIndex_GLOBAL_ACTIVE = 4;
+final int impactGraphIndex_GLOBAL_PASSIVE = 5;
+final int impactGraphIndex_WIND_ACTIVE = 6;
+final int impactGraphIndex_WIND_PASSIVE = 7;
+final int impactGraphIndex_URBAN_ACTIVE = 8;
+final int impactGraphIndex_URBAN_PASSIVE = 9;
 
 float CubePower = 16; //8;
 float StarPower = 0.25;
@@ -98,10 +98,10 @@ static final int USER_AUTO = 1;
 
 int control = USER_GUI;
 
-String[] skyScenario_Title = {
+String[] skyScenarioIndex_Title = {
   "", "All", "Cloudy\nPattern", "Partly\nCloudy\nPattern", "Sunny\nPattern"
 };
-String[] skyScenario_FileTXT = {
+String[] skyScenarioIndex_FileTXT = {
   "", "", "Overcast sky", "Scattered sky", "Clear sky"
 };
 
@@ -277,11 +277,11 @@ String createStamp (int increment, String CLASS_STAMP) {
   txt += STATION.getCity() + "_";
 
   if (impactDisplayDay != 0) {
-    txt += TIME.getMM((impactDisplayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
+    txt += TIME.getMM((impactDisplayDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
   }
   else {
-    txt += TIME.getMM( STUDY.j_Start    * STUDY.perDays + 286 + TIME.beginDay) + "-" +
-           TIME.getMM((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
+    txt += TIME.getMM( STUDY.startDay    * STUDY.dayIncrement + 286 + TIME.beginDay) + "-" +
+           TIME.getMM((STUDY.endDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
   }
 
   return txt;
@@ -367,7 +367,7 @@ String MAKE_MainName () {
 
   String s = "";
 
-  if (currentDataSource == dataID_ensembleForecast) s = nf(TIME.year, 2) + nf(TIME.month, 2) + nf(TIME.day, 2) + "_" + nf(STUDY.j_End, 0) + "dayFORECAST_";
+  if (currentDataSource == dataID_ensembleForecast) s = nf(TIME.year, 2) + nf(TIME.month, 2) + nf(TIME.day, 2) + "_" + nf(STUDY.endDay, 0) + "dayFORECAST_";
 
   return s;
 }
@@ -659,10 +659,10 @@ WindRose allWindRoses = new WindRose();
 
 WindFlow allWindFlows = new WindFlow();
 
-void VertexSolar_resize_array () { // called when STUDY.j_End changes
+void VertexSolar_resize_array () { // called when STUDY.endDay changes
 
   VertexSolar_XYZ     = new float [0][3];
-  VertexSolar_amounts = new float [2][1 + STUDY.j_End - STUDY.j_Start][0];
+  VertexSolar_amounts = new float [2][1 + STUDY.endDay - STUDY.startDay][0];
 
   VertexSolar_rebuild_array = false;
 }

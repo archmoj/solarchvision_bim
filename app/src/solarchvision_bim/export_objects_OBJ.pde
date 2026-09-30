@@ -47,20 +47,20 @@ void exportObj (String suffix) {
 
   if (Sun3D.displayPattern) {
 
-    float keep_STUDY_perDays = STUDY.perDays;
-    int keep_STUDY_joinDays = STUDY.joinDays;
+    float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+    int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
-      STUDY.perDays = 1;
-      STUDY.joinDays = 1;
+      STUDY.dayIncrement = 1;
+      STUDY.daysMergedCount = 1;
     }
 
     float previous_DATE = TIME.date;
 
     Sun3D.drawCycles(TypeWindow.STUDY, 0, 0, 0, 0.975 *   Sky3D.radius);
 
-    STUDY.perDays = keep_STUDY_perDays;
-    STUDY.joinDays = keep_STUDY_joinDays;
+    STUDY.dayIncrement = keep_STUDY_dayIncrement;
+    STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
     TIME.date = previous_DATE;
     TIME.updateDate();
   }

@@ -18,8 +18,8 @@ class Terrain {
 
   float[][][] Mesh;
 
-  float[] Textures_U_scale;
-  float[] Textures_V_scale;
+  float[] Textures_horizontalUnitScale;
+  float[] Textures_verticalUnitScale;
   PImage[] Textures_map;
   String[] Textures_path;
   int Textures_num = 0;
@@ -39,8 +39,8 @@ class Terrain {
   ArrayList<float[][]> winEdgeBatch = null;
 
   void update_textures () {
-    this.Textures_U_scale = new float[0];
-    this.Textures_V_scale = new float[0];
+    this.Textures_horizontalUnitScale = new float[0];
+    this.Textures_verticalUnitScale = new float[0];
     this.Textures_map = new PImage[0];
     this.Textures_path = new String[0];
     this.Textures_num = 0;
@@ -88,8 +88,8 @@ class Terrain {
     if ((w < h) && (h != 0)) u *= w / (1.0 * h);
     if ((w > h) && (w != 0)) v *= h / (1.0 * w);
 
-    this.Textures_U_scale = (float[]) concat(this.Textures_U_scale, new float[] { u });
-    this.Textures_V_scale = (float[]) concat(this.Textures_V_scale, new float[] { v });
+    this.Textures_horizontalUnitScale = (float[]) concat(this.Textures_horizontalUnitScale, new float[] { u });
+    this.Textures_verticalUnitScale = (float[]) concat(this.Textures_verticalUnitScale, new float[] { v });
 
     this.Textures_num += 1;
     this.displayTexture = true;
@@ -481,8 +481,8 @@ class Terrain {
     for (int q = 0; q < this.Textures_num; q++) { // increase resolution until every corner fits inside a map
       n_Map = q;
       for (int s = 0; s < subFace.length; s++) {
-        float u = (subFace[s][0] / this.Textures_U_scale[q] + 0.5);
-        float v = (-subFace[s][1] / this.Textures_V_scale[q] + 0.5);
+        float u = (subFace[s][0] / this.Textures_horizontalUnitScale[q] + 0.5);
+        float v = (-subFace[s][1] / this.Textures_verticalUnitScale[q] + 0.5);
         if ((0.05 > u) || (u > 0.95) || (0.05 > v) || (v > 0.95)) { // exclude margins where the legend is printed
           n_Map = -1;
           break;
@@ -595,8 +595,8 @@ class Terrain {
     float u = 0;
     float v = 0;
     if (n_Map != -1) {
-      u = (subFace[s][0] / this.Textures_U_scale[n_Map] + 0.5);
-      v = (-subFace[s][1] / this.Textures_V_scale[n_Map] + 0.5);
+      u = (subFace[s][0] / this.Textures_horizontalUnitScale[n_Map] + 0.5);
+      v = (-subFace[s][1] / this.Textures_verticalUnitScale[n_Map] + 0.5);
     }
 
     if (target_window == TypeWindow.WIN3D) {
@@ -688,11 +688,11 @@ class Terrain {
       float u_next = 0;
       float v_next = 0;
       if (n_Map != -1) {
-        u = (subFace[s][0] / this.Textures_U_scale[n_Map] + 0.5);
-        v = (-subFace[s][1] / this.Textures_V_scale[n_Map] + 0.5);
+        u = (subFace[s][0] / this.Textures_horizontalUnitScale[n_Map] + 0.5);
+        v = (-subFace[s][1] / this.Textures_verticalUnitScale[n_Map] + 0.5);
 
-        u_next = (subFace[s_next][0] / this.Textures_U_scale[n_Map] + 0.5);
-        v_next = (-subFace[s_next][1] / this.Textures_V_scale[n_Map] + 0.5);
+        u_next = (subFace[s_next][0] / this.Textures_horizontalUnitScale[n_Map] + 0.5);
+        v_next = (-subFace[s_next][1] / this.Textures_verticalUnitScale[n_Map] + 0.5);
       }
 
       WIN3D.graphics.beginShape();
@@ -939,8 +939,8 @@ class Terrain {
       for (int i = 0; i < this.Textures_num; i++) {
         XML child = parent.addChild("item");
         XML_setInt(child, "id", i);
-        XML_setFloat(child, "U_scale", this.Textures_U_scale[i]);
-        XML_setFloat(child, "V_scale", this.Textures_V_scale[i]);
+        XML_setFloat(child, "horizontalUnitScale", this.Textures_horizontalUnitScale[i]);
+        XML_setFloat(child, "verticalUnitScale", this.Textures_verticalUnitScale[i]);
         XML_setContent(child, this.Textures_path[i]);
       }
     }
@@ -995,11 +995,11 @@ class Terrain {
       }
 
       XML[] children = parent.getChildren("item");
-      this.Textures_U_scale = new float [this.Textures_num];
-      this.Textures_V_scale = new float [this.Textures_num];
+      this.Textures_horizontalUnitScale = new float [this.Textures_num];
+      this.Textures_verticalUnitScale = new float [this.Textures_num];
       for (int i = 0; i < this.Textures_num; i++) {
-        this.Textures_U_scale[i] = children[i].getFloat("U_scale");
-        this.Textures_V_scale[i] = children[i].getFloat("V_scale");
+        this.Textures_horizontalUnitScale[i] = children[i].getFloat("horizontalUnitScale");
+        this.Textures_verticalUnitScale[i] = children[i].getFloat("verticalUnitScale");
 
         String new_Texture_path = XML_getContent(children[i]);
 

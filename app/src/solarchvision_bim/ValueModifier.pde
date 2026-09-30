@@ -27,13 +27,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Number of days to plot",
-        () -> (float) STUDY.j_End,
-        (v) -> { STUDY.j_End = int(v); },
+        () -> (float) STUDY.endDay,
+        (v) -> { STUDY.endDay = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyStudyJEnd);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Number of days to plot", STUDY.j_End, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Number of days to plot", STUDY.endDay, s1, s2, s3);
     }
     return out;
   }
@@ -49,12 +49,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Day step",
-        () -> STUDY.perDays,
-        (v) -> { STUDY.perDays = v; },
+        () -> STUDY.dayIncrement,
+        (v) -> { STUDY.dayIncrement = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Day step", STUDY.perDays, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Day step", STUDY.dayIncrement, s1, s2, s3);
     }
     return out;
   }
@@ -70,13 +70,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Join days",
-        () -> (float) STUDY.joinDays,
-        (v) -> { STUDY.joinDays = int(v); },
+        () -> (float) STUDY.daysMergedCount,
+        (v) -> { STUDY.daysMergedCount = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Join days", STUDY.joinDays, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Join days", STUDY.daysMergedCount, s1, s2, s3);
     }
     return out;
   }
@@ -180,13 +180,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Start hour",
-        () -> (float) STUDY.i_Start,
-        (v) -> { STUDY.i_Start = int(v); },
+        () -> (float) STUDY.startHour,
+        (v) -> { STUDY.startHour = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start hour", STUDY.i_Start, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start hour", STUDY.startHour, s1, s2, s3);
     }
     return out;
   }
@@ -202,13 +202,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("End hour",
-        () -> (float) STUDY.i_End,
-        (v) -> { STUDY.i_End = int(v); },
+        () -> (float) STUDY.endHour,
+        (v) -> { STUDY.endHour = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End hour", STUDY.i_End, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End hour", STUDY.endHour, s1, s2, s3);
     }
     return out;
   }
@@ -353,12 +353,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Sky status",
-        () -> (float) STUDY.skyScenario,
-        (v) -> { STUDY.skyScenario = int(v); },
+        () -> (float) STUDY.skyScenarioIndex,
+        (v) -> { STUDY.skyScenarioIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky status", STUDY.skyScenario, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky status", STUDY.skyScenarioIndex, s1, s2, s3);
     }
     return out;
   }
@@ -374,12 +374,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Hourly/daily filter",
-        () -> (float) STUDY.filter,
-        (v) -> { STUDY.filter = int(v); },
+        () -> (float) STUDY.filterTypeIndex,
+        (v) -> { STUDY.filterTypeIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Hourly/daily filter", STUDY.filter, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Hourly/daily filter", STUDY.filterTypeIndex, s1, s2, s3);
     }
     return out;
   }
@@ -2109,21 +2109,21 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Create3D_displayNormals (int created) {
+  boolean Create3D_showNormalLines (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Create3D displayNormals",
-        () -> (allFaces.displayNormals ? 1f : 0f),
-        (v) -> { allFaces.displayNormals = (v >= 0.5f); },
+      putValueAction("Create3D showNormalLines",
+        () -> (allFaces.showNormalLines ? 1f : 0f),
+        (v) -> { allFaces.showNormalLines = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D displayNormals", allFaces.displayNormals);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D showNormalLines", allFaces.showNormalLines);
     }
     return out;
   }
@@ -2154,11 +2154,11 @@ class ValueModifier {
       putValueAction("Impacts displayDay",
         () -> (float) impactDisplayDay,
         (v) -> { impactDisplayDay = int(v); },
-        () -> (float) (0), () -> (float) (STUDY.j_End - STUDY.j_Start), 1,
+        () -> (float) (0), () -> (float) (STUDY.endDay - STUDY.startDay), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impacts displayDay", impactDisplayDay, 0, STUDY.j_End - STUDY.j_Start, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impacts displayDay", impactDisplayDay, 0, STUDY.endDay - STUDY.startDay, 1);
     }
     return out;
   }
@@ -2898,13 +2898,13 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Diagram setup",
-        () -> (float) STUDY.plotSetup,
-        (v) -> { STUDY.plotSetup = int(v); },
+        () -> (float) STUDY.plotLayoutIndex,
+        (v) -> { STUDY.plotLayoutIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.impactsUpdateFlag);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Diagram setup", STUDY.plotSetup, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Diagram setup", STUDY.plotLayoutIndex, s1, s2, s3);
     }
     return out;
   }
@@ -2920,12 +2920,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Scale",
-        () -> STUDY.V_scale,
-        (v) -> { STUDY.V_scale = v; },
+        () -> STUDY.verticalUnitScale,
+        (v) -> { STUDY.verticalUnitScale = v; },
         s1, s2, Math.abs(s3),
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Scale (" + allLayers[currentLayerId].descriptions[Language_EN] + ")", STUDY.V_scale, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Scale (" + allLayers[currentLayerId].descriptions[Language_EN] + ")", STUDY.verticalUnitScale, s1, s2, s3);
     }
     return out;
   }
@@ -2937,12 +2937,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Draw data",
-        () -> (STUDY.displayRaws ? 1f : 0f),
-        (v) -> { STUDY.displayRaws = (v >= 0.5f); },
+        () -> (STUDY.showRawLines ? 1f : 0f),
+        (v) -> { STUDY.showRawLines = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw data", STUDY.displayRaws);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw data", STUDY.showRawLines);
     }
     return out;
   }
@@ -2954,12 +2954,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Draw sorted",
-        () -> (STUDY.displaySorted ? 1f : 0f),
-        (v) -> { STUDY.displaySorted = (v >= 0.5f); },
+        () -> (STUDY.showStatisticalRanges ? 1f : 0f),
+        (v) -> { STUDY.showStatisticalRanges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw sorted", STUDY.displaySorted);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw sorted", STUDY.showStatisticalRanges);
     }
     return out;
   }
@@ -2971,12 +2971,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Draw statistics",
-        () -> (STUDY.displayNormals ? 1f : 0f),
-        (v) -> { STUDY.displayNormals = (v >= 0.5f); },
+        () -> (STUDY.showNormalLines ? 1f : 0f),
+        (v) -> { STUDY.showNormalLines = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw statistics", STUDY.displayNormals);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw statistics", STUDY.showNormalLines);
     }
     return out;
   }
@@ -2988,12 +2988,12 @@ class ValueModifier {
     boolean out = false;
     if (created == 0) {
       putValueAction("Draw probabilities",
-        () -> (STUDY.displayProbs ? 1f : 0f),
-        (v) -> { STUDY.displayProbs = (v >= 0.5f); },
+        () -> (STUDY.showProbabilities ? 1f : 0f),
+        (v) -> { STUDY.showProbabilities = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw probabilities", STUDY.displayProbs);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw probabilities", STUDY.showProbabilities);
     }
     return out;
   }
@@ -3009,12 +3009,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Probabilities interval",
-        () -> (float) STUDY.sumInterval,
-        (v) -> { STUDY.sumInterval = int(v); },
+        () -> (float) STUDY.probabilityWidthInterval,
+        (v) -> { STUDY.probabilityWidthInterval = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities interval", STUDY.sumInterval, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities interval", STUDY.probabilityWidthInterval, s1, s2, s3);
     }
     return out;
   }
@@ -3031,12 +3031,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Probabilities range",
-        () -> STUDY.LevelPix,
-        (v) -> { STUDY.LevelPix = v; },
+        () -> STUDY.probabilityHeightInterval,
+        (v) -> { STUDY.probabilityHeightInterval = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities range", STUDY.LevelPix, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities range", STUDY.probabilityHeightInterval, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3295,12 +3295,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("WindRose opacityScale",
-        () -> STUDY.O_scale,
-        (v) -> { STUDY.O_scale = v; },
+        () -> STUDY.opacityPercentage,
+        (v) -> { STUDY.opacityPercentage = v; },
         s1, s2, Math.abs(s3),
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindRose opacityScale", STUDY.O_scale, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindRose opacityScale", STUDY.opacityPercentage, s1, s2, s3);
     }
     return out;
   }
@@ -4230,49 +4230,6 @@ class ValueModifier {
     }
     return out;
   }
-  int Trend_periodHours (int created) {
-    int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
-    int u3 = 0; // updateWORLD
-
-    int s1 = 1; //start
-    int s2 = 24 * 16; //stop
-    int s3 = 1; //step
-
-    int out = 0;
-    if (created == 0) {
-      putValueAction("Trend periodHours",
-        () -> (float) STUDY.TrendJoinHours,
-        (v) -> { STUDY.TrendJoinHours = int(v); },
-        s1, s2, s3,
-        u1, u2, u3);
-    } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Trend periodHours", STUDY.TrendJoinHours, s1, s2, s3);
-    }
-    return out;
-  }
-  int Weighted_equal_trend (int created) {
-    int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
-    int u3 = 0; // updateWORLD
-
-    int s1 = -1; //start
-    int s2 = 1; //stop
-    int s3 = 2; //step (negative = geometric multiply/divide on +/- click)
-    int s4 = 1; //round
-
-    int out = 0;
-    if (created == 0) {
-      putValueAction("Weighted equal trend",
-        () -> (float) STUDY.TrendJoinType,
-        (v) -> { STUDY.TrendJoinType = int(v); },
-        s1, s2, s4,
-        u1, u2, u3);
-    } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Weighted equal trend", STUDY.TrendJoinType, s1, s2, s3, s4);
-    }
-    return out;
-  }
   float Inclination_angle (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
@@ -4347,12 +4304,12 @@ class ValueModifier {
     int out = 0;
     if (created == 0) {
       putValueAction("Impact min 50 max",
-        () -> (float) STUDY.ImpactLayer,
-        (v) -> { STUDY.ImpactLayer = int(v); },
+        () -> (float) STUDY.impactLayerIndex,
+        (v) -> { STUDY.impactLayerIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impact min 50 max", STUDY.ImpactLayer, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impact min 50 max", STUDY.impactLayerIndex, s1, s2, s3);
     }
     return out;
   }

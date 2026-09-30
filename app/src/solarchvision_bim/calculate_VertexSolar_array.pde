@@ -8,12 +8,12 @@ void calculate_VertexSolar_array () {
 
   VertexSolar_resize_array();
 
-  float keep_STUDY_perDays = STUDY.perDays;
-  int keep_STUDY_joinDays = STUDY.joinDays;
+  float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+  int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
   if ((currentDataSource == dataID_ensembleForecast) ||
       (currentDataSource == dataID_ensembleObservation)) {
-    STUDY.perDays = 1;
-    STUDY.joinDays = 1;
+    STUDY.dayIncrement = 1;
+    STUDY.daysMergedCount = 1;
   }
 
   int[] startK_endK = get_startK_endK();
@@ -22,10 +22,10 @@ void calculate_VertexSolar_array () {
   int count_k = 1 + end_k - start_k;
   if (count_k < 0) count_k = 0;
 
-  int l = STUDY.ImpactLayer;
+  int l = STUDY.impactLayerIndex;
   int DATE_step = 1;
-  int J_START = STUDY.j_Start;
-  int J_END = STUDY.j_End;
+  int J_START = STUDY.startDay;
+  int J_END = STUDY.endDay;
   int numDays = J_END - J_START;
   if (numDays < 0) numDays = 0;
 
@@ -43,22 +43,22 @@ void calculate_VertexSolar_array () {
   for (int j = J_START; j < J_END; j += DATE_step) {
     int jIdx = j - J_START;
 
-    int day_now_j = (j * int(STUDY.perDays) + TIME.beginDay + 365) % 365;
+    int day_now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
     if (day_now_j >= 365) day_now_j = day_now_j % 365;
     if (day_now_j < 0) day_now_j = (day_now_j + 365) % 365;
 
     float DATE_ANGLE = (360 * ((286 + day_now_j) % 365) / 365.0);
     TS_DayTime[jIdx] = funcs.roundTo(funcs.DayTime(STATION.getLatitude(), DATE_ANGLE), 1);
 
-    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactType);
+    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
     if (nk == -1) continue;
 
     TS_dayHasData[jIdx] = true;
-    int k = int(nk / STUDY.joinDays);
-    int j_ADD = nk % STUDY.joinDays;
+    int k = int(nk / STUDY.daysMergedCount);
+    int j_ADD = nk % STUDY.daysMergedCount;
     int now_k = k + start_k;
 
-    int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+    int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
     if (now_j >= 365) now_j = now_j % 365;
     if (now_j < 0) now_j = (now_j + 365) % 365;
 
@@ -77,7 +77,7 @@ void calculate_VertexSolar_array () {
 
       if (is_undefined(Pa) || is_undefined(Pb) || is_undefined(Pc) || is_undefined(Pd)) continue;
 
-      boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, i, now_j, now_k);
+      boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, i, now_j, now_k);
       if (!isMemberCounted) continue;
 
       float[] SunDir = { SunR[1], SunR[2], SunR[3] };
@@ -295,8 +295,8 @@ void calculate_VertexSolar_array () {
             TOTAL_COMPARISON = ((abs(TOTAL_PERCENTAGE)) * TOTAL_AVERAGE);
 
             float valuesSUM = FLOAT_undefined;
-            if (WIN3D.impactType == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD;
-            if (WIN3D.impactType == Impact_PASSIVE) valuesSUM = TOTAL_COMPARISON;
+            if (WIN3D.impactTypeIndex == Impact_ACTIVE) valuesSUM = TOTALvaluesSUM_RAD;
+            if (WIN3D.impactTypeIndex == Impact_PASSIVE) valuesSUM = TOTAL_COMPARISON;
 
             activeDayValues[0].append(TOTALvaluesSUM_RAD);
             passiveDayValues[0].append(TOTAL_COMPARISON);

@@ -150,7 +150,7 @@ class WIN3DTest {
   @Test
   void choosePaletteParams_usesTheActiveOrPassivePaletteBasedOnImpactType () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar; // enables solar palette mode
-    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.allFaces.activeColorScaleIndex = 5;
     app.allFaces.activeColorScaleDirection = 1;
     app.allFaces.activeColorScaleFactor = 0.5f;
@@ -412,7 +412,7 @@ class WIN3DTest {
     app.WIN3D.currentTool = 1;
     app.WIN3D.targetAxisIndex = 1;
     app.WIN3D.toolParameterModifier = 1;
-    app.WIN3D.impactType = app.Impact_PASSIVE;
+    app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
 
     processing.data.XML root = new processing.data.XML("root");
     app.WIN3D.to_XML(root);
@@ -428,7 +428,7 @@ class WIN3DTest {
     assertEquals(0, fresh.projectionTypeIndex);
     assertEquals(2, fresh.shadingMode);
     assertEquals(1, fresh.currentTool);
-    assertEquals(app.Impact_PASSIVE, fresh.impactType);
+    assertEquals(app.Impact_PASSIVE, fresh.impactTypeIndex);
   }
 
   // ================= handleArrowKeys (plain, all four directions) ========
@@ -674,19 +674,19 @@ class WIN3DTest {
 
   @Test
   void handleCommandKey_tab_withShiftDown_cyclesImpactTypeAndWrapsAround () {
-    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.WIN3D.handleCommandKey(app.TAB, true);
-    assertEquals(app.Impact_PASSIVE, app.WIN3D.impactType);
+    assertEquals(app.Impact_PASSIVE, app.WIN3D.impactTypeIndex);
 
     app.WIN3D.handleCommandKey(app.TAB, true); // wraps back to Active
-    assertEquals(app.Impact_ACTIVE, app.WIN3D.impactType);
+    assertEquals(app.Impact_ACTIVE, app.WIN3D.impactTypeIndex);
   }
 
   @Test
   void handleCommandKey_tab_withoutShiftDown_doesNotChangeImpactType () {
-    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.WIN3D.handleCommandKey(app.TAB, false);
-    assertEquals(app.Impact_ACTIVE, app.WIN3D.impactType);
+    assertEquals(app.Impact_ACTIVE, app.WIN3D.impactTypeIndex);
   }
 
   @Test
@@ -833,31 +833,31 @@ class WIN3DTest {
 
   @Test
   void handleCommandKey_tAndCapitalT_moveTropoTimeInOppositeDirectionsAndClampAtStudyBounds () {
-    app.STUDY.i_Start = 0;
-    app.STUDY.i_End = 23;
+    app.STUDY.startHour = 0;
+    app.STUDY.endHour = 23;
     app.TROPO_deltaTime = 1;
 
-    app.Tropo3D.i_Map = 23; // already at i_End
-    app.WIN3D.handleCommandKey('t', false); // steps forward, then clamps back since it exceeded i_End
+    app.Tropo3D.i_Map = 23; // already at endHour
+    app.WIN3D.handleCommandKey('t', false); // steps forward, then clamps back since it exceeded endHour
     assertEquals(23, app.Tropo3D.i_Map);
 
-    app.Tropo3D.i_Map = 0; // already at i_Start
-    app.WIN3D.handleCommandKey('T', false); // steps backward, then clamps back since it went below i_Start
+    app.Tropo3D.i_Map = 0; // already at startHour
+    app.WIN3D.handleCommandKey('T', false); // steps backward, then clamps back since it went below startHour
     assertEquals(0, app.Tropo3D.i_Map);
   }
 
   @Test
   void handleCommandKey_dAndCapitalD_moveImpactsDisplayDayAndWrapAtStudyBounds () {
-    app.STUDY.j_Start = 0;
-    app.STUDY.j_End = 12;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 12;
 
-    app.impactDisplayDay = app.STUDY.j_End; // one past the last valid day
+    app.impactDisplayDay = app.STUDY.endDay; // one past the last valid day
     app.WIN3D.handleCommandKey('d', false); // wraps back to 0
     assertEquals(0, app.impactDisplayDay);
 
     app.impactDisplayDay = 0;
     app.WIN3D.handleCommandKey('D', false); // wraps to the last day
-    assertEquals(app.STUDY.j_End, app.impactDisplayDay);
+    assertEquals(app.STUDY.endDay, app.impactDisplayDay);
   }
 
   @Test

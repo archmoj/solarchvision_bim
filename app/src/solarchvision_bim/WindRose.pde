@@ -16,9 +16,9 @@ class WindRose {
 
   void resize_Image_array () {
 
-    this.Image = new PImage [(1 + STUDY.j_End - STUDY.j_Start)];
+    this.Image = new PImage [(1 + STUDY.endDay - STUDY.startDay)];
 
-    for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
+    for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
       this.Image[j + 1] = createImage(2, 2, RGB); // empty and small
     }
@@ -41,8 +41,8 @@ class WindRose {
       WIN3D.graphics.beginShape();
 
       float elevation = 0.0 + allSolidImpacts.Z[1];
-      float U_scale = this.scale;
-      float V_scale = this.scale;
+      float horizontalUnitScale = this.scale;
+      float verticalUnitScale = this.scale;
 
       float minU = 0;
       float maxU = this.renderedRES;
@@ -95,7 +95,7 @@ class WindRose {
         y = b;
         z = c;
 
-        WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale, u * U_scale, v * V_scale);
+        WIN3D.graphics.vertex(x * overallScale * WIN3D.scale, -y * overallScale * WIN3D.scale, z * overallScale * WIN3D.scale, u * horizontalUnitScale, v * verticalUnitScale);
       }
 
       WIN3D.graphics.endShape(CLOSE);

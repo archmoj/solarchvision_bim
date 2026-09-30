@@ -36,7 +36,7 @@ class Sky3DTest {
 
   @Test
   void activePalette_returnsTheActiveSetWhenImpactTypeIsActive () {
-    app.WIN3D.impactType = app.Impact_ACTIVE;
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
     app.Sky3D.activeColorScaleIndex = 5;
     app.Sky3D.activeColorScaleDirection = 1;
     app.Sky3D.activeColorScaleFactor = 0.5f;
@@ -50,7 +50,7 @@ class Sky3DTest {
 
   @Test
   void activePalette_returnsThePassiveSetWhenImpactTypeIsPassive () {
-    app.WIN3D.impactType = app.Impact_PASSIVE;
+    app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
     app.Sky3D.passiveColorScaleIndex = 8;
     app.Sky3D.passiveColorScaleDirection = -1;
     app.Sky3D.passiveColorScaleFactor = 0.25f;

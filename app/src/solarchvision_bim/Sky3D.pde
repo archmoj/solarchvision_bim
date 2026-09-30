@@ -33,12 +33,12 @@ class Sky3D {
     int type = 0;
     int direction = 1;
     float multiplier = 1;
-    if (WIN3D.impactType == Impact_ACTIVE) {
+    if (WIN3D.impactTypeIndex == Impact_ACTIVE) {
       type = this.activeColorScaleIndex;
       direction = this.activeColorScaleDirection;
       multiplier = this.activeColorScaleFactor;
     }
-    if (WIN3D.impactType == Impact_PASSIVE) {
+    if (WIN3D.impactTypeIndex == Impact_PASSIVE) {
       type = this.passiveColorScaleIndex;
       direction = this.passiveColorScaleDirection;
       multiplier = this.passiveColorScaleFactor;
@@ -105,7 +105,7 @@ class Sky3D {
       int Image_X = np % RES1;
       float val = (Image_X / (0.5 * RES1)) - 1;
       float u = 0.5 + val;
-      if (WIN3D.impactType == Impact_ACTIVE) u = 0.5 + 0.5 * val;
+      if (WIN3D.impactTypeIndex == Impact_ACTIVE) u = 0.5 + 0.5 * val;
       float[] COL = PAINT.getColorStyle(PAL_type, u);
       palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
     }
@@ -143,7 +143,7 @@ class Sky3D {
       if (_turn == 2) {
         float u1 = 0.5 * (u + 0.5);
         boolean solarShade = (WIN3D.shadingMode == SHADE.Global_Solar) || (WIN3D.shadingMode == SHADE.Vertex_Solar);
-        if (solarShade && (WIN3D.impactType == Impact_ACTIVE)) u1 = u;
+        if (solarShade && (WIN3D.impactTypeIndex == Impact_ACTIVE)) u1 = u;
         u1 = constrain(u1, 0.001, 0.999);
         OBJprintVtexture(u1, 0.5, 0);
       }

@@ -23,7 +23,7 @@ class UI_caseBar {
 
     drawTrackBackground();
     drawTabs();
-    drawImpactLayerSelector();
+    drawimpactLayerIndexSelector();
 
     X_clicked = -1;
     Y_clicked = -1;
@@ -142,21 +142,21 @@ class UI_caseBar {
   void drawHoursTab (float x1, float y1, float x2, float y2) {
     if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
       if (mouseButton == LEFT) {
-        STUDY.i_Start = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
+        STUDY.startHour = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
         notifyChanged();
       }
       if (mouseButton == RIGHT) {
-        STUDY.i_End = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
+        STUDY.endHour = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
         notifyChanged();
       }
     }
 
-    float x_start = x1 + (x2 - x1) * (STUDY.i_Start) / 24.0;
-    float x_end = x1 + (x2 - x1) * (STUDY.i_End + 1) / 24.0;
+    float x_start = x1 + (x2 - x1) * (STUDY.startHour) / 24.0;
+    float x_end = x1 + (x2 - x1) * (STUDY.endHour + 1) / 24.0;
 
     fill(0, 191, 0, 191);
     noStroke();
-    drawWrappedRect(STUDY.i_Start <= STUDY.i_End, x_start, x_end, x1, x2, y1, y2);
+    drawWrappedRect(STUDY.startHour <= STUDY.endHour, x_start, x_end, x1, x2, y1, y2);
 
     textAlign(CENTER, CENTER);
     stroke(0);
@@ -174,19 +174,19 @@ class UI_caseBar {
   void drawDaysTab (float x1, float y1, float x2, float y2) {
     handleDaysClick(x1, y1, x2, y2);
 
-    float keep_STUDY_perDays = STUDY.perDays;
-    int keep_STUDY_joinDays = STUDY.joinDays;
+    float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+    int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
-      STUDY.perDays = 1;
-      STUDY.joinDays = 1;
+      STUDY.dayIncrement = 1;
+      STUDY.daysMergedCount = 1;
     }
 
     drawDaysBands(x1, x2, y1, y2);
     drawDaysMonthLabels(x1, x2);
 
-    STUDY.perDays = keep_STUDY_perDays;
-    STUDY.joinDays = keep_STUDY_joinDays;
+    STUDY.dayIncrement = keep_STUDY_dayIncrement;
+    STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
   }
 
   // Shared by both mouse buttons: maps the click x-position to a day-of-year.
@@ -209,19 +209,19 @@ class UI_caseBar {
     if (mouseButton == RIGHT) {
       float _DATE2 = dayOfYearFromClick(X_clicked, x1, x2);
       if (TIME.date > _DATE2) _DATE2 += 365;
-      STUDY.perDays = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.j_End - STUDY.j_Start), 0.5);
-      if (STUDY.perDays < 1) STUDY.perDays = 1;
+      STUDY.dayIncrement = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.endDay - STUDY.startDay), 0.5);
+      if (STUDY.dayIncrement < 1) STUDY.dayIncrement = 1;
       notifyChanged();
     }
   }
 
   void drawDaysBands (float x1, float x2, float y1, float y2) {
-    for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
+    for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
       float first_x_start = -1;
       float last_x_end = -1;
 
-      for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {
-        int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+      for (int j_ADD = 0; j_ADD < STUDY.daysMergedCount; j_ADD++) {
+        int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
         if (now_j >= 365) now_j = now_j % 365;
         if (now_j < 0) now_j = (now_j + 365) % 365;
 
@@ -229,9 +229,9 @@ class UI_caseBar {
         float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / 365.0;
 
         if (j_ADD == 0) first_x_start = x_start;
-        if (j_ADD == STUDY.joinDays - 1) last_x_end = x_end;
+        if (j_ADD == STUDY.daysMergedCount - 1) last_x_end = x_end;
 
-        float q = 1.0 * (j - STUDY.j_Start) / (STUDY.j_End - STUDY.j_Start);
+        float q = 1.0 * (j - STUDY.startDay) / (STUDY.endDay - STUDY.startDay);
         fill(255 * (1 - q), 63, 255 * q, 127);
         noStroke();
         drawWrappedRect(x_start <= x_end, x_start, x_end, x1, x2, y1, y2);
@@ -384,14 +384,14 @@ class UI_caseBar {
   // Impact layer selector (3x3 grid)
   // ---------------------------------------------------------------------
 
-  void drawImpactLayerSelector () {
+  void drawimpactLayerIndexSelector () {
     float displayBarWidth = UI_rollout.dX;
     float displayBarHeight = 4.5 * MessageSize;
     float offsetX = UI_rollout.cX + 0.5 * displayBarWidth;
     float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5 * displayBarHeight;
 
-    handleImpactLayerClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
-    renderImpactLayerGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
+    handleimpactLayerIndexClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
+    renderimpactLayerIndexGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
   }
 
   // Bounds of grid cell n (0..8) as {x1, x2, y1, y2}.
@@ -407,24 +407,24 @@ class UI_caseBar {
     return new float[]{x1, x2, y1, y2};
   }
 
-  void handleImpactLayerClicks (float offsetX, float offsetY, float w, float h) {
+  void handleimpactLayerIndexClicks (float offsetX, float offsetY, float w, float h) {
     for (int n = 0; n < 9; n++) {
       float[] b = impactCellBounds(n, offsetX, offsetY, w, h);
       if (isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) {
-        STUDY.ImpactLayer = n;
+        STUDY.impactLayerIndex = n;
         notifyChanged();
       }
     }
   }
 
-  void renderImpactLayerGrid (float offsetX, float offsetY, float w, float h) {
+  void renderimpactLayerIndexGrid (float offsetX, float offsetY, float w, float h) {
     for (int n = 0; n < 9; n++) {
       float[] b = impactCellBounds(n, offsetX, offsetY, w, h);
       float x1 = b[0], x2 = b[1], y1 = b[2], y2 = b[3];
 
-      if (n == STUDY.ImpactLayer) {
+      if (n == STUDY.impactLayerIndex) {
         fill(255, 127, 0);
-      } else if (n / 3 == STUDY.ImpactLayer / 3) {
+      } else if (n / 3 == STUDY.impactLayerIndex / 3) {
         fill(127, 63, 0);
       } else {
         fill(127);
@@ -433,10 +433,10 @@ class UI_caseBar {
       rect(x1, y1, x2 - x1, y2 - y1);
 
       textAlign(CENTER, CENTER);
-      if (n == STUDY.ImpactLayer) {
+      if (n == STUDY.impactLayerIndex) {
         stroke(0);
         fill(0);
-      } else if (n / 3 == STUDY.ImpactLayer / 3) {
+      } else if (n / 3 == STUDY.impactLayerIndex / 3) {
         stroke(191);
         fill(191);
       } else {

@@ -51,7 +51,7 @@ class ValueModifierTest {
       methodCount++;
     }
 
-    assertEquals(233, methodCount, "expected exactly 233 value-modifier methods");
+    assertEquals(231, methodCount, "expected exactly 231 value-modifier methods");
   }
 
   // ================= Latitude / Longitude: STATION sync regression ========
@@ -134,13 +134,13 @@ class ValueModifierTest {
   @Test
   void scale_negativeClickStepField_roundsCommandLineInputByItsAbsoluteValue () {
     app.vm.Scale(0);
-    app.STUDY.V_scale = 1;
+    app.STUDY.verticalUnitScale = 1;
 
     float roundingStep = (float) Math.abs(-Math.pow(2.0, 1.0 / 2.0));
 
     app.allActions.get("scale").run(new String[]{"scale", "5"});
 
-    assertEquals(app.funcs.roundTo(5, roundingStep), app.STUDY.V_scale, 0.001f);
+    assertEquals(app.funcs.roundTo(5, roundingStep), app.STUDY.verticalUnitScale, 0.001f);
   }
 
   // ================= array-indexed field (allSolidImpacts.R[sectionType]) ===
@@ -171,12 +171,12 @@ class ValueModifierTest {
   @Test
   void numberOfDaysToPlot_commandLineAction_triggersApplyStudyJEnd () {
     app.vm.Number_of_days_to_plot(0);
-    app.STUDY.j_End = 100;
+    app.STUDY.endDay = 100;
     app.UI_caseBar.update = false;
 
     app.allActions.get("number_of_days_to_plot").run(new String[]{"number_of_days_to_plot", "200"});
 
-    assertEquals(200, app.STUDY.j_End);
+    assertEquals(200, app.STUDY.endDay);
     assertTrue(app.UI_caseBar.update);
   }
 }

@@ -14,8 +14,8 @@ class SHADE {
 
   float impactValueToU (float val, float PAL_multiplier) {
     float _u = FLOAT_undefined;
-    if (WIN3D.impactType == Impact_ACTIVE)  _u = (0.1 * PAL_multiplier * val);
-    if (WIN3D.impactType == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * val);
+    if (WIN3D.impactTypeIndex == Impact_ACTIVE)  _u = (0.1 * PAL_multiplier * val);
+    if (WIN3D.impactTypeIndex == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * val);
     return _u;
   }
 
@@ -56,7 +56,7 @@ class SHADE {
     float v = FLOAT_undefined;
     int q = this.findID_SolarImpact_atXYZ(x, y, z, x2, y2, z2, x3, y3, z3);
     if (q >= 0) {
-      v = VertexSolar_amounts[WIN3D.impactType][impactDisplayDay][q];
+      v = VertexSolar_amounts[WIN3D.impactTypeIndex][impactDisplayDay][q];
     }
     return v;
   }
@@ -131,7 +131,7 @@ class SHADE {
 
   float vertexU_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_type, int PAL_direction, float PAL_multiplier) {
     int[] bucket = this.get_SkyBucket(VERTEX_now, VERTEX_prev, VERTEX_next);
-    float valuesSUM = GlobalSolar[WIN3D.impactType][impactDisplayDay][bucket[0]][bucket[1]];
+    float valuesSUM = GlobalSolar[WIN3D.impactTypeIndex][impactDisplayDay][bucket[0]][bucket[1]];
 
     float _u = FLOAT_undefined;
     if (is_defined(valuesSUM)) {
@@ -147,8 +147,8 @@ class SHADE {
   int get_PAL_type () {
     int PAL_type = 0;
     if (isSolarImpactShade()) {
-      if (WIN3D.impactType == Impact_ACTIVE)  PAL_type = allFaces.activeColorScaleIndex;
-      if (WIN3D.impactType == Impact_PASSIVE) PAL_type = allFaces.passiveColorScaleIndex;
+      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_type = allFaces.activeColorScaleIndex;
+      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_type = allFaces.passiveColorScaleIndex;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_type = allSolids.colorScaleIndex;
     if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_type = Terrain.colorScaleIndex;
@@ -158,8 +158,8 @@ class SHADE {
   int get_PAL_direction () {
     int PAL_direction = 1;
     if (isSolarImpactShade()) {
-      if (WIN3D.impactType == Impact_ACTIVE)  PAL_direction = allFaces.activeColorScaleDirection;
-      if (WIN3D.impactType == Impact_PASSIVE) PAL_direction = allFaces.passiveColorScaleDirection;
+      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_direction = allFaces.activeColorScaleDirection;
+      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_direction = allFaces.passiveColorScaleDirection;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_direction = allSolids.colorScaleDirection;
     if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_direction = Terrain.colorScaleDirection;
@@ -169,8 +169,8 @@ class SHADE {
   float get_PAL_multiplier () {
     float PAL_multiplier = 1;
     if (isSolarImpactShade()) {
-      if (WIN3D.impactType == Impact_ACTIVE)  PAL_multiplier = allFaces.activeColorScaleFactor;
-      if (WIN3D.impactType == Impact_PASSIVE) PAL_multiplier = allFaces.passiveColorScaleFactor;
+      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_multiplier = allFaces.activeColorScaleFactor;
+      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = allFaces.passiveColorScaleFactor;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_multiplier = allSolids.colorScaleFactor;
     if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_multiplier = Terrain.colorScaleFactor;

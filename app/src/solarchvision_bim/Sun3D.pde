@@ -48,12 +48,12 @@ class Sun3D {
     int type = 0;
     int direction = 1;
     float multiplier = 1;
-    if (WIN3D.impactType == Impact_ACTIVE) {
+    if (WIN3D.impactTypeIndex == Impact_ACTIVE) {
       type = useStudySettings ? STUDY.activeColorScaleIndex : this.activeColorScaleIndex;
       direction = useStudySettings ? STUDY.activeColorScaleDirection : this.activeColorScaleDirection;
       multiplier = useStudySettings ? STUDY.activeColorScaleFactor : this.activeColorScaleFactor;
     }
-    if (WIN3D.impactType == Impact_PASSIVE) {
+    if (WIN3D.impactTypeIndex == Impact_PASSIVE) {
       type = useStudySettings ? STUDY.passiveColorScaleIndex : this.passiveColorScaleIndex;
       direction = useStudySettings ? STUDY.passiveColorScaleDirection : this.passiveColorScaleDirection;
       multiplier = useStudySettings ? STUDY.passiveColorScaleFactor : this.passiveColorScaleFactor;
@@ -63,8 +63,8 @@ class Sun3D {
 
   float[] paletteValueToColor (float rawValue, int palType, int palDirection) {
     float u = 0;
-    if (WIN3D.impactType == Impact_ACTIVE) u = rawValue;
-    if (WIN3D.impactType == Impact_PASSIVE) u = 0.5 + 0.5 * rawValue;
+    if (WIN3D.impactTypeIndex == Impact_ACTIVE) u = rawValue;
+    if (WIN3D.impactTypeIndex == Impact_PASSIVE) u = 0.5 + 0.5 * rawValue;
     u = applyPalDirection(u, palDirection);
     return PAINT.getColorStyle(palType, u);
   }
@@ -244,12 +244,12 @@ class Sun3D {
   void drawPath (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) {
     if (!this.displayPath) return;
 
-    float keep_STUDY_perDays = STUDY.perDays;
-    int keep_STUDY_joinDays = STUDY.joinDays;
+    float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+    int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
-      STUDY.perDays = 1;
-      STUDY.joinDays = 1;
+      STUDY.dayIncrement = 1;
+      STUDY.daysMergedCount = 1;
     }
     float previous_DATE = TIME.date;
 
@@ -272,26 +272,26 @@ class Sun3D {
     int start_k = startK_endK[0];
     int end_k = startK_endK[1];
 
-    int l = STUDY.ImpactLayer;
-    int J_START = STUDY.j_Start;
-    int J_END = STUDY.j_End;
+    int l = STUDY.impactLayerIndex;
+    int J_START = STUDY.startDay;
+    int J_END = STUDY.endDay;
     if (impactDisplayDay > 0) {
       J_START = impactDisplayDay - 1;
       J_END = impactDisplayDay;
     }
 
     for (int j = J_START; j < J_END; j += 1) {
-      int now_j = wrapDayIndex(j * int(STUDY.perDays) + TIME.beginDay);
+      int now_j = wrapDayIndex(j * int(STUDY.dayIncrement) + TIME.beginDay);
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
       int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
         start_k, end_k, j, DATE_ANGLE,
-        target_window == TypeWindow.STUDY ? STUDY.impactType : WIN3D.impactType);
+        target_window == TypeWindow.STUDY ? STUDY.impactTypeIndex : WIN3D.impactTypeIndex);
 
       if (nk == -1) continue;
 
-      int k = int(nk / STUDY.joinDays);
-      int j_ADD = nk % STUDY.joinDays;
+      int k = int(nk / STUDY.daysMergedCount);
+      int j_ADD = nk % STUDY.daysMergedCount;
 
       for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {
         if (!STUDY.isInHourlyRange(i)) continue;
@@ -301,12 +301,12 @@ class Sun3D {
         int now_i1 = floor(i);
         int now_i2 = (1 + now_i1) % 24;
         float i_ratio = i - now_i1;
-        now_j = wrapDayIndex(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay);
+        now_j = wrapDayIndex(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
 
         float Pa1 = FLOAT_undefined;
         float Pa2 = FLOAT_undefined;
-        int layerId = (WIN3D.impactType == Impact_ACTIVE) ? LAYER_dirnorrad.id
-                    : (WIN3D.impactType == Impact_PASSIVE) ? LAYER_direffect.id : -1;
+        int layerId = (WIN3D.impactTypeIndex == Impact_ACTIVE) ? LAYER_dirnorrad.id
+                    : (WIN3D.impactTypeIndex == Impact_PASSIVE) ? LAYER_direffect.id : -1;
         if (layerId != -1) {
           Pa1 = getValue_currentDataSource(now_i1, now_j, now_k, layerId);
           Pa2 = getValue_currentDataSource(now_i2, now_j, now_k, layerId);
@@ -336,8 +336,8 @@ class Sun3D {
     }
 
     WIN3D.graphics.popMatrix();
-    STUDY.perDays = keep_STUDY_perDays;
-    STUDY.joinDays = keep_STUDY_joinDays;
+    STUDY.dayIncrement = keep_STUDY_dayIncrement;
+    STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
     TIME.date = previous_DATE;
     TIME.updateDate();
   }
@@ -345,19 +345,19 @@ class Sun3D {
   void drawPattern (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) {
     if (!(this.displayPattern || (target_window == TypeWindow.STUDY))) return;
 
-    float keep_STUDY_perDays = STUDY.perDays;
-    int keep_STUDY_joinDays = STUDY.joinDays;
+    float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+    int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
-      STUDY.perDays = 1;
-      STUDY.joinDays = 1;
+      STUDY.dayIncrement = 1;
+      STUDY.daysMergedCount = 1;
     }
     float previous_DATE = TIME.date;
 
     this.drawCycles(target_window, x_SunPath, y_SunPath, z_SunPath, s_SunPath);
 
-    STUDY.perDays = keep_STUDY_perDays;
-    STUDY.joinDays = keep_STUDY_joinDays;
+    STUDY.dayIncrement = keep_STUDY_dayIncrement;
+    STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
     TIME.date = previous_DATE;
     TIME.updateDate();
   }
@@ -373,7 +373,7 @@ class Sun3D {
       int Image_X = np % RES1;
       float val = (Image_X / (0.5 * RES1)) - 1;
       float u = 0.5 + val;
-      if (WIN3D.impactType == Impact_ACTIVE) u = 0.5 + 0.5 * val;
+      if (WIN3D.impactTypeIndex == Impact_ACTIVE) u = 0.5 + 0.5 * val;
       float[] COL = PAINT.getColorStyle(PAL_type, u);
       palette_Texture.pixels[np] = color(COL[1], COL[2], COL[3], COL[0]);
     }
@@ -409,16 +409,16 @@ class Sun3D {
 
   void drawCycles (int target_window, float x_Plot, float y_Plot, float z_Plot, float s_Plot) {
     int TES_hour = 1; // 1 = every 1 hour, 4 = every 15 minutes
-    float STUDY_perDays = STUDY.perDays;
-    if (STUDY_perDays <= STUDY.joinDays) STUDY_perDays = STUDY.joinDays + 0.5;
+    float STUDY_dayIncrement = STUDY.dayIncrement;
+    if (STUDY_dayIncrement <= STUDY.daysMergedCount) STUDY_dayIncrement = STUDY.daysMergedCount + 0.5;
 
     int[] startK_endK = get_startK_endK();
     int start_k = startK_endK[0];
     int end_k = startK_endK[1];
 
-    int keep_impactType = WIN3D.impactType;
+    int keep_impactTypeIndex = WIN3D.impactTypeIndex;
     if (target_window == TypeWindow.STUDY) {
-      WIN3D.impactType = (STUDY.PlotImpacts % 2 == 0) ? Impact_ACTIVE : Impact_PASSIVE;
+      WIN3D.impactTypeIndex = (STUDY.impactGraphIndex % 2 == 0) ? Impact_ACTIVE : Impact_PASSIVE;
     }
 
     float[] palette = activePalette(target_window == TypeWindow.STUDY);
@@ -449,29 +449,29 @@ class Sun3D {
         }
       }
 
-      for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
-        float[][][] SunPathMesh = new float[24 * TES_hour][1 + int(STUDY_perDays / STUDY.joinDays)][3];
+      for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
+        float[][][] SunPathMesh = new float[24 * TES_hour][1 + int(STUDY_dayIncrement / STUDY.daysMergedCount)][3];
 
-        for (int more_J = 0; more_J < STUDY_perDays; more_J += STUDY.joinDays) {
-          int now_j = wrapDayIndex(more_J + j * int(STUDY_perDays) + TIME.beginDay);
+        for (int more_J = 0; more_J < STUDY_dayIncrement; more_J += STUDY.daysMergedCount) {
+          int now_j = wrapDayIndex(more_J + j * int(STUDY_dayIncrement) + TIME.beginDay);
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
           float sunrise_origin = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
           float sunset_origin = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
 
-          int l = STUDY.ImpactLayer;
+          int l = STUDY.impactLayerIndex;
 
-          int keep_filter_type = STUDY.filter;
-          STUDY.filter = filter_HOURLY;
+          int keep_filter_type = STUDY.filterTypeIndex;
+          STUDY.filterTypeIndex = filter_HOURLY;
           int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
             start_k, end_k, more_J + j, DATE_ANGLE,
-            target_window == TypeWindow.STUDY ? STUDY.impactType : WIN3D.impactType);
-          STUDY.filter = keep_filter_type;
+            target_window == TypeWindow.STUDY ? STUDY.impactTypeIndex : WIN3D.impactTypeIndex);
+          STUDY.filterTypeIndex = keep_filter_type;
 
-          int row_J = more_J / STUDY.joinDays;
+          int row_J = more_J / STUDY.daysMergedCount;
 
           if (nk != -1) {
-            int k = int(nk / STUDY.joinDays);
-            int j_ADD = nk % STUDY.joinDays;
+            int k = int(nk / STUDY.daysMergedCount);
+            int j_ADD = nk % STUDY.daysMergedCount;
 
             float valuesSUM_RAD = 0;
             float valuesSUM_EFF = 0;
@@ -495,7 +495,7 @@ class Sun3D {
               int now_i1 = floor(i);
               int now_i2 = (1 + now_i1) % 24;
               float i_ratio = i - now_i1;
-              int now_j2 = wrapDayIndex(more_J + j * STUDY_perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay);
+              int now_j2 = wrapDayIndex(more_J + j * STUDY_dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
 
               float Pa1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_dirnorrad.id);
               float Pb1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difhorrad.id);
@@ -509,7 +509,7 @@ class Sun3D {
               boolean anyUndefined = is_undefined(Pa1) || is_undefined(Pb1) || is_undefined(Pc1) || is_undefined(Pd1)
                                    || is_undefined(Pa2) || is_undefined(Pb2) || is_undefined(Pc2) || is_undefined(Pd2);
               if (!anyUndefined) {
-                boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i1, now_j2, now_k);
+                boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, now_i1, now_j2, now_k);
                 if (isMemberCounted) {
                   valuesSUM_RAD = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
                   valuesSUM_EFF = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
@@ -517,8 +517,8 @@ class Sun3D {
               }
 
               float valuesSUM = FLOAT_undefined;
-              if (WIN3D.impactType == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
-              if (WIN3D.impactType == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
+              if (WIN3D.impactTypeIndex == Impact_ACTIVE) valuesSUM = valuesSUM_RAD;
+              if (WIN3D.impactTypeIndex == Impact_PASSIVE) valuesSUM = valuesSUM_EFF;
 
               SunPathMesh[floor(i * TES_hour)][row_J][0] = Alpha;
               SunPathMesh[floor(i * TES_hour)][row_J][1] = Beta;
@@ -537,8 +537,8 @@ class Sun3D {
           }
         }
 
-        for (int more_J = 0; more_J < STUDY_perDays - STUDY.joinDays; more_J += STUDY.joinDays) { // count one less!
-          int now_j = wrapDayIndex(more_J + j * int(STUDY_perDays) + TIME.beginDay);
+        for (int more_J = 0; more_J < STUDY_dayIncrement - STUDY.daysMergedCount; more_J += STUDY.daysMergedCount) { // count one less!
+          int now_j = wrapDayIndex(more_J + j * int(STUDY_dayIncrement) + TIME.beginDay);
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
           float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE);
           float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);
@@ -560,7 +560,7 @@ class Sun3D {
 
             for (int s = 0; s < 4; s++) {
               int a = int(i * TES_hour);
-              int b = more_J / STUDY.joinDays;
+              int b = more_J / STUDY.daysMergedCount;
               if ((s == 1) || (s == 2)) a += 1;
               if ((s == 2) || (s == 3)) b += 1;
               if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
@@ -572,8 +572,8 @@ class Sun3D {
               if ((Alpha < 0) || !is_defined(valuesSUM)) continue;
 
               float _u = 0;
-              if (WIN3D.impactType == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
-              if (WIN3D.impactType == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
+              if (WIN3D.impactTypeIndex == Impact_ACTIVE) _u = (PAL_multiplier * valuesSUM);
+              if (WIN3D.impactTypeIndex == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_multiplier * valuesSUM);
               _u = applyPalDirection(_u, PAL_direction);
               float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
@@ -587,7 +587,7 @@ class Sun3D {
                 } else if (_turn == 2) {
                   float u1 = 0.5 * (_u + 0.5);
                   boolean solarShade = (WIN3D.shadingMode == SHADE.Global_Solar) || (WIN3D.shadingMode == SHADE.Vertex_Solar);
-                  if (solarShade && (WIN3D.impactType == Impact_ACTIVE)) u1 = _u;
+                  if (solarShade && (WIN3D.impactTypeIndex == Impact_ACTIVE)) u1 = _u;
                   u1 = constrain(u1, 0.001, 0.999);
                   OBJprintVtexture(u1, 0.5, 0);
                 } else { // _turn == 3
@@ -629,7 +629,7 @@ class Sun3D {
       }
     }
 
-    WIN3D.impactType = keep_impactType;
+    WIN3D.impactTypeIndex = keep_impactTypeIndex;
   }
 
 

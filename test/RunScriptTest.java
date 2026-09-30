@@ -570,12 +570,12 @@ class RunScriptTest {
   @Test
   void fallsBackToALastSpaceMatch_forALongerMultiWordCaption () {
     app.vm.Number_of_days_to_plot(0);
-    app.STUDY.j_End = 1;
+    app.STUDY.endDay = 1;
 
     String hint = app.runScriptLine("Number of days to plot 200");
 
     assertEquals("", hint);
-    assertEquals(200, app.STUDY.j_End);
+    assertEquals(200, app.STUDY.endDay);
   }
 
   @Test
@@ -600,17 +600,17 @@ class RunScriptTest {
     // registers the literal, lowercased caption alongside the normalized
     // (spaces -> underscores) key, so either form dispatches it.
     app.build_allActions();
-    app.STUDY.PlotImpacts = -1;
+    app.STUDY.impactGraphIndex = -1;
 
     String hintSpaced = app.runScriptLine("Wind pattern (active)");
     assertEquals("", hintSpaced);
-    assertEquals(app.PlotImpacts_WIND_ACTIVE, app.STUDY.PlotImpacts);
+    assertEquals(app.impactGraphIndex_WIND_ACTIVE, app.STUDY.impactGraphIndex);
 
-    app.STUDY.PlotImpacts = -1; // reset before checking the other form
+    app.STUDY.impactGraphIndex = -1; // reset before checking the other form
 
     String hintUnderscored = app.runScriptLine("wind_pattern_(active)");
     assertEquals("", hintUnderscored);
-    assertEquals(app.PlotImpacts_WIND_ACTIVE, app.STUDY.PlotImpacts);
+    assertEquals(app.impactGraphIndex_WIND_ACTIVE, app.STUDY.impactGraphIndex);
   }
 
   // ================= parseParams / getF / getI ================================

@@ -59,38 +59,38 @@ void reviseStudyAndRegenerate(boolean alsoWorld) {
 }
 
 void handleHoursCaseBarWheel(float wheelValue) {
-  int oldStart = STUDY.i_Start;
-  int oldEnd = STUDY.i_End;
+  int oldStart = STUDY.startHour;
+  int oldEnd = STUDY.endHour;
 
   if (wheelValue > 0) {
-    STUDY.i_Start += 1;
-    STUDY.i_End += 1;
+    STUDY.startHour += 1;
+    STUDY.endHour += 1;
   }
   if (wheelValue < 0) {
-    STUDY.i_Start -= 1;
-    STUDY.i_End -= 1;
+    STUDY.startHour -= 1;
+    STUDY.endHour -= 1;
   }
 
-  if (STUDY.i_Start < 0) STUDY.i_Start = 23;
-  if (STUDY.i_Start > 23) STUDY.i_Start = 0;
-  if (STUDY.i_End < 0) STUDY.i_End = 23;
-  if (STUDY.i_End > 23) STUDY.i_End = 0;
+  if (STUDY.startHour < 0) STUDY.startHour = 23;
+  if (STUDY.startHour > 23) STUDY.startHour = 0;
+  if (STUDY.endHour < 0) STUDY.endHour = 23;
+  if (STUDY.endHour > 23) STUDY.endHour = 0;
 
-  if (oldStart != STUDY.i_Start || oldEnd != STUDY.i_End) {
+  if (oldStart != STUDY.startHour || oldEnd != STUDY.endHour) {
     reviseStudyAndRegenerate(true);
   }
 }
 
 void handleDaysCaseBarWheel(float wheelValue) {
-  int oldJoinDays = STUDY.joinDays;
+  int oldJoinDays = STUDY.daysMergedCount;
 
-  if (wheelValue > 0) STUDY.joinDays += 2;
-  if (wheelValue < 0) STUDY.joinDays -= 2;
+  if (wheelValue > 0) STUDY.daysMergedCount += 2;
+  if (wheelValue < 0) STUDY.daysMergedCount -= 2;
 
-  if (STUDY.joinDays > 365 / STUDY.j_End) STUDY.joinDays = 365 / STUDY.j_End;
-  if (STUDY.joinDays < 1) STUDY.joinDays = 1;
+  if (STUDY.daysMergedCount > 365 / STUDY.endDay) STUDY.daysMergedCount = 365 / STUDY.endDay;
+  if (STUDY.daysMergedCount < 1) STUDY.daysMergedCount = 1;
 
-  if (oldJoinDays != STUDY.joinDays) {
+  if (oldJoinDays != STUDY.daysMergedCount) {
     reviseStudyAndRegenerate(false);
   }
 }

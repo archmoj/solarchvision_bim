@@ -6,12 +6,12 @@ void calculate_GlobalSolar_array () {
     GlobalSolar_resize_array();
   }
 
-  float keep_STUDY_perDays = STUDY.perDays;
-  int keep_STUDY_joinDays = STUDY.joinDays;
+  float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+  int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
   if ((currentDataSource == dataID_ensembleForecast) ||
       (currentDataSource == dataID_ensembleObservation)) {
-    STUDY.perDays = 1;
-    STUDY.joinDays = 1;
+    STUDY.dayIncrement = 1;
+    STUDY.daysMergedCount = 1;
   }
 
   int[] startK_endK = get_startK_endK();
@@ -34,7 +34,7 @@ void calculate_GlobalSolar_array () {
   int now_i = 0;
   int now_j = 0;
 
-  int l = STUDY.ImpactLayer;
+  int l = STUDY.impactLayerIndex;
 
   int a_max = int(180 / Sky3D.inclinationStep);
   int b_max = int(360 / Sky3D.orientationStep);
@@ -60,9 +60,9 @@ void calculate_GlobalSolar_array () {
   float[] cache_E_dir = new float [24];
   float[] cache_E_dif = new float [24];
 
-  for (int j = STUDY.j_Start; j < STUDY.j_End; j++) {
+  for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
-    now_j = (j * int(STUDY.perDays) + TIME.beginDay + 365) % 365;
+    now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
 
     if (now_j >= 365) {
       now_j = now_j % 365;
@@ -73,15 +73,15 @@ void calculate_GlobalSolar_array () {
 
     float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
-    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactType);
+    int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
     if (nk == -1) continue;
 
-    int k = int(nk / STUDY.joinDays);
-    int j_ADD = nk % STUDY.joinDays;
+    int k = int(nk / STUDY.daysMergedCount);
+    int j_ADD = nk % STUDY.daysMergedCount;
 
     now_k = k + start_k;
 
-    int now_j_base = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+    int now_j_base = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
     if (now_j_base >= 365) {
       now_j_base = now_j_base % 365;
     }
@@ -114,7 +114,7 @@ void calculate_GlobalSolar_array () {
             values_E_dif = FLOAT_undefined;
           } else {
 
-            boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filter, STUDY.skyScenario, now_i, now_j, now_k);
+            boolean isMemberCounted = filter(currentDataSource, LAYER_cloudcover.id, STUDY.filterTypeIndex, STUDY.skyScenarioIndex, now_i, now_j, now_k);
 
             if (isMemberCounted) {
               values_R_dir = 0.001 * Pa;
@@ -248,8 +248,8 @@ void calculate_GlobalSolar_array () {
   }
 
 
-  STUDY.perDays = keep_STUDY_perDays;
-  STUDY.joinDays = keep_STUDY_joinDays;
+  STUDY.dayIncrement = keep_STUDY_dayIncrement;
+  STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
 
   cursor(ARROW);
 }

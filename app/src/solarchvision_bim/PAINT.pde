@@ -3,8 +3,8 @@ class PAINT {
   final static String CLASS_STAMP = "PAINT";
 
 
-  int getOpacity (float O_scale) {
-    int k = int(O_scale * 0.01 * 256);
+  int getOpacity (float opacityPercentage) {
+    int k = int(opacityPercentage * 0.01 * 256);
     if (k > 255) k = 255;
     if (k < 0) k = 0;
 
@@ -468,7 +468,7 @@ class PAINT {
     };
 
     if (currentColorStyle == 0) {
-      c[0] = PAINT.getOpacity(STUDY.O_scale);
+      c[0] = PAINT.getOpacity(STUDY.opacityPercentage);
       c[1] = 0;
       c[2] = 0;
       c[3] = 0;
@@ -558,7 +558,7 @@ class PAINT {
       c[3] = COL[1];
     } else if (currentColorStyle == 4) {
       float[] COL = this.VDWBGR(j);
-      c[0] = STUDY.O_scale;
+      c[0] = STUDY.opacityPercentage;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];
@@ -570,7 +570,7 @@ class PAINT {
       c[3] = COL[3];
     } else if (currentColorStyle == 2) {
       float[] COL = this.DRYWCBD(2.0 * (j - 0.5));
-      c[0] = STUDY.O_scale;
+      c[0] = STUDY.opacityPercentage;
       c[1] = COL[1];
       c[2] = COL[2];
       c[3] = COL[3];

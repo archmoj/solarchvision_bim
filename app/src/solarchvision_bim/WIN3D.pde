@@ -54,7 +54,7 @@ class WIN3D {
 
   int shadingMode = SHADE.Surface_Materials; //Shade_Surface_White; // <<<<<
 
-  int impactType = Impact_ACTIVE;
+  int impactTypeIndex = Impact_ACTIVE;
 
   PGraphics graphics;
 
@@ -121,7 +121,7 @@ class WIN3D {
     if (this.fullPeriod_IMG) {
       this.fullPeriod_IMG = false;
       firstDay = 0;
-      lastDay = STUDY.j_End;
+      lastDay = STUDY.endDay;
     }
 
     int keep_impactDisplayDay = impactDisplayDay;
@@ -226,8 +226,8 @@ class WIN3D {
   void saveRecordedFrame () {
     String myFile = MAKE_Filename(createStamp(1, CLASS_STAMP));
 
-    if (this.impactType == Impact_ACTIVE) myFile += "_RAD";
-    if (this.impactType == Impact_PASSIVE) myFile += "_EFF";
+    if (this.impactTypeIndex == Impact_ACTIVE) myFile += "_RAD";
+    if (this.impactTypeIndex == Impact_PASSIVE) myFile += "_EFF";
     myFile += "_" + importedObjectName;
     myFile += ".jpg";
 
@@ -268,12 +268,12 @@ class WIN3D {
     boolean draw_pal = false;
 
     if (isSolarPaletteMode()) {
-      if (this.impactType == Impact_ACTIVE) {
+      if (this.impactTypeIndex == Impact_ACTIVE) {
         type = allFaces.activeColorScaleIndex;
         direction = allFaces.activeColorScaleDirection;
         multiplier = allFaces.activeColorScaleFactor;
       }
-      if (this.impactType == Impact_PASSIVE) {
+      if (this.impactTypeIndex == Impact_PASSIVE) {
         type = allFaces.passiveColorScaleIndex;
         direction = allFaces.passiveColorScaleDirection;
         multiplier = allFaces.passiveColorScaleFactor;
@@ -336,8 +336,8 @@ class WIN3D {
 
     float _u = 0.2 * q - 0.5;
     if (isSolarPaletteMode()) {
-      if (this.impactType == Impact_ACTIVE) _u = 0.1 * q;
-      if (this.impactType == Impact_PASSIVE) _u = 0.2 * q - 0.5;
+      if (this.impactTypeIndex == Impact_ACTIVE) _u = 0.1 * q;
+      if (this.impactTypeIndex == Impact_PASSIVE) _u = 0.2 * q - 0.5;
     }
     _u = applyPalDirection(_u, PAL_direction);
 
@@ -368,8 +368,8 @@ class WIN3D {
     this.graphics.textAlign(CENTER, CENTER);
 
     if (isSolarPaletteMode()) {
-      if (this.impactType == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
-      if (this.impactType == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y, 0);
+      if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
+      if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y, 0);
     }
 
     if (this.shadingMode == SHADE.Vertex_Elevation) {
@@ -389,18 +389,18 @@ class WIN3D {
     this.graphics.textAlign(LEFT, CENTER);
 
     if ((this.shadingMode != SHADE.Vertex_Elevation) && (this.shadingMode != SHADE.Vertex_Solid)) {
-      if (this.impactType == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
-      if (this.impactType == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
+      if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
+      if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
 
       txt += "SOLARCHVISION ";
-      if (this.impactType == Impact_ACTIVE) txt += "active model ";
-      if (this.impactType == Impact_PASSIVE) txt += "passive model ";
+      if (this.impactTypeIndex == Impact_ACTIVE) txt += "active model ";
+      if (this.impactTypeIndex == Impact_PASSIVE) txt += "passive model ";
 
       if (impactDisplayDay != 0) {
-        txt += TIME.getDayText((impactDisplayDay - 1) * STUDY.perDays + 286 + TIME.beginDay);
+        txt += TIME.getDayText((impactDisplayDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
       } else {
-        txt += TIME.getDayText(STUDY.j_Start * STUDY.perDays + 286 + TIME.beginDay) + " - ";
-        txt += TIME.getDayText((STUDY.j_End - 1) * STUDY.perDays + 286 + TIME.beginDay);
+        txt += TIME.getDayText(STUDY.startDay * STUDY.dayIncrement + 286 + TIME.beginDay) + " - ";
+        txt += TIME.getDayText((STUDY.endDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
       }
     }
 
@@ -671,7 +671,7 @@ class WIN3D {
 
       case TAB:
         if (shiftDown) {
-          this.impactType = (this.impactType + 1) % numberOfImpactVariations;
+          this.impactTypeIndex = (this.impactTypeIndex + 1) % numberOfImpactVariations;
           if (this.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
           if (this.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
           reviseViews();
@@ -780,25 +780,25 @@ class WIN3D {
 
       case 't':
         Tropo3D.i_Map += TROPO_deltaTime;
-        if (Tropo3D.i_Map > STUDY.i_End) Tropo3D.i_Map -= TROPO_deltaTime;
+        if (Tropo3D.i_Map > STUDY.endHour) Tropo3D.i_Map -= TROPO_deltaTime;
         WORLD.revise();
         WIN3D.revise();
         break;
       case 'T':
         Tropo3D.i_Map -= TROPO_deltaTime;
-        if (Tropo3D.i_Map < STUDY.i_Start) Tropo3D.i_Map += TROPO_deltaTime;
+        if (Tropo3D.i_Map < STUDY.startHour) Tropo3D.i_Map += TROPO_deltaTime;
         WORLD.revise();
         WIN3D.revise();
         break;
 
       case 'd':
         impactDisplayDay += 1;
-        if (impactDisplayDay > STUDY.j_End) impactDisplayDay = 0;
+        if (impactDisplayDay > STUDY.endDay) impactDisplayDay = 0;
         reviseViews();
         break;
       case 'D':
         impactDisplayDay -= 1;
-        if (impactDisplayDay < 0) impactDisplayDay = STUDY.j_End;
+        if (impactDisplayDay < 0) impactDisplayDay = STUDY.endDay;
         reviseViews();
         break;
 
@@ -1143,7 +1143,7 @@ class WIN3D {
     XML_setInt(parent, "targetAxisIndex", this.targetAxisIndex);
     XML_setInt(parent, "toolParameterModifier", this.toolParameterModifier);
 
-    XML_setInt(parent, "impactType", this.impactType);
+    XML_setInt(parent, "impactTypeIndex", this.impactTypeIndex);
   }
 
   public void from_XML (XML xml) {
@@ -1178,7 +1178,7 @@ class WIN3D {
     this.targetAxisIndex = XML_getInt(parent, "targetAxisIndex");
     this.toolParameterModifier = XML_getInt(parent, "toolParameterModifier");
 
-    this.impactType = XML_getInt(parent, "impactType");
+    this.impactTypeIndex = XML_getInt(parent, "impactTypeIndex");
   }
 
   void revise () {

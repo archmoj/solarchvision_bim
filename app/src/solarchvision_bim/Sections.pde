@@ -16,7 +16,7 @@ class Sections {
     this.f_data = new float[n][6];
     this.i_data = new int[n][3];
     this.SolidImpact = new PImage[n];
-    this.SolarImpact = new PImage[n][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+    this.SolarImpact = new PImage[n][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
     this.num = n;
 
     if (Select3D != null) {
@@ -35,8 +35,8 @@ class Sections {
     PImage[] Temp_SolidImpact = { createImage(RES1, RES2, RGB) };
     this.SolidImpact = (PImage[]) concat(this.SolidImpact, Temp_SolidImpact);
 
-    PImage[][][] Temp_SolarImpact = new PImage[1][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
-    for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) {
+    PImage[][][] Temp_SolarImpact = new PImage[1][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
+    for (int j = STUDY.startDay; j <= STUDY.endDay; j++) {
       for (int q = 0; q < numberOfImpactVariations; q++) {
         Temp_SolarImpact[0][j][q] = createImage(2, 2, RGB); // empty and small
       }
@@ -73,12 +73,12 @@ class Sections {
   }
 
   PImage[] SolidImpact = new PImage[0];
-  PImage[][][] SolarImpact = new PImage[0][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+  PImage[][][] SolarImpact = new PImage[0][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
 
-  void resize_solarImpact_array () { // called when STUDY.j_End changes
-    this.SolarImpact = new PImage[this.num][(1 + STUDY.j_End - STUDY.j_Start)][numberOfImpactVariations];
+  void resize_solarImpact_array () { // called when STUDY.endDay changes
+    this.SolarImpact = new PImage[this.num][(1 + STUDY.endDay - STUDY.startDay)][numberOfImpactVariations];
     for (int i = 0; i < this.num; i++) {
-      for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) {
+      for (int j = STUDY.startDay; j <= STUDY.endDay; j++) {
         for (int q = 0; q < numberOfImpactVariations; q++) {
           this.SolarImpact[i][j][q] = createImage(2, 2, RGB); // empty and small
         }
@@ -156,7 +156,7 @@ class Sections {
 
     if (allSolarImpacts.displayImage) {
       println("Saving texture:", TEXTURE_path);
-      this.SolarImpact[f][impactDisplayDay][WIN3D.impactType].save(TEXTURE_path);
+      this.SolarImpact[f][impactDisplayDay][WIN3D.impactTypeIndex].save(TEXTURE_path);
     } else if (allSolidImpacts.displayImage) {
       println("Saving texture:", TEXTURE_path);
       this.SolidImpact[f].save(TEXTURE_path);
@@ -199,7 +199,7 @@ class Sections {
       WIN3D.graphics.noStroke();
       WIN3D.graphics.noFill();
       if (allSolarImpacts.displayImage) {
-        WIN3D.graphics.texture(this.SolarImpact[f][impactDisplayDay][WIN3D.impactType]);
+        WIN3D.graphics.texture(this.SolarImpact[f][impactDisplayDay][WIN3D.impactTypeIndex]);
       } else if (allSolidImpacts.displayImage) {
         WIN3D.graphics.texture(this.SolidImpact[f]);
       }

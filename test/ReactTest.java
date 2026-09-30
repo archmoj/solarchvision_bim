@@ -133,16 +133,16 @@ class ReactTest {
 
   @Test
   void impactsUpdateFlag_noOp_whenOldEqualsNew () {
-    app.STUDY.Impacts_update = false;
+    app.STUDY.updateImpactGraph = false;
     app.react.impactsUpdateFlag.run(1, 1);
-    assertFalse(app.STUDY.Impacts_update);
+    assertFalse(app.STUDY.updateImpactGraph);
   }
 
   @Test
   void impactsUpdateFlag_setsStudyImpactsUpdate_whenChanged () {
-    app.STUDY.Impacts_update = false;
+    app.STUDY.updateImpactGraph = false;
     app.react.impactsUpdateFlag.run(0, 1);
-    assertTrue(app.STUDY.Impacts_update);
+    assertTrue(app.STUDY.updateImpactGraph);
   }
 
   @Test
@@ -199,9 +199,9 @@ class ReactTest {
     app.allSolarImpacts.rebuild_Image_array = false;
     app.allWindRoses.rebuild_Image_array = false;
 
-    // allSections.resize_solarImpact_array() sizes its array off STUDY.j_End,
+    // allSections.resize_solarImpact_array() sizes its array off STUDY.endDay,
     // so this must actually be the field's new value for the call to be safe
-    app.STUDY.j_End = 100;
+    app.STUDY.endDay = 100;
 
     app.react.applyStudyJEnd.run(90, 100);
 

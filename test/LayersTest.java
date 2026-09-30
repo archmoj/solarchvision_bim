@@ -33,9 +33,9 @@ class LayersTest {
 
     solarchvision_bim.LAYER expected = app.allLayers[5];
 
-    assertEquals(expected.V_scale, app.STUDY.V_scale, 0.0001f);
-    assertEquals(expected.V_offset, app.STUDY.V_offset, 0.0001f);
-    assertEquals(expected.V_belowLine, app.STUDY.V_belowLine, 0.0001f);
+    assertEquals(expected.verticalUnitScale, app.STUDY.verticalUnitScale, 0.0001f);
+    assertEquals(expected.verticalUnitOffset, app.STUDY.verticalUnitOffset, 0.0001f);
+    assertEquals(expected.verticalNegativePadding, app.STUDY.verticalNegativePadding, 0.0001f);
   }
 
   @Test
@@ -130,8 +130,8 @@ class LayersTest {
     assertEquals("TMP", loaded.name);
     assertEquals("Air Temperature", loaded.descriptions[app.Language_EN]);
     assertEquals("Température de l'air", loaded.descriptions[app.Language_FR]);
-    assertEquals(2.5f, loaded.V_scale, 0.0001f);
-    assertEquals(-10f, loaded.V_offset, 0.0001f);
-    assertEquals(1f, loaded.V_belowLine, 0.0001f);
+    assertEquals(2.5f, loaded.verticalUnitScale, 0.0001f);
+    assertEquals(-10f, loaded.verticalUnitOffset, 0.0001f);
+    assertEquals(1f, loaded.verticalNegativePadding, 0.0001f);
   }
 }

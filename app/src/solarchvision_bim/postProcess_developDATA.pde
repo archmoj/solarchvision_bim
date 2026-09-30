@@ -4,14 +4,14 @@ void postProcess_developDATA (int desired_DataSource) {
 
   currentDataSource = desired_DataSource;
 
-  float keep_STUDY_perDays = STUDY.perDays;
-  int keep_STUDY_joinDays = STUDY.joinDays;
+  float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+  int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
 
   if ((currentDataSource == dataID_ensembleForecast) ||
       (currentDataSource == dataID_ensembleObservation)) {
 
-    STUDY.perDays = 1;
-    STUDY.joinDays = 1;
+    STUDY.dayIncrement = 1;
+    STUDY.daysMergedCount = 1;
   }
 
   int DATA_start = getStart_currentDataSource();
@@ -29,14 +29,14 @@ void postProcess_developDATA (int desired_DataSource) {
 
     java.util.Arrays.fill(valuesSUM, FLOAT_undefined);
 
-    for (int j = STUDY.j_Start; j <= STUDY.j_End; j++) {
-      for (int j_ADD = 0; j_ADD < STUDY.joinDays; j_ADD++) {
+    for (int j = STUDY.startDay; j <= STUDY.endDay; j++) {
+      for (int j_ADD = 0; j_ADD < STUDY.daysMergedCount; j_ADD++) {
         for (int k = 0; k < count_k; k++) {
           for (int i = 0; i < 24; i++) {
 
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * STUDY.perDays + (j_ADD - int(funcs.roundTo(0.5 * STUDY.joinDays, 1))) + TIME.beginDay + 365) % 365;
+            int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
 
             if (now_j >= 365) {
               now_j = now_j % 365;
@@ -75,7 +75,7 @@ void postProcess_developDATA (int desired_DataSource) {
             R_dir = FLOAT_undefined;
             R_dif = FLOAT_undefined;
 
-            if ((i == 0) && (j == STUDY.j_Start)) valuesSUM[now_k] = 0;
+            if ((i == 0) && (j == STUDY.startDay)) valuesSUM[now_k] = 0;
 
 
 
@@ -139,9 +139,9 @@ void postProcess_developDATA (int desired_DataSource) {
                 setValue_currentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
 
-              LAYER_developed.V_scale = 0.05;
-              LAYER_developed.V_offset = 0;
-              LAYER_developed.V_belowLine = 0;
+              LAYER_developed.verticalUnitScale = 0.05;
+              LAYER_developed.verticalUnitOffset = 0;
+              LAYER_developed.verticalNegativePadding = 0;
               LAYER_developed.unit = "W/m²";
               LAYER_developed.descriptions[Language_EN] = "Wind power";
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
@@ -158,9 +158,9 @@ void postProcess_developDATA (int desired_DataSource) {
                 setValue_currentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
 
-              LAYER_developed.V_scale = 0.1;
-              LAYER_developed.V_offset = 0;
-              LAYER_developed.V_belowLine = 0;
+              LAYER_developed.verticalUnitScale = 0.1;
+              LAYER_developed.verticalUnitOffset = 0;
+              LAYER_developed.verticalNegativePadding = 0;
               LAYER_developed.unit = "W/m²";
               LAYER_developed.descriptions[Language_EN] = "Radiation on solar tracker";
               LAYER_developed.descriptions[Language_FR] = "?"; // ??
@@ -216,9 +216,9 @@ void postProcess_developDATA (int desired_DataSource) {
                 setValue_currentDataSource(now_i, now_j, now_k, LAYER_developed.id, valuesSUM[now_k]);
               }
 
-              LAYER_developed.V_scale = 0.1;
-              LAYER_developed.V_offset = 0;
-              LAYER_developed.V_belowLine = 0;
+              LAYER_developed.verticalUnitScale = 0.1;
+              LAYER_developed.verticalUnitOffset = 0;
+              LAYER_developed.verticalNegativePadding = 0;
               LAYER_developed.unit = "W/m²";
 
               if (developLayerOption == DEV_RadiationOnSurface) {
@@ -261,8 +261,8 @@ void postProcess_developDATA (int desired_DataSource) {
 
   developDataUpdate = false;
 
-  STUDY.perDays = keep_STUDY_perDays;
-  STUDY.joinDays = keep_STUDY_joinDays;
+  STUDY.dayIncrement = keep_STUDY_dayIncrement;
+  STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
 
   currentDataSource = keep_currentDataSource;
 }

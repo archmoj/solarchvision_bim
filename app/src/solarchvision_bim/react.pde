@@ -39,7 +39,7 @@ class react {
   OnChange recalcImpact = (o, n) -> { if (o == n) return; allSolidImpacts.calculate_Impact_selectedSections(); view_changed(); };
   OnChange selectionChangedOnly = (o, n) -> { if (o == n) return; selection_changed(); };
   OnChange softSelectionChanged = (o, n) -> { if (o == n) return; Select3D.convert_Vertex_to_softSelection(); };
-  OnChange impactsUpdateFlag = (o, n) -> { if (o == n) return; STUDY.Impacts_update = true; UI_caseBar.updated(); };
+  OnChange impactsUpdateFlag = (o, n) -> { if (o == n) return; STUDY.updateImpactGraph = true; UI_caseBar.updated(); };
 
   // Move/Rotate/Scale-by-delta spinners: applyRolloutUpdate.pde applies the
   // *difference* between the old and new spinner reading as a transform on

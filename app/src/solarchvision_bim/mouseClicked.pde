@@ -25,9 +25,9 @@ void stopAllRecording() {
   FRAME_drag_IMG = false;
 }
 
-void setPlotImpacts(int impacts, boolean showWindRoses) {
-  STUDY.PlotImpacts = impacts;
-  STUDY.plotSetup = 0;
+void setimpactGraphIndex(int impacts, boolean showWindRoses) {
+  STUDY.impactGraphIndex = impacts;
+  STUDY.plotLayoutIndex = 0;
   STUDY.revise();
   allWindRoses.displayImage = showWindRoses;
   UI_rollout.revise();

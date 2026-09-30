@@ -181,7 +181,7 @@ class FacesTest {
     app.allFaces.nodes = new int[][]{{5, 6, 7}};
     app.allFaces.options = new int[][]{{3, 2, 1, 1, 4, 1}};
     app.allFaces.displayAll = false;
-    app.allFaces.displayNormals = true;
+    app.allFaces.showNormalLines = true;
     app.allFaces.displayEdges = false;
     app.allFaces.displayTessellation = 3;
     app.allFaces.activeColorScaleIndex = 9;
@@ -202,7 +202,7 @@ class FacesTest {
     assertArrayEquals(new int[]{3, 2, 1, 1, 4, 1}, fresh.options[0]);
 
     assertFalse(fresh.displayAll);
-    assertTrue(fresh.displayNormals);
+    assertTrue(fresh.showNormalLines);
     assertFalse(fresh.displayEdges);
     assertEquals(3, fresh.displayTessellation);
     assertEquals(9, fresh.activeColorScaleIndex);

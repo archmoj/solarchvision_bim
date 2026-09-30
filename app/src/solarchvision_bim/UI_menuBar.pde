@@ -642,7 +642,7 @@ class UI_menuBar {
     map.put(toggleKey("3D-display", "Show/Hide Terrain Depth"),    () -> !Terrain.displayDepth);
     map.put(toggleKey("3D-display", "Show/Hide Vertices"),      () -> !allPoints.displayAll);
     map.put(toggleKey("3D-display", "Show/Hide Edges"),         () -> !allFaces.displayEdges);
-    map.put(toggleKey("3D-display", "Show/Hide Normals"),       () -> !allFaces.displayNormals);
+    map.put(toggleKey("3D-display", "Show/Hide Normals"),       () -> !allFaces.showNormalLines);
     map.put(toggleKey("3D-display", "Show/Hide Leaves"),        () -> !allModel1Ds.displayLeaves);
     map.put(toggleKey("3D-display", "Show/Hide Model1Ds"),      () -> !allModel1Ds.displayAll);
     map.put(toggleKey("3D-display", "Show/Hide Model2Ds"),      () -> !allModel2Ds.displayAll);

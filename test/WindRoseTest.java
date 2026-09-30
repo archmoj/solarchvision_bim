@@ -15,13 +15,13 @@ class WindRoseTest {
 
   @Test
   void resizeImageArray_buildsOnePlaceholderPerDayColumnAndClearsTheRebuildFlag () {
-    app.STUDY.j_Start = 0;
-    app.STUDY.j_End = 3;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 3;
     app.allWindRoses.rebuild_Image_array = true;
 
     app.allWindRoses.resize_Image_array();
 
-    assertEquals(4, app.allWindRoses.Image.length); // 1 + j_End - j_Start
+    assertEquals(4, app.allWindRoses.Image.length); // 1 + endDay - startDay
     assertNotNull(app.allWindRoses.Image[1]);
     assertEquals(2, app.allWindRoses.Image[1].width); // small placeholder image
     assertFalse(app.allWindRoses.rebuild_Image_array);

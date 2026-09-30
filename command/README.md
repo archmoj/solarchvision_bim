@@ -433,7 +433,7 @@ the user interface.
 | `Select3D landPointDisplayPoints` | Toggle: draw selected land points | 0 or 1 |
 | `Create3D displayEdges` | Toggle: draw edges while creating new geometry | 0 or 1 |
 | `Create3D displayVertices` | Toggle: draw vertices while creating new geometry | 0 or 1 |
-| `Create3D displayNormals` | Toggle: draw normals while creating new geometry | 0 or 1 |
+| `Create3D showNormalLines` | Toggle: draw normals while creating new geometry | 0 or 1 |
 
 ### New-object defaults (3D-create)
 

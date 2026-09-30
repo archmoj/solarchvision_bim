@@ -177,8 +177,8 @@ class TerrainTest {
     app.Terrain.to_XML(root);
 
     solarchvision_bim.Terrain fresh = app.new Terrain();
-    fresh.Textures_U_scale = new float[0];
-    fresh.Textures_V_scale = new float[0];
+    fresh.Textures_horizontalUnitScale = new float[0];
+    fresh.Textures_verticalUnitScale = new float[0];
     fresh.from_XML(root);
 
     assertEquals(1, fresh.rowCount);

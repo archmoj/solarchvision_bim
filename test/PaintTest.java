@@ -193,7 +193,7 @@ class PaintTest {
 
   @Test
   void getColorStyle_style0_isOpacityOnlyWithNoColor () {
-    app.STUDY.O_scale = 40;
+    app.STUDY.opacityPercentage = 40;
     float[] c = app.PAINT.getColorStyle(0, 0.5f);
     assertEquals((float) app.PAINT.getOpacity(40), c[0], EPS);
     assertArrayEquals(new float[]{0, 0, 0}, new float[]{c[1], c[2], c[3]}, EPS);
@@ -218,7 +218,7 @@ class PaintTest {
 
   @Test
   void getColorStyle_style2_usesSTUDYOScaleAsAlphaInsteadOfFullOpacity () {
-    app.STUDY.O_scale = 128;
+    app.STUDY.opacityPercentage = 128;
     float j = 0.75f;
     float[] expected = app.PAINT.DRYWCBD(2f * (j - 0.5f));
     float[] c = app.PAINT.getColorStyle(2, j);
@@ -228,7 +228,7 @@ class PaintTest {
 
   @Test
   void getColorStyle_style3And4_passVDWBGRThroughWithDifferentAlphaSources () {
-    app.STUDY.O_scale = 64;
+    app.STUDY.opacityPercentage = 64;
     float j = 0.3f;
     float[] expected = app.PAINT.VDWBGR(j);
 
@@ -237,7 +237,7 @@ class PaintTest {
     assertEquals(expected[1], c3[1], EPS);
 
     float[] c4 = app.PAINT.getColorStyle(4, j);
-    assertEquals(64f, c4[0], EPS); // uses STUDY.O_scale instead of full opacity
+    assertEquals(64f, c4[0], EPS); // uses STUDY.opacityPercentage instead of full opacity
     assertEquals(expected[1], c4[1], EPS);
   }
 

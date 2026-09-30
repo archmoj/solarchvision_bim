@@ -6,7 +6,7 @@ void GlobalSolar_resize_array () {
   Sky3D.inclinationCount = int(funcs.roundTo(180.0 / (1.0 * Sky3D.inclinationStep), 1)) + 1;
   Sky3D.orientationCount = int(funcs.roundTo(360.0 / (1.0 * Sky3D.orientationStep), 1));
 
-  int jCount = 1 + STUDY.j_End - STUDY.j_Start;
+  int jCount = 1 + STUDY.endDay - STUDY.startDay;
 
   GlobalSolar = new float [2][jCount][Sky3D.inclinationCount][Sky3D.orientationCount];
 

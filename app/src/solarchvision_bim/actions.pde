@@ -251,25 +251,25 @@ void build_allActions() {
     exit();
   });
 
-  putAction("Wind pattern (active)", () -> setPlotImpacts(PlotImpacts_WIND_ACTIVE, true));
+  putAction("Wind pattern (active)", () -> setimpactGraphIndex(impactGraphIndex_WIND_ACTIVE, true));
 
-  putAction("Wind pattern (passive)", () -> setPlotImpacts(PlotImpacts_WIND_PASSIVE, true));
+  putAction("Wind pattern (passive)", () -> setimpactGraphIndex(impactGraphIndex_WIND_PASSIVE, true));
 
-  putAction("Urban solar potential (active)", () -> setPlotImpacts(PlotImpacts_URBAN_ACTIVE, false));
+  putAction("Urban solar potential (active)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_ACTIVE, false));
 
-  putAction("Urban solar potential (passive)", () -> setPlotImpacts(PlotImpacts_URBAN_PASSIVE, false));
+  putAction("Urban solar potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_PASSIVE, false));
 
-  putAction("Orientation potential (active)", () -> setPlotImpacts(PlotImpacts_GLOBAL_ACTIVE, false));
+  putAction("Orientation potential (active)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_ACTIVE, false));
 
-  putAction("Orientation potential (passive)", () -> setPlotImpacts(PlotImpacts_GLOBAL_PASSIVE, false));
+  putAction("Orientation potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_PASSIVE, false));
 
-  putAction("Hourly sun position (active)", () -> setPlotImpacts(PlotImpacts_SUNPATH_ACTIVE, false));
+  putAction("Hourly sun position (active)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_ACTIVE, false));
 
-  putAction("Hourly sun position (passive)", () -> setPlotImpacts(PlotImpacts_SUNPATH_PASSIVE, false));
+  putAction("Hourly sun position (passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
 
-  putAction("Annual cycle sun path (active)", () -> setPlotImpacts(PlotImpacts_CYCLES_ACTIVE, false));
+  putAction("Annual cycle sun path (active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
 
-  putAction("Annual cycle sun path (passive)", () -> setPlotImpacts(PlotImpacts_CYCLES_PASSIVE, false));
+  putAction("Annual cycle sun path (passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
 
   putAction("Prebake Selected Sections", () -> {
     allSolarImpacts.render_Shadows_selectedSections();
@@ -278,14 +278,14 @@ void build_allActions() {
   });
 
   putAction("Process Active Impact", () -> {
-    STUDY.PlotImpacts = PlotImpacts_URBAN_ACTIVE;
+    STUDY.impactGraphIndex = impactGraphIndex_URBAN_ACTIVE;
     allSolarImpacts.calculate_Impact_selectedSections();
 
     view_changed();
   });
 
   putAction("Process Passive Impact", () -> {
-    STUDY.PlotImpacts = PlotImpacts_URBAN_PASSIVE;
+    STUDY.impactGraphIndex = impactGraphIndex_URBAN_PASSIVE;
     allSolarImpacts.calculate_Impact_selectedSections();
 
     view_changed();
@@ -519,7 +519,7 @@ void build_allActions() {
 
   putAction("Use Ensemble Observation", () -> {
     currentDataSource = dataID_ensembleObservation;
-    STUDY.joinDays = 1;
+    STUDY.daysMergedCount = 1;
 
     ensembleObservationShouldLoad = true;
     update_ensembleObservation(TIME.year, TIME.month, TIME.day, TIME.hour);
@@ -537,7 +537,7 @@ void build_allActions() {
 
   putAction("Use Ensemble Forecast", () -> {
     currentDataSource = dataID_ensembleForecast;
-    STUDY.joinDays = 1;
+    STUDY.daysMergedCount = 1;
 
     ensembleForecastShouldLoad = true;
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
@@ -554,7 +554,7 @@ void build_allActions() {
   });
 
   putAction("Active Shade", () -> {
-    WIN3D.impactType = Impact_ACTIVE;
+    WIN3D.impactTypeIndex = Impact_ACTIVE;
 
     if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
@@ -563,7 +563,7 @@ void build_allActions() {
   });
 
   putAction("Passive Shade", () -> {
-    WIN3D.impactType = Impact_PASSIVE;
+    WIN3D.impactTypeIndex = Impact_PASSIVE;
 
     if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
@@ -669,7 +669,7 @@ void build_allActions() {
   });
 
   putAction("Show/Hide Normals", () -> {
-    allFaces.displayNormals = !allFaces.displayNormals;
+    allFaces.showNormalLines = !allFaces.showNormalLines;
 
     view_changed();
   });
@@ -2008,7 +2008,7 @@ void build_allActions() {
   putAction("Show Terrain Depth",    () -> {Terrain.displayDepth = true; view_changed();});
   putAction("Show Vertices",      () -> {allPoints.displayAll = true; view_changed();});
   putAction("Show Edges",         () -> {allFaces.displayEdges = true; view_changed();});
-  putAction("Show Normals",       () -> {allFaces.displayNormals = true; view_changed();});
+  putAction("Show Normals",       () -> {allFaces.showNormalLines = true; view_changed();});
   putAction("Show Leaves",        () -> {allModel1Ds.displayLeaves = true; view_changed();});
   putAction("Show Model1Ds",      () -> {allModel1Ds.displayAll = true; view_changed();});
   putAction("Show Model2Ds",      () -> {allModel2Ds.displayAll = true; view_changed();});
@@ -2035,7 +2035,7 @@ void build_allActions() {
   putAction("Hide Terrain Depth",    () -> {Terrain.displayDepth = false; view_changed();});
   putAction("Hide Vertices",      () -> {allPoints.displayAll = false; view_changed();});
   putAction("Hide Edges",         () -> {allFaces.displayEdges = false; view_changed();});
-  putAction("Hide Normals",       () -> {allFaces.displayNormals = false; view_changed();});
+  putAction("Hide Normals",       () -> {allFaces.showNormalLines = false; view_changed();});
   putAction("Hide Leaves",        () -> {allModel1Ds.displayLeaves = false; view_changed();});
   putAction("Hide Model1Ds",      () -> {allModel1Ds.displayAll = false; view_changed();});
   putAction("Hide Model2Ds",      () -> {allModel2Ds.displayAll = false; view_changed();});
@@ -2092,7 +2092,7 @@ void build_allActions() {
   for (int n = -2; n <= 8; n++) {
     final int layoutIndex = n;
     putAction("Layout " + nf(layoutIndex, 0), () -> {
-      STUDY.plotSetup = layoutIndex;
+      STUDY.plotLayoutIndex = layoutIndex;
       STUDY.revise();
     });
   }

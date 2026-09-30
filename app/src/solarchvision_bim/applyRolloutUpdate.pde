@@ -9,12 +9,12 @@ void applyRolloutUpdate() {
   pre_sampleMemberEnd = sampleMemberEnd;
   pre_sampleStationStart = sampleStationStart;
   pre_sampleStationEnd = sampleStationEnd;
-  pre_STUDY_joinDays = STUDY.joinDays;
-  pre_STUDY_i_Start = STUDY.i_Start;
-  pre_STUDY_i_End = STUDY.i_End;
-  pre_STUDY_j_End = STUDY.j_End;
+  pre_STUDY_daysMergedCount = STUDY.daysMergedCount;
+  pre_STUDY_startHour = STUDY.startHour;
+  pre_STUDY_endHour = STUDY.endHour;
+  pre_STUDY_endDay = STUDY.endDay;
   pre_impactDisplayDay = impactDisplayDay;
-  pre_STUDY_Setup = STUDY.plotSetup;
+  pre_STUDY_Setup = STUDY.plotLayoutIndex;
   pre_currentDataSource = currentDataSource;
   pre_TIME_Year = TIME.year;
   pre_TIME_Month = TIME.month;
@@ -44,11 +44,11 @@ void applyRolloutUpdate() {
 
   pre_USER_createUniformSuperellipsoidPower = User3D.creatorUniformSuperellipsoidPower;
 
-  pre_allSolidImpacts_U_scale = allSolidImpacts.U;
-  pre_allSolidImpacts_V_scale = allSolidImpacts.V;
+  pre_allSolidImpacts_horizontalUnitScale = allSolidImpacts.U;
+  pre_allSolidImpacts_verticalUnitScale = allSolidImpacts.V;
 
   pre_allSolidImpacts_sU_offset = allSolidImpacts.X;
-  pre_allSolidImpacts_sV_offset = allSolidImpacts.Y;
+  pre_allSolidImpacts_sverticalUnitOffset = allSolidImpacts.Y;
 
   pre_allSolidImpacts_Grade = allSolidImpacts.Grade;
   pre_allSolidImpacts_Power = allSolidImpacts.Power;
@@ -77,7 +77,7 @@ void applyRolloutUpdate() {
   pre_Selection_model2DDisplayBounds = Select3D.model2DDisplayBounds;
   pre_allPoints_displayAll = allPoints.displayAll;
   pre_allFaces_displayEdges = allFaces.displayEdges;
-  pre_allFaces_displayNormals = allFaces.displayNormals;
+  pre_allFaces_showNormalLines = allFaces.showNormalLines;
 
   pre_Selection_softSelectionFalloffPower = Select3D.softSelectionFalloffPower;
   pre_Selection_softSelectionFalloffRadius = Select3D.softSelectionFalloffRadius;
@@ -108,19 +108,19 @@ void applyRolloutUpdate() {
 
   pre_Create3D_Tessellation = allFaces.displayTessellation;
 
-  pre_STUDY_ImpactLayer = STUDY.ImpactLayer;
+  pre_STUDY_impactLayerIndex = STUDY.impactLayerIndex;
 
   pre_developLayerOption = developLayerOption;
 
   pre_STUDY_currentLayerId = currentLayerId;
 
-  pre_STUDY_SkyScenario = STUDY.skyScenario;
+  pre_STUDY_SkyScenario = STUDY.skyScenarioIndex;
 
-  pre_STUDY_PlotImpacts = STUDY.PlotImpacts;
+  pre_STUDY_impactGraphIndex = STUDY.impactGraphIndex;
 
   UI_rollout.draw();
 
-  if (pre_STUDY_PlotImpacts != STUDY.PlotImpacts) {
+  if (pre_STUDY_impactGraphIndex != STUDY.impactGraphIndex) {
     STUDY.revise();
 
     view_changed();
@@ -137,13 +137,13 @@ void applyRolloutUpdate() {
 
   react.caseBarOnly.run(pre_sampleStationEnd, sampleStationEnd);
 
-  react.caseBarOnly.run(pre_STUDY_joinDays, STUDY.joinDays);
+  react.caseBarOnly.run(pre_STUDY_daysMergedCount, STUDY.daysMergedCount);
 
-  react.caseBarOnly.run(pre_STUDY_i_Start, STUDY.i_Start);
+  react.caseBarOnly.run(pre_STUDY_startHour, STUDY.startHour);
 
-  react.caseBarOnly.run(pre_STUDY_i_End, STUDY.i_End);
+  react.caseBarOnly.run(pre_STUDY_endHour, STUDY.endHour);
 
-  react.applyStudyJEnd.run(pre_STUDY_j_End, STUDY.j_End);
+  react.applyStudyJEnd.run(pre_STUDY_endDay, STUDY.endDay);
 
   react.caseBarOnly.run(pre_impactDisplayDay, impactDisplayDay);
 
@@ -250,10 +250,10 @@ void applyRolloutUpdate() {
   react.recalcImpact.run(pre_allSolidImpacts_Rotation[allSolidImpacts.sectionType], allSolidImpacts.R[allSolidImpacts.sectionType]);
   react.recalcImpact.run(pre_allSolidImpacts_Elevation[allSolidImpacts.sectionType], allSolidImpacts.Z[allSolidImpacts.sectionType]);
 
-  react.recalcImpact.run(pre_allSolidImpacts_U_scale[allSolidImpacts.sectionType], allSolidImpacts.U[allSolidImpacts.sectionType]);
-  react.recalcImpact.run(pre_allSolidImpacts_V_scale[allSolidImpacts.sectionType], allSolidImpacts.V[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_horizontalUnitScale[allSolidImpacts.sectionType], allSolidImpacts.U[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_verticalUnitScale[allSolidImpacts.sectionType], allSolidImpacts.V[allSolidImpacts.sectionType]);
   react.recalcImpact.run(pre_allSolidImpacts_sU_offset[allSolidImpacts.sectionType], allSolidImpacts.X[allSolidImpacts.sectionType]);
-  react.recalcImpact.run(pre_allSolidImpacts_sV_offset[allSolidImpacts.sectionType], allSolidImpacts.Y[allSolidImpacts.sectionType]);
+  react.recalcImpact.run(pre_allSolidImpacts_sverticalUnitOffset[allSolidImpacts.sectionType], allSolidImpacts.Y[allSolidImpacts.sectionType]);
 
   react.recalcImpact.run(pre_allSolidImpacts_Wspd, allSolidImpacts.WindSpeed);
   react.recalcImpact.run(pre_allSolidImpacts_Wdir, allSolidImpacts.WindDirection);
@@ -268,11 +268,11 @@ void applyRolloutUpdate() {
 
   react.viewChangedOnly.run(pre_allFaces_displayEdges ? 1 : 0, allFaces.displayEdges ? 1 : 0);
 
-  react.viewChangedOnly.run(pre_allFaces_displayNormals ? 1 : 0, allFaces.displayNormals ? 1 : 0);
+  react.viewChangedOnly.run(pre_allFaces_showNormalLines ? 1 : 0, allFaces.showNormalLines ? 1 : 0);
 
   react.viewChangedOnly.run(pre_WindFlow_display ? 1 : 0, allWindFlows.displayAll ? 1 : 0);
 
-  react.impactsUpdateFlag.run(pre_STUDY_Setup, STUDY.plotSetup);
+  react.impactsUpdateFlag.run(pre_STUDY_Setup, STUDY.plotLayoutIndex);
 
   react.impactsUpdateFlag.run(pre_currentDataSource, currentDataSource);
 }
@@ -290,10 +290,10 @@ int pre_sampleMemberEnd;
 int pre_sampleStationStart;
 int pre_sampleStationEnd;
 
-int pre_STUDY_joinDays;
-int pre_STUDY_i_Start;
-int pre_STUDY_i_End;
-int pre_STUDY_j_End;
+int pre_STUDY_daysMergedCount;
+int pre_STUDY_startHour;
+int pre_STUDY_endHour;
+int pre_STUDY_endDay;
 int pre_STUDY_Setup;
 
 int pre_impactDisplayDay;
@@ -356,15 +356,15 @@ int pre_Create3D_Tessellation;
 
 boolean pre_allPoints_displayAll;
 boolean pre_allFaces_displayEdges;
-boolean pre_allFaces_displayNormals;
+boolean pre_allFaces_showNormalLines;
 
 int pre_developLayerOption;
 
-int pre_STUDY_ImpactLayer;
+int pre_STUDY_impactLayerIndex;
 int pre_STUDY_currentLayerId;
 
 int pre_STUDY_SkyScenario;
-int pre_STUDY_PlotImpacts;
+int pre_STUDY_impactGraphIndex;
 
 int pre_allSolids_ColorScaleIndex;
 int pre_allSolids_ColorScaleDirection;
@@ -378,16 +378,16 @@ float[] pre_allSolidImpacts_Rotation = {
 float[] pre_allSolidImpacts_Elevation = {
   0, 0, 0, 0
 };
-float[] pre_allSolidImpacts_U_scale = {
+float[] pre_allSolidImpacts_horizontalUnitScale = {
   0, 0, 0, 0
 };
-float[] pre_allSolidImpacts_V_scale = {
+float[] pre_allSolidImpacts_verticalUnitScale = {
   0, 0, 0, 0
 };
 float[] pre_allSolidImpacts_sU_offset = {
   0, 0, 0, 0
 };
-float[] pre_allSolidImpacts_sV_offset = {
+float[] pre_allSolidImpacts_sverticalUnitOffset = {
   0, 0, 0, 0
 };
 
