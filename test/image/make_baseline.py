@@ -187,6 +187,25 @@ def run_once(exe, name):
     return screenshots_since(marker_time)
 
 
+def print_diagnostics(name):
+    """Printed once a test has exhausted every retry with no screenshot -
+    the two things most likely to explain that silently (Processing exits
+    0, no error, nothing produced): either it couldn't actually see
+    command/<name>.txt's content at its own resolved BaseFolder (the
+    input/command/projects symlink-or-junction setup - see
+    test/image/README.md - pointing somewhere that doesn't actually
+    resolve to this repo's real files), or nothing ever reached
+    SCREENSHOTS_ROOTS at all."""
+    print(f"  diagnostics for {name}:")
+    for root in SCREENSHOTS_ROOTS:
+        if os.path.isdir(root):
+            print(f"    {root} exists, contents: {os.listdir(root)}")
+        else:
+            print(f"    {root} does not exist")
+    command_file = os.path.join(COMMAND_DIR, f"{name}.txt")
+    print(f"    {command_file} exists: {os.path.isfile(command_file)}")
+
+
 def make_one(exe, name, out_dir):
     for attempt in range(0, MAX_RETRY + 1):
         screenshots = run_once(exe, name)
@@ -203,6 +222,7 @@ def make_one(exe, name, out_dir):
         print(f"  no screenshots produced for command/{name}.txt")
         if attempt < MAX_RETRY:
             print(f"  retry {attempt + 1}/{MAX_RETRY}")
+    print_diagnostics(name)
     return False
 
 

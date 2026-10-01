@@ -243,13 +243,30 @@ jobs:
       - name: Link repo directories into Processing's resolved base folder
         shell: pwsh
         run: |
+          $ErrorActionPreference = "Stop"
           $core = "$env:USERPROFILE\processing\$env:PROCESSING_VERSION\app\resources\core"
+          Write-Host "Resolved core folder: $core"
+          if (-not (Test-Path $core)) {
+            throw "core folder not found at $core - Processing's Windows install may have a different layout than assumed"
+          }
           New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE\projects" | Out-Null
           foreach ($name in @("input", "command", "projects")) {
             $link = Join-Path $core $name
+            $target = Join-Path $env:GITHUB_WORKSPACE $name
             if (Test-Path $link) { Remove-Item $link -Force -Recurse }
-            New-Item -ItemType Junction -Path $link -Target (Join-Path $env:GITHUB_WORKSPACE $name) | Out-Null
+            New-Item -ItemType Junction -Path $link -Target $target | Out-Null
+            Write-Host "Created junction: $link -> $target"
           }
+          # Diagnostic output kept in permanently (not just for this one
+          # debugging pass): cheap, and the clearest way to confirm in any
+          # future run's log that the junctions actually exist and
+          # actually resolve to real content, rather than inferring it
+          # indirectly from whether a later step happened to produce a
+          # screenshot.
+          Write-Host "--- $core contents after linking ---"
+          Get-ChildItem $core | Format-Table Name, LinkType, Target
+          Write-Host "--- $core\command contents (through the junction) ---"
+          Get-ChildItem (Join-Path $core "command")
 
       # Identical to ci.yml's test-windows job's own Mesa3D step - see
       # there for the full explanation (no GPU/ICD on this runner at all,
