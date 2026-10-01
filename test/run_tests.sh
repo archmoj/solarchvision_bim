@@ -194,20 +194,28 @@ else
   echo "==> warning: solarchvision_bim.java not found under $BUILD_DIR - coverage report (if generated) will have no source-highlighted view" >&2
 fi
 
-# The JVM's classpath separator is OS-specific, not Processing-style-
-# specific (Windows uses ';' - ':' is already taken by drive letters
-# like C: - while every other platform this runs on uses ':'), so this
-# is checked independently of $PROCESSING_STYLE rather than assuming
-# "new-windows" is the only way a ';'-separated classpath could ever be
-# needed here. uname -s is how Git Bash (what Windows runners' `shell:
-# bash` actually is) identifies itself - something like
-# "MINGW64_NT-10.0-...".
-case "$(uname -s)" in
-  MINGW*|MSYS*|CYGWIN*) CP_SEP=";" ;;
-  *)                    CP_SEP=":" ;;
-esac
+# The separator alone ('; ' vs ':') isn't enough on Windows: MSYS/Git
+# Bash's automatic POSIX-to-Windows path translation for arguments
+# passed to native .exe tools (Processing.exe, javac.exe, java.exe here)
+# reliably handles a single path argument, but not a ';'-joined
+# multi-path classpath string - see https://msys2.org/docs/filesystem-paths
+# ("Path lists ... will never work" / its "cygpath -p" fix) and
+# Groovy's own startup script doing the same `cygpath --path --mixed`
+# conversion for exactly this reason. So the classpath is always built
+# here as a plain ':'-joined POSIX-style list, and converted via
+# cygpath only at the point it's actually handed to a native binary -
+# a hand-rolled separator swap isn't enough, since the individual path
+# segments themselves (e.g. /c/Users/... vs C:\Users\...) also need
+# converting, not just what joins them.
+to_native_classpath () {
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*) cygpath --path --mixed "$1" ;;
+    *)                    printf '%s' "$1" ;;
+  esac
+}
 
-CLASSPATH="$CORE_JAR$CP_SEP$JUNIT_JAR$CP_SEP$MAIN_CLASS_DIR"
+CLASSPATH_POSIX="$CORE_JAR:$JUNIT_JAR:$MAIN_CLASS_DIR"
+CLASSPATH="$(to_native_classpath "$CLASSPATH_POSIX")"
 
 echo "==> Compiling tests"
 # Deliberately NOT under $BUILD_DIR: jacococli's --classfiles (below)
@@ -248,7 +256,7 @@ if [ "$COVERAGE_ENABLED" -eq 1 ]; then
 fi
 
 set +e
-"$JAVA_BIN" ${JAVA_AGENT_ARG:+"$JAVA_AGENT_ARG"} -cp "$CLASSPATH$CP_SEP$TEST_CLASSES" \
+"$JAVA_BIN" ${JAVA_AGENT_ARG:+"$JAVA_AGENT_ARG"} -cp "$(to_native_classpath "$CLASSPATH_POSIX:$TEST_CLASSES")" \
   org.junit.platform.console.ConsoleLauncher execute \
   --scan-classpath="$TEST_CLASSES" \
   --details=tree
