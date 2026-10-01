@@ -356,7 +356,21 @@ jobs:
           $ErrorActionPreference = "Stop"
           Invoke-WebRequest -Uri "https://github.com/pal1000/mesa-dist-win/releases/download/25.3.6/mesa3d-25.3.6-release-msvc.7z" -OutFile mesa.7z
           7z x mesa.7z -omesa
-          Copy-Item -Path "mesa\x64\*.dll" -Destination "$env:SystemRoot\System32\" -Force
+          # Not a blanket *.dll copy: Mesa's package also bundles files
+          # that happen to share a name with Windows-protected system
+          # DLLs it doesn't actually provide functionality for here
+          # (d3d10warp.dll - Microsoft's own D3D10 software rasterizer -
+          # is locked even for an admin account, confirmed by this step's
+          # own first real run). Only copying the specific files the
+          # OpenGL software path actually needs avoids touching anything
+          # else in System32 at all.
+          Copy-Item -Path "mesa\x64\opengl32.dll" -Destination "$env:SystemRoot\System32\opengl32.dll" -Force
+          if (Test-Path "mesa\x64\libglapi.dll") {
+            Copy-Item -Path "mesa\x64\libglapi.dll" -Destination "$env:SystemRoot\System32\libglapi.dll" -Force
+          }
+          if (Test-Path "mesa\x64\libgallium_wgl.dll") {
+            Copy-Item -Path "mesa\x64\libgallium_wgl.dll" -Destination "$env:SystemRoot\System32\libgallium_wgl.dll" -Force
+          }
 
       - name: Run integration tests with merged coverage
         shell: bash
