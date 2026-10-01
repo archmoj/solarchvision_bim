@@ -40,12 +40,12 @@ void UI_setTo_Create_Vertex () {
 void UI_setTo_Create_Face () {
   UI_setTo_Create_Nothing();
 
-  current_Material = User3D.defaultMaterial;
-  current_Tessellation = User3D.defaultTessellation;
-  current_Layer = User3D.defaultLayer;
-  current_Visibility = User3D.defaultVisibility;
-  current_Weight = User3D.defaultWeight;
-  current_Closed = User3D.defaultClosed;
+  current_Material = User3D.creatorMaterial;
+  current_Tessellation = User3D.creatorTessellation;
+  current_Layer = User3D.creatorLayer;
+  current_Visibility = User3D.creatorVisibility;
+  current_Weight = User3D.creatorWeight;
+  current_Closed = User3D.creatorClosed;
 
   allFaces.beginNewFace();
 
@@ -56,12 +56,12 @@ void UI_setTo_Create_Face () {
 void UI_setTo_Create_Polyline () {
   UI_setTo_Create_Nothing();
 
-  current_Material = User3D.defaultMaterial;
-  current_Tessellation = User3D.defaultTessellation;
-  current_Layer = User3D.defaultLayer;
-  current_Visibility = User3D.defaultVisibility;
-  current_Weight = User3D.defaultWeight;
-  current_Closed = User3D.defaultClosed;
+  current_Material = User3D.creatorMaterial;
+  current_Tessellation = User3D.creatorTessellation;
+  current_Layer = User3D.creatorLayer;
+  current_Visibility = User3D.creatorVisibility;
+  current_Weight = User3D.creatorWeight;
+  current_Closed = User3D.creatorClosed;
 
   allPolylines.beginNewPolyline();
 

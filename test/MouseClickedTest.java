@@ -678,11 +678,11 @@ class MouseClickedTest {
     app.WIN3D.currentTool = app.UITASK.Move; // not one of the five
     app.WIN3D.toolParameterModifier = 1;
     app.allFaces.options = new int[][]{{9, 9, 9, 9, 9, 9}};
-    app.User3D.defaultMaterial = -1;
+    app.User3D.creatorMaterial = -1;
 
     app.pickOrAssignFaceProperty(0);
 
-    assertEquals(-1, app.User3D.defaultMaterial); // untouched
+    assertEquals(-1, app.User3D.creatorMaterial); // untouched
   }
 
   @Test
@@ -693,14 +693,14 @@ class MouseClickedTest {
 
     app.pickOrAssignFaceProperty(0);
 
-    assertEquals(42, app.User3D.defaultMaterial);
+    assertEquals(42, app.User3D.creatorMaterial);
   }
 
   @Test
   void pickOrAssignFaceProperty_assignSubWritesTheDefaultOntoJustTheClickedFace () {
     app.WIN3D.currentTool = app.UITASK.Weight;
     app.WIN3D.toolParameterModifier = 2; // Assign(sub)
-    app.User3D.defaultWeight = 7;
+    app.User3D.creatorWeight = 7;
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
 
     app.pickOrAssignFaceProperty(0);
@@ -713,7 +713,7 @@ class MouseClickedTest {
   void pickOrAssignFaceProperty_assignAllWritesTheDefaultOntoEveryFaceInTheClickedFacesGroup () {
     app.WIN3D.currentTool = app.UITASK.Layer;
     app.WIN3D.toolParameterModifier = 3; // Assign(all)
-    app.User3D.defaultLayer = 5;
+    app.User3D.creatorLayer = 5;
     app.allFaces.options = new int[][]{
       {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}
     };
@@ -737,7 +737,7 @@ class MouseClickedTest {
     // not setWeight.
     app.WIN3D.currentTool = app.UITASK.Weight;
     app.WIN3D.toolParameterModifier = 3; // Assign(all)
-    app.User3D.defaultWeight = 3;
+    app.User3D.creatorWeight = 3;
     app.allFaces.options = new int[][]{{0, 0, 0, 0, 0, 0}};
     app.allGroups.makeEmpty(0);
     app.allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);

@@ -634,7 +634,7 @@ class ValueModifier {
     }
     return out;
   }
-  int defaultMaterial (int created) {
+  int creatorMaterial (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -645,17 +645,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Default Material",
-        () -> (float) User3D.defaultMaterial,
-        (v) -> { User3D.defaultMaterial = int(v); },
+      putValueAction("Creator Material",
+        () -> (float) User3D.creatorMaterial,
+        (v) -> { User3D.creatorMaterial = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Material", User3D.defaultMaterial, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Material", User3D.creatorMaterial, s1, s2, s3);
     }
     return out;
   }
-  int defaultTessellation (int created) {
+  int creatorTessellation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -666,17 +666,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Default Tessellation",
-        () -> (float) User3D.defaultTessellation,
-        (v) -> { User3D.defaultTessellation = int(v); },
+      putValueAction("Creator Tessellation",
+        () -> (float) User3D.creatorTessellation,
+        (v) -> { User3D.creatorTessellation = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Tessellation", User3D.defaultTessellation, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Tessellation", User3D.creatorTessellation, s1, s2, s3);
     }
     return out;
   }
-  int defaultLayer (int created) {
+  int creatorLayer (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -687,17 +687,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Default Layer",
-        () -> (float) User3D.defaultLayer,
-        (v) -> { User3D.defaultLayer = int(v); },
+      putValueAction("Creator Layer",
+        () -> (float) User3D.creatorLayer,
+        (v) -> { User3D.creatorLayer = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Layer", User3D.defaultLayer, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Layer", User3D.creatorLayer, s1, s2, s3);
     }
     return out;
   }
-  int defaultVisibility (int created) {
+  int creatorVisibility (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -708,17 +708,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Default Visibility",
-        () -> (float) User3D.defaultVisibility,
-        (v) -> { User3D.defaultVisibility = int(v); },
+      putValueAction("Creator Visibility",
+        () -> (float) User3D.creatorVisibility,
+        (v) -> { User3D.creatorVisibility = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Visibility", User3D.defaultVisibility, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Visibility", User3D.creatorVisibility, s1, s2, s3);
     }
     return out;
   }
-  int defaultWeight (int created) {
+  int creatorWeight (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -729,17 +729,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Default Weight",
-        () -> (float) User3D.defaultWeight,
-        (v) -> { User3D.defaultWeight = int(v); },
+      putValueAction("Creator Weight",
+        () -> (float) User3D.creatorWeight,
+        (v) -> { User3D.creatorWeight = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Weight", User3D.defaultWeight, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Weight", User3D.creatorWeight, s1, s2, s3);
     }
     return out;
   }
-  int defaultClosed (int created) {
+  int creatorClosed (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -750,13 +750,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Default Closed",
-        () -> (float) User3D.defaultClosed,
-        (v) -> { User3D.defaultClosed = int(v); },
+      putValueAction("Creator Closed",
+        () -> (float) User3D.creatorClosed,
+        (v) -> { User3D.creatorClosed = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Closed", User3D.defaultClosed, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Closed", User3D.creatorClosed, s1, s2, s3);
     }
     return out;
   }

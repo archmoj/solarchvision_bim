@@ -442,7 +442,7 @@ the user interface.
 | `Default Layer` | Default layer assigned to new objects | 0 to 16 |
 | `Default Material` | Default material index for new objects (-1 = none) | -1 to 8 |
 | `Default Visibility` | Default visibility (-1/0/1) assigned to new faces | -1 to 1 |
-| `Default Weight` | Default weight/thickness assigned to new 1D model segments | -20 to 20 |
+| `Creator Weight` | Default weight/thickness assigned to new 1D model segments | -20 to 20 |
 | `Default Tessellation` | Default tessellation level applied to new faces | 0 to 6 |
 | `Create3D displayTessellation` | Default tessellation-display mode for new faces | 0 to 4 |
 | `Creator Snap Mode Index` | Toggle: snap new objects to the land surface/grid while placing them | 0 to 1 |
@@ -470,7 +470,7 @@ the user interface.
 | `Creator Model1D Leaf Size` | Default leaf size for new fractal trees | 0 to 1 |
 | `Creator Model1D Tree Base` | Default trunk base radius for new fractal trees | 0 to 4 |
 | `Creator Model1D Trunk Size` | Default trunk size for new fractal trees | 0 to 10 |
-| `Default Closed` | Default open/closed state (0/1) for new extruded/mesh geometry | 0 to 1 |
+| `Creator Closed` | Default open/closed state (0/1) for new extruded/mesh geometry | 0 to 1 |
 
 ### Modify tools (3D-modify)
 

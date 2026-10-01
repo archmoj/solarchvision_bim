@@ -2,12 +2,12 @@ class User3D {
 
   final static String CLASS_STAMP = "User3D";
 
-  int defaultMaterial = 7; //0;
-  int defaultTessellation = 0;
-  int defaultLayer = 0;
-  int defaultVisibility = 1; // 1: view 0: hide -1:freeze
-  int defaultWeight = 0;
-  int defaultClosed = 0;
+  int creatorMaterial = 7; //0;
+  int creatorTessellation = 0;
+  int creatorLayer = 0;
+  int creatorVisibility = 1; // 1: view 0: hide -1:freeze
+  int creatorWeight = 0;
+  int creatorClosed = 0;
 
   float creatorLength = 10;
   float creatorWidth = 10;
@@ -69,12 +69,12 @@ class User3D {
 
     XML parent = xml.addChild(this.CLASS_STAMP);
 
-    XML_setInt(parent, "defaultMaterial", this.defaultMaterial);
-    XML_setInt(parent, "defaultTessellation", this.defaultTessellation);
-    XML_setInt(parent, "defaultLayer", this.defaultLayer);
-    XML_setInt(parent, "defaultVisibility", this.defaultVisibility);
-    XML_setInt(parent, "defaultWeight", this.defaultWeight);
-    XML_setInt(parent, "defaultClosed", this.defaultClosed);
+    XML_setInt(parent, "creatorMaterial", this.creatorMaterial);
+    XML_setInt(parent, "creatorTessellation", this.creatorTessellation);
+    XML_setInt(parent, "creatorLayer", this.creatorLayer);
+    XML_setInt(parent, "creatorVisibility", this.creatorVisibility);
+    XML_setInt(parent, "creatorWeight", this.creatorWeight);
+    XML_setInt(parent, "creatorClosed", this.creatorClosed);
 
     XML_setFloat(parent, "creatorLength", this.creatorLength);
     XML_setFloat(parent, "creatorWidth", this.creatorWidth);
@@ -128,12 +128,12 @@ class User3D {
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 
-    this.defaultMaterial = XML_getInt(parent, "defaultMaterial");
-    this.defaultTessellation = XML_getInt(parent, "defaultTessellation");
-    this.defaultLayer = XML_getInt(parent, "defaultLayer");
-    this.defaultVisibility = XML_getInt(parent, "defaultVisibility");
-    this.defaultWeight = XML_getInt(parent, "defaultWeight");
-    this.defaultClosed = XML_getInt(parent, "defaultClosed");
+    this.creatorMaterial = XML_getInt(parent, "creatorMaterial");
+    this.creatorTessellation = XML_getInt(parent, "creatorTessellation");
+    this.creatorLayer = XML_getInt(parent, "creatorLayer");
+    this.creatorVisibility = XML_getInt(parent, "creatorVisibility");
+    this.creatorWeight = XML_getInt(parent, "creatorWeight");
+    this.creatorClosed = XML_getInt(parent, "creatorClosed");
 
     this.creatorLength = XML_getFloat(parent, "creatorLength");
     this.creatorWidth = XML_getFloat(parent, "creatorWidth");

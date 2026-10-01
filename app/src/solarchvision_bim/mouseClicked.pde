@@ -66,28 +66,28 @@ void pickOrAssignFaceProperty (int f) {
       (WIN3D.currentTool != UITASK.Weight)) return;
 
   if (WIN3D.toolParameterModifier == 1) { // Pick
-    if (WIN3D.currentTool == UITASK.Seed_Material) User3D.defaultMaterial     = allFaces.getMaterial(f);
-    else if (WIN3D.currentTool == UITASK.Tessellation)  User3D.defaultTessellation = allFaces.getTessellation(f);
-    else if (WIN3D.currentTool == UITASK.Layer)         User3D.defaultLayer        = allFaces.getLayer(f);
-    else if (WIN3D.currentTool == UITASK.Visibility)    User3D.defaultVisibility   = allFaces.getVisibility(f);
-    else if (WIN3D.currentTool == UITASK.Weight)        User3D.defaultWeight       = allFaces.getWeight(f);
+    if (WIN3D.currentTool == UITASK.Seed_Material) User3D.creatorMaterial     = allFaces.getMaterial(f);
+    else if (WIN3D.currentTool == UITASK.Tessellation)  User3D.creatorTessellation = allFaces.getTessellation(f);
+    else if (WIN3D.currentTool == UITASK.Layer)         User3D.creatorLayer        = allFaces.getLayer(f);
+    else if (WIN3D.currentTool == UITASK.Visibility)    User3D.creatorVisibility   = allFaces.getVisibility(f);
+    else if (WIN3D.currentTool == UITASK.Weight)        User3D.creatorWeight       = allFaces.getWeight(f);
   }
   if (WIN3D.toolParameterModifier == 2) { // Assign(sub)
-    if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (f, User3D.defaultMaterial);
-    else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(f, User3D.defaultTessellation);
-    else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (f, User3D.defaultLayer);
-    else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (f, User3D.defaultVisibility);
-    else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setWeight      (f, User3D.defaultWeight);
+    if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (f, User3D.creatorMaterial);
+    else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(f, User3D.creatorTessellation);
+    else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (f, User3D.creatorLayer);
+    else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (f, User3D.creatorVisibility);
+    else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setWeight      (f, User3D.creatorWeight);
   }
   if (WIN3D.toolParameterModifier == 3) { // Assign(all)
     int OBJ_ID = allGroups.findGroupContainingFace(f);
 
     for (int q = allGroups.getStart_Face(OBJ_ID); q <= allGroups.getStop_Face(OBJ_ID); q++) {
-      if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.defaultMaterial);
-      else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.defaultTessellation);
-      else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (q, User3D.defaultLayer);
-      else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (q, User3D.defaultVisibility);
-      else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setClose       (q, User3D.defaultWeight);
+      if (WIN3D.currentTool == UITASK.Seed_Material) allFaces.setMaterial    (q, User3D.creatorMaterial);
+      else if (WIN3D.currentTool == UITASK.Tessellation)  allFaces.setTessellation(q, User3D.creatorTessellation);
+      else if (WIN3D.currentTool == UITASK.Layer)         allFaces.setLayer       (q, User3D.creatorLayer);
+      else if (WIN3D.currentTool == UITASK.Visibility)    allFaces.setVisibility  (q, User3D.creatorVisibility);
+      else if (WIN3D.currentTool == UITASK.Weight)        allFaces.setClose       (q, User3D.creatorWeight);
     }
   }
 }
@@ -1811,19 +1811,19 @@ void mouseClicked () {
 
                       if (shape == SUPEROBJ_SHAPE_PARAMETRIC) {
 
-                        Create3D.add_ParametricSurface(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, 0, rot);
+                        Create3D.add_ParametricSurface(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, 0, rot);
                       } else if (shape == SUPEROBJ_SHAPE_SUPERCYLINDER) {
 
-                        Create3D.add_SuperCylinder(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, User3D.creatorCylinderDegree, rot);
+                        Create3D.add_SuperCylinder(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, User3D.creatorCylinderDegree, rot);
                       } else if (shape == SUPEROBJ_SHAPE_BOX) {
 
-                        Create3D.add_Box_Core(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, rot);
+                        Create3D.add_Box_Core(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, rot);
                       } else if (shape == SUPEROBJ_SHAPE_OCTAHEDRON) {
 
-                        Create3D.add_Octahedron(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, rot);
+                        Create3D.add_Octahedron(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, rot);
                       } else {
 
-                        Create3D.add_SuperSphere(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, pz, py, pz, rx, ry, rz, User3D.creatorSphereDegree, rot);
+                        Create3D.add_SuperSphere(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, pz, py, pz, rx, ry, rz, User3D.creatorSphereDegree, rot);
                       }
 
                       if (User3D.creatorMeshOrSolidMode != 0) {
@@ -1832,42 +1832,42 @@ void mouseClicked () {
                       }
                     } else if (CreateObject == CREATE.Pyramid) {
 
-                      Create3D.add_Mesh3(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                      Create3D.add_Mesh3(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
                     } else if (CreateObject == CREATE.Plane) {
 
-                      Create3D.add_Mesh4(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
+                      Create3D.add_Mesh4(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
                     } else if (CreateObject == CREATE.Polygon) {
 
-                      Create3D.add_PolygonMesh(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, User3D.creatorPolygonDegree, rot);
+                      Create3D.add_PolygonMesh(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, User3D.creatorPolygonDegree, rot);
                     } else if (CreateObject == CREATE.Hyper) {
 
-                      Create3D.add_PolygonHyper(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, 2 * rz, User3D.creatorPolygonDegree, rot);
+                      Create3D.add_PolygonHyper(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, 2 * rz, User3D.creatorPolygonDegree, rot);
                     } else if (CreateObject == CREATE.Extrude) {
 
-                      Create3D.add_PolygonExtrude(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, 2 * rz, User3D.creatorPolygonDegree, rot);
+                      Create3D.add_PolygonExtrude(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, 2 * rz, User3D.creatorPolygonDegree, rot);
                     } else if (CreateObject == CREATE.House3) {
 
                       float h = ry;
 
-                      Create3D.add_House3_Core(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, h, rot);
+                      Create3D.add_House3_Core(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, h, rot);
                     } else if (CreateObject == CREATE.House2) {
 
                       float h = ry;
 
-                      Create3D.add_House2_Core(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, h, rot);
+                      Create3D.add_House2_Core(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, h, rot);
                     } else if (CreateObject == CREATE.House1) {
 
                       float h = ry;
 
                       if (ry > rx) h = rx;
 
-                      Create3D.add_House1_Core(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, h, rot);
+                      Create3D.add_House1_Core(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, h, rot);
                     } else if (CreateObject == CREATE.Parametric) {
 
-                      Create3D.add_ParametricSurface(User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, x, y, z, rx, ry, rz, User3D.creatorParametricTypeIndex, rot);
+                      Create3D.add_ParametricSurface(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, User3D.creatorParametricTypeIndex, rot);
                     }
                   } else if (currentObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
                     if (CreateObject == CREATE.Person) {

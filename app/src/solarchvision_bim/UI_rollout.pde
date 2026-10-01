@@ -186,12 +186,12 @@ class UI_rollout {
     vm.ensembleForecastDisplayAll(0);
     vm.ensembleForecastDisplayNear(0);
     vm.addToLastGroup(0);
-    vm.defaultMaterial(0);
-    vm.defaultTessellation(0);
-    vm.defaultLayer(0);
-    vm.defaultVisibility(0);
-    vm.defaultWeight(0);
-    vm.defaultClosed(0);
+    vm.creatorMaterial(0);
+    vm.creatorTessellation(0);
+    vm.creatorLayer(0);
+    vm.creatorVisibility(0);
+    vm.creatorWeight(0);
+    vm.creatorClosed(0);
     vm.creatorOrientation(0);
     vm.creatorLength(0);
     vm.creatorWidth(0);
@@ -555,12 +555,12 @@ class UI_rollout {
       if (this.child == CHILD_GEOMETRY_CREATE) {
 
         addToLastGroup = vm.addToLastGroup(1);
-        User3D.defaultMaterial = vm.defaultMaterial(1);
-        User3D.defaultTessellation = vm.defaultTessellation(1);
-        User3D.defaultLayer = vm.defaultLayer(1);
-        User3D.defaultVisibility = vm.defaultVisibility(1);
-        User3D.defaultWeight = vm.defaultWeight(1);
-        User3D.defaultClosed = vm.defaultClosed(1);
+        User3D.creatorMaterial = vm.creatorMaterial(1);
+        User3D.creatorTessellation = vm.creatorTessellation(1);
+        User3D.creatorLayer = vm.creatorLayer(1);
+        User3D.creatorVisibility = vm.creatorVisibility(1);
+        User3D.creatorWeight = vm.creatorWeight(1);
+        User3D.creatorClosed = vm.creatorClosed(1);
         User3D.creatorOrientation = vm.creatorOrientation(1);
         User3D.creatorLength = vm.creatorLength(1);
         User3D.creatorWidth = vm.creatorWidth(1);

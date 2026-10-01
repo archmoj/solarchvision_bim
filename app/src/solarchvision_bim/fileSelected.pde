@@ -97,7 +97,7 @@ void _fileSelected_ImportObj (File selectedFile) {
     int number_of_allGroups_before = allGroups.num;
 
     //import_objects_OBJ(Filename, -1,0,0,1,0,0, 0,0,0, 1,1,1); // different objects: different materials
-    import_objects_OBJ(Filename, User3D.defaultMaterial, User3D.defaultTessellation, User3D.defaultLayer, User3D.defaultVisibility, User3D.defaultWeight, User3D.defaultClosed, 0, 0, 0, 1, 1, 1); // apply default material
+    import_objects_OBJ(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
 
     int number_of_allGroups_after = allGroups.num;
 

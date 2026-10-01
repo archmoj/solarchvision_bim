@@ -13,12 +13,12 @@ class User3DTest {
 
   @Test
   void toXMLThenFromXML_roundTripsEveryField () {
-    app.User3D.defaultMaterial = 3;
-    app.User3D.defaultTessellation = 1;
-    app.User3D.defaultLayer = 2;
-    app.User3D.defaultVisibility = 0;
-    app.User3D.defaultWeight = 4;
-    app.User3D.defaultClosed = 1;
+    app.User3D.creatorMaterial = 3;
+    app.User3D.creatorTessellation = 1;
+    app.User3D.creatorLayer = 2;
+    app.User3D.creatorVisibility = 0;
+    app.User3D.creatorWeight = 4;
+    app.User3D.creatorClosed = 1;
 
     app.User3D.creatorLength = 11;
     app.User3D.creatorWidth = 12;
@@ -69,8 +69,8 @@ class User3DTest {
     solarchvision_bim.User3D fresh = app.new User3D();
     fresh.from_XML(root);
 
-    assertEquals(3, fresh.defaultMaterial);
-    assertEquals(0, fresh.defaultVisibility);
+    assertEquals(3, fresh.creatorMaterial);
+    assertEquals(0, fresh.creatorVisibility);
 
     assertEquals(11f, fresh.creatorLength, 0.0001f);
     assertEquals(15f, fresh.creatorOrientation, 0.0001f);
