@@ -2061,7 +2061,7 @@ void build_allActions() {
   putAction("Show Selected Sections",               () -> {Select3D.sectionDisplayEdges = true; view_changed();});
   putAction("Show Selected Cameras",                () -> {Select3D.cameraDisplayFrustum = true; view_changed();});
   putAction("Show Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = true; view_changed();});
-  putAction("Show Selected Faces",                  () -> {Select3D.faceDisplayEdges = true; view_changed();});
+  putAction("Show Selected Faces Edges",            () -> {Select3D.faceDisplayEdges = true; view_changed();});
   putAction("Show Selected Polylines",              () -> {Select3D.polylineDisplayVertices = true; view_changed();});
   putAction("Show Selected Faces Vertex Count",     () -> {Select3D.faceDisplayvertexSelection = true; view_changed();});
   putAction("Show Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayvertexSelection = true; view_changed();});
@@ -2077,7 +2077,7 @@ void build_allActions() {
   putAction("Hide Selected Sections",               () -> {Select3D.sectionDisplayEdges = false; view_changed();});
   putAction("Hide Selected Cameras",                () -> {Select3D.cameraDisplayFrustum = false; view_changed();});
   putAction("Hide Selected Terrain Vertices",             () -> {Select3D.terrainDisplayVertices = false; view_changed();});
-  putAction("Hide Selected Faces",                  () -> {Select3D.faceDisplayEdges = false; view_changed();});
+  putAction("Hide Selected Faces Edges",            () -> {Select3D.faceDisplayEdges = false; view_changed();});
   putAction("Hide Selected Polylines",              () -> {Select3D.polylineDisplayVertices = false; view_changed();});
   putAction("Hide Selected Faces Vertex Count",     () -> {Select3D.faceDisplayvertexSelection = false; view_changed();});
   putAction("Hide Selected Polylines Vertex Count", () -> {Select3D.polylineDisplayvertexSelection = false; view_changed();});

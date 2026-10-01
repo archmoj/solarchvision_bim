@@ -741,7 +741,7 @@ Most viewable elements have up to three related commands: `Show <X>`
 `Terrain Mesh`, `Terrain Vertices`, `Terrain Texture`, `Leaves`, `Model1Ds`,
 `Model2Ds`, `Moon Surface`, `NAEFS nearest`, `NAEFS stations`, `Normals`,
 `Polylines`, `Sections`, `Selected 1D Edges`, `Selected 2D Edges`,
-`Selected Cameras`, `Selected Faces`, `Selected Faces Vertex Count`,
+`Selected Cameras`, `Selected Faces Edges`, `Selected Faces Vertex Count`,
 `Selected Group Box`, `Selected Group Edges`, `Selected Group Pivot`,
 `Selected Terrain Vertices`, `Selected Polylines`,
 `Selected Polylines Vertex Count`, `Selected Ref Pivot`,
