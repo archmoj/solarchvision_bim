@@ -93,6 +93,17 @@ void draw () {
   UI_rollout.processHeldKey();
 
   if (!draw_initial_frames()) {
+    if (stepAfterInitialization == 0) {
+      // One-time, not per-frame: confirms draw_initial_frames() actually
+      // completed at all (if this line never appears in a run's log, the
+      // draw loop itself never got past initialization - a rendering-
+      // level problem, upstream of anything to do with USER=AUTO/RUN=
+      // argument parsing) and shows exactly what loadStrings(RUN=...)
+      // in parseArgs.pde actually produced, directly rather than only
+      // inferred indirectly (e.g. from the absence of a NullPointerException
+      // that a null loadStrings() result would otherwise cause here).
+      println("draw(): initialization complete at frameCount=" + frameCount + ", runAfterInitialization.length=" + runAfterInitialization.length);
+    }
     if(stepAfterInitialization < runAfterInitialization.length) {
       runScriptLines(runAfterInitialization[stepAfterInitialization]);
     }
@@ -129,6 +140,10 @@ void draw () {
 
     if (control == USER_AUTO) {
       if(stepAfterInitialization > runAfterInitialization.length) {
+        // One-time: confirms the normal USER_AUTO exit path was actually
+        // reached (as opposed to the process being torn down some other
+        // way - a CI timeout, a crash, etc.)
+        println("draw(): USER_AUTO exiting at frameCount=" + frameCount + ", stepAfterInitialization=" + stepAfterInitialization);
         exit();
       }
     }
