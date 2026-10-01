@@ -364,12 +364,28 @@ jobs:
           # own first real run). Only copying the specific files the
           # OpenGL software path actually needs avoids touching anything
           # else in System32 at all.
-          Copy-Item -Path "mesa\x64\opengl32.dll" -Destination "$env:SystemRoot\System32\opengl32.dll" -Force
+          #
+          # opengl32.dll turned out to be locked the same way, despite
+          # being the one file this step exists to replace - Windows
+          # Resource Protection restricts some System32 files even from
+          # an administrator account's default rights. take ownership
+          # and grant Administrators full control first, the standard
+          # (and only reliable) way to override that - plain
+          # administrator membership isn't enough on its own.
+          function Install-SystemDll($source, $destination) {
+            if (Test-Path $destination) {
+              takeown /f $destination /a | Out-Null
+              icacls $destination /grant Administrators:F | Out-Null
+            }
+            Copy-Item -Path $source -Destination $destination -Force
+          }
+
+          Install-SystemDll "mesa\x64\opengl32.dll" "$env:SystemRoot\System32\opengl32.dll"
           if (Test-Path "mesa\x64\libglapi.dll") {
-            Copy-Item -Path "mesa\x64\libglapi.dll" -Destination "$env:SystemRoot\System32\libglapi.dll" -Force
+            Install-SystemDll "mesa\x64\libglapi.dll" "$env:SystemRoot\System32\libglapi.dll"
           }
           if (Test-Path "mesa\x64\libgallium_wgl.dll") {
-            Copy-Item -Path "mesa\x64\libgallium_wgl.dll" -Destination "$env:SystemRoot\System32\libgallium_wgl.dll" -Force
+            Install-SystemDll "mesa\x64\libgallium_wgl.dll" "$env:SystemRoot\System32\libgallium_wgl.dll"
           }
 
       - name: Run integration tests with merged coverage
