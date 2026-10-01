@@ -139,24 +139,48 @@ def run_once(exe, name):
     marker_time = time.time()
     start = time.time()
 
+    # Relative, not SKETCH_DIR's own absolute form: run-with-latest-processing.sh/.bat
+    # (confirmed working through test/run_integration.sh's own invocation)
+    # both pass --sketch=app/src/solarchvision_bim as a path relative to
+    # cwd=REPO_ROOT, never the absolute form - matching that exactly here
+    # rather than assuming the two are equivalent to Processing's own
+    # --sketch handling turned out to matter: this function calling
+    # Processing directly with the absolute path is the one concrete,
+    # verifiable difference between this (image generation silently
+    # producing nothing on Windows) and that (confirmed working) code
+    # path.
+    sketch_arg = os.path.relpath(SKETCH_DIR, REPO_ROOT)
+
     # start_new_session=True puts this process (and anything it launches)
     # in its own process group, so a timeout can kill the whole thing
     # rather than leaving something running in the background.
+    #
+    # stdout/stderr explicitly captured and printed below, rather than
+    # left to inherit this process's own file descriptors: Processing's
+    # own JVM/JOGL output - visible every time this same invocation has
+    # been exercised through bash (test/run_integration.sh) - didn't show
+    # up at all in this script's own CI log, which is otherwise
+    # unexplained and worth not having to guess about again.
     proc = subprocess.Popen(
-        [exe, "cli", f"--sketch={SKETCH_DIR}", "--run", "USER=AUTO", f"RUN=command/{name}.txt"],
+        [exe, "cli", f"--sketch={sketch_arg}", "--run", "USER=AUTO", f"RUN=command/{name}.txt"],
         cwd=REPO_ROOT,
         start_new_session=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
     )
 
     try:
-        returncode = proc.wait(timeout=PER_TEST_TIMEOUT)
+        output, _ = proc.communicate(timeout=PER_TEST_TIMEOUT)
         elapsed = time.time() - start
+        if output:
+            print(output, end="" if output.endswith("\n") else "\n")
         # A nonzero exit isn't necessarily a failure here (e.g. how the
         # sketch calls exit() itself under USER=AUTO can vary by Processing
         # version) - it's logged, but the real check is "did a screenshot
         # appear", below.
-        if returncode != 0:
-            print(f"  note: Processing exited {returncode} after {elapsed:.0f}s")
+        if proc.returncode != 0:
+            print(f"  note: Processing exited {proc.returncode} after {elapsed:.0f}s")
         else:
             print(f"  Processing finished after {elapsed:.0f}s")
     except subprocess.TimeoutExpired:
@@ -181,7 +205,7 @@ def run_once(exe, name):
                 os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
             except ProcessLookupError:
                 pass
-        proc.wait()
+        proc.communicate()  # drain the pipe and reap the process
         return []
 
     return screenshots_since(marker_time)
