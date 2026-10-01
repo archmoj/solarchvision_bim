@@ -122,7 +122,16 @@ elif [ -x "$PROCESSING_HOME/Processing.exe" ] && [ -d "$PROCESSING_HOME/app/reso
   if [ -d "$PROCESSING_HOME/runtime" ] && [ ! -d "$PROCESSING_HOME/runtime.orig" ]; then
     echo "==> Swapping $PROCESSING_HOME/runtime for the bundled full JDK (java.instrument support) - original kept at runtime.orig"
     mv "$PROCESSING_HOME/runtime" "$PROCESSING_HOME/runtime.orig"
-    cmd //c mklink /J "$(cygpath -w "$PROCESSING_HOME/runtime")" "$(cygpath -w "$PROCESSING_HOME/app/resources/jdk")" >/dev/null
+    # MSYS_NO_PATHCONV=1 disables Git Bash's automatic POSIX-to-Windows
+    # argument rewriting for this one command - without it, /J here (and
+    # /c above, if this didn't already sidestep it) gets misread as a
+    # Unix-style path reference and silently mangled before mklink ever
+    # sees it, the exact same class of bug as e.g. a Windows taskkill
+    # /PID flag getting rewritten into a path under Git Bash. Plain /c
+    # and /J (not //c/ //J) are correct here specifically because
+    # conversion is now switched off entirely for this command, not
+    # merely escaped per-argument.
+    MSYS_NO_PATHCONV=1 cmd /c mklink /J "$(cygpath -w "$PROCESSING_HOME/runtime")" "$(cygpath -w "$PROCESSING_HOME/app/resources/jdk")" >/dev/null
   fi
 fi
 
