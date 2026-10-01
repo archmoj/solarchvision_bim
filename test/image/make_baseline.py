@@ -16,7 +16,13 @@ Env vars:
   PROCESSING_HOME     Processing 4 install (default: ~/processing/4.5.2,
                       matching .github/workflows/image-tests.yml's cache
                       path). Runs `$PROCESSING_HOME/bin/Processing cli
-                      --sketch=... --run USER=AUTO RUN=...`.
+                      --sketch=... --run USER=AUTO RUN=...` (Linux/macOS)
+                      or `$PROCESSING_HOME/Processing.exe cli ...` on
+                      Windows (written with a forward slash here only to
+                      avoid Python docstring escaping - it's backslash-
+                      joined like any other Windows path in practice),
+                      where the launcher sits one directory level
+                      shallower - see find_processing_java() below.
   PER_TEST_TIMEOUT    seconds allowed per attempt (default: 300)
   MAX_RETRY           retries per test after the first attempt (default: 2,
                       i.e. up to 3 attempts total for one test)
@@ -31,8 +37,12 @@ Env vars:
                       with SHARD_TOTAL=2 still splits just those two.
 
 Requires a display - wrap with `xvfb-run --auto-servernum` on headless
-machines/CI. Also requires input/, command/, and projects/ to be symlinked
-into Processing's own install directory first - see test/image/README.md.
+Linux machines/CI (Windows runners don't need or have an xvfb-run
+equivalent - see .github/workflows/image-tests.yml's Windows job for what
+they do need instead: a software OpenGL implementation, since
+windows-latest ships no GPU/ICD at all). Also requires input/, command/,
+and projects/ to be symlinked into Processing's own install directory
+first - see test/image/README.md.
 """
 import argparse
 import glob
@@ -90,7 +100,11 @@ def shard_slice(names):
 
 def find_processing_java():
     home = os.environ.get("PROCESSING_HOME", os.path.expanduser("~/processing/4.5.2"))
-    exe = os.path.join(home, "bin", "Processing")
+    # Windows' portable build lays out one directory level shallower than
+    # Linux/macOS (Processing.exe directly at the install root, no bin/
+    # wrapper) - see run-with-latest-processing.bat's and
+    # test/run_tests.sh's own comments on this same difference.
+    exe = os.path.join(home, "Processing.exe") if os.name == "nt" else os.path.join(home, "bin", "Processing")
     if not os.path.isfile(exe) or not os.access(exe, os.X_OK):
         print(f"Processing CLI launcher not found at {exe} (set PROCESSING_HOME to your Processing 4.5.x install)", file=sys.stderr)
         sys.exit(1)
@@ -148,10 +162,25 @@ def run_once(exe, name):
     except subprocess.TimeoutExpired:
         elapsed = time.time() - start
         print(f"  timed out after {elapsed:.0f}s (PER_TEST_TIMEOUT={PER_TEST_TIMEOUT}), killing process group")
-        try:
-            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+        # os.killpg/getpgid don't exist on Windows at all (start_new_session
+        # itself is silently a no-op there too, per subprocess's own
+        # Windows _execute_child - there's no process group to kill in the
+        # first place). taskkill /T /F is the direct Windows equivalent:
+        # kills the whole process tree, not just this one PID, which
+        # matters here since Processing's native launcher spawns an outer
+        # driver process as well as the inner one that actually runs the
+        # sketch (see test/run_integration.sh's own comment on that same
+        # two-process shape).
+        if os.name == "nt":
+            subprocess.run(
+                ["taskkill", "/T", "/F", "/PID", str(proc.pid)],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+        else:
+            try:
+                os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+            except ProcessLookupError:
+                pass
         proc.wait()
         return []
 
