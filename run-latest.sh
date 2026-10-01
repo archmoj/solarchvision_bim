@@ -1,4 +1,6 @@
 #!/bin/bash
+# Windows: use run-latest.bat instead (Processing.exe cli isn't a bash script).
+#
 # Like run.sh, but for Processing 4.5.x's rewritten CLI (`Processing cli`,
 # which replaced the old processing-java script entirely - see
 # test/image/README.md's "Setup: Processing 4.5.x").

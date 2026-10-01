@@ -26,8 +26,10 @@ One-time setup:
 
 1. Install Processing - either generation works, auto-detected by
    `run_tests.sh`:
-   - `<=4.4.x` (matching `run.sh`), e.g. under `~/processing/4.3.4`
-   - `4.5.x+` (matching `run-latest.sh`), e.g. under `~/processing/4.5.2`
+   - `<=4.4.x` (matching `run.sh`, or `run.bat` on Windows), e.g. under
+     `~/processing/4.3.4`
+   - `4.5.x+` (matching `run-latest.sh`, or `run-latest.bat` on Windows),
+     e.g. under `~/processing/4.5.2`
 
    Point `PROCESSING_HOME` at wherever it's installed if it's not under
    `~/processing/4.3.4` (the default, for backwards compatibility).
