@@ -147,8 +147,8 @@ class SHADE {
   int get_PAL_type () {
     int PAL_type = 0;
     if (isSolarImpactShade()) {
-      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_type = allFaces.activeColorScaleIndex;
-      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_type = allFaces.passiveColorScaleIndex;
+      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_type = allFaces.activeColorscaleIndex;
+      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_type = allFaces.passiveColorscaleIndex;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_type = allSolids.colorScaleIndex;
     if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_type = Terrain.colorScaleIndex;
@@ -158,8 +158,8 @@ class SHADE {
   int get_PAL_direction () {
     int PAL_direction = 1;
     if (isSolarImpactShade()) {
-      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_direction = allFaces.activeColorScaleDirection;
-      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_direction = allFaces.passiveColorScaleDirection;
+      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_direction = allFaces.activeColorscaleDirection;
+      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_direction = allFaces.passiveColorscaleDirection;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_direction = allSolids.colorScaleDirection;
     if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_direction = Terrain.colorScaleDirection;
@@ -169,8 +169,8 @@ class SHADE {
   float get_PAL_multiplier () {
     float PAL_multiplier = 1;
     if (isSolarImpactShade()) {
-      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_multiplier = allFaces.activeColorScaleFactor;
-      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = allFaces.passiveColorScaleFactor;
+      if (WIN3D.impactTypeIndex == Impact_ACTIVE)  PAL_multiplier = allFaces.activeColorscaleFactor;
+      if (WIN3D.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = allFaces.passiveColorscaleFactor;
     }
     if (WIN3D.shadingMode == SHADE.Vertex_Solid)     PAL_multiplier = allSolids.colorScaleFactor;
     if (WIN3D.shadingMode == SHADE.Vertex_Elevation) PAL_multiplier = Terrain.colorScaleFactor;

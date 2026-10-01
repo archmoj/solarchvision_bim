@@ -61,7 +61,7 @@ class User3DTest {
     app.User3D.exporterMaintainPolygons = 0;
     app.User3D.exporterMaterialLibrary = false;
     app.User3D.exporterDoubleSided = false;
-    app.User3D.exporterColorScaleResolution = 128;
+    app.User3D.exporterColorscaleResolution = 128;
 
     processing.data.XML root = new processing.data.XML("root");
     app.User3D.to_XML(root);
@@ -106,6 +106,6 @@ class User3DTest {
     assertEquals(0, fresh.exporterMaintainPolygons);
     assertFalse(fresh.exporterMaterialLibrary);
     assertFalse(fresh.exporterDoubleSided);
-    assertEquals(128, fresh.exporterColorScaleResolution);
+    assertEquals(128, fresh.exporterColorscaleResolution);
   }
 }

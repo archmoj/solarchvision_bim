@@ -35,12 +35,12 @@ void applyRolloutUpdate() {
 
   pre_WORLD_autoView = WORLD.autoView;
 
-  pre_Terrain_loadMesh = Terrain.loadMesh;
-  pre_Terrain_loadTextures = Terrain.loadTextures;
+  pre_TerrainLoadMesh = Terrain.loadMesh;
+  pre_TerrainLoadTextures = Terrain.loadTextures;
 
-  pre_allSolids_ColorScaleIndex = allSolids.colorScaleIndex;
-  pre_allSolids_ColorScaleDirection = allSolids.colorScaleDirection;
-  pre_allSolids_ColorScaleFactor = allSolids.colorScaleFactor;
+  pre_allSolids_ColorscaleIndex = allSolids.colorScaleIndex;
+  pre_allSolids_ColorscaleDirection = allSolids.colorScaleDirection;
+  pre_allSolids_ColorscaleFactor = allSolids.colorScaleFactor;
 
   pre_USER_createUniformSuperellipsoidPower = User3D.creatorUniformSuperellipsoidPower;
 
@@ -183,9 +183,9 @@ void applyRolloutUpdate() {
     react.applyLocationChange.run(pre_locationLatitude, locationLatitude);
   }
 
-  react.applyLandLoadMesh.run(pre_Terrain_loadMesh ? 1 : 0, Terrain.loadMesh ? 1 : 0);
+  react.applyLandLoadMesh.run(pre_TerrainLoadMesh ? 1 : 0, Terrain.loadMesh ? 1 : 0);
 
-  react.applyLandLoadTextures.run(pre_Terrain_loadTextures ? 1 : 0, Terrain.loadTextures ? 1 : 0);
+  react.applyLandLoadTextures.run(pre_TerrainLoadTextures ? 1 : 0, Terrain.loadTextures ? 1 : 0);
 
   react.viewChangedOnly.run(pre_Selection_cameraDisplayFrustum ? 1 : 0, Select3D.cameraDisplayFrustum ? 1 : 0);
 
@@ -241,9 +241,9 @@ void applyRolloutUpdate() {
 
   react.applyCreatePowAll.run(pre_USER_createUniformSuperellipsoidPower, User3D.creatorUniformSuperellipsoidPower);
 
-  react.recalcImpact.run(pre_allSolids_ColorScaleIndex, allSolids.colorScaleIndex);
-  react.recalcImpact.run(pre_allSolids_ColorScaleDirection, allSolids.colorScaleDirection);
-  react.recalcImpact.run(pre_allSolids_ColorScaleFactor, allSolids.colorScaleFactor);
+  react.recalcImpact.run(pre_allSolids_ColorscaleIndex, allSolids.colorScaleIndex);
+  react.recalcImpact.run(pre_allSolids_ColorscaleDirection, allSolids.colorScaleDirection);
+  react.recalcImpact.run(pre_allSolids_ColorscaleFactor, allSolids.colorScaleFactor);
 
   react.recalcImpact.run(pre_allSolidImpacts_Grade, allSolidImpacts.Grade);
   react.recalcImpact.run(pre_allSolidImpacts_Power, allSolidImpacts.Power);
@@ -308,8 +308,8 @@ boolean pre_climateArchiveShouldLoad;
 boolean pre_ensembleForecastShouldLoad;
 boolean pre_ensembleObservationShouldLoad;
 
-boolean pre_Terrain_loadMesh;
-boolean pre_Terrain_loadTextures;
+boolean pre_TerrainLoadMesh;
+boolean pre_TerrainLoadTextures;
 
 float pre_locationLatitude;
 float pre_locationLongitude;
@@ -366,9 +366,9 @@ int pre_STUDY_currentLayerId;
 int pre_STUDY_SkyScenario;
 int pre_STUDY_impactGraphIndex;
 
-int pre_allSolids_ColorScaleIndex;
-int pre_allSolids_ColorScaleDirection;
-float pre_allSolids_ColorScaleFactor;
+int pre_allSolids_ColorscaleIndex;
+int pre_allSolids_ColorscaleDirection;
+float pre_allSolids_ColorscaleFactor;
 
 float pre_allSolidImpacts_Grade;
 float pre_allSolidImpacts_Power;

@@ -32,10 +32,10 @@ class User3D {
   float creatorModel1DTrunkSize = 1;
   float creatorModel1DLeafSize = 0.2;
 
-  float creator_Model1D_BranchTilt = 60.0;
-  float creator_Model1D_BranchTwist = 137.5; //golden angle ratio
-  float creator_Model1D_BranchRatio = 0.8;
-  float creator_Model1D_TreeBase = 2.0;
+  float creatorModel1DBranchTilt = 60.0;
+  float creatorModel1DBranchTwist = 137.5; //golden angle ratio
+  float creatorModel1DBranchRatio = 0.8;
+  float creatorModel1DTreeBase = 2.0;
 
 
 
@@ -61,7 +61,7 @@ class User3D {
 
   boolean exporterMaterialLibrary = true;
   boolean exporterDoubleSided = true;
-  int exporterColorScaleResolution = 256;
+  int exporterColorscaleResolution = 256;
 
   public void to_XML (XML xml) {
 
@@ -117,7 +117,7 @@ class User3D {
     XML_setInt(parent, "exporterMaintainPolygons", this.exporterMaintainPolygons);
     XML_setBoolean(parent, "exporterMaterialLibrary", this.exporterMaterialLibrary);
     XML_setBoolean(parent, "exporterDoubleSided", this.exporterDoubleSided);
-    XML_setInt(parent, "exporterColorScaleResolution", this.exporterColorScaleResolution);
+    XML_setInt(parent, "exporterColorscaleResolution", this.exporterColorscaleResolution);
 
   }
 
@@ -179,7 +179,7 @@ class User3D {
     this.exporterMaintainPolygons = XML_getInt(parent, "exporterMaintainPolygons");
     this.exporterMaterialLibrary  = XML_getBoolean(parent, "exporterMaterialLibrary");
     this.exporterDoubleSided = XML_getBoolean(parent, "exporterDoubleSided");
-    this.exporterColorScaleResolution = XML_getInt(parent, "exporterColorScaleResolution");
+    this.exporterColorscaleResolution = XML_getInt(parent, "exporterColorscaleResolution");
 
   }
 

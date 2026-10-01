@@ -270,8 +270,8 @@ class STUDYTest {
     app.STUDY.rawLinesExporter = true;
     app.STUDY.normalLinesExporter = true;
     app.STUDY.probabilitiesExporter = false;
-    app.STUDY.statisticalRangesColorScaleIndex = 2;
-    app.STUDY.activeColorScaleFactor = 0.5f;
+    app.STUDY.statisticalRangesColorscaleIndex = 2;
+    app.STUDY.activeColorscaleFactor = 0.5f;
     app.STUDY.opacityPercentage = 60;
     app.STUDY.centralGraphScale = 1.25f;
     app.STUDY.centralGraphOffsetX = 0.0f;
@@ -303,8 +303,8 @@ class STUDYTest {
     assertEquals(3, fresh.skyScenarioSetting);
     assertTrue(fresh.rawLinesExporter);
     assertFalse(fresh.probabilitiesExporter);
-    assertEquals(2, fresh.statisticalRangesColorScaleIndex);
-    assertEquals(0.5f, fresh.activeColorScaleFactor, 0.0001f);
+    assertEquals(2, fresh.statisticalRangesColorscaleIndex);
+    assertEquals(0.5f, fresh.activeColorscaleFactor, 0.0001f);
     assertFalse(fresh.showImpactSummary);
     assertEquals(2, fresh.impactLayerIndex);
     assertEquals(3, fresh.impactGraphIndex);

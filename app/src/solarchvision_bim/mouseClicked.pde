@@ -134,16 +134,16 @@ void pickOrAssignModel2DSeedMaterial (int OBJ_ID) {
 // (DegreeMax/BranchTilt/BranchTwist/BranchRatio/TreeBase/TrunkSize/
 // LeafSize) WIN3D.currentTool currently is - or all of them at once,
 // for UITASK.Model1DsProps - either reads OBJ_ID's current value(s)
-// into the matching User3D.creator_Model1D_* (Pick,
+// into the matching User3D.creatorModel1D* (Pick,
 // toolParameterModifier==1) or writes the matching User3D.creator_
 // Model1D_* value(s) back onto OBJ_ID (Assign, ==2).
 void pickOrAssignModel1DProperty (int OBJ_ID) {
   if (WIN3D.toolParameterModifier == 1) { // Pick
     if (WIN3D.currentTool == UITASK.DegreeMax) User3D.creatorModel1DDegreeMax = allModel1Ds.getDegreeMax(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.BranchTilt) User3D.creator_Model1D_BranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.BranchTwist) User3D.creator_Model1D_BranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.BranchRatio) User3D.creator_Model1D_BranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
-    else if (WIN3D.currentTool == UITASK.TreeBase) User3D.creator_Model1D_TreeBase = allModel1Ds.getTreeBase(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.BranchTilt) User3D.creatorModel1DBranchTilt = allModel1Ds.getBranchTilt(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.BranchTwist) User3D.creatorModel1DBranchTwist = allModel1Ds.getBranchTwist(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.BranchRatio) User3D.creatorModel1DBranchRatio = allModel1Ds.getBranchRatio(OBJ_ID);
+    else if (WIN3D.currentTool == UITASK.TreeBase) User3D.creatorModel1DTreeBase = allModel1Ds.getTreeBase(OBJ_ID);
 
     else if (WIN3D.currentTool == UITASK.TrunkSize) User3D.creatorModel1DTrunkSize = allModel1Ds.getTrunkSize(OBJ_ID);
     else if (WIN3D.currentTool == UITASK.LeafSize) User3D.creatorModel1DLeafSize = allModel1Ds.getLeafSize(OBJ_ID);
@@ -155,10 +155,10 @@ void pickOrAssignModel1DProperty (int OBJ_ID) {
   }
   if (WIN3D.toolParameterModifier == 2) { // Assign
     if (WIN3D.currentTool == UITASK.DegreeMax) allModel1Ds.setDegreeMax(OBJ_ID, User3D.creatorModel1DDegreeMax);
-    else if (WIN3D.currentTool == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.creator_Model1D_BranchTilt);
-    else if (WIN3D.currentTool == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.creator_Model1D_BranchTwist);
-    else if (WIN3D.currentTool == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.creator_Model1D_BranchRatio);
-    else if (WIN3D.currentTool == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.creator_Model1D_TreeBase);
+    else if (WIN3D.currentTool == UITASK.BranchTilt) allModel1Ds.setBranchTilt(OBJ_ID, User3D.creatorModel1DBranchTilt);
+    else if (WIN3D.currentTool == UITASK.BranchTwist) allModel1Ds.setBranchTwist(OBJ_ID, User3D.creatorModel1DBranchTwist);
+    else if (WIN3D.currentTool == UITASK.BranchRatio) allModel1Ds.setBranchRatio(OBJ_ID, User3D.creatorModel1DBranchRatio);
+    else if (WIN3D.currentTool == UITASK.TreeBase) allModel1Ds.setTreeBase(OBJ_ID, User3D.creatorModel1DTreeBase);
 
     else if (WIN3D.currentTool == UITASK.TrunkSize) allModel1Ds.setTrunkSize(OBJ_ID, User3D.creatorModel1DTrunkSize);
     else if (WIN3D.currentTool == UITASK.LeafSize) allModel1Ds.setLeafSize(OBJ_ID, User3D.creatorModel1DLeafSize);
@@ -1890,8 +1890,8 @@ void mouseClicked () {
                       allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
                                          User3D.creatorModel1DDegreeMax,
                                          x, y, z, 2 * rz, floor(random(360)),
-                                         User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
-                                         User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                                         User3D.creatorModel1DBranchTilt, User3D.creatorModel1DBranchTwist,
+                                         User3D.creatorModel1DBranchRatio, User3D.creatorModel1DTreeBase,
                                          User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
                     }
                   } else if (currentObjectCategory == ObjectCategory.VERTEX) { // working with vertices

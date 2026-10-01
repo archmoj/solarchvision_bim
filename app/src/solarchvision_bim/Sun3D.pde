@@ -10,12 +10,12 @@ class Sun3D {
   float lat_step = 5; //in degrees
   float lon_step  = 10; //in degrees
 
-  int activeColorScaleIndex = 15;
-  int activeColorScaleDirection = 1;
-  float activeColorScaleFactor = 1;
-  int passiveColorScaleIndex = 18;
-  int passiveColorScaleDirection = -1;
-  float passiveColorScaleFactor = 0.25;
+  int activeColorscaleIndex = 15;
+  int activeColorscaleDirection = 1;
+  float activeColorscaleFactor = 1;
+  int passiveColorscaleIndex = 18;
+  int passiveColorscaleDirection = -1;
+  float passiveColorscaleFactor = 0.25;
 
   boolean displayGrid = true;
   boolean displayPath = true;
@@ -49,14 +49,14 @@ class Sun3D {
     int direction = 1;
     float multiplier = 1;
     if (WIN3D.impactTypeIndex == Impact_ACTIVE) {
-      type = useStudySettings ? STUDY.activeColorScaleIndex : this.activeColorScaleIndex;
-      direction = useStudySettings ? STUDY.activeColorScaleDirection : this.activeColorScaleDirection;
-      multiplier = useStudySettings ? STUDY.activeColorScaleFactor : this.activeColorScaleFactor;
+      type = useStudySettings ? STUDY.activeColorscaleIndex : this.activeColorscaleIndex;
+      direction = useStudySettings ? STUDY.activeColorscaleDirection : this.activeColorscaleDirection;
+      multiplier = useStudySettings ? STUDY.activeColorscaleFactor : this.activeColorscaleFactor;
     }
     if (WIN3D.impactTypeIndex == Impact_PASSIVE) {
-      type = useStudySettings ? STUDY.passiveColorScaleIndex : this.passiveColorScaleIndex;
-      direction = useStudySettings ? STUDY.passiveColorScaleDirection : this.passiveColorScaleDirection;
-      multiplier = useStudySettings ? STUDY.passiveColorScaleFactor : this.passiveColorScaleFactor;
+      type = useStudySettings ? STUDY.passiveColorscaleIndex : this.passiveColorscaleIndex;
+      direction = useStudySettings ? STUDY.passiveColorscaleDirection : this.passiveColorscaleDirection;
+      multiplier = useStudySettings ? STUDY.passiveColorscaleFactor : this.passiveColorscaleFactor;
     }
     return new float[] { type, direction, multiplier };
   }
@@ -365,8 +365,8 @@ class Sun3D {
   void writeSunPatternMaterial (int PAL_type, String filename, String texturePath) {
     println("Saving texture:", texturePath);
 
-    int RES1 = User3D.exporterColorScaleResolution;
-    int RES2 = User3D.exporterColorScaleResolution / 16;
+    int RES1 = User3D.exporterColorscaleResolution;
+    int RES2 = User3D.exporterColorscaleResolution / 16;
     PImage palette_Texture = createImage(RES1, RES2, ARGB);
     palette_Texture.loadPixels();
     for (int np = 0; np < (RES1 * RES2); np++) {
@@ -636,12 +636,12 @@ class Sun3D {
   public void to_XML (XML xml) {
     //printlnSaving(this.CLASS_STAMP);
     XML parent = xml.addChild(this.CLASS_STAMP);
-    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
-    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
-    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
-    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
-    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
-    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
+    XML_setInt(parent, "activeColorscaleIndex", this.activeColorscaleIndex);
+    XML_setInt(parent, "activeColorscaleDirection", this.activeColorscaleDirection);
+    XML_setFloat(parent, "activeColorscaleFactor", this.activeColorscaleFactor);
+    XML_setInt(parent, "passiveColorscaleIndex", this.passiveColorscaleIndex);
+    XML_setInt(parent, "passiveColorscaleDirection", this.passiveColorscaleDirection);
+    XML_setFloat(parent, "passiveColorscaleFactor", this.passiveColorscaleFactor);
     XML_setBoolean(parent, "displayGrid", this.displayGrid);
     XML_setBoolean(parent, "displayPath", this.displayPath);
     XML_setBoolean(parent, "displayPattern", this.displayPattern);
@@ -653,12 +653,12 @@ class Sun3D {
   public void from_XML (XML xml) {
     //println("Loading:" + this.CLASS_STAMP);
     XML parent = xml.getChild(this.CLASS_STAMP);
-    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
-    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
-    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
-    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
-    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
-    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
+    this.activeColorscaleIndex = XML_getInt(parent, "activeColorscaleIndex");
+    this.activeColorscaleDirection = XML_getInt(parent, "activeColorscaleDirection");
+    this.activeColorscaleFactor = XML_getFloat(parent, "activeColorscaleFactor");
+    this.passiveColorscaleIndex = XML_getInt(parent, "passiveColorscaleIndex");
+    this.passiveColorscaleDirection = XML_getInt(parent, "passiveColorscaleDirection");
+    this.passiveColorscaleFactor = XML_getFloat(parent, "passiveColorscaleFactor");
     this.displayGrid = XML_getBoolean(parent, "displayGrid");
     this.displayPath = XML_getBoolean(parent, "displayPath");
     this.displayPattern = XML_getBoolean(parent, "displayPattern");

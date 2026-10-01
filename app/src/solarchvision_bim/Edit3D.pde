@@ -96,28 +96,28 @@ class Edit3D {
       else if (WIN3D.currentTool == UITASK.BranchTilt) {
         float q = allModel1Ds.getBranchTilt(OBJ_ID) + p * 5;
         allModel1Ds.setBranchTilt(OBJ_ID, q);
-        User3D.creator_Model1D_BranchTilt = q;
+        User3D.creatorModel1DBranchTilt = q;
         UI_rollout.revise();
       }
 
       else if (WIN3D.currentTool == UITASK.BranchTwist) {
         float q = allModel1Ds.getBranchTwist(OBJ_ID) + p * 5;
         allModel1Ds.setBranchTwist(OBJ_ID, q);
-        User3D.creator_Model1D_BranchTwist = q;
+        User3D.creatorModel1DBranchTwist = q;
         UI_rollout.revise();
       }
 
       else if (WIN3D.currentTool == UITASK.BranchRatio) {
         float q = clampF(allModel1Ds.getBranchRatio(OBJ_ID) + 0.02 * p, 0.1, 1.0);
         allModel1Ds.setBranchRatio(OBJ_ID, q);
-        User3D.creator_Model1D_BranchRatio = q;
+        User3D.creatorModel1DBranchRatio = q;
         UI_rollout.revise();
       }
 
       else if (WIN3D.currentTool == UITASK.TreeBase) {
         float q = clampF(allModel1Ds.getTreeBase(OBJ_ID) + 0.02 * p, 0.0, 4.0);
         allModel1Ds.setTreeBase(OBJ_ID, q);
-        User3D.creator_Model1D_TreeBase = q;
+        User3D.creatorModel1DTreeBase = q;
         UI_rollout.revise();
       }
 

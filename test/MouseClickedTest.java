@@ -824,12 +824,12 @@ class MouseClickedTest {
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // create one instance to pick from
     app.allModel1Ds.setBranchTilt(0, 12.5f);
-    app.User3D.creator_Model1D_BranchTilt = -1;
+    app.User3D.creatorModel1DBranchTilt = -1;
     app.User3D.creatorModel1DLeafSize = -1;
 
     app.pickOrAssignModel1DProperty(0);
 
-    assertEquals(12.5f, app.User3D.creator_Model1D_BranchTilt, 0.0001f);
+    assertEquals(12.5f, app.User3D.creatorModel1DBranchTilt, 0.0001f);
     assertEquals(-1f, app.User3D.creatorModel1DLeafSize, 0.0001f); // untouched: a different task
   }
 
@@ -870,11 +870,11 @@ class MouseClickedTest {
     app.allModel1Ds.makeEmpty(0);
     app.allModel1Ds.create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     app.allModel1Ds.setBranchTwist(0, 9);
-    app.User3D.creator_Model1D_BranchTwist = -1;
+    app.User3D.creatorModel1DBranchTwist = -1;
 
     app.pickOrAssignModel1DProperty(0);
 
-    assertEquals(-1f, app.User3D.creator_Model1D_BranchTwist, 0.0001f); // untouched
+    assertEquals(-1f, app.User3D.creatorModel1DBranchTwist, 0.0001f); // untouched
   }
 
   // ========= computeClickRay (extracted) ===================

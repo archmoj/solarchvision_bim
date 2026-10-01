@@ -12,13 +12,13 @@ class Faces {
 
   int displayTessellation = 2;
 
-  int activeColorScaleIndex = 19; //15; //14;
-  int activeColorScaleDirection = 1;
-  float activeColorScaleFactor = 1;
+  int activeColorscaleIndex = 19; //15; //14;
+  int activeColorscaleDirection = 1;
+  float activeColorscaleFactor = 1;
 
-  int passiveColorScaleIndex = 1;
-  int passiveColorScaleDirection = 1;
-  float passiveColorScaleFactor = 0.25;
+  int passiveColorscaleIndex = 1;
+  int passiveColorscaleDirection = 1;
+  float passiveColorscaleFactor = 0.25;
 
 
   int[][] nodes;
@@ -622,8 +622,8 @@ class Faces {
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.exporterColorScaleResolution;
-            int RES2 = User3D.exporterColorScaleResolution / 16;
+            int RES1 = User3D.exporterColorscaleResolution;
+            int RES2 = User3D.exporterColorscaleResolution / 16;
 
             PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
@@ -936,8 +936,8 @@ class Faces {
 
             println("Saving texture:", TEXTURE_path);
 
-            int RES1 = User3D.exporterColorScaleResolution;
-            int RES2 = User3D.exporterColorScaleResolution / 16;
+            int RES1 = User3D.exporterColorscaleResolution;
+            int RES2 = User3D.exporterColorscaleResolution / 16;
 
             PImage palette_Texture = createImage(RES1, RES2, ARGB);
 
@@ -1607,12 +1607,12 @@ class Faces {
     XML_setBoolean(parent, "displayEdges", this.displayEdges);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
 
-    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
-    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
-    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
-    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
-    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
-    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
+    XML_setInt(parent, "activeColorscaleIndex", this.activeColorscaleIndex);
+    XML_setInt(parent, "activeColorscaleDirection", this.activeColorscaleDirection);
+    XML_setFloat(parent, "activeColorscaleFactor", this.activeColorscaleFactor);
+    XML_setInt(parent, "passiveColorscaleIndex", this.passiveColorscaleIndex);
+    XML_setInt(parent, "passiveColorscaleDirection", this.passiveColorscaleDirection);
+    XML_setFloat(parent, "passiveColorscaleFactor", this.passiveColorscaleFactor);
   }
 
   public void from_XML (XML xml) {
@@ -1650,12 +1650,12 @@ class Faces {
     this.displayEdges = XML_getBoolean(parent, "displayEdges");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
 
-    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
-    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
-    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
-    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
-    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
-    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
+    this.activeColorscaleIndex = XML_getInt(parent, "activeColorscaleIndex");
+    this.activeColorscaleDirection = XML_getInt(parent, "activeColorscaleDirection");
+    this.activeColorscaleFactor = XML_getFloat(parent, "activeColorscaleFactor");
+    this.passiveColorscaleIndex = XML_getInt(parent, "passiveColorscaleIndex");
+    this.passiveColorscaleDirection = XML_getInt(parent, "passiveColorscaleDirection");
+    this.passiveColorscaleFactor = XML_getFloat(parent, "passiveColorscaleFactor");
   }
 
 }

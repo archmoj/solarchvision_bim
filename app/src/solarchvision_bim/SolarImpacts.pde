@@ -290,9 +290,9 @@ class SolarImpacts {
               if (q == Impact_ACTIVE) {
                 valuesSUM = Image_G;
 
-                PAL_type = allFaces.activeColorScaleIndex;
-                PAL_direction = allFaces.activeColorScaleDirection;
-                PAL_multiplier = allFaces.activeColorScaleFactor;
+                PAL_type = allFaces.activeColorscaleIndex;
+                PAL_direction = allFaces.activeColorscaleDirection;
+                PAL_multiplier = allFaces.activeColorscaleFactor;
 
                 //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -309,9 +309,9 @@ class SolarImpacts {
 
                 valuesSUM = COMPARISON;
 
-                PAL_type = allFaces.passiveColorScaleIndex;
-                PAL_direction = allFaces.passiveColorScaleDirection;
-                PAL_multiplier = allFaces.passiveColorScaleFactor;
+                PAL_type = allFaces.passiveColorscaleIndex;
+                PAL_direction = allFaces.passiveColorscaleDirection;
+                PAL_multiplier = allFaces.passiveColorscaleFactor;
 
                 //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
@@ -378,9 +378,9 @@ class SolarImpacts {
               if (q == Impact_ACTIVE) {
                 valuesSUM = Image_G;
 
-                PAL_type = allFaces.activeColorScaleIndex;
-                PAL_direction = allFaces.activeColorScaleDirection;
-                PAL_multiplier = allFaces.activeColorScaleFactor;
+                PAL_type = allFaces.activeColorscaleIndex;
+                PAL_direction = allFaces.activeColorscaleDirection;
+                PAL_multiplier = allFaces.activeColorscaleFactor;
 
                 //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -397,9 +397,9 @@ class SolarImpacts {
 
                 valuesSUM = COMPARISON;
 
-                PAL_type = allFaces.passiveColorScaleIndex;
-                PAL_direction = allFaces.passiveColorScaleDirection;
-                PAL_multiplier = allFaces.passiveColorScaleFactor;
+                PAL_type = allFaces.passiveColorscaleIndex;
+                PAL_direction = allFaces.passiveColorscaleDirection;
+                PAL_multiplier = allFaces.passiveColorscaleFactor;
 
                 //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);

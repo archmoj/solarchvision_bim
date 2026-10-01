@@ -136,7 +136,7 @@ class SHADETest {
   void getPALType_usesTheActivePaletteForSolarShadeAndActiveImpact () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar;
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.allFaces.activeColorScaleIndex = 19;
+    app.allFaces.activeColorscaleIndex = 19;
 
     assertEquals(19, app.SHADE.get_PAL_type());
   }
@@ -145,7 +145,7 @@ class SHADETest {
   void getPALType_usesThePassivePaletteForSolarShadeAndPassiveImpact () {
     app.WIN3D.shadingMode = app.SHADE.Vertex_Solar;
     app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
-    app.allFaces.passiveColorScaleIndex = 1;
+    app.allFaces.passiveColorscaleIndex = 1;
 
     assertEquals(1, app.SHADE.get_PAL_type());
   }
@@ -176,7 +176,7 @@ class SHADETest {
   void getPALDirection_usesTheActivePaletteForSolarShadeAndActiveImpact () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar;
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.allFaces.activeColorScaleDirection = 1;
+    app.allFaces.activeColorscaleDirection = 1;
 
     assertEquals(1, app.SHADE.get_PAL_direction());
   }
@@ -199,7 +199,7 @@ class SHADETest {
   void getPALMultiplier_usesTheActivePaletteForSolarShadeAndActiveImpact () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar;
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.allFaces.activeColorScaleFactor = 1;
+    app.allFaces.activeColorscaleFactor = 1;
 
     assertEquals(1f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }

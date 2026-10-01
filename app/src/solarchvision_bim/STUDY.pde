@@ -2,21 +2,21 @@ class STUDY {
 
   final static String CLASS_STAMP = "STUDY";
 
-  int statisticalRangesColorScaleIndex = -1;
-  int statisticalRangesColorScaleDirection = -1;
-  float statisticalRangesColorScaleFactor = 2;
+  int statisticalRangesColorscaleIndex = -1;
+  int statisticalRangesColorscaleDirection = -1;
+  float statisticalRangesColorscaleFactor = 2;
 
-  int probabilitiesColorScaleIndex = -1;
-  int probabilitiesColorScaleDirection = 1;
-  float probabilitiesColorScaleFactor = 0.5;
+  int probabilitiesColorscaleIndex = -1;
+  int probabilitiesColorscaleDirection = 1;
+  float probabilitiesColorscaleFactor = 0.5;
 
-  int activeColorScaleIndex = 19; //15; //14;
-  int activeColorScaleDirection = 1;
-  float activeColorScaleFactor = 1; //2;
+  int activeColorscaleIndex = 19; //15; //14;
+  int activeColorscaleDirection = 1;
+  float activeColorscaleFactor = 1; //2;
 
-  int passiveColorScaleIndex = 1;
-  int passiveColorScaleDirection = 1;
-  float passiveColorScaleFactor = 0.25;
+  int passiveColorscaleIndex = 1;
+  int passiveColorscaleDirection = 1;
+  float passiveColorscaleFactor = 0.25;
 
 
   int cX = 0;
@@ -677,9 +677,9 @@ class STUDY {
     //println("_pix=", _pix);
 
 
-    int PAL_type = this.probabilitiesColorScaleIndex;
-    int PAL_direction = this.probabilitiesColorScaleDirection;
-    float PAL_multiplier = this.probabilitiesColorScaleFactor;
+    int PAL_type = this.probabilitiesColorscaleIndex;
+    int PAL_direction = this.probabilitiesColorscaleDirection;
+    float PAL_multiplier = this.probabilitiesColorscaleFactor;
 
     float txt_max_width = (this.probabilityWidthInterval * this.view_S * 100 / 24.0) * this.horizontalUnitScale;
     float txt_max_height = _pix;
@@ -815,9 +815,9 @@ class STUDY {
 
   void drawSorted (int i, int j, float[] valuesA, float[] valuesB, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-    int PAL_type = this.statisticalRangesColorScaleIndex;
-    int PAL_direction = this.statisticalRangesColorScaleDirection;
-    float PAL_multiplier = this.statisticalRangesColorScaleFactor;
+    int PAL_type = this.statisticalRangesColorscaleIndex;
+    int PAL_direction = this.statisticalRangesColorscaleDirection;
+    float PAL_multiplier = this.statisticalRangesColorscaleFactor;
 
     float[] sortedvaluesA = sort(valuesA);
     int num_sortedvaluesA = countDefinedPrefix(sortedvaluesA);
@@ -1865,11 +1865,11 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.impactTypeIndex == Impact_ACTIVE) {
-      PAL_type = this.activeColorScaleIndex;
-      PAL_direction = this.activeColorScaleDirection;
+      PAL_type = this.activeColorscaleIndex;
+      PAL_direction = this.activeColorscaleDirection;
     }
     if (this.impactTypeIndex == Impact_PASSIVE) {
-      //PAL_type = this.activeColorScaleIndex; PAL_direction = this.activeColorScaleDirection;
+      //PAL_type = this.activeColorscaleIndex; PAL_direction = this.activeColorscaleDirection;
       PAL_type = 12;
       PAL_direction = -1;
     }
@@ -2215,14 +2215,14 @@ class STUDY {
       float PAL_multiplier = 1;
 
       if (this.impactTypeIndex == Impact_ACTIVE) {
-        PAL_type = allFaces.activeColorScaleIndex;
-        PAL_direction = allFaces.activeColorScaleDirection;
-        PAL_multiplier = allFaces.activeColorScaleFactor;
+        PAL_type = allFaces.activeColorscaleIndex;
+        PAL_direction = allFaces.activeColorscaleDirection;
+        PAL_multiplier = allFaces.activeColorscaleFactor;
       }
       if (this.impactTypeIndex == Impact_PASSIVE) {
-        PAL_type = allFaces.passiveColorScaleIndex;
-        PAL_direction = allFaces.passiveColorScaleDirection;
-        PAL_multiplier = allFaces.passiveColorScaleFactor;
+        PAL_type = allFaces.passiveColorscaleIndex;
+        PAL_direction = allFaces.passiveColorscaleDirection;
+        PAL_multiplier = allFaces.passiveColorscaleFactor;
       }
 
       int l = this.impactLayerIndex;
@@ -2399,17 +2399,17 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.impactTypeIndex == Impact_ACTIVE) {
-      PAL_type = this.activeColorScaleIndex;
-      PAL_direction = this.activeColorScaleDirection;
+      PAL_type = this.activeColorscaleIndex;
+      PAL_direction = this.activeColorscaleDirection;
     }
     if (this.impactTypeIndex == Impact_PASSIVE) {
-      PAL_type = this.passiveColorScaleIndex;
-      PAL_direction = this.passiveColorScaleDirection;
+      PAL_type = this.passiveColorscaleIndex;
+      PAL_direction = this.passiveColorscaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
-    if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
+    if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorscaleFactor;
+    if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorscaleFactor;
 
 
     int l = this.impactLayerIndex;
@@ -2782,17 +2782,17 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.impactTypeIndex == Impact_ACTIVE) {
-      PAL_type = this.activeColorScaleIndex;
-      PAL_direction = this.activeColorScaleDirection;
+      PAL_type = this.activeColorscaleIndex;
+      PAL_direction = this.activeColorscaleDirection;
     }
     if (this.impactTypeIndex == Impact_PASSIVE) {
-      PAL_type = this.passiveColorScaleIndex;
-      PAL_direction = this.passiveColorScaleDirection;
+      PAL_type = this.passiveColorscaleIndex;
+      PAL_direction = this.passiveColorscaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
-    if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
+    if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorscaleFactor;
+    if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorscaleFactor;
 
     this.drawPositionGrid(x_Plot, y_Plot, sx_Plot, sy_Plot, 0);
 
@@ -3021,17 +3021,17 @@ class STUDY {
     int PAL_direction = 1;
 
     if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) {
-      PAL_type = this.activeColorScaleIndex;
-      PAL_direction = this.activeColorScaleDirection;
+      PAL_type = this.activeColorscaleIndex;
+      PAL_direction = this.activeColorscaleDirection;
     }
     if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) {
-      PAL_type = this.passiveColorScaleIndex;
-      PAL_direction = this.passiveColorScaleDirection;
+      PAL_type = this.passiveColorscaleIndex;
+      PAL_direction = this.passiveColorscaleDirection;
     }
 
     float PAL_multiplier = 1;
-    if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) PAL_multiplier = this.activeColorScaleFactor;
-    if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) PAL_multiplier = this.passiveColorScaleFactor;
+    if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) PAL_multiplier = this.activeColorscaleFactor;
+    if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) PAL_multiplier = this.passiveColorscaleFactor;
 
     float pal_length = 400;
     float pal_ox = 700;
@@ -3189,21 +3189,21 @@ class STUDY {
     XML_setBoolean(parent, "normalLinesExporter", this.normalLinesExporter);
     XML_setBoolean(parent, "probabilitiesExporter", this.probabilitiesExporter);
 
-    XML_setInt(parent, "statisticalRangesColorScaleIndex", this.statisticalRangesColorScaleIndex);
-    XML_setInt(parent, "statisticalRangesColorScaleDirection", this.statisticalRangesColorScaleDirection);
-    XML_setFloat(parent, "statisticalRangesColorScaleFactor", this.statisticalRangesColorScaleFactor);
+    XML_setInt(parent, "statisticalRangesColorscaleIndex", this.statisticalRangesColorscaleIndex);
+    XML_setInt(parent, "statisticalRangesColorscaleDirection", this.statisticalRangesColorscaleDirection);
+    XML_setFloat(parent, "statisticalRangesColorscaleFactor", this.statisticalRangesColorscaleFactor);
 
-    XML_setInt(parent, "probabilitiesColorScaleIndex", this.probabilitiesColorScaleIndex);
-    XML_setInt(parent, "probabilitiesColorScaleDirection", this.probabilitiesColorScaleDirection);
-    XML_setFloat(parent, "probabilitiesColorScaleFactor", this.probabilitiesColorScaleFactor);
+    XML_setInt(parent, "probabilitiesColorscaleIndex", this.probabilitiesColorscaleIndex);
+    XML_setInt(parent, "probabilitiesColorscaleDirection", this.probabilitiesColorscaleDirection);
+    XML_setFloat(parent, "probabilitiesColorscaleFactor", this.probabilitiesColorscaleFactor);
 
-    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
-    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
-    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
+    XML_setInt(parent, "activeColorscaleIndex", this.activeColorscaleIndex);
+    XML_setInt(parent, "activeColorscaleDirection", this.activeColorscaleDirection);
+    XML_setFloat(parent, "activeColorscaleFactor", this.activeColorscaleFactor);
 
-    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
-    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
-    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
+    XML_setInt(parent, "passiveColorscaleIndex", this.passiveColorscaleIndex);
+    XML_setInt(parent, "passiveColorscaleDirection", this.passiveColorscaleDirection);
+    XML_setFloat(parent, "passiveColorscaleFactor", this.passiveColorscaleFactor);
 
     XML_setFloat(parent, "opacityPercentage", this.opacityPercentage);
     XML_setFloat(parent, "centralGraphScale", centralGraphScale);
@@ -3248,21 +3248,21 @@ class STUDY {
     this.normalLinesExporter = XML_getBoolean(parent, "normalLinesExporter");
     this.probabilitiesExporter = XML_getBoolean(parent, "probabilitiesExporter");
 
-    this.statisticalRangesColorScaleIndex = XML_getInt(parent, "statisticalRangesColorScaleIndex");
-    this.statisticalRangesColorScaleDirection = XML_getInt(parent, "statisticalRangesColorScaleDirection");
-    this.statisticalRangesColorScaleFactor = XML_getFloat(parent, "statisticalRangesColorScaleFactor");
+    this.statisticalRangesColorscaleIndex = XML_getInt(parent, "statisticalRangesColorscaleIndex");
+    this.statisticalRangesColorscaleDirection = XML_getInt(parent, "statisticalRangesColorscaleDirection");
+    this.statisticalRangesColorscaleFactor = XML_getFloat(parent, "statisticalRangesColorscaleFactor");
 
-    this.probabilitiesColorScaleIndex = XML_getInt(parent, "probabilitiesColorScaleIndex");
-    this.probabilitiesColorScaleDirection = XML_getInt(parent, "probabilitiesColorScaleDirection");
-    this.probabilitiesColorScaleFactor = XML_getFloat(parent, "probabilitiesColorScaleFactor");
+    this.probabilitiesColorscaleIndex = XML_getInt(parent, "probabilitiesColorscaleIndex");
+    this.probabilitiesColorscaleDirection = XML_getInt(parent, "probabilitiesColorscaleDirection");
+    this.probabilitiesColorscaleFactor = XML_getFloat(parent, "probabilitiesColorscaleFactor");
 
-    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
-    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
-    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
+    this.activeColorscaleIndex = XML_getInt(parent, "activeColorscaleIndex");
+    this.activeColorscaleDirection = XML_getInt(parent, "activeColorscaleDirection");
+    this.activeColorscaleFactor = XML_getFloat(parent, "activeColorscaleFactor");
 
-    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
-    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
-    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
+    this.passiveColorscaleIndex = XML_getInt(parent, "passiveColorscaleIndex");
+    this.passiveColorscaleDirection = XML_getInt(parent, "passiveColorscaleDirection");
+    this.passiveColorscaleFactor = XML_getFloat(parent, "passiveColorscaleFactor");
 
 
     this.opacityPercentage = XML_getFloat(parent, "opacityPercentage");

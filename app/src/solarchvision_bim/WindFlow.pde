@@ -43,8 +43,8 @@ class WindFlow {
 
           println("Saving texture:", TEXTURE_path);
 
-          int RES1 = User3D.exporterColorScaleResolution;
-          int RES2 = User3D.exporterColorScaleResolution / 16;
+          int RES1 = User3D.exporterColorscaleResolution;
+          int RES2 = User3D.exporterColorscaleResolution / 16;
 
           PImage palette_Texture = createImage(RES1, RES2, ARGB);
 

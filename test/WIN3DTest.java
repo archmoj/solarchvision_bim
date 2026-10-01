@@ -151,9 +151,9 @@ class WIN3DTest {
   void choosePaletteParams_usesTheActiveOrPassivePaletteBasedOnImpactType () {
     app.WIN3D.shadingMode = app.SHADE.Global_Solar; // enables solar palette mode
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    app.allFaces.activeColorScaleIndex = 5;
-    app.allFaces.activeColorScaleDirection = 1;
-    app.allFaces.activeColorScaleFactor = 0.5f;
+    app.allFaces.activeColorscaleIndex = 5;
+    app.allFaces.activeColorscaleDirection = 1;
+    app.allFaces.activeColorscaleFactor = 0.5f;
 
     float[] result = app.WIN3D.choosePaletteParams();
 

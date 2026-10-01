@@ -184,12 +184,12 @@ class FacesTest {
     app.allFaces.showNormalLines = true;
     app.allFaces.displayEdges = false;
     app.allFaces.displayTessellation = 3;
-    app.allFaces.activeColorScaleIndex = 9;
-    app.allFaces.activeColorScaleDirection = -1;
-    app.allFaces.activeColorScaleFactor = 0.5f;
-    app.allFaces.passiveColorScaleIndex = 2;
-    app.allFaces.passiveColorScaleDirection = 2;
-    app.allFaces.passiveColorScaleFactor = 0.75f;
+    app.allFaces.activeColorscaleIndex = 9;
+    app.allFaces.activeColorscaleDirection = -1;
+    app.allFaces.activeColorscaleFactor = 0.5f;
+    app.allFaces.passiveColorscaleIndex = 2;
+    app.allFaces.passiveColorscaleDirection = 2;
+    app.allFaces.passiveColorscaleFactor = 0.75f;
 
     processing.data.XML root = new processing.data.XML("root");
     app.allFaces.to_XML(root);
@@ -205,11 +205,11 @@ class FacesTest {
     assertTrue(fresh.showNormalLines);
     assertFalse(fresh.displayEdges);
     assertEquals(3, fresh.displayTessellation);
-    assertEquals(9, fresh.activeColorScaleIndex);
-    assertEquals(-1, fresh.activeColorScaleDirection);
-    assertEquals(0.5f, fresh.activeColorScaleFactor, 0.0001f);
-    assertEquals(2, fresh.passiveColorScaleIndex);
-    assertEquals(2, fresh.passiveColorScaleDirection);
-    assertEquals(0.75f, fresh.passiveColorScaleFactor, 0.0001f);
+    assertEquals(9, fresh.activeColorscaleIndex);
+    assertEquals(-1, fresh.activeColorscaleDirection);
+    assertEquals(0.5f, fresh.activeColorscaleFactor, 0.0001f);
+    assertEquals(2, fresh.passiveColorscaleIndex);
+    assertEquals(2, fresh.passiveColorscaleDirection);
+    assertEquals(0.75f, fresh.passiveColorscaleFactor, 0.0001f);
   }
 }

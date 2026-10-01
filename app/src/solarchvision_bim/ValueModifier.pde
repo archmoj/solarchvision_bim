@@ -1576,7 +1576,7 @@ class ValueModifier {
     }
     return out;
   }
-  float creator_Model1D_BranchTilt (int created) {
+  float creatorModel1DBranchTilt (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1589,16 +1589,16 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Creator Model1D Branch Tilt",
-        () -> User3D.creator_Model1D_BranchTilt,
-        (v) -> { User3D.creator_Model1D_BranchTilt = v; },
+        () -> User3D.creatorModel1DBranchTilt,
+        (v) -> { User3D.creatorModel1DBranchTilt = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Tilt", User3D.creator_Model1D_BranchTilt, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Tilt", User3D.creatorModel1DBranchTilt, s1, s2, s3, s4);
     }
     return out;
   }
-  float creator_Model1D_BranchTwist (int created) {
+  float creatorModel1DBranchTwist (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1611,16 +1611,16 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Creator Model1D Branch Twist",
-        () -> User3D.creator_Model1D_BranchTwist,
-        (v) -> { User3D.creator_Model1D_BranchTwist = v; },
+        () -> User3D.creatorModel1DBranchTwist,
+        (v) -> { User3D.creatorModel1DBranchTwist = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Twist", User3D.creator_Model1D_BranchTwist, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Twist", User3D.creatorModel1DBranchTwist, s1, s2, s3, s4);
     }
     return out;
   }
-  float creator_Model1D_BranchRatio (int created) {
+  float creatorModel1DBranchRatio (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1633,16 +1633,16 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Creator Model1D Branch Ratio",
-        () -> User3D.creator_Model1D_BranchRatio,
-        (v) -> { User3D.creator_Model1D_BranchRatio = v; },
+        () -> User3D.creatorModel1DBranchRatio,
+        (v) -> { User3D.creatorModel1DBranchRatio = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Ratio", User3D.creator_Model1D_BranchRatio, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Ratio", User3D.creatorModel1DBranchRatio, s1, s2, s3, s4);
     }
     return out;
   }
-  float creator_Model1D_TreeBase (int created) {
+  float creatorModel1DTreeBase (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1655,16 +1655,16 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Creator Model1D Tree Base",
-        () -> User3D.creator_Model1D_TreeBase,
-        (v) -> { User3D.creator_Model1D_TreeBase = v; },
+        () -> User3D.creatorModel1DTreeBase,
+        (v) -> { User3D.creatorModel1DTreeBase = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Tree Base", User3D.creator_Model1D_TreeBase, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Tree Base", User3D.creatorModel1DTreeBase, s1, s2, s3, s4);
     }
     return out;
   }
-  boolean Terrain_loadTextures (int created) {
+  boolean TerrainLoadTextures (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1682,7 +1682,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Terrain_loadMesh (int created) {
+  boolean TerrainLoadMesh (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1700,7 +1700,7 @@ class ValueModifier {
     }
     return out;
   }
-  int Terrain_skipStart (int created) {
+  int TerrainSkipStart (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1717,7 +1717,7 @@ class ValueModifier {
     }
     return out;
   }
-  int Terrain_skipEnd (int created) {
+  int TerrainSkipEnd (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1734,58 +1734,58 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Terrain_displaySurface (int created) {
+  boolean TerrainDisplaySurface (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Terrain displaySurface",
+      putValueAction("Terrain Display Surface",
         () -> (Terrain.displaySurface ? 1f : 0f),
         (v) -> { Terrain.displaySurface = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displaySurface", Terrain.displaySurface);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Display Surface", Terrain.displaySurface);
     }
     return out;
   }
-  boolean Terrain_displayTexture (int created) {
+  boolean TerrainDisplayTexture (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Terrain displayTexture",
+      putValueAction("Terrain Display Texture",
         () -> (Terrain.displayTexture ? 1f : 0f),
         (v) -> { Terrain.displayTexture = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displayTexture", Terrain.displayTexture);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Display Texture", Terrain.displayTexture);
     }
     return out;
   }
-  boolean Terrain_displayPoints (int created) {
+  boolean TerrainDisplayPoints (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Terrain displayPoints",
+      putValueAction("Terrain Display Points",
         () -> (Terrain.displayPoints ? 1f : 0f),
         (v) -> { Terrain.displayPoints = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displayPoints", Terrain.displayPoints);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Display Points", Terrain.displayPoints);
     }
     return out;
   }
-  boolean displayDepth (int created) {
+  boolean TerrainDisplayDepth (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1802,7 +1802,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Model2Ds_displayAll (int created) {
+  boolean Model2DsDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1819,7 +1819,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Model1Ds_displayAll (int created) {
+  boolean Model1DsDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1836,7 +1836,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Model1Ds_displayLeaves (int created) {
+  boolean Model1DsDisplayLeaves (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1853,7 +1853,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Polylines_displayAll (int created) {
+  boolean PolylinesDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1870,7 +1870,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Faces_displayAll (int created) {
+  boolean FacesDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1887,7 +1887,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Solids_displayAll (int created) {
+  boolean SolidsDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1904,7 +1904,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Sections_displayAll (int created) {
+  boolean SectionsDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1921,7 +1921,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean WindRoses_displayImage (int created) {
+  boolean WindRoseDisplayImage (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1938,7 +1938,7 @@ class ValueModifier {
     }
     return out;
   }
-  float WindRoses_planeSize (int created) {
+  float WindRosePlaneSize (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1960,24 +1960,24 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Sky3D_displaySurface (int created) {
+  boolean Sky3DDisplaySurface (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Sky3D displaySurface",
+      putValueAction("Sky3D Display Surface",
         () -> (Sky3D.displaySurface ? 1f : 0f),
         (v) -> { Sky3D.displaySurface = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D displaySurface", Sky3D.displaySurface);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D Display Surface", Sky3D.displaySurface);
     }
     return out;
   }
-  boolean Sun3D_displayPath (int created) {
+  boolean Sun3DDisplayPath (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1994,7 +1994,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Sun3D_displayPattern (int created) {
+  boolean Sun3DDisplayPattern (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2073,25 +2073,25 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Create3D_displayVertices (int created) {
+  boolean Create3DDisplayVertices (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Create3D displayVertices",
+      putValueAction("Create3D Display Vertices",
         () -> (allPoints.displayAll ? 1f : 0f),
         (v) -> { allPoints.displayAll = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D displayVertices", allPoints.displayAll);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D Display Vertices", allPoints.displayAll);
     }
     return out;
   }
-  boolean Create3D_displayEdges (int created) {
+  boolean Create3DDisplayEdges (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2109,25 +2109,25 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Create3D_showNormalLines (int created) {
+  boolean Create3DDisplayNormals (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Create3D showNormalLines",
+      putValueAction("Create3D Display Normals",
         () -> (allFaces.showNormalLines ? 1f : 0f),
         (v) -> { allFaces.showNormalLines = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D showNormalLines", allFaces.showNormalLines);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D Display Normals", allFaces.showNormalLines);
     }
     return out;
   }
-  boolean Cameras_displayAll (int created) {
+  boolean CamerasDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2162,7 +2162,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean SolarImpacts_displayImage (int created) {
+  boolean SolarImpactsDisplayImage (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2179,7 +2179,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean SolidImpacts_displayImage (int created) {
+  boolean SolidImpactsDisplayImage (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2511,7 +2511,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean SolidImpacts_displayPoints (int created) {
+  boolean SolidImpactsDisplayPoints (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2529,7 +2529,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean SolidImpacts_displayLines (int created) {
+  boolean SolidImpactsDisplayLines (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2547,7 +2547,7 @@ class ValueModifier {
     }
     return out;
   }
-  boolean WindFlows_displayAll (int created) {
+  boolean WindFlowsDisplayAll (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2565,7 +2565,7 @@ class ValueModifier {
     }
     return out;
   }
-  int Create3D_displayTessellation (int created) {
+  int Create3DDisplayTessellation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2576,18 +2576,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D displayTessellation",
+      putValueAction("Create3D Display Tessellation",
         () -> (float) allFaces.displayTessellation,
         (v) -> { allFaces.displayTessellation = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D displayTessellation", allFaces.displayTessellation, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D Display Tessellation", allFaces.displayTessellation, s1, s2, s3);
     }
     return out;
   }
-  int Terrain_displayTessellation (int created) {
+  int TerrainDisplayTessellation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2608,7 +2608,7 @@ class ValueModifier {
     }
     return out;
   }
-  int Sky3D_displayTessellation (int created) {
+  int Sky3DDisplayTessellation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2629,7 +2629,7 @@ class ValueModifier {
     }
     return out;
   }
-  float Sky3D_radius (int created) {
+  float Sky3DRadius (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2651,75 +2651,75 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Tropo3D_displaySurface (int created) {
+  boolean Tropo3DDisplaySurface (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Tropo3D displaySurface",
+      putValueAction("Tropo3D Display Surface",
         () -> (Tropo3D.displaySurface ? 1f : 0f),
         (v) -> { Tropo3D.displaySurface = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Tropo3D displaySurface", Tropo3D.displaySurface);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Tropo3D Display Surface", Tropo3D.displaySurface);
     }
     return out;
   }
-  boolean Tropo3D_displayTexture (int created) {
+  boolean Tropo3DDisplayTexture (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Tropo3D displayTexture",
+      putValueAction("Tropo3D Display Texture",
         () -> (Tropo3D.displayTexture ? 1f : 0f),
         (v) -> { Tropo3D.displayTexture = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Tropo3D displayTexture", Tropo3D.displayTexture);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Tropo3D Display Texture", Tropo3D.displayTexture);
     }
     return out;
   }
-  boolean Earth3D_displaySurface (int created) {
+  boolean Earth3DDisplaySurface (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Earth3D displaySurface",
+      putValueAction("Earth3D Display Surface",
         () -> (Earth3D.displaySurface ? 1f : 0f),
         (v) -> { Earth3D.displaySurface = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Earth3D displaySurface", Earth3D.displaySurface);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Earth3D Display Surface", Earth3D.displaySurface);
     }
     return out;
   }
-  boolean Earth3D_displayTexture (int created) {
+  boolean Earth3DDisplayTexture (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Earth3D displayTexture",
+      putValueAction("Earth3D Display Texture",
         () -> (Earth3D.displayTexture ? 1f : 0f),
         (v) -> { Earth3D.displayTexture = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Earth3D displayTexture", Earth3D.displayTexture);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Earth3D Display Texture", Earth3D.displayTexture);
     }
     return out;
   }
-  float Earth3D_levelOfDetail (int created) {
+  float Earth3DLevelOfDetail (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2741,105 +2741,105 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Moon3D_displaySurface (int created) {
+  boolean Moon3DDisplaySurface (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Moon3D displaySurface",
+      putValueAction("Moon3D Display Surface",
         () -> (Moon3D.displaySurface ? 1f : 0f),
         (v) -> { Moon3D.displaySurface = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Moon3D displaySurface", Moon3D.displaySurface);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Moon3D Display Surface", Moon3D.displaySurface);
     }
     return out;
   }
-  boolean Moon3D_displayTexture (int created) {
+  boolean Moon3DDisplayTexture (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Moon3D displayTexture",
+      putValueAction("Moon3D Display Texture",
         () -> (Moon3D.displayTexture ? 1f : 0f),
         (v) -> { Moon3D.displayTexture = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Moon3D displayTexture", Moon3D.displayTexture);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Moon3D Display Texture", Moon3D.displayTexture);
     }
     return out;
   }
-  boolean Moon3D_fitInSkyDome (int created) {
+  boolean Moon3DFitInSkyDome (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Moon3D fitInSkyDome",
+      putValueAction("Moon3D Fit In Sky Dome",
         () -> (Moon3D.fitInSkyDome ? 1f : 0f),
         (v) -> { Moon3D.fitInSkyDome = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Moon3D fitInSkyDome", Moon3D.fitInSkyDome);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Moon3D Fit In Sky Dome", Moon3D.fitInSkyDome);
     }
     return out;
   }
-  boolean Sun3D_displaySurface (int created) {
+  boolean Sun3DDisplaySurface (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Sun3D displaySurface",
+      putValueAction("Sun3D Display Surface",
         () -> (Sun3D.displaySurface ? 1f : 0f),
         (v) -> { Sun3D.displaySurface = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D displaySurface", Sun3D.displaySurface);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Display Surface", Sun3D.displaySurface);
     }
     return out;
   }
-  boolean Sun3D_displayTexture (int created) {
+  boolean Sun3DDisplayTexture (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Sun3D displayTexture",
+      putValueAction("Sun3D Display Texture",
         () -> (Sun3D.displayTexture ? 1f : 0f),
         (v) -> { Sun3D.displayTexture = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D displayTexture", Sun3D.displayTexture);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Display Texture", Sun3D.displayTexture);
     }
     return out;
   }
-  boolean Sun3D_fitInSkyDome (int created) {
+  boolean Sun3DFitInSkyDome (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Sun3D fitInSkyDome",
+      putValueAction("Sun3D Fit In Sky Dome",
         () -> (Sun3D.fitInSkyDome ? 1f : 0f),
         (v) -> { Sun3D.fitInSkyDome = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D fitInSkyDome", Sun3D.fitInSkyDome);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Fit In Sky Dome", Sun3D.fitInSkyDome);
     }
     return out;
   }
@@ -3040,24 +3040,24 @@ class ValueModifier {
     }
     return out;
   }
-  int Study_activePaletteClr (int created) {
+  int Study_activeColorscaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Study activePaletteClr",
-        () -> (float) STUDY.activeColorScaleIndex,
-        (v) -> { STUDY.activeColorScaleIndex = int(v); },
+      putValueAction("Study Active Colorscale Index",
+        () -> (float) STUDY.activeColorscaleIndex,
+        (v) -> { STUDY.activeColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteClr", STUDY.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study Active Colorscale Index", STUDY.activeColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Study_activePaletteDir (int created) {
+  int Study_activeColorscaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3068,17 +3068,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Study activePaletteDir",
-        () -> (float) STUDY.activeColorScaleDirection,
-        (v) -> { STUDY.activeColorScaleDirection = int(v); },
+      putValueAction("Study Active Colorscale Direction",
+        () -> (float) STUDY.activeColorscaleDirection,
+        (v) -> { STUDY.activeColorscaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteDir", STUDY.activeColorScaleDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study Active Colorscale Direction", STUDY.activeColorscaleDirection, s1, s2, s3);
     }
     return out;
   }
-  float Study_activePaletteMlt (int created) {
+  float Study_activeColorscaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3090,34 +3090,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Study activePaletteMlt",
-        () -> STUDY.activeColorScaleFactor,
-        (v) -> { STUDY.activeColorScaleFactor = v; },
+      putValueAction("Study Active Colorscale Factor",
+        () -> STUDY.activeColorscaleFactor,
+        (v) -> { STUDY.activeColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study activePaletteMlt", STUDY.activeColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study Active Colorscale Factor", STUDY.activeColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Study_passivePaletteClr (int created) {
+  int Study_passiveColorscaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Study passivePaletteClr",
-        () -> (float) STUDY.passiveColorScaleIndex,
-        (v) -> { STUDY.passiveColorScaleIndex = int(v); },
+      putValueAction("Study Passive Colorscale Index",
+        () -> (float) STUDY.passiveColorscaleIndex,
+        (v) -> { STUDY.passiveColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteClr", STUDY.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study Passive Colorscale Index", STUDY.passiveColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Study_passivePaletteDir (int created) {
+  int Study_passiveColorscaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3129,17 +3129,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Study passivePaletteDir",
-        () -> (float) STUDY.passiveColorScaleDirection,
-        (v) -> { STUDY.passiveColorScaleDirection = int(v); },
+      putValueAction("Study Passive Colorscale Direction",
+        () -> (float) STUDY.passiveColorscaleDirection,
+        (v) -> { STUDY.passiveColorscaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteDir", STUDY.passiveColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study Passive Colorscale Direction", STUDY.passiveColorscaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Study_passivePaletteMlt (int created) {
+  float Study_passiveColorscaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3151,34 +3151,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Study passivePaletteMlt",
-        () -> STUDY.passiveColorScaleFactor,
-        (v) -> { STUDY.passiveColorScaleFactor = v; },
+      putValueAction("Study Passive Colorscale Factor",
+        () -> STUDY.passiveColorscaleFactor,
+        (v) -> { STUDY.passiveColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study passivePaletteMlt", STUDY.passiveColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study Passive Colorscale Factor", STUDY.passiveColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int statisticalRangesColorScaleIndex (int created) {
+  int statisticalRangesColorscaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Statistical Ranges Color Scale Index",
-        () -> (float) STUDY.statisticalRangesColorScaleIndex,
-        (v) -> { STUDY.statisticalRangesColorScaleIndex = int(v); },
+      putValueAction("Statistical Ranges Colorscale Index",
+        () -> (float) STUDY.statisticalRangesColorscaleIndex,
+        (v) -> { STUDY.statisticalRangesColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Color Scale Index", STUDY.statisticalRangesColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Colorscale Index", STUDY.statisticalRangesColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int statisticalRangesColorScaleDirection (int created) {
+  int statisticalRangesColorscaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3190,17 +3190,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Statistical Ranges Color Scale Direction",
-        () -> (float) STUDY.statisticalRangesColorScaleDirection,
-        (v) -> { STUDY.statisticalRangesColorScaleDirection = int(v); },
+      putValueAction("Statistical Ranges Colorscale Direction",
+        () -> (float) STUDY.statisticalRangesColorscaleDirection,
+        (v) -> { STUDY.statisticalRangesColorscaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Color Scale Direction", STUDY.statisticalRangesColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Colorscale Direction", STUDY.statisticalRangesColorscaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float statisticalRangesColorScaleFactor (int created) {
+  float statisticalRangesColorscaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3212,34 +3212,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Statistical Ranges Color Scale Factor",
-        () -> STUDY.statisticalRangesColorScaleFactor,
-        (v) -> { STUDY.statisticalRangesColorScaleFactor = v; },
+      putValueAction("Statistical Ranges Colorscale Factor",
+        () -> STUDY.statisticalRangesColorscaleFactor,
+        (v) -> { STUDY.statisticalRangesColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Color Scale Factor", STUDY.statisticalRangesColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Colorscale Factor", STUDY.statisticalRangesColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int probabilitiesColorScaleIndex (int created) {
+  int probabilitiesColorscaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Probabilities Color Scale Index",
-        () -> (float) STUDY.probabilitiesColorScaleIndex,
-        (v) -> { STUDY.probabilitiesColorScaleIndex = int(v); },
+      putValueAction("Probabilities Colorscale Index",
+        () -> (float) STUDY.probabilitiesColorscaleIndex,
+        (v) -> { STUDY.probabilitiesColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Color Scale Index", STUDY.probabilitiesColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Colorscale Index", STUDY.probabilitiesColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int probabilitiesColorScaleDirection (int created) {
+  int probabilitiesColorscaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3251,17 +3251,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Probabilities Color Scale Direction",
-        () -> (float) STUDY.probabilitiesColorScaleDirection,
-        (v) -> { STUDY.probabilitiesColorScaleDirection = int(v); },
+      putValueAction("Probabilities Colorscale Direction",
+        () -> (float) STUDY.probabilitiesColorscaleDirection,
+        (v) -> { STUDY.probabilitiesColorscaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Color Scale Direction", STUDY.probabilitiesColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Colorscale Direction", STUDY.probabilitiesColorscaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float probabilitiesColorScaleFactor (int created) {
+  float probabilitiesColorscaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3273,13 +3273,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Probabilities Color Scale Factor",
-        () -> STUDY.probabilitiesColorScaleFactor,
-        (v) -> { STUDY.probabilitiesColorScaleFactor = v; },
+      putValueAction("Probabilities Colorscale Factor",
+        () -> STUDY.probabilitiesColorscaleFactor,
+        (v) -> { STUDY.probabilitiesColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Color Scale Factor", STUDY.probabilitiesColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Colorscale Factor", STUDY.probabilitiesColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3304,24 +3304,24 @@ class ValueModifier {
     }
     return out;
   }
-  int Faces_activePaletteClr (int created) {
+  int Faces_activeColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Faces activePaletteClr",
-        () -> (float) allFaces.activeColorScaleIndex,
-        (v) -> { allFaces.activeColorScaleIndex = int(v); },
+      putValueAction("Faces Active Colorscale Index",
+        () -> (float) allFaces.activeColorscaleIndex,
+        (v) -> { allFaces.activeColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteClr", allFaces.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces Active Colorscale Index", allFaces.activeColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Faces_activePaletteDir (int created) {
+  int Faces_activeColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3332,17 +3332,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Faces activePaletteDir",
-        () -> (float) allFaces.activeColorScaleDirection,
-        (v) -> { allFaces.activeColorScaleDirection = int(v); },
+      putValueAction("Faces Active Colorscale Direction",
+        () -> (float) allFaces.activeColorscaleDirection,
+        (v) -> { allFaces.activeColorscaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteDir", allFaces.activeColorScaleDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces Active Colorscale Direction", allFaces.activeColorscaleDirection, s1, s2, s3);
     }
     return out;
   }
-  float Faces_activePaletteMlt (int created) {
+  float Faces_activeColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3354,34 +3354,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Faces activePaletteMlt",
-        () -> allFaces.activeColorScaleFactor,
-        (v) -> { allFaces.activeColorScaleFactor = v; },
+      putValueAction("Faces Active Colorscale Factor",
+        () -> allFaces.activeColorscaleFactor,
+        (v) -> { allFaces.activeColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces activePaletteMlt", allFaces.activeColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces Active Colorscale Factor", allFaces.activeColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Faces_passivePaletteClr (int created) {
+  int Faces_passiveColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Faces passivePaletteClr",
-        () -> (float) allFaces.passiveColorScaleIndex,
-        (v) -> { allFaces.passiveColorScaleIndex = int(v); },
+      putValueAction("Faces Passive Colorscale Index",
+        () -> (float) allFaces.passiveColorscaleIndex,
+        (v) -> { allFaces.passiveColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteClr", allFaces.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces Passive Colorscale Index", allFaces.passiveColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Faces_passivePaletteDir (int created) {
+  int Faces_passiveColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3393,17 +3393,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Faces passivePaletteDir",
-        () -> (float) allFaces.passiveColorScaleDirection,
-        (v) -> { allFaces.passiveColorScaleDirection = int(v); },
+      putValueAction("Faces Passive Colorscale Direction",
+        () -> (float) allFaces.passiveColorscaleDirection,
+        (v) -> { allFaces.passiveColorscaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteDir", allFaces.passiveColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces Passive Colorscale Direction", allFaces.passiveColorscaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Faces_passivePaletteMlt (int created) {
+  float Faces_passiveColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3415,34 +3415,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Faces passivePaletteMlt",
-        () -> allFaces.passiveColorScaleFactor,
-        (v) -> { allFaces.passiveColorScaleFactor = v; },
+      putValueAction("Faces Passive Colorscale Factor",
+        () -> allFaces.passiveColorscaleFactor,
+        (v) -> { allFaces.passiveColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces passivePaletteMlt", allFaces.passiveColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Faces Passive Colorscale Factor", allFaces.passiveColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Sky3D_activePaletteClr (int created) {
+  int Sky3D_activeColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sky3D activePaletteClr",
-        () -> (float) Sky3D.activeColorScaleIndex,
-        (v) -> { Sky3D.activeColorScaleIndex = int(v); },
+      putValueAction("Sky3D Active Colorscale Index",
+        () -> (float) Sky3D.activeColorscaleIndex,
+        (v) -> { Sky3D.activeColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteClr", Sky3D.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D Active Colorscale Index", Sky3D.activeColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Sky3D_activePaletteDir (int created) {
+  int Sky3D_activeColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3453,17 +3453,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sky3D activePaletteDir",
-        () -> (float) Sky3D.activeColorScaleDirection,
-        (v) -> { Sky3D.activeColorScaleDirection = int(v); },
+      putValueAction("Sky3D Active Colorscale Direction",
+        () -> (float) Sky3D.activeColorscaleDirection,
+        (v) -> { Sky3D.activeColorscaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteDir", Sky3D.activeColorScaleDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D Active Colorscale Direction", Sky3D.activeColorscaleDirection, s1, s2, s3);
     }
     return out;
   }
-  float Sky3D_activePaletteMlt (int created) {
+  float Sky3D_activeColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3475,34 +3475,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Sky3D activePaletteMlt",
-        () -> Sky3D.activeColorScaleFactor,
-        (v) -> { Sky3D.activeColorScaleFactor = v; },
+      putValueAction("Sky3D Active Colorscale Factor",
+        () -> Sky3D.activeColorscaleFactor,
+        (v) -> { Sky3D.activeColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D activePaletteMlt", Sky3D.activeColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D Active Colorscale Factor", Sky3D.activeColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Sky3D_passivePaletteClr (int created) {
+  int Sky3D_passiveColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sky3D passivePaletteClr",
-        () -> (float) Sky3D.passiveColorScaleIndex,
-        (v) -> { Sky3D.passiveColorScaleIndex = int(v); },
+      putValueAction("Sky3D Passive Colorscale Index",
+        () -> (float) Sky3D.passiveColorscaleIndex,
+        (v) -> { Sky3D.passiveColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteClr", Sky3D.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D Passive Colorscale Index", Sky3D.passiveColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Sky3D_passivePaletteDir (int created) {
+  int Sky3D_passiveColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3514,17 +3514,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sky3D passivePaletteDir",
-        () -> (float) Sky3D.passiveColorScaleDirection,
-        (v) -> { Sky3D.passiveColorScaleDirection = int(v); },
+      putValueAction("Sky3D Passive Colorscale Direction",
+        () -> (float) Sky3D.passiveColorscaleDirection,
+        (v) -> { Sky3D.passiveColorscaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteDir", Sky3D.passiveColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D Passive Colorscale Direction", Sky3D.passiveColorscaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Sky3D_passivePaletteMlt (int created) {
+  float Sky3D_passiveColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3536,34 +3536,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Sky3D passivePaletteMlt",
-        () -> Sky3D.passiveColorScaleFactor,
-        (v) -> { Sky3D.passiveColorScaleFactor = v; },
+      putValueAction("Sky3D Passive Colorscale Factor",
+        () -> Sky3D.passiveColorscaleFactor,
+        (v) -> { Sky3D.passiveColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D passivePaletteMlt", Sky3D.passiveColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D Passive Colorscale Factor", Sky3D.passiveColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Sun3D_activePaletteClr (int created) {
+  int Sun3D_activeColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sun3D activePaletteClr",
-        () -> (float) Sun3D.activeColorScaleIndex,
-        (v) -> { Sun3D.activeColorScaleIndex = int(v); },
+      putValueAction("Sun3D Active Colorscale Index",
+        () -> (float) Sun3D.activeColorscaleIndex,
+        (v) -> { Sun3D.activeColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteClr", Sun3D.activeColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Active Colorscale Index", Sun3D.activeColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Sun3D_activePaletteDir (int created) {
+  int Sun3D_activeColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3574,17 +3574,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sun3D activePaletteDir",
-        () -> (float) Sun3D.activeColorScaleDirection,
-        (v) -> { Sun3D.activeColorScaleDirection = int(v); },
+      putValueAction("Sun3D Active Colorscale Direction",
+        () -> (float) Sun3D.activeColorscaleDirection,
+        (v) -> { Sun3D.activeColorscaleDirection = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteDir", Sun3D.activeColorScaleDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Active Colorscale Direction", Sun3D.activeColorscaleDirection, s1, s2, s3);
     }
     return out;
   }
-  float Sun3D_activePaletteMlt (int created) {
+  float Sun3D_activeColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3596,34 +3596,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Sun3D activePaletteMlt",
-        () -> Sun3D.activeColorScaleFactor,
-        (v) -> { Sun3D.activeColorScaleFactor = v; },
+      putValueAction("Sun3D Active Colorscale Factor",
+        () -> Sun3D.activeColorscaleFactor,
+        (v) -> { Sun3D.activeColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D activePaletteMlt", Sun3D.activeColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Active Colorscale Factor", Sun3D.activeColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Sun3D_passivePaletteClr (int created) {
+  int Sun3D_passiveColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sun3D passivePaletteClr",
-        () -> (float) Sun3D.passiveColorScaleIndex,
-        (v) -> { Sun3D.passiveColorScaleIndex = int(v); },
+      putValueAction("Sun3D Passive Colorscale Index",
+        () -> (float) Sun3D.passiveColorscaleIndex,
+        (v) -> { Sun3D.passiveColorscaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteClr", Sun3D.passiveColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Passive Colorscale Index", Sun3D.passiveColorscaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Sun3D_passivePaletteDir (int created) {
+  int Sun3D_passiveColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3635,17 +3635,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sun3D passivePaletteDir",
-        () -> (float) Sun3D.passiveColorScaleDirection,
-        (v) -> { Sun3D.passiveColorScaleDirection = int(v); },
+      putValueAction("Sun3D Passive Colorscale Direction",
+        () -> (float) Sun3D.passiveColorscaleDirection,
+        (v) -> { Sun3D.passiveColorscaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteDir", Sun3D.passiveColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Passive Colorscale Direction", Sun3D.passiveColorscaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Sun3D_passivePaletteMlt (int created) {
+  float Sun3D_passiveColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3657,35 +3657,35 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Sun3D passivePaletteMlt",
-        () -> Sun3D.passiveColorScaleFactor,
-        (v) -> { Sun3D.passiveColorScaleFactor = v; },
+      putValueAction("Sun3D Passive Colorscale Factor",
+        () -> Sun3D.passiveColorscaleFactor,
+        (v) -> { Sun3D.passiveColorscaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D passivePaletteMlt", Sun3D.passiveColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Passive Colorscale Factor", Sun3D.passiveColorscaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Solids_paletteClr (int created) {
+  int SolidsColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Solids paletteClr",
+      putValueAction("Solids Colorscale Index",
         () -> (float) allSolids.colorScaleIndex,
         (v) -> { allSolids.colorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteClr", allSolids.colorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids Colorscale Index", allSolids.colorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Solids_paletteDir (int created) {
+  int SolidsColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3697,18 +3697,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Solids paletteDir",
+      putValueAction("Solids Colorscale Direction",
         () -> (float) allSolids.colorScaleDirection,
         (v) -> { allSolids.colorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteDir", allSolids.colorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids Colorscale Direction", allSolids.colorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Solids_paletteMlt (int created) {
+  float SolidsColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3720,35 +3720,35 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Solids paletteMlt",
+      putValueAction("Solids Colorscale Factor",
         () -> allSolids.colorScaleFactor,
         (v) -> { allSolids.colorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids paletteMlt", allSolids.colorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solids Colorscale Factor", allSolids.colorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Terrain_paletteClr (int created) {
+  int TerrainColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Terrain paletteClr",
+      putValueAction("Terrain Colorscale Index",
         () -> (float) Terrain.colorScaleIndex,
         (v) -> { Terrain.colorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain paletteClr", Terrain.colorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Colorscale Index", Terrain.colorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Terrain_paletteDir (int created) {
+  int TerrainColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3760,17 +3760,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Terrain paletteDir",
+      putValueAction("Terrain Colorscale Direction",
         () -> (float) Terrain.colorScaleDirection,
         (v) -> { Terrain.colorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain paletteDir", Terrain.colorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Colorscale Direction", Terrain.colorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Terrain_paletteMlt (int created) {
+  float TerrainColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3782,34 +3782,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Terrain paletteMlt",
+      putValueAction("Terrain Colorscale Factor",
         () -> Terrain.colorScaleFactor,
         (v) -> { Terrain.colorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain paletteMlt", Terrain.colorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Colorscale Factor", Terrain.colorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int WindFlows_paletteClr (int created) {
+  int WindFlowsColorscaleIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("WindFlows paletteClr",
+      putValueAction("WindFlows Colorscale Index",
         () -> (float) allWindFlows.colorScaleIndex,
         (v) -> { allWindFlows.colorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteClr", allWindFlows.colorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows Colorscale Index", allWindFlows.colorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int WindFlows_paletteDir (int created) {
+  int WindFlowsColorscaleDirection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3821,17 +3821,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("WindFlows paletteDir",
+      putValueAction("WindFlows Colorscale Direction",
         () -> (float) allWindFlows.colorScaleDirection,
         (v) -> { allWindFlows.colorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteDir", allWindFlows.colorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows Colorscale Direction", allWindFlows.colorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float WindFlows_paletteMlt (int created) {
+  float WindFlowsColorscaleFactor (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3843,13 +3843,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("WindFlows paletteMlt",
+      putValueAction("WindFlows Colorscale Factor",
         () -> allWindFlows.colorScaleFactor,
         (v) -> { allWindFlows.colorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows paletteMlt", allWindFlows.colorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindFlows Colorscale Factor", allWindFlows.colorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4503,7 +4503,7 @@ class ValueModifier {
     }
     return out;
   }
-  int exporterColorScaleResolution (int created) {
+  int exporterColorscaleResolution (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4515,13 +4515,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Exporter Color Scale Resolution",
-        () -> (float) User3D.exporterColorScaleResolution,
-        (v) -> { User3D.exporterColorScaleResolution = int(v); },
+      putValueAction("Exporter Colorscale Resolution",
+        () -> (float) User3D.exporterColorscaleResolution,
+        (v) -> { User3D.exporterColorscaleResolution = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Color Scale Resolution", User3D.exporterColorScaleResolution, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Colorscale Resolution", User3D.exporterColorscaleResolution, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4588,7 +4588,7 @@ class ValueModifier {
     }
     return out;
   }
-  int WindRoses_imageResolution (int created) {
+  int WindRoseImageResolution (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD

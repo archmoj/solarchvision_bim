@@ -383,15 +383,15 @@ the user interface.
 | Command | What it sets | Range |
 |---|---|---|
 | `Climate Typical Year Display Near` | Toggle: highlight the nearest EPW/TMY station on the map | 0 or 1 |
-| `Climate Engineering displayNear` | Toggle: highlight the nearest Climate Engineering station on the map | 0 or 1 |
-| `CLMREC displayNear` | Toggle: highlight the nearest Climate Archive station on the map | 0 or 1 |
-| `NAEFS displayNear` | Toggle: highlight the nearest Ensemble Forecast forecast point on the map | 0 or 1 |
-| `SWOB displayNear` | Toggle: highlight the nearest Ensemble Observation station on the map | 0 or 1 |
+| `Climate Engineering Display Near` | Toggle: highlight the nearest Climate Engineering station on the map | 0 or 1 |
+| `CLMREC Display Near` | Toggle: highlight the nearest Climate Archive station on the map | 0 or 1 |
+| `NAEFS Display Near` | Toggle: highlight the nearest Ensemble Forecast forecast point on the map | 0 or 1 |
+| `SWOB Display Near` | Toggle: highlight the nearest Ensemble Observation station on the map | 0 or 1 |
 | `Climate Typical Year Display All` | 0 = hide, 1 = show, 2 = show with labels - all EPW/TMY stations | 0 to 2 |
-| `Climate Engineering displayAll` | 0 = hide, 1 = show, 2 = show with labels - all Climate Engineering stations | 0 to 2 |
-| `CLMREC displayAll` | 0 = hide, 1 = show, 2 = show with labels - all Climate Archive stations | 0 to 2 |
-| `NAEFS displayAll` | 0 = hide, 1 = show, 2 = show with labels - all Ensemble Forecast points | 0 to 2 |
-| `SWOB displayAll` | 0 = hide, 1 = show, 2 = show with labels - all Ensemble Observation stations | 0 to 2 |
+| `Climate Engineering Display All` | 0 = hide, 1 = show, 2 = show with labels - all Climate Engineering stations | 0 to 2 |
+| `CLMREC Display All` | 0 = hide, 1 = show, 2 = show with labels - all Climate Archive stations | 0 to 2 |
+| `NAEFS Display All` | 0 = hide, 1 = show, 2 = show with labels - all Ensemble Forecast points | 0 to 2 |
+| `SWOB Display All` | 0 = hide, 1 = show, 2 = show with labels - all Ensemble Observation stations | 0 to 2 |
 
 ### Camera
 
@@ -432,8 +432,8 @@ the user interface.
 | `Model2DDisplay Bounds` | Toggle: draw edges of selected 2D models | 0 or 1 |
 | `Terrain Display Vertices` | Toggle: draw selected land points | 0 or 1 |
 | `Create3D Display Edges` | Toggle: draw edges while creating new geometry | 0 or 1 |
-| `Create3D displayVertices` | Toggle: draw vertices while creating new geometry | 0 or 1 |
-| `Create3D showNormalLines` | Toggle: draw normals while creating new geometry | 0 or 1 |
+| `Create3D Display Vertices` | Toggle: draw vertices while creating new geometry | 0 or 1 |
+| `Create3D Display Normals` | Toggle: draw normals while creating new geometry | 0 or 1 |
 
 ### New-object defaults (3D-create)
 
@@ -444,7 +444,7 @@ the user interface.
 | `Default Visibility` | Default visibility (-1/0/1) assigned to new faces | -1 to 1 |
 | `Creator Weight` | Default weight/thickness assigned to new 1D model segments | -20 to 20 |
 | `Default Tessellation` | Default tessellation level applied to new faces | 0 to 6 |
-| `Create3D displayTessellation` | Default tessellation-display mode for new faces | 0 to 4 |
+| `Create3D Display Tessellation` | Default tessellation-display mode for new faces | 0 to 4 |
 | `Creator Snap Mode Index` | Toggle: snap new objects to the land surface/grid while placing them | 0 to 1 |
 | `Creator Orientation` | Default orientation angle (degrees) for new objects | 0 to 360 |
 | `Creator Volume` | Default target volume for new objects that size themselves by volume | 0 to 1000000000 |
@@ -493,7 +493,7 @@ the user interface.
 | `Exporter Yaxis Up` | Toggle: swap the Z and Y axes on export (for tools that use Y-up) | 0 to 1 |
 | `Exporter Maintain Polygons` | Toggle: export polylines as connected poly-to-poly geometry | 0 to 1 |
 | `Exporter Material Library` | Toggle: write a companion material-library file on export | 0 or 1 |
-| `Exporter Color Scale Resolution` | Number of colour steps used when exporting palette-based (impact/solar) shading | 32 to 2048 |
+| `Exporter Colorscale Resolution` | Number of colour steps used when exporting palette-based (impact/solar) shading | 32 to 2048 |
 | `Exporter Precision Vertex` | Number of decimal places kept for exported vertex coordinates | 0 to 6 |
 | `Exporter Precision Vertex Texture` | Number of decimal places kept for exported texture coordinates | 0 to 6 |
 
@@ -501,18 +501,18 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Terrain displaySurface` | Toggle: show the land surface | 0 or 1 |
-| `Terrain displayTexture` | Toggle: show the land texture (aerial imagery) | 0 or 1 |
-| `Terrain displayPoints` | Toggle: show land survey points | 0 or 1 |
+| `Terrain Display Surface` | Toggle: show the land surface | 0 or 1 |
+| `Terrain Display Texture` | Toggle: show the land texture (aerial imagery) | 0 or 1 |
+| `Terrain Display Points` | Toggle: show land survey points | 0 or 1 |
 | `Display Depth` | Toggle: shade the land by elevation/depth | 0 or 1 |
-| `Terrain displayTessellation` | Tessellation-display mode for the land surface | 0 to 4 |
+| `Terrain Display Tessellation` | Tessellation-display mode for the land surface | 0 to 4 |
 | `Terrain Load Mesh` | Toggle: (re)load the land mesh from its topography source | 0 or 1 |
 | `Terrain Load Textures` | Toggle: (re)load the land texture images | 0 or 1 |
 | `Terrain Skip Start` | First row/column of the land grid to skip (for coarser previews) | _(depends on loaded data)_ |
 | `Terrain Skip End` | Last row/column of the land grid to skip | _(depends on loaded data)_ |
-| `Terrain paletteClr` | Colour-scale index used for land elevation shading | _(depends on loaded data)_ |
-| `Terrain paletteDir` | Colour-scale direction (-2..2) for land elevation shading | -2 to 2 |
-| `Terrain paletteMlt` | Colour-scale multiplier for land elevation shading | 0.001 to 0.5 |
+| `Terrain Colorscale Index` | Colour-scale index used for land elevation shading | _(depends on loaded data)_ |
+| `Terrain Colorscale Direction` | Colour-scale direction (-2..2) for land elevation shading | -2 to 2 |
+| `Terrain Colorscale Factor` | Colour-scale multiplier for land elevation shading | 0.001 to 0.5 |
 
 ### Sky, sun, moon and atmosphere
 
@@ -520,20 +520,20 @@ the user interface.
 |---|---|---|
 | `Sky Scenario Setting` | 1-4: sky rendering mode (clear/overcast/etc.) | 1 to 4 |
 | `Sky3D Radius` | Radius of the sky dome | 1 to 4000000 |
-| `Sky3D displayTessellation` | Tessellation-display mode for the sky dome | 0 to 4 |
-| `Sky3D displaySurface` | Toggle: show the sky dome surface | 0 or 1 |
-| `Sun3D displaySurface` | Toggle: show the sun disc | 0 or 1 |
-| `Sun3D displayTexture` | Toggle: show the sun texture | 0 or 1 |
+| `Sky3D Display Tessellation` | Tessellation-display mode for the sky dome | 0 to 4 |
+| `Sky3D Display Surface` | Toggle: show the sky dome surface | 0 or 1 |
+| `Sun3D Display Surface` | Toggle: show the sun disc | 0 or 1 |
+| `Sun3D Display Texture` | Toggle: show the sun texture | 0 or 1 |
 | `Sun3D Display Path` | Toggle: show the sun's daily path | 0 or 1 |
 | `Sun3D Display Pattern` | Toggle: show the sun's annual pattern (analemma) | 0 or 1 |
 | `Sun3D fitInSkyDome` | Toggle: scale the sun path/pattern to fit inside the sky dome | 0 or 1 |
-| `Moon3D displaySurface` | Toggle: show the moon | 0 or 1 |
-| `Moon3D displayTexture` | Toggle: show the moon texture | 0 or 1 |
+| `Moon3D Display Surface` | Toggle: show the moon | 0 or 1 |
+| `Moon3D Display Texture` | Toggle: show the moon texture | 0 or 1 |
 | `Moon3D fitInSkyDome` | Toggle: scale the moon to fit inside the sky dome | 0 or 1 |
-| `Tropo3D displaySurface` | Toggle: show the troposphere layer | 0 or 1 |
-| `Tropo3D displayTexture` | Toggle: show the troposphere texture | 0 or 1 |
-| `Earth3D displaySurface` | Toggle: show the Earth globe surface | 0 or 1 |
-| `Earth3D displayTexture` | Toggle: show the Earth globe texture | 0 or 1 |
+| `Tropo3D Display Surface` | Toggle: show the troposphere layer | 0 or 1 |
+| `Tropo3D Display Texture` | Toggle: show the troposphere texture | 0 or 1 |
+| `Earth3D Display Surface` | Toggle: show the Earth globe surface | 0 or 1 |
+| `Earth3D Display Texture` | Toggle: show the Earth globe texture | 0 or 1 |
 | `Earth3D Level Of Detail` | Level of detail (tile resolution) used for the Earth globe texture | 0.0625 to 16 |
 | `Celestial Magnification` | Visual size multiplier for the sun/moon/planets | 1 to 64 |
 
@@ -541,42 +541,42 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Study activePaletteClr` | Colour-scale index for active-surface impact shading | _(depends on loaded data)_ |
-| `Study activePaletteDir` | Colour-scale direction for active-surface impact shading | -2 to 2 |
-| `Study activePaletteMlt` | Colour-scale multiplier for active-surface impact shading | 0.125 to 8 |
-| `Study passivePaletteClr` | Colour-scale index for passive-surface impact shading | _(depends on loaded data)_ |
-| `Study passivePaletteDir` | Colour-scale direction for passive-surface impact shading | -2 to 2 |
-| `Study passivePaletteMlt` | Colour-scale multiplier for passive-surface impact shading | 0.125 to 8 |
-| `Statistical Ranges Color Scale Index` | Colour-scale index for sorted-value shading | _(depends on loaded data)_ |
-| `Statistical Ranges Color Scale Direction` | Colour-scale direction for sorted-value shading | -2 to 2 |
-| `Statistical Ranges Color Scale Factor` | Colour-scale multiplier for sorted-value shading | 0.125 to 8 |
-| `Probabilities Color Scale Index` | Colour-scale index for probability shading | _(depends on loaded data)_ |
-| `Probabilities Color Scale Direction` | Colour-scale direction for probability shading | -2 to 2 |
-| `Probabilities Color Scale Factor` | Colour-scale multiplier for probability shading | 0.125 to 8 |
-| `Faces activePaletteClr` | Colour-scale index for face shading, active side | _(depends on loaded data)_ |
-| `Faces activePaletteDir` | Colour-scale direction for face shading, active side | -2 to 2 |
-| `Faces activePaletteMlt` | Colour-scale multiplier for face shading, active side | 0.125 to 8 |
-| `Faces passivePaletteClr` | Colour-scale index for face shading, passive side | _(depends on loaded data)_ |
-| `Faces passivePaletteDir` | Colour-scale direction for face shading, passive side | -2 to 2 |
-| `Faces passivePaletteMlt` | Colour-scale multiplier for face shading, passive side | 0.125 to 8 |
-| `Solids paletteClr` | Colour-scale index for solid shading | _(depends on loaded data)_ |
-| `Solids paletteDir` | Colour-scale direction for solid shading | -2 to 2 |
-| `Solids paletteMlt` | Colour-scale multiplier for solid shading | 0.0001 to 64 |
-| `Sky3D activePaletteClr` | Colour-scale index for the sky dome, active-side shading | _(depends on loaded data)_ |
-| `Sky3D activePaletteDir` | Colour-scale direction for the sky dome, active-side shading | -2 to 2 |
-| `Sky3D activePaletteMlt` | Colour-scale multiplier for the sky dome, active-side shading | 0.125 to 8 |
-| `Sky3D passivePaletteClr` | Colour-scale index for the sky dome, passive-side shading | _(depends on loaded data)_ |
-| `Sky3D passivePaletteDir` | Colour-scale direction for the sky dome, passive-side shading | -2 to 2 |
-| `Sky3D passivePaletteMlt` | Colour-scale multiplier for the sky dome, passive-side shading | 0.125 to 8 |
-| `Sun3D activePaletteClr` | Colour-scale index for the sun path, active-side shading | _(depends on loaded data)_ |
-| `Sun3D activePaletteDir` | Colour-scale direction for the sun path, active-side shading | -2 to 2 |
-| `Sun3D activePaletteMlt` | Colour-scale multiplier for the sun path, active-side shading | 0.125 to 8 |
-| `Sun3D passivePaletteClr` | Colour-scale index for the sun path, passive-side shading | _(depends on loaded data)_ |
-| `Sun3D passivePaletteDir` | Colour-scale direction for the sun path, passive-side shading | -2 to 2 |
-| `Sun3D passivePaletteMlt` | Colour-scale multiplier for the sun path, passive-side shading | 0.125 to 8 |
-| `WindFlows paletteClr` | Colour-scale index for wind-flow shading | _(depends on loaded data)_ |
-| `WindFlows paletteDir` | Colour-scale direction for wind-flow shading | -2 to 2 |
-| `WindFlows paletteMlt` | Colour-scale multiplier for wind-flow shading | 0.01 to 1.0 |
+| `Study Active Colorscale Index` | Colour-scale index for active-surface impact shading | _(depends on loaded data)_ |
+| `Study Active Colorscale Direction` | Colour-scale direction for active-surface impact shading | -2 to 2 |
+| `Study Active Colorscale Factor` | Colour-scale multiplier for active-surface impact shading | 0.125 to 8 |
+| `Study Passive Colorscale Index` | Colour-scale index for passive-surface impact shading | _(depends on loaded data)_ |
+| `Study Passive Colorscale Direction` | Colour-scale direction for passive-surface impact shading | -2 to 2 |
+| `Study Passive Colorscale Factor` | Colour-scale multiplier for passive-surface impact shading | 0.125 to 8 |
+| `Statistical Ranges Colorscale Index` | Colour-scale index for sorted-value shading | _(depends on loaded data)_ |
+| `Statistical Ranges Colorscale Direction` | Colour-scale direction for sorted-value shading | -2 to 2 |
+| `Statistical Ranges Colorscale Factor` | Colour-scale multiplier for sorted-value shading | 0.125 to 8 |
+| `Probabilities Colorscale Index` | Colour-scale index for probability shading | _(depends on loaded data)_ |
+| `Probabilities Colorscale Direction` | Colour-scale direction for probability shading | -2 to 2 |
+| `Probabilities Colorscale Factor` | Colour-scale multiplier for probability shading | 0.125 to 8 |
+| `Faces Active Colorscale Index` | Colour-scale index for face shading, active side | _(depends on loaded data)_ |
+| `Faces Active Colorscale Direction` | Colour-scale direction for face shading, active side | -2 to 2 |
+| `Faces Active Colorscale Factor` | Colour-scale multiplier for face shading, active side | 0.125 to 8 |
+| `Faces Passive Colorscale Index` | Colour-scale index for face shading, passive side | _(depends on loaded data)_ |
+| `Faces Passive Colorscale Direction` | Colour-scale direction for face shading, passive side | -2 to 2 |
+| `Faces Passive Colorscale Factor` | Colour-scale multiplier for face shading, passive side | 0.125 to 8 |
+| `Solids Colorscale Index` | Colour-scale index for solid shading | _(depends on loaded data)_ |
+| `Solids Colorscale Direction` | Colour-scale direction for solid shading | -2 to 2 |
+| `Solids Colorscale Factor` | Colour-scale multiplier for solid shading | 0.0001 to 64 |
+| `Sky3D Active Colorscale Index` | Colour-scale index for the sky dome, active-side shading | _(depends on loaded data)_ |
+| `Sky3D Active Colorscale Direction` | Colour-scale direction for the sky dome, active-side shading | -2 to 2 |
+| `Sky3D Active Colorscale Factor` | Colour-scale multiplier for the sky dome, active-side shading | 0.125 to 8 |
+| `Sky3D Passive Colorscale Index` | Colour-scale index for the sky dome, passive-side shading | _(depends on loaded data)_ |
+| `Sky3D Passive Colorscale Direction` | Colour-scale direction for the sky dome, passive-side shading | -2 to 2 |
+| `Sky3D Passive Colorscale Factor` | Colour-scale multiplier for the sky dome, passive-side shading | 0.125 to 8 |
+| `Sun3D Active Colorscale Index` | Colour-scale index for the sun path, active-side shading | _(depends on loaded data)_ |
+| `Sun3D Active Colorscale Direction` | Colour-scale direction for the sun path, active-side shading | -2 to 2 |
+| `Sun3D Active Colorscale Factor` | Colour-scale multiplier for the sun path, active-side shading | 0.125 to 8 |
+| `Sun3D Passive Colorscale Index` | Colour-scale index for the sun path, passive-side shading | _(depends on loaded data)_ |
+| `Sun3D Passive Colorscale Direction` | Colour-scale direction for the sun path, passive-side shading | -2 to 2 |
+| `Sun3D Passive Colorscale Factor` | Colour-scale multiplier for the sun path, passive-side shading | 0.125 to 8 |
+| `WindFlows Colorscale Index` | Colour-scale index for wind-flow shading | _(depends on loaded data)_ |
+| `WindFlows Colorscale Direction` | Colour-scale direction for wind-flow shading | -2 to 2 |
+| `WindFlows Colorscale Factor` | Colour-scale multiplier for wind-flow shading | 0.01 to 1.0 |
 
 ### Solid and solar impact analysis
 
@@ -599,10 +599,10 @@ the user interface.
 | `Solid Impacts Z` | Z offset (elevation) of the current impact-analysis section | -1000 to 1000 |
 | `Solid Impacts Wind Speed` | Wind speed (m/s) used for wind-impact analysis | 1 to 16 |
 | `Solid Impacts Wind Direction` | Wind direction (degrees) used for wind-impact analysis | 0 to 360 |
-| `SolidImpacts displayPoints` | Toggle: show solid-impact analysis points | 0 or 1 |
+| `SolidImpacts Display Points` | Toggle: show solid-impact analysis points | 0 or 1 |
 | `Solid Impacts Display Lines` | Toggle: show solid-impact analysis lines | 0 or 1 |
-| `SolidImpacts displayImage` | Toggle: show the rendered solid-impact image | 0 or 1 |
-| `SolarImpacts displayImage` | Toggle: show the rendered solar-impact image | 0 or 1 |
+| `SolidImpacts Display Image` | Toggle: show the rendered solid-impact image | 0 or 1 |
+| `SolarImpacts Display Image` | Toggle: show the rendered solar-impact image | 0 or 1 |
 | `Probability Width Interval` | Bucket size (hours) used when computing probability distributions | 1 to 24 |
 | `Probability Height Interval` | Number of buckets used when computing probability distributions | 2 to 32 |
 | `Show Raw Lines` | Toggle: include raw data in the plotted graph | 0 or 1 |
@@ -621,24 +621,24 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `WindRoses displayImage` | Toggle: show the rendered wind-rose image | 0 or 1 |
+| `WindRoses Display Image` | Toggle: show the rendered wind-rose image | 0 or 1 |
 | `Wind Roses Plane Size` | Display scale of the wind-rose diagram | 50 to 3200 |
 | `Wind Roses Image Resolution` | Pixel resolution used when rendering the wind-rose image | 200 to 600 |
 | `Opacity Percentage` | Opacity scale used when drawing the wind-rose diagram | 1 to 100 |
-| `WindFlows displayAll` | Toggle: show all wind-flow lines | 0 or 1 |
+| `WindFlows Display All` | Toggle: show all wind-flow lines | 0 or 1 |
 
-### Other display toggles
+### Other Display  toggles
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Faces displayAll` | Toggle: show all faces | 0 or 1 |
-| `Solids displayAll` | Toggle: show all solids | 0 or 1 |
-| `Model1Ds displayAll` | Toggle: show all 1D models (trees, poles, etc.) | 0 or 1 |
+| `Faces Display All` | Toggle: show all faces | 0 or 1 |
+| `Solids Display All` | Toggle: show all solids | 0 or 1 |
+| `Model1Ds Display All` | Toggle: show all 1D models (trees, poles, etc.) | 0 or 1 |
 | `Model1Ds Display Leaves` | Toggle: show leaves on 1D tree models | 0 or 1 |
-| `Model2Ds displayAll` | Toggle: show all 2D models | 0 or 1 |
-| `Polylines displayAll` | Toggle: show all polylines | 0 or 1 |
-| `Sections displayAll` | Toggle: show all sections | 0 or 1 |
-| `Cameras displayAll` | Toggle: show all saved cameras | 0 or 1 |
+| `Model2Ds Display All` | Toggle: show all 2D models | 0 or 1 |
+| `Polylines Display All` | Toggle: show all polylines | 0 or 1 |
+| `Sections Display All` | Toggle: show all sections | 0 or 1 |
+| `Cameras Display All` | Toggle: show all saved cameras | 0 or 1 |
 
 ### Miscellaneous
 

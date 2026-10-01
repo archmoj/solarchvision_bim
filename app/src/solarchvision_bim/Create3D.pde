@@ -2006,8 +2006,8 @@ class Create3D {
                         allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
                                            User3D.creatorModel1DDegreeMax,
                                            x, y, z, s, floor(random(360)),
-                                           User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
-                                           User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                                           User3D.creatorModel1DBranchTilt, User3D.creatorModel1DBranchTwist,
+                                           User3D.creatorModel1DBranchRatio, User3D.creatorModel1DTreeBase,
                                            User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
                       }
 
@@ -2085,8 +2085,8 @@ class Create3D {
                     allModel1Ds.create(User3D.creatorModel1DTypeIndex,  User3D.creatorModel1DSeed,
                                        User3D.creatorModel1DDegreeMax,
                                        x, y, z, 5 + random(10), floor(random(360)),
-                                       User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
-                                       User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                                       User3D.creatorModel1DBranchTilt, User3D.creatorModel1DBranchTwist,
+                                       User3D.creatorModel1DBranchRatio, User3D.creatorModel1DTreeBase,
                                        User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
                   }
                 }
@@ -2119,8 +2119,8 @@ class Create3D {
         allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
                            User3D.creatorModel1DDegreeMax,
                            x, y, z, 5 + random(10), floor(random(360)),
-                           User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
-                           User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                           User3D.creatorModel1DBranchTilt, User3D.creatorModel1DBranchTwist,
+                           User3D.creatorModel1DBranchRatio, User3D.creatorModel1DTreeBase,
                            User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
       }
     }
@@ -2155,8 +2155,8 @@ class Create3D {
         allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
                            User3D.creatorModel1DDegreeMax,
                            x, y, z, 5 + random(10), floor(random(360)),
-                           User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
-                           User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                           User3D.creatorModel1DBranchTilt, User3D.creatorModel1DBranchTwist,
+                           User3D.creatorModel1DBranchRatio, User3D.creatorModel1DTreeBase,
                            User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
       }
     }
@@ -2194,8 +2194,8 @@ class Create3D {
         allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
                            User3D.creatorModel1DDegreeMax,
                            x, y, z, 5 + random(10), floor(random(360)),
-                           User3D.creator_Model1D_BranchTilt, User3D.creator_Model1D_BranchTwist,
-                           User3D.creator_Model1D_BranchRatio, User3D.creator_Model1D_TreeBase,
+                           User3D.creatorModel1DBranchTilt, User3D.creatorModel1DBranchTwist,
+                           User3D.creatorModel1DBranchRatio, User3D.creatorModel1DTreeBase,
                            User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
       }
     }

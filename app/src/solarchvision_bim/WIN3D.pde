@@ -269,14 +269,14 @@ class WIN3D {
 
     if (isSolarPaletteMode()) {
       if (this.impactTypeIndex == Impact_ACTIVE) {
-        type = allFaces.activeColorScaleIndex;
-        direction = allFaces.activeColorScaleDirection;
-        multiplier = allFaces.activeColorScaleFactor;
+        type = allFaces.activeColorscaleIndex;
+        direction = allFaces.activeColorscaleDirection;
+        multiplier = allFaces.activeColorscaleFactor;
       }
       if (this.impactTypeIndex == Impact_PASSIVE) {
-        type = allFaces.passiveColorScaleIndex;
-        direction = allFaces.passiveColorScaleDirection;
-        multiplier = allFaces.passiveColorScaleFactor;
+        type = allFaces.passiveColorscaleIndex;
+        direction = allFaces.passiveColorscaleDirection;
+        multiplier = allFaces.passiveColorscaleFactor;
       }
       draw_pal = true;
     }

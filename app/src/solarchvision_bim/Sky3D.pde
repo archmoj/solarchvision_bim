@@ -8,12 +8,12 @@ class Sky3D {
 
   float radius = 4000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
-  int activeColorScaleIndex = 18; //-1; //7; //8;
-  int activeColorScaleDirection = 1; //-1;
-  float activeColorScaleFactor = 0.5; //1; //0.25;
-  int passiveColorScaleIndex = 18;
-  int passiveColorScaleDirection = -1;
-  float passiveColorScaleFactor = 0.25;
+  int activeColorscaleIndex = 18; //-1; //7; //8;
+  int activeColorscaleDirection = 1; //-1;
+  float activeColorscaleFactor = 0.5; //1; //0.25;
+  int passiveColorscaleIndex = 18;
+  int passiveColorscaleDirection = -1;
+  float passiveColorscaleFactor = 0.25;
 
   float inclinationStep;
   float orientationStep;
@@ -34,14 +34,14 @@ class Sky3D {
     int direction = 1;
     float multiplier = 1;
     if (WIN3D.impactTypeIndex == Impact_ACTIVE) {
-      type = this.activeColorScaleIndex;
-      direction = this.activeColorScaleDirection;
-      multiplier = this.activeColorScaleFactor;
+      type = this.activeColorscaleIndex;
+      direction = this.activeColorscaleDirection;
+      multiplier = this.activeColorscaleFactor;
     }
     if (WIN3D.impactTypeIndex == Impact_PASSIVE) {
-      type = this.passiveColorScaleIndex;
-      direction = this.passiveColorScaleDirection;
-      multiplier = this.passiveColorScaleFactor;
+      type = this.passiveColorscaleIndex;
+      direction = this.passiveColorscaleDirection;
+      multiplier = this.passiveColorscaleFactor;
     }
     return new float[] { type, direction, multiplier };
   }
@@ -97,8 +97,8 @@ class Sky3D {
   void writeSkyPatternMaterial (int PAL_type, String filename, String texturePath) {
     println("Saving texture:", texturePath);
 
-    int RES1 = User3D.exporterColorScaleResolution;
-    int RES2 = User3D.exporterColorScaleResolution / 16;
+    int RES1 = User3D.exporterColorscaleResolution;
+    int RES2 = User3D.exporterColorscaleResolution / 16;
     PImage palette_Texture = createImage(RES1, RES2, ARGB);
     palette_Texture.loadPixels();
     for (int np = 0; np < (RES1 * RES2); np++) {
@@ -291,12 +291,12 @@ class Sky3D {
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
     XML_setFloat(parent, "scale", this.radius);
-    XML_setInt(parent, "activeColorScaleIndex", this.activeColorScaleIndex);
-    XML_setInt(parent, "activeColorScaleDirection", this.activeColorScaleDirection);
-    XML_setFloat(parent, "activeColorScaleFactor", this.activeColorScaleFactor);
-    XML_setInt(parent, "passiveColorScaleIndex", this.passiveColorScaleIndex);
-    XML_setInt(parent, "passiveColorScaleDirection", this.passiveColorScaleDirection);
-    XML_setFloat(parent, "passiveColorScaleFactor", this.passiveColorScaleFactor);
+    XML_setInt(parent, "activeColorscaleIndex", this.activeColorscaleIndex);
+    XML_setInt(parent, "activeColorscaleDirection", this.activeColorscaleDirection);
+    XML_setFloat(parent, "activeColorscaleFactor", this.activeColorscaleFactor);
+    XML_setInt(parent, "passiveColorscaleIndex", this.passiveColorscaleIndex);
+    XML_setInt(parent, "passiveColorscaleDirection", this.passiveColorscaleDirection);
+    XML_setFloat(parent, "passiveColorscaleFactor", this.passiveColorscaleFactor);
     XML_setFloat(parent, "inclinationStep", this.inclinationStep);
     XML_setFloat(parent, "orientationStep", this.orientationStep);
     XML_setInt(parent, "inclinationCount", this.inclinationCount);
@@ -310,12 +310,12 @@ class Sky3D {
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
     this.radius = XML_getFloat(parent, "scale");
-    this.activeColorScaleIndex = XML_getInt(parent, "activeColorScaleIndex");
-    this.activeColorScaleDirection = XML_getInt(parent, "activeColorScaleDirection");
-    this.activeColorScaleFactor = XML_getFloat(parent, "activeColorScaleFactor");
-    this.passiveColorScaleIndex = XML_getInt(parent, "passiveColorScaleIndex");
-    this.passiveColorScaleDirection = XML_getInt(parent, "passiveColorScaleDirection");
-    this.passiveColorScaleFactor = XML_getFloat(parent, "passiveColorScaleFactor");
+    this.activeColorscaleIndex = XML_getInt(parent, "activeColorscaleIndex");
+    this.activeColorscaleDirection = XML_getInt(parent, "activeColorscaleDirection");
+    this.activeColorscaleFactor = XML_getFloat(parent, "activeColorscaleFactor");
+    this.passiveColorscaleIndex = XML_getInt(parent, "passiveColorscaleIndex");
+    this.passiveColorscaleDirection = XML_getInt(parent, "passiveColorscaleDirection");
+    this.passiveColorscaleFactor = XML_getFloat(parent, "passiveColorscaleFactor");
     this.inclinationStep = XML_getFloat(parent, "inclinationStep");
     this.orientationStep = XML_getFloat(parent, "orientationStep");
     this.inclinationCount = XML_getInt(parent, "inclinationCount");
