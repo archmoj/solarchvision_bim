@@ -388,8 +388,18 @@ jobs:
             Install-SystemDll "mesa\x64\libgallium_wgl.dll" "$env:SystemRoot\System32\libgallium_wgl.dll"
           }
 
+      # WGL_SWAP_INTERVAL=0 - see image-tests.yml's "Generate test images
+      # (make_baseline.py)" step for the full explanation (a documented
+      # Mesa gallium/wgl bug: SwapBuffers can freeze when an application
+      # negotiates a swap interval, which JOGL does). Applied here too,
+      # proactively: this step's own success criterion (test/run_integration.sh's
+      # non-empty .exec file check) only confirms some code ran, not that
+      # rendering/REC.png actually completed, so the same hang could be
+      # silently eating a test here without ever surfacing as a failure.
       - name: Run integration tests with merged coverage
         shell: bash
+        env:
+          WGL_SWAP_INTERVAL: '0'
         run: |
           export PROCESSING_HOME="$HOME/processing/4.5.2"
           chmod +x test/run_integration.sh

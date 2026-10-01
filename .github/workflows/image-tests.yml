@@ -311,11 +311,30 @@ jobs:
       # than only SHARD_INDEX, makes this job's shard configuration
       # correct on its own regardless of what the Linux job's happens to
       # be set to.
+      #
+      # WGL_SWAP_INTERVAL=0 works around the same JOGL/Mesa
+      # swap-interval-negotiation quirk already seen on Linux (see
+      # image-tests.yml's "ubuntu-latest, not pinned to an older image"
+      # comment on generate-images above, and
+      # .github/workflows/image-tests.yml's own history - 4.3.4 crashing
+      # on glXQueryDrawable against Mesa llvmpipe was the GLX-side version
+      # of this exact bug class). The Windows side is a documented Mesa
+      # issue too - gallium/wgl: "SwapBuffers freezing regularly with
+      # swap interval enabled" - manifesting as a hang (not a crash) on
+      # WGL: this step's own first real runs showed draw() being called
+      # for frame 1 and never again, with Processing eventually
+      # terminating itself after ~17s with no exception at all, exactly
+      # consistent with a frozen SwapBuffers call during that very first
+      # frame's rendering. Per Mesa's own docs, setting this env var
+      # overrides and disables any wglSwapIntervalEXT() call the
+      # application (JOGL here) makes, sidestepping the negotiation
+      # entirely rather than depending on it succeeding.
       - name: Generate test images (make_baseline.py)
         timeout-minutes: 10
         env:
           SHARD_INDEX: '0'
           SHARD_TOTAL: '1'
+          WGL_SWAP_INTERVAL: '0'
         run: python test/image/make_baseline.py
 
       - name: Upload Windows test images
