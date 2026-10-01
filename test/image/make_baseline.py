@@ -229,6 +229,28 @@ def print_diagnostics(name):
     command_file = os.path.join(COMMAND_DIR, f"{name}.txt")
     print(f"    {command_file} exists: {os.path.isfile(command_file)}")
 
+    # The command above confirms the file is really there at REPO_ROOT -
+    # this one instead checks it through the exact same path Processing's
+    # own loadStrings(RUN=...) resolves against (sketchPath()/dataPath(),
+    # which land under PROCESSING_HOME's own install tree - see
+    # test/image/README.md - not REPO_ROOT directly), i.e. whether the
+    # input/command/projects junction set up earlier in the job is still
+    # correctly routing to this repo's real files at the moment Processing
+    # itself tries to read through it, not just at the moment it was
+    # created.
+    home = os.environ.get("PROCESSING_HOME", os.path.expanduser("~/processing/4.5.2"))
+    core_dir = (
+        os.path.join(home, "app", "resources", "core")
+        if os.name == "nt"
+        else os.path.join(home, "lib", "app", "resources", "core")
+    )
+    core_command_dir = os.path.join(core_dir, "command")
+    core_command_file = os.path.join(core_command_dir, f"{name}.txt")
+    print(f"    {core_command_dir} exists: {os.path.isdir(core_command_dir)}")
+    if os.path.isdir(core_command_dir):
+        print(f"    {core_command_dir} contents: {os.listdir(core_command_dir)}")
+    print(f"    {core_command_file} exists (Processing's own resolved path): {os.path.isfile(core_command_file)}")
+
 
 def make_one(exe, name, out_dir):
     for attempt in range(0, MAX_RETRY + 1):
