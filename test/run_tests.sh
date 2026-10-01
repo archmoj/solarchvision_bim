@@ -194,7 +194,20 @@ else
   echo "==> warning: solarchvision_bim.java not found under $BUILD_DIR - coverage report (if generated) will have no source-highlighted view" >&2
 fi
 
-CLASSPATH="$CORE_JAR:$JUNIT_JAR:$MAIN_CLASS_DIR"
+# The JVM's classpath separator is OS-specific, not Processing-style-
+# specific (Windows uses ';' - ':' is already taken by drive letters
+# like C: - while every other platform this runs on uses ':'), so this
+# is checked independently of $PROCESSING_STYLE rather than assuming
+# "new-windows" is the only way a ';'-separated classpath could ever be
+# needed here. uname -s is how Git Bash (what Windows runners' `shell:
+# bash` actually is) identifies itself - something like
+# "MINGW64_NT-10.0-...".
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) CP_SEP=";" ;;
+  *)                    CP_SEP=":" ;;
+esac
+
+CLASSPATH="$CORE_JAR$CP_SEP$JUNIT_JAR$CP_SEP$MAIN_CLASS_DIR"
 
 echo "==> Compiling tests"
 # Deliberately NOT under $BUILD_DIR: jacococli's --classfiles (below)
@@ -235,7 +248,7 @@ if [ "$COVERAGE_ENABLED" -eq 1 ]; then
 fi
 
 set +e
-"$JAVA_BIN" ${JAVA_AGENT_ARG:+"$JAVA_AGENT_ARG"} -cp "$CLASSPATH:$TEST_CLASSES" \
+"$JAVA_BIN" ${JAVA_AGENT_ARG:+"$JAVA_AGENT_ARG"} -cp "$CLASSPATH$CP_SEP$TEST_CLASSES" \
   org.junit.platform.console.ConsoleLauncher execute \
   --scan-classpath="$TEST_CLASSES" \
   --details=tree
