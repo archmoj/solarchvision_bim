@@ -13,9 +13,13 @@
 # report, from the official JaCoCo distribution zip (see test/README.md).
 #
 # This exercises the sketch's real GL rendering pipeline, so it needs a
-# display - wrap the whole invocation in xvfb-run if there isn't a real one:
+# display. On Linux, wrap the whole invocation in xvfb-run if there isn't
+# a real one:
 #   xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
 #     ./test/run_integration.sh
+# Windows runners don't need (or have) an xvfb-run equivalent - GitHub's
+# windows-latest image provides a real, if software-rendered, display
+# session out of the box.
 #
 # Usage:
 #   ./test/run_integration.sh                          # every command/test_*.txt
@@ -65,35 +69,60 @@ if [ "$#" -lt 1 ]; then
   echo "==> No scripts given - defaulting to every command/test_*.txt: $*"
 fi
 
-# Pick the same launcher run-with-processing-4.3.sh/run-with-latest-processing.sh would use, based on what's
-# actually under PROCESSING_HOME (see test/run_tests.sh's own detection).
-# Use Processing 4.5.x (run-with-latest-processing.sh) if at all possible - 4.3.4's bundled
+# Pick the same launcher run-with-processing-4.3.sh/run-with-latest-processing.sh/.bat would use, based on
+# what's actually under PROCESSING_HOME (see test/run_tests.sh's own
+# detection). Windows' Processing.exe reuses the .bat version rather than
+# teaching this .sh script Windows path handling too - run-with-latest-processing.bat
+# already knows how to find/launch it correctly.
+# Use Processing 4.5.x if at all possible - 4.3.4's bundled
 # JOGL segfaults during GL context setup on newer Mesa (the same class of
 # ABI mismatch noted in .github/workflows/image-tests.yml's comments),
 # before any sketch code - including this script's instrumented classes -
 # ever runs.
 if [ -x "$PROCESSING_HOME/bin/Processing" ]; then
   RUN_CMD=(./run-with-latest-processing.sh)
+elif [ -x "$PROCESSING_HOME/Processing.exe" ]; then
+  RUN_CMD=(./run-with-latest-processing.bat)
 elif [ -x "$PROCESSING_HOME/processing-java" ]; then
   RUN_CMD=(./run-with-processing-4.3.sh)
   echo "warning: using legacy run-with-processing-4.3.sh (Processing 4.3.4) - known to segfault on newer Mesa; switch to 4.5.x if this happens" >&2
 else
-  echo "error: neither processing-java nor bin/Processing found under $PROCESSING_HOME" >&2
+  echo "error: none of processing-java, bin/Processing, or Processing.exe found under $PROCESSING_HOME" >&2
   exit 1
 fi
 
-# Processing 4.5.x's "bin/Processing" is a native jpackage launcher whose
-# bundled lib/runtime is a jlink image trimmed to only what Processing
-# itself needs - which excludes java.instrument, so -javaagent can never
-# attach to it no matter what flags are passed. lib/app/resources/jdk is
-# the same install's full JDK (bundled so it can compile sketches) and
-# does have java.instrument; swapping the two (once, cheaply reversible)
-# is the only way to get a working agent target here.
+# Processing 4.5.x's native launcher (bin/Processing on Linux/macOS,
+# Processing.exe on Windows) bundles a jlink runtime trimmed to only
+# what Processing itself needs - which excludes java.instrument, so
+# -javaagent can never attach to it no matter what flags are passed.
+# The same install's full JDK (bundled so it can compile sketches) does
+# have java.instrument; swapping the two (once, cheaply reversible) is
+# the only way to get a working agent target here.
 if [ -x "$PROCESSING_HOME/bin/Processing" ] && [ -d "$PROCESSING_HOME/lib/app/resources/jdk" ]; then
   if [ -d "$PROCESSING_HOME/lib/runtime" ] && [ ! -L "$PROCESSING_HOME/lib/runtime" ]; then
     echo "==> Swapping $PROCESSING_HOME/lib/runtime for the bundled full JDK (java.instrument support) - original kept at lib/runtime.orig"
     mv "$PROCESSING_HOME/lib/runtime" "$PROCESSING_HOME/lib/runtime.orig"
     ln -sfn "$PROCESSING_HOME/lib/app/resources/jdk" "$PROCESSING_HOME/lib/runtime"
+  fi
+elif [ -x "$PROCESSING_HOME/Processing.exe" ] && [ -d "$PROCESSING_HOME/app/resources/jdk" ]; then
+  # Same swap, Windows layout (runtime/ and app/resources/jdk directly
+  # under PROCESSING_HOME, no lib/ wrapper - see run-with-latest-processing.bat's
+  # own comment on this difference) and a junction (mklink /J) instead
+  # of a symlink: creating a true symlink on Windows needs Administrator
+  # privileges or Developer Mode, which isn't guaranteed on every
+  # runner, while junctions need neither - the same reasoning
+  # run-with-latest-processing.bat already uses for its own input/command/projects
+  # links. Guarded by runtime.orig's absence rather than `[ -L ... ]`:
+  # a junction isn't reliably recognized as a symlink by bash's -L test
+  # on Windows, but this still only swaps once either way (re-running
+  # it against an already-swapped, cached install would otherwise try
+  # to move the junction itself on top of a stale runtime.orig and
+  # fail, or silently redo a no-op swap - checking for runtime.orig
+  # instead sidesteps both).
+  if [ -d "$PROCESSING_HOME/runtime" ] && [ ! -d "$PROCESSING_HOME/runtime.orig" ]; then
+    echo "==> Swapping $PROCESSING_HOME/runtime for the bundled full JDK (java.instrument support) - original kept at runtime.orig"
+    mv "$PROCESSING_HOME/runtime" "$PROCESSING_HOME/runtime.orig"
+    cmd //c mklink /J "$(cygpath -w "$PROCESSING_HOME/runtime")" "$(cygpath -w "$PROCESSING_HOME/app/resources/jdk")" >/dev/null
   fi
 fi
 

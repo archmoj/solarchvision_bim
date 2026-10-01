@@ -236,11 +236,17 @@ jobs:
     # every OS doubles the matrix for a combination (old Processing on
     # Windows) nobody's asked to maintain yet.
     #
-    # Unit tests only, no rendering: there's no Windows equivalent of the
-    # Linux job's Xvfb step here, and headless OpenGL on a Windows runner
-    # is a real unknown rather than something this change can confirm one
-    # way or the other with Linux-only tools - the JUnit suite never opens
-    # a window or calls draw()/setup(), so it doesn't need one.
+    # Unit tests, plus an integration/coverage-merge step mirroring the
+    # Linux job's - no Xvfb equivalent is needed or available on Windows,
+    # since GitHub's windows-latest image provides a real (if software-
+    # rendered) display session out of the box, unlike the Linux
+    # containers which have no display server at all by default.
+    # Whether headless OpenGL/JOGL actually renders correctly there is
+    # still something this change can only confirm by actually running
+    # it in CI, not with the Linux-only tools available while writing
+    # this - treat the first real run of this step as the real test of
+    # it, the same way the classpath and path-translation issues in the
+    # unit-test step above were only actually found that way too.
     name: Test (Windows, latest Processing)
     runs-on: windows-latest
     steps:
@@ -319,6 +325,19 @@ jobs:
           chmod +x test/run_tests.sh
           ./test/run_tests.sh
 
+      # Mirrors the Linux job's "Run integration tests with merged
+      # coverage" - reuses build/test/jacoco.exec, which the step above
+      # just wrote, so the resulting report reflects unit tests AND
+      # every command/test_*.txt integration script together. No
+      # xvfb-run wrapper (see the job-level comment on why none is
+      # needed here).
+      - name: Run integration tests with merged coverage
+        shell: bash
+        run: |
+          export PROCESSING_HOME="$HOME/processing/4.5.2"
+          chmod +x test/run_integration.sh
+          ./test/run_integration.sh
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
@@ -328,5 +347,50 @@ jobs:
             build/test/coverage/html
             build/test/coverage/coverage.xml
             build/test/coverage/coverage.csv
+          if-no-files-found: warn
+          retention-days: 2
+
+      # Named distinctly from the Linux job's "merged-coverage-report" -
+      # both jobs run in the same workflow, and two artifacts with the
+      # same name would collide.
+      - name: Publish merged coverage summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f build/merged-coverage/coverage.csv ]; then
+            {
+              echo "### Coverage: unit tests + integration tests merged (Windows, Processing 4.5.2)"
+              echo
+              echo "| Metric | Coverage |"
+              echo "| --- | --- |"
+              awk -F, '
+                NR == 1 { next }
+                {
+                  instr_missed += $4; instr_covered += $5;
+                  branch_missed += $6; branch_covered += $7;
+                  line_missed += $8; line_covered += $9;
+                }
+                END {
+                  printf "| Instructions | %.1f%% (%d/%d) |\n", 100*instr_covered/(instr_covered+instr_missed), instr_covered, instr_covered+instr_missed;
+                  printf "| Branches | %.1f%% (%d/%d) |\n", 100*branch_covered/(branch_covered+branch_missed), branch_covered, branch_covered+branch_missed;
+                  printf "| Lines | %.1f%% (%d/%d) |\n", 100*line_covered/(line_covered+line_missed), line_covered, line_covered+line_missed;
+                }
+              ' build/merged-coverage/coverage.csv
+              echo
+              echo "Full HTML/XML report: see the \`merged-coverage-report-windows\` artifact on this run."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No build/merged-coverage/coverage.csv found - merged coverage generation may have failed; see the \`Run integration tests with merged coverage\` step above." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload merged coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-coverage-report-windows
+          path: |
+            build/merged-coverage/html
+            build/merged-coverage/coverage.xml
+            build/merged-coverage/coverage.csv
           if-no-files-found: warn
           retention-days: 2
