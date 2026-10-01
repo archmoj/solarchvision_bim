@@ -144,6 +144,23 @@ for SCRIPT in "$@"; do
   EXEC_FILE="$OUT_DIR/${NAME}.exec"
   echo "==> Running $SCRIPT through ${RUN_CMD[*]} with coverage attached"
   rm -f "$EXEC_FILE"
+  # JAVA_TOOL_OPTIONS is an environment variable, not a command-line
+  # argument - Git Bash's automatic POSIX-to-Windows path conversion only
+  # ever applies to argv, so a path built with $(pwd) here stays exactly
+  # as POSIX-style as it started, and the native java.exe this eventually
+  # reaches can't open "/d/a/.../jacocoagent.jar" (same root cause as the
+  # classpath and mklink issues above, just hitting an env var this time
+  # instead of argv). cygpath -m (not -w) specifically to get forward
+  # slashes - sidesteps any question of whether a backslash survives
+  # bash's own string handling untouched, and Java accepts forward
+  # slashes in paths on Windows natively either way.
+  to_native_path () {
+    case "$(uname -s)" in
+      MINGW*|MSYS*|CYGWIN*) cygpath -m "$1" ;;
+      *)                    printf '%s' "$1" ;;
+    esac
+  }
+
   # append=true, NOT append=false: JAVA_TOOL_OPTIONS is picked up by every
   # JVM started while it's set, and Processing cli's native (jpackage)
   # launcher spawns an outer driver JVM as well as the inner one that
@@ -152,7 +169,7 @@ for SCRIPT in "$@"; do
   # last truncates whatever the other already wrote, and losing the inner
   # JVM's real coverage data this way is silent (the file still exists,
   # just full of near-nothing) - append=true is what actually keeps both.
-  JAVA_TOOL_OPTIONS="-javaagent:$(pwd)/${JACOCO_AGENT_JAR}=destfile=$(pwd)/${EXEC_FILE},includes=solarchvision_bim*,append=true" \
+  JAVA_TOOL_OPTIONS="-javaagent:$(to_native_path "$(pwd)/${JACOCO_AGENT_JAR}")=destfile=$(to_native_path "$(pwd)/${EXEC_FILE}"),includes=solarchvision_bim*,append=true" \
     "${RUN_CMD[@]}" "USER=AUTO" "RUN=${SCRIPT}"
   if [ -s "$EXEC_FILE" ]; then
     echo "    -> wrote $EXEC_FILE ($(stat -c%s "$EXEC_FILE" 2>/dev/null || stat -f%z "$EXEC_FILE") bytes)"
