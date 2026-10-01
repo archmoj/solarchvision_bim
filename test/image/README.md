@@ -32,7 +32,7 @@ geometry command that silently changes its output, etc).
    Processing cli --sketch=app/src/solarchvision_bim --run \
      USER=AUTO RUN=command/test_primitives.txt
    ```
-   (the same `USER=AUTO RUN=...` mechanism as `./run.sh USER=AUTO
+   (the same `USER=AUTO RUN=...` mechanism as `./run-with-processing-4.3.sh USER=AUTO
    RUN=command/test.txt` — see `app/src/solarchvision_bim/parseArgs.pde` and
    `solarchvision_bim.pde`: `USER=AUTO` makes the sketch run the script a
    couple of frames after startup and then call `exit()` on its own).

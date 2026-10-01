@@ -1,11 +1,11 @@
 #!/bin/bash
-# Windows: use run-latest.bat instead (Processing.exe cli isn't a bash script).
+# Windows: use run-with-latest-processing.bat instead (Processing.exe cli isn't a bash script).
 #
-# Like run.sh, but for Processing 4.5.x's rewritten CLI (`Processing cli`,
+# Like run-with-processing-4.3.sh, but for Processing 4.5.x's rewritten CLI (`Processing cli`,
 # which replaced the old processing-java script entirely - see
 # test/image/README.md's "Setup: Processing 4.5.x").
 #
-# Run this from the repo root, same as run.sh.
+# Run this from the repo root, same as run-with-processing-4.3.sh.
 set -e
 
 PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"

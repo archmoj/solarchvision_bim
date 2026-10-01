@@ -1,16 +1,16 @@
 #!/bin/bash
 # Builds app/src/solarchvision_bim with Processing's own compiler (so all
-# .pde tabs get preprocessed/merged the same way run.sh/run-latest.sh run
+# .pde tabs get preprocessed/merged the same way run-with-processing-4.3.sh/run-with-latest-processing.sh run
 # them), then compiles and runs the JUnit tests in this folder against the
 # result.
 #
 # Works with either Processing generation - see test/image/README.md's
 # "Setup: Processing 4.5.x" for the two CLIs' differences:
 #   - <=4.4.x: a processing-java script at the install root
-#     (e.g. ~/processing/4.3.4/processing-java, matching run.sh)
+#     (e.g. ~/processing/4.3.4/processing-java, matching run-with-processing-4.3.sh)
 #   - 4.5.x+:  a Processing binary at bin/Processing, invoked as
 #     `Processing cli ...` (e.g. ~/processing/4.5.2/bin/Processing,
-#     matching run-latest.sh)
+#     matching run-with-latest-processing.sh)
 # Auto-detected from whichever exists under PROCESSING_HOME - no need to
 # tell this script which one you have.
 #

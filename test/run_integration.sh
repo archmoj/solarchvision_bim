@@ -1,9 +1,9 @@
 #!/bin/bash
-# Attaches JaCoCo coverage to a run.sh/run-latest.sh USER=AUTO run (e.g. the
+# Attaches JaCoCo coverage to a run-with-processing-4.3.sh/run-with-latest-processing.sh USER=AUTO run (e.g. the
 # command/test_*.txt image-regression scripts), and merges the result with
 # the unit tests' jacoco.exec into one combined report.
 #
-# This does NOT modify run.sh/run-latest.sh - JAVA_TOOL_OPTIONS is picked
+# This does NOT modify run-with-processing-4.3.sh/run-with-latest-processing.sh - JAVA_TOOL_OPTIONS is picked
 # up by any JVM started while it's set, including the one Processing cli
 # spawns internally to run the sketch, so nothing about Processing's own
 # launch command needs to change.
@@ -22,9 +22,9 @@
 #   ./test/run_integration.sh command/test_primitives.txt [more scripts...]
 #
 # Environment:
-#   PROCESSING_HOME       - defaults to ~/processing/4.5.2 (run-latest.sh);
+#   PROCESSING_HOME       - defaults to ~/processing/4.5.2 (run-with-latest-processing.sh);
 #                            point it at a 4.3.4 install instead only if
-#                            you specifically want run.sh - see the "Use
+#                            you specifically want run-with-processing-4.3.sh - see the "Use
 #                            Processing 4.5.x if at all possible" comment
 #                            below for why that's not the default.
 #   JACOCO_AGENT_JAR       - defaults to test/lib/jacoco/jacocoagent.jar
@@ -65,18 +65,18 @@ if [ "$#" -lt 1 ]; then
   echo "==> No scripts given - defaulting to every command/test_*.txt: $*"
 fi
 
-# Pick the same launcher run.sh/run-latest.sh would use, based on what's
+# Pick the same launcher run-with-processing-4.3.sh/run-with-latest-processing.sh would use, based on what's
 # actually under PROCESSING_HOME (see test/run_tests.sh's own detection).
-# Use Processing 4.5.x (run-latest.sh) if at all possible - 4.3.4's bundled
+# Use Processing 4.5.x (run-with-latest-processing.sh) if at all possible - 4.3.4's bundled
 # JOGL segfaults during GL context setup on newer Mesa (the same class of
 # ABI mismatch noted in .github/workflows/image-tests.yml's comments),
 # before any sketch code - including this script's instrumented classes -
 # ever runs.
 if [ -x "$PROCESSING_HOME/bin/Processing" ]; then
-  RUN_CMD=(./run-latest.sh)
+  RUN_CMD=(./run-with-latest-processing.sh)
 elif [ -x "$PROCESSING_HOME/processing-java" ]; then
-  RUN_CMD=(./run.sh)
-  echo "warning: using legacy run.sh (Processing 4.3.4) - known to segfault on newer Mesa; switch to 4.5.x if this happens" >&2
+  RUN_CMD=(./run-with-processing-4.3.sh)
+  echo "warning: using legacy run-with-processing-4.3.sh (Processing 4.3.4) - known to segfault on newer Mesa; switch to 4.5.x if this happens" >&2
 else
   echo "error: neither processing-java nor bin/Processing found under $PROCESSING_HOME" >&2
   exit 1

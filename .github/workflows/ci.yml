@@ -19,7 +19,7 @@ env:
 
 jobs:
   test:
-    # Two jobs, not one: test/run_tests.sh (and run.sh/run-latest.sh) work
+    # Two jobs, not one: test/run_tests.sh (and run-with-processing-4.3.sh/run-with-latest-processing.sh) work
     # with either Processing generation, so both are actually exercised in
     # CI rather than just one. See test/README.md and test/image/README.md's
     # "Setup: Processing 4.5.x" for what differs between them.
@@ -52,7 +52,7 @@ jobs:
           key: processing-${{ matrix.processing_version }}-linux-x64
 
       # <=4.4.x ships as a .tgz with a processing-java script at the
-      # install root (run.sh's expectation).
+      # install root (run-with-processing-4.3.sh's expectation).
       - name: Install Processing 4.3.4
         if: matrix.processing_version == '4.3.4' && steps.cache-processing.outputs.cache-hit != 'true'
         run: |
@@ -63,7 +63,7 @@ jobs:
           mv "/tmp/processing-${{ matrix.processing_version }}" "$HOME/processing/${{ matrix.processing_version }}"
 
       # 4.5.x+ ships as a "portable" zip (a Processing/ folder with a
-      # native launcher at Processing/bin/Processing, run-latest.sh's
+      # native launcher at Processing/bin/Processing, run-with-latest-processing.sh's
       # expectation) instead - no processing-java script in this version.
       - name: Install Processing (latest)
         if: matrix.processing_version != '4.3.4' && steps.cache-processing.outputs.cache-hit != 'true'
@@ -119,7 +119,7 @@ jobs:
           chmod +x test/run_tests.sh
           ./test/run_tests.sh
 
-      # Only on 4.5.2: run.sh (4.3.4) segfaults rendering under Xvfb (see
+      # Only on 4.5.2: run-with-processing-4.3.sh (4.3.4) segfaults rendering under Xvfb (see
       # test/run_integration.sh's own comment on this), so there's no
       # working merged-coverage leg to run there. This reuses
       # build/test/jacoco.exec, which the "Run tests" step above just
