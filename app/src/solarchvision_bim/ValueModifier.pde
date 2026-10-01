@@ -4525,66 +4525,54 @@ class ValueModifier {
     }
     return out;
   }
-  int Record_SolidImpact_in_JPG (int created) {
+  boolean Record_SolidImpact_in_JPG (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
-    int s1 = 0; //start
-    int s2 = 1; //stop
-    int s3 = 1; //step
-
-    int out = 0;
+    boolean out = false;
     if (created == 0) {
       putValueAction("Record SolidImpact in JPG",
-        () -> (float) allSolidImpacts.record_IMG,
-        (v) -> { allSolidImpacts.record_IMG = int(v); },
-        s1, s2, s3,
+        () -> (allSolidImpacts.record_IMG ? 1f : 0f),
+        (v) -> { allSolidImpacts.record_IMG = (v >= 0.5f); },
+        0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Record SolidImpact in JPG", allSolidImpacts.record_IMG, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Record SolidImpact in JPG", allSolidImpacts.record_IMG);
     }
     return out;
   }
-  int Record_SolidImpact_in_PDF (int created) {
+  boolean Record_SolidImpact_in_PDF (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
-    int s1 = 0; //start
-    int s2 = 1; //stop
-    int s3 = 1; //step
-
-    int out = 0;
+    boolean out = false;
     if (created == 0) {
       putValueAction("Record Solid Impact In PDF",
-        () -> (float) allSolidImpacts.record_PDF,
-        (v) -> { allSolidImpacts.record_PDF = int(v); },
-        s1, s2, s3,
+        () -> (allSolidImpacts.record_PDF ? 1f : 0f),
+        (v) -> { allSolidImpacts.record_PDF = (v >= 0.5f); },
+        0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Record Solid Impact In PDF", allSolidImpacts.record_PDF, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Record Solid Impact In PDF", allSolidImpacts.record_PDF);
     }
     return out;
   }
-  int Record_Solar_Analysis_in_JPG (int created) {
+  boolean Record_Solar_Analysis_in_JPG (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
-    int s1 = 0; //start
-    int s2 = 1; //stop
-    int s3 = 1; //step
-
-    int out = 0;
+    boolean out = false;
     if (created == 0) {
       putValueAction("Record Solar Analysis in JPG",
-        () -> (float) allSolarImpacts.record_IMG,
-        (v) -> { allSolarImpacts.record_IMG = int(v); },
-        s1, s2, s3,
+        () -> (allSolarImpacts.record_IMG ? 1f : 0f),
+        (v) -> { allSolarImpacts.record_IMG = (v >= 0.5f); },
+        0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Record Solar Analysis in JPG", allSolarImpacts.record_IMG, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Record Solar Analysis in JPG", allSolarImpacts.record_IMG);
     }
     return out;
   }

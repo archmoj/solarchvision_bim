@@ -43,8 +43,8 @@ class SolidImpacts {
   float positionStep = 1.25;
 
 
-  int record_PDF = 0;
-  int record_IMG = 0;
+  boolean record_PDF = false;
+  boolean record_IMG = false;
 
   float WindSpeed = 5; // (5m/s = 18 km/h)
   float WindDirection = 180.0;
@@ -550,7 +550,7 @@ class SolidImpacts {
 
       this.Image.updatePixels();
 
-      if (this.record_IMG == 1) {
+      if (this.record_IMG == true) {
         String myFile = getFilename_SolidImpact() + ".jpg";
         this.Image.save(myFile);
         println("File created:" + myFile);
@@ -595,7 +595,7 @@ class SolidImpacts {
          */
       }
 
-      if (this.record_PDF == 1) {
+      if (this.record_PDF == true) {
 
         String myFile = getFilename_SolidImpact() + ".pdf";
 

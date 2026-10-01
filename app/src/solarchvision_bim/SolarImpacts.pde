@@ -22,7 +22,7 @@ class SolarImpacts {
 
 
 
-  int record_IMG = 0;
+  boolean record_IMG = false;
 
   void resize_Image_array () {
 
@@ -336,7 +336,7 @@ class SolarImpacts {
 
             //if (cameraIndex == 0) {
             this.Image[q][j + 1] = Image_RGBA[q];
-            if (this.record_IMG == 1) {
+            if (this.record_IMG == true) {
               String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(j + 1, 0) + ".jpg";
               this.Image[q][j + 1].save(myFile);
               println("File created:" + myFile);
@@ -420,7 +420,7 @@ class SolarImpacts {
 
             //if (cameraIndex == 0) {
             this.Image[q][0] = total_Image_RGBA[q];
-            if (this.record_IMG == 1) {
+            if (this.record_IMG == true) {
               String myFile = getFilename_SolarImpact() + "_solar_" + nf(q, 1) + "_" + nf(0, 0) + ".jpg";
               this.Image[q][0].save(myFile);
               println("File created:" + myFile);
