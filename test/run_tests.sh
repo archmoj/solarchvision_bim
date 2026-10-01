@@ -4,13 +4,16 @@
 # them), then compiles and runs the JUnit tests in this folder against the
 # result.
 #
-# Works with either Processing generation - see test/image/README.md's
+# Works with any Processing generation/platform - see test/image/README.md's
 # "Setup: Processing 4.5.x" for the two CLIs' differences:
 #   - <=4.4.x: a processing-java script at the install root
 #     (e.g. ~/processing/4.3.4/processing-java, matching run-with-processing-4.3.sh)
-#   - 4.5.x+:  a Processing binary at bin/Processing, invoked as
-#     `Processing cli ...` (e.g. ~/processing/4.5.2/bin/Processing,
-#     matching run-with-latest-processing.sh)
+#   - 4.5.x+:  a Processing binary at bin/Processing (Linux/macOS) or
+#     Processing.exe directly at the install root (Windows - one
+#     directory level shallower than Linux/macOS, no lib/ wrapper),
+#     invoked as `Processing cli ...` either way (e.g.
+#     ~/processing/4.5.2/bin/Processing, matching run-with-latest-processing.sh,
+#     or Processing.exe for run-with-latest-processing.bat)
 # Auto-detected from whichever exists under PROCESSING_HOME - no need to
 # tell this script which one you have.
 #
@@ -39,7 +42,7 @@ PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.3.4}"
 SKETCH_DIR="app/src/solarchvision_bim"
 BUILD_DIR="build/test"
 
-if [ -x "$PROCESSING_HOME/processing-java" ]; then
+if [ -x "$PROCESSING_HOME/processing-java" ] || [ -x "$PROCESSING_HOME/processing-java.exe" ]; then
   PROCESSING_STYLE="legacy"
   CORE_JAR="$PROCESSING_HOME/core/library/core.jar"
 elif [ -x "$PROCESSING_HOME/bin/Processing" ]; then
@@ -47,8 +50,15 @@ elif [ -x "$PROCESSING_HOME/bin/Processing" ]; then
   # Filename includes the version (core-4.5.2.jar, ...) - match on the
   # unversioned prefix rather than hardcoding one.
   CORE_JAR="$(find "$PROCESSING_HOME/lib/app/resources/core/library" -maxdepth 1 -name 'core-*.jar' -print -quit 2>/dev/null || true)"
+elif [ -x "$PROCESSING_HOME/Processing.exe" ]; then
+  # Windows' portable build lays out one directory level shallower than
+  # Linux's (Processing.exe + app/ + runtime/ directly under
+  # PROCESSING_HOME, no lib/ wrapper) - see run-with-latest-processing.bat's
+  # own comment on this same difference.
+  PROCESSING_STYLE="new-windows"
+  CORE_JAR="$(find "$PROCESSING_HOME/app/resources/core/library" -maxdepth 1 -name 'core-*.jar' -print -quit 2>/dev/null || true)"
 else
-  echo "error: neither processing-java nor bin/Processing found under $PROCESSING_HOME" >&2
+  echo "error: no processing-java, bin/Processing, or Processing.exe found under $PROCESSING_HOME" >&2
   echo "       set PROCESSING_HOME to your Processing install." >&2
   exit 1
 fi
@@ -101,7 +111,8 @@ find_bundled_jdk_bin () {
     "$PROCESSING_HOME/java/bin/$name" \
     "$PROCESSING_HOME/Contents/Java/bin/$name" \
     "$PROCESSING_HOME/jdk/bin/$name" \
-    "$PROCESSING_HOME/lib/app/resources/jdk/bin/$name"
+    "$PROCESSING_HOME/lib/app/resources/jdk/bin/$name" \
+    "$PROCESSING_HOME/app/resources/jdk/bin/$name.exe"
   do
     if [ -n "$candidate" ] && [ -x "$candidate" ]; then
       echo "$candidate"
@@ -116,7 +127,13 @@ JAVA_BIN="java"
 if ! command -v javac >/dev/null 2>&1; then
   if found="$(find_bundled_jdk_bin javac)"; then
     JAVAC_BIN="$found"
-    JAVA_BIN="$(dirname "$found")/java" # keep compile/run on the same JDK
+    # Keep compile/run on the same JDK - preserve the .exe suffix too
+    # (Windows' bundled JDK, javac.exe/java.exe) rather than assuming
+    # the extensionless Linux/macOS form.
+    case "$found" in
+      *.exe) JAVA_BIN="$(dirname "$found")/java.exe" ;;
+      *)     JAVA_BIN="$(dirname "$found")/java" ;;
+    esac
     echo "==> javac not on PATH - using bundled JDK: $JAVAC_BIN"
   else
     echo "error: javac not found on PATH, and no bundled JDK found under \$PROCESSING_HOME." >&2
@@ -137,6 +154,8 @@ mkdir -p "$(dirname "$BUILD_DIR")" # only the parent - the build step creates $B
 # before it.
 if [ "$PROCESSING_STYLE" = "legacy" ]; then
   "$PROCESSING_HOME/processing-java" --sketch="$SKETCH_DIR" --output="$BUILD_DIR" --force --build
+elif [ "$PROCESSING_STYLE" = "new-windows" ]; then
+  "$PROCESSING_HOME/Processing.exe" cli --sketch="$SKETCH_DIR" --output="$BUILD_DIR" --force --build
 else
   "$PROCESSING_HOME/bin/Processing" cli --sketch="$SKETCH_DIR" --output="$BUILD_DIR" --force --build
 fi
@@ -192,7 +211,7 @@ echo "==> Compiling tests"
 TEST_CLASSES="$(dirname "$BUILD_DIR")/test-classes"
 rm -rf "$TEST_CLASSES"
 mkdir -p "$TEST_CLASSES"
-"$JAVAC_BIN" -cp "$CLASSPATH" -d "$TEST_CLASSES" test/*.java
+"$JAVAC_BIN" -encoding UTF-8 -cp "$CLASSPATH" -d "$TEST_CLASSES" test/*.java
 
 echo "==> Running tests"
 

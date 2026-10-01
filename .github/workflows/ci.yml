@@ -225,3 +225,108 @@ jobs:
             build/merged-coverage/coverage.csv
           if-no-files-found: warn
           retention-days: 2
+
+  test-windows:
+    # Separate from the Linux `test` matrix above rather than an added
+    # `os` dimension there, specifically to avoid sprinkling
+    # `if: runner.os == ...` through that job's many Linux/Xvfb-specific
+    # integration-coverage steps. Only the latest Processing generation -
+    # <=4.4.x's processing-java.exe is a real thing (see
+    # run-with-processing-4.3.bat), but exercising both generations on
+    # every OS doubles the matrix for a combination (old Processing on
+    # Windows) nobody's asked to maintain yet.
+    #
+    # Unit tests only, no rendering: there's no Windows equivalent of the
+    # Linux job's Xvfb step here, and headless OpenGL on a Windows runner
+    # is a real unknown rather than something this change can confirm one
+    # way or the other with Linux-only tools - the JUnit suite never opens
+    # a window or calls draw()/setup(), so it doesn't need one.
+    name: Test (Windows, latest Processing)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Processing install
+        id: cache-processing
+        uses: actions/cache@v4
+        with:
+          path: ~/processing/4.5.2
+          key: processing-4.5.2-windows-x64
+
+      # Same release, same tag, as the Linux job's "Install Processing
+      # (latest)" step - just the -windows-x64-portable.zip asset instead
+      # of -linux-x64-portable.zip. Unlike the Linux/macOS portable build,
+      # Windows' lays out one directory level shallower (Processing.exe +
+      # app/ + runtime/ directly under the install root, no lib/ wrapper) -
+      # see run-with-latest-processing.bat's and test/run_tests.sh's own
+      # comments on this difference.
+      - name: Install Processing 4.5.2
+        if: steps.cache-processing.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          curl -fL -o /tmp/processing.zip \
+            "https://github.com/processing/processing4/releases/download/processing-1313-4.5.2/processing-4.5.2-windows-x64-portable.zip"
+          mkdir -p ~/processing
+          unzip -q /tmp/processing.zip -d /tmp/processing-extracted
+          mv /tmp/processing-extracted/Processing "$HOME/processing/4.5.2"
+
+      # test/run_tests.sh looks for the JUnit console launcher under
+      # test/lib/ - reuse test/install_junit.sh, same as the Linux job.
+      # Windows runners ship Git Bash, which both this and run_tests.sh
+      # itself need anyway (shell: bash below) - no separate Windows port
+      # of either script.
+      - name: Cache JUnit console launcher
+        id: cache-junit
+        uses: actions/cache@v4
+        with:
+          path: test/lib
+          key: junit-console-standalone-${{ env.JUNIT_VERSION }}
+
+      - name: Install JUnit console launcher
+        if: steps.cache-junit.outputs.cache-hit != 'true'
+        shell: bash
+        working-directory: test
+        run: |
+          chmod +x install_junit.sh
+          ./install_junit.sh
+
+      - name: Cache JaCoCo
+        id: cache-jacoco
+        uses: actions/cache@v4
+        with:
+          path: test/lib/jacoco
+          key: jacoco-${{ env.JACOCO_VERSION }}
+
+      - name: Install JaCoCo
+        if: steps.cache-jacoco.outputs.cache-hit != 'true'
+        shell: bash
+        working-directory: test
+        run: |
+          chmod +x install_jacoco.sh
+          ./install_jacoco.sh
+
+      - name: Run tests
+        shell: bash
+        run: |
+          export PROCESSING_HOME="$HOME/processing/4.5.2"
+          chmod +x test/run_tests.sh
+          ./test/run_tests.sh
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-windows-4.5.2
+          path: |
+            build/test/coverage/html
+            build/test/coverage/coverage.xml
+            build/test/coverage/coverage.csv
+          if-no-files-found: warn
+          retention-days: 2

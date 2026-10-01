@@ -24,12 +24,17 @@ never needs to open a window.
 
 One-time setup:
 
-1. Install Processing - either generation works, auto-detected by
-   `run_tests.sh`:
-   - `<=4.4.x` (matching `run-with-processing-4.3.sh`, or `run-with-processing-4.3.bat` on Windows), e.g. under
+1. Install Processing - either generation, on any platform, works, auto-
+   detected by `run_tests.sh`:
+   - `<=4.4.x` (matching `run-with-processing-4.3.sh`, or
+     `run-with-processing-4.3.bat` on Windows), e.g. under
      `~/processing/4.3.4`
-   - `4.5.x+` (matching `run-with-latest-processing.sh`, or `run-with-latest-processing.bat` on Windows),
-     e.g. under `~/processing/4.5.2`
+   - `4.5.x+` (matching `run-with-latest-processing.sh`, or
+     `run-with-latest-processing.bat` on Windows), e.g. under
+     `~/processing/4.5.2`. Windows' portable build of this one lays out
+     one directory level shallower than Linux/macOS (`Processing.exe`
+     directly at the install root instead of `bin/Processing`, no `lib/`
+     wrapper around `app/`) - also auto-detected, no extra setup needed.
 
    Point `PROCESSING_HOME` at wherever it's installed if it's not under
    `~/processing/4.3.4` (the default, for backwards compatibility).
