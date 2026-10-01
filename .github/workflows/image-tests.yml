@@ -282,8 +282,23 @@ jobs:
       # needed - see ci.yml's test-windows job comment on this). `python`,
       # not `python3`: setup-python guarantees the former on every
       # platform, the latter only on Linux/macOS.
+      #
+      # SHARD_INDEX/SHARD_TOTAL explicitly set here (0 of 1 - i.e. every
+      # test, no striping) rather than left unset: the workflow-level env
+      # block above sets SHARD_TOTAL: 3 for generate-images' own sharding,
+      # which every job in this file inherits unless overridden - leaving
+      # just SHARD_INDEX unset here produced exactly the half-set state
+      # make_baseline.py's shard_slice() is specifically written to
+      # reject ("SHARD_INDEX and SHARD_TOTAL must both be set"), confirmed
+      # by this step's own first real run. Overriding both here, rather
+      # than only SHARD_INDEX, makes this job's shard configuration
+      # correct on its own regardless of what the Linux job's happens to
+      # be set to.
       - name: Generate test images (make_baseline.py)
         timeout-minutes: 10
+        env:
+          SHARD_INDEX: '0'
+          SHARD_TOTAL: '1'
         run: python test/image/make_baseline.py
 
       - name: Upload Windows test images
