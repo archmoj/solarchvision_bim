@@ -458,18 +458,18 @@ the user interface.
 | `Creator Superellipsoid Power X` | Default X-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
 | `Creator Superellipsoid Power Y` | Default Y-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
 | `Creator Superellipsoid Power Z` | Default Z-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
-| `Creator Model1DType Index` | Default sub-type for the current creation tool | 0 to 0 |
+| `Creator Model1D Type Index` | Default sub-type for the current creation tool | 0 to 0 |
 | `Creator Parametric Type Index` | Default parametric-object variant (1-6) used by the Parametric creation tools | 1 to 6 |
 | `Creator Person Type Index` | Default person model variant used when adding people | _(depends on loaded data)_ |
 | `Creator Plant Type Index` | Default tree/plant model variant used when adding 1D-trees | _(depends on loaded data)_ |
-| `Creator Model1DSeed` | Default random seed for new fractal trees/materials (-1 = random each time) | -1 to 32767 |
+| `Creator Model1D Seed` | Default random seed for new fractal trees/materials (-1 = random each time) | -1 to 32767 |
 | `Creator Model1D Branch Ratio` | Default branch-length ratio for new fractal trees | 0.05 to 1 |
 | `Creator Model1D Branch Tilt` | Default branch tilt angle (degrees) for new fractal trees | 0 to 360 |
 | `Creator Model1D Branch Twist` | Default branch twist angle (degrees) for new fractal trees | 0 to 360 |
-| `Creator Model1DDegree Max` | Default maximum branching degree for new fractal trees | 0 to 12 |
-| `Creator Model1DLeaf Size` | Default leaf size for new fractal trees | 0 to 1 |
+| `Creator Model1D Degree Max` | Default maximum branching degree for new fractal trees | 0 to 12 |
+| `Creator Model1D Leaf Size` | Default leaf size for new fractal trees | 0 to 1 |
 | `Creator Model1D Tree Base` | Default trunk base radius for new fractal trees | 0 to 4 |
-| `Creator Model1DTrunk Size` | Default trunk size for new fractal trees | 0 to 10 |
+| `Creator Model1D Trunk Size` | Default trunk size for new fractal trees | 0 to 10 |
 | `Default Closed` | Default open/closed state (0/1) for new extruded/mesh geometry | 0 to 1 |
 
 ### Modify tools (3D-modify)

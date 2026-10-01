@@ -1480,13 +1480,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Creator Model1DType Index",
+      putValueAction("Creator Model1D Type Index",
         () -> (float) User3D.creatorModel1DTypeIndex,
         (v) -> { User3D.creatorModel1DTypeIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DType Index", User3D.creatorModel1DTypeIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Type Index", User3D.creatorModel1DTypeIndex, s1, s2, s3);
     }
     return out;
   }
@@ -1501,13 +1501,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Creator Model1DDegree Max",
+      putValueAction("Creator Model1D Degree Max",
         () -> (float) User3D.creatorModel1DDegreeMax,
         (v) -> { User3D.creatorModel1DDegreeMax = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DDegree Max", User3D.creatorModel1DDegreeMax, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Degree Max", User3D.creatorModel1DDegreeMax, s1, s2, s3);
     }
     return out;
   }
@@ -1522,13 +1522,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Creator Model1DSeed",
+      putValueAction("Creator Model1D Seed",
         () -> (float) User3D.creatorModel1DSeed,
         (v) -> { User3D.creatorModel1DSeed = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DSeed", User3D.creatorModel1DSeed, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Seed", User3D.creatorModel1DSeed, s1, s2, s3);
     }
     return out;
   }
@@ -1544,13 +1544,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Creator Model1DTrunk Size",
+      putValueAction("Creator Model1D Trunk Size",
         () -> User3D.creatorModel1DTrunkSize,
         (v) -> { User3D.creatorModel1DTrunkSize = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DTrunk Size", User3D.creatorModel1DTrunkSize, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Trunk Size", User3D.creatorModel1DTrunkSize, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1566,13 +1566,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Creator Model1DLeaf Size",
+      putValueAction("Creator Model1D Leaf Size",
         () -> User3D.creatorModel1DLeafSize,
         (v) -> { User3D.creatorModel1DLeafSize = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DLeaf Size", User3D.creatorModel1DLeafSize, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Leaf Size", User3D.creatorModel1DLeafSize, s1, s2, s3, s4);
     }
     return out;
   }
