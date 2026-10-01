@@ -89,7 +89,7 @@ SetLatLon <latitude> <longitude>
 ```
 
 All four also move the currently selected weather station to the new
-location, the same as dragging the Latitude/Longitude spinners in the
+location, the same as dragging the Location Latitude/Location Longitude spinners in the
 Location panel.
 
 ------------------------------------------------------------------------
@@ -315,14 +315,14 @@ matching command - 233 of them. They all work the same way:
 command_name value
 ```
 
-For example, `begin_day 15` sets the calendar day to 15, and
+For example, `day 15` sets the calendar day to 15, and
 `climate_typical_year_display_near 1` turns that display option on (`0` turns it off).
 
 A few things worth knowing:
 
 -   **Naming**: a command's name is just its on-screen label, with any
-    spaces replaced by underscores - so `Begin day` becomes `begin_day`,
-    but you can also type it with the space instead (`begin day 15`)
+    spaces replaced by underscores - so `Start Hour` becomes `start_hour`,
+    but you can also type it with the space instead (`start hour 6`)
     if you find that more readable; both work the same way.
 -   **Out-of-range values are rejected**: if a value is outside the
     listed range, the field is left unchanged (nothing happens - no
@@ -339,35 +339,35 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Begin day` | Day of the month for the study date | 1 to 31 |
-| `Begin month` | Month for the study date | 1 to 12 |
-| `Begin year` | Year for the study date | 1953 to 2100 |
-| `Days past March equinox` | Study date expressed as days since the March equinox (an alternative to setting day/month/year separately) | 0 to 364 |
+| `Day` | Day of the month for the study date | 1 to 31 |
+| `Month` | Month for the study date | 1 to 12 |
+| `Year` | Year for the study date | 1953 to 2100 |
+| `Date` | Study date expressed as days since the March equinox (an alternative to setting day/month/year separately) | 0 to 364 |
 
 ### Analysis window
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Start hour` | First hour of the day included in the analysis | 0 to 23 |
-| `End hour` | Last hour of the day included in the analysis | 0 to 23 |
-| `Join days` | Number of consecutive days grouped together per analysis step | 1 to 182 |
-| `Number of days to plot` | Number of days included in the impact plot | 1 to 365 |
-| `Day step` | Step size (in days) between plotted days | 1.0 to 182.5 |
+| `Start Hour` | First hour of the day included in the analysis | 0 to 23 |
+| `End Hour` | Last hour of the day included in the analysis | 0 to 23 |
+| `Days Merged Count` | Number of consecutive days grouped together per analysis step | 1 to 182 |
+| `End Day` | Number of days included in the impact plot | 1 to 365 |
+| `Day Increment` | Step size (in days) between plotted days | 1.0 to 182.5 |
 
 ### Sampling and forecast sources
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Start year` | First year of the sampled climate-record range | _(depends on loaded data)_ |
-| `End year` | Last year of the sampled climate-record range | _(depends on loaded data)_ |
-| `Start member` | First ensemble-forecast member included in the sample | _(depends on loaded data)_ |
-| `End member` | Last ensemble-forecast member included in the sample | _(depends on loaded data)_ |
-| `Start station` | First observed-weather station included in the sample | _(depends on loaded data)_ |
-| `End station` | Last observed-weather station included in the sample | _(depends on loaded data)_ |
-| `Climate based solar forecast` | 0 = off, 1 = use climate data for the solar forecast | 0 to 1 |
-| `Climate based temperature forecast` | 0 = linear, 1 = average, 2 = sky-based air-temperature/humidity forecast | 0 to 2 |
-| `Hourly/daily filter` | 0 = hourly, 1 = daily data filtering | 0 to 1 |
-| `Forecast/Obs maxDays` | Maximum number of days considered for forecast/observed data | 0 to 31 |
+| `Sample Year Start` | First year of the sampled climate-record range | _(depends on loaded data)_ |
+| `Sample Year End` | Last year of the sampled climate-record range | _(depends on loaded data)_ |
+| `Sample Member Start` | First ensemble-forecast member included in the sample | _(depends on loaded data)_ |
+| `Sample Member End` | Last ensemble-forecast member included in the sample | _(depends on loaded data)_ |
+| `Sample Station Start` | First observed-weather station included in the sample | _(depends on loaded data)_ |
+| `Sample Station End` | Last observed-weather station included in the sample | _(depends on loaded data)_ |
+| `Climate Based Solar Forecast` | 0 = off, 1 = use climate data for the solar forecast | 0 to 1 |
+| `Climate Based Weather Forecast` | 0 = linear, 1 = average, 2 = sky-based air-temperature/humidity forecast | 0 to 2 |
+| `Temporal Filter Setting` | 0 = hourly, 1 = daily data filtering | 0 to 1 |
+| `Ensemble Observation Max Days` | Maximum number of days considered for forecast/observed data | 0 to 31 |
 | `Trend periodHours` | Length of the trend period, in hours | 1 to 384 |
 | `Weighted equal trend` | -1/0/1 - how samples are weighted when computing the trend | -1 to 1 |
 
@@ -375,8 +375,8 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Latitude` | Project location's latitude (also updates the selected weather station) | -85 to 85 |
-| `Longitude` | Project location's longitude (also updates the selected weather station) | -180 to 180 |
+| `Location Latitude` | Project location's latitude (also updates the selected weather station) | -85 to 85 |
+| `Location Longitude` | Project location's longitude (also updates the selected weather station) | -180 to 180 |
 
 ### Weather-station display
 
@@ -397,41 +397,41 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Camera current` | Index of the active saved camera/viewport | _(depends on loaded data)_ |
-| `Camera clipNear` | Near clipping distance for the active camera | 0.01 to 100 |
-| `Camera clipFar` | Far clipping distance for the active camera | 1000 to 2000000000 |
+| `Current Camera Index` | Index of the active saved camera/viewport | _(depends on loaded data)_ |
+| `Camera Clip Near` | Near clipping distance for the active camera | 0.01 to 100 |
+| `Camera Clip Far` | Far clipping distance for the active camera | 1000 to 2000000000 |
 
 ### Selection tools (3D-select)
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Select3D pivotAlignmentX` | Selection's X alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
-| `Select3D pivotAlignmentY` | Selection's Y alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
-| `Select3D pivotAlignmentZ` | Selection's Z alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
-| `Select3D position` | Move the selection along the current move axis by this offset (relative to its previous value, like dragging the spinner) | -50.0 to 50.0 |
-| `Select3D positionVectorIndex` | Move axis used by 3D-select.position: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
-| `Select3D rotation` | Rotate the selection about the current rotate axis by this angle in degrees (relative to its previous value) | -180.0 to 180.0 |
-| `Select3D rotationVectorIndex` | Rotate axis used by 3D-select.rotation: 0 = X, 1 = Y, 2 = Z | 0 to 2 |
-| `Select3D scale` | Scale the selection about the current scale axis (relative to its previous value; each unit change doubles/halves the size) | -8.0 to 8.0 |
-| `Select3D scaleVectorIndex` | Scale axis used by 3D-select.scale: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
-| `Select3D softSelectionFalloffPower` | Falloff power of soft (proportional) selection | 0.125 to 8.0 |
-| `Select3D softSelectionFalloffRadius` | Radius of influence of soft (proportional) selection | 0.01 to 100 |
-| `Select3D pivotDisplayReference` | Toggle: show the reference pivot point | 0 or 1 |
-| `Select3D groupDisplayPivot` | Toggle: show the selected group's pivot point | 0 or 1 |
-| `Select3D groupDisplayBox` | Toggle: draw the selected group's bounding box | 0 or 1 |
-| `Select3D groupDisplayEdges` | Toggle: draw the selected group's edges | 0 or 1 |
-| `Select3D faceDisplayEdges` | Toggle: draw edges of selected faces | 0 or 1 |
-| `Select3D faceDisplayVertexCount` | Toggle: label selected faces with their vertex count | 0 or 1 |
-| `Select3D vertexDisplayVertices` | Toggle: draw selected vertices | 0 or 1 |
-| `Select3D polylineDisplayVertices` | Toggle: draw vertices of selected polylines | 0 or 1 |
-| `Select3D polylineDisplayVertexCount` | Toggle: label selected polylines with their vertex count | 0 or 1 |
-| `Select3D solidDisplayEdges` | Toggle: draw edges of selected solids | 0 or 1 |
-| `Select3D sectionDisplayEdges` | Toggle: draw edges of selected sections | 0 or 1 |
-| `Select3D cameraDisplayEdges` | Toggle: draw camera outlines for the selection | 0 or 1 |
-| `Select3D model1DDisplayEdges` | Toggle: draw edges of selected 1D models (trees, poles, etc.) | 0 or 1 |
-| `Select3D model2DDisplayEdges` | Toggle: draw edges of selected 2D models | 0 or 1 |
-| `Select3D landPointDisplayPoints` | Toggle: draw selected land points | 0 or 1 |
-| `Create3D displayEdges` | Toggle: draw edges while creating new geometry | 0 or 1 |
+| `Pivot Alignment X` | Selection's X alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
+| `Pivot Alignment Y` | Selection's Y alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
+| `Pivot Alignment Z` | Selection's Z alignment: -1 = min side, 0 = center, 1 = max side | -1 to 1 |
+| `Position Selection` | Move the selection along the current move axis by this offset (relative to its previous value, like dragging the spinner) | -50.0 to 50.0 |
+| `Position Vector Index` | Move axis used by 3D-select.position: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
+| `Rotation Selection` | Rotate the selection about the current rotate axis by this angle in degrees (relative to its previous value) | -180.0 to 180.0 |
+| `Rotation Vector Index` | Rotate axis used by 3D-select.rotation: 0 = X, 1 = Y, 2 = Z | 0 to 2 |
+| `Scale Selection` | Scale the selection about the current scale axis (relative to its previous value; each unit change doubles/halves the size) | -8.0 to 8.0 |
+| `Scale Vector Index` | Scale axis used by 3D-select.scale: 0 = X, 1 = Y, 2 = Z, 3 = all | 0 to 3 |
+| `Soft Selection Falloff Power` | Falloff power of soft (proportional) selection | 0.125 to 8.0 |
+| `Soft Selection Falloff Radius` | Radius of influence of soft (proportional) selection | 0.01 to 100 |
+| `Pivot Display Reference` | Toggle: show the reference pivot point | 0 or 1 |
+| `Group Display Pivot` | Toggle: show the selected group's pivot point | 0 or 1 |
+| `Group Display Box` | Toggle: draw the selected group's bounding box | 0 or 1 |
+| `Group Display Edges` | Toggle: draw the selected group's edges | 0 or 1 |
+| `Face Display Edges` | Toggle: draw edges of selected faces | 0 or 1 |
+| `Face Display Vertex Selection` | Toggle: label selected faces with their vertex count | 0 or 1 |
+| `Vertex Display Markers` | Toggle: draw selected vertices | 0 or 1 |
+| `Polyline Display Vertices` | Toggle: draw vertices of selected polylines | 0 or 1 |
+| `Polyline Display Vertex Selection` | Toggle: label selected polylines with their vertex count | 0 or 1 |
+| `Solid Display Edges` | Toggle: draw edges of selected solids | 0 or 1 |
+| `Section Display Edges` | Toggle: draw edges of selected sections | 0 or 1 |
+| `Camera Display Frustum` | Toggle: draw camera outlines for the selection | 0 or 1 |
+| `Model1DDisplay Bounds` | Toggle: draw edges of selected 1D models (trees, poles, etc.) | 0 or 1 |
+| `Model2DDisplay Bounds` | Toggle: draw edges of selected 2D models | 0 or 1 |
+| `Terrain Display Vertices` | Toggle: draw selected land points | 0 or 1 |
+| `Create3D Display Edges` | Toggle: draw edges while creating new geometry | 0 or 1 |
 | `Create3D displayVertices` | Toggle: draw vertices while creating new geometry | 0 or 1 |
 | `Create3D showNormalLines` | Toggle: draw normals while creating new geometry | 0 or 1 |
 
@@ -439,63 +439,63 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Create3D layer` | Default layer assigned to new objects | 0 to 16 |
-| `Create3D material` | Default material index for new objects (-1 = none) | -1 to 8 |
-| `Create3D visibility` | Default visibility (-1/0/1) assigned to new faces | -1 to 1 |
-| `Create3D weight` | Default weight/thickness assigned to new 1D model segments | -20 to 20 |
-| `Create3D tessellation` | Default tessellation level applied to new faces | 0 to 6 |
+| `Default Layer` | Default layer assigned to new objects | 0 to 16 |
+| `Default Material` | Default material index for new objects (-1 = none) | -1 to 8 |
+| `Default Visibility` | Default visibility (-1/0/1) assigned to new faces | -1 to 1 |
+| `Default Weight` | Default weight/thickness assigned to new 1D model segments | -20 to 20 |
+| `Default Tessellation` | Default tessellation level applied to new faces | 0 to 6 |
 | `Create3D displayTessellation` | Default tessellation-display mode for new faces | 0 to 4 |
-| `Create3D snap` | Toggle: snap new objects to the land surface/grid while placing them | 0 to 1 |
-| `Create3D orientation` | Default orientation angle (degrees) for new objects | 0 to 360 |
-| `Create3D volume` | Default target volume for new objects that size themselves by volume | 0 to 1000000000 |
-| `Create3D height` | Default height for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
-| `Create3D length` | Default length for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
-| `Create3D width` | Default width for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
-| `Create3D cylinderDegree` | Default number of sides for new cylinders | 3 to 36 |
-| `Create3D sphereDegree` | Default subdivision level for new spheres | 0 to 5 |
-| `Create3D polyDegree` | Default number of sides for new polygon-based objects | 3 to 36 |
-| `Create3D powAll` | Default exponent applied to all three axes of new superellipsoid-style objects (cushions, superspheres, ...) | _(depends on loaded data)_ |
-| `Create3D powX` | Default X-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
-| `Create3D powY` | Default Y-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
-| `Create3D powZ` | Default Z-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
-| `Create3D type` | Default sub-type for the current creation tool | 0 to 0 |
-| `Create3D parametricType` | Default parametric-object variant (1-6) used by the Parametric creation tools | 1 to 6 |
-| `Create3D personType` | Default person model variant used when adding people | _(depends on loaded data)_ |
-| `Create3D plantType` | Default tree/plant model variant used when adding 1D-trees | _(depends on loaded data)_ |
-| `Create3D seed` | Default random seed for new fractal trees/materials (-1 = random each time) | -1 to 32767 |
-| `Create3D branchRatio` | Default branch-length ratio for new fractal trees | 0.05 to 1 |
-| `Create3D branchTilt` | Default branch tilt angle (degrees) for new fractal trees | 0 to 360 |
-| `Create3D branchTwist` | Default branch twist angle (degrees) for new fractal trees | 0 to 360 |
-| `Create3D degreeMax` | Default maximum branching degree for new fractal trees | 0 to 12 |
-| `Create3D leafSize` | Default leaf size for new fractal trees | 0 to 1 |
-| `Create3D treeBase` | Default trunk base radius for new fractal trees | 0 to 4 |
-| `Create3D trunkSize` | Default trunk size for new fractal trees | 0 to 10 |
-| `Create3D closed` | Default open/closed state (0/1) for new extruded/mesh geometry | 0 to 1 |
+| `Creator Snap Mode Index` | Toggle: snap new objects to the land surface/grid while placing them | 0 to 1 |
+| `Creator Orientation` | Default orientation angle (degrees) for new objects | 0 to 360 |
+| `Creator Volume` | Default target volume for new objects that size themselves by volume | 0 to 1000000000 |
+| `Creator Height` | Default height for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
+| `Creator Length` | Default length for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
+| `Creator Width` | Default width for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
+| `Creator Cylinder Degree` | Default number of sides for new cylinders | 3 to 36 |
+| `Creator Sphere Degree` | Default subdivision level for new spheres | 0 to 5 |
+| `Creator Polygon Degree` | Default number of sides for new polygon-based objects | 3 to 36 |
+| `Creator Uniform Superellipsoid Power` | Default exponent applied to all three axes of new superellipsoid-style objects (cushions, superspheres, ...) | _(depends on loaded data)_ |
+| `Creator Superellipsoid Power X` | Default X-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
+| `Creator Superellipsoid Power Y` | Default Y-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
+| `Creator Superellipsoid Power Z` | Default Z-axis exponent for new superellipsoid-style objects | _(depends on loaded data)_ |
+| `Creator Model1DType Index` | Default sub-type for the current creation tool | 0 to 0 |
+| `Creator Parametric Type Index` | Default parametric-object variant (1-6) used by the Parametric creation tools | 1 to 6 |
+| `Creator Person Type Index` | Default person model variant used when adding people | _(depends on loaded data)_ |
+| `Creator Plant Type Index` | Default tree/plant model variant used when adding 1D-trees | _(depends on loaded data)_ |
+| `Creator Model1DSeed` | Default random seed for new fractal trees/materials (-1 = random each time) | -1 to 32767 |
+| `Creator Model1D Branch Ratio` | Default branch-length ratio for new fractal trees | 0.05 to 1 |
+| `Creator Model1D Branch Tilt` | Default branch tilt angle (degrees) for new fractal trees | 0 to 360 |
+| `Creator Model1D Branch Twist` | Default branch twist angle (degrees) for new fractal trees | 0 to 360 |
+| `Creator Model1DDegree Max` | Default maximum branching degree for new fractal trees | 0 to 12 |
+| `Creator Model1DLeaf Size` | Default leaf size for new fractal trees | 0 to 1 |
+| `Creator Model1D Tree Base` | Default trunk base radius for new fractal trees | 0 to 4 |
+| `Creator Model1DTrunk Size` | Default trunk size for new fractal trees | 0 to 10 |
+| `Default Closed` | Default open/closed state (0/1) for new extruded/mesh geometry | 0 to 1 |
 
 ### Modify tools (3D-modify)
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Modify3D offsetAmount` | Distance used by the vertex-offset tools (above/below/expand/shrink) | 0 to 25 |
-| `Modify3D openningArea` | Target area for newly inserted openings (windows/doors) | 0 to 1 |
-| `Modify3D openningDepth` | Depth (inset/outset) of newly inserted openings | -10 to 10 |
-| `Modify3D openningDeviation` | Allowed random deviation applied to inserted openings | 0 to 1 |
-| `Modify3D tessellateRows` | Number of rows used by the row/column tessellation tool | 1 to 100 |
-| `Modify3D tessellateColumns` | Number of columns used by the row/column tessellation tool | 1 to 100 |
-| `Modify3D weldThreshold` | Maximum distance between vertices for the weld tools to merge them | 0 to 10 |
+| `Modifier Offset Amount` | Distance used by the vertex-offset tools (above/below/expand/shrink) | 0 to 25 |
+| `Modifier Opening Area` | Target area for newly inserted openings (windows/doors) | 0 to 1 |
+| `Modifier Opening Depth` | Depth (inset/outset) of newly inserted openings | -10 to 10 |
+| `Modifier Opening Deviation` | Allowed random deviation applied to inserted openings | 0 to 1 |
+| `Modifier Tessellate Rows` | Number of rows used by the row/column tessellation tool | 1 to 100 |
+| `Modifier Tessellate Columns` | Number of columns used by the row/column tessellation tool | 1 to 100 |
+| `Modifier Weld Threshold` | Maximum distance between vertices for the weld tools to merge them | 0 to 10 |
 
 ### Export defaults (3D-export)
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Export3D scale` | Uniform scale factor applied to exported geometry | .001 to 1000 |
-| `Export3D backSides` | Toggle: include back-facing faces when exporting | 0 or 1 |
-| `Export3D flipZYaxis` | Toggle: swap the Z and Y axes on export (for tools that use Y-up) | 0 to 1 |
-| `Export3D polyToPoly` | Toggle: export polylines as connected poly-to-poly geometry | 0 to 1 |
-| `Export3D materialLibrary` | Toggle: write a companion material-library file on export | 0 or 1 |
-| `Export3D paletteResolution` | Number of colour steps used when exporting palette-based (impact/solar) shading | 32 to 2048 |
-| `Export3D precisionVertex` | Number of decimal places kept for exported vertex coordinates | 0 to 6 |
-| `Export3D precisionVtexture` | Number of decimal places kept for exported texture coordinates | 0 to 6 |
+| `Exporter Scale` | Uniform scale factor applied to exported geometry | .001 to 1000 |
+| `Exporter Double Sided` | Toggle: include back-facing faces when exporting | 0 or 1 |
+| `Exporter Yaxis Up` | Toggle: swap the Z and Y axes on export (for tools that use Y-up) | 0 to 1 |
+| `Exporter Maintain Polygons` | Toggle: export polylines as connected poly-to-poly geometry | 0 to 1 |
+| `Exporter Material Library` | Toggle: write a companion material-library file on export | 0 or 1 |
+| `Exporter Color Scale Resolution` | Number of colour steps used when exporting palette-based (impact/solar) shading | 32 to 2048 |
+| `Exporter Precision Vertex` | Number of decimal places kept for exported vertex coordinates | 0 to 6 |
+| `Exporter Precision Vertex Texture` | Number of decimal places kept for exported texture coordinates | 0 to 6 |
 
 ### Land
 
@@ -504,12 +504,12 @@ the user interface.
 | `Terrain displaySurface` | Toggle: show the land surface | 0 or 1 |
 | `Terrain displayTexture` | Toggle: show the land texture (aerial imagery) | 0 or 1 |
 | `Terrain displayPoints` | Toggle: show land survey points | 0 or 1 |
-| `Terrain displayDepth` | Toggle: shade the land by elevation/depth | 0 or 1 |
+| `Display Depth` | Toggle: shade the land by elevation/depth | 0 or 1 |
 | `Terrain displayTessellation` | Tessellation-display mode for the land surface | 0 to 4 |
-| `Terrain loadMesh` | Toggle: (re)load the land mesh from its topography source | 0 or 1 |
-| `Terrain loadTextures` | Toggle: (re)load the land texture images | 0 or 1 |
-| `Terrain skipStart` | First row/column of the land grid to skip (for coarser previews) | _(depends on loaded data)_ |
-| `Terrain skipEnd` | Last row/column of the land grid to skip | _(depends on loaded data)_ |
+| `Terrain Load Mesh` | Toggle: (re)load the land mesh from its topography source | 0 or 1 |
+| `Terrain Load Textures` | Toggle: (re)load the land texture images | 0 or 1 |
+| `Terrain Skip Start` | First row/column of the land grid to skip (for coarser previews) | _(depends on loaded data)_ |
+| `Terrain Skip End` | Last row/column of the land grid to skip | _(depends on loaded data)_ |
 | `Terrain paletteClr` | Colour-scale index used for land elevation shading | _(depends on loaded data)_ |
 | `Terrain paletteDir` | Colour-scale direction (-2..2) for land elevation shading | -2 to 2 |
 | `Terrain paletteMlt` | Colour-scale multiplier for land elevation shading | 0.001 to 0.5 |
@@ -518,14 +518,14 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Sky status` | 1-4: sky rendering mode (clear/overcast/etc.) | 1 to 4 |
-| `Sky3D scale` | Radius of the sky dome | 1 to 4000000 |
+| `Sky Scenario Setting` | 1-4: sky rendering mode (clear/overcast/etc.) | 1 to 4 |
+| `Sky3D Radius` | Radius of the sky dome | 1 to 4000000 |
 | `Sky3D displayTessellation` | Tessellation-display mode for the sky dome | 0 to 4 |
 | `Sky3D displaySurface` | Toggle: show the sky dome surface | 0 or 1 |
 | `Sun3D displaySurface` | Toggle: show the sun disc | 0 or 1 |
 | `Sun3D displayTexture` | Toggle: show the sun texture | 0 or 1 |
-| `Sun3D displayPath` | Toggle: show the sun's daily path | 0 or 1 |
-| `Sun3D displayPattern` | Toggle: show the sun's annual pattern (analemma) | 0 or 1 |
+| `Sun3D Display Path` | Toggle: show the sun's daily path | 0 or 1 |
+| `Sun3D Display Pattern` | Toggle: show the sun's annual pattern (analemma) | 0 or 1 |
 | `Sun3D fitInSkyDome` | Toggle: scale the sun path/pattern to fit inside the sky dome | 0 or 1 |
 | `Moon3D displaySurface` | Toggle: show the moon | 0 or 1 |
 | `Moon3D displayTexture` | Toggle: show the moon texture | 0 or 1 |
@@ -534,8 +534,8 @@ the user interface.
 | `Tropo3D displayTexture` | Toggle: show the troposphere texture | 0 or 1 |
 | `Earth3D displaySurface` | Toggle: show the Earth globe surface | 0 or 1 |
 | `Earth3D displayTexture` | Toggle: show the Earth globe texture | 0 or 1 |
-| `Earth3D levelOfDetail` | Level of detail (tile resolution) used for the Earth globe texture | 0.0625 to 16 |
-| `Celestial magnification` | Visual size multiplier for the sun/moon/planets | 1 to 64 |
+| `Earth3D Level Of Detail` | Level of detail (tile resolution) used for the Earth globe texture | 0.0625 to 16 |
+| `Celestial Magnification` | Visual size multiplier for the sun/moon/planets | 1 to 64 |
 
 ### Shading colour palettes
 
@@ -547,12 +547,12 @@ the user interface.
 | `Study passivePaletteClr` | Colour-scale index for passive-surface impact shading | _(depends on loaded data)_ |
 | `Study passivePaletteDir` | Colour-scale direction for passive-surface impact shading | -2 to 2 |
 | `Study passivePaletteMlt` | Colour-scale multiplier for passive-surface impact shading | 0.125 to 8 |
-| `Study sortPaletteClr` | Colour-scale index for sorted-value shading | _(depends on loaded data)_ |
-| `Study sortPaletteDir` | Colour-scale direction for sorted-value shading | -2 to 2 |
-| `Study sortPaletteMlt` | Colour-scale multiplier for sorted-value shading | 0.125 to 8 |
-| `Study probPaletteClr` | Colour-scale index for probability shading | _(depends on loaded data)_ |
-| `Study probPaletteDir` | Colour-scale direction for probability shading | -2 to 2 |
-| `Study probPaletteMlt` | Colour-scale multiplier for probability shading | 0.125 to 8 |
+| `Statistical Ranges Color Scale Index` | Colour-scale index for sorted-value shading | _(depends on loaded data)_ |
+| `Statistical Ranges Color Scale Direction` | Colour-scale direction for sorted-value shading | -2 to 2 |
+| `Statistical Ranges Color Scale Factor` | Colour-scale multiplier for sorted-value shading | 0.125 to 8 |
+| `Probabilities Color Scale Index` | Colour-scale index for probability shading | _(depends on loaded data)_ |
+| `Probabilities Color Scale Direction` | Colour-scale direction for probability shading | -2 to 2 |
+| `Probabilities Color Scale Factor` | Colour-scale multiplier for probability shading | 0.125 to 8 |
 | `Faces activePaletteClr` | Colour-scale index for face shading, active side | _(depends on loaded data)_ |
 | `Faces activePaletteDir` | Colour-scale direction for face shading, active side | -2 to 2 |
 | `Faces activePaletteMlt` | Colour-scale multiplier for face shading, active side | 0.125 to 8 |
@@ -582,49 +582,49 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Impact source` | Which loaded data source the impact analysis is computed from | _(depends on loaded data)_ |
-| `Impact min 50 max` | Which impact statistic is shown: minimum, median, or maximum | 0 to 8 |
-| `Impacts displayDay` | Which day (within the plotted range) is currently shown | _(depends on loaded data)_ |
+| `Current Data Source` | Which loaded data source the impact analysis is computed from | _(depends on loaded data)_ |
+| `Impact Layer Index` | Which impact statistic is shown: minimum, median, or maximum | 0 to 8 |
+| `Impact Display Day` | Which day (within the plotted range) is currently shown | _(depends on loaded data)_ |
 | `SolidImpacts sectionType` | Which section cut (0-3) the solid-impact analysis uses | 0 to 3 |
 | `SolarImpacts sectionType` | Which section cut (0-3) the solar-impact analysis uses | 0 to 3 |
-| `SolidImpacts grade` | Ground slope/grade used for solid-impact analysis | 0.0001 to 64.0 |
-| `SolidImpacts power` | Exponent applied when weighting solid-impact results | 0.0001 to 64.0 |
-| `SolidImpacts processSubDivisions` | Number of subdivisions used when processing solid impacts | 0 to 3 |
-| `SolidImpacts positionStep` | Step size used when stepping through impact-analysis positions | 5 to 80 |
-| `SolidImpacts r` | Rotation of the current impact-analysis section | -360 to 360 |
-| `SolidImpacts u` | U-axis scale of the current impact-analysis section | 0.125 to 3200 |
-| `SolidImpacts v` | V-axis scale of the current impact-analysis section | 0.125 to 3200 |
-| `SolidImpacts x` | X offset of the current impact-analysis section | -10000 to 10000 |
-| `SolidImpacts y` | Y offset of the current impact-analysis section | -10000 to 10000 |
-| `SolidImpacts z` | Z offset (elevation) of the current impact-analysis section | -1000 to 1000 |
-| `SolidImpacts windSpeedMps` | Wind speed (m/s) used for wind-impact analysis | 1 to 16 |
-| `SolidImpacts windDirection` | Wind direction (degrees) used for wind-impact analysis | 0 to 360 |
+| `Solid Impacts Grade` | Ground slope/grade used for solid-impact analysis | 0.0001 to 64.0 |
+| `Solid Impacts Power` | Exponent applied when weighting solid-impact results | 0.0001 to 64.0 |
+| `Solid Impacts Process Sub Divisions` | Number of subdivisions used when processing solid impacts | 0 to 3 |
+| `Solid Impacts Position Step` | Step size used when stepping through impact-analysis positions | 5 to 80 |
+| `Solid Impacts R` | Rotation of the current impact-analysis section | -360 to 360 |
+| `Solid Impacts U` | U-axis scale of the current impact-analysis section | 0.125 to 3200 |
+| `Solid Impacts V` | V-axis scale of the current impact-analysis section | 0.125 to 3200 |
+| `Solid Impacts X` | X offset of the current impact-analysis section | -10000 to 10000 |
+| `Solid Impacts Y` | Y offset of the current impact-analysis section | -10000 to 10000 |
+| `Solid Impacts Z` | Z offset (elevation) of the current impact-analysis section | -1000 to 1000 |
+| `Solid Impacts Wind Speed` | Wind speed (m/s) used for wind-impact analysis | 1 to 16 |
+| `Solid Impacts Wind Direction` | Wind direction (degrees) used for wind-impact analysis | 0 to 360 |
 | `SolidImpacts displayPoints` | Toggle: show solid-impact analysis points | 0 or 1 |
-| `SolidImpacts displayLines` | Toggle: show solid-impact analysis lines | 0 or 1 |
+| `Solid Impacts Display Lines` | Toggle: show solid-impact analysis lines | 0 or 1 |
 | `SolidImpacts displayImage` | Toggle: show the rendered solid-impact image | 0 or 1 |
 | `SolarImpacts displayImage` | Toggle: show the rendered solar-impact image | 0 or 1 |
-| `Probabilities interval` | Bucket size (hours) used when computing probability distributions | 1 to 24 |
-| `Probabilities range` | Number of buckets used when computing probability distributions | 2 to 32 |
-| `Draw data` | Toggle: include raw data in the plotted graph | 0 or 1 |
-| `Draw probabilities` | Toggle: include probability curves in the plotted graph | 0 or 1 |
-| `Draw sorted` | Toggle: include the sorted-value curve in the plotted graph | 0 or 1 |
-| `Draw statistics` | Toggle: include summary statistics in the plotted graph | 0 or 1 |
-| `Export ASCII data` | Toggle: also export the raw data as an ASCII text file | 0 or 1 |
-| `Export ASCII probabilities` | Toggle: also export the probability data as an ASCII text file | 0 or 1 |
-| `Export ASCII statistics` | Toggle: also export the summary statistics as an ASCII text file | 0 or 1 |
+| `Probability Width Interval` | Bucket size (hours) used when computing probability distributions | 1 to 24 |
+| `Probability Height Interval` | Number of buckets used when computing probability distributions | 2 to 32 |
+| `Show Raw Lines` | Toggle: include raw data in the plotted graph | 0 or 1 |
+| `Show Probabilities` | Toggle: include probability curves in the plotted graph | 0 or 1 |
+| `Show Statistical Ranges` | Toggle: include the sorted-value curve in the plotted graph | 0 or 1 |
+| `Show Statistics` | Toggle: include summary statistics in the plotted graph | 0 or 1 |
+| `Raw Lines Exporter` | Toggle: also export the raw data as an ASCII text file | 0 or 1 |
+| `Probabilities Exporter` | Toggle: also export the probability data as an ASCII text file | 0 or 1 |
+| `Normal Lines Exporter` | Toggle: also export the summary statistics as an ASCII text file | 0 or 1 |
 | `Record Solar Analysis in JPG` | Toggle: save each solar-analysis frame as a JPG | 0 to 1 |
 | `Record SolidImpact in JPG` | Toggle: save each solid-impact frame as a JPG | 0 to 1 |
-| `Record SolidImpact in PDF` | Toggle: save each solid-impact frame as a PDF | 0 to 1 |
-| `Diagram setup` | Layout preset used for the multi-panel diagram view | -2 to 8 |
+| `Record Solid Impact In PDF` | Toggle: save each solid-impact frame as a PDF | 0 to 1 |
+| `Plot Layout Index` | Layout preset used for the multi-panel diagram view | -2 to 8 |
 
 ### Wind roses and wind flow
 
 | Command | What it sets | Range |
 |---|---|---|
 | `WindRoses displayImage` | Toggle: show the rendered wind-rose image | 0 or 1 |
-| `WindRoses scale` | Display scale of the wind-rose diagram | 50 to 3200 |
-| `WindRoses resolution` | Pixel resolution used when rendering the wind-rose image | 200 to 600 |
-| `WindRose opacityScale` | Opacity scale used when drawing the wind-rose diagram | 1 to 100 |
+| `Wind Roses Plane Size` | Display scale of the wind-rose diagram | 50 to 3200 |
+| `Wind Roses Image Resolution` | Pixel resolution used when rendering the wind-rose image | 200 to 600 |
+| `Opacity Percentage` | Opacity scale used when drawing the wind-rose diagram | 1 to 100 |
 | `WindFlows displayAll` | Toggle: show all wind-flow lines | 0 or 1 |
 
 ### Other display toggles
@@ -634,7 +634,7 @@ the user interface.
 | `Faces displayAll` | Toggle: show all faces | 0 or 1 |
 | `Solids displayAll` | Toggle: show all solids | 0 or 1 |
 | `Model1Ds displayAll` | Toggle: show all 1D models (trees, poles, etc.) | 0 or 1 |
-| `Model1Ds displayLeaves` | Toggle: show leaves on 1D tree models | 0 or 1 |
+| `Model1Ds Display Leaves` | Toggle: show leaves on 1D tree models | 0 or 1 |
 | `Model2Ds displayAll` | Toggle: show all 2D models | 0 or 1 |
 | `Polylines displayAll` | Toggle: show all polylines | 0 or 1 |
 | `Sections displayAll` | Toggle: show all sections | 0 or 1 |
@@ -644,19 +644,19 @@ the user interface.
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Objects scale` | Overall display scale applied to placed objects | 0.0000001 to 1000000 |
-| `Interpolation weight` | Weight applied when interpolating between data points | 0 to 5 |
-| `Inclination angle` | Inclination angle (degrees) used for solid-impact analysis | 0 to 90 |
-| `Orientation angle` | Orientation angle (degrees) used for solid-impact analysis | 0 to 360 |
-| `Scale` | Selected solid's impact-analysis scale factor | 0.0001 to 10000 |
-| `AddToLastGroup` | Toggle: add newly created objects to the most recently used group | 0 or 1 |
+| `Overall Scale` | Overall display scale applied to placed objects | 0.0000001 to 1000000 |
+| `Interpolation Weight` | Weight applied when interpolating between data points | 0 to 5 |
+| `Develop Layer Angle Inclination` | Inclination angle (degrees) used for solid-impact analysis | 0 to 90 |
+| `Develop Layer Angle Orientation` | Orientation angle (degrees) used for solid-impact analysis | 0 to 360 |
+| `Vertical Unit Scale` | Selected solid's impact-analysis scale factor | 0.0001 to 10000 |
+| `Add To Last Group` | Toggle: add newly created objects to the most recently used group | 0 or 1 |
 
 ### Developer/debug
 
 | Command | What it sets | Range |
 |---|---|---|
-| `Develop option` | (developer/debug option) | 0 to 11 |
-| `Develop interval` | (developer/debug option) | 0 to 3 |
+| `Develop Layer Option` | (developer/debug option) | 0 to 11 |
+| `Develop Layer Interval` | (developer/debug option) | 0 to 3 |
 
 ------------------------------------------------------------------------
 
@@ -708,7 +708,7 @@ subtract modes.
 -   `Window Select`, `Window Select+`, `Window Select-`: draw a
     rectangle to replace, add to, or subtract from the selection
 -   `Soft Selection`: enables falloff-based (proportional) selection -
-    see `Select3D softSelectionFalloffPower`/`Select3D softSelectionFalloffRadius` above
+    see `Soft Selection Falloff Power`/`Soft Selection Falloff Radius` above
 
 ### Groups
 
@@ -785,9 +785,9 @@ commands, each switching to a mouse-drag tool for that one axis:
 
 -   `Move`, `MoveX`, `MoveY`, `MoveZ`
 -   `Rotate`, `RotateX`, `RotateY`, `RotateZ`
--   `Scale`, `ScaleX`, `ScaleY`, `ScaleZ`
+-   `Vertical Unit Scale`, `ScaleX`, `ScaleY`, `ScaleZ`
 -   `Power`, `PowerX`, `PowerY`, `PowerZ`: adjust the superellipsoid
-    power exponent (see `Create3D powAll`/`Create3D powX`/`Create3D powY`/`Create3D powZ` above)
+    power exponent (see `Creator Uniform Superellipsoid Power`/`Creator Superellipsoid Power X`/`Creator Superellipsoid Power Y`/`Creator Superellipsoid Power Z` above)
     on the current selection
 
 ### Screenshots and recording

@@ -491,10 +491,10 @@ class RunScriptTest {
 
   @Test
   void unrelatedCommand_stillDispatchesThroughAllActionsNormally () {
-    app.vm.Begin_day(0);
+    app.vm.day(0);
     app.TIME.day = 1;
 
-    String hint = app.runScriptLine("begin_day 15");
+    String hint = app.runScriptLine("day 15");
 
     assertEquals("", hint);
     assertEquals(15, app.TIME.day);
@@ -504,10 +504,10 @@ class RunScriptTest {
 
   @Test
   void unrecognizedCommandInSequence_interruptAndReturnsAHint () {
-    app.vm.Begin_day(0);
+    app.vm.day(0);
     app.TIME.day = 1;
 
-    String hint = app.runScriptLines(new String[] {"nonesense!", "begin_day 15"});
+    String hint = app.runScriptLines(new String[] {"nonesense!", "day 15"});
     assertEquals(app.UnrecognizedCommand, hint);
     assertNotEquals(15, app.TIME.day);
   }
@@ -541,10 +541,10 @@ class RunScriptTest {
 
   @Test
   void fallsBackToAFirstTokenMatch_forACommandRegisteredWithArguments () {
-    app.vm.Begin_day(0);
+    app.vm.day(0);
     app.TIME.day = 1;
 
-    String hint = app.runScriptLine("begin_day 15");
+    String hint = app.runScriptLine("day 15");
 
     assertEquals("", hint);
     assertEquals(15, app.TIME.day);
@@ -552,27 +552,28 @@ class RunScriptTest {
 
   @Test
   void fallsBackToALastSpaceMatch_forAMultiWordCaptionTypedWithItsValue () {
-    // "Begin day" registers both "begin_day" and, via putAction's
-    // "withSpace" fallback, the literal "begin day" too - but typing
-    // "Begin day 15" doesn't match either of those directly: the full
-    // line is "begin day 15" (three words) and the first token alone is
-    // just "begin". Stripping the trailing value word off the line
-    // ("begin day") is what finds it.
-    app.vm.Begin_day(0);
-    app.TIME.day = 1;
+    // "Start Hour" registers both "start_hour" and, via putAction's
+    // "withSpace" fallback, the literal "start hour" too - but typing
+    // "Start Hour 15" doesn't match either of those directly: the full
+    // line is "start hour 15" (three words) and the first token alone is
+    // just "start", which isn't registered as its own command anywhere.
+    // Stripping the trailing value word off the line ("start hour") is
+    // what finds it.
+    app.vm.startHour(0);
+    app.STUDY.startHour = 1;
 
-    String hint = app.runScriptLine("Begin day 15");
+    String hint = app.runScriptLine("Start Hour 15");
 
     assertEquals("", hint);
-    assertEquals(15, app.TIME.day);
+    assertEquals(15, app.STUDY.startHour);
   }
 
   @Test
   void fallsBackToALastSpaceMatch_forALongerMultiWordCaption () {
-    app.vm.Number_of_days_to_plot(0);
+    app.vm.endDay(0);
     app.STUDY.endDay = 1;
 
-    String hint = app.runScriptLine("Number of days to plot 200");
+    String hint = app.runScriptLine("End Day 200");
 
     assertEquals("", hint);
     assertEquals(200, app.STUDY.endDay);
@@ -584,10 +585,10 @@ class RunScriptTest {
     // like the Runnable-taking one used for plain menu items (see the
     // test right below) - registers the literal, lowercased caption
     // alongside the normalized (spaces -> underscores) key.
-    app.vm.Begin_day(0);
+    app.vm.day(0);
     app.TIME.day = 10;
 
-    String hint = app.runScriptLine("Begin day");
+    String hint = app.runScriptLine("Day");
 
     assertEquals("", hint); // the usage-hint print happens inside the action, not via the returned hint
     assertEquals(10, app.TIME.day); // no value token was given, so nothing changed

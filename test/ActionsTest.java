@@ -293,7 +293,7 @@ class ActionsTest {
 
     assertTrue(app.allActions.size() > 400);
     assertTrue(app.allActions.containsKey("new"));
-    assertTrue(app.allActions.containsKey("begin_day"));
-    assertTrue(app.allActions.containsKey("latitude"));
+    assertTrue(app.allActions.containsKey("day"));
+    assertTrue(app.allActions.containsKey("location_latitude"));
   }
 }

@@ -58,9 +58,9 @@ class ValueModifierTest {
 
   @Test
   void latitude_commandLineAction_updatesStationAndSyncsLocationLATBack () {
-    app.vm.Latitude(0);
+    app.vm.LocationLatitude(0);
 
-    app.allActions.get("latitude").run(new String[]{"latitude", "45.5"});
+    app.allActions.get("location_latitude").run(new String[]{"location_latitude", "45.5"});
 
     assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
     assertEquals(45.5f, app.LocationLAT, 0.001f); // update_station(0) syncs it back
@@ -68,9 +68,9 @@ class ValueModifierTest {
 
   @Test
   void longitude_commandLineAction_updatesStationAndSyncsLocationLONBack () {
-    app.vm.Longitude(0);
+    app.vm.LocationLongitude(0);
 
-    app.allActions.get("longitude").run(new String[]{"longitude", "-73.6"});
+    app.allActions.get("location_longitude").run(new String[]{"location_longitude", "-73.6"});
 
     assertEquals(-73.6f, app.STATION.getLongitude(), 0.001f);
     assertEquals(-73.6f, app.LocationLON, 0.001f);
@@ -80,23 +80,23 @@ class ValueModifierTest {
 
   @Test
   void beginDay_commandLineAction_setsTimeDay_androundsAndValidates () {
-    app.vm.Begin_day(0);
+    app.vm.day(0);
     app.TIME.day = 1;
 
-    app.allActions.get("begin_day").run(new String[]{"begin_day", "45"}); // out of [1, 31]
+    app.allActions.get("day").run(new String[]{"day", "45"}); // out of [1, 31]
     assertEquals(1, app.TIME.day);
 
-    app.allActions.get("begin_day").run(new String[]{"begin_day", "15"});
+    app.allActions.get("day").run(new String[]{"day", "15"});
     assertEquals(15, app.TIME.day);
   }
 
   @Test
   void beginDay_commandLineAction_triggersApplyTimeChange () {
-    app.vm.Begin_day(0);
+    app.vm.day(0);
     app.TIME.month = 6;
     app.TIME.day = 1;
 
-    app.allActions.get("begin_day").run(new String[]{"begin_day", "15"});
+    app.allActions.get("day").run(new String[]{"day", "15"});
 
     assertEquals(app.TIME.convert2Date(6, 15), app.TIME.beginDay);
   }
@@ -119,13 +119,13 @@ class ValueModifierTest {
 
   @Test
   void startYear_dynamicBounds_rejectsAValueOutsideTheCurrentClimateRange () {
-    app.vm.Start_year(0);
+    app.vm.sampleYearStart(0);
     app.sampleYearStart = 1980;
 
-    app.allActions.get("start_year").run(new String[]{"start_year", "1900"}); // below climateEngineeringStart
+    app.allActions.get("sample_year_start").run(new String[]{"sample_year_start", "1900"}); // below climateEngineeringStart
     assertEquals(1980, app.sampleYearStart);
 
-    app.allActions.get("start_year").run(new String[]{"start_year", "1975"}); // within range
+    app.allActions.get("sample_year_start").run(new String[]{"sample_year_start", "1975"}); // within range
     assertEquals(1975, app.sampleYearStart);
   }
 
@@ -133,12 +133,12 @@ class ValueModifierTest {
 
   @Test
   void scale_negativeClickStepField_roundsCommandLineInputByItsAbsoluteValue () {
-    app.vm.Scale(0);
+    app.vm.verticalUnitScale(0);
     app.STUDY.verticalUnitScale = 1;
 
     float roundingStep = (float) Math.abs(-Math.pow(2.0, 1.0 / 2.0));
 
-    app.allActions.get("scale").run(new String[]{"scale", "5"});
+    app.allActions.get("vertical_unit_scale").run(new String[]{"vertical_unit_scale", "5"});
 
     assertEquals(app.funcs.roundTo(5, roundingStep), app.STUDY.verticalUnitScale, 0.001f);
   }
@@ -151,7 +151,7 @@ class ValueModifierTest {
     int slot = app.allSolidImpacts.sectionType;
     app.allSolidImpacts.R[slot] = 0;
 
-    app.allActions.get("solidimpacts_r").run(new String[]{"solidimpacts_r", "45"});
+    app.allActions.get("solid_impacts_r").run(new String[]{"solid_impacts_r", "45"});
 
     assertEquals(45, app.allSolidImpacts.R[slot], 0.001f);
   }
@@ -161,7 +161,7 @@ class ValueModifierTest {
     app.vm.SolidImpacts_r(0);
     app.WIN3D.update = false;
 
-    app.allActions.get("solidimpacts_r").run(new String[]{"solidimpacts_r", "45"});
+    app.allActions.get("solid_impacts_r").run(new String[]{"solid_impacts_r", "45"});
 
     assertTrue(app.WIN3D.update); // via react.recalcImpact -> view_changed()
   }
@@ -170,11 +170,11 @@ class ValueModifierTest {
 
   @Test
   void numberOfDaysToPlot_commandLineAction_triggersApplyStudyJEnd () {
-    app.vm.Number_of_days_to_plot(0);
+    app.vm.endDay(0);
     app.STUDY.endDay = 100;
     app.UI_caseBar.update = false;
 
-    app.allActions.get("number_of_days_to_plot").run(new String[]{"number_of_days_to_plot", "200"});
+    app.allActions.get("end_day").run(new String[]{"end_day", "200"});
 
     assertEquals(200, app.STUDY.endDay);
     assertTrue(app.UI_caseBar.update);

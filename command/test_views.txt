@@ -19,7 +19,7 @@ Select nothing
 Show Sky
 Hide Earth Surface
 
-Days past March equinox 80
+Date 80
 
 Shade.Global
 

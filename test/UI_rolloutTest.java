@@ -105,9 +105,9 @@ class UI_rolloutTest {
     assertDoesNotThrow(() -> app.UI_rollout.registerSpinnerActions());
 
     assertTrue(app.allActions.size() > before);
-    assertTrue(app.allActions.containsKey("begin_day"));
-    assertTrue(app.allActions.containsKey("latitude"));
-    assertTrue(app.allActions.containsKey("longitude"));
+    assertTrue(app.allActions.containsKey("day"));
+    assertTrue(app.allActions.containsKey("location_latitude"));
+    assertTrue(app.allActions.containsKey("location_longitude"));
   }
 
   // ================= dispatchEditKey ==========================================

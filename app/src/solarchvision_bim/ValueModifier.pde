@@ -15,7 +15,7 @@
 // reintroducing that bug.
 class ValueModifier {
 
-  int Number_of_days_to_plot (int created) {
+  int endDay (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -26,18 +26,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Number of days to plot",
+      putValueAction("End Day",
         () -> (float) STUDY.endDay,
         (v) -> { STUDY.endDay = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyStudyJEnd);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Number of days to plot", STUDY.endDay, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End Day", STUDY.endDay, s1, s2, s3);
     }
     return out;
   }
-  float Day_step (int created) {
+  float dayIncrement (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -48,17 +48,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Day step",
+      putValueAction("Day Increment",
         () -> STUDY.dayIncrement,
         (v) -> { STUDY.dayIncrement = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Day step", STUDY.dayIncrement, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Day Increment", STUDY.dayIncrement, s1, s2, s3);
     }
     return out;
   }
-  int Join_days (int created) {
+  int daysMergedCount (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -69,18 +69,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Join days",
+      putValueAction("Days Merged Count",
         () -> (float) STUDY.daysMergedCount,
         (v) -> { STUDY.daysMergedCount = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Join days", STUDY.daysMergedCount, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Days Merged Count", STUDY.daysMergedCount, s1, s2, s3);
     }
     return out;
   }
-  float Days_past_March_equinox (int created) {
+  float date (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -91,18 +91,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Days past March equinox",
+      putValueAction("Date",
         () -> TIME.date,
         (v) -> { TIME.date = v; },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeDate);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Days past March equinox", TIME.date, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Date", TIME.date, s1, s2, s3);
     }
     return out;
   }
-  int Begin_day (int created) {
+  int day (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -113,18 +113,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Begin day",
+      putValueAction("Day",
         () -> (float) TIME.day,
         (v) -> { TIME.day = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Begin day", TIME.day, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Day", TIME.day, s1, s2, s3);
     }
     return out;
   }
-  int Begin_month (int created) {
+  int month (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -135,18 +135,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Begin month",
+      putValueAction("Month",
         () -> (float) TIME.month,
         (v) -> { TIME.month = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Begin month", TIME.month, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Month", TIME.month, s1, s2, s3);
     }
     return out;
   }
-  int Begin_year (int created) {
+  int year (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -157,18 +157,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Begin year",
+      putValueAction("Year",
         () -> (float) TIME.year,
         (v) -> { TIME.year = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Begin year", TIME.year, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Year", TIME.year, s1, s2, s3);
     }
     return out;
   }
-  int Start_hour (int created) {
+  int startHour (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -179,18 +179,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Start hour",
+      putValueAction("Start Hour",
         () -> (float) STUDY.startHour,
         (v) -> { STUDY.startHour = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start hour", STUDY.startHour, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start Hour", STUDY.startHour, s1, s2, s3);
     }
     return out;
   }
-  int End_hour (int created) {
+  int endHour (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -201,126 +201,126 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("End hour",
+      putValueAction("End Hour",
         () -> (float) STUDY.endHour,
         (v) -> { STUDY.endHour = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End hour", STUDY.endHour, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End Hour", STUDY.endHour, s1, s2, s3);
     }
     return out;
   }
-  int Start_year (int created) {
+  int sampleYearStart (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Start year",
+      putValueAction("Sample Year Start",
         () -> (float) sampleYearStart,
         (v) -> { sampleYearStart = int(v); },
         () -> (float) (climateEngineeringStart), () -> (float) (climateArchiveEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start year", sampleYearStart, climateEngineeringStart, climateArchiveEnd, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sample Year Start", sampleYearStart, climateEngineeringStart, climateArchiveEnd, 1);
     }
     return out;
   }
-  int End_year (int created) {
+  int sampleYearEnd (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("End year",
+      putValueAction("Sample Year End",
         () -> (float) sampleYearEnd,
         (v) -> { sampleYearEnd = int(v); },
         () -> (float) (climateEngineeringStart), () -> (float) (climateArchiveEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End year", sampleYearEnd, climateEngineeringStart, climateArchiveEnd, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sample Year End", sampleYearEnd, climateEngineeringStart, climateArchiveEnd, 1);
     }
     return out;
   }
-  int Start_member (int created) {
+  int sampleMemberStart (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Start member",
+      putValueAction("Sample Member Start",
         () -> (float) sampleMemberStart,
         (v) -> { sampleMemberStart = int(v); },
         () -> (float) (ensembleForecastStart), () -> (float) (ensembleForecastEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start member", sampleMemberStart, ensembleForecastStart, ensembleForecastEnd, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sample Member Start", sampleMemberStart, ensembleForecastStart, ensembleForecastEnd, 1);
     }
     return out;
   }
-  int End_member (int created) {
+  int sampleMemberEnd (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("End member",
+      putValueAction("Sample Member End",
         () -> (float) sampleMemberEnd,
         (v) -> { sampleMemberEnd = int(v); },
         () -> (float) (ensembleForecastStart), () -> (float) (ensembleForecastEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End member", sampleMemberEnd, ensembleForecastStart, ensembleForecastEnd, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sample Member End", sampleMemberEnd, ensembleForecastStart, ensembleForecastEnd, 1);
     }
     return out;
   }
-  int Start_station (int created) {
+  int sampleStationStart (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Start station",
+      putValueAction("Sample Station Start",
         () -> (float) sampleStationStart,
         (v) -> { sampleStationStart = int(v); },
         () -> (float) (ensembleObservationStart), () -> (float) (ensembleObservationEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Start station", sampleStationStart, ensembleObservationStart, ensembleObservationEnd, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sample Station Start", sampleStationStart, ensembleObservationStart, ensembleObservationEnd, 1);
     }
     return out;
   }
-  int End_station (int created) {
+  int sampleStationEnd (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("End station",
+      putValueAction("Sample Station End",
         () -> (float) sampleStationEnd,
         (v) -> { sampleStationEnd = int(v); },
         () -> (float) (ensembleObservationStart), () -> (float) (ensembleObservationEnd), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "End station", sampleStationEnd, ensembleObservationStart, ensembleObservationEnd, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sample Station End", sampleStationEnd, ensembleObservationStart, ensembleObservationEnd, 1);
     }
     return out;
   }
-  int Forecast_Obs_maxDays (int created) {
+  int ensembleObservationMaxDays (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -331,17 +331,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Forecast/Obs maxDays",
+      putValueAction("Ensemble Observation Max Days",
         () -> (float) ensembleObservationMaxDays,
         (v) -> { ensembleObservationMaxDays = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Forecast/Obs maxDays", ensembleObservationMaxDays, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Ensemble Observation Max Days", ensembleObservationMaxDays, s1, s2, s3);
     }
     return out;
   }
-  int Sky_status (int created) {
+  int skyScenarioSetting (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -352,17 +352,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Sky status",
+      putValueAction("Sky Scenario Setting",
         () -> (float) STUDY.skyScenarioSetting,
         (v) -> { STUDY.skyScenarioSetting = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky status", STUDY.skyScenarioSetting, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky Scenario Setting", STUDY.skyScenarioSetting, s1, s2, s3);
     }
     return out;
   }
-  int Hourly_daily_filter (int created) {
+  int temporalFilterSetting (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -373,17 +373,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Hourly/daily filter",
+      putValueAction("Temporal Filter Setting",
         () -> (float) STUDY.temporalFilterSetting,
         (v) -> { STUDY.temporalFilterSetting = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Hourly/daily filter", STUDY.temporalFilterSetting, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Temporal Filter Setting", STUDY.temporalFilterSetting, s1, s2, s3);
     }
     return out;
   }
-  float Latitude (int created) {
+  float LocationLatitude (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -395,17 +395,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Latitude",
+      putValueAction("Location Latitude",
         () -> LocationLAT,
         (v) -> { STATION.setLatitude(v); update_station(0); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Latitude", LocationLAT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Location Latitude", LocationLAT, s1, s2, s3, s4);
     }
     return out;
   }
-  float Longitude (int created) {
+  float LocationLongitude (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -417,13 +417,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Longitude",
+      putValueAction("Location Longitude",
         () -> LocationLON,
         (v) -> { STATION.setLongitude(v); update_station(0); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Longitude", LocationLON, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Location Longitude", LocationLON, s1, s2, s3, s4);
     }
     return out;
   }
@@ -617,24 +617,24 @@ class ValueModifier {
     }
     return out;
   }
-  boolean AddToLastGroup (int created) {
+  boolean addToLastGroup (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("AddToLastGroup",
+      putValueAction("Add To Last Group",
         () -> (addToLastGroup ? 1f : 0f),
         (v) -> { addToLastGroup = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "AddToLastGroup", addToLastGroup);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Add To Last Group", addToLastGroup);
     }
     return out;
   }
-  int Create3D_material (int created) {
+  int defaultMaterial (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -645,17 +645,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D material",
+      putValueAction("Default Material",
         () -> (float) User3D.defaultMaterial,
         (v) -> { User3D.defaultMaterial = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D material", User3D.defaultMaterial, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Material", User3D.defaultMaterial, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_tessellation (int created) {
+  int defaultTessellation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -666,17 +666,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D tessellation",
+      putValueAction("Default Tessellation",
         () -> (float) User3D.defaultTessellation,
         (v) -> { User3D.defaultTessellation = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D tessellation", User3D.defaultTessellation, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Tessellation", User3D.defaultTessellation, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_layer (int created) {
+  int defaultLayer (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -687,17 +687,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D layer",
+      putValueAction("Default Layer",
         () -> (float) User3D.defaultLayer,
         (v) -> { User3D.defaultLayer = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D layer", User3D.defaultLayer, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Layer", User3D.defaultLayer, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_visibility (int created) {
+  int defaultVisibility (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -708,17 +708,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D visibility",
+      putValueAction("Default Visibility",
         () -> (float) User3D.defaultVisibility,
         (v) -> { User3D.defaultVisibility = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D visibility", User3D.defaultVisibility, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Visibility", User3D.defaultVisibility, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_weight (int created) {
+  int defaultWeight (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -729,17 +729,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D weight",
+      putValueAction("Default Weight",
         () -> (float) User3D.defaultWeight,
         (v) -> { User3D.defaultWeight = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D weight", User3D.defaultWeight, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Weight", User3D.defaultWeight, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_closed (int created) {
+  int defaultClosed (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -750,17 +750,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D closed",
+      putValueAction("Default Closed",
         () -> (float) User3D.defaultClosed,
         (v) -> { User3D.defaultClosed = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D closed", User3D.defaultClosed, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Default Closed", User3D.defaultClosed, s1, s2, s3);
     }
     return out;
   }
-  float Create3D_orientation (int created) {
+  float creatorOrientation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -772,17 +772,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D orientation",
+      putValueAction("Creator Orientation",
         () -> User3D.creatorOrientation,
         (v) -> { User3D.creatorOrientation = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D orientation", User3D.creatorOrientation, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Orientation", User3D.creatorOrientation, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_length (int created) {
+  float creatorLength (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -794,17 +794,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D length",
+      putValueAction("Creator Length",
         () -> User3D.creatorLength,
         (v) -> { User3D.creatorLength = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D length", User3D.creatorLength, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Length", User3D.creatorLength, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_width (int created) {
+  float creatorWidth (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -816,17 +816,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D width",
+      putValueAction("Creator Width",
         () -> User3D.creatorWidth,
         (v) -> { User3D.creatorWidth = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D width", User3D.creatorWidth, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Width", User3D.creatorWidth, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_height (int created) {
+  float creatorHeight (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -838,17 +838,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D height",
+      putValueAction("Creator Height",
         () -> User3D.creatorHeight,
         (v) -> { User3D.creatorHeight = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D height", User3D.creatorHeight, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Height", User3D.creatorHeight, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_volume (int created) {
+  float creatorVolume (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -860,17 +860,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D volume",
+      putValueAction("Creator Volume",
         () -> User3D.creatorVolume,
         (v) -> { User3D.creatorVolume = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D volume", User3D.creatorVolume, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Volume", User3D.creatorVolume, s1, s2, s3, s4);
     }
     return out;
   }
-  int Create3D_snap (int created) {
+  int creatorSnapModeIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -881,17 +881,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D snap",
+      putValueAction("Creator Snap Mode Index",
         () -> (float) User3D.creatorSnapModeIndex,
         (v) -> { User3D.creatorSnapModeIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D snap", User3D.creatorSnapModeIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Snap Mode Index", User3D.creatorSnapModeIndex, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_sphereDegree (int created) {
+  int creatorSphereDegree (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -902,17 +902,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D sphereDegree",
+      putValueAction("Creator Sphere Degree",
         () -> (float) User3D.creatorSphereDegree,
         (v) -> { User3D.creatorSphereDegree = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D sphereDegree", User3D.creatorSphereDegree, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Sphere Degree", User3D.creatorSphereDegree, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_cylinderDegree (int created) {
+  int creatorCylinderDegree (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -923,17 +923,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D cylinderDegree",
+      putValueAction("Creator Cylinder Degree",
         () -> (float) User3D.creatorCylinderDegree,
         (v) -> { User3D.creatorCylinderDegree = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D cylinderDegree", User3D.creatorCylinderDegree, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Cylinder Degree", User3D.creatorCylinderDegree, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_polyDegree (int created) {
+  int creatorPolygonDegree (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -944,17 +944,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D polyDegree",
+      putValueAction("Creator Polygon Degree",
         () -> (float) User3D.creatorPolygonDegree,
         (v) -> { User3D.creatorPolygonDegree = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D polyDegree", User3D.creatorPolygonDegree, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Polygon Degree", User3D.creatorPolygonDegree, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_parametricType (int created) {
+  int creatorParametricTypeIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -965,51 +965,51 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D parametricType",
+      putValueAction("Creator Parametric Type Index",
         () -> (float) User3D.creatorParametricTypeIndex,
         (v) -> { User3D.creatorParametricTypeIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D parametricType", User3D.creatorParametricTypeIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Parametric Type Index", User3D.creatorParametricTypeIndex, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_personType (int created) {
+  int creatorPersonTypeIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D personType",
+      putValueAction("Creator Person Type Index",
         () -> (float) User3D.creatorPersonTypeIndex,
         (v) -> { User3D.creatorPersonTypeIndex = int(v); },
         () -> (float) (0), () -> (float) (allModel2Ds.peopleFileCount), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D personType", User3D.creatorPersonTypeIndex, 0, allModel2Ds.peopleFileCount, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Person Type Index", User3D.creatorPersonTypeIndex, 0, allModel2Ds.peopleFileCount, 1);
     }
     return out;
   }
-  int Create3D_plantType (int created) {
+  int creatorPlantTypeIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D plantType",
+      putValueAction("Creator Plant Type Index",
         () -> (float) User3D.creatorPlantTypeIndex,
         (v) -> { User3D.creatorPlantTypeIndex = int(v); },
         () -> (float) (0), () -> (float) (allModel2Ds.treesFileCount), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D plantType", User3D.creatorPlantTypeIndex, 0, allModel2Ds.treesFileCount, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Plant Type Index", User3D.creatorPlantTypeIndex, 0, allModel2Ds.treesFileCount, 1);
     }
     return out;
   }
-  float Modify3D_openningDepth (int created) {
+  float modifierOpeningDepth (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1020,17 +1020,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Modify3D openningDepth",
+      putValueAction("Modifier Opening Depth",
         () -> User3D.modifierOpeningDepth,
         (v) -> { User3D.modifierOpeningDepth = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningDepth", User3D.modifierOpeningDepth, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modifier Opening Depth", User3D.modifierOpeningDepth, s1, s2, s3);
     }
     return out;
   }
-  float Modify3D_openningArea (int created) {
+  float modifierOpeningArea (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1041,17 +1041,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Modify3D openningArea",
+      putValueAction("Modifier Opening Area",
         () -> User3D.modifierOpeningArea,
         (v) -> { User3D.modifierOpeningArea = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningArea", User3D.modifierOpeningArea, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modifier Opening Area", User3D.modifierOpeningArea, s1, s2, s3);
     }
     return out;
   }
-  float Modify3D_openningDeviation (int created) {
+  float modifierOpeningDeviation (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1062,17 +1062,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Modify3D openningDeviation",
+      putValueAction("Modifier Opening Deviation",
         () -> User3D.modifierOpeningDeviation,
         (v) -> { User3D.modifierOpeningDeviation = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D openningDeviation", User3D.modifierOpeningDeviation, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modifier Opening Deviation", User3D.modifierOpeningDeviation, s1, s2, s3);
     }
     return out;
   }
-  int Modify3D_tessellateRows (int created) {
+  int modifierTessellateRows (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1083,17 +1083,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Modify3D tessellateRows",
+      putValueAction("Modifier Tessellate Rows",
         () -> (float) User3D.modifierTessellateRows,
         (v) -> { User3D.modifierTessellateRows = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D tessellateRows", User3D.modifierTessellateRows, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modifier Tessellate Rows", User3D.modifierTessellateRows, s1, s2, s3);
     }
     return out;
   }
-  int Modify3D_tessellateColumns (int created) {
+  int modifierTessellateColumns (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1104,17 +1104,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Modify3D tessellateColumns",
+      putValueAction("Modifier Tessellate Columns",
         () -> (float) User3D.modifierTessellateColumns,
         (v) -> { User3D.modifierTessellateColumns = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D tessellateColumns", User3D.modifierTessellateColumns, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modifier Tessellate Columns", User3D.modifierTessellateColumns, s1, s2, s3);
     }
     return out;
   }
-  float Modify3D_offsetAmount (int created) {
+  float modifierOffsetAmount (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1125,17 +1125,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Modify3D offsetAmount",
+      putValueAction("Modifier Offset Amount",
         () -> User3D.modifierOffsetAmount,
         (v) -> { User3D.modifierOffsetAmount = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D offsetAmount", User3D.modifierOffsetAmount, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modifier Offset Amount", User3D.modifierOffsetAmount, s1, s2, s3);
     }
     return out;
   }
-  float Modify3D_weldThreshold (int created) {
+  float modifierWeldThreshold (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1146,17 +1146,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Modify3D weldThreshold",
+      putValueAction("Modifier Weld Threshold",
         () -> User3D.modifierWeldThreshold,
         (v) -> { User3D.modifierWeldThreshold = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modify3D weldThreshold", User3D.modifierWeldThreshold, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Modifier Weld Threshold", User3D.modifierWeldThreshold, s1, s2, s3);
     }
     return out;
   }
-  float Select3D_softSelectionFalloffPower (int created) {
+  float softSelectionFalloffPower (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1168,18 +1168,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D softSelectionFalloffPower",
+      putValueAction("Soft Selection Falloff Power",
         () -> Select3D.softSelectionFalloffPower,
         (v) -> { Select3D.softSelectionFalloffPower = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.softSelectionChanged);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D softSelectionFalloffPower", Select3D.softSelectionFalloffPower, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Soft Selection Falloff Power", Select3D.softSelectionFalloffPower, s1, s2, s3, s4);
     }
     return out;
   }
-  float Select3D_softSelectionFalloffRadius (int created) {
+  float softSelectionFalloffRadius (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1191,18 +1191,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D softSelectionFalloffRadius",
+      putValueAction("Soft Selection Falloff Radius",
         () -> Select3D.softSelectionFalloffRadius,
         (v) -> { Select3D.softSelectionFalloffRadius = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.softSelectionChanged);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D softSelectionFalloffRadius", Select3D.softSelectionFalloffRadius, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Soft Selection Falloff Radius", Select3D.softSelectionFalloffRadius, s1, s2, s3, s4);
     }
     return out;
   }
-  int Select3D_positionVectorIndex (int created) {
+  int positionVectorIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1213,17 +1213,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D positionVectorIndex",
+      putValueAction("Position Vector Index",
         () -> (float) Select3D.positionVectorIndex,
         (v) -> { Select3D.positionVectorIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D positionVectorIndex", Select3D.positionVectorIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Position Vector Index", Select3D.positionVectorIndex, s1, s2, s3);
     }
     return out;
   }
-  int Select3D_rotationVectorIndex (int created) {
+  int rotationVectorIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1234,17 +1234,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D rotationVectorIndex",
+      putValueAction("Rotation Vector Index",
         () -> (float) Select3D.rotationVectorIndex,
         (v) -> { Select3D.rotationVectorIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D rotationVectorIndex", Select3D.rotationVectorIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Rotation Vector Index", Select3D.rotationVectorIndex, s1, s2, s3);
     }
     return out;
   }
-  int Select3D_scaleVectorIndex (int created) {
+  int scaleVectorIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1255,17 +1255,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D scaleVectorIndex",
+      putValueAction("Scale Vector Index",
         () -> (float) Select3D.scaleVectorIndex,
         (v) -> { Select3D.scaleVectorIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D scaleVectorIndex", Select3D.scaleVectorIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Scale Vector Index", Select3D.scaleVectorIndex, s1, s2, s3);
     }
     return out;
   }
-  float Select3D_position (int created) {
+  float positionSelection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1277,18 +1277,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D position",
+      putValueAction("Position Selection",
         () -> Select3D.position,
         (v) -> { Select3D.position = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.applyPosValue);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D position", Select3D.position, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Position Selection", Select3D.position, s1, s2, s3, s4);
     }
     return out;
   }
-  float Select3D_rotation (int created) {
+  float rotationSelection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1300,18 +1300,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D rotation",
+      putValueAction("Rotation Selection",
         () -> Select3D.rotation,
         (v) -> { Select3D.rotation = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.applyRotValue);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D rotation", Select3D.rotation, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Rotation Selection", Select3D.rotation, s1, s2, s3, s4);
     }
     return out;
   }
-  float Select3D_scale (int created) {
+  float scaleSelection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1323,18 +1323,18 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Select3D scale",
+      putValueAction("Scale Selection",
         () -> Select3D.scale,
         (v) -> { Select3D.scale = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.applyScaleValue);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D scale", Select3D.scale, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Scale Selection", Select3D.scale, s1, s2, s3, s4);
     }
     return out;
   }
-  int Select3D_pivotAlignmentX (int created) {
+  int pivotAlignmentX (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1345,18 +1345,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D pivotAlignmentX",
+      putValueAction("Pivot Alignment X",
         () -> (float) Select3D.pivotAlignmentX,
         (v) -> { Select3D.pivotAlignmentX = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.selectionChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D pivotAlignmentX", Select3D.pivotAlignmentX, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Pivot Alignment X", Select3D.pivotAlignmentX, s1, s2, s3);
     }
     return out;
   }
-  int Select3D_pivotAlignmentY (int created) {
+  int pivotAlignmentY (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1367,18 +1367,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D pivotAlignmentY",
+      putValueAction("Pivot Alignment Y",
         () -> (float) Select3D.pivotAlignmentY,
         (v) -> { Select3D.pivotAlignmentY = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.selectionChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D pivotAlignmentY", Select3D.pivotAlignmentY, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Pivot Alignment Y", Select3D.pivotAlignmentY, s1, s2, s3);
     }
     return out;
   }
-  int Select3D_pivotAlignmentZ (int created) {
+  int pivotAlignmentZ (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1389,87 +1389,87 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Select3D pivotAlignmentZ",
+      putValueAction("Pivot Alignment Z",
         () -> (float) Select3D.pivotAlignmentZ,
         (v) -> { Select3D.pivotAlignmentZ = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.selectionChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D pivotAlignmentZ", Select3D.pivotAlignmentZ, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Pivot Alignment Z", Select3D.pivotAlignmentZ, s1, s2, s3);
     }
     return out;
   }
-  float Create3D_powAll (int created) {
+  float creatorUniformSuperellipsoidPower (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D powAll",
+      putValueAction("Creator Uniform Superellipsoid Power",
         () -> User3D.creatorUniformSuperellipsoidPower,
         (v) -> { User3D.creatorUniformSuperellipsoidPower = v; },
         () -> (float) (0.5), () -> (float) (CubePower), 0.001,
         u1, u2, u3,
         react.applyCreatePowAll);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powAll", User3D.creatorUniformSuperellipsoidPower, 0.5, CubePower, -2, 0.001);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Uniform Superellipsoid Power", User3D.creatorUniformSuperellipsoidPower, 0.5, CubePower, -2, 0.001);
     }
     return out;
   }
-  float Create3D_powX (int created) {
+  float creatorSuperellipsoidPowerX (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D powX",
+      putValueAction("Creator Superellipsoid Power X",
         () -> User3D.creatorSuperellipsoidPowerX,
         (v) -> { User3D.creatorSuperellipsoidPowerX = v; },
         () -> (float) (0.5), () -> (float) (CubePower), 0.001,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powX", User3D.creatorSuperellipsoidPowerX, 0.5, CubePower, -2, 0.001);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Superellipsoid Power X", User3D.creatorSuperellipsoidPowerX, 0.5, CubePower, -2, 0.001);
     }
     return out;
   }
-  float Create3D_powY (int created) {
+  float creatorSuperellipsoidPowerY (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D powY",
+      putValueAction("Creator Superellipsoid Power Y",
         () -> User3D.creatorSuperellipsoidPowerY,
         (v) -> { User3D.creatorSuperellipsoidPowerY = v; },
         () -> (float) (0.5), () -> (float) (CubePower), 0.001,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powY", User3D.creatorSuperellipsoidPowerY, 0.5, CubePower, -2, 0.001);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Superellipsoid Power Y", User3D.creatorSuperellipsoidPowerY, 0.5, CubePower, -2, 0.001);
     }
     return out;
   }
-  float Create3D_powZ (int created) {
+  float creatorSuperellipsoidPowerZ (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D powZ",
+      putValueAction("Creator Superellipsoid Power Z",
         () -> User3D.creatorSuperellipsoidPowerZ,
         (v) -> { User3D.creatorSuperellipsoidPowerZ = v; },
         () -> (float) (0.5), () -> (float) (CubePower), 0.001,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D powZ", User3D.creatorSuperellipsoidPowerZ, 0.5, CubePower, -2, 0.001);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Superellipsoid Power Z", User3D.creatorSuperellipsoidPowerZ, 0.5, CubePower, -2, 0.001);
     }
     return out;
   }
-  int Create3D_type (int created) {
+  int creatorModel1DTypeIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1480,17 +1480,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D type",
+      putValueAction("Creator Model1DType Index",
         () -> (float) User3D.creatorModel1DTypeIndex,
         (v) -> { User3D.creatorModel1DTypeIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D type", User3D.creatorModel1DTypeIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DType Index", User3D.creatorModel1DTypeIndex, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_degreeMax (int created) {
+  int creatorModel1DDegreeMax (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1501,17 +1501,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D degreeMax",
+      putValueAction("Creator Model1DDegree Max",
         () -> (float) User3D.creatorModel1DDegreeMax,
         (v) -> { User3D.creatorModel1DDegreeMax = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D degreeMax", User3D.creatorModel1DDegreeMax, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DDegree Max", User3D.creatorModel1DDegreeMax, s1, s2, s3);
     }
     return out;
   }
-  int Create3D_seed (int created) {
+  int creatorModel1DSeed (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1522,17 +1522,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Create3D seed",
+      putValueAction("Creator Model1DSeed",
         () -> (float) User3D.creatorModel1DSeed,
         (v) -> { User3D.creatorModel1DSeed = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D seed", User3D.creatorModel1DSeed, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DSeed", User3D.creatorModel1DSeed, s1, s2, s3);
     }
     return out;
   }
-  float Create3D_trunkSize (int created) {
+  float creatorModel1DTrunkSize (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1544,17 +1544,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D trunkSize",
+      putValueAction("Creator Model1DTrunk Size",
         () -> User3D.creatorModel1DTrunkSize,
         (v) -> { User3D.creatorModel1DTrunkSize = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D trunkSize", User3D.creatorModel1DTrunkSize, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DTrunk Size", User3D.creatorModel1DTrunkSize, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_leafSize (int created) {
+  float creatorModel1DLeafSize (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1566,17 +1566,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D leafSize",
+      putValueAction("Creator Model1DLeaf Size",
         () -> User3D.creatorModel1DLeafSize,
         (v) -> { User3D.creatorModel1DLeafSize = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D leafSize", User3D.creatorModel1DLeafSize, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1DLeaf Size", User3D.creatorModel1DLeafSize, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_branchTilt (int created) {
+  float creator_Model1D_BranchTilt (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1588,17 +1588,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D branchTilt",
+      putValueAction("Creator Model1D Branch Tilt",
         () -> User3D.creator_Model1D_BranchTilt,
         (v) -> { User3D.creator_Model1D_BranchTilt = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchTilt", User3D.creator_Model1D_BranchTilt, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Tilt", User3D.creator_Model1D_BranchTilt, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_branchTwist (int created) {
+  float creator_Model1D_BranchTwist (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1610,17 +1610,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D branchTwist",
+      putValueAction("Creator Model1D Branch Twist",
         () -> User3D.creator_Model1D_BranchTwist,
         (v) -> { User3D.creator_Model1D_BranchTwist = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchTwist", User3D.creator_Model1D_BranchTwist, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Twist", User3D.creator_Model1D_BranchTwist, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_branchRatio (int created) {
+  float creator_Model1D_BranchRatio (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1632,17 +1632,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D branchRatio",
+      putValueAction("Creator Model1D Branch Ratio",
         () -> User3D.creator_Model1D_BranchRatio,
         (v) -> { User3D.creator_Model1D_BranchRatio = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D branchRatio", User3D.creator_Model1D_BranchRatio, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Branch Ratio", User3D.creator_Model1D_BranchRatio, s1, s2, s3, s4);
     }
     return out;
   }
-  float Create3D_treeBase (int created) {
+  float creator_Model1D_TreeBase (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1654,13 +1654,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Create3D treeBase",
+      putValueAction("Creator Model1D Tree Base",
         () -> User3D.creator_Model1D_TreeBase,
         (v) -> { User3D.creator_Model1D_TreeBase = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D treeBase", User3D.creator_Model1D_TreeBase, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Creator Model1D Tree Base", User3D.creator_Model1D_TreeBase, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1671,14 +1671,14 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Terrain loadTextures",
+      putValueAction("Terrain Load Textures",
         () -> (Terrain.loadTextures ? 1f : 0f),
         (v) -> { Terrain.loadTextures = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.applyLandLoadTextures);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain loadTextures", Terrain.loadTextures);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Load Textures", Terrain.loadTextures);
     }
     return out;
   }
@@ -1689,14 +1689,14 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Terrain loadMesh",
+      putValueAction("Terrain Load Mesh",
         () -> (Terrain.loadMesh ? 1f : 0f),
         (v) -> { Terrain.loadMesh = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.applyLandLoadMesh);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain loadMesh", Terrain.loadMesh);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Load Mesh", Terrain.loadMesh);
     }
     return out;
   }
@@ -1707,13 +1707,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Terrain skipStart",
+      putValueAction("Terrain Skip Start",
         () -> (float) Terrain.skipStart,
         (v) -> { Terrain.skipStart = int(v); },
         () -> (float) (0), () -> (float) (Terrain.rowCount - 1), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain skipStart", Terrain.skipStart, 0, Terrain.rowCount - 1, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Skip Start", Terrain.skipStart, 0, Terrain.rowCount - 1, 1);
     }
     return out;
   }
@@ -1724,13 +1724,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Terrain skipEnd",
+      putValueAction("Terrain Skip End",
         () -> (float) Terrain.skipEnd,
         (v) -> { Terrain.skipEnd = int(v); },
         () -> (float) (0), () -> (float) (Terrain.rowCount - 1), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain skipEnd", Terrain.skipEnd, 0, Terrain.rowCount - 1, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Skip End", Terrain.skipEnd, 0, Terrain.rowCount - 1, 1);
     }
     return out;
   }
@@ -1785,20 +1785,20 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Terrain_displayDepth (int created) {
+  boolean displayDepth (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Terrain displayDepth",
+      putValueAction("Display Depth",
         () -> (Terrain.displayDepth ? 1f : 0f),
         (v) -> { Terrain.displayDepth = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain displayDepth", Terrain.displayDepth);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Display Depth", Terrain.displayDepth);
     }
     return out;
   }
@@ -1843,13 +1843,13 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Model1Ds displayLeaves",
+      putValueAction("Model1Ds Display Leaves",
         () -> (allModel1Ds.displayLeaves ? 1f : 0f),
         (v) -> { allModel1Ds.displayLeaves = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Model1Ds displayLeaves", allModel1Ds.displayLeaves);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Model1Ds Display Leaves", allModel1Ds.displayLeaves);
     }
     return out;
   }
@@ -1938,7 +1938,7 @@ class ValueModifier {
     }
     return out;
   }
-  float WindRoses_scale (int created) {
+  float WindRoses_planeSize (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -1950,13 +1950,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("WindRoses scale",
+      putValueAction("Wind Roses Plane Size",
         () -> allWindRoses.planeSize,
         (v) -> { allWindRoses.planeSize = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindRoses scale", allWindRoses.planeSize, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Wind Roses Plane Size", allWindRoses.planeSize, s1, s2, s3, s4);
     }
     return out;
   }
@@ -1984,13 +1984,13 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Sun3D displayPath",
+      putValueAction("Sun3D Display Path",
         () -> (Sun3D.displayPath ? 1f : 0f),
         (v) -> { Sun3D.displayPath = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D displayPath", Sun3D.displayPath);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Display Path", Sun3D.displayPath);
     }
     return out;
   }
@@ -2001,35 +2001,35 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Sun3D displayPattern",
+      putValueAction("Sun3D Display Pattern",
         () -> (Sun3D.displayPattern ? 1f : 0f),
         (v) -> { Sun3D.displayPattern = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D displayPattern", Sun3D.displayPattern);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sun3D Display Pattern", Sun3D.displayPattern);
     }
     return out;
   }
-  int Camera_current (int created) {
+  int currentCameraIndex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Camera current",
+      putValueAction("Current Camera Index",
         () -> (float) WIN3D.currentCameraIndex,
         (v) -> { WIN3D.currentCameraIndex = int(v); },
         () -> (float) (0), () -> (float) (allCameras.num), 1,
         u1, u2, u3,
         react.applyCurrentCamera);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera current", WIN3D.currentCameraIndex, 0, allCameras.num, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Current Camera Index", WIN3D.currentCameraIndex, 0, allCameras.num, 1);
     }
     return out;
   }
-  float Camera_clipNear (int created) {
+  float cameraClipNear (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2041,17 +2041,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Camera clipNear",
+      putValueAction("Camera Clip Near",
         () -> WIN3D.cameraClipNear,
         (v) -> { WIN3D.cameraClipNear = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera clipNear", WIN3D.cameraClipNear, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera Clip Near", WIN3D.cameraClipNear, s1, s2, s3, s4);
     }
     return out;
   }
-  float Camera_clipFar (int created) {
+  float cameraClipFar (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2063,13 +2063,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Camera clipFar",
+      putValueAction("Camera Clip Far",
         () -> WIN3D.cameraClipFar,
         (v) -> { WIN3D.cameraClipFar = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera clipFar", WIN3D.cameraClipFar, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera Clip Far", WIN3D.cameraClipFar, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2098,14 +2098,14 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Create3D displayEdges",
+      putValueAction("Create3D Display Edges",
         () -> (allFaces.displayEdges ? 1f : 0f),
         (v) -> { allFaces.displayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D displayEdges", allFaces.displayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Create3D Display Edges", allFaces.displayEdges);
     }
     return out;
   }
@@ -2151,14 +2151,14 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Impacts displayDay",
+      putValueAction("Impact Display Day",
         () -> (float) impactDisplayDay,
         (v) -> { impactDisplayDay = int(v); },
         () -> (float) (0), () -> (float) (STUDY.endDay - STUDY.startDay), 1,
         u1, u2, u3,
         react.caseBarOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impacts displayDay", impactDisplayDay, 0, STUDY.endDay - STUDY.startDay, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impact Display Day", impactDisplayDay, 0, STUDY.endDay - STUDY.startDay, 1);
     }
     return out;
   }
@@ -2250,14 +2250,14 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts grade",
+      putValueAction("Solid Impacts Grade",
         () -> allSolidImpacts.Grade,
         (v) -> { allSolidImpacts.Grade = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts grade", allSolidImpacts.Grade, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solid Impacts Grade", allSolidImpacts.Grade, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2273,14 +2273,14 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts power",
+      putValueAction("Solid Impacts Power",
         () -> allSolidImpacts.Power,
         (v) -> { allSolidImpacts.Power = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts power", allSolidImpacts.Power, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solid Impacts Power", allSolidImpacts.Power, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2296,7 +2296,7 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts r",
+      putValueAction("Solid Impacts R",
         () -> allSolidImpacts.R[allSolidImpacts.sectionType],
         (v) -> { allSolidImpacts.R[allSolidImpacts.sectionType] = v; },
         s1, s2, s4,
@@ -2319,7 +2319,7 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts z",
+      putValueAction("Solid Impacts Z",
         () -> allSolidImpacts.Z[allSolidImpacts.sectionType],
         (v) -> { allSolidImpacts.Z[allSolidImpacts.sectionType] = v; },
         s1, s2, s4,
@@ -2342,13 +2342,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts positionStep",
+      putValueAction("Solid Impacts Position Step",
         () -> allSolidImpacts.positionStep,
         (v) -> { allSolidImpacts.positionStep = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts positionStep", allSolidImpacts.positionStep, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solid Impacts Position Step", allSolidImpacts.positionStep, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2364,7 +2364,7 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts u",
+      putValueAction("Solid Impacts U",
         () -> allSolidImpacts.U[allSolidImpacts.sectionType],
         (v) -> { allSolidImpacts.U[allSolidImpacts.sectionType] = v; },
         s1, s2, s4,
@@ -2387,7 +2387,7 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts v",
+      putValueAction("Solid Impacts V",
         () -> allSolidImpacts.V[allSolidImpacts.sectionType],
         (v) -> { allSolidImpacts.V[allSolidImpacts.sectionType] = v; },
         s1, s2, s4,
@@ -2410,7 +2410,7 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts x",
+      putValueAction("Solid Impacts X",
         () -> allSolidImpacts.X[allSolidImpacts.sectionType],
         (v) -> { allSolidImpacts.X[allSolidImpacts.sectionType] = v; },
         s1, s2, s4,
@@ -2433,7 +2433,7 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts y",
+      putValueAction("Solid Impacts Y",
         () -> allSolidImpacts.Y[allSolidImpacts.sectionType],
         (v) -> { allSolidImpacts.Y[allSolidImpacts.sectionType] = v; },
         s1, s2, s4,
@@ -2444,7 +2444,7 @@ class ValueModifier {
     }
     return out;
   }
-  float SolidImpacts_windSpeedMps (int created) {
+  float SolidImpacts_windSpeed (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2456,14 +2456,14 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts windSpeedMps",
+      putValueAction("Solid Impacts Wind Speed",
         () -> allSolidImpacts.WindSpeed,
         (v) -> { allSolidImpacts.WindSpeed = v; },
         s1, s2, s4,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts windSpeedMps", allSolidImpacts.WindSpeed, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solid Impacts Wind Speed", allSolidImpacts.WindSpeed, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2478,14 +2478,14 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts windDirection",
+      putValueAction("Solid Impacts Wind Direction",
         () -> allSolidImpacts.WindDirection,
         (v) -> { allSolidImpacts.WindDirection = v; },
         s1, s2, s3,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts windDirection", allSolidImpacts.WindDirection, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solid Impacts Wind Direction", allSolidImpacts.WindDirection, s1, s2, s3);
     }
     return out;
   }
@@ -2500,14 +2500,14 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("SolidImpacts processSubDivisions",
+      putValueAction("Solid Impacts Process Sub Divisions",
         () -> (float) allSolidImpacts.Process_subDivisions,
         (v) -> { allSolidImpacts.Process_subDivisions = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.recalcImpact);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts processSubDivisions", allSolidImpacts.Process_subDivisions, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solid Impacts Process Sub Divisions", allSolidImpacts.Process_subDivisions, s1, s2, s3);
     }
     return out;
   }
@@ -2536,14 +2536,14 @@ class ValueModifier {
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("SolidImpacts displayLines",
+      putValueAction("Solid Impacts Display Lines",
         () -> (allSolidImpacts.displayLines ? 1f : 0f),
         (v) -> { allSolidImpacts.displayLines = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "SolidImpacts displayLines", allSolidImpacts.displayLines);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solid Impacts Display Lines", allSolidImpacts.displayLines);
     }
     return out;
   }
@@ -2629,7 +2629,7 @@ class ValueModifier {
     }
     return out;
   }
-  float Sky3D_scale (int created) {
+  float Sky3D_radius (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2641,13 +2641,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Sky3D scale",
+      putValueAction("Sky3D Radius",
         () -> Sky3D.radius,
         (v) -> { Sky3D.radius = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D scale", Sky3D.radius, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Sky3D Radius", Sky3D.radius, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2731,13 +2731,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Earth3D levelOfDetail",
+      putValueAction("Earth3D Level Of Detail",
         () -> Earth3D.levelOfDetail,
         (v) -> { Earth3D.levelOfDetail = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Earth3D levelOfDetail", Earth3D.levelOfDetail, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Earth3D Level Of Detail", Earth3D.levelOfDetail, s1, s2, s3, s4);
     }
     return out;
   }
@@ -2854,13 +2854,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Celestial magnification",
+      putValueAction("Celestial Magnification",
         () -> celestialMagnification,
         (v) -> { celestialMagnification = v; },
         s1, s2, Math.abs(s3),
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Celestial magnification", celestialMagnification, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Celestial Magnification", celestialMagnification, s1, s2, s3);
     }
     return out;
   }
@@ -2876,17 +2876,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Objects scale",
+      putValueAction("Overall Scale",
         () -> overallScale,
         (v) -> { overallScale = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Objects scale", overallScale, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Overall Scale", overallScale, s1, s2, s3, s4);
     }
     return out;
   }
-  int Diagram_setup (int created) {
+  int plotLayoutIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2897,18 +2897,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Diagram setup",
+      putValueAction("Plot Layout Index",
         () -> (float) STUDY.plotLayoutIndex,
         (v) -> { STUDY.plotLayoutIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.impactsUpdateFlag);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Diagram setup", STUDY.plotLayoutIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Plot Layout Index", STUDY.plotLayoutIndex, s1, s2, s3);
     }
     return out;
   }
-  float Scale (int created) {
+  float verticalUnitScale (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -2919,7 +2919,7 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Scale",
+      putValueAction("Vertical Unit Scale",
         () -> STUDY.verticalUnitScale,
         (v) -> { STUDY.verticalUnitScale = v; },
         s1, s2, Math.abs(s3),
@@ -2929,75 +2929,75 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Draw_data (int created) {
+  boolean showRawLines (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Draw data",
+      putValueAction("Show Raw Lines",
         () -> (STUDY.showRawLines ? 1f : 0f),
         (v) -> { STUDY.showRawLines = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw data", STUDY.showRawLines);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Show Raw Lines", STUDY.showRawLines);
     }
     return out;
   }
-  boolean Draw_sorted (int created) {
+  boolean showStatisticalRanges (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Draw sorted",
+      putValueAction("Show Statistical Ranges",
         () -> (STUDY.showStatisticalRanges ? 1f : 0f),
         (v) -> { STUDY.showStatisticalRanges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw sorted", STUDY.showStatisticalRanges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Show Statistical Ranges", STUDY.showStatisticalRanges);
     }
     return out;
   }
-  boolean Draw_statistics (int created) {
+  boolean showStatistics (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Draw statistics",
+      putValueAction("Show Statistics",
         () -> (STUDY.showNormalLines ? 1f : 0f),
         (v) -> { STUDY.showNormalLines = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw statistics", STUDY.showNormalLines);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Show Statistics", STUDY.showNormalLines);
     }
     return out;
   }
-  boolean Draw_probabilities (int created) {
+  boolean showProbabilities (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Draw probabilities",
+      putValueAction("Show Probabilities",
         () -> (STUDY.showProbabilities ? 1f : 0f),
         (v) -> { STUDY.showProbabilities = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Draw probabilities", STUDY.showProbabilities);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Show Probabilities", STUDY.showProbabilities);
     }
     return out;
   }
-  int Probabilities_interval (int created) {
+  int probabilityWidthInterval (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3008,17 +3008,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Probabilities interval",
+      putValueAction("Probability Width Interval",
         () -> (float) STUDY.probabilityWidthInterval,
         (v) -> { STUDY.probabilityWidthInterval = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities interval", STUDY.probabilityWidthInterval, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probability Width Interval", STUDY.probabilityWidthInterval, s1, s2, s3);
     }
     return out;
   }
-  float Probabilities_range (int created) {
+  float probabilityHeightInterval (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3030,13 +3030,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Probabilities range",
+      putValueAction("Probability Height Interval",
         () -> STUDY.probabilityHeightInterval,
         (v) -> { STUDY.probabilityHeightInterval = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities range", STUDY.probabilityHeightInterval, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probability Height Interval", STUDY.probabilityHeightInterval, s1, s2, s3, s4);
     }
     return out;
   }
@@ -3161,24 +3161,24 @@ class ValueModifier {
     }
     return out;
   }
-  int Study_sortPaletteClr (int created) {
+  int statisticalRangesColorScaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Study sortPaletteClr",
+      putValueAction("Statistical Ranges Color Scale Index",
         () -> (float) STUDY.statisticalRangesColorScaleIndex,
         (v) -> { STUDY.statisticalRangesColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteClr", STUDY.statisticalRangesColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Color Scale Index", STUDY.statisticalRangesColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Study_sortPaletteDir (int created) {
+  int statisticalRangesColorScaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3190,17 +3190,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Study sortPaletteDir",
+      putValueAction("Statistical Ranges Color Scale Direction",
         () -> (float) STUDY.statisticalRangesColorScaleDirection,
         (v) -> { STUDY.statisticalRangesColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteDir", STUDY.statisticalRangesColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Color Scale Direction", STUDY.statisticalRangesColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Study_sortPaletteMlt (int created) {
+  float statisticalRangesColorScaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3212,34 +3212,34 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Study sortPaletteMlt",
+      putValueAction("Statistical Ranges Color Scale Factor",
         () -> STUDY.statisticalRangesColorScaleFactor,
         (v) -> { STUDY.statisticalRangesColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study sortPaletteMlt", STUDY.statisticalRangesColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Statistical Ranges Color Scale Factor", STUDY.statisticalRangesColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  int Study_probPaletteClr (int created) {
+  int probabilitiesColorScaleIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Study probPaletteClr",
+      putValueAction("Probabilities Color Scale Index",
         () -> (float) STUDY.probabilitiesColorScaleIndex,
         (v) -> { STUDY.probabilitiesColorScaleIndex = int(v); },
         () -> (float) (-1), () -> (float) ((colorStyleCount - 1)), 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteClr", STUDY.probabilitiesColorScaleIndex, -1, (colorStyleCount - 1), 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Color Scale Index", STUDY.probabilitiesColorScaleIndex, -1, (colorStyleCount - 1), 1);
     }
     return out;
   }
-  int Study_probPaletteDir (int created) {
+  int probabilitiesColorScaleDirection (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3251,17 +3251,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Study probPaletteDir",
+      putValueAction("Probabilities Color Scale Direction",
         () -> (float) STUDY.probabilitiesColorScaleDirection,
         (v) -> { STUDY.probabilitiesColorScaleDirection = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteDir", STUDY.probabilitiesColorScaleDirection, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Color Scale Direction", STUDY.probabilitiesColorScaleDirection, s1, s2, s3, s4);
     }
     return out;
   }
-  float Study_probPaletteMlt (int created) {
+  float probabilitiesColorScaleFactor (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3273,17 +3273,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Study probPaletteMlt",
+      putValueAction("Probabilities Color Scale Factor",
         () -> STUDY.probabilitiesColorScaleFactor,
         (v) -> { STUDY.probabilitiesColorScaleFactor = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Study probPaletteMlt", STUDY.probabilitiesColorScaleFactor, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Color Scale Factor", STUDY.probabilitiesColorScaleFactor, s1, s2, s3, s4);
     }
     return out;
   }
-  float WindRose_opacityScale (int created) {
+  float opacityPercentage (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -3294,13 +3294,13 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("WindRose opacityScale",
+      putValueAction("Opacity Percentage",
         () -> STUDY.opacityPercentage,
         (v) -> { STUDY.opacityPercentage = v; },
         s1, s2, Math.abs(s3),
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindRose opacityScale", STUDY.opacityPercentage, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Opacity Percentage", STUDY.opacityPercentage, s1, s2, s3);
     }
     return out;
   }
@@ -3853,273 +3853,273 @@ class ValueModifier {
     }
     return out;
   }
-  boolean Select3D_groupDisplayPivot (int created) {
+  boolean groupDisplayPivot (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D groupDisplayPivot",
+      putValueAction("Group Display Pivot",
         () -> (Select3D.groupDisplayPivot ? 1f : 0f),
         (v) -> { Select3D.groupDisplayPivot = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayPivot", Select3D.groupDisplayPivot);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Group Display Pivot", Select3D.groupDisplayPivot);
     }
     return out;
   }
-  boolean Select3D_pivotDisplayReference (int created) {
+  boolean pivotDisplayReference (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D pivotDisplayReference",
+      putValueAction("Pivot Display Reference",
         () -> (Select3D.pivotDisplayReference ? 1f : 0f),
         (v) -> { Select3D.pivotDisplayReference = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D pivotDisplayReference", Select3D.pivotDisplayReference);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Pivot Display Reference", Select3D.pivotDisplayReference);
     }
     return out;
   }
-  boolean Select3D_groupDisplayBox (int created) {
+  boolean groupDisplayBox (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D groupDisplayBox",
+      putValueAction("Group Display Box",
         () -> (Select3D.groupDisplayBox ? 1f : 0f),
         (v) -> { Select3D.groupDisplayBox = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayBox", Select3D.groupDisplayBox);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Group Display Box", Select3D.groupDisplayBox);
     }
     return out;
   }
-  boolean Select3D_groupDisplayEdges (int created) {
+  boolean groupDisplayEdges (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D groupDisplayEdges",
+      putValueAction("Group Display Edges",
         () -> (Select3D.groupDisplayEdges ? 1f : 0f),
         (v) -> { Select3D.groupDisplayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D groupDisplayEdges", Select3D.groupDisplayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Group Display Edges", Select3D.groupDisplayEdges);
     }
     return out;
   }
-  boolean Select3D_faceDisplayEdges (int created) {
+  boolean faceDisplayEdges (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D faceDisplayEdges",
+      putValueAction("Face Display Edges",
         () -> (Select3D.faceDisplayEdges ? 1f : 0f),
         (v) -> { Select3D.faceDisplayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D faceDisplayEdges", Select3D.faceDisplayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Face Display Edges", Select3D.faceDisplayEdges);
     }
     return out;
   }
-  boolean Select3D_faceDisplayVertexCount (int created) {
+  boolean faceDisplayVertexSelection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D faceDisplayVertexCount",
+      putValueAction("Face Display Vertex Selection",
         () -> (Select3D.faceDisplayvertexSelection ? 1f : 0f),
         (v) -> { Select3D.faceDisplayvertexSelection = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D faceDisplayVertexCount", Select3D.faceDisplayvertexSelection);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Face Display Vertex Selection", Select3D.faceDisplayvertexSelection);
     }
     return out;
   }
-  boolean Select3D_polylineDisplayVertexCount (int created) {
+  boolean polylineDisplayVertexSelection (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D polylineDisplayVertexCount",
+      putValueAction("Polyline Display Vertex Selection",
         () -> (Select3D.polylineDisplayvertexSelection ? 1f : 0f),
         (v) -> { Select3D.polylineDisplayvertexSelection = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D polylineDisplayVertexCount", Select3D.polylineDisplayvertexSelection);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Polyline Display Vertex Selection", Select3D.polylineDisplayvertexSelection);
     }
     return out;
   }
-  boolean Select3D_vertexDisplayVertices (int created) {
+  boolean vertexDisplayMarkers (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D vertexDisplayVertices",
+      putValueAction("Vertex Display Markers",
         () -> (Select3D.vertexDisplayMarkers ? 1f : 0f),
         (v) -> { Select3D.vertexDisplayMarkers = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D vertexDisplayVertices", Select3D.vertexDisplayMarkers);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Vertex Display Markers", Select3D.vertexDisplayMarkers);
     }
     return out;
   }
-  boolean Select3D_polylineDisplayVertices (int created) {
+  boolean polylineDisplayVertices (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D polylineDisplayVertices",
+      putValueAction("Polyline Display Vertices",
         () -> (Select3D.polylineDisplayVertices ? 1f : 0f),
         (v) -> { Select3D.polylineDisplayVertices = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D polylineDisplayVertices", Select3D.polylineDisplayVertices);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Polyline Display Vertices", Select3D.polylineDisplayVertices);
     }
     return out;
   }
-  boolean Select3D_model2DDisplayEdges (int created) {
+  boolean model2DDisplayBounds (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D model2DDisplayEdges",
+      putValueAction("Model2DDisplay Bounds",
         () -> (Select3D.model2DDisplayBounds ? 1f : 0f),
         (v) -> { Select3D.model2DDisplayBounds = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D model2DDisplayEdges", Select3D.model2DDisplayBounds);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Model2DDisplay Bounds", Select3D.model2DDisplayBounds);
     }
     return out;
   }
-  boolean Select3D_model1DDisplayEdges (int created) {
+  boolean model1DDisplayBounds (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D model1DDisplayEdges",
+      putValueAction("Model1DDisplay Bounds",
         () -> (Select3D.model1DDisplayBounds ? 1f : 0f),
         (v) -> { Select3D.model1DDisplayBounds = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D model1DDisplayEdges", Select3D.model1DDisplayBounds);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Model1DDisplay Bounds", Select3D.model1DDisplayBounds);
     }
     return out;
   }
-  boolean Select3D_solidDisplayEdges (int created) {
+  boolean solidDisplayEdges (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D solidDisplayEdges",
+      putValueAction("Solid Display Edges",
         () -> (Select3D.solidDisplayEdges ? 1f : 0f),
         (v) -> { Select3D.solidDisplayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D solidDisplayEdges", Select3D.solidDisplayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Solid Display Edges", Select3D.solidDisplayEdges);
     }
     return out;
   }
-  boolean Select3D_sectionDisplayEdges (int created) {
+  boolean sectionDisplayEdges (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D sectionDisplayEdges",
+      putValueAction("Section Display Edges",
         () -> (Select3D.sectionDisplayEdges ? 1f : 0f),
         (v) -> { Select3D.sectionDisplayEdges = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D sectionDisplayEdges", Select3D.sectionDisplayEdges);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Section Display Edges", Select3D.sectionDisplayEdges);
     }
     return out;
   }
-  boolean Select3D_cameraDisplayEdges (int created) {
+  boolean cameraDisplayFrustum (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D cameraDisplayEdges",
+      putValueAction("Camera Display Frustum",
         () -> (Select3D.cameraDisplayFrustum ? 1f : 0f),
         (v) -> { Select3D.cameraDisplayFrustum = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D cameraDisplayEdges", Select3D.cameraDisplayFrustum);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Camera Display Frustum", Select3D.cameraDisplayFrustum);
     }
     return out;
   }
-  boolean Select3D_landPointDisplayPoints (int created) {
+  boolean terrainDisplayVertices (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Select3D landPointDisplayPoints",
+      putValueAction("Terrain Display Vertices",
         () -> (Select3D.terrainDisplayVertices ? 1f : 0f),
         (v) -> { Select3D.terrainDisplayVertices = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3,
         react.viewChangedOnly);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Select3D landPointDisplayPoints", Select3D.terrainDisplayVertices);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Terrain Display Vertices", Select3D.terrainDisplayVertices);
     }
     return out;
   }
@@ -4134,17 +4134,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Interpolation weight",
+      putValueAction("Interpolation Weight",
         () -> interpolationWeight,
         (v) -> { interpolationWeight = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Interpolation weight", interpolationWeight, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Interpolation Weight", interpolationWeight, s1, s2, s3);
     }
     return out;
   }
-  int Climate_based_solar_forecast (int created) {
+  int climateBasedSolarForecast (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4155,18 +4155,18 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Climate based solar forecast",
+      putValueAction("Climate Based Solar Forecast",
         () -> (float) climateBasedSolarForecast,
         (v) -> { climateBasedSolarForecast = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate based solar forecast", climateBasedSolarForecast, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate Based Solar Forecast", climateBasedSolarForecast, s1, s2, s3);
     }
     return out;
   }
-  int Climate_based_temperature_forecast (int created) {
+  int climateBasedWeatherForecast (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4177,14 +4177,14 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Climate based temperature forecast",
+      putValueAction("Climate Based Weather Forecast",
         () -> (float) climateBasedWeatherForecast,
         (v) -> { climateBasedWeatherForecast = int(v); },
         s1, s2, s3,
         u1, u2, u3,
         react.applyTimeChange);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate based temperature forecast", climateBasedWeatherForecast, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Climate Based Weather Forecast", climateBasedWeatherForecast, s1, s2, s3);
     }
     return out;
   }
@@ -4199,13 +4199,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Develop option",
+      putValueAction("Develop Layer Option",
         () -> (float) developLayerOption,
         (v) -> { developLayerOption = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop option", developLayerOption, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop Layer Option", developLayerOption, s1, s2, s3);
     }
     return out;
   }
@@ -4220,17 +4220,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Develop interval",
+      putValueAction("Develop Layer Interval",
         () -> (float) developLayerInterval,
         (v) -> { developLayerInterval = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop interval", developLayerInterval, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop Layer Interval", developLayerInterval, s1, s2, s3);
     }
     return out;
   }
-  float Inclination_angle (int created) {
+  float developLayerAngleInclination (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4242,17 +4242,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Inclination angle",
+      putValueAction("Develop Layer Angle Inclination",
         () -> developLayerAngleInclination,
         (v) -> { developLayerAngleInclination = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Inclination angle", developLayerAngleInclination, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop Layer Angle Inclination", developLayerAngleInclination, s1, s2, s3, s4);
     }
     return out;
   }
-  float Orientation_angle (int created) {
+  float developLayerAngleOrientation (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4264,35 +4264,35 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Orientation angle",
+      putValueAction("Develop Layer Angle Orientation",
         () -> developLayerAngleOrientation,
         (v) -> { developLayerAngleOrientation = v; },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Orientation angle", developLayerAngleOrientation, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Develop Layer Angle Orientation", developLayerAngleOrientation, s1, s2, s3, s4);
     }
     return out;
   }
-  int Impact_source (int created) {
+  int currentDataSource (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Impact source",
+      putValueAction("Current Data Source",
         () -> (float) currentDataSource,
         (v) -> { currentDataSource = int(v); },
         () -> (float) (0), () -> (float) (MAXIMUM_dataID), 1,
         u1, u2, u3,
         react.impactsUpdateFlag);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impact source", currentDataSource, 0, MAXIMUM_dataID, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Current Data Source", currentDataSource, 0, MAXIMUM_dataID, 1);
     }
     return out;
   }
-  int Impact_min_50_max (int created) {
+  int impactLayerIndex (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4303,68 +4303,68 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Impact min 50 max",
+      putValueAction("Impact Layer Index",
         () -> (float) STUDY.impactLayerIndex,
         (v) -> { STUDY.impactLayerIndex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impact min 50 max", STUDY.impactLayerIndex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Impact Layer Index", STUDY.impactLayerIndex, s1, s2, s3);
     }
     return out;
   }
-  boolean Export_ASCII_data (int created) {
+  boolean rawLinesExporter (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Export ASCII data",
+      putValueAction("Raw Lines Exporter",
         () -> (STUDY.rawLinesExporter ? 1f : 0f),
         (v) -> { STUDY.rawLinesExporter = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII data", STUDY.rawLinesExporter);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Raw Lines Exporter", STUDY.rawLinesExporter);
     }
     return out;
   }
-  boolean Export_ASCII_statistics (int created) {
+  boolean normalLinesExporter (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Export ASCII statistics",
+      putValueAction("Normal Lines Exporter",
         () -> (STUDY.normalLinesExporter ? 1f : 0f),
         (v) -> { STUDY.normalLinesExporter = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII statistics", STUDY.normalLinesExporter);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Normal Lines Exporter", STUDY.normalLinesExporter);
     }
     return out;
   }
-  boolean Export_ASCII_probabilities (int created) {
+  boolean probabilitiesExporter (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Export ASCII probabilities",
+      putValueAction("Probabilities Exporter",
         () -> (STUDY.probabilitiesExporter ? 1f : 0f),
         (v) -> { STUDY.probabilitiesExporter = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export ASCII probabilities", STUDY.probabilitiesExporter);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Probabilities Exporter", STUDY.probabilitiesExporter);
     }
     return out;
   }
-  float Export3D_scale (int created) {
+  float exporterScale (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4375,17 +4375,17 @@ class ValueModifier {
 
     float out = 0;
     if (created == 0) {
-      putValueAction("Export3D scale",
+      putValueAction("Exporter Scale",
         () -> User3D.exporterScale,
         (v) -> { User3D.exporterScale = v; },
         s1, s2, Math.abs(s3),
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D scale", User3D.exporterScale, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Scale", User3D.exporterScale, s1, s2, s3);
     }
     return out;
   }
-  int Export3D_flipZYaxis (int created) {
+  int exporterYaxisUp (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4396,17 +4396,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Export3D flipZYaxis",
+      putValueAction("Exporter Yaxis Up",
         () -> (float) User3D.exporterYaxisUp,
         (v) -> { User3D.exporterYaxisUp = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D flipZYaxis", User3D.exporterYaxisUp, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Yaxis Up", User3D.exporterYaxisUp, s1, s2, s3);
     }
     return out;
   }
-  int Export3D_precisionVertex (int created) {
+  int exporterPrecisionVertex (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4417,17 +4417,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Export3D precisionVertex",
+      putValueAction("Exporter Precision Vertex",
         () -> (float) User3D.exporterPrecisionVertex,
         (v) -> { User3D.exporterPrecisionVertex = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D precisionVertex", User3D.exporterPrecisionVertex, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Precision Vertex", User3D.exporterPrecisionVertex, s1, s2, s3);
     }
     return out;
   }
-  int Export3D_precisionVtexture (int created) {
+  int exporterPrecisionVertexTexture (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4438,17 +4438,17 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Export3D precisionVtexture",
+      putValueAction("Exporter Precision Vertex Texture",
         () -> (float) User3D.exporterPrecisionVertexTexture,
         (v) -> { User3D.exporterPrecisionVertexTexture = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D precisionVtexture", User3D.exporterPrecisionVertexTexture, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Precision Vertex Texture", User3D.exporterPrecisionVertexTexture, s1, s2, s3);
     }
     return out;
   }
-  int Export3D_polyToPoly (int created) {
+  int exporterMaintainPolygons (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4459,51 +4459,51 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Export3D polyToPoly",
+      putValueAction("Exporter Maintain Polygons",
         () -> (float) User3D.exporterMaintainPolygons,
         (v) -> { User3D.exporterMaintainPolygons = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D polyToPoly", User3D.exporterMaintainPolygons, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Maintain Polygons", User3D.exporterMaintainPolygons, s1, s2, s3);
     }
     return out;
   }
-  boolean Export3D_materialLibrary (int created) {
+  boolean exporterMaterialLibrary (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Export3D materialLibrary",
+      putValueAction("Exporter Material Library",
         () -> (User3D.exporterMaterialLibrary ? 1f : 0f),
         (v) -> { User3D.exporterMaterialLibrary = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D materialLibrary", User3D.exporterMaterialLibrary);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Material Library", User3D.exporterMaterialLibrary);
     }
     return out;
   }
-  boolean Export3D_backSides (int created) {
+  boolean exporterDoubleSided (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     boolean out = false;
     if (created == 0) {
-      putValueAction("Export3D backSides",
+      putValueAction("Exporter Double Sided",
         () -> (User3D.exporterDoubleSided ? 1f : 0f),
         (v) -> { User3D.exporterDoubleSided = (v >= 0.5f); },
         0, 1, 1,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D backSides", User3D.exporterDoubleSided);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Double Sided", User3D.exporterDoubleSided);
     }
     return out;
   }
-  int Export3D_paletteResolution (int created) {
+  int exporterColorScaleResolution (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4515,13 +4515,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Export3D paletteResolution",
+      putValueAction("Exporter Color Scale Resolution",
         () -> (float) User3D.exporterColorScaleResolution,
         (v) -> { User3D.exporterColorScaleResolution = int(v); },
         s1, s2, s4,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Export3D paletteResolution", User3D.exporterColorScaleResolution, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Exporter Color Scale Resolution", User3D.exporterColorScaleResolution, s1, s2, s3, s4);
     }
     return out;
   }
@@ -4557,13 +4557,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("Record SolidImpact in PDF",
+      putValueAction("Record Solid Impact In PDF",
         () -> (float) allSolidImpacts.record_PDF,
         (v) -> { allSolidImpacts.record_PDF = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Record SolidImpact in PDF", allSolidImpacts.record_PDF, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Record Solid Impact In PDF", allSolidImpacts.record_PDF, s1, s2, s3);
     }
     return out;
   }
@@ -4588,7 +4588,7 @@ class ValueModifier {
     }
     return out;
   }
-  int WindRoses_resolution (int created) {
+  int WindRoses_imageResolution (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -4599,13 +4599,13 @@ class ValueModifier {
 
     int out = 0;
     if (created == 0) {
-      putValueAction("WindRoses resolution",
+      putValueAction("Wind Roses Image Resolution",
         () -> (float) allWindRoses.imageResolution,
         (v) -> { allWindRoses.imageResolution = int(v); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = int(UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "WindRoses resolution", allWindRoses.imageResolution, s1, s2, s3));
+      out = int(UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Wind Roses Image Resolution", allWindRoses.imageResolution, s1, s2, s3));
     }
     return out;
   }
