@@ -331,6 +331,33 @@ jobs:
       # every command/test_*.txt integration script together. No
       # xvfb-run wrapper (see the job-level comment on why none is
       # needed here).
+      #
+      # It does need real OpenGL though, which the runner doesn't have:
+      # windows-latest ships no GPU/OpenGL ICD at all (confirmed by this
+      # step's own first real run: "Framebuffer objects are not
+      # supported by this hardware (or driver)" - the ancient,
+      # FBO-less Microsoft generic software implementation is all
+      # that's present otherwise). pal1000/mesa-dist-win is a maintained
+      # prebuilt Windows distribution of Mesa3D's llvmpipe software
+      # rasterizer - the direct Windows equivalent of the Mesa package
+      # the Linux job gets from apt for the same reason. Overwriting
+      # System32's copy (not just placing it next to java.exe) is what
+      # makes every process's plain LoadLibrary("opengl32.dll") -
+      # including the JVM JOGL loads into - pick it up with no further
+      # configuration; the default runner account has the admin rights
+      # this needs. PowerShell (the Windows job's default shell, not
+      # bash) specifically to keep this System32 write on native
+      # Windows path handling throughout, rather than adding another
+      # path through Git Bash's MSYS translation layer right after three
+      # straight rounds of exactly that causing the last three bugs here.
+      - name: Install Mesa3D software OpenGL (no GPU/ICD on this runner)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          Invoke-WebRequest -Uri "https://github.com/pal1000/mesa-dist-win/releases/download/25.3.6/mesa3d-25.3.6-release-msvc.7z" -OutFile mesa.7z
+          7z x mesa.7z -omesa
+          Copy-Item -Path "mesa\x64\*.dll" -Destination "$env:SystemRoot\System32\" -Force
+
       - name: Run integration tests with merged coverage
         shell: bash
         run: |
