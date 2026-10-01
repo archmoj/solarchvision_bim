@@ -781,13 +781,13 @@ class WORLD {
     switch(key) {
       case '`' :
         this.zoom = (this.zoom - 1 + 10) % 10;
-        this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
+        this.VIEW_id = this.FindGoodViewport(locationLongitude, locationLatitude);
         this.revise();
         break;
 
       case '~' :
         this.zoom = (this.zoom + 1) % 10;
-        this.VIEW_id = this.FindGoodViewport(LocationLON, LocationLAT);
+        this.VIEW_id = this.FindGoodViewport(locationLongitude, locationLatitude);
         this.revise();
         break;
 

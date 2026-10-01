@@ -58,8 +58,8 @@ class ReactTest {
 
   @Test
   void applyLocationChange_pushesLocationIntoStation () {
-    app.LocationLAT = 45.5f;
-    app.LocationLON = -73.6f;
+    app.locationLatitude = 45.5f;
+    app.locationLongitude = -73.6f;
 
     app.react.applyLocationChange.run(0, 0);
 
@@ -69,8 +69,8 @@ class ReactTest {
 
   @Test
   void applyLocationChange_revisesWorld_viaUpdateStation () {
-    app.LocationLAT = 10;
-    app.LocationLON = 20;
+    app.locationLatitude = 10;
+    app.locationLongitude = 20;
     app.WORLD.update = false;
 
     app.react.applyLocationChange.run(0, 0);

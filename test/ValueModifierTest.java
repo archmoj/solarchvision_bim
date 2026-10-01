@@ -57,23 +57,23 @@ class ValueModifierTest {
   // ================= Latitude / Longitude: STATION sync regression ========
 
   @Test
-  void latitude_commandLineAction_updatesStationAndSyncsLocationLATBack () {
-    app.vm.LocationLatitude(0);
+  void latitude_commandLineAction_updatesStationAndSyncslocationLatitudeBack () {
+    app.vm.locationLatitude(0);
 
     app.allActions.get("location_latitude").run(new String[]{"location_latitude", "45.5"});
 
     assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
-    assertEquals(45.5f, app.LocationLAT, 0.001f); // update_station(0) syncs it back
+    assertEquals(45.5f, app.locationLatitude, 0.001f); // update_station(0) syncs it back
   }
 
   @Test
-  void longitude_commandLineAction_updatesStationAndSyncsLocationLONBack () {
-    app.vm.LocationLongitude(0);
+  void longitude_commandLineAction_updatesStationAndSyncslocationLongitudeBack () {
+    app.vm.locationLongitude(0);
 
     app.allActions.get("location_longitude").run(new String[]{"location_longitude", "-73.6"});
 
     assertEquals(-73.6f, app.STATION.getLongitude(), 0.001f);
-    assertEquals(-73.6f, app.LocationLON, 0.001f);
+    assertEquals(-73.6f, app.locationLongitude, 0.001f);
   }
 
   // ================= plain int field, fixed bounds, with OnChange ==========

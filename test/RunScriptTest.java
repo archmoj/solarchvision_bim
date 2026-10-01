@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // covered directly by Create3DTest.java - not duplicated here. This
 // focuses on the cases with their own, previously-untested logic worth
 // covering directly: the location-setting commands (also a regression
-// check that they still update STATION, not just LocationLAT/LocationLON),
+// check that they still update STATION, not just locationLatitude/locationLongitude),
 // argument parsing/hints, dispatch to allActions (the integration point
 // with ValueModifier.pde's command-line actions), and the small pure
 // parseParams/getF/getI helpers at the bottom of the file.
@@ -24,12 +24,12 @@ class RunScriptTest {
   // ================= SETLAT / SETLON / SETLONLAT ============================
 
   @Test
-  void setLat_updatesStationAndSyncsLocationLAT () {
+  void setLat_updatesStationAndSyncslocationLatitude () {
     String hint = app.runScriptLine("SETLAT 45.5");
 
     assertEquals("", hint);
     assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
-    assertEquals(45.5f, app.LocationLAT, 0.001f);
+    assertEquals(45.5f, app.locationLatitude, 0.001f);
   }
 
   @Test
@@ -51,12 +51,12 @@ class RunScriptTest {
   }
 
   @Test
-  void setLon_updatesStationAndSyncsLocationLON () {
+  void setLon_updatesStationAndSyncslocationLongitude () {
     String hint = app.runScriptLine("SETLON -73.6");
 
     assertEquals("", hint);
     assertEquals(-73.6f, app.STATION.getLongitude(), 0.001f);
-    assertEquals(-73.6f, app.LocationLON, 0.001f);
+    assertEquals(-73.6f, app.locationLongitude, 0.001f);
   }
 
   @Test

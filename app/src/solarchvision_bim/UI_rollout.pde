@@ -173,8 +173,8 @@ class UI_rollout {
     vm.ensembleObservationMaxDays(0);
     vm.skyScenarioSetting(0);
     vm.temporalFilterSetting(0);
-    vm.LocationLatitude(0);
-    vm.LocationLongitude(0);
+    vm.locationLatitude(0);
+    vm.locationLongitude(0);
     vm.climateTypicalYearDisplayAll(0);
     vm.climateTypicalYearDisplayNear(0);
     vm.climateEngineeringDisplayAll(0);
@@ -534,8 +534,8 @@ class UI_rollout {
 
 
       if (this.child == CHILD_LOCATION_POINT) {
-        LocationLAT = vm.LocationLatitude(1);
-        LocationLON = vm.LocationLongitude(1);
+        locationLatitude = vm.locationLatitude(1);
+        locationLongitude = vm.locationLongitude(1);
       }
 
       if (this.child == CHILD_LOCATION_STATIONS) {

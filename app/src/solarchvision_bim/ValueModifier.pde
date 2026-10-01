@@ -383,7 +383,7 @@ class ValueModifier {
     }
     return out;
   }
-  float LocationLatitude (int created) {
+  float locationLatitude (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -396,16 +396,16 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Location Latitude",
-        () -> LocationLAT,
+        () -> locationLatitude,
         (v) -> { STATION.setLatitude(v); update_station(0); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Location Latitude", LocationLAT, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Location Latitude", locationLatitude, s1, s2, s3, s4);
     }
     return out;
   }
-  float LocationLongitude (int created) {
+  float locationLongitude (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D
     int u3 = 1; // updateWORLD
@@ -418,12 +418,12 @@ class ValueModifier {
     float out = 0;
     if (created == 0) {
       putValueAction("Location Longitude",
-        () -> LocationLON,
+        () -> locationLongitude,
         (v) -> { STATION.setLongitude(v); update_station(0); },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Location Longitude", LocationLON, s1, s2, s3, s4);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, "Location Longitude", locationLongitude, s1, s2, s3, s4);
     }
     return out;
   }

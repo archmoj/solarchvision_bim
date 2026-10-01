@@ -30,8 +30,8 @@ void applyRolloutUpdate() {
   pre_ensembleForecastShouldLoad = ensembleForecastShouldLoad;
   pre_ensembleObservationShouldLoad = ensembleObservationShouldLoad;
 
-  pre_LocationLAT = LocationLAT;
-  pre_LocationLON = LocationLON;
+  pre_locationLatitude = locationLatitude;
+  pre_locationLongitude = locationLongitude;
 
   pre_WORLD_autoView = WORLD.autoView;
 
@@ -174,13 +174,13 @@ void applyRolloutUpdate() {
   if (pre_ensembleForecastShouldLoad != ensembleForecastShouldLoad) update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
   if (pre_WORLD_autoView != WORLD.autoView) {
-    WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
+    WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
   }
 
-  if ((pre_LocationLAT != LocationLAT) ||
-      (pre_LocationLON != LocationLON)) {
+  if ((pre_locationLatitude != locationLatitude) ||
+      (pre_locationLongitude != locationLongitude)) {
 
-    react.applyLocationChange.run(pre_LocationLAT, LocationLAT);
+    react.applyLocationChange.run(pre_locationLatitude, locationLatitude);
   }
 
   react.applyLandLoadMesh.run(pre_Terrain_loadMesh ? 1 : 0, Terrain.loadMesh ? 1 : 0);
@@ -311,8 +311,8 @@ boolean pre_ensembleObservationShouldLoad;
 boolean pre_Terrain_loadMesh;
 boolean pre_Terrain_loadTextures;
 
-float pre_LocationLAT;
-float pre_LocationLON;
+float pre_locationLatitude;
+float pre_locationLongitude;
 
 boolean pre_WORLD_autoView;
 

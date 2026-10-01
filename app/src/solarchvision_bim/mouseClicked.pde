@@ -1545,16 +1545,16 @@ void mouseClicked () {
             //float mouse_lat = STATION.getLatitude();
 
 
-            pre_LocationLAT = LocationLAT;
-            pre_LocationLON = LocationLON;
+            pre_locationLatitude = locationLatitude;
+            pre_locationLongitude = locationLongitude;
 
             STATION.setLatitude(mouse_lat);
             STATION.setLongitude(mouse_lon);
 
-            if ((pre_LocationLAT != LocationLAT) ||
-                (pre_LocationLON != LocationLON)) {
+            if ((pre_locationLatitude != locationLatitude) ||
+                (pre_locationLongitude != locationLongitude)) {
 
-              WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
+              WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
             }
 
             if (mouseButton == LEFT) {

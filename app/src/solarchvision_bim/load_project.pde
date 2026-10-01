@@ -42,7 +42,7 @@ void load_project (String myFile) {
 
     WORLD.autoView = true;
 
-    WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
+    WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
 
     update_frame_layout();
 

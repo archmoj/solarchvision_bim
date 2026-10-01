@@ -384,8 +384,8 @@ String getFilename_SolarImpact () {
 
 float HeightAboveGround = 0; //2.5; // <<<<<<<<<
 
-float LocationLAT = 0.0;
-float LocationLON = 0.0;
+float locationLatitude = 0.0;
+float locationLongitude = 0.0;
 float LocationELE = 0.0;
 
 int save_frame_number = 0;

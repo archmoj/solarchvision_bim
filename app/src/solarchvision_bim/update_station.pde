@@ -10,10 +10,10 @@ void update_station (int Step) {
     STUDY.revise();
     view_changed();
 
-    LocationLAT = STATION.getLatitude();
-    LocationLON = STATION.getLongitude();
+    locationLatitude = STATION.getLatitude();
+    locationLongitude = STATION.getLongitude();
 
-    WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
+    WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
 
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
   }

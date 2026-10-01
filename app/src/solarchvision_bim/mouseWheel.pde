@@ -168,7 +168,7 @@ void handleWorldZoomWheel(float wheelValue) {
   if (WORLD.zoom > 9) WORLD.zoom = 9;
 
   if (oldZoom != WORLD.zoom) {
-    WORLD.VIEW_id = WORLD.FindGoodViewport(LocationLON, LocationLAT);
+    WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
     WORLD.revise();
   }
 }

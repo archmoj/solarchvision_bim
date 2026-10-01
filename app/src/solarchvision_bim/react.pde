@@ -22,15 +22,15 @@ class react {
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
 
-  // GUI-driven change: LocationLAT/LocationLON already hold the new
+  // GUI-driven change: locationLatitude/locationLongitude already hold the new
   // value by the time this fires (applyRolloutUpdate.pde's diff runs
   // after UI_rollout.draw() has applied the spinner's return value), so
   // push them into STATION and let update_station(0) do the same full
   // refresh SETLAT/SETLON do on the command-line path - it already
   // includes WORLD.FindGoodViewport(...) and WORLD.revise().
   OnChange applyLocationChange = (o, n) -> {
-    STATION.setLatitude(LocationLAT);
-    STATION.setLongitude(LocationLON);
+    STATION.setLatitude(locationLatitude);
+    STATION.setLongitude(locationLongitude);
     update_station(0);
   };
 
