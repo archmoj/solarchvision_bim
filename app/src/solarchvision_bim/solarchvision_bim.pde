@@ -86,6 +86,18 @@ int stepAfterInitialization = 0;
 void draw () {
 
   //println("frameCount:", frameCount);
+  if (frameCount <= 30) {
+    // Temporary, scoped to the initialization window only (not forever -
+    // this would be excessive noise for a real GUI session running for
+    // minutes): draw_initial_frames() only returns false once
+    // frameCount > 22 (see its own comment there), each frameCount up to
+    // that doing a specific piece of startup work - this shows exactly
+    // which one (if any) the sketch actually reaches before whatever is
+    // stalling the Windows image-generation job stalls it, rather than
+    // only knowing (from this file's other diagnostic prints, which
+    // never appeared) that it never got past frame 22 at all.
+    println("draw(): frameCount=" + frameCount);
+  }
 
   WIN3D.processHeldKey();
   UI_menuBar.processHeldKey();
