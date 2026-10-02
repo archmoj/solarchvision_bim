@@ -1,51 +1,49 @@
 #!/bin/bash
-# Attaches JaCoCo coverage to a run-with-processing-4.3.sh/run-with-latest-processing.sh USER=AUTO run (e.g. the
-# command/test_*.txt image-regression scripts), and merges the result with
-# the unit tests' jacoco.exec into one combined report.
+# Attaches JaCoCo coverage to a test/image/make_baseline.sh USER=AUTO run
+# (e.g. the command/test_*.txt image-regression scripts), and merges the
+# result with the unit tests' jacoco.exec into one combined report.
 #
-# This does NOT modify run-with-processing-4.3.sh/run-with-latest-processing.sh - JAVA_TOOL_OPTIONS is picked
-# up by any JVM started while it's set, including the one Processing cli
-# spawns internally to run the sketch, so nothing about Processing's own
-# launch command needs to change.
+# Delegates the actual "find Processing, run it, know what it takes to
+# get rendering working at all" work entirely to
+# test/image/make_baseline.sh, rather than duplicating that here a second
+# time. This file used to carry its own copy of the launcher detection
+# and the java.instrument runtime swap - which turned out to be exactly
+# the kind of duplication that bites: make_baseline.sh needed
+# LIBGL_ALWAYS_SOFTWARE and that same runtime swap too, for reasons that
+# took several rounds to track down, and this file's own copy of both was
+# the only reason either was known to work in the first place. One copy
+# now, not two. JAVA_TOOL_OPTIONS is picked up by any JVM started while
+# it's set, including the one make_baseline.sh's own launcher spawns
+# internally to run the sketch, so nothing about that script needs to
+# change to make -javaagent attach here.
 #
 # Requires test/lib/jacoco/jacocoagent.jar and jacococli.jar - the same
 # pair test/install_jacoco.sh fetches for test/run_tests.sh's own coverage
 # report, from the official JaCoCo distribution zip (see test/README.md).
 #
 # This exercises the sketch's real GL rendering pipeline, so it needs a
-# display. On Linux, wrap the whole invocation in xvfb-run if there isn't
-# a real one:
-#   xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-#     ./test/run_integration.sh
-# Windows runners don't need (or have) an xvfb-run equivalent - GitHub's
-# windows-latest image provides a real, if software-rendered, display
-# session out of the box.
+# display - see test/image/make_baseline.sh's own comment on this.
 #
 # Usage:
 #   ./test/run_integration.sh                          # every command/test_*.txt
 #   ./test/run_integration.sh command/test_primitives.txt [more scripts...]
 #
 # Environment:
-#   PROCESSING_HOME       - defaults to ~/processing/4.5.2 (run-with-latest-processing.sh);
-#                            point it at a 4.3.4 install instead only if
-#                            you specifically want run-with-processing-4.3.sh - see the "Use
-#                            Processing 4.5.x if at all possible" comment
-#                            below for why that's not the default.
-#   JACOCO_AGENT_JAR       - defaults to test/lib/jacoco/jacocoagent.jar
-#   UNIT_TEST_EXEC         - defaults to build/test/jacoco.exec (the file
-#                             test/run_tests.sh's own coverage run writes) -
-#                             merged in automatically if it exists, so the
-#                             final report reflects both unit tests AND
-#                             every image script given on the command line.
-#   JACOCO_CLI_JAR         - defaults to test/lib/jacoco/jacococli.jar
+#   PROCESSING_HOME   - defaults to ~/processing/4.5.2 - see
+#                       test/image/make_baseline.sh's own comment on this.
+#   JACOCO_AGENT_JAR  - defaults to test/lib/jacoco/jacocoagent.jar
+#   UNIT_TEST_EXEC    - defaults to build/test/jacoco.exec (the file
+#                       test/run_tests.sh's own coverage run writes) -
+#                       merged in automatically if it exists, so the
+#                       final report reflects both unit tests AND every
+#                       image script given on the command line.
+#   JACOCO_CLI_JAR    - defaults to test/lib/jacoco/jacococli.jar
 set -euo pipefail
 cd "$(dirname "$0")/.."   # repo root
 
-PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 JACOCO_AGENT_JAR="${JACOCO_AGENT_JAR:-test/lib/jacoco/jacocoagent.jar}"
 UNIT_TEST_EXEC="${UNIT_TEST_EXEC:-build/test/jacoco.exec}"
 OUT_DIR="build/merged-coverage"
-export LIBGL_ALWAYS_SOFTWARE=1
 
 if [ ! -f "$JACOCO_AGENT_JAR" ]; then
   echo "error: $JACOCO_AGENT_JAR not found - run test/install_jacoco.sh first" >&2
@@ -69,97 +67,32 @@ if [ "$#" -lt 1 ]; then
   echo "==> No scripts given - defaulting to every command/test_*.txt: $*"
 fi
 
-# Pick the same launcher run-with-processing-4.3.sh/run-with-latest-processing.sh/.bat would use, based on
-# what's actually under PROCESSING_HOME (see test/run_tests.sh's own
-# detection). Windows' Processing.exe reuses the .bat version rather than
-# teaching this .sh script Windows path handling too - run-with-latest-processing.bat
-# already knows how to find/launch it correctly.
-# Use Processing 4.5.x if at all possible - 4.3.4's bundled
-# JOGL segfaults during GL context setup on newer Mesa (the same class of
-# ABI mismatch noted in .github/workflows/image-tests.yml's comments),
-# before any sketch code - including this script's instrumented classes -
-# ever runs.
-if [ -x "$PROCESSING_HOME/bin/Processing" ]; then
-  RUN_CMD=(./run-with-latest-processing.sh)
-elif [ -x "$PROCESSING_HOME/Processing.exe" ]; then
-  RUN_CMD=(./run-with-latest-processing.bat)
-elif [ -x "$PROCESSING_HOME/processing-java" ]; then
-  RUN_CMD=(./run-with-processing-4.3.sh)
-  echo "warning: using legacy run-with-processing-4.3.sh (Processing 4.3.4) - known to segfault on newer Mesa; switch to 4.5.x if this happens" >&2
-else
-  echo "error: none of processing-java, bin/Processing, or Processing.exe found under $PROCESSING_HOME" >&2
-  exit 1
-fi
-
-# Processing 4.5.x's native launcher (bin/Processing on Linux/macOS,
-# Processing.exe on Windows) bundles a jlink runtime trimmed to only
-# what Processing itself needs - which excludes java.instrument, so
-# -javaagent can never attach to it no matter what flags are passed.
-# The same install's full JDK (bundled so it can compile sketches) does
-# have java.instrument; swapping the two (once, cheaply reversible) is
-# the only way to get a working agent target here.
-if [ -x "$PROCESSING_HOME/bin/Processing" ] && [ -d "$PROCESSING_HOME/lib/app/resources/jdk" ]; then
-  if [ -d "$PROCESSING_HOME/lib/runtime" ] && [ ! -L "$PROCESSING_HOME/lib/runtime" ]; then
-    echo "==> Swapping $PROCESSING_HOME/lib/runtime for the bundled full JDK (java.instrument support) - original kept at lib/runtime.orig"
-    mv "$PROCESSING_HOME/lib/runtime" "$PROCESSING_HOME/lib/runtime.orig"
-    ln -sfn "$PROCESSING_HOME/lib/app/resources/jdk" "$PROCESSING_HOME/lib/runtime"
-  fi
-elif [ -x "$PROCESSING_HOME/Processing.exe" ] && [ -d "$PROCESSING_HOME/app/resources/jdk" ]; then
-  # Same swap, Windows layout (runtime/ and app/resources/jdk directly
-  # under PROCESSING_HOME, no lib/ wrapper - see run-with-latest-processing.bat's
-  # own comment on this difference) and a junction (mklink /J) instead
-  # of a symlink: creating a true symlink on Windows needs Administrator
-  # privileges or Developer Mode, which isn't guaranteed on every
-  # runner, while junctions need neither - the same reasoning
-  # run-with-latest-processing.bat already uses for its own input/command/projects
-  # links. Guarded by runtime.orig's absence rather than `[ -L ... ]`:
-  # a junction isn't reliably recognized as a symlink by bash's -L test
-  # on Windows, but this still only swaps once either way (re-running
-  # it against an already-swapped, cached install would otherwise try
-  # to move the junction itself on top of a stale runtime.orig and
-  # fail, or silently redo a no-op swap - checking for runtime.orig
-  # instead sidesteps both).
-  if [ -d "$PROCESSING_HOME/runtime" ] && [ ! -d "$PROCESSING_HOME/runtime.orig" ]; then
-    echo "==> Swapping $PROCESSING_HOME/runtime for the bundled full JDK (java.instrument support) - original kept at runtime.orig"
-    mv "$PROCESSING_HOME/runtime" "$PROCESSING_HOME/runtime.orig"
-    # MSYS_NO_PATHCONV=1 disables Git Bash's automatic POSIX-to-Windows
-    # argument rewriting for this one command - without it, /J here (and
-    # /c above, if this didn't already sidestep it) gets misread as a
-    # Unix-style path reference and silently mangled before mklink ever
-    # sees it, the exact same class of bug as e.g. a Windows taskkill
-    # /PID flag getting rewritten into a path under Git Bash. Plain /c
-    # and /J (not //c/ //J) are correct here specifically because
-    # conversion is now switched off entirely for this command, not
-    # merely escaped per-argument.
-    MSYS_NO_PATHCONV=1 cmd /c mklink /J "$(cygpath -w "$PROCESSING_HOME/runtime")" "$(cygpath -w "$PROCESSING_HOME/app/resources/jdk")" >/dev/null
-  fi
-fi
-
 mkdir -p "$OUT_DIR"
 EXEC_FILES=()
 [ -f "$UNIT_TEST_EXEC" ] && EXEC_FILES+=("$UNIT_TEST_EXEC")
 
+# JAVA_TOOL_OPTIONS is an environment variable, not a command-line
+# argument - Git Bash's automatic POSIX-to-Windows path conversion only
+# ever applies to argv, so a path built with $(pwd) here stays exactly as
+# POSIX-style as it started, and the native java.exe this eventually
+# reaches can't open "/d/a/.../jacocoagent.jar" (same root cause as the
+# classpath and mklink issues this project hit elsewhere, just hitting an
+# env var this time instead of argv). cygpath -m (not -w) specifically to
+# get forward slashes - sidesteps any question of whether a backslash
+# survives bash's own string handling untouched, and Java accepts forward
+# slashes in paths on Windows natively either way.
+to_native_path () {
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*) cygpath -m "$1" ;;
+    *)                    printf '%s' "$1" ;;
+  esac
+}
+
 for SCRIPT in "$@"; do
   NAME="$(basename "$SCRIPT" .txt)"
   EXEC_FILE="$OUT_DIR/${NAME}.exec"
-  echo "==> Running $SCRIPT through ${RUN_CMD[*]} with coverage attached"
+  echo "==> Running $SCRIPT through test/image/make_baseline.sh with coverage attached"
   rm -f "$EXEC_FILE"
-  # JAVA_TOOL_OPTIONS is an environment variable, not a command-line
-  # argument - Git Bash's automatic POSIX-to-Windows path conversion only
-  # ever applies to argv, so a path built with $(pwd) here stays exactly
-  # as POSIX-style as it started, and the native java.exe this eventually
-  # reaches can't open "/d/a/.../jacocoagent.jar" (same root cause as the
-  # classpath and mklink issues above, just hitting an env var this time
-  # instead of argv). cygpath -m (not -w) specifically to get forward
-  # slashes - sidesteps any question of whether a backslash survives
-  # bash's own string handling untouched, and Java accepts forward
-  # slashes in paths on Windows natively either way.
-  to_native_path () {
-    case "$(uname -s)" in
-      MINGW*|MSYS*|CYGWIN*) cygpath -m "$1" ;;
-      *)                    printf '%s' "$1" ;;
-    esac
-  }
 
   # append=true, NOT append=false: JAVA_TOOL_OPTIONS is picked up by every
   # JVM started while it's set, and Processing cli's native (jpackage)
@@ -169,8 +102,15 @@ for SCRIPT in "$@"; do
   # last truncates whatever the other already wrote, and losing the inner
   # JVM's real coverage data this way is silent (the file still exists,
   # just full of near-nothing) - append=true is what actually keeps both.
+  #
+  # || true: make_baseline.sh's own idea of failure is "no screenshot
+  # after every retry", which doesn't necessarily mean no coverage was
+  # written - checked independently right below regardless - and letting
+  # `set -e` abort the whole run here would lose every other script's
+  # coverage too, not just this one's.
   JAVA_TOOL_OPTIONS="-javaagent:$(to_native_path "$(pwd)/${JACOCO_AGENT_JAR}")=destfile=$(to_native_path "$(pwd)/${EXEC_FILE}"),includes=solarchvision_bim*,append=true" \
-    "${RUN_CMD[@]}" "USER=AUTO" "RUN=${SCRIPT}"
+    bash test/image/make_baseline.sh "$NAME" || true
+
   if [ -s "$EXEC_FILE" ]; then
     echo "    -> wrote $EXEC_FILE ($(stat -c%s "$EXEC_FILE" 2>/dev/null || stat -f%z "$EXEC_FILE") bytes)"
     EXEC_FILES+=("$EXEC_FILE")

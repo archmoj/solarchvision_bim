@@ -1,35 +1,39 @@
 #!/bin/bash
-# Bash equivalent of test/image/make_baseline.py, for CI legs where the
-# Python-based version doesn't work (Windows, specifically): generates
+# Bash alternative to test/image/make_baseline.py: generates
 # test/image/actual/*.png for command/test_*.txt by running the sketch
 # headlessly (USER=AUTO) through the exact same
 # run-with-latest-processing.sh/.bat (or run-with-processing-4.3.sh/.bat)
-# wrapper test/run_integration.sh uses - confirmed, by hand, to actually
-# produce real screenshots on Windows, unlike every variation of invoking
-# Processing.exe/Processing cli directly from Python that was tried
-# first (see make_baseline.py's own build_command() for that history -
-# the exact underlying cause was never pinned down; this script exists
-# to stop guessing at it and just reuse the invocation already proven to
-# work instead).
+# wrapper test/run_integration.sh uses (which also delegates its own
+# Processing invocation to this script, rather than duplicating this
+# logic a third time - see that file's own comment).
+#
+# This existed originally to work around what looked like a Windows-
+# specific hang when make_baseline.py invoked Processing.exe directly -
+# every combination of subprocess options and argv forms tried there
+# reliably hung during the sketch's very first rendered frame, while this
+# script's invocation of the exact same Processing.exe through
+# run-with-latest-processing.bat did not. The actual difference turned
+# out to be LIBGL_ALWAYS_SOFTWARE=1 (see the comment on it below) - once
+# make_baseline.py was given that same env var, direct invocation from
+# Python worked too, so this script is no longer the only thing that
+# works on Windows. Kept anyway (not reverted back to a thin wrapper
+# around make_baseline.py) because it's now what test/run_integration.sh
+# itself relies on for every platform, not just Windows.
 #
 # No coverage/JaCoCo instrumentation here: this script exists purely to
 # generate images, so JAVA_TOOL_OPTIONS itself (needed only for
 # -javaagent to attach) is not included. LIBGL_ALWAYS_SOFTWARE and the
-# runtime swap, however, ARE kept despite being originally documented
-# (in test/run_integration.sh, which this was first adapted from) as
-# existing only to support that - a from-scratch version of this script
-# that dropped both on that assumption hung during the sketch's very
-# first rendered frame on Windows, identically to every attempt at
-# invoking Processing directly from Python, while
-# test/run_integration.sh's own JAVA_TOOL_OPTIONS-only difference ran
-# correctly - a side-by-side test confirmed it's one or both of these
-# two, not JaCoCo, making the actual difference. LIBGL_ALWAYS_SOFTWARE in
-# particular: despite the LIBGL name suggesting Linux/GLX specifically,
-# Mesa's WGL (Windows) backend shares the same underlying codebase and
-# environment-variable handling, so this plausibly still matters for
-# forcing llvmpipe rather than letting Mesa probe for hardware
-# acceleration first - a hang (not a crash) during that probe would
-# match the symptom seen without it exactly.
+# runtime swap are kept despite being originally documented (in
+# test/run_integration.sh, which this was first adapted from) as existing
+# only to support that - LIBGL_ALWAYS_SOFTWARE turned out to matter for
+# rendering too (see above), and the runtime swap is cheap enough to
+# leave in rather than prove it's unnecessary here specifically.
+# Mesa's WGL (Windows) backend shares LIBGL_ALWAYS_SOFTWARE's underlying
+# codebase and environment-variable handling with its Linux/GLX one
+# despite the name suggesting otherwise, which is plausibly why setting
+# it mattered here: forcing llvmpipe rather than letting Mesa probe for
+# hardware acceleration first - a hang (not a crash) during that probe
+# would match the symptom seen without it exactly.
 #
 # A single test script can call REC.png more than once, each with its
 # own name given right in the script (see command/test_views.txt), so
