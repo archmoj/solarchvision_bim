@@ -172,17 +172,19 @@ jobs:
   # Windows too, using the Mesa3D software-OpenGL setup proven in
   # .github/workflows/ci.yml's test-windows job (windows-latest ships no
   # GPU/OpenGL ICD at all - see that job's own comment for the full
-  # story). Deliberately NOT wired into compare-pixels' baseline diff
-  # above: these images come from a different OS and a different (if
-  # related - both llvmpipe) software rasterizer than the Linux baseline
-  # was captured with, and font/AA rendering can differ enough between
-  # platforms to produce a real pixel difference that isn't a genuine
-  # regression. compare_pixels.py's existing tolerance (built for
-  # antialiasing/compression noise within one platform) might well absorb
-  # that too, but that's worth confirming deliberately later, not
-  # assuming as part of adding this job. This uploads the images instead,
-  # for a human to look at or diff against the Linux baseline by hand if
-  # ever useful.
+  # story). Compared against the same test/image/baseline/ Linux
+  # originally captured - a separate job below, compare-pixels-windows -
+  # rather than merged into compare-pixels' own comparison above: these
+  # images come from a different OS and a different (if related - both
+  # llvmpipe) software rasterizer than the baseline was captured with, so
+  # keeping the two comparisons separate means a Windows-only rendering
+  # difference fails only compare-pixels-windows, not the Linux pipeline
+  # this whole thing is actually gating. Whether font/AA differences
+  # between the two platforms turn out to need a platform-specific
+  # SCREEN=/FONT=/FONTSIZE= argument (see test/image/README.md's "Sketch
+  # startup arguments"), a separate Windows baseline, or compare_pixels.py's
+  # existing tolerance just absorbing it as-is, is exactly what running
+  # this comparison for real is here to find out.
   #
   # Also deliberately unsharded, unlike generate-images above: Windows
   # runners draw down CI-minute budget faster than Linux ones, and with
@@ -307,4 +309,52 @@ jobs:
           name: windows-actual-images
           path: test/image/actual
           if-no-files-found: error
+          retention-days: 3
+
+  # Same structure as compare-pixels above, for generate-images-windows'
+  # images instead - see that job's own comment for what comparing
+  # Windows-rendered images against the Linux-captured baseline is
+  # expected to tell us. ubuntu-latest, not windows-latest: pixel
+  # comparison is pure Python/PIL regardless of which platform the images
+  # being compared came from (same reasoning as compare-pixels' own "No
+  # Processing/GL/Xvfb here at all"), and Linux runners provision faster
+  # and draw down less CI-minute budget than Windows ones for the exact
+  # same work.
+  compare-pixels-windows:
+    needs: generate-images-windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install image-diff dependencies
+        run: pip install pillow numpy
+
+      - name: Download Windows images
+        uses: actions/download-artifact@v5
+        with:
+          name: windows-actual-images
+          path: test/image/actual
+
+      - name: Compare pixels (compare_pixels.py)
+        run: python3 test/image/compare_pixels.py
+
+      # Named distinctly from compare-pixels' own "new-baselines" -
+      # both jobs can produce this artifact in the same workflow run,
+      # and two artifacts with the same name would collide. See
+      # compare-pixels' own comment on what this artifact is for.
+      - name: Upload new/changed baseline candidates (Windows)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: new-baselines-windows
+          path: |
+            test/image/actual
+            test/image/diff
+          if-no-files-found: warn
           retention-days: 3
