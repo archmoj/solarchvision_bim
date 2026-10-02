@@ -111,6 +111,40 @@ def find_processing_java():
     return exe
 
 
+def build_command(exe, name):
+    """The actual argv to run for one test.
+
+    Linux/macOS: Processing invoked directly, exactly as before - this
+    has always worked reliably there.
+
+    Windows: delegates to run-with-latest-processing.bat (or
+    run-with-processing-4.3.bat for the legacy generation) instead of
+    invoking Processing.exe directly. This script used to build the same
+    kind of --sketch=...  --run ... argv directly on Windows too, and it
+    reliably hung during the very first rendered frame - every retry,
+    every test - while test/run_integration.sh's own invocation of the
+    exact same Processing.exe through this exact same .bat wrapper (same
+    Mesa setup, same sketch, same command scripts) does not. Several
+    rounds of narrowing (the junction, the trimmed runtime's module list,
+    a Mesa WGL swap-interval quirk) ruled out the sketch, the Mesa
+    install, and the resolved paths in turn without finding the actual
+    difference - so rather than keep re-deriving Processing's own
+    invocation logic here and guessing at what's different about it, this
+    just reuses the invocation already proven to work, through the exact
+    same entry point test/run_integration.sh uses.
+
+    cmd /c, not the .bat path directly: Python's subprocess can't execute
+    a .bat file as the program itself (CreateProcess only runs real PE
+    executables) without shell=True, which this avoids in favor of an
+    explicit, unambiguous argv list.
+    """
+    if os.name == "nt":
+        script = "run-with-latest-processing.bat" if "processing.exe" in exe.lower() else "run-with-processing-4.3.bat"
+        return ["cmd", "/c", os.path.join(REPO_ROOT, script), "USER=AUTO", f"RUN=command/{name}.txt"]
+    sketch_arg = os.path.relpath(SKETCH_DIR, REPO_ROOT)
+    return [exe, "cli", f"--sketch={sketch_arg}", "--run", "USER=AUTO", f"RUN=command/{name}.txt"]
+
+
 def screenshots_since(marker_time):
     """Every screenshot this run produced, oldest first: all *.png under any
     of SCREENSHOTS_ROOTS with an mtime after marker_time. Recursive because
@@ -139,18 +173,6 @@ def run_once(exe, name):
     marker_time = time.time()
     start = time.time()
 
-    # Relative, not SKETCH_DIR's own absolute form: run-with-latest-processing.sh/.bat
-    # (confirmed working through test/run_integration.sh's own invocation)
-    # both pass --sketch=app/src/solarchvision_bim as a path relative to
-    # cwd=REPO_ROOT, never the absolute form - matching that exactly here
-    # rather than assuming the two are equivalent to Processing's own
-    # --sketch handling turned out to matter: this function calling
-    # Processing directly with the absolute path is the one concrete,
-    # verifiable difference between this (image generation silently
-    # producing nothing on Windows) and that (confirmed working) code
-    # path.
-    sketch_arg = os.path.relpath(SKETCH_DIR, REPO_ROOT)
-
     # start_new_session=True puts this process (and anything it launches)
     # in its own process group, so a timeout can kill the whole thing
     # rather than leaving something running in the background.
@@ -162,7 +184,7 @@ def run_once(exe, name):
     # up at all in this script's own CI log, which is otherwise
     # unexplained and worth not having to guess about again.
     proc = subprocess.Popen(
-        [exe, "cli", f"--sketch={sketch_arg}", "--run", "USER=AUTO", f"RUN=command/{name}.txt"],
+        build_command(exe, name),
         cwd=REPO_ROOT,
         start_new_session=True,
         stdout=subprocess.PIPE,
