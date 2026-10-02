@@ -32,30 +32,8 @@ int pixel_H = 100; // just an initial value
 int pixel_W = 100; // just an initial value
 
 void settings () {
-  // parseArgs() has to run here, not (only) in setup() below, because
-  // the size()/fullScreen() decision right after it depends on `control`
-  // and - unlike fullScreen(), which this sketch has always called from
-  // setup() without issue - a literal size() call is only allowed inside
-  // settings() in compiled/CLI mode ("When not using the PDE, size() can
-  // only be used inside settings()", confirmed by this exact
-  // IllegalStateException the first time this was tried from setup()
-  // instead). args is a standard sketch field, populated before either
-  // settings() or setup() runs, so it's available here just as it was
-  // there.
   parseArgs(args);
 
-  // fullScreen() sizes the window to whatever the OS reports as the
-  // display resolution - correct for a real interactive user, but not
-  // reliable for automated (USER_AUTO) runs: Linux's CI only gets
-  // 1920x1080 screenshots because Xvfb is explicitly started with
-  // -screen 0 1920x1080x24 (see test/run_integration.sh's own comment on
-  // needing a display at all), while GitHub's windows-latest runners
-  // default their headless session to 1024x768 with no supported way to
-  // change it (a long-standing, still-open upstream limitation - see
-  // actions/runner-images#2935). Fixing the size explicitly here, only
-  // for USER_AUTO, gets every automated run - on any platform - the same
-  // 1920x1080 canvas regardless of what the OS itself reports, without
-  // changing fullScreen()'s real-user behavior at all.
   if (control == USER_AUTO) {
     size(1920, 1080, P2D);
   } else {
@@ -113,38 +91,12 @@ int InitializationStep = 0;
 int stepAfterInitialization = 0;
 
 void draw () {
-
-  //println("frameCount:", frameCount);
-  if (frameCount <= 30) {
-    // Temporary, scoped to the initialization window only (not forever -
-    // this would be excessive noise for a real GUI session running for
-    // minutes): draw_initial_frames() only returns false once
-    // frameCount > 22 (see its own comment there), each frameCount up to
-    // that doing a specific piece of startup work - this shows exactly
-    // which one (if any) the sketch actually reaches before whatever is
-    // stalling the Windows image-generation job stalls it, rather than
-    // only knowing (from this file's other diagnostic prints, which
-    // never appeared) that it never got past frame 22 at all.
-    println("draw(): frameCount=" + frameCount);
-  }
-
   WIN3D.processHeldKey();
   UI_menuBar.processHeldKey();
   UI_consoleBar.processHeldKey();
   UI_rollout.processHeldKey();
 
   if (!draw_initial_frames()) {
-    if (stepAfterInitialization == 0) {
-      // One-time, not per-frame: confirms draw_initial_frames() actually
-      // completed at all (if this line never appears in a run's log, the
-      // draw loop itself never got past initialization - a rendering-
-      // level problem, upstream of anything to do with USER=AUTO/RUN=
-      // argument parsing) and shows exactly what loadStrings(RUN=...)
-      // in parseArgs.pde actually produced, directly rather than only
-      // inferred indirectly (e.g. from the absence of a NullPointerException
-      // that a null loadStrings() result would otherwise cause here).
-      println("draw(): initialization complete at frameCount=" + frameCount + ", runAfterInitialization.length=" + runAfterInitialization.length);
-    }
     if(stepAfterInitialization < runAfterInitialization.length) {
       runScriptLines(runAfterInitialization[stepAfterInitialization]);
     }
