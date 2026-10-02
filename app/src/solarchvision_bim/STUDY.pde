@@ -191,38 +191,41 @@ class STUDY {
     }
   }
 
+  // See actions.pde's own "key2D <descriptor>" section (right after its
+  // key3D one) for the full explanation of this naming and which of
+  // these calls still need requestRedraw() kept here versus which don't.
   void handleCtrlCodedKey (KeyEvent e) {
     switch (keyCode) {
       case UP :
-        changeCurrentLayerTo((currentLayerId + 1) % allLayers.length);
+        runScriptLine("key2D Ctrl+Up");
         requestRedraw();
         break;
 
       case DOWN :
-        changeCurrentLayerTo((currentLayerId + allLayers.length - 1) % allLayers.length);
+        runScriptLine("key2D Ctrl+Down");
         requestRedraw();
         break;
 
       case RIGHT :
-        this.impactGraphIndex = (this.impactGraphIndex + 1) % PLOT_IMPACTS_MODE_COUNT;
+        runScriptLine("key2D Ctrl+Right");
         requestRedraw();
         break;
 
       case LEFT :
-        this.impactGraphIndex = (this.impactGraphIndex - 1 + PLOT_IMPACTS_MODE_COUNT) % PLOT_IMPACTS_MODE_COUNT;
+        runScriptLine("key2D Ctrl+Left");
         requestRedraw();
         break;
 
       case PAGE_UP_KEYCODE :
         if (!e.isShiftDown()) {
-          this.plotLayoutIndex = -2 + (2 + this.plotLayoutIndex + 1) % PLOT_SETUP_MODE_COUNT;
+          runScriptLine("key2D Ctrl+PageUp");
           requestRedraw();
         }
         break;
 
       case PAGE_DOWN_KEYCODE :
         if (!e.isShiftDown()) {
-          this.plotLayoutIndex = -2 + (2 + this.plotLayoutIndex - 1 + PLOT_SETUP_MODE_COUNT) % PLOT_SETUP_MODE_COUNT;
+          runScriptLine("key2D Ctrl+PageDown");
           requestRedraw();
         }
         break;
@@ -232,17 +235,17 @@ class STUDY {
   void handleCtrlCharKey () {
     switch (key) {
       case ';' :
-        this.showImpactSummary = !this.showImpactSummary;
+        runScriptLine("key2D Ctrl+;");
         requestRedraw();
         break;
 
       case '"' :
-        this.verticalUnitScale *= sqrt(2.0);
+        runScriptLine("key2D Ctrl+\"");
         requestRedraw();
         break;
 
       case '\'' :
-        this.verticalUnitScale *= sqrt(0.5);
+        runScriptLine("key2D Ctrl+'");
         requestRedraw();
         break;
     }
@@ -252,65 +255,65 @@ class STUDY {
     switch (key) {
 
       case '>' :
-        changeJoinDays(2);
+        runScriptLine("key2D >");
         break;
       case '<' :
-        changeJoinDays(-2);
+        runScriptLine("key2D <");
         break;
 
       case ')' :
-        changeJEnd(1);
+        runScriptLine("key2D )");
         break;
       case '(' :
-        changeJEnd(-1);
+        runScriptLine("key2D (");
         break;
 
       case 'S' :
-        changeSkyScenario(1);
+        runScriptLine("key2D Shift+S");
         break;
       case 's' :
-        changeSkyScenario(-1);
+        runScriptLine("key2D s");
         break;
 
       case 'V' :
       case 'v' :
-        this.showRawLines = !this.showRawLines;
+        runScriptLine("key2D v");
         requestRedraw();
         break;
 
       case 'm' :
       case 'M' :
-        this.showStatisticalRanges = !this.showStatisticalRanges;
+        runScriptLine("key2D m");
         requestRedraw();
         break;
 
       case 'n' :
       case 'N' :
-        this.showNormalLines = !this.showNormalLines;
+        runScriptLine("key2D n");
         requestRedraw();
         break;
 
       case 'b' :
       case 'B' :
-        this.showProbabilities = !this.showProbabilities;
+        runScriptLine("key2D b");
         requestRedraw();
         break;
 
       case '{' :
-        if (this.probabilityHeightInterval < 32) this.probabilityHeightInterval *= 2.0;
+        runScriptLine("key2D {");
         requestRedraw();
         break;
       case '}' :
-        if (this.probabilityHeightInterval > 2) this.probabilityHeightInterval *= 0.5;
+        runScriptLine("key2D }");
         requestRedraw();
         break;
 
       case '[' :
-        decreaseSumInterval();
+        runScriptLine("key2D [");
         requestRedraw();
         break;
       case ']' :
-        increaseSumInterval();
+        runScriptLine("key2D ]");
         requestRedraw();
         break;
     }

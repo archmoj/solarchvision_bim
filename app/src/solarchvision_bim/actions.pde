@@ -1525,6 +1525,145 @@ void build_allActions() {
     key3D_ShiftUpDown(false);
   });
 
+  // key2D <descriptor>: STUDY.pde's own equivalent of the key3D family
+  // above - see that section's own comment for the naming convention and
+  // the reasoning behind it (case-sensitive letter pairs needing a
+  // "Shift+" name rather than relying on case, which
+  // normalizeActionKey() strips).
+  //
+  // None of STUDY.pde's keys had an existing matching action to reuse
+  // (checked, the way key3D's did before registering anything new) - the
+  // closest-sounding candidates (Change Layer, Show/Hide Sky, Show/Hide
+  // Normals) turned out to be unrelated on inspection: UI_setTo_Modify_Layer()
+  // is a tool-mode switch, not changeCurrentLayerTo()'s direct cycling;
+  // Sky3D.displaySurface/allFaces.showNormalLines are different, 3D-scene
+  // fields entirely from STUDY's own showRawLines/showNormalLines.
+  //
+  // Refresh calls (requestRedraw()) stay in STUDY.pde's own key handlers
+  // below, not moved into these actions - except where the function
+  // being called is already fully self-sufficient about its own refresh
+  // (changeJoinDays/changeJEnd/changeSkyScenario, confirmed by reading
+  // each one, not assumed), in which case there's nothing left for the
+  // key handler to add. Same reasoning as key3D's own "Delete Selection"/
+  // "Look at selection" distinction.
+  // currentLayerId is a global (layers.pde), not a STUDY field - the
+  // original code references it bare from inside STUDY.pde too, which
+  // reads like a "this." field but isn't one.
+  putAction("key2D Ctrl+Up", () -> {
+    changeCurrentLayerTo((currentLayerId + 1) % allLayers.length);
+  });
+
+  putAction("key2D Ctrl+Down", () -> {
+    changeCurrentLayerTo((currentLayerId + allLayers.length - 1) % allLayers.length);
+  });
+
+  putAction("key2D Ctrl+Right", () -> {
+    STUDY.impactGraphIndex = (STUDY.impactGraphIndex + 1) % STUDY.PLOT_IMPACTS_MODE_COUNT;
+  });
+
+  putAction("key2D Ctrl+Left", () -> {
+    STUDY.impactGraphIndex = (STUDY.impactGraphIndex - 1 + STUDY.PLOT_IMPACTS_MODE_COUNT) % STUDY.PLOT_IMPACTS_MODE_COUNT;
+  });
+
+  // The "no shift" guard on both of these stays in STUDY.pde's own
+  // handleCtrlCodedKey() - a real KeyEvent's modifier state isn't
+  // something a script invoking this action by name would have (or
+  // need) an equivalent of.
+  putAction("key2D Ctrl+PageUp", () -> {
+    STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex + 1) % STUDY.PLOT_SETUP_MODE_COUNT;
+  });
+
+  putAction("key2D Ctrl+PageDown", () -> {
+    STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex - 1 + STUDY.PLOT_SETUP_MODE_COUNT) % STUDY.PLOT_SETUP_MODE_COUNT;
+  });
+
+  putAction("key2D Ctrl+;", () -> {
+    STUDY.showImpactSummary = !STUDY.showImpactSummary;
+  });
+
+  putAction("key2D Ctrl+\"", () -> {
+    STUDY.verticalUnitScale *= sqrt(2.0);
+  });
+
+  putAction("key2D Ctrl+'", () -> {
+    STUDY.verticalUnitScale *= sqrt(0.5);
+  });
+
+  // changeJoinDays/changeJEnd/changeSkyScenario are STUDY methods, not
+  // globals (confirmed by their indentation in STUDY.pde - 2 spaces,
+  // meaning inside the class), so they need the STUDY. prefix out here,
+  // unlike currentLayerId above. Each already calls its own
+  // requestDataRefresh()/explicit revise() set internally though -
+  // nothing extra needed in STUDY.pde's own key handler after calling
+  // them.
+  putAction("key2D >", () -> {
+    STUDY.changeJoinDays(2);
+  });
+
+  putAction("key2D <", () -> {
+    STUDY.changeJoinDays(-2);
+  });
+
+  putAction("key2D )", () -> {
+    STUDY.changeJEnd(1);
+  });
+
+  putAction("key2D (", () -> {
+    STUDY.changeJEnd(-1);
+  });
+
+  // 'S' (forward) and 's' (backward) are different, not a case-insensitive
+  // pair like v/m/n/b below - "key2D Shift+S" for the uppercase one is
+  // this family's usual collision-avoidance naming, not a style choice.
+  putAction("key2D Shift+S", () -> {
+    STUDY.changeSkyScenario(1);
+  });
+
+  putAction("key2D s", () -> {
+    STUDY.changeSkyScenario(-1);
+  });
+
+  // v/V, m/M, n/N, b/B are each a true case-insensitive pair (both cases
+  // do the exact same thing) rather than a collision to avoid - one
+  // action per pair, registered under the lowercase name, is enough;
+  // STUDY.pde's own key handler calls the same one for both cases.
+  putAction("key2D v", () -> {
+    STUDY.showRawLines = !STUDY.showRawLines;
+  });
+
+  putAction("key2D m", () -> {
+    STUDY.showStatisticalRanges = !STUDY.showStatisticalRanges;
+  });
+
+  putAction("key2D n", () -> {
+    STUDY.showNormalLines = !STUDY.showNormalLines;
+  });
+
+  putAction("key2D b", () -> {
+    STUDY.showProbabilities = !STUDY.showProbabilities;
+  });
+
+  // requestRedraw() is unconditional in the original ('{'/'}' still
+  // redraw even when already at the clamp limit and the multiply was a
+  // no-op) - preserved exactly as it was rather than moved inside the if,
+  // by keeping it in STUDY.pde's own key handler rather than folding it
+  // into these two actions.
+  putAction("key2D {", () -> {
+    if (STUDY.probabilityHeightInterval < 32) STUDY.probabilityHeightInterval *= 2.0;
+  });
+
+  putAction("key2D }", () -> {
+    if (STUDY.probabilityHeightInterval > 2) STUDY.probabilityHeightInterval *= 0.5;
+  });
+
+  putAction("key2D [", () -> {
+    STUDY.decreaseSumInterval();
+  });
+
+  putAction("key2D ]", () -> {
+    STUDY.increaseSumInterval();
+  });
+
   putAction("Camera View", () -> {
     if (Select3D.cameraSelection.length > 0) {
       WIN3D.currentCameraIndex = Select3D.cameraSelection[Select3D.cameraSelection.length - 1];

@@ -9,6 +9,8 @@ class STUDYTest {
   @BeforeEach
   void setUp () {
     app = new solarchvision_bim();
+    app.allActions = new java.util.HashMap<>(); // fresh app never runs build_allActions() itself
+    app.build_allActions(); // most of STUDY's key handlers now dispatch through allActions
   }
 
   // ================= isInHourlyRange ===================================
