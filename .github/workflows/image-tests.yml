@@ -201,9 +201,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      # No Python setup here, unlike generate-images above: this job uses
-      # test/image/make_baseline.sh, not the Python make_baseline.py -
-      # see that step's own comment for why.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
       - name: Cache Processing install
         id: cache-processing
         uses: actions/cache@v4
@@ -226,6 +228,28 @@ jobs:
           mkdir -p ~/processing
           unzip -q /tmp/processing.zip -d /tmp/processing-extracted
           mv /tmp/processing-extracted/Processing "$HOME/processing/${PROCESSING_VERSION}"
+
+      # Needed again now that this job calls Processing.exe directly
+      # (see "Generate test images" below) rather than through
+      # run-with-latest-processing.bat, which creates these same
+      # junctions itself on every invocation.
+      - name: Link repo directories into Processing's resolved base folder
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $core = "$env:USERPROFILE\processing\$env:PROCESSING_VERSION\app\resources\core"
+          Write-Host "Resolved core folder: $core"
+          if (-not (Test-Path $core)) {
+            throw "core folder not found at $core - Processing's Windows install may have a different layout than assumed"
+          }
+          New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE\projects" | Out-Null
+          foreach ($name in @("input", "command", "projects")) {
+            $link = Join-Path $core $name
+            $target = Join-Path $env:GITHUB_WORKSPACE $name
+            if (Test-Path $link) { Remove-Item $link -Force -Recurse }
+            New-Item -ItemType Junction -Path $link -Target $target | Out-Null
+            Write-Host "Created junction: $link -> $target"
+          }
 
       # Identical to ci.yml's test-windows job's own Mesa3D step - see
       # there for the full explanation (no GPU/ICD on this runner at all,
@@ -254,33 +278,18 @@ jobs:
             Install-SystemDll "mesa\x64\libgallium_wgl.dll" "$env:SystemRoot\System32\libgallium_wgl.dll"
           }
 
-      # test/image/make_baseline.sh, NOT the Python make_baseline.py:
-      # invoking Processing.exe directly from Python - via every
-      # combination of subprocess options and argv forms tried - reliably
-      # hung during the sketch's very first rendered frame on this
-      # runner, while invoking the exact same Processing.exe through
-      # run-with-latest-processing.bat (what test/run_integration.sh
-      # already does, and what this shells out to as well) does not. The
-      # actual mechanical reason was never pinned down across several
-      # rounds of narrowing (junction correctness, the trimmed runtime's
-      # module list, a Mesa WGL swap-interval quirk each ruled out in
-      # turn) - this sidesteps needing to, by reusing the invocation
-      # already proven to work rather than continuing to guess at what's
-      # different about a from-scratch one. shell: bash is required here
-      # specifically (unlike every other step in this job): this job's
-      # default shell is PowerShell, and this script is bash.
-      #
-      # This also makes the separate junction-setup step this job used to
-      # have (back when it called Processing.exe directly and needed its
-      # own copy of that setup) unnecessary: run-with-latest-processing.bat
-      # creates the same input/command/projects junctions itself, every
-      # time it runs, exactly as it already does for test/run_integration.sh.
-      - name: Generate test images (make_baseline.sh)
-        shell: bash
+      # Back to the Python make_baseline.py, calling Processing.exe
+      # directly again (see build_command()'s own comment there) - now
+      # that LIBGL_ALWAYS_SOFTWARE=1 is set, this is specifically testing
+      # whether that env var alone was the actual fix all along, rather
+      # than the .bat-delegation workaround this previously needed.
+      # `python`, not `python3`: setup-python guarantees the former on
+      # every platform, the latter only on Linux/macOS.
+      - name: Generate test images (make_baseline.py)
         timeout-minutes: 15
-        run: |
-          chmod +x test/image/make_baseline.sh
-          ./test/image/make_baseline.sh
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: python test/image/make_baseline.py
 
       - name: Upload Windows test images
         uses: actions/upload-artifact@v4

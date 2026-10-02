@@ -112,35 +112,26 @@ def find_processing_java():
 
 
 def build_command(exe, name):
-    """The actual argv to run for one test.
+    """The actual argv to run for one test - Processing invoked directly,
+    the same way on every platform.
 
-    Linux/macOS: Processing invoked directly, exactly as before - this
-    has always worked reliably there.
-
-    Windows: delegates to run-with-latest-processing.bat (or
-    run-with-processing-4.3.bat for the legacy generation) instead of
-    invoking Processing.exe directly. This script used to build the same
-    kind of --sketch=...  --run ... argv directly on Windows too, and it
-    reliably hung during the very first rendered frame - every retry,
-    every test - while test/run_integration.sh's own invocation of the
-    exact same Processing.exe through this exact same .bat wrapper (same
-    Mesa setup, same sketch, same command scripts) does not. Several
-    rounds of narrowing (the junction, the trimmed runtime's module list,
-    a Mesa WGL swap-interval quirk) ruled out the sketch, the Mesa
-    install, and the resolved paths in turn without finding the actual
-    difference - so rather than keep re-deriving Processing's own
-    invocation logic here and guessing at what's different about it, this
-    just reuses the invocation already proven to work, through the exact
-    same entry point test/run_integration.sh uses.
-
-    cmd /c, not the .bat path directly: Python's subprocess can't execute
-    a .bat file as the program itself (CreateProcess only runs real PE
-    executables) without shell=True, which this avoids in favor of an
-    explicit, unambiguous argv list.
+    This used to delegate to run-with-latest-processing.bat on Windows
+    instead, after Processing.exe invoked directly here reliably hung
+    during the sketch's very first rendered frame - every retry, every
+    test - while test/run_integration.sh's own invocation of the exact
+    same Processing.exe through that .bat wrapper did not. That turned
+    out to be because this script was missing LIBGL_ALWAYS_SOFTWARE=1
+    (and, originally, the java.instrument runtime swap test/run_integration.sh
+    also does - not needed for image generation on its own, but included
+    there since it's what the working comparison actually ran with): once
+    the image-tests.yml Windows job's bash-based replacement
+    (test/image/make_baseline.sh) was given that env var and the
+    screenshots started working there too, delegating to a wrapper script
+    just to get a working GL context was no longer the actual fix - the
+    missing env var was. Restored to direct invocation to confirm that
+    explicitly, rather than carry the .bat-delegation workaround forward
+    once it's no longer needed.
     """
-    if os.name == "nt":
-        script = "run-with-latest-processing.bat" if "processing.exe" in exe.lower() else "run-with-processing-4.3.bat"
-        return ["cmd", "/c", os.path.join(REPO_ROOT, script), "USER=AUTO", f"RUN=command/{name}.txt"]
     sketch_arg = os.path.relpath(SKETCH_DIR, REPO_ROOT)
     return [exe, "cli", f"--sketch={sketch_arg}", "--run", "USER=AUTO", f"RUN=command/{name}.txt"]
 
