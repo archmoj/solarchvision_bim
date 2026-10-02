@@ -31,10 +31,39 @@ int pixel_D = 72; // command bar
 int pixel_H = 100; // just an initial value
 int pixel_W = 100; // just an initial value
 
-void setup () {
+void settings () {
+  // parseArgs() has to run here, not (only) in setup() below, because
+  // the size()/fullScreen() decision right after it depends on `control`
+  // and - unlike fullScreen(), which this sketch has always called from
+  // setup() without issue - a literal size() call is only allowed inside
+  // settings() in compiled/CLI mode ("When not using the PDE, size() can
+  // only be used inside settings()", confirmed by this exact
+  // IllegalStateException the first time this was tried from setup()
+  // instead). args is a standard sketch field, populated before either
+  // settings() or setup() runs, so it's available here just as it was
+  // there.
   parseArgs(args);
 
-  fullScreen(P2D);
+  // fullScreen() sizes the window to whatever the OS reports as the
+  // display resolution - correct for a real interactive user, but not
+  // reliable for automated (USER_AUTO) runs: Linux's CI only gets
+  // 1920x1080 screenshots because Xvfb is explicitly started with
+  // -screen 0 1920x1080x24 (see test/run_integration.sh's own comment on
+  // needing a display at all), while GitHub's windows-latest runners
+  // default their headless session to 1024x768 with no supported way to
+  // change it (a long-standing, still-open upstream limitation - see
+  // actions/runner-images#2935). Fixing the size explicitly here, only
+  // for USER_AUTO, gets every automated run - on any platform - the same
+  // 1920x1080 canvas regardless of what the OS itself reports, without
+  // changing fullScreen()'s real-user behavior at all.
+  if (control == USER_AUTO) {
+    size(1920, 1080, P2D);
+  } else {
+    fullScreen(P2D);
+  }
+}
+
+void setup () {
 
   pixel_W = (width - UI_rollout.dX) / 2;
   pixel_H = (height - (pixel_A + pixel_B + pixel_C + pixel_D)) / 2;
