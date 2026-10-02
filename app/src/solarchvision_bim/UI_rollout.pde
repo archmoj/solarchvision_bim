@@ -1,10 +1,14 @@
+int calcRolloutWidth () {
+  return int(27 * MessageSize);
+}
+
 class UI_rollout {
 
   final static String CLASS_STAMP = "UI_rollout";
 
   int cX = 2 * pixel_W;
   int cY = pixel_A + pixel_B + 0;
-  int dX = int(27 * MessageSize);
+  int dX = calcRolloutWidth();
   int dY = 2 * pixel_H;
   float view_R = float(dY) / float(dX);
   float view_S = MessageSize / 12;

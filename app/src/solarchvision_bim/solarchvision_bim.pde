@@ -22,14 +22,14 @@ String version = "2026";
 String BaseFolder = sketchPath();
 String SceneName = "";
 
-float MessageSize = 15.0;
-int pixel_A = 24; // menu bar
-int pixel_B = 42; // 3D tool bar
-int pixel_C = 72; // case bar
-int pixel_D = 72; // command bar
+float MessageSize = 0.0;
+int pixel_A = 0;
+int pixel_B = 0;
+int pixel_C = 0;
+int pixel_D = 0;
 
-int pixel_H = 100; // just an initial value
-int pixel_W = 100; // just an initial value
+int pixel_H = 0;
+int pixel_W = 0;
 
 int screenWidth = 0;
 int screenHeight = 0;
@@ -47,6 +47,14 @@ void settings () {
 }
 
 void setup () {
+  MessageSize = height / 72.0;
+
+  pixel_A = height / 45; // menu bar
+  pixel_B = height / 25; // 3D tool bar
+  pixel_C = height / 15; // case bar
+  pixel_D = height / 15; // command bar
+
+  UI_rollout.dX = calcRolloutWidth();
 
   pixel_W = (width - UI_rollout.dX) / 2;
   pixel_H = (height - (pixel_A + pixel_B + pixel_C + pixel_D)) / 2;
@@ -54,6 +62,10 @@ void setup () {
   // resize windows
   MESSAGE = new MESSAGE();
   UI_rollout = new UI_rollout();
+  UI_menuBar = new UI_menuBar();
+  UI_toolBar = new UI_toolBar();
+  UI_caseBar = new UI_caseBar();
+  UI_consoleBar = new UI_consoleBar();
   WIN3D = new WIN3D();
   WORLD = new WORLD();
   STUDY = new STUDY();
