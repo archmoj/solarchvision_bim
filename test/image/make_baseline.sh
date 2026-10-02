@@ -13,9 +13,23 @@
 # work instead).
 #
 # No coverage/JaCoCo instrumentation here: this script exists purely to
-# generate images, so none of test/run_integration.sh's
-# JAVA_TOOL_OPTIONS/runtime-swap machinery (needed only for -javaagent to
-# attach) is needed or included.
+# generate images, so JAVA_TOOL_OPTIONS itself (needed only for
+# -javaagent to attach) is not included. LIBGL_ALWAYS_SOFTWARE and the
+# runtime swap, however, ARE kept despite being originally documented
+# (in test/run_integration.sh, which this was first adapted from) as
+# existing only to support that - a from-scratch version of this script
+# that dropped both on that assumption hung during the sketch's very
+# first rendered frame on Windows, identically to every attempt at
+# invoking Processing directly from Python, while
+# test/run_integration.sh's own JAVA_TOOL_OPTIONS-only difference ran
+# correctly - a side-by-side test confirmed it's one or both of these
+# two, not JaCoCo, making the actual difference. LIBGL_ALWAYS_SOFTWARE in
+# particular: despite the LIBGL name suggesting Linux/GLX specifically,
+# Mesa's WGL (Windows) backend shares the same underlying codebase and
+# environment-variable handling, so this plausibly still matters for
+# forcing llvmpipe rather than letting Mesa probe for hardware
+# acceleration first - a hang (not a crash) during that probe would
+# match the symptom seen without it exactly.
 #
 # A single test script can call REC.png more than once, each with its
 # own name given right in the script (see command/test_views.txt), so
@@ -45,6 +59,7 @@ cd "$(dirname "$0")/../.."   # repo root
 PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 PER_TEST_TIMEOUT="${PER_TEST_TIMEOUT:-300}"
 MAX_RETRY="${MAX_RETRY:-2}"
+export LIBGL_ALWAYS_SOFTWARE=1
 
 ACTUAL_DIR="test/image/actual"
 mkdir -p "$ACTUAL_DIR"
@@ -63,6 +78,36 @@ elif [ -x "$PROCESSING_HOME/processing-java" ]; then
 else
   echo "error: none of processing-java, bin/Processing, or Processing.exe found under $PROCESSING_HOME" >&2
   exit 1
+fi
+
+# Ported from test/run_integration.sh verbatim, despite that file's own
+# comment saying this swap exists only for -javaagent/java.instrument -
+# see this file's header comment on why it's kept here anyway even
+# though nothing here attaches a javaagent.
+if [ -x "$PROCESSING_HOME/bin/Processing" ] && [ -d "$PROCESSING_HOME/lib/app/resources/jdk" ]; then
+  if [ -d "$PROCESSING_HOME/lib/runtime" ] && [ ! -L "$PROCESSING_HOME/lib/runtime" ]; then
+    echo "==> Swapping $PROCESSING_HOME/lib/runtime for the bundled full JDK - original kept at lib/runtime.orig"
+    mv "$PROCESSING_HOME/lib/runtime" "$PROCESSING_HOME/lib/runtime.orig"
+    ln -sfn "$PROCESSING_HOME/lib/app/resources/jdk" "$PROCESSING_HOME/lib/runtime"
+  fi
+elif [ -x "$PROCESSING_HOME/Processing.exe" ] && [ -d "$PROCESSING_HOME/app/resources/jdk" ]; then
+  # Junction (mklink /J), not a symlink: true symlinks need Administrator
+  # privileges or Developer Mode on Windows, junctions need neither - see
+  # run-with-latest-processing.bat's own use of this same technique.
+  # Guarded by runtime.orig's absence rather than `[ -L ... ]`: a
+  # junction isn't reliably recognized as a symlink by bash's -L test on
+  # Windows.
+  if [ -d "$PROCESSING_HOME/runtime" ] && [ ! -d "$PROCESSING_HOME/runtime.orig" ]; then
+    echo "==> Swapping $PROCESSING_HOME/runtime for the bundled full JDK - original kept at runtime.orig"
+    mv "$PROCESSING_HOME/runtime" "$PROCESSING_HOME/runtime.orig"
+    # MSYS_NO_PATHCONV=1 disables Git Bash's automatic POSIX-to-Windows
+    # argument rewriting for this one command - without it, /J gets
+    # misread as a Unix-style path reference and silently mangled before
+    # mklink ever sees it. Plain /c and /J (not //c / //J) are correct
+    # here specifically because conversion is switched off entirely for
+    # this command, not merely escaped per-argument.
+    MSYS_NO_PATHCONV=1 cmd /c mklink /J "$(cygpath -w "$PROCESSING_HOME/runtime")" "$(cygpath -w "$PROCESSING_HOME/app/resources/jdk")" >/dev/null
+  fi
 fi
 
 if [ "$#" -lt 1 ]; then
