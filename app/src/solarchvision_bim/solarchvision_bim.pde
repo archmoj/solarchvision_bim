@@ -22,18 +22,6 @@ String version = "2026";
 String BaseFolder = sketchPath();
 String SceneName = "";
 
-float MessageSize = 0.0;
-int pixel_A = 0;
-int pixel_B = 0;
-int pixel_C = 0;
-int pixel_D = 0;
-
-int pixel_H = 0;
-int pixel_W = 0;
-
-int screenWidth = 0;
-int screenHeight = 0;
-
 void settings () {
   parseArgs(args);
 
