@@ -285,9 +285,19 @@ jobs:
       # than the .bat-delegation workaround this previously needed.
       # `python`, not `python3`: setup-python guarantees the former on
       # every platform, the latter only on Linux/macOS.
+      #
+      # SHARD_INDEX/SHARD_TOTAL explicitly set here (0 of 1 - i.e. every
+      # test, no striping), same as the last time this job called
+      # make_baseline.py: the workflow-level env block above sets
+      # SHARD_TOTAL: 3 for generate-images' own sharding, which every job
+      # in this file inherits unless overridden. Dropped when this step
+      # was briefly make_baseline.sh (which never reads either var at
+      # all), and needed again now that it's make_baseline.py once more.
       - name: Generate test images (make_baseline.py)
         timeout-minutes: 15
         env:
+          SHARD_INDEX: '0'
+          SHARD_TOTAL: '1'
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: python test/image/make_baseline.py
 
