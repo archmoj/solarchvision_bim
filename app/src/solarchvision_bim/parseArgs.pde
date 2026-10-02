@@ -29,6 +29,16 @@ void _useArg(String arg) {
     }
   }
 
+  _at = CAP_arg.indexOf("SCREEN");
+  if (_at == 0) {
+    _tokens = split(CAP_arg, '=');
+    if (_tokens.length > 1) {
+      String[] widthXheight = _tokens[1].split("X");
+      screenWidth = PApplet.parseInt(widthXheight[0]);
+      screenHeight = PApplet.parseInt(widthXheight[1]);
+    }
+  }
+
   _at = CAP_arg.indexOf("RUN");
   if (_at == 0) {
     _tokens = split(arg, '=');

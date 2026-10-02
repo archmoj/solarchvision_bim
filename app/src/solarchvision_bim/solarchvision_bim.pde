@@ -31,12 +31,17 @@ int pixel_D = 72; // command bar
 int pixel_H = 100; // just an initial value
 int pixel_W = 100; // just an initial value
 
+int screenWidth = 0;
+int screenHeight = 0;
+
 void settings () {
   parseArgs(args);
 
-  if (control == USER_AUTO) {
+  if (screenWidth > 0 && screenHeight > 0) { // set by arg e.g. SCREEN=1280x720
+    size(screenWidth, screenHeight, P2D);
+  } else if (control == USER_AUTO) { // used in image tests
     size(1920, 1080, P2D);
-  } else {
+  } else { // case of USER_GUI without SCREEN arg
     fullScreen(P2D);
   }
 }
