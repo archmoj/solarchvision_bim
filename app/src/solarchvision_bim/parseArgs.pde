@@ -39,6 +39,31 @@ void _useArg(String arg) {
     }
   }
 
+  _at = CAP_arg.indexOf("FONTSIZE");
+  if (_at == 0) {
+    _tokens = split(CAP_arg, '=');
+    if (_tokens.length > 1) {
+      userPointSize = PApplet.parseFloat(_tokens[1]);
+    }
+  }
+
+  _at = CAP_arg.indexOf("FONT");
+  if (_at == 0) {
+    _tokens = split(CAP_arg, '=');
+    if (_tokens.length > 1) {
+      Default_Font = split(arg, '=')[1]
+        .replace("-", " ")
+        .replace("_", " ");
+
+      if (Default_Font.equals("?")) {
+        String[] fontList = PFont.list();
+        for (int i = 0; i < fontList.length; i++) {
+          println(fontList[i]);
+        }
+      }
+    }
+  }
+
   _at = CAP_arg.indexOf("RUN");
   if (_at == 0) {
     _tokens = split(arg, '=');

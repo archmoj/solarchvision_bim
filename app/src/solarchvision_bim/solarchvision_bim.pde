@@ -35,12 +35,16 @@ void settings () {
 }
 
 void setup () {
-  MessageSize = height / 72.0;
+  if(userPointSize > 0) {
+    MessageSize = userPointSize * 96 / 72.0;
+  } else {
+    MessageSize = height / 60.0;
+  }
 
-  pixel_A = int(MessageSize * 1.6); // menu bar
-  pixel_B = int(MessageSize * 2.88); // 3D tool bar
-  pixel_C = int(MessageSize * 4.8); // case bar
-  pixel_D = int(MessageSize * 4.8); // command bar
+  pixel_A = int(MessageSize * 1.5); // menu bar
+  pixel_B = int(MessageSize * 2.25); // 3D tool bar
+  pixel_C = int(MessageSize * 4.5); // case bar
+  pixel_D = int(MessageSize * 4.5); // command bar
 
   UI_rollout.dX = calcRolloutWidth();
 

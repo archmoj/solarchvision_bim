@@ -768,6 +768,7 @@ String[] allMessages = {"Command Output:", ""};
 
 int typeUserCommand = 0;
 
+float userPointSize = 0.0;
 float MessageSize = 0.0;
 int pixel_A = 0;
 int pixel_B = 0;
