@@ -36,6 +36,27 @@ geometry command that silently changes its output, etc).
    RUN=command/test.txt` — see `app/src/solarchvision_bim/parseArgs.pde` and
    `solarchvision_bim.pde`: `USER=AUTO` makes the sketch run the script a
    couple of frames after startup and then call `exit()` on its own).
+
+### Sketch startup arguments
+
+`USER=`/`RUN=` above are two of several arguments the sketch itself
+understands (`parseArgs.pde`), all passed the same way — space-separated,
+after `--run` — and all optional:
+
+| Argument | Example | What it does |
+| --- | --- | --- |
+| `USER=` | `USER=AUTO` or `USER=GUI` | `AUTO`: run `RUN=`'s script a couple of frames after startup, then exit on its own (what this whole pipeline, and `test/run_integration.sh`, use). `GUI`: normal interactive startup - the default if `USER=` is omitted entirely. |
+| `RUN=` | `RUN=command/test_edit.txt` | The `command/*.txt` script to run under `USER=AUTO` (see `command/README.md`). Has no effect under `USER=GUI`. |
+| `SCREEN=` | `SCREEN=1280x720` | Sets the sketch window to this exact size instead of either of `USER=`'s own defaults (`1920x1080` under `AUTO`, `fullScreen()` under `GUI`) - works the same way regardless of which `USER=` mode is active. Every UI element (menu/tool/case/command bars, the rollout panel's width) resizes itself proportionally to match, rather than assuming a fixed layout. |
+| `FONT=` | `FONT=Times-New-Roman` | Overrides the default UI font (`Liberation Sans`). Spaces can be written as `-` or `_` (`Times-New-Roman` and `Times_New_Roman` both become `Times New Roman`) - useful since most shells treat a literal space as a new argument. **`FONT=?` lists every font the current machine actually has available** (`PFont.list()`), printed to the console - the easiest way to find a valid value for this same argument, especially when the two platforms a project is tested on don't ship the same fonts by default. |
+| `FONTSIZE=` | `FONTSIZE=12` | Sets the point size the UI's own text and bar heights scale from (`MessageSize`), overriding the default (proportional to `SCREEN=`/window height otherwise). Does not change the font asset Processing itself loads internally at a fixed resolution for crisp scaling - just how large it, and everything sized relative to it, ends up on screen. |
+
+All five can be combined freely, e.g. the command this section opens
+with, with a specific size and font added:
+```
+~/processing/4.3.4/processing-java --sketch=app/src/solarchvision_bim --run \
+  SCREEN=1280x720 FONTSIZE=12 FONT=Times-New-Roman
+```
 3. Each script's single screenshot is found under
    `projects/model-01/export/screenshots/` (searched at both the repo root
    and under the Processing install — see "Setup: Processing 4.5.x" below
