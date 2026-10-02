@@ -15,7 +15,7 @@ class UI_menuBar {
   // Layout constants
   // ---------------------------------------------------------------------
 
-  static final float PARENT_TEXT_SIZE_FACTOR = 1.25;
+  static final float PARENT_TEXT_SIZE_FACTOR = 1.15;
   static final float CHILD_ROW_HEIGHT_FACTOR = 0.85;
   static final char DIVIDER_MARK = '—';
   final String ___divider___ = String.valueOf(DIVIDER_MARK);

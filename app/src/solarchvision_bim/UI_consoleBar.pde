@@ -26,7 +26,7 @@ class UI_consoleBar {
 
       noStroke();
 
-      textSize(1.25 * MessageSize);
+      textSize(1.15 * MessageSize);
 
 
       pushMatrix();

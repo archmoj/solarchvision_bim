@@ -1,4 +1,4 @@
-String Default_Font = "Liberation Sans";
+String Default_Font = "Segoe UI Semibold";
 
 PFont font;
 

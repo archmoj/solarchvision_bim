@@ -70,18 +70,6 @@ class UI_caseBar {
     }
   }
 
-  // Inserts a single space between every character of a string
-  // (used to letter-space the month labels on the Days tab).
-  String letterSpaced (String txt) {
-    String out = "";
-    int len = txt.length();
-    for (int k = 0; k < len; k++) {
-      out += txt.charAt(k);
-      if (k < len - 1) out += " ";
-    }
-    return out;
-  }
-
   void notifyChanged () {
     UI_rollout.revise();
     STUDY.revise();
@@ -119,7 +107,7 @@ class UI_caseBar {
       textAlign(RIGHT, CENTER);
       stroke(0);
       fill(0);
-      textSize(1.25 * MessageSize);
+      textSize(1.15 * MessageSize);
       text(this.Items[i][0] + ": ", x1, Y_control - 0.125 * MessageSize);
 
       String item = this.Items[i][0];
@@ -247,13 +235,12 @@ class UI_caseBar {
 
   void drawDaysMonthLabels (float x1, float x2) {
     textAlign(CENTER, CENTER);
-    strokeWeight(1);
-    stroke(0);
+    noStroke();
     fill(0);
-    textSize(0.95 * MessageSize);
+    textSize(1.0 * MessageSize);
     for (int j = 0; j < 12; j++) {
       String txt = TIME.namesOfMonths[j][activeLanguage];
-      text(letterSpaced(txt), x1 + (x2 - x1) * (j + 0.5) / 12.0, Y_control);
+      text("[" + txt + "]", x1 + (x2 - x1) * (j + 0.5) / 12.0, Y_control);
     }
     strokeWeight(0);
   }
@@ -443,7 +430,7 @@ class UI_caseBar {
         stroke(255);
         fill(255);
       }
-      textSize(1.125 * MessageSize);
+      textSize(1.0 * MessageSize);
       text(STAT_N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2));
     }
   }

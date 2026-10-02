@@ -440,16 +440,19 @@ class UI_rollout {
           strokeWeight(2);
           stroke(63);
           fill(191);
-          rect(cx - 2.5 * this.view_S, cy - 5 * this.view_S, 150 * this.view_S, 2 * 7.5 * this.view_S);
+          rect(
+            cx - 2.5 * this.view_S, cy - 5 * this.view_S - 1,
+            150 * this.view_S, 2 * 7.5 * this.view_S
+          );
           strokeWeight(0);
 
           stroke(0);
           fill(0);
-          textSize(15 * this.view_S);
+          textSize(12.5 * this.view_S);
         } else {
           stroke(127);
           fill(127);
-          textSize(15 * this.view_S);
+          textSize(12.5 * this.view_S);
         }
 
         text(nf(i + 1, 0) + ":" + allRollouts.get(i).get(0), cx, cy);
@@ -485,11 +488,11 @@ class UI_rollout {
 
           stroke(255, 0, 0);
           fill(255, 127, 0);
-          textSize(15 * this.view_S);
+          textSize(12.5 * this.view_S);
         } else {
           stroke(255);
           fill(255);
-          textSize(12.5 * this.view_S);
+          textSize(11 * this.view_S);
         }
 
         text("[" + nf(i, 0) + "]" + allRollouts.get(this.parent).get(i), cx, cy);
@@ -957,12 +960,12 @@ class UI_rollout {
     w1 = 100 * UI_rollout.view_S;
     w2 = 200 * UI_rollout.view_S;
 
-    h = 16 * UI_rollout.view_S;
+    h = 13 * UI_rollout.view_S;
     o = 2 * UI_rollout.view_S;
     t_oW = h * UI_rollout.view_S / 8.0;
-    t_oH = t_oW - 2; // move text 2 pixels down to display nicely
+    t_oH = t_oW - 3; // move text 3 pixels down to display nicely
 
-    Y_control += 25 * UI_rollout.view_S; //(h + 2 * o) * 1.25;
+    Y_control += 20 * UI_rollout.view_S; //(h + 2 * o) * 1.25;
 
     this.spinnerOrderThisPass.add(caption);
 

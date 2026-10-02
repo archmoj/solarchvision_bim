@@ -86,11 +86,11 @@ class UI_toolBar {
     ,
 
     {
-      "3", "1D-Tree", "2D-Tree", "Person", "Living Type", "1.5"
+      "3", "1D-Tree", "2D-Tree", "Person", "Living Type", "2.5"
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "Building Type", "2.5"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "Building Type", "3.5"
     }
     ,
     {
