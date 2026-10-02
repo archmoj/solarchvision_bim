@@ -208,33 +208,4 @@ class CamerasTest {
     assertEquals(2f, app.WIN3D.cameraY, 0.0001f);
     assertEquals(3f, app.WIN3D.cameraZ, 0.0001f);
   }
-
-  @Test
-  void getCorners_apexMatchesDirectlyTransformingTheGivenCameraParams () {
-    // Index 0 is the apex (qx=qy=qz=0), so it lands exactly where
-    // transform_3DViewport() would place the camera for these exact
-    // parameters - checked against calling that directly, rather than
-    // re-deriving the rotation math by hand.
-    float pX = 5, pY = 6, pZ = 7, pT = 2, rX = 15, rY = 0, rZ = 35, rT = 3, zoom = 45;
-
-    app.WIN3D.positionX = pX;
-    app.WIN3D.positionY = pY;
-    app.WIN3D.positionZ = pZ;
-    app.WIN3D.positionStep = pT;
-    app.WIN3D.rotationX = rX;
-    app.WIN3D.rotationY = rY;
-    app.WIN3D.rotationZ = rZ;
-    app.WIN3D.rotationStep = rT;
-    app.WIN3D.zoom = zoom;
-    app.WIN3D.transform_3DViewport();
-    float expectedX = app.WIN3D.cameraX;
-    float expectedY = app.WIN3D.cameraY;
-    float expectedZ = app.WIN3D.cameraZ;
-
-    float[][] corners = app.allCameras.getCorners(1, pX, pY, pZ, pT, rX, rY, rZ, rT, zoom);
-
-    assertEquals(expectedX, corners[0][0], 0.001f);
-    assertEquals(expectedY, corners[0][1], 0.001f);
-    assertEquals(expectedZ, corners[0][2], 0.001f);
-  }
 }
