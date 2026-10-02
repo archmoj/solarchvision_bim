@@ -552,95 +552,54 @@ class WIN3D {
   void handleCtrlCommandKey (char cmdKey) {
     switch (cmdKey) {
       case ',':
-        moveWin3DTowardsSelection(-0.5);
+        runScriptLine("key3D Ctrl+,");
         break;
 
       case '.':
-        moveWin3DTowardsSelection(0.5);
+        runScriptLine("key3D Ctrl+.");
         break;
     }
   }
 
+  // Order here is adjustShadeTime() then ShadeViewport() - opposite of
+  // ' '/BACKSPACE above, which is ShadeViewport() then adjustShadeTime() -
+  // preserved exactly as it always was rather than unified, since that's
+  // a real difference in the original code, not an inconsistency this
+  // refactor should quietly paper over.
   void handleAltArrowKeys (int keyCode) {
     switch (keyCode) {
       case RIGHT:
-        adjustShadeTime(1);
-        ShadeViewport();
+        runScriptLines(new String[]{"key3D ShadeTime+1", "Shade Viewport"});
         this.revise();
         break;
 
       case LEFT:
-        adjustShadeTime(-1);
-        ShadeViewport();
+        runScriptLines(new String[]{"key3D ShadeTime-1", "Shade Viewport"});
         this.revise();
         break;
 
       case UP:
-        adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
-        ShadeViewport();
+        runScriptLines(new String[]{"key3D ShadeTime+Day", "Shade Viewport"});
         this.revise();
         break;
 
       case DOWN:
-        adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
-        ShadeViewport();
+        runScriptLines(new String[]{"key3D ShadeTime-Day", "Shade Viewport"});
         this.revise();
         break;
     }
   }
 
+  // Full body moved to key3D_ShiftUpDown() in actions.pde (registered as
+  // "key3D Shift+Up"/"key3D Shift+Down") - see that function's own
+  // comment.
   void handleShiftedArrowKeys (int keyCode) {
     switch (keyCode) {
-
       case UP:
+        runScriptLine("key3D Shift+Up");
+        break;
       case DOWN:
-        float[] P = Select3D.getPivot();
-        float x0 = P[0];
-        float y0 = P[1];
-        float z0 = P[2];
-
-        if (this.currentTool == UITASK.Rotate) {
-          float r = (keyCode == DOWN) ? -5 : 5;
-          int the_Vector = Select3D.rotationVectorIndex;
-          Rotate3D.selection(x0, y0, z0, r, the_Vector);
-          model_changed();
-        }
-
-        if (this.currentTool == UITASK.Scale) {
-          float s = pow(2.0, 0.25);
-          if (keyCode == DOWN) s = 1.0 / s;
-
-          float sx = s, sy = s, sz = s;
-          int the_Vector = Select3D.scaleVectorIndex;
-          if (the_Vector == 0) { sy = 1; sz = 1; }
-          if (the_Vector == 1) { sz = 1; sx = 1; }
-          if (the_Vector == 2) { sx = 1; sy = 1; }
-
-          Scale3D.selection(x0, y0, z0, sx, sy, sz);
-          model_changed();
-        }
-
-        if (this.currentTool == UITASK.Move) {
-          float d = (keyCode == DOWN) ? -0.5 : 0.5;
-          float dx = d, dy = d, dz = d;
-
-          int the_Vector = Select3D.positionVectorIndex;
-          if (the_Vector == 0) { dy = 0; dz = 0; }
-          if (the_Vector == 1) { dz = 0; dx = 0; }
-          if (the_Vector == 2) { dx = 0; dy = 0; }
-
-          Move3D.selection(dx, dy, dz);
-          model_changed();
-        }
-
-        if (this.toolParameterModifier == 0) {
-          if (this.currentTool >= UITASK.Seed_Material) {
-            int p = (keyCode == DOWN) ? -1 : 1;
-            Edit3D.selection(p);
-            model_changed();
-          }
-        }
-
+        runScriptLine("key3D Shift+Down");
         break;
     }
   }
@@ -648,19 +607,19 @@ class WIN3D {
   void handleArrowKeys (int keyCode) {
     switch (keyCode) {
       case DOWN:
-        this.rotateZ_3DViewport_around_Selection(this.rotationStep);
+        runScriptLine("key3D Down");
         reviseViews();
         break;
       case LEFT:
-        this.rotateXY_3DViewport_around_Selection(-this.rotationStep);
+        runScriptLine("key3D Left");
         reviseViews();
         break;
       case RIGHT:
-        this.rotateXY_3DViewport_around_Selection(this.rotationStep);
+        runScriptLine("key3D Right");
         reviseViews();
         break;
       case UP:
-        this.rotateZ_3DViewport_around_Selection(-this.rotationStep);
+        runScriptLine("key3D Up");
         reviseViews();
         break;
     }
@@ -671,151 +630,135 @@ class WIN3D {
 
       case TAB:
         if (shiftDown) {
-          this.impactTypeIndex = (this.impactTypeIndex + 1) % numberOfImpactVariations;
-          if (this.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-          if (this.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+          runScriptLine("key3D Shift+Tab");
           reviseViews();
         }
         break;
 
       case DELETE:
-        Delete3D.selection();
+        runScriptLine("Delete Selection");
         reviseViews();
         break;
 
+      // '0' has always been an exact duplicate of ',' (see "key3D ,"'s
+      // own comment in actions.pde) - both just run it.
       case ',':
-        if (this.projectionTypeIndex == 1) this.positionZ += this.positionStep * overallScale;
-        else this.zoom /= pow(2.0, 0.25);
+      case '0':
+        runScriptLine("key3D ,");
         reviseViews();
         break;
 
       case '.':
-        if (this.projectionTypeIndex == 1) this.positionZ -= this.positionStep * overallScale;
-        else this.zoom *= pow(2.0, 0.25);
-        reviseViews();
-        break;
-
-      case '0':
-        if (this.projectionTypeIndex == 1) this.positionZ += this.positionStep * overallScale;
-        else this.zoom /= pow(2.0, 0.25);
+        runScriptLine("key3D .");
         reviseViews();
         break;
 
       case '5':
-        this.look_3DViewport_towards_Selection();
-        reviseViews();
+        // "Look at selection" does more than this key used to (also
+        // switches to the CameraDistance tool, see UI_setTo_View_LookAtSelection)
+        // - reused as-is rather than as a stripped-down duplicate, on the
+        // view that "the same thing" means the existing, richer action,
+        // not a new minimal one built to avoid its side effect. No
+        // separate reviseViews() after: that action already calls
+        // UI_rollout.revise() and view_changed() (= WIN3D.revise())
+        // itself, which together are exactly what reviseViews() does.
+        runScriptLines(new String[]{"Look at selection"});
         break;
 
       case '4':
-        this.rotationZ += this.rotationStep;
-        this.reverseTransform_3DViewport();
+        runScriptLine("key3D 4");
         reviseViews();
         break;
       case '6':
-        this.rotationZ -= this.rotationStep;
-        this.reverseTransform_3DViewport();
+        runScriptLine("key3D 6");
         reviseViews();
         break;
       case '8':
-        this.rotationX -= this.rotationStep;
-        this.reverseTransform_3DViewport();
+        runScriptLine("key3D 8");
         reviseViews();
         break;
       case '2':
-        this.rotationX += this.rotationStep;
-        this.reverseTransform_3DViewport();
+        runScriptLine("key3D 2");
         reviseViews();
         break;
 
       case '1':
-        this.positionX += this.positionStep * overallScale;
+        runScriptLine("key3D 1");
         reviseViews();
         break;
       case '3':
-        this.positionX -= this.positionStep * overallScale;
+        runScriptLine("key3D 3");
         reviseViews();
         break;
       case '7':
-        this.positionY += this.positionStep * overallScale;
+        runScriptLine("key3D 7");
         reviseViews();
         break;
       case '9':
-        this.positionY -= this.positionStep * overallScale;
+        runScriptLine("key3D 9");
         reviseViews();
         break;
 
       case '*':
-        this.move_3DViewport_towards_Selection(2.0);
+        runScriptLine("key3D *");
         reviseViews();
         break;
       case '/':
-        this.move_3DViewport_towards_Selection(0.5);
+        runScriptLine("key3D /");
         reviseViews();
         break;
 
       case '+':
-        this.zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * this.zoom));
+        runScriptLine("key3D +");
         reviseViews();
         break;
       case '-':
-        this.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * this.zoom));
+        runScriptLine("key3D -");
         reviseViews();
         break;
 
       case 'c':
-        this.currentCameraIndex += 1;
-        if (this.currentCameraIndex > allCameras.num - 1) this.currentCameraIndex = 0;
-        this.apply_currentCameraIndex();
-        modify_Viewport_Title();
+        runScriptLine("key3D c");
         reviseViews();
         break;
 
       case 'C':
-        this.currentCameraIndex -= 1;
-        if (this.currentCameraIndex < 0) this.currentCameraIndex = allCameras.num - 1;
-        this.apply_currentCameraIndex();
-        modify_Viewport_Title();
+        runScriptLine("key3D Shift+C");
         reviseViews();
         break;
 
       case 't':
-        Tropo3D.i_Map += TROPO_deltaTime;
-        if (Tropo3D.i_Map > STUDY.endHour) Tropo3D.i_Map -= TROPO_deltaTime;
-        WORLD.revise();
-        this.revise();
+        runScriptLine("key3D t");
         break;
       case 'T':
-        Tropo3D.i_Map -= TROPO_deltaTime;
-        if (Tropo3D.i_Map < STUDY.startHour) Tropo3D.i_Map += TROPO_deltaTime;
-        WORLD.revise();
-        this.revise();
+        runScriptLine("key3D Shift+T");
         break;
 
       case 'd':
-        impactDisplayDay += 1;
-        if (impactDisplayDay > STUDY.endDay) impactDisplayDay = 0;
+        runScriptLine("key3D d");
         reviseViews();
         break;
       case 'D':
-        impactDisplayDay -= 1;
-        if (impactDisplayDay < 0) impactDisplayDay = STUDY.endDay;
+        runScriptLine("key3D Shift+D");
         reviseViews();
         break;
 
       case ENTER:
-        if (this.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
-        if (this.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+        runScriptLine("key3D Enter");
         reviseViews();
         break;
 
+      // No reviseViews()/revise() after either: that was already true
+      // before these ran through allActions (ShadeViewport()/
+      // adjustShadeTime() apparently don't need one here), so this
+      // preserves that exactly rather than adding a refresh call that
+      // wasn't there before.
       case ' ':
-        ShadeViewport();
-        adjustShadeTime(1);
+        runScriptLines(new String[]{"Shade Viewport", "key3D ShadeTime+1"});
         break;
 
       case BACKSPACE:
-        ShadeViewport();
-        adjustShadeTime(-1);
+        runScriptLines(new String[]{"Shade Viewport", "key3D ShadeTime-1"});
         break;
     }
   }

@@ -164,6 +164,62 @@ void putValueAction(String name, FloatGetter getter, FloatSetter setter, float m
   putValueAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, null);
 }
 
+// Shift+Up ("key3D Shift+Up", isUp=true) or Shift+Down ("key3D
+// Shift+Down", isUp=false)'s full body - see WIN3D.pde's own
+// handleShiftedArrowKeys() for how these get dispatched from an actual
+// key press. Moved out to its own function, rather than inlined in each
+// putAction's lambda, since the two share this entire body and
+// previously shared one switch-case in handleShiftedArrowKeys() too -
+// keeping it that way here avoids maintaining the same logic twice.
+void key3D_ShiftUpDown (boolean isUp) {
+  float[] P = Select3D.getPivot();
+  float x0 = P[0];
+  float y0 = P[1];
+  float z0 = P[2];
+
+  if (WIN3D.currentTool == UITASK.Rotate) {
+    float r = isUp ? 5 : -5;
+    int the_Vector = Select3D.rotationVectorIndex;
+    Rotate3D.selection(x0, y0, z0, r, the_Vector);
+    model_changed();
+  }
+
+  if (WIN3D.currentTool == UITASK.Scale) {
+    float s = pow(2.0, 0.25);
+    if (!isUp) s = 1.0 / s;
+
+    float sx = s, sy = s, sz = s;
+    int the_Vector = Select3D.scaleVectorIndex;
+    if (the_Vector == 0) { sy = 1; sz = 1; }
+    if (the_Vector == 1) { sz = 1; sx = 1; }
+    if (the_Vector == 2) { sx = 1; sy = 1; }
+
+    Scale3D.selection(x0, y0, z0, sx, sy, sz);
+    model_changed();
+  }
+
+  if (WIN3D.currentTool == UITASK.Move) {
+    float d = isUp ? 0.5 : -0.5;
+    float dx = d, dy = d, dz = d;
+
+    int the_Vector = Select3D.positionVectorIndex;
+    if (the_Vector == 0) { dy = 0; dz = 0; }
+    if (the_Vector == 1) { dz = 0; dx = 0; }
+    if (the_Vector == 2) { dx = 0; dy = 0; }
+
+    Move3D.selection(dx, dy, dz);
+    model_changed();
+  }
+
+  if (WIN3D.toolParameterModifier == 0) {
+    if (WIN3D.currentTool >= UITASK.Seed_Material) {
+      int p = isUp ? 1 : -1;
+      Edit3D.selection(p);
+      model_changed();
+    }
+  }
+}
+
 void build_allActions() {
   allActions = new HashMap<String, Action>();
 
@@ -1262,6 +1318,211 @@ void build_allActions() {
     view_changed();
 
     UI_toolBar.revise();
+  });
+
+  // key3D <descriptor>: mirrors a WIN3D.pde key shortcut exactly (see
+  // WIN3D.pde's own keyPressed()/handleCommandKey()/handleCtrlCommandKey()/
+  // handleArrowKeys() family), registered so the same effect is both
+  // scriptable (command/*.txt, or typed directly - runScriptLine's own
+  // "cmd:"/"out:" print gives logging for free) and keyboard-triggered
+  // through one shared code path, rather than two separately-maintained
+  // copies of the same logic. <descriptor> follows the key itself where
+  // that's unambiguous ("key3D 5"), and a "Ctrl+"/"Shift+"/"Alt+" prefix
+  // where a modifier changes what the bare key alone would do. Letter
+  // keys are an exception: normalizeActionKey() lowercases its whole
+  // argument, so "key3D c" and "key3D C" would collide on the exact same
+  // normalized key ("key3d_c") despite being different keypresses -
+  // "key3D Shift+C" is used for the shifted one instead, purely to keep
+  // the two distinct; reviseViews()/other view-refresh calls stay in
+  // WIN3D.pde's own key handler rather than moving into the action here,
+  // matching "Delete Selection" below's own precedent (confirmed by
+  // reading Delete3D.selection() itself: it has no refresh call of its
+  // own, so whoever calls it - keyboard or script - is expected to
+  // trigger that separately).
+  putAction("key3D c", () -> {
+    WIN3D.currentCameraIndex += 1;
+    if (WIN3D.currentCameraIndex > allCameras.num - 1) WIN3D.currentCameraIndex = 0;
+    WIN3D.apply_currentCameraIndex();
+    modify_Viewport_Title();
+  });
+
+  putAction("key3D Shift+C", () -> {
+    WIN3D.currentCameraIndex -= 1;
+    // Pre-existing bug, found (not introduced) while testing this move:
+    // the original "allCameras.num - 1" wrap-around assumes at least one
+    // camera exists - with zero cameras in the scene it computes -1, not
+    // a valid index, which crashes downstream (Model2Ds.pde,
+    // ArrayIndexOutOfBoundsException) the next time anything renders.
+    // Confirmed via `git show` that this exact line, unchanged, already
+    // existed before this file started reusing it as an action -
+    // clamping to 0 here rather than leaving it as still-latent.
+    if (WIN3D.currentCameraIndex < 0) WIN3D.currentCameraIndex = max(0, allCameras.num - 1);
+    WIN3D.apply_currentCameraIndex();
+    modify_Viewport_Title();
+  });
+
+  putAction("key3D Shift+Tab", () -> {
+    WIN3D.impactTypeIndex = (WIN3D.impactTypeIndex + 1) % numberOfImpactVariations;
+    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+  });
+
+  // Also used by '0', which has always been an exact duplicate of ','
+  // (both nudge positionZ in perspective, or zoom otherwise) - rather
+  // than register the same body twice under two names, '0's own key
+  // handler just calls this one too.
+  putAction("key3D ,", () -> {
+    if (WIN3D.projectionTypeIndex == 1) WIN3D.positionZ += WIN3D.positionStep * overallScale;
+    else WIN3D.zoom /= pow(2.0, 0.25);
+  });
+
+  putAction("key3D .", () -> {
+    if (WIN3D.projectionTypeIndex == 1) WIN3D.positionZ -= WIN3D.positionStep * overallScale;
+    else WIN3D.zoom *= pow(2.0, 0.25);
+  });
+
+  putAction("key3D 4", () -> {
+    WIN3D.rotationZ += WIN3D.rotationStep;
+    WIN3D.reverseTransform_3DViewport();
+  });
+
+  putAction("key3D 6", () -> {
+    WIN3D.rotationZ -= WIN3D.rotationStep;
+    WIN3D.reverseTransform_3DViewport();
+  });
+
+  putAction("key3D 8", () -> {
+    WIN3D.rotationX -= WIN3D.rotationStep;
+    WIN3D.reverseTransform_3DViewport();
+  });
+
+  putAction("key3D 2", () -> {
+    WIN3D.rotationX += WIN3D.rotationStep;
+    WIN3D.reverseTransform_3DViewport();
+  });
+
+  putAction("key3D 1", () -> {
+    WIN3D.positionX += WIN3D.positionStep * overallScale;
+  });
+
+  putAction("key3D 3", () -> {
+    WIN3D.positionX -= WIN3D.positionStep * overallScale;
+  });
+
+  putAction("key3D 7", () -> {
+    WIN3D.positionY += WIN3D.positionStep * overallScale;
+  });
+
+  putAction("key3D 9", () -> {
+    WIN3D.positionY -= WIN3D.positionStep * overallScale;
+  });
+
+  putAction("key3D *", () -> {
+    WIN3D.move_3DViewport_towards_Selection(2.0);
+  });
+
+  putAction("key3D /", () -> {
+    WIN3D.move_3DViewport_towards_Selection(0.5);
+  });
+
+  putAction("key3D +", () -> {
+    WIN3D.zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.zoom));
+  });
+
+  putAction("key3D -", () -> {
+    WIN3D.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.zoom));
+  });
+
+  putAction("key3D t", () -> {
+    Tropo3D.i_Map += TROPO_deltaTime;
+    if (Tropo3D.i_Map > STUDY.endHour) Tropo3D.i_Map -= TROPO_deltaTime;
+    WORLD.revise();
+    WIN3D.revise();
+  });
+
+  putAction("key3D Shift+T", () -> {
+    Tropo3D.i_Map -= TROPO_deltaTime;
+    if (Tropo3D.i_Map < STUDY.startHour) Tropo3D.i_Map += TROPO_deltaTime;
+    WORLD.revise();
+    WIN3D.revise();
+  });
+
+  putAction("key3D d", () -> {
+    impactDisplayDay += 1;
+    if (impactDisplayDay > STUDY.endDay) impactDisplayDay = 0;
+  });
+
+  putAction("key3D Shift+D", () -> {
+    impactDisplayDay -= 1;
+    if (impactDisplayDay < 0) impactDisplayDay = STUDY.endDay;
+  });
+
+  putAction("key3D Enter", () -> {
+    if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
+    if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+  });
+
+  // Just the adjustShadeTime() half of Space/Backspace/Alt+arrows' own
+  // "shade time, then re-shade" (or vice versa) pairing - "Shade
+  // Viewport" above already covers the ShadeViewport() half exactly, so
+  // each key composes the two via runScriptLines() in whichever order it
+  // actually uses, rather than this duplicating "Shade Viewport" itself.
+  // +1/-1 cover Space, Backspace, and Alt+Right/Left alike (all four
+  // step by exactly one hour); Alt+Up/Down step a full day instead
+  // (SHADE_HOURS_PER_DAY + 1), hence the separate pair.
+  putAction("key3D ShadeTime+1", () -> {
+    adjustShadeTime(1);
+  });
+
+  putAction("key3D ShadeTime-1", () -> {
+    adjustShadeTime(-1);
+  });
+
+  putAction("key3D ShadeTime+Day", () -> {
+    adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
+  });
+
+  putAction("key3D ShadeTime-Day", () -> {
+    adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
+  });
+
+  putAction("key3D Ctrl+,", () -> {
+    moveWin3DTowardsSelection(-0.5);
+  });
+
+  putAction("key3D Ctrl+.", () -> {
+    moveWin3DTowardsSelection(0.5);
+  });
+
+  putAction("key3D Up", () -> {
+    WIN3D.rotateZ_3DViewport_around_Selection(-WIN3D.rotationStep);
+  });
+
+  putAction("key3D Down", () -> {
+    WIN3D.rotateZ_3DViewport_around_Selection(WIN3D.rotationStep);
+  });
+
+  putAction("key3D Left", () -> {
+    WIN3D.rotateXY_3DViewport_around_Selection(-WIN3D.rotationStep);
+  });
+
+  putAction("key3D Right", () -> {
+    WIN3D.rotateXY_3DViewport_around_Selection(WIN3D.rotationStep);
+  });
+
+  // Shift+Up/Down's full tool-dependent body (Rotate/Scale/Move/Edit
+  // selection, picked by WIN3D.currentTool) moved into key3D_ShiftUpDown()
+  // below, verbatim from handleShiftedArrowKeys() other than keyCode's
+  // role shrinking to the one boolean each branch actually used it for -
+  // everything it touches (Select3D, Rotate3D, Scale3D, Move3D, Edit3D,
+  // UITASK, model_changed()) is already globally accessible, not
+  // WIN3D-private, so nothing but the location and that parameter change.
+  putAction("key3D Shift+Up", () -> {
+    key3D_ShiftUpDown(true);
+  });
+
+  putAction("key3D Shift+Down", () -> {
+    key3D_ShiftUpDown(false);
   });
 
   putAction("Camera View", () -> {
