@@ -37,10 +37,10 @@ void settings () {
 void setup () {
   MessageSize = height / 72.0;
 
-  pixel_A = height / 45; // menu bar
-  pixel_B = height / 25; // 3D tool bar
-  pixel_C = height / 15; // case bar
-  pixel_D = height / 15; // command bar
+  pixel_A = int(MessageSize * 1.6); // menu bar
+  pixel_B = int(MessageSize * 2.88); // 3D tool bar
+  pixel_C = int(MessageSize * 4.8); // case bar
+  pixel_D = int(MessageSize * 4.8); // command bar
 
   UI_rollout.dX = calcRolloutWidth();
 
