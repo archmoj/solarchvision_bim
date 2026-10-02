@@ -62,11 +62,11 @@ void parse_XML_variables (XML xml, boolean desired_diag) {
 
   impactDisplayDay = XML_getInt(parent, "impactDisplayDay");
 
-  String new_Default_Font = XML_getString(parent, "Default_Font");
-  if (Default_Font.equals(new_Default_Font)) {
+  String new_currentFont = XML_getString(parent, "currentFont");
+  if (currentFont.equals(new_currentFont)) {
   } else {
-    Default_Font = new_Default_Font;
-    loadDefaultFontStyle();
+    currentFont = new_currentFont;
+    loadCurrentFontStyle();
   }
 
 

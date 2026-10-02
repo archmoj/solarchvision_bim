@@ -1,12 +1,17 @@
-String Default_Font = "Segoe UI Semibold";
+final String DEFAULT_FONT = "font/selawk.ttf";
+
+String currentFont = DEFAULT_FONT;
 
 PFont font;
 
-void loadDefaultFontStyle () {
+final int maxFontSize = 36;
+final boolean smoothFont = true;
 
-  println("Loading font:", Default_Font);
+void loadCurrentFontStyle () {
 
-  font = createFont(Default_Font, 36, true);
+  println("Loading font:", currentFont);
+
+  font = createFont(currentFont, maxFontSize, smoothFont);
 
   ResetFontStyle();
 }

@@ -85,7 +85,7 @@ void setup () {
 
   SKY2D_graphics = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);
 
-  loadDefaultFontStyle();
+  loadCurrentFontStyle();
 
   changeCurrentLayerTo(5); // pointing to air temperature variable i.e. on the list of allLayers
 

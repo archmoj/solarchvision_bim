@@ -51,11 +51,11 @@ void _useArg(String arg) {
   if (_at == 0) {
     _tokens = split(CAP_arg, '=');
     if (_tokens.length > 1) {
-      Default_Font = split(arg, '=')[1]
+      currentFont = split(arg, '=')[1]
         .replace("-", " ")
         .replace("_", " ");
 
-      if (Default_Font.equals("?")) {
+      if (currentFont.equals("?")) {
         String[] fontList = PFont.list();
         for (int i = 0; i < fontList.length; i++) {
           println(fontList[i]);

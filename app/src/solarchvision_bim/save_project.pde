@@ -72,7 +72,7 @@ void saveProject (String myFile) {
 
     XML_setInt(parent, "impactDisplayDay", impactDisplayDay);
 
-    XML_setString(parent, "Default_Font", Default_Font);
+    XML_setString(parent, "currentFont", currentFont);
   }
 
 
