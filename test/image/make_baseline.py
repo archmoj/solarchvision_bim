@@ -24,8 +24,8 @@ Env vars:
                       where the launcher sits one directory level
                       shallower - see find_processing_java() below.
   PER_TEST_TIMEOUT    seconds allowed per attempt (default: 300)
-  MAX_RETRY           retries per test after the first attempt (default: 2,
-                      i.e. up to 3 attempts total for one test)
+  MAX_RETRY           retries per test after the first attempt (default: 1,
+                      i.e. up to 2 attempts total for one test)
   SHARD_INDEX,        run only every SHARD_TOTAL-th test (0-based, i.e. the
   SHARD_TOTAL         tests where index % SHARD_TOTAL == SHARD_INDEX), for
                       running generation across several parallel CI jobs/
@@ -70,7 +70,7 @@ ACTUAL_DIR = os.path.join(IMAGE_TEST_DIR, "actual")
 BASELINE_DIR = os.path.join(IMAGE_TEST_DIR, "baseline")
 
 PER_TEST_TIMEOUT = int(os.environ.get("PER_TEST_TIMEOUT", "300"))
-MAX_RETRY = int(os.environ.get("MAX_RETRY", "2"))
+MAX_RETRY = int(os.environ.get("MAX_RETRY", "1"))
 
 
 def discover_tests():
