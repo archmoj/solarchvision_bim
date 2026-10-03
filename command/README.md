@@ -184,7 +184,9 @@ House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
 House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
 ```
 
--   `CYLINDER`: Creates a cylinder
+-   `CYLINDER`: Creates a cylinder. `dx`/`dy` can differ for an
+    elliptical (rather than circular) cross-section; `dz` is the
+    height
 
 ```
 Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?
@@ -201,6 +203,13 @@ Sphere m=? tes=? lyr=? x=? y=? z=? d=? deg=? r=?
 
 ```
 SuperSphere m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? px=? py=? pz=? deg=? r=?
+```
+
+-   `PARAMETRIC`: Creates a parametric surface. `n` selects which
+    parametric formula to use
+
+```
+Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=?
 ```
 
 -   `CUSHION`: Creates a cushion-like object

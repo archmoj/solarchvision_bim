@@ -1717,9 +1717,14 @@ void mouseClicked () {
 
                     float[] d = computeMoveDelta(x1, y1, z1, x2, y2, z2);
 
-                    Move3D.selection(d[0], d[1], d[2]);
-
-                    model_changed();
+                    // No separate model_changed() after, unlike the
+                    // direct call this replaces: the "MOVE" command
+                    // already calls it itself. "move" is already in
+                    // bypassAllActionsFor (it's the literal motivating
+                    // example in that set's own comment), so this isn't
+                    // at risk of the Solid/Camera/Section-style silent
+                    // collision found earlier.
+                    runScriptLine("Move dx=" + d[0] + " dy=" + d[1] + " dz=" + d[2]);
                   }
                 }
 

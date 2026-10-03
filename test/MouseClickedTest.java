@@ -252,6 +252,29 @@ class MouseClickedTest {
     assertEquals(before + 1, app.allModel1Ds.num);
   }
 
+  // ================= "Move" command (UITASK.Move drag-to-move) ===========
+  // "MOVE" itself already has solid coverage in RunScriptTest.java
+  // (move_withArguments_actuallyMovesRatherThanJustSwitchingTheTool,
+  // confirming it isn't shadowed by the bare tool-switch action "move"
+  // is already in bypassAllActionsFor to avoid). This instead confirms
+  // this specific substitution's own d[0]/d[1]/d[2] -> dx/dy/dz string
+  // construction is correct - not swapped or misaligned - by checking
+  // the actual resulting vertex position, the same way Move3DTest.java's
+  // own selection_vertexCategoryDispatchesToVertices does for
+  // Move3D.selection(...) directly.
+  @Test
+  void moveCommand_appliesComputedDeltaToTheSelectedVertex () {
+    app.build_allActions();
+    app.allVertices = new float[][]{{1, 2, 3}};
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.vertexSelection = new int[]{0};
+
+    float[] d = {4, 5, 6};
+    app.runScriptLine("Move dx=" + d[0] + " dy=" + d[1] + " dz=" + d[2]);
+
+    assertArrayEquals(new float[]{5, 7, 9}, app.allVertices[0], 0.0001f);
+  }
+
   // ================= small top-level helpers ============================
 
   @Test
