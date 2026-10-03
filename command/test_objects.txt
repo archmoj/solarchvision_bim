@@ -1,3 +1,6 @@
+Month 10
+Day 2
+
 Delete all
 
 PolygonMesh m:0 tes:1 lyr:0 x:-60 y:-20 z:0 d:8 deg:6 r:0
