@@ -1,6 +1,6 @@
 import requests
 
-dirOut = 'app/src/solarchvision_bim/data/font/'
+dirOut = '../app/src/solarchvision_bim/data/font/'
 
 def downloadFonts(baseUrl, allNames) :
     for name in allNames :
