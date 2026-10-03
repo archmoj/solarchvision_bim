@@ -11,6 +11,247 @@ class MouseClickedTest {
     app = new solarchvision_bim();
   }
 
+  // ================= houseCommandArgs / creatorCommandArgs ===============
+  // These build the command string the UITASK.Create House1/2/3 (and
+  // Pyramid/Plane, via creatorCommandArgs() alone) branches now pass to
+  // runScriptLine() instead of calling Create3D.add_HouseN_Core(...)
+  // directly - see mouseClicked.pde's own comment on both for why.
+
+  @Test
+  void houseCommandArgs_doublesHalfWidthsIntoTheFullWidthsTheCommandExpects () {
+    // House1's own command case treats dx/dy/dz as full widths and
+    // halves them internally before calling Create3D.add_House1_Core -
+    // so calling it through houseCommandArgs() with rx=ry=rz=2 (an
+    // already-half-width, matching what computeCreateParams() actually
+    // produces) must land on exactly the same geometry as calling
+    // Create3D.add_House1_Core(...) directly with that same rx=ry=rz=2 -
+    // not half, not double.
+    app.build_allActions();
+
+    app.runScriptLine("House1" + app.houseCommandArgs(0, 0, 0, 2, 2, 3, 4, 0));
+    float[][] viaCommand = app.allVertices;
+
+    app.allVertices = new float[0][3];
+    app.allFaces.nodes = new int[0][];
+    app.Create3D.add_House1_Core(app.User3D.creatorMaterial, app.User3D.creatorTessellation, app.User3D.creatorLayer, app.User3D.creatorVisibility, app.User3D.creatorWeight, app.User3D.creatorClosed, 0, 0, 0, 2, 2, 3, 4, 0);
+    float[][] direct = app.allVertices;
+
+    assertEquals(direct.length, viaCommand.length);
+    for (int i = 0; i < direct.length; i++) {
+      assertArrayEquals(direct[i], viaCommand[i], 0.0001f, "vertex " + i + " should match the direct call exactly");
+    }
+  }
+
+  @Test
+  void creatorCommandArgs_passesTheConfiguredCreatorDefaultsThrough () {
+    // The whole point of routing through the command instead of calling
+    // Create3D.add_HouseN_Core(...) directly: confirms
+    // User3D.creatorVisibility/Weight/Closed actually reach
+    // current_Visibility/Weight/Closed, the same globals
+    // RunScriptTest.java's house1_vsbWgtClz_areNowRespectedInsteadOfHardcoded
+    // checks - this is the other end of that same fix, exercised through
+    // mouseClicked.pde's own helper rather than a hand-written command
+    // string.
+    app.build_allActions();
+    app.User3D.creatorVisibility = 0;
+    app.User3D.creatorWeight = 3;
+    app.User3D.creatorClosed = 1;
+
+    app.runScriptLine("House1" + app.houseCommandArgs(0, 0, 0, 2, 2, 3, 4, 0));
+
+    assertEquals(0, app.current_Visibility);
+    assertEquals(3, app.current_Weight);
+    assertEquals(1, app.current_Closed);
+  }
+
+  // ================= "Solid" command's parameter mapping =================
+
+  // The ObjectCategory.SOLID branch's own local rx/ry/rz (half-widths,
+  // same as every other shape branch) land in the "SOLID" command's own
+  // sx/sy/sz named parameters, not its rx/ry/rz ones - confirmed against
+  // Solids.pde's create(x,y,z,px,py,pz,sx,sy,sz,tx,ty,tz,v) signature
+  // directly, not assumed from parameter names matching across the two
+  // call sites. DEF[0] stores all 13 raw create() arguments in order, so
+  // comparing it directly is a precise check of exactly what reached
+  // allSolids.create(...), not just that something was created.
+  @Test
+  void solidCommand_mapsLocalRxRyRzToTheCommandsOwnSxSySzNotItsRxRyRz () {
+    app.build_allActions();
+
+    app.runScriptLine("Solid x=1 y=2 z=3 px=4 py=5 pz=6 sx=7 sy=8 sz=9 rx=0 ry=0 rz=10 v=1");
+
+    assertArrayEquals(new float[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 10, 1}, app.allSolids.DEF[0], 0.0001f);
+  }
+
+  // ================= "Camera"/"Section" commands, reached at all =========
+  // "solid", "camera" and "section" turned out to each collide with a
+  // bare, zero-argument allActions entry (the same class of collision
+  // the project's own bypassAllActionsFor comment already documents for
+  // "move") - without being listed there, runScriptLine("Camera
+  // px=...") silently matched that bare action and switched the current
+  // tool instead of ever reaching the parameterized switch-case, with no
+  // error at all. Caught only because solidCommand_... above asserted on
+  // actual created state rather than just the absence of an error -
+  // these two do the same for Camera/Section specifically, now that both
+  // are in bypassAllActionsFor.
+
+  @Test
+  void cameraCommand_actuallyReachesAllCamerasCreate () {
+    app.build_allActions();
+    app.allCameras.makeEmpty(0);
+    int before = app.allCameras.num;
+
+    String hint = app.runScriptLine("Camera px=1 py=2 pz=3 pt=1.5 rx=4 ry=5 rz=6 rt=7 a=60 t=1");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(before + 1, app.allCameras.num, "a bare tool-switch collision would leave this unchanged");
+    int newId = app.allCameras.num - 1;
+    assertEquals(1f, app.allCameras.get_posX(newId), 0.0001f);
+    assertEquals(2f, app.allCameras.get_posY(newId), 0.0001f);
+    assertEquals(3f, app.allCameras.get_posZ(newId), 0.0001f);
+    assertEquals(1.5f, app.allCameras.get_posT(newId), 0.0001f);
+  }
+
+  @Test
+  void sectionCommand_actuallyReachesAllSectionsCreate () {
+    app.build_allActions();
+    int before = app.allSections.num;
+
+    String hint = app.runScriptLine("Section x=10 y=20 z=30 r=45 u=2 v=3 t=1 i=4 j=4");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(before + 1, app.allSections.num, "a bare tool-switch collision would leave this unchanged");
+    int newId = app.allSections.num - 1;
+    assertEquals(10f, app.allSections.getX(newId), 0.0001f);
+    assertEquals(20f, app.allSections.getY(newId), 0.0001f);
+    assertEquals(30f, app.allSections.getZ(newId), 0.0001f);
+  }
+
+  // "PARAMETRIC" never had a case in runScriptLine's switch at all until
+  // this effort added one (see runScript.pde's own comment on it) - not
+  // a bypassAllActionsFor collision like Solid/Camera/Section above, but
+  // the same underlying risk applies to any newly-wired command: confirm
+  // it reaches Create3D.add_ParametricSurface for real, the same way
+  // Create3DTest.java's own addParametricSurface_... test does for the
+  // function directly (substantial geometry + the deterministic first
+  // corner, since the exact face count depends on floating-point
+  // loop-increment behavior this doesn't try to replicate exactly).
+  @Test
+  void parametricCommand_actuallyReachesAddParametricSurface () {
+    app.build_allActions();
+
+    String hint = app.runScriptLine("Parametric m=0 tes=0 lyr=0 x=0 y=0 z=0 dx=2 dy=2 dz=2 n=1 r=0");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.allFaces.nodes.length > 100, "a bare-action collision or an unreached case would leave this empty");
+    for (int[] face : app.allFaces.nodes) assertEquals(4, face.length);
+  }
+
+  // Confirms every other command this effort newly started calling from
+  // mouseClicked.pde actually creates something, not just that it runs
+  // without error - the same class of check that caught Solid/Camera/
+  // Section's silent bypassAllActionsFor collision above, applied to the
+  // rest in one pass rather than individually, now that the specific
+  // mechanism is known. allActions.containsKey(...) was already checked
+  // directly for each of these names and confirmed false (no collision),
+  // so this is a second, independent confirmation on top of that, not a
+  // replacement for it.
+  @Test
+  void theRemainingNewlyWiredCommands_actuallyCreateSomething () {
+    app.build_allActions();
+
+    int facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("Box m=0 tes=0 lyr=0 x=0 y=0 z=0 dx=2 dy=2 dz=2 r=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "Box");
+
+    facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("Octahedron m=0 tes=0 lyr=0 x=0 y=0 z=0 dx=2 dy=2 dz=2 r=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "Octahedron");
+
+    facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("SuperSphere m=0 tes=0 lyr=0 x=0 y=0 z=0 dx=2 dy=2 dz=2 px=2 py=2 pz=2 deg=3 r=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "SuperSphere");
+
+    facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("Cylinder m=0 tes=0 lyr=0 x=0 y=0 z=0 dx=2 dy=2 dz=2 deg=8 r=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "Cylinder");
+
+    facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("PolygonMesh m=0 tes=0 lyr=0 x=0 y=0 z=0 d=2 deg=6 r=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "PolygonMesh");
+
+    facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("PolygonHyper m=0 tes=0 lyr=0 x=0 y=0 z=0 d=2 h=2 deg=6 r=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "PolygonHyper");
+
+    facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("PolygonExtrude m=0 tes=0 lyr=0 x=0 y=0 z=0 d=2 h=2 deg=6 r=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "PolygonExtrude");
+
+    facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("Mesh3 m=0 tes=0 lyr=0 x1=0 y1=0 z1=0 x2=1 y2=0 z2=0 x3=0 y3=1 z3=1");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "Mesh3");
+
+    facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("Mesh4 m=0 tes=0 lyr=0 x1=0 y1=0 z1=0 x2=1 y2=0 z2=0 x3=1 y3=1 z3=0 x4=0 y4=1 z4=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "Mesh4");
+  }
+
+  // ================= Solid (SuperOBJ)/Person/Tree2/Tree1 commands ========
+  // Same "confirm it actually creates something, not just that it runs
+  // without error" discipline as the Solid/Camera/Section/Parametric
+  // tests above, applied to the four further substitutions this effort
+  // made from UITASK.Create's remaining direct Create3D-adjacent calls
+  // (SuperOBJ's own extra allSolids.create, and Person/Plant/Model1Ds).
+  // "person" and "solid" are both already confirmed collision cases
+  // (hence already in bypassAllActionsFor) - re-verified here through
+  // the actual substitution rather than just trusted from that earlier
+  // check.
+
+  @Test
+  void superOBJsOwnSolidCall_actuallyReachesAllSolidsCreate () {
+    app.build_allActions();
+    int before = app.allSolids.DEF.length;
+
+    app.runScriptLine("Solid x=1 y=2 z=3 px=4 py=5 pz=6 sx=7 sy=8 sz=9 rx=0 ry=0 rz=10 v=1");
+
+    assertEquals(before + 1, app.allSolids.DEF.length);
+    assertArrayEquals(new float[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 10, 1}, app.allSolids.DEF[before], 0.0001f);
+  }
+
+  @Test
+  void personCommand_actuallyReachesAllModel2DsCreate () {
+    app.build_allActions();
+    int before = app.allModel2Ds.num;
+
+    String hint = app.runScriptLine("Person m=3 x=1 y=2 z=3");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(before + 1, app.allModel2Ds.num, "a bare tool-switch collision would leave this unchanged");
+  }
+
+  @Test
+  void tree2Command_actuallyReachesAllModel2DsCreate () {
+    app.build_allActions();
+    int before = app.allModel2Ds.num;
+
+    String hint = app.runScriptLine("Tree2 m=0 x=1 y=2 z=3 h=5");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(before + 1, app.allModel2Ds.num);
+  }
+
+  @Test
+  void tree1Command_actuallyReachesAllModel1DsCreate () {
+    app.build_allActions();
+    int before = app.allModel1Ds.num;
+
+    String hint = app.runScriptLine("Tree1 m=0 seed=1 degree=8 x=1 y=2 z=3 h=10 r=0 tilt=60 twist=137.5 ratio=0.8 base=2.0 trunk=1.0 leaf=0.1");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(before + 1, app.allModel1Ds.num);
+  }
+
   // ================= small top-level helpers ============================
 
   @Test

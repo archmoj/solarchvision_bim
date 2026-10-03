@@ -41,7 +41,17 @@ HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "box", "sphere", "cylinder", "person", "house1", "house2", "house3",
   "octahedron", "icosahedron", "cushion",
   "rotate", "rotatex", "rotatey", "rotatez",
-  "scale"
+  "scale",
+  // Found while routing mouseClicked.pde's own Solid/Camera/Section
+  // UITASK.Create branches through these same commands: each one
+  // collides with a bare, zero-argument allActions entry the same way
+  // "move" above already does, so without this, runScriptLine("Solid
+  // x=...") would silently match that bare action and switch the
+  // current tool instead of ever reaching the switch-case that actually
+  // calls allSolids.create(...) - no error, no exception, just nothing
+  // created. Confirmed directly (allActions.containsKey(...)), not
+  // assumed from the symptom alone.
+  "solid", "camera", "section"
 ));
 
 String runScriptLine (String lineSTR) {
@@ -525,9 +535,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", -1);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x1 = getF(p, "x1", 0);
         float y1 = getF(p, "y1", 0);
         float z1 = getF(p, "z1", 0);
@@ -552,9 +562,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", -1);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -580,9 +590,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", -1);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -609,9 +619,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", -1);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -638,9 +648,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", -1);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -668,23 +678,75 @@ String runScriptLine (String lineSTR) {
         int deg = getI(p, "deg", 16);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
+        // The hint below has always documented dx/dy/dz (independent
+        // widths, matching add_SuperCylinder's own rx/ry/rz - an
+        // elliptical, not just circular, cross-section), but this case
+        // only ever read a single uniform d and h - found while routing
+        // mouseClicked.pde's own SUPERCYLINDER case (which does pass
+        // independent rx/ry/rz) through this command, where a uniform-only
+        // d would have silently collapsed any non-circular cylinder back
+        // to circular. d/h are kept as fallback defaults for dx/dy/dz
+        // rather than removed, so any existing "Cylinder d=... h=..."
+        // caller keeps working unchanged.
         float d = getF(p, "d", 6);
         float h = getF(p, "h", 6);
+        float dx = getF(p, "dx", d);
+        float dy = getF(p, "dy", d);
+        float dz = getF(p, "dz", h);
         float r = getF(p, "r", 0);
-        if ((d != 0) && (h != 0)) {
-          Create3D.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * d, 0.5 * d, 0.5 * h, deg, r);
+        if ((dx != 0) && (dy != 0) && (dz != 0)) {
+          Create3D.add_SuperCylinder(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, deg, r);
           model_changed();
         }
       }
       else {
         hint = "Cylinder m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?";
         UI_setTo_Create_Cylinder();
+      }
+      return hint;
+    }
+
+    // Never had a case here at all - found while routing
+    // mouseClicked.pde's own UITASK.Create Parametric branch (GROUP
+    // category) through the public commands, the same way House1/2/3
+    // just were: UI_setTo_Create_Parametric(int n) already existed
+    // (n is the parametric surface type index, matching
+    // User3D.creatorParametricTypeIndex, the same value
+    // add_ParametricSurface's own n parameter expects), so the
+    // supporting pieces were already there - just never wired into this
+    // switch. dx/dy/dz halved the same way as every other shape command
+    // here (full widths in, half-widths to Create3D.add_ParametricSurface).
+    case "PARAMETRIC": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        int m = getI(p, "m", 7);
+        int n = getI(p, "n", 0);
+        int tes = getI(p, "tes", 0);
+        int lyr = getI(p, "lyr", 0);
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
+        float x = getF(p, "x", 0);
+        float y = getF(p, "y", 0);
+        float z = getF(p, "z", 0);
+        float dx = getF(p, "dx", 6);
+        float dy = getF(p, "dy", 6);
+        float dz = getF(p, "dz", 6);
+        float r = getF(p, "r", 0);
+        if ((dx != 0) && (dy != 0) && (dz != 0)) {
+          Create3D.add_ParametricSurface(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, n, r);
+          model_changed();
+        }
+      }
+      else {
+        hint = "Parametric m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? n=? r=?";
+        UI_setTo_Create_Parametric(0);
       }
       return hint;
     }
@@ -696,9 +758,9 @@ String runScriptLine (String lineSTR) {
         int deg = getI(p, "deg", 3);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -723,9 +785,9 @@ String runScriptLine (String lineSTR) {
         int deg = getI(p, "deg", 3);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -755,9 +817,9 @@ String runScriptLine (String lineSTR) {
         int deg = getI(p, "deg", 3);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -783,9 +845,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -811,9 +873,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -838,9 +900,9 @@ String runScriptLine (String lineSTR) {
         int deg = getI(p, "deg", 6);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -866,9 +928,9 @@ String runScriptLine (String lineSTR) {
         int deg = getI(p, "deg", 6);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -894,9 +956,9 @@ String runScriptLine (String lineSTR) {
         int deg = getI(p, "deg", 6);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -920,9 +982,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x1 = getF(p, "x1", 0);
         float y1 = getF(p, "y1", 0);
         float z1 = getF(p, "z1", 0);
@@ -946,9 +1008,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x1 = getF(p, "x1", 0);
         float y1 = getF(p, "y1", 0);
         float z1 = getF(p, "z1", 0);
@@ -975,9 +1037,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x1 = getF(p, "x1", 0);
         float y1 = getF(p, "y1", 0);
         float z1 = getF(p, "z1", 0);
@@ -1007,9 +1069,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x1 = getF(p, "x1", 0);
         float y1 = getF(p, "y1", 0);
         float z1 = getF(p, "z1", 0);
@@ -1042,9 +1104,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x1 = getF(p, "x1", 0);
         float y1 = getF(p, "y1", 0);
         float z1 = getF(p, "z1", 0);
@@ -1090,6 +1152,9 @@ String runScriptLine (String lineSTR) {
                  if (low_case.equals("m")) m = int(parameters[1]);
             else if (low_case.equals("tes")) tes = int(parameters[1]);
             else if (low_case.equals("lyr")) lyr = int(parameters[1]);
+            else if (low_case.equals("vsb")) vsb = int(parameters[1]);
+            else if (low_case.equals("wgt")) wgt = int(parameters[1]);
+            else if (low_case.equals("clz")) clz = int(parameters[1]);
           }
           else {
             String[] xyz = split(parts[q], ",");
@@ -1117,9 +1182,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -1144,9 +1209,9 @@ String runScriptLine (String lineSTR) {
         int m = getI(p, "m", 7);
         int tes = getI(p, "tes", 0);
         int lyr = getI(p, "lyr", 0);
-        int vsb = 1;
-        int wgt = 0;
-        int clz = 0;
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
         float x = getF(p, "x", 0);
         float y = getF(p, "y", 0);
         float z = getF(p, "z", 0);
@@ -1258,6 +1323,7 @@ String runScriptLine (String lineSTR) {
                  if (low_case.equals("m")) m = int(parameters[1]);
             else if (low_case.equals("tes")) tes = int(parameters[1]);
             else if (low_case.equals("lyr")) lyr = int(parameters[1]);
+            else if (low_case.equals("vsb")) vsb = int(parameters[1]);
             else if (low_case.equals("wgt")) wgt = int(parameters[1]);
             else if (low_case.equals("clz")) clz = int(parameters[1]);
           }
@@ -1303,6 +1369,7 @@ String runScriptLine (String lineSTR) {
                  if (low_case.equals("m")) m = int(parameters[1]);
             else if (low_case.equals("tes")) tes = int(parameters[1]);
             else if (low_case.equals("lyr")) lyr = int(parameters[1]);
+            else if (low_case.equals("vsb")) vsb = int(parameters[1]);
             else if (low_case.equals("wgt")) wgt = int(parameters[1]);
             else if (low_case.equals("clz")) clz = int(parameters[1]);
             else if (low_case.equals("x")) x = float(parameters[1]);

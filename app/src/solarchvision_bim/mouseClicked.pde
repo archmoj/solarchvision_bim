@@ -1,3 +1,48 @@
+// Shared m/tes/lyr/vsb/wgt/clz argument prefix every Create3D-backed
+// command (HOUSE1/2/3, MESH3/MESH4, and any later addition) takes the
+// same way - factored out since houseCommandArgs() below and the
+// Pyramid/Plane mesh calls in the UITASK.Create branch both need it
+// verbatim.
+String creatorCommandArgs() {
+  return " m=" + User3D.creatorMaterial +
+         " tes=" + User3D.creatorTessellation +
+         " lyr=" + User3D.creatorLayer +
+         " vsb=" + User3D.creatorVisibility +
+         " wgt=" + User3D.creatorWeight +
+         " clz=" + User3D.creatorClosed;
+}
+
+// x/y/z/dx/dy/dz/h/r argument string for the House1/House2/House3
+// commands (runScript.pde's HOUSE1/HOUSE2/HOUSE3 cases) - used by the
+// UITASK.Create House1/2/3 branches below instead of calling
+// Create3D.add_HouseN_Core(...) directly, so a mouse-click creation
+// goes through the exact same public command a typed "House1 ..." line
+// (or a future UI/logging/testing layer) would, per the broader
+// "develop the public API via actions instead of internal calls" goal
+// this is part of.
+//
+// dx/dy/dz here are 2*rx/2*ry/2*rz, not rx/ry/rz directly: the House1/2/3
+// command cases treat dx/dy/dz as full widths and halve them internally
+// (0.5 * dx) before calling Create3D.add_HouseN_Core, while rx/ry/rz
+// here are already half-widths - passing them unchanged would silently
+// halve the object's size a second time.
+String houseCommandArgs(float x, float y, float z, float rx, float ry, float rz, float h, float rot) {
+  return creatorCommandArgs() +
+         " x=" + x + " y=" + y + " z=" + z +
+         " dx=" + (2 * rx) + " dy=" + (2 * ry) + " dz=" + (2 * rz) +
+         " h=" + h + " r=" + rot;
+}
+
+// x/y/z/dx/dy/dz/r argument string shared by Box, Octahedron, Cylinder
+// and Parametric - the same shape as houseCommandArgs() above minus the
+// extra h/dh height parameter only the houses have.
+String boxLikeCommandArgs(float x, float y, float z, float rx, float ry, float rz, float rot) {
+  return creatorCommandArgs() +
+         " x=" + x + " y=" + y + " z=" + z +
+         " dx=" + (2 * rx) + " dy=" + (2 * ry) + " dz=" + (2 * rz) +
+         " r=" + rot;
+}
+
 void selectNewlyCreated(int countBefore, int countAfter, Runnable deselect, java.util.function.IntConsumer selectIndex) {
   if (countBefore == countAfter) return; // nothing created this click
 
@@ -1811,88 +1856,174 @@ void mouseClicked () {
 
                       if (shape == SUPEROBJ_SHAPE_PARAMETRIC) {
 
-                        Create3D.add_ParametricSurface(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, 0, rot);
+                        // n=0 here specifically (not
+                        // User3D.creatorParametricTypeIndex, unlike the
+                        // separate CreateObject == CREATE.Parametric
+                        // branch further down) - matching the direct
+                        // call's own literal 0 exactly, not changed as
+                        // part of this substitution.
+                        runScriptLine("Parametric" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot) + " n=0");
                       } else if (shape == SUPEROBJ_SHAPE_SUPERCYLINDER) {
 
-                        Create3D.add_SuperCylinder(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, User3D.creatorCylinderDegree, rot);
+                        runScriptLine("Cylinder" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot) + " deg=" + User3D.creatorCylinderDegree);
                       } else if (shape == SUPEROBJ_SHAPE_BOX) {
 
-                        Create3D.add_Box_Core(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, rot);
+                        runScriptLine("Box" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot));
                       } else if (shape == SUPEROBJ_SHAPE_OCTAHEDRON) {
 
-                        Create3D.add_Octahedron(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, rot);
+                        runScriptLine("Octahedron" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot));
                       } else {
 
-                        Create3D.add_SuperSphere(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, pz, py, pz, rx, ry, rz, User3D.creatorSphereDegree, rot);
+                        // px=pz (not px) and pz=pz (not a typo here, a
+                        // pre-existing quirk in the direct call this
+                        // replaces: px is never actually used, pz is
+                        // passed for both the first and third
+                        // SuperSphere deformation-exponent arguments) -
+                        // preserved exactly rather than corrected, since
+                        // that would be a behavior change beyond "use
+                        // the public command instead of the internal
+                        // call".
+                        runScriptLine("SuperSphere" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot) +
+                          " px=" + pz + " py=" + py + " pz=" + pz +
+                          " deg=" + User3D.creatorSphereDegree);
                       }
 
                       if (User3D.creatorMeshOrSolidMode != 0) {
 
-                        allSolids.create(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
+                        // Same sx/sy/sz-vs-rx/ry/rz parameter-name
+                        // mapping as the ObjectCategory.SOLID branch
+                        // further down (and its own comment there) -
+                        // this local rx/ry/rz lands in the command's own
+                        // sx/sy/sz, not its rx/ry/rz.
+                        runScriptLine("Solid x=" + x + " y=" + y + " z=" + z +
+                          " px=" + px + " py=" + py + " pz=" + pz +
+                          " sx=" + rx + " sy=" + ry + " sz=" + rz +
+                          " rx=0 ry=0 rz=" + rot + " v=1");
                       }
                     } else if (CreateObject == CREATE.Pyramid) {
 
-                      Create3D.add_Mesh3(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                      Create3D.add_Mesh3(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+                      // Four triangular faces, each a Mesh3 command (no
+                      // dedicated "Pyramid" command exists, unlike
+                      // House1/2/3 - reusing the general-purpose mesh
+                      // commands with the exact same computed corner
+                      // points the direct Create3D.add_Mesh3(...) calls
+                      // used is the agreed substitute). Point order
+                      // preserved exactly as it was per face.
+                      runScriptLine("Mesh3" + creatorCommandArgs() +
+                        " x1=" + (x-rx) + " y1=" + (y-ry) + " z1=" + (z-rz) +
+                        " x2=" + (x+rx) + " y2=" + (y-ry) + " z2=" + (z-rz) +
+                        " x3=" + x + " y3=" + y + " z3=" + (z+rz));
+                      runScriptLine("Mesh3" + creatorCommandArgs() +
+                        " x1=" + (x+rx) + " y1=" + (y-ry) + " z1=" + (z-rz) +
+                        " x2=" + (x+rx) + " y2=" + (y+ry) + " z2=" + (z-rz) +
+                        " x3=" + x + " y3=" + y + " z3=" + (z+rz));
+                      runScriptLine("Mesh3" + creatorCommandArgs() +
+                        " x1=" + (x+rx) + " y1=" + (y+ry) + " z1=" + (z-rz) +
+                        " x2=" + (x-rx) + " y2=" + (y+ry) + " z2=" + (z-rz) +
+                        " x3=" + x + " y3=" + y + " z3=" + (z+rz));
+                      runScriptLine("Mesh3" + creatorCommandArgs() +
+                        " x1=" + (x-rx) + " y1=" + (y+ry) + " z1=" + (z-rz) +
+                        " x2=" + (x-rx) + " y2=" + (y-ry) + " z2=" + (z-rz) +
+                        " x3=" + x + " y3=" + y + " z3=" + (z+rz));
                     } else if (CreateObject == CREATE.Plane) {
 
-                      Create3D.add_Mesh4(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x-rx, y-ry, z, x+rx, y-ry, z, x+rx, y+ry, z, x-rx, y+ry, z);
+                      // One Mesh4 command - same reasoning as Pyramid
+                      // above, no dedicated "Plane" command exists.
+                      runScriptLine("Mesh4" + creatorCommandArgs() +
+                        " x1=" + (x-rx) + " y1=" + (y-ry) + " z1=" + z +
+                        " x2=" + (x+rx) + " y2=" + (y-ry) + " z2=" + z +
+                        " x3=" + (x+rx) + " y3=" + (y+ry) + " z3=" + z +
+                        " x4=" + (x-rx) + " y4=" + (y+ry) + " z4=" + z);
                     } else if (CreateObject == CREATE.Polygon) {
 
-                      Create3D.add_PolygonMesh(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, User3D.creatorPolygonDegree, rot);
+                      // PolygonMesh/Hyper/Extrude's commands take a
+                      // single "d" (diameter, halved internally - so
+                      // d=2*rx) and, for Hyper/Extrude, "h" passed
+                      // through unhalved (matching the direct calls'
+                      // own un-halved 2*rz exactly).
+                      runScriptLine("PolygonMesh" + creatorCommandArgs() +
+                        " x=" + x + " y=" + y + " z=" + z +
+                        " d=" + (2 * rx) + " deg=" + User3D.creatorPolygonDegree + " r=" + rot);
                     } else if (CreateObject == CREATE.Hyper) {
 
-                      Create3D.add_PolygonHyper(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, 2 * rz, User3D.creatorPolygonDegree, rot);
+                      runScriptLine("PolygonHyper" + creatorCommandArgs() +
+                        " x=" + x + " y=" + y + " z=" + z +
+                        " d=" + (2 * rx) + " h=" + (2 * rz) +
+                        " deg=" + User3D.creatorPolygonDegree + " r=" + rot);
                     } else if (CreateObject == CREATE.Extrude) {
 
-                      Create3D.add_PolygonExtrude(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, 2 * rz, User3D.creatorPolygonDegree, rot);
+                      runScriptLine("PolygonExtrude" + creatorCommandArgs() +
+                        " x=" + x + " y=" + y + " z=" + z +
+                        " d=" + (2 * rx) + " h=" + (2 * rz) +
+                        " deg=" + User3D.creatorPolygonDegree + " r=" + rot);
                     } else if (CreateObject == CREATE.House3) {
 
                       float h = ry;
 
-                      Create3D.add_House3_Core(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, h, rot);
+                      runScriptLine("House3" + houseCommandArgs(x, y, z, rx, ry, rz, h, rot));
                     } else if (CreateObject == CREATE.House2) {
 
                       float h = ry;
 
-                      Create3D.add_House2_Core(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, h, rot);
+                      runScriptLine("House2" + houseCommandArgs(x, y, z, rx, ry, rz, h, rot));
                     } else if (CreateObject == CREATE.House1) {
 
                       float h = ry;
 
                       if (ry > rx) h = rx;
 
-                      Create3D.add_House1_Core(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, h, rot);
+                      runScriptLine("House1" + houseCommandArgs(x, y, z, rx, ry, rz, h, rot));
                     } else if (CreateObject == CREATE.Parametric) {
 
-                      Create3D.add_ParametricSurface(User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, x, y, z, rx, ry, rz, User3D.creatorParametricTypeIndex, rot);
+                      runScriptLine("Parametric" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot) + " n=" + User3D.creatorParametricTypeIndex);
                     }
                   } else if (currentObjectCategory == ObjectCategory.MODEL2D) { // working with model2Ds
                     if (CreateObject == CREATE.Person) {
 
+                      // randomSeed(millis()) stays here, not moved into
+                      // the command: neither "PERSON" nor "TREE2"/"TREE1"
+                      // below call it themselves, and it needs to run
+                      // immediately before whatever in allModel2Ds.create/
+                      // allModel1Ds.create actually consumes Processing's
+                      // random state, exactly as it did in the direct call.
                       randomSeed(millis());
-                      allModel2Ds.create("PEOPLE", User3D.creatorPersonTypeIndex, x, y, z, 2.5);
+                      runScriptLine("Person m=" + User3D.creatorPersonTypeIndex + " x=" + x + " y=" + y + " z=" + z);
                     }
 
                     if (CreateObject == CREATE.Plant) {
+                      // n's own computation (not a straight pass-through
+                      // of User3D.creatorPlantTypeIndex) stays here too -
+                      // it's specific to this click-to-create workflow,
+                      // not something "TREE2" itself would know how to
+                      // derive.
                       int n = 0;
                       if (User3D.creatorPlantTypeIndex > 0) n = User3D.creatorPlantTypeIndex + allModel2Ds.peopleFileCount;
 
                       randomSeed(millis());
-                      allModel2Ds.create("TREES", n, x, y, z, 2 * rz);
+                      runScriptLine("Tree2 m=" + n + " x=" + x + " y=" + y + " z=" + z + " h=" + (2 * rz));
                     }
                   } else if (currentObjectCategory == ObjectCategory.MODEL1D) { // working with model1Ds
                     if (CreateObject == CREATE.Model1Ds) {
 
+                      // floor(random(360)) is evaluated once, here,
+                      // before building the command string - keeping it
+                      // a single fresh random value per click, same as
+                      // the direct call, rather than something that
+                      // could evaluate differently (or more than once)
+                      // depending on how the argument string gets built.
                       randomSeed(millis());
-                      allModel1Ds.create(User3D.creatorModel1DTypeIndex, User3D.creatorModel1DSeed,
-                                         User3D.creatorModel1DDegreeMax,
-                                         x, y, z, 2 * rz, floor(random(360)),
-                                         User3D.creatorModel1DBranchTilt, User3D.creatorModel1DBranchTwist,
-                                         User3D.creatorModel1DBranchRatio, User3D.creatorModel1DTreeBase,
-                                         User3D.creatorModel1DTrunkSize, User3D.creatorModel1DLeafSize);
+                      int r = floor(random(360));
+                      runScriptLine("Tree1 m=" + User3D.creatorModel1DTypeIndex +
+                        " seed=" + User3D.creatorModel1DSeed +
+                        " degree=" + User3D.creatorModel1DDegreeMax +
+                        " x=" + x + " y=" + y + " z=" + z +
+                        " h=" + (2 * rz) + " r=" + r +
+                        " tilt=" + User3D.creatorModel1DBranchTilt +
+                        " twist=" + User3D.creatorModel1DBranchTwist +
+                        " ratio=" + User3D.creatorModel1DBranchRatio +
+                        " base=" + User3D.creatorModel1DTreeBase +
+                        " trunk=" + User3D.creatorModel1DTrunkSize +
+                        " leaf=" + User3D.creatorModel1DLeafSize);
                     }
                   } else if (currentObjectCategory == ObjectCategory.VERTEX) { // working with vertices
                     if (CreateObject == CREATE.Vertex) {
@@ -1919,14 +2050,29 @@ void mouseClicked () {
                     }
                   } else if (currentObjectCategory == ObjectCategory.SOLID) { // working with solids
                     if (CreateObject == CREATE.Solid) {
-                      allSolids.create(x, y, z, px, py, pz, rx, ry, rz, 0, 0, rot, 1);
+                      // The "SOLID" command's own sx/sy/sz named
+                      // parameters are where this rx/ry/rz (this
+                      // branch's local half-widths from
+                      // computeCreateParams, same as every other shape
+                      // here) land positionally in allSolids.create(...)
+                      // - the command's own "rx"/"ry"/"rz" names are its
+                      // tx/ty/tz (rotation) parameters instead, where the
+                      // direct call's literal 0, 0, rot go. Traced
+                      // against Solids.pde's own create(...) signature
+                      // directly, not assumed from either side's naming.
+                      runScriptLine("Solid x=" + x + " y=" + y + " z=" + z +
+                        " px=" + px + " py=" + py + " pz=" + pz +
+                        " sx=" + rx + " sy=" + ry + " sz=" + rz +
+                        " rx=0 ry=0 rz=" + rot + " v=1");
                     }
                   } else if (currentObjectCategory == ObjectCategory.CAMERA) { // working with cameras
                     if (CreateObject == CREATE.Camera) {
 
                       CameraParams camParams = computeCameraParamsAtPoint(RxP[1], RxP[2], RxP[3]);
 
-                      allCameras.create(camParams.pX, camParams.pY, camParams.pZ, camParams.pT, camParams.rX, camParams.rY, camParams.rZ, camParams.rT, camParams.zoom, camParams.type);
+                      runScriptLine("Camera px=" + camParams.pX + " py=" + camParams.pY + " pz=" + camParams.pZ +
+                        " pt=" + camParams.pT + " rx=" + camParams.rX + " ry=" + camParams.rY + " rz=" + camParams.rZ +
+                        " rt=" + camParams.rT + " a=" + camParams.zoom + " t=" + camParams.type);
                     }
                   } else if (currentObjectCategory == ObjectCategory.SECTION) { // working with sections
                     if (CreateObject == CREATE.Section) {
@@ -1935,7 +2081,20 @@ void mouseClicked () {
 
                       if (sp.createNew) {
 
-                        allSections.create(sp.X, sp.Y, sp.Z, sp.R, sp.U, sp.V, sp.Type, sp.RES1, sp.RES2);
+                        // The "SECTION" command's own validity guard
+                        // (t>0 && i>0 && j>0 && u>0 && v>0) is slightly
+                        // different from this branch's own sp.createNew
+                        // check - in the ordinary case where
+                        // computeSectionParams() produces sane values
+                        // these agree, but it's worth noting this isn't
+                        // byte-for-byte the same condition. Everything
+                        // after the create call (the allSolidImpacts/
+                        // allSolarImpacts bookkeeping below) is specific
+                        // to this mouse-click workflow, not part of the
+                        // command itself, so it stays here unchanged.
+                        runScriptLine("Section x=" + sp.X + " y=" + sp.Y + " z=" + sp.Z +
+                          " r=" + sp.R + " u=" + sp.U + " v=" + sp.V +
+                          " t=" + sp.Type + " i=" + sp.RES1 + " j=" + sp.RES2);
 
                         selectNewlyCreated(keep_number_of_allSections, allSections.num,
                           () -> Select3D.deselect_Sections(),

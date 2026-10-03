@@ -427,6 +427,41 @@ class RunScriptTest {
     assertTrue(app.allFaces.nodes.length > 0);
   }
 
+  // vsb/wgt/clz used to be hardcoded (1/0/0) in every one of these
+  // shape-creation cases, regardless of what was passed - found and
+  // fixed while making mouseClicked.pde's own Create3D block route
+  // through these same commands instead of calling
+  // Create3D.add_HouseN_Core(...) directly, since the hardcoded values
+  // would have silently discarded the person's actual configured
+  // creator defaults (User3D.creatorVisibility/Weight/Closed) on every
+  // mouse-click creation. This confirms the fix directly, the same way
+  // house1_withArguments_actuallyCreatesAFace above already covers x/y/z
+  // actually being applied.
+  @Test
+  void house1_vsbWgtClz_areNowRespectedInsteadOfHardcoded () {
+    app.build_allActions();
+    app.runScriptLine("HOUSE1 x=0 y=0 z=0 vsb=0 wgt=3 clz=1");
+    assertEquals(0, app.current_Visibility);
+    assertEquals(3, app.current_Weight);
+    assertEquals(1, app.current_Closed);
+  }
+
+  // POLYLINE parses its own arguments by hand (colon-separated, not the
+  // parseParams()/getI() "key=value" style the shape commands above
+  // use) rather than being generated from a shared helper - wgt/clz were
+  // already individually wired into that hand-written parser; vsb was
+  // the one left out, fixed the same way as the test above but via a
+  // genuinely different code path, worth covering separately rather than
+  // assuming the same fix covers both.
+  @Test
+  void polyline_vsb_isNowRespectedInsteadOfHardcoded () {
+    app.build_allActions();
+    app.runScriptLine("POLYLINE m:0 vsb:0 wgt:3 clz:1 0,0,0 1,1,1");
+    assertEquals(0, app.current_Visibility);
+    assertEquals(3, app.current_Weight);
+    assertEquals(1, app.current_Closed);
+  }
+
   @Test
   void house1_withNoArguments_returnsTheUsageHint () {
     app.build_allActions();
