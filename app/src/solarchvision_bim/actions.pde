@@ -1664,6 +1664,24 @@ void build_allActions() {
     STUDY.increaseSumInterval();
   });
 
+  // key2D's WORLD.pde counterpart - see that section's own comment for
+  // the naming convention this (and key3D's) follows. No existing action
+  // matched either key (checked the way key3D/key2D's own did, not
+  // assumed) - "Zoom"/"Zoom as default" sounded closest but turned out
+  // to be WIN3D tool-mode switches (UI_setTo_View_ZOOM), unrelated to
+  // WORLD's own map zoom level. WORLD.revise() stays in WORLD.pde's own
+  // key handler, not moved into either action, matching key3D/key2D's
+  // own convention for brand new (not reused) actions.
+  putAction("keyMap `", () -> {
+    WORLD.zoom = (WORLD.zoom - 1 + 10) % 10;
+    WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
+  });
+
+  putAction("keyMap ~", () -> {
+    WORLD.zoom = (WORLD.zoom + 1) % 10;
+    WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
+  });
+
   putAction("Camera View", () -> {
     if (Select3D.cameraSelection.length > 0) {
       WIN3D.currentCameraIndex = Select3D.cameraSelection[Select3D.cameraSelection.length - 1];

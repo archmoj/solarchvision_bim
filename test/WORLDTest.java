@@ -9,6 +9,8 @@ class WORLDTest {
   @BeforeEach
   void setUp () {
     app = new solarchvision_bim();
+    app.allActions = new java.util.HashMap<>(); // fresh app never runs build_allActions() itself
+    app.build_allActions(); // handlePlainCharKey now dispatches through allActions
   }
 
   // ================= resetPan / revise / updated ========================
