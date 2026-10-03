@@ -2210,6 +2210,18 @@ class Create3D {
 
 
 
+  // Rewritten to call the public runScript.pde commands instead of these
+  // Create3D/allGroups/allSolids/allSections methods directly - same
+  // "develop the public API, not the internal calls" reasoning as
+  // mouseClicked.pde's own UITASK.Create block. Every substitution below
+  // was traced against the actual command case in runScript.pde, not
+  // assumed from the method/command names matching - several (Sphere's
+  // own d=2*radius and r=t-90, House2/3's dx=2*rx) carry the exact same
+  // non-obvious parameter transforms already documented where they were
+  // first found.
+  //
+  // Create3D.add_onTerrain(...) is the one call left direct: no matching
+  // command exists for it, and creating one wasn't asked for here.
   void add_DefaultModel (int n) {
 
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
@@ -2226,180 +2238,196 @@ class Create3D {
     }
 
     if (n == 1) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -16, -16, 0, 16, 16, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=5 lyr=0 vsb=1 wgt=0 clz=0 x1=-16 y1=-16 z1=0 x2=16 y2=16 z2=0");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, 0, 5, 5, 4, 0, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      // CrystalSphere's own "radius" argument (5 here) is SPHERE's d/2,
+      // and its "t" argument (0 here) is SPHERE's own 90+r - so d=10,
+      // r=0-90=-90.
+      runScriptLine("Sphere m=7 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=5 d=10 deg=4 r=-90");
     }
 
     if (n == 2) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -16, -16, 0, 16, 16, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=5 lyr=0 vsb=1 wgt=0 clz=0 x1=-16 y1=-16 z1=0 x2=16 y2=16 z2=0");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Box_Corners(-1, 4, 0, 1, 0, 0, -8, -8, 0, 8, 8, 8);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Box2P m=-1 tes=4 lyr=0 vsb=1 wgt=0 clz=0 x1=-8 y1=-8 z1=0 x2=8 y2=8 z2=8");
 
-      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, -8, -10, 4, 8, -8, 8);
+      runScriptLine("Box2P m=-1 tes=3 lyr=0 vsb=1 wgt=0 clz=0 x1=-8 y1=-10 z1=4 x2=8 y2=-8 z2=8");
 
-      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, -10, -8, 4, -8, 8, 8);
+      runScriptLine("Box2P m=-1 tes=3 lyr=0 vsb=1 wgt=0 clz=0 x1=-10 y1=-8 z1=4 x2=-8 y2=8 z2=8");
 
-      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, 8, 10, 4, -8, 8, 8);
+      runScriptLine("Box2P m=-1 tes=3 lyr=0 vsb=1 wgt=0 clz=0 x1=8 y1=10 z1=4 x2=-8 y2=8 z2=8");
 
-      this.add_Box_Corners(-1, 3, 0, 1, 0, 0, 10, 8, 4, 8, -8, 8);
+      runScriptLine("Box2P m=-1 tes=3 lyr=0 vsb=1 wgt=0 clz=0 x1=10 y1=8 z1=4 x2=8 y2=-8 z2=8");
     }
 
     if (n == 3) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=5 lyr=0 vsb=1 wgt=0 clz=0 x1=-32 y1=-32 z1=0 x2=32 y2=32 z2=0");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Box_Corners(-1, 4, 0, 1, 0, 0, -12, -12, 0, 12, 12, 12);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Box2P m=-1 tes=4 lyr=0 vsb=1 wgt=0 clz=0 x1=-12 y1=-12 z1=0 x2=12 y2=12 z2=12");
 
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, -13, -13, 11.8, 0, 0, 12);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, -13, -13, 8.8, 0, 0, 9);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, -13, -13, 7.3, 0, 0, 7.5);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, -13, -13, 6.55, 0, 0, 6.75);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, -13, -13, 5.8, 0, 0, 6);
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=-13 y1=-13 z1=11.8 x2=0 y2=0 z2=12");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=-13 y1=-13 z1=8.8 x2=0 y2=0 z2=9");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=-13 y1=-13 z1=7.3 x2=0 y2=0 z2=7.5");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=-13 y1=-13 z1=6.55 x2=0 y2=0 z2=6.75");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=-13 y1=-13 z1=5.8 x2=0 y2=0 z2=6");
 
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, 13, 13, 11.8, 0, 0, 12);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, 13, 13, 8.8, 0, 0, 9);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, 13, 13, 7.3, 0, 0, 7.5);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, 13, 13, 6.55, 0, 0, 6.75);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, 13, 13, 5.8, 0, 0, 6);
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=13 y1=13 z1=11.8 x2=0 y2=0 z2=12");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=13 y1=13 z1=8.8 x2=0 y2=0 z2=9");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=13 y1=13 z1=7.3 x2=0 y2=0 z2=7.5");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=13 y1=13 z1=6.55 x2=0 y2=0 z2=6.75");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=13 y1=13 z1=5.8 x2=0 y2=0 z2=6");
 
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, 0, -18, 2.9, 18, 0, 3);
-      this.add_Box_Corners(-1, 2, 0, 1, 0, 0, -18, 0, 2.9, 0, 18, 3);
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=0 y1=-18 z1=2.9 x2=18 y2=0 z2=3");
+      runScriptLine("Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x1=-18 y1=0 z1=2.9 x2=0 y2=18 z2=3");
     }
 
     if (n == 4) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -16, -16, 0, 16, 16, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=5 lyr=0 vsb=1 wgt=0 clz=0 x1=-16 y1=-16 z1=0 x2=16 y2=16 z2=0");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_House3_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      // House3/2's own rx/ry/rz (6,6,6 here) are House3/2's dx/dy/dz
+      // halved - so dx=dy=dz=12; h2 (6) passes straight through as h.
+      runScriptLine("House3 m=0 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=0 dx=12 dy=12 dz=12 h=6 r=0");
     }
 
     if (n == 5) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -16, -16, 0, 16, 16, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=5 lyr=0 vsb=1 wgt=0 clz=0 x1=-16 y1=-16 z1=0 x2=16 y2=16 z2=0");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_House2_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("House2 m=0 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=0 dx=12 dy=12 dz=12 h=6 r=0");
     }
 
     if (n == 6) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 6, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=6 lyr=0 vsb=1 wgt=0 clz=0 x1=-32 y1=-32 z1=0 x2=32 y2=32 z2=0");
 
-      allGroups.beginNewGroup(0, -15, 0, 1, 1, 1, 0, 0, 0);
-      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, -15, 0, 5, 4, 0, 0);
+      runScriptLine("BeginNewGroup x=0 y=-15 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Sphere m=7 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=-15 z=0 d=10 deg=4 r=-90");
 
-      allGroups.beginNewGroup(0, 15, 0, 1, 1, 1, 0, 0, 0);
-      this.add_CrystalSphere(7, 0, 0, 1, 0, 0, 0, 15, 0, 5, 4, 0, 0);
+      runScriptLine("BeginNewGroup x=0 y=15 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Sphere m=7 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=15 z=0 d=10 deg=4 r=-90");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_House2_Core(7, 2, 0, 1, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("House2 m=7 tes=2 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=0 dx=12 dy=12 dz=12 h=6 r=0");
     }
 
     if (n == 7) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=5 lyr=0 vsb=1 wgt=0 clz=0 x1=-32 y1=-32 z1=0 x2=32 y2=32 z2=0");
 
       {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
         float x = 0;
         float y = 0;
         float z = 0;
         float r = 10;
-        this.add_CrystalSphere(1, 0, 0, 1, 0, 0, x, y, z, r, 5, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+        // t=90 here (unlike n==1/6's t=0 above) -> SPHERE's own
+        // r=90-90=0.
+        runScriptLine("Sphere m=1 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=" + x + " y=" + y + " z=" + z + " d=" + (2 * r) + " deg=5 r=0");
+        // Solid's own sx/sy/sz are this r (the half-widths allSolids.create
+        // itself calls sx/sy/sz), not its rx/ry/rz - same mapping as
+        // mouseClicked.pde's own ObjectCategory.SOLID branch.
+        runScriptLine("Solid x=" + x + " y=" + y + " z=" + z + " px=2 py=2 pz=2 sx=" + r + " sy=" + r + " sz=" + r + " rx=0 ry=0 rz=0 v=1");
       }
 
       {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
         float x = -20;
         float y = -20;
         float z = 0;
         float r = 8;
-        this.add_CrystalSphere(2, 0, 0, 1, 0, 0, x, y, z, r, 4, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+        runScriptLine("Sphere m=2 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=" + x + " y=" + y + " z=" + z + " d=" + (2 * r) + " deg=4 r=0");
+        runScriptLine("Solid x=" + x + " y=" + y + " z=" + z + " px=2 py=2 pz=2 sx=" + r + " sy=" + r + " sz=" + r + " rx=0 ry=0 rz=0 v=1");
       }
 
       {
-        allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
         float x = 0;
         float y = 20;
         float z = 0;
         float r = 6;
-        this.add_CrystalSphere(3, 0, 0, 1, 0, 0, x, y, z, r, 3, 0, 90);
-        allSolids.create(x, y, z, 2, 2, 2, r, r, r, 0, 0, 0, 1);
+        runScriptLine("Sphere m=3 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=" + x + " y=" + y + " z=" + z + " d=" + (2 * r) + " deg=3 r=0");
+        runScriptLine("Solid x=" + x + " y=" + y + " z=" + z + " px=2 py=2 pz=2 sx=" + r + " sy=" + r + " sz=" + r + " rx=0 ry=0 rz=0 v=1");
       }
     }
 
     if (n == 8) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 5, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=5 lyr=0 vsb=1 wgt=0 clz=0 x1=-32 y1=-32 z1=0 x2=32 y2=32 z2=0");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_ParametricSurface(7, 0, 0, 1, 0, 0, 0, 0, 0, 20, 20, 20, 1, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      // Parametric's own rx/ry/rz (20,20,20) are its dx/dy/dz halved -
+      // so dx=dy=dz=40.
+      runScriptLine("Parametric m=7 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=0 dx=40 dy=40 dz=40 n=1 r=0");
     }
 
     if (n == 9) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(7, 0, 0, 1, 0, 0, -32, -32, 0, 32, 32, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=7 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x1=-32 y1=-32 z1=0 x2=32 y2=32 z2=0");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_PolygonHyper(0, 0, 0, 1, 0, 0, 0, 0, 5, 10, 10, 4, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      // PolygonHyper's own "r" (10 here) is its d/2 - so d=20; h (10)
+      // passes straight through.
+      runScriptLine("PolygonHyper m=0 tes=0 lyr=0 vsb=1 wgt=0 clz=0 x=0 y=0 z=5 d=20 h=10 deg=4 r=0");
     }
 
     if (n == 10) {
       //Complex used in the YC book:
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.add_Mesh2(8, 6, 0, 1, 0, 0, -96, -96, 0, 96, 96, 0);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Mesh2 m=8 tes=6 lyr=0 vsb=1 wgt=0 clz=0 x1=-96 y1=-96 z1=0 x2=96 y2=96 z2=0");
 
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      int t = 2;
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, -78, 0, -66, -42, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, -78, 12, -66, -66, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, -54, 12, -66, -42, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, -78, 24, -66, -42, 36);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -54, -78, 0, -6, -30, 6);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 6, -78, 0, 30, -54, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 6, -42, 0, 30, -30, 48);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 42, -78, 0, 78, -66, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 42, -66, 0, 48, -42, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 72, -66, 0, 78, -42, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 42, -42, 0, 78, -30, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, -30, 0, -66, 18, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -54, -18, 0, -30, -12, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -54, -12, 0, -48, 12, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -36, -12, 0, -30, 12, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -54, 12, 0, -30, 18, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -18, -18, 0, 18, 18, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 30, -18, 0, 54, 30, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 66, -18, 0, 78, 6, 48);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 66, 18, 0, 78, 30, 96);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, 30, 0, -30, 54, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -18, 30, 0, -12, 54, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -12, 30, 0, 12, 36, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -12, 48, 0, 12, 54, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 12, 30, 0, 18, 54, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, 66, 0, -42, 78, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, 66, 12, -66, 78, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -54, 66, 12, -42, 78, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -78, 66, 24, -42, 78, 36);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, -30, 66, 0, 18, 78, 24);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 30, 42, 0, 42, 78, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 42, 42, 0, 66, 48, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 42, 72, 0, 66, 78, 12);
-      this.add_Box_Corners(-1, t, 0, 1, 0, 0, 66, 42, 0, 78, 78, 12);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      // Same m=-1/tes=2/lyr=0/vsb=1/wgt=0/clz=0 prefix for all of these,
+      // held once rather than repeated 34 times.
+      String boxArgs = "Box2P m=-1 tes=2 lyr=0 vsb=1 wgt=0 clz=0 ";
+      runScriptLine(boxArgs + "x1=-78 y1=-78 z1=0 x2=-66 y2=-42 z2=12");
+      runScriptLine(boxArgs + "x1=-78 y1=-78 z1=12 x2=-66 y2=-66 z2=24");
+      runScriptLine(boxArgs + "x1=-78 y1=-54 z1=12 x2=-66 y2=-42 z2=24");
+      runScriptLine(boxArgs + "x1=-78 y1=-78 z1=24 x2=-66 y2=-42 z2=36");
+      runScriptLine(boxArgs + "x1=-54 y1=-78 z1=0 x2=-6 y2=-30 z2=6");
+      runScriptLine(boxArgs + "x1=6 y1=-78 z1=0 x2=30 y2=-54 z2=24");
+      runScriptLine(boxArgs + "x1=6 y1=-42 z1=0 x2=30 y2=-30 z2=48");
+      runScriptLine(boxArgs + "x1=42 y1=-78 z1=0 x2=78 y2=-66 z2=12");
+      runScriptLine(boxArgs + "x1=42 y1=-66 z1=0 x2=48 y2=-42 z2=12");
+      runScriptLine(boxArgs + "x1=72 y1=-66 z1=0 x2=78 y2=-42 z2=12");
+      runScriptLine(boxArgs + "x1=42 y1=-42 z1=0 x2=78 y2=-30 z2=12");
+      runScriptLine(boxArgs + "x1=-78 y1=-30 z1=0 x2=-66 y2=18 z2=24");
+      runScriptLine(boxArgs + "x1=-54 y1=-18 z1=0 x2=-30 y2=-12 z2=24");
+      runScriptLine(boxArgs + "x1=-54 y1=-12 z1=0 x2=-48 y2=12 z2=24");
+      runScriptLine(boxArgs + "x1=-36 y1=-12 z1=0 x2=-30 y2=12 z2=24");
+      runScriptLine(boxArgs + "x1=-54 y1=12 z1=0 x2=-30 y2=18 z2=24");
+      runScriptLine(boxArgs + "x1=-18 y1=-18 z1=0 x2=18 y2=18 z2=12");
+      runScriptLine(boxArgs + "x1=30 y1=-18 z1=0 x2=54 y2=30 z2=12");
+      runScriptLine(boxArgs + "x1=66 y1=-18 z1=0 x2=78 y2=6 z2=48");
+      runScriptLine(boxArgs + "x1=66 y1=18 z1=0 x2=78 y2=30 z2=96");
+      runScriptLine(boxArgs + "x1=-78 y1=30 z1=0 x2=-30 y2=54 z2=12");
+      runScriptLine(boxArgs + "x1=-18 y1=30 z1=0 x2=-12 y2=54 z2=24");
+      runScriptLine(boxArgs + "x1=-12 y1=30 z1=0 x2=12 y2=36 z2=24");
+      runScriptLine(boxArgs + "x1=-12 y1=48 z1=0 x2=12 y2=54 z2=24");
+      runScriptLine(boxArgs + "x1=12 y1=30 z1=0 x2=18 y2=54 z2=24");
+      runScriptLine(boxArgs + "x1=-78 y1=66 z1=0 x2=-42 y2=78 z2=12");
+      runScriptLine(boxArgs + "x1=-78 y1=66 z1=12 x2=-66 y2=78 z2=24");
+      runScriptLine(boxArgs + "x1=-54 y1=66 z1=12 x2=-42 y2=78 z2=24");
+      runScriptLine(boxArgs + "x1=-78 y1=66 z1=24 x2=-42 y2=78 z2=36");
+      runScriptLine(boxArgs + "x1=-30 y1=66 z1=0 x2=18 y2=78 z2=24");
+      runScriptLine(boxArgs + "x1=30 y1=42 z1=0 x2=42 y2=78 z2=12");
+      runScriptLine(boxArgs + "x1=42 y1=42 z1=0 x2=66 y2=48 z2=12");
+      runScriptLine(boxArgs + "x1=42 y1=72 z1=0 x2=66 y2=78 z2=12");
+      runScriptLine(boxArgs + "x1=66 y1=42 z1=0 x2=78 y2=78 z2=12");
     }
 
     if (n == 11) {
-      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
-      allSections.create(0, 0, 0.1, 0, 50, 50, 1, 200, 200);
+      runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+      runScriptLine("Section x=0 y=0 z=0.1 r=0 u=50 v=50 t=1 i=200 j=200");
     }
 
 

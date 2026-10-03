@@ -518,6 +518,7 @@ class Create3DTest {
     // else-branch for the land-scatter portion, instead of add_onTerrain -
     // which is not exercised directly, per this file's header.
     app.Terrain.loadMesh = false;
+    app.build_allActions(); // add_DefaultModel now dispatches through allActions
 
     app.Create3D.add_DefaultModel(1);
 
@@ -529,6 +530,7 @@ class Create3DTest {
   @Test
   void addDefaultModel_n4BuildsAMeshAndAHouseInTwoGroups () {
     app.Terrain.loadMesh = false;
+    app.build_allActions(); // add_DefaultModel now dispatches through allActions
 
     app.Create3D.add_DefaultModel(4);
 
