@@ -1850,7 +1850,7 @@ void mouseClicked () {
 
                     if (addToLastGroup == false) {
 
-                      allGroups.beginNewGroup(x, y, z, 1, 1, 1, 0, 0, rot);
+                      runScriptLine("BeginNewGroup x=" + x + " y=" + y + " z=" + z + " sx=1 sy=1 sz=1 rx=0 ry=0 rz=" + rot);
                     }
 
 

@@ -134,6 +134,14 @@ Scale s=? sx=? sy=? sz=? x=? y=? z=?
 
 ### Object creation
 
+-   `BEGINNEWGROUP`: Starts a new group at the given position/scale/
+    rotation - the group that House1/2/3, Box, Cylinder and the other
+    group-based shapes below add their first mesh or solid into
+
+```
+BeginNewGroup x=? y=? z=? sx=? sy=? sz=? rx=? ry=? rz=?
+```
+
 -   `PERSON`: Creates a person
 
 ```

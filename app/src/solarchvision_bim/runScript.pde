@@ -1258,6 +1258,31 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
+    // allGroups.beginNewGroup(...) itself has no validity guard at all
+    // (just appends the 9 values directly - see Groups.pde), so none is
+    // added here either, unlike SOLID's px/py/pz/sx/sy/sz/v check just
+    // above - matching the direct call in mouseClicked.pde this replaces,
+    // which also calls it unconditionally.
+    case "BEGINNEWGROUP": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float x = getF(p, "x", 0);
+        float y = getF(p, "y", 0);
+        float z = getF(p, "z", 0);
+        float sx = getF(p, "sx", 1);
+        float sy = getF(p, "sy", 1);
+        float sz = getF(p, "sz", 1);
+        float rx = getF(p, "rx", 0);
+        float ry = getF(p, "ry", 0);
+        float rz = getF(p, "rz", 0);
+        allGroups.beginNewGroup(x, y, z, sx, sy, sz, rx, ry, rz);
+      }
+      else {
+        hint = "BeginNewGroup x=? y=? z=? sx=? sy=? sz=? rx=? ry=? rz=?";
+      }
+      return hint;
+    }
+
     case "SECTION": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);

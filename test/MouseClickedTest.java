@@ -275,6 +275,24 @@ class MouseClickedTest {
     assertArrayEquals(new float[]{5, 7, 9}, app.allVertices[0], 0.0001f);
   }
 
+  // ================= "BeginNewGroup" command ==============================
+  // allGroups.beginNewGroup(...) itself has no validity guard at all
+  // (GroupsTest.java's own beginNewGroup_appendsARowToEveryArrayUsingCurrentSceneCounts
+  // confirms it just appends the 9 values directly), so this just
+  // confirms the command passes all 9 through correctly, the same way
+  // moveCommand_... above confirms Move's own string construction rather
+  // than re-testing Move3D.selection() itself.
+  @Test
+  void beginNewGroupCommand_passesAllNineValuesThrough () {
+    app.build_allActions();
+
+    String hint = app.runScriptLine("BeginNewGroup x=1 y=2 z=3 sx=1 sy=1 sz=1 rx=0 ry=0 rz=45");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertEquals(1, app.allGroups.num);
+    assertArrayEquals(new float[]{1, 2, 3, 1, 1, 1, 0, 0, 45}, app.allGroups.Pivots[0], 0.0001f);
+  }
+
   // ================= small top-level helpers ============================
 
   @Test
