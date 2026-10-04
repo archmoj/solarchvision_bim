@@ -335,10 +335,6 @@ void build_allActions() {
     view_changed();
   });
 
-  // Each of these 5 menu actions used to reset the same 12 recording
-  // flags to false and then flip exactly one of them true. Pulling the
-  // reset into stopAllRecording() means each action states
-  // only what's actually different: which flag turns on.
   putAction("Stop REC.", () -> {
     stopAllRecording();
 
@@ -1300,28 +1296,6 @@ void build_allActions() {
     UI_toolBar.revise();
   });
 
-  // This group mirrors WIN3D.pde's own key shortcuts exactly (see that
-  // file's keyPressed()/handleCommandKey()/handleCtrlCommandKey()/
-  // handleArrowKeys() family), registered so the same effect is both
-  // scriptable (command/*.txt, or typed directly - runScriptLine's own
-  // "cmd:"/"out:" print gives logging for free) and keyboard-triggered
-  // through one shared code path, rather than two separately-maintained
-  // copies of the same logic. Originally named by the literal key
-  // pressed ("key3D c", "key3D Shift+C", etc.) - renamed to describe
-  // what each one actually does instead, since that's what a person
-  // scripting or reading this list cares about, not which physical key
-  // happened to trigger it in the GUI. A collision this renaming had to
-  // route around either way: normalizeActionKey() lowercases its whole
-  // argument, so naming both camera-cycle actions by case alone ("c" vs
-  // "C") would have collided on the same normalized key regardless of
-  // the literal-key or the descriptive naming - "Next Camera"/
-  // "Previous Camera" sidesteps that the same way "key3D c"/"key3D
-  // Shift+C" did before. reviseViews()/other view-refresh calls stay in
-  // WIN3D.pde's own key handler rather than moving into the action here,
-  // matching "Delete Selection" below's own precedent (confirmed by
-  // reading Delete3D.selection() itself: it has no refresh call of its
-  // own, so whoever calls it - keyboard or script - is expected to
-  // trigger that separately).
   putAction("Next Camera", () -> {
     WIN3D.currentCameraIndex += 1;
     if (WIN3D.currentCameraIndex > allCameras.num - 1) WIN3D.currentCameraIndex = 0;
@@ -1350,10 +1324,6 @@ void build_allActions() {
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
   });
 
-  // Also used by '0', which has always been an exact duplicate of ','
-  // (both nudge positionZ in perspective, or zoom otherwise) - rather
-  // than register the same body twice under two names, '0's own key
-  // handler just calls this one too.
   putAction("Zoom Out", () -> {
     if (WIN3D.projectionTypeIndex == 1) WIN3D.positionZ += WIN3D.positionStep * overallScale;
     else WIN3D.zoom /= pow(2.0, 0.25);
@@ -1445,14 +1415,6 @@ void build_allActions() {
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
   });
 
-  // Just the adjustShadeTime() half of Space/Backspace/Alt+arrows' own
-  // "shade time, then re-shade" (or vice versa) pairing - "Shade
-  // Viewport" above already covers the ShadeViewport() half exactly, so
-  // each key composes the two via runScriptLines() in whichever order it
-  // actually uses, rather than this duplicating "Shade Viewport" itself.
-  // +1/-1 cover Space, Backspace, and Alt+Right/Left alike (all four
-  // step by exactly one hour); Alt+Up/Down step a full day instead
-  // (SHADE_HOURS_PER_DAY + 1), hence the separate pair.
   putAction("Shade Time +1 Hour", () -> {
     adjustShadeTime(1);
   });
@@ -1501,31 +1463,6 @@ void build_allActions() {
     WIN3D.incrementParameter(-1);
   });
 
-  // STUDY.pde's own equivalent of the WIN3D group above - see that
-  // section's own comment for the naming approach (descriptive names
-  // rather than the literal key pressed) and the reasoning behind it
-  // (case-sensitive letter pairs needing distinct wording rather than
-  // relying on case, which normalizeActionKey() strips).
-  //
-  // None of STUDY.pde's keys had an existing matching action to reuse
-  // (checked, the way the WIN3D group's own did before registering
-  // anything new) - the closest-sounding candidates (Change Layer,
-  // Show/Hide Sky, Show/Hide Normals) turned out to be unrelated on
-  // inspection: UI_setTo_Modify_Layer() is a tool-mode switch, not
-  // changeCurrentLayerTo()'s direct cycling; Sky3D.displaySurface/
-  // allFaces.showNormalLines are different, 3D-scene fields entirely
-  // from STUDY's own showRawLines/showNormalLines.
-  //
-  // Refresh calls (requestRedraw()) stay in STUDY.pde's own key handlers
-  // below, not moved into these actions - except where the function
-  // being called is already fully self-sufficient about its own refresh
-  // (changeJoinDays/changeJEnd/changeSkyScenario, confirmed by reading
-  // each one, not assumed), in which case there's nothing left for the
-  // key handler to add. Same reasoning as the WIN3D group's own "Delete
-  // Selection"/"Look at selection" distinction.
-  // currentLayerId is a global (layers.pde), not a STUDY field - the
-  // original code references it bare from inside STUDY.pde too, which
-  // reads like a "this." field but isn't one.
   putAction("Next Layer", () -> {
     changeCurrentLayerTo((currentLayerId + 1) % allLayers.length);
   });
@@ -1542,10 +1479,6 @@ void build_allActions() {
     STUDY.impactGraphIndex = (STUDY.impactGraphIndex - 1 + STUDY.PLOT_IMPACTS_MODE_COUNT) % STUDY.PLOT_IMPACTS_MODE_COUNT;
   });
 
-  // The "no shift" guard on both of these stays in STUDY.pde's own
-  // handleCtrlCodedKey() - a real KeyEvent's modifier state isn't
-  // something a script invoking this action by name would have (or
-  // need) an equivalent of.
   putAction("Next Plot Layout", () -> {
     STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex + 1) % STUDY.PLOT_SETUP_MODE_COUNT;
   });
@@ -1566,13 +1499,6 @@ void build_allActions() {
     STUDY.verticalUnitScale *= sqrt(0.5);
   });
 
-  // changeJoinDays/changeJEnd/changeSkyScenario are STUDY methods, not
-  // globals (confirmed by their indentation in STUDY.pde - 2 spaces,
-  // meaning inside the class), so they need the STUDY. prefix out here,
-  // unlike currentLayerId above. Each already calls its own
-  // requestDataRefresh()/explicit revise() set internally though -
-  // nothing extra needed in STUDY.pde's own key handler after calling
-  // them.
   putAction("Widen Join Window", () -> {
     STUDY.changeJoinDays(2);
   });
@@ -1589,9 +1515,6 @@ void build_allActions() {
     STUDY.changeJEnd(-1);
   });
 
-  // 'S' (forward) and 's' (backward) are different, not a case-insensitive
-  // pair like v/m/n/b below - "Next Sky Scenario" for the uppercase one is
-  // this family's usual collision-avoidance naming, not a style choice.
   putAction("Next Sky Scenario", () -> {
     STUDY.changeSkyScenario(1);
   });
@@ -1600,10 +1523,6 @@ void build_allActions() {
     STUDY.changeSkyScenario(-1);
   });
 
-  // v/V, m/M, n/N, b/B are each a true case-insensitive pair (both cases
-  // do the exact same thing) rather than a collision to avoid - one
-  // action per pair, registered under the lowercase name, is enough;
-  // STUDY.pde's own key handler calls the same one for both cases.
   putAction("Toggle Raw Lines", () -> {
     STUDY.showRawLines = !STUDY.showRawLines;
   });
@@ -1620,11 +1539,6 @@ void build_allActions() {
     STUDY.showProbabilities = !STUDY.showProbabilities;
   });
 
-  // requestRedraw() is unconditional in the original ('{'/'}' still
-  // redraw even when already at the clamp limit and the multiply was a
-  // no-op) - preserved exactly as it was rather than moved inside the if,
-  // by keeping it in STUDY.pde's own key handler rather than folding it
-  // into these two actions.
   putAction("Increase Probability Height Step", () -> {
     if (STUDY.probabilityHeightInterval < 32) STUDY.probabilityHeightInterval *= 2.0;
   });
@@ -1641,15 +1555,6 @@ void build_allActions() {
     STUDY.increaseSumInterval();
   });
 
-  // WORLD.pde's own counterpart to the WIN3D/STUDY groups above - see
-  // those sections' own comments for the naming approach this follows.
-  // No existing action matched either key (checked the way those
-  // groups' own did, not assumed) - "Zoom"/"Zoom as default" sounded
-  // closest but turned out to be WIN3D tool-mode switches
-  // (UI_setTo_View_ZOOM), unrelated to WORLD's own map zoom level.
-  // WORLD.revise() stays in WORLD.pde's own key handler, not moved into
-  // either action, matching the same convention for brand new (not
-  // reused) actions.
   putAction("Map Zoom Out", () -> {
     WORLD.zoom = (WORLD.zoom - 1 + 10) % 10;
     WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
