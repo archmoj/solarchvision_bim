@@ -39,15 +39,11 @@ private String normalizeActionKey(String s) {
   return s.toLowerCase().replace(' ', '_');
 }
 
-void showFullCommand(String fullCommand) {
-  println(fullCommand);
-}
-
-int logLevel = 1;
-
 void echoAction(String command, String[] args) {
-  if(logLevel < 1) return;
-  StringBuilder line = new StringBuilder(command);
+  if(logLevel <= LOGLEVEL_DISABLED) return;
+
+  StringBuilder line = new StringBuilder(ACTIONS_LABEL);
+  line.append(command);
   for (int i = 1; i < args.length; i++) {
     line.append(" ").append(args[i]);
   }
@@ -55,8 +51,8 @@ void echoAction(String command, String[] args) {
 }
 
 void echoAction(String command) {
-  if(logLevel < 1) return;
-  showFullCommand(command);
+  if(logLevel <= LOGLEVEL_DISABLED) return;
+  showFullCommand(ACTIONS_LABEL + command);
 }
 
 private void putAction(String s, Runnable fn) {

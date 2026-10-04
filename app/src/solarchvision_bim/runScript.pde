@@ -11,21 +11,30 @@ String runScriptLines (String[] FileALL) {
   for (int f = 0; f < FileALL.length; f++) {
     String lineSTR = FileALL[f];
 
-    if(!lineSTR.equals("")) {
-      println("cmd:", lineSTR);
+    hint = runScriptLine(lineSTR);
+    if(hint.equals(UnrecognizedCommand)) return UnrecognizedCommand;
+  }
+  return hint;
+}
 
-      hint = runScriptLine(lineSTR);
+String runScriptLine (String lineSTR) {
+  String hint = "";
+  if(!lineSTR.equals("")) {
+    showFullCommand(COMMANDS_LABEL + lineSTR);
 
-      if(!hint.equals("")) {
-        println("out:", hint);
+    hint = ___executeScriptLine___(lineSTR);
 
-        // interrupt in case of error
-        if(hint.equals(UnrecognizedCommand)) return UnrecognizedCommand;
-      }
+    if(!hint.equals("")) {
+      boolean isUnrecognizedCommand = hint.equals(UnrecognizedCommand);
+      showFullFeedback(FEEDBACKS_LABEL + hint, isUnrecognizedCommand);
+
+      // interrupt in case of error
+      if(isUnrecognizedCommand) return UnrecognizedCommand;
     }
   }
   return hint;
 }
+
 
 // Lowercase command names that must always reach the switch-case in
 // runScriptLine below, even though each also has a bare, zero-argument
@@ -44,7 +53,7 @@ HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "scale", "section", "solid", "sphere"
 ));
 
-String runScriptLine (String lineSTR) {
+String ___executeScriptLine___ (String lineSTR) {
   String hint = "";
 
   lineSTR = lineSTR.stripLeading();

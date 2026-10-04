@@ -12,6 +12,15 @@ void parseArgs(String[] passedArgs) {
 
 String[][] runAfterInitialization = new String[0][0];
 
+final int LOGLEVEL_GUI_AND_PRINT = 3;
+final int LOGLEVEL_GUI_ONLY      = 2;
+final int LOGLEVEL_PRINT_ONLY    = 1;
+final int LOGLEVEL_DISABLED      = 0;
+final int LOGLEVEL_IS_NOT_SET    = -1;
+
+int logLevel = LOGLEVEL_GUI_AND_PRINT; //LOGLEVEL_IS_NOT_SET;
+
+
 void _useArg(String arg) {
   String CAP_arg = arg.toUpperCase();
 
@@ -19,13 +28,27 @@ void _useArg(String arg) {
   String input_str = "";
   String[] _tokens;
 
+  _at = CAP_arg.indexOf("LOGLEVEL");
+  if (_at == 0) {
+    _tokens = split(CAP_arg, '=');
+    if (_tokens.length > 1) {
+      logLevel = PApplet.parseInt(_tokens[1]);
+    }
+  }
+
   _at = CAP_arg.indexOf("USER");
   if (_at == 0) {
     _tokens = split(CAP_arg, '=');
     if (_tokens.length > 1) {
       input_str = _tokens[1];
-      if (input_str.equals("GUI")) control = USER_GUI;
-      else if (input_str.equals("AUTO")) control = USER_AUTO;
+      if (input_str.equals("GUI")) {
+        control = USER_GUI;
+        if (logLevel == LOGLEVEL_IS_NOT_SET) logLevel = LOGLEVEL_GUI_ONLY;
+      }
+      else if (input_str.equals("AUTO")) {
+        control = USER_AUTO;
+        if (logLevel == LOGLEVEL_IS_NOT_SET) logLevel = LOGLEVEL_PRINT_ONLY;
+      }
     }
   }
 

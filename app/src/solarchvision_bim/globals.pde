@@ -287,26 +287,27 @@ String createStamp (int increment, String CLASS_STAMP) {
   return txt;
 }
 
-final String ANSI_RESET = "\u001B[0m";
+final String ANSI_RESET  = "\u001B[0m";
 
-final String ANSI_BLACK = "\u001B[30m";
-final String ANSI_RED = "\u001B[31m";
-final String ANSI_GREEN = "\u001B[32m";
+final String ANSI_BLACK  = "\u001B[30m";
+final String ANSI_RED    = "\u001B[31m";
+final String ANSI_GREEN  = "\u001B[32m";
 final String ANSI_YELLOW = "\u001B[33m";
-final String ANSI_BLUE = "\u001B[34m";
+final String ANSI_BLUE   = "\u001B[34m";
 final String ANSI_PURPLE = "\u001B[35m";
-final String ANSI_CYAN = "\u001B[36m";
+final String ANSI_CYAN   = "\u001B[36m";
+final String ANSI_WHITE  = "\u001B[37m";
 
-final String ANSI_BLACK_BG = "\u001B[40m";
-final String ANSI_RED_BG = "\u001B[41m";
-final String ANSI_GREEN_BG = "\u001B[42m";
+final String ANSI_BLACK_BG  = "\u001B[40m";
+final String ANSI_RED_BG    = "\u001B[41m";
+final String ANSI_GREEN_BG  = "\u001B[42m";
 final String ANSI_YELLOW_BG = "\u001B[43m";
-final String ANSI_BLUE_BG = "\u001B[44m";
+final String ANSI_BLUE_BG   = "\u001B[44m";
 final String ANSI_PURPLE_BG = "\u001B[45m";
-final String ANSI_CYAN_BG = "\u001B[46m";
+final String ANSI_CYAN_BG   = "\u001B[46m";
 
 final String OSC8_START = "\u001B]8;;";
-final String OSC8_END = "\u001B\\";
+final String OSC8_END   = "\u001B\\";
 final String OSC8_CLOSE = "\u001B]8;;\u001B\\";
 
 String terminalLink (String path) {
@@ -318,11 +319,49 @@ String terminalLink (String path) {
 }
 
 String terminalLinkColor (String path) {
- return (ANSI_BLACK + ANSI_YELLOW_BG + terminalLink(path) + ANSI_RESET);
+ return (
+  ANSI_BLACK +
+  ANSI_YELLOW_BG +
+  (control == USER_GUI ? terminalLink(path) : path) +
+  ANSI_RESET);
 }
 
 void printlnSaving (String path) {
-  println("Saving:", (control == USER_GUI) ? terminalLinkColor(path) : path);
+  println("Saving:", terminalLinkColor(path));
+}
+
+final String ACTIONS_LABEL =   "[Action]: ";
+final String COMMANDS_LABEL =  "(Command): ";
+final String FEEDBACKS_LABEL = "{Feedback}: ";
+
+void showFullCommand(String txt) {
+  if (
+    logLevel == LOGLEVEL_PRINT_ONLY ||
+    logLevel == LOGLEVEL_GUI_AND_PRINT
+  ) {
+    if (control == USER_GUI) {
+      println(ANSI_WHITE + ANSI_BLUE_BG + txt + ANSI_RESET);
+    } else {
+      println(txt);
+    }
+  }
+}
+
+void showFullFeedback(String txt, boolean isUnrecognizedCommand) {
+  if (
+    logLevel == LOGLEVEL_PRINT_ONLY ||
+    logLevel == LOGLEVEL_GUI_AND_PRINT
+  ) {
+    if (control == USER_GUI) {
+      if (isUnrecognizedCommand) {
+        println(ANSI_YELLOW + ANSI_RED_BG + txt + ANSI_RESET);
+      } else {
+        println(ANSI_RED + ANSI_YELLOW_BG + txt + ANSI_RESET);
+      }
+    } else {
+      println(txt);
+    }
+  }
 }
 
 
