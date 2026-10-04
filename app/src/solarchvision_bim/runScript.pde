@@ -501,6 +501,368 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
+    // mouseWheel.pde's own leaf handlers, the wheel-event counterpart of
+    // the thirteen DRAG* cases above - same reasoning (switch cases, not
+    // allActions, for the same single-token-only-lookup reason explained
+    // there; "Wheel" prefixed instead of "Drag" to keep the two event
+    // sources distinct in the command list). One, handleMoveWheel, isn't
+    // here at all: it already builds the exact same delta MOVE's own
+    // Move3D.selection(dx,dy,dz) call expects, so it now calls MOVE
+    // directly instead of getting its own case - see mouseWheel.pde's own
+    // comment on it. Every name below checked against allActions directly
+    // before being used; none collide.
+
+    case "WHEELHOURS": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        int oldStart = STUDY.startHour;
+        int oldEnd = STUDY.endHour;
+        if (wheelValue > 0) {
+          STUDY.startHour += 1;
+          STUDY.endHour += 1;
+        }
+        if (wheelValue < 0) {
+          STUDY.startHour -= 1;
+          STUDY.endHour -= 1;
+        }
+        if (STUDY.startHour < 0) STUDY.startHour = 23;
+        if (STUDY.startHour > 23) STUDY.startHour = 0;
+        if (STUDY.endHour < 0) STUDY.endHour = 23;
+        if (STUDY.endHour > 23) STUDY.endHour = 0;
+        if (oldStart != STUDY.startHour || oldEnd != STUDY.endHour) {
+          reviseStudyAndRegenerate(true);
+        }
+      }
+      else {
+        hint = "WheelHours ?";
+      }
+      return hint;
+    }
+
+    case "WHEELDAYS": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        int oldJoinDays = STUDY.daysMergedCount;
+        if (wheelValue > 0) STUDY.daysMergedCount += 2;
+        if (wheelValue < 0) STUDY.daysMergedCount -= 2;
+        if (STUDY.daysMergedCount > 365 / STUDY.endDay) STUDY.daysMergedCount = 365 / STUDY.endDay;
+        if (STUDY.daysMergedCount < 1) STUDY.daysMergedCount = 1;
+        if (oldJoinDays != STUDY.daysMergedCount) {
+          reviseStudyAndRegenerate(false);
+        }
+      }
+      else {
+        hint = "WheelDays ?";
+      }
+      return hint;
+    }
+
+    // Dispatches by currentDataSource internally, same as the direct
+    // call it replaces - which of sampleYearStart/End,
+    // sampleMemberStart/End or sampleStationStart/End actually moves
+    // depends on state this command reads itself, not something a
+    // caller could usefully pass in as a parameter.
+    case "WHEELSCENARIO": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        if (currentDataSource == dataID_climateEngineering) {
+          int[] r = shiftAndClampRange(sampleYearStart, sampleYearEnd, wheelValue, climateEngineeringStart, climateEngineeringEnd);
+          if (r[0] != sampleYearStart || r[1] != sampleYearEnd) {
+            sampleYearStart = r[0];
+            sampleYearEnd = r[1];
+            reviseStudyAndRegenerate(false);
+          }
+        }
+        if (currentDataSource == dataID_climateArchive) {
+          int[] r = shiftAndClampRange(sampleYearStart, sampleYearEnd, wheelValue, climateArchiveStart, climateArchiveEnd);
+          if (r[0] != sampleYearStart || r[1] != sampleYearEnd) {
+            sampleYearStart = r[0];
+            sampleYearEnd = r[1];
+            reviseStudyAndRegenerate(false);
+          }
+        }
+        if (currentDataSource == dataID_ensembleForecast) {
+          int[] r = shiftAndClampRange(sampleMemberStart, sampleMemberEnd, wheelValue, ensembleForecastStart, ensembleForecastEnd);
+          if (r[0] != sampleMemberStart || r[1] != sampleMemberEnd) {
+            sampleMemberStart = r[0];
+            sampleMemberEnd = r[1];
+            reviseStudyAndRegenerate(false);
+          }
+        }
+        if (currentDataSource == dataID_ensembleObservation) {
+          int[] r = shiftAndClampRange(sampleStationStart, sampleStationEnd, wheelValue, ensembleObservationStart, ensembleObservationEnd);
+          if (r[0] != sampleStationStart || r[1] != sampleStationEnd) {
+            sampleStationStart = r[0];
+            sampleStationEnd = r[1];
+            reviseStudyAndRegenerate(false);
+          }
+        }
+      }
+      else {
+        hint = "WheelScenario ?";
+      }
+      return hint;
+    }
+
+    case "WHEELWORLDZOOM": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        int oldZoom = WORLD.zoom;
+        if (wheelValue < 0) WORLD.zoom += 1;
+        if (wheelValue > 0) WORLD.zoom -= 1;
+        if (WORLD.zoom < 1) WORLD.zoom = 1;
+        if (WORLD.zoom > 9) WORLD.zoom = 9;
+        if (oldZoom != WORLD.zoom) {
+          WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
+          WORLD.revise();
+        }
+      }
+      else {
+        hint = "WheelWorldZoom ?";
+      }
+      return hint;
+    }
+
+    case "WHEELROTATESELECTION": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float wheelValue = getF(p, "wheelvalue", 0);
+        float x0 = getF(p, "x0", 0);
+        float y0 = getF(p, "y0", 0);
+        float z0 = getF(p, "z0", 0);
+        float r = 5 * -wheelValue;
+        int theVector = Select3D.rotationVectorIndex;
+        Rotate3D.selection(x0, y0, z0, r, theVector);
+        model_changed();
+      }
+      else {
+        hint = "WheelRotateSelection wheelValue=? x0=? y0=? z0=?";
+      }
+      return hint;
+    }
+
+    case "WHEELSCALESELECTION": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float wheelValue = getF(p, "wheelvalue", 0);
+        float x0 = getF(p, "x0", 0);
+        float y0 = getF(p, "y0", 0);
+        float z0 = getF(p, "z0", 0);
+        float s = pow(pow(2.0, 0.25), -wheelValue);
+        float sx = s;
+        float sy = s;
+        float sz = s;
+        int theVector = Select3D.scaleVectorIndex;
+        if (theVector == 0) { sy = 1; sz = 1; }
+        if (theVector == 1) { sz = 1; sx = 1; }
+        if (theVector == 2) { sx = 1; sy = 1; }
+        Scale3D.selection(x0, y0, z0, sx, sy, sz);
+        model_changed();
+      }
+      else {
+        hint = "WheelScaleSelection wheelValue=? x0=? y0=? z0=?";
+      }
+      return hint;
+    }
+
+    case "WHEELEDITSELECTION": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        int pEdit = int(-wheelValue);
+        Edit3D.selection(pEdit);
+        model_changed();
+      }
+      else {
+        hint = "WheelEditSelection ?";
+      }
+      return hint;
+    }
+
+    case "WHEELZOOMVIEWPORT": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        if (WIN3D.projectionTypeIndex == 1) {
+          WIN3D.positionZ -= wheelValue * WIN3D.positionStep * overallScale;
+        } else {
+          WIN3D.zoom *= pow(2.0, wheelValue);
+        }
+        view_changed();
+      }
+      else {
+        hint = "WheelZoomViewport ?";
+      }
+      return hint;
+    }
+
+    case "WHEELELEVATION": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        if (wheelValue > 0) WIN3D.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.zoom));
+        if (wheelValue < 0) WIN3D.zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.zoom));
+        view_changed();
+      }
+      else {
+        hint = "WheelElevation ?";
+      }
+      return hint;
+    }
+
+    case "WHEELSCALEOBJECTS": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        if (wheelValue > 0) overallScale /= pow(2.0, 0.25);
+        if (wheelValue < 0) overallScale *= pow(2.0, 0.25);
+        view_changed();
+      }
+      else {
+        hint = "WheelScaleObjects ?";
+      }
+      return hint;
+    }
+
+    case "WHEELSCALESKYDOME": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        if (wheelValue > 0) Sky3D.radius *= pow(2.0, 0.25);
+        if (wheelValue < 0) Sky3D.radius /= pow(2.0, 0.25);
+        view_changed();
+      }
+      else {
+        hint = "WheelScaleSkydome ?";
+      }
+      return hint;
+    }
+
+    case "WHEELSCALEALLMODEL": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        if (wheelValue > 0) {
+          overallScale /= pow(2.0, 0.25);
+          Sky3D.radius /= pow(2.0, 0.25);
+        }
+        if (wheelValue < 0) {
+          overallScale *= pow(2.0, 0.25);
+          Sky3D.radius *= pow(2.0, 0.25);
+        }
+        view_changed();
+      }
+      else {
+        hint = "WheelScaleAllModel ?";
+      }
+      return hint;
+    }
+
+    // Which of rotationX/rotationZ moves depends on WIN3D.targetAxisIndex,
+    // read internally - same as WHEELSCENARIO above, this is state the
+    // command reads itself rather than something a caller passes in.
+    case "WHEELTARGETROLLXYZ": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        if (WIN3D.targetAxisIndex == 0) {
+          WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
+          WIN3D.reverseTransform_3DViewport();
+        }
+        if (WIN3D.targetAxisIndex == 1) {
+          WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
+          WIN3D.reverseTransform_3DViewport();
+        }
+        view_changed();
+      }
+      else {
+        hint = "WheelTargetRollXYZ ?";
+      }
+      return hint;
+    }
+
+    case "WHEELCAMERAROLLXYZ": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        if (WIN3D.targetAxisIndex == 0) {
+          WIN3D.rotateZ_3DViewport_around_Selection(wheelValue * WIN3D.rotationStep);
+        }
+        if (WIN3D.targetAxisIndex == 1) {
+          WIN3D.rotateXY_3DViewport_around_Selection(wheelValue * WIN3D.rotationStep);
+        }
+        view_changed();
+      }
+      else {
+        hint = "WheelCameraRollXYZ ?";
+      }
+      return hint;
+    }
+
+    case "WHEELMOVETOWARDSSELECTION": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        WIN3D.move_3DViewport_towards_Selection(pow(2, 0.5 * wheelValue));
+        view_changed();
+      }
+      else {
+        hint = "WheelMoveTowardsSelection ?";
+      }
+      return hint;
+    }
+
+    case "WHEELMOVETOWARDSMOUSE": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        WIN3D.move_3DViewport_towards_Mouse(pow(2, 0.5 * wheelValue));
+        view_changed();
+      }
+      else {
+        hint = "WheelMoveTowardsMouse ?";
+      }
+      return hint;
+    }
+
+    case "WHEELPOSITIONX": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        WIN3D.positionX += wheelValue * WIN3D.positionStep * overallScale;
+        view_changed();
+      }
+      else {
+        hint = "WheelPositionX ?";
+      }
+      return hint;
+    }
+
+    case "WHEELPOSITIONY": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        WIN3D.positionY += wheelValue * WIN3D.positionStep * overallScale;
+        view_changed();
+      }
+      else {
+        hint = "WheelPositionY ?";
+      }
+      return hint;
+    }
+
+    case "WHEELROTATIONX": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
+        view_changed();
+      }
+      else {
+        hint = "WheelRotationX ?";
+      }
+      return hint;
+    }
+
+    case "WHEELROTATIONZ": {
+      if (parts.length > 1) {
+        float wheelValue = float(parts[1]);
+        WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
+        view_changed();
+      }
+      else {
+        hint = "WheelRotationZ ?";
+      }
+      return hint;
+    }
+
     case "ROTATE":
     case "ROTATEX":
     case "ROTATEY":

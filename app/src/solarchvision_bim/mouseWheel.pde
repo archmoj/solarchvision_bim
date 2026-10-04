@@ -59,40 +59,11 @@ void reviseStudyAndRegenerate(boolean alsoWorld) {
 }
 
 void handleHoursCaseBarWheel(float wheelValue) {
-  int oldStart = STUDY.startHour;
-  int oldEnd = STUDY.endHour;
-
-  if (wheelValue > 0) {
-    STUDY.startHour += 1;
-    STUDY.endHour += 1;
-  }
-  if (wheelValue < 0) {
-    STUDY.startHour -= 1;
-    STUDY.endHour -= 1;
-  }
-
-  if (STUDY.startHour < 0) STUDY.startHour = 23;
-  if (STUDY.startHour > 23) STUDY.startHour = 0;
-  if (STUDY.endHour < 0) STUDY.endHour = 23;
-  if (STUDY.endHour > 23) STUDY.endHour = 0;
-
-  if (oldStart != STUDY.startHour || oldEnd != STUDY.endHour) {
-    reviseStudyAndRegenerate(true);
-  }
+  runScriptLine("WheelHours " + wheelValue);
 }
 
 void handleDaysCaseBarWheel(float wheelValue) {
-  int oldJoinDays = STUDY.daysMergedCount;
-
-  if (wheelValue > 0) STUDY.daysMergedCount += 2;
-  if (wheelValue < 0) STUDY.daysMergedCount -= 2;
-
-  if (STUDY.daysMergedCount > 365 / STUDY.endDay) STUDY.daysMergedCount = 365 / STUDY.endDay;
-  if (STUDY.daysMergedCount < 1) STUDY.daysMergedCount = 1;
-
-  if (oldJoinDays != STUDY.daysMergedCount) {
-    reviseStudyAndRegenerate(false);
-  }
+  runScriptLine("WheelDays " + wheelValue);
 }
 
 int[] shiftAndClampRange(int start, int end, float wheelValue, int lo, int hi) {
@@ -117,41 +88,7 @@ int[] shiftAndClampRange(int start, int end, float wheelValue, int lo, int hi) {
 }
 
 void handleScenarioCaseBarWheel(float wheelValue) {
-  if (currentDataSource == dataID_climateEngineering) {
-    int[] r = shiftAndClampRange(sampleYearStart, sampleYearEnd, wheelValue, climateEngineeringStart, climateEngineeringEnd);
-    if (r[0] != sampleYearStart || r[1] != sampleYearEnd) {
-      sampleYearStart = r[0];
-      sampleYearEnd = r[1];
-      reviseStudyAndRegenerate(false);
-    }
-  }
-
-  if (currentDataSource == dataID_climateArchive) {
-    int[] r = shiftAndClampRange(sampleYearStart, sampleYearEnd, wheelValue, climateArchiveStart, climateArchiveEnd);
-    if (r[0] != sampleYearStart || r[1] != sampleYearEnd) {
-      sampleYearStart = r[0];
-      sampleYearEnd = r[1];
-      reviseStudyAndRegenerate(false);
-    }
-  }
-
-  if (currentDataSource == dataID_ensembleForecast) {
-    int[] r = shiftAndClampRange(sampleMemberStart, sampleMemberEnd, wheelValue, ensembleForecastStart, ensembleForecastEnd);
-    if (r[0] != sampleMemberStart || r[1] != sampleMemberEnd) {
-      sampleMemberStart = r[0];
-      sampleMemberEnd = r[1];
-      reviseStudyAndRegenerate(false);
-    }
-  }
-
-  if (currentDataSource == dataID_ensembleObservation) {
-    int[] r = shiftAndClampRange(sampleStationStart, sampleStationEnd, wheelValue, ensembleObservationStart, ensembleObservationEnd);
-    if (r[0] != sampleStationStart || r[1] != sampleStationEnd) {
-      sampleStationStart = r[0];
-      sampleStationEnd = r[1];
-      reviseStudyAndRegenerate(false);
-    }
-  }
+  runScriptLine("WheelScenario " + wheelValue);
 }
 
 
@@ -159,18 +96,7 @@ void handleWorldZoomWheel(float wheelValue) {
   if (!WORLD.include) return;
   if (!isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return;
 
-  int oldZoom = WORLD.zoom;
-
-  if (wheelValue < 0) WORLD.zoom += 1;
-  if (wheelValue > 0) WORLD.zoom -= 1;
-
-  if (WORLD.zoom < 1) WORLD.zoom = 1;
-  if (WORLD.zoom > 9) WORLD.zoom = 9;
-
-  if (oldZoom != WORLD.zoom) {
-    WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
-    WORLD.revise();
-  }
+  runScriptLine("WheelWorldZoom " + wheelValue);
 }
 
 
@@ -206,26 +132,11 @@ void handleObjectEditWheel(float wheelValue, float x0, float y0, float z0) {
 }
 
 void handleRotateWheel(float wheelValue, float x0, float y0, float z0) {
-  float r = 5 * -wheelValue;
-  int theVector = Select3D.rotationVectorIndex;
-  Rotate3D.selection(x0, y0, z0, r, theVector);
-  model_changed();
+  runScriptLine("WheelRotateSelection wheelValue=" + wheelValue + " x0=" + x0 + " y0=" + y0 + " z0=" + z0);
 }
 
 void handleScaleWheel(float wheelValue, float x0, float y0, float z0) {
-  float s = pow(pow(2.0, 0.25), -wheelValue);
-
-  float sx = s;
-  float sy = s;
-  float sz = s;
-
-  int theVector = Select3D.scaleVectorIndex;
-  if (theVector == 0) { sy = 1; sz = 1; }
-  if (theVector == 1) { sz = 1; sx = 1; }
-  if (theVector == 2) { sx = 1; sy = 1; }
-
-  Scale3D.selection(x0, y0, z0, sx, sy, sz);
-  model_changed();
+  runScriptLine("WheelScaleSelection wheelValue=" + wheelValue + " x0=" + x0 + " y0=" + y0 + " z0=" + z0);
 }
 
 void handleMoveWheel(float wheelValue) {
@@ -237,16 +148,18 @@ void handleMoveWheel(float wheelValue) {
   // function zero out whichever axes positionVectorIndex excludes, is exactly
   // equivalent to the dx=dy=dz=d then zero-by-positionVectorIndex this used to do
   // inline.
+  //
+  // No dedicated Wheel* command here, unlike every other handler in this
+  // file: this already builds the exact same (dx,dy,dz) the existing
+  // "MOVE" command's own Move3D.selection(dx,dy,dz) call expects, so it
+  // reuses that command directly instead of getting its own.
   float[] delta = computeMoveDelta(0, 0, 0, d, d, d);
 
-  Move3D.selection(delta[0], delta[1], delta[2]);
-  model_changed();
+  runScriptLine("Move dx=" + delta[0] + " dy=" + delta[1] + " dz=" + delta[2]);
 }
 
 void handlePropertyEditWheel(float wheelValue) {
-  int p = int(-wheelValue);
-  Edit3D.selection(p);
-  model_changed();
+  runScriptLine("WheelEditSelection " + wheelValue);
 }
 
 
@@ -313,94 +226,55 @@ void handleViewportWheel(float wheelValue) {
 }
 
 void zoomWin3DViewport(float wheelValue) {
-  if (WIN3D.projectionTypeIndex == 1) {
-    WIN3D.positionZ -= wheelValue * WIN3D.positionStep * overallScale;
-  } else {
-    WIN3D.zoom *= pow(2.0, wheelValue);
-  }
-  view_changed();
+  runScriptLine("WheelZoomViewport " + wheelValue);
 }
 
 void adjustWin3DElevationWheel(float wheelValue) {
-  if (wheelValue > 0) WIN3D.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.zoom));
-  if (wheelValue < 0) WIN3D.zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.zoom));
-  view_changed();
+  runScriptLine("WheelElevation " + wheelValue);
 }
 
 void scaleObjectsWheel(float wheelValue) {
-  if (wheelValue > 0) overallScale /= pow(2.0, 0.25);
-  if (wheelValue < 0) overallScale *= pow(2.0, 0.25);
-  view_changed();
+  runScriptLine("WheelScaleObjects " + wheelValue);
 }
 
 void scaleSkydomeWheel(float wheelValue) {
-  if (wheelValue > 0)   Sky3D.radius *= pow(2.0, 0.25);
-  if (wheelValue < 0)   Sky3D.radius /= pow(2.0, 0.25);
-  view_changed();
+  runScriptLine("WheelScaleSkydome " + wheelValue);
 }
 
 void scaleAllModelWheel(float wheelValue) {
-  if (wheelValue > 0) {
-    overallScale /= pow(2.0, 0.25);
-      Sky3D.radius /= pow(2.0, 0.25);
-  }
-  if (wheelValue < 0) {
-    overallScale *= pow(2.0, 0.25);
-      Sky3D.radius *= pow(2.0, 0.25);
-  }
-  view_changed();
+  runScriptLine("WheelScaleAllModel " + wheelValue);
 }
 
 void handleTargetRollXYZWheel(float wheelValue) {
-  if (WIN3D.targetAxisIndex == 0) {
-    WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
-    WIN3D.reverseTransform_3DViewport();
-  }
-  if (WIN3D.targetAxisIndex == 1) {
-    WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
-    WIN3D.reverseTransform_3DViewport();
-  }
-  view_changed();
+  runScriptLine("WheelTargetRollXYZ " + wheelValue);
 }
 
 void handleCameraRollXYZWheel(float wheelValue) {
-  if (WIN3D.targetAxisIndex == 0) {
-    WIN3D.rotateZ_3DViewport_around_Selection(wheelValue * WIN3D.rotationStep);
-  }
-  if (WIN3D.targetAxisIndex == 1) {
-    WIN3D.rotateXY_3DViewport_around_Selection(wheelValue * WIN3D.rotationStep);
-  }
-  view_changed();
+  runScriptLine("WheelCameraRollXYZ " + wheelValue);
 }
 
 void moveWin3DTowardsSelection(float wheelValue) {
-  WIN3D.move_3DViewport_towards_Selection(pow(2, 0.5 * wheelValue));
-  view_changed();
+  runScriptLine("WheelMoveTowardsSelection " + wheelValue);
 }
 
 void moveWin3DTowardsMouse(float wheelValue) {
-  WIN3D.move_3DViewport_towards_Mouse(pow(2, 0.5 * wheelValue));
-  view_changed();
+  runScriptLine("WheelMoveTowardsMouse " + wheelValue);
 }
 
 void adjustPositionXWheel(float wheelValue) {
-  WIN3D.positionX += wheelValue * WIN3D.positionStep * overallScale;
-  view_changed();
+  runScriptLine("WheelPositionX " + wheelValue);
 }
 
 void adjustPositionYWheel(float wheelValue) {
-  WIN3D.positionY += wheelValue * WIN3D.positionStep * overallScale;
-  view_changed();
+  runScriptLine("WheelPositionY " + wheelValue);
 }
 
 void adjustRotationXWheel(float wheelValue) {
-  WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
-  view_changed();
+  runScriptLine("WheelRotationX " + wheelValue);
 }
 
 void adjustRotationZWheel(float wheelValue) {
-  WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
-  view_changed();
+  runScriptLine("WheelRotationZ " + wheelValue);
 }
 
 void handleTruckOrbitWheel(float wheelValue) {
