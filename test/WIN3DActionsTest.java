@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // (confirms the registered body does what it's named for) - following
 // RunScriptTest.java's own established pattern for exercising allActions
 // through runScriptLine rather than poking the map directly.
-class Key3DActionsTest {
+class WIN3DActionsTest {
 
   private solarchvision_bim app;
 
@@ -26,7 +26,7 @@ class Key3DActionsTest {
     app.build_allActions();
   }
 
-  // ================= key3D c / key3D Shift+C (camera cycling) ============
+  // ================= WIN3D c / WIN3D Shift+C (camera cycling) ============
 
   @Test
   void keyC_cyclesCameraForwardAndWrapsAtTheEnd () {
@@ -69,7 +69,7 @@ class Key3DActionsTest {
     assertEquals(0, app.WIN3D.currentCameraIndex, "must clamp to 0, never go negative");
   }
 
-  // ================= key3D Shift+Tab (impact type cycling) ===============
+  // ================= WIN3D Shift+Tab (impact type cycling) ===============
 
   @Test
   void keyShiftTab_cyclesImpactTypeAndWrapsAround () {
@@ -105,7 +105,7 @@ class Key3DActionsTest {
     assertTrue(app.VertexSolar_rebuild_array);
   }
 
-  // ================= key3D , / key3D . (perspective dolly / zoom) ========
+  // ================= WIN3D , / WIN3D . (perspective dolly / zoom) ========
 
   @Test
   void keyComma_inPerspective_movesPositionZForward () {
@@ -157,7 +157,7 @@ class Key3DActionsTest {
     assertTrue(app.WIN3D.zoom > 90);
   }
 
-  // ================= key3D 4/6/8/2 (rotation) =============================
+  // ================= WIN3D 4/6/8/2 (rotation) =============================
 
   @Test
   void key4_increasesRotationZ () {
@@ -200,7 +200,7 @@ class Key3DActionsTest {
     assertEquals(5f, app.WIN3D.rotationX, 0.0001f);
   }
 
-  // ================= key3D 1/3/7/9 (pan) ==================================
+  // ================= WIN3D 1/3/7/9 (pan) ==================================
 
   @Test
   void key1_increasesPositionX () {
@@ -247,7 +247,7 @@ class Key3DActionsTest {
     assertEquals(-1f, app.WIN3D.positionY, 0.0001f);
   }
 
-  // ================= key3D * / key3D / (distance to selection) ===========
+  // ================= WIN3D * / WIN3D / (distance to selection) ===========
 
   // moveCameraTowards() (what move_3DViewport_towards_Selection() calls)
   // sets cameraX/Y/Z, not positionZ - setup copied from WIN3DTest.java's
@@ -271,7 +271,7 @@ class Key3DActionsTest {
     assertTrue(app.WIN3D.cameraX < afterStar);
   }
 
-  // ================= key3D + / key3D - (field-of-view zoom) ===============
+  // ================= WIN3D + / WIN3D - (field-of-view zoom) ===============
 
   @Test
   void keyPlus_and_keyMinus_zoomInOppositeDirections () {
@@ -289,7 +289,7 @@ class Key3DActionsTest {
     assertTrue(afterMinus > 90, "- should widen the field of view");
   }
 
-  // ================= key3D t / key3D Shift+T (troposphere time) ===========
+  // ================= WIN3D t / WIN3D Shift+T (troposphere time) ===========
 
   // "Wraps" here means the step gets reverted right back to the boundary
   // it started from (Tropo3D.i_Map += delta; if over endHour, -= delta
@@ -342,7 +342,7 @@ class Key3DActionsTest {
     assertEquals(app.STUDY.endHour - app.TROPO_deltaTime, app.Tropo3D.i_Map, 0.0001f);
   }
 
-  // ================= key3D d / key3D Shift+D (impact display day) ========
+  // ================= WIN3D d / WIN3D Shift+D (impact display day) ========
 
   @Test
   void keyD_advancesDisplayDayAndWrapsAtEndDay () {
@@ -366,7 +366,7 @@ class Key3DActionsTest {
     assertEquals(5, app.impactDisplayDay);
   }
 
-  // ================= key3D Enter ==========================================
+  // ================= WIN3D Enter ==========================================
 
   @Test
   void keyEnter_flagsGlobalSolarForRebuildWhenThatShadeModeIsActive () {
@@ -393,7 +393,7 @@ class Key3DActionsTest {
     assertFalse(app.VertexSolar_rebuild_array);
   }
 
-  // ================= key3D ShadeTime+1/-1/+Day/-Day ========================
+  // ================= WIN3D ShadeTime+1/-1/+Day/-Day ========================
 
   @Test
   void keyShadeTimePlus1_stepsForwardByOneHour () {
@@ -431,7 +431,7 @@ class Key3DActionsTest {
     assertEquals(app.SHADE_STEP_DAYS, app.SHADE_DATE_ANGLE);
   }
 
-  // ================= key3D Ctrl+, / key3D Ctrl+. ==========================
+  // ================= WIN3D Ctrl+, / WIN3D Ctrl+. ==========================
 
   // moveWin3DTowardsSelection(wheelValue) calls
   // move_3DViewport_towards_Selection(pow(2, 0.5*wheelValue)) - for
@@ -460,7 +460,7 @@ class Key3DActionsTest {
     assertTrue(app.WIN3D.cameraX > afterComma);
   }
 
-  // ================= key3D Up/Down/Left/Right (orbit around selection) ===
+  // ================= WIN3D Up/Down/Left/Right (orbit around selection) ===
 
   // rotateZ_3DViewport_around_Selection() actually changes rotationX, not
   // rotationZ, despite the name - confirmed against WIN3DTest.java's own
@@ -512,8 +512,8 @@ class Key3DActionsTest {
     assertEquals(before + 5, app.WIN3D.rotationZ, 0.0001f);
   }
 
-  // ================= key3D Shift+Up / key3D Shift+Down ====================
-  // (the shared, tool-dependent key3D_ShiftUpDown() body - exercised here
+  // ================= WIN3D Shift+Up / WIN3D Shift+Down ====================
+  // (the shared, tool-dependent WIN3D_ShiftUpDown() body - exercised here
   // only through the Rotate/Move branches already covered directly in
   // WIN3DTest.java's own handleShiftedArrowKeys_* tests; this just
   // confirms the same effect is reachable by name.)

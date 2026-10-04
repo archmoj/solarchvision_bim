@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // capability this adds). Same two things checked together in each test:
 // runScriptLine's hint isn't UnrecognizedCommand, and the actual state
 // change is correct.
-class Key2DActionsTest {
+class STUDYActionsTest {
 
   private solarchvision_bim app;
 
@@ -20,7 +20,7 @@ class Key2DActionsTest {
     app.build_allActions();
   }
 
-  // ================= key2D Ctrl+Up / key2D Ctrl+Down (layer cycling) =====
+  // ================= STUDY Ctrl+Up / STUDY Ctrl+Down (layer cycling) =====
 
   @Test
   void keyCtrlUp_cyclesLayerForwardAndWrapsAtTheEnd () {
@@ -57,7 +57,7 @@ class Key2DActionsTest {
     assertEquals(app.allLayers[app.currentLayerId].verticalUnitScale, app.STUDY.verticalUnitScale, 0.0001f);
   }
 
-  // ================= key2D Ctrl+Right / key2D Ctrl+Left (impact graph) ===
+  // ================= STUDY Ctrl+Right / STUDY Ctrl+Left (impact graph) ===
 
   @Test
   void keyCtrlRight_cyclesImpactGraphIndexForwardAndWraps () {
@@ -79,7 +79,7 @@ class Key2DActionsTest {
     assertEquals(app.STUDY.PLOT_IMPACTS_MODE_COUNT - 1, app.STUDY.impactGraphIndex);
   }
 
-  // ================= key2D Ctrl+PageUp / key2D Ctrl+PageDown ==============
+  // ================= STUDY Ctrl+PageUp / STUDY Ctrl+PageDown ==============
 
   @Test
   void keyCtrlPageUp_and_keyCtrlPageDown_areEachOthersInverse () {
@@ -96,7 +96,7 @@ class Key2DActionsTest {
     assertEquals(0, app.STUDY.plotLayoutIndex, "PageDown should undo PageUp exactly");
   }
 
-  // ================= key2D Ctrl+; / Ctrl+" / Ctrl+' =======================
+  // ================= STUDY Ctrl+; / Ctrl+" / Ctrl+' =======================
 
   @Test
   void keyCtrlSemicolon_togglesImpactSummary () {
@@ -131,7 +131,7 @@ class Key2DActionsTest {
     assertEquals(10 * Math.sqrt(0.5), app.STUDY.verticalUnitScale, 0.0001f);
   }
 
-  // ================= key2D > / key2D < (day-joining window) ==============
+  // ================= STUDY > / STUDY < (day-joining window) ==============
 
   @Test
   void keyGreaterThan_widensTheJoinWindowByTwoDays () {
@@ -171,7 +171,7 @@ class Key2DActionsTest {
     assertEquals(1, app.STUDY.daysMergedCount);
   }
 
-  // ================= key2D ) / key2D ( (date column count) ================
+  // ================= STUDY ) / STUDY ( (date column count) ================
 
   @Test
   void keyCloseParen_growsEndDayByOne () {
@@ -211,7 +211,7 @@ class Key2DActionsTest {
     assertTrue(app.STUDY.endDay > app.STUDY.startDay);
   }
 
-  // ================= key2D Shift+S / key2D s (sky scenario) ===============
+  // ================= STUDY Shift+S / STUDY s (sky scenario) ===============
 
   @Test
   void keyShiftS_cyclesSkyScenarioForward () {
@@ -233,7 +233,7 @@ class Key2DActionsTest {
     assertEquals(4, app.STUDY.skyScenarioSetting);
   }
 
-  // ================= key2D v/m/n/b (display toggles) ======================
+  // ================= STUDY v/m/n/b (display toggles) ======================
 
   @Test
   void keyV_togglesShowRawLines () {
@@ -275,7 +275,7 @@ class Key2DActionsTest {
     assertTrue(app.STUDY.showProbabilities);
   }
 
-  // ================= key2D { / key2D } (probability height interval) =====
+  // ================= STUDY { / STUDY } (probability height interval) =====
 
   @Test
   void keyOpenBrace_doublesProbabilityHeightInterval () {
@@ -315,7 +315,7 @@ class Key2DActionsTest {
     assertEquals(2f, app.STUDY.probabilityHeightInterval, 0.0001f);
   }
 
-  // ================= key2D [ / key2D ] (sum interval) ======================
+  // ================= STUDY [ / STUDY ] (sum interval) ======================
 
   // Traced by hand rather than assumed from the comment's "24 -> 6 -> 1"
   // step-sequence summary: one call steps by 6 while above that
