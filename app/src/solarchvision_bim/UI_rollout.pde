@@ -204,6 +204,7 @@ class UI_rollout {
     vm.creatorSnapModeIndex(0);
     vm.creatorSphereDegree(0);
     vm.creatorCylinderDegree(0);
+    vm.creatorConeDegree(0);
     vm.creatorPolygonDegree(0);
     vm.creatorParametricTypeIndex(0);
     vm.creatorPersonTypeIndex(0);
@@ -576,6 +577,7 @@ class UI_rollout {
         User3D.creatorSnapModeIndex = vm.creatorSnapModeIndex(1);
         User3D.creatorSphereDegree = vm.creatorSphereDegree(1);
         User3D.creatorCylinderDegree = vm.creatorCylinderDegree(1);
+        User3D.creatorConeDegree = vm.creatorConeDegree(1);
         User3D.creatorPolygonDegree = vm.creatorPolygonDegree(1);
         User3D.creatorParametricTypeIndex = vm.creatorParametricTypeIndex(1);
         User3D.creatorPersonTypeIndex = vm.creatorPersonTypeIndex(1);

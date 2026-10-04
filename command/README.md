@@ -192,6 +192,14 @@ House2 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
 House3 m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? dh=? r=?
 ```
 
+-   `CONE`: Creates a cone. `dx`/`dy` can differ for an
+    elliptical (rather than circular) cross-section; `dz` is the
+    height
+
+```
+Cone m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?
+```
+
 -   `CYLINDER`: Creates a cylinder. `dx`/`dy` can differ for an
     elliptical (rather than circular) cross-section; `dz` is the
     height
@@ -468,6 +476,7 @@ the user interface.
 | `Creator Height` | Default height for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
 | `Creator Length` | Default length for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
 | `Creator Width` | Default width for new objects (a negative value randomizes it) | -100.0 to 1000.0 |
+| `Creator Cone Degree` | Default number of sides for new cones | 3 to 36 |
 | `Creator Cylinder Degree` | Default number of sides for new cylinders | 3 to 36 |
 | `Creator Sphere Degree` | Default subdivision level for new spheres | 0 to 5 |
 | `Creator Polygon Degree` | Default number of sides for new polygon-based objects | 3 to 36 |

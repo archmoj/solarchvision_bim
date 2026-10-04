@@ -353,6 +353,7 @@ class UI_menuBar {
       "Person",
       ___divider___,
       "Box",
+      "Cone",
       "Cushion",
       "Cylinder",
       "Sphere",

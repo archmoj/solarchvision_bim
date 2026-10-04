@@ -90,7 +90,7 @@ class UI_toolBar {
     }
     ,
     {
-      "1", "House1", "House2", "House3", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "Building Type", "3.5"
+      "1", "House1", "House2", "House3", "Box", "Cushion", "Cone", "Cylinder", "Sphere", "Octahedron", "Icosahedron", "Pyramid", "Hyper", "Plane", "Polygon", "Extrude", "Parametric", "Point", "Polyline", "Surface", "Building Type", "3.5"
     }
     ,
     {
@@ -407,6 +407,7 @@ class UI_toolBar {
           case "Octahedron": UI_setTo_Create_Octahedron(); break;
           case "Sphere": UI_setTo_Create_Sphere(); break;
           case "Cylinder": UI_setTo_Create_Cylinder(); break;
+          case "Cone": UI_setTo_Create_Cone(); break;
           case "Cushion": UI_setTo_Create_Cushion(); break;
           case "Parametric": UI_setTo_Create_Parametric(User3D.creatorParametricTypeIndex); break;
         }

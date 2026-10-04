@@ -32,6 +32,7 @@ class User3DTest {
     app.User3D.creatorRandomSuperellipsoidPower = 1;
     app.User3D.creatorSphereDegree = 5;
     app.User3D.creatorCylinderDegree = 30;
+    app.User3D.creatorConeDegree = 31;
     app.User3D.creatorPolygonDegree = 8;
     app.User3D.creatorParametricTypeIndex = 2;
     app.User3D.creatorPersonTypeIndex = 1;
@@ -79,6 +80,7 @@ class User3DTest {
     assertEquals(1, fresh.creatorRandomSuperellipsoidPower);
     assertEquals(5, fresh.creatorSphereDegree);
     assertEquals(30, fresh.creatorCylinderDegree);
+    assertEquals(31, fresh.creatorConeDegree);
     assertEquals(2, fresh.creatorParametricTypeIndex);
     assertEquals(1, fresh.creatorPlantTypeIndex);
 

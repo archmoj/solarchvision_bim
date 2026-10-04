@@ -21,6 +21,7 @@ class User3D {
   int creatorRandomSuperellipsoidPower = 0;
   int creatorSphereDegree = 4;
   int creatorCylinderDegree = 24;
+  int creatorConeDegree = 24;
   int creatorPolygonDegree = 6;
   int creatorParametricTypeIndex = 1;
   int creatorPersonTypeIndex = 0;
@@ -88,6 +89,7 @@ class User3D {
     XML_setInt(parent, "creatorRandomSuperellipsoidPower", this.creatorRandomSuperellipsoidPower);
     XML_setInt(parent, "creatorSphereDegree", this.creatorSphereDegree);
     XML_setInt(parent, "creatorCylinderDegree", this.creatorCylinderDegree);
+    XML_setInt(parent, "creatorConeDegree", this.creatorConeDegree);
     XML_setInt(parent, "creatorPolygonDegree", this.creatorPolygonDegree);
     XML_setInt(parent, "creatorParametricTypeIndex", this.creatorParametricTypeIndex);
     XML_setInt(parent, "creatorPersonTypeIndex", this.creatorPersonTypeIndex);
@@ -149,6 +151,7 @@ class User3D {
 
     this.creatorSphereDegree = XML_getInt(parent, "creatorSphereDegree");
     this.creatorCylinderDegree = XML_getInt(parent, "creatorCylinderDegree");
+    this.creatorConeDegree = XML_getInt(parent, "creatorConeDegree");
     this.creatorPolygonDegree = XML_getInt(parent, "creatorPolygonDegree");
 
     this.creatorParametricTypeIndex = XML_getInt(parent, "creatorParametricTypeIndex");

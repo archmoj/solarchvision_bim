@@ -222,6 +222,13 @@ void UI_setTo_Create_Cylinder () {
   switch_category(ObjectCategory.GROUP);
 }
 
+void UI_setTo_Create_Cone () {
+  UI_setTo_Create_Nothing();
+
+  CreateObject = CREATE.Cone;
+  switch_category(ObjectCategory.GROUP);
+}
+
 void UI_setTo_Create_Cushion () {
   UI_setTo_Create_Nothing();
 

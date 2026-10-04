@@ -33,7 +33,7 @@ String houseCommandArgs(float x, float y, float z, float rx, float ry, float rz,
          " h=" + h + " r=" + rot;
 }
 
-// x/y/z/dx/dy/dz/r argument string shared by Box, Octahedron, Cylinder
+// x/y/z/dx/dy/dz/r argument string shared by Box, Octahedron, Cylinder, Cone
 // and Parametric - the same shape as houseCommandArgs() above minus the
 // extra h/dh height parameter only the houses have.
 String boxLikeCommandArgs(float x, float y, float z, float rx, float ry, float rz, float rot) {
@@ -1905,14 +1905,11 @@ void mouseClicked () {
                           " sx=" + rx + " sy=" + ry + " sz=" + rz +
                           " rx=0 ry=0 rz=" + rot + " v=1");
                       }
+                    } else if (CreateObject == CREATE.Cone) {
+
+                      runScriptLine("Cone" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot) + " deg=" + User3D.creatorConeDegree);
                     } else if (CreateObject == CREATE.Pyramid) {
 
-                      // One "Pyramid" command now, instead of four Mesh3
-                      // ones - same x/y/z/dx/dy/dz/r shape as Box/
-                      // Octahedron/Cylinder/Parametric, so boxLikeCommandArgs()
-                      // applies unchanged. Unlike the Mesh3-based version
-                      // this replaces, the base now rotates with rot -
-                      // see add_Pyramid_Core's own comment in Create3D.pde.
                       runScriptLine("Pyramid" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot));
                     } else if (CreateObject == CREATE.Plane) {
 

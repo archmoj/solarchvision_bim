@@ -1670,6 +1670,46 @@ class Create3D {
     model_added();
   }
 
+  void add_Cone (int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
+
+    current_Material = m;
+    current_Tessellation = tes;
+    current_Layer = lyr;
+    current_Visibility = vsb;
+    current_Weight = wgt;
+    current_Closed = clz;
+
+    int vT = this.addToTempObjectVertices(0, 0, 1);
+
+    int[] vB = new int [n];
+    vB[0] = this.addToTempObjectVertices(1, 0, -1);
+
+    int[] newFace_nodesB = new int [n];
+    newFace_nodesB[0] = vB[0];
+    for (int i = 1; i < n; i++) {
+      float rot = i * 360.0 / float(n);
+
+      vB[i] = this.addToTempObjectVertices(funcs.cos_ang(rot), funcs.sin_ang(rot), -1);
+
+      newFace_nodesB[i] = vB[i];
+    }
+
+    this.addToTempObjectFaces(newFace_nodesB, 0); // 0:check_duplicates
+
+    for (int i = 0; i < n; i++) {
+      int next_i = (i + 1) % n;
+
+      int[] newFace_nodes = {
+        vT, vB[i], vB[next_i]
+      };
+
+      this.addToTempObjectFaces(newFace_nodes, 0); // 0:check_duplicates
+    }
+
+    this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
+
+    model_added();
+  }
 
   int addToTempObjectVertices (float x, float y, float z) {
 

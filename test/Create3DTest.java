@@ -519,6 +519,17 @@ class Create3DTest {
     assertEquals(0, app.POINTER_TempObjectVertices);
   }
 
+  // ================= add_Cone ================
+
+  @Test
+  void addCone_flushesReshapedGeometryIntoTheScene () {
+    app.Create3D.add_Cone(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 6, 0);
+
+    assertTrue(app.allVertices.length > 0);
+    assertTrue(app.allFaces.nodes.length > 0);
+    assertEquals(0, app.POINTER_TempObjectVertices);
+  }
+
   // ================= add_onPolar / add_onPlane / add_onMesh2 ============
   //
   // All three scatter a fixed COUNT (n) of randomly-placed people, trees,

@@ -425,6 +425,20 @@ class RunScriptTest {
   }
 
   @Test
+  void cone_withArguments_actuallyCreatesAFace () {
+    app.build_allActions();
+    String hint = app.runScriptLine("CONE x=0 y=0 z=0");
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  @Test
+  void cone_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Cone m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? deg=? r=?", app.runScriptLine("CONE"));
+  }
+
+  @Test
   void person_withArguments_actuallyCreatesAModel2D_notJustTheCreateTool () {
     app.build_allActions();
     assertEquals(0, app.allModel2Ds.num);

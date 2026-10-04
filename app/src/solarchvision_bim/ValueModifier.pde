@@ -978,6 +978,28 @@ class ValueModifier {
     }
     return out;
   }
+  int creatorConeDegree (int created) {
+    int u1 = 0; // updateSTUDY
+    int u2 = 0; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    int s1 = 3; //start
+    int s2 = 36; //stop
+    int s3 = 1; //step
+
+    int out = 0;
+    String command = "Creator Cone Degree";
+    if (created == 0) {
+      putValueAction(command,
+        () -> (float) User3D.creatorConeDegree,
+        (v) -> { User3D.creatorConeDegree = int(v); },
+        s1, s2, s3,
+        u1, u2, u3);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, User3D.creatorConeDegree, s1, s2, s3);
+    }
+    return out;
+  }
   int creatorPolygonDegree (int created) {
     int u1 = 0; // updateSTUDY
     int u2 = 0; // updateWIN3D

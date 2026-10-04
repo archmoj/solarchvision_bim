@@ -177,6 +177,10 @@ class MouseClickedTest {
     assertTrue(app.allFaces.nodes.length > facesBefore, "Cylinder");
 
     facesBefore = app.allFaces.nodes.length;
+    app.runScriptLine("Cone m=0 tes=0 lyr=0 x=0 y=0 z=0 dx=2 dy=2 dz=2 deg=8 r=0");
+    assertTrue(app.allFaces.nodes.length > facesBefore, "Cone");
+
+    facesBefore = app.allFaces.nodes.length;
     app.runScriptLine("PolygonMesh m=0 tes=0 lyr=0 x=0 y=0 z=0 d=2 deg=6 r=0");
     assertTrue(app.allFaces.nodes.length > facesBefore, "PolygonMesh");
 

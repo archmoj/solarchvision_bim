@@ -1096,6 +1096,10 @@ void build_allActions() {
     UI_setTo_Create_Cylinder();
   });
 
+  putAction("Cone", () -> {
+    UI_setTo_Create_Cone();
+  });
+
   putAction("Cushion", () -> {
     UI_setTo_Create_Cushion();
   });

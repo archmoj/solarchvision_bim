@@ -22,5 +22,6 @@ class CREATE {
   final static int Solid      = 17;
   final static int Section    = 18;
   final static int Camera     = 19;
+  final static int Cone       = 20;
 
 }
