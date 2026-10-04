@@ -198,35 +198,35 @@ class STUDY {
   void handleCtrlCodedKey (KeyEvent e) {
     switch (keyCode) {
       case UP :
-        runScriptLine("Next Layer");
+        callAction("Next Layer");
         requestRedraw();
         break;
 
       case DOWN :
-        runScriptLine("Previous Layer");
+        callAction("Previous Layer");
         requestRedraw();
         break;
 
       case RIGHT :
-        runScriptLine("Next Graph Index");
+        callAction("Next Graph Index");
         requestRedraw();
         break;
 
       case LEFT :
-        runScriptLine("Previous Graph Index");
+        callAction("Previous Graph Index");
         requestRedraw();
         break;
 
       case PAGE_UP_KEYCODE :
         if (!e.isShiftDown()) {
-          runScriptLine("Next Plot Layout");
+          callAction("Next Plot Layout");
           requestRedraw();
         }
         break;
 
       case PAGE_DOWN_KEYCODE :
         if (!e.isShiftDown()) {
-          runScriptLine("Previous Plot Layout");
+          callAction("Previous Plot Layout");
           requestRedraw();
         }
         break;
@@ -236,17 +236,17 @@ class STUDY {
   void handleCtrlCharKey () {
     switch (key) {
       case ';' :
-        runScriptLine("Toggle Impact Summary");
+        callAction("Toggle Impact Summary");
         requestRedraw();
         break;
 
       case '"' :
-        runScriptLine("Increase Vertical Scale");
+        callAction("Increase Vertical Scale");
         requestRedraw();
         break;
 
       case '\'' :
-        runScriptLine("Decrease Vertical Scale");
+        callAction("Decrease Vertical Scale");
         requestRedraw();
         break;
     }
@@ -256,65 +256,65 @@ class STUDY {
     switch (key) {
 
       case '>' :
-        runScriptLine("Widen Join Window");
+        callAction("Widen Join Window");
         break;
       case '<' :
-        runScriptLine("Narrow Join Window");
+        callAction("Narrow Join Window");
         break;
 
       case ')' :
-        runScriptLine("Extend Date Range");
+        callAction("Extend Date Range");
         break;
       case '(' :
-        runScriptLine("Shrink Date Range");
+        callAction("Shrink Date Range");
         break;
 
       case 'S' :
-        runScriptLine("Next Sky Scenario");
+        callAction("Next Sky Scenario");
         break;
       case 's' :
-        runScriptLine("Previous Sky Scenario");
+        callAction("Previous Sky Scenario");
         break;
 
       case 'V' :
       case 'v' :
-        runScriptLine("Toggle Raw Lines");
+        callAction("Toggle Raw Lines");
         requestRedraw();
         break;
 
       case 'm' :
       case 'M' :
-        runScriptLine("Toggle Statistical Ranges");
+        callAction("Toggle Statistical Ranges");
         requestRedraw();
         break;
 
       case 'n' :
       case 'N' :
-        runScriptLine("Toggle Study Normal Lines");
+        callAction("Toggle Study Normal Lines");
         requestRedraw();
         break;
 
       case 'b' :
       case 'B' :
-        runScriptLine("Toggle Probabilities");
+        callAction("Toggle Probabilities");
         requestRedraw();
         break;
 
       case '{' :
-        runScriptLine("Increase Probability Height Step");
+        callAction("Increase Probability Height Step");
         requestRedraw();
         break;
       case '}' :
-        runScriptLine("Decrease Probability Height Step");
+        callAction("Decrease Probability Height Step");
         requestRedraw();
         break;
 
       case '[' :
-        runScriptLine("Decrease Sum Interval");
+        callAction("Decrease Sum Interval");
         requestRedraw();
         break;
       case ']' :
-        runScriptLine("Increase Sum Interval");
+        callAction("Increase Sum Interval");
         requestRedraw();
         break;
     }

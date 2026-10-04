@@ -782,12 +782,12 @@ class WORLD {
   void handlePlainCharKey () {
     switch(key) {
       case '`' :
-        runScriptLine("Map Zoom Out");
+        callAction("Map Zoom Out");
         this.revise();
         break;
 
       case '~' :
-        runScriptLine("Map Zoom In");
+        callAction("Map Zoom In");
         this.revise();
         break;
 
