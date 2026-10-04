@@ -2100,20 +2100,22 @@ void mouseClicked () {
         if (WORLD.include) {
           if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
-            handleWorldClickAt(
-              X_clicked - (WORLD.cX + 0.5 * WORLD.dX),
-              Y_clicked - (WORLD.cY + 0.5 * WORLD.dY)
-            );
+            float Image_X = X_clicked - (WORLD.cX + 0.5 * WORLD.dX);
+            float Image_Y = Y_clicked - (WORLD.cY + 0.5 * WORLD.dY);
+
+            //handleWorldClickAt(Image_X, Image_Y);
+            runScriptLine((mouseButton == RIGHT ? "MapRightClick" : "MapLeftClick") + " x=" + Image_X + " y=" + Image_Y);
           }
         }
 
         if (WIN3D.include) {
           if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
-            handleWin3DClickAt(
-              X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX),
-              Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY)
-            );
+            float Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
+            float Image_Y = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
+
+            //handleWin3DClickAt(Image_X, Image_Y);
+            runScriptLine((mouseButton == RIGHT ? "RightClick" : "LeftClick") + " x=" + Image_X + " y=" + Image_Y);
           }
         }
 
