@@ -282,6 +282,225 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
+    // The following thirteen cases are mouseDragged.pde's own
+    // drag-response helpers (panBothAxes, panXAxis, etc.), routed through
+    // here the same way MOVE above already was - same "develop the
+    // public API, not the internal calls" reasoning as mouseClicked.pde's
+    // own UITASK.Create block. Each fires continuously with a varying
+    // per-call delta during a drag gesture (unlike every other command
+    // here, which a person would type once), so "Drag" prefixed
+    // throughout to keep that distinction clear in the command list, and
+    // also to keep them clearly distinct from key3D's similarly-named
+    // but differently-mechanised actions - e.g. "Turn View Left" calls
+    // WIN3D.reverseTransform_3DViewport(); DragTurnView below does not,
+    // different code paths despite both adjusting rotationZ/rotationX.
+    //
+    // These are switch cases, not allActions/putAction entries, for a
+    // concrete reason found while first attempting the latter: allActions'
+    // own lookup only supports a zero-argument full-line match or a
+    // single-token first-word match (parts[0]) for a registered name
+    // followed by parameters (e.g. "start_day 15") - a multi-word name
+    // with parameters appended (e.g. "Drag Pan View dx=0.5 dy=-0.5")
+    // matches neither: the full line never equals the registered key once
+    // parameters are appended, and parts[0] alone ("drag") was never
+    // registered as its own key. Confirmed directly (a prior version of
+    // this registered under putAction silently no-opped on every call,
+    // caught by MouseDraggedTest.java's own state-checking assertions,
+    // not just a thrown exception) rather than assumed. Every other
+    // parameterized, key=value command in this file (House1, Box, Solid,
+    // Pyramid, Move above, ...) is a switch case for this same reason -
+    // single-token names are the only ones allActions' own lookup
+    // actually supports for anything beyond a bare, zero-argument action.
+    //
+    // Single-word (CamelCase) names, not space-separated, for the same
+    // reason: the switch itself matches only parts[0] (Command_CAPITAL),
+    // so a space-separated name would never reach its own case either -
+    // parts[0] alone ("DRAG") would be compared against "DRAGPANVIEW",
+    // never matching. Checked against allActions directly (not assumed
+    // safe from the name alone) before being used; none collide, so no
+    // bypassAllActionsFor entry was needed here the way Solid/Camera/
+    // Section/Pyramid needed one.
+
+    case "DRAGPANVIEW": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        float dy = getF(p, "dy", 0);
+        WIN3D.positionX += 100 * dx * WIN3D.positionStep * overallScale;
+        WIN3D.positionY += 100 * dy * WIN3D.positionStep * overallScale;
+        view_changed();
+      }
+      else {
+        hint = "DragPanView dx=? dy=?";
+      }
+      return hint;
+    }
+
+    case "DRAGPANVIEWX": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        WIN3D.positionX += 100 * dx * WIN3D.positionStep * overallScale;
+        view_changed();
+      }
+      else {
+        hint = "DragPanViewX dx=?";
+      }
+      return hint;
+    }
+
+    case "DRAGPANVIEWY": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dy = getF(p, "dy", 0);
+        WIN3D.positionY += 100 * dy * WIN3D.positionStep * overallScale;
+        view_changed();
+      }
+      else {
+        hint = "DragPanViewY dy=?";
+      }
+      return hint;
+    }
+
+    case "DRAGTURNTARGET": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        float dy = getF(p, "dy", 0);
+        WIN3D.rotationZ += 10 * dx * WIN3D.rotationStep;
+        WIN3D.rotationX += 10 * dy * WIN3D.rotationStep;
+        WIN3D.reverseTransform_3DViewport();
+        view_changed();
+      }
+      else {
+        hint = "DragTurnTarget dx=? dy=?";
+      }
+      return hint;
+    }
+
+    case "DRAGTURNTARGETZ": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        WIN3D.rotationZ += 10 * dx * WIN3D.rotationStep;
+        WIN3D.reverseTransform_3DViewport();
+        view_changed();
+      }
+      else {
+        hint = "DragTurnTargetZ dx=?";
+      }
+      return hint;
+    }
+
+    case "DRAGTURNTARGETX": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dy = getF(p, "dy", 0);
+        WIN3D.rotationX += 10 * dy * WIN3D.rotationStep;
+        WIN3D.reverseTransform_3DViewport();
+        view_changed();
+      }
+      else {
+        hint = "DragTurnTargetX dy=?";
+      }
+      return hint;
+    }
+
+    case "DRAGORBITSELECTIONXY": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotationStep);
+        view_changed();
+      }
+      else {
+        hint = "DragOrbitSelectionXY dx=?";
+      }
+      return hint;
+    }
+
+    case "DRAGORBITSELECTIONZ": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dy = getF(p, "dy", 0);
+        WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotationStep);
+        view_changed();
+      }
+      else {
+        hint = "DragOrbitSelectionZ dy=?";
+      }
+      return hint;
+    }
+
+    case "DRAGORBITSELECTION": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        float dy = getF(p, "dy", 0);
+        WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotationStep);
+        WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotationStep);
+        view_changed();
+      }
+      else {
+        hint = "DragOrbitSelection dx=? dy=?";
+      }
+      return hint;
+    }
+
+    case "DRAGORBITLAND": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.rotationStep);
+        view_changed();
+      }
+      else {
+        hint = "DragOrbitLand dx=?";
+      }
+      return hint;
+    }
+
+    case "DRAGTURNVIEW": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        float dy = getF(p, "dy", 0);
+        WIN3D.rotationZ -= 10 * dx * WIN3D.rotationStep;
+        WIN3D.rotationX -= 10 * dy * WIN3D.rotationStep;
+        view_changed();
+      }
+      else {
+        hint = "DragTurnView dx=? dy=?";
+      }
+      return hint;
+    }
+
+    case "DRAGTURNVIEWX": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dy = getF(p, "dy", 0);
+        WIN3D.rotationX -= 10 * dy * WIN3D.rotationStep;
+        view_changed();
+      }
+      else {
+        hint = "DragTurnViewX dy=?";
+      }
+      return hint;
+    }
+
+    case "DRAGTURNVIEWZ": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float dx = getF(p, "dx", 0);
+        WIN3D.rotationZ -= 10 * dx * WIN3D.rotationStep;
+        view_changed();
+      }
+      else {
+        hint = "DragTurnViewZ dx=?";
+      }
+      return hint;
+    }
+
     case "ROTATE":
     case "ROTATEX":
     case "ROTATEY":

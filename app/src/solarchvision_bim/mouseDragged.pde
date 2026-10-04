@@ -155,76 +155,66 @@ void dispatchWin3DTaskDrag(float dx, float dy) {
   }
 }
 
+// Each of these now just builds the matching "Drag ..." command string
+// and routes through runScriptLine - see actions.pde's own comment on
+// the thirteen putDragAction1/putDragAction2 registrations for why
+// (same "develop the public API, not the internal calls" reasoning as
+// mouseClicked.pde's own UITASK.Create block) and the naming/collision
+// notes. Function names/signatures kept exactly as they were so
+// dispatchWin3DTaskDrag() and handleTruckOrbitTask() below needed no
+// changes at their own call sites - only what each function's body does
+// changed.
+
 void panBothAxes(float dx, float dy) {
-  WIN3D.positionX += 100 * dx * WIN3D.positionStep * overallScale;
-  WIN3D.positionY += 100 * dy * WIN3D.positionStep * overallScale;
-  view_changed();
+  runScriptLine("DragPanView dx=" + dx + " dy=" + dy);
 }
 
 void panXAxis(float dx) {
-  WIN3D.positionX += 100 * dx * WIN3D.positionStep * overallScale;
-  view_changed();
+  runScriptLine("DragPanViewX dx=" + dx);
 }
 
 void panYAxis(float dy) {
-  WIN3D.positionY += 100 * dy * WIN3D.positionStep * overallScale;
-  view_changed();
+  runScriptLine("DragPanViewY dy=" + dy);
 }
 
 void rotateTargetXY(float dx, float dy) {
-  WIN3D.rotationZ += 10 * dx * WIN3D.rotationStep;
-  WIN3D.rotationX += 10 * dy * WIN3D.rotationStep;
-  WIN3D.reverseTransform_3DViewport();
-  view_changed();
+  runScriptLine("DragTurnTarget dx=" + dx + " dy=" + dy);
 }
 
 void rotateTargetZOnly(float dx) {
-  WIN3D.rotationZ += 10 * dx * WIN3D.rotationStep;
-  WIN3D.reverseTransform_3DViewport();
-  view_changed();
+  runScriptLine("DragTurnTargetZ dx=" + dx);
 }
 
 void rotateTargetXOnly(float dy) {
-  WIN3D.rotationX += 10 * dy * WIN3D.rotationStep;
-  WIN3D.reverseTransform_3DViewport();
-  view_changed();
+  runScriptLine("DragTurnTargetX dy=" + dy);
 }
 
 void rotateCameraXY(float dx) {
-  WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotationStep);
-  view_changed();
+  runScriptLine("DragOrbitSelectionXY dx=" + dx);
 }
 
 void rotateCameraZ(float dy) {
-  WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotationStep);
-  view_changed();
+  runScriptLine("DragOrbitSelectionZ dy=" + dy);
 }
 
 void rotateCameraBoth(float dx, float dy) {
-  WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotationStep);
-  WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotationStep);
-  view_changed();
+  runScriptLine("DragOrbitSelection dx=" + dx + " dy=" + dy);
 }
 
 void rotateCameraAroundLand(float dx) {
-  WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.rotationStep);
-  view_changed();
+  runScriptLine("DragOrbitLand dx=" + dx);
 }
 
 void orbitCamera(float dx, float dy) {
-  WIN3D.rotationZ -= 10 * dx * WIN3D.rotationStep;
-  WIN3D.rotationX -= 10 * dy * WIN3D.rotationStep;
-  view_changed();
+  runScriptLine("DragTurnView dx=" + dx + " dy=" + dy);
 }
 
 void orbitXOnly(float dy) {
-  WIN3D.rotationX -= 10 * dy * WIN3D.rotationStep;
-  view_changed();
+  runScriptLine("DragTurnViewX dy=" + dy);
 }
 
 void orbitZOnly(float dx) {
-  WIN3D.rotationZ -= 10 * dx * WIN3D.rotationStep;
-  view_changed();
+  runScriptLine("DragTurnViewZ dx=" + dx);
 }
 
 void handleTruckOrbitTask(float dx, float dy) {
