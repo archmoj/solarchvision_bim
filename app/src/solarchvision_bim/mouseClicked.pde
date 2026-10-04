@@ -1907,29 +1907,13 @@ void mouseClicked () {
                       }
                     } else if (CreateObject == CREATE.Pyramid) {
 
-                      // Four triangular faces, each a Mesh3 command (no
-                      // dedicated "Pyramid" command exists, unlike
-                      // House1/2/3 - reusing the general-purpose mesh
-                      // commands with the exact same computed corner
-                      // points the direct Create3D.add_Mesh3(...) calls
-                      // used is the agreed substitute). Point order
-                      // preserved exactly as it was per face.
-                      runScriptLine("Mesh3" + creatorCommandArgs() +
-                        " x1=" + (x-rx) + " y1=" + (y-ry) + " z1=" + (z-rz) +
-                        " x2=" + (x+rx) + " y2=" + (y-ry) + " z2=" + (z-rz) +
-                        " x3=" + x + " y3=" + y + " z3=" + (z+rz));
-                      runScriptLine("Mesh3" + creatorCommandArgs() +
-                        " x1=" + (x+rx) + " y1=" + (y-ry) + " z1=" + (z-rz) +
-                        " x2=" + (x+rx) + " y2=" + (y+ry) + " z2=" + (z-rz) +
-                        " x3=" + x + " y3=" + y + " z3=" + (z+rz));
-                      runScriptLine("Mesh3" + creatorCommandArgs() +
-                        " x1=" + (x+rx) + " y1=" + (y+ry) + " z1=" + (z-rz) +
-                        " x2=" + (x-rx) + " y2=" + (y+ry) + " z2=" + (z-rz) +
-                        " x3=" + x + " y3=" + y + " z3=" + (z+rz));
-                      runScriptLine("Mesh3" + creatorCommandArgs() +
-                        " x1=" + (x-rx) + " y1=" + (y+ry) + " z1=" + (z-rz) +
-                        " x2=" + (x-rx) + " y2=" + (y-ry) + " z2=" + (z-rz) +
-                        " x3=" + x + " y3=" + y + " z3=" + (z+rz));
+                      // One "Pyramid" command now, instead of four Mesh3
+                      // ones - same x/y/z/dx/dy/dz/r shape as Box/
+                      // Octahedron/Cylinder/Parametric, so boxLikeCommandArgs()
+                      // applies unchanged. Unlike the Mesh3-based version
+                      // this replaces, the base now rotates with rot -
+                      // see add_Pyramid_Core's own comment in Create3D.pde.
+                      runScriptLine("Pyramid" + boxLikeCommandArgs(x, y, z, rx, ry, rz, rot));
                     } else if (CreateObject == CREATE.Plane) {
 
                       // One Mesh4 command - same reasoning as Pyramid

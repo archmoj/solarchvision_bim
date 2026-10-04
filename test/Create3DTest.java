@@ -61,6 +61,45 @@ class Create3DTest {
     assertEquals(0, app.allVertices.length);
   }
 
+  // ================= add_Pyramid_Core ===================================
+
+  @Test
+  void addPyramidCore_buildsFourTrianglesFromFourBaseCornersAndOneSharedApex () {
+    // At rot=0 this must match the four base corners + apex the old
+    // mouseClicked.pde Pyramid branch's four direct add_Mesh3(...) calls
+    // used to compute (confirmed via an external A/B comparison harness
+    // when this was written, not just by construction) - but with the
+    // apex created once and shared across all four faces, rather than
+    // once per face as the Mesh3-based version did.
+    app.Create3D.add_Pyramid_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 2, 2, 0);
+
+    assertEquals(5, app.allVertices.length, "4 base corners + 1 shared apex, not 4x3=12");
+    assertEquals(4, app.allFaces.nodes.length);
+    for (int[] face : app.allFaces.nodes) {
+      assertEquals(3, face.length);
+      assertEquals(4, face[2], "every face's third node must be the same shared apex vertex");
+    }
+    assertArrayEquals(new float[]{0, 0, 2}, app.allVertices[4], 0.0001f); // apex
+  }
+
+  @Test
+  void addPyramidCore_rotatesTheBaseButNotTheApex () {
+    // At rot=90deg, (rx, ry) rotates like a standard CCW 2D rotation -
+    // same convention addBoxCore_buildsABoxFromACenterHalfExtentsAndRotation
+    // above already verifies for add_Box_Core, which this reuses the same
+    // b1..b4 formula from.
+    app.Create3D.add_Pyramid_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 2, 3, 90);
+
+    assertArrayEquals(new float[]{-2, 1, -3}, app.allVertices[0], 0.001f); // b1
+    assertArrayEquals(new float[]{0, 0, 3}, app.allVertices[4], 0.0001f); // apex unaffected by rotation
+  }
+
+  @Test
+  void addPyramidCore_isANoOpForANonPositiveExtent () {
+    app.Create3D.add_Pyramid_Core(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 3, 0);
+    assertEquals(0, app.allVertices.length);
+  }
+
   // ================= add_Mesh2 ========================================
 
   @Test

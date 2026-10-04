@@ -39,7 +39,7 @@ HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "move",
   "mesh", "polyline",
   "box", "sphere", "cylinder", "person", "house1", "house2", "house3",
-  "octahedron", "icosahedron", "cushion",
+  "octahedron", "icosahedron", "cushion", "pyramid",
   "rotate", "rotatex", "rotatey", "rotatez",
   "scale",
   // Found while routing mouseClicked.pde's own Solid/Camera/Section
@@ -580,6 +580,34 @@ String runScriptLine (String lineSTR) {
       else {
         hint = "Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
         UI_setTo_Create_Box();
+      }
+      return hint;
+    }
+
+    case "PYRAMID": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        int m = getI(p, "m", -1);
+        int tes = getI(p, "tes", 0);
+        int lyr = getI(p, "lyr", 0);
+        int vsb = getI(p, "vsb", 1);
+        int wgt = getI(p, "wgt", 0);
+        int clz = getI(p, "clz", 0);
+        float x = getF(p, "x", 0);
+        float y = getF(p, "y", 0);
+        float z = getF(p, "z", 0);
+        float dx = getF(p, "dx", 6);
+        float dy = getF(p, "dy", 6);
+        float dz = getF(p, "dz", 6);
+        float r = getF(p, "r", 0);
+        if ((dx != 0) && (dy != 0) && (dz != 0)) {
+          Create3D.add_Pyramid_Core(m, tes, lyr, vsb, wgt, clz, x, y, z, 0.5 * dx, 0.5 * dy, 0.5 * dz, r);
+          model_changed();
+        }
+      }
+      else {
+        hint = "Pyramid m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?";
+        UI_setTo_Create_Pyramid();
       }
       return hint;
     }

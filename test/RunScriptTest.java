@@ -374,6 +374,28 @@ class RunScriptTest {
     assertEquals("Box m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?", app.runScriptLine("BOX"));
   }
 
+  // "pyramid" is in bypassAllActionsFor (it collides with the bare
+  // click-to-create tool-switch action of the same name, confirmed
+  // directly via allActions.containsKey("pyramid") when this was added -
+  // same class of collision as Solid/Camera/Section before it) - this
+  // confirms the command is actually reached, not just that
+  // runScriptLine returns without error.
+  @Test
+  void pyramid_withArguments_actuallyCreatesFourTriangularFaces () {
+    app.build_allActions();
+    String hint = app.runScriptLine("PYRAMID x=0 y=0 z=0 dx=4 dy=4 dz=4");
+
+    assertEquals("", hint);
+    assertEquals(5, app.allVertices.length, "4 base corners + 1 shared apex");
+    assertEquals(4, app.allFaces.nodes.length);
+  }
+
+  @Test
+  void pyramid_withNoArguments_returnsTheUsageHint () {
+    app.build_allActions();
+    assertEquals("Pyramid m=? tes=? lyr=? x=? y=? z=? dx=? dy=? dz=? r=?", app.runScriptLine("PYRAMID"));
+  }
+
   @Test
   void sphere_withArguments_actuallyCreatesAFace () {
     app.build_allActions();

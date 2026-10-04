@@ -613,6 +613,75 @@ class Create3D {
   }
 
 
+  // Same b1..b4 base-corner formula as add_Box_Core above (confirmed by
+  // mapping the Pyramid branch's own four Mesh3 point sets onto it at
+  // rot=0: they match exactly, corner for corner), plus a single shared
+  // apex point instead of a second ring of four top corners - a pyramid
+  // only needs that one apex, not Box's full eight. Unlike the Mesh3-based
+  // substitute it replaces, this applies rot - the original direct
+  // Create3D.add_Mesh3(...) calls (and the Mesh3 substitution standing in
+  // for them since) never rotated the base at all, so a rotated pyramid
+  // is new here, not preserved; flagged rather than silently added. Also
+  // adds the same (rx>0)&&(ry>0)&&(rz>0) guard every other _Core function
+  // has, which the Mesh3 calls never had either - a degenerate call no
+  // longer creates zero-area triangles.
+  void add_Pyramid_Core (int m, int tes, int lyr, int vsb, int wgt, int clz, float x, float y, float z, float rx, float ry, float rz, float rot) {
+
+    if ((rx > 0) && (ry > 0) && (rz > 0)) {
+
+      current_Material = m;
+      current_Tessellation = tes;
+      current_Layer = lyr;
+      current_Visibility = vsb;
+      current_Weight = wgt;
+      current_Closed = clz;
+
+      float teta = rot * PI / 180.0;
+
+      int b1 = allPoints.create(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z - rz);
+      int b2 = allPoints.create(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z - rz);
+      int b3 = allPoints.create(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
+      int b4 = allPoints.create(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
+
+      int apex = allPoints.create(x, y, z + rz);
+
+      if (m == -1) current_Material = 0;
+      else current_Material = m;
+
+      {//Side 1 (was Mesh3 #1: x-rx,y-ry -> x+rx,y-ry -> apex)
+        int[] newFace_nodes = {
+          b3, b4, apex
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//Side 2 (was Mesh3 #2: x+rx,y-ry -> x+rx,y+ry -> apex)
+        int[] newFace_nodes = {
+          b4, b1, apex
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//Side 3 (was Mesh3 #3: x+rx,y+ry -> x-rx,y+ry -> apex)
+        int[] newFace_nodes = {
+          b1, b2, apex
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+      {//Side 4 (was Mesh3 #4: x-rx,y+ry -> x-rx,y-ry -> apex)
+        int[] newFace_nodes = {
+          b2, b3, apex
+        };
+        if (m == -1) current_Material = 1 + (current_Material % (allMaterials.Number - 1));
+        allFaces.create(newFace_nodes);
+      }
+
+      model_added();
+    }
+  }
+
+
   void add_Box_Corners (int m, int tes, int lyr, int vsb, int wgt, int clz, float x1, float y1, float z1, float x2, float y2, float z2) {
 
     if ((x1 != x2) || (y1 != y2) || (z1 != z2)) {
