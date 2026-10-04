@@ -440,4 +440,46 @@ class MouseWheelTest {
     assertEquals(2f, app.allPoints.getY(0), 0.0001f);
     assertEquals(2f, app.allPoints.getZ(0), 0.0001f);
   }
+
+  // ================= handleRotateWheel / handleScaleWheel =================
+  // Neither had any direct test at all before this - a real, pre-existing
+  // gap that let a genuine bug slip through: the "+ROTATESELECTION"/
+  // "+SCALESELECTION" cases in runScript.pde read their wheel value via
+  // getF(p, "+value", 0) while mouseWheel.pde itself passes it as "v=" -
+  // a key that never matched, so wheelValue silently defaulted to 0 and
+  // neither command ever actually rotated or scaled anything. Caught by
+  // directly exercising "+RotateSelection v=1 ..." through runScriptLine
+  // and checking the vertex didn't move at all, not by trusting the full
+  // suite's prior all-green result - these two functions simply weren't
+  // in it. Fixed to getF(p, "v", 0), matching both the real parameter
+  // name and the hint string's own "v=?" documentation; these two tests
+  // are the regression coverage that didn't exist before.
+
+  @Test
+  void handleRotateWheel_rotatesTheSelectedVertexAroundTheGivenPivot () {
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.allVertices = new float[][]{{1, 0, 0}};
+    app.Select3D.vertexSelection = new int[]{0};
+    app.Select3D.rotationVectorIndex = 2; // Z axis
+
+    app.handleRotateWheel(1, 0, 0, 0); // r = 5 * -1 = -5 degrees about Z
+
+    assertNotEquals(1f, app.allPoints.getX(0), 0.0001f, "a bare-action or key-mismatch bug would leave this untouched");
+    assertEquals((float) Math.cos(Math.toRadians(-5)), app.allPoints.getX(0), 0.0001f);
+    assertEquals((float) Math.sin(Math.toRadians(-5)), app.allPoints.getY(0), 0.0001f);
+  }
+
+  @Test
+  void handleScaleWheel_scalesTheSelectedVertexFromTheGivenPivot () {
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.allVertices = new float[][]{{2, 0, 0}};
+    app.Select3D.vertexSelection = new int[]{0};
+    app.Select3D.scaleVectorIndex = 0; // keeps sx, zeroes sy/sz
+
+    app.handleScaleWheel(2, 0, 0, 0); // s = pow(2^0.25, -2)
+
+    float expected = 2 * (float) Math.pow(Math.pow(2.0, 0.25), -2);
+    assertNotEquals(2f, app.allPoints.getX(0), 0.0001f, "a bare-action or key-mismatch bug would leave this untouched");
+    assertEquals(expected, app.allPoints.getX(0), 0.0001f);
+  }
 }

@@ -818,6 +818,31 @@ for that action:
 -   `Orbit Up Around Selection`, `Orbit Down Around Selection`,
     `Orbit Left Around Selection`, `Orbit Right Around Selection`
 
+### Drag-based view navigation
+
+These mirror the viewport-navigation actions just above, but take a
+`dx`/`dy` delta instead of firing once per keystroke - mouseDragged.pde
+calls one of these on every mouse-move event during a drag, so each
+fires many times in quick succession rather than once. `dx`/`dy` are
+typically small (a fraction of a pixel's worth of screen movement), not
+whole units.
+
+```
+DragPanView dx=? dy=?
+DragPanViewX dx=?
+DragPanViewY dy=?
+DragTurnTarget dx=? dy=?
+DragTurnTargetZ dx=?
+DragTurnTargetX dy=?
+DragOrbitSelectionXY dx=?
+DragOrbitSelectionZ dy=?
+DragOrbitSelection dx=? dy=?
+DragOrbitLand dx=?
+DragTurnView dx=? dy=?
+DragTurnViewX dy=?
+DragTurnViewZ dx=?
+```
+
 ### Map navigation
 
 -   `Map Zoom In`, `Map Zoom Out`: step the location map's zoom level
@@ -836,6 +861,42 @@ commands, each switching to a mouse-drag tool for that one axis:
 -   `Increase Tool Parameter`, `Decrease Tool Parameter`: nudge the
     current selection via whichever of Rotate/Scale/Move/Edit the
     active tool is
+
+### Mouse-wheel commands
+
+`+`-prefixed, the mouse-wheel counterpart of the `Drag*` commands above:
+mouseWheel.pde calls one of these on every wheel notch, each taking a
+single bare value (a typical wheel notch is `1` or `-1`) rather than a
+named `dx=?`/`dy=?` pair - e.g. `+Days 1`, not `+Days wheelValue=1`.
+`+RotateSelection` and `+ScaleSelection` are the two exceptions, since
+each also needs the pivot point (`x0`/`y0`/`z0`) to rotate or scale
+around.
+
+-   `+Hours`, `+Days`: shift the analysis window's hour/day range,
+    scrolled over the case bar
+-   `+Scenario`: shifts whichever sample range (climate-engineering
+    year, climate-archive year, ensemble-forecast member, or
+    ensemble-observation station) matches the current data source
+-   `+MapZoom`: steps the location map's zoom level
+-   `+RotateSelection v=? x0=? y0=? z0=?`, `+ScaleSelection v=? x0=? y0=? z0=?`:
+    rotate/scale the selection around the given pivot - the wheel
+    counterpart of `ROTATE`/`SCALE` above, scrolled while that tool is
+    active
+-   `+EditSelection`: adjusts a face/model/camera/solid/section/group
+    property on the selection, meaning depends on the current tool and
+    selection category
+-   `+Zoom`: dollies (perspective) or scales (orthographic) the
+    viewport
+-   `+Elevation`: adjusts the viewport's field-of-view angle
+-   `+ScaleObjects`, `+ScaleSkydome`, `+ScaleAllModel`: scale the
+    model, the skydome, or both together
+-   `+TargetRollXYZ`, `+CameraRollXYZ`: rotate the target or the
+    camera around whichever axis (X or Z) is currently selected
+-   `+MoveTowardsSelection`, `+MoveTowardsMouse`: dolly the viewport
+    toward the current selection or the mouse position
+-   `+PositionX`, `+PositionY`: pan the viewport
+-   `+RotationX`, `+RotationZ`: rotate the viewport directly (no
+    reverseTransform, unlike `+TargetRollXYZ`)
 
 ### Screenshots and recording
 

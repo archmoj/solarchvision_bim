@@ -626,7 +626,7 @@ String runScriptLine (String lineSTR) {
     case "+ROTATESELECTION": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
-        float wheelValue = getF(p, "+value", 0);
+        float wheelValue = getF(p, "v", 0);
         float x0 = getF(p, "x0", 0);
         float y0 = getF(p, "y0", 0);
         float z0 = getF(p, "z0", 0);
@@ -644,7 +644,7 @@ String runScriptLine (String lineSTR) {
     case "+SCALESELECTION": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
-        float wheelValue = getF(p, "+value", 0);
+        float wheelValue = getF(p, "v", 0);
         float x0 = getF(p, "x0", 0);
         float y0 = getF(p, "y0", 0);
         float z0 = getF(p, "z0", 0);
