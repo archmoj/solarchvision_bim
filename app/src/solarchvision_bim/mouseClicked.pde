@@ -1517,6 +1517,60 @@ void selectEnsembleObservationStation (int f, float mouse_lon, float mouse_lat) 
   }
 }
 
+void handleWolrdClickAt(float X_clicked, float Y_clicked) {
+          // Clicks meant for the picker list (picking a row, or
+          // clicking away to cancel it) or its scrollbar track aren't
+          // "pick a location on the map" clicks, so handle them here
+          // and skip everything below (STATION repositioning,
+          // nearest-station lookups, etc.) entirely for this click.
+          if (handlePickListTrackClick() || handlePickListClick()) {
+            // handled - fall through to the shared revise() calls below
+          } else {
+
+            float mouse_lon = 360.0 * ((X_clicked - WORLD.cX) * WORLD.sX / WORLD.dX - 0.5) + WORLD.oX;
+            float mouse_lat = -180.0 * ((Y_clicked - WORLD.cY) * WORLD.sY / WORLD.dY - 0.5) + WORLD.oY;
+
+            pre_locationLatitude = locationLatitude;
+            pre_locationLongitude = locationLongitude;
+
+            STATION.setLatitude(mouse_lat);
+            STATION.setLongitude(mouse_lon);
+
+            if ((pre_locationLatitude != locationLatitude) ||
+                (pre_locationLongitude != locationLongitude)) {
+
+              WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
+            }
+
+            if (mouseButton == LEFT) {
+              WORLD.zoom = max(WORLD.zoom, 5); // zoom in to confirm exactly where the click landed
+            }
+            // Right click keeps the current zoom level instead, for
+            // comparing several rough locations across a wider area
+            // without the view snapping in on every click.
+
+            // Each picker's handleMapClick() finds nearby candidates of its
+            // own dataset around (mouse_lon, mouse_lat); if there's more
+            // than one AND that dataset is the active currentDataSource, it
+            // shows its own pick list instead of guessing - otherwise it
+            // quietly selects the single nearest one, same as every
+            // dataset did before pickers existed. A click while any
+            // picker's list was showing (row pick, or click-away-to-cancel)
+            // is already fully handled upfront by
+            // handlePickListClick() above, so no picker can
+            // still be active here.
+            ensembleObservationPicker.handleMapClick(mouse_lon, mouse_lat);
+            ensembleForecastPicker.handleMapClick(mouse_lon, mouse_lat);
+            climateEngineeringPicker.handleMapClick(mouse_lon, mouse_lat);
+            climateArchivePicker.handleMapClick(mouse_lon, mouse_lat);
+            climateTypicalYearPicker.handleMapClick(mouse_lon, mouse_lat);
+
+          }
+
+          WORLD.revise();
+          WIN3D.revise();
+}
+
 void mouseClicked () {
 
   if (frameCount > Last_initializationStep) {
@@ -1575,76 +1629,20 @@ void mouseClicked () {
         if (WORLD.include) {
           if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
-            // Clicks meant for the picker list (picking a row, or
-            // clicking away to cancel it) or its scrollbar track aren't
-            // "pick a location on the map" clicks, so handle them here
-            // and skip everything below (STATION repositioning,
-            // nearest-station lookups, etc.) entirely for this click.
-            if (handlePickListTrackClick() || handlePickListClick()) {
-              // handled - fall through to the shared revise() calls below
-            } else {
-
-            float mouse_lon = 360.0 * ((mouseX - WORLD.cX) * WORLD.sX / WORLD.dX - 0.5) + WORLD.oX;
-            float mouse_lat = -180.0 * ((mouseY - WORLD.cY) * WORLD.sY / WORLD.dY - 0.5) + WORLD.oY;
-            //float mouse_lon = STATION.getLongitude();
-            //float mouse_lat = STATION.getLatitude();
-
-
-            pre_locationLatitude = locationLatitude;
-            pre_locationLongitude = locationLongitude;
-
-            STATION.setLatitude(mouse_lat);
-            STATION.setLongitude(mouse_lon);
-
-            if ((pre_locationLatitude != locationLatitude) ||
-                (pre_locationLongitude != locationLongitude)) {
-
-              WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
-            }
-
-            if (mouseButton == LEFT) {
-              WORLD.zoom = max(WORLD.zoom, 5); // zoom in to confirm exactly where the click landed
-            }
-            // Right click keeps the current zoom level instead, for
-            // comparing several rough locations across a wider area
-            // without the view snapping in on every click.
-
-            // Each picker's handleMapClick() finds nearby candidates of its
-            // own dataset around (mouse_lon, mouse_lat); if there's more
-            // than one AND that dataset is the active currentDataSource, it
-            // shows its own pick list instead of guessing - otherwise it
-            // quietly selects the single nearest one, same as every
-            // dataset did before pickers existed. A click while any
-            // picker's list was showing (row pick, or click-away-to-cancel)
-            // is already fully handled upfront by
-            // handlePickListClick() above, so no picker can
-            // still be active here.
-            ensembleObservationPicker.handleMapClick(mouse_lon, mouse_lat);
-            ensembleForecastPicker.handleMapClick(mouse_lon, mouse_lat);
-            climateEngineeringPicker.handleMapClick(mouse_lon, mouse_lat);
-            climateArchivePicker.handleMapClick(mouse_lon, mouse_lat);
-            climateTypicalYearPicker.handleMapClick(mouse_lon, mouse_lat);
-
-
-
-
-            }
-
-            WORLD.revise();
-            WIN3D.revise();
+            handleWolrdClickAt(
+              X_clicked,
+              Y_clicked
+            );
           }
         }
 
         if (WIN3D.include) {
           if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
-            float Image_X = 0;
-            float Image_Y = 0;
-
-            Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
-            Image_Y = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
-
-            handleWin3DClickAt(Image_X, Image_Y);
+            handleWin3DClickAt(
+              X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX),
+              Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY)
+            );
           }
         }
 
