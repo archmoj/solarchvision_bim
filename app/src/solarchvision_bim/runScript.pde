@@ -1020,6 +1020,91 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
+    // mouseReleased.pde's own performRectSelect() - the corner1x/y,
+    // corner2x/y it passes are already in WIN3D's local viewport
+    // coordinates (screen position minus the viewport's own center),
+    // computed from the drag rectangle; this command just takes those
+    // four numbers and calls Select3D.selectRect(...) with them
+    // unchanged. The rectangle's own on-screen outline (drawn once more
+    // right before this fires) stays in mouseReleased.pde: that's a
+    // rendering side effect, not a selection-data change, the same
+    // distinction RecordFrame() calls elsewhere in this codebase are
+    // left direct for.
+    case "RECTSELECT": {
+      if (parts.length > 3) {
+        HashMap<String,String> p = parseParams(parts);
+        float x1 = getF(p, "x1", 0);
+        float y1 = getF(p, "y1", 0);
+        float x2 = getF(p, "x2", 0);
+        float y2 = getF(p, "y2", 0);
+        Select3D.selectRect(x1, y1, x2, y2);
+        view_changed();
+      }
+      else {
+        hint = "RectSelect x1=? y1=? x2=? y2=?";
+      }
+      return hint;
+    }
+
+    // mouseReleased.pde's own performGetLengthMeasurement() - the ray
+    // casting that turns the two click points into (x1,y1,z1)/(x2,y2,z2)
+    // world coordinates stays in mouseReleased.pde (castClickToWorld()
+    // is state-dependent on the current mouse button and viewport, the
+    // same reason mouseClicked.pde's own computeCreateParams() stays
+    // local rather than being recomputed inside a command). This command
+    // picks up from there: the straightDist/dxRot/dyRot/dzRot math and
+    // which of User3D.creatorLength/Width/Height actually gets written
+    // depends on WIN3D.toolParameterModifier, read internally the same
+    // way +SCENARIO/+TARGETROLLXYZ read their own dispatch state above.
+    case "GETLENGTH": {
+      if (parts.length > 6) {
+        HashMap<String,String> p = parseParams(parts);
+        float x1 = getF(p, "x1", 0);
+        float y1 = getF(p, "y1", 0);
+        float z1 = getF(p, "z1", 0);
+        float x2 = getF(p, "x2", 0);
+        float y2 = getF(p, "y2", 0);
+        float z2 = getF(p, "z2", 0);
+
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float dz = z2 - z1;
+
+        float dxRot = dx * funcs.cos_ang(-WIN3D.rotationZ) - dy * funcs.sin_ang(-WIN3D.rotationZ);
+        float dyRot = dx * funcs.sin_ang(-WIN3D.rotationZ) + dy * funcs.cos_ang(-WIN3D.rotationZ);
+        float dzRot = dz;
+
+        float straightDist = dist(x1, y1, z1, x2, y2, z2);
+
+        switch (WIN3D.toolParameterModifier) {
+          case 0:
+            User3D.creatorLength = straightDist;
+            break;
+          case 1:
+            User3D.creatorWidth = straightDist;
+            break;
+          case 2:
+            User3D.creatorHeight = straightDist;
+            break;
+          case 3:
+            User3D.creatorLength = abs(dxRot);
+            User3D.creatorWidth = abs(dyRot);
+            User3D.creatorHeight = abs(dzRot);
+            break;
+          case 4:
+            User3D.creatorLength = abs(dxRot);
+            User3D.creatorWidth = abs(dyRot);
+            break;
+        }
+
+        UI_rollout.revise();
+      }
+      else {
+        hint = "GetLength x1=? y1=? z1=? x2=? y2=? z2=?";
+      }
+      return hint;
+    }
+
     case "PERSON": {
       if (parts.length > 1) {
         String t = "PEOPLE";

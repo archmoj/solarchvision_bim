@@ -91,50 +91,20 @@ void performRectSelect() {
   rect(corner1x, corner1y, corner2x - corner1x, corner2y - corner1y);
   popMatrix();
 
-  Select3D.selectRect(corner1x, corner1y, corner2x, corner2y);
+  runScriptLine("RectSelect x1=" + corner1x + " y1=" + corner1y + " x2=" + corner2x + " y2=" + corner2y);
 }
 
 void performGetLengthMeasurement() {
+  // Ray casting is state-dependent on the current mouse button and
+  // viewport, so it stays here rather than moving into the command -
+  // see runScript.pde's own comment on GETLENGTH. Everything from here
+  // on (the rotation-undoing math, which of Length/Width/Height actually
+  // gets written) now lives in that command instead.
   float[] p1 = castClickToWorld(X_click1, Y_click1);
   float[] p2 = castClickToWorld(X_click2, Y_click2);
 
-  float x1 = p1[0], y1 = p1[1], z1 = p1[2];
-  float x2 = p2[0], y2 = p2[1], z2 = p2[2];
-
-  float dx = x2 - x1;
-  float dy = y2 - y1;
-  float dz = z2 - z1;
-
-  // Undo the viewport's Z rotation so length/width line up with the
-  // object's local axes rather than screen axes.
-  float dxRot = dx * funcs.cos_ang(-WIN3D.rotationZ) - dy * funcs.sin_ang(-WIN3D.rotationZ);
-  float dyRot = dx * funcs.sin_ang(-WIN3D.rotationZ) + dy * funcs.cos_ang(-WIN3D.rotationZ);
-  float dzRot = dz;
-
-  float straightDist = dist(x1, y1, z1, x2, y2, z2);
-
-  switch (WIN3D.toolParameterModifier) {
-    case 0:
-      User3D.creatorLength = straightDist;
-      break;
-    case 1:
-      User3D.creatorWidth = straightDist;
-      break;
-    case 2:
-      User3D.creatorHeight = straightDist;
-      break;
-    case 3:
-      User3D.creatorLength = abs(dxRot);
-      User3D.creatorWidth = abs(dyRot);
-      User3D.creatorHeight = abs(dzRot);
-      break;
-    case 4:
-      User3D.creatorLength = abs(dxRot);
-      User3D.creatorWidth = abs(dyRot);
-      break;
-  }
-
-  UI_rollout.revise();
+  runScriptLine("GetLength x1=" + p1[0] + " y1=" + p1[1] + " z1=" + p1[2] +
+    " x2=" + p2[0] + " y2=" + p2[1] + " z2=" + p2[2]);
 }
 
 float[] castClickToWorld(float clickX, float clickY) {
