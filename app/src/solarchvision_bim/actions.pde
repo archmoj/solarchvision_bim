@@ -1,5 +1,3 @@
-int logActions = 1;
-
 // Menu items only ever need a plain, argument-less trigger (Runnable).
 // Commands typed on the command line (runScript.pde) may also come with
 // one or more arguments (e.g. "start_day 15"), so allActions is keyed by
@@ -41,14 +39,24 @@ private String normalizeActionKey(String s) {
   return s.toLowerCase().replace(' ', '_');
 }
 
+void echoAction(String command) {
+  println(command);
+}
+
 private void putAction(String s, Runnable fn) {
     String key = normalizeActionKey(s);
-    allActions.put(key, (args) -> fn.run()); // ignore any args
+    allActions.put(key, (args) -> {
+      echoAction(key);
+      fn.run(); // ignore any args
+    });
 
     // Also support commands with space in their names
     String withSpace = s.toLowerCase();
     if(!withSpace.equals(key)) {
-        allActions.put(withSpace, (args) -> fn.run()); // ignore any args
+        allActions.put(withSpace, (args) -> {
+          echoAction(withSpace);
+          fn.run(); // ignore any args
+        });
     }
 }
 
