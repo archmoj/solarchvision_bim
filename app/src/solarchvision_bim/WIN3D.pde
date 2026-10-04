@@ -590,9 +590,6 @@ class WIN3D {
     }
   }
 
-  // Full body moved to key3D_ShiftUpDown() in actions.pde (registered as
-  // "Increase Tool Parameter"/"Decrease Tool Parameter") - see that function's own
-  // comment.
   void handleShiftedArrowKeys (int keyCode) {
     switch (keyCode) {
       case UP:
@@ -1052,6 +1049,56 @@ class WIN3D {
   float[] calculate_Perspective_Internally (float x, float y, float z) {
     float[] cam = calculate_CameraSpace_Internally(x, y, z);
     return calculate_Perspective_fromCameraSpace(cam[0], cam[1], cam[2]);
+  }
+
+
+  void incrementParameter (int direction) {
+    float[] P = Select3D.getPivot();
+    float x0 = P[0];
+    float y0 = P[1];
+    float z0 = P[2];
+
+    if (this.currentTool == UITASK.Rotate) {
+      float r = 5.0 * direction;
+      int the_Vector = Select3D.rotationVectorIndex;
+      Rotate3D.selection(x0, y0, z0, r, the_Vector);
+      model_changed();
+    }
+
+    if (this.currentTool == UITASK.Scale) {
+      float s = pow(2.0, 0.25);
+      if (direction < 0) s = 1.0 / s;
+
+      float sx = s, sy = s, sz = s;
+      int the_Vector = Select3D.scaleVectorIndex;
+      if (the_Vector == 0) { sy = 1; sz = 1; }
+      if (the_Vector == 1) { sz = 1; sx = 1; }
+      if (the_Vector == 2) { sx = 1; sy = 1; }
+
+      Scale3D.selection(x0, y0, z0, sx, sy, sz);
+      model_changed();
+    }
+
+    if (this.currentTool == UITASK.Move) {
+      float d = 0.5 * direction;
+      float dx = d, dy = d, dz = d;
+
+      int the_Vector = Select3D.positionVectorIndex;
+      if (the_Vector == 0) { dy = 0; dz = 0; }
+      if (the_Vector == 1) { dz = 0; dx = 0; }
+      if (the_Vector == 2) { dx = 0; dy = 0; }
+
+      Move3D.selection(dx, dy, dz);
+      model_changed();
+    }
+
+    if (this.toolParameterModifier == 0) {
+      if (this.currentTool >= UITASK.Seed_Material) {
+        int p = direction;
+        Edit3D.selection(p);
+        model_changed();
+      }
+    }
   }
 
 

@@ -1,3 +1,5 @@
+int logActions = 1;
+
 // Menu items only ever need a plain, argument-less trigger (Runnable).
 // Commands typed on the command line (runScript.pde) may also come with
 // one or more arguments (e.g. "start_day 15"), so allActions is keyed by
@@ -162,62 +164,6 @@ void putValueAction(String name, FloatGetter getter, FloatSetter setter, float m
 
 void putValueAction(String name, FloatGetter getter, FloatSetter setter, float min_v, float max_v, float step, int update1, int update2, int update3) {
   putValueAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, null);
-}
-
-// "Increase Tool Parameter" (isUp=true) or "Decrease Tool Parameter"
-// (isUp=false)'s full body - see WIN3D.pde's own
-// handleShiftedArrowKeys() for how these get dispatched from an actual
-// key press. Moved out to its own function, rather than inlined in each
-// putAction's lambda, since the two share this entire body and
-// previously shared one switch-case in handleShiftedArrowKeys() too -
-// keeping it that way here avoids maintaining the same logic twice.
-void key3D_ShiftUpDown (boolean isUp) {
-  float[] P = Select3D.getPivot();
-  float x0 = P[0];
-  float y0 = P[1];
-  float z0 = P[2];
-
-  if (WIN3D.currentTool == UITASK.Rotate) {
-    float r = isUp ? 5 : -5;
-    int the_Vector = Select3D.rotationVectorIndex;
-    Rotate3D.selection(x0, y0, z0, r, the_Vector);
-    model_changed();
-  }
-
-  if (WIN3D.currentTool == UITASK.Scale) {
-    float s = pow(2.0, 0.25);
-    if (!isUp) s = 1.0 / s;
-
-    float sx = s, sy = s, sz = s;
-    int the_Vector = Select3D.scaleVectorIndex;
-    if (the_Vector == 0) { sy = 1; sz = 1; }
-    if (the_Vector == 1) { sz = 1; sx = 1; }
-    if (the_Vector == 2) { sx = 1; sy = 1; }
-
-    Scale3D.selection(x0, y0, z0, sx, sy, sz);
-    model_changed();
-  }
-
-  if (WIN3D.currentTool == UITASK.Move) {
-    float d = isUp ? 0.5 : -0.5;
-    float dx = d, dy = d, dz = d;
-
-    int the_Vector = Select3D.positionVectorIndex;
-    if (the_Vector == 0) { dy = 0; dz = 0; }
-    if (the_Vector == 1) { dz = 0; dx = 0; }
-    if (the_Vector == 2) { dx = 0; dy = 0; }
-
-    Move3D.selection(dx, dy, dz);
-    model_changed();
-  }
-
-  if (WIN3D.toolParameterModifier == 0) {
-    if (WIN3D.currentTool >= UITASK.Seed_Material) {
-      int p = isUp ? 1 : -1;
-      Edit3D.selection(p);
-      model_changed();
-    }
-  }
 }
 
 void build_allActions() {
@@ -1517,19 +1463,12 @@ void build_allActions() {
     WIN3D.rotateXY_3DViewport_around_Selection(WIN3D.rotationStep);
   });
 
-  // Shift+Up/Down's full tool-dependent body (Rotate/Scale/Move/Edit
-  // selection, picked by WIN3D.currentTool) moved into key3D_ShiftUpDown()
-  // below, verbatim from handleShiftedArrowKeys() other than keyCode's
-  // role shrinking to the one boolean each branch actually used it for -
-  // everything it touches (Select3D, Rotate3D, Scale3D, Move3D, Edit3D,
-  // UITASK, model_changed()) is already globally accessible, not
-  // WIN3D-private, so nothing but the location and that parameter change.
   putAction("Increase Tool Parameter", () -> {
-    key3D_ShiftUpDown(true);
+    WIN3D.incrementParameter(1);
   });
 
   putAction("Decrease Tool Parameter", () -> {
-    key3D_ShiftUpDown(false);
+    WIN3D.incrementParameter(-1);
   });
 
   // STUDY.pde's own equivalent of the WIN3D group above - see that
