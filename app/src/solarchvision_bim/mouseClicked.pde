@@ -1517,7 +1517,7 @@ void selectEnsembleObservationStation (int f, float mouse_lon, float mouse_lat) 
   }
 }
 
-void handleWolrdClickAt(float X_clicked, float Y_clicked) {
+void handleWorldClickAt(float fromCornerClickedX, float fromCornerClickedY) {
           // Clicks meant for the picker list (picking a row, or
           // clicking away to cancel it) or its scrollbar track aren't
           // "pick a location on the map" clicks, so handle them here
@@ -1526,9 +1526,8 @@ void handleWolrdClickAt(float X_clicked, float Y_clicked) {
           if (handlePickListTrackClick() || handlePickListClick()) {
             // handled - fall through to the shared revise() calls below
           } else {
-
-            float mouse_lon = 360.0 * ((X_clicked - WORLD.cX) * WORLD.sX / WORLD.dX - 0.5) + WORLD.oX;
-            float mouse_lat = -180.0 * ((Y_clicked - WORLD.cY) * WORLD.sY / WORLD.dY - 0.5) + WORLD.oY;
+            float mouse_lon = 360.0 * (fromCornerClickedX * WORLD.sX / WORLD.dX - 0.5) + WORLD.oX;
+            float mouse_lat = -180.0 * (fromCornerClickedY * WORLD.sY / WORLD.dY - 0.5) + WORLD.oY;
 
             pre_locationLatitude = locationLatitude;
             pre_locationLongitude = locationLongitude;
@@ -1629,9 +1628,9 @@ void mouseClicked () {
         if (WORLD.include) {
           if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
 
-            handleWolrdClickAt(
-              X_clicked,
-              Y_clicked
+            handleWorldClickAt(
+              X_clicked - WORLD.cX,
+              Y_clicked - WORLD.cY
             );
           }
         }
@@ -1640,8 +1639,8 @@ void mouseClicked () {
           if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
 
             handleWin3DClickAt(
-              X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX),
-              Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY)
+              X_clicked - WIN3D.cX,
+              Y_clicked - WIN3D.cY
             );
           }
         }
@@ -1652,7 +1651,10 @@ void mouseClicked () {
   }
 }
 
-void handleWin3DClickAt(float Image_X, float Image_Y) {
+void handleWin3DClickAt(float fromCornerClickedX, float fromCornerClickedY) {
+  float Image_X = fromCornerClickedX - 0.5 * WIN3D.dX;
+  float Image_Y = fromCornerClickedY - 0.5 * WIN3D.dY;
+
             if (WIN3D.currentTool == UITASK.LookAtDirection) { // viewport:LookAtDirection
 
               WIN3D.look_3DViewport_towards_Direction(Image_X, Image_Y);
