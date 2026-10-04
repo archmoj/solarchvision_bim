@@ -794,6 +794,24 @@ for that action:
 -   `Camera View`: applies the last-selected camera's saved view to the
     active viewport
 -   `Display All Viewports`
+-   `Next Camera`, `Previous Camera`: cycle `WIN3D`'s current camera
+-   `Zoom In`, `Zoom Out`: adjust the viewport's zoom/dolly directly
+    (distinct from `Narrow Field of View`/`Widen Field of View` below,
+    which adjust the field of view angle instead)
+-   `Narrow Field of View`, `Widen Field of View`
+-   `Turn View Left`, `Turn View Right`, `Turn View Up`,
+    `Turn View Down`: rotate the viewport's own orientation
+-   `Pan Left`, `Pan Right`, `Pan Forward`, `Pan Backward`
+-   `Dolly Toward Selection`, `Dolly Away From Selection`: move the
+    viewport a fixed step toward/away from the current selection
+-   `Nudge Closer to Selection`, `Nudge Away from Selection`: a finer,
+    mouse-wheel-style version of the dolly pair above
+-   `Orbit Up Around Selection`, `Orbit Down Around Selection`,
+    `Orbit Left Around Selection`, `Orbit Right Around Selection`
+
+### Map navigation
+
+-   `Map Zoom In`, `Map Zoom Out`: step the location map's zoom level
 
 ### Move / rotate / scale by axis
 
@@ -806,6 +824,9 @@ commands, each switching to a mouse-drag tool for that one axis:
 -   `Power`, `PowerX`, `PowerY`, `PowerZ`: adjust the superellipsoid
     power exponent (see `Creator Uniform Superellipsoid Power`/`Creator Superellipsoid Power X`/`Creator Superellipsoid Power Y`/`Creator Superellipsoid Power Z` above)
     on the current selection
+-   `Increase Tool Parameter`, `Decrease Tool Parameter`: nudge the
+    current selection via whichever of Rotate/Scale/Move/Edit the
+    active tool is
 
 ### Screenshots and recording
 
@@ -828,6 +849,8 @@ commands, each switching to a mouse-drag tool for that one axis:
     `Use Climate Archive`, `Use Ensemble Observation`,
     `Use Ensemble Forecast`: choose which data source feeds the
     current study
+-   `Advance Troposphere Time`, `Rewind Troposphere Time`: step the
+    troposphere map's displayed hour forward/backward
 
 ### Impact analysis
 
@@ -841,6 +864,29 @@ commands, each switching to a mouse-drag tool for that one axis:
 -   `Active Shade`, `Passive Shade`
 -   `Run wind 3D-model`
 -   `Prebake Selected Sections`
+-   `Toggle Impact Type`: switches between the impact-type variations
+    shown on the active shading mode
+-   `Next Impact Day`, `Previous Impact Day`
+-   `Recalculate Solar Impact`: flags the Global/Vertex solar arrays for
+    a rebuild
+
+### Analysis graph navigation
+
+Navigating and adjusting the analysis-chart display, rather than
+triggering a computation:
+
+-   `Next Layer`, `Previous Layer`
+-   `Next Graph Index`, `Previous Graph Index`
+-   `Next Plot Layout`, `Previous Plot Layout`
+-   `Next Sky Scenario`, `Previous Sky Scenario`
+-   `Toggle Impact Summary`
+-   `Increase Vertical Scale`, `Decrease Vertical Scale`
+-   `Widen Join Window`, `Narrow Join Window`
+-   `Extend Date Range`, `Shrink Date Range`
+-   `Toggle Raw Lines`, `Toggle Statistical Ranges`,
+    `Toggle Study Normal Lines`, `Toggle Probabilities`
+-   `Increase Probability Height Step`, `Decrease Probability Height Step`
+-   `Increase Sum Interval`, `Decrease Sum Interval`
 
 ### Shading
 
@@ -849,6 +895,8 @@ commands, each switching to a mouse-drag tool for that one axis:
 -   `Shade Global Solar`, `Shade Vertex Solar`, `Shade Vertex Solid`,
     `Shade Vertex Elevation`
 -   `Shade Viewport`
+-   `Shade Time +1 Hour`, `Shade Time -1 Hour`, `Shade Time +1 Day`,
+    `Shade Time -1 Day`
 
 (these are equivalent to the `SHADE.*` commands under
 [Shading and rendering](#shading-and-rendering) above)
