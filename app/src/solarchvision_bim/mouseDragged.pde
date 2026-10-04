@@ -155,66 +155,69 @@ void dispatchWin3DTaskDrag(float dx, float dy) {
   }
 }
 
-// Each of these now just builds the matching "Drag ..." command string
-// and routes through runScriptLine - see actions.pde's own comment on
-// the thirteen putDragAction1/putDragAction2 registrations for why
-// (same "develop the public API, not the internal calls" reasoning as
-// mouseClicked.pde's own UITASK.Create block) and the naming/collision
-// notes. Function names/signatures kept exactly as they were so
+// Each of these now just builds the matching "+..." command string and
+// routes through runScriptLine - see runScript.pde's own comment on the
+// thirteen "+..." cases for why (same "develop the public API, not the
+// internal calls" reasoning as mouseClicked.pde's own UITASK.Create
+// block) and the naming/collision notes. "+" prefixed, not "Drag",
+// matching mouseWheel.pde's own +* commands below - same reasoning:
+// both fire many times in quick succession from a continuous gesture,
+// so they share that convention rather than each having its own prefix.
+// Function names/signatures kept exactly as they were so
 // dispatchWin3DTaskDrag() and handleTruckOrbitTask() below needed no
 // changes at their own call sites - only what each function's body does
 // changed.
 
 void panBothAxes(float dx, float dy) {
-  runScriptLine("DragPanView dx=" + dx + " dy=" + dy);
+  runScriptLine("+PanView dx=" + dx + " dy=" + dy);
 }
 
 void panXAxis(float dx) {
-  runScriptLine("DragPanViewX dx=" + dx);
+  runScriptLine("+PanViewX " + dx);
 }
 
 void panYAxis(float dy) {
-  runScriptLine("DragPanViewY dy=" + dy);
+  runScriptLine("+PanViewY " + dy);
 }
 
 void rotateTargetXY(float dx, float dy) {
-  runScriptLine("DragTurnTarget dx=" + dx + " dy=" + dy);
+  runScriptLine("+TurnTarget dx=" + dx + " dy=" + dy);
 }
 
 void rotateTargetZOnly(float dx) {
-  runScriptLine("DragTurnTargetZ dx=" + dx);
+  runScriptLine("+TurnTargetZ " + dx);
 }
 
 void rotateTargetXOnly(float dy) {
-  runScriptLine("DragTurnTargetX dy=" + dy);
+  runScriptLine("+TurnTargetX " + dy);
 }
 
 void rotateCameraXY(float dx) {
-  runScriptLine("DragOrbitSelectionXY dx=" + dx);
+  runScriptLine("+OrbitSelectionXY " + dx);
 }
 
 void rotateCameraZ(float dy) {
-  runScriptLine("DragOrbitSelectionZ dy=" + dy);
+  runScriptLine("+OrbitSelectionZ " + dy);
 }
 
 void rotateCameraBoth(float dx, float dy) {
-  runScriptLine("DragOrbitSelection dx=" + dx + " dy=" + dy);
+  runScriptLine("+OrbitSelection dx=" + dx + " dy=" + dy);
 }
 
 void rotateCameraAroundLand(float dx) {
-  runScriptLine("DragOrbitLand dx=" + dx);
+  runScriptLine("+OrbitLand " + dx);
 }
 
 void orbitCamera(float dx, float dy) {
-  runScriptLine("DragTurnView dx=" + dx + " dy=" + dy);
+  runScriptLine("+TurnView dx=" + dx + " dy=" + dy);
 }
 
 void orbitXOnly(float dy) {
-  runScriptLine("DragTurnViewX dy=" + dy);
+  runScriptLine("+TurnViewX " + dy);
 }
 
 void orbitZOnly(float dx) {
-  runScriptLine("DragTurnViewZ dx=" + dx);
+  runScriptLine("+TurnViewZ " + dx);
 }
 
 void handleTruckOrbitTask(float dx, float dy) {

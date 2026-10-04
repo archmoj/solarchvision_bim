@@ -288,12 +288,19 @@ String runScriptLine (String lineSTR) {
     // public API, not the internal calls" reasoning as mouseClicked.pde's
     // own UITASK.Create block. Each fires continuously with a varying
     // per-call delta during a drag gesture (unlike every other command
-    // here, which a person would type once), so "Drag" prefixed
-    // throughout to keep that distinction clear in the command list, and
-    // also to keep them clearly distinct from key3D's similarly-named
-    // but differently-mechanised actions - e.g. "Turn View Left" calls
-    // WIN3D.reverseTransform_3DViewport(); DragTurnView below does not,
+    // here, which a person would type once), so "+" prefixed throughout -
+    // same convention as mouseWheel.pde's own +* commands below, since
+    // both fire many times in quick succession from a continuous input
+    // gesture rather than once per keystroke/click - and also to keep
+    // them clearly distinct from key3D's similarly-named but differently-
+    // mechanised actions - e.g. "Turn View Left" calls
+    // WIN3D.reverseTransform_3DViewport(); +TurnView below does not,
     // different code paths despite both adjusting rotationZ/rotationX.
+    // Single-value ones (dx only or dy only) take that value bare
+    // (parts[1]), the same simplification and for the same reason the
+    // mouseWheel.pde commands below already went through - typing
+    // "+PanViewX 0.5" instead of "+PanViewX dx=0.5" for a command with
+    // only one possible parameter.
     //
     // These are switch cases, not allActions/putAction entries, for a
     // concrete reason found while first attempting the latter: allActions'
@@ -315,13 +322,13 @@ String runScriptLine (String lineSTR) {
     // Single-word (CamelCase) names, not space-separated, for the same
     // reason: the switch itself matches only parts[0] (Command_CAPITAL),
     // so a space-separated name would never reach its own case either -
-    // parts[0] alone ("DRAG") would be compared against "DRAGPANVIEW",
-    // never matching. Checked against allActions directly (not assumed
-    // safe from the name alone) before being used; none collide, so no
+    // parts[0] alone would be compared against "+PANVIEW" whole, never
+    // matching. Checked against allActions directly (not assumed safe
+    // from the name alone) before being used; none collide, so no
     // bypassAllActionsFor entry was needed here the way Solid/Camera/
     // Section/Pyramid needed one.
 
-    case "DRAGPANVIEW": {
+    case "+PANVIEW": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float dx = getF(p, "dx", 0);
@@ -331,38 +338,36 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "DragPanView dx=? dy=?";
+        hint = "+PanView dx=? dy=?";
       }
       return hint;
     }
 
-    case "DRAGPANVIEWX": {
+    case "+PANVIEWX": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dx = getF(p, "dx", 0);
+        float dx = float(parts[1]);
         WIN3D.positionX += 100 * dx * WIN3D.positionStep * overallScale;
         view_changed();
       }
       else {
-        hint = "DragPanViewX dx=?";
+        hint = "+PanViewX ?";
       }
       return hint;
     }
 
-    case "DRAGPANVIEWY": {
+    case "+PANVIEWY": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dy = getF(p, "dy", 0);
+        float dy = float(parts[1]);
         WIN3D.positionY += 100 * dy * WIN3D.positionStep * overallScale;
         view_changed();
       }
       else {
-        hint = "DragPanViewY dy=?";
+        hint = "+PanViewY ?";
       }
       return hint;
     }
 
-    case "DRAGTURNTARGET": {
+    case "+TURNTARGET": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float dx = getF(p, "dx", 0);
@@ -373,66 +378,62 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "DragTurnTarget dx=? dy=?";
+        hint = "+TurnTarget dx=? dy=?";
       }
       return hint;
     }
 
-    case "DRAGTURNTARGETZ": {
+    case "+TURNTARGETZ": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dx = getF(p, "dx", 0);
+        float dx = float(parts[1]);
         WIN3D.rotationZ += 10 * dx * WIN3D.rotationStep;
         WIN3D.reverseTransform_3DViewport();
         view_changed();
       }
       else {
-        hint = "DragTurnTargetZ dx=?";
+        hint = "+TurnTargetZ ?";
       }
       return hint;
     }
 
-    case "DRAGTURNTARGETX": {
+    case "+TURNTARGETX": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dy = getF(p, "dy", 0);
+        float dy = float(parts[1]);
         WIN3D.rotationX += 10 * dy * WIN3D.rotationStep;
         WIN3D.reverseTransform_3DViewport();
         view_changed();
       }
       else {
-        hint = "DragTurnTargetX dy=?";
+        hint = "+TurnTargetX ?";
       }
       return hint;
     }
 
-    case "DRAGORBITSELECTIONXY": {
+    case "+ORBITSELECTIONXY": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dx = getF(p, "dx", 0);
+        float dx = float(parts[1]);
         WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotationStep);
         view_changed();
       }
       else {
-        hint = "DragOrbitSelectionXY dx=?";
+        hint = "+OrbitSelectionXY ?";
       }
       return hint;
     }
 
-    case "DRAGORBITSELECTIONZ": {
+    case "+ORBITSELECTIONZ": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dy = getF(p, "dy", 0);
+        float dy = float(parts[1]);
         WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotationStep);
         view_changed();
       }
       else {
-        hint = "DragOrbitSelectionZ dy=?";
+        hint = "+OrbitSelectionZ ?";
       }
       return hint;
     }
 
-    case "DRAGORBITSELECTION": {
+    case "+ORBITSELECTION": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float dx = getF(p, "dx", 0);
@@ -442,25 +443,24 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "DragOrbitSelection dx=? dy=?";
+        hint = "+OrbitSelection dx=? dy=?";
       }
       return hint;
     }
 
-    case "DRAGORBITLAND": {
+    case "+ORBITLAND": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dx = getF(p, "dx", 0);
+        float dx = float(parts[1]);
         WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.rotationStep);
         view_changed();
       }
       else {
-        hint = "DragOrbitLand dx=?";
+        hint = "+OrbitLand ?";
       }
       return hint;
     }
 
-    case "DRAGTURNVIEW": {
+    case "+TURNVIEW": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float dx = getF(p, "dx", 0);
@@ -470,33 +470,31 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "DragTurnView dx=? dy=?";
+        hint = "+TurnView dx=? dy=?";
       }
       return hint;
     }
 
-    case "DRAGTURNVIEWX": {
+    case "+TURNVIEWX": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dy = getF(p, "dy", 0);
+        float dy = float(parts[1]);
         WIN3D.rotationX -= 10 * dy * WIN3D.rotationStep;
         view_changed();
       }
       else {
-        hint = "DragTurnViewX dy=?";
+        hint = "+TurnViewX ?";
       }
       return hint;
     }
 
-    case "DRAGTURNVIEWZ": {
+    case "+TURNVIEWZ": {
       if (parts.length > 1) {
-        HashMap<String,String> p = parseParams(parts);
-        float dx = getF(p, "dx", 0);
+        float dx = float(parts[1]);
         WIN3D.rotationZ -= 10 * dx * WIN3D.rotationStep;
         view_changed();
       }
       else {
-        hint = "DragTurnViewZ dx=?";
+        hint = "+TurnViewZ ?";
       }
       return hint;
     }

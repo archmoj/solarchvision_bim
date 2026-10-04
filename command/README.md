@@ -130,6 +130,22 @@ Rotate[X|Y|Z] r=? x=? y=? z=?
 Scale s=? sx=? sy=? sz=? x=? y=? z=?
 ```
 
+-   `RECTSELECT`: Selects everything inside a screen-space rectangle
+    (`x1`/`y1`/`x2`/`y2` are viewport-local coordinates, relative to the
+    active 3D viewport's own center)
+
+```
+RectSelect x1=? y1=? x2=? y2=?
+```
+
+-   `GETLENGTH`: Measures the distance between two world points and
+    writes it into `User3D.creatorLength`/`Width`/`Height`, choosing
+    which depending on the active Get dX/dY/dZ/dXYZ/dXY tool
+
+```
+GetLength x1=? y1=? z1=? x2=? y2=? z2=?
+```
+
 ------------------------------------------------------------------------
 
 ### Object creation
@@ -820,27 +836,31 @@ for that action:
 
 ### Drag-based view navigation
 
-These mirror the viewport-navigation actions just above, but take a
-`dx`/`dy` delta instead of firing once per keystroke - mouseDragged.pde
-calls one of these on every mouse-move event during a drag, so each
-fires many times in quick succession rather than once. `dx`/`dy` are
-typically small (a fraction of a pixel's worth of screen movement), not
-whole units.
+`+`-prefixed, the same convention [mouse-wheel commands](#mouse-wheel-commands)
+below use and for the same reason: these mirror the viewport-navigation
+actions further above, but take a `dx`/`dy` delta instead of firing once
+per keystroke - mouseDragged.pde calls one of these on every mouse-move
+event during a drag, so each fires many times in quick succession rather
+than once. `dx`/`dy` are typically small (a fraction of a pixel's worth
+of screen movement), not whole units. Single-value ones (`dx` only or
+`dy` only) take that value bare rather than as a named `dx=?`/`dy=?`
+pair, the same simplification the single-value mouse-wheel commands
+below use.
 
-```
-DragPanView dx=? dy=?
-DragPanViewX dx=?
-DragPanViewY dy=?
-DragTurnTarget dx=? dy=?
-DragTurnTargetZ dx=?
-DragTurnTargetX dy=?
-DragOrbitSelectionXY dx=?
-DragOrbitSelectionZ dy=?
-DragOrbitSelection dx=? dy=?
-DragOrbitLand dx=?
-DragTurnView dx=? dy=?
-DragTurnViewX dy=?
-DragTurnViewZ dx=?
+```ruby
++PanView dx=? dy=?
++PanViewX ?
++PanViewY ?
++TurnTarget dx=? dy=?
++TurnTargetZ ?
++TurnTargetX ?
++OrbitSelectionXY ?
++OrbitSelectionZ ?
++OrbitSelection dx=? dy=?
++OrbitLand ?
++TurnView dx=? dy=?
++TurnViewX ?
++TurnViewZ ?
 ```
 
 ### Map navigation
