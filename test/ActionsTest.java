@@ -94,6 +94,14 @@ class ActionsTest {
   void putValueAction_multiWordName_alsoRegistersTheLiteralLowercasedCaption () {
     // putAction's "withSpace" fallback (for menu items like "Select Group")
     // applies here too, since putValueAction reaches it the same way.
+    //
+    // Each key's Action is its own echoAction(...)-wrapping lambda now
+    // (added so every putAction(String, Action) call is echoed, the
+    // Action counterpart of the echo putAction(String, Runnable) already
+    // had), so "test_field" and "test field" are no longer assertSame -
+    // same underlying action, two distinct wrapper objects. Checking
+    // both actually produce the same effect is the real intent of this
+    // test, not reference identity.
     float[] value = {5};
     app.putValueAction("Test Field",
       () -> value[0],
@@ -102,7 +110,12 @@ class ActionsTest {
       0, 0, 0);
 
     assertTrue(app.allActions.containsKey("test field"));
-    assertSame(app.allActions.get("test_field"), app.allActions.get("test field"));
+
+    app.allActions.get("test_field").run(new String[]{"test_field", "42"});
+    assertEquals(42, value[0], 0.0001f);
+
+    app.allActions.get("test field").run(new String[]{"test field", "7"});
+    assertEquals(7, value[0], 0.0001f);
   }
 
   // ================= putValueAction: validation/rounding ===================

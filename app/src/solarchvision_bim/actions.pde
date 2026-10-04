@@ -39,8 +39,24 @@ private String normalizeActionKey(String s) {
   return s.toLowerCase().replace(' ', '_');
 }
 
+void showFullCommand(String fullCommand) {
+  println(fullCommand);
+}
+
+int logLevel = 1;
+
+void echoAction(String command, String[] args) {
+  if(logLevel < 1) return;
+  StringBuilder line = new StringBuilder(command);
+  for (int i = 1; i < args.length; i++) {
+    line.append(" ").append(args[i]);
+  }
+  showFullCommand(line.toString());
+}
+
 void echoAction(String command) {
-  println(command);
+  if(logLevel < 1) return;
+  showFullCommand(command);
 }
 
 private void putAction(String s, Runnable fn) {
@@ -62,12 +78,18 @@ private void putAction(String s, Runnable fn) {
 
 private void putAction(String s, Action fn) {
     String key = normalizeActionKey(s);
-    allActions.put(key, fn);
+    allActions.put(key, (args) -> {
+      echoAction(key, args);
+      fn.run(args);
+    });
 
     // Also support commands with space in their names
     String withSpace = s.toLowerCase();
     if(!withSpace.equals(key)) {
-        allActions.put(withSpace, fn);
+        allActions.put(withSpace, (args) -> {
+          echoAction(withSpace, args);
+          fn.run(args);
+        });
     }
 }
 
