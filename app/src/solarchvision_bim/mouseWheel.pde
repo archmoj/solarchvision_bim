@@ -59,11 +59,11 @@ void reviseStudyAndRegenerate(boolean alsoWorld) {
 }
 
 void handleHoursCaseBarWheel(float wheelValue) {
-  runScriptLine("WheelHours " + wheelValue);
+  runScriptLine("+Hours " + wheelValue);
 }
 
 void handleDaysCaseBarWheel(float wheelValue) {
-  runScriptLine("WheelDays " + wheelValue);
+  runScriptLine("+Days " + wheelValue);
 }
 
 int[] shiftAndClampRange(int start, int end, float wheelValue, int lo, int hi) {
@@ -88,7 +88,7 @@ int[] shiftAndClampRange(int start, int end, float wheelValue, int lo, int hi) {
 }
 
 void handleScenarioCaseBarWheel(float wheelValue) {
-  runScriptLine("WheelScenario " + wheelValue);
+  runScriptLine("+Scenario " + wheelValue);
 }
 
 
@@ -96,7 +96,7 @@ void handleWorldZoomWheel(float wheelValue) {
   if (!WORLD.include) return;
   if (!isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) return;
 
-  runScriptLine("WheelWorldZoom " + wheelValue);
+  runScriptLine("+MapZoom " + wheelValue);
 }
 
 
@@ -132,11 +132,11 @@ void handleObjectEditWheel(float wheelValue, float x0, float y0, float z0) {
 }
 
 void handleRotateWheel(float wheelValue, float x0, float y0, float z0) {
-  runScriptLine("WheelRotateSelection wheelValue=" + wheelValue + " x0=" + x0 + " y0=" + y0 + " z0=" + z0);
+  runScriptLine("+RotateSelection v=" + wheelValue + " x0=" + x0 + " y0=" + y0 + " z0=" + z0);
 }
 
 void handleScaleWheel(float wheelValue, float x0, float y0, float z0) {
-  runScriptLine("WheelScaleSelection wheelValue=" + wheelValue + " x0=" + x0 + " y0=" + y0 + " z0=" + z0);
+  runScriptLine("+ScaleSelection v=" + wheelValue + " x0=" + x0 + " y0=" + y0 + " z0=" + z0);
 }
 
 void handleMoveWheel(float wheelValue) {
@@ -159,7 +159,7 @@ void handleMoveWheel(float wheelValue) {
 }
 
 void handlePropertyEditWheel(float wheelValue) {
-  runScriptLine("WheelEditSelection " + wheelValue);
+  runScriptLine("+EditSelection " + wheelValue);
 }
 
 
@@ -226,55 +226,55 @@ void handleViewportWheel(float wheelValue) {
 }
 
 void zoomWin3DViewport(float wheelValue) {
-  runScriptLine("WheelZoomViewport " + wheelValue);
+  runScriptLine("+Zoom " + wheelValue);
 }
 
 void adjustWin3DElevationWheel(float wheelValue) {
-  runScriptLine("WheelElevation " + wheelValue);
+  runScriptLine("+Elevation " + wheelValue);
 }
 
 void scaleObjectsWheel(float wheelValue) {
-  runScriptLine("WheelScaleObjects " + wheelValue);
+  runScriptLine("+ScaleObjects " + wheelValue);
 }
 
 void scaleSkydomeWheel(float wheelValue) {
-  runScriptLine("WheelScaleSkydome " + wheelValue);
+  runScriptLine("+ScaleSkydome " + wheelValue);
 }
 
 void scaleAllModelWheel(float wheelValue) {
-  runScriptLine("WheelScaleAllModel " + wheelValue);
+  runScriptLine("+ScaleAllModel " + wheelValue);
 }
 
 void handleTargetRollXYZWheel(float wheelValue) {
-  runScriptLine("WheelTargetRollXYZ " + wheelValue);
+  runScriptLine("+TargetRollXYZ " + wheelValue);
 }
 
 void handleCameraRollXYZWheel(float wheelValue) {
-  runScriptLine("WheelCameraRollXYZ " + wheelValue);
+  runScriptLine("+CameraRollXYZ " + wheelValue);
 }
 
 void moveWin3DTowardsSelection(float wheelValue) {
-  runScriptLine("WheelMoveTowardsSelection " + wheelValue);
+  runScriptLine("+MoveTowardsSelection " + wheelValue);
 }
 
 void moveWin3DTowardsMouse(float wheelValue) {
-  runScriptLine("WheelMoveTowardsMouse " + wheelValue);
+  runScriptLine("+MoveTowardsMouse " + wheelValue);
 }
 
 void adjustPositionXWheel(float wheelValue) {
-  runScriptLine("WheelPositionX " + wheelValue);
+  runScriptLine("+PositionX " + wheelValue);
 }
 
 void adjustPositionYWheel(float wheelValue) {
-  runScriptLine("WheelPositionY " + wheelValue);
+  runScriptLine("+PositionY " + wheelValue);
 }
 
 void adjustRotationXWheel(float wheelValue) {
-  runScriptLine("WheelRotationX " + wheelValue);
+  runScriptLine("+RotationX " + wheelValue);
 }
 
 void adjustRotationZWheel(float wheelValue) {
-  runScriptLine("WheelRotationZ " + wheelValue);
+  runScriptLine("+RotationZ " + wheelValue);
 }
 
 void handleTruckOrbitWheel(float wheelValue) {

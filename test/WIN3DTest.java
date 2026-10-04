@@ -368,7 +368,7 @@ class WIN3DTest {
     // the GLOBAL moveWin3DTowardsSelection(-0.5) (defined in
     // mouseWheel.pde), which itself calls
     // move_3DViewport_towards_Selection(pow(2, 0.5*wheelValue)). For
-    // wheelValue=-0.5, that's pow(2,-0.25)=~0.841 - a POSITIVE value
+    // v=-0.5, that's pow(2,-0.25)=~0.841 - a POSITIVE value
     // under 1, which SHRINKS the offset from the pivot (moves closer),
     // not a negative t moving away as it might look at first glance.
     app.allVertices = new float[0][3]; // pivot falls back to the origin

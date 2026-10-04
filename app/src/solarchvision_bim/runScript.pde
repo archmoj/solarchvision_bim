@@ -504,7 +504,7 @@ String runScriptLine (String lineSTR) {
     // mouseWheel.pde's own leaf handlers, the wheel-event counterpart of
     // the thirteen DRAG* cases above - same reasoning (switch cases, not
     // allActions, for the same single-token-only-lookup reason explained
-    // there; "Wheel" prefixed instead of "Drag" to keep the two event
+    // there; "+" prefixed instead of "Drag" to keep the two event
     // sources distinct in the command list). One, handleMoveWheel, isn't
     // here at all: it already builds the exact same delta MOVE's own
     // Move3D.selection(dx,dy,dz) call expects, so it now calls MOVE
@@ -512,7 +512,7 @@ String runScriptLine (String lineSTR) {
     // comment on it. Every name below checked against allActions directly
     // before being used; none collide.
 
-    case "WHEELHOURS": {
+    case "+HOURS": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         int oldStart = STUDY.startHour;
@@ -534,12 +534,12 @@ String runScriptLine (String lineSTR) {
         }
       }
       else {
-        hint = "WheelHours ?";
+        hint = "+Hours ?";
       }
       return hint;
     }
 
-    case "WHEELDAYS": {
+    case "+DAYS": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         int oldJoinDays = STUDY.daysMergedCount;
@@ -552,7 +552,7 @@ String runScriptLine (String lineSTR) {
         }
       }
       else {
-        hint = "WheelDays ?";
+        hint = "+Days ?";
       }
       return hint;
     }
@@ -562,7 +562,7 @@ String runScriptLine (String lineSTR) {
     // sampleMemberStart/End or sampleStationStart/End actually moves
     // depends on state this command reads itself, not something a
     // caller could usefully pass in as a parameter.
-    case "WHEELSCENARIO": {
+    case "+SCENARIO": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (currentDataSource == dataID_climateEngineering) {
@@ -599,12 +599,12 @@ String runScriptLine (String lineSTR) {
         }
       }
       else {
-        hint = "WheelScenario ?";
+        hint = "+Scenario ?";
       }
       return hint;
     }
 
-    case "WHEELWORLDZOOM": {
+    case "+MAPZOOM": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         int oldZoom = WORLD.zoom;
@@ -618,15 +618,15 @@ String runScriptLine (String lineSTR) {
         }
       }
       else {
-        hint = "WheelWorldZoom ?";
+        hint = "+MapZoom ?";
       }
       return hint;
     }
 
-    case "WHEELROTATESELECTION": {
+    case "+ROTATESELECTION": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
-        float wheelValue = getF(p, "wheelvalue", 0);
+        float wheelValue = getF(p, "+value", 0);
         float x0 = getF(p, "x0", 0);
         float y0 = getF(p, "y0", 0);
         float z0 = getF(p, "z0", 0);
@@ -636,15 +636,15 @@ String runScriptLine (String lineSTR) {
         model_changed();
       }
       else {
-        hint = "WheelRotateSelection wheelValue=? x0=? y0=? z0=?";
+        hint = "+RotateSelection v=? x0=? y0=? z0=?";
       }
       return hint;
     }
 
-    case "WHEELSCALESELECTION": {
+    case "+SCALESELECTION": {
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
-        float wheelValue = getF(p, "wheelvalue", 0);
+        float wheelValue = getF(p, "+value", 0);
         float x0 = getF(p, "x0", 0);
         float y0 = getF(p, "y0", 0);
         float z0 = getF(p, "z0", 0);
@@ -660,12 +660,12 @@ String runScriptLine (String lineSTR) {
         model_changed();
       }
       else {
-        hint = "WheelScaleSelection wheelValue=? x0=? y0=? z0=?";
+        hint = "+ScaleSelection v=? x0=? y0=? z0=?";
       }
       return hint;
     }
 
-    case "WHEELEDITSELECTION": {
+    case "+EDITSELECTION": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         int pEdit = int(-wheelValue);
@@ -673,12 +673,12 @@ String runScriptLine (String lineSTR) {
         model_changed();
       }
       else {
-        hint = "WheelEditSelection ?";
+        hint = "+EditSelection ?";
       }
       return hint;
     }
 
-    case "WHEELZOOMVIEWPORT": {
+    case "+ZOOM": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (WIN3D.projectionTypeIndex == 1) {
@@ -689,12 +689,12 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "WheelZoomViewport ?";
+        hint = "+Zoom ?";
       }
       return hint;
     }
 
-    case "WHEELELEVATION": {
+    case "+ELEVATION": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (wheelValue > 0) WIN3D.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.zoom));
@@ -702,12 +702,12 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "WheelElevation ?";
+        hint = "+Elevation ?";
       }
       return hint;
     }
 
-    case "WHEELSCALEOBJECTS": {
+    case "+SCALEOBJECTS": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (wheelValue > 0) overallScale /= pow(2.0, 0.25);
@@ -715,12 +715,12 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "WheelScaleObjects ?";
+        hint = "+ScaleObjects ?";
       }
       return hint;
     }
 
-    case "WHEELSCALESKYDOME": {
+    case "+SCALESKYDOME": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (wheelValue > 0) Sky3D.radius *= pow(2.0, 0.25);
@@ -728,12 +728,12 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "WheelScaleSkydome ?";
+        hint = "+ScaleSkydome ?";
       }
       return hint;
     }
 
-    case "WHEELSCALEALLMODEL": {
+    case "+SCALEALLMODEL": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (wheelValue > 0) {
@@ -747,7 +747,7 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "WheelScaleAllModel ?";
+        hint = "+ScaleAllModel ?";
       }
       return hint;
     }
@@ -755,7 +755,7 @@ String runScriptLine (String lineSTR) {
     // Which of rotationX/rotationZ moves depends on WIN3D.targetAxisIndex,
     // read internally - same as WHEELSCENARIO above, this is state the
     // command reads itself rather than something a caller passes in.
-    case "WHEELTARGETROLLXYZ": {
+    case "+TARGETROLLXYZ": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (WIN3D.targetAxisIndex == 0) {
@@ -769,12 +769,12 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "WheelTargetRollXYZ ?";
+        hint = "+TargetRollXYZ ?";
       }
       return hint;
     }
 
-    case "WHEELCAMERAROLLXYZ": {
+    case "+CAMERAROLLXYZ": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (WIN3D.targetAxisIndex == 0) {
@@ -786,79 +786,79 @@ String runScriptLine (String lineSTR) {
         view_changed();
       }
       else {
-        hint = "WheelCameraRollXYZ ?";
+        hint = "+CameraRollXYZ ?";
       }
       return hint;
     }
 
-    case "WHEELMOVETOWARDSSELECTION": {
+    case "+MOVETOWARDSSELECTION": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.move_3DViewport_towards_Selection(pow(2, 0.5 * wheelValue));
         view_changed();
       }
       else {
-        hint = "WheelMoveTowardsSelection ?";
+        hint = "+MoveTowardsSelection ?";
       }
       return hint;
     }
 
-    case "WHEELMOVETOWARDSMOUSE": {
+    case "+MOVETOWARDSMOUSE": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.move_3DViewport_towards_Mouse(pow(2, 0.5 * wheelValue));
         view_changed();
       }
       else {
-        hint = "WheelMoveTowardsMouse ?";
+        hint = "+MoveTowardsMouse ?";
       }
       return hint;
     }
 
-    case "WHEELPOSITIONX": {
+    case "+POSITIONX": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.positionX += wheelValue * WIN3D.positionStep * overallScale;
         view_changed();
       }
       else {
-        hint = "WheelPositionX ?";
+        hint = "+PositionX ?";
       }
       return hint;
     }
 
-    case "WHEELPOSITIONY": {
+    case "+POSITIONY": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.positionY += wheelValue * WIN3D.positionStep * overallScale;
         view_changed();
       }
       else {
-        hint = "WheelPositionY ?";
+        hint = "+PositionY ?";
       }
       return hint;
     }
 
-    case "WHEELROTATIONX": {
+    case "+ROTATIONX": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
         view_changed();
       }
       else {
-        hint = "WheelRotationX ?";
+        hint = "+RotationX ?";
       }
       return hint;
     }
 
-    case "WHEELROTATIONZ": {
+    case "+ROTATIONZ": {
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
         view_changed();
       }
       else {
-        hint = "WheelRotationZ ?";
+        hint = "+RotationZ ?";
       }
       return hint;
     }
