@@ -1548,4 +1548,64 @@ class MouseClickedTest {
   void cancelActivePickList_returnsFalseWhenNoPickerIsActive () {
     assertFalse(app.cancelActivePickList());
   }
+
+  // ========= "LeftClick"/"RightClick" commands =============================
+  // handleWin3DClickAt(...) is the ~500-line block that used to be
+  // inline inside mouseClicked.pde's own WIN3D.include branch, extracted
+  // so "LeftClick"/"RightClick" (runScript.pde) can call it directly -
+  // verified against the full existing test suite (unchanged, all still
+  // passing) right after the extraction, before these two commands were
+  // added on top of it. These two tests confirm the commands themselves
+  // actually reach it rather than being silently shadowed by a bare
+  // allActions entry of the same name (checked directly, not assumed,
+  // when LeftClick/RightClick were added - neither collides) - using the
+  // LookAtDirection branch specifically since it's the simplest path
+  // through handleWin3DClickAt that doesn't need a populated scene to
+  // ray-cast against, only camera state.
+
+  @Test
+  void leftClickCommand_reachesHandleWin3DClickAt_viaLookAtDirection () {
+    app.build_allActions();
+    app.WIN3D.projectionTypeIndex = 1; // perspective
+    app.WIN3D.scale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = 10;
+    app.overallScale = 1;
+    app.WIN3D.currentTool = app.UITASK.LookAtDirection;
+    app.mouseButton = app.RIGHT; // deliberately opposite of LEFT, to confirm restoration below
+
+    String hint = app.runScriptLine("LeftClick x=40 y=25");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.rotationZ != 0 || app.WIN3D.rotationX != 0,
+      "a bare-action collision would leave both untouched");
+    assertEquals(app.RIGHT, app.mouseButton, "mouseButton must be restored after the simulated click");
+  }
+
+  @Test
+  void rightClickCommand_reachesHandleWin3DClickAt_viaLookAtDirection () {
+    app.build_allActions();
+    app.WIN3D.projectionTypeIndex = 1;
+    app.WIN3D.scale = 1;
+    app.WIN3D.cameraFieldOfView = (float) Math.toRadians(60);
+    app.WIN3D.rotationX = 0;
+    app.WIN3D.rotationZ = 0;
+    app.WIN3D.cameraX = 0;
+    app.WIN3D.cameraY = 0;
+    app.WIN3D.cameraZ = 10;
+    app.overallScale = 1;
+    app.WIN3D.currentTool = app.UITASK.LookAtDirection;
+    app.mouseButton = app.LEFT; // deliberately opposite of RIGHT, to confirm restoration below
+
+    String hint = app.runScriptLine("RightClick x=-30 y=15");
+
+    assertNotEquals(app.UnrecognizedCommand, hint);
+    assertTrue(app.WIN3D.rotationZ != 0 || app.WIN3D.rotationX != 0,
+      "a bare-action collision would leave both untouched");
+    assertEquals(app.LEFT, app.mouseButton, "mouseButton must be restored after the simulated click");
+  }
 }

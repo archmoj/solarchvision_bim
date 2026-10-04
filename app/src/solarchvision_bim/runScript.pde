@@ -1018,32 +1018,6 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    // mouseReleased.pde's own performRectSelect() - the corner1x/y,
-    // corner2x/y it passes are already in WIN3D's local viewport
-    // coordinates (screen position minus the viewport's own center),
-    // computed from the drag rectangle; this command just takes those
-    // four numbers and calls Select3D.selectRect(...) with them
-    // unchanged. The rectangle's own on-screen outline (drawn once more
-    // right before this fires) stays in mouseReleased.pde: that's a
-    // rendering side effect, not a selection-data change, the same
-    // distinction RecordFrame() calls elsewhere in this codebase are
-    // left direct for.
-    case "RECTSELECT": {
-      if (parts.length > 3) {
-        HashMap<String,String> p = parseParams(parts);
-        float x1 = getF(p, "x1", 0);
-        float y1 = getF(p, "y1", 0);
-        float x2 = getF(p, "x2", 0);
-        float y2 = getF(p, "y2", 0);
-        Select3D.selectRect(x1, y1, x2, y2);
-        view_changed();
-      }
-      else {
-        hint = "RectSelect x1=? y1=? x2=? y2=?";
-      }
-      return hint;
-    }
-
     // mouseReleased.pde's own performGetLengthMeasurement() - the ray
     // casting that turns the two click points into (x1,y1,z1)/(x2,y2,z2)
     // world coordinates stays in mouseReleased.pde (castClickToWorld()
@@ -1099,6 +1073,108 @@ String runScriptLine (String lineSTR) {
       }
       else {
         hint = "GetLength x1=? y1=? z1=? x2=? y2=? z2=?";
+      }
+      return hint;
+    }
+
+
+    // mouseReleased.pde's own performRectSelect() - the corner1x/y,
+    // corner2x/y it passes are already in WIN3D's local viewport
+    // coordinates (screen position minus the viewport's own center),
+    // computed from the drag rectangle; this command just takes those
+    // four numbers and calls Select3D.selectRect(...) with them
+    // unchanged. The rectangle's own on-screen outline (drawn once more
+    // right before this fires) stays in mouseReleased.pde: that's a
+    // rendering side effect, not a selection-data change, the same
+    // distinction RecordFrame() calls elsewhere in this codebase are
+    // left direct for.
+    case "RECTSELECT": {
+      if (parts.length > 3) {
+        HashMap<String,String> p = parseParams(parts);
+        float x1 = getF(p, "x1", 0);
+        float y1 = getF(p, "y1", 0);
+        float x2 = getF(p, "x2", 0);
+        float y2 = getF(p, "y2", 0);
+        Select3D.selectRect(x1, y1, x2, y2);
+        view_changed();
+      }
+      else {
+        hint = "RectSelect x1=? y1=? x2=? y2=?";
+      }
+      return hint;
+    }
+
+
+    // Simulate a left/right click at a given point in the 3D viewport
+    // (x/y are viewport-local, the same Image_X/Image_Y
+    // mouseClicked.pde's own WIN3D.include block computes from the real
+    // click position) - mouseClicked.pde's handleWin3DClickAt(...) does
+    // everything else (ray casting, LookAtDirection, Pick/Assign, Move,
+    // Create). mouseButton is temporarily overridden for the duration of
+    // the call and restored after, since handleWin3DClickAt checks the
+    // real global directly in three places rather than taking it as a
+    // parameter - the same way a real mouse event would have already
+    // left it set.
+    case "LEFTCLICK": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float x = getF(p, "x", 0);
+        float y = getF(p, "y", 0);
+        int savedButton = mouseButton;
+        mouseButton = LEFT;
+        handleWin3DClickAt(x, y);
+        mouseButton = savedButton;
+      }
+      else {
+        hint = "LeftClick x=? y=?";
+      }
+      return hint;
+    }
+
+    case "RIGHTCLICK": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float x = getF(p, "x", 0);
+        float y = getF(p, "y", 0);
+        int savedButton = mouseButton;
+        mouseButton = RIGHT;
+        handleWin3DClickAt(x, y);
+        mouseButton = savedButton;
+      }
+      else {
+        hint = "RightClick x=? y=?";
+      }
+      return hint;
+    }
+
+    case "MAPLEFTCLICK": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float x = getF(p, "x", 0);
+        float y = getF(p, "y", 0);
+        int savedButton = mouseButton;
+        mouseButton = LEFT;
+        handleWorldClickAt(x, y);
+        mouseButton = savedButton;
+      }
+      else {
+        hint = "MapLeftClick x=? y=?";
+      }
+      return hint;
+    }
+
+    case "MAPRIGHTCLICK": {
+      if (parts.length > 1) {
+        HashMap<String,String> p = parseParams(parts);
+        float x = getF(p, "x", 0);
+        float y = getF(p, "y", 0);
+        int savedButton = mouseButton;
+        mouseButton = RIGHT;
+        handleWorldClickAt(x, y);
+        mouseButton = savedButton;
+      }
+      else {
+        hint = "MapRightClick x=? y=?";
       }
       return hint;
     }
