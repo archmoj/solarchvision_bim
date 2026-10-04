@@ -1006,11 +1006,26 @@ class Select3D {
       return;
     }
 
+    // Every branch below this point shares one root cause, found while
+    // fixing the GROUP case above: a right click's RxP always comes from
+    // Terrain.intersect(...) (a land-cell index), regardless of
+    // currentObjectCategory - so for any category other than TERRAIN
+    // itself, RxP[0] is not an index into that category's own collection
+    // at all. Previously nothing validated OBJ_ID against the
+    // collection's actual size before handing it to toggleSelection(...),
+    // so a right click with, say, currentObjectCategory == FACE could add
+    // an arbitrary, often out-of-range index to faceSelection - crashing
+    // one frame later in calculate_BoundingBox() (get_Face_Vertices(),
+    // specifically) the same way the GROUP case did. Each branch now
+    // checks OBJ_ID is actually within its collection's bounds first.
+
     if (currentObjectCategory == ObjectCategory.TERRAIN) {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.terrainVertexSelection = toggleSelection(this.terrainVertexSelection, OBJ_ID);
+      if ((OBJ_ID >= 0) && (OBJ_ID < Terrain.rowCount * Terrain.columnCount)) {
+        this.terrainVertexSelection = toggleSelection(this.terrainVertexSelection, OBJ_ID);
+      }
     }
 
 
@@ -1018,7 +1033,9 @@ class Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.model1DSelection = toggleSelection(this.model1DSelection, OBJ_ID);
+      if ((OBJ_ID >= 0) && (OBJ_ID < allModel1Ds.num)) {
+        this.model1DSelection = toggleSelection(this.model1DSelection, OBJ_ID);
+      }
     }
 
 
@@ -1026,7 +1043,9 @@ class Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.model2DSelection = toggleSelection(this.model2DSelection, OBJ_ID);
+      if ((OBJ_ID >= 0) && (OBJ_ID < allModel2Ds.num)) {
+        this.model2DSelection = toggleSelection(this.model2DSelection, OBJ_ID);
+      }
     }
 
 
@@ -1034,7 +1053,16 @@ class Select3D {
 
       int f = int(RxP[0]);
 
-      int OBJ_ID = 0;
+      // -1, not 0: OBJ_ID must mean "no group actually contains face f"
+      // when the loop below never matches (including when allGroups.num
+      // is 0, e.g. a right click on an empty, fresh scene - RxP[0] is
+      // still >= 0 there since Terrain.intersect, used for right clicks,
+      // always "hits" the terrain itself). A 0 default here used to
+      // select group 0 regardless of whether group 0 (or any group at
+      // all) existed, which crashed calculate_BoundingBox() the next
+      // time WIN3D.draw() ran: it reads allGroups.Pivots[OBJ_ID] for
+      // every id in groupSelection without checking allGroups.num first.
+      int OBJ_ID = -1;
 
       for (int i = 0; i < allGroups.num; i++) {
         if ((allGroups.Faces[i][0] <= f) && (f <= allGroups.Faces[i][1])) {
@@ -1043,21 +1071,27 @@ class Select3D {
         }
       }
 
-      this.groupSelection = toggleSelection(this.groupSelection, OBJ_ID);
+      if (OBJ_ID >= 0) {
+        this.groupSelection = toggleSelection(this.groupSelection, OBJ_ID);
+      }
     }
 
     if (currentObjectCategory == ObjectCategory.FACE) {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.faceSelection = toggleSelection(this.faceSelection, OBJ_ID);
+      if ((OBJ_ID >= 0) && (OBJ_ID < allFaces.nodes.length)) {
+        this.faceSelection = toggleSelection(this.faceSelection, OBJ_ID);
+      }
     }
 
     if (currentObjectCategory == ObjectCategory.POLYLINE) {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.polylineSelection = toggleSelection(this.polylineSelection, OBJ_ID);
+      if ((OBJ_ID >= 0) && (OBJ_ID < allPolylines.nodes.length)) {
+        this.polylineSelection = toggleSelection(this.polylineSelection, OBJ_ID);
+      }
     }
 
 
@@ -1065,26 +1099,34 @@ class Select3D {
 
       int f = int(RxP[0]);
 
-      int OBJ_ID = 0;
-      float min_dist = FLOAT_undefined;
+      // f indexes allFaces.nodes[f] below, so it needs the same bounds
+      // check as every other branch here - without it, a right click
+      // (f is a land-cell index from Terrain.intersect, not a face
+      // index) throws directly on allFaces.nodes[f] rather than
+      // reaching toggleSelection(...) at all.
+      if ((f >= 0) && (f < allFaces.nodes.length)) {
 
-      for (int j = 0; j < allFaces.nodes[f].length; j++) {
-        int vNo = allFaces.nodes[f][j];
+        int OBJ_ID = 0;
+        float min_dist = FLOAT_undefined;
 
-        float x = allPoints.getX(vNo);
-        float y = allPoints.getY(vNo);
-        float z = allPoints.getZ(vNo);
+        for (int j = 0; j < allFaces.nodes[f].length; j++) {
+          int vNo = allFaces.nodes[f][j];
 
-        float now_dist = dist(x, y, z, RxP[1], RxP[2], RxP[3]);
+          float x = allPoints.getX(vNo);
+          float y = allPoints.getY(vNo);
+          float z = allPoints.getZ(vNo);
 
-        if (min_dist > now_dist) {
-          min_dist = now_dist;
-          OBJ_ID = vNo;
+          float now_dist = dist(x, y, z, RxP[1], RxP[2], RxP[3]);
+
+          if (min_dist > now_dist) {
+            min_dist = now_dist;
+            OBJ_ID = vNo;
+          }
         }
+
+
+        this.vertexSelection = toggleSelection(this.vertexSelection, OBJ_ID);
       }
-
-
-      this.vertexSelection = toggleSelection(this.vertexSelection, OBJ_ID);
     }
 
 
@@ -1093,7 +1135,9 @@ class Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.solidSelection = toggleSelection(this.solidSelection, OBJ_ID);
+      if ((OBJ_ID >= 0) && (OBJ_ID < allSolids.DEF.length)) {
+        this.solidSelection = toggleSelection(this.solidSelection, OBJ_ID);
+      }
     }
 
 
@@ -1102,15 +1146,18 @@ class Select3D {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.sectionSelection = toggleSelection(this.sectionSelection, OBJ_ID);
+      if ((OBJ_ID >= 0) && (OBJ_ID < allSections.num)) {
+        this.sectionSelection = toggleSelection(this.sectionSelection, OBJ_ID);
+      }
     }
 
     if (currentObjectCategory == ObjectCategory.CAMERA) {
 
       int OBJ_ID = int(RxP[0]);
 
-      this.cameraSelection = toggleSelection(this.cameraSelection, OBJ_ID);
-
+      if ((OBJ_ID >= 0) && (OBJ_ID < allCameras.num)) {
+        this.cameraSelection = toggleSelection(this.cameraSelection, OBJ_ID);
+      }
     }
 
 

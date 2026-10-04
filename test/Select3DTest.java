@@ -458,6 +458,129 @@ class Select3DTest {
     assertArrayEquals(new int[]{1}, app.Select3D.groupSelection);
   }
 
+  // Regression test: a right click on a fresh, empty scene used to crash
+  // (ArrayIndexOutOfBoundsException in calculate_BoundingBox, the next
+  // time WIN3D.draw() ran) because this left groupSelection as {0} even
+  // though allGroups.num is 0 here - OBJ_ID defaulted to 0 instead of a
+  // "no match" sentinel when the lookup loop never finds a group owning
+  // the hit face (including, as here, when there are no groups at all;
+  // currentObjectCategory defaults to GROUP on a fresh app, and
+  // Terrain.intersect - used for right clicks - always "hits" something,
+  // so RxP[0] >= 0 even on an empty scene, unlike allFaces.intersect().
+  // Reproduced directly via runScriptLine("RightClick x=-50 y=50") in a
+  // real sketch run before this fix; app.Select3D.calculate_BoundingBox()
+  // is called directly here afterward as the more precise, minimal
+  // reproduction of the actual crash site.
+  @Test
+  void selectPick_groupCategoryWithNoGroupsAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.GROUP;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0}); // a hit (RxP[0] >= 0), but allGroups.num is 0
+
+    assertEquals(0, app.Select3D.groupSelection.length, "no group exists to select");
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
+  // Same root cause, same fix, for every other category selectPick(...)
+  // handles - found right after the GROUP fix above, by setting
+  // currentObjectCategory to each of these in turn before a simulated
+  // right click (reported for FACE specifically, reproducing the exact
+  // crash - get_Face_Vertices() inside calculate_BoundingBox() - directly
+  // first; the rest checked systematically afterward rather than assumed
+  // fixed by analogy). RxP[0]=5 here is never a valid index into any of
+  // these collections on a fresh, empty scene (every collection here is
+  // empty), so each category's own Selection array should stay empty
+  // rather than silently accepting the land-cell index.
+
+  @Test
+  void selectPick_faceCategoryWithNoFacesAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.FACE;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0});
+
+    assertEquals(0, app.Select3D.faceSelection.length);
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
+  @Test
+  void selectPick_polylineCategoryWithNoPolylinesAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.POLYLINE;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0});
+
+    assertEquals(0, app.Select3D.polylineSelection.length);
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
+  @Test
+  void selectPick_vertexCategoryWithNoFacesAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0}); // f=5 would otherwise index allFaces.nodes[5] directly
+
+    assertEquals(0, app.Select3D.vertexSelection.length);
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
+  @Test
+  void selectPick_model1DCategoryWithNoModel1DsAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.MODEL1D;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0});
+
+    assertEquals(0, app.Select3D.model1DSelection.length);
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
+  @Test
+  void selectPick_model2DCategoryWithNoModel2DsAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.MODEL2D;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0});
+
+    assertEquals(0, app.Select3D.model2DSelection.length);
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
+  @Test
+  void selectPick_solidCategoryWithNoSolidsAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.SOLID;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0});
+
+    assertEquals(0, app.Select3D.solidSelection.length);
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
+  @Test
+  void selectPick_sectionCategoryWithNoSectionsAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.SECTION;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0});
+
+    assertEquals(0, app.Select3D.sectionSelection.length);
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
+  @Test
+  void selectPick_cameraCategoryWithNoCamerasAtAll_leavesSelectionEmptyRatherThanCrashing () {
+    app.addNewSelectionToPreviousSelection = 1;
+    app.currentObjectCategory = app.ObjectCategory.CAMERA;
+
+    app.Select3D.selectPick(new float[]{5, 0, 0, 0});
+
+    assertEquals(0, app.Select3D.cameraSelection.length);
+    assertDoesNotThrow(() -> app.Select3D.calculate_BoundingBox());
+  }
+
   @Test
   void selectPick_vertexCategoryPicksTheClosestNodeOfTheHitFace () {
     app.allVertices = new float[][]{{0, 0, 0}, {5, 0, 0}, {10, 0, 0}};
