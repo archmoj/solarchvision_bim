@@ -387,138 +387,327 @@ class UI_toolBar {
 
       case "Living Type":
       case "Building Type":
+        // Each of these (no args) already exists as a shape command's
+        // own no-args hint branch, which calls the exact same
+        // UI_setTo_Create_X() this toolbar button called directly -
+        // confirmed one at a time by reading each command's own branch,
+        // not assumed from name similarity (two are genuinely
+        // surprising: "Mesh" is what UI_setTo_Create_Face() belongs to,
+        // not a "Face" command, and "PolygonMesh"'s own no-args branch
+        // calls UI_setTo_Create_Plane() - a pre-existing mismatch in
+        // that command itself, predating this change, not something
+        // introduced here; preserved exactly rather than silently
+        // "corrected" to UI_setTo_Create_Polygon(), which would be a
+        // separate, unverified behavior change beyond reuse).
+        // "Point" and "Polygon" are left as direct calls: no existing
+        // command's no-args branch calls UI_setTo_Create_Vertex() or
+        // UI_setTo_Create_Polygon() at all. "Parametric" is also left
+        // direct: the "Parametric" command's own no-args branch
+        // hardcodes UI_setTo_Create_Parametric(0), not this button's
+        // own User3D.creatorParametricTypeIndex - reusing it would
+        // silently drop the currently-selected parametric type.
         switch (this.Items[i][j]) {
-          case "1D-Tree": UI_setTo_Create_allModel1Ds(); break;
-          case "2D-Tree": UI_setTo_Create_Tree(); break;
-          case "Person": UI_setTo_Create_Person(); break;
+          case "1D-Tree": runScriptLine("Tree1"); break;
+          case "2D-Tree": runScriptLine("Tree2"); break;
+          case "Person": runScriptLine("Person"); break;
           case "Point": UI_setTo_Create_Vertex(); break;
-          case "Polyline": UI_setTo_Create_Polyline(); break;
-          case "Surface": UI_setTo_Create_Face(); break;
-          case "Pyramid": UI_setTo_Create_Pyramid(); break;
-          case "Plane": UI_setTo_Create_Plane(); break;
+          case "Polyline": runScriptLine("Polyline"); break;
+          case "Surface": runScriptLine("Mesh"); break;
+          case "Pyramid": runScriptLine("Pyramid"); break;
+          case "Plane": runScriptLine("PolygonMesh"); break;
           case "Polygon": UI_setTo_Create_Polygon(); break;
-          case "Extrude": UI_setTo_Create_Extrude(); break;
-          case "Hyper": UI_setTo_Create_Hyper(); break;
-          case "House3": UI_setTo_Create_House3(); break;
-          case "House2": UI_setTo_Create_House2(); break;
-          case "House1": UI_setTo_Create_House1(); break;
-          case "Box": UI_setTo_Create_Box(); break;
-          case "Icosahedron": UI_setTo_Create_Icosahedron(); break;
-          case "Octahedron": UI_setTo_Create_Octahedron(); break;
-          case "Sphere": UI_setTo_Create_Sphere(); break;
-          case "Cylinder": UI_setTo_Create_Cylinder(); break;
-          case "Cone": UI_setTo_Create_Cone(); break;
-          case "Cushion": UI_setTo_Create_Cushion(); break;
+          case "Extrude": runScriptLine("PolygonExtrude"); break;
+          case "Hyper": runScriptLine("PolygonHyper"); break;
+          case "House3": runScriptLine("House3"); break;
+          case "House2": runScriptLine("House2"); break;
+          case "House1": runScriptLine("House1"); break;
+          case "Box": runScriptLine("Box"); break;
+          case "Icosahedron": runScriptLine("Icosahedron"); break;
+          case "Octahedron": runScriptLine("Octahedron"); break;
+          case "Sphere": runScriptLine("Sphere"); break;
+          case "Cylinder": runScriptLine("Cylinder"); break;
+          case "Cone": runScriptLine("Cone"); break;
+          case "Cushion": runScriptLine("Cushion"); break;
           case "Parametric": UI_setTo_Create_Parametric(User3D.creatorParametricTypeIndex); break;
         }
         break;
 
+      // "0"/"1"/"2" of each of these five match an existing "Change
+      // X"/"Pick X"/"Assign X" action exactly (checked against actions.pde
+      // directly for each, not assumed from the pattern repeating); "3"
+      // has no existing match for any of them (UI_setTo_Modify_*(3) is
+      // simply never registered), so stays a direct call.
       case "Change Seed/Material":
         switch (this.Items[i][j]) {
-          case "0": UI_setTo_Modify_Seed(0); break;
-          case "1": UI_setTo_Modify_Seed(1); break;
-          case "2": UI_setTo_Modify_Seed(2); break;
+          case "0": runScriptLine("Change Seed/Material"); break;
+          case "1": runScriptLine("Pick Seed/Material"); break;
+          case "2": runScriptLine("Assign Seed/Material"); break;
           case "3": UI_setTo_Modify_Seed(3); break;
         }
         break;
 
       case "Change Tessellation":
         switch (this.Items[i][j]) {
-          case "0": UI_setTo_Modify_Tessellation(0); break;
-          case "1": UI_setTo_Modify_Tessellation(1); break;
-          case "2": UI_setTo_Modify_Tessellation(2); break;
+          case "0": runScriptLine("Change tessellation"); break;
+          case "1": runScriptLine("Pick tessellation"); break;
+          case "2": runScriptLine("Assign tessellation"); break;
           case "3": UI_setTo_Modify_Tessellation(3); break;
         }
         break;
 
       case "Change Layer":
         switch (this.Items[i][j]) {
-          case "0": UI_setTo_Modify_Layer(0); break;
-          case "1": UI_setTo_Modify_Layer(1); break;
-          case "2": UI_setTo_Modify_Layer(2); break;
+          case "0": runScriptLine("Change Layer"); break;
+          case "1": runScriptLine("Pick Layer"); break;
+          case "2": runScriptLine("Assign Layer"); break;
           case "3": UI_setTo_Modify_Layer(3); break;
         }
         break;
 
       case "Change Visibility":
         switch (this.Items[i][j]) {
-          case "0": UI_setTo_Modify_Visibility(0); break;
-          case "1": UI_setTo_Modify_Visibility(1); break;
-          case "2": UI_setTo_Modify_Visibility(2); break;
+          case "0": runScriptLine("Change Visibility"); break;
+          case "1": runScriptLine("Pick Visibility"); break;
+          case "2": runScriptLine("Assign Visibility"); break;
           case "3": UI_setTo_Modify_Visibility(3); break;
         }
         break;
 
       case "Change Weight":
         switch (this.Items[i][j]) {
-          case "0": UI_setTo_Modify_Weight(0); break;
-          case "1": UI_setTo_Modify_Weight(1); break;
-          case "2": UI_setTo_Modify_Weight(2); break;
+          case "0": runScriptLine("Change Weight"); break;
+          case "1": runScriptLine("Pick Weight"); break;
+          case "2": runScriptLine("Assign Weight"); break;
           case "3": UI_setTo_Modify_Weight(3); break;
         }
         break;
 
       case "Normal":
         switch (this.Items[i][j]) {
-          case "1": UI_setTo_Modify_Normal(1); break;
-          case "2": UI_setTo_Modify_Normal(2); break;
-          case "3": UI_setTo_Modify_Normal(3); break;
+          case "1": runScriptLine("Flip Normal"); break;
+          case "2": runScriptLine("Set-Out Normal"); break;
+          case "3": runScriptLine("Set-In Normal"); break;
         }
         break;
 
       case "First Vertex":
-        if ((this.Items[i][j]).equals("")) UI_setTo_Modify_FirstVertex(1);
+        if ((this.Items[i][j]).equals("")) runScriptLine("Get FirstVertex");
         break;
 
+      // Power/Scale/Move/GetLength all cleanly have an existing action
+      // for every j-1 value this button can produce - unlike Rotate
+      // just below, none of these have a 0/1/2/3(/4) mismatch.
+      case "Power":
+        if (j - 1 == 0) runScriptLine("PowerX");
+        else if (j - 1 == 1) runScriptLine("PowerY");
+        else if (j - 1 == 2) runScriptLine("PowerZ");
+        else runScriptLine("Power");
+        break;
+
+      // "ScaleX"/"ScaleY"/"ScaleZ" are fine (not in bypassAllActionsFor),
+      // but bare "Scale" collides with the "SCALE s=? sx=? sy=? sz=?
+      // x=? y=? z=?" switch-case command - "scale" is in
+      // bypassAllActionsFor for that command's own sake, so
+      // runScriptLine("Scale") would silently reach that command's
+      // no-args hint branch instead of the putAction-registered
+      // UI_setTo_Modify_Scale(3). Found by checking every name used here
+      // against bypassAllActionsFor directly (not assumed safe), the
+      // same way "Rotate" below was found. j-1==3 kept as the direct
+      // call it already was.
+      case "Scale":
+        if (j - 1 == 0) runScriptLine("ScaleX");
+        else if (j - 1 == 1) runScriptLine("ScaleY");
+        else if (j - 1 == 2) runScriptLine("ScaleZ");
+        else UI_setTo_Modify_Scale(j - 1);
+        break;
+
+      // Same reasoning as Scale above: bare "Move" collides with the
+      // "MOVE dx=? dy=? dz=?" switch-case command ("move" is in
+      // bypassAllActionsFor for that command's sake), so j-1==3 stays a
+      // direct call; "MoveX"/"MoveY"/"MoveZ" are fine.
+      case "Move":
+        if (j - 1 == 0) runScriptLine("MoveX");
+        else if (j - 1 == 1) runScriptLine("MoveY");
+        else if (j - 1 == 2) runScriptLine("MoveZ");
+        else UI_setTo_Modify_Move(j - 1);
+        break;
+
+      case "Get Length":
+        if (j - 1 == 0) runScriptLine("Get dX");
+        else if (j - 1 == 1) runScriptLine("Get dY");
+        else if (j - 1 == 2) runScriptLine("Get dZ");
+        else if (j - 1 == 3) runScriptLine("Get dXYZ");
+        else if (j - 1 == 4) runScriptLine("Get dXY");
+        else UI_setTo_Modify_GetLength(j - 1);
+        break;
+
+      // Per "maintain Rotate behavior as is", kept fully direct for
+      // every value, unlike Power/Scale/Move/GetLength above. Two
+      // separate, independent reasons, not one:
+      // (1) actions.pde's own "Rotate" action maps to
+      //     UI_setTo_Modify_Rotate(2), the same value as "RotateZ" - not
+      //     (3), the way the all-axes variant of Power/Scale/Move/
+      //     GetLength each correctly does. Routing j-1==3 through
+      //     "Rotate" would silently change this button's all-axes case
+      //     to Z-only.
+      // (2) "RotateX"/"RotateY"/"RotateZ" (the would-be reuse for
+      //     j-1==0/1/2) are each unreachable via runScriptLine(...) at
+      //     all: "rotatex"/"rotatey"/"rotatez" are in
+      //     bypassAllActionsFor, for the sake of the "ROTATE[X|Y|Z] r=?
+      //     x=? y=? z=?" switch-case command - a real collision found
+      //     by checking every name used on this page against
+      //     bypassAllActionsFor directly, not assumed safe from Power/
+      //     Scale/Move's own sibling names being fine. A first attempt
+      //     at reusing these left rotationVectorIndex wrong for every
+      //     value except 3 - caught by checking actual resulting state,
+      //     not just that runScriptLine returned without error.
       case "Rotate": UI_setTo_Modify_Rotate(j - 1); break;
-      case "Power": UI_setTo_Modify_Power(j - 1); break;
-      case "Scale": UI_setTo_Modify_Scale(j - 1); break;
-      case "Move": UI_setTo_Modify_Move(j - 1); break;
-      case "Get Length": UI_setTo_Modify_GetLength(j - 1); break;
-      case "Drop": UI_setTo_Modify_Drop(j - 1); break;
 
-      case "Projection Type": UI_setTo_View_ProjectionType(j - 1); break;
+      case "Drop":
+        if (j - 1 == 0) runScriptLine("Drop on LandSurface");
+        else if (j - 1 == 1) runScriptLine("Drop on ModelSurface (Down)");
+        else if (j - 1 == 2) runScriptLine("Drop on ModelSurface (Up)");
+        else UI_setTo_Modify_Drop(j - 1);
+        break;
 
-      case "Pick Select": UI_setTo_View_PickSelect(j - 1); break;
-      case "Window Select": UI_setTo_View_WindowSelect(j - 1); break;
+      case "Projection Type":
+        if (j - 1 == 0) runScriptLine("Orthographic");
+        else if (j - 1 == 1) runScriptLine("Perspective");
+        else UI_setTo_View_ProjectionType(j - 1);
+        break;
 
-      case "PivotX": UI_setTo_View_PivotX(j - 2); break;
-      case "PivotY": UI_setTo_View_PivotY(j - 2); break;
-      case "PivotZ": UI_setTo_View_PivotZ(j - 2); break;
+      case "Pick Select":
+        if (j - 1 == 0) runScriptLine("Pick Select");
+        else if (j - 1 == 1) runScriptLine("Pick Select+");
+        else if (j - 1 == 2) runScriptLine("Pick Select-");
+        else UI_setTo_View_PickSelect(j - 1);
+        break;
 
-      case "Terrain Orbit": UI_setTo_View_TerrainOrbit(0); break;
+      case "Window Select":
+        if (j - 1 == 0) runScriptLine("Window Select");
+        else if (j - 1 == 1) runScriptLine("Window Select+");
+        else if (j - 1 == 2) runScriptLine("Window Select-");
+        else UI_setTo_View_WindowSelect(j - 1);
+        break;
 
-      case "Orbit": UI_setTo_View_Orbit(j - 1); break;
-      case "Camera Roll": UI_setTo_View_CameraRoll(j - 1); break;
-      case "Target Roll": UI_setTo_View_TargetRoll(j - 1); break;
+      case "PivotX":
+        if (j - 2 == -1) runScriptLine("PivotX:Minimum");
+        else if (j - 2 == 0) runScriptLine("PivotX:Center");
+        else if (j - 2 == 1) runScriptLine("PivotX:Maximum");
+        else UI_setTo_View_PivotX(j - 2);
+        break;
 
-      case "Look At Origin": UI_setTo_View_LookAtOrigin(j - 1); break;
-      case "Look At Direction": UI_setTo_View_LookAtDirection(j - 1); break;
-      case "Look At Selection": UI_setTo_View_LookAtSelection(j - 1); break;
+      case "PivotY":
+        if (j - 2 == -1) runScriptLine("PivotY:Minimum");
+        else if (j - 2 == 0) runScriptLine("PivotY:Center");
+        else if (j - 2 == 1) runScriptLine("PivotY:Maximum");
+        else UI_setTo_View_PivotY(j - 2);
+        break;
 
-      case "Pan": UI_setTo_View_Pan(j - 1); break;
+      case "PivotZ":
+        if (j - 2 == -1) runScriptLine("PivotZ:Minimum");
+        else if (j - 2 == 0) runScriptLine("PivotZ:Center");
+        else if (j - 2 == 1) runScriptLine("PivotZ:Maximum");
+        else UI_setTo_View_PivotZ(j - 2);
+        break;
+
+      case "Terrain Orbit": runScriptLine("TerrainOrbit"); break;
+
+      case "Orbit":
+        if (j - 1 == 0) runScriptLine("Orbit");
+        else if (j - 1 == 1) runScriptLine("OrbitZ");
+        else if (j - 1 == 2) runScriptLine("OrbitXY");
+        else UI_setTo_View_Orbit(j - 1);
+        break;
+
+      case "Camera Roll":
+        if (j - 1 == 0) runScriptLine("CameraRoll");
+        else if (j - 1 == 1) runScriptLine("CameraRollZ");
+        else if (j - 1 == 2) runScriptLine("CameraRollXY");
+        else UI_setTo_View_CameraRoll(j - 1);
+        break;
+
+      case "Target Roll":
+        if (j - 1 == 0) runScriptLine("TargetRoll");
+        else if (j - 1 == 1) runScriptLine("TargetRollZ");
+        else if (j - 1 == 2) runScriptLine("TargetRollXY");
+        else UI_setTo_View_TargetRoll(j - 1);
+        break;
+
+      // Only index 0 has an existing action for any of these three -
+      // kept as a direct call otherwise rather than assumed unreachable.
+      case "Look At Origin":
+        if (j - 1 == 0) runScriptLine("Look at origin");
+        else UI_setTo_View_LookAtOrigin(j - 1);
+        break;
+
+      case "Look At Direction":
+        if (j - 1 == 0) runScriptLine("Look at direction");
+        else UI_setTo_View_LookAtDirection(j - 1);
+        break;
+
+      case "Look At Selection":
+        if (j - 1 == 0) runScriptLine("Look at selection");
+        else UI_setTo_View_LookAtSelection(j - 1);
+        break;
+
+      case "Pan":
+        if (j - 1 == 0) runScriptLine("Pan");
+        else if (j - 1 == 1) runScriptLine("PanX");
+        else if (j - 1 == 2) runScriptLine("PanY");
+        else UI_setTo_View_Pan(j - 1);
+        break;
 
       case "Zoom":
-        UI_setTo_View_ZOOM(j - 1);
+        // "Zoom"/"Zoom as default" cover the UI_setTo_View_ZOOM(...)
+        // call itself; the toolbar's own this.Items[i][0] reset is
+        // this button's own bookkeeping, not part of either action, so
+        // it stays here unchanged - same reasoning as mouseReleased.pde's
+        // Section branch keeping its own extra bookkeeping separate from
+        // the "Section" command it calls.
+        if (j - 1 == 0) runScriptLine("Zoom");
+        else if (j - 1 == 1) runScriptLine("Zoom as default");
+        else UI_setTo_View_ZOOM(j - 1);
         this.Items[i][0] = "1"; // << set it to default choice next time
         break;
 
-      case "Camera Distance": UI_setTo_View_CameraDistance(0); break;
+      case "Camera Distance": runScriptLine("CameraDistance"); break;
 
-      case "Dist XY": UI_setTo_View_DistMouseXY(0); break;
+      case "Dist XY": runScriptLine("DistMouseXY"); break;
 
-      case "Dist Z": UI_setTo_View_Truck(0); break; // NOTE: intentionally forwards to Truck
-      case "Truck": UI_setTo_View_Truck(j - 1); break;
+      case "Dist Z": runScriptLine("DistZ"); break; // NOTE: intentionally forwards to Truck
 
-      case "3D Model Size": UI_setTo_View_3DModelSize(); break;
+      case "Truck":
+        if (j - 1 == 0) runScriptLine("TruckZ");
+        else if (j - 1 == 1) runScriptLine("TruckX");
+        else if (j - 1 == 2) runScriptLine("TruckY");
+        else UI_setTo_View_Truck(j - 1);
+        break;
 
-      case "Skydome Size": UI_setTo_View_SkydomeSize(); break;
+      case "3D Model Size": runScriptLine("3DModelSize"); break;
 
-      case "All Model Size": UI_setTo_View_AllModelSize(); break;
+      case "Skydome Size": runScriptLine("SkydomeSize"); break;
 
-      case "View Layout": UI_setTo_Viewport(j - 1); break;
+      case "All Model Size": runScriptLine("AllModelSize"); break;
 
-      case "View Point": UI_setTo_View_3DViewPoint(j - 1); break;
+      case "View Layout":
+        if (j - 1 == 0) runScriptLine("Display All Viewports");
+        else if (j - 1 == 1) runScriptLine("Enlarge 3D Viewport");
+        else if (j - 1 == 2) runScriptLine("Enlarge Time Viewport");
+        else if (j - 1 == 3) runScriptLine("Enlarge Map Viewport");
+        else UI_setTo_Viewport(j - 1);
+        break;
+
+      case "View Point": {
+        String[] viewPointNames = {"Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."};
+        int vpIndex = j - 1;
+        if ((vpIndex >= 0) && (vpIndex < viewPointNames.length)) {
+          runScriptLine(viewPointNames[vpIndex]);
+        } else {
+          UI_setTo_View_3DViewPoint(vpIndex);
+        }
+        break;
+      }
     }
   }
 
