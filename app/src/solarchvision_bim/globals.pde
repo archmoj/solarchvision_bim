@@ -340,7 +340,7 @@ void showFullCommand(String txt) {
     logLevel == LOGLEVEL_GUI_AND_PRINT
   ) {
     if (control == USER_GUI) {
-      println(ANSI_WHITE + ANSI_BLUE_BG + txt + ANSI_RESET);
+      println(ANSI_BLACK + ANSI_BLUE_BG + txt + ANSI_RESET);
     } else {
       println(txt);
     }
