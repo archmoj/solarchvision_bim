@@ -1573,86 +1573,6 @@ void handleWorldClickAt(float Image_X, float Image_Y) {
   WIN3D.revise();
 }
 
-void mouseClicked () {
-
-  if (frameCount > Last_initializationStep) {
-
-    if (control == USER_GUI) {
-
-      if (FRAME_click_IMG) {
-
-        RecordFrame();
-
-        UI_toolBar.drawMouse(1, mouseX, mouseY, 2 * MessageSize);
-
-        RecordFrame();
-      }
-
-      if ((UI_menuBar.selected_parent != -1)) {
-
-        if (mouseButton == LEFT) {
-          UI_menuBar.runSelectedItem();
-        }
-
-        UI_menuBar.deselect();
-
-        X_clicked = -1;
-        Y_clicked = -1;
-      } else {
-
-        X_clicked = mouseX;
-        Y_clicked = mouseY;
-
-        if (isInside(X_clicked, Y_clicked, 0, 0, width, pixel_A)) {
-          UI_menuBar.revise();
-          return; // we must return here so that typeUserCommand is not set to 0
-        }
-
-        if (isInside(X_clicked, Y_clicked, 0, pixel_A, width, pixel_A + pixel_B)) {
-          UI_toolBar.revise();
-        }
-
-        if (isInside(X_clicked, Y_clicked, 0, pixel_A + pixel_B + 2 * pixel_H, width, pixel_A + pixel_B + 2 * pixel_H + pixel_C)) {
-          UI_caseBar.revise();
-        }
-
-        if (isInside(X_clicked, Y_clicked, 0, pixel_A + pixel_B + 2 * pixel_H + pixel_C, width, pixel_A + pixel_B + 2 * pixel_H + pixel_C + pixel_D)) {
-          typeUserCommand = 1;
-          UI_consoleBar.revise();
-        } else if (typeUserCommand == 1){
-          typeUserCommand = 0;
-          UI_consoleBar.revise();
-        }
-
-        if (isInside(X_clicked, Y_clicked, UI_rollout.cX, UI_rollout.cY, UI_rollout.cX + UI_rollout.dX, UI_rollout.cY + UI_rollout.dY)) {
-          UI_rollout.revise();
-        }
-
-        if (WORLD.include) {
-          if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
-
-            handleWorldClickAt(
-              X_clicked - (WORLD.cX + 0.5 * WORLD.dX),
-              Y_clicked - (WORLD.cY + 0.5 * WORLD.dY)
-            );
-          }
-        }
-
-        if (WIN3D.include) {
-          if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
-
-            handleWin3DClickAt(
-              X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX),
-              Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY)
-            );
-          }
-        }
-
-        redraw();
-      }
-    }
-  }
-}
 
 void handleWin3DClickAt(float Image_X, float Image_Y) {
 
@@ -2118,5 +2038,87 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
     }
 
     view_changed();
+  }
+}
+
+
+void mouseClicked () {
+
+  if (frameCount > Last_initializationStep) {
+
+    if (control == USER_GUI) {
+
+      if (FRAME_click_IMG) {
+
+        RecordFrame();
+
+        UI_toolBar.drawMouse(1, mouseX, mouseY, 2 * MessageSize);
+
+        RecordFrame();
+      }
+
+      if ((UI_menuBar.selected_parent != -1)) {
+
+        if (mouseButton == LEFT) {
+          UI_menuBar.runSelectedItem();
+        }
+
+        UI_menuBar.deselect();
+
+        X_clicked = -1;
+        Y_clicked = -1;
+      } else {
+
+        X_clicked = mouseX;
+        Y_clicked = mouseY;
+
+        if (isInside(X_clicked, Y_clicked, 0, 0, width, pixel_A)) {
+          UI_menuBar.revise();
+          return; // we must return here so that typeUserCommand is not set to 0
+        }
+
+        if (isInside(X_clicked, Y_clicked, 0, pixel_A, width, pixel_A + pixel_B)) {
+          UI_toolBar.revise();
+        }
+
+        if (isInside(X_clicked, Y_clicked, 0, pixel_A + pixel_B + 2 * pixel_H, width, pixel_A + pixel_B + 2 * pixel_H + pixel_C)) {
+          UI_caseBar.revise();
+        }
+
+        if (isInside(X_clicked, Y_clicked, 0, pixel_A + pixel_B + 2 * pixel_H + pixel_C, width, pixel_A + pixel_B + 2 * pixel_H + pixel_C + pixel_D)) {
+          typeUserCommand = 1;
+          UI_consoleBar.revise();
+        } else if (typeUserCommand == 1){
+          typeUserCommand = 0;
+          UI_consoleBar.revise();
+        }
+
+        if (isInside(X_clicked, Y_clicked, UI_rollout.cX, UI_rollout.cY, UI_rollout.cX + UI_rollout.dX, UI_rollout.cY + UI_rollout.dY)) {
+          UI_rollout.revise();
+        }
+
+        if (WORLD.include) {
+          if (isInside(X_clicked, Y_clicked, WORLD.cX, WORLD.cY, WORLD.cX + WORLD.dX, WORLD.cY + WORLD.dY)) {
+
+            handleWorldClickAt(
+              X_clicked - (WORLD.cX + 0.5 * WORLD.dX),
+              Y_clicked - (WORLD.cY + 0.5 * WORLD.dY)
+            );
+          }
+        }
+
+        if (WIN3D.include) {
+          if (isInside(X_clicked, Y_clicked, WIN3D.cX, WIN3D.cY, WIN3D.cX + WIN3D.dX, WIN3D.cY + WIN3D.dY)) {
+
+            handleWin3DClickAt(
+              X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX),
+              Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY)
+            );
+          }
+        }
+
+        redraw();
+      }
+    }
   }
 }
