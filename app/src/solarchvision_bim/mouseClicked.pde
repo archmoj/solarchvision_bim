@@ -1644,6 +1644,17 @@ void mouseClicked () {
             Image_X = X_clicked - (WIN3D.cX + 0.5 * WIN3D.dX);
             Image_Y = Y_clicked - (WIN3D.cY + 0.5 * WIN3D.dY);
 
+            handleWin3DClickAt(Image_X, Image_Y);
+          }
+        }
+
+        redraw();
+      }
+    }
+  }
+}
+
+void handleWin3DClickAt(float Image_X, float Image_Y) {
             if (WIN3D.currentTool == UITASK.LookAtDirection) { // viewport:LookAtDirection
 
               WIN3D.look_3DViewport_towards_Direction(Image_X, Image_Y);
@@ -2143,11 +2154,4 @@ void mouseClicked () {
 
               view_changed();
             }
-          }
-        }
-
-        redraw();
-      }
-    }
-  }
 }
