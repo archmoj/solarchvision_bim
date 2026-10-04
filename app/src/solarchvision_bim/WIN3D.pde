@@ -552,11 +552,11 @@ class WIN3D {
   void handleCtrlCommandKey (char cmdKey) {
     switch (cmdKey) {
       case ',':
-        runScriptLine("Nudge Closer to Selection");
+        callAction("Nudge Closer to Selection");
         break;
 
       case '.':
-        runScriptLine("Nudge Away from Selection");
+        callAction("Nudge Away from Selection");
         break;
     }
   }
@@ -593,10 +593,10 @@ class WIN3D {
   void handleShiftedArrowKeys (int keyCode) {
     switch (keyCode) {
       case UP:
-        runScriptLine("Increase Tool Parameter");
+        callAction("Increase Tool Parameter");
         break;
       case DOWN:
-        runScriptLine("Decrease Tool Parameter");
+        callAction("Decrease Tool Parameter");
         break;
     }
   }
@@ -604,19 +604,19 @@ class WIN3D {
   void handleArrowKeys (int keyCode) {
     switch (keyCode) {
       case DOWN:
-        runScriptLine("Orbit Down Around Selection");
+        callAction("Orbit Down Around Selection");
         reviseViews();
         break;
       case LEFT:
-        runScriptLine("Orbit Left Around Selection");
+        callAction("Orbit Left Around Selection");
         reviseViews();
         break;
       case RIGHT:
-        runScriptLine("Orbit Right Around Selection");
+        callAction("Orbit Right Around Selection");
         reviseViews();
         break;
       case UP:
-        runScriptLine("Orbit Up Around Selection");
+        callAction("Orbit Up Around Selection");
         reviseViews();
         break;
     }
@@ -627,13 +627,13 @@ class WIN3D {
 
       case TAB:
         if (shiftDown) {
-          runScriptLine("Toggle Impact Type");
+          callAction("Toggle Impact Type");
           reviseViews();
         }
         break;
 
       case DELETE:
-        runScriptLine("Delete Selection");
+        callAction("Delete Selection");
         reviseViews();
         break;
 
@@ -641,12 +641,12 @@ class WIN3D {
       // own comment in actions.pde) - both just run it.
       case ',':
       case '0':
-        runScriptLine("Zoom Out");
+        callAction("Zoom Out");
         reviseViews();
         break;
 
       case '.':
-        runScriptLine("Zoom In");
+        callAction("Zoom In");
         reviseViews();
         break;
 
@@ -663,85 +663,85 @@ class WIN3D {
         break;
 
       case '4':
-        runScriptLine("Turn View Left");
+        callAction("Turn View Left");
         reviseViews();
         break;
       case '6':
-        runScriptLine("Turn View Right");
+        callAction("Turn View Right");
         reviseViews();
         break;
       case '8':
-        runScriptLine("Turn View Up");
+        callAction("Turn View Up");
         reviseViews();
         break;
       case '2':
-        runScriptLine("Turn View Down");
+        callAction("Turn View Down");
         reviseViews();
         break;
 
       case '1':
-        runScriptLine("Pan Left");
+        callAction("Pan Left");
         reviseViews();
         break;
       case '3':
-        runScriptLine("Pan Right");
+        callAction("Pan Right");
         reviseViews();
         break;
       case '7':
-        runScriptLine("Pan Forward");
+        callAction("Pan Forward");
         reviseViews();
         break;
       case '9':
-        runScriptLine("Pan Backward");
+        callAction("Pan Backward");
         reviseViews();
         break;
 
       case '*':
-        runScriptLine("Dolly Away From Selection");
+        callAction("Dolly Away From Selection");
         reviseViews();
         break;
       case '/':
-        runScriptLine("Dolly Toward Selection");
+        callAction("Dolly Toward Selection");
         reviseViews();
         break;
 
       case '+':
-        runScriptLine("Narrow Field of View");
+        callAction("Narrow Field of View");
         reviseViews();
         break;
       case '-':
-        runScriptLine("Widen Field of View");
+        callAction("Widen Field of View");
         reviseViews();
         break;
 
       case 'c':
-        runScriptLine("Next Camera");
+        callAction("Next Camera");
         reviseViews();
         break;
 
       case 'C':
-        runScriptLine("Previous Camera");
+        callAction("Previous Camera");
         reviseViews();
         break;
 
       case 't':
-        runScriptLine("Advance Troposphere Time");
+        callAction("Advance Troposphere Time");
         break;
       case 'T':
-        runScriptLine("Rewind Troposphere Time");
+        callAction("Rewind Troposphere Time");
         break;
 
       case 'd':
-        runScriptLine("Next Impact Day");
+        callAction("Next Impact Day");
         reviseViews();
         break;
       case 'D':
-        runScriptLine("Previous Impact Day");
+        callAction("Previous Impact Day");
         reviseViews();
         break;
 
       case ENTER:
-        runScriptLine("Recalculate Solar Impact");
+        callAction("Recalculate Solar Impact");
         reviseViews();
         break;
 

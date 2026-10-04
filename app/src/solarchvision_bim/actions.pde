@@ -89,6 +89,24 @@ private void putAction(String s, Action fn) {
     }
 }
 
+// Calls a putAction-registered action directly - the echoAction(...) a
+// normal lookup already wraps it in still fires (one "[Action]: name"
+// line, same as always), but runScriptLine's own string-transform and
+// switch-case lookup are skipped entirely. For a caller that already
+// knows the exact action name at compile time (UI_toolBar.pde's own
+// performAction, mainly) and doesn't need runScriptLine's broader
+// dispatch (command names, bypassAllActionsFor, etc.), going through
+// runScriptLine("CameraRollXY") only to have that command's own no-args
+// branch call this exact same action internally is wasted work, and
+// doubles the log output ("(Command): CameraRollXY" followed by
+// "[Action]: camerarollxy") for no benefit. Only ever call this with a
+// name actually registered via putAction - unlike runScriptLine, there
+// is no switch-case fallback and no UnrecognizedCommand hint if it
+// isn't.
+void callAction(String name) {
+  allActions.get(name.toLowerCase()).run(new String[]{name});
+}
+
 // Shared by putValueAction (below) and _Spinner (UI_rollout.pde): revise
 // the views a spinner-style field's update1/update2/update3 flags say
 // should refresh when its value actually changes.

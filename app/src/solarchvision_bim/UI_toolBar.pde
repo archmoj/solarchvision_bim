@@ -439,69 +439,69 @@ class UI_toolBar {
       // simply never registered), so stays a direct call.
       case "Change Seed/Material":
         switch (this.Items[i][j]) {
-          case "0": runScriptLine("Change Seed/Material"); break;
-          case "1": runScriptLine("Pick Seed/Material"); break;
-          case "2": runScriptLine("Assign Seed/Material"); break;
+          case "0": callAction("Change Seed/Material"); break;
+          case "1": callAction("Pick Seed/Material"); break;
+          case "2": callAction("Assign Seed/Material"); break;
           case "3": UI_setTo_Modify_Seed(3); break;
         }
         break;
 
       case "Change Tessellation":
         switch (this.Items[i][j]) {
-          case "0": runScriptLine("Change tessellation"); break;
-          case "1": runScriptLine("Pick tessellation"); break;
-          case "2": runScriptLine("Assign tessellation"); break;
+          case "0": callAction("Change tessellation"); break;
+          case "1": callAction("Pick tessellation"); break;
+          case "2": callAction("Assign tessellation"); break;
           case "3": UI_setTo_Modify_Tessellation(3); break;
         }
         break;
 
       case "Change Layer":
         switch (this.Items[i][j]) {
-          case "0": runScriptLine("Change Layer"); break;
-          case "1": runScriptLine("Pick Layer"); break;
-          case "2": runScriptLine("Assign Layer"); break;
+          case "0": callAction("Change Layer"); break;
+          case "1": callAction("Pick Layer"); break;
+          case "2": callAction("Assign Layer"); break;
           case "3": UI_setTo_Modify_Layer(3); break;
         }
         break;
 
       case "Change Visibility":
         switch (this.Items[i][j]) {
-          case "0": runScriptLine("Change Visibility"); break;
-          case "1": runScriptLine("Pick Visibility"); break;
-          case "2": runScriptLine("Assign Visibility"); break;
+          case "0": callAction("Change Visibility"); break;
+          case "1": callAction("Pick Visibility"); break;
+          case "2": callAction("Assign Visibility"); break;
           case "3": UI_setTo_Modify_Visibility(3); break;
         }
         break;
 
       case "Change Weight":
         switch (this.Items[i][j]) {
-          case "0": runScriptLine("Change Weight"); break;
-          case "1": runScriptLine("Pick Weight"); break;
-          case "2": runScriptLine("Assign Weight"); break;
+          case "0": callAction("Change Weight"); break;
+          case "1": callAction("Pick Weight"); break;
+          case "2": callAction("Assign Weight"); break;
           case "3": UI_setTo_Modify_Weight(3); break;
         }
         break;
 
       case "Normal":
         switch (this.Items[i][j]) {
-          case "1": runScriptLine("Flip Normal"); break;
-          case "2": runScriptLine("Set-Out Normal"); break;
-          case "3": runScriptLine("Set-In Normal"); break;
+          case "1": callAction("Flip Normal"); break;
+          case "2": callAction("Set-Out Normal"); break;
+          case "3": callAction("Set-In Normal"); break;
         }
         break;
 
       case "First Vertex":
-        if ((this.Items[i][j]).equals("")) runScriptLine("Get FirstVertex");
+        if ((this.Items[i][j]).equals("")) callAction("Get FirstVertex");
         break;
 
       // Power/Scale/Move/GetLength all cleanly have an existing action
       // for every j-1 value this button can produce - unlike Rotate
       // just below, none of these have a 0/1/2/3(/4) mismatch.
       case "Power":
-        if (j - 1 == 0) runScriptLine("PowerX");
-        else if (j - 1 == 1) runScriptLine("PowerY");
-        else if (j - 1 == 2) runScriptLine("PowerZ");
-        else runScriptLine("Power");
+        if (j - 1 == 0) callAction("PowerX");
+        else if (j - 1 == 1) callAction("PowerY");
+        else if (j - 1 == 2) callAction("PowerZ");
+        else callAction("Power");
         break;
 
       // "ScaleX"/"ScaleY"/"ScaleZ" are fine (not in bypassAllActionsFor),
@@ -515,9 +515,9 @@ class UI_toolBar {
       // same way "Rotate" below was found. j-1==3 kept as the direct
       // call it already was.
       case "Scale":
-        if (j - 1 == 0) runScriptLine("ScaleX");
-        else if (j - 1 == 1) runScriptLine("ScaleY");
-        else if (j - 1 == 2) runScriptLine("ScaleZ");
+        if (j - 1 == 0) callAction("ScaleX");
+        else if (j - 1 == 1) callAction("ScaleY");
+        else if (j - 1 == 2) callAction("ScaleZ");
         else UI_setTo_Modify_Scale(j - 1);
         break;
 
@@ -526,18 +526,18 @@ class UI_toolBar {
       // bypassAllActionsFor for that command's sake), so j-1==3 stays a
       // direct call; "MoveX"/"MoveY"/"MoveZ" are fine.
       case "Move":
-        if (j - 1 == 0) runScriptLine("MoveX");
-        else if (j - 1 == 1) runScriptLine("MoveY");
-        else if (j - 1 == 2) runScriptLine("MoveZ");
+        if (j - 1 == 0) callAction("MoveX");
+        else if (j - 1 == 1) callAction("MoveY");
+        else if (j - 1 == 2) callAction("MoveZ");
         else UI_setTo_Modify_Move(j - 1);
         break;
 
       case "Get Length":
-        if (j - 1 == 0) runScriptLine("Get dX");
-        else if (j - 1 == 1) runScriptLine("Get dY");
-        else if (j - 1 == 2) runScriptLine("Get dZ");
-        else if (j - 1 == 3) runScriptLine("Get dXYZ");
-        else if (j - 1 == 4) runScriptLine("Get dXY");
+        if (j - 1 == 0) callAction("Get dX");
+        else if (j - 1 == 1) callAction("Get dY");
+        else if (j - 1 == 2) callAction("Get dZ");
+        else if (j - 1 == 3) callAction("Get dXYZ");
+        else if (j - 1 == 4) callAction("Get dXY");
         else UI_setTo_Modify_GetLength(j - 1);
         break;
 
@@ -564,97 +564,97 @@ class UI_toolBar {
       case "Rotate": UI_setTo_Modify_Rotate(j - 1); break;
 
       case "Drop":
-        if (j - 1 == 0) runScriptLine("Drop on LandSurface");
-        else if (j - 1 == 1) runScriptLine("Drop on ModelSurface (Down)");
-        else if (j - 1 == 2) runScriptLine("Drop on ModelSurface (Up)");
+        if (j - 1 == 0) callAction("Drop on LandSurface");
+        else if (j - 1 == 1) callAction("Drop on ModelSurface (Down)");
+        else if (j - 1 == 2) callAction("Drop on ModelSurface (Up)");
         else UI_setTo_Modify_Drop(j - 1);
         break;
 
       case "Projection Type":
-        if (j - 1 == 0) runScriptLine("Orthographic");
-        else if (j - 1 == 1) runScriptLine("Perspective");
+        if (j - 1 == 0) callAction("Orthographic");
+        else if (j - 1 == 1) callAction("Perspective");
         else UI_setTo_View_ProjectionType(j - 1);
         break;
 
       case "Pick Select":
-        if (j - 1 == 0) runScriptLine("Pick Select");
-        else if (j - 1 == 1) runScriptLine("Pick Select+");
-        else if (j - 1 == 2) runScriptLine("Pick Select-");
+        if (j - 1 == 0) callAction("Pick Select");
+        else if (j - 1 == 1) callAction("Pick Select+");
+        else if (j - 1 == 2) callAction("Pick Select-");
         else UI_setTo_View_PickSelect(j - 1);
         break;
 
       case "Window Select":
-        if (j - 1 == 0) runScriptLine("Window Select");
-        else if (j - 1 == 1) runScriptLine("Window Select+");
-        else if (j - 1 == 2) runScriptLine("Window Select-");
+        if (j - 1 == 0) callAction("Window Select");
+        else if (j - 1 == 1) callAction("Window Select+");
+        else if (j - 1 == 2) callAction("Window Select-");
         else UI_setTo_View_WindowSelect(j - 1);
         break;
 
       case "PivotX":
-        if (j - 2 == -1) runScriptLine("PivotX:Minimum");
-        else if (j - 2 == 0) runScriptLine("PivotX:Center");
-        else if (j - 2 == 1) runScriptLine("PivotX:Maximum");
+        if (j - 2 == -1) callAction("PivotX:Minimum");
+        else if (j - 2 == 0) callAction("PivotX:Center");
+        else if (j - 2 == 1) callAction("PivotX:Maximum");
         else UI_setTo_View_PivotX(j - 2);
         break;
 
       case "PivotY":
-        if (j - 2 == -1) runScriptLine("PivotY:Minimum");
-        else if (j - 2 == 0) runScriptLine("PivotY:Center");
-        else if (j - 2 == 1) runScriptLine("PivotY:Maximum");
+        if (j - 2 == -1) callAction("PivotY:Minimum");
+        else if (j - 2 == 0) callAction("PivotY:Center");
+        else if (j - 2 == 1) callAction("PivotY:Maximum");
         else UI_setTo_View_PivotY(j - 2);
         break;
 
       case "PivotZ":
-        if (j - 2 == -1) runScriptLine("PivotZ:Minimum");
-        else if (j - 2 == 0) runScriptLine("PivotZ:Center");
-        else if (j - 2 == 1) runScriptLine("PivotZ:Maximum");
+        if (j - 2 == -1) callAction("PivotZ:Minimum");
+        else if (j - 2 == 0) callAction("PivotZ:Center");
+        else if (j - 2 == 1) callAction("PivotZ:Maximum");
         else UI_setTo_View_PivotZ(j - 2);
         break;
 
-      case "Terrain Orbit": runScriptLine("TerrainOrbit"); break;
+      case "Terrain Orbit": callAction("TerrainOrbit"); break;
 
       case "Orbit":
-        if (j - 1 == 0) runScriptLine("Orbit");
-        else if (j - 1 == 1) runScriptLine("OrbitZ");
-        else if (j - 1 == 2) runScriptLine("OrbitXY");
+        if (j - 1 == 0) callAction("Orbit");
+        else if (j - 1 == 1) callAction("OrbitZ");
+        else if (j - 1 == 2) callAction("OrbitXY");
         else UI_setTo_View_Orbit(j - 1);
         break;
 
       case "Camera Roll":
-        if (j - 1 == 0) runScriptLine("CameraRoll");
-        else if (j - 1 == 1) runScriptLine("CameraRollZ");
-        else if (j - 1 == 2) runScriptLine("CameraRollXY");
+        if (j - 1 == 0) callAction("CameraRoll");
+        else if (j - 1 == 1) callAction("CameraRollZ");
+        else if (j - 1 == 2) callAction("CameraRollXY");
         else UI_setTo_View_CameraRoll(j - 1);
         break;
 
       case "Target Roll":
-        if (j - 1 == 0) runScriptLine("TargetRoll");
-        else if (j - 1 == 1) runScriptLine("TargetRollZ");
-        else if (j - 1 == 2) runScriptLine("TargetRollXY");
+        if (j - 1 == 0) callAction("TargetRoll");
+        else if (j - 1 == 1) callAction("TargetRollZ");
+        else if (j - 1 == 2) callAction("TargetRollXY");
         else UI_setTo_View_TargetRoll(j - 1);
         break;
 
       // Only index 0 has an existing action for any of these three -
       // kept as a direct call otherwise rather than assumed unreachable.
       case "Look At Origin":
-        if (j - 1 == 0) runScriptLine("Look at origin");
+        if (j - 1 == 0) callAction("Look at origin");
         else UI_setTo_View_LookAtOrigin(j - 1);
         break;
 
       case "Look At Direction":
-        if (j - 1 == 0) runScriptLine("Look at direction");
+        if (j - 1 == 0) callAction("Look at direction");
         else UI_setTo_View_LookAtDirection(j - 1);
         break;
 
       case "Look At Selection":
-        if (j - 1 == 0) runScriptLine("Look at selection");
+        if (j - 1 == 0) callAction("Look at selection");
         else UI_setTo_View_LookAtSelection(j - 1);
         break;
 
       case "Pan":
-        if (j - 1 == 0) runScriptLine("Pan");
-        else if (j - 1 == 1) runScriptLine("PanX");
-        else if (j - 1 == 2) runScriptLine("PanY");
+        if (j - 1 == 0) callAction("Pan");
+        else if (j - 1 == 1) callAction("PanX");
+        else if (j - 1 == 2) callAction("PanY");
         else UI_setTo_View_Pan(j - 1);
         break;
 
@@ -665,36 +665,36 @@ class UI_toolBar {
         // it stays here unchanged - same reasoning as mouseReleased.pde's
         // Section branch keeping its own extra bookkeeping separate from
         // the "Section" command it calls.
-        if (j - 1 == 0) runScriptLine("Zoom");
-        else if (j - 1 == 1) runScriptLine("Zoom as default");
+        if (j - 1 == 0) callAction("Zoom");
+        else if (j - 1 == 1) callAction("Zoom as default");
         else UI_setTo_View_ZOOM(j - 1);
         this.Items[i][0] = "1"; // << set it to default choice next time
         break;
 
-      case "Camera Distance": runScriptLine("CameraDistance"); break;
+      case "Camera Distance": callAction("CameraDistance"); break;
 
-      case "Dist XY": runScriptLine("DistMouseXY"); break;
+      case "Dist XY": callAction("DistMouseXY"); break;
 
-      case "Dist Z": runScriptLine("DistZ"); break; // NOTE: intentionally forwards to Truck
+      case "Dist Z": callAction("DistZ"); break; // NOTE: intentionally forwards to Truck
 
       case "Truck":
-        if (j - 1 == 0) runScriptLine("TruckZ");
-        else if (j - 1 == 1) runScriptLine("TruckX");
-        else if (j - 1 == 2) runScriptLine("TruckY");
+        if (j - 1 == 0) callAction("TruckZ");
+        else if (j - 1 == 1) callAction("TruckX");
+        else if (j - 1 == 2) callAction("TruckY");
         else UI_setTo_View_Truck(j - 1);
         break;
 
-      case "3D Model Size": runScriptLine("3DModelSize"); break;
+      case "3D Model Size": callAction("3DModelSize"); break;
 
-      case "Skydome Size": runScriptLine("SkydomeSize"); break;
+      case "Skydome Size": callAction("SkydomeSize"); break;
 
-      case "All Model Size": runScriptLine("AllModelSize"); break;
+      case "All Model Size": callAction("AllModelSize"); break;
 
       case "View Layout":
-        if (j - 1 == 0) runScriptLine("Display All Viewports");
-        else if (j - 1 == 1) runScriptLine("Enlarge 3D Viewport");
-        else if (j - 1 == 2) runScriptLine("Enlarge Time Viewport");
-        else if (j - 1 == 3) runScriptLine("Enlarge Map Viewport");
+        if (j - 1 == 0) callAction("Display All Viewports");
+        else if (j - 1 == 1) callAction("Enlarge 3D Viewport");
+        else if (j - 1 == 2) callAction("Enlarge Time Viewport");
+        else if (j - 1 == 3) callAction("Enlarge Map Viewport");
         else UI_setTo_Viewport(j - 1);
         break;
 
