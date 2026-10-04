@@ -130,6 +130,23 @@ Rotate[X|Y|Z] r=? x=? y=? z=?
 Scale s=? sx=? sy=? sz=? x=? y=? z=?
 ```
 
+-   `LEFTCLICK`, `RIGHTCLICK`: Simulate a left/right click at a point in
+    the 3D viewport (`x`/`y` are viewport-local coordinates, relative to
+    the active viewport's own center) - ray casting, LookAtDirection,
+    Pick/Assign, Move, and Create all follow from here exactly as they
+    would for a real click
+-   `MAPLEFTCLICK`, `MAPRIGHTCLICK`: Simulate a left/right click on the
+    location map (`x`/`y` are map-local coordinates) - repositions the
+    station and runs the nearest-station/pick-list lookups a real map
+    click would
+
+```
+LeftClick x=? y=?
+RightClick x=? y=?
+MapLeftClick x=? y=?
+MapRightClick x=? y=?
+```
+
 -   `RECTSELECT`: Selects everything inside a screen-space rectangle
     (`x1`/`y1`/`x2`/`y2` are viewport-local coordinates, relative to the
     active 3D viewport's own center)
