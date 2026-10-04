@@ -552,11 +552,11 @@ class WIN3D {
   void handleCtrlCommandKey (char cmdKey) {
     switch (cmdKey) {
       case ',':
-        runScriptLine("key3D Ctrl+,");
+        runScriptLine("Nudge Closer to Selection");
         break;
 
       case '.':
-        runScriptLine("key3D Ctrl+.");
+        runScriptLine("Nudge Away from Selection");
         break;
     }
   }
@@ -569,37 +569,37 @@ class WIN3D {
   void handleAltArrowKeys (int keyCode) {
     switch (keyCode) {
       case RIGHT:
-        runScriptLines(new String[]{"key3D ShadeTime+1", "Shade Viewport"});
+        runScriptLines(new String[]{"Shade Time +1 Hour", "Shade Viewport"});
         this.revise();
         break;
 
       case LEFT:
-        runScriptLines(new String[]{"key3D ShadeTime-1", "Shade Viewport"});
+        runScriptLines(new String[]{"Shade Time -1 Hour", "Shade Viewport"});
         this.revise();
         break;
 
       case UP:
-        runScriptLines(new String[]{"key3D ShadeTime+Day", "Shade Viewport"});
+        runScriptLines(new String[]{"Shade Time +1 Day", "Shade Viewport"});
         this.revise();
         break;
 
       case DOWN:
-        runScriptLines(new String[]{"key3D ShadeTime-Day", "Shade Viewport"});
+        runScriptLines(new String[]{"Shade Time -1 Day", "Shade Viewport"});
         this.revise();
         break;
     }
   }
 
   // Full body moved to key3D_ShiftUpDown() in actions.pde (registered as
-  // "key3D Shift+Up"/"key3D Shift+Down") - see that function's own
+  // "Increase Tool Parameter"/"Decrease Tool Parameter") - see that function's own
   // comment.
   void handleShiftedArrowKeys (int keyCode) {
     switch (keyCode) {
       case UP:
-        runScriptLine("key3D Shift+Up");
+        runScriptLine("Increase Tool Parameter");
         break;
       case DOWN:
-        runScriptLine("key3D Shift+Down");
+        runScriptLine("Decrease Tool Parameter");
         break;
     }
   }
@@ -607,19 +607,19 @@ class WIN3D {
   void handleArrowKeys (int keyCode) {
     switch (keyCode) {
       case DOWN:
-        runScriptLine("key3D Down");
+        runScriptLine("Orbit Down Around Selection");
         reviseViews();
         break;
       case LEFT:
-        runScriptLine("key3D Left");
+        runScriptLine("Orbit Left Around Selection");
         reviseViews();
         break;
       case RIGHT:
-        runScriptLine("key3D Right");
+        runScriptLine("Orbit Right Around Selection");
         reviseViews();
         break;
       case UP:
-        runScriptLine("key3D Up");
+        runScriptLine("Orbit Up Around Selection");
         reviseViews();
         break;
     }
@@ -630,7 +630,7 @@ class WIN3D {
 
       case TAB:
         if (shiftDown) {
-          runScriptLine("key3D Shift+Tab");
+          runScriptLine("Toggle Impact Type");
           reviseViews();
         }
         break;
@@ -640,16 +640,16 @@ class WIN3D {
         reviseViews();
         break;
 
-      // '0' has always been an exact duplicate of ',' (see "key3D ,"'s
+      // '0' has always been an exact duplicate of ',' (see "Zoom Out"'s
       // own comment in actions.pde) - both just run it.
       case ',':
       case '0':
-        runScriptLine("key3D ,");
+        runScriptLine("Zoom Out");
         reviseViews();
         break;
 
       case '.':
-        runScriptLine("key3D .");
+        runScriptLine("Zoom In");
         reviseViews();
         break;
 
@@ -666,85 +666,85 @@ class WIN3D {
         break;
 
       case '4':
-        runScriptLine("key3D 4");
+        runScriptLine("Turn View Left");
         reviseViews();
         break;
       case '6':
-        runScriptLine("key3D 6");
+        runScriptLine("Turn View Right");
         reviseViews();
         break;
       case '8':
-        runScriptLine("key3D 8");
+        runScriptLine("Turn View Up");
         reviseViews();
         break;
       case '2':
-        runScriptLine("key3D 2");
+        runScriptLine("Turn View Down");
         reviseViews();
         break;
 
       case '1':
-        runScriptLine("key3D 1");
+        runScriptLine("Pan Left");
         reviseViews();
         break;
       case '3':
-        runScriptLine("key3D 3");
+        runScriptLine("Pan Right");
         reviseViews();
         break;
       case '7':
-        runScriptLine("key3D 7");
+        runScriptLine("Pan Forward");
         reviseViews();
         break;
       case '9':
-        runScriptLine("key3D 9");
+        runScriptLine("Pan Backward");
         reviseViews();
         break;
 
       case '*':
-        runScriptLine("key3D *");
+        runScriptLine("Dolly Away From Selection");
         reviseViews();
         break;
       case '/':
-        runScriptLine("key3D /");
+        runScriptLine("Dolly Toward Selection");
         reviseViews();
         break;
 
       case '+':
-        runScriptLine("key3D +");
+        runScriptLine("Narrow Field of View");
         reviseViews();
         break;
       case '-':
-        runScriptLine("key3D -");
+        runScriptLine("Widen Field of View");
         reviseViews();
         break;
 
       case 'c':
-        runScriptLine("key3D c");
+        runScriptLine("Next Camera");
         reviseViews();
         break;
 
       case 'C':
-        runScriptLine("key3D Shift+C");
+        runScriptLine("Previous Camera");
         reviseViews();
         break;
 
       case 't':
-        runScriptLine("key3D t");
+        runScriptLine("Advance Troposphere Time");
         break;
       case 'T':
-        runScriptLine("key3D Shift+T");
+        runScriptLine("Rewind Troposphere Time");
         break;
 
       case 'd':
-        runScriptLine("key3D d");
+        runScriptLine("Next Impact Day");
         reviseViews();
         break;
       case 'D':
-        runScriptLine("key3D Shift+D");
+        runScriptLine("Previous Impact Day");
         reviseViews();
         break;
 
       case ENTER:
-        runScriptLine("key3D Enter");
+        runScriptLine("Recalculate Solar Impact");
         reviseViews();
         break;
 
@@ -754,11 +754,11 @@ class WIN3D {
       // preserves that exactly rather than adding a refresh call that
       // wasn't there before.
       case ' ':
-        runScriptLines(new String[]{"Shade Viewport", "key3D ShadeTime+1"});
+        runScriptLines(new String[]{"Shade Viewport", "Shade Time +1 Hour"});
         break;
 
       case BACKSPACE:
-        runScriptLines(new String[]{"Shade Viewport", "key3D ShadeTime-1"});
+        runScriptLines(new String[]{"Shade Viewport", "Shade Time -1 Hour"});
         break;
     }
   }

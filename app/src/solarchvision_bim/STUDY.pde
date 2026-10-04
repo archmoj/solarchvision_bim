@@ -191,41 +191,42 @@ class STUDY {
     }
   }
 
-  // See actions.pde's own "key2D <descriptor>" section (right after its
-  // key3D one) for the full explanation of this naming and which of
-  // these calls still need requestRedraw() kept here versus which don't.
+  // See actions.pde's own STUDY.pde-key-shortcuts section (right after
+  // the WIN3D one) for the full explanation of these action names and
+  // which of these calls still need requestRedraw() kept here versus
+  // which don't.
   void handleCtrlCodedKey (KeyEvent e) {
     switch (keyCode) {
       case UP :
-        runScriptLine("key2D Ctrl+Up");
+        runScriptLine("Next Layer");
         requestRedraw();
         break;
 
       case DOWN :
-        runScriptLine("key2D Ctrl+Down");
+        runScriptLine("Previous Layer");
         requestRedraw();
         break;
 
       case RIGHT :
-        runScriptLine("key2D Ctrl+Right");
+        runScriptLine("Next Graph Index");
         requestRedraw();
         break;
 
       case LEFT :
-        runScriptLine("key2D Ctrl+Left");
+        runScriptLine("Previous Graph Index");
         requestRedraw();
         break;
 
       case PAGE_UP_KEYCODE :
         if (!e.isShiftDown()) {
-          runScriptLine("key2D Ctrl+PageUp");
+          runScriptLine("Next Plot Layout");
           requestRedraw();
         }
         break;
 
       case PAGE_DOWN_KEYCODE :
         if (!e.isShiftDown()) {
-          runScriptLine("key2D Ctrl+PageDown");
+          runScriptLine("Previous Plot Layout");
           requestRedraw();
         }
         break;
@@ -235,17 +236,17 @@ class STUDY {
   void handleCtrlCharKey () {
     switch (key) {
       case ';' :
-        runScriptLine("key2D Ctrl+;");
+        runScriptLine("Toggle Impact Summary");
         requestRedraw();
         break;
 
       case '"' :
-        runScriptLine("key2D Ctrl+\"");
+        runScriptLine("Increase Vertical Scale");
         requestRedraw();
         break;
 
       case '\'' :
-        runScriptLine("key2D Ctrl+'");
+        runScriptLine("Decrease Vertical Scale");
         requestRedraw();
         break;
     }
@@ -255,65 +256,65 @@ class STUDY {
     switch (key) {
 
       case '>' :
-        runScriptLine("key2D >");
+        runScriptLine("Widen Join Window");
         break;
       case '<' :
-        runScriptLine("key2D <");
+        runScriptLine("Narrow Join Window");
         break;
 
       case ')' :
-        runScriptLine("key2D )");
+        runScriptLine("Extend Date Range");
         break;
       case '(' :
-        runScriptLine("key2D (");
+        runScriptLine("Shrink Date Range");
         break;
 
       case 'S' :
-        runScriptLine("key2D Shift+S");
+        runScriptLine("Next Sky Scenario");
         break;
       case 's' :
-        runScriptLine("key2D s");
+        runScriptLine("Previous Sky Scenario");
         break;
 
       case 'V' :
       case 'v' :
-        runScriptLine("key2D v");
+        runScriptLine("Toggle Raw Lines");
         requestRedraw();
         break;
 
       case 'm' :
       case 'M' :
-        runScriptLine("key2D m");
+        runScriptLine("Toggle Statistical Ranges");
         requestRedraw();
         break;
 
       case 'n' :
       case 'N' :
-        runScriptLine("key2D n");
+        runScriptLine("Toggle Study Normal Lines");
         requestRedraw();
         break;
 
       case 'b' :
       case 'B' :
-        runScriptLine("key2D b");
+        runScriptLine("Toggle Probabilities");
         requestRedraw();
         break;
 
       case '{' :
-        runScriptLine("key2D {");
+        runScriptLine("Increase Probability Height Step");
         requestRedraw();
         break;
       case '}' :
-        runScriptLine("key2D }");
+        runScriptLine("Decrease Probability Height Step");
         requestRedraw();
         break;
 
       case '[' :
-        runScriptLine("key2D [");
+        runScriptLine("Decrease Sum Interval");
         requestRedraw();
         break;
       case ']' :
-        runScriptLine("key2D ]");
+        runScriptLine("Increase Sum Interval");
         requestRedraw();
         break;
     }

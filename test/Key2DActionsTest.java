@@ -26,7 +26,7 @@ class Key2DActionsTest {
   void keyCtrlUp_cyclesLayerForwardAndWrapsAtTheEnd () {
     app.currentLayerId = app.allLayers.length - 1;
 
-    String hint = app.runScriptLine("key2D Ctrl+Up");
+    String hint = app.runScriptLine("Next Layer");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.currentLayerId);
@@ -36,7 +36,7 @@ class Key2DActionsTest {
   void keyCtrlDown_cyclesLayerBackwardAndWrapsAtTheStart () {
     app.currentLayerId = 0;
 
-    String hint = app.runScriptLine("key2D Ctrl+Down");
+    String hint = app.runScriptLine("Previous Layer");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.allLayers.length - 1, app.currentLayerId);
@@ -52,7 +52,7 @@ class Key2DActionsTest {
     int target = app.allLayers.length > 1 ? 1 : 0;
     app.currentLayerId = target - 1 < 0 ? app.allLayers.length - 1 : target - 1;
 
-    app.runScriptLine("key2D Ctrl+Up");
+    app.runScriptLine("Next Layer");
 
     assertEquals(app.allLayers[app.currentLayerId].verticalUnitScale, app.STUDY.verticalUnitScale, 0.0001f);
   }
@@ -63,7 +63,7 @@ class Key2DActionsTest {
   void keyCtrlRight_cyclesImpactGraphIndexForwardAndWraps () {
     app.STUDY.impactGraphIndex = app.STUDY.PLOT_IMPACTS_MODE_COUNT - 1;
 
-    String hint = app.runScriptLine("key2D Ctrl+Right");
+    String hint = app.runScriptLine("Next Graph Index");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.STUDY.impactGraphIndex);
@@ -73,7 +73,7 @@ class Key2DActionsTest {
   void keyCtrlLeft_cyclesImpactGraphIndexBackwardAndWraps () {
     app.STUDY.impactGraphIndex = 0;
 
-    String hint = app.runScriptLine("key2D Ctrl+Left");
+    String hint = app.runScriptLine("Previous Graph Index");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.STUDY.PLOT_IMPACTS_MODE_COUNT - 1, app.STUDY.impactGraphIndex);
@@ -85,10 +85,10 @@ class Key2DActionsTest {
   void keyCtrlPageUp_and_keyCtrlPageDown_areEachOthersInverse () {
     app.STUDY.plotLayoutIndex = 0;
 
-    String upHint = app.runScriptLine("key2D Ctrl+PageUp");
+    String upHint = app.runScriptLine("Next Plot Layout");
     int afterUp = app.STUDY.plotLayoutIndex;
 
-    String downHint = app.runScriptLine("key2D Ctrl+PageDown");
+    String downHint = app.runScriptLine("Previous Plot Layout");
 
     assertNotEquals(app.UnrecognizedCommand, upHint);
     assertNotEquals(app.UnrecognizedCommand, downHint);
@@ -102,12 +102,12 @@ class Key2DActionsTest {
   void keyCtrlSemicolon_togglesImpactSummary () {
     app.STUDY.showImpactSummary = false;
 
-    String hint = app.runScriptLine("key2D Ctrl+;");
+    String hint = app.runScriptLine("Toggle Impact Summary");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showImpactSummary);
 
-    app.runScriptLine("key2D Ctrl+;");
+    app.runScriptLine("Toggle Impact Summary");
     assertFalse(app.STUDY.showImpactSummary);
   }
 
@@ -115,7 +115,7 @@ class Key2DActionsTest {
   void keyCtrlDoubleQuote_scalesVerticalUnitScaleUp () {
     app.STUDY.verticalUnitScale = 10;
 
-    String hint = app.runScriptLine("key2D Ctrl+\"");
+    String hint = app.runScriptLine("Increase Vertical Scale");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(10 * Math.sqrt(2.0), app.STUDY.verticalUnitScale, 0.0001f);
@@ -125,7 +125,7 @@ class Key2DActionsTest {
   void keyCtrlSingleQuote_scalesVerticalUnitScaleDown () {
     app.STUDY.verticalUnitScale = 10;
 
-    String hint = app.runScriptLine("key2D Ctrl+'");
+    String hint = app.runScriptLine("Decrease Vertical Scale");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(10 * Math.sqrt(0.5), app.STUDY.verticalUnitScale, 0.0001f);
@@ -137,7 +137,7 @@ class Key2DActionsTest {
   void keyGreaterThan_widensTheJoinWindowByTwoDays () {
     app.STUDY.daysMergedCount = 10;
 
-    String hint = app.runScriptLine("key2D >");
+    String hint = app.runScriptLine("Widen Join Window");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(12, app.STUDY.daysMergedCount);
@@ -147,7 +147,7 @@ class Key2DActionsTest {
   void keyGreaterThan_clampsAt365 () {
     app.STUDY.daysMergedCount = 365;
 
-    app.runScriptLine("key2D >");
+    app.runScriptLine("Widen Join Window");
 
     assertEquals(365, app.STUDY.daysMergedCount);
   }
@@ -156,7 +156,7 @@ class Key2DActionsTest {
   void keyLessThan_narrowsTheJoinWindowByTwoDays () {
     app.STUDY.daysMergedCount = 10;
 
-    String hint = app.runScriptLine("key2D <");
+    String hint = app.runScriptLine("Narrow Join Window");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(8, app.STUDY.daysMergedCount);
@@ -166,7 +166,7 @@ class Key2DActionsTest {
   void keyLessThan_clampsAt1 () {
     app.STUDY.daysMergedCount = 1;
 
-    app.runScriptLine("key2D <");
+    app.runScriptLine("Narrow Join Window");
 
     assertEquals(1, app.STUDY.daysMergedCount);
   }
@@ -178,7 +178,7 @@ class Key2DActionsTest {
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 10;
 
-    String hint = app.runScriptLine("key2D )");
+    String hint = app.runScriptLine("Extend Date Range");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(11, app.STUDY.endDay);
@@ -189,7 +189,7 @@ class Key2DActionsTest {
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 10;
 
-    String hint = app.runScriptLine("key2D (");
+    String hint = app.runScriptLine("Shrink Date Range");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(9, app.STUDY.endDay);
@@ -206,7 +206,7 @@ class Key2DActionsTest {
     app.STUDY.startDay = 0;
     app.STUDY.endDay = 5;
 
-    app.runScriptLine("key2D (");
+    app.runScriptLine("Shrink Date Range");
 
     assertTrue(app.STUDY.endDay > app.STUDY.startDay);
   }
@@ -217,7 +217,7 @@ class Key2DActionsTest {
   void keyShiftS_cyclesSkyScenarioForward () {
     app.STUDY.skyScenarioSetting = 1;
 
-    String hint = app.runScriptLine("key2D Shift+S");
+    String hint = app.runScriptLine("Next Sky Scenario");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(2, app.STUDY.skyScenarioSetting);
@@ -227,7 +227,7 @@ class Key2DActionsTest {
   void keyS_cyclesSkyScenarioBackwardAndWrapsToFour () {
     app.STUDY.skyScenarioSetting = 1;
 
-    String hint = app.runScriptLine("key2D s");
+    String hint = app.runScriptLine("Previous Sky Scenario");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(4, app.STUDY.skyScenarioSetting);
@@ -239,7 +239,7 @@ class Key2DActionsTest {
   void keyV_togglesShowRawLines () {
     app.STUDY.showRawLines = false;
 
-    String hint = app.runScriptLine("key2D v");
+    String hint = app.runScriptLine("Toggle Raw Lines");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showRawLines);
@@ -249,7 +249,7 @@ class Key2DActionsTest {
   void keyM_togglesShowStatisticalRanges () {
     app.STUDY.showStatisticalRanges = false;
 
-    String hint = app.runScriptLine("key2D m");
+    String hint = app.runScriptLine("Toggle Statistical Ranges");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showStatisticalRanges);
@@ -259,7 +259,7 @@ class Key2DActionsTest {
   void keyN_togglesShowNormalLines () {
     app.STUDY.showNormalLines = false;
 
-    String hint = app.runScriptLine("key2D n");
+    String hint = app.runScriptLine("Toggle Study Normal Lines");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showNormalLines);
@@ -269,7 +269,7 @@ class Key2DActionsTest {
   void keyB_togglesShowProbabilities () {
     app.STUDY.showProbabilities = false;
 
-    String hint = app.runScriptLine("key2D b");
+    String hint = app.runScriptLine("Toggle Probabilities");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showProbabilities);
@@ -281,7 +281,7 @@ class Key2DActionsTest {
   void keyOpenBrace_doublesProbabilityHeightInterval () {
     app.STUDY.probabilityHeightInterval = 4;
 
-    String hint = app.runScriptLine("key2D {");
+    String hint = app.runScriptLine("Increase Probability Height Step");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(8f, app.STUDY.probabilityHeightInterval, 0.0001f);
@@ -291,7 +291,7 @@ class Key2DActionsTest {
   void keyOpenBrace_doesNotGrowPast32 () {
     app.STUDY.probabilityHeightInterval = 32;
 
-    app.runScriptLine("key2D {");
+    app.runScriptLine("Increase Probability Height Step");
 
     assertEquals(32f, app.STUDY.probabilityHeightInterval, 0.0001f);
   }
@@ -300,7 +300,7 @@ class Key2DActionsTest {
   void keyCloseBrace_halvesProbabilityHeightInterval () {
     app.STUDY.probabilityHeightInterval = 8;
 
-    String hint = app.runScriptLine("key2D }");
+    String hint = app.runScriptLine("Decrease Probability Height Step");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(4f, app.STUDY.probabilityHeightInterval, 0.0001f);
@@ -310,7 +310,7 @@ class Key2DActionsTest {
   void keyCloseBrace_doesNotShrinkPast2 () {
     app.STUDY.probabilityHeightInterval = 2;
 
-    app.runScriptLine("key2D }");
+    app.runScriptLine("Decrease Probability Height Step");
 
     assertEquals(2f, app.STUDY.probabilityHeightInterval, 0.0001f);
   }
@@ -326,7 +326,7 @@ class Key2DActionsTest {
   void keyOpenBracket_decreasesSumInterval () {
     app.STUDY.probabilityWidthInterval = 24;
 
-    String hint = app.runScriptLine("key2D [");
+    String hint = app.runScriptLine("Decrease Sum Interval");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(18, app.STUDY.probabilityWidthInterval);
@@ -336,7 +336,7 @@ class Key2DActionsTest {
   void keyCloseBracket_increasesSumInterval () {
     app.STUDY.probabilityWidthInterval = 1;
 
-    String hint = app.runScriptLine("key2D ]");
+    String hint = app.runScriptLine("Increase Sum Interval");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(2, app.STUDY.probabilityWidthInterval);

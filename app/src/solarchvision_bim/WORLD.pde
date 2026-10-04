@@ -776,18 +776,18 @@ class WORLD {
 
   // '`' / '~' : step the map's zoom level backward/forward, wrapping around
   // the 0..9 range, then re-pick a good viewport tile for the current
-  // location at the new zoom. See actions.pde's own "keyMap `"/"keyMap ~"
+  // location at the new zoom. See actions.pde's own "Map Zoom Out"/"Map Zoom In"
   // comment for the naming convention and why these are new actions
   // rather than a reuse of something existing.
   void handlePlainCharKey () {
     switch(key) {
       case '`' :
-        runScriptLine("keyMap `");
+        runScriptLine("Map Zoom Out");
         this.revise();
         break;
 
       case '~' :
-        runScriptLine("keyMap ~");
+        runScriptLine("Map Zoom In");
         this.revise();
         break;
 

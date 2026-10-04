@@ -164,8 +164,8 @@ void putValueAction(String name, FloatGetter getter, FloatSetter setter, float m
   putValueAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, null);
 }
 
-// Shift+Up ("key3D Shift+Up", isUp=true) or Shift+Down ("key3D
-// Shift+Down", isUp=false)'s full body - see WIN3D.pde's own
+// "Increase Tool Parameter" (isUp=true) or "Decrease Tool Parameter"
+// (isUp=false)'s full body - see WIN3D.pde's own
 // handleShiftedArrowKeys() for how these get dispatched from an actual
 // key press. Moved out to its own function, rather than inlined in each
 // putAction's lambda, since the two share this entire body and
@@ -1320,33 +1320,36 @@ void build_allActions() {
     UI_toolBar.revise();
   });
 
-  // key3D <descriptor>: mirrors a WIN3D.pde key shortcut exactly (see
-  // WIN3D.pde's own keyPressed()/handleCommandKey()/handleCtrlCommandKey()/
+  // This group mirrors WIN3D.pde's own key shortcuts exactly (see that
+  // file's keyPressed()/handleCommandKey()/handleCtrlCommandKey()/
   // handleArrowKeys() family), registered so the same effect is both
   // scriptable (command/*.txt, or typed directly - runScriptLine's own
   // "cmd:"/"out:" print gives logging for free) and keyboard-triggered
   // through one shared code path, rather than two separately-maintained
-  // copies of the same logic. <descriptor> follows the key itself where
-  // that's unambiguous ("key3D 5"), and a "Ctrl+"/"Shift+"/"Alt+" prefix
-  // where a modifier changes what the bare key alone would do. Letter
-  // keys are an exception: normalizeActionKey() lowercases its whole
-  // argument, so "key3D c" and "key3D C" would collide on the exact same
-  // normalized key ("key3d_c") despite being different keypresses -
-  // "key3D Shift+C" is used for the shifted one instead, purely to keep
-  // the two distinct; reviseViews()/other view-refresh calls stay in
+  // copies of the same logic. Originally named by the literal key
+  // pressed ("key3D c", "key3D Shift+C", etc.) - renamed to describe
+  // what each one actually does instead, since that's what a person
+  // scripting or reading this list cares about, not which physical key
+  // happened to trigger it in the GUI. A collision this renaming had to
+  // route around either way: normalizeActionKey() lowercases its whole
+  // argument, so naming both camera-cycle actions by case alone ("c" vs
+  // "C") would have collided on the same normalized key regardless of
+  // the literal-key or the descriptive naming - "Next Camera"/
+  // "Previous Camera" sidesteps that the same way "key3D c"/"key3D
+  // Shift+C" did before. reviseViews()/other view-refresh calls stay in
   // WIN3D.pde's own key handler rather than moving into the action here,
   // matching "Delete Selection" below's own precedent (confirmed by
   // reading Delete3D.selection() itself: it has no refresh call of its
   // own, so whoever calls it - keyboard or script - is expected to
   // trigger that separately).
-  putAction("key3D c", () -> {
+  putAction("Next Camera", () -> {
     WIN3D.currentCameraIndex += 1;
     if (WIN3D.currentCameraIndex > allCameras.num - 1) WIN3D.currentCameraIndex = 0;
     WIN3D.apply_currentCameraIndex();
     modify_Viewport_Title();
   });
 
-  putAction("key3D Shift+C", () -> {
+  putAction("Previous Camera", () -> {
     WIN3D.currentCameraIndex -= 1;
     // Pre-existing bug, found (not introduced) while testing this move:
     // the original "allCameras.num - 1" wrap-around assumes at least one
@@ -1361,7 +1364,7 @@ void build_allActions() {
     modify_Viewport_Title();
   });
 
-  putAction("key3D Shift+Tab", () -> {
+  putAction("Toggle Impact Type", () -> {
     WIN3D.impactTypeIndex = (WIN3D.impactTypeIndex + 1) % numberOfImpactVariations;
     if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
@@ -1371,93 +1374,93 @@ void build_allActions() {
   // (both nudge positionZ in perspective, or zoom otherwise) - rather
   // than register the same body twice under two names, '0's own key
   // handler just calls this one too.
-  putAction("key3D ,", () -> {
+  putAction("Zoom Out", () -> {
     if (WIN3D.projectionTypeIndex == 1) WIN3D.positionZ += WIN3D.positionStep * overallScale;
     else WIN3D.zoom /= pow(2.0, 0.25);
   });
 
-  putAction("key3D .", () -> {
+  putAction("Zoom In", () -> {
     if (WIN3D.projectionTypeIndex == 1) WIN3D.positionZ -= WIN3D.positionStep * overallScale;
     else WIN3D.zoom *= pow(2.0, 0.25);
   });
 
-  putAction("key3D 4", () -> {
+  putAction("Turn View Left", () -> {
     WIN3D.rotationZ += WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
   });
 
-  putAction("key3D 6", () -> {
+  putAction("Turn View Right", () -> {
     WIN3D.rotationZ -= WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
   });
 
-  putAction("key3D 8", () -> {
+  putAction("Turn View Up", () -> {
     WIN3D.rotationX -= WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
   });
 
-  putAction("key3D 2", () -> {
+  putAction("Turn View Down", () -> {
     WIN3D.rotationX += WIN3D.rotationStep;
     WIN3D.reverseTransform_3DViewport();
   });
 
-  putAction("key3D 1", () -> {
+  putAction("Pan Left", () -> {
     WIN3D.positionX += WIN3D.positionStep * overallScale;
   });
 
-  putAction("key3D 3", () -> {
+  putAction("Pan Right", () -> {
     WIN3D.positionX -= WIN3D.positionStep * overallScale;
   });
 
-  putAction("key3D 7", () -> {
+  putAction("Pan Forward", () -> {
     WIN3D.positionY += WIN3D.positionStep * overallScale;
   });
 
-  putAction("key3D 9", () -> {
+  putAction("Pan Backward", () -> {
     WIN3D.positionY -= WIN3D.positionStep * overallScale;
   });
 
-  putAction("key3D *", () -> {
+  putAction("Dolly Away From Selection", () -> {
     WIN3D.move_3DViewport_towards_Selection(2.0);
   });
 
-  putAction("key3D /", () -> {
+  putAction("Dolly Toward Selection", () -> {
     WIN3D.move_3DViewport_towards_Selection(0.5);
   });
 
-  putAction("key3D +", () -> {
+  putAction("Narrow Field of View", () -> {
     WIN3D.zoom = 2 * funcs.atan_ang((1.0 / 1.1) * funcs.tan_ang(0.5 * WIN3D.zoom));
   });
 
-  putAction("key3D -", () -> {
+  putAction("Widen Field of View", () -> {
     WIN3D.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.zoom));
   });
 
-  putAction("key3D t", () -> {
+  putAction("Advance Troposphere Time", () -> {
     Tropo3D.i_Map += TROPO_deltaTime;
     if (Tropo3D.i_Map > STUDY.endHour) Tropo3D.i_Map -= TROPO_deltaTime;
     WORLD.revise();
     WIN3D.revise();
   });
 
-  putAction("key3D Shift+T", () -> {
+  putAction("Rewind Troposphere Time", () -> {
     Tropo3D.i_Map -= TROPO_deltaTime;
     if (Tropo3D.i_Map < STUDY.startHour) Tropo3D.i_Map += TROPO_deltaTime;
     WORLD.revise();
     WIN3D.revise();
   });
 
-  putAction("key3D d", () -> {
+  putAction("Next Impact Day", () -> {
     impactDisplayDay += 1;
     if (impactDisplayDay > STUDY.endDay) impactDisplayDay = 0;
   });
 
-  putAction("key3D Shift+D", () -> {
+  putAction("Previous Impact Day", () -> {
     impactDisplayDay -= 1;
     if (impactDisplayDay < 0) impactDisplayDay = STUDY.endDay;
   });
 
-  putAction("key3D Enter", () -> {
+  putAction("Recalculate Solar Impact", () -> {
     if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
   });
@@ -1470,43 +1473,43 @@ void build_allActions() {
   // +1/-1 cover Space, Backspace, and Alt+Right/Left alike (all four
   // step by exactly one hour); Alt+Up/Down step a full day instead
   // (SHADE_HOURS_PER_DAY + 1), hence the separate pair.
-  putAction("key3D ShadeTime+1", () -> {
+  putAction("Shade Time +1 Hour", () -> {
     adjustShadeTime(1);
   });
 
-  putAction("key3D ShadeTime-1", () -> {
+  putAction("Shade Time -1 Hour", () -> {
     adjustShadeTime(-1);
   });
 
-  putAction("key3D ShadeTime+Day", () -> {
+  putAction("Shade Time +1 Day", () -> {
     adjustShadeTime(SHADE_HOURS_PER_DAY + 1);
   });
 
-  putAction("key3D ShadeTime-Day", () -> {
+  putAction("Shade Time -1 Day", () -> {
     adjustShadeTime(-(SHADE_HOURS_PER_DAY + 1));
   });
 
-  putAction("key3D Ctrl+,", () -> {
+  putAction("Nudge Closer to Selection", () -> {
     moveWin3DTowardsSelection(-0.5);
   });
 
-  putAction("key3D Ctrl+.", () -> {
+  putAction("Nudge Away from Selection", () -> {
     moveWin3DTowardsSelection(0.5);
   });
 
-  putAction("key3D Up", () -> {
+  putAction("Orbit Up Around Selection", () -> {
     WIN3D.rotateZ_3DViewport_around_Selection(-WIN3D.rotationStep);
   });
 
-  putAction("key3D Down", () -> {
+  putAction("Orbit Down Around Selection", () -> {
     WIN3D.rotateZ_3DViewport_around_Selection(WIN3D.rotationStep);
   });
 
-  putAction("key3D Left", () -> {
+  putAction("Orbit Left Around Selection", () -> {
     WIN3D.rotateXY_3DViewport_around_Selection(-WIN3D.rotationStep);
   });
 
-  putAction("key3D Right", () -> {
+  putAction("Orbit Right Around Selection", () -> {
     WIN3D.rotateXY_3DViewport_around_Selection(WIN3D.rotationStep);
   });
 
@@ -1517,51 +1520,52 @@ void build_allActions() {
   // everything it touches (Select3D, Rotate3D, Scale3D, Move3D, Edit3D,
   // UITASK, model_changed()) is already globally accessible, not
   // WIN3D-private, so nothing but the location and that parameter change.
-  putAction("key3D Shift+Up", () -> {
+  putAction("Increase Tool Parameter", () -> {
     key3D_ShiftUpDown(true);
   });
 
-  putAction("key3D Shift+Down", () -> {
+  putAction("Decrease Tool Parameter", () -> {
     key3D_ShiftUpDown(false);
   });
 
-  // key2D <descriptor>: STUDY.pde's own equivalent of the key3D family
-  // above - see that section's own comment for the naming convention and
-  // the reasoning behind it (case-sensitive letter pairs needing a
-  // "Shift+" name rather than relying on case, which
-  // normalizeActionKey() strips).
+  // STUDY.pde's own equivalent of the WIN3D group above - see that
+  // section's own comment for the naming approach (descriptive names
+  // rather than the literal key pressed) and the reasoning behind it
+  // (case-sensitive letter pairs needing distinct wording rather than
+  // relying on case, which normalizeActionKey() strips).
   //
   // None of STUDY.pde's keys had an existing matching action to reuse
-  // (checked, the way key3D's did before registering anything new) - the
-  // closest-sounding candidates (Change Layer, Show/Hide Sky, Show/Hide
-  // Normals) turned out to be unrelated on inspection: UI_setTo_Modify_Layer()
-  // is a tool-mode switch, not changeCurrentLayerTo()'s direct cycling;
-  // Sky3D.displaySurface/allFaces.showNormalLines are different, 3D-scene
-  // fields entirely from STUDY's own showRawLines/showNormalLines.
+  // (checked, the way the WIN3D group's own did before registering
+  // anything new) - the closest-sounding candidates (Change Layer,
+  // Show/Hide Sky, Show/Hide Normals) turned out to be unrelated on
+  // inspection: UI_setTo_Modify_Layer() is a tool-mode switch, not
+  // changeCurrentLayerTo()'s direct cycling; Sky3D.displaySurface/
+  // allFaces.showNormalLines are different, 3D-scene fields entirely
+  // from STUDY's own showRawLines/showNormalLines.
   //
   // Refresh calls (requestRedraw()) stay in STUDY.pde's own key handlers
   // below, not moved into these actions - except where the function
   // being called is already fully self-sufficient about its own refresh
   // (changeJoinDays/changeJEnd/changeSkyScenario, confirmed by reading
   // each one, not assumed), in which case there's nothing left for the
-  // key handler to add. Same reasoning as key3D's own "Delete Selection"/
-  // "Look at selection" distinction.
+  // key handler to add. Same reasoning as the WIN3D group's own "Delete
+  // Selection"/"Look at selection" distinction.
   // currentLayerId is a global (layers.pde), not a STUDY field - the
   // original code references it bare from inside STUDY.pde too, which
   // reads like a "this." field but isn't one.
-  putAction("key2D Ctrl+Up", () -> {
+  putAction("Next Layer", () -> {
     changeCurrentLayerTo((currentLayerId + 1) % allLayers.length);
   });
 
-  putAction("key2D Ctrl+Down", () -> {
+  putAction("Previous Layer", () -> {
     changeCurrentLayerTo((currentLayerId + allLayers.length - 1) % allLayers.length);
   });
 
-  putAction("key2D Ctrl+Right", () -> {
+  putAction("Next Graph Index", () -> {
     STUDY.impactGraphIndex = (STUDY.impactGraphIndex + 1) % STUDY.PLOT_IMPACTS_MODE_COUNT;
   });
 
-  putAction("key2D Ctrl+Left", () -> {
+  putAction("Previous Graph Index", () -> {
     STUDY.impactGraphIndex = (STUDY.impactGraphIndex - 1 + STUDY.PLOT_IMPACTS_MODE_COUNT) % STUDY.PLOT_IMPACTS_MODE_COUNT;
   });
 
@@ -1569,23 +1573,23 @@ void build_allActions() {
   // handleCtrlCodedKey() - a real KeyEvent's modifier state isn't
   // something a script invoking this action by name would have (or
   // need) an equivalent of.
-  putAction("key2D Ctrl+PageUp", () -> {
+  putAction("Next Plot Layout", () -> {
     STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex + 1) % STUDY.PLOT_SETUP_MODE_COUNT;
   });
 
-  putAction("key2D Ctrl+PageDown", () -> {
+  putAction("Previous Plot Layout", () -> {
     STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex - 1 + STUDY.PLOT_SETUP_MODE_COUNT) % STUDY.PLOT_SETUP_MODE_COUNT;
   });
 
-  putAction("key2D Ctrl+;", () -> {
+  putAction("Toggle Impact Summary", () -> {
     STUDY.showImpactSummary = !STUDY.showImpactSummary;
   });
 
-  putAction("key2D Ctrl+\"", () -> {
+  putAction("Increase Vertical Scale", () -> {
     STUDY.verticalUnitScale *= sqrt(2.0);
   });
 
-  putAction("key2D Ctrl+'", () -> {
+  putAction("Decrease Vertical Scale", () -> {
     STUDY.verticalUnitScale *= sqrt(0.5);
   });
 
@@ -1596,30 +1600,30 @@ void build_allActions() {
   // requestDataRefresh()/explicit revise() set internally though -
   // nothing extra needed in STUDY.pde's own key handler after calling
   // them.
-  putAction("key2D >", () -> {
+  putAction("Widen Join Window", () -> {
     STUDY.changeJoinDays(2);
   });
 
-  putAction("key2D <", () -> {
+  putAction("Narrow Join Window", () -> {
     STUDY.changeJoinDays(-2);
   });
 
-  putAction("key2D )", () -> {
+  putAction("Extend Date Range", () -> {
     STUDY.changeJEnd(1);
   });
 
-  putAction("key2D (", () -> {
+  putAction("Shrink Date Range", () -> {
     STUDY.changeJEnd(-1);
   });
 
   // 'S' (forward) and 's' (backward) are different, not a case-insensitive
-  // pair like v/m/n/b below - "key2D Shift+S" for the uppercase one is
+  // pair like v/m/n/b below - "Next Sky Scenario" for the uppercase one is
   // this family's usual collision-avoidance naming, not a style choice.
-  putAction("key2D Shift+S", () -> {
+  putAction("Next Sky Scenario", () -> {
     STUDY.changeSkyScenario(1);
   });
 
-  putAction("key2D s", () -> {
+  putAction("Previous Sky Scenario", () -> {
     STUDY.changeSkyScenario(-1);
   });
 
@@ -1627,19 +1631,19 @@ void build_allActions() {
   // do the exact same thing) rather than a collision to avoid - one
   // action per pair, registered under the lowercase name, is enough;
   // STUDY.pde's own key handler calls the same one for both cases.
-  putAction("key2D v", () -> {
+  putAction("Toggle Raw Lines", () -> {
     STUDY.showRawLines = !STUDY.showRawLines;
   });
 
-  putAction("key2D m", () -> {
+  putAction("Toggle Statistical Ranges", () -> {
     STUDY.showStatisticalRanges = !STUDY.showStatisticalRanges;
   });
 
-  putAction("key2D n", () -> {
+  putAction("Toggle Study Normal Lines", () -> {
     STUDY.showNormalLines = !STUDY.showNormalLines;
   });
 
-  putAction("key2D b", () -> {
+  putAction("Toggle Probabilities", () -> {
     STUDY.showProbabilities = !STUDY.showProbabilities;
   });
 
@@ -1648,36 +1652,37 @@ void build_allActions() {
   // no-op) - preserved exactly as it was rather than moved inside the if,
   // by keeping it in STUDY.pde's own key handler rather than folding it
   // into these two actions.
-  putAction("key2D {", () -> {
+  putAction("Increase Probability Height Step", () -> {
     if (STUDY.probabilityHeightInterval < 32) STUDY.probabilityHeightInterval *= 2.0;
   });
 
-  putAction("key2D }", () -> {
+  putAction("Decrease Probability Height Step", () -> {
     if (STUDY.probabilityHeightInterval > 2) STUDY.probabilityHeightInterval *= 0.5;
   });
 
-  putAction("key2D [", () -> {
+  putAction("Decrease Sum Interval", () -> {
     STUDY.decreaseSumInterval();
   });
 
-  putAction("key2D ]", () -> {
+  putAction("Increase Sum Interval", () -> {
     STUDY.increaseSumInterval();
   });
 
-  // key2D's WORLD.pde counterpart - see that section's own comment for
-  // the naming convention this (and key3D's) follows. No existing action
-  // matched either key (checked the way key3D/key2D's own did, not
-  // assumed) - "Zoom"/"Zoom as default" sounded closest but turned out
-  // to be WIN3D tool-mode switches (UI_setTo_View_ZOOM), unrelated to
-  // WORLD's own map zoom level. WORLD.revise() stays in WORLD.pde's own
-  // key handler, not moved into either action, matching key3D/key2D's
-  // own convention for brand new (not reused) actions.
-  putAction("keyMap `", () -> {
+  // WORLD.pde's own counterpart to the WIN3D/STUDY groups above - see
+  // those sections' own comments for the naming approach this follows.
+  // No existing action matched either key (checked the way those
+  // groups' own did, not assumed) - "Zoom"/"Zoom as default" sounded
+  // closest but turned out to be WIN3D tool-mode switches
+  // (UI_setTo_View_ZOOM), unrelated to WORLD's own map zoom level.
+  // WORLD.revise() stays in WORLD.pde's own key handler, not moved into
+  // either action, matching the same convention for brand new (not
+  // reused) actions.
+  putAction("Map Zoom Out", () -> {
     WORLD.zoom = (WORLD.zoom - 1 + 10) % 10;
     WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
   });
 
-  putAction("keyMap ~", () -> {
+  putAction("Map Zoom In", () -> {
     WORLD.zoom = (WORLD.zoom + 1) % 10;
     WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
   });

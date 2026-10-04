@@ -34,7 +34,7 @@ class Key3DActionsTest {
     app.allCameras.create(0, 0, 0, 1, 0, 0, 0, 5, 60, 1); // camera 1
     app.WIN3D.currentCameraIndex = 1; // at the last camera
 
-    String hint = app.runScriptLine("key3D c");
+    String hint = app.runScriptLine("Next Camera");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.WIN3D.currentCameraIndex);
@@ -46,7 +46,7 @@ class Key3DActionsTest {
     app.allCameras.create(0, 0, 0, 1, 0, 0, 0, 5, 60, 1); // camera 1
     app.WIN3D.currentCameraIndex = 0; // at the first camera
 
-    String hint = app.runScriptLine("key3D Shift+C");
+    String hint = app.runScriptLine("Previous Camera");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(1, app.WIN3D.currentCameraIndex);
@@ -63,7 +63,7 @@ class Key3DActionsTest {
     app.allCameras.num = 0;
     app.WIN3D.currentCameraIndex = 0;
 
-    String hint = app.runScriptLine("key3D Shift+C");
+    String hint = app.runScriptLine("Previous Camera");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.WIN3D.currentCameraIndex, "must clamp to 0, never go negative");
@@ -75,7 +75,7 @@ class Key3DActionsTest {
   void keyShiftTab_cyclesImpactTypeAndWrapsAround () {
     app.WIN3D.impactTypeIndex = app.numberOfImpactVariations - 1; // at the last one
 
-    String hint = app.runScriptLine("key3D Shift+Tab");
+    String hint = app.runScriptLine("Toggle Impact Type");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.WIN3D.impactTypeIndex);
@@ -87,7 +87,7 @@ class Key3DActionsTest {
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
 
-    app.runScriptLine("key3D Shift+Tab");
+    app.runScriptLine("Toggle Impact Type");
 
     assertTrue(app.GlobalSolar_rebuild_array);
     assertFalse(app.VertexSolar_rebuild_array);
@@ -99,7 +99,7 @@ class Key3DActionsTest {
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
 
-    app.runScriptLine("key3D Shift+Tab");
+    app.runScriptLine("Toggle Impact Type");
 
     assertFalse(app.GlobalSolar_rebuild_array);
     assertTrue(app.VertexSolar_rebuild_array);
@@ -114,7 +114,7 @@ class Key3DActionsTest {
     app.WIN3D.positionStep = 1;
     app.overallScale = 1;
 
-    String hint = app.runScriptLine("key3D ,");
+    String hint = app.runScriptLine("Zoom Out");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(1f, app.WIN3D.positionZ, 0.0001f);
@@ -126,7 +126,7 @@ class Key3DActionsTest {
     app.WIN3D.positionZ = 0;
     app.WIN3D.zoom = 90;
 
-    app.runScriptLine("key3D ,");
+    app.runScriptLine("Zoom Out");
 
     assertEquals(0f, app.WIN3D.positionZ, 0.0001f, "orthographic mode must not move positionZ");
     assertTrue(app.WIN3D.zoom < 90);
@@ -139,7 +139,7 @@ class Key3DActionsTest {
     app.WIN3D.positionStep = 1;
     app.overallScale = 1;
 
-    String hint = app.runScriptLine("key3D .");
+    String hint = app.runScriptLine("Zoom In");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(-1f, app.WIN3D.positionZ, 0.0001f);
@@ -151,7 +151,7 @@ class Key3DActionsTest {
     app.WIN3D.positionZ = 0;
     app.WIN3D.zoom = 90;
 
-    app.runScriptLine("key3D .");
+    app.runScriptLine("Zoom In");
 
     assertEquals(0f, app.WIN3D.positionZ, 0.0001f);
     assertTrue(app.WIN3D.zoom > 90);
@@ -164,7 +164,7 @@ class Key3DActionsTest {
     app.WIN3D.rotationZ = 0;
     app.WIN3D.rotationStep = 5;
 
-    String hint = app.runScriptLine("key3D 4");
+    String hint = app.runScriptLine("Turn View Left");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(5f, app.WIN3D.rotationZ, 0.0001f);
@@ -175,7 +175,7 @@ class Key3DActionsTest {
     app.WIN3D.rotationZ = 0;
     app.WIN3D.rotationStep = 5;
 
-    app.runScriptLine("key3D 6");
+    app.runScriptLine("Turn View Right");
 
     assertEquals(-5f, app.WIN3D.rotationZ, 0.0001f);
   }
@@ -185,7 +185,7 @@ class Key3DActionsTest {
     app.WIN3D.rotationX = 0;
     app.WIN3D.rotationStep = 5;
 
-    app.runScriptLine("key3D 8");
+    app.runScriptLine("Turn View Up");
 
     assertEquals(-5f, app.WIN3D.rotationX, 0.0001f);
   }
@@ -195,7 +195,7 @@ class Key3DActionsTest {
     app.WIN3D.rotationX = 0;
     app.WIN3D.rotationStep = 5;
 
-    app.runScriptLine("key3D 2");
+    app.runScriptLine("Turn View Down");
 
     assertEquals(5f, app.WIN3D.rotationX, 0.0001f);
   }
@@ -208,7 +208,7 @@ class Key3DActionsTest {
     app.WIN3D.positionStep = 1;
     app.overallScale = 1;
 
-    String hint = app.runScriptLine("key3D 1");
+    String hint = app.runScriptLine("Pan Left");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(1f, app.WIN3D.positionX, 0.0001f);
@@ -220,7 +220,7 @@ class Key3DActionsTest {
     app.WIN3D.positionStep = 1;
     app.overallScale = 1;
 
-    app.runScriptLine("key3D 3");
+    app.runScriptLine("Pan Right");
 
     assertEquals(-1f, app.WIN3D.positionX, 0.0001f);
   }
@@ -231,7 +231,7 @@ class Key3DActionsTest {
     app.WIN3D.positionStep = 1;
     app.overallScale = 1;
 
-    app.runScriptLine("key3D 7");
+    app.runScriptLine("Pan Forward");
 
     assertEquals(1f, app.WIN3D.positionY, 0.0001f);
   }
@@ -242,7 +242,7 @@ class Key3DActionsTest {
     app.WIN3D.positionStep = 1;
     app.overallScale = 1;
 
-    app.runScriptLine("key3D 9");
+    app.runScriptLine("Pan Backward");
 
     assertEquals(-1f, app.WIN3D.positionY, 0.0001f);
   }
@@ -261,12 +261,12 @@ class Key3DActionsTest {
     app.WIN3D.cameraZ = 0;
     app.overallScale = 1;
 
-    String starHint = app.runScriptLine("key3D *"); // factor 2.0 - away from the pivot
+    String starHint = app.runScriptLine("Dolly Away From Selection"); // factor 2.0 - away from the pivot
     assertNotEquals(app.UnrecognizedCommand, starHint);
     assertTrue(app.WIN3D.cameraX > 10);
 
     float afterStar = app.WIN3D.cameraX;
-    String slashHint = app.runScriptLine("key3D /"); // factor 0.5 - back towards it
+    String slashHint = app.runScriptLine("Dolly Toward Selection"); // factor 0.5 - back towards it
     assertNotEquals(app.UnrecognizedCommand, slashHint);
     assertTrue(app.WIN3D.cameraX < afterStar);
   }
@@ -276,11 +276,11 @@ class Key3DActionsTest {
   @Test
   void keyPlus_and_keyMinus_zoomInOppositeDirections () {
     app.WIN3D.zoom = 90;
-    String plusHint = app.runScriptLine("key3D +");
+    String plusHint = app.runScriptLine("Narrow Field of View");
     float afterPlus = app.WIN3D.zoom;
 
     app.WIN3D.zoom = 90;
-    String minusHint = app.runScriptLine("key3D -");
+    String minusHint = app.runScriptLine("Widen Field of View");
     float afterMinus = app.WIN3D.zoom;
 
     assertNotEquals(app.UnrecognizedCommand, plusHint);
@@ -302,7 +302,7 @@ class Key3DActionsTest {
     app.STUDY.endHour = 23;
     app.Tropo3D.i_Map = app.STUDY.endHour;
 
-    String hint = app.runScriptLine("key3D t");
+    String hint = app.runScriptLine("Advance Troposphere Time");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.STUDY.endHour, app.Tropo3D.i_Map, 0.0001f);
@@ -314,7 +314,7 @@ class Key3DActionsTest {
     app.STUDY.endHour = 23;
     app.Tropo3D.i_Map = app.STUDY.startHour;
 
-    app.runScriptLine("key3D t");
+    app.runScriptLine("Advance Troposphere Time");
 
     assertEquals(app.STUDY.startHour + app.TROPO_deltaTime, app.Tropo3D.i_Map, 0.0001f);
   }
@@ -325,7 +325,7 @@ class Key3DActionsTest {
     app.STUDY.endHour = 23;
     app.Tropo3D.i_Map = app.STUDY.startHour;
 
-    String hint = app.runScriptLine("key3D Shift+T");
+    String hint = app.runScriptLine("Rewind Troposphere Time");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.STUDY.startHour, app.Tropo3D.i_Map, 0.0001f);
@@ -337,7 +337,7 @@ class Key3DActionsTest {
     app.STUDY.endHour = 23;
     app.Tropo3D.i_Map = app.STUDY.endHour;
 
-    app.runScriptLine("key3D Shift+T");
+    app.runScriptLine("Rewind Troposphere Time");
 
     assertEquals(app.STUDY.endHour - app.TROPO_deltaTime, app.Tropo3D.i_Map, 0.0001f);
   }
@@ -349,7 +349,7 @@ class Key3DActionsTest {
     app.STUDY.endDay = 5;
     app.impactDisplayDay = 5;
 
-    String hint = app.runScriptLine("key3D d");
+    String hint = app.runScriptLine("Next Impact Day");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.impactDisplayDay);
@@ -360,7 +360,7 @@ class Key3DActionsTest {
     app.STUDY.endDay = 5;
     app.impactDisplayDay = 0;
 
-    String hint = app.runScriptLine("key3D Shift+D");
+    String hint = app.runScriptLine("Previous Impact Day");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(5, app.impactDisplayDay);
@@ -374,7 +374,7 @@ class Key3DActionsTest {
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
 
-    String hint = app.runScriptLine("key3D Enter");
+    String hint = app.runScriptLine("Recalculate Solar Impact");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.GlobalSolar_rebuild_array);
@@ -387,7 +387,7 @@ class Key3DActionsTest {
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
 
-    app.runScriptLine("key3D Enter");
+    app.runScriptLine("Recalculate Solar Impact");
 
     assertFalse(app.GlobalSolar_rebuild_array);
     assertFalse(app.VertexSolar_rebuild_array);
@@ -400,7 +400,7 @@ class Key3DActionsTest {
     app.SHADE_HOUR_ANGLE = 0;
     app.SHADE_DATE_ANGLE = 0;
 
-    String hint = app.runScriptLine("key3D ShadeTime+1");
+    String hint = app.runScriptLine("Shade Time +1 Hour");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(1, app.SHADE_HOUR_ANGLE);
@@ -411,7 +411,7 @@ class Key3DActionsTest {
     app.SHADE_HOUR_ANGLE = app.SHADE_LAST_HOUR;
     app.SHADE_DATE_ANGLE = 0;
 
-    String hint = app.runScriptLine("key3D ShadeTime-1");
+    String hint = app.runScriptLine("Shade Time -1 Hour");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.SHADE_LAST_HOUR - 1, app.SHADE_HOUR_ANGLE);
@@ -422,7 +422,7 @@ class Key3DActionsTest {
     app.SHADE_HOUR_ANGLE = app.SHADE_FIRST_HOUR;
     app.SHADE_DATE_ANGLE = 0;
 
-    String hint = app.runScriptLine("key3D ShadeTime+Day");
+    String hint = app.runScriptLine("Shade Time +1 Day");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     // A full day's worth of hourly steps (SHADE_HOURS_PER_DAY + 1) wraps
@@ -450,12 +450,12 @@ class Key3DActionsTest {
     app.WIN3D.cameraZ = 0;
     app.overallScale = 1;
 
-    String commaHint = app.runScriptLine("key3D Ctrl+,"); // closer to the pivot
+    String commaHint = app.runScriptLine("Nudge Closer to Selection"); // closer to the pivot
     assertNotEquals(app.UnrecognizedCommand, commaHint);
     assertTrue(app.WIN3D.cameraX < 10);
 
     float afterComma = app.WIN3D.cameraX;
-    String periodHint = app.runScriptLine("key3D Ctrl+."); // farther from it
+    String periodHint = app.runScriptLine("Nudge Away from Selection"); // farther from it
     assertNotEquals(app.UnrecognizedCommand, periodHint);
     assertTrue(app.WIN3D.cameraX > afterComma);
   }
@@ -473,7 +473,7 @@ class Key3DActionsTest {
     app.WIN3D.rotationStep = 5;
     float before = app.WIN3D.rotationX;
 
-    String hint = app.runScriptLine("key3D Up");
+    String hint = app.runScriptLine("Orbit Up Around Selection");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(before - 5, app.WIN3D.rotationX, 0.0001f);
@@ -484,7 +484,7 @@ class Key3DActionsTest {
     app.WIN3D.rotationStep = 5;
     float before = app.WIN3D.rotationX;
 
-    String hint = app.runScriptLine("key3D Down");
+    String hint = app.runScriptLine("Orbit Down Around Selection");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(before + 5, app.WIN3D.rotationX, 0.0001f);
@@ -495,7 +495,7 @@ class Key3DActionsTest {
     app.WIN3D.rotationStep = 5;
     float before = app.WIN3D.rotationZ;
 
-    String hint = app.runScriptLine("key3D Left");
+    String hint = app.runScriptLine("Orbit Left Around Selection");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(before - 5, app.WIN3D.rotationZ, 0.0001f);
@@ -506,7 +506,7 @@ class Key3DActionsTest {
     app.WIN3D.rotationStep = 5;
     float before = app.WIN3D.rotationZ;
 
-    String hint = app.runScriptLine("key3D Right");
+    String hint = app.runScriptLine("Orbit Right Around Selection");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(before + 5, app.WIN3D.rotationZ, 0.0001f);
@@ -526,7 +526,7 @@ class Key3DActionsTest {
     app.Select3D.rotationVectorIndex = 2; // Z axis
     app.WIN3D.currentTool = app.UITASK.Rotate;
 
-    String hint = app.runScriptLine("key3D Shift+Up");
+    String hint = app.runScriptLine("Increase Tool Parameter");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertNotEquals(0f, app.allVertices[0][1], 0.0001f);
@@ -541,7 +541,7 @@ class Key3DActionsTest {
     app.overallScale = 1;
     app.WIN3D.currentTool = app.UITASK.Move;
 
-    String hint = app.runScriptLine("key3D Shift+Down");
+    String hint = app.runScriptLine("Decrease Tool Parameter");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0f, app.allVertices[0][0], 0.0001f);
