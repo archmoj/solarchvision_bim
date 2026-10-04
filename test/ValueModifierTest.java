@@ -51,7 +51,7 @@ class ValueModifierTest {
       methodCount++;
     }
 
-    assertEquals(231, methodCount, "expected exactly 231 value-modifier methods");
+    assertEquals(232, methodCount, "expected exactly 232 value-modifier methods"); // +1: creatorConeDegree, added with Cone
   }
 
   // ================= Latitude / Longitude: STATION sync regression ========
