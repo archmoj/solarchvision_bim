@@ -273,6 +273,7 @@ String runScriptLine (String lineSTR) {
     case "VERTEX>GROUP": return  __VERTEX$GROUP__(parts);
     case "+SCALEOBJECTS": return  __$SCALEOBJECTS__(parts);
     case "+SCALESKYDOME": return  __$SCALESKYDOME__(parts);
+    case "BEGINNEWGROUP": return  __BEGINNEWGROUP__(parts);
     case "+CAMERAROLLXYZ": return  __$CAMERAROLLXYZ__(parts);
     case "+EDITSELECTION": return  __$EDITSELECTION__(parts);
     case "+SCALEALLMODEL": return  __$SCALEALLMODEL__(parts);
