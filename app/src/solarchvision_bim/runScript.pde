@@ -127,7 +127,207 @@ String runScriptLine (String lineSTR) {
 
   String Command_CAPITAL = parts[0].toUpperCase();
   switch (Command_CAPITAL) {
-    case "CLS": {
+
+    case "CLS": return  __CLS__(parts);
+    case "QUIT": return  __QUIT__(parts);
+    case "EXIT": return  __EXIT__(parts);
+    case "HOLD": return  __HOLD__(parts);
+    case "FETCH": return  __FETCH__(parts);
+    case "NEW": return  __NEW__(parts);
+    case "OPEN": return  __OPEN__(parts);
+    case "SAVE.AS": return  __SAVE_AS__(parts);
+    case "SAVE": return  __SAVE__(parts);
+    case "IMPORT.OBJ": return  __IMPORT_OBJ__(parts);
+    case "RUN.SCRIPT": return  __RUN_SCRIPT__(parts);
+    case "EXPORT.OBJ.TIMESERIES": return  __EXPORT_OBJ_TIMESERIES__(parts);
+    case "EXPORT.OBJ.DATESERIES": return  __EXPORT_OBJ_DATESERIES__(parts);
+    case "EXPORT.OBJ": return  __EXPORT_OBJ__(parts);
+    case "EXPORT.RAD": return  __EXPORT_RAD__(parts);
+    case "EXPORT.SCR": return  __EXPORT_SCR__(parts);
+    case "REC.PNG": return  __REC_PNG__(parts);
+    case "REC.JPG": return  __REC_JPG__(parts);
+    case "REC.TIF": return  __REC_TIF__(parts);
+    case "REC.BMP": return  __REC_BMP__(parts);
+    case "MOVE": return  __MOVE__(parts);
+    case "+PANVIEW": return  __$PANVIEW__(parts);
+    case "+PANVIEWX": return  __$PANVIEWX__(parts);
+    case "+PANVIEWY": return  __$PANVIEWY__(parts);
+    case "+TURNTARGET": return  __$TURNTARGET__(parts);
+    case "+TURNTARGETZ": return  __$TURNTARGETZ__(parts);
+    case "+TURNTARGETX": return  __$TURNTARGETX__(parts);
+    case "+ORBITSELECTIONXY": return  __$ORBITSELECTIONXY__(parts);
+    case "+ORBITSELECTIONZ": return  __$ORBITSELECTIONZ__(parts);
+    case "+ORBITSELECTION": return  __$ORBITSELECTION__(parts);
+    case "+ORBITLAND": return  __$ORBITLAND__(parts);
+    case "+TURNVIEW": return  __$TURNVIEW__(parts);
+    case "+TURNVIEWX": return  __$TURNVIEWX__(parts);
+    case "+TURNVIEWZ": return  __$TURNVIEWZ__(parts);
+    case "+HOURS": return  __$HOURS__(parts);
+    case "+DAYS": return  __$DAYS__(parts);
+    case "+SCENARIO": return  __$SCENARIO__(parts);
+    case "+MAPZOOM": return  __$MAPZOOM__(parts);
+    case "+ROTATESELECTION": return  __$ROTATESELECTION__(parts);
+    case "+SCALESELECTION": return  __$SCALESELECTION__(parts);
+    case "+EDITSELECTION": return  __$EDITSELECTION__(parts);
+    case "+ZOOM": return  __$ZOOM__(parts);
+    case "+ELEVATION": return  __$ELEVATION__(parts);
+    case "+SCALEOBJECTS": return  __$SCALEOBJECTS__(parts);
+    case "+SCALESKYDOME": return  __$SCALESKYDOME__(parts);
+    case "+SCALEALLMODEL": return  __$SCALEALLMODEL__(parts);
+    case "+TARGETROLLXYZ": return  __$TARGETROLLXYZ__(parts);
+    case "+CAMERAROLLXYZ": return  __$CAMERAROLLXYZ__(parts);
+    case "+MOVETOWARDSSELECTION": return  __$MOVETOWARDSSELECTION__(parts);
+    case "+MOVETOWARDSMOUSE": return  __$MOVETOWARDSMOUSE__(parts);
+    case "+POSITIONX": return  __$POSITIONX__(parts);
+    case "+POSITIONY": return  __$POSITIONY__(parts);
+    case "+ROTATIONX": return  __$ROTATIONX__(parts);
+    case "+ROTATIONZ": return  __$ROTATIONZ__(parts);
+    case "ROTATE": return  __ROTATE__(parts);
+    case "ROTATEX": return  __ROTATE__(parts);
+    case "ROTATEY": return  __ROTATE__(parts);
+    case "ROTATEZ": return  __ROTATE__(parts);
+    case "SCALE": return  __SCALE__(parts);
+    case "DELETE": return  __DELETE__(parts);
+    case "COPY": return  __COPY__(parts);
+    case "SELECT": return  __SELECT__(parts);
+    case "GETLENGTH": return  __GETLENGTH__(parts);
+    case "RECTSELECT": return  __RECTSELECT__(parts);
+    case "LEFTCLICK": return  __LEFTCLICK__(parts);
+    case "RIGHTCLICK": return  __RIGHTCLICK__(parts);
+    case "MAPLEFTCLICK": return  __MAPLEFTCLICK__(parts);
+    case "MAPRIGHTCLICK": return  __MAPRIGHTCLICK__(parts);
+    case "PERSON": return  __PERSON__(parts);
+    case "TREE2": return  __TREE2__(parts);
+    case "TREE": return  __TREE1__(parts);
+    case "TREE1": return  __TREE1__(parts);
+    case "BOX2P": return  __BOX2P__(parts);
+    case "BOX": return  __BOX__(parts);
+    case "PYRAMID": return  __PYRAMID__(parts);
+    case "HOUSE3": return  __HOUSE3__(parts);
+    case "HOUSE2": return  __HOUSE2__(parts);
+    case "HOUSE1": return  __HOUSE1__(parts);
+    case "CYLINDER": return  __CYLINDER__(parts);
+    case "CONE": return  __CONE__(parts);
+    case "PARAMETRIC": return  __PARAMETRIC__(parts);
+    case "SPHERE": return  __SPHERE__(parts);
+    case "SUPERSPHERE": return  __SUPERSPHERE__(parts);
+    case "CUSHION": return  __CUSHION__(parts);
+    case "OCTAHEDRON": return  __OCTAHEDRON__(parts);
+    case "ICOSAHEDRON": return  __ICOSAHEDRON__(parts);
+    case "POLYGONEXTRUDE": return  __POLYGONEXTRUDE__(parts);
+    case "POLYGONHYPER": return  __POLYGONHYPER__(parts);
+    case "POLYGONMESH": return  __POLYGONMESH__(parts);
+    case "MESH2": return  __MESH2__(parts);
+    case "MESH3": return  __MESH3__(parts);
+    case "MESH4": return  __MESH4__(parts);
+    case "MESH5": return  __MESH5__(parts);
+    case "MESH6": return  __MESH6__(parts);
+    case "MESH": return  __MESH__(parts);
+    case "H_SHADE": return  __H_SHADE__(parts);
+    case "V_SHADE": return  __V_SHADE__(parts);
+    case "SOLID": return  __SOLID__(parts);
+    case "SECTION": return  __SECTION__(parts);
+    case "CAMERA": return  __CAMERA__(parts);
+    case "POLYLINE": return  __POLYLINE__(parts);
+    case "ARC": return  __ARC__(parts);
+    case "PIVOT": return  __PIVOT__(parts);
+    case "VERTEX>GROUP": return  __VERTEX$GROUP__(parts);
+    case "FACE>GROUP": return  __FACE$GROUP__(parts);
+    case "GROUP>FACE": return  __GROUP$FACE__(parts);
+    case "POLYLINE>GROUP": return  __POLYLINE$GROUP__(parts);
+    case "GROUP>POLYLINE": return  __GROUP$POLYLINE__(parts);
+    case "POLYLINE>VERTEX": return  __POLYLINE$VERTEX__(parts);
+    case "VERTEX>POLYLINE": return  __VERTEX$POLYLINE__(parts);
+    case "GROUP>VERTEX": return  __GROUP$VERTEX__(parts);
+    case "FACE>VERTEX": return  __FACE$VERTEX__(parts);
+    case "VERTEX>FACE": return  __VERTEX$FACE__(parts);
+    case "SOLID>GROUP": return  __SOLID$GROUP__(parts);
+    case "GROUP>SOLID": return  __GROUP$SOLID__(parts);
+    case "2D>GROUP": return  __2D$GROUP__(parts);
+    case "GROUP>2D": return  __GROUP$2D__(parts);
+    case "1D>GROUP": return  __1D$GROUP__(parts);
+    case "GROUP>1D": return  __GROUP$1D__(parts);
+    case "DISTZ": return  __DISTZ__(parts);
+    case "DISTC": return  __DISTC__(parts);
+    case "DISTP": return  __DISTP__(parts);
+    case "SIZEALL": return  __SIZEALL__(parts);
+    case "SIZESKY": return  __SIZESKY__(parts);
+    case "SIZE3D": return  __SIZE3D__(parts);
+    case "ALLVIEWPORTS": return  __ALLVIEWPORTS__(parts);
+    case "ENLARGE3D": return  __ENLARGE3D__(parts);
+    case "LOOKORG": return  __LOOKORG__(parts);
+    case "LOOKDIR": return  __LOOKDIR__(parts);
+    case "LOOKSEL": return  __LOOKSEL__(parts);
+    case "TRUCKZ": return  __TRUCKZ__(parts);
+    case "TRUCKX": return  __TRUCKX__(parts);
+    case "TRUCKY": return  __TRUCKY__(parts);
+    case "TARGETROLL": return  __TARGETROLL__(parts);
+    case "TARGETROLLZ": return  __TARGETROLLZ__(parts);
+    case "TARGETROLLXY": return  __TARGETROLLXY__(parts);
+    case "CAMERAROLL": return  __CAMERAROLL__(parts);
+    case "CAMERAROLLZ": return  __CAMERAROLLZ__(parts);
+    case "CAMERAROLLXY": return  __CAMERAROLLXY__(parts);
+    case "ORBIT": return  __ORBIT__(parts);
+    case "ORBITZ": return  __ORBITZ__(parts);
+    case "ORBITXY": return  __ORBITXY__(parts);
+    case "LANDORBIT": return  __LANDORBIT__(parts);
+    case "PAN": return  __PAN__(parts);
+    case "PANX": return  __PANX__(parts);
+    case "PANY": return  __PANY__(parts);
+    case "ZOOM": return  __ZOOM__(parts);
+    case "NORMALZOOM": return  __NORMALZOOM__(parts);
+    case "ORTHOGRAPHIC": return  __ORTHOGRAPHIC__(parts);
+    case "PERSPECTIVE": return  __PERSPECTIVE__(parts);
+    case "TOP": return  __TOP__(parts);
+    case "FRONT": return  __FRONT__(parts);
+    case "LEFT": return  __LEFT__(parts);
+    case "BACK": return  __BACK__(parts);
+    case "RIGHT": return  __RIGHT__(parts);
+    case "BOTTOM": return  __BOTTOM__(parts);
+    case "S.W.": return  __SW__(parts);
+    case "S.E.": return  __SE__(parts);
+    case "N.E.": return  __NE__(parts);
+    case "N.W.": return  __NW__(parts);
+    case "SHADE.WIRE": return  __SHADE_WIRE__(parts);
+    case "SHADE.BASE": return  __SHADE_BASE__(parts);
+    case "SHADE.WHITE": return  __SHADE_WHITE__(parts);
+    case "SHADE.MATERIALS": return  __SHADE_MATERIALS__(parts);
+    case "SHADE.GLOBAL": return  __SHADE_GLOBAL__(parts);
+    case "SHADE.REAL": return  __SHADE_REAL__(parts);
+    case "SHADE.SOLID": return  __SHADE_SOLID__(parts);
+    case "SHADE.ELEVATION": return  __SHADE_ELEVATION__(parts);
+    case "SHADE.VIEWPORT": return  __SHADE_VIEWPORT__(parts);
+    case "PREBAKE.VIEWPORT": return  __PREBAKE_VIEWPORT__(parts);
+    case "SETLONLAT": return  __SETLONLAT__(parts);
+    case "SETLATLON": return  __SETLATLON__(parts);
+    case "SETLON": return  __SETLON__(parts);
+    case "SETLAT": return  __SETLAT__(parts);
+  }
+
+  return UnrecognizedCommand;
+}
+
+HashMap<String,String> parseParams(String[] parts) {
+  HashMap<String,String> p = new HashMap<String,String>();
+  for (int q = 1; q < parts.length; q++) {
+    String[] kv = split(parts[q], ':');
+    if (kv.length > 1) {
+      p.put(kv[0].toLowerCase(), kv[1]);
+    }
+  }
+  return p;
+}
+
+float getF(HashMap<String,String> p, String key, float def) {
+  return p.containsKey(key) ? float(p.get(key)) : def;
+}
+
+int getI(HashMap<String,String> p, String key, int def) {
+  return p.containsKey(key) ? int(p.get(key)) : def;
+}
+
+    String __CLS__ (String[] parts) {
+      String hint = "";
       allCommands = new String[1];
       allMessages = new String[1];
 
@@ -136,89 +336,105 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "QUIT": {
+    String __QUIT__ (String[] parts) {
+      String hint = "";
       exit();
       return hint;
     }
 
-    case "EXIT": {
+    String __EXIT__ (String[] parts) {
+      String hint = "";
       typeUserCommand = 0;
       UI_consoleBar.revise();
       return hint;
     }
 
-    case "HOLD": {
+    String __HOLD__ (String[] parts) {
+      String hint = "";
       holdProject();
       return hint;
     }
 
-    case "FETCH": {
+    String __FETCH__ (String[] parts) {
+      String hint = "";
       fetchProject();
       return hint;
     }
 
-    case "NEW": {
+    String __NEW__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) _fileSelected_New(new File(parts[1]));
       else selectFile_New();
       return hint;
     }
 
-    case "OPEN": {
+    String __OPEN__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) _fileSelected_Open(new File(parts[1]));
       else selectFile_Open();
       return hint;
     }
 
-    case "SAVE.AS": {
+    String __SAVE_AS__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) _fileSelected_SaveAs(new File(parts[1]));
       else selectFile_SaveAs();
       return hint;
     }
 
-    case "SAVE": {
+    String __SAVE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) saveProject(parts[1]);
       else saveProject(Folder_Project + "/" + ProjectName + ".xml");
       return hint;
     }
 
-    case "IMPORT.OBJ": {
+    String __IMPORT_OBJ__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) _fileSelected_ImportObj(new File(parts[1]));
       else selectFile_ImportObj();
       return hint;
     }
 
-    case "RUN.SCRIPT": {
+    String __RUN_SCRIPT__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Import + "/" + parts[1]));
       else selectFile_RunScript();
       return hint;
     }
 
-    case "EXPORT.OBJ.TIMESERIES": {
+    String __EXPORT_OBJ_TIMESERIES__ (String[] parts) {
+      String hint = "";
       exportObj_timeSeries();
       return hint;
     }
 
-    case "EXPORT.OBJ.DATESERIES": {
+    String __EXPORT_OBJ_DATESERIES__ (String[] parts) {
+      String hint = "";
       exportObj_dateSeries();
       return hint;
     }
 
-    case "EXPORT.OBJ": {
+    String __EXPORT_OBJ__ (String[] parts) {
+      String hint = "";
       exportObj("");
       return hint;
     }
 
-    case "EXPORT.RAD": {
+    String __EXPORT_RAD__ (String[] parts) {
+      String hint = "";
       exportRadiance();
       return hint;
     }
 
-    case "EXPORT.SCR": {
+    String __EXPORT_SCR__ (String[] parts) {
+      String hint = "";
       exportAutocadScript();
       return hint;
     }
 
-    case "REC.PNG": {
+    String __REC_PNG__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         screenShot(".png", parts[1]);
       } else {
@@ -227,7 +443,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "REC.JPG": {
+    String __REC_JPG__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         screenShot(".jpg", parts[1]);
       } else {
@@ -236,7 +453,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "REC.TIF": {
+    String __REC_TIF__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         screenShot(".tif", parts[1]);
       } else {
@@ -245,7 +463,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "REC.BMP": {
+    String __REC_BMP__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         screenShot(".bmp", parts[1]);
       } else {
@@ -254,7 +473,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MOVE": {
+    String __MOVE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dx = 0;
         float dy = 0;
@@ -328,7 +548,8 @@ String runScriptLine (String lineSTR) {
     // bypassAllActionsFor entry was needed here the way Solid/Camera/
     // Section/Pyramid needed one.
 
-    case "+PANVIEW": {
+    String __$PANVIEW__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float dx = getF(p, "dx", 0);
@@ -343,7 +564,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+PANVIEWX": {
+    String __$PANVIEWX__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dx = float(parts[1]);
         WIN3D.positionX += 100 * dx * WIN3D.positionStep * overallScale;
@@ -355,7 +577,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+PANVIEWY": {
+    String __$PANVIEWY__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dy = float(parts[1]);
         WIN3D.positionY += 100 * dy * WIN3D.positionStep * overallScale;
@@ -367,7 +590,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+TURNTARGET": {
+    String __$TURNTARGET__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float dx = getF(p, "dx", 0);
@@ -383,7 +607,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+TURNTARGETZ": {
+    String __$TURNTARGETZ__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dx = float(parts[1]);
         WIN3D.rotationZ += 10 * dx * WIN3D.rotationStep;
@@ -396,7 +621,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+TURNTARGETX": {
+    String __$TURNTARGETX__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dy = float(parts[1]);
         WIN3D.rotationX += 10 * dy * WIN3D.rotationStep;
@@ -409,7 +635,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ORBITSELECTIONXY": {
+    String __$ORBITSELECTIONXY__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dx = float(parts[1]);
         WIN3D.rotateXY_3DViewport_around_Selection(-10 * dx * WIN3D.rotationStep);
@@ -421,7 +648,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ORBITSELECTIONZ": {
+    String __$ORBITSELECTIONZ__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dy = float(parts[1]);
         WIN3D.rotateZ_3DViewport_around_Selection(-10 * dy * WIN3D.rotationStep);
@@ -433,7 +661,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ORBITSELECTION": {
+    String __$ORBITSELECTION__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float dx = getF(p, "dx", 0);
@@ -448,7 +677,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ORBITLAND": {
+    String __$ORBITLAND__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dx = float(parts[1]);
         WIN3D.rotateXY_3DViewport_around_LandIntersection(10 * dx * WIN3D.rotationStep);
@@ -460,7 +690,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+TURNVIEW": {
+    String __$TURNVIEW__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float dx = getF(p, "dx", 0);
@@ -475,7 +706,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+TURNVIEWX": {
+    String __$TURNVIEWX__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dy = float(parts[1]);
         WIN3D.rotationX -= 10 * dy * WIN3D.rotationStep;
@@ -487,7 +719,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+TURNVIEWZ": {
+    String __$TURNVIEWZ__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float dx = float(parts[1]);
         WIN3D.rotationZ -= 10 * dx * WIN3D.rotationStep;
@@ -510,7 +743,8 @@ String runScriptLine (String lineSTR) {
     // comment on it. Every name below checked against allActions directly
     // before being used; none collide.
 
-    case "+HOURS": {
+    String __$HOURS__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         int oldStart = STUDY.startHour;
@@ -537,7 +771,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+DAYS": {
+    String __$DAYS__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         int oldJoinDays = STUDY.daysMergedCount;
@@ -560,7 +795,8 @@ String runScriptLine (String lineSTR) {
     // sampleMemberStart/End or sampleStationStart/End actually moves
     // depends on state this command reads itself, not something a
     // caller could usefully pass in as a parameter.
-    case "+SCENARIO": {
+    String __$SCENARIO__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (currentDataSource == dataID_climateEngineering) {
@@ -602,7 +838,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+MAPZOOM": {
+    String __$MAPZOOM__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         int oldZoom = WORLD.zoom;
@@ -621,7 +858,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ROTATESELECTION": {
+    String __$ROTATESELECTION__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float wheelValue = getF(p, "v", 0);
@@ -639,7 +877,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+SCALESELECTION": {
+    String __$SCALESELECTION__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float wheelValue = getF(p, "v", 0);
@@ -663,7 +902,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+EDITSELECTION": {
+    String __$EDITSELECTION__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         int pEdit = int(-wheelValue);
@@ -676,7 +916,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ZOOM": {
+    String __$ZOOM__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (WIN3D.projectionTypeIndex == 1) {
@@ -692,7 +933,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ELEVATION": {
+    String __$ELEVATION__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (wheelValue > 0) WIN3D.zoom = 2 * funcs.atan_ang((1.1 / 1.0) * funcs.tan_ang(0.5 * WIN3D.zoom));
@@ -705,7 +947,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+SCALEOBJECTS": {
+    String __$SCALEOBJECTS__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (wheelValue > 0) overallScale /= pow(2.0, 0.25);
@@ -718,7 +961,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+SCALESKYDOME": {
+    String __$SCALESKYDOME__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (wheelValue > 0) Sky3D.radius *= pow(2.0, 0.25);
@@ -731,7 +975,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+SCALEALLMODEL": {
+    String __$SCALEALLMODEL__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (wheelValue > 0) {
@@ -753,7 +998,8 @@ String runScriptLine (String lineSTR) {
     // Which of rotationX/rotationZ moves depends on WIN3D.targetAxisIndex,
     // read internally - same as WHEELSCENARIO above, this is state the
     // command reads itself rather than something a caller passes in.
-    case "+TARGETROLLXYZ": {
+    String __$TARGETROLLXYZ__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (WIN3D.targetAxisIndex == 0) {
@@ -772,7 +1018,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+CAMERAROLLXYZ": {
+    String __$CAMERAROLLXYZ__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         if (WIN3D.targetAxisIndex == 0) {
@@ -789,7 +1036,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+MOVETOWARDSSELECTION": {
+    String __$MOVETOWARDSSELECTION__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.move_3DViewport_towards_Selection(pow(2, 0.5 * wheelValue));
@@ -801,7 +1049,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+MOVETOWARDSMOUSE": {
+    String __$MOVETOWARDSMOUSE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.move_3DViewport_towards_Mouse(pow(2, 0.5 * wheelValue));
@@ -813,7 +1062,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+POSITIONX": {
+    String __$POSITIONX__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.positionX += wheelValue * WIN3D.positionStep * overallScale;
@@ -825,7 +1075,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+POSITIONY": {
+    String __$POSITIONY__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.positionY += wheelValue * WIN3D.positionStep * overallScale;
@@ -837,7 +1088,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ROTATIONX": {
+    String __$ROTATIONX__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.rotationX += wheelValue * WIN3D.rotationStep;
@@ -849,7 +1101,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "+ROTATIONZ": {
+    String __$ROTATIONZ__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float wheelValue = float(parts[1]);
         WIN3D.rotationZ += wheelValue * WIN3D.rotationStep;
@@ -861,12 +1114,11 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "ROTATE":
-    case "ROTATEX":
-    case "ROTATEY":
-    case "ROTATEZ": {
+    String __ROTATE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         int v = 2;
+        String Command_CAPITAL = parts[0].toUpperCase();
         if (Command_CAPITAL.equals("ROTATEX")) v = 0;
         if (Command_CAPITAL.equals("ROTATEY")) v = 1;
         if (Command_CAPITAL.equals("ROTATEZ")) v = 2;
@@ -898,7 +1150,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SCALE": {
+    String __SCALE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         float sx = 1;
         float sy = 1;
@@ -934,7 +1187,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "DELETE": {
+    String __DELETE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         for (int q = 1; q < parts.length; q++) {
           String low_case = parts[q].toLowerCase();
@@ -958,7 +1212,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "COPY": {
+    String __COPY__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int n = getI(p, "n", 1);
@@ -986,7 +1241,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SELECT": {
+    String __SELECT__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         for (int q = 1; q < parts.length; q++) {
           String low_case = parts[q].toLowerCase();
@@ -1028,7 +1284,8 @@ String runScriptLine (String lineSTR) {
     // which of User3D.creatorLength/Width/Height actually gets written
     // depends on WIN3D.toolParameterModifier, read internally the same
     // way +SCENARIO/+TARGETROLLXYZ read their own dispatch state above.
-    case "GETLENGTH": {
+    String __GETLENGTH__ (String[] parts) {
+      String hint = "";
       if (parts.length > 6) {
         HashMap<String,String> p = parseParams(parts);
         float x1 = getF(p, "x1", 0);
@@ -1088,7 +1345,8 @@ String runScriptLine (String lineSTR) {
     // rendering side effect, not a selection-data change, the same
     // distinction RecordFrame() calls elsewhere in this codebase are
     // left direct for.
-    case "RECTSELECT": {
+    String __RECTSELECT__ (String[] parts) {
+      String hint = "";
       if (parts.length > 3) {
         HashMap<String,String> p = parseParams(parts);
         float x1 = getF(p, "x1", 0);
@@ -1115,7 +1373,8 @@ String runScriptLine (String lineSTR) {
     // real global directly in three places rather than taking it as a
     // parameter - the same way a real mouse event would have already
     // left it set.
-    case "LEFTCLICK": {
+    String __LEFTCLICK__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float x = getF(p, "x", 0);
@@ -1131,7 +1390,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "RIGHTCLICK": {
+    String __RIGHTCLICK__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float x = getF(p, "x", 0);
@@ -1147,7 +1407,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MAPLEFTCLICK": {
+    String __MAPLEFTCLICK__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float x = getF(p, "x", 0);
@@ -1163,7 +1424,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MAPRIGHTCLICK": {
+    String __MAPRIGHTCLICK__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float x = getF(p, "x", 0);
@@ -1179,7 +1441,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "PERSON": {
+    String __PERSON__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         String t = "PEOPLE";
         HashMap<String,String> p = parseParams(parts);
@@ -1197,7 +1460,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "TREE2": {
+    String __TREE2__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         String t = "TREES";
         HashMap<String,String> p = parseParams(parts);
@@ -1218,8 +1482,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "TREE":
-    case "TREE1": {
+    String __TREE1__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
 
         int m = 0;
@@ -1269,7 +1533,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "BOX2P": {
+    String __BOX2P__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", -1);
@@ -1296,7 +1561,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "BOX": {
+    String __BOX__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", -1);
@@ -1324,7 +1590,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "PYRAMID": {
+    String __PYRAMID__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", -1);
@@ -1352,7 +1619,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "HOUSE3": {
+    String __HOUSE3__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", -1);
@@ -1381,7 +1649,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "HOUSE2": {
+    String __HOUSE2__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", -1);
@@ -1410,7 +1679,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "HOUSE1": {
+    String __HOUSE1__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", -1);
@@ -1439,7 +1709,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "CYLINDER": {
+    String __CYLINDER__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1480,7 +1751,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "CONE": {
+    String __CONE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1521,7 +1793,8 @@ String runScriptLine (String lineSTR) {
     // supporting pieces were already there - just never wired into this
     // switch. dx/dy/dz halved the same way as every other shape command
     // here (full widths in, half-widths to Create3D.add_ParametricSurface).
-    case "PARAMETRIC": {
+    String __PARAMETRIC__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1550,7 +1823,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SPHERE": {
+    String __SPHERE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1577,7 +1851,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SUPERSPHERE": {
+    String __SUPERSPHERE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1609,7 +1884,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "CUSHION": {
+    String __CUSHION__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1638,7 +1914,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "OCTAHEDRON": {
+    String __OCTAHEDRON__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1666,7 +1943,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "ICOSAHEDRON": {
+    String __ICOSAHEDRON__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1692,7 +1970,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "POLYGONEXTRUDE": {
+    String __POLYGONEXTRUDE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1720,7 +1999,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "POLYGONHYPER": {
+    String __POLYGONHYPER__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1748,7 +2028,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "POLYGONMESH": {
+    String __POLYGONMESH__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1775,7 +2056,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MESH2": {
+    String __MESH2__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1801,7 +2083,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MESH3": {
+    String __MESH3__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1830,7 +2113,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MESH4": {
+    String __MESH4__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1862,7 +2146,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MESH5": {
+    String __MESH5__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1897,7 +2182,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MESH6": {
+    String __MESH6__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -1935,7 +2221,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "MESH": {
+    String __MESH__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         int m = 7;
         int tes = 0;
@@ -1975,7 +2262,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "H_SHADE": {
+    String __H_SHADE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -2002,7 +2290,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "V_SHADE": {
+    String __V_SHADE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         int m = getI(p, "m", 7);
@@ -2029,7 +2318,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SOLID": {
+    String __SOLID__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float v = getF(p, "v", 1);
@@ -2062,7 +2352,8 @@ String runScriptLine (String lineSTR) {
     // added here either, unlike SOLID's px/py/pz/sx/sy/sz/v check just
     // above - matching the direct call in mouseClicked.pde this replaces,
     // which also calls it unconditionally.
-    case "BEGINNEWGROUP": {
+    String __BEGINNEWGROUP__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float x = getF(p, "x", 0);
@@ -2082,7 +2373,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SECTION": {
+    String __SECTION__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float x = getF(p, "x", 0);
@@ -2106,7 +2398,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "CAMERA": {
+    String __CAMERA__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         HashMap<String,String> p = parseParams(parts);
         float px = getF(p, "px", 0);
@@ -2131,7 +2424,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "POLYLINE": {
+    String __POLYLINE__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         int m = 7;
         int tes = 0;
@@ -2171,7 +2465,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "ARC": {
+    String __ARC__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         int m = 7;
         int deg = 6;
@@ -2217,7 +2512,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "PIVOT": {
+    String __PIVOT__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         for (int q = 1; q < parts.length; q++) {
           String low_case = parts[q].toLowerCase();
@@ -2239,333 +2535,395 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "VERTEX>GROUP": {
+    String __VERTEX$GROUP__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Vertices_to_Groups();
       view_changed();
       return hint;
     }
 
-    case "FACE>GROUP": {
+    String __FACE$GROUP__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Faces_to_Groups();
       view_changed();
       return hint;
     }
 
-    case "GROUP>FACE": {
+    String __GROUP$FACE__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Groups_to_Faces();
       view_changed();
       return hint;
     }
 
-    case "POLYLINE>GROUP": {
+    String __POLYLINE$GROUP__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Polylines_to_Groups();
       view_changed();
       return hint;
     }
 
-    case "GROUP>POLYLINE": {
+    String __GROUP$POLYLINE__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Groups_to_Polylines();
       view_changed();
       return hint;
     }
 
-    case "POLYLINE>VERTEX": {
+    String __POLYLINE$VERTEX__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Polylines_to_Vertices();
       view_changed();
       return hint;
     }
 
-    case "VERTEX>POLYLINE": {
+    String __VERTEX$POLYLINE__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Vertices_to_Polylines();
       view_changed();
       return hint;
     }
 
-    case "GROUP>VERTEX": {
+    String __GROUP$VERTEX__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Groups_to_Vertices();
       view_changed();
       return hint;
     }
 
-    case "FACE>VERTEX": {
+    String __FACE$VERTEX__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Faces_to_Vertices();
       view_changed();
       return hint;
     }
 
-    case "VERTEX>FACE": {
+    String __VERTEX$FACE__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Vertices_to_Faces();
       view_changed();
       return hint;
     }
 
-    case "SOLID>GROUP": {
+    String __SOLID$GROUP__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Solids_to_Groups();
       view_changed();
       return hint;
     }
 
-    case "GROUP>SOLID": {
+    String __GROUP$SOLID__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Groups_to_Solids();
       view_changed();
       return hint;
     }
 
-    case "2D>GROUP": {
+    String __2D$GROUP__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Model2Ds_to_Groups();
       view_changed();
       return hint;
     }
 
-    case "GROUP>2D": {
+    String __GROUP$2D__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Groups_to_Model2Ds();
       view_changed();
       return hint;
     }
 
-    case "1D>GROUP": {
+    String __1D$GROUP__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Model1Ds_to_Groups();
       view_changed();
       return hint;
     }
 
-    case "GROUP>1D": {
+    String __GROUP$1D__ (String[] parts) {
+      String hint = "";
       Select3D.convert_Groups_to_Model1Ds();
       view_changed();
       return hint;
     }
 
-    case "DISTZ": {
+    String __DISTZ__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Truck(0);
       return hint;
     }
 
-    case "DISTC": {
+    String __DISTC__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_CameraDistance(0);
       return hint;
     }
 
-    case "DISTP": {
+    String __DISTP__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_DistMouseXY(0);
       return hint;
     }
 
-    case "SIZEALL": {
+    String __SIZEALL__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_AllModelSize();
       return hint;
     }
 
-    case "SIZESKY": {
+    String __SIZESKY__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_SkydomeSize();
       return hint;
     }
 
-    case "SIZE3D": {
+    String __SIZE3D__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DModelSize();
       return hint;
     }
 
-    case "ALLVIEWPORTS": {
+    String __ALLVIEWPORTS__ (String[] parts) {
+      String hint = "";
       UI_setTo_Viewport(0);
       return hint;
     }
 
-    case "ENLARGE3D": {
+    String __ENLARGE3D__ (String[] parts) {
+      String hint = "";
       UI_setTo_Viewport(1);
       return hint;
     }
 
-    case "LOOKORG": {
+    String __LOOKORG__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_LookAtOrigin(0);
       return hint;
     }
 
-    case "LOOKDIR": {
+    String __LOOKDIR__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_LookAtDirection(0);
       return hint;
     }
 
-    case "LOOKSEL": {
+    String __LOOKSEL__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_LookAtSelection(0);
       return hint;
     }
 
-    case "TRUCKZ": {
+    String __TRUCKZ__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Truck(0);
       return hint;
     }
 
-    case "TRUCKX": {
+    String __TRUCKX__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Truck(1);
       return hint;
     }
 
-    case "TRUCKY": {
+    String __TRUCKY__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Truck(2);
       return hint;
     }
 
-    case "TARGETROLL": {
+    String __TARGETROLL__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_TargetRoll(0);
       return hint;
     }
 
-    case "TARGETROLLZ": {
+    String __TARGETROLLZ__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_TargetRoll(1);
       return hint;
     }
 
-    case "TARGETROLLXY": {
+    String __TARGETROLLXY__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_TargetRoll(2);
       return hint;
     }
 
-    case "CAMERAROLL": {
+    String __CAMERAROLL__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_CameraRoll(0);
       return hint;
     }
 
-    case "CAMERAROLLZ": {
+    String __CAMERAROLLZ__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_CameraRoll(1);
       return hint;
     }
 
-    case "CAMERAROLLXY": {
+    String __CAMERAROLLXY__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_CameraRoll(2);
       return hint;
     }
 
-    case "ORBIT": {
+    String __ORBIT__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Orbit(0);
       return hint;
     }
 
-    case "ORBITZ": {
+    String __ORBITZ__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Orbit(1);
       return hint;
     }
 
-    case "ORBITXY": {
+    String __ORBITXY__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Orbit(2);
       return hint;
     }
 
-    case "LANDORBIT": {
+    String __LANDORBIT__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_TerrainOrbit(0);
       return hint;
     }
 
-    case "PAN": {
+    String __PAN__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Pan(0);
       return hint;
     }
 
-    case "PANX": {
+    String __PANX__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Pan(1);
       return hint;
     }
 
-    case "PANY": {
+    String __PANY__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_Pan(2);
       return hint;
     }
 
-    case "ZOOM": {
+    String __ZOOM__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_ZOOM(0);
       return hint;
     }
 
-    case "NORMALZOOM": {
+    String __NORMALZOOM__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_ZOOM(1);
       return hint;
     }
 
-    case "ORTHOGRAPHIC": {
+    String __ORTHOGRAPHIC__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_ProjectionType(0);
       return hint;
     }
 
-    case "PERSPECTIVE": {
+    String __PERSPECTIVE__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_ProjectionType(1);
       return hint;
     }
 
-    case "TOP": {
+    String __TOP__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(0);
       return hint;
     }
 
-    case "FRONT": {
+    String __FRONT__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(1);
       return hint;
     }
 
-    case "LEFT": {
+    String __LEFT__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(2);
       return hint;
     }
 
-    case "BACK": {
+    String __BACK__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(3);
       return hint;
     }
 
-    case "RIGHT": {
+    String __RIGHT__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(4);
       return hint;
     }
 
-    case "BOTTOM": {
+    String __BOTTOM__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(5);
       return hint;
     }
 
-    case "S.W.": {
+    String __SW__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(6);
       return hint;
     }
 
-    case "S.E.": {
+    String __SE__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(7);
       return hint;
     }
 
-    case "N.E.": {
+    String __NE__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(8);
       return hint;
     }
 
-    case "N.W.": {
+    String __NW__ (String[] parts) {
+      String hint = "";
       UI_setTo_View_3DViewPoint(9);
       return hint;
     }
 
-    case "SHADE.WIRE": {
+    String __SHADE_WIRE__ (String[] parts) {
+      String hint = "";
       WIN3D.shadingMode = SHADE.Surface_Wire;
       allFaces.displayEdges = true; //<<<<<<<<<<<<<<<
       view_changed();
       return hint;
     }
 
-    case "SHADE.BASE": {
+    String __SHADE_BASE__ (String[] parts) {
+      String hint = "";
       WIN3D.shadingMode = SHADE.Surface_Base;
       view_changed();
       return hint;
     }
 
-    case "SHADE.WHITE": {
+    String __SHADE_WHITE__ (String[] parts) {
+      String hint = "";
       WIN3D.shadingMode = SHADE.Surface_White;
       view_changed();
       return hint;
     }
 
-    case "SHADE.MATERIALS": {
+    String __SHADE_MATERIALS__ (String[] parts) {
+      String hint = "";
       WIN3D.shadingMode = SHADE.Surface_Materials;
       view_changed();
       return hint;
     }
 
-    case "SHADE.GLOBAL": {
+    String __SHADE_GLOBAL__ (String[] parts) {
+      String hint = "";
       WIN3D.shadingMode = SHADE.Global_Solar;
       GlobalSolar_rebuild_array = true;
       regenerate_desired_bakings();
@@ -2573,7 +2931,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SHADE.REAL": {
+    String __SHADE_REAL__ (String[] parts) {
+      String hint = "";
       WIN3D.shadingMode = SHADE.Vertex_Solar;
       VertexSolar_rebuild_array = true;
       regenerate_desired_bakings();
@@ -2581,29 +2940,34 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SHADE.SOLID": {
+    String __SHADE_SOLID__ (String[] parts) {
+      String hint = "";
       WIN3D.shadingMode = SHADE.Vertex_Solid;
       view_changed();
       return hint;
     }
 
-    case "SHADE.ELEVATION": {
+    String __SHADE_ELEVATION__ (String[] parts) {
+      String hint = "";
       WIN3D.shadingMode = SHADE.Vertex_Elevation;
       view_changed();
       return hint;
     }
 
-    case "SHADE.VIEWPORT": {
+    String __SHADE_VIEWPORT__ (String[] parts) {
+      String hint = "";
       ShadeViewport();
       return hint;
     }
 
-    case "PREBAKE.VIEWPORT": {
+    String __PREBAKE_VIEWPORT__ (String[] parts) {
+      String hint = "";
       preBakeViewport();
       return hint;
     }
 
-    case "SETLONLAT": {
+    String __SETLONLAT__ (String[] parts) {
+      String hint = "";
       if (parts.length > 2) {
         STATION.setLatitude(float(parts[2]));
         STATION.setLongitude(float(parts[1]));
@@ -2615,7 +2979,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SETLATLON": {
+    String __SETLATLON__ (String[] parts) {
+      String hint = "";
       if (parts.length > 2) {
         STATION.setLatitude(float(parts[1]));
         STATION.setLongitude(float(parts[2]));
@@ -2627,7 +2992,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SETLON": {
+    String __SETLON__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         STATION.setLongitude(float(parts[1]));
         update_station(0);
@@ -2638,7 +3004,8 @@ String runScriptLine (String lineSTR) {
       return hint;
     }
 
-    case "SETLAT": {
+    String __SETLAT__ (String[] parts) {
+      String hint = "";
       if (parts.length > 1) {
         STATION.setLatitude(float(parts[1]));
         update_station(0);
@@ -2648,29 +3015,3 @@ String runScriptLine (String lineSTR) {
       }
       return hint;
     }
-
-    default:
-      hint = UnrecognizedCommand;
-  }
-
-  return hint;
-}
-
-HashMap<String,String> parseParams(String[] parts) {
-  HashMap<String,String> p = new HashMap<String,String>();
-  for (int q = 1; q < parts.length; q++) {
-    String[] kv = split(parts[q], ':');
-    if (kv.length > 1) {
-      p.put(kv[0].toLowerCase(), kv[1]);
-    }
-  }
-  return p;
-}
-
-float getF(HashMap<String,String> p, String key, float def) {
-  return p.containsKey(key) ? float(p.get(key)) : def;
-}
-
-int getI(HashMap<String,String> p, String key, int def) {
-  return p.containsKey(key) ? int(p.get(key)) : def;
-}
