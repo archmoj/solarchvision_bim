@@ -8,11 +8,11 @@ class UI_consoleBar {
   int editCursor = 0;
   String editText = "";
 
-  String[] allCommands = {"Command Input:", ""};
+  ArrayList<String> allCommands = new ArrayList<String>(Arrays.asList("Command Input:", ""));
 
   void emptyCommands() {
-    this.allCommands = new String[1];
-    this.allCommands[0] = "";
+    this.allCommands = new ArrayList<String>();
+    this.allCommands.add("");
   }
 
   final int maxDisplayLines = 2;
@@ -78,9 +78,9 @@ class UI_consoleBar {
 
       for (int q = 0; q < maxDisplayLines; q++) {
 
-        int n = this.allCommands.length + q - maxDisplayLines;
+        int n = this.allCommands.size() + q - maxDisplayLines;
 
-        if ((0 <= n) && (n < this.allCommands.length)) {
+        if ((0 <= n) && (n < this.allCommands.size())) {
 
           textAlign(LEFT, CENTER);
           fill(255);
@@ -88,14 +88,14 @@ class UI_consoleBar {
           float x = 0.5 * MessageSize;
           float y = q * 1.5 * MessageSize;
 
-          String txt = n < this.allCommands.length - 1 ? this.allCommands[n] : this.editText;
+          String txt = n < this.allCommands.size() - 1 ? this.allCommands.get(n) : this.editText;
           if(typeUserCommand == 0) {
             text(txt, x, y);
           } else {
             String txt_1 = txt;
             String txt_2 = "";
             String txt_3 = "";
-            if(n == this.allCommands.length - 1) {
+            if(n == this.allCommands.size() - 1) {
               // text with cursor
               if(this.editCursor < this.editText.length()) {
                 txt_1 = txt.substring(0, this.editCursor);
@@ -145,13 +145,13 @@ class UI_consoleBar {
 
   String runCurrentCommand() {
     // record command
-    this.allCommands[this.allCommands.length - 1] = this.editText;
+    this.allCommands.set(this.allCommands.size() - 1, this.editText);
     // reset editText
     this.editText = "";
     this.editCursor = 0;
-    this.cycleCursor = this.allCommands.length;
+    this.cycleCursor = this.allCommands.size();
     // run last command
-    String lastCommand = this.allCommands[this.allCommands.length - 1];
+    String lastCommand = this.allCommands.get(this.allCommands.size() - 1);
     if(lastCommand.equals("")) UI_consoleBar.drawEmptyDirective();
     return runScriptLine(lastCommand);
   }
@@ -188,7 +188,7 @@ class UI_consoleBar {
         } else {
           // run previous command before adding new line
           String hint = runCurrentCommand();
-          this.allCommands = concat(this.allCommands, new String[] {""});
+          this.allCommands.add("");
 
           // interrupt in case of error
           if(hint.equals(UnrecognizedCommand)) break;
@@ -227,21 +227,21 @@ class UI_consoleBar {
 
         case UP:
           if (this.cycleCursor > 0) {
-            if(this.cycleCursor == this.allCommands.length - 1) {
+            if(this.cycleCursor == this.allCommands.size() - 1) {
               // keep edit text inside last this.allCommands
-              this.allCommands[this.cycleCursor] = this.editText;
+              this.allCommands.set(this.cycleCursor, this.editText);
             }
 
             this.cycleCursor--;
-            this.editText = this.allCommands[this.cycleCursor];
+            this.editText = this.allCommands.get(this.cycleCursor);
             this.editCursor = this.editText.length();
           }
           break;
 
         case DOWN:
-          if (this.cycleCursor < this.allCommands.length - 1) {
+          if (this.cycleCursor < this.allCommands.size() - 1) {
             this.cycleCursor++;
-            this.editText = this.allCommands[this.cycleCursor];
+            this.editText = this.allCommands.get(this.cycleCursor);
             this.editCursor = this.editText.length();
           }
           break;
@@ -260,7 +260,7 @@ class UI_consoleBar {
         case ENTER:
           if(!isCurrentCommandEmpty()) {
             runCurrentCommand();
-            this.allCommands = concat(this.allCommands, new String[] {""});
+            this.allCommands.add("");
             this.editCursor = 0;
           }
           break;

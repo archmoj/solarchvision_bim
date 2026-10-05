@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 // Most of runScriptLine's ~130 switch cases either do file I/O (New, Save,
 // Open, ...), close the JVM (Exit/Quit), or create 3D geometry already
@@ -96,12 +98,12 @@ class RunScriptTest {
 
   @Test
   void cls_resetsCommandHistoryToASingleEmptyEntry () {
-    app.UI_consoleBar.allCommands = new String[]{"a", "b", "c"};
+    app.UI_consoleBar.allCommands = new ArrayList<String>(Arrays.asList("a", "b", "c"));
 
     app.runScriptLine("CLS");
 
-    assertEquals(1, app.UI_consoleBar.allCommands.length);
-    assertEquals("", app.UI_consoleBar.allCommands[0]);
+    assertEquals(1, app.UI_consoleBar.allCommands.size());
+    assertEquals("", app.UI_consoleBar.allCommands.get(0));
   }
 
   // ================= Delete All-<Category> regression =======================
