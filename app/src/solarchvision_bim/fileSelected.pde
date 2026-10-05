@@ -15,7 +15,7 @@ void selectFile_ImportObj () {
 }
 
 void selectFile_RunScript () {
-  selectInput("Select TXT file to execute:", "_fileSelected_RunScript", new File(Folder_Import + "/_.txt"));
+  selectInput("Select SVS file to execute:", "_fileSelected_RunScript", new File(Folder_Import + "/_.svs"));
 }
 
 
