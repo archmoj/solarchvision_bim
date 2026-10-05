@@ -1,6 +1,6 @@
 #!/bin/bash
 # Bash alternative to test/image/make_baseline.py: generates
-# test/image/actual/*.png for command/test_*.txt by running the sketch
+# test/image/actual/*.png for command/test/*.txt by running the sketch
 # headlessly (USER=AUTO) through the exact same
 # run-with-latest-processing.sh/.bat (or run-with-processing-4.3.sh/.bat)
 # wrapper test/run_integration.sh uses (which also delegates its own
@@ -36,7 +36,7 @@
 # would match the symptom seen without it exactly.
 #
 # A single test script can call REC.png more than once, each with its
-# own name given right in the script (see command/test_views.txt), so
+# own name given right in the script (see command/test/views.txt), so
 # one test can produce several screenshots - each is kept under its own
 # original filename rather than the test's, matching make_baseline.py's
 # own behavior exactly.
@@ -48,7 +48,7 @@
 # Windows job for what that takes).
 #
 # Usage:
-#   ./test/image/make_baseline.sh                          # every command/test_*.txt
+#   ./test/image/make_baseline.sh                          # every command/test/*.txt
 #   ./test/image/make_baseline.sh test_edit test_views ...  # specific ones only (name without .txt)
 #
 # Environment:
@@ -116,15 +116,15 @@ fi
 
 if [ "$#" -lt 1 ]; then
   shopt -s nullglob
-  for f in command/test_*.txt; do
+  for f in command/test/*.txt; do
     set -- "$@" "$(basename "$f" .txt)"
   done
   shopt -u nullglob
   if [ "$#" -lt 1 ]; then
-    echo "error: no tests given and no command/test_*.txt files found" >&2
+    echo "error: no tests given and no command/test/*.txt files found" >&2
     exit 1
   fi
-  echo "==> No tests given - defaulting to every command/test_*.txt: $*"
+  echo "==> No tests given - defaulting to every command/test/*.txt: $*"
 fi
 
 # sketchPath() (used as BaseFolder in update_folders.pde) resolves to

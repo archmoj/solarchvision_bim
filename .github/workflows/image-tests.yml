@@ -168,7 +168,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 3
 
-  # Confirms the same command/test_*.txt scripts actually render on
+  # Confirms the same command/test/*.txt scripts actually render on
   # Windows too, using the Mesa3D software-OpenGL setup proven in
   # .github/workflows/ci.yml's test-windows job (windows-latest ships no
   # GPU/OpenGL ICD at all - see that job's own comment for the full
@@ -188,7 +188,7 @@ jobs:
   #
   # Also deliberately unsharded, unlike generate-images above: Windows
   # runners draw down CI-minute budget faster than Linux ones, and with
-  # only a handful of command/test_*.txt scripts to begin with, splitting
+  # only a handful of command/test/*.txt scripts to begin with, splitting
   # them across several Windows containers wouldn't meaningfully speed
   # this up.
   generate-images-windows:

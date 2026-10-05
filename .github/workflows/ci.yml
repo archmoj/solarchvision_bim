@@ -124,7 +124,7 @@ jobs:
       # working merged-coverage leg to run there. This reuses
       # build/test/jacoco.exec, which the "Run tests" step above just
       # wrote, so the resulting report reflects unit tests AND every
-      # command/test_*.txt integration script together, not integration
+      # command/test/*.txt integration script together, not integration
       # tests alone.
       - name: Run integration tests with merged coverage (Processing 4.5.2 only)
         if: matrix.processing_version == '4.5.2'
@@ -328,7 +328,7 @@ jobs:
       # Mirrors the Linux job's "Run integration tests with merged
       # coverage" - reuses build/test/jacoco.exec, which the step above
       # just wrote, so the resulting report reflects unit tests AND
-      # every command/test_*.txt integration script together. No
+      # every command/test/*.txt integration script together. No
       # xvfb-run wrapper (see the job-level comment on why none is
       # needed here).
       #

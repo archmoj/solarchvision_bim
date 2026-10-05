@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Generate screenshots for command/test_*.txt by running the
+"""Generate screenshots for command/test/*.txt by running the
 solarchvision_bim sketch headlessly (USER=AUTO), one subprocess per test.
 A single test script can call REC.png more than once, each with its own
-name given right in the script (see command/test_views.txt), so one test
+name given right in the script (see command/test/views.txt), so one test
 can produce several screenshots - each is kept under its own original
 filename rather than the test's.
 
 Usage:
-  python3 test/image/make_baseline.py                 # generate test/image/actual/*.png for every command/test_*.txt
+  python3 test/image/make_baseline.py                 # generate test/image/actual/*.png for every command/test/*.txt
   python3 test/image/make_baseline.py test_houses ...  # generate specific ones only (name without .txt)
   python3 test/image/make_baseline.py --baseline       # write straight to test/image/baseline/ instead of actual/
                                                         # (review the images before committing them!)
@@ -140,8 +140,8 @@ def screenshots_since(marker_time):
     """Every screenshot this run produced, oldest first: all *.png under any
     of SCREENSHOTS_ROOTS with an mtime after marker_time. Recursive because
     screenshots land under a RunStamp=YYYYMMDD_HH subfolder (globals.pde).
-    A single command/test_*.txt can call REC.png several times, each with
-    its own name given right in the script (see command/test_views.txt),
+    A single command/test/*.txt can call REC.png several times, each with
+    its own name given right in the script (see command/test/views.txt),
     so one test run can produce many screenshots - not just one - and
     every one of them is returned here."""
     found = []
@@ -270,7 +270,7 @@ def make_one(exe, name, out_dir):
         screenshots = run_once(exe, name)
         if screenshots:
             # Keep each screenshot's own filename - the one given right in
-            # command/test_*.txt's REC.png lines (see command/test_views.txt) -
+            # command/test/*.txt's REC.png lines (see command/test/views.txt) -
             # rather than renaming it after the test file, since one test
             # can produce several distinctly-named screenshots.
             for screenshot in screenshots:
@@ -287,13 +287,13 @@ def make_one(exe, name, out_dir):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("names", nargs="*", help="test names to run (default: all command/test_*.txt)")
+    parser.add_argument("names", nargs="*", help="test names to run (default: all command/test/*.txt)")
     parser.add_argument("--baseline", action="store_true", help="write to test/image/baseline/ instead of test/image/actual/")
     args = parser.parse_args()
 
     all_tests = discover_tests()
     if not all_tests:
-        print("error: no command/test_*.txt scripts found", file=sys.stderr)
+        print("error: no command/test/*.txt scripts found", file=sys.stderr)
         sys.exit(1)
 
     names = args.names if args.names else all_tests

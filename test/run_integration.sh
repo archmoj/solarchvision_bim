@@ -1,6 +1,6 @@
 #!/bin/bash
 # Attaches JaCoCo coverage to a test/image/make_baseline.sh USER=AUTO run
-# (e.g. the command/test_*.txt image-regression scripts), and merges the
+# (e.g. the command/test/*.txt image-regression scripts), and merges the
 # result with the unit tests' jacoco.exec into one combined report.
 #
 # Delegates the actual "find Processing, run it, know what it takes to
@@ -25,8 +25,8 @@
 # display - see test/image/make_baseline.sh's own comment on this.
 #
 # Usage:
-#   ./test/run_integration.sh                          # every command/test_*.txt
-#   ./test/run_integration.sh command/test_primitives.txt [more scripts...]
+#   ./test/run_integration.sh                          # every command/test/*.txt
+#   ./test/run_integration.sh command/test/primitives.txt [more scripts...]
 #
 # Environment:
 #   PROCESSING_HOME   - defaults to ~/processing/4.5.2 - see
@@ -58,13 +58,13 @@ fi
 
 if [ "$#" -lt 1 ]; then
   shopt -s nullglob
-  set -- command/test_*.txt
+  set -- command/test/*.txt
   shopt -u nullglob
   if [ "$#" -lt 1 ]; then
-    echo "error: no scripts given and no command/test_*.txt files found" >&2
+    echo "error: no scripts given and no command/test/*.txt files found" >&2
     exit 1
   fi
-  echo "==> No scripts given - defaulting to every command/test_*.txt: $*"
+  echo "==> No scripts given - defaulting to every command/test/*.txt: $*"
 fi
 
 mkdir -p "$OUT_DIR"
