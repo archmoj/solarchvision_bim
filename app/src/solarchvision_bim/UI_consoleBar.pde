@@ -8,12 +8,34 @@ class UI_consoleBar {
   int editCursor = 0;
   String editText = "";
 
+  final int maxDisplayLines = 2;
+  final float hOne = pixel_D / (maxDisplayLines + 1);
+
+  void drawDirective (String txt, boolean b) {
+    float x = 0;
+    float y = pixel_A + pixel_B + 2 * pixel_H + pixel_C + pixel_D - hOne;
+
+    noStroke();
+    fill(0);
+    rect(x, y, width, hOne);
+
+    if(b) { // blue for commands/actions
+      fill(127, 127, 255);
+    } else { // red for hint
+      fill(255, 127, 127);
+    }
+    textAlign(LEFT, TOP);
+    textSize(1.15 * MessageSize);
+    text(txt,
+      x + 0.5 * MessageSize,
+      y + 0.25 * MessageSize
+    );
+  }
+
   void draw () {
     if (this.update) {
 
       this.updated();
-
-      int maxDisplayLines = 3;
 
       if (typeUserCommand == 1) {
         fill(0, 0, 63);
@@ -22,7 +44,7 @@ class UI_consoleBar {
         fill(127);
       }
       noStroke();
-      rect(0, pixel_A + pixel_B + 2 * pixel_H + pixel_C, width, pixel_D);
+      rect(0, pixel_A + pixel_B + 2 * pixel_H + pixel_C, width, pixel_D - hOne);
 
       noStroke();
 

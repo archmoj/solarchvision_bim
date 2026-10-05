@@ -38,11 +38,13 @@ String runScriptLine (String lineSTR) {
       callAction(lineSTR);
     } else {
 
-      printDirective(COMMAND_HEAD + lineSTR);
+      displayDirective(COMMAND_HEAD + lineSTR);
 
       hint = ___executeScriptLine___(lineSTR);
 
       if(!hint.equals("")) {
+        UI_consoleBar.drawDirective(hint, false);
+
         boolean isUnrecognizedCommand = hint.equals(UnrecognizedCommand);
         printFeedback(hint, isUnrecognizedCommand);
 

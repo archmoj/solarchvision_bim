@@ -350,6 +350,11 @@ void printSameLine(String txt) {
   print("\r" + txt);
 }
 
+void displayDirective(String txt) {
+  printDirective(txt);
+  UI_consoleBar.drawDirective(txt, true);
+}
+
 void printDirective(String txt) {
   if (
     logLevel == LOGLEVEL_PRINT_ONLY ||
