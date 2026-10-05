@@ -75,10 +75,6 @@ class UI_consoleBar {
 
         if ((0 <= n) && (n < allCommands.length)) {
 
-          textAlign(RIGHT, CENTER);
-          fill(255,127,0);
-          text(allMessages[n], width - 0.5 * MessageSize, q * 1.5 * MessageSize);
-
           textAlign(LEFT, CENTER);
           fill(255);
 
@@ -175,9 +171,7 @@ class UI_consoleBar {
         } else {
           // run previous command before adding new line
           String hint = runLastCommand();
-          allMessages[allMessages.length - 1] = hint;
           allCommands = concat(allCommands, new String[] {""});
-          allMessages = concat(allMessages, new String[] {""});
 
           // interrupt in case of error
           if(hint.equals(UnrecognizedCommand)) break;
@@ -247,9 +241,8 @@ class UI_consoleBar {
       switch(keyChar) {
 
         case ENTER:
-          allMessages[allMessages.length - 1] = runLastCommand();
+          runLastCommand();
           allCommands = concat(allCommands, new String[] {""});
-          allMessages = concat(allMessages, new String[] {""});
           this.editCursor = 0;
           break;
 

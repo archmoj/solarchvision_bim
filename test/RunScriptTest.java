@@ -95,16 +95,13 @@ class RunScriptTest {
   // ================= CLS =====================================================
 
   @Test
-  void cls_resetsCommandAndMessageHistoryToASingleEmptyEntry () {
+  void cls_resetsCommandHistoryToASingleEmptyEntry () {
     app.allCommands = new String[]{"a", "b", "c"};
-    app.allMessages = new String[]{"x", "y", "z"};
 
     app.runScriptLine("CLS");
 
     assertEquals(1, app.allCommands.length);
     assertEquals("", app.allCommands[0]);
-    assertEquals(1, app.allMessages.length);
-    assertEquals("", app.allMessages[0]);
   }
 
   // ================= Delete All-<Category> regression =======================

@@ -20,10 +20,7 @@ int getI(HashMap<String,String> p, String key, int def) {
 String __CLS__ (String[] parts) {
     String hint = "";
     allCommands = new String[1];
-    allMessages = new String[1];
-
     allCommands[0] = "";
-    allMessages[0] = "";
     return hint;
 }
 

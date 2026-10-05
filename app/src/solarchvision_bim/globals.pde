@@ -828,7 +828,6 @@ UI_consoleBar UI_consoleBar = new UI_consoleBar();
 UI_caseBar UI_caseBar = new UI_caseBar();
 
 String[] allCommands = {"Command Input:", ""};
-String[] allMessages = {"Command Output:", ""};
 
 int typeUserCommand = 0;
 
