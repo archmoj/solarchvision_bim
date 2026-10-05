@@ -55,6 +55,6 @@ class OperatingSystem {
     } catch (Exception e) {
       // Silently fall back if terminal is detached or environments lack tools
     }
-    return 80; // fallback
+    return 120; // fallback
   }
 }
