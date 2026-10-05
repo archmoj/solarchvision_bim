@@ -126,7 +126,17 @@ class UI_consoleBar {
     this.update = false;
   }
 
-  String runLastCommand() {
+  boolean isCurrentCommandEmpty() {
+    if(this.editText.equals("")) {
+      // Note here we clear the message as side effect
+      this.drawEmptyDirective();
+
+      return true;
+    }
+    return false;
+  }
+
+  String runCurrentCommand() {
     // record command
     allCommands[allCommands.length - 1] = this.editText;
     // reset editText
@@ -170,7 +180,7 @@ class UI_consoleBar {
           this.editCursor += line.length();
         } else {
           // run previous command before adding new line
-          String hint = runLastCommand();
+          String hint = runCurrentCommand();
           allCommands = concat(allCommands, new String[] {""});
 
           // interrupt in case of error
@@ -241,9 +251,11 @@ class UI_consoleBar {
       switch(keyChar) {
 
         case ENTER:
-          runLastCommand();
-          allCommands = concat(allCommands, new String[] {""});
-          this.editCursor = 0;
+          if(!isCurrentCommandEmpty()) {
+            runCurrentCommand();
+            allCommands = concat(allCommands, new String[] {""});
+            this.editCursor = 0;
+          }
           break;
 
         case BACKSPACE:
