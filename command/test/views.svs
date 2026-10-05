@@ -5,6 +5,10 @@ Day 2
 # clear default model
 Delete all
 
+3d-model 3
+
+Delete All-Model2Ds
+
 Person m=0 x=-20 y=0   z=0
 Person m=0 x=20  y=0   z=0
 Person m=0 x=0   y=-20 z=0
