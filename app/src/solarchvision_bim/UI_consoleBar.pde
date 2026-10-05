@@ -17,6 +17,16 @@ class UI_consoleBar {
   }
 
   void drawDirective (String txt, boolean b) {
+    // g (the PGraphics context) is only non-null once setup()/size() has
+    // actually run - never true in a headless JUnit test, where every
+    // command/action now reaches here (via echoAction/showFullCommand/
+    // displayDirective) just to log its own name. Every call below
+    // (noStroke/fill/rect/text/etc.) is a PApplet drawing method that
+    // needs that context, so without this guard every one of those
+    // tests crashes here instead of exercising the actual logic it's
+    // meant to test.
+    if (g == null) return;
+
     float x = 0;
     float y = pixel_A + pixel_B + 2 * pixel_H + pixel_C + pixel_D - hOne;
 
