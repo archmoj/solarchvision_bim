@@ -25,6 +25,9 @@ rem ln -sfn's overwrite-if-exists behavior in run-with-latest-processing.sh.
 if exist "%CORE%\input" rmdir "%CORE%\input"
 mklink /J "%CORE%\input" "%CD%\input" >nul
 
+if exist "%CORE%\import" rmdir "%CORE%\import"
+mklink /J "%CORE%\import" "%CD%\import" >nul
+
 if exist "%CORE%\command" rmdir "%CORE%\command"
 mklink /J "%CORE%\command" "%CD%\command" >nul
 

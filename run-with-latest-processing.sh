@@ -17,6 +17,7 @@ PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 CORE="$PROCESSING_HOME/lib/app/resources/core"
 mkdir -p projects
 ln -sfn "$(pwd)/input" "$CORE/input"
+ln -sfn "$(pwd)/import" "$CORE/import"
 ln -sfn "$(pwd)/command" "$CORE/command"
 ln -sfn "$(pwd)/projects" "$CORE/projects"
 
