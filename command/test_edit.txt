@@ -1,6 +1,11 @@
+# clear command cache
+CLS
+
+# set test time
 Month 10
 Day 2
 
+# clear default model
 Delete all
 
 Box m:0 tes:0 lyr:0 x:0 y:0 z:0 dx:8 dy:8 dz:8 r:0
