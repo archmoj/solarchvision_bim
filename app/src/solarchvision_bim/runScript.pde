@@ -20,16 +20,23 @@ String runScriptLines (String[] FileALL) {
 String runScriptLine (String lineSTR) {
   String hint = "";
   if(!lineSTR.equals("")) {
-    showFullCommand(COMMANDS_LABEL + lineSTR);
 
-    hint = ___executeScriptLine___(lineSTR);
+    String name = lineSTR.stripTrailing().toLowerCase();
+    if(allActions.get(name) != null && !bypassAllActionsFor.contains(name)) {
+      callAction(lineSTR);
+    } else {
 
-    if(!hint.equals("")) {
-      boolean isUnrecognizedCommand = hint.equals(UnrecognizedCommand);
-      showFullFeedback(FEEDBACKS_LABEL + hint, isUnrecognizedCommand);
+      showFullCommand(COMMANDS_LABEL + lineSTR);
 
-      // interrupt in case of error
-      if(isUnrecognizedCommand) return UnrecognizedCommand;
+      hint = ___executeScriptLine___(lineSTR);
+
+      if(!hint.equals("")) {
+        boolean isUnrecognizedCommand = hint.equals(UnrecognizedCommand);
+        showFullFeedback(FEEDBACKS_LABEL + hint, isUnrecognizedCommand);
+
+        // interrupt in case of error
+        if(isUnrecognizedCommand) return UnrecognizedCommand;
+      }
     }
   }
   return hint;
