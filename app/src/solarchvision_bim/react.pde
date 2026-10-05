@@ -18,7 +18,7 @@ class react {
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
     TIME.hour = int(24 * (TIME.date - int(TIME.date)));
     TIME.date = (TIME.hour / 24.0) + (286 + TIME.convert2Date(TIME.month, TIME.day)) % 365;
-    println("DATE:", TIME.date, "\tHOUR:", TIME.hour);
+    //println("DATE:", TIME.date, "\tHOUR:", TIME.hour);
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
 

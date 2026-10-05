@@ -26,13 +26,13 @@ String runScriptLine (String lineSTR) {
       callAction(lineSTR);
     } else {
 
-      showFullCommand(COMMANDS_LABEL + lineSTR);
+      showFullCommand(COMMAND_HEAD + lineSTR);
 
       hint = ___executeScriptLine___(lineSTR);
 
       if(!hint.equals("")) {
         boolean isUnrecognizedCommand = hint.equals(UnrecognizedCommand);
-        showFullFeedback(FEEDBACKS_LABEL + hint, isUnrecognizedCommand);
+        showFeedback(hint, isUnrecognizedCommand);
 
         // interrupt in case of error
         if(isUnrecognizedCommand) return UnrecognizedCommand;

@@ -147,6 +147,7 @@ void draw () {
         // One-time: confirms the normal USER_AUTO exit path was actually
         // reached (as opposed to the process being torn down some other
         // way - a CI timeout, a crash, etc.)
+        println();
         println("draw(): USER_AUTO exiting at frameCount=" + frameCount + ", stepAfterInitialization=" + stepAfterInitialization);
         exit();
       }

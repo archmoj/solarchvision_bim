@@ -331,9 +331,19 @@ void printlnSaving (String path) {
   println("Saving:", terminalLinkColor(path));
 }
 
-final String ACTIONS_LABEL =   "[Action]: ";
-final String COMMANDS_LABEL =  "(Command): ";
-final String FEEDBACKS_LABEL = "{Feedback}: ";
+final String ERROR_HEAD   = "<Error>: ";
+final String ACTION_HEAD  = "[Action]: ";
+final String COMMAND_HEAD = "(Command): ";
+final String HINT_HEAD    = "Hint: ";
+
+void printSameLine(String txt) {
+  int paddingLength = terminalWidth - txt.length();
+  if (paddingLength > 0) {
+    txt += " ".repeat(paddingLength);
+  }
+
+  print("\r" + txt);
+}
 
 void showFullCommand(String txt) {
   if (
@@ -348,33 +358,22 @@ void showFullCommand(String txt) {
   }
 }
 
-void showFullFeedback(String txt, boolean isUnrecognizedCommand) {
+void showFeedback(String txt, boolean isUnrecognizedCommand) {
   if (
     logLevel == LOGLEVEL_PRINT_ONLY ||
     logLevel == LOGLEVEL_GUI_AND_PRINT
   ) {
-    if (control == USER_GUI) {
-      println();
-      if (isUnrecognizedCommand) {
-        println(ANSI_YELLOW + ANSI_RED_BG + txt + ANSI_RESET);
-      } else {
-        println(ANSI_RED + ANSI_YELLOW_BG + txt + ANSI_RESET);
-      }
+    if (isUnrecognizedCommand) {
+      printError(txt);
     } else {
-      println(txt);
+      println("\n" + ANSI_BLUE + ANSI_YELLOW_BG + HINT_HEAD + txt + ANSI_RESET);
     }
   }
 }
 
-void printSameLine(String txt) {
-  int paddingLength = terminalWidth - txt.length();
-  if (paddingLength > 0) {
-    txt += " ".repeat(paddingLength);
-  }
-
-  print("\r" + txt);
+void printError (String txt) {
+  println("\n" + ERROR_HEAD + ANSI_YELLOW + ANSI_RED_BG + txt + ANSI_RESET);
 }
-
 
 String ScreenShotName = "";
 String ScreenShotType = ".jpg";

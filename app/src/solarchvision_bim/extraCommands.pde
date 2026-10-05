@@ -29,6 +29,7 @@ String __CLS__ (String[] parts) {
 
 String __QUIT__ (String[] parts) {
     String hint = "";
+    println();
     exit();
     return hint;
 }

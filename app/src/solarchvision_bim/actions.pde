@@ -42,7 +42,7 @@ private String normalizeActionKey(String s) {
 void echoAction(String command, String[] args) {
   if(logLevel <= LOGLEVEL_DISABLED) return;
 
-  StringBuilder line = new StringBuilder(ACTIONS_LABEL);
+  StringBuilder line = new StringBuilder(ACTION_HEAD);
   line.append(command);
   for (int i = 1; i < args.length; i++) {
     line.append(" ").append(args[i]);
@@ -52,7 +52,7 @@ void echoAction(String command, String[] args) {
 
 void echoAction(String command) {
   if(logLevel <= LOGLEVEL_DISABLED) return;
-  showFullCommand(ACTIONS_LABEL + command);
+  showFullCommand(ACTION_HEAD + command);
 }
 
 private void putAction(String s, Runnable fn) {
@@ -164,7 +164,7 @@ void putValueAction(String name, FloatGetter getter, FloatSetter setter, FloatGe
     float max_v = maxGetter.get();
 
     if (args.length < 2) {
-      println("out:", name + " " + nf(min_v, 0, 0) + ".." + nf(max_v, 0, 0));
+      printError(name + " " + nf(min_v, 0, 0) + ".." + nf(max_v, 0, 0));
       return;
     }
 
@@ -173,12 +173,12 @@ void putValueAction(String name, FloatGetter getter, FloatSetter setter, FloatGe
       requested = Float.parseFloat(args[1]);
     }
     catch (Exception ex) {
-      println("out:", "Invalid value for " + name + ": " + args[1]);
+      printError("Invalid value for " + name + ": " + args[1]);
       return;
     }
 
     if ((requested < min_v) || (requested > max_v)) {
-      println("out:", name + " must be between " + nf(min_v, 0, 0) + " and " + nf(max_v, 0, 0));
+      printError(name + " must be between " + nf(min_v, 0, 0) + " and " + nf(max_v, 0, 0));
       return;
     }
 
@@ -294,6 +294,7 @@ void build_allActions() {
   });
 
   putAction("Quit", () -> {
+    println();
     exit();
   });
 
