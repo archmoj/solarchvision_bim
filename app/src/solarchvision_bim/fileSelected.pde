@@ -104,7 +104,6 @@ void _fileSelected_ImportObj (File selectedFile) {
     Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
     for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
       Select3D.groupSelection[i] = i + number_of_allGroups_before;
-      //println(Select3D.groupSelection[i]);
     }
 
     switch_category(ObjectCategory.GROUP);

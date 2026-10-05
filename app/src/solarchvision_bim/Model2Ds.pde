@@ -175,7 +175,6 @@ class Model2Ds {
     }
 
     for (int i = 1; i < n; i++) {
-      //println(this.ImagePath[i]);
       this.Images[i] = loadImage(this.ImagePath[i]);
 
       if (this.Images[i].height != 0) {
@@ -791,8 +790,6 @@ class Model2Ds {
 
         if (n < 0) u = 1 - u;
 
-        //println("uv,n", u, v, n);
-
         int Image_X = int(u * RES1);
         int Image_Y = int(v * RES2);
 
@@ -1043,8 +1040,6 @@ class Model2Ds {
 
   public void to_XML (XML xml) {
 
-    //printlnSaving(this.CLASS_STAMP);
-
     {
       XML parent = xml.addChild(this.CLASS_STAMP);
 
@@ -1118,8 +1113,6 @@ class Model2Ds {
 
 
   public void from_XML (XML xml) {
-
-    //println("Loading:" + this.CLASS_STAMP);
 
     {
       XML parent = xml.getChild(this.CLASS_STAMP);

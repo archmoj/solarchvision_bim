@@ -1436,8 +1436,6 @@ class Select3D {
 
         int OBJ_ID = f / allModel2Ds.num_visualFaces;
 
-        //println(f, OBJ_ID);
-
         for (int j = 0; j < allModel2Ds.Faces[f].length; j++) {
 
           int vNo = allModel2Ds.Faces[f][j];
@@ -1482,8 +1480,6 @@ class Select3D {
         if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
         int OBJ_ID = f / allSolids.num_visualFaces;
-
-        //println(f, OBJ_ID);
 
         for (int j = 0; j < allSolids.Faces[f].length; j++) {
 
@@ -2227,8 +2223,6 @@ class Select3D {
 
   public void to_XML (XML xml) {
 
-    //printlnSaving(this.CLASS_STAMP);
-
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     XML_setInt(parent, "positionVectorIndex", this.positionVectorIndex);
@@ -2278,8 +2272,6 @@ class Select3D {
 
 
   public void from_XML (XML xml) {
-
-    //println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 

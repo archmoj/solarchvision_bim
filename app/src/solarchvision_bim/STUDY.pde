@@ -672,14 +672,7 @@ class STUDY {
 
   void drawProbs (int i, int j, float[] valuesSUM, float[] valuesNUM, float x_Plot, float y_Plot, float sx_Plot, float sy_Plot) {
 
-    //println("view_S=", this.view_S);
-    //println("probabilityHeightInterval=", this.probabilityHeightInterval);
-
-    //float _pix = 100.0 * this.view_S / this.probabilityHeightInterval;
     float _pix = 90.0 * this.view_S / this.probabilityHeightInterval;
-
-    //println("_pix=", _pix);
-
 
     int PAL_type = this.probabilitiesColorscaleIndex;
     int PAL_direction = this.probabilitiesColorscaleDirection;
@@ -3172,8 +3165,6 @@ class STUDY {
 
   public void to_XML (XML xml) {
 
-    //printlnSaving(this.CLASS_STAMP);
-
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     XML_setInt(parent, "startHour", this.startHour);
@@ -3230,8 +3221,6 @@ class STUDY {
 
 
   public void from_XML (XML xml) {
-
-    //println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 

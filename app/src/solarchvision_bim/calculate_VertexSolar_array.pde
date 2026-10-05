@@ -2,7 +2,7 @@ void calculate_VertexSolar_array () {
 
   cursor(WAIT);
 
-  println("Calculating direct and diffuse values at each vertex. Please wait...");
+  println("\nCalculating direct and diffuse values at each vertex. Please wait...");
 
   buildFaceGrid();
 

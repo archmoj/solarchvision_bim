@@ -11,7 +11,7 @@ void download_climateTypicalYear () {
 
     String the_link = STATION.getClimateTypicalYearDownload();
 
-    println("Try downloading: " + the_link);
+    println("\nTry downloading: " + the_link);
 
     try {
       saveBytes(the_target + ".zip", loadBytes(the_link));

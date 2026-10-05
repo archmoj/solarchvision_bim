@@ -66,8 +66,6 @@ class User3D {
 
   public void to_XML (XML xml) {
 
-    //printlnSaving(this.CLASS_STAMP);
-
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     XML_setInt(parent, "creatorMaterial", this.creatorMaterial);
@@ -125,8 +123,6 @@ class User3D {
 
 
   public void from_XML (XML xml) {
-
-    //println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 

@@ -698,7 +698,6 @@ class WORLD {
           if (isInside(x_point, y_point, 0, 0, this.dX, this.dY)) {
             this.drawLabel(x_point, y_point, ensembleObservationCoordinates[f].getCode(), 1.0);
           }
-          //println(ensembleObservationCoordinates[f].getCode());
         }
 
       }
@@ -796,8 +795,6 @@ class WORLD {
 
   public void to_XML (XML xml) {
 
-    //printlnSaving(this.CLASS_STAMP);
-
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     XML_setInt(parent, "zoom", this.zoom);
@@ -817,8 +814,6 @@ class WORLD {
 
 
   public void from_XML (XML xml) {
-
-    //println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 

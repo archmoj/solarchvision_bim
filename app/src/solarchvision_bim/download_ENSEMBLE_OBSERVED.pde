@@ -35,7 +35,7 @@ void download_ensembleObservation (int THE_YEAR, int THE_MONTH, int THE_DAY, int
           String the_link = "https://dd.weather.gc.ca/" + dayStr +"/WXO-DD/observations/swob-ml/" + dayStr + "/" +
             split(ensembleObservationCoordinates[f].getCode(),'-')[0] + "/" + FN;
 
-          println("Try downloading: " + the_link);
+          println("\nTry downloading: " + the_link);
 
           try {
             saveBytes(the_target, loadBytes(the_link));

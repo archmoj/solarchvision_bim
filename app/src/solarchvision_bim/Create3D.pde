@@ -1510,9 +1510,6 @@ class Create3D {
     }
 
 
-    //println("Vertices:", POINTER_TempObjectVertices);
-    //println("Faces:", POINTER_TempObjectFaces);
-
     if (isSky == 0) {
       this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, r, r, r, t);
     } else if (isSky == 1) {
@@ -1769,22 +1766,16 @@ class Create3D {
 
             for (int dir = -1; dir <= 1; dir += 2) { // "dir" introduces different diretions that two faces could match
 
-              //println("\ndir=", dir);
-
               float total_distances = 0;
 
               for (int j = 0; j < f.length; j++) {
 
                 int q = (j * dir + k + f.length) % f.length;
 
-                //print("q=", q, "; k=" );
-
                 total_distances += funcs.vec_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
               }
 
               if (total_distances < 0.0001) { // avoid creating duplicate faces
-                //println("A duplicate face detected :", i);
-
                 face_existed = i;
                 break;
               }

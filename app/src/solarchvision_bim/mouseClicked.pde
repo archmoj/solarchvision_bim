@@ -710,13 +710,11 @@ SectionParams computeSectionParams (int f, float[] RxP) {
       float V = GAxGB_other.dot(GAxGB);
 
       if (V < 0) {
-        //println("flip face!");
+        // flip face
 
         sp.R = 180 + sp.R;
         sp.Z *= -1;
         sp.X *= -1;
-      } else {
-        //println("face OK!");
       }
 
       sp.createNew = true;
@@ -1618,8 +1616,6 @@ void handleWin3DClickAt(float Image_X, float Image_Y) {
         }
       }
     }
-
-    //println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[1], RxP[2], RxP[3], RxP[4], RxP[0]);
 
     if ((WIN3D.currentTool != UITASK.Create) && (WIN3D.currentTool != UITASK.Move)) { // PickSelect also if scale, rotate, modify, etc. where selected
 

@@ -26,9 +26,7 @@ void exportRadiance () {
   radOutput.flush();
   radOutput.close();
 
-  println("End of creating rad file.");
-
-  println("File created:" + radFilename);
+  println("\nFile created:" + radFilename);
 
 
   String batFilename = radFilename.replace(".rad", ".bat");

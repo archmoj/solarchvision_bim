@@ -73,8 +73,5 @@ void exportObj (String suffix) {
   objOutput.flush();
   objOutput.close();
 
-
-  println("End of exporting the mesh.");
-
-  println("File created:" + objFilename);
+  println("\nFile created:" + objFilename);
 }

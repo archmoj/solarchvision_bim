@@ -5,8 +5,6 @@ void load_climateTypicalYear (String FileName) {
   String[] input;
 
 
-  //println("lines = ", FileALL.length);
-
   for (int f = 8; f < FileALL.length; f++) {
 
     lineSTR = FileALL[f];
@@ -18,13 +16,9 @@ void load_climateTypicalYear (String FileName) {
     int CLIMATE_DAY = int(parts[2]);
     int CLIMATE_HOUR = int(parts[3]);
 
-    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
-
     int i = int(CLIMATE_HOUR) - 1;
     int j = TIME.convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
     int k = 0; // on TMYEPW:TMY files we have only one year
-
-    //println(i);
 
     climateTypicalYearValues[i][j][LAYER_pressure.id][k] = float(parts[9]) * 0.01; // 10 times in Pa
     climateTypicalYearValues[i][j][LAYER_drybulb.id][k] = float(parts[6]); // in °C

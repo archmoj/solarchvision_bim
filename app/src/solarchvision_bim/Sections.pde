@@ -391,9 +391,7 @@ class Sections {
     return new float[] { X, Y, Z, dist2intersect };
   }
 
-  public void to_XML (XML xml) {
-    //printlnSaving(this.CLASS_STAMP);
-    {
+  public void to_XML (XML xml) {    {
       XML parent = xml.addChild(this.CLASS_STAMP);
       int ni = this.num;
       XML_setInt(parent, "ni", ni);
@@ -465,9 +463,7 @@ class Sections {
     }
   }
 
-  public void from_XML (XML xml) {
-    //println("Loading:" + this.CLASS_STAMP);
-    {
+  public void from_XML (XML xml) {    {
       XML parent = xml.getChild(this.CLASS_STAMP);
       int ni = XML_getInt(parent, "ni");
       this.f_data = new float[ni][6];

@@ -285,9 +285,7 @@ class Sky3D {
   }
 
 
-  public void to_XML (XML xml) {
-    //printlnSaving(this.CLASS_STAMP);
-    XML parent = xml.addChild(this.CLASS_STAMP);
+  public void to_XML (XML xml) {    XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
     XML_setFloat(parent, "scale", this.radius);
@@ -304,9 +302,7 @@ class Sky3D {
     XML_setFloat(parent, "calculatedResolution", this.calculatedResolution);
   }
 
-  public void from_XML (XML xml) {
-    //println("Loading:" + this.CLASS_STAMP);
-    XML parent = xml.getChild(this.CLASS_STAMP);
+  public void from_XML (XML xml) {    XML parent = xml.getChild(this.CLASS_STAMP);
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
     this.radius = XML_getFloat(parent, "scale");

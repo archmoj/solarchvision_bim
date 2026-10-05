@@ -809,8 +809,6 @@ class Model1Ds {
 
   public void to_XML (XML xml) {
 
-    //printlnSaving(this.CLASS_STAMP);
-
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     int ni = this.num;
@@ -855,8 +853,6 @@ class Model1Ds {
   }
 
   public void from_XML (XML xml) {
-
-    //println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 

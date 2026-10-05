@@ -181,8 +181,6 @@ void exportHtml () {
   htmlOutput.flush();
   htmlOutput.close();
 
-  println("End of creating html file.");
-
-  println("File created:" + htmlFilename);
+  println("\nFile created:" + htmlFilename);
 
 }

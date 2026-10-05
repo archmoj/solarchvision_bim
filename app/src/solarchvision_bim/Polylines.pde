@@ -487,8 +487,6 @@ class Polylines {
 
   public void to_XML (XML xml) {
 
-    //printlnSaving(this.CLASS_STAMP);
-
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     XML_setInt(parent, "ni", this.nodes.length);
@@ -516,8 +514,6 @@ class Polylines {
 
 
   public void from_XML (XML xml) {
-
-    //println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
     int ni = XML_getInt(parent, "ni");

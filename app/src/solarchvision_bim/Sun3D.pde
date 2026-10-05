@@ -633,9 +633,7 @@ class Sun3D {
   }
 
 
-  public void to_XML (XML xml) {
-    //printlnSaving(this.CLASS_STAMP);
-    XML parent = xml.addChild(this.CLASS_STAMP);
+  public void to_XML (XML xml) {    XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setInt(parent, "activeColorscaleIndex", this.activeColorscaleIndex);
     XML_setInt(parent, "activeColorscaleDirection", this.activeColorscaleDirection);
     XML_setFloat(parent, "activeColorscaleFactor", this.activeColorscaleFactor);
@@ -650,9 +648,7 @@ class Sun3D {
     XML_setBoolean(parent, "fitInSkyDome", this.fitInSkyDome);
   }
 
-  public void from_XML (XML xml) {
-    //println("Loading:" + this.CLASS_STAMP);
-    XML parent = xml.getChild(this.CLASS_STAMP);
+  public void from_XML (XML xml) {    XML parent = xml.getChild(this.CLASS_STAMP);
     this.activeColorscaleIndex = XML_getInt(parent, "activeColorscaleIndex");
     this.activeColorscaleDirection = XML_getInt(parent, "activeColorscaleDirection");
     this.activeColorscaleFactor = XML_getFloat(parent, "activeColorscaleFactor");

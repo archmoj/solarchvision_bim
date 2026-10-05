@@ -10,19 +10,14 @@ void load_ensembleObservation (String FileName, int Load_Layer) {
   XML[] children3 = children2[0].getChildren("gml:TimeInstant");
   XML[] children4 = children3[0].getChildren("gml:timePosition");
   String _TimeInstant = String.valueOf(children4[0].getContent());
-  //println(_TimeInstant);
 
   int THE_YEAR = int(_TimeInstant.substring(0, 4));
   int THE_MONTH = int(_TimeInstant.substring(5, 7));
   int THE_DAY = int(_TimeInstant.substring(8, 10));
   int THE_HOUR = int(_TimeInstant.substring(11, 13));
 
-  //println(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
-
   int now_i = int(THE_HOUR);
   int now_j = TIME.convert2Date(THE_MONTH, THE_DAY);
-
-  //println(now_i, now_j);
 
   now_i -= int(-STATION.getTimezoneLongitude() / 15);
 
@@ -34,9 +29,6 @@ void load_ensembleObservation (String FileName, int Load_Layer) {
     }
   }
 
-  //println(now_i, now_j);
-  //println("-------------");
-
   children2 = children1[0].getChildren("om:result");
   children3 = children2[0].getChildren("elements");
   children4 = children3[0].getChildren("element");
@@ -46,8 +38,6 @@ void load_ensembleObservation (String FileName, int Load_Layer) {
     String _a1 = children4[Li].getString("name");
     String _a2 = children4[Li].getString("value");
     String _a3 = children4[Li].getString("uom");
-
-    //println("Li=", Li, _a1, _a2, _a3);
 
     if (_a2.toUpperCase().equals("MSNG")) { // missing values
       _a2 = String.valueOf(FLOAT_undefined);

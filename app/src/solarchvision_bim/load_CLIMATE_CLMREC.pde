@@ -10,7 +10,6 @@ void load_climateArchive (String FileName) {
   for (int f = 18; f < FileALL.length; f++) {
 
     lineSTR = FileALL[f];
-    //println(lineSTR);
 
     if (lineSTR.trim().length() == 0) continue; // skip blank lines (e.g. a trailing empty line at EOF)
 
@@ -24,13 +23,9 @@ void load_climateArchive (String FileName) {
     int CLIMATE_DAY = int(parts[3]);
     int CLIMATE_HOUR = int(parts[4].substring(0, 2));
 
-    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
-
     int i = int(CLIMATE_HOUR);
     int j = TIME.convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
     int k = (CLIMATE_YEAR - climateArchiveStart);
-
-    //println(i);
 
     if (parts.length > 24) {
 
@@ -38,16 +33,12 @@ void load_climateArchive (String FileName) {
 
       str = parts[24];
 
-      //println(str);
-
       if (str.equals("NA")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = FLOAT_undefined;
       else if (str.equals("Clear")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 0;
       else if (str.equals("Mainly Clear")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 2.5;
       else if (str.equals("Mostly Cloudy")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 5;
       else if (str.equals("Cloudy")) climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 7.5;
       else climateArchiveValues[i][j][LAYER_cloudcover.id][k] = 10;
-
-      //println(climateArchiveValues[i][j][LAYER_cloudcover.id][k]);
 
       str = parts[6];
       if (!str.equals("")) climateArchiveValues[i][j][LAYER_drybulb.id][k] = float(str); // °C

@@ -30,8 +30,6 @@ class LAYER {
 
   public void to_XML (XML xml) {
 
-    printlnSaving(this.CLASS_STAMP + "_" + nf(this.id, 0));
-
     XML parent = xml.addChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
 
     XML_setInt(parent, "id", this.id);

@@ -113,8 +113,6 @@ class SolarImpacts {
           int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
           if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
 
-          //println(DATE_ANGLE, DATE_ANGLE_approximate);
-
           int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l, start_k, end_k, j, DATE_ANGLE, WIN3D.impactTypeIndex);
 
           if (nk == -1) continue;
@@ -201,7 +199,6 @@ class SolarImpacts {
                         File_Name += "_Camera" + nf(cameraIndex, 2) + ".png";
 
 
-                        // println(File_Name);
                         Shadings[SHD]  = loadImage(File_Name);
                       }
 
@@ -501,8 +498,6 @@ class SolarImpacts {
 
   public void to_XML (XML xml) {
 
-    //printlnSaving(this.CLASS_STAMP);
-
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     XML_setBoolean(parent, "displayImage", this.displayImage);
@@ -522,8 +517,6 @@ class SolarImpacts {
 
 
   public void from_XML (XML xml) {
-
-    //println("Loading:" + this.CLASS_STAMP);
 
     XML parent = xml.getChild(this.CLASS_STAMP);
 

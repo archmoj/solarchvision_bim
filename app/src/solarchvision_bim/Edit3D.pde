@@ -200,7 +200,6 @@ class Edit3D {
 
         allSections.set_res1(f, n);
         allSections.set_res2(f, n); // also modifying the other one
-        println("RES:", n);
 
         allSolids_updated = true;
       }

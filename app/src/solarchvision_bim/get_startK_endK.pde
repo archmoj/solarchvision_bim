@@ -48,9 +48,6 @@ int[] get_startK_endK () {
     end_k -= ensembleObservationStart;
   }
 
-  //println("start_k=", start_k);
-  //println("end_k=", end_k);
-
   a[0] = start_k;
   a[1] = end_k;
 

@@ -882,9 +882,7 @@ class Terrain {
   }
 
 
-  public void to_XML (XML xml) {
-    //printlnSaving(this.CLASS_STAMP);
-    {
+  public void to_XML (XML xml) {    {
       XML parent = xml.addChild(this.CLASS_STAMP);
 
       XML_setInt(parent, "displayTessellation", this.displayTessellation);
@@ -946,9 +944,7 @@ class Terrain {
     }
   }
 
-  public void from_XML (XML xml) {
-    //println("Loading:" + this.CLASS_STAMP);
-    {
+  public void from_XML (XML xml) {    {
       XML parent = xml.getChild(this.CLASS_STAMP);
 
       this.displayTessellation = XML_getInt(parent, "displayTessellation");

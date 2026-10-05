@@ -149,7 +149,7 @@ void castShadows_CurrentSection () {
       File_Name += "_Camera00.png";
 
       DIFFUSE_graphics.save(File_Name);
-      println(File_Name);
+      println("\n" + File_Name);
     }
   }
 

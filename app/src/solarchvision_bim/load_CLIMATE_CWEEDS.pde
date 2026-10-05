@@ -10,20 +10,15 @@ void load_climateEngineering (String FileName) {
   for (int f = 1; f < FileALL.length; f++) {
 
     lineSTR = FileALL[f];
-    //println(lineSTR);
 
     int CLIMATE_YEAR = int(lineSTR.substring(8, 12));
     int CLIMATE_MONTH = int(lineSTR.substring(12, 14));
     int CLIMATE_DAY = int(lineSTR.substring(14, 16));
     int CLIMATE_HOUR = int(lineSTR.substring(16, 18));
 
-    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
-
     int i = int(CLIMATE_HOUR) - 1;
     int j = TIME.convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
     int k = (CLIMATE_YEAR - climateEngineeringStart);
-
-    //println(i);
 
     climateEngineeringValues[i][j][LAYER_pressure.id][k] = float(lineSTR.substring(87, 92)); // 10 times in Pa
     climateEngineeringValues[i][j][LAYER_drybulb.id][k] = float(lineSTR.substring(93, 97)); // 10 times in °C

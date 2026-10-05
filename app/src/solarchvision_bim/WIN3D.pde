@@ -976,8 +976,6 @@ class WIN3D {
     this.cameraX = r2[0];
     this.cameraY = r2[1];
     this.cameraZ = r2[2];
-
-    //println("Camera:", nf(this.cameraX,0,4), nf(this.cameraY,0,4), nf(this.cameraZ,0,4));
   }
 
   float[] calculate_Click3D (float Image_X, float Image_Y) {
@@ -1103,8 +1101,6 @@ class WIN3D {
 
 
   public void to_XML (XML xml) {
-    //printlnSaving(this.CLASS_STAMP);
-
     XML parent = xml.addChild(this.CLASS_STAMP);
 
     XML_setFloat(parent, "cameraX", this.cameraX);
@@ -1137,8 +1133,6 @@ class WIN3D {
   }
 
   public void from_XML (XML xml) {
-    //println("Loading:" + this.CLASS_STAMP);
-
     XML parent = xml.getChild(this.CLASS_STAMP);
 
     this.cameraX = XML_getFloat(parent, "cameraX");

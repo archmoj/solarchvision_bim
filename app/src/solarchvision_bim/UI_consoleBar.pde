@@ -383,7 +383,7 @@ String terminalLinkColor (String path) {
 }
 
 void printlnSaving (String path) {
-  println("Saving:", terminalLinkColor(path));
+  println("\nSaving:", terminalLinkColor(path));
 }
 
 final String ERROR_HEAD   = "<Error>: ";

@@ -163,9 +163,6 @@ void draw () {
 
 void keyPressed (KeyEvent e) {
 
-  //println("key: " + key);
-  //println("keyCode: " + keyCode);
-
   if (frameCount > Last_initializationStep) {
 
     if (control == USER_GUI) {

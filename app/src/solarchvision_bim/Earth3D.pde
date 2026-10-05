@@ -951,17 +951,13 @@ class Earth3D {
   }
 
 
-  public void to_XML (XML xml) {
-    //printlnSaving(this.CLASS_STAMP);
-    XML parent = xml.addChild(this.CLASS_STAMP);
+  public void to_XML (XML xml) {    XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setBoolean(parent, "displayTexture", this.displayTexture);
     XML_setFloat(parent, "levelOfDetail", this.levelOfDetail);
   }
 
-  public void from_XML (XML xml) {
-    //println("Loading:" + this.CLASS_STAMP);
-    XML parent = xml.getChild(this.CLASS_STAMP);
+  public void from_XML (XML xml) {    XML parent = xml.getChild(this.CLASS_STAMP);
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTexture = XML_getBoolean(parent, "displayTexture");
     this.levelOfDetail = XML_getFloat(parent, "levelOfDetail");

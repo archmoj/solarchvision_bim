@@ -17,7 +17,7 @@ void downloadClimateArchive () {
 
           String the_link = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=" + climateArchiveCoordinates[climateArchiveNearestStationIndex].getCode() + "&Year=" + nf(THE_YEAR, 4) + "&Month=" + nf(THE_MONTH, 2) + "&timeframe=1";
 
-          println("Try downloading: " + the_link);
+          println("\nTry downloading: " + the_link);
 
           try {
             saveBytes(the_target, loadBytes(the_link));

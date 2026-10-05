@@ -22,7 +22,7 @@ void download_ensembleForecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int TH
 
         the_target = the_target + ".bz2";
 
-        println("Try downloading: " + the_link);
+        println("\nTry downloading: " + the_link);
 
         try {
           saveBytes(the_target, loadBytes(the_link));
