@@ -320,11 +320,16 @@ String terminalLink (String path) {
 }
 
 String terminalLinkColor (String path) {
- return (
-  ANSI_BLACK +
-  ANSI_YELLOW_BG +
-  (control == USER_GUI ? terminalLink(path) : path) +
-  ANSI_RESET);
+  if (control == USER_GUI) {
+    return (
+      ANSI_BLACK +
+      ANSI_YELLOW_BG +
+      terminalLink(path)+
+      ANSI_RESET
+    );
+  }
+
+  return (ANSI_GREEN + path + ANSI_RESET);
 }
 
 void printlnSaving (String path) {
