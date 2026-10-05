@@ -139,6 +139,7 @@ PrintWriter[] FILE_outputProbs;
 
 
 OperatingSystem OPESYS = new OperatingSystem();
+int terminalWidth = OPESYS.getTerminalWidth();
 
 TIME TIME = new TIME();
 
@@ -340,7 +341,7 @@ void showFullCommand(String txt) {
     logLevel == LOGLEVEL_GUI_AND_PRINT
   ) {
     if (control == USER_GUI) {
-      println(ANSI_BLACK + ANSI_BLUE_BG + txt + ANSI_RESET);
+      printSameLine(ANSI_BLACK + ANSI_BLUE_BG + txt + ANSI_RESET);
     } else {
       println(txt);
     }
@@ -353,6 +354,7 @@ void showFullFeedback(String txt, boolean isUnrecognizedCommand) {
     logLevel == LOGLEVEL_GUI_AND_PRINT
   ) {
     if (control == USER_GUI) {
+      println();
       if (isUnrecognizedCommand) {
         println(ANSI_YELLOW + ANSI_RED_BG + txt + ANSI_RESET);
       } else {
@@ -362,6 +364,15 @@ void showFullFeedback(String txt, boolean isUnrecognizedCommand) {
       println(txt);
     }
   }
+}
+
+void printSameLine(String txt) {
+  int paddingLength = terminalWidth - txt.length();
+  if (paddingLength > 0) {
+    txt += " ".repeat(paddingLength);
+  }
+
+  print("\r" + txt);
 }
 
 
