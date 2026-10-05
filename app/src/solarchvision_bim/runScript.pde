@@ -21,7 +21,19 @@ String runScriptLine (String lineSTR) {
   String hint = "";
   if(!lineSTR.equals("")) {
 
-    String name = lineSTR.stripTrailing().toLowerCase();
+    lineSTR = lineSTR.stripLeading();
+
+    // Skip section line
+    if (lineSTR.startsWith("=")) return hint;
+
+    // Skip comment line
+    if (lineSTR.startsWith("#")) return hint;
+
+    lineSTR = lineSTR.stripTrailing();
+
+    if (lineSTR.equals("")) return hint;
+
+    String name = lineSTR.toLowerCase();
     if(allActions.get(name) != null && !bypassAllActionsFor.contains(name)) {
       callAction(lineSTR);
     } else {
