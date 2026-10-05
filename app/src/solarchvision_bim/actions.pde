@@ -47,12 +47,12 @@ void echoAction(String command, String[] args) {
   for (int i = 1; i < args.length; i++) {
     line.append(" ").append(args[i]);
   }
-  showFullCommand(line.toString());
+  printDirective(line.toString());
 }
 
 void echoAction(String command) {
   if(logLevel <= LOGLEVEL_DISABLED) return;
-  showFullCommand(ACTION_HEAD + command);
+  printDirective(ACTION_HEAD + command);
 }
 
 private void putAction(String s, Runnable fn) {

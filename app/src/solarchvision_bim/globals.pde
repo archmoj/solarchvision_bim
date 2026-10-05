@@ -350,7 +350,7 @@ void printSameLine(String txt) {
   print("\r" + txt);
 }
 
-void showFullCommand(String txt) {
+void printDirective(String txt) {
   if (
     logLevel == LOGLEVEL_PRINT_ONLY ||
     logLevel == LOGLEVEL_GUI_AND_PRINT
@@ -363,7 +363,7 @@ void showFullCommand(String txt) {
   }
 }
 
-void showFeedback(String txt, boolean isUnrecognizedCommand) {
+void printFeedback(String txt, boolean isUnrecognizedCommand) {
   if (
     logLevel == LOGLEVEL_PRINT_ONLY ||
     logLevel == LOGLEVEL_GUI_AND_PRINT
@@ -377,7 +377,12 @@ void showFeedback(String txt, boolean isUnrecognizedCommand) {
 }
 
 void printError (String txt) {
-  println("\n" + ERROR_HEAD + ANSI_YELLOW + ANSI_RED_BG + txt + ANSI_RESET);
+  if (
+    logLevel == LOGLEVEL_PRINT_ONLY ||
+    logLevel == LOGLEVEL_GUI_AND_PRINT
+  ) {
+    println("\n" + ERROR_HEAD + ANSI_YELLOW + ANSI_RED_BG + txt + ANSI_RESET);
+  }
 }
 
 String ScreenShotName = "";
