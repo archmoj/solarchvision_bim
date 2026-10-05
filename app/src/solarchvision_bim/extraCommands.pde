@@ -19,8 +19,7 @@ int getI(HashMap<String,String> p, String key, int def) {
 
 String __CLS__ (String[] parts) {
     String hint = "";
-    allCommands = new String[1];
-    allCommands[0] = "";
+    UI_consoleBar.emptyCommands();
     return hint;
 }
 

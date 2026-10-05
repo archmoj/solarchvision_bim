@@ -96,12 +96,12 @@ class RunScriptTest {
 
   @Test
   void cls_resetsCommandHistoryToASingleEmptyEntry () {
-    app.allCommands = new String[]{"a", "b", "c"};
+    app.UI_consoleBar.allCommands = new String[]{"a", "b", "c"};
 
     app.runScriptLine("CLS");
 
-    assertEquals(1, app.allCommands.length);
-    assertEquals("", app.allCommands[0]);
+    assertEquals(1, app.UI_consoleBar.allCommands.length);
+    assertEquals("", app.UI_consoleBar.allCommands[0]);
   }
 
   // ================= Delete All-<Category> regression =======================

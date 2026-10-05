@@ -8,6 +8,13 @@ class UI_consoleBar {
   int editCursor = 0;
   String editText = "";
 
+  String[] allCommands = {"Command Input:", ""};
+
+  void emptyCommands() {
+    this.allCommands = new String[1];
+    this.allCommands[0] = "";
+  }
+
   final int maxDisplayLines = 2;
   final float hOne = pixel_D / (maxDisplayLines + 1);
 
@@ -71,9 +78,9 @@ class UI_consoleBar {
 
       for (int q = 0; q < maxDisplayLines; q++) {
 
-        int n = allCommands.length + q - maxDisplayLines;
+        int n = this.allCommands.length + q - maxDisplayLines;
 
-        if ((0 <= n) && (n < allCommands.length)) {
+        if ((0 <= n) && (n < this.allCommands.length)) {
 
           textAlign(LEFT, CENTER);
           fill(255);
@@ -81,14 +88,14 @@ class UI_consoleBar {
           float x = 0.5 * MessageSize;
           float y = q * 1.5 * MessageSize;
 
-          String txt = n < allCommands.length - 1 ? allCommands[n] : this.editText;
+          String txt = n < this.allCommands.length - 1 ? this.allCommands[n] : this.editText;
           if(typeUserCommand == 0) {
             text(txt, x, y);
           } else {
             String txt_1 = txt;
             String txt_2 = "";
             String txt_3 = "";
-            if(n == allCommands.length - 1) {
+            if(n == this.allCommands.length - 1) {
               // text with cursor
               if(this.editCursor < this.editText.length()) {
                 txt_1 = txt.substring(0, this.editCursor);
@@ -138,13 +145,13 @@ class UI_consoleBar {
 
   String runCurrentCommand() {
     // record command
-    allCommands[allCommands.length - 1] = this.editText;
+    this.allCommands[this.allCommands.length - 1] = this.editText;
     // reset editText
     this.editText = "";
     this.editCursor = 0;
-    this.cycleCursor = allCommands.length;
+    this.cycleCursor = this.allCommands.length;
     // run last command
-    String lastCommand = allCommands[allCommands.length - 1];
+    String lastCommand = this.allCommands[this.allCommands.length - 1];
     if(lastCommand.equals("")) UI_consoleBar.drawEmptyDirective();
     return runScriptLine(lastCommand);
   }
@@ -181,7 +188,7 @@ class UI_consoleBar {
         } else {
           // run previous command before adding new line
           String hint = runCurrentCommand();
-          allCommands = concat(allCommands, new String[] {""});
+          this.allCommands = concat(this.allCommands, new String[] {""});
 
           // interrupt in case of error
           if(hint.equals(UnrecognizedCommand)) break;
@@ -220,21 +227,21 @@ class UI_consoleBar {
 
         case UP:
           if (this.cycleCursor > 0) {
-            if(this.cycleCursor == allCommands.length - 1) {
-              // keep edit text inside last allCommands
-              allCommands[this.cycleCursor] = this.editText;
+            if(this.cycleCursor == this.allCommands.length - 1) {
+              // keep edit text inside last this.allCommands
+              this.allCommands[this.cycleCursor] = this.editText;
             }
 
             this.cycleCursor--;
-            this.editText = allCommands[this.cycleCursor];
+            this.editText = this.allCommands[this.cycleCursor];
             this.editCursor = this.editText.length();
           }
           break;
 
         case DOWN:
-          if (this.cycleCursor < allCommands.length - 1) {
+          if (this.cycleCursor < this.allCommands.length - 1) {
             this.cycleCursor++;
-            this.editText = allCommands[this.cycleCursor];
+            this.editText = this.allCommands[this.cycleCursor];
             this.editCursor = this.editText.length();
           }
           break;
@@ -253,7 +260,7 @@ class UI_consoleBar {
         case ENTER:
           if(!isCurrentCommandEmpty()) {
             runCurrentCommand();
-            allCommands = concat(allCommands, new String[] {""});
+            this.allCommands = concat(this.allCommands, new String[] {""});
             this.editCursor = 0;
           }
           break;
@@ -320,8 +327,6 @@ class UI_consoleBar {
     }
   }
 }
-
-String[] allCommands = {"Command Input:", ""};
 
 private static String getClipboardText () {
   try {

@@ -55,7 +55,7 @@ class UI_consoleBarTest {
 
   @Test
   void dispatchEditKey_upStepsBackThroughCommandHistory () {
-    app.allCommands = new String[] {"Command Input:", "first", "second", ""};
+    app.UI_consoleBar.allCommands = new String[] {"Command Input:", "first", "second", ""};
     app.UI_consoleBar.cycleCursor = 3;
     app.UI_consoleBar.editText = "";
 
@@ -68,7 +68,7 @@ class UI_consoleBarTest {
 
   @Test
   void dispatchEditKey_upDoesNothingAtTheOldestCommand () {
-    app.allCommands = new String[] {"Command Input:", "first", ""};
+    app.UI_consoleBar.allCommands = new String[] {"Command Input:", "first", ""};
     app.UI_consoleBar.cycleCursor = 0;
     app.UI_consoleBar.editText = "";
 
@@ -80,7 +80,7 @@ class UI_consoleBarTest {
 
   @Test
   void dispatchEditKey_downStepsForwardThroughCommandHistory () {
-    app.allCommands = new String[] {"Command Input:", "first", "second", ""};
+    app.UI_consoleBar.allCommands = new String[] {"Command Input:", "first", "second", ""};
     app.UI_consoleBar.cycleCursor = 1;
     app.UI_consoleBar.editText = "first";
 
@@ -92,13 +92,13 @@ class UI_consoleBarTest {
 
   @Test
   void dispatchEditKey_downDoesNothingAtTheNewestCommand () {
-    app.allCommands = new String[] {"Command Input:", "first", ""};
-    app.UI_consoleBar.cycleCursor = app.allCommands.length - 1;
+    app.UI_consoleBar.allCommands = new String[] {"Command Input:", "first", ""};
+    app.UI_consoleBar.cycleCursor = app.UI_consoleBar.allCommands.length - 1;
     app.UI_consoleBar.editText = "typing...";
 
     app.UI_consoleBar.dispatchEditKey(true, app.DOWN, (char) 0);
 
-    assertEquals(app.allCommands.length - 1, app.UI_consoleBar.cycleCursor);
+    assertEquals(app.UI_consoleBar.allCommands.length - 1, app.UI_consoleBar.cycleCursor);
     assertEquals("typing...", app.UI_consoleBar.editText);
   }
 
@@ -248,13 +248,13 @@ class UI_consoleBarTest {
 
   @Test
   void dispatchEditKey_upPreservesInProgressTextWhenLeavingTheLiveSlot () {
-    app.allCommands = new String[] {"Command Input:", "first", ""};
+    app.UI_consoleBar.allCommands = new String[] {"Command Input:", "first", ""};
     app.UI_consoleBar.cycleCursor = 2; // the live, not-yet-run slot
     app.UI_consoleBar.editText = "draft";
 
     app.UI_consoleBar.dispatchEditKey(true, app.UP, (char) 0);
 
-    assertEquals("draft", app.allCommands[2]); // the in-progress text was saved first
+    assertEquals("draft", app.UI_consoleBar.allCommands[2]); // the in-progress text was saved first
     assertEquals("first", app.UI_consoleBar.editText);
   }
 
