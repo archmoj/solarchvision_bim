@@ -8,16 +8,22 @@ String runScriptFile (String FileName) {
 
 String runScriptLines (String[] FileALL) {
   String hint = "";
+  boolean shouldDrawDirective = false;
   for (int f = 0; f < FileALL.length; f++) {
     String lineSTR = FileALL[f];
 
-    hint = runScriptLine(lineSTR);
+    hint = _runScriptLine(lineSTR, false);
     if(hint.equals(UnrecognizedCommand)) return UnrecognizedCommand;
   }
   return hint;
 }
 
 String runScriptLine (String lineSTR) {
+  boolean shouldDrawDirective = true;
+  return _runScriptLine(lineSTR, shouldDrawDirective);
+}
+
+String _runScriptLine (String lineSTR, boolean shouldDrawDirective) {
   String hint = "";
   if(!lineSTR.equals("")) {
 
@@ -43,7 +49,7 @@ String runScriptLine (String lineSTR) {
       hint = ___executeScriptLine___(lineSTR);
 
       if(!hint.equals("")) {
-        UI_consoleBar.drawDirective(hint, false);
+        if(shouldDrawDirective) UI_consoleBar.drawDirective(hint, false);
 
         boolean isUnrecognizedCommand = hint.equals(UnrecognizedCommand);
         printFeedback(hint, isUnrecognizedCommand);
