@@ -52,3 +52,7 @@ int[] getNow_inUTC () {
 
   return return_array;
 }
+
+int getLocationTimeZone () {
+  return int(funcs.roundTo(STATION.getLongitude() / 15, 15));
+}

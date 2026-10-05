@@ -135,3 +135,27 @@ void saveProject (String myFile) {
   println("End of saving XML:", myFile);
 
 }
+
+
+String save_folder = "";
+
+void holdProject () {
+
+  HoldStamp = nf(millis(), 0);
+
+  String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
+
+  saveProject(myFile);
+}
+
+void fetchProject () {
+
+  String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
+
+  try {
+    load_project(myFile);
+  }
+  catch (Exception e) {
+    println("Cannot find the hold file:", myFile);
+  }
+}

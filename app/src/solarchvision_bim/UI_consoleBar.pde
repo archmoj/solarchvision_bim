@@ -25,13 +25,7 @@ class UI_consoleBar {
 
   void drawDirective (String txt, boolean b) {
     // g (the PGraphics context) is only non-null once setup()/size() has
-    // actually run - never true in a headless JUnit test, where every
-    // command/action now reaches here (via echoAction/showFullCommand/
-    // displayDirective) just to log its own name. Every call below
-    // (noStroke/fill/rect/text/etc.) is a PApplet drawing method that
-    // needs that context, so without this guard every one of those
-    // tests crashes here instead of exercising the actual logic it's
-    // meant to test.
+    // actually run - never true in a headless JUnit test
     if (g == null) return;
 
     float x = 0;
@@ -342,4 +336,111 @@ private static String getClipboardText () {
   }
 
   return null;
+}
+
+final String ANSI_RESET  = "\u001B[0m";
+
+final String ANSI_BLACK  = "\u001B[30m";
+final String ANSI_RED    = "\u001B[31m";
+final String ANSI_GREEN  = "\u001B[32m";
+final String ANSI_YELLOW = "\u001B[33m";
+final String ANSI_BLUE   = "\u001B[34m";
+final String ANSI_PURPLE = "\u001B[35m";
+final String ANSI_CYAN   = "\u001B[36m";
+final String ANSI_WHITE  = "\u001B[37m";
+
+final String ANSI_BLACK_BG  = "\u001B[40m";
+final String ANSI_RED_BG    = "\u001B[41m";
+final String ANSI_GREEN_BG  = "\u001B[42m";
+final String ANSI_YELLOW_BG = "\u001B[43m";
+final String ANSI_BLUE_BG   = "\u001B[44m";
+final String ANSI_PURPLE_BG = "\u001B[45m";
+final String ANSI_CYAN_BG   = "\u001B[46m";
+
+final String OSC8_START = "\u001B]8;;";
+final String OSC8_END   = "\u001B\\";
+final String OSC8_CLOSE = "\u001B]8;;\u001B\\";
+
+String terminalLink (String path) {
+  File file = new File(path);
+  String linkText = path; // file.getName();
+  String fileUri = "file://" + file.getAbsolutePath();
+
+  return (OSC8_START + fileUri + OSC8_END + linkText + OSC8_CLOSE);
+}
+
+String terminalLinkColor (String path) {
+  if (control == USER_GUI) {
+    return (
+      ANSI_BLACK +
+      ANSI_YELLOW_BG +
+      terminalLink(path)+
+      ANSI_RESET
+    );
+  }
+
+  return (ANSI_GREEN + path + ANSI_RESET);
+}
+
+void printlnSaving (String path) {
+  println("Saving:", terminalLinkColor(path));
+}
+
+final String ERROR_HEAD   = "<Error>: ";
+final String ACTION_HEAD  = "[Action]: ";
+final String COMMAND_HEAD = "(Command): ";
+final String HINT_HEAD    = "Hint: ";
+
+void printSameLine(String txt) {
+  int paddingLength = terminalWidth - txt.length();
+  if (paddingLength > 0) {
+    txt += " ".repeat(paddingLength);
+  }
+
+  print("\r" + txt);
+}
+
+void displayDirective(String txt) {
+  printDirective(txt);
+  UI_consoleBar.drawDirective(txt, true);
+}
+
+void printDirective(String txt) {
+  if (
+    logLevel == LOGLEVEL_PRINT_ONLY ||
+    logLevel == LOGLEVEL_GUI_AND_PRINT
+  ) {
+    if (control == USER_GUI) {
+      printSameLine(ANSI_BLACK + ANSI_BLUE_BG + txt + ANSI_RESET);
+    } else {
+      println(txt);
+    }
+  }
+}
+
+void printFeedback(String txt, boolean isUnrecognizedCommand) {
+  if (
+    logLevel == LOGLEVEL_PRINT_ONLY ||
+    logLevel == LOGLEVEL_GUI_AND_PRINT
+  ) {
+    if (isUnrecognizedCommand) {
+      printError(txt);
+    } else {
+      println("\n" + ANSI_BLUE + ANSI_YELLOW_BG + HINT_HEAD + txt + ANSI_RESET);
+    }
+  }
+}
+
+void printError (String txt) {
+  if (
+    logLevel == LOGLEVEL_PRINT_ONLY ||
+    logLevel == LOGLEVEL_GUI_AND_PRINT
+  ) {
+    println("\n" + ERROR_HEAD + ANSI_YELLOW + ANSI_RED_BG + txt + ANSI_RESET);
+  }
+}
+
+void progressBarHeader () {
+  println("       10%       20%       30%       40%       50%       60%       70%       80%       90%       100%");
+  println(".........|.........|.........|.........|.........|.........|.........|.........|.........|.........|");
 }

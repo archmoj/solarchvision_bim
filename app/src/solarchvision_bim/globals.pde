@@ -115,23 +115,6 @@ final int Language_EN = 0;
 final int Language_FR = 1;
 int activeLanguage = Language_EN;
 
-final float FLOAT_huge = 1000000000;
-final float FLOAT_tiny = 0.001; // don't use very tiny values that could result is shading problems
-
-final String STRING_undefined = "N/A";
-final float FLOAT_undefined = Float.MAX_VALUE; // it must be a positive big number that is not included in any data
-
-boolean is_defined (float a) {
-  if (a < FLOAT_undefined) {
-    return true;
-  }
-  return false;
-}
-
-boolean is_undefined (float a) {
-  return !is_defined(a);
-}
-
 PrintWriter[] FILE_outputRaw;
 PrintWriter[] FILE_outputNorms;
 PrintWriter[] FILE_outputProbs;
@@ -260,191 +243,7 @@ boolean GlobalSolar_rebuild_array = true;
 
 float[][][][] GlobalSolar;
 
-int SavedScreenShots = 0;
 
-String createStamp (int increment, String CLASS_STAMP) {
-
-  SavedScreenShots += increment;
-
-  String txt = "";
-
-  if (CLASS_STAMP == "WIN3D") {
-    txt += "CAM" + nf(WIN3D.currentCameraIndex, 2) + "_";
-  }
-  else {
-    txt += "IMG" + nf(SavedScreenShots, 4) + "_";
-  }
-
-  txt += STATION.getCity() + "_";
-
-  if (impactDisplayDay != 0) {
-    txt += TIME.getMM((impactDisplayDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
-  }
-  else {
-    txt += TIME.getMM( STUDY.startDay    * STUDY.dayIncrement + 286 + TIME.beginDay) + "-" +
-           TIME.getMM((STUDY.endDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
-  }
-
-  return txt;
-}
-
-final String ANSI_RESET  = "\u001B[0m";
-
-final String ANSI_BLACK  = "\u001B[30m";
-final String ANSI_RED    = "\u001B[31m";
-final String ANSI_GREEN  = "\u001B[32m";
-final String ANSI_YELLOW = "\u001B[33m";
-final String ANSI_BLUE   = "\u001B[34m";
-final String ANSI_PURPLE = "\u001B[35m";
-final String ANSI_CYAN   = "\u001B[36m";
-final String ANSI_WHITE  = "\u001B[37m";
-
-final String ANSI_BLACK_BG  = "\u001B[40m";
-final String ANSI_RED_BG    = "\u001B[41m";
-final String ANSI_GREEN_BG  = "\u001B[42m";
-final String ANSI_YELLOW_BG = "\u001B[43m";
-final String ANSI_BLUE_BG   = "\u001B[44m";
-final String ANSI_PURPLE_BG = "\u001B[45m";
-final String ANSI_CYAN_BG   = "\u001B[46m";
-
-final String OSC8_START = "\u001B]8;;";
-final String OSC8_END   = "\u001B\\";
-final String OSC8_CLOSE = "\u001B]8;;\u001B\\";
-
-String terminalLink (String path) {
-  File file = new File(path);
-  String linkText = path; // file.getName();
-  String fileUri = "file://" + file.getAbsolutePath();
-
-  return (OSC8_START + fileUri + OSC8_END + linkText + OSC8_CLOSE);
-}
-
-String terminalLinkColor (String path) {
-  if (control == USER_GUI) {
-    return (
-      ANSI_BLACK +
-      ANSI_YELLOW_BG +
-      terminalLink(path)+
-      ANSI_RESET
-    );
-  }
-
-  return (ANSI_GREEN + path + ANSI_RESET);
-}
-
-void printlnSaving (String path) {
-  println("Saving:", terminalLinkColor(path));
-}
-
-final String ERROR_HEAD   = "<Error>: ";
-final String ACTION_HEAD  = "[Action]: ";
-final String COMMAND_HEAD = "(Command): ";
-final String HINT_HEAD    = "Hint: ";
-
-void printSameLine(String txt) {
-  int paddingLength = terminalWidth - txt.length();
-  if (paddingLength > 0) {
-    txt += " ".repeat(paddingLength);
-  }
-
-  print("\r" + txt);
-}
-
-void displayDirective(String txt) {
-  printDirective(txt);
-  UI_consoleBar.drawDirective(txt, true);
-}
-
-void printDirective(String txt) {
-  if (
-    logLevel == LOGLEVEL_PRINT_ONLY ||
-    logLevel == LOGLEVEL_GUI_AND_PRINT
-  ) {
-    if (control == USER_GUI) {
-      printSameLine(ANSI_BLACK + ANSI_BLUE_BG + txt + ANSI_RESET);
-    } else {
-      println(txt);
-    }
-  }
-}
-
-void printFeedback(String txt, boolean isUnrecognizedCommand) {
-  if (
-    logLevel == LOGLEVEL_PRINT_ONLY ||
-    logLevel == LOGLEVEL_GUI_AND_PRINT
-  ) {
-    if (isUnrecognizedCommand) {
-      printError(txt);
-    } else {
-      println("\n" + ANSI_BLUE + ANSI_YELLOW_BG + HINT_HEAD + txt + ANSI_RESET);
-    }
-  }
-}
-
-void printError (String txt) {
-  if (
-    logLevel == LOGLEVEL_PRINT_ONLY ||
-    logLevel == LOGLEVEL_GUI_AND_PRINT
-  ) {
-    println("\n" + ERROR_HEAD + ANSI_YELLOW + ANSI_RED_BG + txt + ANSI_RESET);
-  }
-}
-
-String ScreenShotName = "";
-String ScreenShotType = ".jpg";
-
-void RecordFrame () {
-
-  String Filename = Folder_ScreenShots + "/";
-  if(ScreenShotName.equals("")) {
-    Filename += createStamp(1, "Screen");
-  } else {
-    Filename += ScreenShotName;
-    ScreenShotName = ""; // reset here to avoid overwrite
-  }
-  Filename += ScreenShotType;
-
-  printlnSaving(Filename);
-
-  saveFrame(Filename);
-}
-
-void screenShot (String fileFormat) {
-  ScreenShotType = fileFormat;
-  FRAME_record_IMG = true;
-}
-
-void screenShot (String fileFormat, String fileName) {
-  ScreenShotName = fileName;
-  ScreenShotType = fileFormat;
-  FRAME_record_IMG = true;
-}
-
-String MAKE_Filename (String beginName) {
-
-  String My_Filenames = Folder_ScreenShots + "/" + beginName;
-
-  return My_Filenames;
-}
-
-String MAKE_MainName () {
-
-  String s = "";
-
-  if (currentDataSource == dataID_ensembleForecast) s = nf(TIME.year, 2) + nf(TIME.month, 2) + nf(TIME.day, 2) + "_" + nf(STUDY.endDay, 0) + "dayFORECAST_";
-
-  return s;
-}
-
-String getFilename_SolidImpact () {
-
-  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[currentDataSource] + "/Impacts/Solid" + nf(allSolidImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolidImpacts.Z[allSolidImpacts.sectionType], 1)), 4) + "r" + nf(int(funcs.roundTo(allSolidImpacts.R[allSolidImpacts.sectionType], 1)), 3) + "p" + nf(allSolidImpacts.Power, 2, 2).replace(".", "_") + "m" + nf(allSolidImpacts.Grade, 2, 2).replace(".", "_");
-}
-
-String getFilename_SolarImpact () {
-
-  return Folder_Graphics + "/" + nf(TIME.year, 2) + "-" + nf(TIME.month, 2) + "-" + nf(TIME.day, 2) + "/" + databaseString[currentDataSource] + "/Impacts/Solar" + nf(allSolarImpacts.sectionType, 0) + "h" + nf(int(funcs.roundTo(allSolarImpacts.Z, 1)), 4) + "r" + nf(int(funcs.roundTo(allSolarImpacts.R, 1)), 3);
-}
 
 float HeightAboveGround = 0; //2.5; // <<<<<<<<<
 
@@ -528,33 +327,6 @@ boolean addNewSelectionToPreviousSelection_isOverridden = false;
 
 boolean addToLastGroup = false; // internal
 
-void find_which_bakings_to_regenerate () {
-
-  if (WIN3D.shadingMode == SHADE.Global_Solar) {
-    GlobalSolar_rebuild_array = true;
-  }
-  if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
-    VertexSolar_rebuild_array = true;
-  }
-  if (allSolarImpacts.displayImage) {
-    allSolarImpacts.rebuild_Image_array = true;
-  }
-  if (allWindRoses.displayImage) {
-    allWindRoses.rebuild_Image_array = true;
-  }
-}
-
-void regenerate_desired_bakings () {
-
-  if (VertexSolar_rebuild_array) {
-    calculate_VertexSolar_array();
-  }
-
-  if (GlobalSolar_rebuild_array) {
-    calculate_GlobalSolar_array();
-  }
-
-}
 
 PAINT PAINT = new PAINT();
 
@@ -594,87 +366,9 @@ int obj_lastGroupNumber;
 
 int num_vertices_added = 0;
 
-void OBJprintVertex (float x, float y, float z) {
-
-  float a = x * User3D.exporterScale;
-  float b = y * User3D.exporterScale;
-  float c = z * User3D.exporterScale;
-
-  if (User3D.exporterYaxisUp == 0) {
-
-    objOutput.println("v " + nf(a, 0, User3D.exporterPrecisionVertex) + " " +  nf(b, 0, User3D.exporterPrecisionVertex) + " " +  nf(c, 0, User3D.exporterPrecisionVertex));
-  } else {
-
-    objOutput.println("v " + nf(-a, 0, User3D.exporterPrecisionVertex) + " " +  nf(c, 0, User3D.exporterPrecisionVertex) + " " +  nf(b, 0, User3D.exporterPrecisionVertex));
-  }
-}
-
-void OBJprintVtexture (float u, float v, float w) {
-
-  objOutput.println("vt " + nf(u, 0, User3D.exporterPrecisionVertexTexture) + " " + nf(v, 0, User3D.exporterPrecisionVertexTexture) + " " + nf(w, 0, User3D.exporterPrecisionVertexTexture));
-}
-
-void HTMLprintVtexture (float u, float v) {
-
-  htmlOutput.print(nf(u, 0, User3D.exporterPrecisionVertexTexture) + " " + nf(v, 0, User3D.exporterPrecisionVertexTexture));
-}
 
 String importedObjectName = "";
 
-void deleteAll () {
-
-  allModel1Ds.makeEmpty(0);
-  allModel2Ds.makeEmpty(0);
-
-  allPolylines.makeEmpty(0);
-  allFaces.makeEmpty(0);
-
-  allPoints.makeEmpty(0);
-
-  allSolids.makeEmpty(0);
-  allSections.makeEmpty(0);
-  allCameras.makeEmpty(0);
-
-  allGroups.makeEmpty(0);
-
-}
-
-void model_added () {
-
-  Select3D.selectLast();
-
-  selection_changed();
-}
-
-boolean should_rebuildFaceGrid = true;
-
-void model_changed () {
-  should_rebuildFaceGrid = true;
-
-  view_changed();
-}
-
-void view_changed () {
-  WIN3D.revise();
-}
-
-void selection_changed () {
-
-  Select3D.reset_selectedRefValues();
-
-  Select3D.revise_BoundingBox();
-
-  view_changed();
-}
-
-void switch_category (int a) {
-
-  currentObjectCategory = a;
-
-  UI_toolBar.revise();
-
-  selection_changed();
-}
 
 float overallScale = 1.0;
 
@@ -683,9 +377,6 @@ int SKY2D_Y_View = 50;
 float SKY2D_ZOOM = 5;
 PGraphics SKY2D_graphics;
 
-int getLocationTimeZone () {
-  return int(funcs.roundTo(STATION.getLongitude() / 15, 15));
-}
 
 Tropo3D Tropo3D = new Tropo3D();
 
@@ -723,14 +414,6 @@ WindRose allWindRoses = new WindRose();
 
 WindFlow allWindFlows = new WindFlow();
 
-void VertexSolar_resize_array () { // called when STUDY.endDay changes
-
-  VertexSolar_XYZ     = new float [0][3];
-  VertexSolar_amounts = new float [2][1 + STUDY.endDay - STUDY.startDay][0];
-
-  VertexSolar_rebuild_array = false;
-}
-
 float[][] skyVertices = new float [0][3];
 int[][] skyFaces = new int [0][1];
 
@@ -743,76 +426,8 @@ int[][] TempObjectFaces = new int [0][1];
 int mouseWheelConsume = 0;
 int dragging_started = 0;
 
-
-boolean isInside (float x, float y, float x1, float y1, float x2, float y2) {
-  if ((x1 < x) && (x < x2) && (y1 < y) && (y < y2)) {
-    return true;
-  }
-  return false;
-}
-
-String NearLatitude_Stamp () {
-
-  int Round_Latitude = int(funcs.roundTo(STATION.getLatitude(), 1));
-
-  String a = nf(abs(Round_Latitude), 2);
-
-  if (Round_Latitude < 0) a += "S";
-  else a += "N";
-
-  return a;
-}
-
-String Section_Stamp () {
-
-  String s = "";
-
-  s += "t" + nf(allSolidImpacts.sectionType, 0);
-  s += "u" + nf(allSolarImpacts.X, 0, 3);
-  s += "v" + nf(allSolarImpacts.Y, 0, 3);
-  s += "w" + nf(allSolarImpacts.Z, 0, 3);
-  s += "r" + nf(allSolarImpacts.R, 0, 3);
-
-  s = s.replace('.', 'p');
-  s = s.replace('-', 'n');
-
-  return s;
-}
-
-String Viewport_Stamp () {
-
-  String s = "";
-
-  /*
-
-  s += "x" + nf(WIN3D.positionX, 0, 3);
-  s += "y" + nf(WIN3D.positionY, 0, 3);
-  s += "z" + nf(WIN3D.positionZ, 0, 3);
-
-  s += "rx" + nf(WIN3D.rotationX, 0, 3);
-  s += "ry" + nf(WIN3D.rotationY, 0, 3);
-  s += "rz" + nf(WIN3D.rotationZ, 0, 3);
-
-  s = s.replace('.', 'p');
-  s = s.replace('-', 'n');
-
-  */
-
-  return s;
-}
-
 int UI_X_moved = -1;
 int UI_Y_moved = -1;
-
-void modify_Viewport_Title () {
-
-  String s = "Cam" + nf(WIN3D.currentCameraIndex, 2);
-
-  UI_toolBar.Items[0][11] = s; // <<<<< Note: 3DViewPoint is the first index on BAR_b
-  UI_toolBar.highlight(s);
-
-  UI_toolBar.revise();
-}
 
 float[][] DiffuseVectors;
 
@@ -855,57 +470,3 @@ float Shades_offsetX;
 float Shades_offsetY;
 
 float[] SunR_Rotated;
-
-String save_folder = "";
-
-void holdProject () {
-
-  HoldStamp = nf(millis(), 0);
-
-  String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
-
-  saveProject(myFile);
-}
-
-void fetchProject () {
-
-  String myFile = Folder_Project + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml";
-
-  try {
-    load_project(myFile);
-  }
-  catch (Exception e) {
-    println("Cannot find the hold file:", myFile);
-  }
-}
-
-String TERRAINTAP_API_KEY = "";
-
-void load_env () {
-  String[] lines = loadStrings(".env");
-  if (lines != null) {
-    int len = lines.length;
-    for (int i = 0; i < len; i++) {
-      String[] parts = lines[i].split("=");
-      if(parts.length > 1) {
-        String key = parts[0];
-        String val = parts[1];
-        if(key.equals("TERRAINTAP_API_KEY")) {
-          TERRAINTAP_API_KEY = val;
-        }
-      }
-    }
-  }
-}
-
-void progressBarHeader () {
-  println("       10%       20%       30%       40%       50%       60%       70%       80%       90%       100%");
-  println(".........|.........|.........|.........|.........|.........|.........|.........|.........|.........|");
-}
-
-float applyPalDirection (float u, int PAL_direction) {
-  if (PAL_direction == -1) return 1 - u;
-  if (PAL_direction == -2) return 0.5 - 0.5 * u;
-  if (PAL_direction == 2)  return 0.5 * u;
-  return u;
-}
