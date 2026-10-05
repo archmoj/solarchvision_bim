@@ -98,7 +98,7 @@ class Earth3D {
     this.BoundariesX[i][1] = -float(Parts[3]) * BOUNDARY_SCALE;
     this.BoundariesY[i][1] =  float(Parts[4]) * BOUNDARY_SCALE;
 
-    println("Loading:", MapFilename);
+    //println("\nLoading:", MapFilename);
     this.Map[i] = loadImage(MapFilename);
   }
 

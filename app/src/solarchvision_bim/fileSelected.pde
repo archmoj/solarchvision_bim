@@ -52,7 +52,7 @@ void _fileSelected_Open (File selectedFile) {
   } else {
     Filename = _getSelectedFile(selectedFile);
 
-    println("Loading:", Filename);
+    //println("\nLoading:", Filename);
 
     noLoop();
 

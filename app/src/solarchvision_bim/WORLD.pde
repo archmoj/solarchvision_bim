@@ -206,7 +206,7 @@ class WORLD {
 
   void loadImages (int n) {
 
-    println("Loading:", this.ViewFolder + "/" + this.VIEW_Filenames[n]);
+    //println("\nLoading:", this.ViewFolder + "/" + this.VIEW_Filenames[n]);
 
     this.ViewImage = loadImage(this.ViewFolder + "/" + this.VIEW_Filenames[n]);
     this.VIEW_ImageCache[n] = this.ViewImage; // keep the cache consistent with the currently-selected tile too

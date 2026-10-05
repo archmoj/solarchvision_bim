@@ -47,7 +47,7 @@ class LAYER {
 
   public void from_XML (XML xml) {
 
-    println("Loading:" + this.CLASS_STAMP + "_" + nf(this.id, 0));
+    //println("\nLoading:" + this.CLASS_STAMP + "_" + nf(this.id, 0));
 
     XML parent = xml.getChild(this.CLASS_STAMP + "_" + nf(this.id, 0));
 

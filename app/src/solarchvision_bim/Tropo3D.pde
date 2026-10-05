@@ -121,7 +121,7 @@ class Tropo3D {
         this.BoundariesX[i][1] = -float(Parts[3]) * BOUNDARY_SCALE;
         this.BoundariesY[i][1] =  float(Parts[4]) * BOUNDARY_SCALE;
 
-        println("Loading:", Folder_GEOMET + "/" + this.Filenames[i]);
+        //println("\nLoading:", Folder_GEOMET + "/" + this.Filenames[i]);
         this.Map[i] = loadImage(Folder_GEOMET + "/" + this.Filenames[i]);
         return;
       }
