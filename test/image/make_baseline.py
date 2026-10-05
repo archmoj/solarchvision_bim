@@ -64,7 +64,7 @@ SCREENSHOTS_ROOTS = [
     os.path.join(REPO_ROOT, "projects", "model-01", "export", "screenshots"),
     os.path.join(SKETCH_DIR, "projects", "model-01", "export", "screenshots"),
 ]
-COMMAND_DIR = os.path.join(REPO_ROOT, "command")
+COMMAND_TEST_DIR = os.path.join(REPO_ROOT, "command", "test")
 IMAGE_TEST_DIR = os.path.join(REPO_ROOT, "test", "image")
 ACTUAL_DIR = os.path.join(IMAGE_TEST_DIR, "actual")
 BASELINE_DIR = os.path.join(IMAGE_TEST_DIR, "baseline")
@@ -74,7 +74,7 @@ MAX_RETRY = int(os.environ.get("MAX_RETRY", "1"))
 
 
 def discover_tests():
-    paths = sorted(glob.glob(os.path.join(COMMAND_DIR, "test_*.txt")))
+    paths = sorted(glob.glob(os.path.join(COMMAND_TEST_DIR, "*.txt")))
     return [os.path.splitext(os.path.basename(p))[0] for p in paths]
 
 
@@ -133,7 +133,7 @@ def build_command(exe, name):
     once it's no longer needed.
     """
     sketch_arg = os.path.relpath(SKETCH_DIR, REPO_ROOT)
-    return [exe, "cli", f"--sketch={sketch_arg}", "--run", "USER=AUTO", f"RUN=command/{name}.txt"]
+    return [exe, "cli", f"--sketch={sketch_arg}", "--run", "USER=AUTO", f"RUN=command/test/{name}.txt"]
 
 
 def screenshots_since(marker_time):
@@ -239,7 +239,7 @@ def print_diagnostics(name):
             print(f"    {root} exists, contents: {os.listdir(root)}")
         else:
             print(f"    {root} does not exist")
-    command_file = os.path.join(COMMAND_DIR, f"{name}.txt")
+    command_file = os.path.join(COMMAND_TEST_DIR, f"{name}.txt")
     print(f"    {command_file} exists: {os.path.isfile(command_file)}")
 
     # The command above confirms the file is really there at REPO_ROOT -
@@ -278,7 +278,7 @@ def make_one(exe, name, out_dir):
                 shutil.copyfile(screenshot, dest)
                 print(f"  captured: {dest} (from {screenshot})")
             return True
-        print(f"  no screenshots produced for command/{name}.txt")
+        print(f"  no screenshots produced for command/test/{name}.txt")
         if attempt < MAX_RETRY:
             print(f"  retry {attempt + 1}/{MAX_RETRY}")
     print_diagnostics(name)

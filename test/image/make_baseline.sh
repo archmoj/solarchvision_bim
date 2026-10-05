@@ -49,7 +49,7 @@
 #
 # Usage:
 #   ./test/image/make_baseline.sh                          # every command/test/*.txt
-#   ./test/image/make_baseline.sh test_edit test_views ...  # specific ones only (name without .txt)
+#   ./test/image/make_baseline.sh edit views ...            # specific ones only (name without .txt)
 #
 # Environment:
 #   PROCESSING_HOME   - defaults to ~/processing/4.5.2, same as
@@ -155,7 +155,7 @@ FAILED_NAMES=()
 
 for NAME in "$@"; do
   TOTAL=$((TOTAL + 1))
-  SCRIPT="command/${NAME}.txt"
+  SCRIPT="command/test/${NAME}.txt"
   if [ ! -f "$SCRIPT" ]; then
     echo "error: $SCRIPT not found" >&2
     FAILED_NAMES+=("$NAME")
