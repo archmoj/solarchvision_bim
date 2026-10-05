@@ -106,8 +106,9 @@ class Terrain {
     boolean using_default_mesh = false;
     try {
       if (this.loadMesh) {
-        loadMeshFromFiles();
-        normalizeMeshElevation();
+        if(loadMeshFromFiles()) {
+          normalizeMeshElevation();
+        }
       }
     }
     catch (Exception e) {
@@ -123,7 +124,10 @@ class Terrain {
     this.update_textures();
   }
 
-  void loadMeshFromFiles () {
+  boolean loadMeshFromFiles () {
+    // avoid error running headless tests
+    if(Folder_Terrain == null) return false;
+
     for (int i = 0; i < this.rowCount; i++) {
       XML FileALL = loadXML(Folder_Terrain + "/" + nf(i, 0) + ".xml");
       XML[] children0 = FileALL.getChildren("result");
@@ -143,6 +147,7 @@ class Terrain {
         this.Mesh[i][j][2] = float(txt_elevation);
       }
     }
+    return true;
   }
 
   void normalizeMeshElevation () {

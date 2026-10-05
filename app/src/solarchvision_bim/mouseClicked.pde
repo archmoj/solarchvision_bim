@@ -1335,7 +1335,7 @@ void selectClimateTypicalYearStation (int f, float mouse_lon, float mouse_lat) {
   STATION.setClimateTypicalYearFilename(climateTypicalYearCoordinates[f].getClimateTypicalYearFilename()); // epw filename
   STATION.setClimateTypicalYearDownload(climateTypicalYearCoordinates[f].getClimateTypicalYearDownload()); // epw filename
 
-  println("nearest epw filename:", climateTypicalYearCoordinates[f].getClimateTypicalYearFilename());
+  println("\nNearest epw filename:", climateTypicalYearCoordinates[f].getClimateTypicalYearFilename());
 
   if (currentDataSource == dataID_climateTypicalYear) {
     STATION.setCity(climateTypicalYearCoordinates[f].getCity());
@@ -1369,7 +1369,7 @@ void selectClimateArchiveStation (int f, float mouse_lon, float mouse_lat) {
 
   STATION.setClimateEngineeringFilename(climateArchiveCoordinates[f].getClimateEngineeringFilename()); // Climate Archive filename
 
-  println("nearest Climate Archive filename:", climateArchiveCoordinates[f].getClimateEngineeringFilename());
+  println("\nNearest Climate Archive filename:", climateArchiveCoordinates[f].getClimateEngineeringFilename());
 
   if (currentDataSource == dataID_climateArchive) {
 
@@ -1399,7 +1399,7 @@ void selectClimateEngineeringStation (int f, float mouse_lon, float mouse_lat) {
 
   STATION.setClimateEngineeringFilename(climateEngineeringCoordinates[f].getClimateEngineeringFilename()); // Climate Engineering filename
 
-  println("nearest Climate Engineering filename:", climateEngineeringCoordinates[f].getClimateEngineeringFilename());
+  println("\nNearest Climate Engineering filename:", climateEngineeringCoordinates[f].getClimateEngineeringFilename());
 
   if (currentDataSource == dataID_climateEngineering) {
 
@@ -1433,7 +1433,7 @@ void selectEnsembleForecastStation (int f, float mouse_lon, float mouse_lat) {
 
   STATION.setEnsembleForecastFilename(ensembleForecastCoordinates[f].getEnsembleForecastFilename());
 
-  println("nearest naefs filename:", ensembleForecastCoordinates[f].getEnsembleForecastFilename());
+  println("\nNearest naefs filename:", ensembleForecastCoordinates[f].getEnsembleForecastFilename());
 
   if (currentDataSource == dataID_ensembleForecast) {
     STATION.setCity(ensembleForecastCoordinates[f].getCity());
@@ -1480,7 +1480,7 @@ void selectEnsembleObservationStation (int f, float mouse_lon, float mouse_lat) 
 
   STATION.setEnsembleObservationFilename(ensembleObservationCoordinates[f].getEnsembleObservationFilename());
 
-  println("nearest swob filename:", ensembleObservationCoordinates[f].getEnsembleObservationFilename());
+  println("\nNearest swob filename:", ensembleObservationCoordinates[f].getEnsembleObservationFilename());
 
   if (currentDataSource == dataID_ensembleObservation) {
     STATION.setCity(ensembleObservationCoordinates[f].getCity());
