@@ -135,6 +135,10 @@ void draw () {
         draw_WIN3D_layers();
         draw_UI_layers();
 
+        if(stepAfterInitialization == 1) {
+          UI_consoleBar.drawEmptyDirective();
+        }
+
         if (FRAME_record_IMG) {
           RecordFrame();
           FRAME_record_IMG = false;

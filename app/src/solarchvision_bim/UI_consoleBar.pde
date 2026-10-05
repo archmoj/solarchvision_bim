@@ -11,13 +11,18 @@ class UI_consoleBar {
   final int maxDisplayLines = 2;
   final float hOne = pixel_D / (maxDisplayLines + 1);
 
+  void drawEmptyDirective () {
+    // empty background
+    this.drawDirective("", true);
+  }
+
   void drawDirective (String txt, boolean b) {
     float x = 0;
     float y = pixel_A + pixel_B + 2 * pixel_H + pixel_C + pixel_D - hOne;
 
     noStroke();
     fill(0);
-    rect(x, y, width, hOne);
+    rect(x, y, width, hOne + 1);
 
     if(b) { // blue for commands/actions
       fill(127, 127, 255);
@@ -123,7 +128,9 @@ class UI_consoleBar {
     this.editCursor = 0;
     this.cycleCursor = allCommands.length;
     // run last command
-    return runScriptLine(allCommands[allCommands.length - 1]);
+    String lastCommand = allCommands[allCommands.length - 1];
+    if(lastCommand.equals("")) UI_consoleBar.drawEmptyDirective();
+    return runScriptLine(lastCommand);
   }
 
   // --- Continuous key-hold repeat (see WIN3D.pde) -----------------------
