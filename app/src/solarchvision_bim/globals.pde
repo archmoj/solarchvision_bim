@@ -827,8 +827,6 @@ UI_consoleBar UI_consoleBar = new UI_consoleBar();
 
 UI_caseBar UI_caseBar = new UI_caseBar();
 
-String[] allCommands = {"Command Input:", ""};
-
 int typeUserCommand = 0;
 
 float userPointSize = 0.0;

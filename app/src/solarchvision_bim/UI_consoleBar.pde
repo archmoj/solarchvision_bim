@@ -321,6 +321,8 @@ class UI_consoleBar {
   }
 }
 
+String[] allCommands = {"Command Input:", ""};
+
 private static String getClipboardText () {
   try {
       Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
