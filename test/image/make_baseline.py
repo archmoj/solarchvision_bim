@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Generate screenshots for command/test/*.txt by running the
+"""Generate screenshots for command/test/*.svs by running the
 solarchvision_bim sketch headlessly (USER=AUTO), one subprocess per test.
 A single test script can call REC.png more than once, each with its own
-name given right in the script (see command/test/views.txt), so one test
+name given right in the script (see command/test/views.svs), so one test
 can produce several screenshots - each is kept under its own original
 filename rather than the test's.
 
 Usage:
-  python3 test/image/make_baseline.py                 # generate test/image/actual/*.png for every command/test/*.txt
-  python3 test/image/make_baseline.py test_houses ...  # generate specific ones only (name without .txt)
+  python3 test/image/make_baseline.py                 # generate test/image/actual/*.png for every command/test/*.svs
+  python3 test/image/make_baseline.py test_houses ...  # generate specific ones only (name without .svs)
   python3 test/image/make_baseline.py --baseline       # write straight to test/image/baseline/ instead of actual/
                                                         # (review the images before committing them!)
 
@@ -74,7 +74,7 @@ MAX_RETRY = int(os.environ.get("MAX_RETRY", "1"))
 
 
 def discover_tests():
-    paths = sorted(glob.glob(os.path.join(COMMAND_TEST_DIR, "*.txt")))
+    paths = sorted(glob.glob(os.path.join(COMMAND_TEST_DIR, "*.svs")))
     return [os.path.splitext(os.path.basename(p))[0] for p in paths]
 
 
@@ -133,15 +133,15 @@ def build_command(exe, name):
     once it's no longer needed.
     """
     sketch_arg = os.path.relpath(SKETCH_DIR, REPO_ROOT)
-    return [exe, "cli", f"--sketch={sketch_arg}", "--run", "USER=AUTO", f"RUN=command/test/{name}.txt"]
+    return [exe, "cli", f"--sketch={sketch_arg}", "--run", "USER=AUTO", f"RUN=command/test/{name}.svs"]
 
 
 def screenshots_since(marker_time):
     """Every screenshot this run produced, oldest first: all *.png under any
     of SCREENSHOTS_ROOTS with an mtime after marker_time. Recursive because
     screenshots land under a RunStamp=YYYYMMDD_HH subfolder (globals.pde).
-    A single command/test/*.txt can call REC.png several times, each with
-    its own name given right in the script (see command/test/views.txt),
+    A single command/test/*.svs can call REC.png several times, each with
+    its own name given right in the script (see command/test/views.svs),
     so one test run can produce many screenshots - not just one - and
     every one of them is returned here."""
     found = []
@@ -228,7 +228,7 @@ def print_diagnostics(name):
     """Printed once a test has exhausted every retry with no screenshot -
     the two things most likely to explain that silently (Processing exits
     0, no error, nothing produced): either it couldn't actually see
-    command/<name>.txt's content at its own resolved BaseFolder (the
+    command/<name>.svs's content at its own resolved BaseFolder (the
     input/command/projects symlink-or-junction setup - see
     test/image/README.md - pointing somewhere that doesn't actually
     resolve to this repo's real files), or nothing ever reached
@@ -239,7 +239,7 @@ def print_diagnostics(name):
             print(f"    {root} exists, contents: {os.listdir(root)}")
         else:
             print(f"    {root} does not exist")
-    command_file = os.path.join(COMMAND_TEST_DIR, f"{name}.txt")
+    command_file = os.path.join(COMMAND_TEST_DIR, f"{name}.svs")
     print(f"    {command_file} exists: {os.path.isfile(command_file)}")
 
     # The command above confirms the file is really there at REPO_ROOT -
@@ -258,7 +258,7 @@ def print_diagnostics(name):
         else os.path.join(home, "lib", "app", "resources", "core")
     )
     core_command_dir = os.path.join(core_dir, "command")
-    core_command_file = os.path.join(core_command_dir, f"{name}.txt")
+    core_command_file = os.path.join(core_command_dir, f"{name}.svs")
     print(f"    {core_command_dir} exists: {os.path.isdir(core_command_dir)}")
     if os.path.isdir(core_command_dir):
         print(f"    {core_command_dir} contents: {os.listdir(core_command_dir)}")
@@ -270,7 +270,7 @@ def make_one(exe, name, out_dir):
         screenshots = run_once(exe, name)
         if screenshots:
             # Keep each screenshot's own filename - the one given right in
-            # command/test/*.txt's REC.png lines (see command/test/views.txt) -
+            # command/test/*.svs's REC.png lines (see command/test/views.svs) -
             # rather than renaming it after the test file, since one test
             # can produce several distinctly-named screenshots.
             for screenshot in screenshots:
@@ -278,7 +278,7 @@ def make_one(exe, name, out_dir):
                 shutil.copyfile(screenshot, dest)
                 print(f"  captured: {dest} (from {screenshot})")
             return True
-        print(f"  no screenshots produced for command/test/{name}.txt")
+        print(f"  no screenshots produced for command/test/{name}.svs")
         if attempt < MAX_RETRY:
             print(f"  retry {attempt + 1}/{MAX_RETRY}")
     print_diagnostics(name)
@@ -287,13 +287,13 @@ def make_one(exe, name, out_dir):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("names", nargs="*", help="test names to run (default: all command/test/*.txt)")
+    parser.add_argument("names", nargs="*", help="test names to run (default: all command/test/*.svs)")
     parser.add_argument("--baseline", action="store_true", help="write to test/image/baseline/ instead of test/image/actual/")
     args = parser.parse_args()
 
     all_tests = discover_tests()
     if not all_tests:
-        print("error: no command/test/*.txt scripts found", file=sys.stderr)
+        print("error: no command/test/*.svs scripts found", file=sys.stderr)
         sys.exit(1)
 
     names = args.names if args.names else all_tests

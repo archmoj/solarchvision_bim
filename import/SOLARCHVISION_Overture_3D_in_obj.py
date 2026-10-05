@@ -9,13 +9,13 @@ folder contract:
 
     <outdir>/buildings.obj    - buildings, extruded from Overture footprints,
                                 triangulated (for tools that need triangles)
-    <outdir>/buildings.txt    - the same buildings as SOLARCHVISION_BIM's
+    <outdir>/buildings.svs    - the same buildings as SOLARCHVISION_BIM's
                                 own "Mesh" script command - hole-free caps
                                 are a single n-gon face each, not
                                 triangulated (see
                                 SOLARCHVISION_OSM_3D_in_obj.py's docstring
                                 for the exact format; identical here)
-    <outdir>/more_info.txt    - a header comment, a ground-rectangle
+    <outdir>/more_info.svs    - a header comment, a ground-rectangle
                                 (Mesh2) line, and trees (if --trees-source
                                 osm is used - see "Trees" below)
 
@@ -61,7 +61,7 @@ has_parts=false are always extruded normally, part fetching or not.
 Trees (--trees-source osm)
 ---------------------------
 Overture has no equivalent of OSM's `natural=tree` layer, so by default
-(--trees-source none) more_info.txt from this script has 0 Tree lines.
+(--trees-source none) more_info.svs from this script has 0 Tree lines.
 Pass --trees-source osm to fetch trees from OpenStreetMap instead (via
 the same Overpass machinery the OSM script uses, in
 solarch_3d_common.py) while still sourcing buildings from Overture -
@@ -283,28 +283,28 @@ def main():
     ap.add_argument("--default-height", type=float, default=6.0, help="Fallback height in meters when no height/num_floors is present (default: 6.0)")
     ap.add_argument("--include-parts", action="store_true", help="Also fetch building_part features for finer massing on complex buildings (towers, domes, etc.)")
 
-    ap.add_argument("--material", type=int, default=7, help="Material index (m:) for buildings.txt Mesh lines (default: 7)")
-    ap.add_argument("--tessellation", type=int, default=0, help="Tessellation index (tes:) for buildings.txt Mesh lines (default: 0)")
-    ap.add_argument("--layer", type=int, default=0, help="Layer index (lyr:) for buildings.txt Mesh lines (default: 0)")
-    ap.add_argument("--no-buildings-txt", action="store_true", help="Skip writing buildings.txt (the SOLARCHVISION_BIM Mesh-command form)")
+    ap.add_argument("--material", type=int, default=7, help="Material index (m:) for buildings.svs Mesh lines (default: 7)")
+    ap.add_argument("--tessellation", type=int, default=0, help="Tessellation index (tes:) for buildings.svs Mesh lines (default: 0)")
+    ap.add_argument("--layer", type=int, default=0, help="Layer index (lyr:) for buildings.svs Mesh lines (default: 0)")
+    ap.add_argument("--no-buildings-svs", action="store_true", help="Skip writing buildings.svs (the SOLARCHVISION_BIM Mesh-command form)")
 
-    ap.add_argument("--trees-source", choices=["none", "osm"], default="none", help="Where to get trees from for more_info.txt. 'osm' fetches OpenStreetMap natural=tree nodes (requires `pip install osmnx` additionally). Default: none (Overture has no tree layer of its own).")
+    ap.add_argument("--trees-source", choices=["none", "osm"], default="none", help="Where to get trees from for more_info.svs. 'osm' fetches OpenStreetMap natural=tree nodes (requires `pip install osmnx` additionally). Default: none (Overture has no tree layer of its own).")
     ap.add_argument("--tree-default-height", type=float, default=10.0, help="Fallback tree height in meters when no height tag exists (only used with --trees-source osm; default: 10.0)")
     ap.add_argument("--overpass-url", default=None, help="Overpass API endpoint to use for --trees-source osm (default: try overpass-api.de, then a couple of public mirrors)")
 
     ap.add_argument("--ground-padding", type=float, default=0.0, help="Extra meters added to --radius for the Mesh2 ground-rectangle extents (default: 0)")
-    ap.add_argument("--no-ground", action="store_true", help="Skip writing the Mesh2 ground-rectangle line in more_info.txt")
+    ap.add_argument("--no-ground", action="store_true", help="Skip writing the Mesh2 ground-rectangle line in more_info.svs")
 
     ap.add_argument("--release", default=None, help="Overture release version to use (default: latest, auto-resolved via Overture's STAC catalog)")
     ap.add_argument("--no-stac", action="store_true", help="Skip the STAC-accelerated query and go straight to a direct dataset scan (slower, but immune to a known overturemaps bug where a STAC catalog gap causes a crash instead of an empty result)")
-    ap.add_argument("--outdir", default=None, help="Output folder for buildings.obj and more_info.txt (default: derived from lat/lon, e.g. 'site_40.7484_-73.9857')")
+    ap.add_argument("--outdir", default=None, help="Output folder for buildings.obj and more_info.svs (default: derived from lat/lon, e.g. 'site_40.7484_-73.9857')")
     args = ap.parse_args()
 
     outdir = args.outdir or f"site_{args.lat}_{args.lon}"
     os.makedirs(outdir, exist_ok=True)
     buildings_path = os.path.join(outdir, "buildings.obj")
-    buildings_txt_path = os.path.join(outdir, "buildings.txt")
-    info_path = os.path.join(outdir, "more_info.txt")
+    buildings_svs_path = os.path.join(outdir, "buildings.svs")
+    info_path = os.path.join(outdir, "more_info.svs")
 
     transformer, origin = get_projection_and_origin(args.lat, args.lon)
 
@@ -358,7 +358,7 @@ def main():
                 writer.start_group(f"building_{n_written}")
                 try:
                     common.add_extruded_polygon(writer, ext, holes, height, base_z)
-                    if not args.no_buildings_txt:
+                    if not args.no_buildings_svs:
                         common.add_extruded_mesh(mesh_writer, ext, holes, height, base_z,
                                                   m=args.material, tes=args.tessellation, lyr=args.layer)
                     n_written += 1
@@ -383,7 +383,7 @@ def main():
                 writer.start_group(f"building_part_{n_written}")
                 try:
                     common.add_extruded_polygon(writer, ext, holes, height, base_z)
-                    if not args.no_buildings_txt:
+                    if not args.no_buildings_svs:
                         common.add_extruded_mesh(mesh_writer, ext, holes, height, base_z,
                                                   m=args.material, tes=args.tessellation, lyr=args.layer)
                     n_written += 1
@@ -398,11 +398,11 @@ def main():
     print(f"Wrote {n_written} building solids ({len(writer.vertices)} vertices, "
           f"{len(writer.faces)} faces) to {buildings_path}")
 
-    if not args.no_buildings_txt:
-        mesh_writer.write(buildings_txt_path)
-        print(f"Wrote {len(mesh_writer.lines)} Mesh faces to {buildings_txt_path}")
+    if not args.no_buildings_svs:
+        mesh_writer.write(buildings_svs_path)
+        print(f"Wrote {len(mesh_writer.lines)} Mesh faces to {buildings_svs_path}")
 
-    # ---- Trees (optional, from OSM) -> more_info.txt ----
+    # ---- Trees (optional, from OSM) -> more_info.svs ----
     # Best-effort, like the parts fetch above: a failure here must not
     # discard the buildings.obj already written.
     tree_rows = []
@@ -434,7 +434,7 @@ def main():
                 tree_rows.append((x, y, 0.0, h))
 
     ground_radius = args.radius + max(args.ground_padding, 0.0)
-    common.write_more_info_txt(info_path, args.lat, args.lon, args.radius, ground_radius,
+    common.write_more_info_svs(info_path, args.lat, args.lon, args.radius, ground_radius,
                                 tree_rows, include_ground=not args.no_ground)
     tree_note = f"{len(tree_rows)} trees" if args.trees_source == "osm" else "0 trees (--trees-source none)"
     print(f"Wrote {tree_note}"

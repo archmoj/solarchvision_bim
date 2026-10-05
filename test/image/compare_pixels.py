@@ -4,7 +4,7 @@ pixel-by-pixel, and write red-highlighted diffs to test/image/diff/.
 
 Usage:
   python3 test/image/compare_pixels.py                 # compare every test/image/actual/*.png that exists
-  python3 test/image/compare_pixels.py test_houses ...  # compare specific ones only (name without .txt)
+  python3 test/image/compare_pixels.py test_houses ...  # compare specific ones only (name without .svs)
   python3 test/image/compare_pixels.py --threshold 1.0  # allow up to 1% of pixels to differ (default 0.5)
   python3 test/image/compare_pixels.py --allow-missing-baseline  # warn instead of fail when a baseline
                                                                   # doesn't exist yet (handy for local, first-time runs)

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Attaches JaCoCo coverage to a test/image/make_baseline.sh USER=AUTO run
-# (e.g. the command/test/*.txt image-regression scripts), and merges the
+# (e.g. the command/test/*.svs image-regression scripts), and merges the
 # result with the unit tests' jacoco.exec into one combined report.
 #
 # Delegates the actual "find Processing, run it, know what it takes to
@@ -25,8 +25,8 @@
 # display - see test/image/make_baseline.sh's own comment on this.
 #
 # Usage:
-#   ./test/run_integration.sh                          # every command/test/*.txt
-#   ./test/run_integration.sh command/test/primitives.txt [more scripts...]
+#   ./test/run_integration.sh                          # every command/test/*.svs
+#   ./test/run_integration.sh command/test/primitives.svs [more scripts...]
 #
 # Environment:
 #   PROCESSING_HOME   - defaults to ~/processing/4.5.2 - see
@@ -58,13 +58,13 @@ fi
 
 if [ "$#" -lt 1 ]; then
   shopt -s nullglob
-  set -- command/test/*.txt
+  set -- command/test/*.svs
   shopt -u nullglob
   if [ "$#" -lt 1 ]; then
-    echo "error: no scripts given and no command/test/*.txt files found" >&2
+    echo "error: no scripts given and no command/test/*.svs files found" >&2
     exit 1
   fi
-  echo "==> No scripts given - defaulting to every command/test/*.txt: $*"
+  echo "==> No scripts given - defaulting to every command/test/*.svs: $*"
 fi
 
 mkdir -p "$OUT_DIR"
@@ -89,7 +89,7 @@ to_native_path () {
 }
 
 for SCRIPT in "$@"; do
-  NAME="$(basename "$SCRIPT" .txt)"
+  NAME="$(basename "$SCRIPT" .svs)"
   EXEC_FILE="$OUT_DIR/${NAME}.exec"
   echo "==> Running $SCRIPT through test/image/make_baseline.sh with coverage attached"
   rm -f "$EXEC_FILE"

@@ -16,7 +16,7 @@ Required:
 
 Options:
   --radius <m>                Search radius in meters (default: 250)
-  --outdir <dir>               Output folder for buildings.obj/more_info.txt
+  --outdir <dir>               Output folder for buildings.obj/more_info.svs
                                (default: derived from lat/lon, e.g. 'site_40.7484_-73.9857')
   --overpass-url <url>        Overpass endpoint to use (default: try overpass-api.de,
                                then a couple of public mirrors)
@@ -30,13 +30,13 @@ Options:
     --default-height <m>      Fallback building height (default: 6.0)
     --include-parts           Also fetch building:part features
 
-  buildings.txt (SOLARCHVISION_BIM's Mesh script command):
+  buildings.svs (SOLARCHVISION_BIM's Mesh script command):
     --material <n>             Material index (m:) for Mesh lines (default: 7)
     --tessellation <n>         Tessellation index (tes:) for Mesh lines (default: 0)
     --layer <n>                Layer index (lyr:) for Mesh lines (default: 0)
-    --no-buildings-txt          Skip writing buildings.txt
+    --no-buildings-svs          Skip writing buildings.svs
 
-  Trees (more_info.txt):
+  Trees (more_info.svs):
     --tree-default-height <m> Fallback tree height (default: 10.0)
     --no-trees                Skip fetching trees
 
@@ -46,7 +46,7 @@ Options:
 `);
 }
 
-const BOOLEAN_FLAGS = new Set(["include-parts", "no-trees", "no-ground", "no-buildings-txt", "help"]);
+const BOOLEAN_FLAGS = new Set(["include-parts", "no-trees", "no-ground", "no-buildings-svs", "help"]);
 
 function parseArgs(argv) {
   const args = {
@@ -57,7 +57,7 @@ function parseArgs(argv) {
     material: 7,
     tessellation: 0,
     layer: 0,
-    noBuildingsTxt: false,
+    nobuildingsSvs: false,
     treeDefaultHeight: 10.0,
     noTrees: false,
     groundPadding: 0.0,
@@ -74,7 +74,7 @@ function parseArgs(argv) {
       if (name === "include-parts") args.includeParts = true;
       else if (name === "no-trees") args.noTrees = true;
       else if (name === "no-ground") args.noGround = true;
-      else if (name === "no-buildings-txt") args.noBuildingsTxt = true;
+      else if (name === "no-buildings-svs") args.nobuildingsSvs = true;
       else if (name === "help") args.help = true;
       continue;
     }

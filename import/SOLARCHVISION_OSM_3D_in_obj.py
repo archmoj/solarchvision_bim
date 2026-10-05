@@ -7,11 +7,11 @@ latitude/longitude within a radius, written into one output folder:
 
     <outdir>/buildings.obj    - buildings, extruded from OSM footprints,
                                 triangulated (for tools that need triangles)
-    <outdir>/buildings.txt    - the same buildings as SOLARCHVISION_BIM's
+    <outdir>/buildings.svs    - the same buildings as SOLARCHVISION_BIM's
                                 own "Mesh" script command (see below) -
                                 hole-free caps are a single n-gon face
                                 each, not triangulated
-    <outdir>/more_info.txt    - a header comment, a ground-rectangle
+    <outdir>/more_info.svs    - a header comment, a ground-rectangle
                                 (Mesh2) line, then trees as plain-text
                                 point+height entries
 
@@ -23,7 +23,7 @@ Buildings are extruded up to a height derived from (in priority order):
 Trees (OSM `natural=tree` nodes) get a height from their own `height` tag,
 falling back to --tree-default-height (default 10.0 m).
 
-buildings.txt (SOLARCHVISION_BIM's `Mesh` script command; see
+buildings.svs (SOLARCHVISION_BIM's `Mesh` script command; see
 app/src/solarchvision_bim/runScript.pde's `case "MESH":`, which calls
 Create3D.pde's add_Mesh) looks like:
 
@@ -38,7 +38,7 @@ footprint with holes (a courtyard) still gets its caps triangulated
 (the same way buildings.obj does): a single n-gon face can't represent
 an annulus. Walls are always a plain 4-vertex quad either way.
 
-more_info.txt looks like:
+more_info.svs looks like:
 
     # --lat 40.7484 --lon -73.9857 --radius 250
     Mesh2 m:3 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
@@ -158,18 +158,18 @@ def main():
     ap.add_argument("--default-height", type=float, default=6.0, help="Fallback building height in meters when no height/levels tags exist (default: 6.0)")
     ap.add_argument("--include-parts", action="store_true", help="Also include building:part features (finer massing for complex buildings)")
 
-    ap.add_argument("--material", type=int, default=7, help="Material index (m:) for buildings.txt Mesh lines (default: 7)")
-    ap.add_argument("--tessellation", type=int, default=0, help="Tessellation index (tes:) for buildings.txt Mesh lines (default: 0)")
-    ap.add_argument("--layer", type=int, default=0, help="Layer index (lyr:) for buildings.txt Mesh lines (default: 0)")
-    ap.add_argument("--no-buildings-txt", action="store_true", help="Skip writing buildings.txt (the SOLARCHVISION_BIM Mesh-command form)")
+    ap.add_argument("--material", type=int, default=7, help="Material index (m:) for buildings.svs Mesh lines (default: 7)")
+    ap.add_argument("--tessellation", type=int, default=0, help="Tessellation index (tes:) for buildings.svs Mesh lines (default: 0)")
+    ap.add_argument("--layer", type=int, default=0, help="Layer index (lyr:) for buildings.svs Mesh lines (default: 0)")
+    ap.add_argument("--no-buildings-svs", action="store_true", help="Skip writing buildings.svs (the SOLARCHVISION_BIM Mesh-command form)")
 
     ap.add_argument("--tree-default-height", type=float, default=10.0, help="Fallback tree height in meters when no height tag exists (default: 10.0)")
-    ap.add_argument("--no-trees", action="store_true", help="Skip fetching/writing the tree layer in more_info.txt")
+    ap.add_argument("--no-trees", action="store_true", help="Skip fetching/writing the tree layer in more_info.svs")
 
-    ap.add_argument("--ground-padding", type=float, default=0.0, help="Extra meters added to --radius for the Mesh2 ground-rectangle extents in more_info.txt (default: 0)")
-    ap.add_argument("--no-ground", action="store_true", help="Skip writing the Mesh2 ground-rectangle line in more_info.txt")
+    ap.add_argument("--ground-padding", type=float, default=0.0, help="Extra meters added to --radius for the Mesh2 ground-rectangle extents in more_info.svs (default: 0)")
+    ap.add_argument("--no-ground", action="store_true", help="Skip writing the Mesh2 ground-rectangle line in more_info.svs")
 
-    ap.add_argument("--outdir", default=None, help="Output folder for buildings.obj and more_info.txt (default: derived from lat/lon, e.g. 'site_40.7484_-73.9857')")
+    ap.add_argument("--outdir", default=None, help="Output folder for buildings.obj and more_info.svs (default: derived from lat/lon, e.g. 'site_40.7484_-73.9857')")
     ap.add_argument("--overpass-url", default=None, help="Overpass API endpoint to use (e.g. a self-hosted instance, or one reachable through your proxy). Default: try overpass-api.de, then a couple of public mirrors.")
     args = ap.parse_args()
 
@@ -178,8 +178,8 @@ def main():
     outdir = args.outdir or f"site_{args.lat}_{args.lon}"
     os.makedirs(outdir, exist_ok=True)
     buildings_path = os.path.join(outdir, "buildings.obj")
-    buildings_txt_path = os.path.join(outdir, "buildings.txt")
-    info_path = os.path.join(outdir, "more_info.txt")
+    buildings_svs_path = os.path.join(outdir, "buildings.svs")
+    info_path = os.path.join(outdir, "more_info.svs")
 
     crs, origin = get_projection_crs_and_origin(args.lat, args.lon)
 
@@ -215,7 +215,7 @@ def main():
                 writer.start_group(f"building_{n_written}")
                 try:
                     common.add_extruded_polygon(writer, ext, holes, height)
-                    if not args.no_buildings_txt:
+                    if not args.no_buildings_svs:
                         common.add_extruded_mesh(mesh_writer, ext, holes, height,
                                                   m=args.material, tes=args.tessellation, lyr=args.layer)
                     n_written += 1
@@ -232,14 +232,14 @@ def main():
     print(f"Wrote {n_written} building solids ({len(writer.vertices)} vertices, "
           f"{len(writer.faces)} faces) to {buildings_path}")
 
-    if not args.no_buildings_txt:
-        mesh_writer.write(buildings_txt_path)
-        print(f"Wrote {len(mesh_writer.lines)} Mesh faces to {buildings_txt_path}")
+    if not args.no_buildings_svs:
+        mesh_writer.write(buildings_svs_path)
+        print(f"Wrote {len(mesh_writer.lines)} Mesh faces to {buildings_svs_path}")
 
-    # ---- Trees -> more_info.txt ----
+    # ---- Trees -> more_info.svs ----
     # Trees are a best-effort supplementary layer: if this fetch fails, we
     # still want to keep the buildings.obj already written above and finish
-    # writing more_info.txt (with zero trees) rather than aborting the run.
+    # writing more_info.svs (with zero trees) rather than aborting the run.
     tree_rows = []
     trees_failed = False
     if not args.no_trees:
@@ -265,7 +265,7 @@ def main():
                 tree_rows.append((x, y, 0.0, h))
 
     ground_radius = args.radius + max(args.ground_padding, 0.0)
-    common.write_more_info_txt(info_path, args.lat, args.lon, args.radius, ground_radius,
+    common.write_more_info_svs(info_path, args.lat, args.lon, args.radius, ground_radius,
                                 tree_rows, include_ground=not args.no_ground)
     print(f"Wrote {len(tree_rows)} trees"
           + ("" if args.no_ground else f" and a Mesh2 ground rectangle (radius {ground_radius:.1f} m)")

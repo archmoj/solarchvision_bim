@@ -10,7 +10,7 @@
  *
  *   <outdir>/buildings.obj    - buildings, extruded from OSM footprints,
  *                               triangulated (for tools that need triangles)
- *   <outdir>/buildings.txt    - the same buildings as SOLARCHVISION_BIM's
+ *   <outdir>/buildings.svs    - the same buildings as SOLARCHVISION_BIM's
  *                               own "Mesh" script command
  *                               (app/src/solarchvision_bim/runScript.pde's
  *                               `case "MESH":`, calling Create3D.pde's
@@ -19,7 +19,7 @@
  *                               footprint with holes (a courtyard) still
  *                               gets its caps triangulated, same as the
  *                               OBJ path
- *   <outdir>/more_info.txt    - a header comment, a ground-rectangle
+ *   <outdir>/more_info.svs    - a header comment, a ground-rectangle
  *                               (Mesh2) line, then trees as plain-text
  *                               point+height entries
  *
@@ -31,7 +31,7 @@
  * Trees (OSM `natural=tree` nodes) get a height from their own `height`
  * tag, falling back to --tree-default-height (default 10.0 m).
  *
- * more_info.txt looks like:
+ * more_info.svs looks like:
  *
  *   # --lat 40.7484 --lon -73.9857 --radius 250
  *   Mesh2 m:3 tes:6 x1:-250 y1:-250 z1:0 x2:250 y2:250 z2:0
@@ -70,7 +70,7 @@ const path = require("path");
 const { isFinitePositive, parseHeightMeters, featureHeight, buildingHeight } = require("./lib/height");
 const { utmProjString, getProjectionAndOrigin, projectAndRecenterPoint, polygonRingsFromGeoJSON } = require("./lib/projection");
 const { triangulateFootprint, ObjWriter, addExtrudedPolygon, iterPolygons, MeshWriter, addExtrudedMesh } = require("./lib/geometry");
-const { formatPyFloatLike, formatNumber, formatMesh2Line, writeMoreInfoTxt } = require("./lib/format");
+const { formatPyFloatLike, formatNumber, formatMesh2Line, writeMoreInfoSvs } = require("./lib/format");
 const {
   DEFAULT_USER_AGENT,
   OverpassUnreachableError,
@@ -101,8 +101,8 @@ async function main(argv = process.argv.slice(2)) {
   const outdir = args.outdir || `site_${args.lat}_${args.lon}`;
   fs.mkdirSync(outdir, { recursive: true });
   const buildingsPath = path.join(outdir, "buildings.obj");
-  const buildingsTxtPath = path.join(outdir, "buildings.txt");
-  const infoPath = path.join(outdir, "more_info.txt");
+  const buildingsSvsPath = path.join(outdir, "buildings.svs");
+  const infoPath = path.join(outdir, "more_info.svs");
 
   const { projDef, origin } = getProjectionAndOrigin(args.lat, args.lon);
 
@@ -142,7 +142,7 @@ async function main(argv = process.argv.slice(2)) {
         writer.startGroup(`building_${nWritten}`);
         try {
           addExtrudedPolygon(writer, ext, holes, height);
-          if (!args.noBuildingsTxt) {
+          if (!args.nobuildingsSvs) {
             addExtrudedMesh(meshWriter, ext, holes, height, 0.0, args.material, args.tessellation, args.layer);
           }
           nWritten++;
@@ -165,15 +165,15 @@ async function main(argv = process.argv.slice(2)) {
       `${writer.faces.length} faces) to ${buildingsPath}`
   );
 
-  if (!args.noBuildingsTxt) {
-    meshWriter.write(buildingsTxtPath);
-    console.log(`Wrote ${meshWriter.lines.length} Mesh faces to ${buildingsTxtPath}`);
+  if (!args.nobuildingsSvs) {
+    meshWriter.write(buildingsSvsPath);
+    console.log(`Wrote ${meshWriter.lines.length} Mesh faces to ${buildingsSvsPath}`);
   }
 
-  // ---- Trees -> more_info.txt ----
+  // ---- Trees -> more_info.svs ----
   // Trees are a best-effort supplementary layer: if this fetch fails, we
   // still want to keep the buildings.obj already written above and finish
-  // writing more_info.txt (with zero trees) rather than aborting the run.
+  // writing more_info.svs (with zero trees) rather than aborting the run.
   const treeRows = [];
   if (!args.noTrees) {
     console.log(`Fetching OSM trees within ${args.radius} m ...`);
@@ -205,7 +205,7 @@ async function main(argv = process.argv.slice(2)) {
   }
 
   const groundRadius = args.radius + Math.max(args.groundPadding, 0.0);
-  writeMoreInfoTxt(infoPath, args.lat, args.lon, args.radius, groundRadius, treeRows, !args.noGround);
+  writeMoreInfoSvs(infoPath, args.lat, args.lon, args.radius, groundRadius, treeRows, !args.noGround);
   console.log(
     `Wrote ${treeRows.length} trees` +
       (args.noGround ? "" : ` and a Mesh2 ground rectangle (radius ${groundRadius.toFixed(1)} m)`) +
@@ -234,7 +234,7 @@ module.exports = {
   formatPyFloatLike,
   formatNumber,
   formatMesh2Line,
-  writeMoreInfoTxt,
+  writeMoreInfoSvs,
   DEFAULT_USER_AGENT,
   OverpassUnreachableError,
   buildBuildingQuery,

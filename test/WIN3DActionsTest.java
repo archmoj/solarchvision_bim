@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // WIN3DTest.java already covers each key handler (handleCommandKey,
 // handleArrowKeys, etc.) dispatching correctly to these actions by
 // name - this instead covers the actions themselves, invoked directly
-// via runScriptLine (as command/*.txt scripts, or anything else
+// via runScriptLine (as command/test/*.svs scripts, or anything else
 // scripting the sketch, would actually call them), since that's the new
 // capability this whole effort adds: before, a key's effect only existed
 // inside its own switch-case, unreachable except by an actual keypress.

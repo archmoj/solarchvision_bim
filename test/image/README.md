@@ -1,12 +1,12 @@
 # Image regression tests
 
-This exercises the `command/test/*.txt` scripts against the running sketch
+This exercises the `command/test/*.svs` scripts against the running sketch
 and image-diffs the screenshot each one produces, to catch unintended visual
 regressions (a broken shading mode, a camera command that stops working, a
 geometry command that silently changes its output, etc).
 
 - **`make_baseline.py`** — runs the sketch, one `Processing cli` process per
-  `command/test/*.txt`, and saves each screenshot to
+  `command/test/*.svs`, and saves each screenshot to
   `test/image/actual/<name>.png` (or `test/image/baseline/<name>.png` with
   `--baseline`). Rendering is the flaky half of this pipeline (JVM/GL
   startup, Xvfb), so it's both retried and parallelized at the level of
@@ -25,15 +25,15 @@ geometry command that silently changes its output, etc).
 
 ## How it works
 
-1. `command/test/*.txt` each build a small, non-intersecting scene, set a
+1. `command/test/*.svs` each build a small, non-intersecting scene, set a
    camera/view, and end in exactly one `REC.png`.
 2. `make_baseline.py` runs each script through the sketch in headless mode:
    ```
    Processing cli --sketch=app/src/solarchvision_bim --run \
-     USER=AUTO RUN=command/test/primitives.txt
+     USER=AUTO RUN=command/test/primitives.svs
    ```
    (the same `USER=AUTO RUN=...` mechanism as `./run-with-processing-4.3.sh USER=AUTO
-   RUN=command/test.txt` — see `app/src/solarchvision_bim/parseArgs.pde` and
+   RUN=command/test.svs` — see `app/src/solarchvision_bim/parseArgs.pde` and
    `solarchvision_bim.pde`: `USER=AUTO` makes the sketch run the script a
    couple of frames after startup and then call `exit()` on its own).
 
@@ -46,7 +46,7 @@ after `--run` — and all optional:
 | Argument | Example | What it does |
 | --- | --- | --- |
 | `USER=` | `USER=AUTO` or `USER=GUI` | `AUTO`: run `RUN=`'s script a couple of frames after startup, then exit on its own (what this whole pipeline, and `test/run_integration.sh`, use). `GUI`: normal interactive startup - the default if `USER=` is omitted entirely. |
-| `RUN=` | `RUN=command/test/edit.txt` | The `command/*.txt` script to run under `USER=AUTO` (see `command/README.md`). Has no effect under `USER=GUI`. |
+| `RUN=` | `RUN=command/test/edit.svs` | The `command/test/*.svs` script to run under `USER=AUTO` (see `command/README.md`). Has no effect under `USER=GUI`. |
 | `SCREEN=` | `SCREEN=1280x720` | Sets the sketch window to this exact size instead of either of `USER=`'s own defaults (`1920x1080` under `AUTO`, `fullScreen()` under `GUI`) - works the same way regardless of which `USER=` mode is active. Every UI element (menu/tool/case/command bars, the rollout panel's width) resizes itself proportionally to match, rather than assuming a fixed layout. |
 | `FONT=` | `FONT=Times-New-Roman` | Overrides the default UI font (`Liberation Sans`). Spaces can be written as `-` or `_` (`Times-New-Roman` and `Times_New_Roman` both become `Times New Roman`) - useful since most shells treat a literal space as a new argument. **`FONT=?` lists every font the current machine actually has available** (`PFont.list()`), printed to the console - the easiest way to find a valid value for this same argument, especially when the two platforms a project is tested on don't ship the same fonts by default. |
 | `FONTSIZE=` | `FONTSIZE=12` | Sets the point size the UI's own text and bar heights scale from (`MessageSize`), overriding the default (proportional to `SCREEN=`/window height otherwise). Does not change the font asset Processing itself loads internally at a fixed resolution for crisp scaling - just how large it, and everything sized relative to it, ends up on screen. |
@@ -116,7 +116,7 @@ instead - if you ever change this, baselines need regenerating at the new
 size (a resolution change alone makes `compare_pixels.py` report every test
 as a dimension mismatch).
 
-Run a subset by naming tests (without `.txt`):
+Run a subset by naming tests (without `.svs`):
 
 ```sh
 python3 test/image/make_baseline.py test_houses test_primitives
@@ -204,7 +204,7 @@ tests have proven stable.
 
 ## Adding a new test
 
-1. Add `command/test/<name>.txt`, following the existing scripts as a
+1. Add `command/test/<name>.svs`, following the existing scripts as a
    template: `Delete all` first, space objects out so nothing intersects,
    set a view + `SIZEALL`, end in exactly one `REC.png`.
 2. `python3 test/image/make_baseline.py test_<name> --baseline`, review the

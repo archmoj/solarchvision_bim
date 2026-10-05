@@ -13,7 +13,7 @@ literal part of the name, not punctuation to skip.
 
 You can also run a whole file of commands, one per line, with
 `RUN.SCRIPT <file>`; a few example scripts are included in this folder
-(`test.txt`, `test_houses.txt`, `test_primitives.txt`, ...).
+(`test.txt`, `test_houses.txt`, `test_primitives.svs`, ...).
 
 This page has two parts:
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Bash alternative to test/image/make_baseline.py: generates
-# test/image/actual/*.png for command/test/*.txt by running the sketch
+# test/image/actual/*.png for command/test/*.svs by running the sketch
 # headlessly (USER=AUTO) through the exact same
 # run-with-latest-processing.sh/.bat (or run-with-processing-4.3.sh/.bat)
 # wrapper test/run_integration.sh uses (which also delegates its own
@@ -36,7 +36,7 @@
 # would match the symptom seen without it exactly.
 #
 # A single test script can call REC.png more than once, each with its
-# own name given right in the script (see command/test/views.txt), so
+# own name given right in the script (see command/test/views.svs), so
 # one test can produce several screenshots - each is kept under its own
 # original filename rather than the test's, matching make_baseline.py's
 # own behavior exactly.
@@ -48,8 +48,8 @@
 # Windows job for what that takes).
 #
 # Usage:
-#   ./test/image/make_baseline.sh                          # every command/test/*.txt
-#   ./test/image/make_baseline.sh edit views ...            # specific ones only (name without .txt)
+#   ./test/image/make_baseline.sh                          # every command/test/*.svs
+#   ./test/image/make_baseline.sh edit views ...            # specific ones only (name without .svs)
 #
 # Environment:
 #   PROCESSING_HOME   - defaults to ~/processing/4.5.2, same as
@@ -116,15 +116,15 @@ fi
 
 if [ "$#" -lt 1 ]; then
   shopt -s nullglob
-  for f in command/test/*.txt; do
-    set -- "$@" "$(basename "$f" .txt)"
+  for f in command/test/*.svs; do
+    set -- "$@" "$(basename "$f" .svs)"
   done
   shopt -u nullglob
   if [ "$#" -lt 1 ]; then
-    echo "error: no tests given and no command/test/*.txt files found" >&2
+    echo "error: no tests given and no command/test/*.svs files found" >&2
     exit 1
   fi
-  echo "==> No tests given - defaulting to every command/test/*.txt: $*"
+  echo "==> No tests given - defaulting to every command/test/*.svs: $*"
 fi
 
 # sketchPath() (used as BaseFolder in update_folders.pde) resolves to
@@ -155,7 +155,7 @@ FAILED_NAMES=()
 
 for NAME in "$@"; do
   TOTAL=$((TOTAL + 1))
-  SCRIPT="command/test/${NAME}.txt"
+  SCRIPT="command/test/${NAME}.svs"
   if [ ! -f "$SCRIPT" ]; then
     echo "error: $SCRIPT not found" >&2
     FAILED_NAMES+=("$NAME")

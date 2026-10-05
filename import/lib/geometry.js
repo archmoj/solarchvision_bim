@@ -138,7 +138,7 @@ function iterPolygons(geometry) {
 }
 
 // -----------------------------------------------------------------------
-// buildings.txt: SOLARCHVISION_BIM's own "Mesh" script command
+// buildings.svs: SOLARCHVISION_BIM's own "Mesh" script command
 // (app/src/solarchvision_bim/runScript.pde's `case "MESH":`, calling
 // Create3D.pde's add_Mesh) natively supports a face with any number of
 // vertices - unlike buildings.obj, a hole-free cap here does NOT need
@@ -152,7 +152,7 @@ function iterPolygons(geometry) {
 //   Mesh m:7 tes:0 lyr:0 x1,y1,z1 x2,y2,z2 x3,y3,z3 ...
 // -----------------------------------------------------------------------
 
-/** Accumulates 'Mesh ...' command lines for buildings.txt. */
+/** Accumulates 'Mesh ...' command lines for buildings.svs. */
 class MeshWriter {
   constructor() {
     this.lines = [];
@@ -176,7 +176,7 @@ class MeshWriter {
   }
 }
 
-/** Same extruded solid as addExtrudedPolygon, but as buildings.txt Mesh
+/** Same extruded solid as addExtrudedPolygon, but as buildings.svs Mesh
  * lines: hole-free caps are one n-gon face each (no triangulation); caps
  * with holes are triangulated (see module comment above). */
 function addExtrudedMesh(writer, ext, holes, height, baseZ = 0.0, m = 7, tes = 0, lyr = 0) {

@@ -8,7 +8,7 @@ since it sits next to them in the same directory).
 
 Contains:
   - OBJ writing, polygon triangulation/extrusion (data-source-agnostic)
-  - Mesh2 / more_info.txt formatting (data-source-agnostic)
+  - Mesh2 / more_info.svs formatting (data-source-agnostic)
   - OSM height-tag parsing (`height`/`building:levels`-style strings) -
     used for tree heights by both scripts, and for building heights by
     the OSM script
@@ -216,7 +216,7 @@ def add_extruded_polygon(writer: ObjWriter, ext, holes, height, base_z=0.0):
 
 
 # ---------------------------------------------------------------------
-# buildings.txt: SOLARCHVISION_BIM's own "Mesh" script command
+# buildings.svs: SOLARCHVISION_BIM's own "Mesh" script command
 # (app/src/solarchvision_bim/runScript.pde's `case "MESH":`, calling
 # Create3D.pde's add_Mesh) natively supports a face with any number of
 # vertices - unlike buildings.obj, a hole-free cap here does NOT need
@@ -229,7 +229,7 @@ def add_extruded_polygon(writer: ObjWriter, ext, holes, height, base_z=0.0):
 # ---------------------------------------------------------------------
 
 class MeshWriter:
-    """Accumulates 'Mesh ...' command lines for buildings.txt."""
+    """Accumulates 'Mesh ...' command lines for buildings.svs."""
 
     def __init__(self):
         self.lines = []
@@ -253,7 +253,7 @@ class MeshWriter:
 
 
 def add_extruded_mesh(writer: MeshWriter, ext, holes, height, base_z=0.0, m=7, tes=0, lyr=0):
-    """Same extruded solid as add_extruded_polygon, but as buildings.txt
+    """Same extruded solid as add_extruded_polygon, but as buildings.svs
     Mesh lines: hole-free caps are one n-gon face each (no triangulation);
     caps with holes are triangulated (see module docstring above)."""
     if len(ext) < 3:
@@ -322,7 +322,7 @@ def polygon_rings_from_shapely_local(poly: Polygon):
 
 
 # ---------------------------------------------------------------------
-# Ground rectangle (Mesh2 line) + more_info.txt writer.
+# Ground rectangle (Mesh2 line) + more_info.svs writer.
 # ---------------------------------------------------------------------
 
 def format_number(v: float) -> str:
@@ -343,7 +343,7 @@ def format_mesh2_line(radius: float) -> str:
     return f"Mesh2 m:3 tes:6 x1:{nr} y1:{nr} z1:0 x2:{r} y2:{r} z2:0"
 
 
-def write_more_info_txt(path, lat, lon, radius, ground_radius, trees=(), include_ground=True):
+def write_more_info_svs(path, lat, lon, radius, ground_radius, trees=(), include_ground=True):
     """trees: iterable of (x, y, z, h), or empty (the Overture script has
     no tree layer unless --trees-source osm is used). Writes:
         # --lat ... --lon ... --radius ...
