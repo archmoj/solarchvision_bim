@@ -113,6 +113,39 @@ class Moon3DTest {
     assertEquals(0f, frame.Gupx);
   }
 
+  @Test
+  void computeFrame_RupAndGupPointTowardTheNorthCelestialPole_notSouth () {
+    // A real, confirmed bug: Rup/Gup used to be built from the SOUTH
+    // celestial pole instead of the north one (the pole reference's own
+    // sign was backwards, in buildRightUp() - see its own comment), which
+    // put the real Moon's north pole visibly at the bottom of its own
+    // texture. Checked here against an independently-derived north
+    // direction - the difference between funcs.SunPosition() at a
+    // genuinely high vs. low declination, not read from the app's own
+    // pole variable - so this actually catches a regression rather than
+    // re-asserting the same formula against itself (same technique as
+    // Sun3DTest.java's equivalent test, which shares this exact
+    // construction).
+    app.SHADE_HOUR_ANGLE = 9; // deliberately not noon, so F and north
+    app.SHADE_DATE_ANGLE = 30; // aren't forced near-perpendicular by symmetry.
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    float stationLat = app.STATION.getLatitude();
+    float[] northish = app.funcs.SunPosition(stationLat, 90, 12);
+    float[] southish = app.funcs.SunPosition(stationLat, 270, 12);
+    float nx = northish[1] - southish[1];
+    float ny = northish[2] - southish[2];
+    float nz = northish[3] - southish[3];
+    float len = (float) Math.sqrt(nx*nx + ny*ny + nz*nz);
+    nx /= len; ny /= len; nz /= len;
+
+    float dotRupNorth = frame.Rupx*nx + frame.Rupy*ny + frame.Rupz*nz;
+    assertTrue(dotRupNorth > 0.5f, "Rup should be strongly aligned with true north, dot=" + dotRupNorth);
+
+    float dotGupNorth = frame.Gupx*nx + frame.Gupy*ny + frame.Gupz*nz;
+    assertTrue(dotGupNorth > 0.5f, "Gup should be strongly aligned with true north, dot=" + dotGupNorth);
+  }
+
   // ================= buildSubFace(): position tracks real time ===============
   // Previously the Moon never moved at all - any observable difference
   // here is new, correct behavior, not just a refinement of existing

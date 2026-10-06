@@ -62,9 +62,18 @@ class Moon3D {
   // the exact same construction, just with a different forward vector.
   // Returns {rightX, rightY, rightZ, upX, upY, upZ}.
   float[] buildRightUp (float forwardX, float forwardY, float forwardZ, float stationLat) {
+    // This is the NORTH celestial pole, not the south one - confirmed by
+    // hand against the real compiled app: dot this against funcs.
+    // SunPosition()'s own output at a genuinely high (northern) vs. low
+    // (southern) declination and the north one comes out positive here,
+    // the south one negative. (Earlier derivations in this file assumed
+    // the negated version - substituting Declination=90 into
+    // SunPosition()'s formula - was already north, which is what put the
+    // real Moon's north pole visibly at the bottom of its own texture:
+    // the "up" built from the south pole ends up pointing south.)
     float poleX = 0;
-    float poleY = -funcs.cos_ang(stationLat);
-    float poleZ = -funcs.sin_ang(stationLat);
+    float poleY = funcs.cos_ang(stationLat);
+    float poleZ = funcs.sin_ang(stationLat);
 
     // right = pole x forward
     float rightX = poleY * forwardZ - poleZ * forwardY;
@@ -191,9 +200,9 @@ class Moon3D {
     // a plain (lat, lon) shift only locks WHICH POINT faces the station,
     // not the texture's roll around that point (checked by hand, same
     // conclusion as Sun3D.pde: it isn't enough on its own). F is "which
-    // point faces the station"; pole is the celestial pole's direction in
-    // this same frame (Declination = 90 in MoonPosition's underlying
-    // formula - hour angle drops out entirely there, as it should).
+    // point faces the station"; the pole reference used here is the
+    // NORTH celestial pole (see buildRightUp()'s own comment on how
+    // that's confirmed, and the real bug it caused when it was backwards).
     if (this.displayTexture) {
       float[] textureRightUp = buildRightUp(f.Fx, f.Fy, f.Fz, stationLat);
       f.Rrightx = textureRightUp[0];

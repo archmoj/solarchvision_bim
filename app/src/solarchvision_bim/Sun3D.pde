@@ -118,19 +118,27 @@ class Sun3D {
     // settling on this: it fixes the center but leaves the texture free
     // to roll around that center point, which still visibly spins hour to
     // hour. Fully locking it needs an actual (forward, up, right) frame:
-    // F is "which point faces the station" (as before); pole is the
-    // celestial pole's direction in this SAME frame (substituting
-    // Declination = 90 into SunPosition's own x/y/z formula - hour angle
-    // drops out entirely at the pole, as it should - gives this fixed
-    // direction) - the one reference that itself barely moves within a
-    // day, so using it to pin the texture's "up" is what keeps the whole
-    // disk's apparent rotation down to the sun's real year-over-year
-    // declination drift (via SHADE_DATE_ANGLE, part of SunPosition's own
-    // inputs, feeding tA/tB here too) instead of its hour-to-hour one.
+    // F is "which point faces the station" (as before); pole is the one
+    // reference that itself barely moves within a day, so using it to pin
+    // the texture's "up" is what keeps the whole disk's apparent rotation
+    // down to the sun's real year-over-year declination drift (via
+    // SHADE_DATE_ANGLE, part of SunPosition's own inputs, feeding tA/tB
+    // here too) instead of its hour-to-hour one.
     if (this.displayTexture) {
+      // This is the NORTH celestial pole, not the south one - confirmed
+      // by hand against the real compiled app: dot this against
+      // funcs.SunPosition()'s own output at a genuinely high (northern)
+      // vs. low (southern) declination and the north one comes out
+      // positive here, the south one negative. (An earlier derivation
+      // here assumed the negated version - substituting Declination = 90
+      // into SunPosition()'s own x/y/z formula - was already north,
+      // which was backwards; see Moon3D.pde's buildRightUp(), which this
+      // same construction was later copied from, for the real bug that
+      // caused - the Moon's north pole visibly at the bottom of its own
+      // texture.)
       float poleX = 0;
-      float poleY = -funcs.cos_ang(stationLat);
-      float poleZ = -funcs.sin_ang(stationLat);
+      float poleY = funcs.cos_ang(stationLat);
+      float poleZ = funcs.sin_ang(stationLat);
 
       // right = pole x F
       f.Rrightx = poleY * f.Fz - poleZ * f.Fy;

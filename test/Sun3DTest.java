@@ -66,6 +66,34 @@ class Sun3DTest {
   }
 
   @Test
+  void computeFrame_RupPointsTowardTheNorthCelestialPole_notSouth () {
+    // A real, confirmed bug: Rup used to be built from the SOUTH
+    // celestial pole instead of the north one (the pole reference's own
+    // sign was backwards), which put the real Moon's north pole visibly
+    // at the bottom of its own texture (same construction, shared bug -
+    // see Moon3D.pde's buildRightUp()). Checked here against an
+    // independently-derived north direction - the difference between
+    // funcs.SunPosition() at a genuinely high vs. low declination, not
+    // read from the app's own pole variable - so this actually catches a
+    // regression rather than re-asserting the same formula against itself.
+    app.SHADE_HOUR_ANGLE = 9; // deliberately not noon, so F and north
+    app.SHADE_DATE_ANGLE = 30; // aren't forced near-perpendicular by symmetry.
+    solarchvision_bim.Sun3D.SkyFrame frame = app.Sun3D.computeFrame();
+
+    float stationLat = app.STATION.getLatitude();
+    float[] northish = app.funcs.SunPosition(stationLat, 90, 12);
+    float[] southish = app.funcs.SunPosition(stationLat, 270, 12);
+    float nx = northish[1] - southish[1];
+    float ny = northish[2] - southish[2];
+    float nz = northish[3] - southish[3];
+    float len = (float) Math.sqrt(nx*nx + ny*ny + nz*nz);
+    nx /= len; ny /= len; nz /= len;
+
+    float dotRupNorth = frame.Rupx*nx + frame.Rupy*ny + frame.Rupz*nz;
+    assertTrue(dotRupNorth > 0.5f, "Rup should be strongly aligned with true north, dot=" + dotRupNorth);
+  }
+
+  @Test
   void computeFrame_withDisplayTextureOff_skipsRupAndRrightButStillSetsF () {
     app.Sun3D.displayTexture = false;
     app.SHADE_HOUR_ANGLE = 12;
