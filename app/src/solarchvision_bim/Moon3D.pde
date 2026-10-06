@@ -27,6 +27,87 @@ class Moon3D {
     this.Map = loadImage(this.Filename);
   }
 
+  // Everything buildSubFace used to recompute from scratch on every one of
+  // its calls (1296 per draw() at the default lat_step=5/lon_step=10 - 36
+  // x 36 - and some of it 4x again per call, once per vertex) that doesn't
+  // actually depend on that call's own (Alpha, Beta): the station tilt,
+  // tA/tB from MoonPosition(), and the tidal-locking (forward, up, right)
+  // frame. None of it changes within one draw() call, so it's computed
+  // once there instead and passed in - same refactor as Sun3D.pde.
+  class SkyFrame {
+    float ta;
+    float tA, tB;
+    // F ("forward"): direction from the sphere toward the station. Used
+    // for the translation step below (equivalent to -d*F, see its own
+    // comment) regardless of displayTexture, and additionally as the
+    // tidal-locking frame's forward axis when displayTexture is on.
+    float Fx, Fy, Fz;
+    // Rup/Rright: only meaningful (and only computed) when displayTexture
+    // is on - see buildSubFace's own comment on why locking F alone isn't
+    // enough.
+    float Rupx, Rupy, Rupz;
+    float Rrightx, Rrighty, Rrightz;
+  }
+
+  SkyFrame computeFrame () {
+    SkyFrame f = new SkyFrame();
+
+    float stationLat = STATION.getLatitude();
+    f.ta = 90 - stationLat;
+
+    // Real position tracking, same architecture as Sun3D.pde: MoonR/tA/tB
+    // move the sphere's POSITION across the sky via the translation step
+    // in buildSubFace, using the exact same SHADE_DATE_ANGLE/
+    // SHADE_HOUR_ANGLE this app already drives the Sun with (see
+    // funcs.MoonPosition's own comment for what this simplified model
+    // does and doesn't capture).
+    float[] MoonR = funcs.MoonPosition(stationLat, SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
+    f.tA = funcs.asin_ang(MoonR[3]);
+    f.tB = funcs.atan2_ang(MoonR[2], MoonR[1]);
+
+    f.Fx = -funcs.cos_ang(f.tB) * funcs.cos_ang(f.tA);
+    f.Fy = -funcs.sin_ang(f.tB) * funcs.cos_ang(f.tA);
+    f.Fz = -funcs.sin_ang(f.tA);
+
+    // Tidal locking, same (forward, up, right) construction as Sun3D.pde -
+    // a plain (lat, lon) shift only locks WHICH POINT faces the station,
+    // not the texture's roll around that point (checked by hand, same
+    // conclusion as Sun3D.pde: it isn't enough on its own). F is "which
+    // point faces the station"; pole is the celestial pole's direction in
+    // this same frame (Declination = 90 in MoonPosition's underlying
+    // formula - hour angle drops out entirely there, as it should).
+    if (this.displayTexture) {
+      float poleX = 0;
+      float poleY = -funcs.cos_ang(stationLat);
+      float poleZ = -funcs.sin_ang(stationLat);
+
+      // right = pole x F
+      f.Rrightx = poleY * f.Fz - poleZ * f.Fy;
+      f.Rrighty = poleZ * f.Fx - poleX * f.Fz;
+      f.Rrightz = poleX * f.Fy - poleY * f.Fx;
+      float rightLen = sqrt(f.Rrightx * f.Rrightx + f.Rrighty * f.Rrighty + f.Rrightz * f.Rrightz);
+      if (rightLen < 0.0001) {
+        // Degenerate only if the Moon sits exactly at the celestial pole
+        // itself (not physically possible here - Declination maxes out
+        // at 23.45 - but guarded for safety rather than risking a NaN).
+        f.Rrightx = 1;
+        f.Rrighty = 0;
+        f.Rrightz = 0;
+        rightLen = 1;
+      }
+      f.Rrightx /= rightLen;
+      f.Rrighty /= rightLen;
+      f.Rrightz /= rightLen;
+
+      // up = F x right
+      f.Rupx = f.Fy * f.Rrightz - f.Fz * f.Rrighty;
+      f.Rupy = f.Fz * f.Rrightx - f.Fx * f.Rrightz;
+      f.Rupz = f.Fx * f.Rrighty - f.Fy * f.Rrightx;
+    }
+
+    return f;
+  }
+
   void draw () {
     if (!this.displaySurface) return;
 
@@ -47,74 +128,22 @@ class Moon3D {
       d = Sky3D.radius;
     }
 
+    SkyFrame frame = computeFrame();
 
     for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
-        FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY);
+        FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY, frame);
         writeFaceWIN3D(subFace);
       }
     }
   }
 
   FaceVertex[] buildSubFace (float Alpha, float Beta,
-                                      float r, float d, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY) {
+                                      float r, float d, float CEN_lon, float CEN_lat, float ScaleX, float ScaleY, SkyFrame frame) {
     FaceVertex[] subFace = new FaceVertex[4];
 
     float tb = 0;
-    float stationLat = STATION.getLatitude();
-    float ta = 90 - stationLat;
-
-    // Real position tracking, same architecture as Sun3D.pde: MoonR/tA/tB
-    // move the sphere's POSITION across the sky via the translation step
-    // below, using the exact same SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE this
-    // app already drives the Sun with (see funcs.MoonPosition's own
-    // comment for what this simplified model does and doesn't capture).
-    float[] MoonR = funcs.MoonPosition(stationLat, SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
-    float tA = funcs.asin_ang(MoonR[3]);
-    float tB = funcs.atan2_ang(MoonR[2], MoonR[1]);
-
-    // Tidal locking, same (forward, up, right) construction as Sun3D.pde -
-    // a plain (lat, lon) shift only locks WHICH POINT faces the station,
-    // not the texture's roll around that point (checked by hand, same
-    // conclusion as Sun3D.pde: it isn't enough on its own). F is "which
-    // point faces the station"; pole is the celestial pole's direction in
-    // this same frame (Declination = 90 in MoonPosition's underlying
-    // formula - hour angle drops out entirely there, as it should).
-    float Fx = 0, Fy = 0, Fz = 0;
-    float Rupx = 0, Rupy = 0, Rupz = 0;
-    float Rrightx = 0, Rrighty = 0, Rrightz = 0;
-    if (this.displayTexture) {
-      Fx = -funcs.cos_ang(tB) * funcs.cos_ang(tA);
-      Fy = -funcs.sin_ang(tB) * funcs.cos_ang(tA);
-      Fz = -funcs.sin_ang(tA);
-
-      float poleX = 0;
-      float poleY = -funcs.cos_ang(stationLat);
-      float poleZ = -funcs.sin_ang(stationLat);
-
-      // right = pole x F
-      Rrightx = poleY * Fz - poleZ * Fy;
-      Rrighty = poleZ * Fx - poleX * Fz;
-      Rrightz = poleX * Fy - poleY * Fx;
-      float rightLen = sqrt(Rrightx * Rrightx + Rrighty * Rrighty + Rrightz * Rrightz);
-      if (rightLen < 0.0001) {
-        // Degenerate only if the Moon sits exactly at the celestial pole
-        // itself (not physically possible here - Declination maxes out
-        // at 23.45 - but guarded for safety rather than risking a NaN).
-        Rrightx = 1;
-        Rrighty = 0;
-        Rrightz = 0;
-        rightLen = 1;
-      }
-      Rrightx /= rightLen;
-      Rrighty /= rightLen;
-      Rrightz /= rightLen;
-
-      // up = F x right
-      Rupx = Fy * Rrightz - Fz * Rrighty;
-      Rupy = Fz * Rrightx - Fx * Rrightz;
-      Rupz = Fx * Rrighty - Fy * Rrightx;
-    }
+    float ta = frame.ta;
 
     for (int s = 0; s < 4; s++) {
       FaceVertex vtx = new FaceVertex();
@@ -133,8 +162,7 @@ class Moon3D {
         // This vertex's own direction (unit sphere, tb/ta applied, no
         // translation) - same transform as x1/y1/z1/x2/y2/z2 below, just
         // computed early and unscaled (divide out r) so it can be
-        // decomposed against the (Fx,Fy,Fz)/(Rupx,Rupy,Rupz)/
-        // (Rrightx,Rrighty,Rrightz) frame above.
+        // decomposed against frame's (forward, up, right) axes.
         float ux0 = x0 / r;
         float uy0 = y0 / r;
         float uz0 = z0 / r;
@@ -147,9 +175,9 @@ class Moon3D {
         float uy2 = uz1 * funcs.sin_ang(ta) + uy1 * funcs.cos_ang(ta);
         float uz2 = uz1 * funcs.cos_ang(ta) - uy1 * funcs.sin_ang(ta);
 
-        float compForward = ux2 * Fx + uy2 * Fy + uz2 * Fz;
-        float compUp = ux2 * Rupx + uy2 * Rupy + uz2 * Rupz;
-        float compRight = ux2 * Rrightx + uy2 * Rrighty + uz2 * Rrightz;
+        float compForward = ux2 * frame.Fx + uy2 * frame.Fy + uz2 * frame.Fz;
+        float compUp = ux2 * frame.Rupx + uy2 * frame.Rupy + uz2 * frame.Rupz;
+        float compRight = ux2 * frame.Rrightx + uy2 * frame.Rrighty + uz2 * frame.Rrightz;
 
         float lat = funcs.asin_ang(constrain(compUp, -1, 1)) - CEN_lat;
         float lon = Earth3D.unwrapLon(funcs.atan2_ang(-compForward, compRight) + 90 - CEN_lon, 0);
@@ -166,10 +194,14 @@ class Moon3D {
       float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
       float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
 
-      // move out to lunar distance, in the Moon's real current sky direction
-      x2 += d * funcs.cos_ang(tB) * funcs.cos_ang(tA);
-      y2 += d * funcs.sin_ang(tB) * funcs.cos_ang(tA);
-      z2 += d * funcs.sin_ang(tA);
+      // move out to lunar distance, in the moon's real current sky
+      // direction - exactly -d*frame.F (F is defined as the direction
+      // FROM the sphere TOWARD the station, so the sphere's own center,
+      // relative to the station, sits at -F); reusing the already-computed
+      // frame.Fx/Fy/Fz instead of recomputing cos(tB)*cos(tA) etc. here.
+      x2 += -d * frame.Fx;
+      y2 += -d * frame.Fy;
+      z2 += -d * frame.Fz;
 
       vtx.x = x2;
       vtx.y = y2;
