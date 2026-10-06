@@ -9,9 +9,15 @@ import static org.junit.jupiter.api.Assertions.*;
 // since none of these test files declare a package either, they're
 // callable directly here with no reflection needed.
 //
-// draw()'s own displaySurface guard isn't exercised at all - these tests
-// call computeFrame()/buildSubFace() directly, bypassing it, the same way
-// a WIN3D.graphics-touching draw() couldn't be tested here regardless.
+// draw() itself only builds/writes the sun disc (same self-contained
+// shape as Moon3D.pde's own draw()) - the grid/path/pattern/cycles
+// drawing (drawGrid(), drawPath(), drawPattern(), drawCycles()) are
+// separate methods WIN3D.pde calls directly, not reached through draw()
+// at all, and all of them touch WIN3D.graphics/STUDY.graphics
+// unconditionally - confirmed by hand against the real compiled app,
+// same WIN3D.graphics boundary as everywhere else in this app (see
+// test/README.md) - so only draw()'s own displaySurface guard is
+// reachable here, same as Moon3DTest.java's equivalent test.
 class Sun3DTest {
 
   private solarchvision_bim app;
@@ -194,5 +200,164 @@ class Sun3DTest {
 
     assertEquals(0f, subFace[0].u);
     assertEquals(0f, subFace[0].v);
+  }
+
+  // ================= wrapDayIndex() ===============================================
+  // Plain integer math, no dependencies at all.
+
+  @Test
+  void wrapDayIndex_leavesAnInRangeDayUnchanged () {
+    assertEquals(10, app.Sun3D.wrapDayIndex(10));
+    assertEquals(0, app.Sun3D.wrapDayIndex(0));
+  }
+
+  @Test
+  void wrapDayIndex_wrapsValuesAtOrAbove365 () {
+    assertEquals(0, app.Sun3D.wrapDayIndex(365));
+    assertEquals(35, app.Sun3D.wrapDayIndex(400));
+  }
+
+  @Test
+  void wrapDayIndex_wrapsNegativeValues () {
+    assertEquals(364, app.Sun3D.wrapDayIndex(-1));
+    // More than a single year below zero - confirmed by hand against the
+    // real compiled app rather than just trusting the double-wrap
+    // (+365, then a second +365 if still negative) actually covers this:
+    // int(-366+365)=-1, then (-1+365)%365=364.
+    assertEquals(364, app.Sun3D.wrapDayIndex(-366));
+  }
+
+  // ================= activePalette() ===============================================
+
+  @Test
+  void activePalette_readsSunsOwnSettings_whenNotUsingStudySettings () {
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
+    app.Sun3D.activeColorscaleIndex = 5;
+    app.Sun3D.activeColorscaleDirection = 1;
+    app.Sun3D.activeColorscaleFactor = 2;
+
+    float[] palette = app.Sun3D.activePalette(false);
+
+    assertEquals(5f, palette[0], 0.0001f);
+    assertEquals(1f, palette[1], 0.0001f);
+    assertEquals(2f, palette[2], 0.0001f);
+  }
+
+  @Test
+  void activePalette_readsSTUDYsSettings_whenUsingStudySettings () {
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
+    app.STUDY.activeColorscaleIndex = 7;
+    app.STUDY.activeColorscaleDirection = -1;
+    app.STUDY.activeColorscaleFactor = 3;
+
+    float[] palette = app.Sun3D.activePalette(true);
+
+    assertEquals(7f, palette[0], 0.0001f);
+    assertEquals(-1f, palette[1], 0.0001f);
+    assertEquals(3f, palette[2], 0.0001f);
+  }
+
+  @Test
+  void activePalette_readsThePassiveSettings_whenImpactTypeIsPassive () {
+    app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
+    app.Sun3D.passiveColorscaleIndex = 9;
+    app.Sun3D.passiveColorscaleDirection = -2;
+    app.Sun3D.passiveColorscaleFactor = 0.5f;
+
+    float[] palette = app.Sun3D.activePalette(false);
+
+    assertEquals(9f, palette[0], 0.0001f);
+    assertEquals(-2f, palette[1], 0.0001f);
+    assertEquals(0.5f, palette[2], 0.0001f);
+  }
+
+  // ================= paletteValueToColor() =========================================
+
+  @Test
+  void paletteValueToColor_returnsAFourComponentColor () {
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
+
+    // Not re-deriving PAINT's own palette math here (out of scope for
+    // this file - it's PAINT.pde's own responsibility) - just confirming
+    // paletteValueToColor() wires rawValue/palType/palDirection through
+    // to it and back correctly, against a result confirmed by hand
+    // against the real compiled app.
+    float[] col = app.Sun3D.paletteValueToColor(0.5f, 15, 1);
+
+    assertEquals(4, col.length);
+    assertEquals(255f, col[0], 0.01f);
+    assertEquals(255f, col[1], 0.01f);
+    assertEquals(127.5f, col[2], 0.01f);
+    assertEquals(0f, col[3], 0.01f);
+  }
+
+  // ================= load_images() =================================================
+
+  @Test
+  void loadImages_loadsTheRealBundledSunTexture () {
+    // Same user.dir-based path override as Moon3DTest.java/Earth3DTest.java.
+    app.Sun3D.Filename = System.getProperty("user.dir") + "/input/images/sun/Sun.jpg";
+
+    app.Sun3D.load_images();
+
+    assertEquals(3000, app.Sun3D.Map.width);
+    assertEquals(1500, app.Sun3D.Map.height);
+  }
+
+  // ================= draw(): the one part of this file that's off-limits ==========
+
+  @Test
+  void draw_withDisplaySurfaceOff_isANoOp () {
+    app.Sun3D.displaySurface = false;
+
+    assertDoesNotThrow(() -> app.Sun3D.draw());
+  }
+
+  // ================= to_XML / from_XML round trip ==================================
+
+  @Test
+  void toXMLThenFromXML_roundTripsDisplaySettings () {
+    app.Sun3D.displaySurface = false;
+    app.Sun3D.displayTexture = false;
+    app.Sun3D.displayGrid = false;
+    app.Sun3D.displayPath = false;
+    app.Sun3D.displayPattern = true;
+    app.Sun3D.fitInSkyDome = false;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.Sun3D.to_XML(root);
+
+    solarchvision_bim.Sun3D fresh = app.new Sun3D();
+    fresh.from_XML(root);
+
+    assertFalse(fresh.displaySurface);
+    assertFalse(fresh.displayTexture);
+    assertFalse(fresh.displayGrid);
+    assertFalse(fresh.displayPath);
+    assertTrue(fresh.displayPattern);
+    assertFalse(fresh.fitInSkyDome);
+  }
+
+  @Test
+  void toXMLThenFromXML_roundTripsThePaletteSettings () {
+    app.Sun3D.activeColorscaleIndex = 11;
+    app.Sun3D.activeColorscaleDirection = -1;
+    app.Sun3D.activeColorscaleFactor = 1.5f;
+    app.Sun3D.passiveColorscaleIndex = 13;
+    app.Sun3D.passiveColorscaleDirection = 2;
+    app.Sun3D.passiveColorscaleFactor = 0.75f;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.Sun3D.to_XML(root);
+
+    solarchvision_bim.Sun3D fresh = app.new Sun3D();
+    fresh.from_XML(root);
+
+    assertEquals(11, fresh.activeColorscaleIndex);
+    assertEquals(-1, fresh.activeColorscaleDirection);
+    assertEquals(1.5f, fresh.activeColorscaleFactor, 0.0001f);
+    assertEquals(13, fresh.passiveColorscaleIndex);
+    assertEquals(2, fresh.passiveColorscaleDirection);
+    assertEquals(0.75f, fresh.passiveColorscaleFactor, 0.0001f);
   }
 }
