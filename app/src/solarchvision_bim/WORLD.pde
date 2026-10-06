@@ -782,12 +782,10 @@ class WORLD {
     switch(key) {
       case '`' :
         callAction("Map Zoom Out");
-        this.revise();
         break;
 
       case '~' :
         callAction("Map Zoom In");
-        this.revise();
         break;
 
     }

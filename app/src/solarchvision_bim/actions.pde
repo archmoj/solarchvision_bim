@@ -1596,11 +1596,13 @@ void build_allActions() {
   putAction("Map Zoom Out", () -> {
     WORLD.zoom = (WORLD.zoom - 1 + 10) % 10;
     WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
+    requestWorldRedraw();
   });
 
   putAction("Map Zoom In", () -> {
     WORLD.zoom = (WORLD.zoom + 1) % 10;
     WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
+    requestWorldRedraw();
   });
 
   putAction("Camera View", () -> {
@@ -2452,7 +2454,12 @@ void build_allActions() {
   //allActions.keySet().stream().sorted().forEach(System.out::println);
 }
 
-  void requestStudyRedraw () {
-    STUDY.revise();
-    UI_rollout.revise();
-  }
+void requestStudyRedraw () {
+  STUDY.revise();
+  UI_rollout.revise();
+}
+
+void requestWorldRedraw () {
+  WORLD.revise();
+  UI_rollout.revise();
+}
