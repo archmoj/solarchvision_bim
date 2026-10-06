@@ -167,6 +167,30 @@ GetLength x1=? y1=? z1=? x2=? y2=? z2=?
 
 ### Object creation
 
+Most shapes below take `m=?`: the material index to paint the new face(s)
+with. Leaving it at `m=0` (no material assigned) does more than skip
+coloring it, though - a material-0 face is the one case this app will
+quietly add extra resolution to on your behalf, wherever per-point detail
+actually matters, without ever touching the face's own corner vertices:
+
+-   In the live 3D view and on export, a material-0 face gets subdivided
+    into a grid of smaller sub-faces before it's drawn or written out, so
+    curved-looking shading and exported geometry both come out smoother.
+-   For solar analysis, that same subdivision is what lets `Vertex_Solar`
+    sample direct/diffuse values across many points spread over the face,
+    rather than only at its original corners - the difference between a
+    solar heatmap with 3-5 data points on a large plane or roof surface
+    and one with dozens, without you having to manually chop that surface
+    into a denser mesh of small polygons yourself (which would also make
+    it more tedious to select, move, or edit later).
+
+How much extra subdivision a material-0 face gets is one shared setting,
+not per-face: `Create3D Display Tessellation` (see
+[New-object defaults](#new-object-defaults-3d-create) below), 0-4, higher
+is denser. Give a face any other material (`m=1` and up) and none of this
+applies - it's drawn and exported exactly as modeled, at its own
+tessellation level only.
+
 -   `BEGINNEWGROUP`: Starts a new group at the given position/scale/
     rotation - the group that House1/2/3, Box, Cylinder and the other
     group-based shapes below add their first mesh or solid into
@@ -502,7 +526,7 @@ the user interface.
 | `Default Visibility` | Default visibility (-1/0/1) assigned to new faces | -1 to 1 |
 | `Creator Weight` | Default weight/thickness assigned to new 1D model segments | -20 to 20 |
 | `Default Tessellation` | Default tessellation level applied to new faces | 0 to 6 |
-| `Create3D Display Tessellation` | Default tessellation-display mode for new faces | 0 to 4 |
+| `Create3D Display Tessellation` | Extra subdivision applied to material-0 faces only - see [Object creation](#object-creation) above - for smoother shading/export and more solar sample points per face | 0 to 4 |
 | `Creator Snap Mode Index` | Toggle: snap new objects to the land surface/grid while placing them | 0 to 1 |
 | `Creator Orientation` | Default orientation angle (degrees) for new objects | 0 to 360 |
 | `Creator Volume` | Default target volume for new objects that size themselves by volume | 0 to 1000000000 |
