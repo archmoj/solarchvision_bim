@@ -24,7 +24,7 @@ void update_project_info (File selectedFile) {
   ProjectName = selectedFile.getName().replace(".xml", "").replace(".XML", ""); // should work most of the times!
   Folder_Project =  selectedFile.getAbsolutePath().replace(char(92), '/').replace("/" + selectedFile.getName(), "");
 
-  println("New ProjectName:", ProjectName);
+  println("\nNew ProjectName:", ProjectName);
   println("New Folder_Project:", Folder_Project);
 
   update_project_folders();
@@ -38,7 +38,7 @@ void _fileSelected_New (File selectedFile) {
   } else {
     Filename = _getSelectedFile(selectedFile);
 
-    println("New project:", Filename);
+    println("\nNew project:", Filename);
 
     update_project_info(selectedFile);
   }
@@ -72,7 +72,7 @@ void _fileSelected_SaveAs (File selectedFile) {
   } else {
     Filename = _getSelectedFile(selectedFile);
 
-    println("Saving to:", Filename);
+    println("\nSaving to:", Filename);
 
     update_project_info(selectedFile);
 
@@ -92,7 +92,7 @@ void _fileSelected_ImportObj (File selectedFile) {
       allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
     }
 
-    println("Importing:", Filename);
+    println("\nImporting:", Filename);
 
     int number_of_allGroups_before = allGroups.num;
 
@@ -118,7 +118,7 @@ void _fileSelected_RunScript (File selectedFile) {
   } else {
     Filename = _getSelectedFile(selectedFile);
 
-    println("Executing:", Filename);
+    println("\nExecuting:", Filename);
 
     runScriptFile(Filename);
   }
