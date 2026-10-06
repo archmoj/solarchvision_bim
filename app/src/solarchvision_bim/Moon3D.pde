@@ -7,6 +7,22 @@ class Moon3D {
   final static float MOON_RADIUS = 1737000.0;
   final static float EARTH_MOON_DISTANCE = 384400000.0;
 
+  // Real moon phases: a point on the Moon is lit only when it faces the
+  // Sun, regardless of which side currently faces the station - these two
+  // constants shape that darkening, not the astronomy itself (see
+  // computeFrame()'s own comment on where the Sun direction comes from).
+  final static float DARK_SIDE_AMBIENT = 0.12; // faint earthshine-like floor
+                                                // for the unlit side - not
+                                                // true black.
+  final static float TERMINATOR_SOFTNESS = 0.15; // half-width, in dot-
+                                                   // product units, of the
+                                                   // lit/dark transition
+                                                   // band - a hard cutoff
+                                                   // at 0 would alias
+                                                   // visibly at this
+                                                   // sphere's tessellation
+                                                   // (lat_step/lon_step).
+
   float lat_step = 5; //in degrees
   float lon_step  = 10; //in degrees
 
@@ -21,6 +37,7 @@ class Moon3D {
   class FaceVertex {
     float x, y, z;
     float u, v;
+    float brightness; // 0..1 - see DARK_SIDE_AMBIENT/TERMINATOR_SOFTNESS
   }
 
   void load_images () {
@@ -47,6 +64,17 @@ class Moon3D {
     // enough.
     float Rupx, Rupy, Rupz;
     float Rrightx, Rrighty, Rrightz;
+    // Direction from the station toward the Sun, in this SAME frame -
+    // used for phase shading (see buildSubFace's own comment). The real
+    // Moon is lit by the Sun regardless of which side currently faces
+    // Earth, which is exactly what makes it show phases in the first
+    // place - station-to-Sun stands in for Moon-to-Sun here, the same
+    // simplification already implicit in reusing the Sun's own real
+    // position (see funcs.SunPosition) rather than computing a separate,
+    // Moon-centered one: the Earth-Moon distance is negligible next to
+    // the Earth-Sun one, so the Sun's direction barely changes between
+    // the two vantage points.
+    float Sx, Sy, Sz;
   }
 
   SkyFrame computeFrame () {
@@ -68,6 +96,19 @@ class Moon3D {
     f.Fx = -funcs.cos_ang(f.tB) * funcs.cos_ang(f.tA);
     f.Fy = -funcs.sin_ang(f.tB) * funcs.cos_ang(f.tA);
     f.Fz = -funcs.sin_ang(f.tA);
+
+    // Sun direction for phase shading - needed regardless of
+    // displayTexture (an untextured Moon should still show phases via
+    // plain fill() shading - see writeFaceWIN3D), so computed
+    // unconditionally, unlike Rup/Rright below. SunPosition() returns a
+    // unit vector already in this exact frame (confirmed by hand: this
+    // is the same relationship Sun3D.pde's own Fx/Fy/Fz have to its own
+    // tA/tB, just not negated here since Fx/Fy/Fz above are themselves
+    // the negation of SunPosition's raw output).
+    float[] SunR = funcs.SunPosition(stationLat, SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
+    f.Sx = SunR[1];
+    f.Sy = SunR[2];
+    f.Sz = SunR[3];
 
     // Tidal locking, same (forward, up, right) construction as Sun3D.pde -
     // a plain (lat, lon) shift only locks WHICH POINT faces the station,
@@ -136,6 +177,18 @@ class Moon3D {
         writeFaceWIN3D(subFace);
       }
     }
+
+    // tint()/fill() (see writeFaceWIN3D's own per-vertex phase darkening)
+    // are PGraphics-wide state, not scoped to the shape that set them -
+    // left at whatever the Moon's own last-drawn vertex happened to be,
+    // they'd otherwise leak into every draw call after this one, this
+    // frame (Earth3D.draw() runs right after Moon3D.draw() - see
+    // WIN3D.pde) and, since nothing resets this state at the start of a
+    // frame either, into next frame's Sun3D.draw() too, which runs
+    // first. castShadows_CurrentSection.pde already pairs its own
+    // tint()/noTint() calls the same way for the same reason.
+    WIN3D.graphics.noTint();
+    WIN3D.graphics.fill(255);
   }
 
   FaceVertex[] buildSubFace (float Alpha, float Beta,
@@ -158,23 +211,26 @@ class Moon3D {
       float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
       float z0 = r * funcs.sin_ang(a);
 
+      // This vertex's own direction (unit sphere, tb/ta applied, no
+      // translation) - same transform as x1/y1/z1/x2/y2/z2 below, just
+      // computed early and unscaled (divide out r). Needed unconditionally
+      // now (not just when displayTexture, as it used to be): phase
+      // shading below depends on it the same way the tidal-locking lookup
+      // already did, and an untextured Moon should still show phases.
+      float ux0 = x0 / r;
+      float uy0 = y0 / r;
+      float uz0 = z0 / r;
+
+      float ux1 = ux0 * funcs.cos_ang(tb) - uy0 * funcs.sin_ang(tb);
+      float uy1 = ux0 * funcs.sin_ang(tb) + uy0 * funcs.cos_ang(tb);
+      float uz1 = uz0;
+
+      float ux2 = ux1;
+      float uy2 = uz1 * funcs.sin_ang(ta) + uy1 * funcs.cos_ang(ta);
+      float uz2 = uz1 * funcs.cos_ang(ta) - uy1 * funcs.sin_ang(ta);
+
       if (this.displayTexture) {
-        // This vertex's own direction (unit sphere, tb/ta applied, no
-        // translation) - same transform as x1/y1/z1/x2/y2/z2 below, just
-        // computed early and unscaled (divide out r) so it can be
-        // decomposed against frame's (forward, up, right) axes.
-        float ux0 = x0 / r;
-        float uy0 = y0 / r;
-        float uz0 = z0 / r;
-
-        float ux1 = ux0 * funcs.cos_ang(tb) - uy0 * funcs.sin_ang(tb);
-        float uy1 = ux0 * funcs.sin_ang(tb) + uy0 * funcs.cos_ang(tb);
-        float uz1 = uz0;
-
-        float ux2 = ux1;
-        float uy2 = uz1 * funcs.sin_ang(ta) + uy1 * funcs.cos_ang(ta);
-        float uz2 = uz1 * funcs.cos_ang(ta) - uy1 * funcs.sin_ang(ta);
-
+        // Decomposed against frame's (forward, up, right) axes.
         float compForward = ux2 * frame.Fx + uy2 * frame.Fy + uz2 * frame.Fz;
         float compUp = ux2 * frame.Rupx + uy2 * frame.Rupy + uz2 * frame.Rupz;
         float compRight = ux2 * frame.Rrightx + uy2 * frame.Rrighty + uz2 * frame.Rrightz;
@@ -184,6 +240,17 @@ class Moon3D {
         vtx.u = (lon / ScaleX / LONGITUDE_SPAN + 0.5);
         vtx.v = (-lat / ScaleY / LATITUDE_SPAN + 0.5);
       }
+
+      // Phase shading: (ux2,uy2,uz2) is this point's own outward surface
+      // normal (a sphere's normal is just the direction from its center),
+      // in the same frame frame.Sx/Sy/Sz already is - so their dot
+      // product is exactly the Lambertian "how directly does this patch
+      // face the Sun" term. constrain()+the softness band (rather than a
+      // hard >0/<=0 split) avoids a visibly faceted terminator edge at
+      // this sphere's own tessellation (lat_step/lon_step).
+      float sunDot = ux2 * frame.Sx + uy2 * frame.Sy + uz2 * frame.Sz;
+      float litAmount = constrain((sunDot + TERMINATOR_SOFTNESS) / (2 * TERMINATOR_SOFTNESS), 0, 1);
+      vtx.brightness = DARK_SIDE_AMBIENT + (1 - DARK_SIDE_AMBIENT) * litAmount;
 
       // rotate to location coordinates
       float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
@@ -221,6 +288,18 @@ class Moon3D {
     }
 
     for (int s = 0; s < subFace.length; s++) {
+      // Per-vertex phase darkening: tint() modulates the bound texture's
+      // own colors (what fill() would do for an untextured shape - see
+      // Faces.pde's own SHADE.vertexRender_*() + fill() pattern, the same
+      // "set it right before this vertex()" technique, just texture-aware
+      // here since the Moon always has one bound when displayTexture).
+      int gray = round(255 * subFace[s].brightness);
+      if (this.displayTexture) {
+        WIN3D.graphics.tint(gray);
+      } else {
+        WIN3D.graphics.fill(gray);
+      }
+
       WIN3D.graphics.vertex(
         subFace[s].x * overallScale * WIN3D.scale,
         -subFace[s].y * overallScale * WIN3D.scale,
