@@ -33,5 +33,11 @@ Mesh m:1 tes:4 lyr:0 wgt:0 clz:1 -16,-4,0 -16,4,0 -24,4,4 -24,-4,4
 
 Select nothing
 
+Show Statistical Ranges 0
+Show Statistics 0
+Show Probabilities 1
+Show Raw Lines 0
+Probability Width Interval 6
+Probability Height Interval 4
 
 REC.png objects

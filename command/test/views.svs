@@ -34,46 +34,60 @@ Top
 REC.png top-global
 =======
 Front
++MapZoom -1
+next layer
+next graph index
 REC.png front-global
 =======
 Right
++MapZoom -1
+next layer
+next graph index
 REC.png right-global
 =======
 Left
++MapZoom -1
+next layer
+next graph index
 REC.png left-global
 =======
 Shade.White
-
 Back
++MapZoom -1
+next layer
+next graph index
 REC.png back-white
 =======
 Shade.Wire
-
 Bottom
++MapZoom -1
+next layer
+next graph index
 REC.png bottom-wire
 =======
 Shade.Real
-
 N.E.
++MapZoom -1
+next layer
+next graph index
 REC.png north-east-real
 =======
-
 S.W.
++MapZoom -1
+next layer
+next graph index
 REC.png south-west-real
 =======
-
 Shade.Viewport
++MapZoom -1
+next layer
+next graph index
 REC.png south-west-shade
 =======
 Shade.Materials
 N.W.
++MapZoom -1
+next layer
+next graph index
 REC.png north-west-materials
-=======
-Shade.Global
 
-#Orthographic
-#REC.png orthographic-global
-=======
-#Perspective
-#REC.png perspective-global
-=======
