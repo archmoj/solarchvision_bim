@@ -24,13 +24,17 @@ class Moon3D {
                                                    // (lat_step/lon_step).
 
   float lat_step = 5; //in degrees
-  float lon_step  = 10; //in degrees
+  float lon_step  = 5; //in degrees
 
-  boolean displaySurface = false;
+  boolean displaySurface = true;
   boolean displayTexture = true;
   boolean displayShadow = true; // real moon phases (see buildSubFace's own
                                  // comment) - off shows the Moon fully lit,
                                  // same as before that was added.
+  boolean displayNightSide = false; // off hides faces in total darkness
+                                     // outright (see draw()'s own comment),
+                                     // rather than just dimming them to
+                                     // DARK_SIDE_AMBIENT.
 
   boolean fitInSkyDome = true;
 
@@ -41,6 +45,10 @@ class Moon3D {
     float x, y, z;
     float u, v;
     float brightness; // 0..1 - see DARK_SIDE_AMBIENT/TERMINATOR_SOFTNESS
+    float facing; // dot(this point's own outward normal, frame.F) - >0
+                  // faces the station, <=0 faces away; see draw()'s own
+                  // comment on why this always matters now, not just when
+                  // displayNightSide hides anything.
   }
 
   void load_images () {
@@ -178,10 +186,26 @@ class Moon3D {
 
     SkyFrame frame = computeFrame();
 
+    // One-sided rendering, unconditionally - not just when
+    // displayNightSide hides something: today, with the full sphere
+    // always drawn solid, the far hemisphere (back-facing relative to
+    // the station - see FaceVertex's own "facing" comment) is already
+    // invisible, occluded by the near hemisphere in front of it, so
+    // culling it outright changes nothing on screen. But a sphere is
+    // convex - a given viewing ray that exits through a near-side point
+    // generally re-enters and exits again through a far-side one - so
+    // the moment displayNightSide actually skips a near-side face
+    // (opening a real hole, not just an occluded one), that same ray
+    // would otherwise carry straight through to whatever far-side face
+    // sits behind it, showing the sphere's own far wall through the gap
+    // instead of empty space/sky. Culling the far hemisphere outright is
+    // what keeps that gap genuinely empty.
     for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
         FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY, frame);
-        writeFaceWIN3D(subFace);
+        if (shouldDrawSubFace(subFace)) {
+          writeFaceWIN3D(subFace);
+        }
       }
     }
 
@@ -196,6 +220,26 @@ class Moon3D {
     // tint()/noTint() calls the same way for the same reason.
     WIN3D.graphics.noTint();
     WIN3D.graphics.fill(255);
+  }
+
+  boolean shouldDrawSubFace (FaceVertex[] subFace) {
+    float avgFacing = 0;
+    float avgBrightness = 0;
+    for (int s = 0; s < subFace.length; s++) {
+      avgFacing += subFace[s].facing;
+      avgBrightness += subFace[s].brightness;
+    }
+    avgFacing /= subFace.length;
+    avgBrightness /= subFace.length;
+
+    // One-sided: never the far hemisphere - see draw()'s own comment.
+    if (avgFacing <= 0) return false;
+
+    // Night side: skip faces in total darkness outright, rather than
+    // just dimming them down to DARK_SIDE_AMBIENT, when it's off.
+    if (!this.displayNightSide && avgBrightness <= DARK_SIDE_AMBIENT + 0.001) return false;
+
+    return true;
   }
 
   FaceVertex[] buildSubFace (float Alpha, float Beta,
@@ -236,9 +280,15 @@ class Moon3D {
       float uy2 = uz1 * funcs.sin_ang(ta) + uy1 * funcs.cos_ang(ta);
       float uz2 = uz1 * funcs.cos_ang(ta) - uy1 * funcs.sin_ang(ta);
 
+      // dot(this point's own outward normal, frame.F) - already needed by
+      // the texture lookup below as its own "forward" axis component, and
+      // now also by draw()'s one-sided culling (see its own comment), so
+      // computed here unconditionally instead of only when displayTexture.
+      float compForward = ux2 * frame.Fx + uy2 * frame.Fy + uz2 * frame.Fz;
+      vtx.facing = compForward;
+
       if (this.displayTexture) {
         // Decomposed against frame's (forward, up, right) axes.
-        float compForward = ux2 * frame.Fx + uy2 * frame.Fy + uz2 * frame.Fz;
         float compUp = ux2 * frame.Rupx + uy2 * frame.Rupy + uz2 * frame.Rupz;
         float compRight = ux2 * frame.Rrightx + uy2 * frame.Rrighty + uz2 * frame.Rrightz;
 
