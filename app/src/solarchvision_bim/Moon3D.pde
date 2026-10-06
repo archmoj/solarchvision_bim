@@ -28,6 +28,9 @@ class Moon3D {
 
   boolean displaySurface = false;
   boolean displayTexture = true;
+  boolean displayShadow = true; // real moon phases (see buildSubFace's own
+                                 // comment) - off shows the Moon fully lit,
+                                 // same as before that was added.
 
   boolean fitInSkyDome = true;
 
@@ -99,16 +102,20 @@ class Moon3D {
 
     // Sun direction for phase shading - needed regardless of
     // displayTexture (an untextured Moon should still show phases via
-    // plain fill() shading - see writeFaceWIN3D), so computed
-    // unconditionally, unlike Rup/Rright below. SunPosition() returns a
-    // unit vector already in this exact frame (confirmed by hand: this
-    // is the same relationship Sun3D.pde's own Fx/Fy/Fz have to its own
-    // tA/tB, just not negated here since Fx/Fy/Fz above are themselves
-    // the negation of SunPosition's raw output).
-    float[] SunR = funcs.SunPosition(stationLat, SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
-    f.Sx = SunR[1];
-    f.Sy = SunR[2];
-    f.Sz = SunR[3];
+    // plain fill() shading - see writeFaceWIN3D), but not at all when
+    // displayShadow is off (buildSubFace skips using it then - see its
+    // own comment), same as Rup/Rright below being skipped when
+    // !displayTexture. SunPosition() returns a unit vector already in
+    // this exact frame (confirmed by hand: this is the same relationship
+    // Sun3D.pde's own Fx/Fy/Fz have to its own tA/tB, just not negated
+    // here since Fx/Fy/Fz above are themselves the negation of
+    // SunPosition's raw output).
+    if (this.displayShadow) {
+      float[] SunR = funcs.SunPosition(stationLat, SHADE_DATE_ANGLE, SHADE_HOUR_ANGLE);
+      f.Sx = SunR[1];
+      f.Sy = SunR[2];
+      f.Sz = SunR[3];
+    }
 
     // Tidal locking, same (forward, up, right) construction as Sun3D.pde -
     // a plain (lat, lon) shift only locks WHICH POINT faces the station,
@@ -241,16 +248,20 @@ class Moon3D {
         vtx.v = (-lat / ScaleY / LATITUDE_SPAN + 0.5);
       }
 
-      // Phase shading: (ux2,uy2,uz2) is this point's own outward surface
-      // normal (a sphere's normal is just the direction from its center),
-      // in the same frame frame.Sx/Sy/Sz already is - so their dot
-      // product is exactly the Lambertian "how directly does this patch
-      // face the Sun" term. constrain()+the softness band (rather than a
-      // hard >0/<=0 split) avoids a visibly faceted terminator edge at
-      // this sphere's own tessellation (lat_step/lon_step).
-      float sunDot = ux2 * frame.Sx + uy2 * frame.Sy + uz2 * frame.Sz;
-      float litAmount = constrain((sunDot + TERMINATOR_SOFTNESS) / (2 * TERMINATOR_SOFTNESS), 0, 1);
-      vtx.brightness = DARK_SIDE_AMBIENT + (1 - DARK_SIDE_AMBIENT) * litAmount;
+      if (this.displayShadow) {
+        // (ux2,uy2,uz2) is this point's own outward surface normal (a
+        // sphere's normal is just the direction from its center), in the
+        // same frame frame.Sx/Sy/Sz already is - so their dot product is
+        // exactly the Lambertian "how directly does this patch face the
+        // Sun" term. constrain()+the softness band (rather than a hard
+        // >0/<=0 split) avoids a visibly faceted terminator edge at this
+        // sphere's own tessellation (lat_step/lon_step).
+        float sunDot = ux2 * frame.Sx + uy2 * frame.Sy + uz2 * frame.Sz;
+        float litAmount = constrain((sunDot + TERMINATOR_SOFTNESS) / (2 * TERMINATOR_SOFTNESS), 0, 1);
+        vtx.brightness = DARK_SIDE_AMBIENT + (1 - DARK_SIDE_AMBIENT) * litAmount;
+      } else {
+        vtx.brightness = 1; // fully lit - same as before phase shading existed
+      }
 
       // rotate to location coordinates
       float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
