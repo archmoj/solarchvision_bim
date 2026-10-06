@@ -6,7 +6,11 @@ void saveProject (String myFile) {
 
   XML xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
 
-  xml.setName("" + version + "_project");
+  // "v" prefix: an XML element name can't start with a digit (an
+  // INVALID_CHARACTER_ERR from xml.setName(), not merely a naming
+  // nicety) - and version (see solarchvision_bim.pde) is "2026", a
+  // plain year string with no letter of its own.
+  xml.setName("v" + version + "_project");
 
   {
     XML parent = xml.addChild("variables");
