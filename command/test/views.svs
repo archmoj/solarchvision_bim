@@ -34,52 +34,58 @@ Top
 REC.png top-global
 =======
 Front
-+MapZoom -1
++MapZoom 1
 next layer
 next graph index
 REC.png front-global
 =======
 Right
-+MapZoom -1
++MapZoom 2
 next layer
 next graph index
 REC.png right-global
 =======
 Left
-+MapZoom -1
++MapZoom 3
 next layer
+# skip urban studies for now
+next graph index
+next graph index
 next graph index
 REC.png left-global
 =======
 Shade.White
 Back
-+MapZoom -1
++MapZoom 4
 next layer
 next graph index
 REC.png back-white
 =======
 Shade.Wire
 Bottom
-+MapZoom -1
++MapZoom 5
 next layer
 next graph index
 REC.png bottom-wire
 =======
 Shade.Real
 N.E.
-+MapZoom -1
++MapZoom 7
 next layer
 next graph index
 REC.png north-east-real
 =======
 S.W.
-+MapZoom -1
++MapZoom 8
+#skip few layers for now
+next layer
+next layer
 next layer
 next graph index
 REC.png south-west-real
 =======
 Shade.Viewport
-+MapZoom -1
++MapZoom 9
 next layer
 next graph index
 REC.png south-west-shade
