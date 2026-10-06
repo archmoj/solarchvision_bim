@@ -4,9 +4,10 @@ class Sky3D {
 
   boolean displaySurface = true;
 
-  int displayTessellation = 3; //3;
+  int displayTessellation = 3;
 
-  float radius = 4000000; //25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
+  float radius = 50000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
+  final float scale = 1.1; // to avoid the low res inset mesh intersect with other objects
 
   int activeColorscaleIndex = 18; //-1; //7; //8;
   int activeColorscaleDirection = 1; //-1;
@@ -131,9 +132,9 @@ class Sky3D {
       int s_next = (s + 1) % subFace.length;
       int s_prev = (s + subFace.length - 1) % subFace.length;
 
-      float x = subFace[s][0] * this.radius * WIN3D.scale;
-      float y = subFace[s][1] * this.radius * WIN3D.scale;
-      float z = subFace[s][2] * this.radius * WIN3D.scale;
+      float x = subFace[s][0] * this.radius * this.scale * WIN3D.scale;
+      float y = subFace[s][1] * this.radius * this.scale * WIN3D.scale;
+      float z = subFace[s][2] * this.radius * this.scale * WIN3D.scale;
 
       float u = SHADE.vertexU_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
 
@@ -199,9 +200,9 @@ class Sky3D {
 
       float[] COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
       WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-      WIN3D.graphics.vertex(subFace[s][0] * this.radius * WIN3D.scale,
-                             -subFace[s][1] * this.radius * WIN3D.scale,
-                             subFace[s][2] * this.radius * WIN3D.scale);
+      WIN3D.graphics.vertex(subFace[s][0] * this.radius * this.scale * WIN3D.scale,
+                             -subFace[s][1] * this.radius * this.scale * WIN3D.scale,
+                             subFace[s][2] * this.radius * this.scale * WIN3D.scale);
     }
     WIN3D.graphics.endShape(CLOSE);
   }
@@ -216,9 +217,9 @@ class Sky3D {
       WIN3D.graphics.beginShape();
       for (int j = 0; j < skyFaces[f].length; j++) {
         int vNo = skyFaces[f][j];
-        WIN3D.graphics.vertex(skyVertices[vNo][0] * this.radius * WIN3D.scale,
-                               -skyVertices[vNo][1] * this.radius * WIN3D.scale,
-                               skyVertices[vNo][2] * this.radius * WIN3D.scale);
+        WIN3D.graphics.vertex(skyVertices[vNo][0] * this.radius * this.scale * WIN3D.scale,
+                               -skyVertices[vNo][1] * this.radius * this.scale * WIN3D.scale,
+                               skyVertices[vNo][2] * this.radius * this.scale * WIN3D.scale);
       }
       WIN3D.graphics.endShape(CLOSE);
     }
