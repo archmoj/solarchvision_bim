@@ -1480,94 +1480,117 @@ void build_allActions() {
 
   putAction("Next Layer", () -> {
     changeCurrentLayerTo((currentLayerId + 1) % allLayers.length);
+    requestStudyRedraw();
   });
 
   putAction("Previous Layer", () -> {
     changeCurrentLayerTo((currentLayerId + allLayers.length - 1) % allLayers.length);
+    requestStudyRedraw();
   });
 
   putAction("Next Graph Index", () -> {
     STUDY.impactGraphIndex = (STUDY.impactGraphIndex + 1) % STUDY.PLOT_IMPACTS_MODE_COUNT;
+    requestStudyRedraw();
   });
 
   putAction("Previous Graph Index", () -> {
     STUDY.impactGraphIndex = (STUDY.impactGraphIndex - 1 + STUDY.PLOT_IMPACTS_MODE_COUNT) % STUDY.PLOT_IMPACTS_MODE_COUNT;
+    requestStudyRedraw();
   });
 
   putAction("Next Plot Layout", () -> {
     STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex + 1) % STUDY.PLOT_SETUP_MODE_COUNT;
+    requestStudyRedraw();
   });
 
   putAction("Previous Plot Layout", () -> {
     STUDY.plotLayoutIndex = -2 + (2 + STUDY.plotLayoutIndex - 1 + STUDY.PLOT_SETUP_MODE_COUNT) % STUDY.PLOT_SETUP_MODE_COUNT;
+    requestStudyRedraw();
   });
 
   putAction("Toggle Impact Summary", () -> {
     STUDY.showImpactSummary = !STUDY.showImpactSummary;
+    requestStudyRedraw();
   });
 
   putAction("Increase Vertical Scale", () -> {
     STUDY.verticalUnitScale *= sqrt(2.0);
+    requestStudyRedraw();
   });
 
   putAction("Decrease Vertical Scale", () -> {
     STUDY.verticalUnitScale *= sqrt(0.5);
+    requestStudyRedraw();
   });
 
   putAction("Widen Join Window", () -> {
     STUDY.changeJoinDays(2);
+    requestStudyRedraw();
   });
 
   putAction("Narrow Join Window", () -> {
     STUDY.changeJoinDays(-2);
+    requestStudyRedraw();
   });
 
   putAction("Extend Date Range", () -> {
     STUDY.changeJEnd(1);
+    requestStudyRedraw();
   });
 
   putAction("Shrink Date Range", () -> {
     STUDY.changeJEnd(-1);
+    requestStudyRedraw();
   });
 
   putAction("Next Sky Scenario", () -> {
     STUDY.changeSkyScenario(1);
+    requestStudyRedraw();
   });
 
   putAction("Previous Sky Scenario", () -> {
     STUDY.changeSkyScenario(-1);
+    requestStudyRedraw();
   });
 
   putAction("Toggle Raw Lines", () -> {
     STUDY.showRawLines = !STUDY.showRawLines;
+    requestStudyRedraw();
   });
 
   putAction("Toggle Statistical Ranges", () -> {
     STUDY.showStatisticalRanges = !STUDY.showStatisticalRanges;
+    requestStudyRedraw();
   });
 
   putAction("Toggle Study Normal Lines", () -> {
     STUDY.showNormalLines = !STUDY.showNormalLines;
+    requestStudyRedraw();
   });
 
   putAction("Toggle Probabilities", () -> {
     STUDY.showProbabilities = !STUDY.showProbabilities;
+    requestStudyRedraw();
   });
 
   putAction("Increase Probability Height Step", () -> {
     if (STUDY.probabilityHeightInterval < 32) STUDY.probabilityHeightInterval *= 2.0;
+    requestStudyRedraw();
   });
 
   putAction("Decrease Probability Height Step", () -> {
     if (STUDY.probabilityHeightInterval > 2) STUDY.probabilityHeightInterval *= 0.5;
+    requestStudyRedraw();
   });
 
   putAction("Decrease Sum Interval", () -> {
     STUDY.decreaseSumInterval();
+    requestStudyRedraw();
   });
 
   putAction("Increase Sum Interval", () -> {
     STUDY.increaseSumInterval();
+    requestStudyRedraw();
   });
 
   putAction("Map Zoom Out", () -> {
@@ -2428,3 +2451,8 @@ void build_allActions() {
 
   //allActions.keySet().stream().sorted().forEach(System.out::println);
 }
+
+  void requestStudyRedraw () {
+    STUDY.revise();
+    UI_rollout.revise();
+  }

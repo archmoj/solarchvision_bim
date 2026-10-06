@@ -157,11 +157,6 @@ class STUDY {
   final static int PAGE_UP_KEYCODE = 16;
   final static int PAGE_DOWN_KEYCODE = 11;
 
-  void requestRedraw () {
-    this.revise();
-    UI_rollout.revise();
-  }
-
   void requestDataRefresh () {
     developDataUpdate = true;
     UI_caseBar.revise();
@@ -192,42 +187,34 @@ class STUDY {
   }
 
   // See actions.pde's own STUDY.pde-key-shortcuts section (right after
-  // the WIN3D one) for the full explanation of these action names and
-  // which of these calls still need requestRedraw() kept here versus
-  // which don't.
+  // the WIN3D one) for the full explanation of these action names
   void handleCtrlCodedKey (KeyEvent e) {
     switch (keyCode) {
       case UP :
         callAction("Next Layer");
-        requestRedraw();
         break;
 
       case DOWN :
         callAction("Previous Layer");
-        requestRedraw();
         break;
 
       case RIGHT :
         callAction("Next Graph Index");
-        requestRedraw();
         break;
 
       case LEFT :
         callAction("Previous Graph Index");
-        requestRedraw();
         break;
 
       case PAGE_UP_KEYCODE :
         if (!e.isShiftDown()) {
           callAction("Next Plot Layout");
-          requestRedraw();
         }
         break;
 
       case PAGE_DOWN_KEYCODE :
         if (!e.isShiftDown()) {
           callAction("Previous Plot Layout");
-          requestRedraw();
         }
         break;
     }
@@ -237,17 +224,14 @@ class STUDY {
     switch (key) {
       case ';' :
         callAction("Toggle Impact Summary");
-        requestRedraw();
         break;
 
       case '"' :
         callAction("Increase Vertical Scale");
-        requestRedraw();
         break;
 
       case '\'' :
         callAction("Decrease Vertical Scale");
-        requestRedraw();
         break;
     }
   }
@@ -279,43 +263,35 @@ class STUDY {
       case 'V' :
       case 'v' :
         callAction("Toggle Raw Lines");
-        requestRedraw();
         break;
 
       case 'm' :
       case 'M' :
         callAction("Toggle Statistical Ranges");
-        requestRedraw();
         break;
 
       case 'n' :
       case 'N' :
         callAction("Toggle Study Normal Lines");
-        requestRedraw();
         break;
 
       case 'b' :
       case 'B' :
         callAction("Toggle Probabilities");
-        requestRedraw();
         break;
 
       case '{' :
         callAction("Increase Probability Height Step");
-        requestRedraw();
         break;
       case '}' :
         callAction("Decrease Probability Height Step");
-        requestRedraw();
         break;
 
       case '[' :
         callAction("Decrease Sum Interval");
-        requestRedraw();
         break;
       case ']' :
         callAction("Increase Sum Interval");
-        requestRedraw();
         break;
     }
   }

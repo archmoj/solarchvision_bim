@@ -85,9 +85,9 @@ class STUDYTest {
 
 
   @Test
-  void requestRedraw_flagsStudyForUpdate () {
+  void requestStudyRedraw_flagsStudyForUpdate () {
     app.STUDY.update = false;
-    app.STUDY.requestRedraw();
+    app.requestStudyRedraw();
     assertTrue(app.STUDY.update);
   }
 

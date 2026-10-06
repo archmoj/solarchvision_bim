@@ -30,6 +30,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.currentLayerId);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -40,6 +41,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.allLayers.length - 1, app.currentLayerId);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -55,6 +57,7 @@ class STUDYActionsTest {
     app.runScriptLine("Next Layer");
 
     assertEquals(app.allLayers[app.currentLayerId].verticalUnitScale, app.STUDY.verticalUnitScale, 0.0001f);
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY Ctrl+Right / STUDY Ctrl+Left (impact graph) ===
@@ -67,6 +70,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.STUDY.impactGraphIndex);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -77,6 +81,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.STUDY.PLOT_IMPACTS_MODE_COUNT - 1, app.STUDY.impactGraphIndex);
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY Ctrl+PageUp / STUDY Ctrl+PageDown ==============
@@ -94,6 +99,7 @@ class STUDYActionsTest {
     assertNotEquals(app.UnrecognizedCommand, downHint);
     assertNotEquals(0, afterUp, "PageUp from 0 should actually move somewhere");
     assertEquals(0, app.STUDY.plotLayoutIndex, "PageDown should undo PageUp exactly");
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY Ctrl+; / Ctrl+" / Ctrl+' =======================
@@ -109,6 +115,7 @@ class STUDYActionsTest {
 
     app.runScriptLine("Toggle Impact Summary");
     assertFalse(app.STUDY.showImpactSummary);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -119,6 +126,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(10 * Math.sqrt(2.0), app.STUDY.verticalUnitScale, 0.0001f);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -129,6 +137,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(10 * Math.sqrt(0.5), app.STUDY.verticalUnitScale, 0.0001f);
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY > / STUDY < (day-joining window) ==============
@@ -141,6 +150,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(12, app.STUDY.daysMergedCount);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -150,6 +160,7 @@ class STUDYActionsTest {
     app.runScriptLine("Widen Join Window");
 
     assertEquals(365, app.STUDY.daysMergedCount);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -160,6 +171,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(8, app.STUDY.daysMergedCount);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -169,6 +181,7 @@ class STUDYActionsTest {
     app.runScriptLine("Narrow Join Window");
 
     assertEquals(1, app.STUDY.daysMergedCount);
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY ) / STUDY ( (date column count) ================
@@ -182,6 +195,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(11, app.STUDY.endDay);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -209,6 +223,7 @@ class STUDYActionsTest {
     app.runScriptLine("Shrink Date Range");
 
     assertTrue(app.STUDY.endDay > app.STUDY.startDay);
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY Shift+S / STUDY s (sky scenario) ===============
@@ -221,6 +236,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(2, app.STUDY.skyScenarioSetting);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -231,6 +247,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(4, app.STUDY.skyScenarioSetting);
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY v/m/n/b (display toggles) ======================
@@ -243,6 +260,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showRawLines);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -253,6 +271,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showStatisticalRanges);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -263,6 +282,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showNormalLines);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -273,6 +293,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertTrue(app.STUDY.showProbabilities);
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY { / STUDY } (probability height interval) =====
@@ -285,6 +306,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(8f, app.STUDY.probabilityHeightInterval, 0.0001f);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -294,6 +316,7 @@ class STUDYActionsTest {
     app.runScriptLine("Increase Probability Height Step");
 
     assertEquals(32f, app.STUDY.probabilityHeightInterval, 0.0001f);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -304,6 +327,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(4f, app.STUDY.probabilityHeightInterval, 0.0001f);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -313,6 +337,7 @@ class STUDYActionsTest {
     app.runScriptLine("Decrease Probability Height Step");
 
     assertEquals(2f, app.STUDY.probabilityHeightInterval, 0.0001f);
+    assertTrue(app.STUDY.update);
   }
 
   // ================= STUDY [ / STUDY ] (sum interval) ======================
@@ -330,6 +355,7 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(18, app.STUDY.probabilityWidthInterval);
+    assertTrue(app.STUDY.update);
   }
 
   @Test
@@ -340,5 +366,6 @@ class STUDYActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(2, app.STUDY.probabilityWidthInterval);
+    assertTrue(app.STUDY.update);
   }
 }
