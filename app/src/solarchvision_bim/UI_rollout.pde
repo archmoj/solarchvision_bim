@@ -697,7 +697,7 @@ class UI_rollout {
         allFaces.displayTessellation = vm.Create3DDisplayTessellation(1);
         Terrain.displayTessellation = vm.TerrainDisplayTessellation(1);
         Sky3D.displayTessellation = vm.Sky3DDisplayTessellation(1);
-          Sky3D.radius = vm.Sky3DRadius(1);
+        Sky3D.radius = vm.Sky3DRadius(1);
         Tropo3D.displaySurface = vm.Tropo3DDisplaySurface(1);
         Tropo3D.displayTexture = vm.Tropo3DDisplayTexture(1);
         Earth3D.displaySurface = vm.Earth3DDisplaySurface(1);

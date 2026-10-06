@@ -288,7 +288,7 @@ class Sky3D {
   public void to_XML (XML xml) {    XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
     XML_setInt(parent, "displayTessellation", this.displayTessellation);
-    XML_setFloat(parent, "scale", this.radius);
+    XML_setFloat(parent, "radius", this.radius);
     XML_setInt(parent, "activeColorscaleIndex", this.activeColorscaleIndex);
     XML_setInt(parent, "activeColorscaleDirection", this.activeColorscaleDirection);
     XML_setFloat(parent, "activeColorscaleFactor", this.activeColorscaleFactor);
@@ -305,7 +305,7 @@ class Sky3D {
   public void from_XML (XML xml) {    XML parent = xml.getChild(this.CLASS_STAMP);
     this.displaySurface = XML_getBoolean(parent, "displaySurface");
     this.displayTessellation = XML_getInt(parent, "displayTessellation");
-    this.radius = XML_getFloat(parent, "scale");
+    this.radius = XML_getFloat(parent, "radius");
     this.activeColorscaleIndex = XML_getInt(parent, "activeColorscaleIndex");
     this.activeColorscaleDirection = XML_getInt(parent, "activeColorscaleDirection");
     this.activeColorscaleFactor = XML_getFloat(parent, "activeColorscaleFactor");
