@@ -175,4 +175,55 @@ class Moon3DTest {
     assertEquals(0f, subFace[0].u);
     assertEquals(0f, subFace[0].v);
   }
+
+  // ================= load_images() =================================================
+
+  @Test
+  void loadImages_loadsTheRealBundledMoonTexture () {
+    // BaseFolder/sketchPath() resolves wherever Processing's own CLI build
+    // happens to run from, not this checkout - test/run_tests.sh only
+    // cd's to the repo root before running (same reasoning as
+    // Earth3DTest.java's equivalent note), so user.dir is the reliable
+    // way to find the real, bundled Moon texture from here.
+    app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
+
+    app.Moon3D.load_images();
+
+    assertEquals(1024, app.Moon3D.Map.width);
+    assertEquals(512, app.Moon3D.Map.height);
+  }
+
+  // ================= draw(): the one part of this file that's off-limits =========
+  // writeFaceWIN3D() (and so draw() itself, past its own displaySurface
+  // guard) touches WIN3D.graphics directly - confirmed by hand against
+  // the real compiled app to throw a NullPointerException here, same
+  // WIN3D.graphics boundary as everywhere else in this app (see
+  // test/README.md). The only part of draw() safely reachable from a
+  // bare instance is the guard itself, which is what's tested below.
+
+  @Test
+  void draw_withDisplaySurfaceOff_isANoOp () {
+    assertFalse(app.Moon3D.displaySurface, "default");
+
+    assertDoesNotThrow(() -> app.Moon3D.draw());
+  }
+
+  // ================= to_XML / from_XML round trip ==================================
+
+  @Test
+  void toXMLThenFromXML_roundTripsDisplaySettings () {
+    app.Moon3D.displaySurface = true;
+    app.Moon3D.displayTexture = false;
+    app.Moon3D.fitInSkyDome = false;
+
+    processing.data.XML root = new processing.data.XML("root");
+    app.Moon3D.to_XML(root);
+
+    solarchvision_bim.Moon3D fresh = app.new Moon3D();
+    fresh.from_XML(root);
+
+    assertTrue(fresh.displaySurface);
+    assertFalse(fresh.displayTexture);
+    assertFalse(fresh.fitInSkyDome);
+  }
 }
