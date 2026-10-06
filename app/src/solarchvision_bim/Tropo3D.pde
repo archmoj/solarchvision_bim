@@ -100,9 +100,20 @@ class Tropo3D {
     if (dt.hour < 0) {
       dt.hour += 24;
       dt.day -= 1;
-      if (dt.day < 0) {
+      // Valid days are 1..lengthOfMonths[month-1] (see TIME.pde), so day
+      // rolling over means it reaching 0, not dropping below 0 - matches
+      // advanceHourForward()'s own "day > lengthOfMonths[month-1]" check
+      // on the way up, one end of the same range. The same off-by-one
+      // applied to month below (1..12, so 0 - not below it - is what
+      // means "rolled past January"): confirmed by hand that the
+      // original "< 0" checks leave day/month sitting at the otherwise-
+      // unreachable value 0 - invalid on their own, and, for month
+      // specifically, a TIME.lengthOfMonths[month - 1] = [-1] a few lines
+      // down, which further calls into this function from that state
+      // would throw on.
+      if (dt.day < 1) {
         dt.month -= 1;
-        if (dt.month < 0) {
+        if (dt.month < 1) {
           dt.month = 12;
           dt.year -= 1;
         }
