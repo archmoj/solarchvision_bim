@@ -14,12 +14,17 @@ import java.nio.file.Path;
 // selectInput()/selectOutput() would eventually call them - including the
 // null case, which is exactly what a cancelled dialog passes.
 //
-// _fileSelected_Open is the one exception, deliberately not covered below:
-// it calls load_project(), which calls update_frame_layout(), which calls
-// Processing's own createGraphics() - confirmed elsewhere (see
-// UI_toolBarTest.java's viewLayout_allFourSubOptions()) to throw a
+// _fileSelected_Open is covered only partway: it calls load_project(),
+// which calls update_frame_layout(), which calls Processing's own
+// createGraphics() - confirmed, here and elsewhere (see
+// UI_toolBarTest.java's viewLayout_allFourSubOptions()), to throw a
 // NullPointerException in this headless test environment, since that needs
 // a real sketch surface only available after setup()/size() actually run.
+// Checked by hand against a real save/load round trip before writing the
+// test below: everything load_project() does before that point - XML
+// parsing, every from_XML(), all four update_station() calls - completes
+// first, so the test catches the known exception and asserts what already
+// happened by then, the same pattern UI_toolBarTest.java uses.
 class FileSelectedTest {
 
   private solarchvision_bim app;
@@ -35,12 +40,15 @@ class FileSelectedTest {
     // saveProject() below) assumes it's at least non-null. This is
     // load_images()'s own first two lines, with no actual image loading.
     app.allModel2Ds.ImagePath = new String[]{""};
-    app.Terrain.Mesh = new float[0][][]; // same reasoning: normally built by
-                                          // real terrain loading, which this
-                                          // test never runs; to_XML() just
-                                          // needs it non-null, and an empty
-                                          // mesh produces zero <item>s, which
-                                          // is accurate for a fresh instance.
+    // Same reasoning, but shaped [rowCount][columnCount][3] - matching
+    // Terrain's own default row/column counts - rather than empty: an
+    // empty Mesh still satisfies to_XML() (it just writes zero <item>s),
+    // but desyncs from rowCount/columnCount in the saved file, and
+    // from_XML() always expects exactly rowCount*columnCount items back
+    // on load, throwing ArrayIndexOutOfBoundsException otherwise. Confirmed
+    // by hand against a real save/load round trip before settling on this -
+    // see fileSelectedOpen_restoresGeometry... below, which depends on it.
+    app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3];
   }
 
   // ================= _getSelectedFile ========================================
@@ -228,5 +236,60 @@ class FileSelectedTest {
     assertArrayEquals(new int[]{1, 0}, app.Select3D.groupSelection);
 
     assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory);
+  }
+
+  // ================= _fileSelected_Open (partial - see the class comment) ====
+
+  @Test
+  void fileSelectedOpen_restoresGeometrySavedBySaveAs_beforeHittingTheKnownUpdateFrameLayoutNPE () throws IOException {
+    // Build some real geometry the same way fileSelectedImportObj_withAFile_
+    // importsOneGroupAndSelectsIt above does, so this test isn't also on
+    // the hook for proving import works - just that save/open round-trip
+    // whatever geometry already exists.
+    Path objFile = Files.createTempFile("fileSelected-Open-roundtrip-test", ".obj");
+    Files.writeString(objFile, """
+        g triangle
+        v 0 0 0
+        v 1 0 0
+        v 1 1 0
+        f 1 2 3
+        """
+    );
+    app._fileSelected_ImportObj(objFile.toFile());
+    assertEquals(2, app.allGroups.num, "setup check, not the point of this test");
+    assertEquals(1, app.allFaces.nodes.length, "setup check, not the point of this test");
+    assertEquals(3, app.allPoints.getLength(), "setup check, not the point of this test");
+
+    Path saved = Files.createTempFile("fileSelected-Open-roundtrip-test", ".xml");
+    Files.delete(saved);
+    app._fileSelected_SaveAs(saved.toFile());
+
+    // Wipe the in-memory geometry before loading it back, so a pass here
+    // can only mean _fileSelected_Open actually restored it from the file -
+    // not that it was simply never cleared (confirmed separately: a bare
+    // _fileSelected_New does NOT clear existing geometry, so that alone
+    // wouldn't prove anything).
+    app.allFaces.nodes = new int[0][];
+    app.allVertices = new float[0][3]; // allVertices backs allPoints.getLength() -
+                                        // a top-level field of solarchvision_bim
+                                        // itself, not of Points.
+    app.allGroups.makeEmpty(0);
+
+    Throwable thrown = null;
+    try {
+      app._fileSelected_Open(saved.toFile());
+    } catch (Throwable t) {
+      thrown = t;
+    }
+
+    assertNotNull(thrown, "update_frame_layout()'s createGraphics() call is expected to still throw here");
+    assertInstanceOf(NullPointerException.class, thrown);
+
+    // The actual point of this test: despite that later throw, everything
+    // load_project() does first - XML parsing and every from_XML(),
+    // including allFaces/allGroups/allPoints - already ran to completion.
+    assertEquals(2, app.allGroups.num);
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(3, app.allPoints.getLength());
   }
 }
