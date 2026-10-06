@@ -110,6 +110,64 @@ class Sun3D {
     float tA = funcs.asin_ang(SunR[3]);
     float tB = funcs.atan2_ang(SunR[2], SunR[1]);
 
+    // Unlike the sphere's own body rotation (tb, still always 0 here, same
+    // as Moon3D.pde), tA/tB below move the sphere's POSITION across the
+    // sky over the course of a day - but the texture-to-surface mapping
+    // never follows that move, so a station-facing patch of texture at
+    // one hour becomes whatever patch happened to be on that side of the
+    // (orientation-wise unmoving) body at another hour, as the sphere
+    // swings from one side of the sky to the other.
+    //
+    // Locking only WHICH POINT faces the station (shifting lon/lat by a
+    // single offset) isn't enough on its own - checked by hand before
+    // settling on this: it fixes the center but leaves the texture free
+    // to roll around that center point, which still visibly spins hour to
+    // hour. Fully locking it needs an actual (forward, up, right) frame:
+    // F is "which point faces the station" (as before); pole is the
+    // celestial pole's direction in this SAME frame (substituting
+    // Declination = 90 into SunPosition's own x/y/z formula - hour angle
+    // drops out entirely at the pole, as it should - gives this fixed
+    // direction) - the one reference that itself barely moves within a
+    // day, so using it to pin the texture's "up" is what keeps the whole
+    // disk's apparent rotation down to the sun's real year-over-year
+    // declination drift (via SHADE_DATE_ANGLE, part of SunPosition's own
+    // inputs, feeding tA/tB here too) instead of its hour-to-hour one.
+    float Fx = 0, Fy = 0, Fz = 0;
+    float Rupx = 0, Rupy = 0, Rupz = 0;
+    float Rrightx = 0, Rrighty = 0, Rrightz = 0;
+    if (this.displayTexture) {
+      Fx = -funcs.cos_ang(tB) * funcs.cos_ang(tA);
+      Fy = -funcs.sin_ang(tB) * funcs.cos_ang(tA);
+      Fz = -funcs.sin_ang(tA);
+
+      float poleX = 0;
+      float poleY = -funcs.cos_ang(stationLat);
+      float poleZ = -funcs.sin_ang(stationLat);
+
+      // right = pole x F
+      Rrightx = poleY * Fz - poleZ * Fy;
+      Rrighty = poleZ * Fx - poleX * Fz;
+      Rrightz = poleX * Fy - poleY * Fx;
+      float rightLen = sqrt(Rrightx * Rrightx + Rrighty * Rrighty + Rrightz * Rrightz);
+      if (rightLen < 0.0001) {
+        // Degenerate only if the sun sits exactly at the celestial pole
+        // itself (not physically possible - Declination maxes out at
+        // 23.45 - but guarded for safety rather than risking a NaN).
+        Rrightx = 1;
+        Rrighty = 0;
+        Rrightz = 0;
+        rightLen = 1;
+      }
+      Rrightx /= rightLen;
+      Rrighty /= rightLen;
+      Rrightz /= rightLen;
+
+      // up = F x right
+      Rupx = Fy * Rrightz - Fz * Rrighty;
+      Rupy = Fz * Rrightx - Fx * Rrightz;
+      Rupz = Fx * Rrighty - Fy * Rrightx;
+    }
+
     for (int s = 0; s < 4; s++) {
       FaceVertex vtx = new FaceVertex();
 
@@ -124,8 +182,29 @@ class Sun3D {
       float z0 = r * funcs.sin_ang(a);
 
       if (this.displayTexture) {
-        float lon = b - CEN_lon;
-        float lat = a - CEN_lat;
+        // This vertex's own direction (unit sphere, tb/ta applied, no
+        // translation) - same transform as x1/y1/z1/x2/y2/z2 below, just
+        // computed early and unscaled (divide out r) so it can be
+        // decomposed against the (Fx,Fy,Fz)/(Rupx,Rupy,Rupz)/
+        // (Rrightx,Rrighty,Rrightz) frame above.
+        float ux0 = x0 / r;
+        float uy0 = y0 / r;
+        float uz0 = z0 / r;
+
+        float ux1 = ux0 * funcs.cos_ang(tb) - uy0 * funcs.sin_ang(tb);
+        float uy1 = ux0 * funcs.sin_ang(tb) + uy0 * funcs.cos_ang(tb);
+        float uz1 = uz0;
+
+        float ux2 = ux1;
+        float uy2 = uz1 * funcs.sin_ang(ta) + uy1 * funcs.cos_ang(ta);
+        float uz2 = uz1 * funcs.cos_ang(ta) - uy1 * funcs.sin_ang(ta);
+
+        float compForward = ux2 * Fx + uy2 * Fy + uz2 * Fz;
+        float compUp = ux2 * Rupx + uy2 * Rupy + uz2 * Rupz;
+        float compRight = ux2 * Rrightx + uy2 * Rrighty + uz2 * Rrightz;
+
+        float lat = funcs.asin_ang(constrain(compUp, -1, 1)) - CEN_lat;
+        float lon = Earth3D.unwrapLon(funcs.atan2_ang(-compForward, compRight) + 90 - CEN_lon, 0);
         vtx.u = (lon / ScaleX / LONGITUDE_SPAN + 0.5);
         vtx.v = (-lat / ScaleY / LATITUDE_SPAN + 0.5);
       }

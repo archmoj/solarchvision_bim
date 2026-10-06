@@ -78,7 +78,19 @@ class Moon3D {
       float z0 = r * funcs.sin_ang(a);
 
       if (this.displayTexture) {
-        float lon = b - CEN_lon;
+        // Tidal locking: (x0, y0, z0) below is built from the SAME raw
+        // (Alpha, Beta) this texture lookup uses, before tb/ta reposition
+        // the sphere - so the texture is rigidly painted onto the body.
+        // tb is always 0 today (a day/hour-angle rotation that would move
+        // the moon across the sky over time isn't wired up yet - see
+        // Sun3D.pde's identical, equally-unused tb), but the moment it
+        // isn't, the texture would spin right along with the sphere's new
+        // position, showing a different face as the moon crosses the sky.
+        // Subtracting tb here cancels that out: the same patch of texture
+        // stays pointed at the station no matter what tb is, the way the
+        // real moon always shows Earth the same face regardless of where
+        // it currently sits in the sky.
+        float lon = Earth3D.unwrapLon(b - tb - CEN_lon, 0);
         float lat = a - CEN_lat;
         vtx.u = (lon / ScaleX / LONGITUDE_SPAN + 0.5);
         vtx.v = (-lat / ScaleY / LATITUDE_SPAN + 0.5);
