@@ -203,7 +203,10 @@ class Moon3DTest {
 
   @Test
   void draw_withDisplaySurfaceOff_isANoOp () {
-    assertFalse(app.Moon3D.displaySurface, "default");
+    // displaySurface now defaults to true, so this sets it explicitly
+    // rather than relying on the default - the test is about the guard
+    // itself, not about what displaySurface happens to start as.
+    app.Moon3D.displaySurface = false;
 
     assertDoesNotThrow(() -> app.Moon3D.draw());
   }
