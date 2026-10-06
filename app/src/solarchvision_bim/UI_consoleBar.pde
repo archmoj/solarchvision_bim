@@ -446,13 +446,13 @@ void progressBarHeader () {
 }
 
 String asciiArt = ("""
-   _______  _______  ___      _______  ______    _______  __   __  __   __  ___   _______  ___   _______  __   __ 
-  |SSSSSSS||OOOOOOO||lll|    |aaaaaaa||rrrrrr|  |ccccccc||hh| |hh||vv| |vv||III| |sssssss||iii| |ooooooo||nn+ |nn|
-  |S _____||OO _ OO||lll|    |aa _ aa||rr _ r|  |cc ____||hh|_|hh||vv|_|vv||III| |s _____||iii| |oo _ oo||nnn+|nn|
-  |S|_____ |OO| |OO||lll|    |aa|_|aa||rr|_|r|  |cc|     |hhhhhhh||vvvvvvv||III| |s|_____ |iii| |oo| |oo||nnnnnnn|
-  |_____ S||OO|_|OO||lll|___ |aaaaaaa||rr __ +  |cc|     |hh _ hh||vvvvvvv||III| |_____ s||iii| |oo|_|oo||nnnnnnn|
-   _____|S||OOOOOOO||lllllll||aa _ aa||rr|  + + |cc|____ |hh| |hh| |vvvvv| |III|  _____|s||iii| |ooooooo||nn|+nnn|
-  |_______||_______||_______||__| |__||__|   +_||_______||__| |__|  |___|  |___| |_______||___| |_______||__| +__|
+   _______  _______  ___      _______  ______   _______  __   __  __   __ _______ _______ _______ _______  __   __ 
+  |SSSSSSS+|OOOOOOO||lll|    |aaaaaaa||rrrrrr+ |ccccccc||hh| |hh||vv| |vv|+IIIII/|sssssss++IIIII/|ooooooo||nn+ |nn|
+  |S _____/|OO _ OO||lll|    |aa _ aa||rr() rr||cc ____||hh|_|hh||vv|_|vv| |III| |s _____/ |iii| |oo _ oo||nnn+|nn|
+  |S|_____ |OO| |OO||lll|    |aa|_|aa||rrrr r/ |cc|     |hhhhhhh||vvvvvvv| |III| |s|_____  |iii| |oo| |oo||nnnnnnn|
+  |____ SS||OO|_|OO||lll|___ |aaaaaaa||rr _ r+ |cc|     |hh _ hh||vvvvvvv| |III| |____ ss| |iii| |oo|_|oo||nnnnnnn|
+   ____|SS||OOOOOOO||lllllll||aa _ aa||rr| + r+|cc|____ |hh| |hh| |vvvvv|  |III|  ____|ss| |iii| |ooooooo||nn|+nnn|
+  |_______||_______||_______||__| |__||__|  +_/|_______||__| |__|  |___|  /_____+|_______|/_____+|_______||__| +__|
 """)
   .replace("+", "\\")
   .replace("S", "\u001B[2;31m$\u001B[0m") // S = Dim Red
