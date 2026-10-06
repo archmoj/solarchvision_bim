@@ -1,29 +1,3 @@
-
-
-String asciiArt = ("""
-   _______  _______  ___      _______  ______    _______  __   __  __   __  ___   _______  ___   _______  __   __ 
-  |SSSSSSS||OOOOOOO||lll|    |aaaaaaa||rrrrrr|  |ccccccc||hh| |hh||vv| |vv||III| |sssssss||iii| |ooooooo||nn+ |nn|
-  |S _____||OO _ OO||lll|    |aa _ aa||rr _ r|  |cc ____||hh|_|hh||vv|_|vv||III| |s _____||iii| |oo _ oo||nnn+|nn|
-  |S|_____ |OO| |OO||lll|    |aa|_|aa||rr|_|r|  |cc|     |hhhhhhh||vvvvvvv||III| |s|_____ |iii| |oo| |oo||nnnnnnn|
-  |_____ S||OO|_|OO||lll|___ |aaaaaaa||rr __ +  |cc|     |hh _ hh||vvvvvvv||III| |_____ s||iii| |oo|_|oo||nnnnnnn|
-   _____|S||OOOOOOO||lllllll||aa _ aa||rr|  + + |cc|____ |hh| |hh| |vvvvv| |III|  _____|s||iii| |ooooooo||nn|+nnn|
-  |_______||_______||_______||__| |__||__|   +_||_______||__| |__|  |___|  |___| |_______||___| |_______||__| +__|
-""")
-  .replace("+", "\\")
-  .replace("S", "\u001B[2;31m$\u001B[0m")    // S = Dim Red
-  .replace("O", "\u001B[2;31m$\u001B[0m")    // O = Dim Red
-  .replace("l", "\u001B[2;33m$\u001B[0m")    // l = Dim Yellow / Ochre
-  .replace("a", "\u001B[2;33m$\u001B[0m")    // a = Dim Yellow / Ochre
-  .replace("r", "\u001B[2;32m$\u001B[0m")    // r = Dim Green
-  .replace("c", "\u001B[2;32m$\u001B[0m")    // c = Dim Green
-  .replace("h", "\u001B[2;36m$\u001B[0m")    // h = Dim Cyan / Slate Blue
-  .replace("v", "\u001B[2;36m$\u001B[0m")    // v = Dim Cyan / Slate Blue
-  .replace("I", "\u001B[2;34m$\u001B[0m")    // I = Dim Blue
-  .replace("s", "\u001B[2;34m$\u001B[0m")    // s = Dim Blue
-  .replace("i", "\u001B[2;35m$\u001B[0m")    // i = Dim Purple / Indigo
-  .replace("o", "\u001B[2;35m$\u001B[0m")    // o = Dim Purple / Indigo
-  .replace("n", "\u001B[90m$\u001B[0m");     // n = Gray
-
 void parseArgs(String[] passedArgs) {
   println(asciiArt);
 
