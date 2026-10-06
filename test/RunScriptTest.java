@@ -725,4 +725,75 @@ class RunScriptTest {
     java.util.HashMap<String, String> p = app.parseParams(new String[]{"cmd"});
     assertEquals(-1, app.getI(p, "n", -1));
   }
+
+  // ================= runScriptFile ================================================
+  // Everything above goes through runScriptLine()/runScriptLines() - this
+  // is the one entry point among the three (see runScript.pde) not yet
+  // exercised directly, rather than only through _fileSelected_RunScript's
+  // own tests (see FileSelectedTest.java).
+
+  @Test
+  void runScriptFile_readsARealFileAndRunsItsLines () throws java.io.IOException {
+    java.nio.file.Path script = java.nio.file.Files.createTempFile("runscript-file-test", ".svs");
+    java.nio.file.Files.writeString(script, "SETLAT 45.5\n");
+
+    String hint = app.runScriptFile(script.toString());
+
+    assertEquals("", hint);
+    assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
+  }
+
+  // ================= ___executeScriptLine___'s own text normalization =============
+  // Stripped/collapsed before splitting into parts[] (see its own comment
+  // block in runScript.pde): quotes removed, runs of spaces collapsed to
+  // one, "=" turned into ":", runs of ":" collapsed to one. None of the
+  // tests above happen to exercise an actual double space, a quoted
+  // value, or a doubled "=" - most already use single spaces and single
+  // "="/":" by construction, which wouldn't catch a regression here.
+
+  @Test
+  void multipleSpacesBetweenTokens_collapseToOne_soPositionalParsingStillWorks () {
+    // Without the " +" -> " " collapsing, split(transformedLine, ' ')
+    // would produce empty strings between the real tokens, shifting
+    // parts[1] away from where SETLAT (see its own float(parts[1])) expects it.
+    String hint = app.runScriptLine("SETLAT     45.5");
+
+    assertEquals("", hint);
+    assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
+  }
+
+  @Test
+  void quotesAroundAValue_areStrippedBeforeParsing () {
+    String hint = app.runScriptLine("SETLAT \"45.5\"");
+
+    assertEquals("", hint);
+    assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
+  }
+
+  @Test
+  void doubledEqualsSign_stillParsesCorrectly_viaTheColonCollapsing () {
+    // "x==0" -> (= -> :) "x::0" -> (collapse +:) "x:0" - two separate
+    // normalization steps have to both fire correctly for this one case
+    // to come out right, not just either alone.
+    app.build_allActions();
+
+    String hint = app.runScriptLine("BOX x==0 y=0 z=0");
+
+    assertEquals("", hint);
+    assertTrue(app.allFaces.nodes.length > 0);
+  }
+
+  // ================= RUN.SCRIPT: a script invoking another script =================
+
+  @Test
+  void runDotScript_withAFilename_runsThatFileFromFolder_Import () throws java.io.IOException {
+    java.nio.file.Path nested = java.nio.file.Path.of(app.Folder_Import, "run-dot-script-nested-test.svs");
+    java.nio.file.Files.createDirectories(nested.getParent());
+    java.nio.file.Files.writeString(nested, "SETLAT 33.3\n");
+
+    String hint = app.runScriptLine("RUN.SCRIPT run-dot-script-nested-test.svs");
+
+    assertEquals("", hint);
+    assertEquals(33.3f, app.STATION.getLatitude(), 0.001f);
+  }
 }
