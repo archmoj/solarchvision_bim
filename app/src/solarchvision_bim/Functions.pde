@@ -564,6 +564,53 @@ class Functions {
     return return_array;
   }
 
+  // Simplified lunar position - NOT a precise ephemeris. This app has no
+  // real calendar date/epoch to work from in the first place (DateAngle
+  // is day-of-year only, the same way SunPosition() above already is -
+  // no year, so no true lunar-phase accuracy is possible here regardless
+  // of how this function is written), so this models the Moon's two most
+  // visually relevant departures from the Sun's own path using the exact
+  // same DateAngle/HourAngleOrigin inputs, rather than introducing some
+  // separate, unsupported notion of "real time" just for the Moon:
+  //
+  // 1) It rises/sets roughly 50 minutes later each day, drifting through
+  //    a full day/night cycle relative to solar time over one synodic
+  //    month (~29.53 days) - near new moon it tracks the Sun closely
+  //    (rising/setting together, hence invisible against the daytime
+  //    sky); near full moon it's a full 12 hours out of phase (rising as
+  //    the Sun sets). DateAngle spans 360 over ~365.25 days, so this
+  //    phase needs to cycle (365.25 / 29.53) ≈ 12.37 times as fast.
+  // 2) Its declination swings through a comparable range to the Sun's
+  //    (same ±23.45 amplitude, for simplicity - the real extra ~5 degrees
+  //    from the Moon's own orbital inclination is a second-order detail
+  //    not worth the added complexity here), but on its own, faster,
+  //    ~27.3-day sidereal cycle rather than the Sun's 365.25-day one -
+  //    same scaling idea as above.
+  //
+  // correctHourAngle()'s equation-of-time correction is Sun-specific (it
+  // corrects apparent solar time against clock time), so it's
+  // deliberately not reused here - this function computes the Moon's own
+  // hour angle directly instead.
+  float[] MoonPosition (float Latitude, float DateAngle, float HourAngleOrigin) {
+    float phaseAngle = (DateAngle * (365.25 / 29.53)) % 360.0;
+    float declinationDateAngle = (DateAngle * (365.25 / 27.3)) % 360.0;
+
+    float HourAngle = HourAngleOrigin - (phaseAngle / 360.0) * 24.0;
+    float Declination = 23.45 * this.sin_ang(declinationDateAngle - 180.0);
+    float cosDeclination = this.cos_ang(Declination);
+    float a = this.sin_ang(Declination);
+    float hourAngle15 = 15.0 * HourAngle;
+    float b = cosDeclination * -this.cos_ang(hourAngle15);
+    float c = cosDeclination * this.sin_ang(hourAngle15);
+    float x = c;
+    float y = -(a * this.cos_ang(Latitude) + b * this.sin_ang(Latitude));
+    float z = -a * this.sin_ang(Latitude) + b * this.cos_ang(Latitude);
+    float[] return_array = {
+      0, x, y, z
+    };
+    return return_array;
+  }
+
   float sunriseHourAngle_Raw (float Latitude, float DateAngle) {
     float Declination = 23.5 * this.sin_ang(DateAngle - 180.0);
     float q = -(this.tan_ang(Declination) * this.tan_ang(Latitude));
