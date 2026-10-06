@@ -137,7 +137,16 @@ class Earth3D {
 
     color c = textureImage.get(px, py);
 
-    float brightness = green(c);
+    // Processing's own green(c) delegates to the active PGraphics' current
+    // color mode (this.g) - unavailable (null) before a real sketch
+    // surface exists (setup()/size() having actually run), which this
+    // function otherwise has no need for at all. This app never calls
+    // colorMode() anywhere, so it's always Processing's default RGB with
+    // an 0-255 range - under that default, green(c) is exactly this bit
+    // extraction, with no scaling to account for; the whole point of
+    // spelling it out directly is sidestepping the this.g dependency, not
+    // a difference in what it computes.
+    float brightness = (c >> 8) & 0xFF;
 
     float z = 6400.0 * // as applied by NASA map: https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/topography-bathymetry-maps/
       brightness / 255.0;
