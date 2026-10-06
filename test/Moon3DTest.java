@@ -67,6 +67,52 @@ class Moon3DTest {
     assertEquals(0f, frame.Rrightz);
   }
 
+  @Test
+  void computeFrame_gridBasisIsOrthonormal_atVariousHoursAndDates () {
+    // (Gright, Gup, S) - the Sun-aligned grid basis buildSubFace() now
+    // builds its mesh from (see its own comment) - needs to be a genuine
+    // orthonormal frame for exactly the same reason (F, Rup, Rright) does.
+    for (int hour : new int[]{0, 6, 12, 18, 23}) {
+      for (int dateAngle : new int[]{0, 90, 180, 270}) {
+        app.SHADE_HOUR_ANGLE = hour;
+        app.SHADE_DATE_ANGLE = dateAngle;
+        solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+        float Slen2 = frame.Sx*frame.Sx + frame.Sy*frame.Sy + frame.Sz*frame.Sz;
+        float Guplen2 = frame.Gupx*frame.Gupx + frame.Gupy*frame.Gupy + frame.Gupz*frame.Gupz;
+        float Grightlen2 = frame.Grightx*frame.Grightx + frame.Grighty*frame.Grighty + frame.Grightz*frame.Grightz;
+        assertEquals(1f, Slen2, 0.001f, "S should be a unit vector");
+        assertEquals(1f, Guplen2, 0.001f, "Gup should be a unit vector");
+        assertEquals(1f, Grightlen2, 0.001f, "Gright should be a unit vector");
+
+        float S_dot_Gup = frame.Sx*frame.Gupx + frame.Sy*frame.Gupy + frame.Sz*frame.Gupz;
+        float S_dot_Gright = frame.Sx*frame.Grightx + frame.Sy*frame.Grighty + frame.Sz*frame.Grightz;
+        float Gup_dot_Gright = frame.Gupx*frame.Grightx + frame.Gupy*frame.Grighty + frame.Gupz*frame.Grightz;
+        assertEquals(0f, S_dot_Gup, 0.001f, "S and Gup should be perpendicular");
+        assertEquals(0f, S_dot_Gright, 0.001f, "S and Gright should be perpendicular");
+        assertEquals(0f, Gup_dot_Gright, 0.001f, "Gup and Gright should be perpendicular");
+      }
+    }
+  }
+
+  @Test
+  void computeFrame_withDisplayShadowOff_skipsTheGridBasisEntirely () {
+    app.Moon3D.displayShadow = false;
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 0;
+
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    // Not just "equals 0" by coincidence - S itself is never computed
+    // either (see computeFrame()'s own guard), so Gright/Gup, built from
+    // S, can't be either.
+    assertEquals(0f, frame.Sx);
+    assertEquals(0f, frame.Sy);
+    assertEquals(0f, frame.Sz);
+    assertEquals(0f, frame.Grightx);
+    assertEquals(0f, frame.Gupx);
+  }
+
   // ================= buildSubFace(): position tracks real time ===============
   // Previously the Moon never moved at all - any observable difference
   // here is new, correct behavior, not just a refinement of existing
@@ -102,16 +148,43 @@ class Moon3DTest {
   }
 
   // ================= buildSubFace(): tidal-locked texture =====================
+  // (Alpha, Beta) no longer parameterizes a body/celestial-pole-fixed grid
+  // at all when displayShadow is on (the default, and what every test
+  // below runs with) - the mesh itself is now built directly in the
+  // Sun-aligned (frame.Gright, frame.Gup, frame.Sx/Sy/Sz) basis instead,
+  // so that displayNightSide's cutoff follows an actual grid line instead
+  // of cutting diagonally across faces (see Moon3D.pde's own comments on
+  // SkyFrame.Gright/Gup and buildSubFace() for the full reasoning).
+  // Texture locking is still exactly what it was - these two helpers
+  // split that back out: one for "a fixed point in the Earth-locked
+  // frame" (unaffected by any of this), one for "which (Alpha, Beta)
+  // currently reaches that point through the Sun-aligned grid" (the part
+  // that's now hour/date-dependent, since the grid itself rotates with
+  // the Sun).
 
-  private float[] stationFacingAlphaBeta (solarchvision_bim.Moon3D.SkyFrame frame) {
-    float dy1 = frame.Fy * app.funcs.cos_ang(frame.ta) - frame.Fz * app.funcs.sin_ang(frame.ta);
-    float dz1 = frame.Fy * app.funcs.sin_ang(frame.ta) + frame.Fz * app.funcs.cos_ang(frame.ta);
-    float lat = app.funcs.asin_ang(Math.max(-1f, Math.min(1f, dz1))); // constrain() is a
+  // A fixed real-world feature, 20deg "up" from the station-facing point
+  // within the Earth-locked (F, Rup, Rright) texture frame - not the
+  // Sun-aligned grid frame below, which is what makes this direction
+  // genuinely fixed across hours/dates in the first place.
+  private float[] earthFixedFeatureDirection (solarchvision_bim.Moon3D.SkyFrame frame) {
+    float x = frame.Fx * app.funcs.cos_ang(20) + frame.Rupx * app.funcs.sin_ang(20);
+    float y = frame.Fy * app.funcs.cos_ang(20) + frame.Rupy * app.funcs.sin_ang(20);
+    float z = frame.Fz * app.funcs.cos_ang(20) + frame.Rupz * app.funcs.sin_ang(20);
+    return new float[]{x, y, z};
+  }
+
+  // Inverts buildSubFace()'s own Sun-aligned grid basis: the (Alpha, Beta)
+  // that currently produces the given world direction.
+  private float[] alphaBetaForWorldDirection (solarchvision_bim.Moon3D.SkyFrame frame, float[] target) {
+    float compRight = target[0] * frame.Grightx + target[1] * frame.Grighty + target[2] * frame.Grightz;
+    float compUp = target[0] * frame.Gupx + target[1] * frame.Gupy + target[2] * frame.Gupz;
+    float compForward = target[0] * frame.Sx + target[1] * frame.Sy + target[2] * frame.Sz;
+    float alpha = app.funcs.asin_ang(Math.max(-1f, Math.min(1f, compForward))); // constrain() is a
                                     // PApplet/Processing built-in, in scope inside the
                                     // .pde sketch classes via inheritance but not here -
                                     // this test file is a plain standalone Java class.
-    float lon = app.funcs.atan2_ang(dy1, frame.Fx) + 90;
-    return new float[]{lat, lon};
+    float beta = app.funcs.atan2_ang(compUp, compRight) + 90;
+    return new float[]{alpha, beta};
   }
 
   @Test
@@ -122,10 +195,11 @@ class Moon3DTest {
     for (int hour : new int[]{6, 9, 12, 15, 18}) {
       app.SHADE_HOUR_ANGLE = hour;
       solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
-      float[] ab = stationFacingAlphaBeta(frame);
+      float[] target = earthFixedFeatureDirection(frame);
+      float[] ab = alphaBetaForWorldDirection(frame, target);
 
       solarchvision_bim.Moon3D.FaceVertex[] subFace =
-          app.Moon3D.buildSubFace(ab[0] + 20, ab[1] + 30, 1, 10, 0, 0, 1, 1, frame);
+          app.Moon3D.buildSubFace(ab[0], ab[1], 1, 10, 0, 0, 1, 1, frame);
 
       if (firstU == null) {
         firstU = subFace[0].u;
@@ -138,29 +212,103 @@ class Moon3DTest {
   }
 
   @Test
-  void buildSubFace_textureDrifts_acrossDates_atAFixedHour () {
+  void buildSubFace_textureStaysLocked_acrossDatesToo_notJustHours () {
+    // Real tidal locking holds continuously - the same hemisphere faces
+    // Earth throughout the Moon's whole orbit, not just within one day -
+    // so a correctly-identified Earth-relative feature shouldn't drift
+    // across dates any more than it does across hours (the test above).
+    // Checked by hand before settling on this: decomposing one TRULY
+    // fixed world direction (computed once, reused as-is) against each
+    // date's own very differently-oriented F/Rup/Rright does show large
+    // apparent "drift" - but that's an artifact of re-measuring a fixed
+    // point with a rotated ruler (F itself swings across a large part of
+    // the sky between these dates), not a real statement about the
+    // texture lock failing. Re-identifying the SAME Earth-relative
+    // feature fresh via each date's own current frame (the same
+    // technique the hours test above uses) is what actually tests
+    // whether tidal locking holds, and it does.
     app.SHADE_HOUR_ANGLE = 12;
+    Float firstU = null, firstV = null;
 
-    // Unlike the Sun (see Sun3DTest.java's own note on why it specifically
-    // avoids DATE_ANGLE 0/180), the Moon's declination cycles roughly 13.4
-    // times as fast via its own ~27.3-day period (funcs.MoonPosition), so
-    // 0 vs 90 is already enough to land on meaningfully different points
-    // of that faster cycle - checked by hand before settling on this pair.
-    app.SHADE_DATE_ANGLE = 0;
-    solarchvision_bim.Moon3D.SkyFrame frame0 = app.Moon3D.computeFrame();
-    float[] ab0 = stationFacingAlphaBeta(frame0);
-    solarchvision_bim.Moon3D.FaceVertex[] date0 =
-        app.Moon3D.buildSubFace(ab0[0] + 20, ab0[1] + 30, 1, 10, 0, 0, 1, 1, frame0);
+    for (int dateAngle : new int[]{0, 7, 30, 90, 180}) {
+      app.SHADE_DATE_ANGLE = dateAngle;
+      solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+      float[] target = earthFixedFeatureDirection(frame);
+      float[] ab = alphaBetaForWorldDirection(frame, target);
 
-    app.SHADE_DATE_ANGLE = 90;
-    solarchvision_bim.Moon3D.SkyFrame frame90 = app.Moon3D.computeFrame();
-    float[] ab90 = stationFacingAlphaBeta(frame90);
-    solarchvision_bim.Moon3D.FaceVertex[] date90 =
-        app.Moon3D.buildSubFace(ab90[0] + 20, ab90[1] + 30, 1, 10, 0, 0, 1, 1, frame90);
+      solarchvision_bim.Moon3D.FaceVertex[] subFace =
+          app.Moon3D.buildSubFace(ab[0], ab[1], 1, 10, 0, 0, 1, 1, frame);
 
-    boolean differs = Math.abs(date0[0].u - date90[0].u) > 0.01f || Math.abs(date0[0].v - date90[0].v) > 0.01f;
-    assertTrue(differs, "the same offset-from-center feature should show different texture across dates "
-        + "(date=0 u=" + date0[0].u + " v=" + date0[0].v + ", date=90 u=" + date90[0].u + " v=" + date90[0].v + ")");
+      if (firstU == null) {
+        firstU = subFace[0].u;
+        firstV = subFace[0].v;
+      } else {
+        assertEquals(firstU, subFace[0].u, 0.001f, "dateAngle=" + dateAngle);
+        assertEquals(firstV, subFace[0].v, 0.001f, "dateAngle=" + dateAngle);
+      }
+    }
+  }
+
+  // ================= buildSubFace(): the grid itself tracks the Sun ===========
+  // The actual point of the Sun-aligned grid basis: displayNightSide's
+  // cutoff (see shouldDrawSubFace()) is a brightness threshold, and these
+  // confirm that threshold now falls on an exact grid line (Alpha=0, the
+  // "equator" of this basis) rather than cutting across faces at whatever
+  // angle the old body-frame grid happened to leave the terminator at.
+
+  @Test
+  void buildSubFace_gridPoleIsTheSubSolarPoint_regardlessOfLongitude () {
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 7; // crescent-ish, so there's an actual terminator to check
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    for (float beta : new float[]{-90, 0, 90, 170}) {
+      solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(90, beta, 1, 10, 0, 0, 1, 1, frame);
+      assertEquals(1f, subFace[0].brightness, 0.001f, "Beta=" + beta);
+    }
+  }
+
+  @Test
+  void buildSubFace_terminatorSitsExactlyOnTheGridsEquator_regardlessOfLongitude () {
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 7;
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    // Alpha=0 means sunDot=sin(0)=0 exactly, the dead center of the
+    // TERMINATOR_SOFTNESS ramp - litAmount=0.5 there, regardless of Beta.
+    float expectedMidBrightness = 0.5f + 0.5f * app.Moon3D.DARK_SIDE_AMBIENT; // DARK_SIDE_AMBIENT + (1-DARK_SIDE_AMBIENT)*0.5
+    for (float beta : new float[]{-90, 0, 90, 170}) {
+      solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(0, beta, 1, 10, 0, 0, 1, 1, frame);
+      assertEquals(expectedMidBrightness, subFace[0].brightness, 0.001f, "Beta=" + beta);
+    }
+  }
+
+  @Test
+  void buildSubFace_antisolarPointIsTheDarkestPoint () {
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 7;
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(-90, 0, 1, 10, 0, 0, 1, 1, frame);
+
+    assertEquals(app.Moon3D.DARK_SIDE_AMBIENT, subFace[0].brightness, 0.001f);
+  }
+
+  @Test
+  void buildSubFace_withDisplayShadowOff_usesTheOldBodyFrameGrid_notTheSunOne () {
+    // No terminator to align a grid with when phase shading itself is
+    // off (see shouldDrawSubFace()'s own reasoning) - confirms the grid
+    // pole in that case is NOT the sub-solar point, i.e. this really did
+    // fall back to the original body-frame construction rather than
+    // silently still using a stale/zeroed Sun direction.
+    app.Moon3D.displayShadow = false;
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 7;
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(90, 0, 1, 10, 0, 0, 1, 1, frame);
+
+    assertEquals(1f, subFace[0].brightness, "always fully lit when displayShadow is off");
   }
 
   @Test

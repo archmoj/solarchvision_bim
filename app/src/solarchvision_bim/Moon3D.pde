@@ -55,6 +55,44 @@ class Moon3D {
     this.Map = loadImage(this.Filename);
   }
 
+  // An orthonormal (right, up) pair perpendicular to the given forward
+  // vector, using the celestial pole as a stable "roughly up" reference -
+  // shared by the Earth-facing texture lock (forward = F) and the
+  // Sun-facing grid reorientation (forward = S) below, since both need
+  // the exact same construction, just with a different forward vector.
+  // Returns {rightX, rightY, rightZ, upX, upY, upZ}.
+  float[] buildRightUp (float forwardX, float forwardY, float forwardZ, float stationLat) {
+    float poleX = 0;
+    float poleY = -funcs.cos_ang(stationLat);
+    float poleZ = -funcs.sin_ang(stationLat);
+
+    // right = pole x forward
+    float rightX = poleY * forwardZ - poleZ * forwardY;
+    float rightY = poleZ * forwardX - poleX * forwardZ;
+    float rightZ = poleX * forwardY - poleY * forwardX;
+    float rightLen = sqrt(rightX * rightX + rightY * rightY + rightZ * rightZ);
+    if (rightLen < 0.0001) {
+      // Degenerate only if forward sits exactly on the celestial pole
+      // itself (not physically possible for F or S here - Declination
+      // maxes out at 23.45 - but guarded for safety rather than risking
+      // a NaN).
+      rightX = 1;
+      rightY = 0;
+      rightZ = 0;
+      rightLen = 1;
+    }
+    rightX /= rightLen;
+    rightY /= rightLen;
+    rightZ /= rightLen;
+
+    // up = forward x right
+    float upX = forwardY * rightZ - forwardZ * rightY;
+    float upY = forwardZ * rightX - forwardX * rightZ;
+    float upZ = forwardX * rightY - forwardY * rightX;
+
+    return new float[]{rightX, rightY, rightZ, upX, upY, upZ};
+  }
+
   // Everything buildSubFace used to recompute from scratch on every one of
   // its calls (1296 per draw() at the default lat_step=5/lon_step=10 - 36
   // x 36 - and some of it 4x again per call, once per vertex) that doesn't
@@ -86,6 +124,20 @@ class Moon3D {
     // the Earth-Sun one, so the Sun's direction barely changes between
     // the two vantage points.
     float Sx, Sy, Sz;
+    // (Gright, Gup, S) is the grid's own basis - the mesh (buildSubFace's
+    // own Alpha/Beta loop) is built directly in this basis instead of the
+    // old body-frame/celestial-pole one, so the grid's own "latitude"
+    // lines become circles of constant angle from the Sun - exactly what
+    // the terminator (brightness's own lit/dark boundary) already is.
+    // That's what keeps displayNightSide's cutoff following an actual
+    // grid line/mesh boundary instead of slicing diagonally across faces
+    // at this sphere's tessellation (see buildSubFace's own comment) -
+    // only computed, and only used, when displayShadow is on; the
+    // texture's own lock to F/Rup/Rright below is entirely unaffected by
+    // this - the grid defines where the mesh's faces/edges fall, the
+    // texture lock defines what's painted on them, independently.
+    float Grightx, Grighty, Grightz;
+    float Gupx, Gupy, Gupz;
   }
 
   SkyFrame computeFrame () {
@@ -123,6 +175,16 @@ class Moon3D {
       f.Sx = SunR[1];
       f.Sy = SunR[2];
       f.Sz = SunR[3];
+
+      // Grid basis (see SkyFrame's own comment on Gright/Gup) - same
+      // construction as F/Rup/Rright below, just built from S instead.
+      float[] gridRightUp = buildRightUp(f.Sx, f.Sy, f.Sz, stationLat);
+      f.Grightx = gridRightUp[0];
+      f.Grighty = gridRightUp[1];
+      f.Grightz = gridRightUp[2];
+      f.Gupx = gridRightUp[3];
+      f.Gupy = gridRightUp[4];
+      f.Gupz = gridRightUp[5];
     }
 
     // Tidal locking, same (forward, up, right) construction as Sun3D.pde -
@@ -133,32 +195,13 @@ class Moon3D {
     // this same frame (Declination = 90 in MoonPosition's underlying
     // formula - hour angle drops out entirely there, as it should).
     if (this.displayTexture) {
-      float poleX = 0;
-      float poleY = -funcs.cos_ang(stationLat);
-      float poleZ = -funcs.sin_ang(stationLat);
-
-      // right = pole x F
-      f.Rrightx = poleY * f.Fz - poleZ * f.Fy;
-      f.Rrighty = poleZ * f.Fx - poleX * f.Fz;
-      f.Rrightz = poleX * f.Fy - poleY * f.Fx;
-      float rightLen = sqrt(f.Rrightx * f.Rrightx + f.Rrighty * f.Rrighty + f.Rrightz * f.Rrightz);
-      if (rightLen < 0.0001) {
-        // Degenerate only if the Moon sits exactly at the celestial pole
-        // itself (not physically possible here - Declination maxes out
-        // at 23.45 - but guarded for safety rather than risking a NaN).
-        f.Rrightx = 1;
-        f.Rrighty = 0;
-        f.Rrightz = 0;
-        rightLen = 1;
-      }
-      f.Rrightx /= rightLen;
-      f.Rrighty /= rightLen;
-      f.Rrightz /= rightLen;
-
-      // up = F x right
-      f.Rupx = f.Fy * f.Rrightz - f.Fz * f.Rrighty;
-      f.Rupy = f.Fz * f.Rrightx - f.Fx * f.Rrightz;
-      f.Rupz = f.Fx * f.Rrighty - f.Fy * f.Rrightx;
+      float[] textureRightUp = buildRightUp(f.Fx, f.Fy, f.Fz, stationLat);
+      f.Rrightx = textureRightUp[0];
+      f.Rrighty = textureRightUp[1];
+      f.Rrightz = textureRightUp[2];
+      f.Rupx = textureRightUp[3];
+      f.Rupy = textureRightUp[4];
+      f.Rupz = textureRightUp[5];
     }
 
     return f;
@@ -257,38 +300,55 @@ class Moon3D {
       if (s == 2 || s == 3) a -= this.lat_step;
       if (s == 1 || s == 2) b -= this.lon_step;
 
-      // corner position on the moon sphere
-      float x0 = r * funcs.cos_ang(b - 90) * funcs.cos_ang(a);
-      float y0 = r * funcs.sin_ang(b - 90) * funcs.cos_ang(a);
-      float z0 = r * funcs.sin_ang(a);
+      // This vertex's own outward unit normal, in world/station frame -
+      // everything else below (position, facing, texture, brightness) is
+      // derived from this one direction, regardless of which basis built
+      // it.
+      float ux2, uy2, uz2;
 
-      // This vertex's own direction (unit sphere, tb/ta applied, no
-      // translation) - same transform as x1/y1/z1/x2/y2/z2 below, just
-      // computed early and unscaled (divide out r). Needed unconditionally
-      // now (not just when displayTexture, as it used to be): phase
-      // shading below depends on it the same way the tidal-locking lookup
-      // already did, and an untextured Moon should still show phases.
-      float ux0 = x0 / r;
-      float uy0 = y0 / r;
-      float uz0 = z0 / r;
+      if (this.displayShadow) {
+        // Grid built directly in the Sun-facing (Gright, Gup, S) basis
+        // (see SkyFrame's own comment) - Alpha/Beta here parameterize
+        // this basis exactly the way the old body-frame pipeline below
+        // parameterizes (right, up, forward) = (X axis, Z axis, Y axis)
+        // via tb/ta, just aimed at S instead of the celestial pole.
+        float gx = funcs.cos_ang(b - 90) * funcs.cos_ang(a);
+        float gy = funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+        float gz = funcs.sin_ang(a);
+        ux2 = gx * frame.Grightx + gy * frame.Gupx + gz * frame.Sx;
+        uy2 = gx * frame.Grighty + gy * frame.Gupy + gz * frame.Sy;
+        uz2 = gx * frame.Grightz + gy * frame.Gupz + gz * frame.Sz;
+      } else {
+        // No Sun-relative terminator to align a grid with when phase
+        // shading itself is off (displayNightSide never hides anything
+        // in that case either - see shouldDrawSubFace()), so this is the
+        // original body-frame grid, tilted by station latitude alone
+        // (tb/ta) - entirely unaffected by any of the above.
+        float x0 = funcs.cos_ang(b - 90) * funcs.cos_ang(a);
+        float y0 = funcs.sin_ang(b - 90) * funcs.cos_ang(a);
+        float z0 = funcs.sin_ang(a);
 
-      float ux1 = ux0 * funcs.cos_ang(tb) - uy0 * funcs.sin_ang(tb);
-      float uy1 = ux0 * funcs.sin_ang(tb) + uy0 * funcs.cos_ang(tb);
-      float uz1 = uz0;
+        float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
+        float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
+        float z1 = z0;
 
-      float ux2 = ux1;
-      float uy2 = uz1 * funcs.sin_ang(ta) + uy1 * funcs.cos_ang(ta);
-      float uz2 = uz1 * funcs.cos_ang(ta) - uy1 * funcs.sin_ang(ta);
+        ux2 = x1;
+        uy2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
+        uz2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
+      }
 
-      // dot(this point's own outward normal, frame.F) - already needed by
-      // the texture lookup below as its own "forward" axis component, and
-      // now also by draw()'s one-sided culling (see its own comment), so
-      // computed here unconditionally instead of only when displayTexture.
+      // dot(this point's own outward normal, frame.F) - needed by the
+      // texture lookup below as its own "forward" axis component, and
+      // also by draw()'s one-sided culling (see its own comment) -
+      // computed unconditionally either way.
       float compForward = ux2 * frame.Fx + uy2 * frame.Fy + uz2 * frame.Fz;
       vtx.facing = compForward;
 
       if (this.displayTexture) {
-        // Decomposed against frame's (forward, up, right) axes.
+        // Decomposed against frame's (forward, up, right) axes - entirely
+        // independent of which basis produced (ux2, uy2, uz2) above: the
+        // texture is still locked to F (Earth), never to S (Sun), however
+        // the mesh itself is now built.
         float compUp = ux2 * frame.Rupx + uy2 * frame.Rupy + uz2 * frame.Rupz;
         float compRight = ux2 * frame.Rrightx + uy2 * frame.Rrighty + uz2 * frame.Rrightz;
 
@@ -304,8 +364,10 @@ class Moon3D {
         // same frame frame.Sx/Sy/Sz already is - so their dot product is
         // exactly the Lambertian "how directly does this patch face the
         // Sun" term. constrain()+the softness band (rather than a hard
-        // >0/<=0 split) avoids a visibly faceted terminator edge at this
-        // sphere's own tessellation (lat_step/lon_step).
+        // >0/<=0 split) avoids a visibly faceted terminator edge within a
+        // single grid cell - the grid basis above is what keeps the
+        // terminator from cutting diagonally *across* cells in the first
+        // place, this is what keeps it smooth *within* one.
         float sunDot = ux2 * frame.Sx + uy2 * frame.Sy + uz2 * frame.Sz;
         float litAmount = constrain((sunDot + TERMINATOR_SOFTNESS) / (2 * TERMINATOR_SOFTNESS), 0, 1);
         vtx.brightness = DARK_SIDE_AMBIENT + (1 - DARK_SIDE_AMBIENT) * litAmount;
@@ -313,27 +375,14 @@ class Moon3D {
         vtx.brightness = 1; // fully lit - same as before phase shading existed
       }
 
-      // rotate to location coordinates
-      float x1 = x0 * funcs.cos_ang(tb) - y0 * funcs.sin_ang(tb);
-      float y1 = x0 * funcs.sin_ang(tb) + y0 * funcs.cos_ang(tb);
-      float z1 = z0;
-
-      float x2 = x1;
-      float y2 = z1 * funcs.sin_ang(ta) + y1 * funcs.cos_ang(ta);
-      float z2 = z1 * funcs.cos_ang(ta) - y1 * funcs.sin_ang(ta);
-
-      // move out to lunar distance, in the moon's real current sky
-      // direction - exactly -d*frame.F (F is defined as the direction
-      // FROM the sphere TOWARD the station, so the sphere's own center,
-      // relative to the station, sits at -F); reusing the already-computed
-      // frame.Fx/Fy/Fz instead of recomputing cos(tB)*cos(tA) etc. here.
-      x2 += -d * frame.Fx;
-      y2 += -d * frame.Fy;
-      z2 += -d * frame.Fz;
-
-      vtx.x = x2;
-      vtx.y = y2;
-      vtx.z = z2;
+      // Scale back out to the sphere's real radius, then move out to
+      // lunar distance, in the moon's real current sky direction -
+      // exactly -d*frame.F (F is defined as the direction FROM the
+      // sphere TOWARD the station, so the sphere's own center, relative
+      // to the station, sits at -F).
+      vtx.x = r * ux2 - d * frame.Fx;
+      vtx.y = r * uy2 - d * frame.Fy;
+      vtx.z = r * uz2 - d * frame.Fz;
 
       subFace[s] = vtx;
     }
