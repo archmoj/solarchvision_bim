@@ -75,6 +75,33 @@ class FunctionsTest {
   // --- vector operations -----------------------------------------------
 
   @Test
+  void vec3_scale_multipliesEveryComponent () {
+    assertArrayEquals(new float[]{2, 4, 6}, funcs.vec3_scale(new float[]{1, 2, 3}, 2), EPS);
+  }
+
+  @Test
+  void vec3_sum_addsComponentwise () {
+    assertArrayEquals(new float[]{4, 6, 8}, funcs.vec3_sum(new float[]{1, 2, 3}, new float[]{3, 4, 5}), EPS);
+  }
+
+  @Test
+  void vec3_diff_subtractsTheFirstArgumentFromTheSecond () {
+    // Same convention as vec_diff (see vecDiff_subtractsTheFirstArgumentFromTheSecond below): diff(a, b) == b - a
+    assertArrayEquals(new float[]{2, 2, 2}, funcs.vec3_diff(new float[]{1, 1, 1}, new float[]{3, 3, 3}), EPS);
+  }
+
+  @Test
+  void vec3_dist_isTheMagnitudeOfTheDifference () {
+    assertEquals(5f, funcs.vec3_dist(new float[]{0, 0, 0}, new float[]{3, 4, 0}), EPS);
+  }
+
+  @Test
+  void vec_dot_matchesTheDotProductFormula_anyDimension () {
+    assertEquals(0f, funcs.vec_dot(new float[]{1, 0, 0}, new float[]{0, 1, 0}), EPS);
+    assertEquals(14f, funcs.vec_dot(new float[]{1, 2, 3, 4}, new float[]{1, 1, 1, 2}), EPS); // 1+2+3+8
+  }
+
+  @Test
   void vec3_cross_ofUnitAxesGivesTheThirdAxis () {
     float[] result = funcs.vec3_cross(new float[]{1, 0, 0}, new float[]{0, 1, 0});
     assertArrayEquals(new float[]{0, 0, 1}, result, EPS);
@@ -220,6 +247,12 @@ class FunctionsTest {
   // --- solar-position formulas -------------------------------------------
 
   @Test
+  void equationOfTime_matchesAKnownValue () {
+    // DateAngle=0: 0.01*(9.87*sin(0) - 7.53*cos(0) - 1.5*sin(0)) = 0.01*(-7.53)
+    assertEquals(-0.0753f, funcs.EquationOfTime(0), EPS);
+  }
+
+  @Test
   void correctHourAngle_addsEquationOfTimeToTheOrigin () {
     float dateAngle = 45f;
     float hourAngleOrigin = 3f;
@@ -242,6 +275,126 @@ class FunctionsTest {
       float magSq = pos[1] * pos[1] + pos[2] * pos[2] + pos[3] * pos[3];
       assertEquals(1f, magSq, 0.01f, "latitude=" + c[0] + " dateAngle=" + c[1] + " hourAngle=" + c[2]);
     }
+  }
+
+  @Test
+  void moonPosition_directionVectorIsAlwaysUnitLength () {
+    // Same invariant as sunPosition_directionVectorIsAlwaysUnitLength
+    // above - MoonPosition shares SunPosition's own rotation formula (see
+    // Functions.pde's own comment on MoonPosition), just with phase-
+    // shifted inputs, so the same rotation-preserves-length argument holds.
+    float[][] cases = {
+      {0f, 80f, 2f}, {45f, 180f, -3f}, {-30f, 300f, 6f}, {60f, 10f, 0f}
+    };
+    for (float[] c : cases) {
+      float[] pos = funcs.MoonPosition(c[0], c[1], c[2]);
+      float magSq = pos[1] * pos[1] + pos[2] * pos[2] + pos[3] * pos[3];
+      assertEquals(1f, magSq, 0.01f, "latitude=" + c[0] + " dateAngle=" + c[1] + " hourAngle=" + c[2]);
+    }
+  }
+
+  @Test
+  void sunPositionRadiation_directionVectorIsAlsoUnitLength () {
+    app.STATION.latitude = 43.7f;
+    app.STATION.longitude = -79.4f;
+
+    float[] rad = funcs.SunPositionRadiation(90, 12, 0); // near-noon, near-peak declination, no cloud
+    float magSq = rad[1] * rad[1] + rad[2] * rad[2] + rad[3] * rad[3];
+    assertEquals(1f, magSq, 0.01f);
+  }
+
+  @Test
+  void sunPositionRadiation_isDaytimeWithPositiveIrradiance () {
+    app.STATION.latitude = 43.7f;
+    app.STATION.longitude = -79.4f;
+
+    float[] rad = funcs.SunPositionRadiation(90, 12, 0);
+
+    assertTrue(rad[3] > 0.01f, "z (sun above horizon)"); // the z<0.01 threshold below it treats as "down"
+    assertTrue(rad[4] > 0f, "Idirect");
+    assertTrue(rad[5] > 0f, "Idiffuse");
+  }
+
+  @Test
+  void sunPositionRadiation_isNightWithZeroIrradiance () {
+    app.STATION.latitude = 43.7f;
+    app.STATION.longitude = -79.4f;
+
+    float[] rad = funcs.SunPositionRadiation(90, 0, 0); // midnight
+
+    assertTrue(rad[3] < 0.01f, "z (sun below horizon, or within the threshold of it)");
+    assertEquals(0f, rad[4], EPS, "Idirect");
+    assertEquals(0f, rad[5], EPS, "Idiffuse");
+  }
+
+  // --- getSubFace ----------------------------------------------------------
+  // The subdivision engine behind the "material 0 on a face gets extra
+  // export/solar-sample resolution" feature (see export_objects_OBJ.pde,
+  // calculate_VertexSolar_array.pde, and command/README.md's own
+  // "Object creation" section) - called once per sub-face index, not all
+  // at once, so these tests exercise it the same way its real callers do.
+
+  @Test
+  void getSubFace_withTessellationZeroOrBelow_returnsTheBaseVerticesUnchanged () {
+    float[][] square = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+
+    float[][] result = funcs.getSubFace(square, 0, 0);
+
+    assertEquals(square.length, result.length);
+    for (int i = 0; i < square.length; i++) assertArrayEquals(square[i], result[i], EPS);
+  }
+
+  @Test
+  void getSubFace_withNOutOfRange_alsoReturnsTheBaseVerticesUnchanged () {
+    float[][] square = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+
+    // totalNumberOfSubs at tessellation=1 for a 4-cornered base is 4 (one
+    // quad per corner) - so n=999 is far past the end.
+    float[][] result = funcs.getSubFace(square, 1, 999);
+
+    assertEquals(square.length, result.length);
+    for (int i = 0; i < square.length; i++) assertArrayEquals(square[i], result[i], EPS);
+  }
+
+  @Test
+  void getSubFace_atTessellationOne_fansOutOneQuadPerCorner () {
+    // n=0: anchored at corner 0, out to the midpoints of its two
+    // neighboring edges, in to the overall centroid. Confirmed by hand
+    // before writing this: A=corner0, B=midpoint(corner0,corner1),
+    // C=centroid, D=midpoint(corner0,corner3).
+    float[][] square = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+
+    float[][] quad0 = funcs.getSubFace(square, 1, 0);
+    assertArrayEquals(new float[]{0, 0, 0}, quad0[0], EPS);
+    assertArrayEquals(new float[]{0.5f, 0, 0}, quad0[1], EPS);
+    assertArrayEquals(new float[]{0.5f, 0.5f, 0}, quad0[2], EPS);
+    assertArrayEquals(new float[]{0, 0.5f, 0}, quad0[3], EPS);
+
+    // n=1: same construction, anchored at corner 1 instead.
+    float[][] quad1 = funcs.getSubFace(square, 1, 1);
+    assertArrayEquals(new float[]{1, 0, 0}, quad1[0], EPS);
+    assertArrayEquals(new float[]{1, 0.5f, 0}, quad1[1], EPS);
+    assertArrayEquals(new float[]{0.5f, 0.5f, 0}, quad1[2], EPS);
+    assertArrayEquals(new float[]{0.5f, 0, 0}, quad1[3], EPS);
+  }
+
+  @Test
+  void getSubFace_atHigherTessellation_subdividesEachCornerQuadFurther () {
+    // Not re-deriving the tessellation=2 "rotate tri-grid cells" checker-
+    // boarding by hand (see getSubFace's own comment in Functions.pde) -
+    // confirmed against the real compiled app before writing this -
+    // just confirming it actually subdivides smaller than tessellation=1's
+    // own quad (every coordinate half the size), and that the vertex count
+    // stays 4 regardless of tessellation level.
+    float[][] square = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+
+    float[][] result = funcs.getSubFace(square, 2, 0);
+
+    assertEquals(4, result.length);
+    assertArrayEquals(new float[]{0.25f, 0, 0}, result[0], EPS);
+    assertArrayEquals(new float[]{0.25f, 0.25f, 0}, result[1], EPS);
+    assertArrayEquals(new float[]{0, 0.25f, 0}, result[2], EPS);
+    assertArrayEquals(new float[]{0, 0, 0}, result[3], EPS);
   }
 
   @Test
