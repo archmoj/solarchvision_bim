@@ -253,6 +253,10 @@ class Moon3D {
     // instead of empty space/sky. Culling the far hemisphere outright is
     // what keeps that gap genuinely empty.
     for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
+      // Night side, at the row level - see rowIsEntirelyDark()'s own
+      // comment.
+      if (this.displayShadow && !this.displayNightSide && rowIsEntirelyDark(Alpha)) continue;
+
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
         FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY, frame);
         if (shouldDrawSubFace(subFace)) {
@@ -274,24 +278,39 @@ class Moon3D {
     WIN3D.graphics.fill(255);
   }
 
+  // Whether every face in the Alpha row starting at this Alpha (down to
+  // Alpha - lat_step) is wholly inside the dark floor, so draw() can skip
+  // the whole row without building any of its faces just to throw them
+  // away. Only meaningful (and only ever called) when displayShadow is
+  // on - a point's sunDot reduces to exactly sin(Alpha) for this grid,
+  // independent of Beta (see buildSubFace's own comment on why - its
+  // basis is literally built from S), so an entire row is either wholly
+  // dark or isn't. Alpha itself (not Alpha - lat_step) is this row's own
+  // least-dark edge - sin() is increasing on this range, so if even that
+  // edge is already at the floor, the rest of the row, being more
+  // negative still, certainly is too. Confirmed by hand against the real
+  // compiled app to make exactly the same skip/draw calls, row for row,
+  // as the old per-face, post-hoc brightness check did.
+  boolean rowIsEntirelyDark (float Alpha) {
+    float topLitAmount = constrain((funcs.sin_ang(Alpha) + TERMINATOR_SOFTNESS) / (2 * TERMINATOR_SOFTNESS), 0, 1);
+    return topLitAmount <= 0.001;
+  }
+
+  // One-sided rendering: never the far hemisphere - see draw()'s own
+  // comment on why this matters once some faces get skipped outright.
+  // Unlike the night-side skip above, this can't be hoisted to the row
+  // level: facing depends on F (the station direction), not S, and this
+  // grid's own axes are built from S - so, unlike sunDot, a point's
+  // facing value genuinely depends on both Alpha and Beta here, not
+  // Alpha alone.
   boolean shouldDrawSubFace (FaceVertex[] subFace) {
     float avgFacing = 0;
-    float avgBrightness = 0;
     for (int s = 0; s < subFace.length; s++) {
       avgFacing += subFace[s].facing;
-      avgBrightness += subFace[s].brightness;
     }
     avgFacing /= subFace.length;
-    avgBrightness /= subFace.length;
 
-    // One-sided: never the far hemisphere - see draw()'s own comment.
-    if (avgFacing <= 0) return false;
-
-    // Night side: skip faces in total darkness outright, rather than
-    // just dimming them down to DARK_SIDE_AMBIENT, when it's off.
-    if (!this.displayNightSide && avgBrightness <= DARK_SIDE_AMBIENT + 0.001) return false;
-
-    return true;
+    return avgFacing > 0;
   }
 
   FaceVertex[] buildSubFace (float Alpha, float Beta,

@@ -328,12 +328,33 @@ class Moon3DTest {
   }
 
   @Test
+  void rowIsEntirelyDark_matchesTheTerminatorBoundary () {
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 7;
+
+    // Confirmed against a real compiled app comparison before extracting
+    // this (see Moon3D.pde's own comment on rowIsEntirelyDark()): makes
+    // exactly the same skip/draw decisions, row for row, as the old
+    // per-face, post-hoc brightness check this replaced.
+    assertFalse(app.Moon3D.rowIsEntirelyDark(90), "sub-solar pole - fully lit");
+    assertFalse(app.Moon3D.rowIsEntirelyDark(0), "the terminator itself - half lit, not dark");
+    assertTrue(app.Moon3D.rowIsEntirelyDark(-90), "antisolar pole - fully dark");
+
+    // The actual boundary: just above vs. just below where sin(Alpha)
+    // crosses -TERMINATOR_SOFTNESS.
+    float boundary = app.funcs.asin_ang(-app.Moon3D.TERMINATOR_SOFTNESS);
+    assertFalse(app.Moon3D.rowIsEntirelyDark(boundary + 1), "just above the boundary - not yet fully dark");
+    assertTrue(app.Moon3D.rowIsEntirelyDark(boundary - 1), "just below the boundary - fully dark");
+  }
+
+  @Test
   void buildSubFace_withDisplayShadowOff_usesTheOldBodyFrameGrid_notTheSunOne () {
     // No terminator to align a grid with when phase shading itself is
-    // off (see shouldDrawSubFace()'s own reasoning) - confirms the grid
-    // pole in that case is NOT the sub-solar point, i.e. this really did
-    // fall back to the original body-frame construction rather than
-    // silently still using a stale/zeroed Sun direction.
+    // off (see rowIsEntirelyDark()'s own reasoning, which draw() never
+    // calls in this case) - confirms the grid pole in that case is NOT
+    // the sub-solar point, i.e. this really did fall back to the
+    // original body-frame construction rather than silently still using
+    // a stale/zeroed Sun direction.
     app.Moon3D.displayShadow = false;
     app.SHADE_HOUR_ANGLE = 12;
     app.SHADE_DATE_ANGLE = 7;
