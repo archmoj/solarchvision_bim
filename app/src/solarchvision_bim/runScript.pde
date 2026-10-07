@@ -63,7 +63,8 @@ String runScriptLines (String[] FileALL) {
       return hint;
     }
 
-    hint = _runScriptLine(lineSTR, false);
+    boolean shouldDrawDirective = false;
+    hint = _runScriptLine(lineSTR, shouldDrawDirective);
     if(hint.equals(UnrecognizedCommand)) return UnrecognizedCommand;
   }
   return hint;
