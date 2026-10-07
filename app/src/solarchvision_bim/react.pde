@@ -104,6 +104,18 @@ class react {
     TIME.updateDate();
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
   };
+
+  // UI_caseBar's "Days" tab left-click handler nudges TIME.beginDay by
+  // the same delta it just moved TIME.date by (see handleDaysClick), so
+  // year/month/day/hour are already current by the time this fires -
+  // update_ensembleForecast reuses them as-is. find_which_bakings_to_regenerate
+  // flags any prebaked shading images as stale; the WIN3D refresh
+  // view_changed() would otherwise do here is already covered by this
+  // command's own update2 (updateWIN3D) flag.
+  OnChange applyBeginDayChange = (o, n) -> {
+    update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
+    find_which_bakings_to_regenerate();
+  };
   OnChange applyLandLoadTextures = (o, n) -> { if (o == n) return; Terrain.update_textures(); model_changed(); };
   OnChange applyLandLoadMesh = (o, n) -> { if (o == n) return; Terrain.update_mesh(); model_changed(); };
   OnChange applyCurrentCamera = (o, n) -> {

@@ -169,13 +169,10 @@ class UI_caseBar {
 
     if (mouseButton == LEFT) {
       float keep_TIME_Date = TIME.date;
-      runScriptLine("date " + dayOfYearFromClick(X_clicked, x1, x2));
-      TIME.beginDay = int(TIME.beginDay + (TIME.date - keep_TIME_Date) + 365) % 365;
-      update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
-      UI_rollout.revise();
-      STUDY.revise();
-      view_changed();
-      find_which_bakings_to_regenerate();
+      runScriptLine("Date " + dayOfYearFromClick(X_clicked, x1, x2));
+
+      int newBeginDay = int(TIME.beginDay + (TIME.date - keep_TIME_Date) + 365) % 365;
+      runScriptLine("Begin Day " + newBeginDay);
     }
 
     if (mouseButton == RIGHT) {

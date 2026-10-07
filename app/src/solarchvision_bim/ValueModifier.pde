@@ -106,6 +106,35 @@ class ValueModifier {
     }
     return out;
   }
+  // The day-of-year offset applied throughout the solar/shadow math (see
+  // STUDY.pde, Sun3D.pde, WIN3D.pde, calculate_*Solar_array.pde, ...) -
+  // distinct from Day/Month/Year below, which describe the calendar date
+  // itself. Normally kept in sync with month/day via react.applyTimeChange,
+  // but UI_caseBar's "Days" tab also nudges it directly by a delta (see
+  // handleDaysClick), independently of month/day - hence its own command.
+  int beginDay (int created) {
+    int u1 = 1; // updateSTUDY
+    int u2 = 1; // updateWIN3D
+    int u3 = 0; // updateWORLD
+
+    int s1 = 0; //start
+    int s2 = 364; //stop
+    int s3 = 1; //step
+
+    int out = 0;
+    String command = "Begin Day";
+    if (created == 0) {
+      putValueAction(command,
+        () -> (float) TIME.beginDay,
+        (v) -> { TIME.beginDay = int(v); },
+        s1, s2, s3,
+        u1, u2, u3,
+        react.applyBeginDayChange);
+    } else {
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, TIME.beginDay, s1, s2, s3);
+    }
+    return out;
+  }
   int day (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D

@@ -51,7 +51,7 @@ class ValueModifierTest {
       methodCount++;
     }
 
-    assertEquals(232, methodCount, "expected exactly 232 value-modifier methods"); // +1: creatorConeDegree, added with Cone
+    assertEquals(233, methodCount, "expected exactly 233 value-modifier methods"); // +1: beginDay, added for UI_caseBar's Days-tab click handler
   }
 
   // ================= Latitude / Longitude: STATION sync regression ========
@@ -99,6 +99,37 @@ class ValueModifierTest {
     app.allActions.get("day").run(new String[]{"day", "15"});
 
     assertEquals(app.TIME.convert2Date(6, 15), app.TIME.beginDay);
+  }
+
+  // ================= begin_day: used by UI_caseBar's Days-tab click =======
+
+  @Test
+  void beginDay_commandLineAction_setsTimeBeginDay_androundsAndValidates () {
+    app.vm.beginDay(0);
+    app.TIME.beginDay = 10;
+
+    app.allActions.get("begin_day").run(new String[]{"begin_day", "400"}); // out of [0, 364]
+    assertEquals(10, app.TIME.beginDay);
+
+    app.allActions.get("begin_day").run(new String[]{"begin_day", "60"});
+    assertEquals(60, app.TIME.beginDay);
+  }
+
+  @Test
+  void beginDay_commandLineAction_triggersApplyBeginDayChange () {
+    app.vm.beginDay(0);
+    app.TIME.beginDay = 10;
+    app.TIME.year = 2024;
+    app.TIME.month = 3;
+    app.TIME.day = 1;
+    app.TIME.hour = 12;
+    app.WIN3D.shadingMode = app.SHADE.Global_Solar;
+    app.GlobalSolar_rebuild_array = false;
+
+    app.allActions.get("begin_day").run(new String[]{"begin_day", "60"});
+
+    assertEquals(60, app.TIME.beginDay);
+    assertTrue(app.GlobalSolar_rebuild_array); // via react.applyBeginDayChange -> find_which_bakings_to_regenerate
   }
 
   // ================= boolean field ==========================================

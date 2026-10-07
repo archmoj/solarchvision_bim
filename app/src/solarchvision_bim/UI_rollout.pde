@@ -163,6 +163,7 @@ class UI_rollout {
     vm.dailyStep(0);
     vm.daysMergedCount(0);
     vm.date(0);
+    vm.beginDay(0);
     vm.day(0);
     vm.month(0);
     vm.year(0);

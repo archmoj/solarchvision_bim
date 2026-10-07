@@ -22,7 +22,7 @@ This page has two parts:
    arguments as `key=value` pairs on the same line.
 2. **[Spinner and toggle value commands](#spinner-and-toggle-value-commands)** -
    one command per numeric or on/off control in the user interface (dates,
-   camera settings, palettes, latitude/longitude, and 233 more). Each
+   camera settings, palettes, latitude/longitude, and 234 more). Each
    takes a single value: `command_name value`.
 
 ------------------------------------------------------------------------
@@ -391,7 +391,7 @@ Includes commands such as:
 ## Spinner and toggle value commands
 
 Nearly every numeric or on/off spinner in the user interface has a
-matching command - 233 of them. They all work the same way:
+matching command - 234 of them. They all work the same way:
 
 ```
 command_name value
@@ -425,6 +425,7 @@ the user interface.
 | `Month` | Month for the study date | 1 to 12 |
 | `Year` | Year for the study date | 1953 to 2100 |
 | `Date` | Study date expressed as days since the March equinox (an alternative to setting day/month/year separately) | 0 to 364 |
+| `Begin Day` | Day-of-year offset used internally for solar/shadow calculations - normally kept in sync with Day/Month automatically, but can be nudged independently | 0 to 364 |
 
 ### Analysis window
 

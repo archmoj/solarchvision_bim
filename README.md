@@ -101,7 +101,7 @@ A high-level summary of what's changed:
     in addition to the existing drag/click adjustment.
 -   **Command-line access to spinner values** — Nearly every numeric and
     toggle spinner in the UI (dates, camera and palette settings,
-    latitude/longitude, and many more — 233 in total) now has a matching
+    latitude/longitude, and many more — 234 in total) now has a matching
     command-line equivalent (e.g. `day 15`), so the
     same values can be set from a script or the command console, not just
     by clicking a spinner.
@@ -490,8 +490,8 @@ command line area (the dark region at the bottom).
 See [`command/README.md`](command/README.md) for the full list: file and
 project commands, object creation and editing, camera and viewport
 control, and one command per numeric or on/off control in the user
-interface (dates, camera settings, palettes, latitude/longitude, and 233
-more), e.g. `day 15` or `latitude 45.5`.
+interface (dates, camera settings, palettes, latitude/longitude, and 234
+more), e.g. `day 15`.
 
 # SOLARCHVISION-BIM — Technical Overview
 
