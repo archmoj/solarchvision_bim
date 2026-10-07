@@ -127,23 +127,23 @@ String ___executeScriptLine___ (String lineSTR) {
       action = allActions.get(key);
     }
 
-    // Otherwise fall back to a first-token match, so commands registered
-    // with parameters (e.g. "start_day 15") can be reused here - same
-    // bypass exception as above, now checked against just the first
-    // token (e.g. "Move dx:1 dy:2 dz:3" must still reach MOVE's
-    // switch-case, not the bare "Move" menu action a first-token-only
-    // match would otherwise find).
-    if ((action == null) && (parts.length > 0) && !bypassAllActionsFor.contains(parts[0].toLowerCase())) {
-      action = allActions.get(parts[0].toLowerCase());
-    }
-
     // Otherwise, try the line with its last word removed - a multi-word
     // command name (e.g. "days merged count", also registered under its
     // literal caption by putAction's "withSpace" fallback) can then also
     // be typed with a value appended (e.g. "days merged count 15"), the
-    // trailing word being that value. Same bypass exception a third
-    // time: a two-word line like "Scale 2" (SCALE's own shorthand
-    // uniform-factor form) strips down to the bare "scale" here too.
+    // trailing word being that value. Tried before the first-token match
+    // below on purpose: this prefix is always at least as long as (and,
+    // whenever the line has more than two words, strictly longer than)
+    // the bare first token alone, so it's the more specific of the two
+    // whenever both would match - e.g. "Day Increment 2.5" must resolve
+    // to "day increment" (this match), not fall - as it would if the
+    // first-token match below ran first - to "day" (TIME.day, a
+    // completely different, separately-registered command that first
+    // token also happens to name on its own), which would then try and
+    // fail to parse "Increment" as Day's numeric value instead. Same
+    // bypass exception as the full-line case above: a two-word line like
+    // "Scale 2" (SCALE's own shorthand uniform-factor form) strips down
+    // to the bare "scale" here too.
     if (action == null) {
       int lastSpace = key.lastIndexOf(' ');
       if (lastSpace > 0) {
@@ -155,6 +155,17 @@ String ___executeScriptLine___ (String lineSTR) {
           }
         }
       }
+    }
+
+    // Otherwise fall back to a first-token match, so commands registered
+    // with parameters (e.g. "start_day 15") can be reused here - same
+    // bypass exception as above, now checked against just the first
+    // token (e.g. "Move dx:1 dy:2 dz:3" must still reach MOVE's
+    // switch-case, not the bare "Move" menu action a first-token-only
+    // match would otherwise find). Only reached once the more specific
+    // trailing-word match above has already had, and missed, its chance.
+    if ((action == null) && (parts.length > 0) && !bypassAllActionsFor.contains(parts[0].toLowerCase())) {
+      action = allActions.get(parts[0].toLowerCase());
     }
 
     if (action != null) {
