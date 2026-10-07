@@ -48,7 +48,7 @@ class ValueModifier {
     float s3 = 0.5; //step
 
     float out = 0;
-    String command = "Day Increment";
+    String command = "Day-Increment";
     if (created == 0) {
       putValueAction(command,
         () -> STUDY.dayIncrement,
@@ -4531,7 +4531,7 @@ class ValueModifier {
   }
   int impactLayerIndex (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int s1 = 0; //start

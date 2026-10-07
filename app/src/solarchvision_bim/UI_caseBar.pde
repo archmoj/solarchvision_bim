@@ -49,12 +49,6 @@ class UI_caseBar {
     return int(funcs.roundTo(count * (clickX - x1) / (x2 - x1) + offset, 1));
   }
 
-  // Returns {min, max} of a and b.
-  int[] orderPair (int a, int b) {
-    if (a > b) return new int[]{b, a};
-    return new int[]{a, b};
-  }
-
   // Draws a rect from x_start to x_end that may wrap around the [x1, x2]
   // track. `notWrapped` is passed in explicitly rather than inferred from
   // x_start/x_end because the original code sometimes tests the underlying
@@ -68,13 +62,6 @@ class UI_caseBar {
       rect(x1, y1, x_end - x1, y2 - y1);
       rect(x_start, y1, x2 - x_start, y2 - y1);
     }
-  }
-
-  void notifyChanged () {
-    UI_rollout.revise();
-    STUDY.revise();
-    view_changed();
-    find_which_bakings_to_regenerate();
   }
 
   // ---------------------------------------------------------------------
@@ -129,14 +116,9 @@ class UI_caseBar {
 
   void drawHoursTab (float x1, float y1, float x2, float y2) {
     if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
-      if (mouseButton == LEFT) {
-        STUDY.startHour = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
-        notifyChanged();
-      }
-      if (mouseButton == RIGHT) {
-        STUDY.endHour = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
-        notifyChanged();
-      }
+      int selectedValue = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
+      if (mouseButton == LEFT) runScriptLine("Start Hour " + selectedValue);
+      if (mouseButton == RIGHT) runScriptLine("End Hour " + selectedValue);
     }
 
     float x_start = x1 + (x2 - x1) * (STUDY.startHour) / 24.0;
@@ -187,19 +169,21 @@ class UI_caseBar {
 
     if (mouseButton == LEFT) {
       float keep_TIME_Date = TIME.date;
-      TIME.date = dayOfYearFromClick(X_clicked, x1, x2);
-      TIME.updateDate();
+      runScriptLine("date " + dayOfYearFromClick(X_clicked, x1, x2));
       TIME.beginDay = int(TIME.beginDay + (TIME.date - keep_TIME_Date) + 365) % 365;
       update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
-      notifyChanged();
+      UI_rollout.revise();
+      STUDY.revise();
+      view_changed();
+      find_which_bakings_to_regenerate();
     }
 
     if (mouseButton == RIGHT) {
       float _DATE2 = dayOfYearFromClick(X_clicked, x1, x2);
       if (TIME.date > _DATE2) _DATE2 += 365;
-      STUDY.dayIncrement = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.endDay - STUDY.startDay), 0.5);
-      if (STUDY.dayIncrement < 1) STUDY.dayIncrement = 1;
-      notifyChanged();
+      float selectedValue = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.endDay - STUDY.startDay), 0.5);
+      if (selectedValue < 1) selectedValue = 1;
+      runScriptLine("Day-Increment " + selectedValue);
     }
   }
 
@@ -255,14 +239,24 @@ class UI_caseBar {
     int n2 = range[1];
 
     if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
-      int V_selection = n1 + scaledIndexFromClick(X_clicked, x1, x2, n2 - n1 + 1, -0.5);
+      int selectedValue = n1 + scaledIndexFromClick(X_clicked, x1, x2, n2 - n1 + 1, -0.5);
       if (mouseButton == LEFT) {
-        setScenarioStart(currentDataSource, V_selection);
-        notifyChanged();
+        if (currentDataSource == dataID_climateEngineering || currentDataSource == dataID_climateArchive) {
+          runScriptLine("Sample Year Start " + selectedValue);
+        } else if (currentDataSource == dataID_ensembleForecast) {
+          runScriptLine("Sample Member Start " + selectedValue);
+        } else if (currentDataSource == dataID_ensembleObservation) {
+          runScriptLine("Sample Station Start " + selectedValue);
+        }
       }
       if (mouseButton == RIGHT) {
-        setScenarioEnd(currentDataSource, V_selection);
-        notifyChanged();
+        if (currentDataSource == dataID_climateEngineering || currentDataSource == dataID_climateArchive) {
+          runScriptLine("Sample Year End " + selectedValue);
+        } else if (currentDataSource == dataID_ensembleForecast) {
+          runScriptLine("Sample Member End " + selectedValue);
+        } else if (currentDataSource == dataID_ensembleObservation) {
+          runScriptLine("Sample Station End " + selectedValue);
+        }
       }
     }
 
@@ -317,44 +311,6 @@ class UI_caseBar {
     return new int[]{0, 0};
   }
 
-  void setScenarioStart (int dataSource, int value) {
-    if (dataSource == dataID_climateEngineering || dataSource == dataID_climateArchive) {
-      sampleYearStart = value;
-      int[] ord = orderPair(sampleYearStart, sampleYearEnd);
-      sampleYearStart = ord[0];
-      sampleYearEnd = ord[1];
-    } else if (dataSource == dataID_ensembleForecast) {
-      sampleMemberStart = value;
-      int[] ord = orderPair(sampleMemberStart, sampleMemberEnd);
-      sampleMemberStart = ord[0];
-      sampleMemberEnd = ord[1];
-    } else if (dataSource == dataID_ensembleObservation) {
-      sampleStationStart = value;
-      int[] ord = orderPair(sampleStationStart, sampleStationEnd);
-      sampleStationStart = ord[0];
-      sampleStationEnd = ord[1];
-    }
-  }
-
-  void setScenarioEnd (int dataSource, int value) {
-    if (dataSource == dataID_climateEngineering || dataSource == dataID_climateArchive) {
-      sampleYearEnd = value;
-      int[] ord = orderPair(sampleYearStart, sampleYearEnd);
-      sampleYearStart = ord[0];
-      sampleYearEnd = ord[1];
-    } else if (dataSource == dataID_ensembleForecast) {
-      sampleMemberEnd = value;
-      int[] ord = orderPair(sampleMemberStart, sampleMemberEnd);
-      sampleMemberStart = ord[0];
-      sampleMemberEnd = ord[1];
-    } else if (dataSource == dataID_ensembleObservation) {
-      sampleStationEnd = value;
-      int[] ord = orderPair(sampleStationStart, sampleStationEnd);
-      sampleStationStart = ord[0];
-      sampleStationEnd = ord[1];
-    }
-  }
-
   String scenarioTickLabel (int dataSource, int j, int n1) {
     String txt = (j % 5 == 0) ? "|" : ".";
     if ((dataSource == dataID_climateEngineering || dataSource == dataID_climateArchive) && (j % 10 == 5)) {
@@ -398,8 +354,7 @@ class UI_caseBar {
     for (int n = 0; n < 9; n++) {
       float[] b = impactCellBounds(n, offsetX, offsetY, w, h);
       if (isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) {
-        STUDY.impactLayerIndex = n;
-        notifyChanged();
+        runScriptLine("Impact Layer Index " + n);
       }
     }
   }
