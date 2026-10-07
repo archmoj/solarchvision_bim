@@ -1,0 +1,71 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "SVS Command Script",
+  "scopeName": "source.svs",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#section-divider" },
+    { "include": "#command" },
+    { "include": "#key-value-numeric" },
+    { "include": "#key-value-generic" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#bare-word" }
+  ],
+  "repository": {
+    "comments": {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.svs"
+    },
+
+    "section-divider": {
+      "comment": "A line starting with '=' - runScript.pde's sanitizeScriptLine skips these entirely (plain '=======' dividers, as command/test/views.svs uses between viewports, or an '=Section Name' marker).",
+      "match": "^=.*$",
+      "name": "comment.block.section-divider.svs"
+    },
+
+    "command": {
+      "comment": "The command name: the first token on a line. Command names in this DSL aren't plain words - REC.png, Shade.Materials, +MapZoom, N.E./S.W., 3d-model, 1D>GROUP, BOX2P all appear as real command names (see runScript.pde's switch-case and command/README.md), hence the wide character class.",
+      "match": "^\\s*[+\\-]?[A-Za-z0-9][A-Za-z0-9.>_+\\-]*",
+      "name": "keyword.control.command.svs"
+    },
+
+    "key-value-numeric": {
+      "comment": "key:value or key=value where value is a number - the common case (Box m:0 x:-10 dz:8, Person m=0 x=-20). Three captures so the key, the separator, and the number can each get their own scope/colour.",
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(:|=)\\s*(-?\\d+(?:\\.\\d+)?)",
+      "captures": {
+        "1": { "name": "variable.parameter.svs" },
+        "2": { "name": "keyword.operator.assignment.svs" },
+        "3": { "name": "constant.numeric.svs" }
+      }
+    },
+
+    "key-value-generic": {
+      "comment": "key:value or key=value where the value isn't purely numeric (rarer, but the parser doesn't require it - see runScript.pde's tokenizeScriptLine, which just turns '=' into ':' either way).",
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(:|=)\\s*([A-Za-z0-9_.+\\-]+)",
+      "captures": {
+        "1": { "name": "variable.parameter.svs" },
+        "2": { "name": "keyword.operator.assignment.svs" },
+        "3": { "name": "string.unquoted.svs" }
+      }
+    },
+
+    "strings": {
+      "comment": "tokenizeScriptLine strips quotes before parsing, but a person may still type a quoted value (e.g. SETLAT \"45.5\").",
+      "match": "\"[^\"]*\"",
+      "name": "string.quoted.double.svs"
+    },
+
+    "numbers": {
+      "comment": "A bare number not part of a key:value/key=value pair - a trailing argument (Date 80, Day 15, Show Raw Lines 1), or one entry of a comma-separated coordinate list (16,-4,0 16,4,0 ...).",
+      "match": "-?\\b\\d+(?:\\.\\d+)?\\b",
+      "name": "constant.numeric.svs"
+    },
+
+    "bare-word": {
+      "comment": "Catch-all for remaining identifiers: multi-word command captions' trailing words (Select last, Show Statistical Ranges, next graph index, Delete All-Model2Ds), not otherwise styled.",
+      "match": "\\b[A-Za-z][A-Za-z0-9_\\-]*\\b",
+      "name": "support.function.svs"
+    }
+  }
+}

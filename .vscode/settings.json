@@ -1,5 +1,9 @@
 {
+  // Explicit rather than relying solely on tools/vscode-svs-language's own
+  // "extensions": [".svs"] contribution, so this still degrades gracefully
+  // (plain text, not a stale "coffeescript" association) for anyone who
+  // hasn't installed that extension yet - see its own README for how.
   "files.associations": {
-    "*.svs": "coffeescript"
+    "*.svs": "svs"
   }
 }

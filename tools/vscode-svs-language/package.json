@@ -1,0 +1,35 @@
+{
+  "name": "svs-language",
+  "displayName": "SVS Command Script",
+  "description": "Syntax highlighting for SOLARCHVISION-BIM's .svs command scripts (see command/README.md)",
+  "version": "0.0.1",
+  "publisher": "solarchvision-bim",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "svs",
+        "aliases": [
+          "SVS Command Script",
+          "svs"
+        ],
+        "extensions": [
+          ".svs"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "svs",
+        "scopeName": "source.svs",
+        "path": "./syntaxes/svs.tmLanguage.json"
+      }
+    ]
+  }
+}

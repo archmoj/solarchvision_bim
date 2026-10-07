@@ -1,0 +1,9 @@
+{
+  "comments": {
+    "lineComment": "#"
+  },
+  "surroundingPairs": [
+    ["\"", "\""]
+  ],
+  "wordPattern": "[A-Za-z0-9_.>+\\-]+"
+}
