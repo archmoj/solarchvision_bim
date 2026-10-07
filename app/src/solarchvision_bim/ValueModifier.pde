@@ -2173,11 +2173,16 @@ class ValueModifier {
       putValueAction(command,
         () -> (float) WIN3D.currentCameraIndex,
         (v) -> { WIN3D.currentCameraIndex = int(v); },
-        () -> (float) (0), () -> (float) (allCameras.num), 1,
+        // allCameras.num - 1, not allCameras.num: a count, not the last
+        // valid index - the same off-by-one "Next"/"Previous Camera" in
+        // actions.pde both guard against. Left at .num, this command
+        // would validate an out-of-range index as in-bounds and crash
+        // WIN3D.apply_currentCameraIndex()'s array access downstream.
+        () -> (float) (0), () -> (float) max(0, allCameras.num - 1), 1,
         u1, u2, u3,
         react.applyCurrentCamera);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, WIN3D.currentCameraIndex, 0, allCameras.num, 1);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, WIN3D.currentCameraIndex, 0, max(0, allCameras.num - 1), 1);
     }
     return out;
   }

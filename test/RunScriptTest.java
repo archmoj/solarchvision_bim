@@ -3,6 +3,9 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.lang.reflect.Method;
 
 // Most of runScriptLine's ~130 switch cases either do file I/O (New, Save,
 // Open, ...), close the JVM (Exit/Quit), or create 3D geometry already
@@ -682,6 +685,59 @@ class RunScriptTest {
     String hintUnderscored = app.runScriptLine("wind_pattern_(active)");
     assertEquals("", hintUnderscored);
     assertEquals(app.impactGraphIndex_WIND_ACTIVE, app.STUDY.impactGraphIndex);
+  }
+
+  // The few commands above each exercise runScriptLine's dispatch by hand
+  // (full-line, first-token, and the multi-word trailing-value fallback).
+  // This drives every single ValueModifier.pde command the same way, one
+  // parameter appended to its name, through runScriptLine itself - not by
+  // calling its allActions entry directly (that's ValueModifierTest's own
+  // registration-only smoke test). "1" is used as the probe value for all
+  // 233: whatever a command's own min/max happen to be, action.run(...) is
+  // still what gets invoked either way (an out-of-range value is rejected
+  // *inside* the action - see putValueAction - without ever surfacing as
+  // "Unrecognized command!"), so this only verifies runScriptLine itself
+  // actually finds and dispatches to each one, the same way a person
+  // typing it on the command line would. A command whose normalized key
+  // collided with a switch-case name reserved in bypassAllActionsFor
+  // (see that set's own comment) would be exactly the kind of regression
+  // this catches, since it would fall through to the switch instead - and,
+  // not being one of the ~15 commands the switch itself recognizes, come
+  // back as "Unrecognized command!".
+  @Test
+  void everyValueModifierCommand_isDispatchableThroughRunScriptLine_withOneParameter () throws Exception {
+    Method[] methods = app.vm.getClass().getDeclaredMethods();
+
+    int checkedCount = 0;
+
+    for (Method m : methods) {
+      if (m.isSynthetic() || m.isBridge()) continue;
+      if (m.getParameterCount() != 1 || m.getParameterTypes()[0] != int.class) continue;
+
+      Set<String> before = new HashSet<>(app.allActions.keySet());
+
+      m.setAccessible(true);
+      m.invoke(app.vm, 0);
+
+      Set<String> added = new HashSet<>(app.allActions.keySet());
+      added.removeAll(before);
+
+      assertFalse(added.isEmpty(),
+        "vm." + m.getName() + "(0) did not add a new command name (possible key collision)");
+
+      // Every key putAction registered for this command (the normalized
+      // underscore form, and - when it differs - the literal spaced form)
+      // should independently resolve through runScriptLine.
+      for (String key : added) {
+        String hint = app.runScriptLine(key + " 1");
+        assertNotEquals("Unrecognized command!", hint,
+          "runScriptLine(\"" + key + " 1\") was not recognized (vm." + m.getName() + "())");
+      }
+
+      checkedCount++;
+    }
+
+    assertEquals(233, checkedCount, "expected exactly 233 value-modifier methods");
   }
 
   // ================= parseParams / getF / getI ================================
