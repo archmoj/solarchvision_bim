@@ -45,7 +45,7 @@ longer needed for that mapping - see the updated settings file.
 
 ## Editing the grammar
 
-[`syntaxes/svs.tmLanguage.json`](syntaxes/svs.tmLanguage.json) is a regular
+[`svs.tmLanguage.json`](svs.tmLanguage.json) is a regular
 TextMate grammar (same format VS Code's built-in languages use), matched in
 this order per line: comments, section dividers, the leading command token,
 `key:value`/`key=value` pairs (numeric value, then a fallback for anything

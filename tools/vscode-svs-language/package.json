@@ -28,7 +28,7 @@
       {
         "language": "svs",
         "scopeName": "source.svs",
-        "path": "./syntaxes/svs.tmLanguage.json"
+        "path": "./svs.tmLanguage.json"
       }
     ]
   }
