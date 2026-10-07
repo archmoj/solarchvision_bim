@@ -2456,10 +2456,8 @@ void build_allActions() {
 
 void requestStudyRedraw () {
   STUDY.revise();
-  UI_rollout.revise();
 }
 
 void requestWorldRedraw () {
   WORLD.revise();
-  UI_rollout.revise();
 }
