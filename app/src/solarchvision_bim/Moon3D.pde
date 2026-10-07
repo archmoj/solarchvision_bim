@@ -31,10 +31,16 @@ class Moon3D {
   boolean displayShadow = true; // real moon phases (see buildSubFace's own
                                  // comment) - off shows the Moon fully lit,
                                  // same as before that was added.
-  boolean displayNightSide = false; // off hides faces in total darkness
-                                     // outright (see draw()'s own comment),
-                                     // rather than just dimming them to
-                                     // DARK_SIDE_AMBIENT.
+  boolean displayNightSide = true; // off hides faces in total darkness
+                                    // outright (see draw()'s own comment),
+                                    // rather than just dimming them to
+                                    // DARK_SIDE_AMBIENT. Defaults on now:
+                                    // useSkyColorForNightSide (see its own
+                                    // comment) needs the night side's own
+                                    // geometry actually drawn - not just
+                                    // skipped - to correctly occlude
+                                    // whatever's behind it, like the Sun
+                                    // during an eclipse.
   boolean illuminateDaySide = true; // see buildSubFace's own comment on
                                      // what this actually brightens, and
                                      // why only a narrow band near the
@@ -69,6 +75,21 @@ class Moon3D {
   // the day are still lit by the sky's own scattered light, not true
   // night-black.
   boolean mixWithSkyColor = true;
+
+  // Paints faces in total darkness with Sky3D's own flat sky color
+  // instead of the usual (optionally sky-tinted) dark gray - see
+  // writeFaceWIN3D()'s own comment for exactly which faces this reaches.
+  // Visually, this makes the night side blend seamlessly into the sky
+  // except where it's actually in front of something else - which is
+  // the point: with displayNightSide also on (its own default now, for
+  // exactly this reason) the night side's geometry is still genuinely
+  // there and still occludes correctly, so a solar eclipse - the Moon
+  // passing in front of the Sun - shows the Sun's disk correctly
+  // "bitten into" by the Moon's silhouette, rather than either an
+  // ugly dark disk sitting in front of the Sun (useSkyColorForNightSide
+  // off) or the Sun wrongly showing through where the Moon should be
+  // blocking it (displayNightSide off).
+  boolean useSkyColorForNightSide = true;
 
   String Filename = BaseFolder + "/input/images/moon/Moon.jpg";
   PImage Map;
@@ -112,6 +133,27 @@ class Moon3D {
       min(255, gray + sky[1]),
       min(255, gray + sky[2])
     };
+  }
+
+  // The tint()/fill() RGB for one vertex, given its own brightness -
+  // useSkyColorForNightSide (see its own comment) overrides
+  // tintColorForGray() entirely with Sky3D's own flat sky color, but only
+  // for vertices truly AT the dark floor, not just dim: solar eclipses
+  // only happen at new moon, where the whole visible disk already sits
+  // at that floor (this app's one-sided culling, see shouldDrawSubFace(),
+  // already keeps the lit far side out of view), so there's no real need
+  // to blend smoothly through the thin terminator band the way
+  // brightness itself does - a vertex is either part of the eclipsing
+  // silhouette or it isn't.
+  int[] vertexColor (float brightness, int[] sky) {
+    if (this.useSkyColorForNightSide && brightness <= DARK_SIDE_AMBIENT + 0.001) {
+      return new int[]{
+        (Sky3D.flatColor >> 16) & 0xFF,
+        (Sky3D.flatColor >> 8) & 0xFF,
+        Sky3D.flatColor & 0xFF
+      };
+    }
+    return tintColorForGray(round(255 * brightness), sky);
   }
 
   // Multiplies every pixel's own R/G/B by level, then (when
@@ -554,8 +596,9 @@ class Moon3D {
       // second multiplicative tint) - same half-skyColor split
       // brightenTexture() already baked into the texture itself, so the
       // two line up instead of compounding into an over-blued result.
-      int gray = round(255 * subFace[s].brightness);
-      int[] tintColor = tintColorForGray(gray, sky);
+      // useSkyColorForNightSide (see vertexColor()'s own comment) can
+      // override this entirely, for vertices in total darkness.
+      int[] tintColor = vertexColor(subFace[s].brightness, sky);
 
       if (this.displayTexture) {
         WIN3D.graphics.tint(tintColor[0], tintColor[1], tintColor[2]);

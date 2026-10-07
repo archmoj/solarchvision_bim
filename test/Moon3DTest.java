@@ -567,6 +567,64 @@ class Moon3DTest {
     assertArrayEquals(new int[]{100, 100, 100}, result);
   }
 
+  // ================= displayNightSide / useSkyColorForNightSide ====================
+  // Together, these make a solar eclipse show correctly - the Moon's
+  // silhouette actually occluding the Sun's disk (displayNightSide drawing
+  // its geometry rather than skipping it) while blending into the sky
+  // everywhere else (useSkyColorForNightSide painting it as Sky3D's own
+  // flat sky color rather than a dark gray disk) - see both fields' own
+  // comments.
+
+  @Test
+  void displayNightSide_defaultsToOn () {
+    assertTrue(app.Moon3D.displayNightSide);
+  }
+
+  @Test
+  void useSkyColorForNightSide_defaultsToOn () {
+    assertTrue(app.Moon3D.useSkyColorForNightSide);
+  }
+
+  @Test
+  void vertexColor_atTheDarkFloor_usesSky3DsFlatColorExactly () {
+    int[] sky = app.Moon3D.halfSkyColor();
+
+    int[] result = app.Moon3D.vertexColor(app.Moon3D.DARK_SIDE_AMBIENT, sky);
+
+    int[] expected = new int[]{
+      (app.Sky3D.flatColor >> 16) & 0xFF,
+      (app.Sky3D.flatColor >> 8) & 0xFF,
+      app.Sky3D.flatColor & 0xFF
+    };
+    assertArrayEquals(expected, result);
+  }
+
+  @Test
+  void vertexColor_justAboveTheDarkFloor_usesTheNormalTint_notSkyColor () {
+    int[] sky = app.Moon3D.halfSkyColor();
+
+    int[] result = app.Moon3D.vertexColor(app.Moon3D.DARK_SIDE_AMBIENT + 0.01f, sky);
+
+    assertArrayEquals(app.Moon3D.tintColorForGray(Math.round(255 * (app.Moon3D.DARK_SIDE_AMBIENT + 0.01f)), sky), result);
+  }
+
+  @Test
+  void vertexColor_fullyLit_isUnaffectedByUseSkyColorForNightSide () {
+    int[] sky = app.Moon3D.halfSkyColor();
+
+    assertArrayEquals(app.Moon3D.tintColorForGray(255, sky), app.Moon3D.vertexColor(1.0f, sky));
+  }
+
+  @Test
+  void vertexColor_atTheDarkFloor_usesTheNormalDarkTint_whenUseSkyColorForNightSideIsOff () {
+    app.Moon3D.useSkyColorForNightSide = false;
+    int[] sky = app.Moon3D.halfSkyColor();
+
+    int[] result = app.Moon3D.vertexColor(app.Moon3D.DARK_SIDE_AMBIENT, sky);
+
+    assertArrayEquals(app.Moon3D.tintColorForGray(Math.round(255 * app.Moon3D.DARK_SIDE_AMBIENT), sky), result);
+  }
+
   @Test
   void loadImages_appliesTheDefaultBrighteningToTheRealBundledTexture () {
     app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
