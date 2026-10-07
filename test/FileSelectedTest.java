@@ -105,6 +105,11 @@ class FileSelectedTest {
 
     app._fileSelected_RunScript(scriptFile.toFile());
 
+    // runScriptFile only queues the file's lines now (see its own
+    // comment in runScript.pde) - a real draw() frame is what actually
+    // runs them; runPendingScriptLines() stands in for that here.
+    app.runPendingScriptLines();
+
     assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
     assertEquals(-73.6f, app.STATION.getLongitude(), 0.001f);
   }

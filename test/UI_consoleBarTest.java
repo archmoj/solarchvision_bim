@@ -295,4 +295,88 @@ class UI_consoleBarTest {
     assertEquals("a", app.UI_consoleBar.editText); // untouched, never went negative
     assertEquals(0, app.UI_consoleBar.editCursor);
   }
+
+  // ================= pasteLines (Ctrl+V): queues all but the live last line =====
+  // Pulled out of keyPressed's own real-clipboard branch (getClipboardText()
+  // hits the live system clipboard, not unit-testable as-is) precisely so
+  // this - the actual bug fixed here - can be tested directly: pasting a
+  // multi-section .svs file used to run each line synchronously, in that
+  // one keyPressed() call, via runCurrentCommand() - which silently
+  // discarded every section but the last (each later section's camera/
+  // REC.png state overwrote the previous one's before a draw() frame ever
+  // got a chance to render and save it). pasteLines queues instead (see
+  // pendingScriptLines in runScript.pde), the same as RUN.SCRIPT and
+  // RUN=<file>.
+
+  @Test
+  void pasteLines_aSingleLine_justInsertsItAtTheCursor_queuesNothing () {
+    app.UI_consoleBar.editText = "ab";
+    app.UI_consoleBar.editCursor = 1;
+
+    app.UI_consoleBar.pasteLines(new String[]{"XY"});
+
+    assertEquals("aXYb", app.UI_consoleBar.editText);
+    assertEquals(3, app.UI_consoleBar.editCursor);
+    assertTrue(app.pendingScriptLines.isEmpty());
+  }
+
+  @Test
+  void pasteLines_mergesTheFirstLineAtTheCursor_beforeQueuingIt () {
+    app.UI_consoleBar.editText = "ab";
+    app.UI_consoleBar.editCursor = 1;
+
+    app.UI_consoleBar.pasteLines(new String[]{"XY", "second"});
+
+    assertEquals(java.util.List.of("aXYb"), app.pendingScriptLines);
+    // the last line is left live, not queued:
+    assertEquals("second", app.UI_consoleBar.editText);
+    assertEquals(0, app.UI_consoleBar.editCursor);
+  }
+
+  @Test
+  void pasteLines_queuesEveryLineExceptTheLast_leavesTheLastLineLiveForEditing () {
+    app.UI_consoleBar.pasteLines(new String[]{"Top", "REC.png top", "=======", "Front"});
+
+    assertEquals(
+      java.util.List.of("Top", "REC.png top", "======="),
+      app.pendingScriptLines
+    );
+    assertEquals("Front", app.UI_consoleBar.editText);
+    assertEquals(0, app.UI_consoleBar.editCursor);
+  }
+
+  @Test
+  void pasteLines_echoesEveryQueuedLine_intoTheConsoleHistory () {
+    app.UI_consoleBar.pasteLines(new String[]{"one", "two", "three"});
+
+    assertEquals(
+      java.util.List.of("Command Input:", "one", "two", ""),
+      app.UI_consoleBar.allCommands
+    );
+    assertEquals("three", app.UI_consoleBar.editText);
+  }
+
+  @Test
+  void pasteLines_ofAFullMultiSectionScript_runsOneSectionPerSimulatedFrame () {
+    // The exact scenario this fix is for: pasting a whole .svs-style
+    // script straight into the console, ending with a trailing blank
+    // line (as a real multi-line paste from a file normally would).
+    app.allActions = new java.util.HashMap<>(); // fresh app never runs build_allActions() itself
+    float defaultLatitude = app.STATION.getLatitude(); // STATION starts at a real default city, not 0,0
+
+    app.UI_consoleBar.pasteLines(new String[]{
+      "SETLAT 10", "=======", "SETLAT 20", "=======", "SETLAT 30", ""
+    });
+
+    assertEquals(defaultLatitude, app.STATION.getLatitude(), 0.001f); // nothing run yet
+
+    app.runPendingScriptLines(); // "frame" 1
+    assertEquals(10f, app.STATION.getLatitude(), 0.001f);
+
+    app.runPendingScriptLines(); // "frame" 2
+    assertEquals(20f, app.STATION.getLatitude(), 0.001f);
+
+    app.runPendingScriptLines(); // "frame" 3
+    assertEquals(30f, app.STATION.getLatitude(), 0.001f);
+  }
 }

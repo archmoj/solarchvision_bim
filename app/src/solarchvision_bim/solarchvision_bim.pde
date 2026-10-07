@@ -108,9 +108,12 @@ void draw () {
   UI_rollout.processHeldKey();
 
   if (!draw_initial_frames()) {
-    if(stepAfterInitialization < runAfterInitialization.length) {
-      runScriptLines(runAfterInitialization[stepAfterInitialization]);
-    }
+    // Captured before draining: distinguishes "ran something this frame"
+    // from "there was already nothing left to do", which the USER_AUTO
+    // exit check below needs (pendingScriptLines is itself empty either
+    // way by the time this line finishes).
+    boolean hadPendingScriptLines = !pendingScriptLines.isEmpty();
+    runPendingScriptLines();
     stepAfterInitialization++;
 
     applyRolloutUpdate();
@@ -147,7 +150,13 @@ void draw () {
     }
 
     if (control == USER_AUTO) {
-      if(stepAfterInitialization > runAfterInitialization.length) {
+      // One frame after pendingScriptLines last had anything in it (not
+      // the instant it empties - that's still the same frame whatever
+      // was queued is being run): gives that last frame's render/screenshot
+      // one full cycle to actually happen before the process exits. If
+      // nothing was ever queued (no RUN=<file> given), this is simply the
+      // first post-initialization frame.
+      if (!hadPendingScriptLines) {
         // One-time: confirms the normal USER_AUTO exit path was actually
         // reached (as opposed to the process being torn down some other
         // way - a CI timeout, a crash, etc.)

@@ -166,31 +166,60 @@ class UI_consoleBar {
   int navKeyFrameCounter = 0;
   boolean navKeyRepeating = false;
 
+  // Pure decision logic for a Ctrl+V paste, pulled out of keyPressed's
+  // own real-clipboard branch (getClipboardText() hits the live system
+  // clipboard, not unit-testable as-is - see test/README.md's own note
+  // on this pattern) so it can be tested directly against a plain
+  // String[], the same as RUN.SCRIPT and RUN=<file> are. Every line up
+  // to (not including) the last one is a complete command once the
+  // first has merged with whatever was already at the cursor - queued
+  // together (see pendingScriptLines in runScript.pde) rather than run
+  // immediately, one at a time right here, so a "=" section divider
+  // among them defers correctly to a later draw() frame instead of
+  // every line running synchronously, back to back, in this one
+  // keyPressed() call. Running each line immediately (the old
+  // behavior, via runCurrentCommand()) is exactly what silently
+  // discarded every section but the last whenever a multi-section .svs
+  // file got pasted in: each later section's dispatch - also
+  // synchronous, also right here - overwrote the previous one's
+  // camera/REC.png state before a draw() frame ever got a chance to
+  // render and save it. The echoed console history (allCommands) still
+  // reflects every pasted line immediately, even though its command may
+  // not actually run until a later frame. The last pasted line stays
+  // live in the editor, exactly as before the fix - the user can keep
+  // typing/editing it, or press Enter themselves (cursor at its start,
+  // matching runCurrentCommand()'s own editCursor = 0 reset, which the
+  // old per-line loop relied on here too).
+  void pasteLines (String[] allLines) {
+    if (allLines.length > 0) {
+      this.editText =
+      this.editText.substring(0, this.editCursor) + allLines[0] +
+      this.editText.substring(this.editCursor);
+      this.editCursor += allLines[0].length();
+    }
+
+    if (allLines.length > 1) {
+      String[] toQueue = new String[allLines.length - 1];
+      toQueue[0] = this.editText; // line 0, merged with the cursor above
+      for (int i = 1; i < allLines.length - 1; i++) toQueue[i] = allLines[i];
+
+      for (String queuedLine : toQueue) {
+        this.allCommands.set(this.allCommands.size() - 1, queuedLine);
+        this.allCommands.add("");
+      }
+
+      queuePendingScriptLines(toQueue);
+
+      this.editText = allLines[allLines.length - 1];
+      this.editCursor = 0;
+    }
+  }
+
   void keyPressed (KeyEvent e) {
     if (e.isControlDown() && (!e.isAltDown()) && (e.getKeyCode() == 86)) { // key code 86 corresponds to V (Ctrl+V)
       this.navKeyHeld = false;
 
-      String[] allLines = split(getClipboardText(), '\n');
-
-      for (int i = 0; i < allLines.length; i++) {
-        String line = allLines[i];
-        if(i == 0) {
-          this.editText =
-          this.editText.substring(0, this.editCursor) + line +
-          this.editText.substring(this.editCursor);
-          this.editCursor += line.length();
-        } else {
-          // run previous command before adding new line
-          String hint = runCurrentCommand();
-          this.allCommands.add("");
-
-          // interrupt in case of error
-          if(hint.equals(UnrecognizedCommand)) break;
-
-          // add new line
-          this.editText = line;
-        }
-      }
+      pasteLines(split(getClipboardText(), '\n'));
     } else if ((!e.isAltDown()) && (!e.isControlDown())) {
 
       boolean isCoded = (key == CODED);

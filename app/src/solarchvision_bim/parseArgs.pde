@@ -12,8 +12,6 @@ void parseArgs(String[] passedArgs) {
   }
 }
 
-String[][] runAfterInitialization = new String[0][0];
-
 final int LOGLEVEL_GUI_AND_PRINT = 3;
 final int LOGLEVEL_GUI_ONLY      = 2;
 final int LOGLEVEL_PRINT_ONLY    = 1;
@@ -95,40 +93,12 @@ void _useArg(String arg) {
     if (_tokens.length > 1) {
       input_str = _tokens[1];
       if (!input_str.equals("")) {
-        runAfterInitialization = splitByEqualSign(loadStrings(input_str));
+        // Queued whole, as one flat array - runScriptLines itself (see
+        // runScript.pde) splits at "=" dividers as it goes, deferring
+        // whatever comes after one to a later draw() frame, rather than
+        // this needing to pre-split into per-frame sections up front.
+        queuePendingScriptLines(loadStrings(input_str));
       }
     }
   }
-}
-
-
-String[][] splitByEqualSign(String[] original) {
-  String[][] sections = new String[0][]; // Fixed: Initialized with size 0
-  int count = 0;
-  int start = 0;
-
-  while (start < original.length) {
-      // Find where this current section ends (by looking for the next "=")
-      int end = start + 1;
-      while (
-        end < original.length &&
-        (
-          original[end] == null ||
-          !original[end].startsWith("=")
-        )
-      ) {
-          end++;
-      }
-
-      // Expand our outer array by 1 element manually
-      sections = Arrays.copyOf(sections, count + 1);
-
-      // Shallow copy the segment
-      sections[count] = Arrays.copyOfRange(original, start, end);
-
-      count++;
-      start = end; // Move to the start of the next section
-  }
-
-  return sections;
 }

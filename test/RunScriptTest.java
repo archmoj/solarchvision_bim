@@ -1080,14 +1080,125 @@ class RunScriptTest {
   // own tests (see FileSelectedTest.java).
 
   @Test
-  void runScriptFile_readsARealFileAndRunsItsLines () throws java.io.IOException {
+  void runScriptFile_queuesItsLines_runOnTheNextDrawFrame () throws java.io.IOException {
+    // runScriptFile only queues (see its own comment in runScript.pde) -
+    // runPendingScriptLines() stands in for the next draw() frame that
+    // would actually drain it.
     java.nio.file.Path script = java.nio.file.Files.createTempFile("runscript-file-test", ".svs");
     java.nio.file.Files.writeString(script, "SETLAT 45.5\n");
 
     String hint = app.runScriptFile(script.toString());
+    assertEquals("", hint);
+    assertEquals(java.util.List.of("SETLAT 45.5"), app.pendingScriptLines);
+
+    app.runPendingScriptLines();
+
+    assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
+  }
+
+  // ================= section dividers ("=" lines): deferred to a later frame ====
+  // runScriptLines stops at a "=" line and queues everything after it
+  // into pendingScriptLines (see runScript.pde) instead of running it in
+  // the same call - draw() in solarchvision_bim.pde drains that queue
+  // once per frame via runPendingScriptLines(), which is what makes a
+  // "=" divider act as "go to the next frame" for ANY runScriptLines
+  // call: the RUN=<file> startup script (see parseArgs.pde) and a
+  // RUN.SCRIPT run from the live command line after initialization are
+  // now the exact same mechanism, not two separate ones.
+
+  @Test
+  void runScriptLines_withNoSectionDivider_runsEverythingInOneCall () {
+    String hint = app.runScriptLines(new String[]{"SETLAT 10", "SETLON 20"});
 
     assertEquals("", hint);
-    assertEquals(45.5f, app.STATION.getLatitude(), 0.001f);
+    assertEquals(10f, app.STATION.getLatitude(), 0.001f);
+    assertEquals(20f, app.STATION.getLongitude(), 0.001f);
+    assertTrue(app.pendingScriptLines.isEmpty());
+  }
+
+  @Test
+  void runScriptLines_stopsAtASectionDivider_andQueuesTheRemainingLines () {
+    float defaultLongitude = app.STATION.getLongitude(); // STATION starts at a real default city, not 0,0
+
+    app.runScriptLines(new String[]{"SETLAT 10", "=======", "SETLON 20"});
+
+    // Only the line before "=======" ran...
+    assertEquals(10f, app.STATION.getLatitude(), 0.001f);
+    // ...the line after it did not, yet:
+    assertEquals(defaultLongitude, app.STATION.getLongitude(), 0.001f);
+    assertEquals(java.util.List.of("SETLON 20"), app.pendingScriptLines);
+  }
+
+  @Test
+  void runScriptLines_aSectionDividerAsTheLastLine_queuesNothing () {
+    app.runScriptLines(new String[]{"SETLAT 10", "======="});
+
+    assertEquals(10f, app.STATION.getLatitude(), 0.001f);
+    assertTrue(app.pendingScriptLines.isEmpty());
+  }
+
+  @Test
+  void runPendingScriptLines_onAnEmptyQueue_doesNothing () {
+    assertDoesNotThrow(() -> app.runPendingScriptLines());
+  }
+
+  @Test
+  void runPendingScriptLines_drainsOneSectionPerCall_matchingOneDrawFramePerSection () {
+    float defaultLongitude = app.STATION.getLongitude(); // STATION starts at a real default city, not 0,0
+
+    // Three "frames" worth of work, queued the way a RUN.SCRIPT'd file
+    // with two "=" dividers would be - exactly command/test/views.svs's
+    // own shape (several "switch view, then REC.png" sections, one per
+    // frame).
+    app.queuePendingScriptLines(new String[]{
+      "SETLAT 10", "=======", "SETLON 20", "=======", "SETLAT 30"
+    });
+
+    app.runPendingScriptLines(); // "frame" 1
+    assertEquals(10f, app.STATION.getLatitude(), 0.001f);
+    assertEquals(defaultLongitude, app.STATION.getLongitude(), 0.001f); // not yet
+
+    app.runPendingScriptLines(); // "frame" 2
+    assertEquals(20f, app.STATION.getLongitude(), 0.001f);
+    assertEquals(10f, app.STATION.getLatitude(), 0.001f); // unchanged this frame
+
+    app.runPendingScriptLines(); // "frame" 3
+    assertEquals(30f, app.STATION.getLatitude(), 0.001f);
+    assertTrue(app.pendingScriptLines.isEmpty());
+  }
+
+  @Test
+  void runScriptFile_withASectionDivider_runsOneSectionPerSimulatedFrame () throws java.io.IOException {
+    // The exact shape RUN.SCRIPT (__RUN_SCRIPT__ -> runScriptFile) hits
+    // when run from the live command line *after* initialization has
+    // already completed, and the exact bug this guards against: a
+    // *synchronous* first section (i.e. anything runScriptFile itself
+    // ran immediately, rather than only queuing) would get overwritten
+    // by the second section's dispatch on the very next draw() frame
+    // before ever getting a frame of its own to render and save - always
+    // silently losing exactly the first section. So runScriptFile must
+    // run nothing at all synchronously, not even "up to the first
+    // divider": every section, including the first, needs its own
+    // runPendingScriptLines() call (standing in for a draw() frame) in
+    // this test, exactly like every section after it.
+    float defaultLatitude = app.STATION.getLatitude();   // STATION starts at a real default city, not 0,0
+    float defaultLongitude = app.STATION.getLongitude();
+
+    java.nio.file.Path script = java.nio.file.Files.createTempFile("runscript-sections-test", ".svs");
+    java.nio.file.Files.writeString(script, "SETLAT 10\n=======\nSETLON 20\n");
+
+    app.runScriptFile(script.toString());
+
+    // Nothing has run yet - not even the first section:
+    assertEquals(defaultLatitude, app.STATION.getLatitude(), 0.001f);
+    assertEquals(defaultLongitude, app.STATION.getLongitude(), 0.001f);
+
+    app.runPendingScriptLines(); // "frame" 1
+    assertEquals(10f, app.STATION.getLatitude(), 0.001f);
+    assertEquals(defaultLongitude, app.STATION.getLongitude(), 0.001f); // still not yet
+
+    app.runPendingScriptLines(); // "frame" 2
+    assertEquals(20f, app.STATION.getLongitude(), 0.001f);
   }
 
   // ================= ___executeScriptLine___'s own text normalization =============
@@ -1141,6 +1252,10 @@ class RunScriptTest {
     String hint = app.runScriptLine("RUN.SCRIPT run-dot-script-nested-test.svs");
 
     assertEquals("", hint);
+    assertEquals(java.util.List.of("SETLAT 33.3"), app.pendingScriptLines); // queued, not run yet - see runScriptFile's own comment
+
+    app.runPendingScriptLines(); // the next draw() frame would supply this
+
     assertEquals(33.3f, app.STATION.getLatitude(), 0.001f);
   }
 }

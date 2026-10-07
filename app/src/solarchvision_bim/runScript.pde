@@ -1,16 +1,67 @@
 final String UnrecognizedCommand = "Unrecognized command!";
 
 String runScriptFile (String FileName) {
-  String[] FileALL = loadStrings(FileName);
+  // Queued, not run synchronously - see pendingScriptLines's own comment
+  // below. Called from the live command line (RUN.SCRIPT) or the "File >
+  // Run Script..." dialog, both well after initialization and well
+  // outside any draw() frame's own dispatch: running even just the part
+  // before the file's first "=" right here, immediately, would apply
+  // that section's state (camera, REC.png's filename, ...) without ever
+  // giving it a draw() frame of its own to actually render and save -
+  // the very next frame's dispatch of whatever follows (deferred into
+  // the same queue) would overwrite it first. Queuing the whole file
+  // here instead means its first section gets its own frame exactly the
+  // same way every section after it already does (see runScriptLines).
+  queuePendingScriptLines(loadStrings(FileName));
+  return "";
+}
 
-  return runScriptLines(FileALL);
+// Lines waiting to run on a later draw() frame - fed wholesale by
+// runScriptFile (below) and by parseArgs.pde's own RUN=<file> startup
+// handling, and incrementally by runScriptLines itself whenever it hits
+// a "=" section-divider line partway through what it was just given
+// (see below). Drained once per frame by runPendingScriptLines(),
+// called from draw() in solarchvision_bim.pde. Together, this is what
+// makes a "=" divider act as "go to the next frame before continuing"
+// consistently - the startup RUN=<file> script, a RUN.SCRIPT run from
+// the live command line well after initialization, and anything queued
+// recursively from within an already-running script, are all the exact
+// same mechanism, not several separate ones with their own timing.
+ArrayList<String> pendingScriptLines = new ArrayList<String>();
+
+void queuePendingScriptLines (String[] lines) {
+  for (String line : lines) pendingScriptLines.add(line);
+}
+
+// Called once per frame from draw(): runs whatever is currently queued,
+// which may itself re-queue part of what it just ran (if it hits
+// another "=") to continue on a later frame still.
+void runPendingScriptLines () {
+  if (pendingScriptLines.isEmpty()) return;
+  String[] lines = pendingScriptLines.toArray(new String[0]);
+  pendingScriptLines.clear();
+  runScriptLines(lines);
 }
 
 String runScriptLines (String[] FileALL) {
   String hint = "";
-  boolean shouldDrawDirective = false;
   for (int f = 0; f < FileALL.length; f++) {
     String lineSTR = FileALL[f];
+
+    // A line starting with "=" is a section divider: defer every line
+    // after it to a later draw() frame, instead of running it in this
+    // same call. Needed for real, not just pacing - draw_WIN3D_layers()
+    // and the FRAME_record_IMG/RecordFrame() check in draw() each run
+    // once per frame, so running several "switch view, then REC.png"
+    // sections back to back in one call would only ever render and save
+    // the *last* one (see command/test/views.svs, which relies on
+    // exactly this to capture one screenshot per view).
+    if (lineSTR.stripLeading().startsWith("=")) {
+      if (f + 1 < FileALL.length) {
+        queuePendingScriptLines(Arrays.copyOfRange(FileALL, f + 1, FileALL.length));
+      }
+      return hint;
+    }
 
     hint = _runScriptLine(lineSTR, false);
     if(hint.equals(UnrecognizedCommand)) return UnrecognizedCommand;
