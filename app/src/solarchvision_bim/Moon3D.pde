@@ -42,6 +42,34 @@ class Moon3D {
 
   boolean fitInSkyDome = true;
 
+  // The naked eye sees the real Moon as close to white, both day and
+  // night, but the bundled texture's own raw pixels are a fairly dark
+  // gray (its actual albedo is low, closer to worn asphalt than to snow -
+  // it only reads as bright against the night sky, a contrast effect a
+  // flat texture can't reproduce on its own). illuminateDaySide (see its
+  // own comment) addresses a different problem - the per-vertex falloff
+  // near the terminator - and can't fix this: multiplying the SOURCE
+  // IMAGE's own pixels once, right after loading (see load_images()), is
+  // the only one of the two that actually touches the image's overall
+  // exposure. 1 leaves it unchanged; 1.25 raises it by a quarter (clamped
+  // at 255).
+  float brightenLevel = 1.25;
+
+  // By daylight the real Moon never actually reads as gray - what little
+  // of it isn't lost in the sky's own glare looks tinted toward the sky's
+  // own blue, same as any other distant pale object seen through daytime
+  // atmosphere (the same scattering that makes the sky itself blue).
+  // skyColor is that daytime sky color; mixWithSkyColor (see
+  // brightenTexture() and writeFaceWIN3D() for where it's actually used)
+  // toggles blending HALF of it additively into both the stored texture
+  // and the per-vertex brightness - additively, not as a multiplicative
+  // tint, because a plain tint (texture_color * gray/255) drives any
+  // color toward black as gray drops, losing the blue entirely right
+  // where it matters most: the Moon's own shadowed regions, which during
+  // the day are still lit by the sky's own scattered light, not true
+  // night-black.
+  boolean mixWithSkyColor = true;
+
   String Filename = BaseFolder + "/input/images/moon/Moon.jpg";
   PImage Map;
 
@@ -57,6 +85,58 @@ class Moon3D {
 
   void load_images () {
     this.Map = loadImage(this.Filename);
+    brightenTexture(this.Map, this.brightenLevel);
+  }
+
+  // Half of skyColor's own R/G/B, as {r, g, b} - shared by brightenTexture()
+  // and writeFaceWIN3D(), the two places that actually mix it in, so the
+  // split between them never drifts out of sync with each other or with
+  // skyColor itself.
+  int[] halfSkyColor () {
+    return new int[]{
+      ((Sky3D.flatColor >> 16) & 0xFF) / 2,
+      ((Sky3D.flatColor >> 8) & 0xFF) / 2,
+      (Sky3D.flatColor & 0xFF) / 2
+    };
+  }
+
+  // The tint()/fill() RGB for a given 0-255 gray brightness value - sky
+  // is halfSkyColor() when mixWithSkyColor is on, or null when it's off
+  // (a plain gray, same as before mixWithSkyColor existed). Pulled out of
+  // writeFaceWIN3D() itself so this part of it - unlike the
+  // WIN3D.graphics calls around it - is directly testable.
+  int[] tintColorForGray (int gray, int[] sky) {
+    if (sky == null) return new int[]{gray, gray, gray};
+    return new int[]{
+      min(255, gray + sky[0]),
+      min(255, gray + sky[1]),
+      min(255, gray + sky[2])
+    };
+  }
+
+  // Multiplies every pixel's own R/G/B by level, then (when
+  // mixWithSkyColor) adds half of skyColor on top of that - in place,
+  // clamped to 255 - once, right after loading (see load_images()), not
+  // per-vertex/per-frame like illuminateDaySide's own tint() (see
+  // writeFaceWIN3D), which modulates how a SINGLE loaded frame gets
+  // drawn, not the texture's own stored pixels. A plain RGB multiply (for
+  // the level part), rather than converting to HSB and scaling brightness
+  // alone, is enough here since the bundled Moon texture is already close
+  // to grayscale (R=G=B), so there's essentially no hue of its own to
+  // preserve or risk shifting.
+  void brightenTexture (PImage img, float level) {
+    if (level == 1 && !this.mixWithSkyColor) return; // no-op - skip the loadPixels()/updatePixels() cost for nothing
+    int[] sky = this.mixWithSkyColor ? halfSkyColor() : new int[]{0, 0, 0};
+    img.loadPixels();
+    for (int i = 0; i < img.pixels.length; i++) {
+      int c = img.pixels[i];
+      int a = (c >> 24) & 0xFF;
+      int r = min(255, sky[0] + round(((c >> 16) & 0xFF) * level));
+      int g = min(255, sky[1] + round(((c >> 8) & 0xFF) * level));
+      int b = min(255, sky[2] + round((c & 0xFF) * level));
+      img.pixels[i] = (a << 24) | (r << 16) | (g << 8) | b;
+    }
+    img.updatePixels();
   }
 
   // An orthonormal (right, up) pair perpendicular to the given forward
@@ -459,17 +539,28 @@ class Moon3D {
       WIN3D.graphics.texture(this.Map);
     }
 
+    // Computed once per face, not per-vertex - doesn't depend on the
+    // vertex itself, only on skyColor (see its own comment).
+    int[] sky = this.mixWithSkyColor ? halfSkyColor() : null;
+
     for (int s = 0; s < subFace.length; s++) {
       // Per-vertex phase darkening: tint() modulates the bound texture's
       // own colors (what fill() would do for an untextured shape - see
       // Faces.pde's own SHADE.vertexRender_*() + fill() pattern, the same
       // "set it right before this vertex()" technique, just texture-aware
       // here since the Moon always has one bound when displayTexture).
+      // mixWithSkyColor replaces the flat gray with a blue-shifted one
+      // (see its own comment on why this needs to be additive, not a
+      // second multiplicative tint) - same half-skyColor split
+      // brightenTexture() already baked into the texture itself, so the
+      // two line up instead of compounding into an over-blued result.
       int gray = round(255 * subFace[s].brightness);
+      int[] tintColor = tintColorForGray(gray, sky);
+
       if (this.displayTexture) {
-        WIN3D.graphics.tint(gray);
+        WIN3D.graphics.tint(tintColor[0], tintColor[1], tintColor[2]);
       } else {
-        WIN3D.graphics.fill(gray);
+        WIN3D.graphics.fill(tintColor[0], tintColor[1], tintColor[2]);
       }
 
       WIN3D.graphics.vertex(

@@ -207,10 +207,11 @@ class Sky3D {
     WIN3D.graphics.endShape(CLOSE);
   }
 
+  color flatColor = color(127, 191, 255);
+
   void writeDomeFlat () {
-    color c = color(191, 191, 255);
     WIN3D.graphics.noStroke();
-    WIN3D.graphics.fill(c); // same flat color regardless of shade mode here
+    WIN3D.graphics.fill(flatColor); // same flat color regardless of shade mode here
     //WIN3D.graphics.noFill();
 
     for (int f = 0; f < skyFaces.length; f++) {

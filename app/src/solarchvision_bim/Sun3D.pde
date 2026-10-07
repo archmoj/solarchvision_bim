@@ -25,6 +25,14 @@ class Sun3D {
 
   boolean fitInSkyDome = true;
 
+  // Same reasoning as Moon3D.pde's own brightenLevel: the bundled
+  // texture's own raw pixels render dimmer than the real Sun looks to
+  // the naked eye, and this is the one thing that can fix that - a
+  // one-time multiply of the loaded texture's own pixels (see
+  // load_images()), not a per-vertex/per-frame tint. 1 leaves it
+  // unchanged; 2.5 raises it two and a half times over (clamped at 255).
+  float brightenLevel = 2.5;
+
   String Filename = BaseFolder + "/input/images/sun/Sun.jpg";
   PImage Map;
 
@@ -35,6 +43,26 @@ class Sun3D {
 
   void load_images () {
     Map = loadImage(Filename);
+    brightenTexture(Map, brightenLevel);
+  }
+
+  // Multiplies every pixel's own R/G/B by level, in place, clamped to
+  // 255 - see Moon3D.pde's own brightenTexture() for the full reasoning;
+  // this is the identical construction, just duplicated rather than
+  // shared, the same way the two files' (right, up) frame construction
+  // already is.
+  void brightenTexture (PImage img, float level) {
+    if (level == 1) return; // no-op - skip the loadPixels()/updatePixels() cost for nothing
+    img.loadPixels();
+    for (int i = 0; i < img.pixels.length; i++) {
+      int c = img.pixels[i];
+      int a = (c >> 24) & 0xFF;
+      int r = min(255, round(((c >> 16) & 0xFF) * level));
+      int g = min(255, round(((c >> 8) & 0xFF) * level));
+      int b = min(255, round((c & 0xFF) * level));
+      img.pixels[i] = (a << 24) | (r << 16) | (g << 8) | b;
+    }
+    img.updatePixels();
   }
 
   int wrapDayIndex (float rawDay) {

@@ -451,6 +451,147 @@ class Moon3DTest {
     assertEquals(512, app.Moon3D.Map.height);
   }
 
+  // ================= brightenLevel / brightenTexture() =============================
+  // A plain, one-time pixel multiply applied to the loaded texture itself
+  // (see Moon3D.pde's own comment on why illuminateDaySide, a per-vertex/
+  // per-frame tint, can't substitute for this) - tested here against a
+  // small synthetic image, not the real bundled one, so the exact
+  // before/after pixel values are known rather than inferred.
+
+  @Test
+  void brightenLevel_defaultsToOnePointTwoFive () {
+    assertEquals(1.25f, app.Moon3D.brightenLevel, 0.0001f);
+  }
+
+  @Test
+  void brightenTexture_multipliesEachChannel_clampedAt255_alphaUntouched () {
+    // mixWithSkyColor off here, to isolate the plain level-multiply this
+    // test is actually about - see its own tests, further down, for what
+    // mixWithSkyColor adds on top.
+    app.Moon3D.mixWithSkyColor = false;
+    processing.core.PImage img = app.createImage(2, 1, processing.core.PConstants.ARGB);
+    img.loadPixels();
+    img.pixels[0] = 0xFF323232; // (50,50,50) * 2 -> (100,100,100), no clamping
+    img.pixels[1] = 0x80808080; // alpha=128, (128,128,128) * 2 -> clamps to (255,255,255)
+    img.updatePixels();
+
+    app.Moon3D.brightenTexture(img, 2.0f);
+
+    img.loadPixels();
+    assertEquals(0xFF646464, img.pixels[0]);
+    assertEquals(0x80FFFFFF, img.pixels[1]);
+  }
+
+  @Test
+  void brightenTexture_atLevelOne_isATrueNoOp_whenMixWithSkyColorIsAlsoOff () {
+    app.Moon3D.mixWithSkyColor = false;
+    processing.core.PImage img = app.createImage(1, 1, processing.core.PConstants.ARGB);
+    img.loadPixels();
+    img.pixels[0] = 0xFF123456;
+    img.updatePixels();
+
+    app.Moon3D.brightenTexture(img, 1.0f);
+
+    img.loadPixels();
+    assertEquals(0xFF123456, img.pixels[0]);
+  }
+
+  // ================= mixWithSkyColor / skyColor =====================================
+  // By daylight the real Moon reads as blue-tinted, not gray - see
+  // Moon3D.pde's own comment on mixWithSkyColor for the full reasoning,
+  // including why this has to be additive rather than a second
+  // multiplicative tint.
+
+  @Test
+  void mixWithSkyColor_defaultsToOn () {
+    assertTrue(app.Moon3D.mixWithSkyColor);
+  }
+
+  @Test
+  void skyColor_defaultsToADaytimeSkyBlue () {
+    assertEquals(app.color(127, 191, 255), app.Sky3D.flatColor);
+  }
+
+  @Test
+  void halfSkyColor_isExactlyHalf_ofEachChannel () {
+    int[] half = app.Moon3D.halfSkyColor();
+    assertArrayEquals(new int[]{63, 95, 127}, half); // 127/2, 191/2, 255/2, integer division
+  }
+
+  @Test
+  void brightenTexture_withMixWithSkyColor_addsHalfSkyColorOnTopOfTheLevelMultiply () {
+    app.Moon3D.mixWithSkyColor = true;
+    processing.core.PImage img = app.createImage(1, 1, processing.core.PConstants.ARGB);
+    img.loadPixels();
+    img.pixels[0] = 0xFF646400; // (100,100,0)
+    img.updatePixels();
+
+    app.Moon3D.brightenTexture(img, 1.25f);
+
+    img.loadPixels();
+    // r: 63 + round(100*1.25) = 63+125 = 188; g: 95+125 = 220; b: 127+round(0*1.25) = 127
+    assertEquals(0xFFBCDC7F, img.pixels[0]);
+  }
+
+  @Test
+  void brightenTexture_withMixWithSkyColor_isNotANoOp_evenAtLevelOne () {
+    // Confirms the level==1 short-circuit (see brightenTexture()'s own
+    // comment) correctly still runs the loop when mixWithSkyColor alone
+    // has something to do, even with no actual brightening requested.
+    app.Moon3D.mixWithSkyColor = true;
+    processing.core.PImage img = app.createImage(1, 1, processing.core.PConstants.ARGB);
+    img.loadPixels();
+    img.pixels[0] = 0xFF000000; // pure black
+    img.updatePixels();
+
+    app.Moon3D.brightenTexture(img, 1.0f);
+
+    img.loadPixels();
+    assertEquals(app.color(63, 95, 127), img.pixels[0]); // half the sky color, not still black
+  }
+
+  @Test
+  void tintColorForGray_withSky_addsHalfSkyColor_clampedAt255 () {
+    int[] sky = app.Moon3D.halfSkyColor();
+
+    int[] darkest = app.Moon3D.tintColorForGray(0, sky);
+    assertArrayEquals(new int[]{63, 95, 127}, darkest, "even the darkest shadow should show blue, not black");
+
+    int[] brightest = app.Moon3D.tintColorForGray(255, sky);
+    assertArrayEquals(new int[]{255, 255, 255}, brightest, "fully lit should still clamp to white, not overflow blue");
+  }
+
+  @Test
+  void tintColorForGray_withoutSky_isAPlainGray () {
+    int[] result = app.Moon3D.tintColorForGray(100, null);
+    assertArrayEquals(new int[]{100, 100, 100}, result);
+  }
+
+  @Test
+  void loadImages_appliesTheDefaultBrighteningToTheRealBundledTexture () {
+    app.Moon3D.Filename = System.getProperty("user.dir") + "/input/images/moon/Moon.jpg";
+    float theDefault = app.Moon3D.brightenLevel; // read, not hardcoded - this test
+                                                   // shouldn't need editing every
+                                                   // time the default itself changes.
+
+    app.Moon3D.brightenLevel = 1.0f; // effectively raw, for comparison
+    app.Moon3D.load_images();
+    double rawAvg = averageChannelValue(app.Moon3D.Map);
+
+    app.Moon3D.brightenLevel = theDefault;
+    app.Moon3D.load_images();
+    double brightAvg = averageChannelValue(app.Moon3D.Map);
+
+    assertTrue(brightAvg > rawAvg, "raw=" + rawAvg + " brightened=" + brightAvg);
+  }
+
+  private double averageChannelValue (processing.core.PImage img) {
+    img.loadPixels();
+    long sum = 0;
+    for (int px : img.pixels) sum += ((px >> 16) & 0xFF) + ((px >> 8) & 0xFF) + (px & 0xFF);
+    return sum / (double) (img.pixels.length * 3);
+  }
+
   // ================= draw(): the one part of this file that's off-limits =========
   // writeFaceWIN3D() (and so draw() itself, past its own displaySurface
   // guard) touches WIN3D.graphics directly - confirmed by hand against

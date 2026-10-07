@@ -332,6 +332,68 @@ class Sun3DTest {
     assertEquals(1500, app.Sun3D.Map.height);
   }
 
+  // ================= brightenLevel / brightenTexture() =============================
+  // Same construction as Moon3D.pde's own (see its own comment) - a
+  // plain, one-time pixel multiply applied to the loaded texture itself,
+  // duplicated here rather than shared, the same way the two files'
+  // (right, up) frame construction already is. Same tests, mirrored.
+
+  @Test
+  void brightenLevel_defaultsToTwoPointFive () {
+    assertEquals(2.5f, app.Sun3D.brightenLevel, 0.0001f);
+  }
+
+  @Test
+  void brightenTexture_multipliesEachChannel_clampedAt255_alphaUntouched () {
+    processing.core.PImage img = app.createImage(2, 1, processing.core.PConstants.ARGB);
+    img.loadPixels();
+    img.pixels[0] = 0xFF646464; // (100,100,100) * 1.5 -> (150,150,150), no clamping
+    img.pixels[1] = 0x80C8C8C8; // alpha=128, (200,200,200) * 1.5 -> clamps to (255,255,255)
+    img.updatePixels();
+
+    app.Sun3D.brightenTexture(img, 1.5f);
+
+    img.loadPixels();
+    assertEquals(0xFF969696, img.pixels[0]);
+    assertEquals(0x80FFFFFF, img.pixels[1]);
+  }
+
+  @Test
+  void brightenTexture_atLevelOne_isATrueNoOp () {
+    processing.core.PImage img = app.createImage(1, 1, processing.core.PConstants.ARGB);
+    img.loadPixels();
+    img.pixels[0] = 0xFF123456;
+    img.updatePixels();
+
+    app.Sun3D.brightenTexture(img, 1.0f);
+
+    img.loadPixels();
+    assertEquals(0xFF123456, img.pixels[0]);
+  }
+
+  @Test
+  void loadImages_appliesTheDefaultBrighteningToTheRealBundledTexture () {
+    app.Sun3D.Filename = System.getProperty("user.dir") + "/input/images/sun/Sun.jpg";
+    float theDefault = app.Sun3D.brightenLevel; // read, not hardcoded.
+
+    app.Sun3D.brightenLevel = 1.0f; // effectively raw, for comparison
+    app.Sun3D.load_images();
+    double rawAvg = averageChannelValue(app.Sun3D.Map);
+
+    app.Sun3D.brightenLevel = theDefault;
+    app.Sun3D.load_images();
+    double brightAvg = averageChannelValue(app.Sun3D.Map);
+
+    assertTrue(brightAvg > rawAvg, "raw=" + rawAvg + " brightened=" + brightAvg);
+  }
+
+  private double averageChannelValue (processing.core.PImage img) {
+    img.loadPixels();
+    long sum = 0;
+    for (int px : img.pixels) sum += ((px >> 16) & 0xFF) + ((px >> 8) & 0xFF) + (px & 0xFF);
+    return sum / (double) (img.pixels.length * 3);
+  }
+
   // ================= draw(): the one part of this file that's off-limits ==========
 
   @Test
