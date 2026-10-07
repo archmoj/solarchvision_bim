@@ -402,7 +402,7 @@ void printSameLine(String txt) {
 
 void displayDirective(String txt) {
   printDirective(txt);
-  //UI_consoleBar.drawDirective(txt, true);
+  UI_consoleBar.drawDirective(txt, true);
 }
 
 void printDirective(String txt) {

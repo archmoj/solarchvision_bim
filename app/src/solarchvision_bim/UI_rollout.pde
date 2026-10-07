@@ -863,12 +863,14 @@ class UI_rollout {
     int max_v = 1;
     int stp_v = 1;
     int roundStep = Math.abs(stp_v);
-    return (
+    float newValue = (
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, v ? 1.0 : 0.0, (float) min_v, (float) max_v, (float) stp_v),
         roundStep
       )
-    ) > 0.5;
+    );
+    if(v != (newValue > 0.5)) displayDirective(ACTION_HEAD + caption + " " + newValue);
+    return newValue > 0.5;
   }
 
   int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v) {
@@ -876,59 +878,71 @@ class UI_rollout {
     int max_v = 1;
     int stp_v = 1;
     int roundStep = Math.abs(stp_v);
-    return int(
+    int newValue = int(
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v),
         roundStep
       )
     );
+    if(v != newValue) displayDirective(ACTION_HEAD + caption + " " + newValue);
+    return newValue;
   }
 
   int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v) {
     int roundStep = Math.abs(stp_v);
-    return int(
+    int newValue = int(
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v),
         roundStep
       )
     );
+    if(v != newValue) displayDirective(ACTION_HEAD + caption + " " + newValue);
+    return newValue;
   }
 
   int Spinner (float x, float y, int update1, int update2, int update3, String caption, int v, int min_v, int max_v, int stp_v, int roundStep) {
-    return int(
+    int newValue = int(
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, (float) v, (float) min_v, (float) max_v, (float) stp_v),
         roundStep
       )
     );
+    if(v != newValue) displayDirective(ACTION_HEAD + caption + " " + newValue);
+    return newValue;
   }
 
   int Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, int min_v, int max_v, int stp_v, int roundStep) {
-    return int(
+    int newValue = int(
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, v, (float) min_v, (float) max_v, (float) stp_v),
         roundStep
       )
     );
+    if(v != newValue) displayDirective(ACTION_HEAD + caption + " " + newValue);
+    return newValue;
   }
 
   float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v, float roundStep) {
-    return (
+    float newValue = (
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v),
         roundStep
       )
     );
+    if(v != newValue) displayDirective(ACTION_HEAD + caption + " " + newValue);
+    return newValue;
   }
 
   float Spinner (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
     float roundStep = Math.abs(stp_v);
-    return (
+    float newValue = (
       funcs.roundTo(
         this._Spinner(x, y, update1, update2, update3, caption, v, min_v, max_v, stp_v),
         roundStep
       )
     );
+    if(v != newValue) displayDirective(ACTION_HEAD + caption + " " + newValue);
+    return newValue;
   }
 
   DecimalFormat df = new DecimalFormat("0.#####");
