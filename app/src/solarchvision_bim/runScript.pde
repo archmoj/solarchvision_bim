@@ -67,10 +67,17 @@ String _runScriptLine (String lineSTR, boolean shouldDrawDirective) {
 // runScriptLine below, even though each also has a bare, zero-argument
 // menu action of the same name (e.g. "Move" switches the active move
 // tool - see UI_setTo_Modify_Move). Without this, the allActions lookup
-// there would match that bare action by first token before the
-// switch-case ever runs, silently ignoring any parameters typed after
-// the command name - or the usage hint it would otherwise print without
-// them.
+// there would match that bare action - by a full-line match on the bare
+// name alone, or by first token when real parameters follow it - before
+// the switch-case ever runs, silently ignoring those parameters, or
+// printing that bare action's own hint instead of the switch-case
+// command's. Checked below against each of allActions' three match
+// attempts individually, against the exact key *that* attempt would
+// look up (the full line, the first token, or the line with its last
+// word removed) - not merely against the line's first word - so a
+// different, longer command that only *starts* with one of these names
+// (e.g. "Scale Vector Index", starting with "scale") is unaffected and
+// still dispatches normally.
 HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "box", "camera", "cone", "cushion",
   "cylinder", "house1", "house2", "house3",
@@ -105,49 +112,54 @@ String ___executeScriptLine___ (String lineSTR) {
 
   String key = lineSTR.toLowerCase();
 
-  // A handful of switch-case commands below take real parameters (e.g.
-  // MOVE dx:.. dy:.. dz:..) but also happen to share a name with a bare,
-  // zero-argument menu action that just switches a tool (e.g. "Move"
-  // switches the active move tool - see UI_setTo_Modify_Move). Checking
-  // allActions by first token would otherwise match that bare action
-  // before ever reaching the switch-case that actually reads the
-  // parameters - or prints a usage hint when there are none. Skipping the
-  // allActions lookup entirely for these specific names routes them to
-  // the switch-case unconditionally, exactly as before allActions was
-  // checked first.
-  if (!bypassAllActionsFor.contains(parts[0].toLowerCase())) {
-    if(!key.equals("")) {
-      // Full-line match first (menu captions such as "Save As..." that may
-      // contain spaces and take no arguments).
-      Action action = allActions.get(key);
-      String[] actionArgs = parts;
+  if(!key.equals("")) {
+    Action action = null;
+    String[] actionArgs = parts;
 
-      // Otherwise fall back to a first-token match, so commands registered
-      // with parameters (e.g. "start_day 15") can be reused here.
-      if ((action == null) && (parts.length > 0)) {
-        action = allActions.get(parts[0].toLowerCase());
-      }
+    // Full-line match first (menu captions such as "Save As..." that may
+    // contain spaces and take no arguments) - unless the full line is
+    // exactly one of bypassAllActionsFor's bare, switch-case-reserved
+    // names (see that set's own comment): that bare caption also has its
+    // own, same-named menu action registered, and the switch-case's own
+    // no-args branch must win over it (e.g. runScriptLine("Scale") needs
+    // to reach SCALE's hint branch, not UI_setTo_Modify_Scale(3)).
+    if (!bypassAllActionsFor.contains(key)) {
+      action = allActions.get(key);
+    }
 
-      // Otherwise, try the line with its last word removed - a multi-word
-      // command name (e.g. "days merged count", also registered under its
-      // literal caption by putAction's "withSpace" fallback) can then also
-      // be typed with a value appended (e.g. "days merged count 15"), the
-      // trailing word being that value.
-      if (action == null) {
-        int lastSpace = key.lastIndexOf(' ');
-        if (lastSpace > 0) {
-          String prefix = key.substring(0, lastSpace);
+    // Otherwise fall back to a first-token match, so commands registered
+    // with parameters (e.g. "start_day 15") can be reused here - same
+    // bypass exception as above, now checked against just the first
+    // token (e.g. "Move dx:1 dy:2 dz:3" must still reach MOVE's
+    // switch-case, not the bare "Move" menu action a first-token-only
+    // match would otherwise find).
+    if ((action == null) && (parts.length > 0) && !bypassAllActionsFor.contains(parts[0].toLowerCase())) {
+      action = allActions.get(parts[0].toLowerCase());
+    }
+
+    // Otherwise, try the line with its last word removed - a multi-word
+    // command name (e.g. "days merged count", also registered under its
+    // literal caption by putAction's "withSpace" fallback) can then also
+    // be typed with a value appended (e.g. "days merged count 15"), the
+    // trailing word being that value. Same bypass exception a third
+    // time: a two-word line like "Scale 2" (SCALE's own shorthand
+    // uniform-factor form) strips down to the bare "scale" here too.
+    if (action == null) {
+      int lastSpace = key.lastIndexOf(' ');
+      if (lastSpace > 0) {
+        String prefix = key.substring(0, lastSpace);
+        if (!bypassAllActionsFor.contains(prefix)) {
           action = allActions.get(prefix);
           if (action != null) {
             actionArgs = new String[]{prefix, parts[parts.length - 1]};
           }
         }
       }
+    }
 
-      if (action != null) {
-        action.run(actionArgs);
-        return "";
-      }
+    if (action != null) {
+      action.run(actionArgs);
+      return "";
     }
   }
 

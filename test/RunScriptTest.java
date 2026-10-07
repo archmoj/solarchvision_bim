@@ -687,6 +687,53 @@ class RunScriptTest {
     assertEquals(app.impactGraphIndex_WIND_ACTIVE, app.STUDY.impactGraphIndex);
   }
 
+  // ================= bypassAllActionsFor: exact-match, not prefix-match ===
+  // Regression coverage for the fix below the comprehensive test: each of
+  // these three bypass checks (full-line, first-token, trailing-word) now
+  // only discards a match when the *matched key itself* is exactly one of
+  // bypassAllActionsFor's names, not merely when the line starts with one
+  // - these lock in the original, narrower behavior that mechanism is
+  // still meant to guarantee (see UI_toolBar.pde's own "Scale"/"Move"
+  // case comments), so a future change can't silently widen it back out.
+
+  @Test
+  void bareScale_stillReachesScaleSwitchCaseHintBranch_notTheSameNamedMenuAction () {
+    app.build_allActions(); // registers the bare "Scale" menu action itself
+
+    String hint = app.runScriptLine("Scale");
+
+    assertEquals("Scale s=? sx=? sy=? sz=? x=? y=? z=?", hint);
+  }
+
+  @Test
+  void bareMove_stillReachesMoveSwitchCaseHintBranch_notTheSameNamedMenuAction () {
+    app.build_allActions(); // registers the bare "Move" menu action itself
+
+    String hint = app.runScriptLine("Move");
+
+    assertEquals("Move dx=? dy=? dz=?", hint);
+  }
+
+  @Test
+  void scaleShorthandWithOneTrailingValue_stillSkipsTheBareMenuAction () {
+    // "Scale 2" (SCALE's own shorthand uniform-scale-factor form) strips
+    // down, via the trailing-word-removed fallback, to the bare "scale" -
+    // exactly the same bare key a no-args "Scale" would full-line match -
+    // so this needs the same bypass exception as the full-line case
+    // above, just reached through a different one of the three match
+    // attempts.
+    app.build_allActions();
+
+    boolean[] bareMenuActionCalled = {false};
+    app.allActions.put("scale", (args) -> bareMenuActionCalled[0] = true);
+
+    String hint = app.runScriptLine("Scale 2");
+
+    assertFalse(bareMenuActionCalled[0],
+      "runScriptLine(\"Scale 2\") invoked the bare \"scale\" menu action instead of reaching SCALE's switch-case");
+    assertEquals("", hint);
+  }
+
   // The few commands above each exercise runScriptLine's dispatch by hand
   // (full-line, first-token, and the multi-word trailing-value fallback).
   // This drives every single ValueModifier.pde command the same way, one
