@@ -180,7 +180,7 @@ class UI_caseBar {
       if (TIME.date > _DATE2) _DATE2 += 365;
       float selectedValue = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.endDay - STUDY.startDay), 0.5);
       if (selectedValue < 1) selectedValue = 1;
-      runScriptLine("Day-Increment " + selectedValue);
+      runScriptLine("Day Increment " + selectedValue);
     }
   }
 

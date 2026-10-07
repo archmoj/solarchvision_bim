@@ -48,7 +48,7 @@ class ValueModifier {
     float s3 = 0.5; //step
 
     float out = 0;
-    String command = "Day-Increment";
+    String command = "Day Increment";
     if (created == 0) {
       putValueAction(command,
         () -> STUDY.dayIncrement,
