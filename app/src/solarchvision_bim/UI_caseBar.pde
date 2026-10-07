@@ -144,18 +144,18 @@ class UI_caseBar {
   void drawDaysTab (float x1, float y1, float x2, float y2) {
     handleDaysClick(x1, y1, x2, y2);
 
-    float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+    float keep_STUDY_dailyStep = STUDY.dailyStep;
     int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
-      STUDY.dayIncrement = 1;
+      STUDY.dailyStep = 1;
       STUDY.daysMergedCount = 1;
     }
 
     drawDaysBands(x1, x2, y1, y2);
     drawDaysMonthLabels(x1, x2);
 
-    STUDY.dayIncrement = keep_STUDY_dayIncrement;
+    STUDY.dailyStep = keep_STUDY_dailyStep;
     STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
   }
 
@@ -183,7 +183,7 @@ class UI_caseBar {
       if (TIME.date > _DATE2) _DATE2 += 365;
       float selectedValue = funcs.roundTo((_DATE2 - TIME.date) / float(STUDY.endDay - STUDY.startDay), 0.5);
       if (selectedValue < 1) selectedValue = 1;
-      runScriptLine("Day-Increment " + selectedValue);
+      runScriptLine("Daily Step " + selectedValue);
     }
   }
 
@@ -193,7 +193,7 @@ class UI_caseBar {
       float last_x_end = -1;
 
       for (int j_ADD = 0; j_ADD < STUDY.daysMergedCount; j_ADD++) {
-        int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+        int now_j = int(j * STUDY.dailyStep + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
         if (now_j >= 365) now_j = now_j % 365;
         if (now_j < 0) now_j = (now_j + 365) % 365;
 

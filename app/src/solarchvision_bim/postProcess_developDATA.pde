@@ -4,13 +4,13 @@ void postProcess_developDATA (int desired_DataSource) {
 
   currentDataSource = desired_DataSource;
 
-  float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+  float keep_STUDY_dailyStep = STUDY.dailyStep;
   int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
 
   if ((currentDataSource == dataID_ensembleForecast) ||
       (currentDataSource == dataID_ensembleObservation)) {
 
-    STUDY.dayIncrement = 1;
+    STUDY.dailyStep = 1;
     STUDY.daysMergedCount = 1;
   }
 
@@ -36,7 +36,7 @@ void postProcess_developDATA (int desired_DataSource) {
 
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+            int now_j = int(j * STUDY.dailyStep + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
 
             if (now_j >= 365) {
               now_j = now_j % 365;
@@ -261,7 +261,7 @@ void postProcess_developDATA (int desired_DataSource) {
 
   developDataUpdate = false;
 
-  STUDY.dayIncrement = keep_STUDY_dayIncrement;
+  STUDY.dailyStep = keep_STUDY_dailyStep;
   STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
 
   currentDataSource = keep_currentDataSource;

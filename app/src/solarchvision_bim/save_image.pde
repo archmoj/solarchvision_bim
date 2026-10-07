@@ -19,11 +19,11 @@ String createStamp (int increment, String CLASS_STAMP) {
   txt += STATION.getCity() + "_";
 
   if (impactDisplayDay != 0) {
-    txt += TIME.getMM((impactDisplayDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
+    txt += TIME.getMM((impactDisplayDay - 1) * STUDY.dailyStep + 286 + TIME.beginDay);
   }
   else {
-    txt += TIME.getMM( STUDY.startDay    * STUDY.dayIncrement + 286 + TIME.beginDay) + "-" +
-           TIME.getMM((STUDY.endDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
+    txt += TIME.getMM( STUDY.startDay    * STUDY.dailyStep + 286 + TIME.beginDay) + "-" +
+           TIME.getMM((STUDY.endDay - 1) * STUDY.dailyStep + 286 + TIME.beginDay);
   }
 
   return txt;

@@ -391,11 +391,11 @@ class Sun3D {
   void drawPath (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) {
     if (!this.displayPath) return;
 
-    float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+    float keep_STUDY_dailyStep = STUDY.dailyStep;
     int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
-      STUDY.dayIncrement = 1;
+      STUDY.dailyStep = 1;
       STUDY.daysMergedCount = 1;
     }
     float previous_DATE = TIME.date;
@@ -428,7 +428,7 @@ class Sun3D {
     }
 
     for (int j = J_START; j < J_END; j += 1) {
-      int now_j = wrapDayIndex(j * int(STUDY.dayIncrement) + TIME.beginDay);
+      int now_j = wrapDayIndex(j * int(STUDY.dailyStep) + TIME.beginDay);
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
 
       int nk = FIND_SCENARIO_CLOSE_TO_DAILY_STAT(l,
@@ -448,7 +448,7 @@ class Sun3D {
         int now_i1 = floor(i);
         int now_i2 = (1 + now_i1) % 24;
         float i_ratio = i - now_i1;
-        now_j = wrapDayIndex(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
+        now_j = wrapDayIndex(j * STUDY.dailyStep + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
 
         float Pa1 = FLOAT_undefined;
         float Pa2 = FLOAT_undefined;
@@ -483,7 +483,7 @@ class Sun3D {
     }
 
     WIN3D.graphics.popMatrix();
-    STUDY.dayIncrement = keep_STUDY_dayIncrement;
+    STUDY.dailyStep = keep_STUDY_dailyStep;
     STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
     TIME.date = previous_DATE;
     TIME.updateDate();
@@ -492,18 +492,18 @@ class Sun3D {
   void drawPattern (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) {
     if (!(this.displayPattern || (target_window == TypeWindow.STUDY))) return;
 
-    float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+    float keep_STUDY_dailyStep = STUDY.dailyStep;
     int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
-      STUDY.dayIncrement = 1;
+      STUDY.dailyStep = 1;
       STUDY.daysMergedCount = 1;
     }
     float previous_DATE = TIME.date;
 
     this.drawCycles(target_window, x_SunPath, y_SunPath, z_SunPath, s_SunPath);
 
-    STUDY.dayIncrement = keep_STUDY_dayIncrement;
+    STUDY.dailyStep = keep_STUDY_dailyStep;
     STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
     TIME.date = previous_DATE;
     TIME.updateDate();
@@ -556,8 +556,8 @@ class Sun3D {
 
   void drawCycles (int target_window, float x_Plot, float y_Plot, float z_Plot, float s_Plot) {
     int TES_hour = 1; // 1 = every 1 hour, 4 = every 15 minutes
-    float STUDY_dayIncrement = STUDY.dayIncrement;
-    if (STUDY_dayIncrement <= STUDY.daysMergedCount) STUDY_dayIncrement = STUDY.daysMergedCount + 0.5;
+    float STUDY_dailyStep = STUDY.dailyStep;
+    if (STUDY_dailyStep <= STUDY.daysMergedCount) STUDY_dailyStep = STUDY.daysMergedCount + 0.5;
 
     int[] startK_endK = get_startK_endK();
     int start_k = startK_endK[0];
@@ -597,10 +597,10 @@ class Sun3D {
       }
 
       for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
-        float[][][] SunPathMesh = new float[24 * TES_hour][1 + int(STUDY_dayIncrement / STUDY.daysMergedCount)][3];
+        float[][][] SunPathMesh = new float[24 * TES_hour][1 + int(STUDY_dailyStep / STUDY.daysMergedCount)][3];
 
-        for (int more_J = 0; more_J < STUDY_dayIncrement; more_J += STUDY.daysMergedCount) {
-          int now_j = wrapDayIndex(more_J + j * int(STUDY_dayIncrement) + TIME.beginDay);
+        for (int more_J = 0; more_J < STUDY_dailyStep; more_J += STUDY.daysMergedCount) {
+          int now_j = wrapDayIndex(more_J + j * int(STUDY_dailyStep) + TIME.beginDay);
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
           float sunrise_origin = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
           float sunset_origin = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE) + funcs.EquationOfTime(DATE_ANGLE);
@@ -642,7 +642,7 @@ class Sun3D {
               int now_i1 = floor(i);
               int now_i2 = (1 + now_i1) % 24;
               float i_ratio = i - now_i1;
-              int now_j2 = wrapDayIndex(more_J + j * STUDY_dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
+              int now_j2 = wrapDayIndex(more_J + j * STUDY_dailyStep + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay);
 
               float Pa1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_dirnorrad.id);
               float Pb1 = getValue_currentDataSource(now_i1, now_j2, now_k, LAYER_difhorrad.id);
@@ -684,8 +684,8 @@ class Sun3D {
           }
         }
 
-        for (int more_J = 0; more_J < STUDY_dayIncrement - STUDY.daysMergedCount; more_J += STUDY.daysMergedCount) { // count one less!
-          int now_j = wrapDayIndex(more_J + j * int(STUDY_dayIncrement) + TIME.beginDay);
+        for (int more_J = 0; more_J < STUDY_dailyStep - STUDY.daysMergedCount; more_J += STUDY.daysMergedCount) { // count one less!
+          int now_j = wrapDayIndex(more_J + j * int(STUDY_dailyStep) + TIME.beginDay);
           float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
           float sunrise = funcs.Sunrise(STATION.getLatitude(), DATE_ANGLE);
           float sunset = funcs.Sunset(STATION.getLatitude(), DATE_ANGLE);

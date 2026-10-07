@@ -47,11 +47,11 @@ void exportObj (String suffix) {
 
   if (Sun3D.displayPattern) {
 
-    float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+    float keep_STUDY_dailyStep = STUDY.dailyStep;
     int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
-      STUDY.dayIncrement = 1;
+      STUDY.dailyStep = 1;
       STUDY.daysMergedCount = 1;
     }
 
@@ -59,7 +59,7 @@ void exportObj (String suffix) {
 
     Sun3D.drawCycles(TypeWindow.STUDY, 0, 0, 0, 0.975 *   Sky3D.radius);
 
-    STUDY.dayIncrement = keep_STUDY_dayIncrement;
+    STUDY.dailyStep = keep_STUDY_dailyStep;
     STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
     TIME.date = previous_DATE;
     TIME.updateDate();

@@ -6,11 +6,11 @@ void calculate_GlobalSolar_array () {
     GlobalSolar_resize_array();
   }
 
-  float keep_STUDY_dayIncrement = STUDY.dayIncrement;
+  float keep_STUDY_dailyStep = STUDY.dailyStep;
   int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
   if ((currentDataSource == dataID_ensembleForecast) ||
       (currentDataSource == dataID_ensembleObservation)) {
-    STUDY.dayIncrement = 1;
+    STUDY.dailyStep = 1;
     STUDY.daysMergedCount = 1;
   }
 
@@ -62,7 +62,7 @@ void calculate_GlobalSolar_array () {
 
   for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
-    now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
+    now_j = (j * int(STUDY.dailyStep) + TIME.beginDay + 365) % 365;
 
     if (now_j >= 365) {
       now_j = now_j % 365;
@@ -81,7 +81,7 @@ void calculate_GlobalSolar_array () {
 
     now_k = k + start_k;
 
-    int now_j_base = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+    int now_j_base = int(j * STUDY.dailyStep + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
     if (now_j_base >= 365) {
       now_j_base = now_j_base % 365;
     }
@@ -248,7 +248,7 @@ void calculate_GlobalSolar_array () {
   }
 
 
-  STUDY.dayIncrement = keep_STUDY_dayIncrement;
+  STUDY.dailyStep = keep_STUDY_dailyStep;
   STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
 
   cursor(ARROW);

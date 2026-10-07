@@ -99,7 +99,7 @@ class SolarImpacts {
 
         for (int j = STUDY.startDay; j < STUDY.endDay; j++) {
 
-          now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
+          now_j = (j * int(STUDY.dailyStep) + TIME.beginDay + 365) % 365;
 
           if (now_j >= 365) {
             now_j = now_j % 365;
@@ -152,7 +152,7 @@ class SolarImpacts {
 
                 now_k = k + start_k;
                 now_i = i;
-                now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+                now_j = int(j * STUDY.dailyStep + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
 
                 if (now_j >= 365) {
                   now_j = now_j % 365;

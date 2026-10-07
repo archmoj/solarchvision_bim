@@ -38,7 +38,7 @@ class ValueModifier {
     }
     return out;
   }
-  float dayIncrement (int created) {
+  float dailyStep (int created) {
     int u1 = 1; // updateSTUDY
     int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
@@ -48,15 +48,15 @@ class ValueModifier {
     float s3 = 0.5; //step
 
     float out = 0;
-    String command = "Day-Increment";
+    String command = "Daily Step";
     if (created == 0) {
       putValueAction(command,
-        () -> STUDY.dayIncrement,
-        (v) -> { STUDY.dayIncrement = v; },
+        () -> STUDY.dailyStep,
+        (v) -> { STUDY.dailyStep = v; },
         s1, s2, s3,
         u1, u2, u3);
     } else {
-      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.dayIncrement, s1, s2, s3);
+      out = UI_rollout.Spinner(X_control, Y_control, u1, u2, u3, command, STUDY.dailyStep, s1, s2, s3);
     }
     return out;
   }
