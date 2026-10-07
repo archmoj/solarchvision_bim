@@ -696,14 +696,17 @@ class RunScriptTest {
   // 233: whatever a command's own min/max happen to be, action.run(...) is
   // still what gets invoked either way (an out-of-range value is rejected
   // *inside* the action - see putValueAction - without ever surfacing as
-  // "Unrecognized command!"), so this only verifies runScriptLine itself
-  // actually finds and dispatches to each one, the same way a person
-  // typing it on the command line would. A command whose normalized key
-  // collided with a switch-case name reserved in bypassAllActionsFor
-  // (see that set's own comment) would be exactly the kind of regression
-  // this catches, since it would fall through to the switch instead - and,
-  // not being one of the ~15 commands the switch itself recognizes, come
-  // back as "Unrecognized command!".
+  // "Unrecognized command!"), so the underscore-key case below only checks
+  // that runScriptLine found *some* action rather than falling through to
+  // the switch - a command whose normalized key collided with a
+  // switch-case name reserved in bypassAllActionsFor (see that set's own
+  // comment) would be exactly the kind of regression this catches, coming
+  // back as "Unrecognized command!" instead (not one of the ~15 commands
+  // the switch itself recognizes). The spaced-key case needs a stronger
+  // check than that same empty-hint test: a wrong, shorter-prefix match
+  // also returns "" (see the comment at that branch below), so it
+  // confirms the *exact* registered action actually ran, not just that
+  // something did.
   @Test
   void everyValueModifierCommand_isDispatchableThroughRunScriptLine_withOneParameter () throws Exception {
     Method[] methods = app.vm.getClass().getDeclaredMethods();
@@ -729,9 +732,33 @@ class RunScriptTest {
       // underscore form, and - when it differs - the literal spaced form)
       // should independently resolve through runScriptLine.
       for (String key : added) {
-        String hint = app.runScriptLine(key + " 1");
-        assertNotEquals("Unrecognized command!", hint,
-          "runScriptLine(\"" + key + " 1\") was not recognized (vm." + m.getName() + "())");
+        if (key.indexOf(' ') >= 0) {
+          // A spaced key only ever reaches runScriptLine's dispatch through
+          // the trailing-value-stripped fallback (see runScript.pde): the
+          // line is "<key> 1", a full-line match on that fails, so it falls
+          // back to a first-token match on just the key's first word - if
+          // that word happened to collide with another, shorter,
+          // separately-registered command, *that* command would run
+          // instead, silently, while still returning "" (recognized) just
+          // like a correct match would. An empty-hint check alone can't
+          // tell the two apart. Swapping in a counting spy under this
+          // exact key and asserting it fired can: only the trailing-word
+          // fallback reaches this key at all, so the spy firing confirms
+          // runScriptLine actually walked all the way to *this* action
+          // rather than stopping early on a wrong, shorter one.
+          boolean[] called = {false};
+          app.allActions.put(key, (args) -> called[0] = true);
+
+          app.runScriptLine(key + " 1");
+
+          assertTrue(called[0],
+            "runScriptLine(\"" + key + " 1\") did not invoke the action registered under \"" + key +
+            "\" (vm." + m.getName() + "()) - a different, shorter-prefix command matched instead");
+        } else {
+          String hint = app.runScriptLine(key + " 1");
+          assertNotEquals("Unrecognized command!", hint,
+            "runScriptLine(\"" + key + " 1\") was not recognized (vm." + m.getName() + "())");
+        }
       }
 
       checkedCount++;
