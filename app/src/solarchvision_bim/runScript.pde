@@ -129,10 +129,10 @@ String ___executeScriptLine___ (String lineSTR) {
       }
 
       // Otherwise, try the line with its last word removed - a multi-word
-      // command name (e.g. "begin day", also registered under its literal
-      // caption by putAction's "withSpace" fallback) can then also be typed
-      // with a value appended (e.g. "begin day 15"), the trailing word
-      // being that value.
+      // command name (e.g. "days merged count", also registered under its
+      // literal caption by putAction's "withSpace" fallback) can then also
+      // be typed with a value appended (e.g. "days merged count 15"), the
+      // trailing word being that value.
       if (action == null) {
         int lastSpace = key.lastIndexOf(' ');
         if (lastSpace > 0) {
