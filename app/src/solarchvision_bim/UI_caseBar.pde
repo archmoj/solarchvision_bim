@@ -23,7 +23,7 @@ class UI_caseBar {
 
     drawTrackBackground();
     drawTabs();
-    drawimpactLayerIndexSelector();
+    drawImpactLayerIndexSelector();
 
     X_clicked = -1;
     Y_clicked = -1;
@@ -327,14 +327,14 @@ class UI_caseBar {
   // Impact layer selector (3x3 grid)
   // ---------------------------------------------------------------------
 
-  void drawimpactLayerIndexSelector () {
+  void drawImpactLayerIndexSelector () {
     float displayBarWidth = UI_rollout.dX;
     float displayBarHeight = 4.5 * MessageSize;
     float offsetX = UI_rollout.cX + 0.5 * displayBarWidth;
     float offsetY = pixel_A + pixel_B + 2 * pixel_H + 0.5 * displayBarHeight;
 
-    handleimpactLayerIndexClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
-    renderimpactLayerIndexGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
+    handleImpactLayerIndexClicks(offsetX, offsetY, displayBarWidth, displayBarHeight);
+    renderImpactLayerIndexGrid(offsetX, offsetY, displayBarWidth, displayBarHeight);
   }
 
   // Bounds of grid cell n (0..8) as {x1, x2, y1, y2}.
@@ -350,7 +350,7 @@ class UI_caseBar {
     return new float[]{x1, x2, y1, y2};
   }
 
-  void handleimpactLayerIndexClicks (float offsetX, float offsetY, float w, float h) {
+  void handleImpactLayerIndexClicks (float offsetX, float offsetY, float w, float h) {
     for (int n = 0; n < 9; n++) {
       float[] b = impactCellBounds(n, offsetX, offsetY, w, h);
       if (isInside(X_clicked, Y_clicked, b[0], b[2], b[1], b[3])) {
@@ -359,7 +359,7 @@ class UI_caseBar {
     }
   }
 
-  void renderimpactLayerIndexGrid (float offsetX, float offsetY, float w, float h) {
+  void renderImpactLayerIndexGrid (float offsetX, float offsetY, float w, float h) {
     for (int n = 0; n < 9; n++) {
       float[] b = impactCellBounds(n, offsetX, offsetY, w, h);
       float x1 = b[0], x2 = b[1], y1 = b[2], y2 = b[3];
