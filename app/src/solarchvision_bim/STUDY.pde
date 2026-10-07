@@ -40,8 +40,8 @@ class STUDY {
   int startDay = 0; // constant
   int endDay = 12; //8; //6; //2; //16; // Variable
 
-  float dailyStep = 30.5; //1; //45; //61;
-  int daysMergedCount = 30; //1; //dailyStep; // it should be set up to 1 in order to plot only one day
+  float dayIncrement = 30.5; //1; //45; //61;
+  int daysMergedCount = 30; //1; //dayIncrement; // it should be set up to 1 in order to plot only one day
 
   boolean PrintTtitle = true;
 
@@ -119,7 +119,7 @@ class STUDY {
   // (-364, 364)) - preserved as-is rather than removed, since this is a
   // refactor, not a behavior change.
   int computeWrappedDayIndex (int j, int j_ADD) {
-    int now_j = int(j * this.dailyStep + (j_ADD - int(funcs.roundTo(0.5 * this.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+    int now_j = int(j * this.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * this.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
 
     if (now_j >= 365) {
       now_j = now_j % 365;
@@ -580,7 +580,7 @@ class STUDY {
         float h = sx_Plot * 0.2 / this.horizontalUnitScale;
 
         this.graphics.textSize(h);
-        this.graphics.text(TIME.getDayText(j * this.dailyStep + 286 + TIME.beginDay), x, y + h);
+        this.graphics.text(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay), x, y + h);
         if (this.daysMergedCount > 1) {
           this.graphics.text(("±" + int(this.daysMergedCount / 2) + TIME.WORDS[2][activeLanguage] + "s"), x, y);
         }
@@ -1043,7 +1043,7 @@ class STUDY {
       float h = sx_Plot * 0.2 / this.horizontalUnitScale;
 
       this.graphics.textSize(h);
-      this.graphics.text(TIME.getDayText(j * this.dailyStep + 286 + TIME.beginDay), x, y + h);
+      this.graphics.text(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay), x, y + h);
       if (this.daysMergedCount > 1) {
         this.graphics.text(("±" + int(this.daysMergedCount / 2) + TIME.WORDS[2][activeLanguage] + "s"), x, y);
       }
@@ -1060,8 +1060,8 @@ class STUDY {
       _FilenamesAdd = ("±" + int(this.daysMergedCount / 2) + TIME.WORDS[2][activeLanguage] + "s");
     }
     if ((this.rawLinesExporter) && (this.showRawLines)) {
-      FILE_outputRaw[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dailyStep + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-      FILE_outputRaw[(j - this.startDay)].println(TIME.getDayText(j * this.dailyStep + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
+      FILE_outputRaw[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_node_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputRaw[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly data");
 
       FILE_outputRaw[(j - this.startDay)].print("Hour\t");
       for (int k = 0; k < count_k; k++) {
@@ -1070,8 +1070,8 @@ class STUDY {
       FILE_outputRaw[(j - this.startDay)].println("");
     }
     if ((this.normalLinesExporter) && (this.showNormalLines)) {
-      FILE_outputNorms[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dailyStep + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-      FILE_outputNorms[(j - this.startDay)].println(TIME.getDayText(j * this.dailyStep + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
+      FILE_outputNorms[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_norm_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputNorms[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly normal");
       FILE_outputNorms[(j - this.startDay)].print("Hour\t");
       for (int l = 0; l < 9; l++) {
         FILE_outputNorms[(j - this.startDay)].print(STAT_N_Title[l] + "\t");
@@ -1079,8 +1079,8 @@ class STUDY {
       FILE_outputNorms[(j - this.startDay)].println("");
     }
     if ((this.probabilitiesExporter) && (this.showProbabilities)) {
-      FILE_outputProbs[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dailyStep + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
-      FILE_outputProbs[(j - this.startDay)].println(TIME.getDayText(j * this.dailyStep + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
+      FILE_outputProbs[(j - this.startDay)] = createWriter(Folder_Export + "/" + Main_name + "/" + databaseString[currentDataSource] + "_prob_" + STATION.getCity() + "_from_" + String.valueOf(start_k + DATA_start) + "_to_" + String.valueOf(end_k + DATA_start) + "_" + CurrentLayer_descriptions[Language_EN] + "_" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "_" + TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + ".txt");
+      FILE_outputProbs[(j - this.startDay)].println(TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay) + _FilenamesAdd + "\t" + skyScenarioSetting_FileTXT[this.skyScenarioSetting] + "\t" + CurrentLayer_descriptions[Language_EN] + "(" + CurrentLayer_unit + ")" + "\tfrom:" + String.valueOf(start_k + DATA_start) + "\tto:" + String.valueOf(end_k + DATA_start) + "\t" + STATION.getCity() + "\tHourly probabilities");
 
       FILE_outputProbs[(j - this.startDay)].print("Hour:\t");
       FILE_outputProbs[(j - this.startDay)].println("");
@@ -1350,7 +1350,7 @@ class STUDY {
   // and restores every overridden field afterward.
   void setupPlot_cycles () {
     int keep_TIME_BeginDay = TIME.beginDay;
-    float keep_STUDY_dailyStep = this.dailyStep;
+    float keep_STUDY_dayIncrement = this.dayIncrement;
     int keep_daysMergedCount = this.daysMergedCount;
     int keep_STUDY_startDay = this.startDay;
     int keep_STUDY_endDay = this.endDay;
@@ -1359,7 +1359,7 @@ class STUDY {
     int keep_STUDY_impactTypeIndex = this.impactTypeIndex;
 
     TIME.beginDay = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
-    this.dailyStep = 183;
+    this.dayIncrement = 183;
     this.daysMergedCount = 5;
     this.startDay = 0;
     this.endDay = 2;
@@ -1371,7 +1371,7 @@ class STUDY {
     this.plotImpact(0, 0 * this.view_S, scale * (100.0 * this.horizontalUnitScale * this.view_S), scale * (-1.0 * this.verticalUnitScale * this.view_S));
 
     TIME.beginDay = keep_TIME_BeginDay;
-    this.dailyStep = keep_STUDY_dailyStep;
+    this.dayIncrement = keep_STUDY_dayIncrement;
     this.daysMergedCount = keep_daysMergedCount;
     this.startDay = keep_STUDY_startDay;
     this.endDay = keep_STUDY_endDay;
@@ -1788,20 +1788,20 @@ class STUDY {
         (currentDataSource == dataID_climateArchive) ||
         (currentDataSource == dataID_climateTypicalYear)) {
 
-      if (this.dailyStep == 1) {
-        this.dailyStep = int(365 / float(this.endDay - this.startDay));
+      if (this.dayIncrement == 1) {
+        this.dayIncrement = int(365 / float(this.endDay - this.startDay));
       } else {
-        this.dailyStep = 1;
+        this.dayIncrement = 1;
       }
     }
     if (currentDataSource == dataID_ensembleForecast) {
-      this.dailyStep = 1;
+      this.dayIncrement = 1;
     }
     if (currentDataSource == dataID_ensembleObservation) {
-      if (this.dailyStep == 1) {
-        this.dailyStep = int(ensembleObservationMaxDays / float(this.endDay - this.startDay));
+      if (this.dayIncrement == 1) {
+        this.dayIncrement = int(ensembleObservationMaxDays / float(this.endDay - this.startDay));
       } else {
-        this.dailyStep = 1;
+        this.dayIncrement = 1;
       }
     }
   }
@@ -2202,7 +2202,7 @@ class STUDY {
 
       for (int j = this.startDay; j < this.endDay; j++) {
 
-        now_j = (j * int(this.dailyStep) + TIME.beginDay + 365) % 365;
+        now_j = (j * int(this.dayIncrement) + TIME.beginDay + 365) % 365;
 
         if (now_j >= 365) {
           now_j = now_j % 365;
@@ -2401,7 +2401,7 @@ class STUDY {
 
     for (int j = this.startDay; j < this.endDay; j++) {
 
-      now_j = (j * int(this.dailyStep) + TIME.beginDay + 365) % 365;
+      now_j = (j * int(this.dayIncrement) + TIME.beginDay + 365) % 365;
 
       if (now_j >= 365) {
         now_j = now_j % 365;
@@ -2773,7 +2773,7 @@ class STUDY {
 
     for (int j = this.startDay; j < this.endDay; j++) {
 
-      now_j = (j * int(this.dailyStep) + TIME.beginDay + 365) % 365;
+      now_j = (j * int(this.dayIncrement) + TIME.beginDay + 365) % 365;
 
       if (now_j >= 365) {
         now_j = now_j % 365;
@@ -3072,13 +3072,13 @@ class STUDY {
     this.graphics.pushMatrix();
     this.graphics.translate(x_Plot, y_Plot);
 
-    float keep_STUDY_dailyStep = this.dailyStep;
+    float keep_STUDY_dayIncrement = this.dayIncrement;
     int keep_STUDY_daysMergedCount = this.daysMergedCount;
 
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
 
-      this.dailyStep = 1;
+      this.dayIncrement = 1;
       this.daysMergedCount = 1;
     }
 
@@ -3128,7 +3128,7 @@ class STUDY {
     if ((currentDataSource == dataID_ensembleForecast) ||
         (currentDataSource == dataID_ensembleObservation)) {
     } else {
-      this.dailyStep = keep_STUDY_dailyStep;
+      this.dayIncrement = keep_STUDY_dayIncrement;
       this.daysMergedCount = keep_STUDY_daysMergedCount;
     }
 
@@ -3147,7 +3147,7 @@ class STUDY {
     XML_setInt(parent, "endHour", this.endHour);
     XML_setInt(parent, "startDay", this.startDay);
     XML_setInt(parent, "endDay", this.endDay);
-    XML_setFloat(parent, "dailyStep", this.dailyStep);
+    XML_setFloat(parent, "dayIncrement", this.dayIncrement);
     XML_setInt(parent, "daysMergedCount", this.daysMergedCount);
 
     XML_setFloat(parent, "strokeScale", this.strokeScale);
@@ -3204,7 +3204,7 @@ class STUDY {
     this.endHour = XML_getInt(parent, "endHour");
     this.startDay = XML_getInt(parent, "startDay");
     this.endDay = XML_getInt(parent, "endDay");
-    this.dailyStep = XML_getFloat(parent, "dailyStep");
+    this.dayIncrement = XML_getFloat(parent, "dayIncrement");
     this.daysMergedCount = XML_getInt(parent, "daysMergedCount");
 
     this.strokeScale = XML_getFloat(parent, "strokeScale");

@@ -8,11 +8,11 @@ void calculate_VertexSolar_array () {
 
   VertexSolar_resize_array();
 
-  float keep_STUDY_dailyStep = STUDY.dailyStep;
+  float keep_STUDY_dayIncrement = STUDY.dayIncrement;
   int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
   if ((currentDataSource == dataID_ensembleForecast) ||
       (currentDataSource == dataID_ensembleObservation)) {
-    STUDY.dailyStep = 1;
+    STUDY.dayIncrement = 1;
     STUDY.daysMergedCount = 1;
   }
 
@@ -43,7 +43,7 @@ void calculate_VertexSolar_array () {
   for (int j = J_START; j < J_END; j += DATE_step) {
     int jIdx = j - J_START;
 
-    int day_now_j = (j * int(STUDY.dailyStep) + TIME.beginDay + 365) % 365;
+    int day_now_j = (j * int(STUDY.dayIncrement) + TIME.beginDay + 365) % 365;
     if (day_now_j >= 365) day_now_j = day_now_j % 365;
     if (day_now_j < 0) day_now_j = (day_now_j + 365) % 365;
 
@@ -58,7 +58,7 @@ void calculate_VertexSolar_array () {
     int j_ADD = nk % STUDY.daysMergedCount;
     int now_k = k + start_k;
 
-    int now_j = int(j * STUDY.dailyStep + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
+    int now_j = int(j * STUDY.dayIncrement + (j_ADD - int(funcs.roundTo(0.5 * STUDY.daysMergedCount, 1))) + TIME.beginDay + 365) % 365;
     if (now_j >= 365) now_j = now_j % 365;
     if (now_j < 0) now_j = (now_j + 365) % 365;
 

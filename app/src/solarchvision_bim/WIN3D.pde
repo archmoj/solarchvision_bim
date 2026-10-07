@@ -397,10 +397,10 @@ class WIN3D {
       if (this.impactTypeIndex == Impact_PASSIVE) txt += "passive model ";
 
       if (impactDisplayDay != 0) {
-        txt += TIME.getDayText((impactDisplayDay - 1) * STUDY.dailyStep + 286 + TIME.beginDay);
+        txt += TIME.getDayText((impactDisplayDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
       } else {
-        txt += TIME.getDayText(STUDY.startDay * STUDY.dailyStep + 286 + TIME.beginDay) + " - ";
-        txt += TIME.getDayText((STUDY.endDay - 1) * STUDY.dailyStep + 286 + TIME.beginDay);
+        txt += TIME.getDayText(STUDY.startDay * STUDY.dayIncrement + 286 + TIME.beginDay) + " - ";
+        txt += TIME.getDayText((STUDY.endDay - 1) * STUDY.dayIncrement + 286 + TIME.beginDay);
       }
     }
 

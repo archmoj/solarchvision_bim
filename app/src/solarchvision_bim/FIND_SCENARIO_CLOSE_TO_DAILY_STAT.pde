@@ -22,7 +22,7 @@ int FIND_SCENARIO_CLOSE_TO_DAILY_STAT (int l, int start_k, int end_k, int j, flo
     allSunZ[i] = SunR[3];
   }
 
-  float baseJ = j * STUDY.dailyStep + TIME.beginDay + 365 - int(funcs.roundTo(0.5 * daysMergedCount, 1));
+  float baseJ = j * STUDY.dayIncrement + TIME.beginDay + 365 - int(funcs.roundTo(0.5 * daysMergedCount, 1));
 
   int[] nowJ = new int[daysMergedCount];
   for (int j_ADD = 0; j_ADD < daysMergedCount; j_ADD++) {

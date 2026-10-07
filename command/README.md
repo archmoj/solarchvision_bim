@@ -435,7 +435,7 @@ the user interface.
 | `End Hour` | Last hour of the day included in the analysis | 0 to 23 |
 | `Days Merged Count` | Number of consecutive days grouped together per analysis step | 1 to 182 |
 | `End Day` | Number of days included in the impact plot | 1 to 365 |
-| `Daily Step` | Step size (in days) between plotted days | 1.0 to 182.5 |
+| `Day-Increment` | Step size (in days) between plotted days | 1.0 to 182.5 |
 
 ### Sampling and forecast sources
 

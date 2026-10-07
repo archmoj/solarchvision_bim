@@ -39,7 +39,7 @@ class STUDYTest {
 
   @Test
   void computeWrappedDayIndex_mapsJAndJAddToADayOfYearIndex () {
-    app.STUDY.dailyStep = 1;
+    app.STUDY.dayIncrement = 1;
     app.STUDY.daysMergedCount = 0; // avoids the round(0.5*daysMergedCount) tie-breaking case entirely
     app.TIME.beginDay = 0;
 
@@ -48,7 +48,7 @@ class STUDYTest {
 
   @Test
   void computeWrappedDayIndex_wrapsNegativeResultsForward () {
-    app.STUDY.dailyStep = 1;
+    app.STUDY.dayIncrement = 1;
     app.STUDY.daysMergedCount = 0;
     app.TIME.beginDay = -10;
 
@@ -57,7 +57,7 @@ class STUDYTest {
 
   @Test
   void computeWrappedDayIndex_wrapsResultsPast365BackToZero () {
-    app.STUDY.dailyStep = 1;
+    app.STUDY.dayIncrement = 1;
     app.STUDY.daysMergedCount = 0;
     app.TIME.beginDay = 0;
 
@@ -263,7 +263,7 @@ class STUDYTest {
     app.STUDY.endHour = 20;
     app.STUDY.startDay = 1;
     app.STUDY.endDay = 10;
-    app.STUDY.dailyStep = 15;
+    app.STUDY.dayIncrement = 15;
     app.STUDY.daysMergedCount = 5;
     app.STUDY.strokeScale = 0.75f;
     app.STUDY.horizontalUnitScale = 2f;
@@ -300,7 +300,7 @@ class STUDYTest {
     assertEquals(20, fresh.endHour);
     assertEquals(1, fresh.startDay);
     assertEquals(10, fresh.endDay);
-    assertEquals(15f, fresh.dailyStep, 0.0001f);
+    assertEquals(15f, fresh.dayIncrement, 0.0001f);
     assertEquals(5, fresh.daysMergedCount);
     assertEquals(3, fresh.skyScenarioSetting);
     assertTrue(fresh.rawLinesExporter);

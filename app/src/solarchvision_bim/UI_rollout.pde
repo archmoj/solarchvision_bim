@@ -160,7 +160,7 @@ class UI_rollout {
     // OnChange follow-up.
 
     vm.endDay(0);
-    vm.dailyStep(0);
+    vm.dayIncrement(0);
     vm.daysMergedCount(0);
     vm.date(0);
     vm.beginDay(0);
@@ -513,7 +513,7 @@ class UI_rollout {
 
       if (this.child == CHILD_PERIOD_TIME) {
         STUDY.endDay = vm.endDay(1);
-        STUDY.dailyStep = vm.dailyStep(1);
+        STUDY.dayIncrement = vm.dayIncrement(1);
         STUDY.daysMergedCount = vm.daysMergedCount(1);
         TIME.date = vm.date(1);
 
