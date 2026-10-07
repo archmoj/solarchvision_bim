@@ -87,91 +87,134 @@ HashSet<String> bypassAllActionsFor = new HashSet<String>(Arrays.asList(
   "scale", "section", "solid", "sphere"
 ));
 
-String ___executeScriptLine___ (String lineSTR) {
-  String hint = "";
+// One resolved allActions match: which key resolved it, the Action
+// itself (so a caller/test never needs a second allActions.get(key)
+// lookup), and the args to invoke it with - not always the full typed
+// line, see matchTrailingWordRemoved below.
+class ActionMatch {
+  String key;
+  Action action;
+  String[] args;
+  ActionMatch (String key, Action action, String[] args) {
+    this.key = key;
+    this.action = action;
+    this.args = args;
+  }
+}
 
+// Strips a script line down to something ___executeScriptLine___ can
+// use, or signals it should be skipped entirely - blank, a "=" section
+// marker, or a "#" comment line (each ignored the same way by
+// _runScriptLine's own, separate copy of this same check, upstream of
+// here). Returns null for skip.
+String sanitizeScriptLine (String lineSTR) {
   lineSTR = lineSTR.stripLeading();
-
-  // Skip section line
-  if (lineSTR.startsWith("=")) return hint;
-
-  // Skip comment line
-  if (lineSTR.startsWith("#")) return hint;
-
+  if (lineSTR.startsWith("=")) return null;
+  if (lineSTR.startsWith("#")) return null;
   lineSTR = lineSTR.stripTrailing();
+  if (lineSTR.equals("")) return null;
+  return lineSTR;
+}
 
-  if (lineSTR.equals("")) return hint;
-
+// Splits a sanitized line into the space-separated tokens the
+// switch-case below (and allActions' first-token/trailing-word matches)
+// both key off: drops quotes, collapses repeated spaces, turns "="
+// into ":" and collapses repeated colons (so a command's key:value
+// pairs tolerate either separator plus any extra whitespace), then
+// splits on spaces.
+String[] tokenizeScriptLine (String lineSTR) {
   String transformedLine = lineSTR
     .replace("\"", "")
     .replaceAll(" +", " ")  // replace multiple spaces with a single space
     .replace("=", ":")      // replace equal with colon
     .replaceAll(":+", ":"); // replace multiple colons with a single colon
 
-  String[] parts = split(transformedLine, ' ');
+  return split(transformedLine, ' ');
+}
 
+// Tier 1: full-line match - menu captions such as "Save As..." that may
+// contain spaces and take no arguments. Skipped when the full line is
+// exactly one of bypassAllActionsFor's bare, switch-case-reserved names
+// (see that set's own comment): that bare caption also has its own,
+// same-named menu action registered, and the switch-case's own no-args
+// branch must win over it (e.g. runScriptLine("Scale") needs to reach
+// SCALE's hint branch, not UI_setTo_Modify_Scale(3)).
+ActionMatch matchFullLine (String key, String[] parts) {
+  if (key.equals("") || bypassAllActionsFor.contains(key)) return null;
+  Action action = allActions.get(key);
+  if (action == null) return null;
+  return new ActionMatch(key, action, parts);
+}
+
+// Tier 2: the line with its last word removed - a multi-word command
+// name (e.g. "days merged count", also registered under its literal
+// caption by putAction's "withSpace" fallback) can then also be typed
+// with a value appended (e.g. "days merged count 15"), the trailing
+// word being that value. Tried before matchFirstToken below on purpose:
+// this prefix is always at least as long as (and, whenever the line has
+// more than two words, strictly longer than) the bare first token
+// alone, so it's the more specific of the two whenever both would match
+// - e.g. "Day Increment 2.5" must resolve to "day increment" (this
+// match), not fall - as it would if matchFirstToken ran first - to
+// "day" (TIME.day, a completely different, separately-registered
+// command that first token also happens to name on its own), which
+// would then try and fail to parse "Increment" as Day's numeric value
+// instead. Same bypass exception as matchFullLine: a two-word line like
+// "Scale 2" (SCALE's own shorthand uniform-factor form) strips down to
+// the bare "scale" here too.
+ActionMatch matchTrailingWordRemoved (String key, String[] parts) {
+  int lastSpace = key.lastIndexOf(' ');
+  if (lastSpace <= 0) return null;
+  String prefix = key.substring(0, lastSpace);
+  if (bypassAllActionsFor.contains(prefix)) return null;
+  Action action = allActions.get(prefix);
+  if (action == null) return null;
+  return new ActionMatch(prefix, action, new String[]{prefix, parts[parts.length - 1]});
+}
+
+// Tier 3: a first-token match, so commands registered with parameters
+// (e.g. "start_day 15") can be reused here - same bypass exception as
+// the other two tiers, now checked against just the first token (e.g.
+// "Move dx:1 dy:2 dz:3" must still reach MOVE's switch-case, not the
+// bare "Move" menu action a first-token-only match would otherwise
+// find). The least specific of the three tiers, and tried last: see
+// matchTrailingWordRemoved's own comment for why.
+ActionMatch matchFirstToken (String[] parts) {
+  if (parts.length == 0) return null;
+  String firstToken = parts[0].toLowerCase();
+  if (bypassAllActionsFor.contains(firstToken)) return null;
+  Action action = allActions.get(firstToken);
+  if (action == null) return null;
+  return new ActionMatch(firstToken, action, parts);
+}
+
+// Tries all three allActions match tiers above, in order, returning the
+// first (most specific) hit, or null if none match - the single place
+// that order is decided, so a collision scenario (two separately-
+// registered commands where one's full name is a prefix of the
+// other's, as "Day"/"Day Increment" and "Pivot"/"Pivot Alignment X"
+// both were) can be tested directly against it, with a throwaway
+// allActions map, instead of only via the real app's full command set.
+ActionMatch resolveAction (String lineSTR, String[] parts) {
   String key = lineSTR.toLowerCase();
+  ActionMatch match = matchFullLine(key, parts);
+  if (match == null) match = matchTrailingWordRemoved(key, parts);
+  if (match == null) match = matchFirstToken(parts);
+  return match;
+}
 
-  if(!key.equals("")) {
-    Action action = null;
-    String[] actionArgs = parts;
+String ___executeScriptLine___ (String lineSTR) {
+  String hint = "";
 
-    // Full-line match first (menu captions such as "Save As..." that may
-    // contain spaces and take no arguments) - unless the full line is
-    // exactly one of bypassAllActionsFor's bare, switch-case-reserved
-    // names (see that set's own comment): that bare caption also has its
-    // own, same-named menu action registered, and the switch-case's own
-    // no-args branch must win over it (e.g. runScriptLine("Scale") needs
-    // to reach SCALE's hint branch, not UI_setTo_Modify_Scale(3)).
-    if (!bypassAllActionsFor.contains(key)) {
-      action = allActions.get(key);
-    }
+  lineSTR = sanitizeScriptLine(lineSTR);
+  if (lineSTR == null) return hint;
 
-    // Otherwise, try the line with its last word removed - a multi-word
-    // command name (e.g. "days merged count", also registered under its
-    // literal caption by putAction's "withSpace" fallback) can then also
-    // be typed with a value appended (e.g. "days merged count 15"), the
-    // trailing word being that value. Tried before the first-token match
-    // below on purpose: this prefix is always at least as long as (and,
-    // whenever the line has more than two words, strictly longer than)
-    // the bare first token alone, so it's the more specific of the two
-    // whenever both would match - e.g. "Day Increment 2.5" must resolve
-    // to "day increment" (this match), not fall - as it would if the
-    // first-token match below ran first - to "day" (TIME.day, a
-    // completely different, separately-registered command that first
-    // token also happens to name on its own), which would then try and
-    // fail to parse "Increment" as Day's numeric value instead. Same
-    // bypass exception as the full-line case above: a two-word line like
-    // "Scale 2" (SCALE's own shorthand uniform-factor form) strips down
-    // to the bare "scale" here too.
-    if (action == null) {
-      int lastSpace = key.lastIndexOf(' ');
-      if (lastSpace > 0) {
-        String prefix = key.substring(0, lastSpace);
-        if (!bypassAllActionsFor.contains(prefix)) {
-          action = allActions.get(prefix);
-          if (action != null) {
-            actionArgs = new String[]{prefix, parts[parts.length - 1]};
-          }
-        }
-      }
-    }
+  String[] parts = tokenizeScriptLine(lineSTR);
 
-    // Otherwise fall back to a first-token match, so commands registered
-    // with parameters (e.g. "start_day 15") can be reused here - same
-    // bypass exception as above, now checked against just the first
-    // token (e.g. "Move dx:1 dy:2 dz:3" must still reach MOVE's
-    // switch-case, not the bare "Move" menu action a first-token-only
-    // match would otherwise find). Only reached once the more specific
-    // trailing-word match above has already had, and missed, its chance.
-    if ((action == null) && (parts.length > 0) && !bypassAllActionsFor.contains(parts[0].toLowerCase())) {
-      action = allActions.get(parts[0].toLowerCase());
-    }
-
-    if (action != null) {
-      action.run(actionArgs);
-      return "";
-    }
+  ActionMatch match = resolveAction(lineSTR, parts);
+  if (match != null) {
+    match.action.run(match.args);
+    return "";
   }
 
   String Command_CAPITAL = parts[0].toUpperCase();

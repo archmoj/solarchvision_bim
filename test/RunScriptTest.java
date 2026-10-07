@@ -734,6 +734,223 @@ class RunScriptTest {
     assertEquals("", hint);
   }
 
+  // ================= sanitizeScriptLine / tokenizeScriptLine ===============
+  // The two small, pure steps ___executeScriptLine___ runs before any
+  // matching happens at all - extracted out of its own body so they (and
+  // the match tiers below) can each be exercised directly, with a
+  // throwaway line or allActions map, instead of only indirectly through
+  // a full runScriptLine(...) call.
+
+  @Test
+  void sanitizeScriptLine_stripsLeadingAndTrailingWhitespace () {
+    assertEquals("Day 15", app.sanitizeScriptLine("  Day 15  "));
+  }
+
+  @Test
+  void sanitizeScriptLine_returnsNull_forABlankLine () {
+    assertNull(app.sanitizeScriptLine(""));
+    assertNull(app.sanitizeScriptLine("   "));
+  }
+
+  @Test
+  void sanitizeScriptLine_returnsNull_forASectionLine () {
+    assertNull(app.sanitizeScriptLine("=Section Name"));
+  }
+
+  @Test
+  void sanitizeScriptLine_returnsNull_forACommentLine () {
+    assertNull(app.sanitizeScriptLine("# a comment"));
+  }
+
+  @Test
+  void tokenizeScriptLine_splitsOnSpaces () {
+    assertArrayEquals(new String[]{"Day", "Increment", "15"}, app.tokenizeScriptLine("Day Increment 15"));
+  }
+
+  @Test
+  void tokenizeScriptLine_collapsesRepeatedSpaces () {
+    assertArrayEquals(new String[]{"SETLAT", "45.5"}, app.tokenizeScriptLine("SETLAT     45.5"));
+  }
+
+  @Test
+  void tokenizeScriptLine_stripsQuotes () {
+    assertArrayEquals(new String[]{"SETLAT", "45.5"}, app.tokenizeScriptLine("SETLAT \"45.5\""));
+  }
+
+  @Test
+  void tokenizeScriptLine_turnsEqualsIntoAColon_andCollapsesDoubledSigns () {
+    assertArrayEquals(new String[]{"BOX", "x:0", "y:0", "z:0"}, app.tokenizeScriptLine("BOX x==0 y=0 z=0"));
+  }
+
+  // ================= matchFullLine / matchTrailingWordRemoved / matchFirstToken ===
+  // Each of allActions' three match tiers, tested directly against a
+  // throwaway allActions map - not the real, 233-command one - so a
+  // tier's own behavior (what it matches, what args it builds, which
+  // bypass exception it respects) can be pinned down in isolation from
+  // the other two, and from everything else actually registered.
+
+  @Test
+  void matchFullLine_findsARegisteredKey_andPassesThroughTheGivenParts () {
+    app.allActions.put("save as...", (a) -> {});
+    String[] parts = {"save", "as..."};
+
+    solarchvision_bim.ActionMatch match = app.matchFullLine("save as...", parts);
+
+    assertNotNull(match);
+    assertEquals("save as...", match.key);
+    assertSame(parts, match.args);
+  }
+
+  @Test
+  void matchFullLine_returnsNull_whenTheKeyIsNotRegistered () {
+    assertNull(app.matchFullLine("nothing here", new String[]{"nothing", "here"}));
+  }
+
+  @Test
+  void matchFullLine_returnsNull_whenTheKeyIsBypassed_evenThoughItsRegistered () {
+    app.allActions.put("scale", (a) -> {}); // the bare "Scale" menu action
+
+    assertNull(app.matchFullLine("scale", new String[]{"scale"}));
+  }
+
+  @Test
+  void matchTrailingWordRemoved_findsThePrefix_andBuildsPrefixPlusLastWordArgs () {
+    app.allActions.put("day increment", (a) -> {});
+    String[] parts = {"day", "increment", "2.5"};
+
+    solarchvision_bim.ActionMatch match = app.matchTrailingWordRemoved("day increment 2.5", parts);
+
+    assertNotNull(match);
+    assertEquals("day increment", match.key);
+    assertArrayEquals(new String[]{"day increment", "2.5"}, match.args);
+  }
+
+  @Test
+  void matchTrailingWordRemoved_returnsNull_forASingleWordLine_thereIsNoLastWordToRemove () {
+    app.allActions.put("day", (a) -> {});
+
+    assertNull(app.matchTrailingWordRemoved("day", new String[]{"day"}));
+  }
+
+  @Test
+  void matchTrailingWordRemoved_returnsNull_whenThePrefixIsNotRegistered () {
+    assertNull(app.matchTrailingWordRemoved("nothing here 1", new String[]{"nothing", "here", "1"}));
+  }
+
+  @Test
+  void matchTrailingWordRemoved_returnsNull_whenThePrefixIsBypassed_evenThoughItsRegistered () {
+    app.allActions.put("scale", (a) -> {}); // the bare "Scale" menu action
+
+    assertNull(app.matchTrailingWordRemoved("scale 2", new String[]{"scale", "2"}));
+  }
+
+  @Test
+  void matchFirstToken_findsTheFirstWord_andPassesThroughAllTheParts () {
+    app.allActions.put("day", (a) -> {});
+    String[] parts = {"day", "15"};
+
+    solarchvision_bim.ActionMatch match = app.matchFirstToken(parts);
+
+    assertNotNull(match);
+    assertEquals("day", match.key);
+    assertSame(parts, match.args);
+  }
+
+  @Test
+  void matchFirstToken_returnsNull_whenTheFirstWordIsNotRegistered () {
+    assertNull(app.matchFirstToken(new String[]{"nothing", "here"}));
+  }
+
+  @Test
+  void matchFirstToken_returnsNull_whenTheFirstWordIsBypassed_evenThoughItsRegistered () {
+    app.allActions.put("move", (a) -> {}); // the bare "Move" menu action
+
+    assertNull(app.matchFirstToken(new String[]{"move", "dx:1", "dy:2", "dz:3"}));
+  }
+
+  // ================= resolveAction: future collision scenarios =============
+  // The single place the three tiers above are tried, in order - against
+  // synthetic, throwaway allActions entries shaped exactly like the two
+  // real collisions that slipped through before ("Day"/"Day Increment",
+  // "Pivot"/"Pivot Alignment X"): a short command whose name is a strict
+  // prefix of a longer, unrelated command's. A *new* command sharing this
+  // same shape in the future needs no new test of its own - it's already
+  // covered here, generically, rather than only by scanning the real
+  // command set after the fact (that's what the comprehensive test below
+  // still does, and remains useful for, but it can only catch a collision
+  // that already happened to land among the current 233 commands).
+
+  @Test
+  void resolveAction_prefersTheMoreSpecificTrailingWordMatch_overAColliding_shorterFirstToken () {
+    // The exact shape that broke "Day Increment" (collided with "Day")
+    // and "Pivot Alignment X" (collided with "Pivot"): "foo" and "foo
+    // bar" are both real, separately-registered commands; "foo bar 1"
+    // must resolve to "foo bar", not stop early at "foo".
+    app.allActions.put("foo", (a) -> {});
+    app.allActions.put("foo bar", (a) -> {});
+
+    solarchvision_bim.ActionMatch match = app.resolveAction("foo bar 1", app.tokenizeScriptLine("foo bar 1"));
+
+    assertNotNull(match);
+    assertEquals("foo bar", match.key);
+    assertArrayEquals(new String[]{"foo bar", "1"}, match.args);
+  }
+
+  @Test
+  void resolveAction_stillFindsTheShortCommand_whenNoLongerCommandCollidesWithIt () {
+    app.allActions.put("foo", (a) -> {});
+
+    solarchvision_bim.ActionMatch match = app.resolveAction("foo 1", app.tokenizeScriptLine("foo 1"));
+
+    assertNotNull(match);
+    assertEquals("foo", match.key);
+  }
+
+  @Test
+  void resolveAction_prefersAFullLineMatch_overBothOfTheOtherTwoTiers () {
+    // A caption that is itself a prefix of another registered key (so
+    // all three tiers *could* match something) must still resolve to
+    // its own, most specific, full-line match.
+    app.allActions.put("foo", (a) -> {});
+    app.allActions.put("foo bar", (a) -> {});
+
+    solarchvision_bim.ActionMatch match = app.resolveAction("foo bar", app.tokenizeScriptLine("foo bar"));
+
+    assertNotNull(match);
+    assertEquals("foo bar", match.key);
+  }
+
+  @Test
+  void resolveAction_fallsAllTheWayThroughToNull_whenNothingMatchesAnyTier () {
+    solarchvision_bim.ActionMatch match = app.resolveAction("totally unregistered thing", app.tokenizeScriptLine("totally unregistered thing"));
+
+    assertNull(match);
+  }
+
+  @Test
+  void resolveAction_respectsTheBypassException_acrossAllThreeTiers_forAFutureBypassedCommand () {
+    // A hypothetical future addition to bypassAllActionsFor ("zoom", say)
+    // would need this same three-way exception the four already in
+    // runScript.pde's set get - confirmed here against a synthetic bare
+    // "foo" standing in for it, added to a throwaway copy of the real
+    // bypass set for just this one test, rather than mutating the real
+    // one other tests rely on.
+    app.bypassAllActionsFor.add("foo");
+    try {
+      app.allActions.put("foo", (a) -> {});
+
+      assertNull(app.resolveAction("foo", app.tokenizeScriptLine("foo")));
+      assertNull(app.resolveAction("foo 2", app.tokenizeScriptLine("foo 2")));
+
+      app.allActions.put("foo bar", (a) -> {});
+      solarchvision_bim.ActionMatch match = app.resolveAction("foo bar 1", app.tokenizeScriptLine("foo bar 1"));
+      assertNotNull(match);
+      assertEquals("foo bar", match.key);
+    } finally {
+      app.bypassAllActionsFor.remove("foo");
+    }
+  }
+
   // The few commands above each exercise runScriptLine's dispatch by hand
   // (full-line, first-token, and the multi-word trailing-value fallback).
   // This drives every single ValueModifier.pde command the same way, one
