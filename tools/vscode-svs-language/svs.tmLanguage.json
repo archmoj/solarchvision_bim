@@ -19,9 +19,9 @@
     },
 
     "section-divider": {
-      "comment": "A line starting with '=' - runScript.pde's sanitizeScriptLine skips these entirely (plain '=======' dividers, as command/test/views.svs uses between viewports, or an '=Section Name' marker).",
+      "comment": "A line starting with '=' (a bare '=======' divider, as command/test/views.svs uses between viewports, or an '=Section Name' marker) - a directive, not a comment: it makes runScriptLines (see runScript.pde) defer everything after it to the next rendered frame, so a multi-section script takes one frame per section rather than silently losing every section but the last (a camera/shading change and the REC.PNG that depends on it need separate frames to actually render in between). Scoped as a control keyword rather than under comment.* so themes don't render it in the same muted color as an actual '#' comment - it does something, the way an #include or a build-script directive does.",
       "match": "^=.*$",
-      "name": "comment.block.section-divider.svs"
+      "name": "keyword.control.section-divider.svs"
     },
 
     "command": {

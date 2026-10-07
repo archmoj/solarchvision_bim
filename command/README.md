@@ -13,7 +13,23 @@ literal part of the name, not punctuation to skip.
 
 You can also run a whole file of commands, one per line, with
 `RUN.SCRIPT <file>`; a few example scripts are included in this folder
-(`test.txt`, `test_houses.txt`, `test_primitives.svs`, ...).
+(`test.txt`, `test_houses.txt`, `test_primitives.svs`, ...). For proper
+syntax highlighting of these `.svs` files in VS Code, see
+[`tools/vscode-svs-language`](../tools/vscode-svs-language).
+
+A line starting with `=` (a bare `=======` divider, as `test/views.svs`
+uses between viewports, or an `=Section Name` marker - the text after
+the `=` doesn't matter) splits a script into sections, each of which
+runs on its own rendered frame rather than all at once. This matters
+whenever a section changes something - the camera, the shading mode,
+`+MapZoom`, ... - that a following `REC.PNG` in the *same* script needs
+to actually be visible on screen before it's captured: without a
+divider between them, only the last such section would ever get
+rendered and saved, since switching views and taking a screenshot are
+each cheap state changes, but only one frame's worth of actual
+rendering happens between one command and the next. Works in a script
+loaded at startup, from `RUN.SCRIPT` typed on the live command line, and
+when pasting a multi-line script directly into the command line.
 
 This page has two parts:
 
@@ -46,8 +62,9 @@ This page has two parts:
 -   `EXPORT.OBJ`: Exports the scene in `.obj` format
 -   `EXPORT.RAD`: Exports the scene in Radiance `.rad` format
 -   `EXPORT.SCR`: Exports the scene in AutoCAD `.scr` format
--   `RUN.SCRIPT`: Executes a `.txt` script file containing multiple
-    SOLARCHVISION commands
+-   `RUN.SCRIPT`: Executes a script file (commonly `.svs`) containing
+    multiple commands, one per line - see the `=` section-divider note
+    near the top of this page
 -   `REC.PNG`: Records the frame (screenshot) in `.png` format (filename is optional)
 -   `REC.JPG`: Records the frame (screenshot) in `.jpg` format (filename is optional)
 -   `REC.TIF`: Records the frame (screenshot) in `.tif` format (filename is optional)

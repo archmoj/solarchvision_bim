@@ -6,11 +6,16 @@ Syntax highlighting for `.svs` files - the command scripts documented in
 
 Unlike borrowing another language's grammar (CoffeeScript, Ruby, YAML, ...),
 this one is written for the actual syntax: `#` comments, `=`-prefixed
-section-divider lines (skipped the same way by `sanitizeScriptLine` in
-`runScript.pde`), command names (including the punctuation-heavy ones -
+section-divider lines, command names (including the punctuation-heavy ones -
 `REC.png`, `Shade.Materials`, `+MapZoom`, `N.E.`, `3d-model`, `1D>GROUP`),
 and `key:value`/`key=value` argument pairs (both forms highlighted the same
 way, since `tokenizeScriptLine` treats them identically).
+
+A `=` line isn't a comment - it's a directive that makes a multi-line
+script run one section per rendered frame instead of all at once (see
+`command/README.md`'s own note on this, and `pendingScriptLines` in
+`runScript.pde`), so it's colored as a control keyword rather than
+alongside `#` comments, which really are just ignored.
 
 ## Install
 
