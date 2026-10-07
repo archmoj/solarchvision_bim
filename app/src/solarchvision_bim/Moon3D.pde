@@ -35,6 +35,10 @@ class Moon3D {
                                      // outright (see draw()'s own comment),
                                      // rather than just dimming them to
                                      // DARK_SIDE_AMBIENT.
+  boolean illuminateDaySide = true; // see buildSubFace's own comment on
+                                     // what this actually brightens, and
+                                     // why only a narrow band near the
+                                     // terminator is ever affected.
 
   boolean fitInSkyDome = true;
 
@@ -291,6 +295,17 @@ class Moon3D {
   // negative still, certainly is too. Confirmed by hand against the real
   // compiled app to make exactly the same skip/draw calls, row for row,
   // as the old per-face, post-hoc brightness check did.
+  //
+  // This checks the same RAW litAmount buildSubFace() starts from, before
+  // illuminateDaySide's own sqrt() boost (see its own comment) - that
+  // boost still maps 0 to 0, so it never turns a row this considers
+  // entirely dark into a visibly lit one. It could, in principle, turn a
+  // row with a tiny but nonzero raw litAmount (one this already judges
+  // "dark enough to skip") into one whose boosted brightness is a little
+  // more than imperceptible - confirmed by hand not to actually happen at
+  // this sphere's current lat_step: every discrete Alpha value here lands
+  // either exactly on the dark floor or comfortably past 1% litAmount,
+  // nothing in between. A much finer lat_step could someday change that.
   boolean rowIsEntirelyDark (float Alpha) {
     float topLitAmount = constrain((funcs.sin_ang(Alpha) + TERMINATOR_SOFTNESS) / (2 * TERMINATOR_SOFTNESS), 0, 1);
     return topLitAmount <= 0.001;
@@ -398,6 +413,25 @@ class Moon3D {
         // place, this is what keeps it smooth *within* one.
         float sunDot = ux2 * frame.Sx + uy2 * frame.Sy + uz2 * frame.Sz;
         float litAmount = constrain((sunDot + TERMINATOR_SOFTNESS) / (2 * TERMINATOR_SOFTNESS), 0, 1);
+
+        if (this.illuminateDaySide) {
+          // Brightness is already fully saturated (1.0) everywhere beyond
+          // this narrow TERMINATOR_SOFTNESS band - confirmed by hand
+          // against the real compiled app: from about 8.6deg past the
+          // terminator all the way to the sub-solar point itself, nothing
+          // left here to brighten. This is the one place that still can
+          // be: a square-root curve leaves litAmount's own two endpoints
+          // (0 at the dark edge, 1 at the lit edge) exactly where they
+          // were, but lifts everything in between noticeably closer to
+          // fully lit (e.g. 0.25 -> 0.5) - a flatter, less steeply-shaded
+          // transition. That's also a closer match to how the real
+          // Moon's rough, light-scattering surface actually looks from
+          // Earth than smooth Lambertian shading does: notably flatter/
+          // brighter across its whole visible disk than a plain cosine
+          // falloff would suggest, not just right at the sub-solar point.
+          litAmount = sqrt(litAmount);
+        }
+
         vtx.brightness = DARK_SIDE_AMBIENT + (1 - DARK_SIDE_AMBIENT) * litAmount;
       } else {
         vtx.brightness = 1; // fully lit - same as before phase shading existed

@@ -303,6 +303,11 @@ class Moon3DTest {
 
   @Test
   void buildSubFace_terminatorSitsExactlyOnTheGridsEquator_regardlessOfLongitude () {
+    // illuminateDaySide reshapes this same litAmount->brightness curve
+    // (see its own comment) - an orthogonal concern to what this test is
+    // actually checking (that the terminator falls exactly on a grid
+    // line), so it's turned off here to isolate that claim from it.
+    app.Moon3D.illuminateDaySide = false;
     app.SHADE_HOUR_ANGLE = 12;
     app.SHADE_DATE_ANGLE = 7;
     solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
@@ -325,6 +330,57 @@ class Moon3DTest {
     solarchvision_bim.Moon3D.FaceVertex[] subFace = app.Moon3D.buildSubFace(-90, 0, 1, 10, 0, 0, 1, 1, frame);
 
     assertEquals(app.Moon3D.DARK_SIDE_AMBIENT, subFace[0].brightness, 0.001f);
+  }
+
+  // ================= illuminateDaySide =================================
+  // Brightness is already fully saturated (1.0) everywhere beyond a
+  // narrow TERMINATOR_SOFTNESS-wide band around the terminator - these
+  // confirm illuminateDaySide only reshapes what's inside that band
+  // (brighter, without moving its two endpoints), not the saturated
+  // dark/lit regions on either side of it.
+
+  @Test
+  void illuminateDaySide_defaultsToOn () {
+    assertTrue(app.Moon3D.illuminateDaySide);
+  }
+
+  @Test
+  void illuminateDaySide_leavesTheFullyLitAndFullyDarkEndpointsUnchanged () {
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 7;
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    // Well past the TERMINATOR_SOFTNESS band on either side (see
+    // buildSubFace_gridPoleIsTheSubSolarPoint/antisolarPointIsTheDarkest
+    // Point above for the exact endpoints) - already saturated regardless
+    // of illuminateDaySide, since sqrt(0)=0 and sqrt(1)=1.
+    app.Moon3D.illuminateDaySide = false;
+    solarchvision_bim.Moon3D.FaceVertex[] litOff = app.Moon3D.buildSubFace(90, 0, 1, 10, 0, 0, 1, 1, frame);
+    solarchvision_bim.Moon3D.FaceVertex[] darkOff = app.Moon3D.buildSubFace(-90, 0, 1, 10, 0, 0, 1, 1, frame);
+
+    app.Moon3D.illuminateDaySide = true;
+    solarchvision_bim.Moon3D.FaceVertex[] litOn = app.Moon3D.buildSubFace(90, 0, 1, 10, 0, 0, 1, 1, frame);
+    solarchvision_bim.Moon3D.FaceVertex[] darkOn = app.Moon3D.buildSubFace(-90, 0, 1, 10, 0, 0, 1, 1, frame);
+
+    assertEquals(litOff[0].brightness, litOn[0].brightness, 0.001f);
+    assertEquals(darkOff[0].brightness, darkOn[0].brightness, 0.001f);
+  }
+
+  @Test
+  void illuminateDaySide_brightensTheTerminatorTransitionBand () {
+    app.SHADE_HOUR_ANGLE = 12;
+    app.SHADE_DATE_ANGLE = 7;
+    solarchvision_bim.Moon3D.SkyFrame frame = app.Moon3D.computeFrame();
+
+    for (float alpha : new float[]{-6, -2, 0, 2, 6}) {
+      app.Moon3D.illuminateDaySide = false;
+      float off = app.Moon3D.buildSubFace(alpha, 0, 1, 10, 0, 0, 1, 1, frame)[0].brightness;
+
+      app.Moon3D.illuminateDaySide = true;
+      float on = app.Moon3D.buildSubFace(alpha, 0, 1, 10, 0, 0, 1, 1, frame)[0].brightness;
+
+      assertTrue(on > off, "Alpha=" + alpha + ": expected on (" + on + ") > off (" + off + ")");
+    }
   }
 
   @Test
