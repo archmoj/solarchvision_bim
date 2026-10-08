@@ -17,7 +17,7 @@ on:
           a "headless" JRE - see build-dist.sh for why). Always off for
           macOS regardless of this setting - see build-dist.sh.
         type: boolean
-        default: true
+        default: false
 
 permissions:
   contents: read
