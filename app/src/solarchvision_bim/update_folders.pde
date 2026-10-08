@@ -20,21 +20,6 @@ void update_project_folders () {
   if (filenames != null) SavedScreenShots = filenames.length;
 }
 
-String Folder_climateTypicalYear = BaseFolder + "/input/climate/TMYEPW";
-String Folder_climateEngineering = BaseFolder + "/input/climate/CWEEDS";
-String Folder_climateArchive = BaseFolder + "/input/climate/CLMREC";
-String Folder_ensembleObservation;
-String Folder_ensembleForecast;
-String Folder_GEOMET;
-
-String Folder_Coordinates = BaseFolder + "/input/coordinates";
-
-String Folder_Terrain;
-String Folder_People = BaseFolder + "/input/images/people";
-String Folder_Trees = BaseFolder + "/input/images/trees";
-
-String Folder_Import = BaseFolder + "/import";
-
 String Folder_Export;
 String Folder_Project;
 String Folder_Graphics;

@@ -91,7 +91,7 @@ class Moon3D {
   // blocking it (displayNightSide off).
   boolean useSkyColorForNightSide = true;
 
-  String Filename = BaseFolder + "/input/images/moon/Moon.jpg";
+  String Filename = Folder_Input + "/images/moon/Moon.jpg";
   PImage Map;
 
   class FaceVertex {

@@ -19,10 +19,28 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import processing.data.IntList;
 import processing.pdf.*;
 
-String version = "2026";
-
 String BaseFolder = sketchPath();
+
+String Folder_Input = BaseFolder + "/input";
+
+String Folder_climateTypicalYear = Folder_Input + "/climate/TMYEPW";
+String Folder_climateEngineering = Folder_Input + "/climate/CWEEDS";
+String Folder_climateArchive = Folder_Input + "/climate/CLMREC";
+String Folder_ensembleObservation;
+String Folder_ensembleForecast;
+String Folder_GEOMET;
+
+String Folder_Coordinates = Folder_Input + "/coordinates";
+
+String Folder_Terrain;
+String Folder_People = Folder_Input + "/images/people";
+String Folder_Trees = Folder_Input + "/images/trees";
+
+String Folder_Import = BaseFolder + "/import";
+
 String SceneName = "";
+
+String version = "2026";
 
 void settings () {
   parseArgs(args);

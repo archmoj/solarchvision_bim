@@ -58,7 +58,7 @@ class WORLD {
 
   float ImageScale = 1.0;
 
-  String ViewFolder = BaseFolder + "/input/images/worldmap";
+  String ViewFolder = Folder_Input + "/images/worldmap";
 
   PImage ViewImage;
 
