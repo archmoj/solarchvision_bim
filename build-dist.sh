@@ -157,7 +157,6 @@ if [ -n "$REPO_URL" ] && [ "$GIT_COMMIT" != "unknown" ]; then
   COMMIT_URL="$REPO_URL/commit/$GIT_COMMIT"
 fi
 
-BUILT_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 RELEASE_DATE="$(date -u +%Y-%m-%d)"
 RELEASE_VERSION="$RELEASE_DATE-$GIT_COMMIT_SHORT"
 
@@ -281,13 +280,11 @@ for VARIANT in "${VARIANTS[@]}"; do
 {
   "name": "solarchvision_bim",
   "version": "$RELEASE_VERSION",
-  "variant": "$VARIANT",
   "processingVersion": "$PROCESSING_VERSION_STRING",
   "commit": "$GIT_COMMIT",
   "commitShort": "$GIT_COMMIT_SHORT",
   "branch": "$GIT_BRANCH",
   "dirty": $GIT_DIRTY,
-  "builtAt": "$BUILT_AT",
   "repository": "$REPO_URL",
   "commitUrl": "$COMMIT_URL"
 }
