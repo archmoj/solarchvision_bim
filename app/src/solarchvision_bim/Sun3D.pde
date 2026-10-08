@@ -33,7 +33,7 @@ class Sun3D {
   // unchanged; 2.5 raises it two and a half times over (clamped at 255).
   float brightenLevel = 2.5;
 
-  String Filename = BaseFolder + "/input/images/sun/Sun.jpg";
+  String Filename = Folder_Input + "/images/sun/Sun.jpg";
   PImage Map;
 
   class FaceVertex {
