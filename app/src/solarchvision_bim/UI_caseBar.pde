@@ -114,12 +114,18 @@ class UI_caseBar {
   // "Hours" tab
   // ---------------------------------------------------------------------
 
+  // Shares scaledIndexFromClick's -0.5 offset with Scenario below (click
+  // lands mid-bucket), unlike Days (handleDaysClick), which passes 0.
+  void handleHoursClick (float x1, float y1, float x2, float y2) {
+    if (!isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) return;
+
+    int selectedValue = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
+    if (mouseButton == LEFT) runScriptLine("Start Hour " + selectedValue);
+    if (mouseButton == RIGHT) runScriptLine("End Hour " + selectedValue);
+  }
+
   void drawHoursTab (float x1, float y1, float x2, float y2) {
-    if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
-      int selectedValue = scaledIndexFromClick(X_clicked, x1, x2, 24.0, -0.5);
-      if (mouseButton == LEFT) runScriptLine("Start Hour " + selectedValue);
-      if (mouseButton == RIGHT) runScriptLine("End Hour " + selectedValue);
-    }
+    handleHoursClick(x1, y1, x2, y2);
 
     float x_start = x1 + (x2 - x1) * (STUDY.startHour) / 24.0;
     float x_end = x1 + (x2 - x1) * (STUDY.endHour + 1) / 24.0;
@@ -230,32 +236,40 @@ class UI_caseBar {
   // "Scenario" tab
   // ---------------------------------------------------------------------
 
+  // n1/n2 (scenarioRange(currentDataSource)'s own result) are passed in
+  // rather than recomputed here, so the caller's single scenarioRange()
+  // call (also needed for drawing the tick labels below) is reused
+  // rather than duplicated.
+  void handleScenarioClick (float x1, float y1, float x2, float y2, int n1, int n2) {
+    if (!isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) return;
+
+    int selectedValue = n1 + scaledIndexFromClick(X_clicked, x1, x2, n2 - n1 + 1, -0.5);
+    if (mouseButton == LEFT) {
+      if (currentDataSource == dataID_climateEngineering || currentDataSource == dataID_climateArchive) {
+        runScriptLine("Sample Year Start " + selectedValue);
+      } else if (currentDataSource == dataID_ensembleForecast) {
+        runScriptLine("Sample Member Start " + selectedValue);
+      } else if (currentDataSource == dataID_ensembleObservation) {
+        runScriptLine("Sample Station Start " + selectedValue);
+      }
+    }
+    if (mouseButton == RIGHT) {
+      if (currentDataSource == dataID_climateEngineering || currentDataSource == dataID_climateArchive) {
+        runScriptLine("Sample Year End " + selectedValue);
+      } else if (currentDataSource == dataID_ensembleForecast) {
+        runScriptLine("Sample Member End " + selectedValue);
+      } else if (currentDataSource == dataID_ensembleObservation) {
+        runScriptLine("Sample Station End " + selectedValue);
+      }
+    }
+  }
+
   void drawScenarioTab (float x1, float y1, float x2, float y2) {
     int[] range = scenarioRange(currentDataSource);
     int n1 = range[0];
     int n2 = range[1];
 
-    if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2)) {
-      int selectedValue = n1 + scaledIndexFromClick(X_clicked, x1, x2, n2 - n1 + 1, -0.5);
-      if (mouseButton == LEFT) {
-        if (currentDataSource == dataID_climateEngineering || currentDataSource == dataID_climateArchive) {
-          runScriptLine("Sample Year Start " + selectedValue);
-        } else if (currentDataSource == dataID_ensembleForecast) {
-          runScriptLine("Sample Member Start " + selectedValue);
-        } else if (currentDataSource == dataID_ensembleObservation) {
-          runScriptLine("Sample Station Start " + selectedValue);
-        }
-      }
-      if (mouseButton == RIGHT) {
-        if (currentDataSource == dataID_climateEngineering || currentDataSource == dataID_climateArchive) {
-          runScriptLine("Sample Year End " + selectedValue);
-        } else if (currentDataSource == dataID_ensembleForecast) {
-          runScriptLine("Sample Member End " + selectedValue);
-        } else if (currentDataSource == dataID_ensembleObservation) {
-          runScriptLine("Sample Station End " + selectedValue);
-        }
-      }
-    }
+    handleScenarioClick(x1, y1, x2, y2, n1, n2);
 
     int[] current = scenarioCurrentValues(currentDataSource);
     float V_start = current[0];
