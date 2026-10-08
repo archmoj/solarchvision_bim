@@ -123,12 +123,19 @@ A high-level summary of what's changed:
 ## Run a pre-built download (no Processing install needed)
 
 1. Open the [Build distributable workflow](https://github.com/archmoj/solarchvision_bim/actions/workflows/dist.yml)
-   and click **Run workflow** - the default options build a ready-to-run
-   copy for Linux and Windows with a full Java runtime bundled in, so
-   there's nothing else to install first (leave "Bundle a Java runtime"
-   checked; see the workflow's own description of that option for when
-   you might want to turn it off instead - macOS always needs a Java
-   install either way, see the next point).
+   and click **Run workflow**. Two options, both off by default to keep
+   the download small:
+   - **Bundle a Java runtime** - leave off if you already have Java 17+
+     installed (not a "headless" JRE - see
+     [`build-dist.sh`](build-dist.sh) for why that specifically won't
+     work); turn on for a larger download (~395MB more) that needs
+     nothing else installed. Always off for macOS either way - see the
+     next point.
+   - **Bundle input/** - leave off for a ~184MB-smaller download; run
+     `install-assets.sh` (or `install-assets.bat` on Windows) once,
+     after unzipping, to fetch it separately instead (needs `git`
+     installed - nothing else). Turn on to skip that step and have it
+     bundled directly.
 2. Download the matching artifact from that run - `solarchvision_bim-linux-amd64`,
    `-windows-amd64`, `-macos-x86_64` (Intel) or `-macos-aarch64` (Apple
    Silicon) - and unzip it. The two macOS downloads are unsigned (and
@@ -137,7 +144,11 @@ A high-level summary of what's changed:
    a Java 17+ install already present, and right-click -> **Open**
    (not a double-click) to get past Gatekeeper's "unidentified
    developer" warning.
-3. Run `solarchvision_bim` (Linux), `solarchvision_bim.exe` (Windows),
+3. If you left "Bundle input/" off, run `./install-assets.sh` (or
+   double-click `install-assets.bat` on Windows) once - without it, the
+   app starts but can't load the sun/moon/earth imagery it needs even
+   for a basic scene.
+4. Run `solarchvision_bim` (Linux), `solarchvision_bim.exe` (Windows),
    or `solarchvision_bim.app` (macOS) from inside the unzipped folder.
 
 Artifacts are kept for 7 days - for anything older, or to build one

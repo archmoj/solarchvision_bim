@@ -3,15 +3,18 @@
 # dist/<variant>/ - bundling a full Java runtime via Processing's own
 # --export (https://github.com/processing/processing4/wiki/Command-Line),
 # so the result runs with no Processing, and no separate Java, install
-# needed - plus the input/ (a selected subset - see the loop below),
-# command/, projects/, import/ folders solarchvision_bim resolves
-# relative to its own install directory at runtime (BaseFolder =
+# needed - plus the command/, projects/, import/ folders solarchvision_bim
+# resolves relative to its own install directory at runtime (BaseFolder =
 # sketchPath() - see update_folders.pde), which --export alone doesn't
 # know to include, since they live at the repo root rather than inside
 # the sketch's own data/ folder (only data/, here just data/font/, gets
-# bundled automatically). Confirmed by actually running an export before
-# this script existed: it starts, but throws immediately trying to load
-# input/images/sun/Sun.jpg without this.
+# bundled automatically). input/ (a selected subset - see the loop
+# below) is the exception: left for install-assets.sh/.bat to fetch
+# separately by default (see INCLUDE_INPUT below), being by far the
+# biggest single piece of what would otherwise ship. Confirmed by
+# actually running an export before this script existed: it starts, but
+# throws immediately trying to load input/images/sun/Sun.jpg without at
+# least that one piece of it, one way or the other.
 #
 # Same idea as run-with-latest-processing.sh's own input/command/projects
 # symlinks for a live dev run from this repo - except these are real
@@ -33,6 +36,10 @@
 # actually references, and only the platform-native jars this variant
 # itself needs rather than every platform jogl/gluegen support - see the
 # loop below for the specifics and how each was actually verified safe.
+#
+# Also always ships install-assets.sh/.bat - fetches input/ (see
+# INCLUDE_INPUT below) from this exact build's own commit afterward,
+# rather than needing it bundled directly.
 #
 # Usage:
 #   ./build-dist.sh                       # every variant below
@@ -86,6 +93,19 @@
 #                       most people downloading a dist build want it to
 #                       just work, not to debug which JRE variant they
 #                       happen to have.
+#   INCLUDE_INPUT     - set to 1 to bundle input/ (~184MB - coordinates,
+#                       worldmap, earth, moon, sun, people, trees)
+#                       directly instead of leaving it for
+#                       install-assets.sh/.bat (always shipped, either
+#                       way) to fetch afterward. Off by default: this is
+#                       by far the single biggest piece of what a dist
+#                       build would otherwise contain, and most people
+#                       downloading one don't need it bundled sight
+#                       unseen - running the install script once, after
+#                       deciding they do want the full visual experience
+#                       (sun/moon/trees/worldmap, not just a working
+#                       app), is a small extra step in exchange for a
+#                       download roughly a third the size by default.
 set -euo pipefail
 cd "$(dirname "$0")"   # repo root
 
@@ -110,6 +130,12 @@ else
   echo "       --export needs Processing 4.5.x+ - set PROCESSING_HOME to that install." >&2
   exit 1
 fi
+
+# "processing-4.5.7-1435" -> "4.5.7", for version.json below - which
+# exact Processing build a dist came from matters for reproducing an
+# export, same reason the git commit does.
+PROCESSING_VERSION_STRING="$("$PROCESSING_BIN" --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+PROCESSING_VERSION_STRING="${PROCESSING_VERSION_STRING:-unknown}"
 
 # Wiped clean here - once Processing itself is confirmed available, not
 # any earlier - rather than just each variant's own $OUT right before
@@ -274,30 +300,47 @@ for VARIANT in "${VARIANTS[@]}"; do
     find "$JAR_DIR" -maxdepth 1 -name "*-natives-*.jar" ! -name "*-natives-$NATIVES_SUFFIX.jar" -delete
   fi
 
-  echo "==> Adding input/ (selected folders only), command/, projects/, import/ to $ASSET_ROOT"
-  # Not all of input/ (345MB in full - this selection comes to ~184MB):
-  # the climate datasets (the biggest single piece, CWEEDS alone is
-  # 143MB) are created empty instead, since update_folders.pde only ever
-  # points Folder_climate*
-  # at these as plain paths - nothing reads from them until a person
-  # explicitly loads a climate scenario that needs one, unlike
-  # coordinates/ and the images/ subfolders below, which real everyday
-  # use (a plain 3D scene with the sun/moon/people/trees in it) does
-  # touch right away. input/images/earth_high_res and input/images/logo
-  # are left out too, for the same "not needed for a basic run" reason.
-  mkdir -p \
-    "$ASSET_ROOT/input/climate/CWEEDS" \
-    "$ASSET_ROOT/input/climate/CLMREC" \
-    "$ASSET_ROOT/input/climate/TMYEPW" \
-    "$ASSET_ROOT/input/climate/NAEFS"
-  cp -r input/coordinates "$ASSET_ROOT/input/coordinates"
-  mkdir -p "$ASSET_ROOT/input/images"
-  for IMG_FOLDER in worldmap earth moon sun people trees; do
-    cp -r "input/images/$IMG_FOLDER" "$ASSET_ROOT/input/images/$IMG_FOLDER"
-  done
+  # Off by default: even this selection (not all of input/ - 345MB in
+  # full) still comes to ~184MB, by far the single biggest piece of a
+  # dist build otherwise. input/images/sun/Sun.jpg is the one piece that
+  # really is needed just to start up without crashing (see this file's
+  # own opening comment on how that was found) - everything else here
+  # (coordinates/, worldmap/, earth/, moon/, people/, trees/) is only
+  # needed for the full visual experience, not to run at all. Set
+  # INCLUDE_INPUT=1 to bundle it directly instead of leaving it to
+  # install-assets.sh/.bat (always shipped either way - see below).
+  if [ "${INCLUDE_INPUT:-0}" = "1" ]; then
+    echo "==> Adding input/ (selected folders only) to $ASSET_ROOT"
+    # Not all of input/: the climate datasets (the biggest single piece,
+    # CWEEDS alone is 143MB) are created empty instead, since
+    # update_folders.pde only ever points Folder_climate* at these as
+    # plain paths - nothing reads from them until a person explicitly
+    # loads a climate scenario that needs one, unlike coordinates/ and
+    # the images/ subfolders below, which real everyday use (a plain 3D
+    # scene with the sun/moon/people/trees in it) does touch right away.
+    # input/images/earth_high_res and input/images/logo are left out
+    # too, for the same "not needed for a basic run" reason. Kept
+    # identical to install-assets.sh/.bat's own selection below, so
+    # input/ ends up the same whichever path put it there.
+    mkdir -p "$ASSET_ROOT/input/climate/CWEEDS"
+    mkdir -p "$ASSET_ROOT/input/climate/CLMREC"
+    mkdir -p "$ASSET_ROOT/input/climate/TMYEPW"
+    mkdir -p "$ASSET_ROOT/input/climate/NAEFS"
+    cp -r input/coordinates "$ASSET_ROOT/input/coordinates"
+    mkdir -p "$ASSET_ROOT/input/images"
+    for IMG_FOLDER in worldmap earth moon sun people trees; do
+      cp -r "input/images/$IMG_FOLDER" "$ASSET_ROOT/input/images/$IMG_FOLDER"
+    done
+  else
+    echo "==> INCLUDE_INPUT not set - input/ left out (run install-assets.sh/.bat after unzipping to fetch it)"
+  fi
 
+  echo "==> Adding command/, projects/, import/, install-assets.sh/.bat to $ASSET_ROOT"
   cp -r command "$ASSET_ROOT/command"
   mkdir -p "$ASSET_ROOT/projects" "$ASSET_ROOT/import"
+  cp install-assets.sh "$ASSET_ROOT/install-assets.sh"
+  chmod +x "$ASSET_ROOT/install-assets.sh"
+  cp install-assets.bat "$ASSET_ROOT/install-assets.bat"
 
   # All four below land at $OUT itself (not $ASSET_ROOT) even for macOS,
   # so they sit right next to solarchvision_bim.app where someone
@@ -308,6 +351,7 @@ for VARIANT in "${VARIANTS[@]}"; do
   "name": "solarchvision_bim",
   "version": "$RELEASE_VERSION",
   "variant": "$VARIANT",
+  "processingVersion": "$PROCESSING_VERSION_STRING",
   "commit": "$GIT_COMMIT",
   "commitShort": "$GIT_COMMIT_SHORT",
   "branch": "$GIT_BRANCH",
