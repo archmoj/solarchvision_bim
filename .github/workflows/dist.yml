@@ -18,14 +18,6 @@ on:
           macOS regardless of this setting - see build-dist.sh.
         type: boolean
         default: false
-      include_input:
-        description: >-
-          Bundle input/ (~184MB - coordinates, worldmap, earth, moon,
-          sun, people, trees) directly instead of leaving it for
-          install-assets.sh/.bat (always included either way) to fetch
-          afterward - see build-dist.sh for why this is off by default.
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -80,29 +72,16 @@ jobs:
       - name: Build dist (linux-amd64)
         env:
           NO_JAVA: ${{ inputs.bundle_java && '0' || '1' }}
-          INCLUDE_INPUT: ${{ inputs.include_input && '1' || '0' }}
         run: |
           export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
           chmod +x build-dist.sh
           ./build-dist.sh linux-amd64
 
-      # install-assets.sh no-ops if include_input bundled input/ directly
-      # already (see its own "already here" check) - either way, this
-      # confirms the build is actually runnable end to end, not just
-      # that the export step above exited 0: loads
-      # input/images/sun/Sun.jpg (the exact failure build-dist.sh's own
-      # comment describes finding and fixing), runs a bundled
-      # command/test/*.svs script, and produces its screenshot. Running
-      # install-assets.sh here, rather than always setting
-      # include_input, also means this is exactly what most people
-      # downloading this artifact will actually do - a real test of that
-      # path, not just the direct-bundle one.
-      - name: Install assets, then smoke-test the build
+      - name: smoke-test the build
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           cd dist/linux-amd64
-          ./install-assets.sh
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
             ./solarchvision_bim USER=AUTO RUN=command/test/primitives.svs
 
@@ -158,7 +137,6 @@ jobs:
       - name: Build dist (windows-amd64)
         env:
           NO_JAVA: ${{ inputs.bundle_java && '0' || '1' }}
-          INCLUDE_INPUT: ${{ inputs.include_input && '1' || '0' }}
         run: |
           export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
           chmod +x build-dist.sh
@@ -209,8 +187,6 @@ jobs:
           mv /tmp/processing-extracted/Processing "$HOME/processing/${PROCESSING_VERSION}"
 
       - name: Build dist (macos-x86_64, macos-aarch64)
-        env:
-          INCLUDE_INPUT: ${{ inputs.include_input && '1' || '0' }}
         run: |
           export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
           chmod +x build-dist.sh
@@ -228,19 +204,6 @@ jobs:
             if ! file "$LAUNCHER" | grep -q 'Mach-O'; then
               echo "error: $LAUNCHER is not a Mach-O binary:" >&2
               file "$LAUNCHER" >&2
-              exit 1
-            fi
-            if [ ! -f "$JAVA_DIR/install-assets.sh" ]; then
-              echo "error: install-assets.sh is missing from the $variant bundle's Contents/Java/" >&2
-              exit 1
-            fi
-            # Only expected when include_input was turned on - see
-            # build-dist.sh's own INCLUDE_INPUT (off by default, in
-            # which case install-assets.sh above is what's expected to
-            # provide it instead, unchecked here since neither macOS
-            # variant can actually run it on this Linux runner).
-            if [ "${{ inputs.include_input }}" = "true" ] && [ ! -d "$JAVA_DIR/input" ]; then
-              echo "error: include_input was on, but input/ is missing from the $variant bundle's Contents/Java/" >&2
               exit 1
             fi
             echo "==> $variant: OK ($(file "$LAUNCHER"))"
