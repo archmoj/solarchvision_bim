@@ -23,6 +23,7 @@ class ImportObjectsOBJTest {
   @BeforeEach
   void setUp () {
     app = new solarchvision_bim();
+    app.locateBaseFolder();
   }
 
   // ================= vertex transform (cx, cy, cz, sx, sy, sz) ===============

@@ -60,9 +60,7 @@ class Earth3D {
   float[][] BoundariesX;
   float[][] BoundariesY;
 
-  String Path = BaseFolder +
-    "/input/images/earth";
-  //"/input/images/earth_high_res";
+  String Path;
 
   String[] Filenames = new String[] {
     "Z_180000_-090000_-180000_090000_EN_FR_.jpg"

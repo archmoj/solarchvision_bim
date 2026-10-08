@@ -32,6 +32,7 @@ class ExportObjectsOBJTest {
     app = new solarchvision_bim();
     app.allModel2Ds.ImagePath = new String[]{""}; // see FileSelectedTest.java
     app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3];
+    app.locateBaseFolder();
     app.update_project_folders(); // Folder_Export3D is null until this runs
   }
 

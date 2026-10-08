@@ -8,9 +8,6 @@ boolean draw_initial_frames () {
     float cr;
 
     cr = pixel_H / 2;
-    //PImage logo = loadImage(Folder_Input + "/images/logo/SOLARCHVISION.jpg");
-    //imageMode(CENTER);
-    //image(logo, 0.5 * width, 0.5 * height - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
     imageMode(CORNER);
 
     strokeWeight(1);

@@ -58,7 +58,7 @@ class WORLD {
 
   float ImageScale = 1.0;
 
-  String ViewFolder = Folder_Input + "/images/worldmap";
+  String ViewFolder;
 
   PImage ViewImage;
 
@@ -206,7 +206,7 @@ class WORLD {
 
   void loadImages (int n) {
 
-    //println("\nLoading:", this.ViewFolder + "/" + this.VIEW_Filenames[n]);
+    println("\nLoading:", this.ViewFolder + "/" + this.VIEW_Filenames[n]);
 
     this.ViewImage = loadImage(this.ViewFolder + "/" + this.VIEW_Filenames[n]);
     this.VIEW_ImageCache[n] = this.ViewImage; // keep the cache consistent with the currently-selected tile too
