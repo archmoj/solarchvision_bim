@@ -13,7 +13,7 @@ Usage:
                                                         # (review the images before committing them!)
 
 Env vars:
-  PROCESSING_HOME     Processing 4 install (default: ~/processing/4.5.2,
+  PROCESSING_HOME     Processing 4 install (default: ~/processing/4.5.7,
                       matching .github/workflows/image-tests.yml's cache
                       path). Runs `$PROCESSING_HOME/bin/Processing cli
                       --sketch=... --run USER=AUTO RUN=...` (Linux/macOS)
@@ -99,7 +99,7 @@ def shard_slice(names):
 
 
 def find_processing_java():
-    home = os.environ.get("PROCESSING_HOME", os.path.expanduser("~/processing/4.5.2"))
+    home = os.environ.get("PROCESSING_HOME", os.path.expanduser("~/processing/4.5.7"))
     # Windows' portable build lays out one directory level shallower than
     # Linux/macOS (Processing.exe directly at the install root, no bin/
     # wrapper) - see run-with-latest-processing.bat's and
@@ -251,7 +251,7 @@ def print_diagnostics(name):
     # correctly routing to this repo's real files at the moment Processing
     # itself tries to read through it, not just at the moment it was
     # created.
-    home = os.environ.get("PROCESSING_HOME", os.path.expanduser("~/processing/4.5.2"))
+    home = os.environ.get("PROCESSING_HOME", os.path.expanduser("~/processing/4.5.7"))
     core_dir = (
         os.path.join(home, "app", "resources", "core")
         if os.name == "nt"
