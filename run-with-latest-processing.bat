@@ -5,7 +5,7 @@ rem
 rem Run this from the repo root, same as run-with-latest-processing.sh.
 setlocal
 
-if "%PROCESSING_HOME%"=="" set "PROCESSING_HOME=%USERPROFILE%\processing\4.5.2"
+if "%PROCESSING_HOME%"=="" set "PROCESSING_HOME=%USERPROFILE%\processing\4.5.7"
 
 rem The Windows portable build lays out one directory level shallower than
 rem the Linux one (Processing.exe + app\ + runtime\ directly under

@@ -31,7 +31,7 @@ One-time setup:
      `~/processing/4.3.4`
    - `4.5.x+` (matching `run-with-latest-processing.sh`, or
      `run-with-latest-processing.bat` on Windows), e.g. under
-     `~/processing/4.5.2`. Windows' portable build of this one lays out
+     `~/processing/4.5.7`. Windows' portable build of this one lays out
      one directory level shallower than Linux/macOS (`Processing.exe`
      directly at the install root instead of `bin/Processing`, no `lib/`
      wrapper around `app/`) - also auto-detected, no extra setup needed.

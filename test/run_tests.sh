@@ -12,7 +12,7 @@
 #     Processing.exe directly at the install root (Windows - one
 #     directory level shallower than Linux/macOS, no lib/ wrapper),
 #     invoked as `Processing cli ...` either way (e.g.
-#     ~/processing/4.5.2/bin/Processing, matching run-with-latest-processing.sh,
+#     ~/processing/4.5.7/bin/Processing, matching run-with-latest-processing.sh,
 #     or Processing.exe for run-with-latest-processing.bat)
 # Auto-detected from whichever exists under PROCESSING_HOME - no need to
 # tell this script which one you have.
@@ -47,7 +47,7 @@ if [ -x "$PROCESSING_HOME/processing-java" ] || [ -x "$PROCESSING_HOME/processin
   CORE_JAR="$PROCESSING_HOME/core/library/core.jar"
 elif [ -x "$PROCESSING_HOME/bin/Processing" ]; then
   PROCESSING_STYLE="new"
-  # Filename includes the version (core-4.5.2.jar, ...) - match on the
+  # Filename includes the version (core-4.5.7.jar, ...) - match on the
   # unversioned prefix rather than hardcoding one.
   CORE_JAR="$(find "$PROCESSING_HOME/lib/app/resources/core/library" -maxdepth 1 -name 'core-*.jar' -print -quit 2>/dev/null || true)"
 elif [ -x "$PROCESSING_HOME/Processing.exe" ]; then
