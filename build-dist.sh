@@ -22,7 +22,10 @@
 # Also writes a version.json at the root of each variant - which repo
 # state (commit, branch, whether the working tree was clean) it was
 # built from, since nothing else in the dist folder says that once it's
-# been unzipped somewhere on its own.
+# been unzipped somewhere on its own - and copies LICENSE.md,
+# package.json and CITATION.cff there too (the last with version/
+# date-released filled in, since the committed one deliberately leaves
+# those out - see the loop below).
 #
 # Usage:
 #   ./build-dist.sh                       # every variant below
@@ -138,6 +141,8 @@ if [ -n "$REPO_URL" ] && [ "$GIT_COMMIT" != "unknown" ]; then
 fi
 
 BUILT_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+RELEASE_DATE="$(date -u +%Y-%m-%d)"
+RELEASE_VERSION="$RELEASE_DATE-$GIT_COMMIT_SHORT"
 
 for VARIANT in "${VARIANTS[@]}"; do
   OUT="$DIST_DIR/$VARIANT"
@@ -199,13 +204,14 @@ for VARIANT in "${VARIANTS[@]}"; do
   cp -r command "$ASSET_ROOT/command"
   mkdir -p "$ASSET_ROOT/projects" "$ASSET_ROOT/import"
 
-  # At $OUT itself (not $ASSET_ROOT) even for macOS, so it sits right
-  # next to solarchvision_bim.app where someone unzipping this would
-  # actually see it, rather than buried inside the bundle.
+  # All four below land at $OUT itself (not $ASSET_ROOT) even for macOS,
+  # so they sit right next to solarchvision_bim.app where someone
+  # unzipping this would actually see them, rather than buried inside
+  # the bundle.
   cat > "$OUT/version.json" << EOF
 {
   "name": "solarchvision_bim",
-  "version": "$(date -u +%Y.%m.%d)-$GIT_COMMIT_SHORT",
+  "version": "$RELEASE_VERSION",
   "variant": "$VARIANT",
   "commit": "$GIT_COMMIT",
   "commitShort": "$GIT_COMMIT_SHORT",
@@ -216,6 +222,21 @@ for VARIANT in "${VARIANTS[@]}"; do
   "commitUrl": "$COMMIT_URL"
 }
 EOF
+
+  cp LICENSE.md "$OUT/LICENSE.md"
+  cp package.json "$OUT/package.json"
+
+  # CITATION.cff is committed without version/date-released (cff-version
+  # 1.2.0 doesn't require either - see
+  # https://github.com/citation-file-format/citation-file-format/blob/1.2.0/schema-guide.md)
+  # so a citation always names a precise release rather than "whatever
+  # the repo's tip happened to be" - added here, append-only, since YAML
+  # mappings don't care what order their keys come in.
+  {
+    cat CITATION.cff
+    echo "version: \"$RELEASE_VERSION\""
+    echo "date-released: $RELEASE_DATE"
+  } > "$OUT/CITATION.cff"
 
   echo "==> Done: $OUT"
 done

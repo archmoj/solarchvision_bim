@@ -1,0 +1,31 @@
+{
+  "name": "solarchvision-bim",
+  "version": "1.0.0",
+  "description": "A Processing-based 3D platform for solar, shading, and climate analysis of buildings and sites worldwide, with a graphical user interface, scriptable commands, climate-data and ensemble-forecast integration, and advanced visualization.",
+  "author": "Mojtaba Samimi",
+  "license": "GPL-2.0-only",
+  "homepage": "https://github.com/archmoj/solarchvision_bim",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/archmoj/solarchvision_bim"
+  },
+  "bugs": {
+    "url": "https://github.com/archmoj/solarchvision_bim/issues"
+  },
+  "keywords": [
+    "3D",
+    "BIM",
+    "architecture",
+    "solar",
+    "climate",
+    "shading",
+    "environmental-analysis",
+    "weather-data",
+    "ensemble-forecast",
+    "visualization",
+    "Processing"
+  ],
+  "requirements": {
+    "java": ">=17"
+  }
+}
