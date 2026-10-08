@@ -1,7 +1,7 @@
 name: Build distributable
 
 # Button-triggered only (Actions tab -> this workflow -> Run workflow),
-# not on every push - each variant runs ~400-740MB (see bundle_java
+# not on every push - each variant runs ~210-580MB (see bundle_java
 # below), so building one on every push to every branch would be a lot
 # of wasted storage/transfer for something most pushes don't need a
 # fresh copy of. One button starts all three jobs below together - they

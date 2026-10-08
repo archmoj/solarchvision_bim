@@ -3,15 +3,15 @@
 # dist/<variant>/ - bundling a full Java runtime via Processing's own
 # --export (https://github.com/processing/processing4/wiki/Command-Line),
 # so the result runs with no Processing, and no separate Java, install
-# needed - plus the input/, command/, projects/, import/ folders
-# solarchvision_bim resolves relative to its own install directory at
-# runtime (BaseFolder = sketchPath() - see update_folders.pde), which
-# --export alone doesn't know to include, since they live at the repo
-# root rather than inside the sketch's own data/ folder (only data/,
-# here just data/font/, gets bundled automatically). Confirmed by
-# actually running an export before this script existed: it starts, but
-# throws immediately trying to load input/images/sun/Sun.jpg without
-# this.
+# needed - plus the input/ (a selected subset - see the loop below),
+# command/, projects/, import/ folders solarchvision_bim resolves
+# relative to its own install directory at runtime (BaseFolder =
+# sketchPath() - see update_folders.pde), which --export alone doesn't
+# know to include, since they live at the repo root rather than inside
+# the sketch's own data/ folder (only data/, here just data/font/, gets
+# bundled automatically). Confirmed by actually running an export before
+# this script existed: it starts, but throws immediately trying to load
+# input/images/sun/Sun.jpg without this.
 #
 # Same idea as run-with-latest-processing.sh's own input/command/projects
 # symlinks for a live dev run from this repo - except these are real
@@ -137,8 +137,28 @@ for VARIANT in "${VARIANTS[@]}"; do
     *)       ASSET_ROOT="$OUT" ;;
   esac
 
-  echo "==> Adding input/, command/, projects/, import/ to $ASSET_ROOT"
-  cp -r input "$ASSET_ROOT/input"
+  echo "==> Adding input/ (selected folders only), command/, projects/, import/ to $ASSET_ROOT"
+  # Not all of input/ (345MB in full - this selection comes to ~184MB):
+  # the climate datasets (the biggest single piece, CWEEDS alone is
+  # 143MB) are created empty instead, since update_folders.pde only ever
+  # points Folder_climate*
+  # at these as plain paths - nothing reads from them until a person
+  # explicitly loads a climate scenario that needs one, unlike
+  # coordinates/ and the images/ subfolders below, which real everyday
+  # use (a plain 3D scene with the sun/moon/people/trees in it) does
+  # touch right away. input/images/earth_high_res and input/images/logo
+  # are left out too, for the same "not needed for a basic run" reason.
+  mkdir -p \
+    "$ASSET_ROOT/input/climate/CWEEDS" \
+    "$ASSET_ROOT/input/climate/CLMREC" \
+    "$ASSET_ROOT/input/climate/TMYEPW" \
+    "$ASSET_ROOT/input/climate/NAEFS"
+  cp -r input/coordinates "$ASSET_ROOT/input/coordinates"
+  mkdir -p "$ASSET_ROOT/input/images"
+  for IMG_FOLDER in worldmap earth moon sun people trees; do
+    cp -r "input/images/$IMG_FOLDER" "$ASSET_ROOT/input/images/$IMG_FOLDER"
+  done
+
   cp -r command "$ASSET_ROOT/command"
   mkdir -p "$ASSET_ROOT/projects" "$ASSET_ROOT/import"
 
