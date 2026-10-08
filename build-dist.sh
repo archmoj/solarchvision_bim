@@ -19,6 +19,11 @@
 # handed to someone else entirely, not left pointing back at this
 # checkout.
 #
+# Also writes a version.json at the root of each variant - which repo
+# state (commit, branch, whether the working tree was clean) it was
+# built from, since nothing else in the dist folder says that once it's
+# been unzipped somewhere on its own.
+#
 # Usage:
 #   ./build-dist.sh                       # every variant below
 #   ./build-dist.sh linux-amd64           # just one (or a few)
@@ -102,6 +107,38 @@ else
   VARIANTS=(linux-amd64 windows-amd64 macos-x86_64 macos-aarch64)
 fi
 
+# What repo state each dist build came from - written as version.json
+# at the root of every variant below (not package.json: nothing here
+# reads it as an npm manifest, and that name would suggest otherwise).
+GIT_COMMIT="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+GIT_COMMIT_SHORT="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+GIT_DIRTY=false
+if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
+  GIT_DIRTY=true
+fi
+
+# git@host:owner/repo.git and https://host/owner/repo.git both normalize
+# to a plain, browsable https URL. The host:path -> host/path swap has
+# to happen before https:// is prepended, not after - otherwise it's the
+# colon in that https:// itself that ends up replaced, not the intended
+# one between host and path (caught by testing this against a real
+# git@... remote, not just this repo's own https:// one).
+REPO_URL="$(git remote get-url origin 2>/dev/null || echo "")"
+REPO_URL="${REPO_URL%.git}"
+if [[ "$REPO_URL" == git@*:* ]]; then
+  HOST_AND_PATH="${REPO_URL#git@}"
+  HOST_AND_PATH="${HOST_AND_PATH/:/\/}"
+  REPO_URL="https://$HOST_AND_PATH"
+fi
+
+COMMIT_URL=""
+if [ -n "$REPO_URL" ] && [ "$GIT_COMMIT" != "unknown" ]; then
+  COMMIT_URL="$REPO_URL/commit/$GIT_COMMIT"
+fi
+
+BUILT_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
 for VARIANT in "${VARIANTS[@]}"; do
   OUT="$DIST_DIR/$VARIANT"
 
@@ -161,6 +198,24 @@ for VARIANT in "${VARIANTS[@]}"; do
 
   cp -r command "$ASSET_ROOT/command"
   mkdir -p "$ASSET_ROOT/projects" "$ASSET_ROOT/import"
+
+  # At $OUT itself (not $ASSET_ROOT) even for macOS, so it sits right
+  # next to solarchvision_bim.app where someone unzipping this would
+  # actually see it, rather than buried inside the bundle.
+  cat > "$OUT/version.json" << EOF
+{
+  "name": "solarchvision_bim",
+  "version": "$(date -u +%Y.%m.%d)-$GIT_COMMIT_SHORT",
+  "variant": "$VARIANT",
+  "commit": "$GIT_COMMIT",
+  "commitShort": "$GIT_COMMIT_SHORT",
+  "branch": "$GIT_BRANCH",
+  "dirty": $GIT_DIRTY,
+  "builtAt": "$BUILT_AT",
+  "repository": "$REPO_URL",
+  "commitUrl": "$COMMIT_URL"
+}
+EOF
 
   echo "==> Done: $OUT"
 done

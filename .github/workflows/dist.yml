@@ -12,16 +12,10 @@ on:
     inputs:
       bundle_java:
         description: >-
-          Bundle a Java runtime (~395MB extra per variant) so the result
-          runs with nothing else installed. Turning this off needs
-          whoever runs it to already have their own Java 17+ installed -
-          and specifically not a "headless" JRE package (common on
-          servers/minimal installs/CI images - confirmed directly: a
-          headless build's java can't open a window at all, regardless
-          of DISPLAY/Xvfb) - see build-dist.sh's own comment on this.
-          Doesn't apply to the macOS job below, which never bundles Java
-          regardless of this setting (a Processing export bug - again
-          see build-dist.sh), so it needs a Java install either way.
+          Bundle a Java runtime (~395MB extra) so it runs with nothing
+          else installed. If off, needs Java 17+ already installed (not
+          a "headless" JRE - see build-dist.sh for why). Always off for
+          macOS regardless of this setting - see build-dist.sh.
         type: boolean
         default: true
 
