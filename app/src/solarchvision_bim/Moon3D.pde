@@ -356,10 +356,16 @@ class Moon3D {
     float d = EARTH_MOON_DISTANCE - FLOAT_r_Earth;
 
     if(this.fitInSkyDome) {
+
       // fit the moon inside the sky sphere
       // bring it closer and resize it
       r *= Sky3D.radius / d;
+
       d = Sky3D.radius;
+
+      // place it slightly closer to avoid collision with the sun geometry
+      d *= 0.975;
+      r *= 0.975;
     }
 
     SkyFrame frame = computeFrame();
