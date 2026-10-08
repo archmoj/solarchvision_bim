@@ -27,6 +27,13 @@
 # version/date-released filled in, since the committed one deliberately
 # leaves those out - see the loop below).
 #
+# Also trims --export's own output down some: just solarchvision_bim.java
+# out of source/ (not the 140+ .pde files alongside it), a handful of
+# library jars confirmed unused by anything this app's dependency graph
+# actually references, and only the platform-native jars this variant
+# itself needs rather than every platform jogl/gluegen support - see the
+# loop below for the specifics and how each was actually verified safe.
+#
 # Usage:
 #   ./build-dist.sh                       # every variant below
 #   ./build-dist.sh linux-amd64           # just one (or a few)
@@ -178,6 +185,65 @@ for VARIANT in "${VARIANTS[@]}"; do
     macos-*) ASSET_ROOT="$OUT/solarchvision_bim.app/Contents/Java" ;;
     *)       ASSET_ROOT="$OUT" ;;
   esac
+
+  # Same macOS exception as data/ above: a lib/ subfolder for
+  # linux-amd64/windows-amd64 (confirmed present either way, Java
+  # bundled or not - see run below), but no such subfolder for macOS -
+  # its jars sit directly under Contents/Java/ instead.
+  case "$VARIANT" in
+    macos-*) JAR_DIR="$ASSET_ROOT" ;;
+    *)       JAR_DIR="$ASSET_ROOT/lib" ;;
+  esac
+
+  # Only solarchvision_bim.java (the preprocessed source --export already
+  # compiles from) - not the 140+ individual .pde files alongside it,
+  # which add nothing a person running this build needs.
+  find "$OUT" -path "*/source/*.pde" -delete
+
+  # Processing's own preprocessor injects a fixed, broad set of default
+  # imports into every sketch's generated .java - org.apache.commons.
+  # compress.* and org.apache.commons.io.* among them, covering dozens of
+  # subpackages neither this sketch nor anything it depends on actually
+  # uses (compare solarchvision_bim.pde's own, much narrower explicit
+  # import list - just one commons-compress class, BZip2CompressorInputStream,
+  # genuinely gets used, in download_ENSEMBLE_FORECAST.pde). --export's
+  # dependency resolution follows those wildcard imports literally,
+  # bundling entire unrelated libraries (plus, in commons-io/commons-
+  # compress's case, fetching a redundant newer copy alongside an older
+  # one already available locally) as a result.
+  #
+  # Confirmed directly before trusting this, both ways: scanned every
+  # .class file actually shipped (this sketch's own jar, plus every
+  # library jar being kept) for references to each package removed below
+  # - zero hits anywhere in the dependency graph for batik or kotlin, and
+  # the one commons-compress class genuinely used needs exactly one
+  # commons-io class in turn (CloseShieldInputStream) - present in the
+  # newer commons-io jar kept here, not the older, SVG-library-only one
+  # removed. Then actually ran the result afterward: a generic script
+  # and, specifically, a PDF export (the one feature most at risk, since
+  # itext's own classes do reference bouncycastle - but only for
+  # signing/timestamping, a code path this app never reaches) both
+  # produced correct output.
+  rm -f \
+    "$JAR_DIR/batik-all-1.19.jar" \
+    "$JAR_DIR/commons-io-2.17.0.jar" \
+    "$JAR_DIR/kotlin-stdlib-2.3.21.jar" \
+    "$JAR_DIR/bcprov-jdk14-138.jar" # byte-identical to bcprov-jdk14-1.38.jar (md5sum confirmed) - that one's kept
+
+  # jogl/gluegen's native-library jars are bundled for every platform
+  # they support, every time, regardless of which one --variant is
+  # actually targeting - only the one matching this variant's own native
+  # suffix ("macosx-universal" covers both macOS variants, a single
+  # universal binary) is needed here.
+  case "$VARIANT" in
+    linux-amd64)   NATIVES_SUFFIX=linux-amd64 ;;
+    windows-amd64) NATIVES_SUFFIX=windows-amd64 ;;
+    macos-*)       NATIVES_SUFFIX=macosx-universal ;;
+    *)             NATIVES_SUFFIX="" ;;
+  esac
+  if [ -n "$NATIVES_SUFFIX" ]; then
+    find "$JAR_DIR" -maxdepth 1 -name "*-natives-*.jar" ! -name "*-natives-$NATIVES_SUFFIX.jar" -delete
+  fi
 
   echo "==> Adding input/ (selected folders only), command/, projects/, import/ to $ASSET_ROOT"
   # Not all of input/ (345MB in full - this selection comes to ~184MB):
