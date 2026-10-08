@@ -25,13 +25,24 @@
 #
 # Variants (Processing's own --variant names - see `Processing cli --help`):
 #   linux-amd64, windows-amd64, macos-x86_64, macos-aarch64
-# The two macOS variants are known not to cross-export correctly from a
-# Linux or Windows host (confirmed: the export command still exits 0,
-# but throws partway through and leaves an incomplete output directory -
-# a Kotlin NoSuchElementException inside Processing's own
-# JavaBuild.exportApplication) - an actual macOS host is needed for
-# those two. CI (.github/workflows/dist.yml) only builds linux-amd64 and
-# windows-amd64, both confirmed working, from a single Linux runner.
+#
+# The two macOS variants need --no-java specifically (always applied for
+# them below, regardless of the NO_JAVA setting otherwise in effect) -
+# embedding Java into a macOS export hits a known bug in Processing
+# itself (java.util.NoSuchElementException in JavaBuild.exportApplication,
+# reported even for a *native* macOS export with some Processing
+# versions - https://github.com/processing/processing4/issues/1193),
+# confirmed directly here too: --variant=macos-aarch64 --export (java
+# embedded) throws partway through and leaves a broken, incomplete
+# solarchvision_bim.app; the exact same command plus --no-java instead
+# produces a complete, correctly structured one (valid Info.plist, a
+# real Mach-O launcher) - cross-exported from this Linux host, which
+# Processing's own wiki otherwise says needs an actual Mac
+# (https://github.com/processing/processing4/wiki/Exporting-Applications
+# - true for a *signed* export, apparently not for this unsigned,
+# Java-less one). Unsigned means Gatekeeper will still flag it on
+# first launch - right-click -> Open (not a double-click) the first
+# time sidesteps that without needing to actually sign it.
 #
 # Requires Processing 4.5.x+ (the --export flag doesn't exist in the
 # legacy <=4.4.x processing-java CLI - see test/README.md's "Setup:
@@ -67,9 +78,7 @@ PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 SKETCH_DIR="app/src/solarchvision_bim"
 DIST_DIR="${DIST_DIR:-dist}"
 
-EXPORT_EXTRA_FLAGS=()
 if [ "${NO_JAVA:-0}" = "1" ]; then
-  EXPORT_EXTRA_FLAGS+=(--no-java)
   echo "==> NO_JAVA=1: building without a bundled Java runtime - see this script's own comment on what that requires of whoever runs the result."
 fi
 
@@ -95,14 +104,43 @@ fi
 
 for VARIANT in "${VARIANTS[@]}"; do
   OUT="$DIST_DIR/$VARIANT"
+
+  EXPORT_EXTRA_FLAGS=()
+  if [ "${NO_JAVA:-0}" = "1" ]; then
+    EXPORT_EXTRA_FLAGS+=(--no-java)
+  fi
+  case "$VARIANT" in
+    macos-*)
+      if [ "${NO_JAVA:-0}" != "1" ]; then
+        echo "==> $VARIANT: forcing --no-java - embedding Java breaks macOS exports (see this script's own comment above)."
+      fi
+      EXPORT_EXTRA_FLAGS=(--no-java)
+      ;;
+  esac
+
   echo "==> Exporting $VARIANT to $OUT"
   rm -rf "$OUT"
   "$PROCESSING_BIN" cli --sketch="$SKETCH_DIR" --output="$OUT" --force --variant="$VARIANT" "${EXPORT_EXTRA_FLAGS[@]}" --export
 
-  echo "==> Adding input/, command/, projects/, import/ to $OUT"
-  cp -r input "$OUT/input"
-  cp -r command "$OUT/command"
-  mkdir -p "$OUT/projects" "$OUT/import"
+  # Where BaseFolder = sketchPath() (see update_folders.pde) resolves to
+  # - alongside data/ (the sketch's own bundled data, already present:
+  # data/font/ on every variant) is the one part of this confirmed by
+  # directly running the result, for linux-amd64/windows-amd64 (see
+  # test/image/make_baseline.sh-style smoke test this script's own
+  # history was verified with). For macOS the app bundle nests data/
+  # under Contents/Java/ instead of the top level - inferred from that
+  # same placement (not independently verified by actually running a
+  # macOS build, which isn't possible from here), rather than guessed
+  # from nothing.
+  case "$VARIANT" in
+    macos-*) ASSET_ROOT="$OUT/solarchvision_bim.app/Contents/Java" ;;
+    *)       ASSET_ROOT="$OUT" ;;
+  esac
+
+  echo "==> Adding input/, command/, projects/, import/ to $ASSET_ROOT"
+  cp -r input "$ASSET_ROOT/input"
+  cp -r command "$ASSET_ROOT/command"
+  mkdir -p "$ASSET_ROOT/projects" "$ASSET_ROOT/import"
 
   echo "==> Done: $OUT"
 done

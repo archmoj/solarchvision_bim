@@ -17,6 +17,10 @@ on:
           servers/minimal installs/CI images - confirmed directly: a
           headless build's java can't open a window at all, regardless
           of DISPLAY/Xvfb) - see build-dist.sh's own comment on this.
+          Doesn't apply to the two macOS downloads below, which never
+          bundle Java regardless of this setting (a Processing export
+          bug - again see build-dist.sh), so they need a Java install
+          either way.
         type: boolean
         default: true
 
@@ -32,11 +36,12 @@ env:
 
 jobs:
   build-dist:
-    # One job, two variants (linux-amd64, windows-amd64) - both
-    # cross-export successfully from a single Linux host, confirmed
-    # directly (see build-dist.sh's own comment on this). The two macOS
-    # variants don't - an actual macOS runner would be needed for those,
-    # and nobody's asked for them yet.
+    # One job, all four variants (linux-amd64, windows-amd64,
+    # macos-x86_64, macos-aarch64) - all cross-export successfully from
+    # a single Linux host, confirmed directly (see build-dist.sh's own
+    # comment on this - the two macOS ones specifically need its forced
+    # --no-java to avoid a Processing export bug, so bundle_java above
+    # has no effect on them either way).
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -64,13 +69,13 @@ jobs:
           unzip -q /tmp/processing.zip -d /tmp/processing-extracted
           mv /tmp/processing-extracted/Processing "$HOME/processing/${PROCESSING_VERSION}"
 
-      - name: Build dist (linux-amd64, windows-amd64)
+      - name: Build dist (all variants)
         env:
           NO_JAVA: ${{ inputs.bundle_java && '0' || '1' }}
         run: |
           export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
           chmod +x build-dist.sh
-          ./build-dist.sh linux-amd64 windows-amd64
+          ./build-dist.sh linux-amd64 windows-amd64 macos-x86_64 macos-aarch64
 
       # Confirms the linux-amd64 build is actually runnable end to end -
       # loads input/images/sun/Sun.jpg (the exact failure build-dist.sh's
@@ -95,6 +100,35 @@ jobs:
           fi
           echo "==> Found: $SCREENSHOT"
 
+      # Neither macOS variant can actually run here (no Mach-O support
+      # on a Linux runner), so this is a structural check only: the
+      # launcher exists, is a real Mach-O binary (not a leftover/partial
+      # file from a failed export), and input/ landed where
+      # build-dist.sh's own comment says it should - not proof the app
+      # opens and renders correctly, which needs an actual Mac to check
+      # (if that ever becomes available as a runner here, upgrading this
+      # to a real smoke test, the same way the linux-amd64 step above
+      # works, would be the next step).
+      - name: Check the macOS builds are structurally complete
+        run: |
+          for variant in macos-x86_64 macos-aarch64; do
+            LAUNCHER="dist/$variant/solarchvision_bim.app/Contents/MacOS/solarchvision_bim"
+            if [ ! -f "$LAUNCHER" ]; then
+              echo "error: $LAUNCHER is missing - the $variant export may have failed partway through" >&2
+              exit 1
+            fi
+            if ! file "$LAUNCHER" | grep -q 'Mach-O'; then
+              echo "error: $LAUNCHER is not a Mach-O binary:" >&2
+              file "$LAUNCHER" >&2
+              exit 1
+            fi
+            if [ ! -d "dist/$variant/solarchvision_bim.app/Contents/Java/input" ]; then
+              echo "error: input/ is missing from the $variant bundle's Contents/Java/" >&2
+              exit 1
+            fi
+            echo "==> $variant: OK ($(file "$LAUNCHER"))"
+          done
+
       - name: Upload linux-amd64 dist
         uses: actions/upload-artifact@v4
         with:
@@ -107,4 +141,18 @@ jobs:
         with:
           name: solarchvision_bim-windows-amd64
           path: dist/windows-amd64
+          retention-days: 7
+
+      - name: Upload macos-x86_64 dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: solarchvision_bim-macos-x86_64
+          path: dist/macos-x86_64
+          retention-days: 7
+
+      - name: Upload macos-aarch64 dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: solarchvision_bim-macos-aarch64
+          path: dist/macos-aarch64
           retention-days: 7

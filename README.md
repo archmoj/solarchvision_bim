@@ -127,16 +127,21 @@ A high-level summary of what's changed:
    copy for Linux and Windows with a full Java runtime bundled in, so
    there's nothing else to install first (leave "Bundle a Java runtime"
    checked; see the workflow's own description of that option for when
-   you might want to turn it off instead).
-2. Download `solarchvision_bim-linux-amd64` or
-   `solarchvision_bim-windows-amd64` from that run's **Artifacts**
-   section, and unzip it.
-3. Run `solarchvision_bim` (Linux) or `solarchvision_bim.exe` (Windows)
-   from inside the unzipped folder.
+   you might want to turn it off instead - macOS always needs a Java
+   install either way, see the next point).
+2. Download the matching artifact from that run - `solarchvision_bim-linux-amd64`,
+   `-windows-amd64`, `-macos-x86_64` (Intel) or `-macos-aarch64` (Apple
+   Silicon) - and unzip it. The two macOS downloads are unsigned (and
+   never bundle Java, regardless of the option above - see
+   [`build-dist.sh`](build-dist.sh) for why), so the first launch needs
+   a Java 17+ install already present, and right-click -> **Open**
+   (not a double-click) to get past Gatekeeper's "unidentified
+   developer" warning.
+3. Run `solarchvision_bim` (Linux), `solarchvision_bim.exe` (Windows),
+   or `solarchvision_bim.app` (macOS) from inside the unzipped folder.
 
 Artifacts are kept for 7 days - for anything older, or to build one
-yourself (any platform, including macOS), see
-[`build-dist.sh`](build-dist.sh).
+yourself, see [`build-dist.sh`](build-dist.sh).
 
 ## Clone using SSH
 
