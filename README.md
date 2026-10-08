@@ -120,6 +120,24 @@ A high-level summary of what's changed:
 
 # Installation
 
+## Run a pre-built download (no Processing install needed)
+
+Every push builds a ready-to-run copy of SOLARCHVISION-BIM for Linux and
+Windows - a full Java runtime is bundled in, so there's nothing else to
+install first.
+
+1. Open the [Build distributable workflow runs](https://github.com/archmoj/solarchvision_bim/actions/workflows/dist.yml)
+   and pick the most recent successful run (on the branch you want).
+2. Download `solarchvision_bim-linux-amd64` or
+   `solarchvision_bim-windows-amd64` from that run's **Artifacts**
+   section, and unzip it.
+3. Run `solarchvision_bim` (Linux) or `solarchvision_bim.exe` (Windows)
+   from inside the unzipped folder.
+
+Artifacts are kept for 7 days - for anything older, or to build one
+yourself (any platform, including macOS), see
+[`build-dist.sh`](build-dist.sh).
+
 ## Clone using SSH
 
 ``` sh
@@ -146,8 +164,9 @@ git clone https://github.com/archmoj/solarchvision_bim.git --depth 1
 
 ## Requirements
 
-[Processing v4](https://processing.org/download) must be installed, as
-SOLARCHVISION-BIM is a Processing sketch.
+To run from source (the sections below) rather than a pre-built
+download, [Processing v4](https://processing.org/download) must be
+installed, as SOLARCHVISION-BIM is a Processing sketch.
 
 ## Run using Processing IDE
 

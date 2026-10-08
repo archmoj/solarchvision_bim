@@ -1,0 +1,93 @@
+name: Build distributable
+
+on:
+  push:
+    branches: '**'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  # Kept in sync with ci.yml's and image-tests.yml's own pin, so this
+  # reuses the exact same ~/processing/4.5.2 cache entry those already
+  # populate rather than adding a third, separate download/cache of it.
+  PROCESSING_VERSION: 4.5.2
+  PROCESSING_TAG: processing-1313-4.5.2
+
+jobs:
+  build-dist:
+    # One job, two variants (linux-amd64, windows-amd64) - both
+    # cross-export successfully from a single Linux host, confirmed
+    # directly (see build-dist.sh's own comment on this). The two macOS
+    # variants don't - an actual macOS runner would be needed for those,
+    # and nobody's asked for them yet.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Processing install
+        id: cache-processing
+        uses: actions/cache@v4
+        with:
+          path: ~/processing/${{ env.PROCESSING_VERSION }}
+          key: processing-${{ env.PROCESSING_VERSION }}-linux-x64
+
+      - name: Install Processing
+        if: steps.cache-processing.outputs.cache-hit != 'true'
+        run: |
+          curl -fL -o /tmp/processing.zip \
+            "https://github.com/processing/processing4/releases/download/${PROCESSING_TAG}/processing-${PROCESSING_VERSION}-linux-x64-portable.zip"
+          mkdir -p ~/processing
+          unzip -q /tmp/processing.zip -d /tmp/processing-extracted
+          mv /tmp/processing-extracted/Processing "$HOME/processing/${PROCESSING_VERSION}"
+
+      - name: Build dist (linux-amd64, windows-amd64)
+        run: |
+          export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
+          chmod +x build-dist.sh
+          ./build-dist.sh linux-amd64 windows-amd64
+
+      # Confirms the linux-amd64 build is actually runnable end to end -
+      # loads input/images/sun/Sun.jpg (the exact failure build-dist.sh's
+      # own comment describes finding and fixing), runs a bundled
+      # command/test/*.svs script, and produces its screenshot - not just
+      # that the export step above exited 0. Windows' .exe can't be run
+      # on this Linux runner, so it's unverified here beyond having
+      # exported without error; ci.yml's test-windows job does run the
+      # interactive sketch itself on real Windows, just not this export.
+      - name: Smoke-test the linux-amd64 build
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          cd dist/linux-amd64
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            ./solarchvision_bim USER=AUTO RUN=command/test/primitives.svs
+
+          SCREENSHOT="$(find projects -name 'primitives.png' -print -quit)"
+          if [ -z "$SCREENSHOT" ]; then
+            echo "error: primitives.png was not produced - the dist build may be broken" >&2
+            exit 1
+          fi
+          echo "==> Found: $SCREENSHOT"
+
+      - name: Upload linux-amd64 dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: solarchvision_bim-linux-amd64
+          path: dist/linux-amd64
+          retention-days: 7
+
+      - name: Upload windows-amd64 dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: solarchvision_bim-windows-amd64
+          path: dist/windows-amd64
+          retention-days: 7
