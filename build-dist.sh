@@ -41,12 +41,37 @@
 #   PROCESSING_HOME   - defaults to ~/processing/4.5.2, same as
 #                       run-with-latest-processing.sh and test/run_tests.sh.
 #   DIST_DIR          - defaults to dist/
+#   NO_JAVA           - set to 1 to skip bundling Java (--export's own
+#                       --no-java), cutting the output from ~395MB to
+#                       ~25MB per variant (input/ above is unaffected
+#                       either way - it's not part of this). Whoever runs
+#                       the result then needs their own Java 17+ already
+#                       installed - and specifically NOT a "headless" JRE
+#                       package (e.g. Debian/Ubuntu's openjdk-*-jre-headless,
+#                       common on servers/minimal installs/CI images):
+#                       confirmed directly, a headless build's java works
+#                       fine for everything else but is missing
+#                       libawt_xawt.so/libjawt.so, so it can't open a
+#                       window at all, DISPLAY set or not, Xvfb or a real
+#                       X session alike - "Cannot run sketch without a
+#                       display" regardless. Most desktop installs of
+#                       Windows and macOS have no Java at all by default
+#                       either. Off by default for exactly this reason -
+#                       most people downloading a dist build want it to
+#                       just work, not to debug which JRE variant they
+#                       happen to have.
 set -euo pipefail
 cd "$(dirname "$0")"   # repo root
 
 PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 SKETCH_DIR="app/src/solarchvision_bim"
 DIST_DIR="${DIST_DIR:-dist}"
+
+EXPORT_EXTRA_FLAGS=()
+if [ "${NO_JAVA:-0}" = "1" ]; then
+  EXPORT_EXTRA_FLAGS+=(--no-java)
+  echo "==> NO_JAVA=1: building without a bundled Java runtime - see this script's own comment on what that requires of whoever runs the result."
+fi
 
 # Windows' portable build lays out one directory level shallower than
 # Linux/macOS's (Processing.exe directly at the install root, no bin/
@@ -72,7 +97,7 @@ for VARIANT in "${VARIANTS[@]}"; do
   OUT="$DIST_DIR/$VARIANT"
   echo "==> Exporting $VARIANT to $OUT"
   rm -rf "$OUT"
-  "$PROCESSING_BIN" cli --sketch="$SKETCH_DIR" --output="$OUT" --force --variant="$VARIANT" --export
+  "$PROCESSING_BIN" cli --sketch="$SKETCH_DIR" --output="$OUT" --force --variant="$VARIANT" "${EXPORT_EXTRA_FLAGS[@]}" --export
 
   echo "==> Adding input/, command/, projects/, import/ to $OUT"
   cp -r input "$OUT/input"

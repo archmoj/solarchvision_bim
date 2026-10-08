@@ -122,12 +122,12 @@ A high-level summary of what's changed:
 
 ## Run a pre-built download (no Processing install needed)
 
-Every push builds a ready-to-run copy of SOLARCHVISION-BIM for Linux and
-Windows - a full Java runtime is bundled in, so there's nothing else to
-install first.
-
-1. Open the [Build distributable workflow runs](https://github.com/archmoj/solarchvision_bim/actions/workflows/dist.yml)
-   and pick the most recent successful run (on the branch you want).
+1. Open the [Build distributable workflow](https://github.com/archmoj/solarchvision_bim/actions/workflows/dist.yml)
+   and click **Run workflow** - the default options build a ready-to-run
+   copy for Linux and Windows with a full Java runtime bundled in, so
+   there's nothing else to install first (leave "Bundle a Java runtime"
+   checked; see the workflow's own description of that option for when
+   you might want to turn it off instead).
 2. Download `solarchvision_bim-linux-amd64` or
    `solarchvision_bim-windows-amd64` from that run's **Artifacts**
    section, and unzip it.

@@ -1,9 +1,24 @@
 name: Build distributable
 
+# Button-triggered only (Actions tab -> this workflow -> Run workflow),
+# not on every push - each variant runs ~400-740MB (see bundle_java
+# below), so building one on every push to every branch would be a lot
+# of wasted storage/transfer for something most pushes don't need a
+# fresh copy of.
 on:
-  push:
-    branches: '**'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      bundle_java:
+        description: >-
+          Bundle a Java runtime (~395MB extra per variant) so the result
+          runs with nothing else installed. Turning this off needs
+          whoever runs it to already have their own Java 17+ installed -
+          and specifically not a "headless" JRE package (common on
+          servers/minimal installs/CI images - confirmed directly: a
+          headless build's java can't open a window at all, regardless
+          of DISPLAY/Xvfb) - see build-dist.sh's own comment on this.
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -50,6 +65,8 @@ jobs:
           mv /tmp/processing-extracted/Processing "$HOME/processing/${PROCESSING_VERSION}"
 
       - name: Build dist (linux-amd64, windows-amd64)
+        env:
+          NO_JAVA: ${{ inputs.bundle_java && '0' || '1' }}
         run: |
           export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
           chmod +x build-dist.sh
