@@ -111,6 +111,17 @@ else
   exit 1
 fi
 
+# Wiped clean here - once Processing itself is confirmed available, not
+# any earlier - rather than just each variant's own $OUT right before
+# exporting into it below. Otherwise a stale dist/windows-amd64/ (say)
+# from an earlier run that built every variant would just sit there
+# untouched by a later run that only asks for linux-amd64, left looking
+# like part of this run's own output. Waiting until here specifically
+# means a run that fails this early (Processing missing, say) leaves a
+# previous good dist/ alone, rather than wiping it out for a build that
+# was never going to happen anyway.
+rm -rf "$DIST_DIR"
+
 if [ "$#" -ge 1 ]; then
   VARIANTS=("$@")
 else
