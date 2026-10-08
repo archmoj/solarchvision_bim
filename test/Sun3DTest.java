@@ -25,6 +25,7 @@ class Sun3DTest {
   @BeforeEach
   void setUp () {
     app = new solarchvision_bim();
+    app.locateBaseFolder();
     app.STATION.setLatitude(43.7f); // an arbitrary non-degenerate latitude -
                                     // avoids the lat=0 default, which isn't
                                     // wrong, just not representative.

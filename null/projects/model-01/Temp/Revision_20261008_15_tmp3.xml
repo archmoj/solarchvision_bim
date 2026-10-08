@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2026_project>
+  <variables activeLanguage="0" allMaterials.Selection="1" celestialMagnification="16.0" climateArchiveEnd="2026" climateArchiveShouldLoad="false" climateArchiveStart="2000" climateBasedSolarForecast="0" climateBasedWeatherForecast="0" climateEngineeringEnd="2017" climateEngineeringShouldLoad="false" climateEngineeringStart="1970" climateTypicalYearEnd="1" climateTypicalYearShouldLoad="true" climateTypicalYearStart="1" colorStyleCount="20" currentColorStyle="0" currentDataSource="4" currentFont="font/selawk.ttf" currentLayerId="0" currentObjectCategory="3" developDataUpdate="true" developLayerAngleInclination="45.0" developLayerAngleOrientation="0.0" developLayerId="0" developLayerInterval="0" developLayerOption="0" ensembleForecastEnd="43" ensembleForecastMaxDays="16" ensembleForecastShouldLoad="false" ensembleForecastStart="1" ensembleObservationEnd="1" ensembleObservationMaxDays="3" ensembleObservationShouldLoad="false" ensembleObservationStart="1" globalAlbedo="0.0" impactDisplayDay="0" interpolationWeight="0.5" nearestWeatherStationCount="1" overallScale="1.0" sampleMemberEnd="43" sampleMemberStart="1" sampleStationEnd="1" sampleStationStart="1" sampleYearEnd="2026" sampleYearStart="1980" viewLayout="0"/>
+  <STATION city="Toronto" climateEngineeringFilename="CAN_ON_TORONTO-INTL-A_6158731_CWEEDS2011_1998-2017" climateTypicalYearFilename="CAN_ON_Toronto.716240_CWEC" code="" country="CA" elevation="173.0" ensembleForecastFilename="TORONTO_PEARSON_INTL_ON_CA" latitude="43.67" longitude="-79.63" province="ON" timezoneLongitude="-75.0"/>
+  <Points displayAll="false" ni="0"/>
+  <Polylines displayAll="true" ni="0"/>
+  <Faces activeColorscaleDirection="1" activeColorscaleFactor="1.0" activeColorscaleIndex="19" displayAll="true" displayEdges="true" displayTessellation="2" ni="0" passiveColorscaleDirection="1" passiveColorscaleFactor="0.25" passiveColorscaleIndex="1" showNormalLines="false"/>
+  <Cameras displayAll="true" ni="1">
+    <item id="0">0.0000,5.0000,55.0000,1.0000,90.0000,0.0000,-45.0000,5.0000,90.0000,1</item>
+  </Cameras>
+  <Solids colorScaleDirection="-1" colorScaleFactor="0.5" colorScaleIndex="17" displayAll="true" ni="0"/>
+  <Sections displayAll="true" ni="0"/>
+  <Sections.SolidImpact ni="0"/>
+  <Sections.SolarImpacts ni="0" nj="0" nk="0"/>
+  <Model1Ds displayAll="true" displayLeaves="true" ni="0"/>
+  <Model2Ds displayAll="true" ni="0" peopleFileCount="0" treesFileCount="0"/>
+  <Model2Ds.Textures ni="1">
+    <item id="0"/>
+  </Model2Ds.Textures>
+  <Groups ni="0"/>
+  <Terrain colorScaleDirection="-1" colorScaleFactor="0.001" colorScaleIndex="1" columnCount="25" displayDepth="false" displayPoints="false" displaySurface="false" displayTessellation="0" displayTexture="false" loadMesh="true" loadTextures="false" rowCount="12" skipEnd="0" skipStart="1">
+    <item id="0">0.0000,0.0000,0.0000</item>
+    <item id="1">0.0000,0.0000,0.0000</item>
+    <item id="2">0.0000,0.0000,0.0000</item>
+    <item id="3">0.0000,0.0000,0.0000</item>
+    <item id="4">0.0000,0.0000,0.0000</item>
+    <item id="5">0.0000,0.0000,0.0000</item>
+    <item id="6">0.0000,0.0000,0.0000</item>
+    <item id="7">0.0000,0.0000,0.0000</item>
+    <item id="8">0.0000,0.0000,0.0000</item>
+    <item id="9">0.0000,0.0000,0.0000</item>
+    <item id="10">0.0000,0.0000,0.0000</item>
+    <item id="11">0.0000,0.0000,0.0000</item>
+    <item id="12">0.0000,0.0000,0.0000</item>
+    <item id="13">0.0000,0.0000,0.0000</item>
+    <item id="14">0.0000,0.0000,0.0000</item>
+    <item id="15">0.0000,0.0000,0.0000</item>
+    <item id="16">0.0000,0.0000,0.0000</item>
+    <item id="17">0.0000,0.0000,0.0000</item>
+    <item id="18">0.0000,0.0000,0.0000</item>
+    <item id="19">0.0000,0.0000,0.0000</item>
+    <item id="20">0.0000,0.0000,0.0000</item>
+    <item id="21">0.0000,0.0000,0.0000</item>
+    <item id="22">0.0000,0.0000,0.0000</item>
+    <item id="23">0.0000,0.0000,0.0000</item>
+    <item id="24">0.0000,0.0000,0.0000</item>
+    <item id="25">0.0000,0.0000,0.0000</item>
+    <item id="26">0.0000,0.0000,0.0000</item>
+    <item id="27">0.0000,0.0000,0.0000</item>
+    <item id="28">0.0000,0.0000,0.0000</item>
+    <item id="29">0.0000,0.0000,0.0000</item>
+    <item id="30">0.0000,0.0000,0.0000</item>
+    <item id="31">0.0000,0.0000,0.0000</item>
+    <item id="32">0.0000,0.0000,0.0000</item>
+    <item id="33">0.0000,0.0000,0.0000</item>
+    <item id="34">0.0000,0.0000,0.0000</item>
+    <item id="35">0.0000,0.0000,0.0000</item>
+    <item id="36">0.0000,0.0000,0.0000</item>
+    <item id="37">0.0000,0.0000,0.0000</item>
+    <item id="38">0.0000,0.0000,0.0000</item>
+    <item id="39">0.0000,0.0000,0.0000</item>
+    <item id="40">0.0000,0.0000,0.0000</item>
+    <item id="41">0.0000,0.0000,0.0000</item>
+    <item id="42">0.0000,0.0000,0.0000</item>
+    <item id="43">0.0000,0.0000,0.0000</item>
+    <item id="44">0.0000,0.0000,0.0000</item>
+    <item id="45">0.0000,0.0000,0.0000</item>
+    <item id="46">0.0000,0.0000,0.0000</item>
+    <item id="47">0.0000,0.0000,0.0000</item>
+    <item id="48">0.0000,0.0000,0.0000</item>
+    <item id="49">0.0000,0.0000,0.0000</item>
+    <item id="50">0.0000,0.0000,0.0000</item>
+    <item id="51">0.0000,0.0000,0.0000</item>
+    <item id="52">0.0000,0.0000,0.0000</item>
+    <item id="53">0.0000,0.0000,0.0000</item>
+    <item id="54">0.0000,0.0000,0.0000</item>
+    <item id="55">0.0000,0.0000,0.0000</item>
+    <item id="56">0.0000,0.0000,0.0000</item>
+    <item id="57">0.0000,0.0000,0.0000</item>
+    <item id="58">0.0000,0.0000,0.0000</item>
+    <item id="59">0.0000,0.0000,0.0000</item>
+    <item id="60">0.0000,0.0000,0.0000</item>
+    <item id="61">0.0000,0.0000,0.0000</item>
+    <item id="62">0.0000,0.0000,0.0000</item>
+    <item id="63">0.0000,0.0000,0.0000</item>
+    <item id="64">0.0000,0.0000,0.0000</item>
+    <item id="65">0.0000,0.0000,0.0000</item>
+    <item id="66">0.0000,0.0000,0.0000</item>
+    <item id="67">0.0000,0.0000,0.0000</item>
+    <item id="68">0.0000,0.0000,0.0000</item>
+    <item id="69">0.0000,0.0000,0.0000</item>
+    <item id="70">0.0000,0.0000,0.0000</item>
+    <item id="71">0.0000,0.0000,0.0000</item>
+    <item id="72">0.0000,0.0000,0.0000</item>
+    <item id="73">0.0000,0.0000,0.0000</item>
+    <item id="74">0.0000,0.0000,0.0000</item>
+    <item id="75">0.0000,0.0000,0.0000</item>
+    <item id="76">0.0000,0.0000,0.0000</item>
+    <item id="77">0.0000,0.0000,0.0000</item>
+    <item id="78">0.0000,0.0000,0.0000</item>
+    <item id="79">0.0000,0.0000,0.0000</item>
+    <item id="80">0.0000,0.0000,0.0000</item>
+    <item id="81">0.0000,0.0000,0.0000</item>
+    <item id="82">0.0000,0.0000,0.0000</item>
+    <item id="83">0.0000,0.0000,0.0000</item>
+    <item id="84">0.0000,0.0000,0.0000</item>
+    <item id="85">0.0000,0.0000,0.0000</item>
+    <item id="86">0.0000,0.0000,0.0000</item>
+    <item id="87">0.0000,0.0000,0.0000</item>
+    <item id="88">0.0000,0.0000,0.0000</item>
+    <item id="89">0.0000,0.0000,0.0000</item>
+    <item id="90">0.0000,0.0000,0.0000</item>
+    <item id="91">0.0000,0.0000,0.0000</item>
+    <item id="92">0.0000,0.0000,0.0000</item>
+    <item id="93">0.0000,0.0000,0.0000</item>
+    <item id="94">0.0000,0.0000,0.0000</item>
+    <item id="95">0.0000,0.0000,0.0000</item>
+    <item id="96">0.0000,0.0000,0.0000</item>
+    <item id="97">0.0000,0.0000,0.0000</item>
+    <item id="98">0.0000,0.0000,0.0000</item>
+    <item id="99">0.0000,0.0000,0.0000</item>
+    <item id="100">0.0000,0.0000,0.0000</item>
+    <item id="101">0.0000,0.0000,0.0000</item>
+    <item id="102">0.0000,0.0000,0.0000</item>
+    <item id="103">0.0000,0.0000,0.0000</item>
+    <item id="104">0.0000,0.0000,0.0000</item>
+    <item id="105">0.0000,0.0000,0.0000</item>
+    <item id="106">0.0000,0.0000,0.0000</item>
+    <item id="107">0.0000,0.0000,0.0000</item>
+    <item id="108">0.0000,0.0000,0.0000</item>
+    <item id="109">0.0000,0.0000,0.0000</item>
+    <item id="110">0.0000,0.0000,0.0000</item>
+    <item id="111">0.0000,0.0000,0.0000</item>
+    <item id="112">0.0000,0.0000,0.0000</item>
+    <item id="113">0.0000,0.0000,0.0000</item>
+    <item id="114">0.0000,0.0000,0.0000</item>
+    <item id="115">0.0000,0.0000,0.0000</item>
+    <item id="116">0.0000,0.0000,0.0000</item>
+    <item id="117">0.0000,0.0000,0.0000</item>
+    <item id="118">0.0000,0.0000,0.0000</item>
+    <item id="119">0.0000,0.0000,0.0000</item>
+    <item id="120">0.0000,0.0000,0.0000</item>
+    <item id="121">0.0000,0.0000,0.0000</item>
+    <item id="122">0.0000,0.0000,0.0000</item>
+    <item id="123">0.0000,0.0000,0.0000</item>
+    <item id="124">0.0000,0.0000,0.0000</item>
+    <item id="125">0.0000,0.0000,0.0000</item>
+    <item id="126">0.0000,0.0000,0.0000</item>
+    <item id="127">0.0000,0.0000,0.0000</item>
+    <item id="128">0.0000,0.0000,0.0000</item>
+    <item id="129">0.0000,0.0000,0.0000</item>
+    <item id="130">0.0000,0.0000,0.0000</item>
+    <item id="131">0.0000,0.0000,0.0000</item>
+    <item id="132">0.0000,0.0000,0.0000</item>
+    <item id="133">0.0000,0.0000,0.0000</item>
+    <item id="134">0.0000,0.0000,0.0000</item>
+    <item id="135">0.0000,0.0000,0.0000</item>
+    <item id="136">0.0000,0.0000,0.0000</item>
+    <item id="137">0.0000,0.0000,0.0000</item>
+    <item id="138">0.0000,0.0000,0.0000</item>
+    <item id="139">0.0000,0.0000,0.0000</item>
+    <item id="140">0.0000,0.0000,0.0000</item>
+    <item id="141">0.0000,0.0000,0.0000</item>
+    <item id="142">0.0000,0.0000,0.0000</item>
+    <item id="143">0.0000,0.0000,0.0000</item>
+    <item id="144">0.0000,0.0000,0.0000</item>
+    <item id="145">0.0000,0.0000,0.0000</item>
+    <item id="146">0.0000,0.0000,0.0000</item>
+    <item id="147">0.0000,0.0000,0.0000</item>
+    <item id="148">0.0000,0.0000,0.0000</item>
+    <item id="149">0.0000,0.0000,0.0000</item>
+    <item id="150">0.0000,0.0000,0.0000</item>
+    <item id="151">0.0000,0.0000,0.0000</item>
+    <item id="152">0.0000,0.0000,0.0000</item>
+    <item id="153">0.0000,0.0000,0.0000</item>
+    <item id="154">0.0000,0.0000,0.0000</item>
+    <item id="155">0.0000,0.0000,0.0000</item>
+    <item id="156">0.0000,0.0000,0.0000</item>
+    <item id="157">0.0000,0.0000,0.0000</item>
+    <item id="158">0.0000,0.0000,0.0000</item>
+    <item id="159">0.0000,0.0000,0.0000</item>
+    <item id="160">0.0000,0.0000,0.0000</item>
+    <item id="161">0.0000,0.0000,0.0000</item>
+    <item id="162">0.0000,0.0000,0.0000</item>
+    <item id="163">0.0000,0.0000,0.0000</item>
+    <item id="164">0.0000,0.0000,0.0000</item>
+    <item id="165">0.0000,0.0000,0.0000</item>
+    <item id="166">0.0000,0.0000,0.0000</item>
+    <item id="167">0.0000,0.0000,0.0000</item>
+    <item id="168">0.0000,0.0000,0.0000</item>
+    <item id="169">0.0000,0.0000,0.0000</item>
+    <item id="170">0.0000,0.0000,0.0000</item>
+    <item id="171">0.0000,0.0000,0.0000</item>
+    <item id="172">0.0000,0.0000,0.0000</item>
+    <item id="173">0.0000,0.0000,0.0000</item>
+    <item id="174">0.0000,0.0000,0.0000</item>
+    <item id="175">0.0000,0.0000,0.0000</item>
+    <item id="176">0.0000,0.0000,0.0000</item>
+    <item id="177">0.0000,0.0000,0.0000</item>
+    <item id="178">0.0000,0.0000,0.0000</item>
+    <item id="179">0.0000,0.0000,0.0000</item>
+    <item id="180">0.0000,0.0000,0.0000</item>
+    <item id="181">0.0000,0.0000,0.0000</item>
+    <item id="182">0.0000,0.0000,0.0000</item>
+    <item id="183">0.0000,0.0000,0.0000</item>
+    <item id="184">0.0000,0.0000,0.0000</item>
+    <item id="185">0.0000,0.0000,0.0000</item>
+    <item id="186">0.0000,0.0000,0.0000</item>
+    <item id="187">0.0000,0.0000,0.0000</item>
+    <item id="188">0.0000,0.0000,0.0000</item>
+    <item id="189">0.0000,0.0000,0.0000</item>
+    <item id="190">0.0000,0.0000,0.0000</item>
+    <item id="191">0.0000,0.0000,0.0000</item>
+    <item id="192">0.0000,0.0000,0.0000</item>
+    <item id="193">0.0000,0.0000,0.0000</item>
+    <item id="194">0.0000,0.0000,0.0000</item>
+    <item id="195">0.0000,0.0000,0.0000</item>
+    <item id="196">0.0000,0.0000,0.0000</item>
+    <item id="197">0.0000,0.0000,0.0000</item>
+    <item id="198">0.0000,0.0000,0.0000</item>
+    <item id="199">0.0000,0.0000,0.0000</item>
+    <item id="200">0.0000,0.0000,0.0000</item>
+    <item id="201">0.0000,0.0000,0.0000</item>
+    <item id="202">0.0000,0.0000,0.0000</item>
+    <item id="203">0.0000,0.0000,0.0000</item>
+    <item id="204">0.0000,0.0000,0.0000</item>
+    <item id="205">0.0000,0.0000,0.0000</item>
+    <item id="206">0.0000,0.0000,0.0000</item>
+    <item id="207">0.0000,0.0000,0.0000</item>
+    <item id="208">0.0000,0.0000,0.0000</item>
+    <item id="209">0.0000,0.0000,0.0000</item>
+    <item id="210">0.0000,0.0000,0.0000</item>
+    <item id="211">0.0000,0.0000,0.0000</item>
+    <item id="212">0.0000,0.0000,0.0000</item>
+    <item id="213">0.0000,0.0000,0.0000</item>
+    <item id="214">0.0000,0.0000,0.0000</item>
+    <item id="215">0.0000,0.0000,0.0000</item>
+    <item id="216">0.0000,0.0000,0.0000</item>
+    <item id="217">0.0000,0.0000,0.0000</item>
+    <item id="218">0.0000,0.0000,0.0000</item>
+    <item id="219">0.0000,0.0000,0.0000</item>
+    <item id="220">0.0000,0.0000,0.0000</item>
+    <item id="221">0.0000,0.0000,0.0000</item>
+    <item id="222">0.0000,0.0000,0.0000</item>
+    <item id="223">0.0000,0.0000,0.0000</item>
+    <item id="224">0.0000,0.0000,0.0000</item>
+    <item id="225">0.0000,0.0000,0.0000</item>
+    <item id="226">0.0000,0.0000,0.0000</item>
+    <item id="227">0.0000,0.0000,0.0000</item>
+    <item id="228">0.0000,0.0000,0.0000</item>
+    <item id="229">0.0000,0.0000,0.0000</item>
+    <item id="230">0.0000,0.0000,0.0000</item>
+    <item id="231">0.0000,0.0000,0.0000</item>
+    <item id="232">0.0000,0.0000,0.0000</item>
+    <item id="233">0.0000,0.0000,0.0000</item>
+    <item id="234">0.0000,0.0000,0.0000</item>
+    <item id="235">0.0000,0.0000,0.0000</item>
+    <item id="236">0.0000,0.0000,0.0000</item>
+    <item id="237">0.0000,0.0000,0.0000</item>
+    <item id="238">0.0000,0.0000,0.0000</item>
+    <item id="239">0.0000,0.0000,0.0000</item>
+    <item id="240">0.0000,0.0000,0.0000</item>
+    <item id="241">0.0000,0.0000,0.0000</item>
+    <item id="242">0.0000,0.0000,0.0000</item>
+    <item id="243">0.0000,0.0000,0.0000</item>
+    <item id="244">0.0000,0.0000,0.0000</item>
+    <item id="245">0.0000,0.0000,0.0000</item>
+    <item id="246">0.0000,0.0000,0.0000</item>
+    <item id="247">0.0000,0.0000,0.0000</item>
+    <item id="248">0.0000,0.0000,0.0000</item>
+    <item id="249">0.0000,0.0000,0.0000</item>
+    <item id="250">0.0000,0.0000,0.0000</item>
+    <item id="251">0.0000,0.0000,0.0000</item>
+    <item id="252">0.0000,0.0000,0.0000</item>
+    <item id="253">0.0000,0.0000,0.0000</item>
+    <item id="254">0.0000,0.0000,0.0000</item>
+    <item id="255">0.0000,0.0000,0.0000</item>
+    <item id="256">0.0000,0.0000,0.0000</item>
+    <item id="257">0.0000,0.0000,0.0000</item>
+    <item id="258">0.0000,0.0000,0.0000</item>
+    <item id="259">0.0000,0.0000,0.0000</item>
+    <item id="260">0.0000,0.0000,0.0000</item>
+    <item id="261">0.0000,0.0000,0.0000</item>
+    <item id="262">0.0000,0.0000,0.0000</item>
+    <item id="263">0.0000,0.0000,0.0000</item>
+    <item id="264">0.0000,0.0000,0.0000</item>
+    <item id="265">0.0000,0.0000,0.0000</item>
+    <item id="266">0.0000,0.0000,0.0000</item>
+    <item id="267">0.0000,0.0000,0.0000</item>
+    <item id="268">0.0000,0.0000,0.0000</item>
+    <item id="269">0.0000,0.0000,0.0000</item>
+    <item id="270">0.0000,0.0000,0.0000</item>
+    <item id="271">0.0000,0.0000,0.0000</item>
+    <item id="272">0.0000,0.0000,0.0000</item>
+    <item id="273">0.0000,0.0000,0.0000</item>
+    <item id="274">0.0000,0.0000,0.0000</item>
+    <item id="275">0.0000,0.0000,0.0000</item>
+    <item id="276">0.0000,0.0000,0.0000</item>
+    <item id="277">0.0000,0.0000,0.0000</item>
+    <item id="278">0.0000,0.0000,0.0000</item>
+    <item id="279">0.0000,0.0000,0.0000</item>
+    <item id="280">0.0000,0.0000,0.0000</item>
+    <item id="281">0.0000,0.0000,0.0000</item>
+    <item id="282">0.0000,0.0000,0.0000</item>
+    <item id="283">0.0000,0.0000,0.0000</item>
+    <item id="284">0.0000,0.0000,0.0000</item>
+    <item id="285">0.0000,0.0000,0.0000</item>
+    <item id="286">0.0000,0.0000,0.0000</item>
+    <item id="287">0.0000,0.0000,0.0000</item>
+    <item id="288">0.0000,0.0000,0.0000</item>
+    <item id="289">0.0000,0.0000,0.0000</item>
+    <item id="290">0.0000,0.0000,0.0000</item>
+    <item id="291">0.0000,0.0000,0.0000</item>
+    <item id="292">0.0000,0.0000,0.0000</item>
+    <item id="293">0.0000,0.0000,0.0000</item>
+    <item id="294">0.0000,0.0000,0.0000</item>
+    <item id="295">0.0000,0.0000,0.0000</item>
+    <item id="296">0.0000,0.0000,0.0000</item>
+    <item id="297">0.0000,0.0000,0.0000</item>
+    <item id="298">0.0000,0.0000,0.0000</item>
+    <item id="299">0.0000,0.0000,0.0000</item>
+  </Terrain>
+  <Terrain.Textures ni="0"/>
+  <Earth3D displaySurface="true" displayTexture="true" levelOfDetail="4.0"/>
+  <Sky3D activeColorscaleDirection="1" activeColorscaleFactor="0.5" activeColorscaleIndex="18" calculatedResolution="2.5" displaySurface="true" displayTessellation="3" inclinationCount="0" inclinationStep="0.0" orientationCount="0" orientationStep="0.0" passiveColorscaleDirection="-1" passiveColorscaleFactor="0.25" passiveColorscaleIndex="18" radius="50000.0"/>
+  <Tropo3D displaySurface="false" displayTexture="true"/>
+  <Moon3D displaySurface="true" displayTexture="true" fitInSkyDome="true"/>
+  <Sun3D activeColorscaleDirection="1" activeColorscaleFactor="1.0" activeColorscaleIndex="15" displayGrid="true" displayPath="true" displayPattern="false" displaySurface="true" displayTexture="true" fitInSkyDome="true" passiveColorscaleDirection="-1" passiveColorscaleFactor="0.25" passiveColorscaleIndex="18"/>
+  <WIN3D cameraClipFar="2.0E9" cameraClipNear="0.01" cameraDistance="0.0" cameraFieldOfView="0.0" cameraX="0.0" cameraY="0.0" cameraZ="0.0" currentCameraIndex="0" currentTool="16" impactTypeIndex="0" positionStep="1.0" positionX="0.0" positionY="5.0" positionZ="55.0" projectionTypeIndex="1" referenceScale="100.0" rotationStep="5.0" rotationX="90.0" rotationY="0.0" rotationZ="-45.0" shadingMode="2" targetAxisIndex="0" toolParameterModifier="0" zoom="90.0"/>
+  <User3D creatorClosed="0" creatorConeDegree="24" creatorCylinderDegree="24" creatorHeight="10.0" creatorLayer="0" creatorLength="10.0" creatorMaterial="7" creatorMeshOrSolidMode="0" creatorModel1DDegreeMax="8" creatorModel1DLeafSize="0.2" creatorModel1DSeed="-1" creatorModel1DTrunkSize="1.0" creatorModel1DTypeIndex="0" creatorOrientation="0.0" creatorParametricTypeIndex="1" creatorPersonTypeIndex="0" creatorPlantTypeIndex="0" creatorPolygonDegree="6" creatorRandomSuperellipsoidPower="0" creatorSnapModeIndex="0" creatorSphereDegree="4" creatorSuperellipsoidPowerX="16.0" creatorSuperellipsoidPowerY="16.0" creatorSuperellipsoidPowerZ="16.0" creatorTessellation="0" creatorUniformSuperellipsoidPower="8.0" creatorVisibility="1" creatorVolume="0.0" creatorWeight="0" creatorWidth="10.0" exporterColorscaleResolution="256" exporterDoubleSided="true" exporterMaintainPolygons="1" exporterMaterialLibrary="true" exporterPrecisionVertex="6" exporterPrecisionVertexTexture="4" exporterScale="1.0" exporterYaxisUp="1" modifierOffsetAmount="1.0" modifierOpeningArea="0.25" modifierOpeningDepth="1.0" modifierOpeningDeviation="0.5" modifierTessellateColumns="2" modifierTessellateRows="3" modifierWeldThreshold="0.1"/>
+  <Select3D cameraDisplayFrustum="true" cameraSelection="" faceDisplayEdges="true" faceDisplayvertexSelection="false" faceSelection="" groupDisplayBox="true" groupDisplayEdges="false" groupDisplayPivot="true" groupSelection="" model1DDisplayBounds="true" model1DSelection="" model2DDisplayBounds="true" model2DSelection="" pivotAlignmentX="0" pivotAlignmentY="0" pivotAlignmentZ="0" pivotDisplayReference="true" polylineDisplayVertices="true" polylineDisplayvertexSelection="false" polylineSelection="" position="0.0" positionVectorIndex="2" rotation="0.0" rotationVectorIndex="2" scale="0.0" scaleVectorIndex="2" sectionDisplayEdges="true" sectionSelection="" softSelection="" softSelectionFalloff="" softSelectionFalloffPower="1.0" softSelectionFalloffRadius="2.0" solidDisplayEdges="true" solidSelection="" terrainDisplayVertices="true" terrainVertexSelection="" vertexDisplayMarkers="true" vertexSelection=""/>
+  <WORLD climateArchiveDisplayAll="0" climateArchiveDisplayNear="false" climateEngineeringDisplayAll="0" climateEngineeringDisplayNear="false" climateTypicalYearDisplayAll="1" climateTypicalYearDisplayNear="false" ensembleForecastDisplayAll="0" ensembleForecastDisplayNear="false" ensembleObservationDisplayAll="0" ensembleObservationDisplayNear="false" zoom="8"/>
+  <STUDY activeColorscaleDirection="1" activeColorscaleFactor="1.0" activeColorscaleIndex="19" centralGraphOffsetX="0.0" centralGraphScale="1.0" dayIncrement="30.5" daysMergedCount="30" endDay="12" endHour="23" horizontalUnitScale="1.5" impactGraphIndex="5" impactLayerIndex="4" impactTypeIndex="1" normalLinesExporter="false" opacityPercentage="50.0" passiveColorscaleDirection="1" passiveColorscaleFactor="0.25" passiveColorscaleIndex="1" plotLayoutIndex="0" probabilitiesColorscaleDirection="1" probabilitiesColorscaleFactor="0.5" probabilitiesColorscaleIndex="-1" probabilitiesExporter="false" probabilityHeightInterval="8.0" probabilityWidthInterval="4" rawLinesExporter="false" showImpactSummary="true" showNormalLines="true" showProbabilities="false" showRawLines="false" showStatisticalRanges="true" skyScenarioSetting="1" startDay="0" startHour="0" statisticalRangesColorscaleDirection="-1" statisticalRangesColorscaleFactor="2.0" statisticalRangesColorscaleIndex="-1" strokeScale="0.5" temporalFilterSetting="1" updateImpactGraph="true"/>
+  <WindRose displayImage="false" imageResolution="400" planeSize="400.0" renderedResolution="1"/>
+  <WindFlow colorScaleDirection="-1" colorScaleFactor="1.0" colorScaleIndex="18" displayAll="false"/>
+  <SolidImpacts SolidImpacts.Grade="0.02" SolidImpacts.MinimumDistance_traceU="1.0" SolidImpacts.MinimumDistance_traceV="0.25" SolidImpacts.Power="1.0" SolidImpacts.Process_subDivisions="1" SolidImpacts.RES1="400" SolidImpacts.RES2="400" SolidImpacts.WindDirection="180.0" SolidImpacts.WindSpeed="5.0" SolidImpacts.deltaLines="0.0050000004" SolidImpacts.deltaStep="0.05" SolidImpacts.displayImage="true" SolidImpacts.displayLines="true" SolidImpacts.displayPoints="false" SolidImpacts.positionStep="1.25" SolidImpacts.sectionType="0"/>
+  <SolidImpacts.Z ni="4">0.0000,0.1000,0.0000,0.0000</SolidImpacts.Z>
+  <SolidImpacts.R ni="4">0.0000,0.0000,0.0000,0.0000</SolidImpacts.R>
+  <SolidImpacts.U ni="4">100.0000,100.0000,100.0000,100.0000</SolidImpacts.U>
+  <SolidImpacts.V ni="4">100.0000,100.0000,100.0000,100.0000</SolidImpacts.V>
+  <SolidImpacts.X ni="4">0.0000,0.0000,0.0000,0.0000</SolidImpacts.X>
+  <SolidImpacts.Y ni="4">0.0000,0.0000,0.0000,0.0000</SolidImpacts.Y>
+  <SolarImpacts R="0.0" RES1="400" RES2="400" U="500.0" V="500.0" X="0.0" Y="0.0" Z="0.0" displayImage="false" sectionType="0"/>
+  <LAYER_0 description_EN="Ceiling height" description_FR="Hauteur sous plafond" id="0" name="" unit="m" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="0.1"/>
+  <LAYER_1 description_EN="Total Cloud Cover" description_FR="Couvert nuageux total" id="1" name="TCDC" unit="tenth" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="10.0"/>
+  <LAYER_2 description_EN="Surface Wind Direction" description_FR="Direction du vent à la surface" id="2" name="WDIR-SFC" unit="°" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="0.2777778"/>
+  <LAYER_3 description_EN="Surface Wind Speed" description_FR="Vitesse du vent à la surface" id="3" name="WIND-SFC" unit="km/h" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="2.5"/>
+  <LAYER_4 description_EN="Mean Sea level Pressure" description_FR="Pression moyenne au niveau de la mer" id="4" name="MSLP" unit="hPa" verticalNegativePadding="1.0" verticalUnitOffset="-1000.0" verticalUnitScale="2.0"/>
+  <LAYER_5 description_EN="Surface Air Temperature" description_FR="Température de l'air à la surface" id="5" name="TMP-SFC" unit="°C" verticalNegativePadding="1.0" verticalUnitOffset="0.0" verticalUnitScale="2.5"/>
+  <LAYER_6 description_EN="Surface Relative Humidity" description_FR="Humidité relative à la surface" id="6" name="RELH-SFC" unit="%" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="1.0"/>
+  <LAYER_7 description_EN="Direct normal radiation" description_FR="Rayonnement direct normal" id="7" name="" unit="W/m²" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="0.1"/>
+  <LAYER_8 description_EN="Diffuse horizontal radiation" description_FR="Diffus rayonnement horizontal" id="8" name="" unit="W/m²" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="0.1"/>
+  <LAYER_9 description_EN="Global horizontal radiation" description_FR="Rayonnement global horizontal" id="9" name="" unit="W/m²" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="0.1"/>
+  <LAYER_10 description_EN="Direct normal effect &lt;18°C&lt;" description_FR="Effet direct normal &lt;18°C&lt;" id="10" name="" unit="W°C/m²" verticalNegativePadding="1.0" verticalUnitOffset="0.0" verticalUnitScale="0.0025"/>
+  <LAYER_11 description_EN="Diffuse normal effect &lt;18°C&lt;" description_FR="Effet diffus normal &lt;18°C&lt;" id="11" name="" unit="W°C/m²" verticalNegativePadding="1.0" verticalUnitOffset="0.0" verticalUnitScale="0.0025"/>
+  <LAYER_12 description_EN="Surface Accumulated Precipitation" description_FR="Précipitations accumulées à la surface" id="12" name="APCP-SFC" unit="mm" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="4.0"/>
+  <LAYER_13 description_EN="" description_FR="" id="13" name="" unit="" verticalNegativePadding="0.0" verticalUnitOffset="0.0" verticalUnitScale="1.0"/>
+</v2026_project>

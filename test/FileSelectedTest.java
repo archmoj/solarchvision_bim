@@ -32,6 +32,7 @@ class FileSelectedTest {
   @BeforeEach
   void setUp () {
     app = new solarchvision_bim();
+    app.locateBaseFolder();
     app.allActions = new java.util.HashMap<>(); // fresh app never runs build_allActions() itself
     // allModel2Ds.ImagePath is normally populated by load_images() during
     // real app startup - a fresh instance never runs that (it touches

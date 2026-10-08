@@ -10,6 +10,7 @@ class Earth3DTest {
   @BeforeEach
   void setUp () {
     app = new solarchvision_bim();
+    app.locateBaseFolder();
     earth = app.Earth3D;
   }
 

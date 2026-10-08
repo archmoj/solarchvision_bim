@@ -5,8 +5,6 @@ void draw_frame_icon () {
 
   frame_icon.beginDraw();
 
-  //frame_icon.image(loadImage(Folder_Input + "/images/icon/s-icon.png"), 0, 0 );
-
   frame_icon.background(0);
   //frame_icon.background(63,63,255,255);
 
