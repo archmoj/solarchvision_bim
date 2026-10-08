@@ -74,13 +74,15 @@
 #   PROCESSING_HOME   - defaults to ~/processing/4.5.2, same as
 #                       run-with-latest-processing.sh and test/run_tests.sh.
 #   DIST_DIR          - defaults to dist/
-#   NO_JAVA           - set to 1 to skip bundling Java (--export's own
-#                       --no-java), cutting the output from ~395MB to
+#   NO_JAVA           - on (1) by default: skips bundling Java (--export's
+#                       own --no-java), cutting the output from ~395MB to
 #                       ~25MB per variant (input/ above is unaffected
-#                       either way - it's not part of this). Whoever runs
-#                       the result then needs their own Java 17+ already
-#                       installed - and specifically NOT a "headless" JRE
-#                       package (e.g. Debian/Ubuntu's openjdk-*-jre-headless,
+#                       either way - it's not part of this). Set to 0 to
+#                       bundle Java instead, for a larger, no-install-
+#                       needed-at-all result. Whoever runs a NO_JAVA
+#                       build needs their own Java 17+ already installed
+#                       - and specifically NOT a "headless" JRE package
+#                       (e.g. Debian/Ubuntu's openjdk-*-jre-headless,
 #                       common on servers/minimal installs/CI images):
 #                       confirmed directly, a headless build's java works
 #                       fine for everything else but is missing
@@ -89,10 +91,11 @@
 #                       X session alike - "Cannot run sketch without a
 #                       display" regardless. Most desktop installs of
 #                       Windows and macOS have no Java at all by default
-#                       either. Off by default for exactly this reason -
-#                       most people downloading a dist build want it to
-#                       just work, not to debug which JRE variant they
-#                       happen to have.
+#                       either. On by default for exactly this reason -
+#                       most people running this script want the small,
+#                       fast result, same as this repo's own CI (see
+#                       dist.yml's bundle_java, unticked by default)
+#                       rather than bundling Java sight unseen.
 #   INCLUDE_INPUT     - set to 1 to bundle input/ (~184MB - coordinates,
 #                       worldmap, earth, moon, sun, people, trees)
 #                       directly instead of leaving it for
@@ -113,8 +116,8 @@ PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 SKETCH_DIR="app/src/solarchvision_bim"
 DIST_DIR="${DIST_DIR:-dist}"
 
-if [ "${NO_JAVA:-0}" = "1" ]; then
-  echo "==> NO_JAVA=1: building without a bundled Java runtime - see this script's own comment on what that requires of whoever runs the result."
+if [ "${NO_JAVA:-1}" = "1" ]; then
+  echo "==> Building without a bundled Java runtime (the default - set NO_JAVA=0 to bundle one instead). See this script's own comment on what that requires of whoever runs the result."
 fi
 
 # Windows' portable build lays out one directory level shallower than
@@ -192,12 +195,12 @@ for VARIANT in "${VARIANTS[@]}"; do
   OUT="$DIST_DIR/$VARIANT"
 
   EXPORT_EXTRA_FLAGS=()
-  if [ "${NO_JAVA:-0}" = "1" ]; then
+  if [ "${NO_JAVA:-1}" = "1" ]; then
     EXPORT_EXTRA_FLAGS+=(--no-java)
   fi
   case "$VARIANT" in
     macos-*)
-      if [ "${NO_JAVA:-0}" != "1" ]; then
+      if [ "${NO_JAVA:-1}" != "1" ]; then
         echo "==> $VARIANT: forcing --no-java - embedding Java breaks macOS exports (see this script's own comment above)."
       fi
       EXPORT_EXTRA_FLAGS=(--no-java)
