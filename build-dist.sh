@@ -200,6 +200,20 @@ for VARIANT in "${VARIANTS[@]}"; do
   # which add nothing a person running this build needs.
   find "$OUT" -path "*/source/*.pde" -delete
 
+  # Same org.apache.commons.(io|compress).*.*; wildcard imports as the
+  # rm -f block below removes whole jars for, trimmed here from the
+  # shipped solarchvision_bim.java text itself too - cosmetic only
+  # (solarchvision_bim.jar is already compiled by this point, so this
+  # can't change what runs, only what reading this file afterward looks
+  # like), but the same 50+ wildcard lines importing entire unrelated
+  # library trees for a single class actually used are exactly as much
+  # noise here as in the jar list below. The narrower, explicit import
+  # of that one class (BZip2CompressorInputStream) doesn't end in a
+  # literal "*;", so this leaves it (and everything else) untouched -
+  # confirmed with a before/after diff, not just assumed.
+  JAVA_FILE="$(find "$OUT" -name "solarchvision_bim.java")"
+  sed -i -E '/^import org\.apache\.commons\.(io|compress)\.[A-Za-z0-9_.]*\*;$/d' "$JAVA_FILE"
+
   # Processing's own preprocessor injects a fixed, broad set of default
   # imports into every sketch's generated .java - org.apache.commons.
   # compress.* and org.apache.commons.io.* among them, covering dozens of
@@ -224,11 +238,15 @@ for VARIANT in "${VARIANTS[@]}"; do
   # itext's own classes do reference bouncycastle - but only for
   # signing/timestamping, a code path this app never reaches) both
   # produced correct output.
-  rm -f \
-    "$JAR_DIR/batik-all-1.19.jar" \
-    "$JAR_DIR/commons-io-2.17.0.jar" \
-    "$JAR_DIR/kotlin-stdlib-2.3.21.jar" \
-    "$JAR_DIR/bcprov-jdk14-138.jar" # byte-identical to bcprov-jdk14-1.38.jar (md5sum confirmed) - that one's kept
+  # Each its own full, self-contained line on purpose (not one rm -f
+  # with a \-continuation per file) - copying just one line of a
+  # continued command, or missing a \, silently runs something other
+  # than what was intended; a plain rm -f line always does exactly what
+  # it says, copied alone or all four together.
+  rm -f "$JAR_DIR/batik-all-1.19.jar"
+  rm -f "$JAR_DIR/commons-io-2.17.0.jar"
+  rm -f "$JAR_DIR/kotlin-stdlib-2.3.21.jar"
+  rm -f "$JAR_DIR/bcprov-jdk14-138.jar" # byte-identical to bcprov-jdk14-1.38.jar (md5sum confirmed) - that one's kept
 
   # jogl/gluegen's native-library jars are bundled for every platform
   # they support, every time, regardless of which one --variant is
