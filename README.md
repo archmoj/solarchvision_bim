@@ -131,11 +131,6 @@ A high-level summary of what's changed:
      work); turn on for a larger download (~395MB more) that needs
      nothing else installed. Always off for macOS either way - see the
      next point.
-   - **Bundle input/** - leave off for a ~184MB-smaller download; run
-     `install-assets.sh` (or `install-assets.bat` on Windows) once,
-     after unzipping, to fetch it separately instead (needs `git`
-     installed - nothing else). Turn on to skip that step and have it
-     bundled directly.
 2. Download the matching artifact from that run - `solarchvision_bim-linux-amd64`,
    `-windows-amd64`, `-macos-x86_64` (Intel) or `-macos-aarch64` (Apple
    Silicon) - and unzip it. The two macOS downloads are unsigned (and
@@ -144,11 +139,7 @@ A high-level summary of what's changed:
    a Java 17+ install already present, and right-click -> **Open**
    (not a double-click) to get past Gatekeeper's "unidentified
    developer" warning.
-3. If you left "Bundle input/" off, run `./install-assets.sh` (or
-   double-click `install-assets.bat` on Windows) once - without it, the
-   app starts but can't load the sun/moon/earth imagery it needs even
-   for a basic scene.
-4. Run `solarchvision_bim` (Linux), `solarchvision_bim.exe` (Windows),
+3. Run `solarchvision_bim` (Linux), `solarchvision_bim.exe` (Windows),
    or `solarchvision_bim.app` (macOS) from inside the unzipped folder.
 
 Artifacts are kept for 7 days - for anything older, or to build one
