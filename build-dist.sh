@@ -23,9 +23,9 @@
 # state (commit, branch, whether the working tree was clean) it was
 # built from, since nothing else in the dist folder says that once it's
 # been unzipped somewhere on its own - and copies LICENSE.md,
-# package.json and CITATION.cff there too (the last with version/
-# date-released filled in, since the committed one deliberately leaves
-# those out - see the loop below).
+# package.json, README.md and CITATION.cff there too (the last with
+# version/date-released filled in, since the committed one deliberately
+# leaves those out - see the loop below).
 #
 # Usage:
 #   ./build-dist.sh                       # every variant below
@@ -225,6 +225,15 @@ EOF
 
   cp LICENSE.md "$OUT/LICENSE.md"
   cp package.json "$OUT/package.json"
+  # The whole thing, not an extract - most of it (GUI usage, keyboard
+  # shortcuts, the command line) is exactly what someone running a
+  # downloaded build would want, and the rest (cloning, building from
+  # source) is harmless extra context rather than something worth
+  # maintaining a second, trimmed copy just to omit. package.json's own
+  # "docs" field points at this and the other READMEs scattered through
+  # the repo (command/README.md, etc.) for anyone who wants just one of
+  # them.
+  cp README.md "$OUT/README.md"
 
   # CITATION.cff is committed without version/date-released (cff-version
   # 1.2.0 doesn't require either - see

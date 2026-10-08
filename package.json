@@ -12,6 +12,14 @@
   "bugs": {
     "url": "https://github.com/archmoj/solarchvision_bim/issues"
   },
+  "docs": {
+    "main": "README.md",
+    "commandLine": "command/README.md",
+    "vscodeExtension": "tools/vscode-svs-language/README.md",
+    "unitTests": "test/README.md",
+    "imageTests": "test/image/README.md",
+    "importScripts": "import/README.md"
+  },
   "keywords": [
     "3D",
     "BIM",
