@@ -28,11 +28,18 @@ class ExportObjectsOBJTest {
   private solarchvision_bim app;
 
   @BeforeEach
-  void setUp () {
+  void setUp () throws java.io.IOException {
     app = new solarchvision_bim();
     app.allModel2Ds.ImagePath = new String[]{""}; // see FileSelectedTest.java
     app.Terrain.Mesh = new float[app.Terrain.rowCount][app.Terrain.columnCount][3];
-    app.locateBaseFolder();
+    // See Earth3DTest.java's own comment on why this isn't
+    // app.locateBaseFolder() - that walks up from sketchPath() looking
+    // for input/, which from a Processing-CLI/test context resolves
+    // nowhere near this repo's actual input/ folder, so it calls
+    // System.exit(1) and kills the whole test JVM rather than just this
+    // test.
+    app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
+    app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
     app.update_project_folders(); // Folder_Export3D is null until this runs
   }
 

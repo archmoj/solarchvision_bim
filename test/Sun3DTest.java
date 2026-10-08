@@ -23,9 +23,12 @@ class Sun3DTest {
   private solarchvision_bim app;
 
   @BeforeEach
-  void setUp () {
+  void setUp () throws java.io.IOException {
     app = new solarchvision_bim();
-    app.locateBaseFolder();
+    // See Earth3DTest.java's own comment on why this isn't
+    // app.locateBaseFolder().
+    app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
+    app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
     app.STATION.setLatitude(43.7f); // an arbitrary non-degenerate latitude -
                                     // avoids the lat=0 default, which isn't
                                     // wrong, just not representative.

@@ -30,9 +30,12 @@ class FileSelectedTest {
   private solarchvision_bim app;
 
   @BeforeEach
-  void setUp () {
+  void setUp () throws java.io.IOException {
     app = new solarchvision_bim();
-    app.locateBaseFolder();
+    // See Earth3DTest.java's own comment on why this isn't
+    // app.locateBaseFolder().
+    app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
+    app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
     app.allActions = new java.util.HashMap<>(); // fresh app never runs build_allActions() itself
     // allModel2Ds.ImagePath is normally populated by load_images() during
     // real app startup - a fresh instance never runs that (it touches

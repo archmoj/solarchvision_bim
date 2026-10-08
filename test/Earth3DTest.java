@@ -8,9 +8,20 @@ class Earth3DTest {
   private solarchvision_bim.Earth3D earth;
 
   @BeforeEach
-  void setUp () {
+  void setUp () throws java.io.IOException {
     app = new solarchvision_bim();
-    app.locateBaseFolder();
+    // locateBaseFolder() walks up from sketchPath() looking for input/ -
+    // which, from a Processing-CLI/test context, resolves deep inside
+    // the Processing install tree (confirmed directly:
+    // .../lib/app/resources/core), nowhere near this repo's actual
+    // input/ folder - so it calls System.exit(1) and kills the whole
+    // test JVM, not just this test, unless a symlink from an earlier
+    // run-with-latest-processing.sh happens to already be sitting
+    // there. A plain temp directory sidesteps all of that: this test
+    // doesn't need input/ to actually exist, just a real, writable
+    // BaseFolder to derive paths from.
+    app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
+    app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
     earth = app.Earth3D;
   }
 

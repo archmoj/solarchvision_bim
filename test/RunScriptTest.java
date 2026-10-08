@@ -21,9 +21,12 @@ class RunScriptTest {
   private solarchvision_bim app;
 
   @BeforeEach
-  void setUp () {
+  void setUp () throws java.io.IOException {
     app = new solarchvision_bim();
-    app.locateBaseFolder();
+    // See Earth3DTest.java's own comment on why this isn't
+    // app.locateBaseFolder().
+    app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
+    app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
 
     app.allActions = new java.util.HashMap<>(); // fresh app never runs build_allActions() itself
   }
@@ -1247,6 +1250,14 @@ class RunScriptTest {
 
   @Test
   void runDotScript_withAFilename_runsThatFileFromFolder_Import () throws java.io.IOException {
+    // Folder_Import has no field initializer any more (see
+    // update_folders.pde's locateBaseFolder()/update_input_folders(),
+    // only called from setup() - never on a fresh test instance) - set
+    // directly here rather than relying on either of those, since this
+    // test is only about RUN.SCRIPT's own dispatch, not folder
+    // resolution itself.
+    app.Folder_Import = java.nio.file.Files.createTempDirectory("run-dot-script-test").toString();
+
     java.nio.file.Path nested = java.nio.file.Path.of(app.Folder_Import, "run-dot-script-nested-test.svs");
     java.nio.file.Files.createDirectories(nested.getParent());
     java.nio.file.Files.writeString(nested, "SETLAT 33.3\n");
