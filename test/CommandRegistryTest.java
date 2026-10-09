@@ -85,8 +85,8 @@ class CommandRegistryTest {
   @Test
   void noTwoRegisteredCommandsShareANormalizedKey () throws IOException {
     List<String> titles = new ArrayList<>();
-    titles.addAll(extractPutActionTitles("app/src/solarchvision_bim/actions.pde"));
-    titles.addAll(extractCommandDeclarations("app/src/solarchvision_bim/ValueModifier.pde"));
+    titles.addAll(extractPutActionTitles("src/solarchvision_bim/actions.pde"));
+    titles.addAll(extractCommandDeclarations("src/solarchvision_bim/ValueModifier.pde"));
 
     assertTrue(titles.size() > 700, "sanity check: expected hundreds of registered " +
       "commands from both files combined, found " + titles.size() + " - did a source " +

@@ -22,7 +22,7 @@ ln -sfn "$(pwd)/command" "$CORE/command"
 ln -sfn "$(pwd)/projects" "$CORE/projects"
 
 if [ "$#" -lt 1 ]; then
-    "$PROCESSING_HOME/bin/Processing" cli --sketch=app/src/solarchvision_bim --run
+    "$PROCESSING_HOME/bin/Processing" cli --sketch=src/solarchvision_bim --run
 else
-    "$PROCESSING_HOME/bin/Processing" cli --sketch=app/src/solarchvision_bim --run "$@"
+    "$PROCESSING_HOME/bin/Processing" cli --sketch=src/solarchvision_bim --run "$@"
 fi

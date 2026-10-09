@@ -115,7 +115,7 @@ A high-level summary of what's changed:
     pure-Java decompression path for better cross-platform support;
     weather-data API keys are now read from a `.env` file.
 -   **Project structure and internal cleanup** — Source files were
-    reorganized under `app/src/solarchvision_bim`, alongside broad internal
+    reorganized under `src/solarchvision_bim`, alongside broad internal
     refactoring for maintainability.
 
 # Installation
@@ -189,7 +189,7 @@ Please note that the command must be executed from the parent directory
 containing the `solarchvision_bim` folder.
 
 ``` sh
-<PATH-TO-PROCESSING>/processing-java --sketch=app/src/solarchvision_bim --run
+<PATH-TO-PROCESSING>/processing-java --sketch=src/solarchvision_bim --run
 ```
 
 

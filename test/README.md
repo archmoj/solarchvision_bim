@@ -1,4 +1,4 @@
-# Testing `app/src/solarchvision_bim/*.pde`
+# Testing `src/solarchvision_bim/*.pde`
 
 This exists to establish the pattern so more tests can be added the same way.
 
@@ -6,7 +6,7 @@ This exists to establish the pattern so more tests can be added the same way.
 
 Every `.pde` tab (e.g. `Earth3D.pde`) declares one top-level `class
 X { ... }`. Processing's own preprocessor merges all tabs
-in `app/src/solarchvision_bim/` into a single generated Java file, where:
+in `src/solarchvision_bim/` into a single generated Java file, where:
 
 - The main tab (`solarchvision_bim.pde`) becomes a class named
   `solarchvision_bim` extending `PApplet`.
@@ -84,7 +84,7 @@ The source-highlighted view is against Processing's own generated
 to the compiled classes) rather than the original `.pde` tabs - that's
 genuinely what the compiled bytecode maps to, so the line numbers there
 are accurate, just not the same line numbers you'd see editing the `.pde`
-files directly in `app/src/solarchvision_bim/`.
+files directly in `src/solarchvision_bim/`.
 
 CI (`.github/workflows/ci.yml`) always installs JaCoCo, so every run gets
 a coverage report: a summary table in the workflow's Job Summary, and the

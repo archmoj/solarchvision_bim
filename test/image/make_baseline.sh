@@ -137,7 +137,7 @@ fi
 # SCREENSHOTS_ROOTS checks.
 SCREENSHOTS_ROOTS=(
   "projects/model-01/export/screenshots"
-  "app/src/solarchvision_bim/projects/model-01/export/screenshots"
+  "src/solarchvision_bim/projects/model-01/export/screenshots"
 )
 
 find_new_screenshots () {

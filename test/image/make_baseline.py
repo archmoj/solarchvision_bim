@@ -54,7 +54,7 @@ import sys
 import time
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-SKETCH_DIR = os.path.join(REPO_ROOT, "app", "src", "solarchvision_bim")
+SKETCH_DIR = os.path.join(REPO_ROOT, "src", "solarchvision_bim")
 # sketchPath() (used as BaseFolder in update_folders.pde) resolves to
 # Processing's own install directory ($PROCESSING_HOME/lib/app/resources/
 # core), not REPO_ROOT - see test/image/README.md for why and the symlink

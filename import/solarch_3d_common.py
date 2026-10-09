@@ -217,7 +217,7 @@ def add_extruded_polygon(writer: ObjWriter, ext, holes, height, base_z=0.0):
 
 # ---------------------------------------------------------------------
 # buildings.svs: SOLARCHVISION_BIM's own "Mesh" script command
-# (app/src/solarchvision_bim/runScript.pde's `case "MESH":`, calling
+# (src/solarchvision_bim/runScript.pde's `case "MESH":`, calling
 # Create3D.pde's add_Mesh) natively supports a face with any number of
 # vertices - unlike buildings.obj, a hole-free cap here does NOT need
 # triangulating: the whole ring becomes one Mesh line. A footprint WITH

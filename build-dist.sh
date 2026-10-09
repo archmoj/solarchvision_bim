@@ -83,7 +83,7 @@ set -euo pipefail
 cd "$(dirname "$0")"   # repo root
 
 PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
-SKETCH_DIR="app/src/solarchvision_bim"
+SKETCH_DIR="src/solarchvision_bim"
 DIST_DIR="${DIST_DIR:-dist}"
 
 if [ "${NO_JAVA:-1}" = "1" ]; then

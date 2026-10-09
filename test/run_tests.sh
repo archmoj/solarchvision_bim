@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds app/src/solarchvision_bim with Processing's own compiler (so all
+# Builds src/solarchvision_bim with Processing's own compiler (so all
 # .pde tabs get preprocessed/merged the same way run-with-processing-4.3.sh/run-with-latest-processing.sh run
 # them), then compiles and runs the JUnit tests in this folder against the
 # result.
@@ -39,7 +39,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."   # repo root
 
 PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.3.4}"
-SKETCH_DIR="app/src/solarchvision_bim"
+SKETCH_DIR="src/solarchvision_bim"
 BUILD_DIR="build/test"
 
 if [ -x "$PROCESSING_HOME/processing-java" ] || [ -x "$PROCESSING_HOME/processing-java.exe" ]; then

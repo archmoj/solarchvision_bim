@@ -29,11 +29,11 @@ geometry command that silently changes its output, etc).
    camera/view, and end in exactly one `REC.png`.
 2. `make_baseline.py` runs each script through the sketch in headless mode:
    ```
-   Processing cli --sketch=app/src/solarchvision_bim --run \
+   Processing cli --sketch=src/solarchvision_bim --run \
      USER=AUTO RUN=command/test/primitives.svs
    ```
    (the same `USER=AUTO RUN=...` mechanism as `./run-with-processing-4.3.sh USER=AUTO
-   RUN=command/test.svs` — see `app/src/solarchvision_bim/parseArgs.pde` and
+   RUN=command/test.svs` — see `src/solarchvision_bim/parseArgs.pde` and
    `solarchvision_bim.pde`: `USER=AUTO` makes the sketch run the script a
    couple of frames after startup and then call `exit()` on its own).
 
@@ -54,7 +54,7 @@ after `--run` — and all optional:
 All five can be combined freely, e.g. the command this section opens
 with, with a specific size and font added:
 ```
-~/processing/4.3.4/processing-java --sketch=app/src/solarchvision_bim --run \
+~/processing/4.3.4/processing-java --sketch=src/solarchvision_bim --run \
   SCREEN=1280x720 FONTSIZE=12 FONT=Times-New-Roman
 ```
 3. Each script's single screenshot is found under

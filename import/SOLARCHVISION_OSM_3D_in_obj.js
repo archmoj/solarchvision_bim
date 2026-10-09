@@ -12,7 +12,7 @@
  *                               triangulated (for tools that need triangles)
  *   <outdir>/buildings.svs    - the same buildings as SOLARCHVISION_BIM's
  *                               own "Mesh" script command
- *                               (app/src/solarchvision_bim/runScript.pde's
+ *                               (src/solarchvision_bim/runScript.pde's
  *                               `case "MESH":`, calling Create3D.pde's
  *                               add_Mesh) - hole-free caps are a single
  *                               n-gon face each, not triangulated; a
