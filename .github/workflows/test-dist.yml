@@ -183,7 +183,14 @@ jobs:
       # fetch - see update_folders.pde), runs a bundled
       # command/test/*.svs script, and produces its screenshot. Same
       # check as dist.yml's own linux smoke test.
+      #
+      # timeout-minutes defensively, same reasoning as test-macos's own
+      # (see its comment) - this one's never actually hung, but nothing
+      # stops some future regression making it the next one that does,
+      # and a step with no timeout at all defaults to GitHub's own
+      # 6-hour job timeout quietly eating the run if it ever happens.
       - name: Smoke-test the build
+        timeout-minutes: 3
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
@@ -308,7 +315,14 @@ jobs:
       # far, suggesting the & call's inherited-stream approach wasn't
       # capturing it cleanly either; files read back afterward sidestep
       # that same way.
+      #
+      # timeout-minutes defensively, same reasoning as test-macos's own
+      # (see its comment) - a step with no timeout at all defaults to
+      # GitHub's own 6-hour job timeout quietly eating the run if a
+      # future regression ever makes this one hang instead of failing
+      # outright the way its own early rounds did.
       - name: Smoke-test the build
+        timeout-minutes: 3
         shell: pwsh
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
@@ -417,7 +431,22 @@ jobs:
       # available while writing any of it) - treat this step's next
       # real run as the actual test, the same way test-windows's own
       # pwsh switch is.
+      # timeout-minutes: this step's own first two real runs both idled
+      # indefinitely rather than failing outright or printing anything
+      # past the codesign step above - no "cannot find display"-style
+      # error the way Linux gives, no crash, just nothing. Without a
+      # step timeout that's indistinguishable from GitHub's own default
+      # 6-hour job timeout quietly eating the whole run. GitHub's own
+      # macOS runners are documented as not needing the Linux/Windows-
+      # style headless-display workaround in the first place (unlike
+      # windows-latest, which genuinely has no GPU/ICD at all - see the
+      # Mesa3D step above), so what's actually hanging here, rather than
+      # erroring the way a genuinely missing display would, is still
+      # unconfirmed - this bounds the open question rather than
+      # resolving it outright, same as test-windows's own early rounds
+      # needed more than one pass to actually pin down.
       - name: Smoke-test the build
+        timeout-minutes: 3
         run: |
           APP="dist/solarchvision_bim_macos-aarch64.app"
           xattr -cr "$APP"
