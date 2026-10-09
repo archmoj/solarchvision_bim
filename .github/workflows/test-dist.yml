@@ -303,9 +303,21 @@ jobs:
           Write-Host "==> dist/lib/ (solarchvision_bim.jar present?):"
           Get-ChildItem dist/lib | Where-Object { $_.Name -like "*solarchvision_bim*" }
 
+          # Absolute, computed before Push-Location changes the working
+          # directory below - RUN='s own value is a path Processing's
+          # loadStrings() resolves against the process's current
+          # directory (not the exe's own location the way %EXEDIR%/
+          # BaseFolder are - confirmed directly: Push-Location's first
+          # real run got past the classpath failure entirely, only to
+          # then fail to find "command/test/primitives.svs" specifically,
+          # since that relative path now means dist/command/test/... -
+          # it never existed there, only at the repo root this now
+          # points at absolutely instead).
+          $scriptPath = Join-Path (Get-Location).Path "command\test\primitives.svs"
+
           Push-Location dist
           try {
-            & ".\solarchvision_bim_windows-amd64.exe" --l4j-debug-all USER=AUTO RUN=command/test/primitives.svs
+            & ".\solarchvision_bim_windows-amd64.exe" --l4j-debug-all USER=AUTO "RUN=$scriptPath"
             $exitCode = $LASTEXITCODE
           } finally {
             Pop-Location
