@@ -1,867 +1,276 @@
-SOLARCHVISION-BIM is a desktop software application designed and
-developed by [Mojtaba Samimi
-(M.Arch)](https://www.linkedin.com/in/mojtaba-samimi-06178840) in the
-[Processing](https://processing.org/) language. It is available for
-`GNU/Linux`, `macOS`, and `Microsoft Windows`.
+# SOLARCHVISION-BIM
 
-# Table of contents
+**Explore how buildings, landscapes, and urban spaces interact with the sun, weather, and climate.**
 
--   [Copyright and license](#copyright-and-license)
--   [SOLARCHVISION method and studies](#solarchvision-method-and-studies)
--   [Installation](#installation)
-    -   [Run a pre-built app](#run-a-pre-built-app)
-    -   [Clone using SSH](#clone-using-ssh)
-    -   [Clone using HTTPS](#clone-using-https)
-    -   [Download Climate Engineering files](#download-cweeds-files)
--   [Graphical User Interface](#graphical-user-interface)
-    -   [Adding an object to the scene](#adding-an-object-to-the-scene)
-    -   [Selecting objects](#selecting-objects)
-    -   [Altering objects](#altering-objects)
-    -   [Modifying objects](#modifying-objects)
-    -   [Matching and aligning objects](#matching-and-aligning-objects)
-    -   [Quick layout and 3D setup](#quick-layout-and-3d-setup)
-    -   [Climatic studies](#climatic-studies)
-    -   [Weather layers](#weather-layers)
-    -   [Location menu](#location-menu)
-        -   [Picking a station on the map](#picking-a-station-on-the-map)
-    -   [Case bar](#case-bar)
-        -   [Range Sliders](#range-sliders)
-        -   [Statistical Options](#statistical-options)
-    -   [User interface keyboard shortcuts](#user-interface-keyboard-shortcuts)
-        -   [General](#general)
-        -   [Camera and viewport control](#camera-and-viewport-control)
-        -   [Selection and scene interaction](#selection-and-scene-interaction)
-        -   [Time, weather, and impact visualization](#time-weather-and-impact-visualization)
-        -   [Layout and graph controls](#layout-and-graph-controls)
-        -   [Graph scaling and display options](#graph-scaling-and-display-options)
-        -   [Graph visualization modes](#graph-visualization-modes)
-    -   [Command line](#command-line)
--   [SOLARCHVISION-BIM — Technical Overview](#solarchvision-bim--technical-overview)
-    -   [Overview](#overview)
-    -   [Major Technical Subsystems](#major-technical-subsystems)
-        -   [1. 3D Modeling and Geometry Engine](#1-3d-modeling-and-geometry-engine)
-        -   [2. Interactive CAD-Style Modeling](#2-interactive-cad-style-modeling)
-        -   [3. Parametric and Procedural Objects](#3-parametric-and-procedural-objects)
-        -   [4. 3D Rendering and Visualization](#4-3d-rendering-and-visualization)
-        -   [5. Solar Position and Radiation Analysis](#5-solar-position-and-radiation-analysis)
-        -   [6. Surface-Level Solar Analysis](#6-surface-level-solar-analysis)
-        -   [7. Shadow and Occlusion Analysis](#7-shadow-and-occlusion-analysis)
-        -   [8. Environmental Impact Fields](#8-environmental-impact-fields)
-        -   [9. Wind Visualization and Analysis](#9-wind-visualization-and-analysis)
-        -   [10. Weather and Climate Data Integration](#10-weather-and-climate-data-integration)
-        -   [11. Ensemble and Scenario Analysis](#11-ensemble-and-scenario-analysis)
-        -   [12. Statistical Study Engine](#12-statistical-study-engine)
-        -   [13. Cloud and Atmospheric Scenario Analysis](#13-cloud-and-atmospheric-scenario-analysis)
-        -   [14. Geographic and Earth Modeling](#14-geographic-and-earth-modeling)
-        -   [15. Meteorological Station System](#15-meteorological-station-system)
-        -   [16. Sun, Moon, Sky, and Atmospheric Visualization](#16-sun-moon-sky-and-atmospheric-visualization)
-        -   [17. Time-Dependent Simulation](#17-time-dependent-simulation)
-        -   [18. Multi-Viewport Architecture](#18-multi-viewport-architecture)
-        -   [19. Command-Line and Scripting System](#19-command-line-and-scripting-system)
-        -   [20. Project Persistence](#20-project-persistence)
-        -   [21. Layer and Material Systems](#21-layer-and-material-systems)
-        -   [22. Import and Export](#22-import-and-export)
-    -   [Architecture at a Glance](#architecture-at-a-glance)
-    -   [Technical Character](#technical-character)
+SOLARCHVISION-BIM is an open-source desktop application for 3D modeling and environmental analysis. It brings together building and site geometry, geographic context, weather and climate data, and time-dependent visualization to help architects, urban planners, and landscape architects investigate environmental conditions during design.
 
-------------------------------------------------------------------------
+Use it to explore solar access and shading, compare site and building configurations, visualize weather and atmospheric conditions, and examine how environmental impacts change by hour, day, season, or scenario. The application combines an interactive 3D workspace with geographic and time-series views.
 
-# Copyright and license
+- **For:** Architects, urban and landscape planners, designers, researchers, and technically minded users interested in environmental design.
+- **Platforms:** GNU/Linux, macOS, and Microsoft Windows.
+- **License:** GNU General Public License v2 (GPL-2.0).
+- **Repository:** [archmoj/solarchvision_bim](https://github.com/archmoj/solarchvision_bim)
 
-The code and documentation are released under the [GPL
-v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
+> **Important:** SOLARCHVISION-BIM is a design exploration and analysis tool. Results depend on the quality and suitability of the model, location, and input data. They should not be treated as certified engineering calculations or a substitute for professional review.
 
-# SOLARCHVISION method and studies
-## [TU-Berlin book: Intelligent Design using Solar-Climatic Vision (Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION)](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
-## [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
-## [BIM6D Presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
+## What can I use it for?
 
+### Architecture and building design
 
-# Installation
+- Create and edit 3D geometry to explore building form and site relationships.
+- Investigate solar position, surface exposure, and shading from surrounding geometry.
+- Compare environmental conditions across different times and weather scenarios.
+- Visualize modeled buildings with time-dependent solar and environmental layers.
 
-## Run a pre-built app
+### Urban planning and public space
 
-You can download or clone the repository, navigate to the dist folder,
-and run the appropriate executable for your operating system.
+- Explore relationships among building massing, open space, and surrounding context.
+- Examine solar access and shadow patterns at different times of day and year.
+- Use geographic context and weather information to inform early-stage comparisons.
+- Visualize wind-related patterns and other spatial environmental fields where supported by the model and data.
 
-## Clone using SSH
+### Landscape architecture
 
-``` sh
-git clone git@github.com:archmoj/solarchvision_bim.git
-```
+- Represent terrain, trees, and site elements in a 3D scene.
+- Explore the effects of vegetation and surrounding objects on shade and solar exposure.
+- Review site conditions in their geographic and seasonal context.
 
-or
+### Climate and environmental studies
 
-``` sh
-git clone git@github.com:archmoj/solarchvision_bim.git --depth 1
-```
+- Work with supported weather, climate, observation, and ensemble forecast datasets.
+- Inspect time-dependent variables and compare selected hours, days, years, or forecast scenarios.
+- Use statistical summaries such as minimum, average, maximum, and percentiles to explore variability.
+- Export geometry or selected model states for use in other workflows.
 
-## Clone using HTTPS
+The available analyses depend on the selected study, input dataset, location, and model setup.
 
-``` sh
+## Getting started
+
+### 1. Get the application
+
+The simplest route is to use a pre-built application from the repository:
+
+1. Open the [SOLARCHVISION-BIM repository](https://github.com/archmoj/solarchvision_bim).
+2. Download the repository as a ZIP file or clone it using Git.
+3. Open the `dist` directory.
+4. Run the executable intended for your operating system.
+
+If you prefer Git, use one of the following commands:
+
+**HTTPS**
+
+```sh
 git clone https://github.com/archmoj/solarchvision_bim.git
 ```
 
-or
+For a smaller, shallow clone:
 
-``` sh
+```sh
 git clone https://github.com/archmoj/solarchvision_bim.git --depth 1
 ```
 
+**SSH** (requires an SSH key configured with GitHub)
 
-## Download Climate Engineering files
+```sh
+git clone git@github.com:archmoj/solarchvision_bim.git
+```
 
-For locations in `Canada`, there is a database called `CWEEDS`,
-which includes multi-year climate data under the Engineering Climate
-Datasets (https://climate.weather.gc.ca/prods_servs/engineering_e.html).
+The pre-built files and their launch requirements may vary by release. If the application does not start, check the repository instructions and the files supplied in `dist` for your platform.
 
-The files for the region of interest can be extracted and placed inside
-the `solarchvision_bim/input/climate/CWEEDS/` folder.
+### 2. Understand the main workspace
 
+The interface combines several views:
 
-# Graphical User Interface
+- **3D view:** Create, select, edit, and inspect buildings, surfaces, terrain, trees, and other objects. This is also where many environmental effects are visualized.
+- **World view:** Explore geographic context, choose a project location, and work with available map, station, and terrain information.
+- **Study/time view:** Inspect time-series graphs, environmental studies, and statistical or scenario results.
+- **Case bar:** Choose the hours, days, and scenarios or years to include in a study, and select a statistical summary where available.
+- **Command bar:** An optional text-based interface for entering commands. Most users can begin with the menus and view controls; commands are useful for precise settings or repeatable workflows.
 
-Once loaded the UI would look like this:
+The initial layout can vary depending on the selected setup. Use the `Setup` menu to switch among available 3D models and time-view layouts.
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/archmoj/solarchvision_bim/refs/heads/main//doc/images/InitialView.jpg">
-</p>
+### 3. Choose a location and weather data
 
-Please note that in above example the `Setup | 3D-model 7` option is selected. Also the rendering is set to `Shade Global Solar` option via `3D-shade` menu.
+Use the `Location` menu to select the project location and load or download supported weather and geographic data. The application uses EPW/TMY data by default when available. Other supported sources include:
 
-## Adding an object to the scene
+- **CWEEDS:** Multi-year engineering climate data for Canadian locations.
+- **CLMREC:** Supported climate-record data.
+- **NAEFS:** Ensemble forecast data for exploring a range of forecast scenarios.
+- **SWOB:** Meteorological observations.
+- **HRDPS/GDPS forecast imagery:** Available through the atmospheric visualization workflow where configured.
 
-You can choose a desired object such as Houses, Parametric Surfaces,
-`Box`, `Cone`, `Cushion`, `Cylinder`, `Sphere`, `Octahedron`, `Icosahedron`,
-`Pyramid`, `Hyper`, `Plane`, `Polygon`, `Extrude`, `Surface`, `Polyline`,
-`Point`, `1D-Tree`, `2D-Tree`, `Person`, and `Camera` from the
-`3D-create` menu.
+Dataset availability and coverage vary by location. Some geographic features, including terrain mesh and terrain texture, require an API key. For Canadian CWEEDS data, see the [Engineering Climate Datasets](https://climate.weather.gc.ca/prods_servs/engineering_e.html) page. Place downloaded files in the folder described by the repository's data layout; CWEEDS files are expected under `input/climate/CWEEDS/`.
 
-After selecting the desired object, you can use either right-click or
-left-click on a surface in the 3D viewport to add it to the scene:
+### 4. Build or prepare a scene
 
--   **Right-click** adds the object to the land surface.
--   **Left-click** adds the object to the surface of existing 3D models.
+Use the `3D-create` menu to add supported objects. Available object types include houses, parametric surfaces, boxes, cones, cushions, cylinders, spheres, planes, polygons, extrusions, surfaces, polylines, points, trees, people, and cameras.
 
-The default parameters used for creating new objects can be found under
-`Geometries & Space` → `Create`.
+After choosing an object type, click in the 3D view to place it:
 
-Alternatively, you can use the command line to generate new objects. For
-example, the following command adds a section with width and height of
-100 units at a distance of 0.1 units above the origin:
+- **Right-click:** Place the object on the land surface.
+- **Left-click:** Place the object on the surface of an existing 3D model.
 
-    section u=100 v=100 z=0.1
+Default creation parameters are available under `Geometries & Space` → `Create`. Use the `3D-select`, `3D-alter`, `3D-modify`, and `3D-match` menus to select, adjust, modify, and align objects. The application supports importing `.obj` 3D files as well as its own scene geometry.
 
-See the Command line section for more information.
+### 5. Explore solar and environmental conditions
 
-------------------------------------------------------------------------
+Start with an available study in the `Analysis` menu. General studies include wind patterns, orientation potential, hourly sun position, and annual sun paths, with active and passive variants where offered.
 
-## Selecting objects
+For model-based studies such as `Urban solar potential (active)` and `Urban solar potential (passive)`, the README's current workflow requires preparing a selected `Section` or `Camera` first using `PreBake Viewport` or `Pre-bake Selected Sections`.
 
-You can use the `3D-select` menu to select objects of different types,
-including `Land`, `1D`, `2D`, `Group`, `Face`, `Vertex`, `Soft`,
-`Solid`, `Section`, `Camera`, and `Polyline`.
+Use the `3D-shade` menu to change the visualization, including options such as `Shade Global Solar` where available. Move through time to see how the display changes. Interpret colors and values according to the selected layer and its units; different layers may represent different environmental quantities.
 
-You can also use the following selection methods:
+### 6. Compare times and scenarios
 
--   `Pick` and `Window` selection modes to select or deselect objects
--   Add objects to or remove objects from the current selection
--   `Select all` and `Deselect all` options
+The **Case Bar** sits above the command bar. Its range controls let you select:
 
-It is also possible to convert one selection type to another. For
-example:
+- **Hours** within the data period.
+- **Days** to include in the study.
+- **Scenarios** for ensemble forecasts, or **Years** for multi-year climate input.
 
--   `Groups >> Faces` selects all faces belonging to the selected
-    group(s)
--   `Faces >> Groups` selects all groups associated with the selected
-    face(s)
+Use a left-click to set the start of a range and a right-click to set its end. Statistical choices include minimum, average, maximum, 25th, 50th (median), and 75th percentiles, as well as the built-in `Middle`, `Mid-High`, and `Mid-Low` selections. These choices are not interchangeable: choose the statistic or scenario selection that best matches the question you are investigating.
 
-------------------------------------------------------------------------
+### 7. Save or export your work
 
-## Altering objects
+Use the application's project save/load functions to retain supported scene and study information. Available export workflows include OBJ geometry, time-series or date-series OBJ, RAD, SCR, and HTML. These formats serve different purposes.
 
-You can use the `3D-alter` menu to modify properties of existing
-objects.
+## Common tasks
 
-After selecting a modification option, use the mouse wheel to adjust the
-object properties interactively.
+### Select a weather station on the map
 
-------------------------------------------------------------------------
+Click in the world view to select the nearest station from the currently active dataset. A left-click zooms in to the most detailed map level; a right-click keeps the current zoom, which can help when comparing several locations. When multiple stations are within the dataset's search radius, a list appears so you can choose the intended station.
 
-## Modifying objects
+### Work with weather layers
 
-The `3D-modify` menu provides several modifiers for editing 3D surfaces.
+Weather layers fall into two broad categories:
 
-For example, the `Insert Corner Openings` modifier inserts an opening
-base parallel to the edges of the selected surface(s).
+- **General layers:** Values available directly from the source weather data; missing values may be filled through post-processing.
+- **Developed layers:** Variables generated by processing the source data rather than supplied directly in the original file.
 
-------------------------------------------------------------------------
+Check the layer name, units, time range, and data source before comparing results.
 
-## Matching and aligning objects
+### Change the view layout
 
-You can match and align objects using the `3D-match` menu.
+Use the `Setup` menu to select a predefined 3D model or time-view layout. Enlarge the time view when a graph or study layout is too small to read in the current arrangement.
 
-------------------------------------------------------------------------
+## Keyboard shortcuts
 
-## Quick layout and 3D setup
-
-The `Setup` menu provides quick access to predefined:
-
--   Time viewport `layouts`
--   3D viewport `models`
-
-You can enlarge the time viewport to expand and view complete layout
-graphs.
-
-------------------------------------------------------------------------
-
-## Climatic studies
-
-General studies such as:
-
--   `Wind pattern (active)`
--   `Wind pattern (passive)`
--   `Orientation potential (active)`
--   `Orientation potential (passive)`
--   `Hourly sun position (active)`
--   `Hourly sun position (passive)`
--   `Annual cycle sun path (active)`
--   `Annual cycle sun path (passive)`
-
-can be accessed from the `Analysis` menu. These studies are displayed in
-the time viewport.
-
-For studies related to the 3D model, such as:
-
--   `Urban solar potential (active)`
--   `Urban solar potential (passive)`
-
-you must pre-bake the selected `Section` or `Camera` using:
-
--   `PreBake Viewport`, or
--   `Pre-bake Selected Sections`
-
-before running the analysis.
-
-------------------------------------------------------------------------
-
-## Weather layers
-
-Two types of weather layers are defined:
-
-1.  **General layers**
-    -   Available directly from weather data files
-    -   Missing values may be filled using post-processing techniques
-2.  **Developed layers**
-    -   Not available in the original weather files
-    -   Generated through software post-processing
-
-------------------------------------------------------------------------
-
-## Location menu
-
-You can use the `Location` menu to select a project location and
-download or load weather and geographic data.
-
-By default, the software uses EPW/TMY (Typical Meteorological Year)
-data.
-
-Additional supported datasets include:
-
--   Climate files containing multiple years of data (e.g., CWEEDS)
--   Ensemble forecast datasets (e.g., NAEFS) for visualization and
-    simulation
--   Observation datasets (e.g., SWOB records)
-
-Additional features include:
-
--   `Terrain Mesh` and `Terrain Texture` require an API key
--   `Troposphere` allows loading WMS forecast data to visualize hourly
-    cloud formations using datasets such as HRDPS (High Resolution Deterministic Prediction System) or
-    GDPS (Global Deterministic Prediction System)
-
-### Picking a station on the map
-
-Clicking inside the world viewport assigns the nearest station of the
-*currently active* dataset (`TMYEPW`, `CWEEDS`, `CLMREC`, `NAEFS`, or
-`SWOB`) to the project.
-
-Left-clicking also zooms the world viewport in to the most detailed
-level, to confirm exactly where the click landed. Right-click picks a
-station the same way but keeps the current zoom level, which is handy
-for comparing several rough locations across a wider area without the
-view zooming in on every click.
-
-If one or more stations of that dataset fall
-within its own search radius of the click, a scrollable picker list
-appears instead of guessing automatically:
-
-
-| Dataset  | Search radius |
-|----------|----------------|
-| `TMYEPW` | 10 km          |
-| `CLMREC` | 25 km          |
-| `CWEEDS` | 50 km          |
-| `NAEFS`  | 50 km          |
-| `SWOB`   | 25 km          |
-
-While the picker is showing:
-
--   Click a row to select that station.
--   Click anywhere else in the world viewport, or press `ESC`, to
-    cancel without changing the current selection.
--   If the list is longer than fits on screen, scroll it with the
-    mouse wheel, drag the scrollbar thumb, or click the scrollbar
-    track to page up/down.
-
-------------------------------------------------------------------------
-
-## Case bar
-
-The **Case Bar** is located above the Command Bar. It consists of three range sliders on the left and nine statistical options on the right.
-
-### Range Sliders
-
-The range sliders allow users to select the desired:
-- `Hours`
-- `Days`
-- Forecast `Scenarios` (or `Years` when using long-term input data)
-
-To define a range:
-- Use **left-click** to set the start of the range.
-- Use **right-click** to set the end of the range.
-
-### Statistical Options
-
-The statistical options determine which scenario close to the selected data aggregation is used to run simulations in the viewports. Available options include:
-
-- `Minimum`
-- `Average`
-- `Maximum`
-- `25th Percentile`
-- `50th Percentile (Median)`
-- `75th Percentile`
-- `Middle`
-- `Mid-High`
-- `Mid-Low`
-
-The first six options compute standard statistical measures based on the selected data range.
-
-The `Middle`, `Mid-High`, and `Mid-Low` options are built-in methods that apply weighted selection criteria to sorted data records.
-
-
-## User interface keyboard shortcuts
-
-When the command bar is disabled (default mode), you can use keyboard shortcuts to perform various tasks.
+When the command bar is hidden (the default mode), these shortcuts can help you navigate and explore. The application may interpret keys differently when a text field or command bar has focus.
 
 ### General
--   `TAB`: Enable or disable the command bar
--   `Shift+TAB`: Switch between active and passive impact views inside the 3D viewport
 
-------------------------------------------------------------------------
+| Shortcut | Action |
+| --- | --- |
+| `TAB` | Show or hide the command bar |
+| `Shift+TAB` | Switch between active and passive impact views in the 3D view |
 
-### Camera and viewport control
--   `` ` `` and `~`: Cycle backward/forward through the world
-    viewport's zoom levels
--   `+` and `-`: Zoom in and out in the 3D viewport
--   `Ctrl+,` and `Ctrl+.`: Move the camera closer and farther to the selection
--   `,` and `.`: Move the camera closer and farther
--   `2` and `8`: Rotate the camera up and down
--   `4` and `6`: Rotate the camera left and right
--   `1` and `3`: Move the camera left and right
--   `7` and `9`: Move the camera up and down
--   `5`: Rotate the camera to look at the current selection (or the origin if nothing is selected)
--   `0`: Move the camera closer
--   `/` and `*`: Move the camera toward and away from the selection
--   `UP`, `DOWN`, `LEFT` and `RIGHT`: Rotate the camera around the selection
+### Camera and view navigation
 
-------------------------------------------------------------------------
+| Shortcut | Action |
+| --- | --- |
+| `` ` `` / `~` | Cycle through world-view zoom levels |
+| `+` / `-` | Zoom the 3D view in or out |
+| `Ctrl+,` / `Ctrl+.` | Move the camera closer to or farther from the selection |
+| `,` / `.` | Move the camera closer or farther |
+| `2` / `8` | Rotate the camera up or down |
+| `4` / `6` | Rotate the camera left or right |
+| `1` / `3` | Move the camera left or right |
+| `7` / `9` | Move the camera up or down |
+| `5` | Aim the camera at the selection, or the origin if nothing is selected |
+| `0` | Move the camera closer |
+| `/` / `*` | Move the camera toward or away from the selection |
+| Arrow keys | Rotate the camera around the selection |
 
-### Selection and scene interaction
--   `DELETE`: Delete selected item(s)
--   `Shift+UP`, `Shift+DOWN`: Move/rotate/scale (or change properties of) the selection
--   `c` and `C`: Switch the viewport to available cameras in the scene
--   `ENTER`: Rebuild global & vertex solar energy/impact data
--   `SPACE`: Move time forward & shade viewport
--   `BACKSPACE`: Move time backward & shade viewport
+### Selection, model, and time
 
-------------------------------------------------------------------------
+| Shortcut | Action |
+| --- | --- |
+| `DELETE` | Delete selected items |
+| `Shift+UP` / `Shift+DOWN` | Move, rotate, scale, or adjust properties of the selection, depending on the active control |
+| `c` / `C` | Switch to available cameras in the scene |
+| `ENTER` | Rebuild global and vertex solar-energy/impact data |
+| `SPACE` | Advance time and shade the view |
+| `BACKSPACE` | Move time backward and shade the view |
+| `d` / `D` | Change the impact-display day in the 3D view |
+| `t` / `T` | Change the forecast hour used for atmospheric visualization |
 
-### Time, weather, and impact visualization
--   `d` and `D`: Change the impact display day in the 3D viewport
--   `t` and `T`: Change the forecast hour used to display the troposphere
+### Time graphs and layouts
 
-------------------------------------------------------------------------
+These shortcuts act on the time/study view.
 
-### Layout and graph controls
-The shortcuts in this section, as well as in "Graph scaling and display options" and "Graph visualization modes" below, act on the time viewport.
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl+UP` / `Ctrl+DOWN` | Change the weather layer in the hourly graph |
+| `Ctrl+LEFT` / `Ctrl+RIGHT` | Change the impact layer in the daily graph |
+| `Ctrl+PAGE_UP` / `Ctrl+PAGE_DOWN` | Switch among numbered layouts available in `Setup` |
+| `Ctrl+;` | Show or hide the impact summary |
+| `Ctrl+'` / `Ctrl+"` | Adjust the hourly graph's vertical scale factor |
+| `<` / `>` | Change the number of joined days |
+| `(` / `)` | Change the number of displayed days |
+| `[` / `]` | Change the horizontal interval of the probability graph |
+| `{` / `}` | Change the vertical interval of the probability graph |
+| `s` / `S` | Change the sky scenario: all data, sunny, partly cloudy, or cloudy |
+| `v` / `V` | Show or hide raw values on the hourly graph |
+| `b` / `B` | Show or hide probabilities on the hourly graph |
+| `n` / `N` | Show or hide statistics on the hourly graph |
+| `m` / `M` | Show or hide sorted values on the hourly graph |
 
--   `Ctrl+UP` and `Ctrl+DOWN`: Change the current weather layer displayed in the hourly graph
--   `Ctrl+LEFT` and `Ctrl+RIGHT`: Change the current impact layer displayed in the daily graph
--   `Ctrl+PAGE_UP` and `Ctrl+PAGE_DOWN`: Switch between the numbered diagram `Layout`s available from the `Setup` menu (enlarge the time viewport, i.e. the `graph` View Layout, to view the full layout)
--   `Ctrl+;`: Show or hide the impact summary
+## Command bar and advanced workflows
 
-------------------------------------------------------------------------
+The command bar is optional. It is useful for setting a value precisely, repeating a series of operations, or running commands from scripts. Press `TAB` to show or hide it, or click inside the dark command area at the bottom of the interface.
 
-### Graph scaling and display options
--   `Ctrl+'` and `Ctrl+"`: Adjust the vertical scale factor of the hourly time graph
--   `<` and `>`: Increase or decrease the number of joined days (30 days by default for monthly graphs)
--   `(` and `)`: Increase or decrease the number of displayed days
--   `[` and `]`: Increase or decrease the horizontal interval used for the probabilities graph
--   `{` and `}`: Increase or decrease the vertical interval used for the probabilities graph
+See the [command reference](command/README.md) for available commands covering project files, object creation and editing, camera and view controls, dates, palettes, latitude/longitude, numeric controls, and on/off settings. For example, `day 15` sets the day value through the command interface.
 
-------------------------------------------------------------------------
+## SOLARCHVISION method and publications
 
-### Graph visualization modes
--   `s` and `S`: Change the sky scenario ("All data", "Sunny", "Partly Cloudy", or "Cloudy")
--   `v` and `V`: Show or hide raw values on the hourly time graph
--   `b` and `B`: Show or hide probabilities on the hourly time graph
--   `n` and `N`: Show or hide statistics on the hourly time graph
--   `m` and `M`: Show or hide sorted values on the hourly time graph
+- [TU Berlin book: *Intelligent Design using Solar-Climatic Vision* — Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8)
+- [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
+- [BIM6D presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtibaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
 
+## Technical overview
 
+This section summarizes the main capabilities for readers who want a more detailed understanding of the application. Most users can begin with **Getting started**, **Common tasks**, and **Keyboard shortcuts** without reading this section first.
 
-## Command line
+### Modeling and visualization
 
-The command line lets you run text commands instead of (or alongside)
-clicking around the interface - useful for scripting a sequence of
-actions, or for setting a value precisely rather than by dragging a
-spinner. Use `TAB` to show or hide it, or click inside/outside the
-command line area (the dark region at the bottom).
+SOLARCHVISION-BIM includes a 3D geometry system for points, faces, solids, groups, polylines, materials, and 1D/2D models. It supports object creation, selection, transformation, grouping, visibility, layers, and material assignment. Procedural vegetation and parametric objects can be used to represent aspects of the built and natural environment.
 
-See [`command/README.md`](command/README.md) for the full list: file and
-project commands, object creation and editing, camera and viewport
-control, and one command per numeric or on/off control in the user
-interface (dates, camera settings, palettes, latitude/longitude, and 234
-more), e.g. `day 15`.
+The interface provides 3D, world/geographic, and study/time views. Rendering supports perspective and orthographic cameras, surface and edge display, analytical overlays, and cached or clipped rendering for interactive performance.
 
-# SOLARCHVISION-BIM — Technical Overview
+### Solar, shade, and environmental analysis
 
-## Overview
+Solar calculations use the project's geographic location and time, together with weather or climate radiation data and modeled geometry. The application includes direct and diffuse radiation handling, solar direction, shadow/occlusion calculations, and surface-level impact visualization. The model's surrounding geometry can affect estimated exposure and shade.
 
-**SOLARCHVISION-BIM** is an open-source Processing/Java-based 3D BIM and environmental simulation platform that integrates building and site geometry with geographic, meteorological, climate, solar, and environmental datasets.
+Other environmental features include wind visualization, wind-rose views, environmental impact fields, contours and raster-like representations, and atmospheric/cloud visualization. The exact outputs depend on the selected study and available input data.
 
-The application combines a custom 3D modeling and geometry engine, interactive CAD-style editing, geospatial visualization, time-dependent solar radiation and shadow analysis, wind-flow visualization, scenario and statistical analysis, and export/persistence workflows in a unified desktop environment.
+### Weather, climate, and scenario data
 
-A central characteristic of the platform is the integration of:
+Supported workflows include EPW/TMY, CWEEDS, CLMREC, ensemble forecast and observation data, and meteorological station data. The application separates loading, processing, and analysis so source values can be prepared into variables and visual layers. Ensemble and multi-year data can be explored across hours, days, scenarios, and years, with statistical summaries and percentile-based views.
 
-```text
-3D / BIM Geometry
-       +
-Geographic Context
-       +
-Weather / Climate Data
-       +
-Time & Scenarios
-       +
-Environmental Analysis
-       +
-3D Scientific Visualization
-```
+### Geographic context and time
 
-This allows building and urban-environment models to be analyzed using time-dependent environmental and meteorological information rather than being limited to static geometric visualization.
+The geographic subsystem supports latitude/longitude positioning, map projections, map tiles, station locations, zoom levels, and terrain visualization. The Earth model can display map imagery around the project location with geographic grid and terrain context. Time-dependent studies can be explored by hour, day, season, annual period, forecast period, or scenario, depending on the dataset.
 
-## Major Technical Subsystems
+### Projects, commands, and exchange
 
-### 1. 3D Modeling and Geometry Engine
+Project persistence uses structured XML data for supported model geometry, layers, materials, station information, time state, study configuration, analysis settings, and object properties. The command system supports interactive entry and scripts/text files for repeatable operations. Export options include OBJ, time-series/date-series OBJ, RAD, SCR, and HTML.
 
-SOLARCHVISION-BIM implements its own lightweight geometric modeling system rather than functioning only as a viewer.
-
-Core geometry components include:
-
-- Points
-- Faces
-- Solids
-- Groups
-- Polylines
-- Materials
-- 1D models
-- 2D models
-
-The geometry system supports vertex and face management, surface normals, tessellation, transformations, rotation, scaling, translation, geometric intersections, surface operations, object grouping, material assignment, visibility, and layer management.
-
-This geometry layer provides the foundation for both visualization and environmental calculations.
-
-### 2. Interactive CAD-Style Modeling
-
-The application contains dedicated modules for interactive 3D operations, including:
-
-- Create
-- Select
-- Move
-- Rotate
-- Scale
-- Modify
-- Clone
-- Delete
-- Drop
-- Edit
-
-Users can create and manipulate objects directly within the 3D environment. The interaction system includes 3D picking, screen-to-world coordinate operations, object and face selection, mouse-based navigation, and CAD-style viewport interaction.
-
-### 3. Parametric and Procedural Objects
-
-The modeling system supports generated objects and procedural 1D/2D representations.
-
-The procedural vegetation system includes parameters such as species/type, random seed, branching degree, scale, rotation, branch tilt, branch twist, branch ratio, trunk dimensions, and leaf dimensions.
-
-This allows vegetation and environmental context to be represented as computational objects rather than only imported static models.
-
-### 4. 3D Rendering and Visualization
-
-The application uses Processing's `P2D` and `P3D` rendering systems and maintains multiple rendering surfaces for different views.
-
-Major visualization areas include:
-
-- 3D modeling viewport
-- Geographic/world viewport
-- Environmental study viewport
-- Analytical overlays
-
-The rendering system supports perspective and orthographic views, camera transformations, zooming, rotation, directional views, object-centered navigation, 3D overlays, surface and edge rendering, tessellation control, and analytical visualization.
-
-The rendering architecture includes batching, clipping, caching, and selective geographic rendering to improve interactive performance.
-
-### 5. Solar Position and Radiation Analysis
-
-Solar analysis is one of the core environmental capabilities.
-
-The system calculates solar position using project geographic coordinates and time information, including latitude, longitude, date, and hour.
-
-Solar calculations incorporate:
-
-- Direct radiation
-- Diffuse radiation
-- Effective direct radiation
-- Effective diffuse radiation
-- Solar direction vectors
-- Surface geometry
-- Shading/obstruction effects
-
-A simplified workflow is:
+### Main workflow at a glance
 
 ```text
-Geographic Location
-        ↓
-Date / Time
-        ↓
-Solar Position
-        ↓
-Weather / Climate Radiation
-        ↓
-3D Geometry
-        ↓
-Shadow / Occlusion Analysis
-        ↓
-Surface Solar Impact
-        ↓
-Visualization / Statistical Study
+Building / Site Model + Geographic Location
+                    ↓
+             Weather / Climate Data
+                    ↓
+          Choose Time and Scenarios
+                    ↓
+       Solar / Shade / Environmental Study
+                    ↓
+       Explore 3D Views and Study Graphs
+                    ↓
+             Save or Export Results
 ```
 
-### 6. Surface-Level Solar Analysis
+## License
 
-The solar analysis engine can process radiation at a spatially detailed level rather than assigning a single value to an entire building.
-
-The implementation maintains time-dependent arrays for sun direction, unit sun direction, direct radiation, diffuse radiation, effective direct radiation, and effective diffuse radiation.
-
-Solar calculations are combined with geometric surfaces and sub-surface processing to estimate spatially varying environmental impacts.
-
-### 7. Shadow and Occlusion Analysis
-
-The project contains dedicated shadow-casting and geometric intersection functionality.
-
-Shadow calculations use solar direction, 3D geometry, surface geometry, ray/face intersections, and spatial sections.
-
-This accounts for the effect of surrounding geometry on solar exposure and distinguishes theoretical incoming radiation from radiation affected by the modeled environment.
-
-### 8. Environmental Impact Fields
-
-The environmental analysis architecture is not limited to object-level results.
-
-The system can calculate impact values at arbitrary 3D positions `(x, y, z)` and generate spatial fields for environmental quantities.
-
-Impact visualization can include:
-
-- Points
-- Lines
-- Contours
-- Raster/image-based representations
-- 3D visualization
-
-This provides a bridge between numerical environmental analysis and spatial scientific visualization.
-
-### 9. Wind Visualization and Analysis
-
-The project contains a dedicated wind-analysis subsystem.
-
-Components include wind-flow visualization, wind-rose visualization, wind speed, wind direction, and environmental impact calculations.
-
-The system can represent wind as a spatial/vector field around modeled solids and visualize resulting flow or impact patterns in 3D.
-
-### 10. Weather and Climate Data Integration
-
-SOLARCHVISION-BIM contains dedicated data-ingestion and processing workflows for environmental datasets.
-
-Supported data workflows include:
-
-- EPW / TMY
-- CWEEDS
-- CLMREC
-- Ensemble forecast data
-- Ensemble observed data
-- Meteorological station data
-
-The architecture separates data acquisition/loading from post-processing and analysis:
-
-```text
-Download / Load
-      ↓
-Data Validation / Processing
-      ↓
-Post-Processing
-      ↓
-Environmental Variables
-      ↓
-Analysis
-      ↓
-Visualization
-```
-
-### 11. Ensemble and Scenario Analysis
-
-The project includes dedicated modules for Ensemble Forecast and observed data.
-
-The analysis engine recognizes Ensemble Forecast and observation datasets and incorporates them into temporal and statistical study workflows.
-
-The study system supports scenario-oriented analysis, allowing environmental results to be examined across multiple possible weather or climate conditions.
-
-### 12. Statistical Study Engine
-
-The study engine manages:
-
-- Analysis periods
-- Hours
-- Days
-- Scenarios
-- Filters
-- Statistical layers
-- Probability
-- Percentiles
-- Sorted data
-- Normalized data
-- Trends
-- Impact summaries
-
-Statistical analysis includes minimum, average, maximum, percentile analysis, probability-based visualization, scenario selection, and statistical filtering.
-
-The system can also identify scenarios that are close to specified daily statistical conditions.
-
-### 13. Cloud and Atmospheric Scenario Analysis
-
-The study engine can distinguish different atmospheric/cloud conditions, including scenario groups based on total cloud cover.
-
-This provides a mechanism for examining how atmospheric conditions influence solar and environmental results.
-
-### 14. Geographic and Earth Modeling
-
-The application contains a geographic visualization subsystem centered around an Earth/world model.
-
-Capabilities include:
-
-- Latitude/longitude positioning
-- Geographic projections
-- World maps
-- Map tiles
-- Geographic boundaries
-- Station locations
-- Zoom levels
-- Terrain visualization
-- Project-location-based map rendering
-
-Map imagery can be cached and geographically limited to the relevant project/view region to reduce unnecessary processing and improve performance.
-
-### 15. Meteorological Station System
-
-The station subsystem connects geographic locations with environmental datasets.
-
-Station information can include:
-
-- Station code
-- City
-- Province
-- Country
-- Elevation
-- Latitude
-- Longitude
-- Time longitude
-- Dataset filenames
-
-Supported station-related datasets include NAEFS, CWEEDS, TMY/EPW, CLMREC, and observational datasets.
-
-This creates a direct relationship between:
-
-```text
-Project Location
-      ↓
-Meteorological Station
-      ↓
-Environmental Dataset
-      ↓
-Environmental Analysis
-```
-
-### 16. Sun, Moon, Sky, and Atmospheric Visualization
-
-The 3D environment includes dedicated representations of the Sun, Moon, Sky, and Troposphere.
-
-The sun model is connected to solar-position calculations, making the celestial visualization consistent with analysis time and geographic location.
-
-The atmospheric visualization subsystem supports time-dependent imagery and geographically bounded image layers.
-
-### 17. Time-Dependent Simulation
-
-Time is a fundamental component of the platform.
-
-The application maintains temporal state including year, month, day, hour, day-of-year, and analysis period.
-
-Environmental calculations can therefore be evaluated across:
-
-- Hours
-- Days
-- Seasons
-- Annual periods
-- Forecast periods
-- Multiple scenarios
-
-### 18. Multi-Viewport Architecture
-
-The application separates visualization into several functional views.
-
-**3D View** — modeling, camera navigation, object manipulation, and environmental visualization.
-
-**World View** — geographic context, map visualization, station locations, and geographic data.
-
-**Study View** — statistical analysis, environmental results, scenario analysis, and time-series visualization.
-
-### 19. Command-Line and Scripting System
-
-SOLARCHVISION-BIM includes an internal command-line system.
-
-Commands can be entered interactively and can also be executed from scripts/text files. The command system supports parameterized commands using key/value-style arguments.
-
-This provides an additional automation and reproducibility mechanism alongside the graphical interface.
-
-### 20. Project Persistence
-
-The application contains project save/load functionality using structured XML data.
-
-Project information can include:
-
-- Model geometry
-- Layers
-- Materials
-- Station information
-- Time state
-- Study configuration
-- Analysis settings
-- Object properties
-
-### 21. Layer and Material Systems
-
-The layer system provides a common abstraction for environmental and visualization variables.
-
-Layers can include ID, unit, name, descriptions, scale, offset, and display thresholds.
-
-The material system associates materials with geometric faces and supports consistent rendering and object representation.
-
-### 22. Import and Export
-
-The application provides multiple export workflows, including:
-
-- OBJ geometry
-- Time-series OBJ
-- Date-series OBJ
-- RAD
-- SCR
-- HTML
-
-The OBJ time/date-series export is useful for transferring time-dependent model states or analytical geometry into external workflows.
-
-## Architecture at a Glance
-
-```text
-                       SOLARCHVISION-BIM
-                              │
-        ┌─────────────────────┼─────────────────────┐
-        │                     │                     │
-   3D/BIM Model         Climate / Weather      Geospatial
-        │                     │                     │
-   ┌────┼────┐          ┌─────┼─────┐          ┌────┼────┐
-   │    │    │          │     │     │          │    │    │
- Points Faces Solids   EPW  Climate Engineering Ensemble   Earth Maps Stations
-   │    │    │          │     │     │          │    │    │
-   └────┼────┘          └─────┼─────┘          └────┼────┘
-        │                     │                     │
-        └─────────────────────┼─────────────────────┘
-                              │
-                     Time / Scenario Engine
-                              │
-                 ┌────────────┼────────────┐
-                 │            │            │
-               Solar        Shadow        Wind
-              Analysis     Analysis     Analysis
-                 │            │            │
-                 └────────────┼────────────┘
-                              │
-                     Statistical Studies
-                              │
-                 ┌────────────┼────────────┐
-                 │            │            │
-             3D View      Study View    World View
-                 │            │            │
-                 └────────────┼────────────┘
-                              │
-                    Export / Persistence
-```
-
-## Technical Character
-
-SOLARCHVISION-BIM combines:
-
-- 3D computer graphics
-- Computational geometry
-- BIM / CAD modeling
-- Scientific computing
-- Environmental simulation
-- Solar-energy analysis
-- Meteorological data processing
-- Climate-data analysis
-- GIS/geospatial visualization
-- Statistical/scenario analysis
-- Interactive visualization
-- Data import/export
-- Scriptable workflows
-
-The most significant architectural characteristic is the integration of **geometric modeling and environmental data**.
-
-A conventional BIM workflow primarily represents buildings and their relationships. A conventional scientific-visualization workflow primarily represents datasets. SOLARCHVISION-BIM connects the two:
-
-```text
-Building / Urban Geometry
-          +
-Geographic Location
-          +
-Weather / Climate Data
-          +
-Time / Scenarios
-          ↓
-Environmental Simulation
-          ↓
-Spatial Impacts
-          ↓
-Interactive 3D Visualization
-          ↓
-Statistical Study / Export
-```
-
-This makes the platform suitable for environmental and climatic analysis of buildings and urban environments.
+The source code and documentation are released under the [GNU General Public License v2](LICENSE.md).
