@@ -9670,12 +9670,13 @@ class Terrain {
       for (int q = 0; q < this.Textures_num; q++) {
         int n_Map = q;
         String the_filename = this.Textures_path[n_Map].substring(this.Textures_path[n_Map].lastIndexOf("/") + 1);
-        String new_Texture_path = the_dir + "/Textures/" + the_filename;
+        String fileLocation = "Textures/" + the_filename;
+        String new_Texture_path = the_dir + "/" + fileLocation;
 
         if (!this.Textures_path[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
           println("Copying texture:", this.Textures_path[n_Map], ">", new_Texture_path);
           saveBytes(new_Texture_path, loadBytes(this.Textures_path[n_Map]));
-          this.Textures_path[n_Map] = new_Texture_path;
+          this.Textures_path[n_Map] = fileLocation;
         }
       }
 
@@ -11766,8 +11767,8 @@ class Model2Ds {
         } else {
           the_filename = this.ImagePath[i].substring(this.ImagePath[i].lastIndexOf("/") + 1); // image name
 
-
-          String new_Texture_path = the_dir + "/Textures/" + the_filename;
+          String fileLocation = "Textures/" + the_filename;
+          String new_Texture_path = the_dir + "/" + fileLocation;
 
           if (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
             TEXTURE_copied = false;
@@ -11776,7 +11777,7 @@ class Model2Ds {
             } else {
               println("Copying texture:", this.ImagePath[i], ">", new_Texture_path);
               saveBytes(new_Texture_path, loadBytes(this.ImagePath[i]));
-              this.ImagePath[i] = new_Texture_path;
+              this.ImagePath[i] = fileLocation;
 
               TEXTURE_copied = true;
             }
