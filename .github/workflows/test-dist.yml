@@ -253,81 +253,60 @@ jobs:
 
       # No Xvfb-equivalent needed - windows-latest provides a real (if
       # software-rendered, as of the step above) display session out of
-      # the box, same as ci.yml's own test-windows job. WGL_SWAP_INTERVAL=0
-      # for the same documented Mesa gallium/wgl bug noted there and in
-      # image-tests.yml (SwapBuffers can freeze when an application
-      # negotiates a swap interval, which JOGL does) - applied
-      # proactively here too, since this step's own screenshot check
-      # could otherwise hang rather than fail outright.
+      # the box, same as ci.yml's own test-windows job.
       #
-      # pwsh, not bash - swapped after this step's first real run failed
-      # with "Could not find or load main class solarchvision_bim": the
-      # exe did launch and invoke java (not a launch4j-level failure),
-      # but whatever classpath java actually received didn't resolve to
-      # a real solarchvision_bim.jar, even though a listing taken right
-      # before confirmed dist/lib/solarchvision_bim.jar genuinely exists
-      # at the expected size. Measured and ruled out a command-line-
-      # length/truncation explanation directly too (the embedded
-      # classpath is 1730 characters, nowhere near Windows' ~8191-char
-      # limit, and solarchvision_bim.jar is the third entry in it, not
-      # buried at the end) - what was left, and what the pwsh swap ruled
-      # out, was ci.yml's own documented lesson from its Mesa3D step
-      # above (Git Bash's MSYS layer repeatedly causing subtle bugs
-      # around native Windows paths/executables) - except the exact same
-      # failure happened again under pwsh too, so that wasn't it either.
+      # pwsh, not bash: this step's first real run failed with "Could
+      # not find or load main class solarchvision_bim" - the exe
+      # launched and invoked java fine, but whatever classpath it
+      # received didn't resolve to a real solarchvision_bim.jar, despite
+      # a listing right before confirming it genuinely existed at the
+      # expected path and size. Traced all the way to the actual fix
+      # (--l4j-debug-all's own launch4j.log output, printed on that run,
+      # confirmed it): launch4j's %EXEDIR%, despite being documented as
+      # based on the exe's own file location rather than the process's
+      # working directory, apparently still needed that run's Push-
+      # Location dist/ to resolve the classpath correctly in practice -
+      # matching how a person would actually run this anyway (double-
+      # clicking it in Explorer starts it with dist/ itself as the
+      # working directory already). RUN='s own path has to be computed
+      # absolute before that Push-Location, since Processing's own
+      # loadStrings() (unlike %EXEDIR%) does resolve a relative path
+      # against the process's working directory - confirmed directly
+      # too, the very next run got past the classpath failure entirely,
+      # only to then fail to find "command/test/primitives.svs"
+      # specifically, since that relative path now meant
+      # dist/command/test/... instead.
       #
-      # Two things from here, since launch4j's own %EXEDIR% is
-      # documented as based on the exe's actual file location via a
-      # Windows API call, not the process's working directory, so this
-      # genuinely might not be it:
-      #   1. Run from inside dist/ itself, via Push-Location, rather
-      #      than referencing the exe by a relative path from the repo
-      #      root - matching how a person would actually run this
-      #      (double-clicking it in Explorer starts it with dist/
-      #      itself as the working directory already).
-      #   2. --l4j-debug-all regardless, which launch4j's own strings
-      #      output (inside the .exe) confirms it supports - writes
-      #      launch4j.log with exactly what it resolved (JRE search,
-      #      classpath, the lot), read back and printed here either way
-      #      so a still-failing run says why directly from launch4j's
-      #      own account of it, not another guess from outside.
+      # LIBGL_ALWAYS_SOFTWARE=1 below, not WGL_SWAP_INTERVAL=0 (what an
+      # earlier version of this step carried over from ci.yml's own
+      # comment) - the latter turned out to not be a real, recognized
+      # setting at all ("illegal environment value for
+      # wgl_swap_interval: '0'. Ignoring."), apparently a leftover from
+      # some earlier, since-abandoned workaround attempt; ci.yml's own
+      # comment pointed at image-tests.yml for "the full explanation",
+      # but image-tests.yml's actual, current Windows job only sets
+      # LIBGL_ALWAYS_SOFTWARE=1 - its own comment there describes having
+      # moved on from "the .bat-delegation workaround this previously
+      # needed" to just that one variable. ci.yml's test-windows job
+      # looks to have the same now-stale WGL_SWAP_INTERVAL left in it,
+      # worth fixing there too.
       - name: Smoke-test the build
         shell: pwsh
         env:
-          WGL_SWAP_INTERVAL: '0'
+          LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           $ErrorActionPreference = "Stop"
 
-          Write-Host "==> dist/:"
-          Get-ChildItem dist
-          Write-Host "==> dist/lib/ (solarchvision_bim.jar present?):"
-          Get-ChildItem dist/lib | Where-Object { $_.Name -like "*solarchvision_bim*" }
-
           # Absolute, computed before Push-Location changes the working
-          # directory below - RUN='s own value is a path Processing's
-          # loadStrings() resolves against the process's current
-          # directory (not the exe's own location the way %EXEDIR%/
-          # BaseFolder are - confirmed directly: Push-Location's first
-          # real run got past the classpath failure entirely, only to
-          # then fail to find "command/test/primitives.svs" specifically,
-          # since that relative path now means dist/command/test/... -
-          # it never existed there, only at the repo root this now
-          # points at absolutely instead).
+          # directory below - see this step's own comment above on why.
           $scriptPath = Join-Path (Get-Location).Path "command\test\primitives.svs"
 
           Push-Location dist
           try {
-            & ".\solarchvision_bim_windows-amd64.exe" --l4j-debug-all USER=AUTO "RUN=$scriptPath"
+            & ".\solarchvision_bim_windows-amd64.exe" USER=AUTO "RUN=$scriptPath"
             $exitCode = $LASTEXITCODE
           } finally {
             Pop-Location
-          }
-
-          foreach ($logPath in @("dist\launch4j.log", "launch4j.log")) {
-            if (Test-Path $logPath) {
-              Write-Host "==> ${logPath}:"
-              Get-Content $logPath
-            }
           }
 
           if ($exitCode -ne 0) {
