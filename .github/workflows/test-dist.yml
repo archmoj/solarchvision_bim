@@ -107,11 +107,29 @@ jobs:
       #    macOS's own symlinks at all (Windows can create symlinks, but
       #    not without elevated privileges by default - simplest to
       #    just not hand it any).
+      # The fourth tar here, dist.tar.gz, is the whole flat dist/ output
+      # minus the four per-variant build-dist.sh folders (linux-amd64/,
+      # windows-amd64/, macos-x86_64/, macos-aarch64/ - superseded by
+      # the flattened executables/lib//data/ flatten-dist.sh produces
+      # from them, not meant to ship) - see upload-dist's own comment
+      # further down for what this one's actually for. Same tar
+      # reasoning as the three platform-scoped ones above applies to it
+      # too (permissions, symlinks) - confirmed directly the same way:
+      # tarred, extracted elsewhere, both executable bits and every
+      # macOS Contents/Java/* symlink (jars and data/) came through
+      # intact, each still resolving to the exact same bytes as the
+      # shared lib//data/ they point at.
       - name: Package each OS's own files
         run: |
           tar -czf dist-linux-amd64.tar.gz -C dist solarchvision_bim_linux-amd64 lib data
           tar -czf dist-windows-amd64.tar.gz -C dist solarchvision_bim_windows-amd64.exe lib data
           tar -czf dist-macos-aarch64.tar.gz -C dist solarchvision_bim_macos-aarch64.app lib data
+          tar -czf dist.tar.gz -C dist \
+            --exclude='linux-amd64' \
+            --exclude='windows-amd64' \
+            --exclude='macos-x86_64' \
+            --exclude='macos-aarch64' \
+            .
 
       - name: Upload linux-amd64 package
         uses: actions/upload-artifact@v4
@@ -134,6 +152,19 @@ jobs:
         with:
           name: dist-macos-aarch64
           path: dist-macos-aarch64.tar.gz
+          archive: false
+          retention-days: 1
+
+      # Short-lived and unlabeled as anything final - upload-dist below
+      # is what re-publishes this under the name/retention someone
+      # downloading it would actually want, but only once all three
+      # test jobs have confirmed it's good; this copy exists solely to
+      # hand it across that gate, not to be downloaded directly.
+      - name: Upload flat dist (pending all three OS tests)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-pending-verification
+          path: dist.tar.gz
           archive: false
           retention-days: 1
 
@@ -486,3 +517,33 @@ jobs:
           fi
 
           echo "==> OK ($(file "$LAUNCHER"))"
+
+  # needs: all three test jobs, not build-dist directly - this only
+  # runs once every one of them has actually succeeded, which is the
+  # whole point: build-dist's own "Upload flat dist (pending all three
+  # OS tests)" step above produces the exact same tar this re-uploads,
+  # but under a short, 1-day retention and a name ("...-pending...")
+  # that says not to treat it as a real release artifact - GitHub
+  # Actions has no way to make an *already-uploaded* artifact's
+  # retention or visibility conditional on a later job, so the only way
+  # to actually gate "here's dist/, but only once everything has passed"
+  # is for the job making that promise to be the one doing the
+  # uploading. ubuntu-latest, ordinary download+reupload - nothing in
+  # this step needs to be done on a specific OS, just passing an
+  # already-built tar through once the gate's satisfied.
+  upload-dist:
+    needs: [test-linux, test-windows, test-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the pending flat dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-pending-verification
+
+      - name: Upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist.tar.gz
+          archive: false
+          retention-days: 3
