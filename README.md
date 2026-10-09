@@ -8,13 +8,10 @@ developed by [Mojtaba Samimi
 
 -   [Copyright and license](#copyright-and-license)
 -   [SOLARCHVISION method and studies](#solarchvision-method-and-studies)
--   [Recent changes](#recent-changes)
 -   [Installation](#installation)
+    -   [Run a pre-built app](#run-a-pre-built-app)
     -   [Clone using SSH](#clone-using-ssh)
     -   [Clone using HTTPS](#clone-using-https)
-    -   [Requirements](#requirements)
-    -   [Run using Processing IDE](#run-using-processing-ide)
-    -   [Run using command line](#run-using-command-line)
     -   [Download Climate Engineering files](#download-cweeds-files)
 -   [Graphical User Interface](#graphical-user-interface)
     -   [Adding an object to the scene](#adding-an-object-to-the-scene)
@@ -79,51 +76,13 @@ v2](https://github.com/archmoj/solarchvision_bim/blob/master/LICENSE.md).
 ## [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
 ## [BIM6D Presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
 
-# Recent changes
-
-A high-level summary of what's changed:
-
--   **Earth model overhaul** — The 3D Earth globe now composites
-    high-resolution local world-map tiles for its surface texture, rendering
-    only the area around the project's location for performance, with a
-    lat/lon grid overlay and elevation-based terrain relief
--   **World and location views** — The world map view gained panning,
-    additional zoom levels, and image caching for smoother transitions; the
-    station and EPW file pickers were improved with multi-file support,
-    scrollbars, cancel support, and clearer titles; several weather data
-    sources (EPW/TMY, NAEFS and SWOB) received download upgrades.
--   **Rendering and shadows** — Added shadow casting for trees, render
-    preview support, and various shading-quality and viewport-shading
-    improvements.
--   **Editable spinners** — Numeric spinner controls throughout the UI can
-    now be edited directly by clicking and typing, with familiar text-entry
-    controls (cursor movement, selection-free editing, Escape to cancel),
-    in addition to the existing drag/click adjustment.
--   **Command-line access to spinner values** — Nearly every numeric and
-    toggle spinner in the UI (dates, camera and palette settings,
-    latitude/longitude, and many more — 234 in total) now has a matching
-    command-line equivalent (e.g. `day 15`), so the
-    same values can be set from a script or the command console, not just
-    by clicking a spinner.
--   **Selection overlays** — A dedicated overlay system now draws
-    selection highlights (bounding boxes, edges, pivots) separately from
-    the model geometry, with camera clipping and styling fixes.
--   **Performance improvements** — Wide-ranging optimizations across
-    geometry and intersection algorithms, array/memory handling, shading
-    calculations, and the rendering and selection pipelines.
--   **Cross-platform reliability** — Replaced a shell/7z dependency with a
-    pure-Java decompression path for better cross-platform support;
-    weather-data API keys are now read from a `.env` file.
--   **Project structure and internal cleanup** — Source files were
-    reorganized under `src/solarchvision_bim`, alongside broad internal
-    refactoring for maintainability.
 
 # Installation
 
-## Run a pre-built download (no Processing install needed)
+## Run a pre-built app
 
-You may `cd` to the `dist` folder and run relevant file depending on your OS.
-
+You can download or clone the repository, navigate to the dist folder,
+and run the appropriate executable for your operating system.
 
 ## Clone using SSH
 
@@ -147,29 +106,6 @@ or
 
 ``` sh
 git clone https://github.com/archmoj/solarchvision_bim.git --depth 1
-```
-
-## Requirements
-
-To run from source (the sections below) rather than a pre-built
-download, [Processing v4](https://processing.org/download) must be
-installed, as SOLARCHVISION-BIM is a Processing sketch.
-
-## Run using Processing IDE
-
-The `solarchvision_bim` sketch can be opened in the Processing IDE and
-executed using the Play button.
-
-## Run using command line
-
-To compile and run the `solarchvision_bim` sketch, adjust
-`<PATH-TO-PROCESSING>` in the following command as needed.
-
-Please note that the command must be executed from the parent directory
-containing the `solarchvision_bim` folder.
-
-``` sh
-<PATH-TO-PROCESSING>/processing-java --sketch=src/solarchvision_bim --run
 ```
 
 
