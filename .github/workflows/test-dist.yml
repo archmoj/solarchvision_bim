@@ -321,8 +321,18 @@ jobs:
           # this step's own comment above.
           $scriptPath = Join-Path (Get-Location).Path "command\test\primitives.svs"
 
+          # -WorkingDirectory only sets the spawned process's own
+          # working directory - it does not make -FilePath resolve
+          # relative to it. -FilePath still has to be fully qualified
+          # itself (confirmed directly: a bare filename here, relying on
+          # -WorkingDirectory to supply the dist\ part, got "The system
+          # cannot find the file specified" - PowerShell was resolving
+          # it against this script's own location, the repo root, not
+          # dist\, before the process was even started).
+          $exePath = Join-Path (Get-Location).Path "dist\solarchvision_bim_windows-amd64.exe"
+
           $process = Start-Process `
-            -FilePath "solarchvision_bim_windows-amd64.exe" `
+            -FilePath $exePath `
             -ArgumentList @("USER=AUTO", "RUN=$scriptPath") `
             -WorkingDirectory "dist" `
             -NoNewWindow -Wait -PassThru `
