@@ -448,56 +448,71 @@ jobs:
       # Info.plist (read right before this, same job) turns out to be
       # the classic Apple "JavaAppLauncher"-style stub (JVMMainClassName/
       # JVMOptions/JVMArguments keys, no explicit -cp anywhere - this
-      # format auto-adds Contents/Java/*.jar itself) - and its own
-      # JVMOptions has no -XstartOnFirstThread anywhere in it. That's a
-      # well-known, widely-documented macOS-specific requirement: Cocoa/
-      # AWT windowing has to run on the actual OS main thread, and a JVM
-      # started without it can hang indefinitely trying to create a
-      # window rather than throwing anything - silent, not a crash,
-      # matching this step's own symptom exactly. Added via PlistBuddy
-      # (a standard macOS tool) before the codesign step below, since
-      # editing Info.plist afterward would invalidate the signature
-      # anyway - this is a real attempt at fixing it outright this time,
-      # not just gathering more information, given how well-established
-      # this particular requirement is.
+      # format auto-adds Contents/Java/*.jar itself). Added
+      # -XstartOnFirstThread to JVMOptions there first (a well-documented
+      # macOS requirement - Cocoa/AWT windowing has to run on the actual
+      # OS main thread, or a JVM can hang indefinitely trying to create a
+      # window rather than throwing anything) and it made no difference -
+      # confirmed why directly rather than guessing again: the process
+      # list taken after that run's own 20-second wait showed exactly
+      # one process, the native Contents/MacOS/solarchvision_bim stub
+      # itself, no separate java process anywhere. Whatever's hanging is
+      # inside that stub's own startup, before it ever gets around to
+      # invoking java at all - almost certainly its own JVM-discovery
+      # step (this launcher format is known to search standard install
+      # locations such as /Library/Java/JavaVirtualMachines/ for one
+      # matching Info.plist's JVMVersion), the exact same category of
+      # problem as test-windows's own launch4j registry search, just a
+      # macOS-flavored version of it: actions/setup-java's JDK doesn't
+      # necessarily get installed in a way this stub's own search logic
+      # recognizes. -XstartOnFirstThread only affects what happens once
+      # a JVM actually starts, so it was never going to help with a hang
+      # that happens before one does.
+      #
+      # Given that, this bypasses the native stub entirely rather than
+      # keep chasing its own JVM-discovery logic: builds the classpath
+      # directly from Contents/Java/*.jar (the same jars the stub itself
+      # would have used - this launcher format's own "auto-add every jar
+      # in here" convention, confirmed from Info.plist, is exactly what
+      # this replicates by hand) and invokes java - the one
+      # actions/setup-java just put on PATH - directly, main class name
+      # taken from Info.plist's own JVMMainClassName, -XstartOnFirstThread
+      # kept (still true that Cocoa/AWT windowing needs it, even though
+      # it wasn't this run's actual blocker), -Djava.library.path matched
+      # to what Info.plist's own JVMOptions already specified for JOGL's
+      # native library loading.
       #
       # Backgrounded with a bounded wait regardless (well inside the
-      # job's own 3-minute timeout), as a safety net in case that alone
-      # isn't the whole fix: if a java process is still there after 20s,
-      # SIGQUIT makes the JVM print a full thread dump to stdout before
-      # this kills it either way - "waiting" on AWT/Cocoa initialization
-      # specifically would mean -XstartOnFirstThread wasn't sufficient
-      # on its own; anything else waited on would point somewhere new
-      # entirely. Same principle as --l4j-debug-all's launch4j.log
-      # output actually pinning down test-windows's own root cause,
-      # rather than another round of inference from outside.
+      # job's own 3-minute timeout), same safety net as before: if java
+      # is still running after 20s, SIGQUIT for a thread dump before
+      # killing it, so a still-failing run says what it's actually
+      # waiting on this time, now that there's a real java process to
+      # ask.
       - name: Smoke-test the build
         timeout-minutes: 3
         run: |
           APP="dist/solarchvision_bim_macos-aarch64.app"
-          PLIST="$APP/Contents/Info.plist"
-
-          # Adding this invalidates whatever ad hoc signature Processing's
-          # own export already applied (same as "replacing existing
-          # signature" already showed happening regardless, prior to this
-          # step existing at all) - re-signed again below either way, so
-          # modifying Info.plist first changes nothing about needing that.
-          /usr/libexec/PlistBuddy -c "Add :JVMOptions: string -XstartOnFirstThread" "$PLIST"
-          echo "==> JVMOptions after the edit:"
-          /usr/libexec/PlistBuddy -c "Print :JVMOptions" "$PLIST"
+          JAVA_DIR="$APP/Contents/Java"
 
           xattr -cr "$APP"
           codesign --force --deep --sign - "$APP"
-          chmod +x "$APP/Contents/MacOS/solarchvision_bim"
 
-          "$APP/Contents/MacOS/solarchvision_bim" USER=AUTO RUN=command/test/primitives.svs &
+          CLASSPATH="$(find "$JAVA_DIR" -maxdepth 1 -name '*.jar' | paste -sd ':' -)"
+          echo "==> Classpath entry count: $(echo "$CLASSPATH" | tr ':' '\n' | wc -l)"
+
+          java \
+            -XstartOnFirstThread \
+            -Djava.library.path="$JAVA_DIR" \
+            -cp "$CLASSPATH" \
+            solarchvision_bim \
+            USER=AUTO RUN=command/test/primitives.svs &
           APP_PID=$!
 
           sleep 20
 
           if kill -0 "$APP_PID" 2>/dev/null; then
             echo "==> Still running after 20s - process tree:"
-            ps -ef | grep -i "solarchvision_bim\|java" | grep -v grep
+            ps -ef | grep -i "java\|solarchvision_bim" | grep -v grep
 
             JAVA_PID="$(pgrep -f solarchvision_bim | head -1)"
             if [ -n "$JAVA_PID" ]; then
