@@ -260,24 +260,47 @@ jobs:
       # proactively here too, since this step's own screenshot check
       # could otherwise hang rather than fail outright.
       #
-      # Unverified beyond the logic itself and what's reused from
-      # ci.yml's own, already-proven-in-CI job - this exact combination
-      # (this launcher, against the flattened dist/lib/ layout
-      # specifically) hasn't been run for real yet; treat its first
-      # real run as the actual test of it.
+      # pwsh, not bash: this step's first real run failed with "Could
+      # not find or load main class solarchvision_bim" - the exe did
+      # launch and invoke java (so not a launch4j-level failure), but
+      # whatever classpath java actually received didn't resolve to a
+      # real solarchvision_bim.jar. Measured and ruled out a command-
+      # line-length/truncation explanation directly (the embedded
+      # classpath is 1730 characters, nowhere near Windows' ~8191-char
+      # limit, and solarchvision_bim.jar is the third entry in it, not
+      # buried at the end) - what's actually left, and what this swaps
+      # to pwsh to rule out, is ci.yml's own documented lesson from its
+      # Mesa3D step above: Git Bash's MSYS layer repeatedly causing
+      # subtle bugs specifically around native Windows paths/executables
+      # ("three straight rounds of exactly that"), which launching this
+      # particular exe from bash hadn't been tested against before.
+      # Lists dist/ and dist/lib/ first specifically so that, if this
+      # isn't the whole fix, the next run's output says why directly
+      # rather than needing another guess.
       - name: Smoke-test the build
-        shell: bash
+        shell: pwsh
         env:
           WGL_SWAP_INTERVAL: '0'
         run: |
-          dist/solarchvision_bim_windows-amd64.exe USER=AUTO RUN=command/test/primitives.svs
+          $ErrorActionPreference = "Stop"
 
-          SCREENSHOT="$(find projects -name 'primitives.png' -print -quit)"
-          if [ -z "$SCREENSHOT" ]; then
-            echo "error: primitives.png was not produced - the dist build may be broken" >&2
+          Write-Host "==> dist/:"
+          Get-ChildItem dist
+          Write-Host "==> dist/lib/ (solarchvision_bim.jar present?):"
+          Get-ChildItem dist/lib | Where-Object { $_.Name -like "*solarchvision_bim*" }
+
+          & "dist\solarchvision_bim_windows-amd64.exe" USER=AUTO RUN=command/test/primitives.svs
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "solarchvision_bim_windows-amd64.exe exited with code $LASTEXITCODE"
             exit 1
-          fi
-          echo "==> Found: $SCREENSHOT"
+          }
+
+          $screenshot = Get-ChildItem -Path projects -Filter primitives.png -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $screenshot) {
+            Write-Error "primitives.png was not produced - the dist build may be broken"
+            exit 1
+          }
+          Write-Host "==> Found: $($screenshot.FullName)"
 
   test-macos:
     needs: build-dist
@@ -309,27 +332,42 @@ jobs:
       # offer both architectures), just only this one gets an actual
       # run in CI.
       #
-      # xattr -cr strips any quarantine attribute, defensively - CI
-      # downloads don't go through the LSQuarantine APIs (Safari/Mail/
-      # Finder-AirDrop) that normally set it, so Gatekeeper likely isn't
-      # even in play here, but costs nothing to clear either way for an
-      # unsigned .app like this one (see flatten-dist.sh's own comment
-      # on it being unsigned). chmod +x the launcher the same
-      # belt-and-suspenders way as test-linux's own, even though the
-      # tar round-trip this went through was directly confirmed (see
-      # build-dist's own "Package each OS's own files" comment) to
-      # preserve it already.
+      # codesign --sign - (ad hoc) is not optional on Apple Silicon, and
+      # this step's first real run confirmed that the hard way: killed
+      # immediately with signal 9, no other output at all. Since macOS
+      # 11, arm64 refuses to execute ANY unsigned binary at the kernel
+      # level - an ad hoc signature (no real certificate/identity
+      # needed) is enough, but some signature is mandatory; Intel macOS
+      # only warns via Gatekeeper for the same case, which is a
+      # materially different problem with a different fix (and the
+      # reason this one wasn't anticipated while writing this against
+      # an x86_64 assumption, since the Linux cross-export flatten-
+      # dist.sh's own "unsigned" note was written against - see its
+      # comment). --deep re-signs everything inside the bundle, not
+      # just the top-level launcher, in case that matters once other
+      # parts of it (the jar symlinks, etc.) actually get exercised
+      # rather than just started. xattr -cr first, still defensively -
+      # CI downloads don't go through the LSQuarantine APIs that
+      # normally set it, so Gatekeeper likely isn't in play here either
+      # way, but costs nothing to clear regardless. chmod +x the
+      # launcher the same belt-and-suspenders way as test-linux's own,
+      # even though the tar round-trip this went through was directly
+      # confirmed (see build-dist's own "Package each OS's own files"
+      # comment) to preserve it already.
       #
-      # Unverified beyond that confirmation and the same well-documented,
-      # symlink-transparent file handling the rest of this project's
-      # macOS work has had to rely on throughout (no Mac available while
-      # writing any of it) - this is the first time any of it actually
-      # gets run for real; treat this step's first real run as the
-      # actual test, the same way test-windows's own is.
+      # Unverified beyond that confirmation, the codesign fix itself
+      # (widely documented for exactly this symptom, but not something
+      # this project can run and check directly either), and the same
+      # well-documented, symlink-transparent file handling the rest of
+      # this project's macOS work has had to rely on throughout (no Mac
+      # available while writing any of it) - treat this step's next
+      # real run as the actual test, the same way test-windows's own
+      # pwsh switch is.
       - name: Smoke-test the build
         run: |
           APP="dist/solarchvision_bim_macos-aarch64.app"
           xattr -cr "$APP"
+          codesign --force --deep --sign - "$APP"
           chmod +x "$APP/Contents/MacOS/solarchvision_bim"
 
           "$APP/Contents/MacOS/solarchvision_bim" USER=AUTO RUN=command/test/primitives.svs
