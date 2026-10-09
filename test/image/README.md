@@ -86,7 +86,7 @@ location (`projects/` needs creating first, since it doesn't exist yet on
 a fresh checkout):
 
 ```sh
-PROCESSING_HOME=~/processing/4.5.7   # wherever it's installed
+PROCESSING_HOME=~/processing/4.5.2   # wherever it's installed
 CORE="$PROCESSING_HOME/lib/app/resources/core"
 mkdir -p projects
 ln -sfn "$(pwd)/input" "$CORE/input"
@@ -101,7 +101,7 @@ it's not part of the cached Processing install).
 ## Running locally
 
 ```sh
-export PROCESSING_HOME=~/processing/4.5.7   # wherever it's installed
+export PROCESSING_HOME=~/processing/4.5.2   # wherever it's installed
 xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python3 test/image/make_baseline.py
 python3 test/image/compare_pixels.py
 ```

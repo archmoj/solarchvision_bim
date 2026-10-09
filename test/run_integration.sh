@@ -29,7 +29,7 @@
 #   ./test/run_integration.sh command/test/primitives.svs [more scripts...]
 #
 # Environment:
-#   PROCESSING_HOME   - defaults to ~/processing/4.5.7 - see
+#   PROCESSING_HOME   - defaults to ~/processing/4.5.2 - see
 #                       test/image/make_baseline.sh's own comment on this.
 #   JACOCO_AGENT_JAR  - defaults to test/lib/jacoco/jacocoagent.jar
 #   UNIT_TEST_EXEC    - defaults to build/test/jacoco.exec (the file

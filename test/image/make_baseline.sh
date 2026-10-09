@@ -52,7 +52,7 @@
 #   ./test/image/make_baseline.sh edit views ...            # specific ones only (name without .svs)
 #
 # Environment:
-#   PROCESSING_HOME   - defaults to ~/processing/4.5.7, same as
+#   PROCESSING_HOME   - defaults to ~/processing/4.5.2, same as
 #                       test/run_integration.sh.
 #   PER_TEST_TIMEOUT  - seconds allowed per attempt (default: 300)
 #   MAX_RETRY         - retries per test after the first attempt
@@ -60,7 +60,7 @@
 set -uo pipefail   # NOT -e: one failed test shouldn't abort the whole run
 cd "$(dirname "$0")/../.."   # repo root
 
-PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.7}"
+PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 PER_TEST_TIMEOUT="${PER_TEST_TIMEOUT:-300}"
 MAX_RETRY="${MAX_RETRY:-1}"
 export LIBGL_ALWAYS_SOFTWARE=1

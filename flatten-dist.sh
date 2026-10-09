@@ -24,7 +24,7 @@
 # export time - so moving the executable up a level and giving it a
 # dist/lib/ sibling instead of dist/<variant>/lib/ still works. And the
 # jars that would otherwise just be duplicated four times over -
-# core-4.5.7.jar, commons-compress-1.28.0.jar, this app's own
+# core-4.5.2.jar, commons-compress-1.28.0.jar, this app's own
 # solarchvision_bim.jar, etc. - are the exact same bytes in every
 # variant (diffed the fully extracted contents of two variants'
 # solarchvision_bim.jar against each other to be sure - identical,

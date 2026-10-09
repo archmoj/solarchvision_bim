@@ -54,7 +54,7 @@
 # Processing 4.5.x" for the two generations' differences).
 #
 # Environment:
-#   PROCESSING_HOME   - defaults to ~/processing/4.5.7, same as
+#   PROCESSING_HOME   - defaults to ~/processing/4.5.2, same as
 #                       run-with-latest-processing.sh and test/run_tests.sh.
 #   DIST_DIR          - defaults to dist/
 #   NO_JAVA           - on (1) by default: skips bundling Java (--export's
@@ -82,7 +82,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"   # repo root
 
-PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.7}"
+PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 SKETCH_DIR="app/src/solarchvision_bim"
 DIST_DIR="${DIST_DIR:-dist}"
 
@@ -104,7 +104,7 @@ else
   exit 1
 fi
 
-# "processing-4.5.7-1435" -> "4.5.7", for version.json below - which
+# "processing-4.5.2-1435" -> "4.5.2", for version.json below - which
 # exact Processing build a dist came from matters for reproducing an
 # export, same reason the git commit does.
 PROCESSING_VERSION_STRING="$("$PROCESSING_BIN" --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"

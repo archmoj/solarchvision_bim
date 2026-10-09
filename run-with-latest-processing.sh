@@ -8,7 +8,7 @@
 # Run this from the repo root, same as run-with-processing-4.3.sh.
 set -e
 
-PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.7}"
+PROCESSING_HOME="${PROCESSING_HOME:-$HOME/processing/4.5.2}"
 
 # The 4.5.x CLI resolves sketchPath()/BaseFolder to its own install
 # directory instead of this repo's working directory, so input/, command/,
