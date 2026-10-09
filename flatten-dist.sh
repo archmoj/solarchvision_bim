@@ -11,11 +11,12 @@
 #
 # .exe (Windows) and .app (macOS) keep that extension on the renamed
 # copy - dropping it would stop the OS recognizing either as something
-# it can run at all, not just a cosmetic rename. The macOS .app bundles
-# are copied whole, jars and all (they're self-contained - see
-# build-dist.sh's own comment on where Contents/Java/ sits), so neither
-# depends on dist/lib/ to run; only linux-amd64's and windows-amd64's
-# single-file executables do.
+# it can run at all, not just a cosmetic rename. The macOS .app bundles'
+# own Contents/Java/*.jar end up as symlinks into the shared dist/lib/
+# (see further down) rather than real files, so - unlike build-dist.sh's
+# own, still fully self-contained dist/<variant>/ output this reads from
+# - every renamed copy here, macOS included, depends on dist/lib/
+# sitting alongside it to actually run.
 #
 # Merging works because of two things confirmed directly before relying
 # on them, not assumed: the launcher that --export produces (plain
@@ -102,6 +103,30 @@ for VARIANT in "${VARIANTS[@]}"; do
 
   echo "==> Merging $JAR_DIR/*.jar into $DIST_DIR/lib/"
   cp "$JAR_DIR"/*.jar "$DIST_DIR/lib/"
+
+  # macOS only: Contents/Java/*.jar in the copy just made above are
+  # replaced with relative symlinks into the shared $DIST_DIR/lib/
+  # instead, rather than staying real files - same bytes, kept twice
+  # over otherwise (once here, once in $DIST_DIR/lib/, both copied from
+  # $JAR_DIR above). linux-amd64/windows-amd64 don't need this: their
+  # single-file executables already read lib/ as a plain sibling
+  # directory at runtime (see this file's own comment up top), so
+  # dist/lib/ already *is* their one copy, nothing to deduplicate
+  # further. Java treats a symlinked classpath entry no differently
+  # from a real file - the JVM just opens whatever path it's given, and
+  # the OS resolves the symlink transparently - so this is purely a
+  # disk-space change, not a behavioral one.
+  case "$VARIANT" in
+    macos-*)
+      echo "==> Relinking $DEST/Contents/Java/*.jar to $DIST_DIR/lib/"
+      DEST_JAR_DIR="$DEST/Contents/Java"
+      for JAR in "$DEST_JAR_DIR"/*.jar; do
+        JAR_NAME="$(basename "$JAR")"
+        rm -f "$JAR"
+        ln -s "../../../lib/$JAR_NAME" "$JAR"
+      done
+      ;;
+  esac
 
   echo "==> Merging $DATA_DIR/* into $DIST_DIR/data/"
   cp -r "$DATA_DIR"/. "$DIST_DIR/data/"
