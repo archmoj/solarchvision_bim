@@ -42,7 +42,21 @@
 #
 # data/'s own single font file is identical across every variant too
 # (md5sum-confirmed, the same reasoning as the jars above), so merging
-# it the same way is just as safe.
+# it the same way is just as safe - and, for macOS, so is symlinking
+# Contents/Java/data itself into the shared $DIST_DIR/data/ wholesale,
+# the same as each individual jar above (one directory symlink instead
+# of one per file inside it, since unlike Java/'s jars this is the only
+# thing at that particular path).
+#
+# version.json and source/ (the preprocessed solarchvision_bim.java
+# --export actually compiled from - see build-dist.sh's own comment on
+# why just that file, not the 140+ .pde alongside it) are identical
+# across every variant too, for the same reason the jars are - same git
+# commit/branch/processingVersion and same preprocessed source,
+# regardless of target platform - so one copy at $DIST_DIR itself is
+# enough, preferring linux-amd64's own copy when that's one of the
+# variants in play, falling back to whichever variant actually is
+# otherwise.
 #
 # Doesn't remove the dist/<variant>/ folders this reads from - purely
 # additive on top of whatever build-dist.sh already produced there.
@@ -104,32 +118,51 @@ for VARIANT in "${VARIANTS[@]}"; do
   echo "==> Merging $JAR_DIR/*.jar into $DIST_DIR/lib/"
   cp "$JAR_DIR"/*.jar "$DIST_DIR/lib/"
 
-  # macOS only: Contents/Java/*.jar in the copy just made above are
-  # replaced with relative symlinks into the shared $DIST_DIR/lib/
-  # instead, rather than staying real files - same bytes, kept twice
-  # over otherwise (once here, once in $DIST_DIR/lib/, both copied from
-  # $JAR_DIR above). linux-amd64/windows-amd64 don't need this: their
-  # single-file executables already read lib/ as a plain sibling
-  # directory at runtime (see this file's own comment up top), so
-  # dist/lib/ already *is* their one copy, nothing to deduplicate
-  # further. Java treats a symlinked classpath entry no differently
-  # from a real file - the JVM just opens whatever path it's given, and
-  # the OS resolves the symlink transparently - so this is purely a
-  # disk-space change, not a behavioral one.
+  echo "==> Merging $DATA_DIR/* into $DIST_DIR/data/"
+  cp -r "$DATA_DIR"/. "$DIST_DIR/data/"
+
+  # macOS only: Contents/Java/*.jar and Contents/Java/data in the copy
+  # just made above are replaced with relative symlinks into the shared
+  # $DIST_DIR/lib/ and $DIST_DIR/data/ instead, rather than staying real
+  # files/directories - same bytes, kept twice over otherwise (once
+  # here, once in $DIST_DIR/lib//$DIST_DIR/data/, both copied from
+  # $JAR_DIR/$DATA_DIR above). linux-amd64/windows-amd64 don't need
+  # this: their single-file executables already read lib/ and data/ as
+  # plain sibling directories at runtime (see this file's own comment up
+  # top), so $DIST_DIR/lib/ and $DIST_DIR/data/ already *are* their one
+  # copy, nothing to deduplicate further. Java treats a symlinked
+  # classpath entry, or a symlinked data file Processing loads by path,
+  # no differently from a real one - whatever opens it just gets handed
+  # a path, and the OS resolves the symlink transparently - so this is
+  # purely a disk-space change, not a behavioral one.
   case "$VARIANT" in
     macos-*)
-      echo "==> Relinking $DEST/Contents/Java/*.jar to $DIST_DIR/lib/"
+      echo "==> Relinking $DEST/Contents/Java/*.jar to $DIST_DIR/lib/, Contents/Java/data to $DIST_DIR/data/"
       DEST_JAR_DIR="$DEST/Contents/Java"
       for JAR in "$DEST_JAR_DIR"/*.jar; do
         JAR_NAME="$(basename "$JAR")"
         rm -f "$JAR"
         ln -s "../../../lib/$JAR_NAME" "$JAR"
       done
+      rm -rf "$DEST_JAR_DIR/data"
+      ln -s "../../../data" "$DEST_JAR_DIR/data"
       ;;
   esac
-
-  echo "==> Merging $DATA_DIR/* into $DIST_DIR/data/"
-  cp -r "$DATA_DIR"/. "$DIST_DIR/data/"
 done
 
-echo "==> Done: $DIST_DIR/solarchvision_bim_<variant>[.exe|.app], $DIST_DIR/lib/, $DIST_DIR/data/"
+# One copy of each at $DIST_DIR itself - see this file's own comment up
+# top on why linux-amd64 specifically, with a fallback, rather than just
+# the first variant flatten-dist.sh happens to process.
+if [ -d "$DIST_DIR/linux-amd64" ]; then
+  VERSION_SRC_VARIANT="linux-amd64"
+else
+  VERSION_SRC_VARIANT="${VARIANTS[0]}"
+fi
+echo "==> Copying $DIST_DIR/$VERSION_SRC_VARIANT/version.json to $DIST_DIR/version.json"
+cp "$DIST_DIR/$VERSION_SRC_VARIANT/version.json" "$DIST_DIR/version.json"
+
+echo "==> Copying $DIST_DIR/$VERSION_SRC_VARIANT/source to $DIST_DIR/source"
+rm -rf "$DIST_DIR/source"
+cp -r "$DIST_DIR/$VERSION_SRC_VARIANT/source" "$DIST_DIR/source"
+
+echo "==> Done: $DIST_DIR/solarchvision_bim_<variant>[.exe|.app], $DIST_DIR/lib/, $DIST_DIR/data/, $DIST_DIR/version.json, $DIST_DIR/source/"
