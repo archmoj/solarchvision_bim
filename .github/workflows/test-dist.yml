@@ -290,6 +290,24 @@ jobs:
       # needed" to just that one variable. ci.yml's test-windows job
       # looks to have the same now-stale WGL_SWAP_INTERVAL left in it,
       # worth fixing there too.
+      # Start-Process -Wait -PassThru, not the plain & call this step
+      # used before - that captured $LASTEXITCODE right after the call,
+      # on its own line, which should have worked but kept coming back
+      # empty across several runs regardless ("exited with code " with
+      # nothing after it) - a known PowerShell rough edge: $LASTEXITCODE
+      # only reliably reflects the most recent native command, and
+      # anything at all running between that command and reading it
+      # (even just entering/leaving the try/finally block around
+      # Push-Location/Pop-Location, here) risks clearing or never
+      # setting it in the first place. Start-Process's own returned
+      # process object carries its exit code as a real, direct property
+      # instead, unaffected by any of that. Also redirects stdout/
+      # stderr to files, printed below either way - the exe's own
+      # output had been showing up, but out of chronological order
+      # relative to this step's own Write-Error line in every run so
+      # far, suggesting the & call's inherited-stream approach wasn't
+      # capturing it cleanly either; files read back afterward sidestep
+      # that same way.
       - name: Smoke-test the build
         shell: pwsh
         env:
@@ -297,20 +315,27 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
 
-          # Absolute, computed before Push-Location changes the working
-          # directory below - see this step's own comment above on why.
+          # Absolute, since Processing's own loadStrings() resolves a
+          # relative RUN= path against the working directory below, not
+          # the exe's own location the way launch4j's %EXEDIR% is - see
+          # this step's own comment above.
           $scriptPath = Join-Path (Get-Location).Path "command\test\primitives.svs"
 
-          Push-Location dist
-          try {
-            & ".\solarchvision_bim_windows-amd64.exe" USER=AUTO "RUN=$scriptPath"
-            $exitCode = $LASTEXITCODE
-          } finally {
-            Pop-Location
-          }
+          $process = Start-Process `
+            -FilePath "solarchvision_bim_windows-amd64.exe" `
+            -ArgumentList @("USER=AUTO", "RUN=$scriptPath") `
+            -WorkingDirectory "dist" `
+            -NoNewWindow -Wait -PassThru `
+            -RedirectStandardOutput "stdout.log" `
+            -RedirectStandardError "stderr.log"
 
-          if ($exitCode -ne 0) {
-            Write-Error "solarchvision_bim_windows-amd64.exe exited with code $exitCode"
+          Write-Host "==> stdout.log:"
+          if (Test-Path "stdout.log") { Get-Content "stdout.log" }
+          Write-Host "==> stderr.log:"
+          if (Test-Path "stderr.log") { Get-Content "stderr.log" }
+
+          if ($process.ExitCode -ne 0) {
+            Write-Error "solarchvision_bim_windows-amd64.exe exited with code $($process.ExitCode)"
             exit 1
           }
 
