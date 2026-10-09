@@ -57245,7 +57245,7 @@ public void locateBaseFolder () {
   boolean foundInputFolder = false;
   File inputDir;
   // walk up the folders to find the input directory
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 4; i++) {
     inputDir = new File(BaseFolder, "input");
     if (inputDir.exists() && inputDir.isDirectory()) {
       foundInputFolder = true;
