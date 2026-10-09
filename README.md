@@ -122,28 +122,8 @@ A high-level summary of what's changed:
 
 ## Run a pre-built download (no Processing install needed)
 
-1. Open the [Build distributable workflow](https://github.com/archmoj/solarchvision_bim/actions/workflows/dist.yml)
-   and click **Run workflow**. Two options, both off by default to keep
-   the download small:
-   - **Bundle a Java runtime** - leave off if you already have Java 17+
-     installed (not a "headless" JRE - see
-     [`build-dist.sh`](build-dist.sh) for why that specifically won't
-     work); turn on for a larger download (~395MB more) that needs
-     nothing else installed. Always off for macOS either way - see the
-     next point.
-2. Download the matching artifact from that run - `solarchvision_bim-linux-amd64`,
-   `-windows-amd64`, `-macos-x86_64` (Intel) or `-macos-aarch64` (Apple
-   Silicon) - and unzip it. The two macOS downloads are unsigned (and
-   never bundle Java, regardless of the option above - see
-   [`build-dist.sh`](build-dist.sh) for why), so the first launch needs
-   a Java 17+ install already present, and right-click -> **Open**
-   (not a double-click) to get past Gatekeeper's "unidentified
-   developer" warning.
-3. Run `solarchvision_bim` (Linux), `solarchvision_bim.exe` (Windows),
-   or `solarchvision_bim.app` (macOS) from inside the unzipped folder.
+You may `cd` to the `dist` folder and run relevant file depending on your OS.
 
-Artifacts are kept for 7 days - for anything older, or to build one
-yourself, see [`build-dist.sh`](build-dist.sh).
 
 ## Clone using SSH
 
