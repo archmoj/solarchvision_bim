@@ -927,12 +927,13 @@ class Terrain {
       for (int q = 0; q < this.Textures_num; q++) {
         int n_Map = q;
         String the_filename = this.Textures_path[n_Map].substring(this.Textures_path[n_Map].lastIndexOf("/") + 1);
-        String new_Texture_path = the_dir + "/Textures/" + the_filename;
+        String fileLocation = "Textures/" + the_filename;
+        String new_Texture_path = the_dir + "/" + fileLocation;
 
         if (!this.Textures_path[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
           println("Copying texture:", this.Textures_path[n_Map], ">", new_Texture_path);
           saveBytes(new_Texture_path, loadBytes(this.Textures_path[n_Map]));
-          this.Textures_path[n_Map] = new_Texture_path;
+          this.Textures_path[n_Map] = fileLocation;
         }
       }
 

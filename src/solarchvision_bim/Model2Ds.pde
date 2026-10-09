@@ -1082,8 +1082,8 @@ class Model2Ds {
         } else {
           the_filename = this.ImagePath[i].substring(this.ImagePath[i].lastIndexOf("/") + 1); // image name
 
-
-          String new_Texture_path = the_dir + "/Textures/" + the_filename;
+          String fileLocation = "Textures/" + the_filename;
+          String new_Texture_path = the_dir + "/" + fileLocation;
 
           if (this.ImagePath[i].toUpperCase().equals(new_Texture_path.toUpperCase())) {
             TEXTURE_copied = false;
@@ -1092,7 +1092,7 @@ class Model2Ds {
             } else {
               println("Copying texture:", this.ImagePath[i], ">", new_Texture_path);
               saveBytes(new_Texture_path, loadBytes(this.ImagePath[i]));
-              this.ImagePath[i] = new_Texture_path;
+              this.ImagePath[i] = fileLocation;
 
               TEXTURE_copied = true;
             }
