@@ -4,7 +4,6 @@ dist/linux-amd64
 dist/macos-x86_64
 dist/macos-aarch64
 dist/windows-amd64
-dist/*
 null/
 input/images/adjust_trees/
 input/images/trees_raw/
