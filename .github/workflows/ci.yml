@@ -29,8 +29,8 @@ jobs:
         include:
           - processing_version: 4.3.4
             processing_tag: processing-1297-4.3.4
-          - processing_version: 4.5.7
-            processing_tag: processing-1435-4.5.7
+          - processing_version: 4.5.2
+            processing_tag: processing-1313-4.5.2
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -119,15 +119,15 @@ jobs:
           chmod +x test/run_tests.sh
           ./test/run_tests.sh
 
-      # Only on 4.5.7: run-with-processing-4.3.sh (4.3.4) segfaults rendering under Xvfb (see
+      # Only on 4.5.2: run-with-processing-4.3.sh (4.3.4) segfaults rendering under Xvfb (see
       # test/run_integration.sh's own comment on this), so there's no
       # working merged-coverage leg to run there. This reuses
       # build/test/jacoco.exec, which the "Run tests" step above just
       # wrote, so the resulting report reflects unit tests AND every
       # command/test/*.svs integration script together, not integration
       # tests alone.
-      - name: Run integration tests with merged coverage (Processing 4.5.7 only)
-        if: matrix.processing_version == '4.5.7'
+      - name: Run integration tests with merged coverage (Processing 4.5.2 only)
+        if: matrix.processing_version == '4.5.2'
         run: |
           export PROCESSING_HOME="$HOME/processing/${{ matrix.processing_version }}"
           chmod +x test/run_integration.sh
@@ -181,12 +181,12 @@ jobs:
           retention-days: 2
 
       # test/run_integration.sh always writes here, win or lose - same
-      # reasoning as "Publish coverage summary" above. Only runs on 4.5.7
+      # reasoning as "Publish coverage summary" above. Only runs on 4.5.2
       # (see "Run integration tests with merged coverage" above), so
       # there's exactly one of these per workflow run, not one per matrix
       # leg.
-      - name: Publish merged coverage summary (Processing 4.5.7 only)
-        if: always() && matrix.processing_version == '4.5.7'
+      - name: Publish merged coverage summary (Processing 4.5.2 only)
+        if: always() && matrix.processing_version == '4.5.2'
         run: |
           if [ -f build/merged-coverage/coverage.csv ]; then
             {
@@ -214,8 +214,8 @@ jobs:
             echo "No build/merged-coverage/coverage.csv found - merged coverage generation may have failed; see the \`Run integration tests with merged coverage\` step above." >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Upload merged coverage report (Processing 4.5.7 only)
-        if: always() && matrix.processing_version == '4.5.7'
+      - name: Upload merged coverage report (Processing 4.5.2 only)
+        if: always() && matrix.processing_version == '4.5.2'
         uses: actions/upload-artifact@v4
         with:
           name: merged-coverage-report
@@ -263,8 +263,8 @@ jobs:
         id: cache-processing
         uses: actions/cache@v4
         with:
-          path: ~/processing/4.5.7
-          key: processing-4.5.7-windows-x64
+          path: ~/processing/4.5.2
+          key: processing-4.5.2-windows-x64
 
       # Same release, same tag, as the Linux job's "Install Processing
       # (latest)" step - just the -windows-x64-portable.zip asset instead
@@ -273,15 +273,15 @@ jobs:
       # app/ + runtime/ directly under the install root, no lib/ wrapper) -
       # see run-with-latest-processing.bat's and test/run_tests.sh's own
       # comments on this difference.
-      - name: Install Processing 4.5.7
+      - name: Install Processing 4.5.2
         if: steps.cache-processing.outputs.cache-hit != 'true'
         shell: bash
         run: |
           curl -fL -o /tmp/processing.zip \
-            "https://github.com/processing/processing4/releases/download/processing-1435-4.5.7/processing-4.5.7-windows-x64-portable.zip"
+            "https://github.com/processing/processing4/releases/download/processing-1313-4.5.2/processing-4.5.2-windows-x64-portable.zip"
           mkdir -p ~/processing
           unzip -q /tmp/processing.zip -d /tmp/processing-extracted
-          mv /tmp/processing-extracted/Processing "$HOME/processing/4.5.7"
+          mv /tmp/processing-extracted/Processing "$HOME/processing/4.5.2"
 
       # test/run_tests.sh looks for the JUnit console launcher under
       # test/lib/ - reuse test/install_junit.sh, same as the Linux job.
@@ -321,7 +321,7 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          export PROCESSING_HOME="$HOME/processing/4.5.7"
+          export PROCESSING_HOME="$HOME/processing/4.5.2"
           chmod +x test/run_tests.sh
           ./test/run_tests.sh
 
@@ -401,7 +401,7 @@ jobs:
         env:
           WGL_SWAP_INTERVAL: '0'
         run: |
-          export PROCESSING_HOME="$HOME/processing/4.5.7"
+          export PROCESSING_HOME="$HOME/processing/4.5.2"
           chmod +x test/run_integration.sh
           ./test/run_integration.sh
 
@@ -409,7 +409,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-windows-4.5.7
+          name: coverage-report-windows-4.5.2
           path: |
             build/test/coverage/html
             build/test/coverage/coverage.xml
@@ -426,7 +426,7 @@ jobs:
         run: |
           if [ -f build/merged-coverage/coverage.csv ]; then
             {
-              echo "### Coverage: unit tests + integration tests merged (Windows, Processing 4.5.7)"
+              echo "### Coverage: unit tests + integration tests merged (Windows, Processing 4.5.2)"
               echo
               echo "| Metric | Coverage |"
               echo "| --- | --- |"

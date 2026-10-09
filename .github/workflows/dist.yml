@@ -24,11 +24,11 @@ permissions:
 
 env:
   # Kept in sync with ci.yml's and image-tests.yml's own pin, so every
-  # job below reuses the exact same ~/processing/4.5.7 cache entry those
+  # job below reuses the exact same ~/processing/4.5.2 cache entry those
   # already populate, rather than adding a separate download/cache of it
   # per job on top.
-  PROCESSING_VERSION: 4.5.7
-  PROCESSING_TAG: processing-1435-4.5.7
+  PROCESSING_VERSION: 4.5.2
+  PROCESSING_TAG: processing-1313-4.5.2
 
 jobs:
   # One job per OS below (not one job building all variants, and not a

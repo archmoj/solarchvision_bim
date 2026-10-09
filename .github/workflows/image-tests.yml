@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 env:
-  PROCESSING_VERSION: 4.5.7
-  PROCESSING_TAG: processing-1435-4.5.7
+  PROCESSING_VERSION: 4.5.2
+  PROCESSING_TAG: processing-1313-4.5.2
   # How many parallel containers generate images. Kept as one number here
   # (rather than repeated in the matrix list below) since SHARD_TOTAL must
   # match the matrix length - see the "shard" section of
@@ -33,7 +33,7 @@ jobs:
     # ubuntu-latest, not pinned to an older image: Processing 4.3.4's
     # bundled JOGL used to segfault on ubuntu-24.04's Mesa (an ABI
     # mismatch - actions/runner-images#11517 has the same class of
-    # regression elsewhere). Resolved by the Processing 4.5.x upgrade
+    # regression elsewhere). Resolved by the Processing 4.5.2 upgrade
     # below; see test/image/README.md's "Note on upgrading Processing".
     runs-on: ubuntu-latest
     steps:
