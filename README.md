@@ -13,6 +13,32 @@ Use it to explore solar access and shading, compare site and building configurat
 
 > **Important:** SOLARCHVISION-BIM is a design exploration and analysis tool. Results depend on the quality and suitability of the model, location, and input data. They should not be treated as certified engineering calculations or a substitute for professional review.
 
+## The SOLARCHVISION approach
+
+SOLARCHVISION is based on **solar-climatic vision**: looking at architectural and urban design from the perspective of the sun and the local climate, then using that understanding to develop and compare design alternatives.
+
+Rather than treating solar analysis as a check performed after a design is complete, this approach brings environmental performance into the design process. It considers how the sun's path and radiation interact with temperature, wind, clouds, building geometry, façade elements, vegetation, and surrounding urban form. The goal is to understand both beneficial and undesirable conditions and use that knowledge to inform design decisions.
+
+### From climate understanding to design decisions
+
+The approach connects several questions that are often considered separately:
+
+- **Where and when does the sun reach a place?** Consider geographic location, orientation, solar path, time of day, and season.
+- **How does the built and natural environment change solar access?** Explore the effects of building massing, façade geometry, overhangs, shading devices, trees, and surrounding structures.
+- **What are the local climatic conditions?** Interpret solar radiation alongside available temperature, wind, cloud, and other meteorological information.
+- **How might alternatives perform?** Compare forms, orientations, shading strategies, and site arrangements across relevant times and weather conditions.
+- **How can environmental performance inform architectural quality?** Consider energy use, daylight, indoor and outdoor comfort, and the quality of public and private spaces together rather than optimizing a single variable in isolation.
+
+### Think across scales and time
+
+Solar-climatic design can be considered at different scales, from the arrangement of buildings and open spaces in an urban area to the orientation, shape, and details of an individual building or façade. It also has a time dimension: a solution that is beneficial at one hour or season may create unwanted shade or heat at another.
+
+SOLARCHVISION-BIM supports this way of thinking by combining 3D geometry, geographic context, weather and climate data, time-dependent visualization, and scenario or statistical comparisons in one workspace. Designers can use these views to investigate alternatives and identify questions that merit more detailed study.
+
+This is a **design-support methodology**, not a guarantee that one configuration is universally optimal. Outcomes depend on climate, site context, building use, the accuracy of the model, and the assumptions behind the selected data and study.
+
+The approach is described in the coauthored book [*Intelligent Design using Solar-Climatic Vision: Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION*](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8) (Mojtaba Samimi and Farshad Nasrollahi, 2014).
+
 ## What can I use it for?
 
 ### Architecture and building design
