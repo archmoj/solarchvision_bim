@@ -1,0 +1,342 @@
+name: Test distributable
+
+# Every push, unlike dist.yml (button-triggered only, for an actual
+# release download) - this is CI coverage for build-dist.sh/
+# flatten-dist.sh themselves and the flat dist/ layout they produce
+# (now committed in the repo - see its own README), not something
+# meant to be downloaded afterward. workflow_dispatch alongside it just
+# for an easy manual re-run.
+on:
+  push:
+    branches: '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Kept in sync with ci.yml's, dist.yml's and image-tests.yml's own
+  # pin, so build-dist (the only job below that actually needs
+  # Processing installed - the other three just run what it already
+  # built) reuses the exact same ~/processing/4.5.2 cache entry those
+  # already populate.
+  PROCESSING_VERSION: 4.5.2
+  PROCESSING_TAG: processing-1313-4.5.2
+
+jobs:
+  # The only job that needs Processing installed at all - the three
+  # below just run what this one already built, on their own real OS.
+  # One job, not split per variant/OS the way dist.yml's own build-*
+  # jobs are: build-dist.sh cross-exports every variant fine from a
+  # single Linux host regardless (confirmed repeatedly across this
+  # project's history - see build-dist.sh's own comments), and splitting
+  # this particular job wouldn't save any wall-clock time anyway, since
+  # the three test jobs below (the actually slow, platform-specific
+  # part) already run in parallel once this one finishes.
+  build-dist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Processing install
+        id: cache-processing
+        uses: actions/cache@v4
+        with:
+          path: ~/processing/${{ env.PROCESSING_VERSION }}
+          key: processing-${{ env.PROCESSING_VERSION }}-linux-x64
+
+      - name: Install Processing
+        if: steps.cache-processing.outputs.cache-hit != 'true'
+        run: |
+          curl -fL -o /tmp/processing.zip \
+            "https://github.com/processing/processing4/releases/download/${PROCESSING_TAG}/processing-${PROCESSING_VERSION}-linux-x64-portable.zip"
+          mkdir -p ~/processing
+          unzip -q /tmp/processing.zip -d /tmp/processing-extracted
+          mv /tmp/processing-extracted/Processing "$HOME/processing/${PROCESSING_VERSION}"
+
+      # Explicit, even though build-dist.sh already does this same
+      # rm -rf internally (see its own comment on why) - belt and
+      # suspenders against this job ever picking up whatever dist/
+      # happened to already be on disk (the committed copy, from
+      # actions/checkout above) rather than a genuinely fresh build.
+      - name: Empty dist/
+        run: rm -rf dist
+
+      - name: Build dist (linux-amd64, windows-amd64, macos-x86_64, macos-aarch64)
+        run: |
+          export PROCESSING_HOME="$HOME/processing/${PROCESSING_VERSION}"
+          chmod +x build-dist.sh
+          ./build-dist.sh linux-amd64 windows-amd64 macos-x86_64 macos-aarch64
+
+      - name: Flatten dist (same variants)
+        run: |
+          chmod +x flatten-dist.sh
+          ./flatten-dist.sh linux-amd64 windows-amd64 macos-x86_64 macos-aarch64
+
+      # One tar per OS below, not one tar (or a plain actions/upload-
+      # artifact) for the whole dist/ folder, for two reasons confirmed
+      # directly rather than assumed:
+      #
+      # 1. upload-artifact's default zip packaging does not preserve
+      #    Unix file permissions at all - every file comes back 644,
+      #    confirmed in its own README ("Permission Loss") - which would
+      #    silently strip the executable bit from both
+      #    solarchvision_bim_linux-amd64 (a shell script) and the
+      #    Mach-O binary inside each .app bundle. tar (with
+      #    archive: false below, so upload-artifact doesn't re-zip the
+      #    tar itself) preserves permissions - and symlinks - correctly;
+      #    confirmed directly here too, not just taken on faith: tarred
+      #    a flattened macos-aarch64 build, extracted it elsewhere, and
+      #    both the launcher's executable bit and the
+      #    Contents/Java/data -> ../../../data symlink (see
+      #    flatten-dist.sh) came through intact, the symlink still
+      #    resolving to the exact same font file.
+      #
+      # 2. Scoped to one OS's own files - its executable plus the
+      #    shared lib/ and data/ its launcher actually reads (see
+      #    flatten-dist.sh's own comment on why those are shared in the
+      #    first place) - rather than the whole dist/ folder, so the
+      #    test-windows job below never has to extract a tar containing
+      #    macOS's own symlinks at all (Windows can create symlinks, but
+      #    not without elevated privileges by default - simplest to
+      #    just not hand it any).
+      - name: Package each OS's own files
+        run: |
+          tar -czf dist-linux-amd64.tar.gz -C dist solarchvision_bim_linux-amd64 lib data
+          tar -czf dist-windows-amd64.tar.gz -C dist solarchvision_bim_windows-amd64.exe lib data
+          tar -czf dist-macos-aarch64.tar.gz -C dist solarchvision_bim_macos-aarch64.app lib data
+
+      - name: Upload linux-amd64 package
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-linux-amd64
+          path: dist-linux-amd64.tar.gz
+          archive: false
+          retention-days: 1
+
+      - name: Upload windows-amd64 package
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-windows-amd64
+          path: dist-windows-amd64.tar.gz
+          archive: false
+          retention-days: 1
+
+      - name: Upload macos-aarch64 package
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-macos-aarch64
+          path: dist-macos-aarch64.tar.gz
+          archive: false
+          retention-days: 1
+
+  # Three jobs below, all needs: build-dist and nothing else between
+  # them, so GitHub runs them in parallel once it finishes - matching
+  # dist.yml's own build-linux/build-windows/build-macos split (see its
+  # comment) for the same reason: a failure testing one platform
+  # shouldn't hold up, or get bundled in with, the others.
+
+  test-linux:
+    needs: build-dist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      # Not for building anything here - just so a real, non-headless
+      # `java` is on PATH for the launcher below to find (build-dist.sh
+      # defaults to NO_JAVA=1 - no bundled runtime - so this dist build
+      # needs one already installed, same as any real user's machine
+      # would; see build-dist.sh's own comment on why not a "headless"
+      # JRE specifically).
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Download dist-linux-amd64 package
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-linux-amd64
+
+      # Replaces the repo's own committed dist/ (from actions/checkout
+      # above) with this run's freshly built one - input/ and command/
+      # (needed below) come from the checkout either way, unaffected.
+      - name: Extract into dist/
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          tar -xzf dist-linux-amd64.tar.gz -C dist
+
+      # Confirms this is actually runnable end to end, not just that
+      # build-dist produced something - loads input/images/sun/Sun.jpg
+      # (locateBaseFolder() walking up from dist/ to find input/, now
+      # that dist/ sits inside the repo rather than needing a separate
+      # fetch - see update_folders.pde), runs a bundled
+      # command/test/*.svs script, and produces its screenshot. Same
+      # check as dist.yml's own linux smoke test.
+      - name: Smoke-test the build
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          chmod +x dist/solarchvision_bim_linux-amd64
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+            dist/solarchvision_bim_linux-amd64 USER=AUTO RUN=command/test/primitives.svs
+
+          SCREENSHOT="$(find projects -name 'primitives.png' -print -quit)"
+          if [ -z "$SCREENSHOT" ]; then
+            echo "error: primitives.png was not produced - the dist build may be broken" >&2
+            exit 1
+          fi
+          echo "==> Found: $SCREENSHOT"
+
+  test-windows:
+    needs: build-dist
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Download dist-windows-amd64 package
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-windows-amd64
+
+      - name: Extract into dist/
+        shell: bash
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          tar -xzf dist-windows-amd64.tar.gz -C dist
+
+      # windows-latest ships no GPU/OpenGL ICD at all - same issue, same
+      # fix, as ci.yml's own test-windows job (see its much longer
+      # comment on this for the details: Windows Resource Protection
+      # locking some System32 files even from an administrator account,
+      # why opengl32.dll specifically needs to be overwritten there
+      # rather than placed next to java.exe, and so on).
+      - name: Install Mesa3D software OpenGL (no GPU/ICD on this runner)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          Invoke-WebRequest -Uri "https://github.com/pal1000/mesa-dist-win/releases/download/25.3.6/mesa3d-25.3.6-release-msvc.7z" -OutFile mesa.7z
+          7z x mesa.7z -omesa
+          function Install-SystemDll($source, $destination) {
+            if (Test-Path $destination) {
+              takeown /f $destination /a | Out-Null
+              icacls $destination /grant Administrators:F | Out-Null
+            }
+            Copy-Item -Path $source -Destination $destination -Force
+          }
+
+          Install-SystemDll "mesa\x64\opengl32.dll" "$env:SystemRoot\System32\opengl32.dll"
+          if (Test-Path "mesa\x64\libglapi.dll") {
+            Install-SystemDll "mesa\x64\libglapi.dll" "$env:SystemRoot\System32\libglapi.dll"
+          }
+          if (Test-Path "mesa\x64\libgallium_wgl.dll") {
+            Install-SystemDll "mesa\x64\libgallium_wgl.dll" "$env:SystemRoot\System32\libgallium_wgl.dll"
+          }
+
+      # No Xvfb-equivalent needed - windows-latest provides a real (if
+      # software-rendered, as of the step above) display session out of
+      # the box, same as ci.yml's own test-windows job. WGL_SWAP_INTERVAL=0
+      # for the same documented Mesa gallium/wgl bug noted there and in
+      # image-tests.yml (SwapBuffers can freeze when an application
+      # negotiates a swap interval, which JOGL does) - applied
+      # proactively here too, since this step's own screenshot check
+      # could otherwise hang rather than fail outright.
+      #
+      # Unverified beyond the logic itself and what's reused from
+      # ci.yml's own, already-proven-in-CI job - this exact combination
+      # (this launcher, against the flattened dist/lib/ layout
+      # specifically) hasn't been run for real yet; treat its first
+      # real run as the actual test of it.
+      - name: Smoke-test the build
+        shell: bash
+        env:
+          WGL_SWAP_INTERVAL: '0'
+        run: |
+          dist/solarchvision_bim_windows-amd64.exe USER=AUTO RUN=command/test/primitives.svs
+
+          SCREENSHOT="$(find projects -name 'primitives.png' -print -quit)"
+          if [ -z "$SCREENSHOT" ]; then
+            echo "error: primitives.png was not produced - the dist build may be broken" >&2
+            exit 1
+          fi
+          echo "==> Found: $SCREENSHOT"
+
+  test-macos:
+    needs: build-dist
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Download dist-macos-aarch64 package
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-macos-aarch64
+
+      - name: Extract into dist/
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          tar -xzf dist-macos-aarch64.tar.gz -C dist
+
+      # macos-latest is Apple Silicon (arm64) as of this writing, hence
+      # macos-aarch64 specifically rather than macos-x86_64 here -
+      # build-dist.sh still builds both (dist.yml's own macOS downloads
+      # offer both architectures), just only this one gets an actual
+      # run in CI.
+      #
+      # xattr -cr strips any quarantine attribute, defensively - CI
+      # downloads don't go through the LSQuarantine APIs (Safari/Mail/
+      # Finder-AirDrop) that normally set it, so Gatekeeper likely isn't
+      # even in play here, but costs nothing to clear either way for an
+      # unsigned .app like this one (see flatten-dist.sh's own comment
+      # on it being unsigned). chmod +x the launcher the same
+      # belt-and-suspenders way as test-linux's own, even though the
+      # tar round-trip this went through was directly confirmed (see
+      # build-dist's own "Package each OS's own files" comment) to
+      # preserve it already.
+      #
+      # Unverified beyond that confirmation and the same well-documented,
+      # symlink-transparent file handling the rest of this project's
+      # macOS work has had to rely on throughout (no Mac available while
+      # writing any of it) - this is the first time any of it actually
+      # gets run for real; treat this step's first real run as the
+      # actual test, the same way test-windows's own is.
+      - name: Smoke-test the build
+        run: |
+          APP="dist/solarchvision_bim_macos-aarch64.app"
+          xattr -cr "$APP"
+          chmod +x "$APP/Contents/MacOS/solarchvision_bim"
+
+          "$APP/Contents/MacOS/solarchvision_bim" USER=AUTO RUN=command/test/primitives.svs
+
+          SCREENSHOT="$(find projects -name 'primitives.png' -print -quit)"
+          if [ -z "$SCREENSHOT" ]; then
+            echo "error: primitives.png was not produced - the dist build may be broken" >&2
+            exit 1
+          fi
+          echo "==> Found: $SCREENSHOT"
