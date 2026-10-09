@@ -482,12 +482,27 @@ jobs:
       # to what Info.plist's own JVMOptions already specified for JOGL's
       # native library loading.
       #
-      # Backgrounded with a bounded wait regardless (well inside the
-      # job's own 3-minute timeout), same safety net as before: if java
-      # is still running after 20s, SIGQUIT for a thread dump before
-      # killing it, so a still-failing run says what it's actually
-      # waiting on this time, now that there's a real java process to
-      # ask.
+      # That run's own thread dump (SIGQUIT below, same safety net as
+      # before) pinned the actual hang down precisely: the main thread
+      # waiting on the AWT event dispatch thread, which was stuck -
+      # RUNNABLE, not blocked, just never returning - inside a *native*
+      # call, sun.lwawt.macosx.LWCToolkit.getMultiClickTime, reached via
+      # JAWTUtil's own static init (triggered by JOGL's NativeWindowFactory
+      # probing AWT availability generically at startup, regardless of
+      # NEWT being what Processing's own PSurfaceJOGL actually uses for
+      # the window itself). That's not a new, unknown failure - it's
+      # JDK-8208702 ("HangDuringStaticInitialization... may hang on
+      # macos"), a long-documented JDK/AppKit bug specifically affecting
+      # sessions started without a real, matching logged-in GUI session
+      # for the same user (SSH being the classic case the bug report
+      # names, which is architecturally close to how a CI runner's own
+      # job process gets started). The fix that actually shipped for it
+      # is conditional on -Djava.awt.headless=false being explicitly
+      # forced - without it, the JVM falls back to its own default
+      # detection instead, which doesn't benefit from that fix. Added
+      # here on that basis - genuinely uncertain whether GitHub's own
+      # macOS runners hit the exact scenario this fix targets, so this
+      # is a real attempt, not a confirmed one.
       - name: Smoke-test the build
         timeout-minutes: 3
         run: |
@@ -502,6 +517,7 @@ jobs:
 
           java \
             -XstartOnFirstThread \
+            -Djava.awt.headless=false \
             -Djava.library.path="$JAVA_DIR" \
             -cp "$CLASSPATH" \
             solarchvision_bim \
