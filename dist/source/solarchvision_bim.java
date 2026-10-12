@@ -29313,8 +29313,8 @@ class UI_menuBar {
       "Hourly sun (active)",
       "Hourly sun (passive)",
       ___divider___,
-      "Annual cycle sun path (active)",
-      "Annual cycle sun path (passive)",
+      "Sun path (active)",
+      "Sun path (passive)",
       ___divider___,
       "Skin potential (active)",
       "Skin potential (passive)",
@@ -42590,9 +42590,9 @@ public void build_allActions() {
 
   putAction("Hourly sun (passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
 
-  putAction("Annual cycle sun path (active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
+  putAction("Sun path (active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
 
-  putAction("Annual cycle sun path (passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
+  putAction("Sun path (passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
 
   putAction("Prebake Selected Sections", () -> {
     allSolarImpacts.render_Shadows_selectedSections();

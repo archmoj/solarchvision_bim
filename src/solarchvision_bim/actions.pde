@@ -314,9 +314,9 @@ void build_allActions() {
 
   putAction("Hourly sun (passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
 
-  putAction("Annual cycle sun path (active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
+  putAction("Sun path (active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
 
-  putAction("Annual cycle sun path (passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
+  putAction("Sun path (passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
 
   putAction("Prebake Selected Sections", () -> {
     allSolarImpacts.render_Shadows_selectedSections();

@@ -1009,7 +1009,7 @@ around.
 -   `Skin potential (active)`, `Skin potential (passive)`
 -   `Pose potential (active)`, `Pose potential (passive)`
 -   `Hourly sun (active)`, `Hourly sun (passive)`
--   `Annual cycle sun path (active)`, `Annual cycle sun path (passive)`
+-   `Sun path (active)`, `Sun path (passive)`
 -   `Active Shade`, `Passive Shade`
 -   `Run wind 3D-model`
 -   `Prebake Selected Sections`
