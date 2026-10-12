@@ -310,9 +310,9 @@ void build_allActions() {
 
   putAction("Pose potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_PASSIVE, false));
 
-  putAction("Hourly sun position (active)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_ACTIVE, false));
+  putAction("Hourly sun (active)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_ACTIVE, false));
 
-  putAction("Hourly sun position (passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
+  putAction("Hourly sun (passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
 
   putAction("Annual cycle sun path (active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
 

@@ -29310,8 +29310,8 @@ class UI_menuBar {
       "Pose potential (active)",
       "Pose potential (passive)",
       ___divider___,
-      "Hourly sun position (active)",
-      "Hourly sun position (passive)",
+      "Hourly sun (active)",
+      "Hourly sun (passive)",
       ___divider___,
       "Annual cycle sun path (active)",
       "Annual cycle sun path (passive)",
@@ -42586,9 +42586,9 @@ public void build_allActions() {
 
   putAction("Pose potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_PASSIVE, false));
 
-  putAction("Hourly sun position (active)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_ACTIVE, false));
+  putAction("Hourly sun (active)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_ACTIVE, false));
 
-  putAction("Hourly sun position (passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
+  putAction("Hourly sun (passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
 
   putAction("Annual cycle sun path (active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
 
