@@ -29307,8 +29307,8 @@ class UI_menuBar {
       "Wind pattern (active)",
       "Wind pattern (passive)",
       ___divider___,
-      "Orientation potential (active)",
-      "Orientation potential (passive)",
+      "Pose potential (active)",
+      "Pose potential (passive)",
       ___divider___,
       "Hourly sun position (active)",
       "Hourly sun position (passive)",
@@ -42582,9 +42582,9 @@ public void build_allActions() {
 
   putAction("Skin potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_PASSIVE, false));
 
-  putAction("Orientation potential (active)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_ACTIVE, false));
+  putAction("Pose potential (active)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_ACTIVE, false));
 
-  putAction("Orientation potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_PASSIVE, false));
+  putAction("Pose potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_PASSIVE, false));
 
   putAction("Hourly sun position (active)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_ACTIVE, false));
 
