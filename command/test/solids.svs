@@ -1,0 +1,28 @@
+# set test time
+Month 1
+Day 15
+
+# clear default model
+Delete all
+
+3d-model 7
+
+Delete All-Model2Ds
+
+Select nothing
+
+Hide Sun Path
+
+ENLARGE3D
+=======
+N.W.
+
+Select All-Sections
+Process Solid Impact
+Select nothing
+
+Solid Impacts Wind Speed 16.0
+Run wind 3D-model
+
+REC.png solid-impacts
+

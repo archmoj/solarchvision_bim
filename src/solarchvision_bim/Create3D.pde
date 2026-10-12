@@ -2421,7 +2421,7 @@ class Create3D {
 
     if (n == 7) {
       runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
-      runScriptLine("Mesh2 m=7 tes=5 lyr=0 vsb=1 wgt=0 clz=0 x1=-32 y1=-32 z1=0 x2=32 y2=32 z2=0");
+      runScriptLine("Section x=0 y=0 z=0.1 r=0 u=64 v=64 t=1 i=400 j=400");
 
       {
         runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");

@@ -1,0 +1,28 @@
+# set test time
+Month 1
+Day 15
+
+# clear default model
+Delete all
+
+Hide sun path
+
+Wind pattern (passive)
+
+REC.png windrose-passive
+=======
+
+Top
++MoveTowardsSelection 3.5
+
+Wind pattern (active)
+
+previous layer
+previous layer
+
+Sky Scenario Setting 2
+
+REC.png windrose-active-cloudy
+=======
+
+
