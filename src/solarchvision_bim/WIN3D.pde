@@ -651,7 +651,7 @@ class WIN3D {
         break;
 
       case '5':
-        // "Look at selection" does more than this key used to (also
+        // "Look at Selection" does more than this key used to (also
         // switches to the CameraDistance tool, see UI_setTo_View_LookAtSelection)
         // - reused as-is rather than as a stripped-down duplicate, on the
         // view that "the same thing" means the existing, richer action,
@@ -659,7 +659,7 @@ class WIN3D {
         // separate reviseViews() after: that action already calls
         // UI_rollout.revise() and view_changed() (= WIN3D.revise())
         // itself, which together are exactly what reviseViews() does.
-        runScriptLines(new String[]{"Look at selection"});
+        runScriptLines(new String[]{"Look at Selection"});
         break;
 
       case '4':

@@ -637,17 +637,17 @@ class UI_toolBar {
       // Only index 0 has an existing action for any of these three -
       // kept as a direct call otherwise rather than assumed unreachable.
       case "Look At Origin":
-        if (j - 1 == 0) callAction("Look at origin");
+        if (j - 1 == 0) callAction("Look at Origin");
         else UI_setTo_View_LookAtOrigin(j - 1);
         break;
 
       case "Look At Direction":
-        if (j - 1 == 0) callAction("Look at direction");
+        if (j - 1 == 0) callAction("Look at Cursor");
         else UI_setTo_View_LookAtDirection(j - 1);
         break;
 
       case "Look At Selection":
-        if (j - 1 == 0) callAction("Look at selection");
+        if (j - 1 == 0) callAction("Look at Selection");
         else UI_setTo_View_LookAtSelection(j - 1);
         break;
 
@@ -659,14 +659,14 @@ class UI_toolBar {
         break;
 
       case "Zoom":
-        // "Zoom"/"Zoom as default" cover the UI_setTo_View_ZOOM(...)
+        // "Zoom"/"Default Zoom" cover the UI_setTo_View_ZOOM(...)
         // call itself; the toolbar's own this.Items[i][0] reset is
         // this button's own bookkeeping, not part of either action, so
         // it stays here unchanged - same reasoning as mouseReleased.pde's
         // Section branch keeping its own extra bookkeeping separate from
         // the "Section" command it calls.
         if (j - 1 == 0) callAction("Zoom");
-        else if (j - 1 == 1) callAction("Zoom as default");
+        else if (j - 1 == 1) callAction("Default Zoom");
         else UI_setTo_View_ZOOM(j - 1);
         this.Items[i][0] = "1"; // << set it to default choice next time
         break;

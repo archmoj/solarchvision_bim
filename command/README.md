@@ -867,9 +867,9 @@ for that action:
 -   `CameraRoll`, `CameraRollXY`, `CameraRollZ`
 -   `TargetRoll`, `TargetRollXY`, `TargetRollZ`
 -   `DistZ`, `DistMouseXY`, `CameraDistance`
--   `Zoom`, `Zoom as default`
+-   `Zoom`, `Default Zoom`
 -   `Perspective`, `Orthographic`
--   `Look at origin`, `Look at direction`, `Look at selection`
+-   `Look at Origin`, `Look at Cursor`, `Look at Selection`
 -   `3DModelSize`, `AllModelSize`, `SkydomeSize`: frame the camera to fit
     the model, the whole scene, or the sky dome
 -   `Camera >> Viewport`, `Viewport >> Camera`: copy a saved camera's

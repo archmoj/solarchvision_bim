@@ -2177,7 +2177,7 @@ void build_allActions() {
     UI_setTo_View_ZOOM(0);
   });
 
-  putAction("Zoom as default", () -> {
+  putAction("Default Zoom", () -> {
     UI_setTo_View_ZOOM(1);
   });
 
@@ -2205,15 +2205,15 @@ void build_allActions() {
     UI_setTo_View_DistMouseXY(0);
   });
 
-  putAction("Look at origin", () -> {
+  putAction("Look at Origin", () -> {
     UI_setTo_View_LookAtOrigin(0);
   });
 
-  putAction("Look at direction", () -> {
+  putAction("Look at Cursor", () -> {
     UI_setTo_View_LookAtDirection(0);
   });
 
-  putAction("Look at selection", () -> {
+  putAction("Look at Selection", () -> {
     UI_setTo_View_LookAtSelection(0);
   });
 
