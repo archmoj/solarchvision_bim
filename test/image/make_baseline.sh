@@ -49,7 +49,7 @@
 #
 # Usage:
 #   ./test/image/make_baseline.sh                          # every command/test/*.svs
-#   ./test/image/make_baseline.sh edit views ...            # specific ones only (name without .svs)
+#   ./test/image/make_baseline.sh edits views ...          # specific ones only (name without .svs)
 #
 # Environment:
 #   PROCESSING_HOME   - defaults to ~/processing/4.5.2, same as
