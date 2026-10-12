@@ -1,91 +1,66 @@
 # SOLARCHVISION-BIM
 
-**See your building or site from the sun’s perspective. Make environmental conditions part of the design decision.**
+**Bring space, time, energy, and climate into the design process.**
 
-SOLARCHVISION-BIM is an open-source desktop application for 3D modeling and solar-climatic analysis. It brings together a project’s geometry, geographic context, supported weather and climate data, and time-dependent visualization so you can investigate how sunlight, shade, and environmental conditions interact with buildings, landscapes, renewable-energy systems, and urban spaces.
+SOLARCHVISION-BIM is an open-source desktop application for **3D modeling and solar-climatic analysis**. It brings building and site geometry together with geographic context, supported weather and climate data, and time-dependent visualization to help explore how the sun, local climate, weather, and design choices interact.
 
-Use it to **explore a site, compare design alternatives, understand seasonal trade-offs, and communicate findings**—from early concepts to the review of existing places. Its interactive 3D workspace, geographic view, and time-series tools help connect what happens in a model with when and where it happens.
+The SOLARCHVISION approach treats solar exposure and shade as context-dependent effects: they can be beneficial in one season or location and undesirable in another. Use the application to investigate design alternatives across buildings, façades, streets, courtyards, landscapes, neighborhoods, and solar-energy applications. By combining spatial models with time-varying environmental data, SOLARCHVISION-BIM helps design teams consider energy demand and production, daylight, comfort, health, and safety earlier in the design process.
 
-- **Explore:** solar access, shading, sun paths, supported weather layers, and environmental patterns.
-- **Compare:** locations, orientations, geometry, time periods, years, and supported forecast scenarios.
-- **Communicate:** use 3D views and study graphs to discuss design options across disciplines.
-- **Learn and adapt:** inspect the project, use its command interface, or build on the open-source code.
-
-- **For:** Architects, urban and landscape planners, clients, municipalities, renewable-energy specialists, building and operations teams, researchers, educators, and other decision-makers.
+- **For:** Architects, urban and landscape planners, renewable-energy specialists, researchers, educators, and project teams.
 - **Platforms:** GNU/Linux, macOS, and Microsoft Windows.
 - **License:** GNU General Public License v2 (GPL-2.0).
 - **Repository:** [archmoj/solarchvision_bim](https://github.com/archmoj/solarchvision_bim)
+- **Documentation:** [Command reference](command/README.md)
 
-> **Important:** SOLARCHVISION-BIM supports design exploration and analysis. Results depend on the model, location, data quality, and selected workflow; they are not certified engineering calculations and do not replace professional review or specialist simulation where required.
-
-**New to the project?** Start with [Getting started](#getting-started), then try [exploring solar and environmental conditions](#5-explore-solar-and-environmental-conditions). To understand the guiding idea, read [The SOLARCHVISION approach](#the-solarchvision-approach). For commands and detailed capabilities, see the [command reference](command/README.md) and [Technical overview](#technical-overview).
-
----
+> **Scope and limitations:** SOLARCHVISION-BIM supports design exploration and environmental analysis. Results depend on the model, location, input data, processing assumptions, and selected workflow. Outputs are not certified engineering calculations and do not replace professional review or specialist simulations where required.
 
 ## Contents
 
-- [What can you do?](#what-can-you-do-with-solarchvision-bim)
-- [Getting started](#getting-started)
-- [Who can benefit?](#who-can-benefit-from-solar-climatic-analysis)
-- [Why analyze during design?](#why-include-solar-climatic-analysis-in-the-design-process)
-- [The SOLARCHVISION approach](#the-solarchvision-approach)
-- [Common tasks](#common-tasks)
+- [Why SOLARCHVISION-BIM?](#why-solarchvision-bim)
+- [Get started](#get-started)
+- [What can you explore?](#what-can-you-explore)
+- [Weather, climate, and geographic data](#weather-climate-and-geographic-data)
+- [Modeling and analysis workflow](#modeling-and-analysis-workflow)
 - [Keyboard shortcuts](#keyboard-shortcuts)
-- [Command bar](#command-bar-and-advanced-workflows)
-- [Method and publications](#solarchvision-method-and-publications)
+- [Command bar and automation](#command-bar-and-automation)
+- [The SOLARCHVISION approach](#the-solarchvision-approach)
+- [Method and publications](#method-and-publications)
 - [Technical overview](#technical-overview)
+- [Contribute and follow the project](#contribute-and-follow-the-project)
 - [License](#license)
 
-## What can you do with SOLARCHVISION-BIM?
+## Why SOLARCHVISION-BIM?
 
-### Architecture and building design
+Many design questions are spatial and time-dependent: When does a façade receive useful solar radiation? When does the same exposure contribute to overheating? How do neighboring buildings and trees change shade in a public space? How might these effects vary across seasons, years, or forecast scenarios?
 
-- Create and edit 3D geometry to explore building form and site relationships.
-- Investigate solar position, surface exposure, and shading from surrounding geometry.
-- Compare solar exposure and shading across hours, seasons, and supported weather scenarios.
-- Explore trade-offs between useful solar gains and unwanted exposure in different periods.
-- Visualize modeled buildings with time-dependent solar and environmental layers.
+The SOLARCHVISION approach encourages **early, integrated environmental analysis**. Evaluating orientation, dimensions, layout, and form while design options are still flexible can reveal opportunities that may be harder to address later. Climate-aware design does not automatically mean higher construction costs: some improvements can come from adjusting core design parameters, although project costs and feasibility must be assessed individually.
 
-### Urban planning and public space
+The goal is not simply to maximize sunlight or minimize shade. It is to understand how design choices influence the natural and built environment across **space, time, and energy**, and to identify trade-offs before decisions are fixed.
 
-- Explore relationships among building massing, open space, and surrounding context.
-- Examine solar access and shadow patterns across heating, cooling, and annual periods.
-- Consider how street orientation, neighboring buildings, trees, and shading structures affect public-space conditions.
-- Use geographic context and weather information to inform early-stage comparisons.
-- Visualize wind-related patterns and other spatial environmental fields where supported by the model and data.
+SOLARCHVISION-BIM brings several parts of that investigation into one workspace:
 
-### Landscape architecture
+- **Model the place:** Create and edit 3D buildings, surfaces, terrain, trees, and other site elements.
+- **Explore solar exposure:** Investigate sun position, solar radiation, shading, and the effects of surrounding geometry.
+- **Consider benefits and risks:** Explore when solar exposure may be useful and when shade, overheating, or seasonal environmental conditions may create design concerns.
+- **Connect design to location:** Use geographic views, map imagery, station locations, and terrain context where available.
+- **Explore time and variability:** Compare hours, days, years, and supported forecast scenarios; inspect statistical summaries and percentiles where available.
+- **Support design-team discussions:** Use 3D views, graphs, and supported exports to communicate how proposed changes may affect buildings and outdoor spaces.
+- **Visualize environmental data:** Explore supported weather layers and other spatial environmental fields.
+- **Build repeatable workflows:** Use the graphical interface, command bar, scripts, and supported export formats.
+- **Use and extend open-source software:** Inspect the code, report issues, and adapt the application to your needs.
 
-- Represent terrain, trees, and site elements in a 3D scene.
-- Explore how vegetation and structures affect shade, solar exposure, and the usability of outdoor areas.
-- Compare landscape and built-form alternatives in their seasonal context.
-- Review site conditions in their geographic and seasonal context.
+The analyses available depend on the selected study, model setup, location, and dataset.
 
-### Climate and environmental studies
-
-- Work with supported weather, climate, observation, and ensemble forecast datasets.
-- Inspect time-dependent variables and compare selected hours, days, years, or forecast scenarios.
-- Use statistical summaries such as minimum, average, maximum, and percentiles to explore variability.
-- Export geometry or selected model states for use in other workflows.
-
-The available analyses depend on the selected study, input dataset, location, and model setup. Solar-climatic analysis can inform design decisions, but it should be combined with other methods—such as detailed daylight or whole-building energy simulation—when the design question requires them.
-
-## Getting started
-
-**A good first session:** choose a location, load a supported weather dataset, create or import a simple 3D scene, select an available study, and move through time to see how the visualization changes. Start with one clear question—such as when a façade is shaded or how a site’s solar exposure changes by season—before expanding the study.
+## Get started
 
 ### 1. Get the application
 
-The simplest route is to use a pre-built application from the repository:
-
-1. Open the [SOLARCHVISION-BIM repository](https://github.com/archmoj/solarchvision_bim).
-2. Download the repository as a ZIP file or clone it using Git.
+1. Open the [SOLARCHVISION-BIM GitHub repository](https://github.com/archmoj/solarchvision_bim).
+2. Download the repository as a ZIP file or clone it with Git.
 3. Open the `dist` directory.
-4. Run the executable intended for your operating system.
+4. Run the executable intended for your operating system, following any release-specific instructions.
 
-If you prefer Git, use one of the following commands:
-
-**HTTPS**
+Clone the repository with HTTPS:
 
 ```sh
 git clone https://github.com/archmoj/solarchvision_bim.git
@@ -97,29 +72,72 @@ For a smaller, shallow clone:
 git clone https://github.com/archmoj/solarchvision_bim.git --depth 1
 ```
 
-**SSH** (requires an SSH key configured with GitHub)
+Or use SSH if you have an SSH key configured with GitHub:
 
 ```sh
 git clone git@github.com:archmoj/solarchvision_bim.git
 ```
 
-The pre-built files and their launch requirements may vary by release. If the application does not start, check the repository instructions and the files supplied in `dist` for your platform.
+Pre-built files and launch requirements can vary by release. If the application does not start, check the repository instructions and the files supplied in `dist` for your platform.
 
-### 2. Understand the main workspace
+### 2. Try a first study
 
-The interface combines several views:
+Start with one clear question—for example, how shade on a building or outdoor space changes throughout the day.
 
-- **3D view:** Create, select, edit, and inspect buildings, surfaces, terrain, trees, and other objects. This is also where many environmental effects are visualized.
-- **World view:** Explore geographic context, choose a project location, and work with available map, station, and terrain information.
+1. **Choose a location.** Use the `Location` menu to set the project location.
+2. **Load suitable data.** Load an available weather or climate dataset for the location.
+3. **Create a simple scene.** Use `3D-create` to add geometry, or import a supported `.obj` model.
+4. **Choose a study.** Open the `Analysis` menu and select an available solar or environmental study.
+5. **Inspect the result.** Use the 3D view and available study graphs.
+6. **Move through time.** Use the Case Bar to select hours, days, years, or forecast scenarios supported by the dataset.
+7. **Save or export.** Save the project or use an available export workflow.
+
+For model-based studies such as `Urban solar potential (active)` and `Urban solar potential (passive)`, prepare a selected `Section` or `Camera` using `PreBake Viewport` or `Pre-bake Selected Sections` where required by the workflow.
+
+### 3. Get familiar with the workspace
+
+- **3D view:** Create, select, edit, and inspect buildings, surfaces, terrain, trees, and other objects. Supported environmental effects are visualized here.
+- **World view:** Explore geographic context, select a project location, and work with available map, station, and terrain information.
 - **Study/time view:** Inspect time-series graphs, environmental studies, and statistical or scenario results.
-- **Case bar:** Choose the hours, days, and scenarios or years to include in a study, and select a statistical summary where available.
-- **Command bar:** An optional text-based interface for entering commands. Most users can begin with the menus and view controls; commands are useful for precise settings or repeatable workflows.
+- **Case Bar:** Choose the hours, days, and scenarios or years included in a study, and select a statistical summary where available.
+- **Command bar:** Enter commands for precise settings and repeatable workflows. Press `TAB` to show or hide it.
 
-The initial layout can vary depending on the selected setup. Use the `Setup` menu to switch among available 3D models and time-view layouts.
+The initial layout can vary. Use the `Setup` menu to switch among available 3D models and time-view layouts.
 
-### 3. Choose a location and weather data
+## What can you explore?
 
-Use the `Location` menu to select the project location and load or download supported weather and geographic data. The application uses EPW/TMY data by default when available. Other supported sources include:
+### Architecture and building design
+
+- Compare building form, orientation, surface exposure, and shading.
+- Investigate how surrounding geometry affects solar access.
+- Explore changes in solar exposure across hours, seasons, and supported weather scenarios.
+- Consider trade-offs between useful solar gains and unwanted exposure.
+
+### Urban planning and public space
+
+- Examine relationships among building massing, open space, and surrounding context.
+- Explore solar access and shadow patterns in streets, courtyards, parks, and other public spaces.
+- Investigate the influence of neighboring buildings, trees, and shading structures.
+- Use geographic and weather context to inform early-stage comparisons.
+
+### Landscape architecture
+
+- Represent terrain, trees, and site elements in a 3D scene.
+- Explore how vegetation and structures affect shade and solar exposure.
+- Compare landscape alternatives across seasons.
+
+### Climate and environmental studies
+
+- Work with supported weather, climate, observation, and ensemble forecast datasets.
+- Compare selected hours, days, years, and forecast scenarios.
+- Inspect statistical summaries such as minimum, average, maximum, and percentiles where supported.
+- Visualize selected environmental fields and export geometry or model states for other workflows.
+
+These analyses can inform early design, option comparison, and design refinement. Depending on the project and the data available, they may help teams identify locations that warrant closer review for uncomfortable solar exposure, excessive shade, overheating, or seasonal energy and safety concerns—including under selected extreme-weather conditions. These are screening and design-support insights, not a substitute for formal risk assessment or detailed daylight, thermal-comfort, whole-building energy, structural, or other specialist simulations when required.
+
+## Weather, climate, and geographic data
+
+Use the `Location` menu to select a project location and load or download supported weather and geographic data. EPW/TMY data are used by default when available. Other supported sources and workflows include:
 
 - **CWEEDS:** Multi-year engineering climate data for Canadian locations.
 - **CLMREC:** Supported climate-record data.
@@ -127,152 +145,66 @@ Use the `Location` menu to select the project location and load or download supp
 - **SWOB:** Meteorological observations.
 - **HRDPS/GDPS forecast imagery:** Available through the atmospheric visualization workflow where configured.
 
-Dataset availability and coverage vary by location. Some geographic features, including terrain mesh and terrain texture, require an API key. For Canadian CWEEDS data, see the [Engineering Climate Datasets](https://climate.weather.gc.ca/prods_servs/engineering_e.html) page. Place downloaded files in the folder described by the repository's data layout; CWEEDS files are expected under `input/climate/CWEEDS/`.
+Coverage and availability vary by location and workflow. Some geographic features, including terrain mesh and terrain texture, require an API key. For Canadian CWEEDS data, consult [Engineering Climate Datasets](https://climate.weather.gc.ca/prods_servs/engineering_e.html). CWEEDS files are expected under `input/climate/CWEEDS/`.
 
-### 4. Build or prepare a scene
+### Check data before interpreting results
 
-Use the `3D-create` menu to add supported objects. Available object types include houses, parametric surfaces, boxes, cones, cushions, cylinders, spheres, planes, polygons, extrusions, surfaces, polylines, points, trees, people, and cameras.
+Confirm the source, geographic representativeness, time coverage, units, missing values, and processing assumptions. Typical weather years, historical records, recent observations, deterministic forecasts, and ensemble forecasts describe different aspects of environmental conditions and should not be treated as interchangeable.
+
+A typical weather file is useful for many building-energy workflows, but it does not represent every possible weather pattern or extreme. A forecast is not a climate projection, and a single observation station is not automatically representative of the project site.
+
+Solar quantities need particular care. A dataset may not provide solar radiation directly, or may provide it at a coarser time step than the analysis requires. Some workflows may derive direct and diffuse solar components from other forecast parameters or estimate hourly values from coarser intervals. Such values are **derived estimates**, not direct measurements; they depend on the source data, method, and assumptions. When using estimated or interpolated data, document the source variables, time step, assumptions, and uncertainty.
+
+### Match solar studies to the design question
+
+The appropriate study depends on the design stage and the question being asked. A quick sun-path review can help with orientation, while time-dependent studies using representative weather or climate data can reveal seasonal patterns that a single date or image may miss. For building-skin and urban-fabric studies, where the required inputs and workflows are available, hourly analysis over a year—or comparison across multiple years—can help distinguish recurring patterns from conditions tied to a particular period.
+
+When comparing design alternatives, consider:
+
+1. **Surface orientation and inclination.** Compare relevant façades, roofs, canopies, and other surfaces.
+2. **Direct and diffuse components.** Where supported, consider these separately before interpreting global solar exposure.
+3. **Shading and surrounding geometry.** Review how building form, adjacent buildings, trees, and other obstructions alter solar access.
+4. **Seasonal context.** Compare periods when solar gains may be useful with periods when exposure may contribute to overheating or other undesirable effects.
+5. **Variability and extremes.** Alongside averages, inspect relevant extremes and probabilities when the available dataset supports them.
+
+Before comparing results, record the site and orientation, dataset and period, whether solar values are measured or derived, temporal resolution, selected statistic or forecast members, and relevant assumptions. Compare like with like and state limitations when presenting findings.
+
+## Modeling and analysis workflow
+
+### Create or import a scene
+
+Use the `3D-create` menu to add supported objects, including houses, parametric surfaces, boxes, cones, cushions, cylinders, spheres, planes, polygons, extrusions, surfaces, polylines, points, trees, people, and cameras.
 
 After choosing an object type, click in the 3D view to place it:
 
 - **Right-click:** Place the object on the land surface.
 - **Left-click:** Place the object on the surface of an existing 3D model.
 
-Default creation parameters are available under `Geometries & Space` → `Create`. Use the `3D-select`, `3D-alter`, `3D-modify`, and `3D-match` menus to select, adjust, modify, and align objects. The application supports importing `.obj` 3D files as well as its own scene geometry.
+Default creation parameters are available under `Geometries & Space` → `Create`. Use `3D-select`, `3D-alter`, `3D-modify`, and `3D-match` to select, adjust, modify, and align objects. The application supports importing `.obj` files as well as its own scene geometry.
 
-### 5. Explore solar and environmental conditions
+### Choose and interpret a study
 
 Start with an available study in the `Analysis` menu. General studies include wind patterns, orientation potential, hourly sun position, and annual sun paths, with active and passive variants where offered.
 
-For model-based studies such as `Urban solar potential (active)` and `Urban solar potential (passive)`, the README's current workflow requires preparing a selected `Section` or `Camera` first using `PreBake Viewport` or `Pre-bake Selected Sections`.
+Use the `3D-shade` menu to change the visualization, including options such as `Shade Global Solar` where available. Move through time to see how the display changes. Interpret colors and values according to the selected layer and its units; different layers can represent different environmental quantities.
 
-Use the `3D-shade` menu to change the visualization, including options such as `Shade Global Solar` where available. Move through time to see how the display changes. Interpret colors and values according to the selected layer and its units; different layers may represent different environmental quantities.
-
-### 6. Compare times and scenarios
+### Compare hours, days, years, and scenarios
 
 The **Case Bar** sits above the command bar. Its range controls let you select:
 
-- **Hours** within the data period.
+- **Hours** within the available data period.
 - **Days** to include in the study.
 - **Scenarios** for ensemble forecasts, or **Years** for multi-year climate input.
 
-Use a left-click to set the start of a range and a right-click to set its end. Statistical choices include minimum, average, maximum, 25th, 50th (median), and 75th percentiles, as well as the built-in `Middle`, `Mid-High`, and `Mid-Low` selections. These choices are not interchangeable: choose the statistic or scenario selection that best matches the question you are investigating.
+Use a left-click to set the start of a range and a right-click to set its end. Available statistical choices include minimum, average, maximum, the 25th, 50th (median), and 75th percentiles, plus built-in `Middle`, `Mid-High`, and `Mid-Low` selections. These options are not interchangeable: choose the statistic or scenario selection that matches the question being investigated.
 
-### 7. Save or export your work
+### Save and export
 
 Use the application's project save/load functions to retain supported scene and study information. Available export workflows include OBJ geometry, time-series or date-series OBJ, RAD, SCR, and HTML. These formats serve different purposes; check the target application's documentation before relying on an export for downstream production work.
 
-## Who can benefit from solar-climatic analysis?
-
-Solar and climatic analysis can inform more than the work of architects, urban planners, and landscape architects. Its results can help different stakeholders understand environmental conditions, compare alternatives, communicate priorities, and make better-informed decisions throughout the design and operation of buildings and natural or built environments.
-
-- **Architects and design teams** can assess building form, orientation, façades, shading, and relationships between indoor and outdoor spaces.
-- **Urban planners and municipalities** can examine neighborhood layouts, public spaces, vegetation, solar access, and the potential effects of development on surrounding areas.
-- **Landscape architects and environmental designers** can study terrain, trees, shade, and seasonal conditions in parks, streets, courtyards, and other outdoor spaces.
-- **Clients, owners, and project decision-makers** can use visual evidence to discuss design options, understand trade-offs, and align proposals with project objectives.
-- **Renewable-energy specialists and energy-system planners** can investigate solar exposure and potential at building and site scales as part of broader energy planning.
-- **Building users and facility or operations teams** can better understand how solar exposure, shading, and seasonal conditions may affect the use and operation of spaces.
-- **Scientists, researchers, and educators** can explore relationships among geometry, solar radiation, weather, climate, and environmental performance, and communicate findings to other audiences.
-
-The application does not make decisions on behalf of these groups. It provides a shared visual and analytical basis for discussion, helping design teams, clients, municipalities, energy specialists, researchers, and current or future users consider different objectives and trade-offs. The relevance of a result depends on the question being asked, the quality of the model and data, and any additional specialist analysis required.
-
-## Why include solar-climatic analysis in the design process?
-
-Environmental analysis is most useful when it informs decisions while there is still flexibility to change a proposal. Building orientation, dimensions, layout, massing, façade proportions, vegetation, and shading are already part of the design process; considering solar and climatic effects while making those choices can reveal opportunities without necessarily adding construction cost. The actual cost and benefit depend on the project, design alternatives, and level of analysis, so they should be evaluated rather than assumed.
-
-Solar-climatic analysis can support discussion of several connected objectives:
-
-- **Energy demand and production:** explore solar exposure and shading relevant to passive solar gains and the siting or assessment of solar-energy systems.
-- **Daylight, comfort, and health:** identify patterns of exposure and shade that may warrant closer investigation for indoor and outdoor environments.
-- **Seasonal performance and safety:** examine changing conditions across seasons and, where suitable data are available, average, unusual, and extreme weather scenarios.
-- **Design quality and place-making:** assess how building form and the arrangement of open spaces, trees, and neighboring structures influence one another.
-- **Communication and coordination:** use spatial views and time-based results to help technical specialists and non-specialist decision-makers compare options and discuss their implications.
-
-Use these analyses during early design comparisons, while refining building or landscape elements, or when investigating existing buildings and spaces in operation. They do not guarantee lower costs or better outcomes on their own; they provide evidence that can help teams make informed choices.
-
-## The SOLARCHVISION approach
-
-SOLARCHVISION is built around **solar-climatic vision**: rather than looking only *toward* the sun, look at a building, landscape, or urban space **from the sun's perspective**. Study where solar radiation reaches the site and its surfaces, when it arrives, and how the local climate and surrounding geometry change its effects. Use those findings throughout design to develop, compare, and refine alternatives.
-
-This is broader than adding photovoltaic panels or solar collectors to a completed design. The book *Intelligent Design using Solar-Climatic Vision* presents solar architecture as an integrated design problem spanning building form, orientation, the building skin, outdoor space, urban fabric, and the relationship between indoor and outdoor conditions. The method considers both immediate design decisions and longer-term performance, so that teams can investigate how alternatives may behave across seasons and changing weather conditions. The aim is to support places that are more climate-responsive, energy-conscious, healthy, comfortable, and safe.
-
-### What the method considers
-
-- **Solar geometry and timing:** The sun's position changes with geographic location, date, and hour. A design that performs well at one time may cast unwanted shadows—or receive unwanted exposure—at another.
-- **Local climate, not sunlight alone:** Interpret solar access alongside available temperature, direct and diffuse radiation, wind, cloud, and other meteorological information. Similar latitudes do not necessarily have similar weather or solar conditions.
-- **The building skin and architectural form:** Explore how orientation, massing, transparent and opaque surfaces, windows, shading and reflecting devices, and surface proportions influence solar gains and exposure.
-- **Landscape and urban space:** Consider trees, terrain, neighboring buildings, streets, paths, courtyards, plazas, and other outdoor spaces. A decision about one building can change conditions for adjacent buildings and public space.
-- **Benefits and trade-offs:** Solar exposure may be desirable for passive heating in cold periods and undesirable when it contributes to overheating. Shading may improve summer conditions but reduce useful winter sun or daylight. Compare these effects instead of optimizing for a single hour or season.
-- **People and use:** Consider energy demand together with daylight, thermal comfort, views, natural ventilation opportunities, and the quality of indoor and outdoor spaces. The design must respond to the needs of its occupants and the purpose of the place.
-
-### Active and passive solar-climatic analysis
-
-The book distinguishes two complementary ways to study design:
-
-- **Active analysis** examines the amount and distribution of solar radiation received by surfaces or spaces, helping reveal solar-energy potential.
-- **Passive analysis** examines the beneficial and undesirable effects of solar exposure on the building and surrounding spaces over selected periods, such as heating, cooling, or the annual cycle.
-
-Used together, these views help designers investigate both the radiation available at a location and whether its effects support the intended use of a building or outdoor space. The precise studies available in SOLARCHVISION-BIM depend on the selected analysis, model, and input data.
-
-### A practical design loop
-
-1. **Understand the site.** Establish the location, orientation, topography, surrounding geometry, intended use, and the reliability of available climate data.
-2. **Identify meaningful periods.** Study relevant hours and seasons, including the heating and cooling periods, transitional conditions, and locally important extremes—not only the solstices or a typical day.
-3. **Analyze the current proposal.** Use the available solar and environmental studies to locate desirable and undesirable conditions on the building skin, in rooms, and in outdoor spaces.
-4. **Develop alternatives.** Test changes to massing, orientation, window layout, shading or reflecting devices, vegetation, and site arrangement where relevant.
-5. **Compare the trade-offs.** Check how a change affects different orientations, spaces, seasons, and neighboring areas. A solution should be assessed in context rather than judged from a single image.
-6. **Repeat the analysis.** Refine the proposal and rerun the study. The analysis is intended to inform design decisions, not replace architectural judgment or other specialist calculations.
-
-### Work across scales and climate conditions
-
-The method can be applied from a neighborhood or urban layout down to individual buildings, façades, shading devices, and renewable-energy installations. It can inform both the design of new places and the review of existing buildings and spaces in operation. It also considers the time scale of the input information: hourly data across a year or multiple years can reveal seasonal patterns, long-term climate records can help characterize typical conditions, and historical extremes, multi-year variability, and forecast or scenario data can reveal other conditions that a design or operational decision may need to address, when suitable datasets are available.
-
-### Weather data and solar orientations
-
-In his chapter [“Weather Data and Solar Orientations”](https://doi.org/10.1007/978-3-319-15030-7_12), published in *Future City: Architecture for Optimal Living* (Springer, 2015, pp. 221–240), Mojtaba Samimi argues that solar design should use weather information as an integral part of architectural and urban decision-making—not treat solar technology, a typical meteorological file, or a single shading image as a complete environmental assessment.
-
-The chapter emphasizes several practical principles that inform the SOLARCHVISION approach:
-
-- **Match the data to the question.** Long-term historical climate records, recent observations, nowcasts, deterministic forecasts, and probabilistic or ensemble forecasts describe different aspects of environmental conditions. Use the types that are relevant to the design or operational decision and available for the location.
-- **Do not mistake a typical year for every possible condition.** Typical weather files are useful for many building-energy workflows, but they do not represent the full range of real-world weather, including all extremes and unusual patterns. Consider additional records or scenarios when these conditions matter.
-- **Analyze orientation over time.** The solar energy received by a surface depends on its orientation and inclination, the sun's position, direct and diffuse radiation, and the weather. Compare multiple directions, hours, months, and seasons rather than selecting an orientation from one snapshot.
-- **Interpret solar exposure with other weather variables.** Air temperature, cloud cover, wind speed and direction, and precipitation can change how solar conditions affect buildings and outdoor spaces. The chapter illustrates the use of hourly and daily summaries, seasonal distributions, probabilities, and forecast scenarios.
-- **Check the provenance and limitations of data.** Ask where observations were collected, whether they represent the project site, how missing solar components or time intervals were estimated, and what assumptions are introduced by interpolation or post-processing. Derived values should be identified as estimates, not mistaken for direct observations.
-- **Consider local impacts as well as building performance.** The chapter's Montréal case studies discuss annual solar-radiation and urban-impact analyses in relation to proposed towers, pedestrian comfort and safety, blocked views, falling ice, and urban heat-island concerns. They illustrate why the effects of a project on adjacent buildings and public spaces matter to planning decisions.
-
-These principles are useful when deciding what to analyze and how to interpret results. The availability of any particular variable, time resolution, forecast source, statistical method, or analysis in the current SOLARCHVISION-BIM release depends on the implemented workflow and the data supplied; the chapter's historical examples should not be read as a guarantee that every illustrated capability is present in the current application.
-
-**Data quality matters.** Before relying on an analysis, check the source, geographic representativeness, coverage, units, time period, processing assumptions, and suitability of the dataset for the question. Statistical summaries and forecast scenarios are useful only when their assumptions and limitations are understood.
-
-SOLARCHVISION-BIM brings 3D geometry, geographic context, supported weather and climate data, time-dependent visualization, and study comparisons into one workspace. It can help users investigate alternatives and identify issues for further analysis. It does not, by itself, guarantee a universally optimal design or replace specialist energy, daylight, structural, or building-services simulations where those are required.
-
-The solar-climatic vision approach is discussed in two complementary publications:
-
-- Samimi, Mojtaba. [“Weather Data and Solar Orientations.”](https://doi.org/10.1007/978-3-319-15030-7_12) In *Future City: Architecture for Optimal Living*, edited by Stamatina Th. Rassia and Panos M. Pardalos, Springer, 2015, pp. 221–240.
-- Samimi, Mojtaba, and Farshad Nasrollahi. [*Intelligent Design using Solar-Climatic Vision: Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION*](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8). Young Cities Research Paper Series, Volume 09, 2014.
-
-## Common tasks
-
-### Select a weather station on the map
-
-Click in the world view to select the nearest station from the currently active dataset. A left-click zooms in to the most detailed map level; a right-click keeps the current zoom, which can help when comparing several locations. When multiple stations are within the dataset's search radius, a list appears so you can choose the intended station.
-
-### Work with weather layers
-
-Weather layers fall into two broad categories:
-
-- **General layers:** Values available directly from the source weather data; missing values may be filled through post-processing.
-- **Developed layers:** Variables generated by processing the source data rather than supplied directly in the original file.
-
-Check the layer name, units, time range, and data source before comparing results.
-
-### Change the view layout
-
-Use the `Setup` menu to select a predefined 3D model or time-view layout. Enlarge the time view when a graph or study layout is too small to read in the current arrangement.
-
 ## Keyboard shortcuts
 
-When the command bar is hidden (the default mode), these shortcuts can help you navigate and explore. The application may interpret keys differently when a text field or command bar has focus.
+Shortcuts may behave differently when a text field or the command bar has focus.
 
 ### General
 
@@ -303,7 +235,7 @@ When the command bar is hidden (the default mode), these shortcuts can help you 
 | Shortcut | Action |
 | --- | --- |
 | `DELETE` | Delete selected items |
-| `Shift+UP` / `Shift+DOWN` | Move, rotate, scale, or adjust properties of the selection, depending on the active control |
+| `Shift+UP` / `Shift+DOWN` | Move, rotate, scale, or adjust selection properties, depending on the active control |
 | `c` / `C` | Switch to available cameras in the scene |
 | `ENTER` | Rebuild global and vertex solar-energy/impact data |
 | `SPACE` | Advance time and shade the view |
@@ -312,8 +244,6 @@ When the command bar is hidden (the default mode), these shortcuts can help you 
 | `t` / `T` | Change the forecast hour used for atmospheric visualization |
 
 ### Time graphs and layouts
-
-These shortcuts act on the time/study view.
 
 | Shortcut | Action |
 | --- | --- |
@@ -332,64 +262,112 @@ These shortcuts act on the time/study view.
 | `n` / `N` | Show or hide statistics on the hourly graph |
 | `m` / `M` | Show or hide sorted values on the hourly graph |
 
-## Command bar and advanced workflows
+## Command bar and automation
 
-The command bar is optional. It is useful for setting a value precisely, repeating a series of operations, or running commands from scripts. Press `TAB` to show or hide it, or click inside the dark command area at the bottom of the interface.
+The command bar is optional. It is useful for setting values precisely, repeating operations, or running commands from scripts. Press `TAB` to show or hide it, or click inside the dark command area at the bottom of the interface.
 
-See the [command reference](command/README.md) for available commands covering project files, object creation and editing, camera and view controls, dates, palettes, latitude/longitude, numeric controls, and on/off settings. For example, `day 15` sets the day value through the command interface.
+See the [command reference](command/README.md) for commands covering project files, object creation and editing, camera and view controls, dates, palettes, latitude/longitude, numeric controls, and on/off settings. For example, `day 15` sets the day value through the command interface.
 
-## SOLARCHVISION method and publications
+## The SOLARCHVISION approach
 
-The publications below explain the principles behind SOLARCHVISION's solar-climatic approach and provide examples of how weather data, solar orientations, building geometry, and urban context can inform design decisions. The chapter “Weather Data and Solar Orientations” discusses the strengths and limits of typical weather files, the complementary roles of historical observations and forecast scenarios, and the need to assess solar exposure across different orientations and time periods. Its Montréal examples show how solar-radiation and urban-impact studies can inform discussion of proposed development and the effects on nearby public spaces. The coauthored book *Intelligent Design using Solar-Climatic Vision* further develops the approach through solar-path and climate diagrams, building-skin studies, architectural case studies, and urban/neighborhood analyses in locations including Montréal, Tehran, Abu Dhabi, and European cities. It also describes work conducted within the German-Iranian **Young Cities** research project, including neighborhood analysis for the Shahre Javan Community and studies of an office-building design.
+**Solar-climatic vision means looking at architecture and urban space from the perspectives of the sun and climate.** Rather than treating sunlight as an unqualified benefit or relying only on a sun-path diagram, investigate where radiation reaches a surface or space, when it arrives, and whether its effect is desirable under local climatic conditions.
 
-- Samimi, Mojtaba. [“Weather Data and Solar Orientations.”](https://doi.org/10.1007/978-3-319-15030-7_12) In *Future City: Architecture for Optimal Living*, edited by Stamatina Th. Rassia and Panos M. Pardalos, Springer, 2015, pp. 221–240.
+The approach treats solar design as an integrated problem spanning building form, orientation, the building skin, outdoor space, urban fabric, and renewable-energy systems. It considers both immediate design decisions and longer-term performance across seasons and changing weather conditions. The analysis is most useful when introduced early enough to influence fundamental choices—such as orientation, dimensions, layout, façade proportions, landscape placement, and shading—rather than being used only to check a nearly finished design.
+
+The purpose is to help a project team identify promising options, recognize areas that may need further investigation, and exchange evidence in forms that support discussion among architects, landscape architects, urban planners, energy modelers, clients, municipalities, and other decision-makers.
+
+### Active and passive strategies are complementary
+
+- **Active solar strategy:** Shape and orient buildings and surfaces to make solar energy available for useful purposes. Depending on the project and systems, this may include solar collection or electricity generation.
+- **Passive solar-climatic strategy:** Evaluate both beneficial and undesirable effects of solar radiation on buildings and outdoor spaces. Solar heat gains can help during cold periods but contribute to overheating during warm periods.
+
+A design should not maximize solar exposure everywhere. It should balance useful gains and unwanted exposure while considering daylight, views, ventilation, construction, operation, and the needs of people using the space.
+
+### From radiation to solar-climatic effect
+
+The amount of solar radiation is not the same as its effect in a particular climate. The method described in the SOLARCHVISION publications includes the *Degree of Need to Shade/Shine*, which relates solar radiation to the difference between outdoor temperature and a desired indoor temperature. This provides a way to distinguish periods when solar radiation may be beneficial from periods when shading or other responses may be desirable.
+
+### Analyze the whole design—not just one façade
+
+1. **Building skin:** Study each orientation, transparent and opaque surfaces, overhangs, vertical and horizontal shading, and reflective elements.
+2. **Building form and layout:** Compare orientation, proportions, massing, self-shading, and the relationship between transparent and opaque surfaces.
+3. **Indoor and outdoor conditions:** Consider how solar exposure and shade may affect energy demand, daylight, comfort, and use of interior and exterior spaces.
+4. **Outdoor space and urban fabric:** Examine how buildings, street orientation, spacing, trees, terrain, and secondary structures affect courtyards, sidewalks, plazas, and other public spaces.
+5. **Renewable-energy systems and site planning:** Where relevant, consider solar collectors and other renewable-energy elements alongside building and landscape decisions; combine solar-climatic information with geographic and planning layers where supported.
+
+### A practical solar-climatic design loop
+
+1. **Establish the context.** Confirm location, orientation, topography where relevant, intended use, surrounding geometry, and the quality and coverage of available climate data.
+2. **Choose meaningful periods and data types.** Consider representative climate patterns and relevant extremes. Where appropriate, compare long-term records, observations, and forecast scenarios.
+3. **Check the solar inputs.** Confirm whether direct, diffuse, and global radiation values are supplied, estimated, interpolated, or post-processed. Note the time step and assumptions.
+4. **Map performance and potential risks.** Review relevant surfaces and indoor or outdoor spaces across hours, days, and seasons. Look for both beneficial conditions and potential problems such as excessive exposure, persistent shade, overheating, or seasonal safety concerns.
+5. **Generate alternatives.** Test changes to orientation, massing, transparent and opaque façade areas, shading devices, trees, landscape elements, and public-space layout where appropriate.
+6. **Compare trade-offs.** Consider energy demand and production, comfort, daylight, health, safety, views, constructability, operation, and effects on neighboring spaces together.
+7. **Communicate and refine.** Share views, graphs, and supported exports with the design team; repeat the analysis after design changes. Use specialist daylight, thermal, energy, wind, safety, or other simulation tools where required.
+
+The method can inform early design, refinement of building or landscape elements, and review of existing places. It supports the identification of design questions and alternatives; it does not guarantee a universally optimal design or replace formal risk assessment or specialist calculations.
+
+## Method and publications
+
+The following publications describe the principles behind SOLARCHVISION's solar-climatic approach and show how weather data, solar orientation, building geometry, and urban context can inform design decisions.
+
 - Samimi, Mojtaba, and Farshad Nasrollahi. [*Intelligent Design using Solar-Climatic Vision: Energy and Comfort Improvement in Architecture and Urban Planning using SOLARCHVISION*](https://depositonce.tu-berlin.de/items/c091139a-09cf-44c3-99a9-6adf59f7eaf8). Young Cities Research Paper Series, Volume 09, 2014.
-- [Presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
+- Samimi, Mojtaba. [“Weather Data and Solar Orientations.”](https://doi.org/10.1007/978-3-319-15030-7_12) In *Future City: Architecture for Optimal Living*, edited by Stamatina Th. Rassia and Panos M. Pardalos, Springer, 2015, pp. 221–240.
+- [SOLARCHVISION presentation at Ouranos](https://www.dropbox.com/scl/fo/5r66ns7r9j0rezprwa567/ADuKLQ_qQo98gDnlqDQMXVY?dl=0&e=2&preview=SOLARCHVISION_2015_12_09_Ouranos.pdf&rlkey=0x1wzfy5dll3bvx6j9ltw96v6)
 - [BIM6D presentation](https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtibaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1)
 
 ## Technical overview
 
-This section summarizes the main capabilities for readers who want a more detailed understanding of the application. Most users can begin with **Getting started**, **Common tasks**, and **Keyboard shortcuts** without reading this section first.
-
 ### Modeling and visualization
 
-SOLARCHVISION-BIM includes a 3D geometry system for points, faces, solids, groups, polylines, materials, and 1D/2D models. It supports object creation, selection, transformation, grouping, visibility, layers, and material assignment. Procedural vegetation and parametric objects can be used to represent aspects of the built and natural environment.
+The application includes a 3D geometry system for points, faces, solids, groups, polylines, materials, and 1D/2D models. Supported workflows include object creation, selection, transformation, grouping, visibility, layers, and material assignment. Procedural vegetation and parametric objects can represent aspects of the built and natural environment.
 
 The interface provides 3D, world/geographic, and study/time views. Rendering supports perspective and orthographic cameras, surface and edge display, analytical overlays, and cached or clipped rendering for interactive performance.
 
 ### Solar, shade, and environmental analysis
 
-Solar calculations use the project's geographic location and time, together with weather or climate radiation data and modeled geometry. The application includes direct and diffuse radiation handling, solar direction, shadow/occlusion calculations, and surface-level impact visualization. The model's surrounding geometry can affect estimated exposure and shade.
-
-Other environmental features include wind visualization, wind-rose views, environmental impact fields, contours and raster-like representations, and atmospheric/cloud visualization. The exact outputs depend on the selected study and available input data.
+Solar workflows use the project location and time, weather or climate radiation data, and modeled geometry. Supported calculations and visualizations include solar direction, direct and diffuse radiation handling, shadow/occlusion calculations, and surface-level impact display. Other environmental features may include wind visualization, wind-rose views, environmental impact fields, contours, raster-like representations, and atmospheric/cloud visualization. Exact outputs depend on the selected study and available data.
 
 ### Weather, climate, and scenario data
 
-Supported workflows include EPW/TMY, CWEEDS, CLMREC, ensemble forecast and observation data, and meteorological station data. The application separates loading, processing, and analysis so source values can be prepared into variables and visual layers. Ensemble and multi-year data can be explored across hours, days, scenarios, and years, with statistical summaries and percentile-based views.
+Supported workflows include EPW/TMY, CWEEDS, CLMREC, ensemble forecast and observation data, and meteorological station data. Loading, processing, and analysis workflows prepare source data for variables and visual layers. Ensemble and multi-year data can be explored across hours, days, scenarios, and years, with statistical summaries and percentile-based views where supported.
 
 ### Geographic context and time
 
-The geographic subsystem supports latitude/longitude positioning, map projections, map tiles, station locations, zoom levels, and terrain visualization. The Earth model can display map imagery around the project location with geographic grid and terrain context. Time-dependent studies can be explored by hour, day, season, annual period, forecast period, or scenario, depending on the dataset.
+The geographic subsystem supports latitude/longitude positioning, map projections, map tiles, station locations, zoom levels, and terrain visualization. The Earth model can display map imagery around the project location with geographic-grid and terrain context. Time-dependent studies can be explored by hour, day, season, annual period, forecast period, or scenario, depending on the dataset.
 
 ### Projects, commands, and exchange
 
-Project persistence uses structured XML data for supported model geometry, layers, materials, station information, time state, study configuration, analysis settings, and object properties. The command system supports interactive entry and scripts/text files for repeatable operations. Export options include OBJ, time-series/date-series OBJ, RAD, SCR, and HTML.
+Project persistence uses structured XML for supported model geometry, layers, materials, station information, time state, study configuration, analysis settings, and object properties. The command system supports interactive entry and scripts or text files for repeatable operations. Export options include OBJ, time-series/date-series OBJ, RAD, SCR, and HTML.
 
-### Main workflow at a glance
+A typical supported workflow is:
 
 ```text
-Building / Site Model + Geographic Location
+Building or Site Model + Geographic Location
                     ↓
-             Weather / Climate Data
+           Weather / Climate Data
                     ↓
-          Choose Time and Scenarios
+          Select Time and Scenarios
                     ↓
        Solar / Shade / Environmental Study
                     ↓
-       Explore 3D Views and Study Graphs
+        Explore 3D Views and Study Graphs
                     ↓
-             Save or Export Results
+               Save or Export
 ```
+
+For exact commands and additional workflows, consult the [command reference](command/README.md).
+
+## Contribute and follow the project
+
+SOLARCHVISION-BIM is open source. If it is useful to your work:
+
+- **Star the repository** to help others discover it.
+- **Follow the project** for updates.
+- **Try it and report issues** through the [GitHub repository](https://github.com/archmoj/solarchvision_bim).
+- **Explore the code and contribute** improvements, documentation, or bug reports.
+
+When reporting an issue, include your operating system, the steps to reproduce the problem, the relevant dataset or workflow, and any error message that may help diagnose it.
 
 ## License
 
