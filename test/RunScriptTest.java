@@ -681,7 +681,7 @@ class RunScriptTest {
     app.build_allActions();
     app.STUDY.impactGraphIndex = -1;
 
-    String hintSpaced = app.runScriptLine("Wind pattern (active)");
+    String hintSpaced = app.runScriptLine("Wind Pattern (Active)");
     assertEquals("", hintSpaced);
     assertEquals(app.impactGraphIndex_WIND_ACTIVE, app.STUDY.impactGraphIndex);
 

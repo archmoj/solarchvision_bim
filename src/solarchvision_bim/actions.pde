@@ -253,43 +253,43 @@ void build_allActions() {
     fetchProject();
   });
 
-  putAction("Open...", () -> {
+  putAction("Open", () -> {
     selectFile_Open();
   });
 
-  putAction("Save As...", () -> {
+  putAction("Save As", () -> {
     selectFile_SaveAs();
   });
 
-  putAction("Import 3D-model...", () -> {
+  putAction("Import OBJ", () -> {
     selectFile_ImportObj();
   });
 
-  putAction("Import Command File...", () -> {
+  putAction("Import Commands", () -> {
     selectFile_RunScript();
   });
 
-  putAction("Export 3D-model > OBJ (time-series)", () -> {
+  putAction("Export 3D > OBJ (time-series)", () -> {
     exportObj_timeSeries();
   });
 
-  putAction("Export 3D-model > OBJ (date-series)", () -> {
+  putAction("Export 3D > OBJ (date-series)", () -> {
     exportObj_dateSeries();
   });
 
-  putAction("Export 3D-model > OBJ", () -> {
+  putAction("Export 3D > OBJ", () -> {
     exportObj("");
   });
 
-  putAction("Export 3D-model > HTML", () -> {
+  putAction("Export 3D > HTML", () -> {
     exportHtml();
   });
 
-  putAction("Export 3D-model > RAD", () -> {
+  putAction("Export 3D > RAD", () -> {
     exportRadiance();
   });
 
-  putAction("Export 3D-model > SCR", () -> {
+  putAction("Export 3D > SCR", () -> {
     exportAutocadScript();
   });
 
@@ -298,25 +298,25 @@ void build_allActions() {
     exit();
   });
 
-  putAction("Wind pattern (active)", () -> setimpactGraphIndex(impactGraphIndex_WIND_ACTIVE, true));
+  putAction("Wind Pattern (Active)", () -> setimpactGraphIndex(impactGraphIndex_WIND_ACTIVE, true));
 
-  putAction("Wind pattern (passive)", () -> setimpactGraphIndex(impactGraphIndex_WIND_PASSIVE, true));
+  putAction("Wind Pattern (Passive)", () -> setimpactGraphIndex(impactGraphIndex_WIND_PASSIVE, true));
 
-  putAction("Skin potential (active)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_ACTIVE, false));
+  putAction("Skin Potential (Active)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_ACTIVE, false));
 
-  putAction("Skin potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_PASSIVE, false));
+  putAction("Skin Potential (Passive)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_PASSIVE, false));
 
-  putAction("Pose potential (active)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_ACTIVE, false));
+  putAction("Pose Potential (Active)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_ACTIVE, false));
 
-  putAction("Pose potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_PASSIVE, false));
+  putAction("Pose Potential (Passive)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_PASSIVE, false));
 
-  putAction("Hourly sun (active)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_ACTIVE, false));
+  putAction("Hourly Sun (Active)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_ACTIVE, false));
 
-  putAction("Hourly sun (passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
+  putAction("Hourly Sun (Passive)", () -> setimpactGraphIndex(impactGraphIndex_SUNPATH_PASSIVE, false));
 
-  putAction("Sun path (active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
+  putAction("Sun Path (Active)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_ACTIVE, false));
 
-  putAction("Sun path (passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
+  putAction("Sun Path (Passive)", () -> setimpactGraphIndex(impactGraphIndex_CYCLES_PASSIVE, false));
 
   putAction("Prebake Selected Sections", () -> {
     allSolarImpacts.render_Shadows_selectedSections();
@@ -344,73 +344,73 @@ void build_allActions() {
     view_changed();
   });
 
-  putAction("Run wind 3D-model", () -> {
+  putAction("Run 3D Wind Model", () -> {
     allSolidImpacts.calculate_WindFlow();
 
     view_changed();
   });
 
-  putAction("Stop REC.", () -> {
+  putAction("Stop Recording", () -> {
     stopAllRecording();
 
     UI_rollout.revise();
   });
 
-  putAction("REC. Time Graph", () -> {
+  putAction("Record Time Graph", () -> {
     stopAllRecording();
     STUDY.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  putAction("REC. Location Graph", () -> {
+  putAction("Record Map Graph", () -> {
     stopAllRecording();
     WORLD.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  putAction("REC. Solid Graph", () -> {
+  putAction("Record Solid Graph", () -> {
     stopAllRecording();
     WIN3D.record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  putAction("REC. Screenshot", () -> {
+  putAction("Record Screenshot", () -> {
     stopAllRecording();
     FRAME_record_AUTO = true;
 
     UI_rollout.revise();
   });
 
-  putAction("PDF Time Graph", () -> {
+  putAction("Save PDF Time Graph", () -> {
     STUDY.record_PDF = true;
     STUDY.revise();
   });
 
-  putAction("JPG Time Graph", () -> {
+  putAction("Save JPG Time Graph", () -> {
     STUDY.record_IMG = true;
     STUDY.revise();
   });
 
-  putAction("JPG Location Graph", () -> {
+  putAction("Save JPG Map Graph", () -> {
     WORLD.record_IMG = true;
     WORLD.revise();
   });
 
-  putAction("PDF Location Graph", () -> {
+  putAction("Save PDF Map Graph", () -> {
     WORLD.record_PDF = true;
     WORLD.revise();
   });
 
-  putAction("JPG 3D Graph", () -> {
+  putAction("Save JPG 3D Graph", () -> {
     WIN3D.record_IMG = true;
 
     view_changed();
   });
 
-  putAction("JPG 3D Full-Period", () -> {
+  putAction("Save JPG 3D Graph (Full-Period)", () -> {
     WIN3D.fullPeriod_IMG = true;
     WIN3D.record_IMG = true;
 
@@ -421,11 +421,11 @@ void build_allActions() {
     FRAME_record_IMG = true;
   });
 
-  putAction("Screenshot+Click", () -> {
+  putAction("Click Screenshot", () -> {
     FRAME_click_IMG = true;
   });
 
-  putAction("Screenshot+Drag", () -> {
+  putAction("Drag Screenshot", () -> {
     FRAME_drag_IMG = true;
   });
 
@@ -923,61 +923,61 @@ void build_allActions() {
     view_changed();
   });
 
-  putAction("Show/Hide Ensemble Observation stations", () -> {
+  putAction("Show/Hide Ensemble Observation Stations", () -> {
     WORLD.ensembleObservationDisplayAll = (WORLD.ensembleObservationDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Ensemble Observation nearest", () -> {
+  putAction("Show/Hide Ensemble Observation Nearest", () -> {
     WORLD.ensembleObservationDisplayNear = !WORLD.ensembleObservationDisplayNear;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Ensemble Forecast stations", () -> {
+  putAction("Show/Hide Ensemble Forecast Stations", () -> {
     WORLD.ensembleForecastDisplayAll = (WORLD.ensembleForecastDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Ensemble Forecast nearest", () -> {
+  putAction("Show/Hide Ensemble Forecast Nearest", () -> {
     WORLD.ensembleForecastDisplayNear = !WORLD.ensembleForecastDisplayNear;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Climate Engineering stations", () -> {
+  putAction("Show/Hide Climate Engineering Stations", () -> {
     WORLD.climateEngineeringDisplayAll = (WORLD.climateEngineeringDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Climate Engineering nearest", () -> {
+  putAction("Show/Hide Climate Engineering Nearest", () -> {
     WORLD.climateEngineeringDisplayNear = !WORLD.climateEngineeringDisplayNear;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Climate Archive stations", () -> {
+  putAction("Show/Hide Climate Archive Stations", () -> {
     WORLD.climateArchiveDisplayAll = (WORLD.climateArchiveDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Climate Archive nearest", () -> {
+  putAction("Show/Hide Climate Archive Nearest", () -> {
     WORLD.climateArchiveDisplayNear = !WORLD.climateArchiveDisplayNear;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Climate Typical Year stations", () -> {
+  putAction("Show/Hide Climate Typical Year Stations", () -> {
     WORLD.climateTypicalYearDisplayAll = (WORLD.climateTypicalYearDisplayAll + 1) % 2;
 
     WORLD.revise();
   });
 
-  putAction("Show/Hide Climate Typical Year nearest", () -> {
+  putAction("Show/Hide Climate Typical Year Nearest", () -> {
     WORLD.climateTypicalYearDisplayNear = !WORLD.climateTypicalYearDisplayNear;
 
     WORLD.revise();
@@ -2440,7 +2440,7 @@ void build_allActions() {
 
   for (int n = 1; n <= 11; n++) {
     final int modelIndex = n;
-    putAction("3D-model " + nf(modelIndex, 0), () -> {
+    putAction("3D Model " + nf(modelIndex, 0), () -> {
       deleteAll();
       Create3D.add_DefaultModel(modelIndex);
       allSolidImpacts.calculate_Impact_selectedSections();

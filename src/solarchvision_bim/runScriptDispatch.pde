@@ -79,7 +79,7 @@ String[] tokenizeScriptLine (String lineSTR) {
   return split(transformedLine, ' ');
 }
 
-// Tier 1: full-line match - menu captions such as "Save As..." that may
+// Tier 1: full-line match - menu captions such as "Save As" that may
 // contain spaces and take no arguments. Skipped when the full line is
 // exactly one of bypassAllActionsFor's bare, switch-case-reserved names
 // (see that set's own comment): that bare caption also has its own,

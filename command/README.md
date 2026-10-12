@@ -73,8 +73,8 @@ This page has two parts:
 -   `QUIT`: Exits the software
 
 Several of these are also reachable by their on-screen menu caption, if
-you prefer that form: `Open...`, `Save As...`, `Import 3D-model...`,
-`Import Command File...`, `Export 3D-model > OBJ` (and
+you prefer that form: `Open`, `Save As`, `Import OBJ`,
+`Import Commands`, `Export 3D > OBJ` (and
 `> OBJ (time-series)`, `> OBJ (date-series)`, `> HTML`, `> RAD`, `> SCR`).
 
 ------------------------------------------------------------------------
@@ -979,12 +979,12 @@ around.
 
 ### Screenshots and recording
 
--   `Screenshot`, `Screenshot+Click`, `Screenshot+Drag`
--   `REC. Screenshot`, `REC. Time Graph`, `REC. Location Graph`,
-    `REC. Solid Graph`, `Stop REC.`
--   `JPG 3D Graph`, `JPG 3D Full-Period`, `JPG Time Graph`,
-    `JPG Location Graph`
--   `PDF Time Graph`, `PDF Location Graph`
+-   `Screenshot`, `Click Screenshot`, `Drag Screenshot`
+-   `Record Screenshot`, `Record Time Graph`, `Record Map Graph`,
+    `Record Solid Graph`, `Stop Recording`
+-   `Save JPG 3D Graph`, `Save JPG 3D Graph (Full-Period)`, `Save JPG Time Graph`,
+    `Save JPG Map Graph`
+-   `Save PDF Time Graph`, `Save PDF Map Graph`
 
 ### Weather and climate data
 
@@ -1005,13 +1005,13 @@ around.
 
 -   `Process Active Impact`, `Process Passive Impact`,
     `Process Solid Impact`
--   `Wind pattern (active)`, `Wind pattern (passive)`
--   `Skin potential (active)`, `Skin potential (passive)`
--   `Pose potential (active)`, `Pose potential (passive)`
--   `Hourly sun (active)`, `Hourly sun (passive)`
--   `Sun path (active)`, `Sun path (passive)`
+-   `Wind Pattern (Active)`, `Wind Pattern (Passive)`
+-   `Skin Potential (Active)`, `Skin Potential (Passive)`
+-   `Pose Potential (Active)`, `Pose Potential (Passive)`
+-   `Hourly Sun (Active)`, `Hourly Sun (Passive)`
+-   `Sun Path (Active)`, `Sun Path (Passive)`
 -   `Active Shade`, `Passive Shade`
--   `Run wind 3D-model`
+-   `Run 3D Wind Model`
 -   `Prebake Selected Sections`
 -   `Toggle Impact Type`: switches between the impact-type variations
     shown on the active shading mode

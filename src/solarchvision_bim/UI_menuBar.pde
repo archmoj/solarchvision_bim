@@ -63,45 +63,45 @@ class UI_menuBar {
     {
       "File",
       "New",
-      "Open...",
+      "Open",
       ___divider___,
-      "Import 3D-model...",
-      "Import Command File...",
+      "Import OBJ",
+      "Import Commands",
       ___divider___,
       "Hold",
       "Fetch",
       ___divider___,
       "Save",
-      "Save As...",
+      "Save As",
       ___divider___,
-      "Export 3D-model > SCR",
-      "Export 3D-model > RAD",
-      "Export 3D-model > HTML",
-      "Export 3D-model > OBJ",
-      "Export 3D-model > OBJ (date-series)",
-      "Export 3D-model > OBJ (time-series)",
+      "Export 3D > SCR",
+      "Export 3D > RAD",
+      "Export 3D > HTML",
+      "Export 3D > OBJ",
+      "Export 3D > OBJ (date-series)",
+      "Export 3D > OBJ (time-series)",
       ___divider___,
       "Quit"
     }
     ,
     {
       "Tools",
-      "JPG Time Graph",
-      "PDF Time Graph",
-      "JPG Location Graph",
-      "PDF Location Graph",
-      "JPG 3D Graph",
-      "JPG 3D Full-Period",
+      "Save JPG Time Graph",
+      "Save PDF Time Graph",
+      "Save JPG Map Graph",
+      "Save PDF Map Graph",
+      "Save JPG 3D Graph",
+      "Save JPG 3D Graph (Full-Period)",
       ___divider___,
       "Screenshot",
-      "Screenshot+Click",
-      "Screenshot+Drag",
+      "Click Screenshot",
+      "Drag Screenshot",
       ___divider___,
-      "REC. Time Graph",
-      "REC. Location Graph",
-      "REC. Solid Graph",
-      "REC. Screenshot",
-      "Stop REC.",
+      "Record Screenshot",
+      "Record Time Graph",
+      "Record Map Graph",
+      "Record Solid Graph",
+      "Stop Recording",
       ___divider___,
       "Add People on Land",
       "Add 2D-Trees on Land",
@@ -152,16 +152,16 @@ class UI_menuBar {
       "Download Ensemble Forecast",
       "Download Ensemble Observation",
       ___divider___,
-      "Show/Hide Climate Typical Year stations",
-      "Show/Hide Climate Typical Year nearest",
-      "Show/Hide Climate Engineering stations",
-      "Show/Hide Climate Engineering nearest",
-      "Show/Hide Climate Archive stations",
-      "Show/Hide Climate Archive nearest",
-      "Show/Hide Ensemble Observation stations",
-      "Show/Hide Ensemble Observation nearest",
-      "Show/Hide Ensemble Forecast stations",
-      "Show/Hide Ensemble Forecast nearest"
+      "Show/Hide Climate Typical Year Stations",
+      "Show/Hide Climate Typical Year Nearest",
+      "Show/Hide Climate Engineering Stations",
+      "Show/Hide Climate Engineering Nearest",
+      "Show/Hide Climate Archive Stations",
+      "Show/Hide Climate Archive Nearest",
+      "Show/Hide Ensemble Observation Stations",
+      "Show/Hide Ensemble Observation Nearest",
+      "Show/Hide Ensemble Forecast Stations",
+      "Show/Hide Ensemble Forecast Nearest"
     }
     ,
     {
@@ -183,17 +183,17 @@ class UI_menuBar {
       "Layout 7",
       "Layout 8",
       ___divider___,
-      "3D-model 1",
-      "3D-model 2",
-      "3D-model 3",
-      "3D-model 4",
-      "3D-model 5",
-      "3D-model 6",
-      "3D-model 7",
-      "3D-model 8",
-      "3D-model 9",
-      "3D-model 10",
-      "3D-model 11"
+      "3D Model 1",
+      "3D Model 2",
+      "3D Model 3",
+      "3D Model 4",
+      "3D Model 5",
+      "3D Model 6",
+      "3D Model 7",
+      "3D Model 8",
+      "3D Model 9",
+      "3D Model 10",
+      "3D Model 11"
     }
     ,
     {
@@ -203,20 +203,20 @@ class UI_menuBar {
     ,
     {
       "Analysis",
-      "Wind pattern (active)",
-      "Wind pattern (passive)",
+      "Wind Pattern (Active)",
+      "Wind Pattern (Passive)",
       ___divider___,
-      "Pose potential (active)",
-      "Pose potential (passive)",
+      "Pose Potential (Active)",
+      "Pose Potential (Passive)",
       ___divider___,
-      "Hourly sun (active)",
-      "Hourly sun (passive)",
+      "Hourly Sun (Active)",
+      "Hourly Sun (Passive)",
       ___divider___,
-      "Sun path (active)",
-      "Sun path (passive)",
+      "Sun Path (Active)",
+      "Sun Path (Passive)",
       ___divider___,
-      "Skin potential (active)",
-      "Skin potential (passive)",
+      "Skin Potential (Active)",
+      "Skin Potential (Passive)",
       ___divider___,
       "Shade Viewport",
       ___divider___,
@@ -227,7 +227,7 @@ class UI_menuBar {
       "Process Passive Impact",
       ___divider___,
       "Process Solid Impact",
-      "Run wind 3D-model"
+      "Run 3D Wind Model"
     }
     ,
     {
@@ -625,16 +625,16 @@ class UI_menuBar {
     HashMap<String, java.util.function.BooleanSupplier> map = new HashMap<String, java.util.function.BooleanSupplier>();
 
     // "Location" menu
-    map.put(toggleKey("Location", "Show/Hide Ensemble Observation stations"),   () -> WORLD.ensembleObservationDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Ensemble Observation nearest"),    () -> !WORLD.ensembleObservationDisplayNear);
-    map.put(toggleKey("Location", "Show/Hide Ensemble Forecast stations"),  () -> WORLD.ensembleForecastDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Ensemble Forecast nearest"),   () -> !WORLD.ensembleForecastDisplayNear);
-    map.put(toggleKey("Location", "Show/Hide Climate Engineering stations"), () -> WORLD.climateEngineeringDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Climate Engineering nearest"),  () -> !WORLD.climateEngineeringDisplayNear);
-    map.put(toggleKey("Location", "Show/Hide Climate Archive stations"), () -> WORLD.climateArchiveDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Climate Archive nearest"),  () -> !WORLD.climateArchiveDisplayNear);
-    map.put(toggleKey("Location", "Show/Hide Climate Typical Year stations"), () -> WORLD.climateTypicalYearDisplayAll == 0);
-    map.put(toggleKey("Location", "Show/Hide Climate Typical Year nearest"),  () -> !WORLD.climateTypicalYearDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Ensemble Observation Stations"),   () -> WORLD.ensembleObservationDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Ensemble Observation Nearest"),    () -> !WORLD.ensembleObservationDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Ensemble Forecast Stations"),  () -> WORLD.ensembleForecastDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Ensemble Forecast Nearest"),   () -> !WORLD.ensembleForecastDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Climate Engineering Stations"), () -> WORLD.climateEngineeringDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Climate Engineering Nearest"),  () -> !WORLD.climateEngineeringDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Climate Archive Stations"), () -> WORLD.climateArchiveDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Climate Archive Nearest"),  () -> !WORLD.climateArchiveDisplayNear);
+    map.put(toggleKey("Location", "Show/Hide Climate Typical Year Stations"), () -> WORLD.climateTypicalYearDisplayAll == 0);
+    map.put(toggleKey("Location", "Show/Hide Climate Typical Year Nearest"),  () -> !WORLD.climateTypicalYearDisplayNear);
 
     // "3D-display" menu
     map.put(toggleKey("3D-display", "Show/Hide Terrain Mesh"),     () -> !Terrain.displaySurface);
