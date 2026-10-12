@@ -114,8 +114,8 @@ class RunScriptTest {
     assertEquals("", app.UI_consoleBar.allCommands.get(0));
   }
 
-  // ================= Delete All-<Category> regression =======================
-  // Previously "Delete All Model2Ds" (now "Delete All-Model2Ds") reached the
+  // ================= Delete All <Category> regression =======================
+  // Previously "Delete All Model2Ds" (now "Delete All Model2Ds") reached the
   // DELETE switch-case, whose per-token loop treated "all" and "model2ds" as
   // two *independent* instructions - "all" alone triggers deleteAll(), which
   // wipes every category, not just the one named. Registering the full
@@ -130,11 +130,11 @@ class RunScriptTest {
 
   @Test
   void deleteAllDashModel2Ds_onlyClearsModel2Ds () {
-    app.build_allActions(); // registers "Delete All-Model2Ds" itself - needed to reach it at all
+    app.build_allActions(); // registers "Delete All Model2Ds" itself - needed to reach it at all
     app.allModel2Ds.num = 1;
     app.allFaces.nodes = new int[1][4]; // unrelated category, seeded independently
 
-    String hint = app.runScriptLine("Delete All-Model2Ds");
+    String hint = app.runScriptLine("Delete All Model2Ds");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allModel2Ds.num, "the named category should actually be cleared");
@@ -147,7 +147,7 @@ class RunScriptTest {
     app.allModel1Ds.num = 1;
     app.allFaces.nodes = new int[1][4];
 
-    String hint = app.runScriptLine("Delete All-Model1Ds");
+    String hint = app.runScriptLine("Delete All Model1Ds");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allModel1Ds.num);
@@ -160,7 +160,7 @@ class RunScriptTest {
     app.allGroups.num = 1;
     app.allFaces.nodes = new int[1][4];
 
-    String hint = app.runScriptLine("Delete All-Groups");
+    String hint = app.runScriptLine("Delete All Groups");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allGroups.num);
@@ -173,7 +173,7 @@ class RunScriptTest {
     app.allSections.num = 1;
     app.allFaces.nodes = new int[1][4];
 
-    String hint = app.runScriptLine("Delete All-Sections");
+    String hint = app.runScriptLine("Delete All Sections");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allSections.num);
@@ -186,7 +186,7 @@ class RunScriptTest {
     app.allFaces.nodes = new int[1][4];
     app.allPolylines.nodes = new int[1][2]; // unrelated category this time
 
-    String hint = app.runScriptLine("Delete All-Faces");
+    String hint = app.runScriptLine("Delete All Faces");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allFaces.nodes.length, "the named category should actually be cleared");
@@ -199,7 +199,7 @@ class RunScriptTest {
     app.allPolylines.nodes = new int[1][2];
     app.allFaces.nodes = new int[1][4];
 
-    String hint = app.runScriptLine("Delete All-Polylines");
+    String hint = app.runScriptLine("Delete All Polylines");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allPolylines.nodes.length);
@@ -212,7 +212,7 @@ class RunScriptTest {
     app.allSolids.DEF = new float[1][13];
     app.allFaces.nodes = new int[1][4];
 
-    String hint = app.runScriptLine("Delete All-Solids");
+    String hint = app.runScriptLine("Delete All Solids");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(0, app.allSolids.DEF.length, "the named category should actually be cleared");
@@ -231,14 +231,14 @@ class RunScriptTest {
     assertEquals(2, app.allCameras.num, "sanity check: the extra camera was actually added");
     app.allFaces.nodes = new int[1][4];
 
-    String hint = app.runScriptLine("Delete All-Cameras");
+    String hint = app.runScriptLine("Delete All Cameras");
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(1, app.allCameras.num, "back to just the one camera every Cameras instance always keeps");
     assertEquals(1, app.allFaces.nodes.length, "an unrelated category must not be touched");
   }
 
-  // ================= Select All-<Category> =====================================
+  // ================= Select All <Category> =====================================
   // Less severe than Delete's bug (Select3D.selectAll() only ever acts on
   // whichever category is current, so the old dispatch order happened to
   // still switch to the right category first), but still worth locking in
@@ -247,7 +247,7 @@ class RunScriptTest {
   @Test
   void selectAllDashModel2Ds_switchesToTheModel2DCategory () {
     app.build_allActions();
-    String hint = app.runScriptLine("Select All-Model2Ds");
+    String hint = app.runScriptLine("Select All Model2Ds");
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.ObjectCategory.MODEL2D, app.currentObjectCategory);
   }
@@ -255,7 +255,7 @@ class RunScriptTest {
   @Test
   void selectAllDashSolids_switchesToTheSolidCategory () {
     app.build_allActions();
-    String hint = app.runScriptLine("Select All-Solids");
+    String hint = app.runScriptLine("Select All Solids");
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.ObjectCategory.SOLID, app.currentObjectCategory);
   }
@@ -263,29 +263,29 @@ class RunScriptTest {
   @Test
   void selectAllDashCameras_switchesToTheCameraCategory () {
     app.build_allActions();
-    String hint = app.runScriptLine("Select All-Cameras");
+    String hint = app.runScriptLine("Select All Cameras");
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(app.ObjectCategory.CAMERA, app.currentObjectCategory);
   }
 
-  // ================= other renamed "All-*" actions ===========================
+  // ================= other renamed "All *" actions ===========================
 
   @Test
   void hideAllDashFaces_isRecognized () {
     app.build_allActions();
-    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Hide All-Faces"));
+    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Hide All Faces"));
   }
 
   @Test
   void unhideAllDashFaces_isRecognized () {
     app.build_allActions();
-    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Unhide All-Faces"));
+    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Unhide All Faces"));
   }
 
   @Test
   void reverseVisibilityOfAllDashFaces_isRecognized () {
     app.build_allActions();
-    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Reverse Visibility of All-Faces"));
+    assertNotEquals(app.UnrecognizedCommand, app.runScriptLine("Reverse Visibility of All Faces"));
   }
 
   // ================= MOVE / ROTATE / SCALE / creation commands ===============
