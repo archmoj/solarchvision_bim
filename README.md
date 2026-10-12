@@ -92,7 +92,7 @@ Start with one clear question—for example, how shade on a building or outdoor 
 6. **Move through time.** Use the Case Bar to select hours, days, years, or forecast scenarios supported by the dataset.
 7. **Save or export.** Save the project or use an available export workflow.
 
-For model-based studies such as `Urban solar potential (active)` and `Urban solar potential (passive)`, prepare a selected `Section` or `Camera` using `PreBake Viewport` or `Pre-bake Selected Sections` where required by the workflow.
+For model-based studies such as `Skin potential (active)` and `Skin potential (passive)`, prepare a selected `Section` or `Camera` using `PreBake Viewport` or `Pre-bake Selected Sections` where required by the workflow.
 
 ### 3. Get familiar with the workspace
 

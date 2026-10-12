@@ -1006,7 +1006,7 @@ around.
 -   `Process Active Impact`, `Process Passive Impact`,
     `Process Solid Impact`
 -   `Wind pattern (active)`, `Wind pattern (passive)`
--   `Urban solar potential (active)`, `Urban solar potential (passive)`
+-   `Skin potential (active)`, `Skin potential (passive)`
 -   `Orientation potential (active)`, `Orientation potential (passive)`
 -   `Hourly sun position (active)`, `Hourly sun position (passive)`
 -   `Annual cycle sun path (active)`, `Annual cycle sun path (passive)`

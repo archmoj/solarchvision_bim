@@ -302,9 +302,9 @@ void build_allActions() {
 
   putAction("Wind pattern (passive)", () -> setimpactGraphIndex(impactGraphIndex_WIND_PASSIVE, true));
 
-  putAction("Urban solar potential (active)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_ACTIVE, false));
+  putAction("Skin potential (active)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_ACTIVE, false));
 
-  putAction("Urban solar potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_PASSIVE, false));
+  putAction("Skin potential (passive)", () -> setimpactGraphIndex(impactGraphIndex_URBAN_PASSIVE, false));
 
   putAction("Orientation potential (active)", () -> setimpactGraphIndex(impactGraphIndex_GLOBAL_ACTIVE, false));
 
