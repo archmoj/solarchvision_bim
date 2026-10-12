@@ -210,8 +210,33 @@ void putValueAction(String name, FloatGetter getter, FloatSetter setter, float m
   putValueAction(name, getter, setter, () -> min_v, () -> max_v, step, update1, update2, update3, null);
 }
 
+String[] menuItems;
+
 void build_allActions() {
   allActions = new HashMap<String, Action>();
+
+  menuItems = UI_menuBar.populateLayerMenu();
+  for (int i = 0; i < menuItems.length; i++) {
+    String item = menuItems[i];
+    if (item.equals(UI_menuBar.___divider___)) continue;
+
+    if (i < allLayers.length) {
+      putAction(item, () -> {
+        int id = Arrays.asList(menuItems).indexOf(item);
+        changeCurrentLayerTo(id - 1);
+        developLayerId = currentLayerId;
+        STUDY.revise();
+      });
+     } else {
+      putAction(item, () -> {
+        int id = Arrays.asList(menuItems).indexOf(item);
+        developLayerOption = id - allLayers.length - 1; // -1 for the divider
+        postProcess_developDATA(currentDataSource);
+        changeCurrentLayerTo(LAYER_developed.id);
+        STUDY.revise();
+      });
+    }
+  }
 
   putAction("SOLARCHVISION-BIM6D", () -> {
     link("https://www.dropbox.com/scl/fi/vyfqllzj7hnb3rhvpnwus/BatimentDurable_MojtabaSamimi_20171123.pdf?rlkey=lzpoqyu59vp8wb4qidqtradaw&e=1");

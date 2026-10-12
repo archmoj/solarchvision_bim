@@ -588,7 +588,7 @@ class UI_menuBar {
 
   // Finds the "Layer" tab and rebuilds its child items from the live
   // layer list plus the fixed set of "developed" analysis layers.
-  void populateLayerMenu() {
+  String[] populateLayerMenu() {
     LayersID_in_Bar = -1;
     for (int i = 0; i < this.Items.length; i++) {
       if (this.Items[i][0].equals("Layer")) {
@@ -617,6 +617,8 @@ class UI_menuBar {
     this.Items[LayersID_in_Bar][base + 9] = "Radiation on N.E. surface";
     this.Items[LayersID_in_Bar][base + 10] = "Radiation on N.W. surface";
     this.Items[LayersID_in_Bar][base + 11] = "Radiation on S.W. surface";
+
+    return this.Items[LayersID_in_Bar];
   }
 
   // Builds the lookup used to grey out toggle-style menu items whose
@@ -700,17 +702,11 @@ class UI_menuBar {
   // Drawing
   // ---------------------------------------------------------------------
 
-  private boolean isMenuLayerPopulated = false;
   private float currentParentWidth = 0;
 
   void draw () {
     if (!this.update) return;
     this.updated();
-
-    if(!isMenuLayerPopulated) {
-      populateLayerMenu();
-      isMenuLayerPopulated = true;
-    }
 
     fill(127);
     noStroke();
@@ -1022,21 +1018,6 @@ class UI_menuBar {
     Action action = allActions.get(menu_option);
     if (action != null) {
       action.run(new String[0]);
-    }
-
-    if (this.Items[this.selected_parent][0].equals("Layer")) {
-      if (this.selected_child > 0) {
-        if (this.selected_child < allLayers.length) {
-          changeCurrentLayerTo(this.selected_child - 1);
-          developLayerId = currentLayerId;
-          STUDY.revise();
-        } else if (menu_option.charAt(0) != '—') {
-          developLayerOption = this.selected_child - allLayers.length - 1; // -1 for the divider
-          postProcess_developDATA(currentDataSource);
-          changeCurrentLayerTo(LAYER_developed.id);
-          STUDY.revise();
-        }
-      }
     }
   }
 
