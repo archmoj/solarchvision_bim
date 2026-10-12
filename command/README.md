@@ -13,7 +13,7 @@ literal part of the name, not punctuation to skip.
 
 You can also run a whole file of commands, one per line, with
 `RUN.SCRIPT <file>`; a few example scripts are included in this folder
-(`test.txt`, `test_houses.txt`, `test_primitives.svs`, ...). For proper
+(`primitives.svs`, ...). For proper
 syntax highlighting of these `.svs` files in VS Code, see
 [`tools/vscode-svs-language`](../tools/vscode-svs-language).
 

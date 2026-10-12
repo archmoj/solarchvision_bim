@@ -11,7 +11,7 @@ geometry command that silently changes its output, etc).
   `--baseline`). Rendering is the flaky half of this pipeline (JVM/GL
   startup, Xvfb), so it's both retried and parallelized at the level of
   individual tests rather than the whole batch:
-  - **retries are per test**: if `test_houses` fails, only `test_houses` is
+  - **retries are per test**: if `primitives` fails, only `primitives` is
     retried — the tests that already succeeded aren't re-run.
   - **generation is sharded across parallel containers** via
     `SHARD_INDEX`/`SHARD_TOTAL`, so e.g. 3 containers each render a third
