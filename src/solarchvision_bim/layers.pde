@@ -3,7 +3,7 @@ LAYER LAYER_ceilingsky = new LAYER(
   0,
   0,
   "m",
-  "Ceiling height",
+  "Ceiling Height",
   "Hauteur sous plafond",
   ""
 );
@@ -43,7 +43,7 @@ LAYER LAYER_pressure = new LAYER(
   -1000,
   1,
   "hPa",
-  "Mean Sea level Pressure",
+  "Mean Sea Level Pressure",
   "Pression moyenne au niveau de la mer",
   "MSLP"
 );
@@ -73,7 +73,7 @@ LAYER LAYER_dirnorrad = new LAYER(
   0,
   0,
   "W/m²",
-  "Direct normal radiation",
+  "Direct Normal Radiation",
   "Rayonnement direct normal",
   ""
 );
@@ -83,7 +83,7 @@ LAYER LAYER_difhorrad = new LAYER(
   0,
   0,
   "W/m²",
-  "Diffuse horizontal radiation",
+  "Diffuse Horizontal Radiation",
   "Diffus rayonnement horizontal",
   ""
 );
@@ -93,7 +93,7 @@ LAYER LAYER_glohorrad = new LAYER(
   0,
   0,
   "W/m²",
-  "Global horizontal radiation",
+  "Global Horizontal Radiation",
   "Rayonnement global horizontal",
   ""
 );
@@ -103,8 +103,8 @@ LAYER LAYER_direffect = new LAYER(
   0,
   1,
   "W°C/m²",
-  "Direct normal effect <18°C<",
-  "Effet direct normal <18°C<",
+  "Direct Normal Effect",
+  "Effet direct normal",
   ""
 );
 
@@ -113,8 +113,8 @@ LAYER LAYER_difeffect = new LAYER(
   0,
   1,
   "W°C/m²",
-  "Diffuse normal effect <18°C<",
-  "Effet diffus normal <18°C<",
+  "Diffuse Normal Effect",
+  "Effet diffus normal",
   ""
 );
 
