@@ -183,17 +183,17 @@ class UI_menuBar {
       "Layout 7",
       "Layout 8",
       ___divider___,
-      "3D Model 1",
-      "3D Model 2",
-      "3D Model 3",
-      "3D Model 4",
-      "3D Model 5",
-      "3D Model 6",
-      "3D Model 7",
-      "3D Model 8",
-      "3D Model 9",
-      "3D Model 10",
-      "3D Model 11"
+      "3D-model 1",
+      "3D-model 2",
+      "3D-model 3",
+      "3D-model 4",
+      "3D-model 5",
+      "3D-model 6",
+      "3D-model 7",
+      "3D-model 8",
+      "3D-model 9",
+      "3D-model 10",
+      "3D-model 11"
     }
     ,
     {

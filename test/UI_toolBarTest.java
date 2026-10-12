@@ -495,7 +495,7 @@ class UI_toolBarTest {
 
   @Test
   void modelAndSkydomeSizeActions_reuseExisting () {
-    app.UI_toolBar.performAction("3D Model Size", 0, 1);
+    app.UI_toolBar.performAction("3D-model Size", 0, 1);
     app.UI_toolBar.performAction("Skydome Size", 0, 1);
     app.UI_toolBar.performAction("All Model Size", 0, 1);
     // All three are fixed, no-arg UI_setTo_View_X() calls with no

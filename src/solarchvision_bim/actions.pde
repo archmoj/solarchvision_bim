@@ -2440,7 +2440,7 @@ void build_allActions() {
 
   for (int n = 1; n <= 11; n++) {
     final int modelIndex = n;
-    putAction("3D Model " + nf(modelIndex, 0), () -> {
+    putAction("3D-model " + nf(modelIndex, 0), () -> {
       deleteAll();
       Create3D.add_DefaultModel(modelIndex);
       allSolidImpacts.calculate_Impact_selectedSections();

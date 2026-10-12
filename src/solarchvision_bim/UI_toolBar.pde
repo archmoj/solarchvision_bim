@@ -77,7 +77,7 @@ class UI_toolBar {
     }
     ,
     {
-      "1", "", "3D Model Size", "1.0"
+      "1", "", "3D-model Size", "1.0"
     }
     ,
     {
@@ -684,7 +684,7 @@ class UI_toolBar {
         else UI_setTo_View_Truck(j - 1);
         break;
 
-      case "3D Model Size": callAction("3DModelSize"); break;
+      case "3D-model Size": callAction("3DModelSize"); break;
 
       case "Skydome Size": callAction("SkydomeSize"); break;
 
@@ -746,7 +746,7 @@ class UI_toolBar {
       case "Dist XY": this.drawDistMouseXY(j, cx, cy, r); break;
       case "Dist Z": this.drawDistZ(j, cx, cy, r); break;
       case "Truck": this.drawTruck(j, cx, cy, r); break;
-      case "3D Model Size": this.draw3DModelSize(j, cx, cy, r); break;
+      case "3D-model Size": this.draw3DModelSize(j, cx, cy, r); break;
       case "Skydome Size": this.drawSkydomeSize(j, cx, cy, r); break;
       case "All Model Size": this.drawAllModelSize(j, cx, cy, r); break;
       case "View Layout": this.draw3DViewSpace(j, cx, cy, r); break;
