@@ -16,6 +16,55 @@ class Sky3D {
   int passiveColorscaleDirection = -1;
   float passiveColorscaleFactor = 0.25;
 
+  // --- WIN3D retained-mode cache -------------------------------------------
+  // The existing cachedSubFacesByFace below already avoids re-subdividing
+  // the dome's geometry every frame, but drawWIN3D() still re-issued every
+  // face/subFace to WIN3D.graphics as a fresh beginShape()/vertex()/
+  // endShape() on every redraw - including every pure camera move, which
+  // changes nothing here (position, tessellation, shading and palette are
+  // all camera-independent). Same fix as Faces.pde/Model1Ds.pde: build a
+  // PShape once and reuse it. winCacheGeneration is bumped at the end of
+  // calculate_GlobalSolar_array.pde, since that's what actually changes
+  // the per-vertex colors in shaded mode (SHADE.vertexRender_Global_Solar)
+  // without going through any of the scalar knobs tracked below - the
+  // same reason Faces.pde's own cache bumps the same kind of counter
+  // there. Palette/shading-mode knobs are scattered across ValueModifier.
+  // pde/UI_rollout.pde the same way Faces.pde's were, so PAL_type/
+  // direction/multiplier (already resolved by activePalette() before
+  // drawWIN3D() is even called) are compared directly instead of chasing
+  // every place impactTypeIndex or the colorscale fields above can change.
+  int winCacheGeneration = 0;
+
+  PShape win3DCache = null;
+  int win3DCache_builtGeneration = -1;
+  int win3DCache_shadingMode = -1;
+  int win3DCache_displayTessellation = -1;
+  float win3DCache_radius = Float.NaN;
+  int win3DCache_PAL_type = -1;
+  int win3DCache_PAL_direction = 0;
+  float win3DCache_PAL_multiplier = -1;
+
+  boolean win3DCache_isValid (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    return this.win3DCache != null &&
+      this.win3DCache_builtGeneration     == this.winCacheGeneration &&
+      this.win3DCache_shadingMode         == WIN3D.shadingMode &&
+      this.win3DCache_displayTessellation == this.displayTessellation &&
+      this.win3DCache_radius              == this.radius &&
+      this.win3DCache_PAL_type            == PAL_type &&
+      this.win3DCache_PAL_direction       == PAL_direction &&
+      this.win3DCache_PAL_multiplier      == PAL_multiplier;
+  }
+
+  void win3DCache_recordState (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    this.win3DCache_builtGeneration     = this.winCacheGeneration;
+    this.win3DCache_shadingMode         = WIN3D.shadingMode;
+    this.win3DCache_displayTessellation = this.displayTessellation;
+    this.win3DCache_radius              = this.radius;
+    this.win3DCache_PAL_type            = PAL_type;
+    this.win3DCache_PAL_direction       = PAL_direction;
+    this.win3DCache_PAL_multiplier      = PAL_multiplier;
+  }
+
   float inclinationStep;
   float orientationStep;
   int inclinationCount;
@@ -178,51 +227,73 @@ class Sky3D {
   }
 
   void drawWIN3D (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    if (!this.win3DCache_isValid(PAL_type, PAL_direction, PAL_multiplier)) {
+      this.win3DCache = this.build_win3DCache(PAL_type, PAL_direction, PAL_multiplier);
+      this.win3DCache_recordState(PAL_type, PAL_direction, PAL_multiplier);
+    }
+
+    WIN3D.graphics.shape(this.win3DCache);
+  }
+
+  // Rebuilds the cached dome. Same two branches, same math and same
+  // per-vertex SHADE.vertexRender_Global_Solar() calls the old immediate-
+  // mode writeFaceWIN3DShaded()/writeDomeFlat() used - just recorded into
+  // PShape children of a GROUP instead of issued straight to
+  // WIN3D.graphics. Only called from drawWIN3D() when win3DCache_isValid()
+  // is false, never on a plain camera move.
+  PShape build_win3DCache (int PAL_type, int PAL_direction, float PAL_multiplier) {
+
+    PShape group = createShape(GROUP);
+
     boolean shaded = (WIN3D.shadingMode == SHADE.Global_Solar) || (WIN3D.shadingMode == SHADE.Vertex_Solar);
 
     if (shaded) {
       for (int f = 0; f < skyFaces.length; f++) {
         float[][][] subFaces = getTessellatedSubFaces(f, this.displayTessellation);
         for (int n = 0; n < subFaces.length; n++) {
-          writeFaceWIN3DShaded(subFaces[n], PAL_type, PAL_direction, PAL_multiplier);
+          cacheWriteFaceWIN3DShaded(group, subFaces[n], PAL_type, PAL_direction, PAL_multiplier);
         }
       }
     } else {
-      writeDomeFlat();
+      cacheWriteDomeFlat(group);
     }
+
+    return group;
   }
 
-  void writeFaceWIN3DShaded (float[][] subFace, int PAL_type, int PAL_direction, float PAL_multiplier) {
-    WIN3D.graphics.beginShape();
+  void cacheWriteFaceWIN3DShaded (PShape group, float[][] subFace, int PAL_type, int PAL_direction, float PAL_multiplier) {
+    PShape child = createShape();
+    child.beginShape();
     for (int s = 0; s < subFace.length; s++) {
       int s_next = (s + 1) % subFace.length;
       int s_prev = (s + subFace.length - 1) % subFace.length;
 
       float[] COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
-      WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-      WIN3D.graphics.vertex(subFace[s][0] * this.radius * this.scale * WIN3D.scale,
-                             -subFace[s][1] * this.radius * this.scale * WIN3D.scale,
-                             subFace[s][2] * this.radius * this.scale * WIN3D.scale);
+      child.fill(COL[1], COL[2], COL[3], COL[0]);
+      child.vertex(subFace[s][0] * this.radius * this.scale * WIN3D.scale,
+                    -subFace[s][1] * this.radius * this.scale * WIN3D.scale,
+                    subFace[s][2] * this.radius * this.scale * WIN3D.scale);
     }
-    WIN3D.graphics.endShape(CLOSE);
+    child.endShape(CLOSE);
+    group.addChild(child);
   }
 
   color flatColor = color(127, 191, 255);
 
-  void writeDomeFlat () {
-    WIN3D.graphics.noStroke();
-    WIN3D.graphics.fill(flatColor); // same flat color regardless of shade mode here
-    //WIN3D.graphics.noFill();
-
+  void cacheWriteDomeFlat (PShape group) {
     for (int f = 0; f < skyFaces.length; f++) {
-      WIN3D.graphics.beginShape();
+      PShape child = createShape();
+      child.beginShape();
+      child.noStroke();
+      child.fill(this.flatColor); // same flat color regardless of shade mode here
       for (int j = 0; j < skyFaces[f].length; j++) {
         int vNo = skyFaces[f][j];
-        WIN3D.graphics.vertex(skyVertices[vNo][0] * this.radius * this.scale * WIN3D.scale,
-                               -skyVertices[vNo][1] * this.radius * this.scale * WIN3D.scale,
-                               skyVertices[vNo][2] * this.radius * this.scale * WIN3D.scale);
+        child.vertex(skyVertices[vNo][0] * this.radius * this.scale * WIN3D.scale,
+                      -skyVertices[vNo][1] * this.radius * this.scale * WIN3D.scale,
+                      skyVertices[vNo][2] * this.radius * this.scale * WIN3D.scale);
       }
-      WIN3D.graphics.endShape(CLOSE);
+      child.endShape(CLOSE);
+      group.addChild(child);
     }
   }
 
@@ -240,6 +311,7 @@ class Sky3D {
   // changed.
   void invalidateTessellationCache () {
     this.cachedSubFacesByFace = null;
+    this.winCacheGeneration++;
   }
 
   float[][][] getTessellatedSubFaces (int f, int tessellation) {
