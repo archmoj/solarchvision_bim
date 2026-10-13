@@ -39,7 +39,7 @@ void buildFaceGrid () {
   entireFaces = new ArrayList<>();
   entireFaces.add(new int[0]); // Provide an empty item at index 0.
 
-  allFaces.draw(TypeWindow.RENDER);
+  allFaces.addToFaceGrid(); // reuses Faces.pde's own geometry-only grid cache instead of re-walking/re-tessellating every face via TypeWindow.RENDER
   allModel1Ds.addToFaceGrid(); // reuses Model1Ds.pde's own WIN3D retained-mode cache instead of re-walking makeBranch() via TypeWindow.RENDER
   //Terrain.draw(TypeWindow.RENDER); // It is expensive because it expands the bounding box!
 

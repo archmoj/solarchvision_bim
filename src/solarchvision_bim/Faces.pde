@@ -64,6 +64,112 @@ class Faces {
   float win3DCache_passiveColorscaleFactor = -1;
   int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
+  // --- raycasting grid cache (buildFaceGrid(), isIntersected_Faces.pde) ---
+  // A SEPARATE cache from win3DCache above, not a reuse of its geometry:
+  // the original TypeWindow.RENDER branch (now removed - see
+  // addToFaceGrid()) never read WIN3D.shadingMode at all, and always
+  // tessellated every face the same way the WIN3D path's non-Surface_Base
+  // branch does - including while WIN3D.shadingMode IS Surface_Base,
+  // where win3DCache's OWN geometry is deliberately the coarser,
+  // untessellated per-face shape instead (Surface_Base's whole point is
+  // skipping tessellation for WIN3D display speed). Reusing win3DCache's
+  // geometry directly would have made raycasting/shadows silently less
+  // accurate whenever Surface_Base happened to be the active shading mode
+  // - so this tracks geometry only (no color, no shading-mode dependency
+  // at all), invalidated by the same winCacheGeneration bump win3DCache
+  // uses for structural changes, but nothing else.
+  ArrayList<Float> win3DCache_gridPointsX = new ArrayList<Float>();
+  ArrayList<Float> win3DCache_gridPointsY = new ArrayList<Float>();
+  ArrayList<Float> win3DCache_gridPointsZ = new ArrayList<Float>();
+  ArrayList<int[]> win3DCache_gridFaces = new ArrayList<int[]>();
+  int win3DCache_gridBuiltGeneration = -1;
+
+  // Called by buildFaceGrid() (isIntersected_Faces.pde) instead of the old
+  // allFaces.draw(TypeWindow.RENDER) - rebuilds build_gridCache()'s output
+  // only when winCacheGeneration has actually moved since the last call,
+  // then copies it into the global entirePointsX/Y/Z/entireFaces with
+  // fresh index offsets, since those globals are rebuilt from scratch on
+  // every call to buildFaceGrid() itself.
+  void addToFaceGrid () {
+
+    if (this.win3DCache_gridBuiltGeneration != this.winCacheGeneration) {
+      this.build_gridCache();
+      this.win3DCache_gridBuiltGeneration = this.winCacheGeneration;
+    }
+
+    int offset = entirePointsX.size();
+
+    int numPoints = this.win3DCache_gridPointsX.size();
+    for (int p = 0; p < numPoints; p++) {
+      entirePointsX.add(this.win3DCache_gridPointsX.get(p));
+      entirePointsY.add(this.win3DCache_gridPointsY.get(p));
+      entirePointsZ.add(this.win3DCache_gridPointsZ.get(p));
+    }
+
+    int numFaces = this.win3DCache_gridFaces.size();
+    for (int fIdx = 0; fIdx < numFaces; fIdx++) {
+      int[] localFace = this.win3DCache_gridFaces.get(fIdx);
+      int[] newFace = new int[localFace.length];
+      for (int s = 0; s < localFace.length; s++) {
+        newFace[s] = localFace[s] + offset;
+      }
+      entireFaces.add(newFace);
+    }
+  }
+
+  // Exact port of the original TypeWindow.RENDER branch's geometry math -
+  // same tessellation decision (per-face getTessellation() plus
+  // displayTessellation when material==0), same raw/unscaled points
+  // straight from allPoints, deliberately NOT gated on WIN3D.shadingMode
+  // at all (see the field block above for why). Only called from
+  // addToFaceGrid() when winCacheGeneration has actually changed.
+  void build_gridCache () {
+
+    this.win3DCache_gridPointsX = new ArrayList<Float>();
+    this.win3DCache_gridPointsY = new ArrayList<Float>();
+    this.win3DCache_gridPointsZ = new ArrayList<Float>();
+    this.win3DCache_gridFaces = new ArrayList<int[]>();
+
+    int lenFaces = this.nodes.length;
+    for (int f = 0; f < lenFaces; f++) {
+      int vsb = this.getVisibility(f);
+      if (vsb <= 0) continue;
+
+      int mt = this.getMaterial(f);
+
+      int tessellation = this.getTessellation(f);
+
+      int totalNumberOfSubs = 1;
+      if (mt == 0) {
+        tessellation += this.displayTessellation;
+      }
+      if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+
+      float[][] base_Vertices = new float [this.nodes[f].length][3];
+      for (int j = 0; j < this.nodes[f].length; j++) {
+        int vNo = this.nodes[f][j];
+        base_Vertices[j][0] = allPoints.getX(vNo);
+        base_Vertices[j][1] = allPoints.getY(vNo);
+        base_Vertices[j][2] = allPoints.getZ(vNo);
+      }
+
+      for (int n = 0; n < totalNumberOfSubs; n++) {
+        float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
+
+        int len = subFace.length;
+        int[] newFace = new int[len];
+        for (int s = 0; s < len; s++) {
+          newFace[s] = this.win3DCache_gridPointsX.size();
+
+          this.win3DCache_gridPointsX.add(subFace[s][0]);
+          this.win3DCache_gridPointsY.add(subFace[s][1]);
+          this.win3DCache_gridPointsZ.add(subFace[s][2]);
+        }
+        this.win3DCache_gridFaces.add(newFace);
+      }
+    }
+  }
+
 
   int[][] nodes;
   int[][] options;
@@ -313,50 +419,6 @@ class Faces {
           }
 
           WIN3D.graphics.endShape();
-        }
-      }
-
-      if (target_window == TypeWindow.RENDER) {
-        int lenFaces = this.nodes.length;
-        for (int f = 0; f < lenFaces; f++) {
-          int vsb = this.getVisibility(f);
-          if (vsb <= 0) continue;
-
-          int mt = this.getMaterial(f);
-
-          int tessellation = this.getTessellation(f);
-
-          int totalNumberOfSubs = 1;
-          if (mt == 0) {
-            tessellation += this.displayTessellation;
-          }
-          if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
-
-          float[][] base_Vertices = new float [this.nodes[f].length][3];
-          for (int j = 0; j < this.nodes[f].length; j++) {
-            int vNo = this.nodes[f][j];
-            base_Vertices[j][0] = allPoints.getX(vNo);
-            base_Vertices[j][1] = allPoints.getY(vNo);
-            base_Vertices[j][2] = allPoints.getZ(vNo);
-          }
-
-          for (int n = 0; n < totalNumberOfSubs; n++) {
-            float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
-
-            int len = subFace.length;
-            int[] newFace = new int[len];
-            for (int s = 0; s < len; s++) {
-              newFace[s] = entirePointsX.size();
-
-              entirePointsX.add(subFace[s][0]);
-              entirePointsY.add(subFace[s][1]);
-              entirePointsZ.add(subFace[s][2]);
-
-              if(s == len - 1) {
-                entireFaces.add(newFace);
-              }
-            }
-          }
         }
       }
 
