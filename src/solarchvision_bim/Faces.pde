@@ -43,6 +43,14 @@ class Faces {
   int winCacheGeneration = 0;
 
   PShape win3DCache = null;
+  // Edges are deliberately NOT baked into win3DCache as a LINES child PShape
+  // - that didn't render reliably (see build_win3DCache()'s comment). They're
+  // cached as plain object-space endpoint data instead and replayed each
+  // frame through the same immediate-mode beginShape(LINES)/vertex/endShape
+  // call that already worked pre-cache - still far cheaper than before,
+  // since it skips the tessellation + per-vertex shading lookups, which were
+  // the actual expensive part; it just replays already-known line endpoints.
+  ArrayList<float[][]> win3DCache_edgePolygons = null;
   int win3DCache_builtGeneration = -1;
   int win3DCache_shadingMode = -1;
   int win3DCache_impactTypeIndex = -1;
@@ -274,6 +282,37 @@ class Faces {
         }
 
         WIN3D.graphics.shape(this.win3DCache);
+
+        if (this.displayEdges && this.win3DCache_edgePolygons != null) {
+          WIN3D.graphics.stroke(0, 0, 0);
+          WIN3D.graphics.strokeWeight(1);
+          WIN3D.graphics.noFill();
+          WIN3D.graphics.beginShape(LINES);
+
+          int len = this.win3DCache_edgePolygons.size();
+          for (int p = 0; p < len; p++) {
+            float[][] poly = this.win3DCache_edgePolygons.get(p);
+            int n = poly.length;
+
+            for (int s = 0; s < n; s++) {
+              int s_next = (s + 1) % n;
+
+              // obj inputs break rectangles to triangles
+              // and we don't want to see the diagonal lines
+              // so skip non orthogonal edges of triangles here
+              if(n == 3 &&
+                poly[s][0] != poly[s_next][0] &&
+                poly[s][1] != poly[s_next][1] &&
+                poly[s][2] != poly[s_next][2]
+              ) break;
+
+              WIN3D.graphics.vertex(poly[s][0], poly[s][1], poly[s][2]);
+              WIN3D.graphics.vertex(poly[s_next][0], poly[s_next][1], poly[s_next][2]);
+            }
+          }
+
+          WIN3D.graphics.endShape();
+        }
       }
 
       if (target_window == TypeWindow.RENDER) {
@@ -1332,38 +1371,14 @@ class Faces {
       }
     }
 
-    if (this.displayEdges) {
-      PShape edgesChild = createShape();
-      edgesChild.stroke(0, 0, 0);
-      edgesChild.strokeWeight(1);
-      edgesChild.noFill();
-      edgesChild.beginShape(LINES);
-
-      int len = edgePolygons.size();
-      for (int p = 0; p < len; p++) {
-        float[][] poly = edgePolygons.get(p);
-        int n = poly.length;
-
-        for (int s = 0; s < n; s++) {
-          int s_next = (s + 1) % n;
-
-          // obj inputs break rectangles to triangles
-          // and we don't want to see the diagonal lines
-          // so skip non orthogonal edges of triangles here
-          if(n == 3 &&
-            poly[s][0] != poly[s_next][0] &&
-            poly[s][1] != poly[s_next][1] &&
-            poly[s][2] != poly[s_next][2]
-          ) break;
-
-          edgesChild.vertex(poly[s][0], poly[s][1], poly[s][2]);
-          edgesChild.vertex(poly[s_next][0], poly[s_next][1], poly[s_next][2]);
-        }
-      }
-
-      edgesChild.endShape();
-      group.addChild(edgesChild);
-    }
+    // Edges as a LINES-primitive PShape child didn't render reliably inside
+    // the GROUP alongside the filled POLYGON children - rather than chase
+    // that further blind (no Processing toolchain available here to debug
+    // it directly), cache the endpoint data itself and let draw() replay it
+    // through the original, already-proven immediate-mode beginShape(LINES)
+    // call. Still skips the expensive part (tessellation + per-vertex
+    // shading lookups above) on every camera-only frame.
+    this.win3DCache_edgePolygons = edgePolygons;
 
     return group;
   }
