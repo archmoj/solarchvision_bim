@@ -206,7 +206,7 @@ class ValueModifier {
   }
   int startHour (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int s1 = 0; //start
@@ -229,7 +229,7 @@ class ValueModifier {
   }
   int endHour (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int s1 = 0; //start
@@ -252,7 +252,7 @@ class ValueModifier {
   }
   int sampleYearStart (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
@@ -271,7 +271,7 @@ class ValueModifier {
   }
   int sampleYearEnd (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
@@ -290,7 +290,7 @@ class ValueModifier {
   }
   int sampleMemberStart (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
@@ -309,7 +309,7 @@ class ValueModifier {
   }
   int sampleMemberEnd (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
@@ -328,7 +328,7 @@ class ValueModifier {
   }
   int sampleStationStart (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
@@ -347,7 +347,7 @@ class ValueModifier {
   }
   int sampleStationEnd (int created) {
     int u1 = 1; // updateSTUDY
-    int u2 = 0; // updateWIN3D
+    int u2 = 1; // updateWIN3D
     int u3 = 0; // updateWORLD
 
     int out = 0;
