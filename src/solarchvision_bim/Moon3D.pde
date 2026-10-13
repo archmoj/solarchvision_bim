@@ -343,10 +343,61 @@ class Moon3D {
     return f;
   }
 
-  void draw () {
-    if (!this.displaySurface) return;
+  // --- WIN3D retained-mode cache --------------------------------------------
+  // Same shape as Sun3D.pde's own sun-disc cache: draw() is WIN3D-only
+  // already, so a straight build-once-and-replay. Position depends on the
+  // same SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE/station-latitude trio as the
+  // Sun; phase shading additionally depends on the Sun's own direction
+  // (also from those two globals, via computeFrame()'s own SunPosition()
+  // call) plus the handful of toggles below, none of which ever touch the
+  // camera.
+  PShape win3DCache = null;
+  float win3DCache_stationLat = Float.NaN;
+  int win3DCache_SHADE_DATE_ANGLE = Integer.MIN_VALUE;
+  int win3DCache_SHADE_HOUR_ANGLE = Integer.MIN_VALUE;
+  boolean win3DCache_displayTexture = true;
+  boolean win3DCache_displayShadow = true;
+  boolean win3DCache_displayNightSide = true;
+  boolean win3DCache_illuminateDaySide = true;
+  boolean win3DCache_mixWithSkyColor = true;
+  boolean win3DCache_useSkyColorForNightSide = true;
+  boolean win3DCache_fitInSkyDome = true;
+  float win3DCache_celestialMagnification = Float.NaN;
+  float win3DCache_skyRadius = Float.NaN;
 
-    WIN3D.graphics.strokeWeight(1);
+  boolean win3DCache_isValid () {
+    return this.win3DCache != null &&
+      this.win3DCache_stationLat                == STATION.getLatitude() &&
+      this.win3DCache_SHADE_DATE_ANGLE           == SHADE_DATE_ANGLE &&
+      this.win3DCache_SHADE_HOUR_ANGLE           == SHADE_HOUR_ANGLE &&
+      this.win3DCache_displayTexture             == this.displayTexture &&
+      this.win3DCache_displayShadow              == this.displayShadow &&
+      this.win3DCache_displayNightSide           == this.displayNightSide &&
+      this.win3DCache_illuminateDaySide          == this.illuminateDaySide &&
+      this.win3DCache_mixWithSkyColor            == this.mixWithSkyColor &&
+      this.win3DCache_useSkyColorForNightSide    == this.useSkyColorForNightSide &&
+      this.win3DCache_fitInSkyDome               == this.fitInSkyDome &&
+      this.win3DCache_celestialMagnification     == celestialMagnification &&
+      this.win3DCache_skyRadius                  == Sky3D.radius;
+  }
+
+  void win3DCache_recordState () {
+    this.win3DCache_stationLat                = STATION.getLatitude();
+    this.win3DCache_SHADE_DATE_ANGLE           = SHADE_DATE_ANGLE;
+    this.win3DCache_SHADE_HOUR_ANGLE           = SHADE_HOUR_ANGLE;
+    this.win3DCache_displayTexture             = this.displayTexture;
+    this.win3DCache_displayShadow              = this.displayShadow;
+    this.win3DCache_displayNightSide           = this.displayNightSide;
+    this.win3DCache_illuminateDaySide          = this.illuminateDaySide;
+    this.win3DCache_mixWithSkyColor            = this.mixWithSkyColor;
+    this.win3DCache_useSkyColorForNightSide    = this.useSkyColorForNightSide;
+    this.win3DCache_fitInSkyDome               = this.fitInSkyDome;
+    this.win3DCache_celestialMagnification     = celestialMagnification;
+    this.win3DCache_skyRadius                  = Sky3D.radius;
+  }
+
+  PShape build_win3DCache () {
+    PShape group = createShape(GROUP);
 
     float ScaleX  = 1;
     float ScaleY  = 1;
@@ -371,42 +422,68 @@ class Moon3D {
 
     SkyFrame frame = computeFrame();
 
-    // One-sided rendering, unconditionally - not just when
-    // displayNightSide hides something: today, with the full sphere
-    // always drawn solid, the far hemisphere (back-facing relative to
-    // the station - see FaceVertex's own "facing" comment) is already
-    // invisible, occluded by the near hemisphere in front of it, so
-    // culling it outright changes nothing on screen. But a sphere is
-    // convex - a given viewing ray that exits through a near-side point
-    // generally re-enters and exits again through a far-side one - so
-    // the moment displayNightSide actually skips a near-side face
-    // (opening a real hole, not just an occluded one), that same ray
-    // would otherwise carry straight through to whatever far-side face
-    // sits behind it, showing the sphere's own far wall through the gap
-    // instead of empty space/sky. Culling the far hemisphere outright is
-    // what keeps that gap genuinely empty.
     for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
-      // Night side, at the row level - see rowIsEntirelyDark()'s own
-      // comment.
       if (this.displayShadow && !this.displayNightSide && rowIsEntirelyDark(Alpha)) continue;
 
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
         FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY, frame);
         if (shouldDrawSubFace(subFace)) {
-          writeFaceWIN3D(subFace);
+          cacheWriteFaceWIN3D(group, subFace);
         }
       }
     }
 
-    // tint()/fill() (see writeFaceWIN3D's own per-vertex phase darkening)
-    // are PGraphics-wide state, not scoped to the shape that set them -
-    // left at whatever the Moon's own last-drawn vertex happened to be,
-    // they'd otherwise leak into every draw call after this one, this
-    // frame (Earth3D.draw() runs right after Moon3D.draw() - see
-    // WIN3D.pde) and, since nothing resets this state at the start of a
-    // frame either, into next frame's Sun3D.draw() too, which runs
-    // first. castShadows_CurrentSection.pde already pairs its own
-    // tint()/noTint() calls the same way for the same reason.
+    return group;
+  }
+
+  void cacheWriteFaceWIN3D (PShape group, FaceVertex[] subFace) {
+    PShape child = createShape();
+    child.beginShape();
+    child.noStroke();
+    if (this.displayTexture) {
+      child.texture(this.Map);
+    }
+
+    int[] sky = this.mixWithSkyColor ? halfSkyColor() : null;
+
+    for (int s = 0; s < subFace.length; s++) {
+      int[] tintColor = vertexColor(subFace[s].brightness, sky);
+
+      if (this.displayTexture) {
+        child.tint(tintColor[0], tintColor[1], tintColor[2]);
+      } else {
+        child.fill(tintColor[0], tintColor[1], tintColor[2]);
+      }
+
+      child.vertex(
+        subFace[s].x * overallScale * WIN3D.scale,
+        -subFace[s].y * overallScale * WIN3D.scale,
+        subFace[s].z * overallScale * WIN3D.scale,
+        subFace[s].u * this.Map.width,
+        subFace[s].v * this.Map.height
+      );
+    }
+
+    child.endShape(CLOSE);
+    group.addChild(child);
+  }
+
+  void draw () {
+    if (!this.displaySurface) return;
+
+    if (!this.win3DCache_isValid()) {
+      this.win3DCache = this.build_win3DCache();
+      this.win3DCache_recordState();
+    }
+
+    WIN3D.graphics.shape(this.win3DCache);
+
+    // Belt-and-braces reset, kept from the original immediate-mode code:
+    // tint()/fill() are PGraphics-wide state. A PShape's own per-vertex
+    // tint/fill shouldn't leak into WIN3D.graphics's ambient state the way
+    // raw immediate-mode calls would have, but nothing else resets this
+    // either, and Earth3D.draw() runs right after this - cheap enough to
+    // keep rather than rely on that distinction holding.
     WIN3D.graphics.noTint();
     WIN3D.graphics.fill(255);
   }
@@ -580,51 +657,6 @@ class Moon3D {
 
     return subFace;
   }
-
-  void writeFaceWIN3D (FaceVertex[] subFace) {
-    WIN3D.graphics.beginShape();
-    WIN3D.graphics.noStroke();
-    if (this.displayTexture) {
-      WIN3D.graphics.texture(this.Map);
-    }
-
-    // Computed once per face, not per-vertex - doesn't depend on the
-    // vertex itself, only on skyColor (see its own comment).
-    int[] sky = this.mixWithSkyColor ? halfSkyColor() : null;
-
-    for (int s = 0; s < subFace.length; s++) {
-      // Per-vertex phase darkening: tint() modulates the bound texture's
-      // own colors (what fill() would do for an untextured shape - see
-      // Faces.pde's own SHADE.vertexRender_*() + fill() pattern, the same
-      // "set it right before this vertex()" technique, just texture-aware
-      // here since the Moon always has one bound when displayTexture).
-      // mixWithSkyColor replaces the flat gray with a blue-shifted one
-      // (see its own comment on why this needs to be additive, not a
-      // second multiplicative tint) - same half-skyColor split
-      // brightenTexture() already baked into the texture itself, so the
-      // two line up instead of compounding into an over-blued result.
-      // useSkyColorForNightSide (see vertexColor()'s own comment) can
-      // override this entirely, for vertices in total darkness.
-      int[] tintColor = vertexColor(subFace[s].brightness, sky);
-
-      if (this.displayTexture) {
-        WIN3D.graphics.tint(tintColor[0], tintColor[1], tintColor[2]);
-      } else {
-        WIN3D.graphics.fill(tintColor[0], tintColor[1], tintColor[2]);
-      }
-
-      WIN3D.graphics.vertex(
-        subFace[s].x * overallScale * WIN3D.scale,
-        -subFace[s].y * overallScale * WIN3D.scale,
-        subFace[s].z * overallScale * WIN3D.scale,
-        subFace[s].u * this.Map.width,
-        subFace[s].v * this.Map.height
-      );
-    }
-
-    WIN3D.graphics.endShape(CLOSE);
-  }
-
 
   public void to_XML (XML xml) {    XML parent = xml.addChild(this.CLASS_STAMP);
     XML_setBoolean(parent, "displaySurface", this.displaySurface);
