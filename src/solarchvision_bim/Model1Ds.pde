@@ -594,9 +594,9 @@ class Model1Ds {
   void cacheLocalFace (PShape group, PMatrix3D m, float[][] localVerts, int fr, int fg, int fb) {
 
     PShape child = createShape();
+    child.beginShape();
     child.noStroke();
     child.fill(fr, fg, fb);
-    child.beginShape();
 
     PVector src = new PVector();
     PVector dst = new PVector();
