@@ -390,6 +390,181 @@ class Earth3D {
     this.cachedTextureLabel    = "EarthSphereEmosaic";
   }
 
+  // --- WIN3D retained-mode cache -------------------------------------------
+  // This sphere is location-driven, not model-driven: nothing it renders
+  // depends on allFaces/allModel1Ds/etc, so unlike Faces.pde/Model1Ds.pde
+  // this cache is deliberately NOT tied to model_changed() - orbiting the
+  // camera or editing the 3D model should never rebuild it, only the
+  // station moving (or the handful of other things below) should. Every
+  // one of those inputs is a cheap scalar (or, for the resolved texture
+  // tile, one PImage reference plus its 4 boundary floats), so rather than
+  // chase every UI control that could touch one of them (same lesson as
+  // Faces.pde's shading knobs), win3DCache_isValid() just compares the
+  // live values against what the cache was built with on every draw() -
+  // no separate "something changed" hook needed at all.
+  PShape win3DCache = null;
+
+  float win3DCache_stationLat = Float.NaN;
+  float win3DCache_stationLon = Float.NaN;
+  float win3DCache_clipRadiusDegrees_Lat = Float.NaN;
+  float win3DCache_clipRadiusDegrees_Lon = Float.NaN;
+  float win3DCache_lat_step = Float.NaN;
+  float win3DCache_lon_step = Float.NaN;
+  float win3DCache_gridStepDegrees = Float.NaN;
+  int win3DCache_fillStationGridCell = Integer.MIN_VALUE;
+  boolean win3DCache_displayTexture = true;
+  int win3DCache_shadingMode = -1;
+  int win3DCache_impactTypeIndex = -1;
+  int win3DCache_activeColorscaleIndex = -1;
+  int win3DCache_activeColorscaleDirection = 0;
+  float win3DCache_activeColorscaleFactor = -1;
+  int win3DCache_passiveColorscaleIndex = -1;
+  int win3DCache_passiveColorscaleDirection = 0;
+  float win3DCache_passiveColorscaleFactor = -1;
+  int win3DCache_terrainColorScaleIndex = -1;
+  int win3DCache_terrainColorScaleDirection = 0;
+  float win3DCache_terrainColorScaleFactor = -1;
+  PImage win3DCache_textureImage = null;
+  float win3DCache_textureBx1 = Float.NaN;
+  float win3DCache_textureBx2 = Float.NaN;
+  float win3DCache_textureBy1 = Float.NaN;
+  float win3DCache_textureBy2 = Float.NaN;
+
+  // Grid-line edges are deliberately NOT baked into win3DCache as LINES
+  // child PShapes - that was tried for Faces.pde's edges too and never
+  // actually rendered there, in any ordering of the style calls. These are
+  // cached as the same plain object-space endpoint data flushEdgeBatch()
+  // already draws from every frame, and draw() replays them through that
+  // same, already-proven immediate-mode call on a cache hit too - still
+  // far cheaper than before, since it skips the tessellation loop that
+  // built them, it just doesn't try to route them through a PShape.
+  ArrayList<float[][]> win3DCache_majorGridEdgeBatch = null;
+  ArrayList<float[][]> win3DCache_minorGridEdgeBatch = null;
+
+  boolean win3DCache_isValid () {
+    return this.win3DCache != null &&
+      this.win3DCache_stationLat                 == STATION.getLatitude() &&
+      this.win3DCache_stationLon                 == STATION.getLongitude() &&
+      this.win3DCache_clipRadiusDegrees_Lat       == this.clipRadiusDegrees_Lat &&
+      this.win3DCache_clipRadiusDegrees_Lon       == this.clipRadiusDegrees_Lon &&
+      this.win3DCache_lat_step                    == this.lat_step &&
+      this.win3DCache_lon_step                    == this.lon_step &&
+      this.win3DCache_gridStepDegrees             == this.gridStepDegrees &&
+      this.win3DCache_fillStationGridCell         == this.fillStationGridCell &&
+      this.win3DCache_displayTexture              == this.displayTexture &&
+      this.win3DCache_shadingMode                 == WIN3D.shadingMode &&
+      this.win3DCache_impactTypeIndex             == WIN3D.impactTypeIndex &&
+      this.win3DCache_activeColorscaleIndex       == allFaces.activeColorscaleIndex &&
+      this.win3DCache_activeColorscaleDirection   == allFaces.activeColorscaleDirection &&
+      this.win3DCache_activeColorscaleFactor      == allFaces.activeColorscaleFactor &&
+      this.win3DCache_passiveColorscaleIndex      == allFaces.passiveColorscaleIndex &&
+      this.win3DCache_passiveColorscaleDirection  == allFaces.passiveColorscaleDirection &&
+      this.win3DCache_passiveColorscaleFactor     == allFaces.passiveColorscaleFactor &&
+      this.win3DCache_terrainColorScaleIndex      == Terrain.colorScaleIndex &&
+      this.win3DCache_terrainColorScaleDirection  == Terrain.colorScaleDirection &&
+      this.win3DCache_terrainColorScaleFactor     == Terrain.colorScaleFactor &&
+      this.win3DCache_textureImage                == this.cachedTextureImage &&
+      this.win3DCache_textureBx1                  == this.cachedTextureBx1 &&
+      this.win3DCache_textureBx2                  == this.cachedTextureBx2 &&
+      this.win3DCache_textureBy1                  == this.cachedTextureBy1 &&
+      this.win3DCache_textureBy2                  == this.cachedTextureBy2;
+  }
+
+  void win3DCache_recordState () {
+    this.win3DCache_stationLat                = STATION.getLatitude();
+    this.win3DCache_stationLon                = STATION.getLongitude();
+    this.win3DCache_clipRadiusDegrees_Lat      = this.clipRadiusDegrees_Lat;
+    this.win3DCache_clipRadiusDegrees_Lon      = this.clipRadiusDegrees_Lon;
+    this.win3DCache_lat_step                   = this.lat_step;
+    this.win3DCache_lon_step                   = this.lon_step;
+    this.win3DCache_gridStepDegrees            = this.gridStepDegrees;
+    this.win3DCache_fillStationGridCell        = this.fillStationGridCell;
+    this.win3DCache_displayTexture             = this.displayTexture;
+    this.win3DCache_shadingMode                = WIN3D.shadingMode;
+    this.win3DCache_impactTypeIndex            = WIN3D.impactTypeIndex;
+    this.win3DCache_activeColorscaleIndex      = allFaces.activeColorscaleIndex;
+    this.win3DCache_activeColorscaleDirection  = allFaces.activeColorscaleDirection;
+    this.win3DCache_activeColorscaleFactor     = allFaces.activeColorscaleFactor;
+    this.win3DCache_passiveColorscaleIndex     = allFaces.passiveColorscaleIndex;
+    this.win3DCache_passiveColorscaleDirection = allFaces.passiveColorscaleDirection;
+    this.win3DCache_passiveColorscaleFactor    = allFaces.passiveColorscaleFactor;
+    this.win3DCache_terrainColorScaleIndex     = Terrain.colorScaleIndex;
+    this.win3DCache_terrainColorScaleDirection = Terrain.colorScaleDirection;
+    this.win3DCache_terrainColorScaleFactor    = Terrain.colorScaleFactor;
+    this.win3DCache_textureImage               = this.cachedTextureImage;
+    this.win3DCache_textureBx1                 = this.cachedTextureBx1;
+    this.win3DCache_textureBx2                 = this.cachedTextureBx2;
+    this.win3DCache_textureBy1                 = this.cachedTextureBy1;
+    this.win3DCache_textureBy2                 = this.cachedTextureBy2;
+  }
+
+  // Cache-building counterparts of beginWIN3DSphere()/addFaceWIN3D()/
+  // addTriangleWIN3D()/endWIN3DSphere() - same math, same per-vertex
+  // shading calls, but recorded into a PShape child instead of issued to
+  // WIN3D.graphics. Called alongside (not instead of) the live WIN3D.
+  // graphics.* calls in draw()'s loop, using the same already-computed
+  // subFace/stationVertex/etc. values, so the generation logic itself is
+  // never duplicated - only the "where do these vertices go" target is.
+  void cacheBeginSphere (PShape sphereChild, PImage textureImage) {
+    sphereChild.beginShape(QUADS);
+    sphereChild.noStroke();
+    if (this.showTexture()) {
+      sphereChild.texture(textureImage);
+    }
+  }
+
+  void cacheAddFaceWIN3D (PShape sphereChild, FaceVertex[] subFace, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
+    if (!this.showTexture()) {
+      for (int s = 0; s < subFace.length; s++) {
+        int s_prev = (s + subFace.length - 1) % subFace.length;
+        int s_next = (s + 1) % subFace.length;
+
+        float[] VERTEX_now  = { subFace[s].x,      subFace[s].y,      subFace[s].z };
+        float[] VERTEX_prev = { subFace[s_prev].x,  subFace[s_prev].y,  subFace[s_prev].z };
+        float[] VERTEX_next = { subFace[s_next].x,  subFace[s_next].y,  subFace[s_next].z };
+
+        float[] COL = { 255, 255, 255, 255 };
+        if (WIN3D.shadingMode == SHADE.Global_Solar) {
+          COL = SHADE.vertexRender_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_type, PAL_direction, PAL_multiplier);
+        }
+        if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
+          float[] VERTEX_elevation = { subFace[s].x, subFace[s].y, subFace[s].w };
+          COL = SHADE.vertexRender_Vertex_Elevation(VERTEX_elevation, PAL_type, PAL_direction, PAL_multiplier);
+        }
+
+        sphereChild.fill(COL[1], COL[2], COL[3], COL[0]);
+        sphereChild.vertex(
+          subFace[s].x * overallScale * WIN3D.scale,
+          -subFace[s].y * overallScale * WIN3D.scale,
+          subFace[s].z * overallScale * WIN3D.scale
+        );
+      }
+      return;
+    }
+
+    for (int s = 0; s < subFace.length; s++) {
+      float u = clamp01(subFace[s].u);
+      float v = clamp01(subFace[s].v);
+      sphereChild.vertex(
+        subFace[s].x * overallScale * WIN3D.scale,
+        -subFace[s].y * overallScale * WIN3D.scale,
+        subFace[s].z * overallScale * WIN3D.scale,
+        u * textureImage.width,
+        v * textureImage.height
+      );
+    }
+  }
+
+  void cacheAddTriangleWIN3D (PShape sphereChild, FaceVertex a, FaceVertex b, FaceVertex c, PImage textureImage, int PAL_type, int PAL_direction, float PAL_multiplier) {
+    FaceVertex[] triangleAsQuad = { a, b, c, c };
+    cacheAddFaceWIN3D(sphereChild, triangleAsQuad, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+  }
+
+  void cacheEndSphere (PShape group, PShape sphereChild) {
+    sphereChild.endShape();
+    group.addChild(sphereChild);
+  }
+
   void draw (int target_window) {
     if (!shouldDraw(target_window)) return;
 
@@ -445,7 +620,29 @@ class Earth3D {
     // to rebind it per quad.
     boolean isWin3D = (target_window == TypeWindow.WIN3D);
 
-    if (isWin3D) beginWIN3DSphere(textureImage);
+    // Camera-only WIN3D frames (orbit/pan/zoom/roll) with a valid cache
+    // skip the entire tessellation loop below (and the texture/elevation
+    // setup above it was worth keeping, since resolveTextureSource()
+    // already memoizes itself) - just replay the cached PShape and stop.
+    if (isWin3D && this.win3DCache_isValid()) {
+      WIN3D.graphics.shape(this.win3DCache);
+      flushEdgeBatch(this.win3DCache_majorGridEdgeBatch, color(0), 2);
+      flushEdgeBatch(this.win3DCache_minorGridEdgeBatch, color(255), 1);
+      return;
+    }
+
+    // Rebuilding (or never cached yet): the cache is built alongside the
+    // existing live rendering below, using the same already-computed
+    // subFace/stationVertex/etc. values, so this frame's on-screen output
+    // still comes from the unchanged WIN3D.graphics.* calls - the cache
+    // only affects future frames.
+    PShape win3DCacheGroup = isWin3D ? createShape(GROUP) : null;
+    PShape win3DCacheSphereChild = isWin3D ? createShape() : null;
+
+    if (isWin3D) {
+      beginWIN3DSphere(textureImage);
+      cacheBeginSphere(win3DCacheSphereChild, textureImage);
+    }
 
     ArrayList<float[][]> majorGridEdgeBatch = isWin3D ? new ArrayList<float[][]>() : null;
     ArrayList<float[][]> minorGridEdgeBatch = isWin3D ? new ArrayList<float[][]>() : null;
@@ -513,6 +710,7 @@ class Earth3D {
           if (isWin3D) {
             if (!skipFill) {
               addFaceWIN3D(subFace, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              cacheAddFaceWIN3D(win3DCacheSphereChild, subFace, textureImage, PAL_type, PAL_direction, PAL_multiplier);
             } else if (fillGapTriangles) {
               // Fan-fill the skipped cell with 4 triangles running from
               // each of its edges to the station itself (subFace's 4
@@ -522,6 +720,11 @@ class Earth3D {
               addTriangleWIN3D(stationVertex, subFace[1], subFace[2], textureImage, PAL_type, PAL_direction, PAL_multiplier);
               addTriangleWIN3D(stationVertex, subFace[2], subFace[3], textureImage, PAL_type, PAL_direction, PAL_multiplier);
               addTriangleWIN3D(stationVertex, subFace[3], subFace[0], textureImage, PAL_type, PAL_direction, PAL_multiplier);
+
+              cacheAddTriangleWIN3D(win3DCacheSphereChild, stationVertex, subFace[0], subFace[1], textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              cacheAddTriangleWIN3D(win3DCacheSphereChild, stationVertex, subFace[1], subFace[2], textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              cacheAddTriangleWIN3D(win3DCacheSphereChild, stationVertex, subFace[2], subFace[3], textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              cacheAddTriangleWIN3D(win3DCacheSphereChild, stationVertex, subFace[3], subFace[0], textureImage, PAL_type, PAL_direction, PAL_multiplier);
             } else if (fillGapQuads) {
               // Subdivide the skipped cell midway to the station instead
               // of fanning all the way in: each of the cell's 4 corners
@@ -542,6 +745,12 @@ class Earth3D {
               addFaceWIN3D(new FaceVertex[] { subFace[2], subFace[3], d, c }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
               addFaceWIN3D(new FaceVertex[] { subFace[3], subFace[0], a, d }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
               addFaceWIN3D(new FaceVertex[] { a, b, c, d }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+
+              cacheAddFaceWIN3D(win3DCacheSphereChild, new FaceVertex[] { subFace[0], subFace[1], b, a }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              cacheAddFaceWIN3D(win3DCacheSphereChild, new FaceVertex[] { subFace[1], subFace[2], c, b }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              cacheAddFaceWIN3D(win3DCacheSphereChild, new FaceVertex[] { subFace[2], subFace[3], d, c }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              cacheAddFaceWIN3D(win3DCacheSphereChild, new FaceVertex[] { subFace[3], subFace[0], a, d }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
+              cacheAddFaceWIN3D(win3DCacheSphereChild, new FaceVertex[] { a, b, c, d }, textureImage, PAL_type, PAL_direction, PAL_multiplier);
             }
             collectGridEdges(subFace, Alpha, unwrappedBeta, majorGridEdgeBatch, minorGridEdgeBatch);
           } else if (!skipFill) {
@@ -555,6 +764,15 @@ class Earth3D {
       endWIN3DSphere();
       flushEdgeBatch(majorGridEdgeBatch, color(0), 2);      // round-degree grid, black
       flushEdgeBatch(minorGridEdgeBatch, color(255), 1);    // finer mesh tessellation, white
+
+      // The live rendering above is already correct for this frame -
+      // everything from here on only prepares the cache for future frames.
+      cacheEndSphere(win3DCacheGroup, win3DCacheSphereChild);
+
+      this.win3DCache = win3DCacheGroup;
+      this.win3DCache_majorGridEdgeBatch = majorGridEdgeBatch;
+      this.win3DCache_minorGridEdgeBatch = minorGridEdgeBatch;
+      this.win3DCache_recordState();
     }
   }
 
