@@ -99,6 +99,15 @@ void _fileSelected_ImportObj (File selectedFile) {
     //import_objects_OBJ(Filename, -1,0,0,1,0,0, 0,0,0, 1,1,1); // different objects: different materials
     import_objects_OBJ(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
 
+    // import_objects_OBJ() adds faces straight into allFaces without ever
+    // calling model_changed() itself - without this, the imported geometry
+    // would never bump allFaces.winCacheGeneration (see Faces.pde's WIN3D
+    // retained-mode cache) and so would never actually appear in WIN3D:
+    // switch_category() below still triggers a redraw via its own
+    // view_changed(), but that redraw would just replay the stale,
+    // pre-import cached PShape.
+    model_changed();
+
     int number_of_allGroups_after = allGroups.num;
 
     Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
