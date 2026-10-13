@@ -255,6 +255,7 @@ void calculate_GlobalSolar_array () {
   // model_changed() - invalidate the WIN3D retained-mode face cache so the
   // next WIN3D.draw() rebuilds it instead of reusing stale colors.
   if (allFaces != null) allFaces.winCacheGeneration++;
+  if (Sky3D != null) Sky3D.winCacheGeneration++;
 
   cursor(ARROW);
 }
