@@ -4,6 +4,12 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   if (m == -1) current_Material = 0;
   else current_Material = m;
 
+  current_Tessellation = tes;
+  current_Layer = lyr;
+  current_Visibility = vsb;
+  current_Weight = wgt;
+  current_Closed = clz;
+
   // OBJ vertex indices are 1-based, so index 0 is an unused placeholder,
 
   IntList importVerticeNumber = new IntList();
