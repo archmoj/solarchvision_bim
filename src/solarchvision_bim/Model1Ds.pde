@@ -472,7 +472,19 @@ class Model1Ds {
   // it's built on, so a mistake here can't show up until the *next* frame.
   PShape build_win3DCache () {
 
-    PShape group = createShape(GROUP);
+    // ONE shape, QUADS mode, for every tree combined - not one createShape()
+    // per quad. Plain beginShape() (no primitive type) is generic POLYGON
+    // mode, which Processing tessellates through GLU (jogamp.opengl.glu) to
+    // handle arbitrary/concave shapes - real work and retained memory per
+    // shape, regardless of vertex count. With ~1,000+ quads (trunk ring
+    // segments + leaf faces) per tree, a few hundred trees was enough
+    // individually-tessellated shapes to exhaust the heap. QUADS is a
+    // fixed-topology primitive Processing can rasterize directly, with no
+    // GLU tessellation step at all - the same trick Earth3D.pde's sphere
+    // already uses for its own (much larger, but single-shape) QUADS mesh.
+    PShape shape = createShape();
+    shape.beginShape(QUADS);
+    shape.noStroke();
 
     this.win3DCache_modelPointsX = new ArrayList<Float>();
     this.win3DCache_modelPointsY = new ArrayList<Float>();
@@ -512,10 +524,11 @@ class Model1Ds {
       m.translate(x, -y, z);
       m.rotateZ(rot);
 
-      this.cacheBranch(group, m, treeWidth0, treeHeight0, this.nStart);
+      this.cacheBranch(shape, m, treeWidth0, treeHeight0, this.nStart);
     }
 
-    return group;
+    shape.endShape();
+    return shape;
   }
 
   // Called by buildFaceGrid() (isIntersected_Faces.pde) to feed the
@@ -559,7 +572,7 @@ class Model1Ds {
 
   // Mirrors makeBranch(w,h,n) exactly, reading the same shared
   // this.branchTwist/branchTilt/branchRatio/treeBase/nStart fields.
-  void cacheBranch (PShape group, PMatrix3D m, float w, float h, int n) {
+  void cacheBranch (PShape shape, PMatrix3D m, float w, float h, int n) {
 
     if (n > 0) {
 
@@ -567,17 +580,17 @@ class Model1Ds {
       m1.rotateZ(this.branchTwist * PI / 180.0); // mirrors twistBranch(branchTwist)
 
       if ((n == this.nStart) && (this.treeBase > 0.0)) {
-        this.cacheElement(group, m1, w, h * this.treeBase, n);
+        this.cacheElement(shape, m1, w, h * this.treeBase, n);
       }
-      this.cacheBranch(group, m1, w * this.branchRatio, h * this.branchRatio, n - 1);
+      this.cacheBranch(shape, m1, w * this.branchRatio, h * this.branchRatio, n - 1);
       // m1 simply goes out of scope here - mirrors popMatrix()
 
       if (n != this.nStart) {
         PMatrix3D m2 = m.get(); // clone from the ORIGINAL m - mirrors the second, independent pushMatrix()
         m2.rotateZ(this.branchTwist * PI / 180.0);  // mirrors twistBranch(branchTwist)
         m2.rotateY(this.branchTilt * PI / 180.0);   // mirrors tiltBranch(branchTilt)
-        this.cacheElement(group, m2, w, h, n);
-        this.cacheBranch(group, m2, w * this.branchRatio, h * this.branchRatio, n - 1);
+        this.cacheElement(shape, m2, w, h, n);
+        this.cacheBranch(shape, m2, w * this.branchRatio, h * this.branchRatio, n - 1);
       }
     }
   }
@@ -586,22 +599,22 @@ class Model1Ds {
   // clone - it mutates m in place, exactly like the original's un-scoped
   // WIN3D.graphics.translate(0,0,h) persists on the caller's matrix for
   // whatever cacheBranch() does next with this same m.
-  void cacheElement (PShape group, PMatrix3D m, float w, float h, int n) {
+  void cacheElement (PShape shape, PMatrix3D m, float w, float h, int n) {
 
     PMatrix3D mTrunk = m.get(); // clone - mirrors pushMatrix()
     mTrunk.translate(0, 0, 0.5 * h);
-    this.cacheTrunk(group, mTrunk, w, h);
+    this.cacheTrunk(shape, mTrunk, w, h);
     // mTrunk discarded here - mirrors popMatrix()
 
     m.translate(0, 0, h); // mutates the caller's matrix - mirrors the original's unscoped translate()
 
     if (n == 1) {
-      this.cacheLeaf(group, m);
+      this.cacheLeaf(shape, m);
     }
   }
 
   // Mirrors drawTrunk(w,h).
-  void cacheTrunk (PShape group, PMatrix3D m, float w, float h) {
+  void cacheTrunk (PShape shape, PMatrix3D m, float w, float h) {
 
     for (int i = 0; i < this.elementSegments; i++) {
 
@@ -623,12 +636,12 @@ class Model1Ds {
         localVerts[j][2] = h * (v - 0.5);
       }
 
-      this.cacheLocalFace(group, m, localVerts, 127, 63, 0); // trunk color, matches drawTrunk()'s fill(127,63,0)
+      this.cacheLocalFace(shape, m, localVerts, 127, 63, 0); // trunk color, matches drawTrunk()'s fill(127,63,0)
     }
   }
 
   // Mirrors drawLeaf().
-  void cacheLeaf (PShape group, PMatrix3D m) {
+  void cacheLeaf (PShape shape, PMatrix3D m) {
 
     if (this.leafSize > 0) {
 
@@ -642,20 +655,22 @@ class Model1Ds {
           localVerts[j][2] = this.leaf_faces[i][j][2] * this.leafSize;
         }
 
-        this.cacheLocalFace(group, m, localVerts, 63, 127, 0); // leaf color, matches drawLeaf()'s fill(63,127,0)
+        this.cacheLocalFace(shape, m, localVerts, 63, 127, 0); // leaf color, matches drawLeaf()'s fill(63,127,0)
       }
     }
   }
 
   // Mirrors drawLocalFace()'s WIN3D-only branch: bakes local_vertices
   // through m (equivalent to WIN3D.graphics.vertex(x, -y, z) under the
-  // current matrix stack) into a plain filled child PShape.
-  void cacheLocalFace (PShape group, PMatrix3D m, float[][] localVerts, int fr, int fg, int fb) {
-
-    PShape child = createShape();
-    child.beginShape();
-    child.noStroke();
-    child.fill(fr, fg, fb);
+  // current matrix stack) into the single shared QUADS shape build_
+  // win3DCache() opened - not its own child PShape (that was the OOM:
+  // Processing's default beginShape() is generic POLYGON mode, which goes
+  // through GLU tessellation and retains real memory per shape, and this
+  // is called ~1,000+ times per tree - trunk ring segments plus leaf
+  // faces). localVerts is always exactly 4 points (a trunk ring segment
+  // or a leaf's cube face), so this always emits exactly one quad into
+  // the shared stream.
+  void cacheLocalFace (PShape shape, PMatrix3D m, float[][] localVerts, int fr, int fg, int fb) {
 
     PVector src = new PVector();
     PVector dst = new PVector();
@@ -668,7 +683,8 @@ class Model1Ds {
     for (int j = 0; j < localVerts.length; j++) {
       src.set(localVerts[j][0], -localVerts[j][1], localVerts[j][2]); // mirrors vertex(x, -y, z)
       m.mult(src, dst);
-      child.vertex(dst.x, dst.y, dst.z);
+      shape.fill(fr, fg, fb);
+      shape.vertex(dst.x, dst.y, dst.z);
 
       // entirePointsX/Y/Z (see addToFaceGrid() and Faces.pde's own
       // TypeWindow.RENDER branch) take the RAW (non-negated) local y and
@@ -690,9 +706,6 @@ class Model1Ds {
       this.win3DCache_modelPointsZ.add(dstRaw.z * invScale);
     }
     this.win3DCache_modelFaces.add(newFace);
-
-    child.endShape(CLOSE);
-    group.addChild(child);
   }
 
 
