@@ -506,8 +506,182 @@ class Sun3D {
   }
 
 
+  // --- WIN3D retained-mode cache (drawPath/drawPattern) ---------------------
+  // Unlike every other WIN3D.pde-drawn class so far, these two don't shade
+  // from the precomputed GlobalSolar/VertexSolar_amounts arrays - they read
+  // live climate/weather data via getValue_currentDataSource()/
+  // FIND_SCENARIO_CLOSE_TO_DAILY_STAT(), gated by a much wider set of
+  // STUDY/case-bar/data-source inputs. Tracked directly below: STUDY's
+  // day/hour range and filter settings, currentDataSource, TIME.beginDay,
+  // station latitude, WIN3D.impactTypeIndex, and the resolved palette.
+  // winCache_dataGeneration is the safety net for everything NOT cheaply
+  // enumerable this way - the case-bar sample-range sliders
+  // (sampleYearStart/End, sampleMemberStart/End, sampleStationStart/End -
+  // get_startK_endK()'s own inputs) and the data actually being reloaded -
+  // bumped from UI_caseBar.revise() (see UI_caseBar.pde), which is already
+  // the pervasive "something about the active case/data selection changed"
+  // hook for exactly these (every "Use <data source>" action, the case-bar
+  // range-slider drag/release/wheel handlers, and file loads all call it).
+  int winCache_dataGeneration = 0;
+
+  boolean win3DCache_dataIsValid (int builtGeneration, int PAL_type, int builtPAL_type, int PAL_direction, int builtPAL_direction, float PAL_multiplier, float builtPAL_multiplier,
+                                   int dataSource, int builtDataSource, float dayIncrement, float builtDayIncrement, int daysMergedCount, int builtDaysMergedCount,
+                                   int startDay, int builtStartDay, int endDay, int builtEndDay, int impactLayerIndex, int builtImpactLayerIndex,
+                                   int temporalFilterSetting, int builtTemporalFilterSetting, int skyScenarioSetting, int builtSkyScenarioSetting,
+                                   float startHour, float builtStartHour, float endHour, float builtEndHour, int beginDay, int builtBeginDay,
+                                   float stationLat, float builtStationLat, int impactTypeIndex, int builtImpactTypeIndex) {
+    return builtGeneration == this.winCache_dataGeneration &&
+      PAL_type == builtPAL_type && PAL_direction == builtPAL_direction && PAL_multiplier == builtPAL_multiplier &&
+      dataSource == builtDataSource && dayIncrement == builtDayIncrement && daysMergedCount == builtDaysMergedCount &&
+      startDay == builtStartDay && endDay == builtEndDay && impactLayerIndex == builtImpactLayerIndex &&
+      temporalFilterSetting == builtTemporalFilterSetting && skyScenarioSetting == builtSkyScenarioSetting &&
+      startHour == builtStartHour && endHour == builtEndHour && beginDay == builtBeginDay &&
+      stationLat == builtStationLat && impactTypeIndex == builtImpactTypeIndex;
+  }
+
+  PShape win3DCache_pattern = null;
+  int win3DCache_pattern_builtGeneration = -1;
+  int win3DCache_pattern_PAL_type = -1;
+  int win3DCache_pattern_PAL_direction = 0;
+  float win3DCache_pattern_PAL_multiplier = -1;
+  int win3DCache_pattern_dataSource = -1;
+  float win3DCache_pattern_dayIncrement = Float.NaN;
+  int win3DCache_pattern_daysMergedCount = -1;
+  int win3DCache_pattern_startDay = Integer.MIN_VALUE;
+  int win3DCache_pattern_endDay = Integer.MIN_VALUE;
+  int win3DCache_pattern_impactLayerIndex = -1;
+  int win3DCache_pattern_temporalFilterSetting = -1;
+  int win3DCache_pattern_skyScenarioSetting = -1;
+  float win3DCache_pattern_startHour = Float.NaN;
+  float win3DCache_pattern_endHour = Float.NaN;
+  int win3DCache_pattern_beginDay = Integer.MIN_VALUE;
+  float win3DCache_pattern_stationLat = Float.NaN;
+  int win3DCache_pattern_impactTypeIndex = -1;
+
+  boolean win3DCache_patternIsValid (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    return this.win3DCache_pattern != null &&
+      win3DCache_dataIsValid(this.win3DCache_pattern_builtGeneration,
+        PAL_type, this.win3DCache_pattern_PAL_type, PAL_direction, this.win3DCache_pattern_PAL_direction, PAL_multiplier, this.win3DCache_pattern_PAL_multiplier,
+        currentDataSource, this.win3DCache_pattern_dataSource, STUDY.dayIncrement, this.win3DCache_pattern_dayIncrement, STUDY.daysMergedCount, this.win3DCache_pattern_daysMergedCount,
+        STUDY.startDay, this.win3DCache_pattern_startDay, STUDY.endDay, this.win3DCache_pattern_endDay, STUDY.impactLayerIndex, this.win3DCache_pattern_impactLayerIndex,
+        STUDY.temporalFilterSetting, this.win3DCache_pattern_temporalFilterSetting, STUDY.skyScenarioSetting, this.win3DCache_pattern_skyScenarioSetting,
+        STUDY.startHour, this.win3DCache_pattern_startHour, STUDY.endHour, this.win3DCache_pattern_endHour, TIME.beginDay, this.win3DCache_pattern_beginDay,
+        STATION.getLatitude(), this.win3DCache_pattern_stationLat, WIN3D.impactTypeIndex, this.win3DCache_pattern_impactTypeIndex);
+  }
+
+  void win3DCache_patternRecordState (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    this.win3DCache_pattern_builtGeneration        = this.winCache_dataGeneration;
+    this.win3DCache_pattern_PAL_type               = PAL_type;
+    this.win3DCache_pattern_PAL_direction          = PAL_direction;
+    this.win3DCache_pattern_PAL_multiplier         = PAL_multiplier;
+    this.win3DCache_pattern_dataSource             = currentDataSource;
+    this.win3DCache_pattern_dayIncrement           = STUDY.dayIncrement;
+    this.win3DCache_pattern_daysMergedCount        = STUDY.daysMergedCount;
+    this.win3DCache_pattern_startDay               = STUDY.startDay;
+    this.win3DCache_pattern_endDay                 = STUDY.endDay;
+    this.win3DCache_pattern_impactLayerIndex       = STUDY.impactLayerIndex;
+    this.win3DCache_pattern_temporalFilterSetting  = STUDY.temporalFilterSetting;
+    this.win3DCache_pattern_skyScenarioSetting     = STUDY.skyScenarioSetting;
+    this.win3DCache_pattern_startHour              = STUDY.startHour;
+    this.win3DCache_pattern_endHour                = STUDY.endHour;
+    this.win3DCache_pattern_beginDay               = TIME.beginDay;
+    this.win3DCache_pattern_stationLat             = STATION.getLatitude();
+    this.win3DCache_pattern_impactTypeIndex        = WIN3D.impactTypeIndex;
+  }
+
+  // Segments cached as raw endpoint + stroke-color + weight data, NOT a
+  // PShape - same fix as Faces.pde's/Earth3D.pde's edges: PShape LINES
+  // children don't reliably render here, in any ordering of the style
+  // calls, so these are replayed through the same live WIN3D.graphics.
+  // line() call that already works, just reading cached values instead of
+  // recomputing them. Each entry: {x1,y1,z1,x2,y2,z2, strokeR,G,B,A, weight}.
+  ArrayList<float[]> win3DCache_pathSegments = null;
+  int win3DCache_path_builtGeneration = -1;
+  int win3DCache_path_PAL_type = -1;
+  int win3DCache_path_PAL_direction = 0;
+  float win3DCache_path_PAL_multiplier = -1;
+  int win3DCache_path_dataSource = -1;
+  float win3DCache_path_dayIncrement = Float.NaN;
+  int win3DCache_path_daysMergedCount = -1;
+  int win3DCache_path_startDay = Integer.MIN_VALUE;
+  int win3DCache_path_endDay = Integer.MIN_VALUE;
+  int win3DCache_path_impactLayerIndex = -1;
+  int win3DCache_path_temporalFilterSetting = -1;
+  int win3DCache_path_skyScenarioSetting = -1;
+  float win3DCache_path_startHour = Float.NaN;
+  float win3DCache_path_endHour = Float.NaN;
+  int win3DCache_path_beginDay = Integer.MIN_VALUE;
+  float win3DCache_path_stationLat = Float.NaN;
+  int win3DCache_path_impactTypeIndex = -1;
+  int win3DCache_path_impactDisplayDay = Integer.MIN_VALUE;
+
+  boolean win3DCache_pathIsValid (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    return this.win3DCache_pathSegments != null &&
+      win3DCache_dataIsValid(this.win3DCache_path_builtGeneration,
+        PAL_type, this.win3DCache_path_PAL_type, PAL_direction, this.win3DCache_path_PAL_direction, PAL_multiplier, this.win3DCache_path_PAL_multiplier,
+        currentDataSource, this.win3DCache_path_dataSource, STUDY.dayIncrement, this.win3DCache_path_dayIncrement, STUDY.daysMergedCount, this.win3DCache_path_daysMergedCount,
+        STUDY.startDay, this.win3DCache_path_startDay, STUDY.endDay, this.win3DCache_path_endDay, STUDY.impactLayerIndex, this.win3DCache_path_impactLayerIndex,
+        STUDY.temporalFilterSetting, this.win3DCache_path_temporalFilterSetting, STUDY.skyScenarioSetting, this.win3DCache_path_skyScenarioSetting,
+        STUDY.startHour, this.win3DCache_path_startHour, STUDY.endHour, this.win3DCache_path_endHour, TIME.beginDay, this.win3DCache_path_beginDay,
+        STATION.getLatitude(), this.win3DCache_path_stationLat, WIN3D.impactTypeIndex, this.win3DCache_path_impactTypeIndex) &&
+      this.win3DCache_path_impactDisplayDay == impactDisplayDay;
+  }
+
+  void win3DCache_pathRecordState (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    this.win3DCache_path_builtGeneration        = this.winCache_dataGeneration;
+    this.win3DCache_path_PAL_type               = PAL_type;
+    this.win3DCache_path_PAL_direction          = PAL_direction;
+    this.win3DCache_path_PAL_multiplier         = PAL_multiplier;
+    this.win3DCache_path_dataSource             = currentDataSource;
+    this.win3DCache_path_dayIncrement           = STUDY.dayIncrement;
+    this.win3DCache_path_daysMergedCount        = STUDY.daysMergedCount;
+    this.win3DCache_path_startDay               = STUDY.startDay;
+    this.win3DCache_path_endDay                 = STUDY.endDay;
+    this.win3DCache_path_impactLayerIndex       = STUDY.impactLayerIndex;
+    this.win3DCache_path_temporalFilterSetting  = STUDY.temporalFilterSetting;
+    this.win3DCache_path_skyScenarioSetting     = STUDY.skyScenarioSetting;
+    this.win3DCache_path_startHour              = STUDY.startHour;
+    this.win3DCache_path_endHour                = STUDY.endHour;
+    this.win3DCache_path_beginDay               = TIME.beginDay;
+    this.win3DCache_path_stationLat             = STATION.getLatitude();
+    this.win3DCache_path_impactTypeIndex        = WIN3D.impactTypeIndex;
+    this.win3DCache_path_impactDisplayDay       = impactDisplayDay;
+  }
+
   void drawPath (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) {
     if (!this.displayPath) return;
+
+    // drawPath is only ever called for WIN3D today (unlike drawPattern/
+    // drawCycles below, which are genuinely shared with STUDY/OBJ3D) -
+    // target_window is kept as a parameter for the same reason the rest of
+    // this file does, but the cache only ever applies here.
+    boolean isWin3D = (target_window == TypeWindow.WIN3D);
+
+    float[] palette = activePalette(false);
+    int PAL_type = int(palette[0]);
+    int PAL_direction = int(palette[1]);
+    float PAL_multiplier = palette[2];
+
+    if (isWin3D && this.win3DCache_pathIsValid(PAL_type, PAL_direction, PAL_multiplier)) {
+      WIN3D.graphics.pushMatrix();
+      WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
+      WIN3D.graphics.strokeWeight(0);
+      WIN3D.graphics.stroke(0, 0, 0);
+      WIN3D.graphics.fill(0, 0, 0);
+      WIN3D.graphics.line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0);
+      WIN3D.graphics.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
+
+      int len = this.win3DCache_pathSegments.size();
+      for (int p = 0; p < len; p++) {
+        float[] seg = this.win3DCache_pathSegments.get(p);
+        WIN3D.graphics.stroke(seg[6], seg[7], seg[8], seg[9]);
+        WIN3D.graphics.strokeWeight(seg[10]);
+        WIN3D.graphics.line(seg[0], seg[1], seg[2], seg[3], seg[4], seg[5]);
+      }
+
+      WIN3D.graphics.popMatrix();
+      return;
+    }
 
     float keep_STUDY_dayIncrement = STUDY.dayIncrement;
     int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
@@ -519,10 +693,6 @@ class Sun3D {
     float previous_DATE = TIME.date;
 
     int TES_hour = 4; // 1 = every 1 hour, 4 = every 15 minutes
-    float[] palette = activePalette(false);
-    int PAL_type = int(palette[0]);
-    int PAL_direction = int(palette[1]);
-    float PAL_multiplier = palette[2];
 
     WIN3D.graphics.pushMatrix();
     WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
@@ -544,6 +714,8 @@ class Sun3D {
       J_START = impactDisplayDay - 1;
       J_END = impactDisplayDay;
     }
+
+    ArrayList<float[]> newWin3DCacheSegments = isWin3D ? new ArrayList<float[]>() : null;
 
     for (int j = J_START; j < J_END; j += 1) {
       int now_j = wrapDayIndex(j * int(STUDY.dayIncrement) + TIME.beginDay);
@@ -596,6 +768,14 @@ class Sun3D {
           float y2 = SunB[2] * WIN3D.scale * s_SunPath;
           float z2 = SunB[3] * WIN3D.scale * s_SunPath;
           WIN3D.graphics.line(x1, -y1, z1, x2, -y2, z2);
+
+          if (newWin3DCacheSegments != null) {
+            newWin3DCacheSegments.add(new float[] {
+              x1, -y1, z1, x2, -y2, z2,
+              COL[1], COL[2], COL[3], COL[0],
+              0.01f * WIN3D.dY
+            });
+          }
         }
       }
     }
@@ -605,10 +785,27 @@ class Sun3D {
     STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
     TIME.date = previous_DATE;
     TIME.updateDate();
+
+    if (isWin3D) {
+      this.win3DCache_pathSegments = newWin3DCacheSegments;
+      this.win3DCache_pathRecordState(PAL_type, PAL_direction, PAL_multiplier);
+    }
   }
 
   void drawPattern (int target_window, float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) {
     if (!(this.displayPattern || (target_window == TypeWindow.STUDY))) return;
+
+    boolean isWin3D = (target_window == TypeWindow.WIN3D);
+
+    float[] palette = activePalette(target_window == TypeWindow.STUDY);
+    int PAL_type = int(palette[0]);
+    int PAL_direction = int(palette[1]);
+    float PAL_multiplier = palette[2];
+
+    if (isWin3D && this.win3DCache_patternIsValid(PAL_type, PAL_direction, PAL_multiplier)) {
+      WIN3D.graphics.shape(this.win3DCache_pattern);
+      return;
+    }
 
     float keep_STUDY_dayIncrement = STUDY.dayIncrement;
     int keep_STUDY_daysMergedCount = STUDY.daysMergedCount;
@@ -619,12 +816,18 @@ class Sun3D {
     }
     float previous_DATE = TIME.date;
 
-    this.drawCycles(target_window, x_SunPath, y_SunPath, z_SunPath, s_SunPath);
+    PShape newWin3DCacheGroup = isWin3D ? createShape(GROUP) : null;
+    this.drawCycles(target_window, x_SunPath, y_SunPath, z_SunPath, s_SunPath, newWin3DCacheGroup);
 
     STUDY.dayIncrement = keep_STUDY_dayIncrement;
     STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
     TIME.date = previous_DATE;
     TIME.updateDate();
+
+    if (isWin3D) {
+      this.win3DCache_pattern = newWin3DCacheGroup;
+      this.win3DCache_patternRecordState(PAL_type, PAL_direction, PAL_multiplier);
+    }
   }
 
   void writeSunPatternMaterial (int PAL_type, String filename, String texturePath) {
@@ -673,6 +876,17 @@ class Sun3D {
   }
 
   void drawCycles (int target_window, float x_Plot, float y_Plot, float z_Plot, float s_Plot) {
+    this.drawCycles(target_window, x_Plot, y_Plot, z_Plot, s_Plot, null);
+  }
+
+  // win3DCacheGroup is non-null only when drawPattern() is rebuilding the
+  // WIN3D cache: the quad-emission block below then also records each
+  // quad it draws into a PShape child added to that group, alongside the
+  // unchanged live WIN3D.graphics.* calls - same dual live+cache pattern
+  // as Earth3D.pde's sphere. Every other caller (export_objects_OBJ.pde's
+  // direct STUDY-target call, and drawPattern() itself for STUDY/OBJ3D)
+  // passes null here and this behaves exactly as before.
+  void drawCycles (int target_window, float x_Plot, float y_Plot, float z_Plot, float s_Plot, PShape win3DCacheGroup) {
     int TES_hour = 1; // 1 = every 1 hour, 4 = every 15 minutes
     float STUDY_dayIncrement = STUDY.dayIncrement;
     if (STUDY_dayIncrement <= STUDY.daysMergedCount) STUDY_dayIncrement = STUDY.daysMergedCount + 0.5;
@@ -812,9 +1026,16 @@ class Sun3D {
             if (!STUDY.isInHourlyRange(i)) continue;
             if (!((i > sunrise - 1.0 / float(TES_hour)) && (i < sunset + 1.0 / float(TES_hour)))) continue;
 
+            PShape patternChild = null;
+
             if (target_window == TypeWindow.WIN3D) {
               WIN3D.graphics.beginShape();
               WIN3D.graphics.noStroke();
+              if (win3DCacheGroup != null) {
+                patternChild = createShape();
+                patternChild.beginShape();
+                patternChild.noStroke();
+              }
             } else if (target_window == TypeWindow.WORLD) {
               WORLD.graphics.beginShape();
               WORLD.graphics.noStroke();
@@ -864,6 +1085,10 @@ class Sun3D {
                 float y = funcs.cos_ang(Alpha) * (funcs.sin_ang(Beta - 90)) * WIN3D.scale * s_Plot + y_Plot;
                 float z = funcs.sin_ang(Alpha) * WIN3D.scale * s_Plot + z_Plot;
                 WIN3D.graphics.vertex(x, -y, z);
+                if (patternChild != null) {
+                  patternChild.fill(COL[1], COL[2], COL[3], 127);
+                  patternChild.vertex(x, -y, z);
+                }
               } else if (target_window == TypeWindow.WORLD) {
                 // not yet implemented for the WORLD window
               } else if (target_window == TypeWindow.STUDY) {
@@ -879,6 +1104,10 @@ class Sun3D {
               if (_turn == 3) writeSunPatternObjFace();
             } else if (target_window == TypeWindow.WIN3D) {
               WIN3D.graphics.endShape(CLOSE);
+              if (patternChild != null) {
+                patternChild.endShape(CLOSE);
+                win3DCacheGroup.addChild(patternChild);
+              }
             } else if (target_window == TypeWindow.WORLD) {
               WORLD.graphics.endShape(CLOSE);
             } else if (target_window == TypeWindow.STUDY) {
