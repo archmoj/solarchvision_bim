@@ -429,6 +429,7 @@ class Earth3D {
   float win3DCache_textureBx2 = Float.NaN;
   float win3DCache_textureBy1 = Float.NaN;
   float win3DCache_textureBy2 = Float.NaN;
+  int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
   // Grid-line edges are deliberately NOT baked into win3DCache as LINES
   // child PShapes - that was tried for Faces.pde's edges too and never
@@ -467,7 +468,8 @@ class Earth3D {
       this.win3DCache_textureBx1                  == this.cachedTextureBx1 &&
       this.win3DCache_textureBx2                  == this.cachedTextureBx2 &&
       this.win3DCache_textureBy1                  == this.cachedTextureBy1 &&
-      this.win3DCache_textureBy2                  == this.cachedTextureBy2;
+      this.win3DCache_textureBy2                  == this.cachedTextureBy2 &&
+      this.win3DCache_impactDisplayDay            == impactDisplayDay;
   }
 
   void win3DCache_recordState () {
@@ -496,6 +498,7 @@ class Earth3D {
     this.win3DCache_textureBx2                 = this.cachedTextureBx2;
     this.win3DCache_textureBy1                 = this.cachedTextureBy1;
     this.win3DCache_textureBy2                 = this.cachedTextureBy2;
+    this.win3DCache_impactDisplayDay           = impactDisplayDay;
   }
 
   // Cache-building counterparts of beginWIN3DSphere()/addFaceWIN3D()/
