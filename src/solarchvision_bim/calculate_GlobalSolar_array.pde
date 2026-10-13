@@ -251,5 +251,10 @@ void calculate_GlobalSolar_array () {
   STUDY.dayIncrement = keep_STUDY_dayIncrement;
   STUDY.daysMergedCount = keep_STUDY_daysMergedCount;
 
+  // Global-solar shading colors just changed without going through
+  // model_changed() - invalidate the WIN3D retained-mode face cache so the
+  // next WIN3D.draw() rebuilds it instead of reusing stale colors.
+  if (allFaces != null) allFaces.winCacheGeneration++;
+
   cursor(ARROW);
 }
