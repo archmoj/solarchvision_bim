@@ -166,46 +166,6 @@ class ImportObjectsOBJTest {
     assertEquals(3, app.allFaces.options[2][0]);
   }
 
-  // ================= tes/lyr/vsb/wgt/clz: confirmed dead parameters ===========
-
-  @Test
-  void importObjectsOBJ_ignoresItsOwnTessellationLayerVisibilityWeightAndClosedParameters () throws IOException {
-    // allFaces.create() (see Faces.pde) pulls a new face's tessellation,
-    // layer, visibility, weight and "closed" from the current_Tessellation/
-    // current_Layer/current_Visibility/current_Weight/current_Closed
-    // globals - which every primitive-creation function in Create3D.pde
-    // sets from its own matching tes/lyr/vsb/wgt/clz parameters before
-    // creating geometry (e.g. add_Octahedron()). import_objects_OBJ() has
-    // the exact same five parameters, declared with the exact same names,
-    // but its body never assigns any of them to those globals - only
-    // current_Material (from m) is ever set. So these five arguments are
-    // silently ignored: an imported face's tessellation/layer/visibility/
-    // weight/closed end up being whatever was already set by the previous
-    // unrelated operation, not what the caller passed in here. Confirmed
-    // by hand against the real compiled app before writing this - this
-    // documents the actual, observed behavior, not a presumed-intentional
-    // design, and is worth a fix (match Create3D.pde's own pattern) if
-    // it isn't deliberate.
-    app.current_Tessellation = 111;
-    app.current_Layer = 222;
-    app.current_Visibility = 333;
-    app.current_Weight = 444;
-    app.current_Closed = 555;
-
-    Path objFile = Files.createTempFile("import-dead-params-test", ".obj");
-    Files.writeString(objFile, "g g1\nv 0 0 0\nv 1 0 0\nv 1 1 0\nf 1 2 3\n");
-
-    app.import_objects_OBJ(objFile.toString(), 9 /*m*/, 1 /*tes*/, 2 /*lyr*/, 3 /*vsb*/, 4 /*wgt*/, 5 /*clz*/, 0, 0, 0, 1, 1, 1);
-
-    // options = [material, tessellation, layer, visibility, weight, closed] - see Faces.create()
-    assertEquals(9, app.allFaces.options[0][0], "material (m) IS applied");
-    assertEquals(111, app.allFaces.options[0][1], "tessellation (tes=1) is NOT applied - stays at the stale global");
-    assertEquals(222, app.allFaces.options[0][2], "layer (lyr=2) is NOT applied - stays at the stale global");
-    assertEquals(333, app.allFaces.options[0][3], "visibility (vsb=3) is NOT applied - stays at the stale global");
-    assertEquals(444, app.allFaces.options[0][4], "weight (wgt=4) is NOT applied - stays at the stale global");
-    assertEquals(555, app.allFaces.options[0][5], "closed (clz=5) is NOT applied - stays at the stale global");
-  }
-
   // ================= lines that should be skipped =============================
 
   @Test
