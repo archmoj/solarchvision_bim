@@ -1210,9 +1210,9 @@ class Faces {
         if (WIN3D.shadingMode == SHADE.Surface_Base) {
 
           PShape child = createShape();
-          child.beginShape();
           child.noStroke();
           child.fill(255, 255, 255);
+          child.beginShape();
 
           float[][] edgePolygon = this.displayEdges ? new float[this.nodes[f].length][3] : null;
 
@@ -1261,8 +1261,8 @@ class Faces {
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
             PShape child = createShape();
-            child.beginShape();
             child.noStroke();
+            child.beginShape();
 
             float[][] edgePolygon = this.displayEdges ? new float[subFace.length][3] : null;
 
@@ -1334,10 +1334,10 @@ class Faces {
 
     if (this.displayEdges) {
       PShape edgesChild = createShape();
-      edgesChild.beginShape(LINES);
       edgesChild.stroke(0, 0, 0);
       edgesChild.strokeWeight(1);
       edgesChild.noFill();
+      edgesChild.beginShape(LINES);
 
       int len = edgePolygons.size();
       for (int p = 0; p < len; p++) {
