@@ -356,7 +356,7 @@ class Model1Ds {
             // cache skip the recursive branch walk entirely here - the
             // whole forest is drawn once, after the loop, via the cached
             // PShape (see win3DCache_isValid() below). Any other
-            // target_window (SHADOW/OBJ3D/RENDER) always takes this branch
+            // target_window (SHADOW/OBJ3D) always takes this branch
             // unchanged, same as before this cache existed.
             boolean skipImmediateTreeRender = (target_window == TypeWindow.WIN3D) && this.win3DCache_isValid();
 
@@ -466,7 +466,7 @@ class Model1Ds {
   // same matrix-stack math PGraphics uses internally, so composing them by
   // hand here mirrors pushMatrix()/popMatrix() exactly. The original
   // draw()/makeBranch()/etc. are untouched and still used as-is for
-  // SHADOW/OBJ3D/RENDER output and for WIN3D frames where the cache is
+  // SHADOW/OBJ3D output and for WIN3D frames where the cache is
   // being rebuilt (see the "if (!skipImmediateTreeRender)" block in
   // draw()) - this method only ever feeds the cache, never the live frame
   // it's built on, so a mistake here can't show up until the *next* frame.
@@ -518,22 +518,18 @@ class Model1Ds {
     return group;
   }
 
-  // Replaces the old allModel1Ds.draw(TypeWindow.RENDER) call in
-  // buildFaceGrid() (isIntersected_Faces.pde): instead of re-walking the
-  // entire recursive branch generator a second time through
-  // WIN3D.graphics.modelX/Y/Z() under freshly-pushed pushMatrix/translate/
-  // rotateZ/rotateY calls, this reuses the exact same object-space
-  // geometry already computed for win3DCache (same cacheBranch()/
-  // cacheElement()/cacheTrunk()/cacheLeaf()/cacheLocalFace() pass - the
-  // math was already re-derived by hand against the original immediate-
-  // mode chain for win3DCache itself, so this shares that, not a second
-  // independent derivation). Valid because buildFaceGrid() itself is only
-  // ever called outside the normal per-frame draw() cycle (from
-  // ShadeViewport()/preBakeViewport()/calculate_VertexSolar_array()),
-  // where WIN3D.graphics's matrix stack is back at identity - the same
-  // starting point this PMatrix3D chain already assumes - confirmed by
-  // renderFrame()'s own single matched pushMatrix()/popMatrix() pair
-  // wrapping every normal frame's entire drawSceneContents() call.
+  // Called by buildFaceGrid() (isIntersected_Faces.pde) to feed the
+  // spatial raycasting grid every tree's geometry, reusing the same
+  // object-space data already computed for win3DCache (same cacheBranch()/
+  // cacheElement()/cacheTrunk()/cacheLeaf()/cacheLocalFace() pass) rather
+  // than walking the recursive branch generator a second time. Valid
+  // because buildFaceGrid() is only ever called outside the normal
+  // per-frame draw() cycle (from ShadeViewport()/preBakeViewport()/
+  // calculate_VertexSolar_array()), where WIN3D.graphics's matrix stack is
+  // back at identity - the same starting point this PMatrix3D chain
+  // already assumes - confirmed by renderFrame()'s own single matched
+  // pushMatrix()/popMatrix() pair wrapping every normal frame's entire
+  // drawSceneContents() call.
   void addToFaceGrid () {
 
     if (!this.win3DCache_isValid()) {
@@ -674,18 +670,17 @@ class Model1Ds {
       m.mult(src, dst);
       child.vertex(dst.x, dst.y, dst.z);
 
-      // The original TypeWindow.RENDER branch fed modelX/Y/Z() the RAW
-      // (non-negated) local y and negated the Y *output* afterward - not
-      // the same transform as negating y on the *input* the way the
-      // vertex(x,-y,z) convention above does once any rotation is in the
-      // chain (this PMatrix3D's rotateZ/rotateY calls, from the tree's own
-      // rot plus every branch's twist/tilt). So this is a second,
-      // independent multiply with un-flipped y, matching that exact
-      // convention - not a reuse of dst above. Divided back out of the
-      // overallScale*WIN3D.scale this chain applied first/outermost (see
-      // build_win3DCache()'s own m.scale(...) call) to recover the raw
-      // model-space coordinate, matching entirePointsX/Y/Z's own
-      // convention (see addToFaceGrid() and Faces.pde's RENDER branch).
+      // entirePointsX/Y/Z (see addToFaceGrid() and Faces.pde's own
+      // TypeWindow.RENDER branch) take the RAW (non-negated) local y and
+      // negate the Y *output* instead - not the same transform as
+      // negating y on the *input* the way the vertex(x,-y,z) convention
+      // above does once any rotation is in the chain (this PMatrix3D's
+      // rotateZ/rotateY calls, from the tree's own rot plus every
+      // branch's twist/tilt). So this is a second, independent multiply
+      // with un-flipped y, matching that exact convention - not a reuse
+      // of dst above. Divided back out of the overallScale*WIN3D.scale
+      // this chain applied first/outermost (see build_win3DCache()'s own
+      // m.scale(...) call) to recover the raw model-space coordinate.
       srcRaw.set(localVerts[j][0], localVerts[j][1], localVerts[j][2]);
       m.mult(srcRaw, dstRaw);
 
@@ -988,28 +983,6 @@ class Model1Ds {
       }
 
       SHADOW_graphics.endShape(CLOSE);
-    }
-
-
-
-    if (target_window == TypeWindow.RENDER) {
-      int len = this.local_vertices.length;
-      int[] newFace = new int[len];
-      for (int j = 0; j < len; j++) {
-        newFace[j] = entirePointsX.size();
-
-        float x = this.local_vertices[j][0];
-        float y = this.local_vertices[j][1];
-        float z = this.local_vertices[j][2];
-
-        entirePointsX.add(WIN3D.graphics.modelX(x,y,z) / (overallScale * WIN3D.scale));
-        entirePointsY.add(-WIN3D.graphics.modelY(x,y,z) / (overallScale * WIN3D.scale));
-        entirePointsZ.add(WIN3D.graphics.modelZ(x,y,z) / (overallScale * WIN3D.scale));
-
-        if(j == len - 1) {
-          entireFaces.add(newFace);
-        }
-      }
     }
 
 
