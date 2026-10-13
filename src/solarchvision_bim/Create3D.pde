@@ -129,6 +129,8 @@ class Create3D {
 
     model_added();
     }
+
+    model_changed();
   }
 
 
@@ -254,6 +256,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -379,6 +383,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -533,6 +539,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -610,6 +618,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -679,6 +689,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -753,6 +765,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -804,6 +818,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -851,6 +867,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -900,6 +918,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -932,6 +952,8 @@ class Create3D {
         }
       }
     }
+
+    model_changed();
   }
 
 
@@ -977,6 +999,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -1027,6 +1051,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -1081,6 +1107,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -1103,6 +1131,7 @@ class Create3D {
 
     allFaces.create(newFace_nodes);
 
+    model_changed();
     model_added();
   }
 
@@ -1129,6 +1158,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -1155,6 +1186,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -1210,6 +1243,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -1289,6 +1324,8 @@ class Create3D {
 
       model_added();
     }
+
+    model_changed();
   }
 
 
@@ -1417,6 +1454,7 @@ class Create3D {
       }
     }
 
+    model_changed();
     model_added();
   }
 
@@ -1542,6 +1580,7 @@ class Create3D {
       // Nothing. In this case we should add temp object outside this function. See SuperSphere
     }
 
+    model_changed();
     model_added();
   }
 
@@ -1590,6 +1629,7 @@ class Create3D {
 
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
 
+    model_changed();
     model_added();
   }
 
@@ -1664,6 +1704,7 @@ class Create3D {
 
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
 
+    model_changed();
     model_added();
   }
 
@@ -1705,6 +1746,7 @@ class Create3D {
 
     this.addTempObjectToScene(m, tes, lyr, vsb, wgt, clz, cx, cy, cz, sx, sy, sz, t);
 
+    model_changed();
     model_added();
   }
 
