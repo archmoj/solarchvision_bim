@@ -228,6 +228,21 @@ class Model1Ds {
   PShape win3DCache = null;
   int win3DCache_builtGeneration = -1;
 
+  // Flat, UNSCALED (raw model-space, matching allPoints.getX/Y/Z()'s own
+  // convention - see Faces.pde's own TypeWindow.RENDER branch, which
+  // populates entirePointsX/Y/Z the same unscaled way) point/face lists,
+  // built in the exact same pass as win3DCache above (cacheLocalFace()
+  // appends to both). These use tree-local indices, not the spatial
+  // grid's global ones - addToFaceGrid() below offsets them when copying
+  // this cache into the global entirePointsX/Y/Z/entireFaces (see
+  // isIntersected_Faces.pde), since those lists are rebuilt fresh every
+  // call to buildFaceGrid(). Kept in sync with win3DCache's own validity,
+  // not tracked separately.
+  ArrayList<Float> win3DCache_modelPointsX = new ArrayList<Float>();
+  ArrayList<Float> win3DCache_modelPointsY = new ArrayList<Float>();
+  ArrayList<Float> win3DCache_modelPointsZ = new ArrayList<Float>();
+  ArrayList<int[]> win3DCache_modelFaces = new ArrayList<int[]>();
+
   float[][] Vertices;
   int[][] Faces;
 
@@ -459,6 +474,11 @@ class Model1Ds {
 
     PShape group = createShape(GROUP);
 
+    this.win3DCache_modelPointsX = new ArrayList<Float>();
+    this.win3DCache_modelPointsY = new ArrayList<Float>();
+    this.win3DCache_modelPointsZ = new ArrayList<Float>();
+    this.win3DCache_modelFaces = new ArrayList<int[]>();
+
     for (int f = 0; f < this.num; f++) {
 
       int n = this.getType(f);
@@ -496,6 +516,49 @@ class Model1Ds {
     }
 
     return group;
+  }
+
+  // Replaces the old allModel1Ds.draw(TypeWindow.RENDER) call in
+  // buildFaceGrid() (isIntersected_Faces.pde): instead of re-walking the
+  // entire recursive branch generator a second time through
+  // WIN3D.graphics.modelX/Y/Z() under freshly-pushed pushMatrix/translate/
+  // rotateZ/rotateY calls, this reuses the exact same object-space
+  // geometry already computed for win3DCache (same cacheBranch()/
+  // cacheElement()/cacheTrunk()/cacheLeaf()/cacheLocalFace() pass - the
+  // math was already re-derived by hand against the original immediate-
+  // mode chain for win3DCache itself, so this shares that, not a second
+  // independent derivation). Valid because buildFaceGrid() itself is only
+  // ever called outside the normal per-frame draw() cycle (from
+  // ShadeViewport()/preBakeViewport()/calculate_VertexSolar_array()),
+  // where WIN3D.graphics's matrix stack is back at identity - the same
+  // starting point this PMatrix3D chain already assumes - confirmed by
+  // renderFrame()'s own single matched pushMatrix()/popMatrix() pair
+  // wrapping every normal frame's entire drawSceneContents() call.
+  void addToFaceGrid () {
+
+    if (!this.win3DCache_isValid()) {
+      this.win3DCache = this.build_win3DCache();
+      this.win3DCache_recordState();
+    }
+
+    int offset = entirePointsX.size();
+
+    int numPoints = this.win3DCache_modelPointsX.size();
+    for (int p = 0; p < numPoints; p++) {
+      entirePointsX.add(this.win3DCache_modelPointsX.get(p));
+      entirePointsY.add(this.win3DCache_modelPointsY.get(p));
+      entirePointsZ.add(this.win3DCache_modelPointsZ.get(p));
+    }
+
+    int numFaces = this.win3DCache_modelFaces.size();
+    for (int fIdx = 0; fIdx < numFaces; fIdx++) {
+      int[] localFace = this.win3DCache_modelFaces.get(fIdx);
+      int[] newFace = new int[localFace.length];
+      for (int s = 0; s < localFace.length; s++) {
+        newFace[s] = localFace[s] + offset;
+      }
+      entireFaces.add(newFace);
+    }
   }
 
   // Mirrors makeBranch(w,h,n) exactly, reading the same shared
@@ -600,12 +663,38 @@ class Model1Ds {
 
     PVector src = new PVector();
     PVector dst = new PVector();
+    PVector srcRaw = new PVector();
+    PVector dstRaw = new PVector();
+
+    int[] newFace = new int[localVerts.length];
+    float invScale = 1.0 / (overallScale * WIN3D.scale);
 
     for (int j = 0; j < localVerts.length; j++) {
       src.set(localVerts[j][0], -localVerts[j][1], localVerts[j][2]); // mirrors vertex(x, -y, z)
       m.mult(src, dst);
       child.vertex(dst.x, dst.y, dst.z);
+
+      // The original TypeWindow.RENDER branch fed modelX/Y/Z() the RAW
+      // (non-negated) local y and negated the Y *output* afterward - not
+      // the same transform as negating y on the *input* the way the
+      // vertex(x,-y,z) convention above does once any rotation is in the
+      // chain (this PMatrix3D's rotateZ/rotateY calls, from the tree's own
+      // rot plus every branch's twist/tilt). So this is a second,
+      // independent multiply with un-flipped y, matching that exact
+      // convention - not a reuse of dst above. Divided back out of the
+      // overallScale*WIN3D.scale this chain applied first/outermost (see
+      // build_win3DCache()'s own m.scale(...) call) to recover the raw
+      // model-space coordinate, matching entirePointsX/Y/Z's own
+      // convention (see addToFaceGrid() and Faces.pde's RENDER branch).
+      srcRaw.set(localVerts[j][0], localVerts[j][1], localVerts[j][2]);
+      m.mult(srcRaw, dstRaw);
+
+      newFace[j] = this.win3DCache_modelPointsX.size();
+      this.win3DCache_modelPointsX.add(dstRaw.x * invScale);
+      this.win3DCache_modelPointsY.add(-dstRaw.y * invScale);
+      this.win3DCache_modelPointsZ.add(dstRaw.z * invScale);
     }
+    this.win3DCache_modelFaces.add(newFace);
 
     child.endShape(CLOSE);
     group.addChild(child);
