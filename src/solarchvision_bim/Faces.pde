@@ -20,6 +20,49 @@ class Faces {
   int passiveColorscaleDirection = 1;
   float passiveColorscaleFactor = 0.25;
 
+  // --- WIN3D retained-mode cache -------------------------------------------
+  // Orbiting/panning/zooming the WIN3D camera does not change face geometry,
+  // material, tessellation or shading - only the view matrix. draw() used to
+  // re-tessellate and re-color every face from scratch on every such frame.
+  // Instead we build a PShape once and reuse it until something that
+  // actually affects the cached geometry/color changes:
+  //  - structural/material edits bump winCacheGeneration (see the global
+  //    model_changed() in global_functions.pde, already called pervasively
+  //    on every create/edit/move/delete/import of faces, so this piggybacks
+  //    on an existing, well-established hook rather than adding a new one
+  //    that every future mutation site would also have to remember to call)
+  //  - solar-array recomputation bumps it too (see calculate_GlobalSolar_
+  //    array.pde / calculate_VertexSolar_array.pde - those change per-vertex
+  //    colors without changing winCacheGeneration via model_changed())
+  //  - the handful of cheap scalar knobs below (shading mode, impact type,
+  //    display-edges toggle, tessellation level, colorscale params) are
+  //    compared frame-to-frame in win3DCache_isValid(), so we don't have to
+  //    chase every UI control (sliders, menus, XML load, ...) that can touch
+  //    them - there turned out to be a lot of those (ValueModifier.pde,
+  //    UI_rollout.pde, extraCommands.pde, actions.pde, ...).
+  int winCacheGeneration = 0;
+
+  PShape win3DCache = null;
+  // Edges are deliberately NOT baked into win3DCache as a LINES child PShape
+  // - that didn't render reliably (see build_win3DCache()'s comment). They're
+  // cached as plain object-space endpoint data instead and replayed each
+  // frame through the same immediate-mode beginShape(LINES)/vertex/endShape
+  // call that already worked pre-cache - still far cheaper than before,
+  // since it skips the tessellation + per-vertex shading lookups, which were
+  // the actual expensive part; it just replays already-known line endpoints.
+  ArrayList<float[][]> win3DCache_edgePolygons = null;
+  int win3DCache_builtGeneration = -1;
+  int win3DCache_shadingMode = -1;
+  int win3DCache_impactTypeIndex = -1;
+  boolean win3DCache_displayEdges = true;
+  int win3DCache_displayTessellation = -1;
+  int win3DCache_activeColorscaleIndex = -1;
+  int win3DCache_activeColorscaleDirection = 0;
+  float win3DCache_activeColorscaleFactor = -1;
+  int win3DCache_passiveColorscaleIndex = -1;
+  int win3DCache_passiveColorscaleDirection = 0;
+  float win3DCache_passiveColorscaleFactor = -1;
+
 
   int[][] nodes;
   int[][] options;
@@ -229,150 +272,26 @@ class Faces {
           }
         }
 
-        // afterward instead.
-        WIN3D.graphics.noStroke();
-
-        ArrayList<float[][]> edgePolygons = this.displayEdges ? new ArrayList<float[][]>() : null;
-
-        int PAL_type = SHADE.get_PAL_type();
-        int PAL_direction = SHADE.get_PAL_direction();
-        float PAL_multiplier = SHADE.get_PAL_multiplier();
-
-        for (int f = 0; f < this.nodes.length; f++) {
-
-          int vsb = this.getVisibility(f);
-
-          if (vsb > 0) {
-
-            if (WIN3D.shadingMode == SHADE.Surface_Base) {
-
-              WIN3D.graphics.fill(255, 255, 255);
-
-              WIN3D.graphics.beginShape();
-
-              float[][] edgePolygon = this.displayEdges ? new float[this.nodes[f].length][3] : null;
-
-              for (int j = 0; j < this.nodes[f].length; j++) {
-                int vNo = this.nodes[f][j];
-
-                float px =  allPoints.getX(vNo) * overallScale * WIN3D.scale;
-                float py = -allPoints.getY(vNo) * overallScale * WIN3D.scale;
-                float pz =  allPoints.getZ(vNo) * overallScale * WIN3D.scale;
-
-                WIN3D.graphics.vertex(px, py, pz);
-
-                if (this.displayEdges) {
-                  edgePolygon[j][0] = px;
-                  edgePolygon[j][1] = py;
-                  edgePolygon[j][2] = pz;
-                }
-              }
-
-              WIN3D.graphics.endShape(CLOSE);
-
-              if (this.displayEdges) edgePolygons.add(edgePolygon);
-            } else {
-
-              int mt = this.getMaterial(f);
-
-              int tessellation = this.getTessellation(f);
-
-              int totalNumberOfSubs = 1;
-              if (this.getMaterial(f) == 0) {
-                tessellation += this.displayTessellation;
-              }
-              if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
-
-              float[][] base_Vertices = new float [this.nodes[f].length][3];
-              for (int j = 0; j < this.nodes[f].length; j++) {
-                int vNo = this.nodes[f][j];
-                base_Vertices[j][0] = allPoints.getX(vNo);
-                base_Vertices[j][1] = allPoints.getY(vNo);
-                base_Vertices[j][2] = allPoints.getZ(vNo);
-              }
-
-              for (int n = 0; n < totalNumberOfSubs; n++) {
-
-                float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
-
-                WIN3D.graphics.beginShape();
-
-                float[][] edgePolygon = this.displayEdges ? new float[subFace.length][3] : null;
-
-                for (int s = 0; s < subFace.length; s++) {
-
-                  if (WIN3D.shadingMode != SHADE.Surface_Wire) {
-
-                    float[] COL = {
-                      255, 255, 255, 255
-                    };
-
-                    int s_next = (s + 1) % subFace.length;
-                    int s_prev = (s + subFace.length - 1) % subFace.length;
-
-                    if (WIN3D.shadingMode == SHADE.Global_Solar) {
-
-                      COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
-                    }
-
-                    if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
-
-                      COL = SHADE.vertexRender_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
-                    }
-
-                    if (WIN3D.shadingMode == SHADE.Vertex_Solid) {
-
-                      COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
-                    }
-
-                    if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
-
-                      COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
-                    }
-
-                    if (WIN3D.shadingMode == SHADE.Surface_Materials) {
-                      COL = SHADE.vertexRender_Surface_Materials(mt);
-                    }
-
-                    if (WIN3D.shadingMode == SHADE.Surface_White) {
-                      COL = SHADE.vertexRender_Surface_White(255);
-                    }
-
-                    WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-                  } else {
-                    WIN3D.graphics.noFill();
-                  }
-
-                  float px =  subFace[s][0] * overallScale * WIN3D.scale;
-                  float py = -subFace[s][1] * overallScale * WIN3D.scale;
-                  float pz =  subFace[s][2] * overallScale * WIN3D.scale;
-
-                  WIN3D.graphics.vertex(px, py, pz);
-
-                  if (this.displayEdges) {
-                    edgePolygon[s][0] = px;
-                    edgePolygon[s][1] = py;
-                    edgePolygon[s][2] = pz;
-                  }
-                }
-
-                WIN3D.graphics.endShape(CLOSE);
-
-                if (this.displayEdges) edgePolygons.add(edgePolygon);
-              }
-            }
-          }
+        // Camera-only frames (orbit/pan/zoom/roll) reach this point with
+        // win3DCache_isValid() == true: replay the cached GPU buffers under
+        // whatever transform put_3DViewport() already pushed, instead of
+        // re-tessellating + re-coloring every face again.
+        if (!this.win3DCache_isValid()) {
+          this.win3DCache = this.build_win3DCache();
+          this.win3DCache_recordState();
         }
 
-        if (this.displayEdges) {
+        WIN3D.graphics.shape(this.win3DCache);
+
+        if (this.displayEdges && this.win3DCache_edgePolygons != null) {
           WIN3D.graphics.stroke(0, 0, 0);
           WIN3D.graphics.strokeWeight(1);
           WIN3D.graphics.noFill();
           WIN3D.graphics.beginShape(LINES);
 
-          int len = edgePolygons.size();
+          int len = this.win3DCache_edgePolygons.size();
           for (int p = 0; p < len; p++) {
-            float[][] poly = edgePolygons.get(p);
+            float[][] poly = this.win3DCache_edgePolygons.get(p);
             int n = poly.length;
 
             for (int s = 0; s < n; s++) {
@@ -1274,6 +1193,195 @@ class Faces {
   }
 
 
+  // --- WIN3D retained-mode cache (see field block near the top) -----------
+
+  boolean win3DCache_isValid () {
+    return this.win3DCache != null &&
+      this.win3DCache_builtGeneration            == this.winCacheGeneration &&
+      this.win3DCache_shadingMode                == WIN3D.shadingMode &&
+      this.win3DCache_impactTypeIndex             == WIN3D.impactTypeIndex &&
+      this.win3DCache_displayEdges                == this.displayEdges &&
+      this.win3DCache_displayTessellation         == this.displayTessellation &&
+      this.win3DCache_activeColorscaleIndex       == this.activeColorscaleIndex &&
+      this.win3DCache_activeColorscaleDirection   == this.activeColorscaleDirection &&
+      this.win3DCache_activeColorscaleFactor      == this.activeColorscaleFactor &&
+      this.win3DCache_passiveColorscaleIndex      == this.passiveColorscaleIndex &&
+      this.win3DCache_passiveColorscaleDirection  == this.passiveColorscaleDirection &&
+      this.win3DCache_passiveColorscaleFactor     == this.passiveColorscaleFactor;
+  }
+
+  void win3DCache_recordState () {
+    this.win3DCache_builtGeneration           = this.winCacheGeneration;
+    this.win3DCache_shadingMode               = WIN3D.shadingMode;
+    this.win3DCache_impactTypeIndex           = WIN3D.impactTypeIndex;
+    this.win3DCache_displayEdges              = this.displayEdges;
+    this.win3DCache_displayTessellation       = this.displayTessellation;
+    this.win3DCache_activeColorscaleIndex     = this.activeColorscaleIndex;
+    this.win3DCache_activeColorscaleDirection = this.activeColorscaleDirection;
+    this.win3DCache_activeColorscaleFactor    = this.activeColorscaleFactor;
+    this.win3DCache_passiveColorscaleIndex     = this.passiveColorscaleIndex;
+    this.win3DCache_passiveColorscaleDirection = this.passiveColorscaleDirection;
+    this.win3DCache_passiveColorscaleFactor    = this.passiveColorscaleFactor;
+  }
+
+  // Straight port of the old immediate-mode WIN3D face-drawing loop - same
+  // math, same per-vertex shading calls (SHADE.vertexRender_*) - just
+  // recorded into a PShape GROUP instead of issued directly to
+  // WIN3D.graphics. Only called from draw() when win3DCache_isValid() is
+  // false, i.e. when geometry/material/tessellation/shading actually
+  // changed, never on a plain camera move.
+  PShape build_win3DCache () {
+
+    PShape group = createShape(GROUP);
+
+    ArrayList<float[][]> edgePolygons = this.displayEdges ? new ArrayList<float[][]>() : null;
+
+    int PAL_type = SHADE.get_PAL_type();
+    int PAL_direction = SHADE.get_PAL_direction();
+    float PAL_multiplier = SHADE.get_PAL_multiplier();
+
+    for (int f = 0; f < this.nodes.length; f++) {
+
+      int vsb = this.getVisibility(f);
+
+      if (vsb > 0) {
+
+        if (WIN3D.shadingMode == SHADE.Surface_Base) {
+
+          PShape child = createShape();
+          child.beginShape();
+          child.noStroke();
+          child.fill(255, 255, 255);
+
+          float[][] edgePolygon = this.displayEdges ? new float[this.nodes[f].length][3] : null;
+
+          for (int j = 0; j < this.nodes[f].length; j++) {
+            int vNo = this.nodes[f][j];
+
+            float px =  allPoints.getX(vNo) * overallScale * WIN3D.scale;
+            float py = -allPoints.getY(vNo) * overallScale * WIN3D.scale;
+            float pz =  allPoints.getZ(vNo) * overallScale * WIN3D.scale;
+
+            child.vertex(px, py, pz);
+
+            if (this.displayEdges) {
+              edgePolygon[j][0] = px;
+              edgePolygon[j][1] = py;
+              edgePolygon[j][2] = pz;
+            }
+          }
+
+          child.endShape(CLOSE);
+          group.addChild(child);
+
+          if (this.displayEdges) edgePolygons.add(edgePolygon);
+        } else {
+
+          int mt = this.getMaterial(f);
+
+          int tessellation = this.getTessellation(f);
+
+          int totalNumberOfSubs = 1;
+          if (this.getMaterial(f) == 0) {
+            tessellation += this.displayTessellation;
+          }
+          if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
+
+          float[][] base_Vertices = new float [this.nodes[f].length][3];
+          for (int j = 0; j < this.nodes[f].length; j++) {
+            int vNo = this.nodes[f][j];
+            base_Vertices[j][0] = allPoints.getX(vNo);
+            base_Vertices[j][1] = allPoints.getY(vNo);
+            base_Vertices[j][2] = allPoints.getZ(vNo);
+          }
+
+          for (int n = 0; n < totalNumberOfSubs; n++) {
+
+            float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
+
+            PShape child = createShape();
+            child.beginShape();
+            child.noStroke();
+
+            float[][] edgePolygon = this.displayEdges ? new float[subFace.length][3] : null;
+
+            for (int s = 0; s < subFace.length; s++) {
+
+              if (WIN3D.shadingMode != SHADE.Surface_Wire) {
+
+                float[] COL = {
+                  255, 255, 255, 255
+                };
+
+                int s_next = (s + 1) % subFace.length;
+                int s_prev = (s + subFace.length - 1) % subFace.length;
+
+                if (WIN3D.shadingMode == SHADE.Global_Solar) {
+
+                  COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
+                }
+
+                if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
+
+                  COL = SHADE.vertexRender_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
+                }
+
+                if (WIN3D.shadingMode == SHADE.Vertex_Solid) {
+
+                  COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+                }
+
+                if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
+
+                  COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+                }
+
+                if (WIN3D.shadingMode == SHADE.Surface_Materials) {
+                  COL = SHADE.vertexRender_Surface_Materials(mt);
+                }
+
+                if (WIN3D.shadingMode == SHADE.Surface_White) {
+                  COL = SHADE.vertexRender_Surface_White(255);
+                }
+
+                child.fill(COL[1], COL[2], COL[3], COL[0]);
+              } else {
+                child.noFill();
+              }
+
+              float px =  subFace[s][0] * overallScale * WIN3D.scale;
+              float py = -subFace[s][1] * overallScale * WIN3D.scale;
+              float pz =  subFace[s][2] * overallScale * WIN3D.scale;
+
+              child.vertex(px, py, pz);
+
+              if (this.displayEdges) {
+                edgePolygon[s][0] = px;
+                edgePolygon[s][1] = py;
+                edgePolygon[s][2] = pz;
+              }
+            }
+
+            child.endShape(CLOSE);
+            group.addChild(child);
+
+            if (this.displayEdges) edgePolygons.add(edgePolygon);
+          }
+        }
+      }
+    }
+
+    // Edges as a LINES-primitive PShape child didn't render reliably inside
+    // the GROUP alongside the filled POLYGON children - rather than chase
+    // that further blind (no Processing toolchain available here to debug
+    // it directly), cache the endpoint data itself and let draw() replay it
+    // through the original, already-proven immediate-mode beginShape(LINES)
+    // call. Still skips the expensive part (tessellation + per-vertex
+    // shading lookups above) on every camera-only frame.
+    this.win3DCache_edgePolygons = edgePolygons;
+
+    return group;
+  }
 
 
 
