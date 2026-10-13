@@ -1233,19 +1233,89 @@ class Faces {
   // WIN3D.graphics. Only called from draw() when win3DCache_isValid() is
   // false, i.e. when geometry/material/tessellation/shading actually
   // changed, never on a plain camera move.
+  // Caps how many quads/triangles a single chunk shape accumulates before
+  // being flushed and replaced by a fresh one - bounds each chunk's own
+  // vertex buffer regardless of how large the imported model is, instead
+  // of one shape holding every face (a single huge, doubling-reallocated
+  // buffer is its own OOM risk, independent of the GLU-tessellation one
+  // avoided by using QUADS/TRIANGLES mode in the first place). Still
+  // orders-of-magnitude fewer shapes than one per face for any
+  // realistically large model.
+  final int WIN3D_CACHE_CHUNK_POLYGONS = 10000;
+
+  PShape win3DCache_quadsChunk = null;
+  int win3DCache_quadsChunkCount = 0;
+  PShape win3DCache_trianglesChunk = null;
+  int win3DCache_trianglesChunkCount = 0;
+
+  void resetChunkState () {
+    this.win3DCache_quadsChunk = null;
+    this.win3DCache_quadsChunkCount = 0;
+    this.win3DCache_trianglesChunk = null;
+    this.win3DCache_trianglesChunkCount = 0;
+  }
+
+  // Flushes (endShape + addChild) whichever chunk is currently open, if
+  // any - called once a chunk fills up (to start a fresh one) and once
+  // more at the very end of build_win3DCache() to flush whatever's left.
+  void flushChunks (PShape group) {
+    if (this.win3DCache_quadsChunk != null) {
+      this.win3DCache_quadsChunk.endShape();
+      group.addChild(this.win3DCache_quadsChunk);
+      this.win3DCache_quadsChunk = null;
+      this.win3DCache_quadsChunkCount = 0;
+    }
+    if (this.win3DCache_trianglesChunk != null) {
+      this.win3DCache_trianglesChunk.endShape();
+      group.addChild(this.win3DCache_trianglesChunk);
+      this.win3DCache_trianglesChunk = null;
+      this.win3DCache_trianglesChunkCount = 0;
+    }
+  }
+
   // Emits one polygon (verts.length vertices, each with its own color -
   // {a,r,g,b} per vertex matching the SHADE.vertexRender_*()/COL
   // convention used throughout this file, or null to noFill() every
   // vertex, matching Surface_Wire) into whichever target actually fits:
-  // QUADS/TRIANGLES mode for the overwhelmingly common 4- and 3-vertex
-  // cases (no GLU tessellation needed, so no per-shape retained memory),
-  // or a one-off generic-mode child for anything else (5+-sided n-gons),
-  // added to fallbackGroup - same as every face/subface used to be built,
-  // just now only for the rare case that still needs it.
-  void emitPolygon (PShape fallbackGroup, PShape quadsShape, PShape trianglesShape, float[][] verts, float[][] colors) {
+  // a chunked QUADS/TRIANGLES shape for the overwhelmingly common 4- and
+  // 3-vertex cases (no GLU tessellation needed, so no per-shape retained
+  // tessellation memory - see WIN3D_CACHE_CHUNK_POLYGONS's own comment
+  // for why these are chunked rather than one unbounded shape each), or
+  // a one-off generic-mode child for anything else (5+-sided n-gons),
+  // added to fallbackGroup - same as every face/subface used to be
+  // built, just now only for the rare case that still needs it.
+  void emitPolygon (PShape fallbackGroup, float[][] verts, float[][] colors) {
     int n = verts.length;
 
-    PShape target = (n == 4) ? quadsShape : (n == 3) ? trianglesShape : null;
+    PShape target = null;
+
+    if (n == 4) {
+      if ((this.win3DCache_quadsChunk == null) || (this.win3DCache_quadsChunkCount >= WIN3D_CACHE_CHUNK_POLYGONS)) {
+        if (this.win3DCache_quadsChunk != null) {
+          this.win3DCache_quadsChunk.endShape();
+          fallbackGroup.addChild(this.win3DCache_quadsChunk);
+        }
+        this.win3DCache_quadsChunk = createShape();
+        this.win3DCache_quadsChunk.beginShape(QUADS);
+        this.win3DCache_quadsChunk.noStroke();
+        this.win3DCache_quadsChunkCount = 0;
+      }
+      target = this.win3DCache_quadsChunk;
+      this.win3DCache_quadsChunkCount++;
+    } else if (n == 3) {
+      if ((this.win3DCache_trianglesChunk == null) || (this.win3DCache_trianglesChunkCount >= WIN3D_CACHE_CHUNK_POLYGONS)) {
+        if (this.win3DCache_trianglesChunk != null) {
+          this.win3DCache_trianglesChunk.endShape();
+          fallbackGroup.addChild(this.win3DCache_trianglesChunk);
+        }
+        this.win3DCache_trianglesChunk = createShape();
+        this.win3DCache_trianglesChunk.beginShape(TRIANGLES);
+        this.win3DCache_trianglesChunk.noStroke();
+        this.win3DCache_trianglesChunkCount = 0;
+      }
+      target = this.win3DCache_trianglesChunk;
+      this.win3DCache_trianglesChunkCount++;
+    }
 
     if (target != null) {
       for (int j = 0; j < n; j++) {
@@ -1271,13 +1341,7 @@ class Faces {
 
     PShape group = createShape(GROUP);
 
-    PShape quadsShape = createShape();
-    quadsShape.beginShape(QUADS);
-    quadsShape.noStroke();
-
-    PShape trianglesShape = createShape();
-    trianglesShape.beginShape(TRIANGLES);
-    trianglesShape.noStroke();
+    this.resetChunkState();
 
     ArrayList<float[][]> edgePolygons = this.displayEdges ? new ArrayList<float[][]>() : null;
 
@@ -1317,7 +1381,7 @@ class Faces {
             }
           }
 
-          emitPolygon(group, quadsShape, trianglesShape, verts, colors);
+          emitPolygon(group, verts, colors);
 
           if (this.displayEdges) edgePolygons.add(edgePolygon);
         } else {
@@ -1405,7 +1469,7 @@ class Faces {
               }
             }
 
-            emitPolygon(group, quadsShape, trianglesShape, verts, colors);
+            emitPolygon(group, verts, colors);
 
             if (this.displayEdges) edgePolygons.add(edgePolygon);
           }
@@ -1413,10 +1477,7 @@ class Faces {
       }
     }
 
-    quadsShape.endShape();
-    trianglesShape.endShape();
-    group.addChild(quadsShape);
-    group.addChild(trianglesShape);
+    this.flushChunks(group);
 
     // Edges as a LINES-primitive PShape child didn't render reliably inside
     // the GROUP alongside the filled POLYGON children - rather than chase
