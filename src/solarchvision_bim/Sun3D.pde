@@ -235,7 +235,17 @@ class Sun3D {
   }
 
   PShape build_win3DCache () {
-    PShape group = createShape(GROUP);
+    // ONE shape, QUADS mode, for the whole disc - not one createShape()
+    // per grid cell (see Model1Ds.pde's own fix for why: plain beginShape()
+    // is generic POLYGON mode, GLU-tessellated and retained per shape;
+    // buildSubFace() always returns exactly 4 vertices, so QUADS mode -
+    // fixed-topology, no GLU tessellation needed - is always valid here).
+    PShape shape = createShape();
+    shape.beginShape(QUADS);
+    shape.noStroke();
+    if (this.displayTexture) {
+      shape.texture(this.Map); // bound once for the whole disc, not per quad
+    }
 
     float ScaleX  = 1;
     float ScaleY  = 1;
@@ -257,23 +267,17 @@ class Sun3D {
     for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
         FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY, frame);
-        cacheWriteFaceWIN3D(group, subFace);
+        cacheWriteFaceWIN3D(shape, subFace);
       }
     }
 
-    return group;
+    shape.endShape();
+    return shape;
   }
 
-  void cacheWriteFaceWIN3D (PShape group, FaceVertex[] subFace) {
-    PShape child = createShape();
-    child.beginShape();
-    child.noStroke();
-    if (this.displayTexture) {
-      child.texture(this.Map);
-    }
-
+  void cacheWriteFaceWIN3D (PShape shape, FaceVertex[] subFace) {
     for (int s = 0; s < subFace.length; s++) {
-      child.vertex(
+      shape.vertex(
         subFace[s].x * overallScale * WIN3D.scale,
         -subFace[s].y * overallScale * WIN3D.scale,
         subFace[s].z * overallScale * WIN3D.scale,
@@ -281,9 +285,6 @@ class Sun3D {
         subFace[s].v * this.Map.height
       );
     }
-
-    child.endShape(CLOSE);
-    group.addChild(child);
   }
 
   void draw () {

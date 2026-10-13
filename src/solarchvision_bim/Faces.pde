@@ -1233,9 +1233,51 @@ class Faces {
   // WIN3D.graphics. Only called from draw() when win3DCache_isValid() is
   // false, i.e. when geometry/material/tessellation/shading actually
   // changed, never on a plain camera move.
+  // Emits one polygon (verts.length vertices, each with its own color -
+  // {a,r,g,b} per vertex matching the SHADE.vertexRender_*()/COL
+  // convention used throughout this file, or null to noFill() every
+  // vertex, matching Surface_Wire) into whichever target actually fits:
+  // QUADS/TRIANGLES mode for the overwhelmingly common 4- and 3-vertex
+  // cases (no GLU tessellation needed, so no per-shape retained memory),
+  // or a one-off generic-mode child for anything else (5+-sided n-gons),
+  // added to fallbackGroup - same as every face/subface used to be built,
+  // just now only for the rare case that still needs it.
+  void emitPolygon (PShape fallbackGroup, PShape quadsShape, PShape trianglesShape, float[][] verts, float[][] colors) {
+    int n = verts.length;
+
+    PShape target = (n == 4) ? quadsShape : (n == 3) ? trianglesShape : null;
+
+    if (target != null) {
+      for (int j = 0; j < n; j++) {
+        if (colors == null) target.noFill();
+        else target.fill(colors[j][1], colors[j][2], colors[j][3], colors[j][0]);
+        target.vertex(verts[j][0], verts[j][1], verts[j][2]);
+      }
+    } else {
+      PShape child = createShape();
+      child.beginShape();
+      child.noStroke();
+      for (int j = 0; j < n; j++) {
+        if (colors == null) child.noFill();
+        else child.fill(colors[j][1], colors[j][2], colors[j][3], colors[j][0]);
+        child.vertex(verts[j][0], verts[j][1], verts[j][2]);
+      }
+      child.endShape(CLOSE);
+      fallbackGroup.addChild(child);
+    }
+  }
+
   PShape build_win3DCache () {
 
     PShape group = createShape(GROUP);
+
+    PShape quadsShape = createShape();
+    quadsShape.beginShape(QUADS);
+    quadsShape.noStroke();
+
+    PShape trianglesShape = createShape();
+    trianglesShape.beginShape(TRIANGLES);
+    trianglesShape.noStroke();
 
     ArrayList<float[][]> edgePolygons = this.displayEdges ? new ArrayList<float[][]>() : null;
 
@@ -1251,31 +1293,31 @@ class Faces {
 
         if (WIN3D.shadingMode == SHADE.Surface_Base) {
 
-          PShape child = createShape();
-          child.beginShape();
-          child.noStroke();
-          child.fill(255, 255, 255);
+          int n = this.nodes[f].length;
+          float[][] verts = new float[n][3];
+          float[][] colors = new float[n][4]; // same {255,255,255,255} for every vertex - emitPolygon indexes colors[j] per vertex, so this must be n-long, not a single shared row
+          float[][] edgePolygon = this.displayEdges ? new float[n][3] : null;
 
-          float[][] edgePolygon = this.displayEdges ? new float[this.nodes[f].length][3] : null;
-
-          for (int j = 0; j < this.nodes[f].length; j++) {
+          for (int j = 0; j < n; j++) {
             int vNo = this.nodes[f][j];
 
-            float px =  allPoints.getX(vNo) * overallScale * WIN3D.scale;
-            float py = -allPoints.getY(vNo) * overallScale * WIN3D.scale;
-            float pz =  allPoints.getZ(vNo) * overallScale * WIN3D.scale;
+            verts[j][0] =  allPoints.getX(vNo) * overallScale * WIN3D.scale;
+            verts[j][1] = -allPoints.getY(vNo) * overallScale * WIN3D.scale;
+            verts[j][2] =  allPoints.getZ(vNo) * overallScale * WIN3D.scale;
 
-            child.vertex(px, py, pz);
+            colors[j][0] = 255;
+            colors[j][1] = 255;
+            colors[j][2] = 255;
+            colors[j][3] = 255;
 
             if (this.displayEdges) {
-              edgePolygon[j][0] = px;
-              edgePolygon[j][1] = py;
-              edgePolygon[j][2] = pz;
+              edgePolygon[j][0] = verts[j][0];
+              edgePolygon[j][1] = verts[j][1];
+              edgePolygon[j][2] = verts[j][2];
             }
           }
 
-          child.endShape(CLOSE);
-          group.addChild(child);
+          emitPolygon(group, quadsShape, trianglesShape, verts, colors);
 
           if (this.displayEdges) edgePolygons.add(edgePolygon);
         } else {
@@ -1302,15 +1344,13 @@ class Faces {
 
             float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
 
-            PShape child = createShape();
-            child.beginShape();
-            child.noStroke();
-
+            float[][] verts = new float[subFace.length][3];
+            float[][] colors = (WIN3D.shadingMode == SHADE.Surface_Wire) ? null : new float[subFace.length][4];
             float[][] edgePolygon = this.displayEdges ? new float[subFace.length][3] : null;
 
             for (int s = 0; s < subFace.length; s++) {
 
-              if (WIN3D.shadingMode != SHADE.Surface_Wire) {
+              if (colors != null) {
 
                 float[] COL = {
                   255, 255, 255, 255
@@ -1347,16 +1387,16 @@ class Faces {
                   COL = SHADE.vertexRender_Surface_White(255);
                 }
 
-                child.fill(COL[1], COL[2], COL[3], COL[0]);
-              } else {
-                child.noFill();
+                colors[s] = COL;
               }
 
               float px =  subFace[s][0] * overallScale * WIN3D.scale;
               float py = -subFace[s][1] * overallScale * WIN3D.scale;
               float pz =  subFace[s][2] * overallScale * WIN3D.scale;
 
-              child.vertex(px, py, pz);
+              verts[s][0] = px;
+              verts[s][1] = py;
+              verts[s][2] = pz;
 
               if (this.displayEdges) {
                 edgePolygon[s][0] = px;
@@ -1365,14 +1405,18 @@ class Faces {
               }
             }
 
-            child.endShape(CLOSE);
-            group.addChild(child);
+            emitPolygon(group, quadsShape, trianglesShape, verts, colors);
 
             if (this.displayEdges) edgePolygons.add(edgePolygon);
           }
         }
       }
     }
+
+    quadsShape.endShape();
+    trianglesShape.endShape();
+    group.addChild(quadsShape);
+    group.addChild(trianglesShape);
 
     // Edges as a LINES-primitive PShape child didn't render reliably inside
     // the GROUP alongside the filled POLYGON children - rather than chase

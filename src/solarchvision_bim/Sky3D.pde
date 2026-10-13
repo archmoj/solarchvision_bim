@@ -246,7 +246,15 @@ class Sky3D {
   // is false, never on a plain camera move.
   PShape build_win3DCache (int PAL_type, int PAL_direction, float PAL_multiplier) {
 
-    PShape group = createShape(GROUP);
+    // ONE shape, QUADS mode, for the whole dome - see Model1Ds.pde's own
+    // fix for why: plain beginShape() is generic POLYGON mode, GLU-
+    // tessellated and retained per shape. skyFaces is always 4-vertex
+    // (built as new int[...][4] in Create3D.pde) and the tessellated
+    // subfaces below are always exactly 4 vertices too, with no partial
+    // quads in either branch, so QUADS mode is always valid.
+    PShape shape = createShape();
+    shape.beginShape(QUADS);
+    shape.noStroke();
 
     boolean shaded = (WIN3D.shadingMode == SHADE.Global_Solar) || (WIN3D.shadingMode == SHADE.Vertex_Solar);
 
@@ -254,49 +262,41 @@ class Sky3D {
       for (int f = 0; f < skyFaces.length; f++) {
         float[][][] subFaces = getTessellatedSubFaces(f, this.displayTessellation);
         for (int n = 0; n < subFaces.length; n++) {
-          cacheWriteFaceWIN3DShaded(group, subFaces[n], PAL_type, PAL_direction, PAL_multiplier);
+          cacheWriteFaceWIN3DShaded(shape, subFaces[n], PAL_type, PAL_direction, PAL_multiplier);
         }
       }
     } else {
-      cacheWriteDomeFlat(group);
+      cacheWriteDomeFlat(shape);
     }
 
-    return group;
+    shape.endShape();
+    return shape;
   }
 
-  void cacheWriteFaceWIN3DShaded (PShape group, float[][] subFace, int PAL_type, int PAL_direction, float PAL_multiplier) {
-    PShape child = createShape();
-    child.beginShape();
+  void cacheWriteFaceWIN3DShaded (PShape shape, float[][] subFace, int PAL_type, int PAL_direction, float PAL_multiplier) {
     for (int s = 0; s < subFace.length; s++) {
       int s_next = (s + 1) % subFace.length;
       int s_prev = (s + subFace.length - 1) % subFace.length;
 
       float[] COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
-      child.fill(COL[1], COL[2], COL[3], COL[0]);
-      child.vertex(subFace[s][0] * this.radius * this.scale * WIN3D.scale,
+      shape.fill(COL[1], COL[2], COL[3], COL[0]);
+      shape.vertex(subFace[s][0] * this.radius * this.scale * WIN3D.scale,
                     -subFace[s][1] * this.radius * this.scale * WIN3D.scale,
                     subFace[s][2] * this.radius * this.scale * WIN3D.scale);
     }
-    child.endShape(CLOSE);
-    group.addChild(child);
   }
 
   color flatColor = color(127, 191, 255);
 
-  void cacheWriteDomeFlat (PShape group) {
+  void cacheWriteDomeFlat (PShape shape) {
     for (int f = 0; f < skyFaces.length; f++) {
-      PShape child = createShape();
-      child.beginShape();
-      child.noStroke();
-      child.fill(this.flatColor); // same flat color regardless of shade mode here
+      shape.fill(this.flatColor); // same flat color regardless of shade mode here
       for (int j = 0; j < skyFaces[f].length; j++) {
         int vNo = skyFaces[f][j];
-        child.vertex(skyVertices[vNo][0] * this.radius * this.scale * WIN3D.scale,
+        shape.vertex(skyVertices[vNo][0] * this.radius * this.scale * WIN3D.scale,
                       -skyVertices[vNo][1] * this.radius * this.scale * WIN3D.scale,
                       skyVertices[vNo][2] * this.radius * this.scale * WIN3D.scale);
       }
-      child.endShape(CLOSE);
-      group.addChild(child);
     }
   }
 

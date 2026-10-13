@@ -397,7 +397,17 @@ class Moon3D {
   }
 
   PShape build_win3DCache () {
-    PShape group = createShape(GROUP);
+    // ONE shape, QUADS mode, for the whole sphere - see Model1Ds.pde's own
+    // fix for why: plain beginShape() is generic POLYGON mode, GLU-
+    // tessellated and retained per shape. buildSubFace() always returns
+    // exactly 4 vertices and shouldDrawSubFace() below skips a whole cell
+    // or none of it (never a partial quad), so QUADS mode is always valid.
+    PShape shape = createShape();
+    shape.beginShape(QUADS);
+    shape.noStroke();
+    if (this.displayTexture) {
+      shape.texture(this.Map); // bound once for the whole sphere, not per quad
+    }
 
     float ScaleX  = 1;
     float ScaleY  = 1;
@@ -428,34 +438,28 @@ class Moon3D {
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
         FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY, frame);
         if (shouldDrawSubFace(subFace)) {
-          cacheWriteFaceWIN3D(group, subFace);
+          cacheWriteFaceWIN3D(shape, subFace);
         }
       }
     }
 
-    return group;
+    shape.endShape();
+    return shape;
   }
 
-  void cacheWriteFaceWIN3D (PShape group, FaceVertex[] subFace) {
-    PShape child = createShape();
-    child.beginShape();
-    child.noStroke();
-    if (this.displayTexture) {
-      child.texture(this.Map);
-    }
-
+  void cacheWriteFaceWIN3D (PShape shape, FaceVertex[] subFace) {
     int[] sky = this.mixWithSkyColor ? halfSkyColor() : null;
 
     for (int s = 0; s < subFace.length; s++) {
       int[] tintColor = vertexColor(subFace[s].brightness, sky);
 
       if (this.displayTexture) {
-        child.tint(tintColor[0], tintColor[1], tintColor[2]);
+        shape.tint(tintColor[0], tintColor[1], tintColor[2]);
       } else {
-        child.fill(tintColor[0], tintColor[1], tintColor[2]);
+        shape.fill(tintColor[0], tintColor[1], tintColor[2]);
       }
 
-      child.vertex(
+      shape.vertex(
         subFace[s].x * overallScale * WIN3D.scale,
         -subFace[s].y * overallScale * WIN3D.scale,
         subFace[s].z * overallScale * WIN3D.scale,
@@ -463,9 +467,6 @@ class Moon3D {
         subFace[s].v * this.Map.height
       );
     }
-
-    child.endShape(CLOSE);
-    group.addChild(child);
   }
 
   void draw () {
