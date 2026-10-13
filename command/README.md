@@ -1001,6 +1001,19 @@ around.
 -   `Advance Troposphere Time`, `Rewind Troposphere Time`: step the
     troposphere map's displayed hour forward/backward
 
+
+### Input and post-processed data layers
+
+-   `Ceiling Height`, `Total Cloud Cover`
+-   `Surface Wind Direction`, `Surface Wind Speed`
+-   `Mean Sea Level Pressure`, `Surface Air Temperature`, `Surface Relative Humidity`
+-   `Direct Normal Radiation`, `Diffuse Horizontal Radiation`, `Global Horizontal Radiation`
+-   `Direct Normal Effect`, `Diffuse Normal Effect`
+-   `Surface Accumulated Precipitation`, `Wind power`,
+-   `Radiation on solar tracker`, `Radiation on surface with inclination`
+-   `Radiation on South surface`, `Radiation on East surface`, `Radiation on North surface`, `Radiation on West surface`
+-   `Radiation on S.E. surface`, `Radiation on N.E. surface`, `Radiation on N.W. surface`, `Radiation on S.W. surface`
+
 ### Impact analysis
 
 -   `Process Active Impact`, `Process Passive Impact`,
