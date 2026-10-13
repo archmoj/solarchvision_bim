@@ -62,6 +62,7 @@ class Faces {
   int win3DCache_passiveColorscaleIndex = -1;
   int win3DCache_passiveColorscaleDirection = 0;
   float win3DCache_passiveColorscaleFactor = -1;
+  int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
 
   int[][] nodes;
@@ -1207,7 +1208,8 @@ class Faces {
       this.win3DCache_activeColorscaleFactor      == this.activeColorscaleFactor &&
       this.win3DCache_passiveColorscaleIndex      == this.passiveColorscaleIndex &&
       this.win3DCache_passiveColorscaleDirection  == this.passiveColorscaleDirection &&
-      this.win3DCache_passiveColorscaleFactor     == this.passiveColorscaleFactor;
+      this.win3DCache_passiveColorscaleFactor     == this.passiveColorscaleFactor &&
+      this.win3DCache_impactDisplayDay            == impactDisplayDay;
   }
 
   void win3DCache_recordState () {
@@ -1222,6 +1224,7 @@ class Faces {
     this.win3DCache_passiveColorscaleIndex     = this.passiveColorscaleIndex;
     this.win3DCache_passiveColorscaleDirection = this.passiveColorscaleDirection;
     this.win3DCache_passiveColorscaleFactor    = this.passiveColorscaleFactor;
+    this.win3DCache_impactDisplayDay           = impactDisplayDay;
   }
 
   // Straight port of the old immediate-mode WIN3D face-drawing loop - same

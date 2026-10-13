@@ -43,6 +43,7 @@ class Sky3D {
   int win3DCache_PAL_type = -1;
   int win3DCache_PAL_direction = 0;
   float win3DCache_PAL_multiplier = -1;
+  int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
   boolean win3DCache_isValid (int PAL_type, int PAL_direction, float PAL_multiplier) {
     return this.win3DCache != null &&
@@ -52,7 +53,8 @@ class Sky3D {
       this.win3DCache_radius              == this.radius &&
       this.win3DCache_PAL_type            == PAL_type &&
       this.win3DCache_PAL_direction       == PAL_direction &&
-      this.win3DCache_PAL_multiplier      == PAL_multiplier;
+      this.win3DCache_PAL_multiplier      == PAL_multiplier &&
+      this.win3DCache_impactDisplayDay    == impactDisplayDay;
   }
 
   void win3DCache_recordState (int PAL_type, int PAL_direction, float PAL_multiplier) {
@@ -63,6 +65,7 @@ class Sky3D {
     this.win3DCache_PAL_type            = PAL_type;
     this.win3DCache_PAL_direction       = PAL_direction;
     this.win3DCache_PAL_multiplier      = PAL_multiplier;
+    this.win3DCache_impactDisplayDay    = impactDisplayDay;
   }
 
   float inclinationStep;
