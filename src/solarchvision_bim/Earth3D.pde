@@ -430,6 +430,17 @@ class Earth3D {
   float win3DCache_textureBy1 = Float.NaN;
   float win3DCache_textureBy2 = Float.NaN;
 
+  // Grid-line edges are deliberately NOT baked into win3DCache as LINES
+  // child PShapes - that was tried for Faces.pde's edges too and never
+  // actually rendered there, in any ordering of the style calls. These are
+  // cached as the same plain object-space endpoint data flushEdgeBatch()
+  // already draws from every frame, and draw() replays them through that
+  // same, already-proven immediate-mode call on a cache hit too - still
+  // far cheaper than before, since it skips the tessellation loop that
+  // built them, it just doesn't try to route them through a PShape.
+  ArrayList<float[][]> win3DCache_majorGridEdgeBatch = null;
+  ArrayList<float[][]> win3DCache_minorGridEdgeBatch = null;
+
   boolean win3DCache_isValid () {
     return this.win3DCache != null &&
       this.win3DCache_stationLat                 == STATION.getLatitude() &&
@@ -554,30 +565,6 @@ class Earth3D {
     group.addChild(sphereChild);
   }
 
-  // Cache-building counterpart of flushEdgeBatch(). majorGridEdgeBatch/
-  // minorGridEdgeBatch are already plain object-space endpoint data (see
-  // collectGridEdges()/addGridEdge()/projectEarthVertexForWIN3D()) - not
-  // GPU calls - so they need no cache-specific version of their own and
-  // are reused as-is for both the live draw and this cache build.
-  void cacheFlushEdgeBatch (PShape group, ArrayList<float[][]> batch, int strokeColor, float weight) {
-    if ((batch == null) || (batch.size() == 0)) return;
-
-    PShape child = createShape();
-    child.stroke(strokeColor);
-    child.strokeWeight(weight);
-    child.noFill();
-    child.beginShape(LINES);
-
-    for (int p = 0; p < batch.size(); p++) {
-      float[][] seg = batch.get(p);
-      child.vertex(seg[0][0], seg[0][1], seg[0][2]);
-      child.vertex(seg[1][0], seg[1][1], seg[1][2]);
-    }
-
-    child.endShape();
-    group.addChild(child);
-  }
-
   void draw (int target_window) {
     if (!shouldDraw(target_window)) return;
 
@@ -639,6 +626,8 @@ class Earth3D {
     // already memoizes itself) - just replay the cached PShape and stop.
     if (isWin3D && this.win3DCache_isValid()) {
       WIN3D.graphics.shape(this.win3DCache);
+      flushEdgeBatch(this.win3DCache_majorGridEdgeBatch, color(0), 2);
+      flushEdgeBatch(this.win3DCache_minorGridEdgeBatch, color(255), 1);
       return;
     }
 
@@ -779,10 +768,10 @@ class Earth3D {
       // The live rendering above is already correct for this frame -
       // everything from here on only prepares the cache for future frames.
       cacheEndSphere(win3DCacheGroup, win3DCacheSphereChild);
-      cacheFlushEdgeBatch(win3DCacheGroup, majorGridEdgeBatch, color(0), 2);
-      cacheFlushEdgeBatch(win3DCacheGroup, minorGridEdgeBatch, color(255), 1);
 
       this.win3DCache = win3DCacheGroup;
+      this.win3DCache_majorGridEdgeBatch = majorGridEdgeBatch;
+      this.win3DCache_minorGridEdgeBatch = minorGridEdgeBatch;
       this.win3DCache_recordState();
     }
   }
