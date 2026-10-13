@@ -31,6 +31,7 @@ class UI_caseBar {
 
   void revise () {
     this.update = true;
+    if (Sun3D != null) Sun3D.winCache_dataGeneration++;
   }
 
   void updated () {
