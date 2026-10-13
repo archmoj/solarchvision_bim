@@ -196,10 +196,46 @@ class Sun3D {
     return f;
   }
 
-  void draw () {
-    if (!this.displaySurface) return;
+  // --- WIN3D retained-mode cache (sun disc) --------------------------------
+  // draw() is WIN3D-only already (no target_window dispatch, unlike
+  // drawGrid()/drawPath()/drawPattern() below), so this is a straight
+  // build-once-and-replay like Faces.pde/Sky3D.pde: the disc's shape
+  // depends only on where the sun currently is (station latitude +
+  // SHADE_DATE_ANGLE/SHADE_HOUR_ANGLE - the same two globals
+  // adjustShadeTime()/ShadeViewport.pde's own "move time" controls change)
+  // plus a handful of display toggles - never on the camera.
+  PShape win3DCache = null;
+  float win3DCache_stationLat = Float.NaN;
+  int win3DCache_SHADE_DATE_ANGLE = Integer.MIN_VALUE;
+  int win3DCache_SHADE_HOUR_ANGLE = Integer.MIN_VALUE;
+  boolean win3DCache_displayTexture = true;
+  boolean win3DCache_fitInSkyDome = true;
+  float win3DCache_celestialMagnification = Float.NaN;
+  float win3DCache_skyRadius = Float.NaN;
 
-    WIN3D.graphics.noStroke();
+  boolean win3DCache_isValid () {
+    return this.win3DCache != null &&
+      this.win3DCache_stationLat             == STATION.getLatitude() &&
+      this.win3DCache_SHADE_DATE_ANGLE       == SHADE_DATE_ANGLE &&
+      this.win3DCache_SHADE_HOUR_ANGLE       == SHADE_HOUR_ANGLE &&
+      this.win3DCache_displayTexture         == this.displayTexture &&
+      this.win3DCache_fitInSkyDome           == this.fitInSkyDome &&
+      this.win3DCache_celestialMagnification == celestialMagnification &&
+      this.win3DCache_skyRadius              == Sky3D.radius;
+  }
+
+  void win3DCache_recordState () {
+    this.win3DCache_stationLat             = STATION.getLatitude();
+    this.win3DCache_SHADE_DATE_ANGLE       = SHADE_DATE_ANGLE;
+    this.win3DCache_SHADE_HOUR_ANGLE       = SHADE_HOUR_ANGLE;
+    this.win3DCache_displayTexture         = this.displayTexture;
+    this.win3DCache_fitInSkyDome           = this.fitInSkyDome;
+    this.win3DCache_celestialMagnification = celestialMagnification;
+    this.win3DCache_skyRadius              = Sky3D.radius;
+  }
+
+  PShape build_win3DCache () {
+    PShape group = createShape(GROUP);
 
     float ScaleX  = 1;
     float ScaleY  = 1;
@@ -221,9 +257,73 @@ class Sun3D {
     for (float Alpha = 90; Alpha > -90; Alpha -= this.lat_step) {
       for (float Beta = 180; Beta > -180; Beta -= this.lon_step) {
         FaceVertex[] subFace = buildSubFace(Alpha, Beta, r, d, CEN_lon, CEN_lat, ScaleX, ScaleY, frame);
-        writeFaceWIN3D(subFace);
+        cacheWriteFaceWIN3D(group, subFace);
       }
     }
+
+    return group;
+  }
+
+  void cacheWriteFaceWIN3D (PShape group, FaceVertex[] subFace) {
+    PShape child = createShape();
+    child.beginShape();
+    child.noStroke();
+    if (this.displayTexture) {
+      child.texture(this.Map);
+    }
+
+    for (int s = 0; s < subFace.length; s++) {
+      child.vertex(
+        subFace[s].x * overallScale * WIN3D.scale,
+        -subFace[s].y * overallScale * WIN3D.scale,
+        subFace[s].z * overallScale * WIN3D.scale,
+        subFace[s].u * this.Map.width,
+        subFace[s].v * this.Map.height
+      );
+    }
+
+    child.endShape(CLOSE);
+    group.addChild(child);
+  }
+
+  void draw () {
+    if (!this.displaySurface) return;
+
+    if (!this.win3DCache_isValid()) {
+      this.win3DCache = this.build_win3DCache();
+      this.win3DCache_recordState();
+    }
+
+    WIN3D.graphics.shape(this.win3DCache);
+  }
+
+  // --- WIN3D retained-mode cache (sky grid lines) --------------------------
+  // drawGrid() is shared with the STUDY target, unlike draw() above, so it
+  // can't just be replaced outright - see drawGrid()'s own cache-hit/
+  // cache-miss split below. The grid lines are plain segments (no fill),
+  // and the earlier Earth3D.pde/Faces.pde edges bug showed PShape LINES
+  // children don't reliably render here - so, same fix as those: cache the
+  // raw endpoint data, not a PShape, and replay it through the same
+  // drawGridSegment()-shaped WIN3D.graphics.line() calls that already work.
+  ArrayList<float[]> win3DCache_gridSegments = null;
+  float win3DCache_grid_stationLat = Float.NaN;
+  float win3DCache_grid_sSunPath = Float.NaN;
+  int win3DCache_grid_startJ = Integer.MIN_VALUE;
+  int win3DCache_grid_endJ = Integer.MIN_VALUE;
+
+  boolean win3DCache_gridIsValid (float s_SunPath, int start_j, int end_j) {
+    return this.win3DCache_gridSegments != null &&
+      this.win3DCache_grid_stationLat == STATION.getLatitude() &&
+      this.win3DCache_grid_sSunPath   == s_SunPath &&
+      this.win3DCache_grid_startJ     == start_j &&
+      this.win3DCache_grid_endJ       == end_j;
+  }
+
+  void win3DCache_gridRecordState (float s_SunPath, int start_j, int end_j) {
+    this.win3DCache_grid_stationLat = STATION.getLatitude();
+    this.win3DCache_grid_sSunPath   = s_SunPath;
+    this.win3DCache_grid_startJ     = start_j;
+    this.win3DCache_grid_endJ       = end_j;
   }
 
 
@@ -303,35 +403,20 @@ class Sun3D {
   }
 
 
-  void writeFaceWIN3D (FaceVertex[] subFace) {
-    WIN3D.graphics.beginShape();
-    if (this.displayTexture) {
-      WIN3D.graphics.texture(this.Map);
-    }
-
-    for (int s = 0; s < subFace.length; s++) {
-      WIN3D.graphics.vertex(
-        subFace[s].x * overallScale * WIN3D.scale,
-        -subFace[s].y * overallScale * WIN3D.scale,
-        subFace[s].z * overallScale * WIN3D.scale,
-        subFace[s].u * this.Map.width,
-        subFace[s].v * this.Map.height
-      );
-    }
-
-    WIN3D.graphics.endShape(CLOSE);
-  }
-
-  void drawGridSegment (int target_window, float[] SunA, float[] SunB, float s_SunPath) {
+  void drawGridSegment (int target_window, float[] SunA, float[] SunB, float s_SunPath, ArrayList<float[]> win3DCacheSink) {
     if ((SunA[3] <= 0) && (SunB[3] <= 0)) return; // both points below horizon
 
     if (target_window == TypeWindow.WIN3D) {
-      WIN3D.graphics.line(SunA[1] * s_SunPath * WIN3D.scale,
-                           -SunA[2] * s_SunPath * WIN3D.scale,
-                           SunA[3] * s_SunPath * WIN3D.scale,
-                           SunB[1] * s_SunPath * WIN3D.scale,
-                           -SunB[2] * s_SunPath * WIN3D.scale,
-                           SunB[3] * s_SunPath * WIN3D.scale);
+      float x1 =  SunA[1] * s_SunPath * WIN3D.scale;
+      float y1 = -SunA[2] * s_SunPath * WIN3D.scale;
+      float z1 =  SunA[3] * s_SunPath * WIN3D.scale;
+      float x2 =  SunB[1] * s_SunPath * WIN3D.scale;
+      float y2 = -SunB[2] * s_SunPath * WIN3D.scale;
+      float z2 =  SunB[3] * s_SunPath * WIN3D.scale;
+
+      WIN3D.graphics.line(x1, y1, z1, x2, y2, z2);
+
+      if (win3DCacheSink != null) win3DCacheSink.add(new float[] { x1, y1, z1, x2, y2, z2 });
     }
     if (target_window == TypeWindow.STUDY) {
       float A_Alpha = 90 - funcs.acos_ang(SunA[3]);
@@ -353,7 +438,34 @@ class Sun3D {
 
     if (!this.displayGrid) return;
 
-    if (target_window == TypeWindow.WIN3D) {
+    boolean isWin3D = (target_window == TypeWindow.WIN3D);
+
+    // Camera-only WIN3D frames with a valid cache skip the SunPosition()/
+    // drawGridSegment() loops below entirely - x_SunPath/y_SunPath/
+    // z_SunPath don't affect the segments themselves (only the translate
+    // wrapper, reapplied either way), so they aren't part of the key.
+    if (isWin3D && this.win3DCache_gridIsValid(s_SunPath, start_j, end_j)) {
+      WIN3D.graphics.pushMatrix();
+      WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
+      WIN3D.graphics.strokeWeight(1);
+      WIN3D.graphics.stroke(0);
+
+      int len = this.win3DCache_gridSegments.size();
+      for (int p = 0; p < len; p++) {
+        float[] seg = this.win3DCache_gridSegments.get(p);
+        WIN3D.graphics.line(seg[0], seg[1], seg[2], seg[3], seg[4], seg[5]);
+      }
+
+      WIN3D.graphics.popMatrix();
+      return;
+    }
+
+    // Rebuilding (or STUDY target, which isn't cached): the live drawing
+    // below is unchanged: on a WIN3D rebuild it also collects the same
+    // segments it's drawing into a fresh list for next frame's cache hit.
+    ArrayList<float[]> newWin3DCacheSegments = isWin3D ? new ArrayList<float[]>() : null;
+
+    if (isWin3D) {
       WIN3D.graphics.pushMatrix();
       WIN3D.graphics.translate(x_SunPath, y_SunPath, z_SunPath);
       WIN3D.graphics.strokeWeight(1);
@@ -371,7 +483,7 @@ class Sun3D {
       for (float i = 0; i <= 24; i += HOUR_step) {
         float[] SunA = funcs.SunPosition(STATION.getLatitude(), j, i);
         float[] SunB = funcs.SunPosition(STATION.getLatitude(), j, i + HOUR_step);
-        drawGridSegment(target_window, SunA, SunB, s_SunPath);
+        drawGridSegment(target_window, SunA, SunB, s_SunPath, newWin3DCacheSegments);
       }
     }
 
@@ -380,12 +492,17 @@ class Sun3D {
       for (float j = start_j; j <= end_j; j += DATE_step) {
         float[] SunA = funcs.SunPosition(STATION.getLatitude(), j, i);
         float[] SunB = funcs.SunPosition(STATION.getLatitude(), j + DATE_step, i);
-        drawGridSegment(target_window, SunA, SunB, s_SunPath);
+        drawGridSegment(target_window, SunA, SunB, s_SunPath, newWin3DCacheSegments);
       }
     }
 
-    if (target_window == TypeWindow.WIN3D) WIN3D.graphics.popMatrix();
+    if (isWin3D) WIN3D.graphics.popMatrix();
     if (target_window == TypeWindow.STUDY) STUDY.graphics.popMatrix();
+
+    if (isWin3D) {
+      this.win3DCache_gridSegments = newWin3DCacheSegments;
+      this.win3DCache_gridRecordState(s_SunPath, start_j, end_j);
+    }
   }
 
 
