@@ -53,11 +53,13 @@ boolean should_rebuildFaceGrid = true;
 void model_changed () {
   should_rebuildFaceGrid = true;
 
-  // Any structural/material edit invalidates the WIN3D retained-mode face
-  // cache (see Faces.pde's "WIN3D retained-mode cache" block) - this piggy-
-  // backs on model_changed() rather than adding a new hook, since it's
-  // already called from every create/edit/move/delete/import site.
+  // Any structural/material edit invalidates the WIN3D retained-mode
+  // caches (see Faces.pde's / Model1Ds.pde's "WIN3D retained-mode cache"
+  // blocks) - this piggybacks on model_changed() rather than adding a new
+  // hook, since it's already called from every create/edit/move/delete/
+  // import site for both classes.
   if (allFaces != null) allFaces.winCacheGeneration++;
+  if (allModel1Ds != null) allModel1Ds.winCacheGeneration++;
 
   view_changed();
 }

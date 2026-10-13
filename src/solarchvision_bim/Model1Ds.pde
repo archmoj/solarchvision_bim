@@ -213,6 +213,21 @@ class Model1Ds {
   float treeBase;
   float leafSize;
 
+  // --- WIN3D retained-mode cache -------------------------------------------
+  // Same idea as Faces.pde's cache: orbiting/panning/zooming WIN3D's camera
+  // doesn't change any tree's shape or position, only the view matrix, so
+  // there's no need to re-walk the recursive branch generator every such
+  // frame. Unlike Faces, colors here are fixed constants (trunk/leaf), so
+  // the only thing that invalidates this cache is the tree data itself
+  // changing - which already goes through the same pervasive model_changed()
+  // hook used for every create/edit/move/delete of a Model1D (confirmed by
+  // checking Move3D.pde/Rotate3D.pde/Scale3D.pde/Drop3D.pde/Edit3D.pde's
+  // call sites), so a single generation counter bumped there is enough -
+  // no scalar-state comparison needed like Faces' shading knobs required.
+  int winCacheGeneration = 0;
+  PShape win3DCache = null;
+  int win3DCache_builtGeneration = -1;
+
   float[][] Vertices;
   int[][] Faces;
 
@@ -322,21 +337,32 @@ class Model1Ds {
 
           for (_turn = 1; _turn <= end_turn; _turn++) {
 
-            WIN3D.graphics.pushMatrix();
-
-            WIN3D.graphics.scale(overallScale * WIN3D.scale);
-            WIN3D.graphics.translate(x, -y, z);
-            WIN3D.graphics.rotateZ(rot);
+            // Camera-only WIN3D frames (orbit/pan/zoom/roll) with a valid
+            // cache skip the recursive branch walk entirely here - the
+            // whole forest is drawn once, after the loop, via the cached
+            // PShape (see win3DCache_isValid() below). Any other
+            // target_window (SHADOW/OBJ3D/RENDER) always takes this branch
+            // unchanged, same as before this cache existed.
+            boolean skipImmediateTreeRender = (target_window == TypeWindow.WIN3D) && this.win3DCache_isValid();
 
             float treeHeight0 = rad;
             float treeWidth0 = rad * trunkSize * 0.15;
 
-            randomSeed(seed);
+            if (!skipImmediateTreeRender) {
 
-            // Call to draw the tree
-            this.makeBranch(treeWidth0, treeHeight0, nStart);
+              WIN3D.graphics.pushMatrix();
 
-            WIN3D.graphics.popMatrix();
+              WIN3D.graphics.scale(overallScale * WIN3D.scale);
+              WIN3D.graphics.translate(x, -y, z);
+              WIN3D.graphics.rotateZ(rot);
+
+              randomSeed(seed);
+
+              // Call to draw the tree
+              this.makeBranch(treeWidth0, treeHeight0, nStart);
+
+              WIN3D.graphics.popMatrix();
+            }
 
 
 
@@ -385,7 +411,204 @@ class Model1Ds {
 
         }
       }
+
+      if (target_window == TypeWindow.WIN3D) {
+        if (this.win3DCache_isValid()) {
+          // Every instance above skipped its immediate-mode render (cache
+          // was valid going in) - draw the whole cached forest in one call.
+          WIN3D.graphics.shape(this.win3DCache);
+        } else {
+          // Every instance above just rendered itself immediately as
+          // before, so this frame's on-screen output is already correct.
+          // Rebuild the cache now so the next camera-only frame can take
+          // the fast path above instead.
+          this.win3DCache = this.build_win3DCache();
+          this.win3DCache_recordState();
+        }
+      }
     }
+  }
+
+
+  // --- WIN3D retained-mode cache (see field block above) -------------------
+
+  boolean win3DCache_isValid () {
+    return this.win3DCache != null && this.win3DCache_builtGeneration == this.winCacheGeneration;
+  }
+
+  void win3DCache_recordState () {
+    this.win3DCache_builtGeneration = this.winCacheGeneration;
+  }
+
+  // Rebuilds the cached PShape for every tree. This is a parallel port of
+  // makeBranch()/drawElement()/drawTrunk()/drawLeaf()/drawLocalFace()'s
+  // WIN3D-only behavior - same recursion, same per-instance parameters,
+  // same geometry math - except it tracks its own PMatrix3D instead of
+  // calling WIN3D.graphics.pushMatrix()/translate()/rotateZ()/rotateY(),
+  // and bakes the resulting absolute (camera-independent) coordinates into
+  // plain PShape children instead of issuing them straight to
+  // WIN3D.graphics. PMatrix3D's translate/rotateZ/rotateY/scale are the
+  // same matrix-stack math PGraphics uses internally, so composing them by
+  // hand here mirrors pushMatrix()/popMatrix() exactly. The original
+  // draw()/makeBranch()/etc. are untouched and still used as-is for
+  // SHADOW/OBJ3D/RENDER output and for WIN3D frames where the cache is
+  // being rebuilt (see the "if (!skipImmediateTreeRender)" block in
+  // draw()) - this method only ever feeds the cache, never the live frame
+  // it's built on, so a mistake here can't show up until the *next* frame.
+  PShape build_win3DCache () {
+
+    PShape group = createShape(GROUP);
+
+    for (int f = 0; f < this.num; f++) {
+
+      int n = this.getType(f);
+      if (n != 0) continue; // mirrors draw()'s own "if (n == 0)" gate
+
+      float x = this.getX(f);
+      float y = this.getY(f);
+      float z = this.getZ(f);
+
+      float rad = this.getScale(f) * 0.25;
+      float rot = this.getRotation(f);
+
+      int seed = this.getSeed(f);
+
+      float trunkSize = this.getTrunkSize(f);
+
+      this.leafSize    = this.getLeafSize(f);
+      this.branchTilt  = this.getBranchTilt(f);
+      this.branchTwist = this.getBranchTwist(f);
+      this.branchRatio = this.getBranchRatio(f);
+      this.treeBase    = this.getTreeBase(f);
+      this.nStart      = this.getDegreeMax(f);
+
+      float treeHeight0 = rad;
+      float treeWidth0 = rad * trunkSize * 0.15;
+
+      randomSeed(seed); // kept for parity with the original call, even though nothing in this chain currently calls random()
+
+      PMatrix3D m = new PMatrix3D(); // identity - object space, camera applied separately by put_3DViewport()
+      m.scale(overallScale * WIN3D.scale);
+      m.translate(x, -y, z);
+      m.rotateZ(rot);
+
+      this.cacheBranch(group, m, treeWidth0, treeHeight0, this.nStart);
+    }
+
+    return group;
+  }
+
+  // Mirrors makeBranch(w,h,n) exactly, reading the same shared
+  // this.branchTwist/branchTilt/branchRatio/treeBase/nStart fields.
+  void cacheBranch (PShape group, PMatrix3D m, float w, float h, int n) {
+
+    if (n > 0) {
+
+      PMatrix3D m1 = m.get(); // clone - mirrors pushMatrix()
+      m1.rotateZ(this.branchTwist * PI / 180.0); // mirrors twistBranch(branchTwist)
+
+      if ((n == this.nStart) && (this.treeBase > 0.0)) {
+        this.cacheElement(group, m1, w, h * this.treeBase, n);
+      }
+      this.cacheBranch(group, m1, w * this.branchRatio, h * this.branchRatio, n - 1);
+      // m1 simply goes out of scope here - mirrors popMatrix()
+
+      if (n != this.nStart) {
+        PMatrix3D m2 = m.get(); // clone from the ORIGINAL m - mirrors the second, independent pushMatrix()
+        m2.rotateZ(this.branchTwist * PI / 180.0);  // mirrors twistBranch(branchTwist)
+        m2.rotateY(this.branchTilt * PI / 180.0);   // mirrors tiltBranch(branchTilt)
+        this.cacheElement(group, m2, w, h, n);
+        this.cacheBranch(group, m2, w * this.branchRatio, h * this.branchRatio, n - 1);
+      }
+    }
+  }
+
+  // Mirrors drawElement(w,h,n). Note the final translate is NOT scoped to a
+  // clone - it mutates m in place, exactly like the original's un-scoped
+  // WIN3D.graphics.translate(0,0,h) persists on the caller's matrix for
+  // whatever cacheBranch() does next with this same m.
+  void cacheElement (PShape group, PMatrix3D m, float w, float h, int n) {
+
+    PMatrix3D mTrunk = m.get(); // clone - mirrors pushMatrix()
+    mTrunk.translate(0, 0, 0.5 * h);
+    this.cacheTrunk(group, mTrunk, w, h);
+    // mTrunk discarded here - mirrors popMatrix()
+
+    m.translate(0, 0, h); // mutates the caller's matrix - mirrors the original's unscoped translate()
+
+    if (n == 1) {
+      this.cacheLeaf(group, m);
+    }
+  }
+
+  // Mirrors drawTrunk(w,h).
+  void cacheTrunk (PShape group, PMatrix3D m, float w, float h) {
+
+    for (int i = 0; i < this.elementSegments; i++) {
+
+      float[][] localVerts = new float[4][3];
+
+      for (int j = 0; j < 4; j++) {
+
+        float u = 0;
+        if ((j == 1) || (j == 2)) u = 1;
+
+        float v = 0;
+        if ((j == 2) || (j == 3)) v = 1;
+
+        float T = w;
+        if ((j == 2) || (j == 3)) T *= this.branchRatio; // for conic trunks
+
+        localVerts[j][0] = T * cos((i + u) * TWO_PI / float(this.elementSegments));
+        localVerts[j][1] = T * sin((i + u) * TWO_PI / float(this.elementSegments));
+        localVerts[j][2] = h * (v - 0.5);
+      }
+
+      this.cacheLocalFace(group, m, localVerts, 127, 63, 0); // trunk color, matches drawTrunk()'s fill(127,63,0)
+    }
+  }
+
+  // Mirrors drawLeaf().
+  void cacheLeaf (PShape group, PMatrix3D m) {
+
+    if (this.leafSize > 0) {
+
+      for (int i = 0; i < this.num_leaf_faces; i++) {
+
+        float[][] localVerts = new float[4][3];
+
+        for (int j = 0; j < 4; j++) {
+          localVerts[j][0] = this.leaf_faces[i][j][0] * this.leafSize;
+          localVerts[j][1] = this.leaf_faces[i][j][1] * this.leafSize;
+          localVerts[j][2] = this.leaf_faces[i][j][2] * this.leafSize;
+        }
+
+        this.cacheLocalFace(group, m, localVerts, 63, 127, 0); // leaf color, matches drawLeaf()'s fill(63,127,0)
+      }
+    }
+  }
+
+  // Mirrors drawLocalFace()'s WIN3D-only branch: bakes local_vertices
+  // through m (equivalent to WIN3D.graphics.vertex(x, -y, z) under the
+  // current matrix stack) into a plain filled child PShape.
+  void cacheLocalFace (PShape group, PMatrix3D m, float[][] localVerts, int fr, int fg, int fb) {
+
+    PShape child = createShape();
+    child.beginShape();
+    child.noStroke();
+    child.fill(fr, fg, fb);
+
+    PVector src = new PVector();
+    PVector dst = new PVector();
+
+    for (int j = 0; j < localVerts.length; j++) {
+      src.set(localVerts[j][0], -localVerts[j][1], localVerts[j][2]); // mirrors vertex(x, -y, z)
+      m.mult(src, dst);
+      child.vertex(dst.x, dst.y, dst.z);
+    }
+
+    child.endShape(CLOSE);
+    group.addChild(child);
   }
 
 
