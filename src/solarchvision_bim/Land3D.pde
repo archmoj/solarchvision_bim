@@ -53,15 +53,34 @@ class Terrain {
   ArrayList<float[][]> winEdgeBatch = null;
 
   // --- WIN3D retained-mode cache -------------------------------------------
-  // Shaded (non-textured) terrain only - see this field block's own
-  // comment above the class, and win3DCache_isValid()'s displayTexture
-  // check below, for why textured terrain isn't cached here.
-  // winCacheGeneration is bumped inside update_mesh() (the common
-  // entry point every mesh-reload path - update_station.pde, the "load
-  // mesh" UI toggle, download_mesh() - already funnels through), not by
-  // model_changed(): nothing about this class's own geometry depends on
-  // allFaces/allModel1Ds/etc edits, only on the terrain mesh itself
-  // actually changing.
+  // Both shaded and textured terrain, EXCEPT displayDepth - with depth
+  // walls on, writeLandDepthWalls() draws extra geometry per cell that
+  // this cache doesn't track at all, so that combination always falls
+  // back to the original live path, unconditionally (see
+  // win3DCache_isValid()'s displayDepth check below) - same scoping
+  // decision as excluding textured terrain entirely used to be, just
+  // narrower now.
+  //
+  // Textured cells pick their own texture tile per cell
+  // (selectLandTextureMap()), and texture() binds once per shape - so
+  // quads are chunked PER TILE (win3DCache_quadChunks, keyed by n_Map),
+  // not into one shared shape the way shaded-only caching could. n_Map
+  // == -1 means "shaded, no texture" when !displayTexture, but means "no
+  // tile covers this cell" when displayTexture - in the latter case the
+  // cell is drawn noFill() *and* noStroke() (completely invisible; its
+  // only visible effect is the gap outline already handled separately
+  // via winEdgeBatch/shouldStrokeLandSubFace()), so those quads are
+  // skipped from the cache entirely rather than guessing whether mixing
+  // fill() and noFill() quads within one QUADS stream would render
+  // correctly - see beginLandShape()'s own use of this.
+  //
+  // winCacheGeneration is bumped inside update_mesh() (full reload) and
+  // recomputeTextureOffsets() (texture list reloaded, or just re-panned
+  // after the station moves - see its own comment for why the latter
+  // matters here specifically now that texture positioning is part of
+  // what this cache renders), not by model_changed(): nothing about this
+  // class's own geometry depends on allFaces/allModel1Ds/etc edits, only
+  // on the terrain mesh/textures themselves actually changing.
   int winCacheGeneration = 0;
 
   PShape win3DCache = null;
@@ -69,6 +88,9 @@ class Terrain {
   int win3DCache_builtGeneration = -1;
   int win3DCache_shadingMode = -1;
   int win3DCache_displayTessellation = -1;
+  int win3DCache_skipStart = Integer.MIN_VALUE;
+  int win3DCache_skipEnd = Integer.MIN_VALUE;
+  boolean win3DCache_displayTexture = false;
   int win3DCache_PAL_type = -1;
   int win3DCache_PAL_direction = 0;
   float win3DCache_PAL_multiplier = -1;
@@ -76,11 +98,14 @@ class Terrain {
   boolean win3DCache_allFacesDisplayEdges = true;
 
   boolean win3DCache_isValid (int PAL_type, int PAL_direction, float PAL_multiplier) {
-    if (this.displayTexture) return false; // textured terrain is never cached - always rebuilt live
+    if (this.displayTexture && this.displayDepth) return false; // depth walls are never cached - always rebuilt live
     return this.win3DCache != null &&
       this.win3DCache_builtGeneration        == this.winCacheGeneration &&
       this.win3DCache_shadingMode            == WIN3D.shadingMode &&
       this.win3DCache_displayTessellation    == this.displayTessellation &&
+      this.win3DCache_skipStart              == this.skipStart &&
+      this.win3DCache_skipEnd                == this.skipEnd &&
+      this.win3DCache_displayTexture         == this.displayTexture &&
       this.win3DCache_PAL_type               == PAL_type &&
       this.win3DCache_PAL_direction          == PAL_direction &&
       this.win3DCache_PAL_multiplier         == PAL_multiplier &&
@@ -92,6 +117,9 @@ class Terrain {
     this.win3DCache_builtGeneration      = this.winCacheGeneration;
     this.win3DCache_shadingMode          = WIN3D.shadingMode;
     this.win3DCache_displayTessellation  = this.displayTessellation;
+    this.win3DCache_skipStart            = this.skipStart;
+    this.win3DCache_skipEnd              = this.skipEnd;
+    this.win3DCache_displayTexture       = this.displayTexture;
     this.win3DCache_PAL_type             = PAL_type;
     this.win3DCache_PAL_direction        = PAL_direction;
     this.win3DCache_PAL_multiplier       = PAL_multiplier;
@@ -104,32 +132,51 @@ class Terrain {
   // itself. Quads are chunked the same way Faces.pde's/Model1Ds.pde's
   // caches are, for the same reason: one shape holding the whole terrain
   // mesh would need one huge, doubling-reallocated vertex buffer for a
-  // large enough grid.
+  // large enough grid. Keyed by n_Map (-1 for the shaded/no-texture
+  // bucket, 0..Textures_num-1 for a specific tile) so each chunk can bind
+  // its own texture() once, rather than one shared chunk set.
   final int WIN3D_CACHE_CHUNK_POLYGONS = 10000;
   boolean win3DCache_rebuilding = false;
   PShape win3DCache_buildingGroup = null;
-  PShape win3DCache_quadChunk = null;
-  PShape win3DCache_currentChunk = null; // the specific chunk the quad currently being emitted (by renderLandVertexShaded) belongs to
-  int win3DCache_quadChunkCount = 0;
+  HashMap<Integer, PShape> win3DCache_quadChunks = new HashMap<Integer, PShape>();
+  HashMap<Integer, Integer> win3DCache_quadChunkCounts = new HashMap<Integer, Integer>();
+  PShape win3DCache_currentChunk = null; // the specific chunk the quad currently being emitted (by renderLandVertexShaded()/renderLandVertexTextured()) belongs to - null means "don't cache this quad" (see beginLandShape()'s own comment)
 
-  PShape win3DCache_getQuadChunk () {
-    if ((this.win3DCache_quadChunk == null) || (this.win3DCache_quadChunkCount >= WIN3D_CACHE_CHUNK_POLYGONS)) {
-      this.win3DCache_flushQuadChunk();
-      this.win3DCache_quadChunk = createShape();
-      this.win3DCache_quadChunk.beginShape(QUADS);
-      this.win3DCache_quadChunk.noStroke();
+  PShape win3DCache_getQuadChunk (int n_Map) {
+    PShape chunk = this.win3DCache_quadChunks.get(n_Map);
+    Integer countObj = this.win3DCache_quadChunkCounts.get(n_Map);
+    int count = (countObj == null) ? 0 : countObj;
+
+    if ((chunk == null) || (count >= WIN3D_CACHE_CHUNK_POLYGONS)) {
+      if (chunk != null) {
+        chunk.endShape();
+        this.win3DCache_buildingGroup.addChild(chunk);
+      }
+      chunk = createShape();
+      chunk.beginShape(QUADS);
+      chunk.noStroke();
+      if (n_Map != -1) {
+        chunk.texture(this.Textures_map[n_Map]);
+      }
+      this.win3DCache_quadChunks.put(n_Map, chunk);
+      count = 0;
     }
-    this.win3DCache_quadChunkCount++;
-    return this.win3DCache_quadChunk;
+
+    count++;
+    this.win3DCache_quadChunkCounts.put(n_Map, count);
+    return chunk;
   }
 
-  void win3DCache_flushQuadChunk () {
-    if (this.win3DCache_quadChunk != null) {
-      this.win3DCache_quadChunk.endShape();
-      this.win3DCache_buildingGroup.addChild(this.win3DCache_quadChunk);
-      this.win3DCache_quadChunk = null;
-      this.win3DCache_quadChunkCount = 0;
+  void win3DCache_flushAllQuadChunks () {
+    for (Integer key : this.win3DCache_quadChunks.keySet()) {
+      PShape chunk = this.win3DCache_quadChunks.get(key);
+      if (chunk != null) {
+        chunk.endShape();
+        this.win3DCache_buildingGroup.addChild(chunk);
+      }
     }
+    this.win3DCache_quadChunks.clear();
+    this.win3DCache_quadChunkCounts.clear();
   }
 
   void update_textures () {
@@ -164,6 +211,8 @@ class Terrain {
   // earlier station position keeps tracking its true lon/lat location as the
   // mesh's local origin (the station) moves - it pans instead of going stale.
   void recomputeTextureOffsets () {
+    this.winCacheGeneration++;
+
     this.Textures_offsetX = new float[this.Textures_num];
     this.Textures_offsetY = new float[this.Textures_num];
     for (int i = 0; i < this.Textures_num; i++) {
@@ -494,16 +543,17 @@ class Terrain {
       return;
     }
 
-    // Rebuilding (or textured terrain, which is never cached - see
+    // Rebuilding (or displayDepth, which is never cached - see
     // win3DCache_isValid()): the walk below runs exactly as it always
     // did, with a few extra lines at the actual WIN3D.graphics.* call
-    // sites (beginLandShape()/renderLandVertexShaded()) to also record
-    // into the cache in parallel, gated by win3DCache_rebuilding.
-    this.win3DCache_rebuilding = isWin3D && !this.displayTexture;
+    // sites (beginLandShape()/renderLandVertexShaded()/
+    // renderLandVertexTextured()) to also record into the cache in
+    // parallel, gated by win3DCache_rebuilding.
+    this.win3DCache_rebuilding = isWin3D && !(this.displayTexture && this.displayDepth);
     if (this.win3DCache_rebuilding) {
       this.win3DCache_buildingGroup = createShape(GROUP);
-      this.win3DCache_quadChunk = null;
-      this.win3DCache_quadChunkCount = 0;
+      this.win3DCache_quadChunks.clear();
+      this.win3DCache_quadChunkCounts.clear();
     }
 
     if (target_window == TypeWindow.WIN3D) this.winEdgeBatch = new ArrayList<float[][]>();
@@ -567,7 +617,7 @@ class Terrain {
     }
 
     if (this.win3DCache_rebuilding) {
-      this.win3DCache_flushQuadChunk();
+      this.win3DCache_flushAllQuadChunks();
       this.win3DCache = this.win3DCache_buildingGroup;
       this.win3DCache_buildingGroup = null;
       this.win3DCache_recordState(PAL_type, PAL_direction, PAL_multiplier);
@@ -784,7 +834,11 @@ class Terrain {
       }
 
       if (this.win3DCache_rebuilding) {
-        this.win3DCache_currentChunk = this.win3DCache_getQuadChunk();
+        if (this.displayTexture && (n_Map == -1)) {
+          this.win3DCache_currentChunk = null; // invisible gap cell - its outline is cached separately via winEdgeBatch
+        } else {
+          this.win3DCache_currentChunk = this.win3DCache_getQuadChunk(n_Map);
+        }
       }
     }
 
@@ -886,8 +940,19 @@ class Terrain {
           u * this.Textures_map[n_Map].width,
           v * this.Textures_map[n_Map].height
         );
+        if (this.win3DCache_rebuilding && (this.win3DCache_currentChunk != null)) {
+          this.win3DCache_currentChunk.vertex(
+            subFace[s][0] * overallScale * WIN3D.scale,
+            -subFace[s][1] * overallScale * WIN3D.scale,
+            subFace[s][2] * overallScale * WIN3D.scale,
+            u * this.Textures_map[n_Map].width,
+            v * this.Textures_map[n_Map].height
+          );
+        }
       } else {
         WIN3D.graphics.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, subFace[s][2] * overallScale * WIN3D.scale);
+        // win3DCache_currentChunk is null here (see beginLandShape()) - this
+        // gap cell is intentionally not cached, it's fully invisible anyway.
       }
     }
 
