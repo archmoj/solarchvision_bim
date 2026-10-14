@@ -16,6 +16,19 @@ void update_station (int Step) {
     WORLD.VIEW_id = WORLD.FindGoodViewport(locationLongitude, locationLatitude);
 
     TIME.beginDay = TIME.convert2Date(TIME.month, TIME.day);
+
+    // Keep already-loaded textures tracking the real lon/lat they were
+    // captured at as the station moves (see Land3D.pde's
+    // recomputeTextureOffsets()). This is every live way the station can
+    // move - the GUI spinners, clicking the map, and the SETLAT/SETLON/
+    // SETLATLON/SETLONLAT commands all funnel through Step 0 - so without
+    // this, textures only ever re-pan on the separate, explicit "Update
+    // Station" action (Step -1) or at startup, not on a normal move.
+    // Deliberately NOT the full Terrain.update_mesh() here: that re-reads
+    // elevation files and reloads every texture image from disk, which is
+    // too expensive to repeat on every single live edit - this is pure
+    // offset math over the already-loaded texture list instead.
+    Terrain.recomputeTextureOffsets();
   }
 
   if ((Step == -1) || (Step == 1)) update_climateTypicalYear();

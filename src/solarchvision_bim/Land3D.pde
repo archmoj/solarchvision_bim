@@ -24,6 +24,20 @@ class Terrain {
   String[] Textures_path;
   int Textures_num = 0;
 
+  // Real-world (lon/lat) position each texture was originally captured/centered
+  // on, decoded from its ELEV_ filename (see addLandTextureIfElevationJpg()).
+  float[] Textures_centerLon;
+  float[] Textures_centerLat;
+
+  // Where that original capture center currently sits in the mesh's local
+  // (meter) coordinates, i.e. relative to the CURRENT STATION position -
+  // see recomputeTextureOffsets(). Zero when the station hasn't moved since
+  // download; non-zero after a re-center, which is what lets the existing
+  // texture pan across the (re-centered) mesh instead of needing a fresh
+  // download for every small latitude/longitude tweak.
+  float[] Textures_offsetX;
+  float[] Textures_offsetY;
+
   // Polar grid
   int rowCount = 18;
   int columnCount = 24 + 1; // 48 + 1;
@@ -121,6 +135,8 @@ class Terrain {
   void update_textures () {
     this.Textures_horizontalUnitScale = new float[0];
     this.Textures_verticalUnitScale = new float[0];
+    this.Textures_centerLon = new float[0];
+    this.Textures_centerLat = new float[0];
     this.Textures_map = new PImage[0];
     this.Textures_path = new String[0];
     this.Textures_num = 0;
@@ -138,7 +154,23 @@ class Terrain {
       println("\nERROR: loading terrain texture maps");
     }
 
+    this.recomputeTextureOffsets();
     view_changed();
+  }
+
+  // Called whenever the texture list is (re)loaded (update_textures(), above)
+  // and whenever the station is re-centered (update_station.pde -> update_mesh()
+  // -> update_textures() already runs this), so a texture downloaded for an
+  // earlier station position keeps tracking its true lon/lat location as the
+  // mesh's local origin (the station) moves - it pans instead of going stale.
+  void recomputeTextureOffsets () {
+    this.Textures_offsetX = new float[this.Textures_num];
+    this.Textures_offsetY = new float[this.Textures_num];
+    for (int i = 0; i < this.Textures_num; i++) {
+      float[] XY = funcs.convert_lonlat2XY(STATION.getLongitude(), STATION.getLatitude(), this.Textures_centerLon[i], this.Textures_centerLat[i]);
+      this.Textures_offsetX[i] = XY[0];
+      this.Textures_offsetY[i] = XY[1];
+    }
   }
 
   void addLandTextureIfElevationJpg (String filename) {
@@ -153,7 +185,48 @@ class Terrain {
     if (Parts.length <= 1) return;
 
     String dir = Folder_Terrain + "/" + filename;
+
+    // Parts[2]/Parts[3] hold the lat/lon the texture was centered on at
+    // download time (see download_textures()). Older files saved before this
+    // format existed won't have them - IMPORTANT: that must be treated as "no
+    // data, freeze a best guess right now", not "recompute from the station
+    // every time this runs". update_textures() re-scans the folder on every
+    // single station move, so re-deriving the center from the live station
+    // position each time would silently re-anchor the image to wherever the
+    // station currently is, forever - meaning its offset could never become
+    // non-zero no matter how far the station actually moved. Instead we
+    // migrate the file once: rename it on disk to embed today's best guess
+    // (the station's current position), so the NEXT reload parses a real,
+    // frozen anchor from the filename like any other texture.
+    float centerLat = STATION.getLatitude();
+    float centerLon = STATION.getLongitude();
+    boolean hasEmbeddedCenter = false;
+    if (Parts.length > 3) {
+      try {
+        centerLat = float(Parts[2]);
+        centerLon = float(Parts[3]);
+        hasEmbeddedCenter = true;
+      }
+      catch (Exception e) {
+        println("WARNING: could not parse lat/lon from texture filename:", filename);
+      }
+    }
+
+    if (!hasEmbeddedCenter) {
+      String migratedFilename = "ELEV_" + Parts[1] + "_" + nfDot(centerLat, 0, 6) + "_" + nfDot(centerLon, 0, 6) + "_.jpg";
+      String migratedDir = Folder_Terrain + "/" + migratedFilename;
+      println("Migrating pre-pan texture filename:", filename, ">", migratedFilename);
+      if (new File(dir).renameTo(new File(migratedDir))) {
+        dir = migratedDir;
+      }
+      else {
+        println("WARNING: could not migrate texture filename, pan offset will reset to zero again next reload:", filename);
+      }
+    }
+
     this.Textures_path = (String[]) concat(this.Textures_path, new String[] { dir });
+    this.Textures_centerLat = (float[]) concat(this.Textures_centerLat, new float[] { centerLat });
+    this.Textures_centerLon = (float[]) concat(this.Textures_centerLon, new float[] { centerLon });
 
     float u = float(Parts[1]);
     float v = u;
@@ -298,6 +371,18 @@ class Terrain {
     this.update_mesh();
   }
 
+  // nf() uses the JVM's default locale, which on many systems formats
+  // decimals with a comma ("43,650000") instead of a period - harmless in
+  // most places this codebase calls nf(), but fatal here: that string gets
+  // split on '_' and parsed back with float(), which throws on a comma and
+  // (silently, via the catch in addLandTextureIfElevationJpg) falls back to
+  // "centered on the current station" - i.e. no pan, ever, on those systems.
+  // Same fix already used for Mesh XML content below; reused here for the
+  // texture filename and the bbox URL.
+  String nfDot (float v, int left, int right) {
+    return nf(v, left, right).replace(",", ".");
+  }
+
   void download_textures () {
     float[] ratios = {
       1128.497220, 2256.994440, 4513.988880, 9027.977761, 18055.95552,
@@ -311,13 +396,13 @@ class Terrain {
       if (i > 9) continue; // skip too far
 
       float widthMeters = 0.05 * ratios[i];
-      String the_target = Folder_Terrain + "/ELEV_" + nf(int(widthMeters), 7) + "_.jpg";
+      String the_target = Folder_Terrain + "/ELEV_" + nf(int(widthMeters), 7) + "_" + nfDot(STATION.getLatitude(), 0, 6) + "_" + nfDot(STATION.getLongitude(), 0, 6) + "_.jpg";
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
       double[] bbox = satelliteBBoxForWidth(widthMeters);
       String esri_link = "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export"
-        + "?bbox=" + nf((float) bbox[0], 0, 6) + "," + nf((float) bbox[1], 0, 6) + "," + nf((float) bbox[2], 0, 6) + "," + nf((float) bbox[3], 0, 6)
+        + "?bbox=" + nfDot((float) bbox[0], 0, 6) + "," + nfDot((float) bbox[1], 0, 6) + "," + nfDot((float) bbox[2], 0, 6) + "," + nfDot((float) bbox[3], 0, 6)
         + "&bboxSR=4326&imageSR=4326&size=640,640&format=jpg&f=image";
       println("Try downloading: " + esri_link);
       try {
@@ -329,7 +414,7 @@ class Terrain {
         // Fallback: Google Static Maps now requires a billed API key (free tier retired).
         // Only attempted if GOOGLE_STATIC_MAPS_API_KEY was set via .env.
         if (!GOOGLE_STATIC_MAPS_API_KEY.equals("")) {
-          String google_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(STATION.getLatitude(), 0, 5) + "," + nf(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
+          String google_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nfDot(STATION.getLatitude(), 0, 5) + "," + nfDot(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
           println("Try downloading (fallback): " + google_link); // don't show the API_KEY
           try {
             saveBytes(the_target, loadBytes(google_link + "&key=" + GOOGLE_STATIC_MAPS_API_KEY));
@@ -635,6 +720,21 @@ class Terrain {
     this.winEdgeBatch = null;
   }
 
+  // x, y are a vertex's local mesh coordinates (meters, relative to the
+  // CURRENT station). Textures_offsetX/Y[n_Map] is where that texture's own
+  // capture center now sits in that same local frame (see
+  // recomputeTextureOffsets()) - subtracting it re-centers the lookup on the
+  // texture's true position instead of assuming it's still at the origin,
+  // which is what lets a re-centered station reuse a previously-downloaded,
+  // off-center texture by panning it across the mesh.
+  float landTextureU (float x, int n_Map) {
+    return ((x - this.Textures_offsetX[n_Map]) / this.Textures_horizontalUnitScale[n_Map] + 0.5);
+  }
+
+  float landTextureV (float y, int n_Map) {
+    return ((this.Textures_offsetY[n_Map] - y) / this.Textures_verticalUnitScale[n_Map] + 0.5);
+  }
+
   int selectLandTextureMap (float[][] subFace) {
     if (!this.displayTexture) return -1;
 
@@ -642,8 +742,8 @@ class Terrain {
     for (int q = 0; q < this.Textures_num; q++) { // increase resolution until every corner fits inside a map
       n_Map = q;
       for (int s = 0; s < subFace.length; s++) {
-        float u = (subFace[s][0] / this.Textures_horizontalUnitScale[q] + 0.5);
-        float v = (-subFace[s][1] / this.Textures_verticalUnitScale[q] + 0.5);
+        float u = landTextureU(subFace[s][0], q);
+        float v = landTextureV(subFace[s][1], q);
         if ((0.05 > u) || (u > 0.95) || (0.05 > v) || (v > 0.95)) { // exclude margins where the legend is printed
           n_Map = -1;
           break;
@@ -763,8 +863,8 @@ class Terrain {
     float u = 0;
     float v = 0;
     if (n_Map != -1) {
-      u = (subFace[s][0] / this.Textures_horizontalUnitScale[n_Map] + 0.5);
-      v = (-subFace[s][1] / this.Textures_verticalUnitScale[n_Map] + 0.5);
+      u = landTextureU(subFace[s][0], n_Map);
+      v = landTextureV(subFace[s][1], n_Map);
     }
 
     if (target_window == TypeWindow.WIN3D) {
@@ -856,11 +956,11 @@ class Terrain {
       float u_next = 0;
       float v_next = 0;
       if (n_Map != -1) {
-        u = (subFace[s][0] / this.Textures_horizontalUnitScale[n_Map] + 0.5);
-        v = (-subFace[s][1] / this.Textures_verticalUnitScale[n_Map] + 0.5);
+        u = landTextureU(subFace[s][0], n_Map);
+        v = landTextureV(subFace[s][1], n_Map);
 
-        u_next = (subFace[s_next][0] / this.Textures_horizontalUnitScale[n_Map] + 0.5);
-        v_next = (-subFace[s_next][1] / this.Textures_verticalUnitScale[n_Map] + 0.5);
+        u_next = landTextureU(subFace[s_next][0], n_Map);
+        v_next = landTextureV(subFace[s_next][1], n_Map);
       }
 
       WIN3D.graphics.beginShape();
@@ -1108,6 +1208,8 @@ class Terrain {
         XML_setInt(child, "id", i);
         XML_setFloat(child, "horizontalUnitScale", this.Textures_horizontalUnitScale[i]);
         XML_setFloat(child, "verticalUnitScale", this.Textures_verticalUnitScale[i]);
+        XML_setFloat(child, "centerLat", this.Textures_centerLat[i]);
+        XML_setFloat(child, "centerLon", this.Textures_centerLon[i]);
         XML_setContent(child, this.Textures_path[i]);
       }
     }
@@ -1162,9 +1264,17 @@ class Terrain {
       XML[] children = parent.getChildren("item");
       this.Textures_horizontalUnitScale = new float [this.Textures_num];
       this.Textures_verticalUnitScale = new float [this.Textures_num];
+      this.Textures_centerLat = new float [this.Textures_num];
+      this.Textures_centerLon = new float [this.Textures_num];
       for (int i = 0; i < this.Textures_num; i++) {
         this.Textures_horizontalUnitScale[i] = children[i].getFloat("horizontalUnitScale");
         this.Textures_verticalUnitScale[i] = children[i].getFloat("verticalUnitScale");
+
+        // Default to the current station for projects saved before centerLat/
+        // centerLon existed - same "assume no pan needed" fallback used when
+        // reading an old-format filename in addLandTextureIfElevationJpg().
+        this.Textures_centerLat[i] = children[i].getFloat("centerLat", STATION.getLatitude());
+        this.Textures_centerLon[i] = children[i].getFloat("centerLon", STATION.getLongitude());
 
         String new_Texture_path = XML_getContent(children[i]);
 
@@ -1177,6 +1287,8 @@ class Terrain {
           }
         }
       }
+
+      this.recomputeTextureOffsets();
     }
   }
 }
