@@ -126,18 +126,16 @@ class Terrain {
     this.Textures_num = 0;
     this.displayTexture = false;
 
-    if (this.loadTextures) {
-      try {
-        String[] filenames = sort(OPESYS.getFiles(Folder_Terrain)); // important to sort
-        if (filenames != null) {
-          for (int i = 0; i < filenames.length; i++) {
-            addLandTextureIfElevationJpg(filenames[i]);
-          }
+    try {
+      String[] filenames = sort(OPESYS.getFiles(Folder_Terrain)); // important to sort
+      if (filenames != null) {
+        for (int i = 0; i < filenames.length; i++) {
+          addLandTextureIfElevationJpg(filenames[i]);
         }
       }
-      catch (Exception e) {
-        println("ERROR loading this.Textures_map!");
-      }
+    }
+    catch (Exception e) {
+      println("\nERROR: loading terrain texture maps");
     }
 
     view_changed();
