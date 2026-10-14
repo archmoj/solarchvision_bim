@@ -39,7 +39,7 @@ class Terrain {
   float[] Textures_offsetY;
 
   // Polar grid
-  int rowCount = 18;
+  int rowCount = 20;
   int columnCount = 24 + 1; // 48 + 1;
 
   int skipStart = 1;
@@ -403,7 +403,7 @@ class Terrain {
 
     for (int i = 0; i <= 15; i++) {
       if (i < 2) continue; // skip too close
-      if (i > 9) continue; // skip too far
+      if (i > 10) continue; // skip too far
 
       float widthMeters = 0.05 * ratios[i];
       String the_target = Folder_Terrain + "/ELEV_" + nf(int(widthMeters), 7) + "_" + encodeDegrees(STATION.getLatitude(), 3, 6) + "_" + encodeDegrees(STATION.getLongitude(), 3, 6) + "_.jpg";
