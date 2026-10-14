@@ -1162,7 +1162,7 @@ class Model2Ds {
           if (this.ImagePath[i].equals("")) {
           } else {
             println("Loading texture(" + i + "):", this.ImagePath[i]);
-            this.Images[i] = loadImage(this.ImagePath[i]);
+            this.Images[i] = loadImage(Folder_Project + "/" + this.ImagePath[i]);
             println("loaded!");
 
             if (this.Images[i].height != 0) {
