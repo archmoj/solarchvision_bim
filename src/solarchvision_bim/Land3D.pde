@@ -179,6 +179,95 @@ class Terrain {
     this.win3DCache_quadChunkCounts.clear();
   }
 
+  // --- raycasting grid cache (buildFaceGrid(), isIntersected_Faces.pde) ---
+  // A separate cache from win3DCache above, not tied to its own build pass
+  // or validity: win3DCache's tessellation decision depends on
+  // WIN3D.shadingMode (Surface_Base forces tessellation to 0 - see
+  // draw()'s own tessellation logic), which is a display-only concern
+  // that shouldn't affect raycasting accuracy (same reasoning as
+  // Faces.pde's own grid cache). Only depends on the mesh itself
+  // (winCacheGeneration), this.displayTessellation, and skipStart/skipEnd
+  // (the same row range win3DCache itself now also tracks). Capped at
+  // row 4 (i < 4) regardless of skipEnd - "don't add points farther
+  // away", keeping the shading/raycasting algorithm working on a small,
+  // nearby patch rather than the whole mesh.
+  ArrayList<Float> win3DCache_gridPointsX = new ArrayList<Float>();
+  ArrayList<Float> win3DCache_gridPointsY = new ArrayList<Float>();
+  ArrayList<Float> win3DCache_gridPointsZ = new ArrayList<Float>();
+  ArrayList<int[]> win3DCache_gridFaces = new ArrayList<int[]>();
+  int win3DCache_gridBuiltGeneration = -1;
+  int win3DCache_gridDisplayTessellation = -1;
+  int win3DCache_gridSkipStart = Integer.MIN_VALUE;
+  int win3DCache_gridSkipEnd = Integer.MIN_VALUE;
+
+  void addToFaceGrid () {
+    boolean gridValid = (this.win3DCache_gridBuiltGeneration == this.winCacheGeneration) &&
+                         (this.win3DCache_gridDisplayTessellation == this.displayTessellation) &&
+                         (this.win3DCache_gridSkipStart == this.skipStart) &&
+                         (this.win3DCache_gridSkipEnd == this.skipEnd);
+
+    if (!gridValid) {
+      this.build_gridCache();
+      this.win3DCache_gridBuiltGeneration     = this.winCacheGeneration;
+      this.win3DCache_gridDisplayTessellation = this.displayTessellation;
+      this.win3DCache_gridSkipStart           = this.skipStart;
+      this.win3DCache_gridSkipEnd             = this.skipEnd;
+    }
+
+    int offset = entirePointsX.size();
+
+    int numPoints = this.win3DCache_gridPointsX.size();
+    for (int p = 0; p < numPoints; p++) {
+      entirePointsX.add(this.win3DCache_gridPointsX.get(p));
+      entirePointsY.add(this.win3DCache_gridPointsY.get(p));
+      entirePointsZ.add(this.win3DCache_gridPointsZ.get(p));
+    }
+
+    int numFaces = this.win3DCache_gridFaces.size();
+    for (int fIdx = 0; fIdx < numFaces; fIdx++) {
+      int[] localFace = this.win3DCache_gridFaces.get(fIdx);
+      int[] newFace = new int[localFace.length];
+      for (int s = 0; s < localFace.length; s++) {
+        newFace[s] = localFace[s] + offset;
+      }
+      entireFaces.add(newFace);
+    }
+  }
+
+  void build_gridCache () {
+    this.win3DCache_gridPointsX = new ArrayList<Float>();
+    this.win3DCache_gridPointsY = new ArrayList<Float>();
+    this.win3DCache_gridPointsZ = new ArrayList<Float>();
+    this.win3DCache_gridFaces = new ArrayList<int[]>();
+
+    int tessellation = this.displayTessellation;
+    int totalNumberOfSubs = 1;
+    if (tessellation > 0) totalNumberOfSubs = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // x4: a LAND cell has 4 points
+
+    int i_start = this.skipStart;
+    int i_end = min(this.rowCount - 1 - this.skipEnd, 4); // don't add points farther away - helps the shading algorithm
+
+    for (int i = i_start; i < i_end; i++) {
+      for (int j = 0; j < this.columnCount - 1; j++) {
+        float[][] base_Vertices = landCellBaseVertices(i, j);
+
+        for (int n = 0; n < totalNumberOfSubs; n++) {
+          float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
+
+          int len = subFace.length;
+          int[] newFace = new int[len];
+          for (int s = 0; s < len; s++) {
+            newFace[s] = this.win3DCache_gridPointsX.size();
+            this.win3DCache_gridPointsX.add(subFace[s][0]);
+            this.win3DCache_gridPointsY.add(subFace[s][1]);
+            this.win3DCache_gridPointsZ.add(subFace[s][2]);
+          }
+          this.win3DCache_gridFaces.add(newFace);
+        }
+      }
+    }
+  }
+
   void update_textures () {
     this.Textures_horizontalUnitScale = new float[0];
     this.Textures_verticalUnitScale = new float[0];
@@ -712,9 +801,8 @@ class Terrain {
 
     beginLandShape(target_window, subFace, n_Map, _turn);
 
-    int[] newFace = new int[subFace.length]; // used only for target_window == RENDER
     for (int s = 0; s < subFace.length; s++) {
-      renderLandVertex(target_window, subFace, newFace, s, i, _turn, n_Map, PAL_type, PAL_direction, PAL_multiplier);
+      renderLandVertex(target_window, subFace, s, i, _turn, n_Map, PAL_type, PAL_direction, PAL_multiplier);
     }
 
     endLandShape(target_window, i, n_Map, _turn);
@@ -871,15 +959,7 @@ class Terrain {
     }
   }
 
-  void renderLandVertex (int target_window, float[][] subFace, int[] newFace, int s, int i, int _turn, int n_Map, int PAL_type, int PAL_direction, float PAL_multiplier) {
-    if ((target_window == TypeWindow.RENDER) && (i < 5)) { // don't add points farther away
-      newFace[s] = entirePointsX.size();
-      entirePointsX.add(subFace[s][0]);
-      entirePointsY.add(subFace[s][1]);
-      entirePointsZ.add(subFace[s][2]);
-      if (s == subFace.length - 1) entireFaces.add(newFace);
-    }
-
+  void renderLandVertex (int target_window, float[][] subFace, int s, int i, int _turn, int n_Map, int PAL_type, int PAL_direction, float PAL_multiplier) {
     if (target_window == TypeWindow.SKY2D) {
       SKY2D_graphics.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
     }
