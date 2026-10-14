@@ -84,6 +84,13 @@ String __IMPORT_OBJ__ (String[] parts) {
     return hint;
 }
 
+String __IMPORT_IFC__ (String[] parts) {
+    String hint = "";
+    if (parts.length > 1) _fileSelected_ImportIfc(new File(parts[1]));
+    else selectFile_ImportIfc();
+    return hint;
+}
+
 String __RUN_SCRIPT__ (String[] parts) {
     String hint = "";
     if (parts.length > 1) _fileSelected_RunScript(new File(Folder_Import + "/" + parts[1]));

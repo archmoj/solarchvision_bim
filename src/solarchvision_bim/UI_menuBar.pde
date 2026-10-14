@@ -66,6 +66,7 @@ class UI_menuBar {
       "Open",
       ___divider___,
       "Import OBJ",
+      "Import IFC",
       "Import Commands",
       ___divider___,
       "Hold",

@@ -290,6 +290,10 @@ void build_allActions() {
     selectFile_ImportObj();
   });
 
+  putAction("Import IFC", () -> {
+    selectFile_ImportIfc();
+  });
+
   putAction("Import Commands", () -> {
     selectFile_RunScript();
   });

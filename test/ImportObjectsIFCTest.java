@@ -1,0 +1,357 @@
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+// import_objects_IFC() is a plain STEP(.ifc)-format text parser plus calls
+// to Create3D.add_Mesh() (itself allPoints.create()/allFaces.create()/
+// model_changed()/model_added()) and allGroups.beginNewGroup() - no
+// WIN3D.graphics, no PImage - so, like ImportObjectsOBJTest.java's own
+// import_objects_OBJ() tests, this is directly testable from a bare,
+// never-setup()'d instance with no extra seeding.
+//
+// Each test below writes the smallest STEP snippet that exercises one
+// path, rather than a realistic whole-building export - see
+// import_objects_IFC.pde's own file-header comment for exactly which
+// IFC entities/attributes each path corresponds to, and for the
+// documented limitations (holes, curves, booleans, IfcMappedItem) a
+// couple of tests below confirm are skipped-and-counted, not silently
+// guessed around.
+class ImportObjectsIFCTest {
+
+  private solarchvision_bim app;
+
+  @BeforeEach
+  void setUp () throws java.io.IOException {
+    app = new solarchvision_bim();
+    // See Earth3DTest.java's own comment on why this isn't
+    // app.locateBaseFolder().
+    app.BaseFolder = java.nio.file.Files.createTempDirectory("solarchvision-bim-test").toString();
+    app.sketchPath(); // side effect: lazily caches into PApplet's own sketchPath field, which loadStrings()/loadImage()/createInput() check directly - without this they throw "Files must be loaded inside setup() or after it has been called." even though BaseFolder above is already set
+  }
+
+  private Path ifcFile (String name, String body) throws IOException {
+    Path f = Files.createTempFile(name, ".ifc");
+    Files.writeString(f, body);
+    return f;
+  }
+
+  // ================= IfcFacetedBrep (straight-edged B-rep) ===================
+
+  @Test
+  void importObjectsIFC_facetedBrep_importsOneQuadFace_keptAsAnNgonNotTriangulated () throws IOException {
+    Path f = ifcFile("ifc-facetedbrep-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "the one IfcFace should have become exactly one face");
+    assertEquals(4, app.allFaces.nodes[0].length, "a 4-point IfcPolyLoop should stay a quad, not split into triangles");
+    assertEquals(4, app.allPoints.getLength());
+
+    float[][] expected = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+    for (int i = 0; i < 4; i++) {
+      assertEquals(expected[i][0], app.allPoints.getX(i), 0.0001f, "point " + i);
+      assertEquals(expected[i][1], app.allPoints.getY(i), 0.0001f, "point " + i);
+      assertEquals(expected[i][2], app.allPoints.getZ(i), 0.0001f, "point " + i);
+    }
+  }
+
+  @Test
+  void importObjectsIFC_faceOuterBound_withFalseOrientation_reversesTheLoop () throws IOException {
+    Path f = ifcFile("ifc-orientation-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.F.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // .F. orientation reverses the loop, so the first vertex created
+    // should be the *last* point of the original IfcPolyLoop (0,1,0).
+    assertEquals(0f, app.allPoints.getX(0), 0.0001f);
+    assertEquals(1f, app.allPoints.getY(0), 0.0001f);
+    assertEquals(0f, app.allPoints.getZ(0), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_faceBound_innerLoopIsIgnored_butOuterLoopStillImports () throws IOException {
+    Path f = ifcFile("ifc-hole-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((4.,0.,0.));
+        #3=IFCCARTESIANPOINT((4.,4.,0.));
+        #4=IFCCARTESIANPOINT((0.,4.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCCARTESIANPOINT((1.,1.,0.));
+        #8=IFCCARTESIANPOINT((2.,1.,0.));
+        #9=IFCCARTESIANPOINT((2.,2.,0.));
+        #10=IFCCARTESIANPOINT((1.,2.,0.));
+        #11=IFCPOLYLOOP((#7,#8,#9,#10));
+        #12=IFCFACEBOUND(#11,.T.);
+        #13=IFCFACE((#6,#12));
+        #14=IFCCLOSEDSHELL((#13));
+        #15=IFCFACETEDBREP(#14);
+        #16=IFCSHAPEREPRESENTATION($,'Body','Brep',(#15));
+        #17=IFCPRODUCTDEFINITIONSHAPE($,$,(#16));
+        #18=IFCWALL('guid-1',$,$,$,$,$,#17);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "the outer boundary should still import as one solid face");
+    assertEquals(4, app.allFaces.nodes[0].length);
+    assertEquals(1, app.ifcImportHolesIgnoredCount, "the inner IfcFaceBound should be counted as an ignored hole");
+  }
+
+  // ================= IfcLocalPlacement / IfcAxis2Placement3D =================
+
+  @Test
+  void importObjectsIFC_objectPlacement_translatesEveryPointOfTheProduct () throws IOException {
+    Path f = ifcFile("ifc-placement-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #20=IFCCARTESIANPOINT((10.,20.,30.));
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCLOCALPLACEMENT($,#21);
+        #12=IFCWALL('guid-1',$,$,$,$,#22,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    float[] expectedX = {10, 11, 11, 10};
+    float[] expectedY = {20, 20, 21, 21};
+    for (int i = 0; i < 4; i++) {
+      assertEquals(expectedX[i], app.allPoints.getX(i), 0.0001f, "point " + i);
+      assertEquals(expectedY[i], app.allPoints.getY(i), 0.0001f, "point " + i);
+      assertEquals(30f, app.allPoints.getZ(i), 0.0001f, "point " + i);
+    }
+  }
+
+  // ================= IfcPolygonalFaceSet (tessellated geometry) ==============
+
+  @Test
+  void importObjectsIFC_polygonalFaceSet_sharedPointPool_importsAQuadFace () throws IOException {
+    Path f = ifcFile("ifc-polygonalfaceset-test", """
+        #1=IFCCARTESIANPOINTLIST3D(((0.,0.,0.),(1.,0.,0.),(1.,1.,0.),(0.,1.,0.)));
+        #2=IFCINDEXEDPOLYGONALFACE((1,2,3,4));
+        #3=IFCPOLYGONALFACESET(#1,.F.,(#2),$);
+        #4=IFCSHAPEREPRESENTATION($,'Body','Tessellation',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCWALL('guid-1',$,$,$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(4, app.allFaces.nodes[0].length, "the 1-based CoordIndex list should stay a quad");
+  }
+
+  // ================= IfcExtrudedAreaSolid (parametric wall/column/slab) ======
+
+  @Test
+  void importObjectsIFC_extrudedRectangleProfile_buildsTwoCapsPlusOneSideFacePerEdge () throws IOException {
+    Path f = ifcFile("ifc-extrusion-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,4.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,3.);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCWALL('guid-1',$,$,$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // A 4-edge rectangle profile extruded straight up: 2 end caps + 4
+    // side panels, every one of them a single 4-point face - the same
+    // shape Create3D.add_Mesh4()/"Mesh4" would build by hand, not a pair
+    // of triangles per panel.
+    assertEquals(6, app.allFaces.nodes.length);
+    for (int[] face : app.allFaces.nodes) {
+      assertEquals(4, face.length, "every cap/side of a rectangular extrusion should be a quad");
+    }
+
+    boolean sawBottom = false, sawTop = false;
+    boolean sawMinX = false, sawMaxX = false, sawMinY = false, sawMaxY = false;
+    for (int i = 0; i < app.allPoints.getLength(); i++) {
+      if (app.allPoints.getZ(i) < 0.0001f) sawBottom = true;
+      if (Math.abs(app.allPoints.getZ(i) - 3f) < 0.0001f) sawTop = true;
+      if (Math.abs(app.allPoints.getX(i) + 1f) < 0.0001f) sawMinX = true;
+      if (Math.abs(app.allPoints.getX(i) - 1f) < 0.0001f) sawMaxX = true;
+      if (Math.abs(app.allPoints.getY(i) + 2f) < 0.0001f) sawMinY = true;
+      if (Math.abs(app.allPoints.getY(i) - 2f) < 0.0001f) sawMaxY = true;
+    }
+    assertTrue(sawBottom && sawTop, "profile should be extruded from z=0 to z=Depth=3");
+    assertTrue(sawMinX && sawMaxX, "rectangle should be centered: x in [-XDim/2, XDim/2] = [-1, 1]");
+    assertTrue(sawMinY && sawMaxY, "rectangle should be centered: y in [-YDim/2, YDim/2] = [-2, 2]");
+  }
+
+  // ================= unsupported geometry: skipped and counted, not guessed ==
+
+  @Test
+  void importObjectsIFC_unsupportedRepresentationItem_isSkippedAndCounted_notSilentlyIgnored () throws IOException {
+    Path f = ifcFile("ifc-skip-test", """
+        #1=IFCMAPPEDITEM(#2,#3);
+        #4=IFCSHAPEREPRESENTATION($,'Body','MappedRepresentation',(#1));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCWALL('guid-1',$,$,$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "IfcMappedItem isn't supported yet, so no geometry should appear");
+    assertEquals(1, app.ifcImportSkippedCount);
+    assertEquals(Integer.valueOf(1), app.ifcImportSkippedReasons.get("IFCMAPPEDITEM"));
+  }
+
+  // ================= groups / material cycling (mirrors OBJ's "g" lines) =====
+
+  @Test
+  void importObjectsIFC_oneGroupPerImportableProduct () throws IOException {
+    Path f = ifcFile("ifc-groups-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #13=IFCWALL('guid-2',$,$,$,$,$,#11);
+        #14=IFCWALL('guid-3',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(3, app.allGroups.num, "the three IfcWalls (sharing one Representation) should each start their own group");
+    assertEquals(3, app.allFaces.nodes.length);
+  }
+
+  @Test
+  void importObjectsIFC_withMinusOneMaterial_cyclesThroughEightMaterialsOneProductAtATime () throws IOException {
+    app.current_Material = 7; // stale value from something else entirely; should have no bearing below
+
+    Path f = ifcFile("ifc-material-cycle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #13=IFCWALL('guid-2',$,$,$,$,$,#11);
+        #14=IFCWALL('guid-3',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), -1 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.options[0][0]);
+    assertEquals(2, app.allFaces.options[1][0]);
+    assertEquals(3, app.allFaces.options[2][0]);
+  }
+
+  // ================= vertex transform (cx, cy, cz, sx, sy, sz) ===============
+
+  @Test
+  void importObjectsIFC_appliesTheOffsetAndScaleToEveryVertex () throws IOException {
+    Path f = ifcFile("ifc-transform-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, /*cx,cy,cz*/ 100, 200, 300, /*sx,sy,sz*/ 2, 2, 2);
+
+    // first vertex is the IfcPolyLoop's own first point, (0,0,0):
+    // (cx + sx*0, cy + sy*0, cz + sz*0) = (100, 200, 300)
+    assertEquals(100f, app.allPoints.getX(0), 0.0001f);
+    assertEquals(200f, app.allPoints.getY(0), 0.0001f);
+    assertEquals(300f, app.allPoints.getZ(0), 0.0001f);
+  }
+
+  // ================= non-geometry product types are skipped on purpose =======
+
+  @Test
+  void importObjectsIFC_ifcSpace_isNeverImportedEvenWithGeometry () throws IOException {
+    Path f = ifcFile("ifc-space-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(0, app.allGroups.num, "IfcSpace shouldn't even start a group");
+  }
+}

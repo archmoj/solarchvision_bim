@@ -14,6 +14,10 @@ void selectFile_ImportObj () {
   selectInput("Select OBJ file to import:", "_fileSelected_ImportObj", new File(Folder_Import + "/_.obj"));
 }
 
+void selectFile_ImportIfc () {
+  selectInput("Select IFC file to import:", "_fileSelected_ImportIfc", new File(Folder_Import + "/_.ifc"));
+}
+
 void selectFile_RunScript () {
   selectInput("Select SVS file to execute:", "_fileSelected_RunScript", new File(Folder_Import + "/_.svs"));
 }
@@ -107,6 +111,39 @@ void _fileSelected_ImportObj (File selectedFile) {
     // view_changed(), but that redraw would just replay the stale,
     // pre-import cached PShape.
     model_changed();
+
+    int number_of_allGroups_after = allGroups.num;
+
+    Select3D.groupSelection = new int [1 + number_of_allGroups_after - number_of_allGroups_before];
+    for (int i = 0; i < Select3D.groupSelection.length - 1; i++) {
+      Select3D.groupSelection[i] = i + number_of_allGroups_before;
+    }
+
+    switch_category(ObjectCategory.GROUP);
+  }
+}
+
+void _fileSelected_ImportIfc (File selectedFile) {
+
+  String Filename = "";
+
+  if (selectedFile == null) {
+  } else {
+    Filename = _getSelectedFile(selectedFile);
+
+    if (allGroups.num == 0) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    }
+
+    println("\nImporting:", Filename);
+
+    int number_of_allGroups_before = allGroups.num;
+
+    // Like import_objects_OBJ() above, import_objects_IFC() adds faces
+    // straight into allFaces (see ifcEmitFace()'s own comment for why)
+    // and calls model_changed() itself exactly once, at the very end of
+    // the whole import - so no extra call is needed here either.
+    import_objects_IFC(Filename, User3D.creatorMaterial, User3D.creatorTessellation, User3D.creatorLayer, User3D.creatorVisibility, User3D.creatorWeight, User3D.creatorClosed, 0, 0, 0, 1, 1, 1); // apply default material
 
     int number_of_allGroups_after = allGroups.num;
 

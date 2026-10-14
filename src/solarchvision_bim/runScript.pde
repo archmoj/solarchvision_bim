@@ -256,6 +256,7 @@ String ___executeScriptLine___ (String lineSTR) {
     case "EXPORT.SCR": return  __EXPORT_SCR__(parts);
     case "FACE>GROUP": return  __FACE$GROUP__(parts);
     case "GROUP>FACE": return  __GROUP$FACE__(parts);
+    case "IMPORT.IFC": return  __IMPORT_IFC__(parts);
     case "IMPORT.OBJ": return  __IMPORT_OBJ__(parts);
     case "NORMALZOOM": return  __NORMALZOOM__(parts);
     case "OCTAHEDRON": return  __OCTAHEDRON__(parts);

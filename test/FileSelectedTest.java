@@ -247,6 +247,59 @@ class FileSelectedTest {
     assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory);
   }
 
+  // ================= _fileSelected_ImportIfc ===================================
+
+  @Test
+  void fileSelectedImportIfc_withNull_isANoOp () {
+    int groupCountBefore = app.allGroups.num;
+
+    assertDoesNotThrow(() -> app._fileSelected_ImportIfc(null));
+
+    assertEquals(groupCountBefore, app.allGroups.num);
+  }
+
+  @Test
+  void fileSelectedImportIfc_withAFile_importsOneGroupAndSelectsIt () throws IOException {
+    // A minimal, valid IFC: one IfcWall whose Representation is a single
+    // quad IfcFace (see ImportObjectsIFCTest.java for the per-entity
+    // breakdown of this shape).
+    Path ifcFile = Files.createTempFile("fileSelected-ImportIfc-test", ".ifc");
+    Files.writeString(ifcFile, """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app._fileSelected_ImportIfc(ifcFile.toFile());
+
+    // allGroups starts empty, so _fileSelected_ImportIfc first seeds one
+    // placeholder group of its own (see fileSelected.pde's
+    // "if (allGroups.num == 0)" guard, same as _fileSelected_ImportObj's)
+    // before importing - then the one IfcWall above adds a second, real
+    // one.
+    assertEquals(2, app.allGroups.num);
+    assertEquals(4, app.allPoints.getLength(), "all 4 vertices of the quad should have been created"); // sanity check, not the focus of this test
+    assertEquals(1, app.allFaces.nodes.length, "the one face should have been created, kept as a quad");
+    assertEquals(4, app.allFaces.nodes[0].length);
+
+    // Same documented groupSelection quirk as
+    // fileSelectedImportObj_withAFile_importsOneGroupAndSelectsIt - see
+    // that test's own comment.
+    assertArrayEquals(new int[]{1, 0}, app.Select3D.groupSelection);
+
+    assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory);
+  }
+
   // ================= _fileSelected_Open (partial - see the class comment) ====
 
   @Test
