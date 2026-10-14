@@ -187,41 +187,23 @@ class Terrain {
     String dir = Folder_Terrain + "/" + filename;
 
     // Parts[2]/Parts[3] hold the lat/lon the texture was centered on at
-    // download time (see download_textures()). Older files saved before this
-    // format existed won't have them - IMPORTANT: that must be treated as "no
-    // data, freeze a best guess right now", not "recompute from the station
-    // every time this runs". update_textures() re-scans the folder on every
-    // single station move, so re-deriving the center from the live station
-    // position each time would silently re-anchor the image to wherever the
-    // station currently is, forever - meaning its offset could never become
-    // non-zero no matter how far the station actually moved. Instead we
-    // migrate the file once: rename it on disk to embed today's best guess
-    // (the station's current position), so the NEXT reload parses a real,
-    // frozen anchor from the filename like any other texture.
-    float centerLat = STATION.getLatitude();
-    float centerLon = STATION.getLongitude();
-    boolean hasEmbeddedCenter = false;
-    if (Parts.length > 3) {
-      try {
-        centerLat = float(Parts[2]);
-        centerLon = float(Parts[3]);
-        hasEmbeddedCenter = true;
-      }
-      catch (Exception e) {
-        println("WARNING: could not parse lat/lon from texture filename:", filename);
-      }
+    // download time (see download_textures()), encoded via encodeDegrees().
+    // No legacy files to support, so a missing/malformed center just skips
+    // the file rather than silently defaulting to the current station -
+    // that silent default is exactly what made the pan offset always come
+    // out zero before (see commit history).
+    if (Parts.length <= 3) {
+      println("WARNING: texture filename has no embedded lat/lon, skipping:", filename);
+      return;
     }
-
-    if (!hasEmbeddedCenter) {
-      String migratedFilename = "ELEV_" + Parts[1] + "_" + nfDot(centerLat, 0, 6) + "_" + nfDot(centerLon, 0, 6) + "_.jpg";
-      String migratedDir = Folder_Terrain + "/" + migratedFilename;
-      println("Migrating pre-pan texture filename:", filename, ">", migratedFilename);
-      if (new File(dir).renameTo(new File(migratedDir))) {
-        dir = migratedDir;
-      }
-      else {
-        println("WARNING: could not migrate texture filename, pan offset will reset to zero again next reload:", filename);
-      }
+    float centerLat, centerLon;
+    try {
+      centerLat = decodeDegrees(Parts[2], 3, 6);
+      centerLon = decodeDegrees(Parts[3], 3, 6);
+    }
+    catch (Exception e) {
+      println("WARNING: could not parse lat/lon from texture filename, skipping:", filename);
+      return;
     }
 
     this.Textures_path = (String[]) concat(this.Textures_path, new String[] { dir });
@@ -373,14 +355,42 @@ class Terrain {
 
   // nf() uses the JVM's default locale, which on many systems formats
   // decimals with a comma ("43,650000") instead of a period - harmless in
-  // most places this codebase calls nf(), but fatal here: that string gets
-  // split on '_' and parsed back with float(), which throws on a comma and
-  // (silently, via the catch in addLandTextureIfElevationJpg) falls back to
-  // "centered on the current station" - i.e. no pan, ever, on those systems.
-  // Same fix already used for Mesh XML content below; reused here for the
-  // texture filename and the bbox URL.
+  // most places this codebase calls nf(), but would be fatal for a filename
+  // token that gets parsed back later. Used below for the (non-filename)
+  // bbox URL, where an actual decimal point is required.
   String nfDot (float v, int left, int right) {
     return nf(v, left, right).replace(",", ".");
+  }
+
+  // Fixed-width, dot-free lat/lon encoding for filenames - matches the
+  // convention already used elsewhere in this repo, e.g.
+  // input/images/worldmap/A_180000_-090000_-180000_090000_EN_FR_.jpg.
+  // 43.669998 with (wholeDigits=3, fracDigits=6) -> "043669998";
+  // -79.629997 -> "-079629997". Rounds the WHOLE value to the target
+  // precision in one step (via integer micro-degrees) rather than
+  // formatting the integer and fractional parts separately, so a
+  // fractional part that rounds up to e.g. "1000000" correctly carries
+  // into the whole part instead of overflowing fracDigits.
+  // Being plain digits (no '.', no ','), this also sidesteps nf()'s
+  // locale-dependent decimal separator entirely.
+  String encodeDegrees (float v, int wholeDigits, int fracDigits) {
+    String sign = (v < 0) ? "-" : "";
+    double absVal = Math.abs(v);
+    long scale = (long) Math.pow(10, fracDigits);
+    long micro = Math.round(absVal * scale);
+    long whole = micro / scale;
+    long frac = micro % scale;
+    return sign + nf((int) whole, wholeDigits) + nf((int) frac, fracDigits);
+  }
+
+  // Inverse of encodeDegrees().
+  float decodeDegrees (String s, int wholeDigits, int fracDigits) {
+    boolean negative = s.startsWith("-");
+    String digits = negative ? s.substring(1) : s;
+    int whole = int(digits.substring(0, wholeDigits));
+    int frac = int(digits.substring(wholeDigits, wholeDigits + fracDigits));
+    float value = whole + (frac / (float) Math.pow(10, fracDigits));
+    return negative ? -value : value;
   }
 
   void download_textures () {
@@ -396,7 +406,7 @@ class Terrain {
       if (i > 9) continue; // skip too far
 
       float widthMeters = 0.05 * ratios[i];
-      String the_target = Folder_Terrain + "/ELEV_" + nf(int(widthMeters), 7) + "_" + nfDot(STATION.getLatitude(), 0, 6) + "_" + nfDot(STATION.getLongitude(), 0, 6) + "_.jpg";
+      String the_target = Folder_Terrain + "/ELEV_" + nf(int(widthMeters), 7) + "_" + encodeDegrees(STATION.getLatitude(), 3, 6) + "_" + encodeDegrees(STATION.getLongitude(), 3, 6) + "_.jpg";
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
@@ -1270,11 +1280,8 @@ class Terrain {
         this.Textures_horizontalUnitScale[i] = children[i].getFloat("horizontalUnitScale");
         this.Textures_verticalUnitScale[i] = children[i].getFloat("verticalUnitScale");
 
-        // Default to the current station for projects saved before centerLat/
-        // centerLon existed - same "assume no pan needed" fallback used when
-        // reading an old-format filename in addLandTextureIfElevationJpg().
-        this.Textures_centerLat[i] = children[i].getFloat("centerLat", STATION.getLatitude());
-        this.Textures_centerLon[i] = children[i].getFloat("centerLon", STATION.getLongitude());
+        this.Textures_centerLat[i] = children[i].getFloat("centerLat");
+        this.Textures_centerLon[i] = children[i].getFloat("centerLon");
 
         String new_Texture_path = XML_getContent(children[i]);
 
