@@ -155,7 +155,9 @@ function iterPolygons(geometry) {
 /** Accumulates 'Mesh ...' command lines for buildings.svs. */
 class MeshWriter {
   constructor() {
-    this.lines = [];
+    this.lines = [
+      "BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0"
+    ];
   }
 
   /** points: array of [x, y, z], at least 3, in order around the face

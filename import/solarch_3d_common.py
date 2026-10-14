@@ -232,7 +232,7 @@ class MeshWriter:
     """Accumulates 'Mesh ...' command lines for buildings.svs."""
 
     def __init__(self):
-        self.lines = []
+        self.lines = ["BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0"]
 
     def add_face(self, points, m, tes, lyr):
         """points: iterable of (x, y, z), at least 3, in order around the
@@ -352,8 +352,12 @@ def write_more_info_svs(path, lat, lon, radius, ground_radius, trees=(), include
     """
     with open(path, "w") as f:
         f.write(f"# --lat {lat} --lon {lon} --radius {radius}\n")
+
         if include_ground:
+            f.write("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0\n")
             f.write(format_mesh2_line(ground_radius) + "\n")
+
+        f.write("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0\n")
         for x, y, z, h in trees:
             f.write(f"Tree x:{x:.4f} y:{y:.4f} z:{z:.4f} h:{h:.4f}\n")
 

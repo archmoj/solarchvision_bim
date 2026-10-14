@@ -41,7 +41,12 @@ function formatMesh2Line(radius) {
 function writeMoreInfoSvs(filePath, lat, lon, radius, groundRadius, trees, includeGround) {
   const lines = [];
   lines.push(`# --lat ${formatPyFloatLike(lat)} --lon ${formatPyFloatLike(lon)} --radius ${formatPyFloatLike(radius)}`);
-  if (includeGround) lines.push(formatMesh2Line(groundRadius));
+  if (includeGround) {
+    lines.push("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
+    lines.push(formatMesh2Line(groundRadius));
+  }
+
+  lines.push("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
   for (const [x, y, z, h] of trees) {
     lines.push(`Tree x:${x.toFixed(4)} y:${y.toFixed(4)} z:${z.toFixed(4)} h:${h.toFixed(4)}`);
   }
