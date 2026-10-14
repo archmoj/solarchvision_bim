@@ -385,6 +385,38 @@ class Terrain {
     return new double[] { _lon, _lat };
   }
 
+  // Appends one row to a Markdown reference file (textures.md / elevations.md)
+  // directly under Folder_Terrain - not per-subfolder, since the point is a
+  // single running index across every position this project has ever
+  // downloaded data for. Writes a header table the first time the file is
+  // touched. the_target is the full path of the file that was just
+  // successfully saved (used only to pull out its subfolder/file names for
+  // the row); url must already have any API key stripped out - callers are
+  // responsible for that, same as the existing println scrubbing.
+  void appendTerrainReference (String refFileName, String the_target, String source, String url) {
+    try {
+      File saved = new File(the_target);
+      String folderName = saved.getParentFile().getName();
+      String fileName = saved.getName();
+      String refPath = Folder_Terrain + "/" + refFileName;
+
+      boolean isNew = !(new File(refPath).isFile());
+      java.io.FileWriter writer = new java.io.FileWriter(refPath, true); // append
+      if (isNew) {
+        String title = refFileName.replace(".md", "");
+        writer.write("# Terrain " + title + "\n\n");
+        writer.write("Auto-generated log of successfully downloaded terrain " + title + " for this project, one row per file actually saved to disk.\n\n");
+        writer.write("| Folder | File | Source | URL |\n");
+        writer.write("|---|---|---|---|\n");
+      }
+      writer.write("| " + folderName + " | " + fileName + " | " + source + " | " + url + " |\n");
+      writer.close();
+    }
+    catch (Exception e) {
+      println("WARNING: could not update terrain reference file:", refFileName);
+    }
+  }
+
   void download_mesh () {
     this.Mesh = new float[this.rowCount][this.columnCount][3];
 
@@ -445,6 +477,7 @@ class Terrain {
       xml.append("</results>\n");
 
       saveBytes(the_target, xml.toString().getBytes());
+      appendTerrainReference("elevations.md", the_target, "Open-Meteo", the_link);
       return true;
     }
     catch (Exception e) {
@@ -465,6 +498,7 @@ class Terrain {
     println("Try downloading (TerrainTap): " + the_link); // don't show the API_KEY
     try {
       saveBytes(the_target, loadBytes(the_link + "&key=" + TERRAINTAP_API_KEY));
+      appendTerrainReference("elevations.md", the_target, "TerrainTap", the_link); // link only, no API_KEY
     }
     catch (Exception e) {
       println("LINK NOT AVAILABLE:", the_link); // don't show the API_KEY
@@ -608,6 +642,7 @@ class Terrain {
       println("Try downloading: " + esri_link);
       try {
         saveBytes(the_target, loadBytes(esri_link));
+        appendTerrainReference("textures.md", the_target, "Esri World Imagery", esri_link);
       }
       catch (Exception e) {
         println("LINK NOT AVAILABLE:", esri_link);
@@ -619,6 +654,7 @@ class Terrain {
           println("Try downloading (fallback): " + google_link); // don't show the API_KEY
           try {
             saveBytes(the_target, loadBytes(google_link + "&key=" + GOOGLE_STATIC_MAPS_API_KEY));
+            appendTerrainReference("textures.md", the_target, "Google Static Maps (fallback)", google_link); // link only, no API_KEY
           }
           catch (Exception e2) {
             println("LINK NOT AVAILABLE (fallback):", google_link); // don't show the API_KEY
