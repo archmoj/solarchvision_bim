@@ -41,7 +41,7 @@ void buildFaceGrid () {
 
   allFaces.addToFaceGrid(); // reuses Faces.pde's own geometry-only grid cache instead of re-walking/re-tessellating every face via TypeWindow.RENDER
   allModel1Ds.addToFaceGrid(); // reuses Model1Ds.pde's own WIN3D retained-mode cache instead of re-walking makeBranch() via TypeWindow.RENDER
-  Terrain.addToFaceGrid(); // top surface only (no depth walls - writeLandDepthWalls() is WIN3D-only anyway), reused from Terrain's own cache instead of walking TypeWindow.RENDER every call
+  //Terrain.draw(TypeWindow.RENDER); // It is expensive because it expands the bounding box!
 
   int numFaces = entireFaces.size();
   int numPoints = entirePointsX.size();
