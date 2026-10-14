@@ -379,27 +379,80 @@ class Terrain {
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
-      String the_link = "";
+      double[] LAT_ROW = new double[this.columnCount];
+      double[] LON_ROW = new double[this.columnCount];
       for (int j = 0; j < this.columnCount; j++) {
-        the_link += the_link.equals("") ? "https://api.terraintap.com/elevation/xml?locations=" : "%7C"; // "|"
-
         double[] LON_LAT = getLandGrid(i, j);
-        String txt_latitude = nf((float) LON_LAT[1], 0, 5);
-        String txt_longitude = nf((float) LON_LAT[0], 0, 5);
-        the_link += txt_latitude + "," + txt_longitude;
+        LON_ROW[j] = LON_LAT[0];
+        LAT_ROW[j] = LON_LAT[1];
       }
 
-      println("Try downloading: " + the_link); // don't show the API_KEY
-      try {
-        saveBytes(the_target, loadBytes(the_link + "&key=" + TERRAINTAP_API_KEY));
-      }
-      catch (Exception e) {
-        println("LINK NOT AVAILABLE:", the_link); // don't show the API_KEY
+      if (!downloadElevationRow_OpenMeteo(the_target, LAT_ROW, LON_ROW)) {
+        downloadElevationRow_TerrainTap(the_target, LAT_ROW, LON_ROW);
       }
     }
 
     this.loadMesh = true;
     this.update_mesh();
+  }
+
+  // Free, key-less primary elevation source: Open-Meteo's Elevation API
+  // (Copernicus GLO-90, 90m resolution; up to 100 coordinates per request -
+  // this.columnCount, currently 25, is well within that). On success, writes
+  // the SAME TerrainTap-shaped XML that loadMeshFromFiles() already parses
+  // (<result><elevation>.../<location><lat>/<lng></...), so no other code
+  // needs to know or care which source actually answered.
+  boolean downloadElevationRow_OpenMeteo (String the_target, double[] LAT_ROW, double[] LON_ROW) {
+    StringBuilder latCsv = new StringBuilder();
+    StringBuilder lonCsv = new StringBuilder();
+    for (int j = 0; j < LAT_ROW.length; j++) {
+      if (j > 0) { latCsv.append(','); lonCsv.append(','); }
+      latCsv.append(LAT_ROW[j]);
+      lonCsv.append(LON_ROW[j]);
+    }
+
+    String the_link = "https://api.open-meteo.com/v1/elevation?latitude=" + latCsv + "&longitude=" + lonCsv;
+    println("Try downloading (Open-Meteo): " + the_link);
+    try {
+      JSONObject json = loadJSONObject(the_link);
+      if (json == null || json.hasKey("error")) return false;
+
+      JSONArray elevations = json.getJSONArray("elevation");
+      if (elevations == null || elevations.size() != LAT_ROW.length) return false;
+
+      StringBuilder xml = new StringBuilder("<results>\n");
+      for (int j = 0; j < LAT_ROW.length; j++) {
+        xml.append("<result><elevation>").append(elevations.getFloat(j)).append("</elevation>")
+           .append("<location><lat>").append(LAT_ROW[j]).append("</lat><lng>").append(LON_ROW[j]).append("</lng></location>")
+           .append("</result>\n");
+      }
+      xml.append("</results>\n");
+
+      saveBytes(the_target, xml.toString().getBytes());
+      return true;
+    }
+    catch (Exception e) {
+      println("Open-Meteo elevation request failed, falling back to TerrainTap:", e.getMessage());
+      return false;
+    }
+  }
+
+  // Fallback elevation source, used only if Open-Meteo fails. Needs
+  // TERRAINTAP_API_KEY set (see load_env.pde).
+  void downloadElevationRow_TerrainTap (String the_target, double[] LAT_ROW, double[] LON_ROW) {
+    String the_link = "";
+    for (int j = 0; j < LAT_ROW.length; j++) {
+      the_link += the_link.equals("") ? "https://api.terraintap.com/elevation/xml?locations=" : "%7C"; // "|"
+      the_link += nf((float) LAT_ROW[j], 0, 5) + "," + nf((float) LON_ROW[j], 0, 5);
+    }
+
+    println("Try downloading (TerrainTap): " + the_link); // don't show the API_KEY
+    try {
+      saveBytes(the_target, loadBytes(the_link + "&key=" + TERRAINTAP_API_KEY));
+    }
+    catch (Exception e) {
+      println("LINK NOT AVAILABLE:", the_link); // don't show the API_KEY
+    }
   }
 
   // nf() uses the JVM's default locale, which on many systems formats
