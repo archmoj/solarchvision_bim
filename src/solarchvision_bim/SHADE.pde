@@ -3,6 +3,18 @@ class SHADE {
   final static String CLASS_STAMP = "SHADE";
 
   final static int Surface_Wire       = -1;
+  // Surface_Base (0) is deliberately no longer selectable (menu entry/
+  // action/script command removed) - it used to mean "skip tessellation
+  // entirely, flat white" in Faces.pde/Land3D.pde, which was the one
+  // thing forcing their WIN3D display geometry and their raycasting grid
+  // geometry to differ. Kept defined, not reused, purely so an old saved
+  // project or script with shadingMode==0 still loads instead of
+  // breaking - it now just falls through to the same default-white,
+  // fully-tessellated rendering every other unmatched COL case already
+  // used (see Faces.pde's build_win3DCache()/cacheQuad()), rather than
+  // being removed outright and renumbering every mode after it (which
+  // would silently reinterpret old saved shadingMode values as the wrong
+  // mode).
   final static int Surface_Base       = 0;
   final static int Surface_White      = 1;
   final static int Surface_Materials  = 2;

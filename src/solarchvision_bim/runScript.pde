@@ -261,7 +261,6 @@ String ___executeScriptLine___ (String lineSTR) {
     case "OCTAHEDRON": return  __OCTAHEDRON__(parts);
     case "PARAMETRIC": return  __PARAMETRIC__(parts);
     case "RUN.SCRIPT": return  __RUN_SCRIPT__(parts);
-    case "SHADE.BASE": return  __SHADE_BASE__(parts);
     case "SHADE.REAL": return  __SHADE_REAL__(parts);
     case "SHADE.WIRE": return  __SHADE_WIRE__(parts);
     case "TARGETROLL": return  __TARGETROLL__(parts);

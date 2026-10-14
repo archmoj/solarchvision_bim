@@ -646,12 +646,6 @@ void build_allActions() {
     view_changed();
   });
 
-  putAction("Shade Surface Base", () -> {
-    WIN3D.shadingMode = SHADE.Surface_Base;
-
-    view_changed();
-  });
-
   putAction("Shade Surface White", () -> {
     WIN3D.shadingMode = SHADE.Surface_White;
 

@@ -236,7 +236,6 @@ class UI_menuBar {
       "Passive Shade",
       ___divider___,
       "Shade Surface Wire",
-      "Shade Surface Base",
       "Shade Surface White",
       "Shade Surface Materials",
       ___divider___,

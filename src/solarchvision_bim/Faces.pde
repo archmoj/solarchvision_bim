@@ -65,36 +65,27 @@ class Faces {
   int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
 
   // --- raycasting grid cache (buildFaceGrid(), isIntersected_Faces.pde) ---
-  // A SEPARATE cache from win3DCache above, not a reuse of its geometry:
-  // the original TypeWindow.RENDER branch (now removed - see
-  // addToFaceGrid()) never read WIN3D.shadingMode at all, and always
-  // tessellated every face the same way the WIN3D path's non-Surface_Base
-  // branch does - including while WIN3D.shadingMode IS Surface_Base,
-  // where win3DCache's OWN geometry is deliberately the coarser,
-  // untessellated per-face shape instead (Surface_Base's whole point is
-  // skipping tessellation for WIN3D display speed). Reusing win3DCache's
-  // geometry directly would have made raycasting/shadows silently less
-  // accurate whenever Surface_Base happened to be the active shading mode
-  // - so this tracks geometry only (no color, no shading-mode dependency
-  // at all), invalidated by the same winCacheGeneration bump win3DCache
-  // uses for structural changes, but nothing else.
+  // No longer a separate build pass: with Surface_Base gone, win3DCache's
+  // own geometry is always fully tessellated regardless of WIN3D.
+  // shadingMode, exactly what the grid needs too - so build_win3DCache()
+  // below populates these flat, raw/unscaled lists in the very same loop
+  // that builds the PShape chunks, from the very same subFace[s] values,
+  // instead of a second independent walk re-deriving identical geometry.
+  // addToFaceGrid() just makes sure win3DCache itself is current (the
+  // same mechanism draw() already uses) and copies whatever that build
+  // produced - these lists are tree-local indices, offset into the
+  // global entirePointsX/Y/Z/entireFaces on copy, since those are rebuilt
+  // fresh on every call to buildFaceGrid().
   ArrayList<Float> win3DCache_gridPointsX = new ArrayList<Float>();
   ArrayList<Float> win3DCache_gridPointsY = new ArrayList<Float>();
   ArrayList<Float> win3DCache_gridPointsZ = new ArrayList<Float>();
   ArrayList<int[]> win3DCache_gridFaces = new ArrayList<int[]>();
-  int win3DCache_gridBuiltGeneration = -1;
 
-  // Called by buildFaceGrid() (isIntersected_Faces.pde) instead of the old
-  // allFaces.draw(TypeWindow.RENDER) - rebuilds build_gridCache()'s output
-  // only when winCacheGeneration has actually moved since the last call,
-  // then copies it into the global entirePointsX/Y/Z/entireFaces with
-  // fresh index offsets, since those globals are rebuilt from scratch on
-  // every call to buildFaceGrid() itself.
   void addToFaceGrid () {
 
-    if (this.win3DCache_gridBuiltGeneration != this.winCacheGeneration) {
-      this.build_gridCache();
-      this.win3DCache_gridBuiltGeneration = this.winCacheGeneration;
+    if (!this.win3DCache_isValid()) {
+      this.win3DCache = this.build_win3DCache();
+      this.win3DCache_recordState();
     }
 
     int offset = entirePointsX.size();
@@ -114,59 +105,6 @@ class Faces {
         newFace[s] = localFace[s] + offset;
       }
       entireFaces.add(newFace);
-    }
-  }
-
-  // Exact port of the original TypeWindow.RENDER branch's geometry math -
-  // same tessellation decision (per-face getTessellation() plus
-  // displayTessellation when material==0), same raw/unscaled points
-  // straight from allPoints, deliberately NOT gated on WIN3D.shadingMode
-  // at all (see the field block above for why). Only called from
-  // addToFaceGrid() when winCacheGeneration has actually changed.
-  void build_gridCache () {
-
-    this.win3DCache_gridPointsX = new ArrayList<Float>();
-    this.win3DCache_gridPointsY = new ArrayList<Float>();
-    this.win3DCache_gridPointsZ = new ArrayList<Float>();
-    this.win3DCache_gridFaces = new ArrayList<int[]>();
-
-    int lenFaces = this.nodes.length;
-    for (int f = 0; f < lenFaces; f++) {
-      int vsb = this.getVisibility(f);
-      if (vsb <= 0) continue;
-
-      int mt = this.getMaterial(f);
-
-      int tessellation = this.getTessellation(f);
-
-      int totalNumberOfSubs = 1;
-      if (mt == 0) {
-        tessellation += this.displayTessellation;
-      }
-      if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
-
-      float[][] base_Vertices = new float [this.nodes[f].length][3];
-      for (int j = 0; j < this.nodes[f].length; j++) {
-        int vNo = this.nodes[f][j];
-        base_Vertices[j][0] = allPoints.getX(vNo);
-        base_Vertices[j][1] = allPoints.getY(vNo);
-        base_Vertices[j][2] = allPoints.getZ(vNo);
-      }
-
-      for (int n = 0; n < totalNumberOfSubs; n++) {
-        float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
-
-        int len = subFace.length;
-        int[] newFace = new int[len];
-        for (int s = 0; s < len; s++) {
-          newFace[s] = this.win3DCache_gridPointsX.size();
-
-          this.win3DCache_gridPointsX.add(subFace[s][0]);
-          this.win3DCache_gridPointsY.add(subFace[s][1]);
-          this.win3DCache_gridPointsZ.add(subFace[s][2]);
-        }
-        this.win3DCache_gridFaces.add(newFace);
-      }
     }
   }
 
@@ -1405,6 +1343,11 @@ class Faces {
 
     this.resetChunkState();
 
+    this.win3DCache_gridPointsX = new ArrayList<Float>();
+    this.win3DCache_gridPointsY = new ArrayList<Float>();
+    this.win3DCache_gridPointsZ = new ArrayList<Float>();
+    this.win3DCache_gridFaces = new ArrayList<int[]>();
+
     ArrayList<float[][]> edgePolygons = this.displayEdges ? new ArrayList<float[][]>() : null;
 
     int PAL_type = SHADE.get_PAL_type();
@@ -1417,124 +1360,101 @@ class Faces {
 
       if (vsb > 0) {
 
-        if (WIN3D.shadingMode == SHADE.Surface_Base) {
+        int mt = this.getMaterial(f);
 
-          int n = this.nodes[f].length;
-          float[][] verts = new float[n][3];
-          float[][] colors = new float[n][4]; // same {255,255,255,255} for every vertex - emitPolygon indexes colors[j] per vertex, so this must be n-long, not a single shared row
-          float[][] edgePolygon = this.displayEdges ? new float[n][3] : null;
+        int tessellation = this.getTessellation(f);
 
-          for (int j = 0; j < n; j++) {
-            int vNo = this.nodes[f][j];
+        int totalNumberOfSubs = 1;
+        if (this.getMaterial(f) == 0) {
+          tessellation += this.displayTessellation;
+        }
+        if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
 
-            verts[j][0] =  allPoints.getX(vNo) * overallScale * WIN3D.scale;
-            verts[j][1] = -allPoints.getY(vNo) * overallScale * WIN3D.scale;
-            verts[j][2] =  allPoints.getZ(vNo) * overallScale * WIN3D.scale;
+        float[][] base_Vertices = new float [this.nodes[f].length][3];
+        for (int j = 0; j < this.nodes[f].length; j++) {
+          int vNo = this.nodes[f][j];
+          base_Vertices[j][0] = allPoints.getX(vNo);
+          base_Vertices[j][1] = allPoints.getY(vNo);
+          base_Vertices[j][2] = allPoints.getZ(vNo);
+        }
 
-            colors[j][0] = 255;
-            colors[j][1] = 255;
-            colors[j][2] = 255;
-            colors[j][3] = 255;
+        for (int n = 0; n < totalNumberOfSubs; n++) {
+
+          float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
+
+          float[][] verts = new float[subFace.length][3];
+          float[][] colors = (WIN3D.shadingMode == SHADE.Surface_Wire) ? null : new float[subFace.length][4];
+          float[][] edgePolygon = this.displayEdges ? new float[subFace.length][3] : null;
+          int[] gridFace = new int[subFace.length];
+
+          for (int s = 0; s < subFace.length; s++) {
+
+            if (colors != null) {
+
+              float[] COL = {
+                255, 255, 255, 255
+              };
+
+              int s_next = (s + 1) % subFace.length;
+              int s_prev = (s + subFace.length - 1) % subFace.length;
+
+              if (WIN3D.shadingMode == SHADE.Global_Solar) {
+
+                COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
+              }
+
+              if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
+
+                COL = SHADE.vertexRender_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
+              }
+
+              if (WIN3D.shadingMode == SHADE.Vertex_Solid) {
+
+                COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+              }
+
+              if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
+
+                COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
+              }
+
+              if (WIN3D.shadingMode == SHADE.Surface_Materials) {
+                COL = SHADE.vertexRender_Surface_Materials(mt);
+              }
+
+              if (WIN3D.shadingMode == SHADE.Surface_White) {
+                COL = SHADE.vertexRender_Surface_White(255);
+              }
+
+              colors[s] = COL;
+            }
+
+            float px =  subFace[s][0] * overallScale * WIN3D.scale;
+            float py = -subFace[s][1] * overallScale * WIN3D.scale;
+            float pz =  subFace[s][2] * overallScale * WIN3D.scale;
+
+            verts[s][0] = px;
+            verts[s][1] = py;
+            verts[s][2] = pz;
 
             if (this.displayEdges) {
-              edgePolygon[j][0] = verts[j][0];
-              edgePolygon[j][1] = verts[j][1];
-              edgePolygon[j][2] = verts[j][2];
+              edgePolygon[s][0] = px;
+              edgePolygon[s][1] = py;
+              edgePolygon[s][2] = pz;
             }
+
+            // Grid points are raw/unscaled - the same subFace[s] values
+            // read above, just without the WIN3D display scale/Y-flip.
+            gridFace[s] = this.win3DCache_gridPointsX.size();
+            this.win3DCache_gridPointsX.add(subFace[s][0]);
+            this.win3DCache_gridPointsY.add(subFace[s][1]);
+            this.win3DCache_gridPointsZ.add(subFace[s][2]);
           }
 
           emitPolygon(group, verts, colors);
+          this.win3DCache_gridFaces.add(gridFace);
 
           if (this.displayEdges) edgePolygons.add(edgePolygon);
-        } else {
-
-          int mt = this.getMaterial(f);
-
-          int tessellation = this.getTessellation(f);
-
-          int totalNumberOfSubs = 1;
-          if (this.getMaterial(f) == 0) {
-            tessellation += this.displayTessellation;
-          }
-          if (tessellation > 0) totalNumberOfSubs = this.nodes[f].length * int(funcs.roundTo(pow(4, tessellation - 1), 1));
-
-          float[][] base_Vertices = new float [this.nodes[f].length][3];
-          for (int j = 0; j < this.nodes[f].length; j++) {
-            int vNo = this.nodes[f][j];
-            base_Vertices[j][0] = allPoints.getX(vNo);
-            base_Vertices[j][1] = allPoints.getY(vNo);
-            base_Vertices[j][2] = allPoints.getZ(vNo);
-          }
-
-          for (int n = 0; n < totalNumberOfSubs; n++) {
-
-            float[][] subFace = funcs.getSubFace(base_Vertices, tessellation, n);
-
-            float[][] verts = new float[subFace.length][3];
-            float[][] colors = (WIN3D.shadingMode == SHADE.Surface_Wire) ? null : new float[subFace.length][4];
-            float[][] edgePolygon = this.displayEdges ? new float[subFace.length][3] : null;
-
-            for (int s = 0; s < subFace.length; s++) {
-
-              if (colors != null) {
-
-                float[] COL = {
-                  255, 255, 255, 255
-                };
-
-                int s_next = (s + 1) % subFace.length;
-                int s_prev = (s + subFace.length - 1) % subFace.length;
-
-                if (WIN3D.shadingMode == SHADE.Global_Solar) {
-
-                  COL = SHADE.vertexRender_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
-                }
-
-                if (WIN3D.shadingMode == SHADE.Vertex_Solar) {
-
-                  COL = SHADE.vertexRender_Vertex_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_type, PAL_direction, PAL_multiplier);
-                }
-
-                if (WIN3D.shadingMode == SHADE.Vertex_Solid) {
-
-                  COL = SHADE.vertexRender_Vertex_Solid(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
-                }
-
-                if (WIN3D.shadingMode == SHADE.Vertex_Elevation) {
-
-                  COL = SHADE.vertexRender_Vertex_Elevation(subFace[s], PAL_type, PAL_direction, PAL_multiplier);
-                }
-
-                if (WIN3D.shadingMode == SHADE.Surface_Materials) {
-                  COL = SHADE.vertexRender_Surface_Materials(mt);
-                }
-
-                if (WIN3D.shadingMode == SHADE.Surface_White) {
-                  COL = SHADE.vertexRender_Surface_White(255);
-                }
-
-                colors[s] = COL;
-              }
-
-              float px =  subFace[s][0] * overallScale * WIN3D.scale;
-              float py = -subFace[s][1] * overallScale * WIN3D.scale;
-              float pz =  subFace[s][2] * overallScale * WIN3D.scale;
-
-              verts[s][0] = px;
-              verts[s][1] = py;
-              verts[s][2] = pz;
-
-              if (this.displayEdges) {
-                edgePolygon[s][0] = px;
-                edgePolygon[s][1] = py;
-                edgePolygon[s][2] = pz;
-              }
-            }
-
-            emitPolygon(group, verts, colors);
-
-            if (this.displayEdges) edgePolygons.add(edgePolygon);
-          }
         }
       }
     }

@@ -181,16 +181,18 @@ class Terrain {
 
   // --- raycasting grid cache (buildFaceGrid(), isIntersected_Faces.pde) ---
   // A separate cache from win3DCache above, not tied to its own build pass
-  // or validity: win3DCache's tessellation decision depends on
-  // WIN3D.shadingMode (Surface_Base forces tessellation to 0 - see
-  // draw()'s own tessellation logic), which is a display-only concern
-  // that shouldn't affect raycasting accuracy (same reasoning as
-  // Faces.pde's own grid cache). Only depends on the mesh itself
-  // (winCacheGeneration), this.displayTessellation, and skipStart/skipEnd
-  // (the same row range win3DCache itself now also tracks). Capped at
-  // row 4 (i < 4) regardless of skipEnd - "don't add points farther
-  // away", keeping the shading/raycasting algorithm working on a small,
-  // nearby patch rather than the whole mesh.
+  // or validity - unlike Faces.pde (where the same kind of grid cache was
+  // folded into win3DCache's own build pass once Surface_Base was
+  // removed), this one stays independent for two reasons unrelated to
+  // Surface_Base: it deliberately covers a NARROWER row range than
+  // win3DCache's own display geometry (capped at row 4, i < 4, regardless
+  // of skipEnd - "don't add points farther away", keeping the shading/
+  // raycasting algorithm working on a small, nearby patch rather than the
+  // whole mesh), and it needs to exist even when win3DCache itself is
+  // entirely unavailable (displayTexture && displayDepth excludes
+  // win3DCache from caching at all - see win3DCache_isValid() above).
+  // Only depends on the mesh itself (winCacheGeneration),
+  // this.displayTessellation, and skipStart/skipEnd.
   ArrayList<Float> win3DCache_gridPointsX = new ArrayList<Float>();
   ArrayList<Float> win3DCache_gridPointsY = new ArrayList<Float>();
   ArrayList<Float> win3DCache_gridPointsZ = new ArrayList<Float>();
@@ -673,7 +675,6 @@ class Terrain {
       }
 
       int tessellation = this.displayTessellation;
-      if (WIN3D.shadingMode == SHADE.Surface_Base) tessellation = 0;
       if (target_window == TypeWindow.TerrainMesh) tessellation = 0;
 
       int totalNumberOfSubs = 1;
@@ -1161,7 +1162,6 @@ class Terrain {
     if (!this.displaySurface) return;
 
     int tessellation = this.displayTessellation;
-    if (WIN3D.shadingMode == SHADE.Surface_Base) tessellation = 0;
 
     int totalNumberOfSubs = 1;
     if (tessellation > 0) totalNumberOfSubs = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // x4: a LAND cell has 4 points

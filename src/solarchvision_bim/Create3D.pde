@@ -2011,9 +2011,6 @@ class Create3D {
     int treesCount = 1; // index 0 is a sentinel row; real trees start at 1
 
     int tessellation = Terrain.displayTessellation;
-    if (WIN3D.shadingMode == SHADE.Surface_Base) {
-      tessellation = 0;
-    }
 
     int totalNumberOfSubs = 1;
     if (tessellation > 0) totalNumberOfSubs = 4 * int(funcs.roundTo(pow(4, tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.

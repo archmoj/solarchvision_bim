@@ -2589,13 +2589,6 @@ String __SHADE_WIRE__ (String[] parts) {
     return hint;
 }
 
-String __SHADE_BASE__ (String[] parts) {
-    String hint = "";
-    WIN3D.shadingMode = SHADE.Surface_Base;
-    view_changed();
-    return hint;
-}
-
 String __SHADE_WHITE__ (String[] parts) {
     String hint = "";
     WIN3D.shadingMode = SHADE.Surface_White;
