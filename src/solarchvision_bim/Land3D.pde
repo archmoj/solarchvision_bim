@@ -25,7 +25,7 @@ class Terrain {
   int Textures_num = 0;
 
   // Polar grid
-  int rowCount = 12; // 24;
+  int rowCount = 18;
   int columnCount = 24 + 1; // 48 + 1;
 
   int skipStart = 1;
@@ -307,6 +307,9 @@ class Terrain {
     };
 
     for (int i = 0; i <= 15; i++) {
+      if (i < 2) continue; // skip too close
+      if (i > 9) continue; // skip too far
+
       float widthMeters = 0.05 * ratios[i];
       String the_target = Folder_Terrain + "/ELEV_" + nf(int(widthMeters), 7) + "_.jpg";
       File dir = new File(the_target);
