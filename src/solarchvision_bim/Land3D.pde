@@ -38,6 +38,86 @@ class Terrain {
   // see beginLandShape()/drawLandSubFace()/flushLandEdgeBatch() below.
   ArrayList<float[][]> winEdgeBatch = null;
 
+  // --- WIN3D retained-mode cache -------------------------------------------
+  // Shaded (non-textured) terrain only - see this field block's own
+  // comment above the class, and win3DCache_isValid()'s displayTexture
+  // check below, for why textured terrain isn't cached here.
+  // winCacheGeneration is bumped inside update_mesh() (the common
+  // entry point every mesh-reload path - update_station.pde, the "load
+  // mesh" UI toggle, download_mesh() - already funnels through), not by
+  // model_changed(): nothing about this class's own geometry depends on
+  // allFaces/allModel1Ds/etc edits, only on the terrain mesh itself
+  // actually changing.
+  int winCacheGeneration = 0;
+
+  PShape win3DCache = null;
+  ArrayList<float[][]> win3DCache_edgeBatch = null;
+  int win3DCache_builtGeneration = -1;
+  int win3DCache_shadingMode = -1;
+  int win3DCache_displayTessellation = -1;
+  int win3DCache_PAL_type = -1;
+  int win3DCache_PAL_direction = 0;
+  float win3DCache_PAL_multiplier = -1;
+  int win3DCache_impactDisplayDay = Integer.MIN_VALUE;
+  boolean win3DCache_allFacesDisplayEdges = true;
+
+  boolean win3DCache_isValid (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    if (this.displayTexture) return false; // textured terrain is never cached - always rebuilt live
+    return this.win3DCache != null &&
+      this.win3DCache_builtGeneration        == this.winCacheGeneration &&
+      this.win3DCache_shadingMode            == WIN3D.shadingMode &&
+      this.win3DCache_displayTessellation    == this.displayTessellation &&
+      this.win3DCache_PAL_type               == PAL_type &&
+      this.win3DCache_PAL_direction          == PAL_direction &&
+      this.win3DCache_PAL_multiplier         == PAL_multiplier &&
+      this.win3DCache_impactDisplayDay       == impactDisplayDay &&
+      this.win3DCache_allFacesDisplayEdges   == allFaces.displayEdges;
+  }
+
+  void win3DCache_recordState (int PAL_type, int PAL_direction, float PAL_multiplier) {
+    this.win3DCache_builtGeneration      = this.winCacheGeneration;
+    this.win3DCache_shadingMode          = WIN3D.shadingMode;
+    this.win3DCache_displayTessellation  = this.displayTessellation;
+    this.win3DCache_PAL_type             = PAL_type;
+    this.win3DCache_PAL_direction        = PAL_direction;
+    this.win3DCache_PAL_multiplier       = PAL_multiplier;
+    this.win3DCache_impactDisplayDay     = impactDisplayDay;
+    this.win3DCache_allFacesDisplayEdges = allFaces.displayEdges;
+  }
+
+  // Transient state used only while actually rebuilding the cache (see
+  // draw()'s own use of win3DCache_rebuilding) - not part of the cache
+  // itself. Quads are chunked the same way Faces.pde's/Model1Ds.pde's
+  // caches are, for the same reason: one shape holding the whole terrain
+  // mesh would need one huge, doubling-reallocated vertex buffer for a
+  // large enough grid.
+  final int WIN3D_CACHE_CHUNK_POLYGONS = 10000;
+  boolean win3DCache_rebuilding = false;
+  PShape win3DCache_buildingGroup = null;
+  PShape win3DCache_quadChunk = null;
+  PShape win3DCache_currentChunk = null; // the specific chunk the quad currently being emitted (by renderLandVertexShaded) belongs to
+  int win3DCache_quadChunkCount = 0;
+
+  PShape win3DCache_getQuadChunk () {
+    if ((this.win3DCache_quadChunk == null) || (this.win3DCache_quadChunkCount >= WIN3D_CACHE_CHUNK_POLYGONS)) {
+      this.win3DCache_flushQuadChunk();
+      this.win3DCache_quadChunk = createShape();
+      this.win3DCache_quadChunk.beginShape(QUADS);
+      this.win3DCache_quadChunk.noStroke();
+    }
+    this.win3DCache_quadChunkCount++;
+    return this.win3DCache_quadChunk;
+  }
+
+  void win3DCache_flushQuadChunk () {
+    if (this.win3DCache_quadChunk != null) {
+      this.win3DCache_quadChunk.endShape();
+      this.win3DCache_buildingGroup.addChild(this.win3DCache_quadChunk);
+      this.win3DCache_quadChunk = null;
+      this.win3DCache_quadChunkCount = 0;
+    }
+  }
+
   void update_textures () {
     this.Textures_horizontalUnitScale = new float[0];
     this.Textures_verticalUnitScale = new float[0];
@@ -96,6 +176,8 @@ class Terrain {
   }
 
   void update_mesh () {
+    this.winCacheGeneration++;
+
     this.Mesh = new float[this.rowCount][this.columnCount][3];
     for (int i = 0; i < this.rowCount; i++) {
       for (int j = 0; j < this.columnCount; j++) {
@@ -264,11 +346,37 @@ class Terrain {
   void draw (int target_window) {
     if (!shouldDraw(target_window)) return;
 
-    if (target_window == TypeWindow.WIN3D) this.winEdgeBatch = new ArrayList<float[][]>();
+    boolean isWin3D = (target_window == TypeWindow.WIN3D);
 
     int PAL_type = SHADE.get_PAL_type();
     int PAL_direction = SHADE.get_PAL_direction();
     float PAL_multiplier = SHADE.get_PAL_multiplier();
+
+    if (isWin3D && this.win3DCache_isValid(PAL_type, PAL_direction, PAL_multiplier)) {
+      WIN3D.graphics.shape(this.win3DCache);
+
+      if (this.win3DCache_edgeBatch != null) {
+        this.winEdgeBatch = this.win3DCache_edgeBatch;
+        flushLandEdgeBatch(); // draws live from the cached list, then only nulls the winEdgeBatch field - win3DCache_edgeBatch keeps its own reference
+      }
+
+      this.drawTerrainVertices(); // independent of the geometry cache - cheap, opt-in, always live
+      return;
+    }
+
+    // Rebuilding (or textured terrain, which is never cached - see
+    // win3DCache_isValid()): the walk below runs exactly as it always
+    // did, with a few extra lines at the actual WIN3D.graphics.* call
+    // sites (beginLandShape()/renderLandVertexShaded()) to also record
+    // into the cache in parallel, gated by win3DCache_rebuilding.
+    this.win3DCache_rebuilding = isWin3D && !this.displayTexture;
+    if (this.win3DCache_rebuilding) {
+      this.win3DCache_buildingGroup = createShape(GROUP);
+      this.win3DCache_quadChunk = null;
+      this.win3DCache_quadChunkCount = 0;
+    }
+
+    if (target_window == TypeWindow.WIN3D) this.winEdgeBatch = new ArrayList<float[][]>();
 
     if (User3D.exporterMaterialLibrary) {
       writeTerrainMaterials(target_window);
@@ -314,6 +422,11 @@ class Terrain {
 
     if (target_window == TypeWindow.WIN3D) {
       drawTerrainVertices();
+
+      if (this.win3DCache_rebuilding) {
+        this.win3DCache_edgeBatch = this.winEdgeBatch; // capture the reference before flushLandEdgeBatch() nulls the field below
+      }
+
       flushLandEdgeBatch();
     }
 
@@ -321,6 +434,14 @@ class Terrain {
       Select3D.groupSelection = new int[1];
       Select3D.groupSelection[0] = allGroups.num - 1;
       Modify3D.weldObjectsVertices_Selection(0);
+    }
+
+    if (this.win3DCache_rebuilding) {
+      this.win3DCache_flushQuadChunk();
+      this.win3DCache = this.win3DCache_buildingGroup;
+      this.win3DCache_buildingGroup = null;
+      this.win3DCache_recordState(PAL_type, PAL_direction, PAL_multiplier);
+      this.win3DCache_rebuilding = false;
     }
   }
 
@@ -516,6 +637,10 @@ class Terrain {
           WIN3D.graphics.noFill();
         }
       }
+
+      if (this.win3DCache_rebuilding) {
+        this.win3DCache_currentChunk = this.win3DCache_getQuadChunk();
+      }
     }
 
     if ((target_window == TypeWindow.OBJ3D) && (_turn == 3) && this.displayTexture && User3D.exporterMaterialLibrary && (n_Map != -1)) {
@@ -586,13 +711,16 @@ class Terrain {
 
       if (target_window == TypeWindow.WIN3D) {
         WIN3D.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
+        if (this.win3DCache_rebuilding) this.win3DCache_currentChunk.fill(COL[1], COL[2], COL[3], COL[0]);
       }
     } else if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.noFill();
+      if (this.win3DCache_rebuilding) this.win3DCache_currentChunk.noFill();
     }
 
     if (target_window == TypeWindow.WIN3D) {
       WIN3D.graphics.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, subFace[s][2] * overallScale * WIN3D.scale);
+      if (this.win3DCache_rebuilding) this.win3DCache_currentChunk.vertex(subFace[s][0] * overallScale * WIN3D.scale, -subFace[s][1] * overallScale * WIN3D.scale, subFace[s][2] * overallScale * WIN3D.scale);
     }
   }
 
