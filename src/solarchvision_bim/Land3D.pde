@@ -25,7 +25,8 @@ class Terrain {
   int Textures_num = 0;
 
   // Real-world (lon/lat) position each texture was originally captured/centered
-  // on, decoded from its ELEV_ filename (see addLandTextureIfElevationJpg()).
+  // on, decoded from its parent terrain subfolder's name (see
+  // decodeTerrainFolderName(), addLandTextureIfElevationJpg()).
   float[] Textures_centerLon;
   float[] Textures_centerLat;
 
@@ -37,6 +38,15 @@ class Terrain {
   // download for every small latitude/longitude tweak.
   float[] Textures_offsetX;
   float[] Textures_offsetY;
+
+  // Elevation (0.xml, 1.xml, ...) and texture (ELEV_<width>.jpg) files live
+  // under Folder_Terrain in a subfolder named "<lat>_<lon>" (encodeDegrees(),
+  // 3+6 digits, e.g. "043669998_-079629997") for the station position they
+  // were downloaded at - see stationFolder()/decodeTerrainFolderName().
+  // Data is only ever loaded from a subfolder within this many meters of the
+  // CURRENT station; farther subfolders are ignored entirely (flat mesh /
+  // no texture fallback), rather than stretched across a implausible pan.
+  final float MAX_TERRAIN_REUSE_DISTANCE_METERS = 1000.0; // ~0.01 degree
 
   // Polar grid
   int rowCount = 20;
@@ -190,11 +200,25 @@ class Terrain {
     this.displayTexture = false;
 
     try {
-      String[] filenames = sort(OPESYS.getFiles(Folder_Terrain)); // important to sort
-      if (filenames != null) {
+      String[] folders = findNearbyTerrainFolders();
+
+      // "<filename>\t<folder>" so a plain alphabetical sort orders every
+      // candidate, across all qualifying folders, by its zero-padded width
+      // first (same trick the old flat layout relied on) and by folder only
+      // as a tiebreaker.
+      String[] entries = new String[0];
+      for (int f = 0; f < folders.length; f++) {
+        String[] filenames = OPESYS.getFiles(folders[f]);
+        if (filenames == null) continue;
         for (int i = 0; i < filenames.length; i++) {
-          addLandTextureIfElevationJpg(filenames[i]);
+          entries = (String[]) append(entries, filenames[i] + "\t" + folders[f]);
         }
+      }
+      entries = sort(entries);
+
+      for (int i = 0; i < entries.length; i++) {
+        String[] parts = split(entries[i], '\t');
+        addLandTextureIfElevationJpg(parts[1], parts[0]);
       }
     }
     catch (Exception e) {
@@ -222,44 +246,29 @@ class Terrain {
     }
   }
 
-  void addLandTextureIfElevationJpg (String filename) {
+  // folder is the full path of one of findNearbyTerrainFolders()'s results -
+  // its name has already passed decodeTerrainFolderName(), so the capture
+  // center it implies is trusted without re-checking distance here.
+  void addLandTextureIfElevationJpg (String folder, String filename) {
     println(filename);
 
     int L = filename.length();
+    if (L <= 9) return; // shorter than "ELEV_" (5) + 1 digit + ".jpg" (4)
     String extension = filename.substring(L - 4, L);
     if (!extension.toLowerCase().equals(".jpg")) return;
+    if (!filename.toUpperCase().startsWith("ELEV_")) return;
 
-    String[] Parts = split(filename, '_');
-    if (!Parts[0].toUpperCase().equals("ELEV")) return;
-    if (Parts.length <= 1) return;
+    float[] lonLat = decodeTerrainFolderName(new File(folder).getName());
+    if (lonLat == null) return; // shouldn't happen - folder already passed this check once
 
-    String dir = Folder_Terrain + "/" + filename;
-
-    // Parts[2]/Parts[3] hold the lat/lon the texture was centered on at
-    // download time (see download_textures()), encoded via encodeDegrees().
-    // No legacy files to support, so a missing/malformed center just skips
-    // the file rather than silently defaulting to the current station -
-    // that silent default is exactly what made the pan offset always come
-    // out zero before (see commit history).
-    if (Parts.length <= 3) {
-      println("WARNING: texture filename has no embedded lat/lon, skipping:", filename);
-      return;
-    }
-    float centerLat, centerLon;
-    try {
-      centerLat = decodeDegrees(Parts[2], 3, 6);
-      centerLon = decodeDegrees(Parts[3], 3, 6);
-    }
-    catch (Exception e) {
-      println("WARNING: could not parse lat/lon from texture filename, skipping:", filename);
-      return;
-    }
+    String dir = folder + "/" + filename;
+    String widthStr = filename.substring(5, L - 4); // strip "ELEV_" and ".jpg"
 
     this.Textures_path = (String[]) concat(this.Textures_path, new String[] { dir });
-    this.Textures_centerLat = (float[]) concat(this.Textures_centerLat, new float[] { centerLat });
-    this.Textures_centerLon = (float[]) concat(this.Textures_centerLon, new float[] { centerLon });
+    this.Textures_centerLat = (float[]) concat(this.Textures_centerLat, new float[] { lonLat[1] });
+    this.Textures_centerLon = (float[]) concat(this.Textures_centerLon, new float[] { lonLat[0] });
 
-    float u = float(Parts[1]);
+    float u = float(widthStr);
     float v = u;
 
     PImage image = loadImage(dir);
@@ -312,8 +321,13 @@ class Terrain {
     // avoid error running headless tests
     if(Folder_Terrain == null) return false;
 
+    String[] folders = findNearbyTerrainFolders();
+    if (folders.length == 0) return false; // nothing close enough - flat mesh fallback
+
+    String folder = folders[0]; // nearest
+
     for (int i = 0; i < this.rowCount; i++) {
-      XML FileALL = loadXML(Folder_Terrain + "/" + nf(i, 0) + ".xml");
+      XML FileALL = loadXML(folder + "/" + nf(i, 0) + ".xml");
       XML[] children0 = FileALL.getChildren("result");
 
       for (int j = 0; j < this.columnCount; j++) {
@@ -374,8 +388,10 @@ class Terrain {
   void download_mesh () {
     this.Mesh = new float[this.rowCount][this.columnCount][3];
 
+    String folder = stationFolder();
+
     for (int i = 0; i < this.rowCount; i++) {
-      String the_target = Folder_Terrain + "/" + nf(i, 0) + ".xml";
+      String the_target = folder + "/" + nf(i, 0) + ".xml";
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
@@ -495,6 +511,77 @@ class Terrain {
     return negative ? -value : value;
   }
 
+  // The subfolder name (not full path) a download at the given lat/lon would
+  // live under, e.g. "043669998_-079629997".
+  String terrainFolderName (float lat, float lon) {
+    return encodeDegrees(lat, 3, 6) + "_" + encodeDegrees(lon, 3, 6);
+  }
+
+  // Full path of the subfolder for the CURRENT station - where new downloads
+  // (download_mesh(), download_textures()) get written.
+  String stationFolder () {
+    return Folder_Terrain + "/" + terrainFolderName(STATION.getLatitude(), STATION.getLongitude());
+  }
+
+  // Inverse of terrainFolderName(): decodes a subfolder's name back into
+  // {lon, lat}, or null if it isn't one of ours (wrong shape, stray folder,
+  // etc.) - callers skip it rather than fail.
+  float[] decodeTerrainFolderName (String name) {
+    String[] parts = split(name, '_');
+    if (parts.length != 2) return null;
+    try {
+      float lat = decodeDegrees(parts[0], 3, 6);
+      float lon = decodeDegrees(parts[1], 3, 6);
+      return new float[] { lon, lat };
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  // Every subfolder of Folder_Terrain within MAX_TERRAIN_REUSE_DISTANCE_METERS
+  // of the CURRENT station, nearest first. Both loadMeshFromFiles() (which
+  // uses just the nearest) and update_textures() (which uses all of them)
+  // go through this, so "don't load data that's too far from the station"
+  // is enforced in exactly one place.
+  String[] findNearbyTerrainFolders () {
+    java.util.ArrayList<String> paths = new java.util.ArrayList<String>();
+    java.util.ArrayList<Float> distances = new java.util.ArrayList<Float>();
+
+    if (Folder_Terrain == null) return new String[0];
+    File[] entries = new File(Folder_Terrain).listFiles();
+    if (entries == null) return new String[0];
+
+    for (File entry : entries) {
+      if (!entry.isDirectory()) continue;
+
+      float[] lonLat = decodeTerrainFolderName(entry.getName());
+      if (lonLat == null) continue;
+
+      float[] XY = funcs.convert_lonlat2XY(STATION.getLongitude(), STATION.getLatitude(), lonLat[0], lonLat[1]);
+      float distance = (float) Math.hypot(XY[0], XY[1]);
+      if (distance > MAX_TERRAIN_REUSE_DISTANCE_METERS) continue;
+
+      paths.add(Folder_Terrain + "/" + entry.getName());
+      distances.add(distance);
+    }
+
+    // Candidate lists are tiny (a handful of folders at most), so a plain
+    // selection sort by distance is simpler than pulling in a comparator.
+    for (int a = 0; a < paths.size(); a++) {
+      int nearest = a;
+      for (int b = a + 1; b < paths.size(); b++) {
+        if (distances.get(b) < distances.get(nearest)) nearest = b;
+      }
+      if (nearest != a) {
+        String tmpPath = paths.get(a); paths.set(a, paths.get(nearest)); paths.set(nearest, tmpPath);
+        Float tmpDist = distances.get(a); distances.set(a, distances.get(nearest)); distances.set(nearest, tmpDist);
+      }
+    }
+
+    return paths.toArray(new String[0]);
+  }
+
   void download_textures () {
     float[] ratios = {
       1128.497220, 2256.994440, 4513.988880, 9027.977761, 18055.95552,
@@ -503,12 +590,14 @@ class Terrain {
       36978596.91, 73957193.82, 147914387.6, 295828775.3, 591657550.5
     };
 
+    String folder = stationFolder();
+
     for (int i = 0; i <= 15; i++) {
       if (i < 2) continue; // skip too close
       if (i > 10) continue; // skip too far
 
       float widthMeters = 0.05 * ratios[i];
-      String the_target = Folder_Terrain + "/ELEV_" + nf(int(widthMeters), 7) + "_" + encodeDegrees(STATION.getLatitude(), 3, 6) + "_" + encodeDegrees(STATION.getLongitude(), 3, 6) + "_.jpg";
+      String the_target = folder + "/ELEV_" + nf(int(widthMeters), 7) + ".jpg";
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
@@ -1315,8 +1404,14 @@ class Terrain {
 
       for (int q = 0; q < this.Textures_num; q++) {
         int n_Map = q;
-        String the_filename = this.Textures_path[n_Map].substring(this.Textures_path[n_Map].lastIndexOf("/") + 1);
-        String fileLocation = "Textures/" + the_filename;
+        int lastSlash = this.Textures_path[n_Map].lastIndexOf("/");
+        String the_filename = this.Textures_path[n_Map].substring(lastSlash + 1);
+        String sourceFolderPath = this.Textures_path[n_Map].substring(0, lastSlash);
+        String sourceFolderName = sourceFolderPath.substring(sourceFolderPath.lastIndexOf("/") + 1);
+        // Prefix the source lat/lon folder name so two different station
+        // positions' same-named ELEV_<width>.jpg files don't collide once
+        // flattened into one Textures/ folder.
+        String fileLocation = "Textures/" + sourceFolderName + "_" + the_filename;
         String new_Texture_path = the_dir + "/" + fileLocation;
 
         if (!this.Textures_path[n_Map].toUpperCase().equals(new_Texture_path.toUpperCase())) {
