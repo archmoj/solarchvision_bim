@@ -309,22 +309,56 @@ class Terrain {
     };
 
     for (int i = 0; i <= 15; i++) {
-      String the_target = Folder_Terrain + "/ELEV_" + nf(int(0.05 * ratios[i]), 7) + "_.jpg";
+      float widthMeters = 0.05 * ratios[i];
+      String the_target = Folder_Terrain + "/ELEV_" + nf(int(widthMeters), 7) + "_.jpg";
       File dir = new File(the_target);
       if (dir.isFile()) continue;
 
-      String the_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(STATION.getLatitude(), 0, 5) + "," + nf(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
-      println("Try downloading: " + the_link);
+      double[] bbox = satelliteBBoxForWidth(widthMeters);
+      String esri_link = "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export"
+        + "?bbox=" + nf((float) bbox[0], 0, 6) + "," + nf((float) bbox[1], 0, 6) + "," + nf((float) bbox[2], 0, 6) + "," + nf((float) bbox[3], 0, 6)
+        + "&bboxSR=4326&imageSR=4326&size=640,640&format=jpg&f=image";
+      println("Try downloading: " + esri_link);
       try {
-        saveBytes(the_target, loadBytes(the_link));
+        saveBytes(the_target, loadBytes(esri_link));
       }
       catch (Exception e) {
-        println("LINK NOT AVAILABLE:", the_link);
+        println("LINK NOT AVAILABLE:", esri_link);
+
+        // Fallback: Google Static Maps now requires a billed API key (free tier retired).
+        // Only attempted if GOOGLE_STATIC_MAPS_API_KEY was set via .env.
+        if (!GOOGLE_STATIC_MAPS_API_KEY.equals("")) {
+          String google_link = "https://maps.googleapis.com/maps/api/staticmap?center=" + nf(STATION.getLatitude(), 0, 5) + "," + nf(STATION.getLongitude(), 0, 5) + "&zoom=" + nf(20 - i, 0) + "&size=640x640&maptype=satellite&format=jpg";
+          println("Try downloading (fallback): " + google_link); // don't show the API_KEY
+          try {
+            saveBytes(the_target, loadBytes(google_link + "&key=" + GOOGLE_STATIC_MAPS_API_KEY));
+          }
+          catch (Exception e2) {
+            println("LINK NOT AVAILABLE (fallback):", google_link); // don't show the API_KEY
+          }
+        }
       }
     }
 
     this.loadTextures = true;
     this.update_textures();
+  }
+
+  // Free, key-less replacement for Google's (now paid) Static Maps API: Esri's
+  // World Imagery MapServer "export" endpoint takes a lat/lon bounding box
+  // instead of a center+zoom pair, so we derive that box directly from the
+  // ground width (in meters) that this texture tile is meant to cover - the
+  // same width already encoded in the ELEV_ filename/u-v texture scale above -
+  // using the same lon/lat <-> meters convention as Functions.convert_lonlat2XY().
+  double[] satelliteBBoxForWidth (double widthMeters) {
+    double half = widthMeters / 2.0;
+    double lat = STATION.getLatitude();
+    double lon = STATION.getLongitude();
+
+    double dLat = half * 180.0 / (PI * DOUBLE_r_Earth);
+    double dLon = half * 180.0 / (PI * DOUBLE_r_Earth * funcs.cos_ang((float) lat));
+
+    return new double[] { lon - dLon, lat - dLat, lon + dLon, lat + dLat }; // minLon, minLat, maxLon, maxLat
   }
 
   boolean shouldDraw (int target_window) {

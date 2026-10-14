@@ -1,4 +1,5 @@
 String TERRAINTAP_API_KEY = "";
+String GOOGLE_STATIC_MAPS_API_KEY = "";
 
 void load_env () {
   String[] lines = loadStrings(".env");
@@ -11,6 +12,9 @@ void load_env () {
         String val = parts[1];
         if(key.equals("TERRAINTAP_API_KEY")) {
           TERRAINTAP_API_KEY = val;
+        }
+        if(key.equals("GOOGLE_STATIC_MAPS_API_KEY")) {
+          GOOGLE_STATIC_MAPS_API_KEY = val;
         }
       }
     }
