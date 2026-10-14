@@ -183,7 +183,7 @@ class GlobalFunctionsTest {
   void findWhichBakingsToRegenerate_leavesBothFlagsAlone_forAnUnrelatedShadingMode () {
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
-    app.WIN3D.shadingMode = app.SHADE.Surface_Base;
+    app.WIN3D.shadingMode = app.SHADE.Surface_Wire;
 
     app.find_which_bakings_to_regenerate();
 

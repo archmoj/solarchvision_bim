@@ -392,7 +392,6 @@ Includes commands such as:
 ### Shading and rendering
 
 -   `SHADE.WIRE`: Wireframe view
--   `SHADE.BASE`: Base shading
 -   `SHADE.WHITE`: White shading
 -   `SHADE.MATERIALS`: Material shading
 -   `SHADE.GLOBAL`: Global solar values shading
