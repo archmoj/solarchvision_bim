@@ -54,12 +54,16 @@ void model_changed () {
   should_rebuildFaceGrid = true;
 
   // Any structural/material edit invalidates the WIN3D retained-mode
-  // caches (see Faces.pde's / Model1Ds.pde's "WIN3D retained-mode cache"
-  // blocks) - this piggybacks on model_changed() rather than adding a new
-  // hook, since it's already called from every create/edit/move/delete/
-  // import site for both classes.
+  // caches (see Faces.pde's / Model1Ds.pde's / Land3D.pde's "WIN3D
+  // retained-mode cache" blocks) - this piggybacks on model_changed()
+  // rather than adding a new hook, since it's already called from every
+  // create/edit/move/delete/import site for all three classes - including
+  // Move3D.pde/Scale3D.pde/Rotate3D.pde's TerrainVertices() functions,
+  // which edit Terrain.Mesh directly through the normal selection/move
+  // system (separately from Terrain.update_mesh()'s own full-reload bump).
   if (allFaces != null) allFaces.winCacheGeneration++;
   if (allModel1Ds != null) allModel1Ds.winCacheGeneration++;
+  if (Terrain != null) Terrain.winCacheGeneration++;
 
   view_changed();
 }

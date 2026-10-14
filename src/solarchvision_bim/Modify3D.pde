@@ -1074,7 +1074,7 @@ class Modify3D {
       Terrain.Mesh[i][j][2] = 0;
     }
 
-    selection_changed();
+    model_changed();
   }
 
   void changeVisibilityFaces_Selection (int new_vsb) {
