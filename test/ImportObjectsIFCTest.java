@@ -1664,4 +1664,171 @@ class ImportObjectsIFCTest {
     assertEquals(50f, app.allPoints.getX(4), 0.0001f);
     assertArrayEquals(new int[]{4, 5, 6, 7}, app.allFaces.nodes[1]);
   }
+
+  // ================= people: human/entourage figures, not imported meshes ====
+
+  @Test
+  void importObjectsIFC_ifcActor_isPlacedAsANativePerson_notItsMappedMesh () throws IOException {
+    Path f = ifcFile("ifc-actor-test", """
+        #1=IFCCARTESIANPOINT((3.,4.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #10=IFCCARTESIANPOINT((0.,0.,0.));
+        #11=IFCCARTESIANPOINT((1.,0.,0.));
+        #12=IFCCARTESIANPOINT((1.,1.,0.));
+        #13=IFCPOLYLOOP((#10,#11,#12));
+        #14=IFCFACEOUTERBOUND(#13,.T.);
+        #15=IFCFACE((#14));
+        #16=IFCCLOSEDSHELL((#15));
+        #17=IFCFACETEDBREP(#16);
+        #18=IFCSHAPEREPRESENTATION($,'Body','Brep',(#17));
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCREPRESENTATIONMAP(#21,#18);
+        #30=IFCCARTESIANPOINT((0.,0.,0.));
+        #31=IFCCARTESIANTRANSFORMATIONOPERATOR3D($,$,#30,$,$);
+        #32=IFCMAPPEDITEM(#22,#31);
+        #33=IFCSHAPEREPRESENTATION($,'Body','MappedRepresentation',(#32));
+        #34=IFCPRODUCTDEFINITIONSHAPE($,$,(#33));
+        #35=IFCACTOR('guid-1',$,$,$,$,#3,#34);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "the actor's own mapped mesh should not be imported as Faces");
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(3f, app.allModel2Ds.XYZS[0][0], 0.0001f, "x");
+    assertEquals(4f, app.allModel2Ds.XYZS[0][1], 0.0001f, "y");
+    assertEquals(2.5f, app.allModel2Ds.XYZS[0][3], 0.0001f, "fixed height 2.5, same as \"Person\"'s own default");
+  }
+
+  @Test
+  void importObjectsIFC_buildingElementProxyWithHumanObjectType_isPlacedAsAPerson () throws IOException {
+    Path f = ifcFile("ifc-proxy-human-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #4=IFCBUILDINGELEMENTPROXY('guid-1',$,$,$,'Human',#3,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allModel2Ds.num, "a Human-ObjectType proxy should be placed even with no Representation of its own");
+  }
+
+  @Test
+  void importObjectsIFC_buildingElementProxyWithEntourageOrScaleFigureObjectType_isAlsoPlacedAsAPerson () throws IOException {
+    Path f = ifcFile("ifc-proxy-entourage-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #4=IFCBUILDINGELEMENTPROXY('guid-1',$,$,$,'Entourage',#3,$);
+        #11=IFCCARTESIANPOINT((5.,0.,0.));
+        #12=IFCAXIS2PLACEMENT3D(#11,$,$);
+        #13=IFCLOCALPLACEMENT($,#12);
+        #14=IFCBUILDINGELEMENTPROXY('guid-2',$,$,$,'Scale Figure',#13,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allModel2Ds.num);
+  }
+
+  @Test
+  void importObjectsIFC_productOnHumanPresentationLayer_isPlacedAsAPerson () throws IOException {
+    Path f = ifcFile("ifc-layer-humn-test", """
+        #1=IFCCARTESIANPOINT((7.,8.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #10=IFCCARTESIANPOINT((0.,0.,0.));
+        #11=IFCCARTESIANPOINT((1.,0.,0.));
+        #12=IFCCARTESIANPOINT((1.,1.,0.));
+        #13=IFCPOLYLOOP((#10,#11,#12));
+        #14=IFCFACEOUTERBOUND(#13,.T.);
+        #15=IFCFACE((#14));
+        #16=IFCCLOSEDSHELL((#15));
+        #17=IFCFACETEDBREP(#16);
+        #18=IFCSHAPEREPRESENTATION($,'Body','Brep',(#17));
+        #19=IFCPRODUCTDEFINITIONSHAPE($,$,(#18));
+        #20=IFCBUILDINGELEMENTPROXY('guid-1',$,$,$,$,#3,#19);
+        #30=IFCPRESENTATIONLAYERASSIGNMENT('A-PROP-HUMN',$,(#18),$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "the layer-tagged geometry should not be imported as Faces");
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(7f, app.allModel2Ds.XYZS[0][0], 0.0001f, "x");
+    assertEquals(8f, app.allModel2Ds.XYZS[0][1], 0.0001f, "y");
+  }
+
+  @Test
+  void importObjectsIFC_productNotOnHumanLayer_importsNormally () throws IOException {
+    Path f = ifcFile("ifc-layer-unrelated-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCPRESENTATIONLAYERASSIGNMENT('A-WALL',$,(#10),$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "an unrelated layer name shouldn't trigger person detection");
+    assertEquals(0, app.allModel2Ds.num);
+  }
+
+  @Test
+  void importObjectsIFC_peopleDoNotDisruptTheWallMaterialCycleOrGroupCount () throws IOException {
+    Path f = ifcFile("ifc-person-cycle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCLOCALPLACEMENT($,#21);
+        #23=IFCACTOR('guid-2',$,$,$,$,#22,$);
+        #30=IFCWALL('guid-3',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), -1 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // Every candidate product - including the actor - still starts its
+    // own group, same as a tree or anything else: group 1 (the actor's
+    // own) ends up with an empty Faces range ([x,-1], the same "no
+    // faces at all" sentinel an ordinary empty IfcProduct would leave)
+    // and its own Model2Ds range instead.
+    assertEquals(3, app.allGroups.num);
+    assertEquals(0, app.allGroups.getStart_Face(0));
+    assertEquals(0, app.allGroups.getStop_Face(0));
+    assertTrue(app.allGroups.getStart_Face(1) > app.allGroups.getStop_Face(1), "the actor's own group should have an empty Faces range");
+    assertEquals(0, app.allGroups.getStart_Model2D(1));
+    assertEquals(0, app.allGroups.getStop_Model2D(1));
+    assertEquals(1, app.allFaces.options[0][0], "first wall: material cycle starts at 1");
+    assertEquals(2, app.allFaces.options[1][0], "second wall: material cycle continues at 2, not disrupted by the actor in between");
+    assertEquals(1, app.allModel2Ds.num);
+  }
 }

@@ -65,6 +65,15 @@
 //     default otherwise - rather than importing whatever (often just a
 //     low-detail box or cylinder) geometry the product itself carries.
 //     See ifcLooksLikeATree() below.
+//   - A human/entourage/scale-figure reference model - IfcActor, an
+//     IfcBuildingElementProxy with ObjectType "Human"/"Entourage"/
+//     "Scale Figure", a Name/ObjectType word match, or a product on an
+//     IfcPresentationLayerAssignment named A-PROP-HUMN/A-PROP-ENTS
+//     (the AIA layer-naming standard) - is placed the same way, as one
+//     of the app's own native 2D people (allModel2Ds, "PEOPLE") at a
+//     fixed height (2.5), instead of importing whatever detailed mesh
+//     it carries (typically through an IfcMappedItem). See
+//     ifcLooksLikeAPerson() below.
 //   - A PV panel, solar collector or solar hybrid panel - whether the
 //     file models it as IfcSolarDevice (IFC4.3) or, like a tree, as a
 //     generic product whose Name/ObjectType just says so - imports its
@@ -378,6 +387,7 @@ final int IFC_MATERIAL_WATER      = 19;
 int ifcImportSkippedCount = 0;
 int ifcImportHolesIgnoredCount = 0;
 int ifcImportTreeCount = 0;
+int ifcImportPersonCount = 0;
 // Furniture excluded by IFC_IMPORT_FURNITURE == false - counted
 // separately from ifcImportSkippedCount, since this isn't something
 // unsupported being skipped, it's a deliberate choice.
@@ -1684,6 +1694,100 @@ boolean ifcLooksLikeASolarDevice (StepEntity e) {
 }
 
 // ---------------------------------------------------------------------
+// People - human/entourage/scale-figure reference models, usually a
+// detailed mesh placed via IfcMappedItem. Caught three ways: IfcActor
+// (an unambiguous entity type for this), IfcBuildingElementProxy with
+// an ObjectType of "Human", "Entourage" or "Scale Figure" (the common
+// Revit convention), or - independently of entity type or ObjectType -
+// a product whose own geometry sits on an IfcPresentationLayerAssignment
+// named A-PROP-HUMN or A-PROP-ENTS (the AIA CAD layer-naming standard
+// for human/entourage props; older, AutoCAD-style exports often tag
+// geometry this way instead of, or in addition to, ObjectType). Placed
+// as one of the app's own native 2D people (allModel2Ds, the same
+// "PEOPLE" kind "Add People on Land"/the "Person" command create) at
+// that product's own placement origin - a fixed height (2.5, the same
+// constant default "Person" itself always uses, unlike a tree's own
+// parsed-or-default height) rather than importing the mapped mesh.
+// ---------------------------------------------------------------------
+
+HashSet<String> ifcPersonNameWords = new HashSet<String>(Arrays.asList(
+  "human", "entourage"
+  ));
+
+HashSet<String> ifcPersonObjectTypeValues = new HashSet<String>(Arrays.asList(
+  "human", "entourage", "scale figure"
+  ));
+
+HashSet<String> ifcPersonLayerNames = new HashSet<String>(Arrays.asList(
+  "a-prop-humn", "a-prop-ents"
+  ));
+
+// One pass over every IfcPresentationLayerAssignment in the file,
+// collecting the entity id of every item assigned to a human/entourage
+// layer (a representation item, or sometimes a whole
+// IfcShapeRepresentation) - far cheaper than re-walking every layer
+// assignment per product. IfcPresentationLayerAssignment's own
+// attribute order: Name(0), Description(1), AssignedItems(2),
+// Identifier(3).
+HashSet<Integer> ifcBuildPersonLayerItemIds (HashMap<Integer, StepEntity> ents) {
+  HashSet<Integer> ids = new HashSet<Integer>();
+  for (StepEntity e : ents.values()) {
+    if (!e.type.equals("IFCPRESENTATIONLAYERASSIGNMENT") || e.attrs.length < 3) continue;
+    String name = ifcUnquote(e.attrs[0]);
+    if (name == null || !ifcPersonLayerNames.contains(name.trim().toLowerCase())) continue;
+    for (String ref : ifcListTokens(e.attrs[2])) {
+      int id = ifcRefId(ref);
+      if (id >= 0) ids.add(id);
+    }
+  }
+  return ids;
+}
+
+// Whether a product's own Representation - walked the same way
+// ifcProcessProductRepresentation()/ifcProcessShapeRepresentation() do,
+// just checking membership instead of building geometry - includes
+// anything a human/entourage IfcPresentationLayerAssignment claimed
+// (see ifcBuildPersonLayerItemIds() above): the IfcShapeRepresentation
+// itself, or any one of its own representation items (most often
+// exactly the IfcMappedItem the actual mesh comes through).
+boolean ifcProductIsOnPersonLayer (HashMap<Integer, StepEntity> ents, int repId, HashSet<Integer> personLayerItemIds) {
+  if (personLayerItemIds.isEmpty() || repId < 0) return false;
+  StepEntity e = ents.get(repId);
+  if (e == null) return false;
+  if (personLayerItemIds.contains(repId)) return true;
+
+  if (e.type.equals("IFCPRODUCTDEFINITIONSHAPE") && e.attrs.length >= 3) {
+    for (String repRef : ifcListTokens(e.attrs[2])) {
+      if (ifcProductIsOnPersonLayer(ents, ifcRefId(repRef), personLayerItemIds)) return true;
+    }
+    return false;
+  }
+
+  if (e.type.equals("IFCSHAPEREPRESENTATION") && e.attrs.length >= 4) {
+    for (String itemRef : ifcListTokens(e.attrs[3])) {
+      int itemId = ifcRefId(itemRef);
+      if (itemId >= 0 && personLayerItemIds.contains(itemId)) return true;
+    }
+  }
+
+  return false;
+}
+
+boolean ifcLooksLikeAPerson (HashMap<Integer, StepEntity> ents, StepEntity e, int repId, HashSet<Integer> personLayerItemIds) {
+  if (e.type.equals("IFCACTOR")) return true;
+
+  if (e.type.equals("IFCBUILDINGELEMENTPROXY") && e.attrs.length > 4) {
+    String objectType = ifcUnquote(e.attrs[4]);
+    if (objectType != null && ifcPersonObjectTypeValues.contains(objectType.trim().toLowerCase())) return true;
+  }
+
+  if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcPersonNameWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcPersonNameWords)) return true; // ObjectType
+
+  return ifcProductIsOnPersonLayer(ents, repId, personLayerItemIds);
+}
+
+// ---------------------------------------------------------------------
 // Entry point - mirrors import_objects_OBJ(FileName, m, tes, lyr, vsb,
 // wgt, clz, cx, cy, cz, sx, sy, sz)'s own signature, including the
 // m == -1 "auto-cycle through 8 materials" convention (there, cycled
@@ -1697,6 +1801,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportSkippedCount = 0;
   ifcImportHolesIgnoredCount = 0;
   ifcImportTreeCount = 0;
+  ifcImportPersonCount = 0;
   ifcImportFurnitureExcludedCount = 0;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
@@ -1721,6 +1826,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // One pass up front, rather than re-walking the relationship graph
   // per product.
   HashMap<Integer, String> productMaterialNames = ifcBuildProductMaterialNames(ents);
+  HashSet<Integer> personLayerItemIds = ifcBuildPersonLayerItemIds(ents);
 
   // Processed in ascending entity-id order (which almost always matches
   // the file's own declaration order) rather than ents.keySet()'s own
@@ -1759,6 +1865,16 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       // modeled as a space/volume rather than a solid building element.
       // Unlike a tree, water has no native substitute to fall back on,
       // so this still requires an actual Representation.
+      productIds.add(id);
+    } else if (candidate != null && ifcLooksLikeAProduct(candidate)
+      && ifcLooksLikeAPerson(ents, candidate, -1, personLayerItemIds)) {
+      // A person/entourage figure is placed from just its name/
+      // placement even with no Representation of its own, same
+      // reasoning as a tree - passing repId -1 here is exact, not a
+      // placeholder: reaching this branch at all already means this
+      // candidate has no usable Representation (ifcLooksLikeAProduct()
+      // just passed, ifcLooksLikeImportableProduct() didn't), so
+      // there's nothing for the layer check to look up regardless.
       productIds.add(id);
     }
   }
@@ -1800,6 +1916,20 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       allModel2Ds.create("TREES", 0,
         cx + sx * world.x, cy + sy * world.y, cz + sz * world.z, height);
       ifcImportTreeCount++;
+      continue;
+    }
+
+    // A person/entourage figure (see ifcLooksLikeAPerson() above) is
+    // placed the same way, as one of the app's own native 2D people -
+    // the same "Person" command's own fixed height (2.5), not a parsed
+    // or per-tree-style default one, since there's no size-bearing
+    // naming convention for a human reference figure the way there is
+    // for a tree's own catalog name.
+    if (ifcLooksLikeAPerson(ents, e, ifcRefId(e.attrs[6].trim()), personLayerItemIds)) {
+      PVector world = productFrame.origin;
+      allModel2Ds.create("PEOPLE", 0,
+        cx + sx * world.x, cy + sy * world.y, cz + sz * world.z, 2.5);
+      ifcImportPersonCount++;
       continue;
     }
 
@@ -1881,6 +2011,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
   if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
   if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
+  if (ifcImportPersonCount > 0) summary += ", " + ifcImportPersonCount + " people placed";
   if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
   if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
   if (ifcImportHolesIgnoredCount > 0) summary += ", " + ifcImportHolesIgnoredCount + " inner boundary/boundaries ignored";
