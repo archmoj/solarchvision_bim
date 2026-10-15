@@ -1371,7 +1371,7 @@ class ImportObjectsIFCTest {
         #40=IFCCARTESIANPOINT((10.,0.,0.));
         #41=IFCAXIS2PLACEMENT3D(#40,$,$);
         #42=IFCLOCALPLACEMENT($,#41);
-        #43=IFCFURNISHINGELEMENT('guid-1',$,$,$,$,#42,#34);
+        #43=IFCBUILDINGELEMENTPROXY('guid-1',$,$,$,$,#42,#34);
         """
     );
 
@@ -1404,5 +1404,126 @@ class ImportObjectsIFCTest {
 
     assertEquals(0, app.allFaces.nodes.length);
     assertEquals(1, app.ifcImportSkippedCount);
+  }
+
+  // ================= furniture: excluded by default (IFC_IMPORT_FURNITURE) ===
+
+  @Test
+  void importObjectsIFC_ordinaryFurnishingElement_isExcludedByDefault () throws IOException {
+    Path f = ifcFile("ifc-furniture-excluded-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCFURNISHINGELEMENT('guid-1',$,'Office Chair',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "ordinary furniture should be excluded while IFC_IMPORT_FURNITURE is false");
+    assertEquals(0, app.allGroups.num, "an excluded furniture item shouldn't even start a group");
+    assertEquals(1, app.ifcImportFurnitureExcludedCount);
+    assertEquals(0, app.ifcImportSkippedCount, "excluded furniture is a deliberate choice, not an unsupported-item skip");
+  }
+
+  @Test
+  void importObjectsIFC_ifcFurnitureAndIfcSystemFurnitureElement_alsoExcludedByDefault () throws IOException {
+    Path f = ifcFile("ifc-furniture-types-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCFURNITURE('guid-1',$,'Desk',$,$,$,#11);
+        #13=IFCSYSTEMFURNITUREELEMENT('guid-2',$,'Cubicle Panel',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(2, app.ifcImportFurnitureExcludedCount);
+  }
+
+  @Test
+  void importObjectsIFC_treeModeledAsFurnishingElement_stillImportsDespiteTheFurnitureToggle () throws IOException {
+    Path f = ifcFile("ifc-tree-furniture-exempt-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #4=IFCFURNISHINGELEMENT('guid-1',$,'Oak Tree',$,$,#3,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allModel2Ds.num, "a tree should still be placed, even though it's modeled as IfcFurnishingElement");
+    assertEquals(0, app.ifcImportFurnitureExcludedCount, "a tree isn't counted as excluded furniture - it's its own feature");
+  }
+
+  @Test
+  void importObjectsIFC_vegetationModeledAsFurnishingElement_stillImportsDespiteTheFurnitureToggle () throws IOException {
+    Path f = ifcFile("ifc-vegetation-furniture-exempt-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCFURNISHINGELEMENT('guid-1',$,'Garden Planter',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "a \"Garden Planter\" should still import despite being IfcFurnishingElement");
+    assertEquals(18, app.allFaces.options[0][0], "and should still get the vegetation default");
+    assertEquals(0, app.ifcImportFurnitureExcludedCount);
+  }
+
+  @Test
+  void importObjectsIFC_furnitureDoesNotDisruptTheWallMaterialCycleOrGroupCount () throws IOException {
+    Path f = ifcFile("ifc-furniture-cycle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #13=IFCFURNISHINGELEMENT('guid-2',$,'Sofa',$,$,$,#11);
+        #14=IFCWALL('guid-3',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), -1 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allGroups.num, "only the two walls should start groups - the excluded sofa shouldn't");
+    assertEquals(1, app.allFaces.options[0][0], "first wall: material cycle starts at 1");
+    assertEquals(2, app.allFaces.options[1][0], "second wall: material cycle continues at 2, not disrupted by the excluded sofa");
   }
 }

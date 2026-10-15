@@ -117,6 +117,11 @@
 //   - Boolean operations (IfcBooleanClippingResult/IfcBooleanResult,
 //     typically how a door/window opening is cut into a wall or slab)
 //     are not evaluated.
+//   - Furniture (IfcFurnishingElement, IfcFurniture,
+//     IfcSystemFurnitureElement) isn't imported at all while
+//     IFC_IMPORT_FURNITURE (below) is false, its current default -
+//     deliberate, not a gap, and not (yet) user-facing; see that
+//     constant's own comment.
 //   - An IfcMappedItem's IfcRepresentationMap.MappingOrigin is assumed
 //     to be the identity placement rather than inverted and composed in
 //     (see that bullet above) - true for the large majority of real-
@@ -198,6 +203,27 @@ IfcFrame ifcComposeFrame (IfcFrame parent, IfcFrame child) {
 HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
   "IFCPROJECT", "IFCBUILDING", "IFCBUILDINGSTOREY",
   "IFCSPACE", "IFCOPENINGELEMENT", "IFCVIRTUALELEMENT"
+  ));
+
+// Whether to import furniture at all - off by default for now. Tables,
+// chairs, desks and the like add clutter and import time without
+// adding much to what's primarily an architectural/solar study tool;
+// this may become a user-facing option later (exposed through the
+// Import IFC dialog or a command-line parameter), but isn't one yet -
+// just a single constant to flip here in the meantime.
+//
+// Trees, solar devices, a pool's water and planted surfaces are
+// commonly modeled using one of these same entity types too (e.g. a
+// tree as an IfcFurnishingElement - see every ifcLooksLike*() function
+// above), and are NOT affected by this toggle regardless of its value:
+// import_objects_IFC()'s own product-collection loop excludes anything
+// those functions already recognize from the furniture skip, since
+// they're each handled as their own, deliberate feature independent of
+// the underlying entity type.
+final boolean IFC_IMPORT_FURNITURE = false;
+
+HashSet<String> ifcFurnitureProductTypes = new HashSet<String>(Arrays.asList(
+  "IFCFURNISHINGELEMENT", "IFCFURNITURE", "IFCSYSTEMFURNITUREELEMENT"
   ));
 
 // Product types drawn as glass (IFC_MATERIAL_GLASS below) instead of
@@ -351,6 +377,10 @@ final int IFC_MATERIAL_WATER      = 19;
 int ifcImportSkippedCount = 0;
 int ifcImportHolesIgnoredCount = 0;
 int ifcImportTreeCount = 0;
+// Furniture excluded by IFC_IMPORT_FURNITURE == false - counted
+// separately from ifcImportSkippedCount, since this isn't something
+// unsupported being skipped, it's a deliberate choice.
+int ifcImportFurnitureExcludedCount = 0;
 HashMap<String, Integer> ifcImportSkippedReasons = new HashMap<String, Integer>();
 
 // Guards against a pathological/cyclic chain of nested IfcMappedItems
@@ -1578,6 +1608,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportSkippedCount = 0;
   ifcImportHolesIgnoredCount = 0;
   ifcImportTreeCount = 0;
+  ifcImportFurnitureExcludedCount = 0;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
   ifcMappedItemDepth = 0;
@@ -1606,6 +1637,19 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ArrayList<Integer> productIds = new ArrayList<Integer>();
   for (Integer id : ents.keySet()) {
     StepEntity candidate = ents.get(id);
+
+    if (!IFC_IMPORT_FURNITURE && candidate != null && ifcFurnitureProductTypes.contains(candidate.type)
+      && !ifcLooksLikeATree(candidate) && !ifcLooksLikeASolarDevice(candidate)
+      && !ifcLooksLikeAPool(candidate) && !ifcLooksLikeVegetation(candidate)) {
+      // Ordinary furniture (not one of the special-cased categories
+      // above, which keep working regardless of this toggle) - skipped
+      // entirely while IFC_IMPORT_FURNITURE is false, counted
+      // separately from ifcImportSkippedCount since this is a
+      // deliberate exclusion, not an unsupported item.
+      ifcImportFurnitureExcludedCount++;
+      continue;
+    }
+
     if (ifcLooksLikeImportableProduct(candidate)) {
       productIds.add(id);
     } else if (ifcLooksLikeAProduct(candidate) && ifcLooksLikeATree(candidate)) {
@@ -1737,6 +1781,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
   if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
   if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
+  if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
   if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
   if (ifcImportHolesIgnoredCount > 0) summary += ", " + ifcImportHolesIgnoredCount + " inner boundary/boundaries ignored";
   summary += ".";
