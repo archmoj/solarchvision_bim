@@ -700,4 +700,94 @@ class ImportObjectsIFCTest {
     }
     assertEquals(17, app.allFaces.options[0][0], "terrain from a TIN should also default to IFC_MATERIAL_EARTH");
   }
+
+  // ================= trees: placed natively, not imported as Faces ===========
+
+  @Test
+  void importObjectsIFC_treeNamedByProduct_isPlacedAsANativeModel2D_withHeightParsedFromItsName () throws IOException {
+    Path f = ifcFile("ifc-tree-test", """
+        #1=IFCCARTESIANPOINT((5.,7.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #4=IFCCARTESIANPOINT((0.,0.,0.));
+        #5=IFCCARTESIANPOINT((1.,0.,0.));
+        #6=IFCCARTESIANPOINT((1.,1.,0.));
+        #7=IFCPOLYLOOP((#4,#5,#6));
+        #8=IFCFACEOUTERBOUND(#7,.T.);
+        #9=IFCFACE((#8));
+        #10=IFCCLOSEDSHELL((#9));
+        #11=IFCFACETEDBREP(#10);
+        #12=IFCSHAPEREPRESENTATION($,'Body','Brep',(#11));
+        #13=IFCPRODUCTDEFINITIONSHAPE($,$,(#12));
+        #14=IFCFURNISHINGELEMENT('guid-1',$,'Tree - Deciduous - Generic : 30''',$,$,#3,#13);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "a tree's own proxy geometry should not be imported as Faces");
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(5f, app.allModel2Ds.XYZS[0][0], 0.0001f, "x");
+    assertEquals(7f, app.allModel2Ds.XYZS[0][1], 0.0001f, "y");
+    // "30'" -> 30 * 0.3048 = 9.144m
+    assertEquals(9.144f, app.allModel2Ds.XYZS[0][3], 0.01f, "height parsed from the name's \"30'\"");
+  }
+
+  @Test
+  void importObjectsIFC_treeWithNoParseableHeight_defaultsToTenMetres_sameAsTree2sOwnDefault () throws IOException {
+    Path f = ifcFile("ifc-tree-default-height-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #4=IFCFURNISHINGELEMENT('guid-1',$,'Oak Tree',$,$,#3,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // No Representation at all - a tree is still placed from just its
+    // name/placement, unlike any other product type.
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(10f, app.allModel2Ds.XYZS[0][3], 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_treeHeightScalesWithTheImportsOwnZScale () throws IOException {
+    Path f = ifcFile("ifc-tree-scale-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #4=IFCFURNISHINGELEMENT('guid-1',$,'Tree',$,$,#3,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 2 /*sz*/);
+
+    assertEquals(1, app.allModel2Ds.num);
+    assertEquals(20f, app.allModel2Ds.XYZS[0][3], 0.0001f, "default 10m height should scale with sz (2x here)");
+  }
+
+  @Test
+  void importObjectsIFC_streetLampIsNotMistakenForATree_wholeWordMatchOnly () throws IOException {
+    Path f = ifcFile("ifc-not-a-tree-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCBUILDINGELEMENTPROXY('guid-1',$,'Street Lamp',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allModel2Ds.num, "\"Street\" should never be mistaken for containing \"tree\"");
+    assertEquals(1, app.allFaces.nodes.length, "it should import its own geometry as Faces instead");
+  }
 }

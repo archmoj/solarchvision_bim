@@ -55,6 +55,15 @@
 //     it (see ifcTopographyProductTypes below) - geometry is imported as
 //     ordinary Faces, the same as a wall or slab, not resampled onto the
 //     app's own regular-grid Terrain.Mesh.
+//   - A product whose Name or ObjectType names it as a tree (IFC has no
+//     single dedicated entity for one) is placed as one of the app's own
+//     native 2D billboard trees (allModel2Ds, "Add 2D-Trees on Land"'s
+//     own kind) at that product's placement origin, with a height
+//     parsed from that same Name/ObjectType text when one is written
+//     there (e.g. "Tree - Deciduous - Generic : 30'"), or a fixed
+//     default otherwise - rather than importing whatever (often just a
+//     low-detail box or cylinder) geometry the product itself carries.
+//     See ifcLooksLikeATree() below.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -190,6 +199,7 @@ final int IFC_MATERIAL_EARTH      = 17;
 // at the top of every import_objects_IFC() call).
 int ifcImportSkippedCount = 0;
 int ifcImportHolesIgnoredCount = 0;
+int ifcImportTreeCount = 0;
 HashMap<String, Integer> ifcImportSkippedReasons = new HashMap<String, Integer>();
 
 // The multiplier that converts a raw length value read from the file
@@ -962,16 +972,26 @@ void ifcProcessProductRepresentation (HashMap<Integer, StepEntity> ents, int rep
 // Description(3), ObjectType(4), ObjectPlacement(5), Representation(6)
 // - whatever a particular subtype adds (e.g. IfcWall's own Tag) always
 // comes after index 6. So rather than hand-listing every IfcWall/
-// IfcSlab/IfcDoor/... subtype name, this recognizes "an importable
-// product" structurally: not a relationship (IfcRel...), not one of the
-// non-geometry types above, and shaped like an IfcProduct with an
-// explicit Representation reference.
-boolean ifcLooksLikeImportableProduct (StepEntity e) {
+// IfcSlab/IfcDoor/... subtype name, this recognizes "a product this
+// importer could do something with" structurally: not a relationship
+// (IfcRel...), not one of the non-geometry types above, and shaped like
+// an IfcProduct.
+boolean ifcLooksLikeAProduct (StepEntity e) {
   if (e.attrs.length < 7) return false;
   if (!e.type.startsWith("IFC")) return false;
   if (e.type.startsWith("IFCREL")) return false;
-  if (ifcNonGeometryProductTypes.contains(e.type)) return false;
-  return e.attrs[6].trim().startsWith("#");
+  return !ifcNonGeometryProductTypes.contains(e.type);
+}
+
+// The further, geometry-specific requirement most products need: an
+// explicit Representation reference - everything this importer does
+// with Faces/materials needs one. A tree is the one exception (see
+// ifcLooksLikeATree() above): it's still placed from just its name and
+// placement even with Representation == $, so the product-collection
+// loop in import_objects_IFC() checks ifcLooksLikeAProduct() plus
+// ifcLooksLikeATree() directly for that case, rather than through this.
+boolean ifcLooksLikeImportableProduct (StepEntity e) {
+  return ifcLooksLikeAProduct(e) && e.attrs[6].trim().startsWith("#");
 }
 
 // ---------------------------------------------------------------------
@@ -1195,6 +1215,88 @@ float ifcTypedValueNumber (String token) {
 }
 
 // ---------------------------------------------------------------------
+// Trees: IFC has no single dedicated entity for a tree (unlike a
+// window or a wall) - a tree is typically authored as a generic
+// furnishing/proxy/geographic element whose Name or ObjectType just
+// says so (e.g. a Revit family instance named "Tree - Deciduous -
+// Generic : 30'"). So rather than importing a tree's own (often just a
+// low-detail box or cylinder) geometry as Faces, a product whose Name
+// or ObjectType names it as a tree is instead placed as one of the
+// app's own native 2D billboard trees (allModel2Ds.create("TREES", ...),
+// the same thing "Add 2D-Trees on Land"/the "Tree2" command create) at
+// that product's own placement origin - a nicer result than a crude
+// imported proxy box, and consistent with every other
+// product-type-driven choice this importer makes (windows -> glass,
+// IfcSite -> earth).
+// ---------------------------------------------------------------------
+
+HashSet<String> ifcTreeNameWords = new HashSet<String>(Arrays.asList("tree", "trees"));
+
+// A whole-word match against a product's own Name/ObjectType, not a
+// raw substring search - "Street Tree #14" matches ("tree" is its own
+// word), "Street Lamp" does not ("street" is never mistaken for
+// containing "tree").
+boolean ifcNameHasWord (String rawAttr, HashSet<String> words) {
+  String text = ifcUnquote(rawAttr);
+  if (text == null) return false;
+  for (String word : text.toLowerCase().split("[^a-z0-9]+")) {
+    if (words.contains(word)) return true;
+  }
+  return false;
+}
+
+boolean ifcLooksLikeATree (StepEntity e) {
+  if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcTreeNameWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcTreeNameWords)) return true; // ObjectType
+  return false;
+}
+
+// Looks for a "<number><unit>" height hint in a tree's own Name/
+// ObjectType text - common in furniture-family naming conventions
+// (e.g. "Tree - Deciduous - Generic : 30'", "Oak 9m", "Pine 4500mm") -
+// recognizing metres, millimetres, centimetres, feet (' or ft). Skips
+// over any earlier number in the text that isn't followed by a
+// recognized unit (so "Tree 2 - Oak 30'" still finds 30', not 2), and
+// returns null - not a guess - when nothing parseable is found; the
+// caller falls back to a fixed default height the same way "Tree2"'s
+// own h=10 default does.
+Float ifcParseHeightHint (String rawAttr) {
+  String text = ifcUnquote(rawAttr);
+  if (text == null) return null;
+
+  int n = text.length();
+  for (int i = 0; i < n; i++) {
+    if (!Character.isDigit(text.charAt(i))) continue;
+
+    int start = i;
+    while (start > 0 && (Character.isDigit(text.charAt(start - 1)) || text.charAt(start - 1) == '.')) start--;
+    int end = i;
+    while (end + 1 < n && (Character.isDigit(text.charAt(end + 1)) || text.charAt(end + 1) == '.')) end++;
+
+    float value;
+    try {
+      value = Float.parseFloat(text.substring(start, end + 1));
+    }
+    catch (Exception ex) {
+      i = end;
+      continue;
+    }
+
+    int unitStart = end + 1;
+    if (unitStart < n && text.charAt(unitStart) == ' ') unitStart++;
+    String rest = text.substring(unitStart).toLowerCase();
+
+    if (rest.startsWith("mm")) return value * 0.001f;
+    if (rest.startsWith("cm")) return value * 0.01f;
+    if (rest.startsWith("m") && !rest.startsWith("mm")) return value;
+    if (rest.startsWith("'") || rest.startsWith("ft")) return value * 0.3048f;
+
+    i = end; // no recognized unit right after this number - keep scanning
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------
 // Entry point - mirrors import_objects_OBJ(FileName, m, tes, lyr, vsb,
 // wgt, clz, cx, cy, cz, sx, sy, sz)'s own signature, including the
 // m == -1 "auto-cycle through 8 materials" convention (there, cycled
@@ -1207,6 +1309,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   ifcImportSkippedCount = 0;
   ifcImportHolesIgnoredCount = 0;
+  ifcImportTreeCount = 0;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
 
@@ -1233,7 +1336,16 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // through a different product order from one run to the next.
   ArrayList<Integer> productIds = new ArrayList<Integer>();
   for (Integer id : ents.keySet()) {
-    if (ifcLooksLikeImportableProduct(ents.get(id))) productIds.add(id);
+    StepEntity candidate = ents.get(id);
+    if (ifcLooksLikeImportableProduct(candidate)) {
+      productIds.add(id);
+    } else if (ifcLooksLikeAProduct(candidate) && ifcLooksLikeATree(candidate)) {
+      // A tree is placed from just its name/placement even with no
+      // Representation of its own (a lightweight landscape/vegetation
+      // placeholder, common in practice) - every other product without
+      // one is skipped exactly because it has nothing to import.
+      productIds.add(id);
+    }
   }
   ifcSortAscending(productIds);
 
@@ -1247,6 +1359,31 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // be deferred until after we know whether the product actually
     // produced geometry.
     if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+    String placementTok = e.attrs[5].trim();
+    IfcFrame productFrame = placementTok.startsWith("#")
+      ? ifcPlacementToFrame(ents, ifcRefId(placementTok)) : ifcIdentityFrame();
+
+    // A tree (see ifcLooksLikeATree() above) is placed as one of the
+    // app's own native 2D trees at this product's placement origin
+    // instead of going through the normal Faces/material pipeline at
+    // all below - skipped here are not just the glass/material-name/
+    // topography choice, but also the m == -1 cycle (same reasoning as
+    // every other product-type-driven choice: it shouldn't leave a gap
+    // in the opaque cycle either) and the actual geometry import
+    // (ifcProcessProductRepresentation), since a billboard tree has no
+    // Faces of its own to speak of.
+    if (ifcLooksLikeATree(e)) {
+      Float heightHint = (e.attrs.length > 2) ? ifcParseHeightHint(e.attrs[2]) : null;
+      if (heightHint == null && e.attrs.length > 4) heightHint = ifcParseHeightHint(e.attrs[4]);
+      float height = (heightHint != null ? heightHint : 10) * sz;
+
+      PVector world = productFrame.origin;
+      allModel2Ds.create("TREES", 0,
+        cx + sx * world.x, cy + sy * world.y, cz + sz * world.z, height);
+      ifcImportTreeCount++;
+      continue;
+    }
 
     // A window (see ifcGlassProductTypes above) always draws as glass
     // (material 9), regardless of what m says or what material, if any,
@@ -1285,10 +1422,6 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       materialForThisProduct = effectiveMaterial;
     }
 
-    String placementTok = e.attrs[5].trim();
-    IfcFrame productFrame = placementTok.startsWith("#")
-      ? ifcPlacementToFrame(ents, ifcRefId(placementTok)) : ifcIdentityFrame();
-
     int repId = ifcRefId(e.attrs[6]);
     ifcProcessProductRepresentation(ents, repId, productFrame, cx, cy, cz, sx, sy, sz,
       materialForThisProduct, tes, lyr, vsb, wgt, clz);
@@ -1299,6 +1432,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   int importedFaceCount = allFaces.nodes.length - importedFaceCountBefore;
   String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
   if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
+  if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
   if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
   if (ifcImportHolesIgnoredCount > 0) summary += ", " + ifcImportHolesIgnoredCount + " inner boundary/boundaries ignored";
   summary += ".";
