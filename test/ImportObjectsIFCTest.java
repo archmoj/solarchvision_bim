@@ -1645,6 +1645,168 @@ class ImportObjectsIFCTest {
     assertEquals(2, app.allFaces.options[2][0], "second wall: material cycle continues at 2, not disrupted");
   }
 
+  // ================= shading devices: louvers, brise-soleil, ... =============
+
+  @Test
+  void importObjectsIFC_ifcShadingDevice_importsItsRealGeometry_defaultsToSteel () throws IOException {
+    Path f = ifcFile("ifc-shadingdevice-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSHADINGDEVICE('guid-1',$,$,$,$,$,#11,$,.LOUVER.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "IfcShadingDevice should import its own real geometry as Faces");
+    assertEquals(4, app.allFaces.nodes[0].length, "kept as a quad, not triangulated, same as any other face");
+    assertEquals(12, app.allFaces.options[0][0], "an unmaterialed shading device should default to IFC_MATERIAL_STEEL (12), not the fixed material (5)");
+  }
+
+  @Test
+  void importObjectsIFC_genericProxyNamedLouvre_isAlsoRecognized_notJustIfcShadingDevice () throws IOException {
+    Path f = ifcFile("ifc-shading-proxy-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCBUILDINGELEMENTPROXY('guid-1',$,'Louvre Screen',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(12, app.allFaces.options[0][0], "a generic proxy named \"Louvre Screen\" should also default to IFC_MATERIAL_STEEL");
+  }
+
+  @Test
+  void importObjectsIFC_briseSoleilTwoWordNameMatch_isRecognized () throws IOException {
+    Path f = ifcFile("ifc-shading-brisesoleil-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCBUILDINGELEMENTPROXY('guid-1',$,'Brise-Soleil Fin',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(12, app.allFaces.options[0][0], "\"Brise-Soleil\" (hyphenated two-word name) should also be recognized");
+  }
+
+  @Test
+  void importObjectsIFC_shadingDeviceExplicitMaterialWins_overTheSteelDefault () throws IOException {
+    Path f = ifcFile("ifc-shading-material-override-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSHADINGDEVICE('guid-1',$,'Timber Louvre',$,$,$,#11,$,.LOUVER.);
+        #20=IFCMATERIAL('Timber');
+        #21=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(13, app.allFaces.options[0][0],
+      "unlike glass/solar, a shading device's own steel default is purely cosmetic, so an explicit material-name match (timber, 13) should still win");
+  }
+
+  @Test
+  void importObjectsIFC_shadingDeviceDoesNotDisruptTheWallMaterialCycle () throws IOException {
+    Path f = ifcFile("ifc-shading-cycle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #13=IFCSHADINGDEVICE('guid-2',$,$,$,$,$,#11,$,.LOUVER.);
+        #14=IFCWALL('guid-3',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), -1 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.options[0][0], "first wall: material cycle starts at 1");
+    assertEquals(12, app.allFaces.options[1][0], "shading device: defaults to steel (12), same every time, not part of the cycle");
+    assertEquals(2, app.allFaces.options[2][0], "second wall: material cycle continues at 2, not disrupted");
+  }
+
+  @Test
+  void importObjectsIFC_shadingDeviceImportsEvenWhileFurnitureIsExcluded () throws IOException {
+    // Mimics a file that (unusually) models a shading device as an
+    // IfcFurnishingElement instead of IfcShadingDevice/a plain proxy -
+    // the same kind of miscategorization ifcLooksLikeATree()/
+    // ifcLooksLikeASolarDevice() already guard against for trees/solar
+    // panels (see import_objects_IFC()'s own product-collection loop).
+    Path f = ifcFile("ifc-shading-furniture-bypass-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCFURNISHINGELEMENT('guid-1',$,'Exterior Louvre Panel',$,$,$,#11);
+        """
+    );
+
+    // IFC_IMPORT_FURNITURE is false by default - confirmed by every
+    // other furniture test in this file - so this alone proves the
+    // shading-device recognition bypasses that exclusion, the same way
+    // it already does for a tree/solar device/pool/vegetation.
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "a shading device named this way should import despite IFC_IMPORT_FURNITURE being false");
+    assertEquals(0, app.ifcImportFurnitureExcludedCount, "and should not be counted as excluded furniture");
+  }
+
   // ================= vegetation: green roof, green wall, garden/grass ========
 
   @Test

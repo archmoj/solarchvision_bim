@@ -91,6 +91,18 @@
 //     with material 0 (IFC_MATERIAL_SOLAR; see that constant's own
 //     comment), regardless of m or any material the file associates
 //     with it. See ifcLooksLikeASolarDevice() below.
+//   - A fixed sun-shading element - a louver, brise-soleil, shutter,
+//     jalousie or awning - whether the file models it as
+//     IfcShadingDevice (IFC4) or, like a tree, as a generic product
+//     whose Name/ObjectType just says so, imports its own real geometry
+//     as Faces, same as any other product, and is never excluded the
+//     way furniture/small objects can be, regardless of
+//     IFC_IMPORT_FURNITURE: unlike most of what this importer treats
+//     specially, a shading device's geometry is directly relevant to
+//     this app's own purpose (it exists to cast a shadow), not just
+//     cosmetic. Defaults to IFC_MATERIAL_STEEL (most are aluminum or
+//     painted steel) only when the file names no material of its own -
+//     see ifcLooksLikeAShadingDevice() below.
 //   - A green roof, green wall or garden/lawn - again, no single
 //     dedicated IFC entity for any of these, so caught the same way as
 //     a tree, by a Name/ObjectType word match ("green", "garden",
@@ -2302,6 +2314,47 @@ boolean ifcLooksLikeASolarDevice (StepEntity e) {
 }
 
 // ---------------------------------------------------------------------
+// Shading devices: louvers, brise-soleil, shutters, jalousies, awnings
+// and other fixed sun-shading elements. Caught either by entity type
+// (IfcShadingDevice, IFC4's own dedicated entity for this) or, for any
+// IFC2x3 file (the entity didn't exist yet) and plenty of IFC4 ones too,
+// by a Name/ObjectType word match - the same mechanism solar devices/
+// vegetation/... above already use. See IFC_MATERIAL_STEEL's own use in
+// import_objects_IFC()'s material-choice block, and the furniture-
+// exclusion bypass in its product-collection loop, for what this
+// actually changes.
+// ---------------------------------------------------------------------
+
+HashSet<String> ifcShadingDeviceProductTypes = new HashSet<String>(Arrays.asList(
+  "IFCSHADINGDEVICE"
+  ));
+
+HashSet<String> ifcShadingDeviceNameWords = new HashSet<String>(Arrays.asList(
+  "louvre", "louvres", "louver", "louvers", "jalousie", "jalousies",
+  "shutter", "shutters", "sunshade", "sunshades", "awning", "awnings",
+  "brisesoleil"
+  ));
+
+// "Brise Soleil"/"brise-soleil" - two separate words/tokens once split
+// (see ifcNameHasWord()'s own [^a-z0-9]+ split, which treats a hyphen
+// the same as a space) - so neither "brise" nor "soleil" alone is in
+// ifcShadingDeviceNameWords above: each is too generic by itself
+// ("soleil" is simply French for "sun") to safely match alone the way
+// ifcShadingDeviceNameWords's own single words do, but the two together
+// are specific enough - the same tradeoff ifcNameHasAllWords() already
+// makes for "washing machine"/"range hood" above.
+HashSet<String> ifcBriseSoleilWords = new HashSet<String>(Arrays.asList("brise", "soleil"));
+
+boolean ifcLooksLikeAShadingDevice (StepEntity e) {
+  if (ifcShadingDeviceProductTypes.contains(e.type)) return true;
+  if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcShadingDeviceNameWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcShadingDeviceNameWords)) return true; // ObjectType
+  if (e.attrs.length > 2 && ifcNameHasAllWords(e.attrs[2], ifcBriseSoleilWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasAllWords(e.attrs[4], ifcBriseSoleilWords)) return true; // ObjectType
+  return false;
+}
+
+// ---------------------------------------------------------------------
 // People - human/entourage/scale-figure reference models, usually a
 // detailed mesh placed via IfcMappedItem. Caught three ways: IfcActor
 // (an unambiguous entity type for this), IfcBuildingElementProxy with
@@ -2554,12 +2607,14 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     if (!IFC_IMPORT_FURNITURE && candidate != null
       && (ifcFurnitureProductTypes.contains(candidate.type) || ifcLooksLikeExcludedApplianceOrCabinet(candidate))
       && !ifcLooksLikeATree(candidate) && !ifcLooksLikeASolarDevice(candidate)
-      && !ifcLooksLikeAPool(candidate) && !ifcLooksLikeVegetation(candidate)) {
+      && !ifcLooksLikeAPool(candidate) && !ifcLooksLikeVegetation(candidate)
+      && !ifcLooksLikeAShadingDevice(candidate)) {
       // Ordinary furniture, a sanitary/MEP-terminal fixture, or a
       // Name/ObjectType-matched kitchen appliance or cabinet/storage
       // item (see ifcFurnitureProductTypes and
       // ifcLooksLikeExcludedApplianceOrCabinet() above) - none of them
-      // one of the special-cased categories above, which keep working
+      // one of the special-cased categories above (tree, solar device,
+      // pool, vegetation, shading device), which keep working
       // regardless of this toggle - skipped entirely while
       // IFC_IMPORT_FURNITURE is false, counted separately from
       // ifcImportSkippedCount since this is a deliberate exclusion, not
@@ -2671,9 +2726,11 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // IFC_MATERIAL_WATER; an exposed structural member (a column, beam
     // or IfcMember) or a floor (see
     // ifcStructuralProductTypes/ifcLooksLikeAFloor() above) defaults to
-    // IFC_MATERIAL_CONCRETE; and IfcSite's own topography more
-    // generally (see ifcTopographyProductTypes above) defaults to
-    // IFC_MATERIAL_EARTH - rather than any of them falling into the
+    // IFC_MATERIAL_CONCRETE; a shading device (see
+    // ifcLooksLikeAShadingDevice() above) defaults to IFC_MATERIAL_STEEL;
+    // and IfcSite's own topography more generally (see
+    // ifcTopographyProductTypes above) defaults to IFC_MATERIAL_EARTH -
+    // rather than any of them falling into the
     // generic cycle, since each should read as what it visibly is even
     // when the file names no material for it at all. Only a product
     // matching none of the above falls back to m/the normal 1-8 cycle.
@@ -2703,6 +2760,9 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       }
       if (matchedMaterial == null && (ifcStructuralProductTypes.contains(e.type) || ifcLooksLikeAFloor(e))) {
         matchedMaterial = IFC_MATERIAL_CONCRETE;
+      }
+      if (matchedMaterial == null && ifcLooksLikeAShadingDevice(e)) {
+        matchedMaterial = IFC_MATERIAL_STEEL;
       }
       if (matchedMaterial == null && ifcTopographyProductTypes.contains(e.type)) {
         matchedMaterial = IFC_MATERIAL_EARTH;
