@@ -71,6 +71,13 @@
 //     with material 0 (IFC_MATERIAL_SOLAR; see that constant's own
 //     comment), regardless of m or any material the file associates
 //     with it. See ifcLooksLikeASolarDevice() below.
+//   - A green roof, green wall or garden/lawn - again, no single
+//     dedicated IFC entity for any of these, so caught the same way as
+//     a tree, by a Name/ObjectType word match ("green", "garden",
+//     "grass", "lawn", "vegetation") - imports its own real geometry as
+//     Faces and defaults to IFC_MATERIAL_VEGETATION, a natural grass
+//     green, when the file names no material for it. See
+//     ifcLooksLikeVegetation() below.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -183,6 +190,29 @@ HashSet<String> ifcTopographyProductTypes = new HashSet<String>(Arrays.asList(
   "IFCSITE"
   ));
 
+// Words that mark a product as a planted/vegetated surface - a green
+// roof (an IfcRoof build-up), a green wall (an IfcWall or
+// IfcCurtainWall), or a garden/lawn (often just IfcSite's own
+// Name/ObjectType, same as how a site's topography is caught
+// generally - see ifcTopographyProductTypes above) - IFC has no single
+// dedicated entity for any of these any more than it does for a tree or
+// a solar device, so this is a Name/ObjectType word match too (see
+// ifcLooksLikeVegetation() below, which reuses ifcNameHasWord() the
+// same way trees and solar devices do). Checked only after an explicit
+// associated IfcMaterial name match fails (see the material-choice
+// block in import_objects_IFC() below) - purely a cosmetic default, not
+// a functional override like glass or solar, so a file-authored
+// material name (e.g. "Sedum Mat", "Topsoil") still wins over it.
+HashSet<String> ifcVegetationNameWords = new HashSet<String>(Arrays.asList(
+  "green", "garden", "grass", "lawn", "vegetation"
+  ));
+
+boolean ifcLooksLikeVegetation (StepEntity e) {
+  if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcVegetationNameWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcVegetationNameWords)) return true; // ObjectType
+  return false;
+}
+
 // Product types always drawn with IFC_MATERIAL_SOLAR (material 0),
 // overriding any associated IfcMaterial name the same way windows
 // override theirs - IfcSolarDevice (IFC4.3's own entity for a PV panel,
@@ -229,6 +259,7 @@ final int IFC_MATERIAL_MASONRY    = 14;
 final int IFC_MATERIAL_INSULATION = 15;
 final int IFC_MATERIAL_MEP        = 16;
 final int IFC_MATERIAL_EARTH      = 17;
+final int IFC_MATERIAL_VEGETATION = 18;
 
 // Running counters for the post-import summary (and for tests - reset
 // at the top of every import_objects_IFC() call).
@@ -1453,15 +1484,18 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // of those, a product whose own associated IfcMaterial name matches
     // one of Materials.pde's named colors (concrete, steel, timber,
     // ...) gets that color - here an explicit match *does* win, same as
-    // everywhere else. Failing that too, IfcSite's own topography (see
-    // ifcTopographyProductTypes above) defaults to IFC_MATERIAL_EARTH
-    // rather than falling into the generic cycle, since a terrain
-    // surface should read as ground even when the file names no
-    // material for it at all. Only a product matching none of the
-    // above falls back to m/the normal 1-8 cycle. Every kind of
-    // explicit match here is intentionally kept out of that cycle too
-    // - so unmatched walls/slabs/etc. still cycle smoothly through
-    // materials 1-8 with no gaps.
+    // everywhere else. Failing that, a planted surface (a green roof,
+    // green wall, or garden/lawn - see ifcLooksLikeVegetation() above)
+    // defaults to IFC_MATERIAL_VEGETATION, and IfcSite's own topography
+    // more generally (see ifcTopographyProductTypes above) defaults to
+    // IFC_MATERIAL_EARTH, rather than either falling into the generic
+    // cycle - a terrain surface should read as ground, and a planted
+    // one as green, even when the file names no material for either at
+    // all. Only a product matching none of the above falls back to
+    // m/the normal 1-8 cycle. Every kind of explicit match here is
+    // intentionally kept out of that cycle too - so unmatched walls/
+    // slabs/etc. still cycle smoothly through materials 1-8 with no
+    // gaps.
     int materialForThisProduct;
     // Deliberately not a "cond ? IFC_MATERIAL_GLASS : ifcMaterialNameToConstant(...)"
     // ternary: mixing a primitive int (IFC_MATERIAL_GLASS) with an
@@ -1477,6 +1511,9 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       matchedMaterial = IFC_MATERIAL_SOLAR;
     } else {
       matchedMaterial = ifcMaterialNameToConstant(productMaterialNames.get(id));
+      if (matchedMaterial == null && ifcLooksLikeVegetation(e)) {
+        matchedMaterial = IFC_MATERIAL_VEGETATION;
+      }
       if (matchedMaterial == null && ifcTopographyProductTypes.contains(e.type)) {
         matchedMaterial = IFC_MATERIAL_EARTH;
       }

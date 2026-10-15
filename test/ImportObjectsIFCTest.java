@@ -895,4 +895,105 @@ class ImportObjectsIFCTest {
     assertEquals(0, app.allFaces.options[1][0], "solar device: always material 0");
     assertEquals(2, app.allFaces.options[2][0], "second wall: material cycle continues at 2, not disrupted");
   }
+
+  // ================= vegetation: green roof, green wall, garden/grass ========
+
+  @Test
+  void importObjectsIFC_roofNamedGreenRoof_defaultsToVegetationMaterial () throws IOException {
+    Path f = ifcFile("ifc-greenroof-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCROOF('guid-1',$,'Green Roof - Extensive',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(18, app.allFaces.options[0][0], "should default to IFC_MATERIAL_VEGETATION (18), not the fixed material (5)");
+  }
+
+  @Test
+  void importObjectsIFC_wallNamedGreenWall_alsoDefaultsToVegetationMaterial () throws IOException {
+    Path f = ifcFile("ifc-greenwall-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,'Living Green Wall',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(18, app.allFaces.options[0][0]);
+  }
+
+  @Test
+  void importObjectsIFC_siteNamedGarden_getsVegetationInsteadOfTheGenericEarthDefault () throws IOException {
+    Path f = ifcFile("ifc-garden-site-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((10.,0.,0.));
+        #3=IFCCARTESIANPOINT((10.,10.,0.));
+        #4=IFCCARTESIANPOINT((0.,10.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSITE('guid-1',$,'Garden Area',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(18, app.allFaces.options[0][0], "a site explicitly named \"Garden\" should get vegetation (18), not the generic earth default (17)");
+  }
+
+  @Test
+  void importObjectsIFC_vegetationDefaultLosesToAnExplicitAssociatedMaterialName () throws IOException {
+    Path f = ifcFile("ifc-vegetation-material-override-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCROOF('guid-1',$,'Green Roof',$,$,$,#11);
+        #20=IFCMATERIAL('Concrete Ballast');
+        #21=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(11, app.allFaces.options[0][0],
+      "vegetation is purely cosmetic, unlike glass/solar, so an explicit material-name match (concrete, 11) should still win");
+  }
 }

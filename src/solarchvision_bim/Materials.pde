@@ -1,6 +1,6 @@
 class Materials {
 
-  int Number = 18; //256;
+  int Number = 19; //256;
   int Selection = 1;
 
   int[][] Color = new int [this.Number][4]; // ARGB
@@ -32,7 +32,14 @@ class Materials {
       {255, 178,  34,  34}, // 14 Masonry (Brick, CMU Block)
       {127, 255, 245, 157}, // 15 Insulation (Thermal Barrier, Batting) - 50% semi-transparent
       {255,   0, 188, 212}, // 16 MEP / Plastics (PVC, Conduit, Piping)
-      {255,  92,  64,  51}  // 17 Earth / Soil (Excavation, Backfill)
+      {255,  92,  64,  51}, // 17 Earth / Soil (Excavation, Backfill)
+      // 18: a natural grass green for planted surfaces - green roofs,
+      // green walls, gardens/lawns - deliberately not material 3
+      // (0,255,0, fully saturated "pure" green, one of the original
+      // 8 cycling colors, not meant to represent anything specific)
+      // which would look cartoonish next to the realistic tones above.
+      // See import_objects_IFC.pde's IFC_MATERIAL_VEGETATION.
+      {255,  76, 153,  56}  // 18 Vegetation (Green Roof, Green Wall, Garden/Grass)
     };
 
     int fixedCount = min(fixed.length, this.Number);
