@@ -97,7 +97,7 @@
 //     whose Name/ObjectType just says so, imports its own real geometry
 //     as Faces, same as any other product, and is never excluded the
 //     way furniture/small objects can be, regardless of
-//     IFC_IMPORT_FURNITURE: unlike most of what this importer treats
+//     ifcImportFurniture: unlike most of what this importer treats
 //     specially, a shading device's geometry is directly relevant to
 //     this app's own purpose (it exists to cast a shadow), not just
 //     cosmetic. Defaults to IFC_MATERIAL_STEEL (most are aluminum or
@@ -174,9 +174,11 @@
 //     IfcSystemFurnitureElement), a sanitary/MEP-terminal fixture
 //     (IfcFlowTerminal, IfcSanitaryTerminal - a toilet, sink, bathtub,
 //     ...) and a Name/ObjectType-matched kitchen appliance or cabinet/
-//     storage item isn't imported at all while IFC_IMPORT_FURNITURE
-//     (below) is false, its current default - deliberate, not a gap,
-//     and not (yet) user-facing; see that constant's own comment. The
+//     storage item isn't imported at all while ifcImportFurniture
+//     (below) is false, its default - deliberate, not a gap, and
+//     user-facing via the IFC import options dialog (see
+//     ifcShowImportOptionsDialog() in fileSelected.pde); see
+//     IFC_IMPORT_FURNITURE's own comment for more. The
 //     same toggle also excludes a small (under
 //     IFC_SMALL_OBJECT_MAX_DIMENSION on every axis) IfcBuildingElementProxy
 //     - a book, a cup, a vase, other loose tabletop decor - while
@@ -268,12 +270,9 @@ HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
   "IFCSPACE", "IFCOPENINGELEMENT", "IFCVIRTUALELEMENT"
   ));
 
-// Whether to import furniture at all - off by default for now. Tables,
-// chairs, desks and the like add clutter and import time without
-// adding much to what's primarily an architectural/solar study tool;
-// this may become a user-facing option later (exposed through the
-// Import IFC dialog or a command-line parameter), but isn't one yet -
-// just a single constant to flip here in the meantime.
+// Whether to import furniture at all - off by default. Tables, chairs,
+// desks and the like add clutter and import time without adding much to
+// what's primarily an architectural/solar study tool.
 //
 // Trees, solar devices, a pool's water and planted surfaces are
 // commonly modeled using one of these same entity types too (e.g. a
@@ -300,7 +299,19 @@ HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
 // everything from dinner plates to elevators and escalators, so size,
 // not type, is the signal that actually distinguishes a small object
 // from a significant one modeled the same way.
+//
+// This constant is only ever this toggle's own starting value - what
+// import_objects_IFC() actually checks at import time is
+// ifcImportFurniture below, a plain (non-final) variable the person
+// importing can flip per import, from the IFC import options dialog
+// (see ifcShowImportOptionsDialog() in fileSelected.pde) - the same
+// relationship IFC_IMPORT_NORTH/ifcImportOrient and
+// IFC_IMPORT_GOTO_LATLON/ifcImportRelocate below have.
 final boolean IFC_IMPORT_FURNITURE = false;
+
+// The actual, per-session, user-toggleable switch - see this constant's
+// own comment just above for what it does and why it starts this way.
+boolean ifcImportFurniture = IFC_IMPORT_FURNITURE;
 
 // Whether to rotate the whole imported model, around the world origin,
 // to correct for the project's own true-north rotation - on by default.
@@ -328,7 +339,13 @@ final boolean IFC_IMPORT_FURNITURE = false;
 // zero angle, so this is a no-op for those regardless of the toggle's
 // value - see "Don't rotate if the angle is zero" in
 // ifcRotateImportedModelToTrueNorth()'s own comment.
+//
+// Just this toggle's own starting value - see IFC_IMPORT_FURNITURE's
+// own comment above for why, and ifcImportOrient below for what's
+// actually checked at import time.
 final boolean IFC_IMPORT_NORTH = true;
+
+boolean ifcImportOrient = IFC_IMPORT_NORTH;
 
 // Whether to navigate the app's own "station" (STATION.latitude/
 // longitude - see STATION.pde) to wherever the file's own IfcSite says
@@ -342,9 +359,15 @@ final boolean IFC_IMPORT_NORTH = true;
 // itself comes from (IfcSite's own RefLatitude/RefLongitude, or, failing
 // that, an IfcMapConversion's Eastings/Northings); a file with neither
 // naturally leaves the station untouched regardless of this toggle's
-// value, same as IFC_IMPORT_NORTH already does for an unrotated/missing
+// value, same as ifcImportOrient already does for an unrotated/missing
 // IfcSite.
+//
+// Just this toggle's own starting value - see IFC_IMPORT_FURNITURE's
+// own comment above for why, and ifcImportRelocate below for what's
+// actually checked at import time.
 final boolean IFC_IMPORT_GOTO_LATLON = true;
+
+boolean ifcImportRelocate = IFC_IMPORT_GOTO_LATLON;
 
 // IfcSanitaryTerminal is IFC4's own dedicated entity for toilet/
 // bathroom fixtures (a IfcFlowTerminal subtype: WCs, sinks, bathtubs,
@@ -412,7 +435,7 @@ boolean ifcLooksLikeExcludedApplianceOrCabinet (StepEntity e) {
 // An IfcBuildingElementProxy whose own geometry fits within a cube of
 // this size (metres, after unit conversion - see ifcLengthUnitScale)
 // on every axis is treated as a small tabletop object and excluded the
-// same way furniture is, while IFC_IMPORT_FURNITURE is false. 0.5m
+// same way furniture is, while ifcImportFurniture is false. 0.5m
 // comfortably covers plates, cups, vases, books and other loose decor
 // (all well under it in every dimension) while staying well below
 // anything closer to furniture-sized (even a narrow side table or
@@ -586,7 +609,7 @@ int ifcImportPersonCount = 0;
 // this is real, imported geometry, just without its opening cut out,
 // not something left out of the import entirely.
 int ifcImportUncutOpeningCount = 0;
-// Furniture excluded by IFC_IMPORT_FURNITURE == false - counted
+// Furniture excluded by ifcImportFurniture == false - counted
 // separately from ifcImportSkippedCount, since this isn't something
 // unsupported being skipped, it's a deliberate choice.
 int ifcImportFurnitureExcludedCount = 0;
@@ -595,14 +618,14 @@ int ifcImportFurnitureExcludedCount = 0;
 // comment.
 int ifcImportSmallObjectExcludedCount = 0;
 // The true-north angle (degrees, signed, about Z) the import actually
-// rotated the model by - see IFC_IMPORT_NORTH and
+// rotated the model by - see ifcImportOrient and
 // ifcRotateImportedModelToTrueNorth() below. Stays 0 whenever nothing
-// was rotated: IFC_IMPORT_NORTH is off, the file has no IfcSite, or
+// was rotated: ifcImportOrient is off, the file has no IfcSite, or
 // that IfcSite's own placement isn't rotated at all.
 float ifcImportNorthRotationAngle = 0;
 // {latitude, longitude} the import navigated the station to - see
-// IFC_IMPORT_GOTO_LATLON and ifcSiteLatLonDecimalDegrees() below. Stays
-// null whenever nothing was navigated to: IFC_IMPORT_GOTO_LATLON is
+// ifcImportRelocate and ifcSiteLatLonDecimalDegrees() below. Stays
+// null whenever nothing was navigated to: ifcImportRelocate is
 // off, or the file gives no usable reference point at all (see that
 // function's own comment for the two sources it tries).
 float[] ifcImportGotoLatLon = null;
@@ -2580,7 +2603,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // Left at 0 - i.e. IFC_IMPORT_NORTH's own "don't rotate" case -
   // without even reading the file's IfcSite, whenever the toggle itself
   // is off.
-  ifcImportNorthRotationAngle = IFC_IMPORT_NORTH ? ifcTrueNorthAngleDegrees(ents) : 0;
+  ifcImportNorthRotationAngle = ifcImportOrient ? ifcTrueNorthAngleDegrees(ents) : 0;
 
   // Detected before any geometry is read, since ifcPointFromCoords()
   // and the profile-dimension/extrusion-depth readers below all apply
@@ -2604,7 +2627,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   for (Integer id : ents.keySet()) {
     StepEntity candidate = ents.get(id);
 
-    if (!IFC_IMPORT_FURNITURE && candidate != null
+    if (!ifcImportFurniture && candidate != null
       && (ifcFurnitureProductTypes.contains(candidate.type) || ifcLooksLikeExcludedApplianceOrCabinet(candidate))
       && !ifcLooksLikeATree(candidate) && !ifcLooksLikeASolarDevice(candidate)
       && !ifcLooksLikeAPool(candidate) && !ifcLooksLikeVegetation(candidate)
@@ -2616,7 +2639,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       // one of the special-cased categories above (tree, solar device,
       // pool, vegetation, shading device), which keep working
       // regardless of this toggle - skipped entirely while
-      // IFC_IMPORT_FURNITURE is false, counted separately from
+      // ifcImportFurniture is false, counted separately from
       // ifcImportSkippedCount since this is a deliberate exclusion, not
       // an unsupported item.
       ifcImportFurnitureExcludedCount++;
@@ -2799,7 +2822,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // decide either way - ifcPromoteProductStaging() on an empty
     // staging buffer is already a safe no-op, so it's simplest to
     // always take that branch rather than add a third one.
-    if (!IFC_IMPORT_FURNITURE && e.type.equals("IFCBUILDINGELEMENTPROXY")
+    if (!ifcImportFurniture && e.type.equals("IFCBUILDINGELEMENTPROXY")
       && ifcProductPendingFaceNodes.size() > 0 && ifcProductBBoxMaxDimension() < IFC_SMALL_OBJECT_MAX_DIMENSION) {
       ifcDiscardProductStaging();
       ifcImportSmallObjectExcludedCount++;
@@ -2822,7 +2845,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // allFaces/allModel2Ds - see ifcRotateImportedModelToTrueNorth()'s own
   // comment for why this runs here, after the flush, rather than
   // earlier alongside where ifcImportNorthRotationAngle itself was
-  // computed. A zero angle (IFC_IMPORT_NORTH off, no IfcSite, or an
+  // computed. A zero angle (ifcImportOrient off, no IfcSite, or an
   // unrotated one) is a no-op inside that function too, but checked
   // here as well so a zero-angle import never even touches
   // currentObjectCategory/the selection.
@@ -2852,7 +2875,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // already was - whenever the file gives no usable reference point,
   // same as a file with no (or an unrotated) IfcSite already leaves
   // IFC_IMPORT_NORTH's own rotation a no-op.
-  ifcImportGotoLatLon = IFC_IMPORT_GOTO_LATLON ? ifcSiteLatLonDecimalDegrees(ents) : null;
+  ifcImportGotoLatLon = ifcImportRelocate ? ifcSiteLatLonDecimalDegrees(ents) : null;
   if (ifcImportGotoLatLon != null) {
     println();
     println("Now navigating to latitude " + ifcImportGotoLatLon[0] + ", longitude " + ifcImportGotoLatLon[1] + "...");

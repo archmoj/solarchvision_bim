@@ -14,7 +14,52 @@ void selectFile_ImportObj () {
   selectInput("Select OBJ file to import:", "_fileSelected_ImportObj", new File(Folder_Import + "/_.obj"));
 }
 
+// Lets the person importing check/uncheck ifcImportFurniture/
+// ifcImportOrient/ifcImportRelocate (see import_objects_IFC.pde's own
+// IFC_IMPORT_FURNITURE/IFC_IMPORT_NORTH/IFC_IMPORT_GOTO_LATLON - these
+// three variables are what actually gets checked at import time, those
+// constants are only their starting values) before picking a file to
+// import. A plain Swing dialog (JCheckBox in a JOptionPane) rather than
+// one of this app's own custom-drawn rollouts: selectInput() below
+// already shows a native/Swing file chooser the exact same way, so this
+// fits right in as "one more standard system dialog in the same flow",
+// and - unlike a rollout - needs nothing from WIN3D's own render loop,
+// which matters here since this runs before any file (and so before any
+// of the geometry a rollout might otherwise reflect) even exists yet.
+// Shown before the file picker, not after: so cancelling it skips
+// opening a file chooser at all, rather than popping up only to be
+// immediately followed by another dialog. Returns false on Cancel/the
+// dialog's own close button - selectFile_ImportIfc() below treats that
+// as "don't import", the same as cancelling the file chooser itself
+// would.
+boolean ifcShowImportOptionsDialog () {
+
+  javax.swing.JCheckBox furnitureBox = new javax.swing.JCheckBox("Import furniture", ifcImportFurniture);
+  javax.swing.JCheckBox orientBox = new javax.swing.JCheckBox("Rotate to the project's true north", ifcImportOrient);
+  javax.swing.JCheckBox relocateBox = new javax.swing.JCheckBox("Navigate to the file's own location (latitude/longitude)", ifcImportRelocate);
+
+  javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
+  panel.add(furnitureBox);
+  panel.add(orientBox);
+  panel.add(relocateBox);
+
+  int result = javax.swing.JOptionPane.showConfirmDialog(
+    null, panel, "IFC import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+  if (result != javax.swing.JOptionPane.OK_OPTION) return false;
+
+  // Each one left exactly where it was (ifcImportFurniture's own
+  // current value, etc.) unless this dialog's own OK button is actually
+  // pressed - a cancelled dialog must never half-apply a choice.
+  ifcImportFurniture = furnitureBox.isSelected();
+  ifcImportOrient = orientBox.isSelected();
+  ifcImportRelocate = relocateBox.isSelected();
+
+  return true;
+}
+
 void selectFile_ImportIfc () {
+  if (!ifcShowImportOptionsDialog()) return; // cancelled - nothing to pick a file for
   selectInput("Select IFC file to import:", "_fileSelected_ImportIfc", new File(Folder_Import + "/_.ifc"));
 }
 

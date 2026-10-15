@@ -967,7 +967,7 @@ class ImportObjectsIFCTest {
     assertEquals(11, app.allFaces.options[0][0], "an explicit material-name match should win over the IfcSite earth default");
   }
 
-  // ================= IFC_IMPORT_NORTH: rotate to the project's true north ====
+  // ================= ifcImportOrient: rotate to the project's true north =====
   //
   // These fixtures' IFCGEOMETRICREPRESENTATIONCONTEXT(...) line - a
   // ContextIdentifier, ContextType, CoordinateSpaceDimension, Precision,
@@ -1246,7 +1246,7 @@ class ImportObjectsIFCTest {
     assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
   }
 
-  // ================= IFC_IMPORT_GOTO_LATLON: navigate to the site =============
+  // ================= ifcImportRelocate: navigate to the site ==================
 
   @Test
   void importObjectsIFC_gotoLatLon_navigatesTheStationToIfcSitesRefLatLon () throws IOException {
@@ -1797,13 +1797,13 @@ class ImportObjectsIFCTest {
         """
     );
 
-    // IFC_IMPORT_FURNITURE is false by default - confirmed by every
+    // ifcImportFurniture is false by default - confirmed by every
     // other furniture test in this file - so this alone proves the
     // shading-device recognition bypasses that exclusion, the same way
     // it already does for a tree/solar device/pool/vegetation.
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(1, app.allFaces.nodes.length, "a shading device named this way should import despite IFC_IMPORT_FURNITURE being false");
+    assertEquals(1, app.allFaces.nodes.length, "a shading device named this way should import despite ifcImportFurniture being false");
     assertEquals(0, app.ifcImportFurnitureExcludedCount, "and should not be counted as excluded furniture");
   }
 
@@ -2311,7 +2311,92 @@ class ImportObjectsIFCTest {
     assertEquals(1, app.ifcImportSkippedCount);
   }
 
-  // ================= furniture: excluded by default (IFC_IMPORT_FURNITURE) ===
+  // ================= ifcImportFurniture/ifcImportOrient/ifcImportRelocate: =====
+  // ================= per-session toggles, not compile-time constants ==========
+
+  @Test
+  void ifcImportToggles_startAtTheirRespectiveConstantsOwnDefaultValue () {
+    assertEquals(app.IFC_IMPORT_FURNITURE, app.ifcImportFurniture);
+    assertEquals(app.IFC_IMPORT_NORTH, app.ifcImportOrient);
+    assertEquals(app.IFC_IMPORT_GOTO_LATLON, app.ifcImportRelocate);
+  }
+
+  @Test
+  void ifcImportFurniture_setTrue_actuallyImportsFurniture_notJustTheConstant () throws IOException {
+    Path f = ifcFile("ifc-furniture-toggle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCFURNISHINGELEMENT('guid-1',$,'Office Chair',$,$,$,#11);
+        """
+    );
+
+    app.ifcImportFurniture = true; // IFC_IMPORT_FURNITURE itself is still false
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "flipping the variable (not the constant) should be enough to import furniture");
+    assertEquals(0, app.ifcImportFurnitureExcludedCount);
+  }
+
+  @Test
+  void ifcImportOrient_setFalse_skipsTrueNorthRotation_evenWithANonzeroTrueNorth () throws IOException {
+    Path f = ifcFile("ifc-orient-toggle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCDIRECTION((1.,0.));
+        #23=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#21,#22);
+        """
+    );
+
+    app.ifcImportOrient = false; // IFC_IMPORT_NORTH itself is still true
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0f, app.ifcImportNorthRotationAngle, 0.0001f, "turning the variable off should skip rotating, even though this file's own TrueNorth is a real 90 degrees");
+    assertEquals(1f, app.allPoints.getX(1), 0.0001f, "geometry should import unrotated");
+    assertEquals(0f, app.allPoints.getY(1), 0.0001f);
+  }
+
+  @Test
+  void ifcImportRelocate_setFalse_skipsNavigating_evenWithAUsableRefLatLon () throws IOException {
+    Path f = ifcFile("ifc-relocate-toggle-test", """
+        #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,(43,38,33),(-79,23,13),0.,$,$);
+        """
+    );
+
+    app.ifcImportRelocate = false; // IFC_IMPORT_GOTO_LATLON itself is still true
+    app.STATION.setLatitude(12.34f);
+    app.STATION.setLongitude(56.78f);
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertNull(app.ifcImportGotoLatLon, "turning the variable off should skip navigating, even though this file's own RefLatitude/RefLongitude are usable");
+    assertEquals(12.34f, app.STATION.getLatitude(), 0.0001f, "the station should be left exactly where it was");
+    assertEquals(56.78f, app.STATION.getLongitude(), 0.0001f);
+  }
+
+  // ================= furniture: excluded by default (ifcImportFurniture) ======
 
   @Test
   void importObjectsIFC_ordinaryFurnishingElement_isExcludedByDefault () throws IOException {
@@ -2333,7 +2418,7 @@ class ImportObjectsIFCTest {
 
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(0, app.allFaces.nodes.length, "ordinary furniture should be excluded while IFC_IMPORT_FURNITURE is false");
+    assertEquals(0, app.allFaces.nodes.length, "ordinary furniture should be excluded while ifcImportFurniture is false");
     assertEquals(0, app.allGroups.num, "an excluded furniture item shouldn't even start a group");
     assertEquals(1, app.ifcImportFurnitureExcludedCount);
     assertEquals(0, app.ifcImportSkippedCount, "excluded furniture is a deliberate choice, not an unsupported-item skip");
