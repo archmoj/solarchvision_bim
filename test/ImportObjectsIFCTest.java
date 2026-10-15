@@ -2322,6 +2322,38 @@ class ImportObjectsIFCTest {
   }
 
   @Test
+  void ifcImportShowOptionsDialog_defaultsToFalse_soCallingImportDirectlyNeverPopsADialog () throws IOException {
+    // The options dialog is a real, blocking Swing dialog (see
+    // ifcShowImportOptionsDialog() in fileSelected.pde) - every test in
+    // this whole file calls import_objects_IFC() directly the way this
+    // one does, and would hang waiting on a person who isn't there if
+    // this flag defaulted to anything other than false, or if
+    // import_objects_IFC() didn't leave it false afterward too.
+    assertFalse(app.ifcImportShowOptionsDialog);
+
+    Path f = ifcFile("ifc-no-options-dialog-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertFalse(app.ifcImportShowOptionsDialog, "should still be false afterward - nothing here should have armed it");
+    assertEquals(1, app.allFaces.nodes.length, "the import itself should still have gone through");
+  }
+
+  @Test
   void ifcImportFurniture_setTrue_actuallyImportsFurniture_notJustTheConstant () throws IOException {
     Path f = ifcFile("ifc-furniture-toggle-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));

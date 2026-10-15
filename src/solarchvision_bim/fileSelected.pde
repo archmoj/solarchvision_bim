@@ -18,20 +18,18 @@ void selectFile_ImportObj () {
 // ifcImportOrient/ifcImportRelocate (see import_objects_IFC.pde's own
 // IFC_IMPORT_FURNITURE/IFC_IMPORT_NORTH/IFC_IMPORT_GOTO_LATLON - these
 // three variables are what actually gets checked at import time, those
-// constants are only their starting values) before picking a file to
-// import. A plain Swing dialog (JCheckBox in a JOptionPane) rather than
-// one of this app's own custom-drawn rollouts: selectInput() below
-// already shows a native/Swing file chooser the exact same way, so this
-// fits right in as "one more standard system dialog in the same flow",
-// and - unlike a rollout - needs nothing from WIN3D's own render loop,
-// which matters here since this runs before any file (and so before any
-// of the geometry a rollout might otherwise reflect) even exists yet.
-// Shown before the file picker, not after: so cancelling it skips
-// opening a file chooser at all, rather than popping up only to be
-// immediately followed by another dialog. Returns false on Cancel/the
-// dialog's own close button - selectFile_ImportIfc() below treats that
-// as "don't import", the same as cancelling the file chooser itself
-// would.
+// constants are only their starting values). Called from
+// import_objects_IFC() itself, not from here - see
+// ifcImportShowOptionsDialog's own comment in import_objects_IFC.pde
+// for exactly when, and why that's after a file's already been picked
+// rather than before. A plain Swing dialog (JCheckBox in a JOptionPane)
+// rather than one of this app's own custom-drawn rollouts: selectInput()
+// below already shows a native/Swing file chooser the exact same way,
+// so this fits right in as "one more standard system dialog in the same
+// flow", and - unlike a rollout - needs nothing from WIN3D's own render
+// loop. Returns false on Cancel/the dialog's own close button -
+// import_objects_IFC() treats that as "don't import, at all", the same
+// as cancelling the file chooser itself would have.
 boolean ifcShowImportOptionsDialog () {
 
   javax.swing.JCheckBox furnitureBox = new javax.swing.JCheckBox("Import furniture", ifcImportFurniture);
@@ -59,7 +57,10 @@ boolean ifcShowImportOptionsDialog () {
 }
 
 void selectFile_ImportIfc () {
-  if (!ifcShowImportOptionsDialog()) return; // cancelled - nothing to pick a file for
+  // Arms ifcImportShowOptionsDialog (import_objects_IFC.pde) so the
+  // options dialog shows once the file this picks is actually about to
+  // be imported, not here - see that variable's own comment for why.
+  ifcImportShowOptionsDialog = true;
   selectInput("Select IFC file to import:", "_fileSelected_ImportIfc", new File(Folder_Import + "/_.ifc"));
 }
 
@@ -173,6 +174,14 @@ void _fileSelected_ImportIfc (File selectedFile) {
   String Filename = "";
 
   if (selectedFile == null) {
+    // Cancelling the native file chooser itself never reaches
+    // import_objects_IFC(), which is otherwise what consumes
+    // ifcImportShowOptionsDialog (see that variable's own comment) -
+    // without this, it would stay armed and pop the options dialog up
+    // on the next import_objects_IFC() call regardless of how that one
+    // was started, including a later non-interactive one (a script's
+    // own IMPORT_IFC command with a path already given).
+    ifcImportShowOptionsDialog = false;
   } else {
     Filename = _getSelectedFile(selectedFile);
 

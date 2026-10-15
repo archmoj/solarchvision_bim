@@ -300,6 +300,60 @@ class FileSelectedTest {
     assertEquals(app.ObjectCategory.GROUP, app.currentObjectCategory);
   }
 
+  @Test
+  void fileSelectedImportIfc_neverArmsTheOptionsDialog_onlySelectFile_ImportIfcDoes () throws IOException {
+    // ifcImportShowOptionsDialog (import_objects_IFC.pde) defaults to
+    // false, and nothing on this - the non-interactive - path (a script's
+    // own IMPORT_IFC command with a path already given, or a direct call
+    // like this one) should ever set it: every test in this class and in
+    // ImportObjectsIFCTest.java calls _fileSelected_ImportIfc()/
+    // import_objects_IFC() directly the same way, and would hang on a
+    // real dialog if this weren't true. Only selectFile_ImportIfc()
+    // itself - not unit-tested, same as every other selectFile_X() (see
+    // this class's own header comment) - ever arms it.
+    assertFalse(app.ifcImportShowOptionsDialog);
+
+    Path ifcFile = Files.createTempFile("fileSelected-ImportIfc-noDialog-test", ".ifc");
+    Files.writeString(ifcFile, """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app._fileSelected_ImportIfc(ifcFile.toFile());
+
+    assertFalse(app.ifcImportShowOptionsDialog, "a direct/scripted import should neither need nor leave this armed");
+    assertEquals(1, app.allFaces.nodes.length, "the import itself should still have gone through, with no dialog in the way");
+  }
+
+  @Test
+  void fileSelectedImportIfc_cancellingTheFileChooser_disarmsAnAlreadyArmedOptionsDialog () {
+    // Mimics selectFile_ImportIfc() having already armed the flag (it
+    // always does, right before asking for a file), followed by the
+    // person cancelling that native file chooser - Processing calls this
+    // same callback with selectedFile == null for that. Without this
+    // disarming, the flag would stay armed - import_objects_IFC() is the
+    // only thing that otherwise consumes it, and a cancelled file
+    // chooser never reaches it - and pop the options dialog up
+    // unexpectedly on whatever import_objects_IFC() call happens next,
+    // including a later non-interactive one.
+    app.ifcImportShowOptionsDialog = true;
+
+    app._fileSelected_ImportIfc(null);
+
+    assertFalse(app.ifcImportShowOptionsDialog);
+  }
+
   // ================= _fileSelected_Open (partial - see the class comment) ====
 
   @Test

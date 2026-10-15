@@ -369,6 +369,21 @@ final boolean IFC_IMPORT_GOTO_LATLON = true;
 
 boolean ifcImportRelocate = IFC_IMPORT_GOTO_LATLON;
 
+// One-shot: whether the very next import_objects_IFC() call should open
+// ifcShowImportOptionsDialog() (fileSelected.pde) before doing anything
+// else - set true only by selectFile_ImportIfc(), right before it asks
+// Processing's own native file chooser (selectInput()) for a file, and
+// consumed (reset back to false) by import_objects_IFC() itself the
+// moment it checks it, whether or not that import actually happens.
+// Defaults to (and, every other way import_objects_IFC() can be
+// reached - a script's own IMPORT_IFC command with a path already
+// given, a direct call from a test, ...  - stays) false, so none of
+// those other paths ever pops up a dialog: showing one there would mean
+// a file path given non-interactively (by a script, or by a test
+// calling import_objects_IFC()/_fileSelected_ImportIfc() directly)
+// could still block waiting on a person who was never going to see it.
+boolean ifcImportShowOptionsDialog = false;
+
 // IfcSanitaryTerminal is IFC4's own dedicated entity for toilet/
 // bathroom fixtures (a IfcFlowTerminal subtype: WCs, sinks, bathtubs,
 // showers, urinals, bidets, ...) - included for files from tools that
@@ -2568,6 +2583,23 @@ void ifcRotateImportedModelToTrueNorth (float angleDegrees, int baseFaceCount, i
 // once per OBJ "g" line; here, once per imported IfcProduct).
 // ---------------------------------------------------------------------
 void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
+  // Only when ifcImportShowOptionsDialog (above) was actually set, by
+  // selectFile_ImportIfc() - i.e. only on the real, interactive "pick a
+  // file from the menu" path - and only once per import, even if this
+  // same import is retried: consumed (reset) right here regardless of
+  // whether the dialog is shown or how the person answers it. Placed
+  // after FileName is already known - a real path on disk - rather than
+  // back when selectFile_ImportIfc() first asked for one, so whoever's
+  // importing can see the file itself (its size among other things)
+  // before deciding, say, whether importing furniture is worth the
+  // extra time. A cancelled dialog aborts the whole import immediately,
+  // before touching allPoints/allFaces/ifcImport* or printing anything
+  // below - as if import_objects_IFC() had never been called at all.
+  if (ifcImportShowOptionsDialog) {
+    ifcImportShowOptionsDialog = false;
+    if (!ifcShowImportOptionsDialog()) return;
+  }
+
   println("Importing IFC. Please wait...");
 
   importedObjectName = OPESYS.getFilenameFromPath(FileName);
