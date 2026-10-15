@@ -1173,4 +1173,129 @@ class ImportObjectsIFCTest {
     assertEquals(11, app.allFaces.options[1][0], "column: always concrete (11)");
     assertEquals(2, app.allFaces.options[2][0], "second wall: material cycle continues at 2, not disrupted");
   }
+
+  // ================= pool water ================================================
+
+  @Test
+  void importObjectsIFC_slabNamedPool_defaultsToWaterMaterial () throws IOException {
+    Path f = ifcFile("ifc-pool-slab-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((5.,0.,0.));
+        #3=IFCCARTESIANPOINT((5.,3.,0.));
+        #4=IFCCARTESIANPOINT((0.,3.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSLAB('guid-1',$,'Swimming Pool Water Surface',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(19, app.allFaces.options[0][0], "should default to IFC_MATERIAL_WATER (19), not the fixed material (5)");
+  }
+
+  @Test
+  void importObjectsIFC_ifcSpaceNamedPool_isImportedDespiteIfcSpaceNormallyBeingSkipped () throws IOException {
+    Path f = ifcFile("ifc-pool-space-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((5.,0.,0.));
+        #3=IFCCARTESIANPOINT((5.,3.,0.));
+        #4=IFCCARTESIANPOINT((0.,3.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Pool',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "an IfcSpace named \"Pool\" should still import its water surface");
+    assertEquals(19, app.allFaces.options[0][0]);
+  }
+
+  @Test
+  void importObjectsIFC_ordinaryIfcSpaceIsStillSkipped_poolExceptionIsNarrow () throws IOException {
+    Path f = ifcFile("ifc-ordinary-space-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Office 101',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "an ordinary IfcSpace should still be skipped - the pool exception shouldn't widen that");
+    assertEquals(0, app.allGroups.num);
+  }
+
+  @Test
+  void importObjectsIFC_waterHeaterIsNotMistakenForAPool_bareWordIsNotEnough () throws IOException {
+    Path f = ifcFile("ifc-waterheater-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCBUILDINGELEMENTPROXY('guid-1',$,'Water Heater',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(5, app.allFaces.options[0][0], "\"Water Heater\" should not match pool detection (bare \"water\" is deliberately not a trigger word)");
+  }
+
+  @Test
+  void importObjectsIFC_poolWaterMaterialLosesToAnExplicitAssociatedMaterialName () throws IOException {
+    Path f = ifcFile("ifc-pool-material-override-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSLAB('guid-1',$,'Pool Deck',$,$,$,#11);
+        #20=IFCMATERIAL('Concrete Paving');
+        #21=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(11, app.allFaces.options[0][0],
+      "water is purely cosmetic, unlike glass/solar, so an explicit material-name match (concrete, 11) should still win over the pool default");
+  }
 }

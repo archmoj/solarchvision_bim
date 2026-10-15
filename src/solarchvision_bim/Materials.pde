@@ -1,6 +1,6 @@
 class Materials {
 
-  int Number = 19; //256;
+  int Number = 20; //256;
   int Selection = 1;
 
   int[][] Color = new int [this.Number][4]; // ARGB
@@ -39,7 +39,14 @@ class Materials {
       // 8 cycling colors, not meant to represent anything specific)
       // which would look cartoonish next to the realistic tones above.
       // See import_objects_IFC.pde's IFC_MATERIAL_VEGETATION.
-      {255,  76, 153,  56}  // 18 Vegetation (Green Roof, Green Wall, Garden/Grass)
+      {255,  76, 153,  56}, // 18 Vegetation (Green Roof, Green Wall, Garden/Grass)
+      // 19: a translucent pool blue for standing water - alpha 127,
+      // the same "50%, no cast shadow" value as material 9 (glass) and
+      // 15 (insulation) above (see Faces.castShadows()'s own
+      // alpha > 127 check) - a pool's water surface shouldn't cast a
+      // hard shadow the way its coping/deck does.
+      // See import_objects_IFC.pde's IFC_MATERIAL_WATER.
+      {127,  64, 164, 223}  // 19 Water (Pool)
     };
 
     int fixedCount = min(fixed.length, this.Number);

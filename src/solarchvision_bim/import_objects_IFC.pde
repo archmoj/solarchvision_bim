@@ -85,6 +85,15 @@
 //     no material for them, since a coordination-stage model very often
 //     doesn't have one assigned yet. See ifcStructuralProductTypes and
 //     ifcLooksLikeAFloor() below.
+//   - A swimming pool's own water surface - a Name/ObjectType word
+//     match again ("pool", "pools", "swimming") - defaults to
+//     IFC_MATERIAL_WATER, a translucent pool blue, when the file names
+//     no material for it. A pool is commonly modeled as an IfcSpace (a
+//     water volume) rather than a solid element, so this is the one
+//     case besides a tree where a product is imported without needing
+//     ifcLooksLikeImportableProduct()'s own Representation requirement
+//     - see ifcLooksLikeAPool() below and its own use in
+//     import_objects_IFC()'s product-collection loop.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -254,6 +263,27 @@ boolean ifcLooksLikeVegetation (StepEntity e) {
   return false;
 }
 
+// Words that mark a product as a swimming pool's own water surface -
+// also no single dedicated IFC entity, same reasoning as above.
+// Deliberately not a bare "water" (too broad on its own - "Water
+// Heater", "Water Closet", "Water Tank", "Watermain" and plenty of
+// other MEP-ish names would all false-match it); "pool"/"pools"/
+// "swimming" alone stay specific to an actual swimming pool. A pool is
+// commonly modeled as an IfcSpace (a water volume) rather than a solid
+// building element, so ifcLooksLikeAPool() gets its own, narrow
+// exception in import_objects_IFC()'s own product-collection loop
+// (every other IfcSpace is still excluded, same as always - this
+// doesn't reopen that for anything but a pool).
+HashSet<String> ifcPoolNameWords = new HashSet<String>(Arrays.asList(
+  "pool", "pools", "swimming"
+  ));
+
+boolean ifcLooksLikeAPool (StepEntity e) {
+  if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcPoolNameWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcPoolNameWords)) return true; // ObjectType
+  return false;
+}
+
 // Product types always drawn with IFC_MATERIAL_SOLAR (material 0),
 // overriding any associated IfcMaterial name the same way windows
 // override theirs - IfcSolarDevice (IFC4.3's own entity for a PV panel,
@@ -301,6 +331,7 @@ final int IFC_MATERIAL_INSULATION = 15;
 final int IFC_MATERIAL_MEP        = 16;
 final int IFC_MATERIAL_EARTH      = 17;
 final int IFC_MATERIAL_VEGETATION = 18;
+final int IFC_MATERIAL_WATER      = 19;
 
 // Running counters for the post-import summary (and for tests - reset
 // at the top of every import_objects_IFC() call).
@@ -1473,6 +1504,15 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       // placeholder, common in practice) - every other product without
       // one is skipped exactly because it has nothing to import.
       productIds.add(id);
+    } else if (candidate != null && candidate.type.equals("IFCSPACE") && candidate.attrs.length >= 7
+      && candidate.attrs[6].trim().startsWith("#") && ifcLooksLikeAPool(candidate)) {
+      // An IfcSpace specifically named as a pool still imports its own
+      // water surface - every other IfcSpace stays excluded above
+      // (ifcNonGeometryProductTypes), since a swimming pool is commonly
+      // modeled as a space/volume rather than a solid building element.
+      // Unlike a tree, water has no native substitute to fall back on,
+      // so this still requires an actual Representation.
+      productIds.add(id);
     }
   }
   ifcSortAscending(productIds);
@@ -1527,8 +1567,10 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // ...) gets that color - here an explicit match *does* win, same as
     // everywhere else. Failing that, a planted surface (a green roof,
     // green wall, or garden/lawn - see ifcLooksLikeVegetation() above)
-    // defaults to IFC_MATERIAL_VEGETATION; an exposed structural member
-    // (a column, beam or IfcMember) or a floor (see
+    // defaults to IFC_MATERIAL_VEGETATION; a swimming pool's own water
+    // surface (see ifcLooksLikeAPool() above) defaults to
+    // IFC_MATERIAL_WATER; an exposed structural member (a column, beam
+    // or IfcMember) or a floor (see
     // ifcStructuralProductTypes/ifcLooksLikeAFloor() above) defaults to
     // IFC_MATERIAL_CONCRETE; and IfcSite's own topography more
     // generally (see ifcTopographyProductTypes above) defaults to
@@ -1556,6 +1598,9 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       matchedMaterial = ifcMaterialNameToConstant(productMaterialNames.get(id));
       if (matchedMaterial == null && ifcLooksLikeVegetation(e)) {
         matchedMaterial = IFC_MATERIAL_VEGETATION;
+      }
+      if (matchedMaterial == null && ifcLooksLikeAPool(e)) {
+        matchedMaterial = IFC_MATERIAL_WATER;
       }
       if (matchedMaterial == null && (ifcStructuralProductTypes.contains(e.type) || ifcLooksLikeAFloor(e))) {
         matchedMaterial = IFC_MATERIAL_CONCRETE;
