@@ -878,7 +878,7 @@ class ImportObjectsIFCTest {
   // ================= non-geometry product types are skipped on purpose =======
 
   @Test
-  void importObjectsIFC_ifcSpace_isNeverImportedEvenWithGeometry () throws IOException {
+  void importObjectsIFC_ifcSpace_importsItsOwnGeometry_defaultsToTheSpaceMaterial () throws IOException {
     Path f = ifcFile("ifc-space-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
         #2=IFCCARTESIANPOINT((1.,0.,0.));
@@ -895,10 +895,67 @@ class ImportObjectsIFCTest {
         """
     );
 
-    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(0, app.allFaces.nodes.length);
-    assertEquals(0, app.allGroups.num, "IfcSpace shouldn't even start a group");
+    assertEquals(1, app.allFaces.nodes.length, "ifcImportSpace is true by default, so a plain IfcSpace should import its own geometry");
+    assertEquals(8, app.allFaces.options[0][0], "should default to IFC_MATERIAL_SPACE (8), not the fixed material (5)");
+  }
+
+  @Test
+  void importObjectsIFC_ifcSpaceMaterialOverridesAnyAssociatedIfcMaterialName () throws IOException {
+    Path f = ifcFile("ifc-space-material-override-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Office 101',$,$,$,#11);
+        #20=IFCMATERIAL('Concrete');
+        #21=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(8, app.allFaces.options[0][0],
+      "like glass, a space's own material is unconditional - a room isn't real building fabric, so an associated material name shouldn't win here either");
+  }
+
+  @Test
+  void ifcImportSpace_setFalse_excludesAnOrdinarySpace_butNotAPool () throws IOException {
+    Path f = ifcFile("ifc-space-toggle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Office 101',$,$,$,#11);
+        #22=IFCSPACE('guid-2',$,'Pool',$,$,$,#11);
+        """
+    );
+
+    app.ifcImportSpace = false; // IFC_IMPORT_SPACE itself is still true
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // Only the pool should have come through - the ordinary office
+    // space should not have, same as the whole product type always has
+    // while this toggle is off.
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(19, app.allFaces.options[0][0], "the pool should still import, with IFC_MATERIAL_WATER, regardless of ifcImportSpace");
   }
 
   // ================= IfcSite: topography, unlike the other spatial types =====
@@ -2112,7 +2169,7 @@ class ImportObjectsIFCTest {
   }
 
   @Test
-  void importObjectsIFC_ifcSpaceNamedPool_isImportedDespiteIfcSpaceNormallyBeingSkipped () throws IOException {
+  void importObjectsIFC_ifcSpaceNamedPool_getsWaterMaterial_takingPriorityOverTheGenericSpaceMaterial () throws IOException {
     Path f = ifcFile("ifc-pool-space-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
         #2=IFCCARTESIANPOINT((5.,0.,0.));
@@ -2132,11 +2189,11 @@ class ImportObjectsIFCTest {
     app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     assertEquals(1, app.allFaces.nodes.length, "an IfcSpace named \"Pool\" should still import its water surface");
-    assertEquals(19, app.allFaces.options[0][0]);
+    assertEquals(19, app.allFaces.options[0][0], "a space recognized as a pool is still more specifically a pool, so IFC_MATERIAL_WATER (19), not IFC_MATERIAL_SPACE (8), should win");
   }
 
   @Test
-  void importObjectsIFC_ordinaryIfcSpaceIsStillSkipped_poolExceptionIsNarrow () throws IOException {
+  void importObjectsIFC_ordinaryIfcSpaceAndAPool_bothImport_eachWithItsOwnMaterial () throws IOException {
     Path f = ifcFile("ifc-ordinary-space-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
         #2=IFCCARTESIANPOINT((1.,0.,0.));
@@ -2150,13 +2207,17 @@ class ImportObjectsIFCTest {
         #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
         #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
         #12=IFCSPACE('guid-1',$,'Office 101',$,$,$,#11);
+        #22=IFCSPACE('guid-2',$,'Pool',$,$,$,#11);
         """
     );
 
-    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(0, app.allFaces.nodes.length, "an ordinary IfcSpace should still be skipped - the pool exception shouldn't widen that");
-    assertEquals(0, app.allGroups.num);
+    // ifcImportSpace is true by default, so both should import now - the
+    // office with the generic space material, the pool with its own.
+    assertEquals(2, app.allFaces.nodes.length);
+    assertEquals(8, app.allFaces.options[0][0], "the office space");
+    assertEquals(19, app.allFaces.options[1][0], "the pool");
   }
 
   @Test
@@ -2319,6 +2380,7 @@ class ImportObjectsIFCTest {
     assertEquals(app.IFC_IMPORT_FURNITURE, app.ifcImportFurniture);
     assertEquals(app.IFC_IMPORT_NORTH, app.ifcImportOrient);
     assertEquals(app.IFC_IMPORT_GOTO_LATLON, app.ifcImportRelocate);
+    assertEquals(app.IFC_IMPORT_SPACE, app.ifcImportSpace);
   }
 
   @Test

@@ -15,10 +15,11 @@ void selectFile_ImportObj () {
 }
 
 // Lets the person importing check/uncheck ifcImportFurniture/
-// ifcImportOrient/ifcImportRelocate (see import_objects_IFC.pde's own
-// IFC_IMPORT_FURNITURE/IFC_IMPORT_NORTH/IFC_IMPORT_GOTO_LATLON - these
-// three variables are what actually gets checked at import time, those
-// constants are only their starting values). Called from
+// ifcImportOrient/ifcImportRelocate/ifcImportSpace (see
+// import_objects_IFC.pde's own IFC_IMPORT_FURNITURE/IFC_IMPORT_NORTH/
+// IFC_IMPORT_GOTO_LATLON/IFC_IMPORT_SPACE - these four variables are
+// what actually gets checked at import time, those constants are only
+// their starting values). Called from
 // import_objects_IFC() itself, not from here - see
 // ifcImportShowOptionsDialog's own comment in import_objects_IFC.pde
 // for exactly when, and why that's after a file's already been picked
@@ -35,11 +36,13 @@ boolean ifcShowImportOptionsDialog () {
   javax.swing.JCheckBox furnitureBox = new javax.swing.JCheckBox("Import furniture", ifcImportFurniture);
   javax.swing.JCheckBox orientBox = new javax.swing.JCheckBox("Rotate to the project's true north", ifcImportOrient);
   javax.swing.JCheckBox relocateBox = new javax.swing.JCheckBox("Navigate to the file's own location (latitude/longitude)", ifcImportRelocate);
+  javax.swing.JCheckBox spaceBox = new javax.swing.JCheckBox("Import spaces (rooms/zones)", ifcImportSpace);
 
   javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1));
   panel.add(furnitureBox);
   panel.add(orientBox);
   panel.add(relocateBox);
+  panel.add(spaceBox);
 
   int result = javax.swing.JOptionPane.showConfirmDialog(
     null, panel, "IFC import options", javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE);
@@ -52,6 +55,7 @@ boolean ifcShowImportOptionsDialog () {
   ifcImportFurniture = furnitureBox.isSelected();
   ifcImportOrient = orientBox.isSelected();
   ifcImportRelocate = relocateBox.isSelected();
+  ifcImportSpace = spaceBox.isSelected();
 
   return true;
 }

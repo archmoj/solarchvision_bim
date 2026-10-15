@@ -15,7 +15,11 @@ class Materials {
       {255,   0,   0, 255}, // 5
       {255, 255,   0, 255}, // 6
       {255, 255, 255, 255}, // 7
-      { 63,  63,  63,  63}, // 8
+      // 8: a faint, mostly-transparent grey for IfcSpace's own volume
+      // (a room/zone boundary, not real building fabric) - alpha 63, a
+      // bare outline rather than something meant to read as a solid
+      // surface. See import_objects_IFC.pde's IFC_MATERIAL_SPACE.
+      { 63,  63,  63,  63}, // 8 Space (IfcSpace room/zone volume)
       {127, 127, 127, 127}, // 9  translucent gray ("glass"; see import_objects_IFC.pde's IFC_MATERIAL_GLASS)
       {191, 191, 191, 191}, // 10
       // 11-17: representative colors for common real-world building
