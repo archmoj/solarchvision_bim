@@ -228,9 +228,15 @@ class ImportObjectsIFCTest {
 
   @Test
   void importObjectsIFC_unsupportedRepresentationItem_isSkippedAndCounted_notSilentlyIgnored () throws IOException {
+    // IfcBooleanClippingResult (a documented limitation - boolean
+    // operations aren't evaluated) stands in here for "a representation
+    // item type this importer genuinely doesn't handle" - IfcMappedItem
+    // used to be that case, until it gained its own support; a
+    // malformed IfcMappedItem (e.g. a missing RepresentationMap) is
+    // covered by its own, more specific test instead.
     Path f = ifcFile("ifc-skip-test", """
-        #1=IFCMAPPEDITEM(#2,#3);
-        #4=IFCSHAPEREPRESENTATION($,'Body','MappedRepresentation',(#1));
+        #1=IFCBOOLEANCLIPPINGRESULT(.DIFFERENCE.,#2,#3);
+        #4=IFCSHAPEREPRESENTATION($,'Body','Clipping',(#1));
         #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
         #6=IFCWALL('guid-1',$,$,$,$,$,#5);
         """
@@ -238,9 +244,9 @@ class ImportObjectsIFCTest {
 
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(0, app.allFaces.nodes.length, "IfcMappedItem isn't supported yet, so no geometry should appear");
+    assertEquals(0, app.allFaces.nodes.length, "IfcBooleanClippingResult isn't supported, so no geometry should appear");
     assertEquals(1, app.ifcImportSkippedCount);
-    assertEquals(Integer.valueOf(1), app.ifcImportSkippedReasons.get("IFCMAPPEDITEM"));
+    assertEquals(Integer.valueOf(1), app.ifcImportSkippedReasons.get("IFCBOOLEANCLIPPINGRESULT"));
   }
 
   // ================= groups / material cycling (mirrors OBJ's "g" lines) =====
@@ -1297,5 +1303,106 @@ class ImportObjectsIFCTest {
     assertEquals(1, app.allFaces.nodes.length);
     assertEquals(11, app.allFaces.options[0][0],
       "water is purely cosmetic, unlike glass/solar, so an explicit material-name match (concrete, 11) should still win over the pool default");
+  }
+
+  // ================= IfcMappedItem ("family/type" block instances) ===========
+
+  @Test
+  void importObjectsIFC_mappedItem_withIdentityMappingOrigin_translatesByItsLocalOrigin () throws IOException {
+    Path f = ifcFile("ifc-mappeditem-translate-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCREPRESENTATIONMAP(#21,#10);
+        #30=IFCCARTESIANPOINT((100.,200.,0.));
+        #31=IFCCARTESIANTRANSFORMATIONOPERATOR3D($,$,#30,$,$);
+        #32=IFCMAPPEDITEM(#22,#31);
+        #33=IFCSHAPEREPRESENTATION($,'Body','MappedRepresentation',(#32));
+        #34=IFCPRODUCTDEFINITIONSHAPE($,$,(#33));
+        #35=IFCWINDOW('guid-1',$,$,$,$,$,#34);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "the mapped item's one quad face should be resolved, not skipped");
+    assertEquals(4, app.allFaces.nodes[0].length, "kept as a quad, not triangulated");
+    assertEquals(9, app.allFaces.options[0][0], "still an IfcWindow, so still always material 9");
+    // the mapped square (0,0)-(1,0)-(1,1)-(0,1) translated by LocalOrigin (100,200,0)
+    float[] expectedX = {100, 101, 101, 100};
+    float[] expectedY = {200, 200, 201, 201};
+    for (int i = 0; i < 4; i++) {
+      assertEquals(expectedX[i], app.allPoints.getX(i), 0.0001f, "point " + i);
+      assertEquals(expectedY[i], app.allPoints.getY(i), 0.0001f, "point " + i);
+    }
+    assertEquals(0, app.ifcImportSkippedCount, "a resolved mapped item shouldn't be counted as skipped");
+  }
+
+  @Test
+  void importObjectsIFC_mappedItem_appliesScaleAndComposesWithTheProductsOwnPlacement () throws IOException {
+    Path f = ifcFile("ifc-mappeditem-scale-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCREPRESENTATIONMAP(#21,#10);
+        #30=IFCCARTESIANPOINT((0.,0.,0.));
+        #31=IFCCARTESIANTRANSFORMATIONOPERATOR3D($,$,#30,2.,$);
+        #32=IFCMAPPEDITEM(#22,#31);
+        #33=IFCSHAPEREPRESENTATION($,'Body','MappedRepresentation',(#32));
+        #34=IFCPRODUCTDEFINITIONSHAPE($,$,(#33));
+        #40=IFCCARTESIANPOINT((10.,0.,0.));
+        #41=IFCAXIS2PLACEMENT3D(#40,$,$);
+        #42=IFCLOCALPLACEMENT($,#41);
+        #43=IFCFURNISHINGELEMENT('guid-1',$,$,$,$,#42,#34);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    // mapped square scaled by 2 -> (0,0)-(2,0)-(2,2)-(0,2), then
+    // translated by the product's own placement (10,0,0)
+    float[] expectedX = {10, 12, 12, 10};
+    float[] expectedY = {0, 0, 2, 2};
+    for (int i = 0; i < 4; i++) {
+      assertEquals(expectedX[i], app.allPoints.getX(i), 0.0001f, "point " + i);
+      assertEquals(expectedY[i], app.allPoints.getY(i), 0.0001f, "point " + i);
+    }
+  }
+
+  @Test
+  void importObjectsIFC_mappedItemWithMissingRepresentationMap_isSkippedAndCounted () throws IOException {
+    Path f = ifcFile("ifc-mappeditem-broken-test", """
+        #30=IFCCARTESIANPOINT((0.,0.,0.));
+        #31=IFCCARTESIANTRANSFORMATIONOPERATOR3D($,$,#30,$,$);
+        #32=IFCMAPPEDITEM(#999,#31);
+        #33=IFCSHAPEREPRESENTATION($,'Body','MappedRepresentation',(#32));
+        #34=IFCPRODUCTDEFINITIONSHAPE($,$,(#33));
+        #35=IFCWALL('guid-1',$,$,$,$,$,#34);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(1, app.ifcImportSkippedCount);
   }
 }

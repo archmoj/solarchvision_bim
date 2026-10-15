@@ -94,6 +94,15 @@
 //     ifcLooksLikeImportableProduct()'s own Representation requirement
 //     - see ifcLooksLikeAPool() below and its own use in
 //     import_objects_IFC()'s product-collection loop.
+//   - IfcMappedItem - a "family/type" instance, the same shared geometry
+//     reused, positioned and scaled differently at every place it's
+//     used; commonly how a door, window or piece of furniture is
+//     exported - resolves its MappingSource's own geometry through its
+//     MappingTarget transform (see ifcCartesianTransformToFrame() and
+//     ifcProcessMappedItem() below), assuming the IfcRepresentationMap's
+//     own MappingOrigin is the identity placement; see that function's
+//     own comment, and the limitation below, for the (uncommon) case
+//     where that assumption doesn't hold.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -108,9 +117,13 @@
 //   - Boolean operations (IfcBooleanClippingResult/IfcBooleanResult,
 //     typically how a door/window opening is cut into a wall or slab)
 //     are not evaluated.
-//   - IfcMappedItem (family/type "block" instances - commonly how
-//     doors, windows and furniture are placed) is not supported in this
-//     first pass; such items are skipped and counted.
+//   - An IfcMappedItem's IfcRepresentationMap.MappingOrigin is assumed
+//     to be the identity placement rather than inverted and composed in
+//     (see that bullet above) - true for the large majority of real-
+//     world exporters, but a file whose MappingOrigin genuinely isn't
+//     identity will see that block's instances offset by whatever that
+//     placement was, not flagged or counted as skipped (there's no way
+//     to tell from the result alone that this assumption didn't hold).
 //   - A conversion-based length unit (e.g. 'foot', 'inch') is assumed
 //     to be defined directly against the bare SI metre, rather than
 //     having its own UnitComponent resolved recursively - true for the
@@ -339,6 +352,16 @@ int ifcImportSkippedCount = 0;
 int ifcImportHolesIgnoredCount = 0;
 int ifcImportTreeCount = 0;
 HashMap<String, Integer> ifcImportSkippedReasons = new HashMap<String, Integer>();
+
+// Guards against a pathological/cyclic chain of nested IfcMappedItems
+// (a mapped representation that itself contains another mapped item,
+// and so on) recursing forever - see ifcProcessMappedItem()'s own
+// comment. A plain int rather than a parameter threaded through the
+// whole ifcProcessRepresentationItem()/ifcProcessShapeRepresentation()
+// call chain, since only this one path can ever recurse that deeply;
+// reset to 0 at the top of every import_objects_IFC() call, same as
+// the counters above.
+int ifcMappedItemDepth = 0;
 
 // The multiplier that converts a raw length value read from the file
 // into metres - the app's own working unit, same as every other
@@ -670,6 +693,41 @@ IfcFrame ifcPlacementToFrame (HashMap<Integer, StepEntity> ents, int placementId
 
   IfcFrame parentFrame = ifcPlacementToFrame(ents, ifcRefId(relToTok));
   return ifcComposeFrame(parentFrame, childFrame);
+}
+
+// IfcCartesianTransformationOperator(3D[NonUniform]) - used only as an
+// IfcMappedItem's own MappingTarget (see ifcProcessMappedItem() below).
+// Attribute order: Axis1(0, optional direction - default local X),
+// Axis2(1, optional - default local Y), LocalOrigin(2, required point),
+// Scale(3, optional, default 1), Axis3(4, optional - default local Z;
+// present on the 3D variants only). Unlike IfcAxis2Placement3D, Axis1/
+// Axis2/Axis3 are used exactly as given, not re-derived via a cross
+// product - each one is read, normalized and scaled independently.
+// Reads straight through regardless of the uniform/non-uniform variant:
+// a non-uniform operator's own extra Scale2/Scale3 (after Axis3) are
+// simply never read, so every axis is scaled by the one shared Scale
+// instead - a known, minor simplification for the (uncommon) non-
+// uniform case.
+IfcFrame ifcCartesianTransformToFrame (HashMap<Integer, StepEntity> ents, StepEntity e) {
+  if (e == null) return ifcIdentityFrame();
+
+  PVector origin = (e.attrs.length > 2) ? ifcPoint3(ents, e.attrs[2]) : new PVector(0, 0, 0);
+
+  PVector axis1 = (e.attrs.length > 0 && e.attrs[0].trim().startsWith("#")) ? ifcDirection3(ents, e.attrs[0]) : new PVector(1, 0, 0);
+  PVector axis2 = (e.attrs.length > 1 && e.attrs[1].trim().startsWith("#")) ? ifcDirection3(ents, e.attrs[1]) : new PVector(0, 1, 0);
+  PVector axis3 = (e.attrs.length > 4 && e.attrs[4].trim().startsWith("#")) ? ifcDirection3(ents, e.attrs[4]) : new PVector(0, 0, 1);
+  axis1.normalize();
+  axis2.normalize();
+  axis3.normalize();
+
+  String scaleTok = (e.attrs.length > 3) ? e.attrs[3].trim() : "";
+  float scale = (scaleTok.length() > 0 && !scaleTok.equals("$")) ? ifcFloat(scaleTok) : 1;
+
+  axis1.mult(scale);
+  axis2.mult(scale);
+  axis3.mult(scale);
+
+  return new IfcFrame(origin, axis1, axis2, axis3);
 }
 
 // ---------------------------------------------------------------------
@@ -1055,7 +1113,58 @@ void ifcProcessRepresentationItem (HashMap<Integer, StepEntity> ents, int itemId
     return;
   }
 
-  ifcNoteSkipped(e.type); // IfcMappedItem, booleans, swept curves, etc. - see file header
+  if (e.type.equals("IFCMAPPEDITEM")) {
+    ifcProcessMappedItem(ents, e, productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
+    return;
+  }
+
+  ifcNoteSkipped(e.type); // booleans, swept curves, etc. - see file header
+}
+
+// IfcMappedItem: a "family/type" instance - the same shared geometry
+// (MappingSource -> an IfcRepresentationMap) reused, positioned and
+// scaled differently (MappingTarget, a IfcCartesianTransformationOperator3D)
+// at every place it's used - commonly how a BIM authoring tool exports a
+// repeated block like a door, window or piece of furniture.
+//
+// Resolving one fully means composing two placements: the mapping
+// target (how this particular instance is positioned/scaled) and the
+// inverse of the IfcRepresentationMap's own MappingOrigin (the local
+// placement the shared geometry was originally authored against). This
+// deliberately only applies the first: MappingOrigin is assumed to be
+// the identity placement (origin at (0,0,0), default axes) rather than
+// inverted and composed in, true for the large majority of real-world
+// exporters (Revit/ArchiCAD/Tekla, among others, always emit an
+// identity MappingOrigin in practice) - a file whose MappingOrigin
+// genuinely isn't identity will see that block's instances offset by
+// whatever that placement was.
+void ifcProcessMappedItem (HashMap<Integer, StepEntity> ents, StepEntity e, IfcFrame productFrame,
+  float cx, float cy, float cz, float sx, float sy, float sz,
+  int m, int tes, int lyr, int vsb, int wgt, int clz) {
+
+  if (ifcMappedItemDepth > 6) {
+    ifcNoteSkipped("IfcMappedItem nested too deeply");
+    return;
+  }
+  if (e.attrs.length < 2) {
+    ifcNoteSkipped("malformed IfcMappedItem");
+    return;
+  }
+
+  StepEntity repMap = ifcResolve(ents, e.attrs[0]);
+  if (repMap == null || !repMap.type.equals("IFCREPRESENTATIONMAP") || repMap.attrs.length < 2) {
+    ifcNoteSkipped("IfcMappedItem with missing/unrecognized MappingSource");
+    return;
+  }
+
+  IfcFrame mapFrame = ifcCartesianTransformToFrame(ents, ifcResolve(ents, e.attrs[1]));
+  IfcFrame combinedFrame = ifcComposeFrame(productFrame, mapFrame);
+
+  int mappedShapeRepId = ifcRefId(repMap.attrs[1]);
+
+  ifcMappedItemDepth++;
+  ifcProcessShapeRepresentation(ents, mappedShapeRepId, combinedFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
+  ifcMappedItemDepth--;
 }
 
 void ifcProcessShapeRepresentation (HashMap<Integer, StepEntity> ents, int repId, IfcFrame productFrame,
@@ -1471,6 +1580,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportTreeCount = 0;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
+  ifcMappedItemDepth = 0;
 
   String fullText = join(loadStrings(FileName), " ");
   HashMap<Integer, StepEntity> ents = ifcParseEntities(fullText);
