@@ -339,6 +339,150 @@ class ImportObjectsIFCTest {
     assertEquals(0, app.ifcImportUncutOpeningCount, "a malformed boolean result shouldn't count as an evaluated-but-uncut opening");
   }
 
+  // ================= IfcArbitraryClosedProfileDef(IfcIndexedPolyCurve) ========
+
+  @Test
+  void importObjectsIFC_indexedPolyCurveProfile_withNoSegments_importsAsAnImplicitPolyline () throws IOException {
+    // No Segments attribute (the overwhelmingly common case checked
+    // against a real Revit export - every one of its own 610
+    // IfcIndexedPolyCurve instances omits it) means an implicit
+    // polyline through every point in the shared list, in order. This
+    // is the exact root cause of three real objects (a generic floor
+    // slab, a roof slab, a curtain-wall panel) that were missing from
+    // import despite having perfectly ordinary IfcExtrudedAreaSolid
+    // geometry otherwise.
+    Path f = ifcFile("ifc-indexedpolycurve-nosegments-test", """
+        #1=IFCCARTESIANPOINTLIST2D(((0.,0.),(2.,0.),(2.,1.),(0.,1.)));
+        #2=IFCINDEXEDPOLYCURVE(#1,$,.F.);
+        #3=IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,#2);
+        #4=IFCDIRECTION((0.,0.,1.));
+        #5=IFCEXTRUDEDAREASOLID(#3,$,#4,3.);
+        #6=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#5));
+        #7=IFCPRODUCTDEFINITIONSHAPE($,$,(#6));
+        #8=IFCWALL('guid-1',$,$,$,$,$,#7);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "4-point rectangle profile: 2 caps + 4 sides");
+    assertEquals(0, app.ifcImportSkippedCount);
+  }
+
+  @Test
+  void importObjectsIFC_indexedPolyCurveProfile_withAnExplicitlyClosedLoop_dedupsTheRepeatedLastPoint () throws IOException {
+    // The real roof slab this fix was found from has its point list
+    // explicitly repeat the first point at the end - same dedup
+    // IfcPolyline already gets.
+    Path f = ifcFile("ifc-indexedpolycurve-closedloop-test", """
+        #1=IFCCARTESIANPOINTLIST2D(((0.,0.),(2.,0.),(2.,1.),(0.,1.),(0.,0.)));
+        #2=IFCINDEXEDPOLYCURVE(#1,$,.F.);
+        #3=IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,#2);
+        #4=IFCDIRECTION((0.,0.,1.));
+        #5=IFCEXTRUDEDAREASOLID(#3,$,#4,3.);
+        #6=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#5));
+        #7=IFCPRODUCTDEFINITIONSHAPE($,$,(#6));
+        #8=IFCWALL('guid-1',$,$,$,$,$,#7);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "the repeated closing point should be dropped, still a 4-point rectangle");
+  }
+
+  @Test
+  void importObjectsIFC_indexedPolyCurveProfile_withExplicitLineIndexSegments_importsCorrectly () throws IOException {
+    // Two IfcLineIndex segments sharing a boundary point (index 3) -
+    // the shared point must not be duplicated.
+    Path f = ifcFile("ifc-indexedpolycurve-segments-test", """
+        #1=IFCCARTESIANPOINTLIST2D(((0.,0.),(2.,0.),(2.,1.),(0.,1.)));
+        #2=IFCINDEXEDPOLYCURVE(#1,(IFCLINEINDEX((1,2,3)),IFCLINEINDEX((3,4,1))),.F.);
+        #3=IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,#2);
+        #4=IFCDIRECTION((0.,0.,1.));
+        #5=IFCEXTRUDEDAREASOLID(#3,$,#4,3.);
+        #6=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#5));
+        #7=IFCPRODUCTDEFINITIONSHAPE($,$,(#6));
+        #8=IFCWALL('guid-1',$,$,$,$,$,#7);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "4 distinct points across 2 line-index segments, boundary point not duplicated: 2 caps + 4 sides");
+  }
+
+  @Test
+  void importObjectsIFC_indexedPolyCurveProfile_withAnArcIndexSegment_isSkippedNotApproximated () throws IOException {
+    Path f = ifcFile("ifc-indexedpolycurve-arc-test", """
+        #1=IFCCARTESIANPOINTLIST2D(((0.,0.),(1.,1.),(2.,0.),(1.,-1.)));
+        #2=IFCINDEXEDPOLYCURVE(#1,(IFCARCINDEX((1,2,3)),IFCLINEINDEX((3,4,1))),.F.);
+        #3=IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,#2);
+        #4=IFCDIRECTION((0.,0.,1.));
+        #5=IFCEXTRUDEDAREASOLID(#3,$,#4,3.);
+        #6=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#5));
+        #7=IFCPRODUCTDEFINITIONSHAPE($,$,(#6));
+        #8=IFCWALL('guid-1',$,$,$,$,$,#7);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "an actual arc segment should be skipped, not approximated as straight");
+    assertEquals(1, app.ifcImportSkippedCount);
+  }
+
+  @Test
+  void importObjectsIFC_indexedPolyCurveProfile_withMissingPointList_isSkippedNotCrashed () throws IOException {
+    Path f = ifcFile("ifc-indexedpolycurve-missing-test", """
+        #2=IFCINDEXEDPOLYCURVE(#999,$,.F.);
+        #3=IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,#2);
+        #4=IFCDIRECTION((0.,0.,1.));
+        #5=IFCEXTRUDEDAREASOLID(#3,$,#4,3.);
+        #6=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#5));
+        #7=IFCPRODUCTDEFINITIONSHAPE($,$,(#6));
+        #8=IFCWALL('guid-1',$,$,$,$,$,#7);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(1, app.ifcImportSkippedCount);
+  }
+
+  @Test
+  void importObjectsIFC_realRoofSlabChain_fromTheUserReportedFile_nowImportsCorrectly () throws IOException {
+    // The exact real entity chain for "Basic Roof:Warm Roof -
+    // Timber:724430" - reproduced verbatim (ids/coordinates) from the
+    // originally-reported file - that this fix was found from: an
+    // IfcSlab whose profile is an IfcArbitraryClosedProfileDef over an
+    // IfcIndexedPolyCurve, previously missing entirely.
+    Path f = ifcFile("ifc-real-roofslab-test", """
+        #20=IFCDIRECTION((0.,0.,1.));
+        #6=IFCCARTESIANPOINT((0.,0.,0.));
+        #131334=IFCLOCALPLACEMENT($,#131360);
+        #131360=IFCAXIS2PLACEMENT3D(#6,$,$);
+        #484834=IFCAXIS2PLACEMENT3D(#6,$,$);
+        #131342=IFCCARTESIANPOINTLIST2D(((-3000.,5899.00000000013),(-3000.,-5899.00000000013),(3000.,-5899.00000000013),(3000.,5899.00000000013),(-3000.,5899.00000000013)));
+        #131349=IFCINDEXEDPOLYCURVE(#131342,$,.F.);
+        #131350=IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,#131349);
+        #131351=IFCCARTESIANPOINT((3000.,5899.,0.));
+        #131353=IFCAXIS2PLACEMENT3D(#131351,$,$);
+        #131354=IFCEXTRUDEDAREASOLID(#131350,#131353,#20,338.000000000001);
+        #131355=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#131354));
+        #131357=IFCPRODUCTDEFINITIONSHAPE($,$,(#131355));
+        #131361=IFCLOCALPLACEMENT(#131334,#484834);
+        #131363=IFCSLAB('0LKJKCHUL1kBtnlFXddz6a',#42,'Basic Roof:Warm Roof - Timber:724430',$,'Basic Roof:Warm Roof - Timber',#131361,#131357,'724430',.NOTDEFINED.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "a rectangular profile (the 5th point repeats the 1st): 2 caps + 4 sides");
+    assertEquals(0, app.ifcImportSkippedCount);
+  }
+
   // ================= groups / material cycling (mirrors OBJ's "g" lines) =====
 
   @Test
@@ -1644,15 +1788,18 @@ class ImportObjectsIFCTest {
   @Test
   void importObjectsIFC_largeBuildingElementProxy_stillImports_evenThoughItsTheSameEntityType () throws IOException {
     // A 2x2x2m box - the same IFC type as the coffee cup above, but
-    // large enough (e.g. a washing machine, an elevator) that it should
-    // never be excluded just for being an IfcBuildingElementProxy.
+    // large enough (and with a Name that doesn't match the kitchen-
+    // appliance/cabinet word list either - see
+    // importObjectsIFC_kitchenApplianceBuildingElementProxy_isExcluded()
+    // below for that) that it should never be excluded just for being
+    // an IfcBuildingElementProxy - an elevator, say.
     Path f = ifcFile("ifc-large-proxy-test", """
         #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,2.);
         #2=IFCDIRECTION((0.,0.,1.));
         #3=IFCEXTRUDEDAREASOLID(#1,$,#2,2.);
         #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
         #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
-        #6=IFCBUILDINGELEMENTPROXY('guid-1',$,'Washing Machine',$,$,$,#5);
+        #6=IFCBUILDINGELEMENTPROXY('guid-1',$,'Elevator',$,$,$,#5);
         """
     );
 
@@ -1660,6 +1807,143 @@ class ImportObjectsIFCTest {
 
     assertEquals(6, app.allFaces.nodes.length, "a 2m proxy should import normally (2 caps + 4 sides)");
     assertEquals(0, app.ifcImportSmallObjectExcludedCount);
+    assertEquals(0, app.ifcImportFurnitureExcludedCount);
+  }
+
+  @Test
+  void importObjectsIFC_kitchenApplianceBuildingElementProxy_isExcluded () throws IOException {
+    // Checked against a real Revit export: every one of its own kitchen
+    // appliances (branded "Miele") came through as
+    // IfcBuildingElementProxy, large enough that the size filter alone
+    // would never catch them - needs a Name/ObjectType word match
+    // instead. One name per word-group this feature recognizes,
+    // including both of the two-word conjunctions (deliberately not
+    // bare "washer"/"range"/"hood" - too likely to mean something else
+    // out of context).
+    String[] applianceNames = {
+      "Miele Oven H 5681 BP", "Miele Induction Cooktop KM 6350 LPT",
+      "Miele Built-in Rangehood DA 2210", "Miele Built-under Dishwasher G 4101 U CS",
+      "Miele MasterCool Fridge/Freezer KF 1911 Vi", "Miele Built-in Microwave M 8260-2",
+      "Miele Tumble Dryer T 7944 C", "Miele Washing Machine W 5820 WPS",
+      "Range Hood Custom"
+    };
+    for (String name : applianceNames) {
+      Path f = ifcFile("ifc-appliance-" + name.hashCode(), """
+          #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,0.8,0.8);
+          #2=IFCDIRECTION((0.,0.,1.));
+          #3=IFCEXTRUDEDAREASOLID(#1,$,#2,0.9);
+          #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+          #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+          #6=IFCBUILDINGELEMENTPROXY('guid-1',$,'""" + name + """
+          ',$,$,$,#5);
+          """
+      );
+
+      app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+      assertEquals(0, app.allFaces.nodes.length, "'" + name + "' should be excluded as a kitchen appliance, even at 0.9m (too large for the size filter alone)");
+      assertEquals(1, app.ifcImportFurnitureExcludedCount, "'" + name + "'");
+    }
+  }
+
+  @Test
+  void importObjectsIFC_cabinetOrStorageBuildingElementProxy_isExcluded () throws IOException {
+    Path f = ifcFile("ifc-cabinet-proxy-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,1.5,0.4);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,0.9);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCBUILDINGELEMENTPROXY('guid-1',$,'Pantry Cabinet',$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(1, app.ifcImportFurnitureExcludedCount);
+  }
+
+  @Test
+  void importObjectsIFC_flowTerminalBathroomFixture_isExcluded () throws IOException {
+    // Checked against a real Revit export: its own sink, faucet,
+    // bathtub and lavatory instances all came through as
+    // IfcFlowTerminal, not the more specific IfcSanitaryTerminal -
+    // a known Revit IFC-export behavior.
+    Path f = ifcFile("ifc-flow-terminal-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCFLOWTERMINAL('guid-1',$,'Bathtub-TOTO-Nexus-FBF794S',$,'Bathtub-TOTO-Nexus-FBF794S',$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(1, app.ifcImportFurnitureExcludedCount);
+  }
+
+  @Test
+  void importObjectsIFC_sanitaryTerminal_isExcluded () throws IOException {
+    // IfcSanitaryTerminal - IFC's own dedicated entity for the same
+    // kind of fixture, for files from tools that do use it.
+    Path f = ifcFile("ifc-sanitary-terminal-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSANITARYTERMINAL('guid-1',$,'Toilet',$,$,$,#11,$,.TOILETPAN.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(1, app.ifcImportFurnitureExcludedCount);
+  }
+
+  @Test
+  void importObjectsIFC_ambiguousBareWordsDoNotFalselyExcludeUnrelatedProxies () throws IOException {
+    // "range"/"washer"/"hood" alone must never trigger this exclusion -
+    // each too likely to mean something else out of context (an
+    // operating range, a mechanical fastener, a car's hood).
+    String[] unrelatedNames = {"Operating Range Sensor", "Flat Washer M10", "Car Hood Panel"};
+    for (String name : unrelatedNames) {
+      Path f = ifcFile("ifc-ambiguous-" + name.hashCode(), """
+          #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,0.3,0.3);
+          #2=IFCDIRECTION((0.,0.,1.));
+          #3=IFCEXTRUDEDAREASOLID(#1,$,#2,0.3);
+          #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+          #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+          #6=IFCBUILDINGELEMENTPROXY('guid-1',$,'""" + name + """
+          ',$,$,$,#5);
+          """
+      );
+
+      app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+      // A 0.3m cube is also under the small-object size threshold, so
+      // this only proves the *appliance/cabinet* exclusion didn't fire -
+      // ifcImportFurnitureExcludedCount, not Faces/allPoints, is the
+      // meaningful assertion here.
+      assertEquals(0, app.ifcImportFurnitureExcludedCount, "'" + name + "' shouldn't be excluded as an appliance/cabinet");
+    }
   }
 
   @Test

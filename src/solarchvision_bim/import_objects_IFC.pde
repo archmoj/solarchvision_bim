@@ -23,11 +23,19 @@
 //     shape of a site's own topography/terrain surface) backed by a
 //     shared IfcCartesianPointList3D.
 //   - IfcExtrudedAreaSolid over IfcRectangleProfileDef or
-//     IfcArbitraryClosedProfileDef(IfcPolyline) - very common for
-//     walls, slabs, columns and beams modelled parametrically instead
-//     of as an explicit Brep. Each side panel is built as a single
-//     4-point face (the same shape Create3D.add_Mesh4()/"Mesh4" would
-//     build by hand), plus two n-gon end caps.
+//     IfcArbitraryClosedProfileDef(IfcPolyline or IfcIndexedPolyCurve) -
+//     very common for walls, slabs, roofs and curtain-wall panels
+//     modelled parametrically instead of as an explicit Brep.
+//     IfcIndexedPolyCurve - a shared point list plus an OPTIONAL
+//     Segments list of straight/arc runs through it - is read as a
+//     straight-edged profile when Segments is omitted (an implicit
+//     polyline through every point in order; the overwhelmingly common
+//     case checked against a real export) or made up entirely of
+//     IfcLineIndex segments; an IfcArcIndex segment (an actual circular
+//     arc) still isn't evaluated, same as any other curved profile. See
+//     ifcIndexedPolyCurvePoints() below. Each side panel is built as a
+//     single 4-point face (the same shape Create3D.add_Mesh4()/"Mesh4"
+//     would build by hand), plus two n-gon end caps.
 //   - IfcLocalPlacement chains (including IfcAxis2Placement3D's
 //     Axis/RefDirection) are walked and composed into one world
 //     placement per product.
@@ -142,17 +150,20 @@
 //     is imported, so a wall or slab with a window/door opening shows
 //     up solid, without the opening cut out as a hole.
 //   - Furniture (IfcFurnishingElement, IfcFurniture,
-//     IfcSystemFurnitureElement) isn't imported at all while
-//     IFC_IMPORT_FURNITURE (below) is false, its current default -
-//     deliberate, not a gap, and not (yet) user-facing; see that
-//     constant's own comment. The same toggle also excludes a small
-//     (under IFC_SMALL_OBJECT_MAX_DIMENSION on every axis)
-//     IfcBuildingElementProxy - a book, a cup, a vase, other loose
-//     tabletop decor - while leaving a larger one (an appliance, an
-//     elevator, a parked-car entourage prop, ...) alone, since that
-//     type is IFC's own catch-all and isn't reliably "small" on its
-//     own; see that constant's own comment for how this was checked
-//     against a real export.
+//     IfcSystemFurnitureElement), a sanitary/MEP-terminal fixture
+//     (IfcFlowTerminal, IfcSanitaryTerminal - a toilet, sink, bathtub,
+//     ...) and a Name/ObjectType-matched kitchen appliance or cabinet/
+//     storage item isn't imported at all while IFC_IMPORT_FURNITURE
+//     (below) is false, its current default - deliberate, not a gap,
+//     and not (yet) user-facing; see that constant's own comment. The
+//     same toggle also excludes a small (under
+//     IFC_SMALL_OBJECT_MAX_DIMENSION on every axis) IfcBuildingElementProxy
+//     - a book, a cup, a vase, other loose tabletop decor - while
+//     leaving a larger one (an elevator, a parked-car entourage prop,
+//     ...) alone, since that type is IFC's own catch-all and isn't
+//     reliably "small" (or kitchen/cabinet-named) on its own; see that
+//     constant's own and ifcApplianceOrCabinetNameWords's own comments
+//     for how both were checked against a real export.
 //   - An IfcMappedItem's IfcRepresentationMap.MappingOrigin is assumed
 //     to be the identity placement rather than inverted and composed in
 //     (see that bullet above) - true for the large majority of real-
@@ -270,9 +281,68 @@ HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
 // from a significant one modeled the same way.
 final boolean IFC_IMPORT_FURNITURE = false;
 
+// IfcSanitaryTerminal is IFC4's own dedicated entity for toilet/
+// bathroom fixtures (a IfcFlowTerminal subtype: WCs, sinks, bathtubs,
+// showers, urinals, bidets, ...) - included for files from tools that
+// use it. IfcFlowTerminal itself is included too, and checked first in
+// this list's own real-export validation below for a reason: it's IFC's
+// generic "endpoint of an MEP distribution system" entity, and turns
+// out to be where Revit's own IFC export actually puts sanitary
+// fixtures in practice rather than the more specific entity - checked
+// against a real export, every one of its own IfcFlowTerminal instances
+// was a sink, faucet, bathtub or lavatory, none an air terminal/
+// diffuser or anything else the "flow terminal" name could in principle
+// also cover. Excluding the type wholesale, the same as furniture
+// itself, accepts that same small breadth-of-scope risk other files
+// might expose, on the same reasoning: an MEP terminal device is
+// inherently a fixture, not core architecture, squarely in
+// "non-essential for a solar/architectural study" territory the same
+// way furniture already is.
 HashSet<String> ifcFurnitureProductTypes = new HashSet<String>(Arrays.asList(
-  "IFCFURNISHINGELEMENT", "IFCFURNITURE", "IFCSYSTEMFURNITUREELEMENT"
+  "IFCFURNISHINGELEMENT", "IFCFURNITURE", "IFCSYSTEMFURNITUREELEMENT",
+  "IFCFLOWTERMINAL", "IFCSANITARYTERMINAL"
   ));
+
+// Kitchen appliances (gas or otherwise) and cabinets/storage fixtures
+// have no entity of their own the way a sanitary fixture does - checked
+// against a real export, every one of its kitchen appliances (a washing
+// machine, dryer, oven, induction cooktop, rangehood, dishwasher,
+// fridge/freezer, microwave - all branded "Miele") came through as
+// IfcBuildingElementProxy, the same catch-all small decor objects use
+// (see IFC_SMALL_OBJECT_MAX_DIMENSION above) - but these are large
+// enough that the size filter alone would never catch them, so this is
+// a Name/ObjectType word match instead, the same mechanism trees/solar/
+// vegetation/pools/people already use, scoped to IfcBuildingElementProxy
+// for the same reason the size filter is: that type is IFC's and most
+// authoring tools' catch-all for "doesn't fit a more specific class",
+// so only a name that actually says so should be excluded, not the type
+// as a whole. Deliberately excludes bare "range"/"washer"/"hood" - each
+// too likely to mean something else entirely out of context (a value
+// range, a mechanical fastener, a car's hood) - requiring either a more
+// specific single word ("rangehood", "dishwasher", "cooktop") or an
+// explicit two-word conjunction ("washing"+"machine", "range"+"hood")
+// instead.
+HashSet<String> ifcApplianceOrCabinetNameWords = new HashSet<String>(Arrays.asList(
+  "oven", "cooktop", "stovetop", "stove", "rangehood", "dishwasher",
+  "fridge", "refrigerator", "freezer", "microwave", "dryer",
+  "cabinet", "cabinetry", "cupboard", "pantry", "wardrobe", "closet", "shelving"
+  ));
+
+ArrayList<HashSet<String>> ifcApplianceOrCabinetWordGroups = new ArrayList<HashSet<String>>(Arrays.asList(
+  new HashSet<String>(Arrays.asList("washing", "machine")),
+  new HashSet<String>(Arrays.asList("range", "hood"))
+  ));
+
+boolean ifcLooksLikeExcludedApplianceOrCabinet (StepEntity e) {
+  if (!e.type.equals("IFCBUILDINGELEMENTPROXY")) return false;
+  if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcApplianceOrCabinetNameWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcApplianceOrCabinetNameWords)) return true; // ObjectType
+  for (HashSet<String> words : ifcApplianceOrCabinetWordGroups) {
+    if (e.attrs.length > 2 && ifcNameHasAllWords(e.attrs[2], words)) return true;
+    if (e.attrs.length > 4 && ifcNameHasAllWords(e.attrs[4], words)) return true;
+  }
+  return false;
+}
 
 // An IfcBuildingElementProxy whose own geometry fits within a cube of
 // this size (metres, after unit conversion - see ifcLengthUnitScale)
@@ -1254,24 +1324,97 @@ ArrayList<float[]> ifcProfilePoints (HashMap<Integer, StepEntity> ents, String p
   }
 
   if (profile.type.equals("IFCARBITRARYCLOSEDPROFILEDEF") && profile.attrs.length >= 3) {
-    StepEntity polyline = ifcResolve(ents, profile.attrs[2]);
-    if (polyline == null || !polyline.type.equals("IFCPOLYLINE") || polyline.attrs.length == 0) return null;
+    StepEntity curve = ifcResolve(ents, profile.attrs[2]);
+    if (curve == null) return null;
 
-    ArrayList<float[]> pts = new ArrayList<float[]>();
-    for (String ptRef : ifcListTokens(polyline.attrs[0])) {
-      PVector p = ifcPoint3(ents, ptRef);
-      pts.add(new float[]{p.x, p.y});
-    }
-    if (pts.size() > 1) {
-      float[] first = pts.get(0), lastPt = pts.get(pts.size() - 1);
-      if (abs(first[0] - lastPt[0]) < 0.00001 && abs(first[1] - lastPt[1]) < 0.00001) {
-        pts.remove(pts.size() - 1);
+    if (curve.type.equals("IFCPOLYLINE") && curve.attrs.length > 0) {
+      ArrayList<float[]> pts = new ArrayList<float[]>();
+      for (String ptRef : ifcListTokens(curve.attrs[0])) {
+        PVector p = ifcPoint3(ents, ptRef);
+        pts.add(new float[]{p.x, p.y});
       }
+      return ifcClosePolygon2D(pts);
     }
-    return pts.size() >= 3 ? pts : null;
+
+    if (curve.type.equals("IFCINDEXEDPOLYCURVE") && curve.attrs.length > 0) {
+      return ifcIndexedPolyCurvePoints(ents, curve);
+    }
+
+    return null; // circle/B-spline/composite/... curves: not supported
   }
 
   return null; // circle/I-shape/composite/... profiles: not supported yet
+}
+
+// Strips a trailing point that exactly repeats the first (an explicitly
+// closed loop, rather than this importer's own implicit "last point
+// connects back to the first" convention), then requires at least a
+// triangle's worth of points to actually be a profile. Shared between
+// the IfcPolyline and IfcIndexedPolyCurve cases above.
+ArrayList<float[]> ifcClosePolygon2D (ArrayList<float[]> pts) {
+  if (pts.size() > 1) {
+    float[] first = pts.get(0), lastPt = pts.get(pts.size() - 1);
+    if (abs(first[0] - lastPt[0]) < 0.00001 && abs(first[1] - lastPt[1]) < 0.00001) {
+      pts.remove(pts.size() - 1);
+    }
+  }
+  return pts.size() >= 3 ? pts : null;
+}
+
+// IfcIndexedPolyCurve: Points(0), a shared IfcCartesianPointList2D/3D
+// (z dropped if 3D - a profile curve is always meant to live in its own
+// 2D plane), plus an OPTIONAL Segments(1) list of IfcLineIndex/
+// IfcArcIndex runs of 1-based indices into that list, each select-typed
+// in the raw STEP text as e.g. IFCLINEINDEX((1,2,3)). Checked against a
+// real Revit export: every single one of its own 610 IfcIndexedPolyCurve
+// instances omits Segments entirely - the overwhelmingly common case in
+// practice - which per the IFC4 spec means an implicit polyline through
+// every point in the list, in order; that's the case this fix actually
+// targets (it was the root cause of several real missing objects - a
+// generic floor slab, a roof slab, a curtain-wall panel - that all
+// otherwise had perfectly ordinary IfcExtrudedAreaSolid geometry). The
+// explicit-Segments case is handled too, for files from other tools:
+// consecutive segments share their boundary point per spec, so a
+// segment's own first index is skipped when it repeats the last point
+// already added. Returns null - not approximated - the moment any
+// segment turns out to be an IfcArcIndex (an actual circular arc), same
+// as every other curved profile this importer doesn't support.
+ArrayList<float[]> ifcIndexedPolyCurvePoints (HashMap<Integer, StepEntity> ents, StepEntity curve) {
+  StepEntity pointList = ifcResolve(ents, curve.attrs[0]);
+  if (pointList == null || pointList.attrs.length == 0) return null;
+
+  String[] rows = ifcListTokens(pointList.attrs[0]);
+  float[][] pool = new float[rows.length][];
+  for (int i = 0; i < rows.length; i++) {
+    PVector p = ifcPointFromCoords(rows[i]);
+    pool[i] = new float[]{p.x, p.y};
+  }
+
+  String segmentsAttr = (curve.attrs.length > 1) ? curve.attrs[1].trim() : "";
+  if (segmentsAttr.length() == 0 || segmentsAttr.equals("$") || segmentsAttr.equals("()")) {
+    ArrayList<float[]> pts = new ArrayList<float[]>();
+    for (float[] p : pool) pts.add(p);
+    return ifcClosePolygon2D(pts);
+  }
+
+  ArrayList<float[]> pts = new ArrayList<float[]>();
+  int lastIndex = -1;
+  for (String segTok : ifcListTokens(segmentsAttr)) {
+    String trimmed = segTok.trim();
+    String upper = trimmed.toUpperCase();
+    if (upper.startsWith("IFCARCINDEX")) return null; // an actual arc: not supported
+
+    int parenStart = trimmed.indexOf('(');
+    if (!upper.startsWith("IFCLINEINDEX") || parenStart < 0) return null; // unrecognized segment type
+    for (String idxTok : ifcListTokens(ifcStripParens(trimmed.substring(parenStart)))) {
+      int idx = (int) ifcFloat(idxTok) - 1; // 1-based in the file
+      if (idx < 0 || idx >= pool.length) continue;
+      if (idx == lastIndex) continue; // shared boundary point between consecutive segments
+      pts.add(pool[idx]);
+      lastIndex = idx;
+    }
+  }
+  return ifcClosePolygon2D(pts);
 }
 
 void ifcProcessExtrudedAreaSolid (HashMap<Integer, StepEntity> ents, StepEntity e, IfcFrame productFrame,
@@ -2087,14 +2230,19 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   for (Integer id : ents.keySet()) {
     StepEntity candidate = ents.get(id);
 
-    if (!IFC_IMPORT_FURNITURE && candidate != null && ifcFurnitureProductTypes.contains(candidate.type)
+    if (!IFC_IMPORT_FURNITURE && candidate != null
+      && (ifcFurnitureProductTypes.contains(candidate.type) || ifcLooksLikeExcludedApplianceOrCabinet(candidate))
       && !ifcLooksLikeATree(candidate) && !ifcLooksLikeASolarDevice(candidate)
       && !ifcLooksLikeAPool(candidate) && !ifcLooksLikeVegetation(candidate)) {
-      // Ordinary furniture (not one of the special-cased categories
-      // above, which keep working regardless of this toggle) - skipped
-      // entirely while IFC_IMPORT_FURNITURE is false, counted
-      // separately from ifcImportSkippedCount since this is a
-      // deliberate exclusion, not an unsupported item.
+      // Ordinary furniture, a sanitary/MEP-terminal fixture, or a
+      // Name/ObjectType-matched kitchen appliance or cabinet/storage
+      // item (see ifcFurnitureProductTypes and
+      // ifcLooksLikeExcludedApplianceOrCabinet() above) - none of them
+      // one of the special-cased categories above, which keep working
+      // regardless of this toggle - skipped entirely while
+      // IFC_IMPORT_FURNITURE is false, counted separately from
+      // ifcImportSkippedCount since this is a deliberate exclusion, not
+      // an unsupported item.
       ifcImportFurnitureExcludedCount++;
       continue;
     }
