@@ -790,4 +790,109 @@ class ImportObjectsIFCTest {
     assertEquals(0, app.allModel2Ds.num, "\"Street\" should never be mistaken for containing \"tree\"");
     assertEquals(1, app.allFaces.nodes.length, "it should import its own geometry as Faces instead");
   }
+
+  // ================= solar devices: real geometry, always material 0 =========
+
+  @Test
+  void importObjectsIFC_ifcSolarDevice_importsItsRealGeometry_withMaterial0 () throws IOException {
+    Path f = ifcFile("ifc-solardevice-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSOLARDEVICE('guid-1',$,$,$,$,$,#11,$,.SOLARPANEL.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "IfcSolarDevice should import its own real geometry as Faces");
+    assertEquals(4, app.allFaces.nodes[0].length, "kept as a quad, not triangulated, same as any other face");
+    assertEquals(0, app.allFaces.options[0][0], "should always be material 0 (IFC_MATERIAL_SOLAR), not the fixed material (5)");
+  }
+
+  @Test
+  void importObjectsIFC_genericProxyNamedSolarPanel_isAlsoRecognized_notJustIfcSolarDevice () throws IOException {
+    Path f = ifcFile("ifc-solar-proxy-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCBUILDINGELEMENTPROXY('guid-1',$,'Solar Collector - Flat Plate',$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(0, app.allFaces.options[0][0], "a generic proxy named \"Solar Collector\" should also get material 0");
+  }
+
+  @Test
+  void importObjectsIFC_solarDeviceMaterialOverridesAnyAssociatedIfcMaterialName () throws IOException {
+    Path f = ifcFile("ifc-solar-material-override-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSOLARDEVICE('guid-1',$,'PV Panel',$,$,$,#11,$,.SOLARPANEL.);
+        #20=IFCMATERIAL('Glass');
+        #21=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(0, app.allFaces.options[0][0],
+      "the solar material is functional (tessellation), not cosmetic, so it should win over an associated material name too");
+  }
+
+  @Test
+  void importObjectsIFC_solarDeviceDoesNotDisruptTheWallMaterialCycle () throws IOException {
+    Path f = ifcFile("ifc-solar-cycle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #13=IFCSOLARDEVICE('guid-2',$,$,$,$,$,#11,$,.SOLARPANEL.);
+        #14=IFCWALL('guid-3',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), -1 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.options[0][0], "first wall: material cycle starts at 1");
+    assertEquals(0, app.allFaces.options[1][0], "solar device: always material 0");
+    assertEquals(2, app.allFaces.options[2][0], "second wall: material cycle continues at 2, not disrupted");
+  }
 }

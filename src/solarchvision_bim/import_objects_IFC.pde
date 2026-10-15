@@ -64,6 +64,13 @@
 //     default otherwise - rather than importing whatever (often just a
 //     low-detail box or cylinder) geometry the product itself carries.
 //     See ifcLooksLikeATree() below.
+//   - A PV panel, solar collector or solar hybrid panel - whether the
+//     file models it as IfcSolarDevice (IFC4.3) or, like a tree, as a
+//     generic product whose Name/ObjectType just says so - imports its
+//     own real geometry as Faces, same as any other product, but always
+//     with material 0 (IFC_MATERIAL_SOLAR; see that constant's own
+//     comment), regardless of m or any material the file associates
+//     with it. See ifcLooksLikeASolarDevice() below.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -176,6 +183,19 @@ HashSet<String> ifcTopographyProductTypes = new HashSet<String>(Arrays.asList(
   "IFCSITE"
   ));
 
+// Product types always drawn with IFC_MATERIAL_SOLAR (material 0),
+// overriding any associated IfcMaterial name the same way windows
+// override theirs - IfcSolarDevice (IFC4.3's own entity for a PV panel,
+// solar collector or solar hybrid panel) if the file uses it. A file
+// that doesn't - most don't yet - is still covered by
+// ifcLooksLikeASolarDevice()'s own Name/ObjectType word match below
+// ("solar", "photovoltaic", "pv"), which catches a solar panel/
+// collector/hybrid panel modeled as a generic proxy element instead,
+// so this set alone isn't the whole story - see that function.
+HashSet<String> ifcSolarProductTypes = new HashSet<String>(Arrays.asList(
+  "IFCSOLARDEVICE"
+  ));
+
 // Materials.pde indices for the colors an IFC import can pick by name/
 // product type instead of cycling through materials 1-8. Keep these in
 // sync with Materials.pde's own "fixed" color table and its comments.
@@ -186,6 +206,21 @@ HashSet<String> ifcTopographyProductTypes = new HashSet<String>(Arrays.asList(
 // IFC_MATERIAL_INSULATION below, which shares its 50% alpha) don't cast
 // one; material 10 would, which is part of why windows no longer cycle
 // into it.
+//
+// IFC_MATERIAL_SOLAR is material 0, Materials.pde's orange - not a
+// separate convention invented for this importer, but the app's own
+// existing one: Faces.pde (castShadows() and several others),
+// calculate_VertexSolar_array.pde, Overlay3D.pde, ViewFromTheSky.pde
+// and snap_Faces.pde all single out "getMaterial(f) == 0" for finer,
+// boosted tessellation (current tessellation + displayTessellation)
+// specifically because that extra resolution matters for a face's own
+// solar/shading calculation - exactly what a PV panel or solar
+// collector needs for an accurate yield estimate. There's no material
+// index -1 to assign (Materials.pde has no such entry, and storing one
+// on a face would crash the very rendering/calculation code just
+// described) - 0 is the real, load-bearing value underneath that
+// mental shorthand, not an approximation of it.
+final int IFC_MATERIAL_SOLAR      = 0;
 final int IFC_MATERIAL_GLASS      = 9;
 final int IFC_MATERIAL_CONCRETE   = 11;
 final int IFC_MATERIAL_STEEL      = 12;
@@ -1297,6 +1332,27 @@ Float ifcParseHeightHint (String rawAttr) {
 }
 
 // ---------------------------------------------------------------------
+// Solar devices: PV panels, solar collectors and solar hybrid panels
+// always draw with IFC_MATERIAL_SOLAR (material 0) - see that
+// constant's own comment for why. Caught either by entity type
+// (IfcSolarDevice, see ifcSolarProductTypes above) or, for the many
+// files that don't use that IFC4.3 entity, by a Name/ObjectType word
+// match - the same whole-word approach ifcNameHasWord() already does
+// for trees, just with a different word set.
+// ---------------------------------------------------------------------
+
+HashSet<String> ifcSolarNameWords = new HashSet<String>(Arrays.asList(
+  "solar", "photovoltaic", "pv"
+  ));
+
+boolean ifcLooksLikeASolarDevice (StepEntity e) {
+  if (ifcSolarProductTypes.contains(e.type)) return true;
+  if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcSolarNameWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcSolarNameWords)) return true; // ObjectType
+  return false;
+}
+
+// ---------------------------------------------------------------------
 // Entry point - mirrors import_objects_OBJ(FileName, m, tes, lyr, vsb,
 // wgt, clz, cx, cy, cz, sx, sy, sz)'s own signature, including the
 // m == -1 "auto-cycle through 8 materials" convention (there, cycled
@@ -1386,18 +1442,26 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     }
 
     // A window (see ifcGlassProductTypes above) always draws as glass
-    // (material 9), regardless of what m says or what material, if any,
-    // it's associated with in the file. Otherwise, a product whose own
-    // associated IfcMaterial name matches one of Materials.pde's named
-    // colors (concrete, steel, timber, ...) gets that color. Failing
-    // that, IfcSite's own topography (see ifcTopographyProductTypes
-    // above) defaults to IFC_MATERIAL_EARTH rather than falling into
-    // the generic cycle, since a terrain surface should read as ground
-    // even when the file names no material for it at all. Only a
-    // product matching none of the above falls back to m/the normal
-    // 1-8 cycle. Every kind of explicit match here is intentionally
-    // kept out of that cycle too - so unmatched walls/slabs/etc. still
-    // cycle smoothly through materials 1-8 with no gaps.
+    // (material 9), and a solar panel/collector/hybrid panel (see
+    // ifcLooksLikeASolarDevice() above) always draws with
+    // IFC_MATERIAL_SOLAR (material 0) - both regardless of what m says
+    // or what material, if any, the file associates with the product:
+    // the solar material isn't a color choice, it's what gets the face
+    // its boosted tessellation for an accurate yield calculation (see
+    // IFC_MATERIAL_SOLAR's own comment), so a file-authored material
+    // name shouldn't be able to quietly turn that off. Short of either
+    // of those, a product whose own associated IfcMaterial name matches
+    // one of Materials.pde's named colors (concrete, steel, timber,
+    // ...) gets that color - here an explicit match *does* win, same as
+    // everywhere else. Failing that too, IfcSite's own topography (see
+    // ifcTopographyProductTypes above) defaults to IFC_MATERIAL_EARTH
+    // rather than falling into the generic cycle, since a terrain
+    // surface should read as ground even when the file names no
+    // material for it at all. Only a product matching none of the
+    // above falls back to m/the normal 1-8 cycle. Every kind of
+    // explicit match here is intentionally kept out of that cycle too
+    // - so unmatched walls/slabs/etc. still cycle smoothly through
+    // materials 1-8 with no gaps.
     int materialForThisProduct;
     // Deliberately not a "cond ? IFC_MATERIAL_GLASS : ifcMaterialNameToConstant(...)"
     // ternary: mixing a primitive int (IFC_MATERIAL_GLASS) with an
@@ -1409,6 +1473,8 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     Integer matchedMaterial;
     if (ifcGlassProductTypes.contains(e.type)) {
       matchedMaterial = IFC_MATERIAL_GLASS;
+    } else if (ifcLooksLikeASolarDevice(e)) {
+      matchedMaterial = IFC_MATERIAL_SOLAR;
     } else {
       matchedMaterial = ifcMaterialNameToConstant(productMaterialNames.get(id));
       if (matchedMaterial == null && ifcTopographyProductTypes.contains(e.type)) {
