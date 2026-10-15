@@ -38,6 +38,13 @@
 //     steel/timber/masonry/insulation/MEP/earth colors (the
 //     IFC_MATERIAL_* constants below); a product with no match falls
 //     back to m/the normal 1-8 cycle, same as before this existed.
+//   - Every length read from the file (point/direction coordinates,
+//     profile dimensions, extrusion depth) is converted into metres
+//     using the project's own declared length unit
+//     (IfcProject.UnitsInContext), so a file authored in millimetres,
+//     centimetres, feet, inches, etc. still imports at the right real-
+//     world scale - see ifcDetectLengthUnitScale() below. A file with no
+//     declared length unit at all is read as-is, assumed already metric.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -55,6 +62,12 @@
 //   - IfcMappedItem (family/type "block" instances - commonly how
 //     doors, windows and furniture are placed) is not supported in this
 //     first pass; such items are skipped and counted.
+//   - A conversion-based length unit (e.g. 'foot', 'inch') is assumed
+//     to be defined directly against the bare SI metre, rather than
+//     having its own UnitComponent resolved recursively - true for the
+//     large majority of real-world files. IfcDerivedUnit (a length unit
+//     expressed as a formula over other units, rare in practice) isn't
+//     resolved at all.
 //   - Only the plain-text STEP exchange format is read - not ifcXML or
 //     zipped ifcZIP.
 //   - IfcSpace, IfcOpeningElement and IfcVirtualElement are skipped on
@@ -150,6 +163,17 @@ final int IFC_MATERIAL_EARTH      = 17;
 int ifcImportSkippedCount = 0;
 int ifcImportHolesIgnoredCount = 0;
 HashMap<String, Integer> ifcImportSkippedReasons = new HashMap<String, Integer>();
+
+// The multiplier that converts a raw length value read from the file
+// into metres - the app's own working unit, same as every other
+// importer/exporter here assumes (see e.g. export_objects_OBJ.pde).
+// Detected once per import, from the project's own declared length
+// unit (see ifcDetectLengthUnitScale() below); reset to 1 (assume
+// metres already) at the top of every import_objects_IFC() call, same
+// as the counters above, so a file that doesn't declare one at all -
+// most small hand-written or test files - is read as-is rather than
+// guessed at.
+float ifcLengthUnitScale = 1;
 
 void ifcNoteSkipped (String reason) {
   ifcImportSkippedCount++;
@@ -382,12 +406,20 @@ String[] ifcListTokens (String listAttr) {
   return ifcSplitTopLevel(ifcStripParens(listAttr), ',');
 }
 
+// Every raw coordinate triple in the file - IfcCartesianPoint,
+// IfcDirection, and an IfcCartesianPointList3D's own point rows - goes
+// through here, so this is also the one place ifcLengthUnitScale (see
+// below) needs applying to convert a length from the file's own units
+// into metres. Scaling a direction here too is harmless, not just
+// convenient: every direction this importer reads gets re-normalized
+// (or explicitly divided by its own magnitude) immediately after, so
+// any positive scale factor on it cancels out.
 PVector ifcPointFromCoords (String coordsListAttr) {
   String[] c = ifcListTokens(coordsListAttr);
   float x = c.length > 0 ? ifcFloat(c[0]) : 0;
   float y = c.length > 1 ? ifcFloat(c[1]) : 0;
   float z = c.length > 2 ? ifcFloat(c[2]) : 0;
-  return new PVector(x, y, z);
+  return new PVector(x * ifcLengthUnitScale, y * ifcLengthUnitScale, z * ifcLengthUnitScale);
 }
 
 // Resolves a "#ref" token to an IFCCARTESIANPOINT/IFCDIRECTION and
@@ -697,8 +729,8 @@ ArrayList<float[]> ifcProfilePoints (HashMap<Integer, StepEntity> ents, String p
   if (profile == null) return null;
 
   if (profile.type.equals("IFCRECTANGLEPROFILEDEF") && profile.attrs.length >= 5) {
-    float xDim = ifcFloat(profile.attrs[3]);
-    float yDim = ifcFloat(profile.attrs[4]);
+    float xDim = ifcFloat(profile.attrs[3]) * ifcLengthUnitScale;
+    float yDim = ifcFloat(profile.attrs[4]) * ifcLengthUnitScale;
     float hx = xDim / 2, hy = yDim / 2;
     float[] placement = (profile.attrs[2].trim().startsWith("#"))
       ? ifcAxis2Placement2D(ents, profile.attrs[2]) : new float[]{0, 0, 1, 0};
@@ -752,7 +784,7 @@ void ifcProcessExtrudedAreaSolid (HashMap<Integer, StepEntity> ents, StepEntity 
 
   PVector direction = (e.attrs[2].trim().startsWith("#")) ? ifcDirection3(ents, e.attrs[2]) : new PVector(0, 0, 1);
   direction.normalize();
-  float depth = ifcFloat(e.attrs[3]);
+  float depth = ifcFloat(e.attrs[3]) * ifcLengthUnitScale;
 
   PVector extrusionOffset = solidFrame.toWorldVector(direction);
   extrusionOffset.mult(depth);
@@ -1025,6 +1057,110 @@ Integer ifcMaterialNameToConstant (String rawName) {
 }
 
 // ---------------------------------------------------------------------
+// Units: a raw length value in the file is almost never already in
+// metres - metric files commonly declare millimetres, and
+// US/imperial-authored files declare feet or inches via a conversion-
+// based unit - so every length this importer reads needs converting.
+// ifcLengthUnitScale (see its own declaration above) is detected here,
+// once per import, from IfcProject.UnitsInContext, and applied inside
+// ifcPointFromCoords() for every coordinate/direction, plus wherever a
+// profile dimension or extrusion depth is read directly as a number
+// (see ifcProfilePoints()'s IfcRectangleProfileDef case and
+// ifcProcessExtrudedAreaSolid()).
+// ---------------------------------------------------------------------
+
+// IfcProject (IFC4's IfcContext base attrs): GlobalId(0), OwnerHistory(1),
+// Name(2), Description(3), ObjectType(4), LongName(5), Phase(6),
+// RepresentationContexts(7), UnitsInContext(8) - not an IfcProduct
+// (no ObjectPlacement/Representation), so ifcLooksLikeImportableProduct
+// never matches it; found here by type instead.
+float ifcDetectLengthUnitScale (HashMap<Integer, StepEntity> ents) {
+  StepEntity project = null;
+  for (StepEntity e : ents.values()) {
+    if (e.type.equals("IFCPROJECT")) {
+      project = e;
+      break;
+    }
+  }
+  if (project == null || project.attrs.length < 9) return 1;
+
+  StepEntity unitAssignment = ifcResolve(ents, project.attrs[8]);
+  if (unitAssignment == null || !unitAssignment.type.equals("IFCUNITASSIGNMENT") || unitAssignment.attrs.length == 0) return 1;
+
+  for (String unitRef : ifcListTokens(unitAssignment.attrs[0])) {
+    Float scale = ifcLengthUnitToMetresScale(ents, ifcResolve(ents, unitRef));
+    if (scale != null) return scale;
+  }
+  return 1; // no declared length unit found - assume the file is already in metres
+}
+
+// The to-metres multiplier for one IfcUnitAssignment member, if it's
+// the project's length unit - null for anything else (a different
+// UnitType such as area/volume/plane angle, or a unit kind this
+// importer doesn't resolve, e.g. IfcDerivedUnit).
+Float ifcLengthUnitToMetresScale (HashMap<Integer, StepEntity> ents, StepEntity unit) {
+  if (unit == null) return null;
+
+  if (unit.type.equals("IFCSIUNIT")) {
+    // IfcSIUnit: Dimensions(0), UnitType(1), Prefix(2, optional), Name(3).
+    if (unit.attrs.length < 4 || !unit.attrs[1].trim().equals(".LENGTHUNIT.")) return null;
+    return ifcSiPrefixScale(unit.attrs[2].trim());
+  }
+
+  if (unit.type.equals("IFCCONVERSIONBASEDUNIT") || unit.type.equals("IFCCONVERSIONBASEDUNITWITHOFFSET")) {
+    // IfcConversionBasedUnit: Dimensions(0), UnitType(1), Name(2),
+    // ConversionFactor(3) - a ref to an IfcMeasureWithUnit. The *WithOffset
+    // subtype only adds a ConversionOffset after this, so the index is
+    // the same for both. Used for feet/inches/etc.
+    if (unit.attrs.length < 4 || !unit.attrs[1].trim().equals(".LENGTHUNIT.")) return null;
+    StepEntity measureWithUnit = ifcResolve(ents, unit.attrs[3]);
+    if (measureWithUnit == null || !measureWithUnit.type.equals("IFCMEASUREWITHUNIT") || measureWithUnit.attrs.length < 2) return null;
+    // ValueComponent(0) is a typed numeric value (e.g. "IFCLENGTHMEASURE(0.3048)"
+    // for 'foot'); UnitComponent(1), the unit it's relative to, is assumed
+    // to be a plain metre (scale 1) rather than recursively resolved -
+    // true for the large majority of real-world files, where a
+    // conversion-based unit is defined directly against the SI base unit.
+    return ifcTypedValueNumber(measureWithUnit.attrs[0]);
+  }
+
+  return null;
+}
+
+float ifcSiPrefixScale (String prefixToken) {
+  if (!prefixToken.startsWith(".")) return 1; // "$" - no prefix - the bare SI unit (metre)
+  switch (prefixToken) {
+    case ".EXA.":   return 1e18;
+    case ".PETA.":  return 1e15;
+    case ".TERA.":  return 1e12;
+    case ".GIGA.":  return 1e9;
+    case ".MEGA.":  return 1e6;
+    case ".KILO.":  return 1e3;
+    case ".HECTO.": return 1e2;
+    case ".DECA.":  return 1e1;
+    case ".DECI.":  return 1e-1;
+    case ".CENTI.": return 1e-2;
+    case ".MILLI.": return 1e-3;
+    case ".MICRO.": return 1e-6;
+    case ".NANO.":  return 1e-9;
+    case ".PICO.":  return 1e-12;
+    case ".FEMTO.": return 1e-15;
+    case ".ATTO.":  return 1e-18;
+    default:        return 1; // an exponent-only prefix (e.g. .KIBI. etc.) - not length-relevant in practice
+  }
+}
+
+// Pulls the number out of a typed value token - "IFCLENGTHMEASURE(0.3048)"
+// becomes 0.3048 - or parses it directly if it's already a bare number.
+float ifcTypedValueNumber (String token) {
+  token = token.trim();
+  int paren = token.indexOf('(');
+  if (paren >= 0 && token.endsWith(")")) {
+    return ifcFloat(token.substring(paren + 1, token.length() - 1));
+  }
+  return ifcFloat(token);
+}
+
+// ---------------------------------------------------------------------
 // Entry point - mirrors import_objects_OBJ(FileName, m, tes, lyr, vsb,
 // wgt, clz, cx, cy, cz, sx, sy, sz)'s own signature, including the
 // m == -1 "auto-cycle through 8 materials" convention (there, cycled
@@ -1038,9 +1174,16 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportSkippedCount = 0;
   ifcImportHolesIgnoredCount = 0;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
+  ifcLengthUnitScale = 1;
 
   String fullText = join(loadStrings(FileName), " ");
   HashMap<Integer, StepEntity> ents = ifcParseEntities(fullText);
+
+  // Detected before any geometry is read, since ifcPointFromCoords()
+  // and the profile-dimension/extrusion-depth readers below all apply
+  // it as they go, rather than importing in the file's own units and
+  // rescaling the result afterward.
+  ifcLengthUnitScale = ifcDetectLengthUnitScale(ents);
 
   int effectiveMaterial = (m == -1) ? 0 : m;
   int importedFaceCountBefore = allFaces.nodes.length;
@@ -1115,6 +1258,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   int importedFaceCount = allFaces.nodes.length - importedFaceCountBefore;
   String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
+  if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
   if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
   if (ifcImportHolesIgnoredCount > 0) summary += ", " + ifcImportHolesIgnoredCount + " inner boundary/boundaries ignored";
   summary += ".";

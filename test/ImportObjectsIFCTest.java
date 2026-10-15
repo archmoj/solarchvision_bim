@@ -474,6 +474,121 @@ class ImportObjectsIFCTest {
     assertEquals(5, app.allFaces.options[0][0], "no keyword matched, so the fixed material (5) passed in should still be used");
   }
 
+  // ================= units: converted to metres on import ====================
+
+  @Test
+  void importObjectsIFC_millimetreProject_convertsCoordinatesToMetres () throws IOException {
+    Path f = ifcFile("ifc-units-millimetre-test", """
+        #1=IFCSIUNIT(*,.LENGTHUNIT.,.MILLI.,.METRE.);
+        #2=IFCUNITASSIGNMENT((#1));
+        #3=IFCPROJECT('guid-proj',$,$,$,$,$,$,$,#2);
+        #10=IFCCARTESIANPOINT((0.,0.,0.));
+        #11=IFCCARTESIANPOINT((1000.,0.,0.));
+        #12=IFCCARTESIANPOINT((1000.,1000.,0.));
+        #13=IFCCARTESIANPOINT((0.,1000.,0.));
+        #14=IFCPOLYLOOP((#10,#11,#12,#13));
+        #15=IFCFACEOUTERBOUND(#14,.T.);
+        #16=IFCFACE((#15));
+        #17=IFCCLOSEDSHELL((#16));
+        #18=IFCFACETEDBREP(#17);
+        #19=IFCSHAPEREPRESENTATION($,'Body','Brep',(#18));
+        #20=IFCPRODUCTDEFINITIONSHAPE($,$,(#19));
+        #21=IFCWALL('guid-1',$,$,$,$,$,#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // 1000mm face should import as a 1m face.
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(1f, app.allPoints.getX(1), 0.0001f, "1000mm should convert to 1m");
+    assertEquals(1f, app.allPoints.getY(2), 0.0001f, "1000mm should convert to 1m");
+    assertEquals(0.001f, app.ifcLengthUnitScale, 0.0000001f);
+  }
+
+  @Test
+  void importObjectsIFC_feetProject_convertsCoordinatesToMetres () throws IOException {
+    Path f = ifcFile("ifc-units-feet-test", """
+        #1=IFCSIUNIT(*,.LENGTHUNIT.,$,.METRE.);
+        #2=IFCMEASUREWITHUNIT(IFCLENGTHMEASURE(0.3048),#1);
+        #3=IFCCONVERSIONBASEDUNIT(*,.LENGTHUNIT.,'feet',#2);
+        #4=IFCUNITASSIGNMENT((#3));
+        #5=IFCPROJECT('guid-proj',$,$,$,$,$,$,$,#4);
+        #10=IFCCARTESIANPOINT((0.,0.,0.));
+        #11=IFCCARTESIANPOINT((10.,0.,0.));
+        #12=IFCCARTESIANPOINT((10.,10.,0.));
+        #13=IFCCARTESIANPOINT((0.,10.,0.));
+        #14=IFCPOLYLOOP((#10,#11,#12,#13));
+        #15=IFCFACEOUTERBOUND(#14,.T.);
+        #16=IFCFACE((#15));
+        #17=IFCCLOSEDSHELL((#16));
+        #18=IFCFACETEDBREP(#17);
+        #19=IFCSHAPEREPRESENTATION($,'Body','Brep',(#18));
+        #20=IFCPRODUCTDEFINITIONSHAPE($,$,(#19));
+        #21=IFCWALL('guid-1',$,$,$,$,$,#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // 10 feet should import as 10*0.3048 = 3.048m.
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(3.048f, app.allPoints.getX(1), 0.001f, "10 feet should convert to 3.048m");
+    assertEquals(0.3048f, app.ifcLengthUnitScale, 0.00001f);
+  }
+
+  @Test
+  void importObjectsIFC_noDeclaredUnit_isReadAsIs () throws IOException {
+    Path f = ifcFile("ifc-units-none-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1f, app.ifcLengthUnitScale, 0.0000001f, "no declared length unit - should be assumed already metric");
+    assertEquals(1f, app.allPoints.getX(1), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_millimetreProject_alsoScalesExtrusionProfileAndDepth () throws IOException {
+    Path f = ifcFile("ifc-units-extrusion-test", """
+        #1=IFCSIUNIT(*,.LENGTHUNIT.,.MILLI.,.METRE.);
+        #2=IFCUNITASSIGNMENT((#1));
+        #3=IFCPROJECT('guid-proj',$,$,$,$,$,$,$,#2);
+        #10=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2000.,4000.);
+        #11=IFCDIRECTION((0.,0.,1.));
+        #12=IFCEXTRUDEDAREASOLID(#10,$,#11,3000.);
+        #13=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#12));
+        #14=IFCPRODUCTDEFINITIONSHAPE($,$,(#13));
+        #15=IFCWALL('guid-1',$,$,$,$,$,#14);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "2 caps + 4 sides");
+    boolean sawDepthAtThreeMetres = false;
+    boolean sawHalfWidthAtOneMetre = false;
+    for (int i = 0; i < app.allPoints.getLength(); i++) {
+      if (Math.abs(app.allPoints.getZ(i) - 3f) < 0.001f) sawDepthAtThreeMetres = true;
+      if (Math.abs(app.allPoints.getX(i) - 1f) < 0.001f) sawHalfWidthAtOneMetre = true;
+    }
+    assertTrue(sawDepthAtThreeMetres, "3000mm extrusion depth should convert to 3m");
+    assertTrue(sawHalfWidthAtOneMetre, "2000mm XDim (half-width 1000mm) should convert to 1m");
+  }
+
   // ================= non-geometry product types are skipped on purpose =======
 
   @Test
