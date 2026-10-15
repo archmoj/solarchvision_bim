@@ -329,6 +329,151 @@ class ImportObjectsIFCTest {
     assertEquals(300f, app.allPoints.getZ(0), 0.0001f);
   }
 
+  // ================= IfcWindow always draws as glass (Materials.pde 9) =======
+
+  @Test
+  void importObjectsIFC_ifcWindow_alwaysGetsMaterial9_insteadOfTheFixedWallMaterial () throws IOException {
+    Path f = ifcFile("ifc-window-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWINDOW('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(9, app.allFaces.options[0][0], "IfcWindow should always use material 9, not the fixed wall material (5) or any other shade");
+  }
+
+  @Test
+  void importObjectsIFC_windowsDontDisruptTheWallMaterialCycle () throws IOException {
+    Path f = ifcFile("ifc-window-cycle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #13=IFCWINDOW('guid-2',$,$,$,$,$,#11);
+        #14=IFCWALL('guid-3',$,$,$,$,$,#11);
+        #15=IFCWINDOW('guid-4',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), -1 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // Products are processed in ascending id order: wall(#12), window(#13),
+    // wall(#14), window(#15).
+    assertEquals(1, app.allFaces.options[0][0], "first wall: material cycle starts at 1");
+    assertEquals(9, app.allFaces.options[1][0], "first window: always material 9");
+    assertEquals(2, app.allFaces.options[2][0], "second wall: material cycle continues at 2, not disrupted by the window");
+    assertEquals(9, app.allFaces.options[3][0], "second window: always material 9");
+  }
+
+  // ================= associated IfcMaterial -> Materials.pde named colors ====
+
+  @Test
+  void importObjectsIFC_wallWithConcreteMaterial_getsIFC_MATERIAL_CONCRETE () throws IOException {
+    Path f = ifcFile("ifc-material-concrete-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCMATERIAL('Concrete, Cast-in-Place');
+        #21=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(11, app.allFaces.options[0][0], "should match 'Concrete' to IFC_MATERIAL_CONCRETE (11), not the fixed material (5)");
+  }
+
+  @Test
+  void importObjectsIFC_wallWithLayeredMaterial_resolvesThroughMaterialLayerSetUsage () throws IOException {
+    // The common real-world path for a wall's material: IfcWall's own
+    // IfcRelAssociatesMaterial points at an IfcMaterialLayerSetUsage,
+    // which points at an IfcMaterialLayerSet, whose first IfcMaterialLayer
+    // finally names an IfcMaterial - "Structural Steel" here, to also
+    // confirm the keyword match (not just the chain-walking).
+    Path f = ifcFile("ifc-material-layered-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCBEAM('guid-1',$,$,$,$,$,#11);
+        #30=IFCMATERIAL('Structural Steel');
+        #31=IFCMATERIALLAYER(#30,0.2,$);
+        #32=IFCMATERIALLAYERSET((#31),$);
+        #33=IFCMATERIALLAYERSETUSAGE(#32,.AXIS2.,.POSITIVE.,0.);
+        #34=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#33);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(12, app.allFaces.options[0][0], "should resolve through LayerSetUsage->LayerSet->Layer to IFC_MATERIAL_STEEL (12)");
+  }
+
+  @Test
+  void importObjectsIFC_unmatchedOrAbsentMaterial_fallsBackToTheNormalMaterialChoice () throws IOException {
+    Path f = ifcFile("ifc-material-unmatched-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCMATERIAL('Some Custom Finish');
+        #21=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(5, app.allFaces.options[0][0], "no keyword matched, so the fixed material (5) passed in should still be used");
+  }
+
   // ================= non-geometry product types are skipped on purpose =======
 
   @Test

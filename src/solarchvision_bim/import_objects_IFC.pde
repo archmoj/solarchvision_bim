@@ -28,6 +28,16 @@
 //   - IfcLocalPlacement chains (including IfcAxis2Placement3D's
 //     Axis/RefDirection) are walked and composed into one world
 //     placement per product.
+//   - IfcWindow is always drawn with Materials.pde's translucent "glass"
+//     material (9), independently of whatever m was passed in - see
+//     ifcGlassProductTypes below. Every other product's own associated
+//     IfcMaterial (IfcRelAssociatesMaterial, by way of
+//     IfcMaterialLayerSetUsage, IfcMaterialProfileSetUsage,
+//     IfcMaterialConstituentSet or a plain IfcMaterial) is read and its
+//     name matched, keyword-style, against Materials.pde's concrete/
+//     steel/timber/masonry/insulation/MEP/earth colors (the
+//     IFC_MATERIAL_* constants below); a product with no match falls
+//     back to m/the normal 1-8 cycle, same as before this existed.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -106,6 +116,34 @@ HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
   "IFCPROJECT", "IFCSITE", "IFCBUILDING", "IFCBUILDINGSTOREY",
   "IFCSPACE", "IFCOPENINGELEMENT", "IFCVIRTUALELEMENT"
   ));
+
+// Product types drawn as glass (IFC_MATERIAL_GLASS below) instead of
+// whatever opaque material the rest of the import is using. Only
+// IfcWindow by default; IfcPlate and IfcCurtainWall (curtain-wall
+// glazing panels, in files that model them as separate elements) are
+// easy to add to this set the same way if that's ever wanted too.
+HashSet<String> ifcGlassProductTypes = new HashSet<String>(Arrays.asList(
+  "IFCWINDOW"
+  ));
+
+// Materials.pde indices for the colors an IFC import can pick by name/
+// product type instead of cycling through materials 1-8. Keep these in
+// sync with Materials.pde's own "fixed" color table and its comments.
+// IFC_MATERIAL_GLASS is material 9, one of the three translucent grays
+// (alpha 63/127/191 for 8/9/10; everything else is fully opaque) - and,
+// as a side effect worth knowing about, Faces.castShadows() only casts
+// a shadow for a material whose alpha is > 127, so material 9 (and
+// IFC_MATERIAL_INSULATION below, which shares its 50% alpha) don't cast
+// one; material 10 would, which is part of why windows no longer cycle
+// into it.
+final int IFC_MATERIAL_GLASS      = 9;
+final int IFC_MATERIAL_CONCRETE   = 11;
+final int IFC_MATERIAL_STEEL      = 12;
+final int IFC_MATERIAL_TIMBER     = 13;
+final int IFC_MATERIAL_MASONRY    = 14;
+final int IFC_MATERIAL_INSULATION = 15;
+final int IFC_MATERIAL_MEP        = 16;
+final int IFC_MATERIAL_EARTH      = 17;
 
 // Running counters for the post-import summary (and for tests - reset
 // at the top of every import_objects_IFC() call).
@@ -871,6 +909,122 @@ boolean ifcLooksLikeImportableProduct (StepEntity e) {
 }
 
 // ---------------------------------------------------------------------
+// Material assignment: a product's actual associated IfcMaterial (an
+// IfcRelAssociatesMaterial relationship, usually by way of
+// IfcMaterialLayerSetUsage for walls/slabs, IfcMaterialProfileSetUsage
+// for beams/columns, or IfcMaterialConstituentSet for anything made of
+// several named materials at once) is read and its name matched,
+// keyword-style, against the Materials.pde entries above. A product
+// with no material association, or one whose name doesn't match any
+// known keyword, falls back to the caller's normal m/cycling choice
+// instead - this only ever opts a product IN to a specific color, never
+// guesses one.
+// ---------------------------------------------------------------------
+
+// Strips one layer of STEP '...' string-literal quoting (with '' as an
+// escaped quote inside one), e.g. IfcMaterial.Name's own raw token.
+String ifcUnquote (String token) {
+  token = token.trim();
+  if (token.length() >= 2 && token.startsWith("'") && token.endsWith("'")) {
+    return token.substring(1, token.length() - 1).replace("''", "'");
+  }
+  return token;
+}
+
+// Takes the first resolvable material name out of a list of refs
+// (IfcMaterialLayer/IfcMaterialProfile/IfcMaterialConstituent/IfcMaterial
+// refs, however this particular wrapper type names its members) - "the
+// first layer/constituent" is a practical stand-in for "the material",
+// not a claim about which one visually dominates the surface.
+String ifcMaterialNameFromRefList (HashMap<Integer, StepEntity> ents, String listAttr, int depth) {
+  for (String ref : ifcListTokens(listAttr)) {
+    String name = ifcMaterialName(ents, ifcRefId(ref), depth + 1);
+    if (name != null) return name;
+  }
+  return null;
+}
+
+// Resolves a RelatingMaterial reference (or anything it points through)
+// down to a plain IfcMaterial's own Name, drilling through the common
+// IfcMaterialLayerSetUsage/Set/Layer, IfcMaterialProfileSetUsage/Set/
+// Profile, IfcMaterialConstituentSet/Constituent and IfcMaterialList
+// wrapper chains - depth-capped against a pathological/cyclic
+// reference. Returns null, rather than guessing, for anything else
+// (IfcMaterialDefinitionRepresentation and friends - style/rendering
+// data this importer has no use for).
+String ifcMaterialName (HashMap<Integer, StepEntity> ents, int entityId, int depth) {
+  if (depth > 6 || entityId < 0) return null;
+  StepEntity e = ents.get(entityId);
+  if (e == null) return null;
+
+  if (e.type.equals("IFCMATERIAL")) {
+    return e.attrs.length > 0 ? ifcUnquote(e.attrs[0]) : null;
+  }
+  if (e.type.equals("IFCMATERIALLAYER") || e.type.equals("IFCMATERIALPROFILE")) {
+    return e.attrs.length > 0 ? ifcMaterialName(ents, ifcRefId(e.attrs[0]), depth + 1) : null;
+  }
+  if (e.type.equals("IFCMATERIALCONSTITUENT")) {
+    return e.attrs.length > 2 ? ifcMaterialName(ents, ifcRefId(e.attrs[2]), depth + 1) : null;
+  }
+  if (e.type.equals("IFCMATERIALLAYERSET")) {
+    return e.attrs.length > 0 ? ifcMaterialNameFromRefList(ents, e.attrs[0], depth) : null;
+  }
+  if (e.type.equals("IFCMATERIALPROFILESET") || e.type.equals("IFCMATERIALCONSTITUENTSET")) {
+    return e.attrs.length > 2 ? ifcMaterialNameFromRefList(ents, e.attrs[2], depth) : null;
+  }
+  if (e.type.equals("IFCMATERIALLIST")) {
+    return e.attrs.length > 0 ? ifcMaterialNameFromRefList(ents, e.attrs[0], depth) : null;
+  }
+  if (e.type.equals("IFCMATERIALLAYERSETUSAGE") || e.type.equals("IFCMATERIALPROFILESETUSAGE")) {
+    return e.attrs.length > 0 ? ifcMaterialName(ents, ifcRefId(e.attrs[0]), depth + 1) : null;
+  }
+  return null;
+}
+
+// One pass over every IFCRELASSOCIATESMATERIAL in the file, building a
+// productId -> material-name lookup - far cheaper than re-walking the
+// relationship graph for every product individually. IfcRelAssociates'
+// own attribute order: GlobalId(0), OwnerHistory(1), Name(2),
+// Description(3), RelatedObjects(4); IfcRelAssociatesMaterial adds
+// RelatingMaterial(5).
+HashMap<Integer, String> ifcBuildProductMaterialNames (HashMap<Integer, StepEntity> ents) {
+  HashMap<Integer, String> result = new HashMap<Integer, String>();
+  for (StepEntity e : ents.values()) {
+    if (!e.type.equals("IFCRELASSOCIATESMATERIAL") || e.attrs.length < 6) continue;
+    String name = ifcMaterialName(ents, ifcRefId(e.attrs[5]), 0);
+    if (name == null) continue;
+    for (String ref : ifcListTokens(e.attrs[4])) {
+      int productId = ifcRefId(ref);
+      if (productId >= 0) result.put(productId, name);
+    }
+  }
+  return result;
+}
+
+// Keyword match against a resolved material name, ordered so a name
+// that happens to match more than one group (e.g. "Steel stud with batt
+// insulation") resolves to its first/most specific hit rather than its
+// last. Returns null - not a guess - when nothing matches, so the
+// caller falls back to its normal material choice.
+Integer ifcMaterialNameToConstant (String rawName) {
+  if (rawName == null) return null;
+  String name = rawName.toLowerCase();
+
+  if (name.contains("concrete")) return IFC_MATERIAL_CONCRETE;
+  if (name.contains("steel") || name.contains("metal") || name.contains("rebar")
+    || name.contains("aluminium") || name.contains("aluminum") || name.contains("iron")) return IFC_MATERIAL_STEEL;
+  if (name.contains("timber") || name.contains("wood") || name.contains("plywood") || name.contains("lumber")) return IFC_MATERIAL_TIMBER;
+  if (name.contains("masonry") || name.contains("brick") || name.contains("block")
+    || name.contains("cmu") || name.contains("stone")) return IFC_MATERIAL_MASONRY;
+  if (name.contains("insulation")) return IFC_MATERIAL_INSULATION;
+  if (name.contains("pvc") || name.contains("plastic") || name.contains("conduit") || name.contains("pipe")) return IFC_MATERIAL_MEP;
+  if (name.contains("soil") || name.contains("earth") || name.contains("backfill") || name.contains("excavation")) return IFC_MATERIAL_EARTH;
+  if (name.contains("glass") || name.contains("glazing")) return IFC_MATERIAL_GLASS;
+
+  return null;
+}
+
+// ---------------------------------------------------------------------
 // Entry point - mirrors import_objects_OBJ(FileName, m, tes, lyr, vsb,
 // wgt, clz, cx, cy, cz, sx, sy, sz)'s own signature, including the
 // m == -1 "auto-cycle through 8 materials" convention (there, cycled
@@ -891,6 +1045,10 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   int effectiveMaterial = (m == -1) ? 0 : m;
   int importedFaceCountBefore = allFaces.nodes.length;
 
+  // One pass up front, rather than re-walking the relationship graph
+  // per product.
+  HashMap<Integer, String> productMaterialNames = ifcBuildProductMaterialNames(ents);
+
   // Processed in ascending entity-id order (which almost always matches
   // the file's own declaration order) rather than ents.keySet()'s own
   // HashMap<Integer,...> order, which Java never guarantees - without
@@ -908,11 +1066,41 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // The new group has to exist *before* any face is created into it:
     // Faces.create() stamps every face it creates into allGroups' own
     // current (last) group, exactly like import_objects_OBJ.pde does on
-    // every "g" line - so, unlike the material cycle below, this can't
+    // every "g" line - so, unlike the material choice below, this can't
     // be deferred until after we know whether the product actually
     // produced geometry.
-    if (m == -1) effectiveMaterial = 1 + (effectiveMaterial % 8);
     if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+
+    // A window (see ifcGlassProductTypes above) always draws as glass
+    // (material 9), regardless of what m says or what material, if any,
+    // it's associated with in the file. Otherwise, a product whose own
+    // associated IfcMaterial name matches one of Materials.pde's named
+    // colors (concrete, steel, timber, ...) gets that color; only a
+    // product with no match at all falls back to m/the normal 1-8
+    // cycle. Either kind of explicit match is intentionally kept out of
+    // that cycle too - same reasoning as for windows, just not
+    // hardcoded to one product type - so unmatched walls/slabs/etc.
+    // still cycle smoothly through materials 1-8 with no gaps.
+    int materialForThisProduct;
+    // Deliberately not a "cond ? IFC_MATERIAL_GLASS : ifcMaterialNameToConstant(...)"
+    // ternary: mixing a primitive int (IFC_MATERIAL_GLASS) with an
+    // Integer (the method's return type, often legitimately null) makes
+    // Java's conditional operator settle on the primitive int as the
+    // whole expression's static type (JLS 15.25) - forcing an unboxing
+    // of whichever side is actually chosen, even the null one, which
+    // throws a NullPointerException instead of just being null.
+    Integer matchedMaterial;
+    if (ifcGlassProductTypes.contains(e.type)) {
+      matchedMaterial = IFC_MATERIAL_GLASS;
+    } else {
+      matchedMaterial = ifcMaterialNameToConstant(productMaterialNames.get(id));
+    }
+    if (matchedMaterial != null) {
+      materialForThisProduct = matchedMaterial;
+    } else {
+      if (m == -1) effectiveMaterial = 1 + (effectiveMaterial % 8);
+      materialForThisProduct = effectiveMaterial;
+    }
 
     String placementTok = e.attrs[5].trim();
     IfcFrame productFrame = placementTok.startsWith("#")
@@ -920,7 +1108,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
     int repId = ifcRefId(e.attrs[6]);
     ifcProcessProductRepresentation(ents, repId, productFrame, cx, cy, cz, sx, sy, sz,
-      effectiveMaterial, tes, lyr, vsb, wgt, clz);
+      materialForThisProduct, tes, lyr, vsb, wgt, clz);
   }
 
   model_changed();
