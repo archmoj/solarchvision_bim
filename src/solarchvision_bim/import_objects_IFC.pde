@@ -143,7 +143,14 @@
 //     IfcSystemFurnitureElement) isn't imported at all while
 //     IFC_IMPORT_FURNITURE (below) is false, its current default -
 //     deliberate, not a gap, and not (yet) user-facing; see that
-//     constant's own comment.
+//     constant's own comment. The same toggle also excludes a small
+//     (under IFC_SMALL_OBJECT_MAX_DIMENSION on every axis)
+//     IfcBuildingElementProxy - a book, a cup, a vase, other loose
+//     tabletop decor - while leaving a larger one (an appliance, an
+//     elevator, a parked-car entourage prop, ...) alone, since that
+//     type is IFC's own catch-all and isn't reliably "small" on its
+//     own; see that constant's own comment for how this was checked
+//     against a real export.
 //   - An IfcMappedItem's IfcRepresentationMap.MappingOrigin is assumed
 //     to be the identity placement rather than inverted and composed in
 //     (see that bullet above) - true for the large majority of real-
@@ -242,11 +249,40 @@ HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
 // those functions already recognize from the furniture skip, since
 // they're each handled as their own, deliberate feature independent of
 // the underlying entity type.
+//
+// The same toggle also excludes small tabletop objects (books, coffee
+// cups, vases, loose decor) - see IFC_SMALL_OBJECT_MAX_DIMENSION's own
+// comment for how those get recognized, which is a different mechanism
+// from ifcFurnitureProductTypes below: a real check against a sample
+// Revit export (a hotel/residential model, "White Porcelain Plate",
+// "Water Glass", "aalto vase", "Wine Bottles" among its contents)
+// confirmed small objects like these are exported as
+// IfcBuildingElementProxy, not IfcFurnishingElement/IfcFurniture - but
+// that same model's IfcBuildingElementProxy instances also included a
+// washing machine, an oven, a dishwasher and a parked-car entourage
+// prop, none of which belong in a blanket "it's a proxy, exclude it"
+// rule - IfcBuildingElementProxy is IFC's and most authoring tools'
+// catch-all for "doesn't fit a more specific class", used for
+// everything from dinner plates to elevators and escalators, so size,
+// not type, is the signal that actually distinguishes a small object
+// from a significant one modeled the same way.
 final boolean IFC_IMPORT_FURNITURE = false;
 
 HashSet<String> ifcFurnitureProductTypes = new HashSet<String>(Arrays.asList(
   "IFCFURNISHINGELEMENT", "IFCFURNITURE", "IFCSYSTEMFURNITUREELEMENT"
   ));
+
+// An IfcBuildingElementProxy whose own geometry fits within a cube of
+// this size (metres, after unit conversion - see ifcLengthUnitScale)
+// on every axis is treated as a small tabletop object and excluded the
+// same way furniture is, while IFC_IMPORT_FURNITURE is false. 0.5m
+// comfortably covers plates, cups, vases, books and other loose decor
+// (all well under it in every dimension) while staying well below
+// anything closer to furniture-sized (even a narrow side table or
+// pedestal is taller than this) - deliberately conservative, since the
+// cost of wrongly keeping a small object is low (mild clutter) but the
+// cost of wrongly excluding a real one is a silently incomplete model.
+final float IFC_SMALL_OBJECT_MAX_DIMENSION = 0.5;
 
 // Product types drawn as glass (IFC_MATERIAL_GLASS below) instead of
 // whatever opaque material the rest of the import is using. Only
@@ -410,6 +446,10 @@ int ifcImportUncutOpeningCount = 0;
 // separately from ifcImportSkippedCount, since this isn't something
 // unsupported being skipped, it's a deliberate choice.
 int ifcImportFurnitureExcludedCount = 0;
+// Small IfcBuildingElementProxy objects excluded the same way, while
+// the same toggle is false - see IFC_SMALL_OBJECT_MAX_DIMENSION's own
+// comment.
+int ifcImportSmallObjectExcludedCount = 0;
 HashMap<String, Integer> ifcImportSkippedReasons = new HashMap<String, Integer>();
 
 // Guards against a pathological/cyclic chain of nested IfcMappedItems
@@ -903,30 +943,109 @@ ArrayList<int[]> ifcPendingFaceOptions = new ArrayList<int[]>();
 int ifcBasePointCount = 0;
 int ifcBaseFaceCount = 0;
 
-int ifcQueuePoint (float x, float y, float z) {
-  ifcPendingPoints.add(new float[]{x, y, z});
-  return ifcBasePointCount + ifcPendingPoints.size() - 1;
+// A second, per-product staging layer in front of the one above: every
+// point/face a product's own geometry produces lands here first, with
+// purely local (0-based within this one product) indices, rather than
+// going straight into ifcPendingPoints/ifcPendingFaceNodes/
+// ifcPendingFaceOptions - because IFC_IMPORT_FURNITURE's own small-
+// object exclusion (see that constant's own comment) needs to know a
+// candidate's bounding box before deciding whether to keep its geometry
+// at all, and building the geometry first, locally, is the
+// straightforward way to get one. import_objects_IFC()'s own per-
+// product loop calls ifcBeginProductStaging() before processing a
+// product's Representation, then either ifcPromoteProductStaging()
+// (append this product's local points/faces onto the real pending
+// buffers, remapping local point indices to their final ones) or
+// ifcDiscardProductStaging() (small object - drop them) once it knows
+// whether to keep them. A product that was never going to produce Faces
+// at all (a tree, a person, ...) never touches any of this - those
+// branches of the loop return before reaching it.
+ArrayList<float[]> ifcProductPendingPoints = new ArrayList<float[]>();
+ArrayList<int[]> ifcProductPendingFaceNodes = new ArrayList<int[]>();
+ArrayList<int[]> ifcProductPendingFaceOptions = new ArrayList<int[]>();
+float ifcProductBBoxMinX, ifcProductBBoxMinY, ifcProductBBoxMinZ;
+float ifcProductBBoxMaxX, ifcProductBBoxMaxY, ifcProductBBoxMaxZ;
+
+void ifcBeginProductStaging () {
+  ifcProductPendingPoints.clear();
+  ifcProductPendingFaceNodes.clear();
+  ifcProductPendingFaceOptions.clear();
+  ifcProductBBoxMinX = ifcProductBBoxMinY = ifcProductBBoxMinZ = Float.MAX_VALUE;
+  ifcProductBBoxMaxX = ifcProductBBoxMaxY = ifcProductBBoxMaxZ = -Float.MAX_VALUE;
 }
 
-// Mirrors Faces.create()'s own two effects - appending the face itself,
-// and stamping allGroups' current (last) group's own stop index - just
-// against the pending buffer and a virtual index instead of the real
-// array, since this import hasn't flushed into it yet. See
-// ifcBeginGroupForPendingFaces() for the matching "start index" half of
-// that same group bookkeeping.
-void ifcQueueFace (int[] nodes, int m, int tes, int lyr, int vsb, int wgt, int clz) {
-  ifcPendingFaceNodes.add(nodes);
-  ifcPendingFaceOptions.add(new int[]{m, tes, lyr, vsb, wgt, clz});
-  if (allGroups.num > 0) {
-    allGroups.Faces[allGroups.num - 1][1] = ifcBaseFaceCount + ifcPendingFaceNodes.size() - 1;
+// The largest extent of this product's own geometry so far, along any
+// single axis - 0 if nothing's been queued yet (rather than a bogus
+// huge number from the min/max sentinels never having been touched).
+float ifcProductBBoxMaxDimension () {
+  if (ifcProductPendingPoints.size() == 0) return 0;
+  float dx = ifcProductBBoxMaxX - ifcProductBBoxMinX;
+  float dy = ifcProductBBoxMaxY - ifcProductBBoxMinY;
+  float dz = ifcProductBBoxMaxZ - ifcProductBBoxMinZ;
+  return max(dx, max(dy, dz));
+}
+
+void ifcDiscardProductStaging () {
+  ifcProductPendingPoints.clear();
+  ifcProductPendingFaceNodes.clear();
+  ifcProductPendingFaceOptions.clear();
+}
+
+// Appends this product's own staged points/faces onto the real pending
+// buffers - point indices get remapped from local (0-based within the
+// product) to their final virtual ones in the process, since every
+// other product's own points may have landed in between. Mirrors
+// Faces.create()'s own group-stop-index bookkeeping (see
+// ifcQueueFace()'s old comment, before this layer existed) once per
+// promoted face rather than once per queued one, since that's now only
+// known to be real once promotion happens.
+void ifcPromoteProductStaging () {
+  int pointOffset = ifcBasePointCount + ifcPendingPoints.size();
+  for (float[] p : ifcProductPendingPoints) {
+    ifcPendingPoints.add(p);
   }
+  for (int i = 0; i < ifcProductPendingFaceNodes.size(); i++) {
+    int[] localNodes = ifcProductPendingFaceNodes.get(i);
+    int[] globalNodes = new int[localNodes.length];
+    for (int j = 0; j < localNodes.length; j++) {
+      globalNodes[j] = localNodes[j] + pointOffset;
+    }
+    ifcPendingFaceNodes.add(globalNodes);
+    ifcPendingFaceOptions.add(ifcProductPendingFaceOptions.get(i));
+    if (allGroups.num > 0) {
+      allGroups.Faces[allGroups.num - 1][1] = ifcBaseFaceCount + ifcPendingFaceNodes.size() - 1;
+    }
+  }
+  ifcProductPendingPoints.clear();
+  ifcProductPendingFaceNodes.clear();
+  ifcProductPendingFaceOptions.clear();
+}
+
+int ifcQueuePoint (float x, float y, float z) {
+  ifcProductPendingPoints.add(new float[]{x, y, z});
+  if (x < ifcProductBBoxMinX) ifcProductBBoxMinX = x;
+  if (y < ifcProductBBoxMinY) ifcProductBBoxMinY = y;
+  if (z < ifcProductBBoxMinZ) ifcProductBBoxMinZ = z;
+  if (x > ifcProductBBoxMaxX) ifcProductBBoxMaxX = x;
+  if (y > ifcProductBBoxMaxY) ifcProductBBoxMaxY = y;
+  if (z > ifcProductBBoxMaxZ) ifcProductBBoxMaxZ = z;
+  return ifcProductPendingPoints.size() - 1; // local to this product - see ifcPromoteProductStaging()
+}
+
+void ifcQueueFace (int[] nodes, int m, int tes, int lyr, int vsb, int wgt, int clz) {
+  ifcProductPendingFaceNodes.add(nodes);
+  ifcProductPendingFaceOptions.add(new int[]{m, tes, lyr, vsb, wgt, clz});
 }
 
 // Called right after allGroups.beginNewGroup(): that call itself stamps
 // the new group's own start-of-range as allFaces.nodes.length, the
 // *real* array's current length - stale while this import's own faces
 // are still only queued, not yet flushed into it. Corrects it to the
-// virtual index the next queued face will actually land on.
+// virtual index the next *promoted* face will actually land on - safe
+// to compute up front even though promotion happens later, since
+// nothing else can land in ifcPendingFaceNodes between this group
+// starting and this same product's own staging being promoted or
+// discarded.
 void ifcBeginGroupForPendingFaces () {
   if (allGroups.num > 0) {
     allGroups.Faces[allGroups.num - 1][0] = ifcBaseFaceCount + ifcPendingFaceNodes.size();
@@ -1860,6 +1979,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportPersonCount = 0;
   ifcImportUncutOpeningCount = 0;
   ifcImportFurnitureExcludedCount = 0;
+  ifcImportSmallObjectExcludedCount = 0;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
   ifcMappedItemDepth = 0;
@@ -2047,16 +2167,48 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
         matchedMaterial = IFC_MATERIAL_EARTH;
       }
     }
+    // The m == -1 cycle's own advance is tentative, not committed to
+    // effectiveMaterial yet - see the small-object-exclusion comment
+    // below for why: a product that turns out to be a discarded small
+    // object must never consume a cycle slot, the same as it producing
+    // no Faces at all would. (When matchedMaterial != null, or m != -1,
+    // nextEffectiveMaterial just comes back out equal to
+    // effectiveMaterial - so committing it unconditionally below is a
+    // harmless no-op in both of those cases; only the actual m == -1 +
+    // no-explicit-match case below has anything to roll back.)
+    int nextEffectiveMaterial = effectiveMaterial;
     if (matchedMaterial != null) {
       materialForThisProduct = matchedMaterial;
     } else {
-      if (m == -1) effectiveMaterial = 1 + (effectiveMaterial % 8);
-      materialForThisProduct = effectiveMaterial;
+      if (m == -1) nextEffectiveMaterial = 1 + (effectiveMaterial % 8);
+      materialForThisProduct = nextEffectiveMaterial;
     }
 
     int repId = ifcRefId(e.attrs[6]);
+    ifcBeginProductStaging();
     ifcProcessProductRepresentation(ents, repId, productFrame, cx, cy, cz, sx, sy, sz,
       materialForThisProduct, tes, lyr, vsb, wgt, clz);
+
+    // Small-object exclusion (see IFC_SMALL_OBJECT_MAX_DIMENSION's own
+    // comment): only for IfcBuildingElementProxy, IFC's and most
+    // authoring tools' catch-all for "doesn't fit a more specific
+    // class" - used for everything from dinner plates to elevators, so
+    // only a genuinely small one gets excluded here, not the type as a
+    // whole. A product that produced no geometry at all has nothing to
+    // decide either way - ifcPromoteProductStaging() on an empty
+    // staging buffer is already a safe no-op, so it's simplest to
+    // always take that branch rather than add a third one.
+    if (!IFC_IMPORT_FURNITURE && e.type.equals("IFCBUILDINGELEMENTPROXY")
+      && ifcProductPendingFaceNodes.size() > 0 && ifcProductBBoxMaxDimension() < IFC_SMALL_OBJECT_MAX_DIMENSION) {
+      ifcDiscardProductStaging();
+      ifcImportSmallObjectExcludedCount++;
+      // effectiveMaterial deliberately left uncommitted - the next real
+      // (kept) product picks up exactly where the last one left off, as
+      // if this discarded one had never been in the file at all.
+    } else {
+      ifcPromoteProductStaging();
+      effectiveMaterial = nextEffectiveMaterial;
+    }
   }
 
   // Every point/face queued above (see ifcQueuePoint()/ifcQueueFace())
@@ -2072,6 +2224,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   if (ifcImportPersonCount > 0) summary += ", " + ifcImportPersonCount + " people placed";
   if (ifcImportUncutOpeningCount > 0) summary += ", " + ifcImportUncutOpeningCount + " opening(s) not cut (imported as solid)";
   if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
+  if (ifcImportSmallObjectExcludedCount > 0) summary += ", " + ifcImportSmallObjectExcludedCount + " small object(s) not imported";
   if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
   if (ifcImportHolesIgnoredCount > 0) summary += ", " + ifcImportHolesIgnoredCount + " inner boundary/boundaries ignored";
   summary += ".";

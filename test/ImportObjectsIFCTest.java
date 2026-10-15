@@ -1617,6 +1617,152 @@ class ImportObjectsIFCTest {
     assertEquals(2, app.allFaces.options[1][0], "second wall: material cycle continues at 2, not disrupted by the excluded sofa");
   }
 
+  // ================= small IfcBuildingElementProxy objects (same toggle) =====
+
+  @Test
+  void importObjectsIFC_smallBuildingElementProxy_isExcludedByDefault () throws IOException {
+    // A 0.1m cube - well under IFC_SMALL_OBJECT_MAX_DIMENSION (0.5m) on
+    // every axis, standing in for something like a coffee cup.
+    Path f = ifcFile("ifc-small-proxy-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,0.1,0.1);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,0.1);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCBUILDINGELEMENTPROXY('guid-1',$,'Coffee Cup',$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "a 0.1m proxy should be excluded as a small object");
+    assertEquals(0, app.allPoints.getLength(), "its points shouldn't be promoted either");
+    assertEquals(1, app.ifcImportSmallObjectExcludedCount);
+    assertEquals(0, app.ifcImportFurnitureExcludedCount, "small-object exclusion is tracked separately from furniture exclusion");
+  }
+
+  @Test
+  void importObjectsIFC_largeBuildingElementProxy_stillImports_evenThoughItsTheSameEntityType () throws IOException {
+    // A 2x2x2m box - the same IFC type as the coffee cup above, but
+    // large enough (e.g. a washing machine, an elevator) that it should
+    // never be excluded just for being an IfcBuildingElementProxy.
+    Path f = ifcFile("ifc-large-proxy-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,2.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,2.);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCBUILDINGELEMENTPROXY('guid-1',$,'Washing Machine',$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "a 2m proxy should import normally (2 caps + 4 sides)");
+    assertEquals(0, app.ifcImportSmallObjectExcludedCount);
+  }
+
+  @Test
+  void importObjectsIFC_smallNonProxyProduct_isNotExcluded_onlyBuildingElementProxyIs () throws IOException {
+    // The same tiny 0.1m cube, but as an IfcFurnishingElement - already
+    // excluded wholesale by the furniture toggle regardless of size -
+    // and as an IfcWall, which should never be size-excluded at all.
+    Path f = ifcFile("ifc-small-nonproxy-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,0.1,0.1);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,0.1);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCWALL('guid-1',$,$,$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "a tiny IfcWall should still import - the size exclusion only applies to IfcBuildingElementProxy");
+  }
+
+  @Test
+  void importObjectsIFC_smallBuildingElementProxyDoesNotDisruptTheWallMaterialCycleOrGroupCount () throws IOException {
+    Path f = ifcFile("ifc-small-proxy-cycle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,0.1,0.1);
+        #21=IFCDIRECTION((0.,0.,1.));
+        #22=IFCEXTRUDEDAREASOLID(#20,$,#21,0.1);
+        #23=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#22));
+        #24=IFCPRODUCTDEFINITIONSHAPE($,$,(#23));
+        #25=IFCBUILDINGELEMENTPROXY('guid-2',$,'Vase',$,$,$,#24);
+        #30=IFCWALL('guid-3',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), -1 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allFaces.nodes.length, "only the two walls' faces should be promoted");
+    assertEquals(1, app.allFaces.options[0][0], "first wall: material cycle starts at 1");
+    assertEquals(2, app.allFaces.options[1][0], "second wall: material cycle continues at 2, not disrupted by the excluded vase");
+  }
+
+  @Test
+  void importObjectsIFC_pointIndicesStayCorrect_whenASmallObjectIsExcludedBetweenTwoWalls () throws IOException {
+    // The trickiest part of the per-product staging/promotion refactor:
+    // the excluded vase's own points must never "use up" any part of
+    // the final index space, so the second wall's points land exactly
+    // where they would have if the vase had never been in the file.
+    Path f = ifcFile("ifc-small-proxy-indices-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,0.1,0.1);
+        #21=IFCDIRECTION((0.,0.,1.));
+        #22=IFCEXTRUDEDAREASOLID(#20,$,#21,0.1);
+        #23=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#22));
+        #24=IFCPRODUCTDEFINITIONSHAPE($,$,(#23));
+        #25=IFCBUILDINGELEMENTPROXY('guid-2',$,'Vase',$,$,$,#24);
+        #101=IFCCARTESIANPOINT((10.,0.,0.));
+        #102=IFCCARTESIANPOINT((11.,0.,0.));
+        #103=IFCCARTESIANPOINT((11.,1.,0.));
+        #104=IFCCARTESIANPOINT((10.,1.,0.));
+        #105=IFCPOLYLOOP((#101,#102,#103,#104));
+        #106=IFCFACEOUTERBOUND(#105,.T.);
+        #107=IFCFACE((#106));
+        #108=IFCCLOSEDSHELL((#107));
+        #109=IFCFACETEDBREP(#108);
+        #110=IFCSHAPEREPRESENTATION($,'Body','Brep',(#109));
+        #111=IFCPRODUCTDEFINITIONSHAPE($,$,(#110));
+        #112=IFCWALL('guid-3',$,$,$,$,$,#111);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(8, app.allPoints.getLength(), "4 points per wall, none from the excluded vase");
+    assertEquals(2, app.allFaces.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.allFaces.nodes[0]);
+    assertArrayEquals(new int[]{4, 5, 6, 7}, app.allFaces.nodes[1], "second wall's indices should pick up right where the first wall's left off");
+    assertEquals(10f, app.allPoints.getX(4), 0.0001f);
+  }
+
   // ================= bulk point/face queuing (performance fix) ===============
 
   @Test
