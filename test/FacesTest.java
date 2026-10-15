@@ -213,34 +213,133 @@ class FacesTest {
     assertEquals(0.75f, fresh.passiveColorscaleFactor, 0.0001f);
   }
 
-  // ================= excludedFromFaceGrid ===============================
+  // ================= excludedFromFaceGrid / isPointInsideAnySpaceBoundingBox ==
   //
-  // build_win3DCache() itself - the only place this is actually read, and
-  // what populates the raycasting grid (win3DCache_gridPoints*/
-  // win3DCache_gridFaces, then entirePointsX/Y/Z/entireFaces once
-  // addToFaceGrid() copies them in) - calls createShape(GROUP), which
-  // needs a real graphics context and isn't unit-testable as-is in this
-  // headless environment (see test/README.md's own "Extending this"
-  // section, and UI_toolBarTest.java's viewLayout_allFourSubOptions() for
-  // the same kind of createGraphics()-needs-a-real-surface issue
-  // elsewhere in this suite). excludedFromFaceGrid() is the actual
-  // per-face decision build_win3DCache() makes, pulled out into its own
-  // small, pure method for exactly that reason - this is what's actually
-  // tested here, not the grid-building integration around it.
+  // build_win3DCache() itself - the only place either of these is
+  // actually read, and what populates the raycasting grid
+  // (win3DCache_gridPoints*/win3DCache_gridFaces, then
+  // entirePointsX/Y/Z/entireFaces once addToFaceGrid() copies them in) -
+  // calls createShape(GROUP), which needs a real graphics context and
+  // isn't unit-testable as-is in this headless environment (see
+  // test/README.md's own "Extending this" section, and
+  // UI_toolBarTest.java's viewLayout_allFourSubOptions() for the same
+  // kind of createGraphics()-needs-a-real-surface issue elsewhere in
+  // this suite). excludedFromFaceGrid() and
+  // isPointInsideAnySpaceBoundingBox() are the actual per-face/per-build
+  // decisions build_win3DCache() makes, pulled out into their own small,
+  // pure methods for exactly that reason - this is what's actually
+  // tested here, not the grid-building integration around them.
 
   @Test
-  void excludedFromFaceGrid_true_forIFC_MATERIAL_SPACE () {
-    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_SPACE));
+  void excludedFromFaceGrid_true_forIFC_MATERIAL_SPACE_regardlessOfCameraPosition () {
+    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_SPACE, false));
+    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_SPACE, true));
   }
 
   @Test
-  void excludedFromFaceGrid_false_forOrdinaryMaterials () {
+  void excludedFromFaceGrid_glass_onlyWhenTheCameraIsInsideASpace () {
+    assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_GLASS, false), "camera outside every space: glass should still cast/receive a shadow");
+    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_GLASS, true), "camera inside a space: glass shouldn't block a ray out through it");
+  }
+
+  @Test
+  void excludedFromFaceGrid_false_forOrdinaryMaterials_regardlessOfCameraPosition () {
     // 0 is IFC_MATERIAL_SOLAR, included on purpose - a solar panel
     // should still cast/receive shadows, unlike a room/zone volume.
-    assertFalse(app.allFaces.excludedFromFaceGrid(0));
-    assertFalse(app.allFaces.excludedFromFaceGrid(1));
-    assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_GLASS));
-    assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_CONCRETE));
-    assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_WATER));
+    for (boolean cameraInsideASpace : new boolean[]{false, true}) {
+      assertFalse(app.allFaces.excludedFromFaceGrid(0, cameraInsideASpace));
+      assertFalse(app.allFaces.excludedFromFaceGrid(1, cameraInsideASpace));
+      assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_CONCRETE, cameraInsideASpace));
+      assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_WATER, cameraInsideASpace));
+    }
+  }
+
+  // A 2x2x2 room centred on the origin - faces 0-5 (a box's 6 sides),
+  // all IFC_MATERIAL_SPACE - used by every isPointInsideAnySpaceBoundingBox
+  // test below.
+  private void buildOneSpaceBox () {
+    app.allPoints.makeEmpty(0);
+    float[][] corners = {
+      {-1, -1, -1}, {1, -1, -1}, {1, 1, -1}, {-1, 1, -1},
+      {-1, -1, 1}, {1, -1, 1}, {1, 1, 1}, {-1, 1, 1}
+    };
+    for (float[] c : corners) app.allPoints.create(c[0], c[1], c[2]);
+
+    int[][] faceNodes = {
+      {0, 1, 2, 3}, {4, 5, 6, 7}, {0, 1, 5, 4},
+      {1, 2, 6, 5}, {2, 3, 7, 6}, {3, 0, 4, 7}
+    };
+    app.allFaces.makeEmpty(6);
+    for (int f = 0; f < 6; f++) {
+      app.allFaces.nodes[f] = faceNodes[f];
+      app.allFaces.setMaterial(f, app.IFC_MATERIAL_SPACE);
+    }
+  }
+
+  @Test
+  void isPointInsideAnySpaceBoundingBox_pointInsideTheBox_isTrue () {
+    buildOneSpaceBox();
+    assertTrue(app.allFaces.isPointInsideAnySpaceBoundingBox(0, 0, 0), "dead centre");
+    assertTrue(app.allFaces.isPointInsideAnySpaceBoundingBox(0.9f, 0.9f, 0.9f), "near a corner, still inside");
+    assertTrue(app.allFaces.isPointInsideAnySpaceBoundingBox(1, 1, 1), "exactly on a corner - inclusive bounds");
+  }
+
+  @Test
+  void isPointInsideAnySpaceBoundingBox_pointOutsideTheBox_isFalse () {
+    buildOneSpaceBox();
+    assertFalse(app.allFaces.isPointInsideAnySpaceBoundingBox(5, 0, 0));
+    assertFalse(app.allFaces.isPointInsideAnySpaceBoundingBox(0, 0, 1.1f));
+  }
+
+  @Test
+  void isPointInsideAnySpaceBoundingBox_noSpaceFacesAtAll_isAlwaysFalse () {
+    app.allPoints.makeEmpty(0);
+    app.allPoints.create(0, 0, 0);
+    app.allPoints.create(1, 0, 0);
+    app.allPoints.create(1, 1, 0);
+    app.allFaces.makeEmpty(1);
+    app.allFaces.nodes[0] = new int[]{0, 1, 2};
+    app.allFaces.setMaterial(0, app.IFC_MATERIAL_CONCRETE); // not a space
+
+    assertFalse(app.allFaces.isPointInsideAnySpaceBoundingBox(0.5f, 0.3f, 0));
+  }
+
+  @Test
+  void isPointInsideAnySpaceBoundingBox_pointInsideASecondSeparateSpace_isTrue () {
+    // Two separate rooms: the 2x2x2 box above at the origin, plus a
+    // second, non-space face (a "wall", breaking the run - without it,
+    // two space faces placed back to back with nothing non-space
+    // between them are indistinguishable from one bigger room, which is
+    // exactly the bug this fixture used to have), then a second small
+    // room far away - a point between them (inside neither) should read
+    // false, and a point inside the second room should still read true,
+    // proving this checks every contiguous run of space faces
+    // separately, not just merging everything into one.
+    buildOneSpaceBox();
+
+    app.allPoints.create(0, 0, 5);
+    app.allPoints.create(1, 0, 5);
+    app.allPoints.create(1, 1, 5);
+    app.allPoints.create(19, 19, 19);
+    app.allPoints.create(21, 19, 19);
+    app.allPoints.create(21, 21, 19);
+    app.allPoints.create(19, 21, 19);
+
+    int before = app.allFaces.nodes.length;
+    int[][] newNodes = new int[before + 2][];
+    int[][] newOptions = new int[before + 2][6];
+    for (int f = 0; f < before; f++) {
+      newNodes[f] = app.allFaces.nodes[f];
+      newOptions[f] = app.allFaces.options[f];
+    }
+    newNodes[before] = new int[]{8, 9, 10}; // the wall, non-space
+    newNodes[before + 1] = new int[]{11, 12, 13, 14}; // the second room
+    app.allFaces.nodes = newNodes;
+    app.allFaces.options = newOptions;
+    app.allFaces.setMaterial(before, app.IFC_MATERIAL_CONCRETE);
+    app.allFaces.setMaterial(before + 1, app.IFC_MATERIAL_SPACE);
+
+    assertFalse(app.allFaces.isPointInsideAnySpaceBoundingBox(10, 10, 10), "between the two rooms, inside neither");
+    assertTrue(app.allFaces.isPointInsideAnySpaceBoundingBox(20, 20, 19), "inside the second, far-away room");
   }
 }

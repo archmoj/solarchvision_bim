@@ -84,20 +84,85 @@ class Faces {
   // Whether a face with this material should be left out of the
   // raycasting grid (win3DCache_gridPoints*/win3DCache_gridFaces below,
   // and so entirePointsX/Y/Z/entireFaces once addToFaceGrid() copies
-  // them in) - currently just IFC_MATERIAL_SPACE (an IfcSpace's own
-  // room/zone volume, not real building fabric - see that constant's
-  // own comment in import_objects_IFC.pde): since the grid is what
-  // shadow-casting/receiving and every other ray/intersection test in
-  // isIntersected_Faces.pde actually reads, a face excluded here simply
-  // never participates in either, while still drawing normally (see
-  // build_win3DCache()'s own use of this, right where it decides
-  // whether to add a face's points to the grid). Pulled out as its own
-  // small, pure method - rather than left inline in build_win3DCache(),
-  // which needs a real graphics context (createShape(GROUP)) and so
-  // isn't unit-testable as-is - so this one decision can be tested on
-  // its own.
-  boolean excludedFromFaceGrid (int material) {
-    return material == IFC_MATERIAL_SPACE;
+  // them in): since the grid is what shadow-casting/receiving and every
+  // other ray/intersection test in isIntersected_Faces.pde actually
+  // reads, a face excluded here simply never participates in either,
+  // while still drawing normally (see build_win3DCache()'s own use of
+  // this, right where it decides whether to add a face's points to the
+  // grid). Two cases:
+  //   - IFC_MATERIAL_SPACE (an IfcSpace's own room/zone volume, not
+  //     real building fabric - see that constant's own comment in
+  //     import_objects_IFC.pde) is always excluded, regardless of
+  //     cameraInsideASpace.
+  //   - IFC_MATERIAL_GLASS is excluded only while the camera itself is
+  //     inside one of those same room/zone volumes (see
+  //     isPointInsideAnySpaceBoundingBox() below, and
+  //     build_win3DCache()'s own computation of cameraInsideASpace,
+  //     once per build rather than once per face): looking out from
+  //     inside a room, a window's own glass shouldn't block a ray the
+  //     way an opaque wall would - but looking at the building from
+  //     outside, that same glass should still read as something solid
+  //     enough to cast/receive a shadow, the same as any other face.
+  // Pulled out as its own small, pure method - rather than left inline
+  // in build_win3DCache(), which needs a real graphics context
+  // (createShape(GROUP)) and so isn't unit-testable as-is - so this one
+  // decision can be tested on its own.
+  boolean excludedFromFaceGrid (int material, boolean cameraInsideASpace) {
+    if (material == IFC_MATERIAL_SPACE) return true;
+    if (material == IFC_MATERIAL_GLASS && cameraInsideASpace) return true;
+    return false;
+  }
+
+  // Whether (px,py,pz) - in the same raw/unscaled coordinate space as
+  // allPoints and the raycasting grid itself, e.g. WIN3D.
+  // cameraPositionScaled() rather than WIN3D.cameraX/Y/Z directly -
+  // falls inside the axis-aligned bounding box of any one contiguous
+  // run of IFC_MATERIAL_SPACE faces. Not a true point-in-polyhedron
+  // test - computing one properly, for a room that might not even be
+  // convex, is a materially harder problem than this needs (the same
+  // "serious computational-geometry undertaking, well out of scope"
+  // tradeoff import_objects_IFC.pde's own header comment already makes
+  // for a true Boolean solid difference) - a bounding box is a cheap,
+  // good-enough stand-in for "is the camera roughly inside this room".
+  // Each contiguous run of IFC_MATERIAL_SPACE faces is treated as one
+  // room/zone's own faces, since that's how import_objects_IFC.pde
+  // actually writes them - one run per imported IfcSpace, back to back,
+  // never interleaved with another product's own faces.
+  boolean isPointInsideAnySpaceBoundingBox (float px, float py, float pz) {
+    int f = 0;
+    while (f < this.nodes.length) {
+      if (this.getMaterial(f) != IFC_MATERIAL_SPACE) {
+        f++;
+        continue;
+      }
+
+      float minX = FLOAT_huge, minY = FLOAT_huge, minZ = FLOAT_huge;
+      float maxX = -FLOAT_huge, maxY = -FLOAT_huge, maxZ = -FLOAT_huge;
+
+      int runEnd = f;
+      while (runEnd < this.nodes.length && this.getMaterial(runEnd) == IFC_MATERIAL_SPACE) {
+        for (int j = 0; j < this.nodes[runEnd].length; j++) {
+          int vNo = this.nodes[runEnd][j];
+          float x = allPoints.getX(vNo);
+          float y = allPoints.getY(vNo);
+          float z = allPoints.getZ(vNo);
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+          if (z < minZ) minZ = z;
+          if (z > maxZ) maxZ = z;
+        }
+        runEnd++;
+      }
+
+      if (px >= minX && px <= maxX && py >= minY && py <= maxY && pz >= minZ && pz <= maxZ) {
+        return true;
+      }
+
+      f = runEnd;
+    }
+    return false;
   }
 
   void addToFaceGrid () {
@@ -1373,6 +1438,12 @@ class Faces {
     int PAL_direction = SHADE.get_PAL_direction();
     float PAL_multiplier = SHADE.get_PAL_multiplier();
 
+    // Computed once per build, not once per face - see
+    // excludedFromFaceGrid()'s own comment for what this changes (glass
+    // only, never IFC_MATERIAL_SPACE itself) and why.
+    float[] cameraPos = WIN3D.cameraPositionScaled();
+    boolean cameraInsideASpace = this.isPointInsideAnySpaceBoundingBox(cameraPos[0], cameraPos[1], cameraPos[2]);
+
     for (int f = 0; f < this.nodes.length; f++) {
 
       int vsb = this.getVisibility(f);
@@ -1472,7 +1543,7 @@ class Faces {
             // else about it (still drawn here via emitPolygon() below,
             // still getting its own edge lines) stays the same as any
             // other face.
-            if (!this.excludedFromFaceGrid(mt)) {
+            if (!this.excludedFromFaceGrid(mt, cameraInsideASpace)) {
               gridFace[s] = this.win3DCache_gridPointsX.size();
               this.win3DCache_gridPointsX.add(subFace[s][0]);
               this.win3DCache_gridPointsY.add(subFace[s][1]);
@@ -1481,7 +1552,7 @@ class Faces {
           }
 
           emitPolygon(group, verts, colors);
-          if (!this.excludedFromFaceGrid(mt)) this.win3DCache_gridFaces.add(gridFace);
+          if (!this.excludedFromFaceGrid(mt, cameraInsideASpace)) this.win3DCache_gridFaces.add(gridFace);
 
           if (this.displayEdges) edgePolygons.add(edgePolygon);
         }

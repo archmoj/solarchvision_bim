@@ -134,7 +134,9 @@
 //     same unconditional way a window always draws as glass - a space
 //     isn't real building fabric, so there's no real material for a
 //     file-authored one to actually mean here. See ifcSpaceProductTypes
-//     above and IFC_IMPORT_SPACE below.
+//     above and IFC_IMPORT_SPACE below. Counted in ifcImportSpaceCount
+//     (a pool included), surfaced in the post-import summary line the
+//     same way ifcImportTreeCount/ifcImportPersonCount already are.
 //   - IfcMappedItem - a "family/type" instance, the same shared geometry
 //     reused, positioned and scaled differently at every place it's
 //     used; commonly how a door, window or piece of furniture is
@@ -674,6 +676,10 @@ int ifcImportSkippedCount = 0;
 int ifcImportHolesCutCount = 0;
 int ifcImportTreeCount = 0;
 int ifcImportPersonCount = 0;
+// How many IfcSpace products (see ifcSpaceProductTypes above) actually
+// had their own geometry kept - a pool recognized this way counts too,
+// same as it always has, regardless of ifcImportSpace's own value.
+int ifcImportSpaceCount = 0;
 // IfcBooleanResult/IfcBooleanClippingResult items that imported only
 // their FirstOperand - see ifcProcessRepresentationItem()'s own
 // comment on that - counted separately from ifcImportSkippedCount:
@@ -2664,6 +2670,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportHolesCutCount = 0;
   ifcImportTreeCount = 0;
   ifcImportPersonCount = 0;
+  ifcImportSpaceCount = 0;
   ifcImportUncutOpeningCount = 0;
   ifcImportFurnitureExcludedCount = 0;
   ifcImportSmallObjectExcludedCount = 0;
@@ -2936,6 +2943,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     } else {
       ifcPromoteProductStaging();
       effectiveMaterial = nextEffectiveMaterial;
+      if (ifcSpaceProductTypes.contains(e.type)) ifcImportSpaceCount++;
     }
   }
 
@@ -2962,6 +2970,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
   if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
   if (ifcImportPersonCount > 0) summary += ", " + ifcImportPersonCount + " people placed";
+  if (ifcImportSpaceCount > 0) summary += ", " + ifcImportSpaceCount + " space(s) added";
   if (ifcImportUncutOpeningCount > 0) summary += ", " + ifcImportUncutOpeningCount + " opening(s) not cut (imported as solid)";
   if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
   if (ifcImportSmallObjectExcludedCount > 0) summary += ", " + ifcImportSmallObjectExcludedCount + " small object(s) not imported";

@@ -899,6 +899,7 @@ class ImportObjectsIFCTest {
 
     assertEquals(1, app.allFaces.nodes.length, "ifcImportSpace is true by default, so a plain IfcSpace should import its own geometry");
     assertEquals(8, app.allFaces.options[0][0], "should default to IFC_MATERIAL_SPACE (8), not the fixed material (5)");
+    assertEquals(1, app.ifcImportSpaceCount);
   }
 
   @Test
@@ -956,6 +957,30 @@ class ImportObjectsIFCTest {
     // while this toggle is off.
     assertEquals(1, app.allFaces.nodes.length);
     assertEquals(19, app.allFaces.options[0][0], "the pool should still import, with IFC_MATERIAL_WATER, regardless of ifcImportSpace");
+    assertEquals(1, app.ifcImportSpaceCount, "only the pool should be counted - the excluded office space shouldn't be");
+  }
+
+  @Test
+  void ifcImportSpaceCount_countsEveryKeptSpace_zeroWhenThereAreNone () throws IOException {
+    Path f = ifcFile("ifc-space-count-zero-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.ifcImportSpaceCount, "a file with no IfcSpace at all - just a wall - should count zero spaces");
   }
 
   // ================= IfcSite: topography, unlike the other spatial types =====
@@ -2218,6 +2243,7 @@ class ImportObjectsIFCTest {
     assertEquals(2, app.allFaces.nodes.length);
     assertEquals(8, app.allFaces.options[0][0], "the office space");
     assertEquals(19, app.allFaces.options[1][0], "the pool");
+    assertEquals(2, app.ifcImportSpaceCount, "both IfcSpace products should be counted, the pool included");
   }
 
   @Test
