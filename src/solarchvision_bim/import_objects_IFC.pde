@@ -113,6 +113,15 @@
 //     own MappingOrigin is the identity placement; see that function's
 //     own comment, and the limitation below, for the (uncommon) case
 //     where that assumption doesn't hold.
+//   - IfcBooleanResult/IfcBooleanClippingResult - typically how a door/
+//     window opening is cut into a wall or slab - imports only
+//     FirstOperand (almost always the wall/slab's own solid), not a
+//     true boolean evaluation of the cut itself (see the limitation
+//     below): the element still shows up as real geometry instead of
+//     being skipped outright, just without its opening. Counted in
+//     ifcImportUncutOpeningCount, separately from
+//     ifcImportSkippedCount, since this is real, imported geometry,
+//     not something left out of the import.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -124,9 +133,12 @@
 //     IfcAdvancedBrep's curved faces, swept/revolved solids other than
 //     a straight extrusion) are not evaluated; items that need them are
 //     skipped and counted, not approximated.
-//   - Boolean operations (IfcBooleanClippingResult/IfcBooleanResult,
-//     typically how a door/window opening is cut into a wall or slab)
-//     are not evaluated.
+//   - Boolean operations are not truly evaluated (see the bullet above):
+//     computing a robust, general 3D solid difference is a serious
+//     computational-geometry undertaking in its own right, well out of
+//     scope for an importer like this one. Only the uncut FirstOperand
+//     is imported, so a wall or slab with a window/door opening shows
+//     up solid, without the opening cut out as a hole.
 //   - Furniture (IfcFurnishingElement, IfcFurniture,
 //     IfcSystemFurnitureElement) isn't imported at all while
 //     IFC_IMPORT_FURNITURE (below) is false, its current default -
@@ -388,6 +400,12 @@ int ifcImportSkippedCount = 0;
 int ifcImportHolesIgnoredCount = 0;
 int ifcImportTreeCount = 0;
 int ifcImportPersonCount = 0;
+// IfcBooleanResult/IfcBooleanClippingResult items that imported only
+// their FirstOperand - see ifcProcessRepresentationItem()'s own
+// comment on that - counted separately from ifcImportSkippedCount:
+// this is real, imported geometry, just without its opening cut out,
+// not something left out of the import entirely.
+int ifcImportUncutOpeningCount = 0;
 // Furniture excluded by IFC_IMPORT_FURNITURE == false - counted
 // separately from ifcImportSkippedCount, since this isn't something
 // unsupported being skipped, it's a deliberate choice.
@@ -403,6 +421,14 @@ HashMap<String, Integer> ifcImportSkippedReasons = new HashMap<String, Integer>(
 // reset to 0 at the top of every import_objects_IFC() call, same as
 // the counters above.
 int ifcMappedItemDepth = 0;
+
+// Guards against a pathological/cyclic chain of nested
+// IfcBooleanResult/IfcBooleanClippingResult items the same way
+// ifcMappedItemDepth guards IfcMappedItem - see
+// ifcProcessRepresentationItem()'s own comment. Capped higher than the
+// mapped-item one (100, not 6): several openings chained one after
+// another on the same wall is normal, not pathological.
+int ifcBooleanResultDepth = 0;
 
 // The multiplier that converts a raw length value read from the file
 // into metres - the app's own working unit, same as every other
@@ -1247,7 +1273,37 @@ void ifcProcessRepresentationItem (HashMap<Integer, StepEntity> ents, int itemId
     return;
   }
 
-  ifcNoteSkipped(e.type); // booleans, swept curves, etc. - see file header
+  // IfcBooleanResult/IfcBooleanClippingResult - how a door/window
+  // opening gets cut into a wall or slab (Operator(0) is normally
+  // .DIFFERENCE., FirstOperand(1) the wall/slab's own solid,
+  // SecondOperand(2) the opening's own void shape, or a half-space for
+  // a simpler planar clip). Full CSG evaluation - a general, robust 3D
+  // solid difference - is a serious computational-geometry undertaking
+  // in its own right and well out of scope for an importer like this
+  // one. Instead, only FirstOperand is processed, so the wall/slab
+  // still shows up as real geometry rather than being skipped outright
+  // (the alternative, before this) - just without its opening actually
+  // cut out, counted in ifcImportUncutOpeningCount for transparency
+  // rather than silently left looking identical to a wall that was
+  // never meant to have one. Recursing back into this same function
+  // handles a FirstOperand that's itself another boolean result too -
+  // several openings cut one after another, common for a wall with
+  // more than one window - up to ifcBooleanResultDepth's own cap,
+  // guarding against a pathological/cyclic chain the same way
+  // ifcMappedItemDepth does for IfcMappedItem.
+  if (e.type.equals("IFCBOOLEANRESULT") || e.type.equals("IFCBOOLEANCLIPPINGRESULT")) {
+    if (e.attrs.length >= 2 && ifcBooleanResultDepth <= 100) {
+      ifcImportUncutOpeningCount++;
+      ifcBooleanResultDepth++;
+      ifcProcessRepresentationItem(ents, ifcRefId(e.attrs[1]), productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
+      ifcBooleanResultDepth--;
+    } else {
+      ifcNoteSkipped(e.type);
+    }
+    return;
+  }
+
+  ifcNoteSkipped(e.type); // swept curves, etc. - see file header
 }
 
 // IfcMappedItem: a "family/type" instance - the same shared geometry
@@ -1802,10 +1858,12 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportHolesIgnoredCount = 0;
   ifcImportTreeCount = 0;
   ifcImportPersonCount = 0;
+  ifcImportUncutOpeningCount = 0;
   ifcImportFurnitureExcludedCount = 0;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
   ifcMappedItemDepth = 0;
+  ifcBooleanResultDepth = 0;
   ifcPendingPoints.clear();
   ifcPendingFaceNodes.clear();
   ifcPendingFaceOptions.clear();
@@ -2012,6 +2070,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
   if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
   if (ifcImportPersonCount > 0) summary += ", " + ifcImportPersonCount + " people placed";
+  if (ifcImportUncutOpeningCount > 0) summary += ", " + ifcImportUncutOpeningCount + " opening(s) not cut (imported as solid)";
   if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
   if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
   if (ifcImportHolesIgnoredCount > 0) summary += ", " + ifcImportHolesIgnoredCount + " inner boundary/boundaries ignored";

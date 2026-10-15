@@ -228,25 +228,115 @@ class ImportObjectsIFCTest {
 
   @Test
   void importObjectsIFC_unsupportedRepresentationItem_isSkippedAndCounted_notSilentlyIgnored () throws IOException {
-    // IfcBooleanClippingResult (a documented limitation - boolean
-    // operations aren't evaluated) stands in here for "a representation
-    // item type this importer genuinely doesn't handle" - IfcMappedItem
-    // used to be that case, until it gained its own support; a
-    // malformed IfcMappedItem (e.g. a missing RepresentationMap) is
-    // covered by its own, more specific test instead.
+    // IfcRevolvedAreaSolid (a documented limitation - swept/revolved
+    // solids other than a straight extrusion aren't evaluated) stands
+    // in here for "a representation item type this importer genuinely
+    // doesn't handle". IfcBooleanClippingResult/IfcMappedItem used to
+    // be that case too, until each gained its own (partial, for
+    // booleans) support - a malformed IfcMappedItem or
+    // IfcBooleanClippingResult is covered by its own, more specific
+    // test instead.
     Path f = ifcFile("ifc-skip-test", """
-        #1=IFCBOOLEANCLIPPINGRESULT(.DIFFERENCE.,#2,#3);
-        #4=IFCSHAPEREPRESENTATION($,'Body','Clipping',(#1));
-        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
-        #6=IFCWALL('guid-1',$,$,$,$,$,#5);
+        #1=IFCARBITRARYCLOSEDPROFILEDEF(.AREA.,$,#2);
+        #2=IFCPOLYLINE((#3,#4,#5));
+        #3=IFCCARTESIANPOINT((0.,0.));
+        #4=IFCCARTESIANPOINT((1.,0.));
+        #5=IFCCARTESIANPOINT((1.,1.));
+        #6=IFCAXIS1PLACEMENT(#7,$);
+        #7=IFCCARTESIANPOINT((0.,0.,0.));
+        #8=IFCREVOLVEDAREASOLID(#1,$,#6,3.14159);
+        #9=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#8));
+        #10=IFCPRODUCTDEFINITIONSHAPE($,$,(#9));
+        #11=IFCWALL('guid-1',$,$,$,$,$,#10);
         """
     );
 
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(0, app.allFaces.nodes.length, "IfcBooleanClippingResult isn't supported, so no geometry should appear");
+    assertEquals(0, app.allFaces.nodes.length, "IfcRevolvedAreaSolid isn't supported, so no geometry should appear");
     assertEquals(1, app.ifcImportSkippedCount);
-    assertEquals(Integer.valueOf(1), app.ifcImportSkippedReasons.get("IFCBOOLEANCLIPPINGRESULT"));
+    assertEquals(Integer.valueOf(1), app.ifcImportSkippedReasons.get("IFCREVOLVEDAREASOLID"));
+  }
+
+  // ================= boolean results: uncut-solid fallback ====================
+
+  @Test
+  void importObjectsIFC_booleanClippingResult_importsTheUncutFirstOperand () throws IOException {
+    Path f = ifcFile("ifc-boolean-clip-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,4.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,3.);
+        #4=IFCBOOLEANCLIPPINGRESULT(.DIFFERENCE.,#3,$);
+        #5=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#4));
+        #6=IFCPRODUCTDEFINITIONSHAPE($,$,(#5));
+        #7=IFCWALL('guid-1',$,$,$,$,$,#6);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "the wall's own solid (2 caps + 4 sides) should still import");
+    assertEquals(1, app.ifcImportUncutOpeningCount);
+    assertEquals(0, app.ifcImportSkippedCount, "an evaluated (if uncut) boolean result isn't an unsupported-item skip");
+  }
+
+  @Test
+  void importObjectsIFC_plainBooleanResult_behavesTheSameAsTheClippingSubtype () throws IOException {
+    Path f = ifcFile("ifc-boolean-result-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,4.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,3.);
+        #4=IFCBOOLEANRESULT(.DIFFERENCE.,#3,$);
+        #5=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#4));
+        #6=IFCPRODUCTDEFINITIONSHAPE($,$,(#5));
+        #7=IFCWALL('guid-1',$,$,$,$,$,#6);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length);
+    assertEquals(1, app.ifcImportUncutOpeningCount);
+  }
+
+  @Test
+  void importObjectsIFC_chainedBooleanResults_resolveThroughToTheRealSolid_multipleOpeningsCounted () throws IOException {
+    // Two openings cut one after another - a common pattern for a wall
+    // with more than one window - chains FirstOperand through two
+    // boolean results before reaching the real extrusion.
+    Path f = ifcFile("ifc-boolean-chain-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,4.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,3.);
+        #4=IFCBOOLEANCLIPPINGRESULT(.DIFFERENCE.,#3,$);
+        #5=IFCBOOLEANCLIPPINGRESULT(.DIFFERENCE.,#4,$);
+        #6=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#5));
+        #7=IFCPRODUCTDEFINITIONSHAPE($,$,(#6));
+        #8=IFCWALL('guid-1',$,$,$,$,$,#7);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "should still resolve through both boolean levels to the real solid");
+    assertEquals(2, app.ifcImportUncutOpeningCount, "two chained boolean results - two openings not cut");
+  }
+
+  @Test
+  void importObjectsIFC_malformedBooleanResult_isSkippedAndCounted_notCrashed () throws IOException {
+    Path f = ifcFile("ifc-boolean-malformed-test", """
+        #1=IFCBOOLEANCLIPPINGRESULT(.DIFFERENCE.);
+        #2=IFCSHAPEREPRESENTATION($,'Body','Clipping',(#1));
+        #3=IFCPRODUCTDEFINITIONSHAPE($,$,(#2));
+        #4=IFCWALL('guid-1',$,$,$,$,$,#3);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(1, app.ifcImportSkippedCount);
+    assertEquals(0, app.ifcImportUncutOpeningCount, "a malformed boolean result shouldn't count as an evaluated-but-uncut opening");
   }
 
   // ================= groups / material cycling (mirrors OBJ's "g" lines) =====
