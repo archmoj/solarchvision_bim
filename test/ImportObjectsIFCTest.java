@@ -922,29 +922,37 @@ class ImportObjectsIFCTest {
   }
 
   // ================= IFC_IMPORT_NORTH: rotate to the project's true north ====
+  //
+  // These fixtures' IFCGEOMETRICREPRESENTATIONCONTEXT(...) line - a
+  // ContextIdentifier, ContextType, CoordinateSpaceDimension, Precision,
+  // WorldCoordinateSystem, then TrueNorth - mirrors the exact attribute
+  // order of real official buildingSMART sample files
+  // (buildingSMART/IFC4.x-specification-models, e.g.
+  // placements-and-gis-referencing/grid-placement and
+  // geographic-referencing-utm), which also confirms TrueNorth is a
+  // plain 2D IfcDirection (no Z component), same as used here.
 
   @Test
-  void importObjectsIFC_trueNorth_angleIsReadFromIfcSitesOwnPlacement () throws IOException {
+  void importObjectsIFC_trueNorth_angleIsReadFromTheGeometricRepresentationContextsTrueNorth () throws IOException {
     Path f = ifcFile("ifc-true-north-angle-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
-        #2=IFCDIRECTION((0.,1.,0.));
-        #3=IFCAXIS2PLACEMENT3D(#1,$,#2);
-        #4=IFCLOCALPLACEMENT($,#3);
-        #5=IFCSITE('guid-site',$,$,$,$,#4,$);
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCDIRECTION((1.,0.));
+        #4=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#2,#3);
         """
     );
 
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    // IfcSite's own RefDirection (0,1,0) is its local X axis, 90 degrees
-    // away from world +X - see ifcSiteTrueNorthAngleDegrees()'s own
-    // comment for why that's read as the project's true-north angle.
+    // TrueNorth (1,0) means true north points along the project's own
+    // +X - 90 degrees away from +Y, where this file's own rotation
+    // formula (atan2(dx,dy)) puts it.
     assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
   }
 
   @Test
-  void importObjectsIFC_trueNorth_noIfcSiteInFile_angleIsZero_andGeometryImportsUntouched () throws IOException {
-    Path f = ifcFile("ifc-true-north-no-site-test", """
+  void importObjectsIFC_trueNorth_noGeometricRepresentationContextInFile_angleIsZero_andGeometryImportsUntouched () throws IOException {
+    Path f = ifcFile("ifc-true-north-no-context-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
         #2=IFCCARTESIANPOINT((1.,0.,0.));
         #3=IFCCARTESIANPOINT((1.,1.,0.));
@@ -962,13 +970,13 @@ class ImportObjectsIFCTest {
 
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(0f, app.ifcImportNorthRotationAngle, 0.0001f, "no IfcSite at all means nothing to correct for");
+    assertEquals(0f, app.ifcImportNorthRotationAngle, 0.0001f, "no IfcGeometricRepresentationContext at all means nothing to correct for");
     assertEquals(1f, app.allPoints.getX(1), 0.0001f, "geometry should import exactly as given");
     assertEquals(0f, app.allPoints.getY(1), 0.0001f);
   }
 
   @Test
-  void importObjectsIFC_trueNorth_unrotatedIfcSitePlacement_angleIsZero_andDoesNotTouchTheUsersOwnSelection () throws IOException {
+  void importObjectsIFC_trueNorth_noTrueNorthOnTheContext_angleIsZero_andDoesNotTouchTheUsersOwnSelection () throws IOException {
     Path f = ifcFile("ifc-true-north-zero-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
         #2=IFCCARTESIANPOINT((1.,0.,0.));
@@ -984,8 +992,7 @@ class ImportObjectsIFCTest {
         #12=IFCWALL('guid-1',$,$,$,$,$,#11);
         #20=IFCCARTESIANPOINT((0.,0.,0.));
         #21=IFCAXIS2PLACEMENT3D(#20,$,$);
-        #22=IFCLOCALPLACEMENT($,#21);
-        #23=IFCSITE('guid-site',$,$,$,$,#22,$);
+        #22=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#21,$);
         """
     );
 
@@ -997,7 +1004,7 @@ class ImportObjectsIFCTest {
 
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(0f, app.ifcImportNorthRotationAngle, 0.0001f, "an unrotated IfcSite placement (default RefDirection) should read as a zero angle");
+    assertEquals(0f, app.ifcImportNorthRotationAngle, 0.0001f, "an unset ($) TrueNorth is the common case, and should read as a zero angle");
 
     float[][] expected = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
     for (int i = 0; i < 4; i++) {
@@ -1007,6 +1014,25 @@ class ImportObjectsIFCTest {
 
     assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory, "a zero-angle import shouldn't touch the user's own current selection category");
     assertArrayEquals(new int[]{99}, app.Select3D.faceSelection, "...or their own face selection");
+  }
+
+  @Test
+  void importObjectsIFC_trueNorth_explicitDefaultTrueNorth_angleIsZero () throws IOException {
+    Path f = ifcFile("ifc-true-north-explicit-default-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCDIRECTION((0.,1.));
+        #4=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#2,#3);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // (0,1) is IFC's own documented default for TrueNorth when it's
+    // omitted entirely (meaning "the project's own +Y already is true
+    // north") - an explicit (0,1) should read the same as not setting
+    // it at all: zero rotation.
+    assertEquals(0f, app.ifcImportNorthRotationAngle, 0.0001f);
   }
 
   @Test
@@ -1025,10 +1051,9 @@ class ImportObjectsIFCTest {
         #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
         #12=IFCWALL('guid-1',$,$,$,$,$,#11);
         #20=IFCCARTESIANPOINT((0.,0.,0.));
-        #21=IFCDIRECTION((0.,1.,0.));
-        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
-        #23=IFCLOCALPLACEMENT($,#22);
-        #24=IFCSITE('guid-site',$,$,$,$,#23,$);
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCDIRECTION((1.,0.));
+        #23=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#21,#22);
         """
     );
 
@@ -1064,10 +1089,9 @@ class ImportObjectsIFCTest {
         #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
         #12=IFCWALL('guid-1',$,$,$,$,$,#11);
         #20=IFCCARTESIANPOINT((0.,0.,0.));
-        #21=IFCDIRECTION((0.,-1.,0.));
-        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
-        #23=IFCLOCALPLACEMENT($,#22);
-        #24=IFCSITE('guid-site',$,$,$,$,#23,$);
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCDIRECTION((-1.,0.));
+        #23=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#21,#22);
         """
     );
 
@@ -1092,10 +1116,9 @@ class ImportObjectsIFCTest {
         #3=IFCLOCALPLACEMENT($,#2);
         #4=IFCFURNISHINGELEMENT('guid-1',$,'Oak Tree',$,$,#3,$);
         #20=IFCCARTESIANPOINT((0.,0.,0.));
-        #21=IFCDIRECTION((0.,1.,0.));
-        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
-        #23=IFCLOCALPLACEMENT($,#22);
-        #24=IFCSITE('guid-site',$,$,$,$,#23,$);
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCDIRECTION((1.,0.));
+        #23=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#21,#22);
         """
     );
 
@@ -1127,10 +1150,9 @@ class ImportObjectsIFCTest {
         #15=IFCLOCALPLACEMENT($,#14);
         #16=IFCFURNISHINGELEMENT('guid-2',$,'Oak Tree',$,$,#15,$);
         #20=IFCCARTESIANPOINT((0.,0.,0.));
-        #21=IFCDIRECTION((0.,1.,0.));
-        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
-        #23=IFCLOCALPLACEMENT($,#22);
-        #24=IFCSITE('guid-site',$,$,$,$,#23,$);
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCDIRECTION((1.,0.));
+        #23=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#21,#22);
         """
     );
 
@@ -1147,8 +1169,8 @@ class ImportObjectsIFCTest {
   }
 
   @Test
-  void importObjectsIFC_trueNorth_multipleIfcSites_usesTheLowestEntityId () throws IOException {
-    Path f = ifcFile("ifc-true-north-multiple-sites-test", """
+  void importObjectsIFC_trueNorth_multipleGeometricRepresentationContexts_usesTheLowestEntityId () throws IOException {
+    Path f = ifcFile("ifc-true-north-multiple-contexts-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
         #2=IFCCARTESIANPOINT((1.,0.,0.));
         #3=IFCCARTESIANPOINT((1.,1.,0.));
@@ -1162,23 +1184,19 @@ class ImportObjectsIFCTest {
         #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
         #12=IFCWALL('guid-1',$,$,$,$,$,#11);
         #20=IFCCARTESIANPOINT((0.,0.,0.));
-        #21=IFCDIRECTION((0.,1.,0.));
-        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
-        #23=IFCLOCALPLACEMENT($,#22);
-        #24=IFCSITE('guid-site-1',$,$,$,$,#23,$);
-        #30=IFCCARTESIANPOINT((0.,0.,0.));
-        #31=IFCDIRECTION((-1.,0.,0.));
-        #32=IFCAXIS2PLACEMENT3D(#30,$,#31);
-        #33=IFCLOCALPLACEMENT($,#32);
-        #34=IFCSITE('guid-site-2',$,$,$,$,#33,$);
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCDIRECTION((1.,0.));
+        #23=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-5,#21,#22);
+        #30=IFCDIRECTION((-1.,0.));
+        #31=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Plan',3,1.E-5,#21,#30);
         """
     );
 
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    // #24 (RefDirection (0,1,0), 90 degrees) has the lower entity id of
-    // the two IfcSite entities, so its own angle wins over #34's (180
-    // degrees).
+    // #23 ('Model', TrueNorth (1,0), 90 degrees) has the lower entity id
+    // of the two contexts, so its own angle wins over #31's ('Plan',
+    // -90 degrees).
     assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
   }
 
@@ -1201,6 +1219,33 @@ class ImportObjectsIFCTest {
     // __SETLATLON__ should actually have been called with it.
     assertEquals(43.6425f, app.STATION.getLatitude(), 0.0001f);
     assertEquals(-79.3869f, app.STATION.getLongitude(), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_gotoLatLon_officialBuildingSmartSample_readsTheRealRefLatLon () throws IOException {
+    // IfcSite's own line, verbatim, from buildingSMART's official
+    // geographic-referencing-utm.ifc sample (buildingSMART/
+    // IFC4.x-specification-models, placements-and-gis-referencing/
+    // geographic-referencing-utm) - a real file demonstrating both
+    // RefLatitude/RefLongitude AND IfcMapConversion/IfcProjectedCRS
+    // together, which is also how this test independently confirms
+    // IfcSite's own RefLatitude(9)/RefLongitude(10) attribute indices
+    // against real, official data, not just a fixture built to match
+    // this importer's own assumptions.
+    Path f = ifcFile("ifc-gotolatlon-official-sample-test", """
+        #100020=IFCSITE('1BPCQAtTW7GhKrUF$Sytrr',$,'Site',$,$,#100022,$,$,.ELEMENT.,(49,5,43,983700),(8,26,1,247300),113.7,$,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // 49 deg 5' 43.9837" N, 8 deg 26' 1.2473" E - Karlsruhe, Germany,
+    // matching the file's own EPSG:25832 (UTM zone 32N / ETRS89) CRS.
+    assertNotNull(app.ifcImportGotoLatLon);
+    assertEquals(49.0956f, app.ifcImportGotoLatLon[0], 0.0001f, "latitude");
+    assertEquals(8.4337f, app.ifcImportGotoLatLon[1], 0.0001f, "longitude");
+    assertEquals(49.0956f, app.STATION.getLatitude(), 0.0001f);
+    assertEquals(8.4337f, app.STATION.getLongitude(), 0.0001f);
   }
 
   @Test
@@ -1297,10 +1342,14 @@ class ImportObjectsIFCTest {
 
   @Test
   void importObjectsIFC_gotoLatLon_ifcMapConversionWithTrueProjectedMetres_isNotMistakenForDegrees () throws IOException {
+    // #1/#2 are, verbatim, the real IfcProjectedCRS/IfcMapConversion
+    // lines from buildingSMART's own official geographic-referencing-utm.ifc
+    // sample (see the test above) - 458657.30/5438232.25 are real
+    // EPSG:25832 UTM-zone-32N Eastings/Northings in metres, not degrees.
     Path f = ifcFile("ifc-gotolatlon-mapconversion-utm-test", """
         #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,$,$,$,$,$);
-        #2=IFCPROJECTEDCRS('UTM Zone 17N',$,$,$,$,$,$);
-        #3=IFCMAPCONVERSION($,#2,500000.,4800000.,0.,1.,0.,1.);
+        #2=IFCPROJECTEDCRS('EPSG:25832','UTM in band 32','ETRS89',$,'UTM','UTM32',$);
+        #3=IFCMAPCONVERSION($,#2,458657.30,5438232.25,113.7,0.270600445976,0.962691746426,1000.);
         """
     );
 

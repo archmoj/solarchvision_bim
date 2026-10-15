@@ -283,24 +283,30 @@ final boolean IFC_IMPORT_FURNITURE = false;
 
 // Whether to rotate the whole imported model, around the world origin,
 // to correct for the project's own true-north rotation - on by default.
-// Most BIM authoring tools (Revit among them) model a site that isn't
-// exactly aligned with the project's internal/model axes, and record
-// that misalignment as the rotation baked into IfcSite's own
-// ObjectPlacement (see ifcSiteTrueNorthAngleDegrees() below): IfcSite
-// sits at the project's real-world origin, so its own local X axis -
-// unlike every other product's, which is usually just inherited
-// straight from the project/building/storey chain above it - is
-// rotated away from the project's X axis by exactly the true-north
-// angle. Left on, every face and every placed tree/person this import
-// produces (see ifcRotateImportedModelToTrueNorth() below) ends up
-// rotated by that same angle around Z, about the origin, so "north" in
-// this app's own sense (R=0, i.e. +Y - see SolarImpacts.R's own
-// comment) lines up with the real, geographic north the file's author
-// actually meant, instead of whatever the file's local axes happened to
-// be drawn in. A file with no IfcSite, or one whose placement isn't
-// rotated at all, naturally produces a zero angle, so this is a no-op
-// for those regardless of the toggle's value - see "Don't rotate if the
-// angle is zero" in ifcRotateImportedModelToTrueNorth()'s own comment.
+// IFC's own, schema-defined place for this is NOT an IfcSite attribute -
+// it's IfcGeometricRepresentationContext.TrueNorth (referenced from
+// IfcProject.RepresentationContexts): a 2D direction, in the project's
+// own XY plane, that points toward real/geographic north (see
+// ifcTrueNorthAngleDegrees() below). Per the IFC documentation, this
+// attribute should be set whenever WorldCoordinateSystem's own Y axis
+// does NOT already point to true north, and defaults to (0,1) - i.e.
+// "already does" - when omitted. (An IfcSite's own ObjectPlacement
+// rotation is a similar-looking but different, tool-specific thing -
+// Autodesk's own documentation notes Revit does this only "in some
+// circumstances", and that the rotation it writes there doesn't drive
+// any object's actual coordinates - so this importer doesn't treat it
+// as true north at all, to avoid reading a real rotation where the file
+// never actually asked for one.) Left on, every face and every placed
+// tree/person this import produces (see
+// ifcRotateImportedModelToTrueNorth() below) ends up rotated by that
+// angle around Z, about the origin, so "north" in this app's own sense
+// (R=0, i.e. +Y - see SolarImpacts.R's own comment) lines up with the
+// real, geographic north the file's author actually meant, instead of
+// whatever the file's own project axes happened to be drawn in. A file
+// with no TrueNorth at all - the common case - naturally produces a
+// zero angle, so this is a no-op for those regardless of the toggle's
+// value - see "Don't rotate if the angle is zero" in
+// ifcRotateImportedModelToTrueNorth()'s own comment.
 final boolean IFC_IMPORT_NORTH = true;
 
 // Whether to navigate the app's own "station" (STATION.latitude/
@@ -927,34 +933,46 @@ IfcFrame ifcPlacementToFrame (HashMap<Integer, StepEntity> ents, int placementId
 // The project's own true-north rotation (degrees, signed, measured in
 // the horizontal X/Y plane from world +X toward world +Y - exactly what
 // Rotate3D.selection(..., the_Vector=2), rotation about Z, already
-// expects), read from IfcSite's own ObjectPlacement - see
-// IFC_IMPORT_NORTH's own comment for why IfcSite is where this lives.
-// Composed into a world frame the same way as any other product's
-// placement (ifcPlacementToFrame() above): the angle is simply that
-// frame's own X axis, projected onto the horizontal plane, measured
-// against the world X axis. A file with several IfcSite entities (rare,
-// but not disallowed) uses the one with the lowest entity id, the same
-// ascending-id determinism ifcSortAscending() gives import_objects_IFC()'s
-// own product loop. Returns 0 - meaning "don't rotate" - when the file
-// has no IfcSite at all, when that IfcSite has no ObjectPlacement of its
-// own, or when its placement simply isn't rotated.
-float ifcSiteTrueNorthAngleDegrees (HashMap<Integer, StepEntity> ents) {
-  ArrayList<Integer> siteIds = new ArrayList<Integer>();
+// expects), read from IfcGeometricRepresentationContext.TrueNorth - see
+// IFC_IMPORT_NORTH's own comment for why that attribute, not an IfcSite
+// one, is the schema-correct place to read this from. TrueNorth is
+// itself a 2D direction (dx,dy), in the project's own XY plane, that
+// points toward real/geographic north; defaults to (0,1) - already
+// north, zero rotation - when the context has no TrueNorth of its own,
+// read the same way ifcDirection3() already reads any other direction
+// (2D entries come back with z=0, which is simply ignored here).
+//
+// The angle that brings a (dx,dy) vector onto +Y, under this file's own
+// the_Vector==2 rotation (x'=x*cosθ-y*sinθ, y'=x*sinθ+y*cosθ - a
+// standard counterclockwise rotation matrix), solves
+// dx*cosθ - dy*sinθ = 0, i.e. θ = atan2(dx,dy): e.g. TrueNorth=(1,0)
+// (north is 90 degrees away, toward the project's own +X) needs a +90
+// degree rotation to swing that +X onto +Y, and atan2(1,0) is indeed 90
+// degrees.
+//
+// A file with several IfcGeometricRepresentationContext entities (one
+// each for "Model", "Plan", ...) uses the one with the lowest entity id,
+// the same ascending-id determinism ifcSortAscending() gives
+// import_objects_IFC()'s own product loop. Returns 0 - meaning "don't
+// rotate" - when the file has no such context at all, or when it has
+// one but no TrueNorth of its own.
+float ifcTrueNorthAngleDegrees (HashMap<Integer, StepEntity> ents) {
+  ArrayList<Integer> contextIds = new ArrayList<Integer>();
   for (Integer id : ents.keySet()) {
     StepEntity candidate = ents.get(id);
-    if (candidate != null && candidate.type.equals("IFCSITE")) siteIds.add(id);
+    if (candidate != null && candidate.type.equals("IFCGEOMETRICREPRESENTATIONCONTEXT")) contextIds.add(id);
   }
-  if (siteIds.size() == 0) return 0;
-  ifcSortAscending(siteIds);
+  if (contextIds.size() == 0) return 0;
+  ifcSortAscending(contextIds);
 
-  StepEntity site = ents.get(siteIds.get(0));
-  if (site.attrs.length < 6) return 0;
+  StepEntity context = ents.get(contextIds.get(0));
+  if (context.attrs.length < 6) return 0;
 
-  String placementTok = site.attrs[5].trim();
-  if (!placementTok.startsWith("#")) return 0;
+  String trueNorthTok = context.attrs[5].trim();
+  if (!trueNorthTok.startsWith("#")) return 0;
 
-  IfcFrame siteFrame = ifcPlacementToFrame(ents, ifcRefId(placementTok));
-  return atan2(siteFrame.xAxis.y, siteFrame.xAxis.x) * 180 / PI;
+  PVector trueNorth = ifcDirection3(ents, trueNorthTok);
+  return atan2(trueNorth.x, trueNorth.y) * 180 / PI;
 }
 
 // IfcSite's RefLatitude/RefLongitude are IFC's own
@@ -988,12 +1006,13 @@ float ifcCompoundAngleToDecimalDegrees (String listAttr) {
 //
 //   1. IfcSite's own RefLatitude(9)/RefLongitude(10) - IFC2x3's and
 //      IFC4's original way of georeferencing a site directly, and still
-//      what most real exports actually set - read from the same
-//      lowest-entity-id IfcSite ifcSiteTrueNorthAngleDegrees() above
-//      reads ObjectPlacement from. A "$" (unset) RefLatitude/
-//      RefLongitude - common even in files that do set ObjectPlacement
-//      - is treated as absent, not as the compound angle (0,0,0): only
-//      an attribute that's actually a "(...)" list is read as one.
+//      what most real exports actually set - read from the file's own
+//      lowest-entity-id IfcSite (the same ascending-id determinism used
+//      throughout this importer). A "$" (unset) RefLatitude/
+//      RefLongitude - common even in a file that does set an
+//      ObjectPlacement for that same IfcSite - is treated as absent,
+//      not as the compound angle (0,0,0): only an attribute that's
+//      actually a "(...)" list is read as one.
 //
 //   2. Failing that, an IfcMapConversion's own Eastings(2)/Northings(3)
 //      - IFC4's newer, CRS-based way of georeferencing a project
@@ -2467,7 +2486,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // Left at 0 - i.e. IFC_IMPORT_NORTH's own "don't rotate" case -
   // without even reading the file's IfcSite, whenever the toggle itself
   // is off.
-  ifcImportNorthRotationAngle = IFC_IMPORT_NORTH ? ifcSiteTrueNorthAngleDegrees(ents) : 0;
+  ifcImportNorthRotationAngle = IFC_IMPORT_NORTH ? ifcTrueNorthAngleDegrees(ents) : 0;
 
   // Detected before any geometry is read, since ifcPointFromCoords()
   // and the profile-dimension/extrusion-depth readers below all apply
