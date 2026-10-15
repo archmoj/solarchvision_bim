@@ -78,6 +78,13 @@
 //     Faces and defaults to IFC_MATERIAL_VEGETATION, a natural grass
 //     green, when the file names no material for it. See
 //     ifcLooksLikeVegetation() below.
+//   - A floor (an IfcSlab whose PredefinedType is .FLOOR., or a
+//     Name/ObjectType word match for files that don't set that
+//     attribute) and an exposed structural member - IfcColumn, IfcBeam,
+//     IfcMember - default to IFC_MATERIAL_CONCRETE when the file names
+//     no material for them, since a coordination-stage model very often
+//     doesn't have one assigned yet. See ifcStructuralProductTypes and
+//     ifcLooksLikeAFloor() below.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -189,6 +196,40 @@ HashSet<String> ifcGlassProductTypes = new HashSet<String>(Arrays.asList(
 HashSet<String> ifcTopographyProductTypes = new HashSet<String>(Arrays.asList(
   "IFCSITE"
   ));
+
+// Exposed structural members - columns, beams, and the more general
+// IfcMember (bracing, struts, purlins, ...) - that default to
+// IFC_MATERIAL_CONCRETE when nothing more specific applies, the same
+// way IfcSite defaults to earth: a coordination-stage file very often
+// has no IfcMaterial assigned to its structure yet, and an unmatched
+// column or beam just cycling through 1-8 like a wall or a window reads
+// as arbitrary, not structural. Unlike glass/solar, this is a cosmetic
+// default only - an actual associated material name (e.g. "Steel")
+// still wins, same priority tier as vegetation/earth below. Pure
+// entity-type matching here, no Name/ObjectType word check needed:
+// unlike a tree or a solar device, IFC already gives these their own
+// unambiguous entity types.
+HashSet<String> ifcStructuralProductTypes = new HashSet<String>(Arrays.asList(
+  "IFCCOLUMN", "IFCBEAM", "IFCMEMBER"
+  ));
+
+// A floor - an IfcSlab whose own PredefinedType says .FLOOR. (IfcSlab
+// also covers roofs, landings, base slabs, paving, ... - only the
+// floor case gets this default) or, for files that don't set that
+// attribute, a Name/ObjectType word match - also defaults to
+// IFC_MATERIAL_CONCRETE, same reasoning and priority as
+// ifcStructuralProductTypes above. IfcSlab's own attribute order:
+// ...Representation(6), Tag(7), PredefinedType(8).
+HashSet<String> ifcFloorNameWords = new HashSet<String>(Arrays.asList(
+  "floor", "floors", "flooring"
+  ));
+
+boolean ifcLooksLikeAFloor (StepEntity e) {
+  if (e.type.equals("IFCSLAB") && e.attrs.length > 8 && e.attrs[8].trim().equals(".FLOOR.")) return true;
+  if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcFloorNameWords)) return true; // Name
+  if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcFloorNameWords)) return true; // ObjectType
+  return false;
+}
 
 // Words that mark a product as a planted/vegetated surface - a green
 // roof (an IfcRoof build-up), a green wall (an IfcWall or
@@ -1486,16 +1527,18 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // ...) gets that color - here an explicit match *does* win, same as
     // everywhere else. Failing that, a planted surface (a green roof,
     // green wall, or garden/lawn - see ifcLooksLikeVegetation() above)
-    // defaults to IFC_MATERIAL_VEGETATION, and IfcSite's own topography
-    // more generally (see ifcTopographyProductTypes above) defaults to
-    // IFC_MATERIAL_EARTH, rather than either falling into the generic
-    // cycle - a terrain surface should read as ground, and a planted
-    // one as green, even when the file names no material for either at
-    // all. Only a product matching none of the above falls back to
-    // m/the normal 1-8 cycle. Every kind of explicit match here is
-    // intentionally kept out of that cycle too - so unmatched walls/
-    // slabs/etc. still cycle smoothly through materials 1-8 with no
-    // gaps.
+    // defaults to IFC_MATERIAL_VEGETATION; an exposed structural member
+    // (a column, beam or IfcMember) or a floor (see
+    // ifcStructuralProductTypes/ifcLooksLikeAFloor() above) defaults to
+    // IFC_MATERIAL_CONCRETE; and IfcSite's own topography more
+    // generally (see ifcTopographyProductTypes above) defaults to
+    // IFC_MATERIAL_EARTH - rather than any of them falling into the
+    // generic cycle, since each should read as what it visibly is even
+    // when the file names no material for it at all. Only a product
+    // matching none of the above falls back to m/the normal 1-8 cycle.
+    // Every kind of explicit match here is intentionally kept out of
+    // that cycle too - so unmatched walls/windows/etc. still cycle
+    // smoothly through materials 1-8 with no gaps.
     int materialForThisProduct;
     // Deliberately not a "cond ? IFC_MATERIAL_GLASS : ifcMaterialNameToConstant(...)"
     // ternary: mixing a primitive int (IFC_MATERIAL_GLASS) with an
@@ -1513,6 +1556,9 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       matchedMaterial = ifcMaterialNameToConstant(productMaterialNames.get(id));
       if (matchedMaterial == null && ifcLooksLikeVegetation(e)) {
         matchedMaterial = IFC_MATERIAL_VEGETATION;
+      }
+      if (matchedMaterial == null && (ifcStructuralProductTypes.contains(e.type) || ifcLooksLikeAFloor(e))) {
+        matchedMaterial = IFC_MATERIAL_CONCRETE;
       }
       if (matchedMaterial == null && ifcTopographyProductTypes.contains(e.type)) {
         matchedMaterial = IFC_MATERIAL_EARTH;
