@@ -64,6 +64,8 @@ void update_frame_layout () {
     WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
   }
 
+  if(WIN3D.include) model_changed(); // to update 3D caches
+
   WORLD.revise();
   WIN3D.revise();
   STUDY.revise();
