@@ -281,6 +281,28 @@ HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
 // from a significant one modeled the same way.
 final boolean IFC_IMPORT_FURNITURE = false;
 
+// Whether to rotate the whole imported model, around the world origin,
+// to correct for the project's own true-north rotation - on by default.
+// Most BIM authoring tools (Revit among them) model a site that isn't
+// exactly aligned with the project's internal/model axes, and record
+// that misalignment as the rotation baked into IfcSite's own
+// ObjectPlacement (see ifcSiteTrueNorthAngleDegrees() below): IfcSite
+// sits at the project's real-world origin, so its own local X axis -
+// unlike every other product's, which is usually just inherited
+// straight from the project/building/storey chain above it - is
+// rotated away from the project's X axis by exactly the true-north
+// angle. Left on, every face and every placed tree/person this import
+// produces (see ifcRotateImportedModelToTrueNorth() below) ends up
+// rotated by that same angle around Z, about the origin, so "north" in
+// this app's own sense (R=0, i.e. +Y - see SolarImpacts.R's own
+// comment) lines up with the real, geographic north the file's author
+// actually meant, instead of whatever the file's local axes happened to
+// be drawn in. A file with no IfcSite, or one whose placement isn't
+// rotated at all, naturally produces a zero angle, so this is a no-op
+// for those regardless of the toggle's value - see "Don't rotate if the
+// angle is zero" in ifcRotateImportedModelToTrueNorth()'s own comment.
+final boolean IFC_IMPORT_NORTH = true;
+
 // IfcSanitaryTerminal is IFC4's own dedicated entity for toilet/
 // bathroom fixtures (a IfcFlowTerminal subtype: WCs, sinks, bathtubs,
 // showers, urinals, bidets, ...) - included for files from tools that
@@ -522,6 +544,12 @@ int ifcImportFurnitureExcludedCount = 0;
 // the same toggle is false - see IFC_SMALL_OBJECT_MAX_DIMENSION's own
 // comment.
 int ifcImportSmallObjectExcludedCount = 0;
+// The true-north angle (degrees, signed, about Z) the import actually
+// rotated the model by - see IFC_IMPORT_NORTH and
+// ifcRotateImportedModelToTrueNorth() below. Stays 0 whenever nothing
+// was rotated: IFC_IMPORT_NORTH is off, the file has no IfcSite, or
+// that IfcSite's own placement isn't rotated at all.
+float ifcImportNorthRotationAngle = 0;
 HashMap<String, Integer> ifcImportSkippedReasons = new HashMap<String, Integer>();
 
 // Guards against a pathological/cyclic chain of nested IfcMappedItems
@@ -874,6 +902,39 @@ IfcFrame ifcPlacementToFrame (HashMap<Integer, StepEntity> ents, int placementId
   return ifcComposeFrame(parentFrame, childFrame);
 }
 
+// The project's own true-north rotation (degrees, signed, measured in
+// the horizontal X/Y plane from world +X toward world +Y - exactly what
+// Rotate3D.selection(..., the_Vector=2), rotation about Z, already
+// expects), read from IfcSite's own ObjectPlacement - see
+// IFC_IMPORT_NORTH's own comment for why IfcSite is where this lives.
+// Composed into a world frame the same way as any other product's
+// placement (ifcPlacementToFrame() above): the angle is simply that
+// frame's own X axis, projected onto the horizontal plane, measured
+// against the world X axis. A file with several IfcSite entities (rare,
+// but not disallowed) uses the one with the lowest entity id, the same
+// ascending-id determinism ifcSortAscending() gives import_objects_IFC()'s
+// own product loop. Returns 0 - meaning "don't rotate" - when the file
+// has no IfcSite at all, when that IfcSite has no ObjectPlacement of its
+// own, or when its placement simply isn't rotated.
+float ifcSiteTrueNorthAngleDegrees (HashMap<Integer, StepEntity> ents) {
+  ArrayList<Integer> siteIds = new ArrayList<Integer>();
+  for (Integer id : ents.keySet()) {
+    StepEntity candidate = ents.get(id);
+    if (candidate != null && candidate.type.equals("IFCSITE")) siteIds.add(id);
+  }
+  if (siteIds.size() == 0) return 0;
+  ifcSortAscending(siteIds);
+
+  StepEntity site = ents.get(siteIds.get(0));
+  if (site.attrs.length < 6) return 0;
+
+  String placementTok = site.attrs[5].trim();
+  if (!placementTok.startsWith("#")) return 0;
+
+  IfcFrame siteFrame = ifcPlacementToFrame(ents, ifcRefId(placementTok));
+  return atan2(siteFrame.xAxis.y, siteFrame.xAxis.x) * 180 / PI;
+}
+
 // IfcCartesianTransformationOperator(3D[NonUniform]) - used only as an
 // IfcMappedItem's own MappingTarget (see ifcProcessMappedItem() below).
 // Attribute order: Axis1(0, optional direction - default local X),
@@ -1014,6 +1075,15 @@ ArrayList<int[]> ifcPendingFaceNodes = new ArrayList<int[]>();
 ArrayList<int[]> ifcPendingFaceOptions = new ArrayList<int[]>();
 int ifcBasePointCount = 0;
 int ifcBaseFaceCount = 0;
+// How many allModel2Ds entries (trees, people - see ifcLooksLikeATree()/
+// ifcLooksLikeAPerson() above) already existed before this import
+// started. Unlike points/faces, model2Ds are written straight into
+// allModel2Ds as each product is processed rather than queued and
+// flushed - but this is captured the same way and for a similar reason:
+// ifcRotateImportedModelToTrueNorth() below needs to know exactly which
+// trees/people this import just placed, not any that were already in
+// the scene.
+int ifcBaseModel2DCount = 0;
 
 // A second, per-product staging layer in front of the one above: every
 // point/face a product's own geometry produces lands here first, with
@@ -2177,6 +2247,65 @@ boolean ifcLooksLikeAPerson (HashMap<Integer, StepEntity> ents, StepEntity e, in
   return ifcProductIsOnPersonLayer(ents, repId, personLayerItemIds);
 }
 
+// {start, start+1, ..., start+count-1} - the same shape Select3D's own
+// rangeIds(n) returns ({0, ..., n-1}), just offset to start at an
+// arbitrary index instead of always 0, since what needs selecting here
+// is a contiguous range somewhere in the middle of allFaces/allModel2Ds
+// (everything this import just added), not the whole collection from
+// its start the way rangeIds(n) itself assumes.
+int[] ifcRangeIdsFrom (int start, int count) {
+  int[] ids = new int[max(count, 0)];
+  for (int i = 0; i < ids.length; i++) ids[i] = start + i;
+  return ids;
+}
+
+// Selects everything this one import just produced - every face (and,
+// through it, every point a face actually uses - see
+// Select3D.get_Face_Vertices()) and every placed tree/person (see
+// ifcLooksLikeATree()/ifcLooksLikeAPerson() above) - and rotates that
+// selection, as a whole, around the world origin by angleDegrees, about
+// Z (Rotate3D.selection's the_Vector=2) - exactly the "select all the
+// imported BIM IFC model and rotate them around the origin" IFC_IMPORT_NORTH
+// is meant to do. Does nothing - not even touching currentObjectCategory
+// or either selection - when angleDegrees is zero: an unrotated IfcSite
+// (or no IfcSite at all) means there's nothing to correct for, and a
+// zero-degree "rotation" should leave the model and the user's own
+// current selection exactly as they were, not just numerically
+// equivalent to leaving them alone. Must run after
+// ifcFlushPendingGeometry() - baseFaceCount/baseModel2DCount only
+// identify this import's own faces/model2Ds once they've actually
+// landed in allFaces/allModel2Ds. Temporarily switches
+// currentObjectCategory and the FACE/MODEL2D selections to do its own
+// rotation, then restores whatever was selected before it ran, so this
+// is invisible to the user's own current selection afterward.
+void ifcRotateImportedModelToTrueNorth (float angleDegrees, int baseFaceCount, int baseModel2DCount) {
+  if (angleDegrees == 0) return; // Don't rotate if the angle is zero.
+
+  int newFaceCount = allFaces.nodes.length - baseFaceCount;
+  int newModel2DCount = allModel2Ds.num - baseModel2DCount;
+  if (newFaceCount <= 0 && newModel2DCount <= 0) return; // nothing was actually imported
+
+  int savedCategory = currentObjectCategory;
+  int[] savedFaceSelection = Select3D.faceSelection;
+  int[] savedModel2DSelection = Select3D.model2DSelection;
+
+  if (newFaceCount > 0) {
+    currentObjectCategory = ObjectCategory.FACE;
+    Select3D.faceSelection = ifcRangeIdsFrom(baseFaceCount, newFaceCount);
+    Rotate3D.selection(0, 0, 0, angleDegrees, 2);
+  }
+
+  if (newModel2DCount > 0) {
+    currentObjectCategory = ObjectCategory.MODEL2D;
+    Select3D.model2DSelection = ifcRangeIdsFrom(baseModel2DCount, newModel2DCount);
+    Rotate3D.selection(0, 0, 0, angleDegrees, 2);
+  }
+
+  currentObjectCategory = savedCategory;
+  Select3D.faceSelection = savedFaceSelection;
+  Select3D.model2DSelection = savedModel2DSelection;
+}
+
 // ---------------------------------------------------------------------
 // Entry point - mirrors import_objects_OBJ(FileName, m, tes, lyr, vsb,
 // wgt, clz, cx, cy, cz, sx, sy, sz)'s own signature, including the
@@ -2195,6 +2324,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportUncutOpeningCount = 0;
   ifcImportFurnitureExcludedCount = 0;
   ifcImportSmallObjectExcludedCount = 0;
+  ifcImportNorthRotationAngle = 0;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
   ifcMappedItemDepth = 0;
@@ -2204,9 +2334,20 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcPendingFaceOptions.clear();
   ifcBasePointCount = allPoints.getLength();
   ifcBaseFaceCount = allFaces.nodes.length;
+  ifcBaseModel2DCount = allModel2Ds.num;
 
   String fullText = join(loadStrings(FileName), " ");
   HashMap<Integer, StepEntity> ents = ifcParseEntities(fullText);
+
+  // Computed up front, alongside the length-unit scale just below, since
+  // neither depends on anything the product-collection loop further
+  // down does - the actual rotation only happens once the geometry
+  // itself exists (see ifcRotateImportedModelToTrueNorth()'s own call,
+  // after ifcFlushPendingGeometry(), near the end of this function).
+  // Left at 0 - i.e. IFC_IMPORT_NORTH's own "don't rotate" case -
+  // without even reading the file's IfcSite, whenever the toggle itself
+  // is off.
+  ifcImportNorthRotationAngle = IFC_IMPORT_NORTH ? ifcSiteTrueNorthAngleDegrees(ents) : 0;
 
   // Detected before any geometry is read, since ifcPointFromCoords()
   // and the profile-dimension/extrusion-depth readers below all apply
@@ -2437,6 +2578,18 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   int importedFaceCount = ifcPendingFaceNodes.size();
   ifcFlushPendingGeometry();
 
+  // Only meaningful once the geometry it rotates actually exists in
+  // allFaces/allModel2Ds - see ifcRotateImportedModelToTrueNorth()'s own
+  // comment for why this runs here, after the flush, rather than
+  // earlier alongside where ifcImportNorthRotationAngle itself was
+  // computed. A zero angle (IFC_IMPORT_NORTH off, no IfcSite, or an
+  // unrotated one) is a no-op inside that function too, but checked
+  // here as well so a zero-angle import never even touches
+  // currentObjectCategory/the selection.
+  if (ifcImportNorthRotationAngle != 0) {
+    ifcRotateImportedModelToTrueNorth(ifcImportNorthRotationAngle, ifcBaseFaceCount, ifcBaseModel2DCount);
+  }
+
   model_changed();
   String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
   if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
@@ -2447,6 +2600,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   if (ifcImportSmallObjectExcludedCount > 0) summary += ", " + ifcImportSmallObjectExcludedCount + " small object(s) not imported";
   if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
   if (ifcImportHolesIgnoredCount > 0) summary += ", " + ifcImportHolesIgnoredCount + " inner boundary/boundaries ignored";
+  if (ifcImportNorthRotationAngle != 0) summary += ", rotated " + ifcImportNorthRotationAngle + " degree(s) around the origin to match the project's true north";
   summary += ".";
   println();
   println(summary);

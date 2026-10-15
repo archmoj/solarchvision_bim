@@ -921,6 +921,267 @@ class ImportObjectsIFCTest {
     assertEquals(11, app.allFaces.options[0][0], "an explicit material-name match should win over the IfcSite earth default");
   }
 
+  // ================= IFC_IMPORT_NORTH: rotate to the project's true north ====
+
+  @Test
+  void importObjectsIFC_trueNorth_angleIsReadFromIfcSitesOwnPlacement () throws IOException {
+    Path f = ifcFile("ifc-true-north-angle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCDIRECTION((0.,1.,0.));
+        #3=IFCAXIS2PLACEMENT3D(#1,$,#2);
+        #4=IFCLOCALPLACEMENT($,#3);
+        #5=IFCSITE('guid-site',$,$,$,$,#4,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // IfcSite's own RefDirection (0,1,0) is its local X axis, 90 degrees
+    // away from world +X - see ifcSiteTrueNorthAngleDegrees()'s own
+    // comment for why that's read as the project's true-north angle.
+    assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_trueNorth_noIfcSiteInFile_angleIsZero_andGeometryImportsUntouched () throws IOException {
+    Path f = ifcFile("ifc-true-north-no-site-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0f, app.ifcImportNorthRotationAngle, 0.0001f, "no IfcSite at all means nothing to correct for");
+    assertEquals(1f, app.allPoints.getX(1), 0.0001f, "geometry should import exactly as given");
+    assertEquals(0f, app.allPoints.getY(1), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_trueNorth_unrotatedIfcSitePlacement_angleIsZero_andDoesNotTouchTheUsersOwnSelection () throws IOException {
+    Path f = ifcFile("ifc-true-north-zero-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCAXIS2PLACEMENT3D(#20,$,$);
+        #22=IFCLOCALPLACEMENT($,#21);
+        #23=IFCSITE('guid-site',$,$,$,$,#22,$);
+        """
+    );
+
+    // An arbitrary pre-existing selection/category, to confirm a
+    // zero-angle import ("Don't rotate if the angle is zero") doesn't
+    // even touch it - not just that it leaves the geometry unmoved.
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.faceSelection = new int[]{99};
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0f, app.ifcImportNorthRotationAngle, 0.0001f, "an unrotated IfcSite placement (default RefDirection) should read as a zero angle");
+
+    float[][] expected = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+    for (int i = 0; i < 4; i++) {
+      assertEquals(expected[i][0], app.allPoints.getX(i), 0.0001f, "point " + i + " x");
+      assertEquals(expected[i][1], app.allPoints.getY(i), 0.0001f, "point " + i + " y");
+    }
+
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory, "a zero-angle import shouldn't touch the user's own current selection category");
+    assertArrayEquals(new int[]{99}, app.Select3D.faceSelection, "...or their own face selection");
+  }
+
+  @Test
+  void importObjectsIFC_trueNorth_rotatesImportedFacesAroundTheWorldOrigin () throws IOException {
+    Path f = ifcFile("ifc-true-north-rotate-faces-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCDIRECTION((0.,1.,0.));
+        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
+        #23=IFCLOCALPLACEMENT($,#22);
+        #24=IFCSITE('guid-site',$,$,$,$,#23,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
+    assertEquals(4, app.allPoints.getLength());
+
+    // A 90-degree rotation about Z around the world origin sends
+    // (x,y,0) to (-y,x,0) - see Rotate3D.rotateAroundVector()'s own
+    // the_Vector==2 branch.
+    float[][] expected = {{0, 0, 0}, {0, 1, 0}, {-1, 1, 0}, {-1, 0, 0}};
+    for (int i = 0; i < 4; i++) {
+      assertEquals(expected[i][0], app.allPoints.getX(i), 0.001f, "point " + i + " x");
+      assertEquals(expected[i][1], app.allPoints.getY(i), 0.001f, "point " + i + " y");
+      assertEquals(expected[i][2], app.allPoints.getZ(i), 0.001f, "point " + i + " z");
+    }
+  }
+
+  @Test
+  void importObjectsIFC_trueNorth_negativeAngle_rotatesTheOtherWay () throws IOException {
+    Path f = ifcFile("ifc-true-north-negative-angle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCDIRECTION((0.,-1.,0.));
+        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
+        #23=IFCLOCALPLACEMENT($,#22);
+        #24=IFCSITE('guid-site',$,$,$,$,#23,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(-90f, app.ifcImportNorthRotationAngle, 0.0001f);
+
+    // A -90-degree rotation about Z around the world origin sends
+    // (x,y,0) to (y,-x,0).
+    float[][] expected = {{0, 0, 0}, {0, -1, 0}, {1, -1, 0}, {1, 0, 0}};
+    for (int i = 0; i < 4; i++) {
+      assertEquals(expected[i][0], app.allPoints.getX(i), 0.001f, "point " + i + " x");
+      assertEquals(expected[i][1], app.allPoints.getY(i), 0.001f, "point " + i + " y");
+    }
+  }
+
+  @Test
+  void importObjectsIFC_trueNorth_alsoRotatesPlacedTrees_notJustFaces () throws IOException {
+    Path f = ifcFile("ifc-true-north-rotate-trees-test", """
+        #1=IFCCARTESIANPOINT((5.,7.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #4=IFCFURNISHINGELEMENT('guid-1',$,'Oak Tree',$,$,#3,$);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCDIRECTION((0.,1.,0.));
+        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
+        #23=IFCLOCALPLACEMENT($,#22);
+        #24=IFCSITE('guid-site',$,$,$,$,#23,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allModel2Ds.num);
+    // (5,7) rotated 90 degrees about Z around the origin -> (-7,5).
+    assertEquals(-7f, app.allModel2Ds.XYZS[0][0], 0.001f, "x after a 90-degree true-north rotation");
+    assertEquals(5f, app.allModel2Ds.XYZS[0][1], 0.001f, "y after a 90-degree true-north rotation");
+  }
+
+  @Test
+  void importObjectsIFC_trueNorth_restoresTheUsersOwnSelectionAfterRotating () throws IOException {
+    Path f = ifcFile("ifc-true-north-restore-selection-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #13=IFCCARTESIANPOINT((5.,7.,0.));
+        #14=IFCAXIS2PLACEMENT3D(#13,$,$);
+        #15=IFCLOCALPLACEMENT($,#14);
+        #16=IFCFURNISHINGELEMENT('guid-2',$,'Oak Tree',$,$,#15,$);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCDIRECTION((0.,1.,0.));
+        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
+        #23=IFCLOCALPLACEMENT($,#22);
+        #24=IFCSITE('guid-site',$,$,$,$,#23,$);
+        """
+    );
+
+    app.currentObjectCategory = app.ObjectCategory.VERTEX;
+    app.Select3D.faceSelection = new int[]{42};
+    app.Select3D.model2DSelection = new int[]{7};
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
+    assertEquals(app.ObjectCategory.VERTEX, app.currentObjectCategory, "the north-rotation step should restore the user's own current category afterward");
+    assertArrayEquals(new int[]{42}, app.Select3D.faceSelection, "...and their own face selection");
+    assertArrayEquals(new int[]{7}, app.Select3D.model2DSelection, "...and their own model2D selection");
+  }
+
+  @Test
+  void importObjectsIFC_trueNorth_multipleIfcSites_usesTheLowestEntityId () throws IOException {
+    Path f = ifcFile("ifc-true-north-multiple-sites-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCCARTESIANPOINT((0.,0.,0.));
+        #21=IFCDIRECTION((0.,1.,0.));
+        #22=IFCAXIS2PLACEMENT3D(#20,$,#21);
+        #23=IFCLOCALPLACEMENT($,#22);
+        #24=IFCSITE('guid-site-1',$,$,$,$,#23,$);
+        #30=IFCCARTESIANPOINT((0.,0.,0.));
+        #31=IFCDIRECTION((-1.,0.,0.));
+        #32=IFCAXIS2PLACEMENT3D(#30,$,#31);
+        #33=IFCLOCALPLACEMENT($,#32);
+        #34=IFCSITE('guid-site-2',$,$,$,$,#33,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // #24 (RefDirection (0,1,0), 90 degrees) has the lower entity id of
+    // the two IfcSite entities, so its own angle wins over #34's (180
+    // degrees).
+    assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
+  }
+
   @Test
   void importObjectsIFC_triangulatedIrregularNetwork_importsAsATerrainMesh_sameReaderAsTriangulatedFaceSet () throws IOException {
     Path f = ifcFile("ifc-tin-test", """
