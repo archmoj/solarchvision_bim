@@ -1955,6 +1955,135 @@ class ImportObjectsIFCTest {
   }
 
   @Test
+  void importObjectsIFC_archvisionRpcHumanFigures_arePlacedAsNativePeople_notTheirMesh () throws IOException {
+    // Archvision RPC ("Rich Photorealistic Content") is a widely-used
+    // Revit entourage plugin - checked directly against a real Revit
+    // export, whose own IfcBuildingElementProxy instances used exactly
+    // this "RPC Male:<name>"/"RPC Female:<name>" pattern for its human
+    // entourage figures, each carrying a real mapped mesh that should
+    // be replaced, not imported.
+    Path f = ifcFile("ifc-rpc-person-test", """
+        #1=IFCCARTESIANPOINT((2.,3.,0.));
+        #2=IFCAXIS2PLACEMENT3D(#1,$,$);
+        #3=IFCLOCALPLACEMENT($,#2);
+        #10=IFCCARTESIANPOINT((0.,0.,0.));
+        #11=IFCCARTESIANPOINT((1.,0.,0.));
+        #12=IFCCARTESIANPOINT((1.,1.,0.));
+        #13=IFCPOLYLOOP((#10,#11,#12));
+        #14=IFCFACEOUTERBOUND(#13,.T.);
+        #15=IFCFACE((#14));
+        #16=IFCCLOSEDSHELL((#15));
+        #17=IFCFACETEDBREP(#16);
+        #18=IFCSHAPEREPRESENTATION($,'Body','Brep',(#17));
+        #19=IFCPRODUCTDEFINITIONSHAPE($,$,(#18));
+        #20=IFCBUILDINGELEMENTPROXY('guid-1','owner','RPC Female:YinYin:954641',$,'RPC Female:YinYin',#3,#19,'954641',.NOTDEFINED.);
+        #30=IFCCARTESIANPOINT((5.,6.,0.));
+        #31=IFCAXIS2PLACEMENT3D(#30,$,$);
+        #32=IFCLOCALPLACEMENT($,#31);
+        #33=IFCBUILDINGELEMENTPROXY('guid-2','owner','RPC Male:Alex:954779',$,'RPC Male:Alex',#32,#19,'954779',.NOTDEFINED.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "neither RPC figure's own mapped mesh should be imported as Faces");
+    assertEquals(2, app.allModel2Ds.num);
+    assertEquals(2f, app.allModel2Ds.XYZS[0][0], 0.0001f, "RPC Female's x");
+    assertEquals(3f, app.allModel2Ds.XYZS[0][1], 0.0001f, "RPC Female's y");
+    assertEquals(5f, app.allModel2Ds.XYZS[1][0], 0.0001f, "RPC Male's x");
+    assertEquals(6f, app.allModel2Ds.XYZS[1][1], 0.0001f, "RPC Male's y");
+  }
+
+  @Test
+  void importObjectsIFC_rpcCarAndRpcTree_areNotMistakenForPeople () throws IOException {
+    // The same "RPC <Category>:<Name>" convention names RPC cars and
+    // trees too - a car should import as real geometry (there's no
+    // native substitute for it, unlike a person or a tree), and a tree
+    // should still go through the existing tree placement, not people.
+    Path f = ifcFile("ifc-rpc-nonperson-test", """
+        #1=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,2.);
+        #2=IFCDIRECTION((0.,0.,1.));
+        #3=IFCEXTRUDEDAREASOLID(#1,$,#2,2.);
+        #4=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCBUILDINGELEMENTPROXY('guid-1',$,'M_RPC Beetle:M_RPC Beetle:950367',$,'M_RPC Beetle:M_RPC Beetle',$,#5,'950367',.NOTDEFINED.);
+        #11=IFCCARTESIANPOINT((0.,0.,0.));
+        #12=IFCAXIS2PLACEMENT3D(#11,$,$);
+        #13=IFCLOCALPLACEMENT($,#12);
+        #14=IFCBUILDINGELEMENTPROXY('guid-2',$,'RPC Tree - Deciduous:Honey Locust - 25',$,'RPC Tree - Deciduous:Honey Locust - 25',#13,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(6, app.allFaces.nodes.length, "the RPC car should import as real geometry (2 caps + 4 sides)");
+    assertEquals(1, app.allModel2Ds.num, "only the tree should land in allModel2Ds");
+    assertEquals(1, app.ifcImportTreeCount, "the RPC tree should go through tree placement");
+    assertEquals(0, app.ifcImportPersonCount, "neither the car nor the tree is a person");
+  }
+
+  @Test
+  void importObjectsIFC_typeDefinitionEntities_areNeverCountedAsTreesOrPeople_onlyTheirInstancesAre () throws IOException {
+    // Regression test for a real bug found while verifying the RPC
+    // person fix against an actual Revit export: an IfcXxxType entity
+    // (a type DEFINITION several placed instances can share, never
+    // itself a placed instance) shares enough of IfcRoot's own
+    // Name/Description prefix to pass ifcLooksLikeAProduct() - so
+    // before ifcLooksLikeAProduct() itself excluded *TYPE entities, a
+    // type definition named like a tree or an RPC person was being
+    // swept in and counted/placed as a bogus extra one, alongside its
+    // own real placed instance. Deliberately exercises both the tree
+    // and the person path with one type entity each, alongside one real
+    // instance of each, so a regression here fails loudly either way.
+    Path f = ifcFile("ifc-type-entity-test", """
+        #1=IFCBUILDINGELEMENTPROXYTYPE('type-guid-1',$,'RPC Tree - Deciduous:Honey Locust - 25',$,$,(#50),(#51),'1',$,.NOTDEFINED.);
+        #10=IFCCARTESIANPOINT((0.,0.,0.));
+        #11=IFCAXIS2PLACEMENT3D(#10,$,$);
+        #12=IFCLOCALPLACEMENT($,#11);
+        #13=IFCBUILDINGELEMENTPROXY('guid-1',$,'RPC Tree - Deciduous:Honey Locust - 25:100',$,'RPC Tree - Deciduous:Honey Locust - 25',#12,$);
+        #20=IFCBUILDINGELEMENTPROXYTYPE('type-guid-2',$,'RPC Female:YinYin',$,$,(#52),(#53),'2',$,.NOTDEFINED.);
+        #30=IFCCARTESIANPOINT((5.,0.,0.));
+        #31=IFCAXIS2PLACEMENT3D(#30,$,$);
+        #32=IFCLOCALPLACEMENT($,#31);
+        #33=IFCBUILDINGELEMENTPROXY('guid-2',$,'RPC Female:YinYin:200',$,'RPC Female:YinYin',#32,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.ifcImportTreeCount, "only the real tree instance, not its type definition too");
+    assertEquals(1, app.ifcImportPersonCount, "only the real RPC person instance, not its type definition too");
+    assertEquals(2, app.allModel2Ds.num, "one tree + one person, nothing extra from either type entity");
+  }
+
+  @Test
+  void importObjectsIFC_mepMaleOrFemaleConnector_isNotMistakenForAnRpcPerson () throws IOException {
+    // "Male"/"Female" alone (common MEP connector/adapter/coupling
+    // terminology) must never trigger person detection on their own -
+    // only "rpc" together with "male"/"female" should.
+    Path f = ifcFile("ifc-mep-male-female-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCBUILDINGELEMENTPROXY('guid-1',$,'Male Adapter Coupling',$,'Male Adapter Coupling',$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "a plain MEP male connector should import as real geometry, not a person");
+    assertEquals(0, app.allModel2Ds.num);
+  }
+
+  @Test
   void importObjectsIFC_buildingElementProxyWithEntourageOrScaleFigureObjectType_isAlsoPlacedAsAPerson () throws IOException {
     Path f = ifcFile("ifc-proxy-entourage-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));

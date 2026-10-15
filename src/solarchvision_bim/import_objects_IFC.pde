@@ -67,13 +67,15 @@
 //     See ifcLooksLikeATree() below.
 //   - A human/entourage/scale-figure reference model - IfcActor, an
 //     IfcBuildingElementProxy with ObjectType "Human"/"Entourage"/
-//     "Scale Figure", a Name/ObjectType word match, or a product on an
-//     IfcPresentationLayerAssignment named A-PROP-HUMN/A-PROP-ENTS
-//     (the AIA layer-naming standard) - is placed the same way, as one
-//     of the app's own native 2D people (allModel2Ds, "PEOPLE") at a
-//     fixed height (2.5), instead of importing whatever detailed mesh
-//     it carries (typically through an IfcMappedItem). See
-//     ifcLooksLikeAPerson() below.
+//     "Scale Figure", a Name/ObjectType word match, an Archvision RPC
+//     ("Rich Photorealistic Content") human figure - Name/ObjectType
+//     "RPC Male:..."/"RPC Female:...", a common Revit entourage plugin
+//     - or a product on an IfcPresentationLayerAssignment named
+//     A-PROP-HUMN/A-PROP-ENTS (the AIA layer-naming standard) - is
+//     placed the same way, as one of the app's own native 2D people
+//     (allModel2Ds, "PEOPLE") at a fixed height (2.5), instead of
+//     importing whatever detailed mesh it carries (typically through an
+//     IfcMappedItem). See ifcLooksLikeAPerson() below.
 //   - A PV panel, solar collector or solar hybrid panel - whether the
 //     file models it as IfcSolarDevice (IFC4.3) or, like a tree, as a
 //     generic product whose Name/ObjectType just says so - imports its
@@ -1525,12 +1527,35 @@ void ifcProcessProductRepresentation (HashMap<Integer, StepEntity> ents, int rep
 // comes after index 6. So rather than hand-listing every IfcWall/
 // IfcSlab/IfcDoor/... subtype name, this recognizes "a product this
 // importer could do something with" structurally: not a relationship
-// (IfcRel...), not one of the non-geometry types above, and shaped like
-// an IfcProduct.
+// (IfcRel...), not a type definition (IfcXxxType - see below), not one
+// of the non-geometry types above, and shaped like an IfcProduct.
+//
+// IfcXxxType entities (IfcBuildingElementProxyType, IfcFurnitureType,
+// IfcWallType, IfcDoorType, ...) are *definitions* a project's own
+// placed instances can share - never themselves a placed instance - but
+// happen to share IfcRoot's same Name/Description prefix, and are
+// numerous enough (attrs.length >= 7 easily) to otherwise pass this
+// same structural check. ifcLooksLikeImportableProduct() below was
+// already safe from these (a type's own attrs[6], HasPropertySets or
+// RepresentationMaps depending on exact subtype, is always a list -
+// "(#...)" - never a single reference starting with "#"), but every
+// Name/ObjectType-driven exception elsewhere (ifcLooksLikeATree(),
+// ifcLooksLikeAPerson(), ...) that checks ifcLooksLikeAProduct() alone,
+// without also requiring a real Representation, was not: checked
+// against a real Revit export, its own IfcBuildingElementProxyType
+// entities for "RPC Female:YinYin" and "RPC Male:Alex" (the type
+// definitions, not either's own several placed instances) were being
+// counted and placed as two extra, bogus people, and the same file's
+// own RPC tree types were inflating ifcImportTreeCount by exactly the
+// same mechanism (7 tree types counted alongside 16 real tree
+// instances). Excluding every *TYPE entity structurally, right here,
+// fixes every one of these at once rather than one Name/ObjectType
+// exception function at a time.
 boolean ifcLooksLikeAProduct (StepEntity e) {
   if (e.attrs.length < 7) return false;
   if (!e.type.startsWith("IFC")) return false;
   if (e.type.startsWith("IFCREL")) return false;
+  if (e.type.endsWith("TYPE")) return false;
   return !ifcNonGeometryProductTypes.contains(e.type);
 }
 
@@ -1796,6 +1821,22 @@ boolean ifcNameHasWord (String rawAttr, HashSet<String> words) {
   return false;
 }
 
+// A whole-word match requiring every one of several words to be
+// present (in any order), rather than any single one - see
+// ifcLooksLikeAPerson()'s own RPC check below for why: "rpc" alone is
+// nowhere near specific enough on its own (it also names RPC trees and
+// RPC cars, already handled their own ways), but "rpc" together with
+// "male"/"female" is - and requiring the conjunction, rather than
+// either word alone, avoids "male"/"female" misfiring on an unrelated
+// MEP male/female connector/adapter/coupling, a common naming pattern
+// that has nothing to do with people.
+boolean ifcNameHasAllWords (String rawAttr, HashSet<String> words) {
+  String text = ifcUnquote(rawAttr);
+  if (text == null) return false;
+  HashSet<String> tokens = new HashSet<String>(Arrays.asList(text.toLowerCase().split("[^a-z0-9]+")));
+  return tokens.containsAll(words);
+}
+
 boolean ifcLooksLikeATree (StepEntity e) {
   if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcTreeNameWords)) return true; // Name
   if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcTreeNameWords)) return true; // ObjectType
@@ -1889,6 +1930,35 @@ HashSet<String> ifcPersonNameWords = new HashSet<String>(Arrays.asList(
   "human", "entourage"
   ));
 
+// Archvision RPC ("Rich Photorealistic Content") is a widely-used
+// Revit/3ds Max plugin for photorealistic entourage - people, cars,
+// trees, shrubs - imported into Revit as a generic proxy family and
+// named "RPC <Category>:<Specific Name>" (e.g. "RPC Female:YinYin",
+// "RPC Male:Alex") on export; the RPC trees already catch via
+// ifcTreeNameWords above ("RPC Tree - Deciduous:..." contains "tree"),
+// and an RPC car (e.g. "RPC Beetle") is left as real imported geometry
+// - just the two human categories need catching here. Checked against
+// a real Revit export rather than assumed: that file's own
+// IfcBuildingElementProxy instances included exactly these two
+// ("RPC Female:YinYin", "RPC Male:Alex"), nothing else RPC-person-like.
+// "rpc child"/"rpc person"/"rpc people" are included on the same
+// pattern as a reasonable guess at other RPC human categories, not
+// themselves confirmed against real export data.
+ArrayList<HashSet<String>> ifcRpcPersonWordGroups = new ArrayList<HashSet<String>>(Arrays.asList(
+  new HashSet<String>(Arrays.asList("rpc", "male")),
+  new HashSet<String>(Arrays.asList("rpc", "female")),
+  new HashSet<String>(Arrays.asList("rpc", "child")),
+  new HashSet<String>(Arrays.asList("rpc", "person")),
+  new HashSet<String>(Arrays.asList("rpc", "people"))
+  ));
+
+boolean ifcNameHasRpcPersonPhrase (String rawAttr) {
+  for (HashSet<String> words : ifcRpcPersonWordGroups) {
+    if (ifcNameHasAllWords(rawAttr, words)) return true;
+  }
+  return false;
+}
+
 HashSet<String> ifcPersonObjectTypeValues = new HashSet<String>(Arrays.asList(
   "human", "entourage", "scale figure"
   ));
@@ -1958,6 +2028,8 @@ boolean ifcLooksLikeAPerson (HashMap<Integer, StepEntity> ents, StepEntity e, in
 
   if (e.attrs.length > 2 && ifcNameHasWord(e.attrs[2], ifcPersonNameWords)) return true; // Name
   if (e.attrs.length > 4 && ifcNameHasWord(e.attrs[4], ifcPersonNameWords)) return true; // ObjectType
+  if (e.attrs.length > 2 && ifcNameHasRpcPersonPhrase(e.attrs[2])) return true; // Name, e.g. "RPC Female:YinYin"
+  if (e.attrs.length > 4 && ifcNameHasRpcPersonPhrase(e.attrs[4])) return true; // ObjectType, same pattern
 
   return ifcProductIsOnPersonLayer(ents, repId, personLayerItemIds);
 }
