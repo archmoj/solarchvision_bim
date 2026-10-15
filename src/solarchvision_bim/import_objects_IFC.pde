@@ -303,6 +303,22 @@ final boolean IFC_IMPORT_FURNITURE = false;
 // angle is zero" in ifcRotateImportedModelToTrueNorth()'s own comment.
 final boolean IFC_IMPORT_NORTH = true;
 
+// Whether to navigate the app's own "station" (STATION.latitude/
+// longitude - see STATION.pde) to wherever the file's own IfcSite says
+// the project actually is, once loading finishes - on by default. Most
+// of what this app computes (sun position, solar yield, the satellite/
+// terrain imagery WORLD.FindGoodViewport() picks, ...) depends on the
+// station's own lat/lon, so an IFC import that leaves it wherever it
+// happened to be before - typically nowhere near the file's own site -
+// silently makes all of that wrong for the model that was just loaded.
+// See ifcSiteLatLonDecimalDegrees() below for exactly where the lat/lon
+// itself comes from (IfcSite's own RefLatitude/RefLongitude, or, failing
+// that, an IfcMapConversion's Eastings/Northings); a file with neither
+// naturally leaves the station untouched regardless of this toggle's
+// value, same as IFC_IMPORT_NORTH already does for an unrotated/missing
+// IfcSite.
+final boolean IFC_IMPORT_GOTO_LATLON = true;
+
 // IfcSanitaryTerminal is IFC4's own dedicated entity for toilet/
 // bathroom fixtures (a IfcFlowTerminal subtype: WCs, sinks, bathtubs,
 // showers, urinals, bidets, ...) - included for files from tools that
@@ -550,6 +566,12 @@ int ifcImportSmallObjectExcludedCount = 0;
 // was rotated: IFC_IMPORT_NORTH is off, the file has no IfcSite, or
 // that IfcSite's own placement isn't rotated at all.
 float ifcImportNorthRotationAngle = 0;
+// {latitude, longitude} the import navigated the station to - see
+// IFC_IMPORT_GOTO_LATLON and ifcSiteLatLonDecimalDegrees() below. Stays
+// null whenever nothing was navigated to: IFC_IMPORT_GOTO_LATLON is
+// off, or the file gives no usable reference point at all (see that
+// function's own comment for the two sources it tries).
+float[] ifcImportGotoLatLon = null;
 HashMap<String, Integer> ifcImportSkippedReasons = new HashMap<String, Integer>();
 
 // Guards against a pathological/cyclic chain of nested IfcMappedItems
@@ -933,6 +955,103 @@ float ifcSiteTrueNorthAngleDegrees (HashMap<Integer, StepEntity> ents) {
 
   IfcFrame siteFrame = ifcPlacementToFrame(ents, ifcRefId(placementTok));
   return atan2(siteFrame.xAxis.y, siteFrame.xAxis.x) * 180 / PI;
+}
+
+// IfcSite's RefLatitude/RefLongitude are IFC's own
+// IfcCompoundPlaneAngleMeasure - a plain attribute-level list of
+// (degrees, minutes, seconds[, microseconds]), NOT an entity reference
+// the way almost everything else this importer reads is - converted
+// here into ordinary signed decimal degrees. Only the first (degrees)
+// component's own sign is honored - minutes/seconds/microseconds are
+// assumed non-negative, same as every real IFC export writes them.
+float ifcCompoundAngleToDecimalDegrees (String listAttr) {
+  String[] c = ifcListTokens(listAttr);
+  if (c.length == 0) return 0;
+
+  float deg = ifcFloat(c[0]);
+  float min = c.length > 1 ? ifcFloat(c[1]) : 0;
+  float sec = c.length > 2 ? ifcFloat(c[2]) : 0;
+  // The optional 4th component is in millionths of a second - not a
+  // 4th decimal place - per IfcCompoundPlaneAngleMeasure's own
+  // definition.
+  float microsec = c.length > 3 ? ifcFloat(c[3]) : 0;
+
+  float sign = (deg < 0) ? -1 : 1;
+  float magnitude = abs(deg) + min / 60 + (sec + microsec / 1000000) / 3600;
+  return sign * magnitude;
+}
+
+// Where IFC_IMPORT_GOTO_LATLON (see its own comment) navigates the
+// station to, as {latitude, longitude} in decimal degrees - or null
+// when the file gives no usable reference point at all. Two sources,
+// tried in this order:
+//
+//   1. IfcSite's own RefLatitude(9)/RefLongitude(10) - IFC2x3's and
+//      IFC4's original way of georeferencing a site directly, and still
+//      what most real exports actually set - read from the same
+//      lowest-entity-id IfcSite ifcSiteTrueNorthAngleDegrees() above
+//      reads ObjectPlacement from. A "$" (unset) RefLatitude/
+//      RefLongitude - common even in files that do set ObjectPlacement
+//      - is treated as absent, not as the compound angle (0,0,0): only
+//      an attribute that's actually a "(...)" list is read as one.
+//
+//   2. Failing that, an IfcMapConversion's own Eastings(2)/Northings(3)
+//      - IFC4's newer, CRS-based way of georeferencing a project
+//      (IfcMapConversion + IfcProjectedCRS), which newer exporters often
+//      use instead, typically leaving RefLatitude/RefLongitude unset.
+//      Taken only when both numbers already look like plain geographic
+//      degrees (|Eastings| <= 180, |Northings| <= 90) rather than a real
+//      projected CRS's own metres (a UTM easting, for example, is
+//      typically in the hundreds of thousands) - this importer has no
+//      map-projection engine of its own to turn a true projected
+//      easting/northing into an actual latitude/longitude, so this path
+//      only fires for the (common in practice) case of a file whose
+//      "projection" is really just WGS84 geographic coordinates passed
+//      straight through as Eastings/Northings.
+//
+// Either way, the result is rounded to 4 decimal places (roughly 11m at
+// the equator) - this is only ever meant to get the station to the
+// right part of the world, not to survey-grade accuracy.
+float[] ifcSiteLatLonDecimalDegrees (HashMap<Integer, StepEntity> ents) {
+  ArrayList<Integer> siteIds = new ArrayList<Integer>();
+  for (Integer id : ents.keySet()) {
+    StepEntity candidate = ents.get(id);
+    if (candidate != null && candidate.type.equals("IFCSITE")) siteIds.add(id);
+  }
+  if (siteIds.size() > 0) {
+    ifcSortAscending(siteIds);
+    StepEntity site = ents.get(siteIds.get(0));
+
+    if (site.attrs.length > 10) {
+      String latTok = site.attrs[9].trim();
+      String lonTok = site.attrs[10].trim();
+      if (latTok.startsWith("(") && lonTok.startsWith("(")) {
+        float lat = ifcCompoundAngleToDecimalDegrees(latTok);
+        float lon = ifcCompoundAngleToDecimalDegrees(lonTok);
+        return new float[] { round(lat * 10000) / 10000.0f, round(lon * 10000) / 10000.0f };
+      }
+    }
+  }
+
+  ArrayList<Integer> mapConversionIds = new ArrayList<Integer>();
+  for (Integer id : ents.keySet()) {
+    StepEntity candidate = ents.get(id);
+    if (candidate != null && candidate.type.equals("IFCMAPCONVERSION")) mapConversionIds.add(id);
+  }
+  if (mapConversionIds.size() > 0) {
+    ifcSortAscending(mapConversionIds);
+    StepEntity mc = ents.get(mapConversionIds.get(0));
+
+    if (mc.attrs.length > 3) {
+      float eastings = ifcFloat(mc.attrs[2]);
+      float northings = ifcFloat(mc.attrs[3]);
+      if (abs(eastings) <= 180 && abs(northings) <= 90) {
+        return new float[] { round(northings * 10000) / 10000.0f, round(eastings * 10000) / 10000.0f };
+      }
+    }
+  }
+
+  return null;
 }
 
 // IfcCartesianTransformationOperator(3D[NonUniform]) - used only as an
@@ -2325,6 +2444,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportFurnitureExcludedCount = 0;
   ifcImportSmallObjectExcludedCount = 0;
   ifcImportNorthRotationAngle = 0;
+  ifcImportGotoLatLon = null;
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
   ifcMappedItemDepth = 0;
@@ -2604,4 +2724,18 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   summary += ".";
   println();
   println(summary);
+
+  // Last step of loading an IFC file, after the summary above - see
+  // IFC_IMPORT_GOTO_LATLON's own comment for why this runs at all, and
+  // ifcSiteLatLonDecimalDegrees()'s own comment for exactly where the
+  // lat/lon comes from. Left alone - the station stays wherever it
+  // already was - whenever the file gives no usable reference point,
+  // same as a file with no (or an unrotated) IfcSite already leaves
+  // IFC_IMPORT_NORTH's own rotation a no-op.
+  ifcImportGotoLatLon = IFC_IMPORT_GOTO_LATLON ? ifcSiteLatLonDecimalDegrees(ents) : null;
+  if (ifcImportGotoLatLon != null) {
+    println();
+    println("Now navigating to latitude " + ifcImportGotoLatLon[0] + ", longitude " + ifcImportGotoLatLon[1] + "...");
+    __SETLATLON__(new String[] { "SETLATLON", "" + ifcImportGotoLatLon[0], "" + ifcImportGotoLatLon[1] });
+  }
 }

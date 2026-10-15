@@ -1182,6 +1182,159 @@ class ImportObjectsIFCTest {
     assertEquals(90f, app.ifcImportNorthRotationAngle, 0.0001f);
   }
 
+  // ================= IFC_IMPORT_GOTO_LATLON: navigate to the site =============
+
+  @Test
+  void importObjectsIFC_gotoLatLon_navigatesTheStationToIfcSitesRefLatLon () throws IOException {
+    Path f = ifcFile("ifc-gotolatlon-reflatlon-test", """
+        #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,(43,38,33),(-79,23,13),0.,$,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // 43 deg 38' 33" N, 79 deg 23' 13" W - rounded to 4 decimal places.
+    assertNotNull(app.ifcImportGotoLatLon);
+    assertEquals(43.6425f, app.ifcImportGotoLatLon[0], 0.0001f, "latitude");
+    assertEquals(-79.3869f, app.ifcImportGotoLatLon[1], 0.0001f, "longitude");
+
+    // __SETLATLON__ should actually have been called with it.
+    assertEquals(43.6425f, app.STATION.getLatitude(), 0.0001f);
+    assertEquals(-79.3869f, app.STATION.getLongitude(), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_gotoLatLon_fourComponentCompoundAngle_includesTheMicrosecondsComponent () throws IOException {
+    Path f = ifcFile("ifc-gotolatlon-microseconds-test", """
+        #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,(43,38,33,500000),(0,0,0,0),0.,$,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // 500000 microseconds = 0.5 seconds, so 33" becomes 33.5".
+    assertNotNull(app.ifcImportGotoLatLon);
+    assertEquals(43.6426f, app.ifcImportGotoLatLon[0], 0.0001f, "43 deg 38' 33.5\" rounds to this at 4 decimal places");
+  }
+
+  @Test
+  void importObjectsIFC_gotoLatLon_negativeDegreesComponent_onlyThatComponentCarriesTheSign () throws IOException {
+    Path f = ifcFile("ifc-gotolatlon-negative-test", """
+        #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,(-33,52,4),(151,12,36),0.,$,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertNotNull(app.ifcImportGotoLatLon);
+    assertTrue(app.ifcImportGotoLatLon[0] < 0, "negative degrees should make the whole latitude negative");
+    assertEquals(-33.8678f, app.ifcImportGotoLatLon[0], 0.0001f);
+    assertEquals(151.21f, app.ifcImportGotoLatLon[1], 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_gotoLatLon_unsetRefLatLon_andNoMapConversion_leavesTheStationUntouched () throws IOException {
+    Path f = ifcFile("ifc-gotolatlon-unset-test", """
+        #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,$,$,$,$,$);
+        """
+    );
+
+    app.STATION.setLatitude(12.34f);
+    app.STATION.setLongitude(56.78f);
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertNull(app.ifcImportGotoLatLon, "an unset ($) RefLatitude/RefLongitude is not a (0,0,0) compound angle - it's absent");
+    assertEquals(12.34f, app.STATION.getLatitude(), 0.0001f, "the station should be left exactly where it was");
+    assertEquals(56.78f, app.STATION.getLongitude(), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_gotoLatLon_noIfcSiteAtAll_leavesTheStationUntouched () throws IOException {
+    Path f = ifcFile("ifc-gotolatlon-no-site-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.STATION.setLatitude(12.34f);
+    app.STATION.setLongitude(56.78f);
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertNull(app.ifcImportGotoLatLon);
+    assertEquals(12.34f, app.STATION.getLatitude(), 0.0001f);
+    assertEquals(56.78f, app.STATION.getLongitude(), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_gotoLatLon_fallsBackToIfcMapConversion_whenRefLatLonIsUnset () throws IOException {
+    Path f = ifcFile("ifc-gotolatlon-mapconversion-test", """
+        #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,$,$,$,$,$);
+        #2=IFCPROJECTEDCRS('WGS 84',$,$,$,$,$,$);
+        #3=IFCMAPCONVERSION($,#2,-79.387,43.6425,0.,1.,0.,1.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertNotNull(app.ifcImportGotoLatLon, "no RefLatitude/RefLongitude, but an IfcMapConversion with plain geographic Eastings/Northings should still be usable");
+    assertEquals(43.6425f, app.ifcImportGotoLatLon[0], 0.0001f, "Northings is latitude");
+    assertEquals(-79.387f, app.ifcImportGotoLatLon[1], 0.0001f, "Eastings is longitude");
+    assertEquals(43.6425f, app.STATION.getLatitude(), 0.0001f);
+    assertEquals(-79.387f, app.STATION.getLongitude(), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_gotoLatLon_ifcMapConversionWithTrueProjectedMetres_isNotMistakenForDegrees () throws IOException {
+    Path f = ifcFile("ifc-gotolatlon-mapconversion-utm-test", """
+        #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,$,$,$,$,$);
+        #2=IFCPROJECTEDCRS('UTM Zone 17N',$,$,$,$,$,$);
+        #3=IFCMAPCONVERSION($,#2,500000.,4800000.,0.,1.,0.,1.);
+        """
+    );
+
+    app.STATION.setLatitude(12.34f);
+    app.STATION.setLongitude(56.78f);
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // A real UTM easting/northing (hundreds of thousands to millions of
+    // metres) is nowhere near a plausible longitude/latitude - with no
+    // map-projection engine to convert it properly, this should be left
+    // alone rather than "navigating" somewhere wildly wrong.
+    assertNull(app.ifcImportGotoLatLon);
+    assertEquals(12.34f, app.STATION.getLatitude(), 0.0001f);
+    assertEquals(56.78f, app.STATION.getLongitude(), 0.0001f);
+  }
+
+  @Test
+  void importObjectsIFC_gotoLatLon_ifcSitesOwnRefLatLon_takesPriorityOverMapConversion () throws IOException {
+    Path f = ifcFile("ifc-gotolatlon-priority-test", """
+        #1=IFCSITE('guid-site',$,$,$,$,$,$,$,$,(43,38,33),(-79,23,13),0.,$,$);
+        #2=IFCPROJECTEDCRS('WGS 84',$,$,$,$,$,$);
+        #3=IFCMAPCONVERSION($,#2,10.,20.,0.,1.,0.,1.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    // IfcSite's own RefLatitude/RefLongitude should win over the
+    // IfcMapConversion's own (10, 20), not just whichever is found first.
+    assertEquals(43.6425f, app.ifcImportGotoLatLon[0], 0.0001f);
+    assertEquals(-79.3869f, app.ifcImportGotoLatLon[1], 0.0001f);
+  }
+
   @Test
   void importObjectsIFC_triangulatedIrregularNetwork_importsAsATerrainMesh_sameReaderAsTriangulatedFaceSet () throws IOException {
     Path f = ifcFile("ifc-tin-test", """
