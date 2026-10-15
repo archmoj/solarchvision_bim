@@ -1526,4 +1526,142 @@ class ImportObjectsIFCTest {
     assertEquals(1, app.allFaces.options[0][0], "first wall: material cycle starts at 1");
     assertEquals(2, app.allFaces.options[1][0], "second wall: material cycle continues at 2, not disrupted by the excluded sofa");
   }
+
+  // ================= bulk point/face queuing (performance fix) ===============
+
+  @Test
+  void importObjectsIFC_groupFaceRangesAreExactAfterBulkFlush_oneFaceThenSixFaces () throws IOException {
+    // A single-face product followed by a 6-face extrusion - checks
+    // allGroups.Faces[][] directly, the part of the queue-then-flush
+    // refactor (see ifcQueuePoint()/ifcQueueFace()/
+    // ifcFlushPendingGeometry() in import_objects_IFC.pde) most at risk
+    // of an off-by-one, since group start/stop indices are now stamped
+    // against "virtual" (not-yet-real) face indices during the import
+    // and only become real once everything is flushed at the end.
+    Path f = ifcFile("ifc-group-ranges-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #20=IFCRECTANGLEPROFILEDEF(.AREA.,$,$,2.,4.);
+        #21=IFCDIRECTION((0.,0.,1.));
+        #22=IFCEXTRUDEDAREASOLID(#20,$,#21,3.);
+        #23=IFCSHAPEREPRESENTATION($,'Body','SweptSolid',(#22));
+        #24=IFCPRODUCTDEFINITIONSHAPE($,$,(#23));
+        #25=IFCWALL('guid-2',$,$,$,$,$,#24);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(7, app.allFaces.nodes.length, "1 (wall) + 6 (extrusion: 2 caps + 4 sides)");
+    assertEquals(2, app.allGroups.num);
+    assertEquals(0, app.allGroups.getStart_Face(0));
+    assertEquals(0, app.allGroups.getStop_Face(0));
+    assertEquals(1, app.allGroups.getStart_Face(1));
+    assertEquals(6, app.allGroups.getStop_Face(1));
+  }
+
+  @Test
+  void importObjectsIFC_pointIndicesAreExactAfterBulkFlush_acrossMultipleProducts () throws IOException {
+    // Two separate 4-point faces from two separate products - every
+    // vertex should land at the right index once everything is flushed,
+    // not just the right count.
+    Path f = ifcFile("ifc-point-indices-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        #101=IFCCARTESIANPOINT((10.,0.,0.));
+        #102=IFCCARTESIANPOINT((11.,0.,0.));
+        #103=IFCCARTESIANPOINT((11.,1.,0.));
+        #104=IFCCARTESIANPOINT((10.,1.,0.));
+        #105=IFCPOLYLOOP((#101,#102,#103,#104));
+        #106=IFCFACEOUTERBOUND(#105,.T.);
+        #107=IFCFACE((#106));
+        #108=IFCCLOSEDSHELL((#107));
+        #109=IFCFACETEDBREP(#108);
+        #110=IFCSHAPEREPRESENTATION($,'Body','Brep',(#109));
+        #111=IFCPRODUCTDEFINITIONSHAPE($,$,(#110));
+        #112=IFCWALL('guid-2',$,$,$,$,$,#111);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(8, app.allPoints.getLength());
+    assertEquals(2, app.allFaces.nodes.length);
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.allFaces.nodes[0]);
+    assertArrayEquals(new int[]{4, 5, 6, 7}, app.allFaces.nodes[1]);
+    assertEquals(10f, app.allPoints.getX(4), 0.0001f, "second product's first point should start right after the first product's four");
+  }
+
+  @Test
+  void importObjectsIFC_bulkFlushAppendsAfterPreExistingGeometry_doesNotOverwriteIt () throws IOException {
+    // Importing into a scene that already has geometry (e.g. a second
+    // IFC import in the same session) - the flush must append after
+    // whatever already exists, not overwrite it. Build the "pre-
+    // existing" geometry with a first import, then import again and
+    // check the first import's own points/faces are untouched.
+    Path f1 = ifcFile("ifc-preexisting-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-1',$,$,$,$,$,#11);
+        """
+    );
+    app.import_objects_IFC(f1.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+    assertEquals(4, app.allPoints.getLength(), "setup check");
+    assertEquals(1, app.allFaces.nodes.length, "setup check");
+
+    Path f2 = ifcFile("ifc-second-import-test", """
+        #1=IFCCARTESIANPOINT((50.,50.,0.));
+        #2=IFCCARTESIANPOINT((51.,50.,0.));
+        #3=IFCCARTESIANPOINT((51.,51.,0.));
+        #4=IFCCARTESIANPOINT((50.,51.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCWALL('guid-2',$,$,$,$,$,#11);
+        """
+    );
+    app.import_objects_IFC(f2.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(8, app.allPoints.getLength());
+    assertEquals(2, app.allFaces.nodes.length);
+    // the first import's own points/faces should be exactly as they were
+    assertEquals(0f, app.allPoints.getX(0), 0.0001f, "first import's own point 0 should be untouched");
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.allFaces.nodes[0], "first import's own face should be untouched");
+    // the second import's geometry should be appended after it
+    assertEquals(50f, app.allPoints.getX(4), 0.0001f);
+    assertArrayEquals(new int[]{4, 5, 6, 7}, app.allFaces.nodes[1]);
+  }
 }

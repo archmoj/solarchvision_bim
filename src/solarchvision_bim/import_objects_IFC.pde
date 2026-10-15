@@ -10,8 +10,9 @@
 // behind the "Mesh"/"Mesh2".."Mesh6" command-line commands) builds for a
 // single call - so a quad wall panel stays one 4-sided face instead of
 // being split into two triangles. See ifcEmitFace()'s own comment for
-// why this calls allPoints.create()/allFaces.create() directly rather
-// than literally calling Create3D.add_Mesh() itself.
+// why the point/face data this builds is queued and bulk-flushed into
+// allPoints/allFaces rather than calling Create3D.add_Mesh(), or even
+// allPoints.create()/allFaces.create(), directly.
 //
 // Supported geometry (a practical subset, not the full EXPRESS schema):
 //   - IfcFacetedBrep / IfcShellBasedSurfaceModel: (Open|Closed)Shell ->
@@ -787,11 +788,11 @@ float[] ifcApply2DPlacement (float[] placement, float px, float py) {
 }
 
 // ---------------------------------------------------------------------
-// Face/geometry import - every face becomes one allPoints.create() call
-// per vertex plus one allFaces.create() call, the same pair of calls
-// Create3D.add_Mesh() itself makes internally for an n-gon point list -
-// so a quad/pentagon/etc. stays exactly that, never split into
-// triangles.
+// Face/geometry import - every face becomes one queued point per
+// vertex plus one queued face (see ifcQueuePoint()/ifcQueueFace()
+// below), the same conceptual pair of steps Create3D.add_Mesh() itself
+// does internally for an n-gon point list - so a quad/pentagon/etc.
+// stays exactly that, never split into triangles.
 //
 // This deliberately does NOT call Create3D.add_Mesh() directly, though:
 // that convenience wrapper also calls model_changed()/model_added() on
@@ -824,22 +825,110 @@ void ifcEmitFace (ArrayList<PVector> localPts, IfcFrame productFrame,
   }
   if (cleaned.size() < 3) return;
 
-  // Faces.create() (called via allFaces.create() below) reads these as
-  // globals, not parameters - exactly what Create3D.add_Mesh() itself
-  // sets immediately before doing the same thing.
-  current_Material = m;
-  current_Tessellation = tes;
-  current_Layer = lyr;
-  current_Visibility = vsb;
-  current_Weight = wgt;
-  current_Closed = clz;
-
   int[] newFace_nodes = new int[cleaned.size()];
   for (int i = 0; i < cleaned.size(); i++) {
     PVector world = productFrame.toWorldPoint(cleaned.get(i));
-    newFace_nodes[i] = allPoints.create(cx + sx * world.x, cy + sy * world.y, cz + sz * world.z);
+    newFace_nodes[i] = ifcQueuePoint(cx + sx * world.x, cy + sy * world.y, cz + sz * world.z);
   }
-  allFaces.create(newFace_nodes);
+  ifcQueueFace(newFace_nodes, m, tes, lyr, vsb, wgt, clz);
+}
+
+// ---------------------------------------------------------------------
+// Bulk point/face staging - see the comment above ifcEmitFace() for why
+// this doesn't call Create3D.add_Mesh(); this goes a step further and
+// doesn't call allPoints.create()/allFaces.create() either, for a
+// related but distinct reason. Both grow their backing array by
+// exactly one element via concat() on every single call - correct, but
+// O(n) of copying per call, so O(n^2) overall across n calls. That's
+// invisible for an interactive create (a handful of points/faces at a
+// time) but becomes the dominant cost once a single IFC import can mean
+// hundreds of thousands of faces: profiling a real ~200,000-face Revit
+// export showed import throughput visibly degrading as the import
+// progressed (the array getting bigger making each subsequent copy
+// bigger too) - the textbook signature of this exact kind of quadratic
+// growth, confirmed to account for effectively the entire import time
+// (parsing the file and walking the entity graph were each a few
+// hundred milliseconds; the point/face creation itself was everything
+// else).
+//
+// So every point/face this importer creates is queued here instead,
+// and flushed - one single array of the right size allocated once,
+// filled, and swapped in - at the very end of import_objects_IFC(),
+// turning that O(n^2) into O(n). ifcBasePointCount/ifcBaseFaceCount
+// capture how many points/faces already existed before this import
+// started (reset per import, same as the other counters); a "virtual"
+// index - what a point/face will actually end up at once flushed - is
+// always ifcBase*Count + however many of this import's own have been
+// queued so far, which is exactly what the two ifcQueue*() functions
+// below hand back and use.
+ArrayList<float[]> ifcPendingPoints = new ArrayList<float[]>();
+ArrayList<int[]> ifcPendingFaceNodes = new ArrayList<int[]>();
+ArrayList<int[]> ifcPendingFaceOptions = new ArrayList<int[]>();
+int ifcBasePointCount = 0;
+int ifcBaseFaceCount = 0;
+
+int ifcQueuePoint (float x, float y, float z) {
+  ifcPendingPoints.add(new float[]{x, y, z});
+  return ifcBasePointCount + ifcPendingPoints.size() - 1;
+}
+
+// Mirrors Faces.create()'s own two effects - appending the face itself,
+// and stamping allGroups' current (last) group's own stop index - just
+// against the pending buffer and a virtual index instead of the real
+// array, since this import hasn't flushed into it yet. See
+// ifcBeginGroupForPendingFaces() for the matching "start index" half of
+// that same group bookkeeping.
+void ifcQueueFace (int[] nodes, int m, int tes, int lyr, int vsb, int wgt, int clz) {
+  ifcPendingFaceNodes.add(nodes);
+  ifcPendingFaceOptions.add(new int[]{m, tes, lyr, vsb, wgt, clz});
+  if (allGroups.num > 0) {
+    allGroups.Faces[allGroups.num - 1][1] = ifcBaseFaceCount + ifcPendingFaceNodes.size() - 1;
+  }
+}
+
+// Called right after allGroups.beginNewGroup(): that call itself stamps
+// the new group's own start-of-range as allFaces.nodes.length, the
+// *real* array's current length - stale while this import's own faces
+// are still only queued, not yet flushed into it. Corrects it to the
+// virtual index the next queued face will actually land on.
+void ifcBeginGroupForPendingFaces () {
+  if (allGroups.num > 0) {
+    allGroups.Faces[allGroups.num - 1][0] = ifcBaseFaceCount + ifcPendingFaceNodes.size();
+  }
+}
+
+// The flush itself - one allocation and one fill per array, each
+// sized exactly right, rather than growing one element at a time.
+void ifcFlushPendingGeometry () {
+  // allVertices (allPoints' own backing array) is a top-level global in
+  // globals.pde, not a field of the Points class itself - Points' own
+  // methods just reference it directly as an enclosing-instance field,
+  // the same way this function can.
+  if (ifcPendingPoints.size() > 0) {
+    float[][] newVertices = new float[ifcBasePointCount + ifcPendingPoints.size()][3];
+    System.arraycopy(allVertices, 0, newVertices, 0, ifcBasePointCount);
+    for (int i = 0; i < ifcPendingPoints.size(); i++) {
+      newVertices[ifcBasePointCount + i] = ifcPendingPoints.get(i);
+    }
+    allVertices = newVertices;
+  }
+
+  if (ifcPendingFaceNodes.size() > 0) {
+    int[][] newNodes = new int[ifcBaseFaceCount + ifcPendingFaceNodes.size()][];
+    int[][] newOptions = new int[ifcBaseFaceCount + ifcPendingFaceOptions.size()][];
+    System.arraycopy(allFaces.nodes, 0, newNodes, 0, ifcBaseFaceCount);
+    System.arraycopy(allFaces.options, 0, newOptions, 0, ifcBaseFaceCount);
+    for (int i = 0; i < ifcPendingFaceNodes.size(); i++) {
+      newNodes[ifcBaseFaceCount + i] = ifcPendingFaceNodes.get(i);
+      newOptions[ifcBaseFaceCount + i] = ifcPendingFaceOptions.get(i);
+    }
+    allFaces.nodes = newNodes;
+    allFaces.options = newOptions;
+  }
+
+  ifcPendingPoints.clear();
+  ifcPendingFaceNodes.clear();
+  ifcPendingFaceOptions.clear();
 }
 
 ArrayList<PVector> ifcPolyLoopPoints (HashMap<Integer, StepEntity> ents, StepEntity loopEntity) {
@@ -1612,6 +1701,11 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcImportSkippedReasons = new HashMap<String, Integer>();
   ifcLengthUnitScale = 1;
   ifcMappedItemDepth = 0;
+  ifcPendingPoints.clear();
+  ifcPendingFaceNodes.clear();
+  ifcPendingFaceOptions.clear();
+  ifcBasePointCount = allPoints.getLength();
+  ifcBaseFaceCount = allFaces.nodes.length;
 
   String fullText = join(loadStrings(FileName), " ");
   HashMap<Integer, StepEntity> ents = ifcParseEntities(fullText);
@@ -1623,7 +1717,6 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcLengthUnitScale = ifcDetectLengthUnitScale(ents);
 
   int effectiveMaterial = (m == -1) ? 0 : m;
-  int importedFaceCountBefore = allFaces.nodes.length;
 
   // One pass up front, rather than re-walking the relationship graph
   // per product.
@@ -1680,7 +1773,10 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // every "g" line - so, unlike the material choice below, this can't
     // be deferred until after we know whether the product actually
     // produced geometry.
-    if (addToLastGroup == false) allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+    if (addToLastGroup == false) {
+      allGroups.beginNewGroup(0, 0, 0, 1, 1, 1, 0, 0, 0);
+      ifcBeginGroupForPendingFaces();
+    }
 
     String placementTok = e.attrs[5].trim();
     IfcFrame productFrame = placementTok.startsWith("#")
@@ -1775,9 +1871,13 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       materialForThisProduct, tes, lyr, vsb, wgt, clz);
   }
 
-  model_changed();
+  // Every point/face queued above (see ifcQueuePoint()/ifcQueueFace())
+  // only actually lands in allPoints/allFaces here, in one bulk copy -
+  // see ifcFlushPendingGeometry()'s own comment for why.
+  int importedFaceCount = ifcPendingFaceNodes.size();
+  ifcFlushPendingGeometry();
 
-  int importedFaceCount = allFaces.nodes.length - importedFaceCountBefore;
+  model_changed();
   String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
   if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
   if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
