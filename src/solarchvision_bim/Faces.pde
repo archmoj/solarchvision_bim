@@ -81,6 +81,25 @@ class Faces {
   ArrayList<Float> win3DCache_gridPointsZ = new ArrayList<Float>();
   ArrayList<int[]> win3DCache_gridFaces = new ArrayList<int[]>();
 
+  // Whether a face with this material should be left out of the
+  // raycasting grid (win3DCache_gridPoints*/win3DCache_gridFaces below,
+  // and so entirePointsX/Y/Z/entireFaces once addToFaceGrid() copies
+  // them in) - currently just IFC_MATERIAL_SPACE (an IfcSpace's own
+  // room/zone volume, not real building fabric - see that constant's
+  // own comment in import_objects_IFC.pde): since the grid is what
+  // shadow-casting/receiving and every other ray/intersection test in
+  // isIntersected_Faces.pde actually reads, a face excluded here simply
+  // never participates in either, while still drawing normally (see
+  // build_win3DCache()'s own use of this, right where it decides
+  // whether to add a face's points to the grid). Pulled out as its own
+  // small, pure method - rather than left inline in build_win3DCache(),
+  // which needs a real graphics context (createShape(GROUP)) and so
+  // isn't unit-testable as-is - so this one decision can be tested on
+  // its own.
+  boolean excludedFromFaceGrid (int material) {
+    return material == IFC_MATERIAL_SPACE;
+  }
+
   void addToFaceGrid () {
 
     if (!this.win3DCache_isValid()) {
@@ -1445,14 +1464,24 @@ class Faces {
 
             // Grid points are raw/unscaled - the same subFace[s] values
             // read above, just without the WIN3D display scale/Y-flip.
-            gridFace[s] = this.win3DCache_gridPointsX.size();
-            this.win3DCache_gridPointsX.add(subFace[s][0]);
-            this.win3DCache_gridPointsY.add(subFace[s][1]);
-            this.win3DCache_gridPointsZ.add(subFace[s][2]);
+            // Left out entirely for a face this.excludedFromFaceGrid()
+            // (above) says to skip - see the matching skip just below,
+            // around win3DCache_gridFaces.add(): together, these two
+            // keep such a face out of the raycasting grid entirely, so
+            // it neither casts nor receives a shadow, while everything
+            // else about it (still drawn here via emitPolygon() below,
+            // still getting its own edge lines) stays the same as any
+            // other face.
+            if (!this.excludedFromFaceGrid(mt)) {
+              gridFace[s] = this.win3DCache_gridPointsX.size();
+              this.win3DCache_gridPointsX.add(subFace[s][0]);
+              this.win3DCache_gridPointsY.add(subFace[s][1]);
+              this.win3DCache_gridPointsZ.add(subFace[s][2]);
+            }
           }
 
           emitPolygon(group, verts, colors);
-          this.win3DCache_gridFaces.add(gridFace);
+          if (!this.excludedFromFaceGrid(mt)) this.win3DCache_gridFaces.add(gridFace);
 
           if (this.displayEdges) edgePolygons.add(edgePolygon);
         }

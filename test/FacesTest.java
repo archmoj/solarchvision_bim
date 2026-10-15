@@ -212,4 +212,35 @@ class FacesTest {
     assertEquals(2, fresh.passiveColorscaleDirection);
     assertEquals(0.75f, fresh.passiveColorscaleFactor, 0.0001f);
   }
+
+  // ================= excludedFromFaceGrid ===============================
+  //
+  // build_win3DCache() itself - the only place this is actually read, and
+  // what populates the raycasting grid (win3DCache_gridPoints*/
+  // win3DCache_gridFaces, then entirePointsX/Y/Z/entireFaces once
+  // addToFaceGrid() copies them in) - calls createShape(GROUP), which
+  // needs a real graphics context and isn't unit-testable as-is in this
+  // headless environment (see test/README.md's own "Extending this"
+  // section, and UI_toolBarTest.java's viewLayout_allFourSubOptions() for
+  // the same kind of createGraphics()-needs-a-real-surface issue
+  // elsewhere in this suite). excludedFromFaceGrid() is the actual
+  // per-face decision build_win3DCache() makes, pulled out into its own
+  // small, pure method for exactly that reason - this is what's actually
+  // tested here, not the grid-building integration around it.
+
+  @Test
+  void excludedFromFaceGrid_true_forIFC_MATERIAL_SPACE () {
+    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_SPACE));
+  }
+
+  @Test
+  void excludedFromFaceGrid_false_forOrdinaryMaterials () {
+    // 0 is IFC_MATERIAL_SOLAR, included on purpose - a solar panel
+    // should still cast/receive shadows, unlike a room/zone volume.
+    assertFalse(app.allFaces.excludedFromFaceGrid(0));
+    assertFalse(app.allFaces.excludedFromFaceGrid(1));
+    assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_GLASS));
+    assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_CONCRETE));
+    assertFalse(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_WATER));
+  }
 }
