@@ -137,8 +137,17 @@
 // guessed around, and surfaced to the person importing via the
 // post-import summary line / ifcImportSkippedReasons:
 //   - Inner face/profile boundaries ("holes" - IfcFaceBound,
-//     IfcIndexedPolygonalFaceWithVoids) are ignored: a wall face with a
-//     window-sized hole in it imports as a solid face, hole and all.
+//     IfcIndexedPolygonalFaceWithVoids) ARE cut out, via PolygonHoles'
+//     own mergeHolesIntoOuterLoop() (see PolygonHoles.pde) bridging each
+//     hole into its own face's outer boundary - but only when a face's
+//     own geometry already carries the hole explicitly, as a named
+//     inner loop in the source file, the way a Tessellation body
+//     usually does. This is NOT the same thing as evaluating a true
+//     Boolean cut (see the next bullet): a wall whose only opening
+//     geometry is an IfcBooleanClippingResult subtracting an
+//     IfcOpeningElement's own solid still imports uncut, counted in
+//     ifcImportUncutOpeningCount - there is no inner loop anywhere in
+//     that representation for this to find and bridge.
 //   - Curved edges/surfaces (IfcCircleProfileDef, IfcBSplineCurve,
 //     IfcAdvancedBrep's curved faces, swept/revolved solids other than
 //     a straight extrusion) are not evaluated; items that need them are
@@ -549,7 +558,14 @@ final int IFC_MATERIAL_WATER      = 19;
 // Running counters for the post-import summary (and for tests - reset
 // at the top of every import_objects_IFC() call).
 int ifcImportSkippedCount = 0;
-int ifcImportHolesIgnoredCount = 0;
+// How many inner face/profile boundaries (IfcFaceBound,
+// IfcIndexedPolygonalFaceWithVoids' own voids) have actually been cut
+// out of their own outer face so far - see PolygonHoles.pde's own
+// comment for how. No longer "ignored": this used to count holes the
+// importer left in place (hole and all); now it counts holes it
+// actually bridged out, kept for the same post-import summary line
+// under a name that matches what happens now.
+int ifcImportHolesCutCount = 0;
 int ifcImportTreeCount = 0;
 int ifcImportPersonCount = 0;
 // IfcBooleanResult/IfcBooleanClippingResult items that imported only
@@ -1387,8 +1403,14 @@ void ifcProcessFace (HashMap<Integer, StepEntity> ents, int faceId, IfcFrame pro
     return;
   }
 
-  boolean emittedOuter = false;
-  boolean hasInnerBound = false;
+  // Collected first, rather than emitted bound-by-bound as they're
+  // encountered: an IfcFaceBound (hole) can appear before its own
+  // IfcFaceOuterBound in the file, and every hole needs bridging into
+  // whichever outer bound(s) this face turns out to have (see the loop
+  // below) - so this face's own holes have to be gathered in full
+  // before any of them can actually be cut.
+  ArrayList<ArrayList<PVector>> outerLoops = new ArrayList<ArrayList<PVector>>();
+  ArrayList<ArrayList<PVector>> innerLoops = new ArrayList<ArrayList<PVector>>();
 
   for (String boundRef : ifcListTokens(face.attrs[0])) {
     StepEntity bound = ifcResolve(ents, boundRef);
@@ -1397,12 +1419,8 @@ void ifcProcessFace (HashMap<Integer, StepEntity> ents, int faceId, IfcFrame pro
     boolean isOuter = bound.type.equals("IFCFACEOUTERBOUND");
     boolean isInner = bound.type.equals("IFCFACEBOUND");
     if (!isOuter && !isInner) continue;
-    if (isInner) {
-      hasInnerBound = true;
-      continue; // holes are not cut out of the face - see file header
-    }
-
     if (bound.attrs.length < 2) continue;
+
     StepEntity loopEntity = ifcResolve(ents, bound.attrs[0]);
     ArrayList<PVector> loop = ifcPolyLoopPoints(ents, loopEntity);
     if (loop.size() < 3) continue;
@@ -1410,12 +1428,17 @@ void ifcProcessFace (HashMap<Integer, StepEntity> ents, int faceId, IfcFrame pro
     boolean orientation = bound.attrs[1].trim().equals(".T.");
     if (!orientation) ifcReverseInPlace(loop);
 
-    ifcEmitFace(loop, productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
-    emittedOuter = true;
+    if (isInner) innerLoops.add(loop); else outerLoops.add(loop);
   }
 
-  if (hasInnerBound) ifcImportHolesIgnoredCount++;
-  if (!emittedOuter) ifcNoteSkipped("IfcFace with no usable outer bound");
+  if (innerLoops.size() > 0) ifcImportHolesCutCount += innerLoops.size();
+
+  for (ArrayList<PVector> outer : outerLoops) {
+    ArrayList<PVector> withHoles = PolygonHoles.mergeHolesIntoOuterLoop(outer, innerLoops);
+    ifcEmitFace(withHoles, productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
+  }
+
+  if (outerLoops.size() == 0) ifcNoteSkipped("IfcFace with no usable outer bound");
 }
 
 void ifcProcessShell (HashMap<Integer, StepEntity> ents, int shellId, IfcFrame productFrame,
@@ -1461,20 +1484,38 @@ void ifcProcessPolygonalFaceSet (HashMap<Integer, StepEntity> ents, StepEntity e
       ifcNoteSkipped("missing/unrecognized IfcIndexedPolygonalFace");
       continue;
     }
+
+    ArrayList<PVector> loop = ifcIndexedFaceLoop(faceEntity.attrs[0], pool);
+    if (loop.size() < 3) continue;
+
+    ArrayList<ArrayList<PVector>> voids = new ArrayList<ArrayList<PVector>>();
     if (faceEntity.type.equals("IFCINDEXEDPOLYGONALFACEWITHVOIDS") && faceEntity.attrs.length > 1
       && faceEntity.attrs[1].trim().length() > 0 && !faceEntity.attrs[1].trim().equals("$")) {
-      ifcImportHolesIgnoredCount++;
+      for (String voidTok : ifcListTokens(faceEntity.attrs[1])) {
+        ArrayList<PVector> voidLoop = ifcIndexedFaceLoop(voidTok, pool);
+        if (voidLoop.size() >= 3) voids.add(voidLoop);
+      }
+      ifcImportHolesCutCount += voids.size();
     }
 
-    ArrayList<PVector> loop = new ArrayList<PVector>();
-    for (String idxTok : ifcListTokens(faceEntity.attrs[0])) {
-      int idx = (int) ifcFloat(idxTok); // 1-based index into pool
-      if (idx >= 1 && idx <= pool.length) loop.add(pool[idx - 1]);
-    }
-    if (loop.size() >= 3) {
-      ifcEmitFace(loop, productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
-    }
+    ArrayList<PVector> withVoids = PolygonHoles.mergeHolesIntoOuterLoop(loop, voids);
+    ifcEmitFace(withVoids, productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
   }
+}
+
+// A face's or void's own list of 1-based indices (e.g. "(16,17,1,2,...)")
+// resolved into the actual points they refer to in `pool` - shared
+// between an IfcIndexedPolygonalFace(WithVoids)'s own outer index list
+// and each of its void index lists above, since both are read exactly
+// the same way. An out-of-range index (malformed file) is simply
+// skipped rather than failing the whole face.
+ArrayList<PVector> ifcIndexedFaceLoop (String idxListAttr, PVector[] pool) {
+  ArrayList<PVector> loop = new ArrayList<PVector>();
+  for (String idxTok : ifcListTokens(idxListAttr)) {
+    int idx = (int) ifcFloat(idxTok); // 1-based index into pool
+    if (idx >= 1 && idx <= pool.length) loop.add(pool[idx - 1]);
+  }
+  return loop;
 }
 
 void ifcProcessTriangulatedFaceSet (HashMap<Integer, StepEntity> ents, StepEntity e, IfcFrame productFrame,
@@ -2456,7 +2497,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   importedObjectName = OPESYS.getFilenameFromPath(FileName);
 
   ifcImportSkippedCount = 0;
-  ifcImportHolesIgnoredCount = 0;
+  ifcImportHolesCutCount = 0;
   ifcImportTreeCount = 0;
   ifcImportPersonCount = 0;
   ifcImportUncutOpeningCount = 0;
@@ -2738,7 +2779,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   if (ifcImportFurnitureExcludedCount > 0) summary += ", " + ifcImportFurnitureExcludedCount + " furniture item(s) not imported (furniture import is currently disabled)";
   if (ifcImportSmallObjectExcludedCount > 0) summary += ", " + ifcImportSmallObjectExcludedCount + " small object(s) not imported";
   if (ifcImportSkippedCount > 0) summary += ", " + ifcImportSkippedCount + " unsupported geometry item(s) skipped";
-  if (ifcImportHolesIgnoredCount > 0) summary += ", " + ifcImportHolesIgnoredCount + " inner boundary/boundaries ignored";
+  if (ifcImportHolesCutCount > 0) summary += ", " + ifcImportHolesCutCount + " inner boundary/boundaries cut out of their face";
   if (ifcImportNorthRotationAngle != 0) summary += ", rotated " + ifcImportNorthRotationAngle + " degree(s) around the origin to match the project's true north";
   summary += ".";
   println();

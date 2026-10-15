@@ -100,7 +100,7 @@ class ImportObjectsIFCTest {
   }
 
   @Test
-  void importObjectsIFC_faceBound_innerLoopIsIgnored_butOuterLoopStillImports () throws IOException {
+  void importObjectsIFC_faceBound_innerLoopIsCutOutOfTheOuterLoop () throws IOException {
     Path f = ifcFile("ifc-hole-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
         #2=IFCCARTESIANPOINT((4.,0.,0.));
@@ -125,9 +125,27 @@ class ImportObjectsIFCTest {
 
     app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(1, app.allFaces.nodes.length, "the outer boundary should still import as one solid face");
-    assertEquals(4, app.allFaces.nodes[0].length);
-    assertEquals(1, app.ifcImportHolesIgnoredCount, "the inner IfcFaceBound should be counted as an ignored hole");
+    // PolygonHoles bridges the 1x1 hole into the 4x4 outer square with a
+    // single slit, so this is still one face, just with 4 (outer) + 4
+    // (hole) + 2 (the duplicated bridge endpoints) = 10 vertices now,
+    // instead of simply dropping the hole's own 4.
+    assertEquals(1, app.allFaces.nodes.length, "the hole is bridged into the same single face, not split into a second one");
+    assertEquals(10, app.allFaces.nodes[0].length);
+    assertEquals(1, app.ifcImportHolesCutCount, "the inner IfcFaceBound should be counted as an actually-cut hole");
+
+    // Both loops are given .T. (use as-is), and (1,1)->(2,1)->(2,2)->(1,2)
+    // winds the same way (counterclockwise) as the outer square, so
+    // PolygonHoles should have reversed the hole before bridging it in -
+    // see PolygonHoles' own comment on winding. The nearest valid
+    // outer-to-hole pair is corner (0,0) to hole-vertex (1,1).
+    float[][] expected = {
+      {0, 0, 0}, {1, 1, 0}, {1, 2, 0}, {2, 2, 0}, {2, 1, 0}, {1, 1, 0}, {0, 0, 0}, {4, 0, 0}, {4, 4, 0}, {0, 4, 0}
+    };
+    for (int i = 0; i < expected.length; i++) {
+      assertEquals(expected[i][0], app.allPoints.getX(i), 0.0001f, "point " + i + " x");
+      assertEquals(expected[i][1], app.allPoints.getY(i), 0.0001f, "point " + i + " y");
+      assertEquals(expected[i][2], app.allPoints.getZ(i), 0.0001f, "point " + i + " z");
+    }
   }
 
   // ================= IfcLocalPlacement / IfcAxis2Placement3D =================
@@ -182,6 +200,34 @@ class ImportObjectsIFCTest {
 
     assertEquals(1, app.allFaces.nodes.length);
     assertEquals(4, app.allFaces.nodes[0].length, "the 1-based CoordIndex list should stay a quad");
+  }
+
+  @Test
+  void importObjectsIFC_polygonalFaceSet_indexedPolygonalFaceWithVoids_cutsTheVoidsOut () throws IOException {
+    // Mirrors the real shape of a Revit "Tessellation" wall body with
+    // window openings - e.g. Ifc4_Revit_ARC.ifc's own Wall #36910, whose
+    // single big face is an IFCINDEXEDPOLYGONALFACEWITHVOIDS with five
+    // voids - just with one 4x4 face and one 1x1 void, at the same
+    // indices (16 outer points then the void's own 4) a real export's
+    // own point pool would use.
+    Path f = ifcFile("ifc-polygonalfaceset-withvoids-test", """
+        #1=IFCCARTESIANPOINTLIST3D(((0.,0.,0.),(4.,0.,0.),(4.,4.,0.),(0.,4.,0.),(1.,1.,0.),(2.,1.,0.),(2.,2.,0.),(1.,2.,0.)));
+        #2=IFCINDEXEDPOLYGONALFACEWITHVOIDS((1,2,3,4),((5,6,7,8)));
+        #3=IFCPOLYGONALFACESET(#1,.T.,(#2),$);
+        #4=IFCSHAPEREPRESENTATION($,'Body','Tessellation',(#3));
+        #5=IFCPRODUCTDEFINITIONSHAPE($,$,(#4));
+        #6=IFCWALL('guid-1',$,$,$,$,$,#5);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "the void is bridged into the same single face, not split into a second one");
+    // outer(4) + void(4) + 2 duplicated bridge endpoints = 10 - see
+    // PolygonHolesTest for exactly this same shape worked out point by
+    // point.
+    assertEquals(10, app.allFaces.nodes[0].length);
+    assertEquals(1, app.ifcImportHolesCutCount, "the one void should be counted as an actually-cut hole");
   }
 
   // ================= IfcExtrudedAreaSolid (parametric wall/column/slab) ======

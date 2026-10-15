@@ -309,6 +309,8 @@ Delete3D Delete3D = new Delete3D();
 
 Select3D Select3D = new Select3D();
 
+PolygonHoles PolygonHoles = new PolygonHoles();
+
 float[][] saved_BoundingBox = Select3D.BoundingBox;
 
 int saved_pivotAlignmentX = Select3D.pivotAlignmentX;
