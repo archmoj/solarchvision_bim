@@ -17,8 +17,10 @@
 //   - IfcFacetedBrep / IfcShellBasedSurfaceModel: (Open|Closed)Shell ->
 //     IfcFace -> IfcFaceOuterBound -> IfcPolyLoop -> IfcCartesianPoint.
 //     This is IFC2X3's and IFC4's most common straight-edged B-rep path.
-//   - IfcPolygonalFaceSet / IfcTriangulatedFaceSet (IFC4 tessellated
-//     geometry) backed by a shared IfcCartesianPointList3D.
+//   - IfcPolygonalFaceSet / IfcTriangulatedFaceSet / IfcTriangulatedIrregularNetwork
+//     (IFC4 tessellated geometry - the last one's a TIN, the usual
+//     shape of a site's own topography/terrain surface) backed by a
+//     shared IfcCartesianPointList3D.
 //   - IfcExtrudedAreaSolid over IfcRectangleProfileDef or
 //     IfcArbitraryClosedProfileDef(IfcPolyline) - very common for
 //     walls, slabs, columns and beams modelled parametrically instead
@@ -45,6 +47,14 @@
 //     centimetres, feet, inches, etc. still imports at the right real-
 //     world scale - see ifcDetectLengthUnitScale() below. A file with no
 //     declared length unit at all is read as-is, assumed already metric.
+//   - IfcSite imports its own topography/terrain surface, if it has one,
+//     the same way as any other product - unlike IfcProject/IfcBuilding/
+//     IfcBuildingStorey, it's not excluded just for being a spatial-
+//     structure type (see ifcNonGeometryProductTypes below). It also
+//     defaults to IFC_MATERIAL_EARTH when the file names no material for
+//     it (see ifcTopographyProductTypes below) - geometry is imported as
+//     ordinary Faces, the same as a wall or slab, not resampled onto the
+//     app's own regular-grid Terrain.Mesh.
 //
 // Known, deliberate limitations - noted here rather than silently
 // guessed around, and surfaced to the person importing via the
@@ -124,9 +134,17 @@ IfcFrame ifcComposeFrame (IfcFrame parent, IfcFrame child) {
 // Product types that are intentionally never imported as geometry, even
 // when they carry a Representation: spatial-structure containers (no
 // building fabric of their own) and voids/program area (see the file
-// header's "Known limitations").
+// header's "Known limitations"). IfcSite is deliberately NOT in this
+// set - unlike IfcProject/IfcBuilding/IfcBuildingStorey, a real IFC
+// site often does carry its own topography/terrain surface as its
+// Representation (a toposurface, typically an IfcTriangulatedFaceSet
+// or IfcTriangulatedIrregularNetwork - see
+// ifcProcessRepresentationItem()); an IfcSite with no Representation at
+// all is already skipped for the ordinary reason
+// (ifcLooksLikeImportableProduct() requires one), so there's nothing
+// extra to guard against by excluding the type outright.
 HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
-  "IFCPROJECT", "IFCSITE", "IFCBUILDING", "IFCBUILDINGSTOREY",
+  "IFCPROJECT", "IFCBUILDING", "IFCBUILDINGSTOREY",
   "IFCSPACE", "IFCOPENINGELEMENT", "IFCVIRTUALELEMENT"
   ));
 
@@ -137,6 +155,16 @@ HashSet<String> ifcNonGeometryProductTypes = new HashSet<String>(Arrays.asList(
 // easy to add to this set the same way if that's ever wanted too.
 HashSet<String> ifcGlassProductTypes = new HashSet<String>(Arrays.asList(
   "IFCWINDOW"
+  ));
+
+// Product types that default to IFC_MATERIAL_EARTH when nothing more
+// specific applies - just IfcSite's own topography/terrain surface.
+// Lower priority than an actual associated IfcMaterial name match (see
+// the material-choice block in import_objects_IFC() below): a site
+// whose file-authored material happens to say e.g. "Grass" or "Asphalt"
+// still gets that color instead, same as any other product.
+HashSet<String> ifcTopographyProductTypes = new HashSet<String>(Arrays.asList(
+  "IFCSITE"
   ));
 
 // Materials.pde indices for the colors an IFC import can pick by name/
@@ -852,7 +880,13 @@ void ifcProcessRepresentationItem (HashMap<Integer, StepEntity> ents, int itemId
     return;
   }
 
-  if (e.type.equals("IFCTRIANGULATEDFACESET")) {
+  // IfcTriangulatedIrregularNetwork (a TIN - the usual shape of an
+  // IfcSite's own topography/terrain surface) is a subtype of
+  // IfcTriangulatedFaceSet that only appends one more attribute
+  // (Flags, a per-triangle breakline/boundary marker this importer has
+  // no use for) after the same Coordinates/Normals/Closed/CoordIndex/
+  // PnIndex attributes - so the exact same reader handles both.
+  if (e.type.equals("IFCTRIANGULATEDFACESET") || e.type.equals("IFCTRIANGULATEDIRREGULARNETWORK")) {
     ifcProcessTriangulatedFaceSet(ents, e, productFrame, cx, cy, cz, sx, sy, sz, m, tes, lyr, vsb, wgt, clz);
     return;
   }
@@ -1218,12 +1252,15 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // (material 9), regardless of what m says or what material, if any,
     // it's associated with in the file. Otherwise, a product whose own
     // associated IfcMaterial name matches one of Materials.pde's named
-    // colors (concrete, steel, timber, ...) gets that color; only a
-    // product with no match at all falls back to m/the normal 1-8
-    // cycle. Either kind of explicit match is intentionally kept out of
-    // that cycle too - same reasoning as for windows, just not
-    // hardcoded to one product type - so unmatched walls/slabs/etc.
-    // still cycle smoothly through materials 1-8 with no gaps.
+    // colors (concrete, steel, timber, ...) gets that color. Failing
+    // that, IfcSite's own topography (see ifcTopographyProductTypes
+    // above) defaults to IFC_MATERIAL_EARTH rather than falling into
+    // the generic cycle, since a terrain surface should read as ground
+    // even when the file names no material for it at all. Only a
+    // product matching none of the above falls back to m/the normal
+    // 1-8 cycle. Every kind of explicit match here is intentionally
+    // kept out of that cycle too - so unmatched walls/slabs/etc. still
+    // cycle smoothly through materials 1-8 with no gaps.
     int materialForThisProduct;
     // Deliberately not a "cond ? IFC_MATERIAL_GLASS : ifcMaterialNameToConstant(...)"
     // ternary: mixing a primitive int (IFC_MATERIAL_GLASS) with an
@@ -1237,6 +1274,9 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       matchedMaterial = IFC_MATERIAL_GLASS;
     } else {
       matchedMaterial = ifcMaterialNameToConstant(productMaterialNames.get(id));
+      if (matchedMaterial == null && ifcTopographyProductTypes.contains(e.type)) {
+        matchedMaterial = IFC_MATERIAL_EARTH;
+      }
     }
     if (matchedMaterial != null) {
       materialForThisProduct = matchedMaterial;

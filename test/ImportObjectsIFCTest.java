@@ -614,4 +614,90 @@ class ImportObjectsIFCTest {
     assertEquals(0, app.allFaces.nodes.length);
     assertEquals(0, app.allGroups.num, "IfcSpace shouldn't even start a group");
   }
+
+  // ================= IfcSite: topography, unlike the other spatial types =====
+
+  @Test
+  void importObjectsIFC_ifcSiteWithGeometry_importsItsOwnTopography_defaultingToEarthMaterial () throws IOException {
+    Path f = ifcFile("ifc-site-topo-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((10.,0.,0.));
+        #3=IFCCARTESIANPOINT((10.,10.,0.));
+        #4=IFCCARTESIANPOINT((0.,10.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSITE('guid-1',$,$,$,$,$,#11);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allGroups.num, "an IfcSite with geometry should start a group like any other product");
+    assertEquals(1, app.allFaces.nodes.length, "IfcSite's own topography should import as a face");
+    assertEquals(17, app.allFaces.options[0][0], "should default to IFC_MATERIAL_EARTH (17), not the fixed material (5)");
+  }
+
+  @Test
+  void importObjectsIFC_ifcSiteWithNoRepresentation_isStillSkipped_justLikeAnyOtherProductWithoutGeometry () throws IOException {
+    Path f = ifcFile("ifc-site-no-geometry-test", """
+        #1=IFCSITE('guid-1',$,$,$,$,$,$);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length);
+    assertEquals(0, app.allGroups.num, "IfcSite with Representation=$ shouldn't start a group either");
+  }
+
+  @Test
+  void importObjectsIFC_ifcSiteWithAnExplicitMaterialName_usesThatInstead_notTheEarthDefault () throws IOException {
+    Path f = ifcFile("ifc-site-material-override-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((10.,0.,0.));
+        #3=IFCCARTESIANPOINT((10.,10.,0.));
+        #4=IFCCARTESIANPOINT((0.,10.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSITE('guid-1',$,$,$,$,$,#11);
+        #20=IFCMATERIAL('Concrete Paving');
+        #21=IFCRELASSOCIATESMATERIAL('guid-2',$,$,$,(#12),#20);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(11, app.allFaces.options[0][0], "an explicit material-name match should win over the IfcSite earth default");
+  }
+
+  @Test
+  void importObjectsIFC_triangulatedIrregularNetwork_importsAsATerrainMesh_sameReaderAsTriangulatedFaceSet () throws IOException {
+    Path f = ifcFile("ifc-tin-test", """
+        #1=IFCCARTESIANPOINTLIST3D(((0.,0.,0.),(1.,0.,0.5),(0.,1.,0.2),(1.,1.,0.7)));
+        #2=IFCTRIANGULATEDIRREGULARNETWORK(#1,$,.F.,((1,2,3),(2,4,3)),$,(0,0));
+        #3=IFCSHAPEREPRESENTATION($,'Body','Tessellation',(#2));
+        #4=IFCPRODUCTDEFINITIONSHAPE($,$,(#3));
+        #5=IFCSITE('guid-1',$,$,$,$,$,#4);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(2, app.allFaces.nodes.length, "the TIN's two triangles should each become one face");
+    for (int[] face : app.allFaces.nodes) {
+      assertEquals(3, face.length);
+    }
+    assertEquals(17, app.allFaces.options[0][0], "terrain from a TIN should also default to IFC_MATERIAL_EARTH");
+  }
 }
