@@ -506,6 +506,23 @@ class Functions {
     return result_AxB;
   }
 
+  float computeAngleWithXYPlane(float[] A, float[] B) {
+    float[] D = this.vec3_diff(A, B);
+    float magnitude = this.vec3_mag(D);
+
+    if (magnitude == 0.0f) {
+        return 0.0f;
+    }
+
+    float sinTheta = Math.abs(D[2]) / magnitude;
+
+    if (sinTheta > 1.0f) {
+        sinTheta = 1.0f;
+    }
+
+    return this.asin_ang(sinTheta);
+  }
+
   float EquationOfTime (float DateAngle) {
     return 0.01 * (9.87 * this.sin_ang(2 * DateAngle) - 7.53 * this.cos_ang(DateAngle) - 1.5 * this.sin_ang(DateAngle));
   }

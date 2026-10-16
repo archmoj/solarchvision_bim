@@ -535,9 +535,9 @@ class Model2Ds {
                   float y4 = y1 + dy;
 
                   if (target_window == TypeWindow.WIN3D) {
-                    float angleWithCamera = computeAngleWithXYPlane(
-                      WIN3D.cameraX, WIN3D.cameraY, WIN3D.cameraZ,
-                      x, y, z + rh * ratio
+                    float angleWithCamera = funcs.computeAngleWithXYPlane(
+                      new float[] {WIN3D.cameraX, WIN3D.cameraY, WIN3D.cameraZ},
+                      new float[] {x, y, z + rh * ratio}
                     );
 
                     if(Math.abs(angleWithCamera) > 45) {
@@ -1181,34 +1181,4 @@ class Model2Ds {
       }
     }
   }
-}
-
-float computeAngleWithXYPlane(
-  float ax, float ay, float az,
-  float bx, float by, float bz) {
-
-  // 1. Calculate the direction vector components
-  float dx = bx - ax;
-  float dy = by - ay;
-  float dz = bz - az;
-
-  // 2. Compute the magnitude (length) of the line segment
-  float magnitude = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-  // 3. Handle edge case: line has no length (A and B are the same point)
-  if (magnitude == 0.0f) {
-      return 0.0f;
-  }
-
-  // 4. Calculate the sine of the angle
-  float sinTheta = Math.abs(dz) / magnitude;
-
-  // 5. Clip floating-point imprecision to keep sinTheta within legal bounds [-1.0f, 1.0f]
-  if (sinTheta > 1.0f) {
-      sinTheta = 1.0f;
-  }
-
-  // 6. Compute arcsine and convert from radians to degrees
-  float angleInRadians = (float) Math.asin(sinTheta);
-  return (float) Math.toDegrees(angleInRadians);
 }
