@@ -305,4 +305,125 @@ class PolygonHolesTest {
 
     assertEquals(4, result.size(), "a <3-point hole has nothing to bridge, so the outer loop should come back untouched");
   }
+
+  // --- triangulate() -----------------------------------------------------
+
+  private static float triangleArea (PVector a, PVector b, PVector c) {
+    PVector ab = PVector.sub(b, a);
+    PVector ac = PVector.sub(c, a);
+    return 0.5f * ab.cross(ac).mag();
+  }
+
+  private static float totalArea (ArrayList<PVector> loop, ArrayList<int[]> triangles) {
+    float sum = 0;
+    for (int[] t : triangles) {
+      sum += triangleArea(loop.get(t[0]), loop.get(t[1]), loop.get(t[2]));
+    }
+    return sum;
+  }
+
+  @Test
+  void triangulate_tooFewPoints_returnsNoTriangles () {
+    assertEquals(0, app.PolygonHoles.triangulate(loop()).size());
+    assertEquals(0, app.PolygonHoles.triangulate(loop(new float[]{0, 0, 0})).size());
+    assertEquals(0, app.PolygonHoles.triangulate(loop(new float[]{0, 0, 0}, new float[]{1, 0, 0})).size());
+  }
+
+  @Test
+  void triangulate_aTriangle_returnsItselfUnchanged_withoutRunningEarClipping () {
+    ArrayList<PVector> triangleLoop = loop(new float[]{0, 0, 0}, new float[]{1, 0, 0}, new float[]{0, 1, 0});
+    ArrayList<int[]> triangles = app.PolygonHoles.triangulate(triangleLoop);
+
+    assertEquals(1, triangles.size());
+    assertArrayEquals(new int[]{0, 1, 2}, triangles.get(0));
+  }
+
+  @Test
+  void triangulate_aSquare_producesTwoTrianglesCoveringTheFullArea () {
+    ArrayList<PVector> square = outerSquare(); // 4x4, area 16
+    ArrayList<int[]> triangles = app.PolygonHoles.triangulate(square);
+
+    assertEquals(2, triangles.size());
+    assertEquals(16f, totalArea(square, triangles), 0.0001f);
+  }
+
+  @Test
+  void triangulate_concaveLShape_coversExactlyTheLsOwnArea_notItsBoundingSquare () {
+    // An L-shape: the top-right 2x2 corner of a 4x4 square is missing -
+    // true area 12, not 16, the way a naive convex-assuming triangulator
+    // (or a fan from a point outside the L's own notch) might produce.
+    ArrayList<PVector> lShape = loop(
+      new float[]{0, 0, 0}, new float[]{4, 0, 0}, new float[]{4, 2, 0},
+      new float[]{2, 2, 0}, new float[]{2, 4, 0}, new float[]{0, 4, 0}
+    );
+    ArrayList<int[]> triangles = app.PolygonHoles.triangulate(lShape);
+
+    assertEquals(4, triangles.size(), "an n-vertex simple polygon always triangulates into n-2 triangles");
+    assertEquals(12f, totalArea(lShape, triangles), 0.0001f);
+  }
+
+  @Test
+  void triangulate_everyTriangleIndexIsValidAndDistinctWithinItsOwnTriangle () {
+    ArrayList<PVector> lShape = loop(
+      new float[]{0, 0, 0}, new float[]{4, 0, 0}, new float[]{4, 2, 0},
+      new float[]{2, 2, 0}, new float[]{2, 4, 0}, new float[]{0, 4, 0}
+    );
+    ArrayList<int[]> triangles = app.PolygonHoles.triangulate(lShape);
+
+    for (int[] t : triangles) {
+      assertEquals(3, t.length);
+      for (int idx : t) assertTrue(idx >= 0 && idx < lShape.size());
+      assertNotEquals(t[0], t[1]);
+      assertNotEquals(t[1], t[2]);
+      assertNotEquals(t[0], t[2]);
+    }
+  }
+
+  @Test
+  void triangulate_aKeyholeBridgedSquareWithAHole_excludesTheHolesOwnArea () {
+    // The exact bug this was written to fix: a hole bridged into its
+    // outer loop via mergeHolesIntoOuterLoop() is never convex, so a
+    // naive fan from some arbitrary interior point (this app's own
+    // previous raycasting-grid behavior) can cover part of the hole's
+    // own, supposedly-empty area with phantom triangles. True
+    // triangulation must not: a 4x4 square (area 16) with a 1x1 hole
+    // (area 1) bridged in should triangulate to exactly area 15, not 16.
+    ArrayList<PVector> outer = outerSquare();
+    ArrayList<ArrayList<PVector>> holes = new ArrayList<ArrayList<PVector>>();
+    holes.add(holeSquareSameWinding());
+
+    ArrayList<PVector> merged = app.PolygonHoles.mergeHolesIntoOuterLoop(outer, holes);
+    ArrayList<int[]> triangles = app.PolygonHoles.triangulate(merged);
+
+    assertEquals(15f, totalArea(merged, triangles), 0.0001f, "16 (outer) - 1 (hole) = 15 - the hole's own area must not be covered");
+
+    // Belt and braces: no triangle's own centroid should fall inside the
+    // original 1x1 hole (1,1)-(2,1)-(2,2)-(1,2) at all - a direct,
+    // geometric check of the same thing the area total above already
+    // implies.
+    for (int[] t : triangles) {
+      PVector a = merged.get(t[0]);
+      PVector b = merged.get(t[1]);
+      PVector c = merged.get(t[2]);
+      float cx = (a.x + b.x + c.x) / 3;
+      float cy = (a.y + b.y + c.y) / 3;
+      boolean centroidInsideHole = cx > 1 && cx < 2 && cy > 1 && cy < 2;
+      assertFalse(centroidInsideHole, "a triangle's own centroid landed inside the hole - exactly the reported bug");
+    }
+  }
+
+  @Test
+  void triangulate_doesNotMutateItsInput () {
+    ArrayList<PVector> square = outerSquare();
+    ArrayList<PVector> snapshot = new ArrayList<PVector>(square);
+
+    app.PolygonHoles.triangulate(square);
+
+    assertEquals(snapshot.size(), square.size());
+    for (int i = 0; i < square.size(); i++) {
+      assertEquals(snapshot.get(i).x, square.get(i).x, 0.0001f);
+      assertEquals(snapshot.get(i).y, square.get(i).y, 0.0001f);
+      assertEquals(snapshot.get(i).z, square.get(i).z, 0.0001f);
+    }
+  }
 }

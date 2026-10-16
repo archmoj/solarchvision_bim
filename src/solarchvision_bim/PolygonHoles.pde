@@ -104,6 +104,163 @@ class PolygonHoles {
     return merged;
   }
 
+  // Triangulates a (possibly concave) planar polygon loop via ear
+  // clipping - standard, and the thing to reach for here specifically
+  // because, unlike a naive fan from some arbitrary interior point (an
+  // average/centroid, say), it's correct for a concave loop: it never
+  // produces a triangle that reaches outside the polygon's own true
+  // shape. That matters most for exactly the loops
+  // mergeHolesIntoOuterLoop() above produces - a hole bridged into its
+  // outer boundary is never convex, and a naive centroid fan over one
+  // routinely covers part of the hole's own, supposedly-empty area with
+  // phantom triangles.
+  //
+  // Returns each triangle as {i,j,k} - indices into `loop` itself (not
+  // new points), in the same winding `loop` itself has - so the caller
+  // maps these back to whatever point-numbering scheme it's actually
+  // using. A loop of fewer than 3 points triangulates to nothing; one of
+  // exactly 3 is already a single triangle, returned as-is without
+  // running the algorithm below at all.
+  ArrayList<int[]> triangulate (ArrayList<PVector> loop) {
+    ArrayList<int[]> triangles = new ArrayList<int[]>();
+    int n = loop.size();
+    if (n < 3) return triangles;
+    if (n == 3) {
+      triangles.add(new int[] { 0, 1, 2 });
+      return triangles;
+    }
+
+    PVector normal = faceNormal(loop);
+    PVector uAxis = anyPerpendicularUnitVector(normal);
+    PVector vAxis = normal.cross(uAxis);
+    vAxis.normalize();
+    ArrayList<PVector> loop2D = project(loop, loop.get(0), uAxis, vAxis);
+
+    float winding = signedArea2D(loop2D) >= 0 ? 1 : -1;
+
+    // The still-to-be-triangulated boundary, as indices into `loop`/
+    // `loop2D` - shrinks by one (whichever vertex the clipped ear's own
+    // tip was) each time through the loop below, same as any standard
+    // ear-clipping implementation.
+    ArrayList<Integer> remaining = new ArrayList<Integer>();
+    for (int i = 0; i < n; i++) remaining.add(i);
+
+    // A simple polygon's ear-clipping always finishes in exactly n-3
+    // clips; this bound is only a last-resort safety net against an
+    // input that isn't actually simple (self-intersecting/degenerate in
+    // some way this method doesn't itself detect), so this can never
+    // spin forever on bad input.
+    int maxIterations = n * n + 16;
+    int guard = 0;
+
+    while (remaining.size() > 3 && guard < maxIterations) {
+      guard++;
+      int m = remaining.size();
+      int earK = -1;
+
+      for (int k = 0; k < m; k++) {
+        int prevIdx = remaining.get((k + m - 1) % m);
+        int currIdx = remaining.get(k);
+        int nextIdx = remaining.get((k + 1) % m);
+        PVector prev = loop2D.get(prevIdx);
+        PVector curr = loop2D.get(currIdx);
+        PVector next = loop2D.get(nextIdx);
+
+        // A reflex (concave) vertex can never be an ear's own tip -
+        // skip it. Exactly 0 (curr sits exactly on the line through
+        // prev/next - collinear, or this is one half of
+        // mergeHolesIntoOuterLoop()'s own zero-area bridge "slit") is
+        // treated as convex enough to clip: the resulting triangle has
+        // zero area and contributes nothing, but refusing it here could
+        // leave ear-clipping unable to ever finish around a slit.
+        if (cross2(prev, curr, next) * winding < 0) continue;
+
+        boolean blocked = false;
+        for (int j = 0; j < m; j++) {
+          int otherIdx = remaining.get(j);
+          if (otherIdx == prevIdx || otherIdx == currIdx || otherIdx == nextIdx) continue;
+          PVector other = loop2D.get(otherIdx);
+          // A point that merely duplicates one of this ear's own three
+          // corners - same coordinates, different index - doesn't
+          // actually intrude on anything: it's exactly what
+          // mergeHolesIntoOuterLoop()'s own zero-area bridge "slit"
+          // produces (an outer or hole vertex appearing twice, at two
+          // different indices), not a genuinely different part of the
+          // polygon's boundary. Only an actually-different point still
+          // blocks - see pointInOrOnTriangle2D()'s own comment for why
+          // that one still has to stay boundary-inclusive, not strict.
+          if (coincides2D(other, prev) || coincides2D(other, curr) || coincides2D(other, next)) continue;
+          if (pointInOrOnTriangle2D(other, prev, curr, next)) {
+            blocked = true;
+            break;
+          }
+        }
+        if (blocked) continue;
+
+        earK = k;
+        break;
+      }
+
+      if (earK < 0) {
+        // Shouldn't happen for a genuinely simple polygon - rather than
+        // loop forever or silently drop the rest of the face, fall back
+        // to a plain fan over whatever's left: not guaranteed to match
+        // the polygon's own true shape perfectly on this input, but
+        // still a complete triangle set instead of an incomplete one.
+        for (int k = 1; k + 1 < remaining.size(); k++) {
+          triangles.add(new int[] { remaining.get(0), remaining.get(k), remaining.get(k + 1) });
+        }
+        return triangles;
+      }
+
+      int prevIdx = remaining.get((earK + m - 1) % m);
+      int currIdx = remaining.get(earK);
+      int nextIdx = remaining.get((earK + 1) % m);
+      triangles.add(new int[] { prevIdx, currIdx, nextIdx });
+      remaining.remove(earK);
+    }
+
+    if (remaining.size() == 3) {
+      triangles.add(new int[] { remaining.get(0), remaining.get(1), remaining.get(2) });
+    }
+
+    return triangles;
+  }
+
+  // Whether point p lies inside, or exactly on the boundary of,
+  // triangle (a,b,c) - all already-projected 2D points, same as
+  // cross2()/segmentsCross() above. "On the boundary" counts as inside
+  // on purpose: an otherwise-unrelated vertex that happens to sit
+  // exactly on an ear's edge - e.g. a reflex vertex lying exactly on
+  // the diagonal of its own bounding shape, not a contrived case, just
+  // ordinary polygon geometry - genuinely has to block that ear, or
+  // ear-clipping can carve straight through where that vertex actually
+  // sits on the polygon's own boundary. The one exception is a point
+  // that's a coordinate-duplicate of the ear's own prev/curr/next -
+  // handled separately, by the caller (see triangulate()'s own
+  // coincides2D() check), since that's a different situation entirely:
+  // not another part of the boundary this ear would cut through, just
+  // mergeHolesIntoOuterLoop()'s own intentional zero-area bridge "slit"
+  // repeating one of this same triangle's own corners at another index.
+  boolean pointInOrOnTriangle2D (PVector p, PVector a, PVector b, PVector c) {
+    float d1 = cross2(a, b, p);
+    float d2 = cross2(b, c, p);
+    float d3 = cross2(c, a, p);
+    boolean hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    boolean hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(hasNeg && hasPos);
+  }
+
+  // Whether 2D points a and b are the same point, within floating-point
+  // noise - used only to recognize mergeHolesIntoOuterLoop()'s own
+  // bridge-slit duplicates (see pointInOrOnTriangle2D()'s own comment),
+  // which are exact duplicates by construction (splice() copies the
+  // same PVector's own x/y straight through), so this tight a tolerance
+  // is deliberate, not a guess.
+  boolean coincides2D (PVector a, PVector b) {
+    return abs(a.x - b.x) < 0.00000001 && abs(a.y - b.y) < 0.00000001;
+  }
+
   // Twice the signed area of a 2D loop (the shoelace formula, sign only
   // - never divided by 2, since every caller here only ever compares
   // its sign, not its magnitude): positive for a counterclockwise loop,

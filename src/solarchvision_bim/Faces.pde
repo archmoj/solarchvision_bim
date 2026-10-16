@@ -1475,7 +1475,6 @@ class Faces {
           float[][] verts = new float[subFace.length][3];
           float[][] colors = (WIN3D.shadingMode == SHADE.Surface_Wire) ? null : new float[subFace.length][4];
           float[][] edgePolygon = this.displayEdges ? new float[subFace.length][3] : null;
-          int[] gridFace = new int[subFace.length];
 
           for (int s = 0; s < subFace.length; s++) {
 
@@ -1532,27 +1531,44 @@ class Faces {
               edgePolygon[s][1] = py;
               edgePolygon[s][2] = pz;
             }
-
-            // Grid points are raw/unscaled - the same subFace[s] values
-            // read above, just without the WIN3D display scale/Y-flip.
-            // Left out entirely for a face this.excludedFromFaceGrid()
-            // (above) says to skip - see the matching skip just below,
-            // around win3DCache_gridFaces.add(): together, these two
-            // keep such a face out of the raycasting grid entirely, so
-            // it neither casts nor receives a shadow, while everything
-            // else about it (still drawn here via emitPolygon() below,
-            // still getting its own edge lines) stays the same as any
-            // other face.
-            if (!this.excludedFromFaceGrid(mt, cameraInsideASpace)) {
-              gridFace[s] = this.win3DCache_gridPointsX.size();
-              this.win3DCache_gridPointsX.add(subFace[s][0]);
-              this.win3DCache_gridPointsY.add(subFace[s][1]);
-              this.win3DCache_gridPointsZ.add(subFace[s][2]);
-            }
           }
 
           emitPolygon(group, verts, colors);
-          if (!this.excludedFromFaceGrid(mt, cameraInsideASpace)) this.win3DCache_gridFaces.add(gridFace);
+
+          // The raycasting grid gets this sub-face's own real
+          // triangulation (PolygonHoles.triangulate() - see its own
+          // comment) rather than the whole sub-face handed over as one
+          // N-gon: isIntersected_Faces.pde's own >3-point fallback fans
+          // every face it's given from that face's vertex-average
+          // centroid, which - for a concave sub-face, including exactly
+          // the shape PolygonHoles.mergeHolesIntoOuterLoop() produces
+          // when bridging a hole in - routinely covered part of the
+          // hole's own, supposedly-transparent area with phantom
+          // shadow-casting triangles. Triangulating here, once, when the
+          // grid itself is built, means isIntersected_Faces.pde never
+          // has to re-derive this face's shape from scratch per ray; it
+          // only ever sees real triangles from this point on, for which
+          // its own 3-point branch is already exact. Still skipped
+          // entirely for a face this.excludedFromFaceGrid() (above)
+          // says to leave out, same as before.
+          if (!this.excludedFromFaceGrid(mt, cameraInsideASpace)) {
+            ArrayList<PVector> subFaceLoop = new ArrayList<PVector>();
+            for (int s = 0; s < subFace.length; s++) {
+              subFaceLoop.add(new PVector(subFace[s][0], subFace[s][1], subFace[s][2]));
+            }
+
+            for (int[] triangle : PolygonHoles.triangulate(subFaceLoop)) {
+              int[] gridFace = new int[3];
+              for (int t = 0; t < 3; t++) {
+                PVector p = subFaceLoop.get(triangle[t]);
+                gridFace[t] = this.win3DCache_gridPointsX.size();
+                this.win3DCache_gridPointsX.add(p.x);
+                this.win3DCache_gridPointsY.add(p.y);
+                this.win3DCache_gridPointsZ.add(p.z);
+              }
+              this.win3DCache_gridFaces.add(gridFace);
+            }
+          }
 
           if (this.displayEdges) edgePolygons.add(edgePolygon);
         }
