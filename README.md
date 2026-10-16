@@ -240,6 +240,10 @@ Shortcuts may behave differently when a text field or the command bar has focus.
 | `ENTER` | Rebuild global and vertex solar-energy/impact data |
 | `SPACE` | Advance time and shade the view |
 | `BACKSPACE` | Move time backward and shade the view |
+| `Alt+RIGHT` | Advance time |
+| `Alt+LEFT` | Rewind time |
+| `Alt+UP` | Advance month |
+| `Alt+DOWN` | Rewind month |
 | `d` / `D` | Change the impact-display day in the 3D view |
 | `t` / `T` | Change the forecast hour used for atmospheric visualization |
 

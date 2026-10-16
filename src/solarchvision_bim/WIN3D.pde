@@ -561,30 +561,25 @@ class WIN3D {
     }
   }
 
-  // Order here is adjustShadeTime() then ShadeViewport() - opposite of
-  // ' '/BACKSPACE above, which is ShadeViewport() then adjustShadeTime() -
-  // preserved exactly as it always was rather than unified, since that's
-  // a real difference in the original code, not an inconsistency this
-  // refactor should quietly paper over.
   void handleAltArrowKeys (int keyCode) {
     switch (keyCode) {
       case RIGHT:
-        runScriptLines(new String[]{"Shade Time +1 Hour", "Shade Viewport"});
+        runScriptLine("Shade Time +1 Hour");
         this.revise();
         break;
 
       case LEFT:
-        runScriptLines(new String[]{"Shade Time -1 Hour", "Shade Viewport"});
+        runScriptLine("Shade Time -1 Hour");
         this.revise();
         break;
 
       case UP:
-        runScriptLines(new String[]{"Shade Time +1 Day", "Shade Viewport"});
+        runScriptLine("Shade Time +1 Day");
         this.revise();
         break;
 
       case DOWN:
-        runScriptLines(new String[]{"Shade Time -1 Day", "Shade Viewport"});
+        runScriptLine("Shade Time -1 Day");
         this.revise();
         break;
     }
@@ -745,17 +740,14 @@ class WIN3D {
         reviseViews();
         break;
 
-      // No reviseViews()/revise() after either: that was already true
-      // before these ran through allActions (ShadeViewport()/
-      // adjustShadeTime() apparently don't need one here), so this
-      // preserves that exactly rather than adding a refresh call that
-      // wasn't there before.
       case ' ':
-        runScriptLines(new String[]{"Shade Viewport", "Shade Time +1 Hour"});
+        this.revise();
+        runScriptLines(new String[]{"Shade Time +1 Hour", "=", "Shade Viewport"});
         break;
 
       case BACKSPACE:
-        runScriptLines(new String[]{"Shade Viewport", "Shade Time -1 Hour"});
+        this.revise();
+        runScriptLines(new String[]{"Shade Time -1 Hour", "=", "Shade Viewport"});
         break;
     }
   }
