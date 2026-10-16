@@ -1,0 +1,18 @@
+{
+  "name": "make-tree-pngs",
+  "version": "0.0.0",
+  "description": "make PNGs of trees",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.0.12"
+  },
+  "dependencies": {
+    "@dgreenheck/ez-tree": "^1.1.0",
+    "three": "^0.184.0"
+  }
+}

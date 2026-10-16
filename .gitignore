@@ -5,6 +5,7 @@ dist/macos-x86_64
 dist/macos-aarch64
 dist/windows-amd64
 null/
+node_modules
 src/solarchvision_bim/projects
 input/images/adjust_trees/
 input/images/trees_raw/
