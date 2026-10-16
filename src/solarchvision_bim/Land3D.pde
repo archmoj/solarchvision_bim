@@ -418,6 +418,8 @@ class Terrain {
   }
 
   void download_mesh () {
+    cursor(WAIT);
+
     this.Mesh = new float[this.rowCount][this.columnCount][3];
 
     String folder = stationFolder();
@@ -442,6 +444,8 @@ class Terrain {
 
     this.loadMesh = true;
     this.update_mesh();
+
+    cursor(ARROW);
   }
 
   // Free, key-less primary elevation source: Open-Meteo's Elevation API
@@ -617,6 +621,8 @@ class Terrain {
   }
 
   void download_textures () {
+    cursor(WAIT);
+
     float[] ratios = {
       1128.497220, 2256.994440, 4513.988880, 9027.977761, 18055.95552,
       36111.91104, 72223.82209, 144447.6442, 288895.2884, 577790.5767,
@@ -665,6 +671,8 @@ class Terrain {
 
     this.loadTextures = true;
     this.update_textures();
+
+    cursor(ARROW);
   }
 
   // Free, key-less replacement for Google's (now paid) Static Maps API: Esri's

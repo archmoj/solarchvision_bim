@@ -140,6 +140,8 @@ class Tropo3D {
   }
 
   void download_images () {
+    cursor(WAIT);
+
     int LocationTimeZone = getLocationTimeZone();
     DateTimeUTC dt = currentUTC();
 
@@ -176,6 +178,8 @@ class Tropo3D {
     }
 
     this.load_images();
+
+    cursor(ARROW);
   }
 
   String buildParameterStamp () {
