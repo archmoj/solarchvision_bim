@@ -535,19 +535,25 @@ class Model2Ds {
                   float y4 = y1 + dy;
 
                   if (target_window == TypeWindow.WIN3D) {
+                    float angleWithCamera = computeAngleWithXYPlane(
+                      WIN3D.cameraX, WIN3D.cameraY, WIN3D.cameraZ,
+                      x, y, z + rh * ratio
+                    );
 
-                    WIN3D.graphics.beginShape();
+                    if(Math.abs(angleWithCamera) > 45) {
+                      WIN3D.graphics.beginShape();
 
-                    WIN3D.graphics.texture(this.Images[n]);
-                    WIN3D.graphics.stroke(255, 255, 255, 0);
-                    WIN3D.graphics.fill(255, 255, 255, 0);
+                      WIN3D.graphics.texture(this.Images[n]);
+                      WIN3D.graphics.stroke(255, 255, 255, 0);
+                      WIN3D.graphics.fill(255, 255, 255, 0);
 
-                    WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, h * ratio);
-                    WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, h * ratio);
-                    WIN3D.graphics.vertex(x3 * WIN3D.scale, -y3 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, 0);
-                    WIN3D.graphics.vertex(x4 * WIN3D.scale, -y4 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, 0);
+                      WIN3D.graphics.vertex(x1 * WIN3D.scale, -y1 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, h * ratio);
+                      WIN3D.graphics.vertex(x2 * WIN3D.scale, -y2 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, h * ratio);
+                      WIN3D.graphics.vertex(x3 * WIN3D.scale, -y3 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, w, 0);
+                      WIN3D.graphics.vertex(x4 * WIN3D.scale, -y4 * WIN3D.scale, (z + 2 * rh * ratio) * WIN3D.scale, 0, 0);
 
-                    WIN3D.graphics.endShape(CLOSE);
+                      WIN3D.graphics.endShape(CLOSE);
+                    }
                   }
 
                   if (target_window == TypeWindow.OBJ3D) {
@@ -1175,4 +1181,34 @@ class Model2Ds {
       }
     }
   }
+}
+
+float computeAngleWithXYPlane(
+  float ax, float ay, float az,
+  float bx, float by, float bz) {
+
+  // 1. Calculate the direction vector components
+  float dx = bx - ax;
+  float dy = by - ay;
+  float dz = bz - az;
+
+  // 2. Compute the magnitude (length) of the line segment
+  float magnitude = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+  // 3. Handle edge case: line has no length (A and B are the same point)
+  if (magnitude == 0.0f) {
+      return 0.0f;
+  }
+
+  // 4. Calculate the sine of the angle
+  float sinTheta = Math.abs(dz) / magnitude;
+
+  // 5. Clip floating-point imprecision to keep sinTheta within legal bounds [-1.0f, 1.0f]
+  if (sinTheta > 1.0f) {
+      sinTheta = 1.0f;
+  }
+
+  // 6. Compute arcsine and convert from radians to degrees
+  float angleInRadians = (float) Math.asin(sinTheta);
+  return (float) Math.toDegrees(angleInRadians);
 }
