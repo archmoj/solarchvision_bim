@@ -2726,6 +2726,8 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
 
   println("Importing IFC. Please wait...");
 
+  progressBarHeader();
+
   importedObjectName = OPESYS.getFilenameFromPath(FileName);
 
   ifcImportSkippedCount = 0;
@@ -2781,7 +2783,28 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   // this, two imports of the exact same file could cycle materials
   // through a different product order from one run to the next.
   ArrayList<Integer> productIds = new ArrayList<Integer>();
+
+  float Progress = 0;
+  float printed_Progress = 0;
+  StringBuilder barBuffer = new StringBuilder();
+  int totalF = ents.size() + productIds.size();
+
+  int f = -1;
   for (Integer id : ents.keySet()) {
+    f++;
+    if (control != USER_AUTO) {
+      Progress = 100 * f / totalF;
+      int delta = (int) floor(Progress - printed_Progress);
+      if (delta >= 1) {
+        barBuffer.setLength(0);
+        for (int c = 0; c < delta; c++) {
+          barBuffer.append('█');
+        }
+        print(barBuffer.toString()); // one print() call instead of `delta` calls
+        printed_Progress = floor(Progress);
+      }
+    }
+
     StepEntity candidate = ents.get(id);
 
     if (!ifcImportFurniture && candidate != null
@@ -2842,6 +2865,20 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   ifcSortAscending(productIds);
 
   for (Integer id : productIds) {
+    f++;
+    if (control != USER_AUTO) {
+      Progress = 100 * f / totalF;
+      int delta = (int) floor(Progress - printed_Progress);
+      if (delta >= 1) {
+        barBuffer.setLength(0);
+        for (int c = 0; c < delta; c++) {
+          barBuffer.append('█');
+        }
+        print(barBuffer.toString()); // one print() call instead of `delta` calls
+        printed_Progress = floor(Progress);
+      }
+    }
+
     StepEntity e = ents.get(id);
 
     // The new group has to exist *before* any face is created into it:
@@ -3034,6 +3071,15 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   }
 
   model_changed();
+
+  int remaining = (int) floor(100 - printed_Progress);
+  barBuffer.setLength(0);
+  for (int c = 0; c < remaining; c++) {
+    barBuffer.append('█');
+  }
+  print(barBuffer.toString());
+  println();
+
   String summary = "IFC import complete: " + importedFaceCount + " face(s) imported";
   if (ifcLengthUnitScale != 1) summary += " (converted from the file's own length unit, scale " + ifcLengthUnitScale + " to metres)";
   if (ifcImportTreeCount > 0) summary += ", " + ifcImportTreeCount + " tree(s) placed";
