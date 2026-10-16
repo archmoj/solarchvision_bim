@@ -129,14 +129,17 @@
 //   - IfcSpace more generally - a room or zone's own volume - imports
 //     its real geometry as Faces, same as any other product, while
 //     ifcImportSpace (below) is true, its default: always drawn as a
-//     faint, mostly-transparent grey (IFC_MATERIAL_SPACE, material 8),
-//     regardless of m or any material the file associates with it, the
-//     same unconditional way a window always draws as glass - a space
-//     isn't real building fabric, so there's no real material for a
-//     file-authored one to actually mean here. See ifcSpaceProductTypes
-//     above and IFC_IMPORT_SPACE below. Counted in ifcImportSpaceCount
-//     (a pool included), surfaced in the post-import summary line the
-//     same way ifcImportTreeCount/ifcImportPersonCount already are.
+//     faint, mostly-transparent grey (IFC_MATERIAL_INDOOR_SPACE, material
+//     8, or IFC_MATERIAL_OUTDOOR_SPACE, material 10 and a little less
+//     transparent, for one whose own PredefinedType is EXTERNAL - see
+//     ifcSpaceIsExterior() below), regardless of m or any material the
+//     file associates with it, the same unconditional way a window
+//     always draws as glass - a space isn't real building fabric, so
+//     there's no real material for a file-authored one to actually mean
+//     here. See ifcSpaceProductTypes above and IFC_IMPORT_SPACE below.
+//     Counted in ifcImportSpaceCount (a pool included, indoor and
+//     outdoor alike), surfaced in the post-import summary line the same
+//     way ifcImportTreeCount/ifcImportPersonCount already are.
 //   - IfcMappedItem - a "family/type" instance, the same shared geometry
 //     reused, positioned and scaled differently at every place it's
 //     used; commonly how a door, window or piece of furniture is
@@ -390,8 +393,9 @@ boolean ifcImportRelocate = IFC_IMPORT_GOTO_LATLON;
 // only ever "draw this room's own boundary or don't", which is why this
 // defaults to true rather than false the way ifcImportFurniture does: a
 // space adds far less visual clutter than furniture can (see
-// IFC_MATERIAL_SPACE above - a faint, mostly-transparent outline, not a
-// solid, opaque object), and room/zone boundaries are often genuinely
+// IFC_MATERIAL_INDOOR_SPACE/IFC_MATERIAL_OUTDOOR_SPACE above - a faint,
+// mostly-transparent outline, not a solid, opaque object), and room/zone
+// boundaries are often genuinely
 // useful context for a solar study (room-by-room program area, for
 // instance) in a way a dining chair just isn't. A space specifically
 // recognized as a swimming pool (see ifcLooksLikeAPool() below) still
@@ -505,19 +509,41 @@ HashSet<String> ifcGlassProductTypes = new HashSet<String>(Arrays.asList(
   "IFCWINDOW"
   ));
 
-// Product types drawn with IFC_MATERIAL_SPACE above, the same
-// unconditional way ifcGlassProductTypes draws IFCWINDOW with
-// IFC_MATERIAL_GLASS - a faint, mostly-transparent grey outline, not
-// whatever opaque/file-authored material the rest of the import is
-// using, since an IfcSpace's volume is a room/zone boundary, not real
-// building fabric to begin with. Just IfcSpace - except a space
-// specifically recognized as a swimming pool (see ifcLooksLikeAPool()
-// below), which keeps its own IFC_MATERIAL_WATER instead; see the
-// material-choice block in import_objects_IFC() for exactly how that
-// takes priority.
+// Product types drawn with IFC_MATERIAL_INDOOR_SPACE or
+// IFC_MATERIAL_OUTDOOR_SPACE above (see ifcSpaceIsExterior() just below
+// for which), the same unconditional way ifcGlassProductTypes draws
+// IFCWINDOW with IFC_MATERIAL_GLASS - a faint, mostly-transparent grey
+// outline, not whatever opaque/file-authored material the rest of the
+// import is using, since an IfcSpace's volume is a room/zone boundary,
+// not real building fabric to begin with. Just IfcSpace - except a
+// space specifically recognized as a swimming pool (see
+// ifcLooksLikeAPool() below), which keeps its own IFC_MATERIAL_WATER
+// instead; see the material-choice block in import_objects_IFC() for
+// exactly how that takes priority.
 HashSet<String> ifcSpaceProductTypes = new HashSet<String>(Arrays.asList(
   "IFCSPACE"
   ));
+
+// Whether an IfcSpace is an exterior one (a courtyard, terrace, or other
+// outdoor amenity area) rather than an interior room/zone - read from
+// its own PredefinedType (attrs[9]: GlobalId(0), OwnerHistory(1),
+// Name(2), Description(3), ObjectType(4), ObjectPlacement(5),
+// Representation(6), LongName(7), CompositionType(8), PredefinedType(9)
+// - IfcSpace's own attribute order, inherited through
+// IfcSpatialStructureElement rather than IfcElement, so this is NOT the
+// same position Tag/PredefinedType sit at on an IfcElement like
+// IfcShadingDevice/IfcSolarDevice). IfcSpaceTypeEnum's own EXTERNAL
+// value is literally documented as meaning this - "Previous use had
+// been to indicate whether the IfcSpace is an interior space by value
+// INTERNAL, or an exterior space by value EXTERNAL" - so this reads
+// only for that one value; INTERNAL, any other PredefinedType (SPACE,
+// PARKING, GFA, USERDEFINED, ...), or no PredefinedType at all (a "$" or
+// a missing attribute, since it's optional) all mean interior, the far
+// more common case for an ordinary room/zone.
+boolean ifcSpaceIsExterior (StepEntity e) {
+  if (e.attrs.length <= 9) return false;
+  return e.attrs[9].trim().equals(".EXTERNAL.");
+}
 
 // Product types that default to IFC_MATERIAL_EARTH when nothing more
 // specific applies - just IfcSite's own topography/terrain surface.
@@ -648,11 +674,25 @@ final int IFC_MATERIAL_SOLAR      = 0;
 // Materials.pde's own material 8 - a faint, mostly-transparent grey (not
 // one of the "Standard IFC Materials Mapping Table" colors at 11-19
 // below, since an IfcSpace isn't real building fabric the way a wall or
-// slab is) - for an IfcSpace's own room/zone volume. See
-// ifcSpaceProductTypes below for exactly which products get it, and its
-// own use in import_objects_IFC()'s material-choice block for how.
-final int IFC_MATERIAL_SPACE      = 8;
+// slab is) - for an interior IfcSpace's own room/zone volume: one whose
+// own PredefinedType (see ifcSpaceIsExterior() below) isn't EXTERNAL.
+// See ifcSpaceProductTypes below for exactly which products get it, and
+// its own use in import_objects_IFC()'s material-choice block for how.
+final int IFC_MATERIAL_INDOOR_SPACE  = 8;
 final int IFC_MATERIAL_GLASS      = 9;
+// Materials.pde's own material 10 - the same grey as
+// IFC_MATERIAL_INDOOR_SPACE above, just less transparent - for an
+// exterior IfcSpace's own volume (PredefinedType EXTERNAL: a courtyard,
+// terrace, or other outdoor amenity area) instead. Deliberately not
+// included in Faces.pde's own isPointInsideAnySpaceBoundingBox(): a
+// camera standing in an exterior space is still outside the building,
+// so a window should still read as something solid there, the same as
+// anywhere else outdoors - only IFC_MATERIAL_INDOOR_SPACE actually means
+// "indoors" in that sense. It IS still excluded, the same as indoor
+// space always has been, from Faces.pde's own excludedFromFaceGrid():
+// neither one is real building fabric, so neither should cast or
+// receive a shadow either.
+final int IFC_MATERIAL_OUTDOOR_SPACE = 10;
 final int IFC_MATERIAL_CONCRETE   = 11;
 final int IFC_MATERIAL_STEEL      = 12;
 final int IFC_MATERIAL_TIMBER     = 13;
@@ -2834,9 +2874,12 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     // ifcLooksLikeASolarDevice() above) always draws with
     // IFC_MATERIAL_SOLAR (material 0), and an IfcSpace that isn't a pool
     // (see ifcSpaceProductTypes above) always draws as a faint,
-    // mostly-transparent grey (material 8) - all three regardless of
-    // what m says or what material, if any, the file associates with
-    // the product: the solar material isn't a color choice, it's what
+    // mostly-transparent grey - IFC_MATERIAL_INDOOR_SPACE (material 8)
+    // or IFC_MATERIAL_OUTDOOR_SPACE (material 10), depending on whether
+    // ifcSpaceIsExterior() says it's interior or exterior - all three
+    // regardless of what m says or what material, if any, the file
+    // associates with the product: the solar material isn't a color
+    // choice, it's what
     // gets the face its boosted tessellation for an accurate yield
     // calculation (see IFC_MATERIAL_SOLAR's own comment), so a
     // file-authored material name shouldn't be able to quietly turn
@@ -2883,7 +2926,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       // a couple of lines down: a space recognized as a pool is still
       // more specifically a pool than it is a generic space, the same
       // priority ifcLooksLikeAPool() already gets everywhere else.
-      matchedMaterial = IFC_MATERIAL_SPACE;
+      matchedMaterial = ifcSpaceIsExterior(e) ? IFC_MATERIAL_OUTDOOR_SPACE : IFC_MATERIAL_INDOOR_SPACE;
     } else {
       matchedMaterial = ifcMaterialNameToConstant(productMaterialNames.get(id));
       if (matchedMaterial == null && ifcLooksLikeVegetation(e)) {

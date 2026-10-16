@@ -898,7 +898,7 @@ class ImportObjectsIFCTest {
     app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     assertEquals(1, app.allFaces.nodes.length, "ifcImportSpace is true by default, so a plain IfcSpace should import its own geometry");
-    assertEquals(8, app.allFaces.options[0][0], "should default to IFC_MATERIAL_SPACE (8), not the fixed material (5)");
+    assertEquals(8, app.allFaces.options[0][0], "should default to IFC_MATERIAL_INDOOR_SPACE (8), not the fixed material (5)");
     assertEquals(1, app.ifcImportSpaceCount);
   }
 
@@ -927,6 +927,54 @@ class ImportObjectsIFCTest {
     assertEquals(1, app.allFaces.nodes.length);
     assertEquals(8, app.allFaces.options[0][0],
       "like glass, a space's own material is unconditional - a room isn't real building fabric, so an associated material name shouldn't win here either");
+  }
+
+  @Test
+  void importObjectsIFC_ifcSpaceWithExternalPredefinedType_getsTheOutdoorSpaceMaterial () throws IOException {
+    Path f = ifcFile("ifc-space-exterior-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Courtyard',$,$,$,#11,$,$,.EXTERNAL.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(10, app.allFaces.options[0][0], "PredefinedType .EXTERNAL. should give IFC_MATERIAL_OUTDOOR_SPACE (10), not the indoor default (8)");
+  }
+
+  @Test
+  void importObjectsIFC_ifcSpaceWithInternalPredefinedType_stillGetsTheIndoorSpaceMaterial () throws IOException {
+    Path f = ifcFile("ifc-space-interior-explicit-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Office 101',$,$,$,#11,$,$,.INTERNAL.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length);
+    assertEquals(8, app.allFaces.options[0][0], "an explicit .INTERNAL. should read the same as no PredefinedType at all - IFC_MATERIAL_INDOOR_SPACE (8)");
   }
 
   @Test
@@ -2214,7 +2262,7 @@ class ImportObjectsIFCTest {
     app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     assertEquals(1, app.allFaces.nodes.length, "an IfcSpace named \"Pool\" should still import its water surface");
-    assertEquals(19, app.allFaces.options[0][0], "a space recognized as a pool is still more specifically a pool, so IFC_MATERIAL_WATER (19), not IFC_MATERIAL_SPACE (8), should win");
+    assertEquals(19, app.allFaces.options[0][0], "a space recognized as a pool is still more specifically a pool, so IFC_MATERIAL_WATER (19), not IFC_MATERIAL_INDOOR_SPACE (8), should win");
   }
 
   @Test

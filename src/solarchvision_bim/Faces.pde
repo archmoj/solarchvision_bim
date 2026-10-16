@@ -90,25 +90,29 @@ class Faces {
   // while still drawing normally (see build_win3DCache()'s own use of
   // this, right where it decides whether to add a face's points to the
   // grid). Two cases:
-  //   - IFC_MATERIAL_SPACE (an IfcSpace's own room/zone volume, not
-  //     real building fabric - see that constant's own comment in
-  //     import_objects_IFC.pde) is always excluded, regardless of
+  //   - IFC_MATERIAL_INDOOR_SPACE or IFC_MATERIAL_OUTDOOR_SPACE (an
+  //     IfcSpace's own room/zone volume, interior or exterior - not real
+  //     building fabric either way - see those constants' own comments
+  //     in import_objects_IFC.pde) are always excluded, regardless of
   //     cameraInsideASpace.
   //   - IFC_MATERIAL_GLASS is excluded only while the camera itself is
-  //     inside one of those same room/zone volumes (see
-  //     isPointInsideAnySpaceBoundingBox() below, and
-  //     build_win3DCache()'s own computation of cameraInsideASpace,
-  //     once per build rather than once per face): looking out from
-  //     inside a room, a window's own glass shouldn't block a ray the
-  //     way an opaque wall would - but looking at the building from
-  //     outside, that same glass should still read as something solid
-  //     enough to cast/receive a shadow, the same as any other face.
+  //     inside one of the INDOOR spaces specifically (see
+  //     isPointInsideAnySpaceBoundingBox() below - it only looks at
+  //     IFC_MATERIAL_INDOOR_SPACE, on purpose; an outdoor space is still
+  //     outdoors - and build_win3DCache()'s own computation of
+  //     cameraInsideASpace, once per build rather than once per face):
+  //     looking out from inside a room, a window's own glass shouldn't
+  //     block a ray the way an opaque wall would - but looking at the
+  //     building from outside (an exterior space included), that same
+  //     glass should still read as something solid enough to
+  //     cast/receive a shadow, the same as any other face.
   // Pulled out as its own small, pure method - rather than left inline
   // in build_win3DCache(), which needs a real graphics context
   // (createShape(GROUP)) and so isn't unit-testable as-is - so this one
   // decision can be tested on its own.
   boolean excludedFromFaceGrid (int material, boolean cameraInsideASpace) {
-    if (material == IFC_MATERIAL_SPACE) return true;
+    if (material == IFC_MATERIAL_INDOOR_SPACE) return true;
+    if (material == IFC_MATERIAL_OUTDOOR_SPACE) return true;
     if (material == IFC_MATERIAL_GLASS && cameraInsideASpace) return true;
     return false;
   }
@@ -116,22 +120,27 @@ class Faces {
   // Whether (px,py,pz) - in the same raw/unscaled coordinate space as
   // allPoints and the raycasting grid itself, e.g. WIN3D.
   // cameraPositionScaled() rather than WIN3D.cameraX/Y/Z directly -
-  // falls inside the axis-aligned bounding box of any one contiguous
-  // run of IFC_MATERIAL_SPACE faces. Not a true point-in-polyhedron
-  // test - computing one properly, for a room that might not even be
-  // convex, is a materially harder problem than this needs (the same
-  // "serious computational-geometry undertaking, well out of scope"
-  // tradeoff import_objects_IFC.pde's own header comment already makes
-  // for a true Boolean solid difference) - a bounding box is a cheap,
-  // good-enough stand-in for "is the camera roughly inside this room".
-  // Each contiguous run of IFC_MATERIAL_SPACE faces is treated as one
-  // room/zone's own faces, since that's how import_objects_IFC.pde
-  // actually writes them - one run per imported IfcSpace, back to back,
-  // never interleaved with another product's own faces.
+  // falls inside the axis-aligned bounding box of any one contiguous run
+  // of IFC_MATERIAL_INDOOR_SPACE faces specifically - an outdoor space
+  // (IFC_MATERIAL_OUTDOOR_SPACE) is deliberately never checked here: the
+  // only thing this feeds is excludedFromFaceGrid()'s own glass
+  // exception above, and standing in an exterior space is still standing
+  // outside the building, where a window ought to keep behaving like a
+  // solid, shadow-casting surface. Not a true point-in-polyhedron test -
+  // computing one properly, for a room that might not even be convex, is
+  // a materially harder problem than this needs (the same "serious
+  // computational-geometry undertaking, well out of scope" tradeoff
+  // import_objects_IFC.pde's own header comment already makes for a true
+  // Boolean solid difference) - a bounding box is a cheap, good-enough
+  // stand-in for "is the camera roughly inside this room". Each
+  // contiguous run of IFC_MATERIAL_INDOOR_SPACE faces is treated as one
+  // room's own faces, since that's how import_objects_IFC.pde actually
+  // writes them - one run per imported IfcSpace, back to back, never
+  // interleaved with another product's own faces.
   boolean isPointInsideAnySpaceBoundingBox (float px, float py, float pz) {
     int f = 0;
     while (f < this.nodes.length) {
-      if (this.getMaterial(f) != IFC_MATERIAL_SPACE) {
+      if (this.getMaterial(f) != IFC_MATERIAL_INDOOR_SPACE) {
         f++;
         continue;
       }
@@ -140,7 +149,7 @@ class Faces {
       float maxX = -FLOAT_huge, maxY = -FLOAT_huge, maxZ = -FLOAT_huge;
 
       int runEnd = f;
-      while (runEnd < this.nodes.length && this.getMaterial(runEnd) == IFC_MATERIAL_SPACE) {
+      while (runEnd < this.nodes.length && this.getMaterial(runEnd) == IFC_MATERIAL_INDOOR_SPACE) {
         for (int j = 0; j < this.nodes[runEnd].length; j++) {
           int vNo = this.nodes[runEnd][j];
           float x = allPoints.getX(vNo);
@@ -1440,7 +1449,8 @@ class Faces {
 
     // Computed once per build, not once per face - see
     // excludedFromFaceGrid()'s own comment for what this changes (glass
-    // only, never IFC_MATERIAL_SPACE itself) and why.
+    // only, never IFC_MATERIAL_INDOOR_SPACE/IFC_MATERIAL_OUTDOOR_SPACE
+    // themselves, which are always excluded regardless) and why.
     float[] cameraPos = WIN3D.cameraPositionScaled();
     boolean cameraInsideASpace = this.isPointInsideAnySpaceBoundingBox(cameraPos[0], cameraPos[1], cameraPos[2]);
 

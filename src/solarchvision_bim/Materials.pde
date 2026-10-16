@@ -15,13 +15,21 @@ class Materials {
       {255,   0,   0, 255}, // 5
       {255, 255,   0, 255}, // 6
       {255, 255, 255, 255}, // 7
-      // 8: a faint, mostly-transparent grey for IfcSpace's own volume
-      // (a room/zone boundary, not real building fabric) - alpha 63, a
-      // bare outline rather than something meant to read as a solid
-      // surface. See import_objects_IFC.pde's IFC_MATERIAL_SPACE.
-      { 63,  63,  63,  63}, // 8 Space (IfcSpace room/zone volume)
+      // 8: a faint, mostly-transparent grey for an interior IfcSpace's
+      // own volume (a room/zone boundary, not real building fabric) -
+      // alpha 63, a bare outline rather than something meant to read as
+      // a solid surface. See import_objects_IFC.pde's
+      // IFC_MATERIAL_INDOOR_SPACE.
+      { 63,  63,  63,  63}, // 8 Indoor space (IfcSpace room/zone volume, PredefinedType INTERNAL or unset)
       {127, 127, 127, 127}, // 9  translucent gray ("glass"; see import_objects_IFC.pde's IFC_MATERIAL_GLASS)
-      {191, 191, 191, 191}, // 10
+      // 10: the same idea as material 8's own grey, but less transparent
+      // (alpha 191, not 63) for an exterior IfcSpace's own volume - a
+      // courtyard, terrace or other outdoor amenity area still worth
+      // seeing the footprint of, unlike an indoor room's own volume,
+      // which this app otherwise has no reason to render as anything
+      // but a faint outline. See import_objects_IFC.pde's
+      // IFC_MATERIAL_OUTDOOR_SPACE.
+      {191, 191, 191, 191}, // 10 Outdoor space (IfcSpace room/zone volume, PredefinedType EXTERNAL)
       // 11-17: representative colors for common real-world building
       // materials, for the IFC importer to pick by IfcMaterial name (see
       // import_objects_IFC.pde's IFC_MATERIAL_* constants and

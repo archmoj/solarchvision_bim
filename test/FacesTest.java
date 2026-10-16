@@ -231,9 +231,17 @@ class FacesTest {
   // tested here, not the grid-building integration around them.
 
   @Test
-  void excludedFromFaceGrid_true_forIFC_MATERIAL_SPACE_regardlessOfCameraPosition () {
-    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_SPACE, false));
-    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_SPACE, true));
+  void excludedFromFaceGrid_true_forIFC_MATERIAL_INDOOR_SPACE_regardlessOfCameraPosition () {
+    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_INDOOR_SPACE, false));
+    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_INDOOR_SPACE, true));
+  }
+
+  @Test
+  void excludedFromFaceGrid_true_forIFC_MATERIAL_OUTDOOR_SPACE_regardlessOfCameraPosition () {
+    // Neither one is real building fabric, so neither should cast or
+    // receive a shadow - indoor and outdoor alike.
+    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_OUTDOOR_SPACE, false));
+    assertTrue(app.allFaces.excludedFromFaceGrid(app.IFC_MATERIAL_OUTDOOR_SPACE, true));
   }
 
   @Test
@@ -255,8 +263,8 @@ class FacesTest {
   }
 
   // A 2x2x2 room centred on the origin - faces 0-5 (a box's 6 sides),
-  // all IFC_MATERIAL_SPACE - used by every isPointInsideAnySpaceBoundingBox
-  // test below.
+  // all IFC_MATERIAL_INDOOR_SPACE - used by every
+  // isPointInsideAnySpaceBoundingBox test below.
   private void buildOneSpaceBox () {
     app.allPoints.makeEmpty(0);
     float[][] corners = {
@@ -272,7 +280,7 @@ class FacesTest {
     app.allFaces.makeEmpty(6);
     for (int f = 0; f < 6; f++) {
       app.allFaces.nodes[f] = faceNodes[f];
-      app.allFaces.setMaterial(f, app.IFC_MATERIAL_SPACE);
+      app.allFaces.setMaterial(f, app.IFC_MATERIAL_INDOOR_SPACE);
     }
   }
 
@@ -337,9 +345,36 @@ class FacesTest {
     app.allFaces.nodes = newNodes;
     app.allFaces.options = newOptions;
     app.allFaces.setMaterial(before, app.IFC_MATERIAL_CONCRETE);
-    app.allFaces.setMaterial(before + 1, app.IFC_MATERIAL_SPACE);
+    app.allFaces.setMaterial(before + 1, app.IFC_MATERIAL_INDOOR_SPACE);
 
     assertFalse(app.allFaces.isPointInsideAnySpaceBoundingBox(10, 10, 10), "between the two rooms, inside neither");
     assertTrue(app.allFaces.isPointInsideAnySpaceBoundingBox(20, 20, 19), "inside the second, far-away room");
+  }
+
+  @Test
+  void isPointInsideAnySpaceBoundingBox_ignoresOutdoorSpaceFaces_evenStandingWhereOneIs () {
+    // An IFC_MATERIAL_OUTDOOR_SPACE box, the same 2x2x2 shape
+    // buildOneSpaceBox() builds for an indoor one - standing inside it
+    // is still standing outside the building, so this must read false
+    // even dead centre: only IFC_MATERIAL_INDOOR_SPACE should ever make
+    // this true (see excludedFromFaceGrid()'s own glass exception, the
+    // only thing this feeds).
+    app.allPoints.makeEmpty(0);
+    float[][] corners = {
+      {-1, -1, -1}, {1, -1, -1}, {1, 1, -1}, {-1, 1, -1},
+      {-1, -1, 1}, {1, -1, 1}, {1, 1, 1}, {-1, 1, 1}
+    };
+    for (float[] c : corners) app.allPoints.create(c[0], c[1], c[2]);
+    int[][] faceNodes = {
+      {0, 1, 2, 3}, {4, 5, 6, 7}, {0, 1, 5, 4},
+      {1, 2, 6, 5}, {2, 3, 7, 6}, {3, 0, 4, 7}
+    };
+    app.allFaces.makeEmpty(6);
+    for (int f = 0; f < 6; f++) {
+      app.allFaces.nodes[f] = faceNodes[f];
+      app.allFaces.setMaterial(f, app.IFC_MATERIAL_OUTDOOR_SPACE);
+    }
+
+    assertFalse(app.allFaces.isPointInsideAnySpaceBoundingBox(0, 0, 0), "dead centre of an outdoor space - still outdoors");
   }
 }
