@@ -897,7 +897,7 @@ class ImportObjectsIFCTest {
 
     app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    assertEquals(1, app.allFaces.nodes.length, "ifcImportSpace is true by default, so a plain IfcSpace should import its own geometry");
+    assertEquals(1, app.allFaces.nodes.length, "ifcImportIndoorSpace is true by default, so a plain (interior) IfcSpace should import its own geometry");
     assertEquals(8, app.allFaces.options[0][0], "should default to IFC_MATERIAL_INDOOR_SPACE (8), not the fixed material (5)");
     assertEquals(1, app.ifcImportSpaceCount);
   }
@@ -947,6 +947,12 @@ class ImportObjectsIFCTest {
         """
     );
 
+    // ifcImportOutdoorSpace is false by default - this test is about
+    // which material an exterior space gets once it's actually let
+    // through, not about the toggle itself (see the dedicated
+    // ifcImportOutdoorSpace_* tests for that).
+    app.ifcImportOutdoorSpace = true;
+
     app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
     assertEquals(1, app.allFaces.nodes.length);
@@ -978,8 +984,8 @@ class ImportObjectsIFCTest {
   }
 
   @Test
-  void ifcImportSpace_setFalse_excludesAnOrdinarySpace_butNotAPool () throws IOException {
-    Path f = ifcFile("ifc-space-toggle-test", """
+  void ifcImportIndoorSpace_setFalse_excludesAnOrdinaryInteriorSpace_butNotAPool () throws IOException {
+    Path f = ifcFile("ifc-indoor-space-toggle-test", """
         #1=IFCCARTESIANPOINT((0.,0.,0.));
         #2=IFCCARTESIANPOINT((1.,0.,0.));
         #3=IFCCARTESIANPOINT((1.,1.,0.));
@@ -996,7 +1002,7 @@ class ImportObjectsIFCTest {
         """
     );
 
-    app.ifcImportSpace = false; // IFC_IMPORT_SPACE itself is still true
+    app.ifcImportIndoorSpace = false; // IFC_IMPORT_INDOOR_SPACE itself is still true
 
     app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
@@ -1004,8 +1010,89 @@ class ImportObjectsIFCTest {
     // space should not have, same as the whole product type always has
     // while this toggle is off.
     assertEquals(1, app.allFaces.nodes.length);
-    assertEquals(19, app.allFaces.options[0][0], "the pool should still import, with IFC_MATERIAL_WATER, regardless of ifcImportSpace");
+    assertEquals(19, app.allFaces.options[0][0], "the pool should still import, with IFC_MATERIAL_WATER, regardless of ifcImportIndoorSpace");
     assertEquals(1, app.ifcImportSpaceCount, "only the pool should be counted - the excluded office space shouldn't be");
+  }
+
+  @Test
+  void ifcImportOutdoorSpace_isFalseByDefault_soAnExteriorSpaceIsExcludedUnlessToggledOn () throws IOException {
+    Path f = ifcFile("ifc-outdoor-space-default-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Courtyard',$,$,$,#11,$,$,.EXTERNAL.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(0, app.allFaces.nodes.length, "an exterior space should be excluded by default - unlike an interior one");
+    assertEquals(0, app.ifcImportSpaceCount);
+  }
+
+  @Test
+  void ifcImportOutdoorSpace_setTrue_actuallyImportsAnExteriorSpace () throws IOException {
+    Path f = ifcFile("ifc-outdoor-space-toggle-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Courtyard',$,$,$,#11,$,$,.EXTERNAL.);
+        """
+    );
+
+    app.ifcImportOutdoorSpace = true; // IFC_IMPORT_OUTDOOR_SPACE itself is still false
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "flipping the variable (not the constant) should be enough to import the exterior space");
+    assertEquals(10, app.allFaces.options[0][0], "IFC_MATERIAL_OUTDOOR_SPACE (10)");
+    assertEquals(1, app.ifcImportSpaceCount);
+  }
+
+  @Test
+  void ifcImportIndoorSpace_doesNotAffectAnExteriorSpace_andViceVersa () throws IOException {
+    // ifcImportIndoorSpace being true (the default) shouldn't let an
+    // exterior space through, and ifcImportOutdoorSpace being false (the
+    // default) shouldn't exclude an interior one - the two toggles are
+    // independent, not one overriding the other.
+    Path f = ifcFile("ifc-space-toggles-independent-test", """
+        #1=IFCCARTESIANPOINT((0.,0.,0.));
+        #2=IFCCARTESIANPOINT((1.,0.,0.));
+        #3=IFCCARTESIANPOINT((1.,1.,0.));
+        #4=IFCCARTESIANPOINT((0.,1.,0.));
+        #5=IFCPOLYLOOP((#1,#2,#3,#4));
+        #6=IFCFACEOUTERBOUND(#5,.T.);
+        #7=IFCFACE((#6));
+        #8=IFCCLOSEDSHELL((#7));
+        #9=IFCFACETEDBREP(#8);
+        #10=IFCSHAPEREPRESENTATION($,'Body','Brep',(#9));
+        #11=IFCPRODUCTDEFINITIONSHAPE($,$,(#10));
+        #12=IFCSPACE('guid-1',$,'Office 101',$,$,$,#11);
+        #22=IFCSPACE('guid-2',$,'Courtyard',$,$,$,#11,$,$,.EXTERNAL.);
+        """
+    );
+
+    app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
+
+    assertEquals(1, app.allFaces.nodes.length, "only the interior space should import - the default toggle values leave the exterior one out");
+    assertEquals(8, app.allFaces.options[0][0]);
+    assertEquals(1, app.ifcImportSpaceCount);
   }
 
   @Test
@@ -2286,8 +2373,10 @@ class ImportObjectsIFCTest {
 
     app.import_objects_IFC(f.toString(), 5 /*m*/, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1);
 
-    // ifcImportSpace is true by default, so both should import now - the
-    // office with the generic space material, the pool with its own.
+    // ifcImportIndoorSpace is true by default, so both should import now
+    // (the office is interior; a pool imports regardless either way) -
+    // the office with the generic indoor space material, the pool with
+    // its own.
     assertEquals(2, app.allFaces.nodes.length);
     assertEquals(8, app.allFaces.options[0][0], "the office space");
     assertEquals(19, app.allFaces.options[1][0], "the pool");
@@ -2454,7 +2543,10 @@ class ImportObjectsIFCTest {
     assertEquals(app.IFC_IMPORT_FURNITURE, app.ifcImportFurniture);
     assertEquals(app.IFC_IMPORT_NORTH, app.ifcImportOrient);
     assertEquals(app.IFC_IMPORT_GOTO_LATLON, app.ifcImportRelocate);
-    assertEquals(app.IFC_IMPORT_SPACE, app.ifcImportSpace);
+    assertEquals(app.IFC_IMPORT_INDOOR_SPACE, app.ifcImportIndoorSpace);
+    assertEquals(app.IFC_IMPORT_OUTDOOR_SPACE, app.ifcImportOutdoorSpace);
+    assertTrue(app.ifcImportIndoorSpace, "interior spaces should import by default");
+    assertFalse(app.ifcImportOutdoorSpace, "exterior spaces should NOT import by default - unlike interior ones");
   }
 
   @Test

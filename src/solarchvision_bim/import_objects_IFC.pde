@@ -128,15 +128,17 @@
 //     import_objects_IFC()'s product-collection loop.
 //   - IfcSpace more generally - a room or zone's own volume - imports
 //     its real geometry as Faces, same as any other product, while
-//     ifcImportSpace (below) is true, its default: always drawn as a
-//     faint, mostly-transparent grey (IFC_MATERIAL_INDOOR_SPACE, material
-//     8, or IFC_MATERIAL_OUTDOOR_SPACE, material 10 and a little less
-//     transparent, for one whose own PredefinedType is EXTERNAL - see
-//     ifcSpaceIsExterior() below), regardless of m or any material the
-//     file associates with it, the same unconditional way a window
-//     always draws as glass - a space isn't real building fabric, so
-//     there's no real material for a file-authored one to actually mean
-//     here. See ifcSpaceProductTypes above and IFC_IMPORT_SPACE below.
+//     ifcImportIndoorSpace or ifcImportOutdoorSpace (below, whichever
+//     actually applies - see ifcSpaceIsExterior() below) is true,
+//     interior's own default: always drawn as a faint,
+//     mostly-transparent grey (IFC_MATERIAL_INDOOR_SPACE, material 8, or
+//     IFC_MATERIAL_OUTDOOR_SPACE, material 10 and a little less
+//     transparent, for one whose own PredefinedType is EXTERNAL),
+//     regardless of m or any material the file associates with it, the
+//     same unconditional way a window always draws as glass - a space
+//     isn't real building fabric, so there's no real material for a
+//     file-authored one to actually mean here. See ifcSpaceProductTypes
+//     above and IFC_IMPORT_INDOOR_SPACE/IFC_IMPORT_OUTDOOR_SPACE below.
 //     Counted in ifcImportSpaceCount (a pool included, indoor and
 //     outdoor alike), surfaced in the post-import summary line the same
 //     way ifcImportTreeCount/ifcImportPersonCount already are.
@@ -219,9 +221,11 @@
 //   - IfcOpeningElement and IfcVirtualElement are skipped on purpose
 //     even when they carry geometry: they represent voids, not building
 //     fabric. IfcSpace is different - see the room/zone-volume bullet
-//     above and ifcImportSpace below: it's drawn (faintly) by default,
-//     not skipped, though still not "building fabric" in the sense
-//     those other two mean.
+//     above and ifcImportIndoorSpace/ifcImportOutdoorSpace below: an
+//     interior one is drawn (faintly) by default, not skipped, though
+//     still not "building fabric" in the sense those other two mean -
+//     an exterior one starts off skipped too, but for its own,
+//     different reason (see IFC_IMPORT_OUTDOOR_SPACE's own comment).
 
 // ---------------------------------------------------------------------
 // One parsed STEP entity instance: "#id=TYPE(attr0,attr1,...);"
@@ -386,29 +390,46 @@ final boolean IFC_IMPORT_GOTO_LATLON = true;
 
 boolean ifcImportRelocate = IFC_IMPORT_GOTO_LATLON;
 
-// Whether to import IfcSpace at all - on by default. A space is a
+// Whether to import an interior IfcSpace (one whose own PredefinedType -
+// see ifcSpaceIsExterior() above - isn't EXTERNAL) at all - on by
+// default, unlike IFC_IMPORT_OUTDOOR_SPACE just below. A space is a
 // room/zone volume, not real building fabric, so unlike every other
 // product type this importer reads, there's no wall/slab/window-style
 // Representation geometry *missing* here to worry about - the choice is
 // only ever "draw this room's own boundary or don't", which is why this
-// defaults to true rather than false the way ifcImportFurniture does: a
-// space adds far less visual clutter than furniture can (see
-// IFC_MATERIAL_INDOOR_SPACE/IFC_MATERIAL_OUTDOOR_SPACE above - a faint,
-// mostly-transparent outline, not a solid, opaque object), and room/zone
-// boundaries are often genuinely
-// useful context for a solar study (room-by-room program area, for
-// instance) in a way a dining chair just isn't. A space specifically
-// recognized as a swimming pool (see ifcLooksLikeAPool() below) still
-// imports regardless of this toggle's own value, same as it always has
-// - see ifcImportSpace's own use in import_objects_IFC()'s
-// product-collection loop.
+// defaults to true rather than false the way ifcImportFurniture does: an
+// interior space adds far less visual clutter than furniture can (see
+// IFC_MATERIAL_INDOOR_SPACE above - a faint, mostly-transparent outline,
+// not a solid, opaque object), and room/zone boundaries are often
+// genuinely useful context for a solar study (room-by-room program
+// area, for instance) in a way a dining chair just isn't. A space
+// specifically recognized as a swimming pool (see ifcLooksLikeAPool()
+// below) still imports regardless of either this toggle's or
+// IFC_IMPORT_OUTDOOR_SPACE's own value, same as it always has - see
+// ifcImportIndoorSpace/ifcImportOutdoorSpace's own use in
+// import_objects_IFC()'s product-collection loop.
 //
-// Just this toggle's own starting value - see IFC_IMPORT_FURNITURE's
-// own comment above for why, and ifcImportSpace below for what's
+// Just this toggle's own starting value - see IFC_IMPORT_FURNITURE's own
+// comment above for why, and ifcImportIndoorSpace below for what's
 // actually checked at import time.
-final boolean IFC_IMPORT_SPACE = true;
+final boolean IFC_IMPORT_INDOOR_SPACE = true;
 
-boolean ifcImportSpace = IFC_IMPORT_SPACE;
+// Whether to import an exterior IfcSpace (PredefinedType EXTERNAL) at
+// all - off by default, unlike IFC_IMPORT_INDOOR_SPACE just above: an
+// outdoor space (a courtyard, terrace, or other amenity area) is less
+// often useful context for a solar study than an interior room is, and
+// - drawn with IFC_MATERIAL_OUTDOOR_SPACE's own, less transparent grey -
+// reads more like real geometry cluttering the model than an interior
+// space's own near-invisible outline does, which is why this starts
+// opposite that one rather than matching it.
+//
+// Just this toggle's own starting value - see IFC_IMPORT_FURNITURE's own
+// comment above for why, and ifcImportOutdoorSpace below for what's
+// actually checked at import time.
+final boolean IFC_IMPORT_OUTDOOR_SPACE = false;
+
+boolean ifcImportIndoorSpace = IFC_IMPORT_INDOOR_SPACE;
+boolean ifcImportOutdoorSpace = IFC_IMPORT_OUTDOOR_SPACE;
 
 // One-shot: whether the very next import_objects_IFC() call should open
 // ifcShowImportOptionsDialog() (fileSelected.pde) before doing anything
@@ -717,8 +738,9 @@ int ifcImportHolesCutCount = 0;
 int ifcImportTreeCount = 0;
 int ifcImportPersonCount = 0;
 // How many IfcSpace products (see ifcSpaceProductTypes above) actually
-// had their own geometry kept - a pool recognized this way counts too,
-// same as it always has, regardless of ifcImportSpace's own value.
+// had their own geometry kept - indoor and outdoor alike, and a pool
+// recognized this way counts too, same as it always has, regardless of
+// ifcImportIndoorSpace/ifcImportOutdoorSpace's own values.
 int ifcImportSpaceCount = 0;
 // IfcBooleanResult/IfcBooleanClippingResult items that imported only
 // their FirstOperand - see ifcProcessRepresentationItem()'s own
@@ -2790,17 +2812,20 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
       // one is skipped exactly because it has nothing to import.
       productIds.add(id);
     } else if (candidate != null && candidate.type.equals("IFCSPACE") && candidate.attrs.length >= 7
-      && candidate.attrs[6].trim().startsWith("#") && (ifcImportSpace || ifcLooksLikeAPool(candidate))) {
-      // Every IfcSpace imports its own geometry while ifcImportSpace is
-      // true (see that variable's own comment for why it defaults to
-      // true, unlike ifcImportFurniture) - otherwise, only a space
-      // specifically recognized as a pool still does, exactly the way
-      // it always has: a swimming pool is commonly modeled as a space/
-      // volume rather than a solid building element, and unlike a tree,
-      // water has no native substitute to fall back on. Every IfcSpace
-      // stays excluded above (ifcNonGeometryProductTypes) regardless,
-      // so this is still the one place either kind is ever actually
-      // added; both still require an actual Representation.
+      && candidate.attrs[6].trim().startsWith("#")
+      && ((ifcSpaceIsExterior(candidate) ? ifcImportOutdoorSpace : ifcImportIndoorSpace) || ifcLooksLikeAPool(candidate))) {
+      // An interior IfcSpace imports its own geometry while
+      // ifcImportIndoorSpace is true (its default), an exterior one
+      // while ifcImportOutdoorSpace is (off by default) - see those
+      // variables' own comments for why they start differently - and,
+      // regardless of either toggle, a space specifically recognized as
+      // a pool still does, exactly the way it always has: a swimming
+      // pool is commonly modeled as a space/volume rather than a solid
+      // building element, and unlike a tree, water has no native
+      // substitute to fall back on. Every IfcSpace stays excluded above
+      // (ifcNonGeometryProductTypes) regardless, so this is still the
+      // one place any of the three is ever actually added; all require
+      // an actual Representation.
       productIds.add(id);
     } else if (candidate != null && ifcLooksLikeAProduct(candidate)
       && ifcLooksLikeAPerson(ents, candidate, -1, personLayerItemIds)) {
