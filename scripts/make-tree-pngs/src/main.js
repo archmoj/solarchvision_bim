@@ -1,12 +1,19 @@
 import * as THREE from 'three';
 import { Tree } from '@dgreenheck/ez-tree';
+import { TREE_SPECIES, SPECIES_NAMES, resolveSpeciesOptions } from './tree-species.js';
 
 const renderWidth = 800;
 const renderHeight = 800;
 
+// How many randomized variants to generate per species. Each variant uses a
+// different seed plus a fresh random draw from that species' parameter
+// ranges (see tree-species.js), so trees of the same species still differ
+// from one another while keeping the same overall silhouette/identity.
+const VARIANTS_PER_SPECIES = 3;
+
 // CAMERAS
 var camera = new THREE.PerspectiveCamera(35, renderWidth / renderHeight, 1, 10000);
-var d = 15;
+var d = 50;
 camera.position.set(0, 0, d * 3);
 camera.up.set(0, 0, 1);
 camera.lookAt(0, d, 0); // Focus the camera on the center of the trunk
@@ -42,32 +49,56 @@ dirLight.position.set(0, 0, 100);
 dirLight.castShadow = true;
 scene.add(dirLight);
 
-let tree = new Tree();
-
-scene.add(tree);
+let tree = null;
 var requestID;
-var frame = -1;
 
-function randomRange(min, max) {
-  return Math.random() * (max - min) + min;
+/**
+ * Builds the flat list of render jobs: every species repeated
+ * VARIANTS_PER_SPECIES times, each with its own seed.
+ */
+function buildJobQueue() {
+	const jobs = [];
+	for (const speciesName of SPECIES_NAMES) {
+		for (let variant = 1; variant <= VARIANTS_PER_SPECIES; variant++) {
+			jobs.push({
+				speciesName,
+				variant,
+				// Keep seeds distinct across the whole run so no two jobs,
+				// even across species, happen to regenerate identical geometry.
+				seed: Math.floor(Math.random() * 1_000_000),
+			});
+		}
+	}
+	return jobs;
 }
 
+let jobQueue = buildJobQueue();
+// duplicate first job to by pass first frame bug
+jobQueue = [jobQueue[0]].concat(jobQueue);
+
+let jobIndex = -1;
+
 function render() {
-	frame++;
+	jobIndex++;
 
-	if(frame > 10) return;
+	if (jobIndex >= jobQueue.length) return;
 
-	tree.options.seed = frame;
-	tree.options.branch.levels = 3; // 3 levels of geometry generation
+	const { speciesName, variant, seed } = jobQueue[jobIndex];
+	const speciesConfig = TREE_SPECIES[speciesName];
 
-	tree.options.branch.length[0] = randomRange(10, 20);
-	tree.options.branch.radius[0] = randomRange(0.5, 1.0);
+	// Remove the previous tree (if any) before generating the next one.
+	if (tree) {
+		scene.remove(tree);
+	}
 
-	tree.options.branch.length[1] = randomRange(5, 10);
-	tree.options.branch.radius[1] = randomRange(0.25, 0.5);
+	// A fresh Tree() starts from ez-tree's default TreeOptions, so applying
+	// this species' (partial) overrides on top never leaks parameters left
+	// over from the previous species' job.
+	tree = new Tree();
+	tree.options.copy(resolveSpeciesOptions(speciesConfig));
+	tree.options.seed = seed;
 
-	tree.options.branch.length[2] = randomRange(2.5, 5);
-	tree.options.branch.radius[2] = randomRange(0.125, 0.25);
+	scene.add(tree);
 
 	// 3. Generate geometry safely
 	tree.generate();
@@ -80,15 +111,13 @@ function render() {
 		}
 	});
 
-
 	renderer.render(scene, camera);
 
 	requestID = requestAnimationFrame(render);
 	cancelAnimationFrame(requestID);
 
-	// skip first frame
-	if(frame !== 0) {
-		let filename = frame + ".png";
+	if(jobIndex != 0) { // skip first frame which has a bug
+		let filename = `${speciesName}_${variant}.png`;
 		downloadCanvas(renderer.domElement, filename);
 	}
 
