@@ -1,6 +1,6 @@
 void preBakeViewport () {
 
-  cursor(WAIT);
+  showWaitCursor();
 
   println("PreBaking for Direct and Diffuse models. Please wait...");
 
@@ -294,7 +294,7 @@ void preBakeViewport () {
 
 
 
-  cursor(ARROW);
+  showArrowCursor();
 
   WIN3D.dX = pre_WIN3D_dX;
   WIN3D.dY = pre_WIN3D_dY;

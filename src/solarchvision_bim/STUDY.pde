@@ -1623,7 +1623,7 @@ class STUDY {
 
   void draw () {
 
-    cursor(WAIT);
+    showWaitCursor();
 
     if (this.update) {
       updateImageScale();
@@ -1636,7 +1636,7 @@ class STUDY {
     this.normalLinesExporter = false;
     this.probabilitiesExporter = false;
 
-    cursor(ARROW);
+    showArrowCursor();
   }
 
   // Decides this.ImageScale from the current record_PDF / record_IMG flags.

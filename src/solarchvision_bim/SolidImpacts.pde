@@ -441,7 +441,7 @@ class SolidImpacts {
 
     if (this.sectionType != 0) {
 
-      cursor(WAIT);
+      showWaitCursor();
 
       this.Contours_U1Vertices = new float [1][4];
       this.Contours_U1Vertices[0][0] = 0;
@@ -765,7 +765,7 @@ class SolidImpacts {
         println("File created:" + myFile);
       }
 
-      cursor(ARROW);
+      showArrowCursor();
     }
   }
 
@@ -1056,7 +1056,7 @@ class SolidImpacts {
 
   void calculate_WindFlow () {
 
-    cursor(WAIT);
+    showWaitCursor();
 
     this.Wind_Vertices = new float [0][4];
 
@@ -1208,7 +1208,7 @@ class SolidImpacts {
       }
     }
 
-    cursor(ARROW);
+    showArrowCursor();
 
     allWindFlows.displayAll = true;
     UI_rollout.revise();

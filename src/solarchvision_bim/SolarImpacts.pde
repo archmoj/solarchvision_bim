@@ -47,7 +47,7 @@ class SolarImpacts {
 
     if (this.sectionType != 0) {
 
-      cursor(WAIT);
+      showWaitCursor();
 
       int[] startK_endK = get_startK_endK();
       int start_k = startK_endK[0];
@@ -427,7 +427,7 @@ class SolarImpacts {
         }
       }
 
-      cursor(ARROW);
+      showArrowCursor();
     }
   }
 

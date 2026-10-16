@@ -1,6 +1,6 @@
 void calculate_GlobalSolar_array () {
 
-  cursor(WAIT);
+  showWaitCursor();
 
   if (GlobalSolar_rebuild_array) {
     GlobalSolar_resize_array();
@@ -257,5 +257,5 @@ void calculate_GlobalSolar_array () {
   if (allFaces != null) allFaces.winCacheGeneration++;
   if (Sky3D != null) Sky3D.winCacheGeneration++;
 
-  cursor(ARROW);
+  showArrowCursor();
 }

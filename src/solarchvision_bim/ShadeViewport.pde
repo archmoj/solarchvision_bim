@@ -13,7 +13,7 @@ void ShadeViewport () {
   int DATE_ANGLE = SHADE_DATE_ANGLE;
   int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
-  cursor(WAIT);
+  showWaitCursor();
   buildFaceGrid();
 
 
@@ -116,7 +116,7 @@ void ShadeViewport () {
   }
 
   Shade_RGBA.updatePixels();
-  cursor(ARROW);
+  showArrowCursor();
   WIN3D.showShading = true;
 }
 

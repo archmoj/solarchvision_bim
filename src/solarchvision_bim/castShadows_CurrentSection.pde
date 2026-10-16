@@ -1,6 +1,6 @@
 void castShadows_CurrentSection () {
 
-  cursor(WAIT);
+  showWaitCursor();
 
   SceneName = "Section_" + Section_Stamp();
 
@@ -156,7 +156,7 @@ void castShadows_CurrentSection () {
   allSolarImpacts.sectionType = keep_allSolarImpacts_sectionType;
   allSolarImpacts.R = keep_allSolarImpacts_rotation;
 
-  cursor(ARROW);
+  showArrowCursor();
 }
 
 void renderShadowFrame(float[] SunR, int SunR_Rotated_check, int SHD,

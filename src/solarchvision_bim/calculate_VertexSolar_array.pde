@@ -1,6 +1,6 @@
 void calculate_VertexSolar_array () {
 
-  cursor(WAIT);
+  showWaitCursor();
 
   println("\nCalculating direct and diffuse values at each vertex. Please wait...");
 
@@ -336,5 +336,5 @@ void calculate_VertexSolar_array () {
   // next WIN3D.draw() rebuilds it instead of reusing stale colors.
   if (allFaces != null) allFaces.winCacheGeneration++;
 
-  cursor(ARROW);
+  showArrowCursor();
 }

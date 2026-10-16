@@ -1,6 +1,6 @@
 void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int wgt, int clz, float cx, float cy, float cz, float sx, float sy, float sz) {
   println("Importing OBJ. Please wait...");
-  cursor(WAIT);
+  showWaitCursor();
 
   if (m == -1) current_Material = 0;
   else current_Material = m;
@@ -82,5 +82,5 @@ void import_objects_OBJ (String FileName, int m, int tes, int lyr, int vsb, int 
   print(barBuffer.toString());
   println();
 
-  cursor(ARROW);
+  showArrowCursor();
 }

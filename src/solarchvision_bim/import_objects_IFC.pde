@@ -2725,7 +2725,7 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
   }
 
   println("Importing IFC. Please wait...");
-  cursor(WAIT);
+  showWaitCursor();
 
   progressBarHeader();
 
@@ -3110,5 +3110,5 @@ void import_objects_IFC (String FileName, int m, int tes, int lyr, int vsb, int 
     __SETLATLON__(new String[] { "SETLATLON", "" + ifcImportGotoLatLon[0], "" + ifcImportGotoLatLon[1] });
   }
 
-  cursor(ARROW);
+  showArrowCursor();
 }

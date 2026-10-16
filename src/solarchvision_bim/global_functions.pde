@@ -167,3 +167,11 @@ void VertexSolar_resize_array () { // called when STUDY.endDay changes
 
   VertexSolar_rebuild_array = false;
 }
+
+void showWaitCursor () {
+  if (this.surface != null) cursor(WAIT);
+}
+
+void showArrowCursor () {
+  if (this.surface != null) cursor(ARROW);
+}
