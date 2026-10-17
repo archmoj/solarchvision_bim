@@ -182,13 +182,20 @@ final int MODEL2D_ALPHA_HIT_THRESHOLD = 128;
 // Face f's own texture-alpha test at the already-confirmed-in-polygon hit
 // point P - true (no texture, or texture pixel solid enough) means the hit
 // stands; false means treat it as a miss. entireFaceUVBasis[f] maps P onto
-// the billboard's own rectangle: u runs 0..1 along its width (the stored
-// widthDir/widthLen), v runs 0..1 up from its base along +Z (every
-// billboard is vertical, so no separate height direction needs storing).
-// Image v is 0 at the top, 1 at the bottom (standard texture convention,
-// matching Model2Ds.draw()'s own vertex()/UV calls) - the opposite sense
-// from "up from the base" - hence the (1 - heightFrac) flip below.
+// the billboard's own rectangle (see that array's own declaration above
+// for the basis layout - it already accounts for widthDir/heightDir and
+// the vPixelNear/vPixelFar pixel-space interpolation, so nothing further
+// needs explaining here about top/bottom or vertical-vs-horizontal).
 boolean passesAlphaTest (int f, float[] P) {
+  // entireFaceAlphaTexture/entireFaceUVBasis are only allocated inside
+  // buildFaceGrid() (see its own top) - a caller that populates entireFaces
+  // directly and calls testFaceHit() without ever going through
+  // buildFaceGrid() (e.g. a unit test exercising just the triangle/fan
+  // math in isolation - see FaceIntersectionTest's buildSingleTriangleFace())
+  // leaves these null. No texture data means nothing to gate on, same as
+  // any individual face whose own entry is null below.
+  if (entireFaceAlphaTexture == null) return true;
+
   PImage tex = entireFaceAlphaTexture.get(f);
   if (tex == null) return true; // opaque face (allFaces/allModel1Ds), nothing to sample
 
