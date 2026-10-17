@@ -80,35 +80,57 @@ void ShadeViewport () {
       float[] RxP = intersectAll(ray_start, ray_direction);
 
       if (RxP[0] >= 0) {
-        float[] face_norm = { RxP[5], RxP[6], RxP[7] };
-        face_norm = funcs.vec3_unit(face_norm);
+        int hitFace = (int) RxP[0];
 
-        if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces
-          face_norm[0] *= -1;
-          face_norm[1] *= -1;
-          face_norm[2] *= -1;
+        // A 2D tree's own billboard (see Model2Ds.pde's addToFaceGrid() -
+        // people aren't in the grid at all, so this never fires for them):
+        // paint its real photographic color at the exact pixel the ray
+        // hit, instead of this face's own single flat grayscale radiance
+        // value below. Reuses the very same UV mapping passesAlphaTest()
+        // (isIntersected_Faces.pde) already used to confirm this hit
+        // landed on a non-transparent part of the foliage silhouette in
+        // the first place, so the two can never disagree on which pixel
+        // a hit corresponds to. No sun/sky radiance math needed for this
+        // branch at all - that's only ever used to compute the grayscale
+        // value this branch is replacing.
+        PImage treeTex = (entireFaceAlphaTexture != null && hitFace < entireFaceAlphaTexture.size())
+          ? entireFaceAlphaTexture.get(hitFace) : null;
+
+        if (treeTex != null) {
+          float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
+          int[] texel = faceTexturePixel(hitFace, hitPoint);
+          Shade_RGBA.pixels[np] = treeTex.get(texel[0], texel[1]);
+        } else {
+          float[] face_norm = { RxP[5], RxP[6], RxP[7] };
+          face_norm = funcs.vec3_unit(face_norm);
+
+          if (funcs.vec_dot(face_norm, ray_direction) > 0) { // to render backing faces
+            face_norm[0] *= -1;
+            face_norm[1] *= -1;
+            face_norm[2] *= -1;
+          }
+
+          ray_start[0] = RxP[1];
+          ray_start[1] = RxP[2];
+          ray_start[2] = RxP[3];
+          ray_direction[0] = SunV[0];
+          ray_direction[1] = SunV[1];
+          ray_direction[2] = SunV[2];
+
+          float Alpha = 90 - funcs.acos_ang(face_norm[2]);
+          float SkyMask = 0.5 * (1.0 + (Alpha / 90.0));
+
+          float valuesSUM_RAD = SkyMask; // diffuse radiation
+          if (isIntersected_Faces(ray_start, ray_direction, 0) == 0) {
+            float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
+            if (SunMask <= 0) SunMask = 0; // removes backing faces
+
+            valuesSUM_RAD += SunMask; // direct radiation
+          }
+
+          float v = valuesSUM_RAD * 150;
+          Shade_RGBA.pixels[np] = color(v, v, v, 255);
         }
-
-        ray_start[0] = RxP[1];
-        ray_start[1] = RxP[2];
-        ray_start[2] = RxP[3];
-        ray_direction[0] = SunV[0];
-        ray_direction[1] = SunV[1];
-        ray_direction[2] = SunV[2];
-
-        float Alpha = 90 - funcs.acos_ang(face_norm[2]);
-        float SkyMask = 0.5 * (1.0 + (Alpha / 90.0));
-
-        float valuesSUM_RAD = SkyMask; // diffuse radiation
-        if (isIntersected_Faces(ray_start, ray_direction, 0) == 0) {
-          float SunMask = funcs.vec_dot(SunV_unit, funcs.vec3_unit(face_norm));
-          if (SunMask <= 0) SunMask = 0; // removes backing faces
-
-          valuesSUM_RAD += SunMask; // direct radiation
-        }
-
-        float v = valuesSUM_RAD * 150;
-        Shade_RGBA.pixels[np] = color(v, v, v, 255);
       } else {
         Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
       }

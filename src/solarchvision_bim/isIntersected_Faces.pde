@@ -179,27 +179,19 @@ int cellFlatIndex(int ix, int iy, int iz) { return (ix * gridNy + iy) * gridNz +
 // is already fully opaque or fully absent).
 final int MODEL2D_ALPHA_HIT_THRESHOLD = 128;
 
-// Face f's own texture-alpha test at the already-confirmed-in-polygon hit
-// point P - true (no texture, or texture pixel solid enough) means the hit
-// stands; false means treat it as a miss. entireFaceUVBasis[f] maps P onto
-// the billboard's own rectangle (see that array's own declaration above
-// for the basis layout - it already accounts for widthDir/heightDir and
-// the vPixelNear/vPixelFar pixel-space interpolation, so nothing further
-// needs explaining here about top/bottom or vertical-vs-horizontal).
-boolean passesAlphaTest (int f, float[] P) {
-  // entireFaceAlphaTexture/entireFaceUVBasis are only allocated inside
-  // buildFaceGrid() (see its own top) - a caller that populates entireFaces
-  // directly and calls testFaceHit() without ever going through
-  // buildFaceGrid() (e.g. a unit test exercising just the triangle/fan
-  // math in isolation - see FaceIntersectionTest's buildSingleTriangleFace())
-  // leaves these null. No texture data means nothing to gate on, same as
-  // any individual face whose own entry is null below.
-  if (entireFaceAlphaTexture == null) return true;
-
+// Maps an already-confirmed-in-polygon hit point P on face f onto that
+// face's own texture, in pixel coordinates. Caller must already know
+// entireFaceAlphaTexture.get(f) is non-null (see entireFaceUVBasis's own
+// declaration above for the basis layout this reads). Shared by
+// passesAlphaTest() below (which only needs the alpha channel at this
+// pixel) and ShadeViewport.pde (which samples the full RGBA, to paint a
+// tree's own photographic color onto the shaded image rather than a flat
+// radiance value) - one UV mapping, so the two can never drift apart and
+// disagree on which pixel a given hit corresponds to.
+int[] faceTexturePixel (int f, float[] P) {
   PImage tex = entireFaceAlphaTexture.get(f);
-  if (tex == null) return true; // opaque face (allFaces/allModel1Ds), nothing to sample
-
   float[] basis = entireFaceUVBasis.get(f);
+
   float dx = P[0] - basis[0];
   float dy = P[1] - basis[1];
   float dz = P[2] - basis[2];
@@ -213,7 +205,27 @@ boolean passesAlphaTest (int f, float[] P) {
   int px = constrain(int(u * tex.width), 0, tex.width - 1);
   int py = constrain(int(basis[10] + heightFrac * (basis[11] - basis[10])), 0, tex.height - 1);
 
-  int alpha = (tex.get(px, py) >> 24) & 0xFF;
+  return new int[] { px, py };
+}
+
+// Face f's own texture-alpha test at the already-confirmed-in-polygon hit
+// point P - true (no texture, or texture pixel solid enough) means the hit
+// stands; false means treat it as a miss.
+boolean passesAlphaTest (int f, float[] P) {
+  // entireFaceAlphaTexture/entireFaceUVBasis are only allocated inside
+  // buildFaceGrid() (see its own top) - a caller that populates entireFaces
+  // directly and calls testFaceHit() without ever going through
+  // buildFaceGrid() (e.g. a unit test exercising just the triangle/fan
+  // math in isolation - see FaceIntersectionTest's buildSingleTriangleFace())
+  // leaves these null. No texture data means nothing to gate on, same as
+  // any individual face whose own entry is null below.
+  if (entireFaceAlphaTexture == null) return true;
+
+  PImage tex = entireFaceAlphaTexture.get(f);
+  if (tex == null) return true; // opaque face (allFaces/allModel1Ds), nothing to sample
+
+  int[] texel = faceTexturePixel(f, P);
+  int alpha = (tex.get(texel[0], texel[1]) >> 24) & 0xFF;
   return alpha >= MODEL2D_ALPHA_HIT_THRESHOLD;
 }
 
