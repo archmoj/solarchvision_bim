@@ -64,7 +64,23 @@ void update_frame_layout () {
     WORLD.graphics = createGraphics(WORLD.dX, WORLD.dY, P2D);
   }
 
-  if(WIN3D.include) model_changed(); // to update 3D caches
+  if(WIN3D.include) {
+    model_changed(); // to update 3D caches (Faces, Model1Ds, Terrain)
+
+    // WIN3D.graphics was just recreated above via createGraphics() - any
+    // win3DCache PShape built against the old graphics context must be
+    // rebuilt against the new one too, same reasoning as the Faces/
+    // Model1Ds/Terrain caches invalidated by model_changed() just above.
+    // Sky3D already uses a winCacheGeneration counter like those three (see
+    // Sky3D.pde / calculate_GlobalSolar_array.pde), so bump it the same
+    // way; Sun3D/Moon3D/Earth3D have no such counter - their
+    // win3DCache_isValid() just checks win3DCache != null (see their own
+    // "WIN3D retained-mode cache" blocks), so null the cache out directly.
+    if (Sky3D != null) Sky3D.winCacheGeneration++;
+    if (Sun3D != null) Sun3D.win3DCache = null;
+    if (Moon3D != null) Moon3D.win3DCache = null;
+    if (Earth3D != null) Earth3D.win3DCache = null;
+  }
 
   WORLD.revise();
   WIN3D.revise();
