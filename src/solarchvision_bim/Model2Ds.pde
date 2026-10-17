@@ -8,6 +8,20 @@ class Model2Ds {
 
   boolean displayAll = true;
 
+  // How many camera-facing vertical shading quads addToFaceGrid() builds
+  // per tree (see its own comment) - only 1, 2 and 4 are meaningful:
+  //   1: just the camera-facing quad itself (angles[0], t0).
+  //   2: that quad plus the one perpendicular to it (t0 + 90 degrees).
+  //   4: both of those plus the two diagonals, t0 +45/+135 degrees - the
+  //      full cross this already built before this constant existed.
+  // Defaults to 2 rather than 4: the two canopy-cap quads already catch
+  // a straight-overhead sun that the vertical quads alone would miss, so
+  // the diagonal pair's own benefit (a closer-to-face-on quad for a sun
+  // angle well off the camera-facing one) is a real but smaller
+  // improvement, not something every shading study needs at the extra
+  // cost of twice as many quads to ray-test against.
+  int verticalShadingSections = 2;
+
   int num;
   float[][] XYZS;
 
@@ -189,36 +203,52 @@ class Model2Ds {
   // Called by buildFaceGrid() (isIntersected_Faces.pde) to feed trees into
   // the raycasting grid used for shading, the same way allFaces.
   // addToFaceGrid()/allModel1Ds.addToFaceGrid() already feed faces and
-  // branches. draw()'s own billboard always rotates to face the camera
-  // (its `t` tracks WIN3D.rotationZ, or atan2() against WIN3D.cameraX/Y in
-  // perspective) - meaningless here, since a shading study has no single
-  // camera, the sun moves independently of any viewer, and buildFaceGrid()
-  // itself is called with WIN3D's matrix stack back at identity anyway (see
-  // Model1Ds.pde's own addToFaceGrid() comment on that). So each tree
-  // contributes two world-fixed vertical quads instead, crossed through its
-  // trunk's center line: one spanning east-west (facing north/south), one
-  // spanning north-south (facing east/west) - this is Option 2 from the
-  // investigation (an imaginary canopy solid, e.g. an icosahedron, would
-  // shade identically regardless of species; this reuses the tree's own
-  // texture instead). Each quad is geometrically just a flat rectangle, so
-  // isIntersected_Faces.pde's testFaceHit() also samples that texture's
-  // alpha channel at the hit point (entireFaceAlphaTexture/
-  // entireFaceUVBasis, populated per quad below) and treats a transparent
-  // pixel - outside the foliage silhouette - as no hit, instead of letting
-  // the quad's full bounding rectangle block the ray.
+  // branches. Each tree contributes several vertical quads crossed through
+  // its trunk's center line, plus two flat "canopy cap" quads (see below) -
+  // this is Option 2 from the investigation (an imaginary canopy solid,
+  // e.g. an icosahedron, would shade identically regardless of species;
+  // this reuses the tree's own texture instead). Each quad is
+  // geometrically just a flat rectangle, so isIntersected_Faces.pde's
+  // testFaceHit() also samples that texture's alpha channel at the hit
+  // point (entireFaceAlphaTexture/entireFaceUVBasis, populated per quad
+  // below) and treats a transparent pixel - outside the foliage silhouette
+  // - as no hit, instead of letting the quad's full bounding rectangle
+  // block the ray.
+  //
+  // The first quad (angles[0] below) is built camera-facing, exactly like
+  // draw()'s own WIN3D billboard (same `t` formula - WIN3D.rotationZ in
+  // orthographic, atan2() against WIN3D.cameraX/Y in perspective, and the
+  // same MAP[f]<0 flip trick), and the two canopy-cap quads are built off
+  // that same orientation rather than a fixed one. buildFaceGrid() only
+  // ever runs outside the normal per-frame draw() cycle (ShadeViewport()/
+  // preBakeViewport()/calculate_VertexSolar_array() - see Model1Ds.pde's
+  // own addToFaceGrid() comment on that), so "the camera" here means
+  // whatever WIN3D's camera fields hold at the moment the grid is built,
+  // same as this.draw(TypeWindow.WIN3D) would use if called right then -
+  // this is NOT re-evaluated per ray or per sun angle. The point:
+  // ShadeViewport.pde now samples this tree's own texture color directly
+  // at the ray hit, so for THAT sampled color to match what the WIN3D
+  // render actually shows from the current camera, the quad primary
+  // camera rays are most likely to land on needs to be the same quad, at
+  // the same orientation, draw(TypeWindow.WIN3D) would have drawn.
   //
   // People are left out: isTree(n) below skips them. They're a transient,
   // non-structural part of the scene, not something a solar study should
   // treat as a permanent shading obstruction.
   //
-  // Four quads rather than two: a sun ray coming in roughly diagonally
-  // (e.g. from the southeast) grazes the east-west and north-south quads
-  // at a shallow, near edge-on angle - exactly where a flat billboard's
+  // More than one vertical quad (see verticalShadingSections above): a
+  // sun ray coming in from well off the camera-facing quad's own angle
+  // (e.g. from the southeast while the camera faces north) grazes it at a
+  // shallow, near edge-on angle - exactly where a flat billboard's
   // silhouette is thinnest and least representative of a real canopy's
-  // actual cross-section from that direction. The extra pair at +-45
-  // degrees gives that diagonal sun angle a quad closer to face-on
-  // instead, the same benefit a real canopy's roughly round footprint
-  // would give for free.
+  // actual cross-section from that direction. Each extra quad, offset
+  // +90/+45/+135 degrees from the camera-facing one, gives some sun angle
+  // away from the camera a quad closer to face-on instead, the same
+  // benefit a real canopy's roughly round footprint would give for free -
+  // this part is unchanged by rotating the whole set to track the camera,
+  // since it's the quads' spacing *relative to each other* that matters
+  // here, not which compass direction angles[0] happens to point at any
+  // given moment.
   //
   // The 2D tree images are square - draw() above only applies ImageRatios
   // (width != height) for the billboard's *rendered* aspect, but a tree's
@@ -241,7 +271,30 @@ class Model2Ds {
       int texW = tex.width;
       int texH = tex.height;
 
-      float[] angles = { 0, HALF_PI, QUARTER_PI, HALF_PI + QUARTER_PI }; // east-west, north-south, then the two diagonals (+-45 degrees)
+      // Same camera-facing formula as the WIN3D branch below - note it
+      // needs x/y in that branch's own (overallScale-multiplied) units to
+      // compare against WIN3D.cameraX/Y, even though every point this
+      // method actually emits stays in this method's own raw/unscaled
+      // units (matching allFaces/allModel1Ds's own grid convention).
+      float xScaled = x * overallScale;
+      float yScaled = y * overallScale;
+      float t0 = PI + WIN3D.rotationZ * PI / 180.0;
+      if (WIN3D.projectionTypeIndex == 1) t0 = atan2(yScaled - WIN3D.cameraY, xScaled - WIN3D.cameraX) + 0.5 * PI;
+      if (this.MAP[f] < 0) t0 += PI;
+
+      // See verticalShadingSections's own declaration above for what each
+      // value means; angles beyond whatever it's set to are simply never
+      // built, rather than this array always being the full set of 4 and
+      // something downstream filtering it back down.
+      float[] angles;
+      if (this.verticalShadingSections <= 1) {
+        angles = new float[] { t0 };
+      } else if (this.verticalShadingSections == 2) {
+        angles = new float[] { t0, t0 + HALF_PI };
+      } else {
+        angles = new float[] { t0, t0 + HALF_PI, t0 + QUARTER_PI, t0 + HALF_PI + QUARTER_PI };
+      }
+
       for (int a = 0; a < angles.length; a++) {
         float t = angles[a];
 
@@ -275,14 +328,15 @@ class Model2Ds {
       }
 
       // Two flat "canopy cap" quads, so a sun directly overhead still
-      // casts a shadow: the four quads above are all vertical, so a ray
-      // straight down the +-Z axis runs parallel to every one of them
-      // (testFaceHit()'s own parallel-ray check rejects it outright) and
-      // would otherwise pass clean through the tree. Mirrors the WIN3D
-      // "horizontal mask" quads in draw() above (same x1/x2/x3/x4 and
-      // z + 2*rh*ratio math, same ratio=0.5), but fixed at t=0 (east-west)
-      // rather than tracking the camera - there's no single camera for a
-      // shading study, same reasoning as the vertical quads above. The two
+      // casts a shadow: the four vertical quads above are all vertical,
+      // so a ray straight down the +-Z axis runs parallel to every one of
+      // them (testFaceHit()'s own parallel-ray check rejects it outright)
+      // and would otherwise pass clean through the tree. Mirrors the
+      // WIN3D "horizontal mask" quads in draw() above (same x1/x2/x3/x4
+      // and z + 2*rh*ratio math, same ratio=0.5), built off t0 - the same
+      // camera-facing orientation as the first vertical quad above,
+      // rather than a fixed direction - so they sit flush against that
+      // quad's own base edge instead of an arbitrary other one. The two
       // wings (back_front = -1, +1) sit on opposite sides of the x1-x2
       // edge and together tile into one full s x s square footprint.
       //
@@ -298,12 +352,14 @@ class Model2Ds {
         float ratio = 0.5;
         float capZ = z + 2 * rh * ratio;
 
-        float capX1 = x - rh, capY1 = y; // t = 0 (east-west), matching the first vertical quad above
-        float capX2 = x + rh, capY2 = y;
+        float capDX = rh * cos(t0);
+        float capDY = rh * sin(t0);
+        float capX1 = x - capDX, capY1 = y - capDY; // t0, matching the first vertical quad above
+        float capX2 = x + capDX, capY2 = y + capDY;
 
         for (int back_front = -1; back_front <= 1; back_front += 2) {
 
-          float rot = back_front * HALF_PI; // + t(=0)
+          float rot = back_front * HALF_PI + t0;
           float wdx = rh * cos(rot);
           float wdy = rh * sin(rot);
 
@@ -321,12 +377,14 @@ class Model2Ds {
           entireFaceAlphaTexture.add(tex);
 
           float capWidthLen = 2 * rh; // capX1 -> capX2
-          float capHeightLen = rh;    // capX1/capX2 -> capX4/capX3 (the wing's own reach)
+          float capWidthDirX = (capWidthLen > FLOAT_tiny) ? (capX2 - capX1) / capWidthLen : 1;
+          float capWidthDirY = (capWidthLen > FLOAT_tiny) ? (capY2 - capY1) / capWidthLen : 0;
+          float capHeightLen = rh; // capX1/capX2 -> capX4/capX3 (the wing's own reach)
           float capHeightDirX = (capHeightLen > FLOAT_tiny) ? wdx / capHeightLen : 0;
           float capHeightDirY = (capHeightLen > FLOAT_tiny) ? wdy / capHeightLen : 0;
 
           entireFaceUVBasis.add(new float[] {
-            capX1, capY1, capZ, 1, 0, capWidthLen, capHeightDirX, capHeightDirY, 0, capHeightLen, texH * ratio, 0
+            capX1, capY1, capZ, capWidthDirX, capWidthDirY, capWidthLen, capHeightDirX, capHeightDirY, 0, capHeightLen, texH * ratio, 0
           });
         }
       }
