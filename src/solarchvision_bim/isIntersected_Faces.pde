@@ -55,10 +55,52 @@ ArrayList<PImage> entireFaceAlphaTexture;
 // below doesn't need to know which case it's in.
 ArrayList<float[]> entireFaceUVBasis;
 
+// Optional per-face shadow-casting gate, parallel to entireFaces (same
+// index f, same length, padded in lockstep - see padEntireFaceExtras()).
+// true (the default, left behind by padEntireFaceExtras()) is "this face
+// can block a sun ray", exactly the old behavior for every face type -
+// allFaces/allModel1Ds/Model2Ds' own tree quads all keep it. The one
+// contributor that sets it false is Model2Ds.addToFaceGrid()'s own
+// single camera-facing quad per person: people still need to be a
+// hittable, visible face (so ShadeViewport.pde can paint their own
+// texture where a primary ray lands on them) but shouldn't act as an
+// occluder for anyone/anything else's sun-ray test - see
+// faceCastsShadow() and isIntersected_Faces()'s own ignoreNonShadowCasters
+// parameter below for where this actually gets enforced.
+ArrayList<Boolean> entireFaceCastsShadow;
+
+// The WIN3D.cameraX/Y the grid was last actually (not skipped) built
+// with - see cameraHasMovedSinceFaceGridBuild() below. NaN means "never
+// built yet", so that first call always reports movement. Deliberately
+// X/Y only, not Z: Model2Ds.addToFaceGrid()'s own camera-facing t0 is an
+// azimuthal (around-Z) rotation - in orthographic it comes from WIN3D.
+// rotationZ alone, and in perspective from atan2() against cameraX/Y
+// alone (see that method's own comment) - cameraZ (height/distance along
+// the view axis) never enters either formula, so a camera move that only
+// changes Z (e.g. zooming, or tilting straight up/down without any
+// orbit) can't change a single billboard's orientation and isn't worth
+// forcing a rebuild over.
+float lastFaceGridCameraX = Float.NaN;
+float lastFaceGridCameraY = Float.NaN;
+
+// See lastFaceGridCameraX/Y's own comment above. Callers that only care
+// about camera-facing billboards being current (ShadeViewport.pde,
+// preBakeViewport.pde) check this (together with Model2Ds.
+// hasShadingContribution() - no point tracking the camera if nothing in
+// the grid depends on it) before forcing should_rebuildFaceGrid true.
+boolean cameraHasMovedSinceFaceGridBuild () {
+  if (Float.isNaN(lastFaceGridCameraX)) return true; // never built yet
+  return (abs(WIN3D.cameraX - lastFaceGridCameraX) > funcs.EPSILON_POSITION) ||
+         (abs(WIN3D.cameraY - lastFaceGridCameraY) > funcs.EPSILON_POSITION);
+}
+
 // ---------------------------- build (call ONCE per geometry) ---------------
 void buildFaceGrid () {
   if(should_rebuildFaceGrid == false) return;
   should_rebuildFaceGrid = false;
+
+  lastFaceGridCameraX = WIN3D.cameraX;
+  lastFaceGridCameraY = WIN3D.cameraY;
 
   entirePointsX = new ArrayList<>();
   entirePointsY = new ArrayList<>();
@@ -70,13 +112,15 @@ void buildFaceGrid () {
   entireFaceAlphaTexture.add(null);
   entireFaceUVBasis = new ArrayList<float[]>();
   entireFaceUVBasis.add(null);
+  entireFaceCastsShadow = new ArrayList<Boolean>();
+  entireFaceCastsShadow.add(true);
 
   allFaces.addToFaceGrid(); // reuses Faces.pde's own geometry-only grid cache instead of re-walking/re-tessellating every face via TypeWindow.RENDER
-  padEntireFaceAlpha();
+  padEntireFaceExtras();
   allModel1Ds.addToFaceGrid(); // reuses Model1Ds.pde's own WIN3D retained-mode cache instead of re-walking makeBranch() via TypeWindow.RENDER
-  padEntireFaceAlpha();
-  allModel2Ds.addToFaceGrid(); // contributes trees' billboard foliage, with texture-alpha hit testing - see Model2Ds.pde's own addToFaceGrid() comment
-  padEntireFaceAlpha(); // safety net; addToFaceGrid() above already keeps these in lockstep itself
+  padEntireFaceExtras();
+  allModel2Ds.addToFaceGrid(); // contributes trees' billboard foliage (shadow-casting) and people's own camera-facing billboard (not shadow-casting) - see Model2Ds.pde's own addToFaceGrid() comment
+  padEntireFaceExtras(); // safety net; addToFaceGrid() above already keeps these in lockstep itself
   //Terrain.draw(TypeWindow.RENDER); // It is expensive because it expands the bounding box!
 
   int numFaces = entireFaces.size();
@@ -152,17 +196,21 @@ void buildFaceGrid () {
   }
 }
 
-// Keeps entireFaceAlphaTexture/entireFaceUVBasis the same length as
-// entireFaces after a contributor that doesn't know about texture-alpha
-// testing (allFaces, allModel1Ds) has appended its own faces - called
-// right after each such contributor in buildFaceGrid() above. A no-op for
-// Model2Ds.addToFaceGrid(), which appends its own non-null entries itself
-// in the same loop that appends to entireFaces, so the arrays never fall
-// out of sync in the first place; still called defensively afterwards.
-void padEntireFaceAlpha () {
+// Keeps entireFaceAlphaTexture/entireFaceUVBasis/entireFaceCastsShadow the
+// same length as entireFaces after a contributor that doesn't know about
+// these per-face extras (allFaces, allModel1Ds) has appended its own
+// faces - called right after each such contributor in buildFaceGrid()
+// above. A no-op for Model2Ds.addToFaceGrid(), which appends its own
+// entries for all three itself in the same loop that appends to
+// entireFaces, so the arrays never fall out of sync in the first place;
+// still called defensively afterwards.
+void padEntireFaceExtras () {
   while (entireFaceAlphaTexture.size() < entireFaces.size()) {
     entireFaceAlphaTexture.add(null);
     entireFaceUVBasis.add(null);
+  }
+  while (entireFaceCastsShadow.size() < entireFaces.size()) {
+    entireFaceCastsShadow.add(true);
   }
 }
 
@@ -227,6 +275,17 @@ boolean passesAlphaTest (int f, float[] P) {
   int[] texel = faceTexturePixel(f, P);
   int alpha = (tex.get(texel[0], texel[1]) >> 24) & 0xFF;
   return alpha >= MODEL2D_ALPHA_HIT_THRESHOLD;
+}
+
+// Whether face f is allowed to block a sun ray at all - see
+// entireFaceCastsShadow's own declaration above. Same null-safety
+// reasoning as passesAlphaTest()'s own entireFaceAlphaTexture check: a
+// caller that builds entireFaces directly, bypassing buildFaceGrid()
+// entirely, leaves entireFaceCastsShadow null too, and "not built via
+// buildFaceGrid()" has no business excluding anything.
+boolean faceCastsShadow (int f) {
+  if (entireFaceCastsShadow == null) return true;
+  return entireFaceCastsShadow.get(f);
 }
 
 // ---------------------------- per-face plane/poly test ----------------------
@@ -423,6 +482,21 @@ boolean rayHitsGridBounds(float[] ray_pnt, float[] ray_dir, float[] tEnterOut) {
 // (e.g. a static sun angle scanning across a flat roof), testing it first can
 // shortcut the grid walk entirely.
 int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
+  return isIntersected_Faces(ray_pnt, ray_dir, firstGuess, false);
+}
+
+// ignoreNonShadowCasters: when true, faces with faceCastsShadow(f)==false
+// (currently: Model2Ds' own per-person billboard quad - see
+// entireFaceCastsShadow's declaration above) are skipped entirely, as if
+// they weren't in the grid at all. Callers testing "is this point in
+// shadow" (ShadeViewport.pde's and calculate_VertexSolar_array.pde's own
+// sun-ray occlusion tests, preBakeViewport.pde's diffuse/direct exposure
+// tests) pass true, so a person standing in front of a wall doesn't
+// itself cast a shadow onto it. The plain 3-arg overload above - used by
+// intersectAll() for primary/camera-ray hit-testing, where we WANT a
+// person to be a hittable, visible face - defaults to false and so never
+// excludes anyone.
+int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess, boolean ignoreNonShadowCasters) {
   float[] P = new float[3];
 
   // fast-path candidate: test the previous hit first, but do NOT return
@@ -432,7 +506,7 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
   // "first hit == nearest hit" guarantee for coherent ray batches.
   int bestFace = 0;
   float bestDist = FLOAT_huge;
-  if (firstGuess > 0) {
+  if (firstGuess > 0 && !(ignoreNonShadowCasters && !faceCastsShadow(firstGuess))) {
     float d = testFaceHit(firstGuess, ray_pnt, ray_dir, P);
     if (d < bestDist) { bestDist = d; bestFace = firstGuess; }
   }
@@ -486,6 +560,7 @@ int isIntersected_Faces (float[] ray_pnt, float[] ray_dir, int firstGuess) {
       int f = cellFaces.get(k);
       if (faceTestStamp[f] == currentRayStamp) continue; // already tested this ray
       faceTestStamp[f] = currentRayStamp;
+      if (ignoreNonShadowCasters && !faceCastsShadow(f)) continue;
 
       float dist = testFaceHit(f, ray_pnt, ray_dir, P);
       if (dist < bestDist) { bestDist = dist; bestFace = f; }

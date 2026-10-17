@@ -217,7 +217,7 @@ void calculate_VertexSolar_array () {
 
                     if (funcs.vec_dot(W, ray_direction) > 0) { // removes backing faces
 
-                      if (isIntersected_Faces(ray_start, ray_direction, 0) != 0) {
+                      if (isIntersected_Faces(ray_start, ray_direction, 0, true) != 0) { // people don't cast shadows - see entireFaceCastsShadow's own comment
                         if (values_E_dir < 0) {
                           valuesSUM_EFF_P += -(values_E_dir * SunMask);
                           valuesSUM_EFF_N += -(values_E_dif * SkyMask);

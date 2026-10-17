@@ -22,6 +22,27 @@ class Model2Ds {
   // cost of twice as many quads to ray-test against.
   int verticalShadingSections = 2;
 
+  // Whether addToFaceGrid() (below) also contributes people, so they show
+  // up in the shaded viewport at all. Unlike trees, a person only ever
+  // gets a single camera-facing quad - no canopy cap, and
+  // verticalShadingSections above doesn't apply to them - and that quad
+  // is flagged non-shadow-casting (entireFaceCastsShadow in
+  // isIntersected_Faces.pde), so a person is visible to and can be
+  // darkened by other things' shadows without ever casting one themselves.
+  boolean showPeopleInShade = true;
+
+  // How a person is actually painted once showPeopleInShade above has let
+  // them into the grid at all - see ShadeViewport.pde's own use of this.
+  // true (the default): pasted with their own real photo colors, exactly
+  // like a tree - no radiance computation needed for them at all, same
+  // reasoning as a tree's own raw paste.
+  // false: the same flat grayscale radiance fill as any opaque surface
+  // (wall, roof, ...), shaped by their own texture's alpha instead of a
+  // rectangle - so a person reads as just another shaded surface rather
+  // than a recognizable photo, consistent with everything else in the
+  // study, at the cost of losing their own color entirely.
+  boolean peopleUseExactTexture = true;
+
   int num;
   float[][] XYZS;
 
@@ -232,9 +253,12 @@ class Model2Ds {
   // camera rays are most likely to land on needs to be the same quad, at
   // the same orientation, draw(TypeWindow.WIN3D) would have drawn.
   //
-  // People are left out: isTree(n) below skips them. They're a transient,
-  // non-structural part of the scene, not something a solar study should
-  // treat as a permanent shading obstruction.
+  // People get a much simpler treatment, gated by showPeopleInShade above:
+  // a single camera-facing quad (same t0, no extra angles, no canopy cap -
+  // verticalShadingSections above only applies to trees), and flagged
+  // non-shadow-casting (entireFaceCastsShadow.add(false), see
+  // isIntersected_Faces.pde's own declaration) rather than left out
+  // entirely like before - see showPeopleInShade's own comment for why.
   //
   // More than one vertical quad (see verticalShadingSections above): a
   // sun ray coming in from well off the camera-facing quad's own angle
@@ -256,17 +280,20 @@ class Model2Ds {
   // quads here share the same width and height: the tree's own size `s`.
   void addToFaceGrid () {
 
+    if (!this.displayAll) return; // hidden entirely - keep hasShadingContribution() above honest
+
     for (int f = 0; f < this.num; f++) {
 
       int n = abs(this.MAP[f]);
-      if (!this.isTree(n)) continue; // people aren't a shading obstruction - see header comment above
+      boolean isTree = this.isTree(n);
+      if (!isTree && !this.showPeopleInShade) continue; // a person, and showPeopleInShade says to leave them out
 
       float x = this.getX(f);
       float y = this.getY(f);
       float z = this.getZ(f);
       float s = this.getS(f);
 
-      float rh = 0.5 * s; // half-height == half-width for trees (square images)
+      float rh = 0.5 * s; // half-height; half-width too for trees (square images) - people use ImageRatios below instead
       PImage tex = this.Images[n];
       int texW = tex.width;
       int texH = tex.height;
@@ -281,6 +308,43 @@ class Model2Ds {
       float t0 = PI + WIN3D.rotationZ * PI / 180.0;
       if (WIN3D.projectionTypeIndex == 1) t0 = atan2(yScaled - WIN3D.cameraY, xScaled - WIN3D.cameraX) + 0.5 * PI;
       if (this.MAP[f] < 0) t0 += PI;
+
+      if (!isTree) {
+        // A person: exactly one camera-facing quad, full height, no cap,
+        // no extra angles - see showPeopleInShade's own comment above.
+        // rw uses ImageRatios[n] (unlike the tree case below, which
+        // assumes a square image) since a person's image generally isn't
+        // square - same as draw()'s own rw = rh * ImageRatios[n].
+        float rw = rh * this.ImageRatios[n];
+
+        float dx = rw * cos(t0);
+        float dy = rw * sin(t0);
+
+        float x1 = x - dx, y1 = y - dy;
+        float x2 = x + dx, y2 = y + dy;
+        float zBottom = z;
+        float zTop = z + 2 * rh;
+
+        int i0 = entirePointsX.size();
+        entirePointsX.add(x1); entirePointsY.add(y1); entirePointsZ.add(zBottom);
+        entirePointsX.add(x2); entirePointsY.add(y2); entirePointsZ.add(zBottom);
+        entirePointsX.add(x2); entirePointsY.add(y2); entirePointsZ.add(zTop);
+        entirePointsX.add(x1); entirePointsY.add(y1); entirePointsZ.add(zTop);
+
+        entireFaces.add(new int[] { i0, i0 + 1, i0 + 2, i0 + 3 });
+
+        entireFaceAlphaTexture.add(tex);
+        entireFaceCastsShadow.add(false); // the whole point - see showPeopleInShade's own comment
+
+        float widthLen = 2 * rw;
+        float widthDirX = (widthLen > FLOAT_tiny) ? (x2 - x1) / widthLen : 1;
+        float widthDirY = (widthLen > FLOAT_tiny) ? (y2 - y1) / widthLen : 0;
+        entireFaceUVBasis.add(new float[] {
+          x1, y1, zBottom, widthDirX, widthDirY, widthLen, 0, 0, 1, 2 * rh, texH, 0
+        });
+
+        continue; // no cap, no extra angles for a person
+      }
 
       // See verticalShadingSections's own declaration above for what each
       // value means; angles beyond whatever it's set to are simply never
@@ -315,6 +379,7 @@ class Model2Ds {
         entireFaces.add(new int[] { i0, i0 + 1, i0 + 2, i0 + 3 });
 
         entireFaceAlphaTexture.add(tex);
+        entireFaceCastsShadow.add(true); // a tree - shades others normally
 
         float widthLen = 2 * rh;
         float widthDirX = (widthLen > FLOAT_tiny) ? (x2 - x1) / widthLen : 1;
@@ -375,6 +440,7 @@ class Model2Ds {
           entireFaces.add(new int[] { i0, i0 + 1, i0 + 2, i0 + 3 });
 
           entireFaceAlphaTexture.add(tex);
+          entireFaceCastsShadow.add(true); // a tree's canopy cap - shades others normally
 
           float capWidthLen = 2 * rh; // capX1 -> capX2
           float capWidthDirX = (capWidthLen > FLOAT_tiny) ? (capX2 - capX1) / capWidthLen : 1;
@@ -389,6 +455,27 @@ class Model2Ds {
         }
       }
     }
+  }
+
+  // Whether addToFaceGrid() above would actually add anything to the
+  // raycasting grid right now - a tree always would, a person only if
+  // showPeopleInShade. ShadeViewport.pde/preBakeViewport.pde use this to
+  // decide whether forcing a full grid rebuild on every bake (see their
+  // own comments on why camera-facing billboards need that at all) is
+  // worth paying for - an empty scene, or one with only trees and no
+  // people (or vice versa with showPeopleInShade off), shouldn't pay for
+  // a forced rebuild just because this class exists. O(this.num), and
+  // short-circuits on the first contributing entry, so it stays cheap
+  // even called once per bake.
+  boolean hasShadingContribution () {
+    if (!this.displayAll) return false; // hidden entirely - addToFaceGrid() has nothing to add either way
+
+    for (int f = 0; f < this.num; f++) {
+      int n = abs(this.MAP[f]);
+      if (this.isTree(n)) return true;
+      if (this.showPeopleInShade) return true;
+    }
+    return false;
   }
 
   void draw (int target_window) {

@@ -4,6 +4,17 @@ void preBakeViewport () {
 
   println("PreBaking for Direct and Diffuse models. Please wait...");
 
+  // Force a fresh build - see ShadeViewport.pde's own comment on this:
+  // Model2Ds.addToFaceGrid()'s tree/person billboards are camera-facing,
+  // and this method's own intersectAll() below (for each screen pixel)
+  // needs that to reflect the camera as it is right now, not whatever it
+  // was the last time anything rebuilt the grid. Gated the same way too -
+  // no point forcing it when there's nothing camera-facing to refresh, or
+  // when the part of the camera that actually matters (X/Y) hasn't moved
+  // since the last real build.
+  if (allModel2Ds.hasShadingContribution() && cameraHasMovedSinceFaceGridBuild()) {
+    should_rebuildFaceGrid = true;
+  }
   buildFaceGrid();
 
   cameraIndex = 0;
@@ -181,7 +192,7 @@ void preBakeViewport () {
           // when SHD = 0;
           Diffuse_Matrix[0][np] += SkyMask / float(DiffuseVectors.length);
 
-          lastHitDiffuse[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse[n_Ray]);
+          lastHitDiffuse[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse[n_Ray], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
 
           // when SHD = 1;
           if (lastHitDiffuse[n_Ray] == 0) {
@@ -211,7 +222,7 @@ void preBakeViewport () {
 
         // when SHD = 1;
 
-        lastHitDirect[m] = isIntersected_Faces(ray_start, ray_direction, lastHitDirect[m]);
+        lastHitDirect[m] = isIntersected_Faces(ray_start, ray_direction, lastHitDirect[m], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
 
         if (lastHitDirect[m] == 0) {
           Direct_RGBA[m][1].pixels[np] = Map_SunBelowHorizon[m] ? color(0, 255) : color(255 * SunMask, 255);
