@@ -2365,7 +2365,7 @@ class Create3D {
 
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
 
-
+    /*
     if (Terrain.loadMesh) {
 
       Create3D.add_onTerrain(1); // 1 = people
@@ -2375,6 +2375,7 @@ class Create3D {
       //allModel2Ds.add_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
       //allModel2Ds.add_polar(2, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
     }
+    */
 
     if (n == 1) {
       runScriptLine("BeginNewGroup x=0 y=0 z=0 sx=1 sy=1 sz=1 rx=0 ry=0 rz=0");
