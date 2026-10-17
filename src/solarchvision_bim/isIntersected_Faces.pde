@@ -41,7 +41,19 @@ ArrayList<int[]> entireFaces;
 // as no hit - the ray passes straight through the gap instead of being
 // blocked by the quad's full bounding rectangle.
 ArrayList<PImage> entireFaceAlphaTexture;
-ArrayList<float[]> entireFaceUVBasis; // {originX, originY, originZ, widthDirX, widthDirY, widthLen, heightLen} - widthDir is a unit vector, origin is the bottom corner at u=0; height is always along +Z (every billboard is vertical)
+// {originX, originY, originZ, widthDirX, widthDirY, widthLen, heightDirX,
+//  heightDirY, heightDirZ, heightLen, vPixelNear, vPixelFar} - origin is
+// the corner at u=0/heightFrac=0; widthDir/heightDir are unit vectors (in
+// world space - widthDir is always horizontal, heightDir can be +Z for a
+// vertical billboard or horizontal for a flat cap, see Model2Ds.pde's
+// addToFaceGrid()). u always maps 0..1 straight onto the texture's pixel
+// width. v is more roundabout, because it's not always the texture's full
+// height that's in play (a canopy cap deliberately samples only the
+// texture's top half, to skip the trunk - see Model2Ds.pde again): vPixel
+// at heightFrac=0 is vPixelNear, at heightFrac=1 is vPixelFar, interpolated
+// linearly between - already in pixel units, not 0..1, so passesAlphaTest()
+// below doesn't need to know which case it's in.
+ArrayList<float[]> entireFaceUVBasis;
 
 // ---------------------------- build (call ONCE per geometry) ---------------
 void buildFaceGrid () {
@@ -181,14 +193,18 @@ boolean passesAlphaTest (int f, float[] P) {
   if (tex == null) return true; // opaque face (allFaces/allModel1Ds), nothing to sample
 
   float[] basis = entireFaceUVBasis.get(f);
-  float u = ((P[0] - basis[0]) * basis[3] + (P[1] - basis[1]) * basis[4]) / basis[5];
-  float heightFrac = (P[2] - basis[2]) / basis[6];
+  float dx = P[0] - basis[0];
+  float dy = P[1] - basis[1];
+  float dz = P[2] - basis[2];
 
-  u = constrain(u, 0, 1);
+  float u          = (dx * basis[3] + dy * basis[4]) / basis[5];
+  float heightFrac = (dx * basis[6] + dy * basis[7] + dz * basis[8]) / basis[9];
+
+  u          = constrain(u, 0, 1);
   heightFrac = constrain(heightFrac, 0, 1);
 
   int px = constrain(int(u * tex.width), 0, tex.width - 1);
-  int py = constrain(int((1 - heightFrac) * tex.height), 0, tex.height - 1);
+  int py = constrain(int(basis[10] + heightFrac * (basis[11] - basis[10])), 0, tex.height - 1);
 
   int alpha = (tex.get(px, py) >> 24) & 0xFF;
   return alpha >= MODEL2D_ALPHA_HIT_THRESHOLD;

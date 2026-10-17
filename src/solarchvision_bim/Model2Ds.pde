@@ -238,6 +238,8 @@ class Model2Ds {
 
       float rh = 0.5 * s; // half-height == half-width for trees (square images)
       PImage tex = this.Images[n];
+      int texW = tex.width;
+      int texH = tex.height;
 
       float[] angles = { 0, HALF_PI, QUARTER_PI, HALF_PI + QUARTER_PI }; // east-west, north-south, then the two diagonals (+-45 degrees)
       for (int a = 0; a < angles.length; a++) {
@@ -264,7 +266,69 @@ class Model2Ds {
         float widthLen = 2 * rh;
         float widthDirX = (widthLen > FLOAT_tiny) ? (x2 - x1) / widthLen : 1;
         float widthDirY = (widthLen > FLOAT_tiny) ? (y2 - y1) / widthLen : 0;
-        entireFaceUVBasis.add(new float[] { x1, y1, zBottom, widthDirX, widthDirY, widthLen, 2 * rh });
+        // Full image height in play here (bottom row at heightFrac=0, top
+        // row at heightFrac=1) - these are the vertical billboards, where
+        // the whole texture (trunk included) is legitimately on screen.
+        entireFaceUVBasis.add(new float[] {
+          x1, y1, zBottom, widthDirX, widthDirY, widthLen, 0, 0, 1, 2 * rh, texH, 0
+        });
+      }
+
+      // Two flat "canopy cap" quads, so a sun directly overhead still
+      // casts a shadow: the four quads above are all vertical, so a ray
+      // straight down the +-Z axis runs parallel to every one of them
+      // (testFaceHit()'s own parallel-ray check rejects it outright) and
+      // would otherwise pass clean through the tree. Mirrors the WIN3D
+      // "horizontal mask" quads in draw() above (same x1/x2/x3/x4 and
+      // z + 2*rh*ratio math, same ratio=0.5), but fixed at t=0 (east-west)
+      // rather than tracking the camera - there's no single camera for a
+      // shading study, same reasoning as the vertical quads above. The two
+      // wings (back_front = -1, +1) sit on opposite sides of the x1-x2
+      // edge and together tile into one full s x s square footprint.
+      //
+      // Only the texture's top half is sampled (vPixelNear = texH*ratio
+      // down to vPixelFar = 0, i.e. the top-half row range) rather than
+      // the full height used by the vertical quads above: the bottom half
+      // of a tree texture is trunk, and a trunk cross-section doesn't
+      // belong in a flat overhead cap - that would read as the canopy
+      // being solid near the trunk and only thinning out near its edge,
+      // which has nothing to do with where the trunk pixels actually sit
+      // in the image.
+      {
+        float ratio = 0.5;
+        float capZ = z + 2 * rh * ratio;
+
+        float capX1 = x - rh, capY1 = y; // t = 0 (east-west), matching the first vertical quad above
+        float capX2 = x + rh, capY2 = y;
+
+        for (int back_front = -1; back_front <= 1; back_front += 2) {
+
+          float rot = back_front * HALF_PI; // + t(=0)
+          float wdx = rh * cos(rot);
+          float wdy = rh * sin(rot);
+
+          float capX3 = capX2 + wdx, capY3 = capY2 + wdy;
+          float capX4 = capX1 + wdx, capY4 = capY1 + wdy;
+
+          int i0 = entirePointsX.size();
+          entirePointsX.add(capX1); entirePointsY.add(capY1); entirePointsZ.add(capZ);
+          entirePointsX.add(capX2); entirePointsY.add(capY2); entirePointsZ.add(capZ);
+          entirePointsX.add(capX3); entirePointsY.add(capY3); entirePointsZ.add(capZ);
+          entirePointsX.add(capX4); entirePointsY.add(capY4); entirePointsZ.add(capZ);
+
+          entireFaces.add(new int[] { i0, i0 + 1, i0 + 2, i0 + 3 });
+
+          entireFaceAlphaTexture.add(tex);
+
+          float capWidthLen = 2 * rh; // capX1 -> capX2
+          float capHeightLen = rh;    // capX1/capX2 -> capX4/capX3 (the wing's own reach)
+          float capHeightDirX = (capHeightLen > FLOAT_tiny) ? wdx / capHeightLen : 0;
+          float capHeightDirY = (capHeightLen > FLOAT_tiny) ? wdy / capHeightLen : 0;
+
+          entireFaceUVBasis.add(new float[] {
+            capX1, capY1, capZ, 1, 0, capWidthLen, capHeightDirX, capHeightDirY, 0, capHeightLen, texH * ratio, 0
+          });
+        }
       }
     }
   }
