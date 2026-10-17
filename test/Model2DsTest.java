@@ -181,6 +181,205 @@ class Model2DsTest {
     assertEquals(-1, (int) result[0]);
   }
 
+  // ================= addToFaceGrid ======================================
+
+  // addToFaceGrid() reads entirePointsX/Y/Z/entireFaces/entireFaceAlphaTexture/
+  // entireFaceUVBasis/entireFaceCastsShadow directly (the same globals
+  // buildFaceGrid() would normally own - see isIntersected_Faces.pde) and
+  // WIN3D.rotationZ/cameraX/Y/projectionTypeIndex for its camera-facing t0.
+  // Orthographic with rotationZ=0 is used throughout so t0 is an exact,
+  // easy-to-hand-check PI (cos=-1, sin=0), independent of any camera
+  // position setup the perspective branch would otherwise need.
+  private void initEmptyFaceGrid () {
+    app.entirePointsX = new java.util.ArrayList<Float>();
+    app.entirePointsY = new java.util.ArrayList<Float>();
+    app.entirePointsZ = new java.util.ArrayList<Float>();
+    app.entireFaces = new java.util.ArrayList<int[]>();
+    app.entireFaceAlphaTexture = new java.util.ArrayList<processing.core.PImage>();
+    app.entireFaceUVBasis = new java.util.ArrayList<float[]>();
+    app.entireFaceCastsShadow = new java.util.ArrayList<Boolean>();
+
+    app.WIN3D.projectionTypeIndex = 0; // orthographic: t0 = PI + rotationZ*PI/180, no camera position needed
+    app.WIN3D.rotationZ = 0; // so t0 = PI exactly
+  }
+
+  private processing.core.PImage makeImage (int w, int h, boolean opaque) {
+    processing.core.PImage img = app.createImage(w, h, processing.core.PConstants.ARGB);
+    if (opaque) {
+      img.loadPixels();
+      for (int i = 0; i < img.pixels.length; i++) img.pixels[i] = app.color(255, 255, 255, 255);
+      img.updatePixels();
+    } // else: createImage() already starts fully transparent
+    return img;
+  }
+
+  @Test
+  void addToFaceGrid_treeWithOneVerticalSection_addsOneQuadPlusTwoShadowCastingCaps () {
+    initEmptyFaceGrid();
+    app.allModel2Ds.verticalShadingSections = 1;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}}; // x,y,z,s -> rh = 0.5*s = 1
+    app.allModel2Ds.MAP = new int[]{1}; // a tree (peopleFileCount defaults to 0)
+    app.allModel2Ds.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
+
+    app.allModel2Ds.addToFaceGrid();
+
+    assertEquals(3, app.entireFaces.size()); // 1 vertical quad + 2 canopy cap quads
+    for (int f = 0; f < 3; f++) {
+      assertTrue(app.entireFaceCastsShadow.get(f)); // a tree always casts shadows
+      assertSame(app.allModel2Ds.Images[1], app.entireFaceAlphaTexture.get(f));
+    }
+
+    // t0 = PI -> dx = rh*cos(PI) = -1, dy = rh*sin(PI) = 0
+    // x1 = x-dx = 1, x2 = x+dx = -1, zBottom = 0, zTop = 2*rh = 2
+    assertArrayEquals(new int[]{0, 1, 2, 3}, app.entireFaces.get(0));
+    assertEquals(1f, app.entirePointsX.get(0), 0.0001f);
+    assertEquals(0f, app.entirePointsY.get(0), 0.0001f);
+    assertEquals(0f, app.entirePointsZ.get(0), 0.0001f);
+    assertEquals(-1f, app.entirePointsX.get(1), 0.0001f);
+    assertEquals(0f, app.entirePointsZ.get(1), 0.0001f);
+    assertEquals(-1f, app.entirePointsX.get(2), 0.0001f);
+    assertEquals(2f, app.entirePointsZ.get(2), 0.0001f);
+    assertEquals(1f, app.entirePointsX.get(3), 0.0001f);
+    assertEquals(2f, app.entirePointsZ.get(3), 0.0001f);
+
+    // {originX,originY,originZ, widthDirX,widthDirY,widthLen, heightDirX,heightDirY,heightDirZ,heightLen, vPixelNear,vPixelFar}
+    assertArrayEquals(
+      new float[]{1, 0, 0, -1, 0, 2, 0, 0, 1, 2, 4, 0},
+      app.entireFaceUVBasis.get(0), 0.0001f
+    );
+  }
+
+  @Test
+  void addToFaceGrid_treeWithTwoVerticalSections_addsTwoQuadsPlusTwoCaps () {
+    initEmptyFaceGrid();
+    app.allModel2Ds.verticalShadingSections = 2;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}};
+    app.allModel2Ds.MAP = new int[]{1};
+    app.allModel2Ds.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
+
+    app.allModel2Ds.addToFaceGrid();
+
+    assertEquals(4, app.entireFaces.size()); // 2 vertical quads + 2 canopy cap quads
+  }
+
+  @Test
+  void addToFaceGrid_treeWithFourVerticalSections_addsFourQuadsPlusTwoCaps () {
+    initEmptyFaceGrid();
+    app.allModel2Ds.verticalShadingSections = 4;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}};
+    app.allModel2Ds.MAP = new int[]{1};
+    app.allModel2Ds.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
+
+    app.allModel2Ds.addToFaceGrid();
+
+    assertEquals(6, app.entireFaces.size()); // 4 vertical quads + 2 canopy cap quads
+  }
+
+  @Test
+  void addToFaceGrid_person_addsExactlyOneNonShadowCastingQuadUsingImageRatio () {
+    initEmptyFaceGrid();
+    app.allModel2Ds.showPeopleInShade = true;
+    app.allModel2Ds.verticalShadingSections = 4; // should be ignored entirely for a person
+    app.allModel2Ds.peopleFileCount = 5;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}}; // rh = 1
+    app.allModel2Ds.MAP = new int[]{2}; // within the people range
+    app.allModel2Ds.Images = new processing.core.PImage[]{null, null, makeImage(4, 4, true)};
+    app.allModel2Ds.ImageRatios = new float[]{0, 0, 0.5f}; // rw = rh * 0.5 = 0.5, distinct from rh
+
+    app.allModel2Ds.addToFaceGrid();
+
+    assertEquals(1, app.entireFaces.size()); // no cap, no extra angles
+    assertFalse(app.entireFaceCastsShadow.get(0)); // the whole point of showPeopleInShade
+
+    // t0 = PI -> dx = rw*cos(PI) = -0.5, dy = 0
+    assertEquals(0.5f, app.entirePointsX.get(0), 0.0001f);
+    assertEquals(-0.5f, app.entirePointsX.get(1), 0.0001f);
+  }
+
+  @Test
+  void addToFaceGrid_personWithShowPeopleInShadeOff_addsNothing () {
+    initEmptyFaceGrid();
+    app.allModel2Ds.showPeopleInShade = false;
+    app.allModel2Ds.peopleFileCount = 5;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}};
+    app.allModel2Ds.MAP = new int[]{2};
+    app.allModel2Ds.Images = new processing.core.PImage[]{null, null, makeImage(4, 4, true)};
+    app.allModel2Ds.ImageRatios = new float[]{0, 0, 0.5f};
+
+    app.allModel2Ds.addToFaceGrid();
+
+    assertEquals(0, app.entireFaces.size());
+    assertEquals(0, app.entirePointsX.size());
+  }
+
+  @Test
+  void addToFaceGrid_whenDisplayAllIsFalse_addsNothingEvenForATree () {
+    initEmptyFaceGrid();
+    app.allModel2Ds.displayAll = false;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.XYZS = new float[][]{{0, 0, 0, 2}};
+    app.allModel2Ds.MAP = new int[]{1};
+    app.allModel2Ds.Images = new processing.core.PImage[]{null, makeImage(4, 4, true)};
+
+    app.allModel2Ds.addToFaceGrid();
+
+    assertEquals(0, app.entireFaces.size());
+  }
+
+  // ================= hasShadingContribution =============================
+
+  @Test
+  void hasShadingContribution_falseForAnEmptyModel () {
+    app.allModel2Ds.displayAll = true;
+    app.allModel2Ds.num = 0;
+    assertFalse(app.allModel2Ds.hasShadingContribution());
+  }
+
+  @Test
+  void hasShadingContribution_falseWhenDisplayAllIsFalseEvenWithATree () {
+    app.allModel2Ds.displayAll = false;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.MAP = new int[]{1}; // a tree
+
+    assertFalse(app.allModel2Ds.hasShadingContribution());
+  }
+
+  @Test
+  void hasShadingContribution_trueWhenATreeIsPresent () {
+    app.allModel2Ds.displayAll = true;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.MAP = new int[]{1};
+
+    assertTrue(app.allModel2Ds.hasShadingContribution());
+  }
+
+  @Test
+  void hasShadingContribution_falseForAPersonOnlySceneWithShowPeopleInShadeOff () {
+    app.allModel2Ds.displayAll = true;
+    app.allModel2Ds.showPeopleInShade = false;
+    app.allModel2Ds.peopleFileCount = 5;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.MAP = new int[]{2}; // a person
+
+    assertFalse(app.allModel2Ds.hasShadingContribution());
+  }
+
+  @Test
+  void hasShadingContribution_trueForAPersonOnlySceneWithShowPeopleInShadeOn () {
+    app.allModel2Ds.displayAll = true;
+    app.allModel2Ds.showPeopleInShade = true;
+    app.allModel2Ds.peopleFileCount = 5;
+    app.allModel2Ds.num = 1;
+    app.allModel2Ds.MAP = new int[]{2};
+
+    assertTrue(app.allModel2Ds.hasShadingContribution());
+  }
+
   // ================= to_XML / from_XML round trip ======================
 
   @Test

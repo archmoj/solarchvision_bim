@@ -186,4 +186,234 @@ class FaceIntersectionTest {
       1, new float[]{0, 0, 10}, new float[]{0, 0, -1}, P);
     assertEquals(app.FLOAT_huge, dist, EPS);
   }
+
+  // --- passesAlphaTest ---------------------------------------------
+
+  @Test
+  void passesAlphaTest_returnsTrueWhenEntireFaceAlphaTextureWasNeverBuilt () {
+    // Regression test: entireFaceAlphaTexture/entireFaceUVBasis are only
+    // ever allocated inside buildFaceGrid() - a caller that populates
+    // entireFaces directly and calls testFaceHit() without ever going
+    // through buildFaceGrid() (e.g. buildSingleTriangleFace() above) used
+    // to NPE here before this null guard was added.
+    assertTrue(app.passesAlphaTest(1, new float[]{0, 0, 0}));
+  }
+
+  @Test
+  void passesAlphaTest_returnsTrueWhenThisFacesOwnTextureEntryIsNull () {
+    app.entireFaceAlphaTexture = new java.util.ArrayList<processing.core.PImage>();
+    app.entireFaceAlphaTexture.add(null); // index 0, unused here
+    app.entireFaceAlphaTexture.add(null); // face 1: no texture -> opaque everywhere
+
+    assertTrue(app.passesAlphaTest(1, new float[]{0, 0, 0}));
+  }
+
+  @Test
+  void passesAlphaTest_returnsTrueForAPixelAtOrAboveTheAlphaThreshold () {
+    processing.core.PImage tex = app.createImage(4, 4, processing.core.PConstants.ARGB);
+    tex.loadPixels();
+    for (int i = 0; i < tex.pixels.length; i++) tex.pixels[i] = app.color(0, 0, 0, 255); // fully opaque
+    tex.updatePixels();
+
+    app.entireFaceAlphaTexture = new java.util.ArrayList<processing.core.PImage>();
+    app.entireFaceAlphaTexture.add(null);
+    app.entireFaceAlphaTexture.add(tex);
+
+    app.entireFaceUVBasis = new java.util.ArrayList<float[]>();
+    app.entireFaceUVBasis.add(null);
+    // origin=(0,0,0), widthDir=(1,0) widthLen=2, heightDir=(0,0,1) heightLen=2, vNear=4, vFar=0
+    app.entireFaceUVBasis.add(new float[]{0, 0, 0, 1, 0, 2, 0, 0, 1, 2, 4, 0});
+
+    assertTrue(app.passesAlphaTest(1, new float[]{1, 0, 1})); // middle of the quad
+  }
+
+  @Test
+  void passesAlphaTest_returnsFalseForAPixelBelowTheAlphaThreshold () {
+    // createImage() starts fully transparent (alpha=0) - left untouched.
+    processing.core.PImage tex = app.createImage(4, 4, processing.core.PConstants.ARGB);
+
+    app.entireFaceAlphaTexture = new java.util.ArrayList<processing.core.PImage>();
+    app.entireFaceAlphaTexture.add(null);
+    app.entireFaceAlphaTexture.add(tex);
+
+    app.entireFaceUVBasis = new java.util.ArrayList<float[]>();
+    app.entireFaceUVBasis.add(null);
+    app.entireFaceUVBasis.add(new float[]{0, 0, 0, 1, 0, 2, 0, 0, 1, 2, 4, 0});
+
+    assertFalse(app.passesAlphaTest(1, new float[]{1, 0, 1}));
+  }
+
+  // --- faceTexturePixel ---------------------------------------------
+
+  @Test
+  void faceTexturePixel_mapsAHitPointToThePixelItsUVBasisImplies () {
+    processing.core.PImage tex = app.createImage(4, 8, processing.core.PConstants.ARGB); // width 4, height 8
+
+    app.entireFaceAlphaTexture = new java.util.ArrayList<processing.core.PImage>();
+    app.entireFaceAlphaTexture.add(null);
+    app.entireFaceAlphaTexture.add(tex);
+
+    app.entireFaceUVBasis = new java.util.ArrayList<float[]>();
+    app.entireFaceUVBasis.add(null);
+    // origin=(0,0,0), widthDir=(1,0) widthLen=4, heightDir=(0,0,1) heightLen=2, vNear=8, vFar=0
+    app.entireFaceUVBasis.add(new float[]{0, 0, 0, 1, 0, 4, 0, 0, 1, 2, 8, 0});
+
+    // P=(2,0,1): u = 2/4 = 0.5 -> px = 0.5*4 = 2; heightFrac = 1/2 = 0.5 -> py = 8 + 0.5*(0-8) = 4
+    int[] texel = app.faceTexturePixel(1, new float[]{2, 0, 1});
+
+    assertEquals(2, texel[0]);
+    assertEquals(4, texel[1]);
+  }
+
+  // --- faceCastsShadow ------------------------------------------------
+
+  @Test
+  void faceCastsShadow_returnsTrueWhenEntireFaceCastsShadowWasNeverBuilt () {
+    // Same null-safety reasoning as passesAlphaTest()'s own guard above.
+    assertTrue(app.faceCastsShadow(1));
+  }
+
+  @Test
+  void faceCastsShadow_returnsTheStoredFlagForThatFace () {
+    app.entireFaceCastsShadow = new java.util.ArrayList<Boolean>();
+    app.entireFaceCastsShadow.add(true);  // index 0, unused here
+    app.entireFaceCastsShadow.add(false); // face 1 flagged non-shadow-casting (e.g. a person)
+
+    assertFalse(app.faceCastsShadow(1));
+  }
+
+  // --- padEntireFaceExtras ---------------------------------------------
+
+  @Test
+  void padEntireFaceExtras_fillsMissingEntriesWithTheirDefaults () {
+    app.entireFaces = new java.util.ArrayList<int[]>();
+    app.entireFaces.add(new int[0]);
+    app.entireFaces.add(new int[]{0, 1, 2});
+    app.entireFaces.add(new int[]{0, 1, 2}); // size 3 - ahead of the extras below
+
+    app.entireFaceAlphaTexture = new java.util.ArrayList<processing.core.PImage>();
+    app.entireFaceAlphaTexture.add(null); // size 1 - behind
+    app.entireFaceUVBasis = new java.util.ArrayList<float[]>();
+    app.entireFaceUVBasis.add(null);
+    app.entireFaceCastsShadow = new java.util.ArrayList<Boolean>();
+    app.entireFaceCastsShadow.add(true);
+
+    app.padEntireFaceExtras();
+
+    assertEquals(3, app.entireFaceAlphaTexture.size());
+    assertEquals(3, app.entireFaceUVBasis.size());
+    assertEquals(3, app.entireFaceCastsShadow.size());
+    assertNull(app.entireFaceAlphaTexture.get(2));
+    assertNull(app.entireFaceUVBasis.get(2));
+    assertTrue(app.entireFaceCastsShadow.get(2)); // default: casts a shadow
+  }
+
+  // --- isIntersected_Faces (grid walk) / ignoreNonShadowCasters --------
+
+  // Wraps buildSingleTriangleFace()'s own triangle in a minimal
+  // single-cell grid (gridNx=gridNy=gridNz=1, so the one real face always
+  // lands in cell 0) so the full grid-walking isIntersected_Faces() - not
+  // just testFaceHit() - can be exercised directly, without going through
+  // buildFaceGrid() and its allFaces/allModel1Ds/allModel2Ds dependencies.
+  private void buildSingleTriangleGrid (boolean castsShadow) {
+    buildSingleTriangleFace();
+
+    app.gridMinX = app.gridMinY = -10;
+    app.gridMinZ = -10;
+    app.gridMaxX = app.gridMaxY = 10;
+    app.gridMaxZ = 20;
+    app.gridNx = app.gridNy = app.gridNz = 1;
+    app.cellSizeX = (app.gridMaxX - app.gridMinX) / app.gridNx;
+    app.cellSizeY = (app.gridMaxY - app.gridMinY) / app.gridNy;
+    app.cellSizeZ = (app.gridMaxZ - app.gridMinZ) / app.gridNz;
+
+    app.gridCells = new processing.data.IntList[1];
+    app.gridCells[0] = new processing.data.IntList();
+    app.gridCells[0].append(1); // our one real face, index 1
+
+    app.faceTestStamp = new int[2];
+
+    app.entireFaceCastsShadow = new java.util.ArrayList<Boolean>();
+    app.entireFaceCastsShadow.add(true);  // index 0, unused here
+    app.entireFaceCastsShadow.add(castsShadow);
+  }
+
+  @Test
+  void isIntersectedFaces_defaultOverload_hitsAFaceRegardlessOfItsShadowFlag () {
+    buildSingleTriangleGrid(false); // flagged non-shadow-casting
+
+    int f = app.isIntersected_Faces(new float[]{0.5f, 0.5f, 10}, new float[]{0, 0, -1}, 0);
+
+    assertEquals(1, f); // the plain 3-arg overload never excludes anyone
+  }
+
+  @Test
+  void isIntersectedFaces_ignoreNonShadowCastersTrue_skipsAFaceFlaggedFalse () {
+    buildSingleTriangleGrid(false);
+
+    int f = app.isIntersected_Faces(new float[]{0.5f, 0.5f, 10}, new float[]{0, 0, -1}, 0, true);
+
+    assertEquals(0, f); // skipped entirely, as if it weren't in the grid at all
+  }
+
+  @Test
+  void isIntersectedFaces_ignoreNonShadowCastersTrue_stillHitsAFaceFlaggedTrue () {
+    buildSingleTriangleGrid(true);
+
+    int f = app.isIntersected_Faces(new float[]{0.5f, 0.5f, 10}, new float[]{0, 0, -1}, 0, true);
+
+    assertEquals(1, f); // a shadow-casting face is never excluded
+  }
+
+  // --- cameraHasMovedSinceFaceGridBuild ---------------------------------
+
+  @Test
+  void cameraHasMovedSinceFaceGridBuild_trueBeforeAnyRealBuild () {
+    // lastFaceGridCameraX/Y default to Float.NaN on a fresh instance.
+    assertTrue(app.cameraHasMovedSinceFaceGridBuild());
+  }
+
+  @Test
+  void cameraHasMovedSinceFaceGridBuild_falseWhenCameraXAndYAreUnchanged () {
+    app.lastFaceGridCameraX = 5;
+    app.lastFaceGridCameraY = 7;
+    app.WIN3D.cameraX = 5;
+    app.WIN3D.cameraY = 7;
+
+    assertFalse(app.cameraHasMovedSinceFaceGridBuild());
+  }
+
+  @Test
+  void cameraHasMovedSinceFaceGridBuild_trueWhenCameraXChanges () {
+    app.lastFaceGridCameraX = 5;
+    app.lastFaceGridCameraY = 7;
+    app.WIN3D.cameraX = 50;
+    app.WIN3D.cameraY = 7;
+
+    assertTrue(app.cameraHasMovedSinceFaceGridBuild());
+  }
+
+  @Test
+  void cameraHasMovedSinceFaceGridBuild_trueWhenCameraYChanges () {
+    app.lastFaceGridCameraX = 5;
+    app.lastFaceGridCameraY = 7;
+    app.WIN3D.cameraX = 5;
+    app.WIN3D.cameraY = 70;
+
+    assertTrue(app.cameraHasMovedSinceFaceGridBuild());
+  }
+
+  @Test
+  void cameraHasMovedSinceFaceGridBuild_ignoresCameraZChangingAlone () {
+    // The actual bug being regression-tested: a camera move that only
+    // changes Z (zoom, or a tilt-only orbit) must NOT be reported as
+    // movement, since Model2Ds.addToFaceGrid()'s t0 never reads cameraZ.
+    app.lastFaceGridCameraX = 5;
+    app.lastFaceGridCameraY = 7;
+    app.WIN3D.cameraX = 5;
+    app.WIN3D.cameraY = 7;
+    app.WIN3D.cameraZ = 99999;
+
+    assertFalse(app.cameraHasMovedSinceFaceGridBuild());
+  }
 }
