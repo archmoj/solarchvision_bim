@@ -59,6 +59,17 @@ class SolarImpacts {
       int RES1 = this.RES1;
       int RES2 = this.RES2;
 
+      // This camera's Model2Ds (tree/person) visibility mask, baked by
+      // preBakeViewport() (via ShadeViewport()'s noShadeOnlyVisible2DTextures
+      // mode - see ShadeViewport.pde) at this very same RES1 x RES2 grid, under
+      // the same Folder_Shadings/NearLatitude_Stamp()/SceneName/Camera
+      // naming the Shadings[] PNGs below are loaded from. Loaded once, up
+      // front, rather than per day/hour: it doesn't depend on either.
+      // Left null when no bake exists yet for this camera, so every
+      // pixel below just falls through to the normal computation.
+      String camera2DTextureFile = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "2Ds_Camera" + nf(cameraIndex, 2) + ".png";
+      PImage Model2DsTexture = new File(camera2DTextureFile).exists() ? loadImage(camera2DTextureFile) : null;
+
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
       float Pc = FLOAT_undefined;
@@ -260,7 +271,21 @@ class SolarImpacts {
             int Image_X = np % RES1;
             int Image_Y = np / RES1;
 
+            // A pixel this camera's Model2Ds mask marks non-transparent -
+            // a tree/person was hit there - skips the radiation/impact
+            // computation below entirely and is simply painted with that
+            // billboard's own real color, so trees and people show up in
+            // the analysis the same way they do in the live shaded
+            // preview.
+            color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
+            boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
+
             for (int q = 0; q < numberOfImpactVariations; q++) {
+
+              if (isModel2DsPixel) {
+                Image_RGBA[q].pixels[np] = Model2DsPixel;
+                continue;
+              }
 
               float Image_A = Matrix_ARGB[q][0][Image_X][Image_Y] * valuesMUL;
               float Image_R = Matrix_ARGB[q][1][Image_X][Image_Y] * valuesMUL;
@@ -353,7 +378,17 @@ class SolarImpacts {
             int Image_X = np % RES1;
             int Image_Y = np / RES1;
 
+            // Same Model2Ds mask bypass as the per-day loop above, applied
+            // here to the summary image too.
+            color Model2DsPixel = (Model2DsTexture != null) ? Model2DsTexture.get(Image_X, Image_Y) : 0;
+            boolean isModel2DsPixel = (Model2DsTexture != null) && (((Model2DsPixel >> 24) & 0xFF) != 0);
+
             for (int q = 0; q < numberOfImpactVariations; q++) {
+
+              if (isModel2DsPixel) {
+                total_Image_RGBA[q].pixels[np] = Model2DsPixel;
+                continue;
+              }
 
               float Image_A = total_Matrix_ARGB[q][0][Image_X][Image_Y] / (1.0 * (STUDY.endDay - STUDY.startDay));
               float Image_R = total_Matrix_ARGB[q][1][Image_X][Image_Y] / (1.0 * (STUDY.endDay - STUDY.startDay));

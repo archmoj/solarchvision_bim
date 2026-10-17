@@ -3,9 +3,9 @@ PImage Shade_RGBA;
 // When true, ShadeViewport() builds and saves a transparent-background
 // PNG mask containing only the pixels whose ray hits a Model2Ds object
 // (a tree or person billboard) to camera2DTexture, instead of computing
-// the normal shaded/shadowed preview - see ShadeViewport_2DsTexture()
-// below, the only place meant to flip this (and camera2DTexture) around
-// a ShadeViewport() call.
+// the normal shaded/shadowed preview - see preBakeViewport.pde, the only
+// place meant to flip this (and camera2DTexture) around a ShadeViewport()
+// call.
 boolean noShadeOnlyVisible2DTextures = false;
 
 // Full output path of the 2D-object visibility mask PNG that
@@ -41,10 +41,18 @@ void ShadeViewport () {
   // - the only part that can actually change a billboard's orientation,
   // see that method's own comment - hasn't moved since the last real
   // build anyway).
-  if (allModel2Ds.hasShadingContribution() && cameraHasMovedSinceFaceGridBuild()) {
-    should_rebuildFaceGrid = true;
+  //
+  // Skipped in mask mode: preBakeViewport() - the only caller that sets
+  // noShadeOnlyVisible2DTextures - already called buildFaceGrid() itself,
+  // right before its own main bake loop, with no camera move or geometry
+  // edit since, so repeating the same check-and-build here would only pay
+  // for it twice.
+  if (!noShadeOnlyVisible2DTextures) {
+    if (allModel2Ds.hasShadingContribution() && cameraHasMovedSinceFaceGridBuild()) {
+      should_rebuildFaceGrid = true;
+    }
+    buildFaceGrid();
   }
-  buildFaceGrid();
 
 
   float quality = WIN3D.shadingQuality;
@@ -54,7 +62,21 @@ void ShadeViewport () {
   Shade_RGBA = createImage(RES1, RES2, ARGB);
   Shade_RGBA.loadPixels();
 
-  float invQuality = 1.0 / quality;
+  // Maps an offset in RES1/RES2 pixel space back to the click-space
+  // calculate_Click3D() below expects. WIN3D.scale is only ever refreshed
+  // inside WIN3D.renderFrame() - the normal per-frame draw() cycle - so
+  // during a plain live preview it's always in sync with the current
+  // WIN3D.dY (renderFrame() just ran this very frame), making this
+  // equivalent to the simpler 1/quality. But preBakeViewport() calls this
+  // in mask mode after overriding WIN3D.dY to allSolarImpacts.RES2,
+  // without ever calling renderFrame() - so WIN3D.scale there is still
+  // whatever it was the last time the viewport was actually drawn, at its
+  // true on-screen size, not RES2. Deriving
+  // invQuality from WIN3D.scale itself - rather than assuming it already
+  // matches the current WIN3D.dY/RES2 - keeps the ray mapping correct
+  // either way, exactly as preBakeViewport()'s own ScaleToFit does for
+  // its Direct/Diffuse bake.
+  float invQuality = (WIN3D.scale * WIN3D.referenceScale) / RES2;
   float invScale    = 1.0 / overallScale;
   float halfRES1 = 0.5 * RES1;
   float halfRES2 = 0.5 * RES2;
@@ -233,23 +255,16 @@ void ShadeViewport () {
   }
 
   showArrowCursor();
-  WIN3D.showShading = true;
-}
 
-// Bakes a standalone transparent-background PNG containing only the
-// Model2Ds (tree/person) silhouettes currently visible from the camera,
-// e.g. "projects/model-01/shadings/44N/Viewport_2Ds_Camera00.png" - the
-// same Folder_Shadings/NearLatitude_Stamp() layout preBakeViewport() saves
-// its own Viewport_* files under. Drives ShadeViewport() through its
-// noShadeOnlyVisible2DTextures mode rather than duplicating the ray loop,
-// so this mask and the live shaded preview can never disagree on which
-// pixel belongs to a tree/person.
-void ShadeViewport_2DsTexture () {
-  camera2DTexture = Folder_Shadings + "/" + NearLatitude_Stamp() + "/Viewport_2Ds_Camera" + nf(cameraIndex, 2) + ".png";
-
-  noShadeOnlyVisible2DTextures = true;
-  ShadeViewport();
-  noShadeOnlyVisible2DTextures = false;
+  if (!noShadeOnlyVisible2DTextures) {
+    // draw_WIN3D_layers.pde stretches Shade_RGBA to WIN3D.dX x WIN3D.dY
+    // with no aspect correction, which only matches the live preview
+    // (sized off WIN3D.dX/dY itself). The mask is a background bake, sized
+    // at the unrelated allSolarImpacts.RES1/RES2, and was never meant to
+    // be shown over the viewport - flagging it for display here would
+    // both pop up an overlay nobody asked for and stretch it wrong.
+    WIN3D.showShading = true;
+  }
 }
 
 void adjustShadeTime (int steps) {

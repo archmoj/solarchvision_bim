@@ -305,6 +305,25 @@ void preBakeViewport () {
 
 
 
+  // Bake the Model2Ds-only (tree/person) visibility mask alongside the
+  // Direct/Diffuse images just saved above, at this same prebake
+  // resolution and under the same Folder_Shadings/NearLatitude_Stamp()/
+  // Camera folder - this is ShadeViewport_2DsTexture()'s own former body,
+  // inlined here now that this is its only caller. No need to redo its
+  // WIN3D.dX/dY/view_R/transform_3DViewport() setup: WIN3D.dX/dY are
+  // already allSolarImpacts.RES1/RES2 from the top of this function, and
+  // nothing since has touched them or the camera.
+  camera2DTexture = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "2Ds_Camera" + nf(cameraIndex, 2) + ".png";
+
+  float preShadingQuality = WIN3D.shadingQuality;
+  WIN3D.shadingQuality = 1;
+
+  noShadeOnlyVisible2DTextures = true;
+  ShadeViewport();
+  noShadeOnlyVisible2DTextures = false;
+
+  WIN3D.shadingQuality = preShadingQuality;
+
   showArrowCursor();
 
   WIN3D.dX = pre_WIN3D_dX;
