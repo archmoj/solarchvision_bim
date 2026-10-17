@@ -1,5 +1,18 @@
 PImage Shade_RGBA;
 
+// When true, ShadeViewport() builds and saves a transparent-background
+// PNG mask containing only the pixels whose ray hits a Model2Ds object
+// (a tree or person billboard) to camera2DTexture, instead of computing
+// the normal shaded/shadowed preview - see ShadeViewport_2DsTexture()
+// below, the only place meant to flip this (and camera2DTexture) around
+// a ShadeViewport() call.
+boolean noShadeOnlyVisible2DTextures = false;
+
+// Full output path of the 2D-object visibility mask PNG that
+// ShadeViewport() saves when noShadeOnlyVisible2DTextures is true, e.g.
+// "projects/model-01/shadings/44N/Viewport_2Ds_Camera00.png".
+String camera2DTexture = "";
+
 final int SHADE_HOURS_PER_DAY = 5 * 2;
 final int SHADE_FIRST_HOUR = 12 - SHADE_HOURS_PER_DAY / 2; // 7 a.m.
 final int SHADE_LAST_HOUR = 12 + SHADE_HOURS_PER_DAY / 2; // 17 p.m.
@@ -111,6 +124,26 @@ void ShadeViewport () {
         PImage billboardTex = (entireFaceAlphaTexture != null && hitFace < entireFaceAlphaTexture.size())
           ? entireFaceAlphaTexture.get(hitFace) : null;
 
+        if (noShadeOnlyVisible2DTextures) {
+          // Pure 2D-object (tree/person) visibility mask: paint the real
+          // photographic texel at this hit the same way paintExactTexture
+          // does below, via the same faceTexturePixel() UV mapping, so
+          // this mask and the live shaded preview can never disagree on
+          // which pixel a hit corresponds to. Every other pixel - an
+          // opaque surface hit, or no hit at all (the RxP[0] < 0 branch
+          // below already writes fully transparent) - is left fully
+          // transparent, and none of the shadow/radiance work further
+          // down runs, since it's irrelevant to a pure mask.
+          if (billboardTex != null) {
+            float[] hitPoint = { RxP[1], RxP[2], RxP[3] };
+            int[] texel = faceTexturePixel(hitFace, hitPoint);
+            Shade_RGBA.pixels[np] = billboardTex.get(texel[0], texel[1]);
+          } else {
+            Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
+          }
+          continue;
+        }
+
         boolean paintExactTexture = (billboardTex != null) && (faceCastsShadow(hitFace) || allModel2Ds.peopleUseExactTexture);
 
         if (paintExactTexture) {
@@ -193,8 +226,30 @@ void ShadeViewport () {
   }
 
   Shade_RGBA.updatePixels();
+
+  if (noShadeOnlyVisible2DTextures) {
+    Shade_RGBA.save(camera2DTexture);
+    println(camera2DTexture);
+  }
+
   showArrowCursor();
   WIN3D.showShading = true;
+}
+
+// Bakes a standalone transparent-background PNG containing only the
+// Model2Ds (tree/person) silhouettes currently visible from the camera,
+// e.g. "projects/model-01/shadings/44N/Viewport_2Ds_Camera00.png" - the
+// same Folder_Shadings/NearLatitude_Stamp() layout preBakeViewport() saves
+// its own Viewport_* files under. Drives ShadeViewport() through its
+// noShadeOnlyVisible2DTextures mode rather than duplicating the ray loop,
+// so this mask and the live shaded preview can never disagree on which
+// pixel belongs to a tree/person.
+void ShadeViewport_2DsTexture () {
+  camera2DTexture = Folder_Shadings + "/" + NearLatitude_Stamp() + "/Viewport_2Ds_Camera" + nf(cameraIndex, 2) + ".png";
+
+  noShadeOnlyVisible2DTextures = true;
+  ShadeViewport();
+  noShadeOnlyVisible2DTextures = false;
 }
 
 void adjustShadeTime (int steps) {
