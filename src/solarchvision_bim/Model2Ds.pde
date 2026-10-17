@@ -211,9 +211,18 @@ class Model2Ds {
   // non-structural part of the scene, not something a solar study should
   // treat as a permanent shading obstruction.
   //
+  // Four quads rather than two: a sun ray coming in roughly diagonally
+  // (e.g. from the southeast) grazes the east-west and north-south quads
+  // at a shallow, near edge-on angle - exactly where a flat billboard's
+  // silhouette is thinnest and least representative of a real canopy's
+  // actual cross-section from that direction. The extra pair at +-45
+  // degrees gives that diagonal sun angle a quad closer to face-on
+  // instead, the same benefit a real canopy's roughly round footprint
+  // would give for free.
+  //
   // The 2D tree images are square - draw() above only applies ImageRatios
   // (width != height) for the billboard's *rendered* aspect, but a tree's
-  // rh (half-height) and rw (half-width) are otherwise equal - so both
+  // rh (half-height) and rw (half-width) are otherwise equal - so all
   // quads here share the same width and height: the tree's own size `s`.
   void addToFaceGrid () {
 
@@ -230,7 +239,7 @@ class Model2Ds {
       float rh = 0.5 * s; // half-height == half-width for trees (square images)
       PImage tex = this.Images[n];
 
-      float[] angles = { 0, HALF_PI }; // east-west quad, then north-south quad
+      float[] angles = { 0, HALF_PI, QUARTER_PI, HALF_PI + QUARTER_PI }; // east-west, north-south, then the two diagonals (+-45 degrees)
       for (int a = 0; a < angles.length; a++) {
         float t = angles[a];
 
