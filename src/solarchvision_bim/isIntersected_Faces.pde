@@ -28,6 +28,21 @@ ArrayList<Float> entirePointsY;
 ArrayList<Float> entirePointsZ;
 ArrayList<int[]> entireFaces;
 
+// Optional per-face texture-alpha gate, parallel to entireFaces (same
+// index f, same length, padded in lockstep - see padEntireFaceAlpha()).
+// null in both arrays (the default, left behind by padEntireFaceAlpha())
+// means "opaque everywhere", exactly the old behavior - allFaces/
+// allModel1Ds never populate these. Model2Ds.addToFaceGrid() is the one
+// contributor that does, for its tree billboards: a billboard's face is a
+// plain rectangle geometrically, but the foliage texture painted on it has
+// transparent background outside the silhouette, so testFaceHit() below
+// also samples entireFaceAlphaTexture[f] at the hit point (via the
+// rectangle basis in entireFaceUVBasis[f]) and treats a transparent pixel
+// as no hit - the ray passes straight through the gap instead of being
+// blocked by the quad's full bounding rectangle.
+ArrayList<PImage> entireFaceAlphaTexture;
+ArrayList<float[]> entireFaceUVBasis; // {originX, originY, originZ, widthDirX, widthDirY, widthLen, heightLen} - widthDir is a unit vector, origin is the bottom corner at u=0; height is always along +Z (every billboard is vertical)
+
 // ---------------------------- build (call ONCE per geometry) ---------------
 void buildFaceGrid () {
   if(should_rebuildFaceGrid == false) return;
@@ -39,8 +54,17 @@ void buildFaceGrid () {
   entireFaces = new ArrayList<>();
   entireFaces.add(new int[0]); // Provide an empty item at index 0.
 
+  entireFaceAlphaTexture = new ArrayList<PImage>();
+  entireFaceAlphaTexture.add(null);
+  entireFaceUVBasis = new ArrayList<float[]>();
+  entireFaceUVBasis.add(null);
+
   allFaces.addToFaceGrid(); // reuses Faces.pde's own geometry-only grid cache instead of re-walking/re-tessellating every face via TypeWindow.RENDER
+  padEntireFaceAlpha();
   allModel1Ds.addToFaceGrid(); // reuses Model1Ds.pde's own WIN3D retained-mode cache instead of re-walking makeBranch() via TypeWindow.RENDER
+  padEntireFaceAlpha();
+  allModel2Ds.addToFaceGrid(); // contributes trees' billboard foliage, with texture-alpha hit testing - see Model2Ds.pde's own addToFaceGrid() comment
+  padEntireFaceAlpha(); // safety net; addToFaceGrid() above already keeps these in lockstep itself
   //Terrain.draw(TypeWindow.RENDER); // It is expensive because it expands the bounding box!
 
   int numFaces = entireFaces.size();
@@ -116,10 +140,59 @@ void buildFaceGrid () {
   }
 }
 
+// Keeps entireFaceAlphaTexture/entireFaceUVBasis the same length as
+// entireFaces after a contributor that doesn't know about texture-alpha
+// testing (allFaces, allModel1Ds) has appended its own faces - called
+// right after each such contributor in buildFaceGrid() above. A no-op for
+// Model2Ds.addToFaceGrid(), which appends its own non-null entries itself
+// in the same loop that appends to entireFaces, so the arrays never fall
+// out of sync in the first place; still called defensively afterwards.
+void padEntireFaceAlpha () {
+  while (entireFaceAlphaTexture.size() < entireFaces.size()) {
+    entireFaceAlphaTexture.add(null);
+    entireFaceUVBasis.add(null);
+  }
+}
+
 int cellIndexX(float x) { return constrain(int((x - gridMinX) / cellSizeX), 0, gridNx - 1); }
 int cellIndexY(float y) { return constrain(int((y - gridMinY) / cellSizeY), 0, gridNy - 1); }
 int cellIndexZ(float z) { return constrain(int((z - gridMinZ) / cellSizeZ), 0, gridNz - 1); }
 int cellFlatIndex(int ix, int iy, int iz) { return (ix * gridNy + iy) * gridNz + iz; }
+
+// Pixel alpha (0-255) at/above which a Model2Ds billboard's texture
+// counts as "solid" for shading purposes; below it, the ray is treated as
+// having missed the face entirely (see passesAlphaTest() below). A simple
+// cutout cutoff rather than partial/fractional shading - this ray-grid has
+// no concept of partial occlusion anywhere else either (every other face
+// is already fully opaque or fully absent).
+final int MODEL2D_ALPHA_HIT_THRESHOLD = 128;
+
+// Face f's own texture-alpha test at the already-confirmed-in-polygon hit
+// point P - true (no texture, or texture pixel solid enough) means the hit
+// stands; false means treat it as a miss. entireFaceUVBasis[f] maps P onto
+// the billboard's own rectangle: u runs 0..1 along its width (the stored
+// widthDir/widthLen), v runs 0..1 up from its base along +Z (every
+// billboard is vertical, so no separate height direction needs storing).
+// Image v is 0 at the top, 1 at the bottom (standard texture convention,
+// matching Model2Ds.draw()'s own vertex()/UV calls) - the opposite sense
+// from "up from the base" - hence the (1 - heightFrac) flip below.
+boolean passesAlphaTest (int f, float[] P) {
+  PImage tex = entireFaceAlphaTexture.get(f);
+  if (tex == null) return true; // opaque face (allFaces/allModel1Ds), nothing to sample
+
+  float[] basis = entireFaceUVBasis.get(f);
+  float u = ((P[0] - basis[0]) * basis[3] + (P[1] - basis[1]) * basis[4]) / basis[5];
+  float heightFrac = (P[2] - basis[2]) / basis[6];
+
+  u = constrain(u, 0, 1);
+  heightFrac = constrain(heightFrac, 0, 1);
+
+  int px = constrain(int(u * tex.width), 0, tex.width - 1);
+  int py = constrain(int((1 - heightFrac) * tex.height), 0, tex.height - 1);
+
+  int alpha = (tex.get(px, py) >> 24) & 0xFF;
+  return alpha >= MODEL2D_ALPHA_HIT_THRESHOLD;
+}
 
 // ---------------------------- per-face plane/poly test ----------------------
 // Same math as the optimized isIntersected_Faces, factored out so both the
@@ -188,6 +261,7 @@ float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N)
     boolean InPoly = funcs.isInside_Triangle(P, A, B, C);
 
     if (!InPoly) return FLOAT_huge;
+    if (!passesAlphaTest(f, P)) return FLOAT_huge; // e.g. a Model2Ds tree quad hit outside its foliage silhouette
     if (N != null) { N[0] = nx; N[1] = ny; N[2] = nz; }
     return dist2intersect;
   }
@@ -241,6 +315,7 @@ float testFaceHit(int f, float[] ray_pnt, float[] ray_dir, float[] P, float[] N)
       float[] B = {Bx, By, Bz};
       float[] G = {Gx, Gy, Gz};
       if (funcs.isInside_Triangle(P, A, B, G)) {
+        if (!passesAlphaTest(f, P)) return FLOAT_huge; // same alpha gate as the triangle branch above
         if (N != null) { N[0] = nx; N[1] = ny; N[2] = nz; }
         return dist2intersect;
       }

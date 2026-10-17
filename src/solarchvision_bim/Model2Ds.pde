@@ -186,6 +186,80 @@ class Model2Ds {
   }
 
 
+  // Called by buildFaceGrid() (isIntersected_Faces.pde) to feed trees into
+  // the raycasting grid used for shading, the same way allFaces.
+  // addToFaceGrid()/allModel1Ds.addToFaceGrid() already feed faces and
+  // branches. draw()'s own billboard always rotates to face the camera
+  // (its `t` tracks WIN3D.rotationZ, or atan2() against WIN3D.cameraX/Y in
+  // perspective) - meaningless here, since a shading study has no single
+  // camera, the sun moves independently of any viewer, and buildFaceGrid()
+  // itself is called with WIN3D's matrix stack back at identity anyway (see
+  // Model1Ds.pde's own addToFaceGrid() comment on that). So each tree
+  // contributes two world-fixed vertical quads instead, crossed through its
+  // trunk's center line: one spanning east-west (facing north/south), one
+  // spanning north-south (facing east/west) - this is Option 2 from the
+  // investigation (an imaginary canopy solid, e.g. an icosahedron, would
+  // shade identically regardless of species; this reuses the tree's own
+  // texture instead). Each quad is geometrically just a flat rectangle, so
+  // isIntersected_Faces.pde's testFaceHit() also samples that texture's
+  // alpha channel at the hit point (entireFaceAlphaTexture/
+  // entireFaceUVBasis, populated per quad below) and treats a transparent
+  // pixel - outside the foliage silhouette - as no hit, instead of letting
+  // the quad's full bounding rectangle block the ray.
+  //
+  // People are left out: isTree(n) below skips them. They're a transient,
+  // non-structural part of the scene, not something a solar study should
+  // treat as a permanent shading obstruction.
+  //
+  // The 2D tree images are square - draw() above only applies ImageRatios
+  // (width != height) for the billboard's *rendered* aspect, but a tree's
+  // rh (half-height) and rw (half-width) are otherwise equal - so both
+  // quads here share the same width and height: the tree's own size `s`.
+  void addToFaceGrid () {
+
+    for (int f = 0; f < this.num; f++) {
+
+      int n = abs(this.MAP[f]);
+      if (!this.isTree(n)) continue; // people aren't a shading obstruction - see header comment above
+
+      float x = this.getX(f);
+      float y = this.getY(f);
+      float z = this.getZ(f);
+      float s = this.getS(f);
+
+      float rh = 0.5 * s; // half-height == half-width for trees (square images)
+      PImage tex = this.Images[n];
+
+      float[] angles = { 0, HALF_PI }; // east-west quad, then north-south quad
+      for (int a = 0; a < angles.length; a++) {
+        float t = angles[a];
+
+        float dx = rh * cos(t);
+        float dy = rh * sin(t);
+
+        float x1 = x - dx, y1 = y - dy;
+        float x2 = x + dx, y2 = y + dy;
+        float zBottom = z;
+        float zTop = z + 2 * rh;
+
+        int i0 = entirePointsX.size();
+        entirePointsX.add(x1); entirePointsY.add(y1); entirePointsZ.add(zBottom);
+        entirePointsX.add(x2); entirePointsY.add(y2); entirePointsZ.add(zBottom);
+        entirePointsX.add(x2); entirePointsY.add(y2); entirePointsZ.add(zTop);
+        entirePointsX.add(x1); entirePointsY.add(y1); entirePointsZ.add(zTop);
+
+        entireFaces.add(new int[] { i0, i0 + 1, i0 + 2, i0 + 3 });
+
+        entireFaceAlphaTexture.add(tex);
+
+        float widthLen = 2 * rh;
+        float widthDirX = (widthLen > FLOAT_tiny) ? (x2 - x1) / widthLen : 1;
+        float widthDirY = (widthLen > FLOAT_tiny) ? (y2 - y1) / widthLen : 0;
+        entireFaceUVBasis.add(new float[] { x1, y1, zBottom, widthDirX, widthDirY, widthLen, 2 * rh });
+      }
+    }
+  }
+
   void draw (int target_window) {
 
     this.Faces = new int [this.num * this.num_visualFaces][4];
