@@ -1166,5 +1166,4 @@ class WIN3D {
 
   float shadingQuality = 0.75f;
   boolean showShading = false;
-  boolean showSolarImpact = false;
 }

@@ -2237,8 +2237,6 @@ class STUDY {
         this.graphics.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.9 * sx_Plot / this.horizontalUnitScale);
       }
 
-      WIN3D.showSolarImpact = true;
-
       if (this.showImpactSummary) {
         int j = -1; // << to put the summary graph before the daily graphs
 
