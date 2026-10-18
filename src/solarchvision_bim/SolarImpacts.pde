@@ -80,7 +80,19 @@ class SolarImpacts {
   int win3DOverlay_passiveColorscaleDirection = Integer.MIN_VALUE;
   float win3DOverlay_passiveColorscaleFactor = Float.NaN;
 
-  boolean win3DOverlay_isFresh () {
+  // Just the camera half of win3DOverlay_isFresh() below - position, zoom
+  // and projection, i.e. exactly what decides whether this.Image[][] still
+  // lines up with what's actually on screen right now. draw_WIN3D_layers.pde
+  // checks this on its own, separately from the model/analysis-time fields
+  // below, to blank the viewport specifically when the *camera* has moved
+  // away from the one the overlay was computed for - a genuine perspective
+  // mismatch, the "two unrelated perspectives on top of one another" a
+  // stale overlay pixel or a freshly redrawn (but un-overlaid) 3D view
+  // could otherwise show - rather than whenever any of this.Image[][]'s
+  // other, non-visual dependencies (the model's geometry, the analysis's
+  // date range) happen to be stale, which doesn't create that same visual
+  // confusion and is already handled by simply not drawing the overlay.
+  boolean win3DOverlay_cameraMatches () {
     return this.win3DOverlay_validSnapshot &&
       this.win3DOverlay_cameraX                  == WIN3D.cameraX &&
       this.win3DOverlay_cameraY                  == WIN3D.cameraY &&
@@ -89,7 +101,11 @@ class SolarImpacts {
       this.win3DOverlay_rotationZ                == WIN3D.rotationZ &&
       this.win3DOverlay_zoom                     == WIN3D.zoom &&
       this.win3DOverlay_projectionTypeIndex      == WIN3D.projectionTypeIndex &&
-      this.win3DOverlay_currentCameraIndex       == WIN3D.currentCameraIndex &&
+      this.win3DOverlay_currentCameraIndex       == WIN3D.currentCameraIndex;
+  }
+
+  boolean win3DOverlay_isFresh () {
+    return this.win3DOverlay_cameraMatches() &&
       this.win3DOverlay_facesGeneration          == allFaces.winCacheGeneration &&
       this.win3DOverlay_model1DsGeneration       == allModel1Ds.winCacheGeneration &&
       this.win3DOverlay_terrainGeneration        == Terrain.winCacheGeneration &&

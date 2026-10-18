@@ -25,6 +25,21 @@ void draw_WIN3D_layers () {
   // navigation and impact-type-toggle actions need only change those -
   // nothing left to re-arm.
   if (allSolarImpacts.win3DOverlay_isFresh() && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length) {
+    // The overlay's own baked aspect ratio (RES1 x RES2) rarely matches
+    // the live viewport's (WIN3D.dX x WIN3D.dY) - the r > 1 branch below
+    // then draws it narrower than WIN3D.dX, centered, leaving uncovered
+    // strips on either side. Without this, those strips show whatever the
+    // live 3D view painted underneath - a different camera/projection
+    // than the overlay itself - which is the "two unrelated perspectives
+    // on top of one another" this is here to avoid. Drawn unconditionally
+    // rather than only for r > 1: harmless where the image call below
+    // fully covers it again right after (r == 1, or r < 1's cropped-and-
+    // stretched fill), and keeps this one step simpler than branching on r
+    // a second time.
+    noStroke();
+    fill(255);
+    rect(WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
+
     PImage img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
     float w = img.width;
     float h = img.height;
