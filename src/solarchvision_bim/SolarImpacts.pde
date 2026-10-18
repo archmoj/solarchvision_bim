@@ -80,26 +80,36 @@ class SolarImpacts {
   int win3DOverlay_passiveColorscaleDirection = Integer.MIN_VALUE;
   float win3DOverlay_passiveColorscaleFactor = Float.NaN;
 
+  // Tolerance for win3DOverlay_cameraMatches() below: a mouse-drag orbit is
+  // incremental (many small per-frame updates), so rotating away and then
+  // back by eye essentially never retraces the exact same floating-point
+  // path - without some slack, the camera would almost never compare equal
+  // to the snapshot again after the first move, even sitting back exactly
+  // where it visually started. Position is in the same world-scaled units
+  // as WIN3D.cameraX/Y/Z; angle covers both rotationX/Z and zoom (a
+  // field-of-view angle in degrees) - both are generous enough to absorb
+  // that drift while staying far too small to notice on screen.
+  final float win3DOverlay_cameraPositionTolerance = 0.01;
+  final float win3DOverlay_cameraAngleTolerance = 0.01;
+
   // Just the camera half of win3DOverlay_isFresh() below - position, zoom
   // and projection, i.e. exactly what decides whether this.Image[][] still
   // lines up with what's actually on screen right now. draw_WIN3D_layers.pde
   // checks this on its own, separately from the model/analysis-time fields
-  // below, to blank the viewport specifically when the *camera* has moved
-  // away from the one the overlay was computed for - a genuine perspective
-  // mismatch, the "two unrelated perspectives on top of one another" a
-  // stale overlay pixel or a freshly redrawn (but un-overlaid) 3D view
-  // could otherwise show - rather than whenever any of this.Image[][]'s
-  // other, non-visual dependencies (the model's geometry, the analysis's
-  // date range) happen to be stale, which doesn't create that same visual
-  // confusion and is already handled by simply not drawing the overlay.
+  // below, as a precondition before painting the overlay at all (and before
+  // its own white backdrop rect) - not as a reason to blank the viewport by
+  // itself; a camera mismatch just means win3DOverlay_isFresh() is false
+  // too, so nothing in that block runs and the live 3D view shows through
+  // untouched. projectionTypeIndex/currentCameraIndex are discrete choices,
+  // not drift-prone measurements, so those stay exact.
   boolean win3DOverlay_cameraMatches () {
     return this.win3DOverlay_validSnapshot &&
-      this.win3DOverlay_cameraX                  == WIN3D.cameraX &&
-      this.win3DOverlay_cameraY                  == WIN3D.cameraY &&
-      this.win3DOverlay_cameraZ                  == WIN3D.cameraZ &&
-      this.win3DOverlay_rotationX                == WIN3D.rotationX &&
-      this.win3DOverlay_rotationZ                == WIN3D.rotationZ &&
-      this.win3DOverlay_zoom                     == WIN3D.zoom &&
+      funcs.is_zero(this.win3DOverlay_cameraX - WIN3D.cameraX, win3DOverlay_cameraPositionTolerance) &&
+      funcs.is_zero(this.win3DOverlay_cameraY - WIN3D.cameraY, win3DOverlay_cameraPositionTolerance) &&
+      funcs.is_zero(this.win3DOverlay_cameraZ - WIN3D.cameraZ, win3DOverlay_cameraPositionTolerance) &&
+      funcs.is_zero(this.win3DOverlay_rotationX - WIN3D.rotationX, win3DOverlay_cameraAngleTolerance) &&
+      funcs.is_zero(this.win3DOverlay_rotationZ - WIN3D.rotationZ, win3DOverlay_cameraAngleTolerance) &&
+      funcs.is_zero(this.win3DOverlay_zoom - WIN3D.zoom, win3DOverlay_cameraAngleTolerance) &&
       this.win3DOverlay_projectionTypeIndex      == WIN3D.projectionTypeIndex &&
       this.win3DOverlay_currentCameraIndex       == WIN3D.currentCameraIndex;
   }
