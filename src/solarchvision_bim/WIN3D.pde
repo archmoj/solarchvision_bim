@@ -110,6 +110,24 @@ class WIN3D {
   void draw () {
     if (!this.update) return;
 
+    // Whatever renders below would just be painted over by
+    // draw_WIN3D_layers.pde's white clearing rect this same frame - skip
+    // it, and consume this.update as if a normal draw had happened.
+    // WIN3D.showSolarImpactOverride is a one-shot flag draw_WIN3D_layers.
+    // pde consumes within this same call, so deferring to "the next
+    // frame" (by leaving this.update true) doesn't work: that next frame
+    // would find the override already gone, the camera still mismatched,
+    // and go ahead with a real render - painting over the overlay the
+    // very frame after it appeared. Consuming this.update here instead
+    // just leaves this frame's stamped overlay+white rect sitting on
+    // screen untouched - the same persistence WIN3D's own rendering
+    // already relies on - until an actual revise() (a real camera move, a
+    // model edit, or another cycling request) asks for a redraw again.
+    if (allSolarImpacts.win3DOverlay_needsClearRect()) {
+      this.updated();
+      return;
+    }
+
     if (Select3D.update_BoundingBox) {
       Select3D.calculate_BoundingBox();
     }

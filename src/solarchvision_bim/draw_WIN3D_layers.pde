@@ -1,6 +1,14 @@
 void draw_WIN3D_layers () {
   if (!WIN3D.include) return;
 
+  // Captured once, up front - before WIN3D.draw() (which checks this same
+  // thing itself, at its own top, to skip rendering what would just be
+  // covered by it anyway) and before the one-shot
+  // WIN3D.showSolarImpactOverride flag gets consumed below. Reused as-is
+  // for the actual rect-drawing decision further down, rather than
+  // re-deriving it from scratch after that flag has already been reset.
+  boolean needsSolarImpactClearRect = allSolarImpacts.win3DOverlay_needsClearRect();
+
   if (WIN3D.update) {
 
     regenerate_desired_bakings();
@@ -36,19 +44,19 @@ void draw_WIN3D_layers () {
   if (allSolarImpacts.win3DOverlay_dataFresh() && (solarImpactCameraMatches || solarImpactOverrideRequested)
       && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length) {
 
-    // Only needed when the camera doesn't match: the overlay's own baked
-    // aspect ratio (RES1 x RES2) rarely matches the live viewport's
-    // (WIN3D.dX x WIN3D.dY), so the r > 1 branch below draws it narrower
-    // than WIN3D.dX, centered, leaving uncovered strips on either side.
-    // With a matching camera, those strips just show more of that same,
-    // correct 3D view, which is fine left alone. With a mismatched camera
-    // (only reachable here via the explicit override above), what's
-    // behind the gap is a different perspective than the overlay itself -
-    // the "two unrelated perspectives on top of one another" this backdrop
-    // is here to avoid. Drawn unconditionally on r rather than only for
-    // r > 1: harmless where the image call below fully covers it again
-    // right after (r == 1, or r < 1's cropped-and-stretched fill).
-    if (!solarImpactCameraMatches) {
+    // Only needed when the camera doesn't match (needsSolarImpactClearRect,
+    // captured above): the overlay's own baked aspect ratio (RES1 x RES2)
+    // rarely matches the live viewport's (WIN3D.dX x WIN3D.dY), so the
+    // r > 1 branch below draws it narrower than WIN3D.dX, centered,
+    // leaving uncovered strips on either side. With a matching camera,
+    // those strips just show more of that same, correct 3D view, which is
+    // fine left alone. With a mismatched camera, what's behind the gap is
+    // a different perspective than the overlay itself - the "two
+    // unrelated perspectives on top of one another" this backdrop is here
+    // to avoid. Drawn unconditionally on r rather than only for r > 1:
+    // harmless where the image call below fully covers it again right
+    // after (r == 1, or r < 1's cropped-and-stretched fill).
+    if (needsSolarImpactClearRect) {
       noStroke();
       fill(255);
       rect(WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);

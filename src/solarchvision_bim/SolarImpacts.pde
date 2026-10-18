@@ -178,6 +178,23 @@ class SolarImpacts {
     return this.win3DOverlay_dataFresh() && this.win3DOverlay_cameraMatches();
   }
 
+  // Whether draw_WIN3D_layers.pde is about to paint the white clearing
+  // rect over the entire WIN3D area this frame - true exactly in the
+  // "explicit cycling request, but the camera doesn't match" case (see
+  // that file's own comment): the data is fresh, the camera doesn't
+  // match, an override was requested, and the requested day/type slice
+  // actually exists. WIN3D.draw() calls this at its own top to skip its
+  // (otherwise wasted) render work when the result is just going to be
+  // painted over anyway - see that method's own comment for why reading
+  // WIN3D.showSolarImpactOverride here, rather than a locally-captured
+  // copy of it, is still safe to do from inside WIN3D.draw().
+  boolean win3DOverlay_needsClearRect () {
+    return this.win3DOverlay_dataFresh() &&
+      !this.win3DOverlay_cameraMatches() &&
+      WIN3D.showSolarImpactOverride &&
+      impactDisplayDay < this.Image[WIN3D.impactTypeIndex].length;
+  }
+
   // Called once, by preBakeViewport.pde, right at its own top - before it
   // overrides WIN3D.dX/dY to fit the impact resolution - so this is
   // whichever camera actually drove the Direct/Diffuse/mask PNGs it's
