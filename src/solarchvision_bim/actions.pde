@@ -1441,11 +1441,13 @@ void build_allActions() {
   putAction("Next Impact Day", () -> {
     impactDisplayDay += 1;
     if (impactDisplayDay > STUDY.endDay) impactDisplayDay = 0;
+    WIN3D.showSolarImpact = true;
   });
 
   putAction("Previous Impact Day", () -> {
     impactDisplayDay -= 1;
     if (impactDisplayDay < 0) impactDisplayDay = STUDY.endDay;
+    WIN3D.showSolarImpact = true;
   });
 
   putAction("Recalculate Solar Impact", () -> {
