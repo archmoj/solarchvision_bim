@@ -9,7 +9,10 @@ void draw_WIN3D_layers () {
   // re-deriving it from scratch after that flag has already been reset.
   boolean needsSolarImpactClearRect = allSolarImpacts.win3DOverlay_needsClearRect();
 
+  boolean mayDrawPalette = false;
+
   if (WIN3D.update) {
+    mayDrawPalette = true;
 
     regenerate_desired_bakings();
 
@@ -49,6 +52,7 @@ void draw_WIN3D_layers () {
   WIN3D.solarImpactOverlayShown = showSolarImpactOverlay;
 
   if (showSolarImpactOverlay) {
+    mayDrawPalette = true;
 
     // Only needed when the camera doesn't match (needsSolarImpactClearRect,
     // captured above): the overlay's own baked aspect ratio (RES1 x RES2)
@@ -103,10 +107,12 @@ void draw_WIN3D_layers () {
     }
   }
 
-  // Drawn last, straight onto the main canvas, so it sits on top of both
-  // WIN3D's own render and the solar-impact overlay above - and called
-  // unconditionally, so it still shows up (over the overlay) on frames
-  // where WIN3D.draw() itself was skipped entirely. See drawPalette()'s
-  // own comment.
-  WIN3D.drawPalette();
+  if(mayDrawPalette == true) {
+    // Drawn last, straight onto the main canvas, so it sits on top of both
+    // WIN3D's own render and the solar-impact overlay above - and called
+    // unconditionally, so it still shows up (over the overlay) on frames
+    // where WIN3D.draw() itself was skipped entirely. See drawPalette()'s
+    // own comment.
+    WIN3D.drawPalette();
+  }
 }
