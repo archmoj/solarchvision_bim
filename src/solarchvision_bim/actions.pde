@@ -1360,6 +1360,7 @@ void build_allActions() {
     WIN3D.impactTypeIndex = (WIN3D.impactTypeIndex + 1) % numberOfImpactVariations;
     if (WIN3D.shadingMode == SHADE.Global_Solar) GlobalSolar_rebuild_array = true;
     if (WIN3D.shadingMode == SHADE.Vertex_Solar) VertexSolar_rebuild_array = true;
+    WIN3D.showSolarImpact = true;
   });
 
   putAction("Zoom Out", () -> {

@@ -16,8 +16,8 @@ void draw_WIN3D_layers () {
   if (WIN3D.showSolarImpact) {
     WIN3D.showSolarImpact = false;
 
-    if(impactDisplayDay < allSolarImpacts.Image[STUDY.impactTypeIndex].length) {
-      PImage img = allSolarImpacts.Image[STUDY.impactTypeIndex][impactDisplayDay];
+    if (allSolarImpacts.win3DOverlay_isFresh() && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length) {
+      PImage img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
       float w = img.width;
       float h = img.height;
       float aspect1 = 1.0f * w / h;

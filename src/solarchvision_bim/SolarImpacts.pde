@@ -24,6 +24,140 @@ class SolarImpacts {
 
   boolean record_IMG = false;
 
+  // --- WIN3D overlay freshness --------------------------------------------
+  // this.Image[][] only ever gets repainted by calculate_Impact_CurrentPreBaked()
+  // below, which reads the model's baked Direct/Diffuse PNGs (tied to
+  // whatever geometry and camera they were baked from - see
+  // preBakeViewport.pde) plus a handful of STUDY/TIME/STATION/palette
+  // settings ("the time of the analysis"). The day-navigation and
+  // impact-type-toggle actions (actions.pde) re-show the WIN3D overlay by
+  // just picking a different already-computed slice of this.Image[][],
+  // without recomputing anything - win3DOverlay_isFresh() is what lets
+  // draw_WIN3D_layers.pde tell whether that slice is still trustworthy
+  // before actually painting it, the same win3DCache-style snapshot/
+  // compare pattern Earth3D.pde/Faces.pde/Sun3D.pde use for their own
+  // caches. win3DOverlay_recordState() is called once, right as
+  // calculate_Impact_CurrentPreBaked() finishes a successful computation,
+  // so every field below is simply "whatever calculate_Impact_
+  // CurrentPreBaked() actually used this time" - extend both together if
+  // that function ever reads something new.
+  boolean win3DOverlay_validSnapshot = false;
+
+  float win3DOverlay_cameraX = Float.NaN;
+  float win3DOverlay_cameraY = Float.NaN;
+  float win3DOverlay_cameraZ = Float.NaN;
+  float win3DOverlay_rotationX = Float.NaN;
+  float win3DOverlay_rotationZ = Float.NaN;
+  float win3DOverlay_zoom = Float.NaN;
+  int win3DOverlay_projectionTypeIndex = Integer.MIN_VALUE;
+  int win3DOverlay_currentCameraIndex = Integer.MIN_VALUE;
+
+  int win3DOverlay_facesGeneration = Integer.MIN_VALUE;
+  int win3DOverlay_model1DsGeneration = Integer.MIN_VALUE;
+  int win3DOverlay_terrainGeneration = Integer.MIN_VALUE;
+
+  int win3DOverlay_startDay = Integer.MIN_VALUE;
+  int win3DOverlay_endDay = Integer.MIN_VALUE;
+  float win3DOverlay_dayIncrement = Float.NaN;
+  int win3DOverlay_daysMergedCount = Integer.MIN_VALUE;
+  int win3DOverlay_impactLayerIndex = Integer.MIN_VALUE;
+  int win3DOverlay_temporalFilterSetting = Integer.MIN_VALUE;
+  int win3DOverlay_skyScenarioSetting = Integer.MIN_VALUE;
+  int win3DOverlay_beginDay = Integer.MIN_VALUE;
+  float win3DOverlay_stationLat = Float.NaN;
+  int win3DOverlay_currentDataSource = Integer.MIN_VALUE;
+  int win3DOverlay_sampleYearStart = Integer.MIN_VALUE;
+  int win3DOverlay_sampleYearEnd = Integer.MIN_VALUE;
+  int win3DOverlay_sampleMemberStart = Integer.MIN_VALUE;
+  int win3DOverlay_sampleMemberEnd = Integer.MIN_VALUE;
+  int win3DOverlay_sampleStationStart = Integer.MIN_VALUE;
+  int win3DOverlay_sampleStationEnd = Integer.MIN_VALUE;
+
+  int win3DOverlay_activeColorscaleIndex = Integer.MIN_VALUE;
+  int win3DOverlay_activeColorscaleDirection = Integer.MIN_VALUE;
+  float win3DOverlay_activeColorscaleFactor = Float.NaN;
+  int win3DOverlay_passiveColorscaleIndex = Integer.MIN_VALUE;
+  int win3DOverlay_passiveColorscaleDirection = Integer.MIN_VALUE;
+  float win3DOverlay_passiveColorscaleFactor = Float.NaN;
+
+  boolean win3DOverlay_isFresh () {
+    return this.win3DOverlay_validSnapshot &&
+      this.win3DOverlay_cameraX                  == WIN3D.cameraX &&
+      this.win3DOverlay_cameraY                  == WIN3D.cameraY &&
+      this.win3DOverlay_cameraZ                  == WIN3D.cameraZ &&
+      this.win3DOverlay_rotationX                == WIN3D.rotationX &&
+      this.win3DOverlay_rotationZ                == WIN3D.rotationZ &&
+      this.win3DOverlay_zoom                     == WIN3D.zoom &&
+      this.win3DOverlay_projectionTypeIndex      == WIN3D.projectionTypeIndex &&
+      this.win3DOverlay_currentCameraIndex       == WIN3D.currentCameraIndex &&
+      this.win3DOverlay_facesGeneration          == allFaces.winCacheGeneration &&
+      this.win3DOverlay_model1DsGeneration       == allModel1Ds.winCacheGeneration &&
+      this.win3DOverlay_terrainGeneration        == Terrain.winCacheGeneration &&
+      this.win3DOverlay_startDay                 == STUDY.startDay &&
+      this.win3DOverlay_endDay                   == STUDY.endDay &&
+      this.win3DOverlay_dayIncrement              == STUDY.dayIncrement &&
+      this.win3DOverlay_daysMergedCount          == STUDY.daysMergedCount &&
+      this.win3DOverlay_impactLayerIndex         == STUDY.impactLayerIndex &&
+      this.win3DOverlay_temporalFilterSetting    == STUDY.temporalFilterSetting &&
+      this.win3DOverlay_skyScenarioSetting       == STUDY.skyScenarioSetting &&
+      this.win3DOverlay_beginDay                 == TIME.beginDay &&
+      this.win3DOverlay_stationLat                == STATION.getLatitude() &&
+      this.win3DOverlay_currentDataSource        == currentDataSource &&
+      this.win3DOverlay_sampleYearStart          == sampleYearStart &&
+      this.win3DOverlay_sampleYearEnd            == sampleYearEnd &&
+      this.win3DOverlay_sampleMemberStart        == sampleMemberStart &&
+      this.win3DOverlay_sampleMemberEnd          == sampleMemberEnd &&
+      this.win3DOverlay_sampleStationStart       == sampleStationStart &&
+      this.win3DOverlay_sampleStationEnd         == sampleStationEnd &&
+      this.win3DOverlay_activeColorscaleIndex    == allFaces.activeColorscaleIndex &&
+      this.win3DOverlay_activeColorscaleDirection == allFaces.activeColorscaleDirection &&
+      this.win3DOverlay_activeColorscaleFactor   == allFaces.activeColorscaleFactor &&
+      this.win3DOverlay_passiveColorscaleIndex   == allFaces.passiveColorscaleIndex &&
+      this.win3DOverlay_passiveColorscaleDirection == allFaces.passiveColorscaleDirection &&
+      this.win3DOverlay_passiveColorscaleFactor  == allFaces.passiveColorscaleFactor;
+  }
+
+  void win3DOverlay_recordState () {
+    this.win3DOverlay_validSnapshot = true;
+
+    this.win3DOverlay_cameraX                  = WIN3D.cameraX;
+    this.win3DOverlay_cameraY                  = WIN3D.cameraY;
+    this.win3DOverlay_cameraZ                  = WIN3D.cameraZ;
+    this.win3DOverlay_rotationX                = WIN3D.rotationX;
+    this.win3DOverlay_rotationZ                = WIN3D.rotationZ;
+    this.win3DOverlay_zoom                     = WIN3D.zoom;
+    this.win3DOverlay_projectionTypeIndex      = WIN3D.projectionTypeIndex;
+    this.win3DOverlay_currentCameraIndex       = WIN3D.currentCameraIndex;
+
+    this.win3DOverlay_facesGeneration          = allFaces.winCacheGeneration;
+    this.win3DOverlay_model1DsGeneration       = allModel1Ds.winCacheGeneration;
+    this.win3DOverlay_terrainGeneration        = Terrain.winCacheGeneration;
+
+    this.win3DOverlay_startDay                 = STUDY.startDay;
+    this.win3DOverlay_endDay                   = STUDY.endDay;
+    this.win3DOverlay_dayIncrement              = STUDY.dayIncrement;
+    this.win3DOverlay_daysMergedCount          = STUDY.daysMergedCount;
+    this.win3DOverlay_impactLayerIndex         = STUDY.impactLayerIndex;
+    this.win3DOverlay_temporalFilterSetting    = STUDY.temporalFilterSetting;
+    this.win3DOverlay_skyScenarioSetting       = STUDY.skyScenarioSetting;
+    this.win3DOverlay_beginDay                 = TIME.beginDay;
+    this.win3DOverlay_stationLat                = STATION.getLatitude();
+    this.win3DOverlay_currentDataSource        = currentDataSource;
+    this.win3DOverlay_sampleYearStart          = sampleYearStart;
+    this.win3DOverlay_sampleYearEnd            = sampleYearEnd;
+    this.win3DOverlay_sampleMemberStart        = sampleMemberStart;
+    this.win3DOverlay_sampleMemberEnd          = sampleMemberEnd;
+    this.win3DOverlay_sampleStationStart       = sampleStationStart;
+    this.win3DOverlay_sampleStationEnd         = sampleStationEnd;
+
+    this.win3DOverlay_activeColorscaleIndex    = allFaces.activeColorscaleIndex;
+    this.win3DOverlay_activeColorscaleDirection = allFaces.activeColorscaleDirection;
+    this.win3DOverlay_activeColorscaleFactor   = allFaces.activeColorscaleFactor;
+    this.win3DOverlay_passiveColorscaleIndex   = allFaces.passiveColorscaleIndex;
+    this.win3DOverlay_passiveColorscaleDirection = allFaces.passiveColorscaleDirection;
+    this.win3DOverlay_passiveColorscaleFactor  = allFaces.passiveColorscaleFactor;
+  }
+
   void resize_Image_array () {
 
     this.Image = new PImage [2][(1 + STUDY.endDay - STUDY.startDay)];
@@ -461,6 +595,8 @@ class SolarImpacts {
           }
         }
       }
+
+      this.win3DOverlay_recordState();
 
       showArrowCursor();
     }
