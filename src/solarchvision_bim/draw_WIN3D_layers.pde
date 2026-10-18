@@ -41,8 +41,14 @@ void draw_WIN3D_layers () {
   // pick which already-computed slice to show and are read live here too,
   // so the day-navigation/impact-type-toggle actions need only change
   // those (and request the override) - nothing else to re-arm.
-  if (allSolarImpacts.win3DOverlay_dataFresh() && (solarImpactCameraMatches || solarImpactOverrideRequested)
-      && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length) {
+  boolean showSolarImpactOverlay = allSolarImpacts.win3DOverlay_dataFresh() && (solarImpactCameraMatches || solarImpactOverrideRequested)
+      && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length;
+
+  // Recorded for WIN3D.isSolarPaletteMode() to read - see that method's
+  // own comment.
+  WIN3D.solarImpactOverlayShown = showSolarImpactOverlay;
+
+  if (showSolarImpactOverlay) {
 
     // Only needed when the camera doesn't match (needsSolarImpactClearRect,
     // captured above): the overlay's own baked aspect ratio (RES1 x RES2)
@@ -96,4 +102,11 @@ void draw_WIN3D_layers () {
       );
     }
   }
+
+  // Drawn last, straight onto the main canvas, so it sits on top of both
+  // WIN3D's own render and the solar-impact overlay above - and called
+  // unconditionally, so it still shows up (over the overlay) on frames
+  // where WIN3D.draw() itself was skipped entirely. See drawPalette()'s
+  // own comment.
+  WIN3D.drawPalette();
 }

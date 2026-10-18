@@ -208,10 +208,13 @@ class WIN3D {
 
     this.graphics.popMatrix();
 
-    this.drawPalette();
-
     this.graphics.endDraw();
 
+    // NOTE: the palette is no longer part of this.graphics (see
+    // drawPalette()'s own comment), so a recorded/saved frame here no
+    // longer includes it - it's only composited onto the main canvas
+    // afterward, by draw_WIN3D_layers.pde, which saveRecordedFrame() below
+    // doesn't capture.
     if (this.record_IMG || this.record_AUTO) {
       saveRecordedFrame();
     }
@@ -272,11 +275,23 @@ class WIN3D {
   }
 
   // --- palette overlay -----------------------------------------------------------------
+  // Drawn as a flat 2D HUD straight onto the main canvas - not into
+  // this.graphics, the 3D viewport's own PGraphics buffer, the way this
+  // used to work (a pushed/translated matrix inside the 3D scene, sized
+  // off the camera's field of view/zoom). That made it tricky to reason
+  // about and tied its size to the 3D projection for no real benefit, since
+  // it's conceptually just a HUD. drawPalette() is called directly from
+  // draw_WIN3D_layers.pde, after both WIN3D's own render and the
+  // solar-impact overlay, so it always ends up on top of both - including
+  // on frames where WIN3D.draw() itself was skipped entirely (see
+  // win3DOverlay_needsClearRect()'s own comment), which is exactly when the
+  // active/passive palette still needs to show over the impact overlay.
 
   boolean isSolarPaletteMode () {
     return (this.shadingMode == SHADE.Global_Solar) ||
            (this.shadingMode == SHADE.Vertex_Solar) ||
-           (allSolarImpacts.displayImage && (allSections.SolarImpact.length > 0));
+           (allSolarImpacts.displayImage && (allSections.SolarImpact.length > 0)) ||
+           this.solarImpactOverlayShown;
   }
 
   float[] choosePaletteParams () {
@@ -323,32 +338,28 @@ class WIN3D {
     float PAL_multiplier = palette[2];
     if (palette[3] != 1) return;
 
-    float the_scale = (this.projectionTypeIndex == 1) ? (0.5 / tan(0.5 * this.cameraFieldOfView)) : (0.5 / this.Orthographic_ZOOM());
-
-    this.graphics.pushMatrix();
-
-    this.cameraFieldOfView = this.zoom * PI / 180;
-    this.cameraDistance = (0.5 * this.referenceScale) / tan(0.5 * this.cameraFieldOfView);
-
-    this.graphics.translate(0.5 * this.dX, 0.5 * this.dY, 0); // << IMPORTANT!
-
-    float pal_length = 1 * pixel_H * this.ImageScale / the_scale;
-    float y1 = -0.2 * (pal_length / 11.0) + (0.4 * this.dY / the_scale);
-    float y2 = y1 + 0.4 * (pal_length / 11.0);
-    float txtSize = y2 - y1;
-    float y = 0.5 * (y1 + y2) - 0.1 * txtSize;
+    // Centered horizontally in the viewport, a fixed margin up from its
+    // bottom edge. pal_length scales with the viewport's own width so it
+    // doesn't overflow a narrow WIN3D area; swatchHeight/bottomMargin/
+    // txtSize are plain screen pixels, since there's no camera projection
+    // involved anymore to scale them against.
+    float pal_length = 0.4 * this.dX;
+    float swatchHeight = 20;
+    float bottomMargin = 40;
+    float pal_ox = this.cX + 0.5 * this.dX - 0.5 * pal_length;
+    float pal_oy = this.cY + this.dY - bottomMargin - swatchHeight;
+    float txtSize = 0.6 * swatchHeight;
+    float y = pal_oy + 0.5 * swatchHeight - 0.1 * txtSize;
 
     for (int q = 0; q < 11; q++) {
-      drawPaletteSegment(q, PAL_type, PAL_direction, PAL_multiplier, pal_length, y1, y2, y, txtSize);
+      drawPaletteSegment(q, PAL_type, PAL_direction, PAL_multiplier, pal_length, pal_ox, pal_oy, swatchHeight, y, txtSize);
     }
 
-    drawPaletteCaption(pal_length, y, y1, txtSize);
-
-    this.graphics.popMatrix();
+    drawPaletteCaption(pal_length, pal_ox, pal_oy, y, txtSize);
   }
 
-  void drawPaletteSegment (int q, int PAL_type, int PAL_direction, float PAL_multiplier, float pal_length, float y1, float y2, float y, float txtSize) {
-    float x1 = -0.5 * pal_length + q * (pal_length / 11.0);
+  void drawPaletteSegment (int q, int PAL_type, int PAL_direction, float PAL_multiplier, float pal_length, float pal_ox, float pal_oy, float swatchHeight, float y, float txtSize) {
+    float x1 = pal_ox + q * (pal_length / 11.0);
     float x2 = x1 + (pal_length / 11.0);
     float x = 0.5 * (x1 + x2);
 
@@ -361,54 +372,49 @@ class WIN3D {
 
     float[] COL = PAINT.getColorStyle(PAL_type, _u);
 
-    this.graphics.stroke(COL[1], COL[2], COL[3], COL[0]);
-    this.graphics.fill(COL[1], COL[2], COL[3], COL[0]);
-    this.graphics.strokeWeight(0);
+    stroke(COL[1], COL[2], COL[3], COL[0]);
+    fill(COL[1], COL[2], COL[3], COL[0]);
+    strokeWeight(0);
 
-    this.graphics.beginShape();
-    this.graphics.vertex(x1, y1, 0);
-    this.graphics.vertex(x1, y2, 0);
-    this.graphics.vertex(x2, y2, 0);
-    this.graphics.vertex(x2, y1, 0);
-    this.graphics.endShape(CLOSE);
+    rect(x1, pal_oy, pal_length / 11.0, swatchHeight);
 
     if (COL[1] + COL[2] + COL[3] > 1.75 * 255) {
-      this.graphics.stroke(127);
-      this.graphics.fill(127);
-      this.graphics.strokeWeight(0);
+      stroke(127);
+      fill(127);
+      strokeWeight(0);
     } else {
-      this.graphics.stroke(255);
-      this.graphics.fill(255);
-      this.graphics.strokeWeight(2);
+      stroke(255);
+      fill(255);
+      strokeWeight(2);
     }
 
-    this.graphics.textSize(txtSize);
-    this.graphics.textAlign(CENTER, CENTER);
+    textSize(txtSize);
+    textAlign(CENTER, CENTER);
 
     if (isSolarPaletteMode()) {
-      if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y, 0);
-      if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y, 0);
+      if (this.impactTypeIndex == Impact_ACTIVE) text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y);
+      if (this.impactTypeIndex == Impact_PASSIVE) text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y);
     }
 
     if (this.shadingMode == SHADE.Vertex_Elevation) {
-      this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y, 0);
+      text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y);
     }
 
     if (this.shadingMode == SHADE.Vertex_Solid) {
-      this.graphics.text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y, 0);
+      text(nf(int(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 1)), 1), x, y);
     }
   }
 
-  void drawPaletteCaption (float pal_length, float y, float y1, float txtSize) {
-    this.graphics.noStroke();
-    this.graphics.fill(127);
+  void drawPaletteCaption (float pal_length, float pal_ox, float pal_oy, float y, float txtSize) {
+    noStroke();
+    fill(127);
 
     String txt = "";
-    this.graphics.textAlign(LEFT, CENTER);
+    textAlign(LEFT, CENTER);
 
     if ((this.shadingMode != SHADE.Vertex_Elevation) && (this.shadingMode != SHADE.Vertex_Solid)) {
-      if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(" kW/m²", 0.5 * pal_length, y, 0);
-      if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(" %kW°C/m²", 0.5 * pal_length, y, 0);
+      if (this.impactTypeIndex == Impact_ACTIVE) text(" kW/m²", pal_ox + pal_length, y);
+      if (this.impactTypeIndex == Impact_PASSIVE) text(" %kW°C/m²", pal_ox + pal_length, y);
 
       txt += "SOLARCHVISION ";
       if (this.impactTypeIndex == Impact_ACTIVE) txt += "active model ";
@@ -422,8 +428,8 @@ class WIN3D {
       }
     }
 
-    this.graphics.textAlign(CENTER, CENTER);
-    this.graphics.text(txt, 0, y1 - 1.0 * txtSize, 0);
+    textAlign(CENTER, CENTER);
+    text(txt, pal_ox + 0.5 * pal_length, pal_oy - txtSize);
   }
 
   void reviseViews () {
@@ -1191,4 +1197,11 @@ class WIN3D {
   // layers.pde consumes it (resets it to false) the next time it checks,
   // regardless of whether it ends up actually showing anything.
   boolean showSolarImpactOverride = false;
+
+  // Set each frame by draw_WIN3D_layers.pde to record whether it actually
+  // drew the WIN3D solar-impact overlay that frame (the one-shot override
+  // above has usually already been consumed to false by the time anything
+  // else would want to ask, so this is the only reliable way to know) -
+  // see isSolarPaletteMode()'s own comment on why it reads this.
+  boolean solarImpactOverlayShown = false;
 }
