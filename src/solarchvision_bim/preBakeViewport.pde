@@ -31,6 +31,13 @@ void preBakeViewport () {
 
   SceneName = "Viewport_" + Viewport_Stamp();
 
+  // The camera this whole bake - Direct/Diffuse PNGs, and the Model2Ds
+  // mask - is actually computed from. See win3DOverlay_recordCameraState()'s
+  // own comment (SolarImpacts.pde) for why this needs to happen here,
+  // rather than wherever calculate_Impact_CurrentPreBaked() next happens
+  // to run.
+  allSolarImpacts.win3DOverlay_recordCameraState();
+
   int pre_WIN3D_dX = WIN3D.dX;
   int pre_WIN3D_dY = WIN3D.dY;
 

@@ -36,12 +36,27 @@ class SolarImpacts {
   // draw_WIN3D_layers.pde tell whether that slice is still trustworthy
   // before actually painting it, the same win3DCache-style snapshot/
   // compare pattern Earth3D.pde/Faces.pde/Sun3D.pde use for their own
-  // caches. win3DOverlay_recordState() is called once, right as
-  // calculate_Impact_CurrentPreBaked() finishes a successful computation,
-  // so every field below is simply "whatever calculate_Impact_
-  // CurrentPreBaked() actually used this time" - extend both together if
-  // that function ever reads something new.
-  boolean win3DOverlay_validSnapshot = false;
+  // caches.
+  //
+  // The camera fields are recorded separately from everything else, by a
+  // separate method (win3DOverlay_recordCameraState() below), called from
+  // a separate place (preBakeViewport.pde, right at its own top, before it
+  // overrides WIN3D.dX/dY to fit the impact resolution) - not here. The
+  // Direct/Diffuse/mask PNGs calculate_Impact_CurrentPreBaked() reads are
+  // tied to whichever camera preBakeViewport() actually baked them from;
+  // calculate_Impact_CurrentPreBaked() itself doesn't read the camera at
+  // all; it can run again at any time (e.g. clicking over to a Skin
+  // Potential graph page re-triggers it) with the live camera sitting
+  // anywhere, which has nothing to do with which camera the underlying
+  // pixels came from. Recording cameraX/Y/Z etc. here, at
+  // calculate_Impact_CurrentPreBaked()'s own completion, would compare
+  // future camera positions against wherever the camera happened to be at
+  // that click instead - so a camera move away and back would often
+  // "match" a snapshot that was itself already wrong, and comparing
+  // against a genuinely different camera move would equally often
+  // mismatch one that's actually still fine.
+  boolean win3DOverlay_cameraSnapshotValid = false;
+  boolean win3DOverlay_analysisSnapshotValid = false;
 
   float win3DOverlay_cameraX = Float.NaN;
   float win3DOverlay_cameraY = Float.NaN;
@@ -103,7 +118,7 @@ class SolarImpacts {
   // untouched. projectionTypeIndex/currentCameraIndex are discrete choices,
   // not drift-prone measurements, so those stay exact.
   boolean win3DOverlay_cameraMatches () {
-    return this.win3DOverlay_validSnapshot &&
+    return this.win3DOverlay_cameraSnapshotValid &&
       funcs.is_zero(this.win3DOverlay_cameraX - WIN3D.cameraX, win3DOverlay_cameraPositionTolerance) &&
       funcs.is_zero(this.win3DOverlay_cameraY - WIN3D.cameraY, win3DOverlay_cameraPositionTolerance) &&
       funcs.is_zero(this.win3DOverlay_cameraZ - WIN3D.cameraZ, win3DOverlay_cameraPositionTolerance) &&
@@ -115,7 +130,8 @@ class SolarImpacts {
   }
 
   boolean win3DOverlay_isFresh () {
-    return this.win3DOverlay_cameraMatches() &&
+    return this.win3DOverlay_analysisSnapshotValid &&
+      this.win3DOverlay_cameraMatches() &&
       this.win3DOverlay_facesGeneration          == allFaces.winCacheGeneration &&
       this.win3DOverlay_model1DsGeneration       == allModel1Ds.winCacheGeneration &&
       this.win3DOverlay_terrainGeneration        == Terrain.winCacheGeneration &&
@@ -143,8 +159,12 @@ class SolarImpacts {
       this.win3DOverlay_passiveColorscaleFactor  == allFaces.passiveColorscaleFactor;
   }
 
-  void win3DOverlay_recordState () {
-    this.win3DOverlay_validSnapshot = true;
+  // Called once, by preBakeViewport.pde, right at its own top - before it
+  // overrides WIN3D.dX/dY to fit the impact resolution - so this is
+  // whichever camera actually drove the Direct/Diffuse/mask PNGs it's
+  // about to bake, not wherever the camera happens to sit afterward.
+  void win3DOverlay_recordCameraState () {
+    this.win3DOverlay_cameraSnapshotValid = true;
 
     this.win3DOverlay_cameraX                  = WIN3D.cameraX;
     this.win3DOverlay_cameraY                  = WIN3D.cameraY;
@@ -154,6 +174,16 @@ class SolarImpacts {
     this.win3DOverlay_zoom                     = WIN3D.zoom;
     this.win3DOverlay_projectionTypeIndex      = WIN3D.projectionTypeIndex;
     this.win3DOverlay_currentCameraIndex       = WIN3D.currentCameraIndex;
+  }
+
+  // Called once, right as calculate_Impact_CurrentPreBaked() finishes a
+  // successful computation, so every field below is simply "whatever
+  // calculate_Impact_CurrentPreBaked() actually used this time" - extend
+  // both together if that function ever reads something new. Deliberately
+  // leaves the camera fields alone - see win3DOverlay_recordCameraState()
+  // above for why those are recorded separately, elsewhere.
+  void win3DOverlay_recordAnalysisState () {
+    this.win3DOverlay_analysisSnapshotValid = true;
 
     this.win3DOverlay_facesGeneration          = allFaces.winCacheGeneration;
     this.win3DOverlay_model1DsGeneration       = allModel1Ds.winCacheGeneration;
@@ -622,7 +652,7 @@ class SolarImpacts {
         }
       }
 
-      this.win3DOverlay_recordState();
+      this.win3DOverlay_recordAnalysisState();
 
       showArrowCursor();
     }
