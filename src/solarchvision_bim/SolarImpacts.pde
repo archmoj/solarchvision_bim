@@ -110,13 +110,17 @@ class SolarImpacts {
   // Just the camera half of win3DOverlay_isFresh() below - position, zoom
   // and projection, i.e. exactly what decides whether this.Image[][] still
   // lines up with what's actually on screen right now. draw_WIN3D_layers.pde
-  // checks this on its own, separately from the model/analysis-time fields
-  // below, as a precondition before painting the overlay at all (and before
-  // its own white backdrop rect) - not as a reason to blank the viewport by
-  // itself; a camera mismatch just means win3DOverlay_isFresh() is false
-  // too, so nothing in that block runs and the live 3D view shows through
-  // untouched. projectionTypeIndex/currentCameraIndex are discrete choices,
-  // not drift-prone measurements, so those stay exact.
+  // checks this on its own, separately from win3DOverlay_dataFresh() below:
+  // when the camera matches, the overlay is drawn straight over the live
+  // (matching) WIN3D content with no white backdrop at all - any gap left
+  // by an aspect-ratio mismatch between the overlay and the viewport just
+  // shows more of that same, correct 3D view through. When it doesn't
+  // match, the overlay is only shown at all if the person explicitly asked
+  // for it (the day-navigation/impact-type-toggle actions, bound to
+  // D/d/Shift+Tab), and in that case a white backdrop is needed, since
+  // whatever's behind the gap is now a different perspective than the
+  // overlay itself. projectionTypeIndex/currentCameraIndex are discrete
+  // choices, not drift-prone measurements, so those stay exact.
   boolean win3DOverlay_cameraMatches () {
     return this.win3DOverlay_cameraSnapshotValid &&
       funcs.is_zero(this.win3DOverlay_cameraX - WIN3D.cameraX, win3DOverlay_cameraPositionTolerance) &&
@@ -129,9 +133,16 @@ class SolarImpacts {
       this.win3DOverlay_currentCameraIndex       == WIN3D.currentCameraIndex;
   }
 
-  boolean win3DOverlay_isFresh () {
+  // The model/analysis-time half of freshness, independent of the camera -
+  // whether this.Image[][] itself is still correct, regardless of where
+  // the camera currently is. draw_WIN3D_layers.pde checks this on its own
+  // (alongside win3DOverlay_cameraMatches() above) so an explicit
+  // day-navigation/impact-type-toggle request can show the overlay even
+  // with the camera mismatched, while still refusing to show data that's
+  // actually stale (the model changed, the analysis-time settings
+  // changed) no matter how the display was requested.
+  boolean win3DOverlay_dataFresh () {
     return this.win3DOverlay_analysisSnapshotValid &&
-      this.win3DOverlay_cameraMatches() &&
       this.win3DOverlay_facesGeneration          == allFaces.winCacheGeneration &&
       this.win3DOverlay_model1DsGeneration       == allModel1Ds.winCacheGeneration &&
       this.win3DOverlay_terrainGeneration        == Terrain.winCacheGeneration &&
@@ -157,6 +168,14 @@ class SolarImpacts {
       this.win3DOverlay_passiveColorscaleIndex   == allFaces.passiveColorscaleIndex &&
       this.win3DOverlay_passiveColorscaleDirection == allFaces.passiveColorscaleDirection &&
       this.win3DOverlay_passiveColorscaleFactor  == allFaces.passiveColorscaleFactor;
+  }
+
+  // Convenience: both halves at once - the data is correct AND the camera
+  // is the one it was computed from, so the overlay can be shown with no
+  // caveats (no white backdrop needed either). See win3DOverlay_dataFresh()
+  // and win3DOverlay_cameraMatches() above for the two things this checks.
+  boolean win3DOverlay_isFresh () {
+    return this.win3DOverlay_dataFresh() && this.win3DOverlay_cameraMatches();
   }
 
   // Called once, by preBakeViewport.pde, right at its own top - before it

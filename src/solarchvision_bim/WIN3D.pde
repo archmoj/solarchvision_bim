@@ -1166,4 +1166,11 @@ class WIN3D {
 
   float shadingQuality = 0.75f;
   boolean showShading = false;
+
+  // One-shot: set by the day-navigation/impact-type-toggle actions
+  // (D/d/Shift+Tab) to show the solar-impact overlay this one time even
+  // if allSolarImpacts.win3DOverlay_cameraMatches() is false - draw_WIN3D_
+  // layers.pde consumes it (resets it to false) the next time it checks,
+  // regardless of whether it ends up actually showing anything.
+  boolean showSolarImpactOverride = false;
 }

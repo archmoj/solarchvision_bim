@@ -13,32 +13,46 @@ void draw_WIN3D_layers () {
     image(Shade_RGBA, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
   }
 
+  // One-shot: consumed here regardless of outcome, same as showShading
+  // above - see WIN3D.showSolarImpactOverride's own comment.
+  boolean solarImpactOverrideRequested = WIN3D.showSolarImpactOverride;
+  WIN3D.showSolarImpactOverride = false;
+
+  boolean solarImpactCameraMatches = allSolarImpacts.win3DOverlay_cameraMatches();
+
   // Shown whenever this.Image[][] is still (or again) valid for the
-  // current model/camera/analysis-time state, re-evaluated fresh every
-  // frame rather than latched by a one-shot flag something else has to
-  // remember to re-arm - see win3DOverlay_isFresh()'s own comment. That
-  // makes this self-healing: rotate away and the overlay drops out as
-  // soon as it stops matching, rotate back to exactly where it was
-  // computed from and it reappears on its own, no action needed either
-  // way. impactDisplayDay/WIN3D.impactTypeIndex pick which already-
-  // computed slice to show and are read live here too, so the day-
-  // navigation and impact-type-toggle actions need only change those -
-  // nothing left to re-arm.
-  if (allSolarImpacts.win3DOverlay_isFresh() && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length) {
-    // The overlay's own baked aspect ratio (RES1 x RES2) rarely matches
-    // the live viewport's (WIN3D.dX x WIN3D.dY) - the r > 1 branch below
-    // then draws it narrower than WIN3D.dX, centered, leaving uncovered
-    // strips on either side. Without this, those strips show whatever the
-    // live 3D view painted underneath - a different camera/projection
-    // than the overlay itself - which is the "two unrelated perspectives
-    // on top of one another" this is here to avoid. Drawn unconditionally
-    // rather than only for r > 1: harmless where the image call below
-    // fully covers it again right after (r == 1, or r < 1's cropped-and-
-    // stretched fill), and keeps this one step simpler than branching on r
-    // a second time.
-    noStroke();
-    fill(255);
-    rect(WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
+  // current model/analysis-time state (win3DOverlay_dataFresh(), re-
+  // evaluated fresh every frame, not latched) and either the camera
+  // matches the one it was baked from, or the person just explicitly
+  // asked to see it anyway (D/d/Shift+Tab, even with the camera
+  // somewhere else). Checking the camera separately from the rest of
+  // freshness, rather than relying on the combined win3DOverlay_isFresh(),
+  // is what lets that explicit request bypass just the camera
+  // requirement - a stale model or analysis-time setting still hides it
+  // no matter how it was requested. impactDisplayDay/WIN3D.impactTypeIndex
+  // pick which already-computed slice to show and are read live here too,
+  // so the day-navigation/impact-type-toggle actions need only change
+  // those (and request the override) - nothing else to re-arm.
+  if (allSolarImpacts.win3DOverlay_dataFresh() && (solarImpactCameraMatches || solarImpactOverrideRequested)
+      && impactDisplayDay < allSolarImpacts.Image[WIN3D.impactTypeIndex].length) {
+
+    // Only needed when the camera doesn't match: the overlay's own baked
+    // aspect ratio (RES1 x RES2) rarely matches the live viewport's
+    // (WIN3D.dX x WIN3D.dY), so the r > 1 branch below draws it narrower
+    // than WIN3D.dX, centered, leaving uncovered strips on either side.
+    // With a matching camera, those strips just show more of that same,
+    // correct 3D view, which is fine left alone. With a mismatched camera
+    // (only reachable here via the explicit override above), what's
+    // behind the gap is a different perspective than the overlay itself -
+    // the "two unrelated perspectives on top of one another" this backdrop
+    // is here to avoid. Drawn unconditionally on r rather than only for
+    // r > 1: harmless where the image call below fully covers it again
+    // right after (r == 1, or r < 1's cropped-and-stretched fill).
+    if (!solarImpactCameraMatches) {
+      noStroke();
+      fill(255);
+      rect(WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
+    }
 
     PImage img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
     float w = img.width;
