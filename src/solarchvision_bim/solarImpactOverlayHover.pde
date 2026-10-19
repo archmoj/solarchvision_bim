@@ -26,12 +26,13 @@ float[] solarImpactOverlay_fitRect (PImage img) {
 }
 
 // --- solar-impact overlay hover tooltip -----------------------------------
-// Shows the raw A/R/G/B data under the mouse (see win3DOverlay_
-// rawValuesAt()'s own comment, SolarImpacts.pde, for what these actually
-// are - not the rendered overlay PImage's own RGBA, which has already
-// been through a color palette and isn't the real data), four lines in a
-// small floating box near the cursor, whenever there's real data there.
-//
+// Shows SOLARCHVISION's actual findings under the mouse, in a small
+// floating box near the cursor, whenever there's real data there - see
+// solarImpactHover_lines()'s own comment for what. Set this true to see
+// the raw A/R/G/B channel values instead (see win3DOverlay_rawValuesAt()'s
+// own comment, SolarImpacts.pde, for what those are).
+boolean showARGB_inHover = false;
+
 // No snapshot/restore trick here (tried twice now - see git history on
 // this file for both attempts). UI_menuBar.pde's dropdown can use one
 // (its own pre_screen field) because nothing else repaints that region on
@@ -47,31 +48,81 @@ float[] solarImpactOverlay_fitRect (PImage img) {
 // keeps it inside that rect - left when the mouse is in the right half,
 // right when it's in the left half, and the same above/below for the
 // vertical half - rather than a fixed corner that could run past an edge.
-final int solarImpactHover_boxW = 100;
-final int solarImpactHover_boxH = 78;
+final int solarImpactHover_boxW = 180;
 final int solarImpactHover_margin = 14; // gap between the cursor and the box
+final int solarImpactHover_lineHeight = 16;
+final int solarImpactHover_topPad = 6;
+final int solarImpactHover_bottomPad = 8;
+final int solarImpactHover_sidePad = 8;
 
-// Returns {boxX, boxY}: where the hover box should be drawn so it stays
-// entirely inside destX..destX+destW / destY..destY+destH (the overlay's
-// own dest rect, from solarImpactOverlay_fitRect() above) - on whichever
-// side of (mouseX, mouseY) that rect has more room: left of the cursor
-// when it's in the right half, right when it's in the left half, and the
-// same above/below for the vertical half, rather than a fixed corner that
-// could run past an edge. The final constrain() is a safety net for a box
-// wider/taller than half the rect. Pure/no drawing, so it's independently
-// checkable without a live PGraphics context - see
+// Returns {boxX, boxY}: where a box of size (boxW, boxH) should be drawn
+// so it stays entirely inside destX..destX+destW / destY..destY+destH
+// (the overlay's own dest rect, from solarImpactOverlay_fitRect() above) -
+// on whichever side of (mouseX, mouseY) that rect has more room: left of
+// the cursor when it's in the right half, right when it's in the left
+// half, and the same above/below for the vertical half, rather than a
+// fixed corner that could run past an edge. The final constrain() is a
+// safety net for a box wider/taller than half the rect. Pure/no drawing,
+// so it's independently checkable without a live PGraphics context - see
 // drawSolarImpactHover()'s own comment for why nothing else here is.
-float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, float destY, float destW, float destH) {
+float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, float destY, float destW, float destH, float boxW, float boxH) {
   boolean rightHalf = (mouseX - destX) > (destW / 2);
   boolean bottomHalf = (mouseY - destY) > (destH / 2);
 
-  float boxX = rightHalf ? (mouseX - solarImpactHover_margin - solarImpactHover_boxW) : (mouseX + solarImpactHover_margin);
-  float boxY = bottomHalf ? (mouseY - solarImpactHover_margin - solarImpactHover_boxH) : (mouseY + solarImpactHover_margin);
+  float boxX = rightHalf ? (mouseX - solarImpactHover_margin - boxW) : (mouseX + solarImpactHover_margin);
+  float boxY = bottomHalf ? (mouseY - solarImpactHover_margin - boxH) : (mouseY + solarImpactHover_margin);
 
-  boxX = constrain(boxX, destX, destX + destW - solarImpactHover_boxW);
-  boxY = constrain(boxY, destY, destY + destH - solarImpactHover_boxH);
+  boxX = constrain(boxX, destX, destX + destW - boxW);
+  boxY = constrain(boxY, destY, destY + destH - boxH);
 
   return new float[] { boxX, boxY };
+}
+
+// Returns the text lines to show for Image[q][dayIndex]'s pixel (x, y),
+// or null if there's no real data there (see win3DOverlay_rawValuesAt()'s
+// own comment, SolarImpacts.pde).
+//
+// Defaults (showARGB_inHover false) to what SOLARCHVISION's passive/
+// active solar-climatic impact method actually found there, rather than
+// the raw channel values themselves - see Mojtaba Samimi's "Degree of
+// Need to Shade/Shine" (TU Berlin, 2014): every hour's sun on a surface is
+// weighted by base minus outdoor temperature, so a map says not just
+// where the sun lands but whether it's wanted there.
+//   Active (G): the solar radiation actually received, kWh/m2.
+//   Passive (R, B): sun received in cold hours or blocked in warm hours
+//   counts as a benefit (P, kept in B); the reverse counts as harm (N,
+//   kept in R) - see Matrix_ARGB's own build site (SolarImpacts.pde) for
+//   exactly how these get accumulated hour by hour. The comparison score
+//   S = (P - N)*|P - N|/(P + N), kWh*C/m2, is the same formula the
+//   passive palette color itself is already chosen from.
+String[] solarImpactHover_lines (int q, int dayIndex, int x, int y) {
+  float[] raw = allSolarImpacts.win3DOverlay_rawValuesAt(q, dayIndex, x, y);
+  if (raw == null) return null;
+
+  if (showARGB_inHover) {
+    return new String[] {
+      "A: " + nf(raw[0], 1, 2),
+      "R: " + nf(raw[1], 1, 2),
+      "G: " + nf(raw[2], 1, 2),
+      "B: " + nf(raw[3], 1, 2)
+    };
+  }
+
+  if (q == Impact_ACTIVE) {
+    float received = raw[2]; // G
+    return new String[] { "Received: " + nf(received, 1, 2) + " kWh/m\u00B2" };
+  }
+
+  // Impact_PASSIVE
+  float P = raw[3]; // B
+  float N = raw[1]; // R
+  float S = ((P + N) > 0.00001) ? (P - N) * abs(P - N) / (P + N) : 0;
+
+  return new String[] {
+    "P: " + nf(P, 1, 2) + " kWh\u00B0C/m\u00B2",
+    "N: " + nf(N, 1, 2) + " kWh\u00B0C/m\u00B2",
+    "S: " + nf(S, 1, 2) + " kWh\u00B0C/m\u00B2"
+  };
 }
 
 // Called every frame the solar-impact overlay is shown, right after
@@ -81,8 +132,7 @@ float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, f
 // allSolarImpacts.Matrix_ARGB/total_Matrix_ARGB are indexed by, so ix/iy
 // below locate the exact data point under the mouse, same as it used to
 // locate the exact rendered pixel - not for sampling a color from it
-// anymore; see win3DOverlay_rawValuesAt()'s own comment (SolarImpacts.pde)
-// for why. draw_WIN3D_layers.pde already returns before ever reaching
+// anymore. draw_WIN3D_layers.pde already returns before ever reaching
 // this call while UI_menuBar.selected_parent != -1, so this doesn't need
 // to check that itself.
 void drawSolarImpactHover (PImage img, float[] fit) {
@@ -94,27 +144,28 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   int ix = (int) constrain(fit[4] + fx * fit[6], 0, img.width - 1);
   int iy = (int) constrain(fit[5] + fy * fit[7], 0, img.height - 1);
 
-  float[] values = allSolarImpacts.win3DOverlay_rawValuesAt(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
-  if (values == null) return;
+  String[] lines = solarImpactHover_lines(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
+  if (lines == null) return;
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH);
+  float boxH = solarImpactHover_topPad + lines.length * solarImpactHover_lineHeight + solarImpactHover_bottomPad;
+
+  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, solarImpactHover_boxW, boxH);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
   noStroke();
   fill(255, 230);
-  rect(boxX, boxY, solarImpactHover_boxW, solarImpactHover_boxH);
+  rect(boxX, boxY, solarImpactHover_boxW, boxH);
   noFill();
   stroke(0);
   strokeWeight(1);
-  rect(boxX, boxY, solarImpactHover_boxW, solarImpactHover_boxH);
+  rect(boxX, boxY, solarImpactHover_boxW, boxH);
 
   noStroke();
   fill(0);
   textAlign(LEFT, TOP);
   textSize(14);
-  text("A: " + nf(values[0], 1, 2), boxX + 8, boxY + 6);
-  text("R: " + nf(values[1], 1, 2), boxX + 8, boxY + 22);
-  text("G: " + nf(values[2], 1, 2), boxX + 8, boxY + 38);
-  text("B: " + nf(values[3], 1, 2), boxX + 8, boxY + 54);
+  for (int i = 0; i < lines.length; i++) {
+    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * solarImpactHover_lineHeight);
+  }
 }
