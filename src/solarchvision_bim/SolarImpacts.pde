@@ -58,6 +58,15 @@ class SolarImpacts {
   boolean win3DOverlay_cameraSnapshotValid = false;
   boolean win3DOverlay_analysisSnapshotValid = false;
 
+  // One-shot: set by win3DOverlay_recordAnalysisState() whenever a fresh
+  // computation completes, so draw_WIN3D_layers.pde can tell that
+  // happened - and that it's worth re-checking whether the overlay should
+  // now show - even on a frame where nothing set WIN3D.update (recomputing
+  // via a Skin Potential graph page, say, only calls STUDY.revise()).
+  // Consumed (read-and-reset) by draw_WIN3D_layers.pde, same one-shot
+  // idiom as WIN3D.showShading/showSolarImpactOverride.
+  boolean win3DOverlay_recomputed = false;
+
   float win3DOverlay_cameraX = Float.NaN;
   float win3DOverlay_cameraY = Float.NaN;
   float win3DOverlay_cameraZ = Float.NaN;
@@ -239,6 +248,7 @@ class SolarImpacts {
   // above for why those are recorded separately, elsewhere.
   void win3DOverlay_recordAnalysisState () {
     this.win3DOverlay_analysisSnapshotValid = true;
+    this.win3DOverlay_recomputed = true;
 
     this.win3DOverlay_facesGeneration          = allFaces.winCacheGeneration;
     this.win3DOverlay_model1DsGeneration       = allModel1Ds.winCacheGeneration;

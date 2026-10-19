@@ -1,6 +1,30 @@
 void draw_WIN3D_layers () {
   if (!WIN3D.include) return;
 
+  // Nothing pending, nothing currently shown, nothing just recomputed -
+  // skip the rest of this function entirely rather than re-deriving the
+  // same "nothing to do" conclusion every frame. The overlay still gets
+  // re-checked every frame while it's actually on screen
+  // (WIN3D.solarImpactOverlayShown): a few of win3DOverlay_dataFresh()'s
+  // inputs (STUDY/TIME/STATION fields, changed directly rather than
+  // through an action that revises WIN3D) can make it go stale without
+  // ever setting WIN3D.update, and that needs to be caught promptly
+  // rather than leaving a now-wrong overlay stuck on screen.
+  // allSolarImpacts.win3DOverlay_recomputed covers the symmetric case: a
+  // fresh computation that might newly make the overlay valid to show,
+  // triggered from somewhere (a Skin Potential graph page, say) that also
+  // doesn't set WIN3D.update.
+  if (!WIN3D.update && !WIN3D.showShading && !WIN3D.showSolarImpactOverride
+      && !WIN3D.solarImpactOverlayShown && !allSolarImpacts.win3DOverlay_recomputed) {
+    return;
+  }
+
+  // One-shot: consumed here regardless of outcome, same reasoning as
+  // WIN3D.showSolarImpactOverride below - a frame that reaches past the
+  // early return above because this was the reason has to clear it, or
+  // every later frame would too.
+  allSolarImpacts.win3DOverlay_recomputed = false;
+
   // Captured once, up front - before WIN3D.draw() (which checks this same
   // thing itself, at its own top, to skip rendering what would just be
   // covered by it anyway) and before the one-shot
