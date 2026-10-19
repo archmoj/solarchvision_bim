@@ -13,6 +13,21 @@ boolean noShadeOnlyVisible2DTextures = false;
 // "projects/model-01/shadings/44N/Viewport_2Ds_Camera00.png".
 String camera2DTexture = "";
 
+// When true, ShadeViewport() builds and saves a transparent-background
+// PNG containing just the visible edges of Faces, painted black, to
+// cameraFaceEdgesTexture - instead of computing the normal shaded/
+// shadowed preview, or the 2D-object mask above. Meant to be overlaid on
+// top of the solar-impact overlay (draw_WIN3D_layers.pde) to make
+// building outlines and creases easier to pick out against the heatmap -
+// see preBakeViewport.pde, the only place meant to flip this (and
+// cameraFaceEdgesTexture) around a ShadeViewport() call.
+boolean noShadeOnlyVisibleFaceEdges = false;
+
+// Full output path of the face-edges mask PNG that ShadeViewport() saves
+// when noShadeOnlyVisibleFaceEdges is true, e.g.
+// "projects/model-01/shadings/44N/Viewport_FaceEdges_Camera00.png".
+String cameraFaceEdgesTexture = "";
+
 final int SHADE_HOURS_PER_DAY = 5 * 2;
 final int SHADE_FIRST_HOUR = 12 - SHADE_HOURS_PER_DAY / 2; // 7 a.m.
 final int SHADE_LAST_HOUR = 12 + SHADE_HOURS_PER_DAY / 2; // 17 p.m.
@@ -43,11 +58,11 @@ void ShadeViewport () {
   // build anyway).
   //
   // Skipped in mask mode: preBakeViewport() - the only caller that sets
-  // noShadeOnlyVisible2DTextures - already called buildFaceGrid() itself,
-  // right before its own main bake loop, with no camera move or geometry
-  // edit since, so repeating the same check-and-build here would only pay
-  // for it twice.
-  if (!noShadeOnlyVisible2DTextures) {
+  // noShadeOnlyVisible2DTextures or noShadeOnlyVisibleFaceEdges - already
+  // called buildFaceGrid() itself, right before its own main bake loop,
+  // with no camera move or geometry edit since, so repeating the same
+  // check-and-build here would only pay for it twice.
+  if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
     if (allModel2Ds.hasShadingContribution() && cameraHasMovedSinceFaceGridBuild()) {
       should_rebuildFaceGrid = true;
     }
@@ -103,6 +118,15 @@ void ShadeViewport () {
   float[] ray_start = new float[3];
   float[] ray_direction = new float[3];
 
+  // First pass (below) just records which Face each pixel's ray actually
+  // hit, -1 for "didn't hit a Face" (no hit at all, or hit something else
+  // sharing the same grid - a Model1D or a Model2Ds billboard); the
+  // second pass (after the main loop) compares each pixel against its
+  // neighbors and paints the actual black-edges output from that. Two
+  // passes because an edge is inherently about a pixel's relationship to
+  // ones that, in raster order, haven't been computed yet.
+  int[] faceEdgeHit = noShadeOnlyVisibleFaceEdges ? new int[RES1 * RES2] : null;
+
   for (int Image_Y_i = 0; Image_Y_i < RES2; Image_Y_i++) {
     float Image_Y = Image_Y_i - halfRES2;
 
@@ -133,6 +157,17 @@ void ShadeViewport () {
 
       if (RxP[0] >= 0) {
         int hitFace = (int) RxP[0];
+
+        if (noShadeOnlyVisibleFaceEdges) {
+          // entireFaces_facesEndIndex (isIntersected_Faces.pde) is the
+          // exclusive upper bound of the index range allFaces contributed
+          // to the shared grid - anything at or past it hit a Model1D or
+          // a Model2Ds billboard instead, which this mask treats the same
+          // as "didn't hit a Face" (-1), same as missing the scene
+          // entirely does just below.
+          faceEdgeHit[np] = (hitFace < entireFaces_facesEndIndex) ? hitFace : -1;
+          continue;
+        }
 
         // Both trees and people are Model2Ds billboards and so both carry
         // a texture here (entireFaceAlphaTexture[hitFace] != null). A tree
@@ -241,8 +276,32 @@ void ShadeViewport () {
             Shade_RGBA.pixels[np] = color(v, v, v, 255);
           }
         }
+      } else if (noShadeOnlyVisibleFaceEdges) {
+        faceEdgeHit[np] = -1;
       } else {
         Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
+      }
+    }
+  }
+
+  // Second pass for the face-edges mode: now that every pixel's hit face
+  // is known, paint a pixel black wherever it differs from its right or
+  // below neighbor (treating "off the edge of the image" as nothing to
+  // compare against, not as an edge in itself) - a silhouette against the
+  // background, a crease between two different Faces, and a Face's own
+  // boundary against a Model1D/Model2Ds billboard in front of or behind
+  // it all fall out of this one same comparison, transparent everywhere
+  // else.
+  if (noShadeOnlyVisibleFaceEdges) {
+    for (int Image_Y_i = 0; Image_Y_i < RES2; Image_Y_i++) {
+      for (int Image_X_i = 0; Image_X_i < RES1; Image_X_i++) {
+        int np = Image_Y_i * RES1 + Image_X_i;
+        int here = faceEdgeHit[np];
+
+        boolean isEdge = (Image_X_i + 1 < RES1) && (faceEdgeHit[np + 1] != here);
+        if (!isEdge) isEdge = (Image_Y_i + 1 < RES2) && (faceEdgeHit[np + RES1] != here);
+
+        Shade_RGBA.pixels[np] = isEdge ? color(0, 0, 0, 255) : color(0, 0, 0, 0);
       }
     }
   }
@@ -254,9 +313,14 @@ void ShadeViewport () {
     println(camera2DTexture);
   }
 
+  if (noShadeOnlyVisibleFaceEdges) {
+    Shade_RGBA.save(cameraFaceEdgesTexture);
+    println(cameraFaceEdgesTexture);
+  }
+
   showArrowCursor();
 
-  if (!noShadeOnlyVisible2DTextures) {
+  if (!noShadeOnlyVisible2DTextures && !noShadeOnlyVisibleFaceEdges) {
     // draw_WIN3D_layers.pde stretches Shade_RGBA to WIN3D.dX x WIN3D.dY
     // with no aspect correction, which only matches the live preview
     // (sized off WIN3D.dX/dY itself). The mask is a background bake, sized

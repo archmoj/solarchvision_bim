@@ -69,6 +69,15 @@ ArrayList<float[]> entireFaceUVBasis;
 // parameter below for where this actually gets enforced.
 ArrayList<Boolean> entireFaceCastsShadow;
 
+// entireFaces indices 1..entireFaces_facesEndIndex-1 (index 0 is always
+// the empty placeholder above) came from allFaces.addToFaceGrid() - set
+// once, in buildFaceGrid() below, right after that call and before
+// allModel1Ds/allModel2Ds add their own entries to the same shared grid.
+// ShadeViewport.pde's face-edges mask uses this to tell "hit a Face" from
+// "hit a Model1D/Model2D" (both still real, occlusion-relevant hits, just
+// not what that mask wants painted).
+int entireFaces_facesEndIndex = 1;
+
 // The WIN3D.cameraX/Y the grid was last actually (not skipped) built
 // with - see cameraHasMovedSinceFaceGridBuild() below. NaN means "never
 // built yet", so that first call always reports movement. Deliberately
@@ -116,6 +125,7 @@ void buildFaceGrid () {
   entireFaceCastsShadow.add(true);
 
   allFaces.addToFaceGrid(); // reuses Faces.pde's own geometry-only grid cache instead of re-walking/re-tessellating every face via TypeWindow.RENDER
+  entireFaces_facesEndIndex = entireFaces.size();
   padEntireFaceExtras();
   allModel1Ds.addToFaceGrid(); // reuses Model1Ds.pde's own WIN3D retained-mode cache instead of re-walking makeBranch() via TypeWindow.RENDER
   padEntireFaceExtras();

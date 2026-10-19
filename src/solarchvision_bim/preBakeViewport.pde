@@ -329,6 +329,14 @@ void preBakeViewport () {
   ShadeViewport();
   noShadeOnlyVisible2DTextures = false;
 
+  // Same reasoning, same setup already in place - just the one extra
+  // ShadeViewport() call, in its own mode, saving its own file.
+  cameraFaceEdgesTexture = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "FaceEdges_Camera" + nf(cameraIndex, 2) + ".png";
+
+  noShadeOnlyVisibleFaceEdges = true;
+  ShadeViewport();
+  noShadeOnlyVisibleFaceEdges = false;
+
   WIN3D.shadingQuality = preShadingQuality;
 
   showArrowCursor();

@@ -112,6 +112,15 @@ void draw_WIN3D_layers () {
     } else {
       image(img.get((int) fit[4], (int) fit[5], (int) fit[6], (int) fit[7]), fit[0], fit[1], fit[2], fit[3]);
     }
+
+    // Same dest rect as the overlay image itself (see faceEdgesOverlay.
+    // pde's own comment on why) - drawn right on top of it, before
+    // anything else (the palette, the hover tooltip) so those stay the
+    // topmost layer.
+    PImage faceEdges = faceEdgesOverlay_load();
+    if (faceEdges != null) {
+      image(faceEdges, fit[0], fit[1], fit[2], fit[3]);
+    }
   }
 
   if(mayDrawPalette == true) {
