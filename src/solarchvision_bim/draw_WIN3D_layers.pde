@@ -98,38 +98,19 @@ void draw_WIN3D_layers () {
     }
 
     PImage img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
-    float w = img.width;
-    float h = img.height;
-    float aspect1 = 1.0f * w / h;
-    float aspect2 = 1.0f * WIN3D.dX / WIN3D.dY;
-    float r = aspect2 / aspect1;
+    // {destX, destY, destW, destH, srcX, srcY, srcW, srcH} - see
+    // solarImpactOverlay_fitRect()'s own comment (solarImpactOverlayHover.
+    // pde) for the r == 1 / r > 1 / r < 1 cases this covers. srcW/srcH
+    // equal the full image size unless r < 1, the only case needing a crop.
+    float[] fit = solarImpactOverlay_fitRect(img);
 
-    if(r == 1) {
-      image(img, WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
+    if (fit[6] >= img.width && fit[7] >= img.height) {
+      image(img, fit[0], fit[1], fit[2], fit[3]);
+    } else {
+      image(img.get((int) fit[4], (int) fit[5], (int) fit[6], (int) fit[7]), fit[0], fit[1], fit[2], fit[3]);
     }
-    else if(r > 1) {
-      float newWidth = aspect1 * WIN3D.dY;
-      image(img,
-        WIN3D.cX + (WIN3D.dX - newWidth) / 2,
-        WIN3D.cY,
-        newWidth,
-        WIN3D.dY
-      );
-    } else { // case of r < 1
-      float extraWidth = aspect1 * WIN3D.dY;
-      float deltaRatio = (extraWidth - WIN3D.dX) / WIN3D.dX;
-      image(img.get(
-          (int) (w * deltaRatio / 2),
-          (int) 0,
-          (int) (w - w * deltaRatio),
-          (int) h
-        ),
-        WIN3D.cX,
-        WIN3D.cY,
-        WIN3D.dX,
-        WIN3D.dY
-      );
-    }
+
+    drawSolarImpactHover(img, fit);
   }
 
   if(mayDrawPalette == true) {
