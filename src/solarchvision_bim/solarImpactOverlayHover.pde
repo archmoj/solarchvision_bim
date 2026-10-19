@@ -48,9 +48,7 @@ boolean showARGB_inHover = false;
 // keeps it inside that rect - left when the mouse is in the right half,
 // right when it's in the left half, and the same above/below for the
 // vertical half - rather than a fixed corner that could run past an edge.
-final int solarImpactHover_boxW = 180;
 final int solarImpactHover_margin = 14; // gap between the cursor and the box
-final int solarImpactHover_lineHeight = 16;
 final int solarImpactHover_topPad = 6;
 final int solarImpactHover_bottomPad = 8;
 final int solarImpactHover_sidePad = 8;
@@ -147,25 +145,42 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   String[] lines = solarImpactHover_lines(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
   if (lines == null) return;
 
-  float boxH = solarImpactHover_topPad + lines.length * solarImpactHover_lineHeight + solarImpactHover_bottomPad;
+  // textWidth()/textAscent()/textDescent() below all read the current text
+  // size, so this has to happen before measuring anything.
+  textSize(MessageSize);
 
-  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, solarImpactHover_boxW, boxH);
+  float lineHeight = textAscent() + textDescent();
+  float boxH = solarImpactHover_topPad + lines.length * lineHeight + solarImpactHover_bottomPad;
+
+  float maxTextWidth = 0;
+  for (int i = 0; i < lines.length; i++) {
+    maxTextWidth = max(maxTextWidth, textWidth(lines[i]));
+  }
+  float boxW = 2 * solarImpactHover_sidePad + maxTextWidth;
+
+  float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH, boxW, boxH);
   float boxX = boxPos[0];
   float boxY = boxPos[1];
 
   noStroke();
   fill(255, 230);
-  rect(boxX, boxY, solarImpactHover_boxW, boxH);
-  noFill();
+  rect(boxX, boxY, boxW, boxH);
+
+  // Just the one horizontal and one vertical edge closest to the cursor,
+  // rather than a full border: whichever ones that is tells you which
+  // corner points back at the actual hovered pixel, instead of leaving
+  // that ambiguous with a box outlined on all four sides.
   stroke(0);
   strokeWeight(1);
-  rect(boxX, boxY, solarImpactHover_boxW, boxH);
+  float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
+  float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
+  line(nearX, boxY, nearX, boxY + boxH);
+  line(boxX, nearY, boxX + boxW, nearY);
 
   noStroke();
   fill(0);
   textAlign(LEFT, TOP);
-  textSize(14);
   for (int i = 0; i < lines.length; i++) {
-    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * solarImpactHover_lineHeight);
+    text(lines[i], boxX + solarImpactHover_sidePad, boxY + solarImpactHover_topPad + i * lineHeight);
   }
 }
