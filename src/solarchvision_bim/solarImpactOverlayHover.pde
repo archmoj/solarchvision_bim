@@ -119,9 +119,9 @@ String[] solarImpactHover_lines (int q, int dayIndex, int x, int y) {
   float S = ((P + N) > 0.00001) ? (P - N) * abs(P - N) / (P + N) : 0;
 
   return new String[] {
-    "P: " + nf(P, 1, 2) + " kWh\u00B0C/m\u00B2",
-    "N: " + nf(N, 1, 2) + " kWh\u00B0C/m\u00B2",
-    "S: " + nf(S, 1, 2) + " kWh\u00B0C/m\u00B2"
+    "Positive: +" + nf(P, 1, 2) + " kWh\u00B0C/m\u00B2",
+    "Negative: -" + nf(N, 1, 2) + " kWh\u00B0C/m\u00B2",
+    "Final Score: " + nf(S, 1, 2) + " kWh\u00B0C/m\u00B2"
   };
 }
 

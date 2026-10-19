@@ -162,10 +162,10 @@ class SolarImpactOverlayHoverTest {
 
     assertNotNull(lines);
     assertEquals(3, lines.length);
-    assertTrue(lines[0].startsWith("P:") && lines[0].contains("15.00"), "P must be B*valuesMUL = 10*1.5 = 15.00: " + lines[0]);
-    assertTrue(lines[1].startsWith("N:") && lines[1].contains("6.00"), "N must be R*valuesMUL = 4*1.5 = 6.00: " + lines[1]);
+    assertTrue(lines[0].startsWith("Positive: +") && lines[0].contains("15.00"), "P must be B*valuesMUL = 10*1.5 = 15.00: " + lines[0]);
+    assertTrue(lines[1].startsWith("Negative: -") && lines[1].contains("6.00"), "N must be R*valuesMUL = 4*1.5 = 6.00: " + lines[1]);
     // S = (P-N)*|P-N|/(P+N) = (15-6)*9/21 = 81/21 = 3.857...
-    assertTrue(lines[2].startsWith("S:") && lines[2].contains("3.86"), "S must be (P-N)*|P-N|/(P+N) ~= 3.86: " + lines[2]);
+    assertTrue(lines[2].startsWith("Final Score: ") && lines[2].contains("3.86"), "S must be (P-N)*|P-N|/(P+N) ~= 3.86: " + lines[2]);
   }
 
   @Test
