@@ -76,6 +76,9 @@ void draw_WIN3D_layers () {
   // own comment.
   WIN3D.solarImpactOverlayShown = showSolarImpactOverlay;
 
+  PImage img = null;
+  float[] fit = null;
+
   if (showSolarImpactOverlay) {
     mayDrawPalette = true;
 
@@ -97,20 +100,18 @@ void draw_WIN3D_layers () {
       rect(WIN3D.cX, WIN3D.cY, WIN3D.dX, WIN3D.dY);
     }
 
-    PImage img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
+    img = allSolarImpacts.Image[WIN3D.impactTypeIndex][impactDisplayDay];
     // {destX, destY, destW, destH, srcX, srcY, srcW, srcH} - see
     // solarImpactOverlay_fitRect()'s own comment (solarImpactOverlayHover.
     // pde) for the r == 1 / r > 1 / r < 1 cases this covers. srcW/srcH
     // equal the full image size unless r < 1, the only case needing a crop.
-    float[] fit = solarImpactOverlay_fitRect(img);
+    fit = solarImpactOverlay_fitRect(img);
 
     if (fit[6] >= img.width && fit[7] >= img.height) {
       image(img, fit[0], fit[1], fit[2], fit[3]);
     } else {
       image(img.get((int) fit[4], (int) fit[5], (int) fit[6], (int) fit[7]), fit[0], fit[1], fit[2], fit[3]);
     }
-
-    drawSolarImpactHover(img, fit);
   }
 
   if(mayDrawPalette == true) {
@@ -120,5 +121,9 @@ void draw_WIN3D_layers () {
     // where WIN3D.draw() itself was skipped entirely. See drawPalette()'s
     // own comment.
     WIN3D.drawPalette();
+  }
+
+  if (showSolarImpactOverlay) {
+    drawSolarImpactHover(img, fit);
   }
 }
