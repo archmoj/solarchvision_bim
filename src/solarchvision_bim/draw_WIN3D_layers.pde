@@ -1,5 +1,6 @@
 void draw_WIN3D_layers () {
   if (!WIN3D.include) return;
+  if (UI_menuBar.selected_parent != -1) return;
 
   // Nothing pending, nothing currently shown, nothing just recomputed -
   // skip the rest of this function entirely rather than re-deriving the
