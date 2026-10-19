@@ -41,22 +41,17 @@ final float FACE_EDGE_NORMAL_DOT_THRESHOLD = 0.999;
 // hit at all, or a Model1D/Model2Ds billboard instead - see
 // noShadeOnlyVisibleFaceEdges' own comment); nxA/nyA/nzA and nxB/nyB/nzB
 // are that hit's own unit normal, meaningless (and unused) when that side
-// is -1. True for a Face next to something that isn't one (a silhouette),
-// false when neither side is a Face (nothing to outline), and otherwise
-// only when the two Faces' normals genuinely differ by more than
-// FACE_EDGE_NORMAL_DOT_THRESHOLD - so tessellating one flat surface into
-// many same-normal pieces doesn't draw a grid of internal edges across
-// it, while an actual crease (or even two different sub-faces that
-// happen to share the exact same index, which can't occur, but the
-// normal check covers it regardless) still shows correctly. Pure/no
-// drawing or face-grid access, so it's independently checkable without a
-// live PGraphics context, unlike the rest of this per-pixel loop.
+// is -1. Only true between two different Faces whose normals genuinely
+// differ by more than FACE_EDGE_NORMAL_DOT_THRESHOLD - so tessellating
+// one flat surface into many same-normal pieces doesn't draw a grid of
+// internal edges across it, while an actual crease still shows correctly
+// - and deliberately false whenever either side isn't a Face: no
+// silhouette against the background, a Model1D, or a Model2Ds billboard,
+// only creases between two Faces. Pure/no drawing or face-grid access, so
+// it's independently checkable without a live PGraphics context, unlike
+// the rest of this per-pixel loop.
 boolean isFaceEdgeBetween (int hitA, float nxA, float nyA, float nzA, int hitB, float nxB, float nyB, float nzB) {
-  boolean aIsFace = hitA >= 0;
-  boolean bIsFace = hitB >= 0;
-
-  if (aIsFace != bIsFace) return true;
-  if (!aIsFace) return false;
+  if (hitA < 0 || hitB < 0) return false;
   if (hitA == hitB) return false;
 
   float dot = nxA * nxB + nyA * nyB + nzA * nzB;
