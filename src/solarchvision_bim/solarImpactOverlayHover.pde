@@ -52,17 +52,27 @@ final int solarImpactHover_margin = 14; // gap between the cursor and the box
 final int solarImpactHover_topPad = 6;
 final int solarImpactHover_bottomPad = 8;
 final int solarImpactHover_sidePad = 8;
+final int solarImpactHover_strokeWeight = 2;
+// Processing centers a stroke on its path, so a strokeWeight(2) edge drawn
+// exactly at the overlay's own boundary would still stick out 1px past it.
+// solarImpactHover_boxPosition() below keeps the box this far clear of
+// destX..destX+destW/destY..destY+destH, not just boxX..boxX+boxW/
+// boxY..boxY+boxH, so the stroke itself never crosses outside the overlay
+// - ceil() rather than a plain /2, so an odd strokeWeight still gets a
+// whole extra pixel of clearance instead of rounding down short.
+final int solarImpactHover_strokeInset = (int) ceil(0.5 * solarImpactHover_strokeWeight);
 
 // Returns {boxX, boxY}: where a box of size (boxW, boxH) should be drawn
-// so it stays entirely inside destX..destX+destW / destY..destY+destH
-// (the overlay's own dest rect, from solarImpactOverlay_fitRect() above) -
-// on whichever side of (mouseX, mouseY) that rect has more room: left of
-// the cursor when it's in the right half, right when it's in the left
-// half, and the same above/below for the vertical half, rather than a
-// fixed corner that could run past an edge. The final constrain() is a
-// safety net for a box wider/taller than half the rect. Pure/no drawing,
-// so it's independently checkable without a live PGraphics context - see
-// drawSolarImpactHover()'s own comment for why nothing else here is.
+// so it (and its stroke - see solarImpactHover_strokeInset above) stays
+// entirely inside destX..destX+destW / destY..destY+destH (the overlay's
+// own dest rect, from solarImpactOverlay_fitRect() above) - on whichever
+// side of (mouseX, mouseY) that rect has more room: left of the cursor
+// when it's in the right half, right when it's in the left half, and the
+// same above/below for the vertical half, rather than a fixed corner that
+// could run past an edge. The final constrain() is a safety net for a box
+// wider/taller than half the rect. Pure/no drawing, so it's independently
+// checkable without a live PGraphics context - see drawSolarImpactHover()'s
+// own comment for why nothing else here is.
 float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, float destY, float destW, float destH, float boxW, float boxH) {
   boolean rightHalf = (mouseX - destX) > (destW / 2);
   boolean bottomHalf = (mouseY - destY) > (destH / 2);
@@ -70,8 +80,8 @@ float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, f
   float boxX = rightHalf ? (mouseX - solarImpactHover_margin - boxW) : (mouseX + solarImpactHover_margin);
   float boxY = bottomHalf ? (mouseY - solarImpactHover_margin - boxH) : (mouseY + solarImpactHover_margin);
 
-  boxX = constrain(boxX, destX, destX + destW - boxW);
-  boxY = constrain(boxY, destY, destY + destH - boxH);
+  boxX = constrain(boxX, destX + solarImpactHover_strokeInset, destX + destW - boxW - solarImpactHover_strokeInset);
+  boxY = constrain(boxY, destY + solarImpactHover_strokeInset, destY + destH - boxH - solarImpactHover_strokeInset);
 
   return new float[] { boxX, boxY };
 }
@@ -171,7 +181,7 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   // corner points back at the actual hovered pixel, instead of leaving
   // that ambiguous with a box outlined on all four sides.
   stroke(0);
-  strokeWeight(1);
+  strokeWeight(solarImpactHover_strokeWeight);
   float nearX = (boxX > mouseX) ? boxX : (boxX + boxW);
   float nearY = (boxY > mouseY) ? boxY : (boxY + boxH);
   line(nearX, boxY, nearX, boxY + boxH);
