@@ -243,4 +243,109 @@ class SolarImpactsTest {
 
     assertFalse(app.allSolarImpacts.win3DOverlay_needsClearRect());
   }
+
+  // ================= win3DOverlay_rawValuesAt ==============================
+  // Matrix_ARGB/dayValuesMUL/total_Matrix_ARGB are normally only filled by
+  // calculate_Impact_CurrentPreBaked() itself, which needs a full climate-
+  // data/geometry setup this test doesn't have - so these build the same
+  // shapes that function builds by hand instead, matching the day-index
+  // convention it uses (dayIndex 0 is the summary/total slot, "j = -1" per
+  // that function's own comment; dayIndex j + 1 for day j).
+
+  private void putDay (int dayIndex, int q, int x, int y, float a, float r, float g, float b, float valuesMUL) {
+    if (app.allSolarImpacts.Matrix_ARGB == null) {
+      app.allSolarImpacts.Matrix_ARGB = new float[dayIndex + 1][][][][];
+      app.allSolarImpacts.dayValuesMUL = new float[dayIndex + 1];
+    }
+    if (app.allSolarImpacts.Matrix_ARGB[dayIndex] == null) {
+      float[][][][] day = new float[2][4][10][10];
+      for (float[][][] qq : day) for (float[][] c : qq) for (float[] row : c) java.util.Arrays.fill(row, app.FLOAT_undefined);
+      app.allSolarImpacts.Matrix_ARGB[dayIndex] = day;
+    }
+    app.allSolarImpacts.Matrix_ARGB[dayIndex][q][0][x][y] = a;
+    app.allSolarImpacts.Matrix_ARGB[dayIndex][q][1][x][y] = r;
+    app.allSolarImpacts.Matrix_ARGB[dayIndex][q][2][x][y] = g;
+    app.allSolarImpacts.Matrix_ARGB[dayIndex][q][3][x][y] = b;
+    app.allSolarImpacts.dayValuesMUL[dayIndex] = valuesMUL;
+  }
+
+  @Test
+  void rawValuesAt_appliesThatDaysOwnValuesMUL_forASpecificDay () {
+    putDay(1, 0, 3, 4, 5f, 1f, 2f, 3f, 2f);
+
+    float[] v = app.allSolarImpacts.win3DOverlay_rawValuesAt(0, 1, 3, 4);
+
+    assertNotNull(v);
+    assertEquals(10f, v[0], 0.0001f); // A: 5*2
+    assertEquals(2f, v[1], 0.0001f);  // R: 1*2
+    assertEquals(4f, v[2], 0.0001f);  // G: 2*2
+    assertEquals(6f, v[3], 0.0001f);  // B: 3*2
+  }
+
+  @Test
+  void rawValuesAt_isNull_forAPixelTheHourlyLoopNeverTouched () {
+    putDay(1, 0, 3, 4, 5f, 1f, 2f, 3f, 2f); // only (3,4) was ever set
+
+    assertNull(app.allSolarImpacts.win3DOverlay_rawValuesAt(0, 1, 0, 0));
+  }
+
+  @Test
+  void rawValuesAt_isNull_whenAnotherImpactTypeWasNeverSetThatDay () {
+    putDay(1, 0, 3, 4, 5f, 1f, 2f, 3f, 2f); // only Impact_ACTIVE (q=0) was set
+
+    assertNull(app.allSolarImpacts.win3DOverlay_rawValuesAt(1, 1, 3, 4));
+  }
+
+  @Test
+  void rawValuesAt_dividesByTheDayCount_forTheSummaryImage () {
+    app.allSolarImpacts.total_Matrix_ARGB = new float[2][4][10][10];
+    app.allSolarImpacts.total_Matrix_ARGB[0][0][3][4] = 20f;
+    app.allSolarImpacts.total_Matrix_ARGB[0][1][3][4] = 4f;
+    app.allSolarImpacts.total_Matrix_ARGB[0][2][3][4] = 8f;
+    app.allSolarImpacts.total_Matrix_ARGB[0][3][3][4] = 12f;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 4;
+
+    float[] v = app.allSolarImpacts.win3DOverlay_rawValuesAt(0, 0, 3, 4);
+
+    assertNotNull(v);
+    assertEquals(5f, v[0], 0.0001f);  // 20/4
+    assertEquals(1f, v[1], 0.0001f);  // 4/4
+    assertEquals(2f, v[2], 0.0001f);  // 8/4
+    assertEquals(3f, v[3], 0.0001f);  // 12/4
+  }
+
+  @Test
+  void rawValuesAt_isNull_whenTheSummaryPixelSumsToExactlyZero () {
+    // A pixel the hourly loop touched every day (so A isn't FLOAT_undefined)
+    // but whose net total comes out to exactly 0 - the same "no real data,
+    // show the gray fallback" case calculate_Impact_CurrentPreBaked() itself
+    // tests for with Image_A != 0.
+    app.allSolarImpacts.total_Matrix_ARGB = new float[2][4][10][10];
+    app.allSolarImpacts.total_Matrix_ARGB[0][0][0][0] = 0f;
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 4;
+
+    assertNull(app.allSolarImpacts.win3DOverlay_rawValuesAt(0, 0, 0, 0));
+  }
+
+  @Test
+  void rawValuesAt_isNull_forADayThatWasNeverComputedThisRun () {
+    app.allSolarImpacts.Matrix_ARGB = new float[3][][][][]; // slots 1, 2 both left null
+
+    assertNull(app.allSolarImpacts.win3DOverlay_rawValuesAt(0, 1, 3, 4));
+  }
+
+  @Test
+  void rawValuesAt_isNull_forAnOutOfRangeDayIndex_ratherThanThrowing () {
+    putDay(1, 0, 3, 4, 5f, 1f, 2f, 3f, 2f);
+
+    assertDoesNotThrow(() -> assertNull(app.allSolarImpacts.win3DOverlay_rawValuesAt(0, 99, 3, 4)));
+  }
+
+  @Test
+  void rawValuesAt_isNull_beforeAnythingHasEverBeenComputed () {
+    assertNull(app.allSolarImpacts.win3DOverlay_rawValuesAt(0, 1, 0, 0));
+    assertNull(app.allSolarImpacts.win3DOverlay_rawValuesAt(0, 0, 0, 0));
+  }
 }
