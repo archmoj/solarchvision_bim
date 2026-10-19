@@ -26,9 +26,11 @@ float[] solarImpactOverlay_fitRect (PImage img) {
 }
 
 // --- solar-impact overlay hover tooltip -----------------------------------
-// Shows the RGB of the overlay pixel under the mouse, three lines in a
-// small floating box near the cursor, whenever that pixel isn't fully
-// transparent.
+// Shows the raw A/R/G/B data under the mouse (see win3DOverlay_
+// rawValuesAt()'s own comment, SolarImpacts.pde, for what these actually
+// are - not the rendered overlay PImage's own RGBA, which has already
+// been through a color palette and isn't the real data), four lines in a
+// small floating box near the cursor, whenever there's real data there.
 //
 // No snapshot/restore trick here (tried twice now - see git history on
 // this file for both attempts). UI_menuBar.pde's dropdown can use one
@@ -45,8 +47,8 @@ float[] solarImpactOverlay_fitRect (PImage img) {
 // keeps it inside that rect - left when the mouse is in the right half,
 // right when it's in the left half, and the same above/below for the
 // vertical half - rather than a fixed corner that could run past an edge.
-final int solarImpactHover_boxW = 70;
-final int solarImpactHover_boxH = 54;
+final int solarImpactHover_boxW = 100;
+final int solarImpactHover_boxH = 78;
 final int solarImpactHover_margin = 14; // gap between the cursor and the box
 
 // Returns {boxX, boxY}: where the hover box should be drawn so it stays
@@ -74,11 +76,15 @@ float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, f
 
 // Called every frame the solar-impact overlay is shown, right after
 // draw_WIN3D_layers.pde draws it - img/fit are that same image and the
-// fit rect solarImpactOverlay_fitRect() above just computed for it, so
-// this samples the exact pixel on screen under the mouse right now.
-// draw_WIN3D_layers.pde already returns before ever reaching this call
-// while UI_menuBar.selected_parent != -1, so this doesn't need to check
-// that itself.
+// fit rect solarImpactOverlay_fitRect() above just computed for it. img
+// is only needed here for its width/height - the same RES1 x RES2 grid
+// allSolarImpacts.Matrix_ARGB/total_Matrix_ARGB are indexed by, so ix/iy
+// below locate the exact data point under the mouse, same as it used to
+// locate the exact rendered pixel - not for sampling a color from it
+// anymore; see win3DOverlay_rawValuesAt()'s own comment (SolarImpacts.pde)
+// for why. draw_WIN3D_layers.pde already returns before ever reaching
+// this call while UI_menuBar.selected_parent != -1, so this doesn't need
+// to check that itself.
 void drawSolarImpactHover (PImage img, float[] fit) {
   float destX = fit[0], destY = fit[1], destW = fit[2], destH = fit[3];
   if (!isInside(mouseX, mouseY, destX, destY, destX + destW, destY + destH)) return;
@@ -88,12 +94,8 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   int ix = (int) constrain(fit[4] + fx * fit[6], 0, img.width - 1);
   int iy = (int) constrain(fit[5] + fy * fit[7], 0, img.height - 1);
 
-  color c = img.get(ix, iy);
-  if (alpha(c) == 0) return;
-
-  int r = (int) red(c);
-  int g = (int) green(c);
-  int b = (int) blue(c);
+  float[] values = allSolarImpacts.win3DOverlay_rawValuesAt(WIN3D.impactTypeIndex, impactDisplayDay, ix, iy);
+  if (values == null) return;
 
   float[] boxPos = solarImpactHover_boxPosition(mouseX, mouseY, destX, destY, destW, destH);
   float boxX = boxPos[0];
@@ -111,7 +113,8 @@ void drawSolarImpactHover (PImage img, float[] fit) {
   fill(0);
   textAlign(LEFT, TOP);
   textSize(14);
-  text("R: " + r, boxX + 8, boxY + 6);
-  text("G: " + g, boxX + 8, boxY + 22);
-  text("B: " + b, boxX + 8, boxY + 38);
+  text("A: " + nf(values[0], 1, 2), boxX + 8, boxY + 6);
+  text("R: " + nf(values[1], 1, 2), boxX + 8, boxY + 22);
+  text("G: " + nf(values[2], 1, 2), boxX + 8, boxY + 38);
+  text("B: " + nf(values[3], 1, 2), boxX + 8, boxY + 54);
 }

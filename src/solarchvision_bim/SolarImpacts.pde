@@ -6,6 +6,35 @@ class SolarImpacts {
 
   PImage[][] Image;
 
+  // Raw A/R/G/B data calculate_Impact_CurrentPreBaked() builds Image[][]
+  // from, retained (not just computed-and-discarded, the way it used to
+  // be, as purely local variables) so the WIN3D hover tooltip
+  // (solarImpactOverlayHover.pde, via win3DOverlay_rawValuesAt() below)
+  // can show the actual underlying data instead of the rendered PImage's
+  // RGBA - which has already been through a color palette, the Model2Ds
+  // billboard override, and the "else gray" fallback for an untouched
+  // pixel, and is no longer the real data (and, for Image[][]'s RGB-
+  // format PImages specifically, doesn't even carry a meaningful alpha to
+  // gate on - every pixel reads back fully opaque regardless of whether
+  // there's real data there).
+  //
+  // Matrix_ARGB is indexed exactly like Image[q][dayIndex]: dayIndex 0
+  // isn't used here (the total/summary slot is total_Matrix_ARGB instead,
+  // "j = -1" per that function's own comment on its own total block),
+  // dayIndex j + 1 for day j. Each day's own valuesMUL (a single per-day
+  // scalar - see where it's computed in calculate_Impact_
+  // CurrentPreBaked()) still needs applying on read, same as that
+  // function applies it when building Image_RGBA, so it's persisted
+  // alongside in dayValuesMUL rather than baked into Matrix_ARGB itself.
+  // total_Matrix_ARGB is the raw accumulated sum across the whole day
+  // range, with the day-count division calculate_Impact_
+  // CurrentPreBaked() applies for the total image's own Image_RGBA
+  // likewise applied on read (win3DOverlay_rawValuesAt() below), not
+  // baked in.
+  float[][][][][] Matrix_ARGB;
+  float[] dayValuesMUL;
+  float[][][][] total_Matrix_ARGB;
+
   boolean displayImage = false;
 
   int sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
@@ -204,6 +233,57 @@ class SolarImpacts {
       impactDisplayDay < this.Image[WIN3D.impactTypeIndex].length;
   }
 
+  // Returns the raw {A, R, G, B} data calculate_Impact_CurrentPreBaked()
+  // actually built this.Image[q][dayIndex]'s pixel (x, y) from -
+  // Matrix_ARGB (that day's own accumulated values, with that day's own
+  // dayValuesMUL applied) for dayIndex >= 1, or total_Matrix_ARGB (summed
+  // across the whole day range, divided by the day count) for the
+  // summary image (dayIndex == 0, "j = -1" per that function's own
+  // comment on its own total block) - see the fields' own comments above
+  // for why this reads these rather than the rendered PImage's RGBA.
+  // Null when there's nothing meaningful to show: no computation has
+  // filled this slot yet, the ray behind this pixel never actually hit
+  // anything (is_defined() on the raw, pre-multiply/pre-division A value
+  // - checking afterward isn't reliable, since multiplying or dividing
+  // FLOAT_undefined can land back under the is_defined() threshold even
+  // though it was never real), or the final A comes out to exactly 0 -
+  // the same "has real data" test calculate_Impact_CurrentPreBaked()
+  // itself uses (Image_A != 0) to decide between a palette color and the
+  // plain gray fallback.
+  float[] win3DOverlay_rawValuesAt (int q, int dayIndex, int x, int y) {
+    float a, r, g, b;
+
+    if (dayIndex == 0) {
+      if (this.total_Matrix_ARGB == null) return null;
+      float rawA = this.total_Matrix_ARGB[q][0][x][y];
+      if (!is_defined(rawA)) return null;
+
+      float dayCount = STUDY.endDay - STUDY.startDay;
+      if (dayCount <= 0) return null;
+
+      a = rawA / dayCount;
+      r = this.total_Matrix_ARGB[q][1][x][y] / dayCount;
+      g = this.total_Matrix_ARGB[q][2][x][y] / dayCount;
+      b = this.total_Matrix_ARGB[q][3][x][y] / dayCount;
+    } else {
+      if (this.Matrix_ARGB == null || dayIndex >= this.Matrix_ARGB.length || this.Matrix_ARGB[dayIndex] == null) return null;
+
+      float[][][][] day = this.Matrix_ARGB[dayIndex];
+      float rawA = day[q][0][x][y];
+      if (!is_defined(rawA)) return null;
+
+      float mul = this.dayValuesMUL[dayIndex];
+      a = rawA * mul;
+      r = day[q][1][x][y] * mul;
+      g = day[q][2][x][y] * mul;
+      b = day[q][3][x][y] * mul;
+    }
+
+    if (a == 0) return null;
+
+    return new float[] { a, r, g, b };
+  }
+
   // Called once, by preBakeViewport.pde, right at its own top - before it
   // overrides WIN3D.dX/dY to fit the impact resolution - so this is
   // whichever camera actually drove the Direct/Diffuse/mask PNGs it's
@@ -348,8 +428,19 @@ class SolarImpacts {
           total_Image_RGBA[q] = createImage(RES1, RES2, RGB);
         }
 
+        // this.total_Matrix_ARGB aliases the same array the code below
+        // already builds and accumulates into via the local name - no
+        // other line in this function needs to change, this just also
+        // keeps a reference reachable after the function returns. Same
+        // reasoning for this.Matrix_ARGB/dayValuesMUL, sized here (one
+        // slot per this.Image[q]'s own dayIndex) before the day loop
+        // below fills each slot in turn.
         float[][][][] total_Matrix_ARGB;
         total_Matrix_ARGB = new float [2][4][RES1][RES2];
+        this.total_Matrix_ARGB = total_Matrix_ARGB;
+
+        this.Matrix_ARGB = new float[this.Image[0].length][][][][];
+        this.dayValuesMUL = new float[this.Image[0].length];
 
         for (int np = 0; np < (RES1 * RES2); np++) {
           int Image_X = np % RES1;
@@ -388,6 +479,7 @@ class SolarImpacts {
           float[][][][] Matrix_ARGB;
 
           Matrix_ARGB = new float [2][4][RES1][RES2];
+          this.Matrix_ARGB[j + 1] = Matrix_ARGB;
 
           for (int np = 0; np < (RES1 * RES2); np++) {
             int Image_X = np % RES1;
@@ -517,6 +609,8 @@ class SolarImpacts {
           if (valuesNUM != 0) {
             valuesMUL = funcs.DayTime(STATION.getLatitude(), DATE_ANGLE) / (1.0 * valuesNUM);
           }
+
+          this.dayValuesMUL[j + 1] = valuesMUL;
 
           for (int q = 0; q < numberOfImpactVariations; q++) {
             Image_RGBA[q].loadPixels();
