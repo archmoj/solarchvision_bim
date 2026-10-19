@@ -105,6 +105,18 @@ class WIN3DActionsTest {
     assertTrue(app.VertexSolar_rebuild_array);
   }
 
+  @Test
+  void keyShiftTab_alsoRequestsTheSolarImpactOverlayOverride () {
+    // See SolarImpactsTest.java's win3DOverlay_needsClearRect tests for
+    // what this flag actually controls: showing the WIN3D solar-impact
+    // overlay even with the camera mismatched.
+    app.WIN3D.showSolarImpactOverride = false;
+
+    app.runScriptLine("Toggle Impact Type");
+
+    assertTrue(app.WIN3D.showSolarImpactOverride);
+  }
+
   // ================= WIN3D , / WIN3D . (perspective dolly / zoom) ========
 
   @Test
@@ -356,6 +368,19 @@ class WIN3DActionsTest {
   }
 
   @Test
+  void keyD_alsoRequestsTheSolarImpactOverlayOverride () {
+    // See SolarImpactsTest.java's win3DOverlay_needsClearRect tests for
+    // what this flag actually controls: showing the WIN3D solar-impact
+    // overlay even with the camera mismatched.
+    app.STUDY.endDay = 5;
+    app.WIN3D.showSolarImpactOverride = false;
+
+    app.runScriptLine("Next Impact Day");
+
+    assertTrue(app.WIN3D.showSolarImpactOverride);
+  }
+
+  @Test
   void keyShiftD_rewindsDisplayDayAndWrapsAtZero () {
     app.STUDY.endDay = 5;
     app.impactDisplayDay = 0;
@@ -364,6 +389,16 @@ class WIN3DActionsTest {
 
     assertNotEquals(app.UnrecognizedCommand, hint);
     assertEquals(5, app.impactDisplayDay);
+  }
+
+  @Test
+  void keyShiftD_alsoRequestsTheSolarImpactOverlayOverride () {
+    app.STUDY.endDay = 5;
+    app.WIN3D.showSolarImpactOverride = false;
+
+    app.runScriptLine("Previous Impact Day");
+
+    assertTrue(app.WIN3D.showSolarImpactOverride);
   }
 
   // ================= WIN3D Enter ==========================================

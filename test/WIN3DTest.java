@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import processing.core.PImage;
 
 class WIN3DTest {
 
@@ -170,6 +171,37 @@ class WIN3DTest {
     app.WIN3D.shadingMode = -999; // matches nothing
     float[] result = app.WIN3D.choosePaletteParams();
     assertEquals(0f, result[3], 0.0001f);
+  }
+
+  @Test
+  void isSolarPaletteMode_isTrue_whenTheSolarImpactOverlayIsShown_evenWithAnUnrelatedShadeMode () {
+    // Set by draw_WIN3D_layers.pde each frame so the palette (now drawn
+    // separately from WIN3D's own 3D render - see drawPalette()'s own
+    // comment) still shows up over the overlay.
+    app.WIN3D.shadingMode = -999; // matches nothing on its own
+    app.WIN3D.solarImpactOverlayShown = true;
+
+    assertTrue(app.WIN3D.isSolarPaletteMode());
+  }
+
+  // ================= draw (solar-impact overlay clearing-rect skip) ======
+
+  @Test
+  void draw_skipsRenderingAndConsumesUpdate_whenTheClearingRectWillCoverItAnyway () {
+    app.allSolarImpacts.win3DOverlay_recordAnalysisState();
+    app.allSolarImpacts.Image = new PImage[2][5];
+    app.WIN3D.impactTypeIndex = 0;
+    app.impactDisplayDay = 2;
+    app.WIN3D.showSolarImpactOverride = true; // camera deliberately left un-recorded, so it mismatches
+    app.WIN3D.update = true;
+
+    // If this didn't early-return via win3DOverlay_needsClearRect(), it
+    // would reach beginImageScale()/this.graphics.* below - this.graphics
+    // is never initialized in a bare, never-setup()'d instance, so that
+    // would throw instead of returning cleanly.
+    assertDoesNotThrow(() -> app.WIN3D.draw());
+
+    assertFalse(app.WIN3D.update, "this.updated() must still run, or this would be retried as a real render next frame");
   }
 
   // ================= isRepeatableCommandKey ==============================
