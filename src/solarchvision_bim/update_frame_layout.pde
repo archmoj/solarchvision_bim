@@ -80,6 +80,12 @@ void update_frame_layout () {
     if (Sun3D != null) Sun3D.win3DCache = null;
     if (Moon3D != null) Moon3D.win3DCache = null;
     if (Earth3D != null) Earth3D.win3DCache = null;
+
+    // See win3DOverlay_resyncGenerationAfterResize()'s own comment: the
+    // model_changed() call just above was for the new WIN3D.graphics
+    // context, not an actual geometry edit, so don't let it falsely hide
+    // the solar-impact overlay.
+    allSolarImpacts.win3DOverlay_resyncGenerationAfterResize();
   }
 
   WORLD.revise();

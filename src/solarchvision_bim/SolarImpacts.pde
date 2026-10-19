@@ -212,6 +212,25 @@ class SolarImpacts {
     this.win3DOverlay_currentCameraIndex       = WIN3D.currentCameraIndex;
   }
 
+  // model_changed() bumps allFaces/allModel1Ds/Terrain's winCacheGeneration
+  // counters - exactly what win3DOverlay_dataFresh() above reads as its
+  // "has the model changed" signal - for two different reasons: an actual
+  // structural/material edit (which should invalidate this.Image[][]), and
+  // also, via update_frame_layout.pde, a pure viewport resize (WIN3D.
+  // graphics gets recreated by createGraphics(), so the cached PShapes
+  // built against the old one need rebuilding - nothing about the model's
+  // actual geometry changed). win3DOverlay_dataFresh() can't tell those two
+  // reasons apart from the counters alone, so update_frame_layout.pde calls
+  // this right after its own resize-triggered model_changed() call, to
+  // catch this recorded snapshot up to the new (but data-wise unchanged)
+  // generation values - an actual edit elsewhere, which never calls this,
+  // still invalidates freshness exactly as before.
+  void win3DOverlay_resyncGenerationAfterResize () {
+    this.win3DOverlay_facesGeneration    = allFaces.winCacheGeneration;
+    this.win3DOverlay_model1DsGeneration = allModel1Ds.winCacheGeneration;
+    this.win3DOverlay_terrainGeneration  = Terrain.winCacheGeneration;
+  }
+
   // Called once, right as calculate_Impact_CurrentPreBaked() finishes a
   // successful computation, so every field below is simply "whatever
   // calculate_Impact_CurrentPreBaked() actually used this time" - extend
