@@ -28,6 +28,41 @@ boolean noShadeOnlyVisibleFaceEdges = false;
 // "projects/model-01/shadings/44N/Viewport_FaceEdges_Camera00.png".
 String cameraFaceEdgesTexture = "";
 
+// cos(~2.56 degrees) - two neighboring hits whose (unit) normals dot to at
+// least this are treated as the same flat surface by isFaceEdgeBetween()
+// below, not a real crease. A small tolerance rather than exact equality,
+// since two independently-computed normals for what's geometrically the
+// same flat plane aren't guaranteed to come out bit-for-bit identical.
+final float FACE_EDGE_NORMAL_DOT_THRESHOLD = 0.999;
+
+// Whether two neighboring pixels in the face-edges mask's second pass
+// (ShadeViewport() below) should be painted as an edge between them -
+// hitA/hitB are each either a Face index (>= 0) or -1 ("not a Face": no
+// hit at all, or a Model1D/Model2Ds billboard instead - see
+// noShadeOnlyVisibleFaceEdges' own comment); nxA/nyA/nzA and nxB/nyB/nzB
+// are that hit's own unit normal, meaningless (and unused) when that side
+// is -1. True for a Face next to something that isn't one (a silhouette),
+// false when neither side is a Face (nothing to outline), and otherwise
+// only when the two Faces' normals genuinely differ by more than
+// FACE_EDGE_NORMAL_DOT_THRESHOLD - so tessellating one flat surface into
+// many same-normal pieces doesn't draw a grid of internal edges across
+// it, while an actual crease (or even two different sub-faces that
+// happen to share the exact same index, which can't occur, but the
+// normal check covers it regardless) still shows correctly. Pure/no
+// drawing or face-grid access, so it's independently checkable without a
+// live PGraphics context, unlike the rest of this per-pixel loop.
+boolean isFaceEdgeBetween (int hitA, float nxA, float nyA, float nzA, int hitB, float nxB, float nyB, float nzB) {
+  boolean aIsFace = hitA >= 0;
+  boolean bIsFace = hitB >= 0;
+
+  if (aIsFace != bIsFace) return true;
+  if (!aIsFace) return false;
+  if (hitA == hitB) return false;
+
+  float dot = nxA * nxB + nyA * nyB + nzA * nzB;
+  return dot < FACE_EDGE_NORMAL_DOT_THRESHOLD;
+}
+
 final int SHADE_HOURS_PER_DAY = 5 * 2;
 final int SHADE_FIRST_HOUR = 12 - SHADE_HOURS_PER_DAY / 2; // 7 a.m.
 final int SHADE_LAST_HOUR = 12 + SHADE_HOURS_PER_DAY / 2; // 17 p.m.
@@ -120,12 +155,19 @@ void ShadeViewport () {
 
   // First pass (below) just records which Face each pixel's ray actually
   // hit, -1 for "didn't hit a Face" (no hit at all, or hit something else
-  // sharing the same grid - a Model1D or a Model2Ds billboard); the
-  // second pass (after the main loop) compares each pixel against its
-  // neighbors and paints the actual black-edges output from that. Two
-  // passes because an edge is inherently about a pixel's relationship to
-  // ones that, in raster order, haven't been computed yet.
+  // sharing the same grid - a Model1D or a Model2Ds billboard), and that
+  // hit's own (unit) normal; the second pass (after the main loop)
+  // compares each pixel against its neighbors and paints the actual
+  // black-edges output from that - two different sub-faces only count as
+  // an edge if their normals actually differ (isFaceEdgeBetween() below),
+  // so tessellating a single flat surface into many pieces doesn't paint
+  // a grid of internal edges across it. Two passes because an edge is
+  // inherently about a pixel's relationship to ones that, in raster
+  // order, haven't been computed yet.
   int[] faceEdgeHit = noShadeOnlyVisibleFaceEdges ? new int[RES1 * RES2] : null;
+  float[] faceEdgeNormalX = noShadeOnlyVisibleFaceEdges ? new float[RES1 * RES2] : null;
+  float[] faceEdgeNormalY = noShadeOnlyVisibleFaceEdges ? new float[RES1 * RES2] : null;
+  float[] faceEdgeNormalZ = noShadeOnlyVisibleFaceEdges ? new float[RES1 * RES2] : null;
 
   for (int Image_Y_i = 0; Image_Y_i < RES2; Image_Y_i++) {
     float Image_Y = Image_Y_i - halfRES2;
@@ -165,7 +207,15 @@ void ShadeViewport () {
           // a Model2Ds billboard instead, which this mask treats the same
           // as "didn't hit a Face" (-1), same as missing the scene
           // entirely does just below.
-          faceEdgeHit[np] = (hitFace < entireFaces_facesEndIndex) ? hitFace : -1;
+          if (hitFace < entireFaces_facesEndIndex) {
+            faceEdgeHit[np] = hitFace;
+            float[] n = funcs.vec3_unit(new float[]{ RxP[5], RxP[6], RxP[7] });
+            faceEdgeNormalX[np] = n[0];
+            faceEdgeNormalY[np] = n[1];
+            faceEdgeNormalZ[np] = n[2];
+          } else {
+            faceEdgeHit[np] = -1;
+          }
           continue;
         }
 
@@ -285,21 +335,28 @@ void ShadeViewport () {
   }
 
   // Second pass for the face-edges mode: now that every pixel's hit face
-  // is known, paint a pixel black wherever it differs from its right or
-  // below neighbor (treating "off the edge of the image" as nothing to
-  // compare against, not as an edge in itself) - a silhouette against the
-  // background, a crease between two different Faces, and a Face's own
-  // boundary against a Model1D/Model2Ds billboard in front of or behind
-  // it all fall out of this one same comparison, transparent everywhere
-  // else.
+  // and normal are known, paint a pixel black wherever isFaceEdgeBetween()
+  // says it and its right or below neighbor are actually a genuine edge
+  // (treating "off the edge of the image" as nothing to compare against,
+  // not as an edge in itself) - a silhouette against the background, a
+  // real crease between two different Faces, and a Face's own boundary
+  // against a Model1D/Model2Ds billboard in front of or behind it all
+  // fall out of that one comparison, transparent everywhere else.
   if (noShadeOnlyVisibleFaceEdges) {
     for (int Image_Y_i = 0; Image_Y_i < RES2; Image_Y_i++) {
       for (int Image_X_i = 0; Image_X_i < RES1; Image_X_i++) {
         int np = Image_Y_i * RES1 + Image_X_i;
-        int here = faceEdgeHit[np];
 
-        boolean isEdge = (Image_X_i + 1 < RES1) && (faceEdgeHit[np + 1] != here);
-        if (!isEdge) isEdge = (Image_Y_i + 1 < RES2) && (faceEdgeHit[np + RES1] != here);
+        boolean isEdge = (Image_X_i + 1 < RES1) && isFaceEdgeBetween(
+          faceEdgeHit[np], faceEdgeNormalX[np], faceEdgeNormalY[np], faceEdgeNormalZ[np],
+          faceEdgeHit[np + 1], faceEdgeNormalX[np + 1], faceEdgeNormalY[np + 1], faceEdgeNormalZ[np + 1]
+        );
+        if (!isEdge && Image_Y_i + 1 < RES2) {
+          isEdge = isFaceEdgeBetween(
+            faceEdgeHit[np], faceEdgeNormalX[np], faceEdgeNormalY[np], faceEdgeNormalZ[np],
+            faceEdgeHit[np + RES1], faceEdgeNormalX[np + RES1], faceEdgeNormalY[np + RES1], faceEdgeNormalZ[np + RES1]
+          );
+        }
 
         Shade_RGBA.pixels[np] = isEdge ? color(0, 0, 0, 255) : color(0, 0, 0, 0);
       }
