@@ -540,8 +540,8 @@ class SolarImpacts {
                     values_E_dif = 0.001 * Pd;
 
                     for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE++) {
-                      float RAD_VALUE = values_R_dir;
-                      float EFF_VALUE = values_E_dir;
+                      float RAD_VALUE = (RAD_TYPE == 0) ? values_R_dir : values_R_dif;
+                      float EFF_VALUE = (RAD_TYPE == 0) ? values_E_dir : values_E_dif;
 
                       PImage[] Shadings = new PImage [2];
                       for (int SHD = 0; SHD <= 1; SHD++) {
