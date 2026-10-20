@@ -28,6 +28,14 @@ boolean noShadeOnlyVisibleFaceEdges = false;
 // "projects/model-01/shadings/44N/Viewport_FaceEdges_Camera00.png".
 String cameraFaceEdgesTexture = "";
 
+// preBakeViewport.pde renders the face-edges bake at WIN3D.dX/dY times
+// this, rather than at allSolarImpacts.RES1/RES2 like the rest of its
+// bakes - crisper, closer-to-antialiased-looking lines once Processing's
+// own image() scales this (larger) source down to the (same as always)
+// on-screen size draw_WIN3D_layers.pde displays it at, without changing
+// anything about how or where it's drawn there.
+final int FACE_EDGE_RESOLUTION_MULTIPLIER = 2;
+
 // cos(~2.56 degrees) - two neighboring hits whose (unit) normals dot to at
 // least this are treated as the same flat surface by isFaceEdgeBetween()
 // below, not a real crease. A small tolerance rather than exact equality,

@@ -330,12 +330,27 @@ void preBakeViewport () {
   noShadeOnlyVisible2DTextures = false;
 
   // Same reasoning, same setup already in place - just the one extra
-  // ShadeViewport() call, in its own mode, saving its own file.
+  // ShadeViewport() call, in its own mode, saving its own file. Rendered
+  // at FACE_EDGE_RESOLUTION_MULTIPLIER times the usual resolution (see
+  // that constant's own comment, ShadeViewport.pde): WIN3D.dX/dY
+  // temporarily doubled for just this one call - ShadeViewport()'s own
+  // invQuality already derives itself from whichever RES1/RES2 actually
+  // end up in use (its own comment on that), rather than assuming
+  // RES1/RES2 == WIN3D.dX/dY * quality, so the field of view comes out
+  // correct at the higher resolution too with no other change needed.
   cameraFaceEdgesTexture = Folder_Shadings + "/" + NearLatitude_Stamp() + "/" + SceneName + "FaceEdges_Camera" + nf(cameraIndex, 2) + ".png";
+
+  int pre_faceEdges_dX = WIN3D.dX;
+  int pre_faceEdges_dY = WIN3D.dY;
+  WIN3D.dX = pre_faceEdges_dX * FACE_EDGE_RESOLUTION_MULTIPLIER;
+  WIN3D.dY = pre_faceEdges_dY * FACE_EDGE_RESOLUTION_MULTIPLIER;
 
   noShadeOnlyVisibleFaceEdges = true;
   ShadeViewport();
   noShadeOnlyVisibleFaceEdges = false;
+
+  WIN3D.dX = pre_faceEdges_dX;
+  WIN3D.dY = pre_faceEdges_dY;
 
   WIN3D.shadingQuality = preShadingQuality;
 

@@ -116,10 +116,15 @@ void draw_WIN3D_layers () {
     // Same dest rect as the overlay image itself (see faceEdgesOverlay.
     // pde's own comment on why) - drawn right on top of it, before
     // anything else (the palette, the hover tooltip) so those stay the
-    // topmost layer.
-    PImage faceEdges = faceEdgesOverlay_load();
-    if (faceEdges != null) {
-      image(faceEdges, fit[0], fit[1], fit[2], fit[3]);
+    // topmost layer. Passive only - gated here rather than inside
+    // faceEdgesOverlay_load() itself, so that function stays purely about
+    // "what's on disk for this camera/location", not which impact type is
+    // currently selected.
+    if (WIN3D.impactTypeIndex == Impact_PASSIVE) {
+      PImage faceEdges = faceEdgesOverlay_load();
+      if (faceEdges != null) {
+        image(faceEdges, fit[0], fit[1], fit[2], fit[3]);
+      }
     }
   }
 
