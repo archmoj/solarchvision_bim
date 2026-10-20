@@ -129,7 +129,7 @@ String[] solarImpactHover_lines (int q, int dayIndex, int x, int y) {
   return new String[] {
     "Positive: +" + nf(P, 1, 2) + " kWh\u00B0C/m\u00B2",
     "Negative: -" + nf(N, 1, 2) + " kWh\u00B0C/m\u00B2",
-    "Final Score: " + nf(S, 1, 2) + " kWh\u00B0C/m\u00B2"
+    "Final Score: " + nf(S, 1, 2) + " %kWh\u00B0C/m\u00B2"
   };
 }
 
