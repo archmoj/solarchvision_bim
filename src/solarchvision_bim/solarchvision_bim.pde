@@ -140,6 +140,7 @@ void draw () {
         WORLD.record_PDF = false;
       } else {
         draw_WIN3D_layers();
+        draw_STUDY_hover();
         draw_UI_layers();
 
         if(stepAfterInitialization == 1) {

@@ -26,6 +26,30 @@ class STUDY {
   float view_R = float(dY) / float(dX);
   float view_S;
 
+  // --- Skin Potential hover support (studyImpactHover.pde) -----------------
+  // Recorded by plotImpact_urban() itself, each time it actually redraws -
+  // the center of each day's thumbnail in this.graphics' own device-pixel
+  // space (before the cX/cY/ImageScale compositing transform that lands it
+  // on the real screen), plus the one shared width/height every thumbnail
+  // is drawn at that same pass. Indexed exactly the way allSolarImpacts.
+  // Image[type][dayIndex] already is - 0 is the summary thumbnail,
+  // dayIndex is day (dayIndex-1) - so a hit on this array can be handed
+  // straight to win3DOverlay_rawValuesAt() with no translation. Reading
+  // each day's actual screen position this way, rather than re-deriving it
+  // from centralGraphScale/sx_Plot/the active setupPlot_N layout by hand,
+  // sidesteps needing to keep a hand-written formula in sync with however
+  // many different layouts position this graph differently.
+  float[] urbanThumbnail_centerX;
+  float[] urbanThumbnail_centerY;
+  float urbanThumbnail_sizeX = 0;
+  float urbanThumbnail_sizeY = 0;
+
+  // Incremented once per real redraw, in endFrame() below - lets
+  // studyImpactHover.pde tell "STUDY just redrew this frame" from "it
+  // didn't," which the global drawnFrame counter (also bumped by WIN3D's
+  // and WORLD's own renders) can't do on its own.
+  int renderGeneration = 0;
+
   boolean update = true;
   boolean include = true;
 
@@ -1777,6 +1801,8 @@ class STUDY {
       this.graphics = createGraphics(this.dX, this.dY, P2D);
     }
 
+    this.renderGeneration += 1;
+
     this.updated();
 
     if ((this.record_IMG) || (this.record_AUTO == false)) this.record_IMG = false;
@@ -2200,6 +2226,18 @@ class STUDY {
 
       int l = this.impactLayerIndex;
 
+      // Reset the hover tracking arrays fresh each time this actually
+      // redraws - any index this pass doesn't populate below (showImpact
+      // Summary off, say) stays FLOAT_undefined, which studyImpactHover.
+      // pde's hit-test naturally treats as "nothing drawn there, no hit".
+      int imageCount = allSolarImpacts.Image[this.impactTypeIndex].length;
+      this.urbanThumbnail_centerX = new float[imageCount];
+      this.urbanThumbnail_centerY = new float[imageCount];
+      java.util.Arrays.fill(this.urbanThumbnail_centerX, FLOAT_undefined);
+      java.util.Arrays.fill(this.urbanThumbnail_centerY, FLOAT_undefined);
+      this.urbanThumbnail_sizeX = sizeX;
+      this.urbanThumbnail_sizeY = sizeY;
+
       for (int j = this.startDay; j < this.endDay; j++) {
 
         now_j = (j * int(this.dayIncrement) + TIME.beginDay + 365) % 365;
@@ -2224,6 +2262,9 @@ class STUDY {
 
         this.graphics.imageMode(CENTER);
         this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][j + 1], (j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
+
+        this.urbanThumbnail_centerX[j + 1] = this.graphics.screenX((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
+        this.urbanThumbnail_centerY[j + 1] = this.graphics.screenY((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
 
         this.graphics.stroke(0);
         this.graphics.fill(0);
@@ -2252,6 +2293,9 @@ class STUDY {
 
         this.graphics.imageMode(CENTER);
         this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][0], (j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
+
+        this.urbanThumbnail_centerX[0] = this.graphics.screenX((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
+        this.urbanThumbnail_centerY[0] = this.graphics.screenY((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
 
         this.graphics.stroke(0);
         this.graphics.fill(0);
