@@ -312,7 +312,7 @@ void ShadeViewport () {
           ray_direction[2] = SunV[2];
 
           float Alpha = 90 - funcs.acos_ang(face_norm[2]);
-          float SkyMask = 0.5 * (1.0 + (Alpha / 90.0));
+          float SkyMask = 0.5 * (1.0 + funcs.sin_ang(Alpha));
 
           float valuesSUM_RAD = SkyMask; // diffuse radiation
           if (isIntersected_Faces(ray_start, ray_direction, 0, true) == 0) {

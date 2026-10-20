@@ -50,9 +50,11 @@ class SolarAtSurfaceTest {
   void regularBranchMatchesTheTrigFormulaAtA45DegreeTilt () {
     // Alpha=45, Beta=0: VECT = (sin(0), -cos(0), tan(45)) = (0, -1, 1),
     // unit length (0, -0.7071, 0.7071). A sun vector along the same
-    // direction gives SunMask=1; SkyMask at Alpha=45 is 0.75.
+    // direction gives SunMask=1; SkyMask = 0.5*(1+sin(45)) = 0.853553
+    // (the physically correct isotropic-sky curve, not the old linear
+    // interpolation that only matched it at Alpha=90/0/-90).
     float result = app.SolarAtSurface(0, -1, 1, 1000, 200, 45, 0, 0);
-    assertEquals(1150f, result, EPS); // 1000*1 + 200*0.75
+    assertEquals(1170.71f, result, EPS); // 1000*1 + 200*0.853553
   }
 
   @Test

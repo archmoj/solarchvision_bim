@@ -124,21 +124,26 @@ class SolarConsistencyTest {
   // (build_SkySphere() turns out to have no graphics dependency and is
   // directly callable here), so those two should land on the exact same
   // number. Pose Potential's SolarAtSurface() doesn't sample
-  // DiffuseVectors at all - it uses a simple analytical SkyMask =
-  // 0.5*(1+Alpha/90), which at Alpha=90 (horizontal) is exactly 1.0,
-  // matching the isotropic-sky convention weather data's own "diffuse
+  // DiffuseVectors at all - it uses the exact isotropic-sky formula,
+  // SkyMask = 0.5*(1+sin(Alpha)), which at Alpha=90 (horizontal) is
+  // exactly 1.0, matching the convention weather data's own "diffuse
   // horizontal" figure is defined against.
   //
-  // The Monte-Carlo average used to come out at roughly half that (~0.53)
-  // - dividing by the sample count alone normalizes against the
-  // hemisphere's raw solid angle (2*pi), not the Lambertian-hemisphere
-  // integral (pi) that's actually correct here, a missing factor of 2.
-  // Both sites were fixed to divide by half the sample count instead; the
-  // tests below reflect that fix - Pose Potential and the Monte-Carlo
-  // estimate should now agree within the residual gap you'd expect from
-  // two different approximation methods (a 44-sample icosphere
-  // tessellation vs. a smooth analytical curve), not the ~1.9x gap the
-  // bug used to produce.
+  // Two separate bugs used to widen the gap between this and the Monte-
+  // Carlo estimate well past what two different approximation methods
+  // should produce: the Monte-Carlo average divided by the full sample
+  // count instead of half of it (normalizing against the hemisphere's
+  // raw solid angle, 2*pi, instead of the Lambertian-hemisphere integral,
+  // pi, that's actually correct here); and SolarAtSurface() itself used
+  // to approximate the isotropic-sky curve with a straight line through
+  // Alpha=90/0/-90, which only matched the real cos(tilt)-based curve at
+  // those three points and diverged substantially everywhere else (worst
+  // around Alpha=-45, a 45-degree-downward tilt, where it ran ~2x high).
+  // Both are fixed now - the tests below reflect that: Pose Potential and
+  // the Monte-Carlo estimate should agree within the residual gap you'd
+  // expect from two different approximation methods (a 44-sample
+  // icosphere tessellation vs. a smooth analytical curve) at every tilt,
+  // not just the three the old linear formula happened to get exactly right.
 
   private float monteCarloSkyMask (solarchvision_bim instance, float[] normal) {
     float sum = 0;
@@ -402,52 +407,24 @@ class SolarConsistencyTest {
   }
 
   @Test
-  void latitude45N_southFacingSurfaceTiltedDownward_diffuseRadiation_hasAMuchWiderGapThanUpwardTiltsDo () {
-    // Unlike every diffuse comparison above, this one does NOT land within
-    // the usual 15-20% - it's roughly 2x, consistently, for a downward
-    // tilt. DiffuseVectors only samples the upper hemisphere (z > 0 -
-    // build_SkySphere.pde's own construction), so a downward-facing
-    // surface's Monte-Carlo estimate only ever captures weak, near-
-    // horizon grazing contributions from samples that still barely clear
-    // a positive dot product - a much thinner, less representative slice
-    // of the sample set than an upward-tilted surface gets. Pose
-    // Potential's own SkyMask = 0.5*(1+Alpha/90) formula doesn't account
-    // for that restriction at all - it's a simple linear interpolation
-    // with no notion of which samples are actually available to look at.
-    // Documented here as a known, substantial gap rather than quietly
-    // asserted within a tolerance that doesn't actually hold, so a future
-    // change to either formula that shifts this further gets noticed.
-    solarchvision_bim fresh = new solarchvision_bim();
-    fresh.build_SkySphere(3);
-
-    float diffuse = 0.2f;
-    float[] VECT = vectForTilt(-45, 0);
-
-    float poseResult = fresh.SolarAtSurface(0, 0, 1, 0, diffuse, -45, 0, 0);
-    float monteCarloResult = diffuse * monteCarloSkyMask(fresh, VECT);
-
-    assertTrue(poseResult > monteCarloResult * 1.5f,
-      "Pose Potential's analytical SkyMask is known to run roughly 2x the Monte-Carlo estimate for a 45-degree-downward tilt - if this ever stops being true, something about one of the two formulas changed and is worth a closer look");
+  void latitude45N_southFacingSurfaceTiltedDownward_diffuseRadiationAgreesClosely () {
+    // This case used to be the one place the usual 15-20% tolerance broke
+    // down badly - SolarAtSurface()'s old linear SkyMask approximation
+    // ran roughly 2x the Monte-Carlo estimate specifically at a 45-
+    // degree-downward tilt (see this section's own header comment and
+    // SolarAtSurface.pde's own comment on the fix). With the corrected
+    // formula in place, this agrees within the same tolerance every other
+    // orientation in this file does.
+    assertDiffuseAgreesClosely(-45, 0, "south-down");
   }
 
   @Test
-  void latitude45N_westFacingSurfaceTiltedDownward_diffuseRadiation_hasTheSameWideGap () {
-    // Same gap, same magnitude, for the west-facing version of the same
-    // tilt - confirms the size of the gap tracks Alpha (how far downward
-    // the surface looks), not Beta (which compass direction it also
-    // faces), consistent with DiffuseVectors' roughly azimuth-symmetric
-    // sampling.
-    solarchvision_bim fresh = new solarchvision_bim();
-    fresh.build_SkySphere(3);
-
-    float diffuse = 0.2f;
-    float[] VECT = vectForTilt(-45, -90);
-
-    float poseResult = fresh.SolarAtSurface(0, 0, 1, 0, diffuse, -45, -90, 0);
-    float monteCarloResult = diffuse * monteCarloSkyMask(fresh, VECT);
-
-    assertTrue(poseResult > monteCarloResult * 1.5f,
-      "the same ~2x gap should show up here too, independent of which compass direction the downward tilt also faces");
+  void latitude45N_westFacingSurfaceTiltedDownward_diffuseRadiationAgreesClosely () {
+    // Same fix, same orientation tilt, facing west instead of south -
+    // confirms the correction holds regardless of which compass direction
+    // the downward tilt also faces, consistent with DiffuseVectors'
+    // roughly azimuth-symmetric sampling.
+    assertDiffuseAgreesClosely(-45, -90, "west-down");
   }
 
   // ================= colorscale factor defaults =============================

@@ -36,7 +36,7 @@ float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float 
     float SunMask = funcs.vec_dot(funcs.vec3_unit(SunV), funcs.vec3_unit(VECT));
     if (SunMask <= 0) SunMask = 0; // removes backing faces
 
-    float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
+    float SkyMask = (0.5 * (1.0 + funcs.sin_ang(Alpha)));
 
     return_value = (SunR4 * SunMask) + (SunR5 * SkyMask);
 
@@ -47,7 +47,7 @@ float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float 
      float REF_SunMask = funcs.vec_dot(funcs.vec3_unit(REF_SunV), funcs.vec3_unit(VECT));
      if (REF_SunMask <= 0) REF_SunMask = 0; // removes backing faces
 
-     float REF_SkyMask = 1 - (0.5 * (1.0 + (Alpha / 90.0)));
+     float REF_SkyMask = 1 - (0.5 * (1.0 + funcs.sin_ang(Alpha)));
 
      return_value +=  (0.01 * THE_ALBEDO) * ((SunR4 * REF_SunMask) + (SunR5 * REF_SkyMask));
      */
