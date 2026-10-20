@@ -110,6 +110,17 @@ class StudyPoseHoverTest {
     assertEquals("N - 1\u00B0", app.formatOrientation(181f));
   }
 
+  @Test
+  void orientation_roundsANonIntegerOffset () {
+    // nf(value, 1, 0) does NOT round on its own - it only guarantees a
+    // minimum of 0 decimal digits, so nf(12.857, 1, 0) prints "12.857",
+    // not "13". Any grid whose orientationStepImplied (360/bCount)
+    // doesn't divide evenly produces exactly this kind of non-integer
+    // Beta, so this needs an explicit round() before formatting.
+    // compassBearing=77.143 -> nearest 45-multiple is 90 (E), offset=-12.857
+    assertEquals("E - 13\u00B0", app.formatOrientation(102.857f));
+  }
+
   // ================= snapInclination =========================================
 
   @Test
@@ -154,6 +165,13 @@ class StudyPoseHoverTest {
   @Test
   void combinedLabel_combinesBothInBetween () {
     assertEquals("S, Inclination 45\u00B0", app.formatOrientationAndInclination(0f, 45f));
+  }
+
+  @Test
+  void combinedLabel_roundsANonIntegerInclination () {
+    // Same nf() rounding fix as orientation_roundsANonIntegerOffset above,
+    // for the inclination value itself.
+    assertEquals("S, Inclination 34\u00B0", app.formatOrientationAndInclination(0f, 33.7f));
   }
 
   // ================= studyGlobalPoseHover_hitTest ============================

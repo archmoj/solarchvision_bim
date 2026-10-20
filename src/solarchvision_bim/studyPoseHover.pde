@@ -83,7 +83,7 @@ String formatOrientation (float Beta) {
   if (abs(offset) < 0.05) return direction;
 
   String sign = (offset < 0) ? "-" : "+";
-  return direction + " " + sign + " " + nf(abs(offset), 1, 0) + "\u00B0";
+  return direction + " " + sign + " " + nf(round(abs(offset)), 1, 0) + "\u00B0";
 }
 
 // Snaps a wedge's raw inclination to a round, easy-to-read value when
@@ -110,7 +110,7 @@ float snapInclination (float Alpha) {
 String formatOrientationAndInclination (float Beta, float Alpha) {
   if (Alpha >= 90) return "Roof";
   if (Alpha <= 0) return formatOrientation(Beta);
-  return formatOrientation(Beta) + ", Inclination " + nf(Alpha, 1, 0) + "\u00B0";
+  return formatOrientation(Beta) + ", Inclination " + nf(round(Alpha), 1, 0) + "\u00B0";
 }
 
 // Returns the hover hit under the mouse, or null if it isn't over any of

@@ -60,6 +60,14 @@ class STUDY {
   // that motivated urbanThumbnailHoverInfo in the first place.
   ArrayList<GlobalPoseHoverInfo> globalPoseHoverInfo;
 
+  // Same idea again, for "Hourly Sun" (plotImpact_sunpath() internally -
+  // see studySunpathHover.pde's own comment on the UI-label/internal-name
+  // mismatch) - a growing list of individual points rather than a grid,
+  // since this graph draws one independent ellipse per actual (day, hour)
+  // sample at the sun's own continuous altitude/azimuth position, not a
+  // regular grid of buckets the way Pose Potential's dome is.
+  ArrayList<SunpathHoverPoint> sunpathHoverPoints;
+
   // Incremented once per real redraw, in endFrame() below - lets
   // studyImpactHover.pde tell "STUDY just redrew this frame" from "it
   // didn't," which the global drawnFrame counter (also bumped by WIN3D's
@@ -1734,6 +1742,7 @@ class STUDY {
 
     this.urbanThumbnailHoverInfo = new ArrayList<UrbanThumbnailHoverInfo>();
     this.globalPoseHoverInfo = new ArrayList<GlobalPoseHoverInfo>();
+    this.sunpathHoverPoints = new ArrayList<SunpathHoverPoint>();
 
     if (developDataUpdate) {
       if (currentLayerId == LAYER_developed.id) {
@@ -2989,15 +2998,32 @@ class STUDY {
 
               this.graphics.strokeWeight(0);
 
-              this.graphics.ellipse((j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
+              float pointLocalX = (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot;
+              float pointLocalY = -((90 - Alpha) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot;
+
+              this.graphics.ellipse(pointLocalX, pointLocalY, 0.075 * sx_Plot, 0.075 * sx_Plot);
+
+              {
+                SunpathHoverPoint hoverPoint = new SunpathHoverPoint();
+                hoverPoint.screenX = this.graphics.screenX(pointLocalX, pointLocalY);
+                hoverPoint.screenY = this.graphics.screenY(pointLocalX, pointLocalY);
+                float edgeScreenX = this.graphics.screenX(pointLocalX + 0.075 * sx_Plot, pointLocalY);
+                float edgeScreenY = this.graphics.screenY(pointLocalX + 0.075 * sx_Plot, pointLocalY);
+                hoverPoint.hitRadius = dist(hoverPoint.screenX, hoverPoint.screenY, edgeScreenX, edgeScreenY);
+                hoverPoint.Alpha = Alpha;
+                hoverPoint.Beta = Beta;
+                hoverPoint.valuesSUM = valuesSUM;
+                hoverPoint.impactTypeIndex = this.impactTypeIndex;
+                this.sunpathHoverPoints.add(hoverPoint);
+              }
 
               applyLegendTextStyle(COL);
 
               this.graphics.textSize(this.view_S * 4.0 * this.horizontalUnitScale);
 
               this.graphics.textAlign(CENTER, CENTER);
-              if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
-              if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), (j + (this.centralGraphOffsetX + 0.5) + (90 - Alpha) * (this.centralGraphScale / 200) * (funcs.cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * (this.centralGraphScale / 200) * (funcs.sin_ang(Beta - 90))) * sx_Plot);
+              if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf(valuesSUM, 1, 1), pointLocalX, pointLocalY);
+              if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(valuesSUM, 1, 1), pointLocalX, pointLocalY);
             }
           }
         }
