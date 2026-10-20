@@ -51,10 +51,17 @@ float[] globalPoseRawValuesAt (GlobalPoseHoverInfo info, int a, int b) {
   return new float[] { p + n, n, 0, p };
 }
 
-// The dome entry a hit landed on, plus which of its own (a,b) wedges.
+// The dome entry a hit landed on, plus which of its own (a,b) wedges -
+// displayAlpha is the (possibly snapped - see snapInclination() below)
+// inclination actually used to pick that wedge, stored directly rather
+// than re-derived from a alone: re-deriving it as a*inclinationStepImplied
+// would make the snap thresholds drift with the grid's own resolution,
+// since ordinary nearest-bucket rounding can already land on the extreme
+// bucket for inclinations well outside the 80/10 degree thresholds below.
 class GlobalPoseHoverHit {
   GlobalPoseHoverInfo info;
   int a, b;
+  float displayAlpha;
 }
 
 final String[] compassDirectionNames = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
@@ -79,12 +86,31 @@ String formatOrientation (float Beta) {
   return direction + " " + sign + " " + nf(abs(offset), 1, 0) + "\u00B0";
 }
 
-// Alpha (this app's own tilt convention - 90 is horizontal, 0 is
-// vertical, -90 is facing straight down) shown plainly, labeled since
-// unlike orientation's compass direction it isn't otherwise self-evident
-// as an angle of tilt rather than orientation.
-String formatInclination (float Alpha) {
-  return "Inclination: " + nf(Alpha, 1, 0) + "\u00B0";
+// Snaps a wedge's raw inclination to a round, easy-to-read value when
+// it's close enough to count as effectively horizontal or vertical -
+// above 80 degrees reads as a clean 90 (horizontal), below 10 degrees
+// reads as a clean 0 (vertical). Both are common surfaces to want a
+// reading for, and both sit where the dome's own polar projection makes
+// precise hovering hardest - horizontal wedges bunch up tightly around
+// the dome's own center, so without this, hovering near the middle would
+// otherwise land on whichever narrow sliver the mouse happens to be
+// closest to rather than a single, simple answer.
+float snapInclination (float Alpha) {
+  if (Alpha > 80) return 90;
+  if (Alpha < 10) return 0;
+  return Alpha;
+}
+
+// The hover box's first line - orientation and inclination together for
+// a general tilt, "horizontal surface" alone (no orientation, which is
+// meaningless once a surface is flat) once inclination has snapped to
+// 90, and orientation alone (inclination dropped as implied/redundant)
+// once it's snapped to 0, since reading a vertical surface's own compass
+// direction is the common case worth keeping simple.
+String formatOrientationAndInclination (float Beta, float Alpha) {
+  if (Alpha >= 90) return "horizontal surface";
+  if (Alpha <= 0) return formatOrientation(Beta);
+  return formatOrientation(Beta) + ", Inclination " + nf(Alpha, 1, 0) + "\u00B0";
 }
 
 // Returns the hover hit under the mouse, or null if it isn't over any of
@@ -115,7 +141,7 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (float mouseXPos, float mouseYPo
     float angleDeg = degrees(atan2(-dy, dx)); // inverse of x=r*cos(angle), y=-r*sin(angle)
     float Beta = angleDeg + 90;
     Beta = ((Beta % 360) + 360) % 360;
-    float Alpha = 90 - radiusDegrees;
+    float Alpha = snapInclination(90 - radiusDegrees);
 
     int aCount = info.snapshotRAD.length;
     int bCount = info.snapshotRAD[0].length;
@@ -133,6 +159,7 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (float mouseXPos, float mouseYPo
     hit.info = info;
     hit.a = a;
     hit.b = b;
+    hit.displayAlpha = Alpha;
     return hit;
   }
 
@@ -147,17 +174,16 @@ void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
   String[] dataLines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
   if (dataLines == null) return;
 
-  // Same implied-step-size derivation the hit-test itself used to turn
-  // Alpha/Beta into (a,b) in the first place, run in reverse here.
-  int aCount = hit.info.snapshotRAD.length;
+  // Beta still comes from hit.b the same way as before (only inclination
+  // gets snapped, never orientation); hit.displayAlpha is used directly
+  // rather than re-derived from hit.a, since hit.a only identifies which
+  // bucket matched, not whether snapInclination() actually moved it there.
   int bCount = hit.info.snapshotRAD[0].length;
-  float Alpha = hit.a * (90.0 / (aCount - 1));
   float Beta = hit.b * (360.0 / bCount);
 
-  String[] lines = new String[dataLines.length + 2];
-  lines[0] = formatOrientation(Beta);
-  lines[1] = formatInclination(Alpha);
-  System.arraycopy(dataLines, 0, lines, 2, dataLines.length);
+  String[] lines = new String[dataLines.length + 1];
+  lines[0] = formatOrientationAndInclination(Beta, hit.displayAlpha);
+  System.arraycopy(dataLines, 0, lines, 1, dataLines.length);
 
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
