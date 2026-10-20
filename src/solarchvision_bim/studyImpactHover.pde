@@ -98,11 +98,15 @@ void draw_STUDY_hover () {
   if (studyHover_pre_screen == null) return; // nothing captured yet (STUDY hasn't drawn a single frame)
 
   boolean showingSkinPotential = (STUDY.impactGraphIndex == impactGraphIndex_URBAN_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_URBAN_PASSIVE);
+  boolean showingPosePotential = (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_PASSIVE);
 
-  UrbanHoverHit hit = null;
-  if (showingSkinPotential && UI_menuBar.selected_parent == -1 &&
+  UrbanHoverHit urbanHit = null;
+  GlobalPoseHoverHit poseHit = null;
+
+  if ((showingSkinPotential || showingPosePotential) && UI_menuBar.selected_parent == -1 &&
       isInside(mouseX, mouseY, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
-    hit = studyUrbanHover_hitTest(mouseX, mouseY);
+    if (showingSkinPotential) urbanHit = studyUrbanHover_hitTest(mouseX, mouseY);
+    if (showingPosePotential) poseHit = studyGlobalPoseHover_hitTest(mouseX, mouseY);
   }
 
   if (studyHover_wasShownLastFrame) {
@@ -110,8 +114,11 @@ void draw_STUDY_hover () {
     studyHover_wasShownLastFrame = false;
   }
 
-  if (hit != null) {
-    drawStudyUrbanHoverBox(hit);
+  if (urbanHit != null) {
+    drawStudyUrbanHoverBox(urbanHit);
+    studyHover_wasShownLastFrame = true;
+  } else if (poseHit != null) {
+    drawGlobalPoseHoverBox(poseHit);
     studyHover_wasShownLastFrame = true;
   }
 }

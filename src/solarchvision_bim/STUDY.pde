@@ -51,6 +51,15 @@ class STUDY {
   float urbanThumbnail_sizeX = 0;
   float urbanThumbnail_sizeY = 0;
 
+  // Same idea as urbanThumbnailHoverInfo above, for Pose Potential's own
+  // sky-dome diagrams instead of Skin Potential's thumbnails - see
+  // GlobalPoseHoverInfo's own comment (studyPoseHover.pde) for why this
+  // needs its own list too: setupPlot_4()'s viewLayout==2 branch calls
+  // plotImpact_global() twice in one render pass (two of the three
+  // percentile group members), the same kind of multi-call situation
+  // that motivated urbanThumbnailHoverInfo in the first place.
+  ArrayList<GlobalPoseHoverInfo> globalPoseHoverInfo;
+
   // Incremented once per real redraw, in endFrame() below - lets
   // studyImpactHover.pde tell "STUDY just redrew this frame" from "it
   // didn't," which the global drawnFrame counter (also bumped by WIN3D's
@@ -1724,6 +1733,7 @@ class STUDY {
     //println("frame:", drawnFrame);
 
     this.urbanThumbnailHoverInfo = new ArrayList<UrbanThumbnailHoverInfo>();
+    this.globalPoseHoverInfo = new ArrayList<GlobalPoseHoverInfo>();
 
     if (developDataUpdate) {
       if (currentLayerId == LAYER_developed.id) {
@@ -2480,6 +2490,22 @@ class STUDY {
       int k = int(nk / this.daysMergedCount);
       int j_ADD = nk % this.daysMergedCount;
 
+      // Filled in alongside the quad drawing below, one day's worth at a
+      // time - unlike TOTALvaluesSUM_RAD/EFF_P/EFF_N above (which persist
+      // across the whole day loop, for the summary dome), valuesSUM_RAD/
+      // EFF_P/EFF_N themselves are plain local variables recomputed fresh
+      // for every (a,b) wedge, with nothing else capturing a given day's
+      // own full grid anywhere else - exactly what a hover lookup, run
+      // later on a different frame, needs something to read from.
+      float[][] dayHoverRAD = new float [1 + int(90 / Sky3D.inclinationStep)][int(360 / Sky3D.orientationStep)];
+      float[][] dayHoverEFF_P = new float [1 + int(90 / Sky3D.inclinationStep)][int(360 / Sky3D.orientationStep)];
+      float[][] dayHoverEFF_N = new float [1 + int(90 / Sky3D.inclinationStep)][int(360 / Sky3D.orientationStep)];
+      for (int aa = 0; aa < dayHoverRAD.length; aa++) {
+        java.util.Arrays.fill(dayHoverRAD[aa], FLOAT_undefined);
+        java.util.Arrays.fill(dayHoverEFF_P[aa], FLOAT_undefined);
+        java.util.Arrays.fill(dayHoverEFF_N[aa], FLOAT_undefined);
+      }
+
       for (int a = 0; a <= int (90 / Sky3D.inclinationStep); a++) {
         float Alpha = a * Sky3D.inclinationStep;
         for (int b = 0; b < int (360 / Sky3D.orientationStep); b++) {
@@ -2571,6 +2597,9 @@ class STUDY {
             valuesSUM_EFF_N = FLOAT_undefined;
           }
 
+          dayHoverRAD[a][b] = valuesSUM_RAD;
+          dayHoverEFF_P[a][b] = valuesSUM_EFF_P;
+          dayHoverEFF_N[a][b] = valuesSUM_EFF_N;
 
           float AVERAGE, PERCENTAGE, COMPARISON;
 
@@ -2616,6 +2645,29 @@ class STUDY {
             this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
           }
         }
+      }
+
+      {
+        // Center of this dome (Alpha=90, the wedge radius-0 point) and a
+        // point exactly 1 degree of radius further out, both run through
+        // screenX/screenY while this same transform is still active -
+        // measuring the screen-space distance between them, rather than
+        // hand-computing a scale factor, means this stays correct
+        // whichever setupPlot_N layout is actually positioning this dome.
+        float domeCenterLocalX = (j + (this.centralGraphOffsetX + 0.5)) * sx_Plot;
+        float oneDegreeLocalX = (j + (this.centralGraphOffsetX + 0.5) + 1 * (this.centralGraphScale / 200)) * sx_Plot;
+
+        GlobalPoseHoverInfo info = new GlobalPoseHoverInfo();
+        info.centerX = this.graphics.screenX(domeCenterLocalX, 0);
+        info.centerY = this.graphics.screenY(domeCenterLocalX, 0);
+        float edgeX = this.graphics.screenX(oneDegreeLocalX, 0);
+        float edgeY = this.graphics.screenY(oneDegreeLocalX, 0);
+        info.pixelsPerDegree = dist(info.centerX, info.centerY, edgeX, edgeY);
+        info.impactTypeIndex = this.impactTypeIndex;
+        info.snapshotRAD = dayHoverRAD;
+        info.snapshotEFF_P = dayHoverEFF_P;
+        info.snapshotEFF_N = dayHoverEFF_N;
+        this.globalPoseHoverInfo.add(info);
       }
 
       this.graphics.stroke(0);
@@ -2695,6 +2747,23 @@ class STUDY {
             this.graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
           }
         }
+      }
+
+      {
+        float domeCenterLocalX = (j + (this.centralGraphOffsetX + 0.5)) * sx_Plot;
+        float oneDegreeLocalX = (j + (this.centralGraphOffsetX + 0.5) + 1 * (this.centralGraphScale / 200)) * sx_Plot;
+
+        GlobalPoseHoverInfo info = new GlobalPoseHoverInfo();
+        info.centerX = this.graphics.screenX(domeCenterLocalX, 0);
+        info.centerY = this.graphics.screenY(domeCenterLocalX, 0);
+        float edgeX = this.graphics.screenX(oneDegreeLocalX, 0);
+        float edgeY = this.graphics.screenY(oneDegreeLocalX, 0);
+        info.pixelsPerDegree = dist(info.centerX, info.centerY, edgeX, edgeY);
+        info.impactTypeIndex = this.impactTypeIndex;
+        info.snapshotRAD = TOTALvaluesSUM_RAD;
+        info.snapshotEFF_P = TOTALvaluesSUM_EFF_P;
+        info.snapshotEFF_N = TOTALvaluesSUM_EFF_N;
+        this.globalPoseHoverInfo.add(info);
       }
 
       this.graphics.strokeWeight(this.strokeScale * 2);
