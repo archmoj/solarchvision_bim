@@ -27,20 +27,27 @@ class STUDY {
   float view_S;
 
   // --- Skin Potential hover support (studyImpactHover.pde) -----------------
-  // Recorded by plotImpact_urban() itself, each time it actually redraws -
-  // the center of each day's thumbnail in this.graphics' own device-pixel
-  // space (before the cX/cY/ImageScale compositing transform that lands it
-  // on the real screen), plus the one shared width/height every thumbnail
-  // is drawn at that same pass. Indexed exactly the way allSolarImpacts.
-  // Image[type][dayIndex] already is - 0 is the summary thumbnail,
-  // dayIndex is day (dayIndex-1) - so a hit on this array can be handed
-  // straight to win3DOverlay_rawValuesAt() with no translation. Reading
-  // each day's actual screen position this way, rather than re-deriving it
-  // from centralGraphScale/sx_Plot/the active setupPlot_N layout by hand,
-  // sidesteps needing to keep a hand-written formula in sync with however
-  // many different layouts position this graph differently.
-  float[] urbanThumbnail_centerX;
-  float[] urbanThumbnail_centerY;
+  // Appended to by plotImpact_urban() itself, each time it actually
+  // redraws - one entry per thumbnail actually drawn, holding its center
+  // in this.graphics' own device-pixel space (before the cX/cY/ImageScale
+  // compositing transform that lands it on the real screen) and a self-
+  // contained snapshot of the raw data that produced it. A list rather
+  // than an array indexed by dayIndex, and a per-entry data snapshot
+  // rather than a pointer back into allSolarImpacts' own fields, both for
+  // the same reason: viewLayout==2's setupPlot_0() can call this function
+  // up to three times in one render pass (one per 25th/50th/75th-
+  // percentile row, each its own calculate_Impact_CurrentPreBaked() call)
+  // - same dayIndex, different screen row, different underlying data each
+  // time, since each call's calculate_Impact_CurrentPreBaked() overwrites
+  // allSolarImpacts' own Matrix_ARGB/total_Matrix_ARGB in place. Reading
+  // each day's actual screen position via screenX/screenY, rather than
+  // re-deriving it from centralGraphScale/sx_Plot/the active setupPlot_N
+  // layout by hand, sidesteps needing to keep a hand-written formula in
+  // sync with however many different layouts position this graph
+  // differently. Reset once per render pass, in renderFrame() below - not
+  // once per plotImpact_urban() call, which is exactly what would lose
+  // the earlier rows again.
+  ArrayList<UrbanThumbnailHoverInfo> urbanThumbnailHoverInfo;
   float urbanThumbnail_sizeX = 0;
   float urbanThumbnail_sizeY = 0;
 
@@ -1716,6 +1723,8 @@ class STUDY {
     drawnFrame += 1;
     //println("frame:", drawnFrame);
 
+    this.urbanThumbnailHoverInfo = new ArrayList<UrbanThumbnailHoverInfo>();
+
     if (developDataUpdate) {
       if (currentLayerId == LAYER_developed.id) {
         postProcess_developDATA(currentDataSource);
@@ -2226,15 +2235,12 @@ class STUDY {
 
       int l = this.impactLayerIndex;
 
-      // Reset the hover tracking arrays fresh each time this actually
-      // redraws - any index this pass doesn't populate below (showImpact
-      // Summary off, say) stays FLOAT_undefined, which studyImpactHover.
-      // pde's hit-test naturally treats as "nothing drawn there, no hit".
-      int imageCount = allSolarImpacts.Image[this.impactTypeIndex].length;
-      this.urbanThumbnail_centerX = new float[imageCount];
-      this.urbanThumbnail_centerY = new float[imageCount];
-      java.util.Arrays.fill(this.urbanThumbnail_centerX, FLOAT_undefined);
-      java.util.Arrays.fill(this.urbanThumbnail_centerY, FLOAT_undefined);
+      // The shared width/height every thumbnail this pass is drawn at -
+      // safe to just overwrite each call, since all rows in a single
+      // render pass share the same centralGraphScale/sx_Plot. The actual
+      // per-thumbnail entries append to urbanThumbnailHoverInfo below
+      // instead of resetting it, since this function can run more than
+      // once per pass (see that field's own comment).
       this.urbanThumbnail_sizeX = sizeX;
       this.urbanThumbnail_sizeY = sizeY;
 
@@ -2263,8 +2269,15 @@ class STUDY {
         this.graphics.imageMode(CENTER);
         this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][j + 1], (j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
 
-        this.urbanThumbnail_centerX[j + 1] = this.graphics.screenX((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
-        this.urbanThumbnail_centerY[j + 1] = this.graphics.screenY((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
+        if (allSolarImpacts.Matrix_ARGB != null && (j + 1) < allSolarImpacts.Matrix_ARGB.length && allSolarImpacts.Matrix_ARGB[j + 1] != null) {
+          UrbanThumbnailHoverInfo info = new UrbanThumbnailHoverInfo();
+          info.centerX = this.graphics.screenX((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
+          info.centerY = this.graphics.screenY((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
+          info.impactTypeIndex = this.impactTypeIndex;
+          info.daySnapshot = deepClone4D(allSolarImpacts.Matrix_ARGB[j + 1]);
+          info.mul = allSolarImpacts.dayValuesMUL[j + 1];
+          this.urbanThumbnailHoverInfo.add(info);
+        }
 
         this.graphics.stroke(0);
         this.graphics.fill(0);
@@ -2294,8 +2307,15 @@ class STUDY {
         this.graphics.imageMode(CENTER);
         this.graphics.image(allSolarImpacts.Image[this.impactTypeIndex][0], (j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0, int(sizeX), int(sizeY));
 
-        this.urbanThumbnail_centerX[0] = this.graphics.screenX((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
-        this.urbanThumbnail_centerY[0] = this.graphics.screenY((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
+        if (allSolarImpacts.total_Matrix_ARGB != null && (this.endDay - this.startDay) > 0) {
+          UrbanThumbnailHoverInfo info = new UrbanThumbnailHoverInfo();
+          info.centerX = this.graphics.screenX((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
+          info.centerY = this.graphics.screenY((j + 100 * (this.centralGraphScale / 200)) * sx_Plot, 0);
+          info.impactTypeIndex = this.impactTypeIndex;
+          info.daySnapshot = deepClone4D(allSolarImpacts.total_Matrix_ARGB);
+          info.mul = 1.0 / (this.endDay - this.startDay); // win3DOverlay_rawValuesAt()'s own dayIndex==0 divisor, as a multiplier here instead
+          this.urbanThumbnailHoverInfo.add(info);
+        }
 
         this.graphics.stroke(0);
         this.graphics.fill(0);

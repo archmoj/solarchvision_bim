@@ -1,3 +1,62 @@
+// One thumbnail's worth of hover-relevant info, captured by plotImpact_
+// urban() (STUDY.pde) at the moment it draws that thumbnail. daySnapshot
+// is a deep clone of whichever 4D [q][component][x][y] array (Matrix_ARGB
+// [dayIndex], or total_Matrix_ARGB for the summary) was live at that
+// exact moment - cloned rather than referenced because viewLayout==2 can
+// call plotImpact_urban() up to three times in one render pass (one row
+// per 25th/50th/75th percentile), and each call's own calculate_Impact_
+// CurrentPreBaked() overwrites allSolarImpacts' live Matrix_ARGB/
+// total_Matrix_ARGB in place - a plain reference into those fields would,
+// by the time anyone actually hovers, only ever show whichever row drew
+// last.
+class UrbanThumbnailHoverInfo {
+  float centerX, centerY;
+  int impactTypeIndex;
+  float[][][][] daySnapshot;
+  float mul; // dayValuesMUL[dayIndex] for a real day, or 1.0/dayCount for the summary - see win3DOverlay_rawValuesAt()'s own two cases, SolarImpacts.pde
+}
+
+// A real (not shallow) copy of a [q][component][x][y]-shaped array -
+// Matrix_ARGB[dayIndex] and total_Matrix_ARGB are both this exact shape.
+// Needed because Java's own Object.clone() on a multi-dimensional array
+// only copies the outermost level, leaving every inner array still
+// shared with (and mutable by) the original.
+float[][][][] deepClone4D (float[][][][] src) {
+  float[][][][] dst = new float[src.length][][][];
+  for (int i = 0; i < src.length; i++) {
+    dst[i] = new float[src[i].length][][];
+    for (int j = 0; j < src[i].length; j++) {
+      dst[i][j] = new float[src[i][j].length][];
+      for (int k = 0; k < src[i][j].length; k++) {
+        dst[i][j][k] = src[i][j][k].clone();
+      }
+    }
+  }
+  return dst;
+}
+
+// Same per-pixel logic as win3DOverlay_rawValuesAt() (SolarImpacts.pde),
+// reading from an explicitly-passed-in snapshot/multiplier instead of
+// allSolarImpacts' own live Matrix_ARGB/total_Matrix_ARGB/dayValuesMUL -
+// daySnapshot already has whichever one of those applies baked in (a
+// cloned Matrix_ARGB[dayIndex] with mul = dayValuesMUL[dayIndex] for a
+// real day, or a cloned total_Matrix_ARGB with mul = 1/dayCount for the
+// summary), so this one formula covers both cases the same way the
+// original function's own two branches do.
+float[] win3DOverlay_rawValuesAt_fromSnapshot (int q, float[][][][] daySnapshot, float mul, int x, int y) {
+  float rawA = daySnapshot[q][0][x][y];
+  if (!is_defined(rawA)) return null;
+
+  float a = rawA * mul;
+  float r = daySnapshot[q][1][x][y] * mul;
+  float g = daySnapshot[q][2][x][y] * mul;
+  float b = daySnapshot[q][3][x][y] * mul;
+
+  if (a == 0) return null;
+
+  return new float[] { a, r, g, b };
+}
+
 // --- Skin Potential hover tooltip (STUDY) -----------------------------------
 // Shows the same per-pixel findings WIN3D's own solar-impact-overlay hover
 // does (solarImpactOverlayHover.pde - reused directly here, not
@@ -40,7 +99,7 @@ void draw_STUDY_hover () {
 
   boolean showingSkinPotential = (STUDY.impactGraphIndex == impactGraphIndex_URBAN_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_URBAN_PASSIVE);
 
-  int[] hit = null;
+  UrbanHoverHit hit = null;
   if (showingSkinPotential && UI_menuBar.selected_parent == -1 &&
       isInside(mouseX, mouseY, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
     hit = studyUrbanHover_hitTest(mouseX, mouseY);
@@ -52,51 +111,58 @@ void draw_STUDY_hover () {
   }
 
   if (hit != null) {
-    drawStudyUrbanHoverBox(hit[0], hit[1], hit[2]);
+    drawStudyUrbanHoverBox(hit);
     studyHover_wasShownLastFrame = true;
   }
 }
 
-// Returns {dayIndex, ix, iy} for the allSolarImpacts data point under the
-// mouse, or null if the mouse isn't over any of this pass's thumbnails.
-// dayIndex already matches win3DOverlay_rawValuesAt()'s own convention (0
-// is the summary, dayIndex is day dayIndex-1), since that's exactly how
-// plotImpact_urban() itself indexes STUDY.urbanThumbnail_centerX/Y.
-int[] studyUrbanHover_hitTest (float mouseXPos, float mouseYPos) {
-  if (STUDY.urbanThumbnail_centerX == null) return null;
+// The thumbnail entry a hit landed on, plus which of its own pixels.
+class UrbanHoverHit {
+  UrbanThumbnailHoverInfo info;
+  int ix, iy;
+}
+
+// Returns the hover hit under the mouse, or null if it isn't over any of
+// this pass's thumbnails. Walks every entry (not just one per dayIndex) -
+// with up to three rows sharing the same dayIndex (viewLayout==2's three
+// percentile rows), each one needs its own chance to match, since they
+// sit at different screen positions and carry different data.
+UrbanHoverHit studyUrbanHover_hitTest (float mouseXPos, float mouseYPos) {
+  if (STUDY.urbanThumbnailHoverInfo == null) return null;
 
   // Inverse of endFrame()'s own cX/cY/ImageScale compositing transform
   // (image(this.graphics, cX, cY, dX/ImageScale, dY/ImageScale)) - maps
   // actual screen coordinates back into this.graphics' own device-pixel
-  // space, the same space urbanThumbnail_centerX/Y were recorded in.
+  // space, the same space each entry's centerX/centerY were recorded in.
   float graphicsX = (mouseXPos - STUDY.cX) * STUDY.ImageScale;
   float graphicsY = (mouseYPos - STUDY.cY) * STUDY.ImageScale;
 
   float halfW = STUDY.urbanThumbnail_sizeX / 2;
   float halfH = STUDY.urbanThumbnail_sizeY / 2;
 
-  for (int dayIndex = 0; dayIndex < STUDY.urbanThumbnail_centerX.length; dayIndex++) {
-    float cx = STUDY.urbanThumbnail_centerX[dayIndex];
-    float cy = STUDY.urbanThumbnail_centerY[dayIndex];
-    if (is_undefined(cx) || is_undefined(cy)) continue; // this slot wasn't drawn this pass (e.g. showImpactSummary off)
+  for (UrbanThumbnailHoverInfo info : STUDY.urbanThumbnailHoverInfo) {
+    float cx = info.centerX, cy = info.centerY;
 
     if (graphicsX < cx - halfW || graphicsX > cx + halfW || graphicsY < cy - halfH || graphicsY > cy + halfH) continue;
 
-    if (dayIndex >= allSolarImpacts.Image[STUDY.impactTypeIndex].length) continue;
-    PImage img = allSolarImpacts.Image[STUDY.impactTypeIndex][dayIndex];
-    if (img == null) continue;
+    // daySnapshot's own [q][component][x][y] shape gives the resolution
+    // directly - no need to separately look up allSolarImpacts.RES1/RES2
+    // (which, by hover time, may not even still match this row's own).
+    int resX = info.daySnapshot[0][0].length;
+    int resY = info.daySnapshot[0][0][0].length;
 
     // plotImpact_urban() sizes sizeX/sizeY to already match the image's
     // own aspect ratio (RES1/RES2), so unlike WIN3D's overlay fit rect,
     // there's no letterboxing/cropping to account for here - a plain
-    // linear fraction of the thumbnail maps straight onto the image.
+    // linear fraction of the thumbnail maps straight onto the data.
     float fx = (graphicsX - (cx - halfW)) / STUDY.urbanThumbnail_sizeX;
     float fy = (graphicsY - (cy - halfH)) / STUDY.urbanThumbnail_sizeY;
 
-    int ix = (int) constrain(fx * img.width, 0, img.width - 1);
-    int iy = (int) constrain(fy * img.height, 0, img.height - 1);
-
-    return new int[] { dayIndex, ix, iy };
+    UrbanHoverHit hit = new UrbanHoverHit();
+    hit.info = info;
+    hit.ix = (int) constrain(fx * resX, 0, resX - 1);
+    hit.iy = (int) constrain(fy * resY, 0, resY - 1);
+    return hit;
   }
 
   return null;
@@ -107,9 +173,11 @@ int[] studyUrbanHover_hitTest (float mouseXPos, float mouseYPos) {
 // drawing logic (solarImpactHover_boxPosition(), the stroke-inset
 // constants) exactly as WIN3D's own hover uses them - same look, same
 // behavior, just clamped to STUDY's own dest rect instead of the
-// overlay's.
-void drawStudyUrbanHoverBox (int dayIndex, int ix, int iy) {
-  String[] lines = solarImpactHover_lines(STUDY.impactTypeIndex, dayIndex, ix, iy);
+// overlay's, and reading from the hit's own snapshot instead of
+// allSolarImpacts' live fields.
+void drawStudyUrbanHoverBox (UrbanHoverHit hit) {
+  float[] raw = win3DOverlay_rawValuesAt_fromSnapshot(hit.info.impactTypeIndex, hit.info.daySnapshot, hit.info.mul, hit.ix, hit.iy);
+  String[] lines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
   if (lines == null) return;
 
   textSize(MessageSize);

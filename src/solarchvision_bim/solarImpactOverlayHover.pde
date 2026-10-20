@@ -105,6 +105,14 @@ float[] solarImpactHover_boxPosition (float mouseX, float mouseY, float destX, f
 //   passive palette color itself is already chosen from.
 String[] solarImpactHover_lines (int q, int dayIndex, int x, int y) {
   float[] raw = allSolarImpacts.win3DOverlay_rawValuesAt(q, dayIndex, x, y);
+  return solarImpactHover_lines(q, raw);
+}
+
+// Same formatting, for a raw A/R/G/B that's already been looked up some
+// other way - e.g. studyImpactHover.pde's own snapshot-based lookup,
+// which can't go through allSolarImpacts' live fields the way the
+// overload above does (see UrbanThumbnailHoverInfo's own comment on why).
+String[] solarImpactHover_lines (int q, float[] raw) {
   if (raw == null) return null;
 
   if (showARGB_inHover) {
