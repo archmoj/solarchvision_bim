@@ -23,15 +23,15 @@ class SHADETest {
   @Test
   void impactValueToU_activeImpact_usesASimpleLinearFormula () {
     app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
-    float u = app.SHADE.impactValueToU(2, 3); // 0.1 * 3 * 2
-    assertEquals(0.6f, u, 0.0001f);
+    float u = app.SHADE.impactValueToU(2, 3); // 0.2 * 3 * 2
+    assertEquals(1.2f, u, 0.0001f);
   }
 
   @Test
   void impactValueToU_passiveImpact_usesAnOffsetFormula () {
     app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
-    float u = app.SHADE.impactValueToU(2, 3); // 0.5 + 0.5 * (0.1 * 3 * 2)
-    assertEquals(0.8f, u, 0.0001f);
+    float u = app.SHADE.impactValueToU(2, 3); // 0.5 + 0.5 * (0.2 * 3 * 2)
+    assertEquals(1.1f, u, 0.0001f);
   }
 
   // ================= vertexRender_Surface_White / _Materials ===============
