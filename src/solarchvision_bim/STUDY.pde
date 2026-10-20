@@ -2303,8 +2303,8 @@ class STUDY {
 
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
-        if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-        if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.5 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(2.0 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
       }
 
       if (this.PrintTtitle) {
@@ -2526,8 +2526,8 @@ class STUDY {
 
             float _u = 0;
 
-            if (this.impactTypeIndex == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
-            if (this.impactTypeIndex == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+            if (this.impactTypeIndex == Impact_ACTIVE) _u = (0.2 * PAL_multiplier * valuesSUM);
+            if (this.impactTypeIndex == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
 
             _u = applyPalDirection(_u, PAL_direction);
 
@@ -2606,8 +2606,8 @@ class STUDY {
 
             float _u = 0;
 
-            if (this.impactTypeIndex == Impact_ACTIVE) _u = (0.1 * PAL_multiplier * valuesSUM);
-            if (this.impactTypeIndex == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
+            if (this.impactTypeIndex == Impact_ACTIVE) _u = (0.2 * PAL_multiplier * valuesSUM);
+            if (this.impactTypeIndex == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
 
             _u = applyPalDirection(_u, PAL_direction);
 
@@ -2696,8 +2696,8 @@ class STUDY {
 
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
-      if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-      if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.5 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(2.0 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
     }
 
 

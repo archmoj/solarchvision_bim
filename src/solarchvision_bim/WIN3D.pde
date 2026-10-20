@@ -392,8 +392,8 @@ class WIN3D {
     textAlign(CENTER, CENTER);
 
     if (isSolarPaletteMode()) {
-      if (this.impactTypeIndex == Impact_ACTIVE) text(nf((funcs.roundTo(0.1 * q / PAL_multiplier, 0.1)), 1, 1), x, y);
-      if (this.impactTypeIndex == Impact_PASSIVE) text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y);
+      if (this.impactTypeIndex == Impact_ACTIVE) text(nf((funcs.roundTo(0.5 * q / PAL_multiplier, 0.1)), 1, 1), x, y);
+      if (this.impactTypeIndex == Impact_PASSIVE) text(nf(funcs.roundTo(2.0 * (q - 5) / PAL_multiplier, 0.1), 1, 1), x, y);
     }
 
     if (this.shadingMode == SHADE.Vertex_Elevation) {
