@@ -233,9 +233,17 @@ class SolarConsistencyTest {
     return cached_solarNoonAt45N;
   }
 
-  private void assertDirectAgrees (float Alpha, float Beta, String label) {
-    float[] SunR = solarNoonAt45N();
-    assertTrue(SunR[3] > 0, "the sun must be up at solar noon for this test to mean anything");
+  private float[] cached_lateAfternoonAt45N;
+
+  private float[] lateAfternoonAt45N () {
+    if (cached_lateAfternoonAt45N == null) {
+      cached_lateAfternoonAt45N = app.funcs.SunPosition(45, 0, 16); // same day, 4pm - see the west-orientation section's own comment on why solar noon doesn't work for testing west
+    }
+    return cached_lateAfternoonAt45N;
+  }
+
+  private void assertDirectAgrees (float[] SunR, float Alpha, float Beta, String label) {
+    assertTrue(SunR[3] > 0, label + ": the sun must be up for this test to mean anything");
 
     float direct = 1.0f;
     float poseResult = app.SolarAtSurface(SunR[1], SunR[2], SunR[3], direct, 0, Alpha, Beta, 0);
@@ -264,7 +272,7 @@ class SolarConsistencyTest {
 
   @Test
   void latitude45N_horizontalSurface_directRadiationAgrees () {
-    assertDirectAgrees(90, 0, "horizontal");
+    assertDirectAgrees(solarNoonAt45N(), 90, 0, "horizontal");
   }
 
   @Test
@@ -274,7 +282,7 @@ class SolarConsistencyTest {
 
   @Test
   void latitude45N_verticalSurfaceFacingSouth_directRadiationAgrees () {
-    assertDirectAgrees(0, 0, "vertical-south");
+    assertDirectAgrees(solarNoonAt45N(), 0, 0, "vertical-south");
   }
 
   @Test
@@ -284,7 +292,7 @@ class SolarConsistencyTest {
 
   @Test
   void latitude45N_fortyFiveDegreeTiltFacingSouth_directRadiationAgrees () {
-    assertDirectAgrees(45, 0, "45deg-tilt-south");
+    assertDirectAgrees(solarNoonAt45N(), 45, 0, "45deg-tilt-south");
   }
 
   @Test
@@ -303,6 +311,57 @@ class SolarConsistencyTest {
   @Test
   void latitude45N_fortyFiveDegreeTiltFacingSouth_diffuseRadiationAgreesClosely () {
     assertDiffuseAgreesClosely(45, 0, "45deg-tilt-south");
+  }
+
+  // ================= latitude 45N, west orientation =========================
+  // Same idea, same latitude/equinox, now facing west (Beta=-90 - verified
+  // against funcs.SunPosition()'s own sunrise/sunset output: the sun
+  // tracks from +X near sunrise to -X near sunset, and -X is exactly what
+  // Beta=-90 gives in SolarAtSurface()'s VECT formula). Horizontal is
+  // skipped here - Alpha=90 ignores Beta entirely, so "horizontal facing
+  // west" isn't a distinct case from "horizontal facing south," already
+  // covered above.
+  //
+  // Solar noon doesn't work for testing west the way it did for south:
+  // the sun is due south at noon, so a west-facing surface's SunMask
+  // would be ~0 there (a real, correctly-clamped backing-face result, but
+  // not a useful one to build a comparison test around - 0 agreeing with
+  // 0 doesn't exercise much). Used 4pm instead: the sun has a meaningful
+  // westward component by then without being down at the horizon, and
+  // it's also the more realistic scenario in practice - west-facing
+  // facades are a known design concern specifically for low-angle
+  // afternoon sun, not for the sun being due west at some precise moment.
+
+  @Test
+  void latitude45N_verticalSurfaceFacingWest_directRadiationAgrees () {
+    assertDirectAgrees(lateAfternoonAt45N(), 0, -90, "vertical-west");
+  }
+
+  @Test
+  void latitude45N_verticalSurfaceFacingWest_diffuseRadiationAgreesClosely () {
+    assertDiffuseAgreesClosely(0, -90, "vertical-west");
+  }
+
+  @Test
+  void latitude45N_fortyFiveDegreeTiltFacingWest_directRadiationAgrees () {
+    assertDirectAgrees(lateAfternoonAt45N(), 45, -90, "45deg-tilt-west");
+  }
+
+  @Test
+  void latitude45N_fortyFiveDegreeTiltFacingWest_diffuseRadiationAgreesClosely () {
+    assertDiffuseAgreesClosely(45, -90, "45deg-tilt-west");
+  }
+
+  @Test
+  void latitude45N_southFacingSurface_atSolarNoon_receivesNoDirectSunWhenFacingWestInstead () {
+    // The degenerate case mentioned above, made explicit as its own test
+    // rather than left as a reason to avoid solar noon entirely: at solar
+    // noon the sun is due south, so a vertical west-facing wall's SunMask
+    // correctly clamps to (approximately) 0 as a backing face, not some
+    // small negative number or other stray value.
+    float[] SunR = solarNoonAt45N();
+    float poseResult = app.SolarAtSurface(SunR[1], SunR[2], SunR[3], 1.0f, 0, 0, -90, 0);
+    assertEquals(0f, poseResult, 0.05f);
   }
 
   // ================= colorscale factor defaults =============================
