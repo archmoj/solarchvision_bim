@@ -197,13 +197,13 @@ void preBakeViewport () {
           if (SkyMask < 0) SkyMask = 0; // removes backing faces
 
           // when SHD = 0;
-          Diffuse_Matrix[0][np] += SkyMask / float(DiffuseVectors.length);
+          Diffuse_Matrix[0][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
 
           lastHitDiffuse[n_Ray] = isIntersected_Faces(ray_start, ray_direction, lastHitDiffuse[n_Ray], true); // people don't cast shadows - see entireFaceCastsShadow's own comment
 
           // when SHD = 1;
           if (lastHitDiffuse[n_Ray] == 0) {
-            Diffuse_Matrix[1][np] += SkyMask / float(DiffuseVectors.length);
+            Diffuse_Matrix[1][np] += SkyMask / (float(DiffuseVectors.length) / 2.0);
           }
           else Diffuse_Matrix[1][np] += 0;
         }

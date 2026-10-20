@@ -176,7 +176,7 @@ void calculate_VertexSolar_array () {
               float tmp = funcs.vec_dot(funcs.vec3_unit(SkyV), VECT);
               if (tmp <= 0) tmp = 0; // removes backing faces
 
-              SkyMask += tmp / float(DiffuseVectors.length);
+              SkyMask += tmp / (float(DiffuseVectors.length) / 2.0);
             }
 
             float TOTALvaluesSUM_RAD = FLOAT_undefined;

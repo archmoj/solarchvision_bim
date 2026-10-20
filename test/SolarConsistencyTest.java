@@ -118,24 +118,27 @@ class SolarConsistencyTest {
   }
 
   // ================= diffuse-only case (direct=0, diffuse=200 W/m2) ========
-  // Unlike the direct/SunMask term, the diffuse/SkyMask term isn't
-  // computed the same way by all three pipelines. Skin Potential
-  // (preBakeViewport.pde) and Shade Vertex Solar (calculate_VertexSolar_
-  // array.pde) both average the real sky-dome DiffuseVectors sample set
-  // via the identical cosine-weighted formula (build_SkySphere() turns
-  // out to have no graphics dependency and is directly callable here),
-  // so those two should land on the exact same number. Pose Potential's
-  // SolarAtSurface() doesn't sample DiffuseVectors at all - it uses a
-  // simple analytical SkyMask = 0.5*(1+Alpha/90), which at Alpha=90
-  // (horizontal) is exactly 1.0, well above the Monte-Carlo-averaged
-  // figure these sample directions actually give (~0.53 for an
-  // unobstructed horizontal surface - see the second test below). That's
-  // a genuine, substantial difference between the two approaches for
-  // this term specifically, not a bug to chase down - these are two
-  // legitimately different ways of estimating the same physical
-  // quantity, and the second test documents the gap numerically rather
-  // than papering over it, so a future change to either formula that
-  // shifts it further gets noticed here.
+  // Skin Potential (preBakeViewport.pde) and Shade Vertex Solar
+  // (calculate_VertexSolar_array.pde) both average the real sky-dome
+  // DiffuseVectors sample set via the identical cosine-weighted formula
+  // (build_SkySphere() turns out to have no graphics dependency and is
+  // directly callable here), so those two should land on the exact same
+  // number. Pose Potential's SolarAtSurface() doesn't sample
+  // DiffuseVectors at all - it uses a simple analytical SkyMask =
+  // 0.5*(1+Alpha/90), which at Alpha=90 (horizontal) is exactly 1.0,
+  // matching the isotropic-sky convention weather data's own "diffuse
+  // horizontal" figure is defined against.
+  //
+  // The Monte-Carlo average used to come out at roughly half that (~0.53)
+  // - dividing by the sample count alone normalizes against the
+  // hemisphere's raw solid angle (2*pi), not the Lambertian-hemisphere
+  // integral (pi) that's actually correct here, a missing factor of 2.
+  // Both sites were fixed to divide by half the sample count instead; the
+  // tests below reflect that fix - Pose Potential and the Monte-Carlo
+  // estimate should now agree within the residual gap you'd expect from
+  // two different approximation methods (a 44-sample icosphere
+  // tessellation vs. a smooth analytical curve), not the ~1.9x gap the
+  // bug used to produce.
 
   private float monteCarloSkyMask (solarchvision_bim instance, float[] normal) {
     float sum = 0;
@@ -145,7 +148,7 @@ class SolarConsistencyTest {
       if (dot < 0) dot = 0;
       sum += dot;
     }
-    return sum / instance.DiffuseVectors.length;
+    return sum / (instance.DiffuseVectors.length / 2.0f);
   }
 
   @Test
@@ -172,7 +175,7 @@ class SolarConsistencyTest {
   }
 
   @Test
-  void diffuseOnlyHorizontalSurface_posePotentialsAnalyticalFormulaIsNoticeablyHigherThanMonteCarlo () {
+  void diffuseOnlyHorizontalSurface_posePotentialAgreesCloselyWithTheFixedMonteCarloEstimate () {
     solarchvision_bim fresh = new solarchvision_bim();
     fresh.build_SkySphere(3);
 
@@ -182,8 +185,12 @@ class SolarConsistencyTest {
     float monteCarloResult = diffuse * monteCarloSkyMask(fresh, normal);
     float poseResult = fresh.SolarAtSurface(0, 0, 1, 0, diffuse, 90, 0, 0); // direct=0, SunR is irrelevant here
 
-    assertTrue(poseResult > monteCarloResult * 1.5f,
-      "Pose Potential's analytical SkyMask (1.0 at horizontal) is known to give a noticeably higher diffuse contribution than the Monte-Carlo-averaged DiffuseVectors sample set does - if this ever stops being true, something about one of the two formulas changed and is worth a closer look");
+    // 15% rather than an exact match - a 44-sample icosphere tessellation
+    // approximating a smooth analytical curve won't land on it exactly,
+    // but should now be close, not off by a factor of ~2 the way the
+    // unfixed normalization left it.
+    assertEquals(poseResult, monteCarloResult, poseResult * 0.15f,
+      "Pose Potential and the Monte-Carlo estimate should now agree within the residual gap between two different approximation methods, not by roughly 2x the way the un-normalized average used to");
   }
 
   // ================= colorscale factor defaults =============================
