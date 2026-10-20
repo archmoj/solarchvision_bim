@@ -364,6 +364,92 @@ class SolarConsistencyTest {
     assertEquals(0f, poseResult, 0.05f);
   }
 
+  // ================= latitude 45N, Alpha=-45 (looking downward) =============
+  // Same two orientations (south, west), now tilted 45 degrees below
+  // horizontal instead of above it - Alpha=-45 rather than +45.
+  //
+  // South-down: at exactly latitude 45, cos(Latitude) = sin(Latitude), so
+  // (working through SunPosition()'s own x/y/z formula) the sun's
+  // direction and this surface's own normal come out exactly
+  // perpendicular - not approximately, but identically - at every single
+  // daylight hour of the equinox, not just at solar noon. Verified this
+  // numerically across all 24 hours before writing the test, not just
+  // assumed it from the one sampled hour. So a south-facing 45-degree-
+  // down surface receives exactly zero direct sun all day at this
+  // specific latitude - a genuine, robust (not hour-fragile) result worth
+  // testing as such, rather than picking some other "interesting" hour.
+  //
+  // West-down: unlike south, this does pick up real direct sun as the
+  // afternoon goes on - by 4pm (the same hour already used for the other
+  // west tests) it's a meaningful, comparable value, so reused that same
+  // hour rather than introducing a third time point.
+
+  @Test
+  void latitude45N_southFacingSurfaceTiltedDownward_receivesExactlyZeroDirectSunAllDay () {
+    boolean allZero = true;
+    for (int hour = 0; hour < 24; hour++) {
+      float[] SunR = app.funcs.SunPosition(45, 0, hour);
+      if (SunR[3] <= 0) continue; // night
+      float result = app.SolarAtSurface(SunR[1], SunR[2], SunR[3], 1.0f, 0, -45, 0, 0);
+      if (Math.abs(result) > 0.0001f) allZero = false;
+    }
+    assertTrue(allZero, "a south-facing 45-degree-downward surface should receive exactly zero direct sun at every daylight hour, at latitude 45 specifically (cos(45)=sin(45) makes the sun and this surface's normal exactly perpendicular all day)");
+  }
+
+  @Test
+  void latitude45N_westFacingSurfaceTiltedDownward_directRadiationAgrees () {
+    assertDirectAgrees(lateAfternoonAt45N(), -45, -90, "west-down");
+  }
+
+  @Test
+  void latitude45N_southFacingSurfaceTiltedDownward_diffuseRadiation_hasAMuchWiderGapThanUpwardTiltsDo () {
+    // Unlike every diffuse comparison above, this one does NOT land within
+    // the usual 15-20% - it's roughly 2x, consistently, for a downward
+    // tilt. DiffuseVectors only samples the upper hemisphere (z > 0 -
+    // build_SkySphere.pde's own construction), so a downward-facing
+    // surface's Monte-Carlo estimate only ever captures weak, near-
+    // horizon grazing contributions from samples that still barely clear
+    // a positive dot product - a much thinner, less representative slice
+    // of the sample set than an upward-tilted surface gets. Pose
+    // Potential's own SkyMask = 0.5*(1+Alpha/90) formula doesn't account
+    // for that restriction at all - it's a simple linear interpolation
+    // with no notion of which samples are actually available to look at.
+    // Documented here as a known, substantial gap rather than quietly
+    // asserted within a tolerance that doesn't actually hold, so a future
+    // change to either formula that shifts this further gets noticed.
+    solarchvision_bim fresh = new solarchvision_bim();
+    fresh.build_SkySphere(3);
+
+    float diffuse = 0.2f;
+    float[] VECT = vectForTilt(-45, 0);
+
+    float poseResult = fresh.SolarAtSurface(0, 0, 1, 0, diffuse, -45, 0, 0);
+    float monteCarloResult = diffuse * monteCarloSkyMask(fresh, VECT);
+
+    assertTrue(poseResult > monteCarloResult * 1.5f,
+      "Pose Potential's analytical SkyMask is known to run roughly 2x the Monte-Carlo estimate for a 45-degree-downward tilt - if this ever stops being true, something about one of the two formulas changed and is worth a closer look");
+  }
+
+  @Test
+  void latitude45N_westFacingSurfaceTiltedDownward_diffuseRadiation_hasTheSameWideGap () {
+    // Same gap, same magnitude, for the west-facing version of the same
+    // tilt - confirms the size of the gap tracks Alpha (how far downward
+    // the surface looks), not Beta (which compass direction it also
+    // faces), consistent with DiffuseVectors' roughly azimuth-symmetric
+    // sampling.
+    solarchvision_bim fresh = new solarchvision_bim();
+    fresh.build_SkySphere(3);
+
+    float diffuse = 0.2f;
+    float[] VECT = vectForTilt(-45, -90);
+
+    float poseResult = fresh.SolarAtSurface(0, 0, 1, 0, diffuse, -45, -90, 0);
+    float monteCarloResult = diffuse * monteCarloSkyMask(fresh, VECT);
+
+    assertTrue(poseResult > monteCarloResult * 1.5f,
+      "the same ~2x gap should show up here too, independent of which compass direction the downward tilt also faces");
+  }
+
   // ================= colorscale factor defaults =============================
   // Regression coverage for the palette-matching work this session: the
   // active/passive maximum swatch each palette shows depends directly on
