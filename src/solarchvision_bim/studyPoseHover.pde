@@ -57,6 +57,36 @@ class GlobalPoseHoverHit {
   int a, b;
 }
 
+final String[] compassDirectionNames = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+
+// Beta (this app's own orientation convention - 0 is south, 90 is east,
+// confirmed against SolarAtSurface()'s VECT formula and funcs.SunPosition
+// ()'s own sunrise/sunset output) as the nearest of the 8 cardinal/
+// intercardinal compass directions plus a signed offset, e.g. "NW - 5°"
+// for a compass bearing of 310 degrees, rather than the raw angle.
+String formatOrientation (float Beta) {
+  float compassBearing = ((180 - Beta) % 360 + 360) % 360; // standard bearing: N=0, E=90, S=180, W=270
+
+  int nearestIndex = round(compassBearing / 45.0) % 8;
+  float offset = compassBearing - nearestIndex * 45;
+  if (offset > 180) offset -= 360;   // wrap e.g. 359 degrees -> "N - 1°", not "N + 359°"
+  if (offset < -180) offset += 360;
+
+  String direction = compassDirectionNames[nearestIndex];
+  if (abs(offset) < 0.05) return direction;
+
+  String sign = (offset < 0) ? "-" : "+";
+  return direction + " " + sign + " " + nf(abs(offset), 1, 0) + "\u00B0";
+}
+
+// Alpha (this app's own tilt convention - 90 is horizontal, 0 is
+// vertical, -90 is facing straight down) shown plainly, labeled since
+// unlike orientation's compass direction it isn't otherwise self-evident
+// as an angle of tilt rather than orientation.
+String formatInclination (float Alpha) {
+  return "Inclination: " + nf(Alpha, 1, 0) + "\u00B0";
+}
+
 // Returns the hover hit under the mouse, or null if it isn't over any of
 // this pass's domes. Converts the mouse into polar coordinates around
 // each candidate dome's own center (radius in degrees via
@@ -114,8 +144,20 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (float mouseXPos, float mouseYPo
 // from globalPoseRawValuesAt() instead.
 void drawGlobalPoseHoverBox (GlobalPoseHoverHit hit) {
   float[] raw = globalPoseRawValuesAt(hit.info, hit.a, hit.b);
-  String[] lines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
-  if (lines == null) return;
+  String[] dataLines = solarImpactHover_lines(hit.info.impactTypeIndex, raw);
+  if (dataLines == null) return;
+
+  // Same implied-step-size derivation the hit-test itself used to turn
+  // Alpha/Beta into (a,b) in the first place, run in reverse here.
+  int aCount = hit.info.snapshotRAD.length;
+  int bCount = hit.info.snapshotRAD[0].length;
+  float Alpha = hit.a * (90.0 / (aCount - 1));
+  float Beta = hit.b * (360.0 / bCount);
+
+  String[] lines = new String[dataLines.length + 2];
+  lines[0] = formatOrientation(Beta);
+  lines[1] = formatInclination(Alpha);
+  System.arraycopy(dataLines, 0, lines, 2, dataLines.length);
 
   textSize(MessageSize);
   float lineHeight = textAscent() + textDescent();
