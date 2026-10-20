@@ -151,6 +151,20 @@ class SolarConsistencyTest {
     return sum / (instance.DiffuseVectors.length / 2.0f);
   }
 
+  // Mirrors SolarAtSurface()'s own VECT computation (SolarAtSurface.pde) -
+  // a surface's unit normal for a given tilt (Alpha, 90=horizontal,
+  // 0=vertical) and orientation (Beta, a compass-style bearing measured
+  // from south: Beta=0 faces south, Beta=90 faces east - confirmed by
+  // comparing funcs.SunPosition()'s own x/y output against where the sun
+  // actually is at sunrise and at solar noon for a known latitude).
+  private float[] vectForTilt (float Alpha, float Beta) {
+    float[] VECT;
+    if (Alpha > 89.99) VECT = new float[]{ 0, 0, 1 };
+    else if (Alpha < -89.99) VECT = new float[]{ 0, 0, -1 };
+    else VECT = new float[]{ app.funcs.sin_ang(Beta), -app.funcs.cos_ang(Beta), app.funcs.tan_ang(Alpha) };
+    return app.funcs.vec3_unit(VECT);
+  }
+
   @Test
   void diffuseOnlyHorizontalSurface_skinPotentialAndShadeVertexSolarAgreeExactly () {
     solarchvision_bim fresh = new solarchvision_bim();
@@ -191,6 +205,104 @@ class SolarConsistencyTest {
     // unfixed normalization left it.
     assertEquals(poseResult, monteCarloResult, poseResult * 0.15f,
       "Pose Potential and the Monte-Carlo estimate should now agree within the residual gap between two different approximation methods, not by roughly 2x the way the un-normalized average used to");
+  }
+
+  // ================= latitude 45N, three surface orientations ==============
+  // Same cross-pipeline approach as above, now at a latitude and set of
+  // tilts where the three methods' geometry actually differs meaningfully
+  // from each other - equinox, solar noon (confirmed by scanning every
+  // hour and finding this is where the sun's altitude peaks at 45N), so
+  // the sun sits at 45 degrees altitude, due south. Three surfaces:
+  // horizontal (Alpha=90), a vertical wall facing south (Alpha=0,
+  // Beta=0), and a 45-degree-tilted surface facing south (Alpha=45,
+  // Beta=0) - the last of these puts the sun exactly perpendicular to the
+  // surface (SunMask=1, the maximum possible), a classic "optimal tilt"
+  // result that's a useful sanity check in its own right.
+  //
+  // Horizontal and vertical-south happen to land on the exact same direct
+  // SunMask here (~0.707) - not a coincidence specific to this test code,
+  // but a real geometric fact at exactly 45 degrees solar altitude
+  // (cos(45) = sin(45)), so it's expected, not a sign anything's wrong.
+
+  private float[] cached_solarNoonAt45N;
+
+  private float[] solarNoonAt45N () {
+    if (cached_solarNoonAt45N == null) {
+      cached_solarNoonAt45N = app.funcs.SunPosition(45, 0, 12); // Latitude=45, DateAngle=0 (equinox), HourAngleOrigin=12 (solar noon)
+    }
+    return cached_solarNoonAt45N;
+  }
+
+  private void assertDirectAgrees (float Alpha, float Beta, String label) {
+    float[] SunR = solarNoonAt45N();
+    assertTrue(SunR[3] > 0, "the sun must be up at solar noon for this test to mean anything");
+
+    float direct = 1.0f;
+    float poseResult = app.SolarAtSurface(SunR[1], SunR[2], SunR[3], direct, 0, Alpha, Beta, 0);
+
+    float[] VECT = vectForTilt(Alpha, Beta);
+    float sunMask = app.funcs.vec_dot(app.funcs.vec3_unit(new float[]{ SunR[1], SunR[2], SunR[3] }), VECT);
+    if (sunMask < 0) sunMask = 0;
+    float skinVertexResult = direct * sunMask; // no quantization - this is the un-quantized SunMask both Pose Potential and this skin/vertex reimplementation compute identically
+
+    assertEquals(poseResult, skinVertexResult, EPS, label + ": Pose Potential and the Skin/Vertex Solar SunMask formula must agree exactly - identical dot product, no quantization involved here");
+  }
+
+  private void assertDiffuseAgreesClosely (float Alpha, float Beta, String label) {
+    solarchvision_bim fresh = new solarchvision_bim();
+    fresh.build_SkySphere(3);
+
+    float diffuse = 0.2f;
+    float[] VECT = vectForTilt(Alpha, Beta);
+
+    float poseResult = fresh.SolarAtSurface(0, 0, 1, 0, diffuse, Alpha, Beta, 0); // direct=0, SunR irrelevant
+    float monteCarloResult = diffuse * monteCarloSkyMask(fresh, VECT);
+
+    assertEquals(poseResult, monteCarloResult, poseResult * 0.2f,
+      label + ": Pose Potential's analytical SkyMask and the Monte-Carlo estimate should agree within the residual gap between the two approximation methods");
+  }
+
+  @Test
+  void latitude45N_horizontalSurface_directRadiationAgrees () {
+    assertDirectAgrees(90, 0, "horizontal");
+  }
+
+  @Test
+  void latitude45N_horizontalSurface_diffuseRadiationAgreesClosely () {
+    assertDiffuseAgreesClosely(90, 0, "horizontal");
+  }
+
+  @Test
+  void latitude45N_verticalSurfaceFacingSouth_directRadiationAgrees () {
+    assertDirectAgrees(0, 0, "vertical-south");
+  }
+
+  @Test
+  void latitude45N_verticalSurfaceFacingSouth_diffuseRadiationAgreesClosely () {
+    assertDiffuseAgreesClosely(0, 0, "vertical-south");
+  }
+
+  @Test
+  void latitude45N_fortyFiveDegreeTiltFacingSouth_directRadiationAgrees () {
+    assertDirectAgrees(45, 0, "45deg-tilt-south");
+  }
+
+  @Test
+  void latitude45N_fortyFiveDegreeTiltFacingSouth_directRadiation_isNearlyPerpendicular () {
+    // At solar noon on the equinox, 45N, the sun's own altitude is 45
+    // degrees - exactly matching this surface's tilt - so a south-facing
+    // 45-degree surface should receive the direct beam almost exactly
+    // perpendicular to its face (SunMask close to 1, the maximum
+    // possible), a useful physical sanity check independent of
+    // cross-pipeline agreement.
+    float[] SunR = solarNoonAt45N();
+    float poseResult = app.SolarAtSurface(SunR[1], SunR[2], SunR[3], 1.0f, 0, 45, 0, 0);
+    assertEquals(1.0f, poseResult, 0.01f);
+  }
+
+  @Test
+  void latitude45N_fortyFiveDegreeTiltFacingSouth_diffuseRadiationAgreesClosely () {
+    assertDiffuseAgreesClosely(45, 0, "45deg-tilt-south");
   }
 
   // ================= colorscale factor defaults =============================
