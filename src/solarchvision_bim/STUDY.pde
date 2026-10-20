@@ -68,6 +68,16 @@ class STUDY {
   // regular grid of buckets the way Pose Potential's dome is.
   ArrayList<SunpathHoverPoint> sunpathHoverPoints;
 
+  // Same idea again, for drawNormals() - the 9-statistic-line overlay
+  // shared by every plotHourly() graph (temperature, humidity, wind
+  // speed, radiation, etc. - whichever currentLayerId is active). Several
+  // of these can be stacked at different screen heights within one
+  // render pass (setupPlot_3() alone shows two), so unlike a single
+  // shared "which layer/unit is active" lookup at hover time, each column
+  // snapshots its own layer name/unit/offset - the same multi-call
+  // caution every other hover feature this session needed.
+  ArrayList<NormalsHoverColumn> normalsHoverColumns;
+
   // Incremented once per real redraw, in endFrame() below - lets
   // studyImpactHover.pde tell "STUDY just redrew this frame" from "it
   // didn't," which the global drawnFrame counter (also bumped by WIN3D's
@@ -978,6 +988,73 @@ class STUDY {
     }
     int _OPACITY = 191;
 
+    {
+      float xA = (j + ((i + 0.5) / 24.0)) * sx_Plot;
+      float xB = (j + ((i + 0.5 + TIME.interval) / 24.0)) * sx_Plot;
+
+      float minYA = Float.MAX_VALUE, maxYA = -Float.MAX_VALUE;
+      float minYB = Float.MAX_VALUE, maxYB = -Float.MAX_VALUE;
+      boolean anyDefinedA = false, anyDefinedB = false;
+
+      for (int l = 0; l < 9; l++) {
+        if (is_defined(NormalsA[l])) {
+          float y = NormalsA[l] * sy_Plot;
+          minYA = min(minYA, y);
+          maxYA = max(maxYA, y);
+          anyDefinedA = true;
+        }
+        if (is_defined(NormalsB[l])) {
+          float y = NormalsB[l] * sy_Plot;
+          minYB = min(minYB, y);
+          maxYB = max(maxYB, y);
+          anyDefinedB = true;
+        }
+      }
+
+      // Half-hour offset, measured in screen space via screenX the same
+      // way every other hover this session measures its own hit size -
+      // used both as the column's own hit radius along the time axis and
+      // as a reasonable vertical margin around its line envelope.
+      float halfHourScreenOffset = abs(this.graphics.screenX(xA, 0) - this.graphics.screenX(xA + sx_Plot / 48.0, 0));
+
+      if (anyDefinedA) {
+        NormalsHoverColumn col = new NormalsHoverColumn();
+        col.screenX = this.graphics.screenX(xA, 0);
+        col.hitRadiusX = halfHourScreenOffset;
+        col.screenY1 = this.graphics.screenY(xA, minYA);
+        col.screenY2 = this.graphics.screenY(xA, maxYA);
+        col.dayText = TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay);
+        col.hourIndex = i;
+        col.normalsValues = NormalsA;
+        col.layerName = CurrentLayer_name;
+        col.layerUnit = CurrentLayer_unit;
+        col.verticalUnitOffset = this.verticalUnitOffset;
+        this.normalsHoverColumns.add(col);
+      }
+
+      if (anyDefinedB) {
+        int hourB = i + int(TIME.interval);
+        int dayB = j;
+        if (hourB >= 24) {
+          hourB -= 24;
+          dayB += 1;
+        }
+
+        NormalsHoverColumn col = new NormalsHoverColumn();
+        col.screenX = this.graphics.screenX(xB, 0);
+        col.hitRadiusX = halfHourScreenOffset;
+        col.screenY1 = this.graphics.screenY(xB, minYB);
+        col.screenY2 = this.graphics.screenY(xB, maxYB);
+        col.dayText = TIME.getDayText(dayB * this.dayIncrement + 286 + TIME.beginDay);
+        col.hourIndex = hourB;
+        col.normalsValues = NormalsB;
+        col.layerName = CurrentLayer_name;
+        col.layerUnit = CurrentLayer_unit;
+        col.verticalUnitOffset = this.verticalUnitOffset;
+        this.normalsHoverColumns.add(col);
+      }
+    }
+
     for (int l = 0; l < 9; l++) {
 
 
@@ -1743,6 +1820,7 @@ class STUDY {
     this.urbanThumbnailHoverInfo = new ArrayList<UrbanThumbnailHoverInfo>();
     this.globalPoseHoverInfo = new ArrayList<GlobalPoseHoverInfo>();
     this.sunpathHoverPoints = new ArrayList<SunpathHoverPoint>();
+    this.normalsHoverColumns = new ArrayList<NormalsHoverColumn>();
 
     if (developDataUpdate) {
       if (currentLayerId == LAYER_developed.id) {

@@ -100,16 +100,19 @@ void draw_STUDY_hover () {
   boolean showingSkinPotential = (STUDY.impactGraphIndex == impactGraphIndex_URBAN_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_URBAN_PASSIVE);
   boolean showingPosePotential = (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_PASSIVE);
   boolean showingHourlySun = (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE);
+  boolean showingNormalLines = STUDY.showNormalLines;
 
   UrbanHoverHit urbanHit = null;
   GlobalPoseHoverHit poseHit = null;
   SunpathHoverPoint sunpathHit = null;
+  NormalsHoverColumn normalsHit = null;
 
-  if ((showingSkinPotential || showingPosePotential || showingHourlySun) && UI_menuBar.selected_parent == -1 &&
+  if ((showingSkinPotential || showingPosePotential || showingHourlySun || showingNormalLines) && UI_menuBar.selected_parent == -1 &&
       isInside(mouseX, mouseY, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
     if (showingSkinPotential) urbanHit = studyUrbanHover_hitTest(mouseX, mouseY);
     if (showingPosePotential) poseHit = studyGlobalPoseHover_hitTest(mouseX, mouseY);
     if (showingHourlySun) sunpathHit = studySunpathHover_hitTest(mouseX, mouseY);
+    if (showingNormalLines) normalsHit = studyNormalsHover_hitTest(mouseX, mouseY);
   }
 
   if (studyHover_wasShownLastFrame) {
@@ -125,6 +128,9 @@ void draw_STUDY_hover () {
     studyHover_wasShownLastFrame = true;
   } else if (sunpathHit != null) {
     drawSunpathHoverBox(sunpathHit);
+    studyHover_wasShownLastFrame = true;
+  } else if (normalsHit != null) {
+    drawNormalsHoverBox(normalsHit);
     studyHover_wasShownLastFrame = true;
   }
 }
