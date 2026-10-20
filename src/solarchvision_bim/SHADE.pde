@@ -13,8 +13,8 @@ class SHADE {
 
   float impactValueToU (float val, float PAL_multiplier) {
     float _u = FLOAT_undefined;
-    if (WIN3D.impactTypeIndex == Impact_ACTIVE)  _u = (0.1 * PAL_multiplier * val);
-    if (WIN3D.impactTypeIndex == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_multiplier * val);
+    if (WIN3D.impactTypeIndex == Impact_ACTIVE)  _u = (0.2 * PAL_multiplier * val);
+    if (WIN3D.impactTypeIndex == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * val);
     return _u;
   }
 
