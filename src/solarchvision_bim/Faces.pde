@@ -14,7 +14,7 @@ class Faces {
 
   int activeColorscaleIndex = 19; //15; //14;
   int activeColorscaleDirection = 1;
-  float activeColorscaleFactor = 1;
+  float activeColorscaleFactor = 0.625; // 0.5*10/0.625 = 8 kWh/m2 at the palette's max swatch (was 1, giving 5 kWh/m2)
 
   int passiveColorscaleIndex = 1;
   int passiveColorscaleDirection = 1;
