@@ -35,23 +35,39 @@ String cameraFaceEdgesTexture = "";
 // same flat plane aren't guaranteed to come out bit-for-bit identical.
 final float FACE_EDGE_NORMAL_DOT_THRESHOLD = 0.999;
 
+// The three states a pixel can be in for the face-edges mode's first pass
+// (ShadeViewport() below) - a Face is its own index (>= 0); anything else
+// is one of these two, which isFaceEdgeBetween() treats differently: true
+// background still gets a silhouette edge against a neighboring Face, a
+// Model1D/Model2Ds hit never contributes an edge at all, against a Face or
+// anything else.
+final int FACE_EDGE_HIT_BACKGROUND = -1;
+final int FACE_EDGE_HIT_OTHER_OBJECT = -2;
+
 // Whether two neighboring pixels in the face-edges mask's second pass
-// (ShadeViewport() below) should be painted as an edge between them -
-// hitA/hitB are each either a Face index (>= 0) or -1 ("not a Face": no
-// hit at all, or a Model1D/Model2Ds billboard instead - see
-// noShadeOnlyVisibleFaceEdges' own comment); nxA/nyA/nzA and nxB/nyB/nzB
-// are that hit's own unit normal, meaningless (and unused) when that side
-// is -1. Only true between two different Faces whose normals genuinely
+// should be painted as an edge between them - hitA/hitB are each a Face
+// index (>= 0), FACE_EDGE_HIT_BACKGROUND, or FACE_EDGE_HIT_OTHER_OBJECT;
+// nxA/nyA/nzA and nxB/nyB/nzB are that hit's own unit normal, meaningless
+// (and unused) when that side isn't a Face. A Model1D/Model2Ds hit never
+// contributes an edge, against a Face or against the background - drop
+// straight out for either side being FACE_EDGE_HIT_OTHER_OBJECT before
+// anything else. Otherwise: true for a Face next to true background (a
+// silhouette), false between two background pixels (nothing to outline),
+// and between two different Faces only when their normals genuinely
 // differ by more than FACE_EDGE_NORMAL_DOT_THRESHOLD - so tessellating
 // one flat surface into many same-normal pieces doesn't draw a grid of
-// internal edges across it, while an actual crease still shows correctly
-// - and deliberately false whenever either side isn't a Face: no
-// silhouette against the background, a Model1D, or a Model2Ds billboard,
-// only creases between two Faces. Pure/no drawing or face-grid access, so
-// it's independently checkable without a live PGraphics context, unlike
-// the rest of this per-pixel loop.
+// internal edges across it, while an actual crease still shows correctly.
+// Pure/no drawing or face-grid access, so it's independently checkable
+// without a live PGraphics context, unlike the rest of this per-pixel
+// loop.
 boolean isFaceEdgeBetween (int hitA, float nxA, float nyA, float nzA, int hitB, float nxB, float nyB, float nzB) {
-  if (hitA < 0 || hitB < 0) return false;
+  if (hitA == FACE_EDGE_HIT_OTHER_OBJECT || hitB == FACE_EDGE_HIT_OTHER_OBJECT) return false;
+
+  boolean aIsFace = hitA >= 0;
+  boolean bIsFace = hitB >= 0;
+
+  if (aIsFace != bIsFace) return true;
+  if (!aIsFace) return false;
   if (hitA == hitB) return false;
 
   float dot = nxA * nxB + nyA * nyB + nzA * nzB;
@@ -199,9 +215,7 @@ void ShadeViewport () {
           // entireFaces_facesEndIndex (isIntersected_Faces.pde) is the
           // exclusive upper bound of the index range allFaces contributed
           // to the shared grid - anything at or past it hit a Model1D or
-          // a Model2Ds billboard instead, which this mask treats the same
-          // as "didn't hit a Face" (-1), same as missing the scene
-          // entirely does just below.
+          // a Model2Ds billboard instead, not a Face.
           if (hitFace < entireFaces_facesEndIndex) {
             faceEdgeHit[np] = hitFace;
             float[] n = funcs.vec3_unit(new float[]{ RxP[5], RxP[6], RxP[7] });
@@ -209,7 +223,7 @@ void ShadeViewport () {
             faceEdgeNormalY[np] = n[1];
             faceEdgeNormalZ[np] = n[2];
           } else {
-            faceEdgeHit[np] = -1;
+            faceEdgeHit[np] = FACE_EDGE_HIT_OTHER_OBJECT;
           }
           continue;
         }
@@ -322,7 +336,7 @@ void ShadeViewport () {
           }
         }
       } else if (noShadeOnlyVisibleFaceEdges) {
-        faceEdgeHit[np] = -1;
+        faceEdgeHit[np] = FACE_EDGE_HIT_BACKGROUND;
       } else {
         Shade_RGBA.pixels[np] = color(0, 0, 0, 0);
       }
@@ -333,10 +347,11 @@ void ShadeViewport () {
   // and normal are known, paint a pixel black wherever isFaceEdgeBetween()
   // says it and its right or below neighbor are actually a genuine edge
   // (treating "off the edge of the image" as nothing to compare against,
-  // not as an edge in itself) - a silhouette against the background, a
-  // real crease between two different Faces, and a Face's own boundary
-  // against a Model1D/Model2Ds billboard in front of or behind it all
-  // fall out of that one comparison, transparent everywhere else.
+  // not as an edge in itself) - a silhouette against the true background
+  // and a real crease between two different Faces both paint; a Face's
+  // boundary against a Model1D/Model2Ds billboard in front of or behind
+  // it never does (isFaceEdgeBetween()'s own comment) - transparent
+  // everywhere else.
   if (noShadeOnlyVisibleFaceEdges) {
     for (int Image_Y_i = 0; Image_Y_i < RES2; Image_Y_i++) {
       for (int Image_X_i = 0; Image_X_i < RES1; Image_X_i++) {
