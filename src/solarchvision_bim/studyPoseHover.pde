@@ -102,13 +102,13 @@ float snapInclination (float Alpha) {
 }
 
 // The hover box's first line - orientation and inclination together for
-// a general tilt, "horizontal surface" alone (no orientation, which is
-// meaningless once a surface is flat) once inclination has snapped to
-// 90, and orientation alone (inclination dropped as implied/redundant)
-// once it's snapped to 0, since reading a vertical surface's own compass
-// direction is the common case worth keeping simple.
+// a general tilt, "Roof" alone (no orientation, which is meaningless once
+// a surface is flat) once inclination has snapped to 90, and orientation
+// alone (inclination dropped as implied/redundant) once it's snapped to
+// 0, since reading a vertical surface's own compass direction is the
+// common case worth keeping simple.
 String formatOrientationAndInclination (float Beta, float Alpha) {
-  if (Alpha >= 90) return "horizontal surface";
+  if (Alpha >= 90) return "Roof";
   if (Alpha <= 0) return formatOrientation(Beta);
   return formatOrientation(Beta) + ", Inclination " + nf(Alpha, 1, 0) + "\u00B0";
 }
@@ -159,7 +159,13 @@ GlobalPoseHoverHit studyGlobalPoseHover_hitTest (float mouseXPos, float mouseYPo
     hit.info = info;
     hit.a = a;
     hit.b = b;
-    hit.displayAlpha = Alpha;
+    // Rounded to the bucket actually selected (a), not the continuous
+    // mouse-derived angle before bucketing - so the label always matches
+    // the wedge whose data is being shown below it, not some in-between
+    // value the mouse happened to be near. For the snapped cases (Alpha
+    // 90 or 0) this is unchanged either way, since a's own bucket already
+    // lands on exactly 90 or 0 by construction.
+    hit.displayAlpha = a * inclinationStepImplied;
     return hit;
   }
 
