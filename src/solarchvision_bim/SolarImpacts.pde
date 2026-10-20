@@ -595,9 +595,10 @@ class SolarImpacts {
                           if (COL_V0 != COL_V1) Matrix_ARGB[Impact_PASSIVE][1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
                         }
 
-                        if (np == 0) valuesNUM += 1;
                       }
                     }
+
+                    valuesNUM += 1;
                   }
                 }
               }
