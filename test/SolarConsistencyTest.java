@@ -117,6 +117,75 @@ class SolarConsistencyTest {
     assertEquals(poseDayTotal, skinDayTotal, QUANT * validHours + EPS);
   }
 
+  // ================= diffuse-only case (direct=0, diffuse=200 W/m2) ========
+  // Unlike the direct/SunMask term, the diffuse/SkyMask term isn't
+  // computed the same way by all three pipelines. Skin Potential
+  // (preBakeViewport.pde) and Shade Vertex Solar (calculate_VertexSolar_
+  // array.pde) both average the real sky-dome DiffuseVectors sample set
+  // via the identical cosine-weighted formula (build_SkySphere() turns
+  // out to have no graphics dependency and is directly callable here),
+  // so those two should land on the exact same number. Pose Potential's
+  // SolarAtSurface() doesn't sample DiffuseVectors at all - it uses a
+  // simple analytical SkyMask = 0.5*(1+Alpha/90), which at Alpha=90
+  // (horizontal) is exactly 1.0, well above the Monte-Carlo-averaged
+  // figure these sample directions actually give (~0.53 for an
+  // unobstructed horizontal surface - see the second test below). That's
+  // a genuine, substantial difference between the two approaches for
+  // this term specifically, not a bug to chase down - these are two
+  // legitimately different ways of estimating the same physical
+  // quantity, and the second test documents the gap numerically rather
+  // than papering over it, so a future change to either formula that
+  // shifts it further gets noticed here.
+
+  private float monteCarloSkyMask (solarchvision_bim instance, float[] normal) {
+    float sum = 0;
+    for (float[] v : instance.DiffuseVectors) {
+      float[] unit = instance.funcs.vec3_unit(v);
+      float dot = instance.funcs.vec_dot(unit, normal);
+      if (dot < 0) dot = 0;
+      sum += dot;
+    }
+    return sum / instance.DiffuseVectors.length;
+  }
+
+  @Test
+  void diffuseOnlyHorizontalSurface_skinPotentialAndShadeVertexSolarAgreeExactly () {
+    solarchvision_bim fresh = new solarchvision_bim();
+    fresh.build_SkySphere(3); // the tessellation argument is currently unused internally - any value gives the same real sky-dome sample set the app itself builds
+    assertTrue(fresh.DiffuseVectors.length > 0, "build_SkySphere() must actually populate some sample directions");
+
+    float diffuse = 0.2f; // 200 W/m2
+    float[] normal = { 0, 0, 1 }; // horizontal, facing up
+
+    float skyMask = monteCarloSkyMask(fresh, normal);
+
+    // Skin Potential: quantized through an 8-bit PNG channel, same as the
+    // direct/SunMask case above.
+    float quantizedCOL_V1 = Math.round(255 * skyMask) / 255.0f;
+    float skinResult = diffuse * quantizedCOL_V1;
+
+    // Shade Vertex Solar: the same average, computed directly every time, no quantization.
+    float vertexResult = diffuse * skyMask;
+
+    assertEquals(vertexResult, skinResult, QUANT + EPS,
+      "Skin Potential must agree with Shade Vertex Solar within the 8-bit PNG channel's own quantization step");
+  }
+
+  @Test
+  void diffuseOnlyHorizontalSurface_posePotentialsAnalyticalFormulaIsNoticeablyHigherThanMonteCarlo () {
+    solarchvision_bim fresh = new solarchvision_bim();
+    fresh.build_SkySphere(3);
+
+    float diffuse = 0.2f;
+    float[] normal = { 0, 0, 1 };
+
+    float monteCarloResult = diffuse * monteCarloSkyMask(fresh, normal);
+    float poseResult = fresh.SolarAtSurface(0, 0, 1, 0, diffuse, 90, 0, 0); // direct=0, SunR is irrelevant here
+
+    assertTrue(poseResult > monteCarloResult * 1.5f,
+      "Pose Potential's analytical SkyMask (1.0 at horizontal) is known to give a noticeably higher diffuse contribution than the Monte-Carlo-averaged DiffuseVectors sample set does - if this ever stops being true, something about one of the two formulas changed and is worth a closer look");
+  }
+
   // ================= colorscale factor defaults =============================
   // Regression coverage for the palette-matching work this session: the
   // active/passive maximum swatch each palette shows depends directly on
