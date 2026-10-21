@@ -7,5 +7,4 @@ dist/windows-amd64
 null/
 node_modules
 src/solarchvision_bim/projects
-input/images/adjust_trees/
 input/images/trees_raw/
