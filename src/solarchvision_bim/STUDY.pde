@@ -1024,9 +1024,10 @@ class STUDY {
         col.screenY1 = this.graphics.screenY(xA, minYA);
         col.screenY2 = this.graphics.screenY(xA, maxYA);
         col.dayText = TIME.getDayText(j * this.dayIncrement + 286 + TIME.beginDay);
+        if (this.daysMergedCount > 1) col.dayText += " \u00B1" + int(this.daysMergedCount / 2) + TIME.WORDS[2][activeLanguage] + "s";
         col.hourIndex = i;
         col.normalsValues = NormalsA;
-        col.layerName = CurrentLayer_name;
+        col.layerName = CurrentLayer_descriptions[activeLanguage];
         col.layerUnit = CurrentLayer_unit;
         col.verticalUnitOffset = this.verticalUnitOffset;
         this.normalsHoverColumns.add(col);
@@ -1046,9 +1047,10 @@ class STUDY {
         col.screenY1 = this.graphics.screenY(xB, minYB);
         col.screenY2 = this.graphics.screenY(xB, maxYB);
         col.dayText = TIME.getDayText(dayB * this.dayIncrement + 286 + TIME.beginDay);
+        if (this.daysMergedCount > 1) col.dayText += " \u00B1" + int(this.daysMergedCount / 2) + TIME.WORDS[2][activeLanguage] + "s";
         col.hourIndex = hourB;
         col.normalsValues = NormalsB;
-        col.layerName = CurrentLayer_name;
+        col.layerName = CurrentLayer_descriptions[activeLanguage];
         col.layerUnit = CurrentLayer_unit;
         col.verticalUnitOffset = this.verticalUnitOffset;
         this.normalsHoverColumns.add(col);

@@ -61,6 +61,40 @@ NormalsHoverColumn studyNormalsHover_hitTest (float mouseXPos, float mouseYPos) 
   return nearest;
 }
 
+// Returns the indices of values[] that are defined, sorted so the
+// largest value's own index comes first and the smallest comes last -
+// maximum at top, minimum at bottom, matching how the graph itself
+// visually stacks higher-valued lines above lower ones, rather than the
+// fixed STAT_N_* index order the underlying array uses. A plain selection
+// sort, since there are at most 9 entries here - not worth reaching for a
+// Comparator. Pure/no drawing, so it's independently checkable without a
+// live PGraphics context, unlike the rest of this file's box-drawing.
+int[] sortedDefinedIndicesByValueDescending (float[] values) {
+  int definedCount = 0;
+  int[] definedIndex = new int[values.length];
+  float[] definedValue = new float[values.length];
+  for (int l = 0; l < values.length; l++) {
+    if (is_defined(values[l])) {
+      definedIndex[definedCount] = l;
+      definedValue[definedCount] = values[l];
+      definedCount++;
+    }
+  }
+
+  for (int a = 0; a < definedCount - 1; a++) {
+    int maxPos = a;
+    for (int b = a + 1; b < definedCount; b++) {
+      if (definedValue[b] > definedValue[maxPos]) maxPos = b;
+    }
+    if (maxPos != a) {
+      float tmpVal = definedValue[a]; definedValue[a] = definedValue[maxPos]; definedValue[maxPos] = tmpVal;
+      int tmpIdx = definedIndex[a]; definedIndex[a] = definedIndex[maxPos]; definedIndex[maxPos] = tmpIdx;
+    }
+  }
+
+  return java.util.Arrays.copyOf(definedIndex, definedCount);
+}
+
 // Draws the hover box - a header line (layer name, day, hour) followed by
 // one line per defined statistic, skipping any that are undefined for
 // this particular column. Reuses the same box sizing/positioning/edge-
@@ -71,11 +105,10 @@ void drawNormalsHoverBox (NormalsHoverColumn col) {
   ArrayList<String> lineList = new ArrayList<String>();
   lineList.add(col.layerName + ", " + col.dayText + " " + nf(col.hourIndex, 2) + ":00");
 
-  for (int l = 0; l < 9; l++) {
-    if (is_defined(col.normalsValues[l])) {
-      float value = col.normalsValues[l] - col.verticalUnitOffset;
-      lineList.add(STAT_N_Title[l] + ": " + nf(value, 1, 2) + col.layerUnit);
-    }
+  int[] sortedIndices = sortedDefinedIndicesByValueDescending(col.normalsValues);
+  for (int l : sortedIndices) {
+    float value = col.normalsValues[l] - col.verticalUnitOffset;
+    lineList.add(STAT_N_Title[l] + ": " + nf(value, 1, 2) + col.layerUnit);
   }
 
   if (lineList.size() <= 1) return; // header only, nothing defined - shouldn't normally happen since the column was only recorded when at least one statistic was defined, but no reason to show an empty box if it somehow does
