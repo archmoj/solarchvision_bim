@@ -106,6 +106,82 @@ class STUDYTest {
     assertEquals(plain, effective, 0.0001f, "a selected range wider than the astronomical day must not inflate the result beyond the plain DayTime()");
   }
 
+  // ================= selectedRangeHours =================================
+
+  @Test
+  void selectedRangeHours_defaultRange_isTwentyFour () {
+    app.STUDY.startHour = 0;
+    app.STUDY.endHour = 23;
+    assertEquals(24, app.STUDY.selectedRangeHours());
+  }
+
+  @Test
+  void selectedRangeHours_singleHour_isOne () {
+    app.STUDY.startHour = 12;
+    app.STUDY.endHour = 12;
+    assertEquals(1, app.STUDY.selectedRangeHours());
+  }
+
+  @Test
+  void selectedRangeHours_wrappingRange_countsAcrossMidnight () {
+    app.STUDY.startHour = 22;
+    app.STUDY.endHour = 2; // 22,23,0,1,2 -> 5 hours
+    assertEquals(5, app.STUDY.selectedRangeHours());
+  }
+
+  // ================= paletteColorscaleMultiplier =========================
+  // The counterpart to effectiveDayTime() for a palette's own legend:
+  // scales a colorscale multiplier so its displayed maximum shrinks
+  // proportionally for a restricted hour range, using a fixed 12-hour
+  // nominal reference rather than a specific date's astronomical
+  // DayTime() (several legend-drawing sites have no particular date in
+  // scope, and a palette drawn once per graph shouldn't shift with
+  // whichever day happened to be processed last).
+
+  @Test
+  void paletteColorscaleMultiplier_defaultRange_isUnchanged () {
+    app.STUDY.startHour = 0;
+    app.STUDY.endHour = 23;
+    assertEquals(0.625f, app.STUDY.paletteColorscaleMultiplier(0.625f), 0.0001f);
+  }
+
+  @Test
+  void paletteColorscaleMultiplier_singleHourRange_scalesByTwelve () {
+    app.STUDY.startHour = 12;
+    app.STUDY.endHour = 12;
+    assertEquals(0.625f * 12f, app.STUDY.paletteColorscaleMultiplier(0.625f), 0.0001f);
+  }
+
+  @Test
+  void paletteColorscaleMultiplier_threeHourRange_scalesByFour () {
+    app.STUDY.startHour = 11;
+    app.STUDY.endHour = 13; // 11,12,13 -> 3 hours
+    assertEquals(0.625f * 4f, app.STUDY.paletteColorscaleMultiplier(0.625f), 0.0001f);
+  }
+
+  @Test
+  void paletteColorscaleMultiplier_rangeWiderThanNominal_doesNotInflateBeyondOriginal () {
+    app.STUDY.startHour = 0;
+    app.STUDY.endHour = 14; // 15 hours - wider than the 12-hour nominal reference
+    assertEquals(0.625f, app.STUDY.paletteColorscaleMultiplier(0.625f), 0.0001f);
+  }
+
+  @Test
+  void paletteColorscaleMultiplier_endToEnd_matchesTheMotivatingExample () {
+    // The user's own example: 0.625 = allFaces.activeColorscaleFactor's
+    // calibrated value, giving a default max of 8 kWh/m2 via the
+    // swatch formula 0.5*q/PAL_multiplier at q=10 (5/PAL_multiplier).
+    app.STUDY.startHour = 0;
+    app.STUDY.endHour = 23;
+    float defaultMax = 5f / app.STUDY.paletteColorscaleMultiplier(0.625f);
+    assertEquals(8f, defaultMax, 0.01f);
+
+    app.STUDY.startHour = 12;
+    app.STUDY.endHour = 12;
+    float oneHourMax = 5f / app.STUDY.paletteColorscaleMultiplier(0.625f);
+    assertTrue(oneHourMax < 1f, "a one-hour analysis's own max should land well under 1 kWh/m2, not stay anywhere near 8 (" + oneHourMax + ")");
+  }
+
   // ================= computeWrappedDayIndex (newly extracted) ==========
 
   @Test

@@ -217,4 +217,57 @@ class SHADETest {
     app.WIN3D.shadingMode = app.SHADE.Surface_White;
     assertEquals(1f, app.SHADE.get_PAL_multiplier(), 0.0001f);
   }
+
+  // ================= get_PAL_multiplier (hour-range scaling) =============
+  // The vertex/face coloring counterpart to WIN3D's own palette legend -
+  // both read the same allFaces colorscale fields and must apply the same
+  // restricted-hour-range adjustment (STUDY.paletteColorscaleMultiplier())
+  // so a surface's actual color and the legend it's read against never
+  // drift apart.
+
+  @Test
+  void getPALMultiplier_solarShade_defaultRange_isUnchanged () {
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solar;
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
+    app.STUDY.startHour = 0;
+    app.STUDY.endHour = 23;
+    app.allFaces.activeColorscaleFactor = 0.625f;
+
+    assertEquals(0.625f, app.SHADE.get_PAL_multiplier(), 0.0001f);
+  }
+
+  @Test
+  void getPALMultiplier_solarShade_singleHourRange_isScaledUp () {
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solar;
+    app.WIN3D.impactTypeIndex = app.Impact_ACTIVE;
+    app.STUDY.startHour = 12;
+    app.STUDY.endHour = 12;
+    app.allFaces.activeColorscaleFactor = 0.625f;
+
+    assertEquals(0.625f * 12f, app.SHADE.get_PAL_multiplier(), 0.0001f);
+  }
+
+  @Test
+  void getPALMultiplier_globalSolar_passive_threeHourRange_isScaledUp () {
+    app.WIN3D.shadingMode = app.SHADE.Global_Solar;
+    app.WIN3D.impactTypeIndex = app.Impact_PASSIVE;
+    app.STUDY.startHour = 11;
+    app.STUDY.endHour = 13; // 3 hours
+    app.allFaces.passiveColorscaleFactor = 0.16f;
+
+    assertEquals(0.16f * 4f, app.SHADE.get_PAL_multiplier(), 0.0001f);
+  }
+
+  @Test
+  void getPALMultiplier_nonSolarShadeMode_unaffectedByARestrictedHourRange () {
+    // Vertex_Solid's own colorScaleFactor has nothing to do with solar
+    // energy, so a restricted hour range (which only matters for the
+    // day-extrapolated solar quantities) must leave it untouched.
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solid;
+    app.STUDY.startHour = 12;
+    app.STUDY.endHour = 12;
+    app.allSolids.colorScaleFactor = 2.0f;
+
+    assertEquals(2.0f, app.SHADE.get_PAL_multiplier(), 0.0001f);
+  }
 }
