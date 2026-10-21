@@ -91,6 +91,24 @@ void update_frame_layout () {
     // resize.
     if (Sun3D != null) Sun3D.win3DCache_gridSegments = null;
 
+    // Sun3D keeps a THIRD and FOURTH WIN3D cache too - win3DCache_pathSegments
+    // and win3DCache_pattern (drawPath()/drawPattern(), via drawCycles()):
+    // both bake WIN3D.scale into their cached positions, and
+    // win3DCache_pathSegments also bakes WIN3D.dY directly into each
+    // segment's stroke weight (0.01 * WIN3D.dY - see drawPath()'s own
+    // comment on that entry's layout). Neither is covered by nulling
+    // win3DCache/win3DCache_gridSegments above. Unlike those two, these
+    // caches already key off a generation counter for exactly this kind
+    // of "everything not cheaply enumerable" case (see winCache_
+    // dataGeneration's own comment) - bumping it here invalidates both at
+    // once, no separate null-out needed. Without this, "Enlarge 3D
+    // Viewport" leaves the sun path/pattern rendering at the old
+    // viewport's scale (narrower segments, wrong stroke weight) until
+    // something unrelated happens to call UI_caseBar.revise() and bump
+    // this same counter as a side effect - which is what made the bug
+    // look like it "fixes itself" a frame or two later instead of never.
+    if (Sun3D != null) Sun3D.winCache_dataGeneration++;
+
     // See win3DOverlay_resyncGenerationAfterResize()'s own comment: the
     // model_changed() call just above was for the new WIN3D.graphics
     // context, not an actual geometry edit, so don't let it falsely hide

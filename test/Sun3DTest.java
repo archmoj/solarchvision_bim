@@ -2,6 +2,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
+import processing.core.PShape;
+
 // computeFrame()/buildSubFace() are plain trig/vector math - no
 // WIN3D.graphics, no PImage - so, like import_objects_OBJ() (see
 // ImportObjectsOBJTest.java), they're directly callable from a bare,
@@ -460,6 +462,70 @@ class Sun3DTest {
     assertFalse(app.Sun3D.win3DCache_gridIsValid(3.0f, 1, 365), "an s_SunPath change must miss");
     assertFalse(app.Sun3D.win3DCache_gridIsValid(2.5f, 2, 365), "a start_j change must miss");
     assertFalse(app.Sun3D.win3DCache_gridIsValid(2.5f, 1, 300), "an end_j change must miss");
+  }
+
+  // ================= win3DCache_pathIsValid / win3DCache_patternIsValid ============
+  // drawPath()/drawPattern() themselves touch WIN3D.graphics unconditionally,
+  // same reason drawGrid() isn't callable here either (see this file's
+  // own header comment and the win3DCache_gridIsValid section above) -
+  // these exercise the same cache check/record pair at the level that is
+  // testable.
+  //
+  // Regression coverage for "Enlarge 3D Viewport shows narrower sun-path
+  // segments for one frame, then self-corrects": drawPath() bakes both
+  // WIN3D.scale (into each segment's x/y/z) and WIN3D.dY (into each
+  // segment's own stroke weight, 0.01 * WIN3D.dY - see drawPath()'s own
+  // comment on that cache entry's layout) into win3DCache_pathSegments;
+  // drawPattern()/drawCycles() bakes WIN3D.scale into win3DCache_pattern
+  // the same way. Neither is in win3DCache_dataIsValid()'s own key - both
+  // instead rely on winCache_dataGeneration, the documented "safety net
+  // for everything NOT cheaply enumerable" (see that field's own
+  // comment), to catch exactly this kind of change. update_frame_layout.pde
+  // used to bump that counter nowhere, so a viewport resize left a stale,
+  // old-scale cache valid - it replayed once (the "narrower" frame) before
+  // something unrelated called UI_caseBar.revise(), which bumps this same
+  // counter as a side effect and made the bug look self-correcting rather
+  // than simply delayed. update_frame_layout() itself isn't directly
+  // testable here (see the grid section above), so this exercises the fix
+  // at the level it actually operates: the generation check both caches
+  // already shared before this fix, now actually reached on resize.
+
+  @Test
+  void pathIsValid_isFalse_assoonAsTheGenerationBumps_evenIfEveryOtherKeyStillMatches () {
+    app.Sun3D.win3DCache_pathSegments = new java.util.ArrayList<float[]>();
+    app.Sun3D.win3DCache_pathRecordState(3, 1, 0.625f);
+
+    assertTrue(app.Sun3D.win3DCache_pathIsValid(3, 1, 0.625f), "sanity: matching key with real segments must hit");
+
+    app.Sun3D.winCache_dataGeneration++; // what update_frame_layout.pde's fix now does on a viewport resize
+
+    assertFalse(app.Sun3D.win3DCache_pathIsValid(3, 1, 0.625f),
+      "bumping the generation must force a rebuild even though every field win3DCache_pathIsValid() itself compares (PAL_type/direction/multiplier, STUDY's fields, station latitude, TIME.beginDay, impactTypeIndex, impactDisplayDay) never changed");
+  }
+
+  @Test
+  void patternIsValid_isFalse_assoonAsTheGenerationBumps_evenIfEveryOtherKeyStillMatches () {
+    app.Sun3D.win3DCache_pattern = new PShape();
+    app.Sun3D.win3DCache_patternRecordState(3, 1, 0.625f);
+
+    assertTrue(app.Sun3D.win3DCache_patternIsValid(3, 1, 0.625f), "sanity: matching key with a real shape must hit");
+
+    app.Sun3D.winCache_dataGeneration++; // what update_frame_layout.pde's fix now does on a viewport resize
+
+    assertFalse(app.Sun3D.win3DCache_patternIsValid(3, 1, 0.625f),
+      "bumping the generation must force a rebuild even though no other key field changed - same mechanism as win3DCache_pathIsValid() above");
+  }
+
+  @Test
+  void pathIsValid_missesOnAPaletteMismatch_PalTypeOrDirectionOrMultiplier () {
+    app.Sun3D.win3DCache_pathSegments = new java.util.ArrayList<float[]>();
+    app.Sun3D.win3DCache_pathRecordState(3, 1, 0.625f);
+
+    assertTrue(app.Sun3D.win3DCache_pathIsValid(3, 1, 0.625f), "sanity: matching key must hit");
+
+    assertFalse(app.Sun3D.win3DCache_pathIsValid(5, 1, 0.625f), "a PAL_type change must miss");
+    assertFalse(app.Sun3D.win3DCache_pathIsValid(3, -1, 0.625f), "a PAL_direction change must miss");
+    assertFalse(app.Sun3D.win3DCache_pathIsValid(3, 1, 0.5f), "a PAL_multiplier change must miss");
   }
 
   // ================= to_XML / from_XML round trip ==================================
