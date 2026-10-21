@@ -122,6 +122,24 @@ void draw () {
 
     applyRolloutUpdate();
 
+    // Must run before STUDY.draw(): STUDY's own plotImpact_global() calls
+    // GlobalSolar_resize_array() whenever GlobalSolar_rebuild_array is set
+    // (just to keep the array's dimensions right for plotting), and that
+    // resize clears the array back to FLOAT_undefined and resets the flag
+    // to false as a side effect - exactly the same flag
+    // regenerate_desired_bakings() below checks. If STUDY.draw() ran
+    // first, it would consume the flag with a blank array, and
+    // draw_WIN3D_layers() further down would then find the flag already
+    // false and skip the real recalculation, leaving the 3D view's Global
+    // Solar shading empty until something (e.g. "Recalculate Solar
+    // Impact") re-flagged it. Vertex Solar has no equivalent earlier
+    // consumer, so it was never affected by this ordering. Doing the one
+    // real regeneration for the frame here, before anything else gets a
+    // chance to read (and incidentally clear) the flags, means every
+    // consumer downstream - STUDY's graphs and WIN3D's 3D view alike -
+    // sees the same, already-fresh data.
+    regenerate_desired_bakings();
+
     if (FRAME_record_AUTO) {
       if (STUDY.update) FRAME_record_IMG = true;
       if (WIN3D.update) FRAME_record_IMG = true;

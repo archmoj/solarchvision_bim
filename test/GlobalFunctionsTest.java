@@ -180,15 +180,19 @@ class GlobalFunctionsTest {
   }
 
   @Test
-  void findWhichBakingsToRegenerate_leavesBothFlagsAlone_forAnUnrelatedShadingMode () {
+  void findWhichBakingsToRegenerate_flagsBothCaches_regardlessOfTheActiveShadingMode () {
+    // Both solar caches are kept in sync unconditionally now, not just the
+    // one matching the currently active shading mode - so that switching
+    // shading modes later doesn't uncover a stale bake. This also applies
+    // when neither solar mode is active.
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
     app.WIN3D.shadingMode = app.SHADE.Surface_Wire;
 
     app.find_which_bakings_to_regenerate();
 
-    assertFalse(app.GlobalSolar_rebuild_array);
-    assertFalse(app.VertexSolar_rebuild_array);
+    assertTrue(app.GlobalSolar_rebuild_array);
+    assertTrue(app.VertexSolar_rebuild_array);
   }
 
   // ================= regenerate_desired_bakings ========================================

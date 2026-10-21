@@ -39,8 +39,14 @@ void draw_WIN3D_layers () {
   if (WIN3D.update) {
     mayDrawPalette = true;
 
-    regenerate_desired_bakings();
-
+    // The one real regeneration for this frame already happened earlier,
+    // at the top of draw() - before STUDY.draw(), which can itself
+    // consume (and clear) GlobalSolar_rebuild_array via
+    // plotImpact_global()'s own defensive resize. Calling
+    // regenerate_desired_bakings() again here would be a no-op in the
+    // common case (the flags are already false) and, worse, a silent
+    // skip in the race case this ordering exists to avoid - see that
+    // call site's comment.
     WIN3D.draw();
   }
 

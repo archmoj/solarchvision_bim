@@ -81,12 +81,17 @@ class react {
   };
 
   // One-off follow-up callbacks (each used by exactly one spinner).
+  // Flags only - does not call regenerate_desired_bakings() itself. The
+  // actual recalculation happens once per frame in draw_WIN3D_layers(),
+  // driven by WIN3D.update/the rebuild flags this sets, so that several
+  // of these OnChange callbacks firing in the same frame (e.g. loading a
+  // project, or a rollout diff touching multiple fields) still only pay
+  // for one regeneration instead of one per field.
   OnChange applyCaseBarAndBake = (o, n) -> {
     if (o == n) return;
     allSections.resize_solarImpact_array();
 
     find_which_bakings_to_regenerate();
-    regenerate_desired_bakings();
     UI_caseBar.revise();
   };
   // TIME.updateDate() derives month/day/hour from date (the inverse of
@@ -104,7 +109,6 @@ class react {
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
     find_which_bakings_to_regenerate();
-    regenerate_desired_bakings();
     UI_caseBar.revise();
   };
 
@@ -119,7 +123,6 @@ class react {
     update_ensembleForecast(TIME.year, TIME.month, TIME.day, TIME.hour);
 
     find_which_bakings_to_regenerate();
-    regenerate_desired_bakings();
     UI_caseBar.revise();
   };
 

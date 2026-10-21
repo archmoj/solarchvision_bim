@@ -769,27 +769,18 @@ class WIN3DTest {
   }
 
   @Test
-  void handleCommandKey_enter_flagsGlobalSolarForRebuildWhenThatShadeModeIsActive () {
-    app.WIN3D.shadingMode = app.SHADE.Global_Solar;
-    app.GlobalSolar_rebuild_array = false;
-    app.VertexSolar_rebuild_array = false;
-
-    app.WIN3D.handleCommandKey(app.ENTER, false);
-
-    assertTrue(app.GlobalSolar_rebuild_array);
-    assertFalse(app.VertexSolar_rebuild_array);
-  }
-
-  @Test
-  void handleCommandKey_enter_doesNothingWhenNeitherSolarShadeModeIsActive () {
+  void handleCommandKey_enter_flagsBothSolarCachesForRebuild_regardlessOfTheActiveShadeMode () {
+    // Both caches are now flagged unconditionally, not just the one
+    // matching the currently active shading mode - see
+    // find_which_bakings_to_regenerate's own test for the rationale.
     app.WIN3D.shadingMode = app.SHADE.Surface_Materials;
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
 
     app.WIN3D.handleCommandKey(app.ENTER, false);
 
-    assertFalse(app.GlobalSolar_rebuild_array);
-    assertFalse(app.VertexSolar_rebuild_array);
+    assertTrue(app.GlobalSolar_rebuild_array);
+    assertTrue(app.VertexSolar_rebuild_array);
   }
 
   @Test
@@ -899,14 +890,17 @@ class WIN3DTest {
   }
 
   @Test
-  void handleCommandKey_tab_withShiftDown_flagsVertexSolarForRebuildWhenThatShadeModeIsActive () {
+  void handleCommandKey_tab_withShiftDown_flagsBothSolarCachesForRebuild_regardlessOfTheActiveShadeMode () {
+    // Both caches are now flagged unconditionally, not just the one
+    // matching the currently active shading mode - see
+    // find_which_bakings_to_regenerate's own test for the rationale.
     app.WIN3D.shadingMode = app.SHADE.Vertex_Solar;
     app.GlobalSolar_rebuild_array = false;
     app.VertexSolar_rebuild_array = false;
 
     app.WIN3D.handleCommandKey(app.TAB, true);
 
-    assertFalse(app.GlobalSolar_rebuild_array);
+    assertTrue(app.GlobalSolar_rebuild_array);
     assertTrue(app.VertexSolar_rebuild_array);
   }
 
