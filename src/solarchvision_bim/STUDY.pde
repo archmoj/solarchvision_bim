@@ -78,6 +78,32 @@ class STUDY {
   // caution every other hover feature this session needed.
   ArrayList<NormalsHoverColumn> normalsHoverColumns;
 
+  // Palette legend hover - see studyPaletteHover.pde's own comment on
+  // which graphs' legends this covers and why. Unlike the other hover
+  // features, there's no per-call data snapshot needed here: each
+  // swatch's own value is a direct function of its index and
+  // PAL_multiplier, already computed fresh by each legend's own existing
+  // text-label formula, not read back from any shared/overwritable state.
+  ArrayList<PaletteSwatchHoverInfo> paletteSwatchHoverInfo;
+
+  // Records one legend swatch for hover, in this.graphics' own device-
+  // pixel space - called from each of urban/global/sunpath/cycles' own
+  // legend-drawing loops, right alongside their existing rect() call,
+  // with whatever label string that same loop already computed for its
+  // own on-swatch text. col is the swatch's own RGBA (the exact same
+  // array already used to fill() and stroke() it), carried through so
+  // the hover box can use the same color rather than a generic one.
+  void recordPaletteSwatchHover (float localX, float localY, float localW, float localH, String label, float[] col) {
+    PaletteSwatchHoverInfo info = new PaletteSwatchHoverInfo();
+    info.screenX1 = this.graphics.screenX(localX, localY);
+    info.screenY1 = this.graphics.screenY(localX, localY);
+    info.screenX2 = this.graphics.screenX(localX + localW, localY + localH);
+    info.screenY2 = this.graphics.screenY(localX + localW, localY + localH);
+    info.label = label;
+    info.col = col;
+    this.paletteSwatchHoverInfo.add(info);
+  }
+
   // Incremented once per real redraw, in endFrame() below - lets
   // studyImpactHover.pde tell "STUDY just redrew this frame" from "it
   // didn't," which the global drawnFrame counter (also bumped by WIN3D's
@@ -839,7 +865,14 @@ class STUDY {
       float x = (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S;
       float y = (10 + pal_oy - 0.05 * 20) * this.view_S;
 
-      this.graphics.text((String.valueOf(int(funcs.roundTo(100 * prob_V, 1)))), x, y);
+      String swatchLabel = String.valueOf(int(funcs.roundTo(100 * prob_V, 1)));
+      this.graphics.text(swatchLabel, x, y);
+
+      this.recordPaletteSwatchHover(
+        (pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S,
+        (pal_length / 11.0) * this.view_S, 20 * this.view_S,
+        swatchLabel + " %", COL
+      );
     }
   }
 
@@ -919,6 +952,14 @@ class STUDY {
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
       this.graphics.text(_txt[q], (25 + pal_ox + q * (pal_length / 9.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+
+      if (!_txt[q].equals("")) {
+        this.recordPaletteSwatchHover(
+          (pal_ox + q * (pal_length / 9.0)) * this.view_S, pal_oy * this.view_S,
+          (pal_length / 9.0) * this.view_S, 20 * this.view_S,
+          _txt[q], COL
+        );
+      }
     }
   }
 
@@ -1823,6 +1864,7 @@ class STUDY {
     this.globalPoseHoverInfo = new ArrayList<GlobalPoseHoverInfo>();
     this.sunpathHoverPoints = new ArrayList<SunpathHoverPoint>();
     this.normalsHoverColumns = new ArrayList<NormalsHoverColumn>();
+    this.paletteSwatchHoverInfo = new ArrayList<PaletteSwatchHoverInfo>();
 
     if (developDataUpdate) {
       if (currentLayerId == LAYER_developed.id) {
@@ -2246,7 +2288,16 @@ class STUDY {
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
 
-        if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(0.2 * (q - 5) / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+        if (this.impactTypeIndex == Impact_PASSIVE) {
+          float swatchValue = 0.2 * (q - 5) / PAL_multiplier;
+          this.graphics.text(nf(swatchValue, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+
+          this.recordPaletteSwatchHover(
+            (pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S,
+            (pal_length / 11.0) * this.view_S, 20 * this.view_S,
+            nf(swatchValue, 1, 1) + " \u00B0C", COL
+          );
+        }
       }
     }
 
@@ -2466,8 +2517,18 @@ class STUDY {
 
         this.graphics.textSize(15.0 * this.view_S);
         this.graphics.textAlign(CENTER, CENTER);
-        if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.5 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-        if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(2.0 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+
+        float swatchValue = 0;
+        String swatchUnit = "";
+        if (this.impactTypeIndex == Impact_ACTIVE) { swatchValue = funcs.roundTo(0.5 * q / PAL_multiplier, 0.1); swatchUnit = " kWh/m\u00B2"; }
+        if (this.impactTypeIndex == Impact_PASSIVE) { swatchValue = funcs.roundTo(2.0 * (q - 5) / PAL_multiplier, 0.1); swatchUnit = " %kWh\u00B0C/m\u00B2"; }
+        this.graphics.text(nf(swatchValue, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+
+        this.recordPaletteSwatchHover(
+          (pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S,
+          (pal_length / 11.0) * this.view_S, 20 * this.view_S,
+          nf(swatchValue, 1, 1) + swatchUnit, COL
+        );
       }
 
       if (this.PrintTtitle) {
@@ -2918,8 +2979,18 @@ class STUDY {
 
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
-      if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf((funcs.roundTo(0.5 * q / PAL_multiplier, 0.1)), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-      if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(2.0 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+
+      float swatchValue = 0;
+      String swatchUnit = "";
+      if (this.impactTypeIndex == Impact_ACTIVE) { swatchValue = funcs.roundTo(0.5 * q / PAL_multiplier, 0.1); swatchUnit = " kWh/m\u00B2"; }
+      if (this.impactTypeIndex == Impact_PASSIVE) { swatchValue = funcs.roundTo(2.0 * (q - 5) / PAL_multiplier, 0.1); swatchUnit = " %kWh\u00B0C/m\u00B2"; }
+      this.graphics.text(nf(swatchValue, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+
+      this.recordPaletteSwatchHover(
+        (pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S,
+        (pal_length / 11.0) * this.view_S, 20 * this.view_S,
+        nf(swatchValue, 1, 1) + swatchUnit, COL
+      );
     }
 
 
@@ -3159,8 +3230,17 @@ class STUDY {
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
 
-      if (this.impactTypeIndex == Impact_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
-      if (this.impactTypeIndex == Impact_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+      float swatchValue = 0;
+      String swatchUnit = "";
+      if (this.impactTypeIndex == Impact_ACTIVE) { swatchValue = 0.1 * q / PAL_multiplier; swatchUnit = " kWh/m\u00B2"; }
+      if (this.impactTypeIndex == Impact_PASSIVE) { swatchValue = funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1); swatchUnit = " kWh\u00B0C/m\u00B2"; }
+      this.graphics.text(nf(swatchValue, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 + pal_oy - 0.05 * 20) * this.view_S);
+
+      this.recordPaletteSwatchHover(
+        (pal_ox + q * (pal_length / 11.0)) * this.view_S, pal_oy * this.view_S,
+        (pal_length / 11.0) * this.view_S, 20 * this.view_S,
+        nf(swatchValue, 1, 1) + swatchUnit, COL
+      );
     }
 
 
@@ -3271,8 +3351,18 @@ class STUDY {
 
       this.graphics.textSize(15.0 * this.view_S);
       this.graphics.textAlign(CENTER, CENTER);
-      if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) this.graphics.text(nf(0.1 * q / PAL_multiplier, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
-      if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) this.graphics.text(nf(funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1), 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+
+      float swatchValue = 0;
+      String swatchUnit = "";
+      if (this.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) { swatchValue = 0.1 * q / PAL_multiplier; swatchUnit = " kWh/m\u00B2"; }
+      if (this.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE) { swatchValue = funcs.roundTo(0.4 * (q - 5) / PAL_multiplier, 0.1); swatchUnit = " kWh\u00B0C/m\u00B2"; }
+      this.graphics.text(nf(swatchValue, 1, 1), (20 + pal_ox + q * (pal_length / 11.0)) * this.view_S, (10 - pal_oy - 0.05 * 20) * this.view_S);
+
+      this.recordPaletteSwatchHover(
+        (pal_ox + q * (pal_length / 11.0)) * this.view_S, -pal_oy * this.view_S,
+        (pal_length / 11.0) * this.view_S, 20 * this.view_S,
+        nf(swatchValue, 1, 1) + swatchUnit, COL
+      );
     }
 
 

@@ -100,19 +100,26 @@ void draw_STUDY_hover () {
   boolean showingSkinPotential = (STUDY.impactGraphIndex == impactGraphIndex_URBAN_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_URBAN_PASSIVE);
   boolean showingPosePotential = (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_GLOBAL_PASSIVE);
   boolean showingHourlySun = (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_SUNPATH_PASSIVE);
+  boolean showingSunPath = (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_CYCLES_PASSIVE);
+  boolean showingWind = (STUDY.impactGraphIndex == impactGraphIndex_WIND_ACTIVE) || (STUDY.impactGraphIndex == impactGraphIndex_WIND_PASSIVE);
   boolean showingNormalLines = STUDY.showNormalLines;
+  boolean showingProbabilities = STUDY.showProbabilities;
+  boolean showingStatisticalRanges = STUDY.showStatisticalRanges;
+  boolean showingAPalette = showingSkinPotential || showingPosePotential || showingHourlySun || showingSunPath || showingWind || showingProbabilities || showingStatisticalRanges;
 
   UrbanHoverHit urbanHit = null;
   GlobalPoseHoverHit poseHit = null;
   SunpathHoverPoint sunpathHit = null;
   NormalsHoverColumn normalsHit = null;
+  PaletteSwatchHoverInfo paletteHit = null;
 
-  if ((showingSkinPotential || showingPosePotential || showingHourlySun || showingNormalLines) && UI_menuBar.selected_parent == -1 &&
+  if ((showingAPalette || showingNormalLines) && UI_menuBar.selected_parent == -1 &&
       isInside(mouseX, mouseY, STUDY.cX, STUDY.cY, STUDY.cX + STUDY.dX / STUDY.ImageScale, STUDY.cY + STUDY.dY / STUDY.ImageScale)) {
     if (showingSkinPotential) urbanHit = studyUrbanHover_hitTest(mouseX, mouseY);
     if (showingPosePotential) poseHit = studyGlobalPoseHover_hitTest(mouseX, mouseY);
     if (showingHourlySun) sunpathHit = studySunpathHover_hitTest(mouseX, mouseY);
     if (showingNormalLines) normalsHit = studyNormalsHover_hitTest(mouseX, mouseY);
+    if (showingAPalette && urbanHit == null && poseHit == null && sunpathHit == null) paletteHit = studyPaletteHover_hitTest(mouseX, mouseY);
   }
 
   if (studyHover_wasShownLastFrame) {
@@ -131,6 +138,9 @@ void draw_STUDY_hover () {
     studyHover_wasShownLastFrame = true;
   } else if (normalsHit != null) {
     drawNormalsHoverBox(normalsHit);
+    studyHover_wasShownLastFrame = true;
+  } else if (paletteHit != null) {
+    drawPaletteSwatchHoverBox(paletteHit);
     studyHover_wasShownLastFrame = true;
   }
 }
