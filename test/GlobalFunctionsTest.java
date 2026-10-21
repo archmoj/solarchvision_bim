@@ -210,6 +210,52 @@ class GlobalFunctionsTest {
     assertDoesNotThrow(() -> app.regenerate_desired_bakings());
   }
 
+  // ================= GlobalSolar_resize_array ============================================
+
+  @Test
+  void globalSolarResizeArray_sizesTheArrayToTheStudyDayRange_andClearsTheRebuildFlag () {
+    app.STUDY.startDay = 10;
+    app.STUDY.endDay = 15;
+    app.GlobalSolar_rebuild_array = true;
+
+    app.GlobalSolar_resize_array();
+
+    assertEquals(2, app.GlobalSolar.length);
+    assertEquals(1 + 15 - 10, app.GlobalSolar[0].length);
+    assertFalse(app.GlobalSolar_rebuild_array);
+  }
+
+  @Test
+  void globalSolarResizeArray_blanksTheArrayBackToUndefined_evenIfItAlreadyHeldRealData () {
+    // This is the exact mechanism behind a real regression: STUDY.pde's
+    // plotImpact_global() calls this (only to keep the array's
+    // dimensions right for plotting) whenever GlobalSolar_rebuild_array
+    // is set - and since STUDY.draw() runs before draw_WIN3D_layers()
+    // every frame (see solarchvision_bim.pde's draw()), it used to be
+    // able to consume (and blank) the flag before
+    // regenerate_desired_bakings() got a chance to actually recompute
+    // real data - leaving the 3D view's Global Solar shading empty.
+    // Vertex Solar has no equivalent earlier consumer of its own flag,
+    // which is why only Global was ever affected. solarchvision_bim.pde's
+    // draw() now calls regenerate_desired_bakings() once, up front,
+    // before STUDY.draw() runs, specifically to keep this resize from
+    // ever running ahead of the real computation - see that call site's
+    // own comment for the full ordering argument (draw() itself isn't
+    // unit-testable headless, so this test can only pin down this one
+    // resize's own destructive side effect, not the frame ordering that
+    // now avoids triggering it on real, not-yet-baked data).
+    app.STUDY.startDay = 0;
+    app.STUDY.endDay = 1;
+    app.GlobalSolar_resize_array(); // sized once already, flag now false
+    app.GlobalSolar[0][0][0][0] = 123f; // stand in for real, already-baked data
+
+    app.GlobalSolar_rebuild_array = true; // e.g. a period field just changed
+    app.GlobalSolar_resize_array();
+
+    assertEquals(app.FLOAT_undefined, app.GlobalSolar[0][0][0][0],
+      "a bare resize always blanks the array, real data or not - callers must only reach this after the real recomputation, never instead of it");
+  }
+
   // ================= VertexSolar_resize_array ===========================================
 
   @Test

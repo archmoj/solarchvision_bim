@@ -132,6 +132,29 @@ class ValueModifierTest {
     assertTrue(app.GlobalSolar_rebuild_array); // via react.applyBeginDayChange -> find_which_bakings_to_regenerate
   }
 
+  // ================= dynamic bounds (startHour, via applyCaseBarAndBake) ===
+
+  @Test
+  void startHour_commandLineAction_flagsBothVertexAndGlobalSolarForRebuild () {
+    // react.applyCaseBarAndBake is wired to several ValueModifier fields
+    // (see ValueModifier.pde) - Start Hour exercises that shared path
+    // here. Both caches must come out flagged regardless of which
+    // shading mode happens to be active, same as find_which_bakings_to_
+    // regenerate's own test - this is what actually drives both Vertex
+    // and Global Solar staying in sync when a period field changes.
+    app.vm.startHour(0);
+    app.STUDY.startHour = 5;
+    app.WIN3D.shadingMode = app.SHADE.Vertex_Solar; // deliberately not Global_Solar
+    app.GlobalSolar_rebuild_array = false;
+    app.VertexSolar_rebuild_array = false;
+
+    app.allActions.get("start_hour").run(new String[]{"start_hour", "10"});
+
+    assertEquals(10, app.STUDY.startHour);
+    assertTrue(app.VertexSolar_rebuild_array);
+    assertTrue(app.GlobalSolar_rebuild_array);
+  }
+
   // ================= boolean field ==========================================
 
   @Test
