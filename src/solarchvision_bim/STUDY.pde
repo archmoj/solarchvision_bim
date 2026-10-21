@@ -189,6 +189,19 @@ class STUDY {
     return result;
   }
 
+  // How many of the 24 integer hours in a day satisfy the user's own
+  // selected hour range (startHour/endHour, via isInHourlyRange()) -
+  // shared by effectiveDayTime() below (which scales the underlying
+  // energy data for a restricted range) and paletteColorscaleMultiplier()
+  // (which scales a palette's own displayed maximum the same way).
+  int selectedRangeHours () {
+    int count = 0;
+    for (int h = 0; h < 24; h++) {
+      if (this.isInHourlyRange(h)) count++;
+    }
+    return count;
+  }
+
   // The day's own energy-extrapolation duration: funcs.DayTime() (the
   // astronomical daylight duration, from sunrise to sunset) clamped to
   // the duration of the user's own selected hour range (startHour/
@@ -209,19 +222,53 @@ class STUDY {
   // a fair average is exactly the over-extrapolation this clamps.
   //
   // For the default, unrestricted range (every one of the 24 integer
-  // hours satisfies isInHourlyRange()), selectedRangeHours is 24, so this
-  // returns the plain astronomical DayTime() unchanged - the same value
-  // all three pipelines already used before this existed, and the same
-  // one their own existing consistency tests were built against.
+  // hours satisfies isInHourlyRange()), selectedRangeHours() is 24, so
+  // this returns the plain astronomical DayTime() unchanged - the same
+  // value all three pipelines already used before this existed, and the
+  // same one their own existing consistency tests were built against.
   float effectiveDayTime (float Latitude, float DateAngle) {
     float astronomicalDayTime = funcs.DayTime(Latitude, DateAngle);
+    return min(astronomicalDayTime, this.selectedRangeHours());
+  }
 
-    int selectedRangeHours = 0;
-    for (int h = 0; h < 24; h++) {
-      if (this.isInHourlyRange(h)) selectedRangeHours++;
-    }
+  // Nominal "full day" reference the existing, calibrated palette scales
+  // (allFaces.activeColorscaleFactor/passiveColorscaleFactor and their
+  // STUDY-owned counterparts) were tuned against. A fixed constant
+  // rather than a specific date's own astronomical DayTime(), because a
+  // palette is drawn once per graph, not once per day the way the
+  // underlying energy data is - some of the legend-drawing sites have no
+  // particular date in scope at the point where they draw their own
+  // legend, and a palette that shifted with whatever day happened to be
+  // processed last would be a confusing, unstable reference for reading
+  // colors against. 12 hours - daylight duration at the equinox,
+  // independent of latitude and season - keeps this simple and
+  // predictable at the cost of being only an approximation of the true
+  // astronomical day length for whatever season/latitude is actually
+  // being studied.
+  final float paletteNominalDayHours = 12.0;
 
-    return min(astronomicalDayTime, selectedRangeHours);
+  // Scales a palette's own colorscale multiplier so its displayed
+  // maximum shrinks proportionally when the user restricts analysis to a
+  // shorter-than-nominal hour range - the counterpart to
+  // effectiveDayTime() (which applies the same proportional correction
+  // to the underlying energy data), applied here to a legend's own scale
+  // instead, so reading a 1-hour (or 3-hour) analysis against its legend
+  // means reading it against a legend sized for that period, not a full
+  // day's worth of accumulated energy. Only relevant to palettes whose
+  // underlying values are themselves extrapolated via effectiveDayTime()
+  // - Skin Potential (plotImpact_urban(), via allFaces.*ColorscaleFactor)
+  // and Pose Potential (plotImpact_global(), via this.*ColorscaleFactor).
+  // Hourly Sun, Sun Path, drawProbs, drawSorted and plotImpact_wind all
+  // show raw single-hour samples, frequencies/percentiles, or a direct
+  // weather reading rather than a day-extrapolated energy total, so none
+  // of their own palettes change with the selected hour range at all.
+  //
+  // For the default, unrestricted range, selectedRangeHours() is 24 (at
+  // least paletteNominalDayHours), so this returns originalMultiplier
+  // unchanged.
+  float paletteColorscaleMultiplier (float originalMultiplier) {
+    float effectiveHours = min(this.paletteNominalDayHours, this.selectedRangeHours());
+    return originalMultiplier * (this.paletteNominalDayHours / effectiveHours);
   }
 
   // Maps (j, j_ADD) - a plotted day column and its within-join-window
@@ -2417,6 +2464,7 @@ class STUDY {
         PAL_direction = allFaces.passiveColorscaleDirection;
         PAL_multiplier = allFaces.passiveColorscaleFactor;
       }
+      PAL_multiplier = this.paletteColorscaleMultiplier(PAL_multiplier);
 
       int l = this.impactLayerIndex;
 
@@ -2640,6 +2688,7 @@ class STUDY {
     float PAL_multiplier = 1;
     if (this.impactTypeIndex == Impact_ACTIVE) PAL_multiplier = this.activeColorscaleFactor;
     if (this.impactTypeIndex == Impact_PASSIVE) PAL_multiplier = this.passiveColorscaleFactor;
+    PAL_multiplier = this.paletteColorscaleMultiplier(PAL_multiplier);
 
 
     int l = this.impactLayerIndex;
