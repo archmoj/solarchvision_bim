@@ -92,6 +92,8 @@ int SHADE_HOUR_ANGLE = 8;
 int SHADE_DATE_ANGLE = 0;
 
 void ShadeViewport () {
+  int ShadeViewport_startMillis = millis();
+
   int DATE_ANGLE = SHADE_DATE_ANGLE;
   int HOUR_ANGLE = SHADE_HOUR_ANGLE;
 
@@ -404,6 +406,8 @@ void ShadeViewport () {
     // both pop up an overlay nobody asked for and stretch it wrong.
     WIN3D.showShading = true;
   }
+
+  println("ShadeViewport() finished in " + nf((millis() - ShadeViewport_startMillis) / 1000.0, 0, 2) + "s");
 }
 
 void adjustShadeTime (int steps) {

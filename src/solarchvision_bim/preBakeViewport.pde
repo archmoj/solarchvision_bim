@@ -1,5 +1,7 @@
 void preBakeViewport () {
 
+  int preBakeViewport_startMillis = millis();
+
   showWaitCursor();
 
   println("PreBaking for Direct and Diffuse models. Please wait...");
@@ -359,4 +361,9 @@ void preBakeViewport () {
   WIN3D.dX = pre_WIN3D_dX;
   WIN3D.dY = pre_WIN3D_dY;
   WIN3D.view_R = float(WIN3D.dY) / float(WIN3D.dX);
+
+  // Includes the two ShadeViewport() calls above (2Ds mask, face-edges
+  // texture) - each also prints its own elapsed time on the way, so this
+  // total and their two sub-totals are both visible, not just the sum.
+  println("preBakeViewport() finished in " + nf((millis() - preBakeViewport_startMillis) / 1000.0, 0, 2) + "s");
 }
