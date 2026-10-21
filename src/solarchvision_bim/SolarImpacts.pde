@@ -664,7 +664,7 @@ class SolarImpacts {
 
                 PAL_type = allFaces.activeColorscaleIndex;
                 PAL_direction = allFaces.activeColorscaleDirection;
-                PAL_multiplier = allFaces.activeColorscaleFactor;
+                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
 
                 //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -683,11 +683,12 @@ class SolarImpacts {
 
                 PAL_type = allFaces.passiveColorscaleIndex;
                 PAL_direction = allFaces.passiveColorscaleDirection;
-                PAL_multiplier = allFaces.passiveColorscaleFactor;
+                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
 
                 //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
               }
+
 
 
               //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> valuesSUM =", valuesSUM);
@@ -762,7 +763,7 @@ class SolarImpacts {
 
                 PAL_type = allFaces.activeColorscaleIndex;
                 PAL_direction = allFaces.activeColorscaleDirection;
-                PAL_multiplier = allFaces.activeColorscaleFactor;
+                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.activeColorscaleFactor);
 
                 //_u = 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 //_u = (0.1 * PAL_multiplier * valuesSUM);
@@ -781,11 +782,12 @@ class SolarImpacts {
 
                 PAL_type = allFaces.passiveColorscaleIndex;
                 PAL_direction = allFaces.passiveColorscaleDirection;
-                PAL_multiplier = allFaces.passiveColorscaleFactor;
+                PAL_multiplier = STUDY.paletteColorscaleMultiplier(allFaces.passiveColorscaleFactor);
 
                 //_u = 0.5 + 0.5 * (0.1 * PAL_multiplier * valuesSUM);
                 _u = 0.5 + 0.5 * (0.2 * PAL_multiplier * valuesSUM);
               }
+
 
               _u = applyPalDirection(_u, PAL_direction);
 
