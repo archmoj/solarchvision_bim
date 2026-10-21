@@ -1,4 +1,6 @@
 actual/*
 diff/*
+new-baseline/*
 !actual/.gitkeep
 !diff/.gitkeep
+!new-baseline/.gitkeep

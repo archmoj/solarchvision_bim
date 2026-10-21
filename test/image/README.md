@@ -172,14 +172,19 @@ has generated real baseline images yet**.
 There's no separate "update baselines" workflow or job. Instead a missing
 baseline (a brand new test) and a notable diff (a real regression, *or* a
 rendering change that's actually fine) both make `compare_pixels.py` fail,
-which is exactly when there's something worth a human looking at. So the
-`compare-pixels` job uploads `test/image/actual/` + `test/image/diff/` as
-the `new-baselines` artifact only `if: failure()`. `actual/` doubles as the
-set of candidate new baselines: download the artifact, look at the images
-(and their diffs against whatever baseline did exist, if any), and commit
-the ones that are actually correct into `test/image/baseline/` in a normal
-commit — a bug would otherwise get silently baked in as "correct" if this
-weren't reviewed by eye first.
+which is exactly when there's something worth a human looking at. When that
+happens, `compare_pixels.py` also copies just the failed tests' images from
+`test/image/actual/` into `test/image/new-baseline/` - named to drop
+straight into `test/image/baseline/` once reviewed, so you're not hunting
+through every test's image to find the handful that actually failed. The
+`compare-pixels` job uploads `test/image/new-baseline/` + `test/image/actual/`
++ `test/image/diff/` as the `new-baselines` artifact only `if: failure()`:
+download the artifact, start with `new-baseline/`, look at the images (and
+their diffs against whatever baseline did exist, if any - `actual/`/`diff/`
+are still there for that full context), and commit the ones that are
+actually correct into `test/image/baseline/` in a normal commit — a bug
+would otherwise get silently baked in as "correct" if this weren't reviewed
+by eye first.
 
 To do the same thing locally instead of via the artifact:
 

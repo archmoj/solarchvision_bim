@@ -153,16 +153,20 @@ jobs:
       # regression, or a rendering change that's actually fine) both make
       # compare_pixels.py fail above, which is exactly when there's
       # something worth a human's attention - so only upload then.
-      # test/image/actual/ doubles as the set of candidate new baselines:
-      # download this artifact, look at the images (and their diffs against
-      # whatever baseline did exist), and commit the ones that are actually
-      # correct into test/image/baseline/.
+      # test/image/new-baseline/, which compare_pixels.py just populated,
+      # is exactly the subset of test/image/actual/ worth a human looking
+      # at - only the failed tests' images, named to drop straight into
+      # test/image/baseline/ once reviewed - so that's what to actually
+      # open first; actual/ (every image, pass or fail) and diff/ (the
+      # red-highlighted diffs) still come along for full context on a
+      # failure, same as before.
       - name: Upload new/changed baseline candidates
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: new-baselines
           path: |
+            test/image/new-baseline
             test/image/actual
             test/image/diff
           if-no-files-found: warn
@@ -347,13 +351,16 @@ jobs:
       # Named distinctly from compare-pixels' own "new-baselines" -
       # both jobs can produce this artifact in the same workflow run,
       # and two artifacts with the same name would collide. See
-      # compare-pixels' own comment on what this artifact is for.
+      # compare-pixels' own comment on what this artifact is for, and on
+      # test/image/new-baseline/ - the failed-tests-only subset of
+      # actual/ - specifically.
       - name: Upload new/changed baseline candidates (Windows)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: new-baselines-windows
           path: |
+            test/image/new-baseline
             test/image/actual
             test/image/diff
           if-no-files-found: warn

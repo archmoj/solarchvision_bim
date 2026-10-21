@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Compare test/image/actual/*.png against test/image/baseline/*.png,
-pixel-by-pixel, and write red-highlighted diffs to test/image/diff/.
+pixel-by-pixel, and write red-highlighted diffs to test/image/diff/. Also
+copies the actual/*.png of every failed test into test/image/new-baseline/
+- a review-ready candidate set, named to drop straight into
+test/image/baseline/ once looked at by eye.
 
 Usage:
   python3 test/image/compare_pixels.py                 # compare every test/image/actual/*.png that exists
@@ -14,6 +17,7 @@ Requires: Pillow, numpy.
 import argparse
 import glob
 import os
+import shutil
 import sys
 
 from PIL import Image, ImageChops
@@ -24,6 +28,7 @@ IMAGE_TEST_DIR = os.path.join(REPO_ROOT, "test", "image")
 ACTUAL_DIR = os.path.join(IMAGE_TEST_DIR, "actual")
 BASELINE_DIR = os.path.join(IMAGE_TEST_DIR, "baseline")
 DIFF_DIR = os.path.join(IMAGE_TEST_DIR, "diff")
+NEW_BASELINE_DIR = os.path.join(IMAGE_TEST_DIR, "new-baseline")
 
 
 def discover_names():
@@ -106,10 +111,26 @@ def main():
         elif result == "skipped":
             skipped.append(name)
 
+    # A failed name always has a real actual/<name>.png - compare_one()
+    # only ever returns "failed" past its own "no actual image" check (that
+    # case returns "skipped" instead, above) - so this copy can't miss.
+    # Separate from actual/ (every image generated, pass or fail) and
+    # diff/ (only written for a pixel-threshold/size-mismatch failure, not
+    # a missing baseline - see compare_one() above): new-baseline/ is
+    # exactly the subset of actual/ worth a human looking at, named to
+    # drop straight into test/image/baseline/ once reviewed. See this
+    # script's own module docstring and test/image/README.md's "Baselines"
+    # section for the review workflow this feeds.
+    if failed:
+        os.makedirs(NEW_BASELINE_DIR, exist_ok=True)
+        for name in failed:
+            shutil.copy2(os.path.join(ACTUAL_DIR, name + ".png"), os.path.join(NEW_BASELINE_DIR, name + ".png"))
+
     print()
     print(f"{len(names) - len(failed) - len(skipped)}/{len(names)} passed")
     if failed:
         print("Failed:", ", ".join(failed))
+        print(f"New baseline candidates for the failed tests written to {NEW_BASELINE_DIR}")
     if skipped:
         print("Skipped:", ", ".join(skipped))
     if failed or skipped:
